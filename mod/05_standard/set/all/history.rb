@@ -1,5 +1,4 @@
-
-REVISIONS_PER_PAGE = 2
+REVISIONS_PER_PAGE = Wagn.config.revisions_per_page
 # has to be called always and before :set_name and :process_subcards
 def create_act_and_action
   #@current_act = (@supercard ? @supercard.current_act : Card::Act.create(:ip_address=>Env.ip)) #acts.build(:ip_address=>Env.ip
@@ -34,7 +33,7 @@ event :rollback, :after=>:extend, :on=>:update, :when=>proc{ |c| Env.params['act
     end.compact
     
     revision = { :subcards => {}}
-    actions.each do |action|
+    actions.each do |action|  
       if action.card_id == id
         revision.merge!(revision(action)) 
       else
@@ -68,7 +67,7 @@ end
 
 format :html do
   view :history do |args|
-    frame args.merge( :content=>true, :subheader=>_render_revision_subheader ) do
+    frame args.merge(:body_class=>"history-slot", :content=>true, :subheader=>_render_revision_subheader ) do
       _render_revisions
     end
   end
@@ -114,7 +113,7 @@ format :html do
     rev_nr = params['rev_nr'] || args[:rev_nr] 
     current_rev_nr = params['current_rev_nr'] || args[:current_rev_nr] || card.intrusive_acts.size
     hide_diff = (params["hide_diff"]=="true") || args[:hide_diff]
-    wrap( args.merge(:slot_class=>"revision-#{act.id}") ) do
+    wrap( args.merge(:slot_class=>"revision-#{act.id} history-slot") ) do
       render_haml :card=>card, :act=>act, :act_view=>act_view, 
                   :current_rev_nr=>current_rev_nr, :rev_nr=>rev_nr, 
                   :hide_diff=> hide_diff do 
@@ -179,11 +178,11 @@ format :html do
       %i.fa.fa-arrow-right.arrow
       -if action_view == :summary 
         %span.content-diff
-          = content_changes action, action_view, hide_diff
+          = render_content_changes :action=>action, :diff_type=>action_view, :hide_diff=>hide_diff
   -if action.new_content? and action_view == :expanded
     .expanded
       %span.content-diff
-        = content_changes action, action_view, hide_diff
+        = render_content_changes :action=>action, :diff_type=>action_view, :hide_diff=>hide_diff
         }
     end
   end
@@ -209,11 +208,11 @@ format :html do
     "(#{change})"
   end
   
-  def content_changes action, diff_type, hide_diff=false
-    if hide_diff 
-      action.new_values[:new_content]
+  view :content_changes do |args|
+    if args[:hide_diff ]
+      args[:action].new_values[:new_content]
     else 
-      action.content_diff(diff_type)
+      args[:action].content_diff(args[:diff_type])
     end
   end
 

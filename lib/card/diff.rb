@@ -10,16 +10,14 @@ module Card::Diff
   end
   
   def self.render_added_chunk text
-    "<ins class='diffins'>#{text}</ins>"
+    "<ins class='diffins diff-green'>#{text}</ins>"
   end
   
   def self.render_deleted_chunk text, count=true
-    "<del class='diffdel'>#{text}</del>"
+    "<del class='diffdel diff-red'>#{text}</del>"
   end
 
   class DiffBuilder
-
-    
     def initialize(old_version, new_version, opts={})
       @old_version, @new_version = old_version, new_version
       @opts = opts
@@ -191,7 +189,6 @@ module Card::Diff
     end
     
  
-    
     def new_aggregated_lcs
       new_lcs.inject([]) do |res, change_block|
         last_action = nil
@@ -206,7 +203,6 @@ module Card::Diff
           end
           last_action = change.action
         end
-        binding.pry
         res
       end
     end

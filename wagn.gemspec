@@ -40,6 +40,8 @@ Gem::Specification.new do |s|
     
     [ 'haml',         '~> 4.0.5'  ],
     [ 'kaminari',     '~> 0.16.1' ],
+    [ 'diffy',        '~> 3.0.6'  ],
+    [ 'diff-lcs',     '~> 1.2.5'  ],
     # should not depend!
     [ 'airbrake',     '~> 3.1'    ] 
 

@@ -66,6 +66,7 @@ module Wagn
         config.override_protocol     = nil
         
         config.token_expiry          = 2.days
+        config.revisions_per_page    = 10
         
         config
       end

@@ -27,9 +27,10 @@ format :html do
 
   def watch_link watched_card, text, toggle, title, extra={}
     return '' unless watched_card
+    
     following = Auth.current.fetch :trait=>:following, :new=>{:type=>:pointer}
     path_hash = {:card=>following, :action=>:update, :toggle=>toggle, 
-                 :success=>{:id=>card.id, :view=>:watch} }
+                 :success=>{:id=>card.name, :view=>:watch} }
     case toggle
     when :off then path_hash[:drop_item] = watched_card.cardname.url_key
     when :on  then path_hash[:add_item]  = watched_card.cardname.url_key

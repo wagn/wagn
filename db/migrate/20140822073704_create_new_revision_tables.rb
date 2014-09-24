@@ -47,24 +47,24 @@ class CreateNewRevisionTables < ActiveRecord::Migration
       t.text    :value 
     end
     
-
     
+    created = Set.new
     TmpRevision.find_each do |rev|
       act = TmpAct.create(:id=>rev.id, :card_id=>rev.card_id, :actor_id=>rev.creator_id, :acted_at=>rev.created_at)
-      action = TmpAction.create(:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>0)
-      TmpChange.create(:card_action_id=>action.id, :field=>2, :value=>rev.content )
+      if created.include? rev.card_id
+        action = TmpAction.create(:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>1)
+        TmpChange.create(:card_action_id=>action.id, :field=>2, :value=>rev.content )
+      else
+        action = TmpAction.create(:id=>rev.id, :card_id=>rev.card_id, :card_act_id=>act.id, :action_type=>0)
+        TmpChange.create(:card_action_id=>action.id, :field=>0, :value=>rev.card.name)
+        TmpChange.create(:card_action_id=>action.id, :field=>1, :value=>rev.card.type_id)
+        TmpChange.create(:card_action_id=>action.id, :field=>2, :value=>rev.content )
+        created.add rev.card_id
+      end
     end 
-    
-    
+        
     TmpCard.find_each do |card|
       card.update_column(:db_content,card.tmp_revision.content) if card.tmp_revision
-      first_action = card.tmp_actions.first
-      if !first_action
-        puts "Missing actions#{card.name}"
-      else
-        TmpChange.create(:card_action_id=>first_action.id, :field=>1, :value=>card.type_id)
-        TmpChange.create(:card_action_id=>first_action.id, :field=>0, :value=>card.name)
-      end
     end
     #drop_table :card_revisions
     #remove_column :cards, :current_revision

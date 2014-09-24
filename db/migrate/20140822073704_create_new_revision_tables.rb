@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class CreateNewRevisionTables < ActiveRecord::Migration
   class TmpRevision < ActiveRecord::Base
-    has_one :tmp_card, :foreign_key=>:card_id
+    belongs_to :tmp_card, :foreign_key=>:card_id
     self.table_name = 'card_revisions'
   end
   class TmpAct < ActiveRecord::Base

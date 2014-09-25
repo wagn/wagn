@@ -143,6 +143,7 @@ module Card::Diff
       end
       res += deleted_chunk(dels) if dels.present?
       res += added_chunk(adds) if adds.present?
+      res
     end
     
     def complete_diffy_diff

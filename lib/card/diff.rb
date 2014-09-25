@@ -156,6 +156,7 @@ module Card::Diff
       lines = { :deleted => [], :added=>[], :unchanged=>[], :eof=>[] }
       prev_action = nil
       res = ''
+      inspect = false
       new_diffy.each_chunk do |line|
         action = case line
         when /^\+/ then :added
@@ -185,6 +186,8 @@ module Card::Diff
         complete_lcs_diff lines[:deleted].join, lines[:added].join
       elsif lines[prev_action].present?
         render_chunk prev_action, lines[prev_action].join
+      else
+        ''
       end
     end
     

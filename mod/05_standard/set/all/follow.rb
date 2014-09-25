@@ -51,13 +51,7 @@ def type_watched?; Auth.current.fetch(:trait=>:following, :new=>{}).include_item
 def watched?;     Auth.current.fetch(:trait=>:following, :new=>{}).include_item? cardname.url_key end
 
 def card_watchers
-  Card.search :plus=>[{:codename=> "following"},{:link_to=>name}]
+  Card.search :plus=>[{:codename=> "following"}, {:link_to=>{:name=>['or', name, type_name]}}]
 end
 
-def type_watchers
-  Card.search :plus=>[{:codename=> "following"},{:link_to=>type_name}]
-end
-
-def set_watchers
-end
 

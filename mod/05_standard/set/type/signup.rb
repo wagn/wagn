@@ -1,4 +1,6 @@
 
+include Wagn::Location
+
 format :html do
   
   def default_new_args args
@@ -146,13 +148,13 @@ end
 event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_notifications do
   args =  {
     :to     => Card.setting('*request+*to'),
-    :from   => Card.setting('*request+*from') || "#{@name} <#{@email}>",
+    :from   => Card.setting('*request+*from') || "\"#{name}\" <#{account.email}>",
     :locals => {
-      :email        => self.account.email,
-      :name         => self.name,
+      :email        => account.email,
+      :name         => name,
       :request_url  => wagn_url( self ),
       :requests_url => wagn_url( Card[:signup] ),
-  }
+    }
   }
   Card['signup alert'].format(:format=>:email).deliver(args)
 end

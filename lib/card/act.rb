@@ -25,8 +25,9 @@ class Card
     def notify_followers
       begin
         return false if Card.record_timestamps==false
-        card.card_watchers.each {|w| w.send_change_notice self, card.cardname}
-        card.type_watchers.each {|w| w.send_change_notice self, card.type_name}
+        actions.map do |a|
+          a.card.card_watchers.each {|w| w.send_change_notice self, card.cardname}
+        end.flatten.uniq
       
         #@ethn: The rescue part is from the old notify_followers event. Remove it?
       rescue =>e  #this error handling should apply to all extend callback exceptions 

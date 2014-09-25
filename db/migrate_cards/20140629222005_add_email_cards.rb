@@ -74,3 +74,4 @@ class AddEmailCards < ActiveRecord::Migration
     end
   end
 end
+

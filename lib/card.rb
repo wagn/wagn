@@ -36,7 +36,6 @@ class Card < ActiveRecord::Base
   after_save :extend
   
   TRACKED_FIELDS = %w(name type_id db_content trash)
-  #binding.pry
   Loader.load_mods if count > 0
 
 end

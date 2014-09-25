@@ -61,10 +61,10 @@ def last_action
   actions.last
 end
 def last_content_action
-  last_change_on(:db_content).action
+  l_c = last_change_on(:db_content) and l_c.action
 end
 def last_content_action_id
-  last_change_on(:db_content).card_action_id
+  l_c = last_change_on(:db_content) and l_c.card_action_id
 end
 
 

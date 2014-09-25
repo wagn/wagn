@@ -299,7 +299,7 @@ $diff-green: #41ad41;
 $diff-red: #ff5050;
 $action-white: #fdfdfd;
 $act-gray:  #b7b7b7;
-$act-background: #dbdbdb;
+$act-background: #f3f3f3;
 
 .history-slot {
   overflow: hidden;
@@ -350,7 +350,7 @@ $act-background: #dbdbdb;
     .action {
         background-color: $action-white;
         margin: 5px 5px 2px 2px;
-        padding: 5px 5px 5px 5px;
+        padding: 6px 5px 6px 5px;
         overflow: hidden;
     }
     .ampel {
@@ -369,9 +369,9 @@ $act-background: #dbdbdb;
     .name-diff {
         border-style: solid;
         border-width: 1px;
-        border-color: #a0a0a0;
-        padding: 1px 2px 1px 2px;
-        background-color: #e5e5e5; 
+        border-color: #E4E4E4;
+        padding: 3px 8px 3px 8px;
+        background-color: #EEEEEE;
         margin-left: 3px;
     }
     .type-diff {
@@ -380,10 +380,15 @@ $act-background: #dbdbdb;
     .content-diff {
         overflow: hidden;
     }
-    
-    .action .expanded {
-        clear:left; 
-        padding: 10px 10px 10px 10px;
+
+    .action {
+      .expanded {
+          clear:left;
+          padding: 14px 10px 14px 24px;
+      }
+      .summary {
+          padding: 6px 0px;
+      }
     }
     
     .arrow-down {
@@ -419,6 +424,9 @@ $act-background: #dbdbdb;
   color: $action-white;
 }
 
+.diff-green,.diff-invisible{
+  text-decoration: none;
+}
 
 
 

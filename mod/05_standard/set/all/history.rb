@@ -25,7 +25,7 @@ end
 
 
 event :rollback, :after=>:extend, :on=>:update, :when=>proc{ |c| Env.params['action_ids'] } do
-  if !Env.action_ids.class == Array
+  if !Env.params['action_ids'].class == Array
     #TODO Error handling? params 
   else
     actions = action_ids.map do |a_id|

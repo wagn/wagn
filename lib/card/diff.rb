@@ -169,7 +169,7 @@ module Card::Diff
         else 
           next
         end
-        lines[action] << line.sub(/^?/,'')
+        lines[action] << line.sub(/^./,'')
         if action == :added and prev_action == :deleted
           inspect = true
         end

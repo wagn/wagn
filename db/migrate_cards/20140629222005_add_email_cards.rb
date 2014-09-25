@@ -37,7 +37,7 @@ class AddEmailCards < ActiveRecord::Migration
       fields = %w( to from cc bcc subject message attach )
       Card.search(:right=>"*send").each do |send_rule|
         Card.create! :name=>"send_rule.left+*on create", :content=>send_rule.content, :type_code=>:pointer
-        #send_rule.delete  #@ethn: keep old rule for safety reasons?
+        send_rule.delete  #@ethn: keep old rule for safety reasons?
       end
     
       # the new watch rule
@@ -62,9 +62,10 @@ class AddEmailCards < ActiveRecord::Migration
         end
       end
       
-      # watchers = Card[:watchers]
-      # watchers.update_attributes :codename=>nil
-      # watchers.delete!
+      if watchers = Card[:watchers]
+        watchers.update_attributes :codename=>nil
+        watchers.delete!
+      end
     end
   end
 end

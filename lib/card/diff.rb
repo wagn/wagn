@@ -173,18 +173,19 @@ module Card::Diff
           inspect = false
           lines[:deleted].clear
           lines[:added].clear
-        elsif action != prev_action
-          text = line[prev_action].join
-          line[prev_action].clear
+        elsif prev_action and action != prev_action
+          text = lines[prev_action].join
           res += render_chunk prev_action, text
+          lines[prev_action].clear
         end
         prev_action = action
       end
       
+      binding.pry
       res += if inspect
         complete_lcs_diff lines[:deleted].join, lines[:added].join
-      else
-        render_chunk prev_action, line[prev_action].join
+      elsif lines[prev_action].present?
+        render_chunk prev_action, lines[prev_action].join
       end
     end
     

@@ -109,13 +109,13 @@ module Card::Diff
       end
     end
     
-    def complete_lcs_diff
+    def complete_lcs_diff old_v=@old_version, new_v=@new_version
       last_position = 0
       res = ''
       dels = ''
       adds = ''
       prev_action = nil
-      ::Diff::LCS.traverse_balanced(@old_version,@new_version) do |chunk|
+      ::Diff::LCS.traverse_balanced(old_v, new_v) do |chunk|
         if prev_action and prev_action != chunk.action and
           !(prev_action == '-' and chunk.action == '!') and 
           !(prev_action == '!' and chunk.action == '+')

@@ -130,7 +130,7 @@ format :html do
         ago
         - if current_rev_nr == rev_nr
           |
-          %em.current
+          %em.info
             Current
         - elsif act_view == :expanded
           = rollback_link act.relevant_actions_for(card)
@@ -209,7 +209,7 @@ format :html do
   end
   
   view :content_changes do |args|
-    if args[:hide_diff ]
+    if args[:hide_diff]
       args[:action].new_values[:new_content]
     else 
       args[:action].content_diff(args[:diff_type])

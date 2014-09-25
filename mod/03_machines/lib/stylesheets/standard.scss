@@ -299,7 +299,7 @@ $diff-green: #41ad41;
 $diff-red: #ff5050;
 $action-white: #fdfdfd;
 $act-gray:  #b7b7b7;
-$act-background: #dfdfdf;
+$act-background: #dbdbdb;
 
 .history-slot {
   overflow: hidden;
@@ -403,8 +403,9 @@ $act-background: #dfdfdf;
         display: block;
     }
     
-    .current {
-        color: #888;
+    .info {
+      font-style: italic;
+      color: #888;
     }
 }
 

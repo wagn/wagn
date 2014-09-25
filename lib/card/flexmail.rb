@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 
+=begin
 class Card
   class Flexmail
 
@@ -51,3 +52,4 @@ class Card
     
   end
 end
+=end

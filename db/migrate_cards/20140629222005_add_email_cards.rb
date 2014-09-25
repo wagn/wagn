@@ -66,6 +66,11 @@ class AddEmailCards < ActiveRecord::Migration
         watchers.update_attributes :codename=>nil
         watchers.delete!
       end
+      
+      if send = Card[:send]
+        send.update_attributes :codename=>nil
+        send.delete!
+      end
     end
   end
 end

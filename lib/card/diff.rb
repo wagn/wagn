@@ -181,7 +181,6 @@ module Card::Diff
         prev_action = action
       end
       
-      binding.pry
       res += if inspect
         complete_lcs_diff lines[:deleted].join, lines[:added].join
       elsif lines[prev_action].present?

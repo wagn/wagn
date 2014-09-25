@@ -137,6 +137,7 @@ format :html do
           = show_or_hide_changes_link hide_diff, :act_id=>act.id, :act_view=>act_view, :rev_nr=>rev_nr, :current_rev_nr=>current_rev_nr 
   .toggle
     = fold_or_unfold_link :act_id=>act.id, :act_view=>act_view, :rev_nr=>rev_nr, :current_rev_nr=>current_rev_nr
+  
   .action-container{:style=>("clear: left;" if act_view == :expanded)}
     - act.relevant_actions_for(card).each do |action|
       = send("_render_action_#{ act_view }", :action=>action )
@@ -204,13 +205,13 @@ format :html do
   end
   
   def type_changes action, hide_diff=false
-    change = hide_diff ? action.new_values[:cardtype] : action.diff[:cardtype]
+    change = hide_diff ? action.new_values[:cardtype] : action.cardtype_diff
     "(#{change})"
   end
   
   view :content_changes do |args|
     if args[:hide_diff]
-      args[:action].new_values[:new_content]
+      args[:action].new_values[:content]
     else 
       args[:action].content_diff(args[:diff_type])
     end

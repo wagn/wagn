@@ -138,9 +138,10 @@ class Card
     end
     
     
-    def diff
-      @diff ||= { :cardtype=>type_diff, :content=>content_diff, :name=>name_diff}
-    end
+    # def diff
+    #   binding.pry
+    #   @diff ||= { :cardtype=>type_diff, :content=>content_diff, :name=>name_diff}
+    # end
       
   
     def name_diff
@@ -149,7 +150,7 @@ class Card
       end
     end
   
-    def type_diff
+    def cardtype_diff
       if new_type?
         Card::Diff::DiffBuilder.new(old_values[:cardtype],new_values[:cardtype]).complete
       end
@@ -167,7 +168,7 @@ class Card
     
     def content_diff_builder
       @content_diff_builder ||= begin
-        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], :compare_html=>false)
+        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], :compare_html=>true)
       end
     end
     

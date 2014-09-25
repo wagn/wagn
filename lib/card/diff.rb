@@ -22,8 +22,11 @@ module Card::Diff
       @old_version, @new_version = old_version, new_version
       @opts = opts
       if !opts[:compare_html]
-        @old_version.gsub! %r(</?\w+/?>),'' if @old_version
-        @new_version.gsub! %r(</?\w+/?>),''
+        @old_version.gsub! /<[^>]*>/,'' if @old_version
+        @new_version.gsub! /<[^>]*>/,''
+      else
+        @old_version = CGI::escapeHTML(@old_version) if @old_version
+        @new_version = CGI::escapeHTML(@new_version)
       end
       @summary = false
       @complete = false
@@ -163,18 +166,21 @@ module Card::Diff
         when /^\+/ then :added
         when /^-/ then :deleted
         when /^ / then :unchanged
-        else next
+        else 
+          next
         end
-        lines[action] << line
+        lines[action] << line.sub(/^?/,'')
         if action == :added and prev_action == :deleted
           inspect = true
         end
     
-        if inspect and action != :added
-          res += complete_lcs_diff lines[:deleted].join, lines[:added].join
-          inspect = false
-          lines[:deleted].clear
-          lines[:added].clear
+        if inspect 
+          if action != :added
+            res += complete_lcs_diff lines[:deleted].join, lines[:added].join
+            inspect = false
+            lines[:deleted].clear
+            lines[:added].clear
+          end
         elsif prev_action and action != prev_action
           text = lines[prev_action].join
           res += render_chunk prev_action, text

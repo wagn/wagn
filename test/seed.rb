@@ -3,11 +3,6 @@ require 'timecop'
 
 require_dependency 'card'
 
-# following looks like legacy code to me - efm
-#Dir["#{Rails.root}/app/models/card/*.rb"].sort.each do |cardtype|
-#  require_dependency cardtype
-#end
-
 class SharedData
 
   def self.account_args hash

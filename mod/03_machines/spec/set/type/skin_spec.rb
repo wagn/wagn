@@ -45,4 +45,26 @@ describe Card::Set::Type::Skin do
         expect(File.read path).to eq( compressed_css )
     end
   end
+  
+  context 'when item changed' do
+    it 'updates output of related machine card' do
+      skin = Card.gimme! "test skin supplier", :type => :skin, :content => ''
+      machine = Card.gimme! "style with skin machine+*style", :type => :pointer, :content=>'[[test skin supplier]]'
+      item = Card.gimme! "skin item", :type => :css, :content => css 
+      skin << item
+      skin.putty
+      Card::Auth.as_bot do
+        item.update_attributes :content=>changed_css
+        { :get => machine.machine_output_url }
+        item.update_attributes :content=>new_css
+      end
+      updated_machine  = Card.gimme machine.cardname
+      path = updated_machine.machine_output_path
+      expect(File.read path).to eq( compressed_new_css )
+      expect(updated_machine.machine_input_card.content).to include("[[skin item]]")
+      expect(Card.search(:link_to => "skin item")).to include(updated_machine.machine_input_card)
+    end
+  end
+  
+  
 end

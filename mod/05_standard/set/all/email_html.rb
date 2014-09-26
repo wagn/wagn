@@ -1,14 +1,16 @@
 format :email do
   
-  # def deliver args={}
-  #   mail = _render_mail(args)
-  #   mail.delivery_method(Wagn.config.action_mailer.delivery_method,Wagn.config.action_mailer.smtp_settings)
-  #   mail.deliver
-  # end
-  
   def deliver args={}
-    _render_mail(args).deliver
+    mail = _render_mail(args)
+    Rails.logger.info(Wagn.config.action_mailer.smtp_settings)
+    Rails.logger.info(Wagn.config.action_mailer.delivery_method)
+    mail.delivery_method(Wagn.config.action_mailer.delivery_method,Wagn.config.action_mailer.smtp_settings)
+    mail.deliver
   end
+  
+  # def deliver args={}
+  #   _render_mail(args).deliver
+  # end
     
   view :missing        do |args| '' end
   view :closed_missing do |args| '' end
@@ -24,47 +26,47 @@ format :email do
     output
   end
       
-  # view :mail do |args|
-  #   args = email_config(args)
-  #   text_message = args.delete(:text_message)
-  #   html_message = args.delete(:html_message)
-  #   attachment_list = args.delete(:attach)
-  #   alternative = text_message.present? and html_message.present?
-  #   #Mail.new(args) do
-  #   mail = ActionMailer::Base.mail(args) do
-  #     if alternative and attachment and !attachment_list.empty?
-  #       content_type 'multipart/mixed'
-  #       part :content_type => 'multipart/alternative' do |copy|
-  #         copy.part :content_type => 'text/plain' do |plain|
-  #           plain.body = text_message
-  #         end
-  #         copy.part :content_type => 'text/html' do |html|
-  #           html.body = html_message
-  #         end
-  #       end
-  #     else
-  #       text_part do
-  #         body text_message
-  #       end
-  #
-  #       html_part do
-  #         content_type 'text/html; charset=UTF-8'
-  #         body html_message
-  #       end
-  #     end
-  #     if attachment_list
-  #       attachment_list.each_with_index do |cardname, i|
-  #         if c = Card[ cardname ] and c.respond_to?(:attach)
-  #           add_file :filename => "attachment-#{i + 1}.#{c.attach_extension}", :content => File.read( c.attach.path )
-  #         end
-  #       end
-  #     end
-  #   end   #TODO add error handling
-  # end
-    
   view :mail do |args|
-    ActionMailer::Base.mail _render_config( args )   #TODO add error handling
+    args = email_config(args)
+    text_message = args.delete(:text_message)
+    html_message = args.delete(:html_message)
+    attachment_list = args.delete(:attach)
+    alternative = text_message.present? and html_message.present?
+    Mail.new(args) do
+    #mail = ActionMailer::Base.mail(args) do
+      if alternative and attachment and !attachment_list.empty?
+        content_type 'multipart/mixed'
+        part :content_type => 'multipart/alternative' do |copy|
+          copy.part :content_type => 'text/plain' do |plain|
+            plain.body = text_message
+          end
+          copy.part :content_type => 'text/html' do |html|
+            html.body = html_message
+          end
+        end
+      else
+        text_part do
+          body text_message
+        end
+
+        html_part do
+          content_type 'text/html; charset=UTF-8'
+          body html_message
+        end
+      end
+      if attachment_list
+        attachment_list.each_with_index do |cardname, i|
+          if c = Card[ cardname ] and c.respond_to?(:attach)
+            add_file :filename => "attachment-#{i + 1}.#{c.attach_extension}", :content => File.read( c.attach.path )
+          end
+        end
+      end
+    end   #TODO add error handling
   end
+    
+  # view :mail do |args|
+  #   ActionMailer::Base.mail _render_config( args )   #TODO add error handling
+  # end
   
   view :config do |args|
     config = {}

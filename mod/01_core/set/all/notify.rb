@@ -35,11 +35,12 @@ format do
   
   def change_notice_args args
     act = args[:act_id] ? Card::Act.find(args[:act_id]) : card.acts.last
+  
     {
       :act         => act,
       :card_url    => wagn_url(card),
-      :change_url  => wagn_url("card/#{card.cardname.url_key}?view=history"), #wagn_url( "card/changes/#{card.cardname.url_key}" ),
-      :unwatch_url => wagn_url( "card/watch/#{args[:watched].to_name.url_key}?toggle=off" ),
+      :change_url  => wagn_url("#{card.cardname.url_key}?view=history"), 
+      :unwatch_url => wagn_url( "update/#{args[:watcher].to_name.url_key}+#{Card[:following].cardname.url_key}?drop_item=#{args[:watched].to_name.url_key}" ),
       :updater_url => wagn_url( act.actor ),
       :watcher     => args[:watcher],
       :watched     => (args[:watched] == card.cardname ? args[:watched] : "#{args[:watched]} cards"),
@@ -48,14 +49,16 @@ format do
   end  
 end
 
-format :html do
+format :email_html do
+  
+  
   view :change_notice, :skip_permissions=>true, :denial=>:blank do |args|
     h = change_notice_args(args)
     salutation  = h[:watcher] ? "Dear #{h[:watcher]}" : "Dear #{Card.setting :title} user"
     selfedits   = render_list_of_changes(args)
     
     subedits    = h[:act].actions.map do |action| 
-        action.card_id == card.id ? '' : action.card.format(:format=>:html).render_subedit_notice(:action=>action)
+        action.card_id == card.id ? '' : action.card.format(:format=>:email).render_subedit_notice(:action=>action)
     end.join
     return '' unless selfedits.present? or subedits.present?
       %{

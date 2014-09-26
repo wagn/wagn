@@ -2,7 +2,6 @@
 class Card
   class Act < ActiveRecord::Base
     before_save :set_actor
-    after_save :notify_followers
     has_many :actions, :foreign_key=>:card_act_id, :inverse_of=> :act, :order => :id, :class_name=> "Card::Action"
     belongs_to :actor, class_name: "Card"
     belongs_to :card    
@@ -21,22 +20,7 @@ class Card
     def action_on card_id
       actions.find_by_card_id(card_id)
     end
-    
-    def notify_followers
-      begin
-        return false if Card.record_timestamps==false
-        actions.map do |a|
-          a.card.card_watchers.each {|w| w.send_change_notice self, card.cardname}
-        end.flatten.uniq
-      
-        #@ethn: The rescue part is from the old notify_followers event. Remove it?
-      rescue =>e  #this error handling should apply to all extend callback exceptions 
-        Airbrake.notify e if Airbrake.configuration.api_key
-        Rails.logger.info "\nController exception: #{e.message}"
-        Rails.logger.debug "BT: #{e.backtrace*"\n"}"
-      end
-    end
-    
+        
     def elapsed_time
       DateTime.new(acted_at).distance_of_time_in_words_to_now
 #      (DateTime.now - acted_at).min

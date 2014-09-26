@@ -415,7 +415,8 @@ $act-background: #f3f3f3;
 }
 
 .diff-red {
-    color: $diff-red;
+  text-decoration: line-through;
+  color: $diff-red;
 }
 .diff-green {
     color: $diff-green;

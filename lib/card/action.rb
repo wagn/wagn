@@ -67,10 +67,10 @@ class Card
     def edit_info
       @edit_info ||= {
         :action_type  => "#{action_type}d",
-        :new_content  => new_values[:db_content],
+        :new_content  => new_values[:content],
         :new_name     => new_values[:name],
         :new_cardtype => new_values[:cardtype],
-        :old_content  => old_values[:db_content],
+        :old_content  => old_values[:content],
         :old_name     => old_values[:name],
         :old_cardtype => old_values[:cardtype]
       }
@@ -139,7 +139,6 @@ class Card
     
     
     # def diff
-    #   binding.pry
     #   @diff ||= { :cardtype=>type_diff, :content=>content_diff, :name=>name_diff}
     # end
       

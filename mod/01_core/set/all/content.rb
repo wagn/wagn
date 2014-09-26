@@ -84,7 +84,6 @@ end
 
 
 def previous_revision action_id
-  # binding.pry
   # if previous_action_id
   #   rev_index = revisions.find_index do |rev|
   #     rev.id == revision_id

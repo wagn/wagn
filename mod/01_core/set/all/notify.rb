@@ -1,3 +1,23 @@
+event :notify_followers, :after=>:extend, :when=>proc{ |c| !c.supercard }  do
+  begin
+    return false if Card.record_timestamps==false
+    watchers = @current_act.actions.map do |a|
+      a.card.card_watchers
+    end.flatten.uniq
+    watchers.each do |w|
+      if w.account
+        w.account.send_change_notice @current_act, cardname
+      end
+    end
+  
+    #@ethn: The rescue part is from the old notify_followers event. Remove it?
+  rescue =>e  #this error handling should apply to all extend callback exceptions 
+    Airbrake.notify e if Airbrake.configuration.api_key
+    Rails.logger.info "\nController exception: #{e.message}"
+    Rails.logger.debug "BT: #{e.backtrace*"\n"}"
+  end
+end
+  
 format do
   def wrap_subedits subedits
     %{
@@ -18,7 +38,7 @@ format do
     {
       :act         => act,
       :card_url    => wagn_url(card),
-      :change_url  => wagn_url( "card/changes/#{card.cardname.url_key}" ),
+      :change_url  => wagn_url("card/#{card.cardname.url_key}?view=history"), #wagn_url( "card/changes/#{card.cardname.url_key}" ),
       :unwatch_url => wagn_url( "card/watch/#{args[:watched].to_name.url_key}?toggle=off" ),
       :updater_url => wagn_url( act.actor ),
       :watcher     => args[:watcher],
@@ -50,7 +70,7 @@ format :html do
       
         #{ wrap_subedits subedits if subedits.present? }
       
-        <p>See the card: "#{h[:card_url]}"</p>
+        <p>See the card: <a href="#{h[:card_url]}">"#{h[:card_url]}"</a></p>
 
         <p>
           You received this email because you're following "#{h[:watched]}". <br/>
@@ -106,14 +126,13 @@ format :text do
 #{salutation}
 
 #{card.name}
-was just <a href="#{h[:change_url]}">#{h[:edit][:action_type]}</a>
-by #{h[:act].actor.name}
+was just #{h[:edit][:action_type]} by #{h[:act].actor.name}
 
 #{ selfedits }
 
 #{ wrap_subedits subedits if subedits.present? }
 
-See the card: "#{h[:card_url]}"</p>
+See the card: "#{h[:card_url]}"
 
 You received this email because you're following "#{h[:watched]}". 
 Visit #{h[:unwatch_url]} to stop receiving these emails.

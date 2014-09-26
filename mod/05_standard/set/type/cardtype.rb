@@ -16,7 +16,7 @@ format :html do
 
   view :watch do |args|
     wrap args do
-      link_args = if card.watched
+      link_args = if card.watched? 
         [card, "following", :off, "stop sending emails", { :hover_content=> 'unfollow' } ]
       else
         [card, "follow all", :on, "send emails"]

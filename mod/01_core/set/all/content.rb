@@ -110,8 +110,7 @@ def previous_action action_id
 end
 
 def revised_at
-  #old: (current_revision && current_revision.created_at) || Time.now
-  last_action && act=last_action.act && act.acted_at || Time.now
+  (last_action && act=last_action.act && act.acted_at) or Time.now
 end
 
 def creator

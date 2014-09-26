@@ -25,15 +25,15 @@ end
 
 
 event :rollback, :after=>:extend, :on=>:update, :when=>proc{ |c| Env.params['action_ids'] } do
+
   if !Env.params['action_ids'].class == Array
     #TODO Error handling? params 
   else
-    actions = action_ids.map do |a_id|
-      Action.find(a_id) || nil
-    end.compact
-    
     revision = { :subcards => {}}
-    actions.each do |action|  
+    rollback_actions = Env.params['action_ids'].map do |a_id|
+      Action.find(a_id) || nil
+    end
+    rollback_actions.each do |action|  
       if action.card_id == id
         revision.merge!(revision(action)) 
       else
@@ -43,7 +43,7 @@ event :rollback, :after=>:extend, :on=>:update, :when=>proc{ |c| Env.params['act
     
     Env.params['action_ids'] = nil
     update_attributes! revision
-    actions.each do |action|
+    rollback_actions.each do |action|
       action.card.attachment_symlink_to action.id
     end
   end

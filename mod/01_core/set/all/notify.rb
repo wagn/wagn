@@ -61,7 +61,7 @@ format :html do
       %{
         #{salutation}
         <p>
-          <a href="#{h[:card_url]}">#{card.name}</a> 
+          <a href="#{h[:card_url]}">"#{card.name}"</a> 
           was just <a href="#{h[:change_url]}">#{h[:edit][:action_type]}</a>
           by <a href="#{h[:updater_url]}">#{h[:act].actor.name}</a>
         </p>

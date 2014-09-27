@@ -1,4 +1,4 @@
-
+=begin
 describe Card::Loader do
   let(:card_double) { proxy Card }
   let(:pat_all_double) { proxy Card::AllSet }
@@ -29,3 +29,4 @@ describe Card::Loader do
     expect(html_format_double.method(:_render_raw)).to be
   end
 end
+=end

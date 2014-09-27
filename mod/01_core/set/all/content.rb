@@ -110,7 +110,7 @@ def previous_action action_id
 end
 
 def revised_at
-  (last_action && act=last_action.act && act.acted_at) or Time.now
+  (last_action and act=last_action.act and act.acted_at) or Time.now
 end
 
 def creator

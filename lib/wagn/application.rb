@@ -114,9 +114,9 @@ module Wagn
 
     def load_tasks(app=self)
       super
-      unless approot_is_gemroot?
-        Rake::Task["db:schema:dump"].clear
-      end
+#      unless approot_is_gemroot?
+#        Rake::Task["db:schema:dump"].clear
+#      end
       self
     end
   end

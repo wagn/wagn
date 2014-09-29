@@ -153,7 +153,7 @@ end
 
 def send_change_notice act, cardname_watched
   args = { :watcher=>left.name, :watched=>cardname_watched }  
-  html_msg = act.card.format(:format=>:html).render_change_notice(args)
+  html_msg = act.card.format(:format=>:email_html).render_change_notice(args)
   action_type = (self_action = act.action_on(act.card_id) and self_action.action_type) || act.actions.first.action_type
 
   if html_msg.present?
@@ -161,9 +161,9 @@ def send_change_notice act, cardname_watched
     from_card = Card[WagnBotID]
     email = format(:format=>:email).deliver(
         :subject=>"\"#{act.card.name}\" #{action_type}d",
-        :html_message => html_msg,
+        :message => html_msg,
         :text_message => text_msg,
-        :from => "#{from_card.name} <#{from_card.account.email}>"
+        :from => from_card.account.email
       )
   end
 end

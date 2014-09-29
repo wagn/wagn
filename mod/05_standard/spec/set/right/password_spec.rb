@@ -33,9 +33,9 @@ describe Card::Set::Right::Password do
       end
       
       it "shouldn't break email editing" do
-        @user_card.account.update_attributes! '+*password'=>'', '+*email'=>'joe2@user.com'
-#        @user_card.account.update_attributes! '+*email'=>'joe2@user.com'
+        @user_card.account.update_attributes! :subcards=>{'+*password'=>'', '+*email'=>'joe2@user.com'}
         expect(@user_card.account.email).to eq('joe2@user.com')
+        expect(@user_card.account.password).not_to be_empty
       end
     end
   end

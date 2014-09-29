@@ -52,7 +52,7 @@ end
 format :email_html do
   
   
-  view :change_notice, :skip_permissions=>true, :denial=>:blank do |args|
+  view :change_notice, :perms=>:none, :denial=>:blank do |args|
     h = change_notice_args(args)
     salutation  = h[:watcher] ? "Dear #{h[:watcher]}" : "Dear #{Card.setting :title} user"
     selfedits   = render_list_of_changes(args)
@@ -105,7 +105,7 @@ format :email_html do
     end
   end
   
-  view :subedit_notice, :denial=>:blank do |args|
+  view :subedit_notice, :perms=>:read, :denial=>:blank do |args|
     edit = edit_info(args)
     %{
       <li>#{card.name} #{edit[:action_type]}
@@ -123,7 +123,8 @@ format :text do
     selfedits   = render_list_of_changes(args)
     subedits    = h[:act].actions.map do |action| 
         action.card_id == card.id ? '' : action.card.format(:format=>:email).render_subedit_notice(:action=>action)
-      end.join
+    end.join
+    
     return '' unless selfedits.present? or subedits.present?
       %{
 #{salutation}

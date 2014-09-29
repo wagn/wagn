@@ -44,15 +44,15 @@ describe Card::Set::Right::Account do
     end
 
     it 'contains deck title' do
-      expect( @mail.body.raw_source ).to match(Card.setting( :title ))
+      expect( @mail.parts[0].body.raw_source ).to match(Card.setting( :title ))
     end
 
     it 'contains link to verify account' do
-      expect( @mail.body.raw_source ).to include("/update/#{@account.left.cardname.url_key}?token=#{@account.token}")
+      expect( @mail.parts[0].body.raw_source ).to include("/update/#{@account.left.cardname.url_key}?token=#{@account.token}")
     end
 
     it 'contains expiry days' do
-      expect(@mail.body.raw_source).to include("(link will remain valid for #{Wagn.config.token_expiry / 1.day } days)")
+      expect(@mail.parts[0].body.raw_source).to include("(link will remain valid for #{Wagn.config.token_expiry / 1.day } days)")
     end
   end
 
@@ -66,15 +66,15 @@ describe Card::Set::Right::Account do
     end
 
     it 'contains deck title' do
-      expect( @mail.body.raw_source ).to match(Card.setting( :title ))
+      expect( @mail.parts[0].body.raw_source ).to match(Card.setting( :title ))
     end
 
     it 'contains password resset link' do
-      expect( @mail.body.raw_source ).to include("/update/#{@account.cardname.url_key}?reset_token=#{@account.token_card.refresh(true).content}")
+      expect( @mail.parts[0].body.raw_source ).to include("/update/#{@account.cardname.url_key}?reset_token=#{@account.token_card.refresh(true).content}")
     end
 
     it 'contains expiry days' do
-      expect(@mail.body.raw_source).to include("(link will remain valid for #{Wagn.config.token_expiry / 1.day } days)")
+      expect(@mail.parts[0].body.raw_source).to include("(link will remain valid for #{Wagn.config.token_expiry / 1.day } days)")
     end
   end
   
@@ -139,20 +139,21 @@ describe Card::Set::Right::Account do
   
   describe '#send_change_notice' do
     it 'send multipart email' do
-      pass
+      pending
     end
     
     context 'denied access' do
       it 'excludes protected subcards' do
         Card.create(:name=>"A+B+*self+*read", :type=>'Pointer', :content=>"[[u1]]")
-        u2 = Card.fetch 'u2+*following'
+        u2 = Card.fetch 'u2+*following', :new=>{:type=>'Pointer'}
         u2.add_item "A"
         a = Card.fetch "A"
         a.update_attributes( :content=> "new content", :subcards=>{'+B'=>{:content=>'hidden content'}})
-        expect()
+        pending
       end
       
       it 'sends no email if changes not visible' do
+        pending
       end
     end
   end

@@ -14,7 +14,7 @@ gem 'therubyracer'
 
 <% if options['mod-dev'] -%>
 group :test do
-  gem 'rspec-rails', "~> 2.6"   # behavior-driven-development suite
+  gem 'rspec-rails', "'~> 3.1.0'"   # behavior-driven-development suite
   gem 'spork', '>=0.9'
   # gem 'simplecov' # code coverage analysis tool
 end
@@ -50,7 +50,7 @@ group :development do
 end
 
 group :test do
-  gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
+  gem 'rspec-rails', '~> 3.1.0'                 # behavior-driven-development suite
   gem 'spork', '>=0.9'                                           
   gem 'rr'#, '=1.0.0'
   
@@ -59,7 +59,8 @@ group :test do
   gem 'guard-rspec', '~> 4.2'                  # trigger test runs based on file edits
   if RUBY_PLATFORM =~ /darwin/
     gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
-    # gem 'rspec-formatter-webkit', :path=>'/opt/rspec-formatter-webkit'
+    # gem 'rspec-legacy_formatters'
+    # gem 'wagn-rspec-formatter', :path=>'/opt/wagn-rspec-formatter'
   end
 
   # CUKES see features dir

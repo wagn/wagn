@@ -349,18 +349,5 @@ describe CardController do
       expect(cont).to match(/some lines/)
     end
 
-    it "should watch" do
-      login_as('joe_user')
-      post :watch, :id=>"Home", :toggle=>'on'
-      assert c=Card["Home+*watchers"]
-      expect(c.content).to eq("[[Joe User]]")
-
-      post :watch, :id=>"Home", :toggle=>'off'
-      assert c=Card["Home+*watchers"]
-      expect(c.content).to eq('')
-    end
-
-
-
   end
 end

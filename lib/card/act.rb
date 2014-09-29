@@ -9,6 +9,12 @@ class Card
       self.actor_id = Auth.current_id
     end
     
+    def self.delete_actionless
+      find_each do |act|       #FIXME better sql here
+        act.delete if act.actions.empty?
+      end
+    end
+    
     # def actor
     #   Card[ actor_id ]
     # end
@@ -34,6 +40,20 @@ class Card
           card.included_card_ids.include?(action.card_id) || (card == action.card)
         end
   #    end
+    end
+    
+    def title #ENGLISH        #ACT<revision>
+      current_id = card.current_revision_id
+      if id == current_id
+        'Current'
+      elsif id > current_id
+        'AutoSave'
+      else
+        card.revisions.each_with_index do |rev, index|
+          return "Revision ##{index + 1}" if rev.id == id
+        end
+        '[Revisions Missing]'
+      end
     end
     
   private

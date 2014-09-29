@@ -51,6 +51,7 @@ Spork.prefork do
     
     config.mock_with :rspec do |mocks|
        mocks.syntax = [:should, :expect]
+       mocks.verify_partial_doubles = true
      end
     config.expect_with :rspec do |c|
       c.syntax = [:should, :expect]

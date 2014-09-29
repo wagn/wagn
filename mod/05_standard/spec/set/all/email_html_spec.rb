@@ -17,10 +17,10 @@ describe Card::EmailHtmlFormat do
   
     it "renders local variables" do
       rendered = render_card_with_args(:raw,
-          {:subcards=>{'+*html_message' => {:content=>'{{_myvalue}}'}}},
+          {:content=>'{{_myvalue}}'},
           {:format=> 'email_html'},
           {:locals=> { myvalue: "test" }} )
-      expect( rendered.body.raw_source ).to eq( Card::Mailer.layout 'test' )
+      expect( rendered ).to eq('test')
     end
   
     # it "renders erb" do
@@ -51,8 +51,8 @@ describe Card::EmailHtmlFormat do
       expect(rendered_mail.html_part.body).to include('<a class="known-card" href="http://www.fake.com/B">B</a>')
     end
     
-    it "renders multipart mails" do
-    end
+    # it "renders multipart mails" do
+    # end
     
     it 'renders broken config' do
       Card.fetch("mailconfig+*to").update_attributes(:content=>"invalid mail address")
@@ -113,8 +113,8 @@ describe Card::EmailHtmlFormat do
      it 'creates multipart email if text and html given' do
        Card.create! :name => "mailconfig+*html_message", :content => "Nobody expects the Spanish Inquisition"
        Card.create! :name => "mailconfig+*text_message", :content => "Nobody expects the Spanish Inquisition"
-       email= render_card :mail, {:name=>"mailconfig"}, {:format=>:email}
-       expect(email[:content_type]).to eq('multipart/mixed')
+       email = render_card :mail, {:name=>"mailconfig"}, {:format=>:email}
+       expect(email[:content_type].value).to include('multipart/alternative')
      end
   end
 
@@ -168,23 +168,9 @@ describe Card::EmailHtmlFormat do
         expect(conf[:cc     ]).to eq(nil)
         expect(conf[:subject]).to eq("a very nutty thang")
 #        conf[:attach ].should == ['Banana Trigger+attachment']
-        expect(conf[:body]).to  include("Triggered by Banana Trigger and its wonderful content: data content " +
+        expect(conf[:html_message]).to  include("Triggered by Banana Trigger and its wonderful content: data content " +
           '<a class="known-card" href="http://a.com/A">A</a>')
       end
-    end
-  end
-  
-  describe 'change notice view' do
-    before do
-      @card = Card['A']
-      @mail = @card.format(:format=>:email)._render_change_notice(:watcher=>'Joe User')
-    end
-    
-    it 'renders email' do
-      expect(@mail).to be_a_instance_of(Mail::Message)
-    end
-    it 'contains link to changed card' do
-      expect(@mail.body.raw_source).to include(@card.cardname.url_key)
     end
   end
 end

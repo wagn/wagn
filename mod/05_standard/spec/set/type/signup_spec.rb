@@ -48,7 +48,7 @@ describe Card::Set::Type::Signup do
   
     it 'should send email with an appropriate link' do
       @mail = ActionMailer::Base.deliveries.last
-      expect( @mail.body.raw_source ).to match(Card.setting( :title ))
+      expect( @mail.parts[0].body.raw_source ).to match(Card.setting( :title ))
     end
     
     it 'should create an authenticable token' do

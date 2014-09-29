@@ -56,13 +56,6 @@ class CardController < ActionController::Base
     end
   end
 
-  def watch
-    toggle_subscription_for Card::Auth.current
-    ajax? ? show(:watch) : read    
-  end
-
-
-
 
   private
   

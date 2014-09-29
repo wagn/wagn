@@ -8,7 +8,6 @@ Wagn.application.class.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
   config.reload_classes_only_on_change = false
-  #binding.pry
   if defined?(RailsDevTweaks)
     config.dev_tweaks.autoload_rules do
         skip '/files'

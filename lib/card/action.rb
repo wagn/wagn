@@ -60,9 +60,32 @@ class Card
     
     belongs_to :super_action, class_name: "Action", :inverse_of=>:sub_actions
     has_many   :sub_actions,  class_name: "Action", :inverse_of=>:super_action
+    scope :created_by, lambda { |actor_id|  joins(:act).where('card_acts.actor_id = ?', actor_id) }
     
     # replace with enum if we start using rails 4 
     TYPE = [:create, :update, :delete]
+    
+    def self.delete_cardless  #ACT
+      #Card::Action.where(Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
+      find_each do |a|
+        a.delete unless Card.exists?(a.card_id)
+      end
+    end
+    
+    def self.delete_old  #ACT  
+      # => where( Card.where( :current_revision_id=>arel_table[:id] ).exists.not ).delete_all  #ACT<revision>
+      Card.find_each do |card|
+        last_action_ids = Card::TRACKED_FIELDS.map do |field|
+          if last_change = card.last_change_on(field)
+            last_change.card_action_id
+          else
+            nil
+          end
+        end.compact.uniq
+        card.actions.where('id NOT IN (?)', last_action_ids ).delete_all
+      end    
+      Card::Act.delete_actionless
+    end
     
     def edit_info
       @edit_info ||= {

@@ -122,25 +122,17 @@ def updater
 end
 
 
-
-def drafts
-  if Card::Auth.current_id
-   Card::Action.joins(:card,:act).where('card_actions.card_id'=>id, 'card_acts.actor_id' => Card::Auth.current_id, 'card_actions.draft'=>true)
-#   actions.joins(:act).where('card_acts.actor_id' => Card::Auth.current_id, :draft=>true) || []
-  else
-    actions.joins(:act).where(:draft=>true) || []
-  end
-end
-
 def save_draft( content )
   clear_drafts
   acts.create do |act|
-    act.actions.build(:draft => true).changes.build :field=>:db_content, :value=>content
+    act.actions.build(:draft => true, :card_id=>id).changes.build(:field=>:db_content, :value=>content)
   end
 end
 
 def clear_drafts
-  drafts.delete_all
+  drafts.created_by(Card::Auth.current_id).each do |draft|
+    draft.delete
+  end
 end
 
 def clean_html?

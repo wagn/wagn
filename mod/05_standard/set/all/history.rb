@@ -3,7 +3,6 @@ REVISIONS_PER_PAGE = Wagn.config.revisions_per_page
 def create_act_and_action
   #@current_act = (@supercard ? @supercard.current_act : Card::Act.create(:ip_address=>Env.ip)) #acts.build(:ip_address=>Env.ip
   #@current_action = actions.build(:action_type=>@action, :card_act_id=>@current_act.id)
-  
   @current_act = (@supercard ? @supercard.current_act : acts.build(:ip_address=>Env.ip))
   @current_action = actions.build(:action_type=>@action)
   @current_action.act = @current_act
@@ -13,8 +12,8 @@ def create_act_and_action
   end
 end
 
-event(:create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save)   { create_act_and_action }
-event(:create_act_and_action_for_delete, :after =>:approve,          :on=>:delete) { create_act_and_action }
+event(:create_act_and_action_for_save,   :before=>:approve, :on=>:save)   { create_act_and_action }
+event(:create_act_and_action_for_delete, :after =>:approve, :on=>:delete) { create_act_and_action }
 
 
 event :complete_act, :after=>:extend do

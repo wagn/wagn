@@ -20,8 +20,11 @@ def abortable
 rescue Card::Abort => e
   if e.status == :triumph
     @supercard ? raise( e ) : true
-  else
-    e.status == :success
+  elsif e.status == :success
+    if @supercard
+      @supercard.subcards.delete_if { |k,v| v==self }
+    end
+    true
   end
 end
 
@@ -65,6 +68,7 @@ end
 
 def store_changes
   @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
+  return unless @current_action
   if @changed_fields.present?
     @changed_fields.each{ |f| @current_action.changes.create :field => f, :value => self[f] }
     #@changed_fields.each{ |f| Card::Change.create :field => f, :value => self[f], :card_action_id=>@current_action.id }

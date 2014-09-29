@@ -122,6 +122,38 @@ namespace :wagn do
     end
   end
 
+
+  namespace :emergency do
+    task :rescue_watchers => :environment do
+      follower_hash = Hash.new { |h, v| h[v] = [] } 
+      
+      Card.where("right_id" => 219).each do |watcher_list|
+        watcher_list.include_set_modules
+        if watcher_list.left
+          watching = watcher_list.left.name
+          watcher_list.item_names.each do |user|
+            follower_hash[user] << watching
+          end
+        end
+      end
+      
+      Card.search(:right=>{:codename=>"following"}).each do |following|
+        Card::Auth.as_bot do
+          following.update_attributes! :content=>''
+        end
+      end
+      
+      follower_hash.each do |user, items|
+        if card=Card.fetch(user) and card.account
+          Card::Auth.as(user) do
+            following = card.fetch :trait=>"following", :new=>{}
+            following.items = items
+          end
+        end
+      end
+    end
+  end
+  
   namespace :bootstrap do
     desc "rid template of unneeded cards, revisions, and references"
     task :clean => :environment do
@@ -158,13 +190,20 @@ namespace :wagn do
       ActiveRecord::Base.connection.delete( "delete from cards where trash is true" )
 
       # delete unwanted rows ( will need to revise if we ever add db-level data integrity checks )
-      ActiveRecord::Base.connection.delete( "delete from card_revisions where not exists " +
-        "( select name from cards where current_revision_id = card_revisions.id )"
-      )
-      ActiveRecord::Base.connection.delete( "delete from card_references where" +
-        " (referee_id is not null and not exists (select * from cards where cards.id = card_references.referee_id)) or " +
-        " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"
-      )
+      Card::Action.delete_cardless
+      # ActiveRecord::Base.connection.delete( "delete from card_actions where not exists " +
+      #   "( select name from cards where id = card_actions.card_id )"
+      # )
+      Card::Act.delete_all
+      
+      act = Card::Act.create!(:actor_id=>Card::WagnBotID)
+      Card::Action.find_each do |action|
+        action.update_attributes!(:card_act_id=>act.id)
+      end
+      # ActiveRecord::Base.connection.delete( "delete from card_references where" +
+      #   " (referee_id is not null and not exists (select * from cards where cards.id = card_references.referee_id)) or " +
+      #   " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"
+      # )
       
       ActiveRecord::Base.connection.delete( "delete from sessions" )
       

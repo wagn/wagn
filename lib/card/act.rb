@@ -6,13 +6,14 @@ class Card
     belongs_to :actor, class_name: "Card"
     belongs_to :card    
     def set_actor
-      self.actor_id = Auth.current_id
+      self.actor_id ||= Auth.current_id
     end
     
     def self.delete_actionless
-      find_each do |act|       #FIXME better sql here
-        act.delete if act.actions.empty?
-      end
+      Card::Act.where( Card::Action.where( :id=>arel_table[:card_act_id] ).exists.not ).delete_all
+      # find_each do |act|       #FIXME better sql here
+      #   act.delete if act.actions.empty?
+      # end
     end
     
     # def actor

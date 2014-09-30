@@ -56,12 +56,13 @@ class Card
   class Action < ActiveRecord::Base
     belongs_to :card
     belongs_to :act,  :foreign_key=>:card_act_id, :inverse_of=>:actions 
-    has_many   :changes, :foreign_key=>:card_action_id, :inverse_of=>:action
+    has_many   :changes, :foreign_key=>:card_action_id, :inverse_of=>:action, :dependent=>:delete_all
     
     belongs_to :super_action, class_name: "Action", :inverse_of=>:sub_actions
     has_many   :sub_actions,  class_name: "Action", :inverse_of=>:super_action
     
     scope :created_by, lambda { |actor_id| joins(:act).where('card_acts.actor_id = ?', actor_id) }
+    
     # replace with enum if we start using rails 4 
     TYPE = [:create, :update, :delete]
     
@@ -75,17 +76,14 @@ class Card
       # end
     end
     
-    def self.delete_old  #ACT  
-      # => where( Card.where( :current_revision_id=>arel_table[:id] ).exists.not ).delete_all  #ACT<revision>
+    def self.delete_old 
       Card.find_each do |card|
-        last_action_ids = Card::TRACKED_FIELDS.map do |field|
-          if last_change = card.last_change_on(field)
-            last_change.card_action_id
-          else
-            nil
-          end
-        end.compact.uniq
-        card.actions.where('id NOT IN (?)', last_action_ids ).delete_all
+          Card::TRACKED_FIELDS.each do |field|
+            if not card.last_action.change_for(field) and last_change = card.last_change_on(field)
+              last_change.update_attributes!(:card_action_id=>card.last_action_id)
+            end
+        end
+        card.actions.where('id != ?', card.last_action_id ).delete_all
       end    
       Card::Act.delete_actionless
     end
@@ -125,6 +123,9 @@ class Card
     
     def new_value_for(field)
        ch = changes.find_by_field(field) and ch.value
+    end
+    def change_for(field) 
+      changes.where('card_changes.field = ?', field)
     end
     
     

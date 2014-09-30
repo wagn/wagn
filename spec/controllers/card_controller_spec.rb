@@ -285,7 +285,7 @@ describe CardController do
       args = { :id=>filename, :format=>'txt', :explicit_file=>true }
       path = File.join( Wagn.paths['gem-assets'].existent.first, filename)
       File.open(path, "w") { |f| f.puts "test" } 
-      visit "assets/#{filename}"
+      get "assets/#{filename}"
       expect(page.body).to eq ("test\n")
       FileUtils.rm path
     end

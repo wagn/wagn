@@ -44,7 +44,7 @@ format do
       :updater_url => wagn_url( act.actor ),
       :watcher     => args[:watcher],
       :watched     => (args[:watched] == card.cardname ? args[:watched] : "#{args[:watched]} cards"),
-      :edit        => act.action_on(card.id).edit_info
+      :edit        => (action = act.action_on(card.id) and action.edit_info)
     }
   end  
 end

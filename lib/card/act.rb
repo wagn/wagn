@@ -10,10 +10,10 @@ class Card
     end
     
     def self.delete_actionless
-      Card::Act.where( Card::Action.where( :id=>arel_table[:card_act_id] ).exists.not ).delete_all
-      # find_each do |act|       #FIXME better sql here
-      #   act.delete if act.actions.empty?
-      # end
+      Card::Act.where(
+        "id NOT IN (?)",
+        Card::Action.pluck("card_act_id"),
+      ).delete_all
     end
     
     # def actor

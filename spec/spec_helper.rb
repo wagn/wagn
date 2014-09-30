@@ -28,13 +28,13 @@ Spork.prefork do
 
   RSpec.configure do |config|
 
-    config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => {
+    config.include RSpec::Rails::Matchers::RoutingMatchers,  {
       :file_path => /\bspec\/controllers\//
     }
 
-    format_index = ARGV.find_index {|arg| arg =~ /--format|-f/ }
-    formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation' #'textmate'
-    config.add_formatter formatter
+    # format_index = ARGV.find_index {|arg| arg =~ /--format|-f/ }
+   #  formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation' #'textmate'
+   #  config.add_formatter formatter
     
     config.infer_spec_type_from_file_location!
     #config.include CustomMatchers

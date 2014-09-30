@@ -21,6 +21,7 @@ module Card::Diff
     def initialize(old_version, new_version, opts={})
       @old_version, @new_version = old_version, new_version
       @opts = opts
+      @new_version ||= ''
       if !opts[:compare_html]
         @old_version.gsub! /<[^>]*>/,'' if @old_version
         @new_version.gsub! /<[^>]*>/,''

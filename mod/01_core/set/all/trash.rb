@@ -1,9 +1,9 @@
 def delete
-  update_attributes :trash => true
+  update_attributes :trash => true unless new_card?
 end
 
 def delete!
-  update_attributes! :trash => true
+  update_attributes! :trash => true unless new_card?
 end
 
 

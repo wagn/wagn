@@ -174,7 +174,7 @@ namespace :wagn do
             card.delete!
           end
         end
-        
+        Wagn::Cache.reset_global
         %w{ machine_input machine_output }.each do |codename|
           Card.search(:right=>{:codename=>codename }).each do |card|
             FileUtils.rm_rf File.join('files', card.id.to_s ), :secure=>true            
@@ -187,6 +187,7 @@ namespace :wagn do
 
       # delete unwanted rows ( will need to revise if we ever add db-level data integrity checks )
       Card::Action.delete_cardless
+      Card::Action.delete_old
       # ActiveRecord::Base.connection.delete( "delete from card_actions where not exists " +
       #   "( select name from cards where id = card_actions.card_id )"
       # )

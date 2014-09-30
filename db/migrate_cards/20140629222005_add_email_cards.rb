@@ -50,8 +50,10 @@ class AddEmailCards < ActiveRecord::Migration
       follower_hash = Hash.new { |h, v| h[v] = [] } 
 
       Card.search(:right_plus => {:codename=> "watchers"}).each do |card|
-        card.item_names.each do |user_name|
-          follower_hash[user_name] << card.name
+        if watched = card.left
+          card.item_names.each do |user_name|
+            follower_hash[user_name] << watched.name
+          end
         end
       end
       

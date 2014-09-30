@@ -16,10 +16,10 @@ describe Card::Set::All::RichHtml do
       expect(@card.format.type_field).to match(/<option [^>]*selected/)
       tf=@card.format.type_field(:no_current_type=>true)
       expect(tf).not_to match(/<option [^>]*selected/)
-      expect(tf.scan(/<option /).length).to eq(23)
+      expect(tf.scan(/<option /).length).to eq(24)
       tf=@card.format.type_field
       expect(tf).to match(/<option [^>]*selected/)
-      expect(tf.scan(/<option /).length).to eq(23)
+      expect(tf.scan(/<option /).length).to eq(24)
     end
     
     it "should get type list" do

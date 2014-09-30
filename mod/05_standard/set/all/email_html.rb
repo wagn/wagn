@@ -2,7 +2,9 @@ format :email do
   
   def deliver args={}
     mail = _render_mail(args)
-    mail.delivery_method(Wagn.config.action_mailer.delivery_method,Wagn.config.action_mailer.smtp_settings)
+    delivery_method = Wagn.config.action_mailer.delivery_method || :smtp
+    smtp_settings = Wagn.config.action_mailer.smtp_settings || {}
+    mail.delivery_method(delivery_method, smtp_settings)
     mail.deliver
   end
   

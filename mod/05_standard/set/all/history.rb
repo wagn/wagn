@@ -12,7 +12,7 @@ def create_act_and_action
   end
 end
 
-event(:create_act_and_action_for_save,   :before=>:approve, :on=>:save)   { create_act_and_action }
+event(:create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save)   { create_act_and_action }
 event(:create_act_and_action_for_delete, :after =>:approve, :on=>:delete) { create_act_and_action }
 
 

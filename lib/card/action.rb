@@ -60,16 +60,19 @@ class Card
     
     belongs_to :super_action, class_name: "Action", :inverse_of=>:sub_actions
     has_many   :sub_actions,  class_name: "Action", :inverse_of=>:super_action
-    scope :created_by, lambda { |actor_id|  joins(:act).where('card_acts.actor_id = ?', actor_id) }
     
+    scope :created_by, lambda { |actor_id| joins(:act).where('card_acts.actor_id = ?', actor_id) }
     # replace with enum if we start using rails 4 
     TYPE = [:create, :update, :delete]
     
     def self.delete_cardless  #ACT
+      Card::Action.where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
+      #ActiveRecord::Base.connection.delete( "delete from card_actions where not exists " +
+      #  "( select name from cards where id = card_actions.card_id )"
       #Card::Action.where(Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
-      find_each do |a|
-        a.delete unless Card.exists?(a.card_id)
-      end
+      # find_each do |a|
+      #   a.delete unless Card.exists?(a.card_id)
+      # end
     end
     
     def self.delete_old  #ACT  

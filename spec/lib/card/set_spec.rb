@@ -52,7 +52,6 @@
 #   let(:html_format_double) { double("Card::HtmlFormat") }
 #
 #   it "should define Formatter methods from modules" do
-#     binding.pry
 #     expect(format_double).to respond_to(:render_navbox_self_core)
 #     expect(format_double.method(:render_navbox_self_core)).to be
 #     expect(format_double.method(:_render_right_right_raw)).to be

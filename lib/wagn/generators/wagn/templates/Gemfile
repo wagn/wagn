@@ -14,7 +14,7 @@ gem 'therubyracer'
 
 <% if options['mod-dev'] -%>
 group :test do
-  gem 'rspec-rails', "'~> 3.1.0'"   # behavior-driven-development suite
+  gem 'rspec-rails', '~> 3.1.0'   # behavior-driven-development suite
   gem 'spork', '>=0.9'
   # gem 'simplecov' # code coverage analysis tool
 end

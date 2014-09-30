@@ -58,9 +58,9 @@ class CreateNewRevisionTables < ActiveRecord::Migration
     
     created = Set.new
     TmpRevision.find_each do |rev|
-#     TmpAct.create(:card_id=>rev.card_id, :actor_id=>rev.creator_id, :acted_at=>rev.created_at)
-      TmpAct.connection.execute "INSERT INTO card_acts (id, card_id, actor_id, acted_at) VALUES 
-                                                      ('#{rev.id}', '#{rev.card_id}', '#{rev.creator_id}', '#{rev.created_at}')"
+       TmpAct.create({:id=>rev.id, :card_id=>rev.card_id, :actor_id=>rev.creator_id, :acted_at=>rev.created_at}, :without_protection=>true)
+  #    TmpAct.connection.execute "INSERT INTO card_acts (id, card_id, actor_id, acted_at) VALUES 
+  #                                                    ('#{rev.id}', '#{rev.card_id}', '#{rev.creator_id}', #{rev.created_at})"
       
       if created.include? rev.card_id
         TmpAction.connection.execute "INSERT INTO card_actions (id, card_id, card_act_id, action_type) VALUES 

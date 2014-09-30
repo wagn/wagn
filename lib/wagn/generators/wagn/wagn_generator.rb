@@ -28,7 +28,7 @@ class WagnGenerator < Rails::Generators::AppBase
     if options['core-dev']
       @wagn_path = ask "Enter the path to your local wagn installation: "
       #@wagndev_path = ask "Please enter the path to your local wagn-dev installation (leave empty to use the wagn-dev gem): "
-      @spec_path = File.join @wagn_path, 'spec'
+      @spec_path = @wagn_path
       @spec_helper_path = File.join @spec_path, 'spec_helper'
       @features_path = File.join @wagn_path, 'features/'  # ending slash is important in order to load support and step folders
       @simplecov_config = "wagn_core_dev_simplecov_filters"

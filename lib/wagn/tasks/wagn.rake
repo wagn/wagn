@@ -1,5 +1,5 @@
 
-WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references }
+WAGN_BOOTSTRAP_TABLES = %w{ cards card_actions card_acts card_changes card_references }
 
 namespace :wagn do
   desc "create a wagn database from scratch"
@@ -158,23 +158,19 @@ namespace :wagn do
     desc "rid template of unneeded cards, revisions, and references"
     task :clean => :environment do
       Wagn::Cache.reset_global
-
+      conn =  ActiveRecord::Base.connection
       # Correct time and user stamps
-      %w{ cards card_revisions }.each do |table|
-        sql =  "update #{table} set created_at=now(), creator_id=#{ Card::WagnBotID }"
-        sql +=                    ",updated_at=now(), updater_id=#{ Card::WagnBotID }" if table == 'cards'
-        ActiveRecord::Base.connection.update sql
-      end
+      card_sql =  "update cards set created_at=now(), creator_id=#{ Card::WagnBotID }"
+      card_sql +=                 ",updated_at=now(), updater_id=#{ Card::WagnBotID }"
+      conn.update card_sql
+      act_sql =  "update card_acts set acted_at=now(), actor_id=#{ Card::WagnBotID }"
+      conn.update act_sql
 
       Card::Auth.as_bot do
         # delete ignored cards
         
         if ignoramus = Card['*ignore']
           ignoramus.item_cards.each do |card|
-            if card.account #have to get rid of revisions to delete account  
-              #(could also directly delete cards "manually", but would need to delete all descendants manually, too)
-              ActiveRecord::Base.connection.delete( "delete from card_revisions where card_id = #{card.id}" )
-            end
             card.delete!
           end
         end
@@ -187,7 +183,7 @@ namespace :wagn do
         end
       end
 
-      ActiveRecord::Base.connection.delete( "delete from cards where trash is true" )
+      conn.delete( "delete from cards where trash is true" )
 
       # delete unwanted rows ( will need to revise if we ever add db-level data integrity checks )
       Card::Action.delete_cardless
@@ -196,7 +192,8 @@ namespace :wagn do
       # )
       Card::Act.delete_all
       
-      act = Card::Act.create!(:actor_id=>Card::WagnBotID)
+      act = Card::Act.create!(:actor_id=>Card::WagnBotID,
+       :card_id=>Card::WagnBotID)
       Card::Action.find_each do |action|
         action.update_attributes!(:card_act_id=>act.id)
       end
@@ -205,7 +202,7 @@ namespace :wagn do
       #   " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"
       # )
       
-      ActiveRecord::Base.connection.delete( "delete from sessions" )
+      conn.delete( "delete from sessions" )
       
       Wagn::Cache.reset_global
       

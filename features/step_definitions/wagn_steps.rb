@@ -46,7 +46,7 @@ end
 =end
 
 
-Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|  #ACT
+Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
   Card::Auth.as_bot do
     card = Card.fetch cardname, :new=>{}
     card.content = content
@@ -125,7 +125,7 @@ end
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
   user = Card::Auth.current.name if user == "I"
   signed_in_as user do
-    step "the card #{cardname}+*watchers contains \"[[#{user}]]\""
+    step "the card #{user}+*following contains \"[[#{cardname}]]\""
   end
 end
 

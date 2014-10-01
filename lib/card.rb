@@ -25,10 +25,11 @@ class Card < ActiveRecord::Base
   @@set_patterns, @@error_codes = [], {}
 
   attr_writer :selected_action_id #writer because read method is in mod (and does not override upon load)
-  #old: :selected_revision_id #ACT
+
   attr_accessor :action, :supercard, :current_act, :current_action, 
     :comment, :comment_author,    # obviated soon
-    :update_referencers           # wrong mechanism for this
+    :update_referencers,           # wrong mechanism for this
+    :follower_stash
 
   define_callbacks :approve, :store, :extend
   

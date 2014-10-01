@@ -13,10 +13,11 @@ def create_act_and_action
 end
 
 event(:create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save)   { create_act_and_action }
-event(:create_act_and_action_for_delete, :after =>:approve, :on=>:delete) { create_act_and_action }
+event(:create_act_and_action_for_delete, :before =>:validate_delete_children, :on=>:delete) { create_act_and_action }
 
 
 event :complete_act, :after=>:extend do
+  @current_act.reload
   if not @supercard and @current_act.actions.empty?
      @current_act.delete
   end

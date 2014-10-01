@@ -66,6 +66,10 @@ class Card
     # replace with enum if we start using rails 4 
     TYPE = [:create, :update, :delete]
     
+    # def card
+    #   Card.fetch card_id
+    # end
+    
     def self.delete_cardless  #ACT
       Card::Action.where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
       #ActiveRecord::Base.connection.delete( "delete from card_actions where not exists " +

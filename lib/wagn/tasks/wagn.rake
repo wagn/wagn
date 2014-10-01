@@ -198,10 +198,10 @@ namespace :wagn do
       Card::Action.find_each do |action|
         action.update_attributes!(:card_act_id=>act.id)
       end
-      # ActiveRecord::Base.connection.delete( "delete from card_references where" +
-      #   " (referee_id is not null and not exists (select * from cards where cards.id = card_references.referee_id)) or " +
-      #   " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"
-      # )
+      conn.delete( "delete from card_references where" +
+        " (referee_id is not null and not exists (select * from cards where cards.id = card_references.referee_id)) or " +
+        " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"
+      )
       
       conn.delete( "delete from sessions" )
       

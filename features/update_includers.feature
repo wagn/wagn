@@ -1,9 +1,9 @@
 Feature: Updates for Children of watched cards
   In order to keep track of changes that are important to me
   As an Editor
-  I want to be notified when someone changes a child of a card I'm watching
+  I want to be notified when someone changes a child of a card I'm watching  #'
 
-#should this be in watch?
+  #should this be in watch?
 
   Background:
     Given I am signed in as Joe User
@@ -13,11 +13,11 @@ Feature: Updates for Children of watched cards
 
   Scenario: Watcher should be notified of updates to included plus card
     When I create card "Ulysses+author" with content "James Joyce"
-    Then Joe Camel should be notified that "Joe User updated \"Ulysses\""
     #And He should see "added Ulysses+author" in the email  -- FIXME need multiline matching
-    And Joe Admin should be notified that "Joe User updated \"Ulysses\""
-    When Joe Admin edits "Ulysses+author" setting content to "Jim"
-    Then Joe Camel should be notified that "Joe Admin updated \"Ulysses\""
+    Then Joe Admin should be notified that "Joe User created \"Ulysses\+author\""
+    And Joe Camel should be notified that "Joe User created \"Ulysses\+author\""
+    When Joe Admin edits "Ulysses\+author" setting content to "Jim"
+    Then Joe Camel should be notified that "Joe Admin updated \"Ulysses\+author\""
     #And Joe Admin should be notified that "Joe User updated \"Ulysses\""
 
   Scenario: Should not notify of included but not plussed card
@@ -50,19 +50,26 @@ Feature: Updates for Children of watched cards
     When I edit "Banana" with plusses:
       |color|flavor|
       |spotted|mushy|
-    Then Joe Camel should be notified that "Joe User updated \"Banana\+color\""
+    Then Joe Camel should be notified that "Joe User updated \"Banana\""
     When Joe Camel is watching "Banana"
     And I wait a sec
     And I edit "Banana" with plusses:
       |color|flavor|
-      |spotted|mushy|
+      |green|mushy|
     Then Joe Camel should be notified that "Joe User updated \"Banana\""
+    When I wait a sec
+    And I edit "Banana" with plusses:
+      |color|flavor|
+      |green|mushy|
+    Then Joe Camel should be notified that "Joe User deleted \"Banana\""
+    #Then No notification should be sent
+    
 
   Scenario: Watching a plus card & including card on regular edit
     When I create card "Ulysses+author" with content "Joyce"
-    Then Joe Camel should be notified that "Joe User updated \"Ulysses\""
+    Then Joe Camel should be notified that "Joe User created \"Ulysses\+author\""
     When Joe Camel is watching "Ulysses+author"
     And I edit "Ulysses+author" setting content to "Jim"
-    Then Joe Camel should be notified that "Joe User updated \"Ulysses\""
+    Then Joe Camel should be notified that "Joe User updated \"Ulysses\+author\""
 
 

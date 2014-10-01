@@ -200,15 +200,15 @@ class Card
       def right val
         merge field(:right_id) => id_or_subspec(val)
       end
-
-      def editor_of val  #ACT IMPORTANT
-        revision_spec :creator_id, :card_id, val
+      
+      def editor_of val
+        action_spec :actor_id, "card_actions.card_id", val
       end
 
-      def edited_by val #ACT IMPORTANT
-        revision_spec :card_id, :creator_id, val
+      def edited_by val
+        action_spec "card_actions.card_id", :actor_id, val
       end
-  
+      
       def last_editor_of val
         merge field(:id) => subspec(val, :return=>'updater_id')
       end
@@ -395,10 +395,17 @@ class Card
         self.sql.relevance_fields += cardspec.sql.relevance_fields
       end
 
-
       def revision_spec(field, linkfield, val)
         card_select = CardSpec.build(:_parent=>self, :return=>'id').merge(val).to_sql
         add_join :ed, "(select distinct #{field} from card_revisions where #{linkfield} in #{card_select})", :id, field
+      end
+      
+      
+      def action_spec(field, linkfield, val)
+        card_select = CardSpec.build(:_parent=>self, :return=>'id').merge(val).to_sql
+        sql =  "(SELECT DISTINCT #{field} AS join_card_id FROM card_acts INNER JOIN card_actions ON card_acts.id = card_act_id "
+        sql += " WHERE #{linkfield} IN #{card_select} AND (draft=0 OR draft IS NULL))"
+        add_join :ac, sql, :id, :join_card_id
       end
 
 

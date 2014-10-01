@@ -151,16 +151,29 @@ def ok_to_read
 end
 
 
-def send_change_notice act, cardname_watched
-  args = { :watcher=>left.name, :watched=>cardname_watched }  
-  html_msg = act.card.format(:format=>:email_html).render_change_notice(args)
+def send_change_notice act
+  changed_card = Card.find(act.card_id)
+  watching = left.fetch(:trait=>:following).item_names
+  watched = if watching.include? changed_card.name
+    changed_card.name
+  elsif  watching.include? changed_card.type_name
+    changed_card.type_name
+  elsif parent = self.left
+    while parent.left and !watching.include? parent.name
+      parent = parent.left
+    end
+    parent.name
+  end
+  
+  args = { :watcher=>left.name, :watched=>watched }  
+  html_msg =changed_card.format(:format=>:email_html).render_change_notice(args)
   action_type = (self_action = act.action_on(act.card_id) and self_action.action_type) || act.actions.first.action_type
 
   if html_msg.present?
-    text_msg = act.card.format(:format=>:text).render_change_notice(args)
+    text_msg = changed_card.format(:format=>:text).render_change_notice(args)
     from_card = Card[WagnBotID]
     email = format(:format=>:email).deliver(
-        :subject=>"\"#{act.card.name}\" #{action_type}d",
+        :subject=>"#{act.actor.name} #{action_type}d \"#{act.card.name}\"",
         :message => html_msg,
         :text_message => text_msg,
         :from => from_card.account.email

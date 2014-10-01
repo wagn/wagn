@@ -38,6 +38,7 @@ end
 
 event :validate_delete_children, :after=>:approve, :on=>:delete do
   children.each do |child|
+    child.supercard = self
     subcards[child.name]=child
     child.trash = true
     unless child.valid?

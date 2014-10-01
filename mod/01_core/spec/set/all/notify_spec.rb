@@ -2,7 +2,7 @@ shared_examples_for 'notifications' do
   describe '#change_notice' do
     context 'for new card with subcards' do
       name = "another card with subcards"
-      content = "main content"
+      content = "main content {{+s1}}  {{+s2}}"
       sub1_content = 'new content of subcard 1'
       sub2_content = 'new content of subcard 2'
       before do
@@ -78,7 +78,7 @@ shared_examples_for 'notifications' do
       before { @card.update_attributes!(:name=>'bnn card', :type=>:pointer, :content=>'changed content') }
       it { is_expected.to include 'new content: [[changed content]]' }
       it { is_expected.to include 'new cardtype: Pointer' }
-      it { is_expected.to include 'the name was changed' }
+      it { is_expected.to include 'new name: bnn card' }
     end
     context 'for a deleted card' do
       before { @card.delete }

@@ -114,7 +114,7 @@ describe Card::Set::Right::Account do
       expect(Card::Auth.current_id).to eq(@account.left_id)
       @account = @account.refresh force=true
       expect(@account.fetch(:trait => :token)).to be_nil
-      expect(@account.save).to eq(false)
+      expect(@account.save).to be_falsey
     end
   
     it 'should not work if token is expired' do

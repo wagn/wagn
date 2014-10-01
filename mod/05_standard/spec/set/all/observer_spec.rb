@@ -47,7 +47,7 @@ describe Card::Set::Type::EmailTemplate do
       expect(ActionMailer::Base.deliveries.size).to eq(2)
     end
     it 'uses correct context' do
-      expect(ActionMailer::Base.deliveries.last.parts[0].body.raw_source).to include('My name is mail test')
+      expect(ActionMailer::Base.deliveries.last.body.raw_source).to include('My name is mail test')
     end
   end
   

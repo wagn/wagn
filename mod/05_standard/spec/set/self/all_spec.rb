@@ -26,7 +26,7 @@ describe Card::Set::Self::All do
         expect(a.actions.count).to eq(3)
         Card::Env.params[:task] = :delete_old_revisions #ACT
         @all.update_attributes({})
-        expect(a.actions.count).to eq(2)        
+        expect(a.actions.count).to eq(1)        
       end
     end
 

@@ -48,7 +48,7 @@ describe Card::EmailHtmlFormat do
     it "renders absolute urls" do
       Card::Env[:protocol] = 'http://'
       Card::Env[:host] = 'www.fake.com'
-      expect(rendered_mail.html_part.body).to include('<a class="known-card" href="http://www.fake.com/B">B</a>')
+      expect(rendered_mail.body).to include('<a class="known-card" href="http://www.fake.com/B">B</a>')
     end
     
     # it "renders multipart mails" do

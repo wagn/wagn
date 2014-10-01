@@ -3,7 +3,7 @@
 describe CardController do
 
   include Wagn::Location
-
+  include Capybara::DSL
   describe "- route generation" do
 
     it "should recognize type" do
@@ -284,8 +284,9 @@ describe CardController do
       filename = "asset-test.txt"
       args = { :id=>filename, :format=>'txt', :explicit_file=>true }
       path = File.join( Wagn.paths['gem-assets'].existent.first, filename)
-      File.open(path, "w") { |f| f.puts "test" } 
-      get "assets/#{filename}"
+      File.open(path, "w") { |f| f.puts "test" }
+      args = { :filename => "#{filename}" }
+      visit "/assets/#{filename}"
       expect(page.body).to eq ("test\n")
       FileUtils.rm path
     end

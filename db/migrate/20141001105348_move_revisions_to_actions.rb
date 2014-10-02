@@ -42,7 +42,8 @@ class MoveRevisionsToActions < ActiveRecord::Migration
           TmpChange.connection.execute "INSERT INTO card_changes (card_action_id, field, value) VALUES 
               ('#{rev.id}', 0, #{conn.quote tmp_card.name}), 
               ('#{rev.id}', 1, '#{tmp_card.type_id}'),
-              ('#{rev.id}', 2, #{conn.quote(rev.content)})"
+              ('#{rev.id}', 2, #{conn.quote(rev.content)}),
+              ('#{rev.id}', 3, #{tmp_card.trash})"
         end
         created.add rev.card_id
       end

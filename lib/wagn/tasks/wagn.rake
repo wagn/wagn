@@ -185,20 +185,17 @@ namespace :wagn do
 
       conn.delete( "delete from cards where trash is true" )
 
-      # delete unwanted rows ( will need to revise if we ever add db-level data integrity checks )
       Card::Action.delete_cardless
       Card::Action.delete_old
       Card::Change.delete_actionless
-      # ActiveRecord::Base.connection.delete( "delete from card_actions where not exists " +
-      #   "( select name from cards where id = card_actions.card_id )"
-      # )
-      Card::Act.delete_all
-      
+
+
       act = Card::Act.create!(:actor_id=>Card::WagnBotID,
        :card_id=>Card::WagnBotID)
       Card::Action.find_each do |action|
         action.update_attributes!(:card_act_id=>act.id)
       end
+      Card::Act.where('id != ?',act.id).delete_all
       conn.delete( "delete from card_references where" +
         " (referee_id is not null and not exists (select * from cards where cards.id = card_references.referee_id)) or " +
         " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"

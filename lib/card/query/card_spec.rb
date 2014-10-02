@@ -4,7 +4,7 @@ class Card
     class CardSpec < Spec
     
       ATTRIBUTES = {
-        :basic           => %w{ name type_id content id key updater_id left_id right_id creator_id updater_id codename },  #ACT
+        :basic           => %w{ name type_id content id key updater_id left_id right_id creator_id updater_id codename }, 
         :relational      => %w{ type part left right editor_of edited_by last_editor_of last_edited_by creator_of created_by member_of member },
         :plus_relational => %w{ plus left_plus right_plus },
         :ref_relational  => %w{ refer_to referred_to_by link_to linked_to_by include included_by },
@@ -118,7 +118,7 @@ class Card
             @mods[key] = Array === val ? val : val.to_s
           end
         end
-        spec[:content] = content if content   #ACT
+        spec[:content] = content if content
       end
 
 
@@ -291,7 +291,7 @@ class Card
 
       def sort val
         return nil if @parent
-        val[:return] = val[:return] ? safe_sql(val[:return]) : 'db_content'   #ACT
+        val[:return] = val[:return] ? safe_sql(val[:return]) : 'db_content'
         @mods[:sort] =  "t_sort.#{val[:return]}"
         item = val.delete(:item) || 'left'
 
@@ -372,10 +372,6 @@ class Card
         join_alias
       end
 
-      def add_revision_join
-        add_join(:rev, :card_revisions, :current_revision_id, :id)  #ACT<revsision> remove
-      end
-
       def field name
         @fields ||= {}
         @fields[name] ||= 0
@@ -395,10 +391,10 @@ class Card
         self.sql.relevance_fields += cardspec.sql.relevance_fields
       end
 
-      def revision_spec(field, linkfield, val)
-        card_select = CardSpec.build(:_parent=>self, :return=>'id').merge(val).to_sql
-        add_join :ed, "(select distinct #{field} from card_revisions where #{linkfield} in #{card_select})", :id, field
-      end
+      # def revision_spec(field, linkfield, val)
+#         card_select = CardSpec.build(:_parent=>self, :return=>'id').merge(val).to_sql
+#         add_join :ed, "(select distinct #{field} from card_revisions where #{linkfield} in #{card_select})", :id, field
+#       end
       
       
       def action_spec(field, linkfield, val)
@@ -477,9 +473,7 @@ class Card
         when :raw;  "#{table_alias}.*"
         when :card; "#{table_alias}.name"
         when :count; "coalesce(count(*),0) as count"
-        when :content; "#{table_alias}.db_content"    #new
-          #old: join_alias = add_revision_join        #ACT IMPORTANT
-          #old: "#{join_alias}.content"
+        when :content; "#{table_alias}.db_content"
         else
           ATTRIBUTES[field.to_sym]==:basic ? "#{table_alias}.#{field}" : safe_sql(field)
         end
@@ -505,9 +499,7 @@ class Card
           when "update";          "#{table_alias}.updated_at"
           when "create";          "#{table_alias}.created_at"
           when /^(name|alpha)$/;  "LOWER( #{table_alias}.key )"
-          when 'content';         "#{table_alias}.db_content"  #new
-            #old: join_alias = add_revision_join
-            #old: "lower(#{join_alias}.content)"     #ACT IMPORTANT
+          when 'content';         "#{table_alias}.db_content"
           else
             safe_sql(key)
           end

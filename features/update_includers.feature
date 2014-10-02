@@ -57,12 +57,11 @@ Feature: Updates for Children of watched cards
       |color|flavor|
       |green|mushy|
     Then Joe Camel should be notified that "Joe User updated \"Banana\""
-    When I wait a sec
+    Given a clear email queue
     And I edit "Banana" with plusses:
       |color|flavor|
       |green|mushy|
-    Then Joe Camel should be notified that "Joe User deleted \"Banana\""
-    #Then No notification should be sent
+    Then No notification should be sent
     
 
   Scenario: Watching a plus card & including card on regular edit

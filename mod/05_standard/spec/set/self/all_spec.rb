@@ -24,7 +24,7 @@ describe Card::Set::Self::All do
         a.update_attributes! :content=>'a new day'
         a.update_attributes! :content=>'another day'
         expect(a.actions.count).to eq(3)
-        Card::Env.params[:task] = :delete_old_revisions #ACT
+        Card::Env.params[:task] = :delete_old_revisions
         @all.update_attributes({})
         expect(a.actions.count).to eq(1)        
       end

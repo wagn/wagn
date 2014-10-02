@@ -51,6 +51,15 @@ class Card
     end
   end
   
+  def delete_old_actions
+    Card::TRACKED_FIELDS.each do |field|
+        if (not last_action.change_for(field).present?) and (last_change = last_change_on(field))
+          last_change = Card::Change.find(last_change.id)   # last_change comes as readonly record
+          last_change.update_attributes!(:card_action_id=>last_action_id)
+        end
+    end
+    actions.where('id != ?', last_action_id ).delete_all
+  end
   
   
   class Action < ActiveRecord::Base
@@ -70,7 +79,7 @@ class Card
     #   Card.fetch card_id
     # end
     
-    def self.delete_cardless  #ACT
+    def self.delete_cardless
       Card::Action.where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
       #ActiveRecord::Base.connection.delete( "delete from card_actions where not exists " +
       #  "( select name from cards where id = card_actions.card_id )"
@@ -82,12 +91,7 @@ class Card
     
     def self.delete_old 
       Card.find_each do |card|
-          Card::TRACKED_FIELDS.each do |field|
-            if not card.last_action.change_for(field) and last_change = card.last_change_on(field)
-              last_change.update_attributes!(:card_action_id=>card.last_action_id)
-            end
-        end
-        card.actions.where('id != ?', card.last_action_id ).delete_all
+        card.delete_old_actions
       end    
       Card::Act.delete_actionless
     end

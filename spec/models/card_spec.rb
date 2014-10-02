@@ -71,7 +71,6 @@ describe "basic card tests" do
   end
 
   def assert_samecard card1, card2
-    #old: assert_equal card1.current_revision, card2.current_revision #ACT
     assert_equal card1, card2
   end
 

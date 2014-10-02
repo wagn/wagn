@@ -134,7 +134,7 @@ end
 event :process_subcards, :after=>:approve, :on=>:save do
   subcards.keys.each do |sub_name|
     opts = @subcards[sub_name] || {}
-    opts = { 'content' => opts } if String===opts  #ACT<content>
+    opts = { 'content' => opts } if String===opts
     ab_name = sub_name.to_name.to_absolute_name name
     next if ab_name.key == key # don't resave self!
 
@@ -162,7 +162,7 @@ event :approve_subcards, :after=>:process_subcards do
   subcards.each do |key, subcard|
     if !subcard.valid_subcard?
       subcard.errors.each do |field, err|
-        err = "#{field} #{err}" unless [:content, :abort].member? field   #ACT<content>
+        err = "#{field} #{err}" unless [:content, :abort].member? field
         errors.add subcard.relative_name, err
       end
     end

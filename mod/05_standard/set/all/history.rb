@@ -1,5 +1,6 @@
 REVISIONS_PER_PAGE = Wagn.config.revisions_per_page
-# has to be called always and before :set_name and :process_subcards
+
+# must be called on all actions and before :set_name, :process_subcards and :validate_delete_children
 def create_act_and_action
   #@current_act = (@supercard ? @supercard.current_act : Card::Act.create(:ip_address=>Env.ip)) #acts.build(:ip_address=>Env.ip
   #@current_action = actions.build(:action_type=>@action, :card_act_id=>@current_act.id)
@@ -16,16 +17,16 @@ event(:create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save)
 event(:create_act_and_action_for_delete, :before =>:validate_delete_children, :on=>:delete) { create_act_and_action }
 
 
-event :complete_act, :after=>:extend do
+event :remove_empty_act, :after=>:extend do
   @current_act.reload
   if not @supercard and @current_act.actions.empty?
      @current_act.delete
+     @current_act = nil
   end
 end
 
 
-event :rollback, :after=>:extend, :on=>:update, :when=>proc{ |c| Env.params['action_ids'] and Env.params['action_ids'].class == Array} do
-
+event :rollback, :before=>:approve, :on=>:update, :when=>proc{ |c| Env.params['action_ids'] and Env.params['action_ids'].class == Array} do
   revision = { :subcards => {}}
   rollback_actions = Env.params['action_ids'].map do |a_id|
     Action.find(a_id) || nil
@@ -43,21 +44,25 @@ event :rollback, :after=>:extend, :on=>:update, :when=>proc{ |c| Env.params['act
   rollback_actions.each do |action|
     action.card.attachment_symlink_to action.id
   end
-
+  clear_drafts
+  abort :success
 end
 
 
 def intrusive_acts  # all acts with actions on self and on cards included in self
   @intrusive_acts ||= begin
     Act.joins(:actions).where('card_actions.card_id IN (:card_ids)', {:card_ids => (included_card_ids << id)}).uniq.order(:id).reverse_order
-    #i_acts = (included_cards << self).map{|c| c.actions.map(&:act) }.flatten.uniq
-    #i_acts.uniq.sort{ |a,b| b.acted_at <=> a.acted_at }
+  end
+end
+
+def current_rev_nr
+  @current_rev_nr ||= begin
+    @intrusive_acts.first.actions.last.draft ? @intrusive_acts.size - 1 : @intrusive_acts.size
   end
 end
 
 def included_card_ids
   Card::Reference.select(:referee_id).where( :ref_type => 'I', :referer_id=>id ).map(&:referee_id).compact.uniq
-  #@included_cards ||= Card.search(:referred_to_by => name)
 end 
   
 
@@ -72,7 +77,6 @@ format :html do
   view :revisions do |args| 
     page = params['page'] || 1
     count = card.intrusive_acts.size+1-(page.to_i-1)*REVISIONS_PER_PAGE
-    
     card.intrusive_acts.page(page).per(REVISIONS_PER_PAGE).map do |act|      
       count -= 1
       render_act_summary args.merge(:act=>act,:rev_nr=>count)
@@ -108,7 +112,7 @@ format :html do
   def render_act act_view, args
     act = (params['act_id'] and Card::Act.find(params['act_id'])) || args[:act]
     rev_nr = params['rev_nr'] || args[:rev_nr] 
-    current_rev_nr = params['current_rev_nr'] || args[:current_rev_nr] || card.intrusive_acts.size
+    current_rev_nr = params['current_rev_nr'] || args[:current_rev_nr] || card.current_rev_nr
     hide_diff = (params["hide_diff"]=="true") || args[:hide_diff]
     wrap( args.merge(:slot_class=>"revision-#{act.id} history-slot") ) do
       render_haml :card=>card, :act=>act, :act_view=>act_view, 
@@ -125,12 +129,16 @@ format :html do
       .time.timeago
         = time_ago_in_words(act.acted_at)
         ago
+        - if act.actions.last.draft
+          |
+          %em.info
+            Autosave
         - if current_rev_nr == rev_nr
           |
           %em.info
             Current
         - elsif act_view == :expanded
-          = rollback_link act.relevant_actions_for(card)
+          = rollback_link act.relevant_actions_for(card, act.actions.last.draft)
           = show_or_hide_changes_link hide_diff, :act_id=>act.id, :act_view=>act_view, :rev_nr=>rev_nr, :current_rev_nr=>current_rev_nr 
   .toggle
     = fold_or_unfold_link :act_id=>act.id, :act_view=>act_view, :rev_nr=>rev_nr, :current_rev_nr=>current_rev_nr
@@ -163,32 +171,41 @@ format :html do
       %i.fa.fa-circle{:class=>(action.red? ? 'diff-red' : 'diff-invisible')}
       %i.fa.fa-circle{:class=>(action.green? ? 'diff-green' : 'diff-invisible')}
     -if action.card == card
-      %span.name-diff
-        = name_changes(action, hide_diff)    
+      = wrap_diff :name do
+        - name_changes(action, hide_diff)
     -else
       =  link_to path(:view=>:related, :related=>{:view=>"history",:name=>action.card.name}), :class=>'slotter name-diff', 
                    :slotSelector=>".card-slot.card-frame", :remote=>true do
         - name_changes(action, hide_diff)    
     -if action.new_type?
-      %span.type-diff
-        = type_changes action, hide_diff
+      = wrap_diff :type do
+        - type_changes action, hide_diff
     -if action.new_content?
       %i.fa.fa-arrow-right.arrow
       -if action_view == :summary 
-        %span.content-diff
-          = render_content_changes :action=>action, :diff_type=>action_view, :hide_diff=>hide_diff
+        = wrap_diff :content do
+          - action.card.format.render_content_changes :action=>action, :diff_type=>action_view, :hide_diff=>hide_diff
   -if action.new_content? and action_view == :expanded
     .expanded
-      %span.content-diff
-        = render_content_changes :action=>action, :diff_type=>action_view, :hide_diff=>hide_diff
+      = wrap_diff :content do
+        - action.card.format.render_content_changes :action=>action, :diff_type=>action_view, :hide_diff=>hide_diff
         }
     end
   end
 
+  def wrap_diff field, &block
+    content = block.call
+    if content.present?
+      %{
+         <span class="#{field}-diff">
+         #{content}
+         </span>
+      }
+    end
+  end
   
   def name_changes action, hide_diff=false
     old_name = (name = action.old_values[:name] and showname(name))
-                
     if action.new_name?
       new_name = showname(action.new_values[:name]).to_s
       if hide_diff 
@@ -217,7 +234,7 @@ format :html do
   def rollback_link action_ids
     if card.ok?(:update) 
       "| " + link_to('Save as current', path(:action=>:update, :view=>:open, :action_ids=>action_ids,),
-        :class=>'slotter',:slotSelector=>'.card-slot.card-frame', :remote=>true, :method=>:post)
+        :class=>'slotter',:slotSelector=>'.card-slot.card-frame', :remote=>true, :method=>:post, :rel=>'nofollow')
     end
   end
 
@@ -240,28 +257,5 @@ format :html do
   
   def render_haml locals={}, &block
     Haml::Engine.new(block.call).render(binding, locals)
-  end
-  
-  
-  # old stuff
-  
-
-  def revision_link text, revision, name, accesskey='', mode=nil
-    link_to text, path(:view=>:history, :rev=>revision, :mode=>(mode || params[:mode] || true) ),
-      :class=>"slotter", :remote=>true, :rel=>'nofollow'
-  end
-
-
-
-  def revision_menu
-    revision_menu_items.flatten.map do |item|
-      "<span>#{item}</span>"
-    end.join('')
-  end
-
-  def revision_menu_items
-    items = [back_for_revision, forward, see_or_hide_changes_for_revision]
-    items << rollback unless card.recaptcha_on?
-    items
   end
 end

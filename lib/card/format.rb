@@ -457,7 +457,7 @@ class Card
         args[:supercard] = root.card
       end
       if content=get_inclusion_content(options[:inc_name])
-        args[:content]=content #ACT
+        args[:content]=content
       end
       args
     end

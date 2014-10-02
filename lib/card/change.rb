@@ -12,6 +12,13 @@ class Card
       Card::TRACKED_FIELDS[read_attribute(:field)]
     end
     
+    def self.delete_actionless
+      Card::Change.where(
+        "card_action_id NOT IN (?)",
+        Card::Action.pluck("id"),
+      ).delete_all
+    end
+    
     def self.find_by_field(value)
       index = value.is_a?(Integer) ? value : Card::TRACKED_FIELDS.index(value.to_s)
       super(index)

@@ -26,7 +26,7 @@ event :remove_empty_act, :after=>:extend do
 end
 
 
-event :rollback, :after=>:extend, :on=>:update, :when=>proc{ |c| Env.params['action_ids'] and Env.params['action_ids'].class == Array} do
+event :rollback, :before=>:approve, :on=>:update, :when=>proc{ |c| Env.params['action_ids'] and Env.params['action_ids'].class == Array} do
   revision = { :subcards => {}}
   rollback_actions = Env.params['action_ids'].map do |a_id|
     Action.find(a_id) || nil
@@ -44,7 +44,8 @@ event :rollback, :after=>:extend, :on=>:update, :when=>proc{ |c| Env.params['act
   rollback_actions.each do |action|
     action.card.attachment_symlink_to action.id
   end
-
+  clear_drafts
+  abort :success
 end
 
 
@@ -54,10 +55,17 @@ def intrusive_acts  # all acts with actions on self and on cards included in sel
   end
 end
 
+def current_rev_nr
+  @current_rev_nr ||= begin
+    @intrusive_acts.first.actions.last.draft ? @intrusive_acts.size - 1 : @intrusive_acts.size
+  end
+end
+
 def included_card_ids
   Card::Reference.select(:referee_id).where( :ref_type => 'I', :referer_id=>id ).map(&:referee_id).compact.uniq
 end 
   
+
 
 format :html do
   view :history do |args|
@@ -104,7 +112,7 @@ format :html do
   def render_act act_view, args
     act = (params['act_id'] and Card::Act.find(params['act_id'])) || args[:act]
     rev_nr = params['rev_nr'] || args[:rev_nr] 
-    current_rev_nr = params['current_rev_nr'] || args[:current_rev_nr] || card.intrusive_acts.size
+    current_rev_nr = params['current_rev_nr'] || args[:current_rev_nr] || card.current_rev_nr
     hide_diff = (params["hide_diff"]=="true") || args[:hide_diff]
     wrap( args.merge(:slot_class=>"revision-#{act.id} history-slot") ) do
       render_haml :card=>card, :act=>act, :act_view=>act_view, 
@@ -163,28 +171,38 @@ format :html do
       %i.fa.fa-circle{:class=>(action.red? ? 'diff-red' : 'diff-invisible')}
       %i.fa.fa-circle{:class=>(action.green? ? 'diff-green' : 'diff-invisible')}
     -if action.card == card
-      %span.name-diff
-        = name_changes(action, hide_diff)    
+      = wrap_diff :name do
+        - name_changes(action, hide_diff)
     -else
       =  link_to path(:view=>:related, :related=>{:view=>"history",:name=>action.card.name}), :class=>'slotter name-diff', 
                    :slotSelector=>".card-slot.card-frame", :remote=>true do
         - name_changes(action, hide_diff)    
     -if action.new_type?
-      %span.type-diff
-        = type_changes action, hide_diff
+      = wrap_diff :type do
+        - type_changes action, hide_diff
     -if action.new_content?
       %i.fa.fa-arrow-right.arrow
       -if action_view == :summary 
-        %span.content-diff
-          = action.card.format.render_content_changes :action=>action, :diff_type=>action_view, :hide_diff=>hide_diff
+        = wrap_diff :content do
+          - action.card.format.render_content_changes :action=>action, :diff_type=>action_view, :hide_diff=>hide_diff
   -if action.new_content? and action_view == :expanded
     .expanded
-      %span.content-diff
-        = action.card.format.render_content_changes :action=>action, :diff_type=>action_view, :hide_diff=>hide_diff
+      = wrap_diff :content do
+        - action.card.format.render_content_changes :action=>action, :diff_type=>action_view, :hide_diff=>hide_diff
         }
     end
   end
 
+  def wrap_diff field, &block
+    content = block.call
+    if content.present?
+      %{
+         <span class="#{field}-diff">
+         #{content}
+         </span>
+      }
+    end
+  end
   
   def name_changes action, hide_diff=false
     old_name = (name = action.old_values[:name] and showname(name))

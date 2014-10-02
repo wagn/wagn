@@ -39,12 +39,8 @@ class Card
     end
     
     def relevant_actions_for card, with_drafts=false
-      if with_drafts 
-        relevant_drafts_for card
-      else
-        actions.select do |action|
-          card.included_card_ids.include?(action.card_id) || (card == action.card)
-        end
+      actions.select do |action|
+        card.included_card_ids.include?(action.card_id) || (card == action.card)
       end
     end
     

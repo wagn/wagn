@@ -75,7 +75,7 @@ module Card::Diff
         clear_stats
         if @old_version
           if @old_version.size < 1000
-            complete_lcs_diff
+            better_complete_lcs_diff
           else
             fast_diff
           end
@@ -115,7 +115,6 @@ module Card::Diff
 
 
     def better_complete_lcs_diff old_v=@old_version, new_v=@new_version
-      last_position = 0
       old_v = old_v.split(' ')
       new_v = new_v.split(' ')
       res = ''
@@ -128,23 +127,23 @@ module Card::Diff
           !(prev_action == '!' and chunk.action == '+')
        
           if dels.present?
-            res += deleted_chunk(dels.join(' '))
+            res << deleted_chunk(dels.join(' '))
             dels = []
           end
           if !adds.empty?
-            res += added_chunk(adds.join(' '))
+            res << added_chunk(adds.join(' '))
             adds = []
           end
         end
         
         case chunk.action
-        when '-' then dels += chunk.old_element
-        when '+' then adds += chunk.new_element
+        when '-' then dels << chunk.old_element
+        when '+' then adds << chunk.new_element
         when '!' 
-          dels += chunk.old_element
-          adds += chunk.new_element
+          dels << chunk.old_element
+          adds << chunk.new_element
         else
-          res += chunk.new_element
+          res += ' ' + chunk.new_element
         end
         prev_action = chunk.action
       end
@@ -219,7 +218,7 @@ module Card::Diff
     
         if inspect 
           if action != :added
-            res += complete_lcs_diff lines[:deleted].join, lines[:added].join
+            res += better_complete_lcs_diff lines[:deleted].join, lines[:added].join
             inspect = false
             lines[:deleted].clear
             lines[:added].clear
@@ -233,7 +232,7 @@ module Card::Diff
       end
       
       res += if inspect
-        complete_lcs_diff lines[:deleted].join, lines[:added].join
+        better_complete_lcs_diff lines[:deleted].join, lines[:added].join
       elsif lines[prev_action].present?
         render_chunk prev_action, lines[prev_action].join
       else

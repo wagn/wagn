@@ -20,6 +20,7 @@ event :complete_act, :after=>:extend do
   @current_act.reload
   if not @supercard and @current_act.actions.empty?
      @current_act.delete
+     @current_act = nil
   end
 end
 

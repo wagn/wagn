@@ -15,10 +15,10 @@ end
 
 
 event :notify_followers, :after=>:extend, :when=>proc{ |c| !c.supercard }  do
-#  begin
+  begin
+    return unless @current_act
     @current_act.reload
-   #require 'pry'
-   #binding.pry if @action == :delete
+
     followers = @current_act.actions.map do |a|
        (@follower_stash and @follower_stash[a.card_id]) || (a.card and a.card.card_followers)
     end.compact.flatten.uniq
@@ -27,11 +27,11 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c| !c.supercard }  do
         w.account.send_change_notice @current_act #, self
       end
     end
-  # rescue =>e  #this error handling should apply to all extend callback exceptions
-  #   Airbrake.notify e if Airbrake.configuration.api_key
-  #   Rails.logger.info "\nController exception: #{e.message}"
-  #   Rails.logger.debug "BT: #{e.backtrace*"\n"}"
-  # end
+  rescue =>e  #this error handling should apply to all extend callback exceptions
+    Airbrake.notify e if Airbrake.configuration.api_key
+    Rails.logger.info "\nController exception: #{e.message}"
+    Rails.logger.debug "BT: #{e.backtrace*"\n"}"
+  end
 end
   
 format do

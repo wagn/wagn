@@ -17,7 +17,7 @@ format :html do
       link_args = if card.watched?
         [card,"following", :off, "stop sending emails about changes to #{card.name}", { :hover_content=> 'unfollow' } ]
       elsif card.type_watched?
-        [card.type_card, "following", :off, "stop sending emails about changes to #{card.type_name} cards", { :hover_content=> 'unfollow' } ]
+        [card.type_card, "(following)", :off, "stop sending emails about changes to #{card.type_name} cards", { :hover_content=> 'unfollow' } ]
       else
         [card,"follow", :on, "send emails about changes to #{card.name}" ]
       end
@@ -50,8 +50,16 @@ end
 def type_watched?; Auth.current.fetch(:trait=>:following, :new=>{}).include_item? type_card.cardname.url_key end
 def watched?;     Auth.current.fetch(:trait=>:following, :new=>{}).include_item? cardname.url_key end
 
-def card_watchers
-  Card.search :plus=>[{:codename=> "following"}, {:link_to=>{:name=>['in', name, type_name]}}]
+def card_followers
+  @card_followers ||= begin
+    cur_card = self
+    res = []
+    while cur_card do
+      res += Card.search :plus=>[{:codename=> "following"}, {:link_to=>{:name=>['in',cur_card.name, cur_card.type_name]}}]
+      cur_card = cur_card.left
+    end
+    res
+  end
 end
 
 

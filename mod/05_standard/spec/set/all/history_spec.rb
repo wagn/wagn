@@ -8,11 +8,6 @@ describe Card::Set::All::History do
       history = render_card :history, :name=>"A"
       assert_view_select history, 'div[class~="card-frame"]'
     end
-    
-    it 'has revision-header' do
-      history = render_card :diff, :name=>"A"
-      assert_view_select history, 'div[class~="revision-header"]'
-    end
   end
   
   

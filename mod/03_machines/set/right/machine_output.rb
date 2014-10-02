@@ -10,8 +10,7 @@ format do
     end
   end
   
-  def update_machine_output_live?  #ACT<revision>
-    #old: srid = card.selected_revision_id
+  def update_machine_output_live?
     said = card.selected_action_id
     card.left.kind_of? Machine and                                  # must be a machine
     !card.left.locked?         and                                  # machine must not already be running    

@@ -13,7 +13,7 @@ module Wagn::SpecHelper
   
   def newcard name, content=""
     #FIXME - misleading name; sounds like it doesn't save.
-    Card.create! :name=>name, :content=>content       #ACT<content>
+    Card.create! :name=>name, :content=>content
   end
 
   def assert_view_select(view_html, *args, &block)

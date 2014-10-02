@@ -12,9 +12,5 @@ require 'diff/lcs'
 require 'diffy'
 #require 'scheduler_daemon'
 
-if Rails.env == 'test'
-  require 'pry'
-end
-
 require 'wagn/application'
 

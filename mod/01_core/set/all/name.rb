@@ -168,7 +168,7 @@ end
 
 event :set_autoname, :before=>:validate_name, :on=>:create do
   if name.blank? and autoname_card = rule_card(:autoname)
-    self.name = autoname autoname_card.content              #ACT<content>
+    self.name = autoname autoname_card.content
     Auth.as_bot { autoname_card.refresh.update_attributes! :content=>name }   #fixme, should give placeholder on new, do next and save on create
   end
 end

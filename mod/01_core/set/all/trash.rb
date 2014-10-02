@@ -1,9 +1,9 @@
 def delete
-  update_attributes :trash => true
+  update_attributes :trash => true unless new_card?
 end
 
 def delete!
-  update_attributes! :trash => true
+  update_attributes! :trash => true unless new_card?
 end
 
 
@@ -38,6 +38,7 @@ end
 
 event :validate_delete_children, :after=>:approve, :on=>:delete do
   children.each do |child|
+    child.supercard = self
     subcards[child.name]=child
     child.trash = true
     unless child.valid?

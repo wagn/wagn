@@ -36,7 +36,7 @@ class Card
         Auth.as_bot do
           Card.search( :right_plus=>[
             {:id=>Card::AccountID},
-            {:right_plus=>[{:id=>Card::EmailID},{ :content=>email.strip.downcase }]}  #ACT what about search parameters
+            {:right_plus=>[{:id=>Card::EmailID},{ :content=>email.strip.downcase }]}
           ]).first
         end
       end

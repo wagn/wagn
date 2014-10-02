@@ -46,7 +46,7 @@ end
 =end
 
 
-Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|  #ACT
+Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
   Card::Auth.as_bot do
     card = Card.fetch cardname, :new=>{}
     card.content = content
@@ -69,7 +69,7 @@ When /^(.*) edits? "([^\"]*)" entering "([^\"]*)" into wysiwyg$/ do |username, c
 end
 
 
-When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|   # ACT and the following if want to change the html
+When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
     fill_in 'card[content]', :with=>content
@@ -125,7 +125,7 @@ end
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
   user = Card::Auth.current.name if user == "I"
   signed_in_as user do
-    step "the card #{cardname}+*watchers contains \"[[#{user}]]\""
+    step "the card #{user}+*following contains \"[[#{cardname}]]\""
   end
 end
 
@@ -152,7 +152,7 @@ end
 def create_card(username,cardtype,cardname,content="")
   signed_in_as(username) do
     if cardtype=='Pointer'
-      Card.create :name=>cardname, :type=>cardtype, :content=>content    #ACT
+      Card.create :name=>cardname, :type=>cardtype, :content=>content
     else
       visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"
       yield if block_given?

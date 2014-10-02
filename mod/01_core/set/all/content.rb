@@ -1,6 +1,5 @@
 ::Card.error_codes[:conflict] = [:conflict, 409]
 
-#ACT<content> IMPORTANT
 def content
 #  if new_card? || selected_action_id == last_action_id
     return db_content
@@ -31,7 +30,7 @@ end
 
 
 def raw_content
-  structure ? template.db_content : db_content  #ACT<content> IMPORTANT
+  structure ? template.db_content : db_content
 end
 
 def chunk_list #override to customize by set
@@ -122,25 +121,21 @@ def updater
 end
 
 
-
-def drafts
-  if Card::Auth.current_id
-   Card::Action.joins(:card,:act).where('card_actions.card_id'=>id, 'card_acts.actor_id' => Card::Auth.current_id, 'card_actions.draft'=>true)
-#   actions.joins(:act).where('card_acts.actor_id' => Card::Auth.current_id, :draft=>true) || []
-  else
-    actions.joins(:act).where(:draft=>true) || []
-  end
+def draft_acts
+  drafts.created_by(Card::Auth.current_id).map(&:act)
 end
 
 def save_draft( content )
   clear_drafts
   acts.create do |act|
-    act.actions.build(:draft => true).changes.build :field=>:db_content, :value=>content
+    act.actions.build(:draft => true, :card_id=>id).changes.build(:field=>:db_content, :value=>content)
   end
 end
 
 def clear_drafts
-  drafts.delete_all
+  drafts.created_by(Card::Auth.current_id).each do |draft|
+    draft.delete
+  end
 end
 
 def clean_html?

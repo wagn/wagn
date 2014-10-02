@@ -1,17 +1,33 @@
+
+def stash_followers card_id, followers
+  act_card.follower_stash ||= {}
+  act_card.follower_stash[card_id] = card_followers
+end
+
+def act_card
+  @supercard || self
+end
+
+event :record_followers, :after=>:approve, :on=>:delete do
+  stash_followers id, card_followers
+end
+
+
+
 event :notify_followers, :after=>:extend, :when=>proc{ |c| !c.supercard }  do
   begin
-    return false if Card.record_timestamps==false
-    watchers = @current_act.actions.map do |a|
-      a.card.card_watchers
-    end.flatten.uniq
-    watchers.each do |w|
+    return unless @current_act
+    @current_act.reload
+
+    followers = @current_act.actions.map do |a|
+       (@follower_stash and @follower_stash[a.card_id]) || (a.card and a.card.card_followers)
+    end.compact.flatten.uniq
+    followers.each do |w|
       if w.account
-        w.account.send_change_notice @current_act, cardname
+        w.account.send_change_notice @current_act #, self
       end
     end
-  
-    #@ethn: The rescue part is from the old notify_followers event. Remove it?
-  rescue =>e  #this error handling should apply to all extend callback exceptions 
+  rescue =>e  #this error handling should apply to all extend callback exceptions
     Airbrake.notify e if Airbrake.configuration.api_key
     Rails.logger.info "\nController exception: #{e.message}"
     Rails.logger.debug "BT: #{e.backtrace*"\n"}"
@@ -19,15 +35,6 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c| !c.supercard }  do
 end
   
 format do
-  def wrap_subedits subedits
-    %{
-      This update included the following changes
-      <ul>
-        #{subedits}
-      </ul>
-    }
-  end
-  
   def edit_info args
     action = args[:action] || (args[:action_id] and Card::Action.find(args[:action_id])) || card.last_action
     action.edit_info
@@ -44,28 +51,36 @@ format do
       :updater_url => wagn_url( act.actor ),
       :watcher     => args[:watcher],
       :watched     => (args[:watched] == card.cardname ? args[:watched] : "#{args[:watched]} cards"),
-      :edit        => act.action_on(card.id).edit_info
+      :edit        => (action = act.action_on(card.id) and action.edit_info)
     }
   end  
 end
 
 format :email_html do
+  def wrap_subedits subedits
+    %{
+      This update included the following changes
+      <ul>
+        #{subedits}
+      </ul>
+    }
+  end
   
   
-  view :change_notice, :skip_permissions=>true, :denial=>:blank do |args|
+  view :change_notice, :perms=>:none, :denial=>:blank do |args|
     h = change_notice_args(args)
     salutation  = h[:watcher] ? "Dear #{h[:watcher]}" : "Dear #{Card.setting :title} user"
     selfedits   = render_list_of_changes(args)
-    
-    subedits    = h[:act].actions.map do |action| 
+    action_type = h[:edit] ? h[:edit][:action_type] : "updated"
+    subedits    = h[:act].relevant_actions_for(card).map do |action| 
         action.card_id == card.id ? '' : action.card.format(:format=>:email).render_subedit_notice(:action=>action)
     end.join
-    return '' unless selfedits.present? or subedits.present?
+    return '' unless selfedits.present? or subedits.present? or action_type == "deleted"
       %{
         #{salutation}
         <p>
           <a href="#{h[:card_url]}">"#{card.name}"</a> 
-          was just <a href="#{h[:change_url]}">#{h[:edit][:action_type]}</a>
+          was just <a href="#{h[:change_url]}">#{action_type}</a>
           by <a href="#{h[:updater_url]}">#{h[:act].actor.name}</a>
         </p>
       
@@ -95,7 +110,7 @@ format :email_html do
     when 'updated'
       %{
         <ul>
-        #{'<li>the name was changed</li>'                 if edit[:new_name] }
+        #{"<li>new name: #{edit[:new_name]}</li>"         if edit[:new_name] }
         #{"<li>new cardtype: #{edit[:new_cardtype]}</li>" if edit[:new_cardtype] }
         #{"<li>new content: #{edit[:new_content]}</li>"   if edit[:new_content] }
         </ul>
@@ -105,10 +120,10 @@ format :email_html do
     end
   end
   
-  view :subedit_notice, :denial=>:blank do |args|
+  view :subedit_notice, :perms=>:read, :denial=>:blank do |args|
     edit = edit_info(args)
     %{
-      <li>#{card.name} #{edit[:action_type]}
+      <li>#{edit[:new_name] && edit[:old_name] ? edit[:old_name] : card.name} #{edit[:action_type]}
       #{ render_list_of_changes(args) }
       </li>
     }
@@ -117,25 +132,31 @@ end
 
 
 format :text do
+  def wrap_subedits subedits
+    %{
+This update included the following changes:
+#{subedits}}
+  end
+  
+  
   view :change_notice, :perms=>:none, :denial=>:blank do |args|
     h = change_notice_args(args)
     salutation  = h[:watcher] ? "Dear #{h[:watcher]}" : "Dear #{Card.setting :title} user"
     selfedits   = render_list_of_changes(args)
     subedits    = h[:act].actions.map do |action| 
-        action.card_id == card.id ? '' : action.card.format(:format=>:email).render_subedit_notice(:action=>action)
-      end.join
+        action.card_id == card.id ? '' : action.card.format(:format=>:text).render_subedit_notice(:action=>action)
+    end.join
+    
     return '' unless selfedits.present? or subedits.present?
       %{
 #{salutation}
 
-#{card.name}
-was just #{h[:edit][:action_type]} by #{h[:act].actor.name}
-
+"#{card.name}"
+was just #{h[:edit] ? h[:edit][:action_type] : "updated"} by #{h[:act].actor.name}
 #{ selfedits }
-
 #{ wrap_subedits subedits if subedits.present? }
 
-See the card: "#{h[:card_url]}"
+See the card: #{h[:card_url]}
 
 You received this email because you're following "#{h[:watched]}". 
 Visit #{h[:unwatch_url]} to stop receiving these emails.
@@ -146,16 +167,16 @@ Visit #{h[:unwatch_url]} to stop receiving these emails.
     edit = edit_info(args)
     case edit[:action_type]
     when 'created'
-      %{
-#{"cardtype: #{edit[:new_cardtype]}" if edit[:new_cardtype] }
-#{"content: #{edit[:new_content]}"   if edit[:new_content] }
-      }
+      [
+        ("   cardtype: #{edit[:new_cardtype]}" if edit[:new_cardtype]),
+        ("   content: #{edit[:new_content]}"   if edit[:new_content]) 
+      ].compact.join "\n"
     when 'updated'
-      %{
-        #{'the name was changed'                 if edit[:new_name] }
-        #{"new cardtype: #{edit[:new_cardtype]}" if edit[:new_cardtype] }
-        #{"new content: #{edit[:new_content]}"   if edit[:new_content] }
-      }
+      [
+        ("   new name: #{edit[:new_name]}"         if edit[:new_name]),
+        ("   new cardtype: #{edit[:new_cardtype]}" if edit[:new_cardtype]),
+        ("   new content: #{edit[:new_content]}"   if edit[:new_content])
+      ].compact.join "\n"
     when 'deleted'
       ''
     end
@@ -164,7 +185,7 @@ Visit #{h[:unwatch_url]} to stop receiving these emails.
   view :subedit_notice, :denial=>:blank do |args|
     edit = edit_info(args)
     %{
-      #{card.name} #{edit[:action_type]}
+"#{edit[:new_name] && edit[:old_name] ? edit[:old_name] : card.name}" #{edit[:action_type]}
       #{ render_list_of_changes(args) }
     }
   end

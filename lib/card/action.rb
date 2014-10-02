@@ -51,18 +51,50 @@ class Card
     end
   end
   
+  def delete_old_actions
+    Card::TRACKED_FIELDS.each do |field|
+        if (not last_action.change_for(field).present?) and (last_change = last_change_on(field))
+          last_change = Card::Change.find(last_change.id)   # last_change comes as readonly record
+          last_change.update_attributes!(:card_action_id=>last_action_id)
+        end
+    end
+    actions.where('id != ?', last_action_id ).delete_all
+  end
   
   
   class Action < ActiveRecord::Base
     belongs_to :card
     belongs_to :act,  :foreign_key=>:card_act_id, :inverse_of=>:actions 
-    has_many   :changes, :foreign_key=>:card_action_id, :inverse_of=>:action
+    has_many   :changes, :foreign_key=>:card_action_id, :inverse_of=>:action, :dependent=>:delete_all
     
     belongs_to :super_action, class_name: "Action", :inverse_of=>:sub_actions
     has_many   :sub_actions,  class_name: "Action", :inverse_of=>:super_action
     
+    scope :created_by, lambda { |actor_id| joins(:act).where('card_acts.actor_id = ?', actor_id) }
+    
     # replace with enum if we start using rails 4 
     TYPE = [:create, :update, :delete]
+    
+    # def card
+    #   Card.fetch card_id
+    # end
+    
+    def self.delete_cardless
+      Card::Action.where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
+      #ActiveRecord::Base.connection.delete( "delete from card_actions where not exists " +
+      #  "( select name from cards where id = card_actions.card_id )"
+      #Card::Action.where(Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
+      # find_each do |a|
+      #   a.delete unless Card.exists?(a.card_id)
+      # end
+    end
+    
+    def self.delete_old 
+      Card.find_each do |card|
+        card.delete_old_actions
+      end    
+      Card::Act.delete_actionless
+    end
     
     def edit_info
       @edit_info ||= {
@@ -99,6 +131,9 @@ class Card
     
     def new_value_for(field)
        ch = changes.find_by_field(field) and ch.value
+    end
+    def change_for(field) 
+      changes.where('card_changes.field = ?', field)
     end
     
     

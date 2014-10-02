@@ -9,6 +9,8 @@ require 'timecop'
 require File.expand_path( '../../mod/03_machines/spec/lib/machine_spec.rb', __FILE__ )
 require File.expand_path( '../../mod/03_machines/spec/lib/machine_input_spec.rb', __FILE__ )
 
+
+
 Spork.prefork do
   if ENV["RAILS_ROOT"]
     require File.join( ENV["RAILS_ROOT"], '/config/environment')
@@ -25,16 +27,15 @@ Spork.prefork do
 
 #  FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   JOE_USER_ID = Card['joe_user'].id
-
   RSpec.configure do |config|
 
-    config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => {
+    config.include RSpec::Rails::Matchers::RoutingMatchers,  {
       :file_path => /\bspec\/controllers\//
     }
 
     format_index = ARGV.find_index {|arg| arg =~ /--format|-f/ }
     formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation' #'textmate'
-    config.add_formatter formatter
+    config.default_formatter=formatter
     
     config.infer_spec_type_from_file_location!
     #config.include CustomMatchers
@@ -43,7 +44,7 @@ Spork.prefork do
     # == Mock Framework
     # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:
     # :mocha, :flexmock, :rr
-
+    #require 'wagn-rspec-formatter'
     config.mock_with :rr
 
     config.use_transactional_fixtures = true
@@ -51,6 +52,7 @@ Spork.prefork do
     
     config.mock_with :rspec do |mocks|
        mocks.syntax = [:should, :expect]
+       mocks.verify_partial_doubles = true
      end
     config.expect_with :rspec do |c|
       c.syntax = [:should, :expect]

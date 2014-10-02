@@ -21,6 +21,7 @@ module Card::Diff
     def initialize(old_version, new_version, opts={})
       @old_version, @new_version = old_version, new_version
       @opts = opts
+      @new_version ||= ''
       if !opts[:compare_html]
         @old_version.gsub! /<[^>]*>/,'' if @old_version
         @new_version.gsub! /<[^>]*>/,''
@@ -74,7 +75,7 @@ module Card::Diff
         clear_stats
         if @old_version
           if @old_version.size < 1000
-            complete_lcs_diff
+            better_complete_lcs_diff
           else
             fast_diff
           end
@@ -111,6 +112,47 @@ module Card::Diff
       else text
       end
     end
+
+
+    def better_complete_lcs_diff old_v=@old_version, new_v=@new_version
+      old_v = old_v.split(' ')
+      new_v = new_v.split(' ')
+      res = ''
+      dels = []
+      adds = []
+      prev_action = nil
+      ::Diff::LCS.traverse_balanced(old_v, new_v) do |chunk|
+        if prev_action and prev_action != chunk.action and
+          !(prev_action == '-' and chunk.action == '!') and 
+          !(prev_action == '!' and chunk.action == '+')
+       
+          if dels.present?
+            res << deleted_chunk(dels.join(' '))
+            dels = []
+          end
+          if !adds.empty?
+            res << added_chunk(adds.join(' '))
+            adds = []
+          end
+        end
+        
+        case chunk.action
+        when '-' then dels << chunk.old_element
+        when '+' then adds << chunk.new_element
+        when '!' 
+          dels << chunk.old_element
+          adds << chunk.new_element
+        else
+          res += ' ' + chunk.new_element
+        end
+        prev_action = chunk.action
+      end
+      res += deleted_chunk(dels.join(' ')) if dels.present?
+      res += added_chunk(adds.join(' ')) if adds.present?
+      res
+    end
+    
+    
     
     def complete_lcs_diff old_v=@old_version, new_v=@new_version
       last_position = 0
@@ -176,7 +218,7 @@ module Card::Diff
     
         if inspect 
           if action != :added
-            res += complete_lcs_diff lines[:deleted].join, lines[:added].join
+            res += better_complete_lcs_diff lines[:deleted].join, lines[:added].join
             inspect = false
             lines[:deleted].clear
             lines[:added].clear
@@ -190,7 +232,7 @@ module Card::Diff
       end
       
       res += if inspect
-        complete_lcs_diff lines[:deleted].join, lines[:added].join
+        better_complete_lcs_diff lines[:deleted].join, lines[:added].join
       elsif lines[prev_action].present?
         render_chunk prev_action, lines[prev_action].join
       else

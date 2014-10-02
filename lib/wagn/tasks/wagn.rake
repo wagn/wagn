@@ -1,5 +1,5 @@
 
-WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references }
+WAGN_BOOTSTRAP_TABLES = %w{ cards card_actions card_acts card_changes card_references }
 
 namespace :wagn do
   desc "create a wagn database from scratch"
@@ -122,31 +122,59 @@ namespace :wagn do
     end
   end
 
+
+  namespace :emergency do
+    task :rescue_watchers => :environment do
+      follower_hash = Hash.new { |h, v| h[v] = [] } 
+      
+      Card.where("right_id" => 219).each do |watcher_list|
+        watcher_list.include_set_modules
+        if watcher_list.left
+          watching = watcher_list.left.name
+          watcher_list.item_names.each do |user|
+            follower_hash[user] << watching
+          end
+        end
+      end
+      
+      Card.search(:right=>{:codename=>"following"}).each do |following|
+        Card::Auth.as_bot do
+          following.update_attributes! :content=>''
+        end
+      end
+      
+      follower_hash.each do |user, items|
+        if card=Card.fetch(user) and card.account
+          Card::Auth.as(user) do
+            following = card.fetch :trait=>"following", :new=>{}
+            following.items = items
+          end
+        end
+      end
+    end
+  end
+  
   namespace :bootstrap do
     desc "rid template of unneeded cards, revisions, and references"
     task :clean => :environment do
       Wagn::Cache.reset_global
-
+      conn =  ActiveRecord::Base.connection
       # Correct time and user stamps
-      %w{ cards card_revisions }.each do |table|
-        sql =  "update #{table} set created_at=now(), creator_id=#{ Card::WagnBotID }"
-        sql +=                    ",updated_at=now(), updater_id=#{ Card::WagnBotID }" if table == 'cards'
-        ActiveRecord::Base.connection.update sql
-      end
+      card_sql =  "update cards set created_at=now(), creator_id=#{ Card::WagnBotID }"
+      card_sql +=                 ",updated_at=now(), updater_id=#{ Card::WagnBotID }"
+      conn.update card_sql
+      act_sql =  "update card_acts set acted_at=now(), actor_id=#{ Card::WagnBotID }"
+      conn.update act_sql
 
       Card::Auth.as_bot do
         # delete ignored cards
         
         if ignoramus = Card['*ignore']
           ignoramus.item_cards.each do |card|
-            if card.account #have to get rid of revisions to delete account  
-              #(could also directly delete cards "manually", but would need to delete all descendants manually, too)
-              ActiveRecord::Base.connection.delete( "delete from card_revisions where card_id = #{card.id}" )
-            end
             card.delete!
           end
         end
-        
+        Wagn::Cache.reset_global
         %w{ machine_input machine_output }.each do |codename|
           Card.search(:right=>{:codename=>codename }).each do |card|
             FileUtils.rm_rf File.join('files', card.id.to_s ), :secure=>true            
@@ -155,18 +183,25 @@ namespace :wagn do
         end
       end
 
-      ActiveRecord::Base.connection.delete( "delete from cards where trash is true" )
+      conn.delete( "delete from cards where trash is true" )
 
-      # delete unwanted rows ( will need to revise if we ever add db-level data integrity checks )
-      ActiveRecord::Base.connection.delete( "delete from card_revisions where not exists " +
-        "( select name from cards where current_revision_id = card_revisions.id )"
-      )
-      ActiveRecord::Base.connection.delete( "delete from card_references where" +
+      Card::Action.delete_cardless
+      Card::Action.delete_old
+      Card::Change.delete_actionless
+
+
+      act = Card::Act.create!(:actor_id=>Card::WagnBotID,
+       :card_id=>Card::WagnBotID)
+      Card::Action.find_each do |action|
+        action.update_attributes!(:card_act_id=>act.id)
+      end
+      Card::Act.where('id != ?',act.id).delete_all
+      conn.delete( "delete from card_references where" +
         " (referee_id is not null and not exists (select * from cards where cards.id = card_references.referee_id)) or " +
         " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"
       )
       
-      ActiveRecord::Base.connection.delete( "delete from sessions" )
+      conn.delete( "delete from sessions" )
       
       Wagn::Cache.reset_global
       
@@ -212,9 +247,7 @@ namespace :wagn do
       
       # add a fourth line to the raw content of each image (or file) to identify it as a mod file
       Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
-        card.update_attributes :db_content=>card.db_content + "\nstandard"  #ACT
-        #old: rev = Card::Revision.find card.current_revision_id
-        #     rev.update_attributes :content=>rev.content + "\nstandard"        
+        card.update_attributes :db_content=>card.db_content + "\nstandard"      
       end
     end
 

@@ -2,7 +2,9 @@ format :email do
   
   def deliver args={}
     mail = _render_mail(args)
-    mail.delivery_method(Wagn.config.action_mailer.delivery_method,Wagn.config.action_mailer.smtp_settings)
+    delivery_method = Wagn.config.action_mailer.delivery_method || :smtp
+    smtp_settings = Wagn.config.action_mailer.smtp_settings || {}
+    mail.delivery_method(delivery_method, smtp_settings)
     mail.deliver
   end
   
@@ -29,25 +31,27 @@ format :email do
     alternative = text_message.present? and html_message.present?
     Mail.new(args) do
     #mail = ActionMailer::Base.mail(args) do
-      if alternative and attachment and !attachment_list.empty?
-        content_type 'multipart/mixed'
-        part :content_type => 'multipart/alternative' do |copy|
-          copy.part :content_type => 'text/plain' do |plain|
-            plain.body = text_message
-          end
-          copy.part :content_type => 'text/html' do |html|
-            html.body = html_message
+      if alternative 
+        if attachment and !attachment_list.empty?
+          content_type 'multipart/mixed'
+          part :content_type => 'multipart/alternative' do |copy|
+            copy.part :content_type => 'text/plain' do |plain|
+              plain.body = text_message
+            end
+            copy.part :content_type => 'text/html' do |html|
+              html.body = html_message
+            end
+          end    
+        else
+          text_part { body text_message }
+          html_part do
+            content_type 'text/html; charset=UTF-8'
+            body html_message
           end
         end
       else
-        text_part do
-          body text_message
-        end
-
-        html_part do
-          content_type 'text/html; charset=UTF-8'
-          body html_message
-        end
+        content_type 'text/html; charset=UTF-8'
+        body html_message
       end
       if attachment_list
         attachment_list.each_with_index do |cardname, i|

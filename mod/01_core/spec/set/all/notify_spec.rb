@@ -2,7 +2,7 @@ shared_examples_for 'notifications' do
   describe '#change_notice' do
     context 'for new card with subcards' do
       name = "another card with subcards"
-      content = "main content"
+      content = "main content {{+s1}}  {{+s2}}"
       sub1_content = 'new content of subcard 1'
       sub2_content = 'new content of subcard 2'
       before do
@@ -49,8 +49,10 @@ shared_examples_for 'notifications' do
         end
         context 'for all parts' do
           before do
-            Card.create_or_update! "#{name}+s1+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
-            Card.create_or_update! "#{name}+s2+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
+            #Card.create_or_update! "#{name}+s1+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
+            #Card.create_or_update! "#{name}+s2+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
+            Card.create_or_update! "s1+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
+            Card.create_or_update! "s2+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
             Card.create_or_update! "#{name}+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
           end
           it { is_expected.to be_empty }
@@ -76,7 +78,7 @@ shared_examples_for 'notifications' do
       before { @card.update_attributes!(:name=>'bnn card', :type=>:pointer, :content=>'changed content') }
       it { is_expected.to include 'new content: [[changed content]]' }
       it { is_expected.to include 'new cardtype: Pointer' }
-      it { is_expected.to include 'the name was changed' }
+      it { is_expected.to include 'new name: bnn card' }
     end
     context 'for a deleted card' do
       before { @card.delete }
@@ -139,12 +141,12 @@ end
 describe Card::Set::All::Notify do
   describe 'html format' do
     include_examples 'notifications' do
-      let(:format) { 'html' }
+      let(:format) { 'email_html' }
     end
     
     it 'contains html' do
       card = Card.create! :name=>'new card'
-      expect(card.format(:format=>:html).render_change_notice).to include '<p>'
+      expect(card.format(:format=>:email_html).render_change_notice).to include '<p>'
     end
   end
   

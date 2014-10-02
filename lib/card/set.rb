@@ -310,7 +310,7 @@ EOF
       mod_traits = get_traits mod
     
       new_opts = options[:type] ? {:type=>options[:type]} : {}
-      new_opts.merge!( {:content => options[:default]} ) if options[:default]  #ACT
+      new_opts.merge!( {:content => options[:default]} ) if options[:default]
     
       args.each do |trait|   
         define_trait_card trait, new_opts
@@ -332,7 +332,7 @@ EOF
     def define_trait_reader trait
       define_method trait do
         trait_var "@#{trait}" do
-          send( "#{trait}_card" ).content  #ACT
+          send( "#{trait}_card" ).content
         end
       end
     end
@@ -341,7 +341,7 @@ EOF
       define_method "#{trait}=" do |value|
         card = send "#{trait}_card"
         self.subcards ||= {}
-        self.subcards[card.name] = {:type_id => card.type_id, :content=>value }  #ACT
+        self.subcards[card.name] = {:type_id => card.type_id, :content=>value }
         instance_variable_set "@#{trait}", value
       end
     end

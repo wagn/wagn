@@ -43,6 +43,8 @@ class AddEmailCards < ActiveRecord::Migration
       # the new watch rule
       Card.create! :name => '*following', :type_code=>:pointer, :codename=>'following'
       Card.create! :name => '*following+*right+*default', :type_code=>:pointer
+      Card.create! :name => '*following+*right+*update', :content=>'_left'
+      Card.create! :name => '*following+*right+*create', :content=>'_left'
       Card::Codename.reset_cache      
       
       # move old watch rules
@@ -50,8 +52,10 @@ class AddEmailCards < ActiveRecord::Migration
       follower_hash = Hash.new { |h, v| h[v] = [] } 
 
       Card.search(:right_plus => {:codename=> "watchers"}).each do |card|
-        card.item_names.each do |user_name|
-          follower_hash[user_name] << card.name
+        if watched = card.left
+          card.item_names.each do |user_name|
+            follower_hash[user_name] << watched.name
+          end
         end
       end
       

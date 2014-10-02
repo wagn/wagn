@@ -437,8 +437,8 @@ format :html do
   end
   
   
-  view :last_action do |args|  #ACT
-    action = case card.last_action.action_type   #ACT
+  view :last_action do |args|
+    action = case card.last_action.action_type
     when :create; 'added'
     when :update; link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
     when :delete; 'deleted'
@@ -454,7 +454,6 @@ format :html do
   end
           
   view :errors, :perms=>:none do |args|
-    #Rails.logger.debug "errors #{args.inspect}, #{card.inspect}, #{caller[0..3]*", "}"
     if card.errors.any?
       title = %{ Problems #{%{ with #{card.name} } unless card.name.blank?} }
       frame args.merge( :title=>title ) do

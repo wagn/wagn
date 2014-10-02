@@ -30,30 +30,21 @@ class Card
         
     def elapsed_time
       DateTime.new(acted_at).distance_of_time_in_words_to_now
-#      (DateTime.now - acted_at).min
     end
     
-    def relevant_actions_for card
-  #    if self.card.id == card.id
-  #      actions
-  #    else
+    def relevant_drafts_for card
+      drafts.select do |action|
+        card.included_card_ids.include?(action.card_id) || (card == action.card)
+      end
+    end
+    
+    def relevant_actions_for card, with_drafts=false
+      if with_drafts 
+        relevant_drafts_for card
+      else
         actions.select do |action|
           card.included_card_ids.include?(action.card_id) || (card == action.card)
         end
-  #    end
-    end
-    
-    def title #ENGLISH        #ACT<revision>
-      current_id = card.current_revision_id
-      if id == current_id
-        'Current'
-      elsif id > current_id
-        'AutoSave'
-      else
-        card.revisions.each_with_index do |rev, index|
-          return "Revision ##{index + 1}" if rev.id == id
-        end
-        '[Revisions Missing]'
       end
     end
     

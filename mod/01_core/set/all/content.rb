@@ -1,6 +1,5 @@
 ::Card.error_codes[:conflict] = [:conflict, 409]
 
-#ACT<content> IMPORTANT
 def content
 #  if new_card? || selected_action_id == last_action_id
     return db_content
@@ -31,7 +30,7 @@ end
 
 
 def raw_content
-  structure ? template.db_content : db_content  #ACT<content> IMPORTANT
+  structure ? template.db_content : db_content
 end
 
 def chunk_list #override to customize by set
@@ -121,6 +120,10 @@ def updater
   Card[ updater_id ]
 end
 
+
+def draft_acts
+  drafts.created_by(Card::Auth.current_id).map(&:act)
+end
 
 def save_draft( content )
   clear_drafts

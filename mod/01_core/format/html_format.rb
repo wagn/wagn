@@ -58,7 +58,7 @@ class Card
     def layout_from_card_or_code name
       layout_card = Card.fetch name.to_s, :skip_virtual=>true, :skip_modules=>true
       if layout_card and layout_card.ok? :read
-        layout_card.content   #ACT<content>
+        layout_card.content
       elsif hardcoded_layout = LAYOUTS[name]
         hardcoded_layout
       else
@@ -106,7 +106,7 @@ class Card
     def wrap_body args={}
       css_classes = [ 'card-body' ]
       css_classes << args[:body_class]                  if args[:body_class]
-      css_classes += [ 'card-content', card.safe_set_keys ] if args[:content]  #ACT<content>
+      css_classes += [ 'card-content', card.safe_set_keys ] if args[:content]
       content_tag :div, :class=>css_classes.compact*' ' do
         yield args
       end
@@ -169,7 +169,7 @@ class Card
       
         if [ args[:optional_type_fieldset], args[:optional_name_fieldset] ].member? :show
           # display content field in fieldset for consistency with other fields
-          fieldset '', field, :editor=>:content   #ACT?
+          fieldset '', field, :editor=>:content
         else
           editor_wrap( :content ) { field }
         end

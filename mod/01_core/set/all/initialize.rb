@@ -5,7 +5,7 @@ module ClassMethods
     args = (args || {}).stringify_keys
     JUNK_INIT_ARGS.each { |a| args.delete(a) }
     %w{ type type_code }.each { |k| args.delete(k) if args[k].blank? }
-    args.delete('content') if args['attach'] # should not be handled here!    #ACT
+    args.delete('content') if args['attach'] # should not be handled here!
     super args
   end
 end

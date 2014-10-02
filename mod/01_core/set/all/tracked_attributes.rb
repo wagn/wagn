@@ -16,7 +16,7 @@ def extract_subcard_args! args={}
   args.keys.each do |key|
     if key =~ /^\+/
       val = args.delete key
-      val = { 'content' => val } if String === val  #ACT<content>
+      val = { 'content' => val } if String === val
       extracted_subcards[key] = val
     end
   end
@@ -26,27 +26,12 @@ end
 
 protected
 
-#ACT<content> IMPORTANT no longer called, see set old set_inital_content below
-def set_content new_content
-  if self.id #have to have this to create revision
-    new_content ||= ''
-    new_content = Card::Content.clean! new_content if clean_html?
-    clear_drafts if current_revision_id   # removes all revisions with id > current_revision_id
-    new_rev = Card::Revision.create :card_id=>self.id, :content=>new_content, :creator_id =>Auth.current_id
-    self.current_revision_id = new_rev.id
-    self.selected_revision_id = nil
-    reset_patterns_if_rule saving=true 
-    @name_or_content_changed = true
-  else
-    false
-  end
-end
-
 event :set_initial_content, :before=>:store, :on=>:create do
   unless @from_trash
     self.db_content = content || ''
     self.db_content = Card::Content.clean! self.db_content if clean_html?
     self.selected_action_id = nil
+    clear_drafts
     reset_patterns_if_rule saving=true
   end
 end
@@ -60,7 +45,7 @@ event :update_ruled_cards, :after=>:store do
     self.class.clear_rule_cache
     left.reset_set_patterns
 
-    if right_id==Card::ReadID and (name_changed? or trash_changed?)  #ACT (changed)
+    if right_id==Card::ReadID and (name_changed? or trash_changed?)
       self.class.clear_read_rule_cache
       Card.cache.reset # maybe be more surgical, just Auth.user related
       expire #probably shouldn't be necessary,

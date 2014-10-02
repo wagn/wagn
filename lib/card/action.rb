@@ -70,7 +70,7 @@ class Card
     #   Card.fetch card_id
     # end
     
-    def self.delete_cardless  #ACT
+    def self.delete_cardless
       Card::Action.where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
       #ActiveRecord::Base.connection.delete( "delete from card_actions where not exists " +
       #  "( select name from cards where id = card_actions.card_id )"

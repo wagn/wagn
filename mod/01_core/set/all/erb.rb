@@ -1,6 +1,3 @@
-require 'erb'
-
-
 format do
   def render_erb locals={}, template=nil, a_binding=nil, &block
     template ||= block.call

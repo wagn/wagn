@@ -51,12 +51,12 @@ format do
       :updater_name => act.actor.name,
       :card_url     => wagn_url(card),
       :change_url   => wagn_url("#{card.cardname.url_key}?view=history"), 
-      :unwatch_url  => wagn_url( "update/#{args[:watcher].to_name.url_key}+#{Card[:following].cardname.url_key}?drop_item=#{args[:watched].to_name.url_key}" ),
+      :unfollow_url  => wagn_url( "update/#{args[:follower].to_name.url_key}+#{Card[:following].cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" ),
       :updater_url  => wagn_url( act.actor ),
-      :watcher      => args[:watcher],
-      :watched      => (args[:watched] == card.cardname ? args[:watched] : "#{args[:watched]} cards"),
+      :follower      => args[:follower],
+      :followed      => (args[:followed] == card.cardname ? args[:followed] : "#{args[:followed]} cards"),
       :action_type  => action_on_card ? "#{action_on_card.action_type}d" : "updated",
-      :salutation   => args[:watcher] ? "Dear #{args[:watcher]}" : "Dear #{Card.setting :title} user",
+      :salutation   => args[:follower] ? "Dear #{args[:follower]}" : "Dear #{Card.setting :title} user",
       :selfedits    => selfedits,
       :subedits     => subedits
     }
@@ -90,12 +90,12 @@ format do
     "   #{item}\n"
   end
   
-  def wrap_subedit_item text
-    "\n#{text}\n"
-  end
-  
   def wrap_subedits subedits
     "\nThis update included the following changes:#{wrap_list subedits}"
+  end
+  
+  def wrap_subedit_item text
+    "\n#{text}\n"
   end
   
   view :subedit_notice, :denial=>:blank do |args|
@@ -169,9 +169,9 @@ format :email_html do
   %a{:href=>card_url}
     "\#{card_url}"
 %p
-  You received this email because you\'re following "\#{watched}". 
+  You received this email because you\'re following "\#{followed}". 
   %br
-  %a{:href=>unwatch_url}
+  %a{:href=>unfollow_url}
     Unfollow
   to stop receiving these emails.
 }
@@ -191,8 +191,8 @@ was just <%= action_type %> by <%= updater_name %>
 
 See the card: <%= card_url %>
 
-You received this email because youre following "<%= watched %>".
-Visit <%= unwatch_url %> to stop receiving these emails.
+You received this email because you're following "<%= followed %>".
+Visit <%= unfollow_url %> to stop receiving these emails.
       }.strip
   end
 end

@@ -12,7 +12,8 @@ class CardController < ActionController::Base
   before_filter :load_id, :only => [ :read ]
   before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
-
+  
+  after_filter :view_logger if Wagn.config.view_logger
   layout nil
 
   attr_reader :card
@@ -45,16 +46,16 @@ class CardController < ActionController::Base
     send_file_inside Wagn.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
   end
   
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ## the following methods need to be merged into #update
-
-  def save_draft
-    if card.save_draft params[:card][:content]  
-      render :nothing=>true
-    else
-      render_errors
-    end
-  end
+  # #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # ## the following methods need to be merged into #update
+  #
+  # def save_draft
+  #   if card.save_draft params[:card][:content]
+  #     render :nothing=>true
+  #   else
+  #     render_errors
+  #   end
+  # end
 
 
   private
@@ -130,7 +131,23 @@ class CardController < ActionController::Base
     @card =  card.refresh
   end
 
-
+  def view_logger
+    log = []
+    log << (Card::Env.ajax? ? "YES" : "NO")
+    log << env["REMOTE_ADDR"]
+    log << Card::Auth.current_id
+    log << card.name
+    log << action_name
+    log << params['view'] || params['success[view]']
+    log << env["REQUEST_METHOD"]
+    log << status
+    log << env["REQUEST_URI"]    
+    log << env[DateTime.now]
+    File.open(File.join(Wagn.paths['view_log'].first,Date.today.to_s), "a") do |f|
+      f.puts log.join(', ')
+    end
+  end
+  
   protected
 
   def ajax?

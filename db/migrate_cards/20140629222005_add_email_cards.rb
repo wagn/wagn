@@ -6,20 +6,22 @@ class AddEmailCards < ActiveRecord::Migration
     contentedly do
       # create new cardtype for email templates
       Card.create! :name=>"Email template", :codename=>:email_template, :type_id=>Card::CardtypeID
-      Card.create! :name=>"Email template+*type+*structure", :content=> "{{+*from}}\n{{+*to}}\n{{+*cc}}\n{{+*bcc}}\n{{+*subject}}\n{{+*html message}}\n{{+*text message}}\n{{+*attach}}"
+      Card.create! :name=>"Email template+*type+*structure", 
+          :content=>"{{+*from|titled}}\n{{+*to|titled}}\n{{+*cc|titled}}\n{{+*bcc|titled}}\n{{+*subject|titled}}\n{{+*html message|titled}}\n{{+*text message|titled}}\n{{+*attach|titled}})"
+      Card.create! :name=>"*text message+*right+*default", :type_code=>:plain_text
       if email_config=Card.fetch("email_config+*right+*structure")
         email_config.update_attributes( 
-          :content=>"{{+*from}}\n{{+*to}}\n{{+*cc}}\n{{+*bcc}}\n{{+*subject}}\n{{+*html message}}\n{{+*text message}}\n{{+*attach}})"
+          :content=>"{{+*from|titled}}\n{{+*to|titled}}\n{{+*cc|titled}}\n{{+*bcc|titled}}\n{{+*subject|titled}}\n{{+*html message|titled}}\n{{+*text message|titled}}\n{{+*attach|titled}})"
         )
       end
-      
+      Wagn::Cache.reset_global
       # create system email cards
       dir = "#{Wagn.gem_root}/db/migrate_cards/data/mailer"
       json = File.read( File.join( dir, 'mail_config.json' ))
       data = JSON.parse(json)
       data.each do |mail|
         mail = mail.symbolize_keys!
-        Card.create! :name=> mail[:name], :codename=>mail[:codename], :type=>:email_template
+        Card.create! :name=> mail[:name], :codename=>mail[:codename], :type_id=>Card::EmailTemplateID
         Card.create! :name=>"#{mail[:name]}+*html message", :content=>File.read( File.join( dir, "#{mail[:codename]}.html" ))
         Card.create! :name=>"#{mail[:name]}+*text message", :content=>File.read( File.join( dir, "#{mail[:codename]}.txt" ))
         Card.create! :name=>"#{mail[:name]}+*subject", :content=>mail[:subject] 

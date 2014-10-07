@@ -104,7 +104,7 @@ describe Card::Set::All::Fetch do
       end
 
       it "prefers db cards to pattern virtual cards" do
-        c1=Card.create!(:name => "y+*right+*structure", :db_content => "Formatted Content")
+        c1=Card.create!(:name => "y+*right+*structure", :content => "Formatted Content")
         c2=Card.create!(:name => "a+y", :content => "DB Content")
         card = Card.fetch("a+y")
         expect(card.virtual?).to be_falsey

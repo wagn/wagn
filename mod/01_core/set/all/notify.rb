@@ -1,28 +1,73 @@
 
-def stash_followers card_id, followers
-  act_card.follower_stash ||= {}
-  act_card.follower_stash[card_id] = card_followers
+class FollowerStash  
+  def initialize card=nil
+    @followed_affected_cards = Hash.new { |h,v| h[v]=[] } 
+    @visited = ::Set.new
+    add_affected_card(card) if card
+  end
+    
+  def add_affected_card card
+    if !@visited.include? card.name
+      @visited.add card.name
+      Card.search( :plus=>[{:codename=> "following"}, 
+                           {:link_to=>card.name}     ]
+                 ).each do |follower|
+                   notify follower, :of => card.name
+                 end
+      #{:link_to=>{:name=>['in', card.name, card.type_name]}}]
+      Card.search( :plus=>[{:codename=> "following"}, 
+                           {:link_to=>card.type_name} ]
+                 ).each do |follower|
+                  notify follower, :of => card.type_name
+                end
+      Card.search(:include=>card.name).each do |includer| 
+        add_affected_card includer unless @visited.include? includer.name
+      end
+      if card.left and !@visited.include? card.left.name
+        add_affected_card card.left
+      end
+    end
+  end
+  
+  def followers
+    @followed_affected_cards.keys
+  end
+  
+  def each_follower_followed_pair  # "follower" is a card object, "followed" a card name
+    @followed_affected_cards.each do |user, card_names|
+      yield(user,card_names.first)
+    end
+  end
+  
+  private
+  
+  def notify follower, because
+    @followed_affected_cards[follower] << because[:of]
+  end
+  
 end
 
 def act_card
   @supercard || self
 end
 
-event :record_followers, :after=>:approve, :on=>:delete do
-  stash_followers id, card_followers
+event :stash_followers, :after=>:approve, :on=>:delete do
+  act_card.follower_stash ||=  FollowerStash.new
+  act_card.follower_stash.add_affected_card self
 end
 
 event :notify_followers, :after=>:extend, :when=>proc{ |c| !c.supercard }  do
   begin
     return unless @current_act
     @current_act.reload
+    @follower_stash ||= FollowerStash.new
 
-    followers = @current_act.actions.map do |a|
-       (@follower_stash and @follower_stash[a.card_id]) || (a.card and a.card.card_followers)
-    end.compact.flatten.uniq
-    followers.each do |w|
-      if w.account
-        w.account.send_change_notice @current_act #, self
+    @current_act.actions.each do |a|
+      @follower_stash.add_affected_card a.card
+    end
+    @follower_stash.each_follower_followed_pair do |follower, followed|
+      if follower.account
+        follower.account.send_change_notice @current_act, followed
       end
     end
   rescue =>e  #this error handling should apply to all extend callback exceptions

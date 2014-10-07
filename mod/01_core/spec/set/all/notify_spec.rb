@@ -190,7 +190,7 @@ another card with subcards+s2 created
 
 See the card: /another_card_with_subcards
 
-You received this email because youre following " cards".
+You received this email because you're following " cards".
 Visit /update/+*following?drop_item= to stop receiving these emails.})
     end
   end

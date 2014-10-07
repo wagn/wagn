@@ -255,12 +255,13 @@ class Card
     def content_field form, options={}
       @form = form
       @nested = options[:nested]
-      #revision_tracking = if card && !card.new_card? && !options[:skip_rev_id]
-        #form.hidden_field :current_revision_id, :class=>'current_revision_id'
-        #hidden_field_tag 'current_revision_id', card.actions.last.id, :class=>'current_revision_id'  #ACT<revision>
-        #end
+      card.last_action_id_before_edit = card.last_action_id
+      revision_tracking = if card && !card.new_card? && !options[:skip_rev_id]
+        form.hidden_field :last_action_id_before_edit, :class=>'current_revision_id'
+        #hidden_field_tag 'card[last_action_id_before_edit]', card.last_action_id, :class=>'current_revision_id'
+      end
       %{
-        #{ #revision_tracking 
+        #{ revision_tracking 
          }
         #{ _render_editor options }
       }

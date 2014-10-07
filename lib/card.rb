@@ -29,8 +29,9 @@ class Card < ActiveRecord::Base
   attr_accessor :action, :supercard, :current_act, :current_action, 
     :comment, :comment_author,    # obviated soon
     :update_referencers,           # wrong mechanism for this
-    :follower_stash
-
+    :follower_stash,
+    :last_action_id_before_edit
+    
   define_callbacks :approve, :store, :extend
   
   before_validation :approve

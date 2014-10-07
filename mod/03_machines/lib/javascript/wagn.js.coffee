@@ -109,13 +109,17 @@ jQuery.fn.extend {
       id = slot.data 'cardId'
       reportee = ''
 
-    #might be better to put this href base in the html
-
-    $.ajax wagn.rootPath + '/card/save_draft/~' + id, {
-      data : { 'card[content]' : @val() },
-      type : 'POST',
-      success: () -> slot.report 'draft saved' + reportee
+    # #might be better to put this href base in the html
+    submit_url  = wagn.rootPath + '/update/~' + id
+    form_data = $('#edit_card_'+id).serializeArray().reduce( ((obj, item) ->
+      obj[item.name] = item.value
+      return obj
+    ), { 'draft' : 'true', 'success[view]' : 'blank'});
+    $.ajax submit_url, {
+      data : form_data,
+      type : 'POST'
     }
+    ##{ 'card[content]' : @val() },
 
   setContentFieldsFromMap: (map) ->
     map = wagn.editorContentFunctionMap unless map?

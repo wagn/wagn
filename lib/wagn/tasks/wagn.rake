@@ -247,7 +247,7 @@ namespace :wagn do
       
       # add a fourth line to the raw content of each image (or file) to identify it as a mod file
       Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
-        card.update_attributes :db_content=>card.db_content + "\nstandard"      
+        card.update_attributes :content=>card.db_content + "\nstandard"      
       end
     end
 

@@ -105,9 +105,9 @@ end
 
 def before_post_attach
 #  Rails.logger.info "bpa called for #{name}"
+
   at=self.attach
   at.instance_write :file_name, at.original_filename
-
   Card::ImageID == (type_id || Card.fetch_id( @type_args[:type] ) )
   # returning true enables thumnail creation
 end

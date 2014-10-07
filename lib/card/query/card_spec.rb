@@ -388,7 +388,6 @@ class Card
         cardspec = CardSpec.build( args )
         merge field(:cond) => cardspec.merge(val)
         self.joins.merge! cardspec.joins
-        self.sql.relevance_fields += cardspec.sql.relevance_fields
       end
 
       # def revision_spec(field, linkfield, val)
@@ -500,6 +499,7 @@ class Card
           when "create";          "#{table_alias}.created_at"
           when /^(name|alpha)$/;  "LOWER( #{table_alias}.key )"
           when 'content';         "#{table_alias}.db_content"
+          when "relevance";       "#{table_alias}.updated_at" #deprecated            
           else
             safe_sql(key)
           end

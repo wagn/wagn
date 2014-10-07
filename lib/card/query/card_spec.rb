@@ -13,7 +13,7 @@ class Card
         :ignore          => %w{ prepend append view params vars size }
       }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
     
-      DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" } 
+      DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
       CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
     
       attr_reader :sql, :query, :rawspec, :selfname
@@ -388,7 +388,6 @@ class Card
         cardspec = CardSpec.build( args )
         merge field(:cond) => cardspec.merge(val)
         self.joins.merge! cardspec.joins
-        #self.sql.relevance_fields += cardspec.sql.relevance_fields  #ACT
       end
 
       # def revision_spec(field, linkfield, val)
@@ -500,6 +499,7 @@ class Card
           when "create";          "#{table_alias}.created_at"
           when /^(name|alpha)$/;  "LOWER( #{table_alias}.key )"
           when 'content';         "#{table_alias}.db_content"
+          when "relevance";       "#{table_alias}.updated_at" #deprecated            
           else
             safe_sql(key)
           end

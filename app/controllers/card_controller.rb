@@ -136,13 +136,13 @@ class CardController < ActionController::Base
     log << (Card::Env.ajax? ? "YES" : "NO")
     log << env["REMOTE_ADDR"]
     log << Card::Auth.current_id
-    log << card.name
+    log << "\"#{card.name}\""
     log << action_name
     log << params['view'] || params['success[view]']
     log << env["REQUEST_METHOD"]
     log << status
     log << env["REQUEST_URI"]    
-    log << env[DateTime.now]
+    log << env[DateTime.now.to_s]
     File.open(File.join(Wagn.paths['view_log'].first,Date.today.to_s), "a") do |f|
       f.puts log.join(', ')
     end

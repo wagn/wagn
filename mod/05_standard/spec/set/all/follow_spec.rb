@@ -8,78 +8,71 @@ describe Card do
   end
 end
 
-#FIXME outdated tests
+
+describe "Card::Set::All::Follow" do
+  def expect_user user_name
+    expect(Card.fetch(user_name).account)
+  end
+
+  def be_notified_of card_name
+    receive(:send_change_notice).with(kind_of(Card::Act), card_name)
+  end
+
+  context "when following cards" do
+    before do
+      Card::Auth.current_id = Card['john'].id
+      Timecop.travel(Wagn.future_stamp)  # make sure we're ahead of all the test data
+    end
+  
+    def expect_notice_for card_name
+      expect_any_instance_of(Card::Set::Right::Account).to receive(:send_change_notice).with(kind_of(Card::Act), card_name)
+    end
+    
+    it "sends notifications of edits" do
+      expect_user("Sara").to be_notified_of "Sara Following"
+      Card["Sara Following"].update_attributes :content => "A new change"
+    end
+  
+    it "does not send notification to author of change" do
+      expect_user("John").not_to receive(:send_change_notice)
+      Card["All Eyes On Me"].update_attributes :content => "edit by John"
+    end
+  end
+  
+  context "when following cardtypes" do
+    it "sends notifications of additions" do
+      new_card = Card.new :name => "Microscope", :type => "Optic"
+      expect_user("Sara").to be_notified_of "Optic"
+      new_card.save!
+    end
+
+    it "sends notification of updates" do
+      expect_user("Sara").to be_notified_of "Optic"
+      Card["Sunglasses"].update_attributes :content => 'updated content'
+    end
+    
+    it "sends only one notification per user"  do
+      expect_user("Sara").to receive(:send_change_notice).exactly(1)
+      Card["Google glass"].update_attributes :content => 'updated content'
+    end
+  end
 
 
-# the old mailer change_notice method used below, need a new way to test this
-# def change_notice watcher, watched_card, action, watched, nested_notifications
-#   watched_card.format(:format=>:email)._render_change_notice(
-#             :watcher=>watcher, :watched=>watched.to_s, :action=>action, :subedits=>nested_notifications )
-# end
+  context "when following trunk" do
+    before do
+      Timecop.travel(Wagn.future_stamp)  # make sure we're ahead of all the test data
 
-# describe "On Card Changes" do
-#   before do
-#     Card::Auth.current_id = Card['john'].id
-#     Timecop.travel(Wagn.future_stamp)  # make sure we're ahead of all the test data
-#   end
-#
-#   it "sends notifications of edits" do
-#     double(Card::Mailer).change_notice( Card['Sara'].id, Card["Sara Watching"], "updated", "Sara Watching", nil )
-#     Card["Sara Watching"].update_attributes :content => "A new change"
-#   end
-#
-#   it "sends notifications of additions" do
-#     new_card = Card.new :name => "Microscope", :type => "Optic"
-#     double(Card::Mailer).change_notice( Card['Sara'].id, new_card,"created", "Optic", nil  )
-#     new_card.save!
-#   end
-#
-#   it "sends notification of updates" do
-#     #  Card::EmailHtmlFormat.any_instance.should_receive('_render_change_notice').with( {watcher: is_a(Integer), watched:"Optic", action: "updated"})
-#      #   expect_any_instance_of(Card::HtmlFormat).to receive('_render_change_notice')
-#
-#     double(Card::Mailer).change_notice( is_a(Integer), Card["Sunglasses"], "updated", "Optic", nil)
-#     Card["Sunglasses"].update_attributes :content => 'updated content'
-#   end
-#
-#   it "does not send notification to author of change" do
-#     double(Card::Mailer).change_notice.with_any_args.times(any_times) do
-#       |*a| expect(a[0]).not_to eq(Card::Auth.current_id)
-#     end
-#
-#     Card["All Eyes On Me"].update_attributes :content => "edit by John"
-#   end
-#
-#   it "does include author in wathers" do
-#      expect(Card["All Eyes On Me"].watchers.member?(Card::Auth.current_id)).to be_truthy
-#   end
-# end
-#
-#
-# describe "Trunk watcher notificatione" do
-#   before do
-#     Timecop.travel(Wagn.future_stamp)  # make sure we're ahead of all the test data
-#
-#     Card.create :type=>'Book', :name=>'Ulysses'
-#     expect(@ulyss =Card['Ulysses']).to be
-#     watchers_card = Card.fetch "Ulysses+*watchers", :new=>{}
-#     c = Card['joe camel']
-#     watchers_card << c
-#     @jc_id = c.id
-#     watchers_card.save
-#
-#     watchers_card = Card.fetch "Book+*watchers", :new=>{}
-#     c = Card['joe admin']
-#     watchers_card << c
-#     @ja_id = c.id
-#     watchers_card.save
-#   end
-#
-#   it "sends notification to Joe Camel" do
-#     name = "Ulysses+author"
-#     double(Card::Mailer).change_notice( @ja_id, @ulyss, "updated", 'Book' , [[name, "created"]], is_a(Card))
-#     double(Card::Mailer).change_notice( @jc_id, @ulyss, "updated", @ulyss.name , [[name, "created"]], is_a(Card))
-#     c=Card.create :name=>name, :content => "James Joyce"
-#   end
-#
-# end
+      Card.create :type=>'Book', :name=>'Ulysses'
+      expect(Card['Ulysses']).to be
+      Card.create :name=> 'joe camel+*following', :content=>'[[Ulysses]]'
+      Card.create :name=> 'joe admin+*following', :content=>'[[Book]]'
+    end
+
+    it "sends notification to Joe Camel" do
+      name = "Ulysses+author"
+      expect_user("joe admin").to be_notified_of "Book"
+      expect_user("joe camel").to be_notified_of "Ulysses"
+      Card.create :name=>name, :content => "James Joyce"
+    end
+  end
+end

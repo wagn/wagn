@@ -46,18 +46,6 @@ class CardController < ActionController::Base
     send_file_inside Wagn.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
   end
   
-  # #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # ## the following methods need to be merged into #update
-  #
-  # def save_draft
-  #   if card.save_draft params[:card][:content]
-  #     render :nothing=>true
-  #   else
-  #     render_errors
-  #   end
-  # end
-
-
   private
   
   # make sure that filenname doesn't leave allowed_path using ".."

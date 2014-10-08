@@ -129,7 +129,7 @@ end
 
 
 event :save_draft, :before=>:store, :on=>:update, :when=>proc{ |c| Env.params['draft'] == 'true' } do
-  save_content_draft Env.params['card[content]']
+  save_content_draft content
   abort :success
 end
 

@@ -1,49 +1,17 @@
 ::Card.error_codes[:conflict] = [:conflict, 409]
 
 def content
-  #binding.pry
   db_content or (new_card? && template.db_content)
-#  if new_card? || selected_action_id == last_action_id
-  #return db_content
-  # else
-  #   return revision(selected_action_id)[:db_content]
-  # end
- # byebug
- #old: current_revision.content
-  # if new_card?
-  #   db_content
-  # elsif template && template.db_content.present?
-  #   template.db_content
-  # end
-  # if db_content.nil? && new_card?
-  #   template.db_content
-  # else
-  #   db_content
-  # end
-  # # else
-  #   db_content
-  # end
 end
 
 def selected_content  
-  content  #not sure whether this should be the standard behavior of content
+  content  #ACT #FIXME this is only used in attach.rb. probably we should use selected_content_action here
 end
 
-# def db_content=(value)
-#   #aattribute_will_change!('content') if self.db_content != value
-#   #write_attribute(:db_content, value)
-#   self[:db_content] = value
-# end
-
-#content is not part of the db so we have to add tracking
 def content=(value)
-  #binding.pry
-  #attribute_will_change!('content') if db_content != value
   self.db_content = value
 end
-# def content_changed?
-#   changed.include?('content')
-# end
+
 
 
 def raw_content
@@ -179,7 +147,7 @@ event :protect_structured_content, :before=>:approve, :on=>:update, :changed=>:d
 end
 
 
-event :detect_conflict, :before=>:approve, :on=>:update do   #ACT
+event :detect_conflict, :before=>:approve, :on=>:update do
   if last_action_id_before_edit and last_action_id_before_edit.to_i != last_action_id
     errors.add :conflict, "changes not based on latest revision"
   end

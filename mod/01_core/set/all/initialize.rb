@@ -21,8 +21,8 @@ def initialize args={}
     :type_id   => args[       'type_id'  ]
   }
   
-  args['db_content'] = args.delete('content')
-  
+  args['db_content'] = args.delete('content') if args['content']
+
   #FIXME -- too much of the above is duplicated by assign_attributes (tracked_attributes.rb)
 
   @supercard = args.delete 'supercard' # must come before name =

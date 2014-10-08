@@ -70,8 +70,8 @@ def store_changes
   @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
   return unless @current_action
   if @changed_fields.present?
-    @changed_fields.each{ |f| @current_action.changes.create :field => f, :value => self[f] }
-    #@changed_fields.each{ |f| Card::Change.create :field => f, :value => self[f], :card_action_id=>@current_action.id }
+    #@changed_fields.each{ |f| @current_action.changes.build :field => f, :value => self[f] }
+    @changed_fields.each{ |f| Card::Change.create :field => f, :value => self[f], :card_action_id=>@current_action.id }
   elsif @current_action and @current_action.changes.empty?
     @current_action.delete
   end
@@ -81,7 +81,7 @@ end
 
 def store
   run_callbacks :store do
-    yield
+    yield #unless @draft
     store_changes
     @virtual = false
   end
@@ -171,7 +171,7 @@ end
 
 event :store_subcards, :after=>:store do
   subcards.each do |key, sub|
-    sub.save! :validate=>false
+    sub.save! :validate=>false #unless @draft
   end
 end
 

@@ -151,22 +151,11 @@ def ok_to_read
 end
 
 
-def send_change_notice act
+def send_change_notice act, followed_card_name
   changed_card = Card.find(act.card_id)
-  watching = left.fetch(:trait=>:following).item_names
-  watched = if watching.include? changed_card.name
-    changed_card.name
-  elsif  watching.include? changed_card.type_name
-    changed_card.type_name
-  elsif parent = self.left
-    while parent.left and !watching.include? parent.name
-      parent = parent.left
-    end
-    parent.name
-  end
   
-  args = { :watcher=>left.name, :watched=>watched }  
-  html_msg =changed_card.format(:format=>:email_html).render_change_notice(args)
+  args = { :follower=>left.name, :followed=>followed_card_name }  
+  html_msg = changed_card.format(:format=>:email_html).render_change_notice(args)
   action_type = (self_action = act.action_on(act.card_id) and self_action.action_type) || act.actions.first.action_type
 
   if html_msg.present?

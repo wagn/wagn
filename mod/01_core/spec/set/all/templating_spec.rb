@@ -67,6 +67,10 @@ describe Card::Set::All::Templating do
     it "should have default content" do
       expect(Card['Jim+birthday'].content).to eq('Today!')
     end
+    
+    it "should apply to new cards" do
+      expect(Card.new(:name=>"Pete+birthday").content).to eq('Today!')
+    end
   end
 
   describe "with type structure" do

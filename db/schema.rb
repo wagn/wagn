@@ -21,6 +21,9 @@ ActiveRecord::Schema.define(:version => 20141001105348) do
     t.boolean "draft"
   end
 
+  add_index "card_actions", ["card_act_id"], :name => "card_act_id_index"
+  add_index "card_actions", ["card_id"], :name => "card_id_index"
+
   create_table "card_acts", :force => true do |t|
     t.integer  "card_id"
     t.integer  "actor_id"
@@ -28,11 +31,16 @@ ActiveRecord::Schema.define(:version => 20141001105348) do
     t.string   "ip_address"
   end
 
+  add_index "card_acts", ["actor_id"], :name => "actor_id_index"
+  add_index "card_acts", ["card_id"], :name => "card_id_index"
+
   create_table "card_changes", :force => true do |t|
     t.integer "card_action_id"
     t.integer "field"
     t.text    "value"
   end
+
+  add_index "card_changes", ["card_action_id"], :name => "card_action_id_index"
 
   create_table "card_references", :force => true do |t|
     t.integer "referer_id",               :default => 0,  :null => false

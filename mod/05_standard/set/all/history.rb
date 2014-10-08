@@ -2,28 +2,39 @@ REVISIONS_PER_PAGE = Wagn.config.revisions_per_page
 
 # must be called on all actions and before :set_name, :process_subcards and :validate_delete_children
 def create_act_and_action
-  #@current_act = (@supercard ? @supercard.current_act : Card::Act.create(:ip_address=>Env.ip)) #acts.build(:ip_address=>Env.ip
-  #@current_action = actions.build(:action_type=>@action, :card_act_id=>@current_act.id)
   @current_act = (@supercard ? @supercard.current_act : acts.build(:ip_address=>Env.ip))
-  @current_action = actions.build(:action_type=>@action)
+  @current_action = actions.build(:action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
   @current_action.act = @current_act
-
+  
+  # @current_act = (@supercard ? @supercard.current_act : Card::Act.new(:ip_address=>Env.ip))
+  # if !@supercard
+  #   @current_act.card = self
+  # end
+  # @current_action = @current_act.actions.build(:action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
+  # @current_action.card = self
+  
   if (@supercard and @supercard !=self)
     @current_action.super_action = @supercard.current_action
   end
 end
+
+
 
 event(:create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save)   { create_act_and_action }
 event(:create_act_and_action_for_delete, :before =>:validate_delete_children, :on=>:delete) { create_act_and_action }
 
 
 event :remove_empty_act, :after=>:extend do
+  # if not @supercard and not @current_act.actions.empty?
+  #   @current_act.save
+  # end
   @current_act.reload
   if not @supercard and @current_act.actions.empty?
      @current_act.delete
      @current_act = nil
-  end
+   end
 end
+
 
 
 event :rollback, :before=>:approve, :on=>:update, :when=>proc{ |c| Env.params['action_ids'] and Env.params['action_ids'].class == Array} do
@@ -51,7 +62,8 @@ end
 
 def intrusive_acts  # all acts with actions on self and on cards included in self
   @intrusive_acts ||= begin
-    Act.joins(:actions).where('card_actions.card_id IN (:card_ids)', {:card_ids => (included_card_ids << id)}).uniq.order(:id).reverse_order
+    Act.joins(:actions).where('card_actions.card_id IN (:card_ids) AND ( (draft = 0 OR draft IS null) OR actor_id = :current_user_id)' , 
+    {:card_ids => (included_card_ids << id), :current_user_id=>Card::Auth.current_id }).uniq.order(:id).reverse_order
   end
 end
 
@@ -253,9 +265,5 @@ format :html do
     "| " +  link_to_view( (hide_diff ? "Show" : "Hide") + " changes", :act_expanded, 
       :path_opts=>args.merge(:hide_diff=>!hide_diff), 
       :class=>'slotter', :remote=>true )
-  end
-  
-  def render_haml locals={}, &block
-    Haml::Engine.new(block.call).render(binding, locals)
   end
 end

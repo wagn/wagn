@@ -7,8 +7,8 @@ describe Card::Set::All::Collection do
     end
 
     it "returns list of card names for search" do
-      c = Card.new( :name=>"foo", :type=>"Search", :content => %[{"name":"Z"}])
-      expect(c.item_names).to eq(["Z"])
+      card = Card.new( :name=>"foo", :type=>"Search", :content => %[{"name":"Z"}])
+      expect(card.item_names).to eq(["Z"])
     end
 
     it "handles searches relative to context card" do

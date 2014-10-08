@@ -158,5 +158,40 @@ describe Card::Set::All::Notify do
       card = Card.create! :name=>'new card'
       expect(card.format(:format=>:text).render_change_notice).not_to match /<\w+>/
     end
+    it 'creates well formatted text message' do
+      name = "another card with subcards"
+      content = "main content {{+s1}}  {{+s2}}"
+      sub1_content = 'new content of subcard 1'
+      sub2_content = 'new content of subcard 2'
+      Card::Auth.as_bot do
+        @card = Card.create!(:name=>name, :content=>content,
+                             :subcards=>{ '+s1'=>{:content=>sub1_content},
+                                          '+s2'=>{:content=>sub2_content} })
+      end
+      result =  @card.format(:format=>:text).render_change_notice
+      expect(result).to eq(%{Dear My Wagn user
+
+"another card with subcards"
+was just created by Joe User
+   cardtype: Basic
+   content: main content {{+s1}}  {{+s2}}
+
+This update included the following changes:
+
+another card with subcards+s1 created
+   cardtype: Basic
+   content: new content of subcard 1
+
+
+another card with subcards+s2 created
+   cardtype: Basic
+   content: new content of subcard 2
+
+
+See the card: /another_card_with_subcards
+
+You received this email because you're following " cards".
+Visit /update/+*following?drop_item= to stop receiving these emails.})
+    end
   end
 end

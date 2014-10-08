@@ -416,12 +416,15 @@ format :html do
   end
 
   view :conflict, :error_code=>409 do |args|
-    load_revisions
+    # require 'pry'
+    # binding.pry
     wrap args.merge( :slot_class=>'error-view' ) do
-      %{<strong>Conflict!</strong><span class="new-current-revision-id">#{@revision.id}</span>
-        <div>#{ link_to_page @revision.creator.name } has also been making changes.</div>
+      %{<strong>Conflict!</strong><span class="new-current-revision-id">#{card.last_action_id}</span>
+        <div>#{ link_to_page card.last_action.act.actor.name } has also been making changes.</div>
         <div>Please examine below, resolve above, and re-submit.</div>
-        #{ wrap do |args| _render_diff end } }
+        #{ #wrap do |args| _render_act_expanded :act=>card.current_act end } 
+        }
+      }
     end
   end
 

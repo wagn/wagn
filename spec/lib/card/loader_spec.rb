@@ -1,3 +1,4 @@
+=begin
 describe Card::Loader do
   # let(:card_double) { double "Card" }
   # let(:pat_all_double) { proxy Card::AllSet }

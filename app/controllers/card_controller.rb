@@ -13,7 +13,11 @@ class CardController < ActionController::Base
   before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
   
-  after_filter :view_logger if Wagn.config.view_logger
+  if Wagn.config.view_logger
+    require 'csv'
+    after_filter :view_logger 
+  end
+  
   layout nil
 
   attr_reader :card
@@ -132,7 +136,7 @@ class CardController < ActionController::Base
     log << env["REQUEST_URI"]    
     log << DateTime.now.to_s
     File.open(File.join(Wagn.paths['view_log'].first,Date.today.to_s), "a") do |f|
-      f.puts log.join(', ')
+      f.write CSV.generate_line(log)
     end
   end
   

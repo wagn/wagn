@@ -67,6 +67,7 @@ module Wagn
         
         config.token_expiry          = 2.days
         config.revisions_per_page    = 10
+        config.view_logger           = false
         
         config
       end
@@ -96,6 +97,7 @@ module Wagn
         paths.add 'files'
         paths.add 'tmp/set'
         paths.add 'tmp/set_pattern'
+        paths['view_log'] = ['log/']
         
         paths
       end
@@ -114,9 +116,9 @@ module Wagn
 
     def load_tasks(app=self)
       super
-      unless approot_is_gemroot?
-        Rake::Task["db:schema:dump"].clear
-      end
+#      unless approot_is_gemroot?
+#        Rake::Task["db:schema:dump"].clear
+#      end
       self
     end
   end

@@ -20,7 +20,7 @@ describe Card::Set::All::History do
     context 'for single card' do
       before do
         @card = Card::Auth.as_bot do
-          Card.create :name=>"single card", :db_content=>content
+          Card.create :name=>"single card", :content=>content
         end
       end
         
@@ -36,11 +36,11 @@ describe Card::Set::All::History do
       
       context 'when updated' do
         it 'adds no act if nothing changed' do
-          @card.update_attributes  :name=>"single card", :db_content=>content
+          @card.update_attributes  :name=>"single card", :content=>content
           expect(Card::Act.count).to eq(act_start_cnt+1)
         end
         it 'adds new act' do
-          @card.update_attributes :db_content=>"new content"
+          @card.update_attributes :content=>"new content"
           expect(Card::Act.count).to eq(act_start_cnt+2)
         end
       end
@@ -67,7 +67,7 @@ describe Card::Set::All::History do
     context 'for subcard' do
       before do
         Card::Auth.as_bot do
-          @card = Card.create :name=>"left", :subcards=>{"+right" =>{ :content=>content, :db_content=>content}}
+          @card = Card.create :name=>"left", :subcards=>{"+right" =>{ :content=>content}}
           @left_action = act.actions[0]
           @right_action = act.actions[2]
           @plus_action = act.actions[1]
@@ -110,7 +110,7 @@ describe Card::Set::All::History do
           expect(act.card).to eq(@card)
         end
         it 'adds action for subcard' do
-          @card.update_attributes :subcards=>{"+right"=>{:content=>"New content", :db_content=>"New Content"}}
+          @card.update_attributes :subcards=>{"+right"=>{:content=>"New content", :content=>"New Content"}}
           act = @card.acts.last
           expect(act.actions.count).to eq(1)
           expect(act.actions.last.action_type).to eq(:update)
@@ -122,7 +122,7 @@ describe Card::Set::All::History do
     context 'for plus card' do
       before do
         Card::Auth.as_bot do
-          @card = Card.create :name=>'left+right', :db_content=>content
+          @card = Card.create :name=>'left+right', :content=>content
           @left_action = act.actions[1]
           @plus_action = act.actions[0]
           @right_action = act.actions[2]

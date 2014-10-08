@@ -1,32 +1,17 @@
 ::Card.error_codes[:conflict] = [:conflict, 409]
 
 def content
-#  if new_card? || selected_action_id == last_action_id
-    return db_content
-  # else
-  #   return revision(selected_action_id)[:db_content]
-  # end
- # byebug
- #  if !new_card?
- #    db_content
- #    #old: current_revision.content
- #  elsif template && template.content.present?
- #    template.content
- #  end
+  db_content or (new_card? && template.db_content)
 end
 
 def selected_content  
-  content  #not sure whether this should be the standard behavior of content
+  content  #ACT #FIXME this is only used in attach.rb. probably we should use selected_content_action here
 end
 
-#content is not part of the db so we have to add tracking
 def content=(value)
-  attribute_will_change!('content') if db_content != value
   self.db_content = value
 end
-def content_changed?
-  changed.include?('content')
-end
+
 
 
 def raw_content
@@ -46,7 +31,7 @@ def selected_action
 end
 
 def selected_content_action_id
-  @selected_action_id || last_content_action_id
+  @selected_action_id ||  (@current_action and @current_action.new_content? and  @current_action.id) || last_content_action_id 
 end
 def selected_content_action
   Card::Action.find(selected_content_action_id)
@@ -57,7 +42,7 @@ def last_action_id
   last_action and last_action.id
 end
 def last_action
-  actions.last
+  actions.where('id IS NOT NULL').last
 end
 def last_content_action
   l_c = last_change_on(:db_content) and l_c.action
@@ -120,12 +105,16 @@ def updater
   Card[ updater_id ]
 end
 
+def clean_html?
+  true
+end
+
 
 def draft_acts
   drafts.created_by(Card::Auth.current_id).map(&:act)
 end
 
-def save_draft( content )
+def save_content_draft( content )
   clear_drafts
   acts.create do |act|
     act.actions.build(:draft => true, :card_id=>id).changes.build(:field=>:db_content, :value=>content)
@@ -138,8 +127,10 @@ def clear_drafts
   end
 end
 
-def clean_html?
-  true
+
+event :save_draft, :before=>:store, :on=>:update, :when=>proc{ |c| Env.params['draft'] == 'true' } do
+  save_content_draft Env.params['card[content]']
+  abort :success
 end
 
 
@@ -156,9 +147,8 @@ event :protect_structured_content, :before=>:approve, :on=>:update, :changed=>:d
 end
 
 
-# event :detect_conflict, :before=>:approve, :on=>:update do   #ACT
-#   if current_revision_id_changed?# && current_revision_id.to_i != current_revision_id_was.to_i
-#     @current_revision_id = current_revision_id_was
-#     errors.add :conflict, "changes not based on latest revision"
-#   end
-# end
+event :detect_conflict, :before=>:approve, :on=>:update do
+  if last_action_id_before_edit and last_action_id_before_edit.to_i != last_action_id
+    errors.add :conflict, "changes not based on latest revision"
+  end
+end

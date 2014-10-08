@@ -10,6 +10,13 @@ end
 
 #FIXME outdated tests
 
+
+# the old mailer change_notice method used below, need a new way to test this
+# def change_notice watcher, watched_card, action, watched, nested_notifications
+#   watched_card.format(:format=>:email)._render_change_notice(
+#             :watcher=>watcher, :watched=>watched.to_s, :action=>action, :subedits=>nested_notifications )
+# end
+
 # describe "On Card Changes" do
 #   before do
 #     Card::Auth.current_id = Card['john'].id

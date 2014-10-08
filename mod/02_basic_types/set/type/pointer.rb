@@ -164,7 +164,7 @@ end
 
 
 event :standardize_items, :before=>:approve, :on=>:save do
-  if content_changed?
+  if db_content_changed?
     self.content = item_names(:context=>:raw).map { |name| "[[#{name}]]" }.join "\n"
   end
 end

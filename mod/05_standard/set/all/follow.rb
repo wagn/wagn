@@ -43,23 +43,9 @@ format :html do
 end
 
 
-# event :notify_followers, :after=>:extend do
-# end
-
 
 def type_watched?; Auth.current.fetch(:trait=>:following, :new=>{}).include_item? type_card.cardname.url_key end
 def watched?;     Auth.current.fetch(:trait=>:following, :new=>{}).include_item? cardname.url_key end
 
-def card_followers
-  @card_followers ||= begin
-    cur_card = self
-    res = []
-    while cur_card do
-      res += Card.search :plus=>[{:codename=> "following"}, {:link_to=>{:name=>['in',cur_card.name, cur_card.type_name]}}]
-      cur_card = cur_card.left
-    end
-    res
-  end
-end
 
 

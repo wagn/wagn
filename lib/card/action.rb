@@ -32,23 +32,21 @@ class Card
   end
   
   def last_change_on(field, opts={})
-    field_index = Card::TRACKED_FIELDS.index(field.to_s)
-    if opts[:before] and opts[:before].kind_of? Card::Action
-      Change.joins(:action).where(
-          'card_actions.card_id = :card_id AND field = :field AND card_action_id < :action_id', 
-                            {:card_id=>id,        :field=>field_index,        :action_id=>opts[:before].id}
-        ).order(:id).last
-    elsif opts[:not_after] and opts[:not_after].kind_of? Card::Action
-      Change.joins(:action).where(
-          'card_actions.card_id = :card_id AND field = :field AND card_action_id <= :action_id', 
-                            {:card_id=>id,        :field=>field_index,         :action_id=>opts[:not_after].id}
-        ).order(:id).last
+    where_sql =  'card_actions.card_id = :card_id AND field = :field AND (draft = 0 OR draft IS NULL)'
+    where_sql += if opts[:before]
+      'AND card_action_id < :action_id'      
+    elsif opts[:not_after]
+      'AND card_action_id <= :action_id'
     else
-      Change.joins(:action).where(
-          'card_actions.card_id = :card_id AND field = :field', 
-                            {:card_id => id,      :field=>field_index}
-        ).order(:id).last
+      ''
     end
+    
+    action_arg = opts[:before] || opts[:not_after]
+    action_id =  (action_arg.kind_of?(Card::Action) && action_arg.id) or action_arg
+    field_index = Card::TRACKED_FIELDS.index(field.to_s)
+    Change.joins(:action).where(where_sql, 
+                          {:card_id=>id, :field=>field_index, :action_id=>action_id}
+      ).order(:id).last
   end
   
   def delete_old_actions
@@ -81,12 +79,6 @@ class Card
     
     def self.delete_cardless
       Card::Action.where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
-      #ActiveRecord::Base.connection.delete( "delete from card_actions where not exists " +
-      #  "( select name from cards where id = card_actions.card_id )"
-      #Card::Action.where(Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
-      # find_each do |a|
-      #   a.delete unless Card.exists?(a.card_id)
-      # end
     end
     
     def self.delete_old 

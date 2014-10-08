@@ -9,12 +9,13 @@ class FollowerStash
   def add_affected_card card
     if !@visited.include? card.name
       @visited.add card.name
+      # add card followers
       Card.search( :plus=>[{:codename=> "following"}, 
                            {:link_to=>card.name}     ]
                  ).each do |follower|
                    notify follower, :of => card.name
                  end
-      #{:link_to=>{:name=>['in', card.name, card.type_name]}}]
+      # add cardtype followers
       Card.search( :plus=>[{:codename=> "following"}, 
                            {:link_to=>card.type_name} ]
                  ).each do |follower|
@@ -23,8 +24,10 @@ class FollowerStash
       Card.search(:include=>card.name).each do |includer| 
         add_affected_card includer unless @visited.include? includer.name
       end
-      if card.left and !@visited.include? card.left.name
-        add_affected_card card.left
+      if card.left and !@visited.include?(card.left.name) and
+         includee_set = ::Set.new(Card.search(:included_by=>card.left.name).map(&:name)) and
+         !@visited.disjoint?(includee_set)
+            add_affected_card card.left
       end
     end
   end
@@ -66,7 +69,7 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c| !c.supercard }  do
       @follower_stash.add_affected_card a.card
     end
     @follower_stash.each_follower_followed_pair do |follower, followed|
-      if follower.account
+      if follower.account and follower != @current_act.actor
         follower.account.send_change_notice @current_act, followed
       end
     end

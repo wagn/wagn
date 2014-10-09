@@ -52,13 +52,6 @@ def attachment_format(ext)
       end
     end
   end   
-  # return nil unless ext.present? && attach
-  # return nil unless original_ext = attach_extension
-  # return original_ext if ['file', original_ext].member? ext
-  # exts = MIME::Types[attach.content_type]
-  # return nil unless exts
-  # return ext if exts.find {|mt| mt.extensions.member? ext }
-  # return exts[0].extensions[0]
 rescue => e
   Rails.logger.info "attachment_format issue: #{e.message}"
   nil
@@ -69,8 +62,8 @@ end
 
 def attachment_symlink_to(previous_action_id) # create filesystem links to previous revision
   if styles = case type_code
-        when 'File'; ['']
-        when 'Image'; STYLES
+        when :file; ['']
+        when :image; STYLES
       end
     save_action_id = selected_action_id
     links = {}
@@ -79,29 +72,11 @@ def attachment_symlink_to(previous_action_id) # create filesystem links to previ
     styles.each { |style|  links[style] = attach.path(style)          }
 
     self.selected_action_id = last_action_id
-    styles.each { |style|  File.symlink links[style], attach.path(style) }
+    styles.each { |style|  ::File.symlink links[style], attach.path(style) }
 
     self.selected_action_id = save_action_id
   end
 end
-# old: %(fold)
-# def attachment_link(rev_id) # create filesystem links to previous revision
-#   if styles = case type_code
-#         when 'File'; ['']
-#         when 'Image'; STYLES
-#       end
-#     save_rev_id = selected_revision_id
-#     links = {}
-#
-#     self.selected_revision_id = rev_id
-#     styles.each { |style|  links[style] = attach.path(style)          }
-#
-#     self.selected_revision_id = current_revision_id
-#     styles.each { |style|  File.link links[style], attach.path(style) }
-#
-#     self.selected_revision_id = save_rev_id
-#   end
-# end %(end)
 
 def before_post_attach
 #  Rails.logger.info "bpa called for #{name}"

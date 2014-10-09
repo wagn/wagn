@@ -416,14 +416,19 @@ format :html do
   end
 
   view :conflict, :error_code=>409 do |args|
-    # require 'pry'
-    # binding.pry
+    # FIXME: hack to get the conflicted update as a proper act for the diff view
+    card.current_act.save
+    action = card.actions.last
+    action.card_act_id = card.current_act.id
+    action.draft = true
+    action.save
+    card.store_changes
+    
     wrap args.merge( :slot_class=>'error-view' ) do
       %{<strong>Conflict!</strong><span class="new-current-revision-id">#{card.last_action_id}</span>
         <div>#{ link_to_page card.last_action.act.actor.name } has also been making changes.</div>
         <div>Please examine below, resolve above, and re-submit.</div>
-        #{ #wrap do |args| _render_act_expanded :act=>card.current_act end } 
-        }
+        #{ wrap do |args| _render_act_expanded :act=>card.current_act, :current_rev_nr => 0 end } 
       }
     end
   end

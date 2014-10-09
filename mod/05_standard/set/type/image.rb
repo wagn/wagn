@@ -35,8 +35,8 @@ format :html do
   view :content_changes do |args|
     out = ''
     size = args[:diff_type]==:summary ? :icon : :medium
-    if !args[:hide_diff] and args[:action]
-      card.selected_action_id=card.last_change_on(:db_content,:before=>args[:action]).card_action_id
+    if !args[:hide_diff] and args[:action] and last_change = card.last_change_on(:db_content,:before=>args[:action])
+      card.selected_action_id=last_change.card_action_id
       out << Card::Diff.render_added_chunk(_render_core(:size=>size))
     end
     card.selected_action_id=args[:action].id

@@ -5,7 +5,7 @@ def content
 end
 
 def selected_content  
-  content  #ACT #FIXME this is only used in attach.rb. probably we should use selected_content_action here
+  (last_change = last_change_on(:db_content,:not_after=> selected_action) and last_change.value) || content
 end
 
 def content=(value)
@@ -129,7 +129,7 @@ end
 
 
 event :save_draft, :before=>:store, :on=>:update, :when=>proc{ |c| Env.params['draft'] == 'true' } do
-  save_content_draft Env.params['card[content]']
+  save_content_draft content
   abort :success
 end
 

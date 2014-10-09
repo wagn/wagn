@@ -194,7 +194,7 @@ class Card
     
     def content_diff_builder
       @content_diff_builder ||= begin
-        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], :compare_html=>true)
+        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], :compare_html=>false)
       end
     end
     

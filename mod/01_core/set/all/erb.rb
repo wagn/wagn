@@ -4,7 +4,7 @@ format do
     a_binding ||= binding
     locals.each do |k,v|
       #a_binding.local_variable_set(k, v) # needs ruby 2.1
-      a_binding.eval("@#{k}=v")
+      a_binding.eval("@#{k}=#{v}")
     end
     ERB.new(template,nil,'-').result(a_binding)
   end

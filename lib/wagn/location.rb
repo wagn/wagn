@@ -41,6 +41,14 @@ module Wagn::Location
   def url_key_for_location(location)
     location.match( /\/([^\/]*$)/ ) ? $1 : nil
   end
+  
+  def save_interrupted_action uri
+    session[:interrupted_action] = uri
+  end
+  
+  def interrupted_action
+    session.delete :interrupted_action
+  end
 
    # -----------( urls and redirects from application.rb) ----------------
 

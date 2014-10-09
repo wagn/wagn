@@ -77,6 +77,11 @@ When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardnam
   end
 end
 
+When /^(.*) edits? "([^\"]*)" filling in "([^\"]*)"$/ do |username, cardname, content|
+  visit "/card/edit/#{cardname.to_name.url_key}"
+  fill_in 'card[content]', :with=>content
+end
+
 When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
@@ -134,6 +139,11 @@ When /I wait a sec/ do
   sleep 1
 end
 
+When /I wait (.+) seconds$/ do |period|
+  sleep period.to_i
+end
+
+
 Then /what/ do
   save_and_open_page
 end
@@ -184,6 +194,10 @@ When /^In (.*) I click "(.*)"$/ do |section, link|
   within scope_of(section) do
     click_link link
   end
+end
+
+Then /I submit$/ do
+    click_button("Submit")
 end
 
 When /^I hover over the main menu$/ do
@@ -248,8 +262,12 @@ Then /^I should see$/ do |text|
   page.should have_content(text)
 end
 
+Then /^I should see "([^\"]*)" in (.*)$/ do |text, css_class|
+  page.has_css?(".diff-#{css_class}", text: text)
+  #page.should have_content(text)
+end
+
 When /^I fill in "([^\"]*)" with$/ do |field, value|
   fill_in(field, :with => value)
 end
-
 

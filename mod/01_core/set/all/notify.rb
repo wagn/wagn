@@ -25,8 +25,8 @@ class FollowerStash
         add_affected_card includer unless @visited.include? includer.name
       end
       if card.left and !@visited.include?(card.left.name) and
-         includee_set = ::Set.new(Card.search(:included_by=>card.left.name).map(&:name)) and
-         !@visited.disjoint?(includee_set)
+         includee_set = Card.search(:included_by=>card.left.name).map(&:name) and
+         !@visited.intersection(includee_set).empty?
             add_affected_card card.left
       end
     end
@@ -99,10 +99,10 @@ format do
       :updater_name => act.actor.name,
       :card_url     => wagn_url(card),
       :change_url   => wagn_url("#{card.cardname.url_key}?view=history"), 
-      :unfollow_url  => wagn_url( "update/#{args[:follower].to_name.url_key}+#{Card[:following].cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" ),
+      :unfollow_url => wagn_url( "update/#{args[:follower].to_name.url_key}+#{Card[:following].cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" ),
       :updater_url  => wagn_url( act.actor ),
-      :follower      => args[:follower],
-      :followed      => (args[:followed] == card.cardname ? args[:followed] : "#{args[:followed]} cards"),
+      :follower     => args[:follower],
+      :followed     => args[:followed],
       :action_type  => action_on_card ? "#{action_on_card.action_type}d" : "updated",
       :salutation   => args[:follower] ? "Dear #{args[:follower]}" : "Dear #{Card.setting :title} user",
       :selfedits    => selfedits,
@@ -184,6 +184,14 @@ format do
 end
 
 format :email_html do
+  # def edit_info_for field, action
+  #   if field == :content and action.action_type == :update
+  #      wrap_list_item "content changes: #{render_content_changes :diff_type=>:summary, :action=>action}"
+  #   else
+  #     super
+  #   end
+  # end
+  
   def wrap_list list
     "<ul>#{list}</ul>\n"
   end
@@ -230,17 +238,17 @@ end
 format :text do    
   view :change_notice, :perms=>:none, :denial=>:blank do |args|
     render_template_with_change_notice_locals :erb, args, %{
-<%= salutation %>
+<%= @salutation %>
 
-"<%= card_name %>"
-was just <%= action_type %> by <%= updater_name %>
-<%= selfedits if selfedits.present? -%>
-<%= wrap_subedits subedits if subedits.present? -%>
+"<%= @card_name %>"
+was just <%= @action_type %> by <%= @updater_name %>
+<%= @selfedits if @selfedits.present? -%>
+<%= wrap_subedits @subedits if @subedits.present? -%>
 
-See the card: <%= card_url %>
+See the card: <%= @card_url %>
 
-You received this email because you're following "<%= followed %>".
-Visit <%= unfollow_url %> to stop receiving these emails.
+You received this email because you're following "<%= @followed %>".
+Visit <%= @unfollow_url %> to stop receiving these emails.
       }.strip
   end
 end

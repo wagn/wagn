@@ -508,6 +508,7 @@ format :html do
           or_signup = if Card.new(:type_id=>Card::SignupID).ok? :create
             "or #{ link_to 'sign up', wagn_url('account/signup') }"
           end
+          save_interrupted_action(request.env['REQUEST_URI'])
           "You have to #{ link_to 'sign in', wagn_url(':signin') } #{or_signup} #{to_task}"
         end
 

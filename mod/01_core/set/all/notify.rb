@@ -25,8 +25,8 @@ class FollowerStash
         add_affected_card includer unless @visited.include? includer.name
       end
       if card.left and !@visited.include?(card.left.name) and
-         includee_set = ::Set.new(Card.search(:included_by=>card.left.name).map(&:name)) and
-         !@visited.disjoint?(includee_set)
+         includee_set = Card.search(:included_by=>card.left.name).map(&:name) and
+         !@visited.intersection(includee_set).empty?
             add_affected_card card.left
       end
     end
@@ -184,6 +184,14 @@ format do
 end
 
 format :email_html do
+  # def edit_info_for field, action
+  #   if field == :content and action.action_type == :update
+  #      wrap_list_item "content changes: #{render_content_changes :diff_type=>:summary, :action=>action}"
+  #   else
+  #     super
+  #   end
+  # end
+  
   def wrap_list list
     "<ul>#{list}</ul>\n"
   end
@@ -230,17 +238,17 @@ end
 format :text do    
   view :change_notice, :perms=>:none, :denial=>:blank do |args|
     render_template_with_change_notice_locals :erb, args, %{
-<%= salutation %>
+<%= @salutation %>
 
-"<%= card_name %>"
-was just <%= action_type %> by <%= updater_name %>
-<%= selfedits if selfedits.present? -%>
-<%= wrap_subedits subedits if subedits.present? -%>
+"<%= @card_name %>"
+was just <%= @action_type %> by <%= @updater_name %>
+<%= @selfedits if selfedits.present? -%>
+<%= wrap_subedits @subedits if @subedits.present? -%>
 
-See the card: <%= card_url %>
+See the card: <%= @card_url %>
 
-You received this email because you're following "<%= followed %>".
-Visit <%= unfollow_url %> to stop receiving these emails.
+You received this email because you're following "<%= @followed %>".
+Visit <%= @unfollow_url %> to stop receiving these emails.
       }.strip
   end
 end

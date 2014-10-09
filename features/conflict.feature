@@ -23,6 +23,16 @@ Feature: Conflict
     And I should see "Oliver " in green
     And I should see "Stan" in red
 
+  Scenario: Two edits on a card at the same time but with the same change
+    When I edit "Duck Soup" filling in "Stan Laurel"
+    And I open a new window for Joe User
+    And I edit "Duck Soup" setting content to "Stan Laurel"
+    And I am signed out
+    And I wait a sec
+    And I am signed in as Joe Admin  
+    And I close window
+    And I submit
+    Then I'm not sure what I should see but at the moment I get a exception.
 
 
 

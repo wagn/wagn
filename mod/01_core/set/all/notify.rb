@@ -242,7 +242,7 @@ format :text do
 
 "<%= @card_name %>"
 was just <%= @action_type %> by <%= @updater_name %>
-<%= @selfedits if selfedits.present? -%>
+<%= @selfedits if @selfedits.present? -%>
 <%= wrap_subedits @subedits if @subedits.present? -%>
 
 See the card: <%= @card_url %>

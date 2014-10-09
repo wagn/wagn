@@ -23,11 +23,11 @@ def chunk_list #override to customize by set
 end
 
 def selected_action_id
-  @selected_action_id || (@current_action and @current_action.id) || last_action_id || 0
+  @selected_action_id || (@current_action and @current_action.id) || last_action_id 
 end
 
 def selected_action
-  Card::Action.find(selected_action_id)
+  selected_action_id and Card::Action.find(selected_action_id)
 end
 
 def selected_content_action_id

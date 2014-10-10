@@ -124,19 +124,21 @@ class CardController < ActionController::Base
   end
 
   def view_logger
-    log = []
-    log << (Card::Env.ajax? ? "YES" : "NO")
-    log << env["REMOTE_ADDR"]
-    log << Card::Auth.current_id
-    log << "\"#{card.name}\""
-    log << action_name
-    log << params['view'] || (s = params['success'] and  s['view'])
-    log << env["REQUEST_METHOD"]
-    log << status
-    log << env["REQUEST_URI"]    
-    log << DateTime.now.to_s
-    File.open(File.join(Wagn.paths['view_log'].first,Date.today.to_s), "a") do |f|
-      f.write CSV.generate_line(log)
+    unless env["REQUEST_URI"] =~ %r{^/files?/}
+      log = []
+      log << (Card::Env.ajax? ? "YES" : "NO")
+      log << env["REMOTE_ADDR"]
+      log << Card::Auth.current_id
+      log << "\"#{card.name}\""
+      log << action_name
+      log << params['view'] || (s = params['success'] and  s['view'])
+      log << env["REQUEST_METHOD"]
+      log << status
+      log << env["REQUEST_URI"]
+      log << DateTime.now.to_s
+      File.open(File.join(Wagn.paths['view_log'].first,Date.today.to_s), "a") do |f|
+        f.write CSV.generate_line(log)
+      end
     end
   end
   

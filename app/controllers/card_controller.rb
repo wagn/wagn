@@ -108,6 +108,7 @@ class CardController < ActionController::Base
           Card.fetch mark, :new=>opts
         end
       end
+    raise Wagn::NotFound unless @card
     @card.selected_action_id = (action=@card.find_action_by_params(params) and action.id)
     
     Card::Env[:main_name] = params[:main] || (card && card.name) || ''

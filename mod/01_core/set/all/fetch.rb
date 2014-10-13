@@ -21,6 +21,14 @@ module ClassMethods
   
   
   def fetch mark, opts={}
+    if String === mark
+      case mark
+      when /^\~(\d+)$/ # get by id
+        mark = $1.to_i 
+      when /^\:(\w+)$/ # get by codename
+        mark = $1.to_sym
+      end
+    end
     mark = Card::Codename[mark] if Symbol === mark # id from codename
 
     if mark.present?

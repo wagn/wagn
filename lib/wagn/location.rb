@@ -43,6 +43,7 @@ module Wagn::Location
   end
   
   def save_interrupted_action uri
+    uri = path(uri) if Hash == uri
     session[:interrupted_action] = uri
   end
   

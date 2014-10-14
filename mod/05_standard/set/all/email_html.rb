@@ -1,11 +1,18 @@
 format :email do
   
   def deliver args={}
+    delivery_method    = Wagn.config.action_mailer.delivery_method  || :smtp
+    smtp_settings      = Wagn.config.action_mailer.smtp_settings    || {}
+    perform_deliveries = if !Wagn.config.action_mailer.perform_deliveries.nil?
+       Wagn.config.action_mailer.perform_deliveries
+    else
+       true
+    end
+    delivery_method = :test unless perform_deliveries
     mail = _render_mail(args)
-    delivery_method = Wagn.config.action_mailer.delivery_method || :smtp
-    smtp_settings = Wagn.config.action_mailer.smtp_settings || {}
     mail.delivery_method(delivery_method, smtp_settings)
-    mail.deliver
+    mail.perform_deliveries = perform_deliveries 
+    mail.deliver 
   end
   
 

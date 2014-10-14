@@ -6,11 +6,15 @@ attr_accessor :email
 format :html do
 
   view :setup, :tags=>:unknown_ok, :perms=>lambda { |r| Auth.needs_setup? } do |args|
+    help_text = 'To get started, set up an account.'
+    if Wagn.config.action_mailer.perform_deliveries == false 
+      help_text += '<br>WARNING: Email delivery is turned off. Change settings in config/application.rb to send sign up notifications.'
+    end
     args.merge!( {
       :title=>'Welcome, Wagneer!',
       :optional_help=>:show,
       :optional_menu=>:never, 
-      :help_text=>'To get started, set up an account.',
+      :help_text=>help_text,
       :buttons => button_tag( 'Set up', :disable_with=>'Setting up' ),
       :hidden => { 
         :success => "REDIRECT: #{ Card.path_setting '/' }",

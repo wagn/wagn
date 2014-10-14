@@ -48,24 +48,26 @@ else
 
   case command
   when 'seed'
-    options = {}
+    envs = ['production']
     parser = OptionParser.new do |parser|
-      parser.banner = "Usage: wagn seed [options]\n\nCreate and seed the database specified in config/database.yml\n\n"
-      parser.on('--test-data', 'seed also the test database') do |test|
-        options[:prepare_test] = true
+      parser.banner = "Usage: wagn seed [options]\n\nCreate and seed the production database specified in config/database.yml\n\n"
+      parser.on('--production','-p', 'seed production database (default)') do
+        envs = ['test']
+      end
+      parser.on('--test','-t', 'seed test database') do
+        envs = ['test']
+      end
+      parser.on('--development', '-d', 'seed development database') do
+        envs = ['development']
+      end
+      parser.on('--all', '-a', 'seed production, test, and development database') do
+        envs = %w( production development test)          
       end
     end
     parser.parse!(ARGV)
-    
-    #load_rake_tasks  we can't load config/environment if the database doesn't exist, use config/application instead
-    require './config/application'
-    require 'wagn/migration_helper'
-    require 'rake'
-    Wagn::Application.load_tasks
-    Rake::Task['wagn:create'].invoke
-    if options[:prepare_test]
-      ENV['RELOAD_TEST_DATA'] = 'true'
-      Rake::Task['db:test:prepare'].invoke
+    envs.each do |env|
+      puts "env RAILS_ENV=#{env} bundle exec rake wagn:create"
+      puts `env RAILS_ENV=#{env} bundle exec rake wagn:create`
     end
   when 'update'
     load_rake_tasks

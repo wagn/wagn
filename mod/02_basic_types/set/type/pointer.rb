@@ -5,6 +5,19 @@ event :add_and_drop_items, :before=>:approve, :on=>:save do
 end
 
 format do
+
+  def add_multi_options options,selected_options
+    selected_options.each do |item|
+      add_single_options options,item
+    end
+  end
+  def add_single_options options,selected_option
+    c = Card.fetch selected_option,:new=>{}
+    if !c.real?
+      options.push c
+    end
+  end
+
   def wrap_item item, args={}
     item #no wrap in base    
   end
@@ -65,7 +78,9 @@ format :html do
   end
 
   view :checkbox do |args|
-    options = card.options.map do |option|
+    card_options = card.options
+    add_multi_options card_options,card.item_names
+    options = card_options.map do |option|
       checked = card.item_names.include?(option.name)
       id = "pointer-checkbox-#{option.cardname.key}"
       description = pointer_option_description option
@@ -83,13 +98,17 @@ format :html do
 
   view :multiselect do |args|
     selected_options = card.item_names.map{|i_n| (c=Card.fetch(i_n) and c.name) or i_n}
-    options = options_from_collection_for_select(card.options,:name,:name,selected_options)
+    card_options = card.options
+    add_multi_options card_options, selected_options
+    options = options_from_collection_for_select(card_options,:name,:name,selected_options)
     select_tag("pointer_multiselect", options, :multiple=>true, :class=>'pointer-multiselect')
   end
 
   view :radio do |args|
     input_name = "pointer_radio_button-#{card.key}"
-    options = card.options.map do |option|
+    card_options = card.options
+    add_single_options card_options,card.item_names.first
+    options = card_options.map do |option|
       checked = (option.name==card.item_names.first)
       id = "pointer-radio-#{option.cardname.key}"
       description = pointer_option_description option
@@ -107,6 +126,7 @@ format :html do
 
   view :select do |args|
     options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]}
+    options += [[card.item_names.first,card.item_names.first]]
     select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>'pointer-select')
   end
 

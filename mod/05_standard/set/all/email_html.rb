@@ -1,17 +1,7 @@
 format :email do
   
   def deliver args={}
-    delivery_method    = Wagn.config.action_mailer.delivery_method  || :smtp
-    smtp_settings      = Wagn.config.action_mailer.smtp_settings    || {}
-    perform_deliveries = if !Wagn.config.action_mailer.perform_deliveries.nil?
-       Wagn.config.action_mailer.perform_deliveries
-    else
-       true
-    end
-    delivery_method = :test unless perform_deliveries
     mail = _render_mail(args)
-    mail.delivery_method(delivery_method, smtp_settings)
-    mail.perform_deliveries = perform_deliveries 
     mail.deliver 
   end
   
@@ -36,8 +26,13 @@ format :email do
     html_message = args.delete(:html_message)
     attachment_list = args.delete(:attach)
     alternative = text_message.present? and html_message.present?
-    Mail.new(args) do
-    #mail = ActionMailer::Base.mail(args) do
+    Card::Mailer::Mail.new(args) do
+    #ActionMailer::Base.mail(args) do
+      method = Card::Mailer.delivery_method
+      delivery_method(method, Card::Mailer.send(:"#{method}_settings"))      
+      perform_deliveries    = Card::Mailer.perform_deliveries
+      raise_delivery_errors = Card::Mailer.raise_delivery_errors
+      
       if alternative 
         if attachment and !attachment_list.empty?
           content_type 'multipart/mixed'

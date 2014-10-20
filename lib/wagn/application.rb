@@ -27,6 +27,13 @@ module Wagn
       end
     end
     
+    initializer :load_mod_initializers,  :after => :load_wagn_config_initializers do
+      paths.add 'mod-initializers', :with=>'mod', :glob=>"**/initializers/*.rb"
+      config.paths['mod-initializers'].existent.sort.each do |initializer|
+        load(initializer)
+      end
+    end
+    
     class << self
       def inherited(base)
         Rails.application = base.instance
@@ -60,7 +67,7 @@ module Wagn
         config.recaptcha_public_key  = nil
         config.recaptcha_private_key = nil
         config.recaptcha_proxy       = nil
-        
+                
         config.email_defaults        = nil
         config.override_host         = nil
         config.override_protocol     = nil

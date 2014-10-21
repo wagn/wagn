@@ -6,18 +6,6 @@ end
 
 format do
 
-  def add_multi_options options,selected_options
-    selected_options.each do |item|
-      add_single_options options,item
-    end
-  end
-  def add_single_options options,selected_option
-    c = Card.fetch selected_option,:new=>{}
-    if !c.real?
-      options.push c
-    end
-  end
-
   def wrap_item item, args={}
     item #no wrap in base    
   end
@@ -78,9 +66,8 @@ format :html do
   end
 
   view :checkbox do |args|
-    card_options = card.options
-    add_multi_options card_options,card.item_names
-    options = card_options.map do |option|
+    
+    options = card.options(card.item_names).map do |option|
       checked = card.item_names.include?(option.name)
       id = "pointer-checkbox-#{option.cardname.key}"
       description = pointer_option_description option
@@ -98,17 +85,13 @@ format :html do
 
   view :multiselect do |args|
     selected_options = card.item_names.map{|i_n| (c=Card.fetch(i_n) and c.name) or i_n}
-    card_options = card.options
-    add_multi_options card_options, selected_options
-    options = options_from_collection_for_select(card_options,:name,:name,selected_options)
+    options = options_from_collection_for_select(card.options(selected_options),:name,:name,selected_options)
     select_tag("pointer_multiselect", options, :multiple=>true, :class=>'pointer-multiselect')
   end
 
   view :radio do |args|
     input_name = "pointer_radio_button-#{card.key}"
-    card_options = card.options
-    add_single_options card_options,card.item_names.first
-    options = card_options.map do |option|
+    options = card.options(card.item_names.first).map do |option|
       checked = (option.name==card.item_names.first)
       id = "pointer-radio-#{option.cardname.key}"
       description = pointer_option_description option
@@ -125,8 +108,7 @@ format :html do
   end
 
   view :select do |args|
-    options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]}
-    options += [[card.item_names.first,card.item_names.first]]
+    options = [["-- Select --",""]] + card.options(card.item_names.first).map{|x| [x.name,x.name]}
     select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>'pointer-select')
   end
 
@@ -266,12 +248,30 @@ def options_card
   self.rule_card :options
 end
 
-def options
-  if oc = options_card
+def options selected_options
+  
+  result_cards = if oc = options_card
     oc.item_cards :default_limit=>50, :context=>name
   else
     Card.search :sort=>'alpha', :limit=>50
   end
+  if selected_options
+    if selected_options.kind_of?(Array)
+      selected_options.each do |item|
+        add_option result_cards,item
+      end
+    else
+      add_option result_cards,selected_options
+    end
+  end
+  result_cards
 end
 
+
+def add_option options,selected_option
+  c = Card.fetch selected_option,:new=>{}
+  if !c.real?
+    options.push c
+  end
+end 
 

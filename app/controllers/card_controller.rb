@@ -129,7 +129,7 @@ class CardController < ActionController::Base
       log << (Card::Env.ajax? ? "YES" : "NO")
       log << env["REMOTE_ADDR"]
       log << Card::Auth.current_id
-      log << "\"#{card.name}\""
+      log << card.name
       log << action_name
       log << params['view'] || (s = params['success'] and  s['view'])
       log << env["REQUEST_METHOD"]

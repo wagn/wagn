@@ -26,7 +26,7 @@ format :email do
     html_message = args.delete(:html_message)
     attachment_list = args.delete(:attach)
     alternative = text_message.present? and html_message.present?
-    Card::Mailer::Mail.new(args) do
+    Mail.new(args) do
     #ActionMailer::Base.mail(args) do
       method = Card::Mailer.delivery_method
       delivery_method(method, Card::Mailer.send(:"#{method}_settings"))      

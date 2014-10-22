@@ -59,9 +59,8 @@ event :stash_followers, :after=>:approve, :on=>:delete do
   act_card.follower_stash.add_affected_card self
 end
 
-event :notify_followers, :after=>:extend, :when=>proc{ |c| !c.supercard }  do
+event :notify_followers, :after=>:extend, :when=>proc{ |c| !c.supercard and @current_act}  do
   begin
-    return unless @current_act
     @current_act.reload
     @follower_stash ||= FollowerStash.new
 

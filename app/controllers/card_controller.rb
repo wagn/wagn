@@ -13,9 +13,9 @@ class CardController < ActionController::Base
   before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
   
-  if Wagn.config.view_logger
+  if Wagn.config.request_logger
     require 'csv'
-    after_filter :view_logger 
+    after_filter :request_logger 
   end
   
   layout nil
@@ -123,7 +123,7 @@ class CardController < ActionController::Base
     @card =  card.refresh
   end
 
-  def view_logger
+  def request_logger
     unless env["REQUEST_URI"] =~ %r{^/files?/}
       log = []
       log << (Card::Env.ajax? ? "YES" : "NO")
@@ -136,7 +136,9 @@ class CardController < ActionController::Base
       log << status
       log << env["REQUEST_URI"]
       log << DateTime.now.to_s
-      File.open(File.join(Wagn.paths['view_log'].first,Date.today.to_s), "a") do |f|
+      log_dir = (Wagn.paths['request_log'] || Wagn.paths['log']).first
+      log_filename = "#{Date.today}_#{Rails.env}.csv"
+      File.open(File.join(log_dir,log_filename), "a") do |f|
         f.write CSV.generate_line(log)
       end
     end

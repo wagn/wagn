@@ -115,7 +115,7 @@ namespace :wagn do
     
       paths = ActiveRecord::Migrator.migrations_paths = Wagn::MigrationHelper.deck_card_migration_paths
     
-      Wagn::MigrationHelper.schema_mode :card do
+      Wagn::MigrationHelper.schema_mode :deck do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       end

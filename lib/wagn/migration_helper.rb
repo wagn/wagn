@@ -10,7 +10,11 @@ module Wagn::MigrationHelper
   end
   
   def self.schema_mode type
-    new_suffix = type.to_s =~ /card/ ? '_cards' : ''
+    new_suffix = case type.to_s 
+    when /card/ then '_cards'
+    when /deck/ then '_deck_cards'
+    else ''
+    end
     original_suffix = ActiveRecord::Base.table_name_suffix
     ActiveRecord::Base.table_name_suffix = new_suffix
     yield

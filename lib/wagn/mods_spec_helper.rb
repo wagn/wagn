@@ -29,14 +29,13 @@ Spork.prefork do
   JOE_USER_ID = Card['joe_user'].id
 
   RSpec.configure do |config|
-
-    config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => {
+    config.include RSpec::Rails::Matchers::RoutingMatchers,  {
       :file_path => /\bspec\/controllers\//
     }
-
-    format_index = ARGV.find_index {|arg| arg =~ /--format/ }
-    formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation'
-    config.add_formatter formatter
+    config.infer_spec_type_from_file_location!
+    # format_index = ARGV.find_index {|arg| arg =~ /--format/ }
+    # formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation'
+    # config.add_formatter formatter
     
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers

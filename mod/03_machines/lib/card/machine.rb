@@ -176,7 +176,7 @@ class Card
     end 
 
     def ensure_machine_output
-      unless fetch :trait => :machine_output
+      if !output = fetch(:trait => :machine_output) or !output.selected_content_action_id
         update_machine_output 
       end
     end

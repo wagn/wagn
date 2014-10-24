@@ -105,6 +105,21 @@ namespace :wagn do
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       end
     end
+    
+    desc "migrate deck cards"
+    task :deck_cards => :environment do
+      Wagn::Cache.reset_global
+      ENV['SCHEMA'] = "#{Rails.root}/db/schema.rb"
+      Wagn.config.action_mailer.perform_deliveries = false
+      Card # this is needed in production mode to insure core db structures are loaded before schema_mode is set
+    
+      paths = ActiveRecord::Migrator.migrations_paths = Wagn::MigrationHelper.deck_card_migration_paths
+    
+      Wagn::MigrationHelper.schema_mode :deck do
+        ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
+        ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+      end
+    end
   
     desc 'write the version to a file (not usually called directly)' #maybe we should move this to a method? 
     task :stamp, :suffix do |t, args|

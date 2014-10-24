@@ -27,6 +27,13 @@ module Wagn
       end
     end
     
+    initializer :load_mod_initializers,  :after => :load_wagn_config_initializers do
+      paths.add 'mod-initializers', :with=>'mod', :glob=>"**/initializers/*.rb"
+      config.paths['mod-initializers'].existent.sort.each do |initializer|
+        load(initializer)
+      end
+    end
+    
     class << self
       def inherited(base)
         Rails.application = base.instance
@@ -44,6 +51,7 @@ module Wagn
         config.autoload_paths += Dir["#{Wagn.gem_root}/app/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/lib/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/mod/*/lib/**/"]
+        config.autoload_paths += Dir["#{Rails.root}/mod/*/lib/**/"]
         
         config.assets.enabled = false
         config.assets.version = '1.0'
@@ -67,7 +75,7 @@ module Wagn
         
         config.token_expiry          = 2.days
         config.revisions_per_page    = 10
-        config.view_logger           = false
+        config.request_logger        = false
         
         config
       end
@@ -97,8 +105,7 @@ module Wagn
         paths.add 'files'
         paths.add 'tmp/set'
         paths.add 'tmp/set_pattern'
-        paths['view_log'] = ['log/']
-        
+        paths.add 'db/migrate_deck_cards', :with=>'db/migrate_cards'
         paths
       end
     end

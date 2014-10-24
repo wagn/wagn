@@ -33,9 +33,9 @@ Spork.prefork do
       :file_path => /\bspec\/controllers\//
     }
 
-    format_index = ARGV.find_index {|arg| arg =~ /--format|-f/ }
-    formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation' #'textmate'
-    config.default_formatter=formatter
+    # format_index = ARGV.find_index {|arg| arg =~ /--format|-f/ }
+    # formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation' #'textmate'
+    # config.default_formatter=formatter
     
     config.infer_spec_type_from_file_location!
     #config.include CustomMatchers

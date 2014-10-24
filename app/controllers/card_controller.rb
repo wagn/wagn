@@ -13,9 +13,9 @@ class CardController < ActionController::Base
   before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
   
-  if Wagn.config.view_logger
+  if Wagn.config.request_logger
     require 'csv'
-    after_filter :view_logger 
+    after_filter :request_logger 
   end
   
   layout nil
@@ -93,10 +93,6 @@ class CardController < ActionController::Base
     @card = case params[:id]
       when '*previous'
         return wagn_redirect( previous_location )
-      when /^\~(\d+)$/ # get by id
-        Card.fetch( $1.to_i ) or raise Wagn::NotFound 
-      when /^\:(\w+)$/ # get by codename
-        Card.fetch $1.to_sym
       else  # get by name
         opts = params[:card] ? params[:card].clone : {}   # clone so that original params remain unaltered.  need deeper clone?
         opts[:type] ||= params[:type] if params[:type]    # for /new/:type shortcut.  we should fix and deprecate this.
@@ -112,6 +108,7 @@ class CardController < ActionController::Base
           Card.fetch mark, :new=>opts
         end
       end
+    raise Wagn::NotFound unless @card
     @card.selected_action_id = (action=@card.find_action_by_params(params) and action.id)
     
     Card::Env[:main_name] = params[:main] || (card && card.name) || ''
@@ -123,20 +120,22 @@ class CardController < ActionController::Base
     @card =  card.refresh
   end
 
-  def view_logger
+  def request_logger
     unless env["REQUEST_URI"] =~ %r{^/files?/}
       log = []
       log << (Card::Env.ajax? ? "YES" : "NO")
       log << env["REMOTE_ADDR"]
       log << Card::Auth.current_id
-      log << "\"#{card.name}\""
+      log << card.name
       log << action_name
       log << params['view'] || (s = params['success'] and  s['view'])
       log << env["REQUEST_METHOD"]
       log << status
       log << env["REQUEST_URI"]
       log << DateTime.now.to_s
-      File.open(File.join(Wagn.paths['view_log'].first,Date.today.to_s), "a") do |f|
+      log_dir = (Wagn.paths['request_log'] || Wagn.paths['log']).first
+      log_filename = "#{Date.today}_#{Rails.env}.csv"
+      File.open(File.join(log_dir,log_filename), "a") do |f|
         f.write CSV.generate_line(log)
       end
     end

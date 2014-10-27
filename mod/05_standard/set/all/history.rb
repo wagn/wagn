@@ -2,7 +2,12 @@ REVISIONS_PER_PAGE = Wagn.config.revisions_per_page
 
 # must be called on all actions and before :set_name, :process_subcards and :validate_delete_children
 def create_act_and_action
-  @current_act = (@supercard ? @supercard.current_act : acts.build(:ip_address=>Env.ip))
+  @current_act = if @supercard 
+    @supercard.current_act || @supercard.acts.build(:ip_address=>Env.ip)
+  else
+    acts.build(:ip_address=>Env.ip)
+  end
+  
   @current_action = actions.build(:action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
   @current_action.act = @current_act
   
@@ -60,10 +65,18 @@ event :rollback_actions, :before=>:approve, :on=>:update, :when=>proc{ |c| Env a
 end
 
 
-def intrusive_acts  # all acts with actions on self and on cards included in self
+
+
+
+def intrusive_family_acts args={}   # all acts with actions on self and on cards that are descendants of self and included in self
+  @intrusive_family_acts ||= begin
+    Act.find_all_with_actions_on( (included_descendant_card_ids << id), args)
+  end
+end
+
+def intrusive_acts  args={:with_drafts=>true} # all acts with actions on self and on cards included in self
   @intrusive_acts ||= begin
-    Act.joins(:actions).where('card_actions.card_id IN (:card_ids) AND ( (draft = 0 OR draft IS null) OR actor_id = :current_user_id)' , 
-    {:card_ids => (included_card_ids << id), :current_user_id=>Card::Auth.current_id }).uniq.order(:id).reverse_order
+    Act.find_all_with_actions_on( (included_card_ids << id), args)
   end
 end
 
@@ -74,10 +87,21 @@ def current_rev_nr
 end
 
 def included_card_ids
-  Card::Reference.select(:referee_id).where( :ref_type => 'I', :referer_id=>id ).map(&:referee_id).compact.uniq
+  Card::Reference.select(:referee_id).where( :ref_type => 'I', :referer_id=>id ).pluck('referee_id').compact.uniq
 end 
   
+def descendant_card_ids parent_ids=[id]
+  more_ids = Card.where('left_id IN (?)', parent_ids).pluck('id')
+  
+  if !more_ids.empty? 
+    more_ids += descendant_card_ids more_ids
+  end
+  more_ids
+end
 
+def included_descendant_card_ids
+  included_card_ids & descendant_card_ids
+end
 
 format :html do
   view :history do |args|

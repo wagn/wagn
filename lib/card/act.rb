@@ -16,6 +16,16 @@ class Card
       ).delete_all
     end
     
+    def self.find_all_with_actions_on card_ids, args={}
+      sql = if args[:with_drafts]
+        'card_actions.card_id IN (:card_ids) AND ( (draft = 0 OR draft IS null) OR actor_id = :current_user_id)'
+      else
+        'card_actions.card_id IN (:card_ids) AND ( (draft = 0 OR draft IS null) )'
+      end
+      Card::Act.joins(:actions).where(sql, 
+        {:card_ids => card_ids, :current_user_id=>Card::Auth.current_id }).uniq.order(:id).reverse_order
+    end
+    
     # def actor
     #   Card[ actor_id ]
     # end

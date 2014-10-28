@@ -241,7 +241,7 @@ format :html do
   end
   
   def name_changes action, hide_diff=false
-    old_name = (name = action.old_values[:name] and showname(name))
+    old_name = (name = action.old_values[:name] and showname(name).to_s)
     if action.new_name?
       new_name = showname(action.new_values[:name]).to_s
       if hide_diff 

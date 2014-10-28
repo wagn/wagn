@@ -72,13 +72,21 @@ namespace :wagn do
       Rake::Task['wagn:migrate:stamp'].invoke ''
     end
     
-    puts 'migrating cards'
+    puts 'migrating core cards'
     Wagn::Cache.reset_global
     Rake::Task['wagn:migrate:cards'].execute #not invoke because we don't want to reload environment
     if stamp
       Rake::Task['wagn:migrate:stamp'].reenable
       Rake::Task['wagn:migrate:stamp'].invoke '_cards'
     end
+    
+    puts 'migrating deck cards'
+    Rake::Task['wagn:migrate:deck_cards'].execute #not invoke because we don't want to reload environment
+    if stamp
+      Rake::Task['wagn:migrate:stamp'].reenable
+      Rake::Task['wagn:migrate:stamp'].invoke '_deck'
+    end
+    
     Wagn::Cache.reset_global
   end
 

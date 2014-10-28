@@ -5,7 +5,7 @@ class Card
   class Name < SmartName
 
     self.params  = Card::Env # yuck!
-    self.session = proc { Auth.current.name }
+    self.session = proc { Card::Auth.current.name }
     self.banned_array = ['/']
 
     def star?

@@ -166,7 +166,7 @@ end
 
 
 event :detect_conflict, :before=>:approve, :on=>:update do
-  if last_action_id_before_edit and last_action_id_before_edit.to_i != last_action_id
+  if last_action_id_before_edit and last_action_id_before_edit.to_i != last_action_id and last_action.act.actor_id != Auth.current_id
     errors.add :conflict, "changes not based on latest revision"
   end
 end

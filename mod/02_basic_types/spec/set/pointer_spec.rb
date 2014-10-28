@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
- include ActionView::Helpers::FormTagHelper
 describe Card::Set::Type::Pointer do
   describe "item_names" do
     it "should return array of names of items referred to by a pointer" do
@@ -54,14 +53,12 @@ describe Card::Set::Type::Pointer do
       @pointer = Card.create :name=>"tp", :type=>"pointer", :content=>"[[#{@card_name}]]"
     end
     it "should include nonexistingcardmustnotexistthisistherule in radio options" do
-      
-      input_name = "pointer_radio_button-#{@pointer.key}"
-      id = "pointer-radio-#{@card_name}"
-      @pointer.format.render_radio.should include(radio_button_tag input_name, @card_name, true, :id=>id, :class=>'pointer-radio-button')
+      option_html ="<input checked=\"checked\" class=\"pointer-radio-button\" id=\"pointer-radio-nonexistingcardmustnotexistthisistherule\" name=\"pointer_radio_button-tp\" type=\"radio\" value=\"nonexistingcardmustnotexistthisistherule\" />"
+      @pointer.format.render_radio.should include(option_html)
     end
     it "should include nonexistingcardmustnotexistthisistherule in checkbox options" do
-      id = "pointer-checkbox-#{@card_name}"
-      @pointer.format.render_checkbox.should include(check_box_tag "pointer_checkbox", @card_name, true, :id=>id, :class=>'pointer-checkbox-button' )
+      option_html = "<input checked=\"checked\" class=\"pointer-checkbox-button\" id=\"pointer-checkbox-nonexistingcardmustnotexistthisistherule\" name=\"pointer_checkbox\" type=\"checkbox\" value=\"nonexistingcardmustnotexistthisistherule\" />"
+      @pointer.format.render_checkbox.should include(option_html)
     end
     it "should include nonexistingcardmustnotexistthisistherule in select options" do
       option_html = %{<option value="#{@card_name}" selected="selected">#{@card_name}</option>}

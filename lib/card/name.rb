@@ -1,4 +1,4 @@
-# -*- encoding : utf-8 -*-
+  # -*- encoding : utf-8 -*-
 require 'smart_name'
 
 class Card
@@ -32,7 +32,8 @@ class Card
     end
 
     def trait tag_code
-      trait_name( tag_code ).s
+      name = trait_name( tag_code )
+      name ? name.s : ( raise Wagn::NotFound, "unknown codename: #{tag_code}" )
     end
   end
 end

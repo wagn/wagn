@@ -96,6 +96,7 @@ format :html do
 =end  
 
   view :menu, :tags=>:unknown_ok do |args|
+    return _render_template_closer if args[:menu_hack] == :template_closer
     disc_tagname = Card.fetch(:discussion, :skip_modules=>true).cardname
     disc_card = unless card.new_card? or card.junction? && card.cardname.tag_name.key == disc_tagname.key
       Card.fetch "#{card.name}+#{disc_tagname}", :skip_virtual=>true, :skip_modules=>true, :new=>{}

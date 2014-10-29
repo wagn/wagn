@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141001105348) do
+ActiveRecord::Schema.define(:version => 20141007106000) do
 
   create_table "card_actions", :force => true do |t|
     t.integer "card_id"
@@ -65,20 +65,20 @@ ActiveRecord::Schema.define(:version => 20141001105348) do
   add_index "card_revisions", ["creator_id"], :name => "revisions_created_by_index"
 
   create_table "cards", :force => true do |t|
-    t.string   "name",                :null => false
-    t.string   "key",                 :null => false
-    t.string   "codename"
     t.integer  "left_id"
-    t.integer  "right_id"
-    t.integer  "current_revision_id"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
+    t.integer  "current_revision_id"
+    t.string   "name",                :null => false
     t.integer  "creator_id",          :null => false
     t.integer  "updater_id",          :null => false
+    t.integer  "right_id"
+    t.string   "key",                 :null => false
+    t.boolean  "trash",               :null => false
+    t.integer  "references_expired"
+    t.string   "codename"
     t.string   "read_rule_class"
     t.integer  "read_rule_id"
-    t.integer  "references_expired"
-    t.boolean  "trash",               :null => false
     t.integer  "type_id",             :null => false
     t.text     "db_content"
   end
@@ -95,6 +95,12 @@ ActiveRecord::Schema.define(:version => 20141001105348) do
   end
 
   add_index "schema_migrations_cards", ["version"], :name => "unique_schema_migrations_cards", :unique => true
+
+  create_table "schema_migrations_deck_cards", :id => false, :force => true do |t|
+    t.string "version", :null => false
+  end
+
+  add_index "schema_migrations_deck_cards", ["version"], :name => "unique_schema_migrations_deck_cards", :unique => true
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id"

@@ -8,7 +8,7 @@ class CardMigrationGenerator < ActiveRecord::Generators::Base
     desc: "Create card migration for wagn core"
 
   def create_migration_file
-    root = options['core'] ? Wagn.gem_root : Rails.root
+    root = options['core'] ? Wagn.gem_root : Wagn.root
     migration_template "card_migration.erb", "#{root}/db/migrate_cards/#{file_name}.rb"
   end
 end

@@ -15,7 +15,7 @@ module Wagn
 
       def schema_stamp_path type
         stamp_dir = ENV['SCHEMA_STAMP_PATH'] || if type.to_s =~ /deck/
-          File.join( Rails.root, 'config' )
+          File.join( Wagn.root, 'config' )
         else
           File.join( Wagn.gem_root, 'config' )
         end 

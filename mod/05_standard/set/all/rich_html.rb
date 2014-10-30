@@ -301,7 +301,7 @@ format :html do
     end
   end
 
-  view :closed_missing, :perms=>:none do |args|
+  view :closed_missing, :perms=>:none, :closed=>true do |args|
     %{<span class="faint"> #{ showname } </span>}
   end
 

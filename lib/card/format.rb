@@ -9,7 +9,7 @@ class Card
       :layout=>:layout, :new=>:edit, :setup=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     
     cattr_accessor :ajax_call, :registered, :max_depth
-    [ :perms, :denial_views, :error_codes, :view_tags, :aliases ].each do |acc|
+    [ :perms, :denial_views, :closed_views, :error_codes, :view_tags, :aliases ].each do |acc|
       cattr_accessor acc
       self.send "#{acc}=", {}
     end
@@ -35,9 +35,10 @@ class Card
 
       def extract_class_vars view, opts
         return unless opts.present?
-        perms[view]       = opts.delete(:perms)      if opts[:perms]
-        error_codes[view] = opts.delete(:error_code) if opts[:error_code]
-        denial_views[view]= opts.delete(:denial)     if opts[:denial]
+        perms[view]        = opts.delete(:perms)      if opts[:perms]
+        error_codes[view]  = opts.delete(:error_code) if opts[:error_code]
+        denial_views[view] = opts.delete(:denial)     if opts[:denial]
+        closed_views[view] = opts.delete(:closed)     if opts[:closed]
 
         if tags = opts.delete(:tags)
           Array.wrap(tags).each do |tag|
@@ -291,14 +292,17 @@ class Card
       end
     end
 
-    def ok_view view, args={}    
-      return view if args.delete :skip_permissions
+    def ok_view view, args={}
+#      binding.pry
       approved_view = case
-        when @depth >= @@max_depth      ; :too_deep                    # prevent recursion. @depth tracks subformats
-        when @@perms[view] == :none     ; view                         # view requires no permissions
-        when !card.known? &&
-          !tagged( view, :unknown_ok )  ; view_for_unknown view, args  # handle unknown cards (where view not exempt)
-        else                            ; permitted_view view, args    # run explicit permission checks
+        when @depth >= @@max_depth                                     ; :too_deep  
+          # prevent recursion. @depth tracks subformats
+        when args.delete(:skip_permissions) || @@perms[view] == :none  ; view       
+          # view requires no permissions
+        when !card.known? && !tagged( view, :unknown_ok )              ; view_for_unknown view, args  
+          # handle unknown cards (where view not exempt)
+        else                                                           ; permitted_view view, args    
+          # run explicit permission checks
         end
 
       args[:denied_view] = view if approved_view != view
@@ -421,17 +425,21 @@ class Card
       opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
       # FIXME: special views should be represented in view definitions
 
-      view = case
-      when @mode == :edit
-        if @@perms[view]==:none || nested_card.structure || nested_card.key.blank? # eg {{_self|type}} on new cards
-          :blank
-        else
-          :edit_in_form
+      view = case @mode
+      when :edit
+        not_ready_for_form = @@perms[view]==:none || nested_card.structure || nested_card.key.blank? # eg {{_self|type}} on new cards
+        not_ready_for_form ? :blank : :edit_in_form
+      when :template
+        :template_rule
+      when :closed
+        case
+        when @@closed_views[view] == true || @@error_codes[view] ; view
+        when specified_view = @@closed_views[view]               ; specified_view
+        when !nested_card.known?                                 ; :closed_missing
+        else                                                     ; :closed_content
         end
-      when @mode == :template   ; :template_rule
-      when @@perms[view]==:none ; view
-      when @mode == :closed     ; !nested_card.known?  ? :closed_missing : :closed_content
-      else                      ; view
+      else
+        view
       end
       sub.render view, opts
       #end

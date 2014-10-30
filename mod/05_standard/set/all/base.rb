@@ -7,23 +7,24 @@ format do
 
   # NAME VIEWS
                                                                               
-  view :name,     :perms=>:none  do |args|  card.name                    end
-  view :codename, :perms=>:none  do |args|  card.codename.to_s           end  
-  view :key,      :perms=>:none  do |args|  card.key                     end
-  view :id,       :perms=>:none  do |args|  card.id                      end
-  view :type,     :perms=>:none  do |args|  card.type_name               end
-  view :linkname, :perms=>:none  do |args|  card.cardname.url_key        end
-  view :url,      :perms=>:none  do |args|  wagn_url _render_linkname    end
+  view :name,     :closed=>true, :perms=>:none do |args|  card.name                    end
+  view :key,      :closed=>true, :perms=>:none do |args|  card.key                     end
+  view :linkname, :closed=>true, :perms=>:none do |args|  card.cardname.url_key        end
+  view :url,      :closed=>true, :perms=>:none do |args|  wagn_url _render_linkname    end
 
-  view :link, :perms=>:none  do |args|
+  view :link, :closed=>true, :perms=>:none  do |args|
     card_link card.name, showname( args[:title] ), card.known?, args[:type]
   end
+    
+  view :codename, :closed=>true  do |args|  card.codename.to_s  end  
+  view :id,       :closed=>true  do |args|  card.id             end
+  view :type,     :closed=>true  do |args|  card.type_name      end
 
 
   # DATE VIEWS
 
-  view :created_at, :perms=>:none do |args| time_ago_in_words card.created_at end
-  view :updated_at, :perms=>:none do |args| time_ago_in_words card.updated_at end
+  view :created_at, :closed=>true do |args| time_ago_in_words card.created_at end
+  view :updated_at, :closed=>true do |args| time_ago_in_words card.updated_at end
 
 
   # CONTENT VIEWS
@@ -81,8 +82,9 @@ format do
   # ERROR VIEWS
 
 
-  view :blank,          :perms=>:none do |args| '' end
-  view :closed_missing, :perms=>:none do |args| '' end
+  view :blank,          :perms=>:none, :closed=>true do |args| '' end
+  view :closed_missing, :perms=>:none, :closed=>true do |args| '' end
+    
   view :missing,        :perms=>:none do |args| '' end
 
   view :not_found, :perms=>:none, :error_code=>404 do |args|
@@ -102,11 +104,11 @@ format do
     %{ 404: Bad Address }
   end
 
-  view :too_deep, :perms=>:none do |args|
+  view :too_deep, :perms=>:none, :closed=>true do |args|
     %{ Man, you're too deep.  (Too many levels of inclusions at a time) }
   end
 
-  view :too_slow, :perms=>:none do |args|
+  view :too_slow, :perms=>:none, :closed=>true do |args|
     %{ Timed out! #{ showname } took too long to load. }
   end
 

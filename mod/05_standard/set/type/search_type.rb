@@ -32,7 +32,7 @@ def get_spec params={}
     spec_content = params.delete(:spec) || raw_content
     #warn "get_spec #{name}, #{spec_content}, #{params.inspect}"
     raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
-    JSON.parse( spec_content )
+    String === spec_content ? JSON.parse( spec_content ) : spec_content
   end
   spec.symbolize_keys!.merge! params.symbolize_keys
   if default_limit = spec.delete(:default_limit) and !spec[:limit]
@@ -136,7 +136,7 @@ format :html do
     paging = _optional_render :paging, args
 
     if search_vars[:results].empty?
-      %{<div class="search-no-results"></div>}
+      render_no_search_results(args) 
     else
       %{
         #{paging}
@@ -172,6 +172,9 @@ format :html do
     form.text_area :content, :rows=>5
   end
 
+  view :no_search_results do |args|
+    %{<div class="search-no-results"></div>}
+  end
 
   view :paging do |args|
     s = card.spec search_params

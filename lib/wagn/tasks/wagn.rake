@@ -92,8 +92,8 @@ namespace :wagn do
 
   desc 'insert existing card migrations into schema_migrations_cards to avoid re-migrating'
   task :assume_card_migrations do
-    Wagn::MigrationHelper.schema_mode :card do
-      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:cards), Wagn::MigrationHelper.card_migration_paths
+    Wagn::Migration.schema_mode :card do
+      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:cards), Wagn::Migration.card_migration_paths
     end
   end
 
@@ -106,9 +106,9 @@ namespace :wagn do
       Wagn.config.action_mailer.perform_deliveries = false
       Card # this is needed in production mode to insure core db structures are loaded before schema_mode is set
     
-      paths = ActiveRecord::Migrator.migrations_paths = Wagn::MigrationHelper.card_migration_paths
+      paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.card_migration_paths
     
-      Wagn::MigrationHelper.schema_mode :card do
+      Wagn::Migration.schema_mode :card do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       end
@@ -121,9 +121,9 @@ namespace :wagn do
       Wagn.config.action_mailer.perform_deliveries = false
       Card # this is needed in production mode to insure core db structures are loaded before schema_mode is set
     
-      paths = ActiveRecord::Migrator.migrations_paths = Wagn::MigrationHelper.deck_card_migration_paths
+      paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.deck_card_migration_paths
     
-      Wagn::MigrationHelper.schema_mode :deck do
+      Wagn::Migration.schema_mode :deck do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       end
@@ -135,7 +135,7 @@ namespace :wagn do
       Wagn.config.action_mailer.perform_deliveries = false
       
       stamp_file = Wagn::Version.schema_stamp_path( args[:suffix] )
-      Wagn::MigrationHelper.schema_mode args[:suffix ] do
+      Wagn::Migration.schema_mode args[:suffix ] do
         version = ActiveRecord::Migrator.current_version
         puts ">>  writing version: #{version} to #{stamp_file}"
         if file = open(stamp_file, 'w')

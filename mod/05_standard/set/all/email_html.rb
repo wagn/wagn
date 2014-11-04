@@ -26,13 +26,7 @@ format :email do
     html_message = args.delete(:html_message)
     attachment_list = args.delete(:attach)
     alternative = text_message.present? and html_message.present?
-    Mail.new(args) do
-    #ActionMailer::Base.mail(args) do
-      method = Card::Mailer.delivery_method
-      delivery_method(method, Card::Mailer.send(:"#{method}_settings"))      
-      perform_deliveries    = Card::Mailer.perform_deliveries
-      raise_delivery_errors = Card::Mailer.raise_delivery_errors
-      
+    mail = Mail.new(args) do
       if alternative 
         if attachment and !attachment_list.empty?
           content_type 'multipart/mixed'
@@ -62,15 +56,19 @@ format :email do
           end
         end
       end
+      method = Card::Mailer.delivery_method
+      delivery_method(method, Card::Mailer.send(:"#{method}_settings"))
+      
     end   #TODO add error handling
+    mail.perform_deliveries    = Card::Mailer.perform_deliveries
+    mail.raise_delivery_errors = Card::Mailer.raise_delivery_errors
+    mail
   end
     
   
   
   def email_config args={}
     config = {}
-    args[:locals] ||= {}
-    args[:locals][:site] = Card.setting :title
     context_card = args[:context] || card
     [:to, :from, :cc, :bcc, :attach].each do |field|
       config[field] = args[field] || begin

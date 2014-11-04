@@ -15,6 +15,9 @@ class WagnGenerator < Rails::Generators::AppBase
   class_option 'core-dev', :type => :boolean, aliases: '-c', :default => false, :group => :runtime, 
     desc: "Prepare deck for wagn core testing"
     
+    class_option 'gem-path', :type => :string, aliases: '-g', :default => false, :group => :runtime, 
+      desc: "Path to local gem installation"
+    
   class_option 'mod-dev', :type => :boolean, aliases: '-m', :default => false, :group => :runtime, 
     desc: "Prepare deck for mod testing"
     
@@ -26,7 +29,7 @@ class WagnGenerator < Rails::Generators::AppBase
 ## should probably eventually use rails-like AppBuilder approach, but this is a first step.  
   def dev_setup  
     if options['core-dev']
-      @wagn_path = ask "Enter the path to your local wagn installation: "
+      @wagn_path = options['gem-path'] || ask("Enter the path to your local wagn installation: ")
       #@wagndev_path = ask "Please enter the path to your local wagn-dev installation (leave empty to use the wagn-dev gem): "
       @spec_path = @wagn_path
       @spec_helper_path = File.join @spec_path, 'spec', 'spec_helper'

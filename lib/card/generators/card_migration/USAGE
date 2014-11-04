@@ -17,7 +17,7 @@ Example:
     
     wagn generate card_migration import_better_search_cards
 
-    This wil create:
+    This will create:
     
         db/migrate_cards/(migration_number)_(name).rb
         

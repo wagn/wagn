@@ -150,6 +150,6 @@ event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_n
     :to     => Card.setting('*request+*to'),
     :from   => Card.setting('*request+*from') || "\"#{name}\" <#{account.email}>"
   }
-  Card['signup alert'].format(:format=>:email).deliver(args)
+  Card[:signup_alert].format(:format=>:email).deliver(args)
 end
 

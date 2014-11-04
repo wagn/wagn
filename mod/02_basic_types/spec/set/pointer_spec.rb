@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-
 describe Card::Set::Type::Pointer do
   describe "item_names" do
     it "should return array of names of items referred to by a pointer" do
@@ -46,7 +45,30 @@ describe Card::Set::Type::Pointer do
       pointer.content.should == ""
     end
   end
-  
+   
+  describe "html" do
+    before do
+      Card::Auth.as_bot
+      @card_name = "nonexistingcardmustnotexistthisistherule"
+      @pointer = Card.create :name=>"tp", :type=>"pointer", :content=>"[[#{@card_name}]]"
+    end
+    it "should include nonexistingcardmustnotexistthisistherule in radio options" do
+      option_html ="<input checked=\"checked\" class=\"pointer-radio-button\" id=\"pointer-radio-nonexistingcardmustnotexistthisistherule\" name=\"pointer_radio_button-tp\" type=\"radio\" value=\"nonexistingcardmustnotexistthisistherule\" />"
+      @pointer.format.render_radio.should include(option_html)
+    end
+    it "should include nonexistingcardmustnotexistthisistherule in checkbox options" do
+      option_html = "<input checked=\"checked\" class=\"pointer-checkbox-button\" id=\"pointer-checkbox-nonexistingcardmustnotexistthisistherule\" name=\"pointer_checkbox\" type=\"checkbox\" value=\"nonexistingcardmustnotexistthisistherule\" />"
+      @pointer.format.render_checkbox.should include(option_html)
+    end
+    it "should include nonexistingcardmustnotexistthisistherule in select options" do
+      option_html = %{<option value="#{@card_name}" selected="selected">#{@card_name}</option>}
+      @pointer.format.render_select.should include(option_html)
+    end
+    it "should include nonexistingcardmustnotexistthisistherule in multiselect options" do
+      option_html = %{<option value="#{@card_name}" selected="selected">#{@card_name}</option>}
+      @pointer.format.render_multiselect.should include(option_html)
+    end
+  end
   describe "css" do
     before do
       @css = '#box { display: block }'

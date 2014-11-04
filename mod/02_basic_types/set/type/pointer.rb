@@ -5,6 +5,7 @@ event :add_and_drop_items, :before=>:approve, :on=>:save do
 end
 
 format do
+
   def wrap_item item, args={}
     item #no wrap in base    
   end
@@ -65,6 +66,7 @@ format :html do
   end
 
   view :checkbox do |args|
+    
     options = card.options.map do |option|
       checked = card.item_names.include?(option.name)
       id = "pointer-checkbox-#{option.cardname.key}"
@@ -136,7 +138,7 @@ format :css do
   
   view :core do |args|
     card.item_cards.map do |item|
-      nest item, :view=>(params[:item] || :content)
+      nest item, :view=>(params[:item] || args[:item] || :content)
     end.join "\n\n"
   end
   
@@ -148,7 +150,7 @@ end
 format :js do
   view :core do |args|
     card.item_cards.map do |item|
-      nest item, :view=>(params[:item] || :core)
+      nest item, :view=>(params[:item] || args[:item] || :core)
     end.join "\n\n"
   end
 end
@@ -246,12 +248,17 @@ def options_card
   self.rule_card :options
 end
 
-def options
-  if oc = options_card
+def options 
+  result_cards = if oc = options_card
     oc.item_cards :default_limit=>50, :context=>name
   else
     Card.search :sort=>'alpha', :limit=>50
   end
+  if selected_options = item_names
+    selected_options.each do |item|
+      result_cards.push Card.fetch(item,:new=>{})
+    end
+    result_cards.uniq!
+  end
+  result_cards
 end
-
-

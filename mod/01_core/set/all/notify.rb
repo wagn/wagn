@@ -7,27 +7,29 @@ class FollowerStash
   end
     
   def add_affected_card card
-    if !@visited.include? card.name
-      @visited.add card.name
-      # add card followers
-      Card.search( :plus=>[{:codename=> "following"}, 
-                           {:link_to=>card.name}     ]
-                 ).each do |follower|
-                   notify follower, :of => card.name
-                 end
-      # add cardtype followers
-      Card.search( :plus=>[{:codename=> "following"}, 
-                           {:link_to=>card.type_name} ]
-                 ).each do |follower|
-                  notify follower, :of => card.type_name
-                end
-      Card.search(:include=>card.name).each do |includer| 
-        add_affected_card includer unless @visited.include? includer.name
-      end
-      if card.left and !@visited.include?(card.left.name) and
-         includee_set = Card.search(:included_by=>card.left.name).map(&:name) and
-         !@visited.intersection(includee_set).empty?
-            add_affected_card card.left
+    Auth.as_bot do
+      if !@visited.include? card.name
+        @visited.add card.name
+        # add card followers
+        Card.search( :right_plus=>[{:codename=> "following"}, 
+                             {:link_to=>card.name}     ]
+                   ).each do |follower|
+                     notify follower, :of => card.name
+                   end
+        # add cardtype followers
+        Card.search( :right_plus=>[{:codename=> "following"}, 
+                             {:link_to=>card.type_name} ]
+                   ).each do |follower|
+                    notify follower, :of => card.type_name
+                  end
+        Card.search(:include=>card.name).each do |includer| 
+          add_affected_card includer unless @visited.include? includer.name
+        end
+        if card.left and !@visited.include?(card.left.name) and
+           includee_set = Card.search(:included_by=>card.left.name).map(&:name) and
+           !@visited.intersection(includee_set).empty?
+              add_affected_card card.left
+        end
       end
     end
   end

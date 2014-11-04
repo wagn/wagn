@@ -89,7 +89,7 @@ event :activate_by_token, :before=>:approve, :on=>:update, :when=>proc{ |c| c.ha
     resend_activation_token
     abort :success
   else
-    abort :failure, "signup activation error: #{authentication_result}" # bad token or account
+    abort :failure, "signup activation error: #{result}" # bad token or account
   end
 end
 

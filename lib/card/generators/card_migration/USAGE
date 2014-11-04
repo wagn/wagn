@@ -3,7 +3,7 @@ Description:
     Generates a migration of database content. 
     
     To import database content from a json file move your json file to db/migrate_cards/data
-    and choose a migration name that matches the pattern import_<description>_from_<filename>.
+    and choose as migration name import_<filename>.
     
 Example:
     wagn generate card_migration better_commented_search_cards
@@ -15,10 +15,10 @@ Example:
     ...which is set up to use methods in lib/wagn/migration.rb
     
     
-    wagn generate card_migration import_better_search_cards_from_improved_search
+    wagn generate card_migration import_better_search_cards
 
     This wil create:
     
         db/migrate_cards/(migration_number)_(name).rb
         
-    ...which is set up to import data from db/migrate_cards/data/improved_search.json
+    ...which is set up to import data from db/migrate_cards/data/better_search_cards.json

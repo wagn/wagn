@@ -1,7 +1,7 @@
-Thank you for signing up with {{_site}}
+Thank you for signing up with {{*title}}
 Please follow the link below to verify this email address and activate your account.
 
-{{_link}}
-(link will remain valid for {{_expiry_days}} days)
+{{_|verify_url}}
+(link will remain valid for {{_|verify_days}} days)
 
 

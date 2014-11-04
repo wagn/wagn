@@ -57,7 +57,7 @@ format :email do
         end
       end
       method = Card::Mailer.delivery_method
-      delivery_method(method, Card::Mailer.send(:"#{method}_settings"))      
+      delivery_method(method, Card::Mailer.send(:"#{method}_settings"))
       
     end   #TODO add error handling
     mail.perform_deliveries    = Card::Mailer.perform_deliveries
@@ -69,8 +69,6 @@ format :email do
   
   def email_config args={}
     config = {}
-    args[:locals] ||= {}
-    args[:locals][:site] = Card.setting :title
     context_card = args[:context] || card
     [:to, :from, :cc, :bcc, :attach].each do |field|
       config[field] = args[field] || begin

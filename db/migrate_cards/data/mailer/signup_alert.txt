@@ -1,7 +1,7 @@
-{{_name}} ({{_email}})
-has requested an account ({{_requests_url}})
-on {{_site}}.
+{{_|name}} ({{+*email}})
+has requested an account ({{:signup|url}})
+on {{*title}}.
 
-See {{_request_url}} for {{_name}}&#39;s request.
+See {{_|url}} for {{_|name}}&#39;s request.
 
--- the machines running {{_site}}
+-- the machines running {{*title}}

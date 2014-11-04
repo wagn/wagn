@@ -148,13 +148,7 @@ end
 event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_notifications do
   args =  {
     :to     => Card.setting('*request+*to'),
-    :from   => Card.setting('*request+*from') || "\"#{name}\" <#{account.email}>",
-    :locals => {
-      :email        => account.email,
-      :name         => name,
-      :request_url  => wagn_url( self ),
-      :requests_url => wagn_url( Card[:signup] ),
-    }
+    :from   => Card.setting('*request+*from') || "\"#{name}\" <#{account.email}>"
   }
   Card['signup alert'].format(:format=>:email).deliver(args)
 end

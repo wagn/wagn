@@ -147,6 +147,7 @@ end
 
 event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_notifications do
   args =  {
+    :context=> account,
     :to     => Card.setting('*request+*to'),
     :from   => Card.setting('*request+*from') || "\"#{name}\" <#{account.email}>"
   }

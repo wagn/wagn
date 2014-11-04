@@ -65,8 +65,6 @@ format :email do
     mail
   end
     
-  
-  
   def email_config args={}
     config = {}
     context_card = args[:context] || card

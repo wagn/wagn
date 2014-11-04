@@ -69,27 +69,30 @@ format :email do
     config = {}
     context_card = args[:context] || card
     [:to, :from, :cc, :bcc, :attach].each do |field|
-      config[field] = args[field] || begin
-        ( fld_card = Card["#{card.name}+*#{field}"] ).nil? ? '' :
-              # configuration can be anything visible to configurer
-              Auth.as( fld_card.updater ) do
-                list = fld_card.extended_item_contents context_card
-                field == :attach ? list : list * ','
-              end
+      config[field] = case 
+        when args[field] 
+          args[field]
+        when ( fld_card = card.fetch(:trait=>field) )
+          # configuration can be anything visible to configurer
+          Auth.as( fld_card.updater ) do
+            list = fld_card.extended_item_contents context_card
+            field == :attach ? list : list * ',' 
+          end
+        else ''
         end
     end
-    [:subject, :message, :html_message, :text_message].each do |field|
-      config[field] = args[field] || begin
-        config[field] = ( fld_card=Card["#{card.name}+*#{field}"] ).nil? ? '' :
+    
+    [:subject, :html_message, :text_message].each do |field|
+      config[field] = case 
+        when args[field] 
+          args[field]
+        when ( fld_card=card.fetch(:trait=>field) ) 
             Auth.as( fld_card.updater ) do
               fld_card.contextual_content context_card, {:format=>'email_html'}, args
             end
-      end
+        else ''
+        end
     end
-    if !config[:html_message].present?
-      config[:html_message] = config[:message]
-    end
-    config.delete(:message)
     config[:html_message] = Card::Mailer.layout(config[:html_message])
     config[:from] ||= Card[Card::WagnBotID].account.email
     config[:subject] = strip_html(config[:subject]).strip if config[:subject]

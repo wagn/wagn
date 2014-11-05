@@ -1,7 +1,7 @@
-{{_|name}} ({{+*email}})
+{{_|name}} ({{+*email|core}})
 has requested an account ({{:signup|url}})
-on {{*title}}.
+on {{:title|core}}.
 
 See {{_|url}} for {{_|name}}&#39;s request.
 
--- the machines running {{*title}}
+-- the machines running {{:title|core}}

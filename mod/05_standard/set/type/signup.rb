@@ -7,7 +7,7 @@ format :html do
     super args
     args.merge!(
       :optional_help => :show, #, :optional_menu=>:never
-      :buttons => button_tag( 'Submit' ),
+      :buttons => button_tag( 'Submit', :disable_with=>'Submitting' ),
       :account => card.fetch( :trait=>:account, :new=>{} ),
       :title   => 'Sign up',
       :hidden  => {

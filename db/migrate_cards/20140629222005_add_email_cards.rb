@@ -5,7 +5,7 @@ class AddEmailCards < Wagn::Migration
     # create new cardtype for email templates
     Card.create! :name=>"Email template", :codename=>:email_template, :type_id=>Card::CardtypeID
     Card.create! :name=>"Email template+*type+*structure", 
-        :content=>"{{+*from|titled}}\n{{+*to|titled}}\n{{+*cc|titled}}\n{{+*bcc|titled}}\n{{+*subject|titled}}\n{{+*html message|titled}}\n{{+*text message|titled}}\n{{+*attach|titled}})"
+        :content=>"{{+*from|titled}}\n{{+*to|titled}}\n{{+*cc|titled}}\n{{+*bcc|titled}}\n{{+*subject|titled}}\n{{+*html message|titled}}\n{{+*text message|titled}}\n{{+*attach|titled}}"
     
     c = Card.fetch '*message', :new=>{ }
     c.name     = '*html message'
@@ -17,7 +17,7 @@ class AddEmailCards < Wagn::Migration
     
     if email_config=Card.fetch("email_config+*right+*structure")
       email_config.update_attributes( 
-        :content=>"{{+*from|titled}}\n{{+*to|titled}}\n{{+*cc|titled}}\n{{+*bcc|titled}}\n{{+*subject|titled}}\n{{+*html message|titled}}\n{{+*text message|titled}}\n{{+*attach|titled}})"
+        :content=>"{{+*from|titled}}\n{{+*to|titled}}\n{{+*cc|titled}}\n{{+*bcc|titled}}\n{{+*subject|titled}}\n{{+*html message|titled}}\n{{+*text message|titled}}\n{{+*attach|titled}}"
       )
     end
     Wagn::Cache.reset_global

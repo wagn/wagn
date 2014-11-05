@@ -40,7 +40,7 @@ format :html do
   end
   
   view :verify_url do |args|
-    wagn_url "/update/#{self.left.cardname.url_key}?token=#{self.token}"
+    wagn_url "/update/#{card.cardname.left_name.url_key}?token=#{self.token}"
   end
 
   view :verify_days do |args|
@@ -48,7 +48,7 @@ format :html do
   end
 
   view :reset_password_url do |args|
-    wagn_url "/update/#{self.cardname.url_key}?reset_token=#{self.token_card.refresh(true).content}"
+    wagn_url "/update/#{card.cardname.url_key}?reset_token=#{card.token_card.refresh(true).content}"
   end
 
   view :reset_password_days do |args|

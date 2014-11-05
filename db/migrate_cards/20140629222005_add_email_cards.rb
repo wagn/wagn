@@ -57,9 +57,13 @@ class AddEmailCards < Wagn::Migration
     
     
     # migrate old flexmail cards
-    # FIXME - add email config migrations here...
 
-    email_config_card = Card['email_config'].delete!
+    if email_config_card = Card['email_config']
+      
+      # FIXME - add email config migrations here...
+      
+      email_config_card.delete!
+    end
     
     
     

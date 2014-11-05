@@ -129,7 +129,7 @@ end
 
 event :send_account_confirmation_email, :on=>:create, :after=>:extend do
   if self.email.present?
-    Card["confirmation email"].format(:format=>:email).deliver(
+    Card[:confirmation_email].format(:format=>:email).deliver(
       :context => self,
       :to     => self.email,
       :from   => token_emails_from(self),
@@ -141,7 +141,7 @@ event :send_reset_password_token do
   Auth.as_bot do
     token_card.update_attributes! :content => generate_token
   end
-  Card["password reset"].format(:format=>:email).deliver(
+  Card[:password_reset].format(:format=>:email).deliver(
     :context => self,
     :to      => self.email,
     :from    => token_emails_from(self),

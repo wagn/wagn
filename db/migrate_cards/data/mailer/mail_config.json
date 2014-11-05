@@ -5,13 +5,13 @@
     "subject"   : "verification link for {{:title|core}}"
   },
   {
-      "name"    : "password reset",
+    "name"    : "password reset",
 	  "codename": "password_reset",
-      "subject" : "verification link for {{:title|core}}"
+    "subject" : "reset password for {{:title|core}}"
   },
   {
-      "name"    : "signup alert",
-  	  "codename": "signup_alert",
-      "subject" : "{{_|name}} signed up for {{:title|core}}"
+    "name"    : "signup alert",
+  	"codename": "signup_alert",
+    "subject" : "{{_|name}} signed up for {{:title|core}}"
   }
 ]

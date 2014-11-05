@@ -40,7 +40,7 @@ format :html do
   end
   
   view :verify_url do |args|
-    wagn_url "/update/#{card.cardname.left_name.url_key}?token=#{self.token}"
+    wagn_url "/update/#{card.cardname.left_name.url_key}?token=#{card.token}"
   end
 
   view :verify_days do |args|

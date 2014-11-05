@@ -12,16 +12,16 @@ class FollowerStash
         @visited.add card.name
         # add card followers
         Card.search( :right_plus=>[{:codename=> "following"}, 
-                             {:link_to=>['in'] + card.set_names}     ]
+                             {:link_to=>card.name}     ]
                    ).each do |follower|
                      notify follower, :of => card.name
                    end
         # add cardtype followers
-        # Card.search( :right_plus=>[{:codename=> "following"},
-#                              {:link_to=>card.type_name} ]
-#                    ).each do |follower|
-#                     notify follower, :of => card.type_name
-#                   end
+        Card.search( :right_plus=>[{:codename=> "following"}, 
+                             {:link_to=>card.type_name} ]
+                   ).each do |follower|
+                    notify follower, :of => card.type_name
+                  end
         Card.search(:include=>card.name).each do |includer| 
           add_affected_card includer unless @visited.include? includer.name
         end
@@ -81,21 +81,29 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c| !c.supercard and c.cu
   end
 end
   
-format do
-  def last_act args
-    @last_act ||= args[:act_id] ? Card::Act.find(args[:act_id]) : card.acts.last
-    @last_act
+format do  
+  view :list_of_changes, :denial=>:blank do |args|
+    action = get_action(args)
+    
+    relevant_fields = case action.action_type
+      when :create then [:cardtype, :content]
+      when :update then [:name, :cardtype, :content]
+      when :delete then [:content]
+      end
+    
+    relevant_fields.map do |type| 
+      edit_info_for(type, action)
+    end.compact.join
   end
   
-  def get_action args
-    args[:action] || (args[:action_id] and Card::Action.find(args[:action_id])) || card.last_action
-  end
-   
   
   view :subedits do |args|
-    subedits    = last_act(args).relevant_actions_for(card).map do |action| 
-        action.card_id == card.id ? '' : action.card.format(:format=>@format).render_subedit_notice(:action=>action)
-    end.join
+    subedits = get_act(args).relevant_actions_for(card).map do |action| 
+        if action.card_id != card.id 
+          action.card.format(:format=>@format).render_subedit_notice(:action=>action)
+        end
+      end.compact.join
+      
     if subedits.present?
       wrap_subedits subedits
     else
@@ -103,14 +111,12 @@ format do
     end
   end
     
-  view :last_editor do |args|
-    card.acts.last.actor.name
-  end
-  
-  view :last_action do |args|
-    act = last_act(args)
-    action_on_card = (self_action = act.action_on(act.card_id) and self_action.action_type) || act.actions.first.action_type 
-    "#{action_on_card.action_type}d"
+  view :subedit_notice, :denial=>:blank do |args|
+    action = get_action(args)
+    name_before_action = (action.new_values[:name] && action.old_values[:name]) || card.name
+    
+    wrap_subedit_item %{#{name_before_action} #{action.action_type}d
+#{ render_list_of_changes(args) }}
   end
   
 
@@ -133,45 +139,49 @@ format do
      wrap_list_item "#{item_title}#{item_value}"
   end
   
+  def get_act args
+    @last_act ||= args[:act_id] ? Card::Act.find(args[:act_id]) : card.acts.last
+    @last_act
+  end
+  
+  def get_action args
+    args[:action] || (args[:action_id] and Card::Action.find(args[:action_id])) || card.last_action
+  end
+  
+  
+  def wrap_subedits subedits
+    "\nThis update included the following changes:#{wrap_list subedits}"
+  end
+   
+end
+
+format :email_text do 
+  view :last_action do |args|
+    act = get_act(args)
+    action_on_card =  act.action_on(act.card_id) || act.actions.first
+    "#{action_on_card.action_type}d"
+  end
+  
   def wrap_list list
-    "\n#{list}"
+    "\n#{list}\n"
   end
   
   def wrap_list_item item
     "   #{item}\n"
   end
   
-  def wrap_subedits subedits
-    "\nThis update included the following changes:#{wrap_list subedits}"
-  end
-  
   def wrap_subedit_item text
     "\n#{text}\n"
-  end
-  
-  view :subedit_notice, :denial=>:blank do |args|
-    action = get_action(args)
-    name_before_action = (action.new_values[:name] && action.old_values[:name]) || card.name
-    
-    wrap_subedit_item %{#{name_before_action} #{action.action_type}d
-#{ render_list_of_changes(args) }}
-  end
-  
-  view :list_of_changes, :denial=>:blank do |args|
-    action = get_action(args)
-    
-    relevant_fields = case action.action_type
-    when :create then [:cardtype, :content]
-    when :update then [:name, :cardtype, :content]
-    when :delete then [:content]
-    end
-    relevant_fields.map do |type| 
-      edit_info_for(type, action)
-    end.compact.join
   end
 end
 
 format :email_html do  
+  view :last_action do |args|
+    act = get_act(args)
+    action_on_card =  act.action_on(act.card_id) || act.actions.first
+    "#{action_on_card.action_type}d"
+  end
+  
   def wrap_list list
     "<ul>#{list}</ul>\n"
   end

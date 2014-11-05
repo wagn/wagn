@@ -7,5 +7,5 @@ was just {{_|last_action}} by {{_user|name}}
 
 See the card: {{_|url}}
 
-You received this email because you're following "{{_followed}}>".
+You received this email because you\'re following "{{_followed}}".
 Visit {{_unfollow_url}}

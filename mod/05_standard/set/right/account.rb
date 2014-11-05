@@ -129,7 +129,7 @@ end
 
 event :send_account_confirmation_email, :on=>:create, :after=>:extend do
   if self.email.present?
-    Card[:confirmation_email].format(:format=>:email).deliver(
+    Card[:confirmation_email].deliver(
       :context => self,
       :to     => self.email,
       :from   => token_emails_from(self),
@@ -141,7 +141,7 @@ event :send_reset_password_token do
   Auth.as_bot do
     token_card.update_attributes! :content => generate_token
   end
-  Card[:password_reset].format(:format=>:email).deliver(
+  Card[:password_reset].deliver(
     :context => self,
     :to      => self.email,
     :from    => token_emails_from(self),
@@ -163,7 +163,7 @@ end
 
 
 def changes_visible? act
-  act.relevant_actions_for(card).each do |action|
+  act.relevant_actions_for(act.card).each do |action|
     return true if action.card.ok? :read
   end
   return false
@@ -173,16 +173,17 @@ def send_change_notice act, followed_card_name
   if changes_visible?(act) 
     from_card = Card[WagnBotID] 
     following_card = left.fetch( :trait=>:following )
-    
-    Card[:follower_notification_email].format(:format=>:email).deliver(
+    mail = Card[:follower_notification_email].deliver(
         :context => Card.find(act.card),
         :from => from_card.account.email,
+        :to   => self.email,
         :locals => {
           :follower     => left.name, 
           :followed     => followed_card_name,
           :unfollow_url => wagn_url( "update/#{following_card.key}?drop_item=#{followed_card_name.to_name.url_key}" )
         }
       )
+    mail
   end
 end
 

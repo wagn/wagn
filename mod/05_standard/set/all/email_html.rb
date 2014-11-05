@@ -26,13 +26,7 @@ format :email do
     html_message = args.delete(:html_message)
     attachment_list = args.delete(:attach)
     alternative = text_message.present? and html_message.present?
-    Mail.new(args) do
-    #ActionMailer::Base.mail(args) do
-      method = Card::Mailer.delivery_method
-      delivery_method(method, Card::Mailer.send(:"#{method}_settings"))      
-      perform_deliveries    = Card::Mailer.perform_deliveries
-      raise_delivery_errors = Card::Mailer.raise_delivery_errors
-      
+    mail = Mail.new(args) do
       if alternative 
         if attachment and !attachment_list.empty?
           content_type 'multipart/mixed'
@@ -62,38 +56,43 @@ format :email do
           end
         end
       end
+      method = Card::Mailer.delivery_method
+      delivery_method(method, Card::Mailer.send(:"#{method}_settings"))
+      
     end   #TODO add error handling
+    mail.perform_deliveries    = Card::Mailer.perform_deliveries
+    mail.raise_delivery_errors = Card::Mailer.raise_delivery_errors
+    mail
   end
     
-  
-  
   def email_config args={}
     config = {}
-    args[:locals] ||= {}
-    args[:locals][:site] = Card.setting :title
     context_card = args[:context] || card
     [:to, :from, :cc, :bcc, :attach].each do |field|
-      config[field] = args[field] || begin
-        ( fld_card = Card["#{card.name}+*#{field}"] ).nil? ? '' :
-              # configuration can be anything visible to configurer
-              Auth.as( fld_card.updater ) do
-                list = fld_card.extended_item_contents context_card
-                field == :attach ? list : list * ','
-              end
+      config[field] = case 
+        when args[field] 
+          args[field]
+        when ( fld_card = card.fetch(:trait=>field) )
+          # configuration can be anything visible to configurer
+          Auth.as( fld_card.updater ) do
+            list = fld_card.extended_item_contents context_card
+            field == :attach ? list : list * ',' 
+          end
+        else ''
         end
     end
-    [:subject, :message, :html_message, :text_message].each do |field|
-      config[field] = args[field] || begin
-        config[field] = ( fld_card=Card["#{card.name}+*#{field}"] ).nil? ? '' :
+    
+    [:subject, :html_message, :text_message].each do |field|
+      config[field] = case 
+        when args[field] 
+          args[field]
+        when ( fld_card=card.fetch(:trait=>field) ) 
             Auth.as( fld_card.updater ) do
               fld_card.contextual_content context_card, {:format=>'email_html'}, args
             end
-      end
+        else ''
+        end
     end
-    if !config[:html_message].present?
-      config[:html_message] = config[:message]
-    end
-    config.delete(:message)
     config[:html_message] = Card::Mailer.layout(config[:html_message])
     config[:from] ||= Card[Card::WagnBotID].account.email
     config[:subject] = strip_html(config[:subject]).strip if config[:subject]

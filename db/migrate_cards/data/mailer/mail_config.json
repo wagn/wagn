@@ -2,16 +2,16 @@
   {
     "name"      : "confirmation email",
 	  "codename"  : "confirmation_email",
-    "subject"   : "verification link for {{_site}}"
+    "subject"   : "verification link for {{:title|core}}"
   },
   {
-      "name"    : "password reset",
+    "name"    : "password reset",
 	  "codename": "password_reset",
-      "subject" : "verification link for {{_site}}"
+    "subject" : "reset password for {{:title|core}}"
   },
   {
-      "name"    : "signup alert",
-	  "codename": "signup_alert",
-      "subject" : "{{_name}} signed up for {{_site}}"
+    "name"    : "signup alert",
+  	"codename": "signup_alert",
+    "subject" : "{{_|name}} signed up for {{:title|core}}"
   }
 ]

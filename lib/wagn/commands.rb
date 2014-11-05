@@ -73,7 +73,7 @@ else
     load_rake_tasks
     Rake::Task['wagn:update'].invoke
   when 'cucumber'
-    system "RAILS_ROOT=. bundle exec cucumber #{ ARGV.join(' ') }"
+    system "RAILS_ROOT=. bundle exec cucumber -r #{Wagn.gem_root}/features #{ ARGV.join(' ') }"
   when 'rspec'
     opts = {}
     require 'rspec/core'

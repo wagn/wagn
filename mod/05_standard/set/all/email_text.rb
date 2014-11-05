@@ -12,4 +12,5 @@ format :email_text do
     end
     output
   end
+
 end

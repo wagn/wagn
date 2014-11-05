@@ -82,6 +82,11 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c| !c.supercard and c.cu
 end
   
 format do
+  def last_act args
+    @last_act ||= args[:act_id] ? Card::Act.find(args[:act_id]) : card.acts.last
+    @last_act
+  end
+  
   def get_action args
     args[:action] || (args[:action_id] and Card::Action.find(args[:action_id])) || card.last_action
   end
@@ -90,10 +95,10 @@ format do
     act = args[:act_id] ? Card::Act.find(args[:act_id]) : card.acts.last
     action_on_card = act.action_on(card.id)
     
-    selfedits   = render_list_of_changes(args)
-    subedits    = act.relevant_actions_for(card).map do |action| 
-        action.card_id == card.id ? '' : action.card.format(:format=>@format).render_subedit_notice(:action=>action)
-    end.join
+    # selfedits   = render_list_of_changes(args)
+    # subedits    = act.relevant_actions_for(card).map do |action|
+    #     action.card_id == card.id ? '' : action.card.format(:format=>@format).render_subedit_notice(:action=>action)
+    # end.join
     
     {
       :card_name    => card.name,
@@ -106,11 +111,33 @@ format do
       :followed     => args[:followed],
       :action_type  => action_on_card ? "#{action_on_card.action_type}d" : "updated",
       :salutation   => args[:follower] ? "Dear #{args[:follower]}" : "Dear #{Card.setting :title} user",
-      :selfedits    => selfedits,
-      :subedits     => subedits
+      #:selfedits    => selfedits,
+      #:subedits     => subedits
     }
   end  
+  
+  view :subedits do |args|
+    subedits    = last_act(args).relevant_actions_for(card).map do |action| 
+        action.card_id == card.id ? '' : action.card.format(:format=>@format).render_subedit_notice(:action=>action)
+    end.join
+    if subedits.present?
+      wrap_subedits subedits
+    else
+      ''
+    end
+  end
+  
 
+  
+  view :last_editor do |args|
+    card.acts.last.actor.name
+  end
+  
+  view :last_action do |args|
+    action_on_card = card.acts.last.action_on(card.id)
+    action_on_card ? "#{action_on_card.action_type}d" : "updated"
+  end
+  
 
   def edit_info_for field, action
     return nil unless action.new_values[field]
@@ -184,15 +211,7 @@ format do
   end
 end
 
-format :email_html do
-  # def edit_info_for field, action
-  #   if field == :content and action.action_type == :update
-  #      wrap_list_item "content changes: #{render_content_changes :diff_type=>:summary, :action=>action}"
-  #   else
-  #     super
-  #   end
-  # end
-  
+format :email_html do  
   def wrap_list list
     "<ul>#{list}</ul>\n"
   end
@@ -207,30 +226,19 @@ format :email_html do
   
   view :change_notice, :perms=>:none, :denial=>:blank do |args|
     render_template_with_change_notice_locals :haml, args, %{
-= salutation
+Dear {{_follower}}
 %p
-  %a{:href=>card_url}
-    = card_name
-  was just 
-  %a{:href=>change_url}
-    = action_type
-  by 
-  %a{:href=>updater_url}
-    = updater_name
+  {{_|link}} was just [[/{{_|key}}?view=history|{{_|last_action}}]] by {{+*last editor|link}}
 %p
-  = selfedits
-  - if subedits.present?
-    = wrap_subedits subedits 
+  {{_|list_of_changes}}
+  
+  {{_|subedits}}
 %p
-  See the card: 
-  %a{:href=>card_url}
-    "\#{card_url}"
+  See the card: [[/{{_|key}}|{{_|url}}]] 
 %p
-  You received this email because you\'re following "\#{followed}". 
+  You received this email because you\'re following "{{_followed}}". 
   %br
-  %a{:href=>unfollow_url}
-    Unfollow
-  to stop receiving these emails.
+  [[{{_unfollow_url}} | Unfollow ]] to stop receiving these emails.
 }
   end
 end

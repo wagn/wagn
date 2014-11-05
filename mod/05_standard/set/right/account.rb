@@ -166,17 +166,22 @@ def send_change_notice act, followed_card_name
   changed_card = Card.find(act.card_id)
   
   args = { :follower=>left.name, :followed=>followed_card_name }  
-  html_msg = changed_card.format(:format=>:email_html).render_change_notice(args)
   action_type = (self_action = act.action_on(act.card_id) and self_action.action_type) || act.actions.first.action_type
 
   if html_msg.present?
-    text_msg = changed_card.format(:format=>:text).render_change_notice(args)
-    from_card = Card[WagnBotID]
+    from_card = Card[WagnBotID] 
+    following_card = left.fetch :trait=>:following
+    
+    Card["follower notification"].format(:format=>:email).deliver(
     email = format(:format=>:email).deliver(
+        :context => changed_card,
         :subject=>"#{act.actor.name} #{action_type}d \"#{act.card.name}\"",
-        :message => html_msg,
-        :text_message => text_msg,
-        :from => from_card.account.email
+        :from => from_card.account.email,
+        :locals => {
+          :follower=>left.name, 
+          :followed=>followed_card_name,
+          :unfollow_url=> wagn_url( "update/#{following_card.key}?drop_item=#{followed_card_name.to_name.url_key}" )
+        }
       )
   end
 end

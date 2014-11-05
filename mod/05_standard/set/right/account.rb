@@ -40,7 +40,7 @@ format :html do
   end
   
   view :verify_url do |args|
-    wagn_url "/update/#{self.left.cardname.url_key}?token=#{self.token}"
+    wagn_url "/update/#{card.cardname.left_name.url_key}?token=#{card.token}"
   end
 
   view :verify_days do |args|
@@ -48,7 +48,7 @@ format :html do
   end
 
   view :reset_password_url do |args|
-    wagn_url "/update/#{self.cardname.url_key}?reset_token=#{self.token_card.refresh(true).content}"
+    wagn_url "/update/#{card.cardname.url_key}?reset_token=#{card.token_card.refresh(true).content}"
   end
 
   view :reset_password_days do |args|
@@ -129,7 +129,7 @@ end
 
 event :send_account_confirmation_email, :on=>:create, :after=>:extend do
   if self.email.present?
-    Card["confirmation email"].format(:format=>:email).deliver(
+    Card[:confirmation_email].format(:format=>:email).deliver(
       :context => self,
       :to     => self.email,
       :from   => token_emails_from(self),
@@ -141,7 +141,7 @@ event :send_reset_password_token do
   Auth.as_bot do
     token_card.update_attributes! :content => generate_token
   end
-  Card["password reset"].format(:format=>:email).deliver(
+  Card[:password_reset].format(:format=>:email).deliver(
     :context => self,
     :to      => self.email,
     :from    => token_emails_from(self),

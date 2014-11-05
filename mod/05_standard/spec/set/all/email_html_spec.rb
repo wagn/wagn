@@ -74,7 +74,7 @@ describe Card::EmailHtmlFormat do
 
     it "returns correct hash with email configuration" do
       Rails.logger.rspec %{<p>Some stuff happened.</p>}
-      Card.create! :name => "mailconfig+*message", :content => "Nobody expects the Spanish Inquisition"
+      Card.create! :name => "mailconfig+*html_message", :content => "Nobody expects the Spanish Inquisition"
       expect(mailconfig).to eq({
         :to => "joe@user.com",
         :from => "from@user.com",
@@ -84,7 +84,7 @@ describe Card::EmailHtmlFormat do
     end
     
     it "uses context card for email config" do
-      Card.create! :name => "mailconfig+*message", :content => "Nobody expects {{_left+surprise|core}}"
+      Card.create! :name => "mailconfig+*html_message", :content => "Nobody expects {{_left+surprise|core}}"
       c = Card.create :name=>'Banana+surprise', :content=>"the Spanish Inquisition"
       c = Card.create :name => "Banana+emailtest", :content => "data content"
       expect( mailconfig( context: c ) ).to eq({
@@ -137,7 +137,7 @@ describe Card::EmailHtmlFormat do
         Card.create!  :name => "mailconfig+*from", :content => %{ {"left":"_left", "right":"email"} }, :type=>'Search'
         Card.create!  :name => "subject search+*right+*structure", :content => %{{"referred_to_by":"_self+subject"}}, :type=>'Search'
         Card.create!  :name => "mailconfig+*subject", :content => "{{+subject search|core;item:core}}"
-        Card.create! :name => "mailconfig+*message", :content => "Triggered by {{_self|name}} and its wonderful content: {{_self|core}}"
+        Card.create! :name => "mailconfig+*html message", :content => "Triggered by {{_self|name}} and its wonderful content: {{_self|core}}"
         Card.create! :name => "mailconfig+*attach", :type=>"Pointer", :content => "[[_self+attachment]]"
         Card.create! :name=>'Trigger', :type=>'Cardtype'
         Card.create :name=>'Trigger+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'

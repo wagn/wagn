@@ -7,7 +7,7 @@ format :html do
     super args
     args.merge!(
       :optional_help => :show, #, :optional_menu=>:never
-      :buttons => button_tag( 'Submit' ),
+      :buttons => button_tag( 'Submit', :disable_with=>'Submitting' ),
       :account => card.fetch( :trait=>:account, :new=>{} ),
       :title   => 'Sign up',
       :hidden  => {
@@ -151,6 +151,6 @@ event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_n
     :to     => Card.setting('*request+*to'),
     :from   => Card.setting('*request+*from') || "\"#{name}\" <#{account.email}>"
   }
-  Card['signup alert'].format(:format=>:email).deliver(args)
+  Card[:signup_alert].format(:format=>:email).deliver(args)
 end
 

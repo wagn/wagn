@@ -1,7 +1,7 @@
 describe Card::Set::Type::EmailTemplate do
   before :each do
     Card::Auth.as_bot do
-      Card.create! :name=>"mail template",  :type_code=>'email_template', :subcards=>{'+*message'=>{content: 'Hi Joe! My name is {{_self|name}}'},
+      Card.create! :name=>"mail template",  :type_code=>'email_template', :subcards=>{'+*html message'=>{content: 'Hi Joe! My name is {{_self|name}}'},
                                                                                       '+*to'=>{content: 'joe@user.com'},
                                                                                       '+*from'=>{content: 'from@user.com'} }
     end
@@ -32,7 +32,7 @@ describe Card::Set::Type::EmailTemplate do
   describe '#send_action_mails' do
     before do
       Card::Auth.as_bot do
-        Card.create! :name=>"another mail template",  :type_code=>'email_template', :subcards=>{'+*message'=>{content: 'Hi Joe! My name is {{_self|name}}'},
+        Card.create! :name=>"another mail template",  :type_code=>'email_template', :subcards=>{'+*html message'=>{content: 'Hi Joe! My name is {{_self|name}}'},
                                                                                         '+*to'=>{content: 'joe@user.com'},
                                                                                         '+*from'=>{content: 'from@user.com'} }
         Card.create! :name=>"mail test+*self+*on update", type_code: :pointer, content: "[[mail template]]\n[[another mail template]]"

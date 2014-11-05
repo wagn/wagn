@@ -1,7 +1,5 @@
-{{_|name}} ({{+*email}})
-has requested an account ({{:signup|url}})
-on {{*title}}.
+{{_|name}} ({{+*email|core}}) has signed up on {{:title|core}}.
 
-See {{_|url}} for {{_|name}}&#39;s request.
+See {{_|name}}'s card: {{_|url}}
 
--- the machines running {{*title}}
+-- the machines running {{:title|core}}

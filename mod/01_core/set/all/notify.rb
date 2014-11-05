@@ -12,16 +12,16 @@ class FollowerStash
         @visited.add card.name
         # add card followers
         Card.search( :right_plus=>[{:codename=> "following"}, 
-                             {:link_to=>card.name}     ]
+                             {:link_to=>['in'] + card.set_names}     ]
                    ).each do |follower|
                      notify follower, :of => card.name
                    end
         # add cardtype followers
-        Card.search( :right_plus=>[{:codename=> "following"}, 
-                             {:link_to=>card.type_name} ]
-                   ).each do |follower|
-                    notify follower, :of => card.type_name
-                  end
+        # Card.search( :right_plus=>[{:codename=> "following"},
+#                              {:link_to=>card.type_name} ]
+#                    ).each do |follower|
+#                     notify follower, :of => card.type_name
+#                   end
         Card.search(:include=>card.name).each do |includer| 
           add_affected_card includer unless @visited.include? includer.name
         end
@@ -90,31 +90,7 @@ format do
   def get_action args
     args[:action] || (args[:action_id] and Card::Action.find(args[:action_id])) || card.last_action
   end
-  
-  def change_notice_locals args
-    act = args[:act_id] ? Card::Act.find(args[:act_id]) : card.acts.last
-    action_on_card = act.action_on(card.id)
-    
-    # selfedits   = render_list_of_changes(args)
-    # subedits    = act.relevant_actions_for(card).map do |action|
-    #     action.card_id == card.id ? '' : action.card.format(:format=>@format).render_subedit_notice(:action=>action)
-    # end.join
-    
-    {
-      :card_name    => card.name,
-      :updater_name => act.actor.name,
-      :card_url     => wagn_url(card),
-      :change_url   => wagn_url("#{card.cardname.url_key}?view=history"), 
-      :unfollow_url => wagn_url( "update/#{args[:follower].to_name.url_key}+#{Card[:following].cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" ),
-      :updater_url  => wagn_url( act.actor ),
-      :follower     => args[:follower],
-      :followed     => args[:followed],
-      :action_type  => action_on_card ? "#{action_on_card.action_type}d" : "updated",
-      :salutation   => args[:follower] ? "Dear #{args[:follower]}" : "Dear #{Card.setting :title} user",
-      #:selfedits    => selfedits,
-      #:subedits     => subedits
-    }
-  end  
+   
   
   view :subedits do |args|
     subedits    = last_act(args).relevant_actions_for(card).map do |action| 
@@ -126,16 +102,15 @@ format do
       ''
     end
   end
-  
-
-  
+    
   view :last_editor do |args|
     card.acts.last.actor.name
   end
   
   view :last_action do |args|
-    action_on_card = card.acts.last.action_on(card.id)
-    action_on_card ? "#{action_on_card.action_type}d" : "updated"
+    act = last_act(args)
+    action_on_card = (self_action = act.action_on(act.card_id) and self_action.action_type) || act.actions.first.action_type 
+    "#{action_on_card.action_type}d"
   end
   
 
@@ -194,21 +169,6 @@ format do
       edit_info_for(type, action)
     end.compact.join
   end
-  
-  def render_template_with_change_notice_locals type, args, template
-    locals = change_notice_locals(args)
-    if locals[:selfedits].present? or locals[:subedits].present? or locals[:action_type] == "deleted"  
-      if type == :haml
-        render_haml locals, template, binding
-      elsif type == :erb
-        render_erb locals, template
-      else
-        template
-      end
-    else
-      ''
-    end
-  end
 end
 
 format :email_html do  
@@ -223,42 +183,8 @@ format :email_html do
   def wrap_subedit_item text
     "<li>#{text}</li>\n"
   end
-  
-  view :change_notice, :perms=>:none, :denial=>:blank do |args|
-    render_template_with_change_notice_locals :haml, args, %{
-Dear {{_follower}}
-%p
-  {{_|link}} was just [[/{{_|key}}?view=history|{{_|last_action}}]] by {{+*last editor|link}}
-%p
-  {{_|list_of_changes}}
-  
-  {{_|subedits}}
-%p
-  See the card: [[/{{_|key}}|{{_|url}}]] 
-%p
-  You received this email because you\'re following "{{_followed}}". 
-  %br
-  [[{{_unfollow_url}} | Unfollow ]] to stop receiving these emails.
-}
-  end
 end
 
 
-format :text do    
-  view :change_notice, :perms=>:none, :denial=>:blank do |args|
-    render_template_with_change_notice_locals :erb, args, %{
-<%= @salutation %>
 
-"<%= @card_name %>"
-was just <%= @action_type %> by <%= @updater_name %>
-<%= @selfedits if @selfedits.present? -%>
-<%= wrap_subedits @subedits if @subedits.present? -%>
-
-See the card: <%= @card_url %>
-
-You received this email because you're following "<%= @followed %>".
-Visit <%= @unfollow_url %> to stop receiving these emails.
-      }.strip
-  end
-end
 

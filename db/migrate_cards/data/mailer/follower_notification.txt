@@ -1,4 +1,4 @@
-Dear {{_follower}}
+Dear {{_|follower}}
 
 "{{_|name}}"
 was just {{_|last_action}} by {{_user|name}}
@@ -7,5 +7,5 @@ was just {{_|last_action}} by {{_user|name}}
 
 See the card: {{_|url}}
 
-You received this email because you\'re following "{{_followed}}".
-Visit {{_unfollow_url}}
+You received this email because you\'re following "{{_|followed}}".
+Visit {{_|unfollow_url}}

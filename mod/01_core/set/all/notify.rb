@@ -140,8 +140,7 @@ format do
   end
   
   def get_act args
-    @last_act ||= args[:act_id] ? Card::Act.find(args[:act_id]) : card.acts.last
-    @last_act
+    @notification_act ||= args[:act] || (args[:act_id] and Card::Act.find(args[:act_id])) || card.acts.last
   end
   
   def get_action args
@@ -154,6 +153,24 @@ format do
   end
    
 end
+
+format do
+  view :followed do |args|
+    args[:followed] || 'followed card'
+  end
+
+  view :follower do |args|
+    args[:follower] || 'follower'
+  end
+  
+  view :unfollow_url do |args|
+     if follower = Card.fetch args[:follower] and  args[:followed]
+       following_card = follower.fetch( :trait=>:following, :new=>{} )
+       wagn_url( "update/#{following_card.cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" )
+     end
+  end
+end
+
 
 format :email_text do 
   view :last_action do |args|

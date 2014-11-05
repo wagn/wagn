@@ -172,16 +172,12 @@ end
 def send_change_notice act, followed_card_name
   if changes_visible?(act) 
     from_card = Card[WagnBotID] 
-    following_card = left.fetch( :trait=>:following )
     mail = Card[:follower_notification_email].deliver(
         :context => Card.find(act.card),
         :from => from_card.account.email,
         :to   => self.email,
-        :locals => {
-          :follower     => left.name, 
-          :followed     => followed_card_name,
-          :unfollow_url => wagn_url( "update/#{following_card.key}?drop_item=#{followed_card_name.to_name.url_key}" )
-        }
+        :follower     => left.name, 
+        :followed     => followed_card_name,
       )
     mail
   end

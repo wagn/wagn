@@ -164,10 +164,10 @@ format do
   end
   
   view :unfollow_url do |args|
-     if follower = Card.fetch args[:follower] and  args[:followed]
-       following_card = follower.fetch( :trait=>:following, :new=>{} )
-       wagn_url( "update/#{following_card.cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" )
-     end
+    if args[:followed] and args[:follower] and follower = Card.fetch( args[:follower] )
+     following_card = follower.fetch( :trait=>:following, :new=>{} )
+     wagn_url( "update/#{following_card.cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" )
+    end
   end
 end
 

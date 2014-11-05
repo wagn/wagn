@@ -171,15 +171,13 @@ end
 
 def send_change_notice act, followed_card_name
   if changes_visible?(act) 
-    from_card = Card[WagnBotID] 
-    mail = Card[:follower_notification_email].deliver(
-        :context => Card.find(act.card),
-        :from => from_card.account.email,
-        :to   => self.email,
-        :follower     => left.name, 
-        :followed     => followed_card_name,
-      )
-    mail
+    Card[:follower_notification_email].deliver(
+      :context   => act.card,
+      :from      => Card[WagnBotID].account.email,
+      :to        => email,
+      :follower  => left.name, 
+      :followed  => followed_card_name,
+    )
   end
 end
 

@@ -19,7 +19,7 @@ view :core do |args|
 
   
   %{ 
-    #{ _render_closed_content args }
+    #{ _render_rule_help args }
     <table class="setting-rules">
       <tr><th>Set</th><th>Rule</th></tr>
       #{
@@ -70,7 +70,12 @@ view :core do |args|
 
 end
 
-view :closed_content do |args|
+view :rule_help do |args|
   %{<div class="instruction">#{process_content_object "{{+*right+*help}}"}</div>}
+end
+
+
+view :closed_content do |args|
+  render_rule_help
 end
 

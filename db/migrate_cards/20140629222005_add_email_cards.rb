@@ -43,7 +43,7 @@ class AddEmailCards < Wagn::Migration
     
     # move old hard-coded signup alert email handling to new card-based on_create handling
     Card.create!(
-      :name=>[:signup, :type, :on_create].map { |code| Card[code].name },
+      :name=>( [:signup, :type, :on_create].map { |code| Card[code].name } * '+'),
       :type_id=>Card::PointerID, :content=>"[[signup alert email]]"
     )
     if request_card = Card[:request]

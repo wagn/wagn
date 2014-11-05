@@ -127,9 +127,9 @@ event :reset_token do
 end
   
 
-event :send_account_confirmation_email, :on=>:create, :after=>:extend do
+event :send_account_verification_email, :on=>:create, :after=>:extend do
   if self.email.present?
-    Card[:confirmation_email].format(:format=>:email).deliver(
+    Card[:verification_email].format(:format=>:email).deliver(
       :context => self,
       :to     => self.email,
       :from   => token_emails_from(self),
@@ -141,7 +141,7 @@ event :send_reset_password_token do
   Auth.as_bot do
     token_card.update_attributes! :content => generate_token
   end
-  Card[:password_reset].format(:format=>:email).deliver(
+  Card[:password_reset_email].format(:format=>:email).deliver(
     :context => self,
     :to      => self.email,
     :from    => token_emails_from(self),

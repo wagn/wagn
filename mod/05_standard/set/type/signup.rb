@@ -56,7 +56,7 @@ format :html do
           token_action = 'Resend'
         end
         if account.confirm_ok?
-          links << link_to( "#{token_action} verification email", wagn_path("/update/~#{card.id}?approve_token=true"  ) )
+          links << link_to( "#{token_action} verification email", wagn_path("/update/~#{card.id}?approve_with_token=true"  ) )
           links << link_to( "Approve without verification", wagn_path("/update/~#{card.id}?approve_without_token=true") )
         end
         if card.ok? :delete
@@ -102,10 +102,10 @@ event :activate_account do
   self.type_id = Card.default_accounted_type_id
 end
 
-event :approve_token, :on=>:update, :before=>:approve, :when=>proc {|c| Env.params[:approve_token] } do
+event :approve_with_token, :on=>:update, :before=>:approve, :when=>proc {|c| Env.params[:approve_with_token] } do
   abort :failure, 'illegal approval' unless account.confirm_ok?
   account.reset_token
-  account.send_account_confirmation_email
+  account.send_account_verification_email
 end
 
 event :approve_without_token, :on=>:update, :before=>:approve, :when=>proc {|c| Env.params[:approve_without_token] } do
@@ -115,7 +115,7 @@ end
 
 event :resend_activation_token do
   account.reset_token
-  account.send_account_confirmation_email
+  account.send_account_verification_email
   Env.params[:success] = {
     :id => '_self',
     :view => 'message',

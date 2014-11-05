@@ -5,7 +5,7 @@
     "subject"   : "verification link for {{:title|core}}"
   },
   {
-    "name"    : "password reset",
+    "name"    : "password reset email",
 	  "codename": "password_reset_email",
     "subject" : "reset password for {{:title|core}}"
   },

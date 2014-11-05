@@ -37,22 +37,17 @@ format :html do
   end
 end
 
-=begin
-def ok_to_create
-  unless Auth.needs_setup?
-    deny_because "You cannot create a #{type_name} directly; you must create a #{Card[:signup].name} first"
-  end
-end
-=end
 
 event :setup_as_bot, :before=>:check_permissions, :on=>:create, :when=>proc{ |c| Card::Env.params[:setup] } do
-  # is this still needed, even with the #ok_to_create call?
-  abort :failure unless Auth.needs_setup?
+  abort :failure unless Auth.needs_setup? 
   Auth.as_bot
+  # we need bot authority to set the initial administrator roles
+  # this is granted and inspected here as a separate event for 
+  # flexibility and security when configuring initial setups
 end  
 
 event :setup_first_user, :before=>:process_subcards, :on=>:create, :when=>proc{ |c| Card::Env.params[:setup] } do
-  subcards['*request+*to'] = subcards['+*account+*email']
+  subcards['signup alert email+*to'] = subcards['+*account+*email'] #better to do as pointer eventually!
   subcards['+*roles'] = { :content => Card[:administrator].name }
   
   email, password = subcards.delete('+*account+*email'), subcards.delete('+*account+*password')

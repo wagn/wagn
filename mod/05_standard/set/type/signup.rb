@@ -131,26 +131,11 @@ event :redirect_to_edit_password, :on=>:update, :after=>:store, :when=>proc {|c|
   Env.params[:success] = account.edit_password_success_args  
 end
 
-
 event :preprocess_account_subcards, :before=>:process_subcards, :on=>:create do
   #FIXME: use codenames!
   email, password = subcards.delete('+*account+*email'), subcards.delete('+*account+*password')
   subcards['+*account'] ||={}
   subcards['+*account']['+*email']   = email if email
   subcards['+*account']['+*password' ]=password if password
-end
-
-send_signup_notifications = proc do |c|
-  !Auth.signed_in? and c.account and c.account.pending? and Card.setting '*request+*to'
-end
-
-
-event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_notifications do
-  args =  {
-    :context=> account,
-    :to     => Card.setting('*request+*to'),
-    :from   => Card.setting('*request+*from') || "\"#{name}\" <#{account.email}>"
-  }
-  Card[:signup_alert].format(:format=>:email).deliver(args)
 end
 

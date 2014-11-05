@@ -2,6 +2,15 @@
 
 class AddEmailCards < Wagn::Migration
   def up
+    
+    # change notification rules
+    %w( create update delete ).each do |action|
+      Card.create! :name => "*on #{action}", :type_code=>:setting, :codename=>"on_#{action}"
+      Card.create! :name => "*on #{action}+*right+*help", :content=>"Configures email to be sent when card is #{action}d."
+      Card.create! :name => "*on #{action}+*right+*default", :type_code=>:pointer
+    end
+    
+    
     # create new cardtype for email templates
     Card.create! :name=>"Email template", :codename=>:email_template, :type_id=>Card::CardtypeID
     Card.create! :name=>"Email template+*type+*structure", 
@@ -15,12 +24,10 @@ class AddEmailCards < Wagn::Migration
     Card.create! :name=>'*text message', :codename=>'text_message'
     Card.create! :name=>"*text message+*right+*default", :type_code=>:plain_text
     
-    if email_config=Card.fetch("email_config+*right+*structure")
-      email_config.update_attributes( 
-        :content=>"{{+*from|titled}}\n{{+*to|titled}}\n{{+*cc|titled}}\n{{+*bcc|titled}}\n{{+*subject|titled}}\n{{+*html message|titled}}\n{{+*text message|titled}}\n{{+*attach|titled}}"
-      )
-    end
+    
     Wagn::Cache.reset_global
+    
+    
     # create system email cards
     dir = "#{Wagn.gem_root}/db/migrate_cards/data/mailer"
     json = File.read( File.join( dir, 'mail_config.json' ))
@@ -33,13 +40,28 @@ class AddEmailCards < Wagn::Migration
       Card.create! :name=>"#{mail[:name]}+*subject", :content=>mail[:subject] 
     end
     
-    # change notification rules
-    %w( create update delete ).each do |action|
-      Card.create! :name => "*on #{action}", :type_code=>:setting, :codename=>"on_#{action}"
-      Card.create! :name => "*on #{action}+*right+*help", :content=>"Configures email to be sent when card is #{action}d."
-      Card.create! :name => "*on #{action}+*right+*default", :type_code=>:pointer, 
-                   :content=>"[[_left+email config]]"
+    
+    # move old hard-coded signup alert email handling to new card-based on_create handling
+    Card.create!(
+      :name=>[:signup, :type, :on_create].map { |code| Card[code].name },
+      :type_id=>Card::PointerID, :content=>"[[signup alert email]]"
+    )
+    request_card = Card[:request]
+    [:to, :from].each do |field|
+      if old_card = Card[ request_card.trait_name(field) ] and !old_card.content.blank?
+        Card.create! :name=>"signup alert email+#{Card[field].name}", :content=>old_card.content
+      end
     end
+    request_card.codename = nil
+    request_card.delete!
+    
+    
+    # migrate old flexmail cards
+    # FIXME - add email config migrations here...
+
+    email_config_card = Card['email_config'].delete!
+    
+    
     
     # move old send rule to on_create
     fields = %w( to from cc bcc subject message attach )
@@ -48,7 +70,7 @@ class AddEmailCards < Wagn::Migration
       send_rule.delete  #@ethn: keep old rule for safety reasons?
     end
   
-    # the new watch rule
+    # the new following rule
     Card.create! :name => '*following', :type_code=>:pointer, :codename=>'following'
     Card.create! :name => '*following+*right+*default', :type_code=>:pointer
     Card.create! :name => '*following+*right+*update', :content=>'_left'

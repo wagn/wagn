@@ -104,7 +104,9 @@ namespace :wagn do
       Wagn::Cache.reset_global
       ENV['SCHEMA'] = "#{Wagn.gem_root}/db/schema.rb"
       Wagn.config.action_mailer.perform_deliveries = false
-      Card # this is needed in production mode to insure core db structures are loaded before schema_mode is set
+      Card.reset_column_information
+       # this is needed in production mode to insure core db structures are loaded before schema_mode is set
+      
     
       paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.card_migration_paths
     

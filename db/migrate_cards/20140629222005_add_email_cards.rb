@@ -46,15 +46,15 @@ class AddEmailCards < Wagn::Migration
       :name=>[:signup, :type, :on_create].map { |code| Card[code].name },
       :type_id=>Card::PointerID, :content=>"[[signup alert email]]"
     )
-    request_card = Card[:request]
-    [:to, :from].each do |field|
-      if old_card = Card[ request_card.trait_name(field) ] and !old_card.content.blank?
-        Card.create! :name=>"signup alert email+#{Card[field].name}", :content=>old_card.content
+    if request_card = Card[:request]
+      [:to, :from].each do |field|
+        if old_card = request_card.trait(field) and !old_card.content.blank?
+          Card.create! :name=>"signup alert email+#{Card[field].name}", :content=>old_card.content
+        end
       end
+      request_card.codename = nil
+      request_card.delete!
     end
-    request_card.codename = nil
-    request_card.delete!
-    
     
     # migrate old flexmail cards
 

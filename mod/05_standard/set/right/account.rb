@@ -129,7 +129,7 @@ end
 
 event :send_account_verification_email, :on=>:create, :after=>:extend do
   if self.email.present?
-    Card[:verification_email].format(:format=>:email).deliver(
+    Card[:verification_email].deliver(
       :context => self,
       :to     => self.email,
       :from   => token_emails_from(self),
@@ -141,7 +141,7 @@ event :send_reset_password_token do
   Auth.as_bot do
     token_card.update_attributes! :content => generate_token
   end
-  Card[:password_reset_email].format(:format=>:email).deliver(
+  Card[:password_reset_email].deliver(
     :context => self,
     :to      => self.email,
     :from    => token_emails_from(self),
@@ -162,25 +162,24 @@ def ok_to_read
 end
 
 
-def send_change_notice act, followed_card_name
-  changed_card = Card.find(act.card_id)
-  
-  args = { :follower=>left.name, :followed=>followed_card_name }  
-  html_msg = changed_card.format(:format=>:email_html).render_change_notice(args)
-  action_type = (self_action = act.action_on(act.card_id) and self_action.action_type) || act.actions.first.action_type
-
-  if html_msg.present?
-    text_msg = changed_card.format(:format=>:text).render_change_notice(args)
-    from_card = Card[WagnBotID]
-    email = format(:format=>:email).deliver(
-        :subject=>"#{act.actor.name} #{action_type}d \"#{act.card.name}\"",
-        :message => html_msg,
-        :text_message => text_msg,
-        :from => from_card.account.email
-      )
+def changes_visible? act
+  act.relevant_actions_for(act.card).each do |action|
+    return true if action.card.ok? :read
   end
+  return false
 end
 
+def send_change_notice act, followed_card_name
+  if changes_visible?(act) 
+    Card[:follower_notification_email].deliver(
+      :context   => act.card,
+      :from      => Card[WagnBotID].account.email,
+      :to        => email,
+      :follower  => left.name, 
+      :followed  => followed_card_name,
+    )
+  end
+end
 
 
 format :email do  

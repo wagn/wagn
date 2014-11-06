@@ -138,4 +138,3 @@ event :preprocess_account_subcards, :before=>:process_subcards, :on=>:create do
   subcards['+*account']['+*email']   = email if email
   subcards['+*account']['+*password' ]=password if password
 end
-

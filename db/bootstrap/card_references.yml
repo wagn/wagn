@@ -1948,6 +1948,90 @@ card_references_278:
 card_references_279:
   id: 2224
   referer_id: 1230
+  referee_key: follower_notification_email+*from
+  referee_id: 
+  ref_type: I
+  present: 0
+card_references_280:
+  id: 2225
+  referer_id: 1230
+  referee_key: follower_notification_email+*to
+  referee_id: 
+  ref_type: I
+  present: 0
+card_references_281:
+  id: 2226
+  referer_id: 1230
+  referee_key: follower_notification_email+*cc
+  referee_id: 
+  ref_type: I
+  present: 0
+card_references_282:
+  id: 2227
+  referer_id: 1230
+  referee_key: follower_notification_email+*bcc
+  referee_id: 
+  ref_type: I
+  present: 0
+card_references_283:
+  id: 2228
+  referer_id: 1230
+  referee_key: follower_notification_email+*subject
+  referee_id: 1233
+  ref_type: I
+  present: 1
+card_references_284:
+  id: 2229
+  referer_id: 1230
+  referee_key: follower_notification_email+*html_message
+  referee_id: 1231
+  ref_type: I
+  present: 1
+card_references_285:
+  id: 2230
+  referer_id: 1230
+  referee_key: follower_notification_email+*text_message
+  referee_id: 1232
+  ref_type: I
+  present: 1
+card_references_286:
+  id: 2231
+  referer_id: 1230
+  referee_key: follower_notification_email+*attach
+  referee_id: 
+  ref_type: I
+  present: 0
+card_references_287:
+  id: 2232
+  referer_id: 1231
+  referee_key: wagn_bot
+  referee_id: 1
+  ref_type: I
+  present: 1
+card_references_288:
+  id: 2233
+  referer_id: 1231
+  referee_key: unfollow_url
+  referee_id: 
+  ref_type: L
+  present: 0
+card_references_289:
+  id: 2234
+  referer_id: 1232
+  referee_key: wagn_bot
+  referee_id: 1
+  ref_type: I
+  present: 1
+card_references_290:
+  id: 2235
+  referer_id: 1233
+  referee_key: wagn_bot
+  referee_id: 1
+  ref_type: I
+  present: 1
+card_references_291:
+  id: 2236
+  referer_id: 1234
   referee_key: signup_alert_email
   referee_id: 1226
   ref_type: L

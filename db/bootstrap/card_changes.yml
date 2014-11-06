@@ -8852,107 +8852,135 @@ card_changes_1659:
   id: 5270
   card_action_id: 7180
   field: 0
-  value: '["Sign up", "*type", "*on create"]'
+  value: follower notification_email
 card_changes_1660:
   id: 5271
   card_action_id: 7180
   field: 1
-  value: '47'
+  value: '1211'
 card_changes_1661:
   id: 5272
   card_action_id: 7180
   field: 2
-  value: '[[signup alert email]]'
+  value: |-
+    {{+*from|titled}}
+    {{+*to|titled}}
+    {{+*cc|titled}}
+    {{+*bcc|titled}}
+    {{+*subject|titled}}
+    {{+*html message|titled}}
+    {{+*text message|titled}}
+    {{+*attach|titled}}
 card_changes_1662:
   id: 5273
   card_action_id: 7180
   field: 3
   value: '0'
 card_changes_1663:
-  id: 5280
-  card_action_id: 7187
+  id: 5274
+  card_action_id: 7181
   field: 0
-  value: '*following'
+  value: follower notification_email+*html message
 card_changes_1664:
-  id: 5281
-  card_action_id: 7187
+  id: 5275
+  card_action_id: 7181
   field: 1
-  value: '47'
+  value: '3'
 card_changes_1665:
-  id: 5282
-  card_action_id: 7187
+  id: 5276
+  card_action_id: 7181
   field: 2
-  value: ''
+  value: |
+    <p>{{_|link}} was just <a href="{{_|url}}?view=history">{{_|last_action}}</a> by {{_user|link}}</p>
+
+    <blockquote>{{_|list_of_changes}}</blockquote>
+
+    <p>{{_|subedits}}</p>
+
+    <p>You received this email because you\'re following <strong>{{_|followed}}</strong>.</p>
+
+    <p><em>[[ {{_|unfollow_url}} | Unfollow ]] to stop receiving these emails.</em></p>
 card_changes_1666:
-  id: 5283
-  card_action_id: 7187
+  id: 5277
+  card_action_id: 7181
   field: 3
   value: '0'
 card_changes_1667:
-  id: 5284
-  card_action_id: 7189
+  id: 5278
+  card_action_id: 7182
   field: 0
-  value: '*following+*right'
+  value: follower notification_email+*text message
 card_changes_1668:
-  id: 5285
-  card_action_id: 7189
+  id: 5279
+  card_action_id: 7182
   field: 1
-  value: '259'
+  value: '22'
 card_changes_1669:
-  id: 5286
-  card_action_id: 7189
+  id: 5280
+  card_action_id: 7182
   field: 2
-  value: '{"right":"_self"}'
+  value: |
+    "{{_|name}}" was just {{_|last_action}} by {{_user|name}}.
+
+    {{_|list_of_changes}}
+
+    {{_|subedits}}
+
+    See the card: {{_|url}}
+
+    You received this email because you\'re following "{{_|followed}}".
+
+    Use this link to unfollow {{_|unfollow_url}}
 card_changes_1670:
-  id: 5287
-  card_action_id: 7189
+  id: 5281
+  card_action_id: 7182
   field: 3
   value: '0'
 card_changes_1671:
-  id: 5288
-  card_action_id: 7188
+  id: 5282
+  card_action_id: 7183
   field: 0
-  value: '*following+*right+*default'
+  value: follower notification_email+*subject
 card_changes_1672:
-  id: 5289
-  card_action_id: 7188
+  id: 5283
+  card_action_id: 7183
   field: 1
-  value: '47'
+  value: '52'
 card_changes_1673:
-  id: 5290
-  card_action_id: 7188
+  id: 5284
+  card_action_id: 7183
   field: 2
-  value: ''
+  value: '{{_user|name}} {{_|last_action}} "{{_|name}}"'
 card_changes_1674:
-  id: 5291
-  card_action_id: 7188
+  id: 5285
+  card_action_id: 7183
   field: 3
   value: '0'
 card_changes_1675:
-  id: 5292
-  card_action_id: 7190
+  id: 5286
+  card_action_id: 7184
   field: 0
-  value: '*following+*right+*update'
+  value: Sign up+*type+*on create
 card_changes_1676:
-  id: 5293
-  card_action_id: 7190
+  id: 5287
+  card_action_id: 7184
   field: 1
   value: '47'
 card_changes_1677:
-  id: 5294
-  card_action_id: 7190
+  id: 5288
+  card_action_id: 7184
   field: 2
-  value: _left
+  value: '[[signup alert email]]'
 card_changes_1678:
-  id: 5295
-  card_action_id: 7190
+  id: 5289
+  card_action_id: 7184
   field: 3
   value: '0'
 card_changes_1679:
   id: 5296
   card_action_id: 7191
   field: 0
-  value: '*following+*right+*create'
+  value: '*following'
 card_changes_1680:
   id: 5297
   card_action_id: 7191
@@ -8962,9 +8990,89 @@ card_changes_1681:
   id: 5298
   card_action_id: 7191
   field: 2
-  value: _left
+  value: ''
 card_changes_1682:
   id: 5299
   card_action_id: 7191
+  field: 3
+  value: '0'
+card_changes_1683:
+  id: 5300
+  card_action_id: 7193
+  field: 0
+  value: '*following+*right'
+card_changes_1684:
+  id: 5301
+  card_action_id: 7193
+  field: 1
+  value: '259'
+card_changes_1685:
+  id: 5302
+  card_action_id: 7193
+  field: 2
+  value: '{"right":"_self"}'
+card_changes_1686:
+  id: 5303
+  card_action_id: 7193
+  field: 3
+  value: '0'
+card_changes_1687:
+  id: 5304
+  card_action_id: 7192
+  field: 0
+  value: '*following+*right+*default'
+card_changes_1688:
+  id: 5305
+  card_action_id: 7192
+  field: 1
+  value: '47'
+card_changes_1689:
+  id: 5306
+  card_action_id: 7192
+  field: 2
+  value: ''
+card_changes_1690:
+  id: 5307
+  card_action_id: 7192
+  field: 3
+  value: '0'
+card_changes_1691:
+  id: 5308
+  card_action_id: 7194
+  field: 0
+  value: '*following+*right+*update'
+card_changes_1692:
+  id: 5309
+  card_action_id: 7194
+  field: 1
+  value: '47'
+card_changes_1693:
+  id: 5310
+  card_action_id: 7194
+  field: 2
+  value: _left
+card_changes_1694:
+  id: 5311
+  card_action_id: 7194
+  field: 3
+  value: '0'
+card_changes_1695:
+  id: 5312
+  card_action_id: 7195
+  field: 0
+  value: '*following+*right+*create'
+card_changes_1696:
+  id: 5313
+  card_action_id: 7195
+  field: 1
+  value: '47'
+card_changes_1697:
+  id: 5314
+  card_action_id: 7195
+  field: 2
+  value: _left
+card_changes_1698:
+  id: 5315
+  card_action_id: 7195
   field: 3
   value: '0'

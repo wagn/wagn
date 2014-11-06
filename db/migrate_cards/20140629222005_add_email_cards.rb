@@ -17,6 +17,10 @@ class AddEmailCards < Wagn::Migration
       default_rule.type_id = Card::PointerID
       default_rule.save!
       
+      Card.search( :right=>{:codename=>field.to_s} ).each do |field_card|
+        field_card.update_attributes! :type_id => Card::PointerID
+      end
+      
       options_rule = set.fetch(:trait=>:options, :new=>{})
       options_rule.type_id = Card::SearchID
       options_rule.content = %( { "right":{"codename":"account"} } )
@@ -62,7 +66,7 @@ class AddEmailCards < Wagn::Migration
     if request_card = Card[:request]
       [:to, :from].each do |field|
         if old_card = request_card.fetch(:trait=>field) and !old_card.content.blank?
-          new_card = Card.create! :name=>"signup alert email+#{Card[field].name}", :content=>old_card.content
+          Card.create! :name=>"signup alert email+#{Card[field].name}", :content=>old_card.content
         end
       end
       request_card.codename = nil
@@ -87,7 +91,7 @@ class AddEmailCards < Wagn::Migration
     
     
     # move old send rule to on_create
-    fields = %w( to from cc bcc subject message attach )
+    #fields = %w( to from cc bcc subject message attach )
     Card.search(:right=>"*send").each do |send_rule|
       Card.create! :name=>"send_rule.left+*on create", :content=>send_rule.content, :type_code=>:pointer
       send_rule.delete  #@ethn: keep old rule for safety reasons?

@@ -30,12 +30,12 @@ describe Card::Set::Right::Account do
     end
   end
   
-  describe '#send_account_confirmation_email' do
+  describe '#send_account_verification_email' do
     before do
       @email = 'joe@user.com'
       @account = Card::Auth[@email].account
       ActionMailer::Base.deliveries = []
-      @account.send_account_confirmation_email
+      @account.send_account_verification_email
       @mail = ActionMailer::Base.deliveries.last
     end
 

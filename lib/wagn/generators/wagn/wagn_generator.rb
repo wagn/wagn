@@ -15,14 +15,14 @@ class WagnGenerator < Rails::Generators::AppBase
   class_option 'core-dev', :type => :boolean, aliases: '-c', :default => false, :group => :runtime, 
     desc: "Prepare deck for wagn core testing"
     
-    class_option 'gem-path', :type => :string, aliases: '-g', :default => false, :group => :runtime, 
-      desc: "Path to local gem installation"
+  class_option 'gem-path', :type => :string, aliases: '-g', :default => false, :group => :runtime, 
+    desc: "Path to local gem installation"
     
   class_option 'mod-dev', :type => :boolean, aliases: '-m', :default => false, :group => :runtime, 
     desc: "Prepare deck for mod testing"
     
   class_option 'interactive', :type => :boolean, aliases: '-i', :default => false, :group => :runtime, 
-      desc: "Prompt with dynamic installation options"
+    desc: "Prompt with dynamic installation options"
                         
   public_task :create_root
   

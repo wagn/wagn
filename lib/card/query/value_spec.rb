@@ -53,7 +53,7 @@ class Card::Query
         else;            ["#{table}.#{safe_sql(field)}", v]
         end
 
-      v = v[0] if Array===v && v.length==1
+      v = v[0] if Array===v && v.length==1 && op != 'in'
       if op=='~'
         cxn, v = match_prep(v,@cardspec)
         %{#{field} #{cxn.match(sqlize(v))}}

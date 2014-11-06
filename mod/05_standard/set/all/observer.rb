@@ -1,7 +1,7 @@
 def send_action_mails args  
   setting = "on_#{args[:on]}".to_sym    
   email_templates_for( setting ) do |mailcard|
-    mailcard.format(:format=>:email).deliver( context: self)
+    mailcard.deliver( context: self )
   end
 end
 

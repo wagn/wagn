@@ -57,6 +57,18 @@ def extended_item_contents context = nil
   extended_item_cards(context).map(&:item_names).flatten
 end
 
+def extended_item_contents_for_email_addresses context = nil, format_args, view_args
+  extended_item_cards(context).map do |item_card|
+    if item_card.type_id == UserID
+      item_card.account.email
+    elsif context
+      item_card.contextual_content(context,format_args,view_args).split( /[,\n]/ )
+    else
+      item_card.format(format_args)._render_raw(view_args).split( /[,\n]/ )
+    end
+  end.flatten
+end
+
 def extended_list context = nil
   context = (context ? context.cardname : self.cardname)
   args={ :limit=>'' }

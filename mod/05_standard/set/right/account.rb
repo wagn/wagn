@@ -24,21 +24,7 @@ def authenticate_by_token val
 end
 
 
-
-format :html do
-
-  view :raw do |args|
-    content = []
-    content << "{{+#{Card[:email   ].name}|titled;title:email}}"    unless args[:no_email]
-    content << "{{+#{Card[:password].name}|titled;title:password}}" unless args[:no_password]
-    content * ' '
-  end
-
-  view :edit do |args|
-    args[:structure] = true
-    super args
-  end
-  
+format do
   view :verify_url do |args|
     wagn_url "/update/#{card.cardname.left_name.url_key}?token=#{card.token}"
   end
@@ -53,6 +39,22 @@ format :html do
 
   view :reset_password_days do |args|
     ( Wagn.config.token_expiry / 1.day ).to_s
+  end
+end
+
+
+format :html do
+
+  view :raw do |args|
+    content = []
+    content << "{{+#{Card[:email   ].name}|titled;title:email}}"    unless args[:no_email]
+    content << "{{+#{Card[:password].name}|titled;title:password}}" unless args[:no_password]
+    content * ' '
+  end
+
+  view :edit do |args|
+    args[:structure] = true
+    super args
   end
 end
 

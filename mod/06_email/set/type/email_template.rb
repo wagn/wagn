@@ -4,18 +4,16 @@ end
 
 def deliver args={}
   mail = format.render_mail(args)
-#  mail.from = Auth.current.account.email unless mail.from
   mail.deliver 
 end
 
-def process_email_field field, args, joint=nil
+def process_email_field field, args
   if args[field] 
     args[field]
   elsif field_card = fetch(:trait=>field)
     # configuration can be anything visible to configurer
     Auth.as( field_card.updater ) do
       res = field_card.send(*yield)
-      joint ? res.join(joint) : res
     end
   else 
     ''
@@ -23,14 +21,14 @@ def process_email_field field, args, joint=nil
 end
 
 
+
 def email_config args={}
   config = {}
   context_card = args[:context] || self
 
-
   [:to, :from, :cc, :bcc].each do |field_name|
-    config[field_name] = process_email_field( field_name, args, ',' ) do 
-      [:extended_item_contents_for_email_addresses, context_card, {:format=>'email_text'}, args]
+    config[field_name] = process_email_field( field_name, args ) do 
+      [:process_email_addresses, context_card, {:format=>'email_text'}, args]
     end
   end
 
@@ -56,13 +54,11 @@ end
 
 format do     
   view :mail do |args|
-    
     args = card.email_config(args)
     text_message = args.delete(:text_message)
     html_message = args.delete(:html_message)
     attachment_list = args.delete(:attach)
     alternative = text_message.present? and html_message.present?
-    
     mail = Mail.new(args) do
       if alternative 
         if attachment and !attachment_list.empty?
@@ -100,7 +96,7 @@ format do
       delivery_method(method, Card::Mailer.send(:"#{method}_settings"))
     
     end   #TODO add error handling
-#    mail.perform_deliveries    = Card::Mailer.perform_deliveries
+    mail.perform_deliveries    = Card::Mailer.perform_deliveries
     mail.raise_delivery_errors = Card::Mailer.raise_delivery_errors
     mail
   end

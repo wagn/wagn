@@ -10,6 +10,19 @@ class AddEmailCards < Wagn::Migration
       Card.create! :name => "*on #{action}+*right+*default", :type_code=>:pointer
     end
     
+    # change email address list fields to pointers
+    [:to, :from, :cc, :bcc].each do |field|
+      set = Card[field].fetch(:trait=>:right, :new=>{})
+      default_rule = set.fetch(:trait=>:default, :new=>{})
+      default_rule.type_id = Card::PointerID
+      default_rule.save!
+      
+      options_rule = set.fetch(:trait=>:options, :new=>{})
+      options_rule.type_id = Card::SearchID
+      options_rule.content = %( { "right":{"codename":"account"} } )
+      options_rule.save!
+    end
+    
     
     # create new cardtype for email templates
     Card.create! :name=>"Email template", :codename=>:email_template, :type_id=>Card::CardtypeID
@@ -49,11 +62,17 @@ class AddEmailCards < Wagn::Migration
     if request_card = Card[:request]
       [:to, :from].each do |field|
         if old_card = request_card.fetch(:trait=>field) and !old_card.content.blank?
-          Card.create! :name=>"signup alert email+#{Card[field].name}", :content=>old_card.content
+          new_card = Card.create! :name=>"signup alert email+#{Card[field].name}", :content=>old_card.content
         end
       end
       request_card.codename = nil
       request_card.delete!
+    end
+    
+    signup_alert_from = Card["signup alert email"].fetch(:trait=>:from, :new=>{})
+    if signup_alert_from.content.blank?
+      signup_alert_from.content = '_user'
+      signup_alert_from.save!
     end
     
     # migrate old flexmail cards

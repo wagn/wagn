@@ -300,7 +300,7 @@ describe Card::Query do
 
         w = Card::Query.new( :right_plus=>'*table of contents', :sort=>{ :right=>'*table_of_contents'}, :sort_as=>'integer'  ) # FIXME: codename
         #warn "sql from new wql = #{w.sql}"
-        expect(w.run.map(&:name)).to eq(%w{ *all *account+*right Basic+*type Config+*self Setting+*self })
+        expect(w.run.map(&:name)).to eq(%w{ *all Basic+*type Setting+*self })
       end
     end
 

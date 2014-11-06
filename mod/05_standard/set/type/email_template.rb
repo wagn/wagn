@@ -8,13 +8,64 @@ def deliver args={}
   mail.deliver 
 end
 
+def process_email_field field, args, joint=nil
+  if args[field] 
+    args[field]
+  elsif field_card = fetch(:trait=>field)
+    # configuration can be anything visible to configurer
+    Auth.as( field_card.updater ) do
+      res = field_card.send(*yield)
+      joint ? res.join(joint) : res
+    end
+  else 
+    ''
+  end
+end
+
+
+def email_config args={}
+  config = {}
+  context_card = args[:context] || self
+
+
+  [:to, :from, :cc, :bcc].each do |field_name|
+    config[field_name] = process_email_field( field_name, args, ',' ) do 
+      [:extended_item_contents_for_email_addresses, context_card, {:format=>'email_text'}, args]
+    end
+  end
+
+  binding.pry
+
+  config[:attach] = process_email_field( :attach, args ) do 
+      [:extended_item_contents, context_card]
+    end
+  
+  [:subject, :text_message].each do |field_name|
+    config[field_name] = process_email_field( field_name, args ) do 
+      [:contextual_content, context_card, {:format=>'email_text'}, args]
+    end
+  end
+
+  config[:html_message] = process_email_field :html_message, args do
+    [:contextual_content, context_card, {:format=>'email_html'}, args]
+  end
+
+  config[:html_message] = Card::Mailer.layout(config[:html_message])
+  config[:from] ||= Card[Card::WagnBotID].account.email
+  config.select {|k,v| v.present? }
+end
+
+
 format do     
   view :mail do |args|
-    args = email_config(args)
+    
+    args = card.email_config(args)
     text_message = args.delete(:text_message)
     html_message = args.delete(:html_message)
     attachment_list = args.delete(:attach)
     alternative = text_message.present? and html_message.present?
+    binding.pry
+    
     mail = Mail.new(args) do
       if alternative 
         if attachment and !attachment_list.empty?
@@ -34,10 +85,13 @@ format do
             body html_message
           end
         end
-      else
+      elsif html_message.present?
         content_type 'text/html; charset=UTF-8'
         body html_message
+      else
+        text_part { body text_message }
       end
+      
       if attachment_list
         attachment_list.each_with_index do |cardname, i|
           if c = Card[ cardname ] and c.respond_to?(:attach)
@@ -54,51 +108,4 @@ format do
     mail
   end
   
-  def process_email_field field, args, joint=nil
-    if args[field] 
-      args[field]
-    elsif field_card = card.fetch(:trait=>field)
-      # configuration can be anything visible to configurer
-      Auth.as( field_card.updater ) do
-        res = field_card.send(*yield)
-        joint ? res.join(joint) : res
-      end
-    else 
-      ''
-    end
-  end
-  
-  def email_config args={}
-    config = {}
-    context_card = args[:context] || card
-  
-    [:to, :from, :cc, :bcc].each do |field_name|
-      config[field_name] = process_email_field( field_name, args, ',' ) do 
-        [:extended_item_contents, context_card]
-      end
-    end
-  
-    config[:attach] = process_email_field( :attach, args ) do 
-        [:extended_item_contents, context_card]
-      end
-  
-    [:subject, :html_message].each do |field_name|
-      config[field_name] = process_email_field( field_name, args ) do 
-        [:contextual_content, context_card, {:format=>'email_html'}, args]
-      end
-    end
-  
-    config[:text_message] = process_email_field :text_message, args do
-      [:contextual_content, context_card, {:format=>'email_text'}, args]
-    end
-  
-    config[:html_message] = Card::Mailer.layout(config[:html_message])
-    config[:from] ||= Card[Card::WagnBotID].account.email
-    config[:subject] = strip_html(config[:subject]).strip if config[:subject]
-    config.select {|k,v| v.present? }
-  end
-  
-  def strip_html string
-    string.gsub(/<\/?[^>]*>/, "")
-  end
 end

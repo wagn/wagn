@@ -52,7 +52,7 @@ describe Card::Set::Right::Account do
     end
 
     it 'contains expiry days' do
-      expect(@mail.parts[0].body.raw_source).to include("Link will remain valid for #{Wagn.config.token_expiry / 1.day } days")
+      expect(@mail.parts[0].body.raw_source).to include("valid for #{Wagn.config.token_expiry / 1.day } days")
     end
   end
 
@@ -74,7 +74,7 @@ describe Card::Set::Right::Account do
     end
 
     it 'contains expiry days' do
-      expect(@mail.parts[0].body.raw_source).to include("Link will remain valid for #{Wagn.config.token_expiry / 1.day } days")
+      expect(@mail.parts[0].body.raw_source).to include("valid for #{Wagn.config.token_expiry / 1.day } days")
     end
   end
   

@@ -39,6 +39,11 @@ format :html do
     super args
   end
   
+
+end
+
+
+format do
   view :verify_url do |args|
     wagn_url "/update/#{card.cardname.left_name.url_key}?token=#{card.token}"
   end

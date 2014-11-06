@@ -34,9 +34,9 @@ describe Card::Set::Right::Account do
     before do
       @email = 'joe@user.com'
       @account = Card::Auth[@email].account
-      ActionMailer::Base.deliveries = []
+      Mail::TestMailer.deliveries.clear
       @account.send_account_verification_email
-      @mail = ActionMailer::Base.deliveries.last
+      @mail = Mail::TestMailer.deliveries.last
     end
 
     it 'has correct address' do
@@ -52,7 +52,7 @@ describe Card::Set::Right::Account do
     end
 
     it 'contains expiry days' do
-      expect(@mail.parts[0].body.raw_source).to include("(link will remain valid for #{Wagn.config.token_expiry / 1.day } days)")
+      expect(@mail.parts[0].body.raw_source).to include("Link will remain valid for #{Wagn.config.token_expiry / 1.day } days")
     end
   end
 
@@ -60,9 +60,9 @@ describe Card::Set::Right::Account do
     before do
       @email = 'joe@user.com'
       @account = Card::Auth[@email].account
-      ActionMailer::Base.deliveries = []
+      Mail::TestMailer.deliveries = []
       @account.send_reset_password_token
-      @mail = ActionMailer::Base.deliveries.last
+      @mail = Mail::TestMailer.deliveries.last
     end
 
     it 'contains deck title' do
@@ -74,7 +74,7 @@ describe Card::Set::Right::Account do
     end
 
     it 'contains expiry days' do
-      expect(@mail.parts[0].body.raw_source).to include("(link will remain valid for #{Wagn.config.token_expiry / 1.day } days)")
+      expect(@mail.parts[0].body.raw_source).to include("Link will remain valid for #{Wagn.config.token_expiry / 1.day } days")
     end
   end
   

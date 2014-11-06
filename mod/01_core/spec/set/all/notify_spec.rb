@@ -152,11 +152,11 @@ describe Card::Set::All::Notify do
   
   describe 'text format' do
     include_examples 'notifications' do
-      let(:format) { 'text' }
+      let(:format) { 'email_text' }
     end
     it 'does not contain html' do
       card = Card.create! :name=>'new card'
-      expect(card.format(:format=>:text).render_change_notice).not_to match /<\w+>/
+      expect(card.format(:format=>:email_text).render_change_notice).not_to match /<\w+>/
     end
     it 'creates well formatted text message' do
       name = "another card with subcards"
@@ -168,7 +168,7 @@ describe Card::Set::All::Notify do
                              :subcards=>{ '+s1'=>{:content=>sub1_content},
                                           '+s2'=>{:content=>sub2_content} })
       end
-      result =  @card.format(:format=>:text).render_change_notice
+      result =  @card.format(:format=>:email_text).render_change_notice
       expect(result).to eq(%{Dear My Wagn user
 
 "another card with subcards"

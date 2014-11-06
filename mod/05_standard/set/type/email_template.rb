@@ -4,6 +4,7 @@ end
 
 def deliver args={}
   mail = format.render_mail(args)
+#  mail.from = Auth.current.account.email unless mail.from
   mail.deliver 
 end
 
@@ -48,7 +49,7 @@ format do
       delivery_method(method, Card::Mailer.send(:"#{method}_settings"))
     
     end   #TODO add error handling
-    mail.perform_deliveries    = Card::Mailer.perform_deliveries
+#    mail.perform_deliveries    = Card::Mailer.perform_deliveries
     mail.raise_delivery_errors = Card::Mailer.raise_delivery_errors
     mail
   end

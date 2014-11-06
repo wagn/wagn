@@ -34,8 +34,6 @@ def email_config args={}
     end
   end
 
-  binding.pry
-
   config[:attach] = process_email_field( :attach, args ) do 
       [:extended_item_contents, context_card]
     end
@@ -64,7 +62,6 @@ format do
     html_message = args.delete(:html_message)
     attachment_list = args.delete(:attach)
     alternative = text_message.present? and html_message.present?
-    binding.pry
     
     mail = Mail.new(args) do
       if alternative 

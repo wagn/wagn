@@ -68,7 +68,6 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c|
   begin
     @current_act.reload
     @follower_stash ||= FollowerStash.new
-
     @current_act.actions.each do |a|
       @follower_stash.add_affected_card a.card
     end

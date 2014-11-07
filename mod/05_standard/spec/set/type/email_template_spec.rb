@@ -1,18 +1,21 @@
 describe Card::Set::Type::EmailTemplate do
   def mailconfig args={}
-    Card['mailconfig'].format(:format=>:email_html).email_config(args)
+    Card['a mail template'].email_config(args)
+  end
+  
+  before do
+    Card::Auth.current_id = Card::WagnBotID
+    Card.create! :name => "a mail template", :type=>:email_template, :subcards=>{
+      "+*to" => { :content => "joe@user.com" },
+      "+*from" => { :content => "from@user.com" },
+      "+*subject" => { :content => "Subject of the mail" },
+      "+*html_message" => { :content => "[[B]]" }
+    }
   end
   
   describe "mail view" do
-    let(:rendered_mail) { render_card(:mail, {:name=>"a mail template", :type=>:email_template})}
-    before do
-      Card::Auth.current_id = Card::WagnBotID
-      Card.create! :name => "a mail template+*to", :content => "joe@user.com"
-      Card.create! :name => "a mail template+*from", :content => "from@user.com"
-      Card.create! :name => "a mail template+*subject", :content => "Subject of the mail"
-      Card.create! :name => "a mail template+*html_message", :content => "[[B]]"
-      Card.create! :name => "emailtest+*right+*send", :content => "[[mailconfig]]"
-    end
+    let(:rendered_mail) { Card.fetch("a mail template").format.render_mail }
+   
     
     it "renders absolute urls" do
       Card::Env[:protocol] = 'http://'
@@ -26,23 +29,12 @@ describe Card::Set::Type::EmailTemplate do
     it 'renders broken config' do
       Card.fetch("a mail template+*to").update_attributes(:content=>"invalid mail address")
     end
-    
   end
   
   describe "#email_config" do
-    let(:emailconfig)  { Card.fetch("emailconfig").email_config }
-    before do
-      Card::Auth.current_id = Card::WagnBotID
-      Card.create! :name => "emailconfig", :type=>:email_template, :subcards=> {
-        "+*to"      => { :content => "joe@user.com" },
-        "+*from"    => { :content => "from@user.com" },
-        "+*subject" => { :content => "Subject of the mail" }
-      }
-    end
-    
     it "returns correct hash with email configuration" do
-      Card.create! :name => "emailconfig+*html_message", :content => "Nobody expects the Spanish Inquisition"
-      expect(emailconfig).to eq({
+      Card['a mail template+*html_message'].update_attributes! :content => "Nobody expects the Spanish Inquisition"
+      expect(mailconfig).to eq({
         :to => "joe@user.com",
         :from => "from@user.com",
         :subject => "Subject of the mail",
@@ -51,10 +43,10 @@ describe Card::Set::Type::EmailTemplate do
     end
     
     it "uses context card for email config" do
-      Card.create! :name => "emailconfig+*html_message", :content => "Nobody expects {{_left+surprise|core}}"
+      Card['a mail template+*html_message'].update_attributes! :content => "Nobody expects {{_left+surprise|core}}"
       c = Card.create :name=>'Banana+surprise', :content=>"the Spanish Inquisition"
       c = Card.create :name => "Banana+emailtest", :content => "data content"
-      expect( emailconfig( context: c ) ).to eq({
+      expect( mailconfig( context: c ) ).to eq({
         :to => "joe@user.com",
         :from => "from@user.com",
         :subject => "Subject of the mail",
@@ -62,15 +54,15 @@ describe Card::Set::Type::EmailTemplate do
       })
     end
     
-    it "takes Pointer value for config fields" do
-       Card.create! :name => "mailconfig+*cc", :content => "[[mailconfig+*to]]", :type=>'Pointer'
+    it "takes Pointer value for address fields" do
+       Card.create! :name => "a mail template+*cc", :content => "[[joe@user.com]]", :type=>'Pointer'
        expect(mailconfig[:cc]).to eq('joe@user.com')
      end
      
      it "handles *email cards" do
        Card::Auth.as_bot do
-         Card.create! :name => "mailconfig+*cc", :content => "[[Joe User+*email]]", :type=>'Pointer'
-         Card.create! :name => "mailconfig+*bcc", :content => '{"name":"Joe Admin","append":"*email"}', :type=>'Search'
+         Card.create! :name => "a mail template+*cc", :content => "[[Joe User+*email]]", :type=>'Pointer'
+         Card.create! :name => "a mail template+*bcc", :content => '{"name":"Joe Admin","append":"*email"}', :type=>'Search'
        end
        conf = mailconfig
        expect(conf[:cc]).to eq('joe@user.com')
@@ -78,8 +70,7 @@ describe Card::Set::Type::EmailTemplate do
      end
      
      it 'creates multipart email if text and html given' do
-       Card.create! :name => "mailconfig+*html_message", :content => "Nobody expects the Spanish Inquisition"
-       Card.create! :name => "mailconfig+*text_message", :content => "Nobody expects the Spanish Inquisition"
+       Card.create! :name => "a mail template+*text_message", :content => "Nobody expects the Spanish Inquisition"
        email = render_card :mail, {:name=>"mailconfig"}, {:format=>:email}
        expect(email[:content_type].value).to include('multipart/alternative')
      end

@@ -6,8 +6,10 @@ def send_action_mails args
 end
 
 def email_templates_for setting
-  if event_card = self.rule_card(setting)
-    event_card.extended_item_cards.each do |mailcard|
+  email_templates = @email_template_cash ||
+    ( event_card = self.rule_card(setting) and event_card.extended_item_cards )
+  if email_templates
+    email_templates.each do |mailcard|
       yield(mailcard)
     end
   end
@@ -19,3 +21,7 @@ end
   end
 end
 
+event :cash_delete_email_templates, :after=>:approve, :on=>:delete do 
+  event_card = self.rule_card(:on_delete)
+  @email_template_cash = event_card && event_card.extended_item_cards
+end

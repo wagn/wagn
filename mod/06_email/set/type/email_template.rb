@@ -59,9 +59,9 @@ format do
     html_message = args.delete(:html_message)
     attachment_list = args.delete(:attach)
     alternative = text_message.present? and html_message.present?
-    mail = Mail.new(args) do
+    mail = Card::Mailer.new_mail(args) do
       if alternative 
-        if attachment and !attachment_list.empty?
+        if attachment_list and !attachment_list.empty?
           content_type 'multipart/mixed'
           part :content_type => 'multipart/alternative' do |copy|
             copy.part :content_type => 'text/plain' do |plain|
@@ -91,13 +91,8 @@ format do
             add_file :filename => "attachment-#{i + 1}.#{c.attach_extension}", :content => File.read( c.attach.path )
           end
         end
-      end
-      method = Card::Mailer.delivery_method
-      delivery_method(method, Card::Mailer.send(:"#{method}_settings"))
-    
+      end    
     end   #TODO add error handling
-    mail.perform_deliveries    = Card::Mailer.perform_deliveries
-    mail.raise_delivery_errors = Card::Mailer.raise_delivery_errors
     mail
   end
   

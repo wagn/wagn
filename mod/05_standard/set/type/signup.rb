@@ -138,3 +138,8 @@ event :preprocess_account_subcards, :before=>:process_subcards, :on=>:create do
   subcards['+*account']['+*email']   = email if email
   subcards['+*account']['+*password' ]=password if password
 end
+
+event :act_as_current_for_extend_phase, :before=>:extend, :on=>:create do
+  Auth.current_id = self.id
+end
+

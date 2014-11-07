@@ -14,7 +14,7 @@ def email_templates_for setting
 end
 
 [:create, :update, :delete].each do |action|
-  event "observer_#{action}".to_sym, :after=>:approve, :on=>action do 
+  event "observer_#{action}".to_sym, :after=>:extend, :on=>action do 
     self.send_action_mails :on=>action
   end
 end

@@ -44,8 +44,9 @@ format :json do
   end
 
   view :content do |args|
+    req = controller.request
     {
-      :url       => controller.request.original_url,
+      :url       => (req && req.original_url),
       :timestamp => Time.now.to_s,
       :card      => _render_atom
     }

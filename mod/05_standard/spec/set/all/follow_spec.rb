@@ -10,6 +10,7 @@ end
 
 
 describe "Card::Set::All::Follow" do
+ 
   def expect_user user_name
     expect(Card.fetch(user_name).account)
   end
@@ -40,6 +41,9 @@ describe "Card::Set::All::Follow" do
   end
   
   context "when following cardtypes" do
+    before do
+      Card::Auth.current_id = Card['joe admin'].id
+    end
     it "sends notifications of additions" do
       new_card = Card.new :name => "Microscope", :type => "Optic"
       expect_user("Sara").to be_notified_of "Optic"
@@ -61,7 +65,7 @@ describe "Card::Set::All::Follow" do
   context "when following trunk" do
     before do
       Timecop.travel(Wagn.future_stamp)  # make sure we're ahead of all the test data
-
+      Card::Auth.current_id = Card['joe user'].id
       Card.create :type=>'Book', :name=>'Ulysses'
       expect(Card['Ulysses']).to be
       Card.create :name=> 'joe camel+*following', :content=>'[[Ulysses]]'

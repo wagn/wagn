@@ -31,6 +31,7 @@ describe "Card::Set::All::Follow" do
     
     it "sends notifications of edits" do
       expect_user("Sara").to be_notified_of "Sara Following"
+      Card::Auth.current_id = Card['john'].id
       Card["Sara Following"].update_attributes :content => "A new change"
     end
   

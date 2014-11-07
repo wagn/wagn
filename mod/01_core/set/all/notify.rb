@@ -61,8 +61,8 @@ event :stash_followers, :after=>:approve, :on=>:delete do
   act_card.follower_stash.add_affected_card self
 end
 
-event :notify_followers, :after=>:extend, :when=>proc{ |c| 
-    !c.supercard and c.current_act and !Card::Auth.current_id == WagnBotID 
+event :notify_followers, :after=>:extend, :when=>proc{ |c|
+    !c.supercard and c.current_act and Card::Auth.current_id != WagnBotID 
   }  do
     
   begin

@@ -71,7 +71,7 @@ describe Card::Set::Type::EmailTemplate do
      
      it 'creates multipart email if text and html given' do
        Card.create! :name => "a mail template+*text_message", :content => "Nobody expects the Spanish Inquisition"
-       email = render_card :mail, {:name=>"mailconfig"}, {:format=>:email}
+       email = render_card :mail, {:name=>"a mail template"}, {}
        expect(email[:content_type].value).to include('multipart/alternative')
      end
   end
@@ -98,8 +98,8 @@ describe Card::Set::Type::EmailTemplate do
         Card.create! :name => "mailconfig+*html message", :content => "Triggered by {{_self|name}} and its wonderful content: {{_self|core}}"
         Card.create! :name => "mailconfig+*attach", :type=>"Pointer", :content => "[[_self+attachment]]"
         Card.create! :name=>'Trigger', :type=>'Cardtype'
-        Card.create :name=>'Trigger+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
-        Card.create! :name => "Trigger+*type+*send", :content => "[[mailconfig]]", :type=>'Pointer'
+        Card.create! :name=>'Trigger+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+       # Card.create! :name => "Trigger+*type+*send", :content => "[[mailconfig]]", :type=>'Pointer'
       end
     end
 

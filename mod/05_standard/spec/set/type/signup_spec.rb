@@ -29,12 +29,11 @@ describe Card::Set::Type::Signup do
 
       Card::Auth.as_bot do
         Card.create! :name=>'User+*type+*create', :content=>'[[Anyone]]'
-        Card.create! :name=>'*request+*to', :content=>'signups@wagn.org'
       end
       
       Card::Auth.current_id = Card::AnonymousID
-      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{'+*email'=>'wolf@wagn.org',
-         '+*password'=>'wolf'}     
+      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, 
+        '+*account'=>{'+*email'=>'wolf@wagn.org', '+*password'=>'wolf'}     
         
       @account = @signup.account
       @token = @account.token
@@ -93,9 +92,8 @@ describe Card::Set::Type::Signup do
     before do
       # NOTE: by default Anonymous does not have permission to create User cards.
       Card::Auth.current_id = Card::AnonymousID
-      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ 
-        '+*email'=>'wolf@wagn.org', '+*password'=>'wolf'
-      }
+      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID,
+        '+*account'=>{ '+*email'=>'wolf@wagn.org', '+*password'=>'wolf' p no}
       @account = @signup.account
     end
     
@@ -152,11 +150,8 @@ describe Card::Set::Type::Signup do
   context 'invitation' do
     before do
       # NOTE: by default Anonymous does not have permission to create User cards.
-      Card::Auth.current_id = Card::WagnBotID
-      Card::Auth.as_bot do
-        Card.create! :name=>'*request+*to', :content=>'signups@wagn.org'
-        @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ '+*email'=>'wolf@wagn.org'}
-      end
+      Card::Auth.current_id = Card::WagnBotID 
+      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ '+*email'=>'wolf@wagn.org'}
       @account = @signup.account
     end
     

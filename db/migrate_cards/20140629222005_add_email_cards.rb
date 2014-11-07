@@ -22,8 +22,8 @@ class AddEmailCards < Wagn::Migration
       end
       
       options_rule = set.fetch(:trait=>:options, :new=>{})
-      options_rule.type_id = Card::SearchID
-      options_rule.content = %( { "right":{"codename":"account"} } )
+      options_rule.type_id = Card::SearchTypeID
+      options_rule.content = %( { "right_plus":{"codename":"account"} } )
       options_rule.save!
     end
     

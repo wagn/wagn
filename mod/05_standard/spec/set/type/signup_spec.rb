@@ -93,7 +93,7 @@ describe Card::Set::Type::Signup do
       # NOTE: by default Anonymous does not have permission to create User cards.
       Card::Auth.current_id = Card::AnonymousID
       @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID,
-        '+*account'=>{ '+*email'=>'wolf@wagn.org', '+*password'=>'wolf' p no}
+        '+*account'=>{ '+*email'=>'wolf@wagn.org', '+*password'=>'wolf' }
       @account = @signup.account
     end
     

@@ -21,7 +21,7 @@ class AddEmailCards < Wagn::Migration
         field_card.update_attributes! :type_id => Card::PointerID
       end
       
-      options_rule = set.fetch(:trait=>:options, :new=>{})
+      options_rule = set.fetch(:trait=>:options, :new=>{ :type_code=>:search_type })
       options_rule.type_id = Card::SearchTypeID
       options_rule.content = %( { "right_plus":{"codename":"account"} } )
       options_rule.save!

@@ -8324,14 +8324,7 @@ card_changes_1568:
   id: 5197
   card_action_id: 7162
   field: 2
-  value: |-
-    [[Philipp Kuehl]]
-    [[Ethan McCutchen]]
-    [[cquin]]
-    [[John Abbe]]
-    [[Wagn Bot]]
-    [[Anonymous]]
-    [[Lewis Hoffman]]
+  value: ' { "right_plus":{"codename":"account"} } '
 card_changes_1569:
   id: 5198
   card_action_id: 7162
@@ -8356,14 +8349,7 @@ card_changes_1573:
   id: 5202
   card_action_id: 7164
   field: 2
-  value: |-
-    [[Philipp Kuehl]]
-    [[Ethan McCutchen]]
-    [[cquin]]
-    [[John Abbe]]
-    [[Wagn Bot]]
-    [[Anonymous]]
-    [[Lewis Hoffman]]
+  value: ' { "right_plus":{"codename":"account"} } '
 card_changes_1574:
   id: 5203
   card_action_id: 7164
@@ -8388,14 +8374,7 @@ card_changes_1578:
   id: 5207
   card_action_id: 7166
   field: 2
-  value: |-
-    [[Philipp Kuehl]]
-    [[Ethan McCutchen]]
-    [[cquin]]
-    [[John Abbe]]
-    [[Wagn Bot]]
-    [[Anonymous]]
-    [[Lewis Hoffman]]
+  value: ' { "right_plus":{"codename":"account"} } '
 card_changes_1579:
   id: 5208
   card_action_id: 7166
@@ -8420,14 +8399,7 @@ card_changes_1583:
   id: 5212
   card_action_id: 7168
   field: 2
-  value: |-
-    [[Philipp Kuehl]]
-    [[Ethan McCutchen]]
-    [[cquin]]
-    [[John Abbe]]
-    [[Wagn Bot]]
-    [[Anonymous]]
-    [[Lewis Hoffman]]
+  value: ' { "right_plus":{"codename":"account"} } '
 card_changes_1584:
   id: 5213
   card_action_id: 7168

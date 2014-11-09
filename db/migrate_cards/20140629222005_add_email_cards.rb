@@ -82,8 +82,17 @@ class AddEmailCards < Wagn::Migration
     # migrate old flexmail cards
 
     if email_config_card = Card['email_config']
-      
-      # FIXME - add email config migrations here...
+      Card.search( 
+        :left=>{ :type_id=>Card::SetID },
+        :right=>'email_config',
+        :referred_to_by=>{ :right=>{:codename=>'send'} } 
+      ).each do |card|
+        set_name = card.cardname.left
+        card.name = "#{ set_name.gsub('*','' ).gsub('+', '_') }_email_template"
+        card.type_code = 'email_template'
+        card.save!
+        Card.create! :name=>"#{set_name}+*on create", :content=>card.name
+      end
       
       email_config_card.delete!
     end

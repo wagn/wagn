@@ -5805,6 +5805,7 @@ card_changes_1116:
     vehicle_square72opaque2.png
     image/png
     2020
+    05_standard
 card_changes_1117:
   id: 3888
   card_action_id: 6419
@@ -6034,6 +6035,7 @@ card_changes_1152:
     sample_logo.png
     image/png
     9063
+    05_standard
 card_changes_1153:
   id: 4008
   card_action_id: 6564
@@ -6048,6 +6050,7 @@ card_changes_1154:
     favicon.ico
     image/vnd.microsoft.icon
     606
+    05_standard
 card_changes_1155:
   id: 4012
   card_action_id: 6568

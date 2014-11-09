@@ -262,17 +262,26 @@ namespace :wagn do
 
     desc "copy files from template database to standard mod and update cards"
     task :copy_mod_files => :environment do
+      
+      mod_name = '05_standard'
       template_files_dir = "#{Wagn.root}/files"
-      standard_files_dir = "#{Wagn.gem_root}/mod/05_standard/file"
+      standard_files_dir = "#{Wagn.gem_root}/mod/#{mod_name}/file"
       
       #FIXME - this should delete old revisions
       
       FileUtils.remove_dir standard_files_dir, force=true
       FileUtils.cp_r template_files_dir, standard_files_dir
-      
-      # add a fourth line to the raw content of each image (or file) to identify it as a mod file
-      Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
-        card.update_attributes :content=>card.db_content + "\n05_standard"      
+
+      # add a fourth line to the raw content of each image (or file) to identify it as a mod file      
+      Card::Auth.as_bot do
+        Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
+          unless card.db_content.split(/\n/).last == mod_name
+            new_content = card.db_content + "\n#{mod_name}"
+            card.update_column :db_content, new_content
+            card.last_action.change_for(2).first.update_column :value, new_content
+            #FIXME - should technically update the change as well...
+          end
+        end
       end
     end
 

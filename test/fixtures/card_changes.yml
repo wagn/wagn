@@ -5805,6 +5805,7 @@ card_changes_1116:
     vehicle_square72opaque2.png
     image/png
     2020
+    05_standard
 card_changes_1117:
   id: 3888
   card_action_id: 6419
@@ -6034,6 +6035,7 @@ card_changes_1152:
     sample_logo.png
     image/png
     9063
+    05_standard
 card_changes_1153:
   id: 4008
   card_action_id: 6564
@@ -6048,6 +6050,7 @@ card_changes_1154:
     favicon.ico
     image/vnd.microsoft.icon
     606
+    05_standard
 card_changes_1155:
   id: 4012
   card_action_id: 6568
@@ -9227,7 +9230,7 @@ card_changes_1723:
   id: 5360
   card_action_id: 7211
   field: 2
-  value: 58cd5dad9aa0a8398a85cb9405caba1f48af371f
+  value: 429604eef3d28e4a25f624b674ee37487abecb09
 card_changes_1724:
   id: 5361
   card_action_id: 7211
@@ -9267,7 +9270,7 @@ card_changes_1731:
   id: 5368
   card_action_id: 7213
   field: 2
-  value: 339d4d073f0e59ae3025feeb6b40489326c05a20
+  value: 234ef7af3774855e0452ae53d2e38e59e2a1d735
 card_changes_1732:
   id: 5369
   card_action_id: 7213
@@ -9307,7 +9310,7 @@ card_changes_1739:
   id: 5376
   card_action_id: 7215
   field: 2
-  value: f60a7cd059b3b473654c64590f8ef9f25464c18d
+  value: 3ffdd47275e2babeab5713593e8334d0acf6c646
 card_changes_1740:
   id: 5377
   card_action_id: 7215
@@ -9367,7 +9370,7 @@ card_changes_1751:
   id: 5388
   card_action_id: 7218
   field: 2
-  value: b9be6b83c385b4d76358b23593bbb8aefc2abe83
+  value: c5a200936e7cb451d31cc3133220f6778963a004
 card_changes_1752:
   id: 5389
   card_action_id: 7218
@@ -9407,7 +9410,7 @@ card_changes_1759:
   id: 5396
   card_action_id: 7220
   field: 2
-  value: a869addd478b4d25ec73e85b611c39d3a6dc0997
+  value: f4d2cb04d8f04947ac1f67cce1731cf7ca856e24
 card_changes_1760:
   id: 5397
   card_action_id: 7220
@@ -9447,7 +9450,7 @@ card_changes_1767:
   id: 5404
   card_action_id: 7222
   field: 2
-  value: 434dd66afe8b30b903b10deb0972b6dffe6218d3
+  value: 6d101936761b667315c86f5488730f8d46421f98
 card_changes_1768:
   id: 5405
   card_action_id: 7222
@@ -9507,7 +9510,7 @@ card_changes_1779:
   id: 5416
   card_action_id: 7225
   field: 2
-  value: 5a63bbbdc258dae60ce2668f219ff0abb4ba8e6f
+  value: b2d1f1cd16581487bc2fc2d9f4e2f6515755ebb0
 card_changes_1780:
   id: 5417
   card_action_id: 7225
@@ -9547,7 +9550,7 @@ card_changes_1787:
   id: 5424
   card_action_id: 7227
   field: 2
-  value: fad2947404d61adfbf8f36ecbe456d5d7d5cf53f
+  value: 621f5a665bc56fc54ab40911f6c68eb20b2c003e
 card_changes_1788:
   id: 5425
   card_action_id: 7227
@@ -9587,7 +9590,7 @@ card_changes_1795:
   id: 5432
   card_action_id: 7229
   field: 2
-  value: a28345ef4033ed6d99bdcefebb99e0291534d888
+  value: 79dc9699800898ef074dc370705590dde14494d7
 card_changes_1796:
   id: 5433
   card_action_id: 7229
@@ -9747,7 +9750,7 @@ card_changes_1827:
   id: 5464
   card_action_id: 7237
   field: 2
-  value: e483dfd31c2e5b2b68e5d980cedb29188917526d
+  value: 876843364bd64c37eae1b2f5f45a83b66b5b06af
 card_changes_1828:
   id: 5465
   card_action_id: 7237
@@ -9787,7 +9790,7 @@ card_changes_1835:
   id: 5472
   card_action_id: 7239
   field: 2
-  value: fad2947404d61adfbf8f36ecbe456d5d7d5cf53f
+  value: 09d4bd21fe98ecf7aacf0271aca82e7e136f302b
 card_changes_1836:
   id: 5473
   card_action_id: 7239
@@ -9827,7 +9830,7 @@ card_changes_1843:
   id: 5480
   card_action_id: 7241
   field: 2
-  value: a28345ef4033ed6d99bdcefebb99e0291534d888
+  value: 79dc9699800898ef074dc370705590dde14494d7
 card_changes_1844:
   id: 5481
   card_action_id: 7241
@@ -10170,7 +10173,7 @@ card_changes_1907:
   id: 5544
   card_action_id: 7257
   field: 2
-  value: 80eb454ef5f302670b71c88293e03482ba4b6abd
+  value: e86a4125d040f1e95eab5c16f99e89d2aeb2cfa2
 card_changes_1908:
   id: 5545
   card_action_id: 7257
@@ -10210,7 +10213,7 @@ card_changes_1915:
   id: 5552
   card_action_id: 7259
   field: 2
-  value: 3901879f5d42002dd6886dcbe3a07f6640f343b2
+  value: 251c8949f0f415237f51468ada387c0bbd44631e
 card_changes_1916:
   id: 5553
   card_action_id: 7259
@@ -10250,7 +10253,7 @@ card_changes_1923:
   id: 5560
   card_action_id: 7261
   field: 2
-  value: 0388b4dc4d566fa51ae8247b78b42570e6b12ccd
+  value: 7641bde75da0c29808f037b1ea12e3508083e046
 card_changes_1924:
   id: 5561
   card_action_id: 7261
@@ -10310,7 +10313,7 @@ card_changes_1935:
   id: 5572
   card_action_id: 7264
   field: 2
-  value: 44157c0ad0f2e40191f09fd4bd72d6f32db42e96
+  value: 538c0dd57f79e340cbca4d14f3c195a5cb8ff73c
 card_changes_1936:
   id: 5573
   card_action_id: 7264
@@ -10350,7 +10353,7 @@ card_changes_1943:
   id: 5580
   card_action_id: 7266
   field: 2
-  value: 3f6ed1876f4aca4d1b9254732d944a9a5335c3e8
+  value: 2b55f4d67145b7076d391161279e35262eacff23
 card_changes_1944:
   id: 5581
   card_action_id: 7266
@@ -10390,7 +10393,7 @@ card_changes_1951:
   id: 5588
   card_action_id: 7268
   field: 2
-  value: 0388b4dc4d566fa51ae8247b78b42570e6b12ccd
+  value: 7641bde75da0c29808f037b1ea12e3508083e046
 card_changes_1952:
   id: 5589
   card_action_id: 7268
@@ -10450,7 +10453,7 @@ card_changes_1963:
   id: 5600
   card_action_id: 7271
   field: 2
-  value: 500e66fb6b1bdd5b6b6434e18cd0cd3c11e0bb8b
+  value: d3dca88ea171602b6d2e5ff77e0a9d460fabe244
 card_changes_1964:
   id: 5601
   card_action_id: 7271
@@ -10490,7 +10493,7 @@ card_changes_1971:
   id: 5608
   card_action_id: 7273
   field: 2
-  value: db0fbb5f7c9e2ff294972376cfba2d3a3a62a25c
+  value: 84f7c8a6a19635628f760c7bb5df401acf28892e
 card_changes_1972:
   id: 5609
   card_action_id: 7273
@@ -10530,7 +10533,7 @@ card_changes_1979:
   id: 5616
   card_action_id: 7275
   field: 2
-  value: b6f9875c475424b6c04ccdd1446eb4261c0cffce
+  value: 40632fc8cdd11018de041be5a4b1cd8caa49b0aa
 card_changes_1980:
   id: 5617
   card_action_id: 7275
@@ -11997,7 +12000,7 @@ card_changes_2253:
   id: 5890
   card_action_id: 7345
   field: 2
-  value: 5783df179f6e600e88265883621d0f4f00e6e2d9
+  value: 48c63e9e946bc339f227e47095bfa68681bafc71
 card_changes_2254:
   id: 5891
   card_action_id: 7345
@@ -12137,7 +12140,7 @@ card_changes_2281:
   id: 5918
   card_action_id: 7352
   field: 2
-  value: 48c63e9e946bc339f227e47095bfa68681bafc71
+  value: 0848088d4d6ee4fe818b02814b7aca35fe3d4ae4
 card_changes_2282:
   id: 5919
   card_action_id: 7352

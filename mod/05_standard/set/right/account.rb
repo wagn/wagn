@@ -134,7 +134,6 @@ event :send_account_verification_email, :on=>:create, :after=>:extend do
     Card[:verification_email].deliver(
       :context => self,
       :to     => self.email,
-      :from   => token_emails_from(self),
     )
   end
 end
@@ -145,18 +144,8 @@ event :send_reset_password_token do
   end
   Card[:password_reset_email].deliver(
     :context => self,
-    :to      => self.email,
-    :from    => token_emails_from(self),
+    :to      => self.email
   )
-end
-
-def token_emails_from account
-  Card.setting( '*invite+*from' ) || begin
-    from_card_id = Auth.current_id
-    from_card_id = WagnBotID if [ AnonymousID, account.left_id ].member? from_card_id
-    from_card = Card[from_card_id]
-    "#{from_card.name} <#{from_card.account.email}>"
-  end
 end
 
 def ok_to_read
@@ -175,7 +164,6 @@ def send_change_notice act, followed_card_name
   if changes_visible?(act) 
     Card[:follower_notification_email].deliver(
       :context   => act.card,
-      :from      => Card[WagnBotID].account.email,
       :to        => email,
       :follower  => left.name, 
       :followed  => followed_card_name,

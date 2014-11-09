@@ -15,7 +15,7 @@
     "subject" : "{{_|name}} signed up for {{:title|core}}"
   },
   {
-    "name"    : "follower notification_email",
+    "name"    : "follower notification email",
   	"codename": "follower_notification_email",
     "subject" : "{{_user|name}} {{_|last_action}} \"{{_|name}}\""
   }

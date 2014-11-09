@@ -42,7 +42,10 @@ class SharedData
     Card::Auth.createable_types.each do |type|
       next if ['User', 'Sign up', 'Set', 'Number'].include? type
       Card.create! :type=>type, :name=>"Sample #{type}"
+      Card::Auth.as_bot # need to reset after creating sign up, which changes current_id for extend phase
     end
+
+
 
     # data for role_test.rb
 

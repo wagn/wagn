@@ -30,8 +30,16 @@ class AddEmailCards < Wagn::Migration
     
     # create new cardtype for email templates
     Card.create! :name=>"Email template", :codename=>:email_template, :type_id=>Card::CardtypeID
-    Card.create! :name=>"Email template+*type+*structure", 
-        :content=>"{{+*from|titled}}\n{{+*to|titled}}\n{{+*cc|titled}}\n{{+*bcc|titled}}\n{{+*subject|titled}}\n{{+*html message|titled}}\n{{+*text message|titled}}\n{{+*attach|titled}}"
+    Card.create! :name=>"Email template+*type+*structure", :content=>%(
+{{+#{Card[:from].name} | labeled | link}}
+{{+#{Card[:to  ].name} | labeled | link}}
+{{+#{Card[:cc  ].name} | labeled | link}}
+{{+#{Card[:bcc ].name} | labeled | link}}
+{{+*subject | titled}}
+{{+*html message | titled}}
+{{+*text message | titled}}
+{+*attach | titled}}
+)
     
     c = Card.fetch '*message', :new=>{ }
     c.name     = '*html message'
@@ -73,11 +81,25 @@ class AddEmailCards < Wagn::Migration
       request_card.delete!
     end
     
+    # update *from settings
+    
     signup_alert_from = Card["signup alert email"].fetch(:trait=>:from, :new=>{})
     if signup_alert_from.content.blank?
       signup_alert_from.content = '_user'
       signup_alert_from.save!
     end
+    
+    wagn_bot = Card[:wagn_bot].account.email.present? ? Card[:wagn_bot].name : nil
+    token_emails_from = Card.setting( '*invite+*from' ) || wagn_bot || '_user'
+    [ 'verification email', 'password reset email'].each do |token_email_template_name|
+      Card.create! :name=>"#{token_email_template_name}+#{Card[:from].name}", :content=>token_emails_from
+    end
+    
+    if invite_card = Card[:invite]
+      invite_card.codename = nil
+      invite_card.delete!
+    end
+        
     
     # migrate old flexmail cards
 

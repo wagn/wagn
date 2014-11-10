@@ -6,8 +6,8 @@ end
 
 def selected_content
   @selected_content ||= begin
-    selected_change = ( selected_action and lc = last_change_on :db_content, :not_after=> selected_action )
-    selected_change ? selected_change.value : content
+    change = ( selected_action and last_change_on( :db_content, :not_after=> selected_action ) )
+    change ? change.value : content
   end
 end
 
@@ -37,9 +37,9 @@ def last_change_on(field, opts={})
   action_arg = opts[:before] || opts[:not_after]
   action_id =  (action_arg.kind_of?(Card::Action) && action_arg.id) or action_arg
   field_index = Card::TRACKED_FIELDS.index(field.to_s)
-  Change.joins(:action).where(where_sql, 
-                        {:card_id=>id, :field=>field_index, :action_id=>action_id}
-    ).order(:id).last
+  Change.joins(:action).where( where_sql, 
+    {:card_id=>id, :field=>field_index, :action_id=>action_id}
+  ).order(:id).last
 end
 
 def selected_action_id

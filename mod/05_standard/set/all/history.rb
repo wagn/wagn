@@ -124,7 +124,8 @@ format :html do
     render_haml :intr=>intr do 
       %{
 .history-header  
-  = paginate intr, :html=> {:remote=>true, :class=>'slotter'}
+  %span.slotter
+    = paginate intr, :remote=>true
   %span.history-legend{:style=>"text-align:right;"}
     %i.fa.fa-circle.diff-green
     %span

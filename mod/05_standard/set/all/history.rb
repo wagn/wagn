@@ -45,7 +45,7 @@ end
 event :rollback_actions, :before=>:approve, :on=>:update, :when=>proc{ |c| Env and Env.params['action_ids'] and Env.params['action_ids'].class == Array} do
   revision = { :subcards => {}}
   rollback_actions = Env.params['action_ids'].map do |a_id|
-    Action.find(a_id) || nil
+    Action.fetch(a_id) || nil
   end
   rollback_actions.each do |action|  
     if action.card_id == id

@@ -156,7 +156,7 @@ format do
   end
   
   def get_act args
-    @notification_act ||= args[:act] || (args[:act_id] and Act.fetch(args[:act_id])) || card.acts.last
+    @notification_act ||= args[:act] || (args[:act_id] and Act.find(args[:act_id])) || card.acts.last
   end
   
   def get_action args

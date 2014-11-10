@@ -1,4 +1,5 @@
 def attach_array
+  
   c= self.selected_content
   !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/)
 end

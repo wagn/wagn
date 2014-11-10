@@ -5,14 +5,16 @@ def content
 end
 
 def selected_content
-  @selected_content ||= (last_change = last_change_on(:db_content,:not_after=> selected_action) and last_change.value) || content
+  @selected_content ||= begin
+    selected_change = ( selected_action and lc = last_change_on :db_content, :not_after=> selected_action )
+    selected_change ? selected_change.value : content
+  end
 end
 
 def content=(value)
+  @selected_content = nil
   self.db_content = value
 end
-
-
 
 def raw_content
   structure ? template.db_content : db_content

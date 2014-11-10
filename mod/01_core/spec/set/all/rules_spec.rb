@@ -62,7 +62,7 @@ describe Card::Set::All::Rules do
     end
     
     it "returns universal setting names for non-pointer set" do
-      pending "Different api, we should just put the tests in a new spec for that"
+      skip "Different api, we should just put the tests in a new spec for that"
       snbg = Card.fetch('*star').setting_codenames_by_group
       #warn "snbg #{snbg.class} #{snbg.inspect}"
       expect(snbg.keys.length).to eq(4)

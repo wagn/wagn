@@ -26,9 +26,9 @@ $.extend wagn,
         
   slotReady: (func)->
     $('document').ready ->
-      $('body').on 'slotReady', '.card-slot', ->
+      $('body').on 'slotReady', '.card-slot', (e) ->
+        e.stopPropagation()
         func.call this, $(this)
-
   pingName: (name, success)->
     $.getJSON wagn.rootPath + '/', { format: 'json', view: 'status', 'card[name]': name }, success  
 

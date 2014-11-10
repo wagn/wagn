@@ -11,7 +11,7 @@ describe Card::Set::Type::EmailTemplate do
       Card.create! :name=>"mail test+*self+*on update", type_code: :pointer, content: "[[mail template]]"
     end
     card = Card.fetch "mail test"
-    expect { Card::Auth.as_bot { card.update_attributes(content: "test") } }.to change { ActionMailer::Base.deliveries.count }.by(1)
+    expect { Card::Auth.as_bot { card.update_attributes(content: "test") } }.to change { Mail::TestMailer.deliveries.count }.by(1)
   end
   
   it 'sends email on delete' do
@@ -19,7 +19,7 @@ describe Card::Set::Type::EmailTemplate do
       Card.create! :name=>"mail test+*self+*on delete", type_code: :pointer, content: "[[mail template]]"
     end
     card = Card.fetch "mail test"
-    expect { Card::Auth.as_bot { card.delete } }.to change { ActionMailer::Base.deliveries.count }.by(1)
+    expect { Card::Auth.as_bot { card.delete } }.to change { Mail::TestMailer.deliveries.count }.by(1)
   end
   
   it 'sends email on create' do

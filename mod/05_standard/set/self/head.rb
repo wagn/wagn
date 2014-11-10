@@ -92,7 +92,12 @@ format :html do
       #{ @js_tag if @js_tag }
       <!--[if lt IE 9]>#{ javascript_include_tag ie9_card.machine_output_url if ie9_card }<![endif]-->
       #{ javascript_tag { "wagn.setTinyMCEConfig('#{ escape_javascript Card.setting(:tiny_mce).to_s }')" } }
-      #{ google_analytics_head_javascript })
+      #{ google_analytics_head_javascript }
+      <script type="text/javascript">
+        $('document').ready(function() {
+          $('.card-slot').trigger('slotReady');
+        })
+      </script>)
   end
     
   

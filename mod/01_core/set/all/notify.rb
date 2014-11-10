@@ -61,11 +61,13 @@ event :stash_followers, :after=>:approve, :on=>:delete do
   act_card.follower_stash.add_affected_card self
 end
 
-event :notify_followers, :after=>:extend, :when=>proc{ |c| !c.supercard and c.current_act}  do
+event :notify_followers, :after=>:extend, :when=>proc{ |c|
+    !c.supercard and c.current_act and Card::Auth.current_id != WagnBotID 
+  }  do
+    
   begin
     @current_act.reload
     @follower_stash ||= FollowerStash.new
-
     @current_act.actions.each do |a|
       @follower_stash.add_affected_card a.card
     end
@@ -81,37 +83,59 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c| !c.supercard and c.cu
   end
 end
   
-format do
-  def get_action args
-    args[:action] || (args[:action_id] and Card::Action.find(args[:action_id])) || card.last_action
+format do  
+  view :list_of_changes, :denial=>:blank do |args|
+    action = get_action(args)
+    
+    relevant_fields = case action.action_type
+      when :create then [:cardtype, :content]
+      when :update then [:name, :cardtype, :content]
+      when :delete then [:content]
+      end
+    
+    relevant_fields.map do |type| 
+      edit_info_for(type, action)
+    end.compact.join
   end
   
-  def change_notice_locals args
-    act = args[:act_id] ? Card::Act.find(args[:act_id]) : card.acts.last
-    action_on_card = act.action_on(card.id)
+  
+  view :subedits do |args|
+    subedits = get_act(args).relevant_actions_for(card).map do |action| 
+        if action.card_id != card.id 
+          action.card.format(:format=>@format).render_subedit_notice(:action=>action)
+        end
+      end.compact.join
+      
+    if subedits.present?
+      wrap_subedits subedits
+    else
+      ''
+    end
+  end
     
-    selfedits   = render_list_of_changes(args)
-    subedits    = act.relevant_actions_for(card).map do |action| 
-        action.card_id == card.id ? '' : action.card.format(:format=>@format).render_subedit_notice(:action=>action)
-    end.join
+  view :subedit_notice, :denial=>:blank do |args|
+    action = get_action(args)
+    name_before_action = (action.new_values[:name] && action.old_values[:name]) || card.name
     
-    {
-      :card_name    => card.name,
-      :updater_name => act.actor.name,
-      :card_url     => wagn_url(card),
-      :change_url   => wagn_url("#{card.cardname.url_key}?view=history"), 
-      :unfollow_url => wagn_url( "update/#{args[:follower].to_name.url_key}+#{Card[:following].cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" ),
-      :updater_url  => wagn_url( act.actor ),
-      :follower     => args[:follower],
-      :followed     => args[:followed],
-      :action_type  => action_on_card ? "#{action_on_card.action_type}d" : "updated",
-      :salutation   => args[:follower] ? "Dear #{args[:follower]}" : "Dear #{Card.setting :title} user",
-      :selfedits    => selfedits,
-      :subedits     => subedits
-    }
-  end  
+    wrap_subedit_item %{#{name_before_action} #{action.action_type}d
+#{ render_list_of_changes(args) }}
+  end
+  
+  view :followed do |args|
+    args[:followed] || 'followed card'
+  end
 
-
+  view :follower do |args|
+    args[:follower] || 'follower'
+  end
+  
+  view :unfollow_url do |args|
+    if args[:followed] and args[:follower] and follower = Card.fetch( args[:follower] )
+     following_card = follower.fetch( :trait=>:following, :new=>{} )
+     wagn_url( "update/#{following_card.cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" )
+    end
+  end
+  
   def edit_info_for field, action
     return nil unless action.new_values[field]
     
@@ -131,67 +155,47 @@ format do
      wrap_list_item "#{item_title}#{item_value}"
   end
   
+  def get_act args
+    @notification_act ||= args[:act] || (args[:act_id] and Card::Act.find(args[:act_id])) || card.acts.last
+  end
+  
+  def get_action args
+    args[:action] || (args[:action_id] and Card::Action.find(args[:action_id])) || card.last_action
+  end
+  
+  
+  def wrap_subedits subedits
+    "\nThis update included the following changes:#{wrap_list subedits}"
+  end
+     
   def wrap_list list
-    "\n#{list}"
+    "\n#{list}\n"
   end
   
   def wrap_list_item item
     "   #{item}\n"
   end
   
-  def wrap_subedits subedits
-    "\nThis update included the following changes:#{wrap_list subedits}"
-  end
-  
   def wrap_subedit_item text
     "\n#{text}\n"
   end
-  
-  view :subedit_notice, :denial=>:blank do |args|
-    action = get_action(args)
-    name_before_action = (action.new_values[:name] && action.old_values[:name]) || card.name
-    
-    wrap_subedit_item %{#{name_before_action} #{action.action_type}d
-#{ render_list_of_changes(args) }}
-  end
-  
-  view :list_of_changes, :denial=>:blank do |args|
-    action = get_action(args)
-    
-    relevant_fields = case action.action_type
-    when :create then [:cardtype, :content]
-    when :update then [:name, :cardtype, :content]
-    when :delete then [:content]
-    end
-    relevant_fields.map do |type| 
-      edit_info_for(type, action)
-    end.compact.join
-  end
-  
-  def render_template_with_change_notice_locals type, args, template
-    locals = change_notice_locals(args)
-    if locals[:selfedits].present? or locals[:subedits].present? or locals[:action_type] == "deleted"  
-      if type == :haml
-        render_haml locals, template, binding
-      elsif type == :erb
-        render_erb locals, template
-      else
-        template
-      end
-    else
-      ''
-    end
+end
+
+
+format :email_text do 
+  view :last_action do |args|
+    act = get_act(args)
+    action_on_card =  act.action_on(act.card_id) || act.actions.first
+    "#{action_on_card.action_type}d"
   end
 end
 
-format :email_html do
-  # def edit_info_for field, action
-  #   if field == :content and action.action_type == :update
-  #      wrap_list_item "content changes: #{render_content_changes :diff_type=>:summary, :action=>action}"
-  #   else
-  #     super
-  #   end
-  # end
+format :email_html do  
+  view :last_action do |args|
+    act = get_act(args)
+    action_on_card =  act.action_on(act.card_id) || act.actions.first
+    "#{action_on_card.action_type}d"
+  end
   
   def wrap_list list
     "<ul>#{list}</ul>\n"
@@ -204,53 +208,8 @@ format :email_html do
   def wrap_subedit_item text
     "<li>#{text}</li>\n"
   end
-  
-  view :change_notice, :perms=>:none, :denial=>:blank do |args|
-    render_template_with_change_notice_locals :haml, args, %{
-= salutation
-%p
-  %a{:href=>card_url}
-    = card_name
-  was just 
-  %a{:href=>change_url}
-    = action_type
-  by 
-  %a{:href=>updater_url}
-    = updater_name
-%p
-  = selfedits
-  - if subedits.present?
-    = wrap_subedits subedits 
-%p
-  See the card: 
-  %a{:href=>card_url}
-    "\#{card_url}"
-%p
-  You received this email because you\'re following "\#{followed}". 
-  %br
-  %a{:href=>unfollow_url}
-    Unfollow
-  to stop receiving these emails.
-}
-  end
 end
 
 
-format :text do    
-  view :change_notice, :perms=>:none, :denial=>:blank do |args|
-    render_template_with_change_notice_locals :erb, args, %{
-<%= @salutation %>
 
-"<%= @card_name %>"
-was just <%= @action_type %> by <%= @updater_name %>
-<%= @selfedits if @selfedits.present? -%>
-<%= wrap_subedits @subedits if @subedits.present? -%>
-
-See the card: <%= @card_url %>
-
-You received this email because you're following "<%= @followed %>".
-Visit <%= @unfollow_url %> to stop receiving these emails.
-      }.strip
-  end
-end
 

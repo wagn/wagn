@@ -104,7 +104,9 @@ namespace :wagn do
       Wagn::Cache.reset_global
       ENV['SCHEMA'] = "#{Wagn.gem_root}/db/schema.rb"
       Wagn.config.action_mailer.perform_deliveries = false
-      Card # this is needed in production mode to insure core db structures are loaded before schema_mode is set
+      Card.reset_column_information
+       # this is needed in production mode to insure core db structures are loaded before schema_mode is set
+      
     
       paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.card_migration_paths
     
@@ -270,7 +272,7 @@ namespace :wagn do
       
       # add a fourth line to the raw content of each image (or file) to identify it as a mod file
       Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
-        card.update_attributes :content=>card.db_content + "\nstandard"      
+        card.update_attributes :content=>card.db_content + "\n05_standard"      
       end
     end
 

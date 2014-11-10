@@ -21,6 +21,8 @@ class SharedData
 
     Card['Joe Admin'].fetch(:trait=>:roles, :new=>{}).items = [ Card::AdministratorID ]
 
+    Card.create! :name=>'signup alert email+*to', :content=>'signups@wagn.org'
+
     # generic, shared attribute card
     color = Card.create! :name=>"color"
     basic = Card.create! :name=>"Basic Card"

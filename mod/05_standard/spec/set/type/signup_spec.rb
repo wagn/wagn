@@ -26,13 +26,15 @@ describe Card::Set::Type::Signup do
   context 'signup (without approval)' do
     before do
       ActionMailer::Base.deliveries = [] #needed?
+
       Card::Auth.as_bot do
         Card.create! :name=>'User+*type+*create', :content=>'[[Anyone]]'
-        Card.create! :name=>'*request+*to', :content=>'signups@wagn.org'
-
       end
-      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{'+*email'=>'wolf@wagn.org',
-         '+*password'=>'wolf'}     
+      
+      Card::Auth.current_id = Card::AnonymousID
+      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, 
+        '+*account'=>{'+*email'=>'wolf@wagn.org', '+*password'=>'wolf'}     
+        
       @account = @signup.account
       @token = @account.token
     end
@@ -89,12 +91,9 @@ describe Card::Set::Type::Signup do
   context 'signup (with approval)' do
     before do
       # NOTE: by default Anonymous does not have permission to create User cards.
-      Card::Auth.as_bot do
-        Card.create! :name=>'*request+*to', :content=>'signups@wagn.org'
-      end
-      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ 
-        '+*email'=>'wolf@wagn.org', '+*password'=>'wolf'
-      }
+      Card::Auth.current_id = Card::AnonymousID
+      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID,
+        '+*account'=>{ '+*email'=>'wolf@wagn.org', '+*password'=>'wolf' }
       @account = @signup.account
     end
     
@@ -110,16 +109,18 @@ describe Card::Set::Type::Signup do
     it 'should not create a token' do
       expect(@account.token).not_to be_present
     end
-    
-    it 'should notify someone' do
-      expect(ActionMailer::Base.deliveries.last.to).to eq(['signups@wagn.org'])
+        
+    it 'sends signup alert email' do
+      expect(ActionMailer::Base.deliveries[-2].to).to eq(['signups@wagn.org'])
     end
+    
+          
     
     
     context 'approval with token' do
       
       it 'should create token' do
-        Card::Env.params[:approve_token] = true
+        Card::Env.params[:approve_with_token] = true
         Card::Auth.as :joe_admin
         
         @signup = Card.fetch @signup.id
@@ -149,10 +150,8 @@ describe Card::Set::Type::Signup do
   context 'invitation' do
     before do
       # NOTE: by default Anonymous does not have permission to create User cards.
-      Card::Auth.as_bot do
-        Card.create! :name=>'*request+*to', :content=>'signups@wagn.org'
-        @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ '+*email'=>'wolf@wagn.org'}
-      end
+      Card::Auth.current_id = Card::WagnBotID 
+      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ '+*email'=>'wolf@wagn.org'}
       @account = @signup.account
     end
     

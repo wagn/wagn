@@ -72,7 +72,7 @@ end
 
 def contextual_content context_card, format_args={}, view_args={}
   context_card.format(format_args).process_content(
-    self.format(format_args)._render_raw(view_args)
+    self.format(format_args)._render_raw(view_args), view_args
   )
 end
 

@@ -3,7 +3,7 @@
 def content
   if @selected_action_id
     @selected_content ||= begin
-      change = last_change_on( :db_content, :not_after=> @selected_action_id ) and change.value
+      (change = last_change_on( :db_content, :not_after=> @selected_action_id ) and change.value) || db_content
     end
   else
     db_content or (new_card? && template.db_content)

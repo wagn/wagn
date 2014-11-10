@@ -76,7 +76,7 @@ else
     feature_paths = Dir.glob("./mod/**/features")
     require_args = "-r #{Wagn.gem_root}/features "
     require_args += feature_paths.map { |path| "-r #{path}"}.join(' ')
-    feature_args = ARGV.present? ? ARGV.join(' ') : feature_paths.join(' ')
+    feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.join(' ')
     system "RAILS_ROOT=. bundle exec cucumber #{require_args} #{feature_args}"
   when 'rspec'
     opts = {}

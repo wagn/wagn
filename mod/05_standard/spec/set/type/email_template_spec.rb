@@ -59,7 +59,7 @@ describe Card::Set::Type::EmailTemplate do
        expect(mailconfig[:cc]).to eq('joe@user.com')
      end
      
-     it "handles *email cards" do
+     it "handles +*email cards" do
        Card::Auth.as_bot do
          Card.create! :name => "a mail template+*cc", :content => "[[Joe User+*email]]", :type=>'Pointer'
          Card.create! :name => "a mail template+*bcc", :content => '{"name":"Joe Admin","append":"*email"}', :type=>'Search'
@@ -80,11 +80,7 @@ describe Card::Set::Type::EmailTemplate do
     before do
       class ActionView::Base
         def params
-          if @controller
-            @controller.params
-          else
-            {}
-          end
+          @controller ? @controller.params : {}
         end
       end
 

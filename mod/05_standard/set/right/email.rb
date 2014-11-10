@@ -2,7 +2,6 @@
 include All::Permissions::Accounts
 
 view :raw do |args|
-  
   case
   when card.real?          ; card.content
   when card.left.account   ; card.left.account.email #this supports legacy behavior (should be moved to User+*email+*type plus right)

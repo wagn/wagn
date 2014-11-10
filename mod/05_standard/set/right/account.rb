@@ -79,7 +79,7 @@ event :set_default_salt, :on=>:create, :before=>:process_subcards do
 end
 
 event :set_default_status, :on=>:create, :before=>:process_subcards do
-  default_status = ( Auth.signed_in? || Auth.needs_setup? ? 'active' : 'pending' )
+  default_status = ( Auth.needs_setup? ? 'active' : 'pending' )
   subcards["+#{Card[:status].name}"] = { :content => default_status }
 end
 
@@ -129,34 +129,15 @@ event :reset_token do
 end
   
 
-event :send_account_verification_email, :on=>:create, :after=>:extend do
-  if self.email.present?
-    Card[:verification_email].deliver(
-      :context => self,
-      :to     => self.email,
-      :from   => token_emails_from(self),
-    )
-  end
+event :send_account_verification_email, :on=>:create, :after=>:extend, :when=>proc{ |c| c.token.present? } do
+  Card[:verification_email].deliver( :context => self, :to => self.email )
 end
 
 event :send_reset_password_token do
   Auth.as_bot do
     token_card.update_attributes! :content => generate_token
   end
-  Card[:password_reset_email].deliver(
-    :context => self,
-    :to      => self.email,
-    :from    => token_emails_from(self),
-  )
-end
-
-def token_emails_from account
-  Card.setting( '*invite+*from' ) || begin
-    from_card_id = Auth.current_id
-    from_card_id = WagnBotID if [ AnonymousID, account.left_id ].member? from_card_id
-    from_card = Card[from_card_id]
-    "#{from_card.name} <#{from_card.account.email}>"
-  end
+  Card[:password_reset_email].deliver( :context => self, :to => self.email )
 end
 
 def ok_to_read
@@ -175,7 +156,6 @@ def send_change_notice act, followed_card_name
   if changes_visible?(act) 
     Card[:follower_notification_email].deliver(
       :context   => act.card,
-      :from      => Card[WagnBotID].account.email,
       :to        => email,
       :follower  => left.name, 
       :followed  => followed_card_name,

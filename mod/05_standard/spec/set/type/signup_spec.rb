@@ -91,6 +91,7 @@ describe Card::Set::Type::Signup do
   context 'signup (with approval)' do
     before do
       # NOTE: by default Anonymous does not have permission to create User cards.
+      Mail::TestMailer.deliveries.clear
       Card::Auth.current_id = Card::AnonymousID
       @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID,
         '+*account'=>{ '+*email'=>'wolf@wagn.org', '+*password'=>'wolf' }
@@ -111,10 +112,19 @@ describe Card::Set::Type::Signup do
     end
         
     it 'sends signup alert email' do
-      expect(ActionMailer::Base.deliveries[-2].to).to eq(['signups@wagn.org'])
+      signup_alert = ActionMailer::Base.deliveries.last
+      expect(signup_alert.to).to eq(['signups@wagn.org'])
+      [0, 1].each do |part|
+        body = signup_alert.body.parts[part].body.raw_source
+        expect(body).to include(@signup.name)
+        expect(body).to include('wolf@wagn.org')
+      end
+      
     end
     
-          
+    it 'deos not send verification email' do
+      expect(Mail::TestMailer.deliveries[-2]).to be_nil
+    end
     
     
     context 'approval with token' do

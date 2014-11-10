@@ -1,661 +1,589 @@
 ---
 card_acts_001:
-  id: 7221
+  id: 7224
   card_id: 1
   actor_id: 1
-  acted_at: 2014-11-06 18:34:58.000000000 Z
+  acted_at: 2014-11-09 07:32:19.000000000 Z
   ip_address: 
 card_acts_002:
-  id: 7222
-  card_id: 1245
+  id: 7225
+  card_id: 1247
   actor_id: 1
-  acted_at: 2014-11-06 18:46:39.000000000 Z
+  acted_at: 2014-11-09 07:33:24.000000000 Z
   ip_address: 
 card_acts_003:
-  id: 7223
-  card_id: 1252
+  id: 7226
+  card_id: 1254
   actor_id: 1
-  acted_at: 2014-11-06 18:46:41.000000000 Z
+  acted_at: 2014-11-09 07:33:26.000000000 Z
   ip_address: 
 card_acts_004:
-  id: 7224
-  card_id: 1259
+  id: 7227
+  card_id: 1261
   actor_id: 1
-  acted_at: 2014-11-06 18:46:41.000000000 Z
+  acted_at: 2014-11-09 07:33:26.000000000 Z
   ip_address: 
 card_acts_005:
-  id: 7225
-  card_id: 1266
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:41.000000000 Z
-  ip_address: 
-card_acts_006:
-  id: 7226
-  card_id: 1267
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:41.000000000 Z
-  ip_address: 
-card_acts_007:
-  id: 7227
+  id: 7228
   card_id: 1268
   actor_id: 1
-  acted_at: 2014-11-06 18:46:41.000000000 Z
+  acted_at: 2014-11-09 07:33:27.000000000 Z
   ip_address: 
-card_acts_008:
-  id: 7228
+card_acts_006:
+  id: 7229
   card_id: 1269
   actor_id: 1
-  acted_at: 2014-11-06 18:46:42.000000000 Z
+  acted_at: 2014-11-09 07:33:27.000000000 Z
   ip_address: 
-card_acts_009:
-  id: 7229
+card_acts_007:
+  id: 7230
   card_id: 1270
   actor_id: 1
-  acted_at: 2014-11-06 18:46:42.000000000 Z
+  acted_at: 2014-11-09 07:33:27.000000000 Z
   ip_address: 
-card_acts_010:
-  id: 7230
+card_acts_008:
+  id: 7231
   card_id: 1271
   actor_id: 1
-  acted_at: 2014-11-06 18:46:42.000000000 Z
+  acted_at: 2014-11-09 07:33:27.000000000 Z
+  ip_address: 
+card_acts_009:
+  id: 7232
+  card_id: 1272
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:27.000000000 Z
+  ip_address: 
+card_acts_010:
+  id: 7233
+  card_id: 1273
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:27.000000000 Z
   ip_address: 
 card_acts_011:
-  id: 7231
-  card_id: 1278
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:42.000000000 Z
-  ip_address: 
-card_acts_012:
-  id: 7232
-  card_id: 1279
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:42.000000000 Z
-  ip_address: 
-card_acts_013:
-  id: 7233
+  id: 7234
   card_id: 1280
   actor_id: 1
-  acted_at: 2014-11-06 18:46:42.000000000 Z
+  acted_at: 2014-11-09 07:33:27.000000000 Z
   ip_address: 
-card_acts_014:
-  id: 7234
+card_acts_012:
+  id: 7235
   card_id: 1281
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:42.000000000 Z
+  actor_id: 1280
+  acted_at: 2014-11-09 07:33:28.000000000 Z
   ip_address: 
-card_acts_015:
+card_acts_013:
   id: 7236
   card_id: 1282
   actor_id: 1
-  acted_at: 2014-11-06 18:46:42.000000000 Z
+  acted_at: 2014-11-09 07:33:28.000000000 Z
   ip_address: 
-card_acts_016:
+card_acts_014:
   id: 7237
   card_id: 1283
   actor_id: 1
-  acted_at: 2014-11-06 18:46:43.000000000 Z
+  acted_at: 2014-11-09 07:33:28.000000000 Z
   ip_address: 
-card_acts_017:
+card_acts_015:
   id: 7238
   card_id: 1284
   actor_id: 1
-  acted_at: 2014-11-06 18:46:43.000000000 Z
+  acted_at: 2014-11-09 07:33:28.000000000 Z
   ip_address: 
-card_acts_018:
-  id: 7240
+card_acts_016:
+  id: 7239
   card_id: 1285
   actor_id: 1
-  acted_at: 2014-11-06 18:46:43.000000000 Z
+  acted_at: 2014-11-09 07:33:28.000000000 Z
   ip_address: 
-card_acts_019:
-  id: 7241
+card_acts_017:
+  id: 7240
   card_id: 1286
   actor_id: 1
-  acted_at: 2014-11-06 18:46:43.000000000 Z
+  acted_at: 2014-11-09 07:33:28.000000000 Z
   ip_address: 
-card_acts_020:
-  id: 7242
+card_acts_018:
+  id: 7241
   card_id: 1287
   actor_id: 1
-  acted_at: 2014-11-06 18:46:43.000000000 Z
+  acted_at: 2014-11-09 07:33:28.000000000 Z
   ip_address: 
-card_acts_021:
-  id: 7243
+card_acts_019:
+  id: 7242
   card_id: 1288
   actor_id: 1
-  acted_at: 2014-11-06 18:46:43.000000000 Z
+  acted_at: 2014-11-09 07:33:28.000000000 Z
   ip_address: 
-card_acts_022:
-  id: 7244
+card_acts_020:
+  id: 7243
   card_id: 1289
   actor_id: 1
-  acted_at: 2014-11-06 18:46:43.000000000 Z
+  acted_at: 2014-11-09 07:33:28.000000000 Z
   ip_address: 
-card_acts_023:
-  id: 7245
+card_acts_021:
+  id: 7244
   card_id: 1290
   actor_id: 1
-  acted_at: 2014-11-06 18:46:43.000000000 Z
+  acted_at: 2014-11-09 07:33:28.000000000 Z
   ip_address: 
-card_acts_024:
-  id: 7246
+card_acts_022:
+  id: 7245
   card_id: 1291
   actor_id: 1
-  acted_at: 2014-11-06 18:46:43.000000000 Z
+  acted_at: 2014-11-09 07:33:28.000000000 Z
+  ip_address: 
+card_acts_023:
+  id: 7246
+  card_id: 1292
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:28.000000000 Z
+  ip_address: 
+card_acts_024:
+  id: 7247
+  card_id: 1293
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:28.000000000 Z
   ip_address: 
 card_acts_025:
   id: 7248
-  card_id: 1292
+  card_id: 1300
   actor_id: 1
-  acted_at: 2014-11-06 18:46:43.000000000 Z
+  acted_at: 2014-11-09 07:33:29.000000000 Z
   ip_address: 
 card_acts_026:
   id: 7249
-  card_id: 1293
+  card_id: 1307
   actor_id: 1
-  acted_at: 2014-11-06 18:46:43.000000000 Z
+  acted_at: 2014-11-09 07:33:29.000000000 Z
   ip_address: 
 card_acts_027:
   id: 7250
-  card_id: 1294
+  card_id: 1314
   actor_id: 1
-  acted_at: 2014-11-06 18:46:43.000000000 Z
+  acted_at: 2014-11-09 07:33:29.000000000 Z
   ip_address: 
 card_acts_028:
   id: 7251
-  card_id: 1295
+  card_id: 1315
   actor_id: 1
-  acted_at: 2014-11-06 18:46:43.000000000 Z
+  acted_at: 2014-11-09 07:33:29.000000000 Z
   ip_address: 
 card_acts_029:
   id: 7252
-  card_id: 1296
+  card_id: 1316
   actor_id: 1
-  acted_at: 2014-11-06 18:46:43.000000000 Z
+  acted_at: 2014-11-09 07:33:29.000000000 Z
   ip_address: 
 card_acts_030:
   id: 7253
-  card_id: 1297
+  card_id: 1317
   actor_id: 1
-  acted_at: 2014-11-06 18:46:44.000000000 Z
+  acted_at: 2014-11-09 07:33:29.000000000 Z
   ip_address: 
 card_acts_031:
   id: 7254
-  card_id: 1298
+  card_id: 1318
   actor_id: 1
-  acted_at: 2014-11-06 18:46:44.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
 card_acts_032:
-  id: 7256
-  card_id: 1299
+  id: 7255
+  card_id: 1319
   actor_id: 1
-  acted_at: 2014-11-06 18:46:44.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
 card_acts_033:
-  id: 7257
-  card_id: 1300
+  id: 7256
+  card_id: 1320
   actor_id: 1
-  acted_at: 2014-11-06 18:46:44.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
 card_acts_034:
-  id: 7258
-  card_id: 1301
+  id: 7257
+  card_id: 1321
   actor_id: 1
-  acted_at: 2014-11-06 18:46:44.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
 card_acts_035:
-  id: 7259
-  card_id: 1302
+  id: 7258
+  card_id: 1322
   actor_id: 1
-  acted_at: 2014-11-06 18:46:44.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
 card_acts_036:
-  id: 7260
-  card_id: 1303
+  id: 7259
+  card_id: 1323
   actor_id: 1
-  acted_at: 2014-11-06 18:46:44.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
 card_acts_037:
-  id: 7261
-  card_id: 1310
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:44.000000000 Z
-  ip_address: 
-card_acts_038:
-  id: 7262
-  card_id: 1317
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:45.000000000 Z
-  ip_address: 
-card_acts_039:
-  id: 7263
+  id: 7260
   card_id: 1324
   actor_id: 1
-  acted_at: 2014-11-06 18:46:45.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
-card_acts_040:
-  id: 7264
+card_acts_038:
+  id: 7261
   card_id: 1325
   actor_id: 1
-  acted_at: 2014-11-06 18:46:45.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
-card_acts_041:
-  id: 7265
+card_acts_039:
+  id: 7262
   card_id: 1326
   actor_id: 1
-  acted_at: 2014-11-06 18:46:45.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
-card_acts_042:
-  id: 7266
+card_acts_040:
+  id: 7263
   card_id: 1327
   actor_id: 1
-  acted_at: 2014-11-06 18:46:45.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
-card_acts_043:
-  id: 7267
+card_acts_041:
+  id: 7264
   card_id: 1328
   actor_id: 1
-  acted_at: 2014-11-06 18:46:45.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
-card_acts_044:
-  id: 7268
+card_acts_042:
+  id: 7265
   card_id: 1329
   actor_id: 1
-  acted_at: 2014-11-06 18:46:45.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
-card_acts_045:
-  id: 7269
+card_acts_043:
+  id: 7266
   card_id: 1330
   actor_id: 1
-  acted_at: 2014-11-06 18:46:45.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
-card_acts_046:
-  id: 7270
-  card_id: 1331
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
-  ip_address: 
-card_acts_047:
-  id: 7271
-  card_id: 1332
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
-  ip_address: 
-card_acts_048:
-  id: 7272
-  card_id: 1333
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
-  ip_address: 
-card_acts_049:
-  id: 7273
-  card_id: 1334
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
-  ip_address: 
-card_acts_050:
-  id: 7274
+card_acts_044:
+  id: 7267
   card_id: 1335
   actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
-card_acts_051:
-  id: 7275
-  card_id: 1336
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
-  ip_address: 
-card_acts_052:
-  id: 7276
-  card_id: 1337
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
-  ip_address: 
-card_acts_053:
-  id: 7277
-  card_id: 1338
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
-  ip_address: 
-card_acts_054:
-  id: 7278
+card_acts_045:
+  id: 7268
   card_id: 1339
   actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
+  acted_at: 2014-11-09 07:33:30.000000000 Z
   ip_address: 
-card_acts_055:
-  id: 7279
-  card_id: 1340
+card_acts_046:
+  id: 7269
+  card_id: 1341
   actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
+  acted_at: 2014-11-09 07:33:31.000000000 Z
   ip_address: 
-card_acts_056:
-  id: 7280
+card_acts_047:
+  id: 7270
+  card_id: 1343
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:31.000000000 Z
+  ip_address: 
+card_acts_048:
+  id: 7271
   card_id: 1345
   actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
+  acted_at: 2014-11-09 07:33:31.000000000 Z
   ip_address: 
-card_acts_057:
-  id: 7281
+card_acts_049:
+  id: 7272
+  card_id: 1346
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:31.000000000 Z
+  ip_address: 
+card_acts_050:
+  id: 7273
+  card_id: 1347
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:31.000000000 Z
+  ip_address: 
+card_acts_051:
+  id: 7274
   card_id: 1349
   actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
+  acted_at: 2014-11-09 07:33:31.000000000 Z
   ip_address: 
-card_acts_058:
-  id: 7282
+card_acts_052:
+  id: 7275
+  card_id: 1350
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:31.000000000 Z
+  ip_address: 
+card_acts_053:
+  id: 7276
   card_id: 1351
   actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
+  acted_at: 2014-11-09 07:33:31.000000000 Z
   ip_address: 
-card_acts_059:
-  id: 7283
+card_acts_054:
+  id: 7277
+  card_id: 1352
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:32.000000000 Z
+  ip_address: 
+card_acts_055:
+  id: 7278
   card_id: 1353
   actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
+  acted_at: 2014-11-09 07:33:32.000000000 Z
   ip_address: 
-card_acts_060:
-  id: 7284
+card_acts_056:
+  id: 7279
+  card_id: 1354
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:32.000000000 Z
+  ip_address: 
+card_acts_057:
+  id: 7280
   card_id: 1355
   actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
+  acted_at: 2014-11-09 07:33:32.000000000 Z
   ip_address: 
-card_acts_061:
-  id: 7285
+card_acts_058:
+  id: 7281
   card_id: 1356
   actor_id: 1
-  acted_at: 2014-11-06 18:46:46.000000000 Z
+  acted_at: 2014-11-09 07:33:32.000000000 Z
   ip_address: 
-card_acts_062:
-  id: 7286
+card_acts_059:
+  id: 7282
   card_id: 1357
   actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
+  acted_at: 2014-11-09 07:33:32.000000000 Z
   ip_address: 
-card_acts_063:
-  id: 7287
+card_acts_060:
+  id: 7283
+  card_id: 1358
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:32.000000000 Z
+  ip_address: 
+card_acts_061:
+  id: 7284
   card_id: 1359
   actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
+  acted_at: 2014-11-09 07:33:32.000000000 Z
   ip_address: 
-card_acts_064:
-  id: 7288
+card_acts_062:
+  id: 7285
   card_id: 1360
   actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
+  acted_at: 2014-11-09 07:33:32.000000000 Z
   ip_address: 
-card_acts_065:
-  id: 7289
+card_acts_063:
+  id: 7286
   card_id: 1361
   actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
+  acted_at: 2014-11-09 07:33:32.000000000 Z
   ip_address: 
-card_acts_066:
-  id: 7290
+card_acts_064:
+  id: 7287
   card_id: 1362
   actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
+  acted_at: 2014-11-09 07:33:32.000000000 Z
   ip_address: 
-card_acts_067:
-  id: 7291
+card_acts_065:
+  id: 7288
   card_id: 1363
   actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
+  acted_at: 2014-11-09 07:33:32.000000000 Z
   ip_address: 
-card_acts_068:
-  id: 7292
+card_acts_066:
+  id: 7289
   card_id: 1364
   actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
+  acted_at: 2014-11-09 07:33:32.000000000 Z
+  ip_address: 
+card_acts_067:
+  id: 7290
+  card_id: 1364
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:32.000000000 Z
+  ip_address: 
+card_acts_068:
+  id: 7291
+  card_id: 1364
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:32.000000000 Z
   ip_address: 
 card_acts_069:
-  id: 7293
+  id: 7292
   card_id: 1365
   actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
+  acted_at: 2014-11-09 07:33:32.000000000 Z
   ip_address: 
 card_acts_070:
-  id: 7294
-  card_id: 1366
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
-  ip_address: 
-card_acts_071:
-  id: 7295
+  id: 7293
   card_id: 1367
   actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
+  acted_at: 2014-11-09 07:33:32.000000000 Z
+  ip_address: 
+card_acts_071:
+  id: 7294
+  card_id: 1368
+  actor_id: 1247
+  acted_at: 2014-11-09 07:33:32.000000000 Z
   ip_address: 
 card_acts_072:
-  id: 7296
-  card_id: 1368
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
+  id: 7295
+  card_id: 1369
+  actor_id: 1247
+  acted_at: 2014-11-09 07:33:33.000000000 Z
   ip_address: 
 card_acts_073:
-  id: 7297
-  card_id: 1369
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
-  ip_address: 
-card_acts_074:
-  id: 7298
+  id: 7296
   card_id: 1370
   actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
+  acted_at: 2014-11-09 07:33:33.000000000 Z
   ip_address: 
-card_acts_075:
-  id: 7299
-  card_id: 1371
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
-  ip_address: 
-card_acts_076:
-  id: 7300
+card_acts_074:
+  id: 7297
   card_id: 1372
   actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
+  acted_at: 2014-11-09 07:33:33.000000000 Z
   ip_address: 
-card_acts_077:
-  id: 7301
+card_acts_075:
+  id: 7298
   card_id: 1373
   actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
+  acted_at: 2014-11-09 07:33:33.000000000 Z
   ip_address: 
-card_acts_078:
-  id: 7302
-  card_id: 1374
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
-  ip_address: 
-card_acts_079:
-  id: 7303
-  card_id: 1374
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
-  ip_address: 
-card_acts_080:
-  id: 7304
-  card_id: 1374
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
-  ip_address: 
-card_acts_081:
-  id: 7305
+card_acts_076:
+  id: 7299
   card_id: 1375
   actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
+  acted_at: 2014-11-09 07:33:33.000000000 Z
   ip_address: 
-card_acts_082:
-  id: 7306
+card_acts_077:
+  id: 7300
+  card_id: 1376
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:33.000000000 Z
+  ip_address: 
+card_acts_078:
+  id: 7301
   card_id: 1377
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:47.000000000 Z
-  ip_address: 
-card_acts_083:
-  id: 7307
-  card_id: 1378
-  actor_id: 1245
-  acted_at: 2014-11-06 18:46:48.000000000 Z
-  ip_address: 
-card_acts_084:
-  id: 7308
-  card_id: 1379
-  actor_id: 1245
-  acted_at: 2014-11-06 18:46:48.000000000 Z
-  ip_address: 
-card_acts_085:
-  id: 7309
-  card_id: 1380
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:48.000000000 Z
-  ip_address: 
-card_acts_086:
-  id: 7310
-  card_id: 1382
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:48.000000000 Z
-  ip_address: 
-card_acts_087:
-  id: 7311
-  card_id: 1383
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:48.000000000 Z
-  ip_address: 
-card_acts_088:
-  id: 7312
-  card_id: 1385
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:48.000000000 Z
-  ip_address: 
-card_acts_089:
-  id: 7313
-  card_id: 1386
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:48.000000000 Z
-  ip_address: 
-card_acts_090:
-  id: 7314
-  card_id: 1387
   actor_id: 1
   acted_at: 2019-12-31 07:00:00.000000000 Z
   ip_address: 
-card_acts_091:
-  id: 7315
+card_acts_079:
+  id: 7302
+  card_id: 1384
+  actor_id: 1
+  acted_at: 2019-12-31 07:00:00.000000000 Z
+  ip_address: 
+card_acts_080:
+  id: 7303
+  card_id: 1391
+  actor_id: 1
+  acted_at: 2019-12-31 07:00:00.000000000 Z
+  ip_address: 
+card_acts_081:
+  id: 7304
+  card_id: 1392
+  actor_id: 1
+  acted_at: 2019-12-31 07:00:00.000000000 Z
+  ip_address: 
+card_acts_082:
+  id: 7305
+  card_id: 1393
+  actor_id: 1
+  acted_at: 2019-12-31 07:00:00.000000000 Z
+  ip_address: 
+card_acts_083:
+  id: 7306
   card_id: 1394
   actor_id: 1
   acted_at: 2019-12-31 07:00:00.000000000 Z
   ip_address: 
-card_acts_092:
-  id: 7316
+card_acts_084:
+  id: 7307
+  card_id: 1396
+  actor_id: 1
+  acted_at: 2019-12-31 07:00:00.000000000 Z
+  ip_address: 
+card_acts_085:
+  id: 7308
+  card_id: 1397
+  actor_id: 1
+  acted_at: 2019-12-31 07:00:00.000000000 Z
+  ip_address: 
+card_acts_086:
+  id: 7309
+  card_id: 1398
+  actor_id: 1
+  acted_at: 2019-12-31 07:00:00.000000000 Z
+  ip_address: 
+card_acts_087:
+  id: 7310
+  card_id: 1400
+  actor_id: 1
+  acted_at: 2019-12-31 07:00:00.000000000 Z
+  ip_address: 
+card_acts_088:
+  id: 7311
   card_id: 1401
   actor_id: 1
   acted_at: 2019-12-31 07:00:00.000000000 Z
   ip_address: 
-card_acts_093:
-  id: 7317
+card_acts_089:
+  id: 7312
   card_id: 1402
   actor_id: 1
   acted_at: 2019-12-31 07:00:00.000000000 Z
   ip_address: 
-card_acts_094:
-  id: 7318
+card_acts_090:
+  id: 7313
   card_id: 1403
   actor_id: 1
   acted_at: 2019-12-31 07:00:00.000000000 Z
   ip_address: 
-card_acts_095:
-  id: 7319
-  card_id: 1404
+card_acts_091:
+  id: 7314
+  card_id: 1405
   actor_id: 1
-  acted_at: 2019-12-31 07:00:00.000000000 Z
+  acted_at: 2014-11-09 07:33:34.000000000 Z
   ip_address: 
-card_acts_096:
-  id: 7320
+card_acts_092:
+  id: 7315
   card_id: 1406
   actor_id: 1
-  acted_at: 2019-12-31 07:00:00.000000000 Z
+  acted_at: 2014-11-09 07:33:34.000000000 Z
   ip_address: 
-card_acts_097:
-  id: 7321
-  card_id: 1407
-  actor_id: 1
-  acted_at: 2019-12-31 07:00:00.000000000 Z
-  ip_address: 
-card_acts_098:
-  id: 7322
+card_acts_093:
+  id: 7316
   card_id: 1408
   actor_id: 1
-  acted_at: 2019-12-31 07:00:00.000000000 Z
+  acted_at: 2014-11-09 07:33:34.000000000 Z
   ip_address: 
-card_acts_099:
-  id: 7323
+card_acts_094:
+  id: 7317
+  card_id: 1409
+  actor_id: 1
+  acted_at: 2014-11-09 07:33:35.000000000 Z
+  ip_address: 
+card_acts_095:
+  id: 7318
   card_id: 1410
   actor_id: 1
-  acted_at: 2019-12-31 07:00:00.000000000 Z
+  acted_at: 2014-11-09 07:33:35.000000000 Z
   ip_address: 
-card_acts_100:
-  id: 7324
+card_acts_096:
+  id: 7319
   card_id: 1411
   actor_id: 1
-  acted_at: 2019-12-31 07:00:00.000000000 Z
+  acted_at: 2014-11-09 07:33:35.000000000 Z
   ip_address: 
-card_acts_101:
-  id: 7325
+card_acts_097:
+  id: 7320
   card_id: 1412
   actor_id: 1
-  acted_at: 2019-12-31 07:00:00.000000000 Z
+  acted_at: 2014-11-09 07:33:35.000000000 Z
   ip_address: 
-card_acts_102:
-  id: 7326
+card_acts_098:
+  id: 7321
   card_id: 1413
   actor_id: 1
-  acted_at: 2019-12-31 07:00:00.000000000 Z
-  ip_address: 
-card_acts_103:
-  id: 7327
-  card_id: 1415
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:51.000000000 Z
-  ip_address: 
-card_acts_104:
-  id: 7328
-  card_id: 1416
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:51.000000000 Z
-  ip_address: 
-card_acts_105:
-  id: 7329
-  card_id: 1418
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:51.000000000 Z
-  ip_address: 
-card_acts_106:
-  id: 7330
-  card_id: 1419
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:51.000000000 Z
-  ip_address: 
-card_acts_107:
-  id: 7331
-  card_id: 1420
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:51.000000000 Z
-  ip_address: 
-card_acts_108:
-  id: 7332
-  card_id: 1421
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:51.000000000 Z
-  ip_address: 
-card_acts_109:
-  id: 7333
-  card_id: 1422
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:51.000000000 Z
-  ip_address: 
-card_acts_110:
-  id: 7334
-  card_id: 1423
-  actor_id: 1
-  acted_at: 2014-11-06 18:46:51.000000000 Z
+  acted_at: 2014-11-09 07:33:35.000000000 Z
   ip_address: 

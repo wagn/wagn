@@ -180,7 +180,7 @@ namespace :wagn do
   end
   
   namespace :bootstrap do
-    desc "rid template of unneeded cards, revisions, and references"
+    desc "rid template of unneeded cards, acts, actions, changes, and references"
     task :clean => :environment do
       Wagn::Cache.reset_global
       conn =  ActiveRecord::Base.connection
@@ -266,8 +266,6 @@ namespace :wagn do
       mod_name = '05_standard'
       template_files_dir = "#{Wagn.root}/files"
       standard_files_dir = "#{Wagn.gem_root}/mod/#{mod_name}/file"
-      
-      #FIXME - this should delete old revisions
       
       FileUtils.remove_dir standard_files_dir, force=true
       FileUtils.cp_r template_files_dir, standard_files_dir

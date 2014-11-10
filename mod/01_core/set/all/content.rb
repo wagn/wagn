@@ -4,8 +4,8 @@ def content
   db_content or (new_card? && template.db_content)
 end
 
-def selected_content  
-  (last_change = last_change_on(:db_content,:not_after=> selected_action) and last_change.value) || content
+def selected_content
+  @selected_content ||= (last_change = last_change_on(:db_content,:not_after=> selected_action) and last_change.value) || content
 end
 
 def content=(value)
@@ -44,16 +44,24 @@ def selected_action_id
   @selected_action_id || (@current_action and @current_action.id) || last_action_id 
 end
 
+def selected_action_id= action_id
+  @selected_content = nil
+  @selected_action_id = action_id
+end
+
 def selected_action
-  selected_action_id and Card::Action.find(selected_action_id)
+  selected_action_id and Action.fetch(selected_action_id)
 end
 
 def selected_content_action_id
-  @selected_action_id ||  (@current_action and @current_action.new_content? and  @current_action.id) || last_content_action_id 
+  @selected_action_id ||  
+  (@current_action and @current_action.new_content? and  @current_action.id) || 
+  last_content_action_id 
 end
-def selected_content_action
-  Card::Action.find(selected_content_action_id)
-end
+
+#def selected_content_action
+#  Card::Action.find(selected_content_action_id)
+#end
 
 
 def last_action_id
@@ -70,38 +78,6 @@ def last_content_action_id
 end
 
 
-def current_revision
-  #return current_revision || Card::Revision.new
-  if @cached_revision and @cached_revision.id==current_revision_id
-  elsif ( Card::Revision.cache &&
-     @cached_revision=Card::Revision.cache.read("#{cardname.safe_key}-content") and
-     @cached_revision.id==current_revision_id )
-  else
-    rev = current_revision_id ? Card::Revision.find(current_revision_id) : Card::Revision.new()
-    @cached_revision = Card::Revision.cache ?
-      Card::Revision.cache.write("#{cardname.safe_key}-content", rev) : rev
-  end
-  @cached_revision
-end
-
-
-def previous_revision action_id
-  # if previous_action_id
-  #   rev_index = revisions.find_index do |rev|
-  #     rev.id == revision_id
-  #   end
-  #   revisions[rev_index - 1] if rev_index.to_i != 0
-  # end
-end
-# old
-# def previous_revision revision_id
-#   if revision_id
-#     rev_index = revisions.find_index do |rev|
-#       rev.id == revision_id
-#     end
-#     revisions[rev_index - 1] if rev_index.to_i != 0
-#   end
-# end
 def previous_action action_id
   if action_id
     action_index = actions.find_index do |a|

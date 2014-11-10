@@ -10,7 +10,7 @@ Wagn.application.class.configure do
   config.reload_classes_only_on_change = false
   if defined?(RailsDevTweaks)
     config.dev_tweaks.autoload_rules do
-        skip '/files'
+#        skip '/files'
     end
   end
   

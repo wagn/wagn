@@ -1,28 +1,26 @@
 # -*- encoding : utf-8 -*-
 class Card
+  
+  #fixme - these Card class methods should probably be in a set module
   def find_action_by_params args
     case 
     when args[:rev]
       nth_action(args[:rev].to_i-1)
     when args[:rev_id]
-      action = Card::Action.find(args[:rev_id]) 
-      if action.card_id == id 
+      if action = Action.fetch(args[:rev_id]) and action.card_id == id 
         action 
       end
     end
   end
   
-  def nth_revision index
-    revision(nth_action(index))
-  end
-  
   def nth_action index
-    Card::Action.where("(draft IS NULL OR draft = :draft) AND card_id = ':id'", {:draft=>false, :id=>id})[index-1]
+    Action.where("(draft IS NULL OR draft = :draft) AND card_id = ':id'", {:draft=>false, :id=>id})[index-1]
   end
   
   def revision action
+    # a "revision" refers to the state of all tracked fields at the time of a given action
     if action.is_a? Integer
-      action = Card::Action.find(action)
+      action = Card::Action.fetch(action)
     end
     action and Card::TRACKED_FIELDS.inject({}) do |attr_changes, field|
       last_change = action.changes.find_by_field(field) || last_change_on(field, :not_after=>action)
@@ -33,10 +31,11 @@ class Card
   
   def delete_old_actions
     Card::TRACKED_FIELDS.each do |field|
-        if (not last_action.change_for(field).present?) and (last_change = last_change_on(field))
-          last_change = Card::Change.find(last_change.id)   # last_change comes as readonly record
-          last_change.update_attributes!(:card_action_id=>last_action_id)
-        end
+      # assign previous changes on each tracked field to the last action
+      if (not last_action.change_for(field).present?) and (last_change = last_change_on(field))
+        last_change = Card::Change.find(last_change.id)   # last_change comes as readonly record
+        last_change.update_attributes!(:card_action_id=>last_action_id)
+      end
     end
     actions.where('id != ?', last_action_id ).delete_all
   end
@@ -55,19 +54,28 @@ class Card
     # replace with enum if we start using rails 4 
     TYPE = [:create, :update, :delete]
     
-    # def card
-    #   Card.fetch card_id
-    # end
+    class << self
+      def cache
+        Wagn::Cache[Action]
+      end
     
-    def self.delete_cardless
-      Card::Action.where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
-    end
+      def fetch id
+        cache.read(id.to_s) or begin
+          cache.write id.to_s, Action.find(id.to_i)
+        end
+      end
+      
     
-    def self.delete_old 
-      Card.find_each do |card|
-        card.delete_old_actions
-      end    
-      Card::Act.delete_actionless
+      def delete_cardless
+        Card::Action.where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
+      end
+    
+      def delete_old 
+        Card.find_each do |card|
+          card.delete_old_actions
+        end    
+        Card::Act.delete_actionless
+      end
     end
     
     def edit_info

@@ -1,13 +1,12 @@
 ::Card.error_codes[:conflict] = [:conflict, 409]
 
 def content
-  db_content or (new_card? && template.db_content)
-end
-
-def selected_content
-  @selected_content ||= begin
-    change = ( selected_action and last_change_on( :db_content, :not_after=> selected_action ) )
-    change ? change.value : content
+  if @selected_action_id
+    @selected_content ||= begin
+      change = last_change_on( :db_content, :not_after=> @selected_action_id ) and change.value
+    end
+  else
+    db_content or (new_card? && template.db_content)
   end
 end
 
@@ -57,14 +56,9 @@ end
 
 def selected_content_action_id
   @selected_action_id ||  
-  (@current_action and @current_action.new_content? and  @current_action.id) || 
+  (@current_action and @current_action.new_content? and @current_action.id) || 
   last_content_action_id 
 end
-
-#def selected_content_action
-#  Card::Action.find(selected_content_action_id)
-#end
-
 
 def last_action_id
   last_action and last_action.id

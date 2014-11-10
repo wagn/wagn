@@ -291,7 +291,7 @@ class Card
       end
     end
 
-    def ok_view view, args={}    
+    def ok_view view, args={}
       return view if args.delete :skip_permissions
       approved_view = case
         when @depth >= @@max_depth      ; :too_deep                    # prevent recursion. @depth tracks subformats

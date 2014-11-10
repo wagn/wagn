@@ -112,7 +112,14 @@ describe Card::Set::Type::Signup do
     end
         
     it 'sends signup alert email' do
-      expect(ActionMailer::Base.deliveries.last.to).to eq(['signups@wagn.org'])
+      signup_alert = ActionMailer::Base.deliveries.last
+      expect(signup_alert.to).to eq(['signups@wagn.org'])
+      [0, 1].each do |part|
+        body = signup_alert.body.parts[part].body.raw_source
+        expect(body).to include(@signup.name)
+        expect(body).to include('wolf@wagn.org')
+      end
+      
     end
     
     it 'deos not send verification email' do

@@ -8829,7 +8829,7 @@ card_changes_1655:
   card_action_id: 7186
   field: 2
   value: |
-    {{_|name}} ({{+*email|core}}) has signed up on {{:title|core}}.
+    {{_|name}} ({{+*account+*email|core}}) has signed up on {{:title|core}}.
 
     See {{_|name}}'s card: {{_|url}}
 

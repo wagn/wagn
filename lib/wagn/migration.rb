@@ -39,11 +39,11 @@ class Wagn::Migration < ActiveRecord::Migration
   def data_path filename=nil
     if filename
       migration_paths.each do |path|
-        data_path = File.join path, filename
-        return data_path if File.exists? data_path
+        path_to_file = File.join path, 'data', filename
+        return path_to_file if File.exists? path_to_file
       end
     else
-      migration_paths.first
+      File.join migration_paths.first, 'data'
     end
   end
   

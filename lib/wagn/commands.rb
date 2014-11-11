@@ -52,7 +52,7 @@ else
     parser = OptionParser.new do |parser|
       parser.banner = "Usage: wagn seed [options]\n\nCreate and seed the production database specified in config/database.yml\n\n"
       parser.on('--production','-p', 'seed production database (default)') do
-        envs = ['test']
+        envs = ['production']
       end
       parser.on('--test','-t', 'seed test database') do
         envs = ['test']

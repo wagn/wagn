@@ -15,7 +15,7 @@ module Wagn
 
       def schema_stamp_path type
         root_dir = type.to_s =~ /deck/ ? Wagn.root : Wagn.gem_root
-        stamp_dir = ENV['SCHEMA_STAMP_PATH'] || File.join( root, 'config' )
+        stamp_dir = ENV['SCHEMA_STAMP_PATH'] || File.join( root_dir, 'config' )
         
         File.join stamp_dir, "version#{ "_#{type}s" if type.present? }.txt"  
       end

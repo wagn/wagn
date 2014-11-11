@@ -20,7 +20,7 @@ class Card
   end
 end
 
-class AddScriptCards < Wagn::Migration
+class AddScriptCards < Wagn::CoreMigration
   def up    
     # JavaScript and CoffeeScript types
     card = Card.fetch "CoffeeScript", :new => {}

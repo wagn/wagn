@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class <%= migration_class_name %> < Wagn::Migration
+class <%= migration_class_name %> < <%= @migration_parent_class %>
   def up
     <% if @migration_action == 'import' -%>
       import_json "<%= @json_filename %>"

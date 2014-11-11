@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddEmailCards < Wagn::Migration
+class AddEmailCards < Wagn::CoreMigration
   def up
     
     # change notification rules
@@ -54,8 +54,8 @@ class AddEmailCards < Wagn::Migration
     
     
     # create system email cards
-    dir = "#{Wagn.gem_root}/db/migrate_cards/data/mailer"
-    json = File.read( File.join( dir, 'mail_config.json' ))
+    dir = File.join data_path, 'mailer'
+    json = File.read( File.join( dir, 'mail_config.json' ) )
     data = JSON.parse(json)
     data.each do |mail|
       mail = mail.symbolize_keys!

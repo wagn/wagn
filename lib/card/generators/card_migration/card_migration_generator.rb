@@ -21,6 +21,7 @@ class CardMigrationGenerator < ActiveRecord::Generators::Base
 
   def set_local_assigns!
     @migration_template = "card_migration.erb"
+    @migration_parent_class = option['core'] ? 'Wagn::CoreMigration' : 'Wagn::Migration'
     case file_name
     when /^(import)_(.*)(?:\.json)?/
       @migration_action = $1

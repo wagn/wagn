@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddStyleCards < Wagn::Migration
+class AddStyleCards < Wagn::CoreMigration
   def up
     # TAKE "CSS" CODENAME FROM OLD *CSS CARD
     old_css = Card[:css]

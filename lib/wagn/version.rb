@@ -17,7 +17,7 @@ module Wagn
         root_dir = type.to_s =~ /deck/ ? Wagn.root : Wagn.gem_root
         stamp_dir = ENV['SCHEMA_STAMP_PATH'] || File.join( root, 'config' )
         
-        File.join stamp_dir, "version#{ '_cards' if type.to_s =~ /card|deck/ }.txt"  
+        File.join stamp_dir, "version#{ "_#{type}s" if type.present? }.txt"  
       end
             
     end

@@ -7,6 +7,7 @@ require 'rake'
 unless Rake::TaskManager.methods.include?(:redefine_task)
   module Rake
     module TaskManager
+
       def redefine_task(task_class, args, &block)
         task_name, arg_names, deps = resolve_args(args)
         task_name = task_class.scope_name(@scope, task_name)
@@ -41,7 +42,7 @@ namespace :db do
       end
     end
   end
-    
+
   namespace :test do
     desc 'Prepare the test database and load the schema'
     Rake::Task.redefine_task( :prepare => :environment ) do
@@ -53,3 +54,6 @@ namespace :db do
     end
   end
 end
+
+
+

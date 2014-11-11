@@ -12,7 +12,7 @@ namespace :wagn do
       puts "not dropped"
     end
 
-    ENV['SCHEMA'] = "#{Wagn.gem_root}/db/schema.rb"
+    ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
      
     puts "creating"
     Rake::Task['db:create'].invoke
@@ -62,7 +62,7 @@ namespace :wagn do
 
   desc "migrate structure and cards"
   task :migrate =>:environment do
-    ENV['SCHEMA'] = "#{Wagn.gem_root}/db/schema.rb"
+    ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
     
     stamp = ENV['STAMP_MIGRATIONS']
 
@@ -102,7 +102,7 @@ namespace :wagn do
     desc "migrate cards"
     task :cards => :environment do
       Wagn::Cache.reset_global
-      ENV['SCHEMA'] = "#{Wagn.gem_root}/db/schema.rb"
+      ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
       Wagn.config.action_mailer.perform_deliveries = false
       Card.reset_column_information
        # this is needed in production mode to insure core db structures are loaded before schema_mode is set
@@ -119,7 +119,7 @@ namespace :wagn do
     desc "migrate deck cards"
     task :deck_cards => :environment do
       Wagn::Cache.reset_global
-      ENV['SCHEMA'] = "#{Rails.root}/db/schema.rb"
+      ENV['SCHEMA'] ||= "#{Rails.root}/db/schema.rb"
       Wagn.config.action_mailer.perform_deliveries = false
       Card # this is needed in production mode to insure core db structures are loaded before schema_mode is set
     
@@ -133,7 +133,7 @@ namespace :wagn do
   
     desc 'write the version to a file (not usually called directly)' #maybe we should move this to a method? 
     task :stamp, :suffix do |t, args|
-      ENV['SCHEMA'] = "#{Wagn.gem_root}/db/schema.rb"
+      ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
       Wagn.config.action_mailer.perform_deliveries = false
       
       stamp_file = Wagn::Version.schema_stamp_path( args[:suffix] )

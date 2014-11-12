@@ -60,7 +60,7 @@ class Wagn::Migration < ActiveRecord::Migration
   end
   
   def migration_paths
-    Wagn::Migration.deck_migration_paths
+    Wagn::Migration.deck_card_migration_paths
   end
   
   

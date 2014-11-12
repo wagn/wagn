@@ -2,8 +2,9 @@
 
 class <%= migration_class_name %> < <%= @migration_parent_class %>
   def up
-    <% if @migration_action == 'import' -%>
-      import_json "<%= @json_filename %>"
-    <% end -%>
+<% if @migration_action == 'import' -%>
+    import_json "<%= @json_filename %>"
+<% end -%>
+    
   end
 end

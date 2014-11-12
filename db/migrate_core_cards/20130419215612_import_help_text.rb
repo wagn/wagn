@@ -1,9 +1,9 @@
 # -*- encoding : utf-8 -*-
 
-class ImportHelpText < Wagn::Migration
+class ImportHelpText < Wagn::CoreMigration
   def up
-    json = File.read( File.join Wagn.gem_root, 'db/migrate_cards/data/1.11_help_text.json' )
-    data = JSON.parse json
+    dir = data_path '1.11_help_text.json' 
+    data = JSON.parse( File.read dir )
     data.each do |atom|
       c = atom['card']
       Card.merge c['name'], { :type=>c['type'], :content=>atom['views'][0]['parts'] }, :pristine=>true

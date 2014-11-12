@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 
-class CommonCssPatch < Wagn::Migration
+class CommonCssPatch < Wagn::CoreMigration
   def up
-    dir = "#{Wagn.gem_root}/db/migrate_cards/data/1.12_stylesheets"
+    dir = File.join data_path, "1.12_stylesheets"
     card = Card["style: common"]
     if card && card.pristine?
       card.update_attributes! :content=>File.read("#{dir}/common.scss")

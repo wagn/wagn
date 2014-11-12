@@ -136,6 +136,9 @@ class CardController < ActionController::Base
       log << status
       log << env["REQUEST_URI"]
       log << DateTime.now.to_s
+      log << env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first
+      log << env["HTTP_REFERER"]
+      
       log_dir = (Wagn.paths['request_log'] || Wagn.paths['log']).first
       log_filename = "#{Date.today}_#{Rails.env}.csv"
       File.open(File.join(log_dir,log_filename), "a") do |f|

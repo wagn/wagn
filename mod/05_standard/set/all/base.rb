@@ -24,6 +24,8 @@ format do
 
   view :created_at, :perms=>:none do |args| time_ago_in_words card.created_at end
   view :updated_at, :perms=>:none do |args| time_ago_in_words card.updated_at end
+  view :acted_at,   :perms=>:none do |args| time_ago_in_words card.acted_at   end
+    
 
 
   # CONTENT VIEWS

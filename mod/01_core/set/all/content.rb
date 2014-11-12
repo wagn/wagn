@@ -73,6 +73,23 @@ def last_content_action_id
   l_c = last_change_on(:db_content) and l_c.card_action_id
 end
 
+def last_actor
+  last_act.actor
+end
+
+def last_act
+  last_act_on_self = acts.last
+  if last_action.act == last_act_on_self or last_act_on_self.acted_at > last_action.act.acted_at
+    last_act_on_self
+  else
+    last_action.act
+  end
+end
+
+def acted_at
+  last_act.acted_at
+end
+
 
 def previous_action action_id
   if action_id

@@ -14,10 +14,11 @@ module Wagn
       end
 
       def schema_stamp_path type
-        root_dir = type.to_s =~ /deck/ ? Wagn.root : Wagn.gem_root
+        root_dir = ( type == :deck_cards ? Wagn.root : Wagn.gem_root )
+        suffix   = Wagn::Migration.schema_suffix type
         stamp_dir = ENV['SCHEMA_STAMP_PATH'] || File.join( root_dir, 'config' )
         
-        File.join stamp_dir, "version#{ type }.txt"  
+        File.join stamp_dir, "version#{ suffix }.txt"  
       end
             
     end

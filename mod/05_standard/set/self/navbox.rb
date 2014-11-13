@@ -11,6 +11,7 @@ format :html do
 
     %{
       <form action="#{Card.path_setting '/:search'}" method="get" class="navbox-form nodblclick">
+        <div class="fa fa-search search-icon-position"></div>
         #{ text_field_tag :_keyword, '', input_args }
      </form>
     }

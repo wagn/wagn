@@ -9,12 +9,17 @@ class Wagn::Migration < ActiveRecord::Migration
     Wagn.paths['db/migrate_deck_cards'].to_a
   end
   
-  def self.schema_mode type
-    new_suffix = case type.to_s 
-    when /card/ then '_cards'
-    when /deck/ then '_deck_cards'
+  def self.schema_suffix type
+    case type
+    when :core_cards then '_cards'
+    when :deck_cards then '_deck_cards'
     else ''
     end
+  end
+  
+  def self.schema_mode type
+    new_suffix = Wagn::Migration.schema_suffix type
+    
     original_suffix = ActiveRecord::Base.table_name_suffix
     ActiveRecord::Base.table_name_suffix = new_suffix
     yield

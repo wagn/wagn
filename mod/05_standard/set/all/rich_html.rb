@@ -419,17 +419,32 @@ format :html do
   view :conflict, :error_code=>409 do |args|
     # FIXME: hack to get the conflicted update as a proper act for the diff view
     card.current_act.save
-    action = card.actions.last
+    action = card.actions.last  # the unsaved action with the new changes
     action.card_act_id = card.current_act.id
     action.draft = true
     action.save
-    card.store_changes
-    
-    wrap args.merge( :slot_class=>'error-view' ) do
+    card.store_changes  # deletes action if there are no changes 
+
+    # as a consequence card.current_act.actions can be empty when both users made exactly the same changes
+    # but an act is always supposed to have at least one action, so we have to delete the act to avoid bad things
+    card.current_act.reload
+    if card.current_act.actions.empty?
+      card.current_act.delete
+      card.current_act = nil
+    end
+
+    wrap args.merge( :slot_class=>'error-view' ) do  #ENGLISH below
       %{<strong>Conflict!</strong><span class="new-current-revision-id">#{card.last_action_id}</span>
         <div>#{ link_to_page card.last_action.act.actor.name } has also been making changes.</div>
         <div>Please examine below, resolve above, and re-submit.</div>
-        #{ wrap do |args| _render_act_expanded :act=>card.current_act, :current_rev_nr => 0 end } 
+        #{ wrap do |args| 
+            if card.current_act
+              _render_act_expanded :act=>card.current_act, :current_rev_nr => 0 
+            else
+              "No difference between your changes and #{card.last_action.act.actor.name}'s version."
+            end 
+          end
+         } 
       }
     end
   end

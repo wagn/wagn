@@ -43,7 +43,7 @@ Gem::Specification.new do |s|
     [ 'diffy',        '~> 3.0'  ],
     [ 'diff-lcs',     '~> 1.2'  ],
     # should not depend!
-    [ 'airbrake',     '~> 4.1.0'  ] 
+    [ 'airbrake',     '~> 4.1'  ] 
 
     
   ].each do |dep|

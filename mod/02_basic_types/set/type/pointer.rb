@@ -14,7 +14,7 @@ format do
     render_pointer_items args.merge(:joint=>', ')
   end
   
-  view :pointer_items do |args|
+  view :pointer_items, :tags=>:unknown_ok do |args|
     item_args = { :view => ( args[:item] || (@inclusion_opts && @inclusion_opts[:view]) || default_item_view ) }
     joint = args[:joint] || ' '
     

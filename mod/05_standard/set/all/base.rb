@@ -15,7 +15,7 @@ format do
   view :linkname, :perms=>:none  do |args|  card.cardname.url_key        end
   view :url,      :perms=>:none  do |args|  wagn_url _render_linkname    end
 
-  view :link, :perms=>:none  do |args|
+  view :link, :perms=>:none do |args|
     card_link card.name, showname( args[:title] ), card.known?, args[:type]
   end
 

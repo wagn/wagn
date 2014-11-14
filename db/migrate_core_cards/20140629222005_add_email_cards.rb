@@ -38,7 +38,7 @@ class AddEmailCards < Wagn::CoreMigration
 {{+*subject | titled}}
 {{+*html message | titled}}
 {{+*text message | titled}}
-{+*attach | titled}}
+{{+*attach | titled}}
 )
     
     c = Card.fetch '*message', :new=>{ }

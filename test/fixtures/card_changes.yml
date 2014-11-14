@@ -8100,7 +8100,7 @@ card_changes_1524:
   id: 4600
   card_action_id: 6971
   field: 2
-  value: "<p>[[Sign up]] cards represent not-yet-approved accounts.  When approved,
+  value: "<p>[[Sign up]] cards represent not-yet-approved accounts. When approved,
     they become [[User]] cards.  [[http://wagn.org/account|more]]</p>"
 card_changes_1525:
   id: 4603

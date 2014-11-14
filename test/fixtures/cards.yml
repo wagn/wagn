@@ -1891,7 +1891,7 @@ cards_095:
   references_expired: 
   trash: false
   type_id: 3
-  db_content: "<p>[[Sign up]] cards represent not-yet-approved accounts.  When approved,
+  db_content: "<p>[[Sign up]] cards represent not-yet-approved accounts. When approved,
     they become [[User]] cards.  [[http://wagn.org/account|more]]</p>"
 cards_096:
   id: 217

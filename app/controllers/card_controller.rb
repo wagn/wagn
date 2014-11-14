@@ -136,7 +136,7 @@ class CardController < ActionController::Base
       log << status
       log << env["REQUEST_URI"]
       log << DateTime.now.to_s
-      log << env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first
+      log << env['HTTP_ACCEPT_LANGUAGE'].to_s.scan(/^[a-z]{2}/).first
       log << env["HTTP_REFERER"]
       
       log_dir = (Wagn.paths['request_log'] || Wagn.paths['log']).first

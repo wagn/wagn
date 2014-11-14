@@ -41,7 +41,7 @@ Feature: Watch interface
     Given Joe User is watching "User"
     And I go to card Joe User
     And I hover over the main menu
-    Then In the main card menu I should see "(following)"
+    Then In the main card menu I should see "(following)|unfollow"
 
 #too long for menu
 #

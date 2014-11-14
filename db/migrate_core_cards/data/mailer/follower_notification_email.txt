@@ -6,6 +6,6 @@
 
 See the card: {{_|url}}
 
-You received this email because you\'re following "{{_|followed}}".
+You received this email because you're following "{{_|followed}}".
 
 Use this link to unfollow {{_|unfollow_url}}

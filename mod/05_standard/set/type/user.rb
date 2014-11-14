@@ -47,7 +47,7 @@ event :setup_as_bot, :before=>:check_permissions, :on=>:create, :when=>proc{ |c|
 end  
 
 event :setup_first_user, :before=>:process_subcards, :on=>:create, :when=>proc{ |c| Card::Env.params[:setup] } do
-  subcards['signup alert email+*to'] = subcards['+*account+*email'] #better to do as pointer eventually!
+  subcards['signup alert email+*to'] = name
   subcards['+*roles'] = { :content => Card[:administrator].name }
   
   email, password = subcards.delete('+*account+*email'), subcards.delete('+*account+*password')

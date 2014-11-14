@@ -13,7 +13,7 @@ Feature: Reset password
     And I follow "RESET PASSWORD"
     And I enter "joe@user.com" into "*email"
     And I press "Reset my password"
-    Then "joe@user.com" should receive an email with subject "verification link for My Wagn"
+    Then "joe@user.com" should receive an email with subject "reset password for My Wagn"
     
     When I open the email
     And I click the first link in the email

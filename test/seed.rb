@@ -21,6 +21,8 @@ class SharedData
 
     Card['Joe Admin'].fetch(:trait=>:roles, :new=>{}).items = [ Card::AdministratorID ]
 
+    Card.create! :name=>'signup alert email+*to', :content=>'signups@wagn.org'
+
     # generic, shared attribute card
     color = Card.create! :name=>"color"
     basic = Card.create! :name=>"Basic Card"
@@ -40,7 +42,10 @@ class SharedData
     Card::Auth.createable_types.each do |type|
       next if ['User', 'Sign up', 'Set', 'Number'].include? type
       Card.create! :type=>type, :name=>"Sample #{type}"
+      Card::Auth.current_id = Card::WagnBotID # need to reset after creating sign up, which changes current_id for extend phase
     end
+
+
 
     # data for role_test.rb
 

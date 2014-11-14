@@ -12,7 +12,6 @@ class Card < ActiveRecord::Base
   require_dependency 'card/auth'
   require_dependency 'card/loader'
 
-  #has_many :revisions, :order => :id
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
   has_many :acts, :order => :id
@@ -23,8 +22,6 @@ class Card < ActiveRecord::Base
 
   cattr_accessor :set_patterns, :error_codes
   @@set_patterns, @@error_codes = [], {}
-
-  attr_writer :selected_action_id #writer because read method is in mod (and does not override upon load)
 
   attr_accessor :action, :supercard, :current_act, :current_action, 
     :comment, :comment_author,    # obviated soon

@@ -92,7 +92,7 @@ module Wagn
         add_gem_path paths, "config/routes",       :with => "config/routes.rb"
         add_gem_path paths, "db"
         add_gem_path paths, "db/migrate"
-        add_gem_path paths, "db/migrate_cards"
+        add_gem_path paths, "db/migrate_core_cards"
         add_gem_path paths, "db/seeds",            :with => "db/seeds.rb"        
         add_gem_path paths, 'gem-mod',             :with => 'mod'
         add_gem_path paths, 'gem-assets',          :with => 'public/assets'

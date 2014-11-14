@@ -61,11 +61,13 @@ event :stash_followers, :after=>:approve, :on=>:delete do
   act_card.follower_stash.add_affected_card self
 end
 
-event :notify_followers, :after=>:extend, :when=>proc{ |c| !c.supercard and c.current_act}  do
+event :notify_followers, :after=>:extend, :when=>proc{ |c|
+    !c.supercard and c.current_act and Card::Auth.current_id != WagnBotID 
+  }  do
+    
   begin
     @current_act.reload
     @follower_stash ||= FollowerStash.new
-
     @current_act.actions.each do |a|
       @follower_stash.add_affected_card a.card
     end
@@ -119,7 +121,21 @@ format do
 #{ render_list_of_changes(args) }}
   end
   
+  view :followed do |args|
+    args[:followed] || 'followed card'
+  end
 
+  view :follower do |args|
+    args[:follower] || 'follower'
+  end
+  
+  view :unfollow_url do |args|
+    if args[:followed] and args[:follower] and follower = Card.fetch( args[:follower] )
+     following_card = follower.fetch( :trait=>:following, :new=>{} )
+     wagn_url( "update/#{following_card.cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" )
+    end
+  end
+  
   def edit_info_for field, action
     return nil unless action.new_values[field]
     
@@ -140,45 +156,18 @@ format do
   end
   
   def get_act args
-    @notification_act ||= args[:act] || (args[:act_id] and Card::Act.find(args[:act_id])) || card.acts.last
+    @notification_act ||= args[:act] || (args[:act_id] and Act.find(args[:act_id])) || card.acts.last
   end
   
   def get_action args
-    args[:action] || (args[:action_id] and Card::Action.find(args[:action_id])) || card.last_action
+    args[:action] || (args[:action_id] and Action.fetch(args[:action_id])) || card.last_action
   end
   
   
   def wrap_subedits subedits
     "\nThis update included the following changes:#{wrap_list subedits}"
   end
-   
-end
-
-format do
-  view :followed do |args|
-    args[:followed] || 'followed card'
-  end
-
-  view :follower do |args|
-    args[:follower] || 'follower'
-  end
-  
-  view :unfollow_url do |args|
-    if args[:followed] and args[:follower] and follower = Card.fetch( args[:follower] )
-     following_card = follower.fetch( :trait=>:following, :new=>{} )
-     wagn_url( "update/#{following_card.cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" )
-    end
-  end
-end
-
-
-format :email_text do 
-  view :last_action do |args|
-    act = get_act(args)
-    action_on_card =  act.action_on(act.card_id) || act.actions.first
-    "#{action_on_card.action_type}d"
-  end
-  
+     
   def wrap_list list
     "\n#{list}\n"
   end
@@ -189,6 +178,15 @@ format :email_text do
   
   def wrap_subedit_item text
     "\n#{text}\n"
+  end
+end
+
+
+format :email_text do 
+  view :last_action do |args|
+    act = get_act(args)
+    action_on_card =  act.action_on(act.card_id) || act.actions.first
+    "#{action_on_card.action_type}d"
   end
 end
 

@@ -1,20 +1,25 @@
 # -*- encoding : utf-8 -*-
 
 class Wagn::Migration < ActiveRecord::Migration
-  def self.card_migration_paths
-    Wagn.paths['db/migrate_cards'].to_a
+  def self.core_card_migration_paths
+    Wagn.paths['db/migrate_core_cards'].to_a
   end
   
   def self.deck_card_migration_paths
     Wagn.paths['db/migrate_deck_cards'].to_a
   end
   
-  def self.schema_mode type
-    new_suffix = case type.to_s 
-    when /card/ then '_cards'
-    when /deck/ then '_deck_cards'
+  def self.schema_suffix type
+    case type
+    when :core_cards then '_cards'
+    when :deck_cards then '_deck_cards'
     else ''
     end
+  end
+  
+  def self.schema_mode type
+    new_suffix = Wagn::Migration.schema_suffix type
+    
     original_suffix = ActiveRecord::Base.table_name_suffix
     ActiveRecord::Base.table_name_suffix = new_suffix
     yield
@@ -36,16 +41,33 @@ class Wagn::Migration < ActiveRecord::Migration
     end
   end
   
-  def import_json filename, root=Wagn::Migration.deck_card_migration_paths.first
-    Wagn.config.action_mailer.perform_deliveries = false
-    raw_json = File.read File.join(root , 'data', filename )
-    json = JSON.parse raw_json
-    Card.merge_list json["card"]["value"], :output_file=>File.join(root,"unmerged_#{ filename }")
+  def data_path filename=nil
+    if filename
+      migration_paths.each do |path|
+        path_to_file = File.join path, 'data', filename
+        return path_to_file if File.exists? path_to_file
+      end
+    else
+      File.join migration_paths.first, 'data'
+    end
   end
   
-  def import_json_to_core filename
-    import_json filename, Wagn::Migration.card_migration_paths.first
+  def import_json filename
+    Wagn.config.action_mailer.perform_deliveries = false
+    raw_json = File.read( data_path filename ) 
+    json = JSON.parse raw_json
+    Card.merge_list json["card"]["value"], :output_file=>File.join(data_path,"unmerged_#{ filename }")
   end
+  
+    
+  def schema_mode
+    Wagn::Migration.schema_mode :deck
+  end
+  
+  def migration_paths
+    Wagn::Migration.deck_card_migration_paths
+  end
+  
   
   # Execute this migration in the named direction
   # copied from ActiveRecord to wrap "up" in "contentendly"

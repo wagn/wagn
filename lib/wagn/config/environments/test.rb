@@ -29,6 +29,7 @@ Wagn.application.class.configure do
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
+  config.action_mailer.perform_deliveries = true
   config.action_mailer.default :charset=>"utf-8"
   
   #config.action_mailer.delivery_method = :smtp

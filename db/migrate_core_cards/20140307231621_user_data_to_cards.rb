@@ -3,7 +3,7 @@
 class User < ActiveRecord::Base
 end
 
-class UserDataToCards < Wagn::Migration
+class UserDataToCards < Wagn::CoreMigration
   
   def up
       

@@ -79,7 +79,7 @@ end
 
 def last_act
   last_act_on_self = acts.last
-  if last_action.act == last_act_on_self or last_act_on_self.acted_at > last_action.act.acted_at
+  if last_act_on_self and (last_action.act == last_act_on_self or last_act_on_self.acted_at > last_action.act.acted_at)
     last_act_on_self
   else
     last_action.act

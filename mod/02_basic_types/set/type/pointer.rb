@@ -11,18 +11,20 @@ format do
   end
   
   view :core do |args|
-    pointer_items args[:item], joint=', '
+    render_pointer_items args.merge(:joint=>', ')
   end
   
-  def pointer_items itemview=nil, joint=' '
-    args = { :view => ( itemview || (@inclusion_opts && @inclusion_opts[:view]) || default_item_view ) }
+  view :pointer_items do |args|
+    item_args = { :view => ( args[:item] || (@inclusion_opts && @inclusion_opts[:view]) || default_item_view ) }
+    joint = args[:joint] || ' '
     
     if type = card.item_type
-      args[:type] = type
+      item_args[:type] = type
     end
+
     
     card.item_cards.map do |icard|
-      wrap_item nest(icard, args.clone), args 
+      wrap_item nest(icard, item_args.clone), item_args 
     end.join joint
   end
 
@@ -31,7 +33,7 @@ end
 format :html do
 
   view :core do |args|
-    %{<div class="pointer-list">#{ pointer_items args[:item], args[:joint] }</div>}
+    %{<div class="pointer-list">#{ render_pointer_items args }</div>}
   end
 
   view :closed_content do |args|

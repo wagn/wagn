@@ -7,6 +7,12 @@ def process_email_addresses context_card, format_args, args
 end
 
 
+format :html do
+  view :pointer_items do |args|
+    args[:item] = :name
+    super(args)
+  end
+end
 
 format :email_text do
   view :email_addresses do |args|

@@ -35,7 +35,7 @@ class Card
  #    end
     
     def action_on card_id
-      actions.where :card_id=>c.id, :draft=>[nil, 0]
+      actions.where :card_id=>card.id, :draft=>[nil, 0]
     end
         
     def elapsed_time

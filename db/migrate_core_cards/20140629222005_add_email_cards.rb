@@ -38,7 +38,7 @@ class AddEmailCards < Wagn::CoreMigration
 {{+*subject | titled}}
 {{+*html message | titled}}
 {{+*text message | titled}}
-{+*attach | titled}}
+{{+*attach | titled}}
 )
     
     c = Card.fetch '*message', :new=>{ }
@@ -91,7 +91,7 @@ class AddEmailCards < Wagn::CoreMigration
     
     wagn_bot = Card[:wagn_bot].account.email.present? ? Card[:wagn_bot].name : nil
     token_emails_from = Card.setting( '*invite+*from' ) || wagn_bot || '_user'
-    [ 'verification email', 'password reset email', 'follower notification email'].each do |token_email_template_name|
+    [ 'verification email', 'password reset email'].each do |token_email_template_name|
       Card.create! :name=>"#{token_email_template_name}+#{Card[:from].name}", :content=>token_emails_from
     end
     

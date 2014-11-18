@@ -1,12 +1,12 @@
 # -*- encoding : utf-8 -*-
 module Card::Diff
   
-  def diff_complete(a, b)
-    DiffBuilder.new(a, b).complete
+  def self.complete a, b, opts={}
+    DiffBuilder.new(a, b, opts).complete
   end
   
-  def diff_summary(a, b)
-    DiffBuilder.new(a, b).summary
+  def self.summary a, b, opts={}
+    DiffBuilder.new(a, b, opts).summary
   end
   
   def self.render_added_chunk text
@@ -19,18 +19,26 @@ module Card::Diff
 
   class DiffBuilder
     def initialize(old_version, new_version, opts={})
-      @old_version, @new_version = old_version, new_version
-      @opts = opts
-      @new_version ||= ''
-      if !opts[:compare_html]
-        @old_version.gsub! /<[^>]*>/,'' if @old_version
-        @new_version.gsub! /<[^>]*>/,''
-      else
-        @old_version = CGI::escapeHTML(@old_version) if @old_version
-        @new_version = CGI::escapeHTML(@new_version)
+      @new_version = new_version || ''
+      @old_version = old_version
+      @post_process = nil
+
+      reject_pattern  = nil    # remove completely from diff
+      exclude_pattern = nil  # put back to the result after diff
+      pre_process     = nil
+      case opts[:format]
+      when :html
+        exclude_pattern = /^</
+      when :text
+        reject_pattern = /^</
+      else #:raw
+        pre_process = Proc.new do |word|
+          CGI::escapeHTML(word)
+        end
       end
-      @summary = false
-      @complete = false
+      @lcs = LCS.new(@old_version, @new_version, exclude_pattern, reject_pattern, pre_process)
+      @summary = nil
+      @complete = nil
       @adds = 0
       @dels = 0
     end
@@ -70,19 +78,225 @@ module Card::Diff
       end
     end
   
-    def complete
+    def complete opts
       @complete ||= begin 
         clear_stats
         if @old_version
-          if @old_version.size < 1000
-            better_complete_lcs_diff
-          else
+          if @old_version.size > 1000 or opts[:fast]
             fast_diff
+          else
+            @lcs.diff
+            @adds = @lcs.adds_cnt
+            @dels = @lcs.dels_cnt
           end
         else
           added_chunk(@new_version) 
         end 
       end
+    end
+    
+    class LCS
+      
+      class ExcludeeIterator     
+        def initialize list
+          @list = list
+          @index = 0
+          @chunk_index = 0
+        end
+        
+        def word_step
+          @chunk_index += 1
+        end
+        
+        def next
+          if @index < @list.size and @list[@index][:chunk_index] == @chunk_index
+            res = @list[@index]
+            @index += 1
+            @chunk_index +=1
+            res
+          end
+        end
+      end
+      
+      
+      attr_reader :result, :add_cnt, :dels_cnt, :summary
+      def initialize old_text, new_text, excl_pattern = nil, rej_pattern = nil, pre_process=nil, post_process=nil
+        @result = ''
+        @adds = []
+        @dels = []
+        @adds_cnt = 0
+        @dels_cnt = 0
+        
+        @splitters = %w( <[^>]+>  \[\[[^\]]+\]\]  \{\{[^}]+\}\}  \s+ )
+        @disjunction_pattern = /^\s/ 
+        @reject_pattern  = rej_pattern    # remove completely from diff
+        @exclude_pattern = excl_pattern  # put back to the result after diff
+        @pre_process = pre_process
+        @post_process = post_process
+        
+        old_words, old_ex = separate_comparables_from_excludees old_text
+        new_words, new_ex = separate_comparables_from_excludees new_text
+        @words = {
+          :old => old_words,
+          :new => new_words
+        }
+        @excludees = {
+          :old => ExcludeeIterator.new(old_ex),
+          :new => ExcludeeIterator.new(new_ex)
+        }
+      end
+      
+      def added_chunk text, count=true
+        @adds_cnt += 1 if count
+        Card::Diff.render_added_chunk text
+      end
+  
+      def deleted_chunk text, count=true
+        @dels_cnt += 1 if count
+        Card::Diff.render_deleted_chunk text
+      end
+  
+      
+      def write_dels
+        if !@dels.empty?
+          @result << deleted_chunk(@dels.join)
+          @dels = []
+        end
+      end
+      
+      def write_adds
+        if !@adds.empty?
+          @result << added_chunk(@adds.join)
+          @adds = []
+        end
+      end
+      
+      def write_excludees
+        while ex = @excludees[:new].next
+          @result << ex[:element]
+        end
+      end
+      
+      def del_old_excludees
+        while ex = @excludees[:old].next
+          if ex[:type] == :disjunction
+            @dels << ex[:element]
+          else
+            write_dels
+            @result << ex[:element]
+          end
+        end
+      end
+      
+      def add_new_excludees
+        while ex = @excludees[:new].next
+          if ex[:type] == :disjunction
+            @adds << ex[:element]
+          else
+            write_adds
+            @result << ex[:element]
+          end
+        end
+      end
+      
+      def process_element old_element, new_element, action
+        case action
+        when '-'
+          @dels << old_element
+          @excludees[:old].word_step
+        when '+'
+          @adds << new_element
+          @excludees[:new].word_step
+        when '!'
+          @dels << old_element
+          @adds << new_element
+          @excludees[:old].word_step
+          @excludees[:new].word_step
+        else
+          @result << new_element
+          @excludees[:new].word_step
+        end
+      end
+      
+      def process_word word
+        process_element word.old_element, word.new_element, word.action
+      end
+        
+      def diff 
+        prev_action = nil        
+        ::Diff::LCS.traverse_balanced(@words[:old], @words[:new]) do |word|
+
+          if prev_action 
+            if prev_action != word.action and
+              !(prev_action == '-' and word.action == '!') and 
+              !(prev_action == '!' and word.action == '+')
+
+              # delete and/or add section stops here; write changes to result
+              write_dels
+              write_adds
+                  
+              write_excludees # new neutral section starts, we can just write excludees to result
+              
+            else # current word belongs to edit of previous word
+              case word.action
+              when '-'
+                del_old_excludees
+              when '+'
+                add_new_excludees
+              when '!'
+                del_old_excludees
+                add_new_excludees
+              else
+                write_excludees
+              end             
+            end
+          else
+            write_excludees
+          end
+          
+          process_word word
+          prev_action = word.action      
+        end
+        write_dels
+        write_adds
+        write_excludees
+      
+        @result = @post_process.call(@result) if @post_process
+        @result
+      end
+      
+      def separate_comparables_from_excludees text
+        # return two arrays, one with all words, one with pairs (index in word list, html_tag)
+        list = split_to_list_of_words text
+        if @exclude_pattern
+          list.each_with_index.inject([[],[]]) do |res, pair|
+            element, index = pair  
+            if element.match @disjunction_pattern
+              res[1] << {:chunk_index=>index, :element=>element, :type=>:disjunction}
+            elsif element.match @exclude_pattern
+              res[1] << {:chunk_index=>index, :element=>element, :type=>:excludee}
+            else
+              res[0] << element
+            end
+            res
+          end
+        else
+          [list, []]
+        end
+      end
+    
+      def split_to_list_of_words text
+        split_regex = /(#{@splitters.join '|'})/
+        splitted = text.split(split_regex).select do |s|
+            s.size > 0 and (!@reject_pattern or !s.match @reject_pattern)
+          end
+        if @pre_process
+          splitted.map {|s| @pre_process.call(s) }
+        else
+          splitted
+        end
+      end
+      
     end
     
     private
@@ -114,83 +328,6 @@ module Card::Diff
     end
 
 
-    def better_complete_lcs_diff old_v=@old_version, new_v=@new_version
-      old_v = old_v.split(' ')
-      new_v = new_v.split(' ')
-      res = ''
-      dels = []
-      adds = []
-      prev_action = nil
-      ::Diff::LCS.traverse_balanced(old_v, new_v) do |chunk|
-        if prev_action and prev_action != chunk.action and
-          !(prev_action == '-' and chunk.action == '!') and 
-          !(prev_action == '!' and chunk.action == '+')
-       
-          if dels.present?
-            res << deleted_chunk(dels.join(' '))
-            dels = []
-          end
-          if !adds.empty?
-            res << added_chunk(adds.join(' '))
-            adds = []
-          end
-        end
-        
-        case chunk.action
-        when '-' then dels << chunk.old_element
-        when '+' then adds << chunk.new_element
-        when '!' 
-          dels << chunk.old_element
-          adds << chunk.new_element
-        else
-          res += ' ' + chunk.new_element
-        end
-        prev_action = chunk.action
-      end
-      res += deleted_chunk(dels.join(' ')) if dels.present?
-      res += added_chunk(adds.join(' ')) if adds.present?
-      res
-    end
-    
-    
-    
-    def complete_lcs_diff old_v=@old_version, new_v=@new_version
-      last_position = 0
-      res = ''
-      dels = ''
-      adds = ''
-      prev_action = nil
-      ::Diff::LCS.traverse_balanced(old_v, new_v) do |chunk|
-        if prev_action and prev_action != chunk.action and
-          !(prev_action == '-' and chunk.action == '!') and 
-          !(prev_action == '!' and chunk.action == '+')
-       
-          if dels.present?
-            res += deleted_chunk(dels)
-            dels = ''
-          end
-          if !adds.empty?
-            res += added_chunk(adds)
-            adds = ''
-          end
-        end
-        
-        case chunk.action
-        when '-' then dels += chunk.old_element
-        when '+' then adds += chunk.new_element
-        when '!' 
-          dels += chunk.old_element
-          adds += chunk.new_element
-        else
-          res += chunk.new_element
-        end
-        prev_action = chunk.action
-      end
-      res += deleted_chunk(dels) if dels.present?
-      res += added_chunk(adds) if adds.present?
-      res
-    end
-    
     def complete_diffy_diff
       new_diffy.to_s(:html)
     end
@@ -218,7 +355,7 @@ module Card::Diff
     
         if inspect 
           if action != :added
-            res += better_complete_lcs_diff lines[:deleted].join, lines[:added].join
+            res += complete_lcs_diff lines[:deleted].join, lines[:added].join
             inspect = false
             lines[:deleted].clear
             lines[:added].clear
@@ -232,7 +369,7 @@ module Card::Diff
       end
       
       res += if inspect
-        better_complete_lcs_diff lines[:deleted].join, lines[:added].join
+        complete_lcs_diff lines[:deleted].join, lines[:added].join
       elsif lines[prev_action].present?
         render_chunk prev_action, lines[prev_action].join
       else
@@ -258,6 +395,10 @@ module Card::Diff
         res
       end
     end
+        
+    
+   
+    
     
     def new_diffy
       ::Diffy::Diff.new(@old_version, @new_version)

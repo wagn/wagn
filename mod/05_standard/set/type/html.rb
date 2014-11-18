@@ -14,3 +14,10 @@ end
 def chunk_list
   :references
 end
+
+
+format :html do
+  view :content_changes do |args|
+    super(args.merge(:diff_opts=>{:format=>:raw}))
+  end
+end

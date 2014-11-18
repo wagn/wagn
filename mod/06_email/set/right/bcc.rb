@@ -8,9 +8,10 @@ end
 
 
 format :html do
-  view :pointer_items do |args|
-    args[:item] = :name
-    super(args)
+  view :pointer_items do |args|    
+    card.item_names(:context=>:raw).map do |iname|
+      wrap_item iname, args
+    end.join ', '
   end
 end
 

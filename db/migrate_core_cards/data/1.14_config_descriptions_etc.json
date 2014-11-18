@@ -1,0 +1,77 @@
+{
+  "url": "http://en.dwagn.org/export.json",
+  "timestamp": "2014-11-15 03:44:05 +0000",
+  "card": {
+    "name": "export",
+    "type": "Pointer",
+    "content": "[[Config]]\n[[*account]]\n[[Skin+description]]\n[[Sign up+description]]\n[[Toggle+description]]\n[[User+description]]\n[[Email_template+*type+*structure]]\n[[JavaScript+description]]\n[[CSS+description]]\n[[CoffeeScript+description]]\n[[Layout+description]]\n[[Email template+description]]\n[[SCSS+description]]",
+    "value": [
+      {
+        "name": "Config",
+        "type": "Basic",
+        "content": "<h1>Basics</h1>\r\n<div>Set your site title, home card, and logo image:</div>\r\n<blockquote>\r\n<div>{{*title|closed;type:Phrase}}</div>\r\n<div>{{*home|closed;type:Phrase}}</div>\r\n<div>{{*logo|closed;type:Image}}</div>\r\n</blockquote>\r\n<div> </div>\r\n<h1>Rules</h1>\r\n<div>Cards are configured by creating <em>rules</em>.  All rules impacting a given card can be accessed from its card menu via \"advanced\".</div>\r\n<div> </div>\r\n<div>Here are the site-wide defaults:</div>\r\n<div>\r\n<blockquote>{{*all|closed}}</blockquote>\r\n</div>\r\n<div><em>[[http://wagn.org/rules | More about rules.]]</em></div>\r\n<div> </div>\r\n<h1>Accounts</h1>\r\n<div>{{*accounts}}</div>\r\n<div> </div>\r\n<h1>Emails </h1>\r\n<div>Here are the current [[Email Templates]] for your site.</div>\r\n<blockquote>\r\n<div>{{Email Templates+*type+by update}} </div>\r\n</blockquote>"
+      },
+      {
+        "name": "*account",
+        "type": "Basic",
+        "content": "<div>When someone signs up, they create a [[Sign up]] card...</div>\r\n<blockquote>\r\n<div>{{Sign up|closed;title: Sign ups}}</div>\r\n</blockquote>\r\n<div>...that can be changed into a [[User]] card:</div>\r\n<blockquote>\r\n<div>{{User|closed}}</div>\r\n</blockquote>\r\n<div>Some important [[http://wagn.org/permissions|permissions]]:</div>\r\n<div>\r\n<ul>\r\n<li>When [[Anyone]] can [[*create|create]] a [[Sign up]] card, links to sign up will appear.</li>\r\n<li>When [[Anyone]] can [[*create|create]] a [[User]] card, each [[Sign up]] can be auto-approved with a verification email.</li>\r\n<li>If permission to [[*create|create]] a [[User]] is restricted, someone with that permission must approve each [[Sign up]] by hand.</li>\r\n</ul>\r\n</div>\r\n<div><em>[[http://wagn.org/account | More about accounts.]]</em></div>",
+        "codename": "account"
+      },
+      {
+        "name": "Skin+description",
+        "type": "Basic",
+        "content": "<p>A [[skin]] determines a page's look and feel.  [[http://wagn.org/Skins|more]]</p>"
+      },
+      {
+        "name": "Sign up+description",
+        "type": "Basic",
+        "content": "<p>[[Sign up]] cards represent not-yet-approved accounts. When approved, they become [[User]] cards. [[http://wagn.org/account|more]]</p>"
+      },
+      {
+        "name": "Toggle+description",
+        "type": "Basic",
+        "content": "<p>Toggles simply indicate yes or no. [[http://wagn.org/wagn/Toggle|more]].</p>"
+      },
+      {
+        "name": "User+description",
+        "type": "Basic",
+        "content": "<p>{{_l|name}} cards can support accounts, profile pages, and more. [[http://wagn.org/Users|more]]</p>"
+      },
+      {
+        "name": "Email template+*type+*structure",
+        "type": "Basic",
+        "content": "<p>{{+*from | labeled | link}} {{+*to | labeled | link}} {{+*cc | labeled | link}} {{+*bcc | labeled | link}} {{+*subject | titled}} {{+*html message | titled}} {{+*text message | titled}} {{+*attach | titled}}</p>"
+      },
+      {
+        "name": "JavaScript+description",
+        "type": "Basic",
+        "content": "<p>Create custom JavaScript for [[*script]] rules. [[http://wagn.org/JavaScript|more]]</p>"
+      },
+      {
+        "name": "CSS+description",
+        "type": "Basic",
+        "content": "<p>Customize styles for [[Skins]]. [[http://wagn.org/CSS|more]]</p>"
+      },
+      {
+        "name": "CoffeeScript+description",
+        "type": "Basic",
+        "content": "<p>Generate JavaScript for [[*script]] rules. [[http://wagn.org/CoffeeScript|more]]</p>"
+      },
+      {
+        "name": "Layout+description",
+        "type": "Basic",
+        "content": "<p>Organize webpages. [[http://wagn.org/Layout|more]]</p>"
+      },
+      {
+        "name": "Email template+description",
+        "type": "Basic",
+        "content": "<p>Design custom emails to be triggered by card actions.  [[http://wagn.org/actions|more]]</p>"
+      },
+      {
+        "name": "SCSS+description",
+        "type": "Basic",
+        "content": "<p>Customize styles for [[Skins]]. [[http://wagn.org/SCSS|more]]</p>"
+      }
+    ]
+  }
+}

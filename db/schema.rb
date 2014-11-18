@@ -96,6 +96,12 @@ ActiveRecord::Schema.define(:version => 20141001105348) do
 
   add_index "schema_migrations_cards", ["version"], :name => "unique_schema_migrations_cards", :unique => true
 
+  create_table "schema_migrations_deck_cards", :id => false, :force => true do |t|
+    t.string "version", :null => false
+  end
+
+  add_index "schema_migrations_deck_cards", ["version"], :name => "unique_schema_migrations_deck_cards", :unique => true
+
   create_table "sessions", :force => true do |t|
     t.string   "session_id"
     t.text     "data"

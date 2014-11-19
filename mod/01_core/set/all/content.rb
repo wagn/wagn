@@ -147,12 +147,13 @@ event :set_default_content, :on=>:create, :before=>:approve do
   end
 end
 
+=begin
 event :protect_structured_content, :before=>:approve, :on=>:update, :changed=>:db_content do  
   if structure
     errors.add :content, "can't change; structured by #{template.name}"
   end
 end
-
+=end
 
 event :detect_conflict, :before=>:approve, :on=>:update do
   if last_action_id_before_edit and last_action_id_before_edit.to_i != last_action_id and last_action.act.actor_id != Auth.current_id

@@ -46,7 +46,7 @@ def selected_action_id
 end
 
 def selected_action_id= action_id
-  @selected_content = nil
+  @selected_content = @selected_action_id = nil
   unless last_action_id == action_id
     @selected_action_id = action_id
   end

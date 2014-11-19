@@ -60,8 +60,8 @@ format :rss do
 
 
   view :feed_description do |args| '' end
-  view :comment_box     do |args| '' end
-  view :menu            do |args| '' end
+  view :comment_box      do |args| '' end
+  view :menu             do |args| '' end
     
   
   view :open,         { :view=>:titled, :mod=>All::Base::Format }

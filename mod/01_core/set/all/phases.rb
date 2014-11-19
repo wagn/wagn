@@ -91,7 +91,7 @@ def store
 rescue =>e
   rescue_event e
 ensure
-  @from_trash = nil
+  @from_trash = @last_action_id = @last_content_action_id = nil
 end
 
 

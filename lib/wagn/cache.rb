@@ -119,6 +119,15 @@ module Wagn
     def read_local key
       @local[key]
     end
+    
+    def write_variable key, variable, value
+      key = @prefix + key
+      if @store and object = @store.read(key)
+        object.instance_variable_set "@#{ variable }", value
+        @store.write key, object
+      end
+      value
+    end
 
     def write key, value
       @store.write(@prefix + key, value) if @store

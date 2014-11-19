@@ -2,7 +2,7 @@ format do
   view :not_found do |args|
     if update_machine_output_live?
       Wagn::Cache.reset_global
-      root.error_status = 302      
+      root.error_status = 302
       card.left.update_machine_output
       wagn_path card.left.machine_output_url
     else

@@ -124,7 +124,7 @@ class AddEmailCards < Wagn::CoreMigration
     # move old send rule to on_create
     #fields = %w( to from cc bcc subject message attach )
     Card.search(:right=>"*send").each do |send_rule|
-      Card.create! :name=>"#{send_rule.left_name}+*on create", :content=>send_rule.content, :type_code=>:pointer
+      Card.create! :name=>"#{send_rule.cardname.left_name}+*on create", :content=>send_rule.content, :type_code=>:pointer
       send_rule.delete  #@ethn: keep old rule for safety reasons?
     end
   

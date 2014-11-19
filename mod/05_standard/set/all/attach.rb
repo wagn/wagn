@@ -63,10 +63,10 @@ def attachment_symlink_to(previous_action_id) # create filesystem links to files
     links = {}
 
     self.selected_action_id = previous_action_id
-    styles.each { |style|  links[style] = attach.path(style)          }
+    styles.each { |style|  links[style] = File.basename(attach.path(style))          }
 
     self.selected_action_id = last_action_id
-    styles.each { |style|  ::File.symlink links[style], attach.path(style) }
+    styles.each { |style|  ::File.symlink links[style], File.basename(attach.path(style)) }
 
     self.selected_action_id = save_action_id
   end

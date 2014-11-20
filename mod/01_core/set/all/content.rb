@@ -61,7 +61,8 @@ end
 def last_action_id
   @last_action_id ||= begin
     if la = last_action
-      Card.cache.write_variable self.key, :last_action_id, la.id
+      #Card.cache.write_variable self.key, :last_action_id, la.id
+      la.id      
     end
   end
 end
@@ -77,7 +78,8 @@ end
 def last_content_action_id
   @last_content_action_id ||= begin
     if l_c = last_change_on(:db_content)
-      Card.cache.write_variable self.key, :last_content_action_id, l_c.card_action_id
+      #Card.cache.write_variable self.key, :last_content_action_id, l_c.card_action_id
+      l_c.card_action_id
     end
   end
 end

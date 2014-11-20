@@ -44,8 +44,8 @@ end
 
 
 
-def type_watched?; Auth.current.fetch(:trait=>:following, :new=>{}).include_item? type_card.cardname.url_key end
-def watched?;     Auth.current.fetch(:trait=>:following, :new=>{}).include_item? cardname.url_key end
+def type_watched?; Auth.current.fetch(:trait=>:following, :new=>{}).include_item? type_card.cardname end
+def watched?;     Auth.current.fetch(:trait=>:following, :new=>{}).include_item? cardname end
 
 
 

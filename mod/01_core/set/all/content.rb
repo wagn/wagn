@@ -46,12 +46,10 @@ def selected_action_id
 end
 
 def selected_action_id= action_id
-  @selected_content = nil
-  @selected_action_id = action_id
-end
-
-def selected_action
-  selected_action_id and Action.fetch(selected_action_id)
+  @selected_content = @selected_action_id = nil
+  unless last_action_id == action_id
+    @selected_action_id = action_id
+  end
 end
 
 def selected_content_action_id
@@ -61,16 +59,27 @@ def selected_content_action_id
 end
 
 def last_action_id
-  last_action and last_action.id
+  @last_action_id ||= begin
+    if la = last_action
+      Card.cache.write_variable self.key, :last_action_id, la.id
+    end
+  end
 end
+
 def last_action
   actions.where('id IS NOT NULL').last
 end
+
 def last_content_action
-  l_c = last_change_on(:db_content) and l_c.action
+  lcid = last_content_action_id and Action.fetch(lcid)
 end
+
 def last_content_action_id
-  l_c = last_change_on(:db_content) and l_c.card_action_id
+  @last_content_action_id ||= begin
+    if l_c = last_change_on(:db_content)
+      Card.cache.write_variable self.key, :last_content_action_id, l_c.card_action_id
+    end
+  end
 end
 
 def last_actor
@@ -147,12 +156,13 @@ event :set_default_content, :on=>:create, :before=>:approve do
   end
 end
 
+=begin
 event :protect_structured_content, :before=>:approve, :on=>:update, :changed=>:db_content do  
   if structure
     errors.add :content, "can't change; structured by #{template.name}"
   end
 end
-
+=end
 
 event :detect_conflict, :before=>:approve, :on=>:update do
   if last_action_id_before_edit and last_action_id_before_edit.to_i != last_action_id and last_action.act.actor_id != Auth.current_id

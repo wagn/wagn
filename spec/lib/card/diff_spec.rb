@@ -30,6 +30,37 @@ describe Card::Diff do
     diff '<p>old</p>', '<p>new</p>'
   end
 
+  describe 'traffic light' do
+    it 'is green for addition' do
+      a = "a"
+      b = "a b" 
+      db = Card::Diff::DiffBuilder.new(a,b)
+      expect(db.green?).to be_truthy
+      expect(db.red?).to be_falsey
+    end
+    it 'is red for deletion' do
+      a = "a"
+      b = "" 
+      db = Card::Diff::DiffBuilder.new(a,b)
+      expect(db.green?).to be_falsey
+      expect(db.red?).to be_truthy
+    end
+    it 'is green and red for change' do
+      a = "a"
+      b = "b" 
+      db = Card::Diff::DiffBuilder.new(a,b)
+      expect(db.green?).to be_truthy
+      expect(db.red?).to be_truthy
+    end
+    it 'is off for no change' do
+      a = "a"
+      b = "a" 
+      db = Card::Diff::DiffBuilder.new(a,b)
+      expect(db.green?).to be_falsey
+      expect(db.red?).to be_falsey
+    end
+  end
+  
   
   describe 'summary' do
     before(:all) do
@@ -175,5 +206,21 @@ describe Card::Diff do
     it 'removes square brackets' do
       expect(diff "[[Hello]]", "[[Hi]]").to eq( del('Hello') + ins('Hi') )
     end 
+  end
+  
+  describe 'fast diff' do
+    it 'diff with multiple paragraphs' do
+      @opts = {:format=>:html, :fast=>true}
+      a = "<p>this was the original string</p>"
+      b = "<p>this is</p>\n<p> the new string</p>\n<p>around the world</p>" 
+
+      expect(diff a, b).to eq(
+          "<p>this #{del 'was'}#{ins 'is'}</p>"+
+          "\n<p> the " +
+          "#{del 'original'}#{ins 'new'}" +
+          " string</p>\n" +
+          "<p>#{ins 'around the world'}</p>"
+          )
+    end
   end
 end

@@ -160,31 +160,31 @@ class Card
     # end
       
   
-    def name_diff
+    def name_diff opts={}
       if new_name?
-        Card::Diff::DiffBuilder.new(old_values[:name],new_values[:name]).complete
+        Card::Diff.complete old_values[:name], new_values[:name], opts
       end
     end
   
-    def cardtype_diff
+    def cardtype_diff opts={}
       if new_type?
-        Card::Diff::DiffBuilder.new(old_values[:cardtype],new_values[:cardtype]).complete
+        Card::Diff.complete old_values[:cardtype], new_values[:cardtype], opts
       end
     end
   
-    def content_diff diff_type=:expanded
+    def content_diff diff_type=:expanded, opts={}
       if new_content?
         if diff_type == :summary
-          content_diff_builder.summary
+          content_diff_builder(opts).summary
         else
-          content_diff_builder.complete
+          content_diff_builder(opts).complete 
         end
       end
     end
     
-    def content_diff_builder
+    def content_diff_builder opts={:format=>:html}
       @content_diff_builder ||= begin
-        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], :compare_html=>false)
+        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], opts)
       end
     end
     

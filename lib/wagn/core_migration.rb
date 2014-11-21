@@ -2,11 +2,11 @@
 
 class Wagn::CoreMigration < Wagn::Migration
   def migration_paths
-    Wagn::Migration.core_card_migration_paths
+    Wagn::Migration.paths :core_cards
   end
   
   def schema_mode
-    Wagn::Migration.schema_mode :card
+    Wagn::Migration.schema_mode :core_cards
   end
   
   def import_json filename

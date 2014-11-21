@@ -172,7 +172,7 @@ class Card
       end
     end
   
-    def content_diff diff_type=:expanded, opts={}
+    def content_diff diff_type=:expanded, opts=nil
       if new_content?
         if diff_type == :summary
           content_diff_builder(opts).summary
@@ -182,9 +182,9 @@ class Card
       end
     end
     
-    def content_diff_builder opts={:format=>:html}
+    def content_diff_builder opts=nil
       @content_diff_builder ||= begin
-        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], opts)
+        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], opts || card.diff_args)
       end
     end
     

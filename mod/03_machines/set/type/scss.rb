@@ -3,9 +3,13 @@ include Card::Set::Type::Css
 format :html do
   view :core, :mod=>Css::HtmlFormat
   view :editor, :mod=>PlainText::HtmlFormat
+  view :content_changes, :mod=>Css::HtmlFormat
 end
   
-  
+def diff_args
+  {:format=>:text}
+end  
+
 format do
   view :core do |args|
     process_content compile_scss(_render_raw)
@@ -15,7 +19,9 @@ format do
     Sass.compile scss, :style=>style
   rescue =>e
     e
-  end 
+  end
+  
+
 end
 
 

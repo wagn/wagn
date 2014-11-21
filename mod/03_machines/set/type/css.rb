@@ -25,6 +25,7 @@ def chunk_list  #turn off autodetection of uri's
   :inclusion_and_link
 end
 
+
 format :html do
   view :editor, :mod=>PlainText::HtmlFormat
   
@@ -33,4 +34,17 @@ format :html do
     # problems with including other css?
     process_content ::CodeRay.scan( _render_raw, :css ).div, :size=>:icon
   end
+  
+  view :content_changes do |args|
+    %{
+      <pre>
+      #{super(args)}
+      </pre>
+    }
+  end
+  
+end
+
+def diff_args
+   {:format=>:text}
 end

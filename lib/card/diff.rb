@@ -38,13 +38,10 @@ module Card::Diff
     #   :raw     = escape html tags and compare everything
     #
     # :summary => {:length=><number> , :joint=><string> }
-    #
-    # :fast    => true|false  
-    #    true  = use faster algorithm with less beautiful results
+    
     def initialize(old_version, new_version, opts={})
       @new_version = new_version
       @old_version = old_version
-
       @lcs_opts = lcs_opts_for_format opts[:format]
       @lcs_opts[:summary] = opts[:summary]
       @dels_cnt = 0
@@ -53,8 +50,6 @@ module Card::Diff
       if not @new_version
         @complete = ''
         @summary  = ''
-      elsif opts[:fast] or @new_version.size > 1000
-        fast_diff
       else
         lcs_diff
       end
@@ -73,8 +68,13 @@ module Card::Diff
       case format
       when :html
         opts[:exclude] = /^</
+        opts[:postprocess] = Proc.new do |word|  
+        end
       when :text
         opts[:reject] =  /^</
+        opts[:postprocess] = Proc.new do |word|
+          word.gsub("\n",'<br>')
+        end
       when :pointer
         opts[:preprocess] = Proc.new do |word|
           word.gsub('[[','').gsub(']]','')
@@ -112,7 +112,10 @@ module Card::Diff
         @summary ||= Summary.new opts[:summary]
         
         if not old_text
-          list = split_and_preprocess(new_text).reject{ |word| word.match @exclude_pattern }
+          list = split_and_preprocess(new_text)
+          if @exculde_pattern
+            list = list.reject{ |word| word.match @exclude_pattern }
+          end
           text = postprocess list.join
           @result = added_chunk text
           @summary.add text
@@ -399,6 +402,7 @@ module Card::Diff
             end
           end
         end 
+        
       end
      
       class ExcludeeIterator     
@@ -421,73 +425,8 @@ module Card::Diff
           end
         end
       end
-    end
-    
-    private
-    
-    # combines diffy and lcs:
-    # find with diffy line changes
-    # whenever added lines follow immediately after deleted lines compare them with lcs
-    def fast_diff
-      summary = LCS::Summary.new @lcs_opts[:summary]
-      @complete = ''
-      lines = { :deleted => [], :added=>[], :unchanged=>[], :eof=>[] }
-      prev_action = nil
-     
-      inspect = false
-      new_diffy.each_chunk do |line|
-        action = case line
-        when /^\+/ then :added
-        when /^-/ then :deleted
-        when /^ / then :unchanged
-        else 
-          next
-        end
-        lines[action] << line.sub(/^./,'')
-        if action == :added and prev_action == :deleted
-          inspect = true
-        end
-    
-        if inspect 
-          if action != :added
-            add_diff_line lines[:deleted].join, lines[:added].join, summary
-            inspect = false
-            lines[:deleted].clear
-            lines[:added].clear
-          end
-        elsif prev_action and action != prev_action
-          text = lines[prev_action].join
-          @complete += DiffBuilder.render_chunk prev_action, text
-          lines[prev_action].clear
-        end
-        prev_action = action
-      end
       
-      if inspect
-        add_diff_line lines[:deleted].join, lines[:added].join, summary
-      elsif lines[prev_action].present?
-        @complete += DiffBuilder.render_chunk prev_action, lines[prev_action].join
-      end
-      @summary = summary.result
-    end
-    
-    def add_diff_line  old_line, new_line, summary
-      lcs = LCS.new(old_line, new_line, @lcs_opts, summary)
-      @complete += lcs.complete
-      @dels_cnt += lcs.dels_cnt
-      @adds_cnt += lcs.adds_cnt
-    end
-        
-    def complete_diffy_diff
-      new_diffy.to_s(:html)
-    end
-    
-    def new_diffy
-      ::Diffy::Diff.new(@old_version, @new_version)
-    end
-  
-    def new_lcs
-      ::Diff::LCS.diff(@old_version,@new_version)
     end
   end
 end
+

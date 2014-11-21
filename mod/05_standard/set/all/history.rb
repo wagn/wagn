@@ -248,7 +248,7 @@ format :html do
       if hide_diff 
         new_name
       else
-        Card::Diff.compete(old_name,new_name)
+        Card::Diff.complete(old_name,new_name)
       end
     else
       old_name
@@ -260,18 +260,21 @@ format :html do
     "(#{change})"
   end
   
+
+
+  
   view :content_changes do |args|
     if args[:hide_diff]
       args[:action].new_values[:content]
     else 
-      args[:action].content_diff(args[:diff_type], args[:diff_opts])
+      args[:action].content_diff(args[:diff_type])
     end
   end
 
   def rollback_link action_ids
     if card.ok?(:update) 
       "| " + link_to('Save as current', path(:action=>:update, :view=>:open, :action_ids=>action_ids,),
-        :class=>'slotter',:slotSelector=>'.card-slot.card-frame', :remote=>true, :method=>:post, :rel=>'nofollow')
+        :class=>'slotter',:slotSelector=>'.card-sl<ot.card-frame', :remote=>true, :method=>:post, :rel=>'nofollow')
     end
   end
 
@@ -292,3 +295,9 @@ format :html do
       :class=>'slotter', :remote=>true )
   end
 end
+
+def diff_args
+  {:format=>:text}
+end
+
+

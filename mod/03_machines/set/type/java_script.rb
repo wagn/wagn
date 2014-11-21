@@ -29,4 +29,14 @@ format :html do
     process_content highlighted_js
   end
   
+  view :content_changes do |args|
+    %{
+      <pre>#{super(args)}</pre>
+    }
+  end
+  
+end
+
+def diff_args
+   {:format=>:text}
 end

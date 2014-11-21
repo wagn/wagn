@@ -8,6 +8,18 @@ describe Card::Set::All::History do
       history = render_card :history, :name=>"A"
       assert_view_select history, 'div[class~="card-frame"]'
     end
+    
+    
+    describe '#action_summary' do
+      subject do 
+        first = Card.fetch('First')
+        first.format.render_action_summary
+      end
+      it 'should have a summary' do
+        assert_view_select subject, 'del[class="diffdel diff-red"]', :text=>'chicken' 
+        assert_view_select subject, 'del[class="diffdel diff-green"]', :text=>'chick'         
+      end
+    end
   end
   
   

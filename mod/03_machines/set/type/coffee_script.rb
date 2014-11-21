@@ -29,6 +29,7 @@ end
 
 format :html do
   view :editor, :mod=>PlainText::HtmlFormat
+  view :content_changes, :mod=>JavaScript::HtmlFormat
   
   view :core do |args|
     js = card.compile_coffee _render_raw
@@ -43,4 +44,8 @@ format do
   view :core do |args|
     process_content card.compile_coffee(_render_raw)
   end
+end
+
+def diff_args
+   {:format=>:text}
 end

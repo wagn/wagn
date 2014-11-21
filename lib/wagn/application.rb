@@ -89,7 +89,7 @@ module Wagn
         add_gem_path paths, "app/assets",          :glob => "*"
         add_gem_path paths, "app/controllers",     :eager_load => true
         add_gem_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
-        add_gem_path paths, "config/routes",       :with => "lib/wagn/routes.rb"
+        add_gem_path paths, "config/routes",       :with => "lib/wagn/config/routes.rb"
         add_gem_path paths, "db"
         add_gem_path paths, "db/migrate"
         add_gem_path paths, "db/migrate_core_cards"

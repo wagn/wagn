@@ -1,30 +1,24 @@
 # -*- encoding : utf-8 -*-
 
 class Wagn::Migration < ActiveRecord::Migration
-  def self.core_card_migration_paths
-    Wagn.paths['db/migrate_core_cards'].to_a
-  end
-  
-  def self.deck_card_migration_paths
-    Wagn.paths['db/migrate_deck_cards'].to_a
+  def self.paths type
+    Wagn.paths["db/migrate#{schema_suffix type}"].to_a
   end
   
   def self.schema_suffix type
-    case type
-    when :core_cards then '_cards'
-    when :deck_cards then '_deck_cards'
-    else ''
-    end
+    Wagn::Version.schema_suffix type
   end
   
   def self.schema_mode type
     new_suffix = Wagn::Migration.schema_suffix type
-    
     original_suffix = ActiveRecord::Base.table_name_suffix
+    
     ActiveRecord::Base.table_name_suffix = new_suffix
     yield
     ActiveRecord::Base.table_name_suffix = original_suffix
   end
+  
+  
   
   def contentedly &block
     Wagn::Cache.reset_global
@@ -61,11 +55,11 @@ class Wagn::Migration < ActiveRecord::Migration
   
     
   def schema_mode
-    Wagn::Migration.schema_mode :deck
+    Wagn::Migration.schema_mode :deck_cards
   end
   
   def migration_paths
-    Wagn::Migration.deck_card_migration_paths
+    Wagn::Migration.paths :deck_cards
   end
   
   

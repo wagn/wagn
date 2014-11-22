@@ -29,8 +29,7 @@ class WagnGenerator < Rails::Generators::AppBase
 ## should probably eventually use rails-like AppBuilder approach, but this is a first step.  
   def dev_setup  
     if options['core-dev']
-      @wagn_path = options['gem-path'] || ask("Enter the path to your local wagn installation: ")
-      #@wagndev_path = ask "Please enter the path to your local wagn-dev installation (leave empty to use the wagn-dev gem): "
+      @wagn_path = options['gem-path'] || ask("Enter the path to your local wagn gem installation: ")
       @spec_path = @wagn_path
       @spec_helper_path = File.join @spec_path, 'spec', 'spec_helper'
       @features_path = File.join @wagn_path, 'features/'  # ending slash is important in order to load support and step folders

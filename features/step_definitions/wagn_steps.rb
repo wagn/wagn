@@ -196,6 +196,12 @@ When /^In (.*) I click "(.*)"$/ do |section, link|
   end
 end
 
+When /^In (.*) I find link with class "(.*)" and click it$/ do |section, css_class|
+  within scope_of(section) do
+    find("a.#{css_class}").click
+  end
+end
+
 Then /I submit$/ do
     click_button("Submit")
 end

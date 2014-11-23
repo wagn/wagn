@@ -46,10 +46,12 @@ def selected_action_id
 end
 
 def selected_action_id= action_id
-  @selected_content = @selected_action_id = nil
-  unless last_action_id == action_id
-    @selected_action_id = action_id
-  end
+  @selected_content = nil
+  @selected_action_id = action_id
+end
+
+def selected_action
+  selected_action_id and Action.fetch(selected_action_id)
 end
 
 def selected_content_action_id
@@ -59,11 +61,7 @@ def selected_content_action_id
 end
 
 def last_action_id
-  @last_action_id ||= begin
-    if la = last_action
-      Card.cache.write_variable self.key, :last_action_id, la.id
-    end
-  end
+  la = last_action and la.id
 end
 
 def last_action
@@ -71,15 +69,11 @@ def last_action
 end
 
 def last_content_action
-  lcid = last_content_action_id and Action.fetch(lcid)
+  l_c = last_change_on(:db_content) and l_c.action
 end
 
 def last_content_action_id
-  @last_content_action_id ||= begin
-    if l_c = last_change_on(:db_content)
-      Card.cache.write_variable self.key, :last_content_action_id, l_c.card_action_id
-    end
-  end
+  l_c = last_change_on(:db_content) and l_c.card_action_id
 end
 
 def last_actor

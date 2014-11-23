@@ -46,8 +46,8 @@ class Card
     belongs_to :act,  :foreign_key=>:card_act_id, :inverse_of=>:actions 
     has_many   :changes, :foreign_key=>:card_action_id, :inverse_of=>:action, :dependent=>:delete_all
     
-    belongs_to :super_action, class_name: "Action", :inverse_of=>:sub_actions
-    has_many   :sub_actions,  class_name: "Action", :inverse_of=>:super_action
+    belongs_to :super_action, :class_name=> "Action", :inverse_of=>:sub_actions
+    has_many   :sub_actions,  :class_name=> "Action", :inverse_of=>:super_action
     
     scope :created_by, lambda { |actor_id| joins(:act).where('card_acts.actor_id = ?', actor_id) }
     

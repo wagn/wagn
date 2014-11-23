@@ -20,6 +20,7 @@ class Card
 
       def reset_cache
         @@codehash = nil
+        cache.write 'CODEHASH', nil
       end
 
       #only used in migration

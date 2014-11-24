@@ -68,8 +68,6 @@ module Card::Diff
       case format
       when :html
         opts[:exclude] = /^</
-        opts[:postprocess] = Proc.new do |word|  
-        end
       when :text
         opts[:reject] =  /^</
         opts[:postprocess] = Proc.new do |word|
@@ -110,10 +108,9 @@ module Card::Diff
         @splitters = %w( <[^>]+>  \[\[[^\]]+\]\]  \{\{[^}]+\}\}  \s+ )
         @disjunction_pattern = /^\s/ 
         @summary ||= Summary.new opts[:summary]
-        
         if not old_text
           list = split_and_preprocess(new_text)
-          if @exculde_pattern
+          if @exclude_pattern
             list = list.reject{ |word| word.match @exclude_pattern }
           end
           text = postprocess list.join

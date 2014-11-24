@@ -109,7 +109,8 @@ format :html do
       :structure    => card.structure && card.template.ok?(:update) && card.template.name,
       :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read ),
       :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>n.to_s } },
-      :related_sets => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name } } }
+      :related_sets => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name } } },
+      :follow_options => [{:raw=>"hi"},{:raw=>"another link"}]
     }
     if card.real?
       @menu_vars.merge!({

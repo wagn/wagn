@@ -120,7 +120,9 @@ $.extend wagn,
         i.text = $('<div/>').text(i.text).html() #escapes html
       
       item = 
-        if i.link
+        if i.raw
+          i.raw
+        else if i.link
           vars[i.link]
         else if i.plain
           '<a>' + i.plain + '</a>'

@@ -1,317 +1,270 @@
 # -*- encoding : utf-8 -*-
 module Card::Diff
   
-  def diff(a, b)
-    DiffBuilder.new(a, b).build
+  def diff_complete(a, b)
+    DiffBuilder.new(a, b).complete
   end
-
-
-  Match = Struct.new(:start_in_old, :start_in_new, :size)
-  class Match
-    def end_in_old
-      self.start_in_old + self.size
-    end
-
-    def end_in_new
-      self.start_in_new + self.size
-    end
+  
+  def diff_summary(a, b)
+    DiffBuilder.new(a, b).summary
   end
-
-  Operation = Struct.new(:action, :start_in_old, :end_in_old, :start_in_new, :end_in_new)
+  
+  def self.render_added_chunk text
+    "<ins class='diffins diff-green'>#{text}</ins>"
+  end
+  
+  def self.render_deleted_chunk text, count=true
+    "<del class='diffdel diff-red'>#{text}</del>"
+  end
 
   class DiffBuilder
-
-    def initialize(old_version, new_version)
+    def initialize(old_version, new_version, opts={})
       @old_version, @new_version = old_version, new_version
-      @content = []
-    end
-
-    def build
-      split_inputs_to_words
-      index_new_words
-      operations.each { |op| perform_operation(op) }
-      return @content.join
-    end
-
-    def split_inputs_to_words
-      @old_words = convert_html_to_list_of_words(explode(@old_version))
-      @new_words = convert_html_to_list_of_words(explode(@new_version))
-    end
-
-    def index_new_words
-      @word_indices = Hash.new { |h, word| h[word] = [] }
-      @new_words.each_with_index { |word, i| @word_indices[word] << i }
-    end
-
-    def operations
-      position_in_old = position_in_new = 0
-      operations = []
-
-      matches = matching_blocks
-      # an empty match at the end forces the loop below to handle the unmatched tails
-      # I'm sure it can be done more gracefully, but not at 23:52
-      matches << Match.new(@old_words.length, @new_words.length, 0)
-
-      matches.each_with_index do |match, i|
-        match_starts_at_current_position_in_old = (position_in_old == match.start_in_old)
-        match_starts_at_current_position_in_new = (position_in_new == match.start_in_new)
-
-        action_upto_match_positions =
-          case [match_starts_at_current_position_in_old, match_starts_at_current_position_in_new]
-          when [false, false]
-            :replace
-          when [true, false]
-            :insert
-          when [false, true]
-            :delete
-          else
-            # this happens if the first few words are same in both versions
-            :none
-          end
-
-        if action_upto_match_positions != :none
-          operation_upto_match_positions =
-              Operation.new(action_upto_match_positions,
-                  position_in_old, match.start_in_old,
-                  position_in_new, match.start_in_new)
-          operations << operation_upto_match_positions
-        end
-        if match.size != 0
-          match_operation = Operation.new(:equal,
-              match.start_in_old, match.end_in_old,
-              match.start_in_new, match.end_in_new)
-          operations << match_operation
-        end
-
-        position_in_old = match.end_in_old
-        position_in_new = match.end_in_new
-      end
-
-      operations
-    end
-
-    def matching_blocks
-      matching_blocks = []
-      recursively_find_matching_blocks(0, @old_words.size, 0, @new_words.size, matching_blocks)
-      matching_blocks
-    end
-
-    def recursively_find_matching_blocks(start_in_old, end_in_old, start_in_new, end_in_new, matching_blocks)
-      match = find_match(start_in_old, end_in_old, start_in_new, end_in_new)
-      if match
-        if start_in_old < match.start_in_old and start_in_new < match.start_in_new
-          recursively_find_matching_blocks(
-              start_in_old, match.start_in_old, start_in_new, match.start_in_new, matching_blocks)
-        end
-        matching_blocks << match
-        if match.end_in_old < end_in_old and match.end_in_new < end_in_new
-          recursively_find_matching_blocks(
-              match.end_in_old, end_in_old, match.end_in_new, end_in_new, matching_blocks)
-        end
-      end
-    end
-
-    def find_match(start_in_old, end_in_old, start_in_new, end_in_new)
-
-      best_match_in_old = start_in_old
-      best_match_in_new = start_in_new
-      best_match_size = 0
-
-      match_length_at = Hash.new { |h, index| h[index] = 0 }
-
-      start_in_old.upto(end_in_old - 1) do |index_in_old|
-
-        new_match_length_at = Hash.new { |h, index| h[index] = 0 }
-
-        @word_indices[@old_words[index_in_old]].each do |index_in_new|
-          next  if index_in_new < start_in_new
-          break if index_in_new >= end_in_new
-
-          new_match_length = match_length_at[index_in_new - 1] + 1
-          new_match_length_at[index_in_new] = new_match_length
-
-          if new_match_length > best_match_size
-            best_match_in_old = index_in_old - new_match_length + 1
-            best_match_in_new = index_in_new - new_match_length + 1
-            best_match_size = new_match_length
-          end
-        end
-        match_length_at = new_match_length_at
-      end
-
-#      best_match_in_old, best_match_in_new, best_match_size = add_matching_words_left(
-#          best_match_in_old, best_match_in_new, best_match_size, start_in_old, start_in_new)
-#      best_match_in_old, best_match_in_new, match_size = add_matching_words_right(
-#          best_match_in_old, best_match_in_new, best_match_size, end_in_old, end_in_new)
-
-      return (best_match_size != 0 ? Match.new(best_match_in_old, best_match_in_new, best_match_size) : nil)
-    end
-
-    def add_matching_words_left(match_in_old, match_in_new, match_size, start_in_old, start_in_new)
-      while match_in_old > start_in_old and
-            match_in_new > start_in_new and
-            @old_words[match_in_old - 1] == @new_words[match_in_new - 1]
-        match_in_old -= 1
-        match_in_new -= 1
-        match_size += 1
-      end
-      [match_in_old, match_in_new, match_size]
-    end
-
-    def add_matching_words_right(match_in_old, match_in_new, match_size, end_in_old, end_in_new)
-      while match_in_old + match_size < end_in_old and
-            match_in_new + match_size < end_in_new and
-            @old_words[match_in_old + match_size] == @new_words[match_in_new + match_size]
-        match_size += 1
-      end
-      [match_in_old, match_in_new, match_size]
-    end
-
-    VALID_METHODS = [:replace, :insert, :delete, :equal]
-
-    def perform_operation(operation)
-      @operation = operation
-      self.send operation.action, operation
-    end
-
-    def replace(operation)
-      delete(operation, 'diffmod')
-      insert(operation, 'diffmod')
-    end
-
-    def insert(operation, tagclass = 'diffins')
-      insert_tag('ins', tagclass, @new_words[operation.start_in_new...operation.end_in_new])
-    end
-
-    def delete(operation, tagclass = 'diffdel')
-       insert_tag('del', tagclass, @old_words[operation.start_in_old...operation.end_in_old])
-    end
-
-    def equal(operation)
-      # no tags to insert, simply copy the matching words from one of the versions
-      @content += @new_words[operation.start_in_new...operation.end_in_new]
-    end
-
-    def opening_tag?(item)
-      item =~ %r!^\s*<[^>]+>\s*$!
-    end
-
-    def closing_tag?(item)
-      item =~ %r!^\s*</[^>]+>\s*$!
-    end
-
-    def tag?(item)
-      opening_tag?(item) or closing_tag?(item)
-    end
-
-    def extract_consecutive_words(words, &condition)
-      index_of_first_tag = nil
-      words.each_with_index do |word, i|
-        if !condition.call(word)
-          index_of_first_tag = i
-          break
-        end
-      end
-      if index_of_first_tag
-        return words.slice!(0...index_of_first_tag)
+      @opts = opts
+      @new_version ||= ''
+      if !opts[:compare_html]
+        @old_version.gsub! /<[^>]*>/,'' if @old_version
+        @new_version.gsub! /<[^>]*>/,''
       else
-        return words.slice!(0..words.length)
+        @old_version = CGI::escapeHTML(@old_version) if @old_version
+        @new_version = CGI::escapeHTML(@new_version)
       end
+      @summary = false
+      @complete = false
+      @adds = 0
+      @dels = 0
     end
 
-    # This method encloses words within a specified tag (ins or del), and adds this into @content,
-    # with a twist: if there are words contain tags, it actually creates multiple ins or del,
-    # so that they don't include any ins or del. This handles cases like
-    # old: '<p>a</p>'
-    # new: '<p>ab</p><p>c</b>'
-    # diff result: '<p>a<ins>b</ins></p><p><ins>c</ins></p>'
-    # this still doesn't guarantee valid HTML (hint: think about diffing a text containing ins or
-    # del tags), but handles correctly more cases than the earlier version.
-    #
-    # P.S.: Spare a thought for people who write HTML browsers. They live in this ... every day.
-
-    def insert_tag(tagname, cssclass, words)
-      loop do
-        break if words.empty?
-        non_tags = extract_consecutive_words(words) { |word| not tag?(word) }
-        @content << wrap_text(non_tags.join, tagname, cssclass) unless non_tags.empty?
-
-        break if words.empty?
-        @content += extract_consecutive_words(words) { |word| tag?(word) }
-      end
+    
+    def red?
+      complete and @dels > 0 
     end
-
-    def wrap_text(text, tagname, cssclass)
-      %(<#{tagname} class="#{cssclass}">#{text}</#{tagname}>)
+    def green?
+      complete and @adds > 0 
     end
-
-    def explode(sequence)
-      sequence.is_a?(String) ? sequence.split(//) : sequence
-    end
-
-    def end_of_tag?(char)
-      char == '>'
-    end
-
-    def start_of_tag?(char)
-      char == '<'
-    end
-
-    def whitespace?(char)
-      char =~ /\s/
-    end
-
-    def convert_html_to_list_of_words(x, use_brackets = false)
-      mode = :char
-      current_word  = ''
-      words = []
-
-      explode(x).each do |char|
-        case mode
-        when :tag
-          if end_of_tag? char
-            current_word << (use_brackets ? ']' : '>')
-            words << current_word
-            current_word = ''
-            if whitespace?(char)
-              mode = :whitespace
-            else
-              mode = :char
+    
+    def summary  max_length = 50, joint = '...'
+      @summary ||= begin
+        if @old_version 
+          last_position = 0
+          remaining_chars = max_length
+          res = ''
+          new_aggregated_lcs.each do |change|
+            if change[:position] > last_position
+              res += joint
             end
-          else
-            current_word << char
+            res += render_chunk change[:action], change[:text][0..remaining_chars], false
+            remaining_chars -= change[:text].size
+            if remaining_chars < 0  # no more space left
+              res += joint
+              break
+            end
+            last_position = change[:position]
           end
-        when :char
-          if start_of_tag? char
-            words << current_word unless current_word.empty?
-            current_word = (use_brackets ? '[' : '<')
-            mode = :tag
-          elsif /\s/.match char
-            words << current_word unless current_word.empty?
-            current_word = char
-            mode = :whitespace
+          res
+        else
+          res = @new_version[0..max_length]
+          res += joint if @new_version.size > max_length 
+          added_chunk(res, false) 
+        end
+      end
+    end
+  
+    def complete
+      @complete ||= begin 
+        clear_stats
+        if @old_version
+          if @old_version.size < 1000
+            better_complete_lcs_diff
           else
-            current_word << char
-          end
-        when :whitespace
-          if start_of_tag? char
-            words << current_word unless current_word.empty?
-            current_word = (use_brackets ? '[' : '<')
-            mode = :tag
-          elsif /\s/.match char
-            current_word << char
-          else
-            words << current_word unless current_word.empty?
-            current_word = char
-            mode = :char
+            fast_diff
           end
         else
-          raise "Unknown mode #{mode.inspect}"
-        end
+          added_chunk(@new_version) 
+        end 
       end
-      words << current_word unless current_word.empty?
-      words
+    end
+    
+    private
+    
+    def clear_stats
+      @adds = 0
+      @dels = 0
+    end
+    
+    def added_chunk text, count=true
+      @adds += 1 if count
+      Card::Diff.render_added_chunk text
+    end
+  
+    def deleted_chunk text, count=true
+      @dels += 1 if count
+      Card::Diff.render_deleted_chunk text
+    end
+  
+  
+    def render_chunk action, text, count=true
+      case action
+      when '+'      then added_chunk(text,count)
+      when :added   then added_chunk(text,count)
+      when '-'      then deleted_chunk(text,count)
+      when :deleted then deleted_chunk(text,count)
+      else text
+      end
     end
 
+
+    def better_complete_lcs_diff old_v=@old_version, new_v=@new_version
+      old_v = old_v.split(' ')
+      new_v = new_v.split(' ')
+      res = ''
+      dels = []
+      adds = []
+      prev_action = nil
+      ::Diff::LCS.traverse_balanced(old_v, new_v) do |chunk|
+        if prev_action and prev_action != chunk.action and
+          !(prev_action == '-' and chunk.action == '!') and 
+          !(prev_action == '!' and chunk.action == '+')
+       
+          if dels.present?
+            res << deleted_chunk(dels.join(' '))
+            dels = []
+          end
+          if !adds.empty?
+            res << added_chunk(adds.join(' '))
+            adds = []
+          end
+        end
+        
+        case chunk.action
+        when '-' then dels << chunk.old_element
+        when '+' then adds << chunk.new_element
+        when '!' 
+          dels << chunk.old_element
+          adds << chunk.new_element
+        else
+          res += ' ' + chunk.new_element
+        end
+        prev_action = chunk.action
+      end
+      res += deleted_chunk(dels.join(' ')) if dels.present?
+      res += added_chunk(adds.join(' ')) if adds.present?
+      res
+    end
+    
+    
+    
+    def complete_lcs_diff old_v=@old_version, new_v=@new_version
+      last_position = 0
+      res = ''
+      dels = ''
+      adds = ''
+      prev_action = nil
+      ::Diff::LCS.traverse_balanced(old_v, new_v) do |chunk|
+        if prev_action and prev_action != chunk.action and
+          !(prev_action == '-' and chunk.action == '!') and 
+          !(prev_action == '!' and chunk.action == '+')
+       
+          if dels.present?
+            res += deleted_chunk(dels)
+            dels = ''
+          end
+          if !adds.empty?
+            res += added_chunk(adds)
+            adds = ''
+          end
+        end
+        
+        case chunk.action
+        when '-' then dels += chunk.old_element
+        when '+' then adds += chunk.new_element
+        when '!' 
+          dels += chunk.old_element
+          adds += chunk.new_element
+        else
+          res += chunk.new_element
+        end
+        prev_action = chunk.action
+      end
+      res += deleted_chunk(dels) if dels.present?
+      res += added_chunk(adds) if adds.present?
+      res
+    end
+    
+    def complete_diffy_diff
+      new_diffy.to_s(:html)
+    end
+    
+    # combines diffy and lcs:
+    # find with diffy line changes
+    # whenever added lines follow immediately after deleted lines compare them with lcs
+    def fast_diff
+      lines = { :deleted => [], :added=>[], :unchanged=>[], :eof=>[] }
+      prev_action = nil
+      res = ''
+      inspect = false
+      new_diffy.each_chunk do |line|
+        action = case line
+        when /^\+/ then :added
+        when /^-/ then :deleted
+        when /^ / then :unchanged
+        else 
+          next
+        end
+        lines[action] << line.sub(/^./,'')
+        if action == :added and prev_action == :deleted
+          inspect = true
+        end
+    
+        if inspect 
+          if action != :added
+            res += better_complete_lcs_diff lines[:deleted].join, lines[:added].join
+            inspect = false
+            lines[:deleted].clear
+            lines[:added].clear
+          end
+        elsif prev_action and action != prev_action
+          text = lines[prev_action].join
+          res += render_chunk prev_action, text
+          lines[prev_action].clear
+        end
+        prev_action = action
+      end
+      
+      res += if inspect
+        better_complete_lcs_diff lines[:deleted].join, lines[:added].join
+      elsif lines[prev_action].present?
+        render_chunk prev_action, lines[prev_action].join
+      else
+        ''
+      end
+    end
+    
+ 
+    def new_aggregated_lcs
+      new_lcs.inject([]) do |res, change_block|
+        last_action = nil
+        change_block.each do |change| 
+          if change.action != last_action
+            res << { :position => change.position,
+                   :action   => change.action,
+                   :text   => change.element
+                 }
+          else
+            res.last[:text] += change.element
+          end
+          last_action = change.action
+        end
+        res
+      end
+    end
+    
+    def new_diffy
+      ::Diffy::Diff.new(@old_version, @new_version)
+    end
+  
+    def new_lcs
+      ::Diff::LCS.diff(@old_version,@new_version)
+    end
   end
 end

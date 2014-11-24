@@ -30,7 +30,10 @@ Wagn.application.class.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
   config.action_mailer.default :charset=>"utf-8"
-
+  
+  #config.action_mailer.delivery_method = :smtp
+  #config.action_mailer.smtp_settings = { :address => "localhost", :port => 1025 }
+  
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper,
   # like if you have constraints or database-specific column types
@@ -42,4 +45,13 @@ Wagn.application.class.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+  
+  # Use Pry instead of IRB
+  silence_warnings do
+    begin
+      require 'pry'
+      IRB = Pry
+    rescue LoadError
+    end
+  end
 end

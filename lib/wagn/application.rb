@@ -4,7 +4,7 @@ require 'wagn/all'
 require 'active_support/core_ext/numeric/time'
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
-  Bundler.require *Rails.groups(:assets => %w(development test))
+  Bundler.require *Rails.groups(:assets => %w(development test))   
   # If you want your assets lazily compiled in production, use this line
   # Bundler.require(:default, :assets, Rails.env)
 end
@@ -27,6 +27,13 @@ module Wagn
       end
     end
     
+    initializer :load_mod_initializers,  :after => :load_wagn_config_initializers do
+      paths.add 'mod-initializers', :with=>'mod', :glob=>"**/initializers/*.rb"
+      config.paths['mod-initializers'].existent.sort.each do |initializer|
+        load(initializer)
+      end
+    end
+    
     class << self
       def inherited(base)
         Rails.application = base.instance
@@ -43,7 +50,8 @@ module Wagn
         
         config.autoload_paths += Dir["#{Wagn.gem_root}/app/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/lib/**/"]
-        config.autoload_paths += Dir["#{Wagn.gem_root}/mod/standard/lib/**/"]
+        config.autoload_paths += Dir["#{Wagn.gem_root}/mod/*/lib/**/"]
+        config.autoload_paths += Dir["#{Wagn.root}/mod/*/lib/**/"]
         
         config.assets.enabled = false
         config.assets.version = '1.0'
@@ -66,6 +74,8 @@ module Wagn
         config.override_protocol     = nil
         
         config.token_expiry          = 2.days
+        config.revisions_per_page    = 10
+        config.request_logger        = false
         
         config
       end
@@ -95,7 +105,7 @@ module Wagn
         paths.add 'files'
         paths.add 'tmp/set'
         paths.add 'tmp/set_pattern'
-        
+        paths.add 'db/migrate_deck_cards', :with=>'db/migrate_cards'
         paths
       end
     end
@@ -113,9 +123,9 @@ module Wagn
 
     def load_tasks(app=self)
       super
-      unless approot_is_gemroot?
-        Rake::Task["db:schema:dump"].clear
-      end
+#      unless approot_is_gemroot?
+#        Rake::Task["db:schema:dump"].clear
+#      end
       self
     end
   end

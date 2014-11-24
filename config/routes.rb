@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   
   #most common
   root                      :to => 'card#read', :via=>:get
-  match "#{ Wagn.config.files_web_path }/:id(-:size)-:rev.:format" => 
+  match "#{ Wagn.config.files_web_path }/:id(-:size)-:rev_id.:format" => 
                                    'card#read', :via=>:get, :id => /[^-]+/, :explicit_file=>true
   match "assets/*filename"      => 'card#asset', :via=>:get
   match "javascripts/*filename" => 'card#asset', :via=>:get
@@ -45,7 +45,7 @@ Rails.application.routes.draw do
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~
   
   # standard non-RESTful
-  match '(card)/:action(/:id(.:format))' => 'card', :action => /create|read|update|delete|save_draft|rollback|watch|asset/
+  match '(card)/:action(/:id(.:format))' => 'card', :action => /create|read|update|delete|asset/
 
   # other
   match '*id' => 'card#read', :view => 'bad_address'

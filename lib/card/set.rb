@@ -5,6 +5,7 @@ class Card
 
     mattr_accessor :modules, :traits
     @@modules = { :base=>[], :base_format=>{}, :nonbase=>{}, :nonbase_format=>{} }
+   
     
 =begin
     A "Set" is a group of cards to which "Rules" may be applied.  Sets can be as specific as
@@ -134,6 +135,7 @@ class Card
 
         define_method event do
           run_callbacks event do
+            #puts event
             send final_method
           end
         end
@@ -143,6 +145,7 @@ class Card
     end
 
 
+    
     #
     # ActiveCard support: accessing plus cards as attributes
     #

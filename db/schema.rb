@@ -11,7 +11,36 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130411210957) do
+ActiveRecord::Schema.define(:version => 20141001105348) do
+
+  create_table "card_actions", :force => true do |t|
+    t.integer "card_id"
+    t.integer "card_act_id"
+    t.integer "super_action_id"
+    t.integer "action_type"
+    t.boolean "draft"
+  end
+
+  add_index "card_actions", ["card_act_id"], :name => "card_act_id_index"
+  add_index "card_actions", ["card_id"], :name => "card_id_index"
+
+  create_table "card_acts", :force => true do |t|
+    t.integer  "card_id"
+    t.integer  "actor_id"
+    t.datetime "acted_at"
+    t.string   "ip_address"
+  end
+
+  add_index "card_acts", ["actor_id"], :name => "actor_id_index"
+  add_index "card_acts", ["card_id"], :name => "card_id_index"
+
+  create_table "card_changes", :force => true do |t|
+    t.integer "card_action_id"
+    t.integer "field"
+    t.text    "value"
+  end
+
+  add_index "card_changes", ["card_action_id"], :name => "card_action_id_index"
 
   create_table "card_references", :force => true do |t|
     t.integer "referer_id",               :default => 0,  :null => false
@@ -51,6 +80,7 @@ ActiveRecord::Schema.define(:version => 20130411210957) do
     t.integer  "references_expired"
     t.boolean  "trash",               :null => false
     t.integer  "type_id",             :null => false
+    t.text     "db_content"
   end
 
   add_index "cards", ["key"], :name => "cards_key_uniq", :unique => true

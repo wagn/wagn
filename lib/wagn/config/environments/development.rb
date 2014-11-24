@@ -7,6 +7,15 @@ Wagn.application.class.configure do
   # every request.  This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
+  config.reload_classes_only_on_change = false
+  if defined?(RailsDevTweaks)
+    config.dev_tweaks.autoload_rules do
+        skip '/files'
+    end
+  end
+  
+
+  
   
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
@@ -57,6 +66,14 @@ Wagn.application.class.configure do
 
   config.action_mailer.perform_deliveries = false
   
+  # Use Pry instead of IRB
+  silence_warnings do
+    begin
+      require 'pry'
+      IRB = Pry
+    rescue LoadError
+    end
+  end
 end
 
 

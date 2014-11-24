@@ -1,5 +1,5 @@
 
-WAGN_BOOTSTRAP_TABLES = %w{ cards card_revisions card_references }
+WAGN_BOOTSTRAP_TABLES = %w{ cards card_actions card_acts card_changes card_references }
 
 namespace :wagn do
   desc "create a wagn database from scratch"
@@ -72,20 +72,28 @@ namespace :wagn do
       Rake::Task['wagn:migrate:stamp'].invoke ''
     end
     
-    puts 'migrating cards'
+    puts 'migrating core cards'
     Wagn::Cache.reset_global
     Rake::Task['wagn:migrate:cards'].execute #not invoke because we don't want to reload environment
     if stamp
       Rake::Task['wagn:migrate:stamp'].reenable
       Rake::Task['wagn:migrate:stamp'].invoke '_cards'
     end
+    
+    puts 'migrating deck cards'
+    Rake::Task['wagn:migrate:deck_cards'].execute #not invoke because we don't want to reload environment
+    if stamp
+      Rake::Task['wagn:migrate:stamp'].reenable
+      Rake::Task['wagn:migrate:stamp'].invoke '_deck'
+    end
+    
     Wagn::Cache.reset_global
   end
 
   desc 'insert existing card migrations into schema_migrations_cards to avoid re-migrating'
   task :assume_card_migrations do
-    Wagn::MigrationHelper.schema_mode :card do
-      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:cards), Wagn::MigrationHelper.card_migration_paths
+    Wagn::Migration.schema_mode :card do
+      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:cards), Wagn::Migration.card_migration_paths
     end
   end
 
@@ -98,9 +106,24 @@ namespace :wagn do
       Wagn.config.action_mailer.perform_deliveries = false
       Card # this is needed in production mode to insure core db structures are loaded before schema_mode is set
     
-      paths = ActiveRecord::Migrator.migrations_paths = Wagn::MigrationHelper.card_migration_paths
+      paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.card_migration_paths
     
-      Wagn::MigrationHelper.schema_mode :card do
+      Wagn::Migration.schema_mode :card do
+        ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
+        ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+      end
+    end
+    
+    desc "migrate deck cards"
+    task :deck_cards => :environment do
+      Wagn::Cache.reset_global
+      ENV['SCHEMA'] = "#{Rails.root}/db/schema.rb"
+      Wagn.config.action_mailer.perform_deliveries = false
+      Card # this is needed in production mode to insure core db structures are loaded before schema_mode is set
+    
+      paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.deck_card_migration_paths
+    
+      Wagn::Migration.schema_mode :deck do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       end
@@ -112,7 +135,7 @@ namespace :wagn do
       Wagn.config.action_mailer.perform_deliveries = false
       
       stamp_file = Wagn::Version.schema_stamp_path( args[:suffix] )
-      Wagn::MigrationHelper.schema_mode args[:suffix ] do
+      Wagn::Migration.schema_mode args[:suffix ] do
         version = ActiveRecord::Migrator.current_version
         puts ">>  writing version: #{version} to #{stamp_file}"
         if file = open(stamp_file, 'w')
@@ -122,31 +145,59 @@ namespace :wagn do
     end
   end
 
+
+  namespace :emergency do
+    task :rescue_watchers => :environment do
+      follower_hash = Hash.new { |h, v| h[v] = [] } 
+      
+      Card.where("right_id" => 219).each do |watcher_list|
+        watcher_list.include_set_modules
+        if watcher_list.left
+          watching = watcher_list.left.name
+          watcher_list.item_names.each do |user|
+            follower_hash[user] << watching
+          end
+        end
+      end
+      
+      Card.search(:right=>{:codename=>"following"}).each do |following|
+        Card::Auth.as_bot do
+          following.update_attributes! :content=>''
+        end
+      end
+      
+      follower_hash.each do |user, items|
+        if card=Card.fetch(user) and card.account
+          Card::Auth.as(user) do
+            following = card.fetch :trait=>"following", :new=>{}
+            following.items = items
+          end
+        end
+      end
+    end
+  end
+  
   namespace :bootstrap do
     desc "rid template of unneeded cards, revisions, and references"
     task :clean => :environment do
       Wagn::Cache.reset_global
-
+      conn =  ActiveRecord::Base.connection
       # Correct time and user stamps
-      %w{ cards card_revisions }.each do |table|
-        sql =  "update #{table} set created_at=now(), creator_id=#{ Card::WagnBotID }"
-        sql +=                    ",updated_at=now(), updater_id=#{ Card::WagnBotID }" if table == 'cards'
-        ActiveRecord::Base.connection.update sql
-      end
+      card_sql =  "update cards set created_at=now(), creator_id=#{ Card::WagnBotID }"
+      card_sql +=                 ",updated_at=now(), updater_id=#{ Card::WagnBotID }"
+      conn.update card_sql
+      act_sql =  "update card_acts set acted_at=now(), actor_id=#{ Card::WagnBotID }"
+      conn.update act_sql
 
       Card::Auth.as_bot do
         # delete ignored cards
         
         if ignoramus = Card['*ignore']
           ignoramus.item_cards.each do |card|
-            if card.account #have to get rid of revisions to delete account  
-              #(could also directly delete cards "manually", but would need to delete all descendants manually, too)
-              ActiveRecord::Base.connection.delete( "delete from card_revisions where card_id = #{card.id}" )
-            end
             card.delete!
           end
         end
-        
+        Wagn::Cache.reset_global
         %w{ machine_input machine_output }.each do |codename|
           Card.search(:right=>{:codename=>codename }).each do |card|
             FileUtils.rm_rf File.join('files', card.id.to_s ), :secure=>true            
@@ -155,18 +206,25 @@ namespace :wagn do
         end
       end
 
-      ActiveRecord::Base.connection.delete( "delete from cards where trash is true" )
+      conn.delete( "delete from cards where trash is true" )
 
-      # delete unwanted rows ( will need to revise if we ever add db-level data integrity checks )
-      ActiveRecord::Base.connection.delete( "delete from card_revisions where not exists " +
-        "( select name from cards where current_revision_id = card_revisions.id )"
-      )
-      ActiveRecord::Base.connection.delete( "delete from card_references where" +
+      Card::Action.delete_cardless
+      Card::Action.delete_old
+      Card::Change.delete_actionless
+
+
+      act = Card::Act.create!(:actor_id=>Card::WagnBotID,
+       :card_id=>Card::WagnBotID)
+      Card::Action.find_each do |action|
+        action.update_attributes!(:card_act_id=>act.id)
+      end
+      Card::Act.where('id != ?',act.id).delete_all
+      conn.delete( "delete from card_references where" +
         " (referee_id is not null and not exists (select * from cards where cards.id = card_references.referee_id)) or " +
         " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"
       )
       
-      ActiveRecord::Base.connection.delete( "delete from sessions" )
+      conn.delete( "delete from sessions" )
       
       Wagn::Cache.reset_global
       
@@ -203,7 +261,7 @@ namespace :wagn do
     desc "copy files from template database to standard mod and update cards"
     task :copy_mod_files => :environment do
       template_files_dir = "#{Wagn.root}/files"
-      standard_files_dir = "#{Wagn.gem_root}/mod/standard/file"
+      standard_files_dir = "#{Wagn.gem_root}/mod/05_standard/file"
       
       #FIXME - this should delete old revisions
       
@@ -212,8 +270,7 @@ namespace :wagn do
       
       # add a fourth line to the raw content of each image (or file) to identify it as a mod file
       Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
-        rev = Card::Revision.find card.current_revision_id
-        rev.update_attributes :content=>rev.content + "\nstandard"        
+        card.update_attributes :content=>card.db_content + "\nstandard"      
       end
     end
 

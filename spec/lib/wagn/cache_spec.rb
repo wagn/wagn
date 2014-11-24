@@ -3,16 +3,16 @@
 describe Wagn::Cache do
   describe "with nil store" do
     before do
-      mock(Wagn::Cache).generate_cache_id.times(2).returns("cache_id")
+      expect(Wagn::Cache).to receive(:generate_cache_id).exactly(2).times.and_return("cache_id")
       @cache = Wagn::Cache.new :prefix=>"prefix"
     end
 
     describe "#basic operations" do
       it "should work" do
         @cache.write("a", "foo")
-        @cache.read("a").should == "foo"
+        expect(@cache.read("a")).to eq("foo")
         @cache.fetch("b") { "bar" }
-        @cache.read("b").should == "bar"
+        expect(@cache.read("b")).to eq("bar")
         @cache.reset
       end
     end
@@ -21,57 +21,57 @@ describe Wagn::Cache do
   describe "with same cache_id" do
     before :each do
       @store = ActiveSupport::Cache::MemoryStore.new
-      mock(Wagn::Cache).generate_cache_id().returns("cache_id")
+      expect(Wagn::Cache).to receive(:generate_cache_id).and_return("cache_id")
       @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
     end
 
     it "#read" do
-      mock(@store).read("prefix/cache_id/foo")
+      expect(@store).to receive(:read).with("prefix/cache_id/foo")
       @cache.read("foo")
     end
 
     it "#write" do
-      mock(@store).write("prefix/cache_id/foo", "val")
+      expect(@store).to receive(:write).with("prefix/cache_id/foo", "val")
       @cache.write("foo", "val")
-      @cache.read('foo').should == "val"
+      expect(@cache.read('foo')).to eq("val")
     end
 
     it "#fetch" do
       block = Proc.new { "hi" }
-      mock(@store).fetch("prefix/cache_id/foo", &block)
+      expect(@store).to receive(:fetch).with("prefix/cache_id/foo", &block)
       @cache.fetch("foo", &block)
     end
 
     it "#delete" do
-      mock(@store).delete("prefix/cache_id/foo")
+      expect(@store).to receive(:delete).with("prefix/cache_id/foo")
       @cache.delete "foo"
     end
 
     it "#write_local" do
       @cache.write_local('a', 'foo')
-      @cache.read("a").should == 'foo'
-      mock.dont_allow(@store).write
-      @cache.store.read("a").should == nil
+      expect(@cache.read("a")).to eq('foo')
+      expect(@store).not_to receive(:write)
+      expect(@cache.store.read("a")).to eq(nil)
     end
   end
 
   it "#reset" do
-    mock(Wagn::Cache).generate_cache_id.returns("cache_id1")
+    expect(Wagn::Cache).to receive(:generate_cache_id).and_return("cache_id1")
     @store = ActiveSupport::Cache::MemoryStore.new
     @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
-    @cache.prefix.should == "prefix/cache_id1/"
+    expect(@cache.prefix).to eq("prefix/cache_id1/")
     @cache.write("foo","bar")
-    @cache.read("foo").should == "bar"
+    expect(@cache.read("foo")).to eq("bar")
 
     # reset
-    mock(Wagn::Cache).generate_cache_id.returns("cache_id2")
+    expect(Wagn::Cache).to receive(:generate_cache_id).and_return("cache_id2")
     @cache.reset
-    @cache.prefix.should == "prefix/cache_id2/"
-    @cache.store.read("prefix/cache_id").should == "cache_id2"
-    @cache.read("foo").should be_nil
+    expect(@cache.prefix).to eq("prefix/cache_id2/")
+    expect(@cache.store.read("prefix/cache_id")).to eq("cache_id2")
+    expect(@cache.read("foo")).to be_nil
 
     cache2 = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
-    cache2.prefix.should == "prefix/cache_id2/"
+    expect(cache2.prefix).to eq("prefix/cache_id2/")
   end
 
   describe "with file store" do
@@ -88,7 +88,7 @@ describe Wagn::Cache do
       #files_to_remove = root_dirs.collect{|f| File.join(cache_path, f)}
       #FileUtils.rm_r(files_to_remove)
 
-      mock(Wagn::Cache).generate_cache_id.times(2).returns("cache_id1")
+      expect(Wagn::Cache).to receive(:generate_cache_id).exactly(2).times.and_return("cache_id1")
       @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
     end
 
@@ -96,7 +96,7 @@ describe Wagn::Cache do
       it "should work" do
         @cache.write('%\\/*:?"<>|', "foo")
         cache2 = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
-        cache2.read('%\\/*:?"<>|').should == "foo"
+        expect(cache2.read('%\\/*:?"<>|')).to eq("foo")
         @cache.reset
       end
     end
@@ -106,8 +106,8 @@ describe Wagn::Cache do
         @cache.write('(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén', "foo")
         @cache.write('русский', "foo")
         cache3 = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
-        cache3.read('(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén').should == "foo"
-        cache3.read('русский').should == "foo"
+        expect(cache3.read('(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén')).to eq("foo")
+        expect(cache3.read('русский')).to eq("foo")
         @cache.reset
       end
     end

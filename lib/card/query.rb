@@ -58,10 +58,10 @@ class Card::Query
 
 
   class SqlStatement
-    attr_accessor :fields, :relevance_fields, :tables, :joins, :conditions, :group, :order, :limit, :offset
+    attr_accessor :fields, :tables, :joins, :conditions, :group, :order, :limit, :offset
 
     def initialize
-      @fields, @relevance_fields, @joins, @conditions = [],[],[],[]
+      @fields, @joins, @conditions = [],[],[],[]
       @tables, @group, @order, @limit, @offset = "","","","",""
     end
 

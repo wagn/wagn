@@ -4,7 +4,7 @@ describe Card do
 
   describe "test data" do
     it "should be findable by name" do
-      Card["Wagn Bot"].class.should == Card
+      expect(Card["Wagn Bot"].class).to eq(Card)
     end
   end
 
@@ -16,23 +16,24 @@ describe Card do
       end
     end
 
-    it "should not have errors"        do @b.errors.size.should == 0        end
-    it "should have the right class"   do @c.class.should    == Card        end
-    it "should have the right key"     do @c.key.should      == "new_card"  end
-    it "should have the right name"    do @c.name.should     == "New Card"  end
-    it "should have the right content" do @c.content.should  == "Great Content" end
+    it "should not have errors"        do expect(@b.errors.size).to eq(0)        end
+    it "should have the right class"   do expect(@c.class).to    eq(Card)        end
+    it "should have the right key"     do expect(@c.key).to      eq("new_card")  end
+    it "should have the right name"    do expect(@c.name).to     eq("New Card")  end
+    it "should have the right content" do expect(@c.content).to  eq("Great Content") end
 
-    it "should have a revision with the right content" do
-      @c.current_revision.content == "Great Content"
+    it "should have the right content" do
+      expect(@c.db_content).to eq("Great Content")
+      expect(@c.content).to eq("Great Content")
     end
 
     it "should be findable by name" do
-      Card["New Card"].class.should == Card
+      expect(Card["New Card"].class).to eq(Card)
     end
   end
 
 
-  describe "content change should create new revision" do
+  describe "content change should create new action" do
     before do
       Card::Auth.as_bot do
         @c = Card['basicname']
@@ -40,12 +41,12 @@ describe Card do
       end
     end
 
-    it "should have 2 revisions"  do
-      @c.revisions.length.should == 2
+    it "should have 2 actions"  do
+      expect(@c.actions.count).to eq(2)
     end
 
-    it "should have original revision" do
-      @c.revisions[0].content.should == 'basiccontent'
+    it "should have original action" do
+      expect(@c.nth_revision(1)[:db_content]).to eq('basiccontent')
     end
   end
 
@@ -53,7 +54,7 @@ describe Card do
 
   describe "created a virtual card when missing and has a template" do
     it "should be flagged as virtual" do
-      Card.new(:name=>'A+*last edited').virtual?.should be_true
+      expect(Card.new(:name=>'A+*last edited').virtual?).to be_truthy
     end
   end
 end
@@ -62,15 +63,15 @@ describe "basic card tests" do
 
 
   def assert_simple_card card
-    card.name.should be, "name not null"
-    card.name.empty?.should be_false, "name not empty"
-    rev = card.current_revision
-    rev.should be_instance_of Card::Revision
-    rev.creator.should be_instance_of Card
+    expect(card.name).to be, "name not null"
+    expect(card.name.empty?).to be_falsey, "name not empty"
+    action = card.last_action
+    expect(action).to be_instance_of Card::Action
+    expect(action.act.actor).to be_instance_of Card
   end
 
   def assert_samecard card1, card2
-    assert_equal card1.current_revision, card2.current_revision
+    assert_equal card1, card2
   end
 
   def assert_stable card1
@@ -93,10 +94,10 @@ describe "basic card tests" do
 
     Card['Forba'].delete!
 
-    Card["Forba"].should be_nil
-    Card["Forba+TorgA"].should be_nil
-    Card["TorgB+Forba"].should be_nil
-    Card["Forba+TorgA+TorgC"].should be_nil
+    expect(Card["Forba"]).to be_nil
+    expect(Card["Forba+TorgA"]).to be_nil
+    expect(Card["TorgB+Forba"]).to be_nil
+    expect(Card["Forba+TorgA+TorgC"]).to be_nil
 
     # FIXME: this is a pretty dumb test and it takes a loooooooong time
     #while card = Card.find(:first,:conditions=>["type not in (?,?,?) and trash=?", 'AccountRequest','User','Cardtype',false] )
@@ -114,16 +115,16 @@ describe "basic card tests" do
 
   it 'should create cards' do
     alpha = Card.new :name=>'alpha', :content=>'alpha'
-    alpha.content.should == 'alpha'
+    expect(alpha.content).to eq('alpha')
     alpha.save
-    alpha.name.should == 'alpha'
+    expect(alpha.name).to eq('alpha')
     assert_stable alpha
   end
 
 
   it 'should not find nonexistent' do
-    Card['no such card+no such tag'].should be_nil
-    Card['HomeCard+no such tag'].should be_nil
+    expect(Card['no such card+no such tag']).to be_nil
+    expect(Card['HomeCard+no such tag']).to be_nil
   end
 
 
@@ -132,34 +133,34 @@ describe "basic card tests" do
     Card.update banana.id, :subcards=>{ "+peel" => { :content => "yellow" }}
 
     peel = Card['Banana+peel']
-    peel.content.       should == "yellow"
-    Card['joe_user'].id.should == peel.creator_id
+    expect(peel.content).       to eq("yellow")
+    expect(Card['joe_user'].id).to eq(peel.creator_id)
   end
 
   it 'update_should_create_subcards_as_wagn_bot_if_missing_subcard_permissions' do
     Card.create :name=>'peel'
     Card::Auth.current_id = Card::AnonymousID
-    Card['Banana'].should_not be
-    Card['Basic'].ok?(:create).should be_false, "anon can't creat"
+    expect(Card['Banana']).not_to be
+    expect(Card['Basic'].ok?(:create)).to be_falsey, "anon can't creat"
 
     Card.create! :type=>"Fruit", :name=>'Banana', :subcards=>{ "+peel" => { :content => "yellow" }}
-    Card['Banana'].should be
+    expect(Card['Banana']).to be
     peel = Card["Banana+peel"]
 
-    peel.current_revision.content.should == "yellow"
-    peel.creator_id.should == Card::AnonymousID
+    expect(peel.db_content).to eq("yellow")
+    expect(peel.creator_id).to eq(Card::AnonymousID)
   end
 
   it 'update_should_not_create_subcards_if_missing_main_card_permissions' do
     b = Card.create!( :name=>'Banana' )
     Card::Auth.as Card::AnonymousID do
       b.update_attributes :subcards=>{ "+peel" => { :content => "yellow" }}
-      b.errors[:permission_denied].should_not be_empty
+      expect(b.errors[:permission_denied]).not_to be_empty
       
       
       c = Card.update(b.id, :subcards=>{ "+peel" => { :content => "yellow" }})
-      c.errors[:permission_denied].should_not be_empty
-      Card['Banana+peel'].should be_nil
+      expect(c.errors[:permission_denied]).not_to be_empty
+      expect(Card['Banana+peel']).to be_nil
     end
   end
 

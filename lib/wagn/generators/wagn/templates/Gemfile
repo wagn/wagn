@@ -14,33 +14,43 @@ gem 'therubyracer'
 
 <% if options['mod-dev'] -%>
 group :test do
-  gem 'rspec-rails', "~> 2.6"   # behavior-driven-development suite
+  gem 'rspec-rails', '~> 3.1.0'   # behavior-driven-development suite
   gem 'spork', '>=0.9'
+  # gem 'simplecov' # code coverage analysis tool
 end
 
 group :test, :development do
   gem 'rails-dev-tweaks'
   gem 'sprockets' # just so above works
-  gem 'byebug'
+  # gem 'pry-rails'
+  # gem 'pry-rescue'
+  # gem 'pry-stack_explorer'
+  if RUBY_VERSION =~ /^2/
+		gem 'byebug' 
+    # gem 'pry-byebug'
+	else
+		gem 'debugger'
+	end
 end
 
 <% end -%>
-<% if options['core-dev'] -%>
-  
+
+<% if options['core-dev'] -%>  
 group :assets do
   gem 'jquery-rails',  '~> 3.1'                # main js framework, along with rails-specific unobtrusive lib
   gem 'jquery-ui-rails',  '~> 4.2'             # main js framework, along with rails-specific unobtrusive lib
   gem "jquery_mobile_rails", "~> 1.4.1"
 
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
-
-  # execjs is necessary for developing coffeescript.  mac users have execjs built-in; don't need this one
-  gem 'therubyrhino', :platform=>:ruby         # :ruby is MRI rubies, so if you use a mac ruby ...
 end
 
+group :development do
+  gem 'rails-dev-tweaks'
+  gem 'sprockets' # just so above works
+end
 
 group :test do
-  gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
+  gem 'rspec-rails', '~> 3.1.0'                 # behavior-driven-development suite
   gem 'spork', '>=0.9'                                           
   gem 'rr'#, '=1.0.0'
   
@@ -49,6 +59,8 @@ group :test do
   gem 'guard-rspec', '~> 4.2'                  # trigger test runs based on file edits
   if RUBY_PLATFORM =~ /darwin/
     gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
+    # gem 'rspec-legacy_formatters'
+    # gem 'wagn-rspec-formatter', :path=>'/opt/wagn-rspec-formatter'
   end
 
   # CUKES see features dir
@@ -71,9 +83,15 @@ end
 
 gem 'ruby-prof', '~>0.12.1', :group=>:profile  # profiling
 
+group :development, :test do
+  gem 'pry-rails'
+  gem 'pry-rescue'
+  gem 'pry-stack_explorer'
+end
+
 group :debug do
   if RUBY_VERSION =~ /^2/
-		gem 'byebug' 
+    gem 'pry-byebug'
 	else
 		gem 'debugger'
 	end

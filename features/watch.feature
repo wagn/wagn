@@ -20,7 +20,7 @@ Feature: Watch interface
     Then In the main card menu I should see "following|unfollow"
     # assumes focus still on that link.  otherwise "following"
     # selenium behavior not totally consistent here.
-    And the card Home+*watchers should contain "Joe User"
+    And the card Joe User+*following should contain "Home"
 
   Scenario: Unwatching a Card
     Given Joe User is watching "Home"
@@ -29,7 +29,7 @@ Feature: Watch interface
     And In the main card menu I click "following"
     #note: turns to "unfollow on mouseover"
     Then In the main card menu I should see "follow"
-    And the card Home+*watchers should not contain "Joe User"
+    And the card Joe User+*following should not contain "Home"
 
   Scenario: Watching a Cardtype
     When I go to card User

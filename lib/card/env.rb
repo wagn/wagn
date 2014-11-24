@@ -8,9 +8,10 @@ class Card
       
         if c = args[:controller]
           self[:controller] = c
-          self[:session] = c.request.session
-          self[:params] = c.request.params
-          self[:ajax] = c.request.xhr? || c.request.params[:simulate_xhr]
+          self[:session]    = c.request.session
+          self[:params]     = c.request.params
+          self[:ip]         = c.request.remote_ip
+          self[:ajax]       = c.request.xhr? || c.request.params[:simulate_xhr]
           self[:host]       = Wagn.config.override_host     || c.request.env['HTTP_HOST']
           self[:protocol]   = Wagn.config.override_protocol || c.request.protocol
         

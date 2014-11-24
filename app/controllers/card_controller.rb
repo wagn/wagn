@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 require_dependency 'card'
+require_dependency 'card/action'
 
 class CardController < ActionController::Base
 
@@ -11,7 +12,12 @@ class CardController < ActionController::Base
   before_filter :load_id, :only => [ :read ]
   before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
-
+  
+  if Wagn.config.request_logger
+    require 'csv'
+    after_filter :request_logger 
+  end
+  
   layout nil
 
   attr_reader :card
@@ -44,37 +50,6 @@ class CardController < ActionController::Base
     send_file_inside Wagn.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
   end
   
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ## the following methods need to be merged into #update
-
-  def save_draft
-    if card.save_draft params[:card][:content]
-      render :nothing=>true
-    else
-      render_errors
-    end
-  end
-
-  def rollback
-    revision = card.revisions[params[:rev].to_i - 1]
-    card.update_attributes! :content=>revision.content
-    card.attachment_link revision.id
-    show
-  end
-
-  def watch
-    watchers = card.fetch :trait=>:watchers, :new=>{}
-    watchers = watchers.refresh
-    myname = Card::Auth.current.name
-    watchers.send((params[:toggle]=='on' ? :add_item : :drop_item), myname)
-    watchers.save!
-    ajax? ? show(:watch) : read
-    
-  end
-
-
-
-
   private
   
   # make sure that filenname doesn't leave allowed_path using ".."
@@ -118,10 +93,6 @@ class CardController < ActionController::Base
     @card = case params[:id]
       when '*previous'
         return wagn_redirect( previous_location )
-      when /^\~(\d+)$/ # get by id
-        Card.fetch( $1.to_i ) or raise Wagn::NotFound 
-      when /^\:(\w+)$/ # get by codename
-        Card.fetch $1.to_sym
       else  # get by name
         opts = params[:card] ? params[:card].clone : {}   # clone so that original params remain unaltered.  need deeper clone?
         opts[:type] ||= params[:type] if params[:type]    # for /new/:type shortcut.  we should fix and deprecate this.
@@ -137,7 +108,8 @@ class CardController < ActionController::Base
           Card.fetch mark, :new=>opts
         end
       end
-    @card.selected_revision_id = params[:rev].to_i if params[:rev]
+    raise Wagn::NotFound unless @card
+    @card.selected_action_id = (action=@card.find_action_by_params(params) and action.id)
     
     Card::Env[:main_name] = params[:main] || (card && card.name) || ''
     render_errors if card.errors.any?
@@ -148,7 +120,27 @@ class CardController < ActionController::Base
     @card =  card.refresh
   end
 
-
+  def request_logger
+    unless env["REQUEST_URI"] =~ %r{^/files?/}
+      log = []
+      log << (Card::Env.ajax? ? "YES" : "NO")
+      log << env["REMOTE_ADDR"]
+      log << Card::Auth.current_id
+      log << card.name
+      log << action_name
+      log << params['view'] || (s = params['success'] and  s['view'])
+      log << env["REQUEST_METHOD"]
+      log << status
+      log << env["REQUEST_URI"]
+      log << DateTime.now.to_s
+      log_dir = (Wagn.paths['request_log'] || Wagn.paths['log']).first
+      log_filename = "#{Date.today}_#{Rails.env}.csv"
+      File.open(File.join(log_dir,log_filename), "a") do |f|
+        f.write CSV.generate_line(log)
+      end
+    end
+  end
+  
   protected
 
   def ajax?

@@ -5,11 +5,19 @@ ENV["RAILS_ENV"] = 'test'
 
 
 Spork.prefork do
+  require File.expand_path( '../simplecov_helper.rb', __FILE__ )
+  
   if ENV["RAILS_ROOT"]
     require File.join( ENV["RAILS_ROOT"], '/config/environment')
   else
     require File.expand_path( '../../config/environment', __FILE__ )
   end
+
+  if defined?(Bundler)
+    Bundler.require(:test)   # if simplecov is activated in the Gemfile, it has to be required here
+  end
+  
+
   
   require 'rspec/rails'
   
@@ -21,14 +29,13 @@ Spork.prefork do
   JOE_USER_ID = Card['joe_user'].id
 
   RSpec.configure do |config|
-
-    config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => {
+    config.include RSpec::Rails::Matchers::RoutingMatchers,  {
       :file_path => /\bspec\/controllers\//
     }
-
-    format_index = ARGV.find_index {|arg| arg =~ /--format/ }
-    formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation'
-    config.add_formatter formatter
+    config.infer_spec_type_from_file_location!
+    # format_index = ARGV.find_index {|arg| arg =~ /--format/ }
+    # formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation'
+    # config.add_formatter formatter
     
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers
@@ -59,6 +66,7 @@ Spork.each_run do
   # This code will be run each time you run your specs.
 end
 
-require 'wagn/wagn_spec_helper'
-RSpec::Core::ExampleGroup.send :include, Wagn::WagnSpecHelper
+require 'wagn/spec_helper'
+RSpec::Core::ExampleGroup.send :include, Wagn::SpecHelper
+
 

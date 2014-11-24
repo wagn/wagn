@@ -29,7 +29,12 @@ end
 
 format :html do
   view :editor, :mod=>PlainText::HtmlFormat
-  view :content_changes, :mod=>JavaScript::HtmlFormat
+
+  view :content_changes do |args|
+    %{
+      <pre>#{super(args)}</pre>
+    }
+  end
   
   view :core do |args|
     js = card.compile_coffee _render_raw

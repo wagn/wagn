@@ -35,13 +35,8 @@ format :html do
     process_content ::CodeRay.scan( _render_raw, :css ).div, :size=>:icon
   end
   
-  view :content_changes do |args|
-    %{
-      <pre>
-      #{super(args)}
-      </pre>
-    }
-  end
+  view :content_changes, :mod=>CoffeeScript::HtmlFormat
+
   
 end
 

@@ -216,30 +216,30 @@ end
 Then /the card (.*) should contain "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")
   within scope_of("main card content") do
-    page.should have_content(content)
+    expect(page).to have_content(content)
   end
 end
 
 Then /the card (.*) should not contain "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")
   within scope_of("main card content") do
-    page.should_not have_content(content)
+    expect(page).not_to have_content(content)
   end
 end
 
 Then /^In (.*) I should see "([^\"]*)"$/ do |section, text|
   within scope_of(section) do
     if text.index('|')
-      text.split('|').any? {|t| have_content(t)}.should be
+      expect(text.split('|').any? {|t| have_content(t)}).to be
     else
-      page.should have_content(text)
+      expect(page).to have_content(text)
     end
   end
 end
 
 Then /^In (.*) I should not see "([^\"]*)"$/ do |section, text|
   within scope_of(section) do
-    page.should_not have_content(text)
+    expect(page).not_to have_content(text)
   end
 end
 
@@ -252,11 +252,11 @@ Then /^In (.*) I should (not )?see a ([^\"]*) with class "([^\"]*)"$/ do |select
 end
 
 Then /^the "([^"]*)" field should contain "([^"]*)"$/ do |field, value|
-  field_labeled(field).value.should =~ /#{value}/
+  expect(field_labeled(field).value).to match(/#{value}/)
 end
 
 Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
-  field_labeled(field).element.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
+  expect(field_labeled(field).element.search(".//option[@selected = 'selected']").inner_html).to match(/#{value}/)
 end
 
 When /^I press enter to search$/ do
@@ -265,7 +265,7 @@ end
 
 ## variants of standard steps to handle """ style quoted args
 Then /^I should see$/ do |text|
-  page.should have_content(text)
+  expect(page).to have_content(text)
 end
 
 Then /^I should see "([^\"]*)" in (.*)$/ do |text, css_class|

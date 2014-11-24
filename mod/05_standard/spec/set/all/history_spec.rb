@@ -17,7 +17,7 @@ describe Card::Set::All::History do
       end
       it 'should have a summary' do
         assert_view_select subject, 'del[class="diffdel diff-red"]', :text=>'chicken' 
-        assert_view_select subject, 'del[class="diffdel diff-green"]', :text=>'chick'         
+        assert_view_select subject, 'ins[class="diffins diff-green"]', :text=>'chick'         
       end
     end
   end

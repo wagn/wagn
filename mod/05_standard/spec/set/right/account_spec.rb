@@ -30,13 +30,13 @@ describe Card::Set::Right::Account do
     end
   end
   
-  describe '#send_account_confirmation_email' do
+  describe '#send_account_verification_email' do
     before do
       @email = 'joe@user.com'
       @account = Card::Auth[@email].account
-      ActionMailer::Base.deliveries = []
-      @account.send_account_confirmation_email
-      @mail = ActionMailer::Base.deliveries.last
+      Mail::TestMailer.deliveries.clear
+      @account.send_account_verification_email
+      @mail = Mail::TestMailer.deliveries.last
     end
 
     it 'has correct address' do
@@ -52,7 +52,7 @@ describe Card::Set::Right::Account do
     end
 
     it 'contains expiry days' do
-      expect(@mail.parts[0].body.raw_source).to include("(link will remain valid for #{Wagn.config.token_expiry / 1.day } days)")
+      expect(@mail.parts[0].body.raw_source).to include("valid for #{Wagn.config.token_expiry / 1.day } days")
     end
   end
 
@@ -60,9 +60,9 @@ describe Card::Set::Right::Account do
     before do
       @email = 'joe@user.com'
       @account = Card::Auth[@email].account
-      ActionMailer::Base.deliveries = []
+      Mail::TestMailer.deliveries = []
       @account.send_reset_password_token
-      @mail = ActionMailer::Base.deliveries.last
+      @mail = Mail::TestMailer.deliveries.last
     end
 
     it 'contains deck title' do
@@ -74,7 +74,7 @@ describe Card::Set::Right::Account do
     end
 
     it 'contains expiry days' do
-      expect(@mail.parts[0].body.raw_source).to include("(link will remain valid for #{Wagn.config.token_expiry / 1.day } days)")
+      expect(@mail.parts[0].body.raw_source).to include("valid for #{Wagn.config.token_expiry / 1.day } days")
     end
   end
   
@@ -139,21 +139,22 @@ describe Card::Set::Right::Account do
   
   describe '#send_change_notice' do
     it 'send multipart email' do
-      pending
+      skip
+#      pending
     end
     
     context 'denied access' do
       it 'excludes protected subcards' do
+        skip
         Card.create(:name=>"A+B+*self+*read", :type=>'Pointer', :content=>"[[u1]]")
         u2 = Card.fetch 'u2+*following', :new=>{:type=>'Pointer'}
         u2.add_item "A"
         a = Card.fetch "A"
         a.update_attributes( :content=> "new content", :subcards=>{'+B'=>{:content=>'hidden content'}})
-        pending
       end
       
       it 'sends no email if changes not visible' do
-        pending
+        skip
       end
     end
   end

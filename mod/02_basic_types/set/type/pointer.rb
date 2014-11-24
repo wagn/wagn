@@ -11,18 +11,20 @@ format do
   end
   
   view :core do |args|
-    pointer_items args[:item], joint=', '
+    render_pointer_items args.merge(:joint=>', ')
   end
   
-  def pointer_items itemview=nil, joint=' '
-    args = { :view => ( itemview || (@inclusion_opts && @inclusion_opts[:view]) || default_item_view ) }
+  view :pointer_items, :tags=>:unknown_ok do |args|
+    item_args = { :view => ( args[:item] || (@inclusion_opts && @inclusion_opts[:view]) || default_item_view ) }
+    joint = args[:joint] || ' '
     
     if type = card.item_type
-      args[:type] = type
+      item_args[:type] = type
     end
+
     
     card.item_cards.map do |icard|
-      wrap_item nest(icard, args.clone), args 
+      wrap_item nest(icard, item_args.clone), item_args 
     end.join joint
   end
 
@@ -31,7 +33,7 @@ end
 format :html do
 
   view :core do |args|
-    %{<div class="pointer-list">#{ pointer_items args[:item], args[:joint] }</div>}
+    %{<div class="pointer-list">#{ render_pointer_items args }</div>}
   end
 
   view :closed_content do |args|
@@ -229,20 +231,21 @@ def << item
   add_item newname
 end
 
-def add_item newname
-  inames = item_names
-  unless inames.include? newname
-    self.content="[[#{(inames << newname).reject(&:blank?)*"]]\n[["}]]"
+def add_item name
+  unless include_item? name
+    self.content="[[#{(item_names << name).reject(&:blank?)*"]]\n[["}]]"
   end
 end
 
 def drop_item name
-  inames = item_names
-  if inames.include? name
-    inames = inames.reject{|n|n==name}
-    self.content= inames.empty? ? '' : "[[#{inames * "]]\n[["}]]"
+  if include_item? name
+    key = name.to_name.key
+    new_names = item_names.reject{ |n| n.to_name.key == key }
+    self.content = new_names.empty? ? '' : "[[#{new_names * "]]\n[["}]]"
   end
 end
+
+
 
 def options_card
   self.rule_card :options

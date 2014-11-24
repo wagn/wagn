@@ -50,7 +50,7 @@ format :html do
         current_rule.assign_attributes card_args
         current_rule.include_set_modules
       end
-      set_selected = card_args[:name].to_name.left_name.to_s
+      set_selected = card_args[:name].to_name.left
       edit_mode = true
     end
 

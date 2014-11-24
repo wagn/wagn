@@ -28,7 +28,7 @@ def item_type
 end
 
 def include_item? cardname
-  ::Set.new(item_names).member? cardname
+  ::Set.new(item_names.map{|name| name.to_name.key}).member? cardname.to_name.key
 end
 
 def extended_item_cards context = nil
@@ -72,7 +72,7 @@ end
 
 def contextual_content context_card, format_args={}, view_args={}
   context_card.format(format_args).process_content(
-    self.format(format_args)._render_raw(view_args)
+    self.format(format_args)._render_raw(view_args), view_args
   )
 end
 

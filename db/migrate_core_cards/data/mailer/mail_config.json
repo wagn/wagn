@@ -1,0 +1,22 @@
+[
+  {
+    "name"      : "verification email",
+	  "codename"  : "verification_email",
+    "subject"   : "verification link for {{:title|core}}"
+  },
+  {
+    "name"    : "password reset email",
+	  "codename": "password_reset_email",
+    "subject" : "reset password for {{:title|core}}"
+  },
+  {
+    "name"    : "signup alert email",
+  	"codename": "signup_alert_email",
+    "subject" : "{{_|name}} signed up for {{:title|core}}"
+  },
+  {
+    "name"    : "follower notification email",
+  	"codename": "follower_notification_email",
+    "subject" : "{{_user|name}} {{_|last_action}} \"{{_|name}}\""
+  }
+]

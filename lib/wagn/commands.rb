@@ -52,7 +52,7 @@ else
     parser = OptionParser.new do |parser|
       parser.banner = "Usage: wagn seed [options]\n\nCreate and seed the production database specified in config/database.yml\n\n"
       parser.on('--production','-p', 'seed production database (default)') do
-        envs = ['test']
+        envs = ['production']
       end
       parser.on('--test','-t', 'seed test database') do
         envs = ['test']
@@ -73,7 +73,11 @@ else
     load_rake_tasks
     Rake::Task['wagn:update'].invoke
   when 'cucumber'
-    system "RAILS_ROOT=. bundle exec cucumber -r #{Wagn.gem_root}/features #{ ARGV.join(' ') }"
+    feature_paths = Dir.glob("./mod/**/features")
+    require_args = "-r #{Wagn.gem_root}/features "
+    require_args += feature_paths.map { |path| "-r #{path}"}.join(' ')
+    feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.join(' ')
+    system "RAILS_ROOT=. bundle exec cucumber #{require_args} #{feature_args}"
   when 'rspec'
     opts = {}
     require 'rspec/core'

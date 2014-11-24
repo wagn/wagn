@@ -32,7 +32,7 @@ describe Card::Set::All::Pattern do
     it "returns set names for compound star cards" do
       Card::Auth.as_bot do
         expect(Card.new( :name=>"Iliad+*to" ).set_names).to eq([
-          "Book+*to+*type plus right","*to+*right","*rstar","Phrase+*type","*all plus","*all"
+          "Book+*to+*type plus right","*to+*right","*rstar","Pointer+*type","*all plus","*all"
         ])
       end
     end

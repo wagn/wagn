@@ -1,5 +1,0 @@
-{{_|name}} ({{+*email|core}}) has signed up on {{:title|core}}.
-
-See {{_|name}}'s card: {{_|url}}
-
--- the machines running {{:title|core}}

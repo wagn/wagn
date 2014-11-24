@@ -24,21 +24,7 @@ def authenticate_by_token val
 end
 
 
-
-format :html do
-
-  view :raw do |args|
-    content = []
-    content << "{{+#{Card[:email   ].name}|titled;title:email}}"    unless args[:no_email]
-    content << "{{+#{Card[:password].name}|titled;title:password}}" unless args[:no_password]
-    content * ' '
-  end
-
-  view :edit do |args|
-    args[:structure] = true
-    super args
-  end
-  
+format do
   view :verify_url do |args|
     wagn_url "/update/#{card.cardname.left_name.url_key}?token=#{card.token}"
   end
@@ -53,6 +39,22 @@ format :html do
 
   view :reset_password_days do |args|
     ( Wagn.config.token_expiry / 1.day ).to_s
+  end
+end
+
+
+format :html do
+
+  view :raw do |args|
+    content = []
+    content << "{{+#{Card[:email   ].name}|titled;title:email}}"    unless args[:no_email]
+    content << "{{+#{Card[:password].name}|titled;title:password}}" unless args[:no_password]
+    content * ' '
+  end
+
+  view :edit do |args|
+    args[:structure] = true
+    super args
   end
 end
 
@@ -77,7 +79,7 @@ event :set_default_salt, :on=>:create, :before=>:process_subcards do
 end
 
 event :set_default_status, :on=>:create, :before=>:process_subcards do
-  default_status = ( Auth.signed_in? || Auth.needs_setup? ? 'active' : 'pending' )
+  default_status = ( Auth.needs_setup? ? 'active' : 'pending' )
   subcards["+#{Card[:status].name}"] = { :content => default_status }
 end
 
@@ -127,34 +129,15 @@ event :reset_token do
 end
   
 
-event :send_account_confirmation_email, :on=>:create, :after=>:extend do
-  if self.email.present?
-    Card[:confirmation_email].format(:format=>:email).deliver(
-      :context => self,
-      :to     => self.email,
-      :from   => token_emails_from(self),
-    )
-  end
+event :send_account_verification_email, :on=>:create, :after=>:extend, :when=>proc{ |c| c.token.present? } do
+  Card[:verification_email].deliver( :context => self, :to => self.email )
 end
 
 event :send_reset_password_token do
   Auth.as_bot do
     token_card.update_attributes! :content => generate_token
   end
-  Card[:password_reset].format(:format=>:email).deliver(
-    :context => self,
-    :to      => self.email,
-    :from    => token_emails_from(self),
-  )
-end
-
-def token_emails_from account
-  Card.setting( '*invite+*from' ) || begin
-    from_card_id = Auth.current_id
-    from_card_id = WagnBotID if [ AnonymousID, account.left_id ].member? from_card_id
-    from_card = Card[from_card_id]
-    "#{from_card.name} <#{from_card.account.email}>"
-  end
+  Card[:password_reset_email].deliver( :context => self, :to => self.email )
 end
 
 def ok_to_read
@@ -163,7 +146,7 @@ end
 
 
 def changes_visible? act
-  act.relevant_actions_for(card).each do |action|
+  act.relevant_actions_for(act.card).each do |action|
     return true if action.card.ok? :read
   end
   return false
@@ -171,18 +154,12 @@ end
 
 def send_change_notice act, followed_card_name
   if changes_visible?(act) 
-    from_card = Card[WagnBotID] 
-    following_card = left.fetch( :trait=>:following )
-    
-    Card[:follower_notification_email].format(:format=>:email).deliver(
-        :context => Card.find(act.card),
-        :from => from_card.account.email,
-        :locals => {
-          :follower     => left.name, 
-          :followed     => followed_card_name,
-          :unfollow_url => wagn_url( "update/#{following_card.key}?drop_item=#{followed_card_name.to_name.url_key}" )
-        }
-      )
+    Card[:follower_notification_email].deliver(
+      :context   => act.card,
+      :to        => email,
+      :follower  => left.name, 
+      :followed  => followed_card_name,
+    )
   end
 end
 

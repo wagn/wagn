@@ -14,15 +14,20 @@ module Wagn
       end
 
       def schema_stamp_path type
-        stamp_dir = ENV['SCHEMA_STAMP_PATH'] || if type.to_s =~ /deck/
-          File.join( Wagn.root, 'config' )
-        else
-          File.join( Wagn.gem_root, 'config' )
-        end 
+        root_dir = ( type == :deck_cards ? Wagn.root : Wagn.gem_root )
+        stamp_dir = ENV['SCHEMA_STAMP_PATH'] || File.join( root_dir, 'db' )
         
-        File.join stamp_dir, "version#{ '_cards' if type.to_s =~ /card|deck/ }.txt"  
+        File.join stamp_dir, "version#{ schema_suffix(type) }.txt"  
       end
-            
+      
+      def schema_suffix type
+        case type
+        when :core_cards then '_core_cards' # was _cards before !!!
+        when :deck_cards then '_deck_cards'
+        else ''
+        end
+      end
+      
     end
   end
 end

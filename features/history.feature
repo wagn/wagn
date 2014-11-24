@@ -1,36 +1,21 @@
-Feature: Setting up
-  As an Editor
-  I want to be able to rollback to an old version of a card.
+@javascript
+Feature: History
+  As an editor 
+  I want to be able to browse through the history and save an old version as current.
   
   Background:
-    
-  Scenario: Editor restores old content of a card
     Given I am signed in as Joe Admin
-
-    When I go to url "/First?view=history"
-    Then I should see "chicken"
+    Then the card First should not contain "chicken"
     
-    When I follow ""
-    Then I should see "Save as current"
-    # And I hover over the main menu
-    # And In the main card menu I click "view"
-    # Then I should see "Welcome"
-    #
-    # When I fill in "card_name" with "The Newber"
-    # And I enter "newb@wagn.org" into "*email"
-    # And I enter "newb_pass" into "*password"
-    # And I press "Set up"
-    # Then I should see "The Newber"
-    #
-    # When I go to card "The Newber\+\*roles"
-    # Then I should see "Administrator"
-    #
-    # When I follow "Sign out"
-    # And I follow "Sign in"
-    # And I enter "newb@wagn.org" into "*email"
-    # And I enter "newb_pass" into "*password"
-    # And I press "Sign in"
-    # Then I should see "The Newber"
-    #
-    # And site stops simulating setup need
-  
+  Scenario: view history and rollback 
+    When I go to url "/First?view=history" 
+    Then In the main card content I should see a del with content "egg"
+    
+    When I expand act 2
+    And In the main card content I click "Hide changes"
+    Then In the main card content I should not see a del with content "egg"
+
+    When In the main card content I click "Save as current"
+    Then the card First should contain "chicken"
+    
+    

@@ -399,7 +399,7 @@ class Card
       def action_spec(field, linkfield, val)
         card_select = CardSpec.build(:_parent=>self, :return=>'id').merge(val).to_sql
         sql =  "(SELECT DISTINCT #{field} AS join_card_id FROM card_acts INNER JOIN card_actions ON card_acts.id = card_act_id "
-        sql += " WHERE #{linkfield} IN #{card_select} AND (draft=0 OR draft IS NULL))"
+        sql += " JOIN (#{card_select}) AS ss ON #{linkfield}=ss.id AND (draft=0 OR draft IS NULL))"
         add_join :ac, sql, :id, :join_card_id
       end
 

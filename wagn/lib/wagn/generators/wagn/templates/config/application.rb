@@ -1,6 +1,6 @@
 require File.expand_path('../boot', __FILE__)
 
-require 'card/all'
+require 'wagn/all'
 
 module <%= app_const_base %>
   class Application < Wagn::Application

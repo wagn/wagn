@@ -1,9 +1,11 @@
 
-require File.expand_path( '../lib/card/version', __FILE__ )
+#require File.expand_path( '../lib/card/version', __FILE__ )
+#version =    Card::Version.release
+version = File.open(File.expand_path( '../VERSION', __FILE__ )).read.chomp
 
 Gem::Specification.new do |s|
   s.name          = 'card'
-  s.version       = Card::Version.release
+  s.version       = version
   s.authors       = ["Ethan McCutchen", "Lewis Hoffman", "Gerry Gleason"]
   s.email         = ['info@wagn.org']
                   

@@ -3,9 +3,6 @@ require 'spork'
 ENV["RAILS_ENV"] = 'test'
 require 'card'
 
-warn "spec_helper noclas #{const_get(:Card).class}" unless Module.constants.include? :Card
-warn "spec_helper :Card class: #{Card.class}" if Module.constants.include? :Card
-
 require File.expand_path( '../../lib/wagn/simplecov_helper.rb', __FILE__ )
 require 'simplecov'
 require 'timecop'

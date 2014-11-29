@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+require 'card/location'
 
 class Card
   class Format

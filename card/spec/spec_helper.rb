@@ -3,7 +3,9 @@ require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
 
-require File.expand_path( '../../lib/wagn/simplecov_helper.rb', __FILE__ )
+warn "loading card spec_helper"
+
+require File.expand_path( '../../lib/card/simplecov_helper.rb', __FILE__ )
 require 'simplecov'
 require 'timecop'
 require File.expand_path( '../../mod/03_machines/spec/lib/machine_spec.rb', __FILE__ )
@@ -13,13 +15,16 @@ require File.expand_path( '../../mod/03_machines/spec/lib/machine_input_spec.rb'
 
 Spork.prefork do
   if ENV["RAILS_ROOT"]
+    warn "rr req:#{ ENV["RAILS_ROOT"]}"
     require File.join( ENV["RAILS_ROOT"], '/config/environment')
   else
+    warn "env req:#{File.expand_path( '../../config/environment', __FILE__ )}"
     require File.expand_path( '../../config/environment', __FILE__ )
   end
   
   require 'rspec/rails'
-  require File.expand_path( '../../lib/wagn/spec_helper.rb', __FILE__ )
+  warn "require: #{File.expand_path( '../../lib/card/spec_helper.rb', __FILE__ )}"
+  require File.expand_path( '../../lib/card/spec_helper.rb', __FILE__ )
   
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.

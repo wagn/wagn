@@ -1,13 +1,16 @@
 # -*- encoding : utf-8 -*-
 require 'spork'
 ENV["RAILS_ENV"] = 'test'
+require 'card'
 
+warn "spec_helper noclas #{const_get(:Card).class}" unless Module.constants.include? :Card
+warn "spec_helper :Card class: #{Card.class}" if Module.constants.include? :Card
 
 require File.expand_path( '../../lib/wagn/simplecov_helper.rb', __FILE__ )
 require 'simplecov'
 require 'timecop'
-require File.expand_path( '../../mod/03_machines/spec/lib/machine_spec.rb', __FILE__ )
-require File.expand_path( '../../mod/03_machines/spec/lib/machine_input_spec.rb', __FILE__ )
+#require File.expand_path( '../../mod/03_machines/spec/lib/machine_spec.rb', __FILE__ )
+#require File.expand_path( '../../mod/03_machines/spec/lib/machine_input_spec.rb', __FILE__ )
 
 
 

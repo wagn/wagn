@@ -1,6 +1,16 @@
 # -*- encoding : utf-8 -*-
 
+x=self.class.const_get(:Card)
+warn "card class1 #{x.class}"
+require 'rails/all'
+warn "card class #{x.class}" if x=self.class.const_get(:Card)
+
 class Card < ActiveRecord::Base
+end
+
+require 'card/all'
+
+class Card
   
   require_dependency 'card/active_record_ext'
   require_dependency 'card/codename'
@@ -39,3 +49,4 @@ class Card < ActiveRecord::Base
   Loader.load_mods if count > 0
 
 end
+

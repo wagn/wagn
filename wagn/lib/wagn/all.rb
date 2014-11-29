@@ -1,16 +1,6 @@
-require 'rails/all'
-
-require 'htmlentities'
-require 'recaptcha'
-require 'airbrake'
-require 'RMagick'
-require 'paperclip'
-require 'coderay'
-require 'haml'
-require 'kaminari'
-require 'diff/lcs'
-require 'diffy'
-#require 'scheduler_daemon'
+#warn "in wagn/all #{self.class.const_get(:Card)}"
+warn "wagn/all :Constants: #{Card.class}" if Module.constants.include? :Card
+require 'card'
+warn 'card loaded'
 
 require 'wagn/application'
-

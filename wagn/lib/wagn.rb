@@ -1,6 +1,8 @@
 # should be able to move these to more appropriate places
 
+warn "wagn.rb trace:#{caller*"\n"}\n #{Card.class}" if Module.constants.include? :Card
 WAGN_GEM_ROOT = File.expand_path('../..', __FILE__)
+warn "gem root;#{WAGN_GEM_ROOT}"
 
 module Wagn
 

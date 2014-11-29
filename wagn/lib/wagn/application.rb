@@ -23,6 +23,7 @@ module Wagn
     initializer :load_wagn_config_initializers,  :before => :load_config_initializers do
       add_gem_path paths, 'lib/wagn/config/initializers', :glob => "**/*.rb" 
       config.paths['lib/wagn/config/initializers'].existent.sort.each do |initializer|
+        warn "load initter: #{initializer.inspect}"
         load(initializer)
       end
     end
@@ -30,6 +31,7 @@ module Wagn
     initializer :load_mod_initializers,  :after => :load_wagn_config_initializers do
       paths.add 'mod-initializers', :with=>'mod', :glob=>"**/initializers/*.rb"
       config.paths['mod-initializers'].existent.sort.each do |initializer|
+        warn "load initter2: #{initializer.inspect}"
         load(initializer)
       end
     end
@@ -89,7 +91,8 @@ module Wagn
         add_gem_path paths, "app/assets",          :glob => "*"
         add_gem_path paths, "app/controllers",     :eager_load => true
         add_gem_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
-        add_gem_path paths, "config/routes",       :with => "lib/wagn/config/routes.rb"
+        #add_gem_path paths, "config/routes",       :with => "lib/wagn/config/routes.rb"
+        add_gem_path paths, "config/routes",       :with => "config/routes.rb"
         add_gem_path paths, "db"
         add_gem_path paths, "db/migrate"
         add_gem_path paths, "db/migrate_core_cards"

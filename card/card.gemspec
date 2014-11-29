@@ -1,5 +1,4 @@
-#lib = File.expand_path('../lib', __FILE__)
-#$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
 require File.expand_path( '../lib/card/version', __FILE__ )
 
 Gem::Specification.new do |s|

@@ -1,10 +1,12 @@
 #lib = File.expand_path('../lib', __FILE__)
 #$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require File.expand_path( '../lib/wagn/version', __FILE__ )
+#require File.expand_path( '../lib/wagn/version', __FILE__ )
+#version = Wagn::Version.release
+version = File.open(File.expand_path( '../VERSION', __FILE__ )).read.chomp
 
 Gem::Specification.new do |s|
   s.name          = 'wagn'
-  s.version       = Wagn::Version.release
+  s.version       = version
   s.authors       = ["Ethan McCutchen", "Lewis Hoffman", "Gerry Gleason"]
   s.email         = ['info@wagn.org']
                   
@@ -24,7 +26,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.8.7'
 
   [
-    [ 'card',          Wagn::Version.release  ],
+    #[ 'card',     path:  Wagn::Version.release  ],
   ].each do |dep|
     s.add_runtime_dependency *dep
   end

@@ -68,8 +68,9 @@ describe Card::Query do
       expect(Card::Query.new( :member_of=>[      {:name=>'r1'}, {:key=>'r2'} ], :return=>:name).run.sort).to eq(%w{ u1 u2 })
       expect(Card::Query.new( :member_of=>[:any, {:name=>'r1'}, {:key=>'r2'} ], :return=>:name).run.sort).to eq(%w{ u1 u2 u3 })      
     end
-    
+
     it "should handle multiple values for plus_relational keys" do
+      puts "expecting...."
       expect(Card::Query.new( :right_plus=>[ :all, 'e', 'c' ], :return=>:name ).run.sort).to eq(%w{ A }) #explicit conjunction
       expect(Card::Query.new( :right_plus=>[ ['e',{}],  'c' ], :return=>:name ).run.sort).to eq(%w{ A }) # first element is array
       expect(Card::Query.new( :right_plus=>[ 'e', 'c'       ], :return=>:name ).run.sort).to eq([])      # NOT interpreted as multi-value

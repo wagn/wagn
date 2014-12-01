@@ -27,7 +27,7 @@ class Card::Query
   end
 
   def run
-#    puts "running sql: #{sql}"
+    puts "running sql: #{sql}"
     rows = ActiveRecord::Base.connection.select_all( sql )
     retrn = query[:return].present? ? query[:return].to_s : 'card'
     case retrn 

@@ -238,17 +238,26 @@ class Card
       #~~~~~~ PLUS RELATIONAL
 
       def left_plus(val)
-        part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
-        merge( field(:id) => subspec(junc_spec, :return=>'right_id', :left =>part_spec))
+       
+#        merge( field(:id) => subspec(junc_spec, :return=>'right_id', :left =>part_spec))
+#        restrict :id, junc_spec.merge(:left=>part_spec), :return=>'right_id'
+        restrict :id, junction(:left, val), :return=>'right_id'
       end
 
       def right_plus(val)
-        part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
-        merge( field(:id) => subspec(junc_spec, :return=>'left_id', :right=> part_spec ))
+#        part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
+#        merge( field(:id) => subspec(junc_spec, :return=>'left_id', :right=> part_spec ))
+        restrict :id, junction(:right, val), :return=>'left_id'
+        
       end
 
       def plus(val)
         subcondition( { :left_plus=>val, :right_plus=>val.deep_clone }, :conj=>:or )
+      end
+    
+      def junction side, val
+        part_spec, junction_spec = val.is_a?(Array) ? val : [ val, {} ]
+        junction_spec.merge( side => part_spec )      
       end
     
     

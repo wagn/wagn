@@ -211,7 +211,7 @@ class Card
       end
       
       def last_editor_of val
-        merge field(:id) => subspec(val, :return=>'updater_id')
+        restrict_by_join :id, val, :return=>'updater_id'
       end
 
       def last_edited_by val
@@ -219,7 +219,7 @@ class Card
       end    
 
       def creator_of val
-        merge field(:id)=>subspec(val,:return=>'creator_id')
+        restrict_by_join :id, val, :return=>'creator_id'
       end
 
       def created_by val
@@ -281,8 +281,7 @@ class Card
           unless c && [SearchTypeID,SetID].include?(c.type_id)
             raise BadQuery, %{"found_by" value needs to be valid Search, but #{c.name} is a #{c.type_name}}
           end
-          found_by_spec = CardSpec.new(c.get_spec).rawspec
-          merge(field(:id) => subspec(found_by_spec))
+          restrict :id, CardSpec.new(c.get_spec).rawspec
         end
       end
   
@@ -377,11 +376,11 @@ class Card
         @fields ||= {}
         @fields[name] ||= 0
         @fields[name] += 1
-        "#{ name }:#{ @fields[name] }"
+        "#{ name }_#{ @fields[name] }"
       end
 
       def field_root key
-        key.to_s.gsub /\:\d+/, ''
+        key.to_s.gsub /\_\d+/, ''
       end
 
       def subcondition(val, args={})
@@ -418,13 +417,18 @@ class Card
         end
       end
             
-      def restrict id_field, val, additions={ :return=>'id'}
+      def restrict id_field, val, opts={}
         if id = id_from_spec(val)
           merge field(id_field) => id
         else
-          subselect = CardSpec.build(additions).merge(val).to_sql
-          add_join "#{id_field}_tbl", "(#{subselect})", id_field, :id
+          restrict_by_join id_field, val, opts
         end
+      end
+      
+      def restrict_by_join id_field, val, opts={}
+        opts[:return] ||= :id  
+        subselect = CardSpec.build(opts).merge(val).to_sql
+        add_join "#{ field id_field }_tbl", "(#{subselect})", id_field, opts[:return]
       end
     
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -85,7 +85,7 @@ describe Card::Query do
 
 
   describe "edited_by/editor_of" do
-    it "should find card edited by joe using subspec" do
+    it "should find card edited by joe using subquery" do
       expect(Card::Query.new(:edited_by=>{:match=>"Joe User"}, :sort=>"name").run).to eq([Card["JoeLater"], Card["JoeNow"]])
     end
     it "should find card edited by Wagn Bot" do

@@ -17,10 +17,10 @@ class Wagn::Log
     def finish_block
       log = @@log.pop
       duration = (Time.now - log[:start]) * 1000
-      return if limit = Wagn.config.log[:limit] and limit > 0 and duration < limit
+      return if limit = Wagn.config.performance_logger[:limit] and limit > 0 and duration < limit
         
       log_msg = "#{ indent log[:level] }(%d.2ms) #{ log[:method] }: #{ log[:message] }" % duration
-      log_msg += details log if Wagn.config.log[:details] 
+      log_msg += details log if Wagn.config.performance_logger[:details] 
       log_msg += subtree log
       
       if log_parent = @@log.last

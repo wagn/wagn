@@ -29,7 +29,7 @@ protected
 event :set_content, :before=>:store, :on=>:save do
   self.db_content = content || '' #necessary?
   self.db_content = Card::Content.clean! self.db_content if clean_html?
-  self.selected_action_id = nil
+  @selected_action_id = @selected_content = nil
   clear_drafts
   reset_patterns_if_rule saving=true
 end

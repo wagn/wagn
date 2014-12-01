@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141001105348) do
+ActiveRecord::Schema.define(:version => 20141121172918) do
 
   create_table "card_actions", :force => true do |t|
     t.integer "card_id"
@@ -90,11 +90,11 @@ ActiveRecord::Schema.define(:version => 20141001105348) do
   add_index "cards", ["right_id"], :name => "index_cards_on_tag_id"
   add_index "cards", ["type_id"], :name => "card_type_index"
 
-  create_table "schema_migrations_cards", :id => false, :force => true do |t|
+  create_table "schema_migrations_core_cards", :id => false, :force => true do |t|
     t.string "version", :null => false
   end
 
-  add_index "schema_migrations_cards", ["version"], :name => "unique_schema_migrations_cards", :unique => true
+  add_index "schema_migrations_core_cards", ["version"], :name => "unique_schema_migrations_cards", :unique => true
 
   create_table "schema_migrations_deck_cards", :id => false, :force => true do |t|
     t.string "version", :null => false

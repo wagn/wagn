@@ -61,14 +61,17 @@ def selected_content_action_id
 end
 
 def last_action_id
-  last_action and last_action.id
+  la = last_action and la.id
 end
+
 def last_action
   actions.where('id IS NOT NULL').last
 end
+
 def last_content_action
   l_c = last_change_on(:db_content) and l_c.action
 end
+
 def last_content_action_id
   l_c = last_change_on(:db_content) and l_c.card_action_id
 end
@@ -147,12 +150,13 @@ event :set_default_content, :on=>:create, :before=>:approve do
   end
 end
 
+=begin
 event :protect_structured_content, :before=>:approve, :on=>:update, :changed=>:db_content do  
   if structure
     errors.add :content, "can't change; structured by #{template.name}"
   end
 end
-
+=end
 
 event :detect_conflict, :before=>:approve, :on=>:update do
   if last_action_id_before_edit and last_action_id_before_edit.to_i != last_action_id and last_action.act.actor_id != Auth.current_id

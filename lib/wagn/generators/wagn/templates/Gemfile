@@ -98,7 +98,7 @@ group :debug do
 end
 <% end %>
 
-Dir.glob(File.join(File.dirname(__FILE__), '*','**','Gemfile')).each do |gemfile|
+Dir.glob(File.join(File.dirname(__FILE__), '*','**{,/*/**}','Gemfile')).each do |gemfile|
   instance_eval(File.read(gemfile))
 end
 

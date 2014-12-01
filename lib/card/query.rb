@@ -27,7 +27,6 @@ class Card::Query
   end
 
   def run
-    puts "running sql: #{sql}"
     rows = ActiveRecord::Base.connection.select_all( sql )
     retrn = query[:return].present? ? query[:return].to_s : 'card'
     case retrn 
@@ -67,10 +66,9 @@ class Card::Query
     end
 
     def to_s
-      "(
-select #{fields.reject(&:blank?).join(', ')} from #{tables} #{joins.join(' ')}
-where #{conditions.reject(&:blank?).join(' and ')} #{group} #{order} #{limit} #{offset}
-)"
+      select = fields.reject(&:blank?) * ', '
+      where = conditions.reject(&:blank?) * ' and '
+      ['(SELECT', select, 'FROM', tables, joins, 'WHERE', where, group, order, limit, offset, ')'].compact * ' '
     end
   end
 

@@ -9,6 +9,14 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
+module ActiveSupport::BufferedLogger::Severity
+  WAGN = UNKNOWN + 1
+  
+  def wagn progname, &block
+    add(WAGN, nil, progname, &block)
+  end
+end
+
 
 module Wagn
   class Application < Rails::Application

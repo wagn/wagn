@@ -183,7 +183,9 @@ class Card
         @current_view = view = ok_view canonicalize_view( view ), args       
         args = default_render_args view, args
         with_inclusion_mode view do
-          send "_view_#{ view }", args
+          Wagn.with_logging card.name, :view, view, args do
+            send "_view_#{ view }", args
+          end
         end
       end
     rescue => e

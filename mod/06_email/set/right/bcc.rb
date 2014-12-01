@@ -7,6 +7,13 @@ def process_email_addresses context_card, format_args, args
 end
 
 
+format :html do
+  view :pointer_items do |args|    
+    card.item_names(:context=>:raw).map do |iname|
+      wrap_item iname, args
+    end.join ', '
+  end
+end
 
 format :email_text do
   view :email_addresses do |args|
@@ -29,3 +36,4 @@ end
 
 
 # _user, info@mail.com, Ethan, Pointer -> ..., _left+email, my email address -> info@mail.com
+

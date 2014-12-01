@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddEmailCards < Wagn::Migration
+class AddEmailCards < Wagn::CoreMigration
   def up
     
     # change notification rules
@@ -38,7 +38,7 @@ class AddEmailCards < Wagn::Migration
 {{+*subject | titled}}
 {{+*html message | titled}}
 {{+*text message | titled}}
-{+*attach | titled}}
+{{+*attach | titled}}
 )
     
     c = Card.fetch '*message', :new=>{ }
@@ -54,8 +54,8 @@ class AddEmailCards < Wagn::Migration
     
     
     # create system email cards
-    dir = "#{Wagn.gem_root}/db/migrate_cards/data/mailer"
-    json = File.read( File.join( dir, 'mail_config.json' ))
+    dir = File.join data_path, 'mailer'
+    json = File.read( File.join( dir, 'mail_config.json' ) )
     data = JSON.parse(json)
     data.each do |mail|
       mail = mail.symbolize_keys!
@@ -119,14 +119,6 @@ class AddEmailCards < Wagn::Migration
       email_config_card.delete!
     end
     
-    
-    
-    # move old send rule to on_create
-    #fields = %w( to from cc bcc subject message attach )
-    Card.search(:right=>"*send").each do |send_rule|
-      Card.create! :name=>"#{send_rule.left}+*on create", :content=>send_rule.content, :type_code=>:pointer
-      send_rule.delete  #@ethn: keep old rule for safety reasons?
-    end
   
     # the new following rule
     Card.create! :name => '*following', :type_code=>:pointer, :codename=>'following'

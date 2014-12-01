@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AccountEvents < Wagn::Migration
+class AccountEvents < Wagn::CoreMigration
   def up
     aa = Card.fetch "#{ Card[ :signup ].name }+#{ Card[ :type ].name}+#{ Card[:accountable ].name}", :new=>{}
     aa.content = "1"

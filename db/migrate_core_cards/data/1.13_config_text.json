@@ -14,7 +14,7 @@
       {
         "name": "Sign up+description",
         "type": "Basic",
-        "content": "<p>[[Sign up]] cards represent not-yet-approved accounts.  When approved, they become [[User]] cards.  [[http://wagn.org/account|more]]</p>"
+        "content": "<p>[[Sign up]] cards represent not-yet-approved accounts. When approved, they become [[User]] cards.  [[http://wagn.org/account|more]]</p>"
       },
       {
         "name": "Config",

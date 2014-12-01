@@ -51,16 +51,16 @@ format :html do
       headings << %(<strong>#{ card.name }</strong> #{ 'was' if !by_anon } signed up on #{ format_date card.created_at })
       if account = card.account
         token_action = 'Send'
-        if account.token
+        if account.token.present?
           headings << "A verification email has been sent #{ "to #{account.email}" if account.email_card.ok? :read }"
           token_action = 'Resend'
         end
         if account.confirm_ok?
-          links << link_to( "#{token_action} verification email", wagn_path("/update/~#{card.id}?approve_with_token=true"  ) )
-          links << link_to( "Approve without verification", wagn_path("/update/~#{card.id}?approve_without_token=true") )
+          links << link_to( "#{token_action} verification email", wagn_path("update/~#{card.id}?approve_with_token=true"  ) )
+          links << link_to( "Approve without verification", wagn_path("update/~#{card.id}?approve_without_token=true") )
         end
         if card.ok? :delete
-          links << link_to( "Deny and delete", wagn_path("/delete/~#{card.id}") )
+          links << link_to( "Deny and delete", wagn_path("delete/~#{card.id}") )
         end
         headings << links * '' if links.any?
       else

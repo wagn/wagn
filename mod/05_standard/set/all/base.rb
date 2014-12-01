@@ -15,7 +15,7 @@ format do
   view :linkname, :perms=>:none  do |args|  card.cardname.url_key        end
   view :url,      :perms=>:none  do |args|  wagn_url _render_linkname    end
 
-  view :link, :perms=>:none  do |args|
+  view :link, :perms=>:none do |args|
     card_link card.name, showname( args[:title] ), card.known?, args[:type]
   end
 
@@ -24,6 +24,8 @@ format do
 
   view :created_at, :perms=>:none do |args| time_ago_in_words card.created_at end
   view :updated_at, :perms=>:none do |args| time_ago_in_words card.updated_at end
+  view :acted_at,   :perms=>:none do |args| time_ago_in_words card.acted_at   end
+    
 
 
   # CONTENT VIEWS

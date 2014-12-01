@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class JsonizeTinymce < Wagn::Migration
+class JsonizeTinymce < Wagn::CoreMigration
   def up
     card = Card[:tiny_mce]
     cleaned_rows = card.content.strip.split( /\s*\,\s+/ ).map do |row|

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AccountRequestsToSignups < Wagn::Migration
+class AccountRequestsToSignups < Wagn::CoreMigration
   def up
 
     newname = 'Sign up'

@@ -8,7 +8,8 @@ class CardMigrationGenerator < ActiveRecord::Generators::Base
     desc: "Create card migration for wagn core"
 
   def create_migration_file
-    root = options['core'] ? Wagn::Migration.card_migration_paths.first : Wagn::Migration.deck_card_migration_paths.first
+    migration_type = options['core'] ? :core_cards : :deck_cards
+    root = Wagn::Migration.paths(migration_type).first
     set_local_assigns!
     migration_template @migration_template, File.join( root, "#{file_name}.rb")
   end
@@ -21,6 +22,7 @@ class CardMigrationGenerator < ActiveRecord::Generators::Base
 
   def set_local_assigns!
     @migration_template = "card_migration.erb"
+    @migration_parent_class = options['core'] ? 'Wagn::CoreMigration' : 'Wagn::Migration'
     case file_name
     when /^(import)_(.*)(?:\.json)?/
       @migration_action = $1

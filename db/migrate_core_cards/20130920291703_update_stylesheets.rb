@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 
-class UpdateStylesheets < Wagn::Migration
+class UpdateStylesheets < Wagn::CoreMigration
   def up
-    dir = "#{Wagn.gem_root}/db/migrate_cards/data/1.12_stylesheets"
+    dir = File.join data_path, '1.12_stylesheets'
     %w{ common traditional }.each do |sheetname|
       card = Card["style: #{sheetname}"]
       if card && card.pristine?

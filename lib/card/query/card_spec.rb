@@ -185,7 +185,7 @@ class Card
       #~~~~~~ RELATIONAL
 
       def type val
-        merge field(:type_id) => id_or_subspec(val)
+        restrict :type_id, val
       end
 
       def part val
@@ -193,12 +193,13 @@ class Card
         subcondition :left=>val, :right=>right, :conj=>:or
       end
 
+      
       def left val
-        merge field(:left_id) => id_or_subspec(val)
+        restrict :left_id, val
       end
     
       def right val
-        merge field(:right_id) => id_or_subspec(val)
+        restrict :right_id, val
       end
       
       def editor_of val
@@ -214,7 +215,7 @@ class Card
       end
 
       def last_edited_by val
-        merge field(:updater_id) => id_or_subspec(val)
+        restrict :updater_id, val
       end    
 
       def creator_of val
@@ -222,7 +223,7 @@ class Card
       end
 
       def created_by val
-        merge field(:creator_id) => id_or_subspec(val)
+        restrict :creator_id, val
       end
 
       def member_of val
@@ -410,12 +411,20 @@ class Card
         ValueSpec.new([operator,CardSpec.build(additions).merge(spec)], self)
       end
 
-      def id_or_subspec spec
-        id = case spec
-          when Integer ; spec
-          when String  ; Card.fetch_id(spec)
-          end
-        id or subspec spec
+      def id_from_spec spec
+        case spec
+        when Integer ; spec
+        when String  ; Card.fetch_id(spec)
+        end
+      end
+            
+      def restrict id_field, val, additions={ :return=>'id'}
+        if id = id_from_spec(val)
+          merge field(id_field) => id
+        else
+          subselect = CardSpec.build(additions).merge(val).to_sql
+          add_join "#{id_field}_tbl", "(#{subselect})", id_field, :id
+        end
       end
     
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

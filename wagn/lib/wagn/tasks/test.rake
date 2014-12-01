@@ -2,6 +2,8 @@ def set_database( db )
   y = YAML.load_file("#{Wagn.root}/config/database.yml")
   y["development"]["database"] = db if y["development"]
   y["production"]["database"] = db if y["production"]
+  warn "set_database e:#{Rails.env}, #{y.inspect}"
+
   File.open( "#{Wagn.root}/config/database.yml", 'w' ) do |out|
     YAML.dump( y, out )
   end

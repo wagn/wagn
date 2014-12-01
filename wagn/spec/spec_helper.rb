@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'spork'
 ENV["RAILS_ENV"] = 'test'
-require 'card'
 
 require File.expand_path( '../../lib/wagn/simplecov_helper.rb', __FILE__ )
 require 'simplecov'
@@ -12,6 +11,7 @@ require 'timecop'
 
 
 Spork.prefork do
+  warn "test prefork #{ENV['RAILS_ROOT']}, #{File.expand_path( '../../config/environment', __FILE__ )}"
   if ENV["RAILS_ROOT"]
     require File.join( ENV["RAILS_ROOT"], '/config/environment')
   else

@@ -1,6 +1,6 @@
 
 view :raw do |args|
-  File.read "#{Wagn.gem_root}/mod/03_machines/lib/javascript/wagn_menu.js"
+  File.read "#{Card.gem_root}/mod/03_machines/lib/javascript/wagn_menu.js"
 end
 
 view :editor do |args|

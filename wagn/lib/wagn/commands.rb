@@ -81,6 +81,7 @@ else
   when 'rspec'
     opts = {}
     require 'rspec/core'
+    require 'card/engine'
     parser = RSpec::Core::Parser.new.parser(opts)
     parser.banner = "Usage: wagn rspec [WAGN ARGS] -- [RSPEC ARGS]\n\nRSPEC ARGS"
     parser.separator <<-WAGN 
@@ -94,13 +95,13 @@ WAGN ARGS
 WAGN
 
     parser.on('-d', '--spec FILENAME(:LINE)', 'Run spec for a Wagn deck file') do |file|
-      opts[:files] = find_spec_file( file, "mod")
+      opts[:files] = find_spec_file( file, "#{Card.gem_root}/mod")
     end
     parser.on('-c', '--core-spec FILENAME(:LINE)', 'Run spec for a Wagn core file') do |file|
-      opts[:files] = find_spec_file( file, "#{Wagn.gem_root}" )
+      opts[:files] = find_spec_file( file, "#{Card.gem_root}" )
     end
     parser.on('-m', '--mod MODNAME', 'Run all specs for a mod') do |file|
-      opts[:files] = "mod/#{file}"
+      opts[:files] = "#{Card.gem_root}/mod/#{file}"
     end
     parser.on('-s', '--[no-]simplecov', 'Run with simplecov') do |s|
       opts[:simplecov] = s ? '' : 'COVERAGE=false'
@@ -111,6 +112,8 @@ WAGN
     parser.separator "\n"
 
     wagn_args, rspec_args = (' '<<ARGV.join(' ')).split(' -- ')
+    warn "wagn a:#{wagn_args}, rspec a:#{rspec_args}"
+    warn "opts: #{opts.inspect}"
     parser.parse!(wagn_args.split(' '))
 
     system "RAILS_ROOT=. #{opts[:simplecov]} bundle exec #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]}" 

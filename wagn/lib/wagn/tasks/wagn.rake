@@ -12,7 +12,7 @@ namespace :wagn do
       puts "not dropped"
     end
 
-    ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
+    ENV['SCHEMA'] ||= "#{Card.gem_root}/db/schema.rb"
      
     puts "creating"
     Rake::Task['db:create'].invoke

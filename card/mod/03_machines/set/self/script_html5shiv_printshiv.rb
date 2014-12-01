@@ -1,5 +1,5 @@
 view :raw do |args|
-  File.read "#{Wagn.gem_root}/mod/03_machines/lib/javascript/html5shiv-printshiv.js"
+  File.read "#{Card.gem_root}/mod/03_machines/lib/javascript/html5shiv-printshiv.js"
 end
 
 view :editor do |args|

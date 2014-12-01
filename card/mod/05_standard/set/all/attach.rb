@@ -113,7 +113,7 @@ module Paperclip::Interpolations
   def local at, style_name
     if mod = at.instance.attach_mod
       # generalize this to work with any mod (needs design)
-      "#{Wagn.gem_root}/mod/#{mod}/file"
+      "#{Card.gem_root}/mod/#{mod}/file"
     else
       Wagn.paths['files'].existent.first
     end

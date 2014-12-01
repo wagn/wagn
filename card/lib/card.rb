@@ -1,12 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-require 'rails/all'
+class Card
 
-class Card < ActiveRecord::Base
-#end
-
-#class Card
-  
   require_dependency 'card/active_record_ext'
   require_dependency 'card/codename'
   require_dependency 'card/query'
@@ -23,7 +18,7 @@ class Card < ActiveRecord::Base
   has_many :actions, :order => :id, :conditions=>{:draft => [nil,false]}
   has_many :drafts, :order=>:id, :conditions=>{:draft=>true}, :class_name=> :Action
 
-  cache_attributes 'name', 'type_id' # review - still worth it in Rails 3?
+  #cache_attributes 'name', 'type_id' # review - still worth it in Rails 3?
 
   cattr_accessor :set_patterns, :error_codes
   @@set_patterns, @@error_codes = [], {}
@@ -44,6 +39,4 @@ class Card < ActiveRecord::Base
   Loader.load_mods if count > 0
 
 end
-
-require 'card/all'
 

@@ -127,9 +127,11 @@ class SharedData
 
       Card.create! :name=>"John", :type_code=>'user', :subcards=>account_args('+*email'=>'john@user.com', '+*password'=>'john_pass')
       Card.create! :name=>"Sara", :type_code=>'user', :subcards=>account_args('+*email'=>'sara@user.com', '+*password'=>'sara_pass')
-      
+      Card.create! :name=>"Follower", :type_code=>'user', :subcards=>account_args('+*email'=>'follower@user.com', '+*password'=>'follower_pass')
+            
       Card.create! :name => "All Eyes On Me"
       Card.create! :name => "No One Sees Me"
+      Card.create! :name => "Look at me"
       Card.create! :name => "Sara Following"
       Card.create! :name => "John Following", :content => "{{+her}}"
       Card.create! :name => "John Following+her"
@@ -140,6 +142,9 @@ class SharedData
       
       Card.create! :name => "Sara+*following",  :content => "[[Sara Following]]\n[[All Eyes On Me]]\n[[Optic]]\n[Google glass]"
       Card.create! :name => "John+*following",  :content => "[[John Following]]\n[[All Eyes On Me]]"      
+      
+      follow = ['All Eyes on Me', 'Look at me+*self', 'Optic+*type', 'lens+*right', 'Optic+tint+*type plus right', 'content I created', 'content I edited']
+      Card.create! :name => "Follower+*following", :content=> "[[#{ follow.join "]]\n[[" }]]"
     end
 
 

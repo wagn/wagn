@@ -1,3 +1,32 @@
+def special_followers 
+  Card.search(:editor_of=>name).each do |editor|
+    if editor.following? Card[:content_i_edited].cardname
+      yield editor, Card[:content_i_edited].name
+    end
+  end
+  if creator.following? Card[:content_i_created].cardname
+    yield creator, Card[:content_i_edited].name
+  end
+end
+
+
+def following? cardname
+  fetch(:trait=>:following).include_item? cardname
+end
+
+# Wikirate
+Card::Set::All::Follow::FOLLOW_OPTIONS << 'content I voted for'
+
+def special_followers
+  super
+  Card.search(:right_plus=>[:id=>UpvotesID,:link_to=>name]).each do |voter|
+    if voter.following? Card[:content_i_voted_for].cardname
+      yield voter, Card[:content_i_voted_for].name
+    end
+  end
+end
+#/ Wikirate
+
 class FollowerStash  
   def initialize card=nil
     @followed_affected_cards = Hash.new { |h,v| h[v]=[] } 
@@ -5,29 +34,37 @@ class FollowerStash
     add_affected_card(card) if card
   end
     
-  def add_affected_card card
+  def add_affected_card card    
     Auth.as_bot do
-      if !@visited.include? card.name
-        @visited.add card.name
-        # add card followers
-        Card.search( :right_plus=>[{:codename=> "following"}, 
-                             {:link_to=>['in'] + card.set_names}     ]
-                   ).each do |follower|
-                     notify follower, :of => card.name
-                   end
-        # add cardtype followers
-        # Card.search( :right_plus=>[{:codename=> "following"},
-#                              {:link_to=>card.type_name} ]
-#                    ).each do |follower|
-#                     notify follower, :of => card.type_name
-#                   end
-        Card.search(:include=>card.name).each do |includer| 
-          add_affected_card includer unless @visited.include? includer.name
+      if !@visited.include? card.key
+        @visited.add card.key
+        
+        followers_by_set = Card.read.cache 'FOLLOW_KEY'
+        
+        set_names.each do |set_name|
+          followers_by_set[set_name].each do |follower_id|
+            notify Card.find(follower_id), :of => set_name
+          end      
         end
-        if card.left and !@visited.include?(card.left.name) and
-           includee_set = Card.search(:included_by=>card.left.name).map(&:name) and
-           !@visited.intersection(includee_set).empty?
+        
+        card.special_followers do |follower, followed_name|
+          notify follower, :of => followed_name
+        end
+        
+
+        if card.left and !@visited.include?(card.left.name)
+          card.left.rule_card(:follow_fields).item_names.each do |item|
+            if item == Card[:include].name
+              includee_set = Card.search(:included_by=>card.left.name).map(&:key)
+              if !@visited.intersection(includee_set).empty?
+                add_affected_card card.left
+                break
+              end
+            elsif @visited.include? item.to_name.key
               add_affected_card card.left
+              break
+            end
+          end
         end
       end
     end

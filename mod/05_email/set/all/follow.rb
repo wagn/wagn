@@ -1,3 +1,14 @@
+card_accessor :followed_by
+
+
+def followers
+  followers = fetch :trait=>:followed_by
+  followers.format.render_raw
+end
+
+FOLLOW_KEY = 'FOLLOW'
+FOLLOW_OPTIONS =  ['content I created', 'content I edited']
+
 def toggle_subscription_for watcher
   following = watcher.fetch :trait=>:following, :new=>{:type=>:pointer}
   if following.items.include? card
@@ -8,6 +19,29 @@ def toggle_subscription_for watcher
   following.save
 end
 
+def special_follow_option? name
+ FOLLOW_OPTIONS.include? name
+end
+
+def update_follow_cache
+  follow_cache = Hash.new { |hash,key| hash[key] = []}
+  Card.search( :left_id=>UserID, :right=>{:codename=> "following"} ).each do |following_pointer|
+    following_pointer.item_cards.each do |followed|
+      if followed.type_id != SetID and !special_follow_option? followed.name
+        self_set = followed.fetch(:trait=>:self)
+        follow_cache[self_set.key] << following_pointer.left_id
+      else
+        follow_cache[followed.key] << following_pointer.left_id 
+      end
+    end
+  end
+  Card.cache.write FOLLOW_KEY, follow_cache
+end
+
+event :expired_follow_cache, :before=>:extend, :when => 
+        proc { |c| c.name_changed? or (c.right and c.right.codename == :following and c.left_id == UserID)
+  update_follow_cache
+end
 
 format :html do
   watch_perms = lambda { |r| Auth.signed_in? && !r.card.new_card? }

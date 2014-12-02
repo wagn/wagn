@@ -274,7 +274,7 @@ format :html do
   def rollback_link action_ids
     if card.ok?(:update) 
       "| " + link_to('Save as current', path(:action=>:update, :view=>:open, :action_ids=>action_ids,),
-        :class=>'slotter',:slotSelector=>'.card-sl<ot.card-frame', :remote=>true, :method=>:post, :rel=>'nofollow')
+        :class=>'slotter',:slotSelector=>'.card-slot.card-frame', :remote=>true, :method=>:post, :rel=>'nofollow')
     end
   end
 

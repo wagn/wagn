@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 shared_examples_for 'notifications' do
   # describe '#change_notice' do
   #   context 'for new card with subcards' do

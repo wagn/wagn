@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 shared_examples_for 'machine input' do 
   subject(:input) do

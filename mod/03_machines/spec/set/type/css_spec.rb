@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 describe Card::Set::Type::Css do
   let(:css) { '#box { display: block }' }

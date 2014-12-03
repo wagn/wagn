@@ -25,8 +25,28 @@ describe Card::Set::Type::EmailTemplate do
       expect(rendered_mail.body).to include('<a class="known-card" href="http://www.fake.com/B">B</a>')
     end
     
-    # it "renders multipart mails" do
-    # end
+    
+    context 'multipart mail' do
+      before do 
+        Card::Auth.current_id = Card::WagnBotID
+        Card.create! :name => "multipart email", :type=>:email_template, :subcards=>{
+          "+*to" => { :content => "joe@user.com" },
+          "+*from" => { :content => "from@user.com" },
+          "+*subject" => { :content => "Subject of the mail" },
+          "+*html_message" => { :content => "<p>Hello World!</p>" }
+          "+*text_message" => { :content => "Hello World!" }
+        }
+      end
+          
+      it "renders text part" do
+        expect(rendered_mail.text_part.body.raw_source).to eq "Hello World!"
+      end
+      
+      it "renders html part" do
+        expect(rendered_mail.html_part.body.raw_source).to eq "<p>Hello World!</p>"
+      end
+    end
+    
     
     it 'renders broken config' do
       Card.fetch("a mail template+*to").update_attributes(:content=>"invalid mail address")

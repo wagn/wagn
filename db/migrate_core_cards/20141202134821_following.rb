@@ -5,5 +5,6 @@ class Following < Wagn::CoreMigration
     Card.create! :name => "*followers", :codename=>"followers"
     Card.create! :name => "content I created", :codename=>"created_by_me"
     Card.create! :name => "content I edited", :codename=>"edited_by_me"
+    Card.create! :name => "*follow fields", :codename=>"follow_fields"
   end
 end

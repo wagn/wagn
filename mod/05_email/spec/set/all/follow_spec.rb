@@ -1,83 +1,106 @@
-   # -*- encoding : utf-8 -*-
-
-describe Card do
-  before do
-    Timecop.travel(Wagn.future_stamp)  # make sure we're ahead of all the test data
-    @just_s = [Card["Sara"].id]
-    @s_and_j= [Card["Sara"].id, Card["John"].id].sort
-  end
-end
-
+# -*- encoding : utf-8 -*-
 
 describe "Card::Set::All::Follow" do
+  def follow_view card_name
+    render_card :follow, :name=>card_name
+  end
+   
+  describe "view: follow" do
+    before do
+      Card::Auth.current_user = Card['Big Brother']
+    end
+      
+      
+    context "when not following" do
+      subject { follow_view 'No One Sees Me' 
+      it { is_expected.to eq "follow" }
+    end
+
+    context "when following *self" do
+      subject { follow_view 'Look At Me' }    
+      it { is_expected.to eq "following" }
+    end
+  
+    context "when following *type" do
+      subject { follow_view 'Sunglasses' }    
+      it { is_expected.to eq "following" }
+    end
+  
+    context "when following *right" do
+      subject { follow_view 'Magnifier+lens' }    
+      it { is_expected.to eq "following" }
+    end
+  
+    context 'when following "content I created"' do
+      before { Card::Auth.current_user = Card['Narcissist'] }
+      subject { follow_view 'Sunglasses' }    
+      it { is_expected.to eq "following" }
+    end
+  
+    context 'when following "content I edited"' do
+      before { Card::Auth.current_user = Card['Narcissist'] }
+      subject { follow_view 'Magnifier+lens' }    
+      it { is_expected.to eq "following" }
+    end
+  end
+  
+  
+  describe "view: follow_menu" do
+    before do
+      Card::Auth.current_user = Card['Big Brother']
+    end
+    
+    def follow_menu card_name
+      render_card :follow, :name=>card_name
+    end
+    
+    def include_follow_link text
+    end
+    
+    def include_unfollow_link texet
+    end
+
+    
+    context "when following Optic+*type" do
+      before  { Card::Auth.current_user = Card['Optic fan'] }
+      subject { follow_menu 'Sunglasses' }
+      it { is_expected.to include_unfollow_link "all Optics" }
+      it { is_expected.to include_follow_link "Sunglasses" }
+      it { is_expected.to not_include "content I created"}
+      it { is_expected.to not_include "content I edited"}
+    end
+
+    context "for card created by user" do
+      context "when following 'content I created' " do
+        before  { Card::Auth.current_user = Card['Narcissist'] }
+        subject { follow_menu 'Sunglasses' }
+        it      { is_expected.to include_unfollow_link "content I created" }
+      end
+      context "when not following 'content I created' " do
+        before  { Card::Auth.current_user = Card['Optic fan'] }
+        subject { follow_menu 'Google glass' }
+        it      { is_expected.to include_follow_link "content I created" }
+      end
+    end
+    
+    context "for card edited by user" do
+      before  { Card::Auth.current_user = Card['Narcissist'] }
+      subject { follow_menu 'Magnifier+lens' }
+      it      { is_expected.to include_unfollow_link "content I edited" }
+    end
+  
+    context "when following *right" do
+      subject { follow_menu 'Magnifier+lens' }
+      it      { is_expected.to include_unfollow_link "all +lens"}
+      it      { is_expected.to include_follow_link "all Optic+lens"}
+    end
+  
+    context "when following several sets" do
+      subject { follow_menu 'Sunglasses+lens' }
+      it      { is_expected.to include_unfollow_link "all +lens"}
+      it      { is_expected.to include_unfollow_link "all Optics"}
+      it      { is_expected.to include_unfollow_link "Sunglasses"}
+    end
+  end
  
-  def expect_user user_name
-    expect(Card.fetch(user_name).account)
-  end
-
-  def be_notified_of card_name
-    receive(:send_change_notice).with(kind_of(Card::Act), card_name)
-  end
-
-  context "when following cards" do
-    before do
-      Card::Auth.current_id = Card['john'].id
-      Timecop.travel(Wagn.future_stamp)  # make sure we're ahead of all the test data
-    end
-  
-    def expect_notice_for card_name
-      expect_any_instance_of(Card::Set::Right::Account).to receive(:send_change_notice).with(kind_of(Card::Act), card_name)
-    end
-    
-    it "sends notifications of edits" do
-      expect_user("Sara").to be_notified_of "Sara Following"
-      Card::Auth.current_id = Card['john'].id
-      Card["Sara Following"].update_attributes :content => "A new change"
-    end
-  
-    it "does not send notification to author of change" do
-      expect_user("John").not_to receive(:send_change_notice)
-      Card["All Eyes On Me"].update_attributes :content => "edit by John"
-    end
-  end
-  
-  context "when following cardtypes" do
-    before do
-      Card::Auth.current_id = Card['joe admin'].id
-    end
-    it "sends notifications of additions" do
-      new_card = Card.new :name => "Microscope", :type => "Optic"
-      expect_user("Sara").to be_notified_of "Optic"
-      new_card.save!
-    end
-
-    it "sends notification of updates" do
-      expect_user("Sara").to be_notified_of "Optic"
-      Card["Sunglasses"].update_attributes :content => 'updated content'
-    end
-    
-    it "sends only one notification per user"  do
-      expect_user("Sara").to receive(:send_change_notice).exactly(1)
-      Card["Google glass"].update_attributes :content => 'updated content'
-    end
-  end
-
-
-  context "when following trunk" do
-    before do
-      Timecop.travel(Wagn.future_stamp)  # make sure we're ahead of all the test data
-      Card::Auth.current_id = Card['joe user'].id
-      Card.create :type=>'Book', :name=>'Ulysses'
-      expect(Card['Ulysses']).to be
-      Card.create :name=> 'joe camel+*following', :content=>'[[Ulysses]]'
-      Card.create :name=> 'joe admin+*following', :content=>'[[Book]]'
-    end
-
-    it "sends notification to Joe Camel" do
-      name = "Ulysses+author"
-      expect_user("joe admin").to be_notified_of "Book"
-      expect_user("joe camel").to be_notified_of "Ulysses"
-      Card.create :name=>name, :content => "James Joyce"
-    end
-  end
 end

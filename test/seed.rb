@@ -4,6 +4,7 @@ require 'timecop'
 require_dependency 'card'
 
 class SharedData
+  @@user = ['Joe User', 'Joe Admin', 'Joe Camel', 'Sample User', 'No count', 'u1', 'u2', 'u3', 'Big Brother', 'Optic fan', 'Sunglasses fan', 'Narcissist']
 
   def self.account_args hash
     { "+*account" => { "+*password" =>'joe_pass' }.merge( hash ) }
@@ -125,26 +126,49 @@ class SharedData
       # fwiw Timecop is apparently limited by ruby Time object, which goes only to 2037 and back to 1900 or so.
       #  whereas DateTime can represent all dates.
 
-      Card.create! :name=>"John", :type_code=>'user', :subcards=>account_args('+*email'=>'john@user.com', '+*password'=>'john_pass')
-      Card.create! :name=>"Sara", :type_code=>'user', :subcards=>account_args('+*email'=>'sara@user.com', '+*password'=>'sara_pass')
-      Card.create! :name=>"Follower", :type_code=>'user', :subcards=>account_args('+*email'=>'follower@user.com', '+*password'=>'follower_pass')
-            
+      followers = {
+        'John'           => ['John Following', 'All Eyes On Me'],
+        'Sara'           => ['Sara Following', 'All Eyes On Me', 'Optic+*type', 'Google Glass'], 
+        'Big Brother'    => ['All Eyes on Me', 'Look at me+*self', 'Optic+*type', 'lens+*right', 'Optic+tint+*type plus right', 'content I created', 'content I edited'],
+        'Optic fan'      => ['Optic+*type'],
+        'Sunglasses fan' => ['Sunglasses'],
+        'Narcissist'     => ['content I created', 'content I edited']
+      }
+      
+      followers.each do |name, follow|
+        user = Card.create! :name=>name, :type_code=>'user', :subcards=>account_args('+*email'=>"#{name}@user.com", '+*password'=>"#{name}_pass")
+        following = user.fetch :trait=>:following
+        following.update_attributes! :content=>"[[#{ follow.join( "]]\n[[" ) }]]"
+      end
+      
+      
       Card.create! :name => "All Eyes On Me"
       Card.create! :name => "No One Sees Me"
-      Card.create! :name => "Look at me"
+      Card.create! :name => "Look At Me"
       Card.create! :name => "Sara Following"
       Card.create! :name => "John Following", :content => "{{+her}}"
       Card.create! :name => "John Following+her"
       Card.create! :name => "Optic", :type => "Cardtype"
-      Card.create! :name => "Sunglasses", :type=>"Optic", :content=>"{{+tint}}"
+      
+      magnifier = Card.create! :name => "Magnifier+lens"
+      
+      Card::Auth.current_id = Card['Optic fan'].id
+      Card.create! :name => "Google glass", :type=>"Optic", :content=>"{{+tint}}"
+      
+      Card::Auth.current_id = Card['Narcissist'].id
+      magnifier.update_attributes! :content=>"zoom in"
+      glass = Card.create! :name => "Sunglasses", :type=>"Optic", :content=>"{{+tint}}{{+lens}}"
+
+      Card::Auth.current_id = Card::WagnBotID
       Card.create! :name => "Sunglasses+tint"
-      Card.create! :name => "Google glass", :type=>"Optic"
+      Card.create! :name => "Sunglasses+price"
+      glass_rule = glass.rule_card(:follow_fields)
+      glass_rule.content => "[[#{Card[:include].name}]]\n[[_self+price]]\n[[_self+producer]]"
+      glass_rule.save! 
       
-      Card.create! :name => "Sara+*following",  :content => "[[Sara Following]]\n[[All Eyes On Me]]\n[[Optic]]\n[Google glass]"
-      Card.create! :name => "John+*following",  :content => "[[John Following]]\n[[All Eyes On Me]]"      
       
-      follow = ['All Eyes on Me', 'Look at me+*self', 'Optic+*type', 'lens+*right', 'Optic+tint+*type plus right', 'content I created', 'content I edited']
-      Card.create! :name => "Follower+*following", :content=> "[[#{ follow.join "]]\n[[" }]]"
+
+      
     end
 
 
@@ -166,10 +190,7 @@ class SharedData
     Card.create! :name=>'TwwoHeading', :content => "<h1>One Heading</h1>\r\n<p>and some text</p>\r\n<h2>And a Subheading</h2>\r\n<p>and more text</p>"
     Card.create! :name=>'ThreeHeading', :content =>"<h1>A Heading</h1>\r\n<p>and text</p>\r\n<h2>And Subhead</h2>\r\n<p>text</p>\r\n<h1>And another top Heading</h1>"
 
-    # -------- For history testing: -----------
-    first = Card.create! :name=>"First", :content => 'egg'
-    first.update_attributes! :content=> 'chicken'
-    first.update_attributes! :content=> 'chick'
 
   end
 end
+

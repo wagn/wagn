@@ -1,11 +1,24 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Right::Followers do
+  subject { @card.followers_card.format.render_raw }
   
   describe 'view :raw' do    
     it 'renders an array of followers' do
       @card = Card['All Eyes On Me']
       is_expected.to eq ['Sara', 'John', 'Follower']
+    end
+    
+    it 'recognizes card name changes' do
+      @card = Card['Look At Me']
+      @card.update_attributes! :name=>'Look away'
+      is_expected.to eq ['Follower']
+    end
+    
+    it 'when following a including card' do
+      it 'contains follower' do
+        
+      end
     end
     
     context 'when following a card' do 
@@ -17,7 +30,7 @@ describe Card::Set::Right::Followers do
     
     context 'when following a *self set' do
       it 'contains follower' do
-        @card = Card['Look at me']
+        @card = Card['Look At Me']
         is_expected.to include('Follower')
       end
     end

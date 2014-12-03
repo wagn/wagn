@@ -154,12 +154,14 @@ end
 
 def send_change_notice act, followed_card_name
   if changes_visible?(act) 
-    Card[:follower_notification_email].deliver(
-      :context   => act.card,
-      :to        => email,
-      :follower  => left.name, 
-      :followed  => followed_card_name,
-    )
+    Auth.as(left.id) do
+      Card[:follower_notification_email].deliver(
+        :context   => act.card,
+        :to        => email,
+        :follower  => left.name, 
+        :followed  => followed_card_name,
+      )
+    end
   end
 end
 

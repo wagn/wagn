@@ -270,9 +270,8 @@ class CardController < ActionController::Base
       when Wagn::BadAddress
         :bad_address
       else #the following indicate a code problem and therefore require full logging
-        Card.exception_raised exception
+        @card.notable_exception_raised exception
         
-        Rails.logger.info exception.backtrace*"\n"
         if ActiveRecord::RecordInvalid === exception
           :errors
         elsif Rails.logger.level == 0 # could also just check non-production mode...

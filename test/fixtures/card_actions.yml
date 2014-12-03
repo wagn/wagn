@@ -4780,3 +4780,24 @@ card_actions_683:
   super_action_id: 
   action_type: 0
   draft: 0
+card_actions_684:
+  id: 7480
+  card_id: 1422
+  card_act_id: 7411
+  super_action_id: 
+  action_type: 0
+  draft: 0
+card_actions_685:
+  id: 7481
+  card_id: 1422
+  card_act_id: 7412
+  super_action_id: 
+  action_type: 1
+  draft: 0
+card_actions_686:
+  id: 7482
+  card_id: 1422
+  card_act_id: 7413
+  super_action_id: 
+  action_type: 1
+  draft: 0

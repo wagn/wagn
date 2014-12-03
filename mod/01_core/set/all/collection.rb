@@ -31,7 +31,7 @@ def item_type
 end
 
 def include_item? cardname
-  ::Set.new(item_names.map{|name| name.to_name.key}).member? cardname.to_name.key
+  item_names.map{|name| name.to_name.key}.member? cardname.to_name.key
 end
 
 def extended_item_cards context = nil

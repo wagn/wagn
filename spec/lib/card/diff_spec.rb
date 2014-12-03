@@ -207,20 +207,4 @@ describe Card::Diff do
       expect(diff "[[Hello]]", "[[Hi]]").to eq( del('Hello') + ins('Hi') )
     end 
   end
-  
-  describe 'fast diff' do
-    it 'diff with multiple paragraphs' do
-      @opts = {:format=>:html, :fast=>true}
-      a = "<p>this was the original string</p>"
-      b = "<p>this is</p>\n<p> the new string</p>\n<p>around the world</p>" 
-
-      expect(diff a, b).to eq(
-          "<p>this #{del 'was'}#{ins 'is'}</p>"+
-          "\n<p> the " +
-          "#{del 'original'}#{ins 'new'}" +
-          " string</p>\n" +
-          "<p>#{ins 'around the world'}</p>"
-          )
-    end
-  end
 end

@@ -244,7 +244,7 @@ class Card
       if Rails.env =~ /^cucumber|test$/
         raise e
       else
-        controller.send :notify_airbrake, e if Airbrake.configuration.api_key
+        Card.exception_raised exception
         Rails.logger.info "\nError rendering #{error_cardname} / #{view}: #{e.class} : #{e.message}"
         Rails.logger.debug "BT:  #{e.backtrace*"\n  "}"
         rendering_error e, view

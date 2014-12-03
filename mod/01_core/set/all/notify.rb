@@ -77,7 +77,7 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c|
       end
     end
   rescue =>e  #this error handling should apply to all extend callback exceptions
-    Airbrake.notify e if Airbrake.configuration.api_key
+    Card.exception_raised
     Rails.logger.info "\nController exception: #{e.message}"
     Rails.logger.debug "BT: #{e.backtrace*"\n"}"
   end

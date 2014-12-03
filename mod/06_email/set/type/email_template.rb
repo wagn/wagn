@@ -6,7 +6,7 @@ def deliver args={}
   begin
     mail = format.render_mail(args)
     mail.deliver 
-  rescue Net::SMTPAuthenticationError, Net::SMTPServerBusy, Net::SMTPSyntaxError, Net::SMTPFatalError, Net::SMTPUnknownError => exception
+  rescue Net::SMTPError => exception
     errors.add :exception, exception.message 
   end
 end

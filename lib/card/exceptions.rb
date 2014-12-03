@@ -36,4 +36,8 @@ class Card
     end
 
   end
+  
+  def self.exception_raised exception
+  end
+  
 end

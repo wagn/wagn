@@ -92,8 +92,8 @@ namespace :wagn do
 
   desc 'insert existing card migrations into schema_migrations_cards to avoid re-migrating'
   task :assume_card_migrations do
-    Wagn::Migration.schema_mode :core_cards do
-      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:core_cards), Wagn::Migration.paths(:core_cards)
+    Wagn::Migration.schema_mode :card do
+      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:cards), Wagn::Migration.card_migration_paths
     end
   end
 

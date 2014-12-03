@@ -248,7 +248,7 @@ format :html do
       if hide_diff 
         new_name
       else
-        Card::Diff::DiffBuilder.new(old_name,new_name).complete
+        Card::Diff.compete(old_name,new_name)
       end
     else
       old_name
@@ -264,7 +264,7 @@ format :html do
     if args[:hide_diff]
       args[:action].new_values[:content]
     else 
-      args[:action].content_diff(args[:diff_type])
+      args[:action].content_diff(args[:diff_type], args[:diff_opts])
     end
   end
 

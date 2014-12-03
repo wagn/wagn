@@ -113,6 +113,11 @@ format :html do
     options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]}
     select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>'pointer-select')
   end
+  
+  view :content_changes do |args|
+    super(args.merge(:diff_opts=>{:format=>:pointer}))
+  end
+
 
   def pointer_option_description option
     pod_name = card.rule(:options_label) || 'description'

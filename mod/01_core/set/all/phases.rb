@@ -116,8 +116,8 @@ def rescue_event e
 #  false
 end
 
-def notable_exception_raised exception
-  Rails.logger.debug "BT:  #{e.backtrace*"\n  "}"
+event :notable_exception_raised do
+  Rails.logger.debug "BT:  #{@exception.backtrace*"\n  "}"
 end
 
 

@@ -78,7 +78,8 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c|
     end
   rescue =>e  #this error handling should apply to all extend callback exceptions
     Rails.logger.info "\nController exception: #{e.message}"
-    notable_exception_raised e
+    @exception = e
+    notable_exception_raised
   end
 end
   

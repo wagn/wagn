@@ -254,6 +254,7 @@ class CardController < ActionController::Base
     Rails.logger.info "exception = #{exception.class}: #{exception.message}"
 
     @card ||= Card.new
+    @exception = exception
 
     view = case exception
       ## arguably the view and status should be defined in the error class;
@@ -270,7 +271,7 @@ class CardController < ActionController::Base
       when Wagn::BadAddress
         :bad_address
       else #the following indicate a code problem and therefore require full logging
-        @card.notable_exception_raised exception
+        @card.format.notable_exception_raised
         
         if ActiveRecord::RecordInvalid === exception
           :errors

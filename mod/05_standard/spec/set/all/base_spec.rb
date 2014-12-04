@@ -30,7 +30,9 @@ describe Card::Set::All::Base do
     describe 'array' do
       it "of search items" do
         Card.create! :name => "n+a", :type=>"Number", :content=>"10"
+        sleep 1
         Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""
+        sleep 1
         Card.create! :name => "n+c", :type=>"Number", :content=>"30"
         c = Card.new :name => 'nplusarray', :content => "{{n+*children+by create|array}}"
         expect(c.format._render( :core )).to eq(%{["10", "say:\\"what\\"", "30"]})

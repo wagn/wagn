@@ -271,7 +271,7 @@ class CardController < ActionController::Base
       when Wagn::BadAddress
         :bad_address
       else #the following indicate a code problem and therefore require full logging
-        @card.format.notable_exception_raised
+        @card.notable_exception_raised
         
         if ActiveRecord::RecordInvalid === exception
           :errors

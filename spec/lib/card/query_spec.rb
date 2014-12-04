@@ -306,8 +306,8 @@ describe Card::Query do
 
     it "should sort by count" do
       Card::Auth.as_bot do
-        w = Card::Query.new( :name=>[:in,'Sara','John','Joe User'], :sort=>{ :right=>'*watcher', :item=>'referred_to', :return=>'count' } )
-        expect(w.run.map(&:name)).to eq(['Joe User','John','Sara'])
+        w = Card::Query.new( :name=>[:in,'All Eyes On Me','Sunglasses','No One Sees Me'], :sort=>{ :right=>'*following', :item=>'referred_to', :return=>'count' } )
+        expect(w.run.map(&:name)).to eq(['All Eyes On Me','Sunglasses','No One Sees Me'])
       end
     end
 

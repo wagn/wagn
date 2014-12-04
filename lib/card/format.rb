@@ -246,9 +246,9 @@ class Card
       if Rails.env =~ /^cucumber|test$/
         raise e
       else
-        Card.exception_raised exception
         Rails.logger.info "\nError rendering #{error_cardname} / #{view}: #{e.class} : #{e.message}"
-        Rails.logger.debug "BT:  #{e.backtrace*"\n  "}"
+        @exception = e
+        notable_exception_raised
         rendering_error e, view
       end
     end

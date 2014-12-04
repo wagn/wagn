@@ -1,5 +1,6 @@
 require 'rails/all'
 
+require 'builder'
 require 'htmlentities'
 require 'recaptcha'
 require 'RMagick'

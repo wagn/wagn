@@ -3,8 +3,6 @@
 class WatchersToFollowing < Wagn::CoreMigration
   def up
     
-    Card::Codename.reset_cache      
-    
     follower_hash = Hash.new { |h, v| h[v] = [] } 
 
     #NOTE: this migration must find cards in the trash, because the original (1.14.0) migration attempt

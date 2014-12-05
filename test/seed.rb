@@ -136,9 +136,8 @@ class SharedData
       }
       
       followers.each do |name, follow|
-        user = Card.create! :name=>name, :type_code=>'user', :subcards=>account_args('+*email'=>"#{name}@user.com", '+*password'=>"#{name}_pass")
-        following = user.fetch :trait=>:following
-        following.update_attributes! :content=>"[[#{ follow.join( "]]\n[[" ) }]]"
+        user = Card.create! :name=>name, :type_code=>'user', :subcards=>account_args('+*email'=>"#{name.parameterize}@user.com", '+*password'=>"#{name.parameterize}_pass")
+        user.following_card.update_attributes! :content=>"[[#{ follow.join( "]]\n[[" ) }]]"
       end
       
       
@@ -163,7 +162,7 @@ class SharedData
       Card.create! :name => "Sunglasses+tint"
       Card.create! :name => "Sunglasses+price"
       glass_rule = glass.rule_card(:follow_fields)
-      glass_rule.content => "[[#{Card[:include].name}]]\n[[_self+price]]\n[[_self+producer]]"
+      glass_rule.content = "[[#{Card[:includes].name}]]\n[[_self+price]]\n[[_self+producer]]"
       glass_rule.save! 
       
       

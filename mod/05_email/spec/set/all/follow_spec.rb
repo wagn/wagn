@@ -7,12 +7,12 @@ describe "Card::Set::All::Follow" do
    
   describe "view: follow" do
     before do
-      Card::Auth.current_user = Card['Big Brother']
+      Card::Auth.current_id = Card['Big Brother'].id
     end
       
       
     context "when not following" do
-      subject { follow_view 'No One Sees Me' 
+      subject { follow_view 'No One Sees Me' }
       it { is_expected.to eq "follow" }
     end
 
@@ -32,13 +32,13 @@ describe "Card::Set::All::Follow" do
     end
   
     context 'when following "content I created"' do
-      before { Card::Auth.current_user = Card['Narcissist'] }
+      before { Card::Auth.current_id = Card['Narcissist'].id }
       subject { follow_view 'Sunglasses' }    
       it { is_expected.to eq "following" }
     end
   
     context 'when following "content I edited"' do
-      before { Card::Auth.current_user = Card['Narcissist'] }
+      before { Card::Auth.current_id = Card['Narcissist'].id }
       subject { follow_view 'Magnifier+lens' }    
       it { is_expected.to eq "following" }
     end
@@ -47,7 +47,7 @@ describe "Card::Set::All::Follow" do
   
   describe "view: follow_menu" do
     before do
-      Card::Auth.current_user = Card['Big Brother']
+      Card::Auth.current_id = Card['Big Brother'].id
     end
     
     def follow_menu card_name
@@ -62,7 +62,7 @@ describe "Card::Set::All::Follow" do
 
     
     context "when following Optic+*type" do
-      before  { Card::Auth.current_user = Card['Optic fan'] }
+      before  { Card::Auth.current_id = Card['Optic fan'].id }
       subject { follow_menu 'Sunglasses' }
       it { is_expected.to include_unfollow_link "all Optics" }
       it { is_expected.to include_follow_link "Sunglasses" }
@@ -72,19 +72,19 @@ describe "Card::Set::All::Follow" do
 
     context "for card created by user" do
       context "when following 'content I created' " do
-        before  { Card::Auth.current_user = Card['Narcissist'] }
+        before  { Card::Auth.current_id = Card['Narcissist'].id }
         subject { follow_menu 'Sunglasses' }
         it      { is_expected.to include_unfollow_link "content I created" }
       end
       context "when not following 'content I created' " do
-        before  { Card::Auth.current_user = Card['Optic fan'] }
+        before  { Card::Auth.current_id = Card['Optic fan'].id }
         subject { follow_menu 'Google glass' }
         it      { is_expected.to include_follow_link "content I created" }
       end
     end
     
     context "for card edited by user" do
-      before  { Card::Auth.current_user = Card['Narcissist'] }
+      before  { Card::Auth.current_id = Card['Narcissist'].id }
       subject { follow_menu 'Magnifier+lens' }
       it      { is_expected.to include_unfollow_link "content I edited" }
     end

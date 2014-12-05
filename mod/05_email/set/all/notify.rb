@@ -1,31 +1,16 @@
-def special_followers 
-  Card.search(:editor_of=>name).each do |editor|
-    if editor.following? Card[:content_i_edited].cardname
-      yield editor, Card[:content_i_edited].name
-    end
-  end
-  if creator.following? Card[:content_i_created].cardname
-    yield creator, Card[:content_i_edited].name
-  end
-end
 
-
-def following? cardname
-  fetch(:trait=>:following).include_item? cardname
-end
-
-# Wikirate
-Card::Set::All::Follow::FOLLOW_OPTIONS << 'content I voted for'
-
-def special_followers
-  super
-  Card.search(:right_plus=>[:id=>UpvotesID,:link_to=>name]).each do |voter|
-    if voter.following? Card[:content_i_voted_for].cardname
-      yield voter, Card[:content_i_voted_for].name
-    end
-  end
-end
-#/ Wikirate
+# # Wikirate
+# Card::Set::All::Follow::FOLLOW_OPTIONS << 'content I voted for'
+#
+# def special_followers
+#   super
+#   Card.search(:right_plus=>[:id=>UpvotesID,:link_to=>name]).each do |voter|
+#     if voter.type_id == UserID and voter.following? Card[:content_i_voted_for].cardname
+#       yield voter, Card[:content_i_voted_for].name
+#     end
+#   end
+# end
+# #/ Wikirate
 
 class FollowerStash  
   def initialize card=nil
@@ -39,12 +24,12 @@ class FollowerStash
       if !@visited.include? card.key
         @visited.add card.key
         
-        followers_by_set = Card.read.cache 'FOLLOW_KEY'
-        
-        set_names.each do |set_name|
-          followers_by_set[set_name].each do |follower_id|
-            notify Card.find(follower_id), :of => set_name
-          end      
+        card.set_names.each do |set_name|
+          if set_card = Card.fetch(set_name)
+            set_card.followers.each do |follower_id|
+              notify Card.find(follower_id), :of => set_name
+            end      
+          end
         end
         
         card.special_followers do |follower, followed_name|
@@ -54,7 +39,7 @@ class FollowerStash
 
         if card.left and !@visited.include?(card.left.name)
           card.left.rule_card(:follow_fields).item_names.each do |item|
-            if item == Card[:include].name
+            if item == Card[:includes].name
               includee_set = Card.search(:included_by=>card.left.name).map(&:key)
               if !@visited.intersection(includee_set).empty?
                 add_affected_card card.left
@@ -113,9 +98,10 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c|
       end
     end
   rescue =>e  #this error handling should apply to all extend callback exceptions
-    Rails.logger.info "\nController exception: #{e.message}"
     @exception = e
     notable_exception_raised
+    Rails.logger.info "\nController exception: #{e.message}"
+    Rails.logger.debug "BT: #{e.backtrace*"\n"}"
   end
 end
   

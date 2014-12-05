@@ -14,7 +14,7 @@ format :html do
     end  
   end
 
-  view :watch do |args|
+  view :follow do |args|
     wrap args do
       link_args = if card.watched? 
         [card, "following", :off, "stop sending emails", { :hover_content=> 'unfollow' } ]

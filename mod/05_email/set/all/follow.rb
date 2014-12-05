@@ -1,8 +1,108 @@
 card_accessor :followers
 
+FOLLOW_CACHE_KEY = 'FOLLOW'
 
-FOLLOW_KEY = 'FOLLOW'
 FOLLOW_OPTIONS =  ['content I created', 'content I edited']
+def special_followers 
+  Card.search(:editor_of=>name).each do |editor|
+    if editor.type_id == UserID and editor.following? Card[:edited_by_me].cardname
+      yield editor, Card[:edited_by_me].name
+    end
+  end
+  if creator.type_id == UserID and creator.following? Card[:created_by_me].cardname
+    yield creator, Card[:created_by_me].name
+  end
+end
+
+
+def self.cache
+  Card.cache.read(FOLLOW_CACHE_KEY) || update_cache
+end
+
+def self.store_cache hash
+  Card.cache.write FOLLOW_CACHE_KEY, hash
+  hash
+end
+
+def self.update_cache
+  follow_cache = {}
+  Card.search( :left=>{:type_id=>Card::UserID}, :right=>{:codename=> "following"} ).each do |following_pointer|
+    following_pointer.item_cards.each do |followed|
+      key = followed.follow_key
+      if follow_cache[key]
+        follow_cache[key] << following_pointer.left_id
+      else
+        follow_cache[key] = ::Set.new [following_pointer.left_id]
+      end
+    end
+  end
+  Follow.store_cache follow_cache
+end
+
+
+def followers
+  @followers ||= ( Follow.cache[follow_key] || ::Set.new() )
+end
+
+def save_followers 
+  hash = Follow.cache
+  hash[follow_key] = followers
+  Follow.store_cache hash
+end
+
+def followed_by? user
+  followers.include? user.id
+end
+
+
+def add_follower user
+  if not followed_by? user
+    followers << user.id
+  end
+  save_followers
+end
+
+def drop_follower user
+  followers.delete(user.id)
+  save_followers
+end
+
+
+def special_follow_option? name
+ FOLLOW_OPTIONS.include? name
+end
+
+# the set card to be followed if you want to follow changes of card
+def follow_set_card
+  if special_follow_option? name
+    self
+  else
+    case type_code 
+    when :cardtype
+      fetch(:trait=>:type)
+    when :set
+      self
+    else
+      fetch(:trait=>:self)
+    end
+  end
+end
+
+def follow_set
+  follow_set_card.name
+end
+
+def follow_key
+  follow_set
+end
+
+
+
+
+
+event :expired_follower_cache, :before=>:extend, :when => proc { |c| c.name_changed?  } do
+  Follow.update_cache
+end
 
 def toggle_subscription_for watcher
   following = watcher.fetch :trait=>:following, :new=>{:type=>:pointer}
@@ -12,32 +112,6 @@ def toggle_subscription_for watcher
     following.add_item card.name
   end
   following.save
-end
-
-def special_follow_option? name
- FOLLOW_OPTIONS.include? name
-end
-
-def update_follow_cache
-  follow_cache = {}#Hash.new { |hash,key| hash[key] = []}
-  Card.search( :left_id=>UserID, :right=>{:codename=> "following"} ).each do |following_pointer|
-    following_pointer.item_cards.each do |followed|
-      if followed.type_id != SetID and !special_follow_option? followed.name
-        self_set = followed.fetch(:trait=>:self)
-        follow_cache[self_set.key] ||= []
-        follow_cache[self_set.key] << following_pointer.left_id
-      else
-        follow_cache[followed.key] ||= []
-        follow_cache[followed.key] << following_pointer.left_id 
-      end
-    end
-  end
-  Card.cache.write FOLLOW_KEY, follow_cache
-end
-
-event :expired_follow_cache, :before=>:extend, :when => 
-      proc { |c| c.name_changed? or (c.right and c.right.codename == :following and c.left_id == UserID) } do
-  update_follow_cache
 end
 
 format :html do
@@ -50,7 +124,7 @@ format :html do
         elsif card.type_watched?
           [card.type_card, "(following)", :off, "stop sending emails about changes to #{card.type_name} cards", { :hover_content=> 'unfollow' } ]
         elsif card.set_watched?
-          [card,"following", :off, "stop sending emails about changes to #{follow_set_card(card).name}", { :hover_content=> 'unfollow' } ]
+          [card,"following", :off, "stop sending emails about changes to #{card.follow_set_card.name}", { :hover_content=> 'unfollow' } ]
         else
           [card,"follow", :on, "send emails about changes to #{card.name}" ]
         end
@@ -66,8 +140,8 @@ format :html do
     path_hash = {:card=>following, :action=>:update, :toggle=>toggle, 
                  :success=>{:id=>card.name, :view=>:watch} }
     case toggle
-    when :off then path_hash[:drop_item] = card.follow_set_card(watched_card).cardname.url_key
-    when :on  then path_hash[:add_item]  = card.follow_set_card(watched_card).cardname.url_key
+    when :off then path_hash[:drop_item] = watched_card.follow_set_card.cardname.url_key
+    when :on  then path_hash[:add_item]  = watched_card.follow_set_card.cardname.url_key
     end
 
     link_to "#{text}", path(path_hash), 
@@ -76,17 +150,7 @@ format :html do
   
 end
 
-# the set card to be followed if you want to follow changes of card
-def follow_set_card card
-  case card.type_code 
-  when :cardtype
-    card.fetch(:trait=>:type)
-  when :set
-    card
-  else
-    card.fetch(:trait=>:self)
-  end
-end
+
 
 
 def  follow_options

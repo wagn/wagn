@@ -1,6 +1,16 @@
-require 'byebug'
-
 include Card::Set::Type::Pointer
+
+event :update_followers, :after=>:store, :when => proc { |c| c.db_content_changed?  } do
+  new_content = db_content
+  db_content = db_content_was
+  item_cards.each do |item|
+    item.drop_follower self
+  end
+  db_content = new_content
+  item_cards.each do |item|
+    item.add_follower self
+  end
+end
 
 format()      { include Card::Set::Type::Pointer::Format     }
 format :html do 

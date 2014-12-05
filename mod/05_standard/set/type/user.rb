@@ -2,6 +2,7 @@
 include Basic
 
 attr_accessor :email
+card_accessor :following
 
 format :html do
 
@@ -59,4 +60,7 @@ event :signin_after_setup, :before=>:extend, :on=>:create, :when=>proc{ |c| Card
   Auth.signin id
 end
 
+def following? cardname
+  following_card.include_item? cardname
+end
 

@@ -3,7 +3,3 @@ format :email_html do
   view :closed_missing do |args| '' end
 end
 
-
-def clean_html?
-  false
-end

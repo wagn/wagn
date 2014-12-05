@@ -26,8 +26,9 @@ Feature: Watch interface
     Given Joe User is watching "Home"
     And I am on the homepage
     And I hover over the main menu
-    And In the main card menu I click "following"
-    #note: turns to "unfollow on mouseover"
+    And In the main card menu I find link with class "watch-toggle-off" and click it
+    #note: the link name turns from "follwing" to "unfollow" on mouseover and because we don't control the mouse's position
+    #      this test randomly fails if we use the link name
     Then In the main card menu I should see "follow"
     And the card Joe User+*following should not contain "Home"
 

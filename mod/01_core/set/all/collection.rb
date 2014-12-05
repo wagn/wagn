@@ -1,11 +1,14 @@
 
 module ClassMethods
   def search spec
-    results = ::Card::Query.new(spec).run
-    if block_given? and Array===results
-      results.each { |result| yield result }
+    query = ::Card::Query.new(spec)
+    Wagn.with_logging nil, :search, spec, query.sql.strip do
+      results = query.run
+      if block_given? and Array===results
+        results.each { |result| yield result }
+      end
+      results
     end
-    results
   end
 
   def count_by_wql(spec)
@@ -28,7 +31,7 @@ def item_type
 end
 
 def include_item? cardname
-  ::Set.new(item_names).member? cardname
+  item_names.map{|name| name.to_name.key}.member? cardname.to_name.key
 end
 
 def extended_item_cards context = nil

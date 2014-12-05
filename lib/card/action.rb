@@ -46,8 +46,8 @@ class Card
     belongs_to :act,  :foreign_key=>:card_act_id, :inverse_of=>:actions 
     has_many   :changes, :foreign_key=>:card_action_id, :inverse_of=>:action, :dependent=>:delete_all
     
-    belongs_to :super_action, class_name: "Action", :inverse_of=>:sub_actions
-    has_many   :sub_actions,  class_name: "Action", :inverse_of=>:super_action
+    belongs_to :super_action, :class_name=> "Action", :inverse_of=>:sub_actions
+    has_many   :sub_actions,  :class_name=> "Action", :inverse_of=>:super_action
     
     scope :created_by, lambda { |actor_id| joins(:act).where('card_acts.actor_id = ?', actor_id) }
     
@@ -160,31 +160,31 @@ class Card
     # end
       
   
-    def name_diff
+    def name_diff opts={}
       if new_name?
-        Card::Diff::DiffBuilder.new(old_values[:name],new_values[:name]).complete
+        Card::Diff.complete old_values[:name], new_values[:name], opts
       end
     end
   
-    def cardtype_diff
+    def cardtype_diff opts={}
       if new_type?
-        Card::Diff::DiffBuilder.new(old_values[:cardtype],new_values[:cardtype]).complete
+        Card::Diff.complete old_values[:cardtype], new_values[:cardtype], opts
       end
     end
   
-    def content_diff diff_type=:expanded
+    def content_diff diff_type=:expanded, opts=nil
       if new_content?
         if diff_type == :summary
-          content_diff_builder.summary
+          content_diff_builder(opts).summary
         else
-          content_diff_builder.complete
+          content_diff_builder(opts).complete 
         end
       end
     end
     
-    def content_diff_builder
+    def content_diff_builder opts=nil
       @content_diff_builder ||= begin
-        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], :compare_html=>false)
+        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], opts || card.diff_args)
       end
     end
     

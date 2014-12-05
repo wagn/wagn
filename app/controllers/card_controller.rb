@@ -52,7 +52,7 @@ class CardController < ActionController::Base
   
   private
   
-  # make sure that filenname doesn't leave allowed_path using ".."
+  # make sure that filename doesn't leave allowed_path using ".."
   def send_file_inside(allowed_path, filename, options = {})
     if filename.include? "../"
       raise Wagn::BadAddress
@@ -254,6 +254,7 @@ class CardController < ActionController::Base
     Rails.logger.info "exception = #{exception.class}: #{exception.message}"
 
     @card ||= Card.new
+    @exception = exception
 
     view = case exception
       ## arguably the view and status should be defined in the error class;
@@ -270,9 +271,8 @@ class CardController < ActionController::Base
       when Wagn::BadAddress
         :bad_address
       else #the following indicate a code problem and therefore require full logging
-        Rails.logger.info exception.backtrace*"\n"
-        notify_airbrake exception if Airbrake.configuration.api_key
-
+        @card.notable_exception_raised
+        
         if ActiveRecord::RecordInvalid === exception
           :errors
         elsif Rails.logger.level == 0 # could also just check non-production mode...

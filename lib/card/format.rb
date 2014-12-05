@@ -183,7 +183,9 @@ class Card
         @current_view = view = ok_view canonicalize_view( view ), args       
         args = default_render_args view, args
         with_inclusion_mode view do
-          send "_view_#{ view }", args
+          Wagn.with_logging card.name, :view, view, args do
+            send "_view_#{ view }", args
+          end
         end
       end
     rescue => e
@@ -244,9 +246,9 @@ class Card
       if Rails.env =~ /^cucumber|test$/
         raise e
       else
-        controller.send :notify_airbrake, e if Airbrake.configuration.api_key
         Rails.logger.info "\nError rendering #{error_cardname} / #{view}: #{e.class} : #{e.message}"
-        Rails.logger.debug "BT:  #{e.backtrace*"\n  "}"
+        @exception = e
+        notable_exception_raised
         rendering_error e, view
       end
     end

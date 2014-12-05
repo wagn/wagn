@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
+
 filename = File.join Wagn.root, 'config/airbrake.key'
-if File.exists? filename
+if File.exists? filename or File.symlink? filename
   key = File.read( filename ).strip
   Airbrake.configure do |config|
     Rails.logger.info "setting up airbrake with #{key}"

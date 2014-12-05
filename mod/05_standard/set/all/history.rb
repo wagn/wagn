@@ -248,7 +248,7 @@ format :html do
       if hide_diff 
         new_name
       else
-        Card::Diff::DiffBuilder.new(old_name,new_name).complete
+        Card::Diff.complete(old_name,new_name)
       end
     else
       old_name
@@ -259,6 +259,9 @@ format :html do
     change = hide_diff ? action.new_values[:cardtype] : action.cardtype_diff
     "(#{change})"
   end
+  
+
+
   
   view :content_changes do |args|
     if args[:hide_diff]
@@ -292,3 +295,9 @@ format :html do
       :class=>'slotter', :remote=>true )
   end
 end
+
+def diff_args
+  {:format=>:text}
+end
+
+

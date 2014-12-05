@@ -68,7 +68,7 @@ describe Card::Query do
       expect(Card::Query.new( :member_of=>[      {:name=>'r1'}, {:key=>'r2'} ], :return=>:name).run.sort).to eq(%w{ u1 u2 })
       expect(Card::Query.new( :member_of=>[:any, {:name=>'r1'}, {:key=>'r2'} ], :return=>:name).run.sort).to eq(%w{ u1 u2 u3 })      
     end
-    
+
     it "should handle multiple values for plus_relational keys" do
       expect(Card::Query.new( :right_plus=>[ :all, 'e', 'c' ], :return=>:name ).run.sort).to eq(%w{ A }) #explicit conjunction
       expect(Card::Query.new( :right_plus=>[ ['e',{}],  'c' ], :return=>:name ).run.sort).to eq(%w{ A }) # first element is array
@@ -85,7 +85,7 @@ describe Card::Query do
 
 
   describe "edited_by/editor_of" do
-    it "should find card edited by joe using subspec" do
+    it "should find card edited by joe using subquery" do
       expect(Card::Query.new(:edited_by=>{:match=>"Joe User"}, :sort=>"name").run).to eq([Card["JoeLater"], Card["JoeNow"]])
     end
     it "should find card edited by Wagn Bot" do

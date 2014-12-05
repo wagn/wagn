@@ -92,8 +92,8 @@ namespace :wagn do
 
   desc 'insert existing card migrations into schema_migrations_cards to avoid re-migrating'
   task :assume_card_migrations do
-    Wagn::Migration.schema_mode :card do
-      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:core_cards), Wagn::Migration.core_card_migration_paths
+    Wagn::Migration.schema_mode :core_cards do
+      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:core_cards), Wagn::Migration.paths( :core_cards )
     end
   end
 
@@ -115,7 +115,7 @@ namespace :wagn do
        # this is needed in production mode to insure core db structures are loaded before schema_mode is set
       
     
-      paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.core_card_migration_paths
+      paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.paths(:core_cards)
     
       Wagn::Migration.schema_mode :core_cards do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
@@ -131,7 +131,7 @@ namespace :wagn do
       Card.reset_column_information # this is needed in production mode to insure core db structures are loaded before schema_mode is set
       Card::Reference.reset_column_information
     
-      paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.deck_card_migration_paths
+      paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.paths(:deck_cards)
     
       Wagn::Migration.schema_mode :deck_cards do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true

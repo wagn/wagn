@@ -28,7 +28,7 @@ module Wagn
     end
     
     initializer :load_mod_initializers,  :after => :load_wagn_config_initializers do
-      paths.add 'mod-initializers', :with=>'mod', :glob=>"**/initializers/*.rb"
+      paths.add 'mod-initializers', :with=>'mod', :glob=>"**{,/*/**}/initializers/*.rb"
       config.paths['mod-initializers'].existent.sort.each do |initializer|
         load(initializer)
       end

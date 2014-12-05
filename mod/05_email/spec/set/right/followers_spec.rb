@@ -11,15 +11,21 @@ describe Card::Set::Right::Followers do
     
     it 'recognizes card name changes' do
       @card = Card['Look At Me']
+      @card.update_referencers = true
       @card.update_attributes! :name=>'Look away'
+      binding.pry
       is_expected.to eq ['Big Brother']
     end
-    
+      
+    it 'recognizes +*following changes' do
+    end
     # it 'when following a including card' do
     #   it 'contains follower' do
     #
     #   end
     # end
+    
+
     
     context 'when following a card' do 
       it 'contains follower' do

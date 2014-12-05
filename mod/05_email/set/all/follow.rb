@@ -98,9 +98,7 @@ end
 
 
 
-
-
-event :expired_follower_cache, :before=>:extend, :when => proc { |c| c.name_changed?  } do
+event :expired_follower_cache, :before=>:extend, :changed=>:name do
   Follow.update_cache
 end
 

@@ -1,6 +1,6 @@
 include Card::Set::Type::Pointer
 
-event :update_followers, :after=>:store, :when => proc { |c| c.db_content_changed?  } do
+event :update_followers, :after=>:store, :changed=>:db_content do #when => proc { |c| c.db_content_changed?  } do
   new_content = db_content
   db_content = db_content_was
   item_cards.each do |item|

@@ -248,7 +248,7 @@ class Card
       else
         Rails.logger.info "\nError rendering #{error_cardname} / #{view}: #{e.class} : #{e.message}"
         @exception = e
-        notable_exception_raised
+        card.notable_exception_raised
         rendering_error e, view
       end
     end

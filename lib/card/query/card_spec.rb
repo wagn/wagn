@@ -435,7 +435,7 @@ class Card
 
       def to_sql *args
         sql.conditions << basic_conditions
-
+        
         if @mods[:return]=='condition'
           conds = sql.conditions.last
           return conds.blank? ? nil : "(#{conds})"
@@ -464,7 +464,7 @@ class Card
       end
   
       def basic_conditions
-        @spec.map { |key, val| val.to_sql field_root(key) }.join " #{ current_conjunction } "
+        @spec.map { |key, val| val.to_sql field_root(key) }.compact.join " #{ current_conjunction } "
       end
   
       def current_conjunction

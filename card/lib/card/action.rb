@@ -56,7 +56,7 @@ class Card
     
     class << self
       def cache
-        Wagn::Cache[Action]
+        Card::Cache[Action]
       end
     
       def fetch id

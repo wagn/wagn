@@ -14,8 +14,9 @@ class Card
       cattr_accessor acc
       self.send "#{acc}=", {}
     end
-    @@max_char_count = 200 #should come from Wagn.config
-    @@max_depth      = 20 # ditto
+    # TODO: these should come from Card.config
+    @@max_char_count = 200
+    @@max_depth      = 20
     
     attr_reader :card, :root, :parent, :main_opts
     attr_accessor :form, :error_status, :inclusion_opts
@@ -405,7 +406,7 @@ class Card
     end
 
     def nest nested_card, opts={}
-      #ActiveSupport::Notifications.instrument('wagn', message: "nest: #{nested_card.name}, #{opts}") do
+      #ActiveSupport::Notifications.instrument('card', message: "nest: #{nested_card.name}, #{opts}") do
       opts.delete_if { |k,v| v.nil? }
       opts.reverse_merge! inclusion_defaults
     

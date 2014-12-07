@@ -5,11 +5,11 @@ class CardMigrationGenerator < ActiveRecord::Generators::Base
   source_root File.expand_path('../templates', __FILE__)
   
   class_option 'core', :type => :boolean, aliases: '-c', :default => false, :group => :runtime, 
-    desc: "Create card migration for wagn core"
+    desc: "Create card migration for card core"
 
   def create_migration_file
     migration_type = options['core'] ? :core_cards : :deck_cards
-    root = Wagn::Migration.paths(migration_type).first
+    root = Card::Migration.paths(migration_type).first
     set_local_assigns!
     migration_template @migration_template, File.join( root, "#{file_name}.rb")
   end
@@ -22,7 +22,7 @@ class CardMigrationGenerator < ActiveRecord::Generators::Base
 
   def set_local_assigns!
     @migration_template = "card_migration.erb"
-    @migration_parent_class = options['core'] ? 'Wagn::CoreMigration' : 'Wagn::Migration'
+    @migration_parent_class = options['core'] ? 'Card::CoreMigration' : 'Card::Migration'
     case file_name
     when /^(import)_(.*)(?:\.json)?/
       @migration_action = $1

@@ -15,7 +15,7 @@ class Card
       def authenticate email, password
         accounted = Auth[ email ]
         if accounted and account = accounted.account and account.active?
-          if Wagn.config.no_authentication or password_authenticated?( account, password.strip )
+          if Card.config.no_authentication or password_authenticated?( account, password.strip )
             accounted.id
           end
         end

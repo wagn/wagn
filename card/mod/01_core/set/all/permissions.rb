@@ -72,7 +72,7 @@ end
 
 def permitted? action
 
-  if !Wagn.config.read_only
+  if !Card.config.read_only
     return true if action != :comment and Auth.always_ok?
 
     permitted_ids = who_can action
@@ -87,7 +87,7 @@ def permitted? action
 end
 
 def permit action, verb=nil
-  if Wagn.config.read_only # not called by ok_to_read
+  if Card.config.read_only # not called by ok_to_read
     deny_because "Currently in read-only mode"
   end
   
@@ -229,7 +229,7 @@ end
 
 def have_recaptcha_keys?
   @@have_recaptcha_keys = defined?(@@have_recaptcha_keys) ? @@have_recaptcha_keys : 
-    !!( Wagn.config.recaptcha_public_key && Wagn.config.recaptcha_private_key )
+    !!( Card.config.recaptcha_public_key && Card.config.recaptcha_private_key )
 end
 
 event :recaptcha, :before=>:approve do

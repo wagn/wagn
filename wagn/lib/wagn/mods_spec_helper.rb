@@ -52,7 +52,7 @@ Spork.prefork do
 
     config.before(:each) do
       Card::Auth.current_id = JOE_USER_ID
-      Wagn::Cache.restore
+      Card::Cache.restore
       Card::Env.reset
     end
     config.after(:each) do

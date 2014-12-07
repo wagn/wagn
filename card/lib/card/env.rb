@@ -1,4 +1,4 @@
-# Card::Env can differ for each request; Wagn.config should not
+# Card::Env can differ for each request; Card.config should not
 
 class Card
   module Env
@@ -12,8 +12,8 @@ class Card
           self[:params]     = c.request.params
           self[:ip]         = c.request.remote_ip
           self[:ajax]       = c.request.xhr? || c.request.params[:simulate_xhr]
-          self[:host]       = Wagn.config.override_host     || c.request.env['HTTP_HOST']
-          self[:protocol]   = Wagn.config.override_protocol || c.request.protocol
+          self[:host]       = Card.config.override_host     || c.request.env['HTTP_HOST']
+          self[:protocol]   = Card.config.override_protocol || c.request.protocol
         
         end
       end

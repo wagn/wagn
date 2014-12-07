@@ -129,13 +129,13 @@ class Card
       'blockquote' => ['cite']
     )
 
-    if Wagn.config.allow_inline_styles
+    if Card.config.allow_inline_styles
       ALLOWED_TAGS['table'] += %w[ cellpadding align border cellspacing ]
     end
 
     ALLOWED_TAGS.each_key {|k|
       ALLOWED_TAGS[k] << 'class'
-      ALLOWED_TAGS[k] << 'style' if Wagn.config.allow_inline_styles
+      ALLOWED_TAGS[k] << 'style' if Card.config.allow_inline_styles
       ALLOWED_TAGS[k]
     }
     ALLOWED_TAGS
@@ -147,7 +147,7 @@ class Card
       ## Method that cleans the String of HTML tags
       ## and attributes outside of the allowed list.
 
-      # this has been hacked for wagn to allow classes if
+      # this has been hacked for card to allow classes if
       # the class begins with "w-"
       def clean!( string, tags = ALLOWED_TAGS )
         string.gsub( /<(\/*)(\w+)([^>]*)>/ ) do

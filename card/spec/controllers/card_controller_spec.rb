@@ -256,7 +256,7 @@ describe CardController do
     context "file" do
       before do
         Card::Auth.as_bot do
-          Card.create :name => "mao2", :type_code=>'image', :attach=>File.new("#{Wagn.gem_root}/test/fixtures/mao2.jpg")
+          Card.create :name => "mao2", :type_code=>'image', :attach=>File.new("#{Card.gem_root}/test/fixtures/mao2.jpg")
           Card.create :name => 'mao2+*self+*read', :content=>'[[Administrator]]'
         end
       end
@@ -283,7 +283,7 @@ describe CardController do
     it 'serves file' do
       filename = "asset-test.txt"
       args = { :id=>filename, :format=>'txt', :explicit_file=>true }
-      path = File.join( Wagn.paths['gem-assets'].existent.first, filename)
+      path = File.join( Card.paths['gem-assets'].existent.first, filename)
       File.open(path, "w") { |f| f.puts "test" }
       args = { :filename => "#{filename}" }
       visit "/assets/#{filename}"

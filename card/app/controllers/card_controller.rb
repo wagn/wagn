@@ -13,7 +13,7 @@ class CardController < ActionController::Base
   before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
   
-  if Wagn.config.request_logger
+  if Card.config.request_logger
     require 'csv'
     after_filter :request_logger 
   end
@@ -46,8 +46,8 @@ class CardController < ActionController::Base
   end
   
   def asset
-    Rails.logger.info "Routing assets through Wagn. Recommend symlink from Deck to Wagn gem using 'rake wagn:update_assets_symlink'"
-    send_file_inside Wagn.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
+    Rails.logger.info "Routing assets through Card. Recommend symlink from Deck to Card gem using 'rake wagn:update_assets_symlink'"
+    send_file_inside Card.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
   end
   
   private
@@ -55,7 +55,7 @@ class CardController < ActionController::Base
   # make sure that filename doesn't leave allowed_path using ".."
   def send_file_inside(allowed_path, filename, options = {})
     if filename.include? "../"
-      raise Wagn::BadAddress
+      raise Card::BadAddress
     else
       send_file File.join(allowed_path, filename), options
     end
@@ -65,7 +65,7 @@ class CardController < ActionController::Base
 
   def per_request_setup
     request.format = :html if !params[:format] #is this used??
-    Wagn::Cache.renew
+    Card::Cache.renew
     Card::Env.reset :controller=>self
     Card::Auth.set_current_from_session
   end
@@ -85,7 +85,7 @@ class CardController < ActionController::Base
         Card.setting(:home) || 'Home'
       end
   rescue ArgumentError # less than perfect way to handle encoding issues.
-    raise Wagn::BadAddress
+    raise Card::BadAddress
   end
   
 
@@ -108,7 +108,7 @@ class CardController < ActionController::Base
           Card.fetch mark, :new=>opts
         end
       end
-    raise Wagn::NotFound unless @card
+    raise Card::NotFound unless @card
     
     if action = @card.find_action_by_params( params )
       @card.selected_action_id = action.id
@@ -139,7 +139,7 @@ class CardController < ActionController::Base
       log << env['HTTP_ACCEPT_LANGUAGE'].to_s.scan(/^[a-z]{2}/).first
       log << env["HTTP_REFERER"]
       
-      log_dir = (Wagn.paths['request_log'] || Wagn.paths['log']).first
+      log_dir = (Card.paths['request_log'] || Card.paths['log']).first
       log_filename = "#{Date.today}_#{Rails.env}.csv"
       File.open(File.join(log_dir,log_filename), "a") do |f|
         f.write CSV.generate_line(log)
@@ -225,7 +225,7 @@ class CardController < ActionController::Base
 
 
   def show view = nil, status = 200
-#    ActiveSupport::Notifications.instrument('wagn', message: 'CardController#show') do
+#    ActiveSupport::Notifications.instrument('card', message: 'CardController#show') do
         
     format = request.parameters[:format]
     format = :file if params[:explicit_file] or !Card::Format.registered.member? format #unknown format
@@ -263,11 +263,11 @@ class CardController < ActionController::Base
         # these error messages are visible to end users and are generally not treated as bugs.
         # Probably want to rename accordingly.
         :errors
-      when Card::PermissionDenied, Wagn::PermissionDenied
+      when Card::PermissionDenied
         :denial
-      when Wagn::NotFound, ActiveRecord::RecordNotFound, ActionController::MissingFile
+      when Card::NotFound, ActiveRecord::RecordNotFound, ActionController::MissingFile
         :not_found
-      when Wagn::BadAddress
+      when Card::BadAddress
         :bad_address
       else #the following indicate a code problem and therefore require full logging
         Rails.logger.info exception.backtrace*"\n"

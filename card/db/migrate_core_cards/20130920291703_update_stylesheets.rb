@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class UpdateStylesheets < Wagn::CoreMigration
+class UpdateStylesheets < Card::CoreMigration
   def up
     dir = File.join data_path, '1.12_stylesheets'
     %w{ common traditional }.each do |sheetname|

@@ -25,13 +25,27 @@ class Card < ActiveRecord::Base
     def gem_root
       CARD_GEM_ROOT
     end
+
+    def config
+      Rails.application.config
+    end
+
+    def paths
+      config.paths
+    end
+    
+    def future_stamp
+      ## used in test data
+      @@future_stamp ||= Time.local 2020,1,1,0,0,0
+    end
   end
     
   class Engine < Rails::Engine
 
-    initializer :load_mod_initializers,  :after => :load_wagn_config_initializers do
-      paths.add 'mod-initializers', :with=>'mod', :glob=>"**/initializers/*.rb"
-      config.paths['mod-initializers'].existent.sort.each do |initializer|
+    initializer :load_card_config_initializers,  :before => :load_config_initializers do
+     # warn "lccinit paths #{paths.inspect}"
+      add_gem_path paths, 'lib/card/config/initializers', :glob => "**/*.rb"
+      config.paths['lib/card/config/initializers'].existent.sort.each do |initializer|
         load(initializer)
       end
     end

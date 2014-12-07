@@ -107,7 +107,7 @@ module ClassMethods
   end
   
   def cache
-    Wagn::Cache[Card]
+    Card::Cache[Card]
   end
   
   def fetch_from_cache cache_key

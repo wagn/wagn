@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency 'wagn/exceptions'
+require_dependency 'card/exceptions'
 
 class Card
   module Loader
@@ -48,7 +48,7 @@ class Card
         if rewrite_tmp_files?
           load_set_patterns_from_source
         end
-        load_dir "#{Wagn.paths['tmp/set_pattern'].first}/*.rb"
+        load_dir "#{Card.paths['tmp/set_pattern'].first}/*.rb"
       end
 
       def load_set_patterns_from_source
@@ -85,7 +85,7 @@ class Card
 
       def load_sets_by_pattern
         Card.set_patterns.reverse.map(&:pattern_code).each do |set_pattern|
-          pattern_tmp_dir = "#{Wagn.paths['tmp/set'].first}/#{set_pattern}"
+          pattern_tmp_dir = "#{Card.paths['tmp/set'].first}/#{set_pattern}"
           if rewrite_tmp_files?
             Dir.mkdir pattern_tmp_dir
             load_implicit_sets_from_source set_pattern
@@ -118,7 +118,8 @@ class Card
       
       def prepare_tmp_dir path
         if rewrite_tmp_files?
-          p = Wagn.paths[ path ]
+          p = Card.paths[ path ]
+          raise "paths[#{path}], #{Card.paths.inspect}" if p.nil?
           if p.existent.first
             FileUtils.rm_rf p.first, :secure=>true
           end
@@ -130,7 +131,7 @@ class Card
         if defined?( @@rewrite )
           @@rewrite
         else
-          @@rewrite = !( Rails.env.production? and Wagn.paths['tmp/set'].existent.first )
+          @@rewrite = !( Rails.env.production? and Card.paths['tmp/set'].existent.first )
         end
       end
 

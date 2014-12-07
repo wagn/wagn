@@ -115,12 +115,12 @@ module Paperclip::Interpolations
       # generalize this to work with any mod (needs design)
       "#{Card.gem_root}/mod/#{mod}/file"
     else
-      Wagn.paths['files'].existent.first
+      Card.paths['files'].existent.first
     end
   end
       
   def file_path at, style_name
-    card_path Wagn.config.files_web_path
+    card_path Card.config.files_web_path
   end
 
   def card_id at, style_name

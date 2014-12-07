@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class ResetAccountRequestType < Wagn::CoreMigration
+class ResetAccountRequestType < Card::CoreMigration
   def up
     arcard = Card[:signup]
     if arcard.type_code != :cardtype

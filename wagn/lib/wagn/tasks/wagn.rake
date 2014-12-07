@@ -50,7 +50,7 @@ namespace :wagn do
   
   desc "reset cache"
   task :reset_cache => :environment  do
-    Wagn::Cache.reset_global
+    Card::Cache.reset_global
   end
 
   desc "set symlink for assets"
@@ -73,7 +73,7 @@ namespace :wagn do
     end
     
     puts 'migrating core cards'
-    Wagn::Cache.reset_global
+    Card::Cache.reset_global
     Rake::Task['wagn:migrate:core_cards'].execute #not invoke because we don't want to reload environment
     if stamp
       Rake::Task['wagn:migrate:stamp'].reenable
@@ -87,7 +87,7 @@ namespace :wagn do
       Rake::Task['wagn:migrate:stamp'].invoke :deck_cards
     end
     
-    Wagn::Cache.reset_global
+    Card::Cache.reset_global
   end
 
   desc 'insert existing card migrations into schema_migrations_cards to avoid re-migrating'
@@ -106,7 +106,7 @@ namespace :wagn do
     
     desc "migrate core cards"
     task :core_cards => :environment do
-      Wagn::Cache.reset_global
+      Card::Cache.reset_global
       ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
       Wagn.config.action_mailer.perform_deliveries = false
       Card.reset_column_information
@@ -125,7 +125,7 @@ namespace :wagn do
     
     desc "migrate deck cards"
     task :deck_cards => :environment do
-      Wagn::Cache.reset_global
+      Card::Cache.reset_global
       ENV['SCHEMA'] ||= "#{Rails.root}/db/schema.rb"
       Wagn.config.action_mailer.perform_deliveries = false
       Card.reset_column_information # this is needed in production mode to insure core db structures are loaded before schema_mode is set
@@ -190,7 +190,7 @@ namespace :wagn do
   namespace :bootstrap do
     desc "rid template of unneeded cards, acts, actions, changes, and references"
     task :clean => :environment do
-      Wagn::Cache.reset_global
+      Card::Cache.reset_global
       conn =  ActiveRecord::Base.connection
       # Correct time and user stamps
       card_sql =  "update cards set created_at=now(), creator_id=#{ Card::WagnBotID }"
@@ -207,7 +207,7 @@ namespace :wagn do
             card.delete!
           end
         end
-        Wagn::Cache.reset_global
+        Card::Cache.reset_global
         %w{ machine_input machine_output }.each do |codename|
           Card.search(:right=>{:codename=>codename }).each do |card|
             FileUtils.rm_rf File.join('files', card.id.to_s ), :secure=>true            
@@ -236,13 +236,13 @@ namespace :wagn do
       
       conn.delete( "delete from sessions" )
       
-      Wagn::Cache.reset_global
+      Card::Cache.reset_global
       
     end
 
     desc "dump db to bootstrap fixtures"
     task :dump => :environment do
-      Wagn::Cache.reset_global
+      Card::Cache.reset_global
       
       Rake::Task['wagn:bootstrap:copy_mod_files'].invoke
       

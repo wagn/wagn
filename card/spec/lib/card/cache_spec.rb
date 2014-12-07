@@ -1,10 +1,10 @@
 # -*- encoding : utf-8 -*-
 
-describe Wagn::Cache do
+describe Card::Cache do
   describe "with nil store" do
     before do
-      expect(Wagn::Cache).to receive(:generate_cache_id).exactly(2).times.and_return("cache_id")
-      @cache = Wagn::Cache.new :prefix=>"prefix"
+      expect(Card::Cache).to receive(:generate_cache_id).exactly(2).times.and_return("cache_id")
+      @cache = Card::Cache.new :prefix=>"prefix"
     end
 
     describe "#basic operations" do
@@ -21,8 +21,8 @@ describe Wagn::Cache do
   describe "with same cache_id" do
     before :each do
       @store = ActiveSupport::Cache::MemoryStore.new
-      expect(Wagn::Cache).to receive(:generate_cache_id).and_return("cache_id")
-      @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
+      expect(Card::Cache).to receive(:generate_cache_id).and_return("cache_id")
+      @cache = Card::Cache.new :store=>@store, :prefix=>"prefix"
     end
 
     it "#read" do
@@ -56,27 +56,27 @@ describe Wagn::Cache do
   end
 
   it "#reset" do
-    expect(Wagn::Cache).to receive(:generate_cache_id).and_return("cache_id1")
+    expect(Card::Cache).to receive(:generate_cache_id).and_return("cache_id1")
     @store = ActiveSupport::Cache::MemoryStore.new
-    @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
+    @cache = Card::Cache.new :store=>@store, :prefix=>"prefix"
     expect(@cache.prefix).to eq("prefix/cache_id1/")
     @cache.write("foo","bar")
     expect(@cache.read("foo")).to eq("bar")
 
     # reset
-    expect(Wagn::Cache).to receive(:generate_cache_id).and_return("cache_id2")
+    expect(Card::Cache).to receive(:generate_cache_id).and_return("cache_id2")
     @cache.reset
     expect(@cache.prefix).to eq("prefix/cache_id2/")
     expect(@cache.store.read("prefix/cache_id")).to eq("cache_id2")
     expect(@cache.read("foo")).to be_nil
 
-    cache2 = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
+    cache2 = Card::Cache.new :store=>@store, :prefix=>"prefix"
     expect(cache2.prefix).to eq("prefix/cache_id2/")
   end
 
   describe "with file store" do
     before do
-      cache_path = "#{Wagn.root}/tmp/cache"
+      cache_path = "#{Card.root}/tmp/cache"
       @store = ActiveSupport::Cache::FileStore.new cache_path
 
       @store.clear
@@ -88,14 +88,14 @@ describe Wagn::Cache do
       #files_to_remove = root_dirs.collect{|f| File.join(cache_path, f)}
       #FileUtils.rm_r(files_to_remove)
 
-      expect(Wagn::Cache).to receive(:generate_cache_id).exactly(2).times.and_return("cache_id1")
-      @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
+      expect(Card::Cache).to receive(:generate_cache_id).exactly(2).times.and_return("cache_id1")
+      @cache = Card::Cache.new :store=>@store, :prefix=>"prefix"
     end
 
     describe "#basic operations with special symbols" do
       it "should work" do
         @cache.write('%\\/*:?"<>|', "foo")
-        cache2 = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
+        cache2 = Card::Cache.new :store=>@store, :prefix=>"prefix"
         expect(cache2.read('%\\/*:?"<>|')).to eq("foo")
         @cache.reset
       end
@@ -105,7 +105,7 @@ describe Wagn::Cache do
       it "should work" do
         @cache.write('(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén', "foo")
         @cache.write('русский', "foo")
-        cache3 = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
+        cache3 = Card::Cache.new :store=>@store, :prefix=>"prefix"
         expect(cache3.read('(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén')).to eq("foo")
         expect(cache3.read('русский')).to eq("foo")
         @cache.reset

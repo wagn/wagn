@@ -93,7 +93,7 @@ describe Card::HtmlFormat do
       it "renders card credit" do
         assert_view_select @simple_page, 'div[class~="SELF-Xcredit"]' do#, /Wheeled by/ do
           assert_select 'img'
-          assert_select 'a', "Wagn v#{Wagn::Version.release}"
+          assert_select 'a', "Wagn v#{Card::Version.release}"
         end
       end
     end

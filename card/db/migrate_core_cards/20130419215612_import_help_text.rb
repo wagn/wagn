@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class ImportHelpText < Wagn::CoreMigration
+class ImportHelpText < Card::CoreMigration
   def up
     dir = data_path '1.11_help_text.json' 
     data = JSON.parse( File.read dir )

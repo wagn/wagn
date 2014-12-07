@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class DeleteOldRelatedTabCards < Wagn::CoreMigration
+class DeleteOldRelatedTabCards < Card::CoreMigration
   def up
     [
       '*related',

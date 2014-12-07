@@ -9,7 +9,7 @@ module ClassMethods
   end
   
   def delete_trashed_files #deletes any file not associated with a real card.
-    dir = Wagn.paths['files'].existent.first
+    dir = Card.paths['files'].existent.first
     card_ids = Card.connection.select_all( %{ select id from cards where trash is false } ).map( &:values ).flatten
     file_ids = Dir.entries( dir )[2..-1].map( &:to_i )
     file_ids.each do |file_id|
@@ -21,7 +21,7 @@ module ClassMethods
   end
   
   def delete_tmp_files id=nil
-    dir = Wagn.paths['files'].existent.first + '/tmp'
+    dir = Card.paths['files'].existent.first + '/tmp'
     dir += "/#{id}" if id
     FileUtils.rm_rf dir, :secure=>true
   rescue

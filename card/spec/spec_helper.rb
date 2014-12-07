@@ -2,7 +2,7 @@
 require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
-require File.expand_path( '../../lib/wagn/simplecov_helper.rb', __FILE__ )
+require File.expand_path( '../../lib/card/simplecov_helper.rb', __FILE__ )
 require 'simplecov'
 require 'timecop'
 #require File.expand_path( '../../mod/03_machines/spec/lib/machine_spec.rb', __FILE__ )
@@ -18,11 +18,11 @@ Spork.prefork do
   end
   
   require 'rspec/rails'
-  require File.expand_path( '../../lib/wagn/spec_helper.rb', __FILE__ )
+  require File.expand_path( '../../lib/card/spec_helper.rb', __FILE__ )
   
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
-#  Dir[ File.join(Wagn.gem_root, "spec/support/**/*.rb") ].each { |f| require f }
+#  Dir[ File.join(Card.gem_root, "spec/support/**/*.rb") ].each { |f| require f }
 
 #  FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   JOE_USER_ID = Card['joe_user'].id
@@ -43,7 +43,7 @@ Spork.prefork do
     # == Mock Framework
     # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:
     # :mocha, :flexmock, :rr
-    #require 'wagn-rspec-formatter'
+    #require 'card-rspec-formatter'
     config.mock_with :rr
 
     config.use_transactional_fixtures = true
@@ -58,7 +58,7 @@ Spork.prefork do
     end
     config.before(:each) do
       Card::Auth.current_id = JOE_USER_ID
-      Wagn::Cache.restore
+      Card::Cache.restore
       Card::Env.reset
     end
     config.after(:each) do
@@ -118,7 +118,7 @@ class Card
   end
 end
 
-RSpec::Core::ExampleGroup.send :include, Wagn::SpecHelper
+RSpec::Core::ExampleGroup.send :include, Card::SpecHelper
 
 class ActiveSupport::BufferedLogger
   def rspec msg

@@ -32,7 +32,7 @@ class Card
       private
       
       def cache
-        Wagn::Cache[Codename]
+        Card::Cache[Codename]
       end
 
       def load_hash

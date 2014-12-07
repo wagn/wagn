@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class RenamingForMenu < Wagn::CoreMigration
+class RenamingForMenu < Card::CoreMigration
   def up
     renames = {
       '*content'    => '*structure',

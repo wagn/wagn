@@ -4,7 +4,7 @@ describe Card::Loader do
   # let(:pat_all_double) { proxy Card::AllSet }
   # let(:format_double) { proxy Card::Format }
   # let(:html_format_double) { proxy Card::HtmlFormat }
-  # it "should auto-load Card class methods from lib/wagn and mods" do
+  # it "should auto-load Card class methods from lib/card and mods" do
   #   #xpect(Card).to receive(:load_mods)
   #   #
   #   card = Card[:all]

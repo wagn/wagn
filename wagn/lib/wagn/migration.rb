@@ -21,14 +21,14 @@ class Wagn::Migration < ActiveRecord::Migration
   
   
   def contentedly &block
-    Wagn::Cache.reset_global
+    Card::Cache.reset_global
     Wagn::Migration.schema_mode '' do
       Card::Auth.as_bot do
         ActiveRecord::Base.transaction do
           begin
             yield
           ensure
-            Wagn::Cache.reset_global
+            Card::Cache.reset_global
           end
         end
       end

@@ -3,7 +3,7 @@ def card_simplecov_filters
   add_filter '/config/'
   add_filter '/tasks/'
 	
-	# filter all wagn mods
+	# filter all card mods
   add_filter do |src_file|
     src_file.filename =~ /tmp\// and not
     /\d+-(.+\.rb)/.match(src_file.filename) { |m| Dir["mod/**/#{m[1]}"].present? }
@@ -39,7 +39,7 @@ end
 def card_core_dev_simplecov_filters
   filters.clear # This will remove the :root_filter that comes via simplecov's defaults
   add_filter do |src|
-    !(src.filename =~ /^#{SimpleCov.root}/) unless src.filename =~ /wagn/
+    !(src.filename =~ /^#{SimpleCov.root}/) unless src.filename =~ /card/
   end    
   
   add_filter '/spec/'
@@ -47,7 +47,7 @@ def card_core_dev_simplecov_filters
   add_filter '/config/'
   add_filter '/tasks/'
   add_filter '/generators/'
-  add_filter 'lib/wagn'
+  add_filter 'lib/card'
 
   add_group 'Card', 'lib/card'  
   add_group 'Set Patterns', 'tmp/set_pattern/'

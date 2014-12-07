@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddEmailCards < Wagn::CoreMigration
+class AddEmailCards < Card::CoreMigration
   def up
     
     # change notification rules
@@ -50,7 +50,7 @@ class AddEmailCards < Wagn::CoreMigration
     Card.create! :name=>"*text message+*right+*default", :type_code=>:plain_text
     
     
-    Wagn::Cache.reset_global
+    Card::Cache.reset_global
     
     
     # create system email cards

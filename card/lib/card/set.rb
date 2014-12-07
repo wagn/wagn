@@ -20,7 +20,7 @@ class Card
     "modification"). In accordance with Wagn's "MoVE" architecture, there are two main kinds of
     code rules you can create in a set file: Views, and Events.  Events are associated with the
     Card class, and Views are associated with a Format class.  You can also use set files to 
-    add or override Card and/or Format methods directly.  The majority of Wagn code is contained
+    add or override Card and/or Format methods directly.  The majority of Card code is contained
     in these files.
     
         (FIXME - define mod, add generator)
@@ -52,15 +52,15 @@ class Card
  
     In order to have a set file associated with "all cards ending in +address", you could create
     a file in mywagn/mod/mymod/set/right/address.rb.  The recommended mechanism for doing so
-    is running `wagn generate set modname set_pattern set_anchor`. In the current example, this
-    would translate to `wagn generate set mymod right address`. Note that both the set_pattern 
+    is running `rails generate set modname set_pattern set_anchor`. In the current example, this
+    would translate to `rails generate set mymod right address`. Note that both the set_pattern 
     and the set_anchor must correspond to the codename of a card in the database to function
     correctly.
 
     
-    When Wagn loads, it uses these files to autogenerate a tmp_file that uses this set file to
+    When a Card application loads, it uses these files to autogenerate a tmp_file that uses this set file to
     createa Card::Set::Right::Address module which itself is extended with Card::Set. A set file
-    is "just ruby" but is generally quite concise because Wagn uses its file location to 
+    is "just ruby" but is generally quite concise because Card uses its file location to 
     autogenerate ruby module names and then uses Card::Set module to provide additional API.
 
 
@@ -199,7 +199,7 @@ class Card
         # There are special hacks for *all, but others (like *rstar) will not be found by
         # include_set_modules, which will look for Card::Set::Rstar, not Card::Set::Rstar::Blah
         
-        to_file = "#{Wagn.paths['tmp/set'].first}/#{set_pattern}/#{seq}-#{anchor}.rb"
+        to_file = "#{Card.paths['tmp/set'].first}/#{set_pattern}/#{seq}-#{anchor}.rb"
         file_content = <<EOF
 # -*- encoding : utf-8 -*-
 class Card; module Set; module #{set_pattern.camelize}; module #{anchor.camelize}

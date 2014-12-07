@@ -24,10 +24,5 @@ module Wagn
     def gem_root
       WAGN_GEM_ROOT
     end
-    
-    def future_stamp
-      ## used in test data
-      @@future_stamp ||= Time.local 2020,1,1,0,0,0
-    end
   end
 end

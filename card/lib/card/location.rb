@@ -67,7 +67,7 @@ module Card::Location
     if rel_path =~ /^\//
       rel_path
     else
-      "#{ Wagn.config.relative_url_root }/#{ rel_path }"
+      "#{ Card.config.relative_url_root }/#{ rel_path }"
     end
   end
 

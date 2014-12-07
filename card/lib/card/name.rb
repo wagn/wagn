@@ -33,7 +33,7 @@ class Card
 
     def trait tag_code
       name = trait_name( tag_code )
-      name ? name.s : ( raise Wagn::NotFound, "unknown codename: #{tag_code}" )
+      name ? name.s : ( raise Card::NotFound, "unknown codename: #{tag_code}" )
     end
   end
 end

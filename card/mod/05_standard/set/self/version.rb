@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 view :raw do |args|
-  Wagn::Version.release
+  Card::Version.release
 end
 
 view :core, :raw

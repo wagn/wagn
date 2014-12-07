@@ -6,16 +6,16 @@ Description:
     and choose as migration name import_<filename>.
     
 Example:
-    wagn generate card_migration better_commented_search_cards
+    rails generate card_migration better_commented_search_cards
 
     This will create:
     
         db/migrate_cards/(migration_number)_(name).rb
 
-    ...which is set up to use methods in lib/wagn/migration.rb
+    ...which is set up to use methods in lib/card/migration.rb
     
     
-    wagn generate card_migration import_better_search_cards
+    rails generate card_migration import_better_search_cards
 
     This will create:
     

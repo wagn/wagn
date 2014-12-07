@@ -36,4 +36,10 @@ class Card
     end
 
   end
+
+  class NotFound < StandardError
+  end
+  
+  class BadAddress < StandardError
+  end
 end

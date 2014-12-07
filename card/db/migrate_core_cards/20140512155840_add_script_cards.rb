@@ -20,7 +20,7 @@ class Card
   end
 end
 
-class AddScriptCards < Wagn::CoreMigration
+class AddScriptCards < Card::CoreMigration
   def up    
     # JavaScript and CoffeeScript types
     card = Card.fetch "CoffeeScript", :new => {}
@@ -67,7 +67,7 @@ class AddScriptCards < Wagn::CoreMigration
     card_type = { 'js' => "java_script", 'coffee' => "coffee_script"}
     scripts        = %w{ jquery tinymce slot     card_menu jquery_helper html5shiv_printshiv  }
     types          = %w{ js     js      coffee   js        js            js                   }
-    # jquery.mobile  (in jquery_helper) must be after wagn to avoid mobileinit nastiness
+    # jquery.mobile  (in jquery_helper) must be after card to avoid mobileinit nastiness
     cardnames = scripts.map { |name| "script: #{name.gsub( '_', ' ' )}" }
     
     scripts.each_with_index do |name, index|
@@ -75,7 +75,7 @@ class AddScriptCards < Wagn::CoreMigration
     end
     
     cardnames.pop # html5shiv_printshiv not in default list, only used for IE9 (handled in head.rb)
-    Wagn::Cache.reset_global
+    Card::Cache.reset_global
     Card.create! :name=>"#{Card[:all].name}+*script", :content=>cardnames.map { |name| "[[#{ name }]]" }.join("\n")
 
   end

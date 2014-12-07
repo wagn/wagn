@@ -46,7 +46,7 @@ describe Card::Set::All::Account do
         Card::Auth.as_bot { roles_card.items = [ r1.id ] }        
         expect(Card['Joe User'].parties).to eq(@parties)            # local cache still has old parties (permission does not change mid-request)        
                                                                
-        Wagn::Cache.restore                                    # simulate new request -- clears local cache, where, eg, @parties would still be cached on card
+        Card::Cache.restore                                    # simulate new request -- clears local cache, where, eg, @parties would still be cached on card
         Card::Auth.current_id = Card::Auth.current_id                # simulate new request -- current_id assignment clears several class variables
         
         new_parties = [ Card::AnyoneSignedInID, r1.id, @joe_user_card.id ]

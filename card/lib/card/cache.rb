@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-module Wagn
+class Card
 
   ActiveSupport::Cache::FileStore.class_eval do
     # escape special symbols \*"<>| additionaly to :?.
@@ -12,11 +12,11 @@ module Wagn
     end
   end
 
-
   class Cache
+
     @@prepopulating     = [ 'test','cucumber' ].include? Rails.env
     @@using_rails_cache = Rails.env =~ /^cucumber|test$/
-    @@prefix_root       = Wagn.config.database_configuration[Rails.env]['database']
+    @@prefix_root       = Rails.application.config.database_configuration[Rails.env]['database']
     @@cache_by_class    = {}
 
     cattr_reader :cache_by_class, :prefix_root
@@ -61,7 +61,7 @@ module Wagn
 
       def reset_local
         cache_by_class.each do |cc, cache|
-          if Wagn::Cache===cache
+          if Card::Cache===cache
             cache.reset_local
           else warn "reset class #{cc}, #{cache.class} #{caller[0..8]*"\n"} ???" end
         end

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddStyleCards < Wagn::CoreMigration
+class AddStyleCards < Card::CoreMigration
   def up
     # TAKE "CSS" CODENAME FROM OLD *CSS CARD
     old_css = Card[:css]
@@ -74,7 +74,7 @@ class AddStyleCards < Wagn::CoreMigration
       'classic skin'
     end
     
-    Wagn::Cache.reset_global
+    Card::Cache.reset_global
     begin
       Card.create! :name=>"#{Card[:all].name}+*style", :content=>"[[#{default_skin}]]"
     rescue

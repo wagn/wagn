@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 
+require 'card/engine'
+
 class Card
 
   require_dependency 'card/active_record_ext'
@@ -18,7 +20,7 @@ class Card
   has_many :actions, :order => :id, :conditions=>{:draft => [nil,false]}
   has_many :drafts, :order=>:id, :conditions=>{:draft=>true}, :class_name=> :Action
 
-  #cache_attributes 'name', 'type_id' # review - still worth it in Rails 3?
+  cache_attributes 'name', 'type_id' # review - still worth it in Rails 3?
 
   cattr_accessor :set_patterns, :error_codes
   @@set_patterns, @@error_codes = [], {}

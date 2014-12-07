@@ -73,6 +73,7 @@ else
     load_rake_tasks
     Rake::Task['wagn:update'].invoke
   when 'cucumber'
+    require 'wagn'
     feature_paths = Dir.glob("./mod/**/features")
     require_args = "-r #{Wagn.gem_root}/features "
     require_args += feature_paths.map { |path| "-r #{path}"}.join(' ')
@@ -112,8 +113,6 @@ WAGN
     parser.separator "\n"
 
     wagn_args, rspec_args = (' '<<ARGV.join(' ')).split(' -- ')
-    warn "wagn a:#{wagn_args}, rspec a:#{rspec_args}"
-    warn "opts: #{opts.inspect}"
     parser.parse!(wagn_args.split(' '))
 
     system "RAILS_ROOT=. #{opts[:simplecov]} bundle exec #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]}" 

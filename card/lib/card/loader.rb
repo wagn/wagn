@@ -7,7 +7,6 @@ class Card
     
     class << self
       def load_mods
-        warn "load mods"
         load_set_patterns
         load_formats
         load_sets
@@ -36,7 +35,7 @@ class Card
     
       def mod_dirs
         @@mod_dirs ||= begin
-          (Wagn.paths['card-gem-mod'].existent + Wagn.paths['gem-mod'].existent + Wagn.paths['local-mod'].existent).
+          (Card::Engine.paths['gem-mod'].existent + Card::Engine.paths['local-mod'].existent).
             map do |dirname|
             Dir.entries( dirname ).sort.map do |filename|
               "#{dirname}/#{filename}" if filename !~ /^\./
@@ -136,7 +135,6 @@ class Card
       end
 
       def load_dir dir
-        warn "load dir #{dir}"
         Dir[dir].sort.each do |file|
 #          puts Benchmark.measure("from #load_dir: rd: #{file}") {
           require_dependency file

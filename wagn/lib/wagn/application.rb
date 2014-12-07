@@ -23,15 +23,6 @@ module Wagn
     initializer :load_wagn_config_initializers,  :before => :load_config_initializers do
       add_gem_path paths, 'lib/wagn/config/initializers', :glob => "**/*.rb"
       config.paths['lib/wagn/config/initializers'].existent.sort.each do |initializer|
-        warn "load initter: #{initializer.inspect}"
-        load(initializer)
-      end
-    end
-
-    initializer :load_mod_initializers,  :after => :load_wagn_config_initializers do
-      paths.add 'mod-initializers', :with=>'mod', :glob=>"**/initializers/*.rb"
-      config.paths['mod-initializers'].existent.sort.each do |initializer|
-        warn "load initter2: #{initializer.inspect}"
         load(initializer)
       end
     end
@@ -86,26 +77,15 @@ module Wagn
 
     def paths
       @paths ||= begin
+        Card::Engine.paths['local-mod'] = approot_is_gemroot? ? [] : ["#{Rails.root}/mod"]
         paths = super
         #add_gem_path paths, "app",                 :card => true, :eager_load => true, :glob => "*"
         add_gem_path paths, "app/assets",          :glob => "*"
-        add_gem_path paths, "app/controllers",     :card => true, :eager_load => true
         add_gem_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
-        add_gem_path paths, "config/routes",       :card => true, :with => "config/routes.rb"
-        add_gem_path paths, "db",                  :card => true
-        add_gem_path paths, "db/migrate",          :card => true
-        add_gem_path paths, "db/migrate_core_cards", :card => true
-        add_gem_path paths, "db/seeds",            :card => true, :with => "db/seeds.rb"
-        add_gem_path paths, 'card-gem-mod',        :card => true, :with => 'mod'
-        add_gem_path paths, 'gem-mod',             :card => true, :with => 'mod'
-        add_gem_path paths, 'gem-assets',          :card => true, :with => 'public/assets'
-        add_gem_path paths, 'gem-mod',             :with => 'mod'
         add_gem_path paths, 'gem-assets',          :with => 'public/assets'
 
         paths['app/models'] = []
         paths['app/mailers'] = []
-        #paths['app/views'] = File.join( Card.gem_root, 'lib/card' )
-        paths['local-mod'] = approot_is_gemroot? ? [] : 'mod'
 
         paths.add 'files'
         paths.add 'tmp/set'
@@ -114,10 +94,6 @@ module Wagn
         paths.add 'db/migrate_deck_cards', :with=>'db/migrate_cards'
         paths
       end
-    end
-
-    def approot_is_card_gemroot?
-      Card.gem_root.to_s == config.root.to_s
     end
 
     def approot_is_gemroot?

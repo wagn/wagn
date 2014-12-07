@@ -14,7 +14,6 @@ module Wagn
   class Application < Rails::Application
 
     initializer :load_wagn_environment_config, :before => :load_environment_config, :group => :all do
-      warn "load env initters"
       add_gem_path paths, "lib/wagn/config/environments", :glob => "#{Rails.env}.rb"
       paths["lib/wagn/config/environments"].existent.each do |environment|
         require environment

@@ -43,7 +43,6 @@ class Card < ActiveRecord::Base
   class Engine < Rails::Engine
 
     initializer :load_card_config_initializers,  :before => :load_config_initializers do
-     # warn "lccinit paths #{paths.inspect}"
       add_gem_path paths, 'lib/card/config/initializers', :glob => "**/*.rb"
       config.paths['lib/card/config/initializers'].existent.sort.each do |initializer|
         load(initializer)

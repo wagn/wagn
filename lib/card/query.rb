@@ -27,6 +27,7 @@ class Card::Query
   end
 
   def run
+#    puts "~~~~~~~~~~~~~~\nCARD SPEC =\n#{@card_spec.rawspec}\n\n-----\n\nSQL=\n#{sql}"
     rows = ActiveRecord::Base.connection.select_all( sql )
     retrn = query[:return].present? ? query[:return].to_s : 'card'
     case retrn 

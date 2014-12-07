@@ -354,8 +354,9 @@ describe Card::Query do
 
   describe "any/or" do
     it "should work with :plus" do
-      expect(Card::Query.new(:plus=>"A", :or =>{:name=>'B', :match=>'K'}).run.map(&:name).sort).to eq(%w{ B })
-      expect(Card::Query.new(:plus=>"A", :any=>{:name=>'B', :match=>'K'}).run.map(&:name).sort).to eq(%w{ B })
+      expect(Card::Query.new(:plus=>"A", :or =>{:name=>'B', :match=>'K'}, :return=>'name').run.sort).to eq(%w{ B })
+      expect(Card::Query.new(:plus=>"A", :any=>{:name=>'B', :match=>'K'}, :return=>'name').run.sort).to eq(%w{ B })
+      expect(Card::Query.new(:or=>{:right_plus=>"A", :plus=>'B'}, :return=>'name').run.sort).to eq(%w{ A C D F })
     end
   end
 
@@ -381,6 +382,8 @@ describe Card::Query do
     end
     it "should play nicely with other properties and relationships" do
       expect(Card::Query.new(:plus=>{:found_by=>'Simple Search'}).run.map(&:name).sort).to eq(Card::Query.new(:plus=>{:name=>'A'}).run.map(&:name).sort)
+      expect(Card::Query.new(:found_by=>'A+*self', :plus=>'C').run.map(&:name)).to eq(%w{ A })
+      
     end
     it "should be able to handle _self" do
       expect(Card::Query.new(:context=>'Simple Search', :left=>{:found_by=>'_self'}, :right=>'B').run.first.name).to eq('A+B')

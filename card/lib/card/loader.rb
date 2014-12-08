@@ -35,8 +35,7 @@ class Card
     
       def mod_dirs
         @@mod_dirs ||= begin
-          (Card::Engine.paths['gem-mod'].existent + Card::Engine.paths['local-mod'].existent).
-            map do |dirname|
+          (Card::Engine.paths['gem-mod'].existent + Card::Engine.paths['local-mod'].existent).map do |dirname|
             Dir.entries( dirname ).sort.map do |filename|
               "#{dirname}/#{filename}" if filename !~ /^\./
             end
@@ -119,7 +118,6 @@ class Card
       def prepare_tmp_dir path
         if rewrite_tmp_files?
           p = Card.paths[ path ]
-          raise "paths[#{path}], #{Card.paths.inspect}" if p.nil?
           if p.existent.first
             FileUtils.rm_rf p.first, :secure=>true
           end

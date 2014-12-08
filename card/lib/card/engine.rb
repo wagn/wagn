@@ -55,7 +55,6 @@ class Card < ActiveRecord::Base
         add_gem_path paths, 'gem-mod',             :with => 'mod'
 
         add_gem_path paths, "app/controllers",     :eager_load => true
-        add_gem_path paths, "config/routes",       :with => "lib/card/config/routes.rb"
         add_gem_path paths, "db"
         add_gem_path paths, "db/migrate"
         add_gem_path paths, "db/migrate_core_cards"

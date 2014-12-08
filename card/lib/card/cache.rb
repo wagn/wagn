@@ -16,7 +16,7 @@ class Card
 
     @@prepopulating     = [ 'test','cucumber' ].include? Rails.env
     @@using_rails_cache = Rails.env =~ /^cucumber|test$/
-    @@prefix_root       = Rails.application.config.database_configuration[Rails.env]['database']
+    @@prefix_root       = Card.config.database_configuration[Rails.env]['database']
     @@cache_by_class    = {}
 
     cattr_reader :cache_by_class, :prefix_root

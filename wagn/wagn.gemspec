@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.8.7'
 
   [
-    #[ 'card',     path:  Wagn::Version.release  ],
+    [ 'card',     version  ],
   ].each do |dep|
     s.add_runtime_dependency *dep
   end

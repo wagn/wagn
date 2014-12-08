@@ -2,6 +2,9 @@
 
 class AddAceScript < Wagn::CoreMigration
   def up
+    all_script = Card.fetch "*all+*script"
+    all_script.add_item "script: ace"
+    all_script.save!
     Card.create! :name=>"script: ace",:codename=>"script_ace",:type=>"JavaScript"
     Card.create! :name=>"worker-coffee",:codename=>"worker_coffee",:type=>"JavaScript"
     Card.create! :name=>"worker-css",:codename=>"worker_css",:type=>"JavaScript"

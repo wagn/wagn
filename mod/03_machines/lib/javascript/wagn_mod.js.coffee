@@ -1,3 +1,4 @@
+
 window.wagn ||= {} #needed to run w/o *head.  eg. jasmine
 
 
@@ -14,7 +15,7 @@ $.extend wagn,
 
   editorInitFunctionMap: {
     '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
-    'textarea'               : -> $(this).autosize()
+    'textarea'               : -> wagn.initAce $(this)#$(this).autosize()
     '.tinymce-textarea'      : -> wagn.initTinyMCE @[0].id
     '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
     '.file-upload'           : -> @fileupload( add: wagn.chooseFile )#, forceIframeTransport: true )
@@ -32,7 +33,45 @@ $.extend wagn,
       catch
         {}
     wagn.tinyMCEConfig = setter()
+  
+  initAce: (textarea) ->
+    type_id = textarea.attr("editor_type")
+    hash = {}
+    hash["JavaScript"] = "javascript"
+    hash["CoffeeScript"] = "coffee"
+    hash["CSS"] = "css"
+    hash["SCSS"] = "scss"
+    hash["HTML"] = "html"
+    hash["Search"] = "json"
+    unless type_id
+      textarea.autosize()
+      return
+    mode = hash[type_id]
+    unless mode
+      textarea.autosize()
+      return
+    editDiv = $("<div>",
+      position: "absolute"
+      width: textarea.width()
+      height: textarea.height()
+      class: textarea.attr("class")
+    ).insertBefore(textarea)
+    textarea.css "visibility", "hidden"
+    textarea.css "height", "0px"
+    editor = ace.edit(editDiv[0])
+    editor.renderer.setShowGutter true
+    editor.getSession().setValue textarea.val()
+    editor.setTheme "ace/theme/textmate"
+    editor.getSession().setMode "ace/mode/" + mode
+    editor.setOptions maxLines: 30 
     
+    textarea.closest("form").submit ->
+      textarea.val editor.getSession().getValue()
+      return
+
+    return
+
+
   initTinyMCE: (el_id) ->
     # verify_html: false -- note: this option needed for empty paragraphs to add space.
     conf = {
@@ -315,15 +354,15 @@ navbox_results = (request, response) ->
   formData = f.serialize() + '&view=complete'
   
   this.xhr = $.ajax {
-		url: wagn.prepUrl wagn.rootPath + '/:search.json'
-		data: formData
-		dataType: "json"
-		wagReq: ++reqIndex
-		success: ( data, status ) ->
-			response navboxize(request.term, data) if this.wagReq == reqIndex
-		error: () ->
-		  response [] if this.wagReq == reqIndex
-	  }
+    url: wagn.prepUrl wagn.rootPath + '/:search.json'
+    data: formData
+    dataType: "json"
+    wagReq: ++reqIndex
+    success: ( data, status ) ->
+      response navboxize(request.term, data) if this.wagReq == reqIndex
+    error: () ->
+      response [] if this.wagReq == reqIndex
+    }
 
 navboxize = (term, results)->
   items = []

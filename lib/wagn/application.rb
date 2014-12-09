@@ -9,6 +9,14 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
+module ActiveSupport::BufferedLogger::Severity
+  WAGN = UNKNOWN + 1
+  
+  def wagn progname, &block
+    add(WAGN, nil, progname, &block)
+  end
+end
+
 
 module Wagn
   class Application < Rails::Application
@@ -76,6 +84,7 @@ module Wagn
         config.token_expiry          = 2.days
         config.revisions_per_page    = 10
         config.request_logger        = false
+        config.performance_logger    = false
         
         config
       end

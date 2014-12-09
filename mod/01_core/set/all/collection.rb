@@ -1,11 +1,14 @@
 
 module ClassMethods
   def search spec
-    results = ::Card::Query.new(spec).run
-    if block_given? and Array===results
-      results.each { |result| yield result }
+    query = ::Card::Query.new(spec)
+    Wagn.with_logging nil, :search, spec, query.sql.strip do
+      results = query.run
+      if block_given? and Array===results
+        results.each { |result| yield result }
+      end
+      results
     end
-    results
   end
 
   def count_by_wql(spec)

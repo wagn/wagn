@@ -21,45 +21,47 @@ module ClassMethods
   
   
   def fetch mark, opts={}
-    if String === mark
-      case mark
-      when /^\~(\d+)$/ # get by id
-        mark = $1.to_i 
-      when /^\:(\w+)$/ # get by codename
-        mark = $1.to_sym
+    Wagn.with_logging nil, :fetch, mark, opts do
+      if String === mark
+        case mark
+        when /^\~(\d+)$/ # get by id
+          mark = $1.to_i 
+        when /^\:(\w+)$/ # get by codename
+          mark = $1.to_sym
+        end
       end
-    end
-    mark = Card::Codename[mark] if Symbol === mark # id from codename
+      mark = Card::Codename[mark] if Symbol === mark # id from codename
 
-    if mark.present?
-      card, mark, needs_caching = fetch_from_cache_or_db mark, opts # have existing
-    else
-      return unless opts[:new]
-    end
-
-    if Integer===mark
-      return if card.nil? || mark.nil?
-    else
-      return card.renew(opts) if card and card.eager_renew?(opts)
-      if !card or card.type_id==-1 && clean_cache_opts?(opts)       # new (or improved) card for cache
-        needs_caching = true  
-        card = new_for_cache mark, opts
-      end  
-    end
-    
-    write_to_cache card if Card.cache && needs_caching
-    
-    if card.new_card?
-      if opts[:new]
-        return card.renew(opts) if !clean_cache_opts? opts
+      if mark.present?
+        card, mark, needs_caching = fetch_from_cache_or_db mark, opts # have existing
       else
-        return unless !opts[:skip_virtual] && card.virtual?
+        return unless opts[:new]
       end
-      card.name = mark.to_s if mark && mark.to_s != card.name
-    end
 
-    card.include_set_modules unless opts[:skip_modules]
-    card
+      if Integer===mark
+        return if card.nil? || mark.nil?
+      else
+        return card.renew(opts) if card and card.eager_renew?(opts)
+        if !card or card.type_id==-1 && clean_cache_opts?(opts)       # new (or improved) card for cache
+          needs_caching = true  
+          card = new_for_cache mark, opts
+        end  
+      end
+    
+      write_to_cache card if Card.cache && needs_caching
+    
+      if card.new_card?
+        if opts[:new]
+          return card.renew(opts) if !clean_cache_opts? opts
+        else
+          return unless !opts[:skip_virtual] && card.virtual?
+        end
+        card.name = mark.to_s if mark && mark.to_s != card.name
+      end
+
+      card.include_set_modules unless opts[:skip_modules]
+      card
+    end
   end
   
   def fetch_id mark #should optimize this.  what if mark is int?  or codename?

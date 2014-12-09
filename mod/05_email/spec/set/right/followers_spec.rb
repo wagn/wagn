@@ -1,36 +1,55 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Right::Followers do
-  subject { @card.followers_card.item_names }
   
-  describe 'raw content' do
-    it 'renders a pointer list of followers' do
+  
+  
+  describe '#raw_content' do
+    it 'returns a pointer list of followers' do
       card = Card.fetch 'All Eyes on me'
-      expect(card.followers_card.raw_content).to eq(["[[Sara]]\n[[John]]"])
+      expect( card.followers_card.raw_content).to eq "[[John]]\n[[Sara]]\n[[Big Brother]]"
     end
   end
   
-  describe 'item_names' do    
+  describe 'view :core' do
+    it 'contains follower' do
+      card = Card.fetch 'All Eyes on me'
+      view = card.followers_card.format.render_core
+      expect(view).to include("Sara")
+    end
+  end
+  
+  describe 'view :raw' do
+    it 'renders a pointer list of followers' do
+      card = Card.fetch 'All Eyes on me'
+      view = card.followers_card.format.render_raw
+      expect(view).to eq "[[John]]\n[[Sara]]\n[[Big Brother]]"
+    end
+  end
+  
+  
+  describe 'item_names' do  
+    subject { @card.followers_card.item_names }  
     it 'is an array of followers' do
       @card = Card['All Eyes On Me']
       is_expected.to eq ['John','Sara','Big Brother']
     end
     
-    it 'recognizes card name changes' do
-      @card = Card['Look At Me']
+    it 'recognizes card name changes' do   
+      @card = Card['Look At Me']  
       @card.update_referencers = true
       @card.update_attributes! :name=>'Look away'
       is_expected.to eq ['Big Brother']
     end
       
     it 'recognizes +*following changes' do
+      card = Card['Joe User'].following_card
+      card << 'Look At Me+*self'
+      card.save!
+      @card = Card['Look At Me']
+      is_expected.to include 'Joe User'
     end
-    # it 'when following a including card' do
-    #   it 'contains follower' do
-    #
-    #   end
-    # end
-    
+
 
     
     context 'when following a card' do 

@@ -38,7 +38,7 @@ class FollowerStash
 
 
         if card.left and !@visited.include?(card.left.name) and follow_field_rule = card.left.rule_card(:follow_fields)
-          follow_field_rule.item_names.each do |item|
+          follow_field_rule.item_names(:context=>card.left.cardname).each do |item|
             if item == Card[:includes].name
               includee_set = Card.search(:included_by=>card.left.name).map(&:key)
               if !@visited.intersection(includee_set).empty?
@@ -98,7 +98,8 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c|
       end
     end
   rescue =>e  #this error handling should apply to all extend callback exceptions
-    @exception = e
+    Rails.logger.info "\nController exception: #{e.message}"
+    Card::Error.current = e
     notable_exception_raised
     Rails.logger.info "\nController exception: #{e.message}"
     Rails.logger.debug "BT: #{e.backtrace*"\n"}"
@@ -121,7 +122,7 @@ format do
   end
   
   
-  view :subedits do |args|
+  view :subedits, :perms=>:none do |args|
     subedits = get_act(args).relevant_actions_for(card).map do |action| 
         if action.card_id != card.id 
           action.card.format(:format=>@format).render_subedit_notice(:action=>action)
@@ -143,15 +144,15 @@ format do
 #{ render_list_of_changes(args) }}
   end
   
-  view :followed do |args|
+  view :followed, :perms=>:none do |args|
     args[:followed] || 'followed card'
   end
 
-  view :follower do |args|
+  view :follower, :perms=>:none do |args|
     args[:follower] || 'follower'
   end
   
-  view :unfollow_url do |args|
+  view :unfollow_url, :perms=>:none do |args|
     if args[:followed] and args[:follower] and follower = Card.fetch( args[:follower] )
      following_card = follower.fetch( :trait=>:following, :new=>{} )
      wagn_url( "update/#{following_card.cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" )
@@ -205,7 +206,7 @@ end
 
 
 format :email_text do 
-  view :last_action do |args|
+  view :last_action, :perms=>:none do |args|
     act = get_act(args)
     action_on_card =  act.action_on(act.card_id) || act.actions.first
     "#{action_on_card.action_type}d"
@@ -213,7 +214,7 @@ format :email_text do
 end
 
 format :email_html do  
-  view :last_action do |args|
+  view :last_action, :perms=>:none do |args|
     act = get_act(args)
     action_on_card =  act.action_on(act.card_id) || act.actions.first
     "#{action_on_card.action_type}d"

@@ -110,7 +110,7 @@ format :html do
       :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read ),
       :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>n.to_s } },
       :related_sets => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name } } },
-      :follow_options => [{:raw=>"hi"},{:raw=>"another link"}]
+      :follow_options => render_follow_menu
     }
     if card.real?
       @menu_vars.merge!({
@@ -462,7 +462,7 @@ format :html do
   end
   
   
-  view :last_action do |args|
+  view :last_action, :perms=>:none do |args|
     action_type = case ( action = card.last_act.action_on(card.id) and action.action_type )
     when :create then 'added'
     when :delete then 'deleted'

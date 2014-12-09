@@ -117,7 +117,7 @@ def rescue_event e
 end
 
 event :notable_exception_raised do
-  Rails.logger.debug "BT:  #{@exception.backtrace*"\n  "}"
+  Rails.logger.debug "BT:  #{Card::Error.current.backtrace*"\n  "}"
 end
 
 

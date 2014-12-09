@@ -107,63 +107,48 @@ describe Card::Set::All::Notify do
       it { is_expected.to include sub2_content }
 
       context 'and missing permissions' do
-        subject { 
-          result = ''
-          Card::Auth.current_id = Card['joe user'].id
-          Card::Auth.as(:joe_user) do
-            result = Card[:follower_notification_email].format.render_mail(
-              :context   => @card,
-              :to        => Card['Joe User'].email,
-              :follower  => Card['Joe User'].name, 
-              :followed  => @card.name,
-            ).text_part.body.raw_source
-          end
-          result
-        }
         context 'for subcard' do
           before do
             Card.create_or_update! "#{name}+s1+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
           end
           it "excludes subcard content" do
-            Card::Auth.as(:joe_user) do
-              result = Card[:follower_notification_email].format.render_mail(
-                :context   => @card,
-                :to        => Card['Joe User'].email,
-                :follower  => Card['Joe User'].name, 
-                :followed  => @card.name,
-              ).text_part.body.raw_source
-              #is_expected.not_to 
-              expect(result).not_to include sub1_content
-              is_expected.to include sub2_content
-            end
+            is_expected.not_to include sub1_content
+            is_expected.to include sub2_content
           end
         end
         context 'for main card' do
+          subject { 
+            Card[:follower_notification_email].format.render_mail(
+                :context   => @card.refresh(true),
+                :to        => Card['Joe User'].email,
+                :follower  => Card['Joe User'].name, 
+                :followed  => @card.name+"+s1",
+              ).text_part.body.raw_source
+          }
           before do
             Card.create_or_update! "#{name}+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
             Card.create_or_update! "#{name}+s1+*self+*read",:type=>'Pointer',:content=>'[[Anyone]]'
           end
           it 'includes subcard content' do
-            Card::Auth.as(:joe_user) do
-              is_expected.to include sub1_content
-           end
-         end
+            is_expected.to include sub1_content
+          end
           it "excludes maincard content" do
-            Card::Auth.as(:joe_user) do
-              is_expected.not_to include content
-              is_expected.not_to be_empty
-            end
+            is_expected.not_to include content
+            is_expected.not_to be_empty
           end
         end
         context 'for all parts' do
           before do
-            #Card.create_or_update! "#{name}+s1+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
-            #Card.create_or_update! "#{name}+s2+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
-            Card.create_or_update! "s1+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
-            Card.create_or_update! "s2+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
+            Card.create_or_update! "#{name}+s1+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
+            Card.create_or_update! "#{name}+s2+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
             Card.create_or_update! "#{name}+*self+*read",:type=>'Pointer',:content=>'[[Administrator]]'
           end
-          it { is_expected.to be_empty }
+          it { is_expected.not_to include content }
+          it { is_expected.not_to include sub1_content }
+          it { is_expected.not_to include sub2_content }
+          it "will not be send" do
+            expect(Card['Joe User'].account.changes_visible? @card.acts.last).to be_falsey
+          end
         end
       end
     end
@@ -324,12 +309,12 @@ Use this link to unfollow /update/Joe_User+*following?drop_item=another_card_wit
         context 'and follow fields rule contains subcards' do
           it 'sends notification of new subcard' do
             new_card = Card.new :name=>'Sunglasses+producer'
-            expect_user('Sunglasses fan').to be_notified_of 'Sunglasses'
+            expect_user('Sunglasses fan').to be_notified_of 'Sunglasses+*self'
             new_card.save!
           end
         
           it 'sends notification of updated subcard' do
-            expect_user('Sunglasses fan').to be_notified_of 'Sunglasses'
+            expect_user('Sunglasses fan').to be_notified_of 'Sunglasses+*self'
             update 'Sunglasses+price'
           end
         end
@@ -337,7 +322,7 @@ Use this link to unfollow /update/Joe_User+*following?drop_item=another_card_wit
         context "and follow fields rule contains *include" do
           it "sends notification of new included card" do
             new_card =  Card.new :name=>'Sunglasses+lens'
-            expect_user("Sunglasses fan").to be_notified_of "Sunglasses"
+            expect_user("Sunglasses fan").to be_notified_of "Sunglasses+*self"
             new_card.save!
           end
         
@@ -347,7 +332,7 @@ Use this link to unfollow /update/Joe_User+*following?drop_item=another_card_wit
           end
         
           it "doesn't send notification of not included card" do
-            new_card = Card.new :name=>'Sunglasses+lens'
+            new_card = Card.new :name=>'Sunglasses+frame'
             expect_user("Sunglasses fan").not_to be_notified
             new_card.save!
           end      
@@ -356,13 +341,13 @@ Use this link to unfollow /update/Joe_User+*following?drop_item=another_card_wit
         context "and follow fields rule doesn't contain *include" do
           it "doesn't send notification of included card" do
             expect_user('Big Brother').not_to be_notified
-            update 'Google glass+tint'
+            Card.create! :name=>'Google glass+price'
           end 
         end
       end
       context 'when following a set' do
         it 'sends notification of included card' do
-          expect_user('Optic fan').to be_notified_of 'Sunglasses+*self'
+          expect_user('Optic fan').to be_notified_of 'Optic+*type'
           update 'Sunglasses+tint'
         end
         

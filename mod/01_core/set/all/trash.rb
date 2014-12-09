@@ -27,7 +27,7 @@ event :validate_delete, :before=>:approve, :on=>:delete do
   end
   
   undeletable_all_rules_tags = %w{ default style layout create read update delete }
-  if junction? and left.codename == 'all' and undeletable_all_rules_tags.member? right.codename
+  if junction? and l=left and l.codename == 'all' and undeletable_all_rules_tags.member? right.codename
     errors.add :delete, "#{name} is an indestructible rule"
   end
   

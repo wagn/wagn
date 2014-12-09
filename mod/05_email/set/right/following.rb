@@ -33,15 +33,15 @@ format :html do
      
    end
    
-   view :core do |args|
-     # card.item_cards.map do |item|
-     #   if item.type_id == SetID
-     #     Card.search(#:type => {:name=>item.name).map(&:name).join('\n')
-     #   else
-     #     item.name
-     #   end
-     # end.join("\n")
-   end
+   # view :core do |args|
+   #   # card.item_cards.map do |item|
+   #   #   if item.type_id == SetID
+   #   #     Card.search(#:type => {:name=>item.name).map(&:name).join('\n')
+   #   #   else
+   #   #     item.name
+   #   #   end
+   #   # end.join("\n")
+   # end
    
    view :new_entry do |args|
      if watch_card = Card.fetch(params["subscribe"])

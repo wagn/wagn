@@ -1,6 +1,6 @@
 include Card::Set::Type::Pointer
 
-event :update_followers, :after=>:store, :changed=>:db_content do #when => proc { |c| c.db_content_changed?  } do
+event :update_followers_after_following_changed, :after=>:store, :changed=>:db_content do #when => proc { |c| c.db_content_changed?  } do
   new_content = db_content
   db_content = db_content_was
   item_cards.each do |item|
@@ -36,7 +36,7 @@ format :html do
    view :core do |args|
      # card.item_cards.map do |item|
      #   if item.type_id == SetID
-     #     Card.search(:type => {:name=>item.name).map(&:name).join('\n')
+     #     Card.search(#:type => {:name=>item.name).map(&:name).join('\n')
      #   else
      #     item.name
      #   end

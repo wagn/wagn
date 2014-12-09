@@ -35,10 +35,10 @@ class FollowerStash
         card.special_followers do |follower, followed_name|
           notify follower, :of => followed_name
         end
-        
 
-        if card.left and !@visited.include?(card.left.name)
-          card.left.rule_card(:follow_fields).item_names.each do |item|
+
+        if card.left and !@visited.include?(card.left.name) and follow_field_rule = card.left.rule_card(:follow_fields)
+          follow_field_rule.item_names.each do |item|
             if item == Card[:includes].name
               includee_set = Card.search(:included_by=>card.left.name).map(&:key)
               if !@visited.intersection(includee_set).empty?

@@ -45,15 +45,24 @@ def update_references rendered_content = nil, refresh = false
         
         #update_references chunk.referee_name if Card::Content === chunk.referee_name
         # for the above to work we will need to get past delete_all!
-        
-        Card::Reference.create!(
-          :referer_id  => id,
-          :referee_id  => referee_id,
-          :referee_key => referee_name.key,
-          :ref_type    => Card::Chunk::Link===chunk ? 'L' : 'I',
-          :present     => chunk.referee_card.nil?   ?  0  :  1
-        )
+        referee_name.piece_names.each do |name|
+          if name.key != key # don't create self reference
+            ref_type = if name == referee_name
+                Card::Chunk::Link===chunk ? 'L' : 'I'
+              else
+                'P'
+              end
+            Card::Reference.create!(
+              :referer_id  => id,
+              :referee_id  => Card.where(:key=>name.key).pluck(:id).first,
+              :referee_key => name.key,
+              :ref_type    => ref_type,
+              :present     => 1
+            )
+          end
+        end
       end
+      
     end
   end
 end

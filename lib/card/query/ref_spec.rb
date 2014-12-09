@@ -1,11 +1,11 @@
 class Card::Query
   class RefSpec < Spec
     REFSPECS = {
-      :refer_to       => ['referer_id','referee_id',''],
+      :refer_to       => ['referer_id','referee_id',"ref_type IN ('L','I') AND"],
       :link_to        => ['referer_id','referee_id',"ref_type='L' AND"],
       :include        => ['referer_id','referee_id',"ref_type='I' AND"],
       :link_to_missing=> ['referer_id','referee_id',"present = 0 AND ref_type='L'"],
-      :referred_to_by => ['referee_id','referer_id',''],
+      :referred_to_by => ['referee_id','referer_id',"ref_type IN ('L','I') AND"],
       :linked_to_by   => ['referee_id','referer_id',"ref_type='L' AND"],
       :included_by    => ['referee_id','referer_id',"ref_type='I' AND"]
     }

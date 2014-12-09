@@ -197,12 +197,12 @@ describe Card::Set::All::Notify do
         :follower  => Card['Joe User'].name, 
         :followed  => @card.name,
       ).text_part.body.raw_source
-      expect(result).to eq(%{Dear My Wagn user
+      expect(result).to eq(%{"another card with subcards" was just created by Joe User.
 
-"another card with subcards"
-was just created by Joe User
    cardtype: Basic
    content: main content {{+s1}}  {{+s2}}
+
+
 
 This update included the following changes:
 
@@ -216,18 +216,19 @@ another card with subcards+s2 created
    content: new content of subcard 2
 
 
+
+
 See the card: /another_card_with_subcards
 
-You received this email because you're following "".
-Visit /update/+*following?drop_item= to stop receiving these emails.})
+You received this email because you're following "another card with subcards".
+
+Use this link to unfollow /update/Joe_User+*following?drop_item=another_card_with_subcards
+})
     end
   end
   
- 
 
-
-
-  decribe "#notify_followers" do
+  describe "#notify_followers" do
     def expect_user user_name
       expect(Card.fetch(user_name).account)
     end
@@ -247,7 +248,7 @@ Visit /update/+*following?drop_item= to stop receiving these emails.})
     
 
     it "sends notifications of edits" do
-      expect_user("Big Brother").to be_notified_of "All Eyes On Me"
+      expect_user("Big Brother").to be_notified_of "All Eyes On Me+*self"
       update "All Eyes On Me"
     end
 
@@ -276,12 +277,12 @@ Visit /update/+*following?drop_item= to stop receiving these emails.})
       
       it "sends notifications of new card" do
         new_card = Card.new :name => "Microscope", :type => "Optic"
-        expect_user("Optic fan").to be_notified_of "Optic"
+        expect_user("Optic fan").to be_notified_of "Optic+*type"
         new_card.save!
       end
 
       it "sends notification of update" do
-        expect_user("Optic fan").to be_notified_of "Optic"
+        expect_user("Optic fan").to be_notified_of "Optic+*type"
         update "Sunglasses"
       end
     end
@@ -289,27 +290,27 @@ Visit /update/+*following?drop_item= to stop receiving these emails.})
     context 'when following *right sets' do
       it "sends notifications of new card" do
         new_card = Card.new :name=>"Telescope+lens"
-        expect_user("Big Brother").to be_notified_of "Telescope+lens"
+        expect_user("Big Brother").to be_notified_of "lens+*right"
         new_card.save!
       end
     
       it "sends notifications of update" do
-        expect_user("Big Brother").to be_notified_of "Magnifier+lens"
+        expect_user("Big Brother").to be_notified_of "lens+*right"
         update "Magnifier+lens"
       end
     end
 
     context 'when following "content I created"' do
       it 'sends notifications of update' do
-        expect_user('Narcissist').to be_notified_of 'Sunglasses'
+        expect_user('Narcissist').to be_notified_of 'content I created'
         update 'Sunglasses'
       end
     end
     
     context 'when following "content I edited"' do
       it 'sends notifications of update' do
-        expect_user('Narcissist').to be_notified_of 'Magnifier+lens'
-        update 'Magnifier+lens',
+        expect_user('Narcissist').to be_notified_of 'content I edited'
+        update 'Magnifier+lens'
       end
     end
 
@@ -317,7 +318,7 @@ Visit /update/+*following?drop_item= to stop receiving these emails.})
       context "when following ascendant" do
         it "doesn't sends notification of arbitrary subcards" do
           expect_user('Sunglasses fan').not_to be_notified
-          update 'Sunglasses+about'
+          Card.create :name=>'Sunglasses+about'
         end
         
         context 'and follow fields rule contains subcards' do
@@ -341,7 +342,7 @@ Visit /update/+*following?drop_item= to stop receiving these emails.})
           end
         
           it "sends notification of updated included card" do
-            expect_user("Sunglasses fan").to be_notified_of "Sunglasses"
+            expect_user("Sunglasses fan").to be_notified_of "Sunglasses+*self"
             update 'Sunglasses+tint'
           end
         
@@ -361,12 +362,12 @@ Visit /update/+*following?drop_item= to stop receiving these emails.})
       end
       context 'when following a set' do
         it 'sends notification of included card' do
-          expect_user('Optic fan').to be_notified_of 'Sunglasses'
+          expect_user('Optic fan').to be_notified_of 'Sunglasses+*self'
           update 'Sunglasses+tint'
         end
         
         it 'sends notification of subcard mentioned in follow fields rule' do
-          expect_user('Optic fan').to be_notified_of 'Sunglasses' 
+          expect_user('Optic fan').to be_notified_of 'Optic+*type' 
           update 'Sunglasses+price'
         end
       end

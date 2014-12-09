@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class Following < Wagn::CoreMigration
+class AddFollowingCards < Wagn::CoreMigration
   def up
     Card.create! :name => "*followers", :codename=>"followers"
     Card.create! :name => "content I created", :codename=>"created_by_me"

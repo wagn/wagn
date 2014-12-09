@@ -237,7 +237,7 @@ describe Card::Query do
   end
 
   describe "type" do
-    user_cards =  ["Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"].sort
+    user_cards =  ["Big Brother", "Joe Admin", "Joe Camel", "Joe User", "John", "Narcissist", "No Count", "Optic fan", "Sample User", "Sara", "Sunglasses fan", "u1", "u2", "u3"].sort
 
     it "should find cards of this type" do
       expect(Card::Query.new( :type=>"_self", :context=>'User').run.map(&:name).sort).to eq(user_cards)
@@ -306,8 +306,8 @@ describe Card::Query do
 
     it "should sort by count" do
       Card::Auth.as_bot do
-        w = Card::Query.new( :name=>[:in,'All Eyes On Me','Sunglasses','No One Sees Me'], :sort=>{ :right=>'*following', :item=>'referred_to', :return=>'count' } )
-        expect(w.run.map(&:name)).to eq(['All Eyes On Me','Sunglasses','No One Sees Me'])
+        w = Card::Query.new( :name=>[:in,'All Eyes On Me','Look at me+*self','No One Sees Me'], :sort=>{ :right=>'*following', :item=>'referred_to', :return=>'count' } )
+        expect(w.run.map(&:name)).to eq(['All Eyes On Me','Look at me+*self','No One Sees Me'])
       end
     end
 

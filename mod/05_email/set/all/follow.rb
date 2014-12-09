@@ -4,19 +4,22 @@ FOLLOW_CACHE_KEY = 'FOLLOW'
 
 FOLLOW_OPTIONS =  ['content I created', 'content I edited']
 def special_followers 
+  if creator.type_id == UserID and creator.following? Card[:created_by_me].cardname
+    yield creator, Card[:created_by_me].name
+  end
   Card.search(:editor_of=>name).each do |editor|
     if editor.type_id == UserID and editor.following? Card[:edited_by_me].cardname
       yield editor, Card[:edited_by_me].name
     end
   end
-  if creator.type_id == UserID and creator.following? Card[:created_by_me].cardname
-    yield creator, Card[:created_by_me].name
-  end
 end
 
+def self.cache_expired
+  Card.cache.write FOLLOW_CACHE_KEY, nil
+end
 
 def self.cache
-  Card.cache.read(FOLLOW_CACHE_KEY) || update_cache
+  Card.cache.read(FOLLOW_CACHE_KEY) || refresh_cached_sets
 end
 
 def self.store_cache hash
@@ -24,7 +27,7 @@ def self.store_cache hash
   hash
 end
 
-def self.update_cache
+def self.refresh_cached_sets
   follow_cache = {}
   Card.search( :left=>{:type_id=>Card::UserID}, :right=>{:codename=> "following"} ).each do |following_pointer|
     following_pointer.item_cards.each do |followed|
@@ -41,12 +44,21 @@ end
 
 
 def followers
-  @followers ||= ( Follow.cache[follow_key] || ::Set.new() )
+  #@followers ||= cached_followers
+  cached_followers
 end
 
-def save_followers 
+def cached_followers
+  if type_id == Card::SetID
+    Follow.cache[follow_key] || ::Set.new
+  else
+    Card::Set::All::Notify::FollowerStash.new(self).followers
+  end
+end
+
+def save_followers new_followers
   hash = Follow.cache
-  hash[follow_key] = followers
+  hash[follow_key] = new_followers
   Follow.store_cache hash
 end
 
@@ -59,12 +71,12 @@ def add_follower user
   if not followed_by? user
     followers << user.id
   end
-  save_followers
+  save_followers followers
 end
 
 def drop_follower user
   followers.delete(user.id)
-  save_followers
+  save_followers followers
 end
 
 
@@ -93,13 +105,19 @@ def follow_set
 end
 
 def follow_key
-  follow_set
+  follow_set_card.key
 end
 
+event :cache_expired_because_of_new_set, :before=>:extend, :on=>:create, :when=> proc { |c| c.type_id == Card::SetID } do
+  Follow.cache_expired
+end
 
+event :cache_expired_because_of_type_change, :before=>:extend, :changed=>:type_id do
+  Follow.cache_expired
+end
 
-event :expired_follower_cache, :before=>:extend, :changed=>:name do
-  Follow.update_cache
+event :cache_expired_because_of_name_change, :before=>:extend, :changed=>:name do
+  Follow.cache_expired
 end
 
 def toggle_subscription_for watcher

@@ -33,7 +33,7 @@ describe Card::Set::Type::EmailTemplate do
           "+*to" => { :content => "joe@user.com" },
           "+*from" => { :content => "from@user.com" },
           "+*subject" => { :content => "Subject of the mail" },
-          "+*html_message" => { :content => "<p>Hello World!</p>" }
+          "+*html_message" => { :content => "<p>Hello World!</p>" },
           "+*text_message" => { :content => "Hello World!" }
         }
       end

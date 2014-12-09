@@ -2,7 +2,7 @@
 
 include Card::Set::Type::Pointer
 
-def item_names
+def item_names args={}
   left.followers.map {|id| Card.find(id).name }
 end
 

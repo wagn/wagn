@@ -18,9 +18,13 @@ class Card::Query
     def to_sql *args
       dir, cond = REFSPECS[ @key.to_sym ]
       field1, field2 = dir==:out ? [ :referer_id, :referee_id] : [ :referee_id, :referer_id]
-      
-      where = [ cond, ("#{field2} IN #{ @cardspec.to_sql }" unless @key == :link_to_missing) ].compact
-      %{(select #{field1} as ref_id from card_references where #{ where * ' AND ' })}
+
+      sql = %{select #{field1} as ref_id from card_references }
+      if @key != :link_to_missing
+        sql << %{ join #{ @cardspec.to_sql } as c on #{field2} = c.id }
+      end
+      sql << %{ where #{cond}} if cond
+      "(#{sql})"
     end
   end
 end

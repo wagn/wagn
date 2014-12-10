@@ -20,7 +20,7 @@ class Card::Query
       field1, field2 = dir==:out ? [ :referer_id, :referee_id] : [ :referee_id, :referer_id]
       
       where = [ cond, ("#{field2} IN #{ @cardspec.to_sql }" unless @key == :link_to_missing) ].compact
-      %{(select #{field1} from card_references where #{ where * ' AND ' })}
+      %{(select #{field1} as ref_id from card_references where #{ where * ' AND ' })}
     end
   end
 end

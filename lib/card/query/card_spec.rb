@@ -166,7 +166,8 @@ class Card
           cardspec = 'blank'
         end
         cardspec = CardSpec.build(:return=>'id', :_parent=>self).merge(cardspec)
-        merge field(:id) => ValueSpec.new(['in',RefSpec.new( key, cardspec )], self)
+        
+        add_join :ref, RefSpec.new( key, cardspec ).to_sql, :id, :ref_id
       end
 
 
@@ -377,9 +378,9 @@ class Card
         root.join_count = root.join_count.to_i + 1
         join_alias = "#{name}_#{root.join_count}"
         on = "#{table_alias}.#{cardfield} = #{join_alias}.#{otherfield}"
-        is_subselect = !table.is_a?( Symbol )
+        #is_subselect = !table.is_a?( Symbol )
         
-        if @mods[:conj] == 'or' and is_subselect
+        if @mods[:conj] == 'or'  #and is_subselect
           opts[:side] ||= 'LEFT'
           merge field(:cond) => SqlCond.new(on)
         end

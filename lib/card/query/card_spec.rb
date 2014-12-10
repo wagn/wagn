@@ -160,14 +160,8 @@ class Card
         end
       end
 
-      def refspec key, cardspec
-        if cardspec == '_none'
-          key = :link_to_missing
-          cardspec = 'blank'
-        end
-        cardspec = CardSpec.build(:return=>'id', :_parent=>self).merge(cardspec)
-        
-        add_join :ref, RefSpec.new( key, cardspec ).to_sql, :id, :ref_id
+      def refspec key, val        
+        add_join :ref, RefSpec.new( key, val, self ).to_sql, :id, :ref_id
       end
 
 

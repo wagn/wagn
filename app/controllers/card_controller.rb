@@ -254,7 +254,8 @@ class CardController < ActionController::Base
     Rails.logger.info "exception = #{exception.class}: #{exception.message}"
 
     @card ||= Card.new
-    @exception = exception
+    Card::Error.current = exception
+    
 
     view = case exception
       ## arguably the view and status should be defined in the error class;

@@ -17,7 +17,7 @@ class Card
       CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
     
       attr_reader :sql, :query, :rawspec, :selfname
-      attr_accessor :joins
+      attr_accessor :joins, :join_count
 
       class << self
         def build query
@@ -297,7 +297,6 @@ class Card
       def sort val
         return nil if @parent
         val[:return] = val[:return] ? safe_sql(val[:return]) : 'db_content'
-        @mods[:sort] =  "t_sort.#{val[:return]}"
         item = val.delete(:item) || 'left'
 
         if val[:return] == 'count'
@@ -321,7 +320,9 @@ class Card
         end
 
         cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"
-        add_join :sort, cs.to_sql, :id, :sort_join_field, :side=>'LEFT'
+        join_table = add_join :sort, cs.to_sql, :id, :sort_join_field, :side=>'LEFT'
+        @mods[:sort] = "#{join_table}.#{val[:return]}"
+        
       end
 
       def match(val)
@@ -350,8 +351,9 @@ class Card
       end
 
       def extension_type val
-        # DEPRECATED!!!       
-        add_join :usr, :users, :id, :card_id
+        # DEPRECATED LONG AGO!!!
+        Rails.logger.info "using DEPRECATED extension_type in WQL" 
+        merge field(:right_plus) => AccountID
       end
     
 
@@ -372,9 +374,12 @@ class Card
       end
 
       def add_join(name, table, cardfield, otherfield, opts={})
-        join_alias = "#{table_alias}_#{name}"
+        root.join_count = root.join_count.to_i + 1
+        join_alias = "#{name}_#{root.join_count}"
         on = "#{table_alias}.#{cardfield} = #{join_alias}.#{otherfield}"
-        if @mods[:conj] == 'or'
+        is_subselect = !table.is_a?( Symbol )
+        
+        if @mods[:conj] == 'or' and is_subselect
           opts[:side] ||= 'LEFT'
           merge field(:cond) => SqlCond.new(on)
         end
@@ -403,7 +408,7 @@ class Card
       def action_spec(field, linkfield, val)
         card_select = CardSpec.build(:_parent=>self, :return=>'id').merge(val).to_sql
         sql =  "(SELECT DISTINCT #{field} AS join_card_id FROM card_acts INNER JOIN card_actions ON card_acts.id = card_act_id "
-        sql += " JOIN (#{card_select}) AS ss ON #{linkfield}=ss.id AND (draft=0 OR draft IS NULL))"
+        sql += " JOIN (#{card_select}) AS ss ON #{linkfield}=ss.id AND (draft is not true))"
         add_join :ac, sql, :id, :join_card_id
       end
 
@@ -425,7 +430,7 @@ class Card
       def restrict_by_join id_field, val, opts={}
         opts.reverse_merge!(:return=>:id, :_parent=>self)
         subselect = CardSpec.build(opts).merge(val).to_sql
-        add_join "#{ field id_field }_tbl", subselect, id_field, opts[:return]
+        add_join "card_#{id_field}", subselect, id_field, opts[:return]
       end
     
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -435,7 +440,7 @@ class Card
 
       def to_sql *args
         sql.conditions << basic_conditions
-
+        
         if @mods[:return]=='condition'
           conds = sql.conditions.last
           return conds.blank? ? nil : "(#{conds})"
@@ -464,7 +469,7 @@ class Card
       end
   
       def basic_conditions
-        @spec.map { |key, val| val.to_sql field_root(key) }.join " #{ current_conjunction } "
+        @spec.map { |key, val| val.to_sql field_root(key) }.compact.join " #{ current_conjunction } "
       end
   
       def current_conjunction

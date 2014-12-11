@@ -266,14 +266,10 @@ describe Card::Query do
 
   describe "order" do
     it "should sort by create" do
-      Card.create! :type=>"Cardtype", :name=>"Nudetype"
-      Card.create! :type=>"Nudetype", :name=>"nfirst", :content=>"a"
-      Card.create! :type=>"Nudetype", :name=>"nsecond", :content=>"b"
-      Card.create! :type=>"Nudetype", :name=>"nthird", :content=>"c"
-      # WACK!! this doesn't seem to be consistent across fixture generations :-/
-      expect(Card::Query.new( :type=>"Nudetype", :sort=>"create", :dir=>"asc").run.map(&:name)).to eq(
-        ["nfirst","nsecond","nthird"]
-      )
+      Card.create! :name=>"classic skin head"
+      # classic skin head is created more recently than classic skin, which is in the seed data
+      wql = { :sort=>"create", :name=>[:match,'classic skin']}
+      expect( Card::Query.new(wql).run.map(&:name) ).to eq( ["classic skin","classic skin head"] )
     end
 
     it "should sort by name" do
@@ -345,8 +341,10 @@ describe Card::Query do
   describe "and" do
     it "should act as a simple passthrough" do
       expect(Card::Query.new(:and=>{:match=>'two'}).run.map(&:name).sort).to eq(CARDS_MATCHING_TWO)
+      expect(Card::Query.new(:and=>{}, :type=>"Cardtype E").run.first.name).to eq('type-e-card')
     end
-
+    
+    
     it "should work within 'or'" do
       results = Card::Query.new(:or=>{:name=>'Z', :and=>{:left=>'A', :right=>'C'}}).run
       expect(results.length).to eq(2)
@@ -356,8 +354,9 @@ describe Card::Query do
 
   describe "any/or" do
     it "should work with :plus" do
-      expect(Card::Query.new(:plus=>"A", :or =>{:name=>'B', :match=>'K'}).run.map(&:name).sort).to eq(%w{ B })
-      expect(Card::Query.new(:plus=>"A", :any=>{:name=>'B', :match=>'K'}).run.map(&:name).sort).to eq(%w{ B })
+      expect(Card::Query.new(:plus=>"A", :or =>{:name=>'B', :match=>'K'}, :return=>'name').run.sort).to eq(%w{ B })
+      expect(Card::Query.new(:plus=>"A", :any=>{:name=>'B', :match=>'K'}, :return=>'name').run.sort).to eq(%w{ B })
+      expect(Card::Query.new(:or=>{:right_plus=>"A", :plus=>'B'}, :return=>'name').run.sort).to eq(%w{ A C D F })
     end
   end
 
@@ -383,6 +382,8 @@ describe Card::Query do
     end
     it "should play nicely with other properties and relationships" do
       expect(Card::Query.new(:plus=>{:found_by=>'Simple Search'}).run.map(&:name).sort).to eq(Card::Query.new(:plus=>{:name=>'A'}).run.map(&:name).sort)
+      expect(Card::Query.new(:found_by=>'A+*self', :plus=>'C').run.map(&:name)).to eq(%w{ A })
+      
     end
     it "should be able to handle _self" do
       expect(Card::Query.new(:context=>'Simple Search', :left=>{:found_by=>'_self'}, :right=>'B').run.first.name).to eq('A+B')

@@ -38,11 +38,11 @@ class SharedData
 
     Card.create! :type_id=>Card::SignupID, :name=>"Sample Signup" #, :email=>"invitation@request.com"
     #above still necessary?  try commenting out above and 'Sign up' below
+    Card::Auth.current_id = Card::WagnBotID # need to reset after creating sign up, which changes current_id for extend phase
 
     Card::Auth.createable_types.each do |type|
       next if ['User', 'Sign up', 'Set', 'Number'].include? type
       Card.create! :type=>type, :name=>"Sample #{type}"
-      Card::Auth.current_id = Card::WagnBotID # need to reset after creating sign up, which changes current_id for extend phase
     end
 
 

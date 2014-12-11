@@ -7,7 +7,7 @@ describe Card::Set::Type::FileContent do
   end
   context "when in HTML format" do
     it "should have a plain editor" do
-      assert_view_select render_editor('FileContent'), render_editor('PlainText')
+      assert_view_select render_editor('FileContent'), 'textarea[rows="5"]'
     end
     describe "core view" do
       it "should escape the content" do
@@ -18,11 +18,11 @@ describe Card::Set::Type::FileContent do
   context "when in other formats" do
     describe "core view" do
       it "should render the raw view" do
-        expect(render_card( :core,{ :type=>'FileContent', :content=>@file_path_to_test},{:format=>:js} )).to eq(CGI.escapeHTML render_card( :raw, :type=>'FileContent', :content=>@file_path_to_test ))
+        expect(render_card( :core,{ :type=>'FileContent', :content=>@file_path_to_test},{:format=>:js} )).to eq(render_card( :raw, :type=>'FileContent', :content=>@file_path_to_test ))
       end
     end
     describe "raw view" do
-      context "when content starts with 'WagnGem'"
+      context "when content starts with 'WagnGem'" do
         it "should read file in wagn gem folders" do
           expect(render_card( :raw, :type=>'FileContent', :content=>@file_path_to_test)).to eq(::File.read @file_path_to_test)
         end
@@ -46,3 +46,4 @@ describe Card::Set::Type::FileContent do
     end
   end
 end
+

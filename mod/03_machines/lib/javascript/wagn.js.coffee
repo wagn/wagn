@@ -124,6 +124,8 @@ jQuery.fn.extend {
   setContentFieldsFromMap: (map) ->
     map = wagn.editorContentFunctionMap unless map?
     this_form = $(this)
+    field = this_form.find('.card-content')
+    field.val ''
     $.each map, (selector, fn)->
       this_form.setContentFields(selector, fn)
   setContentFields: (selector, fn) ->
@@ -134,6 +136,12 @@ jQuery.fn.extend {
     init_val = field.val() # tinymce-jquery overrides val(); that's why we're not using it.
     new_val = fn.call this
     field.val new_val
+    field.change() if init_val != new_val
+  addToContentField: (fn)->
+    field = @closest('.card-editor').find('.card-content')
+    init_val = field.val() # tinymce-jquery overrides val(); that's why we're not using it.
+    new_val = fn.call this
+    field.val init_val + "\n" + new_val
     field.change() if init_val != new_val
 }
 

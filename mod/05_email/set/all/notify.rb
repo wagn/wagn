@@ -23,19 +23,11 @@ class FollowerStash
     Auth.as_bot do
       if !@visited.include? card.key
         @visited.add card.key
-        
-        card.set_names.each do |set_name|
-          if set_card = Card.fetch(set_name)
-            set_card.followers.each do |follower_id|
-              notify Card.find(follower_id), :of => set_name
-            end      
-          end
+        card.all_follow_option_cards.each do |option_card|
+          option_card.followers_of(card).each do |follower_card|
+            notify follower_card, :of => option_card.name
+          end      
         end
-        
-        card.special_followers do |follower, followed_name|
-          notify follower, :of => followed_name
-        end
-
 
         if card.left and !@visited.include?(card.left.name) and follow_field_rule = card.left.rule_card(:follow_fields)
           follow_field_rule.item_names(:context=>card.left.cardname).each do |item|

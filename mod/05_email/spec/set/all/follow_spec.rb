@@ -51,55 +51,73 @@ describe "Card::Set::All::Follow" do
     end
     
     def follow_menu card_name
-      render_card :follow, :name=>card_name
+      render_card :follow_menu, :name=>card_name
     end
     
-    def include_follow_link text
+    def add_items array
+      array.map do |entry|
+        entry[:raw].scan(/add_item=([^&]+)&/) do |match|
+          CGI.unescape(match.first)
+        end
+      end
     end
     
-    def include_unfollow_link texet
+    def drop_items array
+      array.map do |entry|
+        entry[:raw].scan(/drop_item=([^&]+)&/) do |match|
+          CGI.unescape(match.first)
+        end
+      end
+    end
+    
+    def includes_follow_link text
+      expect(add_items(subject)).to include text
+    end
+    
+    def includes_unfollow_link text
+      expect(drop_items(subject)).to include text
     end
 
     
     context "when following Optic+*type" do
       before  { Card::Auth.current_id = Card['Optic fan'].id }
       subject { follow_menu 'Sunglasses' }
-      it { is_expected.to include_unfollow_link "all Optics" }
-      it { is_expected.to include_follow_link "Sunglasses" }
-      it { is_expected.to not_include "content I created"}
-      it { is_expected.to not_include "content I edited"}
+      it { includes_unfollow_link "Optic+*type" }
+      it { includes_follow_link "Sunglasses+*self" }
+      it { is_expected.not_to include "content_I_created"}
+      it { is_expected.not_to include "content_I_edited"}
     end
 
     context "for card created by user" do
       context "when following 'content I created' " do
         before  { Card::Auth.current_id = Card['Narcissist'].id }
         subject { follow_menu 'Sunglasses' }
-        it      { is_expected.to include_unfollow_link "content I created" }
+        it      { includes_unfollow_link "content_I_created" }
       end
       context "when not following 'content I created' " do
         before  { Card::Auth.current_id = Card['Optic fan'].id }
         subject { follow_menu 'Google glass' }
-        it      { is_expected.to include_follow_link "content I created" }
+        it      { includes_follow_link "content_I_created" }
       end
     end
     
     context "for card edited by user" do
       before  { Card::Auth.current_id = Card['Narcissist'].id }
-      subject { follow_menu 'Magnifier+lens' }
-      it      { is_expected.to include_unfollow_link "content I edited" }
+      subject { follow_menu 'Magnifier+lens+*self' }
+      it      { includes_unfollow_link "content_I_edited" }
     end
   
     context "when following *right" do
       subject { follow_menu 'Magnifier+lens' }
-      it      { is_expected.to include_unfollow_link "all +lens"}
-      it      { is_expected.to include_follow_link "all Optic+lens"}
+      it      { includes_unfollow_link "lens+*right"}
+      it      { includes_follow_link "Optic+lens+*type_plus_right"}
     end
   
     context "when following several sets" do
       subject { follow_menu 'Sunglasses+lens' }
-      it      { is_expected.to include_unfollow_link "all +lens"}
-      it      { is_expected.to include_unfollow_link "all Optics"}
-      it      { is_expected.to include_unfollow_link "Sunglasses"}
+      it      { includes_unfollow_link "lens+*right"}
+      it      { includes_unfollow_link "Optic+*type"}
+      it      { includes_unfollow_link "Sunglasses"}
     end
   end
  

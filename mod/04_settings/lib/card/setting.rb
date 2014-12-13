@@ -41,7 +41,7 @@ class Card
           @@groups[group][opts[:position]-1] = self
         end
       else
-        @@group_namesoups[group] << self
+        @@groups[group] << self
       end
   
       @codename = opts[:codename] || self.name.match(/::(\w+)$/)[1].underscore.to_sym

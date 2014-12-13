@@ -2,81 +2,44 @@ card_accessor :followers
 
 FOLLOW_CACHE_KEY = 'FOLLOW'
 
-FOLLOW_OPTIONS =  [ {
-      :name => 'content I created',
-      :applies? => Proc.new do |user, card|
-          card.creator and card.creator.type_id == Card::UserID and card.creator == user 
-        end,
-      :followers => Proc.new do |card, &block|
-        card.creator and card.creator.type_id == Card::UserID and card.creator.following? Card[:created_by_me].cardname
-          block.call card.creator, Card[:created_by_me].name
-        end
-    },
-    {
-      :name => 'content I edited',
-      :applies? => Proc.new do |user, card|
-          Card.search(:editor_of=>card.name).include? user
-        end,
-      :followers => Proc.new do |card, &block|
-          Card.search(:editor_of=>card.name).each do |editor|
-            if editor and editor.type_id == Card::UserID and editor.following? Card[:edited_by_me].cardname
-              block.call editor, Card[:edited_by_me].name
-            end
-          end
-        end
-    }
-  ]
 
-
-def special_followers index=nil, &block
-  if index and index < FOLLOW_OPTIONS.size
-    FOLLOW_OPTIONS[index][:followers].call(self, &block) 
-  else
-    FOLLOW_OPTIONS.each do |hash|
-      hash[:followers].call(self, &block)
-    end
+def follow_option_card index
+  if index and index < Card::FollowOption.names.size
+    Card[Card::FollowOption.names[index]]
   end
-end
-
-def special_option_applies? index, check_follower
-  index < FOLLOW_OPTIONS.size and FOLLOW_OPTIONS[index][:applies?].call(check_follower, self)
-end
-
-def special_follower? index, check_follower
-  special_followers(index) do |follower, name|
-    return true if check_follower == follower
-  end
-  return false
 end
 
 def special_follow_option? name
- FOLLOW_OPTIONS.map{|h| h[:name]}.include? name
+  card = Card.fetch(name) and codename = card.codename and Card::FollowOption.names.include? codename.to_sym
 end
 
-
-def followers
+def followers_of card=nil  # the argument is for compatibility reasons, needed for the special follow options
   if type_id == Card::SetID
-    Follow.cache[follow_key] || ::Set.new
+    follower_ids.map { |id| Card.find(id) }
   else
     Card::Set::All::Notify::FollowerStash.new(self).followers
   end
 end
 
+def follower_ids
+  @follower_ids ||= Follow.cache[follow_key] || []
+end
+
 def followed_by? user
-  followers.include? user.id
+  follower_ids.include? user.id
 end
 
 
 def add_follower user
   if not followed_by? user
-    followers << user.id
+    follower_ids << user.id
   end
-  save_followers followers
+  save_followers follower_ids
 end
 
 def drop_follower user
-  followers.delete(user.id)
-  save_followers followers
+  follower_ids.delete(user.id)
+  save_followers follower_ids
 end
 
 def save_followers new_followers
@@ -110,6 +73,30 @@ def follow_key
   follow_set_card.key
 end
 
+def related_follow_option_cards
+  # refers to sets that users may follow from the current card
+  @related_follow_option_cards ||= begin
+    sets = set_names
+    sets.pop unless codename == 'all' # get rid of *all set
+    sets << "#{name}+*type" if known? && type_id==Card::CardtypeID
+    sets << "#{name}+*right" if known? && cardname.simple?
+    Card::FollowOption.names.each do |name| 
+      if Card[name].applies?(Auth.current, self)
+        sets << name
+      end
+    end
+    sets.map { |name| Card.fetch name }
+  end
+end
+
+def all_follow_option_cards
+  sets = set_names
+  sets += Card::FollowOption.names
+  sets.map { |name| Card.fetch name }
+end
+
+
+
 event :cache_expired_because_of_new_set, :before=>:extend, :on=>:create, :when=> proc { |c| c.type_id == Card::SetID } do
   Follow.cache_expired
 end
@@ -131,80 +118,52 @@ format :html do
   end
   
   view :follow_menu, :tags=>:unknown_ok do |args|
-    links = []
-    (card.related_sets.size + FOLLOW_OPTIONS.size).times do |index|
-      link << render_follow_menu( :follow_menu_item => index )
+    follow_links = []
+    card.related_follow_option_cards.size.times do |index|
+      follow_links << render_follow_menu_item( :follow_menu_index => index )
     end
-    links.compact.map do |link|
+    follow_links.compact.map do |link|
       { :raw => link }
     end
   end
 
   view :follow_menu_item do |args|
     index = args[:follow_menu_index] || (Env.params['follow_menu_index'] and Env.params['follow_menu_index'].to_i)
-    if index
-      link_args = if index < card.related_sets.size
-        name, label = card.related_sets[index]
-        follow_link_args name, label, index
-      elsif (index-card.related_sets.size) < FOLLOW_OPTIONS.size
-        special_follow_link_args index-card.related_sets.size, index
-      end
-      
-      if link_args
-        wrap(args) do 
-          follow_link(*link_args)
-        end
-      end
+    if index and link = follow_link(index) and link.present?
+      wrap(args) { follow_link(index) }
     else
       ''
     end
   end
   
   
-  def build_link toggle, followed_set_card, label, index
-    return '' unless followed_set_card
+  def follow_link index
+    return '' unless follow_option_card = card.related_follow_option_cards[index]
     
-    following = Auth.current.fetch :trait=>:following, :new=>{:type=>:pointer}
-    path_hash = {:card=>following, :action=>:update, :follow_menu_index=>index,
-                 :success=>{:id=>card.name, :view=>:follow_menu_item} }
-    options   = {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :remote=>true, :method=>'post'}
+    toggle       = follow_option_card.followed? ? :off : :on
+    label        = follow_option_card.label[0..0].downcase + follow_option_card.label[1..-1]
+    following    = Auth.current.fetch :trait=>:following, :new=>{:type=>:pointer}
+    path_options = {:card=>following, :action=>:update, :follow_menu_index=>index,
+                    :success=>{:id=>card.name, :view=>:follow_menu_item} }
+    html_options = {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :remote=>true, :method=>'post'}
     
     case toggle
-    when :off 
-      text                    = "following #{label}"
-      path_hash[:drop_item]   = followed_set_card.cardname.url_key
-      options[:title]         = "stop sending emails about changes to #{label}"
-      options[:hover_content] = "unfollow #{label}"
+    when :off
+      text                         = "following #{label}"
+      path_options[:drop_item]     = follow_option_card.cardname.url_key
+      html_options[:title]         = "stop sending emails about changes to #{label}"
+      html_options[:hover_content] = "unfollow #{label}"
     when :on 
-      text                    = "follow #{label}"
-      path_hash[:add_item]    = followed_set_card.cardname.url_key
-      options[:title]         = "send emails about changes to #{label}"
+      text                         = "follow #{label}"
+      path_options[:add_item]      = follow_option_card.cardname.url_key
+      html_options[:title]         = "send emails about changes to #{label}"
     end
 
-    link_to text, path(path_hash), opts_hash
+    link_to text, path(path_options), html_options
   end
-  
-  def special_follow_link index, total_index
-    name = FOLLOW_OPTIONS[index][:name]
-    if card.special_followed?(index)
-      build_link :off, Card.fetch(name), name, total_index
-    elsif card.special_option_applies? index, Auth.current
-      build_link :on, Card.fetch(name), name, total_index
-    end
-  end
-    
-  def follow_link_args name, label, index
-    label = label[0..0].downcase + label[1..-1]
-    set_card = Card.fetch(name)
-    toggle = set_card.set_followed? ? :off : :on
-    build_link toggle, set_card, label, index
-  end
-      
 end
 
 
-def set_followed?; Auth.current.fetch(:trait=>:following, :new=>{}).include_item? cardname end
-def special_followed?(index); special_follower? index, Auth.current end
 def followed?; followed_by? Auth.current end
 
 

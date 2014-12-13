@@ -80,16 +80,32 @@ format :html do
 
      extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
-     %{<ul class="pointer-list-editor #{extra_css_class}" options-card="#{options_card_name}"> } +
-     items.map do |item|
-       %{<li class="pointer-li"> } +
-         text_field_tag( 'pointer_item', item, :class=>'pointer-item-text', :id=>'asdfsd' ) +
-         link_to( '', '#', :class=>'pointer-item-delete ui-icon ui-icon-circle-close' ) +
-       '</li>'
-     end.join("\n") +
-     %{</ul><div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>
-      #{_render_new_entry args}
-     }
+     options = %{<div class="pointer-checkbox-list">} +
+       Card::FollowOption.names.map do |name|
+         option_card = Card[name]
+         checked = card.item_names.include?(option_card.name)
+         id = "pointer-checkbox-#{option_card.cardname.key}"
+         description = false
+         %{ <div class="pointer-checkbox"> } +
+           check_box_tag( "pointer_checkbox", option_card.label, checked, :id=>id, :class=>'pointer-checkbox-button') +
+           %{ <label for="#{id}">#{option_card.label}</label>
+           #{ %{<div class="checkbox-option-description">#{ description }</div>} if description }
+            </div>}
+       end.join("\n") +
+       '</div>'
+     
+     list = %{<ul class="pointer-list-editor #{extra_css_class}" options-card="#{options_card_name}"> } +
+        items.reject{|name| card.special_follow_option? name}.map do |item|
+         %{<li class="pointer-li"> } +
+           text_field_tag( 'pointer_item', item, :class=>'pointer-item-text', :id=>'asdfsd' ) +
+           link_to( '', '#', :class=>'pointer-item-delete ui-icon ui-icon-circle-close' ) +
+         '</li>'
+       end.join("\n") + 
+       %{</ul><div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>
+        #{_render_new_entry args}
+       }
+    
+   %{<div class="pointer-mixed">#{options}#{list}</div>}
    end
 end
 

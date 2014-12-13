@@ -56,6 +56,7 @@ module Wagn::SpecHelper
   end
   
   def users
+    require 'test/seed'
     SharedData::users.sort
   end
 end

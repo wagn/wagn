@@ -110,16 +110,16 @@ format :html do
       :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read ),
       :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>n.to_s } },
       :related_sets => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name } } },
-      :follow_options => render_follow_menu
     }
     if card.real?
       @menu_vars.merge!({
-        :edit      => card.ok?(:update),
-        :account   => card.account && card.ok?(:update),
-        :follow    => Auth.signed_in? && render_follow,
-        :creator   => card.creator.name,
-        :updater   => card.updater.name,
-        :delete    => card.ok?(:delete) && link_to( 'delete', path(:action=>:delete),
+        :edit           => card.ok?(:update),
+        :account        => card.account && card.ok?(:update),
+        :follow         => Auth.signed_in? && render_follow,
+        :follow_options => Auth.signed_in? && render_follow_menu,
+        :creator        => card.creator.name,
+        :updater        => card.updater.name,
+        :delete         => card.ok?(:delete) && link_to( 'delete', path(:action=>:delete),
           :class => 'slotter standard-delete', :remote => true, :'data-confirm' => "Are you sure you want to delete #{card.name}?"
         )
       })

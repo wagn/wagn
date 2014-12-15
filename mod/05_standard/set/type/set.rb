@@ -100,11 +100,13 @@ def label
   end
 end
 
+
 def followed?
   if Auth.current
     Auth.current.fetch(:trait=>:following, :new=>{}).include_item? cardname 
   end
 end
+
 
 def setting_codenames_by_group
   result = {}

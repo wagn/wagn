@@ -14,3 +14,7 @@ end
 def anchor_name card
   card.cardname.tag
 end
+
+def follow_label name
+   %{all "+#{name}s"}
+end

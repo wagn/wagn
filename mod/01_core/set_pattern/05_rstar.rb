@@ -11,3 +11,7 @@ end
 def pattern_applies? card
   card.cardname.rstar?
 end
+
+def follow_label name
+  label
+end

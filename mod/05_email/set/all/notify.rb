@@ -26,7 +26,7 @@ class FollowerStash
         card.all_follow_option_cards.each do |option_card|
           option_card.followers_of(card).each do |follower_card|
             notify follower_card, :of => option_card.name
-          end      
+          end
         end
 
         if card.left and !@visited.include?(card.left.name) and follow_field_rule = card.left.rule_card(:follow_fields)

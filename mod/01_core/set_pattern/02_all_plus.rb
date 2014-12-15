@@ -7,3 +7,7 @@ end
 def prototype_args anchor
   { :name=>'+' }
 end
+
+def follow_label name
+  label
+end

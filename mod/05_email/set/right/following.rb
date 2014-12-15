@@ -1,4 +1,18 @@
+
 include Card::Set::Type::Pointer
+
+event :settify_new_follow_options, :before=>:approve, :on=>:save, :changed=>:db_content do
+  temp = db_content
+  item_names.each do |name|
+    if not special_follow_option? name and option_card = Card.fetch(name) and not option_card.type_id == SetID
+        if option_card.type_id == CardtypeID
+          temp.sub!("[[#{name}]]","[[#{name}+*type]]")
+        else
+          temp.sub!("[[#{name}]]","[[#{name}+*self]]")
+        end
+    end
+  end
+end
 
 event :update_followers_after_following_changed, :after=>:store, :changed=>:db_content do #when => proc { |c| c.db_content_changed?  } do
   new_content = db_content
@@ -13,100 +27,68 @@ event :update_followers_after_following_changed, :after=>:store, :changed=>:db_c
 end
 
 format()      { include Card::Set::Type::Pointer::Format     }
-format :html do 
-   include Card::Set::Type::Pointer::HtmlFormat 
-   
-   # all cards for a set
-   # check whether a card belongs to a given set
-   
-   view :watch_list do |args|
-     card.item_cards.map do |item|
-       if item.type_id == SetID
-         #Card.search(:type => {:name=>item.name).map(&:name).join('\n')
-         Card.members(item.key).join ' '
-       else
-         item.name
-       end
-     end.join("\n")
-     
-     candidates = Card.search :sort=> "update", :dir=>"desc"
-     
-   end
-   
-   # view :core do |args|
-   #   # card.item_cards.map do |item|
-   #   #   if item.type_id == SetID
-   #   #     Card.search(#:type => {:name=>item.name).map(&:name).join('\n')
-   #   #   else
-   #   #     item.name
-   #   #   end
-   #   # end.join("\n")
-   # end
-   
-   view :new_entry do |args|
-     if watch_card = Card.fetch(params["subscribe"])
-       set_options = watch_card.set_names.reverse
-       %{
-         <div class="card-editor">
-         #{
-           fieldset 'set', (
-             option_items = set_options.map do |set_name|
-               checked = false
-               #checked = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
-               %{
-                 <li>
-                   #{ form.radio_button :name, "#{set_name}", :checked=> checked }
-                   <span class="set-label">
-                     #{ link_to_page Card.fetch(set_name).label, set_name, :target=>'wagn_set' }
-                   </span>
-                 </li>
-               }
-             end
-             %{ <ul>#{ option_items * "\n" }</ul>}
-           ), :editor => 'set'
-         }
-         </div>
-       }
+format :html do
+   include Card::Set::Type::Pointer::HtmlFormat
+
+   view :open do |args|
+     if card.left and card.left.id == Auth.current_id 
+       render_edit(:checkbox_list=>true)
+     else
+       super(args)
      end
    end
    
-   
-   view :list do |args|     
+   view :list do |args|
+     if args.delete(:checkbox_list)
+       render_checkbox_lists args
+     else
+       super(args)
+     end
+   end
+
+   view :checkbox_list do |args|
      args ||= {}
      items = args[:item_list] || card.item_names(:context=>:raw)
-     items = [''] if items.empty?
-     items << params["subscribe"]
+     items = [''] if items.empty?     
      options_card_name = (oc = card.options_card) ? oc.cardname.url_key : ':all'
 
-     extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
-
-     options = %{<div class="pointer-checkbox-list">} +
+     list = %{<div class="pointer-checkbox-sublist">} +
        Card::FollowOption.names.map do |name|
          option_card = Card[name]
          checked = card.item_names.include?(option_card.name)
-         id = "pointer-checkbox-#{option_card.cardname.key}"
-         description = false
-         %{ <div class="pointer-checkbox"> } +
-           check_box_tag( "pointer_checkbox", option_card.label, checked, :id=>id, :class=>'pointer-checkbox-button') +
-           %{ <label for="#{id}">#{option_card.label}</label>
-           #{ %{<div class="checkbox-option-description">#{ description }</div>} if description }
-            </div>}
+         checkbox_item option_card, checked
+       end.join("\n") + items.reject{|name| card.special_follow_option? name}.map do |name|
+         if option_card = Card.fetch(name)
+           checkbox_item option_card, option_card.followed?
+         end
        end.join("\n") +
-       '</div>'
-     
-     list = %{<ul class="pointer-list-editor #{extra_css_class}" options-card="#{options_card_name}"> } +
-        items.reject{|name| card.special_follow_option? name}.map do |item|
-         %{<li class="pointer-li"> } +
-           text_field_tag( 'pointer_item', item, :class=>'pointer-item-text', :id=>'asdfsd' ) +
-           link_to( '', '#', :class=>'pointer-item-delete ui-icon ui-icon-circle-close' ) +
-         '</li>'
-       end.join("\n") + 
-       %{</ul><div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>
-        #{_render_new_entry args}
+       %{<ul class="pointer-list-editor pointer-sublist-ul" options-card="#{options_card_name}">
+           <li class="pointer-li"> } +
+             text_field_tag( 'pointer_item', '', :class=>'pointer-item-text', :id=>'asdfsd' ) +
+             link_to( '', '#', :class=>'pointer-item-delete ui-icon ui-icon-circle-close' ) +
+       %{  </li>
+         </ul>
+         <div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>
        }
-    
-   %{<div class="pointer-mixed">#{options}#{list}</div>}
+
+     %{<div class="pointer-mixed">#{list}</div>}
    end
+
+   def checkbox_item option_card, checked
+     id = "pointer-checkbox-#{option_card.cardname.key}"
+     description = false
+     %{ <div class="pointer-checkbox"> } +
+       check_box_tag( "pointer_checkbox", option_card.cardname.url_key, checked, :id=>id, :class=>'pointer-checkbox-button') +
+       %{ <label for="#{id}">#{option_card.label}</label>
+       #{ %{<div class="checkbox-option-description">#{ description }</div>} if description }
+        </div>}
+   end
+   
+   
+   view :pointer_items, :tags=>:unknown_ok do |args|
+     super(args.merge(:item=>:link))
+   end
+   
 end
 
 format(:css ) { include Card::Set::Type::Pointer::CssFormat  }
@@ -180,9 +162,4 @@ format(:css ) { include Card::Set::Type::Pointer::CssFormat  }
 #         }
 #       }
 #     end
-#   end
-#
 
-#
-#   #    %{</ul><div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>}
-# end

@@ -54,7 +54,7 @@ wagn.menu_template = [
       }
     ]
   },
-  { "text":"%{follow}", "view":"options", "if":"follow", "list":
+  { "link":"follow", "view":"options", "if":"follow", "list":
      { "name":"follow_options", 
         "template": { "raw":"raw" }
      }

@@ -28,7 +28,7 @@ describe Card::Set::Type::FileContent do
         end
       end
       it "should read file in decko's mod folder" do
-        path = Dir.pwd+"/mod/test.txt"
+        path = Rails.root.to_s+"/mod/test.txt"
         ::File.open(path, 'w') {|f| f.write("testing now") }
         expect(render_card( :raw, :type=>'FileContent', :content=>path)).to eq("testing now")
         ::File.delete path

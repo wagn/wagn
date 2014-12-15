@@ -82,7 +82,7 @@ else
   when 'rspec'
     opts = {}
     require 'rspec/core'
-    require 'card/engine'
+    require 'decko/engine'
     parser = RSpec::Core::Parser.new.parser(opts)
     parser.banner = "Usage: wagn rspec [WAGN ARGS] -- [RSPEC ARGS]\n\nRSPEC ARGS"
     parser.separator <<-WAGN 

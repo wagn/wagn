@@ -4,7 +4,11 @@ require 'wagn/application'
 
 module <%= app_const_base %>
   class Application < Wagn::Application
+  end
     
+  class << Wagn::Application
+   def card_config config
+
     # Wagn inherits Rails configuration options.  See http://guides.rubyonrails.org/configuring.html
 
     config.recaptcha_public_key  = '6LdhRssSAAAAAFfLt1Wkw43hoaA8RTIgso9-tvtc'
@@ -16,7 +20,7 @@ module <%= app_const_base %>
   
     
     # Email configuration
-    config.action_mailer.perform_deliveries = false
+    config.perform_deliveries = false
     # config.action_mailer.delivery_method  = ...
     # config.action_mailer.smtp_settings    = ...
     
@@ -52,5 +56,6 @@ module <%= app_const_base %>
 
     # config.override_protocol = nil
     # don't autodetect protocol (http/https) from web requests
+   end
   end
 end

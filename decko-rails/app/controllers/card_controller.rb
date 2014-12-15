@@ -2,10 +2,15 @@
 
 require_dependency 'card'
 require_dependency 'card/action'
+require_dependency 'decko/engine'
+
+Decko.card_paths_and_config Card.paths
+Card::Loader.load_mods if Card.count > 0
 
 class CardController < ActionController::Base
 
   include Card::Location
+  include Decko::Location
   include Recaptcha::Verify
 
   before_filter :per_request_setup, :except => [:asset]

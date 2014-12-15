@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require 'card/engine'
+require 'decko/engine'
 
 require 'active_support/core_ext/numeric/time'
 if defined?(Bundler)
@@ -32,13 +32,9 @@ module Wagn
       @config ||= begin
         config = super
 
-        config.i18n.enforce_available_locales = true
+        config.autoload_paths << "#{Rails.root}/tmp/lib"
 
-        config.autoload_paths += Dir["#{Card.gem_root}/app/**/"]
-        config.autoload_paths += Dir["#{Card.gem_root}/lib/**/"]
-        config.autoload_paths += Dir["#{Wagn.gem_root}/lib/**/"]
-        config.autoload_paths += Dir["#{Card.gem_root}/mod/*/lib/**/"]
-        config.autoload_paths += Dir["#{Wagn.root}/mod/*/lib/**/"]
+        config.i18n.enforce_available_locales = true
 
         config.assets.enabled = false
         config.assets.version = '1.0'
@@ -70,12 +66,12 @@ module Wagn
 
     def paths
       @paths ||= begin
-        Card::Engine.paths['local-mod'] = approot_is_gemroot? ? [] : ["#{Rails.root}/mod"]
+        Decko::Engine.paths['local-mod'] = approot_is_gemroot? ? [] : ["#{Rails.root}/mod"]
         paths = super
         #add_gem_path paths, "app",                 :card => true, :eager_load => true, :glob => "*"
-        add_gem_path paths, "app/assets",          :glob => "*"
+        #add_gem_path paths, "app/assets",          :glob => "*"
         add_gem_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
-        add_gem_path paths, 'gem-assets',          :with => 'public/assets'
+        #add_gem_path paths, 'gem-assets',          :with => 'public/assets'
 
         paths['app/models'] = []
         paths['app/mailers'] = []
@@ -83,8 +79,6 @@ module Wagn
         paths.add 'files'
         paths.add 'tmp/set'
         paths.add 'tmp/set_pattern'
-        # FIXME: now in cards gem
-        paths.add 'db/migrate_deck_cards', :with=>'db/migrate_cards'
         paths
       end
     end

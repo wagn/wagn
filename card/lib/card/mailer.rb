@@ -11,7 +11,7 @@ class Card
     @@defaults[:charset] ||= 'utf-8'
     default @@defaults
 
-    include Location
+    include Location # is this used?  what methods?
         
     class << self
       def new_mail(*args, &block)

@@ -35,7 +35,9 @@ class Card
     
       def mod_dirs
         @@mod_dirs ||= begin
-          (Card::Engine.paths['gem-mod'].existent + Card::Engine.paths['local-mod'].existent).map do |dirname|
+          mod_paths = Card.paths['gem-mod']
+          path = Card.paths['local-mod'] and mod_paths += path
+          mod_paths.existent.map do |dirname|
             Dir.entries( dirname ).sort.map do |filename|
               "#{dirname}/#{filename}" if filename !~ /^\./
             end

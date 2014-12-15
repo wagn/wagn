@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.email         = ['info@wagn.org']
                   
 #  s.date          = '2013-12-20'
-  s.summary       = "content engine for a structured wiki web platform"
-  s.description   = "A Card is a unit of web-deployed, wiki-linked content. It is the core data model for to stuctured wiki data, dynamic interaction, and web design"
+  s.summary       = "an atomic, set-driven content engine"
+  s.description   = "Cards are data atoms that are grouped into Sets to which Rules can apply. Cards can formatted with Views and transformed with Events."
   s.homepage      = 'http://wagn.org'
   s.license       = 'GPL'
 

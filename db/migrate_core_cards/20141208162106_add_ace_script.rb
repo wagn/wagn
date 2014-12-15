@@ -18,7 +18,7 @@ class AddAceScript < Wagn::CoreMigration
     Card.create! :name=>"worker-javascript",:type=>"FileContent",:content=>"#{js_path}/worker-javascript.js"
     Card.create! :name=>"worker-json",:type=>"FileContent",:content=>"#{js_path}/worker-json.js"
     Card.create! :name=>"worker-scss",:type=>"FileContent",:content=>"#{js_path}/worker-scss.js"
-    Card.create! :name=>"mode-coffee",:type=>"FileContent",:content=>"#{js_path}/worker-coffee.js"
+    Card.create! :name=>"mode-coffee",:type=>"FileContent",:content=>"#{js_path}/mode-coffee.js"
     Card.create! :name=>"mode-css",:type=>"FileContent",:content=>"#{js_path}/mode-css.js"
     Card.create! :name=>"mode-html",:type=>"FileContent",:content=>"#{js_path}/mode-html.js"
     Card.create! :name=>"mode-javascript",:type=>"FileContent",:content=>"#{js_path}/mode-javascript.js"

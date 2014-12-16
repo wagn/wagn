@@ -55,7 +55,7 @@ def email_config args={}
   
   from_name, from_email = (config[:from] =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, config[:from]]
       
-  if default_from=Card::Mailer.defaults[:from]
+  if default_from=Card::Mailer.default[:from]
     config[:from] = from_email ? "#{from_name || from_email} <#{default_from}>" : default_from
     config[:reply_to] ||= config[:from]
   else

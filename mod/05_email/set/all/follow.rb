@@ -1,6 +1,7 @@
 card_accessor :followers
 
 FOLLOW_CACHE_KEY = 'FOLLOW'
+IGNORE_CACHE_KEY = 'IGNORE'
 
 def label
   name
@@ -22,20 +23,20 @@ end
 
 def followers_of card=nil  # the argument is for compatibility reasons, needed for the special follow options
   if type_id == Card::SetID
-    follower_ids.map { |id| Card.find(id) }
+    (follower_ids - ignoramus_ids).map { |id| Card.find(id) }
   else
     Card::Set::All::Notify::FollowerStash.new(self).followers
   end
 end
+
 
 def follower_ids
   @follower_ids ||= Follow.cache[follow_key] || []
 end
 
 def followed_by? user
-  follower_ids.include? user.id
+  follower_ids.include? user.id and not ingnored_by? user
 end
-
 
 def add_follower user
   if not followed_by? user
@@ -53,6 +54,32 @@ def save_followers new_followers
   hash = Follow.cache
   hash[follow_key] = new_followers
   Follow.store_cache hash
+end
+
+def ignoramus_ids
+  @ignoramus_ids ||= Follow.ignore_cache[follow_key] || []
+end
+
+def ignored_by? user
+  ignoramus_ids.inclue? user.id
+end
+
+def add_ignoramus user
+  if not ignored_by? user
+    ignoramus_ids << user.id
+  end
+  save_ignoramuses ignoramus_ids
+end
+
+def drop_ignoramus user
+  ignoramus_ids.delete(user.id)
+  save_ignoramuses ignoramus_ids
+end
+
+def save_ignoramuses new_ignoramus
+  hash = Follow.ignore_cache
+  hash[follow_key] = new_new_ignoramus
+  Follow.store_ignore_cache hash
 end
 
 
@@ -91,6 +118,11 @@ def related_follow_option_cards
       if Card[name].applies?(Auth.current, self)
         sets << name
       end
+    end
+    left_option = left
+    while left_option
+      sets << "#{left_option.name}+*self"
+      left_option = left_option.left
     end
     sets.map { |name| Card.fetch name }
   end
@@ -133,7 +165,9 @@ format :html do
   view :follow_menu, :tags=>:unknown_ok do |args|
     follow_links = []
     card.related_follow_option_cards.size.times do |index|
-      follow_links << render_follow_menu_item( :follow_menu_index => index )
+      if link = render_follow_menu_item( :follow_menu_index => index ) and link.present?
+        follow_links << link
+      end
     end
     follow_links.compact.map do |link|
       { :raw => wrap(args) {link} }
@@ -147,6 +181,51 @@ format :html do
     else
       ''
     end
+  end
+  
+  view :follow_options do |args|
+    if Auth.signed_in?
+      args[:title] = "#{card.name}: follow options"
+      #args[:optional_toggle] ||= main? ? :hide : :show
+      frame_and_form( { :action=>:update, :id=>Auth.current.following_card.id, :success=>{:id=>card.name, :view=>:open} }, args, 'main-success'=>'REDIRECT' ) do
+        [
+          _render_follow_option_list( args ),
+          _optional_render( :button_fieldset, args )
+        ]
+      end
+    end
+  end
+  
+  def default_follow_option_args args    
+    args[:buttons] = %{
+      #{ button_tag 'Submit', :class=>'submit-button', :disable_with=>'Submitting' }
+      #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
+    }
+  end
+  
+  view :follow_option_list do |args|
+    list = card.related_follow_option_cards.map do |option_card|
+      subformat(option_card).render_checkbox(args.merge(:checked=>option_card.followed?, :label=>option_card.follow_label ))
+    end.join("\n")
+    %{
+      <div class="card-editor editor">
+      #{form.hidden_field( :content, :class=>'card-content')}
+      <div class="pointer-checkbox-list">
+        #{list}
+      </div>
+      </div>
+    }
+  end
+  
+  view :checkbox do |args|
+    label = args[:label] || card.name
+    checked = args[:checked]
+    id = "pointer-checkbox-#{card.cardname.key}"
+    %{ <div class="pointer-checkbox"> } +
+      check_box_tag( "pointer_checkbox", card.cardname.url_key, checked, :id=>id, :class=>'pointer-checkbox-button') +
+      %{ <label for="#{id}">#{label}</label>
+      #{ %{<div class="checkbox-option-description">#{ args[:description] }</div>} if args[:description] }
+       </div>}
   end
 
   def more_follow_options_link
@@ -164,8 +243,9 @@ format :html do
     return '' unless follow_option_card
 
     toggle       = follow_option_card.followed? ? :off : :on
-    label        = if follow_option_card.respond_to? :label
-                      follow_option_card.label[0..0].downcase + follow_option_card.label[1..-1]
+    label        = if follow_option_card.respond_to? :follow_label
+                    follow_option_card.follow_label
+                      #follow_option_card.follow_label[0..0].downcase + follow_option_card.label[1..-1]
                    else
                       ''
                    end
@@ -196,6 +276,7 @@ def followed?; followed_by? Auth.current end
 
 def self.cache_expired
   Card.cache.write FOLLOW_CACHE_KEY, nil
+  Card.cache.write IGNORE_CACHE_KEY, nil
 end
 
 def self.cache
@@ -207,7 +288,21 @@ def self.store_cache hash
   hash
 end
 
+def self.ignore_cache
+  Card.cache.read(IGNORE_CACHE_KEY) || refresh_cached_sets
+end
+
+def self.store_ignore_cache hash
+  Card.cache.write IGNORE_CACHE_KEY, hash
+  hash
+end
+
 def self.refresh_cached_sets
+  refresh_cache
+  refresgh_ignore_cache
+end
+
+def self.refresh_cache
   follow_cache = {}
   Card.search( :left=>{:type_id=>Card::UserID}, :right=>{:codename=> "following"} ).each do |following_pointer|
     following_pointer.item_cards.each do |followed|
@@ -222,3 +317,18 @@ def self.refresh_cached_sets
   Follow.store_cache follow_cache
 end
 
+def self.refresh_ignore_cache
+  ignore_cache = {}
+  Card.search( :left=>{:type_id=>Card::UserID}, :right=>{:codename=> "ignore"} ).each do |ignoring_pointer|
+    ignoring_pointer.item_cards.each do |ignored|
+      key = ignored.follow_key
+      if ignore_cache[key]
+        ignore_cache[key] << ignoring_pointer.left_id
+      else
+        ignore_cache[key] = ::Set.new [ignoring_pointer.left_id]
+      end
+    end
+  end
+  Follow.store_ignore_cache ignore_cache
+end
+end

@@ -11,5 +11,5 @@ def pattern_applies? card
 end
 
 def follow_label name
-  name
+  label name
 end

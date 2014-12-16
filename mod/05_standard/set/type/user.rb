@@ -3,6 +3,7 @@ include Basic
 
 attr_accessor :email
 card_accessor :following
+card_accessor :ignoring
 
 format :html do
 

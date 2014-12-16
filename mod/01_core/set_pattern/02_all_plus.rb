@@ -9,5 +9,5 @@ def prototype_args anchor
 end
 
 def follow_label name
-  label
+  label name
 end

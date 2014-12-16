@@ -8,7 +8,7 @@ def followed?
   end
 end
   
-def label
+def follow_label
   'content I edited'
 end
 

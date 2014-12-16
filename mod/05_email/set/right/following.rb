@@ -52,34 +52,40 @@ format :html do
      items = [''] if items.empty?     
      options_card_name = (oc = card.options_card) ? oc.cardname.url_key : ':all'
 
+     
      list = %{<div class="pointer-checkbox-sublist">} +
        Card::FollowOption.names.map do |name|
          option_card = Card[name]
          checked = card.item_names.include?(option_card.name)
          checkbox_item option_card, checked
-       end.join("\n") + items.reject{|name| card.special_follow_option? name}.map do |name|
+       end.join("\n") + 
+       '</div>' + 
+       items.reject{|name| card.special_follow_option? name}.map do |name|
          if option_card = Card.fetch(name)
            checkbox_item option_card, option_card.followed?
          end
        end.join("\n") +
-       %{<ul class="pointer-list-editor pointer-sublist-ul" options-card="#{options_card_name}">
-           <li class="pointer-li"> } +
-             text_field_tag( 'pointer_item', '', :class=>'pointer-item-text', :id=>'asdfsd' ) +
-             link_to( '', '#', :class=>'pointer-item-delete ui-icon ui-icon-circle-close' ) +
-       %{  </li>
-         </ul>
-         <div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>
+       %{ <ul class="pointer-list-editor pointer-sublist-ul" options-card="#{options_card_name}">
+            <li class="pointer-li"> } +
+              text_field_tag( 'pointer_item', '', :class=>'pointer-item-text', :id=>'asdfsd' ) +
+              link_to( '', '#', :class=>'pointer-item-delete ui-icon ui-icon-circle-close' ) +
+       %{   </li>
+          </ul>
+          <div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>
        }
 
      %{<div class="pointer-mixed">#{list}</div>}
    end
+   
+   
+   
 
    def checkbox_item option_card, checked
      id = "pointer-checkbox-#{option_card.cardname.key}"
      description = false
      %{ <div class="pointer-checkbox"> } +
        check_box_tag( "pointer_checkbox", option_card.cardname.url_key, checked, :id=>id, :class=>'pointer-checkbox-button') +
-       %{ <label for="#{id}">#{option_card.label}</label>
+       %{ <label for="#{id}">#{option_card.follow_label}</label>
        #{ %{<div class="checkbox-option-description">#{ description }</div>} if description }
         </div>}
    end

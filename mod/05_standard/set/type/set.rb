@@ -100,6 +100,14 @@ def label
   end
 end
 
+def follow_label
+  if klass = subclass_for_set
+    klass.follow_label cardname.left
+  else
+    ''
+  end
+end
+
 
 def followed?
   if Auth.current

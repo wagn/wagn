@@ -1,7 +1,7 @@
 format :html do
 
   view :editor do |args|
-    form.text_area :content, :rows=>5, :class=>'card-content', :editor_type=>card.type_name
+    form.text_area :content, :rows=>5, :class=>'card-content'
   end
   
   view :core do |args|

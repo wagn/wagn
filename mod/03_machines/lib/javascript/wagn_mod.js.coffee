@@ -35,7 +35,7 @@ $.extend wagn,
     wagn.tinyMCEConfig = setter()
   
   initAce: (textarea) ->
-    type_id = textarea.attr("editor_type")
+    type_id = textarea.slot().attr "data-card-type"
     hash = {}
     hash["JavaScript"] = "javascript"
     hash["CoffeeScript"] = "coffee"
@@ -58,6 +58,7 @@ $.extend wagn,
     ).insertBefore(textarea)
     textarea.css "visibility", "hidden"
     textarea.css "height", "0px"
+    ace.config.set('basePath','/assets/ace')
     editor = ace.edit(editDiv[0])
     editor.renderer.setShowGutter true
     editor.getSession().setValue textarea.val()

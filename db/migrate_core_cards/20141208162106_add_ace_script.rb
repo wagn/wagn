@@ -12,17 +12,6 @@ class AddAceScript < Wagn::CoreMigration
     Card.create! :name=>"FileContent+*type+*delete",:type=>"Pointer",:content=>"[[Administrator]]"
       
     Card.create! :name=>"script: ace",:type=>"FileContent",:content=>"#{js_path}/ace.js"
-    Card.create! :name=>"worker-coffee",:type=>"FileContent",:content=>"#{js_path}/worker-coffee.js"
-    Card.create! :name=>"worker-css",:type=>"FileContent",:content=>"#{js_path}/worker-css.js"
-    Card.create! :name=>"worker-html",:type=>"FileContent",:content=>"#{js_path}/worker-html.js"
-    Card.create! :name=>"worker-javascript",:type=>"FileContent",:content=>"#{js_path}/worker-javascript.js"
-    Card.create! :name=>"worker-json",:type=>"FileContent",:content=>"#{js_path}/worker-json.js"
-    Card.create! :name=>"worker-scss",:type=>"FileContent",:content=>"#{js_path}/worker-scss.js"
-    Card.create! :name=>"mode-coffee",:type=>"FileContent",:content=>"#{js_path}/mode-coffee.js"
-    Card.create! :name=>"mode-css",:type=>"FileContent",:content=>"#{js_path}/mode-css.js"
-    Card.create! :name=>"mode-html",:type=>"FileContent",:content=>"#{js_path}/mode-html.js"
-    Card.create! :name=>"mode-javascript",:type=>"FileContent",:content=>"#{js_path}/mode-javascript.js"
-    Card.create! :name=>"mode-json",:type=>"FileContent",:content=>"#{js_path}/mode-json.js"
-    Card.create! :name=>"theme-textmate",:type=>"FileContent",:content=>"#{js_path}/theme-textmate.js"
+
   end
 end

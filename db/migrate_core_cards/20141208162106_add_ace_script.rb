@@ -5,7 +5,7 @@ class AddAceScript < Wagn::CoreMigration
     all_script = Card.fetch "*all+*script"
     all_script.add_item "script: ace"
     all_script.save!
-    js_path = "WagnGem:mod/03_machines/lib/javascript/ace"
+    js_path = "WagnGem:mod/03_machines/lib/javascript"
     Card.create! :name=>"FileContent",:type=>"Cardtype",:codename=>"file_content"
     Card.create! :name=>"FileContent+*type+*create",:type=>"Pointer",:content=>"[[Administrator]]"
     Card.create! :name=>"FileContent+*type+*update",:type=>"Pointer",:content=>"[[Administrator]]"

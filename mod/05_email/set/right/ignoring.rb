@@ -2,10 +2,10 @@ event :update_ignoramuses_after_following_changed, :after=>:store, :changed=>:db
   new_content = db_content
   db_content = db_content_was
   item_cards.each do |item|
-    item.drop_follower self
+    item.drop_ignoramus self
   end
   db_content = new_content
   item_cards.each do |item|
-    item.add_follower self
+    item.add_ignoramus self
   end
 end

@@ -114,6 +114,7 @@ format :html do
     select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>'pointer-select')
   end
 
+
   def pointer_option_description option
     pod_name = card.rule(:options_label) || 'description'
     dcard = Card[ "#{option.name}+#{pod_name}" ]
@@ -173,6 +174,9 @@ event :standardize_items, :before=>:approve, :on=>:save do
   end
 end
 
+def diff_args 
+  {:format => :pointer}
+end
 
 def item_cards args={}
   if args[:complete]

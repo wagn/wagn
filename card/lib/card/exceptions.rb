@@ -2,6 +2,7 @@
 
 class Card
   class Error < StandardError #code problem
+    cattr_accessor :current
   end
   
   class Oops < Error # wagneer problem (rename!)
@@ -36,4 +37,5 @@ class Card
     end
 
   end
+  
 end

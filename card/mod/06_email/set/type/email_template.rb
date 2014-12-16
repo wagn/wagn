@@ -3,8 +3,12 @@ def clean_html?
 end
 
 def deliver args={}
-  mail = format.render_mail(args)
-  mail.deliver 
+  begin
+    mail = format.render_mail(args)
+    mail.deliver 
+  rescue Net::SMTPError => exception
+    errors.add :exception, exception.message 
+  end
 end
 
 def process_email_field field, args

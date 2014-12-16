@@ -17,7 +17,7 @@ class Card
       CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
     
       attr_reader :sql, :query, :rawspec, :selfname
-      attr_accessor :joins
+      attr_accessor :joins, :join_count
 
       class << self
         def build query
@@ -185,7 +185,7 @@ class Card
       #~~~~~~ RELATIONAL
 
       def type val
-        merge field(:type_id) => id_or_subspec(val)
+        restrict :type_id, val
       end
 
       def part val
@@ -193,12 +193,13 @@ class Card
         subcondition :left=>val, :right=>right, :conj=>:or
       end
 
+      
       def left val
-        merge field(:left_id) => id_or_subspec(val)
+        restrict :left_id, val
       end
     
       def right val
-        merge field(:right_id) => id_or_subspec(val)
+        restrict :right_id, val
       end
       
       def editor_of val
@@ -210,19 +211,19 @@ class Card
       end
       
       def last_editor_of val
-        merge field(:id) => subspec(val, :return=>'updater_id')
+        restrict_by_join :id, val, :return=>'updater_id'
       end
 
       def last_edited_by val
-        merge field(:updater_id) => id_or_subspec(val)
+        restrict :updater_id, val
       end    
 
       def creator_of val
-        merge field(:id)=>subspec(val,:return=>'creator_id')
+        restrict_by_join :id, val, :return=>'creator_id'
       end
 
       def created_by val
-        merge field(:creator_id) => id_or_subspec(val)
+        restrict :creator_id, val
       end
 
       def member_of val
@@ -236,18 +237,21 @@ class Card
 
       #~~~~~~ PLUS RELATIONAL
 
-      def left_plus(val)
-        part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
-        merge( field(:id) => subspec(junc_spec, :return=>'right_id', :left =>part_spec))
+      def left_plus val
+        junction :left, val
       end
 
-      def right_plus(val)
-        part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
-        merge( field(:id) => subspec(junc_spec, :return=>'left_id', :right=> part_spec ))
+      def right_plus val
+        junction :right, val
       end
 
-      def plus(val)
-        subcondition( { :left_plus=>val, :right_plus=>val.deep_clone }, :conj=>:or )
+      def plus val
+        any( { :left_plus=>val, :right_plus=>val.deep_clone } )
+      end
+      
+      def junction side, val
+        part_spec, junction_spec = val.is_a?(Array) ? val : [ val, {} ]
+        restrict_by_join :id, junction_spec, side=>part_spec, :return=>"#{ side==:left ? :right : :left}_id"
       end
     
     
@@ -280,23 +284,23 @@ class Card
           unless c && [SearchTypeID,SetID].include?(c.type_id)
             raise BadQuery, %{"found_by" value needs to be valid Search, but #{c.name} is a #{c.type_name}}
           end
-          found_by_spec = CardSpec.new(c.get_spec).rawspec
-          merge(field(:id) => subspec(found_by_spec))
+          restrict_by_join :id, CardSpec.new(c.get_spec).rawspec
         end
       end
   
       def not val
-        merge field(:id) => subspec( val, {:return=>'id'}, negate=true )
+        subselect = CardSpec.build(:return=>:id, :_parent=>self).merge(val).to_sql
+        join_alias = add_join :not, subselect, :id, :id, :side=>'LEFT'        
+        merge field(:cond) => SqlCond.new("#{join_alias}.id is null")
       end
 
       def sort val
         return nil if @parent
         val[:return] = val[:return] ? safe_sql(val[:return]) : 'db_content'
-        @mods[:sort] =  "t_sort.#{val[:return]}"
         item = val.delete(:item) || 'left'
 
         if val[:return] == 'count'
-          cs_args = { :return=>'count', :group=>'sort_join_field' }
+          cs_args = { :return=>'count', :group=>'sort_join_field', :_parent=>self }
           @mods[:sort] = "coalesce(#{@mods[:sort]},0)"
           case item
           when 'referred_to'
@@ -316,7 +320,9 @@ class Card
         end
 
         cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"
-        add_join :sort, cs.to_sql, :id, :sort_join_field, :side=>'LEFT'
+        join_table = add_join :sort, cs.to_sql, :id, :sort_join_field, :side=>'LEFT'
+        @mods[:sort] = "#{join_table}.#{val[:return]}"
+        
       end
 
       def match(val)
@@ -345,8 +351,9 @@ class Card
       end
 
       def extension_type val
-        # DEPRECATED!!!       
-        add_join :usr, :users, :id, :card_id
+        # DEPRECATED LONG AGO!!!
+        Rails.logger.info "using DEPRECATED extension_type in WQL" 
+        merge field(:right_plus) => AccountID
       end
     
 
@@ -367,8 +374,16 @@ class Card
       end
 
       def add_join(name, table, cardfield, otherfield, opts={})
-        join_alias = "#{table_alias}_#{name}"
-        @joins[join_alias] = "#{opts[:side]} JOIN #{table} AS #{join_alias} ON #{table_alias}.#{cardfield} = #{join_alias}.#{otherfield}"
+        root.join_count = root.join_count.to_i + 1
+        join_alias = "#{name}_#{root.join_count}"
+        on = "#{table_alias}.#{cardfield} = #{join_alias}.#{otherfield}"
+        is_subselect = !table.is_a?( Symbol )
+        
+        if @mods[:conj] == 'or' and is_subselect
+          opts[:side] ||= 'LEFT'
+          merge field(:cond) => SqlCond.new(on)
+        end
+        @joins[join_alias] = ["\n  ", opts[:side], 'JOIN', table, 'AS', join_alias, 'ON', on, "\n"].compact.join ' '
         join_alias
       end
 
@@ -376,11 +391,11 @@ class Card
         @fields ||= {}
         @fields[name] ||= 0
         @fields[name] += 1
-        "#{ name }:#{ @fields[name] }"
+        "#{ name }_#{ @fields[name] }"
       end
 
       def field_root key
-        key.to_s.gsub /\:\d+/, ''
+        key.to_s.gsub /\_\d+/, ''
       end
 
       def subcondition(val, args={})
@@ -388,34 +403,34 @@ class Card
         cardspec = CardSpec.build( args )
         merge field(:cond) => cardspec.merge(val)
         self.joins.merge! cardspec.joins
-      end
-
-      # def revision_spec(field, linkfield, val)
-#         card_select = CardSpec.build(:_parent=>self, :return=>'id').merge(val).to_sql
-#         add_join :ed, "(select distinct #{field} from card_revisions where #{linkfield} in #{card_select})", :id, field
-#       end
-      
+      end      
       
       def action_spec(field, linkfield, val)
         card_select = CardSpec.build(:_parent=>self, :return=>'id').merge(val).to_sql
         sql =  "(SELECT DISTINCT #{field} AS join_card_id FROM card_acts INNER JOIN card_actions ON card_acts.id = card_act_id "
-        sql += " WHERE #{linkfield} IN #{card_select} AND (draft=0 OR draft IS NULL))"
+        sql += " JOIN (#{card_select}) AS ss ON #{linkfield}=ss.id AND (draft is not true))"
         add_join :ac, sql, :id, :join_card_id
       end
 
-
-      def subspec(spec, additions={ :return=>'id'}, negate=false)
-        additions = additions.merge(:_parent=>self)
-        operator = negate ? 'not in' : 'in'
-        ValueSpec.new([operator,CardSpec.build(additions).merge(spec)], self)
+      def id_from_spec spec
+        case spec
+        when Integer ; spec
+        when String  ; Card.fetch_id(spec)
+        end
       end
-
-      def id_or_subspec spec
-        id = case spec
-          when Integer ; spec
-          when String  ; Card.fetch_id(spec)
-          end
-        id or subspec spec
+            
+      def restrict id_field, val, opts={}
+        if id = id_from_spec(val)
+          merge field(id_field) => id
+        else
+          restrict_by_join id_field, val, opts
+        end
+      end
+      
+      def restrict_by_join id_field, val, opts={}
+        opts.reverse_merge!(:return=>:id, :_parent=>self)
+        subselect = CardSpec.build(opts).merge(val).to_sql
+        add_join "card_#{id_field}", subselect, id_field, opts[:return]
       end
     
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -425,8 +440,11 @@ class Card
 
       def to_sql *args
         sql.conditions << basic_conditions
-
-        return "(" + sql.conditions.last + ")" if @mods[:return]=='condition'
+        
+        if @mods[:return]=='condition'
+          conds = sql.conditions.last
+          return conds.blank? ? nil : "(#{conds})"
+        end
     
         if pconds = permission_conditions
           sql.conditions << pconds
@@ -451,7 +469,7 @@ class Card
       end
   
       def basic_conditions
-        @spec.map { |key, val| val.to_sql field_root(key) }.join " #{ current_conjunction } "
+        @spec.map { |key, val| val.to_sql field_root(key) }.compact.join " #{ current_conjunction } "
       end
   
       def current_conjunction

@@ -23,10 +23,15 @@ end
 format :html do
 
   view :editor, :mod=>PlainText::HtmlFormat
+  view :content_changes, :mod=>CoffeeScript::HtmlFormat
   
   view :core do |args|
     highlighted_js = ::CodeRay.scan( _render_raw, :js ).div
     process_content highlighted_js
   end
   
+end
+
+def diff_args
+   {:format=>:text}
 end

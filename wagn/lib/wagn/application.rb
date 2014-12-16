@@ -10,6 +10,15 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
+module ActiveSupport::BufferedLogger::Severity
+  WAGN = UNKNOWN + 1
+  
+  def wagn progname, &block
+    add(WAGN, nil, progname, &block)
+  end
+end
+
+
 module Wagn
   class Application < Rails::Application
 
@@ -20,6 +29,22 @@ module Wagn
       end
     end
 
+    initializer :load_wagn_config_initializers,  :before => :load_config_initializers do
+      add_gem_path paths, 'lib/wagn/config/initializers', :glob => "**/*.rb" 
+      config.paths['lib/wagn/config/initializers'].existent.sort.each do |initializer|
+        load(initializer)
+      end
+    end
+    
+=begin needs to by copied?
+    initializer :load_mod_initializers,  :after => :load_wagn_config_initializers do
+      paths.add 'mod-initializers', :with=>'mod', :glob=>"**{,/*/**}/initializers/*.rb"
+      config.paths['mod-initializers'].existent.sort.each do |initializer|
+        load(initializer)
+      end
+    end
+=end
+    
     class << self
       def inherited(base)
         Rails.application = base.instance
@@ -58,7 +83,12 @@ module Wagn
         config.token_expiry          = 2.days
         config.revisions_per_page    = 10
         config.request_logger        = false
+<<<<<<< HEAD:wagn/lib/wagn/application.rb
 
+=======
+        config.performance_logger    = false
+        
+>>>>>>> master:lib/wagn/application.rb
         config
       end
     end

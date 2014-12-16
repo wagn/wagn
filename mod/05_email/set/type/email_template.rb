@@ -7,6 +7,7 @@ def deliver args={}
     mail = format.render_mail(args)
     mail.deliver 
   rescue Net::SMTPError => exception
+    Rails.logger.info "sending email: #{args}\nprocessed args: #{email_config(args)}"
     errors.add :exception, exception.message 
   end
 end
@@ -16,8 +17,9 @@ def process_email_field field, args
     args[field]
   elsif field_card = fetch(:trait=>field)
     # configuration can be anything visible to configurer
-    Auth.as( field_card.updater ) do
-      res = field_card.send(*yield)
+    user = ( args[:follower] and Card.fetch(args[:follower]) ) || field_card.updater
+    Auth.as( user ) do
+      yield(field_card)
     end
   else 
     ''
@@ -28,30 +30,37 @@ end
 
 def email_config args={}
   config = {}
-  context_card = args[:context] || self
-
+  context_card =  args[:context] || self
   [:to, :from, :cc, :bcc].each do |field_name|
-    config[field_name] = process_email_field( field_name, args ) do 
-      [:process_email_addresses, context_card, {:format=>'email_text'}, args]
+    config[field_name] = process_email_field( field_name, args ) do |field_card|
+      field_card.process_email_addresses context_card, {:format=>'email_text'}, args
     end
   end
 
-  config[:attach] = process_email_field( :attach, args ) do 
-      [:extended_item_contents, context_card]
-    end
+  config[:attach] = process_email_field( :attach, args ) do |field_card|
+    field_card.extended_item_contents context_card
+  end
   
   [:subject, :text_message].each do |field_name|
-    config[field_name] = process_email_field( field_name, args ) do 
-      [:contextual_content, context_card, {:format=>'email_text'}, args]
+    config[field_name] = process_email_field( field_name, args ) do |field_card|
+      field_card.contextual_content context_card, {:format=>'email_text'}, args
     end
   end
 
-  config[:html_message] = process_email_field :html_message, args do
-    [:contextual_content, context_card, {:format=>'email_html'}, args]
+  config[:html_message] = process_email_field :html_message, args do |field_card|
+    field_card.contextual_content context_card, {:format=>'email_html'}, args
   end
 
   config[:html_message] = Card::Mailer.layout(config[:html_message])
-  config[:from] ||= Card[Card::WagnBotID].account.email
+  
+  from_name, from_email = (config[:from] =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, config[:from]]
+      
+  if default_from=Card::Mailer.defaults[:from]
+    config[:from] = from_email ? "#{from_name || from_email} <#{default_from}>" : default_from
+    config[:reply_to] ||= config[:from]
+  else
+    config[:from] ||= Card[Card::WagnBotID].account.email
+  end
   config.select {|k,v| v.present? }
 end
 

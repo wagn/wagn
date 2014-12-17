@@ -71,7 +71,7 @@ describe Card::Set::All::History do
         end  
         it 'adds trash change' do  
           expect(action.changes.last.field).to eq('trash')
-          expect(action.changes.last.value).to eq('1')
+          expect(action.changes.last.value).to be_truthy
         end
       end
     end

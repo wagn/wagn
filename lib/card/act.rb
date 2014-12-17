@@ -32,7 +32,7 @@ class Card
  #    end
     
     def action_on card_id
-      actions.where( :card_id=>card.id, :draft=>[nil, 0] ).first
+      actions.where( "card_id = #{card.id} and draft is not true" ).first
     end
         
     def elapsed_time

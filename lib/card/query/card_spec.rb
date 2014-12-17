@@ -452,8 +452,8 @@ class Card
 
         sql.conditions << "#{table_alias}.trash is false"
       
+        sql.group = "GROUP BY #{safe_sql(@mods[:group])}" if !@mods[:group].blank?
         unless @parent or @mods[:return]=='count'
-          sql.group = "GROUP BY #{safe_sql(@mods[:group])}" if !@mods[:group].blank?
           if @mods[:limit].to_i > 0
             sql.limit  = "LIMIT #{  @mods[:limit ].to_i }"
             sql.offset = "OFFSET #{ @mods[:offset].to_i }" if !@mods[:offset].blank?

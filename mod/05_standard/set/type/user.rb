@@ -2,6 +2,8 @@
 include Basic
 
 attr_accessor :email
+attr_accessor :following
+attr_accessor :ignoring
 
 format :html do
 

@@ -45,7 +45,7 @@ format :html do
   view :editor do |args|
     part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/,'') : :list
     form.hidden_field( :content, :class=>'card-content') +
-    raw(_render(part_view))
+    raw(_render(part_view, args))
   end
 
   view :list do |args|

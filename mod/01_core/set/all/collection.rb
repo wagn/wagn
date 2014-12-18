@@ -30,8 +30,13 @@ def item_type
   nil
 end
 
-def include_item? cardname
-  item_names.map{|name| name.to_name.key}.member? cardname.to_name.key
+def include_item? item
+  key = if Card === item
+    item.cardname.key
+  else
+    item.to_name.key
+  end
+  item_names.map{|name| name.to_name.key}.member? key
 end
 
 def extended_item_cards context = nil

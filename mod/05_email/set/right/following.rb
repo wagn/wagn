@@ -12,6 +12,7 @@ event :settify_new_follow_options, :before=>:approve, :on=>:save, :changed=>:db_
         end
     end
   end
+  db_content = temp
 end
 
 event :update_followers_after_following_changed, :after=>:store, :changed=>:db_content do #when => proc { |c| c.db_content_changed?  } do
@@ -32,17 +33,22 @@ format :html do
 
    view :open do |args|
      if card.left and card.left.id == Auth.current_id 
-       render_edit(:checkbox_list=>true)
+       render_edit(args.merge(:checkbox_list=>true))
      else
        super(args)
      end
    end
    
    view :list do |args|
-     if args.delete(:checkbox_list)
-       render_checkbox_lists args
+     if args[:checkbox_list]
+       "Following:<p>" +
+       render_checkbox_lists(args) +
+       '</p>Ignoring:<p>' +
+       subformat(card.left.ignoring_card).render_checkbox_list(args) +
+       '</p>'
      else
-       super(args)
+       #super(args)
+       "SADFw"
      end
    end
 

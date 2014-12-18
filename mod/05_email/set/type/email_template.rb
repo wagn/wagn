@@ -7,7 +7,7 @@ def deliver args={}
     mail = format.render_mail(args)
     mail.deliver 
   rescue Net::SMTPError => exception
-    
+    Rails.logger.info "sending email: #{args}\nprocessed args: #{email_config(args)}"
     errors.add :exception, exception.message 
   end
 end
@@ -52,7 +52,15 @@ def email_config args={}
   end
 
   config[:html_message] = Card::Mailer.layout(config[:html_message])
-  config[:from] ||= Card[Card::WagnBotID].account.email
+  
+  from_name, from_email = (config[:from] =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, config[:from]]
+      
+  if default_from=Card::Mailer.default[:from]
+    config[:from] = from_email ? "#{from_name || from_email} <#{default_from}>" : default_from
+    config[:reply_to] ||= config[:from]
+  else
+    config[:from] ||= Card[Card::WagnBotID].account.email
+  end
   config.select {|k,v| v.present? }
 end
 

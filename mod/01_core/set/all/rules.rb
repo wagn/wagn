@@ -1,6 +1,8 @@
 RuleSQL = %{
   select rules.id as rule_id, settings.id as setting_id, sets.id as set_id, sets.left_id as anchor_id, sets.right_id as set_tag_id
-  from cards rules join cards sets on rules.left_id = sets.id join cards settings on rules.right_id = settings.id
+  from cards rules 
+  join cards sets     on rules.left_id  = sets.id 
+  join cards settings on rules.right_id = settings.id
   where sets.type_id     = #{Card::SetID }    and sets.trash     is false
   and   settings.type_id = #{Card::SettingID} and settings.trash is false
   and                                             rules.trash    is false;
@@ -8,16 +10,39 @@ RuleSQL = %{
 
 ReadRuleSQL = %{
   select refs.referee_id as party_id, read_rules.id as read_rule_id
-  from cards read_rules join card_references refs on refs.referer_id = read_rules.id join cards sets on read_rules.left_id = sets.id
+  from cards read_rules 
+  join card_references refs on refs.referer_id    = read_rules.id 
+  join cards sets           on read_rules.left_id = sets.id
   where read_rules.right_id = #{Card::ReadID} and read_rules.trash is false and sets.type_id = #{Card::SetID};
+}
+
+UserRuleSQL = %{
+  select rules.id as rule_id, settings.id as setting_id, sets.id as set_id, sets.left_id as anchor_id, sets.right_id as set_tag_id, users.id as user_id
+  from cards user_rules 
+  join cards rules    on user_rules.left_id   = rules.id 
+  join cards sets     on rules.left_id        = sets.id 
+  join cards settings on rules.right_id       = settings.id
+  join cards users    on users_rules.right_id = users.id
+  where sets.type_id     = #{Card::SetID }    and sets.trash     is false
+  and   settings.type_id = #{Card::SettingID} and settings.trash is false
+  and   users.type_id    = #{Card::UserID}    and users.trash    is false
+  and                                             rules.trash    is false;
 }  
 
 def is_rule?
-  !simple?                          and
+  !simple?                            and
+  ( l = left(  :skip_modules=>true )  and
+    l.type_id == Card::SetID          and
+    r = right( :skip_modules=>true )  and
+    r.type_id == Card::SettingID           ) or is_user_rule?
+    
+end
+
+def is_user_rule?
   l = left(  :skip_modules=>true )  and
-  l.type_id == Card::SetID          and
+  l.is_rule?                        and
   r = right( :skip_modules=>true )  and
-  r.type_id == Card::SettingID 
+  r.type_id == Card::UserID          
 end
 
 def rule setting_code, options={}
@@ -32,9 +57,11 @@ end
 
 def rule_card_id setting_code, options={}
   fallback = options.delete( :fallback )
+  options[:user_specific] = !options[:all_users] and Card::Setting.user_specific? setting_code
+  
   rule_set_keys.each do |rule_set_key|
-    rule_id = self.class.rule_cache["#{rule_set_key}+#{setting_code}"]
-    rule_id ||= fallback && self.class.rule_cache["#{rule_set_key}+#{fallback}"]
+    rule_id = self.class.rule_cache(options)["#{rule_set_key}+#{setting_code}"]
+    rule_id ||= fallback && self.class.rule_cache(options)["#{rule_set_key}+#{fallback}"]
     return rule_id if rule_id
   end
   nil
@@ -72,17 +99,24 @@ module ClassMethods
     val.to_s.strip == '1'
   end
 
-  def rule_cache
+  def rule_cache options={}
     Card.cache.read('RULES') || begin        
       hash = {}
-      ActiveRecord::Base.connection.select_all( Card::Set::All::Rules::RuleSQL ).each do |row|
+      sql  = options[:user_specific] ? Card::Set::All::Rules::UserRuleSQL  : Card::Set::All::Rules::RuleSQL
+      ActiveRecord::Base.connection.select_all( sql ).each do |row|
         setting_code = Card::Codename[ row['setting_id'].to_i ] or next
         anchor_id = row['anchor_id']
+        user_id = row['user_id']
         set_class_id = anchor_id.nil? ? row['set_id'] : row['set_tag_id']
-    
+        
         set_class_code = Card::Codename[ set_class_id.to_i ] or next
-        hash_key = [ anchor_id, set_class_code, setting_code ].compact.map( &:to_s ) * '+'
+        hash_key = [ anchor_id, set_class_code, setting_code, user_id ].compact.map( &:to_s ) * '+'
         hash[ hash_key ] = row['rule_id'].to_i
+        if user_id
+          hash_key = [ anchor_id, set_class_code, setting_code].compact.map( &:to_s ) * '+'
+          hash[ hash_key ] ||= []
+          hash[ hash_key ] << user_id
+        end
       end
       Card.cache.write 'RULES', hash
     end

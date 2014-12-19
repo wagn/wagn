@@ -19,11 +19,11 @@ event :update_followers_after_following_changed, :after=>:store, :changed=>:db_c
   new_content = db_content
   db_content = db_content_was
   item_cards.each do |item|
-    item.drop_follower self
+    item.drop_follower left
   end
   db_content = new_content
   item_cards.each do |item|
-    item.add_follower self
+    item.add_follower left
   end
 end
 
@@ -40,15 +40,14 @@ format :html do
    end
    
    view :list do |args|
-     if args[:checkbox_list]
+     if args.delete :checkbox_list
        "Following:<p>" +
        render_checkbox_lists(args) +
        '</p>Ignoring:<p>' +
        subformat(card.left.ignoring_card).render_checkbox_list(args) +
        '</p>'
      else
-       #super(args)
-       "SADFw"
+       super(args)
      end
    end
 
@@ -67,8 +66,9 @@ format :html do
        end.join("\n") + 
        '</div>' + 
        items.reject{|name| card.special_follow_option? name}.map do |name|
+         binding.pry
          if option_card = Card.fetch(name)
-           checkbox_item option_card, option_card.followed?
+           checkbox_item option_card, true
          end
        end.join("\n") +
        %{ <ul class="pointer-list-editor pointer-sublist-ul" options-card="#{options_card_name}">

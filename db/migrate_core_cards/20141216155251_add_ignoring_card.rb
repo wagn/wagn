@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-class AddIgnoreCard < Wagn::CoreMigration
+class AddIgnoringCard < Wagn::CoreMigration
   def up
-        Card.create! :name => "*ignoring", :codename=>"ignoring"
+    Card.create! :name => "*ignoring", :codename=>"ignoring"
   end
 end

@@ -17,6 +17,14 @@ def applies? user, card
   card.creator and card.creator.type_id == Card::UserID and card.creator == user 
 end
 
+def follower_ids args{}
+  if card=args[:context] and card.creator and card.creator.type_id == Card::UserID and card.creator.following? cardname
+    [card.creator.id]
+  else
+    []
+  end
+end
+  
 def followers_of card
   if card.creator and card.creator.type_id == Card::UserID and card.creator.following? cardname
     [card.creator]
@@ -24,3 +32,4 @@ def followers_of card
     []
   end
 end
+

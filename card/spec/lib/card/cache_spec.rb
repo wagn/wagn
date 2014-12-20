@@ -77,6 +77,9 @@ describe Card::Cache do
   describe "with file store" do
     before do
       cache_path = "#{Decko.root}/tmp/cache"
+      unless File.directory?(cache_path)
+        FileUtils.mkdir_p(cache_path)
+      end
       @store = ActiveSupport::Cache::FileStore.new cache_path
 
       @store.clear

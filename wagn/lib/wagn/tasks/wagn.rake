@@ -55,8 +55,9 @@ namespace :wagn do
 
   desc "set symlink for assets"
   task :update_assets_symlink do
-    if Rails.root.to_s != Wagn.gem_root and not File.exists? File.join(Rails.public_path, "assets")
-      FileUtils.ln_s( Wagn.paths['gem-assets'].first, File.join(Rails.public_path, "assets") )
+    assets_path = File.join(Rails.public_path, "assets")
+    if Rails.root.to_s != Wagn.gem_root and not (File.exists? assets_path or File.symlink? assets_path)
+      FileUtils.ln_s( Wagn.paths['gem-assets'].first, assets_path )
     end
   end
 
@@ -256,6 +257,7 @@ namespace :wagn do
           data = ActiveRecord::Base.connection.select_all( "select * from #{table}" )
           file.write YAML::dump( data.inject({}) do |hash, record|
             record['trash'] = false if record.has_key? 'trash'
+            record['draft'] = false if record.has_key? 'draft'
             if record.has_key? 'content'
               record['content'] = record['content'].gsub /\u00A0/, '&nbsp;'
               # sych was handling nonbreaking spaces oddly.  would not be needed with psych.

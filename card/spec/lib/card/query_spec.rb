@@ -294,7 +294,7 @@ describe Card::Query do
         c.save
         c = Card.create! :name=>'Basic+*type+*table of contents', :content=>'3'
 
-        w = Card::Query.new( :right_plus=>'*table of contents', :sort=>{ :right=>'*table_of_contents'}, :sort_as=>'integer'  ) # FIXME: codename
+        w = Card::Query.new( :right_plus=>'*table of contents', :sort=>{ :right=>'*table_of_contents'}, :sort_as=>'integer'  )
         #warn "sql from new wql = #{w.sql}"
         expect(w.run.map(&:name)).to eq(%w{ *all Basic+*type Setting+*self })
       end

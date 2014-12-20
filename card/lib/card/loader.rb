@@ -1,8 +1,25 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency 'card/exceptions'
+#module Card::Loader end
+
+#require_dependency 'card/exceptions'
+require_dependency 'card/cache'
+require_dependency 'card/core_ext'
+require_dependency 'card/env'
+require_dependency 'card/name'
+require_dependency 'card/version'
 
 class Card
+
+  def self.future_stamp
+    ## used in test data
+    @@future_stamp ||= Time.local 2020,1,1,0,0,0
+  end
+
+  def self.gem_root # maybe just change to use this directly?
+    paths.path
+  end
+
   module Loader
     
     class << self
@@ -145,3 +162,4 @@ class Card
     end
   end
 end
+

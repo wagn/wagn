@@ -11,6 +11,9 @@ class Card
   class BadQuery < Error
   end
     
+  class NotFound < StandardError
+  end
+  
   class PermissionDenied < Error
     attr_reader :card
   

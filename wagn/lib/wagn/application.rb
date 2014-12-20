@@ -30,12 +30,12 @@ module Wagn
     end
 
     initializer :load_wagn_config_initializers,  :before => :load_config_initializers do
-      add_gem_path paths, 'lib/wagn/config/initializers', :glob => "**/*.rb" 
+      add_gem_path paths, 'lib/wagn/config/initializers', :glob => "**/*.rb"
       config.paths['lib/wagn/config/initializers'].existent.sort.each do |initializer|
         load(initializer)
       end
     end
-    
+
 =begin needs to by copied?
     initializer :load_mod_initializers,  :after => :load_wagn_config_initializers do
       paths.add 'mod-initializers', :with=>'mod', :glob=>"**{,/*/**}/initializers/*.rb"
@@ -66,33 +66,18 @@ module Wagn
 
         config.encoding              = "utf-8"
         config.filter_parameters    += [:password]
-        config.read_only             = !!ENV['WAGN_READ_ONLY']
-        config.allow_inline_styles   = false
         config.no_authentication     = false
         config.files_web_path        = 'files'
-        config.cache_store           = :file_store, 'tmp/cache'
-
-        config.recaptcha_public_key  = nil
-        config.recaptcha_private_key = nil
-        config.recaptcha_proxy       = nil
 
         config.email_defaults        = nil
-        config.override_host         = nil
-        config.override_protocol     = nil
 
         config.token_expiry          = 2.days
         config.revisions_per_page    = 10
         config.request_logger        = false
-<<<<<<< HEAD:wagn/lib/wagn/application.rb
 
-=======
-        config.performance_logger    = false
-        
->>>>>>> master:lib/wagn/application.rb
         config
       end
     end
-
 
     def paths
       @paths ||= begin
@@ -101,7 +86,7 @@ module Wagn
         #add_gem_path paths, "app",                 :card => true, :eager_load => true, :glob => "*"
         #add_gem_path paths, "app/assets",          :glob => "*"
         add_gem_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
-        #add_gem_path paths, 'gem-assets',          :with => 'public/assets'
+        add_gem_path paths, 'gem-assets',          :with => 'public/assets'
 
         paths['app/models'] = []
         paths['app/mailers'] = []

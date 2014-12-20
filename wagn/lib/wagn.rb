@@ -1,5 +1,6 @@
 # should be able to move these to more appropriate places
 WAGN_GEM_ROOT = File.expand_path('../..', __FILE__)
+CARD_GEM_ROOT = File.expand_path('../../../card', __FILE__)
 
 module Wagn
 
@@ -24,6 +25,10 @@ module Wagn
       WAGN_GEM_ROOT
     end
 
+    def card_gem_root
+      CARD_GEM_ROOT
+    end
+
     def with_logging cardname, method, message, details, &block
       if Wagn.config.performance_logger and 
          Wagn.config.performance_logger[:methods] and 
@@ -35,11 +40,6 @@ module Wagn
       else
         block.call
       end
-    end
-    
-    def future_stamp
-      ## used in test data
-      @@future_stamp ||= Time.local 2020,1,1,0,0,0
     end
   end
 end

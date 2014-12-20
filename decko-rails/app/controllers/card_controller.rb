@@ -1,10 +1,22 @@
 # -*- encoding : utf-8 -*-
 
 require_dependency 'card'
-require_dependency 'card/action'
-require_dependency 'decko/engine'
 
 Decko.card_paths_and_config Card.paths
+
+require_dependency 'card/content'
+#require_dependency 'card/machine'
+#require_dependency 'card/machine_input'
+#require_dependency 'card/machine_output'
+require_dependency 'card/action'
+require_dependency 'card/act'
+require_dependency 'card/change'
+require_dependency 'card/chunk'
+require_dependency 'card/reference'
+require_dependency 'card/mailer'
+require_dependency 'decko/location'
+require_dependency 'decko/exceptions'
+
 Card::Loader.load_mods if Card.count > 0
 
 class CardController < ActionController::Base
@@ -18,7 +30,7 @@ class CardController < ActionController::Base
   before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
   
-  if Card.config.request_logger
+  if Wagn.config.request_logger
     require 'csv'
     after_filter :request_logger 
   end
@@ -52,7 +64,7 @@ class CardController < ActionController::Base
   
   def asset
     Rails.logger.info "Routing assets through Card. Recommend symlink from Deck to Card gem using 'rake wagn:update_assets_symlink'"
-    send_file_inside Card.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
+    send_file_inside Wagn.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
   end
   
   private
@@ -60,7 +72,7 @@ class CardController < ActionController::Base
   # make sure that filename doesn't leave allowed_path using ".."
   def send_file_inside(allowed_path, filename, options = {})
     if filename.include? "../"
-      raise Card::BadAddress
+      raise Decko::BadAddress
     else
       send_file File.join(allowed_path, filename), options
     end
@@ -90,7 +102,7 @@ class CardController < ActionController::Base
         Card.setting(:home) || 'Home'
       end
   rescue ArgumentError # less than perfect way to handle encoding issues.
-    raise Card::BadAddress
+    raise Decko::BadAddress
   end
   
 
@@ -274,7 +286,7 @@ class CardController < ActionController::Base
         :denial
       when Card::NotFound, ActiveRecord::RecordNotFound, ActionController::MissingFile
         :not_found
-      when Card::BadAddress
+      when Decko::BadAddress
         :bad_address
       else #the following indicate a code problem and therefore require full logging
         @card.notable_exception_raised

@@ -1,9 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class Decko
-  class NotFound < StandardError
-  end
-  
+module Decko
   class BadAddress < StandardError
   end
 end

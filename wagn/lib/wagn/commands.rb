@@ -1,5 +1,6 @@
 require 'optparse'
 require 'active_support/core_ext/object/inclusion' # adds method in? to Object class
+require 'wagn'
 
 def load_rake_tasks
   require './config/environment'
@@ -96,13 +97,13 @@ WAGN ARGS
 WAGN
 
     parser.on('-d', '--spec FILENAME(:LINE)', 'Run spec for a Wagn deck file') do |file|
-      opts[:files] = find_spec_file( file, "#{Card.gem_root}/mod")
+      opts[:files] = find_spec_file( file, "#{Wagn.card_gem_root}/mod")
     end
     parser.on('-c', '--core-spec FILENAME(:LINE)', 'Run spec for a Wagn core file') do |file|
-      opts[:files] = find_spec_file( file, "#{Card.gem_root}" )
+      opts[:files] = find_spec_file( file, "#{Wagn.card_gem_root}" )
     end
     parser.on('-m', '--mod MODNAME', 'Run all specs for a mod') do |file|
-      opts[:files] = "#{Card.gem_root}/mod/#{file}"
+      opts[:files] = "#{Wagn.card_gem_root}/mod/#{file}"
     end
     parser.on('-s', '--[no-]simplecov', 'Run with simplecov') do |s|
       opts[:simplecov] = s ? '' : 'COVERAGE=false'
@@ -112,10 +113,13 @@ WAGN
     end
     parser.separator "\n"
 
-    wagn_args, rspec_args = (' '<<ARGV.join(' ')).split(' -- ')
-    parser.parse!(wagn_args.split(' '))
+    before_split = true
+    wagn_args, rspec_args = ARGV.partition {|a| before_split = a=='--' ? false : before_split}
+    rspec_args.shift
 
-    system "RAILS_ROOT=. #{opts[:simplecov]} bundle exec #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]}" 
+    parser.parse!(wagn_args)
+
+    system "RAILS_ROOT=. #{opts[:simplecov]} bundle exec #{opts[:rescue]} rspec #{rspec_args*' '} #{opts[:files]}" 
   when '--version', '-v'
     puts "Wagn #{Wagn::Version.release}"
   when 'new'

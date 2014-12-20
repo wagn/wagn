@@ -1,5 +1,6 @@
 
 format :html do
+  include Decko::Location
   
   def show view, args
     if Env.ajax?

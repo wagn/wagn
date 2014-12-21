@@ -2,7 +2,7 @@ Description:
     Explain the generator
 
 Example:
-    rails generate format backup
+    wagn generate format backup
 
     This will create:
         mods/05_standard/formats/backup_format.rb

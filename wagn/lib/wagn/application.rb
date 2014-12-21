@@ -92,6 +92,7 @@ module Wagn
         paths['app/mailers'] = []
 
         paths.add 'files'
+        paths.add 'tmp/lib'
         paths.add 'tmp/set'
         paths.add 'tmp/set_pattern'
         paths

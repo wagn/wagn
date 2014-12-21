@@ -77,6 +77,8 @@ module Decko
       Wagn::Application.card_config Card.config
       Card.config.database =  Rails.application.config.database_configuration[Rails.env]['database']
       path = wpaths['files'] and paths['files'] = path
+      path = wpaths['tmp/lib'] and paths['tmp/lib'] = path
+      warn "copy tmp/lib #{path}"
       path = wpaths['tmp/set'] and paths['tmp/set'] = path
       path = wpaths['tmp/set_pattern'] and paths['tmp/set_pattern'] = path
       path = wpaths['local-mod'] and paths['local-mod'] = path

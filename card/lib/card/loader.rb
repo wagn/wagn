@@ -1,8 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-#module Card::Loader end
-
-#require_dependency 'card/exceptions'
 require_dependency 'card/cache'
 require_dependency 'card/core_ext'
 require_dependency 'card/env'
@@ -24,6 +21,7 @@ class Card
     
     class << self
       def load_mods
+        load_libs_from_source
         load_set_patterns
         load_formats
         load_sets
@@ -53,7 +51,7 @@ class Card
       def mod_dirs
         @@mod_dirs ||= begin
           mod_paths = Card.paths['gem-mod']
-          path = Card.paths['local-mod'] and mod_paths += path
+          local_mod = Card.paths['local-mod'] and mod_paths += local_mod
           mod_paths.existent.map do |dirname|
             Dir.entries( dirname ).sort.map do |filename|
               "#{dirname}/#{filename}" if filename !~ /^\./
@@ -132,8 +130,18 @@ class Card
         end
       end
 
-      
-      
+      def load_libs_from_source
+        if rewrite_tmp_files? && Card.paths['tmp/lib']
+          lib_tmp_dir = Card.paths['tmp/lib'].first.to_s
+          prepare_tmp_dir 'tmp/lib'
+          mod_dirs.each do |mod_dir|
+            dirname = [mod_dir, 'lib/.'] * '/'
+            next unless File.exists?( dirname )
+            FileUtils.cp_r dirname, lib_tmp_dir
+          end
+        end
+      end
+
       def prepare_tmp_dir path
         if rewrite_tmp_files?
           p = Card.paths[ path ]

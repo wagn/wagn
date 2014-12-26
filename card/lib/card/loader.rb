@@ -5,17 +5,9 @@ require_dependency 'card/core_ext'
 require_dependency 'card/env'
 require_dependency 'card/name'
 require_dependency 'card/version'
+puts "loading card loader?\n"
 
 class Card
-
-  def self.future_stamp
-    ## used in test data
-    @@future_stamp ||= Time.local 2020,1,1,0,0,0
-  end
-
-  def self.gem_root # maybe just change to use this directly?
-    paths.path
-  end
 
   module Loader
     
@@ -169,5 +161,25 @@ class Card
       end
     end
   end
+
+  class << self
+    def future_stamp
+      ## used in test data
+      @@future_stamp ||= Time.local 2020,1,1,0,0,0
+    end
+
+    def gem_root # maybe just change to use this directly?
+      paths.path
+    end
+
+    def delete_tmp_files id=nil
+      dir = Card.paths['files'].existent.first + '/tmp'
+      dir += "/#{id}" if id
+      FileUtils.rm_rf dir, :secure=>true
+    rescue
+      Rails.logger.info "failed to remove tmp files"
+    end
+  end
+
 end
 

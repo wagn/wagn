@@ -17,8 +17,6 @@ Gem::Specification.new do |s|
 
   s.files         = `git ls-files`.split($/)
   
-  s.bindir        = 'bin'
-  s.executables   = [ 'decko' ]
   s.test_files    = s.files.grep(%r{^(test|spec|features)/})
   s.require_paths = ["lib"]
 

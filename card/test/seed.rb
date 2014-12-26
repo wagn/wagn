@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'timecop'
 
-require_dependency 'card'
+require 'card/all'
 
 class SharedData
 

@@ -11,6 +11,7 @@ Feature: Watch interface
     Given I follow "Sign out"
     When I go to the homepage
     And I hover over the main menu
+    And I wait a sec
     Then I should not see "follow"
 
   Scenario: Watching a Card

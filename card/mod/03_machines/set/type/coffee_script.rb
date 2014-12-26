@@ -2,6 +2,9 @@
 require 'coffee-script'
 require 'uglifier'
 
+require_dependency 'card/machine'
+require_dependency 'card/machine_input'
+
 include Machine
 include MachineInput
 

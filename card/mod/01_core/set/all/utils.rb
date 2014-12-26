@@ -21,15 +21,6 @@ module ClassMethods
     end
   end
   
-  def delete_tmp_files id=nil
-    dir = Card.paths['files'].existent.first + '/tmp'
-    dir += "/#{id}" if id
-    FileUtils.rm_rf dir, :secure=>true
-  rescue
-    Rails.logger.info "failed to remove tmp files"
-  end
-  
-  
   def merge_list attribs, opts
     unmerged = []
     attribs.each do |row|

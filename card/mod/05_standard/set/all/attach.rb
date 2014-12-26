@@ -1,3 +1,6 @@
+
+require 'paperclip'
+
 def attach_array
   
   c= self.content

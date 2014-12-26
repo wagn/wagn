@@ -1,16 +1,16 @@
 # -*- encoding : utf-8 -*-
 
-class Wagn::Migration < ActiveRecord::Migration
+class Card::Migration < ActiveRecord::Migration
   def self.paths type
     Wagn.paths["db/migrate#{schema_suffix type}"].to_a
   end
   
   def self.schema_suffix type
-    Wagn::Version.schema_suffix type
+    Card::Version.schema_suffix type
   end
   
   def self.schema_mode type
-    new_suffix = Wagn::Migration.schema_suffix type
+    new_suffix = Card::Migration.schema_suffix type
     original_suffix = ActiveRecord::Base.table_name_suffix
     
     ActiveRecord::Base.table_name_suffix = new_suffix
@@ -22,7 +22,7 @@ class Wagn::Migration < ActiveRecord::Migration
   
   def contentedly &block
     Card::Cache.reset_global
-    Wagn::Migration.schema_mode '' do
+    Card::Migration.schema_mode '' do
       Card::Auth.as_bot do
         ActiveRecord::Base.transaction do
           begin
@@ -55,11 +55,11 @@ class Wagn::Migration < ActiveRecord::Migration
   
     
   def schema_mode
-    Wagn::Migration.schema_mode :deck_cards
+    Card::Migration.schema_mode :deck_cards
   end
   
   def migration_paths
-    Wagn::Migration.paths :deck_cards
+    Card::Migration.paths :deck_cards
   end
   
   

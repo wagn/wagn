@@ -1,3 +1,4 @@
+require_dependency 'decko/location'
 
 format :html do
   include Decko::Location

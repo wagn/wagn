@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 class Card
 
   ActiveSupport::Cache::FileStore.class_eval do
@@ -24,7 +25,7 @@ class Card
     class << self
       def [] klass
         raise "nil klass" if klass.nil?
-        cache_by_class[klass] ||= new :class=>klass, :store=>(@@using_rails_cache ? nil : Rails.cache)
+        cache_by_class[klass] ||= new :class=>klass, :store=>(@@using_rails_cache ? nil : Card.cache)
       end
 
       def renew

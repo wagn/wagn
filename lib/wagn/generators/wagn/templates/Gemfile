@@ -59,9 +59,10 @@ group :test do
   
 	gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
     
-  gem 'guard-rspec', '~> 4.2'                  # trigger test runs based on file edits
+  # gem 'guard-rspec', '~> 4.2'           # trigger test runs based on file edits, 
+                                          # currently not compatible with spring-watcher-listen
   if RUBY_PLATFORM =~ /darwin/
-    gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
+    # gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
     # gem 'rspec-legacy_formatters'
     # gem 'wagn-rspec-formatter', :path=>'/opt/wagn-rspec-formatter'
   end

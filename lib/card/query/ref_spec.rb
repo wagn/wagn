@@ -6,7 +6,7 @@ class Card::Query
           # direction      = :out | :in
           # reference_type =  'L' | 'I' | 'P' 
 
-      :refer_to => [ :out  'L','I' ], :referred_to_by => [ :in, 'L','I' ],
+      :refer_to => [ :out, 'L','I' ], :referred_to_by => [ :in, 'L','I' ],
       :link_to  => [ :out, 'L' ],     :linked_to_by   => [ :in, 'L' ],
       :include  => [ :out, 'I' ],     :included_by    => [ :in, 'I' ]
     }

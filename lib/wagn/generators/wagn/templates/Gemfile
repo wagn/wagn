@@ -53,14 +53,18 @@ group :development do
 end
 
 group :test do
+  gem 'rspec' 
   gem 'rspec-rails', '~> 3.1.0'                 # behavior-driven-development suite
   gem 'spork', '>=0.9'                                           
   gem 'rr'#, '=1.0.0'
   
 	gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
-    
-  # gem 'guard-rspec', '~> 4.2'           # trigger test runs based on file edits, 
-                                          # currently not compatible with spring-watcher-listen
+   
+  
+  # gem 'guard-rspec', '~> 4.2'    # trigger test runs based on file edits
+                                   # currently not compatible with spring-watcher-listen gem, 
+                                   # is supposed to be fixed in the next spring-watcher-listen release
+                                   
   if RUBY_PLATFORM =~ /darwin/
     # gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
     # gem 'rspec-legacy_formatters'
@@ -91,7 +95,7 @@ group :development, :test do
   gem 'spring'
   gem 'spring-commands-rspec'
   gem 'spring-commands-cucumber'
-  gem 'spring-watcher-listen'
+  gem 'spring-watcher-listen' 
   gem 'pry-rails'
   gem 'pry-rescue'
   gem 'pry-stack_explorer'

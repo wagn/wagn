@@ -14,7 +14,7 @@ class Card
   end
   
   def nth_action index
-    Action.where("(draft IS NULL OR draft = :draft) AND card_id = ':id'", {:draft=>false, :id=>id})[index-1]
+    Action.where("draft is not true AND card_id = #{id}").order(:id).limit(1).offset(index-1).first
   end
   
   def revision action
@@ -115,7 +115,8 @@ class Card
        ch = changes.find_by_field(field) and ch.value
     end
     def change_for(field) 
-      changes.where('card_changes.field = ?', field)
+      field_integer = ( field.is_a?(Integer) ? field : Card::TRACKED_FIELDS.index(field.to_s) )
+      changes.where 'card_changes.field = ?', field_integer
     end
     
     

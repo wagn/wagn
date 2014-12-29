@@ -22,6 +22,9 @@ end
 group :test, :development do
   gem 'rails-dev-tweaks'
   gem 'sprockets' # just so above works
+  # gem 'spring'
+  # gem 'spring-commands-rspec'
+  # gem 'spring-commands-cucumber'
   # gem 'pry-rails'
   # gem 'pry-rescue'
   # gem 'pry-stack_explorer'
@@ -84,6 +87,10 @@ end
 gem 'ruby-prof', '~>0.12.1', :group=>:profile  # profiling
 
 group :development, :test do
+  gem 'spring'
+  gem 'spring-commands-rspec'
+  gem 'spring-commands-cucumber'
+  gem 'spring-watcher-listen'
   gem 'pry-rails'
   gem 'pry-rescue'
   gem 'pry-stack_explorer'

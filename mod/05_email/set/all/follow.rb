@@ -1,9 +1,8 @@
 card_accessor :followers
 
-REVERSE_FOLLOWING_CACHE_KEY = 'FOLLOWING'
-REVERSE_IGNORING_CACHE_KEY = 'IGNORING'
-FOLLOWER_CACHE_KEY = 'FOLLOWER'
-
+# REVERSE_FOLLOWING_CACHE_KEY = 'FOLLOWING'
+# REVERSE_IGNORING_CACHE_KEY = 'IGNORING'
+# FOLLOWER_CACHE_KEY = 'FOLLOWER'
 
 
 def label
@@ -21,7 +20,7 @@ def follow_option_card index
 end
 
 def special_follow_option? name
-  card = Card.fetch(name) and codename = card.codename and Card::FollowOption.names.include? codename.to_sym
+  (card = Card.fetch(name)) and (codename = card.codename) and Card::FollowOption.names.include? codename.to_sym
 end
 
 def followers_of card=nil  # the argument is for compatibility reasons, needed for the special follow options
@@ -34,40 +33,47 @@ def followers_of card=nil  # the argument is for compatibility reasons, needed f
   end
 end
 
-# find all followers
-def find_all_followers
-  res = ::Set.new
-  all_follow_option_cards.each do |option_card|
-    (option_card.follower_ids - option_card.ignoramus_ids).each do |follower_id|
-      res << Card.fetch(follower_id)
-    end
-  end
 
-  if left and follow_field_rule = left.rule_card(:follow_fields)
+def find_all_followers
+  result = ::Set.new(followers)
+  if left and (follow_field_rule = left.rule_card(:follow_fields))
     follow_field_rule.item_names(:context=>left.cardname).each do |item|
       if item.to_name.key == key or 
          (item == Card[:includes].name and left.included_card_ids.include? id)
-        res += left.followers
+        result += left.followers
         break
       end
     end
   end
-  res
+  result
 end
 
+
+def follower_ids args={}
+  @follower_ids = read_follower_cache || begin
+    result = ::Set.new
+    set_names.each do |set_name| 
+      set_card = Card.fetch(set_name)
+      result += set_card.all_follower_ids.select do |user_id|
+          followed_by? user_id
+        end
+    end
+    write_follower_cache result
+  end
+end
 
 def followed?; followed_by? Auth.current end
 
 def followed_by? user
-  followers.include? user
+  rule_card(:follow).item_cards.each do |item_card|
+    item_card.applies_to? self, user
+  end 
 end
 
-def ignored_by? user
-  ignore_set_card.ignoramus_ids.include? user.id
-end
-
-def ignored?
-  ignored_by? Auth.current
+def followers
+  follower_ids.map do |id|
+    Card.fetch(id)
+  end
 end
 
 
@@ -95,18 +101,6 @@ def follow_key
   follow_set_card.key
 end
 
-
-def ignore_set_card
-  if type_code == :set and right.codename == "self"
-    self
-  else
-    fetch(:trait=>:self)
-  end  
-end
-
-def ignore_set
-  ignore_set_card.name
-end
 
 
 def related_follow_option_cards
@@ -137,76 +131,64 @@ def all_follow_option_cards
 end
 
 
-
-event :cache_expired_because_of_card_change, :before=>:extend, :on=>:update
-  #Follow.cache_expired
-  ''
-end
-
-event :cache_expired_because_of_new_set, :before=>:extend, :on=>:create, :when=> proc { |c| c.type_id == Card::SetID } do
-  Follow.set_cache_expired
+event :cache_expired_because_of_new_set, :before=>:extend, :on=>:create, :when=>proc { |c| c.type_id == Card::SetID } do
+  Card.clear_user_rule_cache
 end
 
 event :cache_expired_because_of_type_change, :before=>:extend, :changed=>:type_id do
-  Follow.set_cache_expired
+  Card.clear_user_rule_cache
 end
 
 event :cache_expired_because_of_name_change, :before=>:extend, :changed=>:name do
-  Follow.set_cache_expired
+  Card.clear_user_rule_cache
 end
 
-event :follow_change, :before=>:extend, :when=> proc {|c| Env.params[:follow] || Env.params[:unfollow]} do
-  binding.pry
-  if followed? 
-    if Env.params[:unfollow]
-      if Auth.current.following_card.include_item? follow_set_card
-        following_card = Auth.current.following_card
-        following_card.drop_item follow_set
-        following_card.save!
-      else
-        ignoring_card = Auth.current.ignoring_card
-        ignoring_card.add_item ignore_set
-        ignoring_card.save
-      end
-    end
-  else
-    if Env.params[:follow]
-      if ignored? 
-        ignoring_card = Auth.current.ignoring_card
-        ignoring_card.drop_item ignore_set
-        ignoring_card.save
-      else
-        following_card = Auth.current.following_card
-        following_card.add_item follow_set
-        following_card.save!
-      end
-    end
-  end
-end
+# event :follow_change, :before=>:extend, :when=> proc {|c| Env.params[:follow] || Env.params[:unfollow]} do
+#   # if followed?
+# #     if Env.params[:follow]
+# #       if Auth.current.following_card.include_item? follow_set_card
+# #         following_card = Auth.current.following_card
+# #         following_card.drop_item follow_set
+# #         following_card.save!
+# #       end
+# #     end
+# #   else
+# #     if Env.params[:unfollow]
+# #         following_card = Auth.current.following_card
+# #         following_card.add_item follow_set
+# #         following_card.save!
+# #       end
+# #     end
+# #   end
+# end
 
 format :html do
   watch_perms = lambda { |r| Auth.signed_in? && !r.card.new_card? }  # how was this used to be used?
 
   view :follow, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|
     wrap(args) do
-      if card.type_id == CardtypeID
-        follow_link Card.fetch("#{card.name}+*type"), 'all', :follow
-      else
-        follow_link Card.fetch("#{card.name}+*self"), '', :follow
-      end
+      default_follow_link
+    end
+  end
+  
+  def default_follow_link
+    if card.type_id == CardtypeID
+      follow_link Card.fetch("#{card.name}+*type"), 'all', :follow
+    else
+      follow_link Card.fetch("#{card.name}+*self"), '', :follow
     end
   end
 
   view :follow_menu, :tags=>:unknown_ok do |args|
-    follow_links = []
-    card.related_follow_option_cards.size.times do |index|
-      if link = render_follow_menu_item( :follow_menu_index => index ) and link.present?
-        follow_links << link
-      end
-    end
+    follow_links = [default_follow_link, advanced_follow_options_link]
+    # card.related_follow_option_cards.size.times do |index|
+    #   if link = render_follow_menu_item( :follow_menu_index => index ) and link.present?
+    #     follow_links << link
+    #   end
+    # end
     follow_links.compact.map do |link|
       { :raw => wrap(args) {link} }
-    end <<  { :raw => more_follow_options_link }
+    end 
   end
 
   view :follow_menu_item do |args|
@@ -222,7 +204,11 @@ format :html do
     if Auth.signed_in?
       args[:title] = "#{card.name}: follow options"
       #args[:optional_toggle] ||= main? ? :hide : :show
-      frame_and_form( { :action=>:update, :id=>Auth.current.following_card.id, :success=>{:id=>card.name, :view=>:open} }, args, 'main-success'=>'REDIRECT' ) do
+      frame_and_form( {
+                          :action=>:update,
+                          :id=>Auth.current.following_card.id,
+                          :success=>{:id=>card.name, :view=>:open}
+                      }, args, 'main-success'=>'REDIRECT' ) do
         [
           _render_follow_option_list( args ),
           _optional_render( :button_fieldset, args )
@@ -263,29 +249,18 @@ format :html do
        </div>}
   end
 
-  def more_follow_options_link
+  def advanced_follow_options_link
     path_options = {:card=>card, :view=>:follow_options }
     html_options = {:class=>"slotter", :remote=>true}
     link_to "advanced...", path(path_options), html_options
   end
 
-  def follow_link index_or_card, link_label=nil, success_view=:follow_menu_item
-    follow_option_card = if Integer===index_or_card
-        card.related_follow_option_cards[index_or_card]
-      else
-        index_or_card
-      end
-    return '' unless follow_option_card
+  def follow_link set_card, link_label=nil,   success_view=:follow_menu_item
+    toggle       = card.followed? ? :off : :on
+    label        = set_card.respond_to?(:follow_label) ? set_card.follow_label : ''
 
-    toggle       = follow_option_card.followed? ? :off : :on
-    label        = if follow_option_card.respond_to? :follow_label
-                    follow_option_card.follow_label
-                      #follow_option_card.follow_label[0..0].downcase + follow_option_card.label[1..-1]
-                   else
-                      ''
-                   end
     following    = Auth.current.fetch :trait=>:following, :new=>{:type=>:pointer}
-    path_options = {:card=>card, :action=>:update, :follow_menu_index=>index,
+    path_options = {:card=>following, :action=>:update,# :follow_menu_index=>index,
                     :success=>{:id=>card.name, :view=>success_view} }
     html_options = {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :remote=>true, :method=>'post'}
 
@@ -293,14 +268,12 @@ format :html do
     case toggle
     when :off
       text                         = "following#{link_label}"
-      #path_options[:drop_item]     = follow_option_card.cardname.url_key
-      path_options[:unfollow]      = true
+      path_options[:add_item]      = "#{set_card.name}+#{Card[:never].name}",
       html_options[:title]         = "stop sending emails about changes to #{label}"
       html_options[:hover_content] = "unfollow#{link_label}"
     when :on
       text                         = "follow#{link_label}"
-      #path_options[:add_item]      = follow_option_card.cardname.url_key
-      path_options[:follow]        = true
+      path_options[:add_item]      = "#{set_card.name}+#{Card[:always].name}"
       html_options[:title]         = "send emails about changes to #{label}"
     end
     link_to text, path(path_options), html_options
@@ -308,85 +281,64 @@ format :html do
 end
 
 
-module ClassMethods 
-  def reverse_following_cache
-    Card.cache.read(REVERSE_FOLLOWING_CACHE_KEY) || refresh_cached_sets
-  end
-
-  def reverse_ignoring_cache
-    Card.cache.read(REVERSE_IGNORING_CACHE_KEY) || refresh_cached_sets
-  end
-
-  def follower_cache
-    Card.cache.read(FOLLOWER_CACHE_KEY) || {}
-  end
-
-
-  def clear_reverse_following_cache
-    Card.cache.write REVERSE_FOLLOWING_CACHE_KEY, nil
-  end
-
-  def clear_reverse_ignoring_cache
-    Card.cache.write REVERSE_IGNORING_CACHE_KEY, nil
-  end
-
-  def clear_follower_cache
-    Card.cache.write FOLLOWER_CACHE_KEY
-  end
-
-  def clear_follow_caches
-    clear_reverse_ignoring_cache
-    clear_reverse_following_cache
-    clear_follower_cache
-  end
-
-  def read_reverse_following_cache card
-    reverse_following_cach
-    Card.cache.read(REVERSE_FOLLOWING_CACHE_KEY)[card.key]
-  end
-  
-  def read_reverse_ignoring_cache card
-    Card.cache.read(REVERSE_IGNORING_CACHE_KEY)[card.key]
-  end
-  
-  def read_follower_cache card
-    Card.cache.read(FOLLOW_CACHE_KEY)[card.key]
-  end
-
-
-  def refresh_cached_sets
-    refresh_cache
-    refresh_ignore_cache
-  end
-
-  def refresh_cache
-    follow_cache = {}
-    Card.search( :left=>{:type_id=>Card::UserID}, :right=>{:codename=> "following"} ).each do |following_pointer|
-      following_pointer.item_cards.each do |followed|
-        key = followed.follow_key
-        if follow_cache[key]
-          follow_cache[key] << following_pointer.left_id
-        else
-          follow_cache[key] = ::Set.new [following_pointer.left_id]
-        end
-      end
-    end
-    Follow.store_cache follow_cache
-  end
-
-  def refresh_ignore_cache
-    ignore_cache = {}
-    Card.search( :left=>{:type_id=>Card::UserID}, :right=>{:codename=> "ignore"} ).each do |ignoring_pointer|
-      ignoring_pointer.item_cards.each do |ignored|
-        key = ignored.follow_key
-        if ignore_cache[key]
-          ignore_cache[key] << ignoring_pointer.left_id
-        else
-          ignore_cache[key] = ::Set.new [ignoring_pointer.left_id]
-        end
-      end
-    end
-    Follow.store_ignore_cache ignore_cache
-  end
-
-end
+# module ClassMethods
+#   def reverse_following_cache
+#     Card.cache.read(REVERSE_FOLLOWING_CACHE_KEY) || refresh_cached_sets
+#   end
+#
+#
+#
+#   def follower_cache
+#     Card.cache.read(FOLLOWER_CACHE_KEY) || {}
+#   end
+#
+#
+#   def clear_reverse_following_cache
+#     Card.cache.write REVERSE_FOLLOWING_CACHE_KEY, nil
+#   end
+#
+#
+#   def clear_follower_cache
+#     Card.cache.write FOLLOWER_CACHE_KEY
+#   end
+#
+#   def clear_follow_caches
+#     clear_reverse_ignoring_cache
+#     clear_reverse_following_cache
+#     clear_follower_cache
+#   end
+#
+#   def read_reverse_following_cache card
+#     reverse_following_cach
+#     Card.cache.read(REVERSE_FOLLOWING_CACHE_KEY)[card.key]
+#   end
+#
+#
+#   def read_follower_cache card
+#     Card.cache.read(FOLLOW_CACHE_KEY)[card.key]
+#   end
+#
+#
+#   def refresh_cached_sets
+#     refresh_cache
+#     refresh_ignore_cache
+#   end
+#
+#   def refresh_cache
+#     follow_cache = {}
+#     Card.search( :left=>{:type_id=>Card::UserID}, :right=>{:codename=> "following"} ).each do |following_pointer|
+#       following_pointer.item_cards.each do |followed|
+#         key = followed.follow_key
+#         if follow_cache[key]
+#           follow_cache[key] << following_pointer.left_id
+#         else
+#           follow_cache[key] = ::Set.new [following_pointer.left_id]
+#         end
+#       end
+#     end
+#     Follow.store_cache follow_cache
+#   end
+#
+#
+#
+# end

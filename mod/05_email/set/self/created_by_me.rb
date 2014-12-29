@@ -1,6 +1,6 @@
 include Card::FollowOption
 
-self.follow_opts :position=>1
+self.follow_opts :position=>2
 
 
 def followed?
@@ -9,15 +9,16 @@ def followed?
   end
 end
 
+
 def follow_label
   'content I created'
 end
 
-def applies? user, card 
+def applies_to? card, user
   card.creator and card.creator.type_id == Card::UserID and card.creator == user 
 end
 
-def follower_ids args{}
+def follower_ids args={}
   if card=args[:context] and card.creator and card.creator.type_id == Card::UserID and card.creator.following? cardname
     [card.creator.id]
   else

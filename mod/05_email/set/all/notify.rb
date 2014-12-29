@@ -23,9 +23,12 @@ class FollowerStash
     Auth.as_bot do
       if !@visited.include? card.key
         @visited.add card.key
-        card.all_follow_option_cards.each do |option_card|
-          option_card.followers_of(card).each do |follower_card|
-            notify follower_card, :of => option_card.name
+        set_names.each do |set_name| 
+          set_card = Card.fetch(set_name)
+          set_card.all_follower_ids.each do |user_id|
+            if followed_by? user_id
+              notify Card.fetch user_id, :of=>set_name
+            end
           end
         end
 

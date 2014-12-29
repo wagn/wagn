@@ -17,25 +17,54 @@ ReadRuleSQL = %{
 }
 
 UserRuleSQL = %{
-  select rules.id as rule_id, settings.id as setting_id, sets.id as set_id, sets.left_id as anchor_id, sets.right_id as set_tag_id, users.id as user_id
+  select 
+    user_rules.id as rule_id, 
+    settings.id   as setting_id, 
+    sets.id       as set_id, 
+    sets.left_id  as anchor_id, 
+    sets.right_id as set_tag_id,
+    users.id      as user_id
   from cards user_rules 
   join cards rules    on user_rules.left_id   = rules.id 
   join cards sets     on rules.left_id        = sets.id 
   join cards settings on rules.right_id       = settings.id
-  join cards users    on users_rules.right_id = users.id
-  where sets.type_id     = #{Card::SetID }    and sets.trash     is false
-  and   settings.type_id = #{Card::SettingID} and settings.trash is false
-  and   users.type_id    = #{Card::UserID}    and users.trash    is false
-  and                                             rules.trash    is false;
+  join cards users    on user_rules.right_id = users.id
+  where   sets.type_id     =  #{Card::SetID }   and sets.trash     is false 
+    and   settings.type_id = #{Card::SettingID} and settings.trash is false
+    and   users.type_id    = #{Card::UserID}    and users.trash    is false
+    and                                             rules.trash    is false;
 }  
 
+def user_rule_sql user_id=nil
+  if user_id
+    %{
+      select 
+        user_rules.id as rule_id, 
+        settings.id   as setting_id, 
+        sets.id       as set_id, 
+        sets.left_id  as anchor_id, 
+        sets.right_id as set_tag_id,
+      from cards user_rules 
+      join cards rules    on user_rules.left_id   = rules.id 
+      join cards sets     on rules.left_id        = sets.id 
+      join cards settings on rules.right_id       = settings.id
+      where user_rules.right_id = #{user_id}
+        and   sets.type_id      = #{Card::SetID }    and sets.trash     is false
+        and   settings.type_id  = #{Card::SettingID} and settings.trash is false
+        and                                              rules.trash    is false;
+    }
+  else
+    UserRuleSQL
+  end 
+end
+
+
 def is_rule?
-  !simple?                            and
-  ( l = left(  :skip_modules=>true )  and
-    l.type_id == Card::SetID          and
-    r = right( :skip_modules=>true )  and
+  !simple?                             and
+  ( (l = left( :skip_modules=>true ))  and
+    l.type_id == Card::SetID           and
+    (r = right( :skip_modules=>true ))  and
     r.type_id == Card::SettingID           ) or is_user_rule?
-    
 end
 
 def is_user_rule?
@@ -57,11 +86,16 @@ end
 
 def rule_card_id setting_code, options={}
   fallback = options.delete( :fallback )
-  options[:user_specific] = !options[:all_users] and Card::Setting.user_specific? setting_code
+  if options[:all_users]
+    setting_code = "#{setting_code}+user_ids"
+  elsif Card::Setting.user_specific? setting_code and Auth.signed_in?
+    fallback = setting_code
+    setting_code = "#{setting_code}+#{Auth.current_id}"
+  end
   
   rule_set_keys.each do |rule_set_key|
-    rule_id = self.class.rule_cache(options)["#{rule_set_key}+#{setting_code}"]
-    rule_id ||= fallback && self.class.rule_cache(options)["#{rule_set_key}+#{fallback}"]
+    rule_id = self.class.rule_cache["#{rule_set_key}+#{setting_code}"]
+    rule_id ||= fallback && self.class.rule_cache["#{rule_set_key}+#{fallback}"]
     return rule_id if rule_id
   end
   nil
@@ -98,25 +132,79 @@ module ClassMethods
   def toggle val
     val.to_s.strip == '1'
   end
+  
+  def all_user_ids set_card, setting_code
+    key = if (l=set_card.left) and (r=set_card.right)
+        set_class_code = Card::Codename[ r.id ]
+        "#{l.id}+#{set_class_code}+#{setting_code}+all_users"
+      else
+        set_class_code = Card::Codename[ set_card.id ]
+        "#{set_class_code}+#{setting_code}+all_users"
+      end
+    rule_cache[key] || []
+  end
+  
+  def cached_keys_for_user user_id
+    rule_cache["#{user_id}+rule_keys"] || []
+  end
 
-  def rule_cache options={}
+  def cache_key row
+    setting_code = Card::Codename[ row['setting_id'].to_i ] or return false
+    
+    anchor_id = row['anchor_id']
+    set_class_id = anchor_id.nil? ? row['set_id'] : row['set_tag_id']
+    set_class_code = Card::Codename[ set_class_id.to_i ] or return false
+    
+    key_base = [ anchor_id, set_class_code, setting_code].compact.map( &:to_s ) * '+'
+  end
+  
+  def all_rule_keys_with_id
+    ActiveRecord::Base.connection.select_all(RuleSQL).each do |row|
+      if key = cache_key(row)
+        yield(key, row['rule_id'].to_i)
+      end
+    end
+  end
+  
+  def all_user_rule_keys_with_id_and_user_id
+    ActiveRecord::Base.connection.select_all(UserRuleSQL).each do |row|
+      if key = cache_key(row) and user_id = row['user_id']
+        yield(key, row['rule_id'].to_i, user_id.to_i)
+      end
+    end
+  end
+  
+  def user_rule_keys_with_id_for user_id
+    ActiveRecord::Base.connection.select_all(user_rule_sql(user_id)).each do |row|
+      if key = cache_key(row)
+        yield(key, row['rule_id'].to_i)
+      end
+    end
+  end
+  
+  def user_rule_key key, user_id
+    "#{key}+#{user_id}"
+  end
+  
+  def all_users_key key
+    "#{key}+all_users"
+  end
+  
+  def all_rule_keys_key user_id
+  end
+
+  def rule_cache
     Card.cache.read('RULES') || begin        
       hash = {}
-      sql  = options[:user_specific] ? Card::Set::All::Rules::UserRuleSQL  : Card::Set::All::Rules::RuleSQL
-      ActiveRecord::Base.connection.select_all( sql ).each do |row|
-        setting_code = Card::Codename[ row['setting_id'].to_i ] or next
-        anchor_id = row['anchor_id']
-        user_id = row['user_id']
-        set_class_id = anchor_id.nil? ? row['set_id'] : row['set_tag_id']
-        
-        set_class_code = Card::Codename[ set_class_id.to_i ] or next
-        hash_key = [ anchor_id, set_class_code, setting_code, user_id ].compact.map( &:to_s ) * '+'
-        hash[ hash_key ] = row['rule_id'].to_i
-        if user_id
-          hash_key = [ anchor_id, set_class_code, setting_code].compact.map( &:to_s ) * '+'
-          hash[ hash_key ] ||= []
-          hash[ hash_key ] << user_id
-        end
+      all_rule_keys_with_id do |key,rule_id|
+        hash[key] = rule_id
+      end
+      all_user_rule_keys_with_id_and_user_id do |key, rule_id, user_id|
+        hash[ user_rule_key(key,user_id) ] = rule_id
+        hash[ all_users_key(key)         ] ||= []
+        hash[ all_users_key(key)         ] << user_id
+        hash[ all_rule_keys_key(user_id) ] ||= []
+        hash[ all_rule_keys_key(user_id) ] << key
       end
       Card.cache.write 'RULES', hash
     end
@@ -124,6 +212,27 @@ module ClassMethods
   
   def clear_rule_cache
     Card.cache.write 'RULES', nil
+  end
+  
+  def clear_user_rule_cache
+    clear_rule_cache
+  end
+  
+  def refresh_rule_cache_for_user user_id
+    hash = rule_cache
+    cached_keys_for_user(user_id).each do |key|
+      hash[ user_rule_key(key, user_id) ] = nil
+      hash[ all_users_key(key) ].delete(user_id)
+    end
+    hash[ all_rule_keys_key(user_id) ] = nil
+    
+    user_rule_keys_with_id_for(user_id) do |key, rule_id|
+      hash[ user_rule_key(key,user_id) ] = rule_id
+      hash[ all_users_key(key)         ] ||= []
+      hash[ all_users_key(key)         ] << user_id
+      hash[ all_rule_keys_key(user_id) ] ||= []
+      hash[ all_rule_keys_key(user_id) ] << key
+    end
   end
   
   def read_rule_cache

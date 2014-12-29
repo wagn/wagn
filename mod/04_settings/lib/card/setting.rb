@@ -23,7 +23,7 @@ class Card
     }
     @@user_specific = ::Set.new
 
-    def user_specific? codename
+    def self.user_specific? codename
       @@user_specific.include? codename
     end
     

@@ -78,4 +78,51 @@ describe Card::Set::All::Rules do
     end
 
   end
+  
+  describe 'user specific rules' do
+    before do
+      Card::Auth.current_id = Card.fetch('Joe User').id
+    end
+    
+    it "user rule is recognized as rule" do
+      Card::Auth.as_bot do
+        card = Card.create(:name => "Book+*type+*follow+Joe User", :content => "[[Home]]")
+        expect(card.is_rule?).to be_truthy
+      end
+    end
+    
+    it "retrieves Set based value" do
+      Card::Auth.as_bot do
+        Card.create :name => "Book+*type+*follow+Joe User", :content => "[[Home]]"
+      end
+      expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[Home]]")
+    end
+    
+    it "retrieves user indepedent Set based value" do
+      Card::Auth.as_bot do
+        Card.create :name => "Book+*type+*follow", :content => "[[All]]"
+      end
+      expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[All]]")
+    end
+    
+    it "user-specific value overwrites user-independent value" do
+      Card::Auth.as_bot do
+        Card.create :name => "Book+*type+*follow+Joe User", :content => "[[Home]]"
+        Card.create :name => "Book+*type+*follow", :content => "[[All]]"
+      end
+      expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[Home]]")
+    end
+    
+    describe '#all_user_ids' do
+      it "returns all user with values for the given Set and rule" do
+        Card::Auth.as_bot do
+          Card.create(:name => "Book+*type+*follow+Joe User", :content => "[[Home]]")
+          Card::Auth.current_id = Card.fetch('Joe Admin').id
+          Card.create(:name => "Book+*type+*follow+Joe Admin", :content => "[[Home]]")
+          user_ids = Card.all_user_ids( Card.fetch("Book+*type"), :follow )
+          expect(user_ids).to eq [Card['Joe User'].id, Card['Joe Admin'].id]
+        end
+      end
+    end
+  end
 end

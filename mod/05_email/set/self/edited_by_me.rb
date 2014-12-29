@@ -1,6 +1,6 @@
 include Card::FollowOption
 
-follow_opts :position=>2
+follow_opts :position=>3
 
 def followed?
   if Auth.current
@@ -12,7 +12,7 @@ def follow_label
   'content I edited'
 end
 
-def applies? user, card 
+def applies_to? card, user
   Card.search(:editor_of=>card.name).include? user
 end
 

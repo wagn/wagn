@@ -114,7 +114,7 @@ def write_reversed_following_cache user_ids
 end
 
 def read_reversed_following_cache
-  All::Follow.read_reversed_following_cache(key
+  All::Follow.read_reversed_following_cache(key)
 end
 
 def write_reversed_ignoring_cache user_ids
@@ -122,17 +122,16 @@ def write_reversed_ignoring_cache user_ids
 end
 
 def read_reversed_ignoring_cache
-  All::Follow.read_reversed_ignoring_cache(key
+  All::Follow.read_reversed_ignoring_cache(key)
+end
+
+def all_user_ids setting_code
+  All::Rules.all_user_ids self, setting_code
 end
 
 
-def follower_ids args={}
-  @follower_ids = read_reversed_following_cache || begin
-    ids = Card.joins(:references_to).where( 
-        :card_references => { :referee_key => key}, 
-        :right_id=>Card[:following].id ).pluck(:left_id)
-    write_reversed_following_cache ::Set.new(ids)
-  end
+def all_follower_ids
+  all_user_ids :follow
 end
 
 def ignoramus_ids

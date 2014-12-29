@@ -1,29 +1,50 @@
 
 include Card::Set::Type::Pointer
 
-event :settify_new_follow_options, :before=>:approve, :on=>:save, :changed=>:db_content do
-  temp = db_content
-  item_names.each do |name|
-    if not special_follow_option? name and option_card = Card.fetch(name) and not option_card.type_id == SetID
-        if option_card.type_id == CardtypeID
-          temp.sub!("[[#{name}]]","[[#{name}+*type]]")
-        else
-          temp.sub!("[[#{name}]]","[[#{name}+*self]]")
-        end
-    end
-  end
-  db_content = temp
+# event :settify_new_follow_options, :before=>:approve, :on=>:save, :changed=>:db_content do
+#   temp = db_content
+#   item_names.each do |name|
+#     if not special_follow_option? name and option_card = Card.fetch(name) and not option_card.type_id == SetID
+#         if option_card.type_id == CardtypeID
+#           temp.sub!("[[#{name}]]","[[#{name}+*type]]")
+#         else
+#           temp.sub!("[[#{name}]]","[[#{name}+*self]]")
+#         end
+#     end
+#   end
+#   db_content = temp
+# end
+
+
+def add_item name
+  super
+  content = Env.params[:follow_option] || "[[#{Card[:always].name}]]"
+  follow_rule = "#{name.to_name.left}+#{Card[:follow].name}+#{Auth.current.name}"
+  @subcards[follow_rule] = {:content=>"[[#{name.to_name.right}]]", :type=>'pointer'}
+end
+
+def drop_item name
+  super
+  @remove_rule = "#{name}+#{Card[:follow].name}+#{Auth.current.name}"
+end
+
+event :remove_follow_rule, :after=>:store, :when=> proc { |c| c.remove_rule } do 
+  Card.delete remove_rule
 end
 
 event :update_followers_after_following_changed, :after=>:store, :changed=>:db_content do #when => proc { |c| c.db_content_changed?  } do
-  new_content = db_content
-  db_content = db_content_was
-  item_cards.each do |item|
-    item.drop_follower left
-  end
-  db_content = new_content
-  item_cards.each do |item|
-    item.add_follower left
+  if left
+    Card.refresh_rule_cache_for_user left.id
+    
+    # new_content = db_content
+    # db_content = db_content_was
+    # item_cards.each do |item|
+    #   item.drop_follower left
+    # end
+    # db_content = new_content
+    # item_cards.each do |item|
+    #   item.add_follower left
+    # end
   end
 end
 

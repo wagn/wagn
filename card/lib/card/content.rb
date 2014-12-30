@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
+# TODO move Card::Chunk to Card::Content::Chunk...
 require_dependency 'card/chunk'
-# you could make the case that Card::Chunk should be Card::Content::Chunk...
 
 class Card
   class Content < SimpleDelegator
@@ -129,13 +129,13 @@ class Card
       'blockquote' => ['cite']
     )
 
-    if Card.config.allow_inline_styles
+    if CardRailtie.config.allow_inline_styles
       ALLOWED_TAGS['table'] += %w[ cellpadding align border cellspacing ]
     end
 
     ALLOWED_TAGS.each_key {|k|
       ALLOWED_TAGS[k] << 'class'
-      ALLOWED_TAGS[k] << 'style' if Card.config.allow_inline_styles
+      ALLOWED_TAGS[k] << 'style' if CardRailtie.config.allow_inline_styles
       ALLOWED_TAGS[k]
     }
     ALLOWED_TAGS

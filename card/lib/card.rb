@@ -1,9 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require 'active_support/configurable'
-
 class Card < ActiveRecord::Base
-  include ActiveSupport::Configurable
 
   require_dependency 'card/active_record_ext'
   require_dependency 'card/codename'
@@ -40,8 +37,6 @@ class Card < ActiveRecord::Base
   
   TRACKED_FIELDS = %w(name type_id db_content trash)
 
-  config_accessor :paths
-  CARD_GEM_ROOT = File.expand_path('../..', __FILE__)
-  self.paths = Rails::Paths::Root.new CARD_GEM_ROOT
+  ActiveSupport.run_load_hooks(:card, self)
 end
 

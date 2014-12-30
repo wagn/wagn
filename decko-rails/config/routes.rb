@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   
   #most common
   root                      :to => 'card#read', :via=>:get
-  match "#{ Decko.config.files_web_path }/:id(-:size)-:rev_id.:format" => 
+  match "#{ Decko::Engine.config.files_web_path }/:id(-:size)-:rev_id.:format" => 
                                    'card#read', :via=>:get, :id => /[^-]+/, :explicit_file=>true
   match "assets/*filename"      => 'card#asset', :via=>:get
   match "javascripts/*filename" => 'card#asset', :via=>:get

@@ -1,8 +1,11 @@
 # -*- encoding : utf-8 -*-
 
+require 'card'
+require 'card/version'
+
 class Card::Migration < ActiveRecord::Migration
   def self.paths type
-    Wagn.paths["db/migrate#{schema_suffix type}"].to_a
+    CardRailtie.paths["db/migrate#{schema_suffix type}"].to_a
   end
   
   def self.schema_suffix type

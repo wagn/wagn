@@ -1,4 +1,6 @@
-  # -*- encoding : utf-8 -*-
+# -*- encoding : utf-8 -*-
+require_dependency 'card/env'
+
 require 'smart_name'
 
 class Card

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'timecop'
 
-require 'card/all'
+#require 'card_railtie'
 
 class SharedData
 

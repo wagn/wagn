@@ -17,7 +17,7 @@ class Card
 
     @@prepopulating     = [ 'test','cucumber' ].include? Rails.env
     @@using_rails_cache = Rails.env =~ /^cucumber|test$/
-    @@prefix_root       = Card.config.database
+    @@prefix_root       = CardRailtie.config.database_configuration[Rails.env]['database']
     @@cache_by_class    = {}
 
     cattr_reader :cache_by_class, :prefix_root
@@ -25,7 +25,7 @@ class Card
     class << self
       def [] klass
         raise "nil klass" if klass.nil?
-        cache_by_class[klass] ||= new :class=>klass, :store=>(@@using_rails_cache ? nil : Card.cache)
+        cache_by_class[klass] ||= new :class=>klass, :store=>(@@using_rails_cache ? nil : CardRailtie.config.cache)
       end
 
       def renew

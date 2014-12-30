@@ -1,4 +1,6 @@
 
+require 'rails/application'
+
 WAGN_BOOTSTRAP_TABLES = %w{ cards card_actions card_acts card_changes card_references }
 
 namespace :wagn do
@@ -12,7 +14,7 @@ namespace :wagn do
       puts "not dropped"
     end
 
-    ENV['SCHEMA'] ||= "#{Card.gem_root}/db/schema.rb"
+    ENV['SCHEMA'] ||= "#{CARD_GEM_ROOT}/db/schema.rb"
      
     puts "creating"
     Rake::Task['db:create'].invoke
@@ -63,7 +65,7 @@ namespace :wagn do
 
   desc "migrate structure and cards"
   task :migrate =>:environment do
-    ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
+    ENV['SCHEMA'] ||= "#{Wagn.root}/db/schema.rb"
     
     stamp = ENV['STAMP_MIGRATIONS']
 
@@ -93,20 +95,23 @@ namespace :wagn do
 
   desc 'insert existing card migrations into schema_migrations_cards to avoid re-migrating'
   task :assume_card_migrations do
-    Wagn::Migration.schema_mode :core_cards do
-      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:core_cards), Wagn::Migration.paths( :core_cards )
+    require 'card/migration'
+    Card::Migration.schema_mode :core_cards do
+      ActiveRecord::Schema.assume_migrated_upto_version Card::Version.schema(:core_cards), Card::Migration.paths( :core_cards )
     end
   end
 
   namespace :migrate do
     desc "migrate cards" 
     task :cards => :environment do
+    require 'card/migration'
       Rake::Task['wagn:migrate:core_cards'].invoke
       Rake::Task['wagn:migrate:deck_cards'].invoke
     end
     
     desc "migrate core cards"
     task :core_cards => :environment do
+    require 'card/migration'
       Card::Cache.reset_global
       ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
       Wagn.config.action_mailer.perform_deliveries = false
@@ -116,9 +121,9 @@ namespace :wagn do
        # this is needed in production mode to insure core db structures are loaded before schema_mode is set
       
     
-      paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.paths(:core_cards)
+      paths = ActiveRecord::Migrator.migrations_paths = Card::Migration.paths(:core_cards)
     
-      Wagn::Migration.schema_mode :core_cards do
+      Card::Migration.schema_mode :core_cards do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       end
@@ -126,15 +131,16 @@ namespace :wagn do
     
     desc "migrate deck cards"
     task :deck_cards => :environment do
+    require 'card/migration'
       Card::Cache.reset_global
       ENV['SCHEMA'] ||= "#{Rails.root}/db/schema.rb"
       Wagn.config.action_mailer.perform_deliveries = false
       Card.reset_column_information # this is needed in production mode to insure core db structures are loaded before schema_mode is set
       Card::Reference.reset_column_information
     
-      paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.paths(:deck_cards)
+      paths = ActiveRecord::Migrator.migrations_paths = Card::Migration.paths(:deck_cards)
     
-      Wagn::Migration.schema_mode :deck_cards do
+      Card::Migration.schema_mode :deck_cards do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       end
@@ -146,7 +152,7 @@ namespace :wagn do
       Wagn.config.action_mailer.perform_deliveries = false
       
       stamp_file = Wagn::Version.schema_stamp_path( args[:type] )
-      Wagn::Migration.schema_mode args[:type] do
+      Card::Migration.schema_mode args[:type] do
         version = ActiveRecord::Migrator.current_version
         if version.to_i > 0 and file = open(stamp_file, 'w')
           puts ">>  writing version: #{version} to #{stamp_file}"
@@ -298,11 +304,11 @@ namespace :wagn do
     task :load => :environment do
       #FIXME - shouldn't we be more standard and use seed.rb for this code?
       Rake.application.options.trace = true
-      puts "bootstrap load starting"
+      puts "bootstrap load starting #{File.join( CARD_GEM_ROOT, 'db/bootstrap')}"
       require 'active_record/fixtures'
 #      require 'time'
 
-      ActiveRecord::Fixtures.create_fixtures File.join( Wagn.gem_root, 'db/bootstrap'), WAGN_BOOTSTRAP_TABLES
+      ActiveRecord::Fixtures.create_fixtures File.join( CARD_GEM_ROOT, 'db/bootstrap'), WAGN_BOOTSTRAP_TABLES
 
     end
   end

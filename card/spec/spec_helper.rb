@@ -5,10 +5,10 @@ ENV["RAILS_ENV"] = 'test'
 require File.expand_path( '../../lib/card/simplecov_helper.rb', __FILE__ )
 require 'simplecov'
 require 'timecop'
-#require File.expand_path( '../../mod/03_machines/spec/lib/machine_spec.rb', __FILE__ )
-#require File.expand_path( '../../mod/03_machines/spec/lib/machine_input_spec.rb', __FILE__ )
 
-
+require 'active_record'
+require 'decko/engine'
+require 'card_railtie'
 
 Spork.prefork do
   if ENV["RAILS_ROOT"]

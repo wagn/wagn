@@ -1,3 +1,5 @@
+require 'card/mailer'
+
 describe Card::Set::Type::EmailTemplate do
   def mailconfig args={}
     Card['a mail template'].email_config(args)

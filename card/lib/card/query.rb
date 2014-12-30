@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-
 class Card::Query
   require_dependency 'card/query/spec'
   require_dependency 'card/query/card_spec'

@@ -70,10 +70,10 @@ format :html do
   
   def head_javascript
     varvals = [
-      "window.wagn={rootPath:'#{ Card.config.relative_url_root }'}",
+      "window.wagn={rootPath:'#{ CardRailtie.config.relative_url_root }'}",
       "window.tinyMCEPreInit={base:\"#{card_path 'assets/tinymce'}\",query:'3.5.9',suffix:''}" # tinyMCE doesn't load on non-root wagns w/o preinit line
     ]
-    card.have_recaptcha_keys?                        and varvals << "wagn.recaptchaKey='#{Card.config.recaptcha_public_key}'"
+    card.have_recaptcha_keys?                        and varvals << "wagn.recaptchaKey='#{CardRailtie.config.recaptcha_public_key}'"
     c=Card[:double_click] and !Card.toggle c.content and varvals << 'wagn.noDoubleClick=true'
     @css_path                                        and varvals << "wagn.cssPath='#{@css_path}'"
     

@@ -19,7 +19,7 @@ module Card::Location
     if rel_path =~ /^\//
       rel_path
     else
-      "#{ Card.config.relative_url_root }/#{ rel_path }"
+      "#{ CardRailtie.config.relative_url_root }/#{ rel_path }"
     end
   end
 

@@ -80,6 +80,7 @@ describe Card::Set::Type::Signup do
       
       result = @signup.update_attributes!({})
       expect(result).to eq(true)                 # successfully completes save
+      @account.reload
       expect(@account.token).not_to eq(@token)   # token gets updated
       success = Card::Env.params[:success]
       expect(success[:message]).to match(/expired/) # user notified of expired token

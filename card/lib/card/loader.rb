@@ -1,13 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency 'card/cache'
-require_dependency 'card/core_ext'
-require_dependency 'card/env'
-require_dependency 'card/name'
-require_dependency 'card/version'
-puts "loading card loader?\n"
-
 class Card
+  CARD_GEM_ROOT = File.expand_path('../../..', __FILE__)
 
   module Loader
     
@@ -42,11 +36,13 @@ class Card
     
       def mod_dirs
         @@mod_dirs ||= begin
-          mod_paths = Card.paths['gem-mod']
-          local_mod = Card.paths['local-mod'] and mod_paths += local_mod
-          mod_paths.existent.map do |dirname|
-            Dir.entries( dirname ).sort.map do |filename|
-              "#{dirname}/#{filename}" if filename !~ /^\./
+          mod_paths = [CardRailtie.paths['gem-mod']]
+          local_mod = CardRailtie.paths['local-mod'] and mod_paths += local_mod
+          mod_paths.map do |paths|
+            paths.existent.map do |dirname|
+              Dir.entries( dirname ).sort.map do |filename|
+                "#{dirname}/#{filename}" if filename !~ /^\./
+              end
             end
           end.flatten.compact
         end
@@ -56,7 +52,7 @@ class Card
         if rewrite_tmp_files?
           load_set_patterns_from_source
         end
-        load_dir "#{Card.paths['tmp/set_pattern'].first}/*.rb"
+        load_dir "#{CardRailtie.paths['tmp/set_pattern'].first}/*.rb"
       end
 
       def load_set_patterns_from_source
@@ -93,7 +89,7 @@ class Card
 
       def load_sets_by_pattern
         Card.set_patterns.reverse.map(&:pattern_code).each do |set_pattern|
-          pattern_tmp_dir = "#{Card.paths['tmp/set'].first}/#{set_pattern}"
+          pattern_tmp_dir = "#{CardRailtie.paths['tmp/set'].first}/#{set_pattern}"
           if rewrite_tmp_files?
             Dir.mkdir pattern_tmp_dir
             load_implicit_sets_from_source set_pattern
@@ -123,8 +119,8 @@ class Card
       end
 
       def load_libs_from_source
-        if rewrite_tmp_files? && Card.paths['tmp/lib']
-          lib_tmp_dir = Card.paths['tmp/lib'].first.to_s
+        if rewrite_tmp_files? && CardRailtie.paths['tmp/lib']
+          lib_tmp_dir = CardRailtie.paths['tmp/lib'].first.to_s
           prepare_tmp_dir 'tmp/lib'
           mod_dirs.each do |mod_dir|
             dirname = [mod_dir, 'lib/.'] * '/'
@@ -136,7 +132,7 @@ class Card
 
       def prepare_tmp_dir path
         if rewrite_tmp_files?
-          p = Card.paths[ path ]
+          p = CardRailtie.paths[ path ]
           if p.existent.first
             FileUtils.rm_rf p.first, :secure=>true
           end
@@ -148,7 +144,7 @@ class Card
         if defined?( @@rewrite )
           @@rewrite
         else
-          @@rewrite = !( Rails.env.production? and Card.paths['tmp/set'].existent.first )
+          @@rewrite = !( Rails.env.production? and CardRailtie.paths['tmp/set'].existent.first )
         end
       end
 
@@ -169,11 +165,11 @@ class Card
     end
 
     def gem_root # maybe just change to use this directly?
-      paths.path
+      CARD_GEM_ROOT
     end
 
     def delete_tmp_files id=nil
-      dir = Card.paths['files'].existent.first + '/tmp'
+      dir = CardRailtie.paths['files'].existent.first + '/tmp'
       dir += "/#{id}" if id
       FileUtils.rm_rf dir, :secure=>true
     rescue

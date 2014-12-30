@@ -2,7 +2,6 @@ def set_database( db )
   y = YAML.load_file("#{Wagn.root}/config/database.yml")
   y["development"]["database"] = db if y["development"]
   y["production"]["database"] = db if y["production"]
-  warn "set_database e:#{Rails.env}, #{y.inspect}"
 
   File.open( "#{Wagn.root}/config/database.yml", 'w' ) do |out|
     YAML.dump( y, out )
@@ -13,7 +12,7 @@ end
 
 namespace :test do
   # This needs to use bundle methods to find card gem root
-  CARD_GEM_ROOT = File.expand_path('../card/', Wagn.gem_root)
+  #CARD_GEM_ROOT = File.expand_path('../card/', Wagn.gem_root)
   task :all => :environment do
     puts 'This is not yet working; only first invocation takes effect'
     Rake::Task['test:functionals'].invoke
@@ -91,6 +90,7 @@ namespace :test do
 
   desc "create sample data for testing"
   task :populate_template_database => :environment do
+    puts "populate test data\n"
     load "#{CARD_GEM_ROOT}/test/seed.rb"
     SharedData.add_test_data
   end

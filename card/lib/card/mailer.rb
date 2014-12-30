@@ -5,7 +5,7 @@ require 'open-uri'
 class Card
   class Mailer < ActionMailer::Base
     
-    @@defaults = Card.config.email_defaults || {}
+    @@defaults = CardRailtie.config.email_defaults || {}
     @@defaults.symbolize_keys!
     @@defaults[:return_path] ||= @@defaults[:from] if @@defaults[:from]
     @@defaults[:charset] ||= 'utf-8'

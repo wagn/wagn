@@ -1,3 +1,5 @@
+require 'card/mailer'
+
 def clean_html?
   false
 end

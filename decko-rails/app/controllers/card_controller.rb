@@ -2,22 +2,13 @@
 
 require_dependency 'card'
 
-Decko.card_paths_and_config Card.paths
-
 require_dependency 'card/content'
-#require_dependency 'card/machine'
-#require_dependency 'card/machine_input'
-#require_dependency 'card/machine_output'
 require_dependency 'card/action'
 require_dependency 'card/act'
 require_dependency 'card/change'
-require_dependency 'card/chunk'
 require_dependency 'card/reference'
-require_dependency 'card/mailer'
 require_dependency 'decko/location'
 require_dependency 'decko/exceptions'
-
-Card::Loader.load_mods if Card.count > 0
 
 class CardController < ActionController::Base
 

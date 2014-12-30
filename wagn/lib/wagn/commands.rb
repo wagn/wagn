@@ -83,6 +83,7 @@ else
   when 'rspec'
     opts = {}
     require 'rspec/core'
+    require 'card_railtie'
     require 'decko/engine'
     parser = RSpec::Core::Parser.new.parser(opts)
     parser.banner = "Usage: wagn rspec [WAGN ARGS] -- [RSPEC ARGS]\n\nRSPEC ARGS"
@@ -97,7 +98,7 @@ WAGN ARGS
 WAGN
 
     parser.on('-d', '--spec FILENAME(:LINE)', 'Run spec for a Wagn deck file') do |file|
-      opts[:files] = find_spec_file( file, "#{Wagn.card_gem_root}/mod")
+      opts[:files] = find_spec_file( file, "#{Decko.gem_root}/mod")
     end
     parser.on('-c', '--core-spec FILENAME(:LINE)', 'Run spec for a Wagn core file') do |file|
       opts[:files] = find_spec_file( file, "#{Wagn.card_gem_root}" )

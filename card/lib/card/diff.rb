@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 module Card::Diff
   
   def self.complete a, b, opts={}

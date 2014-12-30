@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require 'card/location'
+require_dependency 'card/location'
 
 class Card
   class Format
@@ -14,7 +14,7 @@ class Card
       cattr_accessor acc
       self.send "#{acc}=", {}
     end
-    # TODO: these should come from Card.config
+    # TODO: these should come from CardRailtie.config
     @@max_char_count = 200
     @@max_depth      = 20
     

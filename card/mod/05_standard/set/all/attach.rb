@@ -1,4 +1,5 @@
 
+require 'RMagick'
 require 'paperclip'
 
 def attach_array
@@ -87,6 +88,12 @@ end
 
 def self.included(base)
   base.class_eval do
+    base.include Paperclip::Glue
+    Paperclip::Attachment.default_options[:use_timestamp] = false
+    # the need for this seems related to moving the initializer code here (line above comment)
+    # this isn't quite right, but without it, we see logging to STDOUT
+    Paperclip.options[:log] = false
+
     has_attached_file :attach, :preserve_files=>true,
       :default_url => "missing",
       :url => ":file_path/:basename-:size:action_id.:extension",
@@ -118,12 +125,12 @@ module Paperclip::Interpolations
       # generalize this to work with any mod (needs design)
       "#{Card.gem_root}/mod/#{mod}/file"
     else
-      Card.paths['files'].existent.first
+      CardRailtie.paths['files'].existent.first
     end
   end
       
   def file_path at, style_name
-    card_path Card.config.files_web_path
+    card_path CardRailtie.config.files_web_path
   end
 
   def card_id at, style_name

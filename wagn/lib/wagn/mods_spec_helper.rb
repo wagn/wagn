@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'spork'
+raise "is this loaded anywhere?"
 
 ENV["RAILS_ENV"] = 'test'
 
@@ -48,7 +49,7 @@ Spork.prefork do
 
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
-    
+
 
     config.before(:each) do
       Card::Auth.current_id = JOE_USER_ID

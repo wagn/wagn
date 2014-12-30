@@ -15,7 +15,7 @@ class Card
       def authenticate email, password
         accounted = Auth[ email ]
         if accounted and account = accounted.account and account.active?
-          if Card.config.no_authentication or password_authenticated?( account, password.strip )
+          if CardRailtie.config.no_authentication or password_authenticated?( account, password.strip )
             accounted.id
           end
         end

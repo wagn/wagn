@@ -17,7 +17,7 @@ def pending?  ; status=='pending' end
 def authenticate_by_token val
   tcard = token_card                               or return :token_not_found
   token == val                                     or return :incorrect_token
-  tcard.updated_at > Card.config.token_expiry.ago  or return :token_expired  # > means "after"
+  tcard.updated_at > CardRailtie.config.token_expiry.ago  or return :token_expired  # > means "after"
   left and left.accountable?                       or return :illegal_account  #(overkill?)
   Auth.as_bot { tcard.delete! }
   left.id
@@ -30,7 +30,7 @@ format do
   end
 
   view :verify_days do |args|
-    ( Card.config.token_expiry / 1.day ).to_s
+    ( CardRailtie.config.token_expiry / 1.day ).to_s
   end
 
   view :reset_password_url do |args|
@@ -38,7 +38,7 @@ format do
   end
 
   view :reset_password_days do |args|
-    ( Card.config.token_expiry / 1.day ).to_s
+    ( CardRailtie.config.token_expiry / 1.day ).to_s
   end
 end
 

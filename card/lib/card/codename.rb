@@ -1,4 +1,6 @@
 # -*- encoding : utf-8 -*-
+require_dependency 'card/cache'
+require_dependency 'card/name'
 
 class Card
   class Codename

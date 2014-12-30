@@ -3,11 +3,6 @@ require 'timecop'
 
 require_dependency 'card'
 
-# following looks like legacy code to me - efm
-#Dir["#{Rails.root}/app/models/card/*.rb"].sort.each do |cardtype|
-#  require_dependency cardtype
-#end
-
 class SharedData
 
   def self.account_args hash
@@ -26,6 +21,8 @@ class SharedData
 
     Card['Joe Admin'].fetch(:trait=>:roles, :new=>{}).items = [ Card::AdministratorID ]
 
+    Card.create! :name=>'signup alert email+*to', :content=>'signups@wagn.org'
+
     # generic, shared attribute card
     color = Card.create! :name=>"color"
     basic = Card.create! :name=>"Basic Card"
@@ -41,11 +38,14 @@ class SharedData
 
     Card.create! :type_id=>Card::SignupID, :name=>"Sample Signup" #, :email=>"invitation@request.com"
     #above still necessary?  try commenting out above and 'Sign up' below
+    Card::Auth.current_id = Card::WagnBotID # need to reset after creating sign up, which changes current_id for extend phase
 
     Card::Auth.createable_types.each do |type|
       next if ['User', 'Sign up', 'Set', 'Number'].include? type
       Card.create! :type=>type, :name=>"Sample #{type}"
     end
+
+
 
     # data for role_test.rb
 
@@ -127,18 +127,19 @@ class SharedData
 
       Card.create! :name=>"John", :type_code=>'user', :subcards=>account_args('+*email'=>'john@user.com', '+*password'=>'john_pass')
       Card.create! :name=>"Sara", :type_code=>'user', :subcards=>account_args('+*email'=>'sara@user.com', '+*password'=>'sara_pass')
-
-      Card.create! :name => "Sara Watching+*watchers",  :content => "[[Sara]]"
-      Card.create! :name => "All Eyes On Me+*watchers", :content => "[[Sara]]\n[[John]]"
-      Card.create! :name => "John Watching", :content => "{{+her}}"
-      Card.create! :name => "John Watching+*watchers",  :content => "[[John]]"
-      Card.create! :name => "John Watching+her"
+      
+      Card.create! :name => "All Eyes On Me"
       Card.create! :name => "No One Sees Me"
-
+      Card.create! :name => "Sara Following"
+      Card.create! :name => "John Following", :content => "{{+her}}"
+      Card.create! :name => "John Following+her"
       Card.create! :name => "Optic", :type => "Cardtype"
-      Card.create! :name => "Optic+*watchers", :content => "[[Sara]]"
       Card.create! :name => "Sunglasses", :type=>"Optic", :content=>"{{+tint}}"
       Card.create! :name => "Sunglasses+tint"
+      Card.create! :name => "Google glass", :type=>"Optic"
+      
+      Card.create! :name => "Sara+*following",  :content => "[[Sara Following]]\n[[All Eyes On Me]]\n[[Optic]]\n[Google glass]"
+      Card.create! :name => "John+*following",  :content => "[[John Following]]\n[[All Eyes On Me]]"      
     end
 
 
@@ -160,6 +161,10 @@ class SharedData
     Card.create! :name=>'TwwoHeading', :content => "<h1>One Heading</h1>\r\n<p>and some text</p>\r\n<h2>And a Subheading</h2>\r\n<p>and more text</p>"
     Card.create! :name=>'ThreeHeading', :content =>"<h1>A Heading</h1>\r\n<p>and text</p>\r\n<h2>And Subhead</h2>\r\n<p>text</p>\r\n<h1>And another top Heading</h1>"
 
+    # -------- For history testing: -----------
+    first = Card.create! :name=>"First", :content => 'egg'
+    first.update_attributes! :content=> 'chicken'
+    first.update_attributes! :content=> 'chick'
 
   end
 end

@@ -4,10 +4,21 @@ Thank you!
 In coming months we plan to work to make the process of contributing and entering the Wagn developer community as rewarding an experience as possible.  In the meantime, please be vocal about any way we can help.
 
 ==Basics
-1. The Wagn team makes heavy use of {GitHub's pull request system}[https://help.github.com/articles/using-pull-requests].  If you're not familiar with pull requests, that's the best place to start.
-2. Please make all pull requests to the wagn:develop branch.
+The Wagn team makes heavy use of {GitHub's pull request system}[https://help.github.com/articles/using-pull-requests].  If you're not familiar with pull requests, that's the best place to start.
 
 A great pull request is:
 * small - so the team can review changes incrementally
 * tested - including automatic tests that would fail without its changes
 * explained - with a clear title and comments
+
+==Developing Mods
+Mods (short for modules, modifications, modicums, modesty, whatever...) are the main mechanism for extending Wagn behaviors, and they're a great place to start learning how to contribute.
+
+Documentation is still sparse, but you can get a sense for how to start by reading lib/card/set.rb.
+
+To install in a mod-developer friendly mode, try `wagn new mydeckname --mod-dev` (still uses standard gem installation).
+
+==Developing the Core
+If you're interested in working on the Wagn gem, you'll need to clone a copy of the wagn code from the Github repository.  If, for example, you clone it in /opt/wagn, you can then use the gem by adding `gem 'wagn', :path=>'/opt/wagn'` to your Gemfile.  
+
+To install in a core-developer friendly mode, try `wagn new mydeckname --core-dev`.  Doing so will let you run all core specs using `wagn rspec`.

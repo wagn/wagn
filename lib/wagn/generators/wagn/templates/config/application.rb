@@ -13,7 +13,18 @@ module <%= app_const_base %>
     #
     # IMPORTANT: please be sure to register for your own recaptcha keys before deploying a live site
     # It's quick and easy.  Just follow instructions at https://www.google.com/recaptcha/admin/create
-    #
+  
+    
+    # Email configuration
+    config.action_mailer.perform_deliveries = false
+    # config.action_mailer.delivery_method  = ...
+    # config.action_mailer.smtp_settings    = ...
+    
+    # Example configuration for mailcatcher, a simple smtp server. 
+    # See http://mailcatcher.me for more information
+    # config.action_mailer.delivery_method = :smtp
+    # config.action_mailer.smtp_settings = { :address => "localhost", :port => 1025 }
+    
     # The below keys are fine for testing but should not be used in production sites.
         
     # config.read_only = true
@@ -30,7 +41,7 @@ module <%= app_const_base %>
     # config.paths['files'] = 'files'
     # where uploaded files are actually stored. (eg Image and File cards)
 
-    # config.paths['local-mods'] = 'mods'
+    # config.paths['local-mod'] = 'mod'
     # where mods are stored
 
     # config.allow_inline_styles = false
@@ -41,7 +52,5 @@ module <%= app_const_base %>
 
     # config.override_protocol = nil
     # don't autodetect protocol (http/https) from web requests
-    
-
   end
 end

@@ -59,6 +59,14 @@ module Wagn
         Card.delete_tmp_files
       end
 
+      def reset_local
+        cache_by_class.each do |cc, cache|
+          if Wagn::Cache===cache
+            cache.reset_local
+          else warn "reset class #{cc}, #{cache.class} #{caller[0..8]*"\n"} ???" end
+        end
+      end
+
       private
 
       def prepopulate
@@ -71,13 +79,6 @@ module Wagn
       end
 
 
-      def reset_local
-        cache_by_class.each do |cc, cache|
-          if Wagn::Cache===cache
-            cache.reset_local
-          else warn "reset class #{cc}, #{cache.class} #{caller[0..8]*"\n"} ???" end
-        end
-      end
 
     end
 
@@ -117,6 +118,15 @@ module Wagn
     
     def read_local key
       @local[key]
+    end
+    
+    def write_variable key, variable, value
+      key = @prefix + key
+      if @store and object = @store.read(key)
+        object.instance_variable_set "@#{ variable }", value
+        @store.write key, object
+      end
+      value
     end
 
     def write key, value

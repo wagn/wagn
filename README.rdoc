@@ -35,7 +35,7 @@ Edit the config/database.yml file as necessary. More about database configuratio
 Then run
 
   cd mysite
-  rake wagn:create
+  wagn seed
   
 ..to create and seed the database
 
@@ -68,10 +68,8 @@ From your wagn root directory run:
 
 Run the following:
 
-  rake wagn:migrate
+  wagn update
   
-As with all rake commands, you can try prefacing with "bundle exec" if you encounter gem problems.
-
 ====4. Restart your server.
 
 ===Upgrading pre-gem Wagn sites
@@ -82,7 +80,7 @@ First check the Wagn version of your existing site.
 
 1. Create a new Wagn app using steps 1 and 2 from the installation section above.
 2. Copy config/database.yml from the old site to the new one.
-3. Copy the old local/files contents to the new files directory.
+3. Copy the old local/files contents to the new "files" directory.
 4. If you have edited wagn.yml in your old site, make the corresponding changes to the new config/application.rb file.
 5. Follow the standard upgrade procedure above.
 

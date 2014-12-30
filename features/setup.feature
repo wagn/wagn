@@ -15,10 +15,10 @@ Feature: Setting up
     When I fill in "card_name" with "The Newber"
     And I enter "newb@wagn.org" into "*email"
     And I enter "newb_pass" into "*password"
-    And I press "Submit"
+    And I press "Set up"
     Then I should see "The Newber"
     
-    When I go to card "The Newber\+\*roles"
+    When I go to card "The Newber+*roles"
     Then I should see "Administrator"
 
     When I follow "Sign out"

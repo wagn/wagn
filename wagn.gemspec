@@ -25,21 +25,25 @@ Gem::Specification.new do |s|
 
   [
     
-    [ 'rails',        '3.2.16'    ],
-    [ 'smartname',    '0.2.3'     ],
+    [ 'rails',        '3.2.16'  ],
+    [ 'smartname',    '0.2.3'   ],
+
+    [ 'uuid',         '~> 2.3'  ],
+    [ 'paperclip',    '~> 2.8'  ],
+    [ 'htmlentities', '~> 4.3'  ],
+    [ 'rmagick',      '~> 2.13' ],
+    [ 'recaptcha',    '~> 0.3'  ],                                  
+    [ 'coderay',      '~> 1.0'  ],
+    [ 'sass',         '~> 3.2'  ],
+    [ 'coffee-script','~> 2.2'  ],
+    [ 'uglifier',     '~> 2.5'  ],
     
-    [ 'uuid',         '~> 2.3'    ],
-    [ 'paperclip',    '~> 2.8'    ],
-    [ 'htmlentities', '~> 4.3'    ],
-    [ 'rmagick',      '~> 2.13'   ],
-    [ 'recaptcha',    '~> 0.3'    ],                                  
-    [ 'coderay',      '~> 1.0'    ],
-    [ 'sass',         '~> 3.2'    ],
-    [ 'coffee-script','~> 2.2'    ],
-    [ 'uglifier',     '~> 2.5'    ],
-    
+    [ 'haml',         '~> 4.0'  ],
+    [ 'kaminari',     '~> 0.16' ],
+    [ 'diffy',        '~> 3.0'  ],
+    [ 'diff-lcs',     '~> 1.2'  ],
     # should not depend!
-    [ 'airbrake',     '~> 3.1'    ] 
+    [ 'airbrake',     '~> 4.1'  ] 
 
     
   ].each do |dep|

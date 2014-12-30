@@ -2,14 +2,24 @@
 require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
+
+require File.expand_path( '../../lib/wagn/simplecov_helper.rb', __FILE__ )
 require 'simplecov'
-require File.expand_path( '../../spec/mods/standard/lib/machine_spec.rb', __FILE__ )
-require File.expand_path( '../../spec/mods/standard/lib/machine_input_spec.rb', __FILE__ )
+require 'timecop'
+require File.expand_path( '../../mod/03_machines/spec/lib/machine_spec.rb', __FILE__ )
+require File.expand_path( '../../mod/03_machines/spec/lib/machine_input_spec.rb', __FILE__ )
+
+
 
 Spork.prefork do
-  require File.expand_path( '../../config/environment', __FILE__ )
-  require 'rspec/rails'
+  if ENV["RAILS_ROOT"]
+    require File.join( ENV["RAILS_ROOT"], '/config/environment')
+  else
+    require File.expand_path( '../../config/environment', __FILE__ )
+  end
   
+  require 'rspec/rails'
+  require File.expand_path( '../../lib/wagn/spec_helper.rb', __FILE__ )
   
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
@@ -17,30 +27,36 @@ Spork.prefork do
 
 #  FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   JOE_USER_ID = Card['joe_user'].id
-
   RSpec.configure do |config|
 
-    config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => {
+    config.include RSpec::Rails::Matchers::RoutingMatchers,  {
       :file_path => /\bspec\/controllers\//
     }
 
-    format_index = ARGV.find_index {|arg| arg =~ /--format/ }
-    formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation'
-    config.add_formatter formatter
+    # format_index = ARGV.find_index {|arg| arg =~ /--format|-f/ }
+    # formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation' #'textmate'
+    # config.default_formatter=formatter
     
+    config.infer_spec_type_from_file_location!
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers
 
     # == Mock Framework
     # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:
     # :mocha, :flexmock, :rr
-
+    #require 'wagn-rspec-formatter'
     config.mock_with :rr
 
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
     
-
+    config.mock_with :rspec do |mocks|
+       mocks.syntax = [:should, :expect]
+       mocks.verify_partial_doubles = true
+     end
+    config.expect_with :rspec do |c|
+      c.syntax = [:should, :expect]
+    end
     config.before(:each) do
       Card::Auth.current_id = JOE_USER_ID
       Wagn::Cache.restore
@@ -52,64 +68,27 @@ Spork.prefork do
   end
 end
 
+Card['*all+*style' ].ensure_machine_output
+Card['*all+*script'].ensure_machine_output
+
 
 Spork.each_run do
 
   # This code will be run each time you run your specs.
 end
 
-module Wagn::SpecHelper
-
-  include ActionDispatch::Assertions::SelectorAssertions
-  #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
-  
-  def login_as user
-    Card::Auth.current_id = (uc=Card[user.to_s] and uc.id)
-    if @request
-      @request.session[:user] = Card::Auth.current_id
-    end
-    #warn "(ath)login_as #{user.inspect}, #{Card::Auth.current_id}, #{@request.session[:user]}"
-  end
-  
-  def newcard name, content=""
-    #FIXME - misleading name; sounds like it doesn't save.
-    Card.create! :name=>name, :content=>content
-  end
-
-  def assert_view_select(view_html, *args, &block)
-    node = HTML::Document.new(view_html).root
-    if block_given?
-      assert_select node, *args, &block
-    else
-      assert_select node, *args
-    end
-  end
-
-  def render_editor(type)
-    card = Card.create(:name=>"my favority #{type} + #{rand(4)}", :type=>type)
-    card.format.render(:edit)
-  end
-
-  def render_content content, format_args={}
-    @card ||= Card.new :name=>"Tempo Rary 2"
-    @card.content = content
-    @card.format(format_args)._render :core
-  end
-
-  def render_card view, card_args={}, format_args={}
-    card = begin
-      if card_args[:name]
-        Card.fetch card_args[:name], :new=>card_args
-      else
-        Card.new card_args.merge( :name=> 'Tempo Rary' )
-      end
-    end
-    card.format(format_args)._render(view)
-  end
-end
-
 
 class Card
+  def self.create_or_update! name, args={}
+    Card::Auth.as_bot do
+      if c = Card.fetch(name)
+        c.update_attributes!(args)
+      else
+        Card.create! args.merge({:name=>name})
+      end
+    end
+  end
+  
   def self.gimme! name, args = {}
     Card::Auth.as_bot do
       c = Card.fetch( name, :new => args )
@@ -141,4 +120,10 @@ class Card
 end
 
 RSpec::Core::ExampleGroup.send :include, Wagn::SpecHelper
+
+class ActiveSupport::BufferedLogger
+  def rspec msg
+    Thread.current['logger-output'] << msg
+  end
+end
 

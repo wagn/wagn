@@ -3,43 +3,43 @@
 describe CardController do
 
   include Wagn::Location
-
+  include Capybara::DSL
   describe "- route generation" do
 
     it "should recognize type" do
-      { :get => "/new/Phrase" }.should route_to( :controller => 'card', :action=>'read', :type=>'Phrase', :view=>'new' )
+      expect({ :get => "/new/Phrase" }).to route_to( :controller => 'card', :action=>'read', :type=>'Phrase', :view=>'new' )
     end
 
     it "should recognize .rss on /recent" do
-      {:get => "/recent.rss"}.should route_to(:controller=>"card", :action=>"read", :id=>":recent", :format=>"rss")
+      expect({:get => "/recent.rss"}).to route_to(:controller=>"card", :action=>"read", :id=>":recent", :format=>"rss")
     end
 
     it "should handle RESTful posts" do
-      { :put => '/mycard' }.should route_to( :controller=>'card', :action=>'update', :id=>'mycard')
-      { :put => '/' }.should route_to( :controller=>'card', :action=>'update')
+      expect({ :put => '/mycard' }).to route_to( :controller=>'card', :action=>'update', :id=>'mycard')
+      expect({ :put => '/' }).to route_to( :controller=>'card', :action=>'update')
       
     end
 
     it "handle asset requests" do
-       { :get => "/asset/application.js" }.should route_to( :controller => 'card',:action=>'asset', :id => 'application', :format=> 'js' )
+       expect({ :get => "/asset/application.js" }).to route_to( :controller => 'card',:action=>'asset', :id => 'application', :format=> 'js' )
     end
 
     ["/wagn",""].each do |prefix|
       describe "routes prefixed with '#{prefix}'" do
         it "should recognize .rss format" do
-          {:get => "#{prefix}/*recent.rss"}.should route_to(
+          expect({:get => "#{prefix}/*recent.rss"}).to route_to(
             :controller=>"card", :action=>"read", :id=>"*recent", :format=>"rss"
           )
         end
 
         it "should recognize .xml format" do
-          {:get => "#{prefix}/*recent.xml"}.should route_to(
+          expect({:get => "#{prefix}/*recent.xml"}).to route_to(
             :controller=>"card", :action=>"read", :id=>"*recent", :format=>"xml"
           )
         end
 
         it "should accept cards without dots" do
-          {:get => "#{prefix}/random"}.should route_to(
+          expect({:get => "#{prefix}/random"}).to route_to(
             :controller=>"card",:action=>"read",:id=>"random"
           )
         end
@@ -65,8 +65,8 @@ describe CardController do
       }
       assert_response 302
       c=Card["NewCardFoo"]
-      c.type_code.should == :basic
-      c.content.should == "Bananas"
+      expect(c.type_code).to eq(:basic)
+      expect(c.content).to eq("Bananas")
     end
 
     it "handles permission denials" do
@@ -75,16 +75,16 @@ describe CardController do
         :type => 'Html'
       }
       assert_response 403
-      Card['LackPerms'].should be_nil
+      expect(Card['LackPerms']).to be_nil
     end
 
     # no controller-specific handling.  move test elsewhere
     it "creates cardtype cards" do
       xhr :post, :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
-      assigns['card'].should_not be_nil
+      expect(assigns['card']).not_to be_nil
       assert_response 200
       c=Card["Editor"]
-      c.type_code.should == :cardtype
+      expect(c.type_code).to eq(:cardtype)
     end
 
     # no controller-specific handling.  move test elsewhere
@@ -94,7 +94,7 @@ describe CardController do
       post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
       assert_response 302
       c=Card["Problem"]
-      c.type_code.should == :phrase
+      expect(c.type_code).to eq(:phrase)
     end
 
     
@@ -107,7 +107,7 @@ describe CardController do
             "subcards"=>{"+text"=>{"content"=>"<p>abraid</p>"}}
           }, "view"=>"open"
         assert_response 422
-        assigns['card'].errors[:name].first.should == "can't be blank"
+        expect(assigns['card'].errors[:name].first).to eq("can't be blank")
       end
 
       it "creates card with subcards" do
@@ -121,9 +121,9 @@ describe CardController do
           }
         }
         assert_response 200
-        Card["Gala"].should_not be_nil
-        Card["Gala+kind"].content.should == 'apple'
-        Card["Gala+color"].type_name.should == 'Phrase'
+        expect(Card["Gala"]).not_to be_nil
+        expect(Card["Gala+kind"].content).to eq('apple')
+        expect(Card["Gala+color"].type_name).to eq('Phrase')
       end
     end
 
@@ -137,7 +137,7 @@ describe CardController do
       xhr :post, :create, :success => 'REDIRECT: /thank_you', :card => { "name" => "Wombly" }
       assert_response 200
       json = JSON.parse response.body
-      json['redirect'].should =~ /^http.*\/thank_you$/
+      expect(json['redirect']).to match(/^http.*\/thank_you$/)
     end
 
     it "redirects to card if thanks is blank" do
@@ -157,11 +157,11 @@ describe CardController do
   describe "#read" do
     it "works for basic request" do
       get :read, {:id=>'Sample_Basic'}
-      response.body.match(/\<body[^>]*\>/im).should be_true
+      expect(response.body.match(/\<body[^>]*\>/im)).to be_truthy
       # have_selector broke in commit 8d3bf2380eb8197410e962304c5e640fced684b9, presumably because of a gem (like capybara?)
       #response.should have_selector('body')
       assert_response :success
-      'Sample Basic'.should == assigns['card'].name
+      expect('Sample Basic').to eq(assigns['card'].name)
     end
 
 
@@ -180,7 +180,7 @@ describe CardController do
       get :read, {:id=>'~9999999'}
       assert_response 404
     end
-    
+
     it "returns denial when no read permission" do
       Card::Auth.as_bot do
         Card.create! :name=>'Strawberry', :type=>'Fruit' #only admin can read
@@ -199,7 +199,7 @@ describe CardController do
 
       it "should work on index" do
         get :read, :view=>'new'
-        assigns['card'].name.should == ''
+        expect(assigns['card'].name).to eq('')
         assert_response :success, "response should succeed"
         assert_equal Card::BasicID, assigns['card'].type_id, "@card type should == Basic"
       end
@@ -229,7 +229,7 @@ describe CardController do
       
       it "should use card params name over id in new cards" do
         get :read, :id=>'my_life', :card=>{:name =>'My LIFE'}, :view=>'new'
-        assigns['card'].name.should == 'My LIFE'
+        expect(assigns['card'].name).to eq('My LIFE')
       end
       
     end
@@ -239,17 +239,14 @@ describe CardController do
     context 'css' do
       before do
         @all_style = Card[ "#{ Card[:all].name }+#{ Card[:style].name }" ]
-        @all_style.update_machine_output
-        Card::Auth.as_bot do
-          @all_style.fetch(:trait => :machine_output).delete!
-        end
+        @all_style.reset_machine_output!
       end
       
       it 'should create missing machine output file' do
         args = { :id=>@all_style.machine_output_card.name, :format=>'css', :explicit_file=>true }
         get :read, args
         output_card = Card[ "#{ Card[:all].name }+#{ Card[:style].name }+#{ Card[:machine_output].name}" ]
-        expect(response).to redirect_to( "#{ wagn_path output_card.attach.url }" )
+        expect(response).to redirect_to( @all_style.machine_output_url )
         get :read, args
         expect(response.status).to eq(200)
       end
@@ -287,8 +284,9 @@ describe CardController do
       filename = "asset-test.txt"
       args = { :id=>filename, :format=>'txt', :explicit_file=>true }
       path = File.join( Wagn.paths['gem-assets'].existent.first, filename)
-      File.open(path, "w") { |f| f.puts "test" } 
-      visit "assets/#{filename}"
+      File.open(path, "w") { |f| f.puts "test" }
+      args = { :filename => "#{filename}" }
+      visit "/assets/#{filename}"
       expect(page.body).to eq ("test\n")
       FileUtils.rm path
     end
@@ -310,7 +308,7 @@ describe CardController do
     describe "#update" do
       it "works" do
         xhr :post, :update, { :id=>"~#{@simple_card.id}",
-          :card=>{:current_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }}
+          :card=>{:content=>'brand new content' }}
         assert_response :success, "edited card"
         assert_equal 'brand new content', Card['Sample Basic'].content, "content was updated"
       end
@@ -321,15 +319,15 @@ describe CardController do
           :name => "Newt",
           :update_referencers => "false",
         }
-        assigns['card'].errors.empty?.should_not be_nil
+        expect(assigns['card'].errors.empty?).not_to be_nil
         assert_response :success
-        Card["Newt"].should_not be_nil
+        expect(Card["Newt"]).not_to be_nil
       end
 
       it "update type_code" do
         xhr :post, :update, :id=>"~#{@simple_card.id}", :card=>{ :type=>"Date" }
         assert_response :success, "changed card type"
-        Card['Sample Basic'].type_code.should == :date
+        expect(Card['Sample Basic'].type_code).to eq(:date)
       end
     end
 
@@ -339,7 +337,7 @@ describe CardController do
       c = Card.create( :name=>"Boo", :content=>"booya")
       post :delete, :id=>"~#{c.id}"
       assert_response :redirect
-      Card["Boo"].should == nil
+      expect(Card["Boo"]).to eq(nil)
     end
 
     it "should comment" do
@@ -348,22 +346,9 @@ describe CardController do
       end
       post :update, :id=>'basicname', :card=>{:comment => " and more\n  \nsome lines\n\n"}
       cont = Card['basicname'].content
-      cont.should =~ /basiccontent/
-      cont.should =~ /some lines/
+      expect(cont).to match(/basiccontent/)
+      expect(cont).to match(/some lines/)
     end
-
-    it "should watch" do
-      login_as('joe_user')
-      post :watch, :id=>"Home", :toggle=>'on'
-      assert c=Card["Home+*watchers"]
-      c.content.should == "[[Joe User]]"
-
-      post :watch, :id=>"Home", :toggle=>'off'
-      assert c=Card["Home+*watchers"]
-      c.content.should == ''
-    end
-
-
 
   end
 end

@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 ENV['RAILS_ENV'] = "cucumber"
 
+require File.expand_path( '../../../lib/wagn/simplecov_helper.rb', __FILE__ )
 require 'simplecov'
 
 

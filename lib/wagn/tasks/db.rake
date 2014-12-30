@@ -7,6 +7,7 @@ require 'rake'
 unless Rake::TaskManager.methods.include?(:redefine_task)
   module Rake
     module TaskManager
+
       def redefine_task(task_class, args, &block)
         task_name, arg_names, deps = resolve_args(args)
         task_name = task_class.scope_name(@scope, task_name)
@@ -29,6 +30,7 @@ unless Rake::TaskManager.methods.include?(:redefine_task)
   end
 end
 
+
 namespace :db do  
   namespace :fixtures do
     desc "Load fixtures into the current environment's database.  Load specific fixtures using FIXTURES=x,y"
@@ -36,11 +38,11 @@ namespace :db do
       require 'active_record/fixtures'
       ActiveRecord::Base.establish_connection(::Rails.env.to_sym)
       (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(Wagn.gem_root.to_s, 'test', 'fixtures', '*.{yml,csv}'))).each do |fixture_file|
-        ActiveRecord::Fixtures.create_fixtures('test/fixtures', File.basename(fixture_file, '.*'))
+        ActiveRecord::Fixtures.create_fixtures(File.join(Wagn.gem_root.to_s, 'test', 'fixtures'), File.basename(fixture_file, '.*'))
       end
     end
   end
-    
+
   namespace :test do
     desc 'Prepare the test database and load the schema'
     Rake::Task.redefine_task( :prepare => :environment ) do
@@ -52,3 +54,6 @@ namespace :db do
     end
   end
 end
+
+
+

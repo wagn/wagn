@@ -14,13 +14,13 @@ class Card
       
       def load_chunks
         mod_dirs.each do |mod|
-          load_dir "#{mod}/chunks/*.rb"
+          load_dir "#{mod}/chunk/*.rb"
         end
       end
             
       def load_layouts
         mod_dirs.inject({}) do |hash, mod|
-          dirname = "#{mod}/layouts"
+          dirname = "#{mod}/layout"
           if File.exists? dirname
             Dir.foreach( dirname ) do |filename|
               next if filename =~ /^\./
@@ -35,7 +35,7 @@ class Card
     
       def mod_dirs
         @@mod_dirs ||= begin
-          (Wagn.paths['gem-mods'].existent + Wagn.paths['local-mods'].existent).map do |dirname|
+          (Wagn.paths['gem-mod'].existent + Wagn.paths['local-mod'].existent).map do |dirname|
             Dir.entries( dirname ).sort.map do |filename|
               "#{dirname}/#{filename}" if filename !~ /^\./
             end
@@ -47,14 +47,14 @@ class Card
         if rewrite_tmp_files?
           load_set_patterns_from_source
         end
-        load_dir "#{Wagn.paths['tmp/set_patterns'].first}/*.rb"
+        load_dir "#{Wagn.paths['tmp/set_pattern'].first}/*.rb"
       end
 
       def load_set_patterns_from_source
-        prepare_tmp_dir 'tmp/set_patterns'
+        prepare_tmp_dir 'tmp/set_pattern'
         seq = 100
         mod_dirs.each do |mod|
-          dirname = "#{mod}/set_patterns"
+          dirname = "#{mod}/set_pattern"
           if Dir.exists? dirname
             Dir.entries( dirname ).sort.each do |filename|
               if m = filename.match( /^(\d+_)?([^\.]*).rb/) and key = m[2]
@@ -70,12 +70,12 @@ class Card
       def load_formats
         #cheating on load issues now by putting all inherited-from formats in core mod.
         mod_dirs.each do |mod|
-          load_dir "#{mod}/formats/*.rb"
+          load_dir "#{mod}/format/*.rb"
         end
       end
 
       def load_sets
-        prepare_tmp_dir 'tmp/sets'
+        prepare_tmp_dir 'tmp/set'
         load_sets_by_pattern
         Set.process_base_modules 
         Set.clean_empty_modules
@@ -83,8 +83,8 @@ class Card
 
 
       def load_sets_by_pattern
-        Card.set_patterns.reverse.map(&:key).each do |set_pattern|
-          pattern_tmp_dir = "#{Wagn.paths['tmp/sets'].first}/#{set_pattern}"
+        Card.set_patterns.reverse.map(&:pattern_code).each do |set_pattern|
+          pattern_tmp_dir = "#{Wagn.paths['tmp/set'].first}/#{set_pattern}"
           if rewrite_tmp_files?
             Dir.mkdir pattern_tmp_dir
             load_implicit_sets_from_source set_pattern
@@ -98,7 +98,7 @@ class Card
       def load_implicit_sets_from_source set_pattern
         seq = 1000
         mod_dirs.each do |mod_dir|
-          dirname = [mod_dir, 'sets', set_pattern] * '/'
+          dirname = [mod_dir, 'set', set_pattern] * '/'
           next unless File.exists?( dirname )
 
           #FIXME support multiple anchors!
@@ -129,7 +129,7 @@ class Card
         if defined?( @@rewrite )
           @@rewrite
         else
-          @@rewrite = !( Rails.env.production? and Wagn.paths['tmp/sets'].existent.first )
+          @@rewrite = !( Rails.env.production? and Wagn.paths['tmp/set'].existent.first )
         end
       end
 

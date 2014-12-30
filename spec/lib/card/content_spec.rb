@@ -123,7 +123,7 @@ describe Card::Content do
           wrong_class = m[0] != v.class
           is_last = m.size == 1
           #warn "check M[#{is_last}]:#{wrong_class}, #{m[0]}, V#{v.inspect}" if wrong_class || is_last
-          wrong_class.should be_false
+          expect(wrong_class).to be_falsey
           wrong_class ? false : ( is_last ? true : m[1..-1] )
         else false end
       end
@@ -141,7 +141,7 @@ describe Card::Content do
         # note the mixed [} that are considered matching, needs some cleanup ...
         #warn "cont? #{CONTENT[:one].inspect}"
         cobj = Card::Content.new CONTENT[:one], @card
-        cobj.inject(CLASSES[:one], &@check_proc).should == true
+        expect(cobj.inject(CLASSES[:one], &@check_proc)).to eq(true)
       end
 
       it "should give just the chunks" do
@@ -149,76 +149,76 @@ describe Card::Content do
         clist = CLASSES[:one].find_all {|c| String != c }
         #warn "clist #{clist.inspect}"
         cobj.each_chunk do |chk|
-          chk.should be_instance_of clist.shift
+          expect(chk).to be_instance_of clist.shift
         end
-        clist.should be_empty
+        expect(clist).to be_empty
       end
 
       it "should find all the chunks links and trasclusions" do
         cobj = Card::Content.new CONTENT[:two], @card
-        cobj.inject(CLASSES[:two], &@check_proc).should == true
+        expect(cobj.inject(CLASSES[:two], &@check_proc)).to eq(true)
       end
 
       it "should find uri chunks " do
         # tried some tougher cases that failed, don't know the spec, so hard to form better tests for URIs here
         cobj = Card::Content.new CONTENT[:three], @card
-        cobj.inject(CLASSES[:three], &@check_proc).should == true
+        expect(cobj.inject(CLASSES[:three], &@check_proc)).to eq(true)
         clist = CLASSES[:three].find_all {|c| String != c }
         #warn "clist #{clist.inspect}, #{cobj.inspect}"
         cobj.each_chunk do |chk|
-          chk.should be_instance_of clist.shift
+          expect(chk).to be_instance_of clist.shift
         end
-        clist.should be_empty
+        expect(clist).to be_empty
       end
 
       it "should find uri chunks (b)" do
         # tried some tougher cases that failed, don't know the spec, so hard to form better tests for URIs here
         cobj = Card::Content.new CONTENT[:three_b], @card
         #warn "cobj #{cobj.inspect} #{CLASSES[:three_b].inspect}"
-        cobj.inject(CLASSES[:three_b], &@check_proc).should == true
+        expect(cobj.inject(CLASSES[:three_b], &@check_proc)).to eq(true)
         clist = CLASSES[:three_b].find_all {|c| String != c }
         #warn "clist #{clist.inspect}, #{cobj.inspect}"
         cobj.each_chunk do |chk|
-          chk.should be_instance_of clist.shift
+          expect(chk).to be_instance_of clist.shift
         end
-        clist.should be_empty
+        expect(clist).to be_empty
       end
 
       it "should parse just a string" do
         cobj = Card::Content.new CONTENT[:four], @card
-        cobj.should == RENDERED[:four]
+        expect(cobj).to eq(RENDERED[:four])
       end
 
       it "should parse a single chunk" do
         cobj = Card::Content.new CONTENT[:five], @card
-        cobj.inject(CLASSES[:five], &@check_proc).should == true
+        expect(cobj.inject(CLASSES[:five], &@check_proc)).to eq(true)
         clist = CLASSES[:five].find_all {|c| String != c }
         cobj.each_chunk do |chk|
-          chk.should be_instance_of clist.shift
+          expect(chk).to be_instance_of clist.shift
         end
-        clist.should be_empty
+        expect(clist).to be_empty
       end
     
       it "should leave css alone" do
         cobj = Card::Content.new CONTENT[:six], @card
-        cobj.should == CONTENT[:six]
+        expect(cobj).to eq(CONTENT[:six])
       end
     end
 
     describe "render" do
       it "should render all includes" do
         cobj = Card::Content.new CONTENT[:one], @card
-        cobj.as_json.to_s.should match /not rendered/
+        expect(cobj.as_json.to_s).to match /not rendered/
         cobj.process_content_object &@render_block
-        (rdr=cobj.as_json.to_json).should_not match /not rendered/
-        rdr.should == RENDERED[:one].to_json
+        expect(rdr=cobj.as_json.to_json).not_to match /not rendered/
+        expect(rdr).to eq(RENDERED[:one].to_json)
       end
 
       it "should render links and inclusions" do
         cobj = Card::Content.new CONTENT[:two], @card
         cobj.process_content_object &@render_block
-        (rdr=cobj.as_json.to_json).should_not match /not rendered/
-        rdr.should == RENDERED[:two].to_json
+        expect(rdr=cobj.as_json.to_json).not_to match /not rendered/
+        expect(rdr).to eq(RENDERED[:two].to_json)
       end
 
       it "should not need rendering if no inclusions" do
@@ -226,15 +226,15 @@ describe Card::Content do
   #      (rdr=cobj.as_json.to_json).should match /not rendered/ # links are rendered too, but not with a block
         cobj.process_content_object &@render_block
         (rdr=cobj.as_json.to_json) #.should_not match /not rendered/
-        rdr.should == RENDERED[:three].to_json
+        expect(rdr).to eq(RENDERED[:three].to_json)
       end
 
       it "should not need rendering if no inclusions (b)" do
         cobj = Card::Content.new CONTENT[:three_b], @card
-        (rdr=cobj.as_json.to_json).should match /not rendered/ # links are rendered too, but not with a block
+        expect(rdr=cobj.as_json.to_json).to match /not rendered/ # links are rendered too, but not with a block
         cobj.process_content_object &@render_block
-        (rdr=cobj.as_json.to_json).should_not match /not rendered/
-        rdr.should == RENDERED[:three_b].to_json
+        expect(rdr=cobj.as_json.to_json).not_to match /not rendered/
+        expect(rdr).to eq(RENDERED[:three_b].to_json)
       end
     end
   end

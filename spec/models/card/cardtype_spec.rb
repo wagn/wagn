@@ -18,7 +18,7 @@ describe "Card (Cardtype)" do
       city.delete!
     end
     # make sure it wasn't deleted / trashed
-    Card['City'].should_not be_nil
+    expect(Card['City']).not_to be_nil
   end
 
   it "remove cardtype" do
@@ -41,16 +41,16 @@ describe "Card (Cardtype)" do
   describe "conversion to cardtype" do
     before do
       @card = Card.create!(:type=>'Cardtype', :name=>'Cookie')
-      @card.type_name.should == 'Cardtype'
+      expect(@card.type_name).to eq('Cardtype')
     end
 
     it "creates cardtype model and permission" do
       @card.type_id = Card.fetch_id('cookie')
       @card.save!
-      @card.type_name.should == 'Cookie'
+      expect(@card.type_name).to eq('Cookie')
       @card=Card['Cookie']
       assert_instance_of Card, @card
-      @card.type_code.should == nil # :cookie
+      expect(@card.type_code).to eq(nil) # :cookie
       assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).type_name
     end
   end
@@ -77,9 +77,9 @@ describe Card, "created without permission" do
   #end
 
   it "should not create a new cardtype until saved" do
-    lambda {
+    expect {
       Card.new( :name=>'foo', :type=>'Cardtype')
-    }.should_not change(Card, :count)
+    }.not_to change(Card, :count)
   end
 end
 
@@ -89,20 +89,20 @@ describe Card, "Normal card with dependents" do
     @a = Card['A']
   end
   it "should confirm that it has dependents" do
-    @a.dependents.length.should > 0
+    expect(@a.dependents.length).to be > 0
   end
   it "should successfully have its type changed" do
     Card::Auth.as_bot do
       @a.type_id = Card::PhraseID;
       @a.save!
-      Card['A'].type_code.should== :phrase
+      expect(Card['A'].type_code).to eq(:phrase)
     end
   end
   it "should still have its dependents after changing type" do
     Card::Auth.as_bot do
       assert type_id = Card.fetch_id('cardtype_e')
       @a.type_id = type_id; @a.save!
-      Card['A'].dependents.length.should > 0
+      expect(Card['A'].dependents.length).to be > 0
     end
   end
 end
@@ -133,11 +133,11 @@ describe Card, "New Cardtype" do
   end
 
   it "should have create permissions" do
-    @ct.who_can(:create).should_not be_nil
+    expect(@ct.who_can(:create)).not_to be_nil
   end
 
   it "its create permissions should be based on Basic" do
-    @ct.who_can(:create).should == Card['Basic'].who_can(:create)
+    expect(@ct.who_can(:create)).to eq(Card['Basic'].who_can(:create))
   end
 end
 
@@ -151,7 +151,7 @@ describe Card, "Wannabe Cardtype Card" do
 
   end
   it "should successfully change its type to a Cardtype" do
-    Card['convertible'].type_code.should==:cardtype
+    expect(Card['convertible'].type_code).to eq(:cardtype)
   end
 end
 
@@ -167,16 +167,16 @@ describe Card, "Joe User" do
   end
 
   it "should not have r3 permissions" do
-    @ucard.fetch(:new=>{}, :trait=>:roles).item_names.member?(@r3.name).should be_false
+    expect(@ucard.fetch(:new=>{}, :trait=>:roles).item_names.member?(@r3.name)).to be_falsey
   end
   it "should ponder creating a card of Cardtype F, but find that he lacks create permissions" do
-    Card.new(:type=>'Cardtype F').ok?(:create).should be_false
+    expect(Card.new(:type=>'Cardtype F').ok?(:create)).to be_falsey
   end
   it "should not find Cardtype F on its list of createable cardtypes" do
-    @type_names.member?('Cardtype F').should be_false
+    expect(@type_names.member?('Cardtype F')).to be_falsey
   end
   it "should find Basic on its list of createable cardtypes" do
-    @type_names.member?('Basic').should be_true
+    expect(@type_names.member?('Basic')).to be_truthy
   end
 
 end
@@ -187,13 +187,13 @@ describe Card, "Cardtype with Existing Cards" do
     @ct = Card['Cardtype F']
   end
   it "should have existing cards of that type" do
-    Card.search(:type=>@ct.name).should_not be_empty
+    expect(Card.search(:type=>@ct.name)).not_to be_empty
   end
 
   it "should raise an error when you try to delete it" do
     Card::Auth.as_bot do
       @ct.delete
-      @ct.errors[:cardtype].should_not be_empty
+      expect(@ct.errors[:cardtype]).not_to be_empty
     end
   end
 end
@@ -207,7 +207,7 @@ describe Card::Set::Type::Cardtype do
       ctg.type_id = Card::BasicID
       ctg.save!
       ctg = Card["CardtypeG"]
-      ctg.type_code.should == :basic
+      expect(ctg.type_code).to eq(:basic)
       #ctg.extension.should == nil
     end
   end

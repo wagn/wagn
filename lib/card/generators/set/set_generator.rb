@@ -7,8 +7,8 @@ class SetGenerator < Rails::Generators::Base
   argument :anchor
     
   def create_files
-    template 'set_template.erb',           "mods/#{mod}/sets/#{set_pattern}/#{anchor}.rb"
-    template 'set_spec_template.erb', "spec/mods/#{mod}/sets/#{set_pattern}/#{anchor}_spec.rb"
+    template 'set_template.erb',           "mod/#{mod}/set/#{set_pattern}/#{anchor}.rb"
+    template 'set_spec_template.erb', "spec/mod/#{mod}/set/#{set_pattern}/#{anchor}_spec.rb"
   end
   
 end

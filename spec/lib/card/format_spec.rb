@@ -8,26 +8,26 @@ describe Card::Format do
     end
     
     it "should respect defaults" do
-      @format.show_view?( :menu, {}, :show ).should be_true
-      @format.show_view?( :menu, {}, :hide ).should be_false
-      @format.show_view?( :menu, {}        ).should be_true
+      expect(@format.show_view?( :menu, :default_visibility=>:show )).to be_truthy
+      expect(@format.show_view?( :menu, :default_visibility=>:hide )).to be_falsey
+      expect(@format.show_view?( :menu, {}                          )).to be_truthy
     end
     
     it "should respect developer default overrides" do
-      @format.show_view?( :menu, { :optional_menu=>:show }, :hide ).should be_true
-      @format.show_view?( :menu, { :optional_menu=>:hide }, :show ).should be_false
-      @format.show_view?( :menu, { :optional_menu=>:hide }        ).should be_false
+      expect(@format.show_view?( :menu, :optional_menu=>:show, :default_visibility=>:hide )).to be_truthy
+      expect(@format.show_view?( :menu, :optional_menu=>:hide, :default_visibility=>:show )).to be_falsey
+      expect(@format.show_view?( :menu, :optional_menu=>:hide                             )).to be_falsey
     end
     
     it "should handle args from inclusions" do
-      @format.show_view?( :menu, { :show=>'menu'         }, :hide     ).should be_true
-      @format.show_view?( :menu, { :hide=>'menu, paging' }, :show     ).should be_false
-      @format.show_view?( :menu, :show=>'menu', :optional_menu=>:hide ).should be_true      
+      expect(@format.show_view?( :menu, :show=>'menu', :default_visibility=>:hide         )).to be_truthy
+      expect(@format.show_view?( :menu, :hide=>'menu, paging', :default_visibility=>:show )).to be_falsey
+      expect(@format.show_view?( :menu, :show=>'menu', :optional_menu=>:hide              )).to be_truthy      
     end
     
     it "should handle hard developer overrides" do
-      @format.show_view?( :menu, :optional_menu=>:always, :hide=>'menu' ).should be_true
-      @format.show_view?( :menu, :optional_menu=>:never,  :show=>'menu' ).should be_false
+      expect(@format.show_view?( :menu, :optional_menu=>:always, :hide=>'menu' )).to be_truthy
+      expect(@format.show_view?( :menu, :optional_menu=>:never,  :show=>'menu' )).to be_falsey
     end
     
   end

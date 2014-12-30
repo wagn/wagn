@@ -27,6 +27,7 @@ class Card::Query
   end
 
   def run
+#    puts "~~~~~~~~~~~~~~\nCARD SPEC =\n#{@card_spec.rawspec}\n\n-----\n\nSQL=\n#{sql}"
     rows = ActiveRecord::Base.connection.select_all( sql )
     retrn = query[:return].present? ? query[:return].to_s : 'card'
     case retrn 
@@ -58,18 +59,17 @@ class Card::Query
 
 
   class SqlStatement
-    attr_accessor :fields, :relevance_fields, :tables, :joins, :conditions, :group, :order, :limit, :offset
+    attr_accessor :fields, :tables, :joins, :conditions, :group, :order, :limit, :offset
 
     def initialize
-      @fields, @relevance_fields, @joins, @conditions = [],[],[],[]
+      @fields, @joins, @conditions = [],[],[],[]
       @tables, @group, @order, @limit, @offset = "","","","",""
     end
 
     def to_s
-      "(
-select #{fields.reject(&:blank?).join(', ')} from #{tables} #{joins.join(' ')}
-where #{conditions.reject(&:blank?).join(' and ')} #{group} #{order} #{limit} #{offset}
-)"
+      select = fields.reject(&:blank?) * ', '
+      where = conditions.reject(&:blank?) * ' and '
+      ['(SELECT', select, 'FROM', tables, joins, 'WHERE', where, group, order, limit, offset, ')'].compact * ' '
     end
   end
 

@@ -2,7 +2,12 @@
 require 'uri'
 require 'cgi'
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
-require 'debugger'
+
+if RUBY_VERSION =~ /^2/
+  require 'byebug'
+else
+  require 'debugger'
+end
 
 
 Given /^site simulates setup need$/ do
@@ -72,6 +77,11 @@ When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardnam
   end
 end
 
+When /^(.*) edits? "([^\"]*)" filling in "([^\"]*)"$/ do |username, cardname, content|
+  visit "/card/edit/#{cardname.to_name.url_key}"
+  fill_in 'card[content]', :with=>content
+end
+
 When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
@@ -120,7 +130,7 @@ end
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
   user = Card::Auth.current.name if user == "I"
   signed_in_as user do
-    step "the card #{cardname}+*watchers contains \"[[#{user}]]\""
+    step "the card #{user}+*following contains \"[[#{cardname}]]\""
   end
 end
 
@@ -129,12 +139,22 @@ When /I wait a sec/ do
   sleep 1
 end
 
+When /I wait (.+) seconds$/ do |period|
+  sleep period.to_i
+end
+
+
 Then /what/ do
   save_and_open_page
 end
 
 Then /debug/ do
-  debugger
+  if RUBY_VERSION =~ /^2/
+    require 'pry'
+    binding.pry
+  else
+    debugger
+  end
   nil
 end
 
@@ -177,6 +197,16 @@ When /^In (.*) I click "(.*)"$/ do |section, link|
   end
 end
 
+When /^In (.*) I find link with class "(.*)" and click it$/ do |section, css_class|
+  within scope_of(section) do
+    find("a.#{css_class}").click
+  end
+end
+
+Then /I submit$/ do
+    click_button("Submit")
+end
+
 When /^I hover over the main menu$/ do
   page.execute_script "$('#main > .card-slot > .card-header > .card-menu-link').trigger('mouseenter')"
 end
@@ -187,26 +217,30 @@ end
 Then /the card (.*) should contain "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")
   within scope_of("main card content") do
-    page.should have_content(content)
+    expect(page).to have_content(content)
   end
 end
 
 Then /the card (.*) should not contain "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")
   within scope_of("main card content") do
-    page.should_not have_content(content)
+    expect(page).not_to have_content(content)
   end
 end
 
 Then /^In (.*) I should see "([^\"]*)"$/ do |section, text|
   within scope_of(section) do
-    page.should have_content(text)
+    if text.index('|')
+      expect(text.split('|').any? {|t| have_content(t)}).to be
+    else
+      expect(page).to have_content(text)
+    end
   end
 end
 
 Then /^In (.*) I should not see "([^\"]*)"$/ do |section, text|
   within scope_of(section) do
-    page.should_not have_content(text)
+    expect(page).not_to have_content(text)
   end
 end
 
@@ -218,12 +252,20 @@ Then /^In (.*) I should (not )?see a ([^\"]*) with class "([^\"]*)"$/ do |select
   end
 end
 
+Then /^In (.*) I should (not )?see a ([^\"]*) with content "([^\"]*)"$/ do |selection, neg, element, content|
+  # checks for existence of a element with a class in a selection context
+  element = 'a' if element == 'link'
+  within scope_of(selection) do
+    page.send( ( neg ? :should_not : :should ), have_css( element, :text=>content ) )
+  end
+end
+
 Then /^the "([^"]*)" field should contain "([^"]*)"$/ do |field, value|
-  field_labeled(field).value.should =~ /#{value}/
+  expect(field_labeled(field).value).to match(/#{value}/)
 end
 
 Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
-  field_labeled(field).element.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
+  expect(field_labeled(field).element.search(".//option[@selected = 'selected']").inner_html).to match(/#{value}/)
 end
 
 When /^I press enter to search$/ do
@@ -232,11 +274,15 @@ end
 
 ## variants of standard steps to handle """ style quoted args
 Then /^I should see$/ do |text|
-  page.should have_content(text)
+  expect(page).to have_content(text)
+end
+
+Then /^I should see "([^\"]*)" in (.*)$/ do |text, css_class|
+  page.has_css?(".diff-#{css_class}", text: text)
+  #page.should have_content(text)
 end
 
 When /^I fill in "([^\"]*)" with$/ do |field, value|
   fill_in(field, :with => value)
 end
-
 

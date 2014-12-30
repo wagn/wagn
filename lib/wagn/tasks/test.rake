@@ -69,18 +69,15 @@ namespace :test do
       # which dumps with slashes that syck can't understand (also !!null stuff)
 
     sql = "SELECT * FROM %s"
-    tables = %w{ cards card_revisions card_references }
+    tables = %w{ cards card_acts card_actions card_changes card_references }
     ActiveRecord::Base.establish_connection
     tables.each do |table_name|
       i = "000"
       File.open("#{Wagn.gem_root}/test/fixtures/#{table_name}.yml", 'w') do |file|
         data = ActiveRecord::Base.connection.select_all(sql % table_name)
         file.write data.inject({}) { |hash, record|
-
-          trsh = record['trash']
-          record['trash'] = false if trsh == 0 or trsh == '0'
-          raise "bad trash value #{record['trash'].inspect}" unless (trsh = record['trash']).nil? or trsh == false
-          #puts "test that trash is actually stored as 'false' for postgres and deleteme "
+          record['trash'] = false if record.has_key? 'trash'
+          record['draft'] = false if record.has_key? 'draft'
           hash["#{table_name}_#{i.succ!}"] = record
           hash
         }.to_yaml
@@ -90,7 +87,7 @@ namespace :test do
 
   desc "create sample data for testing"
   task :populate_template_database => :environment do
-    load 'test/seed.rb'
+    load "#{Wagn.gem_root}/test/seed.rb"
     SharedData.add_test_data
   end
 

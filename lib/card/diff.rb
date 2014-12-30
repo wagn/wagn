@@ -1,317 +1,429 @@
 # -*- encoding : utf-8 -*-
 module Card::Diff
   
-  def diff(a, b)
-    DiffBuilder.new(a, b).build
+  def self.complete a, b, opts={}
+    DiffBuilder.new(a, b, opts).complete
   end
-
-
-  Match = Struct.new(:start_in_old, :start_in_new, :size)
-  class Match
-    def end_in_old
-      self.start_in_old + self.size
-    end
-
-    def end_in_new
-      self.start_in_new + self.size
+  
+  def self.summary a, b, opts={}
+    DiffBuilder.new(a, b, opts).summary
+  end
+  
+  def self.render_added_chunk text
+    "<ins class='diffins diff-green'>#{text}</ins>"
+  end
+  
+  def self.render_deleted_chunk text, count=true
+    "<del class='diffdel diff-red'>#{text}</del>"
+  end
+  
+  def self.render_chunk action, text
+    case action
+    when '+'      then render_added_chunk text
+    when :added   then render_added_chunk text
+    when '-'      then render_deleted_chunk text
+    when :deleted then render_deleted_chunk text
+    else text
     end
   end
-
-  Operation = Struct.new(:action, :start_in_old, :end_in_old, :start_in_new, :end_in_new)
 
   class DiffBuilder
-
-    def initialize(old_version, new_version)
-      @old_version, @new_version = old_version, new_version
-      @content = []
-    end
-
-    def build
-      split_inputs_to_words
-      index_new_words
-      operations.each { |op| perform_operation(op) }
-      return @content.join
-    end
-
-    def split_inputs_to_words
-      @old_words = convert_html_to_list_of_words(explode(@old_version))
-      @new_words = convert_html_to_list_of_words(explode(@new_version))
-    end
-
-    def index_new_words
-      @word_indices = Hash.new { |h, word| h[word] = [] }
-      @new_words.each_with_index { |word, i| @word_indices[word] << i }
-    end
-
-    def operations
-      position_in_old = position_in_new = 0
-      operations = []
-
-      matches = matching_blocks
-      # an empty match at the end forces the loop below to handle the unmatched tails
-      # I'm sure it can be done more gracefully, but not at 23:52
-      matches << Match.new(@old_words.length, @new_words.length, 0)
-
-      matches.each_with_index do |match, i|
-        match_starts_at_current_position_in_old = (position_in_old == match.start_in_old)
-        match_starts_at_current_position_in_new = (position_in_new == match.start_in_new)
-
-        action_upto_match_positions =
-          case [match_starts_at_current_position_in_old, match_starts_at_current_position_in_new]
-          when [false, false]
-            :replace
-          when [true, false]
-            :insert
-          when [false, true]
-            :delete
-          else
-            # this happens if the first few words are same in both versions
-            :none
-          end
-
-        if action_upto_match_positions != :none
-          operation_upto_match_positions =
-              Operation.new(action_upto_match_positions,
-                  position_in_old, match.start_in_old,
-                  position_in_new, match.start_in_new)
-          operations << operation_upto_match_positions
-        end
-        if match.size != 0
-          match_operation = Operation.new(:equal,
-              match.start_in_old, match.end_in_old,
-              match.start_in_new, match.end_in_new)
-          operations << match_operation
-        end
-
-        position_in_old = match.end_in_old
-        position_in_new = match.end_in_new
-      end
-
-      operations
-    end
-
-    def matching_blocks
-      matching_blocks = []
-      recursively_find_matching_blocks(0, @old_words.size, 0, @new_words.size, matching_blocks)
-      matching_blocks
-    end
-
-    def recursively_find_matching_blocks(start_in_old, end_in_old, start_in_new, end_in_new, matching_blocks)
-      match = find_match(start_in_old, end_in_old, start_in_new, end_in_new)
-      if match
-        if start_in_old < match.start_in_old and start_in_new < match.start_in_new
-          recursively_find_matching_blocks(
-              start_in_old, match.start_in_old, start_in_new, match.start_in_new, matching_blocks)
-        end
-        matching_blocks << match
-        if match.end_in_old < end_in_old and match.end_in_new < end_in_new
-          recursively_find_matching_blocks(
-              match.end_in_old, end_in_old, match.end_in_new, end_in_new, matching_blocks)
-        end
-      end
-    end
-
-    def find_match(start_in_old, end_in_old, start_in_new, end_in_new)
-
-      best_match_in_old = start_in_old
-      best_match_in_new = start_in_new
-      best_match_size = 0
-
-      match_length_at = Hash.new { |h, index| h[index] = 0 }
-
-      start_in_old.upto(end_in_old - 1) do |index_in_old|
-
-        new_match_length_at = Hash.new { |h, index| h[index] = 0 }
-
-        @word_indices[@old_words[index_in_old]].each do |index_in_new|
-          next  if index_in_new < start_in_new
-          break if index_in_new >= end_in_new
-
-          new_match_length = match_length_at[index_in_new - 1] + 1
-          new_match_length_at[index_in_new] = new_match_length
-
-          if new_match_length > best_match_size
-            best_match_in_old = index_in_old - new_match_length + 1
-            best_match_in_new = index_in_new - new_match_length + 1
-            best_match_size = new_match_length
-          end
-        end
-        match_length_at = new_match_length_at
-      end
-
-#      best_match_in_old, best_match_in_new, best_match_size = add_matching_words_left(
-#          best_match_in_old, best_match_in_new, best_match_size, start_in_old, start_in_new)
-#      best_match_in_old, best_match_in_new, match_size = add_matching_words_right(
-#          best_match_in_old, best_match_in_new, best_match_size, end_in_old, end_in_new)
-
-      return (best_match_size != 0 ? Match.new(best_match_in_old, best_match_in_new, best_match_size) : nil)
-    end
-
-    def add_matching_words_left(match_in_old, match_in_new, match_size, start_in_old, start_in_new)
-      while match_in_old > start_in_old and
-            match_in_new > start_in_new and
-            @old_words[match_in_old - 1] == @new_words[match_in_new - 1]
-        match_in_old -= 1
-        match_in_new -= 1
-        match_size += 1
-      end
-      [match_in_old, match_in_new, match_size]
-    end
-
-    def add_matching_words_right(match_in_old, match_in_new, match_size, end_in_old, end_in_new)
-      while match_in_old + match_size < end_in_old and
-            match_in_new + match_size < end_in_new and
-            @old_words[match_in_old + match_size] == @new_words[match_in_new + match_size]
-        match_size += 1
-      end
-      [match_in_old, match_in_new, match_size]
-    end
-
-    VALID_METHODS = [:replace, :insert, :delete, :equal]
-
-    def perform_operation(operation)
-      @operation = operation
-      self.send operation.action, operation
-    end
-
-    def replace(operation)
-      delete(operation, 'diffmod')
-      insert(operation, 'diffmod')
-    end
-
-    def insert(operation, tagclass = 'diffins')
-      insert_tag('ins', tagclass, @new_words[operation.start_in_new...operation.end_in_new])
-    end
-
-    def delete(operation, tagclass = 'diffdel')
-       insert_tag('del', tagclass, @old_words[operation.start_in_old...operation.end_in_old])
-    end
-
-    def equal(operation)
-      # no tags to insert, simply copy the matching words from one of the versions
-      @content += @new_words[operation.start_in_new...operation.end_in_new]
-    end
-
-    def opening_tag?(item)
-      item =~ %r!^\s*<[^>]+>\s*$!
-    end
-
-    def closing_tag?(item)
-      item =~ %r!^\s*</[^>]+>\s*$!
-    end
-
-    def tag?(item)
-      opening_tag?(item) or closing_tag?(item)
-    end
-
-    def extract_consecutive_words(words, &condition)
-      index_of_first_tag = nil
-      words.each_with_index do |word, i|
-        if !condition.call(word)
-          index_of_first_tag = i
-          break
-        end
-      end
-      if index_of_first_tag
-        return words.slice!(0...index_of_first_tag)
-      else
-        return words.slice!(0..words.length)
-      end
-    end
-
-    # This method encloses words within a specified tag (ins or del), and adds this into @content,
-    # with a twist: if there are words contain tags, it actually creates multiple ins or del,
-    # so that they don't include any ins or del. This handles cases like
-    # old: '<p>a</p>'
-    # new: '<p>ab</p><p>c</b>'
-    # diff result: '<p>a<ins>b</ins></p><p><ins>c</ins></p>'
-    # this still doesn't guarantee valid HTML (hint: think about diffing a text containing ins or
-    # del tags), but handles correctly more cases than the earlier version.
+    attr_reader :summary, :complete
+    
+    # diff options 
+    # :format  => :html|:text|:pointer|:raw 
+    #   :html    = maintain html structure, but compare only content
+    #   :text    = remove all html tags; compare plain text
+    #   :pointer = remove all double square brackets
+    #   :raw     = escape html tags and compare everything
     #
-    # P.S.: Spare a thought for people who write HTML browsers. They live in this ... every day.
-
-    def insert_tag(tagname, cssclass, words)
-      loop do
-        break if words.empty?
-        non_tags = extract_consecutive_words(words) { |word| not tag?(word) }
-        @content << wrap_text(non_tags.join, tagname, cssclass) unless non_tags.empty?
-
-        break if words.empty?
-        @content += extract_consecutive_words(words) { |word| tag?(word) }
+    # :summary => {:length=><number> , :joint=><string> }
+    
+    def initialize(old_version, new_version, opts={})
+      @new_version = new_version
+      @old_version = old_version
+      @lcs_opts = lcs_opts_for_format opts[:format]
+      @lcs_opts[:summary] = opts[:summary]
+      @dels_cnt = 0
+      @adds_cnt = 0
+      
+      if not @new_version
+        @complete = ''
+        @summary  = ''
+      else
+        lcs_diff
       end
     end
 
-    def wrap_text(text, tagname, cssclass)
-      %(<#{tagname} class="#{cssclass}">#{text}</#{tagname}>)
+    def red?
+      @dels_cnt > 0 
+    end
+    
+    def green?
+      @adds_cnt > 0 
+    end
+    
+    def lcs_opts_for_format format
+      opts = {}
+      case format
+      when :html
+        opts[:exclude] = /^</
+      when :text
+        opts[:reject] =  /^</
+        opts[:postprocess] = Proc.new do |word|
+          word.gsub("\n",'<br>')
+        end
+      when :pointer
+        opts[:preprocess] = Proc.new do |word|
+          word.gsub('[[','').gsub(']]','')
+        end
+      else #:raw
+        opts[:preprocess] = Proc.new do |word|
+          CGI::escapeHTML(word)
+        end
+      end
+      opts
+    end
+    
+    def lcs_diff
+      @lcs = LCS.new(@old_version, @new_version, @lcs_opts)
+      @summary  = @lcs.summary
+      @complete = @lcs.complete
+      @dels_cnt = @lcs.dels_cnt
+      @adds_cnt = @lcs.adds_cnt
     end
 
-    def explode(sequence)
-      sequence.is_a?(String) ? sequence.split(//) : sequence
-    end
+    
+    class LCS
+      attr_reader :adds_cnt, :dels_cnt
+      def initialize old_text, new_text, opts, summary=nil
+        @reject_pattern  = opts[:reject]        # regex; remove match completely from diff
+        @exclude_pattern = opts[:exclude]       # regex; put back to the result after diff
+        @preprocess      = opts[:preprocess]    # block; called with every word
+        @postprocess     = opts[:postprocess]   # block; called with complete diff
+        
+        @adds_cnt = 0
+        @dels_cnt = 0
+        
+        @splitters = %w( <[^>]+>  \[\[[^\]]+\]\]  \{\{[^}]+\}\}  \s+ )
+        @disjunction_pattern = /^\s/ 
+        @summary ||= Summary.new opts[:summary]
+        if not old_text
+          list = split_and_preprocess(new_text)
+          if @exclude_pattern
+            list = list.reject{ |word| word.match @exclude_pattern }
+          end
+          text = postprocess list.join
+          @result = added_chunk text
+          @summary.add text
+        else
+          init_diff old_text, new_text
+          run_diff
+        end
+      end
+      
+      def summary 
+        @summary.result
+      end
+      
+      def complete
+        @result
+      end
+      
+      private 
+      
+      def init_diff old_text, new_text
+        @adds = []
+        @dels = []
+        @result = ''
+        old_words, old_ex = separate_comparables_from_excludees old_text
+        new_words, new_ex = separate_comparables_from_excludees new_text
+        
+        @words = {
+          :old => old_words,
+          :new => new_words
+        }
+        @excludees = {
+          :old => ExcludeeIterator.new(old_ex),
+          :new => ExcludeeIterator.new(new_ex)
+        }
+      end
+        
+      def run_diff 
+        prev_action = nil        
+        ::Diff::LCS.traverse_balanced(@words[:old], @words[:new]) do |word|
 
-    def end_of_tag?(char)
-      char == '>'
-    end
+          if prev_action 
+            if prev_action != word.action and
+              !(prev_action == '-' and word.action == '!') and 
+              !(prev_action == '!' and word.action == '+')
 
-    def start_of_tag?(char)
-      char == '<'
-    end
-
-    def whitespace?(char)
-      char =~ /\s/
-    end
-
-    def convert_html_to_list_of_words(x, use_brackets = false)
-      mode = :char
-      current_word  = ''
-      words = []
-
-      explode(x).each do |char|
-        case mode
-        when :tag
-          if end_of_tag? char
-            current_word << (use_brackets ? ']' : '>')
-            words << current_word
-            current_word = ''
-            if whitespace?(char)
-              mode = :whitespace
-            else
-              mode = :char
+              # delete and/or add section stops here; write changes to result
+              write_dels
+              write_adds
+                  
+              write_excludees # new neutral section starts, we can just write excludees to result
+              
+            else # current word belongs to edit of previous word
+              case word.action
+              when '-'
+                del_old_excludees
+              when '+'
+                add_new_excludees
+              when '!'
+                del_old_excludees
+                add_new_excludees
+              else
+                write_excludees
+              end             
             end
           else
-            current_word << char
+            write_excludees
           end
-        when :char
-          if start_of_tag? char
-            words << current_word unless current_word.empty?
-            current_word = (use_brackets ? '[' : '<')
-            mode = :tag
-          elsif /\s/.match char
-            words << current_word unless current_word.empty?
-            current_word = char
-            mode = :whitespace
-          else
-            current_word << char
-          end
-        when :whitespace
-          if start_of_tag? char
-            words << current_word unless current_word.empty?
-            current_word = (use_brackets ? '[' : '<')
-            mode = :tag
-          elsif /\s/.match char
-            current_word << char
-          else
-            words << current_word unless current_word.empty?
-            current_word = char
-            mode = :char
-          end
-        else
-          raise "Unknown mode #{mode.inspect}"
+          
+          process_word word
+          prev_action = word.action      
+        end
+        write_dels
+        write_adds
+        write_excludees
+      
+        @result = postprocess @result
+      end
+
+      
+      def added_chunk text, count=true
+        @adds_cnt += 1 if count
+        Card::Diff.render_added_chunk text
+      end
+  
+      def deleted_chunk text, count=true
+        @dels_cnt += 1 if count
+        Card::Diff.render_deleted_chunk text
+      end
+
+      
+      def write_unchanged text
+        @result << text
+        @summary.omit
+      end
+      
+      def write_dels
+        if !@dels.empty?
+          @result << deleted_chunk(@dels.join)
+          @summary.delete @dels.join
+          @dels = []
         end
       end
-      words << current_word unless current_word.empty?
-      words
+      
+      def write_adds
+        if !@adds.empty?
+          @result << added_chunk(@adds.join)
+          @summary.add @adds.join
+          @adds = []
+        end
+      end
+      
+      def write_excludees
+        while ex = @excludees[:new].next
+          @result << ex[:element]
+        end
+      end
+      
+      def del_old_excludees
+        while ex = @excludees[:old].next
+          if ex[:type] == :disjunction
+            @dels << ex[:element]
+          else
+            write_dels
+            @result << ex[:element]
+          end
+        end
+      end
+      
+      def add_new_excludees
+        while ex = @excludees[:new].next
+          if ex[:type] == :disjunction
+            @adds << ex[:element]
+          else
+            write_adds
+            @result << ex[:element]
+          end
+        end
+      end
+      
+      def process_word word
+        process_element word.old_element, word.new_element, word.action
+      end
+      
+      def process_element old_element, new_element, action
+        case action
+        when '-'
+          @dels << old_element
+          @excludees[:old].word_step
+        when '+'
+          @adds << new_element
+          @excludees[:new].word_step
+        when '!'
+          @dels << old_element
+          @adds << new_element
+          @excludees[:old].word_step
+          @excludees[:new].word_step
+        else
+          write_unchanged new_element
+          @excludees[:new].word_step
+        end
+      end
+      
+      def separate_comparables_from_excludees text
+        # return two arrays, one with all words, one with pairs (index in word list, html_tag)
+        list = split_and_preprocess text
+        if @exclude_pattern
+          list.each_with_index.inject([[],[]]) do |res, pair|
+            element, index = pair  
+            if element.match @disjunction_pattern
+              res[1] << {:chunk_index=>index, :element=>element, :type=>:disjunction}
+            elsif element.match @exclude_pattern
+              res[1] << {:chunk_index=>index, :element=>element, :type=>:excludee}
+            else
+              res[0] << element
+            end
+            res
+          end
+        else
+          [list, []]
+        end
+      end
+    
+      def split_and_preprocess text
+        splitted = split_to_list_of_words(text).select do |s|
+          s.size > 0 and (!@reject_pattern or !s.match @reject_pattern)
+        end
+        @preprocess ? splitted.map {|s| @preprocess.call(s) } : splitted
+      end
+    
+      def split_to_list_of_words text
+        split_regex = /(#{@splitters.join '|'})/
+        text.split(split_regex)
+      end
+          
+      def preprocess text
+        if @preprocess
+          @preprocess.call(text)
+        else
+          text
+        end
+      end
+      
+      def postprocess text
+        if @postprocess
+          @postprocess.call(text)
+        else
+          text
+        end
+      end
+      
+  
+      class Summary 
+        def initialize opts
+          opts ||= {}
+          @remaining_chars = opts[:length] || 50 
+          @joint = opts[:joint] || '...'
+          
+          @summary = nil
+          @chunks = []
+        end
+        
+        def result
+          @summary ||= render_chunks
+        end
+        
+        def add text
+          add_chunk text, :added
+        end
+        
+        def delete text
+          add_chunk text, :deleted
+        end
+        
+        def omit 
+           if @chunks.empty? or @chunks.last[:action] != :ellipsis
+            add_chunk @joint, :ellipsis
+          end
+        end  
+        
+        private
+        
+        def add_chunk text, action
+          if @remaining_chars > 0
+            @chunks << {:action => action, :text=>text}
+            @remaining_chars -= text.size
+          end
+        end
+        
+        def render_chunks
+          truncate_overlap
+          @chunks.map do |chunk|
+              Card::Diff.render_chunk chunk[:action], chunk[:text]
+          end.join 
+        end
+   
+        def truncate_overlap
+          if @remaining_chars < 0
+            if @chunks.last[:action] == :ellipsis
+              @chunks.pop
+              @remaining_chars += @joint.size
+            end
+            
+            index = @chunks.size - 1
+            while @remaining_chars < @joint.size and index >= 0
+              if @remaining_chars + @chunks[index][:text].size == @joint.size   # d
+                @chunks.pop
+                if index-1 >= 0 
+                  if @chunks[index-1][:action] == :added
+                    @chunks << {:action => :ellipsis, :text=>@joint}
+                  elsif @chunks[index-1][:action] == :deleted
+                    @chunks << {:action => :added, :text=>@joint}
+                  end
+                end
+                break
+              elsif @remaining_chars + @chunks[index][:text].size > @joint.size
+                @chunks[index][:text] =  @chunks[index][:text][0..(@remaining_chars-@joint.size-1)] 
+                @chunks[index][:text] += @joint
+                break
+              else
+                @remaining_chars += @chunks[index][:text].size
+                @chunks.delete_at(index)
+              end
+              index -= 1
+            end
+          end
+        end 
+        
+      end
+     
+      class ExcludeeIterator     
+        def initialize list
+          @list = list
+          @index = 0
+          @chunk_index = 0
+        end
+        
+        def word_step
+          @chunk_index += 1
+        end
+        
+        def next
+          if @index < @list.size and @list[@index][:chunk_index] == @chunk_index
+            res = @list[@index]
+            @index += 1
+            @chunk_index +=1
+            res
+          end
+        end
+      end
+      
     end
-
   end
 end
+

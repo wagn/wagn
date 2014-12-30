@@ -25,31 +25,7 @@ class Card
         account.password == encrypt( password, account.salt )
       end
 
-      def authenticate_by_token token
-        token_card = find_token_card(token) or return :token_not_found
-        
-        token_card.updated_at >
-          Wagn.config.token_expiry.ago      or return :token_expired  # > means "after"
 
-        account = token_card.left and
-        account.right_id==Card::AccountID   or return :bad_account
-
-        accounted = account.left and
-        accounted.accountable?              or return :illegal_account  #(overkill?)
-        
-        as_bot { token_card.delete! }
-        accounted.id
-      end
-
-      def find_token_card token
-        Auth.as_bot do
-          Card.search(
-            :right_id=>Card::TokenID, 
-            :content=>token
-          ).first
-        end          
-      end
-    
       # Encrypts some data with the salt.
       def encrypt password, salt
         Digest::SHA1.hexdigest "#{salt}--#{password}--"

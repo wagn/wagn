@@ -11,7 +11,36 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130411210957) do
+ActiveRecord::Schema.define(:version => 20141216053032) do
+
+  create_table "card_actions", :force => true do |t|
+    t.integer "card_id"
+    t.integer "card_act_id"
+    t.integer "super_action_id"
+    t.integer "action_type"
+    t.boolean "draft"
+  end
+
+  add_index "card_actions", ["card_act_id"], :name => "card_actions_card_act_id_index"
+  add_index "card_actions", ["card_id"], :name => "card_actions_card_id_index"
+
+  create_table "card_acts", :force => true do |t|
+    t.integer  "card_id"
+    t.integer  "actor_id"
+    t.datetime "acted_at"
+    t.string   "ip_address"
+  end
+
+  add_index "card_acts", ["actor_id"], :name => "card_acts_actor_id_index"
+  add_index "card_acts", ["card_id"], :name => "card_acts_card_id_index"
+
+  create_table "card_changes", :force => true do |t|
+    t.integer "card_action_id"
+    t.integer "field"
+    t.text    "value"
+  end
+
+  add_index "card_changes", ["card_action_id"], :name => "card_changes_card_action_id_index"
 
   create_table "card_references", :force => true do |t|
     t.integer "referer_id",               :default => 0,  :null => false
@@ -21,9 +50,9 @@ ActiveRecord::Schema.define(:version => 20130411210957) do
     t.integer "present"
   end
 
-  add_index "card_references", ["referee_id"], :name => "wiki_references_referenced_card_id"
-  add_index "card_references", ["referee_key"], :name => "wiki_references_referenced_name"
-  add_index "card_references", ["referer_id"], :name => "wiki_references_card_id"
+  add_index "card_references", ["referee_id"], :name => "card_references_referee_id_index"
+  add_index "card_references", ["referee_key"], :name => "card_references_referee_key_index"
+  add_index "card_references", ["referer_id"], :name => "card_references_referer_id_index"
 
   create_table "card_revisions", :force => true do |t|
     t.datetime "created_at", :null => false
@@ -51,20 +80,27 @@ ActiveRecord::Schema.define(:version => 20130411210957) do
     t.integer  "references_expired"
     t.boolean  "trash",               :null => false
     t.integer  "type_id",             :null => false
+    t.text     "db_content"
   end
 
-  add_index "cards", ["key"], :name => "cards_key_uniq", :unique => true
-  add_index "cards", ["left_id"], :name => "index_cards_on_trunk_id"
+  add_index "cards", ["key"], :name => "cards_key_index", :unique => true
+  add_index "cards", ["left_id"], :name => "cards_left_id_index"
   add_index "cards", ["name"], :name => "cards_name_index"
-  add_index "cards", ["read_rule_id"], :name => "index_cards_on_read_rule_id"
-  add_index "cards", ["right_id"], :name => "index_cards_on_tag_id"
-  add_index "cards", ["type_id"], :name => "card_type_index"
+  add_index "cards", ["read_rule_id"], :name => "cards_read_rule_id_index"
+  add_index "cards", ["right_id"], :name => "cards_right_id_index"
+  add_index "cards", ["type_id"], :name => "cards_type_id_index"
 
-  create_table "schema_migrations_cards", :id => false, :force => true do |t|
+  create_table "schema_migrations_core_cards", :id => false, :force => true do |t|
     t.string "version", :null => false
   end
 
-  add_index "schema_migrations_cards", ["version"], :name => "unique_schema_migrations_cards", :unique => true
+  add_index "schema_migrations_core_cards", ["version"], :name => "unique_schema_migrations_cards", :unique => true
+
+  create_table "schema_migrations_deck_cards", :id => false, :force => true do |t|
+    t.string "version", :null => false
+  end
+
+  add_index "schema_migrations_deck_cards", ["version"], :name => "unique_schema_migrations_deck_cards", :unique => true
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id"

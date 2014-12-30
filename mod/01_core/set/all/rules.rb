@@ -35,28 +35,8 @@ UserRuleSQL = %{
     and                                             rules.trash    is false;
 }  
 
-def user_rule_sql user_id=nil
-  if user_id
-    %{
-      select 
-        user_rules.id as rule_id, 
-        settings.id   as setting_id, 
-        sets.id       as set_id, 
-        sets.left_id  as anchor_id, 
-        sets.right_id as set_tag_id,
-      from cards user_rules 
-      join cards rules    on user_rules.left_id   = rules.id 
-      join cards sets     on rules.left_id        = sets.id 
-      join cards settings on rules.right_id       = settings.id
-      where user_rules.right_id = #{user_id}
-        and   sets.type_id      = #{Card::SetID }    and sets.trash     is false
-        and   settings.type_id  = #{Card::SettingID} and settings.trash is false
-        and                                              rules.trash    is false;
-    }
-  else
-    UserRuleSQL
-  end 
-end
+
+
 
 
 def is_rule?
@@ -86,11 +66,12 @@ end
 
 def rule_card_id setting_code, options={}
   fallback = options.delete( :fallback )
-  if options[:all_users]
-    setting_code = "#{setting_code}+user_ids"
-  elsif Card::Setting.user_specific? setting_code and Auth.signed_in?
-    fallback = setting_code
-    setting_code = "#{setting_code}+#{Auth.current_id}"
+  if Card::Setting.user_specific? setting_code 
+    user_id = options[:user_id] || (options[:user] and options[:user].id) || Auth.current_id
+    if user_id
+      fallback = setting_code
+      setting_code = "#{setting_code}+#{user_id}"
+    end
   end
   
   rule_set_keys.each do |rule_set_key|
@@ -116,6 +97,29 @@ def related_sets
 end
 
 module ClassMethods
+  def user_rule_sql user_id=nil
+    if user_id
+      %{
+        select 
+          user_rules.id as rule_id, 
+          settings.id   as setting_id, 
+          sets.id       as set_id, 
+          sets.left_id  as anchor_id, 
+          sets.right_id as set_tag_id
+        from cards user_rules 
+        join cards rules    on user_rules.left_id   = rules.id 
+        join cards sets     on rules.left_id        = sets.id 
+        join cards settings on rules.right_id       = settings.id
+        where user_rules.right_id = #{user_id}
+          and   sets.type_id      = #{Card::SetID }    and sets.trash     is false
+          and   settings.type_id  = #{Card::SettingID} and settings.trash is false
+          and                                              rules.trash    is false;
+      }
+    else
+      UserRuleSQL
+    end 
+  end
+  
   
   def setting name
     Auth.as_bot do
@@ -131,21 +135,6 @@ module ClassMethods
 
   def toggle val
     val.to_s.strip == '1'
-  end
-  
-  def all_user_ids set_card, setting_code
-    key = if (l=set_card.left) and (r=set_card.right)
-        set_class_code = Card::Codename[ r.id ]
-        "#{l.id}+#{set_class_code}+#{setting_code}+all_users"
-      else
-        set_class_code = Card::Codename[ set_card.id ]
-        "#{set_class_code}+#{setting_code}+all_users"
-      end
-    rule_cache[key] || []
-  end
-  
-  def cached_keys_for_user user_id
-    rule_cache["#{user_id}+rule_keys"] || []
   end
 
   def cache_key row
@@ -181,37 +170,68 @@ module ClassMethods
       end
     end
   end
+
+  def rule_keys_for_user user_id
+    rule_keys_cache[user_id] || []
+  end
+  
+  def all_user_ids_with_rule_for set_card, setting_code
+    key = if (l=set_card.left) and (r=set_card.right)
+        set_class_code = Card::Codename[ r.id ]
+        "#{l.id}+#{set_class_code}+#{setting_code}"
+      else
+        set_class_code = Card::Codename[ set_card.id ]
+        "#{set_class_code}+#{setting_code}"
+      end
+    user_ids_cache[key] || []
+  end
+  
+  def rule_cache
+    Card.cache.read('RULES') || begin        
+      rule_hash = {}
+      all_rule_keys_with_id do |key,rule_id|
+        rule_hash[key] = rule_id
+      end
+      
+      user_ids_hash = {}
+      rule_keys_hash = {}
+      all_user_rule_keys_with_id_and_user_id do |key, rule_id, user_id|
+        rule_hash[ user_rule_key(key,user_id) ] = rule_id
+        user_ids_hash[key] ||= []
+        user_ids_hash[key] << user_id
+        rule_keys_hash[user_id] ||= []
+        rule_keys_hash[user_id] << key
+      end
+      write_user_ids_cache user_ids_hash
+      write_rule_keys_cache rule_keys_hash
+      write_rule_cache rule_hash
+    end
+  end
   
   def user_rule_key key, user_id
     "#{key}+#{user_id}"
   end
   
-  def all_users_key key
-    "#{key}+all_users"
+  # all users that have a user-specific rule for a given rule key
+  def user_ids_cache
+    Card.cache.read('USER_IDS') || begin
+      rule_cache
+      Card.cache.read('USER_IDS')
+    end
   end
   
-  def all_rule_keys_key user_id
-  end
-
-  def rule_cache
-    Card.cache.read('RULES') || begin        
-      hash = {}
-      all_rule_keys_with_id do |key,rule_id|
-        hash[key] = rule_id
-      end
-      all_user_rule_keys_with_id_and_user_id do |key, rule_id, user_id|
-        hash[ user_rule_key(key,user_id) ] = rule_id
-        hash[ all_users_key(key)         ] ||= []
-        hash[ all_users_key(key)         ] << user_id
-        hash[ all_rule_keys_key(user_id) ] ||= []
-        hash[ all_rule_keys_key(user_id) ] << key
-      end
-      Card.cache.write 'RULES', hash
+  # all keys of user-specific rules for a given user
+  def rule_keys_cache
+    Card.cache.read('RULE_KEYS') || begin
+      rule_cache
+      Card.cache.read('RULE_KEYS')
     end
   end
   
   def clear_rule_cache
-    Card.cache.write 'RULES', nil
+    write_rule_cache nil
+    write_user_ids_cache nil
+    write_rule_keys_cache nil
   end
   
   def clear_user_rule_cache
@@ -219,21 +239,42 @@ module ClassMethods
   end
   
   def refresh_rule_cache_for_user user_id
-    hash = rule_cache
-    cached_keys_for_user(user_id).each do |key|
-      hash[ user_rule_key(key, user_id) ] = nil
-      hash[ all_users_key(key) ].delete(user_id)
+    rule_hash = rule_cache
+    user_ids_hash = user_ids_cache
+    rule_keys_hash = rule_keys_cache
+    
+    rule_keys_for_user(user_id).each do |key|
+      rule_hash[ user_rule_key(key, user_id) ] = nil
+      user_ids_hash[ key ].delete(user_id)
     end
-    hash[ all_rule_keys_key(user_id) ] = nil
+    rule_keys_hash[ user_id ] = nil
     
     user_rule_keys_with_id_for(user_id) do |key, rule_id|
-      hash[ user_rule_key(key,user_id) ] = rule_id
-      hash[ all_users_key(key)         ] ||= []
-      hash[ all_users_key(key)         ] << user_id
-      hash[ all_rule_keys_key(user_id) ] ||= []
-      hash[ all_rule_keys_key(user_id) ] << key
+      rule_hash[ user_rule_key(key,user_id) ] = rule_id
+      
+      user_ids_hash[ key ]      ||= []
+      user_ids_hash[ key ]      << user_id
+      rule_keys_hash[ user_id ] ||= []
+      rule_keys_hash[ user_id ] << key
     end
+    write_rule_cache rule_hash
+    write_user_ids_cache user_ids_hash
+    write_rule_keys_cache rule_keys_hash
   end
+  
+  def write_rule_cache hash
+    Card.cache.write 'RULES', hash
+  end
+  
+  def write_user_ids_cache hash
+    Card.cache.write 'USER_IDS', hash
+  end
+  
+  def write_rule_keys_cache hash
+    Card.cache.write 'RULE_KEYS', hash
+  end
+  
+  
   
   def read_rule_cache
     Card.cache.read('READRULES') || begin

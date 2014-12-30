@@ -193,9 +193,11 @@ def item_cards args={}
   end
 end
 
+
 def item_names args={}
   context = args[:context] || self.cardname
-  self.raw_content.to_s.split(/\n+/).map do |line|
+  content = args[:content] || self.raw_content
+  content.to_s.split(/\n+/).map do |line|
     item_name = line.gsub( /\[\[|\]\]/, '').strip
     if context == :raw
       item_name
@@ -204,6 +206,9 @@ def item_names args={}
     end
   end
 end
+
+
+
 
 def item_ids args={}
   item_names(args).map do |name|

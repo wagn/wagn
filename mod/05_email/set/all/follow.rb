@@ -2,7 +2,7 @@ card_accessor :followers
 
 # REVERSE_FOLLOWING_CACHE_KEY = 'FOLLOWING'
 # REVERSE_IGNORING_CACHE_KEY = 'IGNORING'
-# FOLLOWER_CACHE_KEY = 'FOLLOWER'
+FOLLOWER_IDS_CACHE_KEY = 'FOLLOWER_IDS'
 
 
 def label
@@ -23,58 +23,69 @@ def special_follow_option? name
   (card = Card.fetch(name)) and (codename = card.codename) and Card::FollowOption.names.include? codename.to_sym
 end
 
-def followers_of card=nil  # the argument is for compatibility reasons, needed for the special follow options
-  if type_id == Card::SetID
-    (follower_ids - ignoramus_ids).map { |id| Card.find(id) }
-  else
-    Follow.read_follower_cache(key) || begin
-      Follow.write_follower_cache key, find_all_followers 
-    end
-  end
-end
-
-
-def find_all_followers
-  result = ::Set.new(followers)
-  if left and (follow_field_rule = left.rule_card(:follow_fields))
-    follow_field_rule.item_names(:context=>left.cardname).each do |item|
-      if item.to_name.key == key or 
-         (item == Card[:includes].name and left.included_card_ids.include? id)
-        result += left.followers
-        break
-      end
-    end
-  end
-  result
-end
-
-
-def follower_ids args={}
-  @follower_ids = read_follower_cache || begin
-    result = ::Set.new
-    set_names.each do |set_name| 
-      set_card = Card.fetch(set_name)
-      result += set_card.all_follower_ids.select do |user_id|
-          followed_by? user_id
-        end
-    end
-    write_follower_cache result
-  end
-end
-
-def followed?; followed_by? Auth.current end
-
-def followed_by? user
-  rule_card(:follow).item_cards.each do |item_card|
-    item_card.applies_to? self, user
-  end 
-end
 
 def followers
   follower_ids.map do |id|
     Card.fetch(id)
   end
 end
+
+
+
+def follower_ids
+  @follower_ids = read_follower_ids_cache || begin
+    result = direct_follower_ids
+    left_card = left
+    while left_card and (follow_field_rule = left_card.rule_card(:follow_fields))
+      follow_field_rule.item_names(:context=>left.cardname).each do |item|
+        if item.to_name.key == key or 
+           (item == Card[:includes].name and left.included_card_ids.include? id)
+          result += left_card.direct_follower_ids
+          break
+        end
+        left_card = left_card.left
+      end
+    end
+    write_follower_ids_cache result
+    result
+  end
+end
+
+
+def direct_followers
+  direct_follower_ids.map do |id|
+    Card.fetch(id)
+  end
+end
+
+
+# all ids of users that follow this card because of a follow rule that applies to this card
+# doesn't include users that follow this card because they are following parent cards or other cards that include this card
+def direct_follower_ids args={}  
+  result = ::Set.new
+  set_names.each do |set_name| 
+    set_card = Card.fetch(set_name)
+    result += set_card.all_user_ids_with_rule_for(:follow).select do |user_id|
+        follow_rule_applies? user_id
+      end
+  end
+  result
+end
+
+
+def follow_rule_applies? user_id
+  rule_card(:follow, :user_id=>user_id).item_cards.each do |item_card|
+    item_card.applies_to? self, Card.fetch(user_id)
+  end 
+end
+
+def followed?; followed_by? Auth.current end
+
+def followed_by? user
+  follower_ids.include? user_id
+end
+
+
 
 
 # the set card to be followed if you want to follow changes of card
@@ -133,14 +144,17 @@ end
 
 event :cache_expired_because_of_new_set, :before=>:extend, :on=>:create, :when=>proc { |c| c.type_id == Card::SetID } do
   Card.clear_user_rule_cache
+  Card.clear_follower_ids_cache
 end
 
 event :cache_expired_because_of_type_change, :before=>:extend, :changed=>:type_id do
   Card.clear_user_rule_cache
+  Card.clear_follower_ids_cache
 end
 
 event :cache_expired_because_of_name_change, :before=>:extend, :changed=>:name do
   Card.clear_user_rule_cache
+  Card.clear_follower_ids_cache
 end
 
 # event :follow_change, :before=>:extend, :when=> proc {|c| Env.params[:follow] || Env.params[:unfollow]} do
@@ -172,8 +186,11 @@ format :html do
   end
   
   def default_follow_link
-    if card.type_id == CardtypeID
+    case card.type_code
+    when :cardtype
       follow_link Card.fetch("#{card.name}+*type"), 'all', :follow
+    when :set
+      follow_link card, '', :follow
     else
       follow_link Card.fetch("#{card.name}+*self"), '', :follow
     end
@@ -199,6 +216,9 @@ format :html do
       ''
     end
   end
+  
+
+  
   
   view :follow_options do |args|
     if Auth.signed_in?
@@ -281,16 +301,20 @@ format :html do
 end
 
 
-# module ClassMethods
+module ClassMethods
 #   def reverse_following_cache
 #     Card.cache.read(REVERSE_FOLLOWING_CACHE_KEY) || refresh_cached_sets
 #   end
 #
 #
 #
-#   def follower_cache
-#     Card.cache.read(FOLLOWER_CACHE_KEY) || {}
-#   end
+  def follower_ids_cache
+    Card.cache.read(FOLLOWER_IDS_CACHE_KEY) || {}
+  end
+  
+  def write_follower_ids_cache hash
+    Card.cache.write FOLLOWER_IDS_CACHE_KEY, hash
+  end
 #
 #
 #   def clear_reverse_following_cache
@@ -298,9 +322,9 @@ end
 #   end
 #
 #
-#   def clear_follower_cache
-#     Card.cache.write FOLLOWER_CACHE_KEY
-#   end
+  def clear_follower_ids_cache
+    Card.cache.write FOLLOWER_IDS_CACHE_KEY, nil
+  end
 #
 #   def clear_follow_caches
 #     clear_reverse_ignoring_cache
@@ -341,4 +365,14 @@ end
 #
 #
 #
-# end
+end
+
+def write_follower_ids_cache user_ids
+  hash = Card.follower_ids_cache
+  hash[id] = user_ids
+  Card.write_follower_ids_cache hash
+end
+
+def read_follower_ids_cache
+  Card.follower_ids_cache[id]
+end

@@ -15,36 +15,46 @@ include Card::Set::Type::Pointer
 #   db_content = temp
 # end
 
-
 def add_item name
   super
-  content = Env.params[:follow_option] || "[[#{Card[:always].name}]]"
-  follow_rule = "#{name.to_name.left}+#{Card[:follow].name}+#{Auth.current.name}"
-  @subcards[follow_rule] = {:content=>"[[#{name.to_name.right}]]", :type=>'pointer'}
+  add_follow_rule name
 end
 
 def drop_item name
   super
-  @remove_rule = "#{name}+#{Card[:follow].name}+#{Auth.current.name}"
+  prepare_delete_follow_rule name
 end
 
-event :remove_follow_rule, :after=>:store, :when=> proc { |c| c.remove_rule } do 
-  Card.delete remove_rule
+def add_follow_rule name
+  follow_rule = "#{name.to_name.left}+#{Card[:follow].name}+#{left.name}"
+  subcards[follow_rule] = {:content=>"[[#{name.to_name.right}]]", :type_id=>PointerID}
 end
 
-event :update_followers_after_following_changed, :after=>:store, :changed=>:db_content do #when => proc { |c| c.db_content_changed?  } do
+def prepare_delete_follow_rule name
+  @remove_rule_stash ||= []
+  @remove_rule_stash << "#{name}+#{Card[:follow].name}+#{left.name}"
+end
+
+
+event :remove_follow_rule, :after=>:store, :when=> proc { |c| c.remove_rule_stash } do 
+  @remove_rule_stash.each do |rule_name|
+    Card.delete rule_name
+  end
+  @remove_rule_stash = nil
+end
+
+event :update_follow_rules_after_following_changed, :before=>:process_subcards, :changed=>:db_content do
   if left
     Card.refresh_rule_cache_for_user left.id
-    
-    # new_content = db_content
-    # db_content = db_content_was
-    # item_cards.each do |item|
-    #   item.drop_follower left
-    # end
-    # db_content = new_content
-    # item_cards.each do |item|
-    #   item.add_follower left
-    # end
+    Card.clear_follower_ids_cache
+    new_names = item_names
+    old_names = item_names :content=>(db_content_was || '')
+    (new_names-old_names).each do |item|
+      add_follow_rule item
+    end
+    (old_names-new_names).each do |item|
+      prepare_delete_follow_rule item
+    end
   end
 end
 

@@ -15,7 +15,7 @@ def follow_label
 end
 
 def applies_to? card, user
-  card.creator and card.creator.type_id == Card::UserID and card.creator == user 
+  card.creator and card.creator.type_id == Card::UserID and card.creator == user
 end
 
 def follower_ids args={}

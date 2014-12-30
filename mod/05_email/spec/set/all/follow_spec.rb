@@ -5,6 +5,17 @@ describe "Card::Set::All::Follow" do
     render_card :follow, :name=>card_name
   end
    
+  describe "follower_ids" do
+    context 'when a new +*following entry created' do
+      it 'contains id of a new follower' do
+        Card::Auth.as_bot do
+          Card.create :name=>"Joe User+*following", :content=>"[[No One Sees Me+*self+always]]"
+          expect(Card['No One Sees Me'].follower_ids).to eq ::Set.new([Card['Joe User'].id])
+        end
+      end
+    end
+  end
+   
   describe "view: follow" do
     before do
       Card::Auth.current_id = Card['Big Brother'].id

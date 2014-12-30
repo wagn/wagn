@@ -17,23 +17,15 @@ class Card
     def drop_follower user
     end
 
-    def follower_ids
-      All::Follow.read_reversed_following_cache(key) || begin
-        ids = Card.joins(:references_to).where( 
-            :card_references => { :referee_key => key}, 
-            :right_id=>Card[:following].id ).pluck(:left_id)
-        All::Follow.write_reversed_following_cache(key, ::Set.new(ids))
-      end
-    end
-    
-    def ignoramus_ids
-      All::Follow.read_reversed_following_cache(key) || begin
-        ids = Card.joins(:references_to).where( 
-            :card_references => { :referee_key => key}, 
-            :right_id=>Card[:ignoring].id ).pluck(:left_id)
-        All::Follow.write_reversed_ignoring_cache(key, ::Set.new(ids))
-      end
-    end
+    # def follower_ids
+    #   All::Follow.read_reversed_following_cache(key) || begin
+    #     ids = Card.joins(:references_to).where(
+    #         :card_references => { :referee_key => key},
+    #         :right_id=>Card[:following].id ).pluck(:left_id)
+    #     All::Follow.write_reversed_following_cache(key, ::Set.new(ids))
+    #   end
+    # end
+    #
     
     module ClassMethods
       #mattr_reader :names

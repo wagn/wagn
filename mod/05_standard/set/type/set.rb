@@ -108,75 +108,9 @@ def follow_label
   end
 end
 
-
-def write_reversed_following_cache user_ids
-  All::Follow.write_reversed_following_cache(key, user_ids)
+def all_user_ids_with_rule_for setting_code
+  Card.all_user_ids_with_rule_for self, setting_code
 end
-
-def read_reversed_following_cache
-  All::Follow.read_reversed_following_cache(key)
-end
-
-def write_reversed_ignoring_cache user_ids
-  All::Follow.write_reversed_ignoring_cache(key, user_ids)
-end
-
-def read_reversed_ignoring_cache
-  All::Follow.read_reversed_ignoring_cache(key)
-end
-
-def all_user_ids setting_code
-  All::Rules.all_user_ids self, setting_code
-end
-
-
-def all_follower_ids
-  all_user_ids :follow
-end
-
-def ignoramus_ids
-  @ignoramus_ids = read_reversed_ignoring_cache || begin
-    ids = Card.joins(:references_to).where( 
-        :card_references => { :referee_key => key}, 
-        :right_id=>Card[:ignoring].id ).pluck(:left_id)
-    write_reversed_ignoring_cache ::Set.new(ids)
-  end
-end
-
-def add_follower user
-  if not follower_ids.include? user.id
-    follower_ids << user.id
-    write_reversed_following_cache follower_ids
-  end
-end
-
-def drop_follower user
-  if follower_ids.delete(user.id)
-    write_reversed_following_cache follower_ids
-  end
-end
-
-def add_ignoramus user
-  if not ignoramus_ids.include? user.id
-    ignoramus_ids << user.id
-    write_reversed_ignoring_cache ignoramus_ids
-  end
-end
-
-def drop_ignoramus user
-  if ignoramus_ids.delete(user.id)
-    write_reversed_ignoring_cache ignoramus_ids
-  end
-end
-
-
-
-
-#def followed?
-#   if Auth.current
-#     Auth.current.fetch(:trait=>:following, :new=>{}).include_item? cardname
-#   end
-# end
 
 
 def setting_codenames_by_group

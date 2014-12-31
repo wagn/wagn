@@ -19,8 +19,8 @@ def follow_option_card index
   end
 end
 
-def special_follow_option? name
-  (card = Card.fetch(name)) and (codename = card.codename) and Card::FollowOption.names.include? codename.to_sym
+def follow_option?
+  Card::FollowOption.names.include? codename.to_sym
 end
 
 

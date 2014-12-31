@@ -1,19 +1,41 @@
 
 include Card::Set::Type::Pointer
 
-# event :settify_new_follow_options, :before=>:approve, :on=>:save, :changed=>:db_content do
-#   temp = db_content
-#   item_names.each do |name|
-#     if not special_follow_option? name and option_card = Card.fetch(name) and not option_card.type_id == SetID
-#         if option_card.type_id == CardtypeID
-#           temp.sub!("[[#{name}]]","[[#{name}+*type]]")
-#         else
-#           temp.sub!("[[#{name}]]","[[#{name}+*self]]")
-#         end
-#     end
-#   end
-#   db_content = temp
-# end
+event :update_follow_rules, :before=>:process_subcards, :changed=>:db_content do
+  if left
+    Card.refresh_rule_cache_for_user left.id
+    Card.clear_follower_ids_cache
+    new_names = item_names
+    old_names = item_names :content=>(db_content_was || '')
+    (new_names-old_names).each do |item|
+      add_follow_rule item
+    end
+    (old_names-new_names).each do |item|
+      prepare_delete_follow_rule item
+    end
+  end
+end
+
+event :settify_new_follow_options, :before=>:update_follow_rules, :on=>:save, :changed=>:db_content do
+  temp = db_content
+  item_names.each do |name| 
+    if (option_card = Card.fetch(name)) && 
+         ( !option_card.junction? || option_card.left.type_id != SetID || !option_card.follow_option? )
+
+      new_name = if option_card.type_id == SetID  # +followoption is missing
+        "#{name}+always"
+      elsif option_card.type_id == CardtypeID
+        "#{name}+*type+always"
+      elsif option_card.follow_option?
+        "*all+#{name}"
+      else
+        "#{name}+*self+always"
+      end
+      temp.sub!("[[#{name}]]","[[#{new_name}]]")
+    end
+  end
+  db_content = temp
+end
 
 def add_item name
   super
@@ -43,20 +65,7 @@ event :remove_follow_rule, :after=>:store, :when=> proc { |c| c.remove_rule_stas
   @remove_rule_stash = nil
 end
 
-event :update_follow_rules_after_following_changed, :before=>:process_subcards, :changed=>:db_content do
-  if left
-    Card.refresh_rule_cache_for_user left.id
-    Card.clear_follower_ids_cache
-    new_names = item_names
-    old_names = item_names :content=>(db_content_was || '')
-    (new_names-old_names).each do |item|
-      add_follow_rule item
-    end
-    (old_names-new_names).each do |item|
-      prepare_delete_follow_rule item
-    end
-  end
-end
+
 
 format()      { include Card::Set::Type::Pointer::Format     }
 format :html do
@@ -96,7 +105,7 @@ format :html do
          checkbox_item option_card, checked
        end.join("\n") + 
        '</div>' + 
-       items.reject{|name| card.special_follow_option? name}.map do |name|
+       items.reject{|name| card.special_follow_option? name}.map do |name|   #FIXME
          binding.pry
          if option_card = Card.fetch(name)
            checkbox_item option_card, true

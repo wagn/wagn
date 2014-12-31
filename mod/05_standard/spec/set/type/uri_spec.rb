@@ -12,6 +12,13 @@ describe Card::Set::Type::Uri do
     end
   end
 
+  it "renders core view links with title arg" do
+    card = Card.create(:type=>'URI', :name=>'A URI card', :content=>'http://wagn.org/Home')
+    assert_view_select card.format.render('core', :title=>'My Title'), 'a[class="external-link"][href="http://wagn.org/Home"]' do
+      assert_select 'span[class="card-title"]', {:text => 'My Title' }
+    end
+  end
+
   it "renders a uri view" do
     card = Card.create(:type=>'URI', :name=>'A URI card', :content=>'http://wagn.org/Home')
     assert_view_select card.format.render('uri'), 'a[class="external-link"]', {:text => 'http://wagn.org/Home'}

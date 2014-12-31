@@ -6,6 +6,6 @@ format do
   end
 
   view :uri do |args|
-    build_link _render_raw(args), card.content
+    build_link _render_raw(args)
   end
 end

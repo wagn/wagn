@@ -495,7 +495,7 @@ class Card
       opts[:class] = case href.to_s
         when /^https?:/                      ; 'external-link'
         when /^mailto:/                      ; 'email-link'
-        when /^([a-zA-Z][\-+.a-zA-Z\d]*):/   ; $1 + '-link'
+        when /^([a-zA-Z][\-+\.a-zA-Z\d]*):/  ; $1 + '-link'
         when /^\//
           href = internal_url href[1..-1]    ; 'internal-link'
         else

@@ -49318,357 +49318,1205 @@ card_changes_5466:
   value: '0'
 card_changes_5467:
   id: 5467
-  card_action_id: 7296
-  field: 0
-  value: Joe User
+  card_action_id: 7310
+  field: 2
+  value: |
+    <p>{{_|link}} was just <a href="{{_|url}}?view=history">{{_|last_action}}</a> by {{_user|link}}</p>
+
+    <blockquote>{{_|list_of_changes}}</blockquote>
+
+    <p>{{_|subedits}}</p>
+
+    <p>You received this email because you're following <strong>{{_|followed}}</strong>.</p>
+
+    <p><em><a href="{{_|unfollow_url}}">Unfollow</a> to stop receiving these emails.</em></p>
 card_changes_5468:
   id: 5468
-  card_action_id: 7296
-  field: 1
-  value: '4'
+  card_action_id: 7311
+  field: 0
+  value: "*follow"
 card_changes_5469:
   id: 5469
-  card_action_id: 7296
-  field: 2
-  value: I'm number two
+  card_action_id: 7311
+  field: 1
+  value: '278'
 card_changes_5470:
   id: 5470
-  card_action_id: 7296
-  field: 3
-  value: '0'
+  card_action_id: 7311
+  field: 2
+  value: ''
 card_changes_5471:
   id: 5471
-  card_action_id: 7297
-  field: 0
-  value: Joe User+*account
+  card_action_id: 7311
+  field: 3
+  value: '0'
 card_changes_5472:
   id: 5472
-  card_action_id: 7297
-  field: 1
-  value: '3'
+  card_action_id: 7312
+  field: 0
+  value: "*followers"
 card_changes_5473:
   id: 5473
-  card_action_id: 7297
-  field: 2
-  value: |-
-    <h1>[[_left+*roles|{{_left|name}}'s roles]]<br></h1>
-    <blockquote>
-    <p>{{_left+*roles|item:link}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>[[_left+*watching|{{_left|name}} is watching]]</h1>
-    <blockquote>
-    <p>{{_left|name}} will receive email whenever these cards (or cards of types listed here) are changed. [[http://wagn.org/wagn/Notification|Learn more about notifications.]]</p>
-    <p>{{_left+*watching|item:change}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>[[_left+*created|{{_left|name}} created]]</h1>
-    <blockquote>
-    <p>{{_left+*created|item:change}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>[[_left+*editing|{{_left|name}} has edited]]</h1>
-    <blockquote>
-    <p>{{_left+*editing|item:change}}</p>
-    </blockquote>
+  card_action_id: 7312
+  field: 1
+  value: '3'
 card_changes_5474:
   id: 5474
-  card_action_id: 7297
-  field: 3
-  value: '0'
+  card_action_id: 7312
+  field: 2
+  value: ''
 card_changes_5475:
   id: 5475
-  card_action_id: 7298
-  field: 0
-  value: Joe User+*account+*password
+  card_action_id: 7312
+  field: 3
+  value: '0'
 card_changes_5476:
   id: 5476
-  card_action_id: 7298
-  field: 1
-  value: '52'
+  card_action_id: 7313
+  field: 0
+  value: content I created
 card_changes_5477:
   id: 5477
-  card_action_id: 7298
-  field: 2
-  value: 77f48e2138b62fa32e14826ecc0b379fa6155a39
+  card_action_id: 7313
+  field: 1
+  value: '3'
 card_changes_5478:
   id: 5478
-  card_action_id: 7298
-  field: 3
-  value: '0'
+  card_action_id: 7313
+  field: 2
+  value: ''
 card_changes_5479:
   id: 5479
-  card_action_id: 7299
-  field: 0
-  value: Joe User+*account+*email
+  card_action_id: 7313
+  field: 3
+  value: '0'
 card_changes_5480:
   id: 5480
-  card_action_id: 7299
-  field: 1
-  value: '52'
+  card_action_id: 7314
+  field: 0
+  value: content I edited
 card_changes_5481:
   id: 5481
-  card_action_id: 7299
-  field: 2
-  value: joe@user.com
+  card_action_id: 7314
+  field: 1
+  value: '3'
 card_changes_5482:
   id: 5482
-  card_action_id: 7299
-  field: 3
-  value: '0'
+  card_action_id: 7314
+  field: 2
+  value: ''
 card_changes_5483:
   id: 5483
-  card_action_id: 7300
-  field: 0
-  value: Joe User+*account+*token
+  card_action_id: 7314
+  field: 3
+  value: '0'
 card_changes_5484:
   id: 5484
-  card_action_id: 7300
-  field: 1
-  value: '3'
+  card_action_id: 7315
+  field: 0
+  value: "*follow fields"
 card_changes_5485:
   id: 5485
-  card_action_id: 7300
-  field: 2
-  value: e1a56563bbb2ef0df8c8565660e25b73fc3b94fd
+  card_action_id: 7315
+  field: 1
+  value: '278'
 card_changes_5486:
   id: 5486
-  card_action_id: 7300
-  field: 3
-  value: '0'
+  card_action_id: 7315
+  field: 2
+  value: ''
 card_changes_5487:
   id: 5487
-  card_action_id: 7301
-  field: 0
-  value: Joe User+*account+*status
+  card_action_id: 7315
+  field: 3
+  value: '0'
 card_changes_5488:
   id: 5488
-  card_action_id: 7301
-  field: 1
-  value: '3'
+  card_action_id: 7317
+  field: 0
+  value: "*follow fields+*right"
 card_changes_5489:
   id: 5489
-  card_action_id: 7301
-  field: 2
-  value: pending
+  card_action_id: 7317
+  field: 1
+  value: '259'
 card_changes_5490:
   id: 5490
-  card_action_id: 7301
-  field: 3
-  value: '0'
+  card_action_id: 7317
+  field: 2
+  value: '{"right":"_self"}'
 card_changes_5491:
   id: 5491
-  card_action_id: 7302
-  field: 0
-  value: Joe User+*account+*salt
+  card_action_id: 7317
+  field: 3
+  value: '0'
 card_changes_5492:
   id: 5492
-  card_action_id: 7302
-  field: 1
-  value: '3'
+  card_action_id: 7316
+  field: 0
+  value: "*follow fields+*right+*help"
 card_changes_5493:
   id: 5493
-  card_action_id: 7302
-  field: 2
-  value: cafb68c7d83ea2ad1c74515cd25c8499ce1d793e
+  card_action_id: 7316
+  field: 1
+  value: '3'
 card_changes_5494:
   id: 5494
-  card_action_id: 7302
-  field: 3
-  value: '0'
+  card_action_id: 7316
+  field: 2
+  value: ''
 card_changes_5495:
   id: 5495
-  card_action_id: 7303
-  field: 0
-  value: Joe Admin
+  card_action_id: 7316
+  field: 3
+  value: '0'
 card_changes_5496:
   id: 5496
-  card_action_id: 7303
-  field: 1
-  value: '4'
+  card_action_id: 7318
+  field: 0
+  value: "*follow fields+*right+*default"
 card_changes_5497:
   id: 5497
-  card_action_id: 7303
-  field: 2
-  value: I'm number one
+  card_action_id: 7318
+  field: 1
+  value: '47'
 card_changes_5498:
   id: 5498
-  card_action_id: 7303
-  field: 3
-  value: '0'
+  card_action_id: 7318
+  field: 2
+  value: ''
 card_changes_5499:
   id: 5499
-  card_action_id: 7304
-  field: 0
-  value: Joe Admin+*account
+  card_action_id: 7318
+  field: 3
+  value: '0'
 card_changes_5500:
   id: 5500
-  card_action_id: 7304
-  field: 1
-  value: '3'
+  card_action_id: 7319
+  field: 0
+  value: "*all+*follow fields"
 card_changes_5501:
   id: 5501
-  card_action_id: 7304
-  field: 2
-  value: |-
-    <h1>[[_left+*roles|{{_left|name}}'s roles]]<br></h1>
-    <blockquote>
-    <p>{{_left+*roles|item:link}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>[[_left+*watching|{{_left|name}} is watching]]</h1>
-    <blockquote>
-    <p>{{_left|name}} will receive email whenever these cards (or cards of types listed here) are changed. [[http://wagn.org/wagn/Notification|Learn more about notifications.]]</p>
-    <p>{{_left+*watching|item:change}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>[[_left+*created|{{_left|name}} created]]</h1>
-    <blockquote>
-    <p>{{_left+*created|item:change}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>[[_left+*editing|{{_left|name}} has edited]]</h1>
-    <blockquote>
-    <p>{{_left+*editing|item:change}}</p>
-    </blockquote>
+  card_action_id: 7319
+  field: 1
+  value: '47'
 card_changes_5502:
   id: 5502
-  card_action_id: 7304
-  field: 3
-  value: '0'
+  card_action_id: 7319
+  field: 2
+  value: "[[*include]]"
 card_changes_5503:
   id: 5503
-  card_action_id: 7305
-  field: 0
-  value: Joe Admin+*account+*password
+  card_action_id: 7319
+  field: 3
+  value: '0'
 card_changes_5504:
   id: 5504
-  card_action_id: 7305
-  field: 1
-  value: '52'
+  card_action_id: 7320
+  field: 0
+  value: John Abbe+*following
 card_changes_5505:
   id: 5505
-  card_action_id: 7305
-  field: 2
-  value: 535a4dffed62cb18f7464b00b7c1a1923c51f7ff
+  card_action_id: 7320
+  field: 1
+  value: '47'
 card_changes_5506:
   id: 5506
-  card_action_id: 7305
-  field: 3
-  value: '0'
+  card_action_id: 7320
+  field: 2
+  value: |-
+    [[Basic+*type+always]]
+    [[Pointer+*type+always]]
+    [[Phrase+*type+always]]
+    [[PlainText+*type+always]]
+    [[Search+*type+always]]
+    [[Image+*type+always]]
+    [[HTML+*type+always]]
+    [[User+*type+always]]
+    [[Cardtype+*type+always]]
+    [[Date+*type+always]]
+    [[File+*type+always]]
+    [[Number+*type+always]]
+    [[Role+*type+always]]
+    [[Toggle+*type+always]]
 card_changes_5507:
   id: 5507
-  card_action_id: 7306
-  field: 0
-  value: Joe Admin+*account+*email
+  card_action_id: 7320
+  field: 3
+  value: '0'
 card_changes_5508:
   id: 5508
-  card_action_id: 7306
-  field: 1
-  value: '52'
+  card_action_id: 7322
+  field: 0
+  value: John Abbe+*following+*follow
 card_changes_5509:
   id: 5509
-  card_action_id: 7306
-  field: 2
-  value: joe@admin.com
+  card_action_id: 7322
+  field: 1
+  value: '3'
 card_changes_5510:
   id: 5510
-  card_action_id: 7306
-  field: 3
-  value: '0'
+  card_action_id: 7322
+  field: 2
+  value: ''
 card_changes_5511:
   id: 5511
-  card_action_id: 7307
-  field: 0
-  value: Joe Admin+*account+*token
+  card_action_id: 7322
+  field: 3
+  value: '0'
 card_changes_5512:
   id: 5512
-  card_action_id: 7307
-  field: 1
-  value: '3'
+  card_action_id: 7321
+  field: 0
+  value: John Abbe+*following+*follow+John Abbe
 card_changes_5513:
   id: 5513
-  card_action_id: 7307
-  field: 2
-  value: 1d9c5d20c74e3df7ad9ede678f7df2b7972efe9c
+  card_action_id: 7321
+  field: 1
+  value: '47'
 card_changes_5514:
   id: 5514
-  card_action_id: 7307
-  field: 3
-  value: '0'
+  card_action_id: 7321
+  field: 2
+  value: "[[]]"
 card_changes_5515:
   id: 5515
-  card_action_id: 7308
-  field: 0
-  value: Joe Admin+*account+*status
+  card_action_id: 7321
+  field: 3
+  value: '0'
 card_changes_5516:
   id: 5516
-  card_action_id: 7308
-  field: 1
-  value: '3'
+  card_action_id: 7325
+  field: 0
+  value: Basic+*type
 card_changes_5517:
   id: 5517
-  card_action_id: 7308
-  field: 2
-  value: pending
+  card_action_id: 7325
+  field: 1
+  value: '259'
 card_changes_5518:
   id: 5518
-  card_action_id: 7308
-  field: 3
-  value: '0'
+  card_action_id: 7325
+  field: 2
+  value: '{"type":"_self"}'
 card_changes_5519:
   id: 5519
-  card_action_id: 7309
-  field: 0
-  value: Joe Admin+*account+*salt
+  card_action_id: 7325
+  field: 3
+  value: '0'
 card_changes_5520:
   id: 5520
-  card_action_id: 7309
-  field: 1
-  value: '3'
+  card_action_id: 7324
+  field: 0
+  value: Basic+*type+*follow
 card_changes_5521:
   id: 5521
-  card_action_id: 7309
-  field: 2
-  value: 3c33f34d3762f0c6ff16b91acbff65671e2ad2ca
-card_changes_5522:
-  id: 5522
-  card_action_id: 7309
-  field: 3
-  value: '0'
-card_changes_5523:
-  id: 5523
-  card_action_id: 7310
-  field: 0
-  value: Joe Camel
-card_changes_5524:
-  id: 5524
-  card_action_id: 7310
-  field: 1
-  value: '4'
-card_changes_5525:
-  id: 5525
-  card_action_id: 7310
-  field: 2
-  value: Mr. Buttz
-card_changes_5526:
-  id: 5526
-  card_action_id: 7310
-  field: 3
-  value: '0'
-card_changes_5527:
-  id: 5527
-  card_action_id: 7311
-  field: 0
-  value: Joe Camel+*account
-card_changes_5528:
-  id: 5528
-  card_action_id: 7311
+  card_action_id: 7324
   field: 1
   value: '3'
+card_changes_5522:
+  id: 5522
+  card_action_id: 7324
+  field: 2
+  value: ''
+card_changes_5523:
+  id: 5523
+  card_action_id: 7324
+  field: 3
+  value: '0'
+card_changes_5524:
+  id: 5524
+  card_action_id: 7323
+  field: 0
+  value: Basic+*type+*follow+John Abbe
+card_changes_5525:
+  id: 5525
+  card_action_id: 7323
+  field: 1
+  value: '47'
+card_changes_5526:
+  id: 5526
+  card_action_id: 7323
+  field: 2
+  value: "[[always]]"
+card_changes_5527:
+  id: 5527
+  card_action_id: 7323
+  field: 3
+  value: '0'
+card_changes_5528:
+  id: 5528
+  card_action_id: 7328
+  field: 0
+  value: Pointer+*type
 card_changes_5529:
   id: 5529
-  card_action_id: 7311
+  card_action_id: 7328
+  field: 1
+  value: '259'
+card_changes_5530:
+  id: 5530
+  card_action_id: 7328
+  field: 2
+  value: '{"type":"_self"}'
+card_changes_5531:
+  id: 5531
+  card_action_id: 7328
+  field: 3
+  value: '0'
+card_changes_5532:
+  id: 5532
+  card_action_id: 7327
+  field: 0
+  value: Pointer+*type+*follow
+card_changes_5533:
+  id: 5533
+  card_action_id: 7327
+  field: 1
+  value: '3'
+card_changes_5534:
+  id: 5534
+  card_action_id: 7327
+  field: 2
+  value: ''
+card_changes_5535:
+  id: 5535
+  card_action_id: 7327
+  field: 3
+  value: '0'
+card_changes_5536:
+  id: 5536
+  card_action_id: 7326
+  field: 0
+  value: Pointer+*type+*follow+John Abbe
+card_changes_5537:
+  id: 5537
+  card_action_id: 7326
+  field: 1
+  value: '47'
+card_changes_5538:
+  id: 5538
+  card_action_id: 7326
+  field: 2
+  value: "[[always]]"
+card_changes_5539:
+  id: 5539
+  card_action_id: 7326
+  field: 3
+  value: '0'
+card_changes_5540:
+  id: 5540
+  card_action_id: 7331
+  field: 0
+  value: Phrase+*type
+card_changes_5541:
+  id: 5541
+  card_action_id: 7331
+  field: 1
+  value: '259'
+card_changes_5542:
+  id: 5542
+  card_action_id: 7331
+  field: 2
+  value: '{"type":"_self"}'
+card_changes_5543:
+  id: 5543
+  card_action_id: 7331
+  field: 3
+  value: '0'
+card_changes_5544:
+  id: 5544
+  card_action_id: 7330
+  field: 0
+  value: Phrase+*type+*follow
+card_changes_5545:
+  id: 5545
+  card_action_id: 7330
+  field: 1
+  value: '3'
+card_changes_5546:
+  id: 5546
+  card_action_id: 7330
+  field: 2
+  value: ''
+card_changes_5547:
+  id: 5547
+  card_action_id: 7330
+  field: 3
+  value: '0'
+card_changes_5548:
+  id: 5548
+  card_action_id: 7329
+  field: 0
+  value: Phrase+*type+*follow+John Abbe
+card_changes_5549:
+  id: 5549
+  card_action_id: 7329
+  field: 1
+  value: '47'
+card_changes_5550:
+  id: 5550
+  card_action_id: 7329
+  field: 2
+  value: "[[always]]"
+card_changes_5551:
+  id: 5551
+  card_action_id: 7329
+  field: 3
+  value: '0'
+card_changes_5552:
+  id: 5552
+  card_action_id: 7334
+  field: 0
+  value: PlainText+*type
+card_changes_5553:
+  id: 5553
+  card_action_id: 7334
+  field: 1
+  value: '259'
+card_changes_5554:
+  id: 5554
+  card_action_id: 7334
+  field: 2
+  value: '{"type":"_self"}'
+card_changes_5555:
+  id: 5555
+  card_action_id: 7334
+  field: 3
+  value: '0'
+card_changes_5556:
+  id: 5556
+  card_action_id: 7333
+  field: 0
+  value: PlainText+*type+*follow
+card_changes_5557:
+  id: 5557
+  card_action_id: 7333
+  field: 1
+  value: '3'
+card_changes_5558:
+  id: 5558
+  card_action_id: 7333
+  field: 2
+  value: ''
+card_changes_5559:
+  id: 5559
+  card_action_id: 7333
+  field: 3
+  value: '0'
+card_changes_5560:
+  id: 5560
+  card_action_id: 7332
+  field: 0
+  value: PlainText+*type+*follow+John Abbe
+card_changes_5561:
+  id: 5561
+  card_action_id: 7332
+  field: 1
+  value: '47'
+card_changes_5562:
+  id: 5562
+  card_action_id: 7332
+  field: 2
+  value: "[[always]]"
+card_changes_5563:
+  id: 5563
+  card_action_id: 7332
+  field: 3
+  value: '0'
+card_changes_5564:
+  id: 5564
+  card_action_id: 7337
+  field: 0
+  value: Search+*type
+card_changes_5565:
+  id: 5565
+  card_action_id: 7337
+  field: 1
+  value: '259'
+card_changes_5566:
+  id: 5566
+  card_action_id: 7337
+  field: 2
+  value: '{"type":"_self"}'
+card_changes_5567:
+  id: 5567
+  card_action_id: 7337
+  field: 3
+  value: '0'
+card_changes_5568:
+  id: 5568
+  card_action_id: 7336
+  field: 0
+  value: Search+*type+*follow
+card_changes_5569:
+  id: 5569
+  card_action_id: 7336
+  field: 1
+  value: '3'
+card_changes_5570:
+  id: 5570
+  card_action_id: 7336
+  field: 2
+  value: ''
+card_changes_5571:
+  id: 5571
+  card_action_id: 7336
+  field: 3
+  value: '0'
+card_changes_5572:
+  id: 5572
+  card_action_id: 7335
+  field: 0
+  value: Search+*type+*follow+John Abbe
+card_changes_5573:
+  id: 5573
+  card_action_id: 7335
+  field: 1
+  value: '47'
+card_changes_5574:
+  id: 5574
+  card_action_id: 7335
+  field: 2
+  value: "[[always]]"
+card_changes_5575:
+  id: 5575
+  card_action_id: 7335
+  field: 3
+  value: '0'
+card_changes_5576:
+  id: 5576
+  card_action_id: 7340
+  field: 0
+  value: Image+*type
+card_changes_5577:
+  id: 5577
+  card_action_id: 7340
+  field: 1
+  value: '259'
+card_changes_5578:
+  id: 5578
+  card_action_id: 7340
+  field: 2
+  value: '{"type":"_self"}'
+card_changes_5579:
+  id: 5579
+  card_action_id: 7340
+  field: 3
+  value: '0'
+card_changes_5580:
+  id: 5580
+  card_action_id: 7339
+  field: 0
+  value: Image+*type+*follow
+card_changes_5581:
+  id: 5581
+  card_action_id: 7339
+  field: 1
+  value: '3'
+card_changes_5582:
+  id: 5582
+  card_action_id: 7339
+  field: 2
+  value: ''
+card_changes_5583:
+  id: 5583
+  card_action_id: 7339
+  field: 3
+  value: '0'
+card_changes_5584:
+  id: 5584
+  card_action_id: 7338
+  field: 0
+  value: Image+*type+*follow+John Abbe
+card_changes_5585:
+  id: 5585
+  card_action_id: 7338
+  field: 1
+  value: '47'
+card_changes_5586:
+  id: 5586
+  card_action_id: 7338
+  field: 2
+  value: "[[always]]"
+card_changes_5587:
+  id: 5587
+  card_action_id: 7338
+  field: 3
+  value: '0'
+card_changes_5588:
+  id: 5588
+  card_action_id: 7342
+  field: 0
+  value: HTML+*type+*follow
+card_changes_5589:
+  id: 5589
+  card_action_id: 7342
+  field: 1
+  value: '3'
+card_changes_5590:
+  id: 5590
+  card_action_id: 7342
+  field: 2
+  value: ''
+card_changes_5591:
+  id: 5591
+  card_action_id: 7342
+  field: 3
+  value: '0'
+card_changes_5592:
+  id: 5592
+  card_action_id: 7341
+  field: 0
+  value: HTML+*type+*follow+John Abbe
+card_changes_5593:
+  id: 5593
+  card_action_id: 7341
+  field: 1
+  value: '47'
+card_changes_5594:
+  id: 5594
+  card_action_id: 7341
+  field: 2
+  value: "[[always]]"
+card_changes_5595:
+  id: 5595
+  card_action_id: 7341
+  field: 3
+  value: '0'
+card_changes_5596:
+  id: 5596
+  card_action_id: 7344
+  field: 0
+  value: User+*type+*follow
+card_changes_5597:
+  id: 5597
+  card_action_id: 7344
+  field: 1
+  value: '3'
+card_changes_5598:
+  id: 5598
+  card_action_id: 7344
+  field: 2
+  value: ''
+card_changes_5599:
+  id: 5599
+  card_action_id: 7344
+  field: 3
+  value: '0'
+card_changes_5600:
+  id: 5600
+  card_action_id: 7343
+  field: 0
+  value: User+*type+*follow+John Abbe
+card_changes_5601:
+  id: 5601
+  card_action_id: 7343
+  field: 1
+  value: '47'
+card_changes_5602:
+  id: 5602
+  card_action_id: 7343
+  field: 2
+  value: "[[always]]"
+card_changes_5603:
+  id: 5603
+  card_action_id: 7343
+  field: 3
+  value: '0'
+card_changes_5604:
+  id: 5604
+  card_action_id: 7346
+  field: 0
+  value: Cardtype+*type+*follow
+card_changes_5605:
+  id: 5605
+  card_action_id: 7346
+  field: 1
+  value: '3'
+card_changes_5606:
+  id: 5606
+  card_action_id: 7346
+  field: 2
+  value: ''
+card_changes_5607:
+  id: 5607
+  card_action_id: 7346
+  field: 3
+  value: '0'
+card_changes_5608:
+  id: 5608
+  card_action_id: 7345
+  field: 0
+  value: Cardtype+*type+*follow+John Abbe
+card_changes_5609:
+  id: 5609
+  card_action_id: 7345
+  field: 1
+  value: '47'
+card_changes_5610:
+  id: 5610
+  card_action_id: 7345
+  field: 2
+  value: "[[always]]"
+card_changes_5611:
+  id: 5611
+  card_action_id: 7345
+  field: 3
+  value: '0'
+card_changes_5612:
+  id: 5612
+  card_action_id: 7349
+  field: 0
+  value: Date+*type
+card_changes_5613:
+  id: 5613
+  card_action_id: 7349
+  field: 1
+  value: '259'
+card_changes_5614:
+  id: 5614
+  card_action_id: 7349
+  field: 2
+  value: '{"type":"_self"}'
+card_changes_5615:
+  id: 5615
+  card_action_id: 7349
+  field: 3
+  value: '0'
+card_changes_5616:
+  id: 5616
+  card_action_id: 7348
+  field: 0
+  value: Date+*type+*follow
+card_changes_5617:
+  id: 5617
+  card_action_id: 7348
+  field: 1
+  value: '3'
+card_changes_5618:
+  id: 5618
+  card_action_id: 7348
+  field: 2
+  value: ''
+card_changes_5619:
+  id: 5619
+  card_action_id: 7348
+  field: 3
+  value: '0'
+card_changes_5620:
+  id: 5620
+  card_action_id: 7347
+  field: 0
+  value: Date+*type+*follow+John Abbe
+card_changes_5621:
+  id: 5621
+  card_action_id: 7347
+  field: 1
+  value: '47'
+card_changes_5622:
+  id: 5622
+  card_action_id: 7347
+  field: 2
+  value: "[[always]]"
+card_changes_5623:
+  id: 5623
+  card_action_id: 7347
+  field: 3
+  value: '0'
+card_changes_5624:
+  id: 5624
+  card_action_id: 7352
+  field: 0
+  value: File+*type
+card_changes_5625:
+  id: 5625
+  card_action_id: 7352
+  field: 1
+  value: '259'
+card_changes_5626:
+  id: 5626
+  card_action_id: 7352
+  field: 2
+  value: '{"type":"_self"}'
+card_changes_5627:
+  id: 5627
+  card_action_id: 7352
+  field: 3
+  value: '0'
+card_changes_5628:
+  id: 5628
+  card_action_id: 7351
+  field: 0
+  value: File+*type+*follow
+card_changes_5629:
+  id: 5629
+  card_action_id: 7351
+  field: 1
+  value: '3'
+card_changes_5630:
+  id: 5630
+  card_action_id: 7351
+  field: 2
+  value: ''
+card_changes_5631:
+  id: 5631
+  card_action_id: 7351
+  field: 3
+  value: '0'
+card_changes_5632:
+  id: 5632
+  card_action_id: 7350
+  field: 0
+  value: File+*type+*follow+John Abbe
+card_changes_5633:
+  id: 5633
+  card_action_id: 7350
+  field: 1
+  value: '47'
+card_changes_5634:
+  id: 5634
+  card_action_id: 7350
+  field: 2
+  value: "[[always]]"
+card_changes_5635:
+  id: 5635
+  card_action_id: 7350
+  field: 3
+  value: '0'
+card_changes_5636:
+  id: 5636
+  card_action_id: 7355
+  field: 0
+  value: Number+*type
+card_changes_5637:
+  id: 5637
+  card_action_id: 7355
+  field: 1
+  value: '259'
+card_changes_5638:
+  id: 5638
+  card_action_id: 7355
+  field: 2
+  value: '{"type":"_self"}'
+card_changes_5639:
+  id: 5639
+  card_action_id: 7355
+  field: 3
+  value: '0'
+card_changes_5640:
+  id: 5640
+  card_action_id: 7354
+  field: 0
+  value: Number+*type+*follow
+card_changes_5641:
+  id: 5641
+  card_action_id: 7354
+  field: 1
+  value: '3'
+card_changes_5642:
+  id: 5642
+  card_action_id: 7354
+  field: 2
+  value: ''
+card_changes_5643:
+  id: 5643
+  card_action_id: 7354
+  field: 3
+  value: '0'
+card_changes_5644:
+  id: 5644
+  card_action_id: 7353
+  field: 0
+  value: Number+*type+*follow+John Abbe
+card_changes_5645:
+  id: 5645
+  card_action_id: 7353
+  field: 1
+  value: '47'
+card_changes_5646:
+  id: 5646
+  card_action_id: 7353
+  field: 2
+  value: "[[always]]"
+card_changes_5647:
+  id: 5647
+  card_action_id: 7353
+  field: 3
+  value: '0'
+card_changes_5648:
+  id: 5648
+  card_action_id: 7357
+  field: 0
+  value: Role+*type+*follow
+card_changes_5649:
+  id: 5649
+  card_action_id: 7357
+  field: 1
+  value: '3'
+card_changes_5650:
+  id: 5650
+  card_action_id: 7357
+  field: 2
+  value: ''
+card_changes_5651:
+  id: 5651
+  card_action_id: 7357
+  field: 3
+  value: '0'
+card_changes_5652:
+  id: 5652
+  card_action_id: 7356
+  field: 0
+  value: Role+*type+*follow+John Abbe
+card_changes_5653:
+  id: 5653
+  card_action_id: 7356
+  field: 1
+  value: '47'
+card_changes_5654:
+  id: 5654
+  card_action_id: 7356
+  field: 2
+  value: "[[always]]"
+card_changes_5655:
+  id: 5655
+  card_action_id: 7356
+  field: 3
+  value: '0'
+card_changes_5656:
+  id: 5656
+  card_action_id: 7360
+  field: 0
+  value: Toggle+*type
+card_changes_5657:
+  id: 5657
+  card_action_id: 7360
+  field: 1
+  value: '259'
+card_changes_5658:
+  id: 5658
+  card_action_id: 7360
+  field: 2
+  value: '{"type":"_self"}'
+card_changes_5659:
+  id: 5659
+  card_action_id: 7360
+  field: 3
+  value: '0'
+card_changes_5660:
+  id: 5660
+  card_action_id: 7359
+  field: 0
+  value: Toggle+*type+*follow
+card_changes_5661:
+  id: 5661
+  card_action_id: 7359
+  field: 1
+  value: '3'
+card_changes_5662:
+  id: 5662
+  card_action_id: 7359
+  field: 2
+  value: ''
+card_changes_5663:
+  id: 5663
+  card_action_id: 7359
+  field: 3
+  value: '0'
+card_changes_5664:
+  id: 5664
+  card_action_id: 7358
+  field: 0
+  value: Toggle+*type+*follow+John Abbe
+card_changes_5665:
+  id: 5665
+  card_action_id: 7358
+  field: 1
+  value: '47'
+card_changes_5666:
+  id: 5666
+  card_action_id: 7358
+  field: 2
+  value: "[[always]]"
+card_changes_5667:
+  id: 5667
+  card_action_id: 7358
+  field: 3
+  value: '0'
+card_changes_5668:
+  id: 5668
+  card_action_id: 7361
+  field: 0
+  value: Ethan McCutchen+*following
+card_changes_5669:
+  id: 5669
+  card_action_id: 7361
+  field: 1
+  value: '47'
+card_changes_5670:
+  id: 5670
+  card_action_id: 7361
+  field: 2
+  value: "[[Basic+*type+always]]"
+card_changes_5671:
+  id: 5671
+  card_action_id: 7361
+  field: 3
+  value: '0'
+card_changes_5672:
+  id: 5672
+  card_action_id: 7363
+  field: 0
+  value: Ethan McCutchen+*following+*follow
+card_changes_5673:
+  id: 5673
+  card_action_id: 7363
+  field: 1
+  value: '3'
+card_changes_5674:
+  id: 5674
+  card_action_id: 7363
+  field: 2
+  value: ''
+card_changes_5675:
+  id: 5675
+  card_action_id: 7363
+  field: 3
+  value: '0'
+card_changes_5676:
+  id: 5676
+  card_action_id: 7362
+  field: 0
+  value: Ethan McCutchen+*following+*follow+Ethan McCutchen
+card_changes_5677:
+  id: 5677
+  card_action_id: 7362
+  field: 1
+  value: '47'
+card_changes_5678:
+  id: 5678
+  card_action_id: 7362
+  field: 2
+  value: "[[]]"
+card_changes_5679:
+  id: 5679
+  card_action_id: 7362
+  field: 3
+  value: '0'
+card_changes_5680:
+  id: 5680
+  card_action_id: 7364
+  field: 0
+  value: Basic+*type+*follow+Ethan McCutchen
+card_changes_5681:
+  id: 5681
+  card_action_id: 7364
+  field: 1
+  value: '47'
+card_changes_5682:
+  id: 5682
+  card_action_id: 7364
+  field: 2
+  value: "[[always]]"
+card_changes_5683:
+  id: 5683
+  card_action_id: 7364
+  field: 3
+  value: '0'
+card_changes_5684:
+  id: 5684
+  card_action_id: 7365
+  field: 0
+  value: always
+card_changes_5685:
+  id: 5685
+  card_action_id: 7365
+  field: 1
+  value: '3'
+card_changes_5686:
+  id: 5686
+  card_action_id: 7365
+  field: 2
+  value: ''
+card_changes_5687:
+  id: 5687
+  card_action_id: 7365
+  field: 3
+  value: '0'
+card_changes_5688:
+  id: 5688
+  card_action_id: 7366
+  field: 0
+  value: never
+card_changes_5689:
+  id: 5689
+  card_action_id: 7366
+  field: 1
+  value: '3'
+card_changes_5690:
+  id: 5690
+  card_action_id: 7366
+  field: 2
+  value: ''
+card_changes_5691:
+  id: 5691
+  card_action_id: 7366
+  field: 3
+  value: '0'
+card_changes_5692:
+  id: 5692
+  card_action_id: 7367
+  field: 0
+  value: "*all+*follow"
+card_changes_5693:
+  id: 5693
+  card_action_id: 7367
+  field: 1
+  value: '47'
+card_changes_5694:
+  id: 5694
+  card_action_id: 7367
+  field: 2
+  value: "[[never]]"
+card_changes_5695:
+  id: 5695
+  card_action_id: 7367
+  field: 3
+  value: '0'
+card_changes_5696:
+  id: 5696
+  card_action_id: 7368
+  field: 0
+  value: Joe User
+card_changes_5697:
+  id: 5697
+  card_action_id: 7368
+  field: 1
+  value: '4'
+card_changes_5698:
+  id: 5698
+  card_action_id: 7368
+  field: 2
+  value: I'm number two
+card_changes_5699:
+  id: 5699
+  card_action_id: 7368
+  field: 3
+  value: '0'
+card_changes_5700:
+  id: 5700
+  card_action_id: 7369
+  field: 0
+  value: Joe User+*account
+card_changes_5701:
+  id: 5701
+  card_action_id: 7369
+  field: 1
+  value: '3'
+card_changes_5702:
+  id: 5702
+  card_action_id: 7369
   field: 2
   value: |-
     <h1>[[_left+*roles|{{_left|name}}'s roles]]<br></h1>
@@ -49691,108 +50539,428 @@ card_changes_5529:
     <blockquote>
     <p>{{_left+*editing|item:change}}</p>
     </blockquote>
-card_changes_5530:
-  id: 5530
-  card_action_id: 7311
+card_changes_5703:
+  id: 5703
+  card_action_id: 7369
   field: 3
   value: '0'
-card_changes_5531:
-  id: 5531
-  card_action_id: 7312
+card_changes_5704:
+  id: 5704
+  card_action_id: 7370
   field: 0
-  value: Joe Camel+*account+*password
-card_changes_5532:
-  id: 5532
-  card_action_id: 7312
+  value: Joe User+*account+*password
+card_changes_5705:
+  id: 5705
+  card_action_id: 7370
   field: 1
   value: '52'
-card_changes_5533:
-  id: 5533
-  card_action_id: 7312
+card_changes_5706:
+  id: 5706
+  card_action_id: 7370
   field: 2
-  value: 1353432cde2b8bfbda7ebefa09d572490525e757
-card_changes_5534:
-  id: 5534
-  card_action_id: 7312
+  value: 5d315047d83e9949fa4d0799d0e6980cc5f21cbd
+card_changes_5707:
+  id: 5707
+  card_action_id: 7370
   field: 3
   value: '0'
-card_changes_5535:
-  id: 5535
-  card_action_id: 7313
+card_changes_5708:
+  id: 5708
+  card_action_id: 7371
   field: 0
-  value: Joe Camel+*account+*email
-card_changes_5536:
-  id: 5536
-  card_action_id: 7313
+  value: Joe User+*account+*email
+card_changes_5709:
+  id: 5709
+  card_action_id: 7371
   field: 1
   value: '52'
-card_changes_5537:
-  id: 5537
-  card_action_id: 7313
+card_changes_5710:
+  id: 5710
+  card_action_id: 7371
   field: 2
-  value: joe@camel.com
-card_changes_5538:
-  id: 5538
-  card_action_id: 7313
+  value: joe@user.com
+card_changes_5711:
+  id: 5711
+  card_action_id: 7371
   field: 3
   value: '0'
-card_changes_5539:
-  id: 5539
-  card_action_id: 7314
+card_changes_5712:
+  id: 5712
+  card_action_id: 7372
   field: 0
-  value: Joe Camel+*account+*token
-card_changes_5540:
-  id: 5540
-  card_action_id: 7314
+  value: Joe User+*account+*token
+card_changes_5713:
+  id: 5713
+  card_action_id: 7372
   field: 1
   value: '3'
-card_changes_5541:
-  id: 5541
-  card_action_id: 7314
+card_changes_5714:
+  id: 5714
+  card_action_id: 7372
   field: 2
-  value: 35f281518a8f94f0fee990547885f0f25e0aa13e
-card_changes_5542:
-  id: 5542
-  card_action_id: 7314
+  value: 8dd403579514fad883bb1792c447100933db1920
+card_changes_5715:
+  id: 5715
+  card_action_id: 7372
   field: 3
   value: '0'
-card_changes_5543:
-  id: 5543
-  card_action_id: 7315
+card_changes_5716:
+  id: 5716
+  card_action_id: 7373
   field: 0
-  value: Joe Camel+*account+*status
-card_changes_5544:
-  id: 5544
-  card_action_id: 7315
+  value: Joe User+*account+*status
+card_changes_5717:
+  id: 5717
+  card_action_id: 7373
   field: 1
   value: '3'
-card_changes_5545:
-  id: 5545
-  card_action_id: 7315
+card_changes_5718:
+  id: 5718
+  card_action_id: 7373
   field: 2
   value: pending
-card_changes_5546:
-  id: 5546
-  card_action_id: 7315
+card_changes_5719:
+  id: 5719
+  card_action_id: 7373
   field: 3
   value: '0'
-card_changes_5547:
-  id: 5547
-  card_action_id: 7316
+card_changes_5720:
+  id: 5720
+  card_action_id: 7374
   field: 0
-  value: Joe Camel+*account+*salt
-card_changes_5548:
-  id: 5548
-  card_action_id: 7316
+  value: Joe User+*account+*salt
+card_changes_5721:
+  id: 5721
+  card_action_id: 7374
   field: 1
   value: '3'
-card_changes_5549:
-  id: 5549
-  card_action_id: 7316
+card_changes_5722:
+  id: 5722
+  card_action_id: 7374
   field: 2
-  value: e2c00146ee8a5ab0dce8a7f9f4bb75c17bad5374
-card_changes_5550:
-  id: 5550
-  card_action_id: 7316
+  value: 144ffd7a32c8725c3ea5ad86423487d92b5e9aef
+card_changes_5723:
+  id: 5723
+  card_action_id: 7374
+  field: 3
+  value: '0'
+card_changes_5724:
+  id: 5724
+  card_action_id: 7375
+  field: 0
+  value: Joe Admin
+card_changes_5725:
+  id: 5725
+  card_action_id: 7375
+  field: 1
+  value: '4'
+card_changes_5726:
+  id: 5726
+  card_action_id: 7375
+  field: 2
+  value: I'm number one
+card_changes_5727:
+  id: 5727
+  card_action_id: 7375
+  field: 3
+  value: '0'
+card_changes_5728:
+  id: 5728
+  card_action_id: 7376
+  field: 0
+  value: Joe Admin+*account
+card_changes_5729:
+  id: 5729
+  card_action_id: 7376
+  field: 1
+  value: '3'
+card_changes_5730:
+  id: 5730
+  card_action_id: 7376
+  field: 2
+  value: |-
+    <h1>[[_left+*roles|{{_left|name}}'s roles]]<br></h1>
+    <blockquote>
+    <p>{{_left+*roles|item:link}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>[[_left+*watching|{{_left|name}} is watching]]</h1>
+    <blockquote>
+    <p>{{_left|name}} will receive email whenever these cards (or cards of types listed here) are changed. [[http://wagn.org/wagn/Notification|Learn more about notifications.]]</p>
+    <p>{{_left+*watching|item:change}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>[[_left+*created|{{_left|name}} created]]</h1>
+    <blockquote>
+    <p>{{_left+*created|item:change}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>[[_left+*editing|{{_left|name}} has edited]]</h1>
+    <blockquote>
+    <p>{{_left+*editing|item:change}}</p>
+    </blockquote>
+card_changes_5731:
+  id: 5731
+  card_action_id: 7376
+  field: 3
+  value: '0'
+card_changes_5732:
+  id: 5732
+  card_action_id: 7377
+  field: 0
+  value: Joe Admin+*account+*password
+card_changes_5733:
+  id: 5733
+  card_action_id: 7377
+  field: 1
+  value: '52'
+card_changes_5734:
+  id: 5734
+  card_action_id: 7377
+  field: 2
+  value: 433d923d8532a5fb9930ebec70edcc25a646de9f
+card_changes_5735:
+  id: 5735
+  card_action_id: 7377
+  field: 3
+  value: '0'
+card_changes_5736:
+  id: 5736
+  card_action_id: 7378
+  field: 0
+  value: Joe Admin+*account+*email
+card_changes_5737:
+  id: 5737
+  card_action_id: 7378
+  field: 1
+  value: '52'
+card_changes_5738:
+  id: 5738
+  card_action_id: 7378
+  field: 2
+  value: joe@admin.com
+card_changes_5739:
+  id: 5739
+  card_action_id: 7378
+  field: 3
+  value: '0'
+card_changes_5740:
+  id: 5740
+  card_action_id: 7379
+  field: 0
+  value: Joe Admin+*account+*token
+card_changes_5741:
+  id: 5741
+  card_action_id: 7379
+  field: 1
+  value: '3'
+card_changes_5742:
+  id: 5742
+  card_action_id: 7379
+  field: 2
+  value: 4ef308f2ed489f233fc39a44b4fc55bc077a0e23
+card_changes_5743:
+  id: 5743
+  card_action_id: 7379
+  field: 3
+  value: '0'
+card_changes_5744:
+  id: 5744
+  card_action_id: 7380
+  field: 0
+  value: Joe Admin+*account+*status
+card_changes_5745:
+  id: 5745
+  card_action_id: 7380
+  field: 1
+  value: '3'
+card_changes_5746:
+  id: 5746
+  card_action_id: 7380
+  field: 2
+  value: pending
+card_changes_5747:
+  id: 5747
+  card_action_id: 7380
+  field: 3
+  value: '0'
+card_changes_5748:
+  id: 5748
+  card_action_id: 7381
+  field: 0
+  value: Joe Admin+*account+*salt
+card_changes_5749:
+  id: 5749
+  card_action_id: 7381
+  field: 1
+  value: '3'
+card_changes_5750:
+  id: 5750
+  card_action_id: 7381
+  field: 2
+  value: d19e8d09fca2340fc598b3b736dda67619ad4cab
+card_changes_5751:
+  id: 5751
+  card_action_id: 7381
+  field: 3
+  value: '0'
+card_changes_5752:
+  id: 5752
+  card_action_id: 7382
+  field: 0
+  value: Joe Camel
+card_changes_5753:
+  id: 5753
+  card_action_id: 7382
+  field: 1
+  value: '4'
+card_changes_5754:
+  id: 5754
+  card_action_id: 7382
+  field: 2
+  value: Mr. Buttz
+card_changes_5755:
+  id: 5755
+  card_action_id: 7382
+  field: 3
+  value: '0'
+card_changes_5756:
+  id: 5756
+  card_action_id: 7383
+  field: 0
+  value: Joe Camel+*account
+card_changes_5757:
+  id: 5757
+  card_action_id: 7383
+  field: 1
+  value: '3'
+card_changes_5758:
+  id: 5758
+  card_action_id: 7383
+  field: 2
+  value: |-
+    <h1>[[_left+*roles|{{_left|name}}'s roles]]<br></h1>
+    <blockquote>
+    <p>{{_left+*roles|item:link}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>[[_left+*watching|{{_left|name}} is watching]]</h1>
+    <blockquote>
+    <p>{{_left|name}} will receive email whenever these cards (or cards of types listed here) are changed. [[http://wagn.org/wagn/Notification|Learn more about notifications.]]</p>
+    <p>{{_left+*watching|item:change}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>[[_left+*created|{{_left|name}} created]]</h1>
+    <blockquote>
+    <p>{{_left+*created|item:change}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>[[_left+*editing|{{_left|name}} has edited]]</h1>
+    <blockquote>
+    <p>{{_left+*editing|item:change}}</p>
+    </blockquote>
+card_changes_5759:
+  id: 5759
+  card_action_id: 7383
+  field: 3
+  value: '0'
+card_changes_5760:
+  id: 5760
+  card_action_id: 7384
+  field: 0
+  value: Joe Camel+*account+*password
+card_changes_5761:
+  id: 5761
+  card_action_id: 7384
+  field: 1
+  value: '52'
+card_changes_5762:
+  id: 5762
+  card_action_id: 7384
+  field: 2
+  value: 478ccbedca30836948640ae8ae1647cd5b98a18b
+card_changes_5763:
+  id: 5763
+  card_action_id: 7384
+  field: 3
+  value: '0'
+card_changes_5764:
+  id: 5764
+  card_action_id: 7385
+  field: 0
+  value: Joe Camel+*account+*email
+card_changes_5765:
+  id: 5765
+  card_action_id: 7385
+  field: 1
+  value: '52'
+card_changes_5766:
+  id: 5766
+  card_action_id: 7385
+  field: 2
+  value: joe@camel.com
+card_changes_5767:
+  id: 5767
+  card_action_id: 7385
+  field: 3
+  value: '0'
+card_changes_5768:
+  id: 5768
+  card_action_id: 7386
+  field: 0
+  value: Joe Camel+*account+*token
+card_changes_5769:
+  id: 5769
+  card_action_id: 7386
+  field: 1
+  value: '3'
+card_changes_5770:
+  id: 5770
+  card_action_id: 7386
+  field: 2
+  value: 1a0eb68db4d8928286232cb0d590dc728e858010
+card_changes_5771:
+  id: 5771
+  card_action_id: 7386
+  field: 3
+  value: '0'
+card_changes_5772:
+  id: 5772
+  card_action_id: 7387
+  field: 0
+  value: Joe Camel+*account+*status
+card_changes_5773:
+  id: 5773
+  card_action_id: 7387
+  field: 1
+  value: '3'
+card_changes_5774:
+  id: 5774
+  card_action_id: 7387
+  field: 2
+  value: pending
+card_changes_5775:
+  id: 5775
+  card_action_id: 7387
+  field: 3
+  value: '0'
+card_changes_5776:
+  id: 5776
+  card_action_id: 7388
+  field: 0
+  value: Joe Camel+*account+*salt
+card_changes_5777:
+  id: 5777
+  card_action_id: 7388
+  field: 1
+  value: '3'
+card_changes_5778:
+  id: 5778
+  card_action_id: 7388
+  field: 2
+  value: 52d98eb38eb41111c1e84564c97fdbb92249b2dd
+card_changes_5779:
+  id: 5779
+  card_action_id: 7388
   field: 3
   value: '0'

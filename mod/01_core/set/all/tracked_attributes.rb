@@ -112,7 +112,7 @@ event :expire_related, :after=>:store do
   # FIXME really shouldn't be instantiating all the following bastards.  Just need the key.
   # fix in id_cache branch
   self.dependents.each       { |c| c.expire }
-  self.referencers.each      { |c| c.expire }
+  # self.referencers.each      { |c| c.expire }
   self.name_referencers.each { |c| c.expire }
   # FIXME: this will need review when we do the new defaults/templating system
 end

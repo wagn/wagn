@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class UriCodename < ActiveRecord::Migration
-  include Wagn::MigrationHelper
+class UriCodename < Wagn::Migration
   def up
     contentedly do
       puts "adding new codename card for URI"

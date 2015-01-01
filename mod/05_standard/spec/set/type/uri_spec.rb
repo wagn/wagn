@@ -21,6 +21,6 @@ describe Card::Set::Type::Uri do
 
   it "renders a uri view" do
     card = Card.create(:type=>'URI', :name=>'A URI card', :content=>'http://wagn.org/Home')
-    assert_view_select card.format.render('uri'), 'a[class="external-link"]', {:text => 'http://wagn.org/Home'}
+    assert_view_select card.format.render('core', :url_link_text=>true), 'a[class="external-link"]', {:text => 'http://wagn.org/Home'}
   end
 end

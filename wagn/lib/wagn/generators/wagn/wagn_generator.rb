@@ -31,7 +31,7 @@ class WagnGenerator < Rails::Generators::AppBase
     if options['core-dev']
       # TODO: rename or split, wagn_path points to the source repo, card and wagn gems are subdirs
       @wagn_path = options['gem-path'] || ask("Enter the path to your local wagn gem installation: ")
-      @spec_path = "#{@wagn_path}/card"
+      @spec_path = @wagn_path
       @spec_helper_path = File.join @spec_path, 'spec', 'spec_helper'
       @features_path = File.join @wagn_path, 'wagn/features/'  # ending slash is important in order to load support and step folders
       @simplecov_config = "card_core_dev_simplecov_filters"

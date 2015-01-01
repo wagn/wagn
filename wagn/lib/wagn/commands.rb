@@ -98,13 +98,22 @@ WAGN ARGS
 WAGN
 
     parser.on('-d', '--spec FILENAME(:LINE)', 'Run spec for a Wagn deck file') do |file|
-      opts[:files] = find_spec_file( file, "#{Decko.gem_root}/mod")
+      opts[:files] = find_spec_file( file, "#{Wagn.root}/mod")
+    end
+    parser.on('-k', '--decko-spec FILENAME(:LINE)', 'Run spec for a Wagn deck file') do |file|
+      opts[:files] = find_spec_file( file, Decko.gem_root)
+      warn "files #{file}, #{Decko.gem_root}, #{opts[:files].inspect}"
     end
     parser.on('-c', '--core-spec FILENAME(:LINE)', 'Run spec for a Wagn core file') do |file|
-      opts[:files] = find_spec_file( file, "#{Cardio.gem_root}" )
+      opts[:files] = find_spec_file( file, Cardio.gem_root)
     end
-    parser.on('-m', '--mod MODNAME', 'Run all specs for a mod') do |file|
-      opts[:files] = "#{Cardio.gem_root}/mod/#{file}"
+    parser.on('-m', '--mod MODNAME', 'Run all specs for a mod or matching a mod') do |file|
+      mad_path = "#{Cardio.gem_root}/mod/#{file}"
+      if File.exists? mod_path
+        opts[:files] = "#{Cardio.gem_root}/mod/#{file}"
+      else
+        opts[:files] = find_spec_file( file, "#{Cardio.gem_root}/mod")
+      end
     end
     parser.on('-s', '--[no-]simplecov', 'Run with simplecov') do |s|
       opts[:simplecov] = s ? '' : 'COVERAGE=false'

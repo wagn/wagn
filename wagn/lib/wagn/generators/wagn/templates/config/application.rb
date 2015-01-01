@@ -5,12 +5,6 @@ require 'wagn/application'
 module <%= app_const_base %>
   class Application < Wagn::Application
     config.performance_logger = nil
-  end
-
-  # Card config customizations: will be Card.config.*
-  class << Wagn::Application
-
-   def card_config config
 
     # Wagn inherits Rails configuration options.  See http://guides.rubyonrails.org/configuring.html
 
@@ -59,6 +53,5 @@ module <%= app_const_base %>
 
     # config.override_protocol = nil
     # don't autodetect protocol (http/https) from web requests
-   end
   end
 end

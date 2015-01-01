@@ -1,6 +1,6 @@
 
 view :raw do |args|
-  File.read "#{Card.gem_root}/mod/03_machines/lib/stylesheets/jquery-ui-smoothness.css"
+  File.read "#{Cardio.gem_root}/mod/03_machines/lib/stylesheets/jquery-ui-smoothness.css"
 end
 
 view :editor do |args|

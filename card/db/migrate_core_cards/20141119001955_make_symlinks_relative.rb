@@ -2,7 +2,7 @@
 
 class MakeSymlinksRelative < Card::Migration
   def up
-    CardRailtie.paths['files'].each do |file_path| 
+    Cardio.paths['files'].each do |file_path| 
       files = Dir.glob(File.join file_path, '**', '*')
       symlinks = files.select {|f| File.symlink? f }
       symlinks.each do |symlink|

@@ -5,7 +5,7 @@ require 'card/version'
 
 class Card::Migration < ActiveRecord::Migration
   def self.paths type
-    CardRailtie.paths["db/migrate#{schema_suffix type}"].to_a
+    Cardio.paths["db/migrate#{schema_suffix type}"].to_a
   end
   
   def self.schema_suffix type

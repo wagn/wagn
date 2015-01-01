@@ -6,10 +6,6 @@ require File.expand_path( '../../lib/card/simplecov_helper.rb', __FILE__ )
 require 'simplecov'
 require 'timecop'
 
-require 'active_record'
-require 'decko/engine'
-require 'card_railtie'
-
 Spork.prefork do
   if ENV["RAILS_ROOT"]
     require File.join( ENV["RAILS_ROOT"], '/config/environment')
@@ -22,7 +18,7 @@ Spork.prefork do
   
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
-#  Dir[ File.join(Card.gem_root, "spec/support/**/*.rb") ].each { |f| require f }
+#  Dir[ File.join(Cardio.gem_root, "spec/support/**/*.rb") ].each { |f| require f }
 
 #  FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   JOE_USER_ID = Card['joe_user'].id

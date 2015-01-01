@@ -1,6 +1,5 @@
 # should be able to move these to more appropriate places
 WAGN_GEM_ROOT = File.expand_path('../..', __FILE__)
-CARD_GEM_ROOT = File.expand_path('../../../card', __FILE__)
 
 module Wagn
 
@@ -23,10 +22,6 @@ module Wagn
     
     def gem_root
       WAGN_GEM_ROOT
-    end
-
-    def card_gem_root
-      CARD_GEM_ROOT
     end
 
     def with_logging cardname, method, message, details, &block

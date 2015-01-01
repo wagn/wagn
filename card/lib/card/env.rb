@@ -1,4 +1,4 @@
-# Card::Env can differ for each request; CardRailtie.config should not
+# Card::Env can differ for each request; Cardio.config should not
 
 class Card
   module Env
@@ -12,8 +12,8 @@ class Card
           self[:params]     = c.request.params
           self[:ip]         = c.request.remote_ip
           self[:ajax]       = c.request.xhr? || c.request.params[:simulate_xhr]
-          self[:host]       = CardRailtie.config.override_host     || c.request.env['HTTP_HOST']
-          self[:protocol]   = CardRailtie.config.override_protocol || c.request.protocol
+          self[:host]       = Cardio.config.override_host     || c.request.env['HTTP_HOST']
+          self[:protocol]   = Cardio.config.override_protocol || c.request.protocol
         
         end
       end

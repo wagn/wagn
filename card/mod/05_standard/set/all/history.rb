@@ -1,4 +1,4 @@
-REVISIONS_PER_PAGE = CardRailtie.config.revisions_per_page
+REVISIONS_PER_PAGE = Cardio.config.revisions_per_page
 
 # must be called on all actions and before :set_name, :process_subcards and :validate_delete_children
 def create_act_and_action

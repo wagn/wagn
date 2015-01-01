@@ -123,14 +123,14 @@ module Paperclip::Interpolations
   def local at, style_name
     if mod = at.instance.attach_mod
       # generalize this to work with any mod (needs design)
-      "#{Card.gem_root}/mod/#{mod}/file"
+      "#{Cardio.gem_root}/mod/#{mod}/file"
     else
-      CardRailtie.paths['files'].existent.first
+      Cardio.paths['files'].existent.first
     end
   end
       
   def file_path at, style_name
-    card_path CardRailtie.config.files_web_path
+    card_path Cardio.config.files_web_path
   end
 
   def card_id at, style_name

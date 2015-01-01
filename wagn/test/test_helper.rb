@@ -86,7 +86,7 @@ unless defined? TEST_ROOT
         if args[:cardtypes]==:all
           # FIXME: need a better data source for this?
           #args[:cardtypes] = YAML.load_file('db/bootstrap/card_codenames.yml').
-          bootstrap_file = File.join( Card.gem_root, 'db/bootstrap/cards.yml')
+          bootstrap_file = File.join( Cardio.gem_root, 'db/bootstrap/cards.yml')
           args[:cardtypes] = YAML.load_file(bootstrap_file).find_all do |p|
             !%w{set setting}.member?( p[1]['codename'] ) and
               card=Card[ p[1]['name'] ] and card.type_id == Card::CardtypeID

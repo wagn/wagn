@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 
 require 'decko/engine'
-require 'card_railtie'
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
@@ -55,9 +54,6 @@ module Wagn
       #warn "add gem path #{path}, #{with}, #{gem_path}, #{options.inspect}"
       paths[path] = Rails::Paths::Path.new(paths, gem_path, with, options)
     end
-
-    config.autoload_paths << "#{Rails.root}/tmp/lib"
-    Decko::Engine.config.autoload_paths << "#{Rails.root}/tmp/lib"
 
     config.i18n.enforce_available_locales = true
 

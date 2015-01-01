@@ -129,13 +129,13 @@ class Card
       'blockquote' => ['cite']
     )
 
-    if CardRailtie.config.allow_inline_styles
+    if Cardio.config.allow_inline_styles
       ALLOWED_TAGS['table'] += %w[ cellpadding align border cellspacing ]
     end
 
     ALLOWED_TAGS.each_key {|k|
       ALLOWED_TAGS[k] << 'class'
-      ALLOWED_TAGS[k] << 'style' if CardRailtie.config.allow_inline_styles
+      ALLOWED_TAGS[k] << 'style' if Cardio.config.allow_inline_styles
       ALLOWED_TAGS[k]
     }
     ALLOWED_TAGS

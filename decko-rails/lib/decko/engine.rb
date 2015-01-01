@@ -1,6 +1,6 @@
 
 require 'rails/all'
-require 'card_railtie'
+require 'cardio'
 
 # TODO: Move these to modules that use them
 require 'htmlentities'
@@ -42,9 +42,14 @@ module Decko
 
     Decko.add_gem_path paths, "app/controllers",     :eager_load => true
 
-    ActiveSupport.on_load(:active_record) do
-      CardRailtie.add_card_paths Decko::Engine.paths, Rails.application.config
+    initializer :connect_on_load do
+      ActiveSupport.on_load(:active_record) do
+        Cardio.add_card_paths Decko::Engine.paths, Rails.application.config, Wagn.root
+        ActiveRecord::Base.establish_connection(Rails.env)
+      end
     end
+
+    config.autoload_paths += Dir["#{Cardio.gem_root}/mod/*/lib/**/"]
 
   end
 end

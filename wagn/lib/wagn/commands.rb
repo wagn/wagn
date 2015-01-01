@@ -83,7 +83,7 @@ else
   when 'rspec'
     opts = {}
     require 'rspec/core'
-    require 'card_railtie'
+    require 'cardio'
     require 'decko/engine'
     parser = RSpec::Core::Parser.new.parser(opts)
     parser.banner = "Usage: wagn rspec [WAGN ARGS] -- [RSPEC ARGS]\n\nRSPEC ARGS"
@@ -101,10 +101,10 @@ WAGN
       opts[:files] = find_spec_file( file, "#{Decko.gem_root}/mod")
     end
     parser.on('-c', '--core-spec FILENAME(:LINE)', 'Run spec for a Wagn core file') do |file|
-      opts[:files] = find_spec_file( file, "#{Wagn.card_gem_root}" )
+      opts[:files] = find_spec_file( file, "#{Cardio.gem_root}" )
     end
     parser.on('-m', '--mod MODNAME', 'Run all specs for a mod') do |file|
-      opts[:files] = "#{Wagn.card_gem_root}/mod/#{file}"
+      opts[:files] = "#{Cardio.gem_root}/mod/#{file}"
     end
     parser.on('-s', '--[no-]simplecov', 'Run with simplecov') do |s|
       opts[:simplecov] = s ? '' : 'COVERAGE=false'

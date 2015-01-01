@@ -256,7 +256,7 @@ describe CardController do
     context "file" do
       before do
         Card::Auth.as_bot do
-          Card.create :name => "mao2", :type_code=>'image', :attach=>File.new("#{Card.gem_root}/test/fixtures/mao2.jpg")
+          Card.create :name => "mao2", :type_code=>'image', :attach=>File.new("#{Cardio.gem_root}/test/fixtures/mao2.jpg")
           Card.create :name => 'mao2+*self+*read', :content=>'[[Administrator]]'
         end
       end

@@ -14,7 +14,7 @@ namespace :wagn do
       puts "not dropped"
     end
 
-    ENV['SCHEMA'] ||= "#{CARD_GEM_ROOT}/db/schema.rb"
+    ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
      
     puts "creating"
     Rake::Task['db:create'].invoke
@@ -304,11 +304,11 @@ namespace :wagn do
     task :load => :environment do
       #FIXME - shouldn't we be more standard and use seed.rb for this code?
       Rake.application.options.trace = true
-      puts "bootstrap load starting #{File.join( CARD_GEM_ROOT, 'db/bootstrap')}"
+      puts "bootstrap load starting #{File.join( Cardio.gem_root, 'db/bootstrap')}"
       require 'active_record/fixtures'
 #      require 'time'
 
-      ActiveRecord::Fixtures.create_fixtures File.join( CARD_GEM_ROOT, 'db/bootstrap'), WAGN_BOOTSTRAP_TABLES
+      ActiveRecord::Fixtures.create_fixtures File.join( Cardio.gem_root, 'db/bootstrap'), WAGN_BOOTSTRAP_TABLES
 
     end
   end

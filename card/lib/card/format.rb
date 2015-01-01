@@ -14,7 +14,7 @@ class Card
       cattr_accessor acc
       self.send "#{acc}=", {}
     end
-    # TODO: these should come from CardRailtie.config
+    # TODO: these should come from Cardio.config
     @@max_char_count = 200
     @@max_depth      = 20
     

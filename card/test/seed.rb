@@ -1,8 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'timecop'
 
-#require 'card_railtie'
-
 class SharedData
 
   def self.account_args hash

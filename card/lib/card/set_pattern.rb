@@ -40,7 +40,7 @@ class Card
       end
     
       def write_tmp_file pattern_code, from_file, seq
-        to_file = "#{CardRailtie.paths['tmp/set_pattern'].first}/#{seq}-#{pattern_code}.rb"
+        to_file = "#{Cardio.paths['tmp/set_pattern'].first}/#{seq}-#{pattern_code}.rb"
         klass = "Card::#{pattern_code.camelize}Set"
         file_content = <<EOF
 # -*- encoding : utf-8 -*-

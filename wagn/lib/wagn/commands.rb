@@ -108,7 +108,7 @@ WAGN
       opts[:files] = find_spec_file( file, Cardio.gem_root)
     end
     parser.on('-m', '--mod MODNAME', 'Run all specs for a mod or matching a mod') do |file|
-      mad_path = "#{Cardio.gem_root}/mod/#{file}"
+      mod_path = "#{Cardio.gem_root}/mod/#{file}"
       if File.exists? mod_path
         opts[:files] = "#{Cardio.gem_root}/mod/#{file}"
       else

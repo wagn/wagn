@@ -72,6 +72,19 @@ module Cardio
       #warn "add gem path #{path} gp:#{gem_path}, w:#{with}, o:#{options.inspect}"
       paths[path] = Rails::Paths::Path.new(paths, gem_path, with, options)
     end
+
+    def future_stamp
+      ## used in test data
+      @@future_stamp ||= Time.local 2020,1,1,0,0,0
+    end
+
+    def delete_tmp_files id=nil
+      dir = Cardio.paths['files'].existent.first + '/tmp'
+      dir += "/#{id}" if id
+      FileUtils.rm_rf dir, :secure=>true
+    rescue
+      Rails.logger.info "failed to remove tmp files"
+    end
   end
 end
 

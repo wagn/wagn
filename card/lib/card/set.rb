@@ -52,8 +52,8 @@ class Card
  
     In order to have a set file associated with "all cards ending in +address", you could create
     a file in mywagn/mod/mymod/set/right/address.rb.  The recommended mechanism for doing so
-    is running `rails generate set modname set_pattern set_anchor`. In the current example, this
-    would translate to `rails generate set mymod right address`. Note that both the set_pattern 
+    is running `wagn generate set modname set_pattern set_anchor`. In the current example, this
+    would translate to `wagn generate set mymod right address`. Note that both the set_pattern 
     and the set_anchor must correspond to the codename of a card in the database to function
     correctly.
 

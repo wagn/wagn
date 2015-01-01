@@ -2,7 +2,7 @@
 
 describe Card do
   before do
-    Timecop.travel(Card.future_stamp)  # make sure we're ahead of all the test data
+    Timecop.travel(Cardio.future_stamp)  # make sure we're ahead of all the test data
     @just_s = [Card["Sara"].id]
     @s_and_j= [Card["Sara"].id, Card["John"].id].sort
   end
@@ -22,7 +22,7 @@ describe "Card::Set::All::Follow" do
   context "when following cards" do
     before do
       Card::Auth.current_id = Card['john'].id
-      Timecop.travel(Card.future_stamp)  # make sure we're ahead of all the test data
+      Timecop.travel(Cardio.future_stamp)  # make sure we're ahead of all the test data
     end
   
     def expect_notice_for card_name
@@ -65,7 +65,7 @@ describe "Card::Set::All::Follow" do
 
   context "when following trunk" do
     before do
-      Timecop.travel(Card.future_stamp)  # make sure we're ahead of all the test data
+      Timecop.travel(Cardio.future_stamp)  # make sure we're ahead of all the test data
       Card::Auth.current_id = Card['joe user'].id
       Card.create :type=>'Book', :name=>'Ulysses'
       expect(Card['Ulysses']).to be

@@ -19,8 +19,23 @@ describe Card::Set::Type::Uri do
     end
   end
 
-  it "renders a uri view" do
+  it "renders title view in a plain formatter" do
+    card = Card['A']
+    card.format(:format=>:text).render('title', :title=>'My Title').should == 'My Title'
+    card.format(:format=>:text).render('title').should == 'A'
+  end
+
+  it "renders url_link for regular cards" do
+    Wagn.config.relative_url_root = 'https://my_test_host.org'
+    card = Card['A']
+    assert_view_select card.format.render('url_link'),
+      'a[class="external-link"][href="https://my_test_host.org/A"]',
+      {:text => 'https://my_test_host.org/A' }
+  end
+
+  it "renders a url_link view" do
     card = Card.create(:type=>'URI', :name=>'A URI card', :content=>'http://wagn.org/Home')
-    assert_view_select card.format.render('core', :url_link_text=>true), 'a[class="external-link"]', {:text => 'http://wagn.org/Home'}
+    assert_view_select card.format.render('url_link'), 'a[class="external-link"]', {:text => 'http://wagn.org/Home'}
+    card.format(:format=>:text).render('url_link').should == 'http://wagn.org/Home'
   end
 end

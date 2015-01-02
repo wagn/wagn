@@ -29,6 +29,7 @@ Feature: Conflict
     And I open a new window for Joe User
     And I edit "Duck Soup" setting content to "Stan Laurel"
     And I am signed out
+    And I wait a sec
     And I am signed in as Joe Admin
     And I close window
     And I submit

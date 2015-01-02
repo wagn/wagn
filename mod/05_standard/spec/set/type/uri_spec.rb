@@ -28,6 +28,7 @@ describe Card::Set::Type::Uri do
   it "renders url_link for regular cards" do
     Wagn.config.relative_url_root = 'https://my_test_host.org'
     card = Card['A']
+    card.format(:format=>:text).render('url_link').should == 'https://my_test_host.org/A'
     assert_view_select card.format.render('url_link'),
       'a[class="external-link"][href="https://my_test_host.org/A"]',
       {:text => 'https://my_test_host.org/A' }

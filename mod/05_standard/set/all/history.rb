@@ -162,7 +162,7 @@ format :html do
       = "##{rev_nr}"
     .title
       .actor
-        = link_to act.actor.name, wagn_url( act.actor )
+        = link_to act.actor.name, wagn_url( act.actor.cardname.url_key )
       .time.timeago
         = time_ago_in_words(act.acted_at)
         ago

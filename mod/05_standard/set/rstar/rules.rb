@@ -97,7 +97,7 @@ format :html do
         <td class="rule-cell" colspan="3">
           <div class="rule-setting">
             #{ link_to_view setting_name.sub(/^\*/,''), :closed_rule, :class=>'close-rule-link slotter' }
-            #{ link_to_page "all rules", setting_name, :class=>'setting-link', :target=>'wagn_setting' }
+            #{ build_link setting_name, "all rules", :class=>'setting-link', :target=>'wagn_setting' }
           </div>
           
           <div class="instruction rule-instruction">
@@ -121,7 +121,7 @@ format :html do
       args[:item] ||= :link
       %{
         <div class="rule-set">
-          <label>Applies to</label> #{ link_to_page set.label, set.name }:
+          <label>Applies to</label> #{ build_link set.name, set.label }:
         </div>
         #{ _render_core args }
       }
@@ -168,7 +168,7 @@ format :html do
                   <li>
                     #{ form.radio_button :name, "#{set_name}+#{setting_name}", :checked=> checked }
                     <span class="set-label" #{'current-set-label' if is_current }>
-                      #{ link_to_page Card.fetch(set_name).label, set_name, :target=>'wagn_set' }
+                      #{ build_link set_name, Card.fetch(set_name).label, :target=>'wagn_set' }
                       #{'<em>(current)</em>' if is_current}
                     </span>
                   </li>

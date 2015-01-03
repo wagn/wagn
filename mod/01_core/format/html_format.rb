@@ -193,7 +193,7 @@ class Card
           #{
             if Auth.always_ok?
               %{
-                #{ link_to_page error_cardname, nil, :class=>'render-error-link' }
+                #{ build_link error_cardname, nil, :class=>'render-error-link' }
                 <div class="render-error-message errors-view" style="display:none">
                   <h3>Error message (visible to admin only)</h3>
                   <p><strong>#{ exception.message }</strong></p>
@@ -216,8 +216,8 @@ class Card
     end
 
     def final_link href, opts={}
-      text = opts[:text] || href
-      %{<a class="#{opts[:class]}" href="#{href}">#{text}</a>}
+      text = (opts.delete(:text) || href).dup
+      content_tag :a, text, opts.merge(:href=>href)
     end
 
     def link_to_view text, view, opts={}

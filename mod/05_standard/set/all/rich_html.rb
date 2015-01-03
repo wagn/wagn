@@ -56,7 +56,7 @@ format :html do
   end
 
   view :title_link do |args|
-    link_to_page (args[:title_ready] || showname(args[:title]) ), card.name
+    build_link card.name, (args[:title_ready] || showname(args[:title]) )
   end
 
   view :open, :tags=>:comment do |args|
@@ -135,7 +135,7 @@ format :html do
   view :type do |args|
     klasses = ['cardtype']
     klass = args[:type_class] and klasses << klass
-    link_to_page card.type_name, nil, :class=>klasses
+    build_link card.type_card.cardname, nil, :class=>klasses
   end
 
   view :closed do |args|
@@ -435,7 +435,7 @@ format :html do
 
     wrap args.merge( :slot_class=>'error-view' ) do  #ENGLISH below
       %{<strong>Conflict!</strong><span class="new-current-revision-id">#{card.last_action_id}</span>
-        <div>#{ link_to_page card.last_action.act.actor.name } has also been making changes.</div>
+        <div>#{ build_link card.last_action.act.actor.name } has also been making changes.</div>
         <div>Please examine below, resolve above, and re-submit.</div>
         #{ wrap do |args| 
             if card.current_act

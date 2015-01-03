@@ -33,7 +33,7 @@ format :html do
               %{
                 <div class="group-option">
                   #{ check_box_tag( "#{option.key}-perm-checkbox", option.name, checked, :class=>'perm-checkbox-button'  ) }
-                  <label>#{ link_to_page option.name, nil, :target=>'wagn_role' }</label>
+                  <label>#{ build_link option.name, nil, :target=>'wagn_role' }</label>
                 </div>
               }
             end * "\n"
@@ -71,7 +71,7 @@ format :html do
         task = card.tag.codename
         ancestor = Card[sc.trunk_name.trunk_name]
         links = ancestor.who_can( task.to_sym ).map do |card_id|
-          link_to_page Card[card_id].name, nil, :target=>args[:target]
+          build_link Card[card_id].name, nil, :target=>args[:target]
         end*", "
         "Inherit ( #{links} )"
       rescue

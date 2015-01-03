@@ -489,10 +489,14 @@ class Card
       end
     end
 
-    def build_link href, text=nil
-      opts = {:text => text }
+    def build_link href, text=nil, options={}
+      if Card::Name===href
+        text = href.to_s if text.nil?
+        href = wagn_path href.url_key
+      end
+      options[:text] = text if text
 
-      opts[:class] = case href.to_s
+      new_class = case href
         when /^https?:/                      ; 'external-link'
         when /^mailto:/                      ; 'email-link'
         when /^([a-zA-Z][\-+\.a-zA-Z\d]*):/  ; $1 + '-link'
@@ -502,8 +506,9 @@ class Card
           return href
           Rails.logger.debug "build_link mistakenly(?) called on #{href}, #{text}"
         end
+      options[:class] = options[:class] ? [options[:class], new_class]*' ' : new_class
         
-      final_link href, opts
+      final_link href, options
     end
 
     def card_link name, text, known, type=nil

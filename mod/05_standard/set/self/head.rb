@@ -45,7 +45,7 @@ format :html do
       if root.card.type_id == SearchTypeID
         opts = { :format => :rss }
         root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
-        bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{page_path root.card.name, opts} />}
+        bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{page_path root.card.cardname, opts} />}
       end
     end
     bits << '<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">'
@@ -58,7 +58,7 @@ format :html do
     style_card ||= root.card.rule_card :style
     
     @css_path = if params[:debug] == 'style'
-      page_path( style_card.name, :item => :import, :format => :css) 
+      page_path( style_card.cardname, :item => :import, :format => :css) 
     elsif style_card
       wagn_path style_card.machine_output_url
     end 

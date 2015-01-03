@@ -20,7 +20,7 @@ module Wagn::Location
   def save_location
     return if ajax? || !html? || !@card.known? || (@card.codename == 'signin')
     discard_locations_for @card
-    @previous_location = wagn_path @card
+    @previous_location = wagn_path @card.cardname.url_key
     location_history.push @previous_location
   end
 
@@ -51,19 +51,21 @@ module Wagn::Location
     session.delete :interrupted_action
   end
 
-   # -----------( urls and redirects from application.rb) ----------------
-
+  #
+  # page_path    takes a Card::Name, adds the format and query string to url_key (site-absolute)
+  # wagn_path    makes a relative path site-absolute (if not already)
+  # wagn_url     makes it a full url (if not already)
 
   # TESTME
   def page_path title, opts={}
-    
+    Rails.logger.warn "Pass only Card::Name to page_path #{title.class}, #{title}" unless Card::Name===title
     format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
     query  = opts.present? ? "?#{opts.to_param}"         : ''
-    wagn_path "#{title.to_name.url_key}#{format}#{query}"
+    wagn_path "#{title.url_key}#{format}#{query}"
   end
 
-  def wagn_path rel #should be in smartname?
-    rel_path = Card===rel ? rel.cardname.url_key : rel.to_s
+  def wagn_path rel_path
+    Rails.logger.warn "Pass only strings to wagn_path: #{rel_path.class}, #{rel_path}" unless String===rel_path
     if rel_path =~ /^\//
       rel_path
     else
@@ -71,23 +73,12 @@ module Wagn::Location
     end
   end
 
-  def wagn_url rel #should be in smartname?
+  def wagn_url rel
     if rel =~ /^https?\:/
       rel
     else
       "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ wagn_path rel }"
     end
-  end
-
-
-  # Links ----------------------------------------------------------------------
-
-  def link_to_page( text, title=nil, options={})
-    title ||= text
-    url_options = {}
-    [:type, :view].each { |k| url_options[k] = options.delete(k) if options[k] }
-    url = page_path( title, url_options )
-    link_to text, url, options
   end
 
 end

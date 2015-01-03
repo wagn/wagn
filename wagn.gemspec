@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
 
   [
     
-    [ 'rails',        '3.2.16'  ],
+    [ 'rails',        '~> 4.2'  ],
     [ 'smartname',    '0.2.3'   ],
 
     [ 'uuid',         '~> 2.3'  ],

@@ -83,8 +83,8 @@ group :test do
   gem 'email_spec'                             # 
   gem 'database_cleaner', '~> 0.7'             # used by cucumber for db transactions
 
-  gem 'turn', "~>0.8.3", :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
-  gem 'minitest', "~>4.0"
+  gem 'turn', :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
+  gem 'minitest'
 end
 
 gem 'ruby-prof', '~>0.12.1', :group=>:profile  # profiling

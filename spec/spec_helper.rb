@@ -121,7 +121,7 @@ end
 
 RSpec::Core::ExampleGroup.send :include, Wagn::SpecHelper
 
-class ActiveSupport::BufferedLogger
+class ActiveSupport::Logger
   def rspec msg
     Thread.current['logger-output'] << msg
   end

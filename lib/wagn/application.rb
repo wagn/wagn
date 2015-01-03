@@ -9,9 +9,10 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
-module ActiveSupport::BufferedLogger::Severity
-  WAGN = UNKNOWN + 1
-  
+module ActiveSupport::Logger::Severity
+#  WAGN = UNKNOWN + 1
+  WAGN = 6
+   
   def wagn progname, &block
     add(WAGN, nil, progname, &block)
   end
@@ -44,8 +45,9 @@ module Wagn
     
     class << self
       def inherited(base)
-        Rails.application = base.instance
-        Rails.application.add_lib_to_load_path!
+        super
+        Rails.app_class = base
+        add_lib_to_load_path!(find_root(base.called_from))
         ActiveSupport.run_load_hooks(:before_configuration, base.instance)
       end      
     end
@@ -127,7 +129,8 @@ module Wagn
       gem_path        = File.join( Wagn.gem_root, path )
       options[:with] &&= File.join( Wagn.gem_root, options[:with]) 
       with = options[:with] || gem_path
-      paths[path] = Rails::Paths::Path.new(paths, gem_path, with, options)
+      root = paths.instance_variable_get '@root'
+      root[path] = Rails::Paths::Path.new(paths, gem_path, with, options)
     end
 
     def load_tasks(app=self)

@@ -5,7 +5,8 @@ require_dependency 'card/action'
 
 class CardController < ActionController::Base
 
-  include Wagn::Location
+  include Card::Format::Location
+  include Card::HtmlFormat::Location
   include Recaptcha::Verify
 
   before_filter :per_request_setup, :except => [:asset]

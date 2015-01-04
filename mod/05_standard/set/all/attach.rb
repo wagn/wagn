@@ -108,7 +108,7 @@ end
 
 module Paperclip::Interpolations
   
-  extend Wagn::Location
+  extend Card::Format::Location
 
   def local at, style_name
     if mod = at.instance.attach_mod

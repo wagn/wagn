@@ -2,7 +2,6 @@
 
 class Card
   class Format
-    include Wagn::Location
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
@@ -527,6 +526,40 @@ class Card
       final_link internal_url( linkname ), opts
     end
   
+
+    module Location
+      #
+      # page_path    takes a Card::Name, adds the format and query string to url_key (site-absolute)
+      # wagn_path    makes a relative path site-absolute (if not already)
+      # wagn_url     makes it a full url (if not already)
+
+      # TESTME
+      def page_path title, opts={}
+        Rails.logger.warn "Pass only Card::Name to page_path #{title.class}, #{title}" unless Card::Name===title
+        format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
+        query  = opts.present? ? "?#{opts.to_param}"         : ''
+        wagn_path "#{title.url_key}#{format}#{query}"
+      end
+
+      def wagn_path rel_path
+        Rails.logger.warn "Pass only strings to wagn_path: #{rel_path.class}, #{rel_path}" unless String===rel_path
+        if rel_path =~ /^\//
+          rel_path
+        else
+          "#{ Wagn.config.relative_url_root }/#{ rel_path }"
+        end
+      end
+
+      def wagn_url rel
+        if rel =~ /^https?\:/
+          rel
+        else
+          "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ wagn_path rel }"
+        end
+      end
+    end
+    include Location
+
     def unique_id
       "#{card.key}-#{Time.now.to_i}-#{rand(3)}" 
     end

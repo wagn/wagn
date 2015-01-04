@@ -100,7 +100,7 @@ WAGN
       opts[:files] = find_spec_file( file, "#{Wagn.gem_root}" )
     end
     parser.on('-m', '--mod MODNAME', 'Run all specs for a mod') do |file|
-      opts[:files] = "#{Wagn.gem_root}/mod/#{file}"
+      opts[:files] = "mod/#{file}"
     end
     parser.on('-s', '--[no-]simplecov', 'Run with simplecov') do |s|
       opts[:simplecov] = s ? '' : 'COVERAGE=false'

@@ -3597,3 +3597,10 @@ card_actions_514:
   super_action_id: 
   action_type: 1
   draft: false
+card_actions_515:
+  id: 7311
+  card_id: 1255
+  card_act_id: 7316
+  super_action_id: 
+  action_type: 0
+  draft: false

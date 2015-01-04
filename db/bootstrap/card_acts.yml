@@ -5,3 +5,9 @@ card_acts_001:
   actor_id: 1
   acted_at: 2014-12-16 22:18:05.000000000 Z
   ip_address: 
+card_acts_002:
+  id: 7316
+  card_id: 1255
+  actor_id: 1
+  acted_at: 2015-01-03 23:59:51.000000000 Z
+  ip_address: 

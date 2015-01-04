@@ -13206,3 +13206,29 @@ cards_694:
   trash: false
   type_id: 3
   db_content: chick
+cards_695:
+  id: 1435
+  name: URI
+  key: uri
+  codename: uri
+  left_id: 
+  right_id: 
+  current_revision_id: 
+  created_at: 2015-01-04 00:18:03.000000000 Z
+  updated_at: 2015-01-04 00:18:03.000000000 Z
+  creator_id: 1
+  updater_id: 1
+  read_rule_class: "*all"
+  read_rule_id: 500
+  references_expired: 
+  trash: false
+  type_id: 5
+  db_content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <p>[[/new/{{_self|linkname}}|add {{_self|name}} card]]</p>
+    <p>&nbsp;</p>
+    <h1>{{_self|name}} Cards</h1>
+    <blockquote>
+    <p>{{+*type+by name}}</p>
+    </blockquote>

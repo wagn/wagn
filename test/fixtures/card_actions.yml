@@ -4885,3 +4885,10 @@ card_actions_698:
   super_action_id: 
   action_type: 1
   draft: false
+card_actions_699:
+  id: 7499
+  card_id: 1435
+  card_act_id: 7432
+  super_action_id: 
+  action_type: 0
+  draft: false

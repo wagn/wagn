@@ -677,3 +677,9 @@ card_acts_113:
   actor_id: 1
   acted_at: 2014-12-16 22:18:24.000000000 Z
   ip_address: 
+card_acts_114:
+  id: 7432
+  card_id: 1435
+  actor_id: 1
+  acted_at: 2015-01-04 00:18:03.000000000 Z
+  ip_address: 

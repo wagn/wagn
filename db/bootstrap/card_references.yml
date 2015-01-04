@@ -2001,3 +2001,17 @@ card_references_286:
   referee_id: 1
   ref_type: I
   present: 1
+card_references_287:
+  id: 2478
+  referer_id: 1255
+  referee_key: uri+description
+  referee_id: 
+  ref_type: I
+  present: 0
+card_references_288:
+  id: 2479
+  referer_id: 1255
+  referee_key: uri+*type+by_name
+  referee_id: 
+  ref_type: I
+  present: 1

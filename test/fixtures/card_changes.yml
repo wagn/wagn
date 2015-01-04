@@ -12992,3 +12992,31 @@ card_changes_2456:
   card_action_id: 7498
   field: 2
   value: chick
+card_changes_2457:
+  id: 6192
+  card_action_id: 7499
+  field: 0
+  value: URI
+card_changes_2458:
+  id: 6193
+  card_action_id: 7499
+  field: 1
+  value: '5'
+card_changes_2459:
+  id: 6194
+  card_action_id: 7499
+  field: 2
+  value: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <p>[[/new/{{_self|linkname}}|add {{_self|name}} card]]</p>
+    <p>&nbsp;</p>
+    <h1>{{_self|name}} Cards</h1>
+    <blockquote>
+    <p>{{+*type+by name}}</p>
+    </blockquote>
+card_changes_2460:
+  id: 6195
+  card_action_id: 7499
+  field: 3
+  value: '0'

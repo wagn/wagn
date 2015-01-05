@@ -1,3 +1,4 @@
+@javascript
 Feature: Layouts
   In order to have greater control over the look and feel of my website
   As a User

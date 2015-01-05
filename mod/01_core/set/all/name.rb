@@ -159,7 +159,7 @@ event :validate_name, :before=>:approve, :on=>:save do
       condition_sql << " AND cards.id <> ?"
       condition_params << id
     end
-    if c = Card.find(:first, :conditions=>[condition_sql, *condition_params])
+    if c = Card.find_by(condition_sql, *condition_params)
       errors.add :name, "must be unique; '#{c.name}' already exists."
     end
   end

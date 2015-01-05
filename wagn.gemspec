@@ -28,6 +28,8 @@ Gem::Specification.new do |s|
     [ 'rails',        '~> 4.2'  ],
     [ 'smartname',    '0.2.3'   ],
 
+    [ 'activerecord-session_store'],
+
     [ 'uuid',         '~> 2.3'  ],
     [ 'paperclip',    '~> 2.8'  ],
     [ 'htmlentities', '~> 4.3'  ],

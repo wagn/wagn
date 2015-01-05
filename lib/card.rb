@@ -14,11 +14,9 @@ class Card < ActiveRecord::Base
 
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
-  has_many :acts, :order => :id
-  has_many :actions, :order => :id, :conditions=>{:draft => [nil,false]}
-  has_many :drafts, :order=>:id, :conditions=>{:draft=>true}, :class_name=> :Action
-
-  cache_attributes 'name', 'type_id' # review - still worth it in Rails 3?
+  has_many :acts, -> { order :id }
+  has_many :actions, -> { where( :draft=>[nil,false]).order :id }
+  has_many :drafts, { :class_name=> :Action }, -> { where( :draft=>true ).order :id }
 
   cattr_accessor :set_patterns, :error_codes
   @@set_patterns, @@error_codes = [], {}

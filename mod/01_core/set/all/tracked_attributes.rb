@@ -1,5 +1,5 @@
 #fixme -this is called by both initialize and update_attributes.  really should be optimized for new!
-def assign_attributes args={}, options={}
+def assign_attributes args={}
   if args
     args = args.stringify_keys
     if newtype = args.delete('type')
@@ -8,7 +8,7 @@ def assign_attributes args={}, options={}
     @subcards = extract_subcard_args! args
     reset_patterns
   end
-  super args, options
+  super args
 end
 
 def extract_subcard_args! args={}

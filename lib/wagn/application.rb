@@ -23,7 +23,7 @@ module Wagn
   class Application < Rails::Application
     
     initializer :load_wagn_environment_config, :before => :load_environment_config, :group => :all do
-      add_gem_path paths, "lib/wagn/config/environments", :glob => "#{Rails.env}.rb"   
+      add_gem_path paths, "lib/wagn/config/environments", :glob => "#{Rails.env}.rb" 
       paths["lib/wagn/config/environments"].existent.each do |environment|
         require environment
       end
@@ -108,10 +108,10 @@ module Wagn
         add_gem_path paths, 'gem-mod',             :with => 'mod'
         add_gem_path paths, 'gem-assets',          :with => 'public/assets'
 
-        paths['app/models'] = []
-        paths['app/mailers'] = []
-        paths['app/views'] = File.join( Wagn.gem_root, 'lib/card' )
-        paths['local-mod'] = approot_is_gemroot? ? [] : 'mod'
+#        paths['app/models'] = []
+#        paths['app/mailers'] = []
+#        paths['app/views'] = File.join( Wagn.gem_root, 'lib/card' )
+        paths.add 'local-mod', :with=>(approot_is_gemroot? ? nil : 'mod')
         
         paths.add 'files'
         paths.add 'tmp/set'
@@ -126,11 +126,8 @@ module Wagn
     end
     
     def add_gem_path paths, path, options={}
-      gem_path        = File.join( Wagn.gem_root, path )
-      options[:with] &&= File.join( Wagn.gem_root, options[:with]) 
-      with = options[:with] || gem_path
-      root = paths.instance_variable_get '@root'
-      root[path] = Rails::Paths::Path.new(paths, gem_path, with, options)
+      options[:with] = File.join( Wagn.gem_root, (options[:with] || path) )
+      paths.add path, options
     end
 
     def load_tasks(app=self)

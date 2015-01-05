@@ -1,4 +1,5 @@
 require 'rails/all'
+require 'activerecord/session_store'
 
 require 'builder'
 require 'htmlentities'

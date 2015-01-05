@@ -127,7 +127,7 @@ end
 def save_content_draft( content )
   clear_drafts
   acts.create do |act|
-    act.actions.build(:draft => true, :card_id=>id).changes.build(:field=>:db_content, :value=>content)
+    act.actions.build(:draft => true, :card_id=>id).card_changes.build(:field=>:db_content, :value=>content)
   end
 end
 

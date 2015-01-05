@@ -56,6 +56,7 @@ module Wagn
       @config ||= begin
         config = super
         
+        config.active_record.raise_in_transactional_callbacks = true
         config.i18n.enforce_available_locales = true
         
         config.autoload_paths += Dir["#{Wagn.gem_root}/app/**/"]

@@ -101,6 +101,8 @@ def self.included(base)
         end
       end
     end
+    
+    do_not_validate_attachment_file_type :attach
   end
 end
 

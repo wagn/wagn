@@ -23,7 +23,7 @@ class Card
       action = Card::Action.fetch(action)
     end
     action and Card::TRACKED_FIELDS.inject({}) do |attr_changes, field|
-      last_change = action.card_changes.find_by_field(field) || last_change_on(field, :not_after=>action)
+      last_change = action.card_changes.where(field: field) || last_change_on(field, :not_after=>action)
       attr_changes[field.to_sym] = (last_change ? last_change.value : self[field])
       attr_changes
     end
@@ -44,7 +44,8 @@ class Card
   class Action < ActiveRecord::Base
     belongs_to :card
     belongs_to :act,  :foreign_key=>:card_act_id, :inverse_of=>:actions 
-    has_many   :card_changes, :foreign_key=>:card_action_id, :inverse_of=>:action, :dependent=>:delete_all
+    has_many   :card_changes, :foreign_key=>:card_action_id, :inverse_of=>:action,
+      :dependent=>:delete_all, :class_name=> "Card::Change"
     
     belongs_to :super_action, :class_name=> "Action", :inverse_of=>:sub_actions
     has_many   :sub_actions,  :class_name=> "Action", :inverse_of=>:super_action
@@ -112,11 +113,11 @@ class Card
     end
     
     def new_value_for(field)
-       ch = changes.find_by_field(field) and ch.value
+       ch = card_changes.find_by(field: field) and ch.value
     end
     def change_for(field) 
       field_integer = ( field.is_a?(Integer) ? field : Card::TRACKED_FIELDS.index(field.to_s) )
-      changes.where 'card_changes.field = ?', field_integer
+      card_changes.where 'card_changes.field = ?', field_integer
     end
     
     

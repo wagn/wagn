@@ -6,6 +6,8 @@ Wagn.application.class.configure do
   # approximation of performance.  However, it should
   # definitely not use the production databse!
 
+  config.eager_load = true
+
   # Cache classes - otherwise your code
   # will run approximately 5 times slower and the
   # profiling results will be overwhelmed by Rails

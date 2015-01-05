@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Card
   class Change < ActiveRecord::Base
-    belongs_to :action, :foreign_key=>:card_action_id, :inverse_of=>:changes
+    belongs_to :action, :foreign_key=>:card_action_id, :inverse_of=>:card_changes
     
     # replace with enum if we start using rails 4 
     def field=(value)
@@ -19,10 +19,12 @@ class Card
       ).delete_all
     end
     
+=begin
     def self.find_by_field(value)
       index = value.is_a?(Integer) ? value : Card::TRACKED_FIELDS.index(value.to_s)
       super(index)
     end
+=end
   end
 end
 

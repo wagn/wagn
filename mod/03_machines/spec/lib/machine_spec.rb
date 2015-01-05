@@ -3,7 +3,6 @@ def that_produces type
   type
 end
 
-=begin
 def method_missing m, *args, &block
   case m
   when /that_produces_(.+)/
@@ -12,7 +11,6 @@ def method_missing m, *args, &block
     super
   end
 end
-=end
 
 shared_examples_for 'machine' do |filetype|
   context "machine is run" do

@@ -1,7 +1,7 @@
 
 def name_referencers link_name=nil
   link_name = link_name.nil? ? key : link_name.to_name.key
-  Card.all :joins => :references_to, :conditions => { :card_references => { :referee_key => link_name } }
+  Card.joins( :references_to ).where card_references: { referee_key: link_name }
 end
 
 def extended_referencers
@@ -32,7 +32,7 @@ def update_references rendered_content = nil, refresh = false
   #  or just this and save it elsewhere?
   #references_expired=nil
   
-  connection.execute("update cards set references_expired=NULL where id=#{id}")
+  Card.connection.execute("update cards set references_expired=NULL where id=#{id}")
 #  references_expired = nil
   expire if refresh
 

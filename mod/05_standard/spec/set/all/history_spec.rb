@@ -108,7 +108,7 @@ describe Card::Set::All::History do
           expect(@plus_action.action_type).to eq(:create)
         end
         it 'adds content change' do
-          expect(@plus_action.card_changes.find_by_field(:db_content).value).to eq(content)
+          expect(@plus_action.card_changes.where(field: :db_content).value).to eq(content)
         end
         it 'adds superaction for plus card' do
           expect(@plus_action.super_action_id).to eq(@left_action.id)
@@ -165,7 +165,7 @@ describe Card::Set::All::History do
           expect(@plus_action.action_type).to eq(:create)
         end   
         it 'content change' do
-          expect(@plus_action.card_changes.find_by_field(:db_content).value).to eq(content)
+          expect(@plus_action.card_changes.where(field: :db_content).value).to eq(content)
         end
       end
     end

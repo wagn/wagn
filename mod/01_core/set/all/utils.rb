@@ -10,10 +10,11 @@ module ClassMethods
   
   def delete_trashed_files #deletes any file not associated with a real card.
     dir = Wagn.paths['files'].existent.first
-    card_ids = Card.connection.select_all( %{ select id from cards where trash is false } ).map( &:values ).flatten
+    trashed_card_sql = %{ select id from cards where trash is true }
+    trashed_card_ids = Card.connection.select_all( trashed_card_sql ).map( &:values ).flatten.map &:to_i
     file_ids = Dir.entries( dir )[2..-1].map( &:to_i )
     file_ids.each do |file_id|
-      if !card_ids.member?(file_id)
+      if trashed_card_ids.member?(file_id)
         raise Card::Error, "Narrowly averted deleting current file" if Card.exists?(file_id) #double check!
         FileUtils.rm_rf "#{dir}/#{file_id}", :secure => true
       end

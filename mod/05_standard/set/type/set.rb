@@ -61,6 +61,44 @@ format :html do
   view :closed_content do |args|
     ''
   end
+  
+  view :follow_link do |args|
+    toggle       = args[:toggle] || (card.followed? ? :off : :on)
+    success_view = args[:success_view] || :follow
+
+    following    = Auth.current.fetch :trait=>:following, :new=>{:type=>:pointer}
+    path_options = {:card=>following, :action=>:update,# :follow_menu_index=>index,
+                    :success=>{:id=>card.name, :view=>success_view} }
+    html_options = {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :remote=>true, :method=>'post'}
+
+    case toggle
+    when :off
+      path_options[:add_item]      = "#{card.name}+#{Card[:never].name}"
+      html_options[:title]         = "stop sending emails about changes to #{card.follow_label}"
+      html_options[:hover_content] = "unfollow"
+    when :on
+      path_options[:add_item]      = "#{card.name}+#{Card[:always].name}"
+      html_options[:title]         = "send emails about changes to #{card.follow_label}"
+    end
+    text = render_follow_link_name args
+    link_to text, path(path_options), html_options
+  end
+  
+  def default_follow_set_card
+    card
+  end
+  
+  view :follow_link_name do |args|
+    args[:toggle] ||= card.followed? ? :off : :on
+    if args[:toggle] == :off
+      'following'
+    elsif card.right and card.right.codename == 'self'
+      'follow'
+    else
+      'follow all'
+    end
+  end
+  
 end
 
 

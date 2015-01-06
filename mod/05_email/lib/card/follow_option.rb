@@ -3,8 +3,9 @@
 
 class Card
   module FollowOption
-    mattr_reader :names
+    mattr_reader :names, :special
     @@names = []
+    @@special = []
 
     
     def self.included(host_class)     
@@ -16,7 +17,10 @@ class Card
     
     def drop_follower user
     end
-
+    
+    def description set_card
+      set_card.follow_label
+    end
     # def follower_ids
     #   All::Follow.read_reversed_following_cache(key) || begin
     #     ids = Card.joins(:references_to).where(
@@ -35,6 +39,9 @@ class Card
       # follow_opts :position => <Fixnum> (starting at 1, default: add to end)
       def follow_opts opts
         codename = opts[:codename] || self.name.match(/::(\w+)$/)[1].underscore.to_sym
+        if opts[:special]
+          Card::FollowOption.special << codename
+        end
         if opts[:position]
           if Card::FollowOption.names[opts[:position]-1]
             Card::FollowOption.names.insert(opts[:position]-1, codename)

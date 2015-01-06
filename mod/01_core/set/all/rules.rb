@@ -5,7 +5,8 @@ RuleSQL = %{
   join cards settings on rules.right_id = settings.id
   where sets.type_id     = #{Card::SetID }    and sets.trash     is false
   and   settings.type_id = #{Card::SettingID} and settings.trash is false
-  and                                             rules.trash    is false;
+  and                                             rules.trash    is false
+  and   (settings.codename != 'follow' or rules.db_content != '');
 }
 
 ReadRuleSQL = %{
@@ -29,10 +30,10 @@ UserRuleSQL = %{
   join cards sets     on rules.left_id        = sets.id 
   join cards settings on rules.right_id       = settings.id
   join cards users    on user_rules.right_id = users.id
-  where   sets.type_id     =  #{Card::SetID }   and sets.trash     is false 
-    and   settings.type_id = #{Card::SettingID} and settings.trash is false
-    and   users.type_id    = #{Card::UserID}    and users.trash    is false
-    and                                             rules.trash    is false;
+  where   sets.type_id     =  #{Card::SetID }                            and sets.trash     is false 
+    and   settings.type_id = #{Card::SettingID}                          and settings.trash is false
+    and   users.type_id   = #{Card::UserID}                              and users.trash    is false
+    and                                                                      rules.trash    is false;
 }  
 
 
@@ -163,7 +164,7 @@ module ClassMethods
     end
   end
   
-  def user_rule_keys_with_id_for user_id
+  def all_rule_keys_with_id_for user_id
     ActiveRecord::Base.connection.select_all(user_rule_sql(user_id)).each do |row|
       if key = cache_key(row)
         yield(key, row['rule_id'].to_i)
@@ -171,7 +172,7 @@ module ClassMethods
     end
   end
 
-  def rule_keys_for_user user_id
+  def cached_rule_keys_for user_id
     rule_keys_cache[user_id] || []
   end
   
@@ -243,13 +244,13 @@ module ClassMethods
     user_ids_hash = user_ids_cache
     rule_keys_hash = rule_keys_cache
     
-    rule_keys_for_user(user_id).each do |key|
+    cached_rule_keys_for(user_id).each do |key|
       rule_hash[ user_rule_key(key, user_id) ] = nil
       user_ids_hash[ key ].delete(user_id)
     end
     rule_keys_hash[ user_id ] = nil
     
-    user_rule_keys_with_id_for(user_id) do |key, rule_id|
+    all_rule_keys_with_id_for(user_id) do |key, rule_id|
       rule_hash[ user_rule_key(key,user_id) ] = rule_id
       
       user_ids_hash[ key ]      ||= []
@@ -257,9 +258,9 @@ module ClassMethods
       rule_keys_hash[ user_id ] ||= []
       rule_keys_hash[ user_id ] << key
     end
-    write_rule_cache rule_hash
     write_user_ids_cache user_ids_hash
     write_rule_keys_cache rule_keys_hash
+    write_rule_cache rule_hash
   end
   
   def write_rule_cache hash

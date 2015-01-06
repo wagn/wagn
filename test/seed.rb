@@ -4,7 +4,12 @@ require 'timecop'
 require_dependency 'card'
 
 class SharedData
-  @@user = ['Joe User', 'Joe Admin', 'Joe Camel', 'Sample User', 'No count', 'u1', 'u2', 'u3', 'Big Brother', 'Optic fan', 'Sunglasses fan', 'Narcissist']
+  #attr_accessor :users
+  USERS = [
+            'Joe User', 'Joe Admin', 'Joe Camel', 'Sample User', 'No count', 
+            'u1', 'u2', 'u3', 
+            'Big Brother', 'Optic fan', 'Sunglasses fan', 'Narcissist'
+           ]
 
   def self.account_args hash
     { "+*account" => { "+*password" =>'joe_pass' }.merge( hash ) }
@@ -20,7 +25,7 @@ class SharedData
     Card.create! :name=>"Joe Admin", :type_code=>'user', :content=>"I'm number one", :subcards=>account_args( '+*email'=>'joe@admin.com' )
     Card.create! :name=>"Joe Camel", :type_code=>'user', :content=>"Mr. Buttz",      :subcards=>account_args( '+*email'=>'joe@camel.com' )
 
-    Card['Joe Admin'].fetch(:trait=>:roles, :new=>{}).items = [ Card::AdministratorID ]
+    Card['Joe Admin'].fetch(:trait=>:roles, :new=>{:type_code=>'pointer'}).items = [ Card::AdministratorID ]
 
     Card.create! :name=>'signup alert email+*to', :content=>'signups@wagn.org'
 
@@ -125,7 +130,8 @@ class SharedData
     Timecop.freeze(Wagn.future_stamp - 1.day) do
       # fwiw Timecop is apparently limited by ruby Time object, which goes only to 2037 and back to 1900 or so.
       #  whereas DateTime can represent all dates.
-
+ 
+      
       followers = {
         'John'           => ['John Following', 'All Eyes On Me'],
         'Sara'           => ['Sara Following', 'All Eyes On Me', 'Optic+*type', 'Google Glass'], 
@@ -137,18 +143,15 @@ class SharedData
       
       followers.each do |name, follow|
         user = Card.create! :name=>name, :type_code=>'user', :subcards=>account_args('+*email'=>"#{name.parameterize}@user.com", '+*password'=>"#{name.parameterize}_pass")
-        user.following_card.update_attributes! :content=>"[[#{ follow.join( "]]\n[[" ) }]]"
       end
-      
       
       Card.create! :name => "All Eyes On Me"
       Card.create! :name => "No One Sees Me"
       Card.create! :name => "Look At Me"
+      Card.create! :name => "Optic", :type => "Cardtype"
       Card.create! :name => "Sara Following"
       Card.create! :name => "John Following", :content => "{{+her}}"
       Card.create! :name => "John Following+her"
-      Card.create! :name => "Optic", :type => "Cardtype"
-      
       magnifier = Card.create! :name => "Magnifier+lens"
 
       Card::Auth.current_id = Card['Narcissist'].id
@@ -162,7 +165,12 @@ class SharedData
       Card.create! :name=>'Google glass+*self+*follow_fields', :content=>''
       Card.create! :name=>'Sunglasses+*self+*follow_fields', :content=>"[[#{Card[:includes].name}]]\n[[_self+price]]\n[[_self+producer]]"
       Card.create! :name => "Sunglasses+tint"
-      Card.create! :name => "Sunglasses+price"      
+      Card.create! :name => "Sunglasses+price" 
+
+      followers.each do |name, follow|
+        user = Card[name]
+        user.following_card.update_attributes! :content=>"[[#{ follow.join( "]]\n[[" ) }]]"
+      end     
     end
 
 

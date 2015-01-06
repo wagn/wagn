@@ -56,7 +56,7 @@ module Wagn::SpecHelper
   end
   
   def users
-    require 'test/seed'
-    SharedData::users.sort
+    require File.expand_path('../../../test/seed', __FILE__)
+    SharedData::USERS.sort
   end
 end

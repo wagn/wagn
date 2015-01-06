@@ -27,6 +27,7 @@ describe Card::Set::Type::EmailTemplate do
     
     
     context 'multipart mail' do
+      let(:rendered_multipart_mail) { Card.fetch("multipart email").format.render_mail }
       before do 
         Card::Auth.current_id = Card::WagnBotID
         Card.create! :name => "multipart email", :type=>:email_template, :subcards=>{
@@ -39,11 +40,11 @@ describe Card::Set::Type::EmailTemplate do
       end
           
       it "renders text part" do
-        expect(rendered_mail.text_part.body.raw_source).to eq "Hello World!"
+        expect(rendered_multipart_mail.text_part.body.raw_source).to eq "Hello World!"
       end
       
       it "renders html part" do
-        expect(rendered_mail.html_part.body.raw_source).to eq "<p>Hello World!</p>"
+        expect(rendered_multipart_mail.html_part.body.raw_source).to include "<p>Hello World!</p>"
       end
     end
     

@@ -14,18 +14,23 @@ format :html do
     end  
   end
 
-  view :follow do |args|
-    wrap args do
-      link_args = if card.watched? 
-        [card, "following", :off, "stop sending emails", { :hover_content=> 'unfollow' } ]
-      else
-        [card, "follow all", :on, "send emails"]
-      end
-      link_args[3] += " about changes to #{card.cardname} cards"
-      watch_link( *link_args )
-    end
+  view :follow_link do |args|
+    cardtype_followed = ["#{card.name}+*type", "*all"].select do |set_name| 
+        follow_card = Card.fetch("#{set_name}+#{Card[:follow].name}+#{Auth.current.name}")
+        follow_card && follow_card.item_names.include?('always')
+      end.present?
+      
+    super args.merge(:toggle=>( cardtype_followed ? :off : :on) )
   end
+  
+  
+  def default_follow_set_card
+    Card.fetch("#{card.name}+*type")
+  end
+  
 end
+
+
 
 include Basic
 

@@ -1,5 +1,5 @@
 @javascript
-Feature: Watch interface
+Feature: Follow interface
   In order to make use of notifications
   As an Editor
   I want simple watch interface on cards
@@ -13,16 +13,16 @@ Feature: Watch interface
     And I hover over the main menu
     Then I should not see "follow"
 
-  Scenario: Watching a Card
+  Scenario: Following a Card
     When I go to the homepage
     And I hover over the main menu
     And In the main card menu I click "follow"
     Then In the main card menu I should see "following|unfollow"
     # assumes focus still on that link.  otherwise "following"
     # selenium behavior not totally consistent here.
-    And the card Joe User+*following should contain "Home"
+    And the card Joe User+*following should contain "Home+*self+always"
 
-  Scenario: Unwatching a Card
+  Scenario: Unfollowing a Card
     Given Joe User is watching "Home"
     And I am on the homepage
     And I hover over the main menu
@@ -30,15 +30,15 @@ Feature: Watch interface
     #note: the link name turns from "follwing" to "unfollow" on mouseover and because we don't control the mouse's position
     #      this test randomly fails if we use the link name
     Then In the main card menu I should see "follow"
-    And the card Joe User+*following should not contain "Home"
+    And the card Joe User+*following should not contain "Home+*self+always"
 
-  Scenario: Watching a Cardtype
+  Scenario: Following a Cardtype
     When I go to card User
     And I hover over the main menu
     And In the main card menu I should see "follow all"
     And In the main card menu I should not see "|"
 
-  Scenario: A Card whose Cardtype is Watched
+  Scenario: A Card whose Cardtype is Followed
     Given Joe User is watching "User"
     And I go to card Joe User
     And I hover over the main menu

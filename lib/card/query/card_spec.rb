@@ -296,7 +296,7 @@ class Card
 
         if val[:return] == 'count'
           cs_args = { :return=>'count', :group=>'sort_join_field', :_parent=>self }
-          @mods[:sort] = "coalesce(#{@mods[:sort]},0)"
+          @mods[:sort] = "coalesce(count,0)" # needed for postgres
           case item
           when 'referred_to'
             join_field = 'id'
@@ -316,7 +316,7 @@ class Card
 
         cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"
         join_table = add_join :sort, cs.to_sql, :id, :sort_join_field, :side=>'LEFT'
-        @mods[:sort] = "#{join_table}.#{val[:return]}"
+        @mods[:sort] ||= "#{join_table}.#{val[:return]}"
         
       end
 

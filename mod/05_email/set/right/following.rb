@@ -28,19 +28,18 @@ event :update_follow_rules, :before=>:extend, :on=>:save, :changed=>:db_content 
 end
 
 
-def add_item name
-  unless include_item? name
-    self.content="[[#{(item_names << name).reject(&:blank?)*"]]\n[["}]]"
-  end
-end
+# def add_item name
+#   if (option_card = Card.fetch(name.to_name.right)) && option_card.exclusive
+#     new_names = item_names.reject do |item_name|
+#       item_name.to_name.left == name.to_name.left
+#     end
+#     self.content= "[[#{(new_names << name).reject(&:blank?)*"]]\n[["}]]"
+#   else
+#     super
+#   end
+# end
 
-def drop_item name
-  if include_item? name
-    key = name.to_name.key
-    new_names = item_names.reject{ |n| n.to_name.key == key }
-    self.content = new_names.empty? ? '' : "[[#{new_names * "]]\n[["}]]"
-  end
-end
+
 
 
 
@@ -97,7 +96,6 @@ end
 def add_follow_rule item_name
   if follow_card = follow_rule_card(item_name)
     option_name = item_name.to_name.right
-    binding.pry
     if Card[option_name].exclusive
       follow_card.content = "[[#{option_name}]]"
     else
@@ -130,7 +128,7 @@ format :html do
    view :list do |args|
     
      if args.delete :checkbox_list
-       args[:context] = 'Home'
+       args[:context] = 'Basic'
        follow_items = {} 
         if context_card = (args[:context] && Card.fetch(args[:context]))
           context_card.set_names.each do |name|
@@ -147,7 +145,6 @@ format :html do
          follow_items.map do |set_name, option_name|
            option_card = Card[option_name]
            set_card = Card.fetch(set_name)
-           binding.pry unless set_card
            checkbox_item_second_try(option_name, set_card, option_name)
          end.join("\n") + 
          '</div>' +
@@ -187,7 +184,19 @@ format :html do
      }
    end
    
-   view :list_first_try do |args|
+   def add_another
+      options_card_name = (oc = card.options_card) ? oc.cardname.url_key : ':all'
+     %{ <ul class="pointer-list-editor pointer-sublist-ul" options-card="#{options_card_name}">
+          <li class="pointer-li"> } +
+            text_field_tag( 'pointer_item', '', :class=>'pointer-item-text', :id=>'asdfsd' ) +
+            link_to( '', '#', :class=>'pointer-item-delete ui-icon ui-icon-circle-close' ) +
+     %{   </li>
+        </ul>
+        <div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>
+     }
+   end
+   
+   view :list_first do |args|
     
      if args.delete :checkbox_list
        args[:context] = 'Home'

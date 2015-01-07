@@ -207,7 +207,6 @@ format :html do
   
   view :follow_link do |args|
     args[:toggle] ||= (card.followed? ? :off : :on)
-#    binding.pry
     subformat(default_follow_set_card).render_follow_link args
   end
   

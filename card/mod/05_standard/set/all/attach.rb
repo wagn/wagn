@@ -88,7 +88,7 @@ end
 
 def self.included(base)
   base.class_eval do
-    base.include Paperclip::Glue
+    include Paperclip::Glue
     Paperclip::Attachment.default_options[:use_timestamp] = false
     # the need for this seems related to moving the initializer code here (line above comment)
     # this isn't quite right, but without it, we see logging to STDOUT

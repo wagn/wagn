@@ -3,8 +3,9 @@
 
 class Card
   module FollowOption
-    mattr_reader :names, :special
-    @@names = []
+    attr_reader :exclusive
+    mattr_reader :codenames, :special
+    @@codenames = []
     @@special = []
 
     
@@ -16,6 +17,10 @@ class Card
     end
     
     def drop_follower user
+    end
+    
+    def exclusive
+      false
     end
     
     def description set_card
@@ -43,13 +48,13 @@ class Card
           Card::FollowOption.special << codename
         end
         if opts[:position]
-          if Card::FollowOption.names[opts[:position]-1]
-            Card::FollowOption.names.insert(opts[:position]-1, codename)
+          if Card::FollowOption.codenames[opts[:position]-1]
+            Card::FollowOption.codenames.insert(opts[:position]-1, codename)
           else
-            Card::FollowOption.names[opts[:position]-1] = codename
+            Card::FollowOption.codenames[opts[:position]-1] = codename
           end
         else
-          Card::FollowOption.names << codename
+          Card::FollowOption.codenames << codename
         end
       end
     end   

@@ -12,13 +12,13 @@ def follow_label
 end
 
 def follow_option_card index
-  if index and index < Card::FollowOption.names.size
-    Card[Card::FollowOption.names[index]]
+  if index and index < Card::FollowOption.codenames.size
+    Card[Card::FollowOption.codenames[index]]
   end
 end
 
 def follow_option?
-  codename && Card::FollowOption.names.include?(codename.to_sym) 
+  codename && Card::FollowOption.codenames.include?(codename.to_sym) 
 end
 
 
@@ -140,7 +140,7 @@ def related_follow_option_cards
     sets.pop unless codename == 'all' # get rid of *all set
     sets << "#{name}+*type" if known? && type_id==Card::CardtypeID
     sets << "#{name}+*right" if known? && cardname.simple?
-    Card::FollowOption.names.each do |name|
+    Card::FollowOption.codenames.each do |name|
       if Card[name].applies?(Auth.current, self)
         sets << name
       end
@@ -156,7 +156,7 @@ end
 
 def all_follow_option_cards
   sets = set_names
-  sets += Card::FollowOption.names
+  sets += Card::FollowOption.codenames
   sets.map { |name| Card.fetch name }
 end
 
@@ -206,13 +206,14 @@ format :html do
   end
   
   view :follow_link do |args|
-    toggle = card.followed? ? :off : :on
-    subformat(default_follow_set_card).render_follow_link args.reverse_merge(:toggle=>toggle)
+    args[:toggle] ||= (card.followed? ? :off : :on)
+#    binding.pry
+    subformat(default_follow_set_card).render_follow_link args
   end
   
 
   view :follow_link_name do |args|
-    args[:toggle] ||= card.followed? ? :off : :on
+    args[:toggle] ||= (card.followed? ? :off : :on)
     if args[:toggle] == :off
       'following'
     else
@@ -222,7 +223,10 @@ format :html do
   
   
   view :follow_menu, :tags=>:unknown_ok do |args|
-    follow_links = [render_follow_link(args), advanced_follow_options_link]
+    follow_links = [
+      #render_follow_link(args), 
+      advanced_follow_options_link
+    ]
     follow_links.compact.map do |link|
       { :raw => wrap(args) {link} }
     end 

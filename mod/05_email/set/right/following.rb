@@ -27,6 +27,23 @@ event :update_follow_rules, :before=>:extend, :on=>:save, :changed=>:db_content 
   end
 end
 
+
+def add_item name
+  unless include_item? name
+    self.content="[[#{(item_names << name).reject(&:blank?)*"]]\n[["}]]"
+  end
+end
+
+def drop_item name
+  if include_item? name
+    key = name.to_name.key
+    new_names = item_names.reject{ |n| n.to_name.key == key }
+    self.content = new_names.empty? ? '' : "[[#{new_names * "]]\n[["}]]"
+  end
+end
+
+
+
 event :normalize_follow_options, :before=>:approve, :on=>:save, :changed=>:db_content do
   self.content = item_names.map do |item_name| 
     valid_name = make_name_valid_following_entry item_name.to_name
@@ -80,7 +97,12 @@ end
 def add_follow_rule item_name
   if follow_card = follow_rule_card(item_name)
     option_name = item_name.to_name.right
-    follow_card.add_item option_name
+    binding.pry
+    if Card[option_name].exclusive
+      follow_card.content = "[[#{option_name}]]"
+    else
+      follow_card.add_item option_name
+    end
   end
 end
 
@@ -106,63 +128,157 @@ format :html do
    end
    
    view :list do |args|
-     follow_items = Hash.new {|h,k| h[k] = [] }
-     card.item_names.each do |name|
-       follow_items[name.to_name.right] << name.to_name.left
-     end
+    
      if args.delete :checkbox_list
-       "Following:<p>" +
-       render_checkbox_lists(args.merge(:item_list=>follow_items['always'])) +
-       '</p>Ignoring:<p>' +
-      render_checkbox_lists(args.merge(:item_list=>follow_items['never'])) +
-       '</p>'
+       args[:context] = 'Home'
+       follow_items = {} 
+        if context_card = (args[:context] && Card.fetch(args[:context]))
+          context_card.set_names.each do |name|
+            follow_items[name] = false
+          end
+        end
+        
+       card.item_names.each do |name|
+         follow_items[name.to_name.left] = name.to_name.right
+       end
+       
+       options_card_name = (oc = card.options_card) ? oc.cardname.url_key : ':all'
+       list = '<div class="pointer-checkbox-sublist">' +
+         follow_items.map do |set_name, option_name|
+           option_card = Card[option_name]
+           set_card = Card.fetch(set_name)
+           binding.pry unless set_card
+           checkbox_item_second_try(option_name, set_card, option_name)
+         end.join("\n") + 
+         '</div>' +
+         '<div style="clear:left;margin-top:60px;">' +
+         add_another_second_try + "</div>"
+       %{<div class="pointer-mixed">#{list}</div>}
+       
+     else
+       super(args)
+     end
+   end
+   
+   def add_another_second_try
+      options_card_name = (oc = card.options_card) ? oc.cardname.url_key : ':all'
+     %{ <ul class="pointer-list-editor pointer-sublist-ul" options-card="#{options_card_name}">
+          <li class="pointer-li"> } +
+            text_field_tag( 'pointer_item', '', :class=>'pointer-item-text', :id=>'asdfsd' ) +
+            link_to( '', '#', :class=>'pointer-item-delete ui-icon ui-icon-circle-close' ) +
+     %{   </li>
+        </ul>
+        #{
+            option_items = Card::FollowOption.codenames.map do |codename|
+              option_name = Card[codename].name
+              checked = false         
+              %{
+                <li style="list-style-type: none; float:left; margin-right:20px;">
+                  #{ form.radio_button :name, option_name, :checked=>checked }
+                  <span class="set-label">
+                    #{ link_to_page Card.fetch(option_name).form_label, option_name, :target=>'wagn_set' }
+                  </span>
+                </li>
+              }
+            end
+            %{ <ul>#{ option_items * "\n" }</ul>}
+        }      
+        <div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>
+     }
+   end
+   
+   view :list_first_try do |args|
+    
+     if args.delete :checkbox_list
+       args[:context] = 'Home'
+       follow_items = Hash.new do |h,k|
+          h[k] = {}
+          if context_card = (args[:context] && Card.fetch(args[:context]))
+            context_card.set_names.each do |name|
+              h[k][name] = false
+            end
+          end
+          h[k]
+       end 
+       card.item_names.each do |name|
+         follow_items[name.to_name.right][name.to_name.left] = true
+       end
+       
+       options_card_name = (oc = card.options_card) ? oc.cardname.url_key : ':all'
+       list = '<div class="pointer-checkbox-sublist">' +
+         Card::FollowOption.codenames.map do |option_name|
+           option_card = Card[option_name]
+           "<p><h2>#{option_card.title}</h2>" +
+            render_checkbox_lists(args.merge(:option_name=>option_name, :item_list=>follow_items[option_card.name] )) +
+            add_another +
+            '</p><br>' 
+         end.join("\n") + 
+         '</div>' +
+       %{<div class="pointer-mixed">#{list}</div>}
+       
      else
        super(args)
      end
    end
 
    view :checkbox_list do |args|
-     args ||= {}
-     items = args[:item_list] || card.item_names(:context=>:raw)
-     items = [''] if items.empty?     
-     options_card_name = (oc = card.options_card) ? oc.cardname.url_key : ':all'
-
-     
-     list = %{<div class="pointer-checkbox-sublist">} +
-       Card::FollowOption.names.map do |name|
-         option_card = Card[name]
-         checked = card.item_names.include?(option_card.name)
-         checkbox_item option_card, checked
-       end.join("\n") + 
-       '</div>' + 
-       items.map do |name|   #FIXME
-         if option_card = Card.fetch(name)
-           checkbox_item option_card, true
+     items = args[:item_list] || card.item_names(:context=>:raw).map{ |name| name.to_name.left }
+    
+     option_name = args[:option_name] || 'always'
+     if items.empty?
+       checkbox_item option_name, Card[:all], false
+     else
+       items.map do |set_name, checked| 
+         if set_card = Card.fetch(set_name)
+           checkbox_item option_name, set_card, checked
          end
-       end.join("\n") +
-       %{ <ul class="pointer-list-editor pointer-sublist-ul" options-card="#{options_card_name}">
-            <li class="pointer-li"> } +
-              text_field_tag( 'pointer_item', '', :class=>'pointer-item-text', :id=>'asdfsd' ) +
-              link_to( '', '#', :class=>'pointer-item-delete ui-icon ui-icon-circle-close' ) +
-       %{   </li>
-          </ul>
-          <div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>
-       }
-
-     %{<div class="pointer-mixed">#{list}</div>}
+       end.join("\n")
+     end
    end
+    
    
-   
-   
-
-   def checkbox_item option_card, checked
-     id = "pointer-checkbox-#{option_card.cardname.key}"
+   def checkbox_item option_name, set_card, checked
+     id = "pointer-checkbox-#{set_card.cardname.key}"
      description = false
      %{ <div class="pointer-checkbox"> } +
-       check_box_tag( "pointer_checkbox", option_card.cardname.url_key, checked, :id=>id, :class=>'pointer-checkbox-button') +
-       %{ <label for="#{id}">#{option_card.follow_label}</label>
+       check_box_tag( "pointer_checkbox", "#{set_card.cardname.url_key}+#{option_name}", checked, :id=>id, :class=>'pointer-checkbox-button') +
+       %{ <label for="#{id}">#{set_card.follow_label}</label>
        #{ %{<div class="checkbox-option-description">#{ description }</div>} if description }
         </div>}
+   end
+   
+   def checkbox_item_second_try selected_option_name, set_card, checked
+     id = "pointer-checkbox-#{set_card.cardname.key}"
+     current_set_key =  Card[:all].name
+     description = false
+     %{ <div class="pointer-checkbox" style="clear: both;margin-top: 50px;"> } +
+       check_box_tag( "pointer_checkbox", "#{set_card.cardname.url_key}+#{selected_option_name}", checked, :id=>id, :class=>'pointer-checkbox-button') +
+       %{ <label for="#{id}">#{set_card.follow_label}</label>
+       #{ %{<div class="checkbox-option-description">#{ description }</div>} if description }
+       <div>
+       #{
+         #fieldset 'options', (
+           option_items = Card::FollowOption.codenames.map do |codename|
+             option_name = Card[codename].name
+             checked = ( option_name == selected_option_name or current_set_key && Card::FollowOption.codenames.length==1 )
+             is_current = option_name.to_name.key == current_set_key
+             %{
+               <li style="list-style-type: none; float:left; margin-right:20px;">
+                 #{ form.radio_button :name, "#{set_card}+#{option_name}", :checked=> checked }
+                 <span class="set-label" #{'current-set-label' if is_current }>
+                   #{ link_to_page Card.fetch(option_name).form_label, option_name, :target=>'wagn_set' }
+                   #{'<em>(current)</em>' if is_current}
+                 </span>
+               </li>
+             }
+           end
+           %{ <ul>#{ option_items * "\n" }</ul>}
+        # ), :editor => 'set'
+       }        
+       
+       </div>
+        </div>} 
+    
    end
    
    

@@ -2,6 +2,13 @@ include Card::FollowOption
 
 self.follow_opts :position=>2, :special=>true
 
+def title
+  'Following content you created'
+end
+
+def form_label
+  'follow if created by me'
+end
 
 def description set_card
   "#{set_card.follow_label} you created"

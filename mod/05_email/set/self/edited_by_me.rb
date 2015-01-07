@@ -3,7 +3,11 @@ include Card::FollowOption
 follow_opts :position=>3, :special=>true
 
 def title 
-  'Following content you created'
+  'Following content you edited'
+end
+
+def form_label
+  'follow if edited by me'
 end
   
 def description set_card

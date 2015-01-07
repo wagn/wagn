@@ -119,7 +119,22 @@ WAGN
       opts[:simplecov] = s ? '' : 'COVERAGE=false'
     end
     parser.on('--rescue', 'Run with pry-rescue') do
-      opts[:rescue] = 'rescue '
+      if opts[:executer] == 'spring'
+        puts "Disabled pry-rescue. Not compatible with spring."
+      else
+        opts[:rescue] = 'rescue '
+      end
+    end
+    parser.on('--[no-]spring', 'Run with spring') do |spring|
+      if spring
+        opts[:executer] = 'spring'
+        if opts[:rescue]
+          opts[:rescue]  = ''
+          puts "Disabled pry-rescue. Not compatible with spring."
+        end
+      else
+        opts[:executer] = 'bundle exec'
+      end
     end
     parser.separator "\n"
 
@@ -129,7 +144,8 @@ WAGN
 
     parser.parse!(wagn_args)
 
-    system "RAILS_ROOT=. #{opts[:simplecov]} bundle exec #{opts[:rescue]} rspec #{rspec_args*' '} #{opts[:files]}" 
+    rspec_command = "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]}" 
+    system rspec_command
   when '--version', '-v'
     puts "Wagn #{Wagn::Version.release}"
   when 'new'

@@ -51,7 +51,7 @@ describe Card::Set::All::Initialize do
       end
 
       it "happens with implicit pointer setting (from template)" do
-        expect(Card.new(:name=>'Home+*watchers')).to be_truthy
+        expect(Card.new(:name=>'Home+*cc').respond_to?(:add_item)).to be_truthy
       end
     end
   end

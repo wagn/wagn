@@ -17,7 +17,7 @@ describe "card-form", ->
 
   it "should be able to populate all content fields in a form", ->
     $('form').setContentFields '.tinymce-textarea', -> 2+2
-    expect($('.card-content')).toHaveValue '4'
+    expect($('.card-content')).toHaveValue '5'
 
   it "should be able to populate content fields from a map", ->
     $('form').setContentFieldsFromMap { '.tinymce-textarea': -> 3+2 }

@@ -20,7 +20,7 @@ class Card::Query
       field1, field2 = REFERENCE_FIELDS[ dir ]
       cond = type ? ["ref_type='#{type}'"] : []
 
-      sql =  %[select #{field1} as ref_id from card_references]
+      sql =  %[select distinct #{field1} as ref_id from card_references]
       if @val == '_none'
         cond << "present = 0"
       else

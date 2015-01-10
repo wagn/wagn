@@ -98,14 +98,14 @@ describe Card::Reference do
     watermelon_seeds = newcard('watermelon+seeds', 'black')
     lew = newcard('Lew', "likes [[watermelon]] and [[watermelon+seeds|seeds]]")
 
-    assert_equal [1,1], lew.references_to.map(&:present), "links should not be Wanted before"
+    assert_equal [1,1,1,1], lew.references_to.map(&:present), "links should not be Wanted before"
     watermelon = Card['watermelon']
     watermelon.update_referencers = false
     watermelon.name="grapefruit"
     watermelon.save!
     expect(lew.reload.content).to eq("likes [[watermelon]] and [[watermelon+seeds|seeds]]")
-    assert_equal [ 'L', 'L' ], lew.references_to.map(&:ref_type), "links should be a LINK"
-    assert_equal [ 0, 0 ], lew.references_to.map(&:present), "links should not be present"
+    assert_equal ['L','P','P','L'], lew.references_to.map(&:ref_type), "links should be a LINK"
+    assert_equal [ 0, 0, 1, 0 ], lew.references_to.map(&:present), "only reference to +seeds should be present"
   end
 
   it "update referencing content on rename junction card" do

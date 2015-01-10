@@ -15,7 +15,17 @@ module ClassMethods
     spec.delete(:offset)
     search spec.merge(:return=>'count')
   end
-  
+
+  def find_in_batches(options = {})
+    if block_given?
+      super(options) do |records|
+        yield(records)
+        Card.cache.reset_local
+      end
+    else
+      super(options)
+    end
+  end
 end
 
 def item_names(args={})

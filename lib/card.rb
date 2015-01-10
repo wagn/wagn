@@ -38,25 +38,4 @@ class Card < ActiveRecord::Base
   TRACKED_FIELDS = %w(name type_id db_content trash)
   Loader.load_mods if count > 0
 
-
-  def self.find_each(options = {})
-    if block_given?
-      find_in_batches(options) do |records|
-        records.each { |record| yield record }
-      end
-    else
-      super(options)
-    end
-  end
-
-  def self.find_in_batches(options = {})
-    if block_given?
-      super(options) do |records|
-        yield(records)
-        Card.cache.reset_local
-      end
-    else
-      super(options)
-    end
-  end
 end

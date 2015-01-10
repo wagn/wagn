@@ -21,6 +21,9 @@ end
 
 group :test, :development do
   gem 'rails-dev-tweaks'
+  gem 'jasmine'
+  gem 'jasmine-rails', :git=>"https://github.com/chuenlok/jasmine-rails.git"
+  gem 'jasmine-jquery-rails'
   gem 'sprockets' # just so above works
   # gem 'spring'
   # gem 'spring-commands-rspec'
@@ -97,6 +100,9 @@ group :development, :test do
   gem 'pry-rails'
   gem 'pry-rescue'
   gem 'pry-stack_explorer'
+  gem 'jasmine'
+  gem 'jasmine-rails', :git=>"https://github.com/chuenlok/jasmine-rails.git"
+  gem 'jasmine-jquery-rails'
 end
 
 group :debug do

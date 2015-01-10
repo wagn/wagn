@@ -10,6 +10,9 @@ Wagn.application.class.configure do
   # and recreated between test runs.  Don't rely on the data there!
   config.cache_classes = true
 
+
+  config.assets.enabled = true if Object.const_defined?( :JasmineRails )
+
   # Configure static asset server for tests with Cache-Control for performance
   config.serve_static_files = true
   config.static_cache_control = "public, max-age=3600"

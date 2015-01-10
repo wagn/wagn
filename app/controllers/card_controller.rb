@@ -2,6 +2,7 @@
 
 require_dependency 'card'
 require_dependency 'card/action'
+require_dependency 'card/mailer'  #otherwise Net::SMTPError rescues can cause problems when error raised comes before Card::Mailer is mentioned
 
 class CardController < ActionController::Base
 

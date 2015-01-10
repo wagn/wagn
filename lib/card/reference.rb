@@ -45,25 +45,16 @@ class Card::Reference < ActiveRecord::Base
     
     def repair_all
       connection.execute 'truncate card_references'
-      Card.update_all :references_expired => 1
-
-      expired_cards_remain = true
-      batchsize, count_updated = 100, 0
-
-      while expired_cards_remain
-        batch = Card.find_all_by_references_expired(1, :order=>"name ASC", :limit=>batchsize)
-        if batch.empty?
-          expired_cards_remain = false
-        else
-          Rails.logger.debug "Updating references for '#{batch.first.name}' to '#{batch.last.name}' ... "; $stdout.flush        
-          batch.each do |card|
-            count_updated += 1
-            card.update_references
-          end
-          Rails.logger.info "batch done.  \t\t#{count_updated} total updated"
-        end
-      end
+      count_updated = 0
       
+      Card.find_in_batches(:batch_size=>100) do |batch|
+        Rails.logger.debug "Updating references for '#{batch.first.name}' to '#{batch.last.name}' ... "; $stdout.flush        
+        batch.each do |card|
+          count_updated += 1
+          card.update_references 
+        end
+        Rails.logger.info "batch done.  \t\t#{count_updated} total updated"
+      end
     end
     
   end

@@ -17,9 +17,6 @@ module <%= app_const_base %>
     
     # Email configuration
 
-    if !Rails.env.production? && Object.const_defined?( :JasmineRails )
-        config.assets.enabled = true
-    end
     config.action_mailer.perform_deliveries = false
     # config.action_mailer.delivery_method  = ...
     # config.action_mailer.smtp_settings    = ...

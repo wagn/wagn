@@ -11,6 +11,7 @@ RAILS_COMMANDS = %w( generate destroy plugin benchmarker profiler console server
 ALIAS = {
   "rs" => "rspec",
   "cc" => "cucumber",
+  "jm" => "jasmine",
   "g"  => "generate",
   "d"  => "destroy",
   "c"  => "console",
@@ -78,6 +79,8 @@ else
     require_args += feature_paths.map { |path| "-r #{path}"}.join(' ')
     feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.join(' ')
     system "RAILS_ROOT=. bundle exec cucumber #{require_args} #{feature_args}"
+  when 'jasmine'
+    system "RAILS_ENV=test bundle exec rake spec:javascript"
   when 'rspec'
     opts = {}
     require 'rspec/core'

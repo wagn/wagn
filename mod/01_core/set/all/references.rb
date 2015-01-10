@@ -45,15 +45,32 @@ def update_references rendered_content = nil, refresh = false
         
         #update_references chunk.referee_name if Card::Content === chunk.referee_name
         # for the above to work we will need to get past delete_all!
-        
-        Card::Reference.create!(
-          :referer_id  => id,
-          :referee_id  => referee_id,
-          :referee_key => referee_name.key,
-          :ref_type    => Card::Chunk::Link===chunk ? 'L' : 'I',
-          :present     => chunk.referee_card.nil?   ?  0  :  1
-        )
+        referee_name.piece_names.each do |name|
+          if name.key != key # don't create self reference
+            
+            # reference types:
+            # L = link
+            # I = inclusion
+            # P = partial (i.e. the name is part of a compound name that is referenced by a link or inclusion)
+            # The partial type is needed to keep track of references of virtual cards. 
+            # For example a link [[A+*self]] won't make it to the reference table because A+*self is virtual and
+            # doesn't have an id but when A's name is changed we have to find and update that link.
+            ref_type = if name == referee_name
+                Card::Chunk::Link===chunk ? 'L' : 'I'
+              else
+                'P'
+              end
+            Card::Reference.create!(
+              :referer_id  => id,
+              :referee_id  => Card.where(:key=>name.key).pluck(:id).first,
+              :referee_key => name.key,
+              :ref_type    => ref_type,
+              :present     => 1
+            )
+          end
+        end
       end
+      
     end
   end
 end

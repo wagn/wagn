@@ -1,9 +1,14 @@
 class Card::Query
   class RefSpec < Spec
     REFERENCE_DEFINITIONS = {
-      :refer_to => [ :out      ],   :referred_to_by => [ :in      ],
-      :link_to  => [ :out, 'L' ],   :linked_to_by   => [ :in, 'L' ],
-      :include  => [ :out, 'I' ],   :included_by    => [ :in, 'I' ]
+      # syntax:
+      # wql query key => [ direction, {reference_type} ]
+          # direction      = :out | :in
+          # reference_type =  'L' | 'I' | 'P' 
+
+      :refer_to => [ :out, 'L','I' ], :referred_to_by => [ :in, 'L','I' ],
+      :link_to  => [ :out, 'L' ],     :linked_to_by   => [ :in, 'L' ],
+      :include  => [ :out, 'I' ],     :included_by    => [ :in, 'I' ]
     }
     
     REFERENCE_FIELDS = {
@@ -16,9 +21,14 @@ class Card::Query
     end
 
     def to_sql *args
-      dir, type = REFERENCE_DEFINITIONS[ @key.to_sym ]
+      dir, *type = REFERENCE_DEFINITIONS[ @key.to_sym ]
       field1, field2 = REFERENCE_FIELDS[ dir ]
-      cond = type ? ["ref_type='#{type}'"] : []
+      cond = []
+      if type.present?
+        operator = (type.size==1 ? '=' : 'IN')
+        quoted_letters = type.map { |letter| "'#{letter}'" } * ', '
+        cond << "ref_type #{operator} (#{quoted_letters})"
+      end
 
       sql =  %[select distinct #{field1} as ref_id from card_references]
       if @val == '_none'

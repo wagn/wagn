@@ -3576,10 +3576,10 @@ card_actions_511:
   super_action_id: 
   action_type: 1
   draft: false
-card_actions_515:
+card_actions_512:
   id: 7311
   card_id: 1255
-  card_act_id: 7316
+  card_act_id: 7317
   super_action_id: 
   action_type: 0
   draft: false

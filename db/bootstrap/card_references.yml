@@ -3772,4 +3772,45 @@ card_references_539:
   referee_id: 1
   ref_type: L
   present: 1
->>>>>>> master
+card_references_540:
+  id: 1801
+  referer_id: 1255
+  referee_key: description
+  referee_id: 146
+  ref_type: P
+  present: 1
+card_references_541:
+  id: 1802
+  referer_id: 1255
+  referee_key: uri+description
+  referee_id: 
+  ref_type: I
+  present: 1
+card_references_542:
+  id: 1803
+  referer_id: 1255
+  referee_key: "*type"
+  referee_id: 266
+  ref_type: P
+  present: 1
+card_references_543:
+  id: 1804
+  referer_id: 1255
+  referee_key: by_name
+  referee_id: 184
+  ref_type: P
+  present: 1
+card_references_544:
+  id: 1805
+  referer_id: 1255
+  referee_key: uri+*type
+  referee_id: 
+  ref_type: P
+  present: 1
+card_references_545:
+  id: 1806
+  referer_id: 1255
+  referee_key: uri+*type+by_name
+  referee_id: 
+  ref_type: I
+  present: 1

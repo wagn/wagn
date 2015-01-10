@@ -10792,17 +10792,17 @@ card_changes_2044:
     <p>You received this email because you're following <strong>{{_|followed}}</strong>.</p>
 
     <p><em><a href="{{_|unfollow_url}}">Unfollow</a> to stop receiving these emails.</em></p>
-card_changes_1733:
+card_changes_2045:
   id: 5468
   card_action_id: 7311
   field: 0
   value: URI
-card_changes_1734:
+card_changes_2046:
   id: 5469
   card_action_id: 7311
   field: 1
   value: '5'
-card_changes_1735:
+card_changes_2047:
   id: 5470
   card_action_id: 7311
   field: 2
@@ -10815,7 +10815,7 @@ card_changes_1735:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_changes_1736:
+card_changes_2048:
   id: 5471
   card_action_id: 7311
   field: 3

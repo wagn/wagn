@@ -9772,7 +9772,7 @@ cards_511:
   trash: false
   type_id: 47
   db_content: "[[Wagn Bot]]"
-cards_515:
+cards_512:
   id: 1255
   name: URI
   key: uri
@@ -9780,8 +9780,8 @@ cards_515:
   left_id: 
   right_id: 
   current_revision_id: 
-  created_at: 2015-01-03 23:59:51.000000000 Z
-  updated_at: 2015-01-03 23:59:51.000000000 Z
+  created_at: 2015-01-10 17:45:41.000000000 Z
+  updated_at: 2015-01-10 17:45:41.000000000 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"

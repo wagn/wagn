@@ -13149,7 +13149,7 @@ cards_691:
   trash: false
   type_id: 3
   db_content: chick
-cards_695:
+cards_692:
   id: 1435
   name: URI
   key: uri
@@ -13157,8 +13157,8 @@ cards_695:
   left_id: 
   right_id: 
   current_revision_id: 
-  created_at: 2015-01-04 00:18:03.000000000 Z
-  updated_at: 2015-01-04 00:18:03.000000000 Z
+  created_at: 2015-01-10 17:45:25.000000000 Z
+  updated_at: 2015-01-10 17:45:25.000000000 Z
   creator_id: 1
   updater_id: 1
   read_rule_class: "*all"

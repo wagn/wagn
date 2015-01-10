@@ -5011,15 +5011,43 @@ card_references_716:
   referee_id: 10
   ref_type: L
   present: 1
-card_references_369:
-  id: 2564
+card_references_717:
+  id: 1982
+  referer_id: 1435
+  referee_key: description
+  referee_id: 146
+  ref_type: P
+  present: 1
+card_references_718:
+  id: 1983
   referer_id: 1435
   referee_key: uri+description
   referee_id: 
   ref_type: I
-  present: 0
-card_references_370:
-  id: 2565
+  present: 1
+card_references_719:
+  id: 1984
+  referer_id: 1435
+  referee_key: "*type"
+  referee_id: 266
+  ref_type: P
+  present: 1
+card_references_720:
+  id: 1985
+  referer_id: 1435
+  referee_key: by_name
+  referee_id: 184
+  ref_type: P
+  present: 1
+card_references_721:
+  id: 1986
+  referer_id: 1435
+  referee_key: uri+*type
+  referee_id: 
+  ref_type: P
+  present: 1
+card_references_722:
+  id: 1987
   referer_id: 1435
   referee_key: uri+*type+by_name
   referee_id: 

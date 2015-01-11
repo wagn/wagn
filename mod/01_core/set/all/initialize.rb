@@ -1,23 +1,12 @@
-JUNK_INIT_ARGS = %w{ find_unused_name missing skip_virtual id }
+JUNK_INIT_ARGS = %w{ missing skip_virtual id }
 
 module ClassMethods
   def new args={}, options={}
     args = (args || {}).stringify_keys
-    args['name'] = find_unused_name args['name'] if args['find_unused_name']
     JUNK_INIT_ARGS.each { |a| args.delete(a) }
     %w{ type type_code }.each { |k| args.delete(k) if args[k].blank? }
     args.delete('content') if args['attach'] # should not be handled here!
     super args
-  end
-
-  def find_unused_name base_name
-    test_name = base_name
-    add = 1
-    while Card.exists?(test_name) do
-      test_name = "#{base_name}#{add}"
-      add +=1
-    end
-    test_name
   end
 end
 

@@ -9,7 +9,7 @@ class UriCodename < Wagn::Migration
       if Card.exists? codename.to_sym
         raise "Migration failed, codename #{codename} taken"
       else
-        c=Card.create! :type_id=>Card::CardtypeID, :name=>targetname, :codename=>codename, :find_unused_name=>true
+        c=Card.create! :type_id=>Card::CardtypeID, :name=>Wagn::Migration.find_unused_name(targetname), :codename=>codename
         puts "Name #{targetname} was taken, used #{c.name}" if c.name != targetname
       end
     end

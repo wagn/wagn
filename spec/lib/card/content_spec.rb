@@ -11,14 +11,14 @@ CONTENT = {
          
   :three =>%(Some URIs and Links: http://a.url.com/
         More urls: wagn.com/a/path/to.html
-        http://localhost:2020/path?cgi=foo+bar=baz  [[http://brain.org/Home|extra]]
+        http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain.org/Home|extra]]
         [ http://gerry.wagn.com/a/path ]
         { https://brain.org/more?args }),
   :three_b => %(Some URIs and Links: http://a.url.com
         More urls: wagn.com/a/path/to.html
         [ http://gerry.wagn.com/a/path ]
         { https://brain.org/more?args }
-        http://localhost:2020/path?cgi=foo+bar=baz  [[http://brain.org/Home|extra]]),
+        http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain.org/Home|extra]]),
    :four => "No chunks",
    :five => "{{one inclusion|size;large}}",
    :six  => %~
@@ -89,7 +89,7 @@ RENDERED = {
     "\n        More urls: ",
     "<a class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>",
     "\n        ",
-    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo+bar=baz\">http://localhost:2020/path?cgi=foo+bar=baz</a>",
+    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&amp;bar=baz\">http://localhost:2020/path?cgi=foo&amp;bar=baz</a>",
     "  ",
     "<a class=\"external-link\" href=\"http://brain.org/Home\">extra</a>",
     "\n        [ ",
@@ -107,7 +107,7 @@ RENDERED = {
     " ]\n        { ",
     "<a class=\"external-link\" href=\"https://brain.org/more?args\">https://brain.org/more?args</a>",
     " }\n        ",
-    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo+bar=baz\">http://localhost:2020/path?cgi=foo+bar=baz</a>",
+    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&amp;bar=baz\">http://localhost:2020/path?cgi=foo&amp;bar=baz</a>",
     "  ",
     "<a class=\"external-link\" href=\"http://brain.org/Home\">extra</a>"
   ],

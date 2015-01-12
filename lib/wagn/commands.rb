@@ -78,9 +78,9 @@ else
     require_args = "-r #{Wagn.gem_root}/features "
     require_args += feature_paths.map { |path| "-r #{path}"}.join(' ')
     feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.join(' ')
-    system "RAILS_ROOT=. bundle exec cucumber #{require_args} #{feature_args}"
+    system "RAILS_ROOT=. bundle exec cucumber #{require_args} #{feature_args} 2>&1"
   when 'jasmine'
-    system "RAILS_ENV=test bundle exec rake spec:javascript"
+    system "RAILS_ENV=test bundle exec rake spec:javascript 2>&1"
   when 'rspec'
     opts = {}
     require 'rspec/core'
@@ -131,7 +131,7 @@ WAGN
     wagn_args, rspec_args = (' '<<ARGV.join(' ')).split(' -- ')
     parser.parse!(wagn_args.split(' '))
 
-    rspec_command = "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]}" 
+    rspec_command = "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]} 2>&1" 
     system rspec_command
   when '--version', '-v'
     puts "Wagn #{Wagn::Version.release}"

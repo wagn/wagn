@@ -251,7 +251,7 @@ $(window).ready ->
     $(this).data 'params', $(this).closest('form').serialize()
     $(this).data 'url', $(this).attr 'href'
 
-  $('body').on 'change', '.edit-type-field', ->
+  $('body').on 'change', '.edit-type-field, .submit-select-field', ->
     $(this).closest('form').submit()
 
   $('body').on 'change', '.autosave .card-content', ->

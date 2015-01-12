@@ -62,27 +62,6 @@ format :html do
     ''
   end
   
-  view :follow_link do |args|
-    toggle       = args[:toggle] || (card.followed? ? :off : :on)
-    success_view = args[:success_view] || :follow
-
-    following    = Auth.current.fetch :trait=>:following, :new=>{:type=>:pointer}
-    path_options = {:card=>following, :action=>:update,# :follow_menu_index=>index,
-                    :success=>{:id=>card.name, :view=>success_view} }
-    html_options = {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :remote=>true, :method=>'post'}
-
-    case toggle
-    when :off
-      path_options[:add_item]      = "#{card.name}+#{Card[:never].name}"
-      html_options[:title]         = "stop sending emails about changes to #{card.follow_label}"
-      html_options[:hover_content] = "unfollow"
-    when :on
-      path_options[:add_item]      = "#{card.name}+#{Card[:always].name}"
-      html_options[:title]         = "send emails about changes to #{card.follow_label}"
-    end
-    text = render_follow_link_name args
-    link_to text, path(path_options), html_options
-  end
   
   def default_follow_set_card
     card
@@ -143,6 +122,26 @@ def follow_label
     klass.follow_label cardname.left
   else
     ''
+  end
+end
+
+def follow_rule_name user=nil
+  if user
+    if user.kind_of? String
+      "#{name}+#{Card[:follow].name}+#{user}"
+    else
+      "#{name}+#{Card[:follow].name}+#{user.name}"
+    end
+  else
+    "#{name}+#{Card[:follow].name}+#{Card[:all].name}"
+  end
+end
+
+def to_following_item_name user=nil
+  if rule_card = Card.fetch( follow_rule_name(user) )
+    "#{follow_rule_name(user)}+#{rule_card.content}"
+  else
+    "#{follow_rule_name(user)}+#{Card[:nothing].name}"
   end
 end
 

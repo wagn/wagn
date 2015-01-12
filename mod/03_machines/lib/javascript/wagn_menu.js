@@ -54,9 +54,13 @@ wagn.menu_template = [
       }
     ]
   },
+  { "link":"follow", "view":"options", "if":"follow", "sub":
+  [ { "text":"option", "related":"following"}]
+},
   { "link":"follow", "view":"options", "if":"follow", "list":
      { "name":"follow_options", 
-        "template": { "raw":"raw" }
+        "template": { "raw":"raw" },
+  "append":[{"related":"following"}]
      }
   },
   { "text":"account", "related":{"name":"+*account", "view":"edit"}, "if":"account", "sub":

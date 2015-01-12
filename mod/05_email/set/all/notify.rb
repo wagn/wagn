@@ -151,7 +151,7 @@ format do
   
   view :unfollow_url, :perms=>:none do |args|
     if args[:followed_set] and args[:follow_option] and args[:follower] and follower = Card.fetch( args[:follower] )
-     following_card = follower.fetch( :trait=>:following, :new=>{} )
+     following_card = follower.fetch( :trait=>:following, :new=>{} )  #FIXME
      item_name = "#{args[:followed_set].to_name.url_key}+#{args[:follow_option].to_name.url_key}"
      wagn_url( "update/#{following_card.cardname.url_key}?drop_item=#{item_name}" )
     end

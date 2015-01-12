@@ -70,7 +70,7 @@ def rule_card_id setting_code, options={}
   if Card::Setting.user_specific? setting_code 
     user_id = options[:user_id] || (options[:user] and options[:user].id) || Auth.current_id
     if user_id
-      fallback = setting_code
+      fallback = "#{setting_code}+#{Card[:all].name}"
       setting_code = "#{setting_code}+#{user_id}"
     end
   end
@@ -96,6 +96,8 @@ def related_sets
 #      end
   sets
 end
+
+
 
 module ClassMethods
   def user_rule_sql user_id=nil
@@ -185,6 +187,10 @@ module ClassMethods
         "#{set_class_code}+#{setting_code}"
       end
     user_ids_cache[key] || []
+  end
+  
+  def user_rule_cards user_name, setting_code
+    Card.search :right=>user_name, :left=>{:left=>{:type_id=>SetID}, :right=>{:codename=>setting_code}}
   end
   
   def rule_cache

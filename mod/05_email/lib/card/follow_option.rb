@@ -13,12 +13,6 @@ class Card
        host_class.extend ClassMethods
     end
     
-    def add_follower user
-    end
-    
-    def drop_follower user
-    end
-    
     def exclusive
       false
     end
@@ -26,16 +20,7 @@ class Card
     def description set_card
       set_card.follow_label
     end
-    # def follower_ids
-    #   All::Follow.read_reversed_following_cache(key) || begin
-    #     ids = Card.joins(:references_to).where(
-    #         :card_references => { :referee_key => key},
-    #         :right_id=>Card[:following].id ).pluck(:left_id)
-    #     All::Follow.write_reversed_following_cache(key, ::Set.new(ids))
-    #   end
-    # end
-    #
-    
+
     module ClassMethods
       #mattr_reader :names
       

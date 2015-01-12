@@ -94,9 +94,11 @@ end
 
 
 def follow_rule_applies? user_id
-  rule_card(:follow, :user_id=>user_id).item_cards.each do |item_card|
-    if item_card.respond_to?(:applies_to?) and item_card.applies_to? self, Card.fetch(user_id)
-       return item_card
+  if (follow_rule_card=rule_card(:follow, :user_id=>user_id))
+    follow_rule_card.item_cards.each do |item_card|
+      if item_card.respond_to?(:applies_to?) and item_card.applies_to? self, Card.fetch(user_id)
+         return item_card
+      end
     end
   end 
   return false
@@ -161,36 +163,35 @@ def all_follow_option_cards
 end
 
 
-event :cache_expired_because_of_new_set, :before=>:extend, :on=>:create, :when=>proc { |c| c.type_id == Card::SetID } do
+event :cache_expired_because_of_new_set, :before=>:store, :on=>:create, :when=>proc { |c| c.type_id == Card::SetID } do
   Card.follow_caches_expired
 end
 
-event :cache_expired_because_of_type_change, :before=>:extend, :changed=>:type_id do
+event :cache_expired_because_of_type_change, :before=>:store, :changed=>:type_id do
   Card.follow_caches_expired
 end
 
-event :cache_expired_because_of_name_change, :before=>:extend, :changed=>:name do
+event :cache_expired_because_of_name_change, :before=>:store, :changed=>:name do
   Card.follow_caches_expired
 end
 
-# event :follow_change, :before=>:extend, :when=> proc {|c| Env.params[:follow] || Env.params[:unfollow]} do
-#   # if followed?
-# #     if Env.params[:follow]
-# #       if Auth.current.following_card.include_item? follow_set_card
-# #         following_card = Auth.current.following_card
-# #         following_card.drop_item follow_set
-# #         following_card.save!
-# #       end
-# #     end
-# #   else
-# #     if Env.params[:unfollow]
-# #         following_card = Auth.current.following_card
-# #         following_card.add_item follow_set
-# #         following_card.save!
-# #       end
-# #     end
-# #   end
-# end
+event :cache_expired_because_of_follow_rule_change, :before=>:approve, :when=>proc { |c| c.follow_rule_card? }  do
+  Card.follow_caches_expired  #OPTIMIZE shouldn't be necessary to clear the complete cache in this case
+end
+
+def follow_rule_card?
+  right && right.type_id == Card::UserID && left && left.right && left.right.codename == 'follow' && left.left && left.left.type_id == Card::SetID
+end
+
+def related_follow_set_cards
+  follow_set_names = related_sets.map{ |name,label| name} 
+  set_names.each do |name|
+    follow_set_names << name unless follow_set_names.include? name
+  end
+  follow_set_names.map do |name|
+    Card.fetch(name)
+  end
+end
 
 format :html do
   watch_perms = lambda { |r| Auth.signed_in? && !r.card.new_card? }  # how was this used to be used?
@@ -206,9 +207,33 @@ format :html do
   end
   
   view :follow_link do |args|
-    args[:toggle] ||= (card.followed? ? :off : :on)
-    subformat(default_follow_set_card).render_follow_link args
+    toggle       = args[:toggle] || (card.followed? ? :off : :on)
+    success_view = args[:success_view] || :follow
+
+    follow_rule = Card.fetch  "#{default_follow_set_card.name}+#{Card[:follow].name}+#{Auth.current.name}", :new=>{}
+    path_options = {:card=>follow_rule, :action=>:update,
+                    :success=>{:id=>card.name, :view=>success_view} }
+    html_options = {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :remote=>true, :method=>'post'}
+
+    case toggle
+    when :off
+      path_options['card[content]']= '[[never]]'
+      html_options[:title]         = "stop sending emails about changes to #{card.follow_label}"
+      html_options[:hover_content] = "unfollow"
+    when :on
+      path_options['card[content]']= '[[always]]'
+      html_options[:title]         = "send emails about changes to #{card.follow_label}"
+    end
+    text = render_follow_link_name args
+    
+   # url = "#{card.cardname.url_key}+#{Card[:follow].cardname.url_key}+#{Auth.current.cardname.url_key}"
+    
+#    binding.pry
+ #   link_to text,  wagn_path( "update/#{url}?card[content]=#{path}"), html_options
+     link_to text, path(path_options), html_options
+    
   end
+  
   
 
   view :follow_link_name do |args|
@@ -227,33 +252,24 @@ format :html do
       advanced_follow_options_link
     ]
     follow_links.compact.map do |link|
-      { :raw => wrap(args) {link} }
+      { :raw => link }
     end 
   end
   
   def advanced_follow_options_link
-    path_options = {:card=>card, :view=>:follow_options }
+    path_options = {:card=>Card::Auth.current, :following_context=>card.cardname.url_key } #FIXME
     html_options = {:class=>"slotter", :remote=>true}
-    link_to "advanced...", path(path_options), html_options
+    link_to "options", path(path_options), html_options
   end
   
 
-  # view :follow_menu_item do |args|
-  #   index = args[:follow_menu_index] || (Env.params['follow_menu_index'] and Env.params['follow_menu_index'].to_i)
-  #   if index and option_card = card.related_follow_option_cards[index] and option_card.followed?
-  #     wrap(args) { follow_link(option_card) }
-  #   else
-  #     ''
-  #   end
-  # end
-  
   view :follow_options do |args|
     if Auth.signed_in?
       args[:title] = "#{card.name}: follow options"
       #args[:optional_toggle] ||= main? ? :hide : :show
       frame_and_form( {
                           :action=>:update,
-                          :id=>Auth.current.following_card.id,
+                          #:id=>Auth.current.following_card.id, # FIXME
                           :success=>{:id=>card.name, :view=>:open}
                       }, args, 'main-success'=>'REDIRECT' ) do
         [
@@ -263,6 +279,7 @@ format :html do
       end
     end
   end
+  
   
   def default_follow_option_args args    
     args[:buttons] = %{

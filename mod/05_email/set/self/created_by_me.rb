@@ -7,7 +7,7 @@ def title
 end
 
 def form_label
-  'follow if created by me'
+  'follow if I created'
 end
 
 def description set_card

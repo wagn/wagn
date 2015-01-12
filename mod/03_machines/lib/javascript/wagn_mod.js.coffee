@@ -9,6 +9,7 @@ $.extend wagn,
     '.pointer-radio-list'    : -> pointerContent @find('input:checked').val()
     '.pointer-list-ul'       : -> pointerContent @find('input'        ).map( -> $(this).val() )
     '.pointer-checkbox-list' : -> pointerContent @find('input:checked').map( -> $(this).val() )
+    '.pointer-select-list'   : -> pointerContent @find('.pointer-select select').map( -> $(this).val() )
     '.pointer-mixed'         : -> pointerContent @find('.pointer-checkbox-sublist input:checked, .pointer-sublist-ul input').map( -> $(this).val() )
     '.perm-editor'           : -> permissionsContent this # must happen after pointer-list-ul, I think
   }

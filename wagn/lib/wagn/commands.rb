@@ -50,7 +50,7 @@ else
 
   case command
   when 'seed'
-    envs = ['production']
+    envs = []
     parser = OptionParser.new do |parser|
       parser.banner = "Usage: wagn seed [options]\n\nCreate and seed the production database specified in config/database.yml\n\n"
       parser.on('--production','-p', 'seed production database (default)') do
@@ -68,7 +68,7 @@ else
     end
     parser.parse!(ARGV)
     task_cmd="bundle exec rake wagn:seed"
-    if envs.blank?
+    if envs.empty?
       puts task_cmd
       puts `#{task_cmd}`
     else

@@ -1,4 +1,5 @@
-
+module SpecHelper
+end
 module Card::SpecHelper
 
   include ActionDispatch::Assertions::SelectorAssertions

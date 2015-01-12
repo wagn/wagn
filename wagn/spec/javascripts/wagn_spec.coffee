@@ -1,9 +1,11 @@
+
 describe "Global Wagn variable", ->
   it "should be defined", ->
     expect(wagn).toBeDefined
 
 describe "card-form", ->
   beforeEach ->
+    jasmine.getFixtures().fixturesPath = '../../public/assets/jasmine'
     loadFixtures('card_form.html')
 
   it "should find a form", ->

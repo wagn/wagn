@@ -66,7 +66,7 @@ else
       end
     end
     parser.parse!(ARGV)
-    task_cmd="bundle exec rake wagn:seed"
+    task_cmd="bundle exec rake wagn:create"
     if envs.empty?
       puts task_cmd
       puts `#{task_cmd}`

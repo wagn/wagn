@@ -10856,722 +10856,282 @@ card_changes_2056:
 
     <p><em><a href="{{_|unfollow_url}}">Unfollow</a> to stop receiving these emails.</em></p>
 card_changes_2057:
-  id: 5468
-  card_action_id: 7311
-  field: 0
-  value: "*follow"
-card_changes_2058:
-  id: 5469
-  card_action_id: 7311
-  field: 1
-  value: '278'
-card_changes_2059:
-  id: 5470
-  card_action_id: 7311
-  field: 2
-  value: ''
-card_changes_2060:
-  id: 5471
-  card_action_id: 7311
-  field: 3
-  value: '0'
-card_changes_2061:
-  id: 5472
-  card_action_id: 7312
-  field: 0
-  value: "*followers"
-card_changes_2062:
-  id: 5473
-  card_action_id: 7312
-  field: 1
-  value: '3'
-card_changes_2063:
-  id: 5474
-  card_action_id: 7312
-  field: 2
-  value: ''
-card_changes_2064:
-  id: 5475
-  card_action_id: 7312
-  field: 3
-  value: '0'
-card_changes_2065:
   id: 5476
   card_action_id: 7313
   field: 0
-  value: content I created
-card_changes_2066:
+  value: "*follow"
+card_changes_2058:
   id: 5477
   card_action_id: 7313
   field: 1
-  value: '3'
-card_changes_2067:
+  value: '278'
+card_changes_2059:
   id: 5478
   card_action_id: 7313
   field: 2
   value: ''
-card_changes_2068:
+card_changes_2060:
   id: 5479
   card_action_id: 7313
   field: 3
   value: '0'
-card_changes_2069:
+card_changes_2061:
   id: 5480
   card_action_id: 7314
   field: 0
-  value: content I edited
-card_changes_2070:
+  value: "*followers"
+card_changes_2062:
   id: 5481
   card_action_id: 7314
   field: 1
   value: '3'
-card_changes_2071:
+card_changes_2063:
   id: 5482
   card_action_id: 7314
   field: 2
   value: ''
-card_changes_2072:
+card_changes_2064:
   id: 5483
   card_action_id: 7314
   field: 3
   value: '0'
-card_changes_2073:
+card_changes_2065:
   id: 5484
   card_action_id: 7315
   field: 0
   value: "*follow fields"
-card_changes_2074:
+card_changes_2066:
   id: 5485
   card_action_id: 7315
   field: 1
   value: '278'
-card_changes_2075:
+card_changes_2067:
   id: 5486
   card_action_id: 7315
   field: 2
   value: ''
-card_changes_2076:
+card_changes_2068:
   id: 5487
   card_action_id: 7315
   field: 3
   value: '0'
-card_changes_2077:
+card_changes_2069:
   id: 5488
   card_action_id: 7317
   field: 0
   value: "*follow fields+*right"
-card_changes_2078:
+card_changes_2070:
   id: 5489
   card_action_id: 7317
   field: 1
   value: '259'
-card_changes_2079:
+card_changes_2071:
   id: 5490
   card_action_id: 7317
   field: 2
   value: '{"right":"_self"}'
-card_changes_2080:
+card_changes_2072:
   id: 5491
   card_action_id: 7317
   field: 3
   value: '0'
-card_changes_2081:
+card_changes_2073:
   id: 5492
   card_action_id: 7316
   field: 0
   value: "*follow fields+*right+*help"
-card_changes_2082:
+card_changes_2074:
   id: 5493
   card_action_id: 7316
   field: 1
   value: '3'
-card_changes_2083:
+card_changes_2075:
   id: 5494
   card_action_id: 7316
   field: 2
   value: ''
-card_changes_2084:
+card_changes_2076:
   id: 5495
   card_action_id: 7316
   field: 3
   value: '0'
-card_changes_2085:
+card_changes_2077:
   id: 5496
   card_action_id: 7318
   field: 0
   value: "*follow fields+*right+*default"
-card_changes_2086:
+card_changes_2078:
   id: 5497
   card_action_id: 7318
   field: 1
   value: '47'
-card_changes_2087:
+card_changes_2079:
   id: 5498
   card_action_id: 7318
   field: 2
   value: ''
-card_changes_2088:
+card_changes_2080:
   id: 5499
   card_action_id: 7318
   field: 3
   value: '0'
-card_changes_2089:
+card_changes_2081:
   id: 5500
   card_action_id: 7319
   field: 0
   value: "*all+*follow fields"
-card_changes_2090:
+card_changes_2082:
   id: 5501
   card_action_id: 7319
   field: 1
   value: '47'
-card_changes_2091:
+card_changes_2083:
   id: 5502
   card_action_id: 7319
   field: 2
   value: "[[*include]]"
-card_changes_2092:
+card_changes_2084:
   id: 5503
   card_action_id: 7319
   field: 3
   value: '0'
-card_changes_2093:
-  id: 5508
-  card_action_id: 7323
+card_changes_2085:
+  id: 5504
+  card_action_id: 7320
   field: 0
-  value: Basic+*type
-card_changes_2094:
-  id: 5509
-  card_action_id: 7323
+  value: always
+card_changes_2086:
+  id: 5505
+  card_action_id: 7320
   field: 1
-  value: '259'
-card_changes_2095:
-  id: 5510
-  card_action_id: 7323
+  value: '3'
+card_changes_2087:
+  id: 5506
+  card_action_id: 7320
   field: 2
-  value: '{"type":"_self"}'
-card_changes_2096:
-  id: 5511
-  card_action_id: 7323
+  value: ''
+card_changes_2088:
+  id: 5507
+  card_action_id: 7320
   field: 3
   value: '0'
-card_changes_2097:
+card_changes_2089:
+  id: 5508
+  card_action_id: 7321
+  field: 0
+  value: never
+card_changes_2090:
+  id: 5509
+  card_action_id: 7321
+  field: 1
+  value: '3'
+card_changes_2091:
+  id: 5510
+  card_action_id: 7321
+  field: 2
+  value: ''
+card_changes_2092:
+  id: 5511
+  card_action_id: 7321
+  field: 3
+  value: '0'
+card_changes_2093:
   id: 5512
   card_action_id: 7322
   field: 0
-  value: Basic+*type+*follow
-card_changes_2098:
+  value: nothing
+card_changes_2094:
   id: 5513
   card_action_id: 7322
   field: 1
   value: '3'
-card_changes_2099:
+card_changes_2095:
   id: 5514
   card_action_id: 7322
   field: 2
   value: ''
-card_changes_2100:
+card_changes_2096:
   id: 5515
   card_action_id: 7322
   field: 3
   value: '0'
+card_changes_2097:
+  id: 5516
+  card_action_id: 7323
+  field: 0
+  value: content I created
+card_changes_2098:
+  id: 5517
+  card_action_id: 7323
+  field: 1
+  value: '3'
+card_changes_2099:
+  id: 5518
+  card_action_id: 7323
+  field: 2
+  value: ''
+card_changes_2100:
+  id: 5519
+  card_action_id: 7323
+  field: 3
+  value: '0'
 card_changes_2101:
   id: 5520
-  card_action_id: 7326
+  card_action_id: 7324
   field: 0
-  value: Pointer+*type
+  value: content I edited
 card_changes_2102:
   id: 5521
-  card_action_id: 7326
+  card_action_id: 7324
   field: 1
-  value: '259'
+  value: '3'
 card_changes_2103:
   id: 5522
-  card_action_id: 7326
+  card_action_id: 7324
   field: 2
-  value: '{"type":"_self"}'
+  value: ''
 card_changes_2104:
   id: 5523
-  card_action_id: 7326
+  card_action_id: 7324
   field: 3
   value: '0'
 card_changes_2105:
   id: 5524
-  card_action_id: 7325
+  card_action_id: 7326
   field: 0
-  value: Pointer+*type+*follow
+  value: "*all+*follow"
 card_changes_2106:
   id: 5525
-  card_action_id: 7325
+  card_action_id: 7326
   field: 1
   value: '3'
 card_changes_2107:
   id: 5526
-  card_action_id: 7325
+  card_action_id: 7326
   field: 2
   value: ''
 card_changes_2108:
   id: 5527
-  card_action_id: 7325
+  card_action_id: 7326
   field: 3
   value: '0'
 card_changes_2109:
-  id: 5532
-  card_action_id: 7329
+  id: 5528
+  card_action_id: 7325
   field: 0
-  value: Phrase+*type
+  value: "*all+*follow+*all"
 card_changes_2110:
-  id: 5533
-  card_action_id: 7329
-  field: 1
-  value: '259'
-card_changes_2111:
-  id: 5534
-  card_action_id: 7329
-  field: 2
-  value: '{"type":"_self"}'
-card_changes_2112:
-  id: 5535
-  card_action_id: 7329
-  field: 3
-  value: '0'
-card_changes_2113:
-  id: 5536
-  card_action_id: 7328
-  field: 0
-  value: Phrase+*type+*follow
-card_changes_2114:
-  id: 5537
-  card_action_id: 7328
-  field: 1
-  value: '3'
-card_changes_2115:
-  id: 5538
-  card_action_id: 7328
-  field: 2
-  value: ''
-card_changes_2116:
-  id: 5539
-  card_action_id: 7328
-  field: 3
-  value: '0'
-card_changes_2117:
-  id: 5544
-  card_action_id: 7332
-  field: 0
-  value: PlainText+*type
-card_changes_2118:
-  id: 5545
-  card_action_id: 7332
-  field: 1
-  value: '259'
-card_changes_2119:
-  id: 5546
-  card_action_id: 7332
-  field: 2
-  value: '{"type":"_self"}'
-card_changes_2120:
-  id: 5547
-  card_action_id: 7332
-  field: 3
-  value: '0'
-card_changes_2121:
-  id: 5548
-  card_action_id: 7331
-  field: 0
-  value: PlainText+*type+*follow
-card_changes_2122:
-  id: 5549
-  card_action_id: 7331
-  field: 1
-  value: '3'
-card_changes_2123:
-  id: 5550
-  card_action_id: 7331
-  field: 2
-  value: ''
-card_changes_2124:
-  id: 5551
-  card_action_id: 7331
-  field: 3
-  value: '0'
-card_changes_2125:
-  id: 5556
-  card_action_id: 7335
-  field: 0
-  value: Search+*type
-card_changes_2126:
-  id: 5557
-  card_action_id: 7335
-  field: 1
-  value: '259'
-card_changes_2127:
-  id: 5558
-  card_action_id: 7335
-  field: 2
-  value: '{"type":"_self"}'
-card_changes_2128:
-  id: 5559
-  card_action_id: 7335
-  field: 3
-  value: '0'
-card_changes_2129:
-  id: 5560
-  card_action_id: 7334
-  field: 0
-  value: Search+*type+*follow
-card_changes_2130:
-  id: 5561
-  card_action_id: 7334
-  field: 1
-  value: '3'
-card_changes_2131:
-  id: 5562
-  card_action_id: 7334
-  field: 2
-  value: ''
-card_changes_2132:
-  id: 5563
-  card_action_id: 7334
-  field: 3
-  value: '0'
-card_changes_2133:
-  id: 5568
-  card_action_id: 7338
-  field: 0
-  value: Image+*type
-card_changes_2134:
-  id: 5569
-  card_action_id: 7338
-  field: 1
-  value: '259'
-card_changes_2135:
-  id: 5570
-  card_action_id: 7338
-  field: 2
-  value: '{"type":"_self"}'
-card_changes_2136:
-  id: 5571
-  card_action_id: 7338
-  field: 3
-  value: '0'
-card_changes_2137:
-  id: 5572
-  card_action_id: 7337
-  field: 0
-  value: Image+*type+*follow
-card_changes_2138:
-  id: 5573
-  card_action_id: 7337
-  field: 1
-  value: '3'
-card_changes_2139:
-  id: 5574
-  card_action_id: 7337
-  field: 2
-  value: ''
-card_changes_2140:
-  id: 5575
-  card_action_id: 7337
-  field: 3
-  value: '0'
-card_changes_2141:
-  id: 5580
-  card_action_id: 7340
-  field: 0
-  value: HTML+*type+*follow
-card_changes_2142:
-  id: 5581
-  card_action_id: 7340
-  field: 1
-  value: '3'
-card_changes_2143:
-  id: 5582
-  card_action_id: 7340
-  field: 2
-  value: ''
-card_changes_2144:
-  id: 5583
-  card_action_id: 7340
-  field: 3
-  value: '0'
-card_changes_2145:
-  id: 5588
-  card_action_id: 7342
-  field: 0
-  value: User+*type+*follow
-card_changes_2146:
-  id: 5589
-  card_action_id: 7342
-  field: 1
-  value: '3'
-card_changes_2147:
-  id: 5590
-  card_action_id: 7342
-  field: 2
-  value: ''
-card_changes_2148:
-  id: 5591
-  card_action_id: 7342
-  field: 3
-  value: '0'
-card_changes_2149:
-  id: 5596
-  card_action_id: 7344
-  field: 0
-  value: Cardtype+*type+*follow
-card_changes_2150:
-  id: 5597
-  card_action_id: 7344
-  field: 1
-  value: '3'
-card_changes_2151:
-  id: 5598
-  card_action_id: 7344
-  field: 2
-  value: ''
-card_changes_2152:
-  id: 5599
-  card_action_id: 7344
-  field: 3
-  value: '0'
-card_changes_2153:
-  id: 5604
-  card_action_id: 7347
-  field: 0
-  value: Date+*type
-card_changes_2154:
-  id: 5605
-  card_action_id: 7347
-  field: 1
-  value: '259'
-card_changes_2155:
-  id: 5606
-  card_action_id: 7347
-  field: 2
-  value: '{"type":"_self"}'
-card_changes_2156:
-  id: 5607
-  card_action_id: 7347
-  field: 3
-  value: '0'
-card_changes_2157:
-  id: 5608
-  card_action_id: 7346
-  field: 0
-  value: Date+*type+*follow
-card_changes_2158:
-  id: 5609
-  card_action_id: 7346
-  field: 1
-  value: '3'
-card_changes_2159:
-  id: 5610
-  card_action_id: 7346
-  field: 2
-  value: ''
-card_changes_2160:
-  id: 5611
-  card_action_id: 7346
-  field: 3
-  value: '0'
-card_changes_2161:
-  id: 5616
-  card_action_id: 7350
-  field: 0
-  value: File+*type
-card_changes_2162:
-  id: 5617
-  card_action_id: 7350
-  field: 1
-  value: '259'
-card_changes_2163:
-  id: 5618
-  card_action_id: 7350
-  field: 2
-  value: '{"type":"_self"}'
-card_changes_2164:
-  id: 5619
-  card_action_id: 7350
-  field: 3
-  value: '0'
-card_changes_2165:
-  id: 5620
-  card_action_id: 7349
-  field: 0
-  value: File+*type+*follow
-card_changes_2166:
-  id: 5621
-  card_action_id: 7349
-  field: 1
-  value: '3'
-card_changes_2167:
-  id: 5622
-  card_action_id: 7349
-  field: 2
-  value: ''
-card_changes_2168:
-  id: 5623
-  card_action_id: 7349
-  field: 3
-  value: '0'
-card_changes_2169:
-  id: 5628
-  card_action_id: 7353
-  field: 0
-  value: Number+*type
-card_changes_2170:
-  id: 5629
-  card_action_id: 7353
-  field: 1
-  value: '259'
-card_changes_2171:
-  id: 5630
-  card_action_id: 7353
-  field: 2
-  value: '{"type":"_self"}'
-card_changes_2172:
-  id: 5631
-  card_action_id: 7353
-  field: 3
-  value: '0'
-card_changes_2173:
-  id: 5632
-  card_action_id: 7352
-  field: 0
-  value: Number+*type+*follow
-card_changes_2174:
-  id: 5633
-  card_action_id: 7352
-  field: 1
-  value: '3'
-card_changes_2175:
-  id: 5634
-  card_action_id: 7352
-  field: 2
-  value: ''
-card_changes_2176:
-  id: 5635
-  card_action_id: 7352
-  field: 3
-  value: '0'
-card_changes_2177:
-  id: 5640
-  card_action_id: 7355
-  field: 0
-  value: Role+*type+*follow
-card_changes_2178:
-  id: 5641
-  card_action_id: 7355
-  field: 1
-  value: '3'
-card_changes_2179:
-  id: 5642
-  card_action_id: 7355
-  field: 2
-  value: ''
-card_changes_2180:
-  id: 5643
-  card_action_id: 7355
-  field: 3
-  value: '0'
-card_changes_2181:
-  id: 5648
-  card_action_id: 7358
-  field: 0
-  value: Toggle+*type
-card_changes_2182:
-  id: 5649
-  card_action_id: 7358
-  field: 1
-  value: '259'
-card_changes_2183:
-  id: 5650
-  card_action_id: 7358
-  field: 2
-  value: '{"type":"_self"}'
-card_changes_2184:
-  id: 5651
-  card_action_id: 7358
-  field: 3
-  value: '0'
-card_changes_2185:
-  id: 5652
-  card_action_id: 7357
-  field: 0
-  value: Toggle+*type+*follow
-card_changes_2186:
-  id: 5653
-  card_action_id: 7357
-  field: 1
-  value: '3'
-card_changes_2187:
-  id: 5654
-  card_action_id: 7357
-  field: 2
-  value: ''
-card_changes_2188:
-  id: 5655
-  card_action_id: 7357
-  field: 3
-  value: '0'
-card_changes_2189:
-  id: 5668
-  card_action_id: 7361
-  field: 0
-  value: always
-card_changes_2190:
-  id: 5669
-  card_action_id: 7361
-  field: 1
-  value: '3'
-card_changes_2191:
-  id: 5670
-  card_action_id: 7361
-  field: 2
-  value: ''
-card_changes_2192:
-  id: 5671
-  card_action_id: 7361
-  field: 3
-  value: '0'
-card_changes_2193:
-  id: 5672
-  card_action_id: 7362
-  field: 0
-  value: never
-card_changes_2194:
-  id: 5673
-  card_action_id: 7362
-  field: 1
-  value: '3'
-card_changes_2195:
-  id: 5674
-  card_action_id: 7362
-  field: 2
-  value: ''
-card_changes_2196:
-  id: 5675
-  card_action_id: 7362
-  field: 3
-  value: '0'
-card_changes_2197:
-  id: 5676
-  card_action_id: 7363
-  field: 0
-  value: "*all+*follow"
-card_changes_2198:
-  id: 5677
-  card_action_id: 7363
+  id: 5529
+  card_action_id: 7325
   field: 1
   value: '47'
-card_changes_2199:
-  id: 5678
-  card_action_id: 7363
+card_changes_2111:
+  id: 5530
+  card_action_id: 7325
   field: 2
   value: "[[never]]"
-card_changes_2200:
-  id: 5679
-  card_action_id: 7363
+card_changes_2112:
+  id: 5531
+  card_action_id: 7325
   field: 3
   value: '0'

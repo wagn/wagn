@@ -1,5 +1,5 @@
 require 'optparse'
-require 'active_support/core_ext/object/inclusion' # adds method in? to Object class
+require 'active_support/core_ext/object/inclusion' # adds method in? to Object class 
 
 def load_rake_tasks
   require './config/environment'

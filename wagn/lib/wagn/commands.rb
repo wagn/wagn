@@ -67,9 +67,15 @@ else
       end
     end
     parser.parse!(ARGV)
-    envs.each do |env|
-      puts "env RAILS_ENV=#{env} bundle exec rake wagn:create"
-      puts `env RAILS_ENV=#{env} bundle exec rake wagn:create`
+    task_cmd="bundle exec rake wagn:seed"
+    if envs.blank?
+      puts task_cmd
+      puts `#{task_cmd}`
+    else
+      envs.each do |env|
+        puts "env RAILS_ENV=#{env} #{task_cmd}"
+        puts `env RAILS_ENV=#{env} #{task_cmd}`
+      end
     end
   when 'update'
     load_rake_tasks
@@ -80,9 +86,13 @@ else
     require_args = "-r #{Wagn.gem_root}/features "
     require_args += feature_paths.map { |path| "-r #{path}"}.join(' ')
     feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.join(' ')
-    system "RAILS_ROOT=. bundle exec cucumber #{require_args} #{feature_args} 2>&1"
+    unless system "RAILS_ROOT=. bundle exec cucumber #{require_args} #{feature_args} 2>&1"
+      exit $?.exitstatus
+    end
   when 'jasmine'
-    system "RAILS_ENV=test bundle exec rake spec:javascript 2>&1"
+    unless system "RAILS_ENV=test bundle exec rake spec:javascript 2>&1"
+      exit $?.exitstatus
+    end
   when 'rspec'
     opts = {}
     require 'rspec/core'
@@ -148,7 +158,9 @@ WAGN
     parser.parse!(wagn_args)
 
     rspec_command = "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]} 2>&1" 
-    system rspec_command
+    unless system rspec_command
+      exit $?.exitstatus
+    end
   when '--version', '-v'
     puts "Wagn #{Wagn::Version.release}"
   when 'new'
@@ -194,6 +206,5 @@ WAGN
     exit(1)
   end
 end
-
 
 

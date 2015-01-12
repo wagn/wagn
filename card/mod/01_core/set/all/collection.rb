@@ -16,10 +16,18 @@ module ClassMethods
     search spec.merge(:return=>'count')
   end
 
+  def find_each(options = {}) 
+    #this is a copy from rails (3.2.16) and is needed because this is performed by a relation (ActiveRecord::Relation)
+    find_in_batches(options) do |records|
+      records.each { |record| yield record }
+    end
+  end
+
   def find_in_batches(options = {})
     if block_given?
       super(options) do |records|
         yield(records)
+        puts "resetting local cache"
         Card.cache.reset_local
       end
     else

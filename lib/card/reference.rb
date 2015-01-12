@@ -45,15 +45,10 @@ class Card::Reference < ActiveRecord::Base
     
     def repair_all
       connection.execute 'truncate card_references'
-      count_updated = 0
       
-      Card.find_in_batches(:batch_size=>100) do |batch|
-        Rails.logger.debug "Updating references for '#{batch.first.name}' to '#{batch.last.name}' ... "; $stdout.flush        
-        batch.each do |card|
-          count_updated += 1
-          card.update_references 
-        end
-        Rails.logger.info "batch done.  \t\t#{count_updated} total updated"
+      Card.find_each do |card|
+        Rails.logger.debug "\n\n\nUpdating references for '#{card.name}' (id: #{card.id}) ... \n\n\n"
+        card.update_references 
       end
     end
     

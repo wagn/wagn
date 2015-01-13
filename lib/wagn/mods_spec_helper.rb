@@ -3,7 +3,6 @@ require 'spork'
 
 ENV["RAILS_ENV"] = 'test'
 
-
 Spork.prefork do
   require File.expand_path( '../simplecov_helper.rb', __FILE__ )
   

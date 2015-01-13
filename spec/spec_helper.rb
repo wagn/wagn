@@ -10,7 +10,6 @@ require File.expand_path( '../../mod/03_machines/spec/lib/machine_spec.rb', __FI
 require File.expand_path( '../../mod/03_machines/spec/lib/machine_input_spec.rb', __FILE__ )
 
 
-
 Spork.prefork do
   if ENV["RAILS_ROOT"]
     require File.join( ENV["RAILS_ROOT"], '/config/environment')

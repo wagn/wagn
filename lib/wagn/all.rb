@@ -12,4 +12,3 @@ require 'kaminari'
 require 'diff/lcs'
 
 require 'wagn/application'
-

@@ -35,18 +35,15 @@ $.extend wagn,
     wagn.tinyMCEConfig = setter()
   
   initAce: (textarea) ->
-    type_id = textarea.slot().attr "data-card-type"
+    type_code = textarea.slot().attr "data-card-type-code"
     hash = {}
-    hash["JavaScript"] = "javascript"
-    hash["CoffeeScript"] = "coffee"
-    hash["CSS"] = "css"
-    hash["SCSS"] = "scss"
-    hash["HTML"] = "html"
-    hash["Search"] = "json"
-    unless type_id
-      textarea.autosize()
-      return
-    mode = hash[type_id]
+    hash["java_script"] = "javascript"
+    hash["coffee_script"] = "coffee"
+    hash["css"] = "css"
+    hash["scss"] = "scss"
+    hash["html"] = "html"
+    hash["search_type"] = "json"
+    mode = hash[type_code]
     unless mode
       textarea.autosize()
       return
@@ -363,7 +360,7 @@ navbox_results = (request, response) ->
       response navboxize(request.term, data) if this.wagReq == reqIndex
     error: () ->
       response [] if this.wagReq == reqIndex
-    }
+  }
 
 navboxize = (term, results)->
   items = []

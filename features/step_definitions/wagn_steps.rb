@@ -94,7 +94,7 @@ end
 
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do
-    normal_textarea_card_type = ["JavsScript","CoffeeScript","HTML","CSS","SCSS","Search"]
+    normal_textarea_card_type = ["JavaScript","CoffeeScript","HTML","CSS","SCS","Search"]
     if not normal_textarea_card_type.include? cardtype
       fill_in("card[content]", :with=>content)
     else

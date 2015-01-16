@@ -94,7 +94,12 @@ end
 
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do
-    fill_in("card[content]", :with=>content)
+    normal_textarea_card_type = ["JavsScript","CoffeeScript","HTML","CSS","SCSS","Search"]
+    if not normal_textarea_card_type.include? cardtype
+      fill_in("card[content]", :with=>content)
+    else
+      page.execute_script %{ace.edit($('.ace_editor.ace-tm').get(0)).getSession().setValue('#{content}')}
+    end
   end
 end
 

@@ -16,6 +16,7 @@ module <%= app_const_base %>
   
     
     # Email configuration
+
     config.action_mailer.perform_deliveries = false
     # config.action_mailer.delivery_method  = ...
     # config.action_mailer.smtp_settings    = ...

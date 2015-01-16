@@ -19,6 +19,6 @@ Documentation is still sparse, but you can get a sense for how to start by readi
 To install in a mod-developer friendly mode, try `wagn new mydeckname --mod-dev` (still uses standard gem installation).
 
 ==Developing the Core
-If you're interested in working on the Wagn gem, you'll need to clone a copy of the wagn code from the Github repository.  If, for example, you clone it in /opt/wagn, you can then use the gem by adding `gem 'wagn', :path=>'/opt/wagn'` to your Gemfile.  
 
 To install in a core-developer friendly mode, try `wagn new mydeckname --core-dev`.  Doing so will let you run all core specs using `wagn rspec`.
+

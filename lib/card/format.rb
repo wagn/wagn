@@ -502,8 +502,7 @@ class Card
         when /^\//
           href = internal_url href[1..-1]    ; 'internal-link'
         else
-          return href
-          Rails.logger.debug "build_link mistakenly(?) called on #{href}, #{text}"
+          Rails.logger.info "WARNING. build_link called on #{href}, #{text}; should only be called on either urls or cardname objects"
         end
       options[:class] = options[:class] ? [options[:class], new_class]*' ' : new_class
         

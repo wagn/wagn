@@ -56,7 +56,7 @@ format :html do
   end
 
   view :title_link do |args|
-    build_link card.name, (args[:title_ready] || showname(args[:title]) )
+    build_link card.cardname, (args[:title_ready] || showname(args[:title]) )
   end
 
   view :open, :tags=>:comment do |args|

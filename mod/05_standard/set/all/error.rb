@@ -117,7 +117,7 @@ format :html do
 
     wrap args.merge( :slot_class=>'error-view' ) do  #ENGLISH below
       %{<strong>Conflict!</strong><span class="new-current-revision-id">#{card.last_action_id}</span>
-        <div>#{ build_link card.last_action.act.actor.name } has also been making changes.</div>
+        <div>#{ build_link card.last_action.act.actor.cardname } has also been making changes.</div>
         <div>Please examine below, resolve above, and re-submit.</div>
         #{ wrap do |args| 
             if card.current_act

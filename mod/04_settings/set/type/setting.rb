@@ -26,7 +26,7 @@ view :core do |args|
         klasses.map do |klass, rules|
           %{ 
             <tr class="klass-row anchorless-#{ klass.anchorless? }">
-              <td class="setting-klass">#{ klass.anchorless? ? build_link( klass.pattern ) : klass.pattern }</td>
+              <td class="setting-klass">#{ klass.anchorless? ? build_link( klass.pattern.to_name ) : klass.pattern }</td>
               <td class="rule-content-container">
                 <span class="closed-content content">#{ subformat(rules[0])._render_closed_content if klass.anchorless? }</span>
               </td>

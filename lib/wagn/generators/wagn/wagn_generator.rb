@@ -27,9 +27,10 @@ class WagnGenerator < Rails::Generators::AppBase
   public_task :create_root
   
 ## should probably eventually use rails-like AppBuilder approach, but this is a first step.  
-  def dev_setup  
+  def dev_setup
+    @wagn_path = options['gem-path']
     if options['core-dev']
-      @wagn_path = options['gem-path'] || ask("Enter the path to your local wagn gem installation: ")
+      @wagn_path ||= ask("Enter the path to your local wagn gem installation: ")
       @spec_path = @wagn_path
       @spec_helper_path = File.join @spec_path, 'spec', 'spec_helper'
       empty_directory 'spec'

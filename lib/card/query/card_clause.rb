@@ -1,7 +1,7 @@
 
 class Card
   class Query
-    class CardSpec < Spec
+    class CardClause < Clause
     
       ATTRIBUTES = {
         :basic           => %w{ name type_id content id key updater_id left_id right_id creator_id updater_id codename }, 
@@ -16,19 +16,19 @@ class Card
       DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
       CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
     
-      attr_reader :sql, :query, :rawspec, :selfname
+      attr_reader :sql, :query, :rawclause, :selfname
       attr_accessor :joins, :join_count
 
       class << self
         def build query
-          cardspec = self.new query
-          cardspec.merge cardspec.rawspec
+          cardclause = self.new query
+          cardclause.merge cardclause.rawclause
         end
       end
 
       def initialize query
         @mods = MODIFIERS.clone
-        @spec, @joins = {}, {}
+        @clause, @joins = {}, {}
         @selfname, @parent = '', nil
         @sql = SqlStatement.new
 
@@ -37,7 +37,7 @@ class Card
         @vars = @query.delete(:vars) || {}
         @vars.symbolize_keys!
         @query = clean(@query)
-        @rawspec = @query.deep_clone
+        @rawclause = @query.deep_clone
 
         self
       end
@@ -91,7 +91,7 @@ class Card
         s = hashify s
         translate_to_attributes s
         ready_to_sqlize s
-        @spec.merge! s
+        @clause.merge! s
         self
       end
   
@@ -100,41 +100,41 @@ class Card
           when String;   { :key => s.to_name.key }
           when Integer;  { :id => s              }
           when Hash;     s
-          else; raise BadQuery, "Invalid cardspec args #{s.inspect}"
+          else; raise BadQuery, "Invalid cardclause args #{s.inspect}"
         end
       end
 
-      def translate_to_attributes spec
+      def translate_to_attributes clause
         content = nil
-        spec.each do |key,val|
+        clause.each do |key,val|
           if key == :_parent
-            @parent = spec.delete(key)
+            @parent = clause.delete(key)
           elsif OPERATORS.has_key?(key.to_s) && !ATTRIBUTES[key]
-            spec.delete(key)
+            clause.delete(key)
             content = [key,val]
           elsif MODIFIERS.has_key?(key)
-            next if spec[key].is_a? Hash
-            val = spec.delete key
+            next if clause[key].is_a? Hash
+            val = clause.delete key
             @mods[key] = Array === val ? val : val.to_s
           end
         end
-        spec[:content] = content if content
+        clause[:content] = content if content
       end
 
 
-      def ready_to_sqlize spec
-        spec.each do |key,val|
+      def ready_to_sqlize clause
+        clause.each do |key,val|
           keyroot = field_root(key).to_sym
           if keyroot==:cond                            # internal SQL cond (already ready)
           elsif ATTRIBUTES[keyroot] == :basic          # sqlize knows how to handle these keys; just process value
-            spec[key] = ValueSpec.new(val, self)
+            clause[key] = ValueClause.new(val, self)
           else                                         # keys need additional processing
-            val = spec.delete key
+            val = clause.delete key
             is_array = Array===val
             case ATTRIBUTES[keyroot]
               when :ignore                               #noop         
               when :relational, :special, :conjunction ; relate is_array, keyroot, val, :send
-              when :ref_relational                     ; relate is_array, keyroot, val, :refspec
+              when :ref_relational                     ; relate is_array, keyroot, val, :refclause
               when :plus_relational
                 # Arrays can have multiple interpretations for these, so we have to look closer...
                 subcond = is_array && ( Array===val.first || conjunction(val.first) )
@@ -160,8 +160,8 @@ class Card
         end
       end
 
-      def refspec key, val        
-        add_join :ref, RefSpec.new( key, val, self ).to_sql, :id, :ref_id
+      def refclause key, val        
+        add_join :ref, RefClause.new( key, val, self ).to_sql, :id, :ref_id
       end
 
 
@@ -198,11 +198,11 @@ class Card
       end
       
       def editor_of val
-        action_spec :actor_id, "card_actions.card_id", val
+        action_clause :actor_id, "card_actions.card_id", val
       end
 
       def edited_by val
-        action_spec "card_actions.card_id", :actor_id, val
+        action_clause "card_actions.card_id", :actor_id, val
       end
       
       def last_editor_of val
@@ -245,8 +245,8 @@ class Card
       end
       
       def junction side, val
-        part_spec, junction_spec = val.is_a?(Array) ? val : [ val, {} ]
-        restrict_by_join :id, junction_spec, side=>part_spec, :return=>"#{ side==:left ? :right : :left}_id"
+        part_clause, junction_clause = val.is_a?(Array) ? val : [ val, {} ]
+        restrict_by_join :id, junction_clause, side=>part_clause, :return=>"#{ side==:left ? :right : :left}_id"
       end
     
     
@@ -279,12 +279,12 @@ class Card
           unless c && [SearchTypeID,SetID].include?(c.type_id)
             raise BadQuery, %{"found_by" value needs to be valid Search, but #{c.name} is a #{c.type_name}}
           end
-          restrict_by_join :id, CardSpec.new(c.get_spec).rawspec
+          restrict_by_join :id, CardClause.new(c.get_clause).rawclause
         end
       end
   
       def not val
-        subselect = CardSpec.build(:return=>:id, :_parent=>self).merge(val).to_sql
+        subselect = CardClause.build(:return=>:id, :_parent=>self).merge(val).to_sql
         join_alias = add_join :not, subselect, :id, :id, :side=>'LEFT'        
         merge field(:cond) => SqlCond.new("#{join_alias}.id is null")
       end
@@ -300,7 +300,7 @@ class Card
           case item
           when 'referred_to'
             join_field = 'id'
-            cs = CardSpec.build cs_args.merge( field(:cond)=>SqlCond.new("referer_id in #{CardSpec.build( val.merge(:return=>'id')).to_sql}") )
+            cs = CardClause.build cs_args.merge( field(:cond)=>SqlCond.new("referer_id in #{CardClause.build( val.merge(:return=>'id')).to_sql}") )
             cs.add_join :wr, :card_references, :id, :referee_id
           else
             raise BadQuery, "count with item: #{item} not yet implemented"
@@ -311,7 +311,7 @@ class Card
             when 'right' ; 'right_id'
             else         ;  raise BadQuery, "sort item: #{item} not yet implemented"
           end
-          cs = CardSpec.build(val)
+          cs = CardClause.build(val)
         end
 
         cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"
@@ -395,27 +395,27 @@ class Card
 
       def subcondition(val, args={})
         args = { :return=>:condition, :_parent=>self }.merge(args)
-        cardspec = CardSpec.build( args )
-        merge field(:cond) => cardspec.merge(val)
-        self.joins.merge! cardspec.joins
+        cardclause = CardClause.build( args )
+        merge field(:cond) => cardclause.merge(val)
+        self.joins.merge! cardclause.joins
       end      
       
-      def action_spec(field, linkfield, val)
-        card_select = CardSpec.build(:_parent=>self, :return=>'id').merge(val).to_sql
+      def action_clause(field, linkfield, val)
+        card_select = CardClause.build(:_parent=>self, :return=>'id').merge(val).to_sql
         sql =  "(SELECT DISTINCT #{field} AS join_card_id FROM card_acts INNER JOIN card_actions ON card_acts.id = card_act_id "
         sql += " JOIN (#{card_select}) AS ss ON #{linkfield}=ss.id AND (draft is not true))"
         add_join :ac, sql, :id, :join_card_id
       end
 
-      def id_from_spec spec
-        case spec
-        when Integer ; spec
-        when String  ; Card.fetch_id(spec)
+      def id_from_clause clause
+        case clause
+        when Integer ; clause
+        when String  ; Card.fetch_id(clause)
         end
       end
             
       def restrict id_field, val, opts={}
-        if id = id_from_spec(val)
+        if id = id_from_clause(val)
           merge field(id_field) => id
         else
           restrict_by_join id_field, val, opts
@@ -424,7 +424,7 @@ class Card
       
       def restrict_by_join id_field, val, opts={}
         opts.reverse_merge!(:return=>:id, :_parent=>self)
-        subselect = CardSpec.build(opts).merge(val).to_sql
+        subselect = CardClause.build(opts).merge(val).to_sql
         add_join "card_#{id_field}", subselect, id_field, opts[:return]
       end
     
@@ -464,7 +464,7 @@ class Card
       end
   
       def basic_conditions
-        @spec.map { |key, val| val.to_sql field_root(key) }.compact.join " #{ current_conjunction } "
+        @clause.map { |key, val| val.to_sql field_root(key) }.compact.join " #{ current_conjunction } "
       end
   
       def current_conjunction

@@ -194,10 +194,11 @@ namespace :wagn do
       Wagn::Cache.reset_global
       conn =  ActiveRecord::Base.connection
       # Correct time and user stamps
-      card_sql =  "update cards set created_at=#{Time.now}, creator_id=#{ Card::WagnBotID }"
-      card_sql +=                 ",updated_at=#{Time.now}, updater_id=#{ Card::WagnBotID }"
-      conn.update card_sql
-      act_sql =  "update card_acts set acted_at=#{Time.now}, actor_id=#{ Card::WagnBotID }"
+      now = Time.now.utc.to_s(:db)
+      card_sql =  "update cards set  created_at='#{now}', creator_id=#{ Card::WagnBotID }"
+      card_sql +=                  ",updated_at='#{now}', updater_id=#{ Card::WagnBotID }"
+      conn.update card_sql                                  
+      act_sql =  "update card_acts set acted_at='#{now}', actor_id=  #{ Card::WagnBotID }"
       conn.update act_sql
 
       Card::Auth.as_bot do

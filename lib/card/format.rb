@@ -538,7 +538,7 @@ class Card
         Rails.logger.warn "Pass only Card::Name to page_path #{title.class}, #{title}" unless Card::Name===title
         format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
         query  = opts.present? ? "?#{opts.to_param}"         : ''
-        wagn_path "#{title.url_key}#{format}#{query}"
+        wagn_path "#{title.to_name.url_key}#{format}#{query}"
       end
 
       def wagn_path rel_path

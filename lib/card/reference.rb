@@ -40,18 +40,19 @@ class Card::Reference < ActiveRecord::Base
     end
     
     def repair_missing_referees
-      where( Card.where( :id=>arel_table[:referee_id]).exists.not ).update_all :referee_id=>nil
+      #FIXME - should treat trashed cards as not existing
+      where( Card.where( :id=>arel_table[:referee_id], :trash=>false).exists.not ).update_all :referee_id=>nil
     end
     
     def delete_missing_referers
-      where( Card.where( :id=>arel_table[:referer_id]).exists.not ).delete_all
+      where( Card.where( :id=>arel_table[:referer_id], :trash=>false).exists.not ).delete_all
     end
     
     def repair_all
       delete_missing_referers
       
-      Card.find_each do |card|
-        Rails.logger.debug "\n\n\nUpdating references for '#{card.name}' (id: #{card.id}) ... \n\n\n"
+      Card.where(:trash=>false).find_each do |card|
+        Rails.logger.info "\n\n\nRepairing references for '#{card.name}' (id: #{card.id}) ... \n\n\n"
         card.update_references 
       end
     end

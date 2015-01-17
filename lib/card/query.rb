@@ -2,13 +2,10 @@
 
 
 class Card::Query
-  require 'pry'
-  binding.pry
   require_dependency 'card/query/clause'
   require_dependency 'card/query/card_clause'
   require_dependency 'card/query/value_clause'  
   require_dependency 'card/query/ref_clause'
-  binding.pry
 
   MODIFIERS = {};  %w{ conj return sort sort_as group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }
 

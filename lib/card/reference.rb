@@ -43,8 +43,12 @@ class Card::Reference < ActiveRecord::Base
       where( Card.where( :id=>arel_table[:referee_id]).exists.not ).update_all :referee_id=>nil
     end
     
+    def delete_missing_referers
+      where( Card.where( :id=>arel_table[:referer_id]).exists.not ).delete_all
+    end
+    
     def repair_all
-      connection.execute 'truncate card_references'
+      delete_missing_referers
       
       Card.find_each do |card|
         Rails.logger.debug "\n\n\nUpdating references for '#{card.name}' (id: #{card.id}) ... \n\n\n"

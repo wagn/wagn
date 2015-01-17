@@ -50,8 +50,6 @@ describe Card::Set::Right::Followers do
       is_expected.to include 'Joe User'
     end
 
-
-    
     context 'when following a card' do 
       it 'contains follower' do
         @card = Card['All Eye On Me']
@@ -104,6 +102,21 @@ describe Card::Set::Right::Followers do
         Card::Auth.current_id = Card['Sara'].id
         @card.update_attributes! :content=> 'some content'
         is_expected.to include('Sara')
+      end
+    end
+    
+    
+    context 'for a set card' do
+      it 'contains followers of that set' do
+        @card = Card['lens+*right']
+        is_expexted.to include('Big Brother')
+      end
+    end
+    
+    context 'for a type card' do
+      it 'contains followers of that type' do
+        @card = Card['Optic']
+        is_expected.to include('Optic fan')
       end
     end
     

@@ -1,10 +1,7 @@
 include Card::FollowOption
 
-self.follow_opts :position=>4
+self.follow_opts :position=>3
 
-def exclusive
-  true
-end
 
 def title
   'Ignoring'

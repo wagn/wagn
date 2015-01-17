@@ -3,45 +3,69 @@
 
 class Card
   module FollowOption
-    attr_reader :exclusive
-    mattr_reader :codenames, :special
-    @@codenames = []
-    @@special = []
-
+    #mattr_reader :codenames
+    @@options = { :all=>[], :main=>[], :restrictive=>[] }
     
     def self.included(host_class)     
        host_class.extend ClassMethods
     end
     
-    def exclusive
-      false
+    def self.codenames type=:all
+      @@options[type]
     end
     
+    def self.restrictive_options
+      self.codenames :restrictive
+    end
+    
+    def self.main_options
+      self.codenames :main
+    end
+    
+    def restrictive_option?
+      Card::FollowOption.restrictive_options.include? codename
+    end
+
     def description set_card
       set_card.follow_label
     end
 
     module ClassMethods
-      #mattr_reader :names
       
+      # args:
+      # :position => <Fixnum> (starting at 1, default: add to end)
+      def restrictive_follow_opts args
+        add_option args, :restrictive
+      end
       
-      # usage:
-      # follow_opts :position => <Fixnum> (starting at 1, default: add to end)
-      def follow_opts opts
-        codename = opts[:codename] || self.name.match(/::(\w+)$/)[1].underscore.to_sym
-        if opts[:special]
-          Card::FollowOption.special << codename
-        end
-        if opts[:position]
-          if Card::FollowOption.codenames[opts[:position]-1]
-            Card::FollowOption.codenames.insert(opts[:position]-1, codename)
-          else
-            Card::FollowOption.codenames[opts[:position]-1] = codename
-          end
-        else
-          Card::FollowOption.codenames << codename
+      # args:
+      # :position => <Fixnum> (starting at 1, default: add to end)
+      def follow_opts args
+        add_option args, :main
+      end
+      
+      private
+      
+      def insert_option pos, item, type
+        if Card::FollowOption.codenames(type)[pos]  
+          Card::FollowOption.codenames(type).insert(pos, item)
+        else  
+          # If pos > codenames.size in a previous insert then we have a bunch of preceding nils in the array.
+          # Hence, we have to overwrite a nil value if we encounter one and can't use insert.
+          Card::FollowOption.codenames(type)[pos] = item
         end
       end
+      
+      def add_option opts, type
+        codename = opts[:codename] || self.name.match(/::(\w+)$/)[1].underscore.to_sym
+        if opts[:position]
+          insert_option opts[:position]-1, codename, type
+        else
+          Card::FollowOption.codenames(type) << codename
+        end
+        Card::FollowOption.codenames(:all) << codename
+      end
+      
     end   
   end
 end

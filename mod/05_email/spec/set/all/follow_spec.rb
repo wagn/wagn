@@ -10,7 +10,7 @@ describe "Card::Set::All::Follow" do
     context 'when a new +*following entry created' do
       it 'contains id of a new follower' do
         Card::Auth.as_bot do
-          Card.create :name=>"Joe User+*following", :content=>"[[No One Sees Me+*self+always]]"
+          Card.create :name=>"Joe User+*following", :content=>"[[No One Sees Me+*self+*follow+Joe User+always]]"
           expect(Card['No One Sees Me'].follower_ids).to eq ::Set.new([Card['Joe User'].id])
         end
       end

@@ -30,9 +30,9 @@ UserRuleSQL = %{
   join cards sets     on rules.left_id        = sets.id 
   join cards settings on rules.right_id       = settings.id
   join cards users    on user_rules.right_id = users.id
-  where   sets.type_id     =  #{Card::SetID }                            and sets.trash     is false 
+  where   sets.type_id     = #{Card::SetID }                             and sets.trash     is false 
     and   settings.type_id = #{Card::SettingID}                          and settings.trash is false
-    and   users.type_id   = #{Card::UserID}                              and users.trash    is false
+    and   (users.type_id   = #{Card::UserID} or users.codename = 'all')  and users.trash    is false
     and                                                                      rules.trash    is false;
 }  
 
@@ -67,10 +67,11 @@ end
 
 def rule_card_id setting_code, options={}
   fallback = options.delete( :fallback )
+  
   if Card::Setting.user_specific? setting_code 
     user_id = options[:user_id] || (options[:user] and options[:user].id) || Auth.current_id
     if user_id
-      fallback = "#{setting_code}+#{Card[:all].name}"
+      fallback = "#{setting_code}+#{Card[:all].id}"
       setting_code = "#{setting_code}+#{user_id}"
     end
   end
@@ -101,26 +102,30 @@ end
 
 module ClassMethods
   def user_rule_sql user_id=nil
-    if user_id
-      %{
-        select 
-          user_rules.id as rule_id, 
-          settings.id   as setting_id, 
-          sets.id       as set_id, 
-          sets.left_id  as anchor_id, 
-          sets.right_id as set_tag_id
-        from cards user_rules 
-        join cards rules    on user_rules.left_id   = rules.id 
-        join cards sets     on rules.left_id        = sets.id 
-        join cards settings on rules.right_id       = settings.id
-        where user_rules.right_id = #{user_id}
-          and   sets.type_id      = #{Card::SetID }    and sets.trash     is false
-          and   settings.type_id  = #{Card::SettingID} and settings.trash is false
-          and                                              rules.trash    is false;
-      }
-    else
-      UserRuleSQL
-    end 
+    user_restriction = if user_id
+        "users.id = #{user_id}"
+      else
+        "users.type_id = #{Card::UserID}"
+      end
+
+    %{
+      select 
+        user_rules.id as rule_id, 
+        settings.id   as setting_id, 
+        sets.id       as set_id, 
+        sets.left_id  as anchor_id, 
+        sets.right_id as set_tag_id,
+        users.id      as user_id
+      from cards user_rules 
+      join cards rules    on user_rules.left_id   = rules.id 
+      join cards sets     on rules.left_id        = sets.id 
+      join cards settings on rules.right_id       = settings.id
+      join cards users    on user_rules.right_id  = users.id
+      where   sets.type_id      = #{Card::SetID }               and sets.trash     is false
+        and   settings.type_id  = #{Card::SettingID}            and settings.trash is false
+        and   ( #{user_restriction} or users.codename = 'all' ) and users.trash    is false
+        and                                                         rules.trash    is false;
+    } 
   end
   
   
@@ -159,7 +164,7 @@ module ClassMethods
   end
   
   def all_user_rule_keys_with_id_and_user_id
-    ActiveRecord::Base.connection.select_all(UserRuleSQL).each do |row|
+    ActiveRecord::Base.connection.select_all(user_rule_sql).each do |row|
       if key = cache_key(row) and user_id = row['user_id']
         yield(key, row['rule_id'].to_i, user_id.to_i)
       end
@@ -186,7 +191,13 @@ module ClassMethods
         set_class_code = Card::Codename[ set_card.id ]
         "#{set_class_code}+#{setting_code}"
       end
-    user_ids_cache[key] || []
+    user_ids = user_ids_cache[key] || []
+    if user_ids.include? Card[:all].id  # rule for all -> return all user ids
+      Card.where(:type_id=>Card::UserID).pluck(:id)
+    else
+      user_ids
+    end
+    
   end
   
   def user_rule_cards user_name, setting_code

@@ -57,15 +57,13 @@ format :html do
       }
     end
   end
-
+  
   view :closed_content do |args|
     ''
   end
   
   
-  def default_follow_set_card
-    card
-  end
+
   
   view :follow_link_name do |args|
     args[:toggle] ||= card.followed? ? :off : :on
@@ -82,6 +80,10 @@ end
 
 
 include Card::Set::Type::SearchType
+
+def default_follow_set_card
+  self
+end
 
 def inheritable?
   return true if junction_only?
@@ -137,12 +139,15 @@ def follow_rule_name user=nil
   end
 end
 
-def to_following_item_name user=nil
-  if rule_card = Card.fetch( follow_rule_name(user) )
-    "#{follow_rule_name(user)}+#{rule_card.content}"
-  else
-    "#{follow_rule_name(user)}+#{Card[:nothing].name}"
-  end
+def to_following_item_name args
+  left_part = follow_rule_name( args[:user] )
+  option = args[:option] || if (rule_card = Card.fetch(left_part))
+       rule_card.content
+     else
+       Card[:nothing].name
+     end
+  
+  "#{left_part}+#{option}"
 end
 
 def all_user_ids_with_rule_for setting_code

@@ -100,15 +100,15 @@ describe Card::Set::All::Rules do
     
     it "retrieves user indepedent Set based value" do
       Card::Auth.as_bot do
-        Card.create :name => "Book+*type+*follow", :content => "[[All]]"
+        Card.create :name => "Book+*type+*follow+*all", :content => "[[always]]"
       end
-      expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[All]]")
+      expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[always]]")
     end
     
     it "user-specific value overwrites user-independent value" do
       Card::Auth.as_bot do
         Card.create :name => "Book+*type+*follow+Joe User", :content => "[[Home]]"
-        Card.create :name => "Book+*type+*follow", :content => "[[All]]"
+        Card.create :name => "Book+*type+*follow+*all", :content => "[[All]]"
       end
       expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[Home]]")
     end

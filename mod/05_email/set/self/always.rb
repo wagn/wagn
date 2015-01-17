@@ -1,6 +1,6 @@
 include Card::FollowOption
 
-self.follow_opts :position=>1
+self.follow_opts :position=>2
 
 def exclusive
   true

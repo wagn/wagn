@@ -1,26 +1,14 @@
 card_accessor :followers
 
-
 FOLLOWER_IDS_CACHE_KEY = 'FOLLOWER_IDS'
-
-def label
-  name
-end
 
 def follow_label
   name
 end
 
-def follow_option_card index
-  if index and index < Card::FollowOption.codenames.size
-    Card[Card::FollowOption.codenames[index]]
-  end
-end
-
 def follow_option?
   codename && Card::FollowOption.codenames.include?(codename.to_sym) 
 end
-
 
 def followers
   follower_ids.map do |id|
@@ -59,7 +47,6 @@ def direct_followers
     Card.fetch(id)
   end
 end
-
 
 # all ids of users that follow this card because of a follow rule that applies to this card
 # doesn't include users that follow this card because they are following parent cards or other cards that include this card
@@ -131,30 +118,30 @@ def follow_set
   follow_set_card.name
 end
 
-def follow_key
-  follow_set_card.key
-end
+# def follow_key
+#   follow_set_card.key
+# end
 
-def related_follow_option_cards
-  # refers to sets that users may follow from the current card
-  @related_follow_option_cards ||= begin
-    sets = set_names
-    sets.pop unless codename == 'all' # get rid of *all set
-    sets << "#{name}+*type" if known? && type_id==Card::CardtypeID
-    sets << "#{name}+*right" if known? && cardname.simple?
-    Card::FollowOption.codenames.each do |name|
-      if Card[name].applies?(Auth.current, self)
-        sets << name
-      end
-    end
-    left_option = left
-    while left_option
-      sets << "#{left_option.name}+*self"
-      left_option = left_option.left
-    end
-    sets.map { |name| Card.fetch name }
-  end
-end
+# def related_follow_option_cards
+#   # refers to sets that users may follow from the current card
+#   @related_follow_option_cards ||= begin
+#     sets = set_names
+#     sets.pop unless codename == 'all' # get rid of *all set
+#     sets << "#{name}+*type" if known? && type_id==Card::CardtypeID
+#     sets << "#{name}+*right" if known? && cardname.simple?
+#     Card::FollowOption.codenames.each do |name|
+#       if Card[name].applies?(Auth.current, self)
+#         sets << name
+#       end
+#     end
+#     left_option = left
+#     while left_option
+#       sets << "#{left_option.name}+*self"
+#       left_option = left_option.left
+#     end
+#     sets.map { |name| Card.fetch name }
+#   end
+# end
 
 def all_follow_option_cards
   sets = set_names
@@ -167,7 +154,7 @@ event :cache_expired_because_of_new_set, :before=>:store, :on=>:create, :when=>p
   Card.follow_caches_expired
 end
 
-event :cache_expired_because_of_type_change, :before=>:store, :changed=>:type_id do
+event :cache_expired_because_of_type_change, :before=>:store, :changed=>:type_id do  #FIXME expire (also?) after save
   Card.follow_caches_expired
 end
 
@@ -175,12 +162,27 @@ event :cache_expired_because_of_name_change, :before=>:store, :changed=>:name do
   Card.follow_caches_expired
 end
 
-event :cache_expired_because_of_follow_rule_change, :before=>:approve, :when=>proc { |c| c.follow_rule_card? }  do
+event :approve_follow_rule, :before=>:approve, :when=>proc { |c| c.follow_rule_card? }  do
+  self.type_id = PointerID
+end
+
+event :cache_expired_because_of_follow_rule_change, :after=>:approve_follow_rule do
   Card.follow_caches_expired  #OPTIMIZE shouldn't be necessary to clear the complete cache in this case
 end
 
+event :cache_expired_because_of_new_user_rule, :before=>:extend, :when=>proc { |c| c.follow_rule_card? }  do
+  Card.follow_caches_expired
+end
+
+
 def follow_rule_card?
-  right && right.type_id == Card::UserID && left && left.right && left.right.codename == 'follow' && left.left && left.left.type_id == Card::SetID
+  right && (right.type_id == Card::UserID || right.codename == 'all')  && 
+           (rule_name=cardname.left_name)                              && 
+           (set_name=rule_name.left_name)                              && 
+           (set_card=Card.fetch(set_name))                             &&
+           set_card.type_id == Card::SetID                             &&
+           (setting_card = Card.fetch(rule_name.right_name))           &&
+           setting_card.codename == 'follow'
 end
 
 def related_follow_set_cards
@@ -193,6 +195,10 @@ def related_follow_set_cards
   end
 end
 
+def default_follow_set_card
+  Card.fetch("#{name}+*self")
+end
+
 format :html do
   watch_perms = lambda { |r| Auth.signed_in? && !r.card.new_card? }  # how was this used to be used?
 
@@ -201,16 +207,13 @@ format :html do
       render_follow_link args
     end
   end
-    
-  def default_follow_set_card
-    Card.fetch("#{card.name}+*self")
-  end
+
   
   view :follow_link do |args|
     toggle       = args[:toggle] || (card.followed? ? :off : :on)
-    success_view = args[:success_view] || :follow
+    success_view = :follow
 
-    follow_rule = Card.fetch  "#{default_follow_set_card.name}+#{Card[:follow].name}+#{Auth.current.name}", :new=>{}
+    follow_rule = Card.fetch  "#{card.default_follow_set_card.name}+#{Card[:follow].name}+#{Auth.current.name}", :new=>{}
     path_options = {:card=>follow_rule, :action=>:update,
                     :success=>{:id=>card.name, :view=>success_view} }
     html_options = {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :remote=>true, :method=>'post'}
@@ -225,13 +228,7 @@ format :html do
       html_options[:title]         = "send emails about changes to #{card.follow_label}"
     end
     text = render_follow_link_name args
-    
-   # url = "#{card.cardname.url_key}+#{Card[:follow].cardname.url_key}+#{Auth.current.cardname.url_key}"
-    
-#    binding.pry
- #   link_to text,  wagn_path( "update/#{url}?card[content]=#{path}"), html_options
-     link_to text, path(path_options), html_options
-    
+    link_to text, path(path_options), html_options
   end
   
   
@@ -263,55 +260,55 @@ format :html do
   end
   
 
-  view :follow_options do |args|
-    if Auth.signed_in?
-      args[:title] = "#{card.name}: follow options"
-      #args[:optional_toggle] ||= main? ? :hide : :show
-      frame_and_form( {
-                          :action=>:update,
-                          #:id=>Auth.current.following_card.id, # FIXME
-                          :success=>{:id=>card.name, :view=>:open}
-                      }, args, 'main-success'=>'REDIRECT' ) do
-        [
-          _render_follow_option_list( args ),
-          _optional_render( :button_fieldset, args )
-        ]
-      end
-    end
-  end
+  # view :follow_options do |args|
+  #   if Auth.signed_in?
+  #     args[:title] = "#{card.name}: follow options"
+  #     #args[:optional_toggle] ||= main? ? :hide : :show
+  #     frame_and_form( {
+  #                         :action=>:update,
+  #                         #:id=>Auth.current.following_card.id, # FIXME
+  #                         :success=>{:id=>card.name, :view=>:open}
+  #                     }, args, 'main-success'=>'REDIRECT' ) do
+  #       [
+  #         _render_follow_option_list( args ),
+  #         _optional_render( :button_fieldset, args )
+  #       ]
+  #     end
+  #   end
+  # end
+  #
+  #
+  # def default_follow_option_args args
+  #   args[:buttons] = %{
+  #     #{ button_tag 'Submit', :class=>'submit-button', :disable_with=>'Submitting' }
+  #     #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
+  #   }
+  # end
+  #
+  # view :follow_option_list do |args|
+  #   list = card.related_follow_option_cards.map do |option_card|
+  #     subformat(option_card).render_checkbox(args.merge(:checked=>option_card.followed?, :label=>option_card.follow_label ))
+  #   end.join("\n")
+  #   %{
+  #     <div class="card-editor editor">
+  #     #{form.hidden_field( :content, :class=>'card-content')}
+  #     <div class="pointer-checkbox-list">
+  #       #{list}
+  #     </div>
+  #     </div>
+  #   }
+  # end
   
-  
-  def default_follow_option_args args    
-    args[:buttons] = %{
-      #{ button_tag 'Submit', :class=>'submit-button', :disable_with=>'Submitting' }
-      #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
-    }
-  end
-  
-  view :follow_option_list do |args|
-    list = card.related_follow_option_cards.map do |option_card|
-      subformat(option_card).render_checkbox(args.merge(:checked=>option_card.followed?, :label=>option_card.follow_label ))
-    end.join("\n")
-    %{
-      <div class="card-editor editor">
-      #{form.hidden_field( :content, :class=>'card-content')}
-      <div class="pointer-checkbox-list">
-        #{list}
-      </div>
-      </div>
-    }
-  end
-  
-  view :checkbox do |args|
-    label = args[:label] || card.name
-    checked = args[:checked]
-    id = "pointer-checkbox-#{card.cardname.key}"
-    %{ <div class="pointer-checkbox"> } +
-      check_box_tag( "pointer_checkbox", card.cardname.url_key, checked, :id=>id, :class=>'pointer-checkbox-button') +
-      %{ <label for="#{id}">#{label}</label>
-      #{ %{<div class="checkbox-option-description">#{ args[:description] }</div>} if args[:description] }
-       </div>}
-  end
+  # view :checkbox do |args|
+  #   label = args[:label] || card.name
+  #   checked = args[:checked]
+  #   id = "pointer-checkbox-#{card.cardname.key}"
+  #   %{ <div class="pointer-checkbox"> } +
+  #     check_box_tag( "pointer_checkbox", card.cardname.url_key, checked, :id=>id, :class=>'pointer-checkbox-button') +
+  #     %{ <label for="#{id}">#{label}</label>
+  #     #{ %{<div class="checkbox-option-description">#{ args[:description] }</div>} if args[:description] }
+  #      </div>}
+  # end
 
 
 end

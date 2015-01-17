@@ -1,13 +1,11 @@
 include Card::FollowOption
 
-self.follow_opts :position=>0
+self.follow_opts :position=>1
+self.restrictive_follow_opts :position=>1
 
-def exclusive
-  true
-end
 
 def title
-  'Ignoring'
+  ''
 end
 
 def form_label

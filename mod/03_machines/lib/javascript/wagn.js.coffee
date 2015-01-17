@@ -251,7 +251,12 @@ $(window).ready ->
     $(this).data 'params', $(this).closest('form').serialize()
     $(this).data 'url', $(this).attr 'href'
 
-  $('body').on 'change', '.edit-type-field, .submit-select-field', ->
+  $('body').on 'change', '.edit-type-field', ->
+    $(this).closest('form').submit()
+    
+  $('body').on 'change', '.submit-select-field', ->
+    field = $(this).closest('.card-editor').find('.card-content')
+    field.val( $(this).val() )
     $(this).closest('form').submit()
 
   $('body').on 'change', '.autosave .card-content', ->

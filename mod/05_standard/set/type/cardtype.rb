@@ -22,18 +22,14 @@ format :html do
       
     super args.merge(:toggle=>( cardtype_followed ? :off : :on) )
   end
-  
-  
-  def default_follow_set_card
-    Card.fetch("#{card.name}+*type")
-  end
-  
 end
-
 
 
 include Basic
 
+def default_follow_set_card
+  Card.fetch("#{name}+*type")
+end
 
 
 def cards_of_type_exist?

@@ -1,13 +1,13 @@
 include Card::FollowOption
 
-follow_opts :position=>3, :special=>true
+self.restrictive_follow_opts :position=>2
 
 def title 
   'Following content you edited'
 end
 
 def form_label
-  'follow if I edited'
+  'that I edited'
 end
   
 def description set_card

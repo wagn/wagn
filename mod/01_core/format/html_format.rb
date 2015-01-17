@@ -90,7 +90,7 @@ class Card
 
     def final_link href, opts={}
       text = (opts.delete(:text) || href).dup
-      content_tag :a, text, opts.merge(:href=>href)
+      content_tag :a, raw(text), opts.merge(:href=>href)
     end
 
     def link_to_view text, view, opts={}

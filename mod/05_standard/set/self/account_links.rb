@@ -1,7 +1,7 @@
 
 format :html do
 
-  view :raw do |args|
+  def account_links
     #ENGLISH
     links = []
     if Auth.signed_in?
@@ -17,8 +17,11 @@ format :html do
       end
       links << link_to( 'Sign in', wagn_path(':signin'), :id=>'signin-link' )
     end
-    
-    %{<span id="logging">#{ links.join ' ' }</span>}
+    links
+  end
+  
+  view :raw do |args|
+    %{<span id="logging">#{ account_links.join ' ' }</span>}
   end
 
 end

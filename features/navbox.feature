@@ -13,5 +13,6 @@ Feature: Navbox
     Then I press enter to search
 #When I follow "search: Joe" 
 # fixme: unable to click link so far...
+    And I wait a sec
     Then I should see "Search results"
   

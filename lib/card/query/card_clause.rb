@@ -279,7 +279,7 @@ class Card
           unless c && [SearchTypeID,SetID].include?(c.type_id)
             raise BadQuery, %{"found_by" value needs to be valid Search, but #{c.name} is a #{c.type_name}}
           end
-          restrict_by_join :id, CardClause.new(c.get_clause).rawclause
+          restrict_by_join :id, CardClause.new(c.get_query).rawclause
         end
       end
   

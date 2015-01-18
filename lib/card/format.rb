@@ -472,6 +472,15 @@ class Card
     # ------------ LINKS ---------------
     #
 
+    # final link is called by web_link, card_link, and view_link
+    # (and is overridden in other formats)
+    def final_link href, opts={}
+      if text = opts[:text] and href != text
+        "#{text}[#{href}]"
+      else
+        href
+      end
+    end
 
     # link to a specific url or path
     def web_link href, options={}
@@ -502,6 +511,7 @@ class Card
   
   
     # link to a specific view (defaults to current card)
+    # this is generally used for ajax calls
     def view_link text, view, opts={}
       path_opts = view==:home ? {} : { :view=>view }
       if p = opts.delete( :path_opts )
@@ -535,14 +545,7 @@ class Card
       wagn_path( base + query )
     end
   
-    # final link is overridden in other formats
-    def final_link href, opts={}
-      if text = opts[:text] and href != text
-        "#{text}[#{href}]"
-      else
-        href
-      end
-    end
+
   
     def add_class options, klass
       options[:class] = [ options[:class], klass ].flatten.compact * ' '

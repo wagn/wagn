@@ -81,7 +81,7 @@ format do
   end
 
 
-  view :blank,          :perms=>:none do |args| '' end
+  view :blank, :perms=>:none do |args| '' end
     
   
 

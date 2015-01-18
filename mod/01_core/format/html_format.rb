@@ -93,16 +93,6 @@ class Card
       content_tag :a, raw(text), opts.merge(:href=>href)
     end
 
-    def link_to_view text, view, opts={}
-      path_opts = view==:home ? {} : { :view=>view }
-      if p = opts.delete( :path_opts )
-        path_opts.merge! p
-      end
-      opts[:remote] = true
-      opts[:rel] = 'nofollow'
-      link_to text, path( path_opts ), opts
-    end
-
     def main?
       if Env.ajax?
         @depth == 0 && params[:is_main]

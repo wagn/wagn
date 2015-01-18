@@ -467,21 +467,13 @@ class Card
       :name
     end
 
-    def path opts={}
-      pcard = opts.delete(:card) || card
-      base = opts[:action] ? "card/#{ opts.delete :action }/" : ''
-      if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(opts[:action]) #generalize. dislike hardcoding views/actions here
-        base += ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
-      end
-      query = opts.empty? ? '' : "?#{opts.to_param}"
-      wagn_path( base + query )
-    end
+
     #
     # ------------ LINKS ---------------
     #
 
 
-
+    # link to a specific url or path
     def web_link href, options={}
       options[:text] ||= href
       new_class = case href
@@ -497,29 +489,54 @@ class Card
       final_link href, options
     end
 
-    def card_link name, options={}
+    # link to a specific card
+    def card_link name, opts={}
+      opts[:text ] = (opts[:text] || name).to_name.to_show @context_names
       
-      options[:text] = (options[:text] || name).to_name.to_show @context_names
-      linkname = name.to_name.url_key
-
-      type  = options.delete :type
-      known = options.delete :known
-      known = Card.known?(name) if known.nil?
-      
-      if known
-        add_class options, 'known-card'
-      else
-        add_class options, 'wanted-card'
-        link_params = {}
-        link_params['name'] = name.to_s if name.to_s != linkname
-        link_params['type'] = type      if type && Card.known?(type)
-        linkname += "?#{ { :card => link_params }.to_param }" if !link_params.empty?
-      end
-      final_link internal_url( linkname ), options
+      path_opts = opts.delete( :path_opts ) || {}
+      path_opts[:name ] = name
+      path_opts[:known] = opts[:known].nil? ? Card.known?(name) : opts.delete(:known) 
+      add_class opts, ( path_opts[:known] ? 'known-card' : 'wanted-card' )
+      final_link internal_url( path( path_opts ) ), opts
     end
   
   
-    def final_link href, opts
+    # link to a specific view (defaults to current card)
+    def view_link text, view, opts={}
+      path_opts = view==:home ? {} : { :view=>view }
+      if p = opts.delete( :path_opts )
+        path_opts.merge! p
+      end
+      opts[:remote] = true
+      opts[:rel] = 'nofollow'
+      opts[:text] = text
+      
+      final_link path( path_opts ), opts
+    end
+  
+    def path opts={}
+      name = opts.delete(:name) || card.name
+      base = opts[:action] ? "card/#{ opts.delete :action }/" : ''
+      
+      opts[:no_id] = true if [:new, :create].member? opts[:action]
+      #generalize. dislike hardcoding views/actions here
+      
+      linkname = name.to_name.url_key
+      unless name.empty? || opts.delete(:no_id)
+        base += ( opts[:id] ? "~#{ opts.delete :id }" : linkname )
+      end
+      
+      if opts.delete(:known)==false && name.present? && name.to_s != linkname
+        opts[:card] ||= {}
+        opts[:card][:name] = name
+      end
+      
+      query = opts.empty? ? '' : "?#{opts.to_param}"
+      wagn_path( base + query )
+    end
+  
+    # final link is overridden in other formats
+    def final_link href, opts={}
       if text = opts[:text] and href != text
         "#{text}[#{href}]"
       else

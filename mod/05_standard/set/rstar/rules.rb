@@ -96,7 +96,7 @@ format :html do
       <tr class="card-slot open-rule #{rule_view.to_s.sub '_', '-'}">
         <td class="rule-cell" colspan="3">
           <div class="rule-setting">
-            #{ link_to_view setting_name.sub(/^\*/,''), :closed_rule, :class=>'close-rule-link slotter' }
+            #{ view_link setting_name.sub(/^\*/,''), :closed_rule, :class=>'close-rule-link slotter' }
             #{ card_link setting_name, :text=>"all rules", :class=>'setting-link', :target=>'wagn_setting' }
           </div>
           
@@ -150,7 +150,7 @@ format :html do
           #{
             if card.right.rule_type_editable
               fieldset 'type', type_field(
-                :href         => path(:card=>open_rule, :view=>:open_rule, :type_reload=>true),
+                :href         => path(:name=>open_rule.name, :view=>:open_rule, :type_reload=>true),
                 :class        => 'type-field rule-type-field live-type-field',
                 'data-remote' => true
               ), :editor=>'type'

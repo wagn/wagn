@@ -290,7 +290,7 @@ format :html do
   end
   
   def show_or_hide_changes_link hide_diff, args
-    "| " +  link_to_view( (hide_diff ? "Show" : "Hide") + " changes", :act_expanded, 
+    "| " +  view_link( (hide_diff ? "Show" : "Hide") + " changes", :act_expanded, 
       :path_opts=>args.merge(:hide_diff=>!hide_diff), 
       :class=>'slotter', :remote=>true )
   end

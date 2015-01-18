@@ -1,5 +1,5 @@
 /*
- * jQuery File Upload Plugin 5.19.4
+ * jQuery File Upload Plugin 5.19.8
  * https://github.com/blueimp/jQuery-File-Upload
  *
  * Copyright 2010, Sebastian Tschan
@@ -11,7 +11,6 @@
 
 /*jslint nomen: true, unparam: true, regexp: true */
 /*global define, window, document, File, Blob, FormData, location */
-
 
 (function (factory) {
     'use strict';
@@ -342,7 +341,6 @@
                     if (options.blob) {
                         options.headers['Content-Disposition'] = 'attachment; filename="' +
                             encodeURI(file.name) + '"';
-                        options.headers['Content-Description'] = encodeURI(file.type);
                         formData.append(paramName, options.blob, file.name);
                     } else {
                         $.each(options.files, function (index, file) {
@@ -441,7 +439,8 @@
             // The HTTP request method must be "POST" or "PUT":
             options.type = (options.type || options.form.prop('method') || '')
                 .toUpperCase();
-            if (options.type !== 'POST' && options.type !== 'PUT') {
+            if (options.type !== 'POST' && options.type !== 'PUT' &&
+                    options.type !== 'PATCH') {
                 options.type = 'POST';
             }
             if (!options.formAcceptCharset) {
@@ -528,7 +527,8 @@
                 o.blob = slice.call(
                     file,
                     ub,
-                    ub + mcs
+                    ub + mcs,
+                    file.type
                 );
                 // Store the current chunk size, as the blob itself
                 // will be dereferenced after data processing:
@@ -953,10 +953,12 @@
         },
 
         _onDrop: function (e) {
-            e.preventDefault();
             var that = this,
                 dataTransfer = e.dataTransfer = e.originalEvent.dataTransfer,
                 data = {};
+            if (dataTransfer && dataTransfer.files && dataTransfer.files.length) {
+                e.preventDefault();
+            }
             this._getDroppedFiles(dataTransfer).always(function (files) {
                 data.files = files;
                 if (that._trigger('drop', e, data) !== false) {
@@ -970,10 +972,10 @@
             if (this._trigger('dragover', e) === false) {
                 return false;
             }
-            if (dataTransfer) {
+            if (dataTransfer && $.inArray('Files', dataTransfer.types) !== -1) {
                 dataTransfer.dropEffect = 'copy';
+                e.preventDefault();
             }
-            e.preventDefault();
         },
 
         _initEventHandlers: function () {

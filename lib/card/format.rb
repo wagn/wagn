@@ -480,21 +480,10 @@ class Card
     # ------------ LINKS ---------------
     #
 
-    def final_link href, opts
-      if text = opts[:text]
-        "#{text}[#{href}]"
-      else
-        href
-      end
-    end
 
-    def build_link href, text=nil, options={}
-      if Card::Name===href
-        text = href.to_s if text.nil?
-        href = wagn_path href.url_key
-      end
-      options[:text] = text if text
 
+    def web_link href, options={}
+      options[:text] ||= href
       new_class = case href
         when /^https?:/                      ; 'external-link'
         when /^mailto:/                      ; 'email-link'
@@ -502,30 +491,46 @@ class Card
         when /^\//
           href = internal_url href[1..-1]    ; 'internal-link'
         else
-          Rails.logger.info "WARNING. build_link called on #{href}, #{text}; should only be called on either urls or cardname objects"
+          card_link href, options
         end
-      options[:class] = options[:class] ? [options[:class], new_class]*' ' : new_class
-        
+      add_class options, new_class        
       final_link href, options
     end
 
-    def card_link name, text, known, type=nil
-      text ||= name
+    def card_link name, options={}
+      
+      options[:text] = (options[:text] || name).to_name.to_show @context_names
       linkname = name.to_name.url_key
-      opts = {
-        :class => ( known ? 'known-card' : 'wanted-card' ),
-        :text  => ( text.to_name.to_show @context_names  )
-      }
-      if !known
+
+      type  = options.delete :type
+      known = options.delete :known
+      known = Card.known?(name) if known.nil?
+      
+      if known
+        add_class options, 'known-card'
+      else
+        add_class options, 'wanted-card'
         link_params = {}
         link_params['name'] = name.to_s if name.to_s != linkname
-        link_params['type'] = type      if type
+        link_params['type'] = type      if type && Card.known?(type)
         linkname += "?#{ { :card => link_params }.to_param }" if !link_params.empty?
       end
-      final_link internal_url( linkname ), opts
+      final_link internal_url( linkname ), options
     end
   
-
+  
+    def final_link href, opts
+      if text = opts[:text] and href != text
+        "#{text}[#{href}]"
+      else
+        href
+      end
+    end
+  
+    def add_class options, klass
+      options[:class] = [ options[:class], klass ].flatten.compact * ' '
+    end
+    
     module Location
       #
       # page_path    takes a Card::Name, adds the format and query string to url_key (site-absolute)

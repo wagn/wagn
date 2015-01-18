@@ -66,7 +66,7 @@ module Card::Chunk
 
       #warn "uri parse[#{match.inspect}]"
       @uri = ::URI.parse( chunk )
-      @process_chunk = "#{format.build_link(@link_text)}#{@trailing_punctuation}"
+      @process_chunk = "#{format.web_link(@link_text)}#{@trailing_punctuation}"
     rescue ::URI::Error=>e
       #warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect} #{e.backtrace*"\n"}"
       Rails.logger.warn "rescue parse #{self.class}: #{e.inspect}"
@@ -91,7 +91,7 @@ module Card::Chunk
     def interpret match, content
       super
       @text = @text.sub(/^mailto:/,'')  # this removes the prepended string from the unchanged match text
-      @process_chunk = "#{format.build_link(@link_text, @text)}#{@trailing_punctuation}"
+      @process_chunk = "#{format.web_link(@link_text, :text=> @text)}#{@trailing_punctuation}"
     end
   end
 
@@ -129,7 +129,7 @@ module Card::Chunk
       super
       @text = @text.sub(/^http:\/\//,'')  # this removes the prepended string from the unchanged match text
       #warn "huri t:#{@text}, #{match}, #{params.inspect}"
-      @process_chunk = "#{format.build_link(@link_text, @text)}#{@trailing_punctuation}"
+      @process_chunk = "#{format.web_link(@link_text, :text=>@text)}#{@trailing_punctuation}"
     end
   end
 end

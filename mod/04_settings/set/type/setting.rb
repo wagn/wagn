@@ -26,7 +26,7 @@ view :core do |args|
         klasses.map do |klass, rules|
           %{ 
             <tr class="klass-row anchorless-#{ klass.anchorless? }">
-              <td class="setting-klass">#{ klass.anchorless? ? build_link( klass.pattern.to_name ) : klass.pattern }</td>
+              <td class="setting-klass">#{ klass.anchorless? ? card_link( klass.pattern ) : klass.pattern }</td>
               <td class="rule-content-container">
                 <span class="closed-content content">#{ subformat(rules[0])._render_closed_content if klass.anchorless? }</span>
               </td>
@@ -41,7 +41,7 @@ view :core do |args|
                   previous_content = current_content
                   %{
                     <tr class="#{ 'rule-changeover' if changeover }">
-                    <td class="rule-anchor">#{ build_link rule.cardname.trunk_name, rule.cardname.trunk_name.trunk_name }</td>
+                    <td class="rule-anchor">#{ card_link rule.cardname.trunk_name, :text=> rule.cardname.trunk_name.trunk_name }</td>
                     
                       #{
                         if duplicate

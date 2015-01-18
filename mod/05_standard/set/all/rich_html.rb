@@ -56,7 +56,7 @@ format :html do
   end
 
   view :title_link do |args|
-    build_link card.cardname, (args[:title_ready] || showname(args[:title]) )
+    card_link card.cardname, :text=>( args[:title_ready] || showname(args[:title]) )
   end
 
   view :open, :tags=>:comment do |args|
@@ -80,7 +80,7 @@ format :html do
   view :type do |args|
     klasses = ['cardtype']
     klass = args[:type_class] and klasses << klass
-    build_link card.type_card.cardname, nil, :class=>klasses
+    card_link card.type_card.name, :class=>klasses
   end
 
   view :closed do |args|

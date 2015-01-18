@@ -5,7 +5,7 @@ format :html do
     #ENGLISH
     links = []
     if Auth.signed_in?
-      links << build_link( Auth.current.cardname, nil, :id=>'my-card-link' )
+      links << card_link( Auth.current.cardname, :id=>'my-card-link' )
       if Card.new(:type_id=>Card.default_accounted_type_id).ok? :create
         # Shouldn't these use the new paths?
         links << link_to( 'Invite', wagn_path('account/signup'), :id=>'invite-a-friend-link' )

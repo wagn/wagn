@@ -19,12 +19,13 @@ format :html do
     ''
   end
   
-  def default_core_args
+  def default_core_args args={}
     args[:buttons] = button_tag 'Sign in'
     if Card.new(:type_id=>Card::SignupID).ok? :create
       args[:buttons] += link_to( '...or sign up!', wagn_path("account/signup"))
     end
     args[:buttons] += raw("<div style='float:right'>#{ link_to_view 'RESET PASSWORD', :edit }</div>") #FIXME - hardcoded styling
+    args
   end
   
   view :core do |args|

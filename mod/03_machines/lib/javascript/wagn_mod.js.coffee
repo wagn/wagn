@@ -59,8 +59,11 @@ $.extend wagn,
     editor = ace.edit(editDiv[0])
     editor.renderer.setShowGutter true
     editor.getSession().setValue textarea.val()
-    editor.setTheme "ace/theme/textmate"
+    editor.setTheme "ace/theme/github"
     editor.getSession().setMode "ace/mode/" + mode
+    editor.setOption "showPrintMargin", false
+    editor.getSession().setTabSize 2
+    editor.getSession().setUseSoftTabs true
     editor.setOptions maxLines: 30 
     
     textarea.closest("form").submit ->

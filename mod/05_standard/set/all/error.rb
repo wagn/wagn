@@ -145,7 +145,7 @@ format :html do
   view :not_found do |args| #ug.  bad name.
     sign_in_or_up_links = if !Auth.signed_in?
       %{<div>
-        #{ card_link ':signin', :text=>'Sign in'    } or
+        #{ card_link :signin, :text=>'Sign in' } or
         #{ link_to 'Sign up', wagn_path('new/:signup') } to create it.
        </div>}
     end

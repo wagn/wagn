@@ -22,7 +22,7 @@ format do
       when /^\//
         href = internal_url href[1..-1]    ; 'internal-link'
       else
-        return card_link href, options
+        return card_link href, opts
       end
     add_class opts, new_class        
     link_to text, href, opts
@@ -31,6 +31,7 @@ format do
   # link to a specific card
   def card_link name, opts={}
     text = (opts.delete(:text) || name).to_name.to_show @context_names
+    name = Card[name].cardname if Symbol===name
     
     path_opts = opts.delete( :path_opts ) || {}
     path_opts[:name ] = name

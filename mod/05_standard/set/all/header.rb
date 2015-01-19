@@ -3,9 +3,7 @@ format :html do
   view :toggle do |args|
     verb, adjective, direction = ( args[:toggle_mode] == :close ? %w{ open open e } : %w{ close closed s } )
     
-    link_to '', path( :view=>adjective ), 
-      :remote => true,
-      :title => "#{verb} #{card.name}",
+    view_link '', adjective, :title => "#{verb} #{card.name}",
       :class => "#{verb}-icon ui-icon ui-icon-circle-triangle-#{direction} toggler slotter nodblclick"
   end
     
@@ -43,7 +41,7 @@ format :html do
         :watch     => Auth.signed_in? && render_watch,
         :creator   => card.creator.name,
         :updater   => card.updater.name,
-        :delete    => card.ok?(:delete) && link_to( 'delete', path(:action=>:delete),
+        :delete    => card.ok?(:delete) && link_to( 'delete', :action=>:delete,
           :class => 'slotter standard-delete', :remote => true, :'data-confirm' => "Are you sure you want to delete #{card.name}?"
         )
       })

@@ -8,7 +8,8 @@ Feature: History
     Then the card First should not contain "chicken"
     
   Scenario: view history and rollback 
-    When I go to url "/First?view=history" 
+    When I go to url "/First?view=history"
+    Then show me the page
     Then In the main card content I should see a del with content "egg"
     
     When I expand act 2

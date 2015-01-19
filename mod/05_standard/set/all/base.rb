@@ -18,9 +18,7 @@ format do
   view :url_link, :perms=>:none  do |args|  web_link wagn_url(_render_linkname) end
 
   view :link, :perms=>:none do |args|
-    path_opts = {}
-    path_opts[:type]=args[:type] if args[:type] && Card.known?(args[:type])
-    card_link card.name, :text=>showname( args[:title] ), :known=>card.known?, :path_opts=>path_opts
+    card_link card.name, :text=>showname( args[:title] ), :known=>card.known?, :path_opts=>{:type=>args[:type]}
   end
 
 

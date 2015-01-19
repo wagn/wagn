@@ -63,7 +63,7 @@ format :html do
         link_to( '', '#', :class=>'pointer-item-delete ui-icon ui-icon-circle-close' ) +
       '</li>'
     end.join("\n") +
-    %{</ul><div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>}
+    %{</ul><div class="add-another-div">#{ link 'Add another', '#', :class=>'pointer-item-add'}</div>}
 
   end
 

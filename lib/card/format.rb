@@ -472,78 +472,7 @@ class Card
     # ------------ LINKS ---------------
     #
 
-    # final link is called by web_link, card_link, and view_link
-    # (and is overridden in other formats)
-    def final_link href, opts={}
-      if text = opts[:text] and href != text
-        "#{text}[#{href}]"
-      else
-        href
-      end
-    end
 
-    # link to a specific url or path
-    def web_link href, options={}
-      options[:text] ||= href
-      new_class = case href
-        when /^https?:/                      ; 'external-link'
-        when /^mailto:/                      ; 'email-link'
-        when /^([a-zA-Z][\-+\.a-zA-Z\d]*):/  ; $1 + '-link'
-        when /^\//
-          href = internal_url href[1..-1]    ; 'internal-link'
-        else
-          card_link href, options
-        end
-      add_class options, new_class        
-      final_link href, options
-    end
-
-    # link to a specific card
-    def card_link name, opts={}
-      opts[:text ] = (opts[:text] || name).to_name.to_show @context_names
-      
-      path_opts = opts.delete( :path_opts ) || {}
-      path_opts[:name ] = name
-      path_opts[:known] = opts[:known].nil? ? Card.known?(name) : opts.delete(:known) 
-      add_class opts, ( path_opts[:known] ? 'known-card' : 'wanted-card' )
-      final_link internal_url( path( path_opts ) ), opts
-    end
-  
-  
-    # link to a specific view (defaults to current card)
-    # this is generally used for ajax calls
-    def view_link text, view, opts={}
-      path_opts = view==:home ? {} : { :view=>view }
-      if p = opts.delete( :path_opts )
-        path_opts.merge! p
-      end
-      opts[:remote] = true
-      opts[:rel] = 'nofollow'
-      opts[:text] = text
-      
-      final_link path( path_opts ), opts
-    end
-  
-    def path opts={}
-      name = opts.delete(:name) || card.name
-      base = opts[:action] ? "card/#{ opts.delete :action }/" : ''
-      
-      opts[:no_id] = true if [:new, :create].member? opts[:action]
-      #generalize. dislike hardcoding views/actions here
-      
-      linkname = name.to_name.url_key
-      unless name.empty? || opts.delete(:no_id)
-        base += ( opts[:id] ? "~#{ opts.delete :id }" : linkname )
-      end
-      
-      if opts.delete(:known)==false && name.present? && name.to_s != linkname
-        opts[:card] ||= {}
-        opts[:card][:name] = name
-      end
-      
-      query = opts.empty? ? '' : "?#{opts.to_param}"
-      wagn_path( base + query )
-    end
   
 
   
@@ -586,10 +515,6 @@ class Card
 
     def unique_id
       "#{card.key}-#{Time.now.to_i}-#{rand(3)}" 
-    end
-
-    def internal_url relative_path
-      wagn_path relative_path
     end
 
     def format_date date, include_time = true

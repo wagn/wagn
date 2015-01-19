@@ -21,13 +21,13 @@ describe Card::Set::Type::Uri do
 
   it "renders title view in a plain formatter" do
     card = Card['A']
-    card.format(:format=>:text).render('title', :title=>'My Title').should == 'My Title'
-    card.format(:format=>:text).render('title').should == 'A'
+    card.format(:text).render('title', :title=>'My Title').should == 'My Title'
+    card.format(:text).render('title').should == 'A'
   end
 
   it "renders url_link for regular cards" do
     card = Card['A']
-    card.format(:format=>:text).render('url_link').should == '/A'
+    card.format(:text).render('url_link').should == '/A'
     assert_view_select card.format.render('url_link'),
       'a[class="internal-link"][href="/A"]',
       {:text => '/A' }
@@ -36,6 +36,6 @@ describe Card::Set::Type::Uri do
   it "renders a url_link view" do
     card = Card.create(:type=>'URI', :name=>'A URI card', :content=>'http://wagn.org/Home')
     assert_view_select card.format.render('url_link'), 'a[class="external-link"]', {:text => 'http://wagn.org/Home'}
-    card.format(:format=>:text).render('url_link').should == 'http://wagn.org/Home'
+    card.format(:text).render('url_link').should == 'http://wagn.org/Home'
   end
 end

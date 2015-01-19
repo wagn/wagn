@@ -116,7 +116,6 @@ class CardController < ActionController::Base
       @card.selected_action_id = action.id
     end
     
-    Card::Env[:main_name] = params[:main] || (card && card.name) || ''
     render_errors if card.errors.any?
     true
   end

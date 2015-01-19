@@ -4,7 +4,7 @@ class Card
   module Env
     class << self
       def reset args={}
-        @@env = { :main_name => nil }
+        @@env = {}
       
         if c = args[:controller]
           self[:controller] = c

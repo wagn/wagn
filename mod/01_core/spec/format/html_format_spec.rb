@@ -106,8 +106,6 @@ describe Card::HtmlFormat do
         end
         c = Card['*all+*layout'] and c.content = '[[tmp layout]]'
         @main_card = Card.fetch('Joe User')
-        Card::Env[:main_name] = @main_card.name
-        
         #warn "lay #{@layout_card.inspect}, #{@main_card.inspect}"
       end
 

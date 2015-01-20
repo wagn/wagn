@@ -7,7 +7,6 @@ require_dependency 'card/action'
 require_dependency 'card/act'
 require_dependency 'card/change'
 require_dependency 'card/reference'
-require_dependency 'decko/location'
 require_dependency 'decko/exceptions'
 require_dependency 'card/mailer'  #otherwise Net::SMTPError rescues can cause problems when error raised comes before Card::Mailer is mentioned
 

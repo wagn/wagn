@@ -5,6 +5,7 @@ module ClassMethods
     Card.where(:trash=>true).delete_all
     Card::Action.delete_cardless
     Card::Reference.repair_missing_referees
+    Card::Reference.delete_missing_referers
     Card.delete_trashed_files
   end
   

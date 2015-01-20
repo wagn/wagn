@@ -3,7 +3,6 @@ require_dependency 'card/location'
 
 class Card
   class Format
-    include Location
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
@@ -470,66 +469,50 @@ class Card
       :name
     end
 
-    def path opts={}
-      pcard = opts.delete(:card) || card
-      base = opts[:action] ? "card/#{ opts.delete :action }/" : ''
-      if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(opts[:action]) #generalize. dislike hardcoding views/actions here
-        base += ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
-      end
-      query = opts.empty? ? '' : "?#{opts.to_param}"
-      card_path( base + query )
-    end
+
     #
     # ------------ LINKS ---------------
     #
 
-    def final_link href, opts
-      if text = opts[:text]
-        "#{text}[#{href}]"
-      else
-        href
-      end
+    def add_class options, klass
+      options[:class] = [ options[:class], klass ].flatten.compact * ' '
     end
+    
+    module Location
+      #
+      # page_path    takes a Card::Name, adds the format and query string to url_key (site-absolute)
+      # wagn_path    makes a relative path site-absolute (if not already)
+      # wagn_url     makes it a full url (if not already)
 
-    def build_link href, text=nil
-      opts = {:text => text }
+      # TESTME
+      def page_path title, opts={}
+        Rails.logger.warn "Pass only Card::Name to page_path #{title.class}, #{title}" unless Card::Name===title
+        format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
+        query  = opts.present? ? "?#{opts.to_param}"         : ''
+        wagn_path "#{title.to_name.url_key}#{format}#{query}"
+      end
 
-      opts[:class] = case href.to_s
-        when /^https?:/                      ; 'external-link'
-        when /^mailto:/                      ; 'email-link'
-        when /^([a-zA-Z][\-+.a-zA-Z\d]*):/   ; $1 + '-link'
-        when /^\//
-          href = internal_url href[1..-1]    ; 'internal-link'
+      def wagn_path rel_path
+        Rails.logger.warn "Pass only strings to wagn_path: #{rel_path.class}, #{rel_path}" unless String===rel_path
+        if rel_path =~ /^\//
+          rel_path
         else
-          return href
-          Rails.logger.debug "build_link mistakenly(?) called on #{href}, #{text}"
+          "#{ Wagn.config.relative_url_root }/#{ rel_path }"
         end
-        
-      final_link href, opts
-    end
-
-    def card_link name, text, known, type=nil
-      text ||= name
-      linkname = name.to_name.url_key
-      opts = {
-        :class => ( known ? 'known-card' : 'wanted-card' ),
-        :text  => ( text.to_name.to_show @context_names  )
-      }
-      if !known
-        link_params = {}
-        link_params['name'] = name.to_s if name.to_s != linkname
-        link_params['type'] = type      if type
-        linkname += "?#{ { :card => link_params }.to_param }" if !link_params.empty?
       end
-      final_link internal_url( linkname ), opts
+
+      def wagn_url rel
+        if rel =~ /^https?\:/
+          rel
+        else
+          "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ wagn_path rel }"
+        end
+      end
     end
-  
+    include Location
+
     def unique_id
       "#{card.key}-#{Time.now.to_i}-#{rand(3)}" 
-    end
-
-    def internal_url relative_path
-      card_path relative_path
     end
 
     def format_date date, include_time = true

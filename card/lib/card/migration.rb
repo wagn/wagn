@@ -1,9 +1,19 @@
 # -*- encoding : utf-8 -*-
 
-require 'card'
-require 'card/version'
+#require 'card'
+#require 'card/version'
 
 class Card::Migration < ActiveRecord::Migration
+  def self.find_unused_name base_name
+    test_name = base_name
+    add = 1
+    while Card.exists?(test_name) do
+      test_name = "#{base_name}#{add}"
+      add +=1
+    end
+    test_name
+  end
+
   def self.paths type
     Cardio.paths["db/migrate#{schema_suffix type}"].to_a
   end

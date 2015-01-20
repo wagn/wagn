@@ -15,7 +15,7 @@ rescue =>e
 end
 
 machine_input do 
-  Uglifier.compile( compile_coffee format(:format=>:js)._render_raw )
+  Uglifier.compile( compile_coffee format(:js)._render_raw )
 end
 
 store_machine_output :filetype => "js"

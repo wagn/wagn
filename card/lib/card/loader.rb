@@ -92,7 +92,7 @@ class Card
             load_implicit_sets_from_source set_pattern
           end
           if Dir.exists? pattern_tmp_dir
-            load_dir "#{pattern_tmp_dir}/*.rb"
+            load_dir "#{pattern_tmp_dir}/**/*.rb"
           end
         end    
       end
@@ -102,16 +102,16 @@ class Card
         mod_dirs.each do |mod_dir|
           dirname = [mod_dir, 'set', set_pattern] * '/'
           next unless File.exists?( dirname )
-
-          #FIXME support multiple anchors!
-          Dir.entries( dirname ).sort.each do |anchor_filename|
-            next if anchor_filename =~ /^\./
-            anchor = anchor_filename.gsub /\.rb$/, ''
-
-            filename = [dirname, anchor_filename] * '/'
-            Set.write_tmp_file set_pattern, anchor, filename, seq
+          
+          old_pwd = Dir.pwd
+          Dir.chdir dirname
+          Dir.glob( "**/*.rb" ).sort.each do |anchor_path|
+            path_parts = anchor_path.gsub(/\.rb/,'').split(File::SEPARATOR)
+            filename = File.join dirname, anchor_path
+            Set.write_tmp_file set_pattern, path_parts, filename, seq
             seq = seq + 1
           end
+          Dir.chdir old_pwd
         end
       end
 

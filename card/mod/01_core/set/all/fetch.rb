@@ -77,6 +77,11 @@ module ClassMethods
     card = fetch mark, :skip_virtual=>true, :skip_modules=>true
     card.present?
   end
+  
+  def known? mark
+    card = fetch mark, :skip_modules=>true
+    card.present?
+  end
 
   def expire name
     #note: calling instance method breaks on dirty names

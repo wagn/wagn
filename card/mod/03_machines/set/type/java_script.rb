@@ -7,7 +7,7 @@ include MachineInput
 store_machine_output :filetype => "js"
 
 machine_input do 
-  Uglifier.compile(format(:format=>:js)._render_core)
+  Uglifier.compile(format(:js)._render_core)
 end
 
 

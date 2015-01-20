@@ -1,6 +1,5 @@
 require 'optparse'
-require 'active_support/core_ext/object/inclusion' # adds method in? to Object class
-require 'wagn'
+require 'active_support/core_ext/object/inclusion' # adds method in? to Object class 
 
 def load_rake_tasks
   require './config/environment'
@@ -63,7 +62,7 @@ else
         envs = ['development']
       end
       parser.on('--all', '-a', 'seed production, test, and development database') do
-        envs = %w( production development test)          
+        envs = %w( production development test)
       end
     end
     parser.parse!(ARGV)
@@ -100,8 +99,8 @@ else
     require 'decko/engine'
     parser = RSpec::Core::Parser.new.parser(opts)
     parser.banner = "Usage: wagn rspec [WAGN ARGS] -- [RSPEC ARGS]\n\nRSPEC ARGS"
-    parser.separator <<-WAGN 
-      
+    parser.separator <<-WAGN
+
 WAGN ARGS
 
   You don't have to give a full path for FILENAME, the basename is enough
@@ -181,12 +180,12 @@ WAGN
    new         Create a new Wagn deck. "wagn new my_deck" creates a
                new deck called MyDeck in "./my_deck"
    seed        Create and seed the database specified in config/database.yml
-   
+
    server      Start the Rails server (short-cut alias: "s")
    console     Start the Rails console (short-cut alias: "c")
    dbconsole   Start a console for the database specified in config/database.yml
                (short-cut alias: "db")
-               
+
   For core developers
    cucumber     Run cucumber features (short-cut alias: "cc")
    rspec        Run rspec tests (short-cut alias: "rs")

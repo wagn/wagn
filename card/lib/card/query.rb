@@ -1,10 +1,10 @@
 # -*- encoding : utf-8 -*-
 
 class Card::Query
-  require_dependency 'card/query/spec'
-  require_dependency 'card/query/card_spec'
-  require_dependency 'card/query/value_spec'  
-  require_dependency 'card/query/ref_spec'
+  require_dependency 'card/query/clause'
+  require_dependency 'card/query/card_clause'
+  require_dependency 'card/query/value_clause'  
+  require_dependency 'card/query/ref_clause'
 
   MODIFIERS = {};  %w{ conj return sort sort_as group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }
 
@@ -14,19 +14,19 @@ class Card::Query
   }.stringify_keys)
 
   def initialize query
-    @card_spec = CardSpec.build query
+    @card_clause = CardClause.build query
   end
   
   def query
-    @card_spec.query
+    @card_clause.query
   end
   
   def sql
-    @sql ||= @card_spec.to_sql
+    @sql ||= @card_clause.to_sql
   end
 
   def run
-#    puts "~~~~~~~~~~~~~~\nCARD SPEC =\n#{@card_spec.rawspec}\n\n-----\n\nSQL=\n#{sql}"
+#    puts "~~~~~~~~~~~~~~\nCARD SPEC =\n#{@card_clause.rawclause}\n\n-----\n\nSQL=\n#{sql}"
     rows = ActiveRecord::Base.connection.select_all( sql )
     retrn = query[:return].present? ? query[:return].to_s : 'card'
     case retrn 

@@ -2,7 +2,6 @@
 
 describe CardController do
 
-  include Card::Location
   include Capybara::DSL
   describe "- route generation" do
 

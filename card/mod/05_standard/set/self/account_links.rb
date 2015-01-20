@@ -1,12 +1,13 @@
 
 format :html do
 
-  view :raw do |args|
+  def account_links
     #ENGLISH
     links = []
     if Auth.signed_in?
-      links << link_to_page( Auth.current.name, nil, :id=>'my-card-link' )
+      links << card_link( Auth.current.cardname, :id=>'my-card-link' )
       if Card.new(:type_id=>Card.default_accounted_type_id).ok? :create
+        # Shouldn't these use the new paths?
         links << link_to( 'Invite', card_path('account/signup'), :id=>'invite-a-friend-link' )
       end
       links << link_to( 'Sign out', card_path('delete/:signin'), :id=>'signout-link' )
@@ -16,8 +17,11 @@ format :html do
       end
       links << link_to( 'Sign in', card_path(':signin'), :id=>'signin-link' )
     end
-    
-    %{<span id="logging">#{ links.join ' ' }</span>}
+    links
+  end
+  
+  view :raw do |args|
+    %{<span id="logging">#{ account_links.join ' ' }</span>}
   end
 
 end

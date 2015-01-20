@@ -1,6 +1,4 @@
 
-include Card::Location
-
 format :html do
   
   def default_new_args args

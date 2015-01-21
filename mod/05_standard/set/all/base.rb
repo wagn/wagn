@@ -7,15 +7,15 @@ format do
 
   # NAME VIEWS
                                                                               
-  view :name,     :closed=>true, :perms=>:none do |args|  card.name                           end
-  view :key,      :closed=>true, :perms=>:none do |args|  card.key                            end
-  view :title,    :closed=>true, :perms=>:none do |args|  args[:title] || card.name           end
+  view :name,     :closed=>true, :perms=>:none do |args| card.name                           end
+  view :key,      :closed=>true, :perms=>:none do |args| card.key                            end
+  view :title,    :closed=>true, :perms=>:none do |args| args[:title] || card.name           end
 
-  view :linkname, :closed=>true, :perms=>:none do |args|  card.cardname.url_key               end
-  view :url,      :closed=>true, :perms=>:none do |args|  wagn_url _render_linkname           end
-  view :url_link, :closed=>true, :perms=>:none do |args|  web_link wagn_url(_render_linkname) end
+  view :linkname, :closed=>true, :perms=>:none do |args| card.cardname.url_key               end
+  view :url,      :closed=>true, :perms=>:none do |args| wagn_url _render_linkname           end
+  view :url_link, :closed=>true, :perms=>:none do |args| web_link wagn_url(_render_linkname) end
 
-  view :link, :closed=>true, :perms=>:none  do |args|
+  view :link, :closed=>true, :perms=>:none do |args|
     card_link( card.name,
       :text=>showname( args[:title] ),
       :known=>card.known?,
@@ -23,9 +23,9 @@ format do
     )
   end
         
-  view :codename, :closed=>true  do |args|  card.codename.to_s  end  
-  view :id,       :closed=>true  do |args|  card.id             end
-  view :type,     :closed=>true  do |args|  card.type_name      end
+  view :codename, :closed=>true do |args| card.codename.to_s  end  
+  view :id,       :closed=>true do |args| card.id             end
+  view :type,     :closed=>true do |args| card.type_name      end
 
 
   # DATE VIEWS
@@ -54,11 +54,13 @@ format do
     _render_core args
   end
 
-  view :closed_content do |args|
+  view :closed_content, :closed=>true do |args|
     Card::Content.truncatewords_with_closing_tags _render_core(args) #{ yield }
   end
 
-  view :blank, :closed=>true, :perms=>:none do |args| '' end
+  view :blank, :closed=>true, :perms=>:none do |args|
+    ''
+  end
 
 
   # note: content and open_content may look like they should be aliased to core, but it's important that they render

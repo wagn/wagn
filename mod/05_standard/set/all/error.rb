@@ -1,8 +1,13 @@
 
 
 format do
-  view :closed_missing, :perms=>:none, :closed=>true do |args| '' end
-  view :missing,        :perms=>:none                do |args| '' end
+  view :closed_missing, :perms=>:none, :closed=>true do |args|
+    ''
+  end
+  
+  view :missing, :perms=>:none do |args|
+    ''
+  end
 
   view :not_found, :perms=>:none, :error_code=>404 do |args|
     %{ Could not find #{card.name.present? ? %{"#{card.name}"} : 'the card requested'}. }

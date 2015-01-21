@@ -17,13 +17,10 @@ class Card
     end
     
     def self.find_all_with_actions_on card_ids, args={}
-      sql = if args[:with_drafts]
-        'card_actions.card_id IN (:card_ids) AND ( (draft = 0 OR draft IS null) OR actor_id = :current_user_id)'
-      else
-        'card_actions.card_id IN (:card_ids) AND ( (draft = 0 OR draft IS null) )'
-      end
-      Card::Act.joins(:actions).where(sql, 
-        {:card_ids => card_ids, :current_user_id=>Card::Auth.current_id }).uniq.order(:id).reverse_order
+      sql = 'card_actions.card_id IN (:card_ids) AND ( (draft is not true) '
+      sql << ( args[:with_drafts] ? 'OR actor_id = :current_user_id)' : ')' )
+      vars = {:card_ids => card_ids, :current_user_id=>Card::Auth.current_id }
+      Card::Act.joins(:actions).where( sql, vars ).uniq.order(:id).reverse_order
     end
     
     # def actor
@@ -35,7 +32,7 @@ class Card
  #    end
     
     def action_on card_id
-      actions.find_by_card_id(card_id)
+      actions.where( "card_id = #{card.id} and draft is not true" ).first
     end
         
     def elapsed_time

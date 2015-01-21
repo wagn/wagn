@@ -109,7 +109,7 @@ end
 
 def structuree_spec
   if is_structure? and c=trunk and c.type_id = Card::SetID  #could use is_rule?...
-    c.get_spec
+    c.get_query
   end
 end
 

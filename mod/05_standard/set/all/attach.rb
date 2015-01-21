@@ -1,17 +1,11 @@
 def attach_array
-  c= self.selected_content
-  # if self.new_card? || selected_action_id==last_action_id   #ACT why self.content for a given revision id?
-#       self.content
-#     else
-#       revision(selected_action_id)[:db_content]
-#       #old: Card::Revision.find_by_id(selected_revision_id).content  #ACT<revision> IMPORTANT
-#  end
+  
+  c= self.content
   !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/)
 end
 
 #ask ethan
 def attach_array_set i, v
-  #old: rev_id = ( cr = current_revision and cr.id )
   c = attach_array[0..2]  # make sure there is no mod set for uploaded files
   if c[i] != v
     c[i] = v
@@ -60,16 +54,17 @@ end
 # FIXME: test extension matches content type
 
 
-def attachment_symlink_to(previous_action_id) # create filesystem links to previous revision
-  if styles = case type_code
-        when :file; ['']
-        when :image; STYLES
-      end
+def attachment_symlink_to(prior_action_id) # create filesystem links to files from prior action
+  styles = case type_code
+    when :file; ['']
+    when :image; STYLES
+  end
+  if styles and prior_action_id != last_action_id
     save_action_id = selected_action_id
     links = {}
-
-    self.selected_action_id = previous_action_id
-    styles.each { |style|  links[style] = attach.path(style)          }
+    
+    self.selected_action_id = prior_action_id
+    styles.each { |style|  links[style] = ::File.basename(attach.path(style))          }
 
     self.selected_action_id = last_action_id
     styles.each { |style|  ::File.symlink links[style], attach.path(style) }
@@ -92,8 +87,8 @@ def self.included(base)
   base.class_eval do
     has_attached_file :attach, :preserve_files=>true,
       :default_url => "missing",
-      :url => ":file_path/:basename-:size:revision_id.:extension",
-      :path => ":local/:card_id/:size:revision_id.:extension",
+      :url => ":file_path/:basename-:size:action_id.:extension",
+      :path => ":local/:card_id/:size:action_id.:extension",
       :styles => { :icon   => '16x16#', :small  => '75x75',
                  :medium => '200x200>', :large  => '500x500>' }
 
@@ -114,7 +109,7 @@ end
 
 module Paperclip::Interpolations
   
-  extend Wagn::Location
+  extend Card::Format::Location
 
   def local at, style_name
     if mod = at.instance.attach_mod
@@ -141,7 +136,7 @@ module Paperclip::Interpolations
     at.instance.type_id==Card::FileID || style_name.blank? ? '' : "#{style_name}-"
   end
 
-  def revision_id(at, style_name) 
+  def action_id(at, style_name) 
     at.instance.selected_content_action_id 
   end
 end

@@ -8,7 +8,7 @@ describe Card::Set::Self::All do
   end
   
   context '#update' do
-    it 'should be trigger empty trash (with right params)' do
+    it 'should trigger empty trash (with right params)' do
       Card::Auth.as_bot do
         Card['A'].delete!
         expect(Card.where( :trash=>true )).not_to be_empty
@@ -18,7 +18,7 @@ describe Card::Set::Self::All do
       end
     end
 
-    it 'should be trigger deleting old revisions (with right params)' do
+    it 'should trigger deleting old revisions (with right params)' do
       Card::Auth.as_bot do
         a = Card['A']
         a.update_attributes! :content=>'a new day'

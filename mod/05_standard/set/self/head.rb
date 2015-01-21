@@ -45,7 +45,7 @@ format :html do
       if root.card.type_id == SearchTypeID
         opts = { :format => :rss }
         root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
-        bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{page_path root.card.name, opts} />}
+        bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{page_path root.card.cardname, opts} />}
       end
     end
     bits << '<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">'
@@ -58,7 +58,7 @@ format :html do
     style_card ||= root.card.rule_card :style
     
     @css_path = if params[:debug] == 'style'
-      page_path( style_card.name, :item => :import, :format => :css) 
+      page_path( style_card.cardname, :item => :import, :format => :css) 
     elsif style_card
       wagn_path style_card.machine_output_url
     end 
@@ -77,13 +77,27 @@ format :html do
     c=Card[:double_click] and !Card.toggle c.content and varvals << 'wagn.noDoubleClick=true'
     @css_path                                        and varvals << "wagn.cssPath='#{@css_path}'"
     
-    script_card = root.card.rule_card :script
+    manual_script = params[:script]
+    script_card   = Card[manual_script] if manual_script
+    script_card ||= root.card.rule_card :script 
+    
+    @js_tag = if params[:debug] == 'script'
+      script_card.format(:js).render_core :item => :include_tag
+    elsif script_card
+      javascript_include_tag script_card.machine_output_url
+    end 
+
     ie9_card    = Card[:script_html5shiv_printshiv]
-    %(#{ javascript_tag do varvals * ';' end  }      
-      #{ javascript_include_tag script_card.machine_output_url if script_card }
+    %(#{ javascript_tag do varvals * ';' end  }
+      #{ @js_tag if @js_tag }
       <!--[if lt IE 9]>#{ javascript_include_tag ie9_card.machine_output_url if ie9_card }<![endif]-->
       #{ javascript_tag { "wagn.setTinyMCEConfig('#{ escape_javascript Card.setting(:tiny_mce).to_s }')" } }
-      #{ google_analytics_head_javascript })
+      #{ google_analytics_head_javascript }
+      <script type="text/javascript">
+        $('document').ready(function() {
+          $('.card-slot').trigger('slotReady');
+        })
+      </script>)
   end
     
   

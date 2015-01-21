@@ -19,14 +19,14 @@ view :core do |args|
 
   
   %{ 
-    #{ _render_closed_content args }
+    #{ _render_rule_help args }
     <table class="setting-rules">
       <tr><th>Set</th><th>Rule</th></tr>
       #{
         klasses.map do |klass, rules|
           %{ 
             <tr class="klass-row anchorless-#{ klass.anchorless? }">
-              <td class="setting-klass">#{ klass.anchorless? ? link_to_page( klass.pattern ) : klass.pattern }</td>
+              <td class="setting-klass">#{ klass.anchorless? ? card_link( klass.pattern ) : klass.pattern }</td>
               <td class="rule-content-container">
                 <span class="closed-content content">#{ subformat(rules[0])._render_closed_content if klass.anchorless? }</span>
               </td>
@@ -41,7 +41,7 @@ view :core do |args|
                   previous_content = current_content
                   %{
                     <tr class="#{ 'rule-changeover' if changeover }">
-                    <td class="rule-anchor">#{ link_to_page rule.cardname.trunk_name.trunk_name, rule.cardname.trunk_name }</td>
+                    <td class="rule-anchor">#{ card_link rule.cardname.trunk_name, :text=> rule.cardname.trunk_name.trunk_name }</td>
                     
                       #{
                         if duplicate
@@ -70,7 +70,12 @@ view :core do |args|
 
 end
 
-view :closed_content do |args|
+view :rule_help do |args|
   %{<div class="instruction">#{process_content_object "{{+*right+*help}}"}</div>}
+end
+
+
+view :closed_content do |args|
+  render_rule_help
 end
 

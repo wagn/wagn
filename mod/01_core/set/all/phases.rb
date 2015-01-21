@@ -91,7 +91,7 @@ def store
 rescue =>e
   rescue_event e
 ensure
-  @from_trash = nil
+  @from_trash = @last_action_id = @last_content_action_id = nil
 end
 
 
@@ -115,6 +115,11 @@ def rescue_event e
 #rescue Card::Cancel
 #  false
 end
+
+event :notable_exception_raised do
+  Rails.logger.debug "BT:  #{Card::Error.current.backtrace*"\n  "}"
+end
+
 
 def event_applies? opts
   if opts[:on]

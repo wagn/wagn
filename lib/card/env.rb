@@ -5,7 +5,7 @@ class Card
     class << self
       def reset args={}
         @@env = { :main_name => nil }
-      
+        
         if c = args[:controller]
           self[:controller] = c
           self[:session]    = c.request.session

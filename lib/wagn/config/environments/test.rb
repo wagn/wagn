@@ -8,6 +8,9 @@ Wagn.application.class.configure do
   # and recreated between test runs.  Don't rely on the data there!
   config.cache_classes = true
 
+
+  config.assets.enabled = true if Object.const_defined?( :JasmineRails )
+
   # Configure static asset server for tests with Cache-Control for performance
   config.serve_static_assets = true
   config.static_cache_control = "public, max-age=3600"
@@ -29,6 +32,7 @@ Wagn.application.class.configure do
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
+  config.action_mailer.perform_deliveries = true
   config.action_mailer.default :charset=>"utf-8"
   
   #config.action_mailer.delivery_method = :smtp

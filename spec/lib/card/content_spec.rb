@@ -76,7 +76,7 @@ RENDERED = {
   ],
   :two => [
     "Some Links and includes: ",
-    "<a class=\"wanted-card\" href=\"/the_card?card%5Bname%5D=the+card\">the text</a>", #"[[the card|the text]]",
+    "<a class=\"wanted-card\" href=\"/the_card?card%5Bname%5D=the+card\">the text</a>",
     ", and ",
     { :options => { :view => "Is Included", :inc_name=>"This Card", :inc_syntax => "This Card|Is Included"}},
     { :options => { :inc_name=>"this too", :inc_syntax=>"this too"}},
@@ -89,7 +89,7 @@ RENDERED = {
     "\n        More urls: ",
     "<a class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>",
     "\n        ",
-    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>",
+    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&amp;bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>",
     "  ",
     "<a class=\"external-link\" href=\"http://brain.org/Home\">extra</a>",
     "\n        [ ",
@@ -107,11 +107,27 @@ RENDERED = {
     " ]\n        { ",
     "<a class=\"external-link\" href=\"https://brain.org/more?args\">https://brain.org/more?args</a>",
     " }\n        ",
-    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>",
+    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&amp;bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>",
     "  ",
     "<a class=\"external-link\" href=\"http://brain.org/Home\">extra</a>"
   ],
   :four => "No chunks"
+}
+TEXT_RENDERED = {
+  :three => [
+    "Some URIs and Links: ", 'http://a.url.com/',
+    "\n        More urls: ",
+    "wagn.com/a/path/to.html[http://wagn.com/a/path/to.html]",
+    "\n        ",
+    "http://localhost:2020/path?cgi=foo&bar=baz",
+    "  ",
+    "extra[http://brain.org/Home]",
+    "\n        [ ",
+    "http://gerry.wagn.com/a/path",
+    " ]\n        { ",
+    "https://brain.org/more?args",
+    " }"
+  ],
 }
 
 describe Card::Content do
@@ -221,12 +237,18 @@ describe Card::Content do
         expect(rdr).to eq(RENDERED[:two].to_json)
       end
 
+      it "renders links correctly for text formatters" do
+        card2 = Card[@card.id]
+        format = card2.format :format => :text
+        cobj = Card::Content.new CONTENT[:three], format
+        cobj.process_content_object &@render_block
+        expect(cobj.as_json.to_json).to eq(TEXT_RENDERED[:three].to_json)
+      end
+
       it "should not need rendering if no inclusions" do
         cobj = Card::Content.new CONTENT[:three], @card
-  #      (rdr=cobj.as_json.to_json).should match /not rendered/ # links are rendered too, but not with a block
         cobj.process_content_object &@render_block
-        (rdr=cobj.as_json.to_json) #.should_not match /not rendered/
-        expect(rdr).to eq(RENDERED[:three].to_json)
+        expect(cobj.as_json.to_json).to eq(RENDERED[:three].to_json)
       end
 
       it "should not need rendering if no inclusions (b)" do

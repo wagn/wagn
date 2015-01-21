@@ -9,6 +9,14 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
+module ActiveSupport::BufferedLogger::Severity
+  WAGN = UNKNOWN + 1
+  
+  def wagn progname, &block
+    add(WAGN, nil, progname, &block)
+  end
+end
+
 
 module Wagn
   class Application < Rails::Application
@@ -28,7 +36,7 @@ module Wagn
     end
     
     initializer :load_mod_initializers,  :after => :load_wagn_config_initializers do
-      paths.add 'mod-initializers', :with=>'mod', :glob=>"**/initializers/*.rb"
+      paths.add 'mod-initializers', :with=>'mod', :glob=>"**{,/*/**}/initializers/*.rb"
       config.paths['mod-initializers'].existent.sort.each do |initializer|
         load(initializer)
       end
@@ -51,7 +59,7 @@ module Wagn
         config.autoload_paths += Dir["#{Wagn.gem_root}/app/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/lib/**/"]
         config.autoload_paths += Dir["#{Wagn.gem_root}/mod/*/lib/**/"]
-        config.autoload_paths += Dir["#{Rails.root}/mod/*/lib/**/"]
+        config.autoload_paths += Dir["#{Wagn.root}/mod/*/lib/**/"]
         
         config.assets.enabled = false
         config.assets.version = '1.0'
@@ -76,6 +84,7 @@ module Wagn
         config.token_expiry          = 2.days
         config.revisions_per_page    = 10
         config.request_logger        = false
+        config.performance_logger    = false
         
         config
       end
@@ -89,10 +98,10 @@ module Wagn
         add_gem_path paths, "app/assets",          :glob => "*"
         add_gem_path paths, "app/controllers",     :eager_load => true
         add_gem_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
-        add_gem_path paths, "config/routes",       :with => "config/routes.rb"
+        add_gem_path paths, "config/routes",       :with => "lib/wagn/config/routes.rb"
         add_gem_path paths, "db"
         add_gem_path paths, "db/migrate"
-        add_gem_path paths, "db/migrate_cards"
+        add_gem_path paths, "db/migrate_core_cards"
         add_gem_path paths, "db/seeds",            :with => "db/seeds.rb"        
         add_gem_path paths, 'gem-mod',             :with => 'mod'
         add_gem_path paths, 'gem-assets',          :with => 'public/assets'

@@ -8,7 +8,25 @@ class CardMigrationGenerator < ActiveRecord::Generators::Base
     desc: "Create card migration for wagn core"
 
   def create_migration_file
-    root = options['core'] ? Wagn.gem_root : Rails.root
-    migration_template "card_migration.erb", "#{root}/db/migrate_cards/#{file_name}.rb"
+    migration_type = options['core'] ? :core_cards : :deck_cards
+    root = Wagn::Migration.paths(migration_type).first
+    set_local_assigns!
+    migration_template @migration_template, File.join( root, "#{file_name}.rb")
+  end
+  
+  protected
+  
+  # sets the default migration template that is being used for the generation of the migration
+  # depending on the arguments which would be sent out in the command line, the migration template 
+  # and the table name instance variables are setup.
+
+  def set_local_assigns!
+    @migration_template = "card_migration.erb"
+    @migration_parent_class = options['core'] ? 'Wagn::CoreMigration' : 'Wagn::Migration'
+    case file_name
+    when /^(import)_(.*)(?:\.json)?/
+      @migration_action = $1
+      @json_filename    = "#{$2}.json"
+    end
   end
 end

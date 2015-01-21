@@ -50,7 +50,7 @@ format :html do
         current_rule.assign_attributes card_args
         current_rule.include_set_modules
       end
-      set_selected = card_args[:name].to_name.left_name.to_s
+      set_selected = card_args[:name].to_name.left
       edit_mode = true
     end
 
@@ -96,8 +96,8 @@ format :html do
       <tr class="card-slot open-rule #{rule_view.to_s.sub '_', '-'}">
         <td class="rule-cell" colspan="3">
           <div class="rule-setting">
-            #{ link_to_view setting_name.sub(/^\*/,''), :closed_rule, :class=>'close-rule-link slotter' }
-            #{ link_to_page "all rules", setting_name, :class=>'setting-link', :target=>'wagn_setting' }
+            #{ view_link setting_name.sub(/^\*/,''), :closed_rule, :class=>'close-rule-link slotter' }
+            #{ card_link setting_name, :text=>"all rules", :class=>'setting-link', :target=>'wagn_setting' }
           </div>
           
           <div class="instruction rule-instruction">
@@ -121,7 +121,7 @@ format :html do
       args[:item] ||= :link
       %{
         <div class="rule-set">
-          <label>Applies to</label> #{ link_to_page set.label, set.name }:
+          <label>Applies to</label> #{ card_link set.cardname, :text=>set.label }:
         </div>
         #{ _render_core args }
       }
@@ -150,7 +150,7 @@ format :html do
           #{
             if card.right.rule_type_editable
               fieldset 'type', type_field(
-                :href         => path(:card=>open_rule, :view=>:open_rule, :type_reload=>true),
+                :href         => path(:name=>open_rule.name, :view=>:open_rule, :type_reload=>true),
                 :class        => 'type-field rule-type-field live-type-field',
                 'data-remote' => true
               ), :editor=>'type'
@@ -168,7 +168,7 @@ format :html do
                   <li>
                     #{ form.radio_button :name, "#{set_name}+#{setting_name}", :checked=> checked }
                     <span class="set-label" #{'current-set-label' if is_current }>
-                      #{ link_to_page Card.fetch(set_name).label, set_name, :target=>'wagn_set' }
+                      #{ card_link set_name, :text=> Card.fetch(set_name).label, :target=>'wagn_set' }
                       #{'<em>(current)</em>' if is_current}
                     </span>
                   </li>

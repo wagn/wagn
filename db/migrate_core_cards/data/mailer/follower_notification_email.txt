@@ -1,0 +1,11 @@
+"{{_|name}}" was just {{_|last_action}} by {{_user|name}}.
+
+{{_|list_of_changes}}
+
+{{_|subedits}}
+
+See the card: {{_|url}}
+
+You received this email because you're following "{{_|followed}}".
+
+Use this link to unfollow {{_|unfollow_url}}

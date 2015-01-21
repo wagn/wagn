@@ -8,6 +8,18 @@ describe Card::Set::All::History do
       history = render_card :history, :name=>"A"
       assert_view_select history, 'div[class~="card-frame"]'
     end
+    
+    
+    describe '#action_summary' do
+      subject do 
+        first = Card.fetch('First')
+        first.format.render_action_summary
+      end
+      it 'should have a summary' do
+        assert_view_select subject, 'del[class="diffdel diff-red"]', :text=>'chicken' 
+        assert_view_select subject, 'ins[class="diffins diff-green"]', :text=>'chick'         
+      end
+    end
   end
   
   
@@ -59,7 +71,7 @@ describe Card::Set::All::History do
         end  
         it 'adds trash change' do  
           expect(action.changes.last.field).to eq('trash')
-          expect(action.changes.last.value).to eq('1')
+          expect(action.changes.last.value).to be_truthy
         end
       end
     end

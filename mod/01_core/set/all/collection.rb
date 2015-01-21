@@ -1,18 +1,39 @@
 
 module ClassMethods
   def search spec
-    results = ::Card::Query.new(spec).run
-    if block_given? and Array===results
-      results.each { |result| yield result }
+    query = ::Card::Query.new(spec)
+    Wagn.with_logging nil, :search, spec, query.sql.strip do
+      results = query.run
+      if block_given? and Array===results
+        results.each { |result| yield result }
+      end
+      results
     end
-    results
   end
 
   def count_by_wql(spec)
     spec.delete(:offset)
     search spec.merge(:return=>'count')
   end
-  
+
+  def find_each(options = {}) 
+    #this is a copy from rails (3.2.16) and is needed because this is performed by a relation (ActiveRecord::Relation)
+    find_in_batches(options) do |records|
+      records.each { |record| yield record }
+    end
+  end
+
+  def find_in_batches(options = {})
+    if block_given?
+      super(options) do |records|
+        yield(records)
+        puts "resetting local cache"
+        Card.cache.reset_local
+      end
+    else
+      super(options)
+    end
+  end
 end
 
 def item_names(args={})
@@ -28,7 +49,7 @@ def item_type
 end
 
 def include_item? cardname
-  ::Set.new(item_names).member? cardname
+  item_names.map{|name| name.to_name.key}.member? cardname.to_name.key
 end
 
 def extended_item_cards context = nil
@@ -72,7 +93,7 @@ end
 
 def contextual_content context_card, format_args={}, view_args={}
   context_card.format(format_args).process_content(
-    self.format(format_args)._render_raw(view_args)
+    self.format(format_args)._render_raw(view_args), view_args
   )
 end
 

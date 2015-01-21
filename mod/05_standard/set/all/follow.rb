@@ -29,14 +29,14 @@ format :html do
     return '' unless watched_card
     
     following = Auth.current.fetch :trait=>:following, :new=>{:type=>:pointer}
-    path_hash = {:card=>following, :action=>:update, :toggle=>toggle, 
+    path_hash = {:name=>following.name, :action=>:update, :toggle=>toggle, 
                  :success=>{:id=>card.name, :view=>:watch} }
     case toggle
     when :off then path_hash[:drop_item] = watched_card.cardname.url_key
     when :on  then path_hash[:add_item]  = watched_card.cardname.url_key
     end
 
-    link_to "#{text}", path(path_hash), 
+    link_to "#{text}", path_hash, 
       {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :title=>title, :remote=>true, :method=>'post'}.merge(extra)
   end
   
@@ -44,8 +44,8 @@ end
 
 
 
-def type_watched?; Auth.current.fetch(:trait=>:following, :new=>{}).include_item? type_card.cardname.url_key end
-def watched?;     Auth.current.fetch(:trait=>:following, :new=>{}).include_item? cardname.url_key end
+def type_watched?; Auth.current.fetch(:trait=>:following, :new=>{}).include_item? type_card.cardname end
+def watched?;     Auth.current.fetch(:trait=>:following, :new=>{}).include_item? cardname end
 
 
 

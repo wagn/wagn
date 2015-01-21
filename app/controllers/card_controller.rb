@@ -2,10 +2,12 @@
 
 require_dependency 'card'
 require_dependency 'card/action'
+require_dependency 'card/mailer'  #otherwise Net::SMTPError rescues can cause problems when error raised comes before Card::Mailer is mentioned
 
 class CardController < ActionController::Base
 
-  include Wagn::Location
+  include Card::Format::Location
+  include Card::HtmlFormat::Location
   include Recaptcha::Verify
 
   before_filter :per_request_setup, :except => [:asset]
@@ -52,7 +54,7 @@ class CardController < ActionController::Base
   
   private
   
-  # make sure that filenname doesn't leave allowed_path using ".."
+  # make sure that filename doesn't leave allowed_path using ".."
   def send_file_inside(allowed_path, filename, options = {})
     if filename.include? "../"
       raise Wagn::BadAddress
@@ -109,9 +111,12 @@ class CardController < ActionController::Base
         end
       end
     raise Wagn::NotFound unless @card
-    @card.selected_action_id = (action=@card.find_action_by_params(params) and action.id)
     
+    if action = @card.find_action_by_params( params )
+      @card.selected_action_id = action.id
+    end
     Card::Env[:main_name] = params[:main] || (card && card.name) || ''
+    
     render_errors if card.errors.any?
     true
   end
@@ -133,6 +138,9 @@ class CardController < ActionController::Base
       log << status
       log << env["REQUEST_URI"]
       log << DateTime.now.to_s
+      log << env['HTTP_ACCEPT_LANGUAGE'].to_s.scan(/^[a-z]{2}/).first
+      log << env["HTTP_REFERER"]
+      
       log_dir = (Wagn.paths['request_log'] || Wagn.paths['log']).first
       log_filename = "#{Date.today}_#{Rails.env}.csv"
       File.open(File.join(log_dir,log_filename), "a") do |f|
@@ -227,7 +235,7 @@ class CardController < ActionController::Base
     opts = ( params[:slot] || {} ).deep_symbolize_keys
     view ||= params[:view]      
 
-    formatter = card.format( :format=>format )
+    formatter = card.format(format.to_sym)
     result = formatter.show view, opts
     status = formatter.error_status || status
   
@@ -248,6 +256,8 @@ class CardController < ActionController::Base
     Rails.logger.info "exception = #{exception.class}: #{exception.message}"
 
     @card ||= Card.new
+    Card::Error.current = exception
+    
 
     view = case exception
       ## arguably the view and status should be defined in the error class;
@@ -264,9 +274,8 @@ class CardController < ActionController::Base
       when Wagn::BadAddress
         :bad_address
       else #the following indicate a code problem and therefore require full logging
-        Rails.logger.info exception.backtrace*"\n"
-        notify_airbrake exception if Airbrake.configuration.api_key
-
+        @card.notable_exception_raised
+        
         if ActiveRecord::RecordInvalid === exception
           :errors
         elsif Rails.logger.level == 0 # could also just check non-production mode...

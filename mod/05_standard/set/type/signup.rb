@@ -1,13 +1,11 @@
 
-include Wagn::Location
-
 format :html do
   
   def default_new_args args
     super args
     args.merge!(
       :optional_help => :show, #, :optional_menu=>:never
-      :buttons => button_tag( 'Submit' ),
+      :buttons => button_tag( 'Submit', :disable_with=>'Submitting' ),
       :account => card.fetch( :trait=>:account, :new=>{} ),
       :title   => 'Sign up',
       :hidden  => {
@@ -51,16 +49,16 @@ format :html do
       headings << %(<strong>#{ card.name }</strong> #{ 'was' if !by_anon } signed up on #{ format_date card.created_at })
       if account = card.account
         token_action = 'Send'
-        if account.token
+        if account.token.present?
           headings << "A verification email has been sent #{ "to #{account.email}" if account.email_card.ok? :read }"
           token_action = 'Resend'
         end
         if account.confirm_ok?
-          links << link_to( "#{token_action} verification email", wagn_path("/update/~#{card.id}?approve_token=true"  ) )
-          links << link_to( "Approve without verification", wagn_path("/update/~#{card.id}?approve_without_token=true") )
+          links << link_to( "#{token_action} verification email", wagn_path("update/~#{card.id}?approve_with_token=true"  ) )
+          links << link_to( "Approve without verification", wagn_path("update/~#{card.id}?approve_without_token=true") )
         end
         if card.ok? :delete
-          links << link_to( "Deny and delete", wagn_path("/delete/~#{card.id}") )
+          links << link_to( "Deny and delete", wagn_path("delete/~#{card.id}") )
         end
         headings << links * '' if links.any?
       else
@@ -102,10 +100,10 @@ event :activate_account do
   self.type_id = Card.default_accounted_type_id
 end
 
-event :approve_token, :on=>:update, :before=>:approve, :when=>proc {|c| Env.params[:approve_token] } do
+event :approve_with_token, :on=>:update, :before=>:approve, :when=>proc {|c| Env.params[:approve_with_token] } do
   abort :failure, 'illegal approval' unless account.confirm_ok?
   account.reset_token
-  account.send_account_confirmation_email
+  account.send_account_verification_email
 end
 
 event :approve_without_token, :on=>:update, :before=>:approve, :when=>proc {|c| Env.params[:approve_without_token] } do
@@ -115,7 +113,7 @@ end
 
 event :resend_activation_token do
   account.reset_token
-  account.send_account_confirmation_email
+  account.send_account_verification_email
   Env.params[:success] = {
     :id => '_self',
     :view => 'message',
@@ -131,7 +129,6 @@ event :redirect_to_edit_password, :on=>:update, :after=>:store, :when=>proc {|c|
   Env.params[:success] = account.edit_password_success_args  
 end
 
-
 event :preprocess_account_subcards, :before=>:process_subcards, :on=>:create do
   #FIXME: use codenames!
   email, password = subcards.delete('+*account+*email'), subcards.delete('+*account+*password')
@@ -140,22 +137,7 @@ event :preprocess_account_subcards, :before=>:process_subcards, :on=>:create do
   subcards['+*account']['+*password' ]=password if password
 end
 
-send_signup_notifications = proc do |c|
-  !Auth.signed_in? and c.account and c.account.pending? and Card.setting '*request+*to'
-end
-
-
-event :signup_notifications, :after=>:extend, :on=>:create, :when=>send_signup_notifications do
-  args =  {
-    :to     => Card.setting('*request+*to'),
-    :from   => Card.setting('*request+*from') || "\"#{name}\" <#{account.email}>",
-    :locals => {
-      :email        => account.email,
-      :name         => name,
-      :request_url  => wagn_url( self ),
-      :requests_url => wagn_url( Card[:signup] ),
-    }
-  }
-  Card['signup alert'].format(:format=>:email).deliver(args)
+event :act_as_current_for_extend_phase, :before=>:extend, :on=>:create do
+  Auth.current_id = self.id
 end
 

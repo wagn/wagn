@@ -2,7 +2,6 @@
 
 class Card
   class Format
-    include Wagn::Location
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
@@ -184,7 +183,9 @@ class Card
         @current_view = view = ok_view canonicalize_view( view ), args       
         args = default_render_args view, args
         with_inclusion_mode view do
-          send "_view_#{ view }", args
+          Wagn.with_logging card.name, :view, view, args do
+            send "_view_#{ view }", args
+          end
         end
       end
     rescue => e
@@ -245,9 +246,9 @@ class Card
       if Rails.env =~ /^cucumber|test$/
         raise e
       else
-        controller.send :notify_airbrake, e if Airbrake.configuration.api_key
         Rails.logger.info "\nError rendering #{error_cardname} / #{view}: #{e.class} : #{e.message}"
-        Rails.logger.debug "BT:  #{e.backtrace*"\n  "}"
+        Card::Error.current = e
+        card.notable_exception_raised
         rendering_error e, view
       end
     end
@@ -293,7 +294,7 @@ class Card
     end
 
     def ok_view view, args={}
-#      binding.pry
+      return view if args.delete :skip_permissions
       approved_view = case
         when @depth >= @@max_depth                                     ; :too_deep  
           # prevent recursion. @depth tracks subformats
@@ -474,66 +475,54 @@ class Card
       :name
     end
 
-    def path opts={}
-      pcard = opts.delete(:card) || card
-      base = opts[:action] ? "card/#{ opts.delete :action }/" : ''
-      if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(opts[:action]) #generalize. dislike hardcoding views/actions here
-        base += ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
-      end
-      query = opts.empty? ? '' : "?#{opts.to_param}"
-      wagn_path( base + query )
-    end
+
     #
     # ------------ LINKS ---------------
     #
 
-    def final_link href, opts
-      if text = opts[:text]
-        "#{text}[#{href}]"
-      else
-        href
-      end
-    end
 
-    def build_link href, text=nil
-      opts = {:text => text }
-
-      opts[:class] = case href.to_s
-        when /^https?:/                      ; 'external-link'
-        when /^mailto:/                      ; 'email-link'
-        when /^([a-zA-Z][\-+.a-zA-Z\d]*):/   ; $1 + '-link'
-        when /^\//
-          href = internal_url href[1..-1]    ; 'internal-link'
-        else
-          return href
-          Rails.logger.debug "build_link mistakenly(?) called on #{href}, #{text}"
-        end
-        
-      final_link href, opts
-    end
-
-    def card_link name, text, known, type=nil
-      text ||= name
-      linkname = name.to_name.url_key
-      opts = {
-        :class => ( known ? 'known-card' : 'wanted-card' ),
-        :text  => ( text.to_name.to_show @context_names  )
-      }
-      if !known
-        link_params = {}
-        link_params['name'] = name.to_s if name.to_s != linkname
-        link_params['type'] = type      if type
-        linkname += "?#{ { :card => link_params }.to_param }" if !link_params.empty?
-      end
-      final_link internal_url( linkname ), opts
-    end
   
+
+  
+    def add_class options, klass
+      options[:class] = [ options[:class], klass ].flatten.compact * ' '
+    end
+    
+    module Location
+      #
+      # page_path    takes a Card::Name, adds the format and query string to url_key (site-absolute)
+      # wagn_path    makes a relative path site-absolute (if not already)
+      # wagn_url     makes it a full url (if not already)
+
+      # TESTME
+      def page_path title, opts={}
+        Rails.logger.warn "Pass only Card::Name to page_path #{title.class}, #{title}" unless Card::Name===title
+        format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
+        query  = opts.present? ? "?#{opts.to_param}"         : ''
+        wagn_path "#{title.to_name.url_key}#{format}#{query}"
+      end
+
+      def wagn_path rel_path
+        Rails.logger.warn "Pass only strings to wagn_path: #{rel_path.class}, #{rel_path}" unless String===rel_path
+        if rel_path =~ /^\//
+          rel_path
+        else
+          "#{ Wagn.config.relative_url_root }/#{ rel_path }"
+        end
+      end
+
+      def wagn_url rel
+        if rel =~ /^https?\:/
+          rel
+        else
+          "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ wagn_path rel }"
+        end
+      end
+    end
+    include Location
+
     def unique_id
       "#{card.key}-#{Time.now.to_i}-#{rand(3)}" 
-    end
-
-    def internal_url relative_path
-      wagn_path relative_path
     end
 
     def format_date date, include_time = true

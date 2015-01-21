@@ -2,7 +2,7 @@ class Card
   class SetPattern
     
     class << self
-      attr_accessor :pattern_code, :pattern_id, :junction_only, :assigns_type, :anchorless
+      attr_accessor :pattern_code, :pattern_id, :junction_only, :assigns_type, :anchorless, :anchor_parts_count
       
       def find pattern_code
         Card.set_patterns.find { |sub| sub.pattern_code == pattern_code }        
@@ -39,6 +39,10 @@ class Card
         junction_only? ? card.cardname.junction? : true
       end
     
+      def anchor_parts_count 
+        @anchor_parts_count ||= ( anchorless? ? 0 : 1 )
+      end
+      
       def write_tmp_file pattern_code, from_file, seq
         to_file = "#{Wagn.paths['tmp/set_pattern'].first}/#{seq}-#{pattern_code}.rb"
         klass = "Card::#{pattern_code.camelize}Set"

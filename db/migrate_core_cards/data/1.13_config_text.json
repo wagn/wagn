@@ -1,0 +1,32 @@
+{
+  "url": "http://en.dwagn.org/export.json",
+  "timestamp": "2014-07-25 17:38:28 +0000",
+  "card": {
+    "name": "export",
+    "type": "Pointer",
+    "content": "[[Signup Success]]\n[[Sign up+description]]\n[[Config]]\n[[*request]]",
+    "value": [
+      {
+        "name": "Signup Success",
+        "type": "Basic",
+        "content": "<div>Thank you for signing up with {{*title}}. You should receive a response in your email.</div>"
+      },
+      {
+        "name": "Sign up+description",
+        "type": "Basic",
+        "content": "<p>[[Sign up]] cards represent not-yet-approved accounts. When approved, they become [[User]] cards.  [[http://wagn.org/account|more]]</p>"
+      },
+      {
+        "name": "Config",
+        "type": "Basic",
+        "content": "<h1>Basics</h1>\r\n<div>Set your site name, home card, and logo image:</div>\r\n<blockquote>\r\n<div>{{*title|closed;type:Phrase}}</div>\r\n<div>{{*home|closed;type:Phrase}}</div>\r\n<div>{{*logo|closed;type:Image}}</div>\r\n</blockquote>\r\n<div> </div>\r\n<h1>Rules</h1>\r\n<div>Cards are configured by creating <em>rules</em>.  All the rules impacting a given card can be accessed from its card menu via the \"advanced\" item. Here are the site-wide defaults:</div>\r\n<div>\r\n<blockquote>{{*all|open}}</blockquote>\r\n</div>\r\n<div><em>[[http://wagn.org/rules | More about rules.]]</em></div>\r\n<div> </div>\r\n<h1>Accounts</h1>\r\n<div>Accounts are represented in cards, too. You first create a [[Sign up]] card, and that then turns into a [[User]] card.</div>\r\n<blockquote>\r\n<div>{{Sign up|closed}}</div>\r\n<div>{{User|closed}}</div>\r\n</blockquote>\r\n<div>\r\n<ul>\r\n<li>When [[Anyone]] can [[*create|create]] a [[Sign up]] card, links to sign up will appear.</li>\r\n<li>When [[Anyone]] can [[*create|create]] a [[User]] card, sign-ups can be authenticated with a token.</li>\r\n<li>When only other [[Roles]] can [[*create|create]] a [[User]] card, sign-ups must be approved by hand. </li>\r\n</ul>\r\n</div>\r\n<div><em>[[http://wagn.org/account | More about accounts.]]</em></div>\r\n<div> </div>\r\n<blockquote>\r\n<div> </div>\r\n<div> </div>\r\n</blockquote>"
+      },
+      {
+        "name": "*request",
+        "type": "Basic",
+        "content": "",
+        "codename": "request"
+      }
+    ]
+  }
+}

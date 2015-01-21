@@ -76,11 +76,8 @@ namespace :test do
       File.open("#{Wagn.gem_root}/test/fixtures/#{table_name}.yml", 'w') do |file|
         data = ActiveRecord::Base.connection.select_all(sql % table_name)
         file.write data.inject({}) { |hash, record|
-
-          trsh = record['trash']
-          record['trash'] = false if trsh == 0 or trsh == '0'
-          raise "bad trash value #{record['trash'].inspect}" unless (trsh = record['trash']).nil? or trsh == false
-          #puts "test that trash is actually stored as 'false' for postgres and deleteme "
+          record['trash'] = false if record.has_key? 'trash'
+          record['draft'] = false if record.has_key? 'draft'
           hash["#{table_name}_#{i.succ!}"] = record
           hash
         }.to_yaml

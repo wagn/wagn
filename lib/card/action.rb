@@ -1,28 +1,26 @@
 # -*- encoding : utf-8 -*-
 class Card
+  
+  #fixme - these Card class methods should probably be in a set module
   def find_action_by_params args
     case 
     when args[:rev]
       nth_action(args[:rev].to_i-1)
     when args[:rev_id]
-      action = Card::Action.find(args[:rev_id]) 
-      if action.card_id == id 
+      if action = Action.fetch(args[:rev_id]) and action.card_id == id 
         action 
       end
     end
   end
   
-  def nth_revision index
-    revision(nth_action(index))
-  end
-  
   def nth_action index
-    Card::Action.where("(draft IS NULL OR draft = :draft) AND card_id = ':id'", {:draft=>false, :id=>id})[index-1]
+    Action.where("draft is not true AND card_id = #{id}").order(:id).limit(1).offset(index-1).first
   end
   
   def revision action
+    # a "revision" refers to the state of all tracked fields at the time of a given action
     if action.is_a? Integer
-      action = Card::Action.find(action)
+      action = Card::Action.fetch(action)
     end
     action and Card::TRACKED_FIELDS.inject({}) do |attr_changes, field|
       last_change = action.changes.find_by_field(field) || last_change_on(field, :not_after=>action)
@@ -33,10 +31,11 @@ class Card
   
   def delete_old_actions
     Card::TRACKED_FIELDS.each do |field|
-        if (not last_action.change_for(field).present?) and (last_change = last_change_on(field))
-          last_change = Card::Change.find(last_change.id)   # last_change comes as readonly record
-          last_change.update_attributes!(:card_action_id=>last_action_id)
-        end
+      # assign previous changes on each tracked field to the last action
+      if (not last_action.change_for(field).present?) and (last_change = last_change_on(field))
+        last_change = Card::Change.find(last_change.id)   # last_change comes as readonly record
+        last_change.update_attributes!(:card_action_id=>last_action_id)
+      end
     end
     actions.where('id != ?', last_action_id ).delete_all
   end
@@ -47,27 +46,36 @@ class Card
     belongs_to :act,  :foreign_key=>:card_act_id, :inverse_of=>:actions 
     has_many   :changes, :foreign_key=>:card_action_id, :inverse_of=>:action, :dependent=>:delete_all
     
-    belongs_to :super_action, class_name: "Action", :inverse_of=>:sub_actions
-    has_many   :sub_actions,  class_name: "Action", :inverse_of=>:super_action
+    belongs_to :super_action, :class_name=> "Action", :inverse_of=>:sub_actions
+    has_many   :sub_actions,  :class_name=> "Action", :inverse_of=>:super_action
     
     scope :created_by, lambda { |actor_id| joins(:act).where('card_acts.actor_id = ?', actor_id) }
     
     # replace with enum if we start using rails 4 
     TYPE = [:create, :update, :delete]
     
-    # def card
-    #   Card.fetch card_id
-    # end
+    class << self
+      def cache
+        Wagn::Cache[Action]
+      end
     
-    def self.delete_cardless
-      Card::Action.where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
-    end
+      def fetch id
+        cache.read(id.to_s) or begin
+          cache.write id.to_s, Action.find(id.to_i)
+        end
+      end
+      
     
-    def self.delete_old 
-      Card.find_each do |card|
-        card.delete_old_actions
-      end    
-      Card::Act.delete_actionless
+      def delete_cardless
+        Card::Action.where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
+      end
+    
+      def delete_old 
+        Card.find_each do |card|
+          card.delete_old_actions
+        end    
+        Card::Act.delete_actionless
+      end
     end
     
     def edit_info
@@ -107,7 +115,8 @@ class Card
        ch = changes.find_by_field(field) and ch.value
     end
     def change_for(field) 
-      changes.where('card_changes.field = ?', field)
+      field_integer = ( field.is_a?(Integer) ? field : Card::TRACKED_FIELDS.index(field.to_s) )
+      changes.where 'card_changes.field = ?', field_integer
     end
     
     
@@ -152,31 +161,31 @@ class Card
     # end
       
   
-    def name_diff
+    def name_diff opts={}
       if new_name?
-        Card::Diff::DiffBuilder.new(old_values[:name],new_values[:name]).complete
+        Card::Diff.complete old_values[:name], new_values[:name], opts
       end
     end
   
-    def cardtype_diff
+    def cardtype_diff opts={}
       if new_type?
-        Card::Diff::DiffBuilder.new(old_values[:cardtype],new_values[:cardtype]).complete
+        Card::Diff.complete old_values[:cardtype], new_values[:cardtype], opts
       end
     end
   
-    def content_diff diff_type=:expanded
+    def content_diff diff_type=:expanded, opts=nil
       if new_content?
         if diff_type == :summary
-          content_diff_builder.summary
+          content_diff_builder(opts).summary
         else
-          content_diff_builder.complete
+          content_diff_builder(opts).complete 
         end
       end
     end
     
-    def content_diff_builder
+    def content_diff_builder opts=nil
       @content_diff_builder ||= begin
-        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], :compare_html=>false)
+        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], opts || card.diff_args)
       end
     end
     

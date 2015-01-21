@@ -18,7 +18,7 @@ Feature: Setting up
     And I press "Set up"
     Then I should see "The Newber"
     
-    When I go to card "The Newber\+\*roles"
+    When I go to card "The Newber+*roles"
     Then I should see "Administrator"
 
     When I follow "Sign out"

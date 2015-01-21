@@ -1,7 +1,7 @@
 
 
 def item_cards params={}
-  s = spec(params)
+  s = query(params)
   raise("OH NO.. no limit") unless s[:limit]
   # forces explicit limiting
   # can be 0 or less to force no limit
@@ -9,37 +9,37 @@ def item_cards params={}
 end
 
 def item_names params={}
-  ## FIXME - this should just alter the spec to have it return name rather than instantiating all the cards!!
+  ## FIXME - this should just alter the query to have it return name rather than instantiating all the cards!!
   ## (but need to handle prepend/append)
-  Card.search(spec(params)).map(&:cardname)
+  Card.search(query(params)).map(&:cardname)
 end
 
 def item_type
-  spec[:type]
+  query[:type]
 end
 
 def count params={}
-  Card.count_by_wql spec( params )
+  Card.count_by_wql query( params )
 end
 
-def spec params={}
-  @spec ||= {}
-  @spec[params.to_s] ||= get_spec(params.clone)
+def query params={}
+  @query ||= {}
+  @query[params.to_s] ||= get_query(params.clone)
 end
 
-def get_spec params={}
-  spec = Auth.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
-    spec_content = params.delete(:spec) || raw_content
-    #warn "get_spec #{name}, #{spec_content}, #{params.inspect}"
-    raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
-    JSON.parse( spec_content )
+def get_query params={}
+  query = Auth.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
+    query_content = params.delete(:query) || raw_content
+    #warn "get_query #{name}, #{query_content}, #{params.inspect}"
+    raise("Error in card '#{self.name}':can't run search with empty content") if query_content.empty?
+    String === query_content ? JSON.parse( query_content ) : query_content
   end
-  spec.symbolize_keys!.merge! params.symbolize_keys
-  if default_limit = spec.delete(:default_limit) and !spec[:limit]
-    spec[:limit] = default_limit
+  query.symbolize_keys!.merge! params.symbolize_keys
+  if default_limit = query.delete(:default_limit) and !query[:limit]
+    query[:limit] = default_limit
   end
-  spec[:context] ||= (cardname.junction? ? cardname.left_name : cardname)
-  spec
+  query[:context] ||= (cardname.junction? ? cardname.left_name : cardname)
+  query
 end
 
 
@@ -53,7 +53,7 @@ format do
     case
     when e = search_vars[:error]
       %{#{e.class.to_s} :: #{e.message} :: #{card.raw_content}}
-    when search_vars[:spec][:return] =='count'
+    when search_vars[:query][:return] =='count'
       search_vars[:results].to_s
     when @mode == :template
       render :raw
@@ -76,8 +76,8 @@ format do
     
     @search_vars ||= begin
       v = {}
-      v[:spec] = card.spec search_params
-      v[:item] = set_inclusion_opts args.merge( :spec_view=>v[:spec][:view] )
+      v[:query] = card.query search_params
+      v[:item] = set_inclusion_opts args.merge( :query_view=>v[:query][:view] )
       v[:results]  = card.item_cards search_params  # this is really odd.  the search is called from within the vars???
       v
     rescue =>e
@@ -88,7 +88,7 @@ format do
   def set_inclusion_opts args
     @inclusion_defaults = nil
     @inclusion_opts ||= {}
-    @inclusion_opts[:view] = args[:item] || inclusion_opts[:view] || args[:spec_view] || default_item_view
+    @inclusion_opts[:view] = args[:item] || inclusion_opts[:view] || args[:query_view] || default_item_view
     # explicit > inclusion syntax > WQL > inclusion defaults
   end
 
@@ -136,7 +136,7 @@ format :html do
     paging = _optional_render :paging, args
 
     if search_vars[:results].empty?
-      %{<div class="search-no-results"></div>}
+      render_no_search_results(args) 
     else
       %{
         #{paging}
@@ -164,7 +164,7 @@ format :html do
       search_params[:limit] = 10 #not quite right, but prevents massive invisible lists.  
       # really needs to be a hard high limit but allow for lower ones.
       _render_core args.merge( :hide=>'paging', :item=>:link )
-      # fixme - if item is specified to be "name", then that should work.  otherwise use link
+      # fixme - if item is queryified to be "name", then that should work.  otherwise use link
     end
   end
 
@@ -172,9 +172,12 @@ format :html do
     form.text_area :content, :rows=>5
   end
 
+  view :no_search_results do |args|
+    %{<div class="search-no-results"></div>}
+  end
 
   view :paging do |args|
-    s = card.spec search_params
+    s = card.query search_params
     offset, limit = s[:offset].to_i, s[:limit].to_i
     return '' if limit < 1
     return '' if offset==0 && limit > offset + search_vars[:results].length #avoid query if we know there aren't enough results to warrant paging

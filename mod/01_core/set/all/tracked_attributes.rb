@@ -29,7 +29,7 @@ protected
 event :set_content, :before=>:store, :on=>:save do
   self.db_content = content || '' #necessary?
   self.db_content = Card::Content.clean! self.db_content if clean_html?
-  self.selected_action_id = nil
+  @selected_action_id = @selected_content = nil
   clear_drafts
   reset_patterns_if_rule saving=true
 end
@@ -107,7 +107,7 @@ event :expire_related, :after=>:store do
   # FIXME really shouldn't be instantiating all the following bastards.  Just need the key.
   # fix in id_cache branch
   self.dependents.each       { |c| c.expire }
-  self.referencers.each      { |c| c.expire }
+  # self.referencers.each      { |c| c.expire }
   self.name_referencers.each { |c| c.expire }
   # FIXME: this will need review when we do the new defaults/templating system
 end

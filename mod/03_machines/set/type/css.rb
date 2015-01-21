@@ -36,8 +36,6 @@ format :html do
   end
   
   view :content_changes, :mod=>CoffeeScript::HtmlFormat
-
-  
 end
 
 def diff_args

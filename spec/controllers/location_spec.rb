@@ -3,8 +3,6 @@
 
 describe CardController, "location test from old integration" do
 
-  include Wagn::Location
-
   before do
     login_as 'joe_user'
   end

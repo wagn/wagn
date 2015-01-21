@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-include Wagn::Location
 describe Card::Set::Type::Signup do
   
   before do

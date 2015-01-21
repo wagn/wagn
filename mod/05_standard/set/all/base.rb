@@ -7,25 +7,32 @@ format do
 
   # NAME VIEWS
                                                                               
-  view :name,     :perms=>:none  do |args|  card.name                    end
-  view :codename, :perms=>:none  do |args|  card.codename.to_s           end  
-  view :key,      :perms=>:none  do |args|  card.key                     end
-  view :id,       :perms=>:none  do |args|  card.id                      end
-  view :type,     :perms=>:none  do |args|  card.type_name               end
-  view :linkname, :perms=>:none  do |args|  card.cardname.url_key        end
-  view :url,      :perms=>:none  do |args|  wagn_url _render_linkname    end
+  view :name,     :closed=>true, :perms=>:none do |args| card.name                           end
+  view :key,      :closed=>true, :perms=>:none do |args| card.key                            end
+  view :title,    :closed=>true, :perms=>:none do |args| args[:title] || card.name           end
 
-  view :link, :perms=>:none do |args|
-    card_link card.name, showname( args[:title] ), card.known?, args[:type]
+  view :linkname, :closed=>true, :perms=>:none do |args| card.cardname.url_key               end
+  view :url,      :closed=>true, :perms=>:none do |args| wagn_url _render_linkname           end
+  view :url_link, :closed=>true, :perms=>:none do |args| web_link wagn_url(_render_linkname) end
+
+  view :link, :closed=>true, :perms=>:none do |args|
+    card_link( card.name,
+      :text=>showname( args[:title] ),
+      :known=>card.known?,
+      :path_opts=>{ :type=>args[:type] }
+    )
   end
+        
+  view :codename, :closed=>true do |args| card.codename.to_s  end  
+  view :id,       :closed=>true do |args| card.id             end
+  view :type,     :closed=>true do |args| card.type_name      end
 
 
   # DATE VIEWS
 
-  view :created_at, :perms=>:none do |args| time_ago_in_words card.created_at end
-  view :updated_at, :perms=>:none do |args| time_ago_in_words card.updated_at end
-  view :acted_at,   :perms=>:none do |args| time_ago_in_words card.acted_at   end
-    
+  view :created_at, :closed=>true do |args| time_ago_in_words card.created_at end
+  view :updated_at, :closed=>true do |args| time_ago_in_words card.updated_at end
+  view :acted_at,   :closed=>true do |args| time_ago_in_words card.acted_at   end
 
 
   # CONTENT VIEWS
@@ -47,8 +54,12 @@ format do
     _render_core args
   end
 
-  view :closed_content do |args|
+  view :closed_content, :closed=>true do |args|
     Card::Content.truncatewords_with_closing_tags _render_core(args) #{ yield }
+  end
+
+  view :blank, :closed=>true, :perms=>:none do |args|
+    ''
   end
 
 
@@ -78,39 +89,6 @@ format do
     end.inspect
   end
 
-
-
-  # ERROR VIEWS
-
-
-  view :blank,          :perms=>:none do |args| '' end
-  view :closed_missing, :perms=>:none do |args| '' end
-  view :missing,        :perms=>:none do |args| '' end
-
-  view :not_found, :perms=>:none, :error_code=>404 do |args|
-    %{ Could not find #{card.name.present? ? %{"#{card.name}"} : 'the card requested'}. }
-  end
-
-  view :server_error, :perms=>:none, :error_code=>500 do |args|
-    %{ Wagn Hitch!  Server Error. Yuck, sorry about that.\n}+
-    %{ To tell us more and follow the fix, add a support ticket at http://wagn.org/new/Support_Ticket }
-  end
-
-  view :denial, :perms=>:none, :error_code=>403 do |args|
-    focal? ? 'Permission Denied' : ''
-  end
-
-  view :bad_address, :perms=>:none, :error_code=>404 do |args|
-    %{ 404: Bad Address }
-  end
-
-  view :too_deep, :perms=>:none do |args|
-    %{ Man, you're too deep.  (Too many levels of inclusions at a time) }
-  end
-
-  view :too_slow, :perms=>:none do |args|
-    %{ Timed out! #{ showname } took too long to load. }
-  end
 
 
   #none of the below belongs here!!

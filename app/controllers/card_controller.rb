@@ -6,7 +6,8 @@ require_dependency 'card/mailer'  #otherwise Net::SMTPError rescues can cause pr
 
 class CardController < ActionController::Base
 
-  include Wagn::Location
+  include Card::Format::Location
+  include Card::HtmlFormat::Location
   include Recaptcha::Verify
 
   before_filter :per_request_setup, :except => [:asset]
@@ -114,8 +115,8 @@ class CardController < ActionController::Base
     if action = @card.find_action_by_params( params )
       @card.selected_action_id = action.id
     end
-    
     Card::Env[:main_name] = params[:main] || (card && card.name) || ''
+    
     render_errors if card.errors.any?
     true
   end
@@ -234,7 +235,7 @@ class CardController < ActionController::Base
     opts = ( params[:slot] || {} ).deep_symbolize_keys
     view ||= params[:view]      
 
-    formatter = card.format( :format=>format )
+    formatter = card.format(format.to_sym)
     result = formatter.show view, opts
     status = formatter.error_status || status
   

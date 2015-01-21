@@ -1,5 +1,5 @@
 class Card::Query
-  class RefSpec < Spec
+  class RefClause < Clause
     REFERENCE_DEFINITIONS = {
       # syntax:
       # wql query key => [ direction, {reference_type} ]
@@ -34,8 +34,8 @@ class Card::Query
       if @val == '_none'
         cond << "present = 0"
       else
-        cardspec = CardSpec.build(:return=>'id', :_parent=>@parent).merge(@val)
-        sql << %[ join #{ cardspec.to_sql } as c on #{field2} = c.id]
+        cardclause = CardClause.build(:return=>'id', :_parent=>@parent).merge(@val)
+        sql << %[ join #{ cardclause.to_sql } as c on #{field2} = c.id]
       end
       sql << %[ where #{ cond * ' and ' }] if cond.any?
       

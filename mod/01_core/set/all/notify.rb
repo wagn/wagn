@@ -64,7 +64,8 @@ end
 event :notify_followers, :after=>:extend, :when=>proc{ |c|
     !c.supercard and c.current_act and Card::Auth.current_id != WagnBotID 
   }  do
-    
+
+    binding.pry
   begin
     @current_act.reload
     @follower_stash ||= FollowerStash.new
@@ -121,15 +122,15 @@ format do
 #{ render_list_of_changes(args) }}
   end
   
-  view :followed do |args|
+  view :followed, :closed=>true do |args|
     args[:followed] || 'followed card'
   end
 
-  view :follower do |args|
+  view :follower, :closed=>true do |args|
     args[:follower] || 'follower'
   end
   
-  view :unfollow_url do |args|
+  view :unfollow_url, :closed=>true do |args|
     if args[:followed] and args[:follower] and follower = Card.fetch( args[:follower] )
      following_card = follower.fetch( :trait=>:following, :new=>{} )
      wagn_url( "update/#{following_card.cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" )

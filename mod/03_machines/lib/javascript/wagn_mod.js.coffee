@@ -1,3 +1,4 @@
+
 window.wagn ||= {} #needed to run w/o *head.  eg. jasmine
 
 
@@ -14,7 +15,7 @@ $.extend wagn,
 
   editorInitFunctionMap: {
     '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
-    'textarea'               : -> $(this).autosize()
+    'textarea'               : -> wagn.initAce $(this)#$(this).autosize()
     '.tinymce-textarea'      : -> wagn.initTinyMCE @[0].id
     '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
     '.file-upload'           : -> @fileupload( add: wagn.chooseFile )#, forceIframeTransport: true )
@@ -32,7 +33,46 @@ $.extend wagn,
       catch
         {}
     wagn.tinyMCEConfig = setter()
+  
+  initAce: (textarea) ->
+    type_code = textarea.slot().attr "data-card-type-code"
+    hash = {}
+    hash["java_script"] = "javascript"
+    hash["coffee_script"] = "coffee"
+    hash["css"] = "css"
+    hash["scss"] = "scss"
+    hash["html"] = "html"
+    hash["search_type"] = "json"
+    mode = hash[type_code]
+    unless mode
+      textarea.autosize()
+      return
+    editDiv = $("<div>",
+      position: "absolute"
+      width: textarea.width()
+      height: textarea.height()
+      class: textarea.attr("class")
+    ).insertBefore(textarea)
+    textarea.css "visibility", "hidden"
+    textarea.css "height", "0px"
+    ace.config.set('basePath','/assets/ace')
+    editor = ace.edit(editDiv[0])
+    editor.renderer.setShowGutter true
+    editor.getSession().setValue textarea.val()
+    editor.setTheme "ace/theme/github"
+    editor.getSession().setMode "ace/mode/" + mode
+    editor.setOption "showPrintMargin", false
+    editor.getSession().setTabSize 2
+    editor.getSession().setUseSoftTabs true
+    editor.setOptions maxLines: 30 
     
+    textarea.closest("form").submit ->
+      textarea.val editor.getSession().getValue()
+      return
+
+    return
+
+
   initTinyMCE: (el_id) ->
     # verify_html: false -- note: this option needed for empty paragraphs to add space.
     conf = {
@@ -315,15 +355,15 @@ navbox_results = (request, response) ->
   formData = f.serialize() + '&view=complete'
   
   this.xhr = $.ajax {
-		url: wagn.prepUrl wagn.rootPath + '/:search.json'
-		data: formData
-		dataType: "json"
-		wagReq: ++reqIndex
-		success: ( data, status ) ->
-			response navboxize(request.term, data) if this.wagReq == reqIndex
-		error: () ->
-		  response [] if this.wagReq == reqIndex
-	  }
+    url: wagn.prepUrl wagn.rootPath + '/:search.json'
+    data: formData
+    dataType: "json"
+    wagReq: ++reqIndex
+    success: ( data, status ) ->
+      response navboxize(request.term, data) if this.wagReq == reqIndex
+    error: () ->
+      response [] if this.wagReq == reqIndex
+  }
 
 navboxize = (term, results)->
   items = []

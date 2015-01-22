@@ -69,17 +69,19 @@ shared_examples_for 'notifications' do
       @card = Card.create!(:name=>name, :content=>content)
     end
     subject { @card.format(format).render_list_of_changes }
-    
+ 
     context 'for a new card' do
       it { is_expected.to include "content: #{content}" }
       it { is_expected.to include 'cardtype: Basic' }
     end
+    
     context 'for a updated card' do
       before { @card.update_attributes!(:name=>'bnn card', :type=>:pointer, :content=>'changed content') }
       it { is_expected.to include 'new content: [[changed content]]' }
       it { is_expected.to include 'new cardtype: Pointer' }
       it { is_expected.to include 'new name: bnn card' }
     end
+    
     context 'for a deleted card' do
       before { @card.delete }
       it { is_expected.to be_empty }
@@ -93,9 +95,12 @@ shared_examples_for 'notifications' do
       end
       it { is_expected.to include "content: #{content}" }
     end
+
+
     context 'for a given action id' do
       subject do
         action_id = @card.last_action.id
+#        binding.pry
         @card.update_attributes!(:name=>'bnn card', :type=>:pointer, :content=>'changed content')
         @card.format(format).render_list_of_changes(:action_id=>action_id)
       end

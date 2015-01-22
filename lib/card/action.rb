@@ -61,6 +61,7 @@ class Card
       end
     
       def fetch id
+#        binding.pry
         cache.read(id.to_s) or begin
           cache.write id.to_s, Action.find(id.to_i)
         end
@@ -109,28 +110,36 @@ class Card
     end
     
     def last_value_for field
-       ch = self.card.last_change_on(field, :before=>self) and ch.value
+      ch = self.card.last_change_on(field, :before=>self) and ch.value
     end
     
-    def new_value_for(field)
-       ch = card_changes.find_by(field: field) and ch.value
-    end
-    def change_for(field) 
-      field_integer = ( field.is_a?(Integer) ? field : Card::TRACKED_FIELDS.index(field.to_s) )
-      card_changes.where 'card_changes.field = ?', field_integer
+    def field_index field
+      if field.is_a? Integer
+        field
+      else
+        Card::TRACKED_FIELDS.index(field.to_s)
+      end
     end
     
+    def new_value_for field
+      ch = card_changes.find_by(field: field_index(field)) and ch.value
+    end
+    
+    def change_for field
+      card_changes.where 'card_changes.field = ?', field_index(field)
+    end
     
     def new_type?
       new_value_for(:type_id)
     end
+    
     def new_content?
       new_value_for(:db_content)
     end
+    
     def new_name?
       new_value_for(:name)
     end
-    
     
     def action_type=(value)
       write_attribute(:action_type, TYPE.index(value))
@@ -156,11 +165,9 @@ class Card
       content_diff_builder.green?
     end
     
-    
     # def diff
     #   @diff ||= { :cardtype=>type_diff, :content=>content_diff, :name=>name_diff}
-    # end
-      
+    # end 
   
     def name_diff opts={}
       if new_name?

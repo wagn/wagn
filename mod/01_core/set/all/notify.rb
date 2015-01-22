@@ -65,7 +65,7 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c|
     !c.supercard and c.current_act and Card::Auth.current_id != WagnBotID 
   }  do
 
-    binding.pry
+#    binding.pry
   begin
     @current_act.reload
     @follower_stash ||= FollowerStash.new

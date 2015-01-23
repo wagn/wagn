@@ -22,7 +22,6 @@ format do
       item_args[:type] = type
     end
 
-    
     card.item_cards.map do |icard|
       wrap_item nest(icard, item_args.clone), item_args 
     end.join joint

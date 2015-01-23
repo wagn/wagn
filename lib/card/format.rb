@@ -296,14 +296,16 @@ class Card
     def ok_view view, args={}
       return view if args.delete :skip_permissions
       approved_view = case
-        when @depth >= @@max_depth                                     ; :too_deep  
-          # prevent recursion. @depth tracks subformats
-        when args.delete(:skip_permissions) || @@perms[view] == :none  ; view       
-          # view requires no permissions
-        when !card.known? && !tagged( view, :unknown_ok )              ; view_for_unknown view, args  
-          # handle unknown cards (where view not exempt)
-        else                                                           ; permitted_view view, args    
-          # run explicit permission checks
+        when @depth >= @@max_depth                      # prevent recursion. @depth tracks subformats
+          :too_deep
+        when @@perms[view] == :none                     # permission skipping specified in view definition
+          view
+        when args.delete(:skip_permissions)             # permission skipping specified in args
+          view
+        when !card.known? && !tagged(view, :unknown_ok) # handle unknown cards (where view not exempt)
+          view_for_unknown view, args  
+        else                                            # run explicit permission checks
+          permitted_view view, args    
         end
 
       args[:denied_view] = view if approved_view != view

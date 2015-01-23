@@ -47,7 +47,7 @@ class Wagn::Log
      @@the_log  
     end
     class Entry
-      attr_accessor :level, :valid, :context, :parent, :children_cnt
+      attr_accessor :level, :valid, :context, :parent, :children_cnt, :duration
       
       def initialize( parent, level, args )
         @start = Time.new
@@ -91,8 +91,8 @@ class Wagn::Log
       # must be called in the right order
       #
       # More robuts but more expensive approach: use @sibling_nr instead of counting @children_cnt down, 
-      # but @sibling_nr has to be updated for all siblings of an entry if the entry gets deleted due to limit or level
-      # restrictions in the config, so we have to save all children relations for that
+      # but @sibling_nr has to be updated for all siblings of an entry if the entry gets deleted due to 
+      # min_time or max_depth restrictions in the config, so we have to save all children relations for that
       def to_s!
         @to_s ||= begin 
           msg = indent
@@ -222,9 +222,9 @@ class Wagn::Log
       end
       
       def finish_entry entry
-        limit = Wagn.config.performance_logger[:limit]
-        level = Wagn.config.performance_logger[:level]
-        if (level && entry.level > level) || (limit && entry.duration < limit)
+        min_time = Wagn.config.performance_logger[:min_time]
+        max_depth = Wagn.config.performance_logger[:max_depth]
+        if (max_depth && entry.level > max_depth) || (min_time && entry.duration < min_time)
           entry.delete
         end
         @@active_entries.pop

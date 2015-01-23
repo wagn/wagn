@@ -36,8 +36,8 @@ Wagn.application.class.configure do
   #change log_level to :wagn to activate performance logger
   # config.performance_logger = {
   #     :methods => [:event, :search, :fetch, :view],  # choose methods to log
-  #     :limit => 100,                                 # show only method calls that are slower than 100ms
-  #     :level => 3,                                   # show nested method calls only up to level 3
+  #     :min_time => 100,                              # show only method calls that are slower than 100ms
+  #     :max_depth => 3,                               # show nested method calls only up to depth 3
   #     :details=> true                                # show method arguments and sql
   # }
   

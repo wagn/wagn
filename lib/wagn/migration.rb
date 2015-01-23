@@ -1,6 +1,8 @@
 # -*- encoding : utf-8 -*-
 
 class Wagn::Migration < ActiveRecord::Migration
+  @type = :deck_cards
+  
   def self.find_unused_name base_name
     test_name = base_name
     add = 1
@@ -11,16 +13,16 @@ class Wagn::Migration < ActiveRecord::Migration
     test_name
   end
 
-  def self.paths type
-    Wagn.paths["db/migrate#{schema_suffix type}"].to_a
+  def self.paths
+    Wagn.paths["db/migrate#{schema_suffix @type}"].to_a
   end
   
-  def self.schema_suffix type
-    Wagn::Version.schema_suffix type
+  def self.schema_suffix
+    Wagn::Version.schema_suffix @type
   end
   
-  def self.schema_mode type
-    new_suffix = Wagn::Migration.schema_suffix type
+  def self.schema_mode
+    new_suffix = Wagn::Migration.schema_suffix
     original_suffix = ActiveRecord::Base.table_name_suffix
     
     ActiveRecord::Base.table_name_suffix = new_suffix
@@ -29,6 +31,16 @@ class Wagn::Migration < ActiveRecord::Migration
   end
   
   
+  def self.data_path filename=nil
+    if filename
+      self.paths.each do |path|
+        path_to_file = File.join path, 'data', filename
+        return path_to_file if File.exists? path_to_file
+      end
+    else
+      File.join self.paths.first, 'data'
+    end
+  end
   
   def contentedly &block
     Wagn::Cache.reset_global
@@ -45,17 +57,7 @@ class Wagn::Migration < ActiveRecord::Migration
     end
   end
   
-  def data_path filename=nil
-    if filename
-      migration_paths.each do |path|
-        path_to_file = File.join path, 'data', filename
-        return path_to_file if File.exists? path_to_file
-      end
-    else
-      File.join migration_paths.first, 'data'
-    end
-  end
-  
+
   def import_json filename
     Wagn.config.action_mailer.perform_deliveries = false
     raw_json = File.read( data_path filename ) 
@@ -63,13 +65,16 @@ class Wagn::Migration < ActiveRecord::Migration
     Card.merge_list json["card"]["value"], :output_file=>File.join(data_path,"unmerged_#{ filename }")
   end
   
+  def data_path filename=nil
+    self.class.data_path filename
+  end
     
   def schema_mode
-    Wagn::Migration.schema_mode :deck_cards
+    self.class.schema_mode 
   end
   
   def migration_paths
-    Wagn::Migration.paths :deck_cards
+    self.class.paths
   end
   
   

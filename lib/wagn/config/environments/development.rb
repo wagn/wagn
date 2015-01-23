@@ -33,6 +33,14 @@ Wagn.application.class.configure do
   # See everything in the log (default is :info)
   config.log_level = :debug
   
+  #change log_level to :wagn to activate performance logger
+  # config.performance_logger = {
+  #     :methods => [:event, :search, :fetch, :view],  # choose methods to log
+  #     :limit => 100,                                 # show only method calls that are slower than 100ms
+  #     :level => 3,                                   # show nested method calls only up to level 3
+  #     :details=> true                                # show method arguments and sql
+  # }
+  
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 

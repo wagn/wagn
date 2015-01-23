@@ -136,7 +136,7 @@ class Card
 
         define_method event do
           run_callbacks event do
-            Wagn.with_logging self.name, :event, event, opts do
+            Wagn.with_logging :event, event, :context=>self.name, :details=>opts do
               send final_method
             end
           end

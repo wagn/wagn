@@ -59,7 +59,10 @@ class Wagn::Log
         @valid = true
         @parent = parent
         @children_cnt = 0
-        @parent.add_children if @parent
+        if @parent         
+          @parent.add_children
+          #@sibling_nr = @parent.children_cnt
+        end
       end
 
       def add_children
@@ -68,6 +71,10 @@ class Wagn::Log
       
       def delete_children
         @children_cnt -= 1
+      end
+      
+      def has_younger_siblings?
+        @parent && @parent.children_cnt > 0 #@sibling_nr
       end
       
       def save_duration
@@ -79,9 +86,13 @@ class Wagn::Log
         @parent.delete_children if @parent
       end
 
-      
-      # destroys the tree structure in order to print the tree
+
+      # deletes the children counts in order to print the tree;
       # must be called in the right order
+      #
+      # More robuts but more expensive approach: use @sibling_nr instead of counting @children_cnt down, 
+      # but @sibling_nr has to be updated for all siblings of an entry if the entry gets deleted due to limit or level
+      # restrictions in the config, so we have to save all children relations for that
       def to_s!
         @to_s ||= begin 
           msg = indent
@@ -105,33 +116,25 @@ class Wagn::Log
           if @level == 0
             "\n"
           else
-            res = if tree_info
-                (0..level-1).inject('') do |msg, index|
-                  if tree_info[index] && tree_info[index] > 0
-                    msg << ' ' * (TAB_SIZE-1) + '|'
-                  else
-                    msg << ' ' * TAB_SIZE
-                  end
+            res = '  '
+            res += (1..level-1).inject('') do |msg, index|
+                if younger_siblings[index]
+                  msg <<  '|' + ' ' * (TAB_SIZE-1) 
+                else
+                  msg << ' ' * TAB_SIZE
                 end
-              else
-                ' ' * TAB_SIZE *  level
               end
-            res += link ? '--' : '  '
+            
+            res += link ? '|--' : '  '
           end
         end
       end
-      
-      def tree_info
-        ancestors.map do |entry|
-          entry.children_cnt
-        end
-      end
 
-      def ancestors
+      def younger_siblings
         res = []
-        next_parent = @parent
+        next_parent = self
         while (next_parent)
-          res << next_parent
+          res << next_parent.has_younger_siblings?
           next_parent = next_parent.parent
         end
         res.reverse

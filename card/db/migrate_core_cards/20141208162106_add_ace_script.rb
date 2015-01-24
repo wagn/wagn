@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddAceScript < Wagn::CoreMigration
+class AddAceScript < Card::CoreMigration
   def up
     all_script = Card[:all].fetch :trait=>:script
     all_script.add_item "script: ace"

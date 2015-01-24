@@ -23,18 +23,5 @@ module Wagn
     def gem_root
       WAGN_GEM_ROOT
     end
-
-    def with_logging cardname, method, message, details, &block
-      if Wagn.config.performance_logger and 
-         Wagn.config.performance_logger[:methods] and 
-         Wagn.config.performance_logger[:methods].include? method        
-        Wagn::Log.start_block :cardname=>cardname, :method=>method, :message=>message, :details=>details
-        result = block.call
-        Wagn::Log.finish_block
-        result
-      else
-        block.call
-      end
-    end
   end
 end

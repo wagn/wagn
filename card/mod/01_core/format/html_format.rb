@@ -74,7 +74,7 @@ class Card
     module Location
       def location_history
         #warn "sess #{session.class}, #{session.object_id}"
-        session[:history] ||= [wagn_path('')]
+        session[:history] ||= [card_path('')]
         if session[:history]
           session[:history].shift if session[:history].size > 5
           session[:history]
@@ -84,7 +84,7 @@ class Card
       def save_location
         return if ajax? || !html? || !@card.known? || (@card.codename == 'signin')
         discard_locations_for @card
-        @previous_location = wagn_path @card.cardname.url_key
+        @previous_location = card_path @card.cardname.url_key
         location_history.push @previous_location
       end
 

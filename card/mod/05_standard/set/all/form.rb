@@ -51,7 +51,7 @@ format :html do
     url, action = case action
       when Symbol ;  [ path(:action=>action) , action          ]
       when Hash   ;  [ path(action)          , action[:action] ]
-      when String ;  [ wagn_path(action)     , nil             ] #deprecated
+      when String ;  [ card_path(action)     , nil             ] #deprecated
       else        ;  raise Card::Error, "unsupported card_form action class: #{action.class}"
       end
     

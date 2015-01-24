@@ -146,7 +146,7 @@ format :html do
     sign_in_or_up_links = if !Auth.signed_in?
       %{<div>
         #{ card_link :signin, :text=>'Sign in' } or
-        #{ link_to 'Sign up', wagn_path('new/:signup') } to create it.
+        #{ link_to 'Sign up', card_path('new/:signup') } to create it.
        </div>}
     end
     frame args.merge(:title=>'Not Found', :optional_menu=>:never) do
@@ -169,16 +169,16 @@ format :html do
     else
       frame args do #ENGLISH below
         message = case
-        when task != :read && Wagn.config.read_only
+        when task != :read && Cardio.config.read_only
           "We are currently in read-only mode.  Please try again later."
         when Auth.signed_in?
           "You need permission #{to_task}"
         else
           or_signup = if Card.new(:type_id=>Card::SignupID).ok? :create
-            "or #{ link_to 'sign up', wagn_url('new/:signup') }"
+            "or #{ link_to 'sign up', card_url('new/:signup') }"
           end
           save_interrupted_action(request.env['REQUEST_URI'])
-          "You have to #{ link_to 'sign in', wagn_url(':signin') } #{or_signup} #{to_task}"
+          "You have to #{ link_to 'sign in', card_url(':signin') } #{or_signup} #{to_task}"
         end
 
         %{<h1>Sorry!</h1>\n<div>#{ message }</div>}

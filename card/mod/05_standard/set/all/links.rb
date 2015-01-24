@@ -77,7 +77,7 @@ format do
   end
 
   def internal_url relative_path
-    wagn_path relative_path
+    card_path relative_path
   end
   
 end

@@ -184,7 +184,7 @@ class Card
         @current_view = view = ok_view canonicalize_view( view ), args       
         args = default_render_args view, args
         with_inclusion_mode view do
-          Wagn.with_logging card.name, :view, view, args do
+          Card.with_logging card.name, :view, view, args do
             send "_view_#{ view }", args
           end
         end
@@ -481,19 +481,19 @@ class Card
     module Location
       #
       # page_path    takes a Card::Name, adds the format and query string to url_key (site-absolute)
-      # wagn_path    makes a relative path site-absolute (if not already)
-      # wagn_url     makes it a full url (if not already)
+      # card_path    makes a relative path site-absolute (if not already)
+      # card_url     makes it a full url (if not already)
 
       # TESTME
       def page_path title, opts={}
         Rails.logger.warn "Pass only Card::Name to page_path #{title.class}, #{title}" unless Card::Name===title
         format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
         query  = opts.present? ? "?#{opts.to_param}"         : ''
-        wagn_path "#{title.to_name.url_key}#{format}#{query}"
+        card_path "#{title.to_name.url_key}#{format}#{query}"
       end
 
-      def wagn_path rel_path
-        Rails.logger.warn "Pass only strings to wagn_path: #{rel_path.class}, #{rel_path}" unless String===rel_path
+      def card_path rel_path
+        Rails.logger.warn "Pass only strings to card_path: #{rel_path.class}, #{rel_path}" unless String===rel_path
         if rel_path =~ /^\//
           rel_path
         else
@@ -501,11 +501,11 @@ class Card
         end
       end
 
-      def wagn_url rel
+      def card_url rel
         if rel =~ /^https?\:/
           rel
         else
-          "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ wagn_path rel }"
+          "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ card_path rel }"
         end
       end
     end

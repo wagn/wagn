@@ -75,8 +75,8 @@ describe Card::Format do
     end
 
     it "fomats full path and url" do
-      expect(text_format.wagn_path card.name).to eq "/#{card.name}"
-      expect(html_format.wagn_url card.name).to eq "http://test.host/#{card.name}"
+      expect(text_format.card_path card.name).to eq "/#{card.name}"
+      expect(html_format.card_url card.name).to eq "http://test.host/#{card.name}"
     end
   end
 end

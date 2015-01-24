@@ -1,6 +1,5 @@
 
 format :html do
-  include Decko::Location
 
   view :open do |args|
     args.merge! :optional_help=>:show

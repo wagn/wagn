@@ -29,7 +29,7 @@ format :css do
   
   view :url, :perms=>:none do |args|
     page_path card.cardname, :format=>:css, :item=>args[:item]
-#    wagn_url _render_linkname
+#    card_url _render_linkname
   end
 
   def major_comment comment, char='-'

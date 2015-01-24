@@ -21,7 +21,7 @@ module ClassMethods
   
   
   def fetch mark, opts={}
-    Wagn.with_logging nil, :fetch, mark, opts do
+    Card.with_logging nil, :fetch, mark, opts do
       if String === mark
         case mark
         when /^\~(\d+)$/ # get by id

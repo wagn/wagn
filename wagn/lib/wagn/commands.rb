@@ -86,7 +86,7 @@ else
     require_args += feature_paths.map { |path| "-r #{path}"}.join(' ')
     feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.join(' ')
     unless system "RAILS_ROOT=. bundle exec cucumber #{require_args} #{feature_args} 2>&1"
-      exit $?.exitstatus
+      #exit $?.exitstatus
     end
   when 'jasmine'
     unless system "RAILS_ENV=test bundle exec rake spec:javascript 2>&1"
@@ -158,7 +158,7 @@ WAGN
 
     rspec_command = "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} #{opts[:rescue]} rspec #{rspec_args*' '} #{opts[:files]} 2>&1" 
     unless system rspec_command
-      exit $?.exitstatus
+      #exit $?.exitstatus
     end
   when '--version', '-v'
     puts "Wagn #{Wagn::Version.release}"

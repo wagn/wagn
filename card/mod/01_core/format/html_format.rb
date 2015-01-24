@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-warn "load html format #{caller*"\n"}"
+Rails.logger.warn "load html format #{caller*"\n"}"
 require_dependency 'card/diff'
 
 class Card

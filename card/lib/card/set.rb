@@ -55,7 +55,8 @@ class Card
     is running `wagn generate set modname set_pattern set_anchor`. In the current example, this
     would translate to `wagn generate set mymod right address`. Note that both the set_pattern 
     and the set_anchor must correspond to the codename of a card in the database to function
-    correctly.
+    correctly but you can add arbitrary subdirectories to organize your code rules. The rule above 
+    for example could be saved in mywagn/mod/mymod/set/right/address/america/north/canada.rb.
 
     
     When a Card application loads, it uses these files to autogenerate a tmp_file that uses this set file to
@@ -135,7 +136,7 @@ class Card
 
         define_method event do
           run_callbacks event do
-            Card.with_logging self.name, :event, event, opts do
+            Card.with_logging :event, event, :context=>self.name, :details=>opts do
               send final_method
             end
           end

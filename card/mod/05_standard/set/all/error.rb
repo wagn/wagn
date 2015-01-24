@@ -1,6 +1,13 @@
+
+
 format do
-  view :closed_missing, :perms=>:none do |args| '' end
-  view :missing,        :perms=>:none do |args| '' end
+  view :closed_missing, :perms=>:none, :closed=>true do |args|
+    ''
+  end
+  
+  view :missing, :perms=>:none do |args|
+    ''
+  end
 
   view :not_found, :perms=>:none, :error_code=>404 do |args|
     %{ Could not find #{card.name.present? ? %{"#{card.name}"} : 'the card requested'}. }
@@ -19,11 +26,11 @@ format do
     %{ 404: Bad Address }
   end
 
-  view :too_deep, :perms=>:none do |args|
+  view :too_deep, :perms=>:none, :closed=>true do |args|
     %{ Man, you're too deep.  (Too many levels of inclusions at a time) }
   end
 
-  view :too_slow, :perms=>:none do |args|
+  view :too_slow, :perms=>:none, :closed=>true do |args|
     %{ Timed out! #{ showname } took too long to load. }
   end 
 end

@@ -16,15 +16,17 @@ class CardController < ActionController::Base
   include Card::HtmlFormat::Location
   include Recaptcha::Verify
 
+  before_filter :start_performance_logger  if Wagn.config.performance_logger
+  after_filter  :stop_performance_logger   if Wagn.config.performance_logger
+  after_filter :request_logger            if Wagn.config.request_logger
+  
   before_filter :per_request_setup, :except => [:asset]
   before_filter :load_id, :only => [ :read ]
   before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
   
-  if Wagn.config.request_logger
-    require 'csv'
-    after_filter :request_logger 
-  end
+  
+
   
   layout nil
 
@@ -132,27 +134,15 @@ class CardController < ActionController::Base
   end
 
   def request_logger
-    unless env["REQUEST_URI"] =~ %r{^/files?/}
-      log = []
-      log << (Card::Env.ajax? ? "YES" : "NO")
-      log << env["REMOTE_ADDR"]
-      log << Card::Auth.current_id
-      log << card.name
-      log << action_name
-      log << params['view'] || (s = params['success'] and  s['view'])
-      log << env["REQUEST_METHOD"]
-      log << status
-      log << env["REQUEST_URI"]
-      log << DateTime.now.to_s
-      log << env['HTTP_ACCEPT_LANGUAGE'].to_s.scan(/^[a-z]{2}/).first
-      log << env["HTTP_REFERER"]
-      
-      log_dir = (Card.paths['request_log'] || Card.paths['log']).first
-      log_filename = "#{Date.today}_#{Rails.env}.csv"
-      File.open(File.join(log_dir,log_filename), "a") do |f|
-        f.write CSV.generate_line(log)
-      end
-    end
+    Card::Log::Request.write_log_entry self    
+  end
+  
+  def start_performance_logger
+    Card::Log::Performance.start :method=>env["REQUEST_METHOD"], :message=>env["PATH_INFO"] 
+  end
+  
+  def stop_performance_logger
+    Card::Log::Performance.stop
   end
   
   protected

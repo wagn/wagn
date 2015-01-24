@@ -121,15 +121,15 @@ format do
 #{ render_list_of_changes(args) }}
   end
   
-  view :followed do |args|
+  view :followed, :closed=>true do |args|
     args[:followed] || 'followed card'
   end
 
-  view :follower do |args|
+  view :follower, :closed=>true do |args|
     args[:follower] || 'follower'
   end
   
-  view :unfollow_url do |args|
+  view :unfollow_url, :closed=>true do |args|
     if args[:followed] and args[:follower] and follower = Card.fetch( args[:follower] )
      following_card = follower.fetch( :trait=>:following, :new=>{} )
      card_url( "update/#{following_card.cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" )

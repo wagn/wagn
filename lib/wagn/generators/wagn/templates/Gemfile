@@ -103,6 +103,7 @@ group :development, :test do
   gem 'jasmine'
   gem 'jasmine-rails', :git=>"https://github.com/chuenlok/jasmine-rails.git"
   gem 'jasmine-jquery-rails'
+  gem 'phantomjs', '1.9.7' #locked because 1.9.8 is breaking
 end
 
 group :debug do

@@ -10,6 +10,7 @@ class Card < ActiveRecord::Base
   require_dependency 'card/format'
   require_dependency 'card/exceptions'
   require_dependency 'card/auth'
+  require_dependency 'card/log'
   require_dependency 'card/loader'
 
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id

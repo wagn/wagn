@@ -6,7 +6,7 @@ class Card
 
     class Request
       def self.path
-        path = (Wagn.paths['request_log'] && Wagn.paths['request_log'].first) || File.dirname(Wagn.paths['log'].first)
+        path = (Cardio.paths['request_log'] && Cardio.paths['request_log'].first) || File.dirname(Cardio.paths['log'].first)
         filename = "#{Date.today}_#{Rails.env}.csv"
         File.join path, filename
       end
@@ -29,7 +29,7 @@ class Card
           log << env['HTTP_ACCEPT_LANGUAGE'].to_s.scan(/^[a-z]{2}/).first
           log << env["HTTP_REFERER"]
 
-          File.open(Wagn::Log::Request.path, "a") do |f|
+          File.open(Card::Log::Request.path, "a") do |f|
             f.write CSV.generate_line(log)
           end
         end
@@ -208,7 +208,7 @@ class Card
         end
         
         def new_entry args
-          args.delete(:details) unless Wagn.config.performance_logger[:details]
+          args.delete(:details) unless Cardio.config.performance_logger[:details]
           level = @@current_level
                   
           last_entry = @@active_entries.last
@@ -216,7 +216,7 @@ class Card
               last_entry.level == level ? last_entry.parent : last_entry
             end
           
-          @@log << Wagn::Log::Performance::Entry.new(parent, level, args )
+          @@log << Card::Log::Performance::Entry.new(parent, level, args )
           @@current_level += 1 
           @@active_entries << @@log.last
           
@@ -224,8 +224,8 @@ class Card
         end
         
         def finish_entry entry
-          min_time = Wagn.config.performance_logger[:min_time]
-          max_depth = Wagn.config.performance_logger[:max_depth]
+          min_time = Cardio.config.performance_logger[:min_time]
+          max_depth = Cardio.config.performance_logger[:max_depth]
           if (max_depth && entry.level > max_depth) || (min_time && entry.duration < min_time)
             entry.delete
           end

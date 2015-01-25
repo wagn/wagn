@@ -71,7 +71,6 @@ class Card
 
       def load_formats
         #cheating on load issues now by putting all inherited-from formats in core mod.
-        Rails.logger.warn "loading formats #{caller*"\n"}"
         mod_dirs.each do |mod|
           load_dir "#{mod}/format/*.rb"
         end

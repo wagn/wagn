@@ -200,9 +200,11 @@ class Card
         # FIXME - this does not properly handle anchorless sets
         # There are special hacks for *all, but others (like *rstar) will not be found by
         # include_set_modules, which will look for Card::Set::Rstar, not Card::Set::Rstar::Blah
-        
+        # This issue appears to be addressed by making the entries, in modules arrays.
+        # If yes remove this comment.
+
         to_file = "#{Wagn.paths['tmp/set'].first}/#{set_pattern}/#{seq}-#{anchors.join '-'}.rb"
-        anchor_modules = anchors.map { |a| "module #{a.camelize};" }.join
+        anchor_modules = anchors.map { |a| "module #{a.camelize};" }.join # use explicit '', not $,
         file_content = <<EOF
 # -*- encoding : utf-8 -*-
 class Card; module Set; module #{set_pattern.camelize}; #{anchor_modules}

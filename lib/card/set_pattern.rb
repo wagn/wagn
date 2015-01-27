@@ -38,11 +38,11 @@ class Card
       def pattern_applies? card
         junction_only? ? card.cardname.junction? : true
       end
-    
+
       def anchor_parts_count 
         @anchor_parts_count ||= ( anchorless? ? 0 : 1 )
       end
-      
+
       def write_tmp_file pattern_code, from_file, seq
         to_file = "#{Wagn.paths['tmp/set_pattern'].first}/#{seq}-#{pattern_code}.rb"
         klass = "Card::#{pattern_code.camelize}Set"
@@ -77,6 +77,12 @@ EOF
         else
           Card.fetch_id @anchor_name
         end
+        if self.class.pattern_code == 'type' and
+             default_rule = Card.fetch(card.type_cardname.trait_name(:type).trait_name(:default),
+                                       :skip_modules=>true, :skip_virtual=>true) and
+             type_code = default_rule.type_code.to_s
+          @inherited_type_module_key = "Type::#{type_code.camelize}"
+        end
       end
       self
     end
@@ -91,12 +97,17 @@ EOF
       end
     end
 
+    def inherited_key modules_hash
+      module_key && modules_hash[ module_key ] ||
+        @inherited_type_module_key && modules_hash[ @inherited_type_module_key ]
+    end
+
     def module_list
-      module_key and Card::Set.modules[ :nonbase ][ module_key ]
+      inherited_key Card::Set.modules[ :nonbase ]
     end
 
     def format_module_list klass
-      module_key and hash = Card::Set.modules[ :nonbase_format ][ klass ] and hash[ module_key ]
+      hash = Card::Set.modules[ :nonbase_format ][ klass ] and inherited_key hash
     end
 
     def anchor_codenames

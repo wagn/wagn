@@ -51,22 +51,31 @@ describe Card::Set::Type::Pointer do
       Card::Auth.as_bot
       @card_name = "nonexistingcardmustnotexistthisistherule"
       @pointer = Card.create :name=>"tp", :type=>"pointer", :content=>"[[#{@card_name}]]"
+      # similar tests for an inherited type of Pointer
+      @my_list = Card.create :name=>'MyList', :type_id=>Card::CardtypeID
+      Card.create :name=>'MyList+*type+*default', :type_id=>Card::PointerID
+      @inherit_pointer = Card.create :name=>'ip', :type_id=>@my_list.id, :content=>"[[#{@card_name}]]"
     end
     it "should include nonexistingcardmustnotexistthisistherule in radio options" do
       option_html ="<input checked=\"checked\" class=\"pointer-radio-button\" id=\"pointer-radio-nonexistingcardmustnotexistthisistherule\" name=\"pointer_radio_button-tp\" type=\"radio\" value=\"nonexistingcardmustnotexistthisistherule\" />"
       @pointer.format.render_radio.should include(option_html)
+      option_html ="<input checked=\"checked\" class=\"pointer-radio-button\" id=\"pointer-radio-nonexistingcardmustnotexistthisistherule\" name=\"pointer_radio_button-ip\" type=\"radio\" value=\"nonexistingcardmustnotexistthisistherule\" />"
+      @inherit_pointer.format.render_radio.should include(option_html)
     end
     it "should include nonexistingcardmustnotexistthisistherule in checkbox options" do
       option_html = "<input checked=\"checked\" class=\"pointer-checkbox-button\" id=\"pointer-checkbox-nonexistingcardmustnotexistthisistherule\" name=\"pointer_checkbox\" type=\"checkbox\" value=\"nonexistingcardmustnotexistthisistherule\" />"
       @pointer.format.render_checkbox.should include(option_html)
+      @inherit_pointer.format.render_checkbox.should include(option_html)
     end
     it "should include nonexistingcardmustnotexistthisistherule in select options" do
       option_html = %{<option value="#{@card_name}" selected="selected">#{@card_name}</option>}
       @pointer.format.render_select.should include(option_html)
+      @inherit_pointer.format.render_select.should include(option_html)
     end
     it "should include nonexistingcardmustnotexistthisistherule in multiselect options" do
       option_html = %{<option value="#{@card_name}" selected="selected">#{@card_name}</option>}
       @pointer.format.render_multiselect.should include(option_html)
+      @inherit_pointer.format.render_multiselect.should include(option_html)
     end
   end
   describe "css" do

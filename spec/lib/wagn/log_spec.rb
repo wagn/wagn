@@ -1,3 +1,4 @@
+
 describe Wagn::Log::Request do
   before do
     controller = double()
@@ -31,14 +32,195 @@ describe Wagn::Log::Request do
   end  
 end
 
+# describe Wagn::Log::AllInstanceMethods do
+#   it 'tracks all instance methods when included' do
+#     class Card
+#       include Wagn::Log::AllInstanceMethods
+#     end
+#     Wagn.config.performance_logger = { :methods=>[:action]}
+#     expect(Rails.logger).to receive(:wagn).with(/test/).once
+#     expect(Rails.logger).to receive(:wagn).with(/action/)
+#     all = Card[:all]
+#     test_log do
+#       all.action
+#     end
+#   end
+# end
+#
+# describe Wagn::Log::AllSingletonMethods do
+#   it 'tracks all class methods when included' do
+#     class Card
+#       include Wagn::Log::AllSingletonMethods
+#     end
+#     Wagn.config.performance_logger = { :methods=>[:error_codes]}
+#     expect(Rails.logger).to receive(:wagn).with(/test/).once
+#     expect(Rails.logger).to receive(:wagn).with(/error_codes/)
+#     test_log do
+#       Card.error_codes
+#     end
+#   end
+# end
+#
+# describe Wagn::Log::AllMethods do
+#   it 'tracks all methods when included' do
+#     class Card
+#       include Wagn::Log::AllMethods
+#     end
+#     Wagn.config.performance_logger = { :methods=>[:error_codes, :action] }
+#     expect(Rails.logger).to receive(:wagn).with(/test/).once
+#     expect(Rails.logger).to receive(:wagn).with(/error_codes/)
+#     expect(Rails.logger).to receive(:wagn).with(/action/)
+#     all = Card[:all]
+#     test_log do
+#       Card.error_codes
+#       all.action
+#     end
+#   end
+# end
 
-describe Wagn::Log::Performance do
-  def test_log 
-    Wagn::Log::Performance.start :method=>'test'
-    yield
-    Wagn::Log::Performance.stop  
-  end
+
+describe Wagn::Log::Performance do  
+  
+
+  
+  
+  describe  Wagn::Log::Performance::BigBrother do
+    def log_config opts
+       Wagn::Log::Performance.load_config opts
+    end
     
+    it 'watches instance method' do
+      class Card
+        extend Wagn::Log::Performance::BigBrother
+        watch_instance_method :action
+      end
+      expect(Rails.logger).to receive(:wagn).with(/test/).once
+      expect(Rails.logger).to receive(:wagn).with(/action/)
+      all = Card[:all]
+      test_log do
+        all.action
+      end
+    end
+    
+    
+    it 'watches all methods' do
+      class Card
+         extend Wagn::Log::Performance::BigBrother
+         watch_all_methods
+      end
+      expect(Rails.logger).to receive(:wagn).with(/test/).once
+      expect(Rails.logger).to receive(:wagn).with(/action/)
+      expect(Rails.logger).to receive(:wagn).with(/error_codes/)
+      all = Card[:all]
+      test_log do
+        all.action
+        Card.error_codes
+      end
+    end
+    
+    it 'watches singleton method' do
+      class Card
+        extend Wagn::Log::Performance::BigBrother
+        watch_singleton_method :error_codes
+      end
+      expect(Rails.logger).to receive(:wagn).with(/test/).once
+      expect(Rails.logger).to receive(:wagn).with(/error_codes/)
+      test_log do
+        Card.error_codes
+      end
+    end
+    
+    it 'watches all class methods' do
+      class Card
+        extend Wagn::Log::Performance::BigBrother
+        watch_all_singleton_methods
+      end
+      expect(Rails.logger).to receive(:wagn).with(/test/).once
+      expect(Rails.logger).to receive(:wagn).with(/error_codes/)
+      test_log do
+        Card.error_codes
+      end
+    end
+    
+    
+    it 'crazy shit' do
+      log_config( {Card::Set::Type::Skin => {:item_names => {:message=>:content, :title=>"skin item names"}}} )
+      expect_logger_to_receive(/skin item names/) do
+        Card['classic skin'].item_names
+        Card['*all+*read'].item_names
+      end
+    end
+    
+    
+it 'crazy shit' do   # log arbitrary card method
+  log_config( [:content] )
+  expect_logger_to_receive(/content/) do
+    Card[:all].content
+  end
+end
+
+it 'more crazy shit' do # log arbitrary method
+  log_config( { Wagn => { :singleton=>[:gem_root] } } )
+  expect_logger_to_receive(/gem_root/) do
+    Wagn.gem_root
+  end
+end
+ 
+it 'holy shit' do  # log arbitary set method and customize log message
+  log_config( {Card::Set::Type::Skin => {:item_names => {:title=>"skin item names",:message=>:content}}} )
+  expect_logger_to_receive_once(/skin item names/) do
+    Card['classic skin'].item_names
+    Card['*all+*read'].item_names
+  end
+end
+
+it 'almighty shit' do  # use method arguments and procs to customize log messages
+  log_config( :instance => { :name= => { :title => proc { |method_context| "change name '#{method_context.name}' to"}, :message=>1 } } )
+  expect_logger_to_receive_once(/change name 'c1' to: Alfred/) do
+    Card['c1'].name = 'Alfred'
+  end
+end
+    
+    
+    it 'holy shit' do
+      class Card
+        def test a, b 
+          Rails.logger.wagn("orignal method is still alive") 
+        end
+        def self.test a, b; end
+      end
+      log_config( { Card => { :instance => { :test=> {
+                                                        :method=>:name, 
+                                                        :message=>1
+                                                       }}}} )
+
+      expect(Rails.logger).to receive(:wagn).once.with('still alive')
+      expect_logger_to_receive(/\*all\: magic/) do
+        Card[:all].test "ignore this argument", "magic"
+        Card.test "you won't", "get this one"
+      end
+    end
+    
+    def expect_logger_to_receive_once message
+      allow(Rails.logger).to receive(:wagn).with(/((?!#{message}).)*/ )
+      expect(Rails.logger).to receive(:wagn).once.with(message)
+      Wagn::Log::Performance.start :method=>'test'
+      yield
+      Wagn::Log::Performance.stop  
+    end
+    
+    
+    
+    def expect_logger_to_receive message
+      allow(Rails.logger).to receive(:wagn)
+      expect(Rails.logger).to receive(:wagn).once.with(message)
+
+      Wagn::Log::Performance.start :method=>'test'
+      yield
+      Wagn::Log::Performance.stop  
+    end
+  end
+  
   it 'logs searches if enabled' do
     Wagn.config.performance_logger = { :methods=>[:search]}
     expect(Rails.logger).to receive(:wagn).with(/test/).once

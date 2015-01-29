@@ -1,17 +1,4 @@
 
-# # Wikirate
-# Card::Set::All::Follow::FOLLOW_OPTIONS << 'content I voted for'
-#
-# def special_followers
-#   super
-#   Card.search(:right_plus=>[:id=>UpvotesID,:link_to=>name]).each do |voter|
-#     if voter.type_id == UserID and voter.following? Card[:content_i_voted_for].cardname
-#       yield voter, Card[:content_i_voted_for].name
-#     end
-#   end
-# end
-# #/ Wikirate
-
 class FollowerStash  
   def initialize card=nil
     @followed_affected_cards = Hash.new { |h,v| h[v]=[] } 
@@ -19,7 +6,7 @@ class FollowerStash
     add_affected_card(card) if card
   end
     
-  def add_affected_card card    
+  def add_affected_card card
     Auth.as_bot do
       if !@visited.include? card.key
         @visited.add card.key
@@ -93,8 +80,6 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c|
     Rails.logger.info "\nController exception: #{e.message}"
     Card::Error.current = e
     notable_exception_raised
-    Rails.logger.info "\nController exception: #{e.message}"
-    Rails.logger.debug "BT: #{e.backtrace*"\n"}"
   end
 end
   
@@ -136,7 +121,7 @@ format do
 #{ render_list_of_changes(args) }}
   end
   
-  view :followed, :perms=>:none do |args|
+  view :followed, :perms=>:none, :closed=>true do |args|
     if args[:followed_set] && (set_card = Card.fetch(args[:followed_set])) && 
          args[:follow_option] && (option_card = Card.fetch(args[:follow_option]))
        option_card.description set_card
@@ -145,11 +130,11 @@ format do
     end
   end
 
-  view :follower, :perms=>:none do |args|
+  view :follower, :perms=>:none, :closed=>true do |args|
     args[:follower] || 'follower'
   end
   
-  view :unfollow_url, :perms=>:none do |args|
+  view :unfollow_url, :perms=>:none, :closed=>true do |args|
     if args[:followed_set] and args[:follow_option] and args[:follower] and follower = Card.fetch( args[:follower] )
      following_card = follower.fetch( :trait=>:following, :new=>{} )  #FIXME
      item_name = "#{args[:followed_set].to_name.url_key}+#{args[:follow_option].to_name.url_key}"

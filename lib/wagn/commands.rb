@@ -1,5 +1,5 @@
 require 'optparse'
-require 'active_support/core_ext/object/inclusion' # adds method in? to Object class
+require 'active_support/core_ext/object/inclusion' # adds method in? to Object class 
 
 def load_rake_tasks
   require './config/environment'
@@ -11,6 +11,7 @@ RAILS_COMMANDS = %w( generate destroy plugin benchmarker profiler console server
 ALIAS = {
   "rs" => "rspec",
   "cc" => "cucumber",
+  "jm" => "jasmine",
   "g"  => "generate",
   "d"  => "destroy",
   "c"  => "console",
@@ -48,7 +49,7 @@ else
 
   case command
   when 'seed'
-    envs = ['production']
+    envs = []
     parser = OptionParser.new do |parser|
       parser.banner = "Usage: wagn seed [options]\n\nCreate and seed the production database specified in config/database.yml\n\n"
       parser.on('--production','-p', 'seed production database (default)') do
@@ -61,13 +62,19 @@ else
         envs = ['development']
       end
       parser.on('--all', '-a', 'seed production, test, and development database') do
-        envs = %w( production development test)          
+        envs = %w( production development test)
       end
     end
     parser.parse!(ARGV)
-    envs.each do |env|
-      puts "env RAILS_ENV=#{env} bundle exec rake wagn:create"
-      puts `env RAILS_ENV=#{env} bundle exec rake wagn:create`
+    task_cmd="bundle exec rake wagn:create"
+    if envs.empty?
+      puts task_cmd
+      puts `#{task_cmd}`
+    else
+      envs.each do |env|
+        puts "env RAILS_ENV=#{env} #{task_cmd}"
+        puts `env RAILS_ENV=#{env} #{task_cmd}`
+      end
     end
   when 'update'
     load_rake_tasks
@@ -77,14 +84,20 @@ else
     require_args = "-r #{Wagn.gem_root}/features "
     require_args += feature_paths.map { |path| "-r #{path}"}.join(' ')
     feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.join(' ')
-    system "RAILS_ROOT=. bundle exec cucumber #{require_args} #{feature_args}"
+    unless system "RAILS_ROOT=. bundle exec cucumber #{require_args} #{feature_args} 2>&1"
+      exit $?.exitstatus
+    end
+  when 'jasmine'
+    unless system "RAILS_ENV=test bundle exec rake spec:javascript 2>&1"
+      exit $?.exitstatus
+    end
   when 'rspec'
     opts = {}
     require 'rspec/core'
     parser = RSpec::Core::Parser.new.parser(opts)
     parser.banner = "Usage: wagn rspec [WAGN ARGS] -- [RSPEC ARGS]\n\nRSPEC ARGS"
-    parser.separator <<-WAGN 
-      
+    parser.separator <<-WAGN
+
 WAGN ARGS
 
   You don't have to give a full path for FILENAME, the basename is enough
@@ -128,8 +141,10 @@ WAGN
     wagn_args, rspec_args = (' '<<ARGV.join(' ')).split(' -- ')
     parser.parse!(wagn_args.split(' '))
 
-    rspec_command = "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]}" 
-    system rspec_command
+    rspec_command = "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} #{opts[:rescue]} rspec #{rspec_args} #{opts[:files]} 2>&1" 
+    unless system rspec_command
+      exit $?.exitstatus
+    end
   when '--version', '-v'
     puts "Wagn #{Wagn::Version.release}"
   when 'new'
@@ -150,12 +165,12 @@ WAGN
    new         Create a new Wagn deck. "wagn new my_deck" creates a
                new deck called MyDeck in "./my_deck"
    seed        Create and seed the database specified in config/database.yml
-   
+
    server      Start the Rails server (short-cut alias: "s")
    console     Start the Rails console (short-cut alias: "c")
    dbconsole   Start a console for the database specified in config/database.yml
                (short-cut alias: "db")
-               
+
   For core developers
    cucumber     Run cucumber features (short-cut alias: "cc")
    rspec        Run rspec tests (short-cut alias: "rs")
@@ -175,6 +190,5 @@ WAGN
     exit(1)
   end
 end
-
 
 

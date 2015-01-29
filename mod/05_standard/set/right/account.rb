@@ -1,6 +1,5 @@
 
 include All::Permissions::Accounts
-include Wagn::Location
 
 card_accessor :email
 card_accessor :password

@@ -25,7 +25,7 @@ end
 
 def get_type_id args={}
   return if args[:type_id] # type_id was set explicitly.  no need to set again.
-
+  
   type_id = case
     when args[:type_code]
       if code=args[:type_code]

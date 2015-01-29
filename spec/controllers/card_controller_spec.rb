@@ -2,7 +2,6 @@
 
 describe CardController do
 
-  include Wagn::Location
   include Capybara::DSL
   describe "- route generation" do
 

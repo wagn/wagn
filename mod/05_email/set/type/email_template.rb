@@ -1,3 +1,4 @@
+
 def clean_html?
   false
 end
@@ -5,7 +6,7 @@ end
 def deliver args={}
   begin
     mail = format.render_mail(args)
-    mail.deliver 
+    mail.deliver
   rescue Net::SMTPError => exception
     Rails.logger.info "sending email: #{args}\nprocessed args: #{email_config(args)}"
     errors.add :exception, exception.message 
@@ -66,7 +67,7 @@ end
 
 
 format do     
-  view :mail do |args|
+  view :mail, :perms=>:none do |args|
     args = card.email_config(args)
     text_message = args.delete(:text_message)
     html_message = args.delete(:html_message)

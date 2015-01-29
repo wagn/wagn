@@ -1,6 +1,7 @@
 @@options = {
   :junction_only=>true,
-  :assigns_type=>true
+  :assigns_type=>true,
+  :anchor_parts_count=>2
 }
 
 def label name

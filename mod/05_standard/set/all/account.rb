@@ -57,7 +57,7 @@ end
 
 
 event :generate_token do
-  Digest::SHA1.hexdigest "--#{Time.now.to_s}--#{rand 10}--" 
+  Digest::SHA1.hexdigest "--#{Time.now.to_f}--#{rand 10}--" 
 end
 
 event :set_stamper, :before=>:approve do

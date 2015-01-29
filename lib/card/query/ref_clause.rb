@@ -1,5 +1,5 @@
 class Card::Query
-  class RefSpec < Spec
+  class RefClause < Clause
     REFERENCE_DEFINITIONS = {
       # syntax:
       # wql query key => [ direction, {reference_type} ]
@@ -23,20 +23,19 @@ class Card::Query
     def to_sql *args
       dir, *type = REFERENCE_DEFINITIONS[ @key.to_sym ]
       field1, field2 = REFERENCE_FIELDS[ dir ]
-      cond = case type.size 
-        when 0 then [] 
-        when 1 then ["ref_type='#{type.first}'"] 
-        else
-          quoted_letters = type.map{ |letter| "'#{letter}'" }.join(',')
-          ["ref_type IN (#{quoted_letters})"]
-        end
+      cond = []
+      if type.present?
+        operator = (type.size==1 ? '=' : 'IN')
+        quoted_letters = type.map { |letter| "'#{letter}'" } * ', '
+        cond << "ref_type #{operator} (#{quoted_letters})"
+      end
 
-      sql =  %[select #{field1} as ref_id from card_references]
+      sql =  %[select distinct #{field1} as ref_id from card_references]
       if @val == '_none'
         cond << "present = 0"
       else
-        cardspec = CardSpec.build(:return=>'id', :_parent=>@parent).merge(@val)
-        sql << %[ join #{ cardspec.to_sql } as c on #{field2} = c.id]
+        cardclause = CardClause.build(:return=>'id', :_parent=>@parent).merge(@val)
+        sql << %[ join #{ cardclause.to_sql } as c on #{field2} = c.id]
       end
       sql << %[ where #{ cond * ' and ' }] if cond.any?
       

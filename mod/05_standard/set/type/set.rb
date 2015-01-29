@@ -33,13 +33,13 @@ format :html do
   view :template_link do |args|
     args.delete :style
     wrap args do
-      link = link_to_view args[:inc_syntax], :template_editor, :class=>'slotter' #, 'slot-include'=>include_syntax
+      link = view_link args[:inc_syntax], :template_editor, :class=>'slotter' #, 'slot-include'=>include_syntax
       "{{#{link}}}"
     end
   end
   
   view :template_closer do |args|
-    link_to_view '', :template_link, :class=>'slotter ui-icon ui-icon-closethick template-editor-close'
+    view_link '', :template_link, :class=>'slotter ui-icon ui-icon-closethick template-editor-close'
   end
   
   view :template_editor do |args|

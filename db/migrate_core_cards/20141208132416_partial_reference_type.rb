@@ -2,8 +2,6 @@
 
 class PartialReferenceType < Wagn::CoreMigration
   def up
-    Card.all.each do |card|
-      card.update_references
-    end
+    Card::Reference.repair_all
   end
 end

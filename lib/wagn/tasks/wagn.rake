@@ -194,11 +194,10 @@ namespace :wagn do
       Wagn::Cache.reset_global
       conn =  ActiveRecord::Base.connection
       # Correct time and user stamps
-      card_sql =  "update cards set created_at=now(), creator_id=#{ Card::WagnBotID }"
-      card_sql +=                 ",updated_at=now(), updater_id=#{ Card::WagnBotID }"
-      conn.update card_sql
-      act_sql =  "update card_acts set acted_at=now(), actor_id=#{ Card::WagnBotID }"
-      conn.update act_sql
+      who_and_when = [ Card::WagnBotID, Time.now.utc.to_s(:db) ]
+      card_sql = "update cards set creator_id=%1$s, created_at='%2$s', updater_id=%1$s, updated_at='%2$s'"
+      conn.update( card_sql                                          % who_and_when )
+      conn.update( "update card_acts set actor_id=%s, acted_at='%s'" % who_and_when )
 
       Card::Auth.as_bot do
         # delete ignored cards
@@ -217,25 +216,19 @@ namespace :wagn do
         end
       end
 
-      conn.delete( "delete from cards where trash is true" )
+      Card.empty_trash
 
-      Card::Action.delete_cardless
       Card::Action.delete_old
       Card::Change.delete_actionless
 
+      conn.execute( "truncate card_acts" )
+      conn.execute( "truncate sessions" )
 
-      act = Card::Act.create!(:actor_id=>Card::WagnBotID,
-       :card_id=>Card::WagnBotID)
+
+      act = Card::Act.create!(:actor_id=>Card::WagnBotID, :card_id=>Card::WagnBotID)
       Card::Action.find_each do |action|
         action.update_attributes!(:card_act_id=>act.id)
       end
-      Card::Act.where('id != ?',act.id).delete_all
-      conn.delete( "delete from card_references where" +
-        " (referee_id is not null and not exists (select * from cards where cards.id = card_references.referee_id)) or " +
-        " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"
-      )
-      
-      conn.delete( "delete from sessions" )
       
       Wagn::Cache.reset_global
       

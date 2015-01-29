@@ -104,8 +104,8 @@ describe Card::Reference do
     watermelon.name="grapefruit"
     watermelon.save!
     expect(lew.reload.content).to eq("likes [[watermelon]] and [[watermelon+seeds|seeds]]")
-    assert_equal ['L','P','P','L'], lew.references_to.map(&:ref_type), "links should be a LINK"
-    assert_equal [ 0, 0, 1, 0 ], lew.references_to.map(&:present), "only reference to +seeds should be present"
+    assert_equal lew.references_to.order(:id).map(&:ref_type), ['L','P','P','L'], "links should be a LINK"
+    assert_equal lew.references_to.order(:id).map(&:present), [ 0, 0, 1, 0 ],  "only reference to +seeds should be present"
   end
 
   it "update referencing content on rename junction card" do

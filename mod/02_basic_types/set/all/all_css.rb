@@ -28,7 +28,7 @@ format :css do
   end
   
   view :url, :perms=>:none do |args|
-    page_path card.name, :format=>:css, :item=>args[:item]
+    page_path card.cardname, :format=>:css, :item=>args[:item]
 #    wagn_url _render_linkname
   end
 

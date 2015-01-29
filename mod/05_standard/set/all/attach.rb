@@ -54,15 +54,16 @@ end
 # FIXME: test extension matches content type
 
 
-def attachment_symlink_to(previous_action_id) # create filesystem links to files from previous action
-  if styles = case type_code
-        when :file; ['']
-        when :image; STYLES
-      end
+def attachment_symlink_to(prior_action_id) # create filesystem links to files from prior action
+  styles = case type_code
+    when :file; ['']
+    when :image; STYLES
+  end
+  if styles and prior_action_id != last_action_id
     save_action_id = selected_action_id
     links = {}
     
-    self.selected_action_id = previous_action_id
+    self.selected_action_id = prior_action_id
     styles.each { |style|  links[style] = ::File.basename(attach.path(style))          }
 
     self.selected_action_id = last_action_id
@@ -108,7 +109,7 @@ end
 
 module Paperclip::Interpolations
   
-  extend Wagn::Location
+  extend Card::Format::Location
 
   def local at, style_name
     if mod = at.instance.attach_mod

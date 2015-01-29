@@ -1,28 +1,20 @@
 /*!
-	Autosize v1.17.7 - 2013-09-03
-	Automatically adjust textarea height based on user input.
-	(c) 2013 Jack Moore - http://www.jacklmoore.com/autosize
-	license: http://www.opensource.org/licenses/mit-license.php
+	Autosize 1.18.13
+	license: MIT
+	http://www.jacklmoore.com/autosize
 */
-
-(function (factory) {
-	if (typeof define === 'function' && define.amd) {
-		// AMD. Register as an anonymous module.
-		define(['jquery'], factory);
-	} else {
-		// Browser globals: jQuery or jQuery-like library, such as Zepto
-		factory(window.jQuery || window.$);
-	}
-}(function ($) {
+(function ($) {
 	var
 	defaults = {
 		className: 'autosizejs',
-		append: '',
+		id: 'autosizejs',
+		append: '\n',
 		callback: false,
-		resizeDelay: 10
+		resizeDelay: 10,
+		placeholder: true
 	},
 
-	// border:0 is unnecessary, but avoids a bug in FireFox on OSX
+	// border:0 is unnecessary, but avoids a bug in Firefox on OSX
 	copy = '<textarea tabindex="-1" style="position:absolute; top:-999px; left:0; right:auto; bottom:auto; border:0; padding: 0; -moz-box-sizing:content-box; -webkit-box-sizing:content-box; box-sizing:content-box; word-wrap:break-word; height:0 !important; min-height:0 !important; overflow:hidden; transition:none; -webkit-transition:none; -moz-transition:none;"/>',
 
 	// line-height is conditionally included because IE7/IE8/old Opera do not return the correct value.
@@ -34,7 +26,8 @@
 		'letterSpacing',
 		'textTransform',
 		'wordSpacing',
-		'textIndent'
+		'textIndent',
+		'whiteSpace'
 	],
 
 	// to keep track which textarea is being mirrored when adjust() is called.
@@ -51,6 +44,10 @@
 	mirror.style.lineHeight = '';
 
 	$.fn.autosize = function (options) {
+		if (!this.length) {
+			return this;
+		}
+
 		options = $.extend({}, defaults, options || {});
 
 		if (mirror.parentNode !== document.body) {
@@ -73,7 +70,8 @@
 				resize: ta.style.resize
 			},
 			timeout,
-			width = $ta.width();
+			width = $ta.width(),
+			taResize = $ta.css('resize');
 
 			if ($ta.data('autosize')) {
 				// exit if autosize has already been applied, or if the textarea is the mirror element.
@@ -91,28 +89,37 @@
 			$ta.css({
 				overflow: 'hidden',
 				overflowY: 'hidden',
-				wordWrap: 'break-word', // horizontal overflow is hidden, so break-word is necessary for handling words longer than the textarea width
-				resize: ($ta.css('resize') === 'none' || $ta.css('resize') === 'vertical') ? 'none' : 'horizontal'
+				wordWrap: 'break-word' // horizontal overflow is hidden, so break-word is necessary for handling words longer than the textarea width
 			});
 
-			// The mirror width must exactly match the textarea width, so using getBoundingClientRect because it doesn't round the sub-pixel value.
-			function setWidth() {
-				var style, width;
+			if (taResize === 'vertical') {
+				$ta.css('resize','none');
+			} else if (taResize === 'both') {
+				$ta.css('resize', 'horizontal');
+			}
 
-				if ('getComputedStyle' in window) {
-					style = window.getComputedStyle(ta);
+			// The mirror width must exactly match the textarea width, so using getBoundingClientRect because it doesn't round the sub-pixel value.
+			// window.getComputedStyle, getBoundingClientRect returning a width are unsupported, but also unneeded in IE8 and lower.
+			function setWidth() {
+				var width;
+				var style = window.getComputedStyle ? window.getComputedStyle(ta, null) : false;
+				
+				if (style) {
+
 					width = ta.getBoundingClientRect().width;
+
+					if (width === 0 || typeof width !== 'number') {
+						width = parseInt(style.width,10);
+					}
 
 					$.each(['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'], function(i,val){
 						width -= parseInt(style[val],10);
 					});
+				} else {
+					width = $ta.width();
+				}
 
-					mirror.style.width = width + 'px';
-				}
-				else {
-					// window.getComputedStyle, getBoundingClientRect returning a width are unsupported and unneeded in IE8 and lower.
-					mirror.style.width = Math.max($ta.width(), 0) + 'px';
-				}
+				mirror.style.width = Math.max(width,0) + 'px';
 			}
 
 			function initMirror() {
@@ -120,6 +127,7 @@
 
 				mirrored = ta;
 				mirror.className = options.className;
+				mirror.id = options.id;
 				maxHeight = parseInt($ta.css('maxHeight'), 10);
 
 				// mirror is a duplicate textarea located off-screen that
@@ -130,7 +138,8 @@
 				$.each(typographyStyles, function(i,val){
 					styles[val] = $ta.css(val);
 				});
-				$(mirror).css(styles);
+				
+				$(mirror).css(styles).attr('wrap', $ta.attr('wrap'));
 
 				setWidth();
 
@@ -156,7 +165,16 @@
 					setWidth();
 				}
 
-				mirror.value = ta.value + options.append;
+				if (!ta.value && options.placeholder) {
+					// If the textarea is empty, copy the placeholder text into 
+					// the mirror control and use that for sizing so that we 
+					// don't end up with placeholder getting trimmed.
+					mirror.value = ($ta.attr("placeholder") || '');
+				} else {
+					mirror.value = ta.value;
+				}
+
+				mirror.value += options.append || '';
 				mirror.style.overflowY = ta.style.overflowY;
 				original = parseInt(ta.style.height,10);
 
@@ -185,6 +203,7 @@
 					if (callback) {
 						options.callback.call(ta,ta);
 					}
+					$ta.trigger('autosize.resized');
 				}
 			}
 
@@ -252,4 +271,4 @@
 			adjust();
 		});
 	};
-}));
+}(jQuery || $)); // jQuery or jQuery-like library, such as Zepto

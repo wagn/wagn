@@ -96,8 +96,8 @@ format :html do
       <tr class="card-slot open-rule #{rule_view.to_s.sub '_', '-'}">
         <td class="rule-cell" colspan="3">
           <div class="rule-setting">
-            #{ link_to_view setting_name.sub(/^\*/,''), :closed_rule, :class=>'close-rule-link slotter' }
-            #{ link_to_page "all rules", setting_name, :class=>'setting-link', :target=>'wagn_setting' }
+            #{ view_link setting_name.sub(/^\*/,''), :closed_rule, :class=>'close-rule-link slotter' }
+            #{ card_link setting_name, :text=>"all rules", :class=>'setting-link', :target=>'wagn_setting' }
           </div>
           
           <div class="instruction rule-instruction">
@@ -121,7 +121,7 @@ format :html do
       args[:item] ||= :link
       %{
         <div class="rule-set">
-          <label>Applies to</label> #{ link_to_page set.label, set.name }:
+          <label>Applies to</label> #{ card_link set.cardname, :text=>set.label }:
         </div>
         #{ _render_core args }
       }
@@ -209,7 +209,7 @@ format :html do
 =begin
   view :edit_rule2 do |args|
     
-     :update do
+    card_form :update do
       [
         _optional_render( :type_fieldset,    args ),
         _optional_render( :content_fieldset, args ),

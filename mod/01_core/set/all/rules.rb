@@ -17,28 +17,6 @@ ReadRuleSQL = %{
   where read_rules.right_id = #{Card::ReadID} and read_rules.trash is false and sets.type_id = #{Card::SetID};
 }
 
-UserRuleSQL = %{
-  select 
-    user_rules.id as rule_id, 
-    settings.id   as setting_id, 
-    sets.id       as set_id, 
-    sets.left_id  as anchor_id, 
-    sets.right_id as set_tag_id,
-    users.id      as user_id
-  from cards user_rules 
-  join cards rules    on user_rules.left_id   = rules.id 
-  join cards sets     on rules.left_id        = sets.id 
-  join cards settings on rules.right_id       = settings.id
-  join cards users    on user_rules.right_id = users.id
-  where   sets.type_id     = #{Card::SetID }                             and sets.trash     is false 
-    and   settings.type_id = #{Card::SettingID}                          and settings.trash is false
-    and   (users.type_id   = #{Card::UserID} or users.codename = 'all')  and users.trash    is false
-    and                                                                      rules.trash    is false;
-}  
-
-
-
-
 
 def is_rule?
   !simple?                             and

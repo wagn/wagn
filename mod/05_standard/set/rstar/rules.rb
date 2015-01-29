@@ -91,8 +91,7 @@ format :html do
       # have the option to create rules based on arbitrary narrower sets, though narrower sets will always apply to whatever prototype we create
     end
 
-    %{
-      
+    %{     
       <tr class="card-slot open-rule #{rule_view.to_s.sub '_', '-'}">
         <td class="rule-cell" colspan="3">
           <div class="rule-setting">
@@ -133,10 +132,7 @@ format :html do
   view :edit_rule, :tags=>:unknown_ok do |args|
     return 'not a rule' if !card.is_rule?
 
-    setting_name    = args[:setting_name]
-    current_set_key = args[:current_set_key] || Card[:all].name  # (should have a constant for this?)
-    open_rule       = args[:open_rule]
-
+    open_rule = args[:open_rule]
     form_for card, :url=>path(:action=>:update, :no_id=>true), :remote=>true, :html=>
         {:class=>"card-form card-rule-form slotter" } do |form|
 
@@ -145,21 +141,24 @@ format :html do
         #{ hidden_field_tag 'success[view]', 'open_rule' }
         #{ hidden_field_tag 'success[item]', 'view_rule' }
         
-
-        <div class="card-editor">
-          #{ type_fieldset open_rule  if card.right.rule_type_editable }
-          
-          #{ fieldset 'content', content_field( form, args.merge(:skip_rev_id=>true) ), :editor=>'content' }
-          
-          #{ set_fieldset setting_name, current_set_key, args }          
-        </div>
-        
-        <div class="edit-button-area">
-          #{ button_fieldset open_rule}
-        </div>
+        #{ editor open_rule, args }
       }
     end
   end
+  
+  
+  # used keys for args:
+  # :setting_name, :open_rule, :current_set_key, :set_selected, :set_options
+  def editor open_rule, args      
+    wrap_with( :div, :class=>'card-editor' ) do
+      [
+        (type_fieldset( open_rule ) if card.right.rule_type_editable),
+        fieldset( 'content', content_field( form, args.merge(:skip_rev_id=>true) ), :editor=>'content' ),
+        set_fieldset( args )
+      ]
+    end + edit_buttons( open_rule,  args )
+  end
+
 
   def type_fieldset open_rule
     fieldset 'type', type_field(
@@ -169,41 +168,55 @@ format :html do
     ), :editor=>'type'
   end
   
-  def set_fieldset setting_name, current_set_key, args
-    fieldset 'set', (
-      option_items = args[:set_options].map do |set_name|
-        checked = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
-        is_current = set_name.to_name.key == current_set_key
-        %{
-          <li>
-            #{ form.radio_button :name, "#{set_name}+#{setting_name}", :checked=> checked }
-            <span class="set-label" #{'current-set-label' if is_current }>
-              #{ link_to_page Card.fetch(set_name).label, set_name, :target=>'wagn_set' }
-              #{'<em>(current)</em>' if is_current}
-            </span>
-          </li>
-        }
-      end
-      %{ <ul>#{ option_items * "\n" }</ul>}
-    ), :editor => 'set'
+  view :type_fieldset do |args|
+    field = if args[:variety] == :edit #FIXME dislike this api -ef
+      type_field :class=>'type-field edit-type-field'
+    else
+      type_field :class=>"type-field live-type-field", :href=>path(:view=>:new), 'data-remote'=>true
+    end
+    fieldset 'type', field, :editor => 'type', :attribs => { :class=>'type-fieldset'}
   end
   
-  def button_fieldset open_rule
+  
+  
+  def set_fieldset args
+    current_set_key = args[:current_set_key] || Card[:all].name  # (should have a constant for this?)
+    setting_name = args[:setting_name]
+    
+    option_list = wrap_each_with :li do
+                    args[:set_options].map do |set_name|
+                      checked = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
+                      is_current = set_name.to_name.key == current_set_key
+                  
+                      form.radio_button( :name, "#{set_name}+#{setting_name}", :checked=> checked ) + %{
+                          <span class="set-label" #{'current-set-label' if is_current }>
+                            #{ card_link set_name, :text=> Card.fetch(set_name).label, :target=>'wagn_set' }
+                            #{'<em>(current)</em>' if is_current}
+                          </span>
+                        }.html_safe
+                     end
+                   end
+    fieldset 'set', "<ul>#{ option_list }</ul>", :editor => 'set'
+  end
+  
+  def edit_buttons open_rule, args
     delete_button = if !card.new_card?
                       b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
                       b_args[:href] = path :action=>:delete, :success=>{ :id=>open_rule.cardname.url_key, :view=>:open_rule, :item=>:view_rule }
                       if fset = args[:fallback_set]
-                        b_args['data-confirm']="Deleting will revert to #{setting_name} rule for #{Card.fetch(fset).label }"
+                        b_args['data-confirm']="Deleting will revert to #{args[:setting_name]} rule for #{Card.fetch(fset).label }"
                       end
                       %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
                     end
-     }
-     %{
-       #{ delete_button }
-       #{ button_tag 'Submit', :class=>'rule-submit-button' }
-       #{ button_tag 'Cancel', :class=>'rule-cancel-button slotter', :type=>'button',
-            :href=>path( :view=>( card.new_card? ? :closed_rule : :open_rule ), :success=>true ) }
-     }
+    cancel_path = path :view=>( card.new_card? ? :closed_rule : :open_rule )
+    wrap_with( :div, :class=>'edit-button-area' ) do
+     [
+       delete_button,
+       button_tag( 'Submit', :class=>'rule-submit-button' ),
+       button_tag( 'Cancel', :class=>'rule-cancel-button slotter', :type=>'button',
+                             :href=>cancel_path, :success=>true ) 
+     ]
+    end
   end
   
 =begin

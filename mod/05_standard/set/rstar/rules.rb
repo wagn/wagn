@@ -147,57 +147,65 @@ format :html do
         
 
         <div class="card-editor">
-          #{
-            if card.right.rule_type_editable
-              fieldset 'type', type_field(
-                :href         => path(:card=>open_rule, :view=>:open_rule, :type_reload=>true),
-                :class        => 'type-field rule-type-field live-type-field',
-                'data-remote' => true
-              ), :editor=>'type'
-            end
-          }
+          #{ type_fieldset open_rule  if card.right.rule_type_editable }
           
           #{ fieldset 'content', content_field( form, args.merge(:skip_rev_id=>true) ), :editor=>'content' }
           
-          #{
-            fieldset 'set', (
-              option_items = args[:set_options].map do |set_name|
-                checked = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
-                is_current = set_name.to_name.key == current_set_key
-                %{
-                  <li>
-                    #{ form.radio_button :name, "#{set_name}+#{setting_name}", :checked=> checked }
-                    <span class="set-label" #{'current-set-label' if is_current }>
-                      #{ link_to_page Card.fetch(set_name).label, set_name, :target=>'wagn_set' }
-                      #{'<em>(current)</em>' if is_current}
-                    </span>
-                  </li>
-                }
-              end
-              %{ <ul>#{ option_items * "\n" }</ul>}
-            ), :editor => 'set'
-          }          
+          #{ set_fieldset setting_name, current_set_key, args }          
         </div>
         
         <div class="edit-button-area">
-          #{ 
-            if !card.new_card?
-              b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
-              b_args[:href] = path :action=>:delete, :success=>{ :id=>open_rule.cardname.url_key, :view=>:open_rule, :item=>:view_rule }
-              if fset = args[:fallback_set]
-                b_args['data-confirm']="Deleting will revert to #{setting_name} rule for #{Card.fetch(fset).label }"
-              end
-              %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
-            end
-           }
-           #{ button_tag 'Submit', :class=>'rule-submit-button' }
-           #{ button_tag 'Cancel', :class=>'rule-cancel-button slotter', :type=>'button',
-                :href=>path( :view=>( card.new_card? ? :closed_rule : :open_rule ), :success=>true ) }
+          #{ button_fieldset open_rule}
         </div>
       }
     end
   end
 
+  def type_fieldset open_rule
+    fieldset 'type', type_field(
+      :href         => path(:card=>open_rule, :view=>:open_rule, :type_reload=>true),
+      :class        => 'type-field rule-type-field live-type-field',
+      'data-remote' => true
+    ), :editor=>'type'
+  end
+  
+  def set_fieldset setting_name, current_set_key, args
+    fieldset 'set', (
+      option_items = args[:set_options].map do |set_name|
+        checked = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
+        is_current = set_name.to_name.key == current_set_key
+        %{
+          <li>
+            #{ form.radio_button :name, "#{set_name}+#{setting_name}", :checked=> checked }
+            <span class="set-label" #{'current-set-label' if is_current }>
+              #{ link_to_page Card.fetch(set_name).label, set_name, :target=>'wagn_set' }
+              #{'<em>(current)</em>' if is_current}
+            </span>
+          </li>
+        }
+      end
+      %{ <ul>#{ option_items * "\n" }</ul>}
+    ), :editor => 'set'
+  end
+  
+  def button_fieldset open_rule
+    delete_button = if !card.new_card?
+                      b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
+                      b_args[:href] = path :action=>:delete, :success=>{ :id=>open_rule.cardname.url_key, :view=>:open_rule, :item=>:view_rule }
+                      if fset = args[:fallback_set]
+                        b_args['data-confirm']="Deleting will revert to #{setting_name} rule for #{Card.fetch(fset).label }"
+                      end
+                      %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
+                    end
+     }
+     %{
+       #{ delete_button }
+       #{ button_tag 'Submit', :class=>'rule-submit-button' }
+       #{ button_tag 'Cancel', :class=>'rule-cancel-button slotter', :type=>'button',
+            :href=>path( :view=>( card.new_card? ? :closed_rule : :open_rule ), :success=>true ) }
+     }
+  end
+  
 =begin
   view :edit_rule2 do |args|
     

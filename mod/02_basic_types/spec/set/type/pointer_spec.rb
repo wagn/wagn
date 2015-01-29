@@ -48,13 +48,14 @@ describe Card::Set::Type::Pointer do
    
   describe "html" do
     before do
-      Card::Auth.as_bot
-      @card_name = "nonexistingcardmustnotexistthisistherule"
-      @pointer = Card.create :name=>"tp", :type=>"pointer", :content=>"[[#{@card_name}]]"
-      # similar tests for an inherited type of Pointer
-      @my_list = Card.create :name=>'MyList', :type_id=>Card::CardtypeID
-      Card.create :name=>'MyList+*type+*default', :type_id=>Card::PointerID
-      @inherit_pointer = Card.create :name=>'ip', :type_id=>@my_list.id, :content=>"[[#{@card_name}]]"
+      Card::Auth.as_bot do
+        @card_name = "nonexistingcardmustnotexistthisistherule"
+        @pointer = Card.create :name=>"tp", :type=>"pointer", :content=>"[[#{@card_name}]]"
+        # similar tests for an inherited type of Pointer
+        @my_list = Card.create! :name=>'MyList', :type_id=>Card::CardtypeID
+        Card.create :name=>'MyList+*type+*default', :type_id=>Card::PointerID
+        @inherit_pointer = Card.create :name=>'ip', :type_id=>@my_list.id, :content=>"[[#{@card_name}]]"
+      end
     end
     it "should include nonexistingcardmustnotexistthisistherule in radio options" do
       option_html ="<input checked=\"checked\" class=\"pointer-radio-button\" id=\"pointer-radio-nonexistingcardmustnotexistthisistherule\" name=\"pointer_radio_button-tp\" type=\"radio\" value=\"nonexistingcardmustnotexistthisistherule\" />"

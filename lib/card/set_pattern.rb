@@ -80,8 +80,11 @@ EOF
         if self.class.pattern_code == 'type' and
              default_rule = Card.fetch(card.type_cardname.trait_name(:type).trait_name(:default),
                                        :skip_modules=>true, :skip_virtual=>true) and
-             type_code = default_rule.type_code.to_s
-          @inherited_type_module_key = "Type::#{type_code.camelize}"
+             type_code = default_rule.type_code and
+             mod_key = "Type::#{type_code.to_s.camelize}" and
+             (Card::Set.modules[:nonbase_format].values + [Card::Set.modules[:nonbase]]).
+               any?{|hash| hash[mod_key]}
+          @inherited_type_module_key = mod_key
         end
       end
       self

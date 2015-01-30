@@ -141,7 +141,7 @@ EOF
   class TypeSet < SetPattern
     def initialize card
       super
-      if mod_key = lookup_inherited_key(card)
+      if !module_key && mod_key = lookup_inherited_key(card)
         @inherited_key = mod_key
       end
     end
@@ -149,8 +149,8 @@ EOF
     def lookup_inherited_key card
       default_rule = card.rule_card(:default) and
         type_code = default_rule.type_code and
-        default_rule.cardname.size > 2 and
-        default_rule.left.right.codename == self.class.pattern_code
+        #default_rule.cardname.size > 2 and
+        #default_rule.left.right.codename == self.class.pattern_code
         mod_key = "Type::#{type_code.to_s.camelize}" and
         ( Card::Set.modules[:nonbase_format].values +
           [Card::Set.modules[:nonbase]] ).any?{|hash| hash[mod_key]} and

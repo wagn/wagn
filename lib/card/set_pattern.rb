@@ -77,16 +77,8 @@ EOF
         else
           Card.fetch_id @anchor_name
         end
-        if self.class.pattern_code == 'type' and
-             default_rule = Card.fetch(card.type_cardname.trait_name(:type).trait_name(:default),
-                                       :skip_modules=>true, :skip_virtual=>true) and
-             type_code = default_rule.type_code and
-             mod_key = "Type::#{type_code.to_s.camelize}" and
-             (Card::Set.modules[:nonbase_format].values + [Card::Set.modules[:nonbase]]).
-               any?{|hash| hash[mod_key]}
-          @inherited_type_module_key = mod_key
-        end
       end
+        @inherited_key = nil
       self
     end
 
@@ -100,17 +92,17 @@ EOF
       end
     end
 
-    def inherited_key modules_hash
+    def inherited_module_list modules_hash
       module_key && modules_hash[ module_key ] ||
-        @inherited_type_module_key && modules_hash[ @inherited_type_module_key ]
+        @inherited_key && modules_hash[ @inherited_key ]
     end
 
     def module_list
-      inherited_key Card::Set.modules[ :nonbase ]
+      inherited_module_list Card::Set.modules[ :nonbase ]
     end
 
     def format_module_list klass
-      hash = Card::Set.modules[ :nonbase_format ][ klass ] and inherited_key hash
+      hash = Card::Set.modules[ :nonbase_format ][ klass ] and inherited_module_list hash
     end
 
     def anchor_codenames
@@ -145,5 +137,24 @@ EOF
       end
     end
   
+  end
+  class TypeSet < SetPattern
+    def initialize card
+      super
+      if mod_key = lookup_inherited_key(card)
+        @inherited_key = mod_key
+      end
+    end
+
+    def lookup_inherited_key card
+      default_rule = card.rule_card(:default) and
+        type_code = default_rule.type_code and
+        default_rule.cardname.size > 2 and
+        default_rule.left.right.codename == self.class.pattern_code
+        mod_key = "Type::#{type_code.to_s.camelize}" and
+        ( Card::Set.modules[:nonbase_format].values +
+          [Card::Set.modules[:nonbase]] ).any?{|hash| hash[mod_key]} and
+        mod_key
+    end
   end
 end

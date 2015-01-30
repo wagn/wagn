@@ -78,7 +78,7 @@ EOF
           Card.fetch_id @anchor_name
         end
       end
-        @inherited_key = nil
+      @inherited_key = nil
       self
     end
 
@@ -92,9 +92,11 @@ EOF
       end
     end
 
+    attr_reader :inherited_key
+
     def inherited_module_list modules_hash
-      module_key && modules_hash[ module_key ] ||
-        @inherited_key && modules_hash[ @inherited_key ]
+      module_key ? modules_hash[ module_key ] :
+        inherited_key && modules_hash[ inherited_key ]
     end
 
     def module_list

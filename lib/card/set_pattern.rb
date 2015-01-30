@@ -1,4 +1,5 @@
 class Card
+
   class SetPattern
     
     class << self
@@ -78,7 +79,6 @@ EOF
           Card.fetch_id @anchor_name
         end
       end
-      @inherited_key = nil
       self
     end
 
@@ -92,19 +92,16 @@ EOF
       end
     end
 
-    attr_reader :inherited_key
-
-    def inherited_module_list modules_hash
-      module_key ? modules_hash[ module_key ] :
-        inherited_key && modules_hash[ inherited_key ]
+    def lookup_module_list modules_hash
+      module_key && modules_hash[ module_key ]
     end
 
     def module_list
-      inherited_module_list Card::Set.modules[ :nonbase ]
+      lookup_module_list Card::Set.modules[ :nonbase ]
     end
 
     def format_module_list klass
-      hash = Card::Set.modules[ :nonbase_format ][ klass ] and inherited_module_list hash
+      hash = Card::Set.modules[ :nonbase_format ][ klass ] and lookup_module_list hash
     end
 
     def anchor_codenames
@@ -138,17 +135,19 @@ EOF
         [ @anchor_id, self.class.pattern_code ].map( &:to_s ) * '+'
       end
     end
-  
   end
+
   class TypeSet < SetPattern
     def initialize card
+      raise "blow " if caller.size>300
       super
-      if !module_key && mod_key = lookup_inherited_key(card)
-        @inherited_key = mod_key
-      end
+      @inherit_card = card unless module_key
     end
 
-    def lookup_inherited_key card
+    def lookup_inherited_key
+      return unless @inherit_card
+      card, @inherit_card = @inherit_card, nil
+
       default_rule = card.rule_card(:default) and
         type_code = default_rule.type_code and
         #default_rule.cardname.size > 2 and
@@ -157,6 +156,14 @@ EOF
         ( Card::Set.modules[:nonbase_format].values +
           [Card::Set.modules[:nonbase]] ).any?{|hash| hash[mod_key]} and
         mod_key
+    end
+
+    def inherited_key
+      (defined? @inherited_key) ? @inherited_key : @inherited_key = lookup_inherited_key
+    end
+
+    def lookup_module_list modules_hash
+      module_key ? modules_hash[ module_key ] : inherited_key && modules_hash[ inherited_key ]
     end
   end
 end

@@ -139,7 +139,6 @@ EOF
 
   class TypeSet < SetPattern
     def initialize card
-      raise "blow " if caller.size>300
       super
       @inherit_card = card unless module_key
     end

@@ -100,9 +100,9 @@ end
 
 # the set card to be followed if you want to follow changes of card
 def follow_set_card
-  if special_follow_option? name
-    self
-  else
+  # if special_follow_option? name
+  #   self
+  # else
     case type_code
     when :cardtype
       fetch(:trait=>:type)
@@ -111,7 +111,7 @@ def follow_set_card
     else
       fetch(:trait=>:self)
     end
-  end
+#  end
 end
 
 def follow_set

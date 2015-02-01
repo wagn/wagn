@@ -14,6 +14,10 @@ class Card
       @@options[type]
     end
     
+    def self.cards
+       codenames.map { |codename| Card[codename] }
+    end
+    
     def self.restrictive_options
       self.codenames :restrictive
     end

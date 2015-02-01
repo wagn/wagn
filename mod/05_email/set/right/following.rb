@@ -125,7 +125,10 @@ format :html do
    include Card::Set::Type::Pointer::HtmlFormat
 
    view :open do |args|
-     if card.left and ( card.left.id == Auth.current_id || card.left.type_id != Card::UserID)
+     if card.left and Auth.signed_in?
+#       ( card.left.id == Auth.current_id || card.left.type_id != Card::UserID)
+      
+       #nest card, :view=>:closed_rule
        render_edit(args.merge(:select_list=>true, :optional_button_fieldset=>:hide))
      else
        super(args)
@@ -134,11 +137,38 @@ format :html do
    
    view :editor do |args|
      form.hidden_field( :content, :class=>'card-content', 'no-autosave'=>true) +
-        (args.delete(:select_list) ? raw(_render_select_list(args)) : super(args) )
+        (args.delete(:select_list) ? raw(render_rule_editor(args)) : super(args) )
+        # raw(_render_select_list(args)) 
    end
+   
+   view :rule_editor do |args|
+     follow_rule_card = Card.fetch("#{card.left.follow_set_card.name}+#{Auth.current.name}+#{Card[:follow].name}", :new=>{:type=>'pointer'})
+     wrap_with :div, :class=>'edit-rule' do
+       binding.pry
+       @mode = :normal
+       nest follow_rule_card, :view=>:open_rule, :user=>Auth.current 
+       #subformat(follow_rule_card).render_open_rule 
+     end
+   end
+   
+   
    
    view :closed_content do |args|
      ''
+   end
+   
+   view :edit_following do |args|
+     form_for card, :url=>path(:action=>:update, :no_id=>true), :remote=>true, :html=>
+         {:class=>"card-form card-rule-form slotter" } do |form|
+
+       %{
+         #{ hidden_field_tag 'success[id]', open_rule.name }
+         #{ hidden_field_tag 'success[view]', 'open_rule' }
+         #{ hidden_field_tag 'success[item]', 'view_rule' }
+        
+         #{ editor args }
+       }
+     end
    end
    
    view :select_list do |args|
@@ -158,6 +188,7 @@ format :html do
      end
      list = Card::FollowOption.codenames.map do |codename|
        if hash[codename].present?
+         binding.pry unless Card[codename].try :title
          %{ <h1>#{Card[codename].title}</h1>
             <ul>
             #{ hash[codename].map { |entry| "<li>#{entry}</li>" }.join "\n" }

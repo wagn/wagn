@@ -27,11 +27,15 @@ def is_rule?
 end
 
 def is_user_rule?
-  l = left(  :skip_modules=>true )  and
-  l.is_rule?                        and
-  r = right( :skip_modules=>true )  and
-  r.type_id == Card::UserID          
+  binding.pry
+  (set = self[0..-3, :skip_modules=>true])  &&
+   set.type_id == Card::SetID            && 
+  (user = self[-2, :skip_modules=>true] )      &&
+   user.type_id == Card::UserID              &&
+  (r = right( :skip_modules=>true ))       &&
+   r.type_id == Card::SettingID
 end
+
 
 def rule setting_code, options={}
   options[:skip_modules] = true
@@ -79,6 +83,9 @@ end
 
 
 module ClassMethods
+  
+  # User-specific rule use the pattern
+  # user+set+setting
   def user_rule_sql user_id=nil
     user_restriction = if user_id
         "users.id = #{user_id}"
@@ -95,14 +102,14 @@ module ClassMethods
         sets.right_id as set_tag_id,
         users.id      as user_id
       from cards user_rules 
-      join cards rules    on user_rules.left_id   = rules.id 
-      join cards sets     on rules.left_id        = sets.id 
-      join cards settings on rules.right_id       = settings.id
-      join cards users    on user_rules.right_id  = users.id
+      join cards user_sets on user_rules.left_id  = user_sets.id 
+      join cards settings  on user_rules.right_id = settings.id
+      join cards users     on user_sets.right_id  = users.id 
+      join cards sets      on user_sets.left_id = sets.id 
       where   sets.type_id      = #{Card::SetID }               and sets.trash     is false
         and   settings.type_id  = #{Card::SettingID}            and settings.trash is false
         and   ( #{user_restriction} or users.codename = 'all' ) and users.trash    is false
-        and                                                         rules.trash    is false;
+        and                                                         user_sets.trash    is false;
     } 
   end
   

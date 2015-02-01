@@ -3,6 +3,10 @@
 class AddMoreFollowingCards < Wagn::CoreMigration
   def up
     Card.create! :name => "*follow", :codename=>"follow", :type_code=>:setting
+    Card.create! :name => '*follow+*right+*default', :type_code=>:pointer
+    Card.create! :name => '*follow+*right+*input', :type_code=>:pointer, :content=>"[[radio]]"
+    Card.create! :name => '*follow+*right+*help', :content=>'get emails notifications about updates', :type_code=>:phrase
+      
     Card.create! :name => "*followers", :codename=>"followers"
     Card.create! :name => "*follow fields", :codename=>"follow_fields", :type_code=>:setting
     Card.create! :name => "*follow fields+*right+*help", :content=>""
@@ -17,6 +21,6 @@ class AddMoreFollowingCards < Wagn::CoreMigration
     Card.create! :name => "content I edited", :codename=>"edited_by_me"
     
     # default follow rule
-    Card.create! :name => "*all+*follow+*all", :type_code=>:pointer, :content=>'[[never]]'
+    Card.create! :name => "*all+*all+*follow", :type_code=>:pointer, :content=>'[[never]]'
   end
 end

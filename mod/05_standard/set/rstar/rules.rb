@@ -33,9 +33,10 @@ format :html do
 
 
   view :open_rule, :tags=>:unknown_ok do |args|
+    binding.pry
     return 'not a rule' if !card.is_rule?
     
-    current_rule, prototype = find_current_rule_card
+    current_rule, prototype = find_current_rule_card args[:user]
     setting_name = card.cardname.tag
     current_rule ||= Card.new :name=> "*all+#{setting_name}" #FIXME use codename
     set_selected = false
@@ -82,6 +83,8 @@ format :html do
       end
       last = set_options.index{|s| s.to_name.key == card.cardname.trunk_name.key} || -1
       # note, the -1 can happen with virtual cards because the self set doesn't show up in the set_names.  FIXME!!
+      
+      
       opts[:set_options] = set_options[first..last]
 
 
@@ -133,6 +136,7 @@ format :html do
     return 'not a rule' if !card.is_rule?
 
     open_rule = args[:open_rule]
+    binding.pry
     form_for card, :url=>path(:action=>:update, :no_id=>true), :remote=>true, :html=>
         {:class=>"card-form card-rule-form slotter" } do |form|
 
@@ -235,13 +239,18 @@ format :html do
 
   private
 
-  def find_current_rule_card
+  def find_current_rule_card user=nil
     # self.card is a POTENTIAL rule; it quacks like a rule but may or may not exist.
     # This generates a prototypical member of the POTENTIAL rule's set
     # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
-    set_prototype = card.trunk.prototype
+    binding.pry
+    set_prototype = if user
+                      card[0..-3].prototype
+                    else
+                      card.trunk.prototype
+                    end
     rule_card = if card.new_card?
-      setting = card.right and set_prototype.rule_card setting.codename   
+      setting = card.right and set_prototype.rule_card setting.codename, :user=>user   
     else
       card
     end 

@@ -27,7 +27,6 @@ def is_rule?
 end
 
 def is_user_rule?
-  binding.pry
   (set = self[0..-3, :skip_modules=>true])  &&
    set.type_id == Card::SetID            && 
   (user = self[-2, :skip_modules=>true] )      &&
@@ -106,10 +105,11 @@ module ClassMethods
       join cards settings  on user_rules.right_id = settings.id
       join cards users     on user_sets.right_id  = users.id 
       join cards sets      on user_sets.left_id = sets.id 
-      where   sets.type_id      = #{Card::SetID }               and sets.trash     is false
-        and   settings.type_id  = #{Card::SettingID}            and settings.trash is false
-        and   ( #{user_restriction} or users.codename = 'all' ) and users.trash    is false
-        and                                                         user_sets.trash    is false;
+      where   sets.type_id      = #{Card::SetID }               and sets.trash       is false
+        and   settings.type_id  = #{Card::SettingID}            and settings.trash   is false
+        and   ( #{user_restriction} or users.codename = 'all' ) and users.trash      is false
+        and                                                         user_sets.trash  is false
+        and                                                         user_rules.trash is false;
     } 
   end
   
@@ -186,7 +186,7 @@ module ClassMethods
   end
   
   def user_rule_cards user_name, setting_code
-    Card.search :right=>user_name, :left=>{:left=>{:type_id=>SetID}, :right=>{:codename=>setting_code}}
+    Card.search :right=>{:codename=>setting_code}, :left=>{:left=>{:type_id=>SetID}, :right=>user_name}
   end
   
   def rule_cache

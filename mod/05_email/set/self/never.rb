@@ -7,7 +7,7 @@ def title
   'Ignoring'
 end
 
-def form_label
+def label
   'ignore'
 end
 

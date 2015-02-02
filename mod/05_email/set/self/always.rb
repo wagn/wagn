@@ -10,7 +10,7 @@ def title
   'Following'
 end
 
-def form_label
+def label
   'follow'
 end
 

@@ -6,8 +6,8 @@ def title
   'Following content you edited'
 end
 
-def form_label
-  'that I edited'
+def label
+  'follow if edited by me'
 end
   
 def description set_card

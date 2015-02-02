@@ -10,7 +10,6 @@ def raw_content
          #all_follow_rules.map! {|card| "#{card.left.name}+#{user.name}+#{card.item_names.first}" }
          
          follow_rules = Card.user_rule_cards user.name, 'follow'
-         #binding.pry
          follow_rules.map! {|card| "#{card.name}+#{card.item_names.first}" }
          #all_follow_rules + 
          follow_rules
@@ -57,19 +56,19 @@ def update_follow_rule_for_following_item item_name
 end
 
 event :update_follow_rules, :after=>:extend, :on=>:save do
-  if Env.params[:card] && (new_content=Env.params[:card][:content])
-    #Card.follow_caches_expired
-    #   Card.refresh_rule_cache_for_user left.id
-    # Card.clear_follower_ids_cache
-
-    Auth.as_bot do
-      new_content.to_s.split(/\n+/).each do |line|
-        item_name = line.gsub( /\[\[|\]\]/, '').strip.to_name
-        update_follow_rule_for_following_item item_name
-      end
-    end
-    
-  end
+  # if Env.params[:card] && (new_content=Env.params[:card][:content])
+  #   #Card.follow_caches_expired
+  #   #   Card.refresh_rule_cache_for_user left.id
+  #   # Card.clear_follower_ids_cache
+  #
+  #   Auth.as_bot do
+  #     new_content.to_s.split(/\n+/).each do |line|
+  #       item_name = line.gsub( /\[\[|\]\]/, '').strip.to_name
+  #       update_follow_rule_for_following_item item_name
+  #     end
+  #   end
+  #
+  # end
 end
 
 # event :normalize_follow_options, :before=>:approve, :on=>:save, :changed=>:db_content do
@@ -126,10 +125,17 @@ format :html do
 
    view :open do |args|
      if card.left and Auth.signed_in?
+       follow_rule_card = card.left.rule_card(:follow, :user=>Auth.current) || Card.fetch("#{card.left.follow_set_card.name}+#{Auth.current.name}+#{Card[:follow].name}", :new=>{:type=>'pointer'})
+#       @mode = :normal
+ #      binding.pry
+       frame do
+   #      nest follow_rule_card, :view=>:open_rule, :user=>Auth.current 
+         subformat(follow_rule_card).render_edit_rule :success=>{:view=>'edit_rule'}
+       end
 #       ( card.left.id == Auth.current_id || card.left.type_id != Card::UserID)
       
        #nest card, :view=>:closed_rule
-       render_edit(args.merge(:select_list=>true, :optional_button_fieldset=>:hide))
+       #render_edit_following(args.merge(:select_list=>true, :optional_button_fieldset=>:hide))
      else
        super(args)
      end
@@ -144,7 +150,6 @@ format :html do
    view :rule_editor do |args|
      follow_rule_card = Card.fetch("#{card.left.follow_set_card.name}+#{Auth.current.name}+#{Card[:follow].name}", :new=>{:type=>'pointer'})
      wrap_with :div, :class=>'edit-rule' do
-       binding.pry
        @mode = :normal
        nest follow_rule_card, :view=>:open_rule, :user=>Auth.current 
        #subformat(follow_rule_card).render_open_rule 
@@ -152,25 +157,12 @@ format :html do
    end
    
    
-   
+  
    view :closed_content do |args|
      ''
    end
    
-   view :edit_following do |args|
-     form_for card, :url=>path(:action=>:update, :no_id=>true), :remote=>true, :html=>
-         {:class=>"card-form card-rule-form slotter" } do |form|
-
-       %{
-         #{ hidden_field_tag 'success[id]', open_rule.name }
-         #{ hidden_field_tag 'success[view]', 'open_rule' }
-         #{ hidden_field_tag 'success[item]', 'view_rule' }
-        
-         #{ editor args }
-       }
-     end
-   end
-   
+      
    view :select_list do |args|
      list = card.item_names.map do |item_name|
         select_follow_option item_name
@@ -188,7 +180,6 @@ format :html do
      end
      list = Card::FollowOption.codenames.map do |codename|
        if hash[codename].present?
-         binding.pry unless Card[codename].try :title
          %{ <h1>#{Card[codename].title}</h1>
             <ul>
             #{ hash[codename].map { |entry| "<li>#{entry}</li>" }.join "\n" }
@@ -203,7 +194,7 @@ format :html do
    end
   
    def follow_select_tag_option set_card, user, option
-     [Card[option].form_label, set_card.to_following_item_name(:user=>user, :option=>option)]
+     [Card[option].label, set_card.to_following_item_name(:user=>user, :option=>option)]
    end
    
    def follow_select_tag selected_option, set_card, user, option_type, html_options={}
@@ -236,7 +227,6 @@ format :html do
        end
          
        option_select = follow_select_tag selected_option, set_card, user_name, :main  
-      # binding.pry if set_card.name = "Basic+*type"  
        suboption_select = if option_card.restrictive_option? || 
                             (option_card.codename == 'always' && set_card.right && set_card.right.codename != 'self')
            follow_select_tag selected_suboption, set_card, user_name, :restrictive#, :multiple=>true

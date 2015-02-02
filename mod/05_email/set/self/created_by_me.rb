@@ -6,8 +6,8 @@ def title
   'Following content you created'
 end
 
-def form_label
-  'that I created'
+def label
+  'follow if created by me'
 end
 
 def description set_card

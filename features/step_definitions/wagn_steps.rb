@@ -98,7 +98,7 @@ When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |usern
     if not normal_textarea_card_type.include? cardtype or not page.evaluate_script "typeof ace != 'undefined'"
       fill_in("card[content]", :with=>content)
     else
-      page.execute_script %{ace.edit($('.ace_editor.ace-tm').get(0)).getSession().setValue('#{content}')}
+      page.execute_script %{ace.edit($('.ace_editor').get(0)).getSession().setValue('#{content}')}
     end
   end
 end

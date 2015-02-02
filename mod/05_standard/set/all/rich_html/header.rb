@@ -1,11 +1,9 @@
 format :html do
   
-  view :toggle do |args|
+  view :toggle, :perms=>:none, :closed=>true do |args|
     verb, adjective, direction = ( args[:toggle_mode] == :close ? %w{ open open e } : %w{ close closed s } )
     
-    link_to '', path( :view=>adjective ), 
-      :remote => true,
-      :title => "#{verb} #{card.name}",
+    view_link '', adjective, :title => "#{verb} #{card.name}",
       :class => "#{verb}-icon ui-icon ui-icon-circle-triangle-#{direction} toggler slotter nodblclick"
   end
     
@@ -20,7 +18,7 @@ format :html do
     }
   end
   
-  view :menu, :tags=>:unknown_ok do |args|
+  view :menu, :tags=>:unknown_ok, :perms=>:none, :closed=>true do |args|
     return _render_template_closer if args[:menu_hack] == :template_closer
     disc_tagname = Card.fetch(:discussion, :skip_modules=>true).cardname
     disc_card = unless card.new_card? or card.junction? && card.cardname.tag_name.key == disc_tagname.key
@@ -43,7 +41,7 @@ format :html do
         :watch     => Auth.signed_in? && render_watch,
         :creator   => card.creator.name,
         :updater   => card.updater.name,
-        :delete    => card.ok?(:delete) && link_to( 'delete', path(:action=>:delete),
+        :delete    => card.ok?(:delete) && link_to( 'delete', :action=>:delete,
           :class => 'slotter standard-delete', :remote => true, :'data-confirm' => "Are you sure you want to delete #{card.name}?"
         )
       })
@@ -53,10 +51,8 @@ format :html do
     %{<span class="card-menu-link" data-menu-vars='#{json}'>#{_render_menu_link}</span>}
   end
 
-  view :menu_link do |args|
+  view :menu_link, :closed=>true, :perms=>:none do |args|
     '<a class="ui-icon ui-icon-gear"></a>'
   end
-  
-
   
 end

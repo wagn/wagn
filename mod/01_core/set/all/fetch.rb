@@ -19,9 +19,11 @@ module ClassMethods
   #     :new => {  card opts }      Return a new card when not found
   #
   
+
+  
   
   def fetch mark, opts={}
-    Wagn.with_logging nil, :fetch, mark, opts do
+    Wagn.with_logging(:fetch, :message=>mark, :details=>opts) do
       if String === mark
         case mark
         when /^\~(\d+)$/ # get by id

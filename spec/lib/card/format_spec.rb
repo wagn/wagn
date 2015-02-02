@@ -38,7 +38,7 @@ describe Card::Format do
     end
 
     let(:card) { Card['Home'] }
-    let(:text_format) { card.format(:format=>:text) }
+    let(:text_format) { card.format(:text)}
     let(:html_format) { card.format }
     let(:url_text1) { 'with external free link http://localhost:2020/path?cgi=foo&bar=baz' }
     let(:url_text2) { 'with external in link syntax: [[http://brain.org/Home|extra]]' }

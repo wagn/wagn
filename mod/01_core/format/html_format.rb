@@ -117,10 +117,7 @@ class Card
     end
     include Location
 
-    def final_link href, opts={}
-      text = (opts.delete(:text) || href).dup
-      content_tag :a, raw(text), opts.merge(:href=>href)
-    end
+
 
     def main?
       if Env.ajax?

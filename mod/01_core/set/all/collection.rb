@@ -2,7 +2,7 @@
 module ClassMethods
   def search spec
     query = ::Card::Query.new(spec)
-    Wagn.with_logging nil, :search, spec, query.sql.strip do
+    Wagn.with_logging :search, :message=>spec, :details=>query.sql.strip do
       results = query.run
       if block_given? and Array===results
         results.each { |result| yield result }

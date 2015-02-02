@@ -1,6 +1,13 @@
+
+
 format do
-  view :closed_missing, :perms=>:none do |args| '' end
-  view :missing,        :perms=>:none do |args| '' end
+  view :closed_missing, :perms=>:none, :closed=>true do |args|
+    ''
+  end
+  
+  view :missing, :perms=>:none do |args|
+    ''
+  end
 
   view :not_found, :perms=>:none, :error_code=>404 do |args|
     %{ Could not find #{card.name.present? ? %{"#{card.name}"} : 'the card requested'}. }
@@ -19,11 +26,11 @@ format do
     %{ 404: Bad Address }
   end
 
-  view :too_deep, :perms=>:none do |args|
+  view :too_deep, :perms=>:none, :closed=>true do |args|
     %{ Man, you're too deep.  (Too many levels of inclusions at a time) }
   end
 
-  view :too_slow, :perms=>:none do |args|
+  view :too_slow, :perms=>:none, :closed=>true do |args|
     %{ Timed out! #{ showname } took too long to load. }
   end 
 end
@@ -83,12 +90,11 @@ format :html do
 
   view :missing do |args|
     return '' unless card.ok? :create  # should this be moved into ok_view?
-    new_args = { :view=>:new, 'card[name]'=>card.name }
-    new_args['card[type]'] = args[:type] if args[:type]
+
+    opts = { :remote=>true, :class=>"slotter missing-#{ args[:denied_view] || args[:home_view]}" }
 
     wrap args do
-      link_to raw("Add #{ fancy_title args[:title] }"), path(new_args),
-        :class=>"slotter missing-#{ args[:denied_view] || args[:home_view]}", :remote=>true
+      view_link "Add #{ fancy_title args[:title] }", :new, opts
     end
   end
 
@@ -146,8 +152,8 @@ format :html do
   view :not_found do |args| #ug.  bad name.
     sign_in_or_up_links = if !Auth.signed_in?
       %{<div>
-        #{link_to "Sign in", wagn_path(':signin') } or
-        #{link_to 'Sign up', wagn_path('account/signup') } to create it.
+        #{ card_link :signin, :text=>'Sign in' } or
+        #{ link_to 'Sign up', wagn_path('new/:signup') } to create it.
        </div>}
     end
     frame args.merge(:title=>'Not Found', :optional_menu=>:never) do
@@ -176,7 +182,7 @@ format :html do
           "You need permission #{to_task}"
         else
           or_signup = if Card.new(:type_id=>Card::SignupID).ok? :create
-            "or #{ link_to 'sign up', wagn_url('account/signup') }"
+            "or #{ link_to 'sign up', wagn_url('new/:signup') }"
           end
           save_interrupted_action(request.env['REQUEST_URI'])
           "You have to #{ link_to 'sign in', wagn_url(':signin') } #{or_signup} #{to_task}"

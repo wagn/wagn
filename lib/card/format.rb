@@ -8,7 +8,7 @@ class Card
       :layout=>:layout, :new=>:edit, :setup=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     
     cattr_accessor :ajax_call, :registered, :max_depth
-    [ :perms, :denial_views, :error_codes, :view_tags, :aliases ].each do |acc|
+    [ :perms, :denial_views, :closed_views, :error_codes, :view_tags, :aliases ].each do |acc|
       cattr_accessor acc
       self.send "#{acc}=", {}
     end
@@ -34,9 +34,10 @@ class Card
 
       def extract_class_vars view, opts
         return unless opts.present?
-        perms[view]       = opts.delete(:perms)      if opts[:perms]
-        error_codes[view] = opts.delete(:error_code) if opts[:error_code]
-        denial_views[view]= opts.delete(:denial)     if opts[:denial]
+        perms[view]        = opts.delete(:perms)      if opts[:perms]
+        error_codes[view]  = opts.delete(:error_code) if opts[:error_code]
+        denial_views[view] = opts.delete(:denial)     if opts[:denial]
+        closed_views[view] = opts.delete(:closed)     if opts[:closed]
 
         if tags = opts.delete(:tags)
           Array.wrap(tags).each do |tag|
@@ -182,7 +183,7 @@ class Card
         @current_view = view = ok_view canonicalize_view( view ), args       
         args = default_render_args view, args
         with_inclusion_mode view do
-          Wagn.with_logging card.name, :view, view, args do
+          Wagn.with_logging :view, :message=>view, :context=>card.name, :details=>args do
             send "_view_#{ view }", args
           end
         end
@@ -295,11 +296,16 @@ class Card
     def ok_view view, args={}
       return view if args.delete :skip_permissions
       approved_view = case
-        when @depth >= @@max_depth      ; :too_deep                    # prevent recursion. @depth tracks subformats
-        when @@perms[view] == :none     ; view                         # view requires no permissions
-        when !card.known? &&
-          !tagged( view, :unknown_ok )  ; view_for_unknown view, args  # handle unknown cards (where view not exempt)
-        else                            ; permitted_view view, args    # run explicit permission checks
+        when @depth >= @@max_depth                      # prevent recursion. @depth tracks subformats
+          :too_deep
+        when @@perms[view] == :none                     # permission skipping specified in view definition
+          view
+        when args.delete(:skip_permissions)             # permission skipping specified in args
+          view
+        when !card.known? && !tagged(view, :unknown_ok) # handle unknown cards (where view not exempt)
+          view_for_unknown view, args  
+        else                                            # run explicit permission checks
+          permitted_view view, args    
         end
 
       args[:denied_view] = view if approved_view != view
@@ -422,17 +428,21 @@ class Card
       opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
       # FIXME: special views should be represented in view definitions
 
-      view = case
-      when @mode == :edit
-        if @@perms[view]==:none || nested_card.structure || nested_card.key.blank? # eg {{_self|type}} on new cards
-          :blank
-        else
-          :edit_in_form
+      view = case @mode
+      when :edit
+        not_ready_for_form = @@perms[view]==:none || nested_card.structure || nested_card.key.blank? # eg {{_self|type}} on new cards
+        not_ready_for_form ? :blank : :edit_in_form
+      when :template
+        :template_rule
+      when :closed
+        case
+        when @@closed_views[view] == true || @@error_codes[view] ; view
+        when specified_view = @@closed_views[view]               ; specified_view
+        when !nested_card.known?                                 ; :closed_missing
+        else                                                     ; :closed_content
         end
-      when @mode == :template   ; :template_rule
-      when @@perms[view]==:none ; view
-      when @mode == :closed     ; !nested_card.known?  ? :closed_missing : :closed_content
-      else                      ; view
+      else
+        view
       end
       sub.render view, opts
       #end
@@ -472,78 +482,7 @@ class Card
     # ------------ LINKS ---------------
     #
 
-    # final link is called by web_link, card_link, and view_link
-    # (and is overridden in other formats)
-    def final_link href, opts={}
-      if text = opts[:text] and href != text
-        "#{text}[#{href}]"
-      else
-        href
-      end
-    end
 
-    # link to a specific url or path
-    def web_link href, options={}
-      options[:text] ||= href
-      new_class = case href
-        when /^https?:/                      ; 'external-link'
-        when /^mailto:/                      ; 'email-link'
-        when /^([a-zA-Z][\-+\.a-zA-Z\d]*):/  ; $1 + '-link'
-        when /^\//
-          href = internal_url href[1..-1]    ; 'internal-link'
-        else
-          card_link href, options
-        end
-      add_class options, new_class        
-      final_link href, options
-    end
-
-    # link to a specific card
-    def card_link name, opts={}
-      opts[:text ] = (opts[:text] || name).to_name.to_show @context_names
-      
-      path_opts = opts.delete( :path_opts ) || {}
-      path_opts[:name ] = name
-      path_opts[:known] = opts[:known].nil? ? Card.known?(name) : opts.delete(:known) 
-      add_class opts, ( path_opts[:known] ? 'known-card' : 'wanted-card' )
-      final_link internal_url( path( path_opts ) ), opts
-    end
-  
-  
-    # link to a specific view (defaults to current card)
-    # this is generally used for ajax calls
-    def view_link text, view, opts={}
-      path_opts = view==:home ? {} : { :view=>view }
-      if p = opts.delete( :path_opts )
-        path_opts.merge! p
-      end
-      opts[:remote] = true
-      opts[:rel] = 'nofollow'
-      opts[:text] = text
-      
-      final_link path( path_opts ), opts
-    end
-  
-    def path opts={}
-      name = opts.delete(:name) || card.name
-      base = opts[:action] ? "card/#{ opts.delete :action }/" : ''
-      
-      opts[:no_id] = true if [:new, :create].member? opts[:action]
-      #generalize. dislike hardcoding views/actions here
-      
-      linkname = name.to_name.url_key
-      unless name.empty? || opts.delete(:no_id)
-        base += ( opts[:id] ? "~#{ opts.delete :id }" : linkname )
-      end
-      
-      if opts.delete(:known)==false && name.present? && name.to_s != linkname
-        opts[:card] ||= {}
-        opts[:card][:name] = name
-      end
-      
-      query = opts.empty? ? '' : "?#{opts.to_param}"
-      wagn_path( base + query )
-    end
   
 
   
@@ -586,10 +525,6 @@ class Card
 
     def unique_id
       "#{card.key}-#{Time.now.to_i}-#{rand(3)}" 
-    end
-
-    def internal_url relative_path
-      wagn_path relative_path
     end
 
     def format_date date, include_time = true

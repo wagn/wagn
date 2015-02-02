@@ -50,36 +50,34 @@ class Wagn::Log
     #     :methods => [:event, :search, :fetch, :view],  # choose methods to log
     # }
     #
-    # If you give methods a hash you can log arbitrary methods. The syntax is as follows:
+    # If you give :methods a hash you can log arbitrary methods. The syntax is as follows:
     #   class =>  method type => method name => log options
     #
     # Example:
-    # {
     #   Card  => { 
+    #              :instance  => [ :fetch, :search ],
+    #              :singleton => { :fetch    => { :title => 'Card.fetch' } },
     #              :all       => { 
     #                              :fetch    => { 
     #                                             :message => 2                           # use second argument passed to fetch
     #                                             :details => :to_s                       # use return value of to_s in method context
-    #                                             :title => proc { |method_context|  }
+    #                                             :title => proc { |method_context| method_context.name }
     #                                           },
     #                            },
-    #              :singleton => [ :fetch, :search ],
-    #              :instance  => { :fetch => {} }
     #            },
-    #  }
     #  
     # class, method type and log options are optional. 
     # Default values are 'Card', ':all'  and { :title => method name, :message => first argument, :details=> remaining arguments }.
-    # For example [:fetch] is equivalent to Card => { :all => { :fetch  => { ... } }
+    # For example [:fetch] is equivalent to Card => { :all => { :fetch  => { :message=>1, :details=>1..-1 } }
     
     DEFAULT_CLASS           = Card
     DEFAULT_METHOD_TYPE     = :all
     DEFAULT_METHOD_OPTIONS  = {
-                                    :title   => :method_name,
-                                    :message => 1,
-                                    :details => 1..-1,
-                                    :context => nil
-                                  }
+                                :title   => :method_name,
+                                :message => 1,
+                                :details => 1..-1,
+                                :context => nil
+                              }
                               
     SPECIAL_METHODS     = [:search, :view, :event]  # these methods have already a Wagn.with_logging block
                                                         # we don't have to monkey patch them, only turn the logging on with adding the symbol to the methods hash

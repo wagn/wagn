@@ -4,6 +4,7 @@ require 'csv'
 class Wagn::Log
 
   class Request
+    
     def self.path
       path = (Wagn.paths['request_log'] && Wagn.paths['request_log'].first) || File.dirname(Wagn.paths['log'].first)
       filename = "#{Date.today}_#{Rails.env}.csv"
@@ -35,53 +36,87 @@ class Wagn::Log
     end
 
   end
-  
-  DEFAULT_LOG_CLASS           = Card
-  DEFAULT_LOG_METHOD_TYPE     = :all
-  DEFAULT_LOG_METHOD_OPTIONS  = { Card => {:fetch => {:message=>2, :details=>3 }} }
-  
-  # possible config options  
-  #   class =>  method type => method name => log options
-  # {
-  #   Card  => { 
-  #              :all       => { 
-  #                              :fetch    => { 
-  #                                             :message => 2                           # use second argument passed to fetch
-  #                                             :details => :to_s                       # use return value of to_s in method context
-  #                                             :title => proc { |method_context|  }
-  #                                           },
-  #                            },
-  #              :singleton => [ :fetch, :search ],
-  #              :instance  => { }
-  #            },
-  #  
-  # class, method type and log options are optional. 
-  # Default values are 'Card', ':all'  and { :title => method name, :message => first argument, :details=> remaining argumetns }, i.e.
-  #
-  #  [:fetch]  
-  #  
-  #  is equivalent to 
-  #  
-  #  Card => { :all => { :fetch  => { :me}}
-  #              
-  #  Wagn =>  { :cache => {  }   #
-  #           },
-  #
-  #  
-  #
-  # }
 
-  class Performance
-    # def self.apply_defaults args
-    #   args.each |klass, method_types| do
-    #     default_klass = DEFAULT_LOG_OPTIONS[klass]
-    #     method_types.each do |method_type, methods|
-    #       default_method_type = default_klass[method_type]
-    #       methods.each do ||
-    #     end
-    #   end
-    # end
+
+  class Performance  
+    # To enable logging add a performance_logger hash to your configuration and change the log_level to :wagn
+    # config options  
+    #
+    # Example:
+    # config.performance_logger = {
+    #     :min_time => 100,                              # show only method calls that are slower than 100ms
+    #     :max_depth => 3,                               # show nested method calls only up to depth 3
+    #     :details=> true                                # show method arguments and sql
+    #     :methods => [:event, :search, :fetch, :view],  # choose methods to log
+    # }
+    #
+    # If you give methods a hash you can log arbitrary methods. The syntax is as follows:
+    #   class =>  method type => method name => log options
+    #
+    # Example:
+    # {
+    #   Card  => { 
+    #              :all       => { 
+    #                              :fetch    => { 
+    #                                             :message => 2                           # use second argument passed to fetch
+    #                                             :details => :to_s                       # use return value of to_s in method context
+    #                                             :title => proc { |method_context|  }
+    #                                           },
+    #                            },
+    #              :singleton => [ :fetch, :search ],
+    #              :instance  => { :fetch => {} }
+    #            },
+    #  }
+    #  
+    # class, method type and log options are optional. 
+    # Default values are 'Card', ':all'  and { :title => method name, :message => first argument, :details=> remaining arguments }.
+    # For example [:fetch] is equivalent to Card => { :all => { :fetch  => { ... } }
     
+    DEFAULT_CLASS           = Card
+    DEFAULT_METHOD_TYPE     = :all
+    DEFAULT_METHOD_OPTIONS  = {
+                                    :title   => :method_name,
+                                    :message => 1,
+                                    :details => 1..-1,
+                                    :context => nil
+                                  }
+                              
+    SPECIAL_METHODS     = [:search, :view, :event]  # these methods have already a Wagn.with_logging block
+                                                        # we don't have to monkey patch them, only turn the logging on with adding the symbol to the methods hash
+    
+    
+    def self.load_config args
+      @details   = args[:details]   || false
+      @max_depth = args[:max_depth] || false
+      @min_time  = args[:min_time]  || false
+      @enabled_methods = ::Set.new
+      prepare_methods_for_logging args[:methods] if args[:methods]
+    end
+    
+    
+    def self.prepare_methods_for_logging args
+      classes = hashify_and_verify_keys( args, DEFAULT_CLASS ) do |key|
+        key.kind_of?(Class) || key.kind_of?(Module)
+      end
+      
+      classes.each do |klass, method_types|
+        klass.extend BigBrother  # add watch methods 
+          
+        method_types = hashify_and_verify_keys( method_types, DEFAULT_METHOD_TYPE ) do |key|
+          [:all, :instance, :singleton].include? key
+        end
+               
+        method_types.each do |method_type, methods|
+          methods = hashify_and_verify_keys methods    
+          methods.each do |method_name, options|
+            klass.watch_method  method_name, method_type, DEFAULT_METHOD_OPTIONS.merge(options)
+          end   
+        end
+        
+      end
+    end
+    
+
     def self.hashify_and_verify_keys args, default_key=nil
       if default_key 
         case args
@@ -113,160 +148,42 @@ class Wagn::Log
       end
     end
     
-    def self.load_config args
-      classes = hashify_and_verify_keys( args, DEFAULT_LOG_CLASS ) do |key|
-        key.kind_of?(Class) || key.kind_of?(Module)
-      end
-      
-      classes.each do |klass, method_types|
-        binding.pry
-        klass.extend BigBrother
-          
-        method_types = hashify_and_verify_keys( method_types, DEFAULT_LOG_METHOD_TYPE ) do |key|
-          [:all, :instance, :singleton].include? key
-        end
-               
-        method_types.each do |method_type, methods|
-          methods = hashify_and_verify_keys methods        
-          methods.each do |method_name, options|
-            logging_args = {
-              :title  => :method_name,
-              :message => :'args[0]',
-              :details => :'args[1..-1]',
-              :context => nil
-            }
-            options.each do |option_name, value|
-              logging_args[option_name] = case value
-                when Integer
-                  :"args[#{value-1}]"
-                when Symbol
-                  :"send(:#{value})"
-                else
-                  value
-                end
-            end
-            klass.watch_method  method_name, method_type, logging_args
-          end
-            
-        end
-      end
-
+       
+    def self.enable_method method_name
+      @enabled_methods ||= ::Set.new
+      @enabled_methods << method_name
     end
     
+    def self.enabled_method? method_name
+      @enabled_methods && @enabled_methods.include?(method_name)
+    end
+    
+    
+    
     module BigBrother
-      def add_to_config name
-        Wagn.config.performance_logger ||= {}
-        Wagn.config.performance_logger[:methods] ||= []
-        Wagn.config.performance_logger[:methods] << name
-      end
       
-      def watch_method method_name, method_type, options
-        add_to_config method_name
-        if method_type == :all || method_type == :singleton
-          add_singleton_logging method_name, options
-        end
-        if method_type == :all || method_type == :instance
-          add_instance_logging method_name, options
-        end
-      end
-      
-      def add_singleton_logging method_name, options
-        binding.pry
-        return unless singleton_class.method_defined? method_name
-        m = method(method_name)
-        add_logging method_name, :define_singleton_method, options do |bind_object, args, &block|
-          m.call(*args, &block)
-        end
-      end
-      #
-      # def add_instance_logging  method_name, options
-      #   #binding.pry
-      #   return unless method_defined? method_name
-      #   m = instance_method(method_name)
-      #
-      #   send(:define_method, method_name) do |*args, &block|
-      #     #method = options[:method] ? eval(options[:method]) : method_name
-      #     Rails.logger.wagn 'yesh'
-      #     puts "####### multiple define #{method_name} #{options[:title]}"
-      #     #if !self.class.class_variable_defined? "@@#{method_name}_#{define_method}_add_logging_options".to_sym
-      #       hash = {}
-      #       puts "defined new variable ############"
-      #       options.each do |key,value|
-      #         hash[key] = value.kind_of?(Symbol) ? eval(value) : value
-      #       end
-      #      #   self.class.class_variable_set("@@#{method_name}_#{define_method}_add_logging_options".to_sym, hash )
-      #     #end
-      #     o#ptions = self.class.class_variable_get "@@#{method_name}_#{define_method}_add_logging_options".to_sym
-      #     Wagn::Log::Performance.with_timer(method_name, hash) do
-      #       m.bind(self).(*args, &block)
-      #     end
-      #   end
-      #
-      #
-      #
-      #   add_logging method_name, :define_method, options do  |bind_object, args, &block|
-      #     m.bind(bind_object).(*args, &block)
-      #   end
-      # end
-  
-      def add_instance_logging  method_name, options
-        binding.pry
-        return unless method_defined? method_name
-        m = instance_method(method_name)
-        add_logging method_name, :define_method, options do  |bind_object, args, &block|
-          m.bind(bind_object).(*args, &block)
-        end
-      end
-      
-      def options_variable_name method_name, define_method
-        "@_#{method_name.hash}_#{define_method}_add_logging_options".to_sym
-      end
+      def watch_method method_name, method_type=:all, options={}
+        Wagn::Log::Performance.enable_method method_name
         
-      def add_logging method_name, define_method, options, &bind_block
-        store_name = options_variable_name(method_name, define_method)
-        send(define_method, method_name) do |*args, &block|
-          
-          if !self.class.instance_variable_defined? store_name
-            hash = {}
-            options.each do |key,value| 
-              hash[key] = case value
-                when Symbol then eval(value.to_s) 
-                when Proc   then value.call(self)
-                else             value
-                end
-            end
-            self.class.instance_variable_set(store_name, hash )
+        if !SPECIAL_METHODS.include? method_name
+          if method_type == :all || method_type == :singleton
+            add_singleton_logging method_name, options
           end
-          options = self.class.instance_variable_get store_name
-          Wagn::Log::Performance.with_timer(method_name, options) do
-            bind_block.call(self, args, &block)
+          if method_type == :all || method_type == :instance
+            add_instance_logging method_name, options
           end
         end
       end
-      
       
       def watch_instance_method *names
         names.each do |name|
-          add_to_config name
-          m = instance_method(name)
-          send(:define_method, name) do |*args, &block|
-            Wagn.with_logging name, :message=>args[0], :details=>args[1..-1] do
-              
-              m.bind(self).(*args, &block)
-            end
-          end
+          watch_method name, :instance
         end
       end
   
       def watch_singleton_method *names
         names.each do |name|
-          add_to_config name
-          m = method(name)
-          send(:define_singleton_method, name) do |*args, &block|
-            Wagn.with_logging name, :message=>args[0], :details=>args[1..-1] do
-              m.call(*args, &block)
-            end
-          end
+          watch_method name, :singleton
         end
       end
   
@@ -282,9 +199,57 @@ class Wagn::Log
       def watch_all_methods
         watch_all_instance_methods
         watch_all_singleton_methods
+      end 
+      
+      private
+      
+      def add_singleton_logging method_name, options
+        return unless singleton_class.method_defined? method_name
+        m = method(method_name)
+        add_logging method_name, :define_singleton_method, options do |bind_object, args, &block|
+          m.call(*args, &block)
+        end
+      end
+  
+      def add_instance_logging  method_name, options
+        return unless method_defined? method_name
+        m = instance_method(method_name)
+        add_logging method_name, :define_method, options do  |bind_object, args, &block|
+          m.bind(bind_object).(*args, &block)
+        end
+      end
+        
+      def add_logging method_name, define_method, options, &bind_block
+        #store_name = log_options_variable_name(method_name, define_method)
+        send(define_method, method_name) do |*args, &block|
+          
+        # if !self.class.instance_variable_defined? store_name
+        log_args = {}
+        options.each do |key,value| 
+          log_args[key] = case value
+            when Integer then args[value-1]
+            when Range   then args[value]
+            when Symbol  then eval(value.to_s) 
+            when Proc    then value.call(self)
+            else              value
+            end
+        end
+        #   self.class.instance_variable_set(store_name, hash )
+        #   end
+        #   log_args = self.class.instance_variable_get store_name
+          Wagn::Log::Performance.with_timer(method_name, log_args) do
+            bind_block.call(self, args, &block)
+          end
+        end        
+      end
+            
+      def log_options_variable_name method_name, define_method
+        "@_#{self.class.name}_#{method_name.hash.to_s.sub(/^-/,'_')}_#{define_method}_logging_options".to_sym
       end
       
     end
+    
+    
     
     
     TAB_SIZE = 3
@@ -296,6 +261,7 @@ class Wagn::Log
     def self.the_log
      @@the_log  
     end
+    
     class Entry
       attr_accessor :level, :valid, :context, :parent, :children_cnt, :duration
       
@@ -457,7 +423,7 @@ class Wagn::Log
       end
       
       def new_entry args
-        args.delete(:details) unless Wagn.config.performance_logger[:details]
+        args.delete(:details) unless @details
         level = @@current_level
                 
         last_entry = @@active_entries.last
@@ -473,9 +439,7 @@ class Wagn::Log
       end
       
       def finish_entry entry
-        min_time = Wagn.config.performance_logger[:min_time]
-        max_depth = Wagn.config.performance_logger[:max_depth]
-        if (max_depth && entry.level > max_depth) || (min_time && entry.duration < min_time)
+        if (@max_depth && entry.level > @max_depth) || (@min_time && entry.duration < @min_time)
           entry.delete
         end
         @@active_entries.pop

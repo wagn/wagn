@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 describe Card::Set::All::Error do
   describe 'missing view' do
     it "should prompt to add" do

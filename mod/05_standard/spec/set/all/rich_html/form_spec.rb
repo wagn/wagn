@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 describe Card::Set::All::RichHtml::Form do  
   describe "type_list" do
     before do

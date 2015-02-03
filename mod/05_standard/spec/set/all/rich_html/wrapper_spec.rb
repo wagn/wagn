@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 describe Card::Set::All::RichHtml::Wrapper do  
   context "full wrapping" do
     before do

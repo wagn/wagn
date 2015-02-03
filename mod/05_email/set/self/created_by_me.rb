@@ -7,7 +7,7 @@ def title
 end
 
 def label
-  'follow if created by me'
+  "follow what I've created"
 end
 
 def description set_card

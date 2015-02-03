@@ -293,6 +293,14 @@ $(window).ready ->
     else
       item.find('input').val ''
     event.preventDefault() # Prevent link from following its href
+    
+  # following mod
+  $('body').on 'click', '.item-card-delete', ->
+    item = $(this).closest 'li'
+    f = $(this).closest 'form'
+    f.submit()
+    item.remove()
+    event.preventDefault() # Prevent link from following its href
 
   # permissions mod
   $('body').on 'click', '.perm-vals input', ->

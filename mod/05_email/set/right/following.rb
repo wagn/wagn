@@ -10,9 +10,12 @@ def raw_content
          #all_follow_rules.map! {|card| "#{card.left.name}+#{user.name}+#{card.item_names.first}" }
          
          follow_rules = Card.user_rule_cards user.name, 'follow'
-         follow_rules.map! {|card| "#{card.name}+#{card.item_names.first}" }
+         #follow_rules.map! {|card| "#{card.name}+#{card.item_names.first}" }
+         follow_rules.map! {|card| card.name }
          #all_follow_rules + 
+         binding.pry
          follow_rules
+
       else
         user = if Auth.signed_in?
          Auth.current.name
@@ -125,21 +128,18 @@ format :html do
 
    view :open do |args|
      if card.left and Auth.signed_in?
-       follow_rule_card = card.left.rule_card(:follow, :user=>Auth.current) || Card.fetch("#{card.left.follow_set_card.name}+#{Auth.current.name}+#{Card[:follow].name}", :new=>{:type=>'pointer'})
-       frame do
-   #      nest follow_rule_card, :view=>:open_rule, :user=>Auth.current 
-         wrap_with :div, :class=>'edit-rule' do
-           subformat(follow_rule_card).render_edit_rule :success=>{:view=>'edit_rule'}
-         end
+       if card.left.type_id == Card::UserID
+         render_delete_list args
+       else
+         render_rule_editor args
+       
        end
-#       ( card.left.id == Auth.current_id || card.left.type_id != Card::UserID)
-      
-       #nest card, :view=>:closed_rule
-       #render_edit_following(args.merge(:select_list=>true, :optional_button_fieldset=>:hide))
      else
        super(args)
      end
    end
+   
+   
    
    view :editor do |args|
      form.hidden_field( :content, :class=>'card-content', 'no-autosave'=>true) +
@@ -148,19 +148,43 @@ format :html do
    end
    
    view :rule_editor do |args|
-     follow_rule_card = Card.fetch("#{card.left.follow_set_card.name}+#{Auth.current.name}+#{Card[:follow].name}", :new=>{:type=>'pointer'})
-     wrap_with :div, :class=>'edit-rule' do
-       @mode = :normal
-       nest follow_rule_card, :view=>:open_rule, :user=>Auth.current 
-       #subformat(follow_rule_card).render_open_rule 
+     rule_context = Card.fetch("#{card.left.follow_set_card.name}+#{Auth.current.name}+#{Card[:follow].name}", :new=>{:type=>'pointer'})
+     current_follow_rule_card = card.left.rule_card(:follow, :user=>Auth.current) || rule_context
+     frame do
+ #      nest follow_rule_card, :view=>:open_rule, :user=>Auth.current 
+       wrap_with :div, :class=>'edit-rule' do
+         subformat(current_follow_rule_card).render_edit_rule :rule_context=>rule_context, :success=>{:view=>':open', :id=>card.left.name}
+       end
      end
    end
-   
-   
-  
+     
    view :closed_content do |args|
      ''
    end
+   
+   view :delete_list do |args|
+
+     args ||= {}
+     items = args[:item_list] || card.item_names(:context=>:raw)
+     options_card_name = (oc = card.options_card) ? oc.cardname.url_key : ':all'
+
+     extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
+     frame do
+       %{<ul class="pointer-list-editor #{extra_css_class}" options-card="#{options_card_name}"> } +
+       items.map do |item|
+         card_form :action=>:delete, :id=>item do
+           %{<li class="pointer-li"> } +
+           link_to( '', '#', :class=>'item-card-delete ui-icon ui-icon-circle-close' ) +
+             Card.fetch(item).item_cards.first.label + ' ' +
+             Card.fetch(item).rule_set.follow_label +
+           '</li>'
+         end
+       end.join("\n") +
+       %{</ul>}
+     end
+
+   end
+   
    
       
    view :select_list do |args|

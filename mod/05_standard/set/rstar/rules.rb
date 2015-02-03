@@ -1,8 +1,8 @@
-def set_key
-  set_name.key
+def rule_set_key
+  rule_set_name.key
 end
 
-def set_name
+def rule_set_name
   if is_user_rule?
     cardname.trunk_name.trunk_name
   else
@@ -10,7 +10,7 @@ def set_name
   end
 end
 
-def set
+def rule_set
   if is_user_rule?
     trunk.trunk
   else
@@ -18,24 +18,52 @@ def set
   end
 end
 
-def setting_name
+def rule_setting_name
   cardname.tag
 end
 
-def user_setting_name
+def rule_user_setting_name
   if is_user_rule?
-    "#{user_name}+#{setting_name}"
+    "#{rule_user_name}+#{rule_setting_name}"
   else
-    setting_name
+   rule_setting_name
   end
 end
 
-def user_name
+def rule_user_name
   is_user_rule? ? cardname.trunk_name.tag : nil
 end
 
-def user
+def rule_user
   is_user_rule? ? self[-2] : nil
+end
+
+#~~~~~~~~~~ determine the set options to which the user can apply the rule.
+def set_options
+  res = set_prototype.set_names.reverse
+  first =  new_card? ? 0 : res.index{|s| s.to_name.key == rule_set_key} 
+  
+  fallback_set = if first > 0
+                  res[0..(first-1)].find do |set_name|
+                    Card.exists?("#{set_name}+#{rule_user_setting_name}")
+                  end
+                end
+  last = res.index{|s| s.to_name.key == cardname.trunk_name.key} || -1
+  # note, the -1 can happen with virtual cards because the self set doesn't show up in the set_names.  FIXME!!
+  [res[first..last], fallback_set]
+  
+  # The broadest set should always be the currently applied rule
+  # (for anything more general, they must explicitly choose to "DELETE" the current one)
+  # the narrowest rule should be the one attached to the set being viewed.  So, eg, if you're looking at the "*all plus" set, you shouldn't
+  # have the option to create rules based on arbitrary narrower sets, though narrower sets will always apply to whatever prototype we create
+end
+
+def set_prototype
+  if is_user_rule?
+    self[0..-3].prototype
+  else
+    trunk.prototype
+  end
 end
 
 format :html do
@@ -74,7 +102,7 @@ format :html do
   view :open_rule, :tags=>:unknown_ok do |args|
     return 'not a rule' if !card.is_rule?
     current_rule = args[:current_rule]  
-    setting_name = args[:setting_name] || card.setting_name
+    setting_name = args[:setting_name] || card.rule_setting_name
     
     edit_mode = !params[:success] && card.ok?( ( card.new_card? ? :create : :update ) )
     #~~~~~~ handle reloading due to type change
@@ -90,8 +118,8 @@ format :html do
     end
     
     opts = {
-      :success      => {:card => card},
-      :set_context  => card.set_name,
+      :rule_context => card,   # determines the set options and the success view
+      :set_context  => card.rule_set_name,
     }
     rule_view = edit_mode ? :edit_rule : :show_rule
 
@@ -128,7 +156,7 @@ format :html do
     return 'not a rule' if !card.is_rule?
     
     if !card.new_card?
-      set = card.set
+      set = card.rule_set
       args[:item] ||= :link
       %{
         <div class="rule-set">
@@ -155,38 +183,21 @@ format :html do
   end
   
   def default_edit_rule_args args
-    args[:set_context] ||= card.set_name 
-    args[:set_selected]  = params[:type_reload] ? card.set_name : false
+    args[:rule_context] ||= card
+    args[:set_context] ||= card.rule_set_name 
+    args[:set_selected]  = params[:type_reload] ? card.rule_set_name : false
     args[:success] ||= {}
     args[:success].reverse_merge!( {
-      :card => card,
-      :id   => card.cardname.url_key,
+      :card => args[:rule_context],
+      :id   => args[:rule_context].cardname.url_key,
       :view => 'open_rule',
       :item => 'view_rule'
     })
-    args[:set_options], args[:fallback_set] = set_options
+    args[:set_options], args[:fallback_set] = args[:rule_context].set_options
   end
   
   
-  #~~~~~~~~~~ determine the set options to which the user can apply the rule.
-  def set_options
-    res = set_prototype.set_names.reverse
-    first =  card.new_card? ? 0 : res.index{|s| s.to_name.key == card.set_key} 
-    
-    fallback_set = if first > 0
-                    res[0..(first-1)].find do |set_name|
-                      Card.exists?("#{set_name}+#{card.user_setting_name}")
-                    end
-                  end
-    last = res.index{|s| s.to_name.key == card.cardname.trunk_name.key} || -1
-    # note, the -1 can happen with virtual cards because the self set doesn't show up in the set_names.  FIXME!!
-    [res[first..last], fallback_set]
-    
-    # The broadest set should always be the currently applied rule
-    # (for anything more general, they must explicitly choose to "DELETE" the current one)
-    # the narrowest rule should be the one attached to the set being viewed.  So, eg, if you're looking at the "*all plus" set, you shouldn't
-    # have the option to create rules based on arbitrary narrower sets, though narrower sets will always apply to whatever prototype we create
-  end
+
   
 
   
@@ -221,8 +232,8 @@ format :html do
   end
   
   def set_fieldset args
-    current_set_key = card.new_card? ? Card[:all].cardname.key : card.set_key   # (should have a constant for this?)
-    tag = card.user_setting_name
+    current_set_key = card.new_card? ? Card[:all].cardname.key : card.rule_set_key   # (should have a constant for this?)
+    tag = args[:rule_context].rule_user_setting_name
     option_list = wrap_each_with :li do
                     args[:set_options].map do |set_name|
                       checked = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
@@ -244,7 +255,7 @@ format :html do
                       b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
                       b_args[:href] = path :action=>:delete, :success=>args[:success]
                       if (fset = args[:fallback_set]) && (fcard = Card.fetch(fset))
-                        b_args['data-confirm']="Deleting will revert to #{card.setting_name} rule for #{fcard.label }"
+                        b_args['data-confirm']="Deleting will revert to #{card.rule_setting_name} rule for #{fcard.label }"
                       end
                       %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
                     end
@@ -275,21 +286,13 @@ format :html do
 
   private
 
-  def set_prototype
-    if card.is_user_rule?
-      card[0..-3].prototype
-    else
-      card.trunk.prototype
-    end
-  end
-
   def find_current_rule_card
     # self.card is a POTENTIAL rule; it quacks like a rule but may or may not exist.
     # This generates a prototypical member of the POTENTIAL rule's set
     # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
     if card.new_card?
-       ((setting = card.right) && set_prototype.rule_card(setting.codename, :user=>card.user)) ||
-            Card.new(:name=> "#{Card[:all].name}+#{card.user_setting_name}")
+       ((setting = card.right) && card.set_prototype.rule_card(setting.codename, :user=>card.rule_user)) ||
+            Card.new(:name=> "#{Card[:all].name}+#{card.rule_user_setting_name}")
     else
       card
     end 

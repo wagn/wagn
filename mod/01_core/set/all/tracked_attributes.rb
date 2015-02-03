@@ -41,11 +41,7 @@ event :update_ruled_cards, :after=>:store do
   if is_rule?
 #      warn "updating ruled cards for #{name}"
     self.class.clear_rule_cache
-    set = if is_user_rule?
-        left.left
-      else
-        left
-      end
+    set = rule_set
     set.reset_set_patterns
     
     if right_id==Card::ReadID and (name_changed? or trash_changed?)

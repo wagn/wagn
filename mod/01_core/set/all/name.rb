@@ -194,7 +194,6 @@ end
 event :set_name, :before=>:store, :changed=>:name do
   Card.expire name
   Card.expire name_was
-  
   if cardname.junction?
     [:left, :right].each do |side|
       sidename = cardname.send "#{side}_name"

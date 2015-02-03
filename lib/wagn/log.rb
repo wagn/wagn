@@ -383,7 +383,7 @@ class Wagn::Log
         if args[:context]
 
           # if the previous context was created by an entry on the same level
-          # the finish the context if it's a different context
+          # then finish the current context if it's a different context
           if @@context_entries.last && @@current_level == @@context_entries.last.level+1 &&
                                        args[:context] != @@context_entries.last.context
             finish_entry @@context_entries.pop

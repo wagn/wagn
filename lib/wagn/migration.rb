@@ -2,43 +2,56 @@
 
 class Wagn::Migration < ActiveRecord::Migration
   @type = :deck_cards
-  
-  def self.find_unused_name base_name
-    test_name = base_name
-    add = 1
-    while Card.exists?(test_name) do
-      test_name = "#{base_name}#{add}"
-      add +=1
-    end
-    test_name
-  end
 
-  def self.paths
-    Wagn.paths["db/migrate#{schema_suffix @type}"].to_a
-  end
-  
-  def self.schema_suffix
-    Wagn::Version.schema_suffix @type
-  end
-  
-  def self.schema_mode
-    new_suffix = Wagn::Migration.schema_suffix
-    original_suffix = ActiveRecord::Base.table_name_suffix
+  class << self
     
-    ActiveRecord::Base.table_name_suffix = new_suffix
-    yield
-    ActiveRecord::Base.table_name_suffix = original_suffix
-  end
-  
-  
-  def self.data_path filename=nil
-    if filename
-      self.paths.each do |path|
-        path_to_file = File.join path, 'data', filename
-        return path_to_file if File.exists? path_to_file
+    # Rake tasks use class methods, migrations use instance methods.
+    # To avoid repetition a lot of instance methods here just call class methods.
+    # The subclass Wagn::CoreMigration needs a different @type so we can't use a
+    # class variable @@type. It has to be a class instance variable.
+    # Migrations are subclasses of Wagn::Migration or Wagn::CoreMigration but they
+    # don't inherit the @type. The method below solves this problem.
+    def type 
+      @type || (ancestors[1] && ancestors[1].type)
+    end
+    
+    def find_unused_name base_name
+      test_name = base_name
+      add = 1
+      while Card.exists?(test_name) do
+        test_name = "#{base_name}#{add}"
+        add +=1
       end
-    else
-      File.join self.paths.first, 'data'
+      test_name
+    end
+
+    def paths mig_type=type
+      Wagn.paths["db/migrate#{schema_suffix mig_type}"].to_a
+    end
+  
+    def schema_suffix mig_type=type
+      Wagn::Version.schema_suffix( mig_type )
+    end
+  
+    def schema_mode mig_type=type
+      new_suffix = schema_suffix mig_type
+      original_suffix = ActiveRecord::Base.table_name_suffix
+    
+      ActiveRecord::Base.table_name_suffix = new_suffix
+      yield
+      ActiveRecord::Base.table_name_suffix = original_suffix
+    end
+    
+  
+    def data_path filename=nil
+      if filename
+        self.paths.each do |path|
+          path_to_file = File.join path, 'data', filename
+          return path_to_file if File.exists? path_to_file
+        end
+      else
+        File.join self.paths.first, 'data'
+      end
     end
   end
   

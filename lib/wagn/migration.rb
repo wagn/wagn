@@ -70,6 +70,17 @@ class Wagn::Migration < ActiveRecord::Migration
     end
   end
   
+  def data_path filename=nil
+    if filename
+      migration_paths.each do |path|
+        path_to_file = File.join path, 'data', filename
+        return path_to_file if File.exists? path_to_file
+      end
+    else
+      File.join migration_paths.first, 'data'
+    end
+  end
+  
 
   def import_json filename
     Wagn.config.action_mailer.perform_deliveries = false

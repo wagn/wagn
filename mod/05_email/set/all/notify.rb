@@ -69,7 +69,7 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c|
     @current_act.reload
     @follower_stash ||= FollowerStash.new
     @current_act.actions.each do |a|
-      @follower_stash.add_affected_card a.card
+      @follower_stash.add_affected_card a.card if a.card
     end
     @follower_stash.each_follower_with_reason do |follower, reason|
       if follower.account and follower != @current_act.actor

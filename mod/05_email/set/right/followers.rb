@@ -5,14 +5,14 @@ include Card::Set::Type::Pointer
 
 def raw_content
   if left
-    items = if (left.type_id = SetID) or (left.type_id = CardtypeID)
+    items = if (left.type_id == SetID) || (left.type_id == CardtypeID)
         left.default_follow_set_card.all_user_ids_with_rule_for(:follow).map do |user_id|
           (user = Card.find(user_id)) ? user.name : nil
         end.compact
       else
-        left.followers_names.join("]]\n[[")
+        left.follower_names
       end
-    items.present? ? "[[#{items}]]" : ''
+    items.map {|item| "[[#{item}]]"}.join "\n"
   end
 end
 

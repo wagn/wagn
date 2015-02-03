@@ -13,7 +13,6 @@ def raw_content
          #follow_rules.map! {|card| "#{card.name}+#{card.item_names.first}" }
          follow_rules.map! {|card| card.name }
          #all_follow_rules + 
-         binding.pry
          follow_rules
 
       else

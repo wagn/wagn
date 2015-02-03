@@ -54,9 +54,11 @@ wagn.menu_template = [
       }
     ]
   },
-  { "link":"follow", "view":"options", "if":"follow", "sub":
-  [ { "text":"options", "related":"following"}]
-},
+  { "link":"follow", "view":"options", "if":"follow", "sub":[ 
+      { "link":"follow" },
+      { "text":"options", "related":"following"}
+    ]
+  },
   { "text":"account", "related":{"name":"+*account", "view":"edit"}, "if":"account", "sub":
     [
       { "text":"account", "related":{"name":"+*account", "view":"edit"}, "text":"details" },

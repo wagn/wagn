@@ -118,30 +118,6 @@ def follow_set
   follow_set_card.name
 end
 
-# def follow_key
-#   follow_set_card.key
-# end
-
-# def related_follow_option_cards
-#   # refers to sets that users may follow from the current card
-#   @related_follow_option_cards ||= begin
-#     sets = set_names
-#     sets.pop unless codename == 'all' # get rid of *all set
-#     sets << "#{name}+*type" if known? && type_id==Card::CardtypeID
-#     sets << "#{name}+*right" if known? && cardname.simple?
-#     Card::FollowOption.codenames.each do |name|
-#       if Card[name].applies?(Auth.current, self)
-#         sets << name
-#       end
-#     end
-#     left_option = left
-#     while left_option
-#       sets << "#{left_option.name}+*self"
-#       left_option = left_option.left
-#     end
-#     sets.map { |name| Card.fetch name }
-#   end
-# end
 
 def all_follow_option_cards
   sets = set_names
@@ -176,13 +152,7 @@ end
 
 
 def follow_rule_card?
-  right && (right.type_id == Card::UserID || right.codename == 'all')  && 
-           (rule_name=cardname.left_name)                              && 
-           (set_name=rule_name.left_name)                              && 
-           (set_card=Card.fetch(set_name))                             &&
-           set_card.type_id == Card::SetID                             &&
-           (setting_card = Card.fetch(rule_name.right_name))           &&
-           setting_card.codename == 'follow'
+  is_user_rule? && rule_setting_name == '*follow'
 end
 
 def related_follow_set_cards
@@ -198,6 +168,7 @@ end
 def default_follow_set_card
   Card.fetch("#{name}+*self")
 end
+
 
 format :html do
   watch_perms = lambda { |r| Auth.signed_in? && !r.card.new_card? }  # how was this used to be used?
@@ -242,22 +213,22 @@ format :html do
     end
   end
   
-  
-  view :follow_menu, :tags=>:unknown_ok do |args|
-    follow_links = [
-      #render_follow_link(args), 
-      advanced_follow_options_link
-    ]
-    follow_links.compact.map do |link|
-      { :raw => link }
-    end 
-  end
-  
-  def advanced_follow_options_link
-    path_options = {:card=>Card::Auth.current, :following_context=>card.cardname.url_key } #FIXME
-    html_options = {:class=>"slotter", :remote=>true}
-    link_to "options", path(path_options), html_options
-  end
+  #
+  # view :follow_menu, :tags=>:unknown_ok do |args|
+  #   follow_links = [
+  #     render_follow_link(args),
+  #     advanced_follow_options_link
+  #   ]
+  #   follow_links.compact.map do |link|
+  #     { :raw => link }
+  #   end
+  # end
+  #
+  # def advanced_follow_options_link
+  #   path_options = {:card=>Card::Auth.current, :following_context=>card.cardname.url_key } #FIXME
+  #   html_options = {:class=>"slotter", :remote=>true}
+  #   link_to "options", path(path_options), html_options
+  # end
   
 
   # view :follow_options do |args|

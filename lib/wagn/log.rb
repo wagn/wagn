@@ -191,7 +191,7 @@ class Wagn::Log
       end
 
       def watch_all_singleton_methods
-        fragile_methods = %i( default_scope default_scopes default_scopes= )  # if I touch these methods ActiveRecord breaks
+        fragile_methods = [:default_scope :default_scopes :default_scopes=]  # if I touch these methods ActiveRecord breaks
         watch_singleton_method *(singleton_methods - fragile_methods)
       end
 

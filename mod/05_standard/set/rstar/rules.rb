@@ -144,7 +144,6 @@ format :html do
   view :edit_rule, :tags=>:unknown_ok do |args|
     return 'not a rule' if !card.is_rule?
 
-    binding.pry
     form_for card, :url=>path(:action=>:update, :no_id=>true), :remote=>true, :html=>
         {:class=>"card-form card-rule-form slotter" } do |form|
       @form = form

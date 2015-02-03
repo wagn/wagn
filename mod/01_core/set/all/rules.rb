@@ -27,11 +27,11 @@ def is_rule?
 end
 
 def is_user_rule?
-  (set = self[0..-3, :skip_modules=>true])  &&
-   set.type_id == Card::SetID            && 
-  (user = self[-2, :skip_modules=>true] )      &&
-   user.type_id == Card::UserID              &&
-  (r = right( :skip_modules=>true ))       &&
+  (set = self[0..-3, :skip_modules=>true])                   &&
+   set.type_id == Card::SetID                                && 
+  (user = self[-2, :skip_modules=>true] )                    &&
+  (user.type_id == Card::UserID  || user.codename == 'all' ) &&
+  (r = right( :skip_modules=>true ))                         &&
    r.type_id == Card::SettingID
 end
 

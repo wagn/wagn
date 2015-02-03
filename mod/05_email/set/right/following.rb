@@ -126,11 +126,11 @@ format :html do
    view :open do |args|
      if card.left and Auth.signed_in?
        follow_rule_card = card.left.rule_card(:follow, :user=>Auth.current) || Card.fetch("#{card.left.follow_set_card.name}+#{Auth.current.name}+#{Card[:follow].name}", :new=>{:type=>'pointer'})
-#       @mode = :normal
- #      binding.pry
        frame do
    #      nest follow_rule_card, :view=>:open_rule, :user=>Auth.current 
-         subformat(follow_rule_card).render_edit_rule :success=>{:view=>'edit_rule'}
+         wrap_with :div, :class=>'edit-rule' do
+           subformat(follow_rule_card).render_edit_rule :success=>{:view=>'edit_rule'}
+         end
        end
 #       ( card.left.id == Auth.current_id || card.left.type_id != Card::UserID)
       

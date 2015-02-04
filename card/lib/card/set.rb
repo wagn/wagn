@@ -136,7 +136,7 @@ class Card
 
         define_method event do
           run_callbacks event do
-            Card.with_logging :event, event, :context=>self.name, :details=>opts do
+            Card.with_logging :event, :message=>event, :context=>self.name, :details=>opts do
               send final_method
             end
           end
@@ -200,9 +200,11 @@ class Card
         # FIXME - this does not properly handle anchorless sets
         # There are special hacks for *all, but others (like *rstar) will not be found by
         # include_set_modules, which will look for Card::Set::Rstar, not Card::Set::Rstar::Blah
-        
+        # This issue appears to be addressed by making the entries, in modules arrays.
+        # If yes remove this comment.
+
         to_file = "#{Cardio.paths['tmp/set'].first}/#{set_pattern}/#{seq}-#{anchors * '-'}.rb"
-        anchor_modules = anchors.map { |a| "module #{a.camelize};" }.join
+        anchor_modules = anchors.map { |a| "module #{a.camelize};" } * ''
         file_content = <<EOF
 # -*- encoding : utf-8 -*-
 class Card; module Set; module #{set_pattern.camelize}; #{anchor_modules}

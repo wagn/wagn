@@ -3,6 +3,14 @@ require 'rails/application'
 
 WAGN_BOOTSTRAP_TABLES = %w{ cards card_actions card_acts card_changes card_references }
 
+def prepare_migration
+  Wagn::Cache.reset_global
+  Wagn.config.action_mailer.perform_deliveries = false
+  Card.reset_column_information
+  Card::Reference.reset_column_information  # this is needed in production mode to insure core db 
+                                            # structures are loaded before schema_mode is set
+end
+
 namespace :wagn do
   desc "create a wagn database from scratch"
   task :create do
@@ -96,8 +104,8 @@ namespace :wagn do
   desc 'insert existing card migrations into schema_migrations_cards to avoid re-migrating'
   task :assume_card_migrations do
     require 'card/migration'
-    Card::Migration.schema_mode :core_cards do
-      ActiveRecord::Schema.assume_migrated_upto_version Card::Version.schema(:core_cards), Card::Migration.paths( :core_cards )
+    Card::CoreMigration.schema_mode do
+      ActiveRecord::Schema.assume_migrated_upto_version Card::Version.schema(:core_cards), Card::CoreMigration.paths
     end
   end
 
@@ -111,19 +119,14 @@ namespace :wagn do
     
     desc "migrate core cards"
     task :core_cards => :environment do
-    require 'card/migration'
+      require 'card/migration'
+
       Card::Cache.reset_global
       ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
-      Wagn.config.action_mailer.perform_deliveries = false
-      Card.reset_column_information
-      Card::Reference.reset_column_information
-      
-       # this is needed in production mode to insure core db structures are loaded before schema_mode is set
-      
+      prepare_migration
+      paths = ActiveRecord::Migrator.migrations_paths = Card::CoreMigration.paths
     
-      paths = ActiveRecord::Migrator.migrations_paths = Card::Migration.paths(:core_cards)
-    
-      Card::Migration.schema_mode :core_cards do
+      Card::CoreMigration.schema_mode :core_cards do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       end
@@ -131,16 +134,14 @@ namespace :wagn do
     
     desc "migrate deck cards"
     task :deck_cards => :environment do
-    require 'card/migration'
+      require 'card/migration'
+
       Card::Cache.reset_global
       ENV['SCHEMA'] ||= "#{Rails.root}/db/schema.rb"
-      Wagn.config.action_mailer.perform_deliveries = false
-      Card.reset_column_information # this is needed in production mode to insure core db structures are loaded before schema_mode is set
-      Card::Reference.reset_column_information
-    
+      prepare_migration
       paths = ActiveRecord::Migrator.migrations_paths = Card::Migration.paths(:deck_cards)
     
-      Card::Migration.schema_mode :deck_cards do
+      Card::Migration.schema_mode do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       end
@@ -152,6 +153,7 @@ namespace :wagn do
       Wagn.config.action_mailer.perform_deliveries = false
       
       stamp_file = Wagn::Version.schema_stamp_path( args[:type] )
+
       Card::Migration.schema_mode args[:type] do
         version = ActiveRecord::Migrator.current_version
         if version.to_i > 0 and file = open(stamp_file, 'w')

@@ -1,14 +1,8 @@
 # -*- encoding : utf-8 -*-
 
 class Card::CoreMigration < Card::Migration
-  def migration_paths
-    Card::Migration.paths :core_cards
-  end
-  
-  def schema_mode
-    Card::Migration.schema_mode :core_cards
-  end
-  
+  @type = :core_cards
+
   def import_json filename
     Cardio.config.action_mailer.perform_deliveries = false
     raw_json = File.read( data_path filename ) 

@@ -41,4 +41,6 @@ format :html do
     end.join("\n")
     "<ol>" + list + "</ol>"
   end
+
 end
+

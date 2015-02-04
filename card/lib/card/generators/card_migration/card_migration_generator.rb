@@ -8,8 +8,7 @@ class CardMigrationGenerator < ActiveRecord::Generators::Base
     desc: "Create card migration for card core"
 
   def create_migration_file
-    migration_type = options['core'] ? :core_cards : :deck_cards
-    root = Card::Migration.paths(migration_type).first
+    root = options['cord'] ? Card::CoreMigration.paths(migration_type).first : Card::Migration.paths.first
     set_local_assigns!
     migration_template @migration_template, File.join( root, "#{file_name}.rb")
   end

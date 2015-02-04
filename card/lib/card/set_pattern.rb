@@ -1,4 +1,5 @@
 class Card
+
   class SetPattern
     
     class << self
@@ -38,11 +39,11 @@ class Card
       def pattern_applies? card
         junction_only? ? card.cardname.junction? : true
       end
-    
+
       def anchor_parts_count 
         @anchor_parts_count ||= ( anchorless? ? 0 : 1 )
       end
-      
+
       def write_tmp_file pattern_code, from_file, seq
         to_file = "#{Cardio.paths['tmp/set_pattern'].first}/#{seq}-#{pattern_code}.rb"
         klass = "Card::#{pattern_code.camelize}Set"
@@ -91,12 +92,16 @@ EOF
       end
     end
 
+    def lookup_module_list modules_hash
+      module_key && modules_hash[ module_key ]
+    end
+
     def module_list
-      module_key and Card::Set.modules[ :nonbase ][ module_key ]
+      lookup_module_list Card::Set.modules[ :nonbase ]
     end
 
     def format_module_list klass
-      module_key and hash = Card::Set.modules[ :nonbase_format ][ klass ] and hash[ module_key ]
+      hash = Card::Set.modules[ :nonbase_format ][ klass ] and lookup_module_list hash
     end
 
     def anchor_codenames
@@ -130,6 +135,34 @@ EOF
         [ @anchor_id, self.class.pattern_code ].map( &:to_s ) * '+'
       end
     end
-  
+  end
+
+  class TypeSet < SetPattern
+    def initialize card
+      super
+      @inherit_card = card unless module_key
+    end
+
+    def lookup_inherited_key
+      return unless @inherit_card
+      card, @inherit_card = @inherit_card, nil
+
+      default_rule = card.rule_card(:default) and
+        type_code = default_rule.type_code and
+        #default_rule.cardname.size > 2 and
+        #default_rule.left.right.codename == self.class.pattern_code
+        mod_key = "Type::#{type_code.to_s.camelize}" and
+        ( Card::Set.modules[:nonbase_format].values +
+          [Card::Set.modules[:nonbase]] ).any?{|hash| hash[mod_key]} and
+        mod_key
+    end
+
+    def inherited_key
+      (defined? @inherited_key) ? @inherited_key : @inherited_key = lookup_inherited_key
+    end
+
+    def lookup_module_list modules_hash
+      module_key ? modules_hash[ module_key ] : inherited_key && modules_hash[ inherited_key ]
+    end
   end
 end

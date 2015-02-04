@@ -2,7 +2,6 @@
 
 require 'card'
 require 'card/version'
-require 'card/core_migration'
 
 class Card::Migration < ActiveRecord::Migration
   @type = :deck_cards
@@ -153,3 +152,5 @@ class Card::Migration < ActiveRecord::Migration
     raise ActiveRecord::IrreversibleMigration
   end
 end
+
+require 'card/core_migration'

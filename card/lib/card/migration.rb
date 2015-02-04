@@ -2,6 +2,7 @@
 
 require 'card'
 require 'card/version'
+require 'card/core_migration'
 
 class Card::Migration < ActiveRecord::Migration
   def self.find_unused_name base_name

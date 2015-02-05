@@ -1,35 +1,35 @@
 
 include Card::Set::Type::Pointer
 
-def raw_content
-  @raw_content ||= if left
-      items = if left.type_id == Card::UserID
-         user = left
-         #all_follow_rules = Card.user_rule_cards '*all', 'follow'
-         # make 'all' rule a user rule
-         #all_follow_rules.map! {|card| "#{card.left.name}+#{user.name}+#{card.item_names.first}" }
-         
-         follow_rules = Card.user_rule_cards user.name, 'follow'
-         #follow_rules.map! {|card| "#{card.name}+#{card.item_names.first}" }
-         follow_rules.map! {|card| card.name }
-         #all_follow_rules + 
-         follow_rules
-
-      else
-        user = if Auth.signed_in?
-         Auth.current.name
-        else
-          Card[:all].name # TODO does this really work?
-        end
-        left.related_follow_set_cards.map do |set_card|   
-          set_card.to_following_item_name(:user=>user)
-        end
-      end.join("]]\n[[")
-      items.present? ? "[[#{items}]]" : ''   
-    else
-      ''
-    end
-end
+# def raw_content
+#   @raw_content ||= if left
+#       items = if left.type_id == Card::UserID
+#          user = left
+#          #all_follow_rules = Card.user_rule_cards '*all', 'follow'
+#          # make 'all' rule a user rule
+#          #all_follow_rules.map! {|card| "#{card.left.name}+#{user.name}+#{card.item_names.first}" }
+#
+#          follow_rules = Card.user_rule_cards user.name, 'follow'
+#          #follow_rules.map! {|card| "#{card.name}+#{card.item_names.first}" }
+#          follow_rules.map! {|card| card.name }
+#          #all_follow_rules +
+#          follow_rules
+#
+#       else
+#         user = if Auth.signed_in?
+#          Auth.current.name
+#         else
+#           Card[:all].name # TODO does this really work?
+#         end
+#         left.related_follow_set_cards.map do |set_card|
+#           set_card.to_following_item_name(:user=>user)
+#         end
+#       end.join("]]\n[[")
+#       items.present? ? "[[#{items}]]" : ''
+#     else
+#       ''
+#     end
+# end
 
 def ruled_user
   if left.type_id == Card::UserID
@@ -127,12 +127,7 @@ format :html do
 
    view :open do |args|
      if card.left and Auth.signed_in?
-       if card.left.type_id == Card::UserID
-         render_delete_list args
-       else
-         render_rule_editor args
-       
-       end
+       render_rule_editor args
      else
        super(args)
      end

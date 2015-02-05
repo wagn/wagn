@@ -31,7 +31,11 @@ format do
   # link to a specific card
   def card_link name, opts={}
     text = (opts.delete(:text) || name).to_name.to_show @context_names
-    name = Card[name].cardname if Symbol===name
+    name = case name
+           when Symbol then Card[name].cardname
+           when Card   then name.cardname
+           else             name
+           end
     
     path_opts = opts.delete( :path_opts ) || {}
     path_opts[:name ] = name

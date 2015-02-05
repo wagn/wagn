@@ -1,5 +1,35 @@
 
+include Type::SearchType
+def item_cards params={}
+  start = params[:offset] || 0
+  stop = params[:limit] ? start + params[:limit] : -1
+  Card.members(key)[start..stop].map {|item| Card.fetch(item) }.compact
+end
+
+def item_names params={}
+  item_cards.map{ |item_card| item_card.cardname }
+end
+
+def count params={}
+  Card.members(key).size
+end
+
+def query params={}
+  {}
+end
+
+format do
+  include Type::SearchType::Format
+end
+
 format :html do
+  include Type::SearchType::HtmlFormat
+    
+  view :members do |args|
+   frame args.merge(:title=>card.follow_label) do
+      subformat(card)._render_card_list args
+    end
+  end
 
   view :core do |args|
     body = card.setting_codenames_by_group.map do |group, data|
@@ -61,10 +91,7 @@ format :html do
   view :closed_content do |args|
     ''
   end
-  
-  
 
-  
   view :follow_link_name do |args|
     args[:toggle] ||= card.followed? ? :off : :on
     if args[:toggle] == :off

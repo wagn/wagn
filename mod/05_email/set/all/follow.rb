@@ -184,7 +184,7 @@ format :html do
     toggle       = args[:toggle] || (card.followed? ? :off : :on)
     success_view = :follow
 
-    follow_rule = Card.fetch  "#{card.default_follow_set_card.name}+#{Card[:follow].name}+#{Auth.current.name}", :new=>{}
+    follow_rule = Card.fetch  "#{card.default_follow_set_card.name}+#{Auth.current.name}+#{Card[:follow].name}", :new=>{}
     path_options = {:card=>follow_rule, :action=>:update,
                     :success=>{:id=>card.name, :view=>success_view} }
     html_options = {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :remote=>true, :method=>'post'}

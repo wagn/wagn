@@ -119,7 +119,7 @@ format :html do
     args[:rule_context] ||= card
     args[:set_context]  ||= card.rule_set_name 
     args[:set_selected]   = params[:type_reload] ? card.rule_set_name : false
-    args[:set_options], args[:fallback_set] = args[:rule_context].set_options
+    args[:set_options], args[:fallback] = args[:rule_context].set_options
     
     args[:success] ||= {}
     args[:success].reverse_merge!( {
@@ -165,14 +165,16 @@ format :html do
     current_set_key = card.new_card? ? Card[:all].cardname.key : card.rule_set_key   # (should have a constant for this?)
     tag = args[:rule_context].rule_user_setting_name
     option_list = wrap_each_with :li do
-                    args[:set_options].map do |set_name|
+                    args[:set_options].map do |set_name, state|
+                      
                       checked = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
-                      is_current = set_name.to_name.key == current_set_key
+                      is_current = state == :current
+                      disabled = state == :disabled
                       rule_name = "#{set_name}+#{tag}"
-                      form.radio_button( :name, rule_name, :checked=> checked ) + %{
+                      form.radio_button( :name, rule_name, :checked=> checked, :disabled=>disabled ) + %{
                           <span class="set-label" #{'current-set-label' if is_current }>
                             #{ card_link set_name, :text=> Card.fetch(set_name).label, :target=>'wagn_set' }
-                            #{'<em>(current)</em>' if is_current}
+                            #{'<em>(current)</em>' if is_current }
                           </span>
                         }.html_safe
                      end
@@ -213,6 +215,21 @@ format :html do
     end
   end
 =end
+  
+  view :delete_button do |args|
+    wrap_with(:span) do
+      link_to( '', '#', :class=>'item-card-delete ui-icon ui-icon-circle-close' )
+    end
+  end
+  
+  view :item_delete do |args|
+    card_form :action=>:delete, :id=>card.name do
+      output [
+        _optional_render(:delete_button, args),
+        card_link( card.rule_set_name, :path_opts=>{:view=>'members'}, :text=>card.rule_set.follow_label)
+      ]
+    end
+  end
 
   private
 
@@ -273,22 +290,41 @@ end
 
 #~~~~~~~~~~ determine the set options to which the user can apply the rule.
 def set_options
-  res = set_prototype.set_names.reverse
-  first =  new_card? ? 0 : res.index{|s| s.to_name.key == rule_set_key} 
+
   
-  fallback_set = if first > 0
-                  res[0..(first-1)].find do |set_name|
-                    Card.exists?("#{set_name}+#{rule_user_setting_name}")
-                  end
-                end
-  last = res.index{|s| s.to_name.key == cardname.trunk_name.key} || -1
-  # note, the -1 can happen with virtual cards because the self set doesn't show up in the set_names.  FIXME!!
-  [res[first..last], fallback_set]
+  first =  new_card? ? 0 : set_prototype.set_names.index{|s| s.to_name.key == rule_set_key} 
+  rule_cnt = 0
+  res = []
+  fallback_set = nil
+  set_prototype.set_names[first..-1].each do |set_name|
+    if Card.exists?("#{set_name}+#{rule_user_setting_name}")
+      rule_cnt += 1
+    end
+    case rule_cnt
+    when 0 then res << [set_name,:enabled]
+    when 1 then res << [set_name,:current]
+    else        
+      fallback_set ||= set_name
+      
+      res << [set_name,:disabled]
+    end
+  end
   
+  # fallback_set = if first > 0
+  #                 res[0..(first-1)].find do |set_name|
+  #                   Card.exists?("#{set_name}+#{rule_user_setting_name}")
+  #                 end
+  #               end
+  # last = res.index{|s| s.to_name.key == cardname.trunk_name.key} || -1
+  # # note, the -1 can happen with virtual cards because the self set doesn't show up in the set_names.  FIXME!!
+  # [res[first..last], fallback_set]
+  #
   # The broadest set should always be the currently applied rule
   # (for anything more general, they must explicitly choose to "DELETE" the current one)
   # the narrowest rule should be the one attached to the set being viewed.  So, eg, if you're looking at the "*all plus" set, you shouldn't
   # have the option to create rules based on arbitrary narrower sets, though narrower sets will always apply to whatever prototype we create
+  
+  return res, fallback_set
 end
 
 def set_prototype

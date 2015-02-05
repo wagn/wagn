@@ -32,7 +32,7 @@ event :validate_delete, :before=>:approve, :on=>:delete do
   end
   
   if account && Card::Act.find_by_actor_id( self.id )
-    errors.add :delete, "Edits have been made with #{name}'s user account.\n  Deleting this card would mess up our history."
+    errors.add :delete, "Edits have been made with #{name}'s user account.\nDeleting this card would mess up our history."
   end
 end
 

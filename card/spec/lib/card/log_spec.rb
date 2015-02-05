@@ -105,10 +105,17 @@ describe Card::Log::Performance do
       end
     end
 
-    it 'handles classes and singleton method type' do # log arbitrary method
-      log_method( { Card => { :singleton=>[:gem_root] } } )
+    it 'handles classes and singleton method type' do
+      log_method( { Card => { :singleton=>[:fetch] } } )
+      expect_logger_to_receive(/fetch/) do
+        Card.fetch 'A'
+      end
+    end
+
+    it 'handles different class and singleton method type' do
+      log_method( { Cardio => { :singleton=>[:gem_root] } } )
       expect_logger_to_receive(/gem_root/) do
-        Card.gem_root
+        Cardio.gem_root
       end
     end
 

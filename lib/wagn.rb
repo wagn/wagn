@@ -25,7 +25,7 @@ module Wagn
     end
     
     def with_logging method, opts, &block
-      if (pl_config=Wagn.config.performance_logger) && pl_config[:methods] && pl_config[:methods].include?(method)
+      if Wagn::Log::Performance.enabled_method? method
         Wagn::Log::Performance.with_timer(method, opts) do
           block.call
         end

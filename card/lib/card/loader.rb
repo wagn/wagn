@@ -72,6 +72,7 @@ class Card
       def load_formats
         #cheating on load issues now by putting all inherited-from formats in core mod.
         mod_dirs.each do |mod|
+          warn "load format #{mod}"
           load_dir "#{mod}/format/*.rb"
         end
       end
@@ -136,6 +137,7 @@ class Card
       def load_dir dir
         Dir[dir].sort.each do |file|
 #          puts Benchmark.measure("from #load_dir: rd: #{file}") {
+          warn "load_file #{file} in dir #{dir}"
           require_dependency file
 #          }.format("%n: %t %r")
         end

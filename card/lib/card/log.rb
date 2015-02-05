@@ -449,7 +449,7 @@ class Card
   end
 
   class << self
-    def with_logging method, message, opts, &block
+    def with_logging method, opts, &block
       if (pl_config=Cardio.config.performance_logger) && pl_config[:methods] && pl_config[:methods].include?(method)
         Card::Log::Performance.with_timer(method, opts) do
           block.call

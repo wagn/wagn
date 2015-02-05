@@ -182,36 +182,41 @@ format :html do
   
   view :follow_link do |args|
     toggle       = args[:toggle] || (card.followed? ? :off : :on)
-    success_view = :follow
 
-    follow_rule = Card.fetch  "#{card.default_follow_set_card.name}+#{Auth.current.name}+#{Card[:follow].name}", :new=>{}
-    path_options = {:card=>follow_rule, :action=>:update,
-                    :success=>{:id=>card.name, :view=>success_view} }
-    html_options = {:class=>"watch-toggle watch-toggle-#{toggle} slotter", :remote=>true, :method=>'post'}
+    follow_rule_name = "#{card.default_follow_set_card.name}+#{Auth.current.name}+#{Card[:follow].name}"
+    path_options = { 
+                      :action=>:update,
+                      :success=>{:id=>card.name, :view=>:follow} 
+                   }
+    html_options = {  
+                      :class=>"watch-toggle watch-toggle-#{toggle} slotter", 
+                      :remote=>true, 
+                      :method=>'post'
+                   }
 
     case toggle
     when :off
       path_options['card[content]']= '[[never]]'
       html_options[:title]         = "stop sending emails about changes to #{card.follow_label}"
-      html_options[:hover_content] = "unfollow"
+      html_options[:hover_content] = 'unfollow'
+      html_options[:text]          = 'following'
     when :on
       path_options['card[content]']= '[[always]]'
       html_options[:title]         = "send emails about changes to #{card.follow_label}"
+      html_options[:text]          = 'follow'
     end
-    text = render_follow_link_name args
-    link_to text, path(path_options), html_options
+    card_link follow_rule_name, html_options.merge(:path_opts=>path_options) 
   end
   
-  
-
-  view :follow_link_name do |args|
-    args[:toggle] ||= (card.followed? ? :off : :on)
-    if args[:toggle] == :off
-      'following'
-    else
-      'follow'
-    end
-  end
+  #
+  # view :follow_link_name do |args|
+  #   args[:toggle] ||= (card.followed? ? :off : :on)
+  #   if args[:toggle] == :off
+  #     'following'
+  #   else
+  #     'follow'
+  #   end
+  # end
   
   #
   # view :follow_menu, :tags=>:unknown_ok do |args|

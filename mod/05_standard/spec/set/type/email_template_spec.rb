@@ -29,6 +29,8 @@ describe Card::Set::Type::EmailTemplate do
     it 'renders broken config' do
       Card.fetch("a mail template+*to").update_attributes(:content=>"invalid mail address")
     end
+    
+    
   end
   
   describe "#email_config" do
@@ -57,6 +59,16 @@ describe Card::Set::Type::EmailTemplate do
     it "takes Pointer value for address fields" do
        Card.create! :name => "a mail template+*cc", :content => "[[joe@user.com]]", :type=>'Pointer'
        expect(mailconfig[:cc]).to eq('joe@user.com')
+     end
+     
+     it 'does not process uri in subject' do
+       Card["a mail template+*subject"].update_attributes! :content=> "wagn.org"
+       expect(mailconfig[:subject]).to eq 'wagn.org'
+     end
+     
+     it 'does not process uri in text message' do
+       Card.create! :name=>"a mail template+*text_message", :content=> "wagn.org"
+       expect(mailconfig[:text_message]).to eq 'wagn.org'
      end
      
      it "handles +*email" do

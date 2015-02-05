@@ -44,7 +44,7 @@ def email_config args={}
   
   [:subject, :text_message].each do |field_name|
     config[field_name] = process_email_field( field_name, args ) do |field_card|
-      field_card.contextual_content context_card, {:format=>'email_text'}, args
+      field_card.contextual_content context_card, {:format=>'email_text'}, args.merge(:content_opts=>{ :chunk_list=>:inclusion_and_link})
     end
   end
 

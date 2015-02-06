@@ -26,11 +26,13 @@ class Card
       end
     
       def format_class_name format
-        f = format.to_s
-        f = @@aliases[ f ] || f
-        "#{ f.camelize }Format"
+        format = format.to_s
+        format = '' if format == 'base'
+        format = @@aliases[ format ] if @@aliases[ format ]
+        "#{ format.camelize }Format"
       end
 
+      
 
       def extract_class_vars view, opts
         return unless opts.present?

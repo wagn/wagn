@@ -42,6 +42,12 @@ module Wagn
       end
     end
     
+    initializer :load_logger_config, :after => :load_config_initializers do
+      if config.performance_logger
+        Wagn::Log::Performance.load_config config.performance_logger
+      end
+    end
+    
     class << self
       def inherited(base)
         Rails.application = base.instance

@@ -1,3 +1,3 @@
 include Bcc
-format(:email_text) { include Bcc::EmailTextFormat }
+format(:email_address) { include Bcc::EmailAddressFormat }
 format(:html)       { include Bcc::HtmlFormat }

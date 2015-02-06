@@ -81,10 +81,10 @@ describe Card::Set::Type::EmailTemplate do
         expect( mailconfig[:bcc] ).to eq 'joe@admin.com'
       end
       
-      it 'renders broken config' do
-        pending 'handles invalid email address'
-        Card.fetch("a mail template+*to").update_attributes(:content=>"invalid mail address")
-      end
+      # it 'handles invalid email address' do  #TODO not obvious how to deal with that.
+                                              #      we can't decided whether a email address like [[_left]] is valid; depends on the context
+      #   Card.fetch("a mail template+*to").update_attributes(:content=>"invalid mail address")
+      # end
     end
     
 

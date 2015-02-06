@@ -50,6 +50,7 @@ describe Card::Set::Type::EmailTemplate do
     
   end
   
+  
   describe "#email_config" do
 
     describe 'address fields' do

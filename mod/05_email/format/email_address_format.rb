@@ -3,7 +3,7 @@
 class Card::EmailAddressFormat < Card::TextFormat  
   def link_to  text, href, opts={}
     if text and href != text
-      "#{text} <#{href}>"   # [[email adress | name]]
+      "#{text} <#{href}>"
     else
       href
     end

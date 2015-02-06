@@ -32,30 +32,29 @@ end
 def email_config args={}
   config = {}
   context_card =  args[:context] || self
-  [:to, :from, :cc, :bcc].each do |field_name|
-    config[field_name] = process_email_field( field_name, args ) do |field_card|
-      field_card.process_email_addresses context_card, {:format=>'email_text'}, args
-    end
-  end
-
-  config[:attach] = process_email_field( :attach, args ) do |field_card|
-    field_card.extended_item_contents context_card
-  end
   
-  [:subject, :text_message].each do |field_name|
-    config[field_name] = process_email_field( field_name, args ) do |field_card|
-      field_card.contextual_content context_card, {:format=>'email_text'}, args.merge(:content_opts=>{ :chunk_list=>:inclusion_and_link})
-    end
+  [:to, :from, :cc, :bcc].each do |field_name|
+    config[field_name]  = process_email_field( field_name, args ) do |field_card|
+                            field_card.process_email_addresses context_card, {:format=>'email_address'}, args
+                          end
   end
-
+  config[:attach]       = process_email_field( :attach, args ) do |field_card|
+                            field_card.extended_item_contents context_card
+                          end                        
+  config[:subject]      = process_email_field( :subject, args ) do |field_card|
+                            field_card.contextual_content context_card, {:format=>'email_text'}, 
+                                                          args.merge(:content_opts=>{ :chunk_list=>:inclusion_only })
+                          end
+  config[:text_message] = process_email_field( :text_message, args ) do |field_card|
+                            field_card.contextual_content context_card, {:format=>'email_text'}, args
+                          end
   config[:html_message] = process_email_field :html_message, args do |field_card|
-    field_card.contextual_content context_card, {:format=>'email_html'}, args
-  end
-
-  config[:html_message] = Card::Mailer.layout(config[:html_message])
+                            field_card.contextual_content context_card, {:format=>'email_html'}, args
+                          end
+  config[:html_message] = Card::Mailer.layout config[:html_message] if config[:html_message].present? 
+                          
   
   from_name, from_email = (config[:from] =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, config[:from]]
-      
   if default_from=Card::Mailer.default[:from]
     config[:from] = from_email ? "#{from_name || from_email} <#{default_from}>" : default_from
     config[:reply_to] ||= config[:from]
@@ -72,7 +71,7 @@ format do
     text_message = args.delete(:text_message)
     html_message = args.delete(:html_message)
     attachment_list = args.delete(:attach)
-    alternative = text_message.present? and html_message.present?
+    alternative = (text_message.present? && html_message.present?)
     mail = Card::Mailer.new_mail(args) do
       if alternative 
         if attachment_list and !attachment_list.empty?
@@ -96,6 +95,7 @@ format do
         content_type 'text/html; charset=UTF-8'
         body html_message
       else
+        content_type 'text/plain; charset=UTF-8'
         text_part { body text_message }
       end
       

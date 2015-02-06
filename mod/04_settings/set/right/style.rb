@@ -3,7 +3,8 @@ include Machine
 
 store_machine_output :filetype => "css"
 
-def chunk_list  #turn off autodetection of uri's 
-                #TODO with the new format pattern this should be handled in the js format
+format :all do
+  def chunk_list  #turn off autodetection of uri's 
     :inclusion_only
+  end
 end

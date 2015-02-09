@@ -11,8 +11,8 @@ class Card
         load_formats
         load_sets
         
-        if config.performance_logger
-          Wagn::Log::Performance.load_config config.performance_logger
+        if Wagn.config.performance_logger
+          Wagn::Log::Performance.load_config Wagn.config.performance_logger
         end
       end
       

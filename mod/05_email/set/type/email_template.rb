@@ -35,7 +35,7 @@ def email_config args={}
   
   [:to, :from, :cc, :bcc].each do |field_name|
     config[field_name]  = process_email_field( field_name, args ) do |field_card|
-                            field_card.process_email_addresses context_card, {:format=>'email_address'}, args
+                            field_card.process_email_addresses context_card, {:format=>'email_text'}, args
                           end
   end
   config[:attach]       = process_email_field( :attach, args ) do |field_card|

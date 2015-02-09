@@ -19,7 +19,7 @@ format :html do
   end
 end
 
-format :email_address do
+format :email_text do
   view :email_addresses do |args|
     context = args[:context] || self
     card.item_names(:context=>context.cardname).map do |item_name|

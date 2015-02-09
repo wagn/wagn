@@ -4,9 +4,6 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-<% if options['mod-dev'] || options['core-dev'] -%>
-require 'jasmine'
-<% end -%>
 
 
 <%= app_const %>.load_tasks

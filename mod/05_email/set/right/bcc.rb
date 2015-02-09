@@ -4,7 +4,7 @@ def process_email_addresses context_card, format_args, args
 end
 
 
-format :all do
+format do
   def chunk_list  #turn off autodetection of uri's 
     :references
   end

@@ -15,7 +15,7 @@ def diff_args
  {:format=>:raw}
 end
 
-format :all do
+format do
   def chunk_list
     :references
   end

@@ -20,7 +20,7 @@ def raw_content
 end
 
 
-format :all do
+format do
   def chunk_list #override to customize by set
     :default
   end

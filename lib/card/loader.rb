@@ -10,6 +10,10 @@ class Card
         load_set_patterns
         load_formats
         load_sets
+        
+        if config.performance_logger
+          Wagn::Log::Performance.load_config config.performance_logger
+        end
       end
       
       def load_chunks

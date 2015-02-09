@@ -7,11 +7,6 @@ class RenameCardMigrationTable < ActiveRecord::Migration
         t.string "version", :null => false
       end
     end
-    if !ActiveRecord::Base.connection.table_exists? :schema_migrations_deck_cards
-      create_table "schema_migrations_deck_cards", :id => false, :force => true do |t|
-        t.string "version", :null => false
-      end
-    end
   end 
   
   def self.down

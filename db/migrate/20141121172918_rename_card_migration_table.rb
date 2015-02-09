@@ -1,10 +1,15 @@
 class RenameCardMigrationTable < ActiveRecord::Migration
   def self.up
-    if ActiveRecord::Base.connection.table_exists?  :schema_migrations_cards
+    if ActiveRecord::Base.connection.table_exists? :schema_migrations_cards
       rename_table :schema_migrations_cards, :schema_migrations_core_cards
     else
-      create_table  :schema_migrations_core_cards do |t|
-        t.integer :version
+      create_table "schema_migrations_core_cards", :id => false, :force => true do |t|
+        t.string "version", :null => false
+      end
+    end
+    if !ActiveRecord::Base.connection.table_exists? :schema_migrations_deck_cards
+      create_table "schema_migrations_deck_cards", :id => false, :force => true do |t|
+        t.string "version", :null => false
       end
     end
   end 

@@ -100,6 +100,7 @@ end
 event :activate_account do
   subcards['+*account'] = {'+*status'=>'active'}
   self.type_id = Card.default_accounted_type_id
+  account.send_welcome_email
 end
 
 event :approve_with_token, :on=>:update, :before=>:approve, :when=>proc {|c| Env.params[:approve_with_token] } do

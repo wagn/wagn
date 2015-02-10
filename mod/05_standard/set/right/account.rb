@@ -129,6 +129,12 @@ event :reset_token do
 end
   
 
+event :send_welcome_email do
+  if (welcome = Card['welcome email'] && welcome.type_code == :email_template)
+    welcome.deliver(:context=>self, :to=>self.email)
+  end
+end
+
 event :send_account_verification_email, :on=>:create, :after=>:extend, :when=>proc{ |c| c.token.present? } do
   Card[:verification_email].deliver( :context => self, :to => self.email )
 end

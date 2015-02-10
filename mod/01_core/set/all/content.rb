@@ -23,6 +23,10 @@ def chunk_list #override to customize by set
   :default
 end
 
+def label
+  name
+end
+
 def last_change_on(field, opts={})
   where_sql =  'card_actions.card_id = :card_id AND field = :field AND (draft is not true) '
   where_sql += if opts[:before]

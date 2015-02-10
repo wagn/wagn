@@ -9,3 +9,7 @@ end
 def pattern_applies? card
   card.cardname.star?
 end
+
+def follow_label name
+  label name
+end

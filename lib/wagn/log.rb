@@ -119,7 +119,6 @@ class Wagn::Log
       end
       
       classes.each do |klass, method_types|
-        binding.pry
         klass.extend BigBrother
           
         method_types = hashify_and_verify_keys( method_types, DEFAULT_LOG_METHOD_TYPE ) do |key|
@@ -171,7 +170,6 @@ class Wagn::Log
       end
       
       def add_singleton_logging method_name, options
-        binding.pry
         return unless singleton_class.method_defined? method_name
         m = method(method_name)
         add_logging method_name, :define_singleton_method, options do |bind_object, args, &block|
@@ -210,7 +208,6 @@ class Wagn::Log
       # end
   
       def add_instance_logging  method_name, options
-        binding.pry
         return unless method_defined? method_name
         m = instance_method(method_name)
         add_logging method_name, :define_method, options do  |bind_object, args, &block|

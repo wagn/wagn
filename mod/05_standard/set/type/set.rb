@@ -1,5 +1,35 @@
 
+include Type::SearchType
+def item_cards params={}
+  start = params[:offset] || 0
+  stop = params[:limit] ? start + params[:limit] : -1
+  Card.members(key)[start..stop].map {|item| Card.fetch(item) }.compact
+end
+
+def item_names params={}
+  item_cards.map{ |item_card| item_card.cardname }
+end
+
+def count params={}
+  Card.members(key).size
+end
+
+def query params={}
+  {}
+end
+
+format do
+  include Type::SearchType::Format
+end
+
 format :html do
+  include Type::SearchType::HtmlFormat
+    
+  view :members do |args|
+   frame args.merge(:title=>card.follow_label) do
+      subformat(card)._render_card_list args
+    end
+  end
 
   view :core do |args|
     body = card.setting_codenames_by_group.map do |group, data|
@@ -57,14 +87,30 @@ format :html do
       }
     end
   end
-
+  
   view :closed_content do |args|
     ''
   end
+
+  view :follow_link_name do |args|
+    args[:toggle] ||= card.followed? ? :off : :on
+    if args[:toggle] == :off
+      'following'
+    elsif card.right and card.right.codename == 'self'
+      'follow'
+    else
+      'follow all'
+    end
+  end
+  
 end
 
 
 include Card::Set::Type::SearchType
+
+def default_follow_set_card
+  self
+end
 
 def inheritable?
   return true if junction_only?
@@ -98,6 +144,41 @@ def label
   else
     ''
   end
+end
+
+def follow_label
+  if klass = subclass_for_set
+    klass.follow_label cardname.left
+  else
+    ''
+  end
+end
+
+def follow_rule_name user=nil
+  if user
+    if user.kind_of? String
+      "#{name}+#{Card[:follow].name}+#{user}"
+    else
+      "#{name}+#{Card[:follow].name}+#{user.name}"
+    end
+  else
+    "#{name}+#{Card[:follow].name}+#{Card[:all].name}"
+  end
+end
+
+def to_following_item_name args
+  left_part = follow_rule_name( args[:user] )
+  option = args[:option] || if (rule_card = Card.fetch(left_part))
+       rule_card.content
+     else
+       Card[:nothing].name
+     end
+  
+  "#{left_part}+#{option}"
+end
+
+def all_user_ids_with_rule_for setting_code
+  Card.all_user_ids_with_rule_for self, setting_code
 end
 
 

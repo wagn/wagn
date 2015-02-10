@@ -17,3 +17,7 @@ end
 def anchor_id card
   card.type_id
 end
+
+def follow_label name
+  %{all "#{name}s"}
+end

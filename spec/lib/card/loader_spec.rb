@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 =begin
 describe Card::Loader do
   # let(:card_double) { double "Card" }

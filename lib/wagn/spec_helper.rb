@@ -56,4 +56,9 @@ module Wagn::SpecHelper
     end
     card.format(format_args)._render(view, view_args)
   end
+  
+  def users
+    require File.expand_path('../../../test/seed', __FILE__)
+    SharedData::USERS.sort
+  end
 end

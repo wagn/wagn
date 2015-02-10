@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 describe Card::Set::Type::EmailTemplate do
   before :each do
     Card::Auth.as_bot do

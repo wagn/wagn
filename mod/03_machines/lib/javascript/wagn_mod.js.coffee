@@ -10,6 +10,8 @@ $.extend wagn,
     '.pointer-radio-list'    : -> pointerContent @find('input:checked').val()
     '.pointer-list-ul'       : -> pointerContent @find('input'        ).map( -> $(this).val() )
     '.pointer-checkbox-list' : -> pointerContent @find('input:checked').map( -> $(this).val() )
+    '.pointer-select-list'   : -> pointerContent @find('.pointer-select select').map( -> $(this).val() )
+    '.pointer-mixed'         : -> pointerContent @find('.pointer-checkbox-sublist input:checked, .pointer-sublist-ul input').map( -> $(this).val() )
     '.perm-editor'           : -> permissionsContent this # must happen after pointer-list-ul, I think
   }
 
@@ -160,7 +162,9 @@ $.extend wagn,
         i.text = $('<div/>').text(i.text).html() #escapes html
       
       item = 
-        if i.link
+        if i.raw
+          i.raw
+        else if i.link
           vars[i.link]
         else if i.plain
           '<a>' + i.plain + '</a>'
@@ -288,6 +292,14 @@ $(window).ready ->
       item.remove()
     else
       item.find('input').val ''
+    event.preventDefault() # Prevent link from following its href
+    
+  # following mod
+  $('body').on 'click', '.item-card-delete', ->
+    item = $(this).closest 'li'
+    f = $(this).closest 'form'
+    f.submit()
+    item.remove()
     event.preventDefault() # Prevent link from following its href
 
   # permissions mod

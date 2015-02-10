@@ -13,3 +13,7 @@ end
 def anchor_id card
   card.id
 end
+
+def follow_label name
+  name
+end

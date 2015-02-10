@@ -8,29 +8,29 @@ class FollowerStash
     
   def add_affected_card card
     Auth.as_bot do
-      if !@visited.include? card.name
-        @visited.add card.name
-        # add card followers
-        Card.search( :right_plus=>[{:codename=> "following"}, 
-                             {:link_to=>card.name}     ]
-                   ).each do |follower|
-                     notify follower, :of => card.name
-                   end
-        # add cardtype followers
-        Card.search( :right_plus=>[{:codename=> "following"}, 
-                             {:link_to=>card.type_name} ]
-                   ).each do |follower|
-                    notify follower, :of => card.type_name
-                  end
-        Card.search(:include=>card.name).each do |includer| 
-          add_affected_card includer unless @visited.include? includer.name
+      if !@visited.include? card.key
+        @visited.add card.key
+        card.all_direct_follower_ids_with_reason do |user_id, reason|
+          notify Card.fetch(user_id), :of=>reason
         end
-        if card.left and !@visited.include?(card.left.name) and
-           includee_set = Card.search(:included_by=>card.left.name).map(&:name) and
-           !@visited.intersection(includee_set).empty?
+        if card.left and !@visited.include?(card.left.name) and follow_field_rule = card.left.rule_card(:follow_fields)
+          
+          follow_field_rule.item_names(:context=>card.left.cardname).each do |item|  
+            if @visited.include? item.to_name.key
               add_affected_card card.left
-        end
+              break
+            elsif item == Card[:includes].name
+              includee_set = Card.search(:included_by=>card.left.name).map(&:key)
+              if !@visited.intersection(includee_set).empty?
+                add_affected_card card.left
+                break
+              end
+            end
+          end
+          
+        end      
       end
+      
     end
   end
   
@@ -38,9 +38,9 @@ class FollowerStash
     @followed_affected_cards.keys
   end
   
-  def each_follower_followed_pair  # "follower" is a card object, "followed" a card name
-    @followed_affected_cards.each do |user, card_names|
-      yield(user,card_names.first)
+  def each_follower_with_reason  # "follower" is a card object, "followed" a card name
+    @followed_affected_cards.each do |user, reasons|
+      yield(user,reasons.first)
     end
   end
   
@@ -69,11 +69,11 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c|
     @current_act.reload
     @follower_stash ||= FollowerStash.new
     @current_act.actions.each do |a|
-      @follower_stash.add_affected_card a.card
+      @follower_stash.add_affected_card a.card if a.card
     end
-    @follower_stash.each_follower_followed_pair do |follower, followed|
+    @follower_stash.each_follower_with_reason do |follower, reason|
       if follower.account and follower != @current_act.actor
-        follower.account.send_change_notice @current_act, followed
+        follower.account.send_change_notice @current_act, reason[:set_card].name, reason[:option_card].name
       end
     end
   rescue =>e  #this error handling should apply to all extend callback exceptions
@@ -99,7 +99,7 @@ format do
   end
   
   
-  view :subedits do |args|
+  view :subedits, :perms=>:none do |args|
     subedits = get_act(args).relevant_actions_for(card).map do |action| 
         if action.card_id != card.id 
           action.card.format(:format=>@format).render_subedit_notice(:action=>action)
@@ -121,18 +121,24 @@ format do
 #{ render_list_of_changes(args) }}
   end
   
-  view :followed, :closed=>true do |args|
-    args[:followed] || 'followed card'
+  view :followed, :perms=>:none, :closed=>true do |args|
+    if args[:followed_set] && (set_card = Card.fetch(args[:followed_set])) && 
+         args[:follow_option] && (option_card = Card.fetch(args[:follow_option]))
+       option_card.description set_card
+    else
+      'followed card'
+    end
   end
 
-  view :follower, :closed=>true do |args|
+  view :follower, :perms=>:none, :closed=>true do |args|
     args[:follower] || 'follower'
   end
   
-  view :unfollow_url, :closed=>true do |args|
-    if args[:followed] and args[:follower] and follower = Card.fetch( args[:follower] )
-     following_card = follower.fetch( :trait=>:following, :new=>{} )
-     wagn_url( "update/#{following_card.cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" )
+  view :unfollow_url, :perms=>:none, :closed=>true do |args|
+    if args[:followed_set] and args[:follow_option] and args[:follower] and follower = Card.fetch( args[:follower] )
+     following_card = follower.fetch( :trait=>:following, :new=>{} )  #FIXME
+     item_name = "#{args[:followed_set].to_name.url_key}+#{args[:follow_option].to_name.url_key}"
+     wagn_url( "update/#{following_card.cardname.url_key}?drop_item=#{item_name}" )
     end
   end
   
@@ -183,7 +189,7 @@ end
 
 
 format :email_text do 
-  view :last_action do |args|
+  view :last_action, :perms=>:none do |args|
     act = get_act(args)
     action_on_card =  act.action_on(act.card_id) || act.actions.first
     "#{action_on_card.action_type}d"
@@ -191,7 +197,7 @@ format :email_text do
 end
 
 format :email_html do  
-  view :last_action do |args|
+  view :last_action, :perms=>:none do |args|
     act = get_act(args)
     action_on_card =  act.action_on(act.card_id) || act.actions.first
     "#{action_on_card.action_type}d"

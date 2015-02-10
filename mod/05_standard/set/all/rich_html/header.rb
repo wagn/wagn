@@ -38,7 +38,7 @@ format :html do
       @menu_vars.merge!({
         :edit      => card.ok?(:update),
         :account   => card.account && card.ok?(:update),
-        :watch     => Auth.signed_in? && render_watch,
+        :follow     => Auth.signed_in? && render_follow,
         :creator   => card.creator.name,
         :updater   => card.updater.name,
         :delete    => card.ok?(:delete) && link_to( 'delete', :action=>:delete,

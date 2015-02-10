@@ -1,24 +1,59 @@
 # -*- encoding : utf-8 -*-
 
 class Wagn::Migration < ActiveRecord::Migration
-  def self.paths type
-    Wagn.paths["db/migrate#{schema_suffix type}"].to_a
-  end
-  
-  def self.schema_suffix type
-    Wagn::Version.schema_suffix type
-  end
-  
-  def self.schema_mode type
-    new_suffix = Wagn::Migration.schema_suffix type
-    original_suffix = ActiveRecord::Base.table_name_suffix
+  @type = :deck_cards
+
+  class << self
     
-    ActiveRecord::Base.table_name_suffix = new_suffix
-    yield
-    ActiveRecord::Base.table_name_suffix = original_suffix
+    # Rake tasks use class methods, migrations use instance methods.
+    # To avoid repetition a lot of instance methods here just call class methods.
+    # The subclass Wagn::CoreMigration needs a different @type so we can't use a
+    # class variable @@type. It has to be a class instance variable.
+    # Migrations are subclasses of Wagn::Migration or Wagn::CoreMigration but they
+    # don't inherit the @type. The method below solves this problem.
+    def type 
+      @type || (ancestors[1] && ancestors[1].type)
+    end
+    
+    def find_unused_name base_name
+      test_name = base_name
+      add = 1
+      while Card.exists?(test_name) do
+        test_name = "#{base_name}#{add}"
+        add +=1
+      end
+      test_name
+    end
+
+    def paths mig_type=type
+      Wagn.paths["db/migrate#{schema_suffix mig_type}"].to_a
+    end
+  
+    def schema_suffix mig_type=type
+      Wagn::Version.schema_suffix( mig_type )
+    end
+  
+    def schema_mode mig_type=type
+      new_suffix = schema_suffix mig_type
+      original_suffix = ActiveRecord::Base.table_name_suffix
+    
+      ActiveRecord::Base.table_name_suffix = new_suffix
+      yield
+      ActiveRecord::Base.table_name_suffix = original_suffix
+    end
+    
+  
+    def data_path filename=nil
+      if filename
+        self.paths.each do |path|
+          path_to_file = File.join path, 'data', filename
+          return path_to_file if File.exists? path_to_file
+        end
+      else
+        File.join self.paths.first, 'data'
+      end
+    end
   end
-  
-  
   
   def contentedly &block
     Wagn::Cache.reset_global
@@ -46,6 +81,7 @@ class Wagn::Migration < ActiveRecord::Migration
     end
   end
   
+
   def import_json filename
     Wagn.config.action_mailer.perform_deliveries = false
     raw_json = File.read( data_path filename ) 
@@ -53,13 +89,16 @@ class Wagn::Migration < ActiveRecord::Migration
     Card.merge_list json["card"]["value"], :output_file=>File.join(data_path,"unmerged_#{ filename }")
   end
   
+  def data_path filename=nil
+    self.class.data_path filename
+  end
     
   def schema_mode
-    Wagn::Migration.schema_mode :deck_cards
+    self.class.schema_mode 
   end
   
   def migration_paths
-    Wagn::Migration.paths :deck_cards
+    self.class.paths
   end
   
   

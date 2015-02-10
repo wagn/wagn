@@ -24,7 +24,7 @@ def chunk_list #override to customize by set
 end
 
 def last_change_on(field, opts={})
-  where_sql =  'card_actions.card_id = :card_id AND field = :field AND (draft = 0 OR draft IS NULL)'
+  where_sql =  'card_actions.card_id = :card_id AND field = :field AND (draft is not true) '
   where_sql += if opts[:before]
     'AND card_action_id < :action_id'      
   elsif opts[:not_after]
@@ -34,7 +34,7 @@ def last_change_on(field, opts={})
   end
   
   action_arg = opts[:before] || opts[:not_after]
-  action_id =  (action_arg.kind_of?(Card::Action) && action_arg.id) or action_arg
+  action_id = action_arg.kind_of?(Card::Action) ? action_arg.id : action_arg
   field_index = Card::TRACKED_FIELDS.index(field.to_s)
   Change.joins(:action).where( where_sql, 
     {:card_id=>id, :field=>field_index, :action_id=>action_id}

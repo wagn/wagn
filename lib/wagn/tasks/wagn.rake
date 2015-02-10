@@ -1,6 +1,14 @@
 
 WAGN_BOOTSTRAP_TABLES = %w{ cards card_actions card_acts card_changes card_references }
 
+def prepare_migration
+  Wagn::Cache.reset_global
+  Wagn.config.action_mailer.perform_deliveries = false
+  Card.reset_column_information
+  Card::Reference.reset_column_information  # this is needed in production mode to insure core db 
+                                            # structures are loaded before schema_mode is set
+end
+
 namespace :wagn do
   desc "create a wagn database from scratch"
   task :create do
@@ -55,8 +63,9 @@ namespace :wagn do
 
   desc "set symlink for assets"
   task :update_assets_symlink do
-    if Rails.root.to_s != Wagn.gem_root and not File.exists? File.join(Rails.public_path, "assets")
-      FileUtils.ln_s( Wagn.paths['gem-assets'].first, File.join(Rails.public_path, "assets") )
+    assets_path = File.join(Rails.public_path, "assets")
+    if Rails.root.to_s != Wagn.gem_root and not (File.exists? assets_path or File.symlink? assets_path)
+      FileUtils.ln_s( Wagn.paths['gem-assets'].first, assets_path )
     end
   end
 
@@ -92,8 +101,8 @@ namespace :wagn do
 
   desc 'insert existing card migrations into schema_migrations_cards to avoid re-migrating'
   task :assume_card_migrations do
-    Wagn::Migration.schema_mode :card do
-      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:cards), Wagn::Migration.card_migration_paths
+    Wagn::CoreMigration.schema_mode  do
+      ActiveRecord::Schema.assume_migrated_upto_version Wagn::Version.schema(:core_cards), Wagn::CoreMigration.paths
     end
   end
 
@@ -106,18 +115,11 @@ namespace :wagn do
     
     desc "migrate core cards"
     task :core_cards => :environment do
-      Wagn::Cache.reset_global
       ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
-      Wagn.config.action_mailer.perform_deliveries = false
-      Card.reset_column_information
-      Card::Reference.reset_column_information
-      
-       # this is needed in production mode to insure core db structures are loaded before schema_mode is set
-      
+      prepare_migration
+      paths = ActiveRecord::Migrator.migrations_paths = Wagn::CoreMigration.paths
     
-      paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.paths(:core_cards)
-    
-      Wagn::Migration.schema_mode :core_cards do
+      Wagn::CoreMigration.schema_mode do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       end
@@ -125,15 +127,11 @@ namespace :wagn do
     
     desc "migrate deck cards"
     task :deck_cards => :environment do
-      Wagn::Cache.reset_global
       ENV['SCHEMA'] ||= "#{Rails.root}/db/schema.rb"
-      Wagn.config.action_mailer.perform_deliveries = false
-      Card.reset_column_information # this is needed in production mode to insure core db structures are loaded before schema_mode is set
-      Card::Reference.reset_column_information
+      prepare_migration
+      paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.paths
     
-      paths = ActiveRecord::Migrator.migrations_paths = Wagn::Migration.paths(:deck_cards)
-    
-      Wagn::Migration.schema_mode :deck_cards do
+      Wagn::Migration.schema_mode do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       end
@@ -145,6 +143,7 @@ namespace :wagn do
       Wagn.config.action_mailer.perform_deliveries = false
       
       stamp_file = Wagn::Version.schema_stamp_path( args[:type] )
+      
       Wagn::Migration.schema_mode args[:type] do
         version = ActiveRecord::Migrator.current_version
         if version.to_i > 0 and file = open(stamp_file, 'w')
@@ -193,11 +192,10 @@ namespace :wagn do
       Wagn::Cache.reset_global
       conn =  ActiveRecord::Base.connection
       # Correct time and user stamps
-      card_sql =  "update cards set created_at=now(), creator_id=#{ Card::WagnBotID }"
-      card_sql +=                 ",updated_at=now(), updater_id=#{ Card::WagnBotID }"
-      conn.update card_sql
-      act_sql =  "update card_acts set acted_at=now(), actor_id=#{ Card::WagnBotID }"
-      conn.update act_sql
+      who_and_when = [ Card::WagnBotID, Time.now.utc.to_s(:db) ]
+      card_sql = "update cards set creator_id=%1$s, created_at='%2$s', updater_id=%1$s, updated_at='%2$s'"
+      conn.update( card_sql                                          % who_and_when )
+      conn.update( "update card_acts set actor_id=%s, acted_at='%s'" % who_and_when )
 
       Card::Auth.as_bot do
         # delete ignored cards
@@ -216,25 +214,19 @@ namespace :wagn do
         end
       end
 
-      conn.delete( "delete from cards where trash is true" )
+      Card.empty_trash
 
-      Card::Action.delete_cardless
       Card::Action.delete_old
       Card::Change.delete_actionless
 
+      conn.execute( "truncate card_acts" )
+      conn.execute( "truncate sessions" )
 
-      act = Card::Act.create!(:actor_id=>Card::WagnBotID,
-       :card_id=>Card::WagnBotID)
+
+      act = Card::Act.create!(:actor_id=>Card::WagnBotID, :card_id=>Card::WagnBotID)
       Card::Action.find_each do |action|
         action.update_attributes!(:card_act_id=>act.id)
       end
-      Card::Act.where('id != ?',act.id).delete_all
-      conn.delete( "delete from card_references where" +
-        " (referee_id is not null and not exists (select * from cards where cards.id = card_references.referee_id)) or " +
-        " (           referer_id is not null and not exists (select * from cards where cards.id = card_references.referer_id));"
-      )
-      
-      conn.delete( "delete from sessions" )
       
       Wagn::Cache.reset_global
       
@@ -256,6 +248,7 @@ namespace :wagn do
           data = ActiveRecord::Base.connection.select_all( "select * from #{table}" )
           file.write YAML::dump( data.inject({}) do |hash, record|
             record['trash'] = false if record.has_key? 'trash'
+            record['draft'] = false if record.has_key? 'draft'
             if record.has_key? 'content'
               record['content'] = record['content'].gsub /\u00A0/, '&nbsp;'
               # sych was handling nonbreaking spaces oddly.  would not be needed with psych.

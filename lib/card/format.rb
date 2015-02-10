@@ -2,14 +2,13 @@
 
 class Card
   class Format
-    include Wagn::Location
 
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :setup=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     
     cattr_accessor :ajax_call, :registered, :max_depth
-    [ :perms, :denial_views, :error_codes, :view_tags, :aliases ].each do |acc|
+    [ :perms, :denial_views, :closed_views, :error_codes, :view_tags, :aliases ].each do |acc|
       cattr_accessor acc
       self.send "#{acc}=", {}
     end
@@ -35,9 +34,10 @@ class Card
 
       def extract_class_vars view, opts
         return unless opts.present?
-        perms[view]       = opts.delete(:perms)      if opts[:perms]
-        error_codes[view] = opts.delete(:error_code) if opts[:error_code]
-        denial_views[view]= opts.delete(:denial)     if opts[:denial]
+        perms[view]        = opts.delete(:perms)      if opts[:perms]
+        error_codes[view]  = opts.delete(:error_code) if opts[:error_code]
+        denial_views[view] = opts.delete(:denial)     if opts[:denial]
+        closed_views[view] = opts.delete(:closed)     if opts[:closed]
 
         if tags = opts.delete(:tags)
           Array.wrap(tags).each do |tag|
@@ -183,7 +183,9 @@ class Card
         @current_view = view = ok_view canonicalize_view( view ), args       
         args = default_render_args view, args
         with_inclusion_mode view do
-          send "_view_#{ view }", args
+          Wagn.with_logging :view, :message=>view, :context=>card.name, :details=>args do
+            send "_view_#{ view }", args
+          end
         end
       end
     rescue => e
@@ -244,9 +246,9 @@ class Card
       if Rails.env =~ /^cucumber|test$/
         raise e
       else
-        controller.send :notify_airbrake, e if Airbrake.configuration.api_key
         Rails.logger.info "\nError rendering #{error_cardname} / #{view}: #{e.class} : #{e.message}"
-        Rails.logger.debug "BT:  #{e.backtrace*"\n  "}"
+        Card::Error.current = e
+        card.notable_exception_raised
         rendering_error e, view
       end
     end
@@ -294,11 +296,16 @@ class Card
     def ok_view view, args={}
       return view if args.delete :skip_permissions
       approved_view = case
-        when @depth >= @@max_depth      ; :too_deep                    # prevent recursion. @depth tracks subformats
-        when @@perms[view] == :none     ; view                         # view requires no permissions
-        when !card.known? &&
-          !tagged( view, :unknown_ok )  ; view_for_unknown view, args  # handle unknown cards (where view not exempt)
-        else                            ; permitted_view view, args    # run explicit permission checks
+        when @depth >= @@max_depth                      # prevent recursion. @depth tracks subformats
+          :too_deep
+        when @@perms[view] == :none                     # permission skipping specified in view definition
+          view
+        when args.delete(:skip_permissions)             # permission skipping specified in args
+          view
+        when !card.known? && !tagged(view, :unknown_ok) # handle unknown cards (where view not exempt)
+          view_for_unknown view, args  
+        else                                            # run explicit permission checks
+          permitted_view view, args    
         end
 
       args[:denied_view] = view if approved_view != view
@@ -421,17 +428,21 @@ class Card
       opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
       # FIXME: special views should be represented in view definitions
 
-      view = case
-      when @mode == :edit
-        if @@perms[view]==:none || nested_card.structure || nested_card.key.blank? # eg {{_self|type}} on new cards
-          :blank
-        else
-          :edit_in_form
+      view = case @mode
+      when :edit
+        not_ready_for_form = @@perms[view]==:none || nested_card.structure || nested_card.key.blank? # eg {{_self|type}} on new cards
+        not_ready_for_form ? :blank : :edit_in_form
+      when :template
+        :template_rule
+      when :closed
+        case
+        when @@closed_views[view] == true || @@error_codes[view] ; view
+        when specified_view = @@closed_views[view]               ; specified_view
+        when !nested_card.known?                                 ; :closed_missing
+        else                                                     ; :closed_content
         end
-      when @mode == :template   ; :template_rule
-      when @@perms[view]==:none ; view
-      when @mode == :closed     ; !nested_card.known?  ? :closed_missing : :closed_content
-      else                      ; view
+      else
+        view
       end
       sub.render view, opts
       #end
@@ -466,66 +477,54 @@ class Card
       :name
     end
 
-    def path opts={}
-      pcard = opts.delete(:card) || card
-      base = opts[:action] ? "card/#{ opts.delete :action }/" : ''
-      if pcard && !pcard.name.empty? && !opts.delete(:no_id) && ![:new, :create].member?(opts[:action]) #generalize. dislike hardcoding views/actions here
-        base += ( opts[:id] ? "~#{ opts.delete :id }" : pcard.cardname.url_key )
-      end
-      query = opts.empty? ? '' : "?#{opts.to_param}"
-      wagn_path( base + query )
-    end
+
     #
     # ------------ LINKS ---------------
     #
 
-    def final_link href, opts
-      if text = opts[:text]
-        "#{text}[#{href}]"
-      else
-        href
-      end
-    end
 
-    def build_link href, text=nil
-      opts = {:text => text }
-
-      opts[:class] = case href.to_s
-        when /^https?:/                      ; 'external-link'
-        when /^mailto:/                      ; 'email-link'
-        when /^([a-zA-Z][\-+.a-zA-Z\d]*):/   ; $1 + '-link'
-        when /^\//
-          href = internal_url href[1..-1]    ; 'internal-link'
-        else
-          return href
-          Rails.logger.debug "build_link mistakenly(?) called on #{href}, #{text}"
-        end
-        
-      final_link href, opts
-    end
-
-    def card_link name, text, known, type=nil
-      text ||= name
-      linkname = name.to_name.url_key
-      opts = {
-        :class => ( known ? 'known-card' : 'wanted-card' ),
-        :text  => ( text.to_name.to_show @context_names  )
-      }
-      if !known
-        link_params = {}
-        link_params['name'] = name.to_s if name.to_s != linkname
-        link_params['type'] = type      if type
-        linkname += "?#{ { :card => link_params }.to_param }" if !link_params.empty?
-      end
-      final_link internal_url( linkname ), opts
-    end
   
+
+  
+    def add_class options, klass
+      options[:class] = [ options[:class], klass ].flatten.compact * ' '
+    end
+    
+    module Location
+      #
+      # page_path    takes a Card::Name, adds the format and query string to url_key (site-absolute)
+      # wagn_path    makes a relative path site-absolute (if not already)
+      # wagn_url     makes it a full url (if not already)
+
+      # TESTME
+      def page_path title, opts={}
+        Rails.logger.warn "Pass only Card::Name to page_path #{title.class}, #{title}" unless Card::Name===title
+        format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
+        query  = opts.present? ? "?#{opts.to_param}"         : ''
+        wagn_path "#{title.to_name.url_key}#{format}#{query}"
+      end
+
+      def wagn_path rel_path
+        Rails.logger.warn "Pass only strings to wagn_path: #{rel_path.class}, #{rel_path}" unless String===rel_path
+        if rel_path =~ /^\//
+          rel_path
+        else
+          "#{ Wagn.config.relative_url_root }/#{ rel_path }"
+        end
+      end
+
+      def wagn_url rel
+        if rel =~ /^https?\:/
+          rel
+        else
+          "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ wagn_path rel }"
+        end
+      end
+    end
+    include Location
+
     def unique_id
       "#{card.key}-#{Time.now.to_i}-#{rand(3)}" 
-    end
-
-    def internal_url relative_path
-      wagn_path relative_path
     end
 
     def format_date date, include_time = true

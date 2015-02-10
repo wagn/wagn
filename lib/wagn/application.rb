@@ -9,6 +9,14 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
+module ActiveSupport::BufferedLogger::Severity
+  WAGN = UNKNOWN + 1
+  
+  def wagn progname, &block
+    add(WAGN, nil, progname, &block)
+  end
+end
+
 
 module Wagn
   class Application < Rails::Application
@@ -31,6 +39,12 @@ module Wagn
       paths.add 'mod-initializers', :with=>'mod', :glob=>"**{,/*/**}/initializers/*.rb"
       config.paths['mod-initializers'].existent.sort.each do |initializer|
         load(initializer)
+      end
+    end
+    
+    initializer :load_logger_config, :after => :load_config_initializers do
+      if config.performance_logger
+        Wagn::Log::Performance.load_config config.performance_logger
       end
     end
     
@@ -76,6 +90,7 @@ module Wagn
         config.token_expiry          = 2.days
         config.revisions_per_page    = 10
         config.request_logger        = false
+        config.performance_logger    = false
         
         config
       end

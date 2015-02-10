@@ -38,11 +38,11 @@ class SharedData
 
     Card.create! :type_id=>Card::SignupID, :name=>"Sample Signup" #, :email=>"invitation@request.com"
     #above still necessary?  try commenting out above and 'Sign up' below
+    Card::Auth.current_id = Card::WagnBotID # need to reset after creating sign up, which changes current_id for extend phase
 
     Card::Auth.createable_types.each do |type|
       next if ['User', 'Sign up', 'Set', 'Number'].include? type
       Card.create! :type=>type, :name=>"Sample #{type}"
-      Card::Auth.current_id = Card::WagnBotID # need to reset after creating sign up, which changes current_id for extend phase
     end
 
 
@@ -161,6 +161,10 @@ class SharedData
     Card.create! :name=>'TwwoHeading', :content => "<h1>One Heading</h1>\r\n<p>and some text</p>\r\n<h2>And a Subheading</h2>\r\n<p>and more text</p>"
     Card.create! :name=>'ThreeHeading', :content =>"<h1>A Heading</h1>\r\n<p>and text</p>\r\n<h2>And Subhead</h2>\r\n<p>text</p>\r\n<h1>And another top Heading</h1>"
 
+    # -------- For history testing: -----------
+    first = Card.create! :name=>"First", :content => 'egg'
+    first.update_attributes! :content=> 'chicken'
+    first.update_attributes! :content=> 'chick'
 
   end
 end

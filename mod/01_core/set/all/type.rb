@@ -6,7 +6,8 @@ module ClassMethods
 end
 
 def type_card
-  Card[ type_id.to_i ]
+  return if type_id.nil?
+  Card.fetch type_id.to_i, :skip_modules=>true
 end
 
 def type_code
@@ -14,9 +15,11 @@ def type_code
 end
 
 def type_name
-  return if type_id.nil?
-  type_card = Card.fetch type_id.to_i, :skip_modules=>true, :skip_virtual=>true
-  type_card and type_card.name
+  type_card.try :name
+end
+
+def type_cardname
+  type_card.try :cardname
 end
 
 def type= type_name
@@ -25,7 +28,7 @@ end
 
 def get_type_id args={}
   return if args[:type_id] # type_id was set explicitly.  no need to set again.
-
+  
   type_id = case
     when args[:type_code]
       if code=args[:type_code]

@@ -94,7 +94,12 @@ end
 
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do
-    fill_in("card[content]", :with=>content)
+    normal_textarea_card_type = ["JavaScript","CoffeeScript","HTML","CSS","SCS","Search"]
+    if not normal_textarea_card_type.include? cardtype or not page.evaluate_script "typeof ace != 'undefined'"
+      fill_in("card[content]", :with=>content)
+    else
+      page.execute_script %{ace.edit($('.ace_editor').get(0)).getSession().setValue('#{content}')}
+    end
   end
 end
 
@@ -150,7 +155,8 @@ end
 
 Then /debug/ do
   if RUBY_VERSION =~ /^2/
-    byebug
+    require 'pry'
+    binding.pry
   else
     debugger
   end
@@ -248,6 +254,14 @@ Then /^In (.*) I should (not )?see a ([^\"]*) with class "([^\"]*)"$/ do |select
   element = 'a' if element == 'link'
   within scope_of(selection) do
     page.send( ( neg ? :should_not : :should ), have_css( [ element, selector ] * '.' ) )
+  end
+end
+
+Then /^In (.*) I should (not )?see a ([^\"]*) with content "([^\"]*)"$/ do |selection, neg, element, content|
+  # checks for existence of a element with a class in a selection context
+  element = 'a' if element == 'link'
+  within scope_of(selection) do
+    page.send( ( neg ? :should_not : :should ), have_css( element, :text=>content ) )
   end
 end
 

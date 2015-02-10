@@ -125,36 +125,13 @@ class AddEmailCards < Wagn::CoreMigration
     Card.create! :name => '*following+*right+*default', :type_code=>:pointer
     Card.create! :name => '*following+*right+*update', :content=>'_left'
     Card.create! :name => '*following+*right+*create', :content=>'_left'
-    Card::Codename.reset_cache      
-    
-    # move old watch rules
-    # +watchers
-    follower_hash = Hash.new { |h, v| h[v] = [] } 
 
-    Card.search(:right_plus => {:codename=> "watchers"}).each do |card|
-      if watched = card.left
-        card.item_names.each do |user_name|
-          follower_hash[user_name] << watched.name
-        end
-      end
-    end
-    
-    follower_hash.each do |user, items|
-      if card=Card.fetch(user) and card.account
-        following = card.fetch :trait=>"following", :new=>{}
-        following.items = items
-      end
-    end
-    
-    if watchers = Card[:watchers]
-      watchers.update_attributes :codename=>nil
-      watchers.delete!
-    end
-    
     if send = Card[:send]
       send.update_attributes :codename=>nil
       send.delete!
     end
+    
+    
   end
 end
 

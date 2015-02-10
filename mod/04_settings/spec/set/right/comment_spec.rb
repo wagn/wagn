@@ -4,8 +4,8 @@ describe Card::Set::Right::Comment do
 
   context "record appender" do
     before do
-      @r = Card.where(:type_id=>Card::RoleID).first
-      @rule = Card.new :name=>'A+*self+*comment', :type_id=>Card::PointerID, :content=>"[[#{@r.name}]]"
+#      @r = Card.where(:type_id=>Card::RoleID).first
+      @rule = Card.new :name=>'A+*self+*comment', :type_id=>Card::PointerID, :content=>"[[Anyone Signed In]]"
     end
 
     it "should have appender immediately" do

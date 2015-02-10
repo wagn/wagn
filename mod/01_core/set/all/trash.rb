@@ -27,13 +27,13 @@ event :validate_delete, :before=>:approve, :on=>:delete do
   end
   
   undeletable_all_rules_tags = %w{ default style layout create read update delete }
-  if junction? and left.codename == 'all' and undeletable_all_rules_tags.member? right.codename
+  if junction? and l=left and l.codename == 'all' and undeletable_all_rules_tags.member? right.codename
     errors.add :delete, "#{name} is an indestructible rule"
   end
   
-  # if account && Card::Revision.find_by_creator_id( self.id )  #ask ethan
-  #   errors.add :delete, "Edits have been made with #{name}'s user account.\n  Deleting this card would mess up our revision records."
-  # end
+  if account && Card::Act.find_by_actor_id( self.id )
+    errors.add :delete, "Edits have been made with #{name}'s user account.\nDeleting this card would mess up our history."
+  end
 end
 
 event :validate_delete_children, :after=>:approve, :on=>:delete do

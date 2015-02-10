@@ -9,7 +9,7 @@ module RenameMethods
       #:revisions   => card.actions.count,
       :referencers => card.referencers.map(&:name).sort,
       :referees => card.referees.map(&:name).sort,
-      :dependents  => card.dependents.map(&:id)
+      :dependents  => card.dependents.map(&:id).sort
     }
   end
 

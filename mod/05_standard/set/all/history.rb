@@ -162,7 +162,7 @@ format :html do
       = "##{rev_nr}"
     .title
       .actor
-        = link_to act.actor.name, wagn_url( act.actor )
+        = link_to act.actor.name, wagn_url( act.actor.cardname.url_key )
       .time.timeago
         = time_ago_in_words(act.acted_at)
         ago
@@ -248,7 +248,7 @@ format :html do
       if hide_diff 
         new_name
       else
-        Card::Diff::DiffBuilder.new(old_name,new_name).complete
+        Card::Diff.complete(old_name,new_name)
       end
     else
       old_name
@@ -259,6 +259,9 @@ format :html do
     change = hide_diff ? action.new_values[:cardtype] : action.cardtype_diff
     "(#{change})"
   end
+  
+
+
   
   view :content_changes do |args|
     if args[:hide_diff]
@@ -281,14 +284,20 @@ format :html do
     else
       toggled_view = :act_expanded
     end
-    link_to '', path(args.merge(:view=>toggled_view)), 
+    link_to '', args.merge(:view=>toggled_view), 
               :class=>"slotter revision-#{args[:act_id]} #{ args[:act_view]==:expanded ? "arrow-down" : "arrow-right"}", 
               :remote=>true
   end
   
   def show_or_hide_changes_link hide_diff, args
-    "| " +  link_to_view( (hide_diff ? "Show" : "Hide") + " changes", :act_expanded, 
+    "| " +  view_link( (hide_diff ? "Show" : "Hide") + " changes", :act_expanded, 
       :path_opts=>args.merge(:hide_diff=>!hide_diff), 
       :class=>'slotter', :remote=>true )
   end
 end
+
+def diff_args
+  {:format=>:text}
+end
+
+

@@ -1,3 +1,5 @@
+module SpecHelper
+end
 module Wagn::SpecHelper
 
   include ActionDispatch::Assertions::SelectorAssertions

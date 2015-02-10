@@ -77,9 +77,9 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c|
       end
     end
   rescue =>e  #this error handling should apply to all extend callback exceptions
-    Airbrake.notify e if Airbrake.configuration.api_key
     Rails.logger.info "\nController exception: #{e.message}"
-    Rails.logger.debug "BT: #{e.backtrace*"\n"}"
+    Card::Error.current = e
+    notable_exception_raised
   end
 end
   
@@ -121,15 +121,15 @@ format do
 #{ render_list_of_changes(args) }}
   end
   
-  view :followed do |args|
+  view :followed, :closed=>true do |args|
     args[:followed] || 'followed card'
   end
 
-  view :follower do |args|
+  view :follower, :closed=>true do |args|
     args[:follower] || 'follower'
   end
   
-  view :unfollow_url do |args|
+  view :unfollow_url, :closed=>true do |args|
     if args[:followed] and args[:follower] and follower = Card.fetch( args[:follower] )
      following_card = follower.fetch( :trait=>:following, :new=>{} )
      wagn_url( "update/#{following_card.cardname.url_key}?drop_item=#{args[:followed].to_name.url_key}" )

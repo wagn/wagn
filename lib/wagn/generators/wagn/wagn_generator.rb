@@ -27,24 +27,36 @@ class WagnGenerator < Rails::Generators::AppBase
   public_task :create_root
   
 ## should probably eventually use rails-like AppBuilder approach, but this is a first step.  
-  def dev_setup  
+  def dev_setup
+    @wagn_path = options['gem-path']
     if options['core-dev']
-      @wagn_path = options['gem-path'] || ask("Enter the path to your local wagn gem installation: ")
+      @wagn_path ||= ask("Enter the path to your local wagn gem installation: ")
       @spec_path = @wagn_path
       @spec_helper_path = File.join @spec_path, 'spec', 'spec_helper'
+      empty_directory 'spec'
+      inside 'spec' do
+        copy_file File.join('javascripts', 'support', 'wagn_jasmine.yml'), File.join('javascripts', 'support','jasmine.yml')
+      end
       @features_path = File.join @wagn_path, 'features/'  # ending slash is important in order to load support and step folders
       @simplecov_config = "wagn_core_dev_simplecov_filters"
-      template "rspec", ".rspec"
-      template "simplecov", ".simplecov"
+      
     elsif options['mod-dev']
       @spec_path = 'mod/'
       @spec_helper_path = './spec/spec_helper'
       @simplecov_config = "wagn_simplecov_filters"
-      template "rspec", ".rspec"
-      template "simplecov", ".simplecov"
       empty_directory 'spec'
       inside 'spec' do
         template 'spec_helper.rb'
+        copy_file File.join(  'javascripts', 'support', 'deck_jasmine.yml'), File.join('javascripts', 'support','jasmine.yml')
+      end
+    end
+    
+    if options['core-dev'] || options['mod-dev']
+      template "rspec", ".rspec"
+      template "simplecov", ".simplecov"
+      empty_directory 'bin'
+      inside 'bin' do
+        template 'spring'
       end
     end
   end
@@ -52,6 +64,17 @@ class WagnGenerator < Rails::Generators::AppBase
   
   def rakefile
     template "Rakefile"
+  end
+
+  def app
+    empty_directory 'app'
+    inside "app" do
+      empty_directory 'assets'
+      inside "assets" do
+        empty_directory 'javascripts'  
+        empty_directory 'stylesheets'
+      end
+    end
   end
 
 #  def readme

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require File.expand_path('../../../../../03_machines/spec/lib/machine_spec.rb', __FILE__)
+require File.expand_path('../../../../../03_machines/spec/lib/shared_machine_examples.rb', __FILE__)
 
 describe Card::Set::Right::Style do
 #  describe "#delet"

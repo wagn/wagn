@@ -40,30 +40,21 @@ class Card::Reference < ActiveRecord::Base
     end
     
     def repair_missing_referees
-      where( Card.where( :id=>arel_table[:referee_id]).exists.not ).update_all :referee_id=>nil
+      #FIXME - should treat trashed cards as not existing
+      where( Card.where( :id=>arel_table[:referee_id], :trash=>false).exists.not ).update_all :referee_id=>nil
+    end
+    
+    def delete_missing_referers
+      where( Card.where( :id=>arel_table[:referer_id], :trash=>false).exists.not ).delete_all
     end
     
     def repair_all
-      connection.execute 'truncate card_references'
-      Card.update_all :references_expired => 1
-
-      expired_cards_remain = true
-      batchsize, count_updated = 100, 0
-
-      while expired_cards_remain
-        batch = Card.find_all_by_references_expired(1, :order=>"name ASC", :limit=>batchsize)
-        if batch.empty?
-          expired_cards_remain = false
-        else
-          Rails.logger.debug "Updating references for '#{batch.first.name}' to '#{batch.last.name}' ... "; $stdout.flush        
-          batch.each do |card|
-            count_updated += 1
-            card.update_references
-          end
-          Rails.logger.info "batch done.  \t\t#{count_updated} total updated"
-        end
-      end
+      delete_missing_referers
       
+      Card.where(:trash=>false).find_each do |card|
+        Rails.logger.info "\n\n\nRepairing references for '#{card.name}' (id: #{card.id}) ... \n\n\n"
+        card.update_references 
+      end
     end
     
   end

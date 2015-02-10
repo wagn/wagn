@@ -116,6 +116,11 @@ def rescue_event e
 #  false
 end
 
+event :notable_exception_raised do
+  Rails.logger.debug "BT:  #{Card::Error.current.backtrace*"\n  "}"
+end
+
+
 def event_applies? opts
   if opts[:on]
     return false unless Array.wrap( opts[:on] ).member? @action

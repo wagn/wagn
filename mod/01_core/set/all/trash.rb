@@ -31,9 +31,9 @@ event :validate_delete, :before=>:approve, :on=>:delete do
     errors.add :delete, "#{name} is an indestructible rule"
   end
   
-  # if account && Card::Revision.find_by_creator_id( self.id )  #ask ethan
-  #   errors.add :delete, "Edits have been made with #{name}'s user account.\n  Deleting this card would mess up our revision records."
-  # end
+  if account && Card::Act.find_by_actor_id( self.id )
+    errors.add :delete, "Edits have been made with #{name}'s user account.\nDeleting this card would mess up our history."
+  end
 end
 
 event :validate_delete_children, :after=>:approve, :on=>:delete do

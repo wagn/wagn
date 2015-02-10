@@ -30,7 +30,7 @@ format :email_text do
         if item_card.account
           item_card.account.email
         else
-          item_card.contextual_content(context,:format=>:email_address).split( /[,\n]/ )
+          item_card.contextual_content(context,:format=>:email_text).split( /[,\n]/ )
         end
       end          
     end.flatten.compact.join(', ')

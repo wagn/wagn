@@ -72,9 +72,9 @@ format :html do
     %{<div id="main">#{content}</div>}
   end
   
-  def wrap_with tag, args={}
-    content_tag( tag, {:class=>args[:class], :id=>args[:id]} ) do 
-      output( yield args )
+  def wrap_with tag, html_args={}
+    content_tag( tag, html_args ) do 
+      output( yield )
     end
   end
   

@@ -216,9 +216,25 @@ format :html do
   end
 =end
   
-  view :delete_button do |args|
-    wrap_with(:span) do
-      link_to( '', '#', :class=>'item-card-delete ui-icon ui-icon-circle-close' )
+
+  
+  view :follow_item, :tags=>:unknown_ok do |args|
+    if card.new_card?
+      args[:add_button] = args[:editable] ? :show : :hide
+      render_item_add args
+    else
+      args[:delete_button] = args[:editable] ? :show : :hide
+      render_item_delete args
+    end
+  end
+
+
+  view :item_add, :tags=>:unknown_ok do |args|
+    card_form :action=>:create, :id=>card.name do
+      output [
+        _optional_render(:add_button, args),
+        card_link( card.rule_set_name, :path_opts=>{:view=>'members'}, :text=>card.rule_set.follow_label)
+      ]
     end
   end
   
@@ -230,6 +246,38 @@ format :html do
       ]
     end
   end
+  
+  view :delete_button do |args|
+    %{
+    <button type="submit" class="btn btn-defa ult btn-xs" aria-label="Left Align">
+      <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+    </button>
+    <script>
+    $('.btn').hover( function() {
+                      $(this).find('.glyphicon').addClass("glyphicon-remove-sign").removeClass("glyphicon-ok-sign");
+                     },
+                    function() {
+                      $(this).find('.glyphicon').addClass("glyphicon-ok-sign").removeClass("glyphicon-remove-sign");
+                     }
+                    );
+    </script>
+    }
+    # wrap_with(:span, :class=>"glyphicon glyphicon-ok-sign item-card-submit", ':aria-hidden'=>"true") do
+    #   link_to( '', '#', :class=>'item-card-submit' )
+    # end
+  end
+  
+  view :add_button do |args|
+    %{
+    <button type="submit" class="btn btn-default btn-xs" aria-label="Left Align">
+      <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+    </button>
+    }
+    # wrap_with(:span, :class=>"glyphicon glyphicon-plus-sign item-card-submit", ':aria-hidden'=>"true") do
+    #   link_to( '', '#', :class=>'item-card-submit' )
+    # end
+  end
+  
 
   private
 
@@ -262,7 +310,7 @@ end
 
 def rule_set
   if is_user_rule?
-    trunk.trunk
+    self[0..-3]
   else
     trunk
   end

@@ -183,7 +183,7 @@ format :html do
   view :follow_link do |args|
     toggle       = args[:toggle] || (card.followed? ? :off : :on)
 
-    follow_rule_name = "#{card.default_follow_set_card.name}+#{Auth.current.name}+#{Card[:follow].name}"
+    follow_rule_name = card.default_follow_set_card.follow_rule_name Auth.current.name
     path_options = { 
                       :action=>:update,
                       :success=>{:id=>card.name, :view=>:follow} 
@@ -198,14 +198,14 @@ format :html do
     when :off
       path_options['card[content]']= '[[never]]'
       html_options[:title]         = "stop sending emails about changes to #{card.follow_label}"
-      html_options[:hover_content] = 'unfollow'
-      html_options[:text]          = 'following'
+      html_options[:hover_content] = "unfollow #{card.follow_label}"
+      html_options[:text]          = "following #{card.follow_label}"
     when :on
       path_options['card[content]']= '[[always]]'
       html_options[:title]         = "send emails about changes to #{card.follow_label}"
-      html_options[:text]          = 'follow'
+      html_options[:text]          = "follow #{card.follow_label}"
     end
-    card_link follow_rule_name, html_options.merge(:path_opts=>path_options) 
+    card_link follow_rule_name, html_options.merge(:path_opts=>path_options,:success=>{:view=>:follow}) 
   end
   
   #

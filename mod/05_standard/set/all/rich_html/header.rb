@@ -26,23 +26,25 @@ format :html do
     end
 
     @menu_vars = {
-      :self         => card.name,
-      :linkname     => card.cardname.url_key,
-      :type         => card.type_name,
-      :structure    => card.structure && card.template.ok?(:update) && card.template.name,
-      :discuss      => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read ),
-      :piecenames   => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>n.to_s } },
-      :related_sets => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name } } }
+      :self          => card.name,
+      :linkname      => card.cardname.url_key,
+      :type          => card.type_name,
+      :structure     => card.structure && card.template.ok?(:update) && card.template.name,
+      :discuss       => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read ),
+      :piecenames    => card.junction? && card.cardname.piece_names[0..-2].map { |n| { :item=>n.to_s } },
+      :related_sets  => card.related_sets.map { |name,label| { :text=>label, :path_opts=>{ :current_set => name } } }
     }
     if card.real?
       @menu_vars.merge!({
         :edit      => card.ok?(:update),
         :account   => card.account && card.ok?(:update),
-        :follow     => Auth.signed_in? && render_follow,
+        :signedin  => Auth.signed_in?,
+        :follow    => render_follow,
+        :follow_link => render_follow_link, # => #(card.followed? ? 'unfollow' : 'follow'),
         :creator   => card.creator.name,
         :updater   => card.updater.name,
         :delete    => card.ok?(:delete) && link_to( 'delete', :action=>:delete,
-          :class => 'slotter standard-delete', :remote => true, :'data-confirm' => "Are you sure you want to delete #{card.name}?"
+        :class     => 'slotter standard-delete', :remote => true, :'data-confirm' => "Are you sure you want to delete #{card.name}?"
         )
       })
     end

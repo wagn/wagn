@@ -54,8 +54,8 @@ wagn.menu_template = [
       }
     ]
   },
-  { "link":"follow", "view":"options", "if":"follow", "sub":[ 
-      { "link":"follow" },
+  { "link":"follow", "view":"options", "if":"signedin", "sub":[ 
+      { "link":"follow_link" },
       { "text":"advanced", "related":"following"}
     ]
   },

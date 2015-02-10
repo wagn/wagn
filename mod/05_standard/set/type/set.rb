@@ -157,25 +157,25 @@ end
 def follow_rule_name user=nil
   if user
     if user.kind_of? String
-      "#{name}+#{Card[:follow].name}+#{user}"
+      "#{name}+#{user}+#{Card[:follow].name}"
     else
-      "#{name}+#{Card[:follow].name}+#{user.name}"
+      "#{name}+#{user.name}+#{Card[:follow].name}"
     end
   else
-    "#{name}+#{Card[:follow].name}+#{Card[:all].name}"
+    "#{name}+#{Card[:all].name}+#{Card[:follow].name}"
   end
 end
 
-def to_following_item_name args
-  left_part = follow_rule_name( args[:user] )
-  option = args[:option] || if (rule_card = Card.fetch(left_part))
-       rule_card.content
-     else
-       Card[:nothing].name
-     end
-  
-  "#{left_part}+#{option}"
-end
+# def to_following_item_name args
+#   left_part = follow_rule_name( args[:user] )
+#   option = args[:option] || if (rule_card = Card.fetch(left_part))
+#        rule_card.content
+#      else
+#        Card[:nothing].name
+#      end
+#
+#   "#{left_part}+#{option}"
+# end
 
 def all_user_ids_with_rule_for setting_code
   Card.all_user_ids_with_rule_for self, setting_code

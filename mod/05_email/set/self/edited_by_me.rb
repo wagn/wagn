@@ -11,7 +11,7 @@ def label
 end
   
 def description set_card
-  "#{set_card.follow_label} you edited"
+  "#{set_card.follow_label} I edited"
 end
 
 

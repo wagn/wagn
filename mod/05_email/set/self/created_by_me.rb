@@ -11,7 +11,7 @@ def label
 end
 
 def description set_card
-  "#{set_card.follow_label} you created"
+  "#{set_card.follow_label} I created"
 end
 
 def applies_to? card, user

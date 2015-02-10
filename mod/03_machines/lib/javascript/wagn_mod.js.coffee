@@ -295,7 +295,7 @@ $(window).ready ->
     event.preventDefault() # Prevent link from following its href
     
   # following mod
-  $('body').on 'click', '.item-card-delete', ->
+  $('body').on 'click', '.item-card-submit', ->
     item = $(this).closest 'li'
     f = $(this).closest 'form'
     f.submit()

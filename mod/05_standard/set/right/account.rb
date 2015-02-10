@@ -129,8 +129,8 @@ end
   
 
 event :send_welcome_email do
-  if (welcome = Card['welcome email'] && welcome.type_code == :email_template)
-    welcome.deliver(:context=>self, :to=>self.email)
+  if ((welcome = Card['welcome email']) && welcome.type_code == :email_template)
+    welcome.deliver(:context=>left, :to=>self.email)
   end
 end
 

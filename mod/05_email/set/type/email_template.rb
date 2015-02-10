@@ -55,12 +55,11 @@ def email_config args={}
   config[:html_message] = Card::Mailer.layout(config[:html_message])
   
   from_name, from_email = (config[:from] =~ /(.*)\<(.*)>/) ? [$1.strip, $2] : [nil, config[:from]]
-      
   if default_from=Card::Mailer.default[:from]
     config[:from] = from_email ? "#{from_name || from_email} <#{default_from}>" : default_from
     config[:reply_to] ||= config[:from]
-  else
-    config[:from] ||= Card[Card::WagnBotID].account.email
+  elsif config[:from].empty? 
+    config[:from] = Card[Card::WagnBotID].account.email
   end
   config.select {|k,v| v.present? }
 end

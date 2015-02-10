@@ -83,27 +83,6 @@ describe Card::Set::Type::Signup do
       success = Card::Env.params[:success]
       expect(success[:message]).to match(/expired/) # user notified of expired token
     end
-  
-    context 'a welcome email card exists' do
-      before do
-        Card::Auth.as_bot do 
-          Card.create! :name=>'welcome email', :subcards=>{'+*subject'=>'welcome', 
-                       '+*html_message'=>'Welcome {{_self|name}}', :type=>'email template'}
-        end
-        Mail::TestMailer.deliveries.clear
-        @signup = Card.create! :name=>'Big Bad Sheep', :type_id=>Card::SignupID, 
-          '+*account'=>{'+*email'=>'sheep@wagn.org', '+*password'=>'sheep'}     
-        
-      end
-      it 'send welcome email' do
-        @signup.activate_account
-        @mail = ActionMailer::Base.deliveries.find{ |a| a.subject == 'welcome' }
-        Mail::TestMailer.deliveries.clear
-        
-        expect(@email).to be_truthy
-        expect( @mail.parts[0].body.raw_source ).to include('Welcome Big Bad Sheep')
-      end
-    end
   end
 
 
@@ -175,6 +154,26 @@ describe Card::Set::Type::Signup do
 
   end
   
+  context 'a welcome email card exists' do
+    before do
+      Card::Auth.as_bot do 
+        Card.create! :name=>'welcome email', :subcards=>{'+*subject'=>'welcome', 
+                     '+*html_message'=>'Welcome {{_self|name}}'}, :type_id=>Card::EmailTemplateID
+      end
+      Mail::TestMailer.deliveries.clear
+      @signup = Card.create! :name=>'Big Bad Sheep', :type_id=>Card::SignupID, 
+        '+*account'=>{'+*email'=>'sheep@wagn.org', '+*password'=>'sheep'}     
+      
+    end
+    it 'sends welcome email when account is activated' do
+      @signup.activate_account
+      @mail = ActionMailer::Base.deliveries.find{ |a| a.subject == 'welcome' }
+      Mail::TestMailer.deliveries.clear
+      
+      expect(@mail).to be_truthy
+      expect(@mail.body.raw_source ).to include('Welcome Big Bad Sheep')
+    end
+  end
   
   context 'invitation' do
     before do

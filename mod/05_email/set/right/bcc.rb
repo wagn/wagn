@@ -1,9 +1,13 @@
-def chunk_list  #turn off autodetection of uri's 
-  :inclusion_and_link
-end
 
 def process_email_addresses context_card, format_args, args
   format(format_args).render_email_addresses(args.merge(:context=>context_card))
+end
+
+
+format do
+  def chunk_list  #turn off autodetection of uri's 
+    :references
+  end
 end
 
 
@@ -18,7 +22,7 @@ end
 format :email_text do
   view :email_addresses do |args|
     context = args[:context] || self
-    card.item_names.map do |item_name|
+    card.item_names(:context=>context.cardname).map do |item_name|
       item_name = item_name.to_name.to_absolute(context).to_s
       if item_name.match /.+\@.+\..+/ 
         item_name

@@ -11,10 +11,12 @@ def clean_html?
   false
 end
 
-def chunk_list
-  :references
-end
-
 def diff_args
  {:format=>:raw}
+end
+
+format do
+  def chunk_list
+    :references
+  end
 end

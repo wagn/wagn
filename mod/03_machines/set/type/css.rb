@@ -21,8 +21,10 @@ def clean_html?
   false
 end
 
-def chunk_list  #turn off autodetection of uri's 
-  :inclusion_and_link
+format do 
+  def chunk_list  #turn off autodetection of uri's 
+    :references
+  end
 end
 
 

@@ -58,8 +58,8 @@ def email_config args={}
   if default_from=Card::Mailer.default[:from]
     config[:from] = from_email ? "#{from_name || from_email} <#{default_from}>" : default_from
     config[:reply_to] ||= config[:from]
-  else
-    config[:from] ||= Card[Card::WagnBotID].account.email
+  elsif config[:from].blank? 
+    config[:from] = Card[Card::WagnBotID].account.email
   end
   config.select {|k,v| v.present? }
 end

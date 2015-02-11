@@ -23,6 +23,8 @@ format :email_text do
   view :email_addresses do |args|
     context = args[:context] || self
     card.item_names(:context=>context.cardname).map do |item_name|
+      # note that context is processed twice here because pointers absolutize item_names by default
+      # while other types can return relative names.  That's poor default behavior and should be fixed!
       item_name = item_name.to_name.to_absolute(context).to_s
       if item_name.match /.+\@.+\..+/ 
         item_name

@@ -295,9 +295,13 @@ $(window).ready ->
     event.preventDefault() # Prevent link from following its href
     
   # following mod
-  $('.btn-item-delete').hover( \
-     (-> $(this).find('.glyphicon').addClass("glyphicon-remove-sign").removeClass("glyphicon-ok-sign")), \
-     (-> $(this).find('.glyphicon').addClass("glyphicon-ok-sign").removeClass("glyphicon-remove-sign")))
+  $('.btn-item-delete').hover(
+    -> 
+      $(this).find('.glyphicon').addClass("glyphicon-remove-sign").removeClass("glyphicon-ok-sign")
+      $(this).addClass("btn-danger").removeClass("btn-success")
+    -> 
+       $(this).find('.glyphicon').addClass("glyphicon-ok-sign").removeClass("glyphicon-remove-sign")
+       $(this).addClass("btn-success").removeClass("btn-danger"))
   # $('body').on 'click', '.item-card-submit', ->
   #   item = $(this).closest 'li'
   #   f = $(this).closest 'form'

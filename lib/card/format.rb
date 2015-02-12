@@ -223,7 +223,11 @@ class Card
     end
     
     def parse_view_visibility val
-      (val || '').split( /[\s\,]+/ ).map { |view| canonicalize_view view }
+      if val.kind_of? Array
+        val.map { |view| canonicalize_view view }
+      else
+        (val || '').split( /[\s\,]+/ ).map { |view| canonicalize_view view }
+      end
     end
     
 

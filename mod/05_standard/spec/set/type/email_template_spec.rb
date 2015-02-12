@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 describe Card::Set::Type::EmailTemplate do
   let(:email_name) { 'a mail template' }
   let(:email) {Card.fetch(email_name)}

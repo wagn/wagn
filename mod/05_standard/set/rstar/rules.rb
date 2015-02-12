@@ -61,7 +61,7 @@ format :html do
         <td class="rule-cell" colspan="3">
           <div class="rule-setting">
             #{ view_link setting_name.sub(/^\*/,''), :closed_rule, :class=>'close-rule-link slotter' }
-            #{ card_link setting_name, :text=>"all rules", :class=>'setting-link', :target=>'wagn_setting' }
+            #{ card_link setting_name, :text=>"all #{setting_name} rules", :class=>'setting-link', :target=>'wagn_setting' }
           </div>
           
           <div class="instruction rule-instruction">
@@ -167,14 +167,15 @@ format :html do
     option_list = wrap_each_with :li do
                     args[:set_options].map do |set_name, state|
                       
-                      checked = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
-                      is_current = state == :current
-                      disabled = state == :disabled
-                      rule_name = "#{set_name}+#{tag}"
+                      checked    = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
+                      is_current = (state == :current)
+                      disabled   = (state == :disabled || state == :overwritten)
+                      rule_name  = "#{set_name}+#{tag}"
                       form.radio_button( :name, rule_name, :checked=> checked, :disabled=>disabled ) + %{
                           <span class="set-label" #{'current-set-label' if is_current }>
                             #{ card_link set_name, :text=> Card.fetch(set_name).label, :target=>'wagn_set' }
                             #{'<em>(current)</em>' if is_current }
+                            #{"<em> #{card_link "#{set_name}+#{card.rule_user_setting_name}", :text=>"(overwritten)"}</em>" if state == :overwritten }
                           </span>
                         }.html_safe
                      end
@@ -221,7 +222,6 @@ format :html do
   end
   
   view :follow_item, :tags=>:unknown_ok do |args|
-#    binding.pry
     if card.new_card? || !card.include_item?(args[:condition])
       button_view = :add_button
       form_opts = {:add_item=>args[:condition]}
@@ -229,6 +229,7 @@ format :html do
       button_view = :delete_button
       form_opts = {:drop_item=>args[:condition]}
     end
+
     text = if (option_card = Card[args[:condition].to_sym])
              option_card.description(card.rule_set)
            else
@@ -247,7 +248,7 @@ format :html do
   end
   
   view :delete_button do |args|
-    button_tag :type=>:submit, :class=>'btn-xs btn-item-delete', 'aria-label'=>'Left Align' do
+    button_tag :type=>:submit, :but :class=>'btn-xs btn-item-delete btn-success', 'aria-label'=>'Left Align' do
       tag :span, :class=>"glyphicon glyphicon-ok-sign", 'aria-hidden'=>"true"
     end 
 
@@ -320,7 +321,6 @@ end
 #~~~~~~~~~~ determine the set options to which the user can apply the rule.
 def set_options
 
-  
   first =  new_card? ? 0 : set_prototype.set_names.index{|s| s.to_name.key == rule_set_key} 
   rule_cnt = 0
   res = []
@@ -328,14 +328,14 @@ def set_options
   set_prototype.set_names[first..-1].each do |set_name|
     if Card.exists?("#{set_name}+#{rule_user_setting_name}")
       rule_cnt += 1
-    end
-    case rule_cnt
-    when 0 then res << [set_name,:enabled]
-    when 1 then res << [set_name,:current]
-    else        
-      fallback_set ||= set_name
-      
-      res << [set_name,:disabled]
+      res << if rule_cnt == 1 
+               [set_name,:current] 
+             else
+               fallback_set ||= set_name
+               [set_name,:overwritten]
+             end
+    else
+      res << (rule_cnt < 1 ? [set_name,:enabled] : [set_name,:disabled])
     end
   end
   

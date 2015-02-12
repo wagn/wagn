@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
-require 'card/version'
+require 'wagn/version'
 
 view :raw do |args|
-  Card::Version.release
+  Wagn::Version.release
 end
 
 view :core, :raw

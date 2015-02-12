@@ -1,9 +1,15 @@
 format :html do
   def button_tag content_or_options = nil, options = {}, &block
-    options[:class] ||= ''
-    options[:class] += ' btn btn-default'
+    if block_given?
+      content_or_options[:class] ||= ''
+      content_or_options[:class] += ' btn btn-default'
+    else
+      options[:class] ||= ''
+      options[:class] += ' btn btn-default'
+    end
     super(content_or_options, options, &block)
   end
+
   
   
   def fieldset title, content, opts={}

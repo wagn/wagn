@@ -295,12 +295,15 @@ $(window).ready ->
     event.preventDefault() # Prevent link from following its href
     
   # following mod
-  $('body').on 'click', '.item-card-submit', ->
-    item = $(this).closest 'li'
-    f = $(this).closest 'form'
-    f.submit()
-    item.remove()
-    event.preventDefault() # Prevent link from following its href
+  $('.btn-item-delete').hover( \
+     (-> $(this).find('.glyphicon').addClass("glyphicon-remove-sign").removeClass("glyphicon-ok-sign")), \
+     (-> $(this).find('.glyphicon').addClass("glyphicon-ok-sign").removeClass("glyphicon-remove-sign")))
+  # $('body').on 'click', '.item-card-submit', ->
+  #   item = $(this).closest 'li'
+  #   f = $(this).closest 'form'
+  #   f.submit()
+  #   item.remove()
+  #   event.preventDefault() # Prevent link from following its href
 
   # permissions mod
   $('body').on 'click', '.perm-vals input', ->

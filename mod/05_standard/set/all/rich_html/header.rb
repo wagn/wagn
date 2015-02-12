@@ -39,6 +39,7 @@ format :html do
         :edit      => card.ok?(:update),
         :account   => card.account && card.ok?(:update),
         :signedin  => Auth.signed_in?,
+        :follow_text => card.followed? ? 'unfollow' : 'follow',
         :follow    => render_follow,
         :follow_link => render_follow_link, # => #(card.followed? ? 'unfollow' : 'follow'),
         :creator   => card.creator.name,

@@ -2,7 +2,7 @@ include Card::FollowOption
 
 self.follow_opts :position=>2
 
-def exclusive
+def applies_to? card, user
   true
 end
 
@@ -14,6 +14,3 @@ def label
   'follow'
 end
 
-def applies_to? card, user
-  true
-end

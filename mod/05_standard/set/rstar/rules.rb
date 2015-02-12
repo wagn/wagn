@@ -216,66 +216,47 @@ format :html do
   end
 =end
   
-
+  def default_follow_item_args args
+    args[:condition] ||= Env.params[:condition] || 'always'
+  end
   
   view :follow_item, :tags=>:unknown_ok do |args|
-    if card.new_card?
-      args[:add_button] = args[:editable] ? :show : :hide
-      render_item_add args
+#    binding.pry
+    if card.new_card? || !card.include_item?(args[:condition])
+      button_view = :add_button
+      form_opts = {:add_item=>args[:condition]}
     else
-      args[:delete_button] = args[:editable] ? :show : :hide
-      render_item_delete args
+      button_view = :delete_button
+      form_opts = {:drop_item=>args[:condition]}
     end
-  end
-
-
-  view :item_add, :tags=>:unknown_ok do |args|
-    card_form :action=>:create, :id=>card.name do
-      output [
-        _optional_render(:add_button, args),
-        card_link( card.rule_set_name, :path_opts=>{:view=>'members'}, :text=>card.rule_set.follow_label)
-      ]
-    end
-  end
-  
-  view :item_delete do |args|
-    card_form :action=>:delete, :id=>card.name do
-      output [
-        _optional_render(:delete_button, args),
-        card_link( card.rule_set_name, :path_opts=>{:view=>'members'}, :text=>card.rule_set.follow_label)
-      ]
+    text = if (option_card = Card[args[:condition].to_sym])
+             option_card.description(card.rule_set)
+           else
+             card.rule_set.follow_label
+           end
+    
+    wrap do
+      card_form({:action=>:update, :name=>card.name, :success=>{:view=>:follow_item}}, 
+              :hidden=>{:condition=>args[:condition]}.merge(form_opts)) do
+        output [
+          _optional_render(button_view, args),
+          card_link( card.rule_set_name, :path_opts=>{:view=>'members'}, :text=>text)
+        ]
+      end
     end
   end
   
   view :delete_button do |args|
-    %{
-    <button type="submit" class="btn btn-defa ult btn-xs" aria-label="Left Align">
-      <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
-    </button>
-    <script>
-    $('.btn').hover( function() {
-                      $(this).find('.glyphicon').addClass("glyphicon-remove-sign").removeClass("glyphicon-ok-sign");
-                     },
-                    function() {
-                      $(this).find('.glyphicon').addClass("glyphicon-ok-sign").removeClass("glyphicon-remove-sign");
-                     }
-                    );
-    </script>
-    }
-    # wrap_with(:span, :class=>"glyphicon glyphicon-ok-sign item-card-submit", ':aria-hidden'=>"true") do
-    #   link_to( '', '#', :class=>'item-card-submit' )
-    # end
+    button_tag :type=>:submit, :class=>'btn-xs btn-item-delete', 'aria-label'=>'Left Align' do
+      tag :span, :class=>"glyphicon glyphicon-ok-sign", 'aria-hidden'=>"true"
+    end 
+
   end
   
   view :add_button do |args|
-    %{
-    <button type="submit" class="btn btn-default btn-xs" aria-label="Left Align">
-      <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
-    </button>
-    }
-    # wrap_with(:span, :class=>"glyphicon glyphicon-plus-sign item-card-submit", ':aria-hidden'=>"true") do
-    #   link_to( '', '#', :class=>'item-card-submit' )
-    # end
+    button_tag :type=>:submit, :class=>'btn-xs btn-item-add', 'aria-label'=>'Left Align' do
+      tag :span, :class=>"glyphicon glyphicon-plus-sign", 'aria-hidden'=>"true"
+    end
   end
   
 

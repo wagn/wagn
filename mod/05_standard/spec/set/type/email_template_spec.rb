@@ -1,155 +1,199 @@
-# -*- encoding : utf-8 -*-
-
 describe Card::Set::Type::EmailTemplate do
+  let(:email_name) { 'a mail template' }
+  let(:email) {Card.fetch(email_name)}
+  
   def mailconfig args={}
-    Card['a mail template'].email_config(args)
+    Card[email_name].email_config(args)
+  end
+  
+  def update_field name, args={}
+    Card["#{email_name}+#{name}"].update_attributes! args
+  end
+  
+  def create_field name, args={}
+    Card.create! args.merge(:name=>"#{email_name}+#{name}")
   end
   
   before do
     Card::Auth.current_id = Card::WagnBotID
-    Card.create! :name => "a mail template", :type=>:email_template, :subcards=>{
-      "+*to" => { :content => "joe@user.com" },
-      "+*from" => { :content => "from@user.com" },
-      "+*subject" => { :content => "Subject of the mail" },
-      "+*html_message" => { :content => "[[B]]" }
+    chunk_test = "Url(wagn.org) Link([[http://wagn.org|Wagn]]) Inclusion({{B|name}}) Card link([[A]])"
+    Card.create! :name => email_name, :type=>:email_template, :subcards=>{
+      "+*to"           =>  "joe@user.com",
+      "+*from"         =>  "from@user.com",
+      "+*subject"      =>  "*subject #{chunk_test}",
+      "+*html_message" =>  "*html message #{chunk_test}",
+      "+*text_message" =>  "*text message #{chunk_test}"
     }
   end
   
   describe "mail view" do
-    let(:rendered_mail) { Card.fetch("a mail template").format.render_mail }
+    let(:content_type) do
+      card = Card.create!(:name => 'content type test', :type=>:email_template, :subcards=>@fields)
+      email = card.format.render_mail
+      email[:content_type].value
+    end
    
-    
-    it "renders absolute urls" do
-      Card::Env[:protocol] = 'http://'
-      Card::Env[:host] = 'www.fake.com'
-      expect(rendered_mail.body).to include('<a class="known-card" href="http://www.fake.com/B">B</a>')
+    it 'renders text email if text message given' do
+      @fields = { "+*text_message" => "text" }
+      expect(content_type).to include 'text/plain'
     end
     
-    
-    context 'multipart mail' do
-      let(:rendered_multipart_mail) { Card.fetch("multipart email").format.render_mail }
-      before do 
-        Card::Auth.current_id = Card::WagnBotID
-        Card.create! :name => "multipart email", :type=>:email_template, :subcards=>{
-          "+*to" => { :content => "joe@user.com" },
-          "+*from" => { :content => "from@user.com" },
-          "+*subject" => { :content => "Subject of the mail" },
-          "+*html_message" => { :content => "<p>Hello World!</p>" },
-          "+*text_message" => { :content => "Hello World!" }
-        }
-      end
-          
-      it "renders text part" do
-        expect(rendered_multipart_mail.text_part.body.raw_source).to eq "Hello World!"
-      end
-      
-      it "renders html part" do
-        expect(rendered_multipart_mail.html_part.body.raw_source).to include "<p>Hello World!</p>"
-      end
+    it 'renders html email if html message given' do
+      @fields = { "+*html_message" =>  "text" }
+      expect(content_type).to include 'text/html'
     end
     
-    
-    it 'renders broken config' do
-      Card.fetch("a mail template+*to").update_attributes(:content=>"invalid mail address")
+    it 'renders multipart email if text and html given' do
+      @fields = {'+*text_message'=>'text', '+*html_message'=>'text'}
+      expect(content_type).to include 'multipart/alternative'
     end
+    
   end
   
+  
   describe "#email_config" do
-    it "returns correct hash with email configuration" do
-      Card['a mail template+*html_message'].update_attributes! :content => "Nobody expects the Spanish Inquisition"
-      expect(mailconfig).to eq({
-        :to => "joe@user.com",
-        :from => "from@user.com",
-        :subject => "Subject of the mail",
-        :html_message => Card::Mailer.layout("Nobody expects the Spanish Inquisition"),
-      })
+
+    describe 'address fields' do
+      it 'uses *from field' do
+        expect( mailconfig[:from] ).to eq 'from@user.com'
+      end
+      
+      it 'uses *to field' do
+        expect( mailconfig[:to] ).to eq 'joe@user.com'
+      end
+      
+      it 'handles pointer values' do
+        create_field '*cc', :content => "[[joe@user.com]]", :type=>'Pointer'
+        expect( mailconfig[:cc] ).to eq 'joe@user.com'
+      end
+      
+      it 'handles link to email card' do
+        create_field '*cc', :content => "[[Joe User+*email]]", :type=>'Pointer'
+        expect( mailconfig[:cc] ).to eq 'joe@user.com'
+      end
+      
+      # it 'handles link with valid email address' do
+      #   create_field '*cc', :content => "[[joe@admin.com|Joe]]", :type=>'Phrase'
+      #   expect( mailconfig[:cc] ).to eq 'Joe<joe@user.com>'
+      # end
+      
+      it 'handles search card' do
+        create_field '*bcc', :content => '{"name":"Joe Admin","append":"*email"}', :type=>'Search'
+        expect( mailconfig[:bcc] ).to eq 'joe@admin.com'
+      end
+      
+      # it 'handles invalid email address' do  #TODO not obvious how to deal with that.
+                                              #      we can't decided whether a email address like [[_left]] is valid; depends on the context
+      #   Card.fetch("a mail template+*to").update_attributes(:content=>"invalid mail address")
+      # end
     end
     
-    it "uses context card for email config" do
-      Card['a mail template+*html_message'].update_attributes! :content => "Nobody expects {{_left+surprise|core}}"
-      c = Card.create :name=>'Banana+surprise', :content=>"the Spanish Inquisition"
-      c = Card.create :name => "Banana+emailtest", :content => "data content"
-      expect( mailconfig( context: c ) ).to eq({
-        :to => "joe@user.com",
-        :from => "from@user.com",
-        :subject => "Subject of the mail",
-        :html_message => Card::Mailer.layout("Nobody expects the Spanish Inquisition"),
-      })
-    end
-    
-    it "takes Pointer value for address fields" do
-       Card.create! :name => "a mail template+*cc", :content => "[[joe@user.com]]", :type=>'Pointer'
-       expect(mailconfig[:cc]).to eq('joe@user.com')
-     end
-     
-     it "handles +*email" do
-       pending 'need to handle format-specific chunk lists'
-       Card::Auth.as_bot do
-         Card.create! :name => "a mail template+*cc", :content => "[[Joe User+*email]]", :type=>'Pointer'
-         Card.create! :name => "a mail template+*bcc", :content => '{"name":"Joe Admin","append":"*email"}', :type=>'Search'
+
+     describe 'subject' do
+       subject { mailconfig[:subject] }
+       
+       it 'uses *subject field' do
+        is_expected.to include '*subject'
+       end       
+       it 'does not render url' do
+         is_expected.to include 'Url(wagn.org)'
+       end     
+       it 'does not render link' do
+         is_expected.to include 'Link([[http://wagn.org|Wagn]])'
+       end     
+       it 'renders inclusion' do
+         is_expected.to include 'Inclusion(B)'
        end
-       conf = mailconfig
-       expect(conf[:cc]).to eq('joe@user.com')
-       expect(conf[:bcc]).to eq('joe@admin.com')
      end
      
-     it 'creates multipart email if text and html given' do
-       Card.create! :name => "a mail template+*text_message", :content => "Nobody expects the Spanish Inquisition"
-       email = render_card :mail, {:name=>"a mail template"}, {}
-       expect(email[:content_type].value).to include('multipart/alternative')
+     describe 'text message' do
+       subject { mailconfig[:text_message] }
+       
+       it 'uses *text_message field' do
+         is_expected.to include '*text message'
+       end
+       it 'does not render url' do
+         is_expected.to include 'Url(wagn.org)'
+       end
+       it 'renders link' do
+         is_expected.to include 'Link(Wagn[http://wagn.org])'
+       end    
+       it 'renders inclusion' do
+         is_expected.to include 'Inclusion(B)'
+       end
+      
      end
+     
+     describe 'html message' do
+       subject { mailconfig[:html_message] }
+      
+       it 'uses *html_message field' do
+         is_expected.to include '*html message'
+       end      
+       it 'renders url' do
+         is_expected.to include 'Url(<a class="external-link" href="http://wagn.org">wagn.org</a>)'
+       end   
+       it 'renders link' do
+         is_expected.to include 'Link(<a class="external-link" href="http://wagn.org">Wagn</a>)'
+       end   
+       it 'renders inclusion' do
+         is_expected.to include 'Inclusion(B)'
+       end
+       it "renders absolute urls" do
+         Card::Env[:protocol] = 'http://'
+         Card::Env[:host] = 'www.fake.com'
+         is_expected.to include 'Card link(<a class="known-card" href="http://www.fake.com/A">A</a>)'
+       end
+     end
+     
+     
+     context 'with context card' do
+       let(:context_card) do
+         Card.create(
+           :name    => "Banana",
+           :content => "data content [[A]]",
+           :subcards=> {
+             '+email'      => {:content=>'gary@gary.com'},
+             '+subject'    => {:type=>'Pointer', :content=>'[[default subject]]'},
+             '+attachment' => {:type=>'File', :content=>"notreally.txt" }
+           }
+         )
+       end
+       subject {  mailconfig( context: context_card ) }
+
+       it 'handles contextual name in address search' do
+         update_field '*from', :content => '{"left":"_self", "right":"email"}', :type=>'Search'
+         update_field '*from', :content => '{"left":"_self", "right":"email"}'                  #FIXME: have to do this twice to get the right content. 
+                                                                                                #       After the first update the content is empty
+         expect(subject[:from]).to eq "gary@gary.com"
+       end
+
+       it 'handles contextual names and structure rules in subject' do
+         Card.create! :name => 'default subject', :content=>'a very nutty thang', :type=>'Phrase'
+         Card.create! :name => "subject search+*right+*structure", :content => %{{"referred_to_by":"_self+subject"}}, :type=>'Search'
+         update_field '*subject', :content => "{{+subject search|core;item:core}}"
+         expect(subject[:subject]).to eq("a very nutty thang")
+       end
+
+       it 'handles _self in html message' do
+          update_field '*html message', :content => "Triggered by {{_self|name}}"
+          expect(subject[:html_message]).to  include("Triggered by Banana")
+       end
+
+       it 'handles _left in html message' do
+         update_field '*html_message', :content => "Nobody expects {{_left+surprise|core}}"
+         Card.create :name=>'Banana+surprise', :content=>"the Spanish Inquisition"
+         c = Card.create :name => "Banana+emailtest", :content => "data content"
+         expect( mailconfig( context: c )[:html_message] ).to include 'Nobody expects the Spanish Inquisition'
+         
+       end
+
+       it 'handles contextual name for attachments' do
+         create_field '*attach', :type=>"Pointer", :content => "[[_self+attachment]]"
+         expect(subject[:attach]).to eq ['Banana+attachment'.to_name]
+       end
+     end
+
   end
 
-  describe "complex config view" do
-    before do
-      class ActionView::Base
-        def params
-          @controller ? @controller.params : {}
-        end
-      end
-
-      Card::Auth.as_bot do
-        Card.create!  :name => 'Bobs addy', :content=>'bob@bob.com', :type=>'Phrase'
-        Card.create!  :name => 'default subject', :content=>'a very nutty thang', :type=>'Phrase'
-        Card.create!  :name => "mailconfig+*to", :content => %{ {"key":"bob_addy"} }, :type=>'Search'
-        Card.create!  :name => "mailconfig+*from", :content => %{ {"left":"_left", "right":"email"} }, :type=>'Search'
-        Card.create!  :name => "subject search+*right+*structure", :content => %{{"referred_to_by":"_self+subject"}}, :type=>'Search'
-        Card.create!  :name => "mailconfig+*subject", :content => "{{+subject search|core;item:core}}"
-        Card.create! :name => "mailconfig+*html message", :content => "Triggered by {{_self|name}} and its wonderful content: {{_self|core}}"
-        Card.create! :name => "mailconfig+*attach", :type=>"Pointer", :content => "[[_self+attachment]]"
-        Card.create! :name=>'Trigger', :type=>'Cardtype'
-        Card.create! :name=>'Trigger+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
-       # Card.create! :name => "Trigger+*type+*send", :content => "[[mailconfig]]", :type=>'Pointer'
-      end
-    end
-
-    it "returns correct hash with email configuration" do
-      pending 'need to support searches for emails'
-      Card::Auth.as_bot do
-        Card::Env[:protocol] = 'http://'
-        Card::Env[:host]     = 'a.com'
-
-        c = Card.create(
-          :name    => "Banana Trigger",
-          :content => "data content [[A]]",
-          :type    => 'Trigger',
-          :subcards=> {
-            '+email'      => {:content=>'gary@gary.com'},
-            '+subject'    => {:type=>'Pointer', :content=>'[[default subject]]'},
-#            '+attachment' => {:type=>'File', :content=>"notreally.txt" }
-          }
-        )
-        conf = mailconfig( context: c )
-
-        expect(conf[:to     ]).to eq("bob@bob.com")
-        expect(conf[:from   ]).to eq("gary@gary.com")
-        expect(conf[:bcc    ]).to eq(nil)
-        expect(conf[:cc     ]).to eq(nil)
-        expect(conf[:subject]).to eq("a very nutty thang")
-#        conf[:attach ].should == ['Banana Trigger+attachment']
-        expect(conf[:html_message]).to  include("Triggered by Banana Trigger and its wonderful content: data content " +
-          '<a class="known-card" href="http://a.com/A">A</a>')
-      end
-    end
-  end
 end

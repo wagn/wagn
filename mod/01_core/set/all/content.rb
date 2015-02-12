@@ -19,8 +19,11 @@ def raw_content
   structure ? template.db_content : db_content
 end
 
-def chunk_list #override to customize by set
-  :default
+
+format do
+  def chunk_list #override to customize by set
+    :default
+  end
 end
 
 def label

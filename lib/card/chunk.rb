@@ -47,7 +47,6 @@ class Card
     register_list :default, [ :URI, :HostURI, :EmailURI, :EscapedLiteral, :Include, :Link ]
     register_list :references,                         [ :EscapedLiteral, :Include, :Link ]
     register_list :inclusion_only,                     [  :Include ]
-    register_list :inclusion_and_link,                 [  :Include, :Link ]
   
     class Abstract
       class_attribute :config

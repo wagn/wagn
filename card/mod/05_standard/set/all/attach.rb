@@ -8,7 +8,6 @@ def attach_array
   !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/)
 end
 
-#ask ethan
 def attach_array_set i, v
   c = attach_array[0..2]  # make sure there is no mod set for uploaded files
   if c[i] != v

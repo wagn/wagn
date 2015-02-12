@@ -26,7 +26,7 @@ class Card
     end
     
     def chunk_list
-      @opts[:chunk_list] || card.chunk_list
+      @opts[:chunk_list] || @format.chunk_list
     end
 
     def to_s

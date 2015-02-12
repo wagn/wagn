@@ -107,10 +107,22 @@ class Card
       
     end
 
-    def format format=nil, &block
-      klass = Card::Format.format_class_name format   # format class name, eg. HtmlFormat
-      mod = const_get_or_set klass do                 # called on current set module, eg Card::Set::Type::Pointer
-        m = Module.new                                # yielding set format module, eg Card::Set::Type::Pointer::HtmlFormat
+    
+    def format *format_names, &block
+      if format_names.empty?
+        format_names = [:base]
+      elsif format_names.first == :all
+        format_names = Card::Format.registered.reject {|f| Card::Format.aliases[f]}
+      end
+      format_names.each do |f|
+        define_on_format f, &block
+      end
+    end
+    
+    def define_on_format format_name=:base, &block
+      klass = Card::Format.format_class_name format_name   # format class name, eg. HtmlFormat
+      mod = const_get_or_set klass do                      # called on current set module, eg Card::Set::Type::Pointer
+        m = Module.new                                     # yielding set format module, eg Card::Set::Type::Pointer::HtmlFormat
         register_set_format Card.const_get(klass), m
         m.extend Card::Set::Format
         m

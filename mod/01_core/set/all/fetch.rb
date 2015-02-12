@@ -57,7 +57,7 @@ module ClassMethods
       else
         card.include_set_modules unless opts[:skip_modules]  # need to load modules here to call the right virtual? method 
         opts[:skip_modules] = true                           # don't load twice
-        return unless !opts[:skip_virtual] && card.virtual?
+        return if opts[:skip_virtual] || !card.virtual?
       end
       card.name = mark.to_s if mark && mark.to_s != card.name
     end

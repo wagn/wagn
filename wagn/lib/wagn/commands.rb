@@ -161,7 +161,7 @@ WAGN
       exit $?.exitstatus
     end
   when '--version', '-v'
-    puts "Wagn #{Wagn::Version.release}"
+    puts "Wagn #{Card::Version.release}"
   when 'new'
     if ARGV.first.in?(['-h', '--help'])
       require 'wagn/commands/application'

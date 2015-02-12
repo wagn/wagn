@@ -1,8 +1,4 @@
-#lib = File.expand_path('../lib', __FILE__)
-#$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-#require File.expand_path( '../lib/wagn/version', __FILE__ )
-#version = Wagn::Version.release
-version = File.open(File.expand_path( '../VERSION', __FILE__ )).read.chomp
+version = File.open(File.expand_path( '../../VERSION', __FILE__ )).read.chomp
 
 Gem::Specification.new do |s|
   s.name          = 'wagn'

@@ -1,6 +1,6 @@
 #lib = File.expand_path('../lib', __FILE__)
 #$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-version = File.open(File.expand_path( '../VERSION', __FILE__ )).read.chomp
+version = File.open(File.expand_path( '../../VERSION', __FILE__ )).read.chomp
 
 Gem::Specification.new do |s|
   s.name          = 'decko-rails'

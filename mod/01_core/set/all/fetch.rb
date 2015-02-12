@@ -55,7 +55,9 @@ module ClassMethods
       if opts[:new]
         return card.renew(opts) if !clean_cache_opts? opts
       else
-        return unless !opts[:skip_virtual] && card.virtual?
+        card.include_set_modules unless opts[:skip_modules]
+        opts[:skip_modules] = true                           # don't load twice
+        return if opts[:skip_virtual] || !card.virtual?
       end
       card.name = mark.to_s if mark && mark.to_s != card.name
     end

@@ -1,0 +1,123 @@
+source 'http://rubygems.org'
+
+gem 'wagn'<%=        ", :path=>'#{@gem_path}/wagn'"  if @gem_path.present? %>
+gem 'decko-rails'<%= ", :path=>'#{@gem_path}/decko-rails'" if @gem_path.present? %>
+gem 'card'<%=        ", :path=>'#{@gem_path}/card'"  if @gem_path.present? %>, :require => false
+
+<%= database_gemfile_entry -%>
+
+# A javascript runtime is required for JavaScript cards.
+<% if RUBY_PLATFORM =~ /darwin/ -%>
+# Macs have one included, but on other platforms you'll need this or another runtime
+# gem 'therubyracer'
+<% else -%>
+gem 'therubyracer'
+<% end -%>
+
+<% if options['mod-dev'] -%>
+group :test do
+  gem 'rspec-rails', '~> 3.1.0'   # behavior-driven-development suite
+  gem 'spork', '>=0.9'
+  # gem 'simplecov' # code coverage analysis tool
+end
+
+group :test, :development do
+  gem 'rails-dev-tweaks'
+  gem 'jasmine'
+  gem 'jasmine-rails', :git=>"https://github.com/chuenlok/jasmine-rails.git"
+  gem 'jasmine-jquery-rails'
+  gem 'sprockets' # just so above works
+  # gem 'spring'
+  # gem 'spring-commands-rspec'
+  # gem 'spring-commands-cucumber'
+  # gem 'pry-rails'
+  # gem 'pry-rescue'
+  # gem 'pry-stack_explorer'
+  if RUBY_VERSION =~ /^2/
+		gem 'byebug' 
+    # gem 'pry-byebug'
+	else
+		gem 'debugger'
+	end
+end
+
+<% end -%>
+
+<% if options['core-dev'] -%>  
+group :assets do
+  gem 'jquery-rails',  '~> 3.1'                # main js framework, along with rails-specific unobtrusive lib
+  gem 'jquery-ui-rails',  '~> 4.2'             # main js framework, along with rails-specific unobtrusive lib
+  gem "jquery_mobile_rails", "~> 1.4.1"
+
+  gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
+end
+
+group :development do
+  gem 'rails-dev-tweaks'
+  gem 'sprockets' # just so above works
+end
+
+group :test do
+  gem 'rspec' 
+  gem 'rspec-rails', '~> 3.1.0'                 # behavior-driven-development suite
+  gem 'spork', '>=0.9'                                           
+  gem 'rr'#, '=1.0.0'
+	gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
+   
+  # gem 'guard-rspec', '~> 4.2'    # trigger test runs based on file edits
+                                   # currently not compatible with spring-watcher-listen gem, 
+                                   # is supposed to be fixed in the next spring-watcher-listen release
+                                   
+  if RUBY_PLATFORM =~ /darwin/
+    # gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
+    # gem 'rspec-legacy_formatters'
+    # gem 'wagn-rspec-formatter', :path=>'/opt/wagn-rspec-formatter'
+  end
+
+  # CUKES see features dir
+  gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite
+  gem 'capybara', '~> 2.4.4'                    
+  gem 'selenium-webdriver', '~> 2.39'
+#  gem 'capybara-webkit'
+  gem 'launchy'                                # lets cucumber launch browser windows
+
+  gem 'timecop', '=0.3.5'                      # not clear on use/need.  referred to in shared_data.rb 
+  # NOTE: had weird errors with timecop 0.4.4.  would like to update when possible
+
+
+  gem 'email_spec'                             # 
+  gem 'database_cleaner', '~> 0.7'             # used by cucumber for db transactions
+
+  gem 'turn', :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
+  gem 'minitest'
+end
+
+gem 'ruby-prof', '~>0.12.1', :group=>:profile  # profiling
+
+group :development, :test do
+  gem 'spring'
+  gem 'spring-commands-rspec'
+  gem 'spring-commands-cucumber'
+  gem 'spring-watcher-listen' 
+  gem 'pry-rails'
+  gem 'pry-rescue'
+  gem 'pry-stack_explorer'
+  gem 'jasmine'
+  gem 'jasmine-rails', :git=>"https://github.com/chuenlok/jasmine-rails.git"
+  gem 'jasmine-jquery-rails'
+  gem 'phantomjs', '1.9.7.1' #locked because 1.9.8.0 is breaking
+end
+
+group :debug do
+  if RUBY_VERSION =~ /^2/
+    gem 'pry-byebug'
+	else
+		gem 'debugger'
+	end
+end
+<% end %>
+
+Dir.glob( 'mod/**{,/*/**}/Gemfile' ).each do |gemfile|
+  instance_eval File.read(gemfile)
+end
+

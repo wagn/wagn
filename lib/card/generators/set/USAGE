@@ -1,9 +1,0 @@
-Description:
-    Generates new set files in mods and matching specs.
-
-Example:
-    wagn generate set standard type tshirt
-
-    This will create:
-        mods/05_standard/sets/type/tshirt.rb
-        spec/mods/05_standard/sets/type/tshirt_spec.rb

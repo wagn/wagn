@@ -1,7 +1,7 @@
 
 #require File.expand_path( '../lib/card/version', __FILE__ )
 #version =    Card::Version.release
-version = File.open(File.expand_path( '../../VERSION', __FILE__ )).read.chomp
+version = File.open(File.expand_path( '../VERSION', __FILE__ )).read.chomp
 
 Gem::Specification.new do |s|
   s.name          = 'card'

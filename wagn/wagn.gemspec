@@ -1,4 +1,4 @@
-version = File.open(File.expand_path( '../../VERSION', __FILE__ )).read.chomp
+version = File.open(File.expand_path( '../../card/VERSION', __FILE__ )).read.chomp
 
 Gem::Specification.new do |s|
   s.name          = 'wagn'

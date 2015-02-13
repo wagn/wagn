@@ -57,6 +57,7 @@ describe Card::Set::All::Templating do
       Card::Auth.as_bot  do
         @bt = Card.create! :name=>"birthday+*right+*default", :type=>'Date', :content=>"Today!"
       end
+      @bb = Card.new :name=>'Bob+birthday'
       @jb = Card.create! :name=>"Jim+birthday"
     end
 
@@ -69,7 +70,9 @@ describe Card::Set::All::Templating do
     end
     
     it "should apply to new cards" do
-      expect(Card.new(:name=>"Pete+birthday").content).to eq('Today!')
+      pb = Card.new :name=>"Pete+birthday"
+      expect(pb.raw_content).to eq('Today!')
+      expect(pb.content).to eq('Today!')
     end
   end
 

@@ -20,9 +20,4 @@ format do
   
 end
 
-
-format( :html ) { include Css::HtmlFormat }
-  
-
-
-
+format( :html ) { include Css::HtmlFormat }  

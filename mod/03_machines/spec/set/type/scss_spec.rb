@@ -19,8 +19,6 @@ describe Card::Set::Type::Scss do
     @scss_card = Card[:style_functional]
   end
   
-
-  
   
   it 'should highlight code in html' do
     assert_view_select @scss_card.format(:html).render_core, 'div[class=CodeRay]'

@@ -49,6 +49,13 @@ module Decko
         Cardio.add_card_paths Decko::Engine.paths, Rails.application.config, Wagn.root
         ActiveRecord::Base.establish_connection(Rails.env)
       end
+      ActiveSupport.on_load(:after_initialize) do
+        begin
+          require_dependency 'card' unless defined?(Card)
+        rescue ActiveRecord::StatementInvalid => e
+          Rails.logger.warn "database not available[#{Rails.env}] #{e}"
+        end
+      end
     end
 
     config.autoload_paths += Dir["#{Cardio.gem_root}/mod/*/lib/**/"]

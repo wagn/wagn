@@ -10,7 +10,7 @@ module ClassMethods
   end
   
   def delete_trashed_files #deletes any file not associated with a real card.
-    dir = Cardio.paths['files'].existent.first
+    dir = Card.paths['files'].existent.first
     trashed_card_sql = %{ select id from cards where trash is true }
     trashed_card_ids = Card.connection.select_all( trashed_card_sql ).map( &:values ).flatten.map &:to_i
     file_ids = Dir.entries( dir )[2..-1].map( &:to_i )

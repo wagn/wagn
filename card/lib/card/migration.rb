@@ -29,11 +29,11 @@ class Card::Migration < ActiveRecord::Migration
     end
 
     def paths mig_type=type
-      Cardio.paths["db/migrate#{schema_suffix mig_type}"].to_a
+      Card.paths["db/migrate#{schema_suffix type}"].to_a
     end
 
     def schema_suffix mig_type=type
-      Card::Version.schema_suffix( mig_type )
+      Cardio.schema_suffix mig_type
     end
 
     def schema_mode mig_type=type
@@ -60,7 +60,7 @@ class Card::Migration < ActiveRecord::Migration
 
   def contentedly &block
     Card::Cache.reset_global
-    Card::Migration.schema_mode '' do
+    Cardio.schema_mode '' do
       Card::Auth.as_bot do
         ActiveRecord::Base.transaction do
           begin
@@ -86,7 +86,7 @@ class Card::Migration < ActiveRecord::Migration
 
 
   def import_json filename
-    Cardio.config.action_mailer.perform_deliveries = false
+    Card.config.action_mailer.perform_deliveries = false
     raw_json = File.read( data_path filename )
     json = JSON.parse raw_json
     Card.merge_list json["card"]["value"], :output_file=>File.join(data_path,"unmerged_#{ filename }")
@@ -97,11 +97,11 @@ class Card::Migration < ActiveRecord::Migration
   end
 
   def schema_mode
-    Card::Migration.schema_mode
+    Cardio.schema_mode self.class.type
   end
 
   def migration_paths
-    Card::Migration.paths
+    Cardio.paths self.class.type
   end
 
 

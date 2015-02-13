@@ -16,7 +16,7 @@ def content=(value)
 end
 
 def raw_content
-  structure ? template.db_content : db_content
+  structure ? template.db_content : content
 end
 
 

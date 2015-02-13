@@ -152,7 +152,7 @@ namespace :wagn do
       ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
       Wagn.config.action_mailer.perform_deliveries = false
       
-      stamp_file = Wagn::Version.schema_stamp_path( args[:type] )
+      stamp_file = Card::Version.schema_stamp_path( args[:type] )
 
       Card::Migration.schema_mode args[:type] do
         version = ActiveRecord::Migrator.current_version

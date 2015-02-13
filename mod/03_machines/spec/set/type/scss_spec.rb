@@ -19,6 +19,8 @@ describe Card::Set::Type::Scss do
     @scss_card = Card[:style_functional]
   end
   
+
+  
   
   it 'should highlight code in html' do
     assert_view_select @scss_card.format(:html).render_core, 'div[class=CodeRay]'
@@ -35,6 +37,14 @@ describe Card::Set::Type::Scss do
     let(:card_content) do
        { in:       scss,         out:     compressed_css, 
          changed_in:   changed_scss, changed_out: compressed_changed_css }
+    end
+  end
+
+  it "should process links and inclusions but not urls" do
+    Card::Auth.as_bot do
+      scss = ".TYPE-X.no-citations {\n  color: #BA5B5B;\n}\n"
+      card = Card.create! :name=>'minimal css', :type=>'scss', :content=>scss
+      card.format(:css).render_core.should == scss
     end
   end
 

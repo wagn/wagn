@@ -1,16 +1,13 @@
-include Card::Set::Type::Css
+include Type::Css
 
-format :html do
-  view :core, :mod=>Css::HtmlFormat
-  view :editor, :mod=>PlainText::HtmlFormat
-  view :content_changes, :mod=>CoffeeScript::HtmlFormat
-end
-  
 def diff_args
   {:format=>:text}
 end  
 
+
 format do
+  include Css::Format
+  
   view :core do |args|
     process_content compile_scss(_render_raw)
   end
@@ -21,7 +18,11 @@ format do
     e
   end
   
-
 end
+
+
+format( :html ) { include Css::HtmlFormat }
+  
+
 
 

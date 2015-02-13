@@ -1,9 +1,0 @@
-Description:
-    Explain the generator
-
-Example:
-    rails generate format backup
-
-    This will create:
-        mods/05_standard/formats/backup_format.rb
-        spec/mods/05_standard/formats/backup_format_spec.rb

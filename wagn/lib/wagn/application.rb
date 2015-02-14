@@ -74,8 +74,8 @@ module Wagn
     paths = Decko::Engine.config.paths
     # should we have add_deck_paths for these?
     paths['local-mod'] = Rails::Paths::Path.new(paths, 'local-mod', "#{Rails.root}/mod") unless approot_is_gemroot?
-    paths['db/migrate'] = Rails::Paths::Path.new(paths, "#{Rails.root}/db/migrate")
-    paths['db/migrate_deck_cards'] = Rails::Paths::Path.new(paths, "#{Rails.root}/db/migrate_cards", "#{Rails.root}/db/migrate_cards")
+    paths['db/migrate'] = Rails::Paths::Path.new(paths, 'db/migrate', r="#{Cardio.gem_root}/db/migrate")
+    paths['db/migrate_deck_cards'] = Rails::Paths::Path.new(paths, 'db/migrate_deck_cards', "#{Rails.root}/db/migrate_cards", "#{Rails.root}/db/migrate_cards")
     add_gem_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
     add_gem_path paths, 'gem-assets',          :with => 'public/assets'
 

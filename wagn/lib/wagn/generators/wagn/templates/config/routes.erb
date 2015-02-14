@@ -1,0 +1,12 @@
+# -*- encoding : utf-8 -*-
+
+require 'decko/engine'
+
+Rails.application.routes.draw do
+
+  if !Rails.env.production? && Object.const_defined?( :JasmineRails )
+    mount Object.const_get(:JasmineRails).const_get(:Engine) => "<%= mount_point %>/specs"
+  end
+
+  mount Decko::Engine => '<%= mount_point %>/'
+end

@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require_dependency 'card/location'
 
 class Card
   class Format

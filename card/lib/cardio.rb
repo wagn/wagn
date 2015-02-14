@@ -34,23 +34,26 @@ module Cardio
       @@root = root
 
       config.read_only             = !!ENV['WAGN_READ_ONLY']
-      config.allow_inline_styles   = false
+      config.allow_inline_styles   ||= false
 
-      config.recaptcha_public_key  = nil
-      config.recaptcha_private_key = nil
-      config.recaptcha_proxy       = nil
+      config.recaptcha_public_key  ||= nil
+      config.recaptcha_private_key ||= nil
+      config.recaptcha_proxy       ||= nil
 
-      config.cache_store           = :file_store, 'tmp/cache'
-      config.override_host         = nil
-      config.override_protocol     = nil
+      config.cache_store           ||= :file_store, 'tmp/cache'
+      config.override_host         ||= nil
+      config.override_protocol     ||= nil
 
-      config.no_authentication     = false
-      config.files_web_path        = 'files'
+      config.no_authentication     ||= false
+      config.files_web_path        ||= 'files'
 
-      config.email_defaults        = nil
+      config.max_char_count        ||= 200
+      config.max_depth             ||= 20
+      config.email_defaults        ||= nil
 
-      config.token_expiry          = 2.days
-      config.revisions_per_page    = 10
+      config.token_expiry          ||= 2.days
+      config.revisions_per_page    ||= 10
+      config.closed_search_limit   ||= 50
 
       add_gem_path paths, 'gem-mod',             :with => 'mod'
       add_gem_path paths, "db"

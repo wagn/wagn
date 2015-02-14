@@ -241,14 +241,14 @@ format :html do
               :hidden=>{:condition=>args[:condition]}.merge(form_opts)) do
         output [
           _optional_render(button_view, args),
-          card_link( card.rule_set_name, :path_opts=>{:view=>'members'}, :text=>text)
+          card_link( "#{card.rule_set_name}+by name", :text=>text)
         ]
       end
     end
   end
   
   view :delete_button do |args|
-    button_tag :type=>:submit, :but :class=>'btn-xs btn-item-delete btn-success', 'aria-label'=>'Left Align' do
+    button_tag :type=>:submit, :class=>'btn-xs btn-item-delete btn-success', 'aria-label'=>'Left Align' do
       tag :span, :class=>"glyphicon glyphicon-ok-sign", 'aria-hidden'=>"true"
     end 
 

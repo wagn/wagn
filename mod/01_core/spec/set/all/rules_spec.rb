@@ -86,39 +86,40 @@ describe Card::Set::All::Rules do
     
     it "user rule is recognized as rule" do
       Card::Auth.as_bot do
-        card = Card.create(:name => "Book+*type+*follow+Joe User", :content => "[[Home]]")
+        card = Card.create(:name => "Book+*type+Joe User+*follow", :content => "[[always]]")
         expect(card.is_rule?).to be_truthy
       end
     end
     
     it "retrieves Set based value" do
       Card::Auth.as_bot do
-        Card.create :name => "Book+*type+*follow+Joe User", :content => "[[Home]]"
-      end
-      expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[Home]]")
-    end
-    
-    it "retrieves user indepedent Set based value" do
-      Card::Auth.as_bot do
-        Card.create :name => "Book+*type+*follow+*all", :content => "[[always]]"
+        Card.create :name => "Book+*type+Joe User+*follow", :content => "[[always]]"
       end
       expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[always]]")
     end
     
-    it "user-specific value overwrites user-independent value" do
+    it "retrieves user indepedent Set based value" do
       Card::Auth.as_bot do
-        Card.create :name => "Book+*type+*follow+Joe User", :content => "[[Home]]"
-        Card.create :name => "Book+*type+*follow+*all", :content => "[[All]]"
+        Card.create :name => "Book+*type+*all+*follow", :content => "[[Home]]"
       end
       expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[Home]]")
+    end
+    
+    it "user-specific value overwrites user-independent value" do
+      Card::Auth.as_bot do
+        Card.create :name => "Book+*type+Joe User*follow", :content => "[[ignore]]"
+        Card.create :name => "Book+*type+*all+*follow", :content => "[[always]]"
+      end
+      binding.pry
+      expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[ignore]]")
     end
     
     describe '#all_user_ids_with_rule_for' do
       it "returns all user with values for the given Set and rule" do
         Card::Auth.as_bot do
-          Card.create(:name => "Book+*type+*follow+Joe User", :content => "[[Home]]")
+          Card.create(:name => "Book+*type+Joe User+*follow", :content => "[[Home]]")
           Card::Auth.current_id = Card.fetch('Joe Admin').id
-          Card.create(:name => "Book+*type+*follow+Joe Admin", :content => "[[Home]]")
+          Card.create(:name => "Book+*type+Joe Admin+*follow", :content => "[[Home]]")
           user_ids = Card.all_user_ids_with_rule_for( Card.fetch("Book+*type"), :follow )
           expect(user_ids).to eq [Card['Joe User'].id, Card['Joe Admin'].id]
         end

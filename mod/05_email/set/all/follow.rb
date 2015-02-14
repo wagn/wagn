@@ -20,6 +20,25 @@ def follower_names
   followers.map(&:name)
 end
 
+def followed?; followed_by? Auth.current_id end
+
+def followed_by? user_id
+  follower_ids.include? user_id
+end
+
+# the set card to be followed if you want to follow changes of card
+def default_follow_set_card
+  Card.fetch("#{name}+*self")
+end
+
+
+def all_follow_option_cards
+  sets = set_names
+  sets += Card::FollowOption.codenames
+  sets.map { |name| Card.fetch name }
+end
+
+
 def follower_ids
   @follower_ids = read_follower_ids_cache || begin
     result = direct_follower_ids
@@ -65,7 +84,6 @@ def direct_follower_ids args={}
 end
 
 
-
 def all_direct_follower_ids_with_reason
   visited = ::Set.new
   set_names.each do |set_name| 
@@ -91,40 +109,6 @@ def follow_rule_applies? user_id
   return false
 end
 
-def followed?; followed_by? Auth.current_id end
-
-def followed_by? user_id
-  follower_ids.include? user_id
-end
-
-
-# the set card to be followed if you want to follow changes of card
-def follow_set_card
-  # if special_follow_option? name
-  #   self
-  # else
-    case type_code
-    when :cardtype
-      fetch(:trait=>:type)
-    when :set
-      self
-    else
-      fetch(:trait=>:self)
-    end
-#  end
-end
-
-def follow_set
-  follow_set_card.name
-end
-
-
-def all_follow_option_cards
-  sets = set_names
-  sets += Card::FollowOption.codenames
-  sets.map { |name| Card.fetch name }
-end
-
 
 event :cache_expired_because_of_new_set, :before=>:store, :on=>:create, :when=>proc { |c| c.type_id == Card::SetID } do
   Card.follow_caches_expired
@@ -138,13 +122,14 @@ event :cache_expired_because_of_name_change, :before=>:store, :changed=>:name do
   Card.follow_caches_expired
 end
 
-event :approve_follow_rule, :before=>:approve, :when=>proc { |c| c.follow_rule_card? }  do
-  self.type_id = PointerID
-end
-
-event :cache_expired_because_of_follow_rule_change, :after=>:approve_follow_rule do
-  Card.follow_caches_expired  #OPTIMIZE shouldn't be necessary to clear the complete cache in this case
-end
+# #TODO this event should be unneccessary now
+# event :approve_follow_rule, :before=>:approve, :when=>proc { |c| c.follow_rule_card? }  do
+#   self.type_id = PointerID
+# end
+#
+# event :cache_expired_because_of_follow_rule_change, :after=>:approve_follow_rule do
+#   Card.follow_caches_expired  #OPTIMIZE shouldn't be necessary to clear the complete cache in this case
+# end
 
 event :cache_expired_because_of_new_user_rule, :before=>:extend, :when=>proc { |c| c.follow_rule_card? }  do
   Card.follow_caches_expired
@@ -153,20 +138,6 @@ end
 
 def follow_rule_card?
   is_user_rule? && rule_setting_name == '*follow'
-end
-
-def related_follow_set_cards
-  follow_set_names = related_sets.map{ |name,label| name} 
-  set_names.each do |name|
-    follow_set_names << name unless follow_set_names.include? name
-  end
-  follow_set_names.map do |name|
-    Card.fetch(name)
-  end
-end
-
-def default_follow_set_card
-  Card.fetch("#{name}+*self")
 end
 
 

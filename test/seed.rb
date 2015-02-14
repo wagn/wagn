@@ -135,10 +135,10 @@ class SharedData
       followers = {
         'John'           => ['John Following', 'All Eyes On Me'],
         'Sara'           => ['Sara Following', 'All Eyes On Me', 'Optic+*type', 'Google Glass'], 
-        'Big Brother'    => ['All Eyes on Me', 'Look at me+*self', 'Optic+*type', 'lens+*right', 'Optic+tint+*type plus right', 'content I created', 'content I edited'],
+        'Big Brother'    => ['All Eyes on Me', 'Look at me+*self', 'Optic+*type', 'lens+*right', 'Optic+tint+*type plus right', ['*all','content I created'], ['*all','content I edited']],
         'Optic fan'      => ['Optic+*type'],
         'Sunglasses fan' => ['Sunglasses'],
-        'Narcissist'     => ['content I created', 'content I edited']
+        'Narcissist'     => [['*all','content I created'], ['*all','content I edited']]
       }
       
       followers.each do |name, follow|
@@ -169,7 +169,9 @@ class SharedData
 
       followers.each do |name, follow|
         user = Card[name]
-        user.following_card.update_attributes! :content=>"[[#{ follow.join( "]]\n[[" ) }]]"
+        follow.each do |f|
+          user.follow *f
+        end
       end     
     end
 

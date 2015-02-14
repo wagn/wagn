@@ -60,8 +60,7 @@ event :update_ruled_cards, :after=>:store do
            Auth.as_bot do
              cur_index = rule_class_ids.index Card[read_rule_class].id
              if rule_class_index = rule_class_ids.index( class_id )
-                # Why isn't this just 'trunk', do we need the fetch?
-                Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
+                set.item_cards(:limit=>0).each do |item_card|
                   in_set[item_card.key] = true
                   next if cur_index < rule_class_index
                   if cur_index >= rule_class_index

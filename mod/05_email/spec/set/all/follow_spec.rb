@@ -7,10 +7,10 @@ describe "Card::Set::All::Follow" do
    
   describe "follower_ids" do
     
-    context 'when a new +*following entry created' do
+    context 'when a new +*follow rule created' do
       it 'contains id of a new follower' do
         Card::Auth.as_bot do
-          Card.create :name=>"Joe User+*following", :content=>"[[No One Sees Me+*self+*follow+Joe User+always]]"
+          Card['Joe User'].follow "No One Sees Me"
           expect(Card['No One Sees Me'].follower_ids).to eq ::Set.new([Card['Joe User'].id])
         end
       end
@@ -58,20 +58,24 @@ describe "Card::Set::All::Follow" do
     end
       
     def assert_following_view name, args
-      assert_follow_view name, args.reverse_merge(:following => true, :text=>'following')
+      assert_follow_view name, args.reverse_merge(:following => true, :text=>"following #{name}")
     end
   
-  
+#  href="/card/update/Home+*self+philipp+*follow?card%5Bcontent%5D=%5B%5Bnever%5D%5D&success%5Bid%5D=Home&success%5Bview%5D=follow"
     def assert_follow_view name, args
-      if args[:following] 
-        add_item = CGI.escape("#{args[:add_set]}+never")
-        link_class = "watch-toggle-off"
-      else
-        add_item = CGI.escape("#{args[:add_set]}+always")
-        link_class = "watch-toggle-on"
-      end
+      href = "/card/update/#{args[:add_set].to_name.url_key}+Big_Brother+*follow?"
+      href += CGI.escape("card[content]") + '='
+      href += 
+        if args[:following] 
+          link_class = "watch-toggle-off"
+          CGI.escape("[[never]]")
+        else
+          link_class = "watch-toggle-on"
+          CGI.escape("[[always]]")
+        end
+        binding.pry
       assert_view_select follow_view(name), 'div[class~="card-slot follow-view"]' do
-        assert_select "a[class~=#{link_class}][href*='add_item=#{add_item}']", args[:text] || 'follow'
+        assert_select "a[class~=#{link_class}][href*='#{href}']", args[:text] || "follow #{name}"
       end
     end
 

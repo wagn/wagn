@@ -43,9 +43,9 @@ describe Card::Set::Right::Followers do
     end
       
     it 'recognizes +*following changes' do
-      card = Card['Joe User'].following_card
-      card << 'Look At Me+*self'
-      card.save!
+      Card::Auth.as_bot do
+        card = Card['Joe User'].follow 'Look At Me'
+      end
       @card = Card['Look At Me']
       is_expected.to include 'Joe User'
     end
@@ -95,9 +95,10 @@ describe Card::Set::Right::Followers do
     
     context 'when following "content I edited"' do
       it 'contains editor' do
-        following = Card.fetch "Sara+*following"
-        following << Card[:edited_by_me]
-        following.save!
+        Card::Auth.as_bot do 
+          Card['Sara'].follow '*all', 'content I edited'
+        end
+
         @card = Card.create! :name=>"edited by Sara"
         Card::Auth.current_id = Card['Sara'].id
         @card.update_attributes! :content=> 'some content'
@@ -109,7 +110,7 @@ describe Card::Set::Right::Followers do
     context 'for a set card' do
       it 'contains followers of that set' do
         @card = Card['lens+*right']
-        is_expexted.to include('Big Brother')
+        is_expected.to include('Big Brother')
       end
     end
     

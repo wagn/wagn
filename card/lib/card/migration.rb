@@ -29,7 +29,11 @@ class Card::Migration < ActiveRecord::Migration
     end
 
     def paths mig_type=type
-      Card.paths["db/migrate#{schema_suffix type}"].to_a
+      Card.paths["db/migrate#{schema_suffix mig_type}"].to_a
+    end
+
+    def schema mig_type=type
+      Cardio.schema mig_type
     end
 
     def schema_suffix mig_type=type
@@ -45,6 +49,11 @@ class Card::Migration < ActiveRecord::Migration
       ActiveRecord::Base.table_name_suffix = original_suffix
     end
 
+    def assume_migrated_upto_version
+      schema_mode do
+        ActiveRecord::Schema.assume_migrated_upto_version schema, paths
+      end
+    end
 
     def data_path filename=nil
       if filename

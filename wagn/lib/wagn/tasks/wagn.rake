@@ -22,6 +22,7 @@ namespace :wagn do
       puts "not dropped"
     end
 
+    # Note Cardio based, but some use cases need this in app dir.  Solution?
     ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
      
     puts "creating"
@@ -104,9 +105,7 @@ namespace :wagn do
   desc 'insert existing card migrations into schema_migrations_cards to avoid re-migrating'
   task :assume_card_migrations do
     require 'card/migration'
-    Card::CoreMigration.schema_mode do
-      ActiveRecord::Schema.assume_migrated_upto_version Card::Version.schema(:core_cards), Card::CoreMigration.paths
-    end
+    Card::CoreMigration.assume_migrated_upto_version
   end
 
   namespace :migrate do
@@ -152,7 +151,7 @@ namespace :wagn do
       ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
       Wagn.config.action_mailer.perform_deliveries = false
       
-      stamp_file = Card::Version.schema_stamp_path( args[:type] )
+      stamp_file = Cardio.schema_stamp_path( args[:type] )
 
       Card::Migration.schema_mode args[:type] do
         version = ActiveRecord::Migrator.current_version

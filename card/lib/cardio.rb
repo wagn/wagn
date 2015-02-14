@@ -24,7 +24,7 @@ module Cardio
       config.recaptcha_private_key ||= nil
       config.recaptcha_proxy       ||= nil
 
-      config.cache_store           ||= :file_store, 'tmp/cache'
+      config.cache_store           ||= [:file_store, 'tmp/cache']
       config.override_host         ||= nil
       config.override_protocol     ||= nil
 

@@ -46,8 +46,15 @@ module Decko
       ActiveSupport.on_load(:active_record) do
         pths = Wagn.paths['request_log'] and Decko::Engine.paths['request_log'] = pths
         pths = Wagn.paths['log'] and Decko::Engine.paths['log'] = pths
-        Cardio.add_card_paths Decko::Engine.paths, Rails.application.config, Wagn.root
+        Cardio.card_config Rails.application.config, Decko::Engine.paths, Wagn.root, Rails.cache
         ActiveRecord::Base.establish_connection(Rails.env)
+      end
+      ActiveSupport.on_load(:after_initialize) do
+        begin
+          require_dependency 'card' unless defined?(Card)
+        rescue ActiveRecord::StatementInvalid => e
+          Rails.logger.warn "database not available[#{Rails.env}] #{e}"
+        end
       end
     end
 

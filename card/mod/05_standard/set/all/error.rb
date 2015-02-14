@@ -176,7 +176,7 @@ format :html do
     else
       frame args do #ENGLISH below
         message = case
-        when task != :read && Cardio.config.read_only
+        when task != :read && Card.config.read_only
           "We are currently in read-only mode.  Please try again later."
         when Auth.signed_in?
           "You need permission #{to_task}"

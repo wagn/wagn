@@ -71,11 +71,13 @@ module Wagn
     config.revisions_per_page    = 10
     config.request_logger        = false
 
+    # this needs to be on the application's paths object.
+    # maybe if we finally understand how these are supposed to be connected in railties we can fix lots of stuff
+    paths['db/migrate'] = Rails::Paths::Path.new(paths, 'db/migrate', "#{Cardio.gem_root}/db/migrate")
     paths = Decko::Engine.config.paths
+    paths['db/migrate'] = Rails::Paths::Path.new(paths, 'db/migrate', "#{Cardio.gem_root}/db/migrate")
     # should we have add_deck_paths for these?
     paths['local-mod'] = Rails::Paths::Path.new(paths, 'local-mod', "#{Rails.root}/mod") unless approot_is_gemroot?
-    paths['db/migrate'] = Rails::Paths::Path.new(paths, 'db/migrate', r="#{Cardio.gem_root}/db/migrate")
-    paths['db/migrate_deck_cards'] = Rails::Paths::Path.new(paths, 'db/migrate_deck_cards', "#{Rails.root}/db/migrate_cards", "#{Rails.root}/db/migrate_cards")
     add_gem_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
     add_gem_path paths, 'gem-assets',          :with => 'public/assets'
 

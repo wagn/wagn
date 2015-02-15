@@ -12,7 +12,7 @@ class Card::Migration < ActiveRecord::Migration
     # To avoid repetition a lot of instance methods here just call class methods.
     # The subclass Card::CoreMigration needs a different @type so we can't use a
     # class variable @@type. It has to be a class instance variable.
-    # Migrations are subclasses of Wagn::Migration or Wagn::CoreMigration but they
+    # Migrations are subclasses of Card::Migration or Card::CoreMigration but they
     # don't inherit the @type. The method below solves this problem.
     def type
       @type || (ancestors[1] && ancestors[1].type)

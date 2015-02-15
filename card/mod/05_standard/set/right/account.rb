@@ -25,7 +25,7 @@ end
 
 format do
   view :verify_url do |args|
-    card_url "/update/#{card.cardname.left_name.url_key}?token=#{card.token}"
+    card_url "update/#{card.cardname.left_name.url_key}?token=#{card.token}"
   end
 
   view :verify_days do |args|
@@ -33,7 +33,7 @@ format do
   end
 
   view :reset_password_url do |args|
-    card_url "/update/#{card.cardname.url_key}?reset_token=#{card.token_card.refresh(true).content}"
+    card_url "update/#{card.cardname.url_key}?reset_token=#{card.token_card.refresh(true).content}"
   end
 
   view :reset_password_days do |args|

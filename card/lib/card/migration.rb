@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-require 'card'
 require 'card/version'
 
 class Card::Migration < ActiveRecord::Migration
@@ -28,8 +27,8 @@ class Card::Migration < ActiveRecord::Migration
       test_name
     end
 
-    def paths mig_type=type
-      Card.paths["db/migrate#{schema_suffix mig_type}"].to_a
+    def migration_paths mig_type=type
+      Cardio.migration_paths mig_type
     end
 
     def schema mig_type=type
@@ -51,18 +50,18 @@ class Card::Migration < ActiveRecord::Migration
 
     def assume_migrated_upto_version
       schema_mode do
-        ActiveRecord::Schema.assume_migrated_upto_version schema, paths
+        ActiveRecord::Schema.assume_migrated_upto_version schema, migration_paths
       end
     end
 
     def data_path filename=nil
       if filename
-        self.paths.each do |path|
+        self.migration_paths.each do |path|
           path_to_file = File.join path, 'data', filename
           return path_to_file if File.exists? path_to_file
         end
       else
-        File.join self.paths.first, 'data'
+        File.join self.migration_paths.first, 'data'
       end
     end
   end

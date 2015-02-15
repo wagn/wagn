@@ -105,13 +105,14 @@ describe Card::Set::All::Rules do
       expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[Home]]")
     end
     
+    it "uses *all user rule when no super.s"
+    
     it "user-specific value overwrites user-independent value" do
       Card::Auth.as_bot do
-        Card.create :name => "Book+*type+Joe User*follow", :content => "[[ignore]]"
+        Card.create :name => "Book+*type+Joe User+*follow", :content => "[[never]]"
         Card.create :name => "Book+*type+*all+*follow", :content => "[[always]]"
       end
-      binding.pry
-      expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[ignore]]")
+      expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[never]]")
     end
     
     describe '#all_user_ids_with_rule_for' do

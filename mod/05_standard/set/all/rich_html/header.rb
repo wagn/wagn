@@ -38,10 +38,10 @@ format :html do
       @menu_vars.merge!({
         :edit      => card.ok?(:update),
         :account   => card.account && card.ok?(:update),
-        :signedin  => Auth.signed_in?,
-        :follow_text => card.followed? ? 'unfollow' : 'follow',
+        :show_follow  => Auth.signed_in? && !card.new_card?,
+        :follow_text => follow_or_unfollow,
         :follow    => render_follow,
-        :follow_link => render_follow_link, # => #(card.followed? ? 'unfollow' : 'follow'),
+        :follow_link => render_follow_link,
         :creator   => card.creator.name,
         :updater   => card.updater.name,
         :delete    => card.ok?(:delete) && link_to( 'delete', :action=>:delete,
@@ -58,4 +58,11 @@ format :html do
     '<a class="ui-icon ui-icon-gear"></a>'
   end
   
+  def follow_or_unfollow
+    if (card.type_code == :set && card.all_members_followed?) || card.followed?
+      'follow'
+    else
+      'unfollow'
+    end
+  end
 end

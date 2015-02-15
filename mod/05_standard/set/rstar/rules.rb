@@ -318,6 +318,7 @@ def rule_user
   is_user_rule? ? self[-2] : nil
 end
 
+
 #~~~~~~~~~~ determine the set options to which the user can apply the rule.
 def set_options
 

@@ -22,10 +22,10 @@ format :html do
         #{ %{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader] }
         #{ _optional_render :help, args, :hide }
         </div>
-        #{ wrap_body args.merge(:body_class=>'panel-body') do output( block.call(args) ) end }
+        #{ wrap_body args.merge(:body_class=>'panel-body closed-content') do output( block.call(args) ) end }
         </div>
       }
     end
   end
   
-end
+end 

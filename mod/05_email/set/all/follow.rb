@@ -2,6 +2,77 @@ card_accessor :followers
 
 FOLLOWER_IDS_CACHE_KEY = 'FOLLOWER_IDS'
 
+event :cache_expired_because_of_new_set, :before=>:store, :on=>:create, :when=>proc { |c| c.type_id == Card::SetID } do
+  Card.follow_caches_expired
+end
+
+event :cache_expired_because_of_type_change, :before=>:store, :changed=>:type_id do  #FIXME expire (also?) after save
+  Card.follow_caches_expired
+end
+
+event :cache_expired_because_of_name_change, :before=>:store, :changed=>:name do
+  Card.follow_caches_expired
+end
+
+# #TODO this event should be unneccessary now
+# event :approve_follow_rule, :before=>:approve, :when=>proc { |c| c.follow_rule_card? }  do
+#   self.type_id = PointerID
+# end
+#
+# event :cache_expired_because_of_follow_rule_change, :after=>:approve_follow_rule do
+#   Card.follow_caches_expired  #OPTIMIZE shouldn't be necessary to clear the complete cache in this case
+# end
+
+event :cache_expired_because_of_new_user_rule, :before=>:extend, :when=>proc { |c| c.follow_rule_card? }  do
+  Card.follow_caches_expired
+end
+
+
+
+format :html do
+  watch_perms = lambda { |r| Auth.signed_in? && !r.card.new_card? }  # how was this used to be used?
+
+  view :follow, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|
+    wrap(args) do
+      render_follow_link args
+    end
+  end
+ 
+  view :follow_link do |args|                  
+    path_options = { 
+                      :action=>:update,
+                      :success=>{:id=>card.name, :view=>:follow} 
+                   }
+    html_options = {  
+                      :class=>"watch-toggle watch-toggle-#{args[:toggle]} slotter", 
+                      :remote=>true, 
+                      :method=>'post'
+                   }
+
+    case args[:toggle]
+    when :off
+      path_options['card[content]']= '[[never]]'
+      html_options[:title]         = "stop sending emails about changes to #{args[:label]}"
+      html_options[:hover_content] = "unfollow #{args[:label]}"
+      html_options[:text]          = "following #{args[:label]}"
+    when :on
+      path_options['card[content]']= '[[always]]'
+      html_options[:title]         = "send emails about changes to #{args[:label]}"
+      html_options[:text]          = "follow #{args[:label]}"
+    end
+    
+    follow_rule_name = card.default_follow_set_card.follow_rule_name Auth.current.name
+    card_link follow_rule_name, html_options.merge(:path_opts=>path_options,:success=>{:view=>:follow}) 
+  end
+  
+  def default_follow_link_args args
+    args[:toggle] =  card.followed? ? :off : :on
+    args[:label]  =  card.follow_label
+  end
+  
+end
+
+
 def follow_label
   name
 end
@@ -20,11 +91,23 @@ def follower_names
   followers.map(&:name)
 end
 
-def followed?; followed_by? Auth.current_id end
 
+def follow_rule_card?
+  is_user_rule? && rule_setting_name == '*follow'
+end
+
+
+# used for the follow menu
+# overwritten in type/set.rb and type/cardtype.rb
+# for sets and cardtypes it doesn't check whether the users is following the card itself
+# instead it checks whether he is following the complete set
 def followed_by? user_id
   follower_ids.include? user_id
 end
+def followed?
+  followed_by? Auth.current_id 
+end
+
 
 # the set card to be followed if you want to follow changes of card
 def default_follow_set_card
@@ -110,76 +193,8 @@ def follow_rule_applies? user_id
 end
 
 
-event :cache_expired_because_of_new_set, :before=>:store, :on=>:create, :when=>proc { |c| c.type_id == Card::SetID } do
-  Card.follow_caches_expired
-end
 
-event :cache_expired_because_of_type_change, :before=>:store, :changed=>:type_id do  #FIXME expire (also?) after save
-  Card.follow_caches_expired
-end
-
-event :cache_expired_because_of_name_change, :before=>:store, :changed=>:name do
-  Card.follow_caches_expired
-end
-
-# #TODO this event should be unneccessary now
-# event :approve_follow_rule, :before=>:approve, :when=>proc { |c| c.follow_rule_card? }  do
-#   self.type_id = PointerID
-# end
-#
-# event :cache_expired_because_of_follow_rule_change, :after=>:approve_follow_rule do
-#   Card.follow_caches_expired  #OPTIMIZE shouldn't be necessary to clear the complete cache in this case
-# end
-
-event :cache_expired_because_of_new_user_rule, :before=>:extend, :when=>proc { |c| c.follow_rule_card? }  do
-  Card.follow_caches_expired
-end
-
-
-def follow_rule_card?
-  is_user_rule? && rule_setting_name == '*follow'
-end
-
-
-format :html do
-  watch_perms = lambda { |r| Auth.signed_in? && !r.card.new_card? }  # how was this used to be used?
-
-  view :follow, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|
-    wrap(args) do
-      render_follow_link args
-    end
-  end
-
-  
-  view :follow_link do |args|
-    toggle       = args[:toggle] || (card.followed? ? :off : :on)
-
-    follow_rule_name = card.default_follow_set_card.follow_rule_name Auth.current.name
-    path_options = { 
-                      :action=>:update,
-                      :success=>{:id=>card.name, :view=>:follow} 
-                   }
-    html_options = {  
-                      :class=>"watch-toggle watch-toggle-#{toggle} slotter", 
-                      :remote=>true, 
-                      :method=>'post'
-                   }
-
-    case toggle
-    when :off
-      path_options['card[content]']= '[[never]]'
-      html_options[:title]         = "stop sending emails about changes to #{card.follow_label}"
-      html_options[:hover_content] = "unfollow #{card.follow_label}"
-      html_options[:text]          = "following #{card.follow_label}"
-    when :on
-      path_options['card[content]']= '[[always]]'
-      html_options[:title]         = "send emails about changes to #{card.follow_label}"
-      html_options[:text]          = "follow #{card.follow_label}"
-    end
-    card_link follow_rule_name, html_options.merge(:path_opts=>path_options,:success=>{:view=>:follow}) 
-  end
-  
-end
+#~~~~~ cache methods
 
 def write_follower_ids_cache user_ids
   hash = Card.follower_ids_cache

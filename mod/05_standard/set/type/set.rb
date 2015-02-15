@@ -61,22 +61,16 @@ format :html do
   view :closed_content do |args|
     ''
   end
-
-  view :follow_link_name do |args|
-    args[:toggle] ||= card.followed? ? :off : :on
-    if args[:toggle] == :off
-      'following'
-    elsif card.right and card.right.codename == 'self'
-      'follow'
-    else
-      'follow all'
-    end
-  end
   
 end
 
 
 include Card::Set::Type::SearchType
+
+def followed_by? user_id = nil
+  all_members_followed_by? user_id
+end
+
 
 def default_follow_set_card
   self
@@ -162,6 +156,39 @@ def setting_codenames_by_group
   end
   result
 end
+
+def all_members_followed? 
+  all_members_followed_by? Auth.current_id
+end
+
+def all_members_followed_by? user_id = nil
+  if !prototype.followed_by? user_id  
+    return false
+  elsif set_followed_by? user_id
+    return true
+  else
+    broader_sets.each do |b_s|
+      if (set_card  = Card.fetch(b_s)) && set_card.set_followed_by?(user_id)
+       return true
+      end
+    end
+  end
+  return false
+end
+
+def set_followed?
+  set_followed_by? Auth.current_id
+end
+
+def set_followed_by? user_id = nil
+  return  ( user_id && (user = Card.find(user_id)) && Card.fetch(follow_rule_name(user.name)) ) || 
+          Card.fetch(follow_rule_name)
+end
+
+def broader_sets
+  prototype.set_names[1..-1]
+end
+
 
 def prototype
   opts = subclass_for_set.prototype_args self.cardname.trunk_name

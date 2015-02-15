@@ -13,22 +13,22 @@ format :html do
       super args
     end  
   end
-
-  view :follow_link do |args|
-    cardtype_followed = ["#{card.name}+*type", "*all"].select do |set_name| 
-        follow_card = Card.fetch("#{set_name}+#{Card[:follow].name}+#{Auth.current.name}")
-        follow_card && follow_card.item_names.include?('always')
-      end.present?
-      
-    super args.merge(:toggle=>( cardtype_followed ? :off : :on) )
-  end
 end
 
 
 include Basic
 
+
+def follow_label
+  default_follow_set_card.follow_label
+end
+
+def followed_by? user_id = nil
+  default_follow_set_card.all_members_followed_by? user_id
+end
+
 def default_follow_set_card
-  Card.fetch("#{name}+*type")
+  Card.fetch("#{name}+*type") 
 end
 
 

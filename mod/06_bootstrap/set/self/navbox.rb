@@ -10,7 +10,7 @@ format :html do
     input_args[:placeholder] = @@placeholder if @@placeholder
 
     %{
-      <form action="#{Card.path_setting '/:search'}" method="get" class="nodblclick navbar-form" role="search">
+      <form action="#{Card.path_setting '/:search'}" method="get" class="nodblclick navbox-form navbar-form" role="search">
         <div class="form-group">
           #{ text_field_tag :_keyword, '', input_args }
         </div>

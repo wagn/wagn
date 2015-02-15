@@ -22,7 +22,7 @@ describe Card::HtmlFormat do
     it "titled" do
       result = render_card :titled, :name=>'A+B'
       assert_view_select result, 'div[class~="titled-view"]' do
-        assert_select 'h1' do
+        assert_select 'h3' do
           assert_select 'span'
         end
         assert_select 'div[class~="card-body card-content"]', 'AlphaBeta'
@@ -45,7 +45,7 @@ describe Card::HtmlFormat do
 
       it "renders top menu" do
         #warn "sp #{@simple_page}"
-        assert_view_select @simple_page, 'div[id="menu"]' do
+        assert_view_select @simple_page, 'nav[class="navbar navbar-default navbar-static-top"]' do
           assert_select 'a[class="internal-link"][href="/"]', 'Home'
           assert_select 'a[class="internal-link"][href="/recent"]', 'Recent'
           assert_select 'form.navbox-form[action="/:search"]' do
@@ -56,13 +56,13 @@ describe Card::HtmlFormat do
 
       it "renders card header" do
         # lots of duplication here...
-        assert_view_select @simple_page, 'h1[class="card-header"]' do
+        assert_view_select @simple_page, 'h3[class="card-header panel-title"]' do
           assert_select 'span[class="card-title"]'
         end
       end
 
       it "renders card content" do
-        assert_view_select @simple_page, 'div[class="card-body card-content ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]', 'AlphaBeta'
+        assert_view_select @simple_page, 'div[class="card-body panel-body card-content ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]', 'AlphaBeta'
       end
  
       it "renders card credit" do

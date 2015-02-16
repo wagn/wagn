@@ -33,7 +33,7 @@ format do
     text = (opts.delete(:text) || name).to_name.to_show @context_names
     name = case name
            when Symbol then Card[name].cardname
-           when Card   then name.cardname
+           when Card   then Card::Codename[name]
            else             name
            end
     

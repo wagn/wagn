@@ -1,6 +1,6 @@
 
 format :html do
-    
+
   view :core do |args|
     body = card.setting_codenames_by_group.map do |group, data|
       next if group.nil? || data.nil?

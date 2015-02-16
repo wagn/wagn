@@ -1,8 +1,10 @@
 # -*- encoding : utf-8 -*-
 
 class Card
+  remove_const :Set if const_defined?(:Set, false)
+  
   module Set
-
+   
     mattr_accessor :modules, :traits
     @@modules = { :base=>[], :base_format=>{}, :nonbase=>{}, :nonbase_format=>{} }
    

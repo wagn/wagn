@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-class Card < ActiveRecord::Base
 
+class Card < ActiveRecord::Base
   require_dependency 'card/active_record_ext'
   require_dependency 'card/codename'
   require_dependency 'card/query'

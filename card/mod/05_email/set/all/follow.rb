@@ -30,15 +30,13 @@ end
 
 
 format :html do
-  watch_perms = lambda { |r| Auth.signed_in? && !r.card.new_card? }  # how was this used to be used?
-
   view :follow, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|
     wrap(args) do
       render_follow_link args
     end
   end
  
-  view :follow_link do |args|                  
+  view :follow_link, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|    
     path_options = { 
                       :action=>:update,
                       :success=>{:id=>card.name, :view=>:follow} 
@@ -60,7 +58,6 @@ format :html do
       html_options[:title]         = "send emails about changes to #{args[:label]}"
       html_options[:text]          = "follow #{args[:label]}"
     end
-    
     follow_rule_name = card.default_follow_set_card.follow_rule_name Auth.current.name
     card_link follow_rule_name, html_options.merge(:path_opts=>path_options,:success=>{:view=>:follow}) 
   end

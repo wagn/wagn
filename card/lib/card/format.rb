@@ -224,11 +224,12 @@ class Card
     end
     
     def parse_view_visibility val
-      if val.kind_of? Array
-        val.map { |view| canonicalize_view view }
-      else
-        (val || '').split( /[\s\,]+/ ).map { |view| canonicalize_view view }
-      end
+      case val
+      when Array; val
+      when String; val.split(/[\s,]*/)
+      when NilClass; []
+      else raise Card::Error, "bad show/hide argument: #{val}"
+      end.map{ |view| canonicalize_view view }
     end
     
 

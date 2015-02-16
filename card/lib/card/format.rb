@@ -226,7 +226,7 @@ class Card
     def parse_view_visibility val
       case val
       when Array; val
-      when String; val.split(/[\s,]*/)
+      when String; val.split(/[\s,]+/)
       when NilClass; []
       else raise Card::Error, "bad show/hide argument: #{val}"
       end.map{ |view| canonicalize_view view }

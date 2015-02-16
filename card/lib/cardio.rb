@@ -18,25 +18,26 @@ module Cardio
       @@config, @@paths, @@root, @@cache = args
 
       config.read_only             = !!ENV['WAGN_READ_ONLY']
-      config.allow_inline_styles   = false
+      config.allow_inline_styles   = false                    unless config.respond_to? :allow_inline_styles
 
-      config.recaptcha_public_key  = nil
-      config.recaptcha_private_key = nil
-      config.recaptcha_proxy       = nil
+      config.recaptcha_public_key  = nil                      unless config.respond_to? :recaptcha_public_key
+      config.recaptcha_private_key = nil                      unless config.respond_to? :recaptcha_private_key
+      config.recaptcha_proxy       = nil                      unless config.respond_to? :recaptcha_proxy
 
-      config.cache_store           = :file_store, 'tmp/cache'
-      config.override_host         = nil
-      config.override_protocol     = nil
+      config.cache_store           = :file_store, 'tmp/cache' unless config.respond_to? :cache_store
+      config.override_host         = nil                      unless config.respond_to? :override_host
+      config.override_protocol     = nil                      unless config.respond_to? :override_protocol
 
-      config.no_authentication     = false
-      config.files_web_path        = 'files'
+      config.no_authentication     = false                    unless config.respond_to? :no_authentication
+      config.files_web_path        = 'files'                  unless config.respond_to? :files_web_path
 
-      config.max_char_count        = 200
-      config.max_depth             = 20
-      config.email_defaults        = nil
+      config.max_char_count        = 200                      unless config.respond_to? :max_char_count
+      config.max_depth             = 20                       unless config.respond_to? :max_depth
+      config.email_defaults        = nil                      unless config.respond_to? :email_defaults
 
-      config.token_expiry          = 2.days
-      config.revisions_per_page    = 10
+      config.token_expiry          = 2.days                   unless config.respond_to? :token_expiry
+      config.revisions_per_page    = 10                       unless config.respond_to? :revisions_per_page
+      config.closed_search_limit   = 50                       unless config.respond_to? :closed_search_limit
 
       add_gem_path paths, 'gem-mod',             :with => 'mod'
       add_gem_path paths, "db"

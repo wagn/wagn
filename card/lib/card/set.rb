@@ -216,7 +216,7 @@ class Card
         # If yes remove this comment.
 
         to_file = "#{Cardio.paths['tmp/set'].first}/#{set_pattern}/#{seq}-#{anchors * '-'}.rb"
-        anchor_modules = anchors.map { |a| "module #{a.camelize};" } * ''
+        anchor_modules = anchors.map { |a| "module #{a.camelize};" } * ' '
         file_content = <<EOF
 # -*- encoding : utf-8 -*-
 class Card; module Set; module #{set_pattern.camelize}; #{anchor_modules}

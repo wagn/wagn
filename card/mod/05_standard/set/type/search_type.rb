@@ -161,10 +161,11 @@ format :html do
     if @depth > self.class.max_depth
       "..."
     else
-      search_params[:limit] = 10 #not quite right, but prevents massive invisible lists.  
-      # really needs to be a hard high limit but allow for lower ones.
+      search_limit = args[:closed_search_limit]
+      search_params[:limit] = search_limit && search_limit < Card.config.closed_search_limit ?
+                                search_limit : Card.config.closed_search_limit
       _render_core args.merge( :hide=>'paging', :item=>:link )
-      # fixme - if item is queryified to be "name", then that should work.  otherwise use link
+      # TODO: if item is queryified to be "name", then that should work.  otherwise use link
     end
   end
 

@@ -137,7 +137,7 @@ namespace :wagn do
 
       Card::Cache.reset_global
       # maybe we should test for existance and use the Cardio based on if not there?
-      ENV['SCHEMA'] ||= "#{Rails.root}/db/schema.rb"
+      ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       prepare_migration
       paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:deck_cards)
     
@@ -150,7 +150,7 @@ namespace :wagn do
   
     desc 'write the version to a file (not usually called directly)' #maybe we should move this to a method? 
     task :stamp, :type do |t, args|
-      ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
+      ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       Wagn.config.action_mailer.perform_deliveries = false
       
       stamp_file = Cardio.schema_stamp_path( args[:type] )

@@ -3,10 +3,10 @@
 require 'decko/engine'
 
 Rails.application.routes.draw do
-
+<% if @include_jasmine_engine %>
   if !Rails.env.production? && Object.const_defined?( :JasmineRails )
-    mount Object.const_get(:JasmineRails).const_get(:Engine) => "<%= mount_point %>/specs"
+    mount Object.const_get(:JasmineRails).const_get(:Engine) => "<%= decko_path %>/specs"
   end
-
-  mount Decko::Engine => '<%= mount_point %>/'
+<% end %>
+  mount Decko::Engine => '<%= decko_path %>/'
 end

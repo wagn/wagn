@@ -43,10 +43,6 @@ module Wagn
       end
     end
 
-    def approot_is_gemroot?
-      Wagn.gem_root.to_s == config.root.to_s
-    end
-
     def add_gem_path paths, path, options={}
       gem_path = File.join( Wagn.gem_root, path )
       with = options.delete(:with)
@@ -77,7 +73,7 @@ module Wagn
     paths = Decko::Engine.config.paths
     paths['db/migrate'] = Rails::Paths::Path.new(paths, 'db/migrate', "#{Cardio.gem_root}/db/migrate")
     # should we have add_deck_paths for these?
-    paths['local-mod'] = Rails::Paths::Path.new(paths, 'local-mod', "#{Rails.root}/mod") unless approot_is_gemroot?
+    paths['local-mod'] = Rails::Paths::Path.new(paths, 'local-mod', "#{Rails.root}/mod")
     add_gem_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
     add_gem_path paths, 'gem-assets',          :with => 'public/assets'
 
@@ -89,14 +85,6 @@ module Wagn
     paths['tmp/set'] = "#{Rails.root}/tmp/set"
     paths['tmp/set_pattern'] = "#{Rails.root}/tmp/set_pattern"
 
-    # Is this needed?
-    def load_tasks(app=self)
-      super
-#      unless approot_is_gemroot?
-#        Rake::Task["db:schema:dump"].clear
-#      end
-      self
-    end
   end
 end
 

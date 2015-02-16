@@ -18,6 +18,8 @@ local*
 /script/performance/*.session
 tmp/*
 wagn*gem
+card*gem
+decko*gem
 *.project
 *.sqlite3
 *.DS_Store

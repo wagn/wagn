@@ -1,0 +1,56 @@
+# path to parent directory of src_files
+# relative path from Rails.root
+# defaults to app/assets/javascripts
+# useless in wagn file structure
+src_dir: "mod"
+#"app/assets/javascripts"
+
+# path to additional directory of source file that are not part of assets pipeline and need to be included
+# relative path from Rails.root
+# defaults to []
+# include_dir:
+#   - ../mobile_app/public/js
+
+# path to parent directory of css_files
+# relative path from Rails.root
+# defaults to app/assets/stylesheets
+# useless in wagn file structure
+css_dir: "mod"
+
+# list of file expressions to include as source files
+# relative path from src_dir
+src_files:
+ - "**/*.{js.coffee,js,coffee}"
+
+# list of file expressions to include as css files
+# relative path from css_dir
+css_files: 
+    # - "**/*.{css,scss}"
+# THIS IS IMPORTANT!!
+include_dir: "mod"
+  #- <%= Cardio.gem_root+"/mod/03_machines/lib/javascript" %>
+# path to parent directory of spec_files
+# relative path from Rails.root
+#
+# Alternatively accept an array of directory to include external spec files
+# spec_dir:
+#   - spec/javascripts
+#   - ../engine/spec/javascripts
+#
+# defaults to spec/javascripts
+spec_dir:  "spec/javascripts"
+
+# list of file expressions to include as helpers into spec runner
+# relative path from spec_dir
+helpers:
+  - "helpers/**/*.{js.coffee,js,coffee}"
+
+# list of file expressions to include as specs into spec runner
+# relative path from spec_dir
+spec_files:
+  - "**/*[Ss]pec.{js.coffee,js,coffee}"
+
+# path to directory of temporary files
+# (spec runner and asset cache)
+# defaults to tmp/jasmine
+tmp_dir: "tmp/jasmine"

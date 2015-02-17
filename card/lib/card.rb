@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 
+Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
 
 class Card < ActiveRecord::Base
   require_dependency 'card/active_record_ext'

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 class Card
-  remove_const :Set if const_defined?(:Set, false)
+  #remove_const :Set if const_defined?(:Set, false)
   
   module Set
    
@@ -241,6 +241,7 @@ EOF
       # "base modules" are modules that are permanently included on the Card or Format class
       # "nonbase modules" are included dynamically on singleton_classes
       def process_base_modules
+        #binding.pry
         process_base_module_list modules[:base], Card
         modules[:base_format].each do |format_class, modules_list|
           process_base_module_list modules_list, format_class

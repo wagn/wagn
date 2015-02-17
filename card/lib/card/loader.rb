@@ -84,6 +84,8 @@ class Card
       end
 
       def load_formats
+        require 'pry'
+        binding.pry
         #cheating on load issues now by putting all inherited-from formats in core mod.
         mod_dirs.each do |mod|
           load_dir "#{mod}/format/*.rb"

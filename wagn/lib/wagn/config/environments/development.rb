@@ -11,6 +11,7 @@ Wagn.application.class.configure do
   if defined?(RailsDevTweaks)
     config.dev_tweaks.autoload_rules do
       skip '/files'
+      skip /view\=status/
     end
   end
   

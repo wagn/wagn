@@ -29,12 +29,12 @@ format do
   end
 
   # link to a specific card
-  def card_link name, opts={}
-    text = (opts.delete(:text) || name).to_name.to_show @context_names
-    name = case name
-           when Symbol then Card[name].cardname
-           when Card   then Card::Codename[name]
-           else             name
+  def card_link name_or_card, opts={}
+    text = (opts.delete(:text) || name_or_card).to_name.to_show @context_names
+    name = case name_or_card
+           when Symbol then Card.fetch( name_or_card, :skip_modules=>true).cardname
+           when Card   then name_or_card.cardname
+           else             name_or_card
            end
     
     path_opts = opts.delete( :path_opts ) || {}

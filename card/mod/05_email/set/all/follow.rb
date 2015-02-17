@@ -30,9 +30,15 @@ end
 
 
 format :html do
-  view :follow, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|
+  view :follow_menu_link do |args|
     wrap(args) do
-      render_follow_link args
+      render_follow_link( args.merge(:label=>'',:main_menu=>true) )
+    end
+  end
+  
+  view :follow_submenu_link, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|
+    wrap(args) do
+      render_follow_link args.merge(:hover=>true)
     end
   end
  
@@ -51,20 +57,27 @@ format :html do
     when :off
       path_options['card[content]']= '[[never]]'
       html_options[:title]         = "stop sending emails about changes to #{args[:label]}"
-      html_options[:hover_content] = "unfollow #{args[:label]}"
-      html_options[:text]          = "following #{args[:label]}"
+      if args[:hover]
+        html_options[:hover_content] = "unfollow #{args[:label]}" 
+        html_options[:text]          = "following #{args[:label]}"
+      else
+        html_options[:text]          = "unfollow #{args[:label]}"
+      end
     when :on
       path_options['card[content]']= '[[always]]'
       html_options[:title]         = "send emails about changes to #{args[:label]}"
       html_options[:text]          = "follow #{args[:label]}"
+    end
+    if args[:main_menu]
+      html_options[:text] = content_tag( :span, '', :class=>"ui-menu-icon ui-icon ui-icon-carat-1-w") + html_options[:text]
     end
     follow_rule_name = card.default_follow_set_card.follow_rule_name Auth.current.name
     card_link follow_rule_name, html_options.merge(:path_opts=>path_options,:success=>{:view=>:follow}) 
   end
   
   def default_follow_link_args args
-    args[:toggle] =  card.followed? ? :off : :on
-    args[:label]  =  card.follow_label
+    args[:toggle] ||=  card.followed? ? :off : :on
+    args[:label]  ||=  card.follow_label
   end
   
 end

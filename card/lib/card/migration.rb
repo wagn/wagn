@@ -29,7 +29,7 @@ class Card::Migration < ActiveRecord::Migration
     end
 
     def paths mig_type=type
-      Card.paths["db/migrate#{schema_suffix type}"].to_a
+      Cardio.paths["db/migrate#{schema_suffix type}"].to_a
     end
 
     def schema_suffix mig_type=type

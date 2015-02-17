@@ -18,10 +18,10 @@ Feature: Follow interface
     When I go to the homepage
     And I hover over the main menu
     And In the main card menu I click "follow"
-    Then In the main card menu I should see "following|unfollow"
+    Then In the main card menu I should see "unfollow"
     # assumes focus still on that link.  otherwise "following"
     # selenium behavior not totally consistent here.
-    And the card Home+*self+*follow+Joe User should contain "always"
+    And the card Home+*self+Joe User+*follow should contain "always"
 
   Scenario: Unfollowing a Card
     Given Joe User is watching "Home+*self"
@@ -31,13 +31,13 @@ Feature: Follow interface
     #note: the link name turns from "follwing" to "unfollow" on mouseover and because we don't control the mouse's position
     #      this test randomly fails if we use the link name
     Then In the main card menu I should see "follow"
-    And the card Home+*self+*follow+Joe User should not contain "always"
+    And the card Home+*self+Joe User+*follow should not contain "always"
 
   Scenario: Following a Cardtype
     When I go to card User
     And I hover over the main menu
     And In the main card menu I should see "follow all"
-    And In the main card menu I should not see "|"
+    #And In the main card menu I should not see "|"
 
   Scenario: A Card whose Cardtype is Followed
     Given Joe User is watching "User+*type"

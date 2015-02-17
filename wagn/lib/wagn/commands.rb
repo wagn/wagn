@@ -81,8 +81,6 @@ else
     Rake::Task['wagn:update'].invoke
   when 'cucumber'
     require 'wagn'
-    require 'cardio'
-    require 'decko/engine'
     feature_paths = Dir.glob("./mod/**/features")
     require_args = "-r #{Wagn.gem_root}/features "
     require_args += feature_paths.map { |path| "-r #{path}"}.join(' ')

@@ -2,12 +2,10 @@ JUNK_INIT_ARGS = %w{ missing skip_virtual id }
 
 module ClassMethods
   def new args={}, options={}
-    puts "Card.new in initialize. args: #{args}"
     args = (args || {}).stringify_keys
     JUNK_INIT_ARGS.each { |a| args.delete(a) }
     %w{ type type_code }.each { |k| args.delete(k) if args[k].blank? }
     args.delete('content') if args['attach'] # should not be handled here!
-    binding.pry
     super args
   end
 end

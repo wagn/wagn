@@ -149,7 +149,6 @@ class Card
         define_method final_method, &final
 
         define_method event do
-          puts event
           run_callbacks event do
             Card.with_logging :event, :message=>event, :context=>self.name, :details=>opts do
               send final_method

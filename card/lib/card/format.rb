@@ -182,7 +182,6 @@ class Card
     
 
     def render view, args={}
-      puts view
       unless args.delete(:optional) && !show_view?( view, args )
         @current_view = view = ok_view canonicalize_view( view ), args       
         args = default_render_args view, args

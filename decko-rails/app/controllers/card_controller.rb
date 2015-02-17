@@ -37,7 +37,10 @@ class CardController < ActionController::Base
   #  CORE METHODS
   
   def create
-    handle { card.save }
+    #binding.pry
+    res = handle { card.save }
+    #binding.pry
+    res
   end
 
   def read
@@ -82,6 +85,7 @@ class CardController < ActionController::Base
 
 
   def load_id
+    #binding.pry
     params[:id] ||= case
       when Card::Auth.needs_setup?
         params[:card] = { :type_id => Card.default_accounted_type_id }
@@ -109,6 +113,7 @@ class CardController < ActionController::Base
         opts[:name] ||= params[:id].to_s.gsub( '_', ' ')  # move handling to Card::Name?
         
         if params[:action] == 'create'
+          #binding.pry
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
           # that would let us get rid of this...

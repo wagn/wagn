@@ -1,11 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-Rails.application.routes.draw do
+Decko::Engine.routes.draw do
 
-  if !Rails.env.production? && Object.const_defined?( :JasmineRails )
-    mount Object.const_get(:JasmineRails).const_get(:Engine) => "/specs"
-  end
-  
   #most common
   root                      :to => 'card#read', :via=>:get
   match "#{ Decko::Engine.config.files_web_path }/:id(-:size)-:rev_id.:format" => 

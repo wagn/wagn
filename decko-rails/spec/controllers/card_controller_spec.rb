@@ -1,11 +1,16 @@
 # -*- encoding : utf-8 -*-
 
 describe CardController do
+  routes { Decko::Engine.routes }
 
   include Capybara::DSL
   describe "- route generation" do
 
     it "should recognize type" do
+      #all_routes = Rails.application.routes.routes
+      #require 'rails/application/route_inspector'
+      #warn "rountes#{ENV['CONTROLLER']}:\n" + Rails::Application::RouteInspector.new.format(all_routes, ENV['CONTROLLER'])* "\n"
+
       expect({ :get => "/new/Phrase" }).to route_to( :controller => 'card', :action=>'read', :type=>'Phrase', :view=>'new' )
     end
 
@@ -296,8 +301,8 @@ describe CardController do
       expect(response.status).to eq(404)
     end
   end
-  describe "unit tests" do
 
+  describe "unit tests" do
     before do
       @simple_card = Card['Sample Basic']
       login_as 'joe_user'

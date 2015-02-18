@@ -1,4 +1,6 @@
 # -*- encoding : utf-8 -*-
+require 'card/version'
+
 class RequireEarlierMigrations < ActiveRecord::Migration
   def self.up
     fail %{

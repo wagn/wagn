@@ -256,5 +256,17 @@ module Accounts
   end
   
 end
+
+module Follow  
+  def permit action, verb=nil
+    if [:create, :delete, :update].include?(action) && Auth.signed_in? && 
+        (user = rule_user) && Auth.current_id == user.id
+      return true
+    else
+      super action, verb
+    end
+  end
+  
+end
   
 

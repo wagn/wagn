@@ -121,11 +121,12 @@ namespace :wagn do
     
     desc "migrate structure"
     task :structure => :environment do
-      #Cardio.schema_mode(:structure) do
-      ENV['SCHEMA'] = "#{Cardio.gem_root}/db/schema.rb"
-      paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:structure)
-      ActiveRecord::Migrator.migrate paths
-        #end
+      ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
+      Cardio.schema_mode(:structure) do
+        paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:structure)
+        ActiveRecord::Migrator.migrate paths
+        Rake::Task['db:_dump'].invoke   # write schema.rb
+      end
     end
     
     desc "migrate core cards"

@@ -5,10 +5,10 @@ class WagnGenerator < Rails::Generators::AppBase
 
 #class WagnGenerator < Rails::Generators::AppGenerator
 
-  
-
   source_root File.expand_path('../templates', __FILE__)
   
+  argument :decko_path, :required=>false
+
   class_option :database, :type => :string, :aliases => "-d", :default => "mysql",
     :desc => "Preconfigure for selected database (options: #{DATABASES.join('/')})"
     
@@ -16,7 +16,7 @@ class WagnGenerator < Rails::Generators::AppBase
     desc: "Prepare deck for wagn core testing"
     
   class_option 'gem-path', :type => :string, aliases: '-g', :default => false, :group => :runtime, 
-    desc: "Path to local gem installation"
+    desc: "Path to local gem installation (Default, use env WAGN_DEV_GEM_PATH)"
     
   class_option 'mod-dev', :type => :boolean, aliases: '-m', :default => false, :group => :runtime, 
     desc: "Prepare deck for mod testing"
@@ -28,30 +28,30 @@ class WagnGenerator < Rails::Generators::AppBase
   
 ## should probably eventually use rails-like AppBuilder approach, but this is a first step.  
   def dev_setup
-    @gem_path = options['gem-path']
+    # TODO: rename or split, gem_path points to the source repo, card and wagn gems are subdirs
+    @gemfile_gem_path = @gem_path = options['gem-path']
+    env_gem_path = ENV['WAGN_DEV_GEM_PATH']
+    if env_gem_path.present?
+      @gemfile_gem_path = %q{#{ENV['WAGN_DEV_GEM_PATH']}}
+      @gem_path = env_gem_path
+    end
+    
+    @include_jasmine_engine = false
     if options['core-dev']
-      # TODO: rename or split, gem_path points to the source repo, card and wagn gems are subdirs
-      @gem_path = options['gem-path'] || ask("Enter the path to your local wagn gem installation: ")
+      unless @gem_path
+        @gemfile_gem_path = @gem_path = ask("Enter the path to your local wagn gem installation: ")
+      end
+
+      @include_jasmine_engine = true
       @spec_path = @gem_path
       @spec_helper_path = File.join @spec_path, 'card', 'spec', 'spec_helper'
-      @features_path = File.join @gem_path, 'wagn/features/'  # ending slash is important in order to load support and step folders
-      @simplecov_config = "card_core_dev_simplecov_filters"
-      template "rspec", ".rspec"
-    elsif options['mod-dev']
-      @spec_path = 'mod/'
-      @spec_helper_path = './spec/spec_helper'
-      @simplecov_config = "card_simplecov_filters"
-      @gem_path = options['gem-path'] || ask("Enter the path to your local wagn gem installation: ")
-      @spec_path = @gem_path
-      @spec_helper_path = File.join @spec_path, 'spec', 'spec_helper'
       empty_directory 'spec'
       inside 'spec' do
         copy_file File.join('javascripts', 'support', 'wagn_jasmine.yml'), File.join('javascripts', 'support','jasmine.yml')
       end
-      @features_path = File.join @gem_path, 'features/'  # ending slash is important in order to load support and step folders
-      @simplecov_config = "wagn_core_dev_simplecov_filters"
-      template "rspec", ".rspec"
       
+      @features_path = File.join @gem_path, 'wagn/features/'  # ending slash is important in order to load support and step folders
+      @simplecov_config = "card_core_dev_simplecov_filters"
     elsif options['mod-dev']
       @spec_path = 'mod/'
       @spec_helper_path = './spec/spec_helper'
@@ -73,20 +73,8 @@ class WagnGenerator < Rails::Generators::AppBase
     end
   end
 
-  
   def rakefile
     template "Rakefile"
-  end
-
-  def app
-    empty_directory 'app'
-    inside "app" do
-      empty_directory 'assets'
-      inside "assets" do
-        empty_directory 'javascripts'  
-        empty_directory 'stylesheets'
-      end
-    end
   end
 
 #  def readme
@@ -126,6 +114,7 @@ class WagnGenerator < Rails::Generators::AppBase
 
     inside "config" do
       template "application.rb"
+      template 'routes.erb', "routes.rb"
       template "environment.rb"
       template "boot.rb"
       template "databases/#{options[:database]}.yml", "database.yml"  

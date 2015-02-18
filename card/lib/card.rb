@@ -12,6 +12,11 @@ class Card < ActiveRecord::Base
   require_dependency 'card/auth'
   require_dependency 'card/log'
   require_dependency 'card/loader'
+  require_dependency 'card/content'
+  require_dependency 'card/action'
+  require_dependency 'card/act'
+  require_dependency 'card/change'
+  require_dependency 'card/reference'
 
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id

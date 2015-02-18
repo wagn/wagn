@@ -103,6 +103,12 @@ When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |usern
   end
 end
 
+When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content$/ do |username, cardtype, cardname, content|
+  create_card(username, cardtype, cardname, content) do
+    fill_in("card[content]", :with=>content)
+  end
+end
+
 When /^(.*) creates?\s*([^\s]*) card "([^"]*)"$/ do |username, cardtype, cardname|
   create_card(username,cardtype,cardname)
 end
@@ -129,7 +135,7 @@ end
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
   user = Card::Auth.current.name if user == "I"
   signed_in_as user do
-    step "the card #{cardname}+#{user}+*follow contains \"[[#{cardname}]]\""
+    step "the card #{user}+*following contains \"[[#{cardname}]]\""
   end
 end
 
@@ -207,7 +213,7 @@ Then /I submit$/ do
 end
 
 When /^I hover over the main menu$/ do
-  page.execute_script "$('#main > .card-slot > .panel-heading > .card-header > .card-menu-link').trigger('mouseenter')"
+  page.execute_script "$('#main > .card-slot > .card-header > .card-menu-link').trigger('mouseenter')"
 end
 
 When /^I pick (.*)$/ do |menu_item|

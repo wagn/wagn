@@ -30,7 +30,7 @@ end
 
 
 format :html do
-  view :follow_menu_link do |args|
+  view :follow_menu_link, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|
     wrap(args) do
       render_follow_link( args.merge(:label=>'',:main_menu=>true) )
     end
@@ -42,10 +42,11 @@ format :html do
     end
   end
  
-  view :follow_link, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|    
+  view :follow_link, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|   
+    success_view = (args[:main_menu] ? :follow_menu_link : :follow_submenu_link)
     path_options = { 
                       :action=>:update,
-                      :success=>{:id=>card.name, :view=>:follow} 
+                      :success=>{:id=>card.name, :view=>success_view} 
                    }
     html_options = {  
                       :class=>"watch-toggle watch-toggle-#{args[:toggle]} slotter", 
@@ -72,7 +73,7 @@ format :html do
       html_options[:text] = content_tag( :span, '', :class=>"ui-menu-icon ui-icon ui-icon-carat-1-w") + html_options[:text]
     end
     follow_rule_name = card.default_follow_set_card.follow_rule_name Auth.current.name
-    card_link follow_rule_name, html_options.merge(:path_opts=>path_options,:success=>{:view=>:follow}) 
+    card_link follow_rule_name, html_options.merge(:path_opts=>path_options) 
   end
   
   def default_follow_link_args args

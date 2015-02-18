@@ -1,3 +1,5 @@
+include All::Permissions::Follow
+
 def options 
   Card::FollowOption.cards
 end

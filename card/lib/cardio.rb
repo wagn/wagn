@@ -8,7 +8,11 @@ CARD_GEM_ROOT = File.expand_path('../..', __FILE__)
 module Cardio
 
   ActiveSupport.on_load :card do
-    Card::Loader.load_mods if Card.count > 0
+    if Card.count > 0
+      Card::Loader.load_mods 
+    else
+      Rails.logger.warn "empty database"
+    end
   end
 
   mattr_reader :paths, :config, :root, :cache

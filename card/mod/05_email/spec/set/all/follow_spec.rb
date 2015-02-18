@@ -2,7 +2,7 @@
 
 describe "Card::Set::All::Follow" do
   def follow_view card_name
-    render_card :follow, :name=>card_name
+    render_card :follow_submenu_link, :name=>card_name
   end
    
   describe "follower_ids" do
@@ -74,7 +74,7 @@ describe "Card::Set::All::Follow" do
           link_class = "watch-toggle-on"
           CGI.escape("[[always]]")
         end
-      assert_view_select follow_view(name), 'div[class~="card-slot follow-view"]' do
+      assert_view_select follow_view(name), 'div[class~="card-slot follow_submenu_link-view"]' do
         assert_select "a[class~=#{link_class}][href*='#{href}']", args[:text] || "follow #{name}"
       end
     end

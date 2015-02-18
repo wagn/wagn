@@ -13,13 +13,15 @@ class FollowerStash
         card.all_direct_follower_ids_with_reason do |user_id, reason|
           notify Card.fetch(user_id), :of=>reason
         end
+        require 'pry'
         if card.left and !@visited.include?(card.left.name) and follow_field_rule = card.left.rule_card(:follow_fields)
           
           follow_field_rule.item_names(:context=>card.left.cardname).each do |item|  
+            #binding.pry if card.name == "Ulysses+author"
             if @visited.include? item.to_name.key
               add_affected_card card.left
               break
-            elsif item == Card[:includes].name
+            elsif item.to_name.key == Card[:includes].key
               includee_set = Card.search(:included_by=>card.left.name).map(&:key)
               if !@visited.intersection(includee_set).empty?
                 add_affected_card card.left
@@ -135,10 +137,9 @@ format do
   end
   
   view :unfollow_url, :perms=>:none, :closed=>true do |args|
-    if args[:followed_set] and args[:follow_option] and args[:follower] and follower = Card.fetch( args[:follower] )
-     following_card = follower.fetch( :trait=>:following, :new=>{} )  #FIXME
-     item_name = "#{args[:followed_set].to_name.url_key}+#{args[:follow_option].to_name.url_key}"
-     card_url( "update/#{following_card.cardname.url_key}?drop_item=#{item_name}" )
+    if args[:followed_set] && (set_card = Card.fetch(args[:followed_set])) && args[:follow_option] && args[:follower]
+     rule_name = set_card.follow_rule_name args[:follower]
+     card_url( "update/#{rule_name.to_name.url_key}?card[content]=[[#{Card[:never].name}]]" )  # or drop args[:follow_option] ?
     end
   end
   

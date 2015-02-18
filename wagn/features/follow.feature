@@ -18,17 +18,14 @@ Feature: Follow interface
     When I go to the homepage
     And I hover over the main menu
     And In the main card menu I click "follow"
-    And In the main card menu I should see "unfollow"
-    #And I go to card "Home+*self+Joe User+*follow "
-    #Then I should see "always"
+    Then In the main card menu I should see "unfollow"
+    And the card Home+*self+Joe User+*follow should point to "always"
 
   Scenario: Unfollowing a Card
     Given Joe User is watching "Home+*self"
     And I am on the homepage
     And I hover over the main menu
-    And In the main card menu I find link with class "watch-toggle-off" and click it
-    #note: the link name turns from "follwing" to "unfollow" on mouseover and because we don't control the mouse's position
-    #      this test randomly fails if we use the link name
+    And In the main card menu I click "unfollow"
     Then In the main card menu I should see "follow"
     And the card Home+*self+Joe User+*follow should not contain "always"
 
@@ -36,7 +33,6 @@ Feature: Follow interface
     When I go to card User
     And I hover over the main menu
     And In the main card menu I should see "follow"
-    #And In the main card menu I should not see "|"
 
   Scenario: A Card whose Cardtype is Followed
     Given Joe User is watching "User+*type"

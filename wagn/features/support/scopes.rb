@@ -5,6 +5,9 @@ module ScopeHelpers
 
     when /main card content/
       '#main > .card-slot > .card-content'
+      
+    when /pointer card content/
+      '#main > .card-slot > .card-content > .pointer-list'
 
     when /main card header/
       '#main > .card-slot > .card-header'

@@ -74,7 +74,7 @@ namespace :test do
     ActiveRecord::Base.establish_connection
     tables.each do |table_name|
       i = "000"
-      File.open("#{Wagn.gem_root}/test/fixtures/#{table_name}.yml", 'w') do |file|
+      File.open("#{Cardio.gem_root}/test/fixtures/#{table_name}.yml", 'w') do |file|
         data = ActiveRecord::Base.connection.select_all(sql % table_name)
         file.write data.inject({}) { |hash, record|
           record['trash'] = false if record.has_key? 'trash'

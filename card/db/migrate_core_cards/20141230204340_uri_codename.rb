@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class UriCodename < Card::Migration
+class UriCodename < Card::CoreMigration
   def up
     contentedly do
       cardname = 'URI'

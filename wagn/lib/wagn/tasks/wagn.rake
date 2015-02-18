@@ -79,7 +79,10 @@ namespace :wagn do
     stamp = ENV['STAMP_MIGRATIONS']
 
     puts 'migrating structure'
+    
+    Wagn.paths['db/migrate'] = ["#{Cardio.gem_root}/db/migrate"]
     Rake::Task['db:migrate'].invoke
+    #Rake::Task['wagn:migrate:structure'].invoke
     if stamp
       Rake::Task['wagn:migrate:stamp'].invoke :structure
     end
@@ -114,6 +117,15 @@ namespace :wagn do
     require 'card/migration'
       Rake::Task['wagn:migrate:core_cards'].invoke
       Rake::Task['wagn:migrate:deck_cards'].invoke
+    end
+    
+    desc "migrate structure"
+    task :structure => :environment do
+      #Cardio.schema_mode(:structure) do
+      ENV['SCHEMA'] = "#{Cardio.gem_root}/db/schema.rb"
+      paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:structure)
+      ActiveRecord::Migrator.migrate paths
+        #end
     end
     
     desc "migrate core cards"
@@ -255,7 +267,7 @@ namespace :wagn do
       
       WAGN_BOOTSTRAP_TABLES.each do |table|
         i = "000"
-        File.open("#{Wagn.gem_root}/db/bootstrap/#{table}.yml", 'w') do |file|
+        File.open("#{Cardio.gem_root}/db/bootstrap/#{table}.yml", 'w') do |file|
           data = ActiveRecord::Base.connection.select_all( "select * from #{table}" )
           file.write YAML::dump( data.inject({}) do |hash, record|
             record['trash'] = false if record.has_key? 'trash'

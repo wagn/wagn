@@ -1,8 +1,11 @@
 # -*- encoding : utf-8 -*-
 
-class AddMoreFollowingCards < Wagn::CoreMigration
+class AddMoreFollowingCards < Card::CoreMigration
   def up
     Card.create! :name => "*follow", :codename=>"follow", :type_code=>:setting
+    Card.create! :name => '*follow+*right+*create', :type_code=>:pointer, :content=>"[[Anyone Signed In]]"
+    Card.create! :name => '*follow+*right+*update', :type_code=>:pointer, :content=>"[[Anyone Signed In]]"
+    Card.create! :name => '*follow+*right+*delete', :type_code=>:pointer, :content=>"[[Anyone Signed In]]"
     Card.create! :name => '*follow+*right+*default', :type_code=>:pointer
     Card.create! :name => '*follow+*right+*input', :type_code=>:pointer, :content=>"[[radio]]"
     Card.create! :name => '*follow+*right+*help', :content=>'Get notified about changes', :type_code=>:phrase

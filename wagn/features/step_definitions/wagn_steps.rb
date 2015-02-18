@@ -129,7 +129,7 @@ end
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
   user = Card::Auth.current.name if user == "I"
   signed_in_as user do
-    step "the card #{cardname}+*follow+#{user} contains \"[[#{cardname}]]\""
+    step "the card #{cardname}+#{user}+*follow contains \"[[#{cardname}]]\""
   end
 end
 

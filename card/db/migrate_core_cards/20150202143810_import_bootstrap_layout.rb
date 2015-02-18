@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class ImportBootstrapLayout < Wagn::CoreMigration
+class ImportBootstrapLayout < Card::CoreMigration
   def up
     import_json "bootstrap_layout.json"
     Card['*all+*layout'].update_attributes :content=>'[[Bootstrap Layout]]'

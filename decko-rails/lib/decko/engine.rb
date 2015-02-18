@@ -25,28 +25,24 @@ module Decko
       DECKO_GEM_ROOT
     end
 
-    def application
-      Rails.application
-    end
-
-    def add_gem_path paths, path, options={}
-      gem_path = File.join( Decko.gem_root, path )
-      with = options.delete(:with)
-      with = with ? File.join(paths.path, with) : gem_path
-      paths[path] = Rails::Paths::Path.new(paths, gem_path, with, options)
-    end
-
   end
 
   class Decko::Engine < Rails::Engine
-
-    Decko.add_gem_path paths, "app/controllers",     :eager_load => true
+    
+    paths.add "app/controllers", :eager_load => true
+    paths.add 'gem-assets',      :with => 'public/assets'
 
     initializer :connect_on_load do
       ActiveSupport.on_load(:active_record) do
-        pths = Wagn.paths['request_log'] and Decko::Engine.paths['request_log'] = pths
-        pths = Wagn.paths['log'] and Decko::Engine.paths['log'] = pths
-        Cardio.card_config Rails.application.config, Decko::Engine.paths, Wagn.root, Rails.cache
+        if defined? Wagn
+          #this code should all be in Wagn somewhere, I suspect.
+          Decko::Engine.paths['request_log'] = Wagn.paths['request_log']
+          Decko::Engine.paths['log']         = Wagn.paths['log']
+        else
+          Cardio.card_config Rails.application.config
+        end
+        Cardio.cache == Rails.cache
+        
         ActiveRecord::Base.establish_connection(Rails.env)
       end
       ActiveSupport.on_load(:after_initialize) do

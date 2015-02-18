@@ -44,46 +44,61 @@ module Wagn
     end
 
     def add_gem_path paths, path, options={}
-      gem_path = File.join( Wagn.gem_root, path )
+      root = options.delete(:root) || Wagn.gem_root
+      gem_path = File.join( root, path )
       with = options.delete(:with)
-      with = with ? File.join(Wagn.gem_root, with) : gem_path
+      with = with ? File.join(root, with) : gem_path
       #warn "add gem path #{path}, #{with}, #{gem_path}, #{options.inspect}"
       paths[path] = Rails::Paths::Path.new(paths, gem_path, with, options)
     end
 
-    config.i18n.enforce_available_locales = true
 
-    config.assets.enabled = false
-    config.assets.version = '1.0'
+    def config
+      @config ||= begin
+        config = super
+        Cardio.set_config config
+        config.i18n.enforce_available_locales = true
 
-    config.encoding              = "utf-8"
-    config.filter_parameters    += [:password]
-    config.no_authentication     = false
-    config.files_web_path        = 'files'
+        config.assets.enabled = false
+        config.assets.version = '1.0'
 
-    config.email_defaults        = nil
+        config.encoding              = "utf-8"
+        config.filter_parameters    += [:password]
+        config.no_authentication     = false
+        config.files_web_path        = 'files'
 
-    config.token_expiry          = 2.days
-    config.revisions_per_page    = 10
-    config.request_logger        = false
+        config.email_defaults        = nil
 
-    # this needs to be on the application's paths object.
-    # maybe if we finally understand how these are supposed to be connected in railties we can fix lots of stuff
-    paths['db/migrate'] = Rails::Paths::Path.new(paths, 'db/migrate', "#{Cardio.gem_root}/db/migrate")
-    paths = Decko::Engine.config.paths
-    paths['db/migrate'] = Rails::Paths::Path.new(paths, 'db/migrate', "#{Cardio.gem_root}/db/migrate")
-    # should we have add_deck_paths for these?
-    paths['local-mod'] = Rails::Paths::Path.new(paths, 'local-mod', "#{Rails.root}/mod")
-    add_gem_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
-    add_gem_path paths, 'gem-assets',          :with => 'public/assets'
+        config.token_expiry          = 2.days
+        config.revisions_per_page    = 10
+        config.request_logger        = false
+        config
+      end
+    end
+    
+    def paths
+      @paths ||= begin
+        paths = super
+        Cardio.set_paths paths
+        
+        paths.add 'files'
+        
+        paths.add 'local-mod', :with=>'mod'
+        paths['app/models'] = []
+        paths['app/mailers'] = []
+        
+    
+        # should we have add_deck_paths for these?
+        add_gem_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
+        add_gem_path paths, 'gem-assets'
+        
+        paths
+      end
+    end
 
-    paths['app/models'] = []
-    paths['app/mailers'] = []
 
-    paths['files'] = "#{Rails.root}/files"
-    paths['tmp/lib'] = "#{Rails.root}/tmp/lib"
-    paths['tmp/set'] = "#{Rails.root}/tmp/set"
-    paths['tmp/set_pattern'] = "#{Rails.root}/tmp/set_pattern"
+
+
 
   end
 end

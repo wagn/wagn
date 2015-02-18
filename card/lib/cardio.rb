@@ -48,20 +48,20 @@ module Cardio
       paths.add 'tmp/set'
       paths.add 'tmp/set_pattern'
 
-      add_gem_path paths, 'gem-mod',             :with => 'mod'
-      add_gem_path paths, "db"
-      add_gem_path paths, 'db/migrate'
-      add_gem_path paths, "db/migrate_core_cards"
-      add_gem_path paths, "db/seeds",            :with => "db/seeds.rb"
+      add_gem_path 'gem-mod',             :with => 'mod'
+      add_gem_path "db"
+      add_gem_path 'db/migrate'
+      add_gem_path "db/migrate_core_cards"
+      add_gem_path "db/seeds",            :with => "db/seeds.rb"
 
-      add_gem_path paths, 'config/initializers', :glob => '**/*.rb'
+      add_gem_path 'config/initializers', :glob => '**/*.rb'
     end
 
-    def run_initializers
-      paths['config/initializers'].existent.sort.each do |initializer|
-        load(initializer)
-      end
-    end
+#    def run_initializers
+#      paths['config/initializers'].existent.sort.each do |initializer|
+#        load(initializer)
+#      end
+#    end
 
     def root
       @@config.root
@@ -71,10 +71,11 @@ module Cardio
       CARD_GEM_ROOT
     end
 
-    def add_gem_path paths, path, options={}
-      gem_path = File.join( gem_root, path )
+    def add_gem_path path, options={}
+      root = options.delete(:root) || gem_root
+      gem_path = File.join( root, path )
       with = options.delete(:with)
-      with = with ? File.join(gem_root, with) : gem_path
+      with = with ? File.join(root, with) : gem_path
       paths[path] = Rails::Paths::Path.new(paths, gem_path, with, options)
     end
 

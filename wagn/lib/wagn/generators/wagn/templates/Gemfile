@@ -1,8 +1,12 @@
 source 'http://rubygems.org'
 
-gem 'wagn'<%=        ", :path=>'#{@gem_path}/wagn'"  if @gem_path.present? %>
-gem 'decko-rails'<%= ", :path=>'#{@gem_path}/decko-rails'" if @gem_path.present? %>
-gem 'card'<%=        ", :path=>'#{@gem_path}/card'"  if @gem_path.present? %>, :require => false
+<% if @gem_path %>
+gem 'wagn',        :path=>"<%= @gemfile_gem_path %>/wagn"
+gem 'decko-rails', :path=>"<%= @gemfile_gem_path %>/decko-rails"
+gem 'card',        :path=>"<%= @gemfile_gem_path %>/card", :require => false
+<% else %>
+gem 'wagn'
+<% end %>
 
 <%= database_gemfile_entry -%>
 

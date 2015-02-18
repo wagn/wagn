@@ -29,31 +29,29 @@ class WagnGenerator < Rails::Generators::AppBase
 ## should probably eventually use rails-like AppBuilder approach, but this is a first step.  
   def dev_setup
     # TODO: rename or split, gem_path points to the source repo, card and wagn gems are subdirs
-    @gem_path = options['gem-path'] || "ENV['WAGN_DEV_GEM_PATH']"
+    @gemfile_gem_path = @gem_path = options['gem-path']
+    env_gem_path = ENV['WAGN_DEV_GEM_PATH']
+    if env_gem_path.present?
+      @gemfile_gem_path = %q{#{ENV['WAGN_DEV_GEM_PATH']}}
+      @gem_path = env_gem_path
+    end
+    
     @include_jasmine_engine = false
     if options['core-dev']
+      unless @gem_path
+        @gemfile_gem_path = @gem_path = ask("Enter the path to your local wagn gem installation: ")
+      end
+
       @include_jasmine_engine = true
       @spec_path = @gem_path
       @spec_helper_path = File.join @spec_path, 'card', 'spec', 'spec_helper'
-      # Will this work when @gem_path is 'ENV[...]' ?
-      @features_path = File.join @gem_path, 'wagn/features/'  # ending slash is important in order to load support and step folders
-      @simplecov_config = "card_core_dev_simplecov_filters"
-      template "rspec", ".rspec"
-    elsif options['mod-dev']
-      @spec_path = 'mod/'
-      @spec_helper_path = './spec/spec_helper'
-      @simplecov_config = "card_simplecov_filters"
-      @gem_path = ask("Enter the path to your local wagn gem installation: ") unless @gem_path
-      @spec_path = @gem_path
-      @spec_helper_path = File.join @spec_path, 'spec', 'spec_helper'
       empty_directory 'spec'
       inside 'spec' do
         copy_file File.join('javascripts', 'support', 'wagn_jasmine.yml'), File.join('javascripts', 'support','jasmine.yml')
       end
-      @features_path = File.join @gem_path, 'features/'  # ending slash is important in order to load support and step folders
-      @simplecov_config = "wagn_core_dev_simplecov_filters"
-      template "rspec", ".rspec"
       
+      @features_path = File.join @gem_path, 'wagn/features/'  # ending slash is important in order to load support and step folders
+      @simplecov_config = "card_core_dev_simplecov_filters"
     elsif options['mod-dev']
       @spec_path = 'mod/'
       @spec_helper_path = './spec/spec_helper'
@@ -77,17 +75,6 @@ class WagnGenerator < Rails::Generators::AppBase
 
   def rakefile
     template "Rakefile"
-  end
-
-  def app
-    empty_directory 'app'
-    inside "app" do
-      empty_directory 'assets'
-      inside "assets" do
-        empty_directory 'javascripts'  
-        empty_directory 'stylesheets'
-      end
-    end
   end
 
 #  def readme

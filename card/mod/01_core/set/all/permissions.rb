@@ -258,6 +258,18 @@ module Accounts
 end
 
 module Follow  
+  def ok_to_update
+    permit :update
+  end
+  
+  def ok_to_create
+    permit :create
+  end
+  
+  def ok_to_delete
+    permit :delete
+  end
+  
   def permit action, verb=nil
     if [:create, :delete, :update].include?(action) && Auth.signed_in? && 
         (user = rule_user) && Auth.current_id == user.id

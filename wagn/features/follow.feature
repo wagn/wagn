@@ -15,20 +15,24 @@ Feature: Follow interface
     Then I should not see "follow"
 
   Scenario: Following a Card
+    Given Joe User is not watching "Home+*self"
     When I go to the homepage
     And I hover over the main menu
+    And In the main card menu I should not see "unfollow"
     And In the main card menu I click "follow"
     Then In the main card menu I should see "unfollow"
     And the card Home+*self+Joe User+*follow should point to "always"
-
+    
   Scenario: Unfollowing a Card
     Given Joe User is watching "Home+*self"
+    And the card Home+*self+Joe User+*follow should point to "always"
     And I am on the homepage
     And I hover over the main menu
     And In the main card menu I click "unfollow"
     Then In the main card menu I should see "follow"
-    And the card Home+*self+Joe User+*follow should not contain "always"
+    And the card Home+*self+Joe User+*follow should point to "never"
 
+    
   Scenario: Following a Cardtype
     When I go to card User
     And I hover over the main menu

@@ -133,6 +133,13 @@ Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
   end
 end
 
+Given /^(.*) (is|am) not watching "([^\"]+)"$/ do |user, verb, cardname|
+  user = Card::Auth.current.name if user == "I"
+  signed_in_as user do
+    step "the card #{cardname}+#{user}+*follow contains \"[[never]]\""
+  end
+end
+
 
 When /I wait a sec/ do
   sleep 1
@@ -236,8 +243,6 @@ end
 
 Then /the card (.*) should not point to "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")
-  require 'pry'
-#  binding.pry
   within scope_of("pointer card content") do
     expect(page).not_to have_content(content)
   end

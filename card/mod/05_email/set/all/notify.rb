@@ -17,7 +17,6 @@ class FollowerStash
         if card.left and !@visited.include?(card.left.name) and follow_field_rule = card.left.rule_card(:follow_fields)
           
           follow_field_rule.item_names(:context=>card.left.cardname).each do |item|  
-            #binding.pry if card.name == "Ulysses+author"
             if @visited.include? item.to_name.key
               add_affected_card card.left
               break

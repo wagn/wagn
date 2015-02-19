@@ -72,6 +72,7 @@ module Wagn
         config.token_expiry          = 2.days
         config.revisions_per_page    = 10
         config.request_logger        = false
+        config.performance_logger    = false
         config
       end
     end

@@ -9,7 +9,7 @@ class SetGenerator < Rails::Generators::Base
     
   def create_files
     mod_path = if options.core?
-        File.join Wagn.gem_root, 'mod', mod
+        File.join Cardio.gem_root, 'mod', mod
       else
         File.join 'mod', mod
       end

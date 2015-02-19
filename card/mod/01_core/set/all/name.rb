@@ -65,6 +65,15 @@ def right *args
   Card.fetch( cardname.right, *args ) if !simple?
 end
 
+def [] *args
+  if args[0].kind_of?(Fixnum) || args[0].kind_of?(Range)
+    fetch_name = Array.wrap(cardname.parts[args[0]]).compact.join '+'
+    Card.fetch( fetch_name, args[1] || {} ) if !simple?
+  else
+    super
+  end
+end
+
 def trunk *args
   simple? ? self : left( *args )
 end
@@ -185,7 +194,6 @@ end
 event :set_name, :before=>:store, :changed=>:name do
   Card.expire name
   Card.expire name_was
-  
   if cardname.junction?
     [:left, :right].each do |side|
       sidename = cardname.send "#{side}_name"

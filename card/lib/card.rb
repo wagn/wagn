@@ -1,7 +1,9 @@
 # -*- encoding : utf-8 -*-
 
-class Card < ActiveRecord::Base
+Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
 
+
+class Card < ActiveRecord::Base
   require_dependency 'card/active_record_ext'
   require_dependency 'card/codename'
   require_dependency 'card/query'
@@ -32,7 +34,7 @@ class Card < ActiveRecord::Base
   attr_accessor :action, :supercard, :current_act, :current_action, 
     :comment, :comment_author,    # obviated soon
     :update_referencers,           # wrong mechanism for this
-    :follower_stash,
+    :follower_stash, :remove_rule_stash,
     :last_action_id_before_edit
     
   define_callbacks :approve, :store, :extend

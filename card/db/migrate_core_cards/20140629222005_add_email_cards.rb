@@ -122,9 +122,6 @@ class AddEmailCards < Card::CoreMigration
   
     # the new following rule
     Card.create! :name => '*following', :type_code=>:pointer, :codename=>'following'
-    Card.create! :name => '*following+*right+*default', :type_code=>:pointer
-    Card.create! :name => '*following+*right+*update', :content=>'_left'
-    Card.create! :name => '*following+*right+*create', :content=>'_left'
 
     if send = Card[:send]
       send.update_attributes :codename=>nil

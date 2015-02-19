@@ -2,6 +2,7 @@
 .jhw-cache
 .rvmrc
 .bundle
+.tm_properties
 Gemfile.lock
 config/*.yml
 coverage

@@ -73,7 +73,6 @@ format do
   end
   
   def search_vars args={}
-    
     @search_vars ||= begin
       v = {}
       v[:query] = card.query search_params

@@ -57,14 +57,24 @@ format :html do
       }
     end
   end
-
+  
   view :closed_content do |args|
     ''
   end
+  
 end
 
 
 include Card::Set::Type::SearchType
+
+def followed_by? user_id = nil
+  all_members_followed_by? user_id
+end
+
+
+def default_follow_set_card
+  self
+end
 
 def inheritable?
   return true if junction_only?
@@ -100,6 +110,41 @@ def label
   end
 end
 
+def follow_label
+  if klass = subclass_for_set
+    klass.follow_label cardname.left
+  else
+    ''
+  end
+end
+
+def follow_rule_name user=nil
+  if user
+    if user.kind_of? String
+      "#{name}+#{user}+#{Card[:follow].name}"
+    else
+      "#{name}+#{user.name}+#{Card[:follow].name}"
+    end
+  else
+    "#{name}+#{Card[:all].name}+#{Card[:follow].name}"
+  end
+end
+
+# def to_following_item_name args
+#   left_part = follow_rule_name( args[:user] )
+#   option = args[:option] || if (rule_card = Card.fetch(left_part))
+#        rule_card.content
+#      else
+#        Card[:nothing].name
+#      end
+#
+#   "#{left_part}+#{option}"
+# end
+
+def all_user_ids_with_rule_for setting_code
+  Card.all_user_ids_with_rule_for self, setting_code
+end
+
 
 def setting_codenames_by_group
   result = {}
@@ -111,6 +156,39 @@ def setting_codenames_by_group
   end
   result
 end
+
+def all_members_followed? 
+  all_members_followed_by? Auth.current_id
+end
+
+def all_members_followed_by? user_id = nil
+  if !prototype.followed_by? user_id  
+    return false
+  elsif set_followed_by? user_id
+    return true
+  else
+    broader_sets.each do |b_s|
+      if (set_card  = Card.fetch(b_s)) && set_card.set_followed_by?(user_id)
+       return true
+      end
+    end
+  end
+  return false
+end
+
+def set_followed?
+  set_followed_by? Auth.current_id
+end
+
+def set_followed_by? user_id = nil
+  return  ( user_id && (user = Card.find(user_id)) && Card.fetch(follow_rule_name(user.name)) ) || 
+          Card.fetch(follow_rule_name)
+end
+
+def broader_sets
+  prototype.set_names[1..-1]
+end
+
 
 def prototype
   opts = subclass_for_set.prototype_args self.cardname.trunk_name

@@ -13,22 +13,23 @@ format :html do
       super args
     end  
   end
-
-  view :watch do |args|
-    wrap args do
-      link_args = if card.watched? 
-        [card, "following", :off, "stop sending emails", { :hover_content=> 'unfollow' } ]
-      else
-        [card, "follow all", :on, "send emails"]
-      end
-      link_args[3] += " about changes to #{card.cardname} cards"
-      watch_link( *link_args )
-    end
-  end
 end
+
 
 include Basic
 
+
+def follow_label
+  default_follow_set_card.follow_label
+end
+
+def followed_by? user_id = nil
+  default_follow_set_card.all_members_followed_by? user_id
+end
+
+def default_follow_set_card
+  Card.fetch("#{name}+*type") 
+end
 
 
 def cards_of_type_exist?

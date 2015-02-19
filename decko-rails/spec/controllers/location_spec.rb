@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 
 #FIXME - this shouldn't really be with the controller specs
 

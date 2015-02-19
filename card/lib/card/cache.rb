@@ -75,8 +75,12 @@ class Card
         if @@prepopulating
           @@rule_cache      ||= Card.rule_cache
           @@read_rule_cache ||= Card.read_rule_cache
+          @@user_ids_cache  ||= Card.user_ids_cache
+          @@rule_keys_cache ||= Card.rule_keys_cache
           Card.cache.write_local 'RULES', @@rule_cache
           Card.cache.write_local 'READRULES', @@read_rule_cache
+          Card.cache.write_local 'USER_IDS', @@user_ids_cache
+          Card.cache.write_local 'RULE_KEYS', @@rule_keys_cache
         end
       end
 

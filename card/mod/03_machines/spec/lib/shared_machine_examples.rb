@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 def that_produces type
   type

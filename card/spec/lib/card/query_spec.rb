@@ -86,7 +86,7 @@ describe Card::Query do
 
   describe "edited_by/editor_of" do
     it "should find card edited by joe using subquery" do
-      expect(Card::Query.new(:edited_by=>{:match=>"Joe User"}, :sort=>"name").run).to eq([Card["JoeLater"], Card["JoeNow"]])
+      expect(Card::Query.new(:edited_by=>{:match=>"Joe User"}, :sort=>"name").run).to include(Card["JoeLater"], Card["JoeNow"])
     end
     it "should find card edited by Wagn Bot" do
       #this is a weak test, since it gives the name, but different sorting mechanisms in other db setups
@@ -103,7 +103,7 @@ describe Card::Query do
       c.save
       c.content="test3"
       c.save!
-      expect(Card::Query.new(:edited_by=>"Joe User").run.map(&:name).sort).to eq(["JoeLater","JoeNow"])
+      expect(Card::Query.new(:edited_by=>"Joe User").run.map(&:name).count("JoeNow")).to eq 1
     end
 
     it "should find joe user among card's editors" do
@@ -237,7 +237,7 @@ describe Card::Query do
   end
 
   describe "type" do
-    user_cards =  ["Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"].sort
+    user_cards =  ["Big Brother", "Joe Admin", "Joe Camel", "Joe User", "John", "Narcissist", "No Count", "Optic fan", "Sample User", "Sara", "Sunglasses fan", "u1", "u2", "u3"].sort
 
     it "should find cards of this type" do
       expect(Card::Query.new( :type=>"_self", :context=>'User').run.map(&:name).sort).to eq(user_cards)
@@ -302,11 +302,8 @@ describe Card::Query do
 
     it "should sort by count" do
       Card::Auth.as_bot do
-        followed_cards = ['All Eyes On Me', 'Sara Following', 'No One Sees Me']
-        w = Card::Query.new( :name=>[:in, followed_cards].flatten, 
-          :sort=>{ :right=>'*following', :item=>'referred_to', :return=>'count' }
-        ) # this ugly beast is a count of how often items are referred to by +*following cards
-        expect(w.run.map(&:name)).to eq(followed_cards.reverse)
+        w = Card::Query.new( :name=>[:in,'always','never','content I edited'], :sort=>{ :right=>'*follow', :item=>'referred_to', :return=>'count' } )
+        expect(w.run.map(&:name)).to eq(['never','content I edited','always'])
       end
     end
 

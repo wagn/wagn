@@ -59,4 +59,14 @@ event :signin_after_setup, :before=>:extend, :on=>:create, :when=>proc{ |c| Card
   Auth.signin id
 end
 
+def follow follow_name, option = 'always'
+  if (card = Card.fetch(follow_name)) && (set_card = card.default_follow_set_card)
+    if (follow_rule = Card.fetch(set_card.follow_rule_name(name), :new=>{}))
+      follow_rule.drop_item "ignore"
+      follow_rule.add_item option
+      follow_rule.save!
+    end
+  end
+end
+
 

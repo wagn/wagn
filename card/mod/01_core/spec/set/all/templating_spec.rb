@@ -6,9 +6,9 @@ describe Card::Set::All::Templating do
     it "for User+*type+*structure should return all Users" do
       Card::Auth.as_bot do
         c=Card.create(:name=>'User+*type+*structure')
-        expect(c.structuree_names.sort).to eq([
-          "Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"
-        ])
+        users
+        
+        expect(c.structuree_names.sort).to eq(["Big Brother", "Joe Admin", "Joe Camel", "Joe User", "John", "Narcissist", "No Count", "Optic fan", "Sample User", "Sara", "Sunglasses fan", "u1", "u2", "u3"])
       end
     end
   end

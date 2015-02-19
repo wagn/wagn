@@ -253,6 +253,11 @@ $(window).ready ->
 
   $('body').on 'change', '.edit-type-field', ->
     $(this).closest('form').submit()
+    
+  $('body').on 'change', '.submit-select-field', ->
+    field = $(this).closest('.card-editor').find('.card-content')
+    field.val( $(this).val() )
+    $(this).closest('form').submit()
 
   $('body').on 'change', '.autosave .card-content', ->
     content_field = $(this)

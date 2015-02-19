@@ -67,11 +67,9 @@ group :test do
   gem 'spork', '>=0.9'                                           
   gem 'rr'#, '=1.0.0'
 	gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
-   
-  # gem 'guard-rspec', '~> 4.2'    # trigger test runs based on file edits
-                                   # currently not compatible with spring-watcher-listen gem, 
-                                   # is supposed to be fixed in the next spring-watcher-listen release
-                                   
+    
+  # gem 'guard-rspec', '~> 4.2'           # trigger test runs based on file edits, 
+                                          # currently not compatible with spring-watcher-listen
   if RUBY_PLATFORM =~ /darwin/
     # gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
     # gem 'rspec-legacy_formatters'

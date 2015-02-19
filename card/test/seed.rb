@@ -2,6 +2,12 @@
 require 'timecop'
 
 class SharedData
+  #attr_accessor :users
+  USERS = [
+            'Joe User', 'Joe Admin', 'Joe Camel', 'Sample User', 'No count', 
+            'u1', 'u2', 'u3', 
+            'Big Brother', 'Optic fan', 'Sunglasses fan', 'Narcissist'
+           ]
 
   def self.account_args hash
     { "+*account" => { "+*password" =>'joe_pass' }.merge( hash ) }
@@ -17,7 +23,7 @@ class SharedData
     Card.create! :name=>"Joe Admin", :type_code=>'user', :content=>"I'm number one", :subcards=>account_args( '+*email'=>'joe@admin.com' )
     Card.create! :name=>"Joe Camel", :type_code=>'user', :content=>"Mr. Buttz",      :subcards=>account_args( '+*email'=>'joe@camel.com' )
 
-    Card['Joe Admin'].fetch(:trait=>:roles, :new=>{}).items = [ Card::AdministratorID ]
+    Card['Joe Admin'].fetch(:trait=>:roles, :new=>{:type_code=>'pointer'}).items = [ Card::AdministratorID ]
 
     Card.create! :name=>'signup alert email+*to', :content=>'signups@wagn.org'
 
@@ -122,22 +128,49 @@ class SharedData
     Timecop.freeze(Cardio.future_stamp - 1.day) do
       # fwiw Timecop is apparently limited by ruby Time object, which goes only to 2037 and back to 1900 or so.
       #  whereas DateTime can represent all dates.
-
-      Card.create! :name=>"John", :type_code=>'user', :subcards=>account_args('+*email'=>'john@user.com', '+*password'=>'john_pass')
-      Card.create! :name=>"Sara", :type_code=>'user', :subcards=>account_args('+*email'=>'sara@user.com', '+*password'=>'sara_pass')
+ 
+      
+      followers = {
+        'John'           => ['John Following', 'All Eyes On Me'],
+        'Sara'           => ['Sara Following', 'All Eyes On Me', 'Optic+*type', 'Google Glass'], 
+        'Big Brother'    => ['All Eyes on Me', 'Look at me+*self', 'Optic+*type', 'lens+*right', 'Optic+tint+*type plus right', ['*all','content I created'], ['*all','content I edited']],
+        'Optic fan'      => ['Optic+*type'],
+        'Sunglasses fan' => ['Sunglasses'],
+        'Narcissist'     => [['*all','content I created'], ['*all','content I edited']]
+      }
+      
+      followers.each do |name, follow|
+        user = Card.create! :name=>name, :type_code=>'user', :subcards=>account_args('+*email'=>"#{name.parameterize}@user.com", '+*password'=>"#{name.parameterize}_pass")
+      end
       
       Card.create! :name => "All Eyes On Me"
       Card.create! :name => "No One Sees Me"
+      Card.create! :name => "Look At Me"
+      Card.create! :name => "Optic", :type => "Cardtype"
       Card.create! :name => "Sara Following"
       Card.create! :name => "John Following", :content => "{{+her}}"
       Card.create! :name => "John Following+her"
-      Card.create! :name => "Optic", :type => "Cardtype"
-      Card.create! :name => "Sunglasses", :type=>"Optic", :content=>"{{+tint}}"
-      Card.create! :name => "Sunglasses+tint"
-      Card.create! :name => "Google glass", :type=>"Optic"
+      magnifier = Card.create! :name => "Magnifier+lens"
+
+      Card::Auth.current_id = Card['Narcissist'].id
+      magnifier.update_attributes! :content=>"zoom in"
+      Card.create! :name => "Sunglasses", :type=>"Optic", :content=>"{{+tint}}{{+lens}}"
       
-      Card.create! :name => "Sara+*following",  :content => "[[Sara Following]]\n[[All Eyes On Me]]\n[[Optic]]\n[Google glass]"
-      Card.create! :name => "John+*following",  :content => "[[John Following]]\n[[All Eyes On Me]]"      
+      Card::Auth.current_id = Card['Optic fan'].id
+      Card.create! :name => "Google glass", :type=>"Optic", :content=>"{{+price}}"
+      
+      Card::Auth.current_id = Card::WagnBotID
+      Card.create! :name=>'Google glass+*self+*follow_fields', :content=>''
+      Card.create! :name=>'Sunglasses+*self+*follow_fields', :content=>"[[#{Card[:includes].name}]]\n[[_self+price]]\n[[_self+producer]]"
+      Card.create! :name => "Sunglasses+tint"
+      Card.create! :name => "Sunglasses+price" 
+
+      followers.each do |name, follow|
+        user = Card[name]
+        follow.each do |f|
+          user.follow *f
+        end
+      end     
     end
 
 

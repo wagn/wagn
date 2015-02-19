@@ -219,7 +219,6 @@ class CardController < ActionController::Base
 
   def show view = nil, status = 200
 #    ActiveSupport::Notifications.instrument('card', message: 'CardController#show') do
-        
     format = request.parameters[:format]
     format = :file if params[:explicit_file] or !Card::Format.registered.member? format #unknown format
 

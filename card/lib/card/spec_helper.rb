@@ -19,6 +19,7 @@ module Card::SpecHelper
   end
 
   def assert_view_select(view_html, *args, &block)
+    #Rails.logger.rspec "<pre>#{CGI.escapeHTML Nokogiri::XML(view_html,&:noblanks).to_s}</pre>" 
     node = HTML::Document.new(view_html).root
     if block_given?
       assert_select node, *args, &block
@@ -55,5 +56,10 @@ module Card::SpecHelper
       end
     end
     card.format(format_args)._render(view, view_args)
+  end
+  
+  def users
+    require File.expand_path('../../../test/seed', __FILE__)
+    SharedData::USERS.sort
   end
 end

@@ -98,7 +98,7 @@ format :html do
       %{ 
         <div class="pointer-radio">
         #{ radio_button_tag input_name, option.name, checked, :id=>id, :class=>item_css_class('radio-button',args) }
-        <label for="#{id}">#{ option.name }</label>
+        <label for="#{id}">#{ option.label }</label>
         #{ %{<div class="radio-option-description">#{ description }</div>} if description }
         </div>
       }

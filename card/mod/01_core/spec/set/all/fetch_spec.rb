@@ -77,7 +77,6 @@ describe Card::Set::All::Fetch do
         a = Card.fetch("A")
         expect(a).to be_instance_of(Card)
         
-        
         # expires the saved card
         expect(Card.cache).to receive(:delete).with('a').and_call_original
         expect(Card.cache).to receive(:delete).with(/~\d+/).at_least(12)  

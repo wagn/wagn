@@ -71,4 +71,19 @@ format :html do
     return content if params[:layout]=='none'
     %{<div id="main">#{content}</div>}
   end
+  
+  def wrap_with tag, html_args={}
+    content_tag( tag, html_args ) do 
+      output( yield )
+    end
+  end
+  
+  def wrap_each_with tag, args={}
+    yield(args).map do |item|
+      wrap_with tag, args do
+        item
+      end
+    end.join "\n"
+  end
+  
 end

@@ -302,12 +302,6 @@ $(window).ready ->
     -> 
        $(this).find('.glyphicon').addClass("glyphicon-ok-sign").removeClass("glyphicon-remove-sign")
        $(this).addClass("btn-success").removeClass("btn-danger"))
-  # $('body').on 'click', '.item-card-submit', ->
-  #   item = $(this).closest 'li'
-  #   f = $(this).closest 'form'
-  #   f.submit()
-  #   item.remove()
-  #   event.preventDefault() # Prevent link from following its href
 
   # permissions mod
   $('body').on 'click', '.perm-vals input', ->

@@ -19,11 +19,14 @@ ReadRuleSQL = %{
 
 
 def is_rule?
-  !simple?                             and
-  ( (l = left( :skip_modules=>true ))  and
-    l.type_id == Card::SetID           and
-    (r = right( :skip_modules=>true ))  and
-    r.type_id == Card::SettingID           ) or is_user_rule?
+  is_standard_rule? || is_user_rule?
+end
+
+def is_standard_rule?
+  (l = left( :skip_modules=>true ))  &&
+  l.type_id == Card::SetID           &&
+  (r = right( :skip_modules=>true )) &&
+  r.type_id == Card::SettingID           
 end
 
 def is_user_rule?

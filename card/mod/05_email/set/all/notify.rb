@@ -13,7 +13,6 @@ class FollowerStash
         card.all_direct_follower_ids_with_reason do |user_id, reason|
           notify Card.fetch(user_id), :of=>reason
         end
-        require 'pry'
         if card.left and !@visited.include?(card.left.name) and follow_field_rule = card.left.rule_card(:follow_fields)
           
           follow_field_rule.item_names(:context=>card.left.cardname).each do |item|  

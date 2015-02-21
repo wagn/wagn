@@ -30,6 +30,7 @@ module Decko
     
     paths.add "app/controllers", :eager_load => true
     paths.add 'gem-assets',      :with => 'public/assets'
+    paths.add 'lib/tasks',       :with => 'lib/decko/tasks', :glob => '**/*.rake'
 
     initializer :connect_on_load do
       ActiveSupport.on_load(:active_record) do

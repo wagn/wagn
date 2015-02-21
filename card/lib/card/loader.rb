@@ -48,7 +48,7 @@ class Card
       def mod_dirs
         @@mod_dirs ||= begin
           mod_paths = [Card.paths['gem-mod']]
-          local_mod = Card.paths['local-mod'] and mod_paths << local_mod
+          local_mod = Card.paths['deck-mod'] and mod_paths << local_mod
           mod_paths.map do |paths|
             paths.existent.map do |dirname|
               Dir.entries( dirname ).sort.map do |filename|

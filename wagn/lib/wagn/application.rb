@@ -85,7 +85,7 @@ module Wagn
         paths.add 'files'
         
         #more consistent to call this deck mod...
-        paths.add 'local-mod', :with=>'mod'
+        paths.add 'deck-mod', :with=>'mod'
         paths['app/models'] = []
         paths['app/mailers'] = []
         

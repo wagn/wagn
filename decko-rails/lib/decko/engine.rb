@@ -12,7 +12,6 @@ require 'kaminari'
 require 'diff/lcs'
 require 'diffy'
 
-DECKO_GEM_ROOT = File.expand_path('../../..', __FILE__)
 
 module Decko
 
@@ -27,7 +26,7 @@ module Decko
 
   end
 
-  class Decko::Engine < Rails::Engine
+  class Engine < ::Rails::Engine
     
     paths.add "app/controllers", :eager_load => true
     paths.add 'gem-assets',      :with => 'public/assets'
@@ -39,17 +38,17 @@ module Decko
           Decko::Engine.paths['request_log'] = Wagn.paths['request_log']
           Decko::Engine.paths['log']         = Wagn.paths['log']
         else
-          Cardio.card_config Rails.application.config
+          Cardio.card_config ::Rails.application.config
         end
-        Cardio.cache == Rails.cache
+        Cardio.cache == ::Rails.cache
         
-        ActiveRecord::Base.establish_connection(Rails.env)
+        ActiveRecord::Base.establish_connection(::Rails.env)
       end
       ActiveSupport.on_load(:after_initialize) do
         begin
           require_dependency 'card' unless defined?(Card)
         rescue ActiveRecord::StatementInvalid => e
-          Rails.logger.warn "database not available[#{Rails.env}] #{e}"
+          ::Rails.logger.warn "database not available[#{::Rails.env}] #{e}"
         end
       end
     end

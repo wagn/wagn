@@ -38,11 +38,11 @@ group :test, :development do
   # gem 'pry-rescue'
   # gem 'pry-stack_explorer'
   if RUBY_VERSION =~ /^2/
-		gem 'byebug' 
-    # gem 'pry-byebug'
-	else
-		gem 'debugger'
-	end
+  gem 'byebug' 
+  # gem 'pry-byebug'
+  else
+    gem 'debugger'
+  end
 end
 
 <% end -%>

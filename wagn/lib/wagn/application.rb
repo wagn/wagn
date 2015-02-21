@@ -84,14 +84,14 @@ module Wagn
         
         paths.add 'files'
         
+        #more consistent to call this deck mod...
         paths.add 'local-mod', :with=>'mod'
         paths['app/models'] = []
         paths['app/mailers'] = []
         
-    
-        # should we have add_deck_paths for these?
-        add_gem_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
+        add_gem_path paths, "lib/tasks",     :with => "lib/wagn/tasks", :glob => "**/*.rake"
         add_gem_path paths, 'gem-assets'
+        add_gem_path paths, 'config/routes', :with => 'lib/wagn/config/routes.rb'
         
         paths
       end

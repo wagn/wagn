@@ -16,7 +16,7 @@ class WagnGenerator < Rails::Generators::AppBase
     desc: "Prepare deck for wagn core testing"
     
   class_option 'gem-path', :type => :string, aliases: '-g', :default => false, :group => :runtime, 
-    desc: "Path to local gem installation (Default, use env WAGN_DEV_GEM_PATH)"
+    desc: "Path to local gem installation (Default, use env WAGN_GEM_PATH)"
     
   class_option 'mod-dev', :type => :boolean, aliases: '-m', :default => false, :group => :runtime, 
     desc: "Prepare deck for mod testing"
@@ -30,9 +30,9 @@ class WagnGenerator < Rails::Generators::AppBase
   def dev_setup
     # TODO: rename or split, gem_path points to the source repo, card and wagn gems are subdirs
     @gemfile_gem_path = @gem_path = options['gem-path']
-    env_gem_path = ENV['WAGN_DEV_GEM_PATH']
+    env_gem_path = ENV['WAGN_GEM_PATH']
     if env_gem_path.present?
-      @gemfile_gem_path = %q{#{ENV['WAGN_DEV_GEM_PATH']}}
+      @gemfile_gem_path = %q{#{ENV['WAGN_GEM_PATH']}}
       @gem_path = env_gem_path
     end
     

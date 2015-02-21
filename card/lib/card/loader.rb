@@ -47,19 +47,17 @@ class Card
 
       def mod_dirs
         @@mod_dirs ||= begin
-          if !Card.paths['deck-mod'] && Card.paths['local-mod']
-            Card.paths['deck-mod'] = Card.paths['local-mod']
-            Rails.logger.warn 'DEPRECATION WARNING: Use deck-mod vs. local-mod for configuring location of local (deck) modules.'
+          if Card.paths['local-mod']
+            Card.paths['mod'] << Card.paths['local-mod']
+            Rails.logger.warn 'DEPRECATION WARNING: Append to paths[\'mod\'] vs. local-mod for configuring location of local (deck) modules.'
           end
-          mod_paths = [Card.paths['gem-mod']]
-          local_mod = Card.paths['deck-mod'] and mod_paths << local_mod
-          mod_paths.map do |paths|
-            paths.existent.map do |dirname|
+          if mod_paths = Card.paths['mod']
+            mod_paths.existent.map do |dirname|
               Dir.entries( dirname ).sort.map do |filename|
                 "#{dirname}/#{filename}" if filename !~ /^\./
               end
-            end
-          end.flatten.compact
+            end.compact
+          end
         end
       end
 

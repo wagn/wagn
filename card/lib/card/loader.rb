@@ -47,6 +47,10 @@ class Card
 
       def mod_dirs
         @@mod_dirs ||= begin
+          if !Card.paths['deck-mod'] && Card.paths['local-mod']
+            Card.paths['deck-mod'] = Card.paths['local-mod']
+            Rails.logger.warn 'DEPRECATION WARNING: Use deck-mod vs. local-mod for configuring location of local (deck) modules.'
+          end
           mod_paths = [Card.paths['gem-mod']]
           local_mod = Card.paths['deck-mod'] and mod_paths << local_mod
           mod_paths.map do |paths|

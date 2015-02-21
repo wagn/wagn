@@ -4,7 +4,7 @@ def virtual?; true end
 
 format :html do
 
-   view :open_content do |args|
+   view :core do |args|
      if card.left and Auth.signed_in?
        render_rule_editor args
      else

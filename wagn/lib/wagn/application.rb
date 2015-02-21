@@ -85,7 +85,7 @@ module Wagn
         paths.add 'files'
 
         if  mods = paths['mod']
-          if -d (deck_mods = "#{Wagn.root}/mod")
+          if Dir.exists?(deck_mods = "#{Wagn.root}/mod")
             warn "mods #{mods.inspect}, #{deck_mods.inspect}"
             mods << deck_mods
           end

@@ -86,9 +86,8 @@ module Wagn
         Cardio.set_paths paths
         
         paths.add 'files'
-        
-        #more consistent to call this deck mod...
-        paths.add 'local-mod', :with=>'mod'
+
+        paths['mod'] << 'mod'
         paths['app/models'] = []
         paths['app/mailers'] = []
         

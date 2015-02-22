@@ -51,12 +51,11 @@ class Card
             Card.paths['mod'] << Card.paths['local-mod']
             Rails.logger.warn 'DEPRECATION WARNING: Append to paths[\'mod\'] vs. local-mod for configuring location of local (deck) modules.'
           end
-          if mod_paths = Card.paths['mod']
-            mod_paths.existent.map do |dirname|
-              Dir.entries( dirname ).sort.map do |filename|
-                "#{dirname}/#{filename}" if filename !~ /^\./
-              end.compact
-            end
+
+          Card.paths['mod'].existent.map do |dirname|
+            Dir.entries( dirname ).sort.map do |filename|
+              "#{dirname}/#{filename}" if filename !~ /^\./
+            end.compact
           end.flatten.compact
         end
       end

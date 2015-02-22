@@ -88,14 +88,7 @@ module Wagn
         
         paths.add 'files'
 
-        if  mods = paths['mod']
-          if Dir.exists?(deck_mods = "#{Wagn.root}/mod")
-            warn "mods #{mods.inspect}, #{deck_mods.inspect}"
-            mods << deck_mods
-          end
-        else
-          Rails.logger.warn "Missing path for \'mod\'"
-        end
+        paths['mod'] << 'mod'
         paths['app/models'] = []
         paths['app/mailers'] = []
         

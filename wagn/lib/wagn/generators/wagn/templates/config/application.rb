@@ -43,7 +43,6 @@ module <%= app_const_base %>
     # config.paths['files'] = 'files'
     # where uploaded files are actually stored. (eg Image and File cards)
 
-    # This probably needs to be a full path or it will be gem relative, which isn't really what we want here
     # config.paths['mods'] << 'mod'
     # where mods are stored
 

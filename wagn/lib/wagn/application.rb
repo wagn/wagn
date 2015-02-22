@@ -90,7 +90,7 @@ module Wagn
             mods << deck_mods
           end
         else
-          Raisl.logger.warn "Missing path for \'mod\'"
+          Rails.logger.warn "Missing path for \'mod\'"
         end
         paths['app/models'] = []
         paths['app/mailers'] = []

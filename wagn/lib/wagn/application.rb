@@ -87,9 +87,15 @@ module Wagn
         Cardio.set_paths paths
         
         paths.add 'files'
-        
-        #more consistent to call this deck mod...
-        paths.add 'local-mod', :with=>'mod'
+
+        if  mods = paths['mod']
+          if Dir.exists?(deck_mods = "#{Wagn.root}/mod")
+            warn "mods #{mods.inspect}, #{deck_mods.inspect}"
+            mods << deck_mods
+          end
+        else
+          Rails.logger.warn "Missing path for \'mod\'"
+        end
         paths['app/models'] = []
         paths['app/mailers'] = []
         

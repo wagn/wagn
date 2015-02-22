@@ -19,6 +19,7 @@ module Wagn
     paths.add "app/controllers", :with => 'rails/controllers', :eager_load => true
     paths.add 'gem-assets',      :with => 'rails/assets'
     paths.add 'config/routes',   :with => 'rails/engine-routes.rb'
+    paths.add 'lib/tasks',       :with => 'lib/wagn/tasks', :glob => '**/*.rake'
     
 
     initializer :connect_on_load do

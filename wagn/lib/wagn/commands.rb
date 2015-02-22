@@ -112,10 +112,12 @@ WAGN
     parser.on('-d', '--spec FILENAME(:LINE)', 'Run spec for a Wagn deck file') do |file|
       opts[:files] = find_spec_file( file, "#{Wagn.root}/mod")
     end
+=begin    
     parser.on('-k', '--decko-spec FILENAME(:LINE)', 'Run spec for a Wagn deck file') do |file|
       opts[:files] = find_spec_file( file, Decko.gem_root)
       warn "files #{file}, #{Decko.gem_root}, #{opts[:files].inspect}"
     end
+=end
     parser.on('-c', '--core-spec FILENAME(:LINE)', 'Run spec for a Wagn core file') do |file|
       opts[:files] = find_spec_file( file, Cardio.gem_root)
     end

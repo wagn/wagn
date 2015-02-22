@@ -3,8 +3,8 @@
 Wagn.application.routes.draw do
 <% if @include_jasmine_engine %>
   if !Rails.env.production? && Object.const_defined?( :JasmineRails )
-    mount Object.const_get(:JasmineRails).const_get(:Engine) => "<%= decko_path %>/specs"
+    mount Object.const_get(:JasmineRails).const_get(:Engine) => "<%= deck_path %>/specs"
   end
 <% end %>
-  mount Wagn::Engine => '<%= decko_path %>/'
+  mount Wagn::Engine => '<%= deck_path %>/'
 end

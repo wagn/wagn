@@ -13,7 +13,7 @@ require 'diff/lcs'
 require 'diffy'
 
 
-module Wagn
+module Decko
   class Engine < ::Rails::Engine
 
     paths.add "app/controllers", :with => 'rails/controllers', :eager_load => true
@@ -25,8 +25,8 @@ module Wagn
       ActiveSupport.on_load(:active_record) do
         if defined? Wagn
           #this code should all be in Wagn somewhere, I suspect.
-          Wagn::Engine.paths['request_log'] = Wagn.paths['request_log']
-          Wagn::Engine.paths['log']         = Wagn.paths['log']
+          Engine.paths['request_log'] = Wagn.paths['request_log']
+          Engine.paths['log']         = Wagn.paths['log']
         else
           Cardio.card_config ::Rails.application.config
         end

@@ -6,5 +6,5 @@ Wagn.application.routes.draw do
     mount Object.const_get(:JasmineRails).const_get(:Engine) => "<%= deck_path %>/specs"
   end
 <% end %>
-  mount Wagn::Engine => '<%= deck_path %>/'
+  mount Decko::Engine => '<%= deck_path %>/'
 end

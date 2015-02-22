@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require 'wagn/engine'
+require 'wagn/railtie'
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
@@ -58,7 +58,6 @@ module Wagn
         config = super
 
         Cardio.set_config config
-        config.autoload_paths += Dir["#{Cardio.gem_root}/mod/*/lib/**/"]
 
         config.i18n.enforce_available_locales = true
 

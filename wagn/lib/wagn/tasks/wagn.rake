@@ -1,4 +1,5 @@
 
+require 'wagn/railtie'
 require 'rails/application'
 
 WAGN_BOOTSTRAP_TABLES = %w{ cards card_actions card_acts card_changes card_references }
@@ -67,7 +68,7 @@ namespace :wagn do
   task :update_assets_symlink do
     assets_path = File.join(Rails.public_path, "assets")
     if Rails.root.to_s != Wagn.gem_root and not (File.exists? assets_path or File.symlink? assets_path)
-      FileUtils.ln_s( Wagn::Engine.paths['gem-assets'].first, assets_path )
+      FileUtils.ln_s( Decko::Engine.paths['gem-assets'].first, assets_path )
     end
   end
 

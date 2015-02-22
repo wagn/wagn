@@ -55,9 +55,9 @@ class Card
             mod_paths.existent.map do |dirname|
               Dir.entries( dirname ).sort.map do |filename|
                 "#{dirname}/#{filename}" if filename !~ /^\./
-              end
-            end.compact
-          end
+              end.compact
+            end
+          end.flatten.compact
         end
       end
 

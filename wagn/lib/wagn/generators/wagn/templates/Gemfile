@@ -2,7 +2,6 @@ source 'http://rubygems.org'
 
 <% if @gem_path %>
 gem 'wagn',        :path=>"<%= @gemfile_gem_path %>/wagn"
-gem 'decko-rails', :path=>"<%= @gemfile_gem_path %>/decko-rails"
 gem 'card',        :path=>"<%= @gemfile_gem_path %>/card", :require => false
 <% else %>
 gem 'wagn'

@@ -1,10 +1,10 @@
 # -*- encoding : utf-8 -*-
 
-Decko::Engine.routes.draw do
+Wagn::Engine.routes.draw do
 
   #most common
   root                      :to => 'card#read', :via=>:get
-  match "#{ Decko::Engine.config.files_web_path }/:id(-:size)-:rev_id.:format" => 
+  match "#{ Wagn::Engine.config.files_web_path }/:id(-:size)-:rev_id.:format" => 
                                    'card#read', :via=>:get, :id => /[^-]+/, :explicit_file=>true
   match "assets/*filename"      => 'card#asset', :via=>:get
   match "javascripts/*filename" => 'card#asset', :via=>:get

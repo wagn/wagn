@@ -13,30 +13,20 @@ require 'diff/lcs'
 require 'diffy'
 
 
-module Decko
-
-  class << self
-    def root
-      Rails.root
-    end
-
-    def gem_root
-      DECKO_GEM_ROOT
-    end
-
-  end
-
+module Wagn
   class Engine < ::Rails::Engine
+
+    paths.add "app/controllers", :with => 'rails/controllers', :eager_load => true
+    paths.add 'gem-assets',      :with => 'rails/assets'
+    paths.add 'config/routes',   :with => 'rails/engine-routes.rb'
     
-    paths.add "app/controllers", :eager_load => true
-    paths.add 'gem-assets',      :with => 'public/assets'
 
     initializer :connect_on_load do
       ActiveSupport.on_load(:active_record) do
         if defined? Wagn
           #this code should all be in Wagn somewhere, I suspect.
-          Decko::Engine.paths['request_log'] = Wagn.paths['request_log']
-          Decko::Engine.paths['log']         = Wagn.paths['log']
+          Wagn::Engine.paths['request_log'] = Wagn.paths['request_log']
+          Wagn::Engine.paths['log']         = Wagn.paths['log']
         else
           Cardio.card_config ::Rails.application.config
         end
@@ -52,8 +42,6 @@ module Decko
         end
       end
     end
-
-    config.autoload_paths += Dir["#{Cardio.gem_root}/mod/*/lib/**/"]
 
   end
 end

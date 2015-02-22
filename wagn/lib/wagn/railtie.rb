@@ -1,13 +1,8 @@
 
-#require 'wagn'
-#require 'cardio'
-puts "loading w rt 1 #{defined? Rails}, #{defined? Card}, #{defined? Cardio}, #{defined? Decko}"
 require 'decko/engine'
 require 'rails/all'
-puts "loading w rt 2 #{defined? Rails::Railtie}, #{defined? Card}, #{defined? Cardio}, #{defined? Decko}"
 
 module Wagn
-  warn "defined? #{defined? ::Rails::Railtie}"
   if defined? ::Rails::Railtie
     require 'rails'
     class Railtie < Rails::Railtie
@@ -27,13 +22,6 @@ module Wagn
       end
 =end
 
-      initializer 'wagn.rails_paths' do
-        ActiveSupport.on_load :before_initialize do
-        puts "XXXXXXXXXXXXXX auto paths #{Cardio.gem_root}, #{config.object_id}, #{config.class}, #{Wagn.application.config.object_id}, #{Wagn.application.config.class}"
-        #config.autoload_paths += Dir['rails/lib/**/']
-        end
-      end
-
       # Remove me unless we actually use it
       initializer 'wagn.insert_into_active_record' do
         ActiveSupport.on_load :active_record do
@@ -45,7 +33,7 @@ module Wagn
 
   class Railtie
     def self.insert
-  puts "put insert rt"
+      #puts "put insert rt"
       # add the option first
       #Decko.options[:logger] = Rails.logger if defined?(Rails)
       

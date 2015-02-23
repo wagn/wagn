@@ -1,5 +1,5 @@
 
-require 'wagn/railtie'
+require 'wagn/all'
 require 'rails/application'
 
 WAGN_BOOTSTRAP_TABLES = %w{ cards card_actions card_acts card_changes card_references }

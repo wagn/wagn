@@ -95,7 +95,7 @@ else
   when 'rspec'
     opts = {}
     require 'rspec/core'
-    require 'wagn/railtie'
+    require 'wagn/all'
     parser = RSpec::Core::Parser.new.parser(opts)
     parser.banner = "Usage: wagn rspec [WAGN ARGS] -- [RSPEC ARGS]\n\nRSPEC ARGS"
     parser.separator <<-WAGN

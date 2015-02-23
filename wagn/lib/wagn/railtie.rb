@@ -1,5 +1,4 @@
 
-require 'decko/engine'
 =begin
 require 'rails/all'
 

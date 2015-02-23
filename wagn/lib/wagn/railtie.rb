@@ -1,5 +1,6 @@
 
 require 'decko/engine'
+=begin
 require 'rails/all'
 
 module Wagn
@@ -10,3 +11,4 @@ module Wagn
     end
   end
 end
+=end

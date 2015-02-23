@@ -38,10 +38,9 @@ format :html do
       @menu_vars.merge!({
         :edit      => card.ok?(:update),
         :account   => card.account && card.ok?(:update),
-        :show_follow  => Auth.signed_in? && !card.new_card?,
-        :follow_text    => follow_or_unfollow,
-        :follow_menu    => render_follow_menu_link,
-        :follow_submenu => render_follow_submenu_link,
+        :show_follow    => show_follow?,
+        :follow_menu    => show_follow? && render_follow_menu_link,
+        :follow_submenu => show_follow? && render_follow_submenu_link,
         :creator   => card.creator.name,
         :updater   => card.updater.name,
         :delete    => card.ok?(:delete) && link_to( 'delete', :action=>:delete,
@@ -57,9 +56,9 @@ format :html do
   view :menu_link do |args|
     '<a class="ui-icon ui-icon-gear"></a>'
   end
-  
-  def follow_or_unfollow
-    card.followed? ? 'unfollow' : 'follow'
+    
+  def show_follow?
+    Auth.signed_in? && !card.new_card?
   end
 end
 

@@ -22,7 +22,7 @@ class WatchersToFollowing < Card::CoreMigration
     
       follower_hash.each do |user, items|
         if card=Card.fetch(user) and card.account
-          following = Card.fetch("#{card.name}+*following", :new=>{:type=>'pointer'})
+          following = card.fetch :trait=>'following',  :new=>{:type_code=>:pointer}
           items.each { |item| following.add_item item }
           following.save!
         end

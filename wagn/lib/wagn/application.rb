@@ -1,7 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-require 'wagn/engine'
-
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
   Bundler.require *Rails.groups(:assets => %w(development test))
@@ -58,7 +56,6 @@ module Wagn
         config = super
 
         Cardio.set_config config
-        config.autoload_paths += Dir["#{Cardio.gem_root}/mod/*/lib/**/"]
 
         config.i18n.enforce_available_locales = true
 

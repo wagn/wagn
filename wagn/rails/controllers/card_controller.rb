@@ -52,7 +52,7 @@ class CardController < ActionController::Base
   
   def asset
     Rails.logger.info "Routing assets through Card. Recommend symlink from Deck to Card gem using 'rake wagn:update_assets_symlink'"
-    send_file_inside Wagn::Engine.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
+    send_file_inside Decko::Engine.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
   end
   
   private

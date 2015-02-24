@@ -73,6 +73,11 @@ class CardController < ActionController::Base
     Card::Cache.renew
     Card::Env.reset :controller=>self
     Card::Auth.set_current_from_session
+    
+    if params[:id] && !params[:id].valid_encoding?  # slightly better way to handle encoding issues (than the rescue in load_id)
+                                                    # we should find the place where we produce these bad urls
+      params[:id] = params[:id].force_encoding('ISO-8859-1').encode('UTF-8')
+    end
   end
 
 

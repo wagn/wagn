@@ -58,17 +58,18 @@ class Card::Query
 
 
   class SqlStatement
-    attr_accessor :fields, :tables, :joins, :conditions, :group, :order, :limit, :offset
+    attr_accessor :fields, :tables, :joins, :conditions, :group, :order, :limit, :offset, :distinct
 
     def initialize
       @fields, @joins, @conditions = [],[],[],[]
-      @tables, @group, @order, @limit, @offset = "","","","",""
+      @tables = @group = @order = @limit =  @offset = @distinct = nil
     end
 
     def to_s
       select = fields.reject(&:blank?) * ', '
       where = conditions.reject(&:blank?) * ' and '
-      ['(SELECT', select, 'FROM', tables, joins, 'WHERE', where, group, order, limit, offset, ')'].compact * ' '
+      
+      ['(SELECT', distinct, select, 'FROM', tables, joins, 'WHERE', where, group, order, limit, offset, ')'].compact * ' '
     end
   end
 

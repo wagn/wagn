@@ -48,9 +48,9 @@ module ClassMethods
         card = new_for_cache mark, opts
       end  
     end
-  
+
     write_to_cache card if Card.cache && needs_caching
-  
+
     if card.new_card?
       if opts[:new]
         return card.renew(opts) if !clean_cache_opts? opts

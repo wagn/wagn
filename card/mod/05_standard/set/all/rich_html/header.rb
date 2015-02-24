@@ -47,7 +47,7 @@ format :html do
         :class     => 'slotter standard-delete', :remote => true, :'data-confirm' => "Are you sure you want to delete #{card.name}?"
         )
       })
-    end
+    end    
 
     json = html_escape_except_quotes JSON( @menu_vars )
     %{<span class="card-menu-link" data-menu-vars='#{json}'>#{_render_menu_link}</span>}

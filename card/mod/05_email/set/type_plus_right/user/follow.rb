@@ -39,7 +39,7 @@ format :html do
    end
    
    
-   view :open_content do |args|
+   view :core do |args|
      %{
       <div role="tabpanel">
        <ul class="nav nav-tabs" role="tablist" id="myTab">

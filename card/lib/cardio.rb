@@ -22,6 +22,8 @@ module Cardio
       @@config = config
       @@root = @@config.root
         
+      config.autoload_paths += Dir["#{Cardio.gem_root}/mod/*/lib/**/"]
+
       config.read_only             = !!ENV['WAGN_READ_ONLY']
       config.allow_inline_styles   = false
 
@@ -52,11 +54,11 @@ module Cardio
       paths.add 'tmp/set'
       paths.add 'tmp/set_pattern'
 
-      add_gem_path 'gem-mod',             :with => 'mod'
+      add_gem_path 'mod',      :with => 'mod'
       add_gem_path "db"
       add_gem_path 'db/migrate'
       add_gem_path "db/migrate_core_cards"
-      add_gem_path "db/seeds",            :with => "db/seeds.rb"
+      add_gem_path "db/seeds", :with => "db/seeds.rb"
 
       add_gem_path 'config/initializers', :glob => '**/*.rb'
     end

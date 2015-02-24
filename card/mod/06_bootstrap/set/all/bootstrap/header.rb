@@ -2,8 +2,10 @@ format :html do
   view :header do |args|
     %{
       <div class="card-header panel-heading">
-        #{ _optional_render :toggle, args, :hide }
-        <h3 class="panel-title" style="display:inline-block">#{ _optional_render :title, args }</h3>
+        <h3 class="card-header-title panel-title" style="display:inline-block">
+          #{ _optional_render :toggle, args, :hide }
+          #{ _optional_render :title, args }
+        </h3>
         #{ _optional_render :menu, args }
       </div>
     }

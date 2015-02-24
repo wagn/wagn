@@ -1,24 +1,15 @@
-format :html do
-  view :list do |args|
-    args ||= {}
-    items = args[:item_list] || card.item_names(:context=>:raw)
-    items = [''] if items.empty?
-    options_card_name = (oc = card.options_card) ? oc.cardname.url_key : ':all'
+format :html do  
 
-    extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
-
-    %{<ul class="pointer-list-editor #{extra_css_class}" options-card="#{options_card_name}"> } +
-    items.map do |item|
-      %{<li class="pointer-li input-group"> } +
-        text_field_tag( 'pointer_item', item, :class=>'pointer-item-text form-control', :id=>'asdfsd' ) +
-        %{
+  view :list_item do |args|
+    %{
+      <li class="pointer-li input-group">
+        #{ text_field_tag 'pointer_item', args[:pointer_item], :class=>'pointer-item-text form-control' }
         <span class="input-group-btn">
-        <button class="pointer-item-delete glyphicon glyphicon-remove-circle btn btn-default" type="button"></button> 
-        </span></li>}
-    end.join("\n") +
-    %{</ul><div class="add-another-div">#{link_to 'Add another','#', :class=>'pointer-item-add'}</div>}
+          <button class="pointer-item-delete glyphicon glyphicon-remove-circle btn btn-default" type="button"></button> 
+        </span>
+      </li>
+    }
   end
-  
 
   view :edit do |args|
     super(args.merge(:pointer_item_class=>'form-control'))

@@ -315,8 +315,12 @@ $(window).ready ->
   # rstar mod
   $('body').on 'click', '.rule-submit-button', ->
     f = $(this).closest('form')
-    if f.find('.set-editor input:checked').val()
-      true
+    checked = f.find('.set-editor input:checked')
+    if checked.val()
+      if checked.attr('warning') 
+        confirm checked.attr('warning') 
+      else
+        true
     else
       f.find('.set-editor').addClass('attention')
       $(this).notify 'To what Set does this Rule apply?'

@@ -2,7 +2,6 @@ source 'http://rubygems.org'
 
 <% if @gem_path %>
 gem 'wagn',        :path=>"<%= @gemfile_gem_path %>/wagn"
-gem 'decko-rails', :path=>"<%= @gemfile_gem_path %>/decko-rails"
 gem 'card',        :path=>"<%= @gemfile_gem_path %>/card", :require => false
 <% else %>
 gem 'wagn'
@@ -38,11 +37,11 @@ group :test, :development do
   # gem 'pry-rescue'
   # gem 'pry-stack_explorer'
   if RUBY_VERSION =~ /^2/
-		gem 'byebug' 
-    # gem 'pry-byebug'
-	else
-		gem 'debugger'
-	end
+  gem 'byebug' 
+  # gem 'pry-byebug'
+  else
+    gem 'debugger'
+  end
 end
 
 <% end -%>

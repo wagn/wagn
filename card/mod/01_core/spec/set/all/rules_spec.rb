@@ -121,8 +121,8 @@ describe Card::Set::All::Rules do
           Card.create(:name => "Book+*type+Joe User+*follow", :content => "[[Home]]")
           Card::Auth.current_id = Card.fetch('Joe Admin').id
           Card.create(:name => "Book+*type+Joe Admin+*follow", :content => "[[Home]]")
-          user_ids = Card.all_user_ids_with_rule_for( Card.fetch("Book+*type"), :follow )
-          expect(user_ids).to eq [Card['Joe User'].id, Card['Joe Admin'].id]
+          user_ids = Card.all_user_ids_with_rule_for( Card.fetch("Book+*type"), :follow ).sort
+          expect(user_ids).to eq [Card['Joe User'].id, Card['Joe Admin'].id].sort
         end
       end
     end

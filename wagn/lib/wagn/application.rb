@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require 'decko/engine'
+require 'wagn/engine'
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
@@ -56,8 +56,12 @@ module Wagn
     def config
       @config ||= begin
         config = super
+
         Cardio.set_config config
+        config.autoload_paths += Dir["#{Cardio.gem_root}/mod/*/lib/**/"]
+
         config.i18n.enforce_available_locales = true
+
 
         config.assets.enabled = false
         config.assets.version = '1.0'
@@ -83,23 +87,17 @@ module Wagn
         Cardio.set_paths paths
         
         paths.add 'files'
-        
-        paths.add 'local-mod', :with=>'mod'
+
+        paths['mod'] << 'mod'
         paths['app/models'] = []
         paths['app/mailers'] = []
         
-    
-        # should we have add_deck_paths for these?
-        add_gem_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
-        add_gem_path paths, 'gem-assets'
+        add_gem_path paths, "lib/tasks",     :with => "lib/wagn/tasks", :glob => "**/*.rake"
+        add_gem_path paths, 'config/routes', :with => 'rails/application-routes.rb'
         
         paths
       end
     end
-
-
-
-
 
   end
 end

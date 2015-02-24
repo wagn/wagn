@@ -303,11 +303,9 @@ class Card::Log
       def to_s!
         @to_s ||= begin
           msg = indent
-          msg += if @duration
-              "(%d.2ms) #{@message}" % @duration
-            else
-              @message
-            end
+          msg += "(%d.2ms) " % @duration if @duration
+          msg += @message if @message
+
           if @details
             msg +=  ", " + @details.to_s.gsub( "\n", "\n#{ indent(false) }#{' '* TAB_SIZE}" )
           end

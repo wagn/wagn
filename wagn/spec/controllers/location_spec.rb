@@ -4,7 +4,7 @@
 #FIXME - this shouldn't really be with the controller specs
 
 describe CardController, "location test from old integration" do
-  routes { Decko::Engine.routes }
+  routes { Wagn::Engine.routes }
 
   before do
     login_as 'joe_user'

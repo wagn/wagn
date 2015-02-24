@@ -2,7 +2,7 @@
 
 require_dependency 'card'
 
-require_dependency 'decko/exceptions'
+require_dependency 'wagn/exceptions'
 require_dependency 'card/mailer'  #otherwise Net::SMTPError rescues can cause problems when error raised comes before Card::Mailer is mentioned
 
 class CardController < ActionController::Base
@@ -52,7 +52,7 @@ class CardController < ActionController::Base
   
   def asset
     Rails.logger.info "Routing assets through Card. Recommend symlink from Deck to Card gem using 'rake wagn:update_assets_symlink'"
-    send_file_inside Decko::Engine.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
+    send_file_inside Wagn::Engine.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
   end
   
   private
@@ -60,7 +60,7 @@ class CardController < ActionController::Base
   # make sure that filename doesn't leave allowed_path using ".."
   def send_file_inside(allowed_path, filename, options = {})
     if filename.include? "../"
-      raise Decko::BadAddress
+      raise Wagn::BadAddress
     else
       send_file File.join(allowed_path, filename), options
     end
@@ -90,7 +90,7 @@ class CardController < ActionController::Base
         Card.setting(:home) || 'Home'
       end
   rescue ArgumentError # less than perfect way to handle encoding issues.
-    raise Decko::BadAddress
+    raise Wagn::BadAddress
   end
   
 
@@ -261,7 +261,7 @@ class CardController < ActionController::Base
         :denial
       when Card::NotFound, ActiveRecord::RecordNotFound, ActionController::MissingFile
         :not_found
-      when Decko::BadAddress
+      when Wagn::BadAddress
         :bad_address
       else #the following indicate a code problem and therefore require full logging
         @card.notable_exception_raised

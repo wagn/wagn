@@ -22,8 +22,8 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.8.7'
 
   [
-    [ 'rails',        '3.2.16'  ],
-    [ 'decko-rails',     version  ],
+    [ 'rails', '3.2.16'  ],
+    [ 'card',   version  ]
   ].each do |dep|
     s.add_runtime_dependency *dep
   end

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 describe CardController do
-  routes { Wagn::Engine.routes }
+  routes { Decko::Engine.routes }
 
   include Capybara::DSL
   describe "- route generation" do
@@ -287,7 +287,7 @@ describe CardController do
     it 'serves file' do
       filename = "asset-test.txt"
       args = { :id=>filename, :format=>'txt', :explicit_file=>true }
-      path = File.join( Wagn::Engine.paths['gem-assets'].existent.first, filename)
+      path = File.join( Decko::Engine.paths['gem-assets'].existent.first, filename)
       File.open(path, "w") { |f| f.puts "test" }
       args = { :filename => "#{filename}" }
       visit "/assets/#{filename}"

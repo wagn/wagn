@@ -12,16 +12,18 @@ format :html do
   end
   
   view :menu_link do |args|
-    '<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>'
+    glyphicon 'cog'
+    #'<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>'
   end
   
   
   view :toggle do |args|
     verb, adjective, direction = ( args[:toggle_mode] == :close ? %w{ open open expand } : %w{ close closed collapse-down } )
     
-    link_to '', path( :view=>adjective ), 
-      :remote => true,
-      :title => "#{verb} #{card.name}",
-      :class => "#{verb}-icon  glyphicon glyphicon-#{direction} toggler slotter nodblclick"
-  end
+    link_to  glyphicon(direction), #content_tag(:span, '', :class=>"glyphicon glyphicon-#{direction}"),
+             path( :view=>adjective ),
+             :remote => true,
+             :title => "#{verb} #{card.name}",
+             :class => "#{verb}-icon toggler slotter nodblclick"
+   end
 end

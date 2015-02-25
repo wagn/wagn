@@ -5,7 +5,9 @@ format :html do
       <li class="pointer-li input-group">
         #{ text_field_tag 'pointer_item', args[:pointer_item], :class=>'pointer-item-text form-control' }
         <span class="input-group-btn">
-          <button class="pointer-item-delete glyphicon glyphicon-remove-circle btn btn-default" type="button"></button> 
+          <button class="pointer-item-delete btn btn-default" type="button">
+          <span class="glyphicon glyphicon-remove-circle"></span>
+          </button> 
         </span>
       </li>
     }

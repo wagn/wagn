@@ -152,6 +152,7 @@ WAGN
     parser.parse!(wagn_args)
 
     rspec_command = "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} #{opts[:rescue]} rspec #{rspec_args*' '} #{opts[:files]} 2>&1" 
+    puts "command = #{rspec_command}"
     unless system rspec_command
       exit $?.exitstatus
     end

@@ -94,6 +94,12 @@ module Cardio
       paths["db/migrate#{schema_suffix type}"].to_a
     end
 
+    def assume_migrated_upto_version type
+      Cardio.schema_mode(:type) do
+        ActiveRecord::Schema.assume_migrated_upto_version Cardio.schema(type), Cardio.migration_paths(type)
+      end
+    end
+
     def schema_suffix type
       case type
       when :core_cards then '_core_cards'

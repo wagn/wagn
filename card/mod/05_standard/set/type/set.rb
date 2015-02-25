@@ -39,7 +39,7 @@ format :html do
   end
   
   view :template_closer do |args|
-    view_link '', :template_link, :class=>'slotter ui-icon ui-icon-closethick template-editor-close'
+    view_link '', :template_link, :class=>'slotter glyphicon glyphicon-remove template-editor-close'
   end
   
   view :template_editor do |args|
@@ -47,14 +47,16 @@ format :html do
       %{
         <div class="template-editor-left">{{</div> 
         <div class="template-editor-main">
-          #{
-            frame :no_slot=>true, :title=>card.label, :menu_hack=>:template_closer do
-              _render_core args.merge(:unlabeled=>true)
-            end
-          }
+          #{ render_template_editor_frame args }
         </div>
         <div class="template-editor-right">}}</div> 
       }
+    end
+  end
+  
+  view :template_editor_frame do |args|
+    frame :no_slot=>true, :title=>card.label, :menu_hack=>:template_closer do
+      _render_core args.merge(:unlabeled=>true)
     end
   end
   

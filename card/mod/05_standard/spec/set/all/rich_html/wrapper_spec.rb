@@ -8,8 +8,8 @@ describe Card::Set::All::RichHtml::Wrapper do
 
     it "has the appropriate attributes on open" do
       assert_view_select @ocslot.render(:open), 'div[class="card-slot open-view card-frame panel panel-default ALL TYPE-basic SELF-a"]' do
-        assert_select 'h3[class="card-header panel-title"]' do
-          assert_select 'span[class="card-title"]'
+        assert_select 'div[class="card-header panel-heading"]' do
+          assert_select 'h3[class="card-header-title panel-title"]'
         end
         assert_select 'div[class~="card-body"]'
       end
@@ -18,8 +18,8 @@ describe Card::Set::All::RichHtml::Wrapper do
     it "has the appropriate attributes on closed" do
       v = @ocslot.render(:closed)
       assert_view_select v, 'div[class="card-slot closed-view card-frame panel panel-default ALL TYPE-basic SELF-a"]' do
-        assert_select 'h3[class="card-header panel-title"]' do
-          assert_select 'span[class="card-title"]'
+        assert_select 'div[class="card-header panel-heading"]' do
+          assert_select 'h3[class="card-header-title panel-title"]'
         end
         assert_select 'div[class~="closed-content card-content"]'
       end

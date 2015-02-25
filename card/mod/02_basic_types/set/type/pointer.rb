@@ -55,15 +55,25 @@ format :html do
 
     extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
-    %{<ul class="pointer-list-editor #{extra_css_class}" options-card="#{options_card_name}"> } +
-    items.map do |item|
-      %{<li class="pointer-li"> } +
-        text_field_tag( 'pointer_item', item, :class=>'pointer-item-text', :id=>'asdfsd' ) +
-        link_to( '', '#', :class=>'pointer-item-delete ui-icon ui-icon-circle-close' ) +
-      '</li>'
-    end.join("\n") +
-    %{</ul><div class="add-another-div">#{ link_to 'Add another', '#', :class=>'pointer-item-add'}</div>}
-
+    %{
+      <ul class="pointer-list-editor #{extra_css_class}" options-card="#{options_card_name}">
+        #{ 
+          items.map do |item|
+            _render_list_item args.merge( :pointer_item=>item )
+          end * "\n"
+        }
+      </ul>
+      <div class="add-another-div">#{ link_to 'Add another', '#', :class=>'pointer-item-add'}</div>
+    }
+  end
+  
+  view :list_item do |args|
+    %{
+      <li class="pointer-li">
+        #{ text_field_tag 'pointer_item', args[:pointer_item], :class=>'pointer-item-text' }
+        #{ link_to '', '#', :class=>'pointer-item-delete ui-icon ui-icon-circle-close'     }
+      </li>
+    }
   end
 
   view :checkbox do |args|

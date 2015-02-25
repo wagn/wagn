@@ -44,8 +44,8 @@ describe Card::HtmlFormat do
 
 
       it "renders top menu" do
-        #warn "sp #{@simple_page}"
-        assert_view_select @simple_page, 'nav[class="navbar navbar-default navbar-static-top"]' do
+        
+        assert_view_select @simple_page, 'div#menu' do #'nav[class="navbar navbar-default navbar-static-top"]' do
           assert_select 'a[class="internal-link"][href="/"]', 'Home'
           assert_select 'a[class="internal-link"][href="/recent"]', 'Recent'
           assert_select 'form.navbox-form[action="/:search"]' do
@@ -56,8 +56,8 @@ describe Card::HtmlFormat do
 
       it "renders card header" do
         # lots of duplication here...
-        assert_view_select @simple_page, 'h3[class="card-header panel-title"]' do
-          assert_select 'span[class="card-title"]'
+        assert_view_select @simple_page, 'div[class="card-header panel-heading"]' do
+          assert_select 'h3[class="card-header-title panel-title"]'
         end
       end
 

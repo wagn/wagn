@@ -1,12 +1,11 @@
 
-require 'wagn/all'
-require 'rails/application'
+require 'wagn/application'
 
 WAGN_BOOTSTRAP_TABLES = %w{ cards card_actions card_acts card_changes card_references }
 
 def prepare_migration
-  Wagn::Cache.reset_global
-  Wagn.config.action_mailer.perform_deliveries = false
+  Card::Cache.reset_global
+  Card.config.action_mailer.perform_deliveries = false
   Card.reset_column_information
   Card::Reference.reset_column_information  # this is needed in production mode to insure core db 
                                             # structures are loaded before schema_mode is set
@@ -74,7 +73,7 @@ namespace :wagn do
 
   desc "migrate structure and cards"
   task :migrate =>:environment do
-    ENV['SCHEMA'] ||= "#{Wagn.root}/db/schema.rb"
+    ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
     
     stamp = ENV['STAMP_MIGRATIONS']
 
@@ -120,12 +119,12 @@ namespace :wagn do
     
     desc "migrate core cards"
     task :core_cards => :environment do
-      require 'card/migration'
+      require 'card/core_migration'
 
       Card::Cache.reset_global
-      ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
+      ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       prepare_migration
-      paths = ActiveRecord::Migrator.migrations_paths = Card::CoreMigration.paths
+      paths = ActiveRecord::Migrator.migrations_paths = Card::CoreMigration.migration_paths
     
       Card::CoreMigration.schema_mode :core_cards do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
@@ -138,9 +137,9 @@ namespace :wagn do
       require 'card/migration'
 
       Card::Cache.reset_global
-      ENV['SCHEMA'] ||= "#{Rails.root}/db/schema.rb"
+      ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       prepare_migration
-      paths = ActiveRecord::Migrator.migrations_paths = Card::Migration.paths(:deck_cards)
+      paths = ActiveRecord::Migrator.migrations_paths = Card::Migration.migration_paths
     
       Card::Migration.schema_mode do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
@@ -150,10 +149,12 @@ namespace :wagn do
   
     desc 'write the version to a file (not usually called directly)' #maybe we should move this to a method? 
     task :stamp, :type do |t, args|
-      ENV['SCHEMA'] ||= "#{Wagn.gem_root}/db/schema.rb"
+      require 'card/migration'
+      
+      ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       Wagn.config.action_mailer.perform_deliveries = false
       
-      stamp_file = Card::Version.schema_stamp_path( args[:type] )
+      stamp_file = Cardio.schema_stamp_path( args[:type] )
 
       Card::Migration.schema_mode args[:type] do
         version = ActiveRecord::Migrator.current_version
@@ -255,7 +256,7 @@ namespace :wagn do
       
       WAGN_BOOTSTRAP_TABLES.each do |table|
         i = "000"
-        File.open("#{Wagn.gem_root}/db/bootstrap/#{table}.yml", 'w') do |file|
+        File.open("#{Cardio.gem_root}/db/bootstrap/#{table}.yml", 'w') do |file|
           data = ActiveRecord::Base.connection.select_all( "select * from #{table}" )
           file.write YAML::dump( data.inject({}) do |hash, record|
             record['trash'] = false if record.has_key? 'trash'

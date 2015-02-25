@@ -1,9 +1,8 @@
 format :html do
   
   view :closed do |args|
-   closed_frame args.merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show ) do
-      _optional_render :closed_content, args
-    end
+    args.merge! :body_class=>'closed-content'
+    super args
   end
   
   

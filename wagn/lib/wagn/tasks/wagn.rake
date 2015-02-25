@@ -15,7 +15,7 @@ end
 
 namespace :wagn do
   desc "create a wagn database from scratch"
-  task :create => :environment do
+  task :create do
     ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
 
     puts "dropping"
@@ -61,7 +61,7 @@ namespace :wagn do
   end
 
   desc "reset cache"
-  task :reset_cache => :environment  do
+  task :reset_cache => :environment do
     Card::Cache.reset_global
   end
 
@@ -74,7 +74,7 @@ namespace :wagn do
   end
 
   desc "migrate structure and cards"
-  task :migrate =>:environment do
+  task :migrate => :environment do
     ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
 
     stamp = ENV['STAMP_MIGRATIONS']
@@ -104,18 +104,15 @@ namespace :wagn do
   end
 
   desc 'insert existing card migrations into schema_migrations_cards to avoid re-migrating'
-  task :assume_card_migrations => :environment do
-    #require 'rails/all'
+  task :assume_card_migrations do
     require 'decko/engine'
-    #require 'card/migration'
 
-    puts "assume migrated core"
     Cardio.assume_migrated_upto_version :cord_cards
   end
 
   namespace :migrate do
     desc "migrate cards"
-    task :cards => :environment do
+    task :cards do
       Rake::Task['wagn:migrate:core_cards'].invoke
       Rake::Task['wagn:migrate:deck_cards'].invoke
     end

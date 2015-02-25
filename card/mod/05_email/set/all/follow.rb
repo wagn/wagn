@@ -103,7 +103,17 @@ end
 # for sets and cardtypes it doesn't check whether the users is following the card itself
 # instead it checks whether he is following the complete set
 def followed_by? user_id
-  follow_rule_applies? user_id
+  if follow_rule_applies? user_id
+    return true
+  end
+  left_card = left
+  while left_card
+    if left_card.followed_field?(self) && left_card.follow_rule_applies?(user_id)
+      return true
+    end
+    left_card = left_card.left
+  end
+  return false
 end
 
 def followed?
@@ -129,22 +139,23 @@ def default_follow_set_card
 end
 
 
+# returns true if according to the follow_field_rule followers of self also 
+# follow changes of field_card
+def followed_field? field_card
+  (follow_field_rule = rule_card(:follow_fields)) || follow_field_rule.item_names.find do |item|
+     item.to_name.key == field_card.key ||  (item.to_name.key == Card[:includes].key && included_card_ids.include?(field_card.id) )
+  end
+end
 
 def follower_ids
   @follower_ids = read_follower_ids_cache || begin
     result = direct_follower_ids
     left_card = left
-    while left_card and (follow_field_rule = left_card.rule_card(:follow_fields))
-
-      follow_field_rule.item_names(:context=>left.cardname).each do |item|
-        if item.to_name.key == key or 
-           (item == Card[:includes].name and left.included_card_ids.include? id)
-          result += left_card.direct_follower_ids
-          break
-        end
+    while left_card
+      if left_card.followed_field? self
+        result += left_card.direct_follower_ids
       end
       left_card = left_card.left
-      
     end
     write_follower_ids_cache result
     result

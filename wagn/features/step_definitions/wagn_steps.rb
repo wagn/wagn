@@ -214,7 +214,7 @@ Then /I submit$/ do
 end
 
 When /^I hover over the main menu$/ do
-  page.execute_script "$('#main > .card-slot > .panel-heading > .card-header > .card-menu-link').trigger('mouseenter')"
+  page.execute_script "$('#main > .card-slot > .card-header > .card-menu-link').trigger('mouseenter')"
 end
 
 When /^I pick (.*)$/ do |menu_item|

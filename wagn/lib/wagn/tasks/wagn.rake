@@ -1,7 +1,5 @@
 
-require 'rails/all'
-require 'rails/application'
-require 'wagn'
+require 'wagn/application'
 
 WAGN_BOOTSTRAP_TABLES = %w{ cards card_actions card_acts card_changes card_references }
 
@@ -119,7 +117,7 @@ namespace :wagn do
 
     desc "migrate core cards"
     task :core_cards => :environment do
-      require 'card/migration'
+      require 'card/core_migration'
 
       Card::Cache.reset_global
       ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
@@ -137,7 +135,7 @@ namespace :wagn do
       require 'card/migration'
 
       Card::Cache.reset_global
-      ENV['SCHEMA'] ||= "#{Cardio.root}/db/schema.rb"
+      ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       prepare_migration
       paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:deck_cards)
     
@@ -254,7 +252,7 @@ namespace :wagn do
 
       WAGN_BOOTSTRAP_TABLES.each do |table|
         i = "000"
-        File.open("#{Wagn.gem_root}/db/bootstrap/#{table}.yml", 'w') do |file|
+        File.open("#{Cardio.gem_root}/db/bootstrap/#{table}.yml", 'w') do |file|
           data = ActiveRecord::Base.connection.select_all( "select * from #{table}" )
           file.write YAML::dump( data.inject({}) do |hash, record|
             record['trash'] = false if record.has_key? 'trash'

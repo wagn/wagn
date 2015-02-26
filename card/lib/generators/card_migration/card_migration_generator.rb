@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'rails/generators/active_record'
+require 'card/migration'
 
 class CardMigrationGenerator < ActiveRecord::Generators::Base
   source_root File.expand_path('../templates', __FILE__)
@@ -8,9 +9,10 @@ class CardMigrationGenerator < ActiveRecord::Generators::Base
     desc: "Create card migration for card core"
 
   def create_migration_file
-    root = options['cord'] ? Card::CoreMigration.paths(migration_type).first : Card::Migration.paths.first
+    mig_class = options['core'] ? Card::CoreMigration : Card::Migration
+    path = mig_class.migration_paths.first
     set_local_assigns!
-    migration_template @migration_template, File.join( root, "#{file_name}.rb")
+    migration_template @migration_template, File.join( path, "#{file_name}.rb")
   end
   
   protected

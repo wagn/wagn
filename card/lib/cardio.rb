@@ -53,6 +53,7 @@ module Cardio
       paths.add 'tmp/lib'
       paths.add 'tmp/set'
       paths.add 'tmp/set_pattern'
+      paths.add 'db/migrate_deck_cards', :with=>'db/migrate_cards'
 
       add_gem_path 'mod',      :with => 'mod'
       add_gem_path "db"

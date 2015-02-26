@@ -53,17 +53,12 @@ class Card::Migration < ActiveRecord::Migration
         ActiveRecord::Schema.assume_migrated_upto_version schema, migration_paths
       end
     end
-
+    
     def data_path filename=nil
-      if filename
-        self.migration_paths.each do |path|
-          path_to_file = File.join path, 'data', filename
-          return path_to_file if File.exists? path_to_file
-        end
-      else
-        File.join self.migration_paths.first, 'data'
-      end
+      path = migration_paths.first
+      File.join( [ migration_paths.first, 'data', filename ].compact )
     end
+    
   end
 
   def contentedly &block
@@ -80,18 +75,6 @@ class Card::Migration < ActiveRecord::Migration
       end
     end
   end
-
-  def data_path filename=nil
-    if filename
-      migration_paths.each do |path|
-        path_to_file = File.join path, 'data', filename
-        return path_to_file if File.exists? path_to_file
-      end
-    else
-      File.join migration_paths.first, 'data'
-    end
-  end
-
 
   def import_json filename
     Card.config.action_mailer.perform_deliveries = false

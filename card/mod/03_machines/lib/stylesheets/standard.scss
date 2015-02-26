@@ -273,6 +273,24 @@ textarea {
 /*- SEARCH & POINTER - */
 /*-------------------- */
 
+.pointer-radio {
+    display: inline-block;
+    width: 100%;
+    .form-control {
+      box-shadow: none;
+    }
+    input {
+        float: left;
+        width: auto;
+        margin: 0;
+    }
+    label {
+        float: left;
+        width: auto;
+        margin: 6px 8px;
+     }
+}
+
 
 div.pointer-list,
 div.search-result-list {

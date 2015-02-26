@@ -66,7 +66,8 @@ namespace :wagn do
   desc "set symlink for assets"
   task :update_assets_symlink do
     assets_path = File.join(Rails.public_path, "assets")
-    if Rails.root.to_s != Wagn.gem_root and not (File.exists? assets_path or File.symlink? assets_path)
+    if Rails.root.to_s != Wagn.gem_root and not File.exists? assets_path
+      FileUtils.rm assets_path if File.symlink? assets_path
       FileUtils.ln_s( Decko::Engine.paths['gem-assets'].first, assets_path )
     end
   end

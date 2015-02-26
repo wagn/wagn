@@ -69,8 +69,12 @@ format :html do
       html_options[:title]         = "send emails about changes to #{args[:label]}"
       html_options[:text]          = "follow #{args[:label]}"
     end
+    if html_options[:text].size > 20
+      html_options[:text] = html_options[:text][0..17] + '...'
+    end
     if args[:main_menu]
-      html_options[:text] = glyphicon('menu-left') + html_options[:text]
+      html_options[:text] = '<span class="ui-menu-icon ui-icon ui-icon-carat-1-w"></span>' + html_options[:text]
+      # html_options[:text] =  glyphicon('menu-left') + html_options[:text]    #TODO use glyphicons instead of ui-cons
     end
     follow_rule_name = card.default_follow_set_card.follow_rule_name Auth.current.name
     card_link follow_rule_name, html_options.merge(:path_opts=>path_options) 
@@ -165,7 +169,6 @@ end
 # doesn't include users that follow this card because they are following parent cards or other cards that include this card
 def direct_follower_ids args={}  
   result = ::Set.new
-
   set_names.each do |set_name| 
     set_card = Card.fetch(set_name)
     set_card.all_user_ids_with_rule_for(:follow).each do |user_id|

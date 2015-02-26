@@ -3,7 +3,7 @@ include Card::FollowOption
 self.restrictive_follow_opts :position=>2
 
 def applies_to? card, user_id
-  Card.search(:editor_of=>card.name, :return=>:id).include? user_id
+  Card.search(:editor_of=>card.name, :return=>:id).find { |editor_id| editor_id.to_i == user_id }
 end
 
 def title 

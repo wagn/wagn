@@ -91,7 +91,6 @@ module Wagn
         paths['app/models'] = []
         paths['app/mailers'] = []
         
-#        add_gem_path paths, "lib/tasks",     :with => "lib/wagn/tasks", :glob => "**/*.rake"
         add_gem_path paths, 'config/routes', :with => 'rails/application-routes.rb'
         
         paths

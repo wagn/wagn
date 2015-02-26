@@ -61,7 +61,7 @@ format :html do
       html_options[:text]          = "follow #{args[:label]}"
     end
     if args[:main_menu]
-      html_options[:text] = content_tag( :span, '', :class=>"ui-menu-icon ui-icon ui-icon-carat-1-w") + html_options[:text]
+      html_options[:text] = glyphicon('menu-left') + html_options[:text]
     end
     follow_rule_name = card.default_follow_set_card.follow_rule_name Auth.current.name
     card_link follow_rule_name, html_options.merge(:path_opts=>path_options) 

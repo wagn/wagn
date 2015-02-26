@@ -19,7 +19,7 @@ $.extend wagn,
     '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
     'textarea'               : -> wagn.initAce $(this)#$(this).autosize()
     '.tinymce-textarea'      : -> wagn.initTinyMCE @[0].id
-    '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
+    '.pointer-list-editor'   : -> @sortable({handle: '.handle', cancel: ''}); wagn.initPointerList @find('input')
     '.file-upload'           : -> @fileupload( add: wagn.chooseFile )#, forceIframeTransport: true )
     '.etherpad-textarea'     : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
   }
@@ -131,7 +131,8 @@ $.extend wagn,
     if !cm?
       cm = wagn.generateMenu l.slot(), l.data('menu-vars')
       l.data 'menu', cm
-      cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' }
+      cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' } 
+      #TODO submenu should use glyphicon glyphicon-menu-left
     
     if tapped
       cm.addClass 'card-menu-tappable'
@@ -352,7 +353,7 @@ $(window).ready ->
 
 toggleShade = (shadeSlot) ->
   shadeSlot.find('.shade-content').slideToggle 1000
-  shadeSlot.find('.ui-icon').toggleClass 'ui-icon-triangle-1-e ui-icon-triangle-1-s'  
+  shadeSlot.find('.glyphicon').toggleClass 'glyphicon-triangle-right glpyphicon-triangle-bottom'  
 
 permissionsContent = (ed) ->
   return '_left' if ed.find('#inherit').is(':checked')  
@@ -400,11 +401,11 @@ navboxize = (term, results)->
       items.push i
 
   $.each results['goto'], (index, val) ->
-    items.push { icon: 'arrowreturnthick-1-e', prefix: 'go to', value: val[0], label: val[1], href: '/' + val[2] }
+    items.push { icon: 'share-alt', prefix: 'go to', value: val[0], label: val[1], href: '/' + val[2] }
 
   $.each items, (index, i) ->
     i.label =
-      '<span class="navbox-item-label"><a class="ui-icon ui-icon-'+ i.icon + '"></a>' + i.prefix + ':</span> ' +
+      '<span class="glyphicon glyphicon-'+ i.icon + '"></span><span class="navbox-item-label">' + i.prefix + ':</span> ' +
       '<span class="navbox-item-value">' + i.label + '</span>'
 
   items

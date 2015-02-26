@@ -2,8 +2,8 @@ include Card::FollowOption
 
 self.restrictive_follow_opts :position=>1
 
-def applies_to? card, user
-  card.creator and card.creator.type_id == Card::UserID and card.creator == user
+def applies_to? card, user_id
+  card.creator and card.creator.type_id == Card::UserID and card.creator.id == user_id
 end
 
 def title

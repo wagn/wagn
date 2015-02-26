@@ -19,7 +19,7 @@ $.extend wagn,
     '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
     'textarea'               : -> wagn.initAce $(this)#$(this).autosize()
     '.tinymce-textarea'      : -> wagn.initTinyMCE @[0].id
-    '.pointer-list-editor'   : -> @sortable(); wagn.initPointerList @find('input')
+    '.pointer-list-editor'   : -> @sortable({handle: '.handle', cancel: ''}); wagn.initPointerList @find('input')
     '.file-upload'           : -> @fileupload( add: wagn.chooseFile )#, forceIframeTransport: true )
     '.etherpad-textarea'     : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
   }
@@ -131,7 +131,8 @@ $.extend wagn,
     if !cm?
       cm = wagn.generateMenu l.slot(), l.data('menu-vars')
       l.data 'menu', cm
-      cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'glyphicon glyphicon-menu-left' }
+      cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' } 
+      #TODO submenu should use glyphicon glyphicon-menu-left
     
     if tapped
       cm.addClass 'card-menu-tappable'
@@ -302,12 +303,6 @@ $(window).ready ->
     -> 
        $(this).find('.glyphicon').addClass("glyphicon-ok-sign").removeClass("glyphicon-remove-sign")
        $(this).addClass("btn-success").removeClass("btn-danger"))
-  # $('body').on 'click', '.item-card-submit', ->
-  #   item = $(this).closest 'li'
-  #   f = $(this).closest 'form'
-  #   f.submit()
-  #   item.remove()
-  #   event.preventDefault() # Prevent link from following its href
 
   # permissions mod
   $('body').on 'click', '.perm-vals input', ->
@@ -321,8 +316,12 @@ $(window).ready ->
   # rstar mod
   $('body').on 'click', '.rule-submit-button', ->
     f = $(this).closest('form')
-    if f.find('.set-editor input:checked').val()
-      true
+    checked = f.find('.set-editor input:checked')
+    if checked.val()
+      if checked.attr('warning') 
+        confirm checked.attr('warning') 
+      else
+        true
     else
       f.find('.set-editor').addClass('attention')
       $(this).notify 'To what Set does this Rule apply?'
@@ -406,7 +405,7 @@ navboxize = (term, results)->
 
   $.each items, (index, i) ->
     i.label =
-      '<span class="navbox-item-label"><a class="glyphicon glyphicon-'+ i.icon + '"></a>' + i.prefix + ':</span> ' +
+      '<span class="glyphicon glyphicon-'+ i.icon + '"></span><span class="navbox-item-label">' + i.prefix + ':</span> ' +
       '<span class="navbox-item-value">' + i.label + '</span>'
 
   items

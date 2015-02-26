@@ -119,7 +119,7 @@ format :html do
     args[:rule_context] ||= card
     args[:set_context]  ||= card.rule_set_name 
     args[:set_selected]   = params[:type_reload] ? card.rule_set_name : false
-    args[:set_options], args[:fallback] = args[:rule_context].set_options
+    args[:set_options], args[:fallback_set] = args[:rule_context].set_options
     
     args[:success] ||= {}
     args[:success].reverse_merge!( {
@@ -164,21 +164,31 @@ format :html do
   def set_fieldset args
     current_set_key = card.new_card? ? Card[:all].cardname.key : card.rule_set_key   # (should have a constant for this?)
     tag = args[:rule_context].rule_user_setting_name
+    narrower_rules = []
     option_list = wrap_each_with :li do
                     args[:set_options].map do |set_name, state|
                       
                       checked    = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
                       is_current = (state == :current)
-                      disabled   = (state == :disabled || state == :overwritten)
+                      warning = if narrower_rules.present?
+                                  plural = narrower_rules.size > 1 ? 's' : ''
+                                  "This rule will not have any effect on this card unless you delete the narrower rule#{plural} "+
+                                   "for #{narrower_rules.to_sentence}."
+                                end
+                      if is_current || state == :overwritten
+                         narrower_rules << Card.fetch(set_name).label
+                         narrower_rules.last[0] = narrower_rules.last[0].downcase
+                      end
                       rule_name  = "#{set_name}+#{tag}"
-                      form.radio_button( :name, rule_name, :checked=> checked, :disabled=>disabled ) + %{
+                      form.radio_button( :name, rule_name, :checked=>checked, :warning=>warning ) + %{
                           <span class="set-label" #{'current-set-label' if is_current }>
                             #{ card_link set_name, :text=> Card.fetch(set_name).label, :target=>'wagn_set' }
                             #{'<em>(current)</em>' if is_current }
                             #{"<em> #{card_link "#{set_name}+#{card.rule_user_setting_name}", :text=>"(overwritten)"}</em>" if state == :overwritten }
                           </span>
-                        }.html_safe
+                         }.html_safe
                      end
+
                    end
     fieldset 'set', "<ul>#{ option_list }</ul>", :editor => 'set'
   end
@@ -235,13 +245,17 @@ format :html do
            else
              card.rule_set.follow_label
            end
-    
+    link_target = if card.rule_set.codename == 'self'
+                    card.rule_set_name.left
+                  else
+                    "#{card.rule_set_name}+by name"
+                  end
     wrap do
       card_form({:action=>:update, :name=>card.name, :success=>{:view=>:follow_item}}, 
               :hidden=>{:condition=>args[:condition]}.merge(form_opts)) do
         output [
           _optional_render(button_view, args),
-          card_link( "#{card.rule_set_name}+by name", :text=>text)
+          card_link( link_target, :text=>text)
         ]
       end
     end

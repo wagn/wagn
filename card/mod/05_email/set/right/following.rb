@@ -25,10 +25,8 @@ format :html do
    view :rule_editor do |args|
      rule_context = Card.fetch("#{card.left.default_follow_set_card.name}+#{Auth.current.name}+#{Card[:follow].name}", :new=>{:type=>'pointer'})
      current_follow_rule_card = card.left.rule_card(:follow, :user=>Auth.current) || rule_context
-     frame do
-       wrap_with :div, :class=>'edit-rule' do
-         subformat(current_follow_rule_card).render_edit_rule :rule_context=>rule_context, :success=>{:view=>':open', :id=>card.left.name}
-       end
+     wrap_with :div, :class=>'edit-rule' do
+       subformat(current_follow_rule_card).render_edit_rule :rule_context=>rule_context, :success=>{:view=>':open', :id=>card.left.name}
      end
    end
      

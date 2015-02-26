@@ -60,8 +60,8 @@ format :html do
       html_options[:title]         = "send emails about changes to #{args[:label]}"
       html_options[:text]          = "follow #{args[:label]}"
     end
-    if html_options[:text].size > 20
-      html_options[:text] = html_options[:text][0..17] + '...'
+    if html_options[:text].size > 30
+      html_options[:text] = html_options[:text][0..27] + '...'
     end
     if args[:main_menu]
       html_options[:text] = '<span class="ui-menu-icon ui-icon ui-icon-carat-1-w"></span>' + html_options[:text]

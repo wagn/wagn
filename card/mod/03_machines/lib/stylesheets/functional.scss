@@ -71,6 +71,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
   }
 }
 .card-menu-link {
+  margin-left: 5px;
   display: inline-block; 
   float: right;
 }
@@ -83,9 +84,6 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
   overflow: hidden;
   .card-header {
     display: inline-block;
-  }
-  .card-menu-link {
-    float: none;
   }
 }
 .closed-content {

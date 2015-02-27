@@ -718,6 +718,10 @@ h2.set-label {
 /*- MISCELLANEOUS          - */
 /*-------------------------- */
 
+.ui-menu-icons .ui-menu-item a {
+	padding-left: 0;
+}
+
 .ui-icon {
   background-image: url([[/assets/smoothness/ui-icons_454545_256x240.png]])
 }

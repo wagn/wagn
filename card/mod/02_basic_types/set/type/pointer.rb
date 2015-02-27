@@ -41,10 +41,14 @@ format :html do
     _render_core args
   end
 
+  view :edit do |args|
+    super(args.merge(:pointer_item_class=>'form-control'))
+  end
+
   view :editor do |args|
     part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/,'') : :list
     form.hidden_field( :content, :class=>'card-content') +
-    raw(_render(part_view, args))
+    raw(_render(part_view, args.merge(:pointer_item_class=>'form-control')))
   end
 
   view :list do |args|
@@ -66,8 +70,25 @@ format :html do
       <div class="add-another-div">#{ link_to 'Add another', '#', :class=>'pointer-item-add'}</div>
     }
   end
-  
   view :list_item do |args|
+    %{
+      <li class="pointer-li input-group">
+        <span class="input-group-addon handle">
+          #{ glyphicon 'option-vertical left' }
+          #{ glyphicon 'option-vertical right'}
+        </span>
+        #{ text_field_tag 'pointer_item', args[:pointer_item], :class=>'pointer-item-text form-control' }
+        <span class="input-group-btn">
+          <button class="pointer-item-delete btn btn-default" type="button">
+            #{ glyphicon 'remove-circle'}
+          </button>
+        </span>
+      </li>
+    }
+  end
+
+
+  view :old_list_item do |args|
     %{
       <li class="pointer-li">
         #{ text_field_tag 'pointer_item', args[:pointer_item], :class=>'pointer-item-text' }

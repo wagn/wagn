@@ -7990,62 +7990,62 @@ card_changes_1536:
   value: '0'
 card_changes_1537:
   id: 4104
-  card_action_id: 7367
+  card_action_id: 7362
   field: 0
   value: 'style: common'
 card_changes_1538:
   id: 4105
-  card_action_id: 7367
+  card_action_id: 7362
   field: 1
   value: '943'
 card_changes_1539:
   id: 4107
-  card_action_id: 7367
+  card_action_id: 7362
   field: 3
   value: '0'
 card_changes_1540:
   id: 4108
-  card_action_id: 7361
+  card_action_id: 7356
   field: 0
   value: 'style: classic cards'
 card_changes_1541:
   id: 4109
-  card_action_id: 7361
+  card_action_id: 7356
   field: 1
   value: '943'
 card_changes_1542:
   id: 4111
-  card_action_id: 7361
+  card_action_id: 7356
   field: 3
   value: '0'
 card_changes_1543:
   id: 4112
-  card_action_id: 7375
+  card_action_id: 7373
   field: 0
   value: 'style: traditional'
 card_changes_1544:
   id: 4113
-  card_action_id: 7375
+  card_action_id: 7373
   field: 1
   value: '943'
 card_changes_1545:
   id: 4115
-  card_action_id: 7375
+  card_action_id: 7373
   field: 3
   value: '0'
 card_changes_1546:
   id: 4116
-  card_action_id: 7385
+  card_action_id: 7348
   field: 0
   value: simple skin
 card_changes_1547:
   id: 4117
-  card_action_id: 7385
+  card_action_id: 7348
   field: 1
   value: '944'
 card_changes_1548:
   id: 4119
-  card_action_id: 7385
+  card_action_id: 7348
   field: 3
   value: '0'
 card_changes_1549:
@@ -9394,17 +9394,17 @@ card_changes_1809:
   value: '0'
 card_changes_1810:
   id: 4567
-  card_action_id: 7393
+  card_action_id: 7397
   field: 0
   value: "*all+*script"
 card_changes_1811:
   id: 4568
-  card_action_id: 7393
+  card_action_id: 7397
   field: 1
   value: '47'
 card_changes_1812:
   id: 4570
-  card_action_id: 7393
+  card_action_id: 7397
   field: 3
   value: '0'
 card_changes_1813:
@@ -11128,37 +11128,48 @@ card_changes_2131:
     [[style: classic cards]]
 card_changes_2132:
   id: 5578
-  card_action_id: 7389
+  card_action_id: 7348
+  field: 2
+  value: |-
+    [[style: jquery-ui-smoothness]]
+    [[style: functional]]
+    [[style: standard]]
+    [[style: right sidebar]]
+    [[style: common]]
+    [[style: traditional]]
+    [[style: glyphicons]]
+    [[style: bootstrap compatible]]
+card_changes_2133:
+  id: 5583
+  card_action_id: 7353
   field: 0
   value: simple bootstrap skin
-card_changes_2133:
-  id: 5579
-  card_action_id: 7389
+card_changes_2134:
+  id: 5584
+  card_action_id: 7353
   field: 1
   value: '944'
-card_changes_2134:
-  id: 5581
-  card_action_id: 7389
-  field: 3
-  value: '0'
 card_changes_2135:
-  id: 5592
-  card_action_id: 7402
-  field: 0
-  value: 'style: bootstrap cards'
+  id: 5585
+  card_action_id: 7353
+  field: 2
+  value: |-
+    [[style: bootstrap]]
+    [[style: bootstrap theme]]
+    [[style: jquery-ui-smoothness]]
+    [[style: functional]]
+    [[style: standard]]
+    [[style: right sidebar]]
+    [[style: bootstrap common]]
+    [[style: bootstrap cards]]
 card_changes_2136:
-  id: 5593
-  card_action_id: 7402
-  field: 1
-  value: '943'
-card_changes_2137:
-  id: 5595
-  card_action_id: 7402
+  id: 5586
+  card_action_id: 7353
   field: 3
   value: '0'
-card_changes_2138:
-  id: 5600
-  card_action_id: 7361
+card_changes_2137:
+  id: 5592
+  card_action_id: 7356
   field: 2
   value: "/* \r\nThis stylesheet defines the core rules of the \"classic\" Wagn look.\r\n*/\r\n\r\nbody
     {\r\n  font: 12px verdana, arial, helvetica, sans-serif;\r\n  background: #ccc;\r\n
@@ -11169,7 +11180,8 @@ card_changes_2138:
     {\r\n    margin: 0;\r\n    color: #333333;\r\n    background: #8AB;\r\n    text-align:
     left;\r\n    .toggler {\r\n      top: 2px;\r\n    }\r\n  }\r\n  > .instruction
     {\r\n    color: #440;\r\n    background: #ddc;\r\n  }  \r\n}\r\n\r\n#menu {\r\n
-    \ background: #8AB;\r\n  a {\r\n    color: #000;\r\n  }\r\n}\r\n\r\n\r\n/*-------------
+    \ background: #8AB;\r\n  .navbar-default {\r\n    border: none;\r\n    background:
+    #8AB;\r\n    a {\r\n      color: #000;\r\n    }\r\n  }\r\n}\r\n\r\n\r\n/*-------------
     closed view -------*/\r\n.closed-view {\r\n  border: 0;\r\n  border-bottom: 1px
     solid #ccc;\r\n  -moz-border-radius: 0 !important;\r\n  border-radius: 0 !important;\r\n
     \ .card-header {\r\n    vertical-align: middle;\r\n    -moz-border-radius: 0 6px
@@ -11181,33 +11193,33 @@ card_changes_2138:
     #e5f0f5;\r\n  padding: 10px;\r\n}\r\nli {\r\n  margin-bottom: 2px;\r\n}\r\nhr
     {\r\n  margin: 10px\r\n}\r\n\r\n\r\n.card-notice {\r\n  color: #009;\r\n}\r\n.joint
     {\r\n  color: #960;\r\n}\r\n\r\n"
-card_changes_2139:
-  id: 5605
-  card_action_id: 7367
+card_changes_2138:
+  id: 5597
+  card_action_id: 7362
   field: 2
   value: "/*\r\nThis stylesheet outlines a host of commonly-used styles.  Unlike the
     \"standard\" stylesheet, this\r\nsheet will likely affect prominent pages seen
     even by casual users, so any major style tweaking will\r\nlikely alter some of
-    the style rules below.\r\n\r\nWe do not expect migrations to alter this card frequently\r\n*/\r\n\r\n\r\n$input_color:
+    the style rules below.\r\n\r\nWe do not expect migrations to alter this card frequently\r\n*/\r\n\r\n$input_color:
     #f9f9ed;\r\n$input_focus_color: #ffffee;\r\n$label_color: #666666;\r\n$border_color:
-    #999999;\r\n$header_color: #eeeeee;\r\n\r\n\r\ntextarea, input {\r\n  font-size:
-    1em;\r\n  line-height: 1.5em;\r\n}\r\n\r\n/* \r\nthe following gives users more
-    explicit control over spacing within tinyMCE\r\nbut leads to lots of empty paragraph
-    tags\r\n*/\r\n\r\n\r\nh1 {\r\n  font-size: 1.4em;\r\n}\r\nh2 {\r\n  font-size:
-    1.2em;\r\n}\r\n\r\nh1, h2, p {\r\n  margin: 0;\r\n}\r\n\r\nlabel,\r\n.navbox-item-label
-    {\r\n  color: $label_color;\r\n}\r\ntable {\r\n  border-collapse: collapse;\r\n}\r\nth
-    {\r\n  color: $label_color;\r\n  font-weight: normal;\r\n  font-style: italic;\r\n}\r\ntd,
-    th {\r\n  vertical-align: top;\r\n  padding: 0px;\r\n}\r\na:link,\r\na:visited
-    {\r\n\ttext-decoration: none;\r\n}\r\na:hover,\r\na:focus {\r\n  text-decoration:
-    underline;\r\n}\r\nform {\r\n  margin: 0px;\r\n  padding: 0px;\r\n}\r\n\r\n.card-frame
-    {\r\n  > .instruction {\r\n    background: #ccc;\r\n  }  \r\n}\r\n\r\n.card-header
-    > .instruction {\r\n  font-weight: normal;\r\n  font-size: 0.9em;\r\n}\r\n\r\n\r\n/*--------
-    Special Pages --------*/\r\n\r\n/*-- sign in page --*/\r\n\r\n#sign-in input#login_field,\r\n#sign-in
-    input#password,\r\n#forgot-password input#email {\r\n  width: 50%;\r\n}\r\n#forgot-password
-    {\r\n  margin-top: 40px;\r\n}\r\n\r\n\r\n\r\n\r\n/*----------- inputs ---------*/\r\n\r\n\r\ninput[type=text],\r\ninput[type=password],\r\ninput[type=checkbox],\r\ntextarea,\r\nselect
+    #999999;\r\n$header_color: #eeeeee;\r\n\r\ntextarea, input {\r\n  font-size: 1em;\r\n
+    \ line-height: 1.5em;\r\n}\r\n\r\n/* \r\nthe following gives users more explicit
+    control over spacing within tinyMCE\r\nbut leads to lots of empty paragraph tags\r\n*/\r\n\r\n\r\nh1
+    {\r\n  font-size: 1.4em;\r\n}\r\nh2 {\r\n  font-size: 1.2em;\r\n}\r\n\r\nh1, h2,
+    p {\r\n  margin: 0;\r\n}\r\n\r\nlabel,\r\n.navbox-item-label {\r\n  color: $label_color;\r\n}\r\ntable
+    {\r\n  border-collapse: collapse;\r\n}\r\nth {\r\n  color: $label_color;\r\n  font-weight:
+    normal;\r\n  font-style: italic;\r\n}\r\ntd, th {\r\n  vertical-align: top;\r\n
+    \ padding: 0px;\r\n}\r\na:link,\r\na:visited {\r\n\ttext-decoration: none;\r\n}\r\na:hover,\r\na:focus
+    {\r\n  text-decoration: underline;\r\n}\r\nform {\r\n  margin: 0px;\r\n  padding:
+    0px;\r\n}\r\n\r\n.card-frame {\r\n  > .instruction {\r\n    background: #ccc;\r\n
+    \ }  \r\n}\r\n\r\n.card-header > .instruction {\r\n  font-weight: normal;\r\n
+    \ font-size: 0.9em;\r\n}\r\n\r\n\r\n/*-------- Special Pages --------*/\r\n\r\n/*--
+    sign in page --*/\r\n\r\n#sign-in input#login_field,\r\n#sign-in input#password,\r\n#forgot-password
+    input#email {\r\n  width: 50%;\r\n}\r\n#forgot-password {\r\n  margin-top: 40px;\r\n}\r\n\r\n\r\n\r\n\r\n/*-----------
+    inputs ---------*/\r\n\r\ninput[type=text],\r\ninput[type=password],\r\ninput[type=checkbox],\r\ntextarea,\r\nselect
     {\r\n  border: 1px solid #aaa;\r\n  border-top: 2px solid #666;\r\n  border-left:
     2px solid #666;\r\n  background: $input_color;\r\n  :focus {\r\n    background:
-    $input_focus_color;    \r\n  }\r\n}\r\n.history-view > .card-content,\r\n.conflict-view,\r\nbody#tinymce
+    $input_focus_color;    \r\n  }\r\n}\r\n\r\n.history-view > .card-content,\r\n.conflict-view,\r\nbody#tinymce
     {\r\n  background: $input_color;\r\n}\r\nbody.mceContentBody {\r\n  margin: 4px;\r\n}\r\n\r\n\r\n/*-----------
     Change View ---------*/\r\n\r\n.change-view {\r\n  padding: 5px 0px;\r\n  border-bottom:
     1px dotted $border_color;\r\n  .change-card{\r\n    font-weight: bold;\r\n  }\r\n
@@ -11228,9 +11240,67 @@ card_changes_2139:
     8px;\r\n  margin: 0px;\r\n  input {\r\n    padding: 0px;\r\n  }\r\n  textarea
     {\r\n    margin-bottom:5px;\r\n  }\r\n}\r\n.w-comment-author {\r\n  font-style:
     italic;\r\n  margin-left: 10px;\r\n}\r\n"
+card_changes_2139:
+  id: 5602
+  card_action_id: 7368
+  field: 0
+  value: 'style: bootstrap common'
 card_changes_2140:
+  id: 5603
+  card_action_id: 7368
+  field: 1
+  value: '943'
+card_changes_2141:
+  id: 5604
+  card_action_id: 7368
+  field: 2
+  value: "/*\r\nThis stylesheet outlines a host of commonly-used styles.  Unlike the
+    \"standard\" stylesheet, this\r\nsheet will likely affect prominent pages seen
+    even by casual users, so any major style tweaking will\r\nlikely alter some of
+    the style rules below.\r\n\r\nWe do not expect migrations to alter this card frequently\r\n*/\r\n\r\n$input_color:
+    #f9f9ed;\r\n$input_focus_color: #ffffee;\r\n$label_color: #666666;\r\n$border_color:
+    #999999;\r\n$header_color: #eeeeee;\r\n\r\ntextarea, input {\r\n  font-size: 1em;\r\n
+    \ line-height: 1.5em;\r\n}\r\n\r\n/* \r\nthe following gives users more explicit
+    control over spacing within tinyMCE\r\nbut leads to lots of empty paragraph tags\r\n*/\r\n\r\n\r\nh1
+    {\r\n  font-size: 1.4em;\r\n}\r\nh2 {\r\n  font-size: 1.2em;\r\n}\r\n\r\nh1, h2,
+    p {\r\n  margin: 0;\r\n}\r\n\r\nlabel,\r\n.navbox-item-label {\r\n  color: $label_color;\r\n}\r\ntable
+    {\r\n  border-collapse: collapse;\r\n}\r\nth {\r\n  color: $label_color;\r\n  font-weight:
+    normal;\r\n  font-style: italic;\r\n}\r\ntd, th {\r\n  vertical-align: top;\r\n
+    \ padding: 0px;\r\n}\r\na:link,\r\na:visited {\r\n\ttext-decoration: none;\r\n}\r\na:hover,\r\na:focus
+    {\r\n  text-decoration: underline;\r\n}\r\nform {\r\n  margin: 0px;\r\n  padding:
+    0px;\r\n}\r\n\r\n.card-frame {\r\n  > .instruction {\r\n    background: #ccc;\r\n
+    \ }  \r\n}\r\n\r\n.card-header > .instruction {\r\n  font-weight: normal;\r\n
+    \ font-size: 0.9em;\r\n}\r\n\r\n\r\n/*-------- Special Pages --------*/\r\n\r\n/*--
+    sign in page --*/\r\n\r\n#sign-in input#login_field,\r\n#sign-in input#password,\r\n#forgot-password
+    input#email {\r\n  width: 50%;\r\n}\r\n#forgot-password {\r\n  margin-top: 40px;\r\n}\r\n\r\n\r\n\r\n.history-view
+    > .card-content,\r\n.conflict-view,\r\nbody#tinymce {\r\n  background: $input_color;\r\n}\r\nbody.mceContentBody
+    {\r\n  margin: 4px;\r\n}\r\n\r\n\r\n/*----------- Change View ---------*/\r\n\r\n.change-view
+    {\r\n  padding: 5px 0px;\r\n  border-bottom: 1px dotted $border_color;\r\n  .change-card{\r\n
+    \   font-weight: bold;\r\n  }\r\n  .last-update {\r\n    color: $label_color;\r\n
+    \ }\r\n}\r\n\r\n\r\n\r\n/*---------- ( Richtext )-------------*/\r\n\r\n.table-of-contents
+    {\r\n  background: $header_color;\r\n  -moz-border-radius: 10px;\r\n  border-radius:
+    10px;\r\n  padding: 4px;\r\n  margin: 5px 20px 20px 20px;\r\n  h5 {\r\n    margin:
+    0 0 0 40px;\r\n  }\r\n  ol {\r\n    list-style-type: upper-roman;\r\n    ol {\r\n
+    \     list-style-type: upper-alpha;\r\n      padding-left: 25px\r\n    }\r\n  }\r\n}\r\n\r\n\r\n/*
+    CARDTYPE_SPECIFIC ------------------------------*/\r\n\r\n\r\n.TYPE-toggle.card-content
+    {\r\n  font-style: italic;\r\n}\r\n\r\n.TYPE-image.card-content img {\r\n  max-width:
+    100%;\r\n}\r\n\r\n/*---------( Search ) ---------- */\r\n\r\n.search-keyword {\r\n
+    \ font-style: italic;\r\n}\r\n\r\n.search-count {\r\n  float: right;\r\n  color:
+    $label_color;\r\n}\r\n\r\n\r\n/*----------- (Account Request)--------------*/\r\n\r\n.invite-links
+    {\r\n  padding: 10px;\r\n  margin-top: 10px;\r\n  background: $header_color;\r\n
+    \ text-align: center;\r\n}\r\n.invite-links a {\r\n  font-weight: bold;\r\n  margin:
+    0 20px;\r\n}\r\n\r\n\r\n/*---------- comments --------------------------------------
+    */\r\n\r\n.comment-box {\r\n  padding: 8px;\r\n  margin: 0px;\r\n  input {\r\n
+    \   padding: 0px;\r\n  }\r\n  textarea {\r\n    margin-bottom:5px;\r\n  }\r\n}\r\n.w-comment-author
+    {\r\n  font-style: italic;\r\n  margin-left: 10px;\r\n}\r\n"
+card_changes_2142:
+  id: 5605
+  card_action_id: 7368
+  field: 3
+  value: '0'
+card_changes_2143:
   id: 5610
-  card_action_id: 7375
+  card_action_id: 7373
   field: 2
   value: "/*\r\nThis \"traditional\" styling is for backwards compatibility.  \r\nIt
     is not intended for use in Skins created after version 1.15; all such skins should
@@ -11282,52 +11352,50 @@ card_changes_2140:
     > .card-content p,\r\n.SELF-wagneer_menu > .card-content {\r\n  a.external-link
     {\r\n    list-style-type: none;\r\n    padding-right: 0 !important;\r\n    background:
     inherit;\r\n  }\r\n}\r\n"
-card_changes_2141:
-  id: 5615
-  card_action_id: 7381
-  field: 0
-  value: Bootstrap Layout
-card_changes_2142:
-  id: 5616
-  card_action_id: 7381
-  field: 1
-  value: '569'
-card_changes_2143:
-  id: 5617
-  card_action_id: 7381
-  field: 2
-  value: "<!DOCTYPE HTML>\r\n<html>\r\n  <head>\r\n<!-- Latest compiled and minified
-    CSS -->\r\n<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css\">\r\n\r\n<!--
-    Optional theme -->\r\n<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css\">\r\n\r\n<!--
-    Latest compiled and minified JavaScript -->\r\n<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js\"></script>\r\n
-    \   {{*head}}\r\n\r\n  </head>\r\n  \r\n  <body>\r\n    <nav id=\"menu\" class=\"navbar
-    navbar-default navbar-static-top\">\r\n     <div class=\"container\">\r\n        <ul
-    class=\"nav navbar-nav\">\r\n         <li>[[/ | Home]]</li>\r\n         <li>[[/recent
-    | Recent]]</li>\r\n         <li>{{*navbox}}</li>\r\n       </ul>   \r\n       <ul
-    class=\"nav navbar-nav navbar-right\"> \r\n          <li>{{*account links}}</li>\r\n
-    \      </ul>\r\n      </div>\r\n    </nav>\r\n    \r\n    <div id=\"primary\">\r\n
-    \     {{_main}}\r\n    </div>\r\n    \r\n    <div id=\"secondary\">\r\n      {{*sidebar}}\r\n
-    \   </div>\r\n  </body>\r\n</html>"
 card_changes_2144:
+  id: 5615
+  card_action_id: 7379
+  field: 0
+  value: 'style: bootstrap compatible'
+card_changes_2145:
+  id: 5616
+  card_action_id: 7379
+  field: 1
+  value: '943'
+card_changes_2146:
+  id: 5617
+  card_action_id: 7379
+  field: 2
+  value: "#menu {\r\n  height: 30px;\r\n  div.container-fluid{\r\n    display: block;\r\n
+    \ }\r\n  div.navbar-header {\r\n    display: none;\r\n  }\r\n  ul {\r\n    font-size:
+    14px;\r\n    margin-top: 5px;\r\n  }\r\n  li {\r\n    display: inline;\r\n  }\r\n
+    \ .navbar-left {\r\n    float: left;\r\n  }\r\n  .navbar-right {\r\n    float:
+    right;\r\n    margin-right: 15px;\r\n  }\r\n  .navbar-form {\r\n    width: 30%;\r\n
+    \   margin-top: 5px;\r\n    margin-left: 10px;\r\n    input {\r\n      width:
+    100%;\r\n    }\r\n  }\r\n}\r\n\r\n#primary {\r\n  clear: both;\r\n}\r\n\r\n\r\n//
+    removed from standard.scss\r\ninput, select, textarea {\r\n  padding: 0 1%;\r\n}\r\ninput,
+    select {\r\n  max-width: 97.5%;\r\n}"
+card_changes_2147:
   id: 5618
-  card_action_id: 7381
+  card_action_id: 7379
   field: 3
   value: '0'
-card_changes_2145:
-  id: 5619
-  card_action_id: 7382
+card_changes_2148:
+  id: 5623
+  card_action_id: 7385
   field: 0
   value: 'style: glyphicons'
-card_changes_2146:
-  id: 5620
-  card_action_id: 7382
+card_changes_2149:
+  id: 5624
+  card_action_id: 7385
   field: 1
   value: '942'
-card_changes_2147:
-  id: 5621
-  card_action_id: 7382
+card_changes_2150:
+  id: 5625
+  card_action_id: 7385
   field: 2
-  value: "@font-face {\r\n  font-family: 'Glyphicons Halflings';\r\n  src: url([[/assets/fonts/glyphicons-halflings-regular.eot]]);\r\n
+  value: "a .glyphicon {\r\n  color: #333;\r\n}\r\n\r\n@font-face {\r\n  font-family:
+    'Glyphicons Halflings';\r\n  src: url([[/assets/fonts/glyphicons-halflings-regular.eot]]);\r\n
     \ src: url([[/assets/fonts/glyphicons-halflings-regular.eot?#iefix]]) format('embedded-opentype'),
     url([[/assets/fonts/glyphicons-halflings-regular.woff2]]) format('woff2'), url([[/assets/fonts/glyphicons-halflings-regular.woff]])
     format('woff'), url([[/assets/fonts/glyphicons-halflings-regular.ttf]]) format('truetype'),
@@ -11496,130 +11564,24 @@ card_changes_2147:
     \"\\e257\";\r\n}\r\n.glyphicon-menu-right:before {\r\n  content: \"\\e258\";\r\n}\r\n.glyphicon-menu-down:before
     {\r\n  content: \"\\e259\";\r\n}\r\n.glyphicon-menu-up:before {\r\n  content:
     \"\\e260\";\r\n}"
-card_changes_2148:
-  id: 5622
-  card_action_id: 7382
-  field: 3
-  value: '0'
-card_changes_2149:
-  id: 5627
-  card_action_id: 7385
-  field: 2
-  value: |-
-    [[style: jquery-ui-smoothness]]
-    [[style: functional]]
-    [[style: standard]]
-    [[style: right sidebar]]
-    [[style: common]]
-    [[style: traditional]]
-    [[style: glyphicons]]
-    [[style: bootstrap compatible]]
-card_changes_2150:
-  id: 5631
-  card_action_id: 7389
-  field: 2
-  value: |-
-    [[style: bootstrap]]
-    [[style: bootstrap theme]]
-    [[style: jquery-ui-smoothness]]
-    [[style: functional]]
-    [[style: standard]]
-    [[style: right sidebar]]
-    [[style: common]]
-    [[style: bootstrap cards]]
 card_changes_2151:
-  id: 5634
-  card_action_id: 7392
-  field: 0
-  value: Default Layout
+  id: 5626
+  card_action_id: 7385
+  field: 3
+  value: '0'
 card_changes_2152:
-  id: 5635
-  card_action_id: 7392
-  field: 1
-  value: '569'
+  id: 5631
+  card_action_id: 7391
+  field: 0
+  value: 'style: bootstrap cards'
 card_changes_2153:
-  id: 5636
-  card_action_id: 7392
-  field: 2
-  value: "<!DOCTYPE HTML>\r\n<html>\r\n  <head>\r\n    {{*head}}\r\n  </head>\r\n
-    \ \r\n  <body>\r\n    <div id=\"menu\">\r\n      {{*page header}}\r\n    </div>\r\n
-    \   \r\n    <div id=\"primary\">\r\n      {{_main}}\r\n    </div>\r\n    \r\n
-    \   <div id=\"secondary\">\r\n      {{*sidebar}}\r\n    </div>\r\n  </body>\r\n</html>"
-card_changes_2154:
-  id: 5637
-  card_action_id: 7392
-  field: 3
-  value: '0'
-card_changes_2155:
-  id: 5638
-  card_action_id: 7393
-  field: 2
-  value: |-
-    [[script: jquery]]
-    [[script: tinymce]]
-    [[script: slot]]
-    [[script: card menu]]
-    [[script: jquery helper]]
-    [[script: bootstrap]]
-    [[script: ace]]
-card_changes_2156:
-  id: 5640
-  card_action_id: 7395
-  field: 0
-  value: "*page header"
-card_changes_2157:
-  id: 5641
-  card_action_id: 7395
-  field: 1
-  value: '50'
-card_changes_2158:
-  id: 5642
-  card_action_id: 7395
-  field: 2
-  value: "<div class=\"container-fluid\">\r\n  <div class=\"navbar-header\">\r\n    <button
-    type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#navbar-collapse-1\">\r\n
-    \     <span class=\"sr-only\">Toggle navigation</span>\r\n        <span class=\"icon-bar\"></span>\r\n
-    \       <span class=\"icon-bar\"></span>\r\n        <span class=\"icon-bar\"></span>\r\n
-    \     </button>\r\n  </div>\r\n  <div class=\"collapse navbar-collapse\" id=\"navbar-collapse-1\">\r\n
-    \   <ul class=\"nav navbar-nav navbar-left\">\r\n      <li>[[/ | Home]]</li>\r\n
-    \     <li>[[/recent | Recent]]</li>\r\n    </ul>   \r\n    {{*navbox|navbar_left}}\r\n
-    \   \r\n    {{*account links|navbar_right}}\r\n  </div>\r\n</div>"
-card_changes_2159:
-  id: 5643
-  card_action_id: 7395
-  field: 3
-  value: '0'
-card_changes_2160:
-  id: 5644
-  card_action_id: 7396
-  field: 0
-  value: 'style: bootstrap compatible'
-card_changes_2161:
-  id: 5645
-  card_action_id: 7396
+  id: 5632
+  card_action_id: 7391
   field: 1
   value: '943'
-card_changes_2162:
-  id: 5646
-  card_action_id: 7396
-  field: 2
-  value: "#menu {\r\n  height: 30px;\r\n  div.container-fluid{\r\n    display: block;\r\n
-    \ }\r\n  div.navbar-header {\r\n    display: none;\r\n  }\r\n  ul {\r\n    font-size:
-    14px;\r\n    margin-top: 5px;\r\n  }\r\n  li {\r\n    display: inline;\r\n  }\r\n
-    \ .navbar-left {\r\n    float: left;\r\n  }\r\n  .navbar-right {\r\n    float:
-    right;\r\n    margin-right: 15px;\r\n  }\r\n  .navbar-form {\r\n    width: 30%;\r\n
-    \   margin-top: 5px;\r\n    margin-left: 10px;\r\n    input {\r\n      width:
-    100%;\r\n    }\r\n  }\r\n}\r\n\r\n#primary {\r\n  clear: both;\r\n}\r\n\r\n\r\n//
-    removed from standard.scss\r\ninput, select, textarea {\r\n  padding: 0 1%;\r\n}\r\ninput,
-    select {\r\n  max-width: 97.5%;\r\n}"
-card_changes_2163:
-  id: 5647
-  card_action_id: 7396
-  field: 3
-  value: '0'
-card_changes_2164:
-  id: 5652
-  card_action_id: 7402
+card_changes_2154:
+  id: 5633
+  card_action_id: 7391
   field: 2
   value: "#menu {\r\n  margin-bottom: 30px;\r\n  \r\n  .navbox-form {\r\n    width:
     30%;\r\n  }\r\n  .form-group {\r\n    width: 100%;\r\n    input {\r\n      width:
@@ -11634,266 +11596,334 @@ card_changes_2164:
     \     }\r\n    }\r\n  }  \r\n}\r\n\r\n\r\n\r\n.closed-content {\r\n  font-size:
     11px !important;\r\n}\r\n\r\n\r\n/* english content in css.  ugh */\r\n.search-no-results:after
     {\r\n  content:'0 results';\r\n}\r\n.closed-content .search-no-results:after {\r\n
-    \ content:'';\r\n}\r\n\r\nlegend {\r\n  border: 0;\r\n}\r\n.ui-menu-icons .ui-menu-item
-    a {\r\n\tpadding-left: 0;\r\n}\r\n.item-closed .card-menu-link .glyphicon-cog
-    {\r\n  top: -2px;\r\n}\r\n\r\n"
+    \ content:'';\r\n}\r\n\r\nlegend {\r\n  h2 {\r\n    font-size: 0.7em;\r\n  }\r\n
+    \ border: 0;\r\n}\r\n\r\n\r\n"
+card_changes_2155:
+  id: 5634
+  card_action_id: 7391
+  field: 3
+  value: '0'
+card_changes_2156:
+  id: 5639
+  card_action_id: 7396
+  field: 0
+  value: Default Layout
+card_changes_2157:
+  id: 5640
+  card_action_id: 7396
+  field: 1
+  value: '569'
+card_changes_2158:
+  id: 5641
+  card_action_id: 7396
+  field: 2
+  value: "<!DOCTYPE HTML>\r\n<html>\r\n  <head>\r\n    {{*head}}\r\n  </head>\r\n
+    \ \r\n  <body>\r\n    <div id=\"menu\">\r\n      {{*page header}}\r\n    </div>\r\n
+    \   \r\n    <div id=\"primary\">\r\n      {{_main}}\r\n    </div>\r\n    \r\n
+    \   <div id=\"secondary\">\r\n      {{*sidebar}}\r\n    </div>\r\n  </body>\r\n</html>"
+card_changes_2159:
+  id: 5642
+  card_action_id: 7396
+  field: 3
+  value: '0'
+card_changes_2160:
+  id: 5643
+  card_action_id: 7397
+  field: 2
+  value: |-
+    [[script: jquery]]
+    [[script: tinymce]]
+    [[script: slot]]
+    [[script: card menu]]
+    [[script: jquery helper]]
+    [[script: bootstrap]]
+    [[script: ace]]
+card_changes_2161:
+  id: 5645
+  card_action_id: 7399
+  field: 0
+  value: "*page header"
+card_changes_2162:
+  id: 5646
+  card_action_id: 7399
+  field: 1
+  value: '50'
+card_changes_2163:
+  id: 5647
+  card_action_id: 7399
+  field: 2
+  value: "<div class=\"navbar navbar-default navbar-static-top\">\r\n  <div class=\"container-fluid\">\r\n
+    \   <div class=\"navbar-header\">\r\n      <button type=\"button\" class=\"navbar-toggle
+    collapsed\" data-toggle=\"collapse\" data-target=\"#navbar-collapse-1\">\r\n        <span
+    class=\"sr-only\">Toggle navigation</span>\r\n          <span class=\"icon-bar\"></span>\r\n
+    \         <span class=\"icon-bar\"></span>\r\n          <span class=\"icon-bar\"></span>\r\n
+    \       </button>\r\n    </div>\r\n    <div class=\"collapse navbar-collapse\"
+    id=\"navbar-collapse-1\">\r\n      <ul class=\"nav navbar-nav navbar-left\">\r\n
+    \       <li>[[/ | Home]]</li>\r\n        <li>[[/recent | Recent]]</li>\r\n      </ul>
+    \  \r\n      {{*navbox|navbar_left}}\r\n    \r\n      {{*account links|navbar_right}}\r\n
+    \   </div>\r\n  </div>\r\n</div>"
+card_changes_2164:
+  id: 5648
+  card_action_id: 7399
+  field: 3
+  value: '0'
 card_changes_2165:
-  id: 5653
-  card_action_id: 7407
+  id: 5649
+  card_action_id: 7400
   field: 0
   value: 'style: bootstrap theme'
 card_changes_2166:
-  id: 5654
-  card_action_id: 7407
+  id: 5650
+  card_action_id: 7400
   field: 1
   value: '942'
 card_changes_2167:
-  id: 5655
-  card_action_id: 7407
+  id: 5651
+  card_action_id: 7400
   field: 2
   value: ''
 card_changes_2168:
-  id: 5656
-  card_action_id: 7407
+  id: 5652
+  card_action_id: 7400
   field: 3
   value: '0'
 card_changes_2169:
-  id: 5661
-  card_action_id: 7412
+  id: 5657
+  card_action_id: 7405
   field: 0
   value: 'style: bootstrap'
 card_changes_2170:
-  id: 5662
-  card_action_id: 7412
+  id: 5658
+  card_action_id: 7405
   field: 1
   value: '942'
 card_changes_2171:
-  id: 5663
-  card_action_id: 7412
+  id: 5659
+  card_action_id: 7405
   field: 2
   value: ''
 card_changes_2172:
-  id: 5664
-  card_action_id: 7412
+  id: 5660
+  card_action_id: 7405
   field: 3
   value: '0'
 card_changes_2173:
-  id: 5669
-  card_action_id: 7417
+  id: 5665
+  card_action_id: 7410
   field: 0
   value: 'script: bootstrap'
 card_changes_2174:
-  id: 5670
-  card_action_id: 7417
+  id: 5666
+  card_action_id: 7410
   field: 1
   value: '3'
 card_changes_2175:
-  id: 5671
-  card_action_id: 7417
+  id: 5667
+  card_action_id: 7410
   field: 2
   value: ''
 card_changes_2176:
-  id: 5672
-  card_action_id: 7417
+  id: 5668
+  card_action_id: 7410
   field: 3
   value: '0'
 card_changes_2177:
-  id: 5673
-  card_action_id: 7420
+  id: 5669
+  card_action_id: 7413
   field: 0
   value: Basic+*type
 card_changes_2178:
-  id: 5674
-  card_action_id: 7420
+  id: 5670
+  card_action_id: 7413
   field: 1
   value: '259'
 card_changes_2179:
-  id: 5675
-  card_action_id: 7420
+  id: 5671
+  card_action_id: 7413
   field: 2
   value: '{"type":"_self"}'
 card_changes_2180:
-  id: 5676
-  card_action_id: 7420
+  id: 5672
+  card_action_id: 7413
   field: 3
   value: '0'
 card_changes_2181:
-  id: 5693
-  card_action_id: 7425
+  id: 5689
+  card_action_id: 7418
   field: 0
   value: Pointer+*type
 card_changes_2182:
-  id: 5694
-  card_action_id: 7425
+  id: 5690
+  card_action_id: 7418
   field: 1
   value: '259'
 card_changes_2183:
-  id: 5695
-  card_action_id: 7425
+  id: 5691
+  card_action_id: 7418
   field: 2
   value: '{"type":"_self"}'
 card_changes_2184:
-  id: 5696
-  card_action_id: 7425
+  id: 5692
+  card_action_id: 7418
   field: 3
   value: '0'
 card_changes_2185:
-  id: 5705
-  card_action_id: 7428
+  id: 5701
+  card_action_id: 7421
   field: 0
   value: Phrase+*type
 card_changes_2186:
-  id: 5706
-  card_action_id: 7428
+  id: 5702
+  card_action_id: 7421
   field: 1
   value: '259'
 card_changes_2187:
-  id: 5707
-  card_action_id: 7428
+  id: 5703
+  card_action_id: 7421
   field: 2
   value: '{"type":"_self"}'
 card_changes_2188:
-  id: 5708
-  card_action_id: 7428
+  id: 5704
+  card_action_id: 7421
   field: 3
   value: '0'
 card_changes_2189:
-  id: 5717
-  card_action_id: 7431
+  id: 5713
+  card_action_id: 7424
   field: 0
   value: PlainText+*type
 card_changes_2190:
-  id: 5718
-  card_action_id: 7431
+  id: 5714
+  card_action_id: 7424
   field: 1
   value: '259'
 card_changes_2191:
-  id: 5719
-  card_action_id: 7431
+  id: 5715
+  card_action_id: 7424
   field: 2
   value: '{"type":"_self"}'
 card_changes_2192:
-  id: 5720
-  card_action_id: 7431
+  id: 5716
+  card_action_id: 7424
   field: 3
   value: '0'
 card_changes_2193:
-  id: 5729
-  card_action_id: 7434
+  id: 5725
+  card_action_id: 7427
   field: 0
   value: Search+*type
 card_changes_2194:
-  id: 5730
-  card_action_id: 7434
+  id: 5726
+  card_action_id: 7427
   field: 1
   value: '259'
 card_changes_2195:
-  id: 5731
-  card_action_id: 7434
+  id: 5727
+  card_action_id: 7427
   field: 2
   value: '{"type":"_self"}'
 card_changes_2196:
-  id: 5732
-  card_action_id: 7434
+  id: 5728
+  card_action_id: 7427
   field: 3
   value: '0'
 card_changes_2197:
-  id: 5741
-  card_action_id: 7437
+  id: 5737
+  card_action_id: 7430
   field: 0
   value: Image+*type
 card_changes_2198:
-  id: 5742
-  card_action_id: 7437
+  id: 5738
+  card_action_id: 7430
   field: 1
   value: '259'
 card_changes_2199:
-  id: 5743
-  card_action_id: 7437
+  id: 5739
+  card_action_id: 7430
   field: 2
   value: '{"type":"_self"}'
 card_changes_2200:
-  id: 5744
-  card_action_id: 7437
+  id: 5740
+  card_action_id: 7430
   field: 3
   value: '0'
 card_changes_2201:
-  id: 5777
-  card_action_id: 7446
+  id: 5773
+  card_action_id: 7439
   field: 0
   value: Date+*type
 card_changes_2202:
-  id: 5778
-  card_action_id: 7446
+  id: 5774
+  card_action_id: 7439
   field: 1
   value: '259'
 card_changes_2203:
-  id: 5779
-  card_action_id: 7446
+  id: 5775
+  card_action_id: 7439
   field: 2
   value: '{"type":"_self"}'
 card_changes_2204:
-  id: 5780
-  card_action_id: 7446
+  id: 5776
+  card_action_id: 7439
   field: 3
   value: '0'
 card_changes_2205:
-  id: 5789
-  card_action_id: 7449
+  id: 5785
+  card_action_id: 7442
   field: 0
   value: File+*type
 card_changes_2206:
-  id: 5790
-  card_action_id: 7449
+  id: 5786
+  card_action_id: 7442
   field: 1
   value: '259'
 card_changes_2207:
-  id: 5791
-  card_action_id: 7449
+  id: 5787
+  card_action_id: 7442
   field: 2
   value: '{"type":"_self"}'
 card_changes_2208:
-  id: 5792
-  card_action_id: 7449
+  id: 5788
+  card_action_id: 7442
   field: 3
   value: '0'
 card_changes_2209:
-  id: 5801
-  card_action_id: 7452
+  id: 5797
+  card_action_id: 7445
   field: 0
   value: Number+*type
 card_changes_2210:
-  id: 5802
-  card_action_id: 7452
+  id: 5798
+  card_action_id: 7445
   field: 1
   value: '259'
 card_changes_2211:
-  id: 5803
-  card_action_id: 7452
+  id: 5799
+  card_action_id: 7445
   field: 2
   value: '{"type":"_self"}'
 card_changes_2212:
-  id: 5804
-  card_action_id: 7452
+  id: 5800
+  card_action_id: 7445
   field: 3
   value: '0'
 card_changes_2213:
-  id: 5821
-  card_action_id: 7457
+  id: 5817
+  card_action_id: 7450
   field: 0
   value: Toggle+*type
 card_changes_2214:
-  id: 5822
-  card_action_id: 7457
+  id: 5818
+  card_action_id: 7450
   field: 1
   value: '259'
 card_changes_2215:
-  id: 5823
-  card_action_id: 7457
+  id: 5819
+  card_action_id: 7450
   field: 2
   value: '{"type":"_self"}'
 card_changes_2216:
-  id: 5824
-  card_action_id: 7457
+  id: 5820
+  card_action_id: 7450
   field: 3
   value: '0'

@@ -47,7 +47,7 @@ format :html do
   end
   
   def frame args={}
-    wrap args.merge(:slot_class=>'card-frame') do
+    wrap args.reverse_merge(:slot_class=>'card-frame') do
       %{
         #{ _render_header args }
         #{ %{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader] }
@@ -71,4 +71,19 @@ format :html do
     return content if params[:layout]=='none'
     %{<div id="main">#{content}</div>}
   end
+  
+  def wrap_with tag, html_args={}
+    content_tag( tag, html_args ) do 
+      output( yield )
+    end
+  end
+  
+  def wrap_each_with tag, args={}
+    yield(args).map do |item|
+      wrap_with tag, args do
+        item
+      end
+    end.join "\n"
+  end
+  
 end

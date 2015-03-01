@@ -1,8 +1,11 @@
 source 'http://rubygems.org'
 
-gem 'wagn'<%=        ", :path=>'#{@gem_path}/wagn'"  if @gem_path.present? %>
-gem 'decko-rails'<%= ", :path=>'#{@gem_path}/decko-rails'" if @gem_path.present? %>
-gem 'card'<%=        ", :path=>'#{@gem_path}/card'"  if @gem_path.present? %>, :require => false
+<% if @gem_path %>
+gem 'wagn',        :path=>"<%= @gemfile_gem_path %>/wagn"
+gem 'card',        :path=>"<%= @gemfile_gem_path %>/card", :require => false
+<% else %>
+gem 'wagn'
+<% end %>
 
 <%= database_gemfile_entry -%>
 
@@ -34,11 +37,11 @@ group :test, :development do
   # gem 'pry-rescue'
   # gem 'pry-stack_explorer'
   if RUBY_VERSION =~ /^2/
-		gem 'byebug' 
-    # gem 'pry-byebug'
-	else
-		gem 'debugger'
-	end
+  gem 'byebug' 
+  # gem 'pry-byebug'
+  else
+    gem 'debugger'
+  end
 end
 
 <% end -%>
@@ -63,11 +66,9 @@ group :test do
   gem 'spork', '>=0.9'                                           
   gem 'rr'#, '=1.0.0'
 	gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
-   
-  # gem 'guard-rspec', '~> 4.2'    # trigger test runs based on file edits
-                                   # currently not compatible with spring-watcher-listen gem, 
-                                   # is supposed to be fixed in the next spring-watcher-listen release
-                                   
+    
+  # gem 'guard-rspec', '~> 4.2'           # trigger test runs based on file edits, 
+                                          # currently not compatible with spring-watcher-listen
   if RUBY_PLATFORM =~ /darwin/
     # gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
     # gem 'rspec-legacy_formatters'

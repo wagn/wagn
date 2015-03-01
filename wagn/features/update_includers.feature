@@ -1,15 +1,15 @@
 Feature: Updates for Children of watched cards
   In order to keep track of changes that are important to me
   As an Editor
-  I want to be notified when someone changes a child of a card I'm watching  #'
+  I want to be notified when someone changes a child of a card I'm watching
 
   #should this be in watch?
 
   Background:
     Given I am signed in as Joe User
     And I create Book card "Ulysses"
-    And Joe Camel is watching "Ulysses"
-    And Joe Admin is watching "Book"
+    And Joe Camel is watching "Ulysses+*self"
+    And Joe Admin is watching "Book+*type"
 
   Scenario: Watcher should be notified of updates to included plus card
     When I create card "Ulysses+author" with content "James Joyce"
@@ -46,12 +46,12 @@ Feature: Updates for Children of watched cards
     And I create Froot card "Banana" with plusses:
       |color|flavor|
       |yellow|sweet|
-    And Joe Camel is watching "Banana+color"
+    And Joe Camel is watching "Banana+color+*self"
     When I edit "Banana" with plusses:
       |color|flavor|
       |spotted|mushy|
     Then Joe Camel should be notified that "Joe User updated \"Banana\""
-    When Joe Camel is watching "Banana"
+    When Joe Camel is watching "Banana+*self"
     And I wait a sec
     And I edit "Banana" with plusses:
       |color|flavor|
@@ -67,7 +67,7 @@ Feature: Updates for Children of watched cards
   Scenario: Watching a plus card & including card on regular edit
     When I create card "Ulysses+author" with content "Joyce"
     Then Joe Camel should be notified that "Joe User created \"Ulysses\+author\""
-    When Joe Camel is watching "Ulysses+author"
+    When Joe Camel is watching "Ulysses+author+*self"
     And I edit "Ulysses+author" setting content to "Jim"
     Then Joe Camel should be notified that "Joe User updated \"Ulysses\+author\""
 

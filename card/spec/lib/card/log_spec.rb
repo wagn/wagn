@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 describe Card::Log::Request do
   before do

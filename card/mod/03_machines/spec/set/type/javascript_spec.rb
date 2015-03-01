@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 describe Card::Set::Type::JavaScript do
   let(:js)                    { 'alert( "Hi" );'    }
   let(:compressed_js)         { 'alert("Hi");'      }

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'card/mailer'
 
 describe Card::Set::Type::EmailTemplate do
@@ -68,6 +69,12 @@ describe Card::Set::Type::EmailTemplate do
         create_field '*cc', :content => "[[joe@user.com]]", :type=>'Pointer'
         expect( mailconfig[:cc] ).to eq 'joe@user.com'
       end
+      
+
+      #it 'handles email syntax in pointer values' do
+      #  create_field '*cc', :content => "[[Joe User <joe@user.com>]]", :type=>'Pointer'
+      #  expect( mailconfig[:cc] ).to eq 'Joe User <joe@user.com>'
+      #end
       
       it 'handles link to email card' do
         create_field '*cc', :content => "[[Joe User+*email]]", :type=>'Pointer'

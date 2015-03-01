@@ -43,8 +43,8 @@ module <%= app_const_base %>
     # config.paths['files'] = 'files'
     # where uploaded files are actually stored. (eg Image and File cards)
 
-    # config.paths['local-mod'] = 'mod'
-    # where mods are stored
+    # config.paths['mod'] << 'my-mod-dir'
+    # add a new directory for code customizations, or "mods"
 
     # config.allow_inline_styles = false
     # don't strip style attributes (not recommended)

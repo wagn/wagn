@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 describe Card::Set::Type::Css do
   let(:css) { '#box { display: block }' }
@@ -11,6 +12,7 @@ describe Card::Set::Type::Css do
       assert_view_select css_card.format.render_core, 'div[class=CodeRay]'
     end
   end
+  
 
   it_behaves_like "machine input"  do
     let(:create_machine_input_card) { Card.gimme! "test css", :type => :css, :content => css }

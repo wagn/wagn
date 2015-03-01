@@ -1,8 +1,10 @@
 # -*- encoding : utf-8 -*-
 
 class Card
+  #remove_const :Set if const_defined?(:Set, false)
+  
   module Set
-
+   
     mattr_accessor :modules, :traits
     @@modules = { :base=>[], :base_format=>{}, :nonbase=>{}, :nonbase_format=>{} }
    
@@ -216,7 +218,7 @@ class Card
         # If yes remove this comment.
 
         to_file = "#{Cardio.paths['tmp/set'].first}/#{set_pattern}/#{seq}-#{anchors * '-'}.rb"
-        anchor_modules = anchors.map { |a| "module #{a.camelize};" } * ''
+        anchor_modules = anchors.map { |a| "module #{a.camelize};" } * ' '
         file_content = <<EOF
 # -*- encoding : utf-8 -*-
 class Card; module Set; module #{set_pattern.camelize}; #{anchor_modules}

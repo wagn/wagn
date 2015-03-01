@@ -103,12 +103,6 @@ When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |usern
   end
 end
 
-When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content$/ do |username, cardtype, cardname, content|
-  create_card(username, cardtype, cardname, content) do
-    fill_in("card[content]", :with=>content)
-  end
-end
-
 When /^(.*) creates?\s*([^\s]*) card "([^"]*)"$/ do |username, cardtype, cardname|
   create_card(username,cardtype,cardname)
 end
@@ -135,7 +129,14 @@ end
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
   user = Card::Auth.current.name if user == "I"
   signed_in_as user do
-    step "the card #{user}+*following contains \"[[#{cardname}]]\""
+    step "the card #{cardname}+#{user}+*follow contains \"[[always]]\""
+  end
+end
+
+Given /^(.*) (is|am) not watching "([^\"]+)"$/ do |user, verb, cardname|
+  user = Card::Auth.current.name if user == "I"
+  signed_in_as user do
+    step "the card #{cardname}+#{user}+*follow contains \"[[never]]\""
   end
 end
 
@@ -233,6 +234,22 @@ Then /the card (.*) should not contain "([^\"]*)"$/ do |cardname, content|
   end
 end
 
+Then /the card (.*) should point to "([^\"]*)"$/ do |cardname, content|
+  visit path_to("card #{cardname}")
+  within scope_of("pointer card content") do
+    expect(page).to have_content(content)
+  end
+end
+
+Then /the card (.*) should not point to "([^\"]*)"$/ do |cardname, content|
+  visit path_to("card #{cardname}")
+  within scope_of("pointer card content") do
+    expect(page).not_to have_content(content)
+  end
+end
+
+
+
 Then /^In (.*) I should see "([^\"]*)"$/ do |section, text|
   within scope_of(section) do
     if text.index('|')
@@ -282,9 +299,8 @@ Then /^I should see$/ do |text|
   expect(page).to have_content(text)
 end
 
-Then /^I should see "([^\"]*)" in (.*)$/ do |text, css_class|
+Then /^I should see "([^\"]*)" in color (.*)$/ do |text, css_class|
   page.has_css?(".diff-#{css_class}", text: text)
-  #page.should have_content(text)
 end
 
 When /^I fill in "([^\"]*)" with$/ do |field, value|

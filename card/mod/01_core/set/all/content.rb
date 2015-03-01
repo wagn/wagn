@@ -16,7 +16,7 @@ def content=(value)
 end
 
 def raw_content
-  structure ? template.db_content : db_content
+  structure ? template.db_content : content
 end
 
 
@@ -24,6 +24,10 @@ format do
   def chunk_list #override to customize by set
     :default
   end
+end
+
+def label
+  name
 end
 
 def last_change_on(field, opts={})

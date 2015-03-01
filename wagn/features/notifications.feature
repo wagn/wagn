@@ -3,31 +3,29 @@ Feature: Notifications
   Users should be able to track changes to Wagn cards from their email
 
   Scenario: Watching a Card
-    Given Joe Admin is watching "All Eyes On Me"
-    And I am signed in as Joe Admin
+    Given Joe Admin is watching "All Eyes On Me+*self"
     When Joe User edits "All Eyes On Me" setting content to "Boo"
     Then Joe Admin should be notified that "Joe User updated \"All Eyes On Me\""
-    And the card Joe Admin+*following should contain "All Eyes On Me"
-# FIXME:need multiline matching
-    #And He should see "was just edited by Joe User" in the email
-    #And He should see "You received this email because you're watching Home" in the email
-    When I follow "Unfollow" in the email
-    Then the card Joe Admin+*following should not contain "All Eyes On Me"
+    And the card All Eyes On Me+*followers should point to "Joe Admin"
+    And I should see "was just updated by Joe User" in the email body
+    And I should see |You received this email because you're following "All Eyes On Me"| in the email body
+    When I am signed in as Joe Admin
+    And I follow "Unfollow" in the email
+    Then the card All Eyes On Me+*followers should not point to "Joe Admin"
 
   Scenario: Watching a Type Card
-    Given Joe Admin is watching "Phrase"
-    And I am signed in as Joe Admin
+    Given Joe Admin is watching "Phrase+*type"
     When Joe User creates Phrase card "Foo" with content "bar"
     Then Joe Admin should be notified that "Joe User created \"Foo\""
-    And the card Joe Admin+*following should contain "Phrase"
-    # FIXME:need multiline matching
-    #And He should see "was just added by Joe User" in the email
-    #And He should see "You received this email because you're watching Phrase cards" in the email
-    When I follow "Unfollow" in the email
-    Then the card Joe Admin+*following should not contain "Phrase"
+    And the card Phrase+*type+*followers should point to "Joe Admin"
+    And I should see "was just created by Joe User" in the email body
+    And I should see |You received this email because you're following "all "Phrases""| in the email body  #FIXME these double quotes are ugly
+    When I am signed in as Joe Admin
+    And I follow "Unfollow" in the email
+    Then the card Phrase+*type+*followers should not point to "Joe Admin"
 
   Scenario: Watching a Card
-    Given Joe User is watching "Home"
+    Given Joe User is watching "Home+*self"
     When Joe Admin deletes "Home"
     Then Joe User should be notified that "Joe Admin deleted \"Home\""
 

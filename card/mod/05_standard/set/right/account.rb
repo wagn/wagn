@@ -16,7 +16,7 @@ def pending?  ; status=='pending' end
 def authenticate_by_token val
   tcard = token_card                               or return :token_not_found
   token == val                                     or return :incorrect_token
-  tcard.updated_at > Cardio.config.token_expiry.ago  or return :token_expired  # > means "after"
+  tcard.updated_at > Card.config.token_expiry.ago  or return :token_expired  # > means "after"
   left and left.accountable?                       or return :illegal_account  #(overkill?)
   Auth.as_bot { tcard.delete! }
   left.id
@@ -25,19 +25,19 @@ end
 
 format do
   view :verify_url do |args|
-    card_url "/update/#{card.cardname.left_name.url_key}?token=#{card.token}"
+    card_url "update/#{card.cardname.left_name.url_key}?token=#{card.token}"
   end
 
   view :verify_days do |args|
-    ( Cardio.config.token_expiry / 1.day ).to_s
+    ( Card.config.token_expiry / 1.day ).to_s
   end
 
   view :reset_password_url do |args|
-    card_url "/update/#{card.cardname.url_key}?reset_token=#{card.token_card.refresh(true).content}"
+    card_url "update/#{card.cardname.url_key}?reset_token=#{card.token_card.refresh(true).content}"
   end
 
   view :reset_password_days do |args|
-    ( Cardio.config.token_expiry / 1.day ).to_s
+    ( Card.config.token_expiry / 1.day ).to_s
   end
 end
 
@@ -157,14 +157,17 @@ def changes_visible? act
   return false
 end
 
-def send_change_notice act, followed_card_name
+def send_change_notice act, followed_set, follow_option
   if changes_visible?(act) 
-    Card[:follower_notification_email].deliver(
-      :context   => act.card,
-      :to        => email,
-      :follower  => left.name, 
-      :followed  => followed_card_name,
-    )
+    Auth.as(left.id) do
+      Card[:follower_notification_email].deliver(
+        :context       => act.card,
+        :to            => email,
+        :follower      => left.name, 
+        :followed_set  => followed_set,
+        :follow_option => follow_option
+      )
+    end
   end
 end
 

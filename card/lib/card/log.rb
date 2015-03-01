@@ -1,12 +1,11 @@
 require 'csv'
 
-
 class Card::Log
 
   class Request
 
     def self.path
-      path = (Wagn.paths['request_log'] && Wagn.paths['request_log'].first) || File.dirname(Wagn.paths['log'].first)
+      path = (Card.paths['request_log'] && Card.paths['request_log'].first) || File.dirname(Card.paths['log'].first)
       filename = "#{Date.today}_#{Rails.env}.csv"
       File.join path, filename
     end
@@ -304,11 +303,9 @@ class Card::Log
       def to_s!
         @to_s ||= begin
           msg = indent
-          msg += if @duration
-              "(%d.2ms) #{@message}" % @duration
-            else
-              @message
-            end
+          msg += "(%d.2ms) " % @duration if @duration
+          msg += @message if @message
+
           if @details
             msg +=  ", " + @details.to_s.gsub( "\n", "\n#{ indent(false) }#{' '* TAB_SIZE}" )
           end

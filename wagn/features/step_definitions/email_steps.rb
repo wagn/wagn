@@ -95,12 +95,12 @@ Then /^(?:I|they) should see \/([^"]*?)\/ in the email subject$/ do |text|
   expect(current_email).to have_subject(Regexp.new(text))
 end
 
-Then /^(?:I|they) should see "([^"]*?)" in the email body$/ do |text|
-  expect(current_email.body).to include(text)
+Then /^(?:I|they) should see [\|"](.*)[\|"] in the email body$/ do |text|
+  expect(current_email.text_part.body.raw_source).to include("#{text}")
 end
 
 Then /^(?:I|they) should see \/([^"]*?)\/ in the email body$/ do |text|
-  expect(current_email.body).to match(Regexp.new(text))
+  expect(current_email.html_part.body).to match(Regexp.new(text))
 end
 
 Then /^(?:I|they) should see the email delivered from "([^"]*?)"$/ do |text|

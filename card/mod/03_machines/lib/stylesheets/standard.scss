@@ -90,11 +90,18 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 .navbox-item-label {
   font-size: 10px;
   width: 50px;
-  padding: 3px 0 3px 25px;
-  > a.ui-icon {
-    padding: 0;
+  padding: 3px 0 3px 5px;
+}
+
+.ui-menu-item {
+  .glyphicon {
+    float: left;
+    font-size: 10px;
+    padding: 3px 0 3px 0px;
   }
 }
+
+
 
 
 /*-------------------- */
@@ -102,7 +109,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 /*-------------------- */
 
 .closed-view {
-  margin: 0 0 1px 0;
+  margin: 0;
   width: 100%;
 }
 .closed-content {
@@ -180,12 +187,6 @@ fieldset {
   }
 }
 
-input, select, textarea {
-  padding: 0 1%;
-}
-input, select {
-  max-width: 97.5%;
-}
 textarea,
 .content-editor > input[type=text],
 .content-editor > input[type=password],
@@ -237,7 +238,18 @@ textarea {
     vertical-align: middle;
     display: inline-block;
     position: relative;
-    bottom: 2px;
+  }
+  
+  .input-group-addon.handle {
+    padding-left: 1px;
+    padding-right: 1px;
+    
+    .glyphicon-option-vertical.left {
+      margin-right: -7px;
+    }
+    .glyphicon-option-vertical.right {
+      margin-left: -7px;
+    }
   }
 }
 
@@ -260,6 +272,24 @@ textarea {
 /*-------------------- */
 /*- SEARCH & POINTER - */
 /*-------------------- */
+
+.pointer-radio {
+    display: inline-block;
+    width: 100%;
+    .form-control {
+      box-shadow: none;
+    }
+    input {
+        float: left;
+        width: auto;
+        margin: 0;
+    }
+    label {
+        float: left;
+        width: auto;
+        margin: 6px 8px;
+     }
+}
 
 
 div.pointer-list,
@@ -671,6 +701,9 @@ h2.set-label {
   padding-bottom: 10px;
 }
 
+.TYPE_PLUS_RIGHT-user-Xfollow .tab-pane {
+  margin-top: 15px;
+}
 
 /*------- permissions ------------------*/
 

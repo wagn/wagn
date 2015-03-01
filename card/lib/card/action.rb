@@ -5,7 +5,7 @@ class Card
   def find_action_by_params args
     case 
     when args[:rev]
-      nth_action(args[:rev].to_i-1)
+      nth_action args[:rev]
     when args[:rev_id]
       if action = Action.fetch(args[:rev_id]) and action.card_id == id 
         action 
@@ -14,7 +14,10 @@ class Card
   end
   
   def nth_action index
-    Action.where("draft is not true AND card_id = #{id}").order(:id).limit(1).offset(index-1).first
+    index = index.to_i
+    if id and index > 0
+      Action.where("draft is not true AND card_id = #{id}").order(:id).limit(1).offset(index-1).first
+    end
   end
   
   def revision action

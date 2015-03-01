@@ -6,9 +6,9 @@ describe Card::Set::All::Templating do
     it "for User+*type+*structure should return all Users" do
       Card::Auth.as_bot do
         c=Card.create(:name=>'User+*type+*structure')
-        expect(c.structuree_names.sort).to eq([
-          "Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"
-        ])
+        users
+        
+        expect(c.structuree_names.sort).to eq(["Big Brother", "Joe Admin", "Joe Camel", "Joe User", "John", "Narcissist", "No Count", "Optic fan", "Sample User", "Sara", "Sunglasses fan", "u1", "u2", "u3"])
       end
     end
   end
@@ -57,6 +57,7 @@ describe Card::Set::All::Templating do
       Card::Auth.as_bot  do
         @bt = Card.create! :name=>"birthday+*right+*default", :type=>'Date', :content=>"Today!"
       end
+      @bb = Card.new :name=>'Bob+birthday'
       @jb = Card.create! :name=>"Jim+birthday"
     end
 
@@ -69,7 +70,9 @@ describe Card::Set::All::Templating do
     end
     
     it "should apply to new cards" do
-      expect(Card.new(:name=>"Pete+birthday").content).to eq('Today!')
+      pb = Card.new :name=>"Pete+birthday"
+      expect(pb.raw_content).to eq('Today!')
+      expect(pb.content).to eq('Today!')
     end
   end
 

@@ -72,7 +72,7 @@ end
 
 def permitted? action
 
-  if !Cardio.config.read_only
+  if !Card.config.read_only
     return true if action != :comment and Auth.always_ok?
 
     permitted_ids = who_can action
@@ -87,7 +87,7 @@ def permitted? action
 end
 
 def permit action, verb=nil
-  if Cardio.config.read_only # not called by ok_to_read
+  if Card.config.read_only # not called by ok_to_read
     deny_because "Currently in read-only mode"
   end
   
@@ -229,7 +229,7 @@ end
 
 def have_recaptcha_keys?
   @@have_recaptcha_keys = defined?(@@have_recaptcha_keys) ? @@have_recaptcha_keys : 
-    !!( Cardio.config.recaptcha_public_key && Cardio.config.recaptcha_private_key )
+    !!( Card.config.recaptcha_public_key && Card.config.recaptcha_private_key )
 end
 
 event :recaptcha, :before=>:approve do
@@ -252,6 +252,30 @@ module Accounts
       #restricts account creation to subcard handling on permitted card (unless explicitly permitted)
     when is_own_account?   ; true
     else                   ; super action, verb
+    end
+  end
+  
+end
+
+module Follow  
+  def ok_to_update
+    permit :update
+  end
+  
+  def ok_to_create
+    permit :create
+  end
+  
+  def ok_to_delete
+    permit :delete
+  end
+  
+  def permit action, verb=nil
+    if [:create, :delete, :update].include?(action) && Auth.signed_in? && 
+        (user = rule_user) && Auth.current_id == user.id
+      return true
+    else
+      super action, verb
     end
   end
   

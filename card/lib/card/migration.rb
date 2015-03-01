@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-require 'card'
 require 'card/version'
 
 class Card::Migration < ActiveRecord::Migration
@@ -12,7 +11,7 @@ class Card::Migration < ActiveRecord::Migration
     # To avoid repetition a lot of instance methods here just call class methods.
     # The subclass Card::CoreMigration needs a different @type so we can't use a
     # class variable @@type. It has to be a class instance variable.
-    # Migrations are subclasses of Wagn::Migration or Wagn::CoreMigration but they
+    # Migrations are subclasses of Card::Migration or Card::CoreMigration but they
     # don't inherit the @type. The method below solves this problem.
     def type
       @type || (ancestors[1] && ancestors[1].type)
@@ -28,12 +27,16 @@ class Card::Migration < ActiveRecord::Migration
       test_name
     end
 
-    def paths mig_type=type
-      Cardio.paths["db/migrate#{schema_suffix mig_type}"].to_a
+    def migration_paths mig_type=type
+      Cardio.migration_paths mig_type
+    end
+
+    def schema mig_type=type
+      Cardio.schema mig_type
     end
 
     def schema_suffix mig_type=type
-      Card::Version.schema_suffix( mig_type )
+      Cardio.schema_suffix mig_type
     end
 
     def schema_mode mig_type=type
@@ -45,22 +48,22 @@ class Card::Migration < ActiveRecord::Migration
       ActiveRecord::Base.table_name_suffix = original_suffix
     end
 
-
-    def data_path filename=nil
-      if filename
-        self.paths.each do |path|
-          path_to_file = File.join path, 'data', filename
-          return path_to_file if File.exists? path_to_file
-        end
-      else
-        File.join self.paths.first, 'data'
+    def assume_migrated_upto_version
+      schema_mode do
+        ActiveRecord::Schema.assume_migrated_upto_version schema, migration_paths
       end
     end
+    
+    def data_path filename=nil
+      path = migration_paths.first
+      File.join( [ migration_paths.first, 'data', filename ].compact )
+    end
+    
   end
 
   def contentedly &block
     Card::Cache.reset_global
-    Card::Migration.schema_mode '' do
+    Cardio.schema_mode '' do
       Card::Auth.as_bot do
         ActiveRecord::Base.transaction do
           begin
@@ -73,20 +76,8 @@ class Card::Migration < ActiveRecord::Migration
     end
   end
 
-  def data_path filename=nil
-    if filename
-      migration_paths.each do |path|
-        path_to_file = File.join path, 'data', filename
-        return path_to_file if File.exists? path_to_file
-      end
-    else
-      File.join migration_paths.first, 'data'
-    end
-  end
-
-
   def import_json filename
-    Cardio.config.action_mailer.perform_deliveries = false
+    Card.config.action_mailer.perform_deliveries = false
     raw_json = File.read( data_path filename )
     json = JSON.parse raw_json
     Card.merge_list json["card"]["value"], :output_file=>File.join(data_path,"unmerged_#{ filename }")
@@ -97,11 +88,11 @@ class Card::Migration < ActiveRecord::Migration
   end
 
   def schema_mode
-    Card::Migration.schema_mode
+    Cardio.schema_mode self.class.type
   end
 
   def migration_paths
-    Card::Migration.paths
+    Cardio.paths self.class.type
   end
 
 

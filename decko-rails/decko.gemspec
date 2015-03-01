@@ -1,6 +1,6 @@
 #lib = File.expand_path('../lib', __FILE__)
 #$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-version = File.open(File.expand_path( '../VERSION', __FILE__ )).read.chomp
+version = File.open(File.expand_path( '../../card/VERSION', __FILE__ )).read.chomp
 
 Gem::Specification.new do |s|
   s.name          = 'decko-rails'
@@ -22,11 +22,6 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 1.8.7'
 
-  [
-    [ 'rails',    '~> 4.2' ],
-    [ 'card',     version  ]
-  ].each do |dep|
-    s.add_runtime_dependency *dep
-  end
+  s.add_runtime_dependency 'wagn', version
   
 end

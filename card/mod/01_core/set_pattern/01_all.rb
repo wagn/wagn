@@ -5,3 +5,7 @@ end
 def prototype_args anchor
   {}
 end
+
+def follow_label name
+  'all'
+end

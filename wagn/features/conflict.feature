@@ -21,8 +21,8 @@ Feature: Conflict
     And I submit
     Then I should see "Conflict!"
     And I should see "Joe User has also been making changes."
-    And I should see "Oliver " in green
-    And I should see "Stan" in red
+    And I should see "Oliver " in color green
+    And I should see "Stan" in color red
 
   Scenario: Two edits on a card at the same time but with the same change
     When I edit "Duck Soup" filling in "Stan Laurel"

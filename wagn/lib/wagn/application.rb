@@ -45,54 +45,58 @@ module Wagn
       end
     end
 
-    def approot_is_gemroot?
-      Wagn.gem_root.to_s == config.root.to_s
-    end
-
     def add_gem_path paths, path, options={}
-      options[:with] = File.join( Wagn.gem_root, (options[:with] || path) )
+      root = options.delete(:root) || Wagn.gem_root
+      #gem_path = File.join( root, path )
+      options[:with] = File.join(root, (options[:with] || path) )
       paths.add path, options
     end
 
-    config.active_record.raise_in_transactional_callbacks = true
-    config.i18n.enforce_available_locales = true
+    
+    def config
+      @config ||= begin
+        config = super
 
-    config.assets.enabled = false
-    config.assets.version = '1.0'
+        Cardio.set_config config
 
-    config.encoding              = "utf-8"
-    config.filter_parameters    += [:password]
-    config.no_authentication     = false
-    config.files_web_path        = 'files'
+        config.i18n.enforce_available_locales = true
+        #config.active_record.raise_in_transactional_callbacks = true
 
-    config.email_defaults        = nil
+        config.assets.enabled = false
+        config.assets.version = '1.0'
 
-    config.token_expiry          = 2.days
-    config.revisions_per_page    = 10
-    config.request_logger        = false
+        config.encoding              = "utf-8"
+        config.filter_parameters    += [:password]
+        config.no_authentication     = false
+        config.files_web_path        = 'files'
 
-    paths = Decko::Engine.config.paths
-    paths.add 'local-mod', :with=>(approot_is_gemroot? ? nil : 'mod')
+        config.email_defaults        = nil
 
-    add_gem_path paths, "lib/tasks",           :with => "lib/wagn/tasks", :glob => "**/*.rake"
-    add_gem_path paths, 'gem-assets',          :with => 'public/assets'
-
-    #    paths['app/models'] = []
-    #    paths['app/mailers'] = []
-  
-    paths.add 'files'
-    paths.add 'tmp/lib'
-    paths.add 'tmp/set'
-    paths.add 'tmp/set_pattern'
-
-    # Is this needed?
-    def load_tasks(app=self)
-      super
-#      unless approot_is_gemroot?
-#        Rake::Task["db:schema:dump"].clear
-#      end
-      self
+        config.token_expiry          = 2.days
+        config.revisions_per_page    = 10
+        config.request_logger        = false
+        config.performance_logger    = false
+        config
+      end
     end
+    
+    def paths
+      @paths ||= begin
+        paths = super
+        Cardio.set_paths paths
+        
+        paths.add 'files'
+
+        paths['mod'] << 'mod'
+        paths['app/models'] = []
+        paths['app/mailers'] = []
+        
+        add_gem_path paths, 'config/routes', :with => 'rails/application-routes.rb'
+        
+        paths
+      end
+    end
+
   end
 end
 

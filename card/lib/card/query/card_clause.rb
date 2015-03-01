@@ -38,6 +38,8 @@ class Card
         @vars.symbolize_keys!
         @query = clean(@query)
         @rawclause = @query.deep_clone
+        
+        @sql.distinct = 'DISTINCT' if @parent
 
         self
       end

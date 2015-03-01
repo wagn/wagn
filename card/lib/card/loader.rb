@@ -1,8 +1,18 @@
 # -*- encoding : utf-8 -*-
 
 class Card
+  class << self
+    def config
+      Cardio.config
+    end
+
+    def paths
+      Cardio.paths
+    end
+  end
+
   module Loader
-    
+
     class << self
       def load_mods
         load_set_patterns
@@ -13,13 +23,13 @@ class Card
           Card::Log::Performance.load_config Wagn.config.performance_logger
         end
       end
-      
+
       def load_chunks
         mod_dirs.each do |mod|
           load_dir "#{mod}/chunk/*.rb"
         end
       end
-            
+
       def load_layouts
         mod_dirs.inject({}) do |hash, mod|
           dirname = "#{mod}/layout"
@@ -34,17 +44,18 @@ class Card
       end
 
       private
-    
+
       def mod_dirs
         @@mod_dirs ||= begin
-          mod_paths = [Cardio.paths['gem-mod']]
-          local_mod = Cardio.paths['local-mod'] and mod_paths += local_mod
-          mod_paths.map do |paths|
-            paths.existent.map do |dirname|
-              Dir.entries( dirname ).sort.map do |filename|
-                "#{dirname}/#{filename}" if filename !~ /^\./
-              end
-            end
+          if Card.paths['local-mod']
+            Card.paths['mod'] << Card.paths['local-mod']
+            Rails.logger.warn 'DEPRECATION WARNING: Append to paths[\'mod\'] vs. local-mod for configuring location of local (deck) modules.'
+          end
+
+          Card.paths['mod'].existent.map do |dirname|
+            Dir.entries( dirname ).sort.map do |filename|
+              "#{dirname}/#{filename}" if filename !~ /^\./
+            end.compact
           end.flatten.compact
         end
       end
@@ -53,7 +64,7 @@ class Card
         if rewrite_tmp_files?
           load_set_patterns_from_source
         end
-        load_dir "#{Cardio.paths['tmp/set_pattern'].first}/*.rb"
+        load_dir "#{Card.paths['tmp/set_pattern'].first}/*.rb"
       end
 
       def load_set_patterns_from_source
@@ -83,14 +94,14 @@ class Card
       def load_sets
         prepare_tmp_dir 'tmp/set'
         load_sets_by_pattern
-        Set.process_base_modules 
+        Set.process_base_modules
         Set.clean_empty_modules
       end
 
 
       def load_sets_by_pattern
         Card.set_patterns.reverse.map(&:pattern_code).each do |set_pattern|
-          pattern_tmp_dir = "#{Cardio.paths['tmp/set'].first}/#{set_pattern}"
+          pattern_tmp_dir = "#{Card.paths['tmp/set'].first}/#{set_pattern}"
           if rewrite_tmp_files?
             Dir.mkdir pattern_tmp_dir
             load_implicit_sets_from_source set_pattern
@@ -98,7 +109,7 @@ class Card
           if Dir.exists? pattern_tmp_dir
             load_dir "#{pattern_tmp_dir}/**/*.rb"
           end
-        end    
+        end
       end
 
       def load_implicit_sets_from_source set_pattern
@@ -106,7 +117,7 @@ class Card
         mod_dirs.each do |mod_dir|
           dirname = [mod_dir, 'set', set_pattern] * '/'
           next unless File.exists?( dirname )
-          
+
           old_pwd = Dir.pwd
           Dir.chdir dirname
           Dir.glob( "**/*.rb" ).sort.each do |anchor_path|
@@ -121,19 +132,19 @@ class Card
 
       def prepare_tmp_dir path
         if rewrite_tmp_files?
-          p = Cardio.paths[ path ]
+          p = Card.paths[ path ]
           if p.existent.first
             FileUtils.rm_rf p.first, :secure=>true
           end
           Dir.mkdir p.first
         end
       end
-      
+
       def rewrite_tmp_files?
         if defined?( @@rewrite )
           @@rewrite
         else
-          @@rewrite = !( Rails.env.production? and Cardio.paths['tmp/set'].existent.first )
+          @@rewrite = !( Rails.env.production? and Card.paths['tmp/set'].existent.first )
         end
       end
 

@@ -38,6 +38,14 @@ describe Card::Set::Type::Scss do
     end
   end
 
+  it "should process links and inclusions but not urls" do
+    Card::Auth.as_bot do
+      scss = ".TYPE-X.no-citations {\n  color: #BA5B5B;\n}\n"
+      card = Card.create! :name=>'minimal css', :type=>'scss', :content=>scss
+      card.format(:css).render_core.should == scss
+    end
+  end
+
   it_should_behave_like 'content machine', that_produces_css do
     let(:machine_card) {  Card.gimme! "test scss", :type => :scss, :content => scss }
     let(:card_content) do

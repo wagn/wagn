@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require_dependency 'card/location'
 
 class Card
   class Format
@@ -8,15 +7,12 @@ class Card
     INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :setup=>:edit, :normal=>:normal, :template=>:template } #should be set in views
     
-    cattr_accessor :ajax_call, :registered, :max_depth
+    cattr_accessor :ajax_call, :registered
     [ :perms, :denial_views, :closed_views, :error_codes, :view_tags, :aliases ].each do |acc|
       cattr_accessor acc
       self.send "#{acc}=", {}
     end
-    # TODO: these should come from Cardio.config
-    @@max_char_count = 200
-    @@max_depth      = 20
-    
+
     attr_reader :card, :root, :parent, :main_opts
     attr_accessor :form, :error_status, :inclusion_opts
   
@@ -73,9 +69,12 @@ class Card
         end
         ancestry
       end
-        
+
+      def max_depth
+        Card.config.max_depth
+      end
     end
-    
+
     
     #~~~~~ INSTANCE METHODS
 
@@ -225,7 +224,12 @@ class Card
     end
     
     def parse_view_visibility val
-      (val || '').split( /[\s\,]+/ ).map { |view| canonicalize_view view }
+      case val
+      when Array; val
+      when String; val.split(/[\s,]+/)
+      when NilClass; []
+      else raise Card::Error, "bad show/hide argument: #{val}"
+      end.map{ |view| canonicalize_view view }
     end
     
 
@@ -300,7 +304,7 @@ class Card
     def ok_view view, args={}
       return view if args.delete :skip_permissions
       approved_view = case
-        when @depth >= @@max_depth                      # prevent recursion. @depth tracks subformats
+        when @depth >= Card.config.max_depth            # prevent recursion. @depth tracks subformats
           :too_deep
         when @@perms[view] == :none                     # permission skipping specified in view definition
           view
@@ -376,8 +380,8 @@ class Card
       
       opts ||= {}
       case
-      when opts.has_key?( :comment )                            ; opts[:comment]     # as in commented code
-      when @mode == :closed && @char_count > @@max_char_count   ; ''                 # already out of view
+      when opts.has_key?( :comment )                            ; opts[:comment]   # as in commented code
+      when @mode == :closed && @char_count > Card.config.max_char_count   ; ''     # already out of view
       when opts[:inc_name]=='_main' && !Env.ajax? && @depth==0  ; expand_main opts
       else
         nested_card = Card.fetch opts[:inc_name], :new=>new_inclusion_card_args(opts)

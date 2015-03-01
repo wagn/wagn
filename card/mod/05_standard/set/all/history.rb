@@ -1,4 +1,4 @@
-REVISIONS_PER_PAGE = Cardio.config.revisions_per_page
+REVISIONS_PER_PAGE = Card.config.revisions_per_page
 
 # must be called on all actions and before :set_name, :process_subcards and :validate_delete_children
 def create_act_and_action
@@ -127,11 +127,11 @@ format :html do
   %span.slotter
     = paginate intr, :remote=>true
   %span.history-legend{:style=>"text-align:right;"}
-    %i.fa.fa-circle.diff-green
+    %span.glyphicon.glyphicon-plus-sign.diff-green
     %span
       = Card::Diff.render_added_chunk("Added")
       |
-    %i.fa.fa-circle.diff-red
+    %span.glyphicon.glyphicon-minus-sign.diff-red
     %span
       = Card::Diff.render_deleted_chunk("Deleted")
       }
@@ -205,8 +205,8 @@ format :html do
 .action
   .summary
     %span.ampel   
-      %i.fa.fa-circle{:class=>(action.red? ? 'diff-red' : 'diff-invisible')}
-      %i.fa.fa-circle{:class=>(action.green? ? 'diff-green' : 'diff-invisible')}
+      %span.glyphicon.glyphicon-minus-sign{:class=>(action.red? ? 'diff-red' : 'diff-invisible')}
+      %span.glyphicon.glyphicon-plus-sign{:class=>(action.green? ? 'diff-green' : 'diff-invisible')}
     -if action.card == card
       = wrap_diff :name do
         - name_changes(action, hide_diff)
@@ -218,7 +218,7 @@ format :html do
       = wrap_diff :type do
         - type_changes action, hide_diff
     -if action.new_content?
-      %i.fa.fa-arrow-right.arrow
+      %span.glyphicon.glyphicon-arrow-right.arrow
       -if action_view == :summary 
         = wrap_diff :content do
           - action.card.format.render_content_changes :action=>action, :diff_type=>action_view, :hide_diff=>hide_diff

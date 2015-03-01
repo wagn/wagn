@@ -41,8 +41,9 @@ event :update_ruled_cards, :after=>:store do
   if is_rule?
 #      warn "updating ruled cards for #{name}"
     self.class.clear_rule_cache
-    left.reset_set_patterns
-
+    set = rule_set
+    set.reset_set_patterns
+    
     if right_id==Card::ReadID and (name_changed? or trash_changed?)
       self.class.clear_read_rule_cache
       Card.cache.reset # maybe be more surgical, just Auth.user related
@@ -51,7 +52,7 @@ event :update_ruled_cards, :after=>:store do
       # could be related to other bugs?
       in_set = {}
       if !(self.trash)
-        if class_id = (set=left and set_class=set.tag and set_class.id)
+        if class_id = (set and set_class=set.tag and set_class.id)
           rule_class_ids = set_patterns.map &:pattern_id
           #warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
 
@@ -59,8 +60,7 @@ event :update_ruled_cards, :after=>:store do
            Auth.as_bot do
              cur_index = rule_class_ids.index Card[read_rule_class].id
              if rule_class_index = rule_class_ids.index( class_id )
-                # Why isn't this just 'trunk', do we need the fetch?
-                Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
+                set.item_cards(:limit=>0).each do |item_card|
                   in_set[item_card.key] = true
                   next if cur_index < rule_class_index
                   if cur_index >= rule_class_index

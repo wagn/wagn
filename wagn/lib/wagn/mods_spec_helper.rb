@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 require 'spork'
-raise "is this loaded anywhere?"
 
 ENV["RAILS_ENV"] = 'test'
 

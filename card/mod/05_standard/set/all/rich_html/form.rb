@@ -145,7 +145,7 @@ format :html do
 
   def name_field form=nil, options={}
     form ||= self.form
-    form.text_field( :name, {
+    text_field( :name, {
       :value=>card.name, #needed because otherwise gets wrong value if there are updates
       :autocomplete=>'off'
     }.merge(options))
@@ -170,7 +170,7 @@ format :html do
     @nested = options[:nested]
     card.last_action_id_before_edit = card.last_action_id
     revision_tracking = if card && !card.new_card? && !options[:skip_rev_id]
-      form.hidden_field :last_action_id_before_edit, :class=>'current_revision_id'
+      hidden_field :last_action_id_before_edit, :class=>'current_revision_id'
       #hidden_field_tag 'card[last_action_id_before_edit]', card.last_action_id, :class=>'current_revision_id'
     end
     %{
@@ -184,7 +184,7 @@ format :html do
 # FIELD VIEWS
 
   view :editor do |args|
-    form.text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id
+    text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id
   end
 
 
@@ -208,4 +208,40 @@ format :html do
       process_content( inc ).strip
     end.join
   end
+
+  # form helpers
+  def if_form_given
+    if @form
+      yield(@form)
+    else
+      raise "form object required"
+    end
+  end
+  
+  FIELD_HELPERS = %w{hidden_field color_field date_field datetime_field datetime_local_field
+    email_field month_field number_field password_field phone_field
+    range_field search_field telephone_field text_area text_field time_field
+    url_field week_field file_field}
+
+
+  FIELD_HELPERS.each do |method_name|
+    define_method(method_name) do |name, options = {}|
+      if_form_given do |form|
+        form.send(method_name, name, options)
+      end
+    end
+  end
+  
+  def check_box method, options={}, checked_value = "1", unchecked_value = "0"
+    if_form_given do |form|
+      form.check_box method, options, checked_value, unchecked_value
+    end
+  end
+  
+  def radio_button method, tag_value, options = {}
+    if_form_given do |form|
+      form.radio_button method, tag_value, options
+    end
+  end
+  
 end

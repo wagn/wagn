@@ -43,8 +43,6 @@ class Card
         end
       end
 
-      private
-
       def mod_dirs
         @@mod_dirs ||= begin
           if Card.paths['local-mod']
@@ -59,6 +57,8 @@ class Card
           end.flatten.compact
         end
       end
+
+      private
 
       def load_set_patterns
         if rewrite_tmp_files?

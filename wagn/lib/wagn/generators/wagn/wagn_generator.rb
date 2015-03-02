@@ -55,7 +55,7 @@ class WagnGenerator < Rails::Generators::AppBase
     elsif options['mod-dev']
       @spec_path = 'mod/'
       @spec_helper_path = './spec/spec_helper'
-      @simplecov_config = "wagn_simplecov_filters"
+      @simplecov_config = "card_simplecov_filters"
       empty_directory 'spec'
       inside 'spec' do
         template 'spec_helper.rb'

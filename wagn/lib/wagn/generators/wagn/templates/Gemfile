@@ -93,7 +93,7 @@ group :test do
   gem 'minitest', "~>4.0"
 end
 
-gem 'ruby-prof', '~>0.12.1', :group=>:profile  # profiling
+gem 'ruby-prof', :group=>:profile  # profiling
 
 group :development, :test do
   gem 'spring'

@@ -18,4 +18,3 @@ def description set_card
   "#{set_card.follow_label} I created"
 end
 
-

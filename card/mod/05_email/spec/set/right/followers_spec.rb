@@ -85,7 +85,7 @@ describe Card::Set::Right::Followers do
       end
     end
     
-    context 'when following "content I created"' do
+    context 'when following content I created' do
       it 'contains creator' do
         Card::Auth.current_id = Card['Big Brother'].id
         @card = Card.create! :name=>"created by Follower"
@@ -93,10 +93,10 @@ describe Card::Set::Right::Followers do
       end
     end
     
-    context 'when following "content I edited"' do
+    context 'when following content I edited' do
       it 'contains editor' do
         Card::Auth.as_bot do 
-          Card['Sara'].follow '*all', 'content I edited'
+          Card['Sara'].follow '*all', '*edited'
         end
 
         @card = Card.create! :name=>"edited by Sara"

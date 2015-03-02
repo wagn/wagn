@@ -298,10 +298,10 @@ $(window).ready ->
   # following mod
   $('.btn-item-delete').hover(
     -> 
-      $(this).find('.glyphicon').addClass("glyphicon-remove-sign").removeClass("glyphicon-ok-sign")
+      $(this).find('.glyphicon').addClass("glyphicon-remove").removeClass("glyphicon-ok")
       $(this).addClass("btn-danger").removeClass("btn-success")
     -> 
-       $(this).find('.glyphicon').addClass("glyphicon-ok-sign").removeClass("glyphicon-remove-sign")
+       $(this).find('.glyphicon').addClass("glyphicon-ok").removeClass("glyphicon-remove")
        $(this).addClass("btn-success").removeClass("btn-danger"))
 
   # permissions mod

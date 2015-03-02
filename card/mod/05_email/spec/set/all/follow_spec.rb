@@ -69,10 +69,10 @@ describe "Card::Set::All::Follow" do
       href += 
         if args[:following] 
           link_class = "watch-toggle-off"
-          CGI.escape("[[never]]")
+          CGI.escape("[[*never]]")
         else
           link_class = "watch-toggle-on"
-          CGI.escape("[[always]]")
+          CGI.escape("[[*always]]")
         end
       assert_view_select follow_view(name), 'div[class~="card-slot follow_submenu_link-view"]' do
         assert_select "a[class~=#{link_class}][href*='#{href}']", args[:text] || "follow #{name}"
@@ -116,14 +116,14 @@ describe "Card::Set::All::Follow" do
       end
     end
   
-    context 'when following "content I created"' do
+    context 'when following content I created' do
       before { Card::Auth.current_id = Card['Narcissist'].id }
       it "renders following link" do
         assert_following_view 'Sunglasses', :add_set=>'Sunglasses+*self', :user=>'Narcissist'
       end
     end
   
-    context 'when following "content I edited"' do
+    context 'when following content I edited' do
       before { Card::Auth.current_id = Card['Narcissist'].id }
       it "renders following link" do
         assert_following_view 'Magnifier+lens', :add_set=>'Magnifier+lens+*self', :user=>'Narcissist'

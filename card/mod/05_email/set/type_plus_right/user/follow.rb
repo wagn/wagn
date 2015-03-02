@@ -73,7 +73,7 @@ format :html do
             option = option_card.codename
             yield(set_card, option)
           elsif ((set_card = Card.fetch sug) && set_card.type_code == :set) 
-            yield(set_card, 'always')
+            yield(set_card, '*always')
           end
         end
       end
@@ -81,7 +81,7 @@ format :html do
    
    # returns hashes with existing and suggested follow options
    # structure:
-   # set_pattern_class => [ {:card=>rule_card, :options=>['always', 'created_by_me'] },.... ] 
+   # set_pattern_class => [ {:card=>rule_card, :options=>['*always', '*created'] },.... ]
    def followed_by_set
      res = Hash.new { |h,k| h[k] = [] }
      card.item_cards.each do |follow_rule|

@@ -47,7 +47,7 @@ format :html do
 
     case args[:toggle]
     when :off
-      path_options['card[content]']= '[[never]]'
+      path_options['card[content]']= '[[*never]]'
       html_options[:title]         = "stop sending emails about changes to #{args[:label]}"
       if args[:hover]
         html_options[:hover_content] = "unfollow #{args[:label]}" 
@@ -56,7 +56,7 @@ format :html do
         html_options[:text]          = "unfollow #{args[:label]}"
       end
     when :on
-      path_options['card[content]']= '[[always]]'
+      path_options['card[content]']= '[[*always]]'
       html_options[:title]         = "send emails about changes to #{args[:label]}"
       html_options[:text]          = "follow #{args[:label]}"
     end

@@ -228,7 +228,7 @@ format :html do
 =end
   
   def default_follow_item_args args
-    args[:condition] ||= Env.params[:condition] || 'always'
+    args[:condition] ||= Env.params[:condition] || '*always'
   end
   
   view :follow_item, :tags=>:unknown_ok do |args|
@@ -263,14 +263,14 @@ format :html do
   
   view :delete_button do |args|
     button_tag :type=>:submit, :class=>'btn-xs btn-item-delete btn-success', 'aria-label'=>'Left Align' do
-      tag :span, :class=>"glyphicon glyphicon-ok-sign", 'aria-hidden'=>"true"
+      tag :span, :class=>"glyphicon glyphicon-ok", 'aria-hidden'=>"true"
     end 
 
   end
   
   view :add_button do |args|
     button_tag :type=>:submit, :class=>'btn-xs btn-item-add', 'aria-label'=>'Left Align' do
-      tag :span, :class=>"glyphicon glyphicon-plus-sign", 'aria-hidden'=>"true"
+      tag :span, :class=>"glyphicon glyphicon-plus", 'aria-hidden'=>"true"
     end
   end
   

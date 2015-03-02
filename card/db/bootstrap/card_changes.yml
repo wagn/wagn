@@ -886,17 +886,17 @@ card_changes_177:
   value: '0'
 card_changes_178:
   id: 249
-  card_action_id: 7339
+  card_action_id: 7337
   field: 0
   value: "*sidebar+*self+*help"
 card_changes_179:
   id: 250
-  card_action_id: 7339
+  card_action_id: 7337
   field: 1
   value: '3'
 card_changes_180:
   id: 252
-  card_action_id: 7339
+  card_action_id: 7337
   field: 3
   value: '0'
 card_changes_181:
@@ -2067,17 +2067,17 @@ card_changes_413:
   value: '0'
 card_changes_414:
   id: 1269
-  card_action_id: 7340
+  card_action_id: 7338
   field: 0
   value: "*all+*layout"
 card_changes_415:
   id: 1270
-  card_action_id: 7340
+  card_action_id: 7338
   field: 1
   value: '47'
 card_changes_416:
   id: 1272
-  card_action_id: 7340
+  card_action_id: 7338
   field: 3
   value: '0'
 card_changes_417:
@@ -2657,12 +2657,12 @@ card_changes_531:
   value: '0'
 card_changes_532:
   id: 1480
-  card_action_id: 7338
+  card_action_id: 7336
   field: 1
   value: '569'
 card_changes_533:
   id: 1482
-  card_action_id: 7338
+  card_action_id: 7336
   field: 3
   value: '0'
 card_changes_534:
@@ -7990,77 +7990,77 @@ card_changes_1536:
   value: '0'
 card_changes_1537:
   id: 4104
-  card_action_id: 7362
+  card_action_id: 7360
   field: 0
   value: 'style: common'
 card_changes_1538:
   id: 4105
-  card_action_id: 7362
+  card_action_id: 7360
   field: 1
   value: '943'
 card_changes_1539:
   id: 4107
-  card_action_id: 7362
+  card_action_id: 7360
   field: 3
   value: '0'
 card_changes_1540:
   id: 4108
-  card_action_id: 7356
+  card_action_id: 7354
   field: 0
   value: 'style: classic cards'
 card_changes_1541:
   id: 4109
-  card_action_id: 7356
+  card_action_id: 7354
   field: 1
   value: '943'
 card_changes_1542:
   id: 4111
-  card_action_id: 7356
+  card_action_id: 7354
   field: 3
   value: '0'
 card_changes_1543:
   id: 4112
-  card_action_id: 7373
+  card_action_id: 7371
   field: 0
   value: 'style: traditional'
 card_changes_1544:
   id: 4113
-  card_action_id: 7373
+  card_action_id: 7371
   field: 1
   value: '943'
 card_changes_1545:
   id: 4115
-  card_action_id: 7373
+  card_action_id: 7371
   field: 3
   value: '0'
 card_changes_1546:
   id: 4116
-  card_action_id: 7348
+  card_action_id: 7346
   field: 0
   value: simple skin
 card_changes_1547:
   id: 4117
-  card_action_id: 7348
+  card_action_id: 7346
   field: 1
   value: '944'
 card_changes_1548:
   id: 4119
-  card_action_id: 7348
+  card_action_id: 7346
   field: 3
   value: '0'
 card_changes_1549:
   id: 4120
-  card_action_id: 7344
+  card_action_id: 7342
   field: 0
   value: classic skin
 card_changes_1550:
   id: 4121
-  card_action_id: 7344
+  card_action_id: 7342
   field: 1
   value: '944'
 card_changes_1551:
   id: 4123
-  card_action_id: 7344
+  card_action_id: 7342
   field: 3
   value: '0'
 card_changes_1552:
@@ -8188,7 +8188,7 @@ card_changes_1573:
     \   display: none;\n  }\n}\n"
 card_changes_1574:
   id: 4175
-  card_action_id: 7338
+  card_action_id: 7336
   field: 2
   value: "<!DOCTYPE HTML>\r\n<html>\r\n  <head>\r\n    {{*head}}\r\n  </head>\r\n
     \ \r\n  <body>\r\n    <div id=\"menu\">\r\n      [[/ | Home]]   [[/recent | Recent]]
@@ -9394,17 +9394,17 @@ card_changes_1809:
   value: '0'
 card_changes_1810:
   id: 4567
-  card_action_id: 7397
+  card_action_id: 7395
   field: 0
   value: "*all+*script"
 card_changes_1811:
   id: 4568
-  card_action_id: 7397
+  card_action_id: 7395
   field: 1
   value: '47'
 card_changes_1812:
   id: 4570
-  card_action_id: 7397
+  card_action_id: 7395
   field: 3
   value: '0'
 card_changes_1813:
@@ -10938,7 +10938,7 @@ card_changes_2096:
   id: 5531
   card_action_id: 7331
   field: 0
-  value: always
+  value: "*always"
 card_changes_2097:
   id: 5532
   card_action_id: 7331
@@ -10958,7 +10958,7 @@ card_changes_2100:
   id: 5535
   card_action_id: 7332
   field: 0
-  value: never
+  value: "*never"
 card_changes_2101:
   id: 5536
   card_action_id: 7332
@@ -10976,97 +10976,57 @@ card_changes_2103:
   value: '0'
 card_changes_2104:
   id: 5539
-  card_action_id: 7333
+  card_action_id: 7334
   field: 0
-  value: content I created
+  value: "*all+*all"
 card_changes_2105:
   id: 5540
-  card_action_id: 7333
+  card_action_id: 7334
   field: 1
   value: '3'
 card_changes_2106:
   id: 5541
-  card_action_id: 7333
+  card_action_id: 7334
   field: 2
   value: ''
 card_changes_2107:
   id: 5542
-  card_action_id: 7333
+  card_action_id: 7334
   field: 3
   value: '0'
 card_changes_2108:
   id: 5543
-  card_action_id: 7334
+  card_action_id: 7333
   field: 0
-  value: content I edited
+  value: "*all+*all+*follow"
 card_changes_2109:
   id: 5544
-  card_action_id: 7334
+  card_action_id: 7333
   field: 1
-  value: '3'
+  value: '47'
 card_changes_2110:
   id: 5545
-  card_action_id: 7334
+  card_action_id: 7333
   field: 2
-  value: ''
+  value: "[[*never]]"
 card_changes_2111:
   id: 5546
-  card_action_id: 7334
+  card_action_id: 7333
   field: 3
   value: '0'
 card_changes_2112:
   id: 5547
-  card_action_id: 7336
-  field: 0
-  value: "*all+*all"
-card_changes_2113:
-  id: 5548
-  card_action_id: 7336
-  field: 1
-  value: '3'
-card_changes_2114:
-  id: 5549
-  card_action_id: 7336
-  field: 2
-  value: ''
-card_changes_2115:
-  id: 5550
-  card_action_id: 7336
-  field: 3
-  value: '0'
-card_changes_2116:
-  id: 5551
   card_action_id: 7335
-  field: 0
-  value: "*all+*all+*follow"
-card_changes_2117:
-  id: 5552
-  card_action_id: 7335
-  field: 1
-  value: '47'
-card_changes_2118:
-  id: 5553
-  card_action_id: 7335
-  field: 2
-  value: "[[never]]"
-card_changes_2119:
-  id: 5554
-  card_action_id: 7335
-  field: 3
-  value: '0'
-card_changes_2120:
-  id: 5555
-  card_action_id: 7337
   field: 0
   value: URI
-card_changes_2121:
-  id: 5556
-  card_action_id: 7337
+card_changes_2113:
+  id: 5548
+  card_action_id: 7335
   field: 1
   value: '5'
-card_changes_2122:
-  id: 5557
-  card_action_id: 7337
+card_changes_2114:
+  id: 5549
+  card_action_id: 7335
   field: 2
   value: |-
     <p>{{+description}}</p>
@@ -11077,58 +11037,58 @@ card_changes_2122:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-card_changes_2123:
-  id: 5558
-  card_action_id: 7337
+card_changes_2115:
+  id: 5550
+  card_action_id: 7335
   field: 3
   value: '0'
-card_changes_2124:
-  id: 5559
-  card_action_id: 7338
+card_changes_2116:
+  id: 5551
+  card_action_id: 7336
   field: 0
   value: Old Layout
-card_changes_2125:
-  id: 5560
-  card_action_id: 7339
+card_changes_2117:
+  id: 5552
+  card_action_id: 7337
   field: 2
   value: "<p>Sidebar content of [[Old Layout]]. <em>[[http://wagn.org/sidebar|more]]</em></p>"
-card_changes_2126:
-  id: 5561
-  card_action_id: 7340
+card_changes_2118:
+  id: 5553
+  card_action_id: 7338
   field: 2
   value: "[[Old Layout]]"
-card_changes_2127:
-  id: 5563
-  card_action_id: 7342
+card_changes_2119:
+  id: 5555
+  card_action_id: 7340
   field: 0
   value: classic bootstrap skin
-card_changes_2128:
-  id: 5564
-  card_action_id: 7342
+card_changes_2120:
+  id: 5556
+  card_action_id: 7340
   field: 1
   value: '944'
-card_changes_2129:
-  id: 5565
-  card_action_id: 7342
+card_changes_2121:
+  id: 5557
+  card_action_id: 7340
   field: 2
   value: |-
     [[simple bootstrap skin]]
     [[style: classic cards]]
-card_changes_2130:
-  id: 5566
-  card_action_id: 7342
+card_changes_2122:
+  id: 5558
+  card_action_id: 7340
   field: 3
   value: '0'
-card_changes_2131:
-  id: 5571
-  card_action_id: 7344
+card_changes_2123:
+  id: 5563
+  card_action_id: 7342
   field: 2
   value: |-
     [[simple skin]]
     [[style: classic cards]]
-card_changes_2132:
-  id: 5578
-  card_action_id: 7348
+card_changes_2124:
+  id: 5570
+  card_action_id: 7346
   field: 2
   value: |-
     [[style: jquery-ui-smoothness]]
@@ -11139,19 +11099,19 @@ card_changes_2132:
     [[style: traditional]]
     [[style: glyphicons]]
     [[style: bootstrap compatible]]
-card_changes_2133:
-  id: 5583
-  card_action_id: 7353
+card_changes_2125:
+  id: 5575
+  card_action_id: 7351
   field: 0
   value: simple bootstrap skin
-card_changes_2134:
-  id: 5584
-  card_action_id: 7353
+card_changes_2126:
+  id: 5576
+  card_action_id: 7351
   field: 1
   value: '944'
-card_changes_2135:
-  id: 5585
-  card_action_id: 7353
+card_changes_2127:
+  id: 5577
+  card_action_id: 7351
   field: 2
   value: |-
     [[style: bootstrap]]
@@ -11162,14 +11122,14 @@ card_changes_2135:
     [[style: right sidebar]]
     [[style: bootstrap common]]
     [[style: bootstrap cards]]
-card_changes_2136:
-  id: 5586
-  card_action_id: 7353
+card_changes_2128:
+  id: 5578
+  card_action_id: 7351
   field: 3
   value: '0'
-card_changes_2137:
-  id: 5592
-  card_action_id: 7356
+card_changes_2129:
+  id: 5584
+  card_action_id: 7354
   field: 2
   value: "/* \r\nThis stylesheet defines the core rules of the \"classic\" Wagn look.\r\n*/\r\n\r\nbody
     {\r\n  font: 12px verdana, arial, helvetica, sans-serif;\r\n  background: #ccc;\r\n
@@ -11193,9 +11153,9 @@ card_changes_2137:
     #e5f0f5;\r\n  padding: 10px;\r\n}\r\nli {\r\n  margin-bottom: 2px;\r\n}\r\nhr
     {\r\n  margin: 10px\r\n}\r\n\r\n\r\n.card-notice {\r\n  color: #009;\r\n}\r\n.joint
     {\r\n  color: #960;\r\n}\r\n\r\n"
-card_changes_2138:
-  id: 5597
-  card_action_id: 7362
+card_changes_2130:
+  id: 5589
+  card_action_id: 7360
   field: 2
   value: "/*\r\nThis stylesheet outlines a host of commonly-used styles.  Unlike the
     \"standard\" stylesheet, this\r\nsheet will likely affect prominent pages seen
@@ -11240,19 +11200,19 @@ card_changes_2138:
     8px;\r\n  margin: 0px;\r\n  input {\r\n    padding: 0px;\r\n  }\r\n  textarea
     {\r\n    margin-bottom:5px;\r\n  }\r\n}\r\n.w-comment-author {\r\n  font-style:
     italic;\r\n  margin-left: 10px;\r\n}\r\n"
-card_changes_2139:
-  id: 5602
-  card_action_id: 7368
+card_changes_2131:
+  id: 5594
+  card_action_id: 7366
   field: 0
   value: 'style: bootstrap common'
-card_changes_2140:
-  id: 5603
-  card_action_id: 7368
+card_changes_2132:
+  id: 5595
+  card_action_id: 7366
   field: 1
   value: '943'
-card_changes_2141:
-  id: 5604
-  card_action_id: 7368
+card_changes_2133:
+  id: 5596
+  card_action_id: 7366
   field: 2
   value: "/*\r\nThis stylesheet outlines a host of commonly-used styles.  Unlike the
     \"standard\" stylesheet, this\r\nsheet will likely affect prominent pages seen
@@ -11293,14 +11253,14 @@ card_changes_2141:
     */\r\n\r\n.comment-box {\r\n  padding: 8px;\r\n  margin: 0px;\r\n  input {\r\n
     \   padding: 0px;\r\n  }\r\n  textarea {\r\n    margin-bottom:5px;\r\n  }\r\n}\r\n.w-comment-author
     {\r\n  font-style: italic;\r\n  margin-left: 10px;\r\n}\r\n"
-card_changes_2142:
-  id: 5605
-  card_action_id: 7368
+card_changes_2134:
+  id: 5597
+  card_action_id: 7366
   field: 3
   value: '0'
-card_changes_2143:
-  id: 5610
-  card_action_id: 7373
+card_changes_2135:
+  id: 5602
+  card_action_id: 7371
   field: 2
   value: "/*\r\nThis \"traditional\" styling is for backwards compatibility.  \r\nIt
     is not intended for use in Skins created after version 1.15; all such skins should
@@ -11352,19 +11312,19 @@ card_changes_2143:
     > .card-content p,\r\n.SELF-wagneer_menu > .card-content {\r\n  a.external-link
     {\r\n    list-style-type: none;\r\n    padding-right: 0 !important;\r\n    background:
     inherit;\r\n  }\r\n}\r\n"
-card_changes_2144:
-  id: 5615
-  card_action_id: 7379
+card_changes_2136:
+  id: 5607
+  card_action_id: 7377
   field: 0
   value: 'style: bootstrap compatible'
-card_changes_2145:
-  id: 5616
-  card_action_id: 7379
+card_changes_2137:
+  id: 5608
+  card_action_id: 7377
   field: 1
   value: '943'
-card_changes_2146:
-  id: 5617
-  card_action_id: 7379
+card_changes_2138:
+  id: 5609
+  card_action_id: 7377
   field: 2
   value: "#menu {\r\n  height: 30px;\r\n  div.container-fluid{\r\n    display: block;\r\n
     \ }\r\n  div.navbar-header {\r\n    display: none;\r\n  }\r\n  ul {\r\n    font-size:
@@ -11375,24 +11335,24 @@ card_changes_2146:
     100%;\r\n    }\r\n  }\r\n}\r\n\r\n#primary {\r\n  clear: both;\r\n}\r\n\r\n\r\n//
     removed from standard.scss\r\ninput, select, textarea {\r\n  padding: 0 1%;\r\n}\r\ninput,
     select {\r\n  max-width: 97.5%;\r\n}"
-card_changes_2147:
-  id: 5618
-  card_action_id: 7379
+card_changes_2139:
+  id: 5610
+  card_action_id: 7377
   field: 3
   value: '0'
-card_changes_2148:
-  id: 5623
-  card_action_id: 7385
+card_changes_2140:
+  id: 5615
+  card_action_id: 7383
   field: 0
   value: 'style: glyphicons'
-card_changes_2149:
-  id: 5624
-  card_action_id: 7385
+card_changes_2141:
+  id: 5616
+  card_action_id: 7383
   field: 1
   value: '942'
-card_changes_2150:
-  id: 5625
-  card_action_id: 7385
+card_changes_2142:
+  id: 5617
+  card_action_id: 7383
   field: 2
   value: "a .glyphicon {\r\n  color: #333;\r\n}\r\n\r\n@font-face {\r\n  font-family:
     'Glyphicons Halflings';\r\n  src: url([[/assets/fonts/glyphicons-halflings-regular.eot]]);\r\n
@@ -11564,24 +11524,24 @@ card_changes_2150:
     \"\\e257\";\r\n}\r\n.glyphicon-menu-right:before {\r\n  content: \"\\e258\";\r\n}\r\n.glyphicon-menu-down:before
     {\r\n  content: \"\\e259\";\r\n}\r\n.glyphicon-menu-up:before {\r\n  content:
     \"\\e260\";\r\n}"
-card_changes_2151:
-  id: 5626
-  card_action_id: 7385
+card_changes_2143:
+  id: 5618
+  card_action_id: 7383
   field: 3
   value: '0'
-card_changes_2152:
-  id: 5631
-  card_action_id: 7391
+card_changes_2144:
+  id: 5623
+  card_action_id: 7389
   field: 0
   value: 'style: bootstrap cards'
-card_changes_2153:
-  id: 5632
-  card_action_id: 7391
+card_changes_2145:
+  id: 5624
+  card_action_id: 7389
   field: 1
   value: '943'
-card_changes_2154:
-  id: 5633
-  card_action_id: 7391
+card_changes_2146:
+  id: 5625
+  card_action_id: 7389
   field: 2
   value: "#menu {\r\n  margin-bottom: 30px;\r\n  \r\n  .navbox-form {\r\n    width:
     30%;\r\n  }\r\n  .form-group {\r\n    width: 100%;\r\n    input {\r\n      width:
@@ -11598,37 +11558,37 @@ card_changes_2154:
     {\r\n  content:'0 results';\r\n}\r\n.closed-content .search-no-results:after {\r\n
     \ content:'';\r\n}\r\n\r\nlegend {\r\n  h2 {\r\n    font-size: 0.7em;\r\n  }\r\n
     \ border: 0;\r\n}\r\n\r\n\r\n"
-card_changes_2155:
-  id: 5634
-  card_action_id: 7391
+card_changes_2147:
+  id: 5626
+  card_action_id: 7389
   field: 3
   value: '0'
-card_changes_2156:
-  id: 5639
-  card_action_id: 7396
+card_changes_2148:
+  id: 5631
+  card_action_id: 7394
   field: 0
   value: Default Layout
-card_changes_2157:
-  id: 5640
-  card_action_id: 7396
+card_changes_2149:
+  id: 5632
+  card_action_id: 7394
   field: 1
   value: '569'
-card_changes_2158:
-  id: 5641
-  card_action_id: 7396
+card_changes_2150:
+  id: 5633
+  card_action_id: 7394
   field: 2
   value: "<!DOCTYPE HTML>\r\n<html>\r\n  <head>\r\n    {{*head}}\r\n  </head>\r\n
     \ \r\n  <body>\r\n    <div id=\"menu\">\r\n      {{*page header}}\r\n    </div>\r\n
     \   \r\n    <div id=\"primary\">\r\n      {{_main}}\r\n    </div>\r\n    \r\n
     \   <div id=\"secondary\">\r\n      {{*sidebar}}\r\n    </div>\r\n  </body>\r\n</html>"
-card_changes_2159:
-  id: 5642
-  card_action_id: 7396
+card_changes_2151:
+  id: 5634
+  card_action_id: 7394
   field: 3
   value: '0'
-card_changes_2160:
-  id: 5643
-  card_action_id: 7397
+card_changes_2152:
+  id: 5635
+  card_action_id: 7395
   field: 2
   value: |-
     [[script: jquery]]
@@ -11638,19 +11598,19 @@ card_changes_2160:
     [[script: jquery helper]]
     [[script: bootstrap]]
     [[script: ace]]
-card_changes_2161:
-  id: 5645
-  card_action_id: 7399
+card_changes_2153:
+  id: 5637
+  card_action_id: 7397
   field: 0
   value: "*page header"
-card_changes_2162:
-  id: 5646
-  card_action_id: 7399
+card_changes_2154:
+  id: 5638
+  card_action_id: 7397
   field: 1
   value: '50'
-card_changes_2163:
-  id: 5647
-  card_action_id: 7399
+card_changes_2155:
+  id: 5639
+  card_action_id: 7397
   field: 2
   value: "<div class=\"navbar navbar-default navbar-static-top\">\r\n  <div class=\"container-fluid\">\r\n
     \   <div class=\"navbar-header\">\r\n      <button type=\"button\" class=\"navbar-toggle
@@ -11662,268 +11622,268 @@ card_changes_2163:
     \       <li>[[/ | Home]]</li>\r\n        <li>[[/recent | Recent]]</li>\r\n      </ul>
     \  \r\n      {{*navbox|navbar_left}}\r\n    \r\n      {{*account links|navbar_right}}\r\n
     \   </div>\r\n  </div>\r\n</div>"
+card_changes_2156:
+  id: 5640
+  card_action_id: 7397
+  field: 3
+  value: '0'
+card_changes_2157:
+  id: 5641
+  card_action_id: 7398
+  field: 0
+  value: 'style: bootstrap theme'
+card_changes_2158:
+  id: 5642
+  card_action_id: 7398
+  field: 1
+  value: '942'
+card_changes_2159:
+  id: 5643
+  card_action_id: 7398
+  field: 2
+  value: ''
+card_changes_2160:
+  id: 5644
+  card_action_id: 7398
+  field: 3
+  value: '0'
+card_changes_2161:
+  id: 5649
+  card_action_id: 7403
+  field: 0
+  value: 'style: bootstrap'
+card_changes_2162:
+  id: 5650
+  card_action_id: 7403
+  field: 1
+  value: '942'
+card_changes_2163:
+  id: 5651
+  card_action_id: 7403
+  field: 2
+  value: ''
 card_changes_2164:
-  id: 5648
-  card_action_id: 7399
+  id: 5652
+  card_action_id: 7403
   field: 3
   value: '0'
 card_changes_2165:
-  id: 5649
-  card_action_id: 7400
+  id: 5657
+  card_action_id: 7408
   field: 0
-  value: 'style: bootstrap theme'
+  value: 'script: bootstrap'
 card_changes_2166:
-  id: 5650
-  card_action_id: 7400
+  id: 5658
+  card_action_id: 7408
   field: 1
-  value: '942'
+  value: '3'
 card_changes_2167:
-  id: 5651
-  card_action_id: 7400
+  id: 5659
+  card_action_id: 7408
   field: 2
   value: ''
 card_changes_2168:
-  id: 5652
-  card_action_id: 7400
+  id: 5660
+  card_action_id: 7408
   field: 3
   value: '0'
 card_changes_2169:
-  id: 5657
-  card_action_id: 7405
+  id: 5661
+  card_action_id: 7411
   field: 0
-  value: 'style: bootstrap'
+  value: Basic+*type
 card_changes_2170:
-  id: 5658
-  card_action_id: 7405
+  id: 5662
+  card_action_id: 7411
   field: 1
-  value: '942'
+  value: '259'
 card_changes_2171:
-  id: 5659
-  card_action_id: 7405
+  id: 5663
+  card_action_id: 7411
   field: 2
-  value: ''
+  value: '{"type":"_self"}'
 card_changes_2172:
-  id: 5660
-  card_action_id: 7405
+  id: 5664
+  card_action_id: 7411
   field: 3
   value: '0'
 card_changes_2173:
-  id: 5665
-  card_action_id: 7410
+  id: 5681
+  card_action_id: 7416
   field: 0
-  value: 'script: bootstrap'
+  value: Pointer+*type
 card_changes_2174:
-  id: 5666
-  card_action_id: 7410
+  id: 5682
+  card_action_id: 7416
   field: 1
-  value: '3'
+  value: '259'
 card_changes_2175:
-  id: 5667
-  card_action_id: 7410
+  id: 5683
+  card_action_id: 7416
   field: 2
-  value: ''
+  value: '{"type":"_self"}'
 card_changes_2176:
-  id: 5668
-  card_action_id: 7410
+  id: 5684
+  card_action_id: 7416
   field: 3
   value: '0'
 card_changes_2177:
-  id: 5669
-  card_action_id: 7413
+  id: 5693
+  card_action_id: 7419
   field: 0
-  value: Basic+*type
+  value: Phrase+*type
 card_changes_2178:
-  id: 5670
-  card_action_id: 7413
+  id: 5694
+  card_action_id: 7419
   field: 1
   value: '259'
 card_changes_2179:
-  id: 5671
-  card_action_id: 7413
+  id: 5695
+  card_action_id: 7419
   field: 2
   value: '{"type":"_self"}'
 card_changes_2180:
-  id: 5672
-  card_action_id: 7413
+  id: 5696
+  card_action_id: 7419
   field: 3
   value: '0'
 card_changes_2181:
-  id: 5689
-  card_action_id: 7418
+  id: 5705
+  card_action_id: 7422
   field: 0
-  value: Pointer+*type
+  value: PlainText+*type
 card_changes_2182:
-  id: 5690
-  card_action_id: 7418
+  id: 5706
+  card_action_id: 7422
   field: 1
   value: '259'
 card_changes_2183:
-  id: 5691
-  card_action_id: 7418
+  id: 5707
+  card_action_id: 7422
   field: 2
   value: '{"type":"_self"}'
 card_changes_2184:
-  id: 5692
-  card_action_id: 7418
+  id: 5708
+  card_action_id: 7422
   field: 3
   value: '0'
 card_changes_2185:
-  id: 5701
-  card_action_id: 7421
+  id: 5717
+  card_action_id: 7425
   field: 0
-  value: Phrase+*type
+  value: Search+*type
 card_changes_2186:
-  id: 5702
-  card_action_id: 7421
+  id: 5718
+  card_action_id: 7425
   field: 1
   value: '259'
 card_changes_2187:
-  id: 5703
-  card_action_id: 7421
+  id: 5719
+  card_action_id: 7425
   field: 2
   value: '{"type":"_self"}'
 card_changes_2188:
-  id: 5704
-  card_action_id: 7421
+  id: 5720
+  card_action_id: 7425
   field: 3
   value: '0'
 card_changes_2189:
-  id: 5713
-  card_action_id: 7424
+  id: 5729
+  card_action_id: 7428
   field: 0
-  value: PlainText+*type
+  value: Image+*type
 card_changes_2190:
-  id: 5714
-  card_action_id: 7424
+  id: 5730
+  card_action_id: 7428
   field: 1
   value: '259'
 card_changes_2191:
-  id: 5715
-  card_action_id: 7424
+  id: 5731
+  card_action_id: 7428
   field: 2
   value: '{"type":"_self"}'
 card_changes_2192:
-  id: 5716
-  card_action_id: 7424
+  id: 5732
+  card_action_id: 7428
   field: 3
   value: '0'
 card_changes_2193:
-  id: 5725
-  card_action_id: 7427
+  id: 5765
+  card_action_id: 7437
   field: 0
-  value: Search+*type
+  value: Date+*type
 card_changes_2194:
-  id: 5726
-  card_action_id: 7427
+  id: 5766
+  card_action_id: 7437
   field: 1
   value: '259'
 card_changes_2195:
-  id: 5727
-  card_action_id: 7427
+  id: 5767
+  card_action_id: 7437
   field: 2
   value: '{"type":"_self"}'
 card_changes_2196:
-  id: 5728
-  card_action_id: 7427
+  id: 5768
+  card_action_id: 7437
   field: 3
   value: '0'
 card_changes_2197:
-  id: 5737
-  card_action_id: 7430
+  id: 5777
+  card_action_id: 7440
   field: 0
-  value: Image+*type
+  value: File+*type
 card_changes_2198:
-  id: 5738
-  card_action_id: 7430
+  id: 5778
+  card_action_id: 7440
   field: 1
   value: '259'
 card_changes_2199:
-  id: 5739
-  card_action_id: 7430
+  id: 5779
+  card_action_id: 7440
   field: 2
   value: '{"type":"_self"}'
 card_changes_2200:
-  id: 5740
-  card_action_id: 7430
+  id: 5780
+  card_action_id: 7440
   field: 3
   value: '0'
 card_changes_2201:
-  id: 5773
-  card_action_id: 7439
+  id: 5789
+  card_action_id: 7443
   field: 0
-  value: Date+*type
+  value: Number+*type
 card_changes_2202:
-  id: 5774
-  card_action_id: 7439
+  id: 5790
+  card_action_id: 7443
   field: 1
   value: '259'
 card_changes_2203:
-  id: 5775
-  card_action_id: 7439
+  id: 5791
+  card_action_id: 7443
   field: 2
   value: '{"type":"_self"}'
 card_changes_2204:
-  id: 5776
-  card_action_id: 7439
+  id: 5792
+  card_action_id: 7443
   field: 3
   value: '0'
 card_changes_2205:
-  id: 5785
-  card_action_id: 7442
+  id: 5809
+  card_action_id: 7448
   field: 0
-  value: File+*type
+  value: Toggle+*type
 card_changes_2206:
-  id: 5786
-  card_action_id: 7442
+  id: 5810
+  card_action_id: 7448
   field: 1
   value: '259'
 card_changes_2207:
-  id: 5787
-  card_action_id: 7442
+  id: 5811
+  card_action_id: 7448
   field: 2
   value: '{"type":"_self"}'
 card_changes_2208:
-  id: 5788
-  card_action_id: 7442
-  field: 3
-  value: '0'
-card_changes_2209:
-  id: 5797
-  card_action_id: 7445
-  field: 0
-  value: Number+*type
-card_changes_2210:
-  id: 5798
-  card_action_id: 7445
-  field: 1
-  value: '259'
-card_changes_2211:
-  id: 5799
-  card_action_id: 7445
-  field: 2
-  value: '{"type":"_self"}'
-card_changes_2212:
-  id: 5800
-  card_action_id: 7445
-  field: 3
-  value: '0'
-card_changes_2213:
-  id: 5817
-  card_action_id: 7450
-  field: 0
-  value: Toggle+*type
-card_changes_2214:
-  id: 5818
-  card_action_id: 7450
-  field: 1
-  value: '259'
-card_changes_2215:
-  id: 5819
-  card_action_id: 7450
-  field: 2
-  value: '{"type":"_self"}'
-card_changes_2216:
-  id: 5820
-  card_action_id: 7450
+  id: 5812
+  card_action_id: 7448
   field: 3
   value: '0'

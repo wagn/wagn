@@ -39,7 +39,7 @@ end
 def card_core_dev_simplecov_filters
   filters.clear # This will remove the :root_filter that comes via simplecov's defaults
   add_filter do |src|
-    !(src.filename =~ /^#{SimpleCov.root}/) unless src.filename =~ /card/
+    !(src.filename =~ /^#{SimpleCov.root}/) unless src.filename =~ /wagn/
   end    
   
   add_filter '/spec/'

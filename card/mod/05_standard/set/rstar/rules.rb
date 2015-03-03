@@ -262,7 +262,7 @@ format :html do
   end
   
   view :delete_button do |args|
-    button_tag :type=>:submit, :class=>'btn-xs btn-item-delete btn-success', 'aria-label'=>'Left Align' do
+    button_tag :type=>:submit, :class=>'btn-xs btn-item-delete btn-primary', 'aria-label'=>'Left Align' do
       tag :span, :class=>"glyphicon glyphicon-ok", 'aria-hidden'=>"true"
     end 
 

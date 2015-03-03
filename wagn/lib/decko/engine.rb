@@ -9,6 +9,7 @@ require 'airbrake'
 require 'coderay'
 require 'haml'
 require 'kaminari'
+require 'bootstrap-kaminari-views'
 require 'diff/lcs'
 require 'diffy'
 

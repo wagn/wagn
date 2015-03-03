@@ -39,6 +39,7 @@ Gem::Specification.new do |s|
     
     [ 'haml',         '~> 4.0'  ],
     [ 'kaminari',     '~> 0.16' ],
+    [ 'bootstrap-kaminari-views', '~> 0.0.5'],
     [ 'diffy',        '~> 3.0'  ],
     [ 'diff-lcs',     '~> 1.2'  ],
     # should not depend!

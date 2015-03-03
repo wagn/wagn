@@ -1,7 +1,7 @@
 include All::Permissions::Follow
 
 def options 
-  Card::FollowOption.cards
+  Card::FollowOption.cards.compact
 end
 
 def options_card

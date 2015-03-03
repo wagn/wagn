@@ -30,22 +30,16 @@ format :html do
 
   FIELD_HELPERS.each do |method_name|
     define_method(method_name) do |name, options = {}|
-      if_form_given do |form|
-        form.send(method_name, name, bootstrap_options(options) )
-      end
+      form.send(method_name, name, bootstrap_options(options) )
     end
   end
   
   def check_box method, options={}, checked_value = "1", unchecked_value = "0"
-    if_form_given do |form|
-      form.check_box method, bootstrap_options(options), checked_value, unchecked_value
-    end
+    form.check_box method, bootstrap_options(options), checked_value, unchecked_value
   end
   
   def radio_button method, tag_value, options = {}
-    if_form_given do |form|
-      form.radio_button method, tag_value, bootstrap_options(options)
-    end
+    form.radio_button method, tag_value, bootstrap_options(options)
   end
   
 end

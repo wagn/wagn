@@ -180,7 +180,7 @@ format :html do
                          narrower_rules.last[0] = narrower_rules.last[0].downcase
                       end
                       rule_name  = "#{set_name}+#{tag}"
-                      form.radio_button( :name, rule_name, :checked=>checked, :warning=>warning ) + %{
+                      radio_button( :name, rule_name, :checked=>checked, :warning=>warning ) + %{
                           <span class="set-label" #{'current-set-label' if is_current }>
                             #{ card_link set_name, :text=> Card.fetch(set_name).label, :target=>'wagn_set' }
                             #{'<em>(current)</em>' if is_current }

@@ -8,5 +8,5 @@ view :core do |args|
 end
 
 view :editor do |args|
-  form.check_box :content
+  check_box :content
 end

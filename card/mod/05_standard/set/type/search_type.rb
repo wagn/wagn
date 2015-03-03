@@ -169,7 +169,7 @@ format :html do
   end
 
   view :editor do |args|
-    form.text_area :content, :rows=>5
+    text_area :content, :rows=>5
   end
 
   view :no_search_results do |args|

@@ -19,13 +19,17 @@ module Card::SpecHelper
   end
 
   def assert_view_select(view_html, *args, &block)
-    #Rails.logger.rspec "<pre>#{CGI.escapeHTML Nokogiri::XML(view_html,&:noblanks).to_s}</pre>" 
     node = HTML::Document.new(view_html).root
     if block_given?
       assert_select node, *args, &block
     else
       assert_select node, *args
     end
+  end
+  
+  def debug_assert_view_select(view_html, *args, &block)
+    Rails.logger.rspec "<pre>#{CGI.escapeHTML Nokogiri::XML(view_html,&:noblanks).to_s}</pre>" 
+    assert_view_select view_html, *args, &block
   end
 
   def render_editor(type)

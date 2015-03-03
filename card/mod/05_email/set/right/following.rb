@@ -18,7 +18,7 @@ format :html do
    end
    
    view :editor do |args|
-     form.hidden_field( :content, :class=>'card-content', 'no-autosave'=>true) +
+     hidden_field( :content, :class=>'card-content', 'no-autosave'=>true) +
         (args.delete(:select_list) ? raw(render_rule_editor(args)) : super(args) )
    end
    

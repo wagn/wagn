@@ -72,7 +72,8 @@ format :html do
   end
   view :list_item do |args|
     %{
-      <li class="pointer-li input-group list-group-item">
+      <li class="pointer-li list-group-item">
+      <span class="input-group">
         <span class="input-group-addon handle">
           #{ glyphicon 'option-vertical left' }
           #{ glyphicon 'option-vertical right'}
@@ -82,6 +83,7 @@ format :html do
           <button class="pointer-item-delete btn btn-default" type="button">
             #{ glyphicon 'remove-circle'}
           </button>
+        </span>
         </span>
       </li>
     }

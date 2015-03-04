@@ -106,7 +106,7 @@ namespace :wagn do
   task :assume_card_migrations do
     require 'decko/engine'
 
-    Cardio.assume_migrated_upto_version :cord_cards
+    Cardio.assume_migrated_upto_version :core_cards
   end
 
   namespace :migrate do

@@ -81,7 +81,10 @@ else
     Rake::Task['wagn:update'].invoke
   when 'cucumber'
     require 'wagn'
-    feature_paths = Dir.glob("./mod/**/features")
+    require './config/environment'
+    feature_paths = Card::Loader.mod_dirs.map do |p|
+      Dir.glob "#{p}/features"
+    end.flatten
     require_args = "-r #{Wagn.gem_root}/features "
     require_args += feature_paths.map { |path| "-r #{path}"}.join(' ')
     feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.join(' ')

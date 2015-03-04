@@ -5,14 +5,14 @@ ENV["RAILS_ENV"] = 'test'
 
 
 Spork.prefork do
-  require File.expand_path( '../simplecov_helper.rb', __FILE__ )
-  
+    
   if ENV["RAILS_ROOT"]
     require File.join( ENV["RAILS_ROOT"], '/config/environment')
   else
     require File.expand_path( '../../config/environment', __FILE__ )
   end
-
+  require File.join Cardio.gem_root, 'lib', 'card', 'simplecov_helper.rb'
+  
   if defined?(Bundler)
     Bundler.require(:test)   # if simplecov is activated in the Gemfile, it has to be required here
   end
@@ -66,7 +66,8 @@ Spork.each_run do
   # This code will be run each time you run your specs.
 end
 
-require 'card/spec_helper'
+require File.join Cardio.gem_root, 'lib', 'card', 'spec_helper.rb'
+
 RSpec::Core::ExampleGroup.send :include, Card::SpecHelper
 
 

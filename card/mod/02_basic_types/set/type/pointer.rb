@@ -47,7 +47,7 @@ format :html do
 
   view :editor do |args|
     part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/,'') : :list
-    form.hidden_field( :content, :class=>'card-content') +
+    hidden_field( :content, :class=>'card-content') +
     raw(_render(part_view, args.merge(:pointer_item_class=>'form-control')))
   end
 
@@ -60,7 +60,7 @@ format :html do
     extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
     %{
-      <ul class="pointer-list-editor #{extra_css_class}" options-card="#{options_card_name}">
+      <ul class="pointer-list-editor list-group #{extra_css_class}" options-card="#{options_card_name}">
         #{ 
           items.map do |item|
             _render_list_item args.merge( :pointer_item=>item )
@@ -72,7 +72,8 @@ format :html do
   end
   view :list_item do |args|
     %{
-      <li class="pointer-li input-group">
+      <li class="pointer-li list-group-item">
+      <span class="input-group">
         <span class="input-group-addon handle">
           #{ glyphicon 'option-vertical left' }
           #{ glyphicon 'option-vertical right'}
@@ -82,6 +83,7 @@ format :html do
           <button class="pointer-item-delete btn btn-default" type="button">
             #{ glyphicon 'remove-circle'}
           </button>
+        </span>
         </span>
       </li>
     }

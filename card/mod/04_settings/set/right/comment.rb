@@ -12,7 +12,7 @@ format :html do
     item_names = inheriting ? [] : card.item_names
 
     %{     
-      #{ form.hidden_field :content, :class=>'card-content' }
+      #{ hidden_field :content, :class=>'card-content' }
       <div class="perm-editor">
     
         #{ if inheritable; %{

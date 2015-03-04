@@ -96,11 +96,17 @@ module Cardio
     end
 
     def migration_paths type
-      paths["db/migrate#{schema_suffix type}"].to_a
+      list = paths["db/migrate#{schema_suffix type}"].to_a
+      if type == :deck_cards
+        list += Card::Loader.mod_dirs.map do |p|
+          Dir.glob "#{p}/db/migrate_cards"
+        end.flatten
+      end
+      list
     end
 
     def assume_migrated_upto_version type
-      Cardio.schema_mode(:type) do
+      Cardio.schema_mode(type) do
         ActiveRecord::Schema.assume_migrated_upto_version Cardio.schema(type), Cardio.migration_paths(type)
       end
     end

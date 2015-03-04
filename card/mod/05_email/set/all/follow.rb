@@ -49,12 +49,12 @@ format :html do
     when :off
       path_options['card[content]']= '[[*never]]'
       html_options[:title]         = "stop sending emails about changes to #{args[:label]}"
-      if args[:hover]
-        html_options[:hover_content] = "unfollow #{args[:label]}" 
-        html_options[:text]          = "following #{args[:label]}"
-      else
+#      if args[:hover]
+#        html_options[:hover_content] = "unfollow #{args[:label]}" 
+#        html_options[:text]          = "following #{args[:label]}"
+#      else
         html_options[:text]          = "unfollow #{args[:label]}"
-      end
+#      end
     when :on
       path_options['card[content]']= '[[*always]]'
       html_options[:title]         = "send emails about changes to #{args[:label]}"

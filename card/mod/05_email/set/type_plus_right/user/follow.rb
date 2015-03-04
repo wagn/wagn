@@ -13,16 +13,6 @@ def raw_content
     end
 end
 
-def ruled_user
-  if left.type_id == Card::UserID
-    left
-  elsif Auth.signed_in?
-    Auth.current
-  else
-    Card[:all]  # dangerous
-  end
-end
-
 def virtual?; true end
 
 
@@ -66,17 +56,21 @@ format :html do
    end
    
    def each_suggestion
-      if (suggestions = Card["follow suggestions"])
-        suggestions.item_names.each do |sug|
-          if ((set_card = Card.fetch sug.to_name.left) && set_card.type_code == :set) 
-            option_card = Card.fetch(sug.to_name.right) || Card[sug.to_name.right.to_sym]
-            option = option_card.codename
-            yield(set_card, option)
-          elsif ((set_card = Card.fetch sug) && set_card.type_code == :set) 
-            yield(set_card, '*always')
-          end
-        end
-      end
+     if (suggestions = Card["follow suggestions"])
+       suggestions.item_names.each do |sug|
+         if ((set_card = Card.fetch sug.to_name.left) && set_card.type_code == :set) 
+           option_card = Card.fetch(sug.to_name.right) || Card[sug.to_name.right.to_sym]
+           option = if option_card.follow_option?
+                      option_card.name
+                    else
+                      '*always'
+                    end
+           yield(set_card, option)
+         elsif ((set_card = Card.fetch sug) && set_card.type_code == :set) 
+           yield(set_card, '*always')
+         end
+       end
+     end
    end
    
    # returns hashes with existing and suggested follow options

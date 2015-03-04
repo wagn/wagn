@@ -60,7 +60,7 @@ format :html do
     extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
     %{
-      <ul class="pointer-list-editor list-group #{extra_css_class}" options-card="#{options_card_name}">
+      <ul class="pointer-list-editor #{extra_css_class}" options-card="#{options_card_name}">
         #{ 
           items.map do |item|
             _render_list_item args.merge( :pointer_item=>item )
@@ -72,7 +72,7 @@ format :html do
   end
   view :list_item do |args|
     %{
-      <li class="pointer-li list-group-item">
+      <li class="pointer-li">
       <span class="input-group">
         <span class="input-group-addon handle">
           #{ glyphicon 'option-vertical left' }

@@ -1,8 +1,8 @@
 format :html do 
   view :header do |args|
     %{
-      <div class="card-header#{ ' panel-heading' if args[:panel] }">
-        <h3 class="card-header-title #{ ' panel-title' if args[:panel] }">
+      <div class="card-header #{ args[:header_class] }">
+        <h3 class="card-header-title #{ args[:title_class] }">
           #{ _optional_render :toggle, args, :hide }
           #{ _optional_render :title, args }
         </h3>

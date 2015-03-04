@@ -58,7 +58,7 @@ describe "Card::Set::All::Follow" do
     end
       
     def assert_following_view name, args
-      assert_follow_view name, args.reverse_merge(:following => true, :text=>"following #{name}")
+      assert_follow_view name, args.reverse_merge(:following => true, :text=>"unfollow #{name}")
     end
   
 #  href="/card/update/Home+*self+philipp+*follow?card%5Bcontent%5D=%5B%5Bnever%5D%5D&success%5Bid%5D=Home&success%5Bview%5D=follow"
@@ -100,7 +100,7 @@ describe "Card::Set::All::Follow" do
     
     context "when following cardtype card" do
       it 'renders following all link' do
-        assert_following_view 'Optic', :add_set=>'Optic+*type', :text=>'following all "Optics"'
+        assert_following_view 'Optic', :add_set=>'Optic+*type', :text=>'unfollow all "Optics"'
       end
     end
     

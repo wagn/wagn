@@ -299,10 +299,10 @@ $(window).ready ->
   $('.btn-item-delete').hover(
     -> 
       $(this).find('.glyphicon').addClass("glyphicon-remove").removeClass("glyphicon-ok")
-      $(this).addClass("btn-danger").removeClass("btn-success")
+      $(this).addClass("btn-danger").removeClass("btn-primary")
     -> 
        $(this).find('.glyphicon').addClass("glyphicon-ok").removeClass("glyphicon-remove")
-       $(this).addClass("btn-success").removeClass("btn-danger"))
+       $(this).addClass("btn-primary").removeClass("btn-danger"))
 
   # permissions mod
   $('body').on 'click', '.perm-vals input', ->

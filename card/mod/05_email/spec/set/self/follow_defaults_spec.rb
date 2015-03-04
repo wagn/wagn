@@ -4,8 +4,8 @@ describe Card::Set::Self::FollowDefaults do
   context 'when updated' do
     before do 
       Card::Auth.as_bot do
-        ca = Card.fetch '*follow defaults'
-        ca.update_attributes! :content=>'A+*self+*always'
+        ca = Card[:follow_defaults]
+        ca.update_attributes! :content=>'[[A+*self+*always]]'
       end
     end
     it 'updates follow rules of users' do

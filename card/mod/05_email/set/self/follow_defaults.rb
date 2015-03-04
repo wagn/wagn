@@ -15,7 +15,6 @@ event :update_follow_rules, :after=>:store, :on=>:save do
   Auth.as_bot do
     Card.search(:type=>'user').each do |user|
       defaults.each do |set_card, option|
-#        binding.pry
         if (follow_rule = Card.fetch(set_card.follow_rule_name(user.name), :new=>{}))
          follow_rule.drop_item "*never"
          follow_rule.drop_item "*always"

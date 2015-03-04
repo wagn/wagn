@@ -18,6 +18,7 @@ class AddMoreFollowingCards < Card::CoreMigration
     Card.create! :name => "*never", :codename=>"never"
     
     # default follow rule
+    Card.create! :name=>'*follow defaults', :codename=>'follow_defaults', :type_code=>:pointer
     Card.create! :name => "*all+*all+*follow", :type_code=>:pointer, :content=>'[[*never]]'
   end
 end

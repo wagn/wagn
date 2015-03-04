@@ -34,12 +34,4 @@ format :html do
     end
   end
   
-  def check_box method, options={}, checked_value = "1", unchecked_value = "0"
-    form.check_box method, bootstrap_options(options), checked_value, unchecked_value
-  end
-  
-  def radio_button method, tag_value, options = {}
-    form.radio_button method, tag_value, bootstrap_options(options)
-  end
-  
 end

@@ -18,6 +18,10 @@ module Cardio
   mattr_reader :paths, :config, :cache
 
   class << self
+    def cache
+      @@cache ||= ::Rails.cache
+    end
+    
     def set_config config
       @@config = config
       @@root = @@config.root

@@ -47,7 +47,8 @@ format :html do
   end
   
   def frame args={}
-    wrap args.reverse_merge(:slot_class=>'card-frame') do
+    args[:slot_class] = "card-frame #{args[:slot_class]}"
+    wrap args do
       %{
         #{ _render_header args }
         #{ %{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader] }

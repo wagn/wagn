@@ -64,7 +64,8 @@ wagn.menu_template = [
       { "text":"account", "related":{"name":"+*account", "view":"edit"}, "text":"details" },
       { "related":"roles"   },
       { "related":"created" },
-      { "related":"edited"  }
+      { "related":"edited"  },
+      { "related":"follows" }
     ]
   }
   

@@ -92,6 +92,7 @@ format :html do
     return '' unless card.ok? :create  # should this be moved into ok_view?
 
     opts = { :remote=>true, :class=>"slotter missing-#{ args[:denied_view] || args[:home_view]}" }
+    opts[:path_opts] = { :type=> args[:type] } if args[:type]
 
     wrap args do
       view_link "Add #{ fancy_title args[:title] }", :new, opts

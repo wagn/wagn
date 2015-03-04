@@ -1,8 +1,8 @@
 format :html do 
   view :header do |args|
     %{
-      <div class="card-header panel-heading">
-        <h3 class="card-header-title panel-title" style="display:inline-block">
+      <div class="card-header #{ args[:header_class] }">
+        <h3 class="card-header-title #{ args[:title_class] }">
           #{ _optional_render :toggle, args, :hide }
           #{ _optional_render :title, args }
         </h3>

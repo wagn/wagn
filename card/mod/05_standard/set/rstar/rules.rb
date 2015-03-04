@@ -241,7 +241,7 @@ format :html do
       form_opts = {:drop_item=>args[:condition]}
     end
 
-    text = if (option_card = Card[args[:condition].to_sym])
+    text = if (option_card = Card.fetch args[:condition])
              option_card.description(card.rule_set)
            else
              card.rule_set.follow_label

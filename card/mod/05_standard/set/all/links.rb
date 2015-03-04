@@ -5,6 +5,8 @@ format do
   # link is called by web_link, card_link, and view_link
   # (and is overridden in other formats)
   def link_to text, href, opts={}
+    href = interpret_href href
+    
     if text and href != text
       "#{text}[#{href}]"
     else
@@ -84,15 +86,17 @@ format do
     card_path relative_path
   end
   
+  def interpret_href href
+    Hash===href ? path(href) : href
+  end
+    
 end
 
 format :html do
   
   
   def link_to text, href, opts={}
-    if Hash===href
-      href = path href
-    end
+    href = interpret_href href
 
     [:remote, :method].each do |key|
       if val = opts.delete(key)

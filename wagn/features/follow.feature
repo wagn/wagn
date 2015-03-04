@@ -11,7 +11,6 @@ Feature: Follow interface
     Given I follow "Sign out"
     When I go to the homepage
     And I hover over the main menu
-    And I wait a sec
     Then I should not see "follow"
 
   Scenario: Following a Card
@@ -20,6 +19,7 @@ Feature: Follow interface
     And I hover over the main menu
     And In the main card menu I should not see "unfollow"
     And In the main card menu I click "follow"
+    And I hover over the main menu    
     Then In the main card menu I should see "unfollow"
     And the card Home+*self+Joe User+*follow should point to "always"
     
@@ -29,6 +29,7 @@ Feature: Follow interface
     And I am on the homepage
     And I hover over the main menu
     And In the main card menu I click "unfollow"
+    And I hover over the main menu    
     Then In the main card menu I should see "follow"
     And the card Home+*self+Joe User+*follow should point to "never"
 

@@ -9,6 +9,7 @@ require 'airbrake'
 require 'coderay'
 require 'haml'
 require 'kaminari'
+require 'bootstrap-kaminari-views'
 require 'diff/lcs'
 require 'diffy'
 
@@ -33,6 +34,13 @@ module Decko
         end
         
         ActiveRecord::Base.establish_connection(::Rails.env)
+      end
+      ActiveSupport.on_load(:after_initialize) do
+          begin
+           require_dependency 'card' unless defined?(Card)
+          rescue ActiveRecord::StatementInvalid => e
+            ::Rails.logger.warn "database not available[#{::Rails.env}] #{e}"
+          end
       end
     end
 

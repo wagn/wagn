@@ -125,7 +125,7 @@ format :html do
       %{
 .history-header  
   %span.slotter
-    = paginate intr, :remote=>true
+    = paginate intr, :remote=>true, :theme=>'twitter-bootstrap-3'
   %span.history-legend{:style=>"text-align:right;"}
     %span.glyphicon.glyphicon-plus-sign.diff-green
     %span

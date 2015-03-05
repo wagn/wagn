@@ -246,7 +246,7 @@ format :html do
            else
              card.rule_set.follow_label
            end
-    link_target = if card.rule_set.codename == 'self'
+    link_target = if card.rule_set.tag.codename == 'self'
                     card.rule_set_name.left
                   else
                     "#{card.rule_set_name}+by name"

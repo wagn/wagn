@@ -99,7 +99,7 @@ describe Card::Set::All::Notify do
           :to        => Card['Joe User'].email,
           :follower  => Card['Joe User'].name, 
           :followed_set  => "#{@card.name}+*self",
-          :follow_option => 'always'
+          :follow_option => '*always'
         ).text_part.body.raw_source
       }
        
@@ -124,7 +124,7 @@ describe Card::Set::All::Notify do
                 :to        => Card['Joe User'].email,
                 :follower  => Card['Joe User'].name, 
                 :followed_set  => @card.name+"+s1+*self",
-                :follow_option => 'always'
+                :follow_option => '*always'
               ).text_part.body.raw_source
           }
           before do
@@ -183,7 +183,7 @@ describe Card::Set::All::Notify do
         :to        => Card['Joe User'].email,
         :follower  => Card['Joe User'].name, 
         :followed_set  => "#{@card.name}+*self",
-        :follow_option => 'always'
+        :follow_option => '*always'
       ).text_part.body.raw_source
       expect(result).to eq(%{"another card with subcards" was just created by Joe User.
 
@@ -210,7 +210,7 @@ See the card: /another_card_with_subcards
 
 You received this email because you're following "another card with subcards".
 
-Use this link to unfollow /update/another_card_with_subcards+*self+Joe_User+*follow?card[content]=[[never]]
+Use this link to unfollow /update/another_card_with_subcards+*self+Joe_User+*follow?card[content]=[[*never]]
 })
     end
   end
@@ -225,7 +225,7 @@ Use this link to unfollow /update/another_card_with_subcards+*self+Joe_User+*fol
       receive(:send_change_notice)
     end
     
-    def be_notified_of set_name, option_name='always'
+    def be_notified_of set_name, option_name='*always'
       receive(:send_change_notice).with(kind_of(Card::Act), set_name, option_name)
     end
   
@@ -265,12 +265,12 @@ Use this link to unfollow /update/another_card_with_subcards+*self+Joe_User+*fol
       
       it "sends notifications of new card" do
         new_card = Card.new :name => "Microscope", :type => "Optic"
-        expect_user("Optic fan").to be_notified_of "Optic+*type", "always"
+        expect_user("Optic fan").to be_notified_of "Optic+*type", "*always"
         new_card.save!
       end
 
       it "sends notification of update" do
-        expect_user("Optic fan").to be_notified_of "Optic+*type", 'always'
+        expect_user("Optic fan").to be_notified_of "Optic+*type", '*always'
         update "Sunglasses"
       end
     end
@@ -278,26 +278,26 @@ Use this link to unfollow /update/another_card_with_subcards+*self+Joe_User+*fol
     context 'when following *right sets' do
       it "sends notifications of new card" do
         new_card = Card.new :name=>"Telescope+lens"
-        expect_user("Big Brother").to be_notified_of "lens+*right", 'always'
+        expect_user("Big Brother").to be_notified_of "lens+*right", '*always'
         new_card.save!
       end
     
       it "sends notifications of update" do
-        expect_user("Big Brother").to be_notified_of "lens+*right", 'always'
+        expect_user("Big Brother").to be_notified_of "lens+*right", '*always'
         update "Magnifier+lens"
       end
     end
 
-    context 'when following "content I created"' do
+    context 'when following "*created"' do
       it 'sends notifications of update' do
-        expect_user('Narcissist').to be_notified_of '*all', 'content I created'
+        expect_user('Narcissist').to be_notified_of '*all', '*created'
         update 'Sunglasses'
       end
     end
     
     context 'when following "content I edited"' do
       it 'sends notifications of update' do
-        expect_user('Narcissist').to be_notified_of '*all', 'content I edited'
+        expect_user('Narcissist').to be_notified_of '*all', '*edited'
         update 'Magnifier+lens'
       end
     end
@@ -312,12 +312,12 @@ Use this link to unfollow /update/another_card_with_subcards+*self+Joe_User+*fol
         context 'and follow fields rule contains subcards' do
           it 'sends notification of new subcard' do
             new_card = Card.new :name=>'Sunglasses+producer'
-            expect_user('Sunglasses fan').to be_notified_of 'Sunglasses+*self', 'always'
+            expect_user('Sunglasses fan').to be_notified_of 'Sunglasses+*self', '*always'
             new_card.save!
           end
         
           it 'sends notification of updated subcard' do
-            expect_user('Sunglasses fan').to be_notified_of 'Sunglasses+*self', 'always'
+            expect_user('Sunglasses fan').to be_notified_of 'Sunglasses+*self', '*always'
             update 'Sunglasses+price'
           end
         end

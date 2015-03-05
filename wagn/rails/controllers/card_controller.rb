@@ -20,7 +20,6 @@ class CardController < ActionController::Base
   before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
   
-  
 
   
   layout nil

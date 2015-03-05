@@ -293,16 +293,36 @@ $(window).ready ->
       item.remove()
     else
       item.find('input').val ''
-    event.preventDefault() # Prevent link from following its href
     
   # following mod
   $('.btn-item-delete').hover(
     -> 
-      $(this).find('.glyphicon').addClass("glyphicon-remove-sign").removeClass("glyphicon-ok-sign")
-      $(this).addClass("btn-danger").removeClass("btn-success")
+      $(this).find('.glyphicon').addClass("glyphicon-remove").removeClass("glyphicon-ok")
+      $(this).addClass("btn-danger").removeClass("btn-primary")
     -> 
-       $(this).find('.glyphicon').addClass("glyphicon-ok-sign").removeClass("glyphicon-remove-sign")
-       $(this).addClass("btn-success").removeClass("btn-danger"))
+       $(this).find('.glyphicon').addClass("glyphicon-ok").removeClass("glyphicon-remove")
+       $(this).addClass("btn-primary").removeClass("btn-danger"))
+
+  $('body').on 'click', '.follow-toggle', ->
+    anchor = $(this)
+    url  = wagn.rootPath + '/update/' + anchor.data('rule_name') + '.json'
+    $.ajax url, {
+      type : 'POST'
+      dataType : 'json'
+      data : {
+        'card[content]' : '[[' + anchor.data('follow').content + ']]'
+        'success[view]' : 'follow_status'
+        'success[id]'   : anchor.data('card_key')
+      }
+      success : (data)->
+        tags = anchor.closest('.card-menu').find('.follow-toggle')
+        tags.find('.follow-verb').html data.verb
+        tags.attr 'title', data.title
+        tags.attr 'class', data.class
+        tags.data 'follow', data
+    }
+    event.preventDefault() # Prevent link from following its href
+    
 
   # permissions mod
   $('body').on 'click', '.perm-vals input', ->

@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
     [ 'smartname',    '0.2.3'   ],
 
     [ 'uuid',         '~> 2.3'  ],
+    [ 'cocaine',      '~> 0.5.5'], # used by paperclip, version 0.5.6 is broken
     [ 'paperclip',    '~> 2.8'  ],
     [ 'htmlentities', '~> 4.3'  ],
     [ 'rmagick',      '~> 2.13' ],
@@ -38,6 +39,7 @@ Gem::Specification.new do |s|
     
     [ 'haml',         '~> 4.0'  ],
     [ 'kaminari',     '~> 0.16' ],
+    [ 'bootstrap-kaminari-views', '~> 0.0.5'],
     [ 'diffy',        '~> 3.0'  ],
     [ 'diff-lcs',     '~> 1.2'  ],
     # should not depend!

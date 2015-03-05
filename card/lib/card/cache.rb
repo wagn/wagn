@@ -175,7 +175,11 @@ class Card
       @cache_id = self.class.generate_cache_id
       if @store
         if hard
-          @store.clear
+          begin
+            @store.clear
+          rescue => e
+            Rails.logger.debug "Problem clearing cache: #{e.message}"
+          end
         else
           @store.write @system_prefix + "cache_id", @cache_id
         end

@@ -11,7 +11,7 @@ def title
 end
 
 def label
-  "follow what I've edited"
+  "follow if I edited"
 end
   
 def description set_card

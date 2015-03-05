@@ -14,12 +14,11 @@ class AddMoreFollowingCards < Card::CoreMigration
     Card.create! :name => "*all+*follow fields", :content=>"[[*include]]", :type_code=>:pointer
     
     # follow options
-    Card.create! :name => "always", :codename=>"always"
-    Card.create! :name => "never", :codename=>"never"
-    Card.create! :name => "content I created", :codename=>"created_by_me"
-    Card.create! :name => "content I edited", :codename=>"edited_by_me"
+    Card.create! :name => "*always", :codename=>"always"
+    Card.create! :name => "*never", :codename=>"never"
     
     # default follow rule
-    Card.create! :name => "*all+*all+*follow", :type_code=>:pointer, :content=>'[[never]]'
+    Card.create! :name=>'*follow defaults', :codename=>'follow_defaults', :type_code=>:pointer
+    Card.create! :name => "*all+*all+*follow", :type_code=>:pointer, :content=>'[[*never]]'
   end
 end

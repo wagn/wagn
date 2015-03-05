@@ -9,6 +9,7 @@ require 'airbrake'
 require 'coderay'
 require 'haml'
 require 'kaminari'
+require 'bootstrap-kaminari-views'
 require 'diff/lcs'
 require 'diffy'
 
@@ -23,7 +24,6 @@ module Decko
     
 
     initializer :connect_on_load do
-      Cardio.cache == ::Rails.cache
       ActiveSupport.on_load(:active_record) do
         if defined? Wagn
           #this code should all be in Wagn somewhere, I suspect.
@@ -36,11 +36,11 @@ module Decko
         ActiveRecord::Base.establish_connection(::Rails.env)
       end
       ActiveSupport.on_load(:after_initialize) do
-        begin
-          require_dependency 'card' unless defined?(Card)
-        rescue ActiveRecord::StatementInvalid => e
-          ::Rails.logger.warn "database not available[#{::Rails.env}] #{e}"
-        end
+          begin
+           require_dependency 'card' unless defined?(Card)
+          rescue ActiveRecord::StatementInvalid => e
+            ::Rails.logger.warn "database not available[#{::Rails.env}] #{e}"
+          end
       end
     end
 

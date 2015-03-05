@@ -55,7 +55,8 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 
 .card-header {
   .card-header-title {
-    overflow:hidden;
+    display: inline-block;
+    overflow: hidden;
   }
   .toggler {
     display: inline-block;
@@ -71,6 +72,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
   }
 }
 .card-menu-link {
+  margin-left: 5px;
   display: inline-block; 
   float: right;
 }
@@ -83,9 +85,6 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
   overflow: hidden;
   .card-header {
     display: inline-block;
-  }
-  .card-menu-link {
-    float: none;
   }
 }
 .closed-content {

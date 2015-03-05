@@ -4,7 +4,7 @@ format :html do
   view :closed_rule, :tags=>:unknown_ok do |args|
     return 'not a rule' if !card.is_rule? #these are helpful for handling non-rule rstar cards until we have real rule sets
       
-    rule_card = card.new_card? ? find_current_rule_card : card
+    rule_card = find_current_rule_card
 
     rule_content = !rule_card ? '' : begin
       subformat(rule_card)._render_closed_content :set_context=>card.cardname.trunk_name
@@ -78,10 +78,11 @@ format :html do
   end
   
   def default_open_rule_args args
-    args.merge!({
-        :current_rule => find_current_rule_card,
-        :setting_name => card.rule_setting_name,
-      })
+    current_rule_card = find_current_rule_card || begin
+      Card.new :name=> "#{Card[:all].name}+#{card.rule_user_setting_name}"
+    end
+    
+    args.reverse_merge! :current_rule => current_rule_card, :setting_name => card.rule_setting_name
   end
   
 
@@ -180,7 +181,7 @@ format :html do
                          narrower_rules.last[0] = narrower_rules.last[0].downcase
                       end
                       rule_name  = "#{set_name}+#{tag}"
-                      form.radio_button( :name, rule_name, :checked=>checked, :warning=>warning ) + %{
+                      radio_button( :name, rule_name, :checked=>checked, :warning=>warning ) + %{
                           <span class="set-label" #{'current-set-label' if is_current }>
                             #{ card_link set_name, :text=> Card.fetch(set_name).label, :target=>'wagn_set' }
                             #{'<em>(current)</em>' if is_current }
@@ -228,7 +229,7 @@ format :html do
 =end
   
   def default_follow_item_args args
-    args[:condition] ||= Env.params[:condition] || 'always'
+    args[:condition] ||= Env.params[:condition] || '*always'
   end
   
   view :follow_item, :tags=>:unknown_ok do |args|
@@ -240,12 +241,12 @@ format :html do
       form_opts = {:drop_item=>args[:condition]}
     end
 
-    text = if (option_card = Card[args[:condition].to_sym])
+    text = if (option_card = Card.fetch args[:condition])
              option_card.description(card.rule_set)
            else
              card.rule_set.follow_label
            end
-    link_target = if card.rule_set.codename == 'self'
+    link_target = if card.rule_set.tag.codename == 'self'
                     card.rule_set_name.left
                   else
                     "#{card.rule_set_name}+by name"
@@ -262,15 +263,15 @@ format :html do
   end
   
   view :delete_button do |args|
-    button_tag :type=>:submit, :class=>'btn-xs btn-item-delete btn-success', 'aria-label'=>'Left Align' do
-      tag :span, :class=>"glyphicon glyphicon-ok-sign", 'aria-hidden'=>"true"
+    button_tag :type=>:submit, :class=>'btn-xs btn-item-delete btn-primary', 'aria-label'=>'Left Align' do
+      tag :span, :class=>"glyphicon glyphicon-ok", 'aria-hidden'=>"true"
     end 
 
   end
   
   view :add_button do |args|
     button_tag :type=>:submit, :class=>'btn-xs btn-item-add', 'aria-label'=>'Left Align' do
-      tag :span, :class=>"glyphicon glyphicon-plus-sign", 'aria-hidden'=>"true"
+      tag :span, :class=>"glyphicon glyphicon-plus", 'aria-hidden'=>"true"
     end
   end
   
@@ -282,8 +283,9 @@ format :html do
     # This generates a prototypical member of the POTENTIAL rule's set
     # and returns that member's ACTUAL rule for the POTENTIAL rule's setting
     if card.new_card?
-       ((setting = card.right) && card.set_prototype.rule_card(setting.codename, :user=>card.rule_user)) ||
-            Card.new(:name=> "#{Card[:all].name}+#{card.rule_user_setting_name}")
+      if setting = card.right
+        card.set_prototype.rule_card setting.codename, :user=>card.rule_user
+      end
     else
       card
     end 

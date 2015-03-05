@@ -18,57 +18,50 @@ event :cache_expired_because_of_new_user_rule, :before=>:extend, :when=>proc { |
   Card.follow_caches_expired
 end
 
-
-
-format :html do
-  view :follow_menu_link, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|
-    wrap(args) do
-      render_follow_link( args.merge(:label=>'',:main_menu=>true) )
+format do
+    
+  def follow_link_hash args
+    toggle = args[:toggle] || ( card.followed? ? :off : :on )
+    hash = {
+      :class => "follow-toggle follow-toggle-#{toggle}",
+    }
+    case toggle
+    when :off
+      hash[:content] = '*never'
+      hash[:title]   = "stop sending emails about changes to #{card.follow_label}"
+      hash[:verb]    = 'unfollow'
+    when :on
+      hash[:content] = '*always'
+      hash[:title]   = "send emails about changes to #{card.follow_label}"
+      hash[:verb]    = 'follow'
     end
+    hash
+      
   end
   
-  view :follow_submenu_link, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|
-    wrap(args) do
-      render_follow_link args.merge(:hover=>true)
-    end
-  end
- 
-  view :follow_link, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|   
-    success_view = (args[:main_menu] ? :follow_menu_link : :follow_submenu_link)
-    path_options = { 
-                      :action=>:update,
-                      :success=>{:id=>card.name, :view=>success_view} 
-                   }
-    html_options = {  
-                      :class=>"watch-toggle watch-toggle-#{args[:toggle]} slotter", 
-                      :remote=>true, 
-                      :method=>'post'
-                   }
+  
+end
 
-    case args[:toggle]
-    when :off
-      path_options['card[content]']= '[[never]]'
-      html_options[:title]         = "stop sending emails about changes to #{args[:label]}"
-      if args[:hover]
-        html_options[:hover_content] = "unfollow #{args[:label]}" 
-        html_options[:text]          = "following #{args[:label]}"
-      else
-        html_options[:text]          = "unfollow #{args[:label]}"
-      end
-    when :on
-      path_options['card[content]']= '[[always]]'
-      html_options[:title]         = "send emails about changes to #{args[:label]}"
-      html_options[:text]          = "follow #{args[:label]}"
-    end
-    if html_options[:text].size > 30
-      html_options[:text] = html_options[:text][0..27] + '...'
-    end
-    if args[:main_menu]
-      html_options[:text] = '<span class="ui-menu-icon ui-icon ui-icon-carat-1-w"></span>' + html_options[:text]
-      # html_options[:text] =  glyphicon('menu-left') + html_options[:text]    #TODO use glyphicons instead of ui-cons
-    end
-    follow_rule_name = card.default_follow_set_card.follow_rule_name Auth.current.name
-    card_link follow_rule_name, html_options.merge(:path_opts=>path_options) 
+
+format :json do
+  view :follow_status do |args|
+    follow_link_hash args
+  end
+end
+
+format :html do
+ 
+  view :follow_link, :tags=>:unknown_ok, :perms=>:none do |args|
+    hash = follow_link_hash args
+    text = %[<span class="follow-verb">#{hash[:verb]}</span> #{args[:label]}]
+    opts = {
+      :title           => hash[:title],
+      :class           => hash[:class],
+      'data-follow'    => JSON(hash),
+      'data-rule_name' => card.default_follow_set_card.follow_rule_name( Auth.current.name ).to_name.url_key,
+      'data-card_key'  => card.key
+    }
+    link_to text, '', opts
   end
   
   def default_follow_link_args args

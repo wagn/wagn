@@ -1,7 +1,23 @@
 # MySQL.  Versions 4.1 and 5.0 are recommended.
 # Be sure to use new-style password hashing:
 #   http://dev.mysql.com/doc/refman/5.0/en/old-client.html
-development:
+
+production: 
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: <%= app_name %>_production
+  pool: 5
+  username: root
+  password:
+<% if mysql_socket -%>
+  socket: <%= mysql_socket %>
+<% else -%>
+  host: localhost
+<% end -%>
+
+
+development: &development
   adapter: mysql2
   encoding: utf8
   reconnect: false
@@ -34,16 +50,8 @@ test: &test
 
 cucumber: *test
 
-production: 
-  adapter: mysql2
-  encoding: utf8
-  reconnect: false
-  database: <%= app_name %>_production
-  pool: 5
-  username: root
-  password:
-<% if mysql_socket -%>
-  socket: <%= mysql_socket %>
-<% else -%>
-  host: localhost
-<% end -%>
+profile: *development
+
+
+
+

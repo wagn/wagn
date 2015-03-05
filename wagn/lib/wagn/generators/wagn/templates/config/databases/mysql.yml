@@ -17,7 +17,7 @@ production:
 <% end -%>
 
 
-development:
+development: &development
   adapter: mysql2
   encoding: utf8
   reconnect: false
@@ -50,7 +50,7 @@ test: &test
 
 cucumber: *test
 
-profile: *test
+profile: *development
 
 
 

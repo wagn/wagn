@@ -318,7 +318,7 @@ $(window).ready ->
         tags = anchor.closest('.card-menu').find('.follow-toggle')
         tags.find('.follow-verb').html data.verb
         tags.attr 'title', data.title
-        tags.attr 'class', data.class
+        tags.removeClass( 'follow-toggle-on follow-toggle-off').addClass data.class
         tags.data 'follow', data
     }
     event.preventDefault() # Prevent link from following its href

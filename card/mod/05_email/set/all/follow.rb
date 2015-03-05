@@ -22,9 +22,8 @@ format do
     
   def follow_link_hash args
     toggle = args[:toggle] || ( card.followed? ? :off : :on )
-    hash = {
-      :class => "follow-toggle follow-toggle-#{toggle}",
-    }
+    hash = { :class => "follow-toggle-#{toggle}" }
+
     case toggle
     when :off
       hash[:content] = '*never'
@@ -56,7 +55,7 @@ format :html do
     text = %[<span class="follow-verb">#{hash[:verb]}</span> #{args[:label]}]
     opts = {
       :title           => hash[:title],
-      :class           => hash[:class],
+      :class           => "follow-toggle #{hash[:class]}",
       'data-follow'    => JSON(hash),
       'data-rule_name' => card.default_follow_set_card.follow_rule_name( Auth.current.name ).to_name.url_key,
       'data-card_key'  => card.key

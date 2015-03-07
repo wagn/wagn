@@ -6,7 +6,7 @@ Description:
     and choose as migration name import_<filename>.
     
 Example:
-    wagn generate card_migration better_commented_search_cards
+    wagn generate card:migration better_commented_search_cards
 
     This will create:
     
@@ -15,7 +15,7 @@ Example:
     ...which is set up to use methods in lib/card/migration.rb
     
     
-    wagn generate card_migration import_better_search_cards
+    wagn generate card:migration import_better_search_cards
 
     This will create:
     

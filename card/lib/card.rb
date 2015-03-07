@@ -32,7 +32,8 @@ class Card < ActiveRecord::Base
 
   attr_accessor :action, :supercard, :current_act, :current_action, 
     :comment, :comment_author,    # obviated soon
-    :update_referencers,           # wrong mechanism for this
+    :update_referencers,          # wrong mechanism for this
+    :update_all_users,                  # if the above is wrong then this one too
     :follower_stash, :remove_rule_stash,
     :last_action_id_before_edit
     

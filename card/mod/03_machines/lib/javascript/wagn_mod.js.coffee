@@ -295,13 +295,17 @@ $(window).ready ->
       item.find('input').val ''
     
   # following mod
-  $('.btn-item-delete').hover(
-    -> 
-      $(this).find('.glyphicon').addClass("glyphicon-remove").removeClass("glyphicon-ok")
-      $(this).addClass("btn-danger").removeClass("btn-primary")
-    -> 
-       $(this).find('.glyphicon').addClass("glyphicon-ok").removeClass("glyphicon-remove")
-       $(this).addClass("btn-primary").removeClass("btn-danger"))
+  $('body').on 'click', '.btn-item-delete', ->
+    $(this).find('.glyphicon').addClass("glyphicon-hourglass").removeClass("glyphicon-remove")
+  $('body').on 'click', '.btn-item-add', ->
+    $(this).find('.glyphicon').addClass("glyphicon-hourglass").removeClass("glyphicon-plus")
+    
+  $('body').on 'mouseenter', '.btn-item-delete', ->
+    $(this).find('.glyphicon').addClass("glyphicon-remove").removeClass("glyphicon-ok")
+    $(this).addClass("btn-danger").removeClass("btn-primary")
+  $('body').on 'mouseleave', '.btn-item-delete', ->
+    $(this).find('.glyphicon').addClass("glyphicon-ok").removeClass("glyphicon-remove")
+    $(this).addClass("btn-primary").removeClass("btn-danger")
 
   $('body').on 'click', '.follow-toggle', ->
     anchor = $(this)

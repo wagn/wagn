@@ -52,29 +52,29 @@ format :html do
   end
   
   def rendering_error exception, view
-    %{
-      
-      <span class="render-error">
-        error rendering
-        #{
-          if Auth.always_ok?
-            %{
-              #{ card_link error_cardname, :class=>'render-error-link' }
-              <div class="render-error-message errors-view" style="display:none">
-                <h3>Error message (visible to admin only)</h3>
-                <p><strong>#{ exception.message }</strong></p>
-                <div>
-                  #{exception.backtrace * "<br>\n"}
-                </div>
-              </div>
-            }
-          else
-            error_cardname
-          end
-        }
-        (#{view} view)
-      </span>
-    }
+    details = if Auth.always_ok?
+                card_link(error_cardname, :class=>'render-error-link') +
+                    alert('warning', :dismissible=>true, :alert_class=>"render-error-message errors-view admin-error-message") do
+                      %{
+                        <h3>Error message (visible to admin only)</h3>
+                        <p><strong>#{ exception.message }</strong></p>
+                        <div>
+                          #{exception.backtrace * "<br>\n"}
+                        </div>
+                        </div>
+                      }
+                  end
+              else
+                error_cardname
+              end
+                 
+    content_tag :span, :class=>'render-error' do
+      [
+        'error rendering',
+        details,
+        "(#{view} view)"
+      ].join "\n"
+    end
   end
 
   def unsupported_view view
@@ -123,29 +123,33 @@ format :html do
     end
 
     wrap args.merge( :slot_class=>'error-view' ) do  #ENGLISH below
-      %{<strong>Conflict!</strong><span class="new-current-revision-id">#{card.last_action_id}</span>
-        <div>#{ card_link card.last_action.act.actor.cardname } has also been making changes.</div>
-        <div>Please examine below, resolve above, and re-submit.</div>
-        #{ wrap do |args| 
-            if card.current_act
-              _render_act_expanded :act=>card.current_act, :current_rev_nr => 0 
-            else
-              "No difference between your changes and #{card.last_action.act.actor.name}'s version."
-            end 
-          end
-         } 
-      }
+      alert 'warning' do
+        %{<strong>Conflict!</strong><span class="new-current-revision-id">#{card.last_action_id}</span>
+          <div>#{ card_link card.last_action.act.actor.cardname } has also been making changes.</div>
+          <div>Please examine below, resolve above, and re-submit.</div>
+          #{ wrap do |args|
+              if card.current_act
+                _render_act_expanded :act=>card.current_act, :current_rev_nr => 0
+              else
+                "No difference between your changes and #{card.last_action.act.actor.name}'s version."
+              end
+            end
+           } 
+        }
+      end
     end
   end
   
   view :errors, :perms=>:none do |args|
     if card.errors.any?
       title = %{ Problems #{%{ with #{card.name} } unless card.name.blank?} }
-      frame args.merge( :title=>title ) do
+      frame args.merge(:slot_class=>"panel panel-warning", :title=>title, :hide=>'menu' ) do
         card.errors.map do |attrib, msg|
-          msg = "#{attrib.to_s.upcase}: #{msg}" unless attrib == :abort
-          %{ <div class="card-error-msg">#{msg}</div> }
-        end
+          msg = "<strong>#{attrib.to_s.upcase}:</strong> #{msg}" unless attrib == :abort
+          alert 'warning', :dismissible=>true, :alert_class=>'card-error-msg' do
+            msg
+          end
+        end  
       end
     end
   end
@@ -171,7 +175,6 @@ format :html do
     else
       'to do that.'
     end
-
     if !focal?
       %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}
     else

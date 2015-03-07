@@ -67,9 +67,18 @@ format :html do
           end * "\n"
         }
       </ul>
-      <div class="add-another-div">#{ link_to 'Add another', '#', :class=>'pointer-item-add'}</div>
+      #{ add_item_button }
     }
   end
+  
+  def add_item_button
+    content_tag :span, :class=>'input-group' do
+      button_tag :class=>'pointer-item-add' do
+        glyphicon('plus') + ' add another'
+      end
+    end
+  end
+  
   view :list_item do |args|
     %{
       <li class="pointer-li">
@@ -81,7 +90,7 @@ format :html do
         #{ text_field_tag 'pointer_item', args[:pointer_item], :class=>'pointer-item-text form-control' }
         <span class="input-group-btn">
           <button class="pointer-item-delete btn btn-default" type="button">
-            #{ glyphicon 'remove-circle'}
+            #{ glyphicon 'remove'}
           </button>
         </span>
         </span>

@@ -68,6 +68,21 @@ format :html do
     end
   end
   
+  # alert_types: 'success', 'info', 'warning', 'danger'
+  def alert alert_type, args={}
+    css_class = "alert alert-#{alert_type} "
+    css_class += 'alert-dismissible ' if args[:dismissible]
+    css_class += args[:alert_class] if args[:alert_class]
+    close_button = args[:dismissible] ? %{
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      } : ''
+    content_tag :div, :class=>css_class, :role=>'alert' do
+      close_button + output( yield args)
+    end
+  end
+  
   def wrap_main(content)
     return content if params[:layout]=='none'
     %{<div id="main">#{content}</div>}

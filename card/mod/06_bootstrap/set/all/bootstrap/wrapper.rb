@@ -9,5 +9,4 @@ format :html do
     )
     super args
   end
-  
 end 

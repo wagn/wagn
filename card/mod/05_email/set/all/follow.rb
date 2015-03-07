@@ -118,14 +118,23 @@ end
 
 
 def follow_rule_applies? user_id
-  if (follow_rule_card=rule_card(:follow, :user_id=>user_id))
-    follow_rule_card.item_cards.each do |item_card|
-      if item_card.respond_to?(:applies_to?) and item_card.applies_to? self, user_id
-         return item_card
+  follow_rule = rule :follow, :user_id=>user_id
+  if follow_rule.present?
+    follow_rule.split("\n").each do |value|
+      value_code = value.to_name.code
+      if test = Card::FollowOption.test[ value_code ]
+        return test.call :user_id => user_id
+      else
+        #Rails.logger.debug "didn't find block for #{ value }"
       end
     end
   end 
   return false
+end
+
+
+def editor_ids_follow_cache
+  @editor_ids_follow_cache ||= Card.search(:editor_of=>name, :return=>:id)
 end
 
 
@@ -178,6 +187,8 @@ def direct_follower_ids args={}
     end
   end
   result
+  #ensure
+  #@editor_ids_follow_cache = nil
 end
 
 def all_direct_follower_ids_with_reason
@@ -191,7 +202,11 @@ def all_direct_follower_ids_with_reason
       end
     end
   end
+  #ensure
+  #@editor_ids_follow_cache = nil
 end
+
+
 
 #~~~~~ cache methods
 

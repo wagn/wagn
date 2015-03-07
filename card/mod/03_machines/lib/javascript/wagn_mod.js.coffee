@@ -304,6 +304,7 @@ $(window).ready ->
        $(this).addClass("btn-primary").removeClass("btn-danger"))
 
   $('body').on 'click', '.follow-toggle', ->
+    alert 'got here!!'
     anchor = $(this)
     url  = wagn.rootPath + '/update/' + anchor.data('rule_name') + '.json'
     $.ajax url, {

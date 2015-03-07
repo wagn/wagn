@@ -25,7 +25,7 @@ module Cardio
     def set_config config
       @@config = config
       @@root = @@config.root
-        
+
       config.autoload_paths += Dir["#{Cardio.gem_root}/mod/*/lib/**/"]
 
       config.read_only             = !!ENV['WAGN_READ_ONLY']

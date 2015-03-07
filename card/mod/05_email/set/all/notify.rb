@@ -74,7 +74,7 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c|
     end
     @follower_stash.each_follower_with_reason do |follower, reason|
       if follower.account and follower != @current_act.actor
-        follower.account.send_change_notice @current_act, reason[:set_card].name, reason[:option_card].name
+        follower.account.send_change_notice @current_act, reason[:set_card].name, reason[:option]
       end
     end
   rescue =>e  #this error handling should apply to all extend callback exceptions

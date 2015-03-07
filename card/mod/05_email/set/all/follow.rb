@@ -91,7 +91,7 @@ def follow_rule_card?
 end
 
 def follow_option?
-  codename && Card::FollowOption.codenames.include?(codename.to_sym) 
+  codename && FollowOption.codenames.include?(codename.to_sym) 
 end
 
 # used for the follow menu
@@ -99,17 +99,19 @@ end
 # for sets and cardtypes it doesn't check whether the users is following the card itself
 # instead it checks whether he is following the complete set
 def followed_by? user_id
-  if follow_rule_applies? user_id
-    return true
-  end
-  left_card = left
-  while left_card
-    if left_card.followed_field?(self) && left_card.follow_rule_applies?(user_id)
+  set_follow_test_options do
+    if follow_rule_applies? user_id
       return true
     end
-    left_card = left_card.left
+    left_card = left
+    while left_card
+      if left_card.followed_field?(self) && left_card.followed_by?(user_id)
+        return true
+      end
+      left_card = left_card.left
+    end
+    return false
   end
-  return false
 end
 
 def followed?
@@ -121,20 +123,25 @@ def follow_rule_applies? user_id
   follow_rule = rule :follow, :user_id=>user_id
   if follow_rule.present?
     follow_rule.split("\n").each do |value|
-      value_code = value.to_name.code
-      if test = Card::FollowOption.test[ value_code ]
-        return test.call :user_id => user_id
+      if test = FollowOption.test[ value.to_name.code ]
+        if test.call @follow_test_options.merge( :user_id => user_id )
+          return value.gsub( /[\[\]]/, '' )
+        end
       else
-        #Rails.logger.debug "didn't find block for #{ value }"
+        Rails.logger.debug "didn't find follow test for #{ value }"
       end
     end
   end 
   return false
 end
 
-
-def editor_ids_follow_cache
-  @editor_ids_follow_cache ||= Card.search(:editor_of=>name, :return=>:id)
+def set_follow_test_options
+  @follow_test_options = {}
+  FollowOption.test_option.each do |key, val|
+    @follow_test_options[key] = val.call(self)
+  end
+  yield
+  @follow_test_options = nil
 end
 
 
@@ -176,34 +183,34 @@ end
 
 # all ids of users that follow this card because of a follow rule that applies to this card
 # doesn't include users that follow this card because they are following parent cards or other cards that include this card
-def direct_follower_ids args={}  
+def direct_follower_ids args={}
   result = ::Set.new
-  set_names.each do |set_name| 
-    set_card = Card.fetch(set_name)
-    set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
-      if (!result.include? user_id) and self.follow_rule_applies?(user_id)
-        result << user_id
+  set_follow_test_options do
+    set_names.each do |set_name| 
+      set_card = Card.fetch(set_name)
+      set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
+        if (!result.include? user_id) and self.follow_rule_applies?(user_id)
+          result << user_id
+        end
       end
     end
   end
   result
-  #ensure
-  #@editor_ids_follow_cache = nil
 end
 
 def all_direct_follower_ids_with_reason
-  visited = ::Set.new
-  set_names.each do |set_name| 
-    set_card = Card.fetch(set_name)
-    set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
-      if (!visited.include?(user_id)) && (follow_option_card = self.follow_rule_applies?(user_id))
-        visited << user_id
-        yield(user_id, :set_card=>set_card, :option_card=>follow_option_card)
+  set_follow_test_options do  
+    visited = ::Set.new
+    set_names.each do |set_name| 
+      set_card = Card.fetch(set_name)
+      set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
+        if (!visited.include?(user_id)) && (follow_option = self.follow_rule_applies?(user_id))
+          visited << user_id
+          yield(user_id, :set_card=>set_card, :option=>follow_option)
+        end
       end
     end
   end
-  #ensure
-  #@editor_ids_follow_cache = nil
 end
 
 

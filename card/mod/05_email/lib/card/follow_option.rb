@@ -3,9 +3,10 @@
 
 class Card
   module FollowOption
-    mattr_reader :test
+    mattr_reader :test, :test_option
+    @@test, @@test_option = {}, {}
+    
     @@options = { :all=>[], :main=>[], :restrictive=>[] }
-    @@test = {}
     
     def self.included(host_class)     
        host_class.extend ClassMethods
@@ -52,6 +53,10 @@ class Card
       def follow_test opts={}, &block
         codename = get_codename opts
         Card::FollowOption.test[codename] = block
+      end
+      
+      def follow_test_option option, &block
+        Card::FollowOption.test_option[option] = block
       end
       
       private

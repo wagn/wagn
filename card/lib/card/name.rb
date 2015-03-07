@@ -41,5 +41,13 @@ class Card
     def code
       Codename[ Card.fetch_id self ]
     end
+    
+    def is_setting?
+      Set::Type::Setting.member_names[ key ]
+    end
+    
+    def is_set?
+      SetPattern.card_keys[ tag_name.key ]
+    end
   end
 end

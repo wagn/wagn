@@ -19,24 +19,21 @@ ReadRuleSQL = %{
 
 
 def is_rule?
+  cardname.tag_name.is_setting? &&
+  (
+  )
   is_standard_rule? || is_user_rule?
 end
 
 def is_standard_rule?
-  (r = right( :skip_modules=>true )) &&
-  r.type_id == Card::SettingID       &&
-  (l = left( :skip_modules=>true ))  &&
-  l.type_id == Card::SetID
+  cardname.tag_name.is_setting? &&
+  cardname.trunk_name.is_set?
 end
 
 def is_user_rule?
-  cardname.parts.length > 2                                  &&
-  (r = right( :skip_modules=>true ))                         &&
-   r.type_id == Card::SettingID                              &&
-  (set = self[0..-3, :skip_modules=>true])                   &&
-   set.type_id == Card::SetID                                && 
-  (user = self[-2, :skip_modules=>true] )                    &&
-  (user.type_id == Card::UserID  || user.codename == 'all' )
+  cardname.parts.length > 2               &&
+  cardname.tag_name.is_setting?           &&
+  cardname.trunk_name.trunk_name.is_set? 
 end
 
 

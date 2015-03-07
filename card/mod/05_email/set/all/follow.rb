@@ -103,12 +103,8 @@ def followed_by? user_id
     if follow_rule_applies? user_id
       return true
     end
-    left_card = left
-    while left_card
-      if left_card.followed_field?(self) && left_card.followed_by?(user_id)
-        return true
-      end
-      left_card = left_card.left
+    if left_card = left and left_card.followed_field?(self) && left_card.followed_by?(user_id)
+      return true
     end
     return false
   end

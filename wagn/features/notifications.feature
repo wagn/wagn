@@ -19,7 +19,8 @@ Feature: Notifications
     Then Joe Admin should be notified that "Joe User created \"Foo\""
     And the card Phrase+*type+*followers should point to "Joe Admin"
     And I should see "was just created by Joe User" in the email body
-    And I should see |You received this email because you're following "all "Phrases""| in the email body  #FIXME these double quotes are ugly
+    #FIXME these double quotes are ugly
+    And I should see |You received this email because you're following "all "Phrases""| in the email body
     When I am signed in as Joe Admin
     And I follow "Unfollow" in the email
     Then the card Phrase+*type+*followers should not point to "Joe Admin"

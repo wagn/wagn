@@ -1,0 +1,9 @@
+Description:
+    Generates a new format in the deck.
+
+Example:
+    wagn generate card:format backup
+
+    This will create:
+        mod/05_standard/format/backup_format.rb
+        spec/mod/05_standard/format/backup_format_spec.rb

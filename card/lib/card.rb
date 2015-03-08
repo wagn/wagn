@@ -7,6 +7,7 @@ class Card < ActiveRecord::Base
   require_dependency 'card/query'
   require_dependency 'card/exceptions'
   require_dependency 'card/log'
+  require_dependency 'card/action'
 
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id

@@ -2,9 +2,7 @@ include Card::FollowOption
 
 self.follow_opts :position=>2
 
-def applies_to? card, user_id
-  true
-end
+self.follow_test { true }
 
 def title
   'Following'

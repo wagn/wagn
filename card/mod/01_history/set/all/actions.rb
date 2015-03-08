@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 def select_action_by_params params
-  self.selected_action_id = action.id if action = find_action_by_params(params)
+  action = find_action_by_params(params) and self.selected_action_id = action.id
 end
 
 def find_action_by_params args

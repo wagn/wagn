@@ -2,9 +2,8 @@ include Card::FollowOption
 
 self.follow_opts :position=>3
 
-def applies_to? card, user_id
-  false
-end
+self.follow_test { |opts| false }
+
 
 def title
   'Ignoring'

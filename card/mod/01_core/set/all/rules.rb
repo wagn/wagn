@@ -23,19 +23,20 @@ def is_rule?
 end
 
 def is_standard_rule?
-  (l = left( :skip_modules=>true ))  &&
-  l.type_id == Card::SetID           &&
   (r = right( :skip_modules=>true )) &&
-  r.type_id == Card::SettingID           
+  r.type_id == Card::SettingID       &&
+  (l = left( :skip_modules=>true ))  &&
+  l.type_id == Card::SetID
 end
 
 def is_user_rule?
+  cardname.parts.length > 2                                  &&
+  (r = right( :skip_modules=>true ))                         &&
+   r.type_id == Card::SettingID                              &&
   (set = self[0..-3, :skip_modules=>true])                   &&
    set.type_id == Card::SetID                                && 
   (user = self[-2, :skip_modules=>true] )                    &&
-  (user.type_id == Card::UserID  || user.codename == 'all' ) &&
-  (r = right( :skip_modules=>true ))                         &&
-   r.type_id == Card::SettingID
+  (user.type_id == Card::UserID  || user.codename == 'all' )
 end
 
 

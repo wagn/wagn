@@ -1,18 +1,30 @@
 
-def content
-  if @selected_action_id
-    @selected_content ||= begin
-      (change = last_change_on( :db_content, :not_after=> @selected_action_id ) and change.value) || db_content
+# if these aren't in a nested module, the methods just overwrite the base methods,
+# but we need a distict module so that super will be able to refer to the base methods.
+module ContentHistory
+  def content
+    if @selected_action_id
+      @selected_content ||= begin
+        (change = last_change_on( :db_content, :not_after=> @selected_action_id ) and change.value) || db_content
+      end
+    else
+      super
     end
-  else
+  end
+
+  def content= value
+    @selected_content = nil
     super
   end
-end
 
-def content= value
-  @selected_content = nil
-  super
+  def save_content_draft content
+    super
+    acts.create do |act|
+      act.actions.build(:draft => true, :card_id=>id).changes.build(:field=>:db_content, :value=>content)
+    end
+  end
 end
+include ContentHistory
 
 def last_change_on(field, opts={})
   where_sql =  'card_actions.card_id = :card_id AND field = :field AND (draft is not true) '
@@ -110,16 +122,8 @@ def clean_html?
   true
 end
 
-
 def draft_acts
   drafts.created_by(Card::Auth.current_id).map(&:act)
-end
-
-def save_content_draft content
-  super
-  acts.create do |act|
-    act.actions.build(:draft => true, :card_id=>id).changes.build(:field=>:db_content, :value=>content)
-  end
 end
 
 event :detect_conflict, :before=>:approve, :on=>:update do
@@ -127,3 +131,4 @@ event :detect_conflict, :before=>:approve, :on=>:update do
     errors.add :conflict, "changes not based on latest revision"
   end
 end
+

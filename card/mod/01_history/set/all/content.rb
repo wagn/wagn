@@ -1,20 +1,18 @@
 
-def content_with_selected
+def content
   if @selected_action_id
     @selected_content ||= begin
       (change = last_change_on( :db_content, :not_after=> @selected_action_id ) and change.value) || db_content
     end
   else
-    content_without_selected
+    super
   end
 end
-alias_method_chain :content, :selected
 
-def content_with_selected= value
+def content= value
   @selected_content = nil
-  self.content_without_selected= value
+  super
 end
-alias_method_chain :content=, :selected
 
 def last_change_on(field, opts={})
   where_sql =  'card_actions.card_id = :card_id AND field = :field AND (draft is not true) '
@@ -117,13 +115,12 @@ def draft_acts
   drafts.created_by(Card::Auth.current_id).map(&:act)
 end
 
-def save_content_draft_with_action content
-  save_content_draft_without_action content
+def save_content_draft content
+  super
   acts.create do |act|
     act.actions.build(:draft => true, :card_id=>id).changes.build(:field=>:db_content, :value=>content)
   end
 end
-alias_method_chain :save_content_draft, :action
 
 event :detect_conflict, :before=>:approve, :on=>:update do
   if last_action_id_before_edit and last_action_id_before_edit.to_i != last_action_id and last_action.act.actor_id != Auth.current_id

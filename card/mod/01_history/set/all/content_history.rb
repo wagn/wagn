@@ -1,30 +1,27 @@
 
 # if these aren't in a nested module, the methods just overwrite the base methods,
 # but we need a distict module so that super will be able to refer to the base methods.
-module ContentHistory
-  def content
-    if @selected_action_id
-      @selected_content ||= begin
-        (change = last_change_on( :db_content, :not_after=> @selected_action_id ) and change.value) || db_content
-      end
-    else
-      super
+def content
+  if @selected_action_id
+    @selected_content ||= begin
+      (change = last_change_on( :db_content, :not_after=> @selected_action_id ) and change.value) || db_content
     end
-  end
-
-  def content= value
-    @selected_content = nil
+  else
     super
-  end
-
-  def save_content_draft content
-    super
-    acts.create do |act|
-      act.actions.build(:draft => true, :card_id=>id).changes.build(:field=>:db_content, :value=>content)
-    end
   end
 end
-include ContentHistory
+
+def content= value
+  @selected_content = nil
+  super
+end
+
+def save_content_draft content
+  super
+  acts.create do |act|
+    act.actions.build(:draft => true, :card_id=>id).changes.build(:field=>:db_content, :value=>content)
+  end
+end
 
 def last_change_on(field, opts={})
   where_sql =  'card_actions.card_id = :card_id AND field = :field AND (draft is not true) '

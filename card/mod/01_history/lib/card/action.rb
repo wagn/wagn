@@ -1,48 +1,6 @@
 # -*- encoding : utf-8 -*-
+
 class Card
-  
-  #fixme - these Card class methods should probably be in a set module
-  def find_action_by_params args
-    case 
-    when args[:rev]
-      nth_action args[:rev]
-    when args[:rev_id]
-      if action = Action.fetch(args[:rev_id]) and action.card_id == id 
-        action 
-      end
-    end
-  end
-  
-  def nth_action index
-    index = index.to_i
-    if id and index > 0
-      Action.where("draft is not true AND card_id = #{id}").order(:id).limit(1).offset(index-1).first
-    end
-  end
-  
-  def revision action
-    # a "revision" refers to the state of all tracked fields at the time of a given action
-    if action.is_a? Integer
-      action = Card::Action.fetch(action)
-    end
-    action and Card::TRACKED_FIELDS.inject({}) do |attr_changes, field|
-      last_change = action.changes.find_by_field(field) || last_change_on(field, :not_after=>action)
-      attr_changes[field.to_sym] = (last_change ? last_change.value : self[field])
-      attr_changes
-    end
-  end
-  
-  def delete_old_actions
-    Card::TRACKED_FIELDS.each do |field|
-      # assign previous changes on each tracked field to the last action
-      if (not last_action.change_for(field).present?) and (last_change = last_change_on(field))
-        last_change = Card::Change.find(last_change.id)   # last_change comes as readonly record
-        last_change.update_attributes!(:card_action_id=>last_action_id)
-      end
-    end
-    actions.where('id != ?', last_action_id ).delete_all
-  end
-  
   
   class Action < ActiveRecord::Base
     belongs_to :card
@@ -80,7 +38,27 @@ class Card
         Card::Act.delete_actionless
       end
     end
-    
+
+    #
+    # This is the main API from Cards to history
+    # See also create_act_and_action, which needs to happen before this or we
+    # don't have the action to call this method on.
+    #
+    # When changes are stored for versioned attributes, this is the signal method
+    # By overriding this method in a module, the module takes over handling of
+    # changes.  Although the standard version stores the Changes in active record
+    # models (Act, Action and Change records), these could be /dev/nulled for a
+    # history-less implementation, or handled by an external service.
+    #
+    # If change streams are generated from database triggers, and we aren't writing
+    # here (disabled history), we still have to generate change stream events in
+    # another way.
+    #
+    def changed_fields obj, changed_fields
+      #changed_fields.each{ |f| changes.build :field => f, :value => self[f] }
+      changed_fields.each{ |f| Card::Change.create :field => f, :value => obj[f], :card_action_id=>id }
+    end
+
     def edit_info
       @edit_info ||= {
         :action_type  => "#{action_type}d",

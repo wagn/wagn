@@ -503,15 +503,12 @@ class Card
       # TESTME
       def page_path title, opts={}
         Rails.logger.warn "Pass only Card::Name to page_path #{title.class}, #{title}" unless Card::Name===title
-        card_path page_path_segment(title, opts)
+        format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
+        action = ( (path_opts = opts.delete(:path_opts)) && path_opts[:action] ) ? "#{opts[:path_opts][:action]}/" : ''
+        query  = opts.present? ? "?#{opts.to_param}"         : ''
+        card_path "#{action}#{title.to_name.url_key}#{format}#{query}"
       end
       
-      def page_update_path title, opts={}
-        Rails.logger.warn "Pass only Card::Name to page_update_path #{title.class}, #{title}" unless Card::Name===title
-        update_opts = opts[:card] ? opts : { :card => opts }
-        card_path "update/#{page_path_segment(title, update_opts)}"
-      end
-
       def card_path rel_path
         Rails.logger.warn "Pass only strings to card_path: #{rel_path.class}, #{rel_path}" unless String===rel_path
         if rel_path =~ /^\//
@@ -527,12 +524,6 @@ class Card
         else
           "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ card_path rel }"
         end
-      end
-      
-      def page_path_segment title, opts={}
-        format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
-        query  = opts.present? ? "?#{opts.to_param}"         : ''
-        "#{title.to_name.url_key}#{format}#{query}"
       end
       
     end

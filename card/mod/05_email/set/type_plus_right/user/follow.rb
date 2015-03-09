@@ -139,7 +139,6 @@ format :html do
      if !Auth.signed_in? || Auth.current_id != card.left.id
        hide_buttons = [:delete_button, :add_button]
      end
-#     editable = Auth.signed_in? && Auth.current_id == card.left.id
      never = Card[:never].name
      wrap_with :div, :class=>'pointer-list-editor' do
        wrap_with :ul, :class=>'delete-list list-group' do
@@ -170,16 +169,6 @@ format :html do
          super(args)
        end
      end
-     #
-     # binding.pry
-     # save_interrupted_action(request.env['REQUEST_URI'])
-     # "You have to #{ link_to 'sign in', card_url(':signin') } #{to_task}"
-   end
-   
-   view :denial do |args|
-     binding.pry
-     save_interrupted_action(request.env['REQUEST_URI'])
-     "You have to #{ link_to 'sign in', card_url(':signin') } #{or_signup} #{to_task}"
    end
    
 end

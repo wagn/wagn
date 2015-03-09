@@ -138,7 +138,7 @@ format do
     if args[:followed_set] && (set_card = Card.fetch(args[:followed_set])) && args[:follow_option] && args[:follower]
      rule_name = set_card.follow_rule_name args[:follower]    
      target_name = "#{args[:follower]}+#{Card[:follow].name}"
-     update_path = page_update_path target_name, :subcards=>{rule_name=>Card[:never].name}
+     update_path = page_path target_name, :path_opts=>{:action=>:update}, :card=>{:subcards=>{rule_name=>Card[:never].name}}
      card_url update_path # absolutize path
     end
   end

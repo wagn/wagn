@@ -201,6 +201,7 @@ namespace :wagn do
       Card::Cache.reset_global
       conn =  ActiveRecord::Base.connection
       # Correct time and user stamps
+      # USER related
       who_and_when = [ Card::WagnBotID, Time.now.utc.to_s(:db) ]
       card_sql = "update cards set creator_id=%1$s, created_at='%2$s', updater_id=%1$s, updated_at='%2$s'"
       conn.update( card_sql                                          % who_and_when )
@@ -215,6 +216,7 @@ namespace :wagn do
           end
         end
         Card::Cache.reset_global
+        # FIXME: can this be associated with the machine module somehow?
         %w{ machine_input machine_output }.each do |codename|
           Card.search(:right=>{:codename=>codename }).each do |card|
             FileUtils.rm_rf File.join('files', card.id.to_s ), :secure=>true
@@ -225,6 +227,8 @@ namespace :wagn do
 
       Card.empty_trash
 
+      # FIXME: move this to history
+      # Card::Act.clear_history(:actor_id=>Card::WagnBotID, :card_id=>Card::WagnBotID)
       Card::Action.delete_old
       Card::Change.delete_actionless
 

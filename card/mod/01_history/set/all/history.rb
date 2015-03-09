@@ -7,17 +7,10 @@ def create_act_and_action
   else
     acts.build(:ip_address=>Env.ip)
   end
-  
+
   @current_action = actions.build(:action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
   @current_action.act = @current_act
-  
-  # @current_act = (@supercard ? @supercard.current_act : Card::Act.new(:ip_address=>Env.ip))
-  # if !@supercard
-  #   @current_act.card = self
-  # end
-  # @current_action = @current_act.actions.build(:action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
-  # @current_action.card = self
-  
+
   if (@supercard and @supercard !=self)
     @current_action.super_action = @supercard.current_action
   end

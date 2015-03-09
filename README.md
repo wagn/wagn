@@ -1,7 +1,5 @@
 #Wagn: how pioneers roll
 
-[![Build Status](https://semaphoreapp.com/api/v1/projects/0d61c1f9-5ef0-4c5c-89c6-7664e247e4be/294670/badge.png)](https://semaphoreapp.com/ethan/wagn)
-
 ##Basics
 
 Wagn is an open web platform for building coherent web systems.

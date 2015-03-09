@@ -307,7 +307,7 @@ $(window).ready ->
     anchor = $(this)
     url  = wagn.rootPath + '/update/' + anchor.data('rule_name') + '.json'
     $.ajax url, {
-#      type : 'POST'
+      type : 'POST'
       dataType : 'json'
       data : {
         'card[content]' : '[[' + anchor.data('follow').content + ']]'
@@ -315,7 +315,6 @@ $(window).ready ->
         'success[id]'   : anchor.data('card_key')
       }
       success : (data) ->
-        alert 'success, mang'
         tags = anchor.closest('.card-menu').find('.follow-toggle')
         tags.find('.follow-verb').html data.verb
         tags.attr 'title', data.title

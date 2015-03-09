@@ -303,7 +303,7 @@ $(window).ready ->
        $(this).find('.glyphicon').addClass("glyphicon-ok").removeClass("glyphicon-remove")
        $(this).addClass("btn-primary").removeClass("btn-danger"))
 
-  $('body').on 'click', '.follow-toggle', ->
+  $('body').on 'click', '.follow-toggle', (event) ->
     anchor = $(this)
     url  = wagn.rootPath + '/update/' + anchor.data('rule_name') + '.json'
     $.ajax url, {
@@ -314,7 +314,7 @@ $(window).ready ->
         'success[view]' : 'follow_status'
         'success[id]'   : anchor.data('card_key')
       }
-      success : (data)->
+      success : (data) ->
         tags = anchor.closest('.card-menu').find('.follow-toggle')
         tags.find('.follow-verb').html data.verb
         tags.attr 'title', data.title

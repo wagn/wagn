@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require 'card/set'
+require_dependency 'card/set'
 
 class Card
   class << self

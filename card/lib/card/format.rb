@@ -503,9 +503,13 @@ class Card
       # TESTME
       def page_path title, opts={}
         Rails.logger.warn "Pass only Card::Name to page_path #{title.class}, #{title}" unless Card::Name===title
-        format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
-        query  = opts.present? ? "?#{opts.to_param}"         : ''
-        card_path "#{title.to_name.url_key}#{format}#{query}"
+        card_path page_path_segment(title, opts)
+      end
+      
+      def page_update_path title, opts={}
+        Rails.logger.warn "Pass only Card::Name to page_update_path #{title.class}, #{title}" unless Card::Name===title
+        update_opts = opts[:card] ? opts : { :card => opts }
+        card_path "update/#{page_path_segment(title, update_opts)}"
       end
 
       def card_path rel_path
@@ -524,6 +528,13 @@ class Card
           "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ card_path rel }"
         end
       end
+      
+      def page_path_segment title, opts={}
+        format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
+        query  = opts.present? ? "?#{opts.to_param}"         : ''
+        "#{title.to_name.url_key}#{format}#{query}"
+      end
+      
     end
     include Location
 

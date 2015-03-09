@@ -137,7 +137,9 @@ format do
   view :unfollow_url, :perms=>:none, :closed=>true do |args|
     if args[:followed_set] && (set_card = Card.fetch(args[:followed_set])) && args[:follow_option] && args[:follower]
      rule_name = set_card.follow_rule_name args[:follower]    
-     card_url( "update/#{args[:follower]}+#{Card[:follow].name}?card[subcards][#{rule_name.to_name.url_key}]=[[#{Card[:never].name}]]" )  # or drop args[:follow_option] ?
+     target_name = "#{args[:follower]}+#{Card[:follow].name}"
+     update_path = page_update_path target_name, :subcards=>{rule_name=>Card[:never].name}
+     card_url update_path # absolutize path
     end
   end
   

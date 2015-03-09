@@ -210,7 +210,7 @@ See the card: /another_card_with_subcards
 
 You received this email because you're following "another card with subcards".
 
-Use this link to unfollow /update/Joe User+*follow?card[subcards][another_card_with_subcards+*self+Joe_User+*follow]=[[*never]]
+Use this link to unfollow /update/Joe_User+*follow?card%5Bsubcards%5D%5Banother+card+with+subcards%2B%2Aself%2BJoe+User%2B%2Afollow%5D=%2Anever
 })
     end
   end

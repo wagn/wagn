@@ -99,7 +99,7 @@ end
 # for sets and cardtypes it doesn't check whether the users is following the card itself
 # instead it checks whether he is following the complete set
 def followed_by? user_id
-  set_follow_test_options do
+  with_follower_candidate_ids do
     if follow_rule_applies? user_id
       return true
     end
@@ -115,29 +115,38 @@ def followed?
 end
 
 
-def follow_rule_applies? user_id
-  follow_rule = rule :follow, :user_id=>user_id
+def follow_rule_applies? follower_id
+  follow_rule = rule :follow, :user_id=>follower_id
   if follow_rule.present?
     follow_rule.split("\n").each do |value|
-      if test = FollowOption.test[ value.to_name.code ]
-        if test.call @follow_test_options.merge( :user_id => user_id )
-          return value.gsub( /[\[\]]/, '' )
+           
+      value_code = value.to_name.code
+      accounted_ids = @follower_candidate_ids[ value_code ] ||= begin
+        if block = FollowOption.follower_candidate_ids[ value_code ]
+          block.call self
+        else
+          []
         end
-      else
-        Rails.logger.debug "didn't find follow test for #{ value }"
       end
+              
+      applicable = 
+        if test = FollowOption.test[ value_code ]
+          test.call follower_id, accounted_ids
+        else
+          accounted_ids.include? follower_id
+        end
+      
+      return value.gsub( /[\[\]]/, '' ) if applicable
     end
   end 
   return false
 end
 
-def set_follow_test_options
-  @follow_test_options = {}
-  FollowOption.test_option.each do |key, val|
-    @follow_test_options[key] = val.call(self)
-  end
+
+def with_follower_candidate_ids
+  @follower_candidate_ids = {}
   yield
-  @follow_test_options = nil
+  @follower_candidate_ids = nil
 end
 
 
@@ -181,7 +190,7 @@ end
 # doesn't include users that follow this card because they are following parent cards or other cards that include this card
 def direct_follower_ids args={}
   result = ::Set.new
-  set_follow_test_options do
+  with_follower_candidate_ids do
     set_names.each do |set_name| 
       set_card = Card.fetch(set_name)
       set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
@@ -195,7 +204,7 @@ def direct_follower_ids args={}
 end
 
 def all_direct_follower_ids_with_reason
-  set_follow_test_options do  
+  with_follower_candidate_ids do  
     visited = ::Set.new
     set_names.each do |set_name| 
       set_card = Card.fetch(set_name)

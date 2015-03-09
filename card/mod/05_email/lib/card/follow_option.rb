@@ -3,8 +3,8 @@
 
 class Card
   module FollowOption
-    mattr_reader :test, :test_option
-    @@test, @@test_option = {}, {}
+    mattr_reader :test, :follower_candidate_ids
+    @@test, @@follower_candidate_ids = {}, {}
     
     @@options = { :all=>[], :main=>[], :restrictive=>[] }
     
@@ -51,14 +51,13 @@ class Card
       end
       
       def follow_test opts={}, &block
-        codename = get_codename opts
-        Card::FollowOption.test[codename] = block
+        Card::FollowOption.test[ get_codename(opts) ] = block
       end
       
-      def follow_test_option option, &block
-        Card::FollowOption.test_option[option] = block
+      def follower_candidate_ids opts={}, &block
+        Card::FollowOption.follower_candidate_ids[ get_codename(opts) ] = block
       end
-      
+            
       private
       
       def insert_option pos, item, type

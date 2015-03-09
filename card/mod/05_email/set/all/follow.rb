@@ -121,13 +121,14 @@ def follow_rule_applies? follower_id
     follow_rule.split("\n").each do |value|
            
       value_code = value.to_name.code
-      accounted_ids = @follower_candidate_ids[ value_code ] ||= begin
-        if block = FollowOption.follower_candidate_ids[ value_code ]
-          block.call self
-        else
-          []
-        end
-      end
+      accounted_ids = ( 
+        @follower_candidate_ids[ value_code ] ||=
+          if block = FollowOption.follower_candidate_ids[ value_code ]
+            block.call self
+          else
+            []
+          end
+      )
               
       applicable = 
         if test = FollowOption.test[ value_code ]

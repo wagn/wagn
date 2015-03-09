@@ -2,9 +2,13 @@
 require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
+require 'timecop'
+require 'rr'
+require File.expand_path('../../test/seed', __FILE__) # used for SharedData::Users - required here so code won't show up in coverage
+
 require File.expand_path( '../../lib/card/simplecov_helper.rb', __FILE__ )
 require 'simplecov'
-require 'timecop'
+
 require File.expand_path( '../../mod/03_machines/spec/lib/shared_machine_examples.rb', __FILE__ )
 require File.expand_path( '../../mod/03_machines/spec/lib/shared_machine_input_examples.rb', __FILE__ )
 

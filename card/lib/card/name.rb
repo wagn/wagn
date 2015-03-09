@@ -39,7 +39,7 @@ class Card
     end
     
     def code
-      Codename[ Card.fetch_id self ]
+      Card::Codename[ Card.fetch_id self ]
     end
   end
 end

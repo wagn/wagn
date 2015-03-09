@@ -5,38 +5,27 @@ require 'rails/generators/active_record'
 
 class Card
   module Generators
-    class NamedBase < ::Rails::Generators::NamedBase
-      class << self
-        def source_root(path = nil)
-          if path
-            @_card_source_root = path
-          else
-            @_card_source_root ||= File.expand_path(File.join(File.dirname(__FILE__), 'card', generator_name, 'templates'))
-          end
-        end
+    module ClassMethods
 
-        # Override Rails default banner.
-        def banner
-          "wagn generate #{namespace} #{self.arguments.map(&:usage)*' '} [options]".gsub(/\s+/, ' ')
+      def source_root(path = nil)
+        if path
+          @_card_source_root = path
+        else
+          @_card_source_root ||= File.expand_path(File.join(File.dirname(__FILE__), 'card', generator_name, 'templates'))
         end
+      end
+
+      # Override Rails default banner (wagn is the command name).
+      def banner
+        "wagn generate #{namespace} #{self.arguments.map(&:usage)*' '} [options]".gsub(/\s+/, ' ')
       end
     end
 
+    class NamedBase < ::Rails::Generators::NamedBase
+      extend ClassMethods
+    end
     class MigrationBase < ::ActiveRecord::Generators::Base
-      class << self
-        def source_root(path = nil)
-          if path
-            @_card_source_root = path
-          else
-            @_card_source_root ||= File.expand_path(File.join(File.dirname(__FILE__), 'card', generator_name, 'templates'))
-          end
-        end
-
-        # Override Rails default banner.
-        def banner
-          "wagn generate #{namespace} #{self.arguments.map(&:usage)*' '} [options]".gsub(/\s+/, ' ')
-        end
-      end
+      extend ClassMethods
     end
   end
 end

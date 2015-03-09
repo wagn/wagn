@@ -1,82 +1,82 @@
-#Wagn: how pioneers roll
+=Wagn: how pioneers roll
 
-[![Build Status](https://semaphoreapp.com/api/v1/projects/0d61c1f9-5ef0-4c5c-89c6-7664e247e4be/294670/badge.png)](https://semaphoreapp.com/ethan/wagn)
-
-##Basics
+==Basics
 
 Wagn is an open web platform for building coherent web systems.
 
 Using simple wiki-inspired building blocks called cards, "Wagneers" construct sites ranging from simple content managers to custom project trackers to fully integrated web suites.  
 
-##System Requirements
+==System Requirements
  
-* [Ruby](http://www.ruby-lang.org/en/):: version 1.8.7 or higher
-* [Bundler](http://gembundler.com/):: version 1.0 or higher
-* [ImageMagick](http://www.imagemagick.org/)::
-* A database engine:: Either [MySQL](http://www.mysql.com/) or [PostgreSQL](http://www.postgresql.org/)
+Ruby[http://www.ruby-lang.org/en/]:: version 1.8.7 or higher
+Bundler[http://gembundler.com/]:: version 1.0 or higher
+ImageMagick[http://www.imagemagick.org/]::
+A database engine:: Either MySQL[http://www.mysql.com/] or PostgreSQL[http://www.postgresql.org/]
+
  
-##Installation
+==Installation
 
-###1. install the gem
+===1. install the gem
 
-    $ gem install wagn
+ gem install wagn
 
 Watch carefully for errors!
 
 
-###2. create a new wagn application
+===2. create a new wagn application
 
-    $ wagn new mysite
+  wagn new mysite
 
-###3. create / seed database
 
-Edit the config/database.yml file as necessary. More about database configuration at http://www.wagn.org/database_configuration
+===3. create / seed database
 
-Then run:
+Edit the config/database.yml file as necessary. More about database configuration at http://www.wagn.org/database_configuration.
 
-    $ cd mysite
-    $ wagn seed
+Then run
+
+  cd mysite
+  wagn seed
   
 ..to create and seed the database
 
 
-###4. start your server
+===4. start your server
 
 To fire up the default, built-in WEBrick server, just run:
 
-    $ wagn server
+  wagn server
  
 ...and point your browser to http://localhost:3000 (unless otherwise configured).
 
 WEBrick is great for a quick test run.  To run a production website, see http://www.wagn.org/wagn_in_production.
 
 
-##Upgrading
+==Upgrading
 
-###Standard Upgrades
+===Standard Upgrades
 
-####1. Backups
+====1. Backups
 Always back up your database and uploaded files.
 
-####2. Update Libraries
+====2. Update Libraries
 
 From your wagn root directory run:
 
-    $ bundle update
+  bundle update
 
-####3. Update Database
+====3. Update Database
 
 Run the following:
 
-    $ wagn update
+  wagn update
   
-####4. Restart your server.
+====4. Restart your server.
 
-###Upgrading pre-gem Wagn sites
+===Upgrading pre-gem Wagn sites
 
 First check the Wagn version of your existing site.  
 
-####Version 1.10 or newer
+====Version 1.10 or newer
 
 1. Create a new Wagn app using steps 1 and 2 from the installation section above.
 2. Copy config/database.yml from the old site to the new one.
@@ -84,10 +84,12 @@ First check the Wagn version of your existing site.
 4. If you have edited wagn.yml in your old site, make the corresponding changes to the new config/application.rb file.
 5. Follow the standard upgrade procedure above.
 
-####Older than Version 1.10
+====Older than Version 1.10
 
 First update your Wagn to version 1.10 via the old update mechanisms, and then follow the directions above.
 
-##More Resources
+
+
+==More Resources
 
 Find lots more info at http://wagn.org

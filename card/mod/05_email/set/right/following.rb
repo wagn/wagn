@@ -17,9 +17,9 @@ format :html do
      if rcard = current_follow_rule_card
        rcard.item_cards.map do |item|
          %{<div class="alert alert-success" role="alert">
-           <strong>#{item.title}:</strong> #{rcard.rule_set.follow_label}
+           <strong>#{rcard.rule_set.follow_label}</strong>: #{item.title}
           </div>}
-       end * ', '
+       end.join
      else
        "No following preference"
      end

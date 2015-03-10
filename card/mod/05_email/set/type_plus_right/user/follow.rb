@@ -78,8 +78,10 @@ format :html do
    # set_pattern_class => [ {:card=>rule_card, :options=>['*always', '*created'] },.... ]
    def followed_by_set
      res = Hash.new { |h,k| h[k] = [] }
+     never = Card[:never].name
      card.item_cards.each do |follow_rule|
-       res[follow_rule.rule_set.subclass_for_set] << {:card=>follow_rule, :options=>follow_rule.item_names}
+       options = follow_rule.item_names.reject { |item| item == never}
+       res[follow_rule.rule_set.subclass_for_set] << { :card=>follow_rule, :options=>options }
      end
      
      if Auth.signed_in? && Auth.current_id == card.left.id 
@@ -134,13 +136,16 @@ format :html do
          end
        end
      end
-     editable = Auth.signed_in? && Auth.current_id == card.left.id 
+     if !Auth.signed_in? || Auth.current_id != card.left.id
+       hide_buttons = [:delete_button, :add_button]
+     end
+     never = Card[:never].name
      wrap_with :div, :class=>'pointer-list-editor' do
-       wrap_with :ul, :class=>'delete-list' do
+       wrap_with :ul, :class=>'delete-list list-group' do
          
          ignore_list.map do |rule_card|
            content_tag :li do
-             subformat(rule_card).render_item_delete :condition=>'ignore', :editable=>editable
+             subformat(rule_card).render_follow_item :condition=>never, :hide=>hide_buttons
            end
          end.join "\n"
          
@@ -150,6 +155,20 @@ format :html do
    
    view :pointer_items, :tags=>:unknown_ok do |args|
      super(args.merge(:item=>:link))
+   end
+   
+   view :errors, :perms=>:none do |args|
+     if card.errors.any?
+       if card.errors.find { |attrib,msg| attrib == :permission_denied }
+         save_interrupted_action(request.env['REQUEST_URI'])
+         title = "Problems with #{card.name}"
+         frame args.merge(:slot_class=>"panel panel-warning", :title=>title, :hide=>'menu' ) do
+           "You have to #{ link_to 'sign in', card_url(':signin') }" #" #{to_task}"
+         end
+       else
+         super(args)
+       end
+     end
    end
    
 end

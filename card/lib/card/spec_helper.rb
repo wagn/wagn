@@ -63,7 +63,6 @@ module Card::SpecHelper
   end
   
   def users
-    require File.expand_path('../../../test/seed', __FILE__)
     SharedData::USERS.sort
   end
 end

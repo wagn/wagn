@@ -504,10 +504,11 @@ class Card
       def page_path title, opts={}
         Rails.logger.warn "Pass only Card::Name to page_path #{title.class}, #{title}" unless Card::Name===title
         format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
+        action = ( (path_opts = opts.delete(:path_opts)) && path_opts[:action] ) ? "#{path_opts[:action]}/" : ''
         query  = opts.present? ? "?#{opts.to_param}"         : ''
-        card_path "#{title.to_name.url_key}#{format}#{query}"
+        card_path "#{action}#{title.to_name.url_key}#{format}#{query}"
       end
-
+      
       def card_path rel_path
         Rails.logger.warn "Pass only strings to card_path: #{rel_path.class}, #{rel_path}" unless String===rel_path
         if rel_path =~ /^\//
@@ -524,6 +525,7 @@ class Card
           "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ card_path rel }"
         end
       end
+      
     end
     include Location
 

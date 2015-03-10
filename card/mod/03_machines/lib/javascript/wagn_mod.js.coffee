@@ -295,15 +295,19 @@ $(window).ready ->
       item.find('input').val ''
     
   # following mod
-  $('.btn-item-delete').hover(
-    -> 
-      $(this).find('.glyphicon').addClass("glyphicon-remove").removeClass("glyphicon-ok")
-      $(this).addClass("btn-danger").removeClass("btn-primary")
-    -> 
-       $(this).find('.glyphicon').addClass("glyphicon-ok").removeClass("glyphicon-remove")
-       $(this).addClass("btn-primary").removeClass("btn-danger"))
+  $('body').on 'click', '.btn-item-delete', ->
+    $(this).find('.glyphicon').addClass("glyphicon-hourglass").removeClass("glyphicon-remove")
+  $('body').on 'click', '.btn-item-add', ->
+    $(this).find('.glyphicon').addClass("glyphicon-hourglass").removeClass("glyphicon-plus")
+    
+  $('body').on 'mouseenter', '.btn-item-delete', ->
+    $(this).find('.glyphicon').addClass("glyphicon-remove").removeClass("glyphicon-ok")
+    $(this).addClass("btn-danger").removeClass("btn-primary")
+  $('body').on 'mouseleave', '.btn-item-delete', ->
+    $(this).find('.glyphicon').addClass("glyphicon-ok").removeClass("glyphicon-remove")
+    $(this).addClass("btn-primary").removeClass("btn-danger")
 
-  $('body').on 'click', '.follow-toggle', ->
+  $('body').on 'click', '.follow-toggle', (event) ->
     anchor = $(this)
     url  = wagn.rootPath + '/update/' + anchor.data('rule_name') + '.json'
     $.ajax url, {
@@ -314,7 +318,7 @@ $(window).ready ->
         'success[view]' : 'follow_status'
         'success[id]'   : anchor.data('card_key')
       }
-      success : (data)->
+      success : (data) ->
         tags = anchor.closest('.card-menu').find('.follow-toggle')
         tags.find('.follow-verb').html data.verb
         tags.attr 'title', data.title

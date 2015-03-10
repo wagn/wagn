@@ -157,7 +157,7 @@ end
 # Interact with Email Contents
 #
 
-When /^(?:I|they) follow "([^"]*?)" in the email$/ do |link|
+When /^(?:I|they) follow "([^"]*?)" in the email$/ do |link|   # "<- stop textmate from treating the rest of the file as a string
   visit_in_email(link)
 end
 

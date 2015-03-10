@@ -1,4 +1,4 @@
-event :update_follow_rules, :after=>:store, :on=>:save do
+event :update_follow_rules, :after=>:store, :on=>:save, :when=> proc { |c| c.update_all_users } do
   defaults = item_names.map do |item|
     if ((set_card = Card.fetch item.to_name.left) && set_card.type_code == :set) 
       option_card = Card.fetch(item.to_name.right) || Card[item.to_name.right.to_sym]
@@ -25,4 +25,42 @@ event :update_follow_rules, :after=>:store, :on=>:save do
     end
   end
   Card.follow_caches_expired
+end
+
+format :html do
+  view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
+    frame_and_form :update, args do
+      [
+        _optional_render( :content_fieldsets, args ),
+        _optional_render( :confirm_update_all, args ),
+        _optional_render( :button_fieldset,   args )
+      ]
+    end
+  end
+  
+  
+  view :confirm_update_all do |args|
+    wrap args do
+      alert 'info'do
+        %{
+          <h1>Are you sure you want to change the default follow rules?</h1>
+          <p>You may choose to update all existing users. This may take a while. </p>
+        }
+      end
+    end
+  end
+  
+  def default_edit_args args
+    args[:hidden] ||= {}
+    args[:hidden].reverse_merge!(
+      :success  => '_self',
+      :card     => { :update_all_users => false }
+    )
+    args[:buttons] = %{
+      #{ button_tag 'Submit and update all users', :disable_with=>'Updating', :class=>'follow-updater' }
+      #{ button_tag 'Submit', :class=>'follow'         }
+      #{ button_tag 'Cancel', :class=>'slotter', :type=>'button', :href=>path(:view=>:edit, :id=>card.id)}
+    }
+    
+  end
 end

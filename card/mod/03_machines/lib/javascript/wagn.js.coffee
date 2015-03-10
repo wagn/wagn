@@ -149,7 +149,11 @@ $(window).ready ->
 
   $('body').on 'ajax:success', '.slotter', (event, data, c, d) ->
     unless event.slotSuccessful
+      slot_top_pos = $(this).slot().offset().top
       $(this).slotSuccess data
+      # should scroll to top after clicking on new page
+      if $(this).hasClass "card-paging-link"
+        $("body").scrollTop slot_top_pos
       event.slotSuccessful = true
 
   $('body').on 'ajax:error', '.slotter', (event, xhr) ->
@@ -217,6 +221,20 @@ $(window).ready ->
       confirmer.show 'blind'
       false
     
+  
+  
+  $('body').on 'click', '.follow-updater', ->
+    $(this).closest('form').find('#card_update_all_users').val 'true'
+        
+  $('body').on 'submit', '.edit-view.SELF-Xfollow_default .card-form', ->
+    confirmer = $(this).find '.confirm_update_all-view'
+    if confirmer.is ':hidden'
+      $(this).find('.follow-updater').show()
+        
+      confirmer.show 'blind'
+      false
+  
+  
   $('body').on 'click', 'button.redirecter', ->
     window.location = $(this).attr('href')
 

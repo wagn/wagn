@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 require_dependency 'card/set'
+require_dependency 'card/set_pattern'
 
 class Card
   class << self
@@ -78,7 +79,7 @@ class Card
             Dir.entries( dirname ).sort.each do |filename|
               if m = filename.match( /^(\d+_)?([^\.]*).rb/) and key = m[2]
                 filename = [ dirname, filename ] * '/'
-                Card::SetPattern.write_tmp_file key, filename, seq
+                SetPattern.write_tmp_file key, filename, seq
                 seq = seq + 1
               end
             end
@@ -96,8 +97,8 @@ class Card
       def load_sets
         prepare_tmp_dir 'tmp/set'
         load_sets_by_pattern
-        Card::Set.process_base_modules
-        Card::Set.clean_empty_modules
+        Set.process_base_modules
+        Set.clean_empty_modules
       end
 
 
@@ -125,7 +126,7 @@ class Card
           Dir.glob( "**/*.rb" ).sort.each do |anchor_path|
             path_parts = anchor_path.gsub(/\.rb/,'').split(File::SEPARATOR)
             filename = File.join dirname, anchor_path
-            Card::Set.write_tmp_file set_pattern, path_parts, filename, seq
+            Set.write_tmp_file set_pattern, path_parts, filename, seq
             seq = seq + 1
           end
           Dir.chdir old_pwd

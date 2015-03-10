@@ -4,10 +4,18 @@ Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
 
 class Card < ActiveRecord::Base
   require_dependency 'card/active_record_ext'
+  require_dependency 'card/codename'
   require_dependency 'card/query'
+  require_dependency 'card/format'
   require_dependency 'card/exceptions'
+  require_dependency 'card/auth'
   require_dependency 'card/log'
+  require_dependency 'card/loader'
+  require_dependency 'card/content'
   require_dependency 'card/action'
+  require_dependency 'card/act'
+  require_dependency 'card/change'
+  require_dependency 'card/reference'
 
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id

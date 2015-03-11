@@ -37,7 +37,7 @@ $.extend wagn,
     wagn.tinyMCEConfig = setter()
   
   initAce: (textarea) ->
-    type_code = textarea.slot().attr "data-card-type-code"
+    type_code = textarea.attr "data_card_type_code"
     hash = {}
     hash["java_script"] = "javascript"
     hash["coffee_script"] = "coffee"
@@ -45,6 +45,7 @@ $.extend wagn,
     hash["scss"] = "scss"
     hash["html"] = "html"
     hash["search_type"] = "json"
+    hash["layout_type"] = "html"
     mode = hash[type_code]
     unless mode
       textarea.autosize()

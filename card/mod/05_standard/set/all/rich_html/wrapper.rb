@@ -25,7 +25,7 @@ format :html do
       card.safe_set_keys
     ].compact
   
-    div = %{<div id="#{card.cardname.url_key}" data-card-id="#{card.id}" data-card-name="#{h card.name}" data-card-type-code="#{card.type_code}" style="#{h args[:style]}" class="#{classes*' '}" } +
+    div = %{<div id="#{card.cardname.url_key}" data-card-id="#{card.id}" data-card-name="#{h card.name}" style="#{h args[:style]}" class="#{classes*' '}" } +
       %{data-slot='#{html_escape_except_quotes slot_options( args )}'>#{ output yield }</div>}
 
     if params[:debug] == 'slot' && !tagged( @current_view, :no_wrap_comments )

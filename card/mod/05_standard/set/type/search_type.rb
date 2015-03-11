@@ -169,7 +169,7 @@ format :html do
   end
 
   view :editor do |args|
-    text_area :content, :rows=>5
+    text_area :content, :rows=>5, :data_card_type_code=>card.type_code
   end
 
   view :no_search_results do |args|

@@ -1,5 +1,8 @@
 # -*- encoding : utf-8 -*-
 
+require_dependency 'card/set'
+require_dependency 'card/set_pattern'
+
 class Card
   class << self
     def config

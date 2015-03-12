@@ -4,7 +4,7 @@ self.restrictive_follow_opts :position=>2
 
 self.follower_candidate_ids do |card|
   # FIXME? - could optimize by not using cards table...
-  Card.search( :editor_of=>card.name, :return=>:id ).map &:to_i
+  Card.search :editor_of=>card.name, :return=>:id
 end
 
 

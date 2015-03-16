@@ -12,8 +12,8 @@ def prepare_migration
 end
 
 namespace :wagn do
-  desc "create a wagn database from scratch"
-  task :create do
+  desc "create a wagn database from scratch, load initial data"
+  task :seed do
     ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
 
     puts "dropping"
@@ -30,6 +30,31 @@ namespace :wagn do
     puts "loading schema"
     Rake::Task['db:schema:load'].invoke
 
+    Rake::Task['wagn:load'].invoke
+  end
+
+  desc "clear and load fixtures with existing tables"
+  task :reseed do
+    ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
+
+    Rake::Task['wagn:clear'].invoke
+
+    Rake::Task['wagn:load'].invoke
+  end
+
+  desc "empty the card tables"
+  task :clear do
+    conn = ActiveRecord::Base.connection
+
+    puts "delete all data in bootstrap tables"
+    WAGN_BOOTSTRAP_TABLES.each do |table|
+      conn.delete "delete from #{table}"
+    end
+  end
+
+  desc "Load bootstrap data into database"
+  task :load do
+    require 'decko/engine'
     puts "update card_migrations"
     Rake::Task['wagn:assume_card_migrations'].invoke
 
@@ -114,6 +139,16 @@ namespace :wagn do
     task :cards do
       Rake::Task['wagn:migrate:core_cards'].invoke
       Rake::Task['wagn:migrate:deck_cards'].invoke
+    end
+
+    desc "migrate structure"
+    task :structure => :environment do
+      ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
+      Cardio.schema_mode(:structure) do
+        paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:structure)
+        ActiveRecord::Migrator.migrate paths
+        Rake::Task['db:_dump'].invoke   # write schema.rb
+      end
     end
 
     desc "migrate core cards"

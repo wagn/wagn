@@ -28,12 +28,14 @@ module Wagn
       end
     end
 
+=begin
     initializer :load_wagn_config_initializers,  :before => :load_config_initializers do
       add_path paths, 'lib/wagn/config/initializers', :glob => "**/*.rb"
       config.paths['lib/wagn/config/initializers'].existent.sort.each do |initializer|
         load(initializer)
       end
     end
+=end
 
     class << self
       def inherited(base)
@@ -84,7 +86,7 @@ module Wagn
       @paths ||= begin
         paths = super
         Cardio.set_paths paths
-        
+
         paths.add 'files'
 
         paths['mod'] << 'mod'

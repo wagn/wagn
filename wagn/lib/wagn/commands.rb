@@ -9,15 +9,15 @@ end
 
 RAILS_COMMANDS = %w( generate destroy plugin benchmarker profiler console server dbconsole application runner )
 ALIAS = {
-  "rs" => "rspec",
-  "cc" => "cucumber",
-  "jm" => "jasmine",
-  "g"  => "generate",
-  "d"  => "destroy",
-  "c"  => "console",
-  "s"  => "server",
-  "db" => "dbconsole",
-  "r"  => "runner"
+  'rs' => 'rspec',
+  'cc' => 'cucumber',
+  'jm' => 'jasmine',
+  'g'  => 'generate',
+  'd'  => 'destroy',
+  'c'  => 'console',
+  's'  => 'server',
+  'db' => 'dbconsole',
+  'r'  => 'runner'
 }
 
 ARGV << '--help' if ARGV.empty?
@@ -36,37 +36,40 @@ def find_spec_file filename, base_dir
   end
 end
 
+TASK_COMMANDS = %w[seed reseed load]
 
 if supported_rails_command? ARGV.first
   if ARGV.delete('--rescue')
     ENV["PRY_RESCUE_RAILS"]="1"
   end
-  require 'wagn'
+  command = ARGV.first
+  command = ALIAS[command] || command
+  require 'generators/card' if command == 'generate' # without this, the card generators don't list with: wagn g --help
   require 'rails/commands'
 else
   command = ARGV.shift
   command = ALIAS[command] || command
 
   case command
-  when 'seed'
+  when *TASK_COMMANDS
     envs = []
     parser = OptionParser.new do |parser|
-      parser.banner = "Usage: wagn seed [options]\n\nCreate and seed the production database specified in config/database.yml\n\n"
-      parser.on('--production','-p', 'seed production database (default)') do
+      parser.banner = "Usage: wagn #{command} [options]\n\nRun wagn:#{command} task on the production database specified in config/database.yml\n\n"
+      parser.on('--production','-p', "#{command} production database (default)") do
         envs = ['production']
       end
-      parser.on('--test','-t', 'seed test database') do
+      parser.on('--test','-t', "#{command} test database") do
         envs = ['test']
       end
-      parser.on('--development', '-d', 'seed development database') do
+      parser.on('--development', '-d', "#{command} development database") do
         envs = ['development']
       end
-      parser.on('--all', '-a', 'seed production, test, and development database') do
+      parser.on('--all', '-a', "#{command} production, test, and development database") do
         envs = %w( production development test)
       end
     end
     parser.parse!(ARGV)
-    task_cmd="bundle exec rake wagn:create"
+    task_cmd="bundle exec rake wagn:#{command}"
     if envs.empty?
       puts task_cmd
       puts `#{task_cmd}`
@@ -118,9 +121,11 @@ WAGN
       opts[:files] = find_spec_file( file, Cardio.gem_root)
     end
     parser.on('-m', '--mod MODNAME', 'Run all specs for a mod or matching a mod') do |file|
-      mod_path = "#{Cardio.gem_root}/mod/#{file}"
-      if File.exists? mod_path
+      if File.exists? mod_path = "mod/#{file}"
         opts[:files] = "#{Cardio.gem_root}/mod/#{file}"
+      elsif File.exists? mod_path = "#{Cardio.gem_root}/mod/#{file}"
+        opts[:files] = "#{Cardio.gem_root}/mod/#{file}"
+      elsif (opts[:files] = find_spec_file( file, "mod")).present?
       else
         opts[:files] = find_spec_file( file, "#{Cardio.gem_root}/mod")
       end

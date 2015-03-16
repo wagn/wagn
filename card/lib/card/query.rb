@@ -46,7 +46,10 @@ class Card::Query
     when 'raw'
       rows
     else
-      rows.map { |row| row[retrn] }
+      integer = ( retrn =~ /id$/ )
+      rows.map do |row|
+        integer ? row[retrn].to_i : row[retrn]
+      end
     end
   end
 

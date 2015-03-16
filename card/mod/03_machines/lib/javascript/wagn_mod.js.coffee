@@ -37,7 +37,7 @@ $.extend wagn,
     wagn.tinyMCEConfig = setter()
   
   initAce: (textarea) ->
-    type_code = textarea.attr "data_card_type_code"
+    type_code = textarea.attr "data-card-type-code"
     hash = {}
     hash["java_script"] = "javascript"
     hash["coffee_script"] = "coffee"

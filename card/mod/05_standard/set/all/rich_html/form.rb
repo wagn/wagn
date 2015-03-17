@@ -184,7 +184,7 @@ format :html do
 # FIELD VIEWS
 
   view :editor do |args|
-    text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id
+    text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id, "data-card-type-code"=>card.type_code
   end
 
 

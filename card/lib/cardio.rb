@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-require 'rails'
 require 'active_support/core_ext/numeric/time'
 
 CARD_GEM_ROOT = File.expand_path('../..', __FILE__)
@@ -23,10 +22,11 @@ module Cardio
     end
     
     def set_config config
-      @@config = config
-      @@root = @@config.root
-        
-      config.autoload_paths += Dir["#{Cardio.gem_root}/mod/*/lib/**/"]
+      @@config, @@root = config, config.root
+
+      config.autoload_paths += Dir["#{gem_root}/mod/*/lib/**/"]
+      config.autoload_paths += Dir["#{gem_root}/lib/**/"]
+      config.autoload_paths += Dir["#{root}/mod/*/lib/**/"]
 
       config.read_only             = !!ENV['WAGN_READ_ONLY']
       config.allow_inline_styles   = false
@@ -54,25 +54,18 @@ module Cardio
   
     def set_paths paths
       @@paths = paths
-      paths.add 'tmp/lib'
-      paths.add 'tmp/set'
-      paths.add 'tmp/set_pattern'
-      paths.add 'db/migrate_deck_cards', :with=>'db/migrate_cards'
+      add_path 'tmp/set', :root => root
+      add_path 'tmp/set_pattern', :root => root
 
-      add_gem_path 'mod',      :with => 'mod'
-      add_gem_path "db"
-      add_gem_path 'db/migrate'
-      add_gem_path "db/migrate_core_cards"
-      add_gem_path "db/seeds", :with => "db/seeds.rb"
+      add_path 'mod'
+      add_path "db"
+      add_path 'db/migrate'
+      add_path "db/migrate_core_cards"
+      add_path "db/migrate_deck_cards", :root => root, :with => 'db/migrate_cards'
+      add_path "db/seeds", :with => "db/seeds.rb"
 
-      add_gem_path 'config/initializers', :glob => '**/*.rb'
+      add_path 'config/initializers', :glob => '**/*.rb'
     end
-
-#    def run_initializers
-#      paths['config/initializers'].existent.sort.each do |initializer|
-#        load(initializer)
-#      end
-#    end
 
     def root
       @@config.root
@@ -82,7 +75,7 @@ module Cardio
       CARD_GEM_ROOT
     end
 
-    def add_gem_path path, options={}
+    def add_path path, options={}
       root = options.delete(:root) || gem_root
       gem_path = File.join( root, path )
       with = options.delete(:with)

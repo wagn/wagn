@@ -2,9 +2,11 @@ include Card::FollowOption
 
 self.restrictive_follow_opts :position=>2
 
-def applies_to? card, user_id
-  Card.search(:editor_of=>card.name, :return=>:id).find { |editor_id| editor_id.to_i == user_id }
+self.follower_candidate_ids do |card|
+  # FIXME? - could optimize by not using cards table...
+  Card.search :editor_of=>card.name, :return=>:id
 end
+
 
 def title 
   'Following content you edited'

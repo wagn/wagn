@@ -1,7 +1,7 @@
 format do
   view :not_found do |args|
     if update_machine_output_live?
-      Card::Cache.reset_global
+      Card::Cache.reset_global # FIXME - wow, this kind of hard core, no?
       root.error_status = 302
       card.left.update_machine_output
       card_path card.left.machine_output_url

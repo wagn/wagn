@@ -86,14 +86,24 @@ class Card
 
       @mode  ||= :normal
       @depth ||= 0
-      @root  ||= self      
+      @root  ||= self
 
-      @context_names ||= if params[:slot] && context_name_list = params[:slot][:name_context]
-        context_name_list.split(',').map &:to_name
-      else [] end
-        
+      @context_names = get_context_names
       include_set_format_modules
       self
+    end
+    
+    def get_context_names      
+      case
+      when @context_names
+        part_keys = @card.cardname.part_names.map &:key
+        @context_names.reject { |n| !part_keys.include? n.key }
+      when params[:slot]
+        context_name_list = params[:slot][:name_context].to_s 
+        context_name_list.split(',').map &:to_name
+      else
+        []
+      end
     end
     
     def include_set_format_modules

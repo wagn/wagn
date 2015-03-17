@@ -3,7 +3,9 @@
 
 class Card
   module FollowOption
-    #mattr_reader :codenames
+    mattr_reader :test, :follower_candidate_ids
+    @@test, @@follower_candidate_ids = {}, {}
+    
     @@options = { :all=>[], :main=>[], :restrictive=>[] }
     
     def self.included(host_class)     
@@ -48,6 +50,14 @@ class Card
         add_option args, :main
       end
       
+      def follow_test opts={}, &block
+        Card::FollowOption.test[ get_codename(opts) ] = block
+      end
+      
+      def follower_candidate_ids opts={}, &block
+        Card::FollowOption.follower_candidate_ids[ get_codename(opts) ] = block
+      end
+            
       private
       
       def insert_option pos, item, type
@@ -60,8 +70,8 @@ class Card
         end
       end
       
-      def add_option opts, type
-        codename = opts[:codename] || self.name.match(/::(\w+)$/)[1].underscore.to_sym
+      def add_option opts, type, &block
+        codename = get_codename opts
         if opts[:position]
           insert_option opts[:position]-1, codename, type
         else
@@ -69,6 +79,11 @@ class Card
         end
         Card::FollowOption.codenames(:all) << codename
       end
+      
+      def get_codename opts
+        opts[:codename] || self.name.match(/::(\w+)$/)[1].underscore.to_sym
+      end
+      
       
     end   
   end

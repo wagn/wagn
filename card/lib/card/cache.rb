@@ -18,10 +18,9 @@ class Card
     TEST_ENVS = %w{test cucumber}
     @@prepopulating     = TEST_ENVS.include? Rails.env
     @@using_rails_cache = TEST_ENVS.include? Rails.env
-    @@prefix_root       = Cardio.config.database_configuration[Rails.env]['database']
     @@cache_by_class    = {}
 
-    cattr_reader :cache_by_class, :prefix_root
+    cattr_reader :cache_by_class
 
     class << self
       def [] klass
@@ -38,6 +37,11 @@ class Card
           end
         end
         reset_local
+      end
+
+      def prefix_root
+        @@prefix_root ||= ( cfg = Cardio.config and cfg = cfg.database_configuration and
+                            cfg[Rails.env]['database'] )
       end
 
       def system_prefix klass

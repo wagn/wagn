@@ -163,7 +163,6 @@ format :html do
     }
   end
 
-
   private
 
   def fancy_title title=nil

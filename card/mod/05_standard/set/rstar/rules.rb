@@ -147,7 +147,7 @@ format :html do
 
   def type_fieldset args
     fieldset 'type', type_field(
-      :href         => path(:card=>args[:success][:card], :view=>args[:success][:view], :type_reload=>true),
+      :href         => path(:name=>args[:success][:card].name, :view=>args[:success][:view], :type_reload=>true),
       :class        => 'type-field rule-type-field live-type-field',
       'data-remote' => true
     ), :editor=>'type'
@@ -166,31 +166,32 @@ format :html do
     current_set_key = card.new_card? ? Card[:all].cardname.key : card.rule_set_key   # (should have a constant for this?)
     tag = args[:rule_context].rule_user_setting_name
     narrower_rules = []
-    option_list = wrap_each_with :li do
-                    args[:set_options].map do |set_name, state|
-                      
-                      checked    = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
-                      is_current = (state == :current)
-                      warning = if narrower_rules.present?
-                                  plural = narrower_rules.size > 1 ? 's' : ''
-                                  "This rule will not have any effect on this card unless you delete the narrower rule#{plural} "+
-                                   "for #{narrower_rules.to_sentence}."
-                                end
-                      if is_current || state == :overwritten
-                         narrower_rules << Card.fetch(set_name).label
-                         narrower_rules.last[0] = narrower_rules.last[0].downcase
-                      end
-                      rule_name  = "#{set_name}+#{tag}"
-                      radio_button( :name, rule_name, :checked=>checked, :warning=>warning ) + %{
-                          <span class="set-label" #{'current-set-label' if is_current }>
-                            #{ card_link set_name, :text=> Card.fetch(set_name).label, :target=>'wagn_set' }
-                            #{'<em>(current)</em>' if is_current }
-                            #{"<em> #{card_link "#{set_name}+#{card.rule_user_setting_name}", :text=>"(overwritten)"}</em>" if state == :overwritten }
-                          </span>
-                         }.html_safe
-                     end
+    option_list = 
+      wrap_each_with :li do
+        args[:set_options].map do |set_name, state|
+          
+          checked    = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
+          is_current = (state == :current)
+          warning = if narrower_rules.present?
+                      plural = narrower_rules.size > 1 ? 's' : ''
+                      "This rule will not have any effect on this card unless you delete the narrower rule#{plural} "+
+                       "for #{narrower_rules.to_sentence}."
+                    end
+          if is_current || state == :overwritten
+             narrower_rules << Card.fetch(set_name).label
+             narrower_rules.last[0] = narrower_rules.last[0].downcase
+          end
+          rule_name  = "#{set_name}+#{tag}"
+          radio_button( :name, rule_name, :checked=>checked, :warning=>warning ) + %{
+              <span class="set-label" #{'current-set-label' if is_current }>
+                #{ card_link set_name, :text=> Card.fetch(set_name).label, :target=>'wagn_set' }
+                #{'<em>(current)</em>' if is_current }
+                #{"<em> #{card_link "#{set_name}+#{card.rule_user_setting_name}", :text=>"(overwritten)"}</em>" if state == :overwritten }
+              </span>
+             }.html_safe
+         end
 
-                   end
+       end
     fieldset 'set', "<ul>#{ option_list }</ul>", :editor => 'set'
   end
   

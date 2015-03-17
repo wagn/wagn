@@ -144,7 +144,7 @@ format :html do
        wrap_with :ul, :class=>'delete-list list-group' do
          
          ignore_list.map do |rule_card|
-           content_tag :li do
+           content_tag :li, :class=>'list-group-item' do
              subformat(rule_card).render_follow_item :condition=>never, :hide=>hide_buttons
            end
          end.join "\n"

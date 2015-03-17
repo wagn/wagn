@@ -1,7 +1,5 @@
 # -*- encoding : utf-8 -*-
-
-require 'card/version'
-
+ 
 class Card::Migration < ActiveRecord::Migration
   @type = :deck_cards
 

@@ -149,7 +149,11 @@ $(window).ready ->
 
   $('body').on 'ajax:success', '.slotter', (event, data, c, d) ->
     unless event.slotSuccessful
+      slot_top_pos = $(this).slot().offset().top
       $(this).slotSuccess data
+      # should scroll to top after clicking on new page
+      if $(this).hasClass "card-paging-link"
+        $("body").scrollTop slot_top_pos
       event.slotSuccessful = true
 
   $('body').on 'ajax:error', '.slotter', (event, xhr) ->

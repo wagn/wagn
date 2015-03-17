@@ -646,7 +646,7 @@ td.missing-rule {
 .rule-setting {
   padding-top: 4px;
 }
-.open-rule .rule-setting {
+.open-rule > .rule-setting {
   width: 28%;
   float: left;
 }

@@ -22,7 +22,7 @@ module ClassMethods
     end
   end
   
-  def merge_list attribs, opts
+  def merge_list attribs, opts={}
     unmerged = []
     attribs.each do |row|
       result = begin
@@ -46,6 +46,7 @@ module ClassMethods
         Rails.logger.info "failed to merge:\n\n#{ unmerged_json }"
       end
     end
+    unmerged
   end    
     
   

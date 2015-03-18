@@ -69,7 +69,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 .card-menu {
   display: none;
   position: absolute;
-  z-index: 1;
+  z-index: 9;
   li {
     white-space: nowrap;
   }

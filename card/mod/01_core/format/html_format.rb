@@ -11,11 +11,6 @@ class Card
 
     # builtin layouts allow for rescue / testing
     LAYOUTS = Loader.load_layouts.merge 'none' => '{{_main}}'
-
-    INCLUSION_DEFAULTS = {
-      :layout => { :view => :core },
-      :normal => { :view => :content }
-    }
   
     # helper methods for layout view
     def get_layout_content
@@ -45,13 +40,19 @@ class Card
       end
     end
     
-    
     def get_inclusion_defaults
-      INCLUSION_DEFAULTS[@mode] || {}
+      {}
     end
   
     def default_item_view
       :closed
+    end
+
+    def nest nested_card, opts={}
+      unless opts[:view].present?
+        opts[:view] = nested_card.rule :default_html_view
+      end
+      super nested_card, opts
     end
 
     def output content

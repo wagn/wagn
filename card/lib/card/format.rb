@@ -405,7 +405,7 @@ class Card
       opts.merge! root.main_opts if root.main_opts
       legacy_main_opts_tweaks! opts
 
-      opts[:view] ||= :open
+      #opts[:view] ||= :open
       with_inclusion_mode :normal do
         @mainline = true
         result = wrap_main nest( root.card, opts )

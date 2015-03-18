@@ -2,7 +2,7 @@
 
 class ImportBootstrapLayout < Card::CoreMigration
   def up
-    layout = Card.fetch "Default Layout"    
+    layout = Card.fetch "Default Layout"
     if layout
       layout.name = "Classic Layout"
       layout.update_referencers = true

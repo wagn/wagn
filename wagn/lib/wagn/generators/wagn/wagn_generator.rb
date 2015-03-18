@@ -175,9 +175,9 @@ class WagnGenerator < Rails::Generators::AppBase
           :desc    => "seed #{Rails.env}#{ " and test" if options['core-dev'] or options['mod-dev']} database",
           :command => 'wagn seed',
           :code    => proc do
-            system("cd #{destination_root} && bundle exec rake wagn:create") 
+            system("cd #{destination_root} && bundle exec rake wagn:seed") 
             if options['core-dev'] or options['mod-dev']
-              system("cd #{destination_root} && RAILS_ENV=test bundle exec rake wagn:create")  
+              system("cd #{destination_root} && RAILS_ENV=test bundle exec rake wagn:seed")  
             end
             database_seeded.call
           end
@@ -187,7 +187,7 @@ class WagnGenerator < Rails::Generators::AppBase
           :command => 'wagn seed --all',
           :code    => proc do
             %w( production development test ).each do |env|
-              system("cd #{destination_root} && RAILS_ENV=#{env} bundle exec rake wagn:create")  
+              system("cd #{destination_root} && RAILS_ENV=#{env} bundle exec rake wagn:seed")  
             end
             database_seeded.call
           end

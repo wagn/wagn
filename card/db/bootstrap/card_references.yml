@@ -3968,3 +3968,241 @@ card_references_567:
   referee_id: 81
   ref_type: I
   present: 1
+card_references_568:
+  id: 2421
+  referer_id: 1342
+  referee_key: style_bootstrap
+  referee_id: 1296
+  ref_type: L
+  present: 1
+card_references_569:
+  id: 2422
+  referer_id: 1342
+  referee_key: style_jquery_ui_smoothness
+  referee_id: 960
+  ref_type: L
+  present: 1
+card_references_570:
+  id: 2423
+  referer_id: 1342
+  referee_key: style_functional
+  referee_id: 961
+  ref_type: L
+  present: 1
+card_references_571:
+  id: 2424
+  referer_id: 1342
+  referee_key: style_standard
+  referee_id: 962
+  ref_type: L
+  present: 1
+card_references_572:
+  id: 2425
+  referer_id: 1342
+  referee_key: style_right_sidebar
+  referee_id: 963
+  ref_type: L
+  present: 1
+card_references_573:
+  id: 2426
+  referer_id: 1342
+  referee_key: style_bootstrap_card
+  referee_id: 1288
+  ref_type: L
+  present: 1
+card_references_574:
+  id: 2437
+  referer_id: 1346
+  referee_key: raw_bootstrap_skin
+  referee_id: 1342
+  ref_type: L
+  present: 1
+card_references_575:
+  id: 2438
+  referer_id: 1346
+  referee_key: theme_amelium
+  referee_id: 1344
+  ref_type: L
+  present: 1
+card_references_576:
+  id: 2449
+  referer_id: 1350
+  referee_key: raw_bootstrap_skin
+  referee_id: 1342
+  ref_type: L
+  present: 1
+card_references_577:
+  id: 2450
+  referer_id: 1350
+  referee_key: theme_simpex
+  referee_id: 1348
+  ref_type: L
+  present: 1
+card_references_578:
+  id: 2461
+  referer_id: 1354
+  referee_key: raw_bootstrap_skin
+  referee_id: 1342
+  ref_type: L
+  present: 1
+card_references_579:
+  id: 2462
+  referer_id: 1354
+  referee_key: theme_cerulean
+  referee_id: 1352
+  ref_type: L
+  present: 1
+card_references_580:
+  id: 2473
+  referer_id: 1358
+  referee_key: raw_bootstrap_skin
+  referee_id: 1342
+  ref_type: L
+  present: 1
+card_references_581:
+  id: 2474
+  referer_id: 1358
+  referee_key: theme_luman
+  referee_id: 1356
+  ref_type: L
+  present: 1
+card_references_582:
+  id: 2485
+  referer_id: 1362
+  referee_key: raw_bootstrap_skin
+  referee_id: 1342
+  ref_type: L
+  present: 1
+card_references_583:
+  id: 2486
+  referer_id: 1362
+  referee_key: theme_darkly
+  referee_id: 1360
+  ref_type: L
+  present: 1
+card_references_584:
+  id: 2497
+  referer_id: 1366
+  referee_key: raw_bootstrap_skin
+  referee_id: 1342
+  ref_type: L
+  present: 1
+card_references_585:
+  id: 2498
+  referer_id: 1366
+  referee_key: theme_readable
+  referee_id: 1364
+  ref_type: L
+  present: 1
+card_references_586:
+  id: 2509
+  referer_id: 1370
+  referee_key: raw_bootstrap_skin
+  referee_id: 1342
+  ref_type: L
+  present: 1
+card_references_587:
+  id: 2510
+  referer_id: 1370
+  referee_key: theme_holo
+  referee_id: 1368
+  ref_type: L
+  present: 1
+card_references_588:
+  id: 2521
+  referer_id: 1374
+  referee_key: raw_bootstrap_skin
+  referee_id: 1342
+  ref_type: L
+  present: 1
+card_references_589:
+  id: 2522
+  referer_id: 1374
+  referee_key: theme_superhero
+  referee_id: 1372
+  ref_type: L
+  present: 1
+card_references_590:
+  id: 2533
+  referer_id: 1378
+  referee_key: raw_bootstrap_skin
+  referee_id: 1342
+  ref_type: L
+  present: 1
+card_references_591:
+  id: 2534
+  referer_id: 1378
+  referee_key: theme_yeti
+  referee_id: 1376
+  ref_type: L
+  present: 1
+card_references_592:
+  id: 2545
+  referer_id: 1382
+  referee_key: raw_bootstrap_skin
+  referee_id: 1342
+  ref_type: L
+  present: 1
+card_references_593:
+  id: 2546
+  referer_id: 1382
+  referee_key: theme_cosmo
+  referee_id: 1380
+  ref_type: L
+  present: 1
+card_references_594:
+  id: 2557
+  referer_id: 1386
+  referee_key: raw_bootstrap_skin
+  referee_id: 1342
+  ref_type: L
+  present: 1
+card_references_595:
+  id: 2558
+  referer_id: 1386
+  referee_key: theme_cyborg
+  referee_id: 1384
+  ref_type: L
+  present: 1
+card_references_596:
+  id: 2569
+  referer_id: 1390
+  referee_key: raw_bootstrap_skin
+  referee_id: 1342
+  ref_type: L
+  present: 1
+card_references_597:
+  id: 2570
+  referer_id: 1390
+  referee_key: theme_spacelab
+  referee_id: 1388
+  ref_type: L
+  present: 1
+card_references_598:
+  id: 2581
+  referer_id: 1394
+  referee_key: raw_bootstrap_skin
+  referee_id: 1342
+  ref_type: L
+  present: 1
+card_references_599:
+  id: 2582
+  referer_id: 1394
+  referee_key: theme_google_plu
+  referee_id: 1392
+  ref_type: L
+  present: 1
+card_references_600:
+  id: 2593
+  referer_id: 1398
+  referee_key: raw_bootstrap_skin
+  referee_id: 1342
+  ref_type: L
+  present: 1
+card_references_601:
+  id: 2594
+  referer_id: 1398
+  referee_key: theme_facebook
+  referee_id: 1396
+  ref_type: L
+  present: 1

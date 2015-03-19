@@ -1,22 +1,27 @@
 format :html do
-  
-  view :toggle do |args|
-    verb, adjective, direction = ( args[:toggle_mode] == :close ? %w{ open open e } : %w{ close closed s } )
-    
-    view_link '', adjective, :title => "#{verb} #{card.name}",
-      :class => "#{verb}-icon ui-icon ui-icon-circle-triangle-#{direction} toggler slotter nodblclick"
-  end
-    
 
   view :header do |args|
     %{
-      <h1 class="card-header">
-        #{ _optional_render :toggle, args, :hide }
-        #{ _optional_render :title, args }
+      <div class="card-header #{ args[:header_class] }">
+        <div class="card-header-title #{ args[:title_class] }">
+          #{ _optional_render :toggle, args, :hide }
+          #{ _optional_render :title, args }
+        </div>
         #{ _optional_render :menu, args }
-      </h1>
+      </div>
     }
   end
+
+  view :toggle do |args|
+    verb, adjective, direction = ( args[:toggle_mode] == :close ? %w{ open open expand } : %w{ close closed collapse-down } )
+  
+    link_to  glyphicon(direction), #content_tag(:span, '', :class=>"glyphicon glyphicon-#{direction}"),
+             path( :view=>adjective ),
+             :remote => true,
+             :title => "#{verb} #{card.name}",
+             :class => "#{verb}-icon toggler slotter nodblclick"
+  end
+
   
   view :menu, :tags=>:unknown_ok do |args|
     return _render_template_closer if args[:menu_hack] == :template_closer
@@ -54,11 +59,29 @@ format :html do
   end
 
   view :menu_link do |args|
-    '<a class="ui-icon ui-icon-gear"></a>'
+    glyphicon 'cog'
   end
-    
+
+  view :link_list do |args|
+    content_tag :ul, :class=>args[:class] do
+      item_links(args).map do |al|
+        content_tag :li, raw(al)
+      end.join "\n"
+    end
+  end
+  
+  view :navbar_right do |args|
+    render_link_list args.merge(:class=>"nav navbar-nav navbar-right")
+  end
+  
+  view :navbar_left do |args|
+    render_link_list args.merge(:class=>"nav navbar-nav navbar-left")
+  end
+  
   def show_follow?
     Auth.signed_in? && !card.new_card?
   end
+  
+  
 end
 

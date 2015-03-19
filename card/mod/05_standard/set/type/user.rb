@@ -28,9 +28,9 @@ format :html do
     Auth.as_bot do
       frame_and_form :create, args do
         [
-          _render_name_fieldset( :help=>'usually first and last name' ),
-          subformat(account)._render( :content_fieldset, :structure=>true ), 
-          _render_button_fieldset( args )
+          _render_name_formgroup( :help=>'usually first and last name' ),
+          subformat(account)._render( :content_formgroup, :structure=>true ), 
+          _render_button_formgroup( args )
         ]
       end
     end

@@ -104,6 +104,10 @@ end
 
 format do
   
+  def item_links(args={})
+    raw(render_core).split /[,\n]/
+  end
+  
   def search_params
     @search_params ||= begin
       p = default_search_params.clone

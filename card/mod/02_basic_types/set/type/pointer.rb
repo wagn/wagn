@@ -41,14 +41,16 @@ format :html do
     _render_core args
   end
 
-  view :edit do |args|
-    super(args.merge(:pointer_item_class=>'form-control'))
-  end
+#  view :edit do |args|
+#    super(args.merge(:pointer_item_class=>'form-control'))
+#  end
 
   view :editor do |args|
     part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/,'') : :list
     hidden_field( :content, :class=>'card-content') +
-    raw(_render(part_view, args.merge(:pointer_item_class=>'form-control')))
+    raw(_render part_view, args)
+    
+    #.merge(:pointer_item_class=>'form-control')))
   end
 
   view :list do |args|
@@ -99,15 +101,6 @@ format :html do
   end
 
 
-  view :old_list_item do |args|
-    %{
-      <li class="pointer-li">
-        #{ text_field_tag 'pointer_item', args[:pointer_item], :class=>'pointer-item-text' }
-        #{ link_to '', '#', :class=>'pointer-item-delete ui-icon ui-icon-circle-close'     }
-      </li>
-    }
-  end
-
   view :checkbox do |args|
     options = card.options.map do |option|
       checked = card.item_names.include?(option.name)
@@ -115,7 +108,7 @@ format :html do
       description = pointer_option_description option
       %{
         <div class="pointer-checkbox">
-          #{ check_box_tag "pointer_checkbox", option.name, checked, :id=>id, :class=>item_css_class('checkbox-button',args) }
+          #{ check_box_tag "pointer_checkbox", option.name, checked, :id=>id, :class=>'pointer-checkbox-button' }
           <label for="#{id}">#{option.name}</label>
           #{ %{<div class="checkbox-option-description">#{ description }</div>} if description }
         </div>
@@ -128,7 +121,7 @@ format :html do
   view :multiselect do |args|
     selected_options = card.item_names.map{|i_n| (c=Card.fetch(i_n) and c.name) or i_n}
     options = options_from_collection_for_select(card.options,:name,:name,selected_options)
-    select_tag("pointer_multiselect", options, :multiple=>true, :class=>item_css_class('multiselect',args))
+    select_tag("pointer_multiselect", options, :multiple=>true, :class=>'pointer-multiselect form-control')
   end
 
   view :radio do |args|
@@ -138,20 +131,20 @@ format :html do
       id = "pointer-radio-#{option.cardname.key}"
       description = pointer_option_description option
       %{ 
-        <div class="pointer-radio">
-        #{ radio_button_tag input_name, option.name, checked, :id=>id, :class=>item_css_class('radio-button',args) }
-        <label for="#{id}">#{ option.label }</label>
-        #{ %{<div class="radio-option-description">#{ description }</div>} if description }
-        </div>
+        <li class="pointer-radio radio">
+          #{ radio_button_tag input_name, option.name, checked, :id=>id, :class=>'pointer-radio-button' }
+          <label for="#{id}">#{ option.label }</label>
+          #{ %{<div class="radio-option-description">#{ description }</div>} if description }
+        </li>
       }
     end.join("\n")
 
-    %{<div class="pointer-radio-list">#{options}</div>}
+    %{<ul class="pointer-radio-list">#{options}</ul>}
   end
 
   view :select do |args|
     options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]}
-    select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>item_css_class('select',args) )
+    select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>'pointer-select form-control')
   end
 
 
@@ -169,12 +162,6 @@ format :html do
   
   def wrap_item item, args
     %{<div class="pointer-item item-#{args[:view]}">#{item}</div>}
-  end
-  
-  def item_css_class option, args
-    css_classes = ["pointer-#{option}"]
-    css_classes << args[:pointer_item_class] if args[:pointer_item_class] 
-    css_classes.compact*' '
   end
   
   

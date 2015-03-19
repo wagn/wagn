@@ -4,10 +4,10 @@ format :html do
   view :new, :perms=>:create, :tags=>:unknown_ok do |args|
     frame_and_form :create, args, 'main-success'=>'REDIRECT' do
       [
-        _optional_render( :name_fieldset,     args ),
-        _optional_render( :type_fieldset,     args ),
-        _optional_render( :content_fieldsets, args ),
-        _optional_render( :button_fieldset,   args )
+        _optional_render( :name_formgroup,     args ),
+        _optional_render( :type_formgroup,     args ),
+        _optional_render( :content_formgroups, args ),
+        _optional_render( :button_formgroup,   args )
       ]
     end  
   end
@@ -30,10 +30,10 @@ format :html do
       unless card.rule_card :autoname
         # prompt for name
         hidden[:name_prompt] = true unless hidden.has_key? :name_prompt
-        args[:optional_name_fieldset] ||= :show
+        args[:optional_name_formgroup] ||= :show
       end
     end
-    args[:optional_name_fieldset] ||= :hide
+    args[:optional_name_formgroup] ||= :hide
 
     
     # type field
@@ -41,10 +41,10 @@ format :html do
         ( main? || card.simple? || card.is_template? ) and
         Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
       )
-      args[:optional_type_fieldset] = :show
+      args[:optional_type_formgroup] = :show
     else
       hidden[:card][:type_id] ||= card.type_id
-      args[:optional_type_fieldset] = :hide
+      args[:optional_type_formgroup] = :hide
     end
 
 
@@ -65,8 +65,8 @@ format :html do
   view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
     frame_and_form :update, args do
       [
-        _optional_render( :content_fieldsets, args ),
-        _optional_render( :button_fieldset,   args )
+        _optional_render( :content_formgroups, args ),
+        _optional_render( :button_formgroup,   args )
       ]
     end
   end
@@ -83,20 +83,20 @@ format :html do
   view :edit_name, :perms=>:update do |args|
     frame_and_form( { :action=>:update, :id=>card.id }, args, 'main-success'=>'REDIRECT' ) do
       [
-        _render_name_fieldset( args ),
+        _render_name_formgroup( args ),
         _optional_render( :confirm_rename, args ),
-        _optional_render( :button_fieldset, args )
+        _optional_render( :button_formgroup, args )
       ]
     end
   end
-  
+
   view :confirm_rename do |args|
     referers = args[:referers]
     dependents = card.dependents
-    wrap args do
+    alert 'warning' do
       %{
-        <h1>Are you sure you want to rename <em>#{card.name}</em>?</h1>
-        #{ %{ <h2>This change will...</h2> } if referers.any? || dependents.any? }
+        <h5>Are you sure you want to rename <em>#{card.name}</em>?</h5>
+        #{ %{ <h6>This change will...</h6> } if referers.any? || dependents.any? }
         <ul>
           #{ %{<li>automatically alter #{ dependents.size } related name(s). } if dependents.any? }
           #{ %{<li>affect at least #{referers.size} reference(s) to "#{card.name}".} if referers.any? }
@@ -105,6 +105,7 @@ format :html do
       }
     end
   end
+
 
   def default_edit_name_args args
     referers = args[:referers] = card.extended_referencers  
@@ -128,8 +129,8 @@ format :html do
     frame_and_form :update, args do
     #'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
       [
-        _render_type_fieldset( args ),
-        optional_render( :button_fieldset, args )
+        _render_type_formgroup( args ),
+        optional_render( :button_formgroup, args )
       ]
     end
   end

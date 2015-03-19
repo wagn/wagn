@@ -14,7 +14,7 @@ describe Card::HtmlFormat do
       c = Card.new :name => 'ABook', :type => 'Book'
       rendered =  c.format.render( :edit )
 
-      assert_view_select rendered, 'fieldset' do
+      assert_view_select rendered, 'div[class="form-group"]' do
         assert_select 'textarea[name=?][class~="tinymce-textarea card-content"]', 'card[subcards][+illustrator][content]'
       end
     end
@@ -22,8 +22,10 @@ describe Card::HtmlFormat do
     it "titled" do
       result = render_card :titled, :name=>'A+B'
       assert_view_select result, 'div[class~="titled-view"]' do
-        assert_select 'h3' do
-          assert_select 'span'
+        assert_select 'div[class~="card-header"]' do
+          assert_select 'div[class~="card-header-title"]' do
+            assert_select 'span'
+          end
         end
         assert_select 'div[class~="card-body card-content"]', 'AlphaBeta'
       end
@@ -57,7 +59,7 @@ describe Card::HtmlFormat do
       it "renders card header" do
         # lots of duplication here...
         assert_view_select @simple_page, 'div[class="card-header panel-heading"]' do
-          assert_select 'h3[class="card-header-title panel-title"]'
+          assert_select 'div[class="card-header-title panel-title"]'
         end
       end
 

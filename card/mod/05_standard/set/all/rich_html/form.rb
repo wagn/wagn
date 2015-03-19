@@ -14,9 +14,9 @@ format :html do
       # single-card edit mode
       field = content_field form, args
     
-      if [ args[:optional_type_fieldset], args[:optional_name_fieldset] ].member? :show
-        # display content field in fieldset for consistency with other fields
-        fieldset '', field, :editor=>:content
+      if [ args[:optional_type_formgroup], args[:optional_name_formgroup] ].member? :show
+        # display content field in formgroup for consistency with other fields
+        formgroup '', field, :editor=>:content
       else
         editor_wrap( :content ) { field }
       end
@@ -70,26 +70,22 @@ format :html do
     content_tag( :div, :class=>"editor#{ " #{type}-editor" if type }" ) { yield }
   end
 
-  def fieldset title, content, opts={}
-    if attribs = opts[:attribs]
-      attrib_string = attribs.keys.map do |key| 
-        %{#{key}="#{attribs[key]}"}
-      end * ' '
-    end
-    help_text = case opts[:help]
-      when String ; _render_help :help_text=> opts[:help]
-      when true   ; _render_help
+  def formgroup title, content, opts={}
+    help_text = 
+      case opts[:help]
+      when String ; _render_help :help_class=>'help-block', :help_text=> opts[:help]
+      when true   ; _render_help :help_class=>'help-block'
       else        ; nil
+      end
+    wrap_with :div, :class=>['form-group', opts[:class]].compact*' ' do
+      %{
+        <label>#{ title }</label>
+        <div>
+          #{ editor_wrap( opts[:editor] ) { content } }
+          #{ help_text }            
+        </div>
+      }
     end
-    %{
-      <fieldset #{ attrib_string }>
-        <legend>
-          <h2>#{ title }</h2>
-          #{ help_text }
-        </legend>
-        #{ editor_wrap( opts[:editor] ) { content } }
-      </fieldset>
-    }
   end
 
   def hidden_tags hash, base=nil
@@ -110,35 +106,29 @@ format :html do
   
   # FIELDSET VIEWS
 
-  view :name_fieldset do |args|
-    fieldset 'name', raw( name_field form ), :editor=>'name', :help=>args[:help]
+  view :name_formgroup do |args|
+    formgroup 'name', raw( name_field form ), :editor=>'name', :help=>args[:help]
   end
 
-  view :type_fieldset do |args|
+  view :type_formgroup do |args|
     field = if args[:variety] == :edit #FIXME dislike this api -ef
       type_field :class=>'type-field edit-type-field'
     else
       type_field :class=>"type-field live-type-field", :href=>path(:view=>:new), 'data-remote'=>true
     end
-    fieldset 'type', field, :editor => 'type', :attribs => { :class=>'type-fieldset'}
+    formgroup 'type', field, :editor => 'type', :class=>'type-formgroup'
   end
 
 
-  view :button_fieldset do |args|
-    %{
-      <fieldset>
-        <div class="button-area">
-          #{ args[:buttons] }
-        </div>
-      </fieldset>
-    }
+  view :button_formgroup do |args|
+    %{<div class="form-group"><div>#{ args[:buttons] }</div></div>}
   end
 
-  view :content_fieldsets do |args|
+  view :content_formgroups do |args|
     raw %{
-      <div class="card-editor editor">
+      <fieldset class="card-editor editor">
         #{ edit_slot args }
-      </div>
+      </fieldset>
     }
   end
 
@@ -200,7 +190,7 @@ format :html do
       opts[:attribs].merge! :card_id=>card.id, :card_name=>(h card.name)
     end
   
-    fieldset fancy_title( args[:title] ), content, opts
+    formgroup fancy_title( args[:title] ), content, opts
   end
 
   def process_relative_tags args

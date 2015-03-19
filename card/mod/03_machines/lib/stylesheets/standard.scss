@@ -108,7 +108,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 /*- ONE-LINE VIEWS   - */
 /*-------------------- */
 
-.closed-view {
+.closed-view.panel {
   margin: 0;
   width: 100%;
 }
@@ -153,39 +153,6 @@ a.missing-labeled {
 /*-------------------- */
 /*- EDIT INTERFACE   - */
 /*-------------------- */
-
-fieldset {
-  margin: 5px 1px;
-  border: 0;
-  
-  > .button-area {
-    width: 70%;
-    padding: 10px 3px 0 3px;
-    input,
-    button {
-      margin-right: 2%;
-    }
-  }
-    
-  > .editor {
-    width: 70%;
-    padding: 3px;
-    > input {
-      margin-left: 0;
-    }
-  }
-  
-  > legend {
-    text-align:right;
-    width: 25%;
-    padding: 3px;
-    margin: 0;
-    > .instruction {
-      text-align: right;
-      padding: 3px 0;
-    }
-  }
-}
 
 textarea,
 .content-editor > input[type=text],
@@ -276,24 +243,6 @@ textarea {
 /*-------------------- */
 /*- SEARCH & POINTER - */
 /*-------------------- */
-
-.pointer-radio {
-    display: inline-block;
-    width: 100%;
-    .form-control {
-      box-shadow: none;
-    }
-    input {
-        float: left;
-        width: auto;
-        margin: 0;
-    }
-    label {
-        float: left;
-        width: auto;
-        margin: 6px 8px;
-     }
-}
 
 
 div.pointer-list,
@@ -486,11 +435,6 @@ $act-background: #f3f3f3;
   border-right: 2px solid #888;
   color: #333;
 }
-.render-error {
-  background-color: #eaa !important;  /* NOTGREY - red for error */
-  padding: 1px 20px;
-  font-style: italic;
-}
 
 .card-notice {
   background: #fff;
@@ -653,7 +597,7 @@ td.missing-rule {
 .open-rule .card-body {
   clear: both;
 }
-.open-rule .instruction {
+.open-rule .rule-instruction {
   float: right;
   text-align: left;
   max-width: 68%;
@@ -662,8 +606,6 @@ td.missing-rule {
   .set-editor {
     ul {
       list-style-type: none;
-      margin: 0;
-      padding: 0;
     }
     .current-set-label {
       font-weight: bold;
@@ -730,14 +672,6 @@ h2.set-label {
   background-image: url([[/assets/smoothness/ui-icons_454545_256x240.png]])
 }
 
-.instruction {
-  text-align: center;
-  padding: 4px 10px;
-  ol,
-  ul {
-    text-align: left;
-  }
-}
 
 table.show-cache td {
   padding: 10px;

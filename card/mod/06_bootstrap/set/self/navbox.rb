@@ -22,8 +22,8 @@ format :html do
   end
   
   view :core do |args|
-    form_tag Card.path_setting('/:search'), :method => 'get', :role => 'search',
-                                            :class  => "nodblclick navbox-form #{args[:navbar_class]}" do
+    tag_args = { :method=>'get', :role=>'search', :class=>"nodblclick navbox-form #{args[:navbar_class]}"}
+    form_tag Card.path_setting('/:search'), tag_args do
       _render_raw args
     end
 

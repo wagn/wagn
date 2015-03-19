@@ -301,6 +301,10 @@ def drop_item name
   end
 end
 
+def insert_item index, name
+  new_names = item_names.insert(index,name)
+  self.content =  new_names.map { |name| "[[#{name}]]" }.join "\n"
+end
 
 
 def options_card

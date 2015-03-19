@@ -98,7 +98,7 @@ end
 
 format :html do
   view :history do |args|
-    frame args.merge(:body_class=>"history-slot", :content=>true, :subheader=>_render_revision_subheader ) do
+    frame args.merge(:body_class=>"history-slot list-group", :content=>true, :subheader=>_render_revision_subheader ) do
       _render_revisions
     end
   end
@@ -119,7 +119,7 @@ format :html do
 .history-header  
   %span.slotter
     = paginate intr, :remote=>true, :theme=>'twitter-bootstrap-3'
-  %span.history-legend{:style=>"text-align:right;"}
+  %div.history-legend
     %span.glyphicon.glyphicon-plus-sign.diff-green
     %span
       = Card::Diff.render_added_chunk("Added")
@@ -144,7 +144,7 @@ format :html do
     rev_nr = params['rev_nr'] || args[:rev_nr] 
     current_rev_nr = params['current_rev_nr'] || args[:current_rev_nr] || card.current_rev_nr
     hide_diff = (params["hide_diff"]=="true") || args[:hide_diff]
-    wrap( args.merge(:slot_class=>"revision-#{act.id} history-slot") ) do
+    wrap( args.merge(:slot_class=>"revision-#{act.id} history-slot list-group-item") ) do
       render_haml :card=>card, :act=>act, :act_view=>act_view, 
                   :current_rev_nr=>current_rev_nr, :rev_nr=>rev_nr, 
                   :hide_diff=> hide_diff do 
@@ -164,8 +164,7 @@ format :html do
           %em.info
             Autosave
         - if current_rev_nr == rev_nr
-          |
-          %em.info
+          %em.label.label-info
             Current
         - elsif act_view == :expanded
           = rollback_link act.relevant_actions_for(card, act.actions.last.draft)
@@ -204,7 +203,7 @@ format :html do
       = wrap_diff :name do
         - name_changes(action, hide_diff)
     -else
-      =  link_to path(:view=>:related, :related=>{:view=>"history",:name=>action.card.name}), :class=>'slotter name-diff', 
+      =  link_to path(:view=>:related, :related=>{:view=>"history",:name=>action.card.name}), :class=>'slotter label-label-default', 
                    :slotSelector=>".card-slot.card-frame", :remote=>true do
         - name_changes(action, hide_diff)    
     -if action.new_type?
@@ -227,7 +226,7 @@ format :html do
     content = block.call
     if content.present?
       %{
-         <span class="#{field}-diff">
+         <span class="#{field}-diff#{ ' label label-default' if field == :name }">
          #{content}
          </span>
       }

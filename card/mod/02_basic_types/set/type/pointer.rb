@@ -5,6 +5,11 @@ event :add_and_drop_items, :before=>:approve, :on=>:save do
 end
 
 format do
+  def item_links args={}
+    card.item_cards(args).map do |item_card|
+      subformat(item_card).render_link
+    end
+  end
 
   def wrap_item item, args={}
     item #no wrap in base    

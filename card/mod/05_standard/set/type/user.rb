@@ -6,7 +6,7 @@ attr_accessor :email
 format :html do
 
   view :setup, :tags=>:unknown_ok, :perms=>lambda { |r| Auth.needs_setup? } do |args|
-    help_text = 'To get started, set up an account.'
+    help_text = '<h3>To get started, set up an account.</h3>'
     if Card.config.action_mailer.perform_deliveries == false 
       help_text += '<br>WARNING: Email delivery is turned off. Change settings in config/application.rb to send sign up notifications.'
     end

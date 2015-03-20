@@ -18,11 +18,22 @@ format :html do
   end
 
   view :content do |args|
-    wrap args.merge(:slot_class=>'card-content') do
+    wrap args.reverse_merge(:slot_class=>'card-content') do
       [
         _optional_render( :menu, args, :hide ),
         _render_core( args )
       ]
+    end
+  end
+  
+  view :content_panel do |args|
+    wrap args.reverse_merge(:slot_class=>'card-content panel panel-default') do
+      wrap_with :div, :class=>'panel-body' do
+        [
+          _optional_render( :menu, args, :hide ),
+          _render_core( args )
+          ]*"\n"
+      end
     end
   end
 
@@ -142,7 +153,8 @@ format :html do
         end
       end
     end
-    %{<div class="instruction">#{raw text}</div>} if text
+    klass = [args[:help_class], 'help-text'].compact*' '
+    %{<div class="#{klass}">#{raw text}</div>} if text
   end
 
   

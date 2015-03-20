@@ -1,7 +1,7 @@
 
 format :html do
 
-  def account_links args
+  def item_links args
     [
       optional_render( :my_card, args),
       optional_render( :invite, args),
@@ -38,24 +38,12 @@ format :html do
   end
   
   view :raw do |args|
+    item_links(args).join ' '
+  end
+
+  view :core do |args|
     content_tag :span, :id=>'logging' do
-      account_links(args).join ' '
+      render_raw args
     end
-  end
-  
-  view :list do |args|
-    content_tag :ul, :class=>args[:class] do
-      account_links(args).map do |al|
-        content_tag :li, al
-      end.join "\n"
-    end
-  end
-  
-  view :navbar_right do |args|
-    render_list args.merge(:class=>"nav navbar-nav navbar-right")
-  end
-  
-  view :navbar_left do |args|
-    render_list args.merge(:class=>"nav navbar-nav navbar-left")
   end
 end

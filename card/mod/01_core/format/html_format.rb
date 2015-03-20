@@ -50,7 +50,7 @@ class Card
 
     def nest nested_card, opts={}
       unless opts[:view].present?
-        opts[:view] = nested_card.rule :default_html_view
+        opts[:view] = nested_card.rule( :default_html_view ) || :titled
       end
       super nested_card, opts
     end

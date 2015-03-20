@@ -7,5 +7,10 @@ class BootstrapThemes < Card::CoreMigration
       Card.create! :name=>"theme: #{theme}", :type_code=>:css, :codename=>"theme_#{theme}"
       Card.create! :name=>"#{theme} skin", :type_code=>:skin, :content=>"[[raw bootstrap skin]]\n[[theme: #{theme}]]"
     end
+    
+    if sidebar_card = Card['*sidebar']
+      new_content = sidebar_card.content.gsub( /(\*(logo|credit))\|content/, '\1|content_panel' )
+      sidebar_card.update_attributes! :content => new_content
+    end
   end
 end

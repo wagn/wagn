@@ -40,9 +40,9 @@ format :html do
       card_form :update, form_args do
         [
           Auth.as_bot do
-            subformat(account)._render :content_fieldset, :structure=>true, :items=>{:autocomplete=>'on'}
+            subformat(account)._render :content_formgroup, :structure=>true, :items=>{:autocomplete=>'on'}
           end, 
-          _optional_render( :button_fieldset, args )
+          _optional_render( :button_formgroup, args )
         ].join
       end
     end

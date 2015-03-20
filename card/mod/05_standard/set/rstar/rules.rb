@@ -64,7 +64,7 @@ format :html do
             #{ card_link setting_name, :text=>"all #{setting_name} rules", :class=>'setting-link', :target=>'wagn_setting' }
           </div>
           
-          <div class="instruction rule-instruction">
+          <div class="alert alert-info rule-instruction">
             #{ process_content "{{#{setting_name}+*right+*help}}" }
           </div>
           
@@ -110,7 +110,7 @@ format :html do
         {:class=>"card-form card-rule-form slotter" } do |form|
       @form = form
       %{
-        #{ hidden_success_fieldset args[:success]}
+        #{ hidden_success_formgroup args[:success]}
         #{ editor args }
       }
     end
@@ -137,16 +137,16 @@ format :html do
   def editor args      
     wrap_with( :div, :class=>'card-editor' ) do
       [
-        (type_fieldset( args ) if card.right.rule_type_editable),
-        fieldset( 'rule', content_field( form, args.merge(:skip_rev_id=>true) ), :editor=>'content' ),
-        set_fieldset( args )
+        (type_formgroup( args ) if card.right.rule_type_editable),
+        formgroup( 'rule', content_field( form, args.merge(:skip_rev_id=>true) ), :editor=>'content' ),
+        set_formgroup( args )
       ]
     end + edit_buttons( args )
   end
 
 
-  def type_fieldset args
-    fieldset 'type', type_field(
+  def type_formgroup args
+    formgroup 'type', type_field(
       :href         => path(:name=>args[:success][:card].name, :view=>args[:success][:view], :type_reload=>true),
       :class        => 'type-field rule-type-field live-type-field',
       'data-remote' => true
@@ -154,7 +154,7 @@ format :html do
   end
   
   
-  def hidden_success_fieldset args
+  def hidden_success_formgroup args
     %{
       #{ hidden_field_tag 'success[id]', args[:id] || args[:card].name }
       #{ hidden_field_tag 'success[view]', args[:view] }
@@ -162,12 +162,12 @@ format :html do
     }
   end
   
-  def set_fieldset args
+  def set_formgroup args
     current_set_key = card.new_card? ? Card[:all].cardname.key : card.rule_set_key   # (should have a constant for this?)
     tag = args[:rule_context].rule_user_setting_name
     narrower_rules = []
     option_list = 
-      wrap_each_with :li do
+      wrap_each_with :li, :class=>'radio' do
         args[:set_options].map do |set_name, state|
           
           checked    = ( args[:set_selected] == set_name or current_set_key && args[:set_options].length==1 )
@@ -183,16 +183,16 @@ format :html do
           end
           rule_name  = "#{set_name}+#{tag}"
           radio_button( :name, rule_name, :checked=>checked, :warning=>warning ) + %{
-              <span class="set-label" #{'current-set-label' if is_current }>
+              <label class="set-label" #{'current-set-label' if is_current }>
                 #{ card_link set_name, :text=> Card.fetch(set_name).label, :target=>'wagn_set' }
                 #{'<em>(current)</em>' if is_current }
                 #{"<em> #{card_link "#{set_name}+#{card.rule_user_setting_name}", :text=>"(overwritten)"}</em>" if state == :overwritten }
-              </span>
+              </label>
              }.html_safe
          end
 
        end
-    fieldset 'set', "<ul>#{ option_list }</ul>", :editor => 'set'
+    formgroup 'set', "<ul>#{ option_list }</ul>", :editor => 'set'
   end
   
   def edit_buttons  args
@@ -205,7 +205,7 @@ format :html do
                       %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
                     end
     cancel_path = path :view=>( card.new_card? ? :closed_rule : :open_rule )
-    wrap_with( :div, :class=>'edit-button-area' ) do
+    wrap_with( :div, :class=>'button-area' ) do
      [
        delete_button,
        button_tag( 'Submit', :class=>'rule-submit-button' ),
@@ -220,10 +220,10 @@ format :html do
     
     card_form :update do
       [
-        _optional_render( :type_fieldset,    args ),
-        _optional_render( :content_fieldset, args ),
-        _optional_render( :set_fieldset,     args ),
-        _optional_render( :button_fieldset,  args )
+        _optional_render( :type_formgroup,    args ),
+        _optional_render( :content_formgroup, args ),
+        _optional_render( :set_formgroup,     args ),
+        _optional_render( :button_formgroup,  args )
       ]
     end
   end

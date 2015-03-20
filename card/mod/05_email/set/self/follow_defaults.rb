@@ -31,9 +31,9 @@ format :html do
   view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
     frame_and_form :update, args do
       [
-        _optional_render( :content_fieldsets, args ),
+        _optional_render( :content_formgroups, args ),
         _optional_render( :confirm_update_all, args ),
-        _optional_render( :button_fieldset,   args )
+        _optional_render( :button_formgroup,   args )
       ]
     end
   end
@@ -41,7 +41,7 @@ format :html do
   
   view :confirm_update_all do |args|
     wrap args do
-      alert 'info'do
+      alert 'info' do
         %{
           <h1>Are you sure you want to change the default follow rules?</h1>
           <p>You may choose to update all existing users. This may take a while. </p>

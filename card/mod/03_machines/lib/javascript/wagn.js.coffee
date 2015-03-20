@@ -213,7 +213,7 @@ $(window).ready ->
     $(this).closest('form').find('#card_update_referencers').val 'true'
         
   $('body').on 'submit', '.edit_name-view .card-form', ->
-    confirmer = $(this).find '.confirm_rename-view'
+    confirmer = $(this).find '.alert'
     if confirmer.is ':hidden'
       if $(this).find('#referers').val() > 0
         $(this).find('.renamer-updater').show()

@@ -77,7 +77,12 @@ format :html do
       when true   ; _render_help :help_class=>'help-block'
       else        ; nil
       end
-    wrap_with :div, :class=>['form-group', opts[:class]].compact*' ' do
+      
+    div_args = { :class=>['form-group', opts[:class]].compact*' ' }
+    div_args[:card_id  ] = card.id     if card.real?
+    div_args[:card_name] = h card.name if card.name.present? 
+      
+    wrap_with :div, div_args do
       %{
         <label>#{ title }</label>
         <div>
@@ -177,18 +182,14 @@ format :html do
     text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id, "data-card-type-code"=>card.type_code
   end
 
-
   view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
     eform = form_for_multi
+    
     content = content_field eform, args.merge( :nested=>true )
-    opts = { :editor=>'content', :help=>true, :attribs =>
-      { :class=> "card-editor RIGHT-#{ card.cardname.tag_name.safe_key }" }
-    }
-    if card.new_card?
-      content += raw( "\n #{ eform.hidden_field :type_id }" )
-    else
-      opts[:attribs].merge! :card_id=>card.id, :card_name=>(h card.name)
-    end
+    opts = { :editor=>'content', :help=>true, :class=>'card-editor' }
+    
+    content      += raw( "\n #{ eform.hidden_field :type_id }" )     if card.new_card?
+    opts[:class] += " RIGHT-#{ card.cardname.tag_name.safe_key }"   if card.cardname.junction?
   
     formgroup fancy_title( args[:title] ), content, opts
   end

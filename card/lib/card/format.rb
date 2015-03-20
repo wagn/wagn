@@ -431,7 +431,7 @@ class Card
     def nest nested_card, opts={}
       #ActiveSupport::Notifications.instrument('card', message: "nest: #{nested_card.name}, #{opts}") do
       opts.delete_if { |k,v| v.nil? }
-      opts.reverse_merge! inclusion_defaults(nested_cards)
+      opts.reverse_merge! inclusion_defaults(nested_card)
     
       sub = nil
       if opts[:inc_name] =~ /^_(self)?$/

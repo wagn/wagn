@@ -54,7 +54,7 @@ format do
     when e = search_vars[:error]
       %{#{e.class.to_s} :: #{e.message} :: #{card.raw_content}}
     when search_vars[:query][:return] =='count'
-      search_vars[:results].to_s
+      search_results.to_s
     when @mode == :template
       render :raw
     else
@@ -63,25 +63,34 @@ format do
   end
 
   view :card_list do |args|
-    if search_vars[:results].empty?
+    if search_results.empty?
       'no results'
     else
-      search_vars[:results].map do |c|
+      search_results.map do |c|
         nest c
       end.join "\n"
     end
   end
   
   def search_vars args={}
-    @search_vars ||= begin
-      v = {}
-      v[:query] = card.query search_params
-      v[:item] = set_inclusion_opts args.merge( :query_view=>v[:query][:view] )
-      v[:results]  = card.item_cards search_params  # this is really odd.  the search is called from within the vars???
-      v
-    rescue =>e
-      { :error => e }
-    end
+    @search_vars ||=
+      begin
+        v = {}
+        v[:query] = card.query(search_params)
+        v[:item]  = set_inclusion_opts args.merge( :query_view=>v[:query][:view] )
+        v
+      rescue =>e
+        { :error => e }
+      end
+  end
+
+  def search_results
+    @search_results ||=
+      begin
+        card.item_cards search_params
+      rescue => e
+        { :error => e}
+      end
   end
   
   def set_inclusion_opts args
@@ -106,7 +115,7 @@ end
 format :data do
     
   view :card_list do |args|
-    search_vars[:results].map do |c|
+    search_results.map do |c|
       nest c
     end
   end
@@ -134,14 +143,14 @@ format :html do
   view :card_list do |args|
     paging = _optional_render :paging, args
 
-    if search_vars[:results].empty?
+    if search_results.empty?
       render_no_search_results(args) 
     else
       %{
         #{paging}
         <div class="search-result-list">
           #{
-            search_vars[:results].map do |c|
+            search_results.map do |c|
               %{
                 <div class="search-result-item item-#{ inclusion_defaults[:view] }">
                   #{ nest c, :size=>args[:size] }
@@ -150,7 +159,7 @@ format :html do
             end * "\n"
           }
         </div>
-        #{ paging if search_vars[:results].length > 10 }
+        #{ paging if search_results.length > 10 }
       }
     end
   end
@@ -180,7 +189,7 @@ format :html do
     s = card.query search_params
     offset, limit = s[:offset].to_i, s[:limit].to_i
     return '' if limit < 1
-    return '' if offset==0 && limit > offset + search_vars[:results].length #avoid query if we know there aren't enough results to warrant paging
+    return '' if offset==0 && limit > offset + search_results.length #avoid query if we know there aren't enough results to warrant paging
     total = card.count search_params
     return '' if limit >= total # should only happen if limit exactly equals the total
 

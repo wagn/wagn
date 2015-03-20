@@ -35,7 +35,7 @@ format :html do
     s = card.query search_params
     offset, limit = s[:offset].to_i, s[:limit].to_i
     return '' if limit < 1
-    return '' if offset==0 && limit > offset + search_vars[:results].length #avoid query if we know there aren't enough results to warrant paging
+    return '' if offset==0 && limit > offset + search_results.length #avoid query if we know there aren't enough results to warrant paging
     total = card.count search_params
     return '' if limit >= total # should only happen if limit exactly equals the total
 

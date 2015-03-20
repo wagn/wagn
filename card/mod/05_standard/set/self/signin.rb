@@ -84,7 +84,6 @@ event :signin, :before=>:approve, :on=>:update do
   
   if signin_id = Auth.authenticate( email, pword )
     Auth.signin signin_id
-    abort :success
   else
     accted = Auth[ email.strip.downcase ]
     errors.add :signin, case
@@ -94,6 +93,10 @@ event :signin, :before=>:approve, :on=>:update do
       end
     abort :failure
   end  
+end
+
+event :signin_success, :after=>:signin do
+  abort :success
 end
 
 event :send_reset_password_token, :before=>:signin, :on=>:update, :when=>proc{ |c| Env.params[:reset_password] } do

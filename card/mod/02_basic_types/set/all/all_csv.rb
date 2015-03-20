@@ -26,7 +26,7 @@ format :csv  do
   view :csv_title_row do |args|
     #NOTE: assumes all cards have the same structure!
     begin
-      card1 = search_vars[:results].first  
+      card1 = search_results.first
     
       parsed_content = Card::Content.new card1.raw_content, self
       unless String === parsed_content.__getobj__

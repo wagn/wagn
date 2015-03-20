@@ -173,7 +173,7 @@ format :html do
         search_results.map do |c|
           item_view = inclusion_defaults(c)[:view]
           %{
-            <div :class=>"search-result-item item-#{ item_view }>
+            <div class="search-result-item item-#{ item_view }">
               #{nest(c, :size=>args[:size], :view=>item_view)}
             </div>
           }

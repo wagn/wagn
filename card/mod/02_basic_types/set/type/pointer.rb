@@ -41,7 +41,7 @@ format :html do
   end
 
   view :closed_content do |args|
-    args[:item] = (args[:item] || inclusion_defaults[:view])=='name' ? 'name' : 'link'
+    args[:item] = (args[:item] || inclusion_defaults(card)[:view])=='name' ? 'name' : 'link'
     args[:joint] ||= ', '
     _render_core args
   end

@@ -90,7 +90,7 @@ format :html do
   
   def wrap_with tag, html_args={}
     content_tag( tag, html_args ) do 
-      output( yield )
+      output( yield ).html_safe
     end
   end
   

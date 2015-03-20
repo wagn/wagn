@@ -14,7 +14,7 @@ describe Card::HtmlFormat do
       c = Card.new :name => 'ABook', :type => 'Book'
       rendered =  c.format.render( :edit )
 
-      assert_view_select rendered, 'div[class="form-group"]' do
+      assert_view_select rendered, 'div[class~="form-group"]' do
         assert_select 'textarea[name=?][class~="tinymce-textarea card-content"]', 'card[subcards][+illustrator][content]'
       end
     end
@@ -31,9 +31,6 @@ describe Card::HtmlFormat do
       end
     end
 
-    context "Cards with special views" do
-
-    end
 
     context "Simple page with Default Layout" do
       before do

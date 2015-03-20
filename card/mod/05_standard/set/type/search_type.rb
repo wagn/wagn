@@ -169,7 +169,6 @@ format :html do
     if search_results.empty?
       render_no_search_results(args) 
     else
-      item_view = inclusion_defaults[:view]
       %{
         #{ paging }
         <div class="search-result-list">
@@ -177,7 +176,7 @@ format :html do
             search_results.map do |c|
               %{
                 <div class="search-result-item item-#{ item_view }">
-                  #{ nest c, :size=>args[:size], :view=>item_view }
+                  #{ nest c, :size=>args[:size], :view=> inclusion_defaults(c)[:view] }
                 </div>
               }
             end * "\n"
@@ -217,7 +216,7 @@ format :html do
     total = card.count search_params
     return '' if limit >= total # should only happen if limit exactly equals the total
 
-    @paging_path_args = { :limit => limit, :item=> inclusion_defaults[:view] }
+    @paging_path_args = { :limit => limit, :item=> inclusion_defaults(card)[:view] }
     @paging_limit = limit
 
     s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }

@@ -1,7 +1,7 @@
     
 format :css do
 
-  def get_inclusion_defaults
+  def get_inclusion_defaults nested_card
     { :view => :content }
   end
 

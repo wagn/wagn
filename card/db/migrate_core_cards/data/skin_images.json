@@ -1,0 +1,56 @@
+{
+  "url": "http://localhost:3000/skin_images.json",
+  "timestamp": "2015-03-23 16:23:56 -0600",
+  "card": {
+    "name": "skin images",
+    "type": "Search",
+    "content": "{\r\n/*\r\n  \"type\":\"Skin\",\r\n  \"append\":\"Image\",\r\n*/\r\n  \r\n  \"left\":{\"type\":\"Skin\"},\r\n  \"right\":\"Image\",\r\n  \"sort\":\"name\"\r\n  \r\n}",
+    "value": [
+      {
+        "name": "amelia skin+Image",
+        "type": "Image",
+        "content": "amelia.png\nimage/png\n27258\n05_standard"
+      },
+      {
+        "name": "cerulean skin+Image",
+        "type": "Image",
+        "content": "cerulean.png\nimage/png\n39151\n05_standard"
+      },
+      {
+        "name": "cosmo skin+Image",
+        "type": "Image",
+        "content": "cosmo.png\nimage/png\n22812\n05_standard"
+      },
+      {
+        "name": "cyborg skin+Image",
+        "type": "Image",
+        "content": "cyborg.png\nimage/png\n24791\n05_standard"
+      },
+      {
+        "name": "lumen skin+Image",
+        "type": "Image",
+        "content": "lumen.png\nimage/png\n19351\n05_standard"
+      },
+      {
+        "name": "readable skin+Image",
+        "type": "Image",
+        "content": "readable.png\nimage/png\n28367\n05_standard"
+      },
+      {
+        "name": "spacelab skin+Image",
+        "type": "Image",
+        "content": "spacelab.png\nimage/png\n37532\n05_standard"
+      },
+      {
+        "name": "superhero skin+Image",
+        "type": "Image",
+        "content": "superhero.png\nimage/png\n25186\n05_standard"
+      },
+      {
+        "name": "yeti skin+Image",
+        "type": "Image",
+        "content": "yeti.png\nimage/png\n20422\n05_standard"
+      }
+    ]
+  }
+}

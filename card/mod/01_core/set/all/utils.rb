@@ -2,11 +2,11 @@
 module ClassMethods
   
   def empty_trash
+    Card.delete_trashed_files
     Card.where(:trash=>true).delete_all
     Card::Action.delete_cardless
     Card::Reference.repair_missing_referees
     Card::Reference.delete_missing_referers
-    Card.delete_trashed_files
   end
   
   def delete_trashed_files #deletes any file not associated with a real card.

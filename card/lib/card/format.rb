@@ -114,15 +114,15 @@ class Card
       end
     end
   
-    def inclusion_defaults
+    def inclusion_defaults nested_card
       @inclusion_defaults ||= begin
-        defaults = get_inclusion_defaults.clone
+        defaults = get_inclusion_defaults(nested_card).clone
         defaults.merge! @inclusion_opts if @inclusion_opts
         defaults
       end
     end
     
-    def get_inclusion_defaults
+    def get_inclusion_defaults nested_card
       { :view => :name }
     end
     
@@ -405,7 +405,7 @@ class Card
       opts.merge! root.main_opts if root.main_opts
       legacy_main_opts_tweaks! opts
 
-      opts[:view] ||= :open
+      #opts[:view] ||= :open
       with_inclusion_mode :normal do
         @mainline = true
         result = wrap_main nest( root.card, opts )
@@ -431,7 +431,7 @@ class Card
     def nest nested_card, opts={}
       #ActiveSupport::Notifications.instrument('card', message: "nest: #{nested_card.name}, #{opts}") do
       opts.delete_if { |k,v| v.nil? }
-      opts.reverse_merge! inclusion_defaults
+      opts.reverse_merge! inclusion_defaults(nested_card)
     
       sub = nil
       if opts[:inc_name] =~ /^_(self)?$/

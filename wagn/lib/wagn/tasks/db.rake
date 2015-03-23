@@ -47,7 +47,7 @@ namespace :db do
     desc 'Prepare the test database and load the schema'
     Rake::Task.redefine_task( :prepare => :environment ) do
       if ENV['RELOAD_TEST_DATA'] == 'true' || ENV['RUN_CODE_RUN']
-        puts `env RAILS_ENV=test rake wagn:create`
+        puts `env RAILS_ENV=test rake wagn:seed`
       else
         puts "skipping loading test data.  to force, run `env RELOAD_TEST_DATA=true rake db:test:prepare`"
       end

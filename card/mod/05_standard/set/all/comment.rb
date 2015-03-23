@@ -31,7 +31,7 @@ view( :comment_box, :denial=>:blank, :tags=>:unknown_ok, :perms=>lambda { |r| r.
               %{<label>My Name is:</label> #{ text_field :comment_author }}
             end
           }
-          <input type="submit" value="Comment"/>
+          #{ button_tag 'Comment', :type=>:submit, :disable_with=>"Commenting" }
         </div>
       }
     end}

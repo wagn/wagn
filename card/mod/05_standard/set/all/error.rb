@@ -68,7 +68,7 @@ format :html do
                 error_cardname
               end
                  
-    content_tag :span, :class=>'render-error' do
+    content_tag :span, :class=>'render-error alert alert-danger' do
       [
         'error rendering',
         details,

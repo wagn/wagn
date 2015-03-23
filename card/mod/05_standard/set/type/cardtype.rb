@@ -6,7 +6,7 @@ format :html do
     super args
   end
 
-  view :type_fieldset do |args|
+  view :type_formgroup do |args|
     if card.cards_of_type_exist?
       %{<div>Sorry, this card must remain a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
     else

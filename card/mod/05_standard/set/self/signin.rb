@@ -40,9 +40,9 @@ format :html do
       card_form :update, form_args do
         [
           Auth.as_bot do
-            subformat(account)._render :content_fieldset, :structure=>true, :items=>{:autocomplete=>'on'}
+            subformat(account)._render :content_formgroup, :structure=>true, :items=>{:autocomplete=>'on'}
           end, 
-          _optional_render( :button_fieldset, args )
+          _optional_render( :button_formgroup, args )
         ].join
       end
     end
@@ -84,7 +84,6 @@ event :signin, :before=>:approve, :on=>:update do
   
   if signin_id = Auth.authenticate( email, pword )
     Auth.signin signin_id
-    abort :success
   else
     accted = Auth[ email.strip.downcase ]
     errors.add :signin, case
@@ -94,6 +93,10 @@ event :signin, :before=>:approve, :on=>:update do
       end
     abort :failure
   end  
+end
+
+event :signin_success, :after=>:signin do
+  abort :success
 end
 
 event :send_reset_password_token, :before=>:signin, :on=>:update, :when=>proc{ |c| Env.params[:reset_password] } do

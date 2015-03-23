@@ -44,8 +44,8 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 .new-current-revision-id,
 .editor .revision-navigation,
 .editor .autosave-alert,
-.confirm_rename-view,
-.renamer-updater,
+.edit_name-view .alert,
+.btn.renamer-updater,
 .confirm_update_all-view,
 .follow-updater,
 .admin-error-message,
@@ -69,7 +69,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 .card-menu {
   display: none;
   position: absolute;
-  z-index: 1;
+  z-index: 1005;
   li {
     white-space: nowrap;
   }
@@ -136,20 +136,6 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 }
 
 
-
-fieldset {
-  clear: both;
-  float: none !important;
-  > .button-area,
-  > .editor {
-    float: right;
-  }
-  > legend {
-    white-space: inherit;
-    float:left;
-  }
-}
-
 .navbox-item-label {
   float: left;
   position: relative;  
@@ -159,6 +145,7 @@ fieldset {
 /*-- misc --*/
 .card-editor {
   white-space: normal;
+  padding-bottom: 15px;
 }
 pre,
 .TYPE-plain_text.card-content,

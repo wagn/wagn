@@ -54,7 +54,7 @@ format do
     when e = search_vars[:error]
       %{#{e.class.to_s} :: #{e.message} :: #{card.raw_content}}
     when search_vars[:query][:return] =='count'
-      search_vars[:results].to_s
+      search_results.to_s
     when @mode == :template
       render :raw
     else
@@ -63,25 +63,34 @@ format do
   end
 
   view :card_list do |args|
-    if search_vars[:results].empty?
+    if search_results.empty?
       'no results'
     else
-      search_vars[:results].map do |c|
+      search_results.map do |c|
         nest c
       end.join "\n"
     end
   end
   
   def search_vars args={}
-    @search_vars ||= begin
-      v = {}
-      v[:query] = card.query search_params
-      v[:item] = set_inclusion_opts args.merge( :query_view=>v[:query][:view] )
-      v[:results]  = card.item_cards search_params  # this is really odd.  the search is called from within the vars???
-      v
-    rescue =>e
-      { :error => e }
-    end
+    @search_vars ||=
+      begin
+        v = {}
+        v[:query] = card.query(search_params)
+        v[:item]  = set_inclusion_opts args.merge( :query_view=>v[:query][:view] )
+        v
+      rescue =>e
+        { :error => e }
+      end
+  end
+
+  def search_results
+    @search_results ||=
+      begin
+        card.item_cards search_params
+      rescue => e
+        { :error => e}
+      end
   end
   
   def set_inclusion_opts args
@@ -93,11 +102,34 @@ format do
 
   
 
-
-
-  def page_link text, page
+  def page_link text, page, current=false, options={}
     @paging_path_args[:offset] = page * @paging_limit
-    " #{link_to raw(text), path(@paging_path_args), :class=>'card-paging-link slotter', :remote => true} "
+    options.merge!(:class=>'card-paging-link slotter', :remote => true)
+    link_to raw(text), path(@paging_path_args), options
+  end
+
+  def page_li text, page, current=false, options={}
+    css_class = if current
+                  'active'
+                elsif !page
+                  'disabled'
+                end
+    page ||= 0
+    content_tag :li, :class=>css_class do
+      page_link text, page, current, options
+    end
+  end
+
+  def previous_page_link page
+    page_li '<span aria-hidden="true">&laquo;</span>', page, false, 'aria-label'=>"Previous"
+  end
+
+  def next_page_link page
+    page_li '<span aria-hidden="true">&raquo;</span>', page, false, 'aria-label'=>"Next"
+  end
+
+  def ellipse_page
+    content_tag :li, content_tag(:span, '...')
   end
 
 end
@@ -106,7 +138,7 @@ end
 format :data do
     
   view :card_list do |args|
-    search_vars[:results].map do |c|
+    search_results.map do |c|
       nest c
     end
   end
@@ -134,23 +166,25 @@ format :html do
   view :card_list do |args|
     paging = _optional_render :paging, args
 
-    if search_vars[:results].empty?
+    if search_results.empty?
       render_no_search_results(args) 
     else
-      %{
-        #{paging}
-        <div class="search-result-list">
-          #{
-            search_vars[:results].map do |c|
-              %{
-                <div class="search-result-item item-#{ inclusion_defaults[:view] }">
-                  #{ nest c, :size=>args[:size] }
-                </div>
-              }
-            end * "\n"
+      results =
+        search_results.map do |c|
+          item_view = inclusion_defaults(c)[:view]
+          %{
+            <div class="search-result-item item-#{ item_view }">
+              #{nest(c, :size=>args[:size], :view=>item_view)}
+            </div>
           }
+        end.join "\n"
+        
+      %{
+        #{ paging }
+        <div class="search-result-list">
+          #{ results }
         </div>
-        #{ paging if search_vars[:results].length > 10 }
+        #{ paging if search_results.length > 10 }
       }
     end
   end
@@ -180,16 +214,16 @@ format :html do
     s = card.query search_params
     offset, limit = s[:offset].to_i, s[:limit].to_i
     return '' if limit < 1
-    return '' if offset==0 && limit > offset + search_vars[:results].length #avoid query if we know there aren't enough results to warrant paging
+    return '' if offset==0 && limit > offset + search_results.length #avoid query if we know there aren't enough results to warrant paging
     total = card.count search_params
     return '' if limit >= total # should only happen if limit exactly equals the total
 
-    @paging_path_args = { :limit => limit, :item=> inclusion_defaults[:view] }
+    @paging_path_args = { :limit => limit, :item=> inclusion_defaults(card)[:view] }
     @paging_limit = limit
 
     s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }
 
-    out = ['<span class="paging">' ]
+    out = ['<nav><ul class="pagination paging">' ]
 
     total_pages  = ((total-1) / limit).to_i
     current_page = ( offset   / limit).to_i # should already be integer
@@ -197,33 +231,28 @@ format :html do
     window_min = current_page - window
     window_max = current_page + window
 
-    if current_page > 0
-      out << page_link( '&laquo; prev', current_page - 1 )
-    end
-
-    out << %{<span class="paging-numbers">}
+    previous_page = current_page > 0 ? current_page - 1 : false
+    out << previous_page_link(previous_page)
     if window_min > 0
-      out << page_link( 1, 0 )
-      out << '...' if window_min > 1
+      out << page_li( 1, 0 )
+      out << ellipse_page if window_min > 1
     end
 
     (window_min .. window_max).each do |page|
       next if page < 0 or page > total_pages
       text = page + 1
-      out <<  ( page==current_page ? text : page_link( text, page ) )
+      out << page_li( text, page, page==current_page ) 
     end
 
     if total_pages > window_max
-      out << '...' if total_pages > window_max + 1
-      out << page_link( total_pages + 1, total_pages )
-    end
-    out << %{</span>}
-
-    if current_page < total_pages
-      out << page_link( 'next &raquo;', current_page + 1 )
+      out << ellipse_page if total_pages > window_max + 1
+      out << page_li( total_pages + 1, total_pages )
     end
 
-    out << %{<span class="search-count">(#{total})</span></span>}
+    next_page = current_page < total_pages ? current_page + 1 : false
+    out << next_page_link(next_page)
+
+    out << %{</ul></nav>}
     out.join
   end
   
@@ -231,13 +260,6 @@ format :html do
     set_default_search_params :default_limit=>20
   end
   
-  
 end
-
-
-
-
-
-
 
 

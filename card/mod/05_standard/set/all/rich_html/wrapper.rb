@@ -52,7 +52,7 @@ format :html do
       %{
         #{ _render_header args }
         #{ %{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader] }
-        #{ _optional_render :help, args, :hide }
+        #{ _optional_render :help, args.merge(:help_class=>'alert alert-info'), :hide }
         #{ wrap_body args do output( yield args ) end }
       }
     end
@@ -90,7 +90,7 @@ format :html do
   
   def wrap_with tag, html_args={}
     content_tag( tag, html_args ) do 
-      output( yield )
+      output( yield ).html_safe
     end
   end
   

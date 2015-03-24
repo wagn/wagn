@@ -124,7 +124,7 @@ module Paperclip::Interpolations
     card = at.instance
     if mod = at.instance.attach_mod
       # generalize this to work with any mod (needs design)
-      codecard = card.left if card.cardname.junction?
+      codecard = card.cardname.junction? ? card.left : card
       "#{ Cardio.gem_root}/mod/#{mod}/file/#{codecard.codename}/#{size at, style}#{card.type_code}"
     else
       "#{ Card.paths['files'].existent.first }/#{card.id}/#{size at, style}#{action_id at, style}"

@@ -239,11 +239,12 @@ $(window).ready ->
     window.location = $(this).attr('href')
 
   unless wagn.noDoubleClick
-    $('body').on 'dblclick', '.card-slot', (event) ->
-      s = $(this)
-      return false if s.closest( '.nodblclick'  )[0]
-      return false if s.closest( '.card-header' )[0]
-      return false if s.find( '.card-editor' )[0]
+    $('body').on 'dblclick', 'div', (event) ->
+      t = $(this)
+      return false if t.closest( '.nodblclick'  )[0]
+      return false if t.closest( '.card-header' )[0]
+      return false if t.find( '.card-editor' )[0]
+      s = t.slot()
       return false unless s.data('cardId')
       s.addClass 'slotter'
       s.attr 'href', wagn.rootPath + '/card/edit/~' + s.data('cardId')

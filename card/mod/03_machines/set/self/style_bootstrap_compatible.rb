@@ -1,5 +1,5 @@
 view :raw do |args|
-  File.read "#{Cardio.gem_root}/mod/06_bootstrap/lib/stylesheets/#{card.codename}.css"
+  File.read "#{Cardio.gem_root}/mod/03_machines/lib/stylesheets/#{card.codename}.css"
 end
 
 format :html do

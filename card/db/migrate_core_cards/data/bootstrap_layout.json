@@ -19,12 +19,12 @@
       {
         "name": "bootstrap default skin",
         "type": "Skin",
-        "content": "[[raw bootstrap skin]]\n[[theme: bootstrap default]]"
+        "content": "[[themeless bootstrap skin]]\n[[theme: bootstrap default]]"
       },
       {
         "name": "simple skin",
         "type": "Skin",
-        "content": "[[style: jquery-ui-smoothness]]\n[[style: functional]]\n[[style: standard]]\n[[style: right sidebar]]\n[[style: common]]\n[[style: traditional]]\n[[style: glyphicons]]\n[[style: bootstrap compatible]]"
+        "content": "[[style: jquery-ui-smoothness]]\n[[style: cards]]\n[[style: right sidebar]]\n[[style: common]]\n[[style: traditional]]\n[[style: glyphicons]]\n[[style: bootstrap compatible]]"
       },
       {
         "name": "style: classic cards",

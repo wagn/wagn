@@ -1,4 +1,4 @@
-describe Card::Set::All::Bootstrap::Form  do
+describe Card::Set::All::BootstrapCss::Form  do
   describe 'input' do
     it "has form-group css class" do
 	    assert_view_select render_editor('Phrase'), 'input[type="text"][class~="form-control"]'

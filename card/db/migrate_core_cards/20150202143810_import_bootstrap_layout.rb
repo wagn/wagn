@@ -20,11 +20,21 @@ class ImportBootstrapLayout < Card::CoreMigration
         style_rule_card. update_attributes! :content=> '[[classic bootstrap skin]]'
       end
     end
+    
+    old_func = Card[:style_functional]
+    old_func.name = 'style: cards'
+    old_func.codename = 'style_cards'
+    old_func.save!
+    
+    old_stand = Card[:style_standard]
+    old_stand.codename = nil
+    old_stand.delete!
+    
 
     # these are hard-coded
     Card.create! :name=>'theme: bootstrap_default', :type_code=>:css, :codename=>'theme_bootstrap_default'
     Card.create! :name=>'style: bootstrap', :type_code=>:css, :codename=>'bootstrap_css'
-    Card.create! :name=>'style: bootstrap compatible', :type_code=>:scss, :codename=>'bootstrap_compatible'
+    Card.create! :name=>'style: bootstrap compatible', :type_code=>:scss, :codename=>'style_bootstrap_compatible'
     Card.create! :name=>'script: bootstrap', :type_code=>:js, :codename=>'bootstrap_js'
     
     # add new setting: *default html view

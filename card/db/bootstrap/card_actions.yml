@@ -3893,273 +3893,322 @@ card_actions_556:
   draft: false
 card_actions_557:
   id: 7497
-  card_id: 957
-  card_act_id: 1
-  super_action_id: 
-  action_type: 1
-  draft: false
-card_actions_558:
-  id: 7498
-  card_id: 958
-  card_act_id: 1
-  super_action_id: 
-  action_type: 1
-  draft: false
-card_actions_559:
-  id: 7500
   card_id: 1350
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_560:
-  id: 7503
+card_actions_558:
+  id: 7500
   card_id: 1352
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_561:
-  id: 7508
+card_actions_559:
+  id: 7502
   card_id: 1354
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_562:
-  id: 7511
+card_actions_560:
+  id: 7505
   card_id: 1356
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_563:
-  id: 7516
+card_actions_561:
+  id: 7507
   card_id: 1358
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_564:
-  id: 7519
+card_actions_562:
+  id: 7510
   card_id: 1360
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_565:
-  id: 7524
+card_actions_563:
+  id: 7512
   card_id: 1362
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_566:
-  id: 7527
+card_actions_564:
+  id: 7515
   card_id: 1364
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_567:
-  id: 7532
+card_actions_565:
+  id: 7517
   card_id: 1366
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_568:
-  id: 7535
+card_actions_566:
+  id: 7520
   card_id: 1368
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_569:
-  id: 7540
+card_actions_567:
+  id: 7522
   card_id: 1370
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_570:
-  id: 7543
+card_actions_568:
+  id: 7525
   card_id: 1372
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_571:
-  id: 7548
+card_actions_569:
+  id: 7527
   card_id: 1374
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_572:
-  id: 7551
+card_actions_570:
+  id: 7530
   card_id: 1376
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_573:
-  id: 7556
+card_actions_571:
+  id: 7532
   card_id: 1378
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_574:
-  id: 7559
+card_actions_572:
+  id: 7535
   card_id: 1380
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_575:
-  id: 7564
+card_actions_573:
+  id: 7537
   card_id: 1382
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_576:
-  id: 7567
+card_actions_574:
+  id: 7540
   card_id: 1384
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_577:
-  id: 7572
+card_actions_575:
+  id: 7542
   card_id: 1386
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_578:
-  id: 7575
+card_actions_576:
+  id: 7545
   card_id: 1388
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_579:
-  id: 7580
+card_actions_577:
+  id: 7547
   card_id: 1390
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_580:
-  id: 7583
+card_actions_578:
+  id: 7550
   card_id: 1392
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_581:
-  id: 7588
+card_actions_579:
+  id: 7552
   card_id: 1394
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_582:
-  id: 7591
+card_actions_580:
+  id: 7555
   card_id: 1396
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_583:
-  id: 7596
+card_actions_581:
+  id: 7557
   card_id: 1398
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_584:
-  id: 7599
+card_actions_582:
+  id: 7560
   card_id: 1400
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_585:
-  id: 7604
-  card_id: 81
-  card_act_id: 1
-  super_action_id: 
-  action_type: 1
-  draft: false
-card_actions_586:
-  id: 7611
-  card_id: 1403
+card_actions_583:
+  id: 7562
+  card_id: 1402
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_587:
-  id: 7612
+card_actions_584:
+  id: 7565
   card_id: 1404
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_588:
-  id: 7613
-  card_id: 1405
-  card_act_id: 1
-  super_action_id: 
-  action_type: 0
-  draft: false
-card_actions_589:
-  id: 7614
+card_actions_585:
+  id: 7567
   card_id: 1406
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_590:
-  id: 7615
-  card_id: 1407
-  card_act_id: 1
-  super_action_id: 
-  action_type: 0
-  draft: false
-card_actions_591:
-  id: 7616
+card_actions_586:
+  id: 7570
   card_id: 1408
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
-card_actions_592:
-  id: 7617
-  card_id: 1409
-  card_act_id: 1
-  super_action_id: 
-  action_type: 0
-  draft: false
-card_actions_593:
-  id: 7618
+card_actions_587:
+  id: 7572
   card_id: 1410
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
+card_actions_588:
+  id: 7575
+  card_id: 1412
+  card_act_id: 1
+  super_action_id: 
+  action_type: 0
+  draft: false
+card_actions_589:
+  id: 7577
+  card_id: 1414
+  card_act_id: 1
+  super_action_id: 
+  action_type: 0
+  draft: false
+card_actions_590:
+  id: 7580
+  card_id: 1416
+  card_act_id: 1
+  super_action_id: 
+  action_type: 0
+  draft: false
+card_actions_591:
+  id: 7583
+  card_id: 957
+  card_act_id: 1
+  super_action_id: 
+  action_type: 1
+  draft: false
+card_actions_592:
+  id: 7584
+  card_id: 958
+  card_act_id: 1
+  super_action_id: 
+  action_type: 1
+  draft: false
+card_actions_593:
+  id: 7587
+  card_id: 1419
+  card_act_id: 1
+  super_action_id: 
+  action_type: 0
+  draft: false
 card_actions_594:
-  id: 7619
-  card_id: 1411
+  id: 7588
+  card_id: 1420
   card_act_id: 1
   super_action_id: 
   action_type: 0
   draft: false
 card_actions_595:
-  id: 7620
-  card_id: 1402
+  id: 7589
+  card_id: 1421
+  card_act_id: 1
+  super_action_id: 
+  action_type: 0
+  draft: false
+card_actions_596:
+  id: 7590
+  card_id: 1422
+  card_act_id: 1
+  super_action_id: 
+  action_type: 0
+  draft: false
+card_actions_597:
+  id: 7591
+  card_id: 1423
+  card_act_id: 1
+  super_action_id: 
+  action_type: 0
+  draft: false
+card_actions_598:
+  id: 7592
+  card_id: 1424
+  card_act_id: 1
+  super_action_id: 
+  action_type: 0
+  draft: false
+card_actions_599:
+  id: 7593
+  card_id: 1425
+  card_act_id: 1
+  super_action_id: 
+  action_type: 0
+  draft: false
+card_actions_600:
+  id: 7594
+  card_id: 1426
+  card_act_id: 1
+  super_action_id: 
+  action_type: 0
+  draft: false
+card_actions_601:
+  id: 7595
+  card_id: 81
+  card_act_id: 1
+  super_action_id: 
+  action_type: 1
+  draft: false
+card_actions_602:
+  id: 7600
+  card_id: 1418
   card_act_id: 1
   super_action_id: 
   action_type: 1

@@ -4144,8 +4144,8 @@ card_actions_592:
   action_type: 1
   draft: false
 card_actions_593:
-  id: 7587
-  card_id: 1419
+  id: 7586
+  card_id: 1418
   card_act_id: 1
   super_action_id: 
   action_type: 0
@@ -4208,7 +4208,7 @@ card_actions_601:
   draft: false
 card_actions_602:
   id: 7600
-  card_id: 1418
+  card_id: 1419
   card_act_id: 1
   super_action_id: 
   action_type: 1

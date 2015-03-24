@@ -12732,41 +12732,41 @@ card_changes_2371:
   value: "[[radio]]"
 card_changes_2372:
   id: 6182
-  card_action_id: 7600
+  card_action_id: 7586
   field: 0
   value: amelia skin+Image
 card_changes_2373:
   id: 6183
-  card_action_id: 7600
+  card_action_id: 7586
   field: 1
   value: '19'
 card_changes_2374:
-  id: 6185
-  card_action_id: 7600
-  field: 3
-  value: '0'
-card_changes_2375:
-  id: 6186
-  card_action_id: 7587
-  field: 0
-  value: cerulean skin+Image
-card_changes_2376:
-  id: 6187
-  card_action_id: 7587
-  field: 1
-  value: '19'
-card_changes_2377:
-  id: 6188
-  card_action_id: 7587
+  id: 6184
+  card_action_id: 7586
   field: 2
   value: |-
-    cerulean.png
+    amelia.png
     image/png
-    39151
+    27258
     05_standard
+card_changes_2375:
+  id: 6185
+  card_action_id: 7586
+  field: 3
+  value: '0'
+card_changes_2376:
+  id: 6186
+  card_action_id: 7600
+  field: 0
+  value: cerulean skin+Image
+card_changes_2377:
+  id: 6187
+  card_action_id: 7600
+  field: 1
+  value: '19'
 card_changes_2378:
   id: 6189
-  card_action_id: 7587
+  card_action_id: 7600
   field: 3
   value: '0'
 card_changes_2379:
@@ -12948,7 +12948,7 @@ card_changes_2408:
   card_action_id: 7600
   field: 2
   value: |-
-    amelia.png
+    cerulean.png
     image/png
-    27258
-    05_standard
+    39151
+    06_bootstrap

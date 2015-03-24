@@ -22,8 +22,8 @@ describe Card::HtmlFormat do
     it "titled" do
       result = render_card :titled, :name=>'A+B'
       assert_view_select result, 'div[class~="titled-view"]' do
-        assert_select 'h3' do
-          assert_select 'span'
+        assert_select 'div[class~="card-header"]' do
+          assert_select 'span[class~="card-title"]'
         end
         assert_select 'div[class~="card-body card-content"]', 'AlphaBeta'
       end
@@ -44,11 +44,9 @@ describe Card::HtmlFormat do
 
 
       it "renders top menu" do
-        pending "remove after re-import"
-        
         assert_view_select @simple_page, 'header' do
           assert_select 'a[class="internal-link"][href="/"]', 'Home'
-          assert_select 'a[class="internal-link"][href="/recent"]', 'Recent'
+          assert_select 'a[class="internal-link"][href="/:recent"]', 'Recent'
           assert_select 'form.navbox-form[action="/:search"]' do
             assert_select 'input[name="_keyword"]'
           end

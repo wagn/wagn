@@ -12748,7 +12748,7 @@ card_changes_2374:
     amelia.png
     image/png
     27258
-    05_standard
+    06_bootstrap
 card_changes_2375:
   id: 6185
   card_action_id: 7586
@@ -12756,30 +12756,39 @@ card_changes_2375:
   value: '0'
 card_changes_2376:
   id: 6186
-  card_action_id: 7600
+  card_action_id: 7587
   field: 0
   value: cerulean skin+Image
 card_changes_2377:
   id: 6187
-  card_action_id: 7600
+  card_action_id: 7587
   field: 1
   value: '19'
 card_changes_2378:
+  id: 6188
+  card_action_id: 7587
+  field: 2
+  value: |-
+    cerulean.png
+    image/png
+    39151
+    06_bootstrap
+card_changes_2379:
   id: 6189
-  card_action_id: 7600
+  card_action_id: 7587
   field: 3
   value: '0'
-card_changes_2379:
+card_changes_2380:
   id: 6190
   card_action_id: 7588
   field: 0
   value: cosmo skin+Image
-card_changes_2380:
+card_changes_2381:
   id: 6191
   card_action_id: 7588
   field: 1
   value: '19'
-card_changes_2381:
+card_changes_2382:
   id: 6192
   card_action_id: 7588
   field: 2
@@ -12787,23 +12796,23 @@ card_changes_2381:
     cosmo.png
     image/png
     22812
-    05_standard
-card_changes_2382:
+    06_bootstrap
+card_changes_2383:
   id: 6193
   card_action_id: 7588
   field: 3
   value: '0'
-card_changes_2383:
+card_changes_2384:
   id: 6194
   card_action_id: 7589
   field: 0
   value: cyborg skin+Image
-card_changes_2384:
+card_changes_2385:
   id: 6195
   card_action_id: 7589
   field: 1
   value: '19'
-card_changes_2385:
+card_changes_2386:
   id: 6196
   card_action_id: 7589
   field: 2
@@ -12811,23 +12820,23 @@ card_changes_2385:
     cyborg.png
     image/png
     24791
-    05_standard
-card_changes_2386:
+    06_bootstrap
+card_changes_2387:
   id: 6197
   card_action_id: 7589
   field: 3
   value: '0'
-card_changes_2387:
+card_changes_2388:
   id: 6198
   card_action_id: 7590
   field: 0
   value: lumen skin+Image
-card_changes_2388:
+card_changes_2389:
   id: 6199
   card_action_id: 7590
   field: 1
   value: '19'
-card_changes_2389:
+card_changes_2390:
   id: 6200
   card_action_id: 7590
   field: 2
@@ -12835,23 +12844,23 @@ card_changes_2389:
     lumen.png
     image/png
     19351
-    05_standard
-card_changes_2390:
+    06_bootstrap
+card_changes_2391:
   id: 6201
   card_action_id: 7590
   field: 3
   value: '0'
-card_changes_2391:
+card_changes_2392:
   id: 6202
   card_action_id: 7591
   field: 0
   value: readable skin+Image
-card_changes_2392:
+card_changes_2393:
   id: 6203
   card_action_id: 7591
   field: 1
   value: '19'
-card_changes_2393:
+card_changes_2394:
   id: 6204
   card_action_id: 7591
   field: 2
@@ -12859,23 +12868,23 @@ card_changes_2393:
     readable.png
     image/png
     28367
-    05_standard
-card_changes_2394:
+    06_bootstrap
+card_changes_2395:
   id: 6205
   card_action_id: 7591
   field: 3
   value: '0'
-card_changes_2395:
+card_changes_2396:
   id: 6206
   card_action_id: 7592
   field: 0
   value: spacelab skin+Image
-card_changes_2396:
+card_changes_2397:
   id: 6207
   card_action_id: 7592
   field: 1
   value: '19'
-card_changes_2397:
+card_changes_2398:
   id: 6208
   card_action_id: 7592
   field: 2
@@ -12883,23 +12892,23 @@ card_changes_2397:
     spacelab.png
     image/png
     37532
-    05_standard
-card_changes_2398:
+    06_bootstrap
+card_changes_2399:
   id: 6209
   card_action_id: 7592
   field: 3
   value: '0'
-card_changes_2399:
+card_changes_2400:
   id: 6210
   card_action_id: 7593
   field: 0
   value: superhero skin+Image
-card_changes_2400:
+card_changes_2401:
   id: 6211
   card_action_id: 7593
   field: 1
   value: '19'
-card_changes_2401:
+card_changes_2402:
   id: 6212
   card_action_id: 7593
   field: 2
@@ -12907,23 +12916,23 @@ card_changes_2401:
     superhero.png
     image/png
     25186
-    05_standard
-card_changes_2402:
+    06_bootstrap
+card_changes_2403:
   id: 6213
   card_action_id: 7593
   field: 3
   value: '0'
-card_changes_2403:
+card_changes_2404:
   id: 6214
   card_action_id: 7594
   field: 0
   value: yeti skin+Image
-card_changes_2404:
+card_changes_2405:
   id: 6215
   card_action_id: 7594
   field: 1
   value: '19'
-card_changes_2405:
+card_changes_2406:
   id: 6216
   card_action_id: 7594
   field: 2
@@ -12931,24 +12940,227 @@ card_changes_2405:
     yeti.png
     image/png
     20422
-    05_standard
-card_changes_2406:
+    06_bootstrap
+card_changes_2407:
   id: 6217
   card_action_id: 7594
   field: 3
   value: '0'
-card_changes_2407:
+card_changes_2408:
   id: 6218
   card_action_id: 7595
   field: 2
   value: "<div>[[/ | {{*logo|content_panel}}]]</div>\r\n<div> </div>\r\n<div>{{Menu|open}}</div>\r\n<div> </div>\r\n<div>\r\n<div>{{Wagneer
     Menu|open}}</div>\r\n<div> </div>\r\n</div>\r\n<div>{{Administrator Menu|open}}</div>\r\n<div> </div>\r\n<div>{{*credit|content_panel}}</div>"
-card_changes_2408:
+card_changes_2409:
   id: 6227
   card_action_id: 7600
+  field: 0
+  value: skin images
+card_changes_2410:
+  id: 6228
+  card_action_id: 7600
+  field: 1
+  value: '30'
+card_changes_2411:
+  id: 6229
+  card_action_id: 7600
+  field: 2
+  value: '{"type":"Skin","append":"Image"}'
+card_changes_2412:
+  id: 6230
+  card_action_id: 7600
+  field: 3
+  value: '0'
+card_changes_2413:
+  id: 6231
+  card_action_id: 7601
+  field: 0
+  value: united skin+Image
+card_changes_2414:
+  id: 6232
+  card_action_id: 7601
+  field: 1
+  value: '19'
+card_changes_2415:
+  id: 6233
+  card_action_id: 7601
   field: 2
   value: |-
-    cerulean.png
+    united.png
     image/png
-    39151
+    23118
     06_bootstrap
+card_changes_2416:
+  id: 6234
+  card_action_id: 7601
+  field: 3
+  value: '0'
+card_changes_2417:
+  id: 6235
+  card_action_id: 7602
+  field: 0
+  value: slate skin+Image
+card_changes_2418:
+  id: 6236
+  card_action_id: 7602
+  field: 1
+  value: '19'
+card_changes_2419:
+  id: 6237
+  card_action_id: 7602
+  field: 2
+  value: |-
+    slate.png
+    image/png
+    56970
+    06_bootstrap
+card_changes_2420:
+  id: 6238
+  card_action_id: 7602
+  field: 3
+  value: '0'
+card_changes_2421:
+  id: 6239
+  card_action_id: 7603
+  field: 0
+  value: paper skin+Image
+card_changes_2422:
+  id: 6240
+  card_action_id: 7603
+  field: 1
+  value: '19'
+card_changes_2423:
+  id: 6241
+  card_action_id: 7603
+  field: 2
+  value: |-
+    paper.png
+    image/png
+    25645
+    06_bootstrap
+card_changes_2424:
+  id: 6242
+  card_action_id: 7603
+  field: 3
+  value: '0'
+card_changes_2425:
+  id: 6243
+  card_action_id: 7604
+  field: 0
+  value: sandstone skin+Image
+card_changes_2426:
+  id: 6244
+  card_action_id: 7604
+  field: 1
+  value: '19'
+card_changes_2427:
+  id: 6245
+  card_action_id: 7604
+  field: 2
+  value: |-
+    sandstone.png
+    image/png
+    21569
+    06_bootstrap
+card_changes_2428:
+  id: 6246
+  card_action_id: 7604
+  field: 3
+  value: '0'
+card_changes_2429:
+  id: 6247
+  card_action_id: 7605
+  field: 0
+  value: simplex skin+Image
+card_changes_2430:
+  id: 6248
+  card_action_id: 7605
+  field: 1
+  value: '19'
+card_changes_2431:
+  id: 6249
+  card_action_id: 7605
+  field: 2
+  value: |-
+    simplex.png
+    image/png
+    26736
+    06_bootstrap
+card_changes_2432:
+  id: 6250
+  card_action_id: 7605
+  field: 3
+  value: '0'
+card_changes_2433:
+  id: 6251
+  card_action_id: 7606
+  field: 0
+  value: journal skin+Image
+card_changes_2434:
+  id: 6252
+  card_action_id: 7606
+  field: 1
+  value: '19'
+card_changes_2435:
+  id: 6253
+  card_action_id: 7606
+  field: 2
+  value: |-
+    journal.png
+    image/png
+    27152
+    06_bootstrap
+card_changes_2436:
+  id: 6254
+  card_action_id: 7606
+  field: 3
+  value: '0'
+card_changes_2437:
+  id: 6255
+  card_action_id: 7607
+  field: 0
+  value: flatly skin+Image
+card_changes_2438:
+  id: 6256
+  card_action_id: 7607
+  field: 1
+  value: '19'
+card_changes_2439:
+  id: 6257
+  card_action_id: 7607
+  field: 2
+  value: |-
+    flatly.png
+    image/png
+    26907
+    06_bootstrap
+card_changes_2440:
+  id: 6258
+  card_action_id: 7607
+  field: 3
+  value: '0'
+card_changes_2441:
+  id: 6259
+  card_action_id: 7608
+  field: 0
+  value: darkly skin+Image
+card_changes_2442:
+  id: 6260
+  card_action_id: 7608
+  field: 1
+  value: '19'
+card_changes_2443:
+  id: 6261
+  card_action_id: 7608
+  field: 2
+  value: |-
+    darkly.png
+    image/png
+    25944
+    06_bootstrap
+card_changes_2444:
+  id: 6262
+  card_action_id: 7608
+  field: 3
+  value: '0'

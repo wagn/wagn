@@ -1,2 +1,2 @@
-format { include ThemeAmelia::Format }
-format(:html) { include ThemeAmelia::HtmlFormat }
+format { include BootstrapCompatible::Format }
+format(:html) { include BootstrapCompatible::HtmlFormat }

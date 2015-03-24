@@ -11,28 +11,20 @@ class ImportBootstrapLayout < Card::CoreMigration
         
     import_json "bootstrap_layout.json"#, :pristine=>true, :output_file=>nil
 
-#    if unmerged.empty?
-      if layout && layout.pristine? &&
-        all = Card[:all]
-        layout_rule_card = all.fetch :trait=>:layout
-        style_rule_card  = all.fetch :trait=>:style
-        if layout_rule_card.pristine? && style_rule_card.pristine?
-          layout_rule_card.update_attributes! :content=> '[[Default Layout]]'
-          style_rule_card. update_attributes! :content=> '[[classic bootstrap skin]]'
-        end
+    if layout && layout.pristine? &&
+      all = Card[:all]
+      layout_rule_card = all.fetch :trait=>:layout
+      style_rule_card  = all.fetch :trait=>:style
+      if layout_rule_card.pristine? && style_rule_card.pristine?
+        layout_rule_card.update_attributes! :content=> '[[Default Layout]]'
+        style_rule_card. update_attributes! :content=> '[[classic bootstrap skin]]'
       end
-#    else
-#      unmerged.map! do |row|
-#        puts "didn't merge #{row['name']}"
-#        row['name'] += '+alternate'
-#        row
-#      end
-#      Card.merge_list unmerged
-#    end
+    end
 
     # these are hard-coded
-    Card.create! :name=>'style: bootstrap theme', :type_code=>:css, :codename=>'bootstrap_theme_css'
+    Card.create! :name=>'theme: bootstrap_default', :type_code=>:css, :codename=>'theme_bootstrap_default'
     Card.create! :name=>'style: bootstrap', :type_code=>:css, :codename=>'bootstrap_css'
+    Card.create! :name=>'style: bootstrap compatible', :type_code=>:scss, :codename=>'bootstrap_compatible'
     Card.create! :name=>'script: bootstrap', :type_code=>:js, :codename=>'bootstrap_js'
     
     # add new setting: *default html view

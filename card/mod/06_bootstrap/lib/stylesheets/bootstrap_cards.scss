@@ -1,0 +1,199 @@
+/*!
+ * Wagn: [[http://wagn.org]]
+ * Copyright 2015 Grass Commons and other contributors; Licensed GPL
+ */
+
+/*
+  These styles are intended to help bridge the default card context with bootstrap styling
+*/
+
+$label_color: #666666;
+$border_color: #999999;
+$header_color: #eeeeee;
+$credit_color: #186886; /* wagn blue */
+
+header {
+  a {
+    font-size: 1.3em;
+  }
+}
+
+@media print {
+  header {
+    display: none;
+  }
+}
+
+
+/* 
+the following gives users more explicit control over spacing within tinyMCE
+but leads to lots of empty paragraph tags
+*/
+
+
+label,
+.navbox-item-label {
+  color: $label_color;
+}
+table {
+  border-collapse: collapse;
+}
+th {
+  color: $label_color;
+  font-weight: normal;
+  font-style: italic;
+}
+td, th {
+  vertical-align: top;
+  padding: 0px;
+}
+a:link,
+a:visited {
+	text-decoration: none;
+}
+a:hover,
+a:focus {
+  text-decoration: underline;
+}
+form {
+  margin: 0px;
+  padding: 0px;
+}
+
+
+/*-------- Special Pages --------*/
+
+/*-- sign in page --*/
+
+#sign-in input#login_field,
+#sign-in input#password,
+#forgot-password input#email {
+  width: 50%;
+}
+#forgot-password {
+  margin-top: 40px;
+}
+
+
+body.mceContentBody {
+  margin: 4px;
+}
+
+
+/*----------- Change View ---------*/
+
+.change-view {
+  padding: 5px 0px;
+  border-bottom: 1px dotted $border_color;
+  .change-card{
+    font-weight: bold;
+  }
+  .last-update {
+    color: $label_color;
+  }
+}
+
+
+
+/*---------- ( Richtext )-------------*/
+
+.table-of-contents {
+  background: $header_color;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  padding: 4px;
+  margin: 5px 20px 20px 20px;
+  h5 {
+    margin: 0 0 0 40px;
+  }
+  ol {
+    list-style-type: upper-roman;
+    ol {
+      list-style-type: upper-alpha;
+      padding-left: 25px
+    }
+  }
+}
+
+
+/* CARDTYPE_SPECIFIC ------------------------------*/
+
+
+.TYPE-toggle.card-content {
+  font-style: italic;
+}
+
+.TYPE-image.card-content img {
+  max-width: 100%;
+}
+
+/*---------( Search ) ---------- */
+
+.search-keyword {
+  font-style: italic;
+}
+
+.search-count {
+  float: right;
+  color: $label_color;
+}
+
+
+/*----------- (Account Request)--------------*/
+
+.invite-links {
+  padding: 10px;
+  margin-top: 10px;
+  background: $header_color;
+  text-align: center;
+}
+.invite-links a {
+  font-weight: bold;
+  margin: 0 20px;
+}
+
+
+/*---------- comments -------------------------------------- */
+
+.comment-box {
+  padding: 8px;
+  margin: 0px;
+  input {
+    padding: 0px;
+  }
+  textarea {
+    margin-bottom:5px;
+  }
+}
+.w-comment-author {
+  font-style: italic;
+  margin-left: 10px;
+}
+
+
+.SELF-Xlogo.content_panel-view,
+.SELF-Xcredit.content_panel-view {
+  text-align: center;
+  background: #fff;
+  img {
+    max-width: 100%;
+  }
+  a {
+    color: $credit_color; 
+  }
+}  
+
+.closed-content {
+  font-size: 1em !important;
+}
+
+
+/* english content in css.  ugh */
+.search-no-results:after {
+  content:'0 results';
+}
+.closed-content .search-no-results:after {
+  content:'';
+}
+
+

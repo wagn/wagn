@@ -7964,17 +7964,17 @@ card_changes_1531:
   value: '0'
 card_changes_1532:
   id: 4124
-  card_action_id: 7608
+  card_action_id: 7598
   field: 0
   value: "*all+*style"
 card_changes_1533:
   id: 4125
-  card_action_id: 7608
+  card_action_id: 7598
   field: 1
   value: '47'
 card_changes_1534:
   id: 4127
-  card_action_id: 7608
+  card_action_id: 7598
   field: 3
   value: '0'
 card_changes_1535:
@@ -11483,7 +11483,7 @@ card_changes_2143:
   id: 5673
   card_action_id: 7415
   field: 2
-  value: Anyone
+  value: "[[Anyone]]"
 card_changes_2144:
   id: 5674
   card_action_id: 7415
@@ -12994,7 +12994,7 @@ card_changes_2423:
   field: 2
   value: "[[Default Layout]]"
 card_changes_2424:
-  id: 6253
-  card_action_id: 7608
+  id: 6239
+  card_action_id: 7598
   field: 2
   value: "[[yeti skin]]"

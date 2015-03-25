@@ -27,12 +27,13 @@ class ImportBootstrapLayout < Card::CoreMigration
       end
     end
     
-    Card.create! :name=>"*header+*self+*read", :content=>'Anyone'
+    Card.create! :name=>"*header+*self+*read", :content=>'[[Anyone]]'
     
     # merge "style: functional" and "style: standard" into "style: cards"
     old_func = Card[:style_functional]
     old_func.name = 'style: cards'
     old_func.codename = 'style_cards'
+    old_func.update_referencers = true
     old_func.save!
     
     old_stand = Card[:style_standard]

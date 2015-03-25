@@ -16,7 +16,7 @@ describe Card::Set::Type::Scss do
   }
   let(:compressed_changed_css) {  "a{color:#fedcba}\n" }
   before do
-    @scss_card = Card[:style_functional]
+    @scss_card = Card[:style_cards]
   end
   
   

@@ -312,16 +312,36 @@ namespace :wagn do
     desc "copy files from template database to standard mod and update cards"
     task :copy_mod_files => :environment do
 
-      mod_name = '05_standard'
-      template_files_dir = "#{Wagn.root}/files"
-      standard_files_dir = "#{Cardio.gem_root}/mod/#{mod_name}/file"
-
-      FileUtils.remove_dir standard_files_dir, force=true
-      FileUtils.cp_r template_files_dir, standard_files_dir
-
+      source_files_dir = "#{Wagn.root}/files"
       # add a fourth line to the raw content of each image (or file) to identify it as a mod file
       Card::Auth.as_bot do
         Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
+          
+          if card.attach_mod
+            puts "skipping #{card.name}: already in code"
+            next
+          else
+            puts "working on #{card.name}"
+          end
+
+          base_card = card.cardname.junction? ? card.left : card
+          raise "need codename for file" unless base_card.codename.present?
+          
+          mod_name = base_card.type_id==Card::SkinID ? '06_bootstrap' : '05_standard'
+          source_dir =  "#{source_files_dir}/#{card.id}"
+
+          target_dir = "#{Cardio.gem_root}/mod/#{mod_name}/file/#{base_card.codename}"
+          FileUtils.remove_dir target_dir, force=true if Dir.exists? target_dir  
+          FileUtils.mkdir_p target_dir
+          
+          Dir.entries( source_dir ).each do |filename|
+            next if filename =~ /^\./
+
+            target_filename = filename.gsub /\d+/, card.type_code.to_s
+            FileUtils.cp "#{source_dir}/#{filename}", "#{target_dir}/#{target_filename}"
+          end
+          
+          
           unless card.db_content.split(/\n/).last == mod_name
             new_content = card.db_content + "\n#{mod_name}"
             card.update_column :db_content, new_content

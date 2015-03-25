@@ -14,7 +14,7 @@ describe Card::HtmlFormat do
       c = Card.new :name => 'ABook', :type => 'Book'
       rendered =  c.format.render( :edit )
 
-      assert_view_select rendered, 'div[class~="form-group"]' do
+      assert_view_select rendered, 'fieldset' do
         assert_select 'textarea[name=?][class~="tinymce-textarea card-content"]', 'card[subcards][+illustrator][content]'
       end
     end
@@ -23,14 +23,15 @@ describe Card::HtmlFormat do
       result = render_card :titled, :name=>'A+B'
       assert_view_select result, 'div[class~="titled-view"]' do
         assert_select 'div[class~="card-header"]' do
-          assert_select 'div[class~="card-header-title"]' do
-            assert_select 'span'
-          end
+          assert_select 'span[class~="card-title"]'
         end
         assert_select 'div[class~="card-body card-content"]', 'AlphaBeta'
       end
     end
 
+    context "Cards with special views" do
+
+    end
 
     context "Simple page with Default Layout" do
       before do
@@ -43,8 +44,7 @@ describe Card::HtmlFormat do
 
 
       it "renders top menu" do
-        
-        assert_view_select @simple_page, 'header' do #'nav[class="navbar navbar-default navbar-static-top"]' do
+        assert_view_select @simple_page, 'header' do
           assert_select 'a[class="internal-link"][href="/"]', 'Home'
           assert_select 'a[class="internal-link"][href="/:recent"]', 'Recent'
           assert_select 'form.navbox-form[action="/:search"]' do

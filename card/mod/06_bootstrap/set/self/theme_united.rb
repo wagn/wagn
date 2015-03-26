@@ -1,2 +1,2 @@
-format { include BootswatchMixins::Format }
-format(:html) { include BootswatchMixins::HtmlFormat }
+format { include ThemeCerulean::Format }
+format(:html) { include ThemeCerulean::HtmlFormat }

@@ -1,2 +1,2 @@
-format { include BootstrapCss::Format }
-format(:html) { include BootstrapCss::HtmlFormat }
+format { include BootswatchMixins::Format }
+format(:html) { include BootswatchMixins::HtmlFormat }

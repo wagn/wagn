@@ -4,12 +4,11 @@ def diff_args
   {:format=>:text}
 end  
 
-
 format do
   include Css::Format
   
   view :core do |args|
-    process_content compile_scss(_render_raw)
+    compile_scss(process_content _render_raw)
   end
   
   def compile_scss scss, style=:expanded

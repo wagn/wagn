@@ -641,10 +641,6 @@ $act-gray:  #b7b7b7;
   li:nth-child(even) {
     background: #ddd;
   }
-  h1 {
-    font-size: 1.5em;
-    padding: .6em 0 .3em 0
-  }
   aside {
     float: right;
     border: 1px solid #999;  
@@ -658,6 +654,8 @@ $act-gray:  #b7b7b7;
     text-align: center;
     h2 {
       font-size: .9em;
+      padding: 0;
+      margin: 5px;
     }
     p {
       font-size: .8em;

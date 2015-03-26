@@ -1,3 +1,3 @@
+format { include StyleBootstrapCompatible::Format }
+format(:html) { include ScriptAce::HtmlFormat }
 
-include StyleBootstrapCompatible
-include ScriptAce::HtmlFormat

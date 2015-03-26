@@ -1,4 +1,2 @@
-
-include ScriptAce
-include ScriptAce::HtmlFormat
-
+format { include ScriptAce::Format }
+format(:html) { include ScriptAce::HtmlFormat }

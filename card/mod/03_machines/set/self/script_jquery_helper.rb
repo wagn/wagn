@@ -9,4 +9,4 @@ view :raw do |args|
   end.join("\n")
 end
 
-include ScriptAce::HtmlFormat
+format(:html) { include ScriptAce::HtmlFormat }

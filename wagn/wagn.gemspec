@@ -3,7 +3,7 @@ version = File.open(File.expand_path( '../../card/VERSION', __FILE__ )).read.cho
 Gem::Specification.new do |s|
   s.name          = 'wagn'
   s.version       = version
-  s.authors       = ["Ethan McCutchen", "Lewis Hoffman", "Gerry Gleason"]
+  s.authors       = ["Ethan McCutchen", "Lewis Hoffman", "Gerry Gleason", "Philipp Kühl"]
   s.email         = ['info@wagn.org']
                   
 #  s.date          = '2013-12-20'

@@ -20,11 +20,11 @@ css_dir: <%= Cardio.gem_root %>/mod/03_machines/lib/stylesheets
 # list of file expressions to include as source files
 # relative path from src_dir
 src_files:
- - jquery.js
- - tinymce.js
+ - script_jquery.js
+ - script_tinymce.js
  - wagn_mod.js.coffee
  - wagn.js.coffee
- - wagn_menu.js
+ - script_card_menu.js
  # - jquerymobile.js 
  - jquery-ui.js 
  - jquery.ui.autocomplete.html.js 
@@ -32,7 +32,7 @@ src_files:
  - jquery.fileupload.js 
  - jquery.iframe-transport.js 
  - jquery_ujs.js
- - ace.js
+ - script_ace.js
  #- "**/*.{js.coffee,js,coffee}"
 
 # list of file expressions to include as css files

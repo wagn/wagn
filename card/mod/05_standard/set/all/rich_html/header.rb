@@ -55,7 +55,19 @@ format :html do
     end
 
     json = html_escape_except_quotes JSON( @menu_vars )
-    %{<span class="card-menu-link" data-menu-vars='#{json}'>#{_render_menu_link}</span>}
+    #%{
+    #  <div class="btn-group card-menu">
+    #    <span class="card-menu-link dropdown-toggle"  data-toggle="dropdown" aria-expanded="false" data-menu-vars='#{json}'>#{_render_menu_link}</span>
+    #  </div>
+    #}
+    #%{<span class="card-menu-link" data-menu-vars='#{json}'>#{_render_menu_link}</span>}
+    %{
+      <ul class="nav navbar-nav navbar-right">
+        <li class="card-menu">
+          <a href="#" class="card-menu-link" data-menu-vars='#{json}'>#{_render_menu_link}</a>
+        </li>
+      </ul>
+    }
   end
 
   view :menu_link do |args|

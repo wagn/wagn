@@ -131,27 +131,50 @@ $.extend wagn,
     cm = l.data 'menu'
     if !cm?
       cm = wagn.generateMenu l.slot(), l.data('menu-vars')
-      l.data 'menu', cm
-      cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' } 
-      #TODO submenu should use glyphicon glyphicon-menu-left
-    
+      $this = $(cm)
+      $this.addClass('sm').smartmenus
+        subIndicators: false
+        collapsibleShowFunction: null
+        collapsibleHideFunction: null
+        rightToLeftSubMenus: $this.hasClass('navbar-right')
+        bottomToTopSubMenus: $this.closest('.navbar').hasClass('navbar-fixed-bottom')
+        # set Bootstrap's "active" class to SmartMenus "current" items (should someone decide to enable markCurrentItem: true)
+        .find('a.current').parent().addClass('active')
+      .bind
+        # set/unset proper Bootstrap classes for some menu elements
+        'show.smapi': (e, menu) ->
+          $menu = $(menu)
+          $scrollArrows = $menu.dataSM('scroll-arrows')
+          obj = $(this).data('smartmenus')
+          if $scrollArrows
+            # they inherit border-color from body, so we can use its background-color too
+            $scrollArrows.css('background-color', $(document.body).css('background-color'))
+
+          $menu.parent().addClass('open' + (obj.isCollapsible() ? ' collapsible' : ''))
+        'hide.smapi': (e, menu) ->
+          $(menu).parent().removeClass('open collapsible')
+        # click the parent item to toggle the sub menus (and reset deeper levels and other branches on click)
+        'click.smapi': (e, item) ->
+          obj = $(this).data('smartmenus')
+          if obj.isCollapsible()
+            $item = $(item)
+            $sub = $item.parent().dataSM('sub')
+            if $sub && $sub.dataSM('shown-before') && $sub.is(':visible')
+              obj.itemActivate($item)
+              obj.menuHide($sub)
+              return false
+      
+      
+          
     if tapped
       cm.addClass 'card-menu-tappable'
-      
-    cm.show()
-    cm.position my:'right top', at:'right+2 top+2', of: link
 
-  closeMenu: (menu) ->
-    $(menu).hide()
-    $(menu).menu "collapseAll", null, true
-
-  
   generateMenu: (slot, vars) ->
     template_clone = $.extend true, {}, wagn.menu_template
     items = wagn.generateMenuItems template_clone, vars
   
-    m = $( '<ul class="card-menu">' + items.join("\n") +  '</ul>' )
-    slot.append m
+    m = $( '<ul class="dropdown-menu" role="menu">' + items.join("\n") +  '</ul>' )
+    slot.find('a.card-menu').append m
     m
 
   generateMenuItems: (template, vars)->
@@ -190,9 +213,10 @@ $.extend wagn,
             i.sub = listsub if listsub.length > 0
 
         if i.sub
-          item += '<ul>' + wagn.generateMenuItems(i.sub, vars).join("\n") + '</ul>'
-    
-        items.push('<li>' + item + '</li>')
+          item += '<ul class="dropdown-menu">' + wagn.generateMenuItems(i.sub, vars).join("\n") + '</ul>'
+          items.push('<li>' + item + '</li>')
+        else
+          items.push('<li>' + item + '</li>')
     items
 
   generateListTemplate: (list, vars)->
@@ -256,9 +280,6 @@ $(window).ready ->
   $('body').on 'mouseenter', '.card-menu-link', ->
     wagn.openMenu this, false
     
-  $('body').on 'mouseleave', '.card-menu', ->
-    wagn.closeMenu this
-
   $(document).on 'tap', '.card-header', (event) ->
     link = $(this).find('.card-menu-link')
     unless !link[0] or                                             # no gear

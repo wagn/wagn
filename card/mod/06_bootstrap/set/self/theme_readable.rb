@@ -1,2 +1,2 @@
-format { include BootstrapCss::Format }
-format(:html) { include BootstrapCss::HtmlFormat }
+format { include ThemeCerulean::Format }
+format(:html) { include ThemeCerulean::HtmlFormat }

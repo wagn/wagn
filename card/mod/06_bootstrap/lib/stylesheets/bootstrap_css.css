@@ -1054,7 +1054,7 @@ th {
   content: "\e259";
 }
 .glyphicon-menu-up:before {
-  content: "\e260";
+  content: "\e260"; 
 }
 * {
   -webkit-box-sizing: border-box;

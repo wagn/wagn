@@ -5,7 +5,7 @@ format :html do
     super args
     args.merge!(
       :optional_help => :show, #, :optional_menu=>:never
-      :buttons => button_tag( 'Submit', :disable_with=>'Submitting' ),
+      :buttons => button_tag( 'Submit', :disable_with=>'Submitting', :situation=>'primary' ),
       :account => card.fetch( :trait=>:account, :new=>{} ),
       :title   => 'Sign up',
       :hidden  => {
@@ -16,7 +16,7 @@ format :html do
     
     if Auth.signed_in? and args[:account].confirm_ok?
       args[:title] = 'Invite'
-      args[:buttons] = button_tag 'Send Invitation'
+      args[:buttons] = button_tag 'Send Invitation', :situation=>'primary'
       args[:hidden][:success] = '_self'
     end
   end

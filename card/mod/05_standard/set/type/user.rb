@@ -15,7 +15,7 @@ format :html do
       :optional_help=>:show,
       :optional_menu=>:never, 
       :help_text=>help_text,
-      :buttons => button_tag( 'Set up', :disable_with=>'Setting up' ),
+      :buttons => button_tag( 'Set up', :disable_with=>'Setting up', :situation=>'primary' ),
       :hidden => { 
         :success => "REDIRECT: #{ Card.path_setting '/' }",
         'card[type_id]' => Card.default_accounted_type_id,

@@ -65,7 +65,7 @@ format :html do
           </div>
           
           <div class="alert alert-info rule-instruction">
-            #{ process_content "{{#{setting_name}+*right+*help}}" }
+            #{ process_content "{{#{setting_name}+*right+*help|content}}" }
           </div>
           
           <div class="card-body">

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 #require File.expand_path( '../lib/card/version', __FILE__ )
 #version =    Card::Version.release

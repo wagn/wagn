@@ -4,10 +4,10 @@ format :html do
     %(
       <meta charset="UTF-8">  
       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>    
-      #{ head_title     }
+      #{ head_title       }
       #{ head_buttons     }
       #{ head_stylesheets }
-      #{ head_javascript }      
+      #{ head_javascript  }
     )
   end
   
@@ -30,7 +30,7 @@ format :html do
     bits = []
     [:favicon, :logo].each do |name|
       if c = Card[name] and c.type_id == ImageID and !c.db_content.blank?
-        bits << %{<link rel="shortcut icon" href="#{ subformat(c)._render_source :size=>:icon }" />}
+        bits << %{<link rel="shortcut icon" href="#{ subformat(c)._render_source :size=>:small }" />}
         break
       end
     end

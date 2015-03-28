@@ -12,7 +12,6 @@ module ClassMethods
   end
 
   def count_by_wql(spec)
-    spec = spec.clone
     spec.delete(:offset)
     search spec.merge(:return=>'count')
   end
@@ -28,8 +27,7 @@ module ClassMethods
     if block_given?
       super(options) do |records|
         yield(records)
-        puts "resetting local cache"
-        Card.cache.reset_local
+        Card::Cache.reset_global
       end
     else
       super(options)

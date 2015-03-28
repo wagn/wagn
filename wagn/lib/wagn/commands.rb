@@ -36,7 +36,7 @@ def find_spec_file filename, base_dir
   end
 end
 
-TASK_COMMANDS = %w[seed reseed load]
+TASK_COMMANDS = %w[seed reseed load update]
 
 if supported_rails_command? ARGV.first
   if ARGV.delete('--rescue')
@@ -79,9 +79,9 @@ else
         puts `env RAILS_ENV=#{env} #{task_cmd}`
       end
     end
-  when 'update'
-    load_rake_tasks
-    Rake::Task['wagn:update'].invoke
+#  when 'update'
+#    load_rake_tasks
+#    Rake::Task['wagn:update'].invoke
   when 'cucumber'
     require 'wagn'
     require './config/environment'

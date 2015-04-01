@@ -19,7 +19,7 @@ event :cache_expired_because_of_new_user_rule, :before=>:extend, :when=>proc { |
 end
 
 format do
-    
+
   def follow_link_hash args
     toggle = args[:toggle] || ( card.followed? ? :off : :on )
     hash = { :class => "follow-toggle-#{toggle}" }
@@ -35,10 +35,10 @@ format do
       hash[:verb]    = 'follow'
     end
     hash
-      
+
   end
-  
-  
+
+
 end
 
 
@@ -49,7 +49,7 @@ format :json do
 end
 
 format :html do
- 
+
   view :follow_link, :tags=>:unknown_ok, :perms=>:none do |args|
     hash = follow_link_hash args
     text = %[<span class="follow-verb">#{hash[:verb]}</span> #{args[:label]}]
@@ -62,12 +62,29 @@ format :html do
     }
     link_to text, '', opts
   end
-  
+
   def default_follow_link_args args
     args[:toggle] ||=  card.followed? ? :off : :on
     args[:label]  ||=  card.follow_label
   end
-  
+
+
+  view :follow_menu_link, :tags=>:unknown_ok, :perms=>:none do |args|
+
+    hash = follow_link_hash args
+    text = %[#{glyphicon('flag')}<span class="follow-verb menu-item-label">#{hash[:verb]}</span>]
+    opts = {
+      :title           => hash[:title],
+      :class           => "follow-toggle #{hash[:class]}",
+      'data-toggle'    => 'modal',
+      'data-follow'    => JSON(hash),
+      'data-rule_name' => card.default_follow_set_card.follow_rule_name( Auth.current.name ).to_name.url_key,
+      'data-card_key'  => card.key
+    }
+    dialog = card.fetch  :trait=>:follow_dialog
+    link_to(text, "#modal-#{dialog.cardname.safe_key}", opts)
+  end
+
 end
 
 
@@ -91,7 +108,7 @@ def follow_rule_card?
 end
 
 def follow_option?
-  codename && FollowOption.codenames.include?(codename.to_sym) 
+  codename && FollowOption.codenames.include?(codename.to_sym)
 end
 
 # used for the follow menu
@@ -111,7 +128,7 @@ def followed_by? user_id
 end
 
 def followed?
-  followed_by? Auth.current_id 
+  followed_by? Auth.current_id
 end
 
 
@@ -119,9 +136,9 @@ def follow_rule_applies? follower_id
   follow_rule = rule :follow, :user_id=>follower_id
   if follow_rule.present?
     follow_rule.split("\n").each do |value|
-           
+
       value_code = value.to_name.code
-      accounted_ids = ( 
+      accounted_ids = (
         @follower_candidate_ids[ value_code ] ||=
           if block = FollowOption.follower_candidate_ids[ value_code ]
             block.call self
@@ -129,17 +146,17 @@ def follow_rule_applies? follower_id
             []
           end
       )
-              
-      applicable = 
+
+      applicable =
         if test = FollowOption.test[ value_code ]
           test.call follower_id, accounted_ids
         else
           accounted_ids.include? follower_id
         end
-      
+
       return value.gsub( /[\[\]]/, '' ) if applicable
     end
-  end 
+  end
   return false
 end
 
@@ -157,7 +174,7 @@ def default_follow_set_card
 end
 
 
-# returns true if according to the follow_field_rule followers of self also 
+# returns true if according to the follow_field_rule followers of self also
 # follow changes of field_card
 def followed_field? field_card
   (follow_field_rule = rule_card(:follow_fields)) || follow_field_rule.item_names.find do |item|
@@ -192,7 +209,7 @@ end
 def direct_follower_ids args={}
   result = ::Set.new
   with_follower_candidate_ids do
-    set_names.each do |set_name| 
+    set_names.each do |set_name|
       set_card = Card.fetch(set_name)
       set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
         if (!result.include? user_id) and self.follow_rule_applies?(user_id)
@@ -205,9 +222,9 @@ def direct_follower_ids args={}
 end
 
 def all_direct_follower_ids_with_reason
-  with_follower_candidate_ids do  
+  with_follower_candidate_ids do
     visited = ::Set.new
-    set_names.each do |set_name| 
+    set_names.each do |set_name|
       set_card = Card.fetch(set_name)
       set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
         if (!visited.include?(user_id)) && (follow_option = self.follow_rule_applies?(user_id))
@@ -243,7 +260,7 @@ module ClassMethods
   def follower_ids_cache
     Card.cache.read(FOLLOWER_IDS_CACHE_KEY) || {}
   end
-  
+
   def write_follower_ids_cache hash
     Card.cache.write FOLLOWER_IDS_CACHE_KEY, hash
   end

@@ -1,3 +1,9 @@
+wagn.slotReady(function(slot) {
+  var menu = $(slot).find('.open-menu.dropdown-toggle');
+  if (menu != null)
+    $(menu).dropdown('toggle');
+});
+
 wagn.menu_template = [
   { "text":"edit", "view":"edit", "if":"edit", "sub":
     [
@@ -7,7 +13,7 @@ wagn.menu_template = [
       { "text":"structure", "related":{ "name":"structure", "view":"edit" }, "if":"structure" },
       { "link":"delete",                                                     "if":"delete"    }
     ]
-  },  
+  },
   { "text":"view", "view":"home",  "sub":
     [
       { "text":"refresh",       "view":"home"                                  },
@@ -16,16 +22,16 @@ wagn.menu_template = [
       { "text":"history",       "view":"history",             "if":"edit"      },
       { "text":"structure", "related":{ "name":"structure" }, "if":"structure" }
     ]
-  },    
+  },
   { "text":"discuss", "related":{"name":"+discussion"}, "if":"discuss"},
   { "text":"advanced", "view":"options", "sub":
     [
       { "text":"rules", "view":"options", "list":
         { "name": "related_sets",
-          "template" : { "view":"options", "text":"text", "path_opts":"path_opts" } 
-        } 
+          "template" : { "view":"options", "text":"text", "path_opts":"path_opts" }
+        }
       },
-      { "plain":"related", "list" : 
+      { "plain":"related", "list" :
         { "name": "piecenames",
           "template": {"page":"item"},
           "append":[
@@ -54,7 +60,7 @@ wagn.menu_template = [
       }
     ]
   },
-  { "link":"follow_menu", "if":"show_follow", "sub":[ 
+  { "link":"follow_menu", "if":"show_follow", "sub":[
       { "link":"follow_submenu" },
       { "text":"advanced", "related":"following"}
     ]
@@ -68,5 +74,5 @@ wagn.menu_template = [
       { "related":"follows" }
     ]
   }
-  
+
 ];

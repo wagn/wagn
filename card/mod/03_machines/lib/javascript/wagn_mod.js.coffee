@@ -29,13 +29,13 @@ $.extend wagn,
     input.autocomplete { source: wagn.prepUrl wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
 
   setTinyMCEConfig: (string)->
-    setter = ()-> 
+    setter = ()->
       try
         $.parseJSON string
       catch
         {}
     wagn.tinyMCEConfig = setter()
-  
+
   initAce: (textarea) ->
     type_code = textarea.attr "data-card-type-code"
     hash = {}
@@ -67,8 +67,8 @@ $.extend wagn,
     editor.setOption "showPrintMargin", false
     editor.getSession().setTabSize 2
     editor.getSession().setUseSoftTabs true
-    editor.setOptions maxLines: 30 
-    
+    editor.setOptions maxLines: 30
+
     textarea.closest("form").submit ->
       textarea.val editor.getSession().getValue()
       return
@@ -127,29 +127,29 @@ $.extend wagn,
     # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen.
 
   openMenu: (link, tapped) ->
-    l = $(link)
-    cm = l.data 'menu'
-    if !cm?
-      cm = wagn.generateMenu l.slot(), l.data('menu-vars')
-      l.data 'menu', cm
-      cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' } 
-      #TODO submenu should use glyphicon glyphicon-menu-left
-    
-    if tapped
-      cm.addClass 'card-menu-tappable'
-      
-    cm.show()
-    cm.position my:'right top', at:'right+2 top+2', of: link
+ #    l # = $(link)
+ #    cm = l.data 'menu'
+ #    if !cm?
+ #      cm = wagn.generateMenu l.slot(), l.data('menu-vars')
+ #      l.data 'menu', cm
+ #      cm.menu position: { my:'right top', at:'left-2 top-3' }, icons: { submenu:'ui-icon-carat-1-w' }
+ #      #TODO submenu should use glyphicon glyphicon-menu-left
+ #
+ #    if tapped
+ #      cm.addClass 'card-menu-tappable'
+ #
+ #    cm.show()
+ #    cm.position my:'right top', at:'right+2 top+2', of: link
 
   closeMenu: (menu) ->
-    $(menu).hide()
-    $(menu).menu "collapseAll", null, true
+    # $(menu).hide()
+    # $(menu).menu "collapseAll", null, true
 
-  
+
   generateMenu: (slot, vars) ->
     template_clone = $.extend true, {}, wagn.menu_template
     items = wagn.generateMenuItems template_clone, vars
-  
+
     m = $( '<ul class="card-menu">' + items.join("\n") +  '</ul>' )
     slot.append m
     m
@@ -158,12 +158,12 @@ $.extend wagn,
     items = []
     $.each template, (index, i)->
       return true if i.if && !vars[i.if]
-    
+
       if i.text
-        i.text = i.text.replace /\%\{([^}]*)\}/, (m, val)-> vars[val]      
+        i.text = i.text.replace /\%\{([^}]*)\}/, (m, val)-> vars[val]
         i.text = $('<div/>').text(i.text).html() #escapes html
-      
-      item = 
+
+      item =
         if i.raw
           i.raw
         else if i.link
@@ -178,20 +178,20 @@ $.extend wagn,
           else if page.match /^[\w\+\*]+$/
             relpath = page
           else
-            relpath = '?' + $.param( 'card[name]' : page ) 
-            
+            relpath = '?' + $.param( 'card[name]' : page )
+
           '<a href="' + wagn.rootPath + '/' + relpath + '">' + text + ' &crarr;</a>'
         else
           wagn.generateStandardMenuItem i, vars
 
       if item
         if i.list
-          if listsub = wagn.generateListTemplate i.list, vars 
+          if listsub = wagn.generateListTemplate i.list, vars
             i.sub = listsub if listsub.length > 0
 
         if i.sub
           item += '<ul>' + wagn.generateMenuItems(i.sub, vars).join("\n") + '</ul>'
-    
+
         items.push('<li>' + item + '</li>')
     items
 
@@ -203,15 +203,15 @@ $.extend wagn,
         $.map template, (val, key)->
           template[key] = itemvars[template[key]] || template[key]
         items.push template
-    
+
     if list.append
       items = items.concat list.append
-  
+
     items
 
   generateStandardMenuItem: (i, vars)->
     params = i.path_opts || {}
-  
+
     if i.related
       i.view='related'
       params['related'] = if typeof(i.related) == 'object'
@@ -219,20 +219,19 @@ $.extend wagn,
       else
         i.text ||= i.related
         { 'name': '+*' + i.related }
-      
+
     if i.view #following basically reproduces link_to_view.  make own function?
       path = wagn.rootPath + '/'
       if vars['creator']
         path += vars['linkname']
       else
         params['card[name]'] = vars['self']
-      
-      params['view'] = i.view unless i.view == 'home'      
+
+      params['view'] = i.view unless i.view == 'home'
       path += '?' + $.param(params) unless $.isEmptyObject params
-      
+
       text = i.text || i.view
       '<a href="' + path + '" data-remote="true" class="slotter">' + text + '</a>'
-
 
 $(window).ready ->
 
@@ -255,7 +254,7 @@ $(window).ready ->
 
   $('body').on 'mouseenter', '.card-menu-link', ->
     wagn.openMenu this, false
-    
+
   $('body').on 'mouseleave', '.card-menu', ->
     wagn.closeMenu this
 
@@ -264,10 +263,10 @@ $(window).ready ->
     unless !link[0] or                                             # no gear
         link.data('menu') or                                       # already has menu
         event.pageX - $(this).offset().left < $(this).width() / 2  # left half of header
-      
+
       wagn.openMenu link, true
       event.preventDefault()
-  
+
   $(document).on 'tap', 'body', (event) ->
     unless $(event.target).closest('.card-header')[0] or $(event.target).closest('.card-menu-link')[0]
       $('.card-menu').hide()
@@ -294,13 +293,13 @@ $(window).ready ->
       item.remove()
     else
       item.find('input').val ''
-    
+
   # following mod
   $('body').on 'click', '.btn-item-delete', ->
     $(this).find('.glyphicon').addClass("glyphicon-hourglass").removeClass("glyphicon-remove")
   $('body').on 'click', '.btn-item-add', ->
     $(this).find('.glyphicon').addClass("glyphicon-hourglass").removeClass("glyphicon-plus")
-    
+
   $('body').on 'mouseenter', '.btn-item-delete', ->
     $(this).find('.glyphicon').addClass("glyphicon-remove").removeClass("glyphicon-ok")
     $(this).addClass("btn-danger").removeClass("btn-primary")
@@ -327,7 +326,7 @@ $(window).ready ->
         tags.data 'follow', data
     }
     event.preventDefault() # Prevent link from following its href
-    
+
 
   # permissions mod
   $('body').on 'click', '.perm-vals input', ->
@@ -343,8 +342,8 @@ $(window).ready ->
     f = $(this).closest('form')
     checked = f.find('.set-editor input:checked')
     if checked.val()
-      if checked.attr('warning') 
-        confirm checked.attr('warning') 
+      if checked.attr('warning')
+        confirm checked.attr('warning')
       else
         true
     else
@@ -366,10 +365,10 @@ $(window).ready ->
 
   if firstShade = $('.shade-view h1')[0]
     $(firstShade).trigger 'click'
-    
+
 
   # following not in use??
-  
+
   $('body').on 'change', '.go-to-selected select', ->
     val = $(this).val()
     if val != ''
@@ -378,10 +377,10 @@ $(window).ready ->
 
 toggleShade = (shadeSlot) ->
   shadeSlot.find('.shade-content').slideToggle 1000
-  shadeSlot.find('.glyphicon').toggleClass 'glyphicon-triangle-right glpyphicon-triangle-bottom'  
+  shadeSlot.find('.glyphicon').toggleClass 'glyphicon-triangle-right glpyphicon-triangle-bottom'
 
 permissionsContent = (ed) ->
-  return '_left' if ed.find('#inherit').is(':checked')  
+  return '_left' if ed.find('#inherit').is(':checked')
   groups = ed.find('.perm-group input:checked').map( -> $(this).val() )
   indivs = ed.find('.perm-indiv input'        ).map( -> $(this).val() )
   pointerContent $.makeArray(groups).concat($.makeArray(indivs))
@@ -396,7 +395,7 @@ reqIndex = 0 #prevents race conditions
 navbox_results = (request, response) ->
   f = this.element.closest 'form'
   formData = f.serialize() + '&view=complete'
-  
+
   this.xhr = $.ajax {
     url: wagn.prepUrl wagn.rootPath + '/:search.json'
     data: formData
@@ -444,4 +443,4 @@ navbox_select = (event, ui) ->
   $(this).attr('disabled', 'disabled')
 
 
-  
+

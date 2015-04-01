@@ -24,8 +24,11 @@ header {
   }
 }
 
+.panel-heading .card-menu  a {
+  color: inherit;
+}
 
-/* 
+/*
 the following gives users more explicit control over spacing within tinyMCE
 but leads to lots of empty paragraph tags
 */
@@ -182,9 +185,9 @@ body.mceContentBody {
     max-width: 100%;
   }
   a {
-    color: $credit_color; 
+    color: $credit_color;
   }
-}  
+}
 
 .closed-content {
   font-size: 1em !important;

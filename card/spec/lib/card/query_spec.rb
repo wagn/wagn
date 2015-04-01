@@ -266,10 +266,10 @@ describe Card::Query do
 
   describe "order" do
     it "should sort by create" do
-      Card.create! :name=>"classic skin head"
+      Card.create! :name=>"classic bootstrap skin head"
       # classic skin head is created more recently than classic skin, which is in the seed data
-      wql = { :sort=>"create", :name=>[:match,'classic skin']}
-      expect( Card::Query.new(wql).run.map(&:name) ).to eq( ["classic skin","classic skin head"] )
+      wql = { :sort=>"create", :name=>[:match,'classic bootstrap skin']}
+      expect( Card::Query.new(wql).run.map(&:name) ).to eq( ["classic bootstrap skin","classic bootstrap skin head"] )
     end
 
     it "should sort by name" do

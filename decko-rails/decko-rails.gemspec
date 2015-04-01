@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 #lib = File.expand_path('../lib', __FILE__)
 #$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 version = File.open(File.expand_path( '../../card/VERSION', __FILE__ )).read.chomp
@@ -5,13 +7,12 @@ version = File.open(File.expand_path( '../../card/VERSION', __FILE__ )).read.cho
 Gem::Specification.new do |s|
   s.name          = 'decko-rails'
   s.version       = version
-  s.authors       = ["Ethan McCutchen", "Lewis Hoffman", "Gerry Gleason"]
+  s.authors       = ["Ethan McCutchen", "Gerry Gleason", "Philipp Kühl"]
   s.email         = ['info@wagn.org']
                   
 #  s.date          = '2013-12-20'
-  s.summary       = "rails engine for card: a structured wiki web platform"
-  s.description   = "Provides the glue to make the card model available as a Rails::Engine.  Cards are data atoms that are grouped into Sets to which Rules can apply. Cards can formatted with Views and transformed with Events."
-  
+  s.summary       = "rails engine for decko (wagn): a structured wiki web platform"
+  s.description   = "Provides the glue to make decko (currently named Wagn) available as a Rails::Engine."
   s.homepage      = 'http://wagn.org'
   s.license       = 'GPL'
 

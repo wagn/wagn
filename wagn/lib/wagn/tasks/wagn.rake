@@ -334,8 +334,12 @@ namespace :wagn do
           FileUtils.remove_dir target_dir, force=true if Dir.exists? target_dir  
           FileUtils.mkdir_p target_dir
           
+#          if card.name =~ /icon/
+#            require 'pry'; binding.pry
+#          end
           Dir.entries( source_dir ).each do |filename|
             next if filename =~ /^\./
+            next if filename !~ (Regexp.new card.last_content_action_id.to_s)
 
             target_filename = filename.gsub /\d+/, card.type_code.to_s
             FileUtils.cp "#{source_dir}/#{filename}", "#{target_dir}/#{target_filename}"

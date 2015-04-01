@@ -83,6 +83,18 @@ body.mceContentBody {
 }
 
 
+/*---------- Card menu ------------*/
+
+.card-slot > .card-header .card-menu-link {
+  display: none;
+}
+.card-slot.closed-view,
+.card-slot:hover {
+  > .card-header .card-menu-link {
+    display: inline-block;
+  }
+}
+
 /*----------- Change View ---------*/
 
 .change-view {

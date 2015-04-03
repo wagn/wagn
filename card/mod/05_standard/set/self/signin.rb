@@ -20,7 +20,7 @@ format :html do
   end
   
   def default_core_args args={}
-    args[:buttons] = button_tag 'Sign in'
+    args[:buttons] = button_tag 'Sign in', :situation=>'primary'
     if Card.new(:type_id=>Card::SignupID).ok? :create
       args[:buttons] += link_to( '...or sign up!', card_path("account/signup"))
     end
@@ -53,7 +53,7 @@ format :html do
     args.merge!( {
       :title=>'Forgot Password',
       :optional_help=>:hide,
-      :buttons => button_tag( 'Reset my password' ),
+      :buttons => button_tag( 'Reset my password', :situation=>'primary' ),
       :structure => true,      
       :hidden => { 
         :reset_password => true,

@@ -9,15 +9,15 @@ format :html do
         _optional_render( :content_formgroups, args ),
         _optional_render( :button_formgroup,   args )
       ]
-    end  
+    end
   end
-  
 
-  def default_new_args args    
+
+  def default_new_args args
     hidden = args[:hidden] ||= {}
     hidden[:success] ||= card.rule(:thanks) || '_self'
     hidden[:card   ] ||={}
-    
+
     args[:optional_help] ||= :show
 
     # name field / title
@@ -35,9 +35,9 @@ format :html do
     end
     args[:optional_name_formgroup] ||= :hide
 
-    
+
     # type field
-    if ( !params[:type] and !args[:type] and 
+    if ( !params[:type] and !args[:type] and
         ( main? || card.simple? || card.is_template? ) and
         Card.new( :type_id=>card.type_id ).ok? :create #otherwise current type won't be on menu
       )
@@ -53,15 +53,16 @@ format :html do
     else
       { :class=>'slotter',    :href=>path( :view=>:missing         ) }
     end
-    
+
     args[:buttons] ||= %{
-      #{ button_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting' }
+      #{ button_tag 'Submit', :class=>'create-submit-button', :disable_with=>'Submitting', :situation=>'primary' }
       #{ button_tag 'Cancel', :type=>'button', :class=>"create-cancel-button #{cancel[:class]}", :href=>cancel[:href] }
     }
-    
+
   end
 
-  
+
+
   view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
     frame_and_form :update, args do
       [
@@ -71,15 +72,16 @@ format :html do
     end
   end
 
+
   def default_edit_args args
     args[:optional_help] = :show
-    
+
     args[:buttons] = %{
-      #{ button_tag 'Submit', :class=>'submit-button', :disable_with=>'Submitting' }
+      #{ button_tag 'Submit', :class=>'submit-button', :disable_with=>'Submitting', :situation=>'primary' }
       #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
     }
   end
-  
+
   view :edit_name, :perms=>:update do |args|
     frame_and_form( { :action=>:update, :id=>card.id }, args, 'main-success'=>'REDIRECT' ) do
       [
@@ -89,6 +91,7 @@ format :html do
       ]
     end
   end
+
 
   view :confirm_rename do |args|
     referers = args[:referers]
@@ -108,7 +111,7 @@ format :html do
 
 
   def default_edit_name_args args
-    referers = args[:referers] = card.extended_referencers  
+    referers = args[:referers] = card.extended_referencers
     args[:hidden] ||= {}
     args[:hidden].reverse_merge!(
       :success  => '_self',
@@ -117,11 +120,11 @@ format :html do
       :card     => { :update_referencers => false }
     )
     args[:buttons] = %{
-      #{ button_tag 'Rename and Update', :disable_with=>'Renaming', :class=>'renamer-updater' }
+      #{ button_tag 'Rename and Update', :disable_with=>'Renaming', :class=>'renamer-updater', :situation=>'primary' }
       #{ button_tag 'Rename',            :disable_with=>'Renaming', :class=>'renamer'         }
       #{ button_tag 'Cancel', :class=>'slotter', :type=>'button', :href=>path(:view=>:edit, :id=>card.id)}
     }
-    
+
   end
 
 
@@ -139,8 +142,8 @@ format :html do
     args[:variety] = :edit #YUCK!
     args[:hidden] ||= { :view=>:edit }
     args[:buttons] = %{
-      #{ button_tag 'Submit', :disable_with=>'Submitting' }
-      #{ button_tag 'Cancel', :href=>path(:view=>:edit), :type=>'button', :class=>'slotter' }      
-    }    
+      #{ button_tag 'Submit', :disable_with=>'Submitting', :situation=>'primary' }
+      #{ button_tag 'Cancel', :href=>path(:view=>:edit), :type=>'button', :class=>'slotter' }
+    }
   end
 end

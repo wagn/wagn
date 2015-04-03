@@ -24,8 +24,11 @@ header {
   }
 }
 
+.card-menu  a {
+  color: inherit;
+}
 
-/* 
+/*
 the following gives users more explicit control over spacing within tinyMCE
 but leads to lots of empty paragraph tags
 */
@@ -80,6 +83,18 @@ body.mceContentBody {
 }
 
 
+/*---------- Card menu ------------*/
+
+.card-slot > .card-header .card-menu-link {
+  display: none;
+}
+.card-slot.closed-view,
+.card-slot:hover {
+  > .card-header .card-menu-link {
+    display: inline-block;
+  }
+}
+
 /*----------- Change View ---------*/
 
 .change-view {
@@ -93,7 +108,10 @@ body.mceContentBody {
   }
 }
 
-
+.titled-view > .card-header {
+  font-size: 1.3em;
+  margin: 3px 0
+}
 
 /*---------- ( Richtext )-------------*/
 
@@ -179,9 +197,9 @@ body.mceContentBody {
     max-width: 100%;
   }
   a {
-    color: $credit_color; 
+    color: $credit_color;
   }
-}  
+}
 
 .closed-content {
   font-size: 1em !important;

@@ -72,7 +72,7 @@ view :core do |args|
 end
 
 view :rule_help do |args|
-  %{<div class="alert alert-info">#{process_content_object "{{+*right+*help}}"}</div>}
+  %{<div class="alert alert-info">#{process_content_object "{{+*right+*help|content}}"}</div>}
 end
 
 

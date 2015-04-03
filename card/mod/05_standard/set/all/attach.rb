@@ -1,5 +1,5 @@
 
-require 'RMagick'
+require 'rmagick'
 require 'paperclip'
 
 def attach_array

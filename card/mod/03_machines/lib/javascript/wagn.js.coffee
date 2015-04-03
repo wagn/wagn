@@ -13,9 +13,9 @@ $.extend wagn,
       xtra['is_main'] = true if slot.isMain()
       slotdata = slot.data 'slot'
       wagn.slotParams slotdata, xtra, 'slot' if slotdata?
-      
+
     url + ( (if url.match /\?/ then '&' else '?') + $.param(xtra) )
-  
+
   slotParams: (raw, processed, prefix)->
     $.each raw, (key, value)->
       cgiKey = prefix + '[' + snakeCase(key) + ']'
@@ -23,19 +23,23 @@ $.extend wagn,
         wagn.slotParams value, processed, cgiKey
       else
         processed[cgiKey] = value
-        
+
   slotReady: (func)->
     $('document').ready ->
       $('body').on 'slotReady', '.card-slot', (e) ->
         e.stopPropagation()
         func.call this, $(this)
   pingName: (name, success)->
-    $.getJSON wagn.rootPath + '/', { format: 'json', view: 'status', 'card[name]': name }, success  
+    $.getJSON wagn.rootPath + '/', { format: 'json', view: 'status', 'card[name]': name }, success
 
 jQuery.fn.extend {
-  slot: -> 
-    if @attr('slotSelector')
-      @closest @attr('slotSelector')
+  slot: ->
+    if @data('slot-selector')
+      close = @closest(@data('slot-selector'))
+      if close.length == 0
+        $('body').find(@data('slot-selector'))
+      else
+        close
     else
       @closest '.card-slot'
 
@@ -57,7 +61,7 @@ jQuery.fn.extend {
     else
       notice = @attr('notify-success')
       newslot = @setSlotContent data
-        
+
       if newslot.jquery # sometimes response is plaintext
         wagn.initializeEditors newslot
         if notice?
@@ -82,7 +86,7 @@ jQuery.fn.extend {
       if form[0]
         $(form[0]).append notice
       else
-        slot.append notice 
+        slot.append notice
     notice.html message
     notice.show 'blind'
 
@@ -101,7 +105,7 @@ jQuery.fn.extend {
   autosave: ->
     slot = @slot()
     return if @attr 'no-autosave'
-    multi = @closest 'fieldset'
+    multi = @closest '.form-group'
     if multi[0]
       return unless id = multi.data 'cardId'
       reportee = ': ' + multi.data 'cardName'
@@ -165,7 +169,7 @@ $(window).ready ->
 
   $('body').on 'ajax:beforeSend', '.slotter', (event, xhr, opt)->
     return if opt.skip_before_send
-    
+
     unless opt.url.match /home_view/ #avoiding duplication.  could be better test?
       opt.url = wagn.prepUrl opt.url, $(this).slot()
 
@@ -190,7 +194,7 @@ $(window).ready ->
           iframeUploadFilter = (data)-> data.find('body').html()
           opt.dataFilter = iframeUploadFilter
           # gets rid of default html and body tags
-        
+
         args = $.extend opt, (widget._getAJAXSettings data), url: opt.url
         # combines settings from wagn's slotter and jQuery UI's upload widget
         args.skip_before_send = true #avoid looping through this method again
@@ -199,42 +203,39 @@ $(window).ready ->
         false
 
   $('body').on 'submit', '.card-form', ->
-#    warn "on submit called"
     $(this).setContentFieldsFromMap()
-#    warn "content fields set"    
     $(this).find('.card-content').attr('no-autosave','true')
-#    warn "autosave worked"
     true
 
   $('body').on 'click', '.submitter', ->
     $(this).closest('form').submit()
-   
+
   $('body').on 'click', '.renamer-updater', ->
     $(this).closest('form').find('#card_update_referencers').val 'true'
-        
+
   $('body').on 'submit', '.edit_name-view .card-form', ->
     confirmer = $(this).find '.alert'
     if confirmer.is ':hidden'
       if $(this).find('#referers').val() > 0
         $(this).find('.renamer-updater').show()
-        
+
       confirmer.show 'blind'
       false
-    
-  
-  
+
+
+
   $('body').on 'click', '.follow-updater', ->
     $(this).closest('form').find('#card_update_all_users').val 'true'
-        
+
   $('body').on 'submit', '.edit-view.SELF-Xfollow_default .card-form', ->
     confirmer = $(this).find '.confirm_update_all-view'
     if confirmer.is ':hidden'
       $(this).find('.follow-updater').show()
-        
+
       confirmer.show 'blind'
       false
-  
-  
+
+
   $('body').on 'click', 'button.redirecter', ->
     window.location = $(this).attr('href')
 
@@ -282,7 +283,7 @@ $(window).ready ->
     $(this).html $(this).attr( 'hover_content' )
   $('body').on 'mouseleave', '[hover_content]', ->
     $(this).html $(this).attr( 'hover_restore' )
-    
+
   $('body').on 'keyup', '.name-editor input', ->
     box =  $(this)
     name = box.val()
@@ -300,7 +301,7 @@ $(window).ready ->
         slot_id = box.slot().data 'cardId' # use id to avoid warning when renaming to name variant
         if status != 'unknown' and !(slot_id && parseInt(slot_id) == data['id'])
           ed.addClass status + '-name known-name'
-          link = 
+          link =
           qualifier = if status == 'virtual' #wish coffee would let me use  a ? b : c syntax here
             'in virtual'
           else
@@ -308,13 +309,13 @@ $(window).ready ->
           msg.html '"<a href="' + wagn.rootPath + '/' + data['url_key'] + '">' + name + '</a>" ' + qualifier + ' use'
         else
           msg.html ''
-        
+
   $('body').on 'click', '.render-error-link', (event) ->
     msg = $(this).closest('.render-error').find '.render-error-message'
     msg.show()
 #    msg.dialog()
     event.preventDefault()
-	
+
 
 # important: this prevents jquery-mobile from taking over everything
 $( document ).on "mobileinit", ->
@@ -322,6 +323,7 @@ $( document ).on "mobileinit", ->
     autoInitializePage: false
     ajaxEnabled: false
   }
+
 
 
 

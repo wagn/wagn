@@ -2,20 +2,20 @@ format :html do
   def slot_options args
     @@slot_option_keys ||= Card::Chunk::Include.options.reject { |k| k == :view }.unshift :home_view
     options_hash = {}
-  
+
     if @context_names.present?
       options_hash['name_context'] = @context_names.map( &:key ) * ','
     end
-  
+
     @@slot_option_keys.inject(options_hash) do |hash, opt|
       hash[opt] = args[opt] if args[opt].present?
       hash
     end
-  
+
     JSON( options_hash )
   end
-  
-  
+
+
   def wrap args = {}
     classes = [
       ( 'card-slot' unless args[:no_slot] ),
@@ -24,7 +24,7 @@ format :html do
       ( "STRUCTURE-#{args[:structure].to_name.key}" if args[:structure]),
       card.safe_set_keys
     ].compact
-  
+
     div = %{<div id="#{card.cardname.url_key}" data-card-id="#{card.id}" data-card-name="#{h card.name}" style="#{h args[:style]}" class="#{classes*' '}" } +
       %{data-slot='#{html_escape_except_quotes slot_options( args )}'>#{ output yield }</div>}
 
@@ -45,12 +45,12 @@ format :html do
       yield args
     end
   end
-  
+
   def frame args={}
     args[:slot_class] = "card-frame #{args[:slot_class]}"
     wrap args do
       %{
-        #{ _render_header args }
+        #{ _optional_render :header, args, :show }
         #{ %{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader] }
         #{ _optional_render :help, args.merge(:help_class=>'alert alert-info'), :hide }
         #{ wrap_body args do output( yield args ) end }
@@ -67,7 +67,8 @@ format :html do
       end
     end
   end
-  
+
+
   # alert_types: 'success', 'info', 'warning', 'danger'
   def alert alert_type, args={}
     css_class = "alert alert-#{alert_type} "
@@ -82,24 +83,32 @@ format :html do
       close_button + output( yield args)
     end
   end
-  
+
   def wrap_main(content)
     return content if params[:layout]=='none'
     %{<div id="main">#{content}</div>}
   end
-  
-  def wrap_with tag, html_args={}
-    content_tag( tag, html_args ) do 
-      output( yield ).html_safe
+
+  def wrap_with tag, content_or_args={}, html_args={}
+    if block_given?
+      content_tag( tag, content_or_args ) do
+        output( yield ).html_safe
+      end
+    else
+      content_tag( tag, html_args ) do
+        output( content_or_args ).html_safe
+      end
     end
   end
-  
-  def wrap_each_with tag, args={}
-    yield(args).map do |item|
+
+  def wrap_each_with tag, content_or_args={}, args={}
+    content = block_given? ? yield(args) : content_or_args
+    args    = block_given? ? content_or_args : args
+    content.map do |item|
       wrap_with tag, args do
         item
       end
     end.join "\n"
   end
-  
+
 end

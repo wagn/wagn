@@ -49,6 +49,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 /* -- card-headers and menus--*/
 
 .card-header {
+  position: relative;
   .card-header-title {
     display: inline-block;
     overflow: hidden;
@@ -65,6 +66,12 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   }
 }
 
+.card-menu.btn-group {
+  position: absolute;
+  right: 5px;
+}
+
+
 .card-menu {
   display: none;
   position: absolute;
@@ -72,7 +79,20 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
     white-space: nowrap;
   }
   .dropdown-menu {
+    right: -2px;
+    top: 18px;
     min-width: 110px;
+  }
+  .dropdown-menu:before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid white;
+    position: absolute;
+    top: -5px;
+    right: 2px;
   }
 }
 
@@ -92,8 +112,12 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 .dropdown-menu {
   z-index: 1005;
 }
+
+.navbar.toolbar {
+  margin-bottom: 0;
+}
 .toolbar {
-  .dropdown-menu {
+  .related.dropdown-menu {
     min-width: 435px;
     li {
       float: left;
@@ -106,6 +130,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
     margin-left: 5px;
   }
 }
+
 
 
 /*-- closed and labeled views --*/

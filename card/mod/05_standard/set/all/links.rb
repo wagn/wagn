@@ -55,8 +55,8 @@ format do
    opts[:path_opts] ||= {:view=>:related}
    opts[:path_opts][:related] = {:name=>"+#{name}"}
    opts[:path_opts][:related].merge! opts[:related_opts] if opts[:related_opts]
-   link_to opts[:text], '', opts.merge('data-target'=>path(opts.delete(:path_opts)))
-   #view_link( opts[:text] || name, :related, opts)
+   #link_to opts[:text], '', opts.merge('data-target'=>path(opts.delete(:path_opts)))
+   view_link( opts[:text] || name, :related, opts)
   end
 
   # link to a specific view (defaults to current card)

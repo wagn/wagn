@@ -32,6 +32,8 @@ format :html do
   end
 
 
+
+
   view :open_rule, :tags=>:unknown_ok do |args|
     return 'not a rule' if !card.is_rule?
     current_rule = args[:current_rule]

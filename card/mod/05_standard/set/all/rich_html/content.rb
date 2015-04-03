@@ -154,11 +154,16 @@ format :html do
   end
 
   view :options, :tags=>:unknown_ok do |args|
-    current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
-
     frame args do
-      subformat( current_set ).render_content
+      subformat( current_set_card ).render_content args
     end
+  end
+
+  def current_set_card
+    set_name = params[:current_set]
+    set_name ||= "#{card.name}+*type" if card.known? && card.type_id==Card::CardtypeID
+    set_name ||= "#{card.name}+*self"
+    Card.fetch(set_name)
   end
 
 

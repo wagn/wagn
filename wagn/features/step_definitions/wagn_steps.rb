@@ -18,7 +18,7 @@ Given /^site stops simulating setup need$/ do
   Card::Auth.simulate_setup_need! false
   step 'I am signed out'
 end
-  
+
 Given /^I am signed in as (.+)$/ do |account_name|
   accounted = Card[account_name]
   visit "/update/:signin?card[subcards][%2B*email][content]=#{accounted.account.email}&card[subcards][%2B*password][content]=joe_pass"
@@ -215,6 +215,10 @@ end
 
 When /^I hover over the main menu$/ do
   page.execute_script "$('#main > .card-slot > .card-header > .card-menu-link').trigger('mouseenter')"
+end
+
+When /^I click main menu$/ do
+  find('#main .card-menu').click()
 end
 
 When /^I pick (.*)$/ do |menu_item|

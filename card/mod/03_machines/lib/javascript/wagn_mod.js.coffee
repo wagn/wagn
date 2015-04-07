@@ -194,6 +194,27 @@ $(window).ready ->
     }
     event.preventDefault() # Prevent link from following its href
 
+  $('body').on 'click', '.follow-toggle', (event) ->
+    anchor = $(this)
+    url  = wagn.rootPath + '/update/' + anchor.data('rule_name') + '.json'
+    $.ajax url, {
+      type : 'POST'
+      dataType : 'json'
+      data : {
+        'card[content]' : '[[' + anchor.data('follow').content + ']]'
+        'success[view]' : 'follow_status'
+        'success[id]'   : anchor.data('card_key')
+      }
+      success : (data) ->
+        tags = anchor.closest('.card-menu').find('.follow-toggle')
+        tags.find('.follow-verb').html data.verb
+        tags.attr 'title', data.title
+        tags.removeClass( 'follow-toggle-on follow-toggle-off').addClass data.class
+        tags.data 'follow', data
+    }
+    event.preventDefault() # Prevent link from following its href
+
+
   # permissions mod
   $('body').on 'click', '.perm-vals input', ->
     $(this).slot().find('#inherit').attr('checked',false)

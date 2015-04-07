@@ -60,7 +60,7 @@ format :html do
   end
 
   view :title do |args|
-    title = fancy_title args[:title]
+    title = fancy_title args[:title], args[:title_class]
     title =  _optional_render( :title_toolbar, args, (show_view?(:toolbar,args.merge(:default_visibility=>:hide)) ? :show : :hide)) ||
              _optional_render( :title_link, args.merge( :title_ready=>title ), :hide )       ||
              title
@@ -113,31 +113,6 @@ format :html do
   view :closed do |args|
     frame args.reverse_merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show ) do
       _optional_render :closed_content, args
-    end
-  end
-
-
-  def default_modal_args args
-    args[:buttons] = button_tag 'Close', 'data-dismiss'=>'modal'
-  end
-
-
-  view :modal_link do |args|
-    link_to(_render_title(args), "#modal-#{card.cardname.safe_key}", 'data-toggle'=>'modal') + _render_modal(args)
-  end
-
-
-  view :modal do |args|
-    wrap_with(:div, :class=>'modal fade', :role=>'dialog', :id=>"modal-#{card.cardname.safe_key}") do
-      wrap_with(:div, :class=>'modal-dialog') do
-        wrap_with(:div, :class=>'modal-content') do
-          [
-              content_tag(:div, _render_title(args), :class=>'modal-header'),
-              content_tag(:div, _render_content(args).html_safe, :class=>'modal-body'),
-              content_tag(:div, args[:buttons], :class=>'modal-footer')
-          ]
-        end
-      end
     end
   end
 
@@ -224,8 +199,8 @@ format :html do
 
   private
 
-  def fancy_title title=nil
-    raw %{<span class="card-title">#{ showname(title).to_name.parts.join %{<span class="joint">+</span>} }</span>}
+  def fancy_title title=nil, title_class=nil
+    raw %{<span class="card-title #{title_class if title_class}">#{ showname(title).to_name.parts.join %{<span class="joint">+</span>} }</span>}
   end
 end
 

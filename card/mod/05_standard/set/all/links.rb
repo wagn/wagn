@@ -46,19 +46,6 @@ format do
     link_to text, path_opts, opts
   end
 
-  def related_link name_or_card, opts={}
-    name = case name_or_card
-           when Symbol then Card.fetch( name_or_card, :skip_modules=>true ).cardname
-           when Card   then name_or_card.cardname
-           else             name_or_card
-           end
-   opts[:path_opts] ||= {:view=>:related}
-   opts[:path_opts][:related] = {:name=>"+#{name}"}
-   opts[:path_opts][:related].merge! opts[:related_opts] if opts[:related_opts]
-   #link_to opts[:text], '', opts.merge('data-target'=>path(opts.delete(:path_opts)))
-   view_link( opts[:text] || name, :related, opts)
-  end
-
   # link to a specific view (defaults to current card)
   # this is generally used for ajax calls
   def view_link text, view, opts={}
@@ -70,6 +57,17 @@ format do
     link_to text, path_opts, opts
   end
 
+  def related_link name_or_card, opts={}
+    name = case name_or_card
+           when Symbol then Card.fetch( name_or_card, :skip_modules=>true ).cardname
+           when Card   then name_or_card.cardname
+           else             name_or_card
+           end
+   opts[:path_opts] ||= {:view=>:related}
+   opts[:path_opts][:related] = {:name=>"+#{name}"}
+   opts[:path_opts][:related].merge! opts[:related_opts] if opts[:related_opts]
+   view_link( opts[:text] || name, :related, opts)
+  end
 
 
 
@@ -85,7 +83,7 @@ format do
       base += ( opts[:id] ? "~#{ opts.delete :id }" : linkname )
     end
 
-    opts[:card] = {}
+    opts[:card] ||= {}
     opts[:card][:name] = name if opts.delete(:known)==false && name.present? && name.to_s != linkname
 
     if type = opts.delete(:type) and Card.known?( type )

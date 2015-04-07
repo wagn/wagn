@@ -48,7 +48,8 @@ format :html do
         <ul class="dropdown-menu" role="menu">
           #{_render_menu_item_list(args)}
         </ul>
-        #{nest( card.fetch(:trait=>:follow_dialog), :view=>:modal) if args[:show_menu_item][:follow]}
+        #{nest( card, :view=>:modal_slot) if args[:show_menu_item][:follow]
+      }
       }.html_safe
     end
   end
@@ -56,7 +57,7 @@ format :html do
   view :horizontal_menu do |args|
     content_tag :ul, :class=>'btn-group slotter pull-right card-menu horizontal-card-menu' do
       _render_menu_item_list(args.merge(:item_class=>'btn btn-default')).html_safe
-    end.concat "#{nest( card.fetch(:trait=>:follow_dialog), :view=>:modal) if args[:show_menu_item][:follow]}".html_safe
+    end.concat "#{nest( card, :view=>:modal_slot) if args[:show_menu_item][:follow]}".html_safe
   end
 
   view :menu_item_list do |args|
@@ -68,7 +69,7 @@ format :html do
                                                          :slot=>{:show=>'edit_toolbar structure_link',
                                                                  :hide=>'type_link'}})           if args[:show_menu_item][:edit]
     menu_items << menu_item('discuss', 'comment', :related=>disc_tagname)                        if args[:show_menu_item][:discuss]
-    menu_items << render_follow_menu_link                                                        if args[:show_menu_item][:follow]
+    menu_items << render_follow_modal_link                                                       if args[:show_menu_item][:follow]
     menu_items << menu_item('page', 'new-window', :page=>card)                                   if args[:show_menu_item][:page]
     menu_items << menu_item('account', 'user', :related=>{:name=>'+*account',:view=>:edit},
                                                :path_opts=>{:slot=>{:show=>:account_toolbar}})   if args[:show_menu_item][:account]
@@ -132,54 +133,48 @@ format :html do
 
 
   view :toolbar do |args|
-    content_tag :nav, :class=>"navbar navbar-inverse navbar-default slotter toolbar" do
-      wrap_with(:div, :class=>'container-fluid') do
-        [
-          (wrap_with(:p, :class=>"navbar-text navbar-left") do
-            [
-              _optional_render(:type_link,args,:show),
-              _optional_render(:structure_link,args,:hide)
-            ]
-          end),
-          %{
-            <form class="navbar-form navbar-right" role="search">
-                <div class="form-group">
-                #{_optional_render :toolbar_buttons_advanced, args, :show}
-                #{_optional_render :toolbar_buttons, args, :show}
-                </div>
-            </form>
-          }.html_safe
-        ]
-      end
+    navbar 'toolbar', :class=>"navbar-inverse slotter toolbar" do
+      [
+        (wrap_with(:p, :class=>"navbar-text navbar-left") do
+          [
+            _optional_render(:type_link,args,:show),
+            _optional_render(:structure_link,args,:hide)
+          ]
+        end),
+        %{
+          <form class="navbar-form navbar-right" role="search">
+              <div class="form-group">
+              #{_optional_render :toolbar_buttons_advanced, args, :show}
+              #{_optional_render :toolbar_buttons, args, :show}
+              </div>
+          </form>
+        }.html_safe
+      ]
     end
   end
 
   view :edit_toolbar do |args|
-    autosave = if card.drafts.present?
-      wrap_with(:p, :class=>"navbar-text pull-right") do
-        [
-          view_link('autosaved draft', :edit, :path_opts=>{:edit_draft=>true, :slot=>{:show=>:edit_toolbar}}, :class=>'navbar-link slotter'),
-          view_link(glyphicon('remove'), :open)
-        ]
-      end
-    end
-
-    content_tag :nav, :class=>"navbar navbar-inverse navbar-default slotter toolbar" do
-      wrap_with :div, :class=>'container-fluid' do
-        [
-          content_tag(:span, 'Edit:', :class=>"navbar-text"),
-          (wrap_with :ul, :class=>'nav navbar-nav nav-pills' do
+    navbar 'edit-toolbar', {}, :class=>'navbar-inverse slotter toolbar' do
+      [
+        content_tag(:span, 'Edit:', :class=>"navbar-text"),
+        (wrap_with :ul, :class=>'nav navbar-nav nav-pills' do
+          [
+            _optional_render(:edit_content_button, args, :show),
+            _optional_render(:edit_name_button,    args, :show),
+            _optional_render(:edit_type_button,    args, :show),
+            _optional_render(:edit_rules_button,   args, :show),
+            _optional_render(:edit_nests_button,   args, :show),
+          ]
+        end),
+        (wrap_with :ul, :class=>'nav navbar-nav navbar-right' do
+          wrap_each_with :li do
             [
-              _optional_render(:edit_content_button, args, :show),
-              _optional_render(:edit_name_button, args, :show),
-              _optional_render(:edit_type_button, args, :show),
-              _optional_render(:edit_rules_button, args, :show),
-              _optional_render(:edit_nests_button, args, :show),
+              (view_link('autosaved draft', :edit, :path_opts=>{:edit_draft=>true, :slot=>{:show=>:edit_toolbar}}, :class=>'navbar-link slotter') if card.drafts.present?),
+              view_link(glyphicon('remove'), :open)
             ]
-          end),
-          autosave
-        ]
-      end
+          end
+        end),
+      ]
     end
   end
 
@@ -191,8 +186,11 @@ format :html do
       links << account_pill( 'created')
       links << account_pill( 'edited')
       links << account_pill( 'follow')
-      content_tag :nav, :class=>"navbar navbar-inverse navbar-default slotter toolbar", 'data-slot-selector'=>'.related-view > .card-body > .card-slot' do
-        content_tag :ul, links.join("\n").html_safe, :class=>'nav navbar-nav nav-pills'
+      navbar 'account-toolbar', {}, :class=>"navbar-inverse slotter toolbar", 'data-slot-selector'=>'.related-view > .card-body > .card-slot' do
+        [
+          content_tag(:ul, links.join("\n").html_safe, :class=>'nav navbar-nav nav-pills'),
+          content_tag(:ul, "<li>#{view_link(glyphicon('remove'), :open)}</li>".html_safe, :class=>'nav navbar-nav navbar-right'),
+        ]
       end
     end
   end

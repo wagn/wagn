@@ -23,7 +23,6 @@ format do
   def follow_link_hash args
     toggle = args[:toggle] || ( card.followed? ? :off : :on )
     hash = { :class => "follow-toggle-#{toggle}" }
-
     case toggle
     when :off
       hash[:content] = '*never'
@@ -34,13 +33,14 @@ format do
       hash[:title]   = "send emails about changes to #{card.follow_label}"
       hash[:verb]    = 'follow'
     end
+    follow_rule_name = card.default_follow_set_card.follow_rule_name( Auth.current.name )
+    hash[:path] = path :name=>follow_rule_name, :action=>:update,
+                       :success=>{ :view=>:modal_content },
+                       :card=>{ :content=>"[[#{hash[:content]}]]" }
     hash
-
   end
 
-
 end
-
 
 format :json do
   view :follow_status do |args|
@@ -49,42 +49,19 @@ format :json do
 end
 
 format :html do
-
-  view :follow_link, :tags=>:unknown_ok, :perms=>:none do |args|
+  view :follow_modal_link, :tags=>:unknown_ok, :perms=>:none do |args|
     hash = follow_link_hash args
-    text = %[<span class="follow-verb">#{hash[:verb]}</span> #{args[:label]}]
+    text = %[#{glyphicon 'flag'}<span class="follow-verb menu-item-label">#{hash[:verb]}</span>]
+    follow_rule_card = Card.fetch(card.default_follow_set_card.follow_rule_name( Auth.current.name ), :new=>{})
     opts = {
       :title           => hash[:title],
-      :class           => "follow-toggle #{hash[:class]}",
-      'data-follow'    => JSON(hash),
-      'data-rule_name' => card.default_follow_set_card.follow_rule_name( Auth.current.name ).to_name.url_key,
-      'data-card_key'  => card.key
-    }
-    link_to text, '', opts
-  end
-
-  def default_follow_link_args args
-    args[:toggle] ||=  card.followed? ? :off : :on
-    args[:label]  ||=  card.follow_label
-  end
-
-
-  view :follow_menu_link, :tags=>:unknown_ok, :perms=>:none do |args|
-
-    hash = follow_link_hash args
-    text = %[#{glyphicon('flag')}<span class="follow-verb menu-item-label">#{hash[:verb]}</span>]
-    opts = {
-      :title           => hash[:title],
-      :class           => "follow-toggle #{hash[:class]}",
+      :class           => 'follow-link',
+      'data-path'      => hash[:path],
       'data-toggle'    => 'modal',
-      'data-follow'    => JSON(hash),
-      'data-rule_name' => card.default_follow_set_card.follow_rule_name( Auth.current.name ).to_name.url_key,
-      'data-card_key'  => card.key
+      'data-target'    => "#modal-#{card.cardname.safe_key}",
     }
-    dialog = card.fetch  :trait=>:follow_dialog
-    link_to(text, "#modal-#{dialog.cardname.safe_key}", opts)
+    link_to text, hash[:path], opts
   end
-
 end
 
 

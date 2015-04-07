@@ -176,26 +176,23 @@ $(window).ready ->
     $(this).find('.glyphicon').addClass("glyphicon-ok").removeClass("glyphicon-remove")
     $(this).addClass("btn-primary").removeClass("btn-danger")
 
-  $('body').on 'click', '.follow-toggle', (event) ->
+
+  $('body').on 'click', '.update-follow-link', (event) ->
     anchor = $(this)
-    url  = wagn.rootPath + '/update/' + anchor.data('rule_name') + '.json'
+    url  = wagn.rootPath + '/' + anchor.data('card_key') + '.json?view=follow_status'
+    modal =  anchor.closest('.modal')
+    modal.removeData()
     $.ajax url, {
-      type : 'POST'
+      type : 'GET'
       dataType : 'json'
-      data : {
-        'card[content]' : '[[' + anchor.data('follow').content + ']]'
-        'success[view]' : 'follow_status'
-        'success[id]'   : anchor.data('card_key')
-      }
       success : (data) ->
-        tags = anchor.closest('.card-menu').find('.follow-toggle')
+        tags = modal.closest('.card-menu').find('.follow-link')
         tags.find('.follow-verb').html data.verb
+        tags.attr 'href', data.path
         tags.attr 'title', data.title
-        tags.removeClass( 'follow-toggle-on follow-toggle-off').addClass data.class
         tags.data 'follow', data
     }
     event.preventDefault() # Prevent link from following its href
-
 
   # permissions mod
   $('body').on 'click', '.perm-vals input', ->

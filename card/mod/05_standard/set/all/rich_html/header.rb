@@ -133,13 +133,20 @@ format :html do
 
 
   view :toolbar do |args|
-    navbar 'toolbar', :class=>"navbar-inverse slotter toolbar" do
+    navbar 'toolbar', {}, :class=>"navbar-inverse slotter toolbar" do
       [
         (wrap_with(:p, :class=>"navbar-text navbar-left") do
           [
             _optional_render(:type_link,args,:show),
             _optional_render(:structure_link,args,:hide)
           ]
+        end),
+        (wrap_with :ul, :class=>'nav navbar-nav navbar-right' do
+          wrap_each_with :li do
+            [
+              view_link(glyphicon('remove'), :open)
+            ]
+          end
         end),
         %{
           <form class="navbar-form navbar-right" role="search">
@@ -148,7 +155,7 @@ format :html do
               #{_optional_render :toolbar_buttons, args, :show}
               </div>
           </form>
-        }.html_safe
+        }.html_safe,
       ]
     end
   end
@@ -264,7 +271,7 @@ format :html do
   view :edit_rules_button do |args|
     if show_structure?
       rule_items = []
-      rule_items << pill_card_link('structure', card.structure, :view=>:edit, :slot=>{:hide=>:toggle})
+      rule_items << pill_card_link('structure', card.structure, false, :view=>:edit, :slot=>{:hide=>:toggle})
       rule_items << pill_view_link('...', 'options')
       pill_dropdown('rules', rule_items)
     else

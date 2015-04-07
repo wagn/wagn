@@ -151,7 +151,8 @@ format :html do
         :view          => ( rparams[:view] || :open ),
         :optional_toggle => :hide,
         :optional_help => :show,
-        :optional_menu => :show
+        :optional_menu => :show,
+        :parent => card
       }
       nest_args.merge! ( rparams[:slot] || {} ).deep_symbolize_keys
 

@@ -67,7 +67,7 @@ format :html do
 
 
   view :modal_footer do |args|
-    view_link('more options', :edit, :class=>'btn slotter update-follow-link', 'data-dismiss'=>'modal', 'data-card_key'=>args[:card_key]) +
+    card_link(args[:card_key], :text=>'more options', :path_opts=>{:view=>:related, :related=>{:name=>card.name,:view=>:related_edit_rule}}, :class=>'btn update-follow-link', 'data-card_key'=>args[:card_key]) +
       link_to('Close', '', :class=>'btn btn-default update-follow-link', 'data-dismiss'=>'modal', 'data-card_key'=>args[:card_key])
   end
 

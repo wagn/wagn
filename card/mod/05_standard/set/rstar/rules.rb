@@ -114,6 +114,7 @@ format :html do
       %{
         #{ hidden_success_formgroup args[:success]}
         #{ editor args }
+        #{ edit_button args }
       }
     end
   end
@@ -133,6 +134,47 @@ format :html do
     })
   end
 
+  view :related_edit_rule, :tags=>:unknown_ok do |args|
+    delete_button = if !card.new_card?
+                      b_args = { :remote=>true, :class=>'rule-delete-button slotter', 'data-slot-selector'=>'.card-slot.related-view', :type=>'button' }
+                      b_args[:href] = path :action=>:delete, :success=>args[:success]
+                      if (fset = args[:fallback_set]) && (fcard = Card.fetch(fset))
+                        b_args['data-confirm']="Deleting will revert to #{card.rule_setting_name} rule for #{fcard.label }"
+                      end
+                      %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
+                    end
+
+    frame do
+      form_for card, :url=>path(:action=>:update, :no_id=>true), :html=>
+          {:class=>"card-form card-rule-form" } do |form|
+        @form = form
+        %{
+          #{ hidden_success_formgroup args[:success]}
+          #{ editor args }
+          #{
+            wrap_with( :div, :class=>'button-area' ) do
+             [
+               delete_button,
+               button_tag( 'Submit', :class=>'rule-submit-button', :situation=>'primary' ),
+               card_link( args[:success][:id], :text=>'Cancel', :class=>'rule-cancel-button btn btn-default', :path_opts=>{:view=>args[:success][:view]} )
+             ]
+            end
+          }
+        }
+      end
+    end
+  end
+
+  def default_related_edit_rule_args args
+    args[:success] = {
+        :view => :open,
+        :item => nil,
+        :card => args[:parent] || card,
+        :id => (args[:parent] && args[:parent].cardname.url_key) || card.cardname.url_key
+      }
+    default_edit_rule_args args
+  end
+
 
   # used keys for args:
   # :success,  :set_selected, :set_options, :rule_context
@@ -143,7 +185,7 @@ format :html do
         formgroup( 'rule', content_field( form, args.merge(:skip_rev_id=>true) ), :editor=>'content' ),
         set_selection( args )
       ]
-    end + edit_buttons( args )
+    end
   end
 
 

@@ -192,7 +192,6 @@ $(window).ready ->
         tags.attr 'title', data.title
         tags.data 'follow', data
     }
-    event.preventDefault() # Prevent link from following its href
 
   $('body').on 'click', '.follow-toggle', (event) ->
     anchor = $(this)

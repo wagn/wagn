@@ -104,7 +104,7 @@ format :html do
   def wrap_each_with tag, content_or_args={}, args={}
     content = block_given? ? yield(args) : content_or_args
     args    = block_given? ? content_or_args : args
-    content.map do |item|
+    content.compact.map do |item|
       wrap_with tag, args do
         item
       end

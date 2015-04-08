@@ -114,7 +114,7 @@ format :html do
       %{
         #{ hidden_success_formgroup args[:success]}
         #{ editor args }
-        #{ edit_button args }
+        #{ edit_buttons args }
       }
     end
   end

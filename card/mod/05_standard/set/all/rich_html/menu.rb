@@ -16,13 +16,12 @@ format :html do
     content_tag :div, :class=>'btn-group slotter pull-right card-menu' do
       %{
         <span class="open-menu dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-          <a href='#'>#{ glyphicon 'cog'}</a>
+          <a href='#'>#{ glyphicon 'cog' }</a>
         </span>
         <ul class="dropdown-menu" role="menu">
-          #{_render_menu_item_list(args)}
+          #{ _render_menu_item_list(args) }
         </ul>
-        #{nest( card, :view=>:modal_slot) if args[:show_menu_item][:follow]
-      }
+        #{ nest( card, :view=>:modal_slot) if args[:show_menu_item][:follow] }
       }.html_safe
     end
   end
@@ -51,8 +50,8 @@ format :html do
     menu_items.map {|item| "<li class='#{args[:item_class]}'>#{item}</li>"}.join "\n"
   end
 
-  def menu_item text, symbol, target
-    link_text = "#{glyphicon(symbol)}<span class='menu-item-label'>#{text}</span>".html_safe
+  def menu_item text, icon, target
+    link_text = "#{glyphicon(icon)}<span class='menu-item-label'>#{text}</span>".html_safe
     if target[:view]
       view_link(link_text, target.delete(:view), target)
     elsif target[:page]

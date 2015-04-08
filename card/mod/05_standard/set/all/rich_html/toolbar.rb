@@ -16,11 +16,11 @@ format :html do
           end
         end),
         %{
-          <form class="navbar-form navbar-right" role="search">
-              <div class="form-group">
+          <form class="navbar-form navbar-right">
+            <div class="form-group">
               #{_optional_render :toolbar_buttons_advanced, args, :show}
               #{_optional_render :toolbar_buttons, args, :show}
-              </div>
+            </div>
           </form>
         }.html_safe,
       ]
@@ -183,23 +183,25 @@ format :html do
   end
 
   def pill_view_link name, view, active=false, path_opts={}
-    opts = {:class=>'slotter', 'data-slot-selector'=>'.related-view > .card-body > .card-slot', :role=>'pill',
+    opts = {:class=>'slotter', :role=>'pill', 'data-slot-selector'=>'.related-view > .card-body > .card-slot',
             :path_opts=>path_opts.merge(:slot=>{:hide=>'toggle menu header'})}
-    link = view_link name, view, opts
-    "<li role='presentation' #{"class='active'" if active}>#{link}</li>"
+    li_pill view_link(name, view, opts), active
   end
 
   def pill_card_link name, card, active=false, path_opts={}
-    opts = {:text=>name, :class=>'slotter', 'data-slot-selector'=>'.related-view > .card-body > .card-slot', :role=>'pill', :remote=>true,
+    opts = {:text=>name, :role=>'pill', :remote=>true, :class=>'slotter', 'data-slot-selector'=>'.related-view > .card-body > .card-slot',
             :path_opts=>path_opts}
-    link = card_link card, opts
-    "<li role='presentation' #{"class='active'" if active}>#{link}</li>"
+    li_pill card_link(card, opts), active
   end
 
   def account_pill name, active=false, path_opts={}
-    opts = {:role=>'pill', :remote=>true, :text=>name, :path_opts=>path_opts.merge(:slot=>{:hide=>:toggle})}
-    link = card_link "#{card.name}+*#{name}", opts
-    "<li role='presentation' #{"class='active'" if active}>#{link}</li>"
+    opts = {:text=>name, :role=>'pill', :remote=>true,
+            :path_opts=>path_opts.merge(:slot=>{:hide=>:toggle})}
+    li_pill card_link("#{card.name}+*#{name}", opts), active
+  end
+
+  def li_pill content, active
+    "<li role='presentation' #{"class='active'" if active}>#{content}</li>"
   end
 
   def pill_dropdown name, items

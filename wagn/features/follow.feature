@@ -10,16 +10,17 @@ Feature: Follow interface
   Scenario: Anonymous User should not see follow UI
     Given I follow "Sign out"
     When I go to the homepage
-    And I hover over the main menu
+    And I open the main card menu
     Then I should not see "follow"
 
   Scenario: Following a Card
     Given Joe User is not watching "Home+*self"
     When I go to the homepage
-    And I click main menu
+    And I open the main card menu
     And In the main card menu I should not see "unfollow"
     And In the main card menu I click "follow"
-    And I hover over the main menu
+    And I follow "Close"
+    And I open the main card menu
     Then In the main card menu I should see "unfollow"
     And the card Home+*self+Joe User+*follow should point to "always"
 
@@ -27,22 +28,23 @@ Feature: Follow interface
     Given Joe User is watching "Home+*self"
     And the card Home+*self+Joe User+*follow should point to "always"
     And I am on the homepage
-    And I hover over the main menu
+    And I open the main card menu
     And In the main card menu I click "unfollow"
-    And I hover over the main menu
+    And I follow "Close"
+    And I open the main card menu
     Then In the main card menu I should see "follow"
     And the card Home+*self+Joe User+*follow should point to "never"
 
 
   Scenario: Following a Cardtype
     When I go to card User
-    And I hover over the main menu
-    And In the main card menu I should see "follow"
+    And I open the main card menu
+    Then In the main card menu I should see "follow"
 
   Scenario: A Card whose Cardtype is Followed
     Given Joe User is watching "User+*type"
     And I go to card Joe User
-    And I hover over the main menu
+    And I open the main card menu
     Then In the main card menu I should see "(following)|unfollow"
 
 #too long for menu

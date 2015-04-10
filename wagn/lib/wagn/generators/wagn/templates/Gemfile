@@ -16,7 +16,7 @@ gem 'execjs', '<=2.4.0' # locked because 2.5.0 requires Ruby 2
 # Macs have one included, but on other platforms you'll need this or another runtime
 # gem 'therubyracer'
 <% else -%>
-gem 'therubyracer', '0.12.1'
+gem 'therubyracer'
 <% end -%>
 
 <% if options['mod-dev'] -%>

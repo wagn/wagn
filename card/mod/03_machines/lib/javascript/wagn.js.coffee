@@ -243,10 +243,14 @@ $(window).ready ->
     $('body').on 'dblclick', 'div', (event) ->
       t = $(this)
       return false if t.closest( '.nodblclick'  )[0]
+      # fail if inside a div with "nodblclick" class
       return false if t.closest( '.card-header' )[0]
-      return false if t.find( '.card-editor' )[0]
+      # fail if inside a card header
       s = t.slot()
+      return false if s.find( '.card-editor' )[0]
+      # fail if there is an editor open in your slot
       return false unless s.data('cardId')
+      # fail if slot has not card id
       s.addClass 'slotter'
       s.attr 'href', wagn.rootPath + '/card/edit/~' + s.data('cardId')
       $.rails.handleRemote(s)

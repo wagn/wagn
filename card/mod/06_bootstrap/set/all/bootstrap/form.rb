@@ -1,13 +1,12 @@
 format :html do
   def button_tag content_or_options = nil, options = {}, &block
-    if block_given?
-      content_or_options[:class] ||= ''
-      content_or_options[:class] += ' btn btn-default'
-    else
-      options[:class] ||= ''
-      options[:class] += ' btn btn-default'
-    end
+    bootstrapify_button( block_given? ? content_or_options : options )
     super(content_or_options, options, &block)
+  end
+  
+  def bootstrapify_button options
+    situation = options.delete(:situation) || 'default'
+    options[:class] = [ options[:class], 'btn', "btn-#{situation}" ].compact*' '
   end
   
   def type_field args={}

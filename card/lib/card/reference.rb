@@ -53,7 +53,7 @@ class Card::Reference < ActiveRecord::Base
       delete_missing_referers
       
       Card.where(:trash=>false).find_each do |card|
-        Rails.logger.info "\n\n\nRepairing references for '#{card.name}' (id: #{card.id}) ... \n\n\n"
+        Rails.logger.info "\nRepairing references for '#{card.name}' (id: #{card.id}) ... "
         card.update_references 
       end
     end

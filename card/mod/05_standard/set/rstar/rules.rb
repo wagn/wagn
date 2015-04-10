@@ -65,7 +65,7 @@ format :html do
           </div>
           
           <div class="alert alert-info rule-instruction">
-            #{ process_content "{{#{setting_name}+*right+*help}}" }
+            #{ process_content "{{#{setting_name}+*right+*help|content}}" }
           </div>
           
           <div class="card-body">
@@ -208,7 +208,7 @@ format :html do
     wrap_with( :div, :class=>'button-area' ) do
      [
        delete_button,
-       button_tag( 'Submit', :class=>'rule-submit-button' ),
+       button_tag( 'Submit', :class=>'rule-submit-button', :situation=>'primary' ),
        button_tag( 'Cancel', :class=>'rule-cancel-button slotter', :type=>'button',
                              :href=>cancel_path, :success=>true ) 
      ]

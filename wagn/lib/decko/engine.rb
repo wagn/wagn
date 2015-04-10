@@ -47,7 +47,7 @@ module Decko
       end
       ActiveSupport.on_load(:after_initialize) do
           begin
-           require_dependency 'card' unless defined?(Card)
+            require_dependency 'card' unless defined?(Card)
           rescue ActiveRecord::StatementInvalid => e
             ::Rails.logger.warn "database not available[#{::Rails.env}] #{e}"
           end

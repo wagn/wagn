@@ -101,7 +101,7 @@ jQuery.fn.extend {
   autosave: ->
     slot = @slot()
     return if @attr 'no-autosave'
-    multi = @closest 'fieldset'
+    multi = @closest '.form-group'
     if multi[0]
       return unless id = multi.data 'cardId'
       reportee = ': ' + multi.data 'cardName'
@@ -199,11 +199,8 @@ $(window).ready ->
         false
 
   $('body').on 'submit', '.card-form', ->
-#    warn "on submit called"
     $(this).setContentFieldsFromMap()
-#    warn "content fields set"    
     $(this).find('.card-content').attr('no-autosave','true')
-#    warn "autosave worked"
     true
 
   $('body').on 'click', '.submitter', ->

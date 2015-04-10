@@ -9,14 +9,14 @@ gem 'wagn'
 
 <%= database_gemfile_entry -%>
 
-gem 'execjs', '~>2.4.0' # locked because 2.5.0 requires Ruby 2
+gem 'execjs', '<=2.4.0' # locked because 2.5.0 requires Ruby 2
 
 # A javascript runtime is required for JavaScript cards.
 <% if RUBY_PLATFORM =~ /darwin/ -%>
 # Macs have one included, but on other platforms you'll need this or another runtime
 # gem 'therubyracer'
 <% else -%>
-gem 'therubyracer'
+gem 'therubyracer', '0.12.1'
 <% end -%>
 
 <% if options['mod-dev'] -%>

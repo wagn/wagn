@@ -53,7 +53,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   .card-header-title {
     display: inline-block;
     overflow: hidden;
-    span.glyphicon {
+    span.header-icon {
       margin: 0px 5px;
     }
   }
@@ -81,6 +81,10 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   position: absolute;
   li {
     white-space: nowrap;
+    text-align: left;
+    a {
+      color: #333;
+    }
   }
   .dropdown-menu {
     right: -2px;
@@ -256,42 +260,6 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 /*-------------------- */
 /*- DYNAMIC ELEMENTS - */
 /*-------------------- */
-
-/* -- card menus -- */
-
-.card-menu {
-  font-size: 11px;
-  li {
-    text-align: left;
-    a {
-      color: #333;
-    }
-  }
-  .ui-menu-icon {
-    float: left;
-    margin-right: 5px;
-  }
-}
-.ui-menu .ui-menu-item {
-  padding: 2px 0;
-}
-
-.card-menu-tappable {
-  font-size: 18px;
-  .ui-menu-icon {
-    padding: 7px;
-    display: inline-block;
-    margin-right: 15px;
-    background: #666;
-    border-radius: 3px;
-    -moz-border-radius: 3px;
-    color: #fff;
-    font-size: 10px;
-  }
-  .ui-menu-icon:after {
-    content: '<';
-  }
-}
 
 
 /* related view (used by many menu items, such as "referred to by")  */

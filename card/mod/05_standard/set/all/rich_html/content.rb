@@ -78,11 +78,11 @@ format :html do
     end
     res = links.shift
     links.each_with_index do |link, index|
-      res += card_link card.cardname.parts[0..index+1].join('+'), :text=>glyphicon('plus')
+      res += card_link card.cardname.parts[0..index+1].join('+'), :text=>glyphicon('plus','header-icon')
       res += link
     end
     res += ' '
-    res.concat view_link(glyphicon('edit'),:edit_name, :class=>'slotter', 'data-toggle'=>'tooltip', :title=>'edit name')
+    res.concat view_link(glyphicon('edit','header-icon'),:edit_name, :class=>'slotter', 'data-toggle'=>'tooltip', :title=>'edit name')
     res
   end
 

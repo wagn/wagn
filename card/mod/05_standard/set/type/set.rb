@@ -3,13 +3,17 @@ format :html do
 
   view :core do |args|
     output [
-      (content_tag :h2, card.label, :class=>'set-label' unless args[:unlabeled]),
+      _optional_render(:set_label, args, :show),
       (content_tag(:div, :class=>'panel-group', :id=>'accordion', :role=>'tablist','aria-multiselectable'=>'true') do
          Card::Setting.groups.keys.map do |group_key|
            _optional_render(group_key, args, :show)
          end * "\n"
       end)
     ]
+  end
+
+  view :set_label do |args|
+    content_tag :h2, card.label, :class=>'set-label'
   end
 
   Card::Setting.groups.keys.each do |group_key|
@@ -77,7 +81,7 @@ format :html do
 
   view :template_editor_frame do |args|
     frame :no_slot=>true, :title=>card.label, :menu_hack=>:template_closer do
-      _render_core args.merge(:unlabeled=>true)
+      _render_core args.merge(:hide=>'set_label')
     end
   end
 

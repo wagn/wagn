@@ -147,7 +147,7 @@ format :html do
   end
   view :edit_nests_button do |args|
     if (nests = card.fetch(:trait=>:includes)) && nests.item_names.present?
-      pill_card_link('nests', nests, false,  :slot=>{:hide=>'header', :items=>{:view=>:options, :unlabeled=>true}})
+      pill_card_link('nests', nests, false,  :slot=>{:hide=>'header', :items=>{:view=>:options, :hide=>'set_label'}})
     end
   end
 

@@ -2,7 +2,7 @@
 require 'wagn/application'
 
 WAGN_SEED_TABLES = %w{ cards card_actions card_acts card_changes card_references }
-WAGN_SEED_PATH   = File.join( Cardio.gem_root, 'db/seed/new'
+WAGN_SEED_PATH   = File.join( Cardio.gem_root, 'db/seed/new')
 
 def prepare_migration
   Card::Cache.reset_global

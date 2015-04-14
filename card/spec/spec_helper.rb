@@ -4,7 +4,7 @@ ENV["RAILS_ENV"] = 'test'
 
 require 'timecop'
 require 'rr'
-require File.expand_path('../../db/seed/test/seed', __FILE__) # used for SharedData::Users - required here so code won't show up in coverage
+require File.expand_path('../../db/seed/test/seed.rb', __FILE__) # used for SharedData::Users - required here so code won't show up in coverage
 
 require File.expand_path( '../../lib/card/simplecov_helper.rb', __FILE__ )
 require 'simplecov'

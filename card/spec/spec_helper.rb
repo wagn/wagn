@@ -26,7 +26,7 @@ Spork.prefork do
   # in spec/support/ and its subdirectories.
 #  Dir[ File.join(Cardio.gem_root, "spec/support/**/*.rb") ].each { |f| require f }
 
-#  FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
+  FIXTURES_PATH =  File.expand_path('../../db/seed/test/fixtures', __FILE__)
   JOE_USER_ID = Card['joe_user'].id
   RSpec.configure do |config|
 

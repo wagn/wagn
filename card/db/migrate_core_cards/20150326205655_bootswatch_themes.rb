@@ -10,7 +10,7 @@ class BootswatchThemes < Card::CoreMigration
 
     Card.create! :name=>'bootswatch shared', :type_code=>:scss, :codename=>'bootswatch_shared'
     Card.create! :name=>'bootswatch theme+*right+*structure', :content=>'"{{_left+variables}}{{bootswatch shared}}{{_left+style}}"'
-    %w{cerulean cosmo cyborg darkly flatly journal lumen paper readable sandstone simplex slate spacelab superhero united yeti }+['bootstrap default'].each do |theme_name|
+    %w{bootstrap_default cerulean cosmo cyborg darkly flatly journal lumen paper readable sandstone simplex slate spacelab superhero united yeti }.each do |theme_name|
       path = data_path "themes/#{theme_name}"
       theme = Card.fetch "#{theme_name} skin"
 
@@ -20,7 +20,7 @@ class BootswatchThemes < Card::CoreMigration
           "+style"     => {:type_id=>Card::ScssID, :content=>File.read(File.join path, '_bootswatch.scss')}
         }
       else
-        Card.create! :name=>"#{theme_name} skin", :type_id=>Card::SkinID, :content => "[[themeless bootstrap skin]]\n[[+bootswatch theme]]", :subcards=> {
+        Card.create! :name=>"#{theme_name.sub('_',' ')} skin", :type_id=>Card::SkinID, :content => "[[themeless bootstrap skin]]\n[[+bootswatch theme]]", :subcards=> {
           "+variables" => {:type_id=>Card::ScssID, :content=>File.read(File.join path, '_variables.scss')},
           "+style"     => {:type_id=>Card::ScssID, :content=>File.read(File.join path, '_bootswatch.scss')}
         }

@@ -17,12 +17,12 @@ namespace :test do
     puts 'put 2'
     Rake::Task['test:functionals'].invoke
     puts 'put 3'
-    
+
     #    Rake::Task['test'].invoke
     #    Rake::Task['spec'].invoke
     #    Rake::Task['cucumber'].invoke
   end
-  
+
   ## FIXME: this generates an "Adminstrator links" card with the wrong reader_id, I have been
   ##  setting it by hand after fixture generation.
   desc "recreate test fixtures from fresh db"
@@ -57,9 +57,9 @@ namespace :test do
     # go ahead and load the fixtures into the test database
     puts ">> preparing test database"
     puts `env RELOAD_TEST_DATA=true rake db:test:prepare --trace`
-    
+
     Rake::Task['wagn:assume_card_migrations'].invoke
-    
+
   end
 
 
@@ -74,7 +74,7 @@ namespace :test do
     ActiveRecord::Base.establish_connection
     tables.each do |table_name|
       i = "000"
-      File.open("#{Cardio.gem_root}/test/fixtures/#{table_name}.yml", 'w') do |file|
+      File.open("#{Cardio.gem_root}/db/seed/test/fixtures/#{table_name}.yml", 'w') do |file|
         data = ActiveRecord::Base.connection.select_all(sql % table_name)
         file.write data.inject({}) { |hash, record|
           record['trash'] = false if record.has_key? 'trash'
@@ -89,7 +89,7 @@ namespace :test do
   desc "create sample data for testing"
   task :populate_template_database => :environment do
     puts "populate test data\n"
-    load "#{Cardio.gem_root}/test/seed.rb"
+    load "#{Cardio.gem_root}/db/seed/test/seed.rb"
     SharedData.add_test_data
   end
 

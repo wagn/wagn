@@ -21,7 +21,7 @@ describe CardController do
     it "should handle RESTful posts" do
       expect({ :put => '/mycard' }).to route_to( :controller=>'card', :action=>'update', :id=>'mycard')
       expect({ :put => '/' }).to route_to( :controller=>'card', :action=>'update')
-      
+
     end
 
     it "handle asset requests" do
@@ -47,7 +47,7 @@ describe CardController do
             :controller=>"card",:action=>"read",:id=>"random"
           )
         end
-        
+
       end
     end
   end
@@ -101,7 +101,7 @@ describe CardController do
       expect(c.type_code).to eq(:phrase)
     end
 
-    
+
 
     context "multi-create" do
       it "catches missing name error" do
@@ -179,7 +179,7 @@ describe CardController do
       get :read, {:id=>'Sample_Fako'}
       assert_response 404
     end
-    
+
     it "handles nonexistent card ids" do
       get :read, {:id=>'~9999999'}
       assert_response 404
@@ -193,9 +193,9 @@ describe CardController do
       assert_response 403
       get :read, :id=>'Strawberry', :format=>'txt'
       assert_response 403
-      
+
     end
-    
+
     context "view = new" do
       before do
         login_as 'joe_user'
@@ -218,34 +218,34 @@ describe CardController do
         get :read, :card=>{:name=>"A"}, :view=>'new'
         assert_response :success, "response should succeed"  #really?? how come this is ok?
       end
-      
+
       it "new with type_code" do
         post :read, :card => {:type=>'Date'}, :view=>'new'
         assert_response :success, "response should succeed"
         assert_equal Card::DateID, assigns['card'].type_id, "@card type should == Date"
       end
-      
+
       it "new should work for creatable nonviewable cardtype" do
         login_as :anonymous
         get :read, :type=>"Fruit", :view=>'new'
         assert_response :success
       end
-      
+
       it "should use card params name over id in new cards" do
         get :read, :id=>'my_life', :card=>{:name =>'My LIFE'}, :view=>'new'
         expect(assigns['card'].name).to eq('My LIFE')
       end
-      
+
     end
-    
-    
-    
+
+
+
     context 'css' do
       before do
         @all_style = Card[ "#{ Card[:all].name }+#{ Card[:style].name }" ]
         @all_style.reset_machine_output!
       end
-      
+
       it 'should create missing machine output file' do
         args = { :id=>@all_style.machine_output_card.name, :format=>'css', :explicit_file=>true }
         get :read, args
@@ -255,23 +255,23 @@ describe CardController do
         expect(response.status).to eq(200)
       end
     end
-    
-  
+
+
     context "file" do
       before do
         Card::Auth.as_bot do
-          Card.create :name => "mao2", :type_code=>'image', :attach=>File.new("#{Cardio.gem_root}/test/fixtures/mao2.jpg")
+          Card.create :name => "mao2", :type_code=>'image', :attach=>File.new( File.join FIXTURES_PATH, 'mao2.jpg' )
           Card.create :name => 'mao2+*self+*read', :content=>'[[Administrator]]'
         end
       end
-    
+
       it "handles image with no read permission" do
         get :read, :id=>'mao2'
         assert_response 403, "should deny html card view"
         get :read, :id=>'mao2', :format=>'jpg'
         assert_response 403, "should deny simple file view"
       end
-    
+
       it "handles image with read permission" do
         login_as :joe_admin
         get :read, :id=>'mao2'
@@ -282,8 +282,8 @@ describe CardController do
     end
 
   end
-  
-  describe "#asset" do 
+
+  describe "#asset" do
     it 'serves file' do
       filename = "asset-test.txt"
       args = { :id=>filename, :format=>'txt', :explicit_file=>true }
@@ -294,10 +294,10 @@ describe CardController do
       expect(page.body).to eq ("test\n")
       FileUtils.rm path
     end
-      
+
     it 'denies access to other directories' do
       args = { :filename => "/../../Gemfile" }
-      get :asset, args 
+      get :asset, args
       expect(response.status).to eq(404)
     end
   end
@@ -316,7 +316,7 @@ describe CardController do
         assert_response :success, "edited card"
         assert_equal 'brand new content', Card['Sample Basic'].content, "content was updated"
       end
-      
+
       it "rename without update references should work" do
         f = Card.create! :type=>"Cardtype", :name=>"Apple"
         xhr :post, :update, :id => "~#{f.id}", :card => {

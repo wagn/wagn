@@ -16,7 +16,6 @@ module Decko
     class Railtie < ::Rails::Railtie
 
       initializer 'decko-rails.load_task_path', :before => 'decko.engine.load_config_initializers' do
-        puts "dk rails #{::Rails.application.paths.inspect} #{defined? Decko::Engine}"
         Cardio.set_config ::Rails.application.config
         Cardio.set_paths ::Rails.application.paths
       end

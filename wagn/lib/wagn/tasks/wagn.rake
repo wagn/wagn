@@ -293,7 +293,7 @@ namespace :wagn do
 
       WAGN_SEED_TABLES.each do |table|
         i = "000"
-        File.open(File.join WAGN_SEED_PATH, "#{table}.yml", 'w') do |file|
+        File.open(File.join(WAGN_SEED_PATH, "#{table}.yml"), 'w') do |file|
           data = ActiveRecord::Base.connection.select_all( "select * from #{table}" )
           file.write YAML::dump( data.inject({}) do |hash, record|
             record['trash'] = false if record.has_key? 'trash'

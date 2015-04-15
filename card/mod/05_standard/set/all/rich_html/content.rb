@@ -25,7 +25,7 @@ format :html do
       ]
     end
   end
-  
+
   view :content_panel do |args|
     wrap args.reverse_merge(:slot_class=>'card-content panel panel-default') do
       wrap_with :div, :class=>'panel-body' do
@@ -38,7 +38,7 @@ format :html do
   end
 
   view :titled, :tags=>:comment do |args|
-    wrap args do   
+    wrap args do
       [
         _render_header( args ),
         wrap_body( :content=>true ) { _render_core args },
@@ -60,14 +60,30 @@ format :html do
   end
 
   view :title do |args|
-    title = fancy_title args[:title]
-    title = _optional_render( :title_link, args.merge( :title_ready=>title ), :hide ) || title
+    title = fancy_title args[:title], args[:title_class]
+    title =  _optional_render( :title_toolbar, args, (show_view?(:toolbar,args.merge(:default_visibility=>:hide)) ? :show : :hide)) ||
+             _optional_render( :title_link, args.merge( :title_ready=>title ), :hide )       ||
+             title
     add_name_context
     title
   end
 
   view :title_link do |args|
     card_link card.cardname, :text=>( args[:title_ready] || showname(args[:title]) )
+  end
+
+  view :title_toolbar do |args|
+    links = card.cardname.parts.map do |name|
+      card_link name
+    end
+    res = links.shift
+    links.each_with_index do |link, index|
+      res += card_link card.cardname.parts[0..index+1].join('+'), :text=>glyphicon('plus','header-icon')
+      res += link
+    end
+    res += ' '
+    res.concat view_link(glyphicon('edit','header-icon'),:edit_name, :class=>'slotter', 'data-toggle'=>'tooltip', :title=>'edit name')
+    res
   end
 
   view :open, :tags=>:comment do |args|
@@ -80,13 +96,13 @@ format :html do
     end
   end
 
-  
-  
-=begin  
+
+
+=begin
   view :anchor, :perms=>:none, :tags=>:unknown_ok do |args|
     %{ <a id="#{card.cardname.url_key}" name="#{card.cardname.url_key}"></a> }
   end
-=end  
+=end
 
   view :type do |args|
     klasses = ['cardtype']
@@ -113,11 +129,16 @@ format :html do
   end
 
   view :options, :tags=>:unknown_ok do |args|
-    current_set = Card.fetch( params[:current_set] || card.related_sets[0][0] )
-
     frame args do
-      subformat( current_set ).render_content
+      subformat( current_set_card ).render_content args
     end
+  end
+
+  def current_set_card
+    set_name = params[:current_set]
+    set_name ||= "#{card.name}+*type" if card.known? && card.type_id==Card::CardtypeID
+    set_name ||= "#{card.name}+*self"
+    Card.fetch(set_name)
   end
 
 
@@ -130,9 +151,11 @@ format :html do
         :view          => ( rparams[:view] || :open ),
         :optional_toggle => :hide,
         :optional_help => :show,
-        :optional_menu => :show
+        :optional_menu => :show,
+        :parent => card
       }
-      
+      nest_args.merge! ( rparams[:slot] || {} ).deep_symbolize_keys
+
       nest_args[:optional_comment_box] = :show if rparams[:name] == '+discussion' #fixme.  yuck!
 
       frame args do
@@ -140,7 +163,7 @@ format :html do
       end
     end
   end
-  
+
   view :help, :tags=>:unknown_ok do |args|
     text = if args[:help_text]
       args[:help_text]
@@ -157,7 +180,7 @@ format :html do
     %{<div class="#{klass}">#{raw text}</div>} if text
   end
 
-  
+
   view :last_action do |args|
     action_type = case ( action = card.last_act.action_on(card.id) and action.action_type )
     when :create then 'added'
@@ -171,14 +194,14 @@ format :html do
         #{ _render_acted_at }
         ago by
         #{ subformat(card.last_actor)._render_link }
-      </span> 
+      </span>
     }
   end
 
   private
 
-  def fancy_title title=nil
-    raw %{<span class="card-title">#{ showname(title).to_name.parts.join %{<span class="joint">+</span>} }</span>}
+  def fancy_title title=nil, title_class=nil
+    raw %{<span class="card-title#{" #{title_class}"if title_class}">#{ showname(title).to_name.parts.join %{<span class="joint">+</span>} }</span>}
   end
 end
 

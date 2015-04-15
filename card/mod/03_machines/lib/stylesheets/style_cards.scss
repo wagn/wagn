@@ -22,7 +22,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 .card-frame,
 .card-body,
 .ALL {
-  overflow: auto;
+  overflow: inherit;
   white-space: normal;
 }
 
@@ -41,7 +41,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 .confirm_update_all-view,
 .follow-updater,
 .admin-error-message,
-.labeled-view .card-menu-link {  
+.labeled-view .card-menu-link {
   display: none
 }
 
@@ -49,28 +49,96 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 /* -- card-headers and menus--*/
 
 .card-header {
+  position: relative;
   .card-header-title {
     display: inline-block;
     overflow: hidden;
+    span.header-icon {
+      margin: 0px 5px;
+    }
   }
   .toggler {
     display: inline-block;
     position: relative;
   }
+  span.menu-item-label {
+    margin-left: 5px;
+  }
 }
+
+.card-header-title {
+  margin-right: 3px;
+}
+
+.card-menu.btn-group {
+  position: absolute;
+  right: 5px;
+}
+
+
 .card-menu {
   display: none;
   position: absolute;
-  z-index: 1005;
   li {
     white-space: nowrap;
+    text-align: left;
+    a {
+      color: #333;
+    }
+  }
+  .dropdown-menu {
+    right: -2px;
+    top: 18px;
+    min-width: 110px;
+  }
+  .dropdown-menu:before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid white;
+    position: absolute;
+    top: -5px;
+    right: 2px;
   }
 }
+
+.horizontal-card-menu {
+  li {
+    height: 30px;
+  }
+  .btn {
+    padding: 6px 12px;
+  }
+}
+
 .card-menu-link {
-  margin-left: 5px;
-  display: inline-block; 
+  display: inline-block;
   float: right;
 }
+.dropdown-menu {
+  z-index: 1005;
+}
+
+.navbar.toolbar {
+  margin-bottom: 0;
+}
+.toolbar {
+  .related.dropdown-menu {
+    min-width: 435px;
+    li {
+      float: left;
+    }
+  }
+  .navbar-text span.glyphicon {
+    margin-left: 5px;
+  }
+  span.menu-item-label {
+    margin-left: 5px;
+  }
+}
+
 
 
 /*-- closed and labeled views --*/
@@ -85,7 +153,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 .closed-content {
   display: inline;
   white-space: nowrap !important;
-  
+
   table, thead, tbody, tr, th, td, p, h1, h2, h3, h4, h5, h6, ul, li, pre, ol, div, span, a, blockquote, img, label, i {
     display: inline !important;
     white-space: nowrap !important;
@@ -130,7 +198,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 
 .navbox-item-label {
   float: left;
-  position: relative;  
+  position: relative;
 }
 
 
@@ -172,7 +240,7 @@ It includes basic styling for:
   3. views that by definition alter default styling (closed, labeled)
   4. errors / warnings / notices
   5. key default content for new installs (home page, sidebar)
-  
+
 Most colors are greyscale; any that aren't are explained with comments beginning with "NOTGREY"
 
 Note that this CSS is taken from code so that it will be updated automatically with releases.
@@ -185,7 +253,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 .card-frame {
   text-align: left;
   font-weight: normal;
-  font-style: normal;  
+  font-style: normal;
 }
 
 
@@ -193,42 +261,6 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 /*- DYNAMIC ELEMENTS - */
 /*-------------------- */
 
-/* -- card menus -- */
-
-.card-menu {
-  font-size: 11px;
-  li {
-    text-align: right;
-    a {
-      color: #333;
-    }
-  }
-  .ui-menu-icon {
-    float: left;
-    margin-right: 5px;
-  }
-}
-.ui-menu .ui-menu-item {
-  padding: 2px 0;
-}
-
-.card-menu-tappable {
-  font-size: 18px;
-  .ui-menu-icon {
-    padding: 7px;
-    display: inline-block;
-    margin-right: 15px;
-    background: #666;
-    border-radius: 3px;
-    -moz-border-radius: 3px;
-    color: #fff;
-    font-size: 10px;
-  }
-  .ui-menu-icon:after {
-    content: '<';
-  }
-}
- 
 
 /* related view (used by many menu items, such as "referred to by")  */
 
@@ -246,7 +278,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
       padding: 8px 2%;
    }
  }
-} 
+}
 
 /* navboxes */
 
@@ -369,15 +401,15 @@ textarea {
     display: inline-block;
     position: relative;
   }
-  
+
   .pointer-item-add {
     margin-top: 10px;
   }
-  
+
   .input-group-addon.handle {
     padding-left: 1px;
     padding-right: 1px;
-    
+
     .glyphicon-option-vertical.left {
       margin-right: -7px;
     }
@@ -463,14 +495,14 @@ $act-gray:  #b7b7b7;
   float: left;
 }
 
-.act {    
+.act {
   .head {
     float: left;
     margin-right:10px;
     min-width: 175px;
   }
   .nr {
-    float: left;   
+    float: left;
   }
   .title {
     float: left;
@@ -484,7 +516,7 @@ $act-gray:  #b7b7b7;
     float:left;
     clear:left;
   }
-  
+
   .action-container {
     overflow: hidden;
   }
@@ -506,7 +538,7 @@ $act-gray:  #b7b7b7;
     margin: 12px 10px 0px 10px;
     width: 20px;
   }
-/*  
+/*
   .name-diff {
     color: #000;
     border-style: solid;
@@ -533,23 +565,23 @@ $act-gray:  #b7b7b7;
       padding: 6px 0px;
     }
   }
- 
+
   .arrow-down {
-  	width: 0; 
-  	height: 0; 
+  	width: 0;
+  	height: 0;
   	border-left: 7px solid transparent;
   	border-right: 7px solid transparent;
   	border-top: 11px solid $act-gray;
     display: block;
   }
   .arrow-right {
-  	width: 0; 
-  	height: 0; 
+  	width: 0;
+  	height: 0;
   	border-top: 7px solid transparent;
   	border-bottom: 7px solid transparent;
   	border-left: 11px solid $act-gray;
     display: block;
-  } 
+  }
   .info {
     font-style: italic;
   }
@@ -604,7 +636,7 @@ $act-gray:  #b7b7b7;
 
 
 #credit, /* these are both deprecated */
-.flash-notice {  
+.flash-notice {
   color: #333;
   font-size: 1.1em;
   background: #fff;
@@ -643,7 +675,7 @@ $act-gray:  #b7b7b7;
   }
   aside {
     float: right;
-    border: 1px solid #999;  
+    border: 1px solid #999;
     background: white;
     width: 33%;
     padding: 1em;
@@ -836,7 +868,7 @@ table.show-cache td {
 
 /* note said this is o non-ie browsers do better with image floats.  looks over-specified.
 html>body .open-view {
-  width: auto;  
+  width: auto;
 }
 */
 

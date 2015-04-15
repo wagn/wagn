@@ -2,34 +2,59 @@
 format :html do
 
   view :core do |args|
-    body = card.setting_codenames_by_group.map do |group, data|
-      next if group.nil? || data.nil?
-      group_name = Card::Setting.group_names[group] || group.to_s
-      content_tag(:tr, :class=>"rule-group") do
-        (["#{group_name} Rules"]+%w{Content Set}).map do |heading|
-          content_tag(:th, :class=>'rule-heading') { heading }
-        end * "\n"
-      end +
-      raw( data.map do |setting|
-        rule_card = card.fetch(:trait=>setting, :new=>{})
-        nest rule_card, :view=>:closed_rule
-      end * "\n" )
-    end.compact * ''
-    %{
-      #{
-        unless args[:unlabeled]
-          %{ <h2 class="set-label">#{ card.label }</h2> }
-        end
-      }
-      #{ content_tag('table', :class=>'set-rules') { body } }
-    }
+    output [
+      _optional_render(:set_label, args, :show),
+      (content_tag(:div, :class=>'panel-group', :id=>'accordion', :role=>'tablist','aria-multiselectable'=>'true') do
+         Card::Setting.groups.keys.map do |group_key|
+           _optional_render(group_key, args, :show)
+         end * "\n"
+      end)
+    ]
   end
 
+  view :set_label do |args|
+    content_tag :h2, card.label, :class=>'set-label'
+  end
+
+  Card::Setting.groups.keys.each do |group_key|
+    view group_key.to_sym do |args|
+      settings = card.visible_settings group_key
+      if settings.present?
+        group_name =  Card::Setting.group_names[group_key] || group.to_s
+        heading_id = "heading-#{group_key}"
+        collapse_id = "collpase-#{group_key}"
+        output [
+          (content_tag :div, :class=>'panel panel-default' do
+            content_tag :div, :class=>'panel-heading', :role=>'tab', :id=>heading_id do
+              content_tag :h4, :class=>'panel-title' do
+                content_tag :a, group_name, 'data-toggle'=>'collapse', 'data-parent'=>'#accordion', :href=>"##{collapse_id}", 'aria-expanded'=>'false', 'aria-controls'=>collapse_id
+              end
+            end
+          end),
+          (content_tag :div, :id=>collapse_id, :class=>'panel-collapse collapse', :role=>'tabpanel', 'aria-labelledby'=>heading_id do
+            wrap_with :table, :class=>'set-rules table' do
+              [
+                (content_tag(:tr, :class=>"rule-group") do
+                  wrap_each_with :th, %w(Setting Content Set), :class=>'rule-heading'
+                end),
+                (settings.map do |setting|
+                  if show_view? setting.codename, args
+                    rule_card = card.fetch(:trait=>setting.codename, :new=>{})
+                    nest(rule_card, :view=>:closed_rule).html_safe
+                  end
+                end * "\n")
+              ]
+            end
+          end)
+        ]
+      end
+    end
+  end
 
   view :editor do |args|
     'Cannot currently edit Sets' #ENGLISH
   end
-  
+
   view :template_link do |args|
     args.delete :style
     wrap args do
@@ -37,33 +62,33 @@ format :html do
       "{{#{link}}}"
     end
   end
-  
+
   view :template_closer do |args|
     view_link '', :template_link, :class=>'slotter glyphicon glyphicon-remove template-editor-close'
   end
-  
+
   view :template_editor do |args|
     wrap args do
       %{
-        <div class="template-editor-left">{{</div> 
+        <div class="template-editor-left">{{</div>
         <div class="template-editor-main">
           #{ render_template_editor_frame args }
         </div>
-        <div class="template-editor-right">}}</div> 
+        <div class="template-editor-right">}}</div>
       }
     end
   end
-  
+
   view :template_editor_frame do |args|
     frame :no_slot=>true, :title=>card.label, :menu_hack=>:template_closer do
-      _render_core args.merge(:unlabeled=>true)
+      _render_core args.merge(:hide=>'set_label')
     end
   end
-  
+
   view :closed_content do |args|
     ''
   end
-  
+
 end
 
 
@@ -150,7 +175,7 @@ end
 
 def setting_codenames_by_group
   result = {}
-  Card::Setting.groups.each do |group, settings| 
+  Card::Setting.groups.each do |group, settings|
     visible_settings = settings.reject { |s| !s or !s.applies_to_cardtype(prototype.type_id) }
     unless visible_settings.empty?
       result[group] = visible_settings.map { |s| s.codename }
@@ -159,12 +184,18 @@ def setting_codenames_by_group
   result
 end
 
-def all_members_followed? 
+def visible_settings group
+  Card::Setting.groups[group].reject do |setting|
+    !setting or !setting.applies_to_cardtype(prototype.type_id)
+  end
+end
+
+def all_members_followed?
   all_members_followed_by? Auth.current_id
 end
 
 def all_members_followed_by? user_id = nil
-  if !prototype.followed_by? user_id  
+  if !prototype.followed_by? user_id
     return false
   elsif set_followed_by? user_id
     return true
@@ -183,7 +214,7 @@ def set_followed?
 end
 
 def set_followed_by? user_id = nil
-  return  ( user_id && (user = Card.find(user_id)) && Card.fetch(follow_rule_name(user.name)) ) || 
+  return  ( user_id && (user = Card.find(user_id)) && Card.fetch(follow_rule_name(user.name)) ) ||
           Card.fetch(follow_rule_name)
 end
 

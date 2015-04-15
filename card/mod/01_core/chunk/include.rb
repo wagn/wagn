@@ -80,7 +80,7 @@ module Card::Chunk
       replace_name_reference old_name, new_name
       @text = "{{#{ [ @name.to_s, @opt_lists ].compact * '|' }}}"
     end
-    
+
     def explicit_view= view
       unless @options[:view] #could check to make sure it's not already the default...
         if @text =~ /\|/

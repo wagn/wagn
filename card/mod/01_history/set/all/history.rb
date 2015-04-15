@@ -195,7 +195,7 @@ format :html do
         link_to name_changes(action, hide_diff),
                 path(:view=>:related, :related=>{:view=>"history",:name=>action.card.name}),
                 :class=>'slotter label-label-default',
-                :slotSelector=>".card-slot.card-frame",
+                'data-slot-selector'=>".card-slot.card-frame",
                 :remote=>true
       end
 
@@ -275,7 +275,7 @@ format :html do
   def rollback_link action_ids
     if card.ok?(:update)
       "| " + link_to('Save as current', path(:action=>:update, :view=>:open, :action_ids=>action_ids),
-        :class=>'slotter',:slotSelector=>'.card-slot.card-frame', :remote=>true, :method=>:post, :rel=>'nofollow')
+        :class=>'slotter','data-slot-selector'=>'.card-slot.card-frame', :remote=>true, :method=>:post, :rel=>'nofollow')
     end
   end
 

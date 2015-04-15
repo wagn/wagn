@@ -63,7 +63,7 @@ describe Card::HtmlFormat do
       it "renders card content" do
         assert_view_select @simple_page, 'div[class="card-body panel-body card-content ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]', 'AlphaBeta'
       end
- 
+
       it "renders card credit" do
         assert_view_select @simple_page, 'div[class~="SELF-Xcredit"]' do#, /Wheeled by/ do
           assert_select 'img'
@@ -81,7 +81,7 @@ describe Card::HtmlFormat do
         c = Card['*all+*layout'] and c.content = '[[tmp layout]]'
         @main_card = Card.fetch('Joe User')
         Card::Env[:main_name] = @main_card.name
-        
+
         #warn "lay #{@layout_card.inspect}, #{@main_card.inspect}"
       end
 
@@ -115,20 +115,20 @@ describe Card::HtmlFormat do
         @layout_card.content="Mainly {{_main|core}}"
         Card::Auth.as_bot { @layout_card.save }
 
-        rendered = expect(@layout_card.format.render(:layout)).to eq( 
+        rendered = expect(@layout_card.format.render(:layout)).to eq(
           %{Mainly <div id="main"><div class="CodeRay">\n  <div class="code"><pre>Mainly {{_main|core}}</pre></div>\n</div>\n</div>}
         )
           #probably better to check that it matches "Mainly" exactly twice.
       end
-      
-      
+
+
       it "should handle nested _main references" do
         Card::Auth.as_bot do
           @layout_card.content="{{outer space|core}}"
           @layout_card.save!
           Card.create :name=>"outer space", :content=>"{{_main|name}}"
         end
-        
+
         expect(@layout_card.format.render(:layout)).to eq('Joe User')
       end
     end

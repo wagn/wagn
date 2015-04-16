@@ -75,11 +75,12 @@ format :html do
     follow_rule_card = Card.fetch(card.default_follow_set_card.follow_rule_name( Auth.current.name ), :new=>{})
     opts = {
       :title           => hash[:title],
-      :class           => 'follow-link',
+      :class           => "follow-link #{args[:html_args].delete(:class) if args[:html_args]}",
       'data-path'      => hash[:path],
       'data-toggle'    => 'modal',
       'data-target'    => "#modal-#{card.cardname.safe_key}",
     }
+    opts.merge(args[:html_args]) if args[:html_args]
     link_to text, hash[:path], opts
   end
 

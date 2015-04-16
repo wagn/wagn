@@ -13,45 +13,73 @@ format :html do
   end
 
   view :vertical_menu, :tags=>:unknown_ok do |args|
+    items = menu_item_list(args).map {|item| "<li class='#{args[:item_class]}'>#{item}</li>"}.join "\n"
     content_tag :div, :class=>'btn-group slotter pull-right card-menu' do
       %{
         <span class="open-menu dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
           <a href='#'>#{ glyphicon args[:menu_icon] }</a>
         </span>
         <ul class="dropdown-menu" role="menu">
-          #{ _render_menu_item_list(args) }
+          #{ items }
         </ul>
-        #{ nest( card, :view=>:modal_slot) if args[:show_menu_item][:follow] }
+        #{ _render_modal_slot(args) if args[:show_menu_item][:follow] }
       }.html_safe
     end
   end
 
   view :horizontal_menu do |args|
     content_tag :ul, :class=>'btn-group slotter pull-right card-menu horizontal-card-menu' do
-      _render_menu_item_list(args.merge(:item_class=>'btn btn-default')).html_safe
-    end.concat "#{nest( card, :view=>:modal_slot) if args[:show_menu_item][:follow]}".html_safe
+      menu_item_list(args.merge(:html_args=>{:class=>'btn btn-default'})).join("\n").html_safe
+    end.concat "#{ _render_modal_slot(args) if args[:show_menu_item][:follow]}".html_safe
   end
 
-  view :menu_item_list do |args|
-    disc_tagname = Card.fetch(:discussion, :skip_modules=>true).cardname
-    home_view = args[:home_view] || :open
+  def menu_item_list args
     menu_items = []
-    menu_items << menu_item('edit', 'edit', :view=>:related,
-                                            :path_opts=>{:related=>{:name=>card.name,:view=>:edit,:slot=>{:hide=>'header'}},
-                                                         :slot=>{:show=>'edit_toolbar structure_link',
-                                                                 :hide=>'type_link'}})           if args[:show_menu_item][:edit]
-    menu_items << menu_item('discuss', 'comment', :related=>{:name=>disc_tagname})               if args[:show_menu_item][:discuss]
-    menu_items << render_follow_modal_link                                                       if args[:show_menu_item][:follow]
-    menu_items << menu_item('page', 'new-window', :page=>card)                                   if args[:show_menu_item][:page]
-    menu_items << menu_item('account', 'user', :related=>{:name=>'+*account',:view=>:edit},
-                                               :path_opts=>{:slot=>{:show=>:account_toolbar}})   if args[:show_menu_item][:account]
-    menu_items << menu_item('', 'option-horizontal',:view=>home_view,
-                                                    :path_opts=>{:slot=>{:show=>:toolbar}})      if args[:show_menu_item][:more]
-    menu_items.map {|item| "<li class='#{args[:item_class]}'>#{item}</li>"}.join "\n"
+    menu_items << menu_edit_link(args)            if args[:show_menu_item][:edit]
+    menu_items << menu_discuss_link(args)         if args[:show_menu_item][:discuss]
+    menu_items << _render_follow_modal_link(args) if args[:show_menu_item][:follow]
+    menu_items << menu_page_link(args)            if args[:show_menu_item][:page]
+    menu_items << menu_account_link(args)         if args[:show_menu_item][:account]
+    menu_items << menu_more_link(args)            if args[:show_menu_item][:more]
+    menu_items
   end
 
-  def menu_item text, icon, target
+  def menu_edit_link args
+    opts = {
+             :view=>:related,
+             :path_opts=>{ :related=>{:name=>card.name, :view=>:edit, :slot=>{:hide=>'header'}},
+                           :slot=>{:show=>'edit_toolbar structure_link', :hide=>'type_link'}}
+           }
+    menu_item('edit', 'edit', opts, args[:html_args] )
+  end
+
+  def menu_discuss_link args
+    disc_tagname = Card.fetch(:discussion, :skip_motdules=>true).cardname
+    opts = {:related=>{:name=>disc_tagname}}
+    menu_item('discuss', 'comment', opts, args[:html_args])
+  end
+
+  def menu_page_link args
+    opts = {:page=>card}
+    menu_item('page', 'new-window', opts, args[:html_args])
+  end
+
+  def menu_account_link args
+    opts = {:related=>{:name=>'+*account',:view=>:edit},
+            :path_opts=>{:slot=>{:show=>:account_toolbar}} }
+    menu_item('account', 'user',opts, args[:html_args])
+  end
+
+  def menu_more_link args
+        home_view = args[:home_view] || :open
+    opts = {:view=>home_view,
+            :path_opts=>{:slot=>{:show=>:toolbar}}}
+    menu_item('', 'option-horizontal', opts, args[:html_args])
+  end
+
+  def menu_item text, icon, target, html_args
     link_text = "#{glyphicon(icon)}<span class='menu-item-label'>#{text}</span>".html_safe
+    target.merge!(html_args) if html_args
     if target[:view]
       view_link(link_text, target.delete(:view), target)
     elsif target[:page]

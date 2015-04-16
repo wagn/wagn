@@ -1,6 +1,6 @@
 format :html do
   view :toolbar do |args|
-    navbar 'toolbar', {}, :class=>"navbar-inverse slotter toolbar" do
+    navbar 'toolbar', {}, :class=>"slotter toolbar", :navbar_type=>'inverse' do
       [
         (wrap_with(:p, :class=>"navbar-text navbar-left") do
           [
@@ -28,7 +28,7 @@ format :html do
   end
 
   view :edit_toolbar do |args|
-    navbar 'edit-toolbar', {}, :class=>'navbar-inverse slotter toolbar' do
+    navbar 'edit-toolbar', {}, :class=>'slotter toolbar', :navbar_type=>'inverse' do
       [
         content_tag(:span, 'Edit:', :class=>"navbar-text"),
         (wrap_with :ul, :class=>'nav navbar-nav nav-pills' do
@@ -60,7 +60,7 @@ format :html do
       links << account_pill( 'created')
       links << account_pill( 'edited')
       links << account_pill( 'follow')
-      navbar 'account-toolbar', {}, :class=>"navbar-inverse slotter toolbar", 'data-slot-selector'=>'.related-view > .card-body > .card-slot' do
+      navbar 'account-toolbar', {}, :navbar_type=>'inverse', :class=>"slotter toolbar", 'data-slot-selector'=>'.related-view > .card-body > .card-slot' do
         [
           content_tag(:ul, links.join("\n").html_safe, :class=>'nav navbar-nav nav-pills'),
           content_tag(:ul, "<li>#{view_link(glyphicon('remove'), :open)}</li>".html_safe, :class=>'nav navbar-nav navbar-right'),

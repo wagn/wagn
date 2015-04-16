@@ -80,7 +80,8 @@ format :html do
       'data-toggle'    => 'modal',
       'data-target'    => "#modal-#{card.cardname.safe_key}",
     }
-    link_to text, hash[:path], opts.merge(args[:html_args])
+    opts.merge(args[:html_args]) if args[:html_args]
+    link_to text, hash[:path], opts
   end
 
 end

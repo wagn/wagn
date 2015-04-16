@@ -48,7 +48,7 @@ format :html do
     "<h4>#{_render_title args.merge(:title_class=>'modal-title')}</h4>"
   end
 
-  view :modal do |args||
+  view :modal do |args|
     _render_modal_slot args.merge(:optional_modal_content=>:show)
   end
 end

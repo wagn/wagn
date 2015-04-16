@@ -4,7 +4,9 @@ format :html do
   end
 
   view :modal_link do |args|
-    link_to(_render_title(args), "#modal-#{card.cardname.safe_key}", 'data-toggle'=>'modal')
+    args[:html_args] ||= {}
+    args[:html_args].merge!('data-target'=>"#modal-#{card.cardname.safe_key}", 'data-toggle'=>'modal')
+    link_to(args[:text] || _render_title(args), path(:view=>:modal_content), args[:html_args])
   end
 
   view :modal_link_and_dialog do |args|
@@ -43,7 +45,7 @@ format :html do
   end
 
   view :modal_title do |args|
-    _render_title args.merge(:title_class=>'modal-title')
+    "<h4>#{_render_title args.merge(:title_class=>'modal-title')}</h4>"
   end
 
   view :modal do |args|

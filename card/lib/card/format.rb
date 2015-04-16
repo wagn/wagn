@@ -171,7 +171,6 @@ class Card
       case method
       when /(_)?(optional_)?render(_(\w+))?/
         view = $3 ? $4 : opts.shift
-        puts "View: #{view}, Card #{card}"
         args = opts[0] ? opts.shift.clone : {}
         args.merge!( :optional=>true, :default_visibility=>opts.shift) if $2
         args[ :skip_permissions ] = true if $1

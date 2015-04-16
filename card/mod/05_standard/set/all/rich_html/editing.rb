@@ -74,13 +74,14 @@ format :html do
 
 
   def default_edit_args args
-    args[:optional_help] = :show
+    args[:optional_help] ||= :show
 
-    args[:buttons] = %{
+    args[:buttons] ||= %{
       #{ button_tag 'Submit', :class=>'submit-button', :disable_with=>'Submitting', :situation=>'primary' }
       #{ button_tag 'Cancel', :class=>'cancel-button slotter', :href=>path, :type=>'button' }
     }
   end
+
 
   view :edit_name, :perms=>:update do |args|
     frame_and_form( { :action=>:update, :id=>card.id }, args, 'main-success'=>'REDIRECT' ) do

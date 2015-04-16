@@ -22,7 +22,7 @@ format :html do
         <ul class="dropdown-menu" role="menu">
           #{ items }
         </ul>
-        #{ nest( card, :view=>:modal_slot) if args[:show_menu_item][:follow] }
+        #{ _render_modal_slot(args) if args[:show_menu_item][:follow] }
       }.html_safe
     end
   end
@@ -30,7 +30,7 @@ format :html do
   view :horizontal_menu do |args|
     content_tag :ul, :class=>'btn-group slotter pull-right card-menu horizontal-card-menu' do
       menu_item_list(args.merge(:html_args=>{:class=>'btn btn-default'})).join("\n").html_safe
-    end.concat "#{nest( card, :view=>:modal_slot) if args[:show_menu_item][:follow]}".html_safe
+    end.concat "#{ _render_modal_slot(args) if args[:show_menu_item][:follow]}".html_safe
   end
 
   def menu_item_list args

@@ -1,14 +1,14 @@
 format :html do
   view :menu, :tags=>:unknown_ok do |args|
     return _render_template_closer if args[:menu_hack] == :template_closer
-    _optional_render(:horizontal_menu, args,:hide) || _render_menu_link(args)
+    _optional_render(:horizontal_menu, args, :hide) || _render_menu_link(args)
   end
 
   view :menu_link do |args|
     path_opts = {:slot => {:home_view=>args[:home_view]}}
     path_opts[:is_main] = true if main?
     content_tag :div, :class=>'btn-group pull-right slotter card-slot card-menu ' do
-      view_link(glyphicon('cog'), :vertical_menu, :path_opts=>path_opts).html_safe
+      view_link(glyphicon(args[:menu_icon]), :vertical_menu, :path_opts=>path_opts).html_safe
     end
   end
 
@@ -16,7 +16,7 @@ format :html do
     content_tag :div, :class=>'btn-group slotter pull-right card-menu' do
       %{
         <span class="open-menu dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-          <a href='#'>#{ glyphicon 'cog' }</a>
+          <a href='#'>#{ glyphicon args[:menu_icon] }</a>
         </span>
         <ul class="dropdown-menu" role="menu">
           #{ _render_menu_item_list(args) }
@@ -40,7 +40,7 @@ format :html do
                                             :path_opts=>{:related=>{:name=>card.name,:view=>:edit,:slot=>{:hide=>'header'}},
                                                          :slot=>{:show=>'edit_toolbar structure_link',
                                                                  :hide=>'type_link'}})           if args[:show_menu_item][:edit]
-    menu_items << menu_item('discuss', 'comment', :related=>disc_tagname)                        if args[:show_menu_item][:discuss]
+    menu_items << menu_item('discuss', 'comment', :related=>{:name=>disc_tagname})               if args[:show_menu_item][:discuss]
     menu_items << render_follow_modal_link                                                       if args[:show_menu_item][:follow]
     menu_items << menu_item('page', 'new-window', :page=>card)                                   if args[:show_menu_item][:page]
     menu_items << menu_item('account', 'user', :related=>{:name=>'+*account',:view=>:edit},
@@ -71,7 +71,12 @@ format :html do
     end
   end
 
+  def default_menu_link_args args
+    args[:menu_icon] ||= 'cog'
+  end
+
   def default_vertical_menu_args args
+    default_menu_link_args args
     args.merge! :show_menu_item=>show_menu_items
   end
   def default_horizontal_menu_args args

@@ -47,9 +47,12 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 
 
 /* -- card-headers and menus--*/
+.closed-wrapper {
+  position: relative;
+}
+
 
 .card-header {
-  position: relative;
   .card-header-title {
     display: inline-block;
     overflow: hidden;
@@ -146,6 +149,8 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 .closed-view {
   white-space: nowrap !important;
   overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 30px;
   .card-header {
     display: inline-block;
   }

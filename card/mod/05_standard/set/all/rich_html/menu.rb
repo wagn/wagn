@@ -74,7 +74,7 @@ format :html do
     menu_item('', 'option-horizontal', opts, args[:html_args])
   end
 
-  def menu_item text, icon, target, html_args
+  def menu_item text, icon, target, html_args=nil
     link_text = "#{glyphicon(icon)}<span class='menu-item-label'>#{text}</span>".html_safe
     target.merge!(html_args) if html_args
     if target[:view]

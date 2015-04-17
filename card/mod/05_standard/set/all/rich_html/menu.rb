@@ -14,7 +14,7 @@ format :html do
 
   view :vertical_menu, :tags=>:unknown_ok do |args|
     items = menu_item_list(args).map {|item| "<li class='#{args[:item_class]}'>#{item}</li>"}.join "\n"
-    content_tag :div, :class=>'btn-group slotter pull-right card-menu' do
+    content_tag :ul, :class=>'btn-group slotter pull-right card-menu' do
       %{
         <span class="open-menu dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
           <a href='#'>#{ glyphicon args[:menu_icon] }</a>
@@ -28,7 +28,7 @@ format :html do
   end
 
   view :horizontal_menu do |args|
-    content_tag :ul, :class=>'btn-group slotter pull-right card-menu horizontal-card-menu' do
+    content_tag :div, :class=>'btn-group slotter pull-right card-menu horizontal-card-menu' do
       menu_item_list(args.merge(:html_args=>{:class=>'btn btn-default'})).join("\n").html_safe
     end.concat "#{ _render_modal_slot(args) if args[:show_menu_item][:follow]}".html_safe
   end
@@ -54,26 +54,23 @@ format :html do
   end
 
   def menu_discuss_link args
-    disc_tagname = Card.fetch(:discussion, :skip_motdules=>true).cardname
-    opts = {:related=>{:name=>disc_tagname}}
-    menu_item('discuss', 'comment', opts, args[:html_args])
+    disc_tagname = Card.fetch(:discussion, :skip_motdules=>true).name
+    menu_item('discuss', 'comment', {:related=>disc_tagname}, args[:html_args])
   end
 
   def menu_page_link args
-    opts = {:page=>card}
-    menu_item('page', 'new-window', opts, args[:html_args])
+    menu_item('page', 'new-window', {:page=>card}, args[:html_args])
   end
 
   def menu_account_link args
-    opts = {:related=>{:name=>'+*account',:view=>:edit},
-            :path_opts=>{:slot=>{:show=>:account_toolbar}} }
+    opts = { :related=>{:name=>'+*account',:view=>:edit},
+             :path_opts=>{:slot=>{:show=>:account_toolbar}} }
     menu_item('account', 'user',opts, args[:html_args])
   end
 
   def menu_more_link args
-        home_view = args[:home_view] || :open
-    opts = {:view=>home_view,
-            :path_opts=>{:slot=>{:show=>:toolbar}}}
+    opts = { :view=>args[:home_view] || :open,
+             :path_opts=>{:slot=>{:show=>:toolbar}}}
     menu_item('', 'option-horizontal', opts, args[:html_args])
   end
 

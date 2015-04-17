@@ -73,14 +73,14 @@ format :html do
     hash = follow_link_hash args
     text = %[#{glyphicon 'flag'}<span class="follow-verb menu-item-label">#{hash[:verb]}</span>]
     follow_rule_card = Card.fetch(card.default_follow_set_card.follow_rule_name( Auth.current.name ), :new=>{})
-    opts = {
+    opts = args[:html_args] || {}
+    opts.merge!(
       :title           => hash[:title],
-      :class           => "follow-link #{args[:html_args].delete(:class) if args[:html_args]}",
       'data-path'      => hash[:path],
       'data-toggle'    => 'modal',
       'data-target'    => "#modal-#{card.cardname.safe_key}",
-    }
-    opts.merge(args[:html_args]) if args[:html_args]
+    )
+    opts[:class] = "follow-link #{opts[:class]}"
     link_to text, hash[:path], opts
   end
 

@@ -65,7 +65,7 @@ format :html do
   def menu_account_link args
     opts = { :related=>{:name=>'+*account',:view=>:edit},
              :path_opts=>{:slot=>{:show=>:account_toolbar}} }
-    menu_item('account', 'user',opts, args[:html_args])
+    menu_item('account', 'user',opts, args[:html_args].clone)
   end
 
   def menu_more_link args

@@ -151,6 +151,9 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 30px;
+  .card-menu.btn-group {
+    display: none;
+  }
   .card-header {
     display: inline-block;
   }

@@ -244,11 +244,6 @@ $(window).ready ->
   $('body').on 'click', '.submit-modal', ->
     $(this).closest('.modal-content').find('form').submit()
 
-  $('body').on 'mouseover', '.closed-view', ->
-    $(this).find('.card-menu').show()
-  $('body').on 'mouseleave', '.closed-view', ->
-    $(this).find('.card-menu').hide()
-
   #wagn_org mod (for now)
   $('body').on 'click', '.shade-view h1', ->
     toggleThis = $(this).slot().find('.shade-content').is ':hidden'

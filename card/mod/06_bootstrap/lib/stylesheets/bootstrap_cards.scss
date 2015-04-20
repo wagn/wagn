@@ -85,12 +85,11 @@ body.mceContentBody {
 
 /*---------- Card menu ------------*/
 
-.card-slot > .card-header .card-menu-link {
+.card-slot > .card-header .card-menu {
   display: none;
 }
-.card-slot.closed-view,
 .card-slot:hover {
-  > .card-header .card-menu-link {
+  > .card-header .card-menu {
     display: inline-block;
   }
 }

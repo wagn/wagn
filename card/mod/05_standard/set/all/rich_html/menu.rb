@@ -54,7 +54,7 @@ format :html do
   end
 
   def menu_discuss_link args
-    disc_tagname = Card.fetch(:discussion, :skip_motdules=>true).name
+    disc_tagname = Card.fetch(:discussion, :skip_modules=>true).name
     menu_item('discuss', 'comment', {:related=>disc_tagname}, args[:html_args])
   end
 

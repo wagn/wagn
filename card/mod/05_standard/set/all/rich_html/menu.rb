@@ -54,7 +54,7 @@ format :html do
   end
 
   def menu_discuss_link args
-    disc_tagname = Card.fetch(:discussion, :skip_motdules=>true).name
+    disc_tagname = Card.fetch(:discussion, :skip_modules=>true).name
     menu_item('discuss', 'comment', {:related=>disc_tagname}, args[:html_args])
   end
 
@@ -65,7 +65,7 @@ format :html do
   def menu_account_link args
     opts = { :related=>{:name=>'+*account',:view=>:edit},
              :path_opts=>{:slot=>{:show=>:account_toolbar}} }
-    menu_item('account', 'user',opts, args[:html_args].clone)
+    menu_item('account', 'user',opts, args[:html_args])
   end
 
   def menu_more_link args

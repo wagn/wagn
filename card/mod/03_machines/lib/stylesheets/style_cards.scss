@@ -24,6 +24,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 .ALL {
   overflow: inherit;
   white-space: normal;
+  position: relative;
 }
 
 /* NOTE: we recommend against styling ".card-slot", which is heavily used by javascript */
@@ -150,6 +151,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   white-space: nowrap !important;
   overflow: hidden;
   text-overflow: ellipsis;
+  position: static;
   padding-right: 30px;
   .card-header {
     display: inline-block;

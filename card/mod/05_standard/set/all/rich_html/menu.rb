@@ -118,17 +118,17 @@ format :html do
       :structure  => show_structure?,
       :discuss    => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read ),
       :page       => !main?,
-      :more       => true
+      :more       => !card.new_card?
     }
     if card.real?
       res.merge!(
-        :edit      => card.ok?(:update) || show_structure?,
+        :edit      => !card.new_card? && (card.ok?(:update) || show_structure?),
         :account   => card.account && card.ok?(:update),
         :follow    => show_follow?,
         :delete    => card.ok?(:delete)
       )
     else
-      res[:edit] = res[:structure]
+      res[:edit] = !card.new_card? && res[:structure]
     end
     res
   end

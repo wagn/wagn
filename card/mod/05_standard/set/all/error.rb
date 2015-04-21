@@ -4,7 +4,7 @@ format do
   view :closed_missing, :perms=>:none, :closed=>true do |args|
     ''
   end
-  
+
   view :missing, :perms=>:none do |args|
     ''
   end
@@ -32,7 +32,7 @@ format do
 
   view :too_slow, :perms=>:none, :closed=>true do |args|
     %{ Timed out! #{ showname } took too long to load. }
-  end 
+  end
 end
 
 
@@ -44,13 +44,13 @@ format :html do
     else                               super
     end
   end
-  
+
   def commentable? view, args
-    self.class.tagged view, :comment                                   and 
+    self.class.tagged view, :comment                                   and
     show_view? :comment_box, args.merge( :default_visibility=>:hide )  and #developer or wagneer has overridden default
     ok? :comment
   end
-  
+
   def rendering_error exception, view
     details = if Auth.always_ok?
                 card_link(error_cardname, :class=>'render-error-link') +
@@ -67,7 +67,7 @@ format :html do
               else
                 error_cardname
               end
-                 
+
     content_tag :span, :class=>'render-error alert alert-danger' do
       [
         'error rendering',
@@ -80,7 +80,7 @@ format :html do
   def unsupported_view view
     "<strong>view <em>#{view}</em> not supported for <em>#{error_cardname}</em></strong>"
   end
-  
+
   view :message, :perms=>:none, :tags=>:unknown_ok do |args|
     frame args do
       params[:message]
@@ -102,9 +102,9 @@ format :html do
   view :closed_missing, :perms=>:none do |args|
     %{<span class="faint"> #{ showname } </span>}
   end
-  
-  
-  
+
+
+
   view :conflict, :error_code=>409 do |args|
     # FIXME: hack to get the conflicted update as a proper act for the diff view
     card.current_act.save
@@ -112,7 +112,7 @@ format :html do
     action.card_act_id = card.current_act.id
     action.draft = true
     action.save
-    card.store_changes  # deletes action if there are no changes 
+    card.store_changes  # deletes action if there are no changes
 
     # as a consequence card.current_act.actions can be empty when both users made exactly the same changes
     # but an act is always supposed to have at least one action, so we have to delete the act to avoid bad things
@@ -134,22 +134,22 @@ format :html do
                 "No difference between your changes and #{card.last_action.act.actor.name}'s version."
               end
             end
-           } 
+           }
         }
       end
     end
   end
-  
+
   view :errors, :perms=>:none do |args|
     if card.errors.any?
       title = %{ Problems #{%{ with #{card.name} } unless card.name.blank?} }
-      frame args.merge(:slot_class=>"panel panel-warning", :title=>title, :hide=>'menu' ) do
+      frame args.merge(:panel_class=>"panel panel-warning", :title=>title, :hide=>'menu' ) do
         card.errors.map do |attrib, msg|
           msg = "<strong>#{attrib.to_s.upcase}:</strong> #{msg}" unless attrib == :abort
           alert 'warning', :dismissible=>true, :alert_class=>'card-error-msg' do
             msg
           end
-        end  
+        end
       end
     end
   end
@@ -210,5 +210,5 @@ format :html do
     </body>
     }
   end
-  
+
 end

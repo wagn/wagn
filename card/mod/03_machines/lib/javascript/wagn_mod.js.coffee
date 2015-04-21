@@ -241,6 +241,9 @@ $(window).ready ->
 #    $(this).closest('tr').find('.close-rule-link').click()
 
 
+  $('body').on 'click', '.submit-modal', ->
+    $(this).closest('.modal-content').find('form').submit()
+
   #wagn_org mod (for now)
   $('body').on 'click', '.shade-view h1', ->
     toggleThis = $(this).slot().find('.shade-content').is ':hidden'

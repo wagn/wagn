@@ -3,10 +3,7 @@ format :html do
     navbar 'toolbar', {}, :class=>"slotter toolbar", :navbar_type=>'inverse' do
       [
         (wrap_with(:p, :class=>"navbar-text navbar-left") do
-          [
-            _optional_render(:type_link,args,:show),
-            _optional_render(:structure_link,args,:hide)
-          ]
+          _optional_render(:type_link,args,:show)
         end),
         (wrap_with :ul, :class=>'nav navbar-nav navbar-right' do
           wrap_each_with :li do
@@ -60,7 +57,7 @@ format :html do
       links << account_pill( 'created')
       links << account_pill( 'edited')
       links << account_pill( 'follow')
-      navbar 'account-toolbar', {}, :navbar_type=>'inverse', :class=>"slotter toolbar", 'data-slot-selector'=>'.related-view > .card-body > .card-slot' do
+      navbar 'account-toolbar', {}, :navbar_type=>'inverse', :class=>"slotter toolbar", 'data-slot-selector'=>'.related-view > .card-frame > .card-body > .card-slot' do
         [
           content_tag(:ul, links.join("\n").html_safe, :class=>'nav navbar-nav nav-pills'),
           content_tag(:ul, "<li>#{view_link(glyphicon('remove'), :open)}</li>".html_safe, :class=>'nav navbar-nav navbar-right'),
@@ -151,21 +148,10 @@ format :html do
     end
   end
 
-
   view :type_link do |args|
     card_link(card.type_name, :text=>"Type: #{card.type_name}", :class=>'navbar-link') +
       view_link(glyphicon('edit'),'edit_type', :class=>'navbar-link slotter', 'data-toggle'=>'tooltip', :title=>'edit type')
   end
-
-  view :structure_link do |args|
-    if show_structure?
-      card_link(card.structure, :text=>"Structure: #{card.structure.left.label}", :class=>'navbar-link') +
-        card_link(card.structure, :path_opts=>{:view=>:edit}, :text=>glyphicon('edit'), :class=>'navbar-link')
-    else
-      ''
-    end
-  end
-
 
   def toolbar_button text, symbol, hide, target
     btn_class = 'btn btn-default'
@@ -183,13 +169,13 @@ format :html do
   end
 
   def pill_view_link name, view, active=false, path_opts={}
-    opts = {:class=>'slotter', :role=>'pill', 'data-slot-selector'=>'.related-view > .card-body > .card-slot',
+    opts = {:class=>'slotter', :role=>'pill', 'data-slot-selector'=>'.related-view > .card-frame > .card-body > .card-slot',
             :path_opts=>path_opts.merge(:slot=>{:hide=>'toggle menu header'})}
     li_pill view_link(name, view, opts), active
   end
 
   def pill_card_link name, card, active=false, path_opts={}
-    opts = {:text=>name, :role=>'pill', :remote=>true, :class=>'slotter', 'data-slot-selector'=>'.related-view > .card-body > .card-slot',
+    opts = {:text=>name, :role=>'pill', :remote=>true, :class=>'slotter', 'data-slot-selector'=>'.related-view > .card-frame > .card-body > .card-slot',
             :path_opts=>path_opts}
     li_pill card_link(card, opts), active
   end

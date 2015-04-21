@@ -25,7 +25,7 @@ textarea, input {
   line-height: 1.5em;
 }
 
-/* 
+/*
 the following gives users more explicit control over spacing within tinyMCE
 but leads to lots of empty paragraph tags
 */
@@ -74,13 +74,13 @@ form {
   > .card-header {
     background: $header_color;
     padding: 5px 12px;
-  }  
+  }
   > .card-body {
     padding: 5px 12px;
   }
   > .instruction {
     background: #ccc;
-  }  
+  }
 }
 
 .card-header > .instruction {
@@ -122,10 +122,10 @@ select {
   border-left: 2px solid #666;
   background: $input_color;
   :focus {
-    background: $input_focus_color;    
+    background: $input_focus_color;
   }
 }
-.history-view > .card-content,
+.history-view > .card-frame > .card-content,
 .conflict-view,
 body#tinymce {
   background: $input_color;

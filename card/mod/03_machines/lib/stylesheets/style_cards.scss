@@ -159,7 +159,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
     white-space: nowrap !important;
     float: none !important;
   }
-  br, hr, input, textarea, object {
+  br, hr, input, textarea, object, :after, :before {
     display: none !important;
   }
 }

@@ -1,6 +1,7 @@
 format :html do
-  view :menu, :tags=>:unknown_ok do |args|
+  view :menu, :denial=>:blank, :tags=>:unknown_ok do |args|
     return _render_template_closer if args[:menu_hack] == :template_closer
+    return '' if card.unknown?
     _optional_render(:horizontal_menu, args, :hide) || _render_menu_link(args)
   end
 
@@ -14,7 +15,7 @@ format :html do
 
   view :vertical_menu, :tags=>:unknown_ok do |args|
     items = menu_item_list(args).map {|item| "<li class='#{args[:item_class]}'>#{item}</li>"}.join "\n"
-    content_tag :ul, :class=>'btn-group slotter pull-right card-menu vertical-card-men' do
+    content_tag :ul, :class=>'btn-group slotter pull-right card-menu vertical-card-menu' do
       %{
         <span class="open-menu dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
           <a href='#'>#{ glyphicon args[:menu_icon] }</a>
@@ -39,6 +40,7 @@ format :html do
     menu_items << menu_discuss_link(args)         if args[:show_menu_item][:discuss]
     menu_items << _render_follow_modal_link(args) if args[:show_menu_item][:follow]
     menu_items << menu_page_link(args)            if args[:show_menu_item][:page]
+    menu_items << menu_rules_link(args)           if args[:show_menu_item][:rules]
     menu_items << menu_account_link(args)         if args[:show_menu_item][:account]
     menu_items << menu_more_link(args)            if args[:show_menu_item][:more]
     menu_items
@@ -48,7 +50,7 @@ format :html do
     opts = {
              :view=>:related,
              :path_opts=>{ :related=>{:name=>card.name, :view=>:edit, :slot=>{:hide=>'header'}},
-                           :slot=>{:show=>'edit_toolbar structure_link', :hide=>'type_link'}}
+                           :slot=>{:show=>'edit_toolbar', :hide=>'type_link'}}
            }
     menu_item('edit', 'edit', opts, args[:html_args] )
   end
@@ -60,6 +62,10 @@ format :html do
 
   def menu_page_link args
     menu_item('page', 'new-window', {:page=>card}, args[:html_args])
+  end
+
+  def menu_rules_link args
+    menu_item('rules', 'wrench', {:view=>:options}, args[:html_args])
   end
 
   def menu_account_link args
@@ -115,20 +121,18 @@ format :html do
     end
 
     res = {
-      :structure  => show_structure?,
       :discuss    => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read ),
-      :page       => !main?,
-      :more       => !card.new_card?
+      :page       => card.name.present? && !main?,
+      :rules      => card.virtual?
     }
     if card.real?
       res.merge!(
-        :edit      => !card.new_card? && (card.ok?(:update) || show_structure?),
+        :edit      => card.ok?(:update) || show_structure?,
         :account   => card.account && card.ok?(:update),
         :follow    => show_follow?,
-        :delete    => card.ok?(:delete)
+        :delete    => card.ok?(:delete),
+        :more      => true
       )
-    else
-      res[:edit] = !card.new_card? && res[:structure]
     end
     res
   end

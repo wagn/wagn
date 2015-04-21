@@ -7,14 +7,14 @@ format :html do
   view :menu_link do |args|
     path_opts = {:slot => {:home_view=>args[:home_view]}}
     path_opts[:is_main] = true if main?
-    content_tag :div, :class=>'btn-group pull-right slotter card-slot card-menu ' do
+    content_tag :div, :class=>'btn-group pull-right slotter card-slot card-menu vertical-card-menu' do
       view_link(glyphicon(args[:menu_icon]), :vertical_menu, :path_opts=>path_opts).html_safe
     end
   end
 
   view :vertical_menu, :tags=>:unknown_ok do |args|
     items = menu_item_list(args).map {|item| "<li class='#{args[:item_class]}'>#{item}</li>"}.join "\n"
-    content_tag :ul, :class=>'btn-group slotter pull-right card-menu' do
+    content_tag :ul, :class=>'btn-group slotter pull-right card-menu vertical-card-men' do
       %{
         <span class="open-menu dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
           <a href='#'>#{ glyphicon args[:menu_icon] }</a>

@@ -214,6 +214,7 @@ Then /I submit$/ do
 end
 
 When /^I open the main card menu$/ do
+  page.find('#main .card-slot').hover
   page.find('#main .card-menu a').click
 end
 

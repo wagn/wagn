@@ -48,11 +48,6 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 
 
 /* -- card-headers and menus--*/
-.closed-wrapper {
-  position: relative;
-}
-
-
 .card-header {
   .card-header-title {
     display: inline-block;
@@ -81,7 +76,6 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 
 
 .card-menu {
-  display: none;
   position: absolute;
   li {
     white-space: nowrap;
@@ -117,10 +111,6 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   }
 }
 
-.card-menu-link {
-  display: inline-block;
-  float: right;
-}
 .dropdown-menu {
   z-index: 1005;
 }
@@ -148,11 +138,14 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 /*-- closed and labeled views --*/
 
 .closed-view {
-  white-space: nowrap !important;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  position: static;
-  padding-right: 30px;
+  position: relative;
+  > .card-frame {
+    white-space: nowrap !important;
+    padding-right: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: static;
+  }
   .card-menu.btn-group {
     display: none;
   }
@@ -174,7 +167,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   }
 }
 
-.labeled-view:hover .card-menu-link {
+.labeled-view:hover .card-menu {
   display: inline-block;
 }
 
@@ -274,20 +267,24 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 
 /* related view (used by many menu items, such as "referred to by")  */
 
-.related-view > .card-body  {
- background: #bbb;
- padding: 5px;
- > .ALL  {
-   background: #fff;
-   > .card-header {
-     background: #ddd;
-     padding: 5px;
-     color: #000;
-   }
-   > .card-body {
-      padding: 8px 2%;
-   }
- }
+.related-view {
+  > .card-frame, & {
+    > .card-body  {
+      background: #bbb;
+      padding: 5px;
+      > .ALL  {
+        background: #fff;
+        > .card-header {
+          background: #ddd;
+          padding: 5px;
+          color: #000;
+        }
+        > .card-body {
+          padding: 8px 2%;
+        }
+      }
+    }
+  }
 }
 
 /* navboxes */
@@ -455,6 +452,9 @@ div.search-result-list {
   list-style: none;
   padding: 5px 0;
   margin: 0;
+  .closed-view > .card-frame {
+    margin-bottom: 0;
+  }
 }
 div.pointer-list .pointer-item,
 div.search-result-list .search-result-item {

@@ -60,7 +60,7 @@ format :html do
       links << account_pill( 'created')
       links << account_pill( 'edited')
       links << account_pill( 'follow')
-      navbar 'account-toolbar', {}, :navbar_type=>'inverse', :class=>"slotter toolbar", 'data-slot-selector'=>'.related-view > .card-body > .card-slot' do
+      navbar 'account-toolbar', {}, :navbar_type=>'inverse', :class=>"slotter toolbar", 'data-slot-selector'=>'.related-view > .card-frame > .card-body > .card-slot' do
         [
           content_tag(:ul, links.join("\n").html_safe, :class=>'nav navbar-nav nav-pills'),
           content_tag(:ul, "<li>#{view_link(glyphicon('remove'), :open)}</li>".html_safe, :class=>'nav navbar-nav navbar-right'),
@@ -189,7 +189,7 @@ format :html do
   end
 
   def pill_card_link name, card, active=false, path_opts={}
-    opts = {:text=>name, :role=>'pill', :remote=>true, :class=>'slotter', 'data-slot-selector'=>'.related-view > .card-body > .card-slot',
+    opts = {:text=>name, :role=>'pill', :remote=>true, :class=>'slotter', 'data-slot-selector'=>'.related-view > .card-frame > .card-body > .card-slot',
             :path_opts=>path_opts}
     li_pill card_link(card, opts), active
   end

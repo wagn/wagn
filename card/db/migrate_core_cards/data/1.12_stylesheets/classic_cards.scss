@@ -1,4 +1,4 @@
-/* 
+/*
 This stylesheet defines the core rules of the "classic" Wagn look.
 */
 
@@ -35,7 +35,7 @@ body {
   > .instruction {
     color: #440;
     background: #ddc;
-  }  
+  }
 }
 
 
@@ -55,9 +55,13 @@ body {
 }
 
 
-.errors-view > .card-body {
-  border: 2px solid #b44;
-  background: #ffb;
+.errors-view {
+  > .card-frame, & {
+    > .card-body {
+      border: 2px solid #b44;
+      background: #ffb;
+    }
+  }
 }
 
 

@@ -15,7 +15,6 @@ format :html do
     JSON( options_hash )
   end
 
-
   def wrap args = {}
     classes = [
       ( 'card-slot' unless args[:no_slot] ),
@@ -46,15 +45,22 @@ format :html do
     end
   end
 
+  def panel args={}
+    wrap_with :div, :class=>"card-frame #{args[:panel_class]}" do
+      output(yield)
+    end
+  end
+
   def frame args={}
-    args[:slot_class] = "card-frame #{args[:slot_class]}"
     wrap args do
-      %{
-        #{ _optional_render :header, args, :show }
-        #{ %{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader] }
-        #{ _optional_render :help, args.merge(:help_class=>'alert alert-info'), :hide }
-        #{ wrap_body args do output( yield args ) end }
-      }
+      panel args do
+        [
+          _optional_render( :header, args, :show),
+          (%{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader]),
+          _optional_render( :help, args.merge(:help_class=>'alert alert-info'), :hide),
+          wrap_body(args) { output( yield args ) } ,
+        ]
+      end
     end
   end
 

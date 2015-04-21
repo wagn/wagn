@@ -213,12 +213,8 @@ Then /I submit$/ do
     click_button("Submit")
 end
 
-When /^I hover over the main menu$/ do
-  page.execute_script "$('#main > .card-slot > .card-header > .card-menu-link').trigger('mouseenter')"
-end
-
 When /^I open the main card menu$/ do
-  find('#main .card-menu a').click()
+  page.find('#main .card-menu a').click
 end
 
 When /^I pick (.*)$/ do |menu_item|

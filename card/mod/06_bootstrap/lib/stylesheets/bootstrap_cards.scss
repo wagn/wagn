@@ -86,9 +86,11 @@ body.mceContentBody {
 /*---------- Card menu ------------*/
 
 .card-slot {
-  > .card-frame, & {
-    > .card-header .card-menu {
-      display: none;
+  &.closed-view, &.labeled-view {
+    > .card-frame, & {
+      > .card-header .card-menu {
+        display: none;
+      }
     }
   }
 }

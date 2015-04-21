@@ -186,7 +186,7 @@ $(window).ready ->
       type : 'GET'
       dataType : 'json'
       success : (data) ->
-        tags = modal.closest('.card-menu').find('.follow-link')
+        tags = $(modal).parent().find('.follow-link')
         tags.find('.follow-verb').html data.verb
         tags.attr 'href', data.path
         tags.attr 'title', data.title
@@ -205,7 +205,7 @@ $(window).ready ->
         'success[id]'   : anchor.data('card_key')
       }
       success : (data) ->
-        tags = anchor.closest('.card-menu').find('.follow-toggle')
+        tags = anchor.closest('.modal').parent().find('.follow-toggle')
         tags.find('.follow-verb').html data.verb
         tags.attr 'title', data.title
         tags.removeClass( 'follow-toggle-on follow-toggle-off').addClass data.class

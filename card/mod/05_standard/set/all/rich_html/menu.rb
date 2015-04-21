@@ -2,7 +2,8 @@ format :html do
   view :menu, :denial=>:blank, :tags=>:unknown_ok do |args|
     return _render_template_closer if args[:menu_hack] == :template_closer
     return '' if card.unknown?
-    _optional_render(:horizontal_menu, args, :hide) || _render_menu_link(args)
+    (_optional_render(:horizontal_menu, args, :hide) || _render_menu_link(args)) +
+      _render_modal_slot(args)
   end
 
   view :menu_link do |args|
@@ -15,23 +16,19 @@ format :html do
 
   view :vertical_menu, :tags=>:unknown_ok do |args|
     items = menu_item_list(args).map {|item| "<li class='#{args[:item_class]}'>#{item}</li>"}.join "\n"
-    content_tag :ul, :class=>'btn-group slotter pull-right card-menu vertical-card-menu' do
-      %{
-        <span class="open-menu dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-          <a href='#'>#{ glyphicon args[:menu_icon] }</a>
-        </span>
-        <ul class="dropdown-menu" role="menu">
-          #{ items }
-        </ul>
-        #{ _render_modal_slot(args) if args[:show_menu_item][:follow] }
-      }.html_safe
+    wrap_with :ul, :class=>'btn-group slotter pull-right card-menu vertical-card-menu' do
+      [
+        content_tag( :span, "<a href='#'>#{ glyphicon args[:menu_icon] }</a>".html_safe,
+                     :class=>'open-menu dropdown-toggle', 'data-toggle'=>'dropdown', 'aria-expanded'=>'false'),
+        content_tag( :ul, items.html_safe, :class=>'dropdown-menu', :role=>'menu')
+      ]
     end
   end
 
   view :horizontal_menu do |args|
     content_tag :div, :class=>'btn-group slotter pull-right card-menu horizontal-card-menu' do
       menu_item_list(args.merge(:html_args=>{:class=>'btn btn-default'})).join("\n").html_safe
-    end.concat "#{ _render_modal_slot(args) if args[:show_menu_item][:follow]}".html_safe
+    end
   end
 
   def menu_item_list args

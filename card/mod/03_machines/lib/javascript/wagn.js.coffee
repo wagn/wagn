@@ -35,11 +35,15 @@ $.extend wagn,
 jQuery.fn.extend {
   slot: ->
     if @data('slot-selector')
-      close = @closest(@data('slot-selector'))
-      if close.length == 0
+      target_slot = @closest(@data('slot-selector'))
+      parent_slot = @closest '.card-slot'
+      while target_slot.length == 0 and parent_slot.length > 0
+        target_slot = $(parent_slot).find(@data('slot-selector'))
+        parent_slot = $(parent_slot).parent().closest '.card-slot'
+      if target_slot.length == 0
         $('body').find(@data('slot-selector'))
       else
-        close
+        target_slot
     else
       @closest '.card-slot'
 

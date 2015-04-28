@@ -58,10 +58,7 @@ format :html do
                       %{
                         <h3>Error message (visible to admin only)</h3>
                         <p><strong>#{ exception.message }</strong></p>
-                        <div>
-                          #{exception.backtrace * "<br>\n"}
-                        </div>
-                        </div>
+                        <div>#{exception.backtrace * "<br>\n"}</div>
                       }
                   end
               else

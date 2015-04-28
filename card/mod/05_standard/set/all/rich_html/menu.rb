@@ -53,8 +53,7 @@ format :html do
   end
 
   def menu_discuss_link args
-    disc_tagname = Card.fetch(:discussion, :skip_modules=>true).name
-    menu_item('discuss', 'comment', {:related=>disc_tagname}, args[:html_args])
+    menu_item('discuss', 'comment', { :related=>Card[:discussion].name }, args[:html_args])
   end
 
   def menu_page_link args
@@ -124,10 +123,9 @@ format :html do
     }
     if card.real?
       res.merge!(
-        :edit      => card.ok?(:update) || show_structure?,
+        :edit      => card.ok?(:update) || structure_editable?,
         :account   => card.account && card.ok?(:update),
         :follow    => show_follow?,
-        :delete    => card.ok?(:delete),
         :more      => true
       )
     end

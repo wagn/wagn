@@ -45,7 +45,7 @@ format :html do
     Auth.signed_in? && !card.new_card?
   end
 
-  def show_structure?
+  def structure_editable?
     card.structure && card.template.ok?(:update)
   end
 

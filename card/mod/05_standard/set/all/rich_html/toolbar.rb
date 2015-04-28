@@ -133,7 +133,7 @@ format :html do
     pill_view_link( 'type', 'edit_type')
   end
   view :edit_rules_button do |args|
-    if show_structure?
+    if structure_editable?
       rule_items = []
       rule_items << pill_card_link('structure', card.structure, false, :view=>:edit, :slot=>{:hide=>:toggle})
       rule_items << pill_view_link('...', 'options')

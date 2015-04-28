@@ -24,7 +24,6 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 .ALL {
   overflow: inherit;
   white-space: normal;
-  position: relative;
 }
 
 /* NOTE: we recommend against styling ".card-slot", which is heavily used by javascript */
@@ -60,8 +59,56 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
     display: inline-block;
     position: relative;
   }
+}
+
+.menu-slot {
+  width:100%;
+  position: relative;
+
   span.menu-item-label {
     margin-left: 5px;
+  }
+
+  .card-menu.btn-group {
+    position: absolute;
+    right: 5px;
+  }
+
+  .card-menu {
+    position: absolute;
+    z-index: 1;
+    li {
+      white-space: nowrap;
+      text-align: left;
+      a {
+        color: #333;
+      }
+    }
+    .dropdown-menu {
+      right: -2px;
+      top: 18px;
+      min-width: 110px;
+    }
+    .dropdown-menu:before {
+      content: "";
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 5px solid white;
+      position: absolute;
+      top: -5px;
+      right: 2px;
+    }
+  }
+
+  .horizontal-card-menu {
+    li {
+      height: 30px;
+    }
+    .btn {
+      padding: 6px 12px;
+    }
   }
 }
 
@@ -69,48 +116,6 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   margin-right: 3px;
 }
 
-.card-menu.btn-group {
-  position: absolute;
-  right: 5px;
-}
-
-
-.card-menu {
-  position: absolute;
-  z-index: 1;
-  li {
-    white-space: nowrap;
-    text-align: left;
-    a {
-      color: #333;
-    }
-  }
-  .dropdown-menu {
-    right: -2px;
-    top: 18px;
-    min-width: 110px;
-  }
-  .dropdown-menu:before {
-    content: "";
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 5px solid white;
-    position: absolute;
-    top: -5px;
-    right: 2px;
-  }
-}
-
-.horizontal-card-menu {
-  li {
-    height: 30px;
-  }
-  .btn {
-    padding: 6px 12px;
-  }
-}
 
 .dropdown-menu {
   z-index: 1005;
@@ -133,7 +138,6 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
     margin-left: 5px;
   }
 }
-
 
 
 /*-- closed and labeled views --*/

@@ -86,17 +86,13 @@ body.mceContentBody {
 /*---------- Card menu ------------*/
 
 .card-slot {
-  > .card-frame, & {
-    > .card-header .card-menu.vertical-card-menu {
-      display: none;
-    }
+  > .menu-slot .card-menu.vertical-card-menu {
+    display: none;
   }
 }
 .card-slot:hover {
-  > .card-frame, & {
-    > .card-header .card-menu.vertical-card-menu {
-      display: inline-block;
-    }
+  > .menu-slot .card-menu.vertical-card-menu {
+    display: inline-block;
   }
 }
 

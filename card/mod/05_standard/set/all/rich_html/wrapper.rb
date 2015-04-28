@@ -53,14 +53,17 @@ format :html do
 
   def frame args={}
     wrap args do
-      panel args do
-        [
-          _optional_render( :header, args, :show),
-          (%{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader]),
-          _optional_render( :help, args.merge(:help_class=>'alert alert-info'), :hide),
-          wrap_body(args) { output( yield args ) } ,
-        ]
-      end
+      [
+        _optional_render( :menu, args ),
+        panel(args) do
+          [
+            _optional_render( :header, args, :show),
+            (%{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader]),
+            _optional_render( :help, args.merge(:help_class=>'alert alert-info'), :hide),
+            wrap_body(args) { output( yield args ) } ,
+          ]
+        end
+      ]
     end
   end
 

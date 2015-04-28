@@ -37,6 +37,8 @@ jQuery.fn.extend {
     if @data('slot-selector')
       target_slot = @closest(@data('slot-selector'))
       parent_slot = @closest '.card-slot'
+
+      # if slot-selector doesn't apply to a child, search in all parent slots and finally in the body
       while target_slot.length == 0 and parent_slot.length > 0
         target_slot = $(parent_slot).find(@data('slot-selector'))
         parent_slot = $(parent_slot).parent().closest '.card-slot'

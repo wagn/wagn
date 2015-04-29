@@ -1,36 +1,34 @@
 format :html do
-  view :menu, :tags=>:unknown_ok do |args|
+  view :menu, :denial=>:blank, :tags=>:unknown_ok do |args|
     return _render_template_closer if args[:menu_hack] == :template_closer
-    _optional_render(:horizontal_menu, args, :hide) || _render_menu_link(args)
+    return '' if card.unknown?
+    (_optional_render(:horizontal_menu, args, :hide) || _render_menu_link(args)) +
+      _render_modal_slot(args)
   end
 
   view :menu_link do |args|
     path_opts = {:slot => {:home_view=>args[:home_view]}}
     path_opts[:is_main] = true if main?
-    content_tag :div, :class=>'btn-group pull-right slotter card-slot card-menu ' do
+    content_tag :div, :class=>'btn-group pull-right slotter card-slot card-menu vertical-card-menu' do
       view_link(glyphicon(args[:menu_icon]), :vertical_menu, :path_opts=>path_opts).html_safe
     end
   end
 
   view :vertical_menu, :tags=>:unknown_ok do |args|
     items = menu_item_list(args).map {|item| "<li class='#{args[:item_class]}'>#{item}</li>"}.join "\n"
-    content_tag :ul, :class=>'btn-group slotter pull-right card-menu' do
-      %{
-        <span class="open-menu dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-          <a href='#'>#{ glyphicon args[:menu_icon] }</a>
-        </span>
-        <ul class="dropdown-menu" role="menu">
-          #{ items }
-        </ul>
-        #{ _render_modal_slot(args) if args[:show_menu_item][:follow] }
-      }.html_safe
+    wrap_with :ul, :class=>'btn-group slotter pull-right card-menu vertical-card-menu' do
+      [
+        content_tag( :span, "<a href='#'>#{ glyphicon args[:menu_icon] }</a>".html_safe,
+                     :class=>'open-menu dropdown-toggle', 'data-toggle'=>'dropdown', 'aria-expanded'=>'false'),
+        content_tag( :ul, items.html_safe, :class=>'dropdown-menu', :role=>'menu')
+      ]
     end
   end
 
   view :horizontal_menu do |args|
     content_tag :div, :class=>'btn-group slotter pull-right card-menu horizontal-card-menu' do
       menu_item_list(args.merge(:html_args=>{:class=>'btn btn-default'})).join("\n").html_safe
-    end.concat "#{ _render_modal_slot(args) if args[:show_menu_item][:follow]}".html_safe
+    end
   end
 
   def menu_item_list args
@@ -39,6 +37,7 @@ format :html do
     menu_items << menu_discuss_link(args)         if args[:show_menu_item][:discuss]
     menu_items << _render_follow_modal_link(args) if args[:show_menu_item][:follow]
     menu_items << menu_page_link(args)            if args[:show_menu_item][:page]
+    menu_items << menu_rules_link(args)           if args[:show_menu_item][:rules]
     menu_items << menu_account_link(args)         if args[:show_menu_item][:account]
     menu_items << menu_more_link(args)            if args[:show_menu_item][:more]
     menu_items
@@ -48,18 +47,22 @@ format :html do
     opts = {
              :view=>:related,
              :path_opts=>{ :related=>{:name=>card.name, :view=>:edit, :slot=>{:hide=>'header'}},
-                           :slot=>{:show=>'edit_toolbar structure_link', :hide=>'type_link'}}
+                           :slot=>{:show=>'edit_toolbar', :hide=>'type_link'}}
            }
     menu_item('edit', 'edit', opts, args[:html_args] )
   end
 
   def menu_discuss_link args
-    disc_tagname = Card.fetch(:discussion, :skip_motdules=>true).name
+    disc_tagname = Card.fetch(:discussion, :skip_modules=>true).name
     menu_item('discuss', 'comment', {:related=>disc_tagname}, args[:html_args])
   end
 
   def menu_page_link args
     menu_item('page', 'new-window', {:page=>card}, args[:html_args])
+  end
+
+  def menu_rules_link args
+    menu_item('rules', 'wrench', {:view=>:options}, args[:html_args])
   end
 
   def menu_account_link args
@@ -115,20 +118,18 @@ format :html do
     end
 
     res = {
-      :structure  => show_structure?,
       :discuss    => disc_card && disc_card.ok?( disc_card.new_card? ? :comment : :read ),
-      :page       => !main?,
-      :more       => true
+      :page       => card.name.present? && !main?,
+      :rules      => card.virtual?
     }
     if card.real?
       res.merge!(
         :edit      => card.ok?(:update) || show_structure?,
         :account   => card.account && card.ok?(:update),
         :follow    => show_follow?,
-        :delete    => card.ok?(:delete)
+        :delete    => card.ok?(:delete),
+        :more      => true
       )
-    else
-      res[:edit] = res[:structure]
     end
     res
   end

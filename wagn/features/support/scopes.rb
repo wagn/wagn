@@ -4,16 +4,16 @@ module ScopeHelpers
     case section
 
     when /main card content/
-      '#main > .card-slot > .card-content'
+      '#main > .card-slot > .card-frame > .card-content'
 
     when /pointer card content/
-      '#main > .card-slot > .card-content > .pointer-list'
+      '#main > .card-slot > .card-frame > .card-content > .pointer-list'
 
     when /main card header/
-      '#main > .card-slot > .card-header'
+      '#main > .card-slot > .card-frame > .card-header'
 
     when /main card menu/
-      '#main > .card-slot .card-menu'
+      '#main > .card-slot > .card-frame > .card-header .card-menu'
 
     else
       raise "Can't find mapping from \"#{section}\" to a scope.\n" +

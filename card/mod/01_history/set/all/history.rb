@@ -95,7 +95,7 @@ end
 
 format :html do
   view :history do |args|
-    frame args.merge(:body_class=>"history-slot list-group", :content=>true, :subheader=>_render_revision_subheader ) do
+    frame args.merge(:body_class=>"history-slot list-group", :content=>true, :subheader=>revision_subheader ) do
       _render_revisions
     end
   end
@@ -109,7 +109,7 @@ format :html do
     end.join
   end
 
-  view :revision_subheader do |args|
+  def revision_subheader
     intr = card.intrusive_acts.page(params['page']).per(REVISIONS_PER_PAGE)
     render_haml :intr=>intr do
       %{
@@ -195,7 +195,7 @@ format :html do
         link_to name_changes(action, hide_diff),
                 path(:view=>:related, :related=>{:view=>"history",:name=>action.card.name}),
                 :class=>'slotter label-label-default',
-                'data-slot-selector'=>".card-slot.card-frame",
+                'data-slot-selector'=>".card-slot.history-view",
                 :remote=>true
       end
 
@@ -275,7 +275,7 @@ format :html do
   def rollback_link action_ids
     if card.ok?(:update)
       "| " + link_to('Save as current', path(:action=>:update, :view=>:open, :action_ids=>action_ids),
-        :class=>'slotter','data-slot-selector'=>'.card-slot.card-frame', :remote=>true, :method=>:post, :rel=>'nofollow')
+        :class=>'slotter','data-slot-selector'=>'.card-slot.history-view', :remote=>true, :method=>:post, :rel=>'nofollow')
     end
   end
 

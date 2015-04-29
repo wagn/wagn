@@ -37,7 +37,7 @@ format :html do
   end
 
   view :modal_body do |args|
-    _render_content(args)
+    _render_core(args)
   end
 
   view :modal_footer do |args|

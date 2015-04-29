@@ -166,6 +166,12 @@ $(window).ready ->
         $("body").scrollTop slot_top_pos
       event.slotSuccessful = true
 
+  $('body').on 'loaded.bs.modal', null, (event) ->
+    unless event.slotSuccessful
+      wagn.initializeEditors $(event.target)
+      event.slotSuccessful = true
+
+
   $('body').on 'ajax:error', '.slotter', (event, xhr) ->
     $(this).slotError xhr.status, xhr.responseText
 

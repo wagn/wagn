@@ -106,6 +106,7 @@ format :html do
     default_menu_link_args args
     args.merge! :show_menu_item=>show_menu_items
   end
+
   def default_horizontal_menu_args args
     args.merge! :show_menu_item=>show_menu_items
   end

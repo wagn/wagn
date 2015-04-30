@@ -1,12 +1,8 @@
 # -*- encoding : utf-8 -*-
 
-#require File.expand_path( '../lib/card/version', __FILE__ )
-#version =    Card::Version.release
-version = File.open(File.expand_path( '../VERSION', __FILE__ )).read.chomp
-
 Gem::Specification.new do |s|
   s.name          = 'card'
-  s.version       = version
+  s.version       = File.open(File.expand_path( '../VERSION', __FILE__ )).read.chomp
   s.authors       = ["Ethan McCutchen", "Lewis Hoffman", "Gerry Gleason", "Philipp Kühl"]
   s.email         = ['info@wagn.org']
 
@@ -17,6 +13,17 @@ Gem::Specification.new do |s|
   s.license       = 'GPL'
 
   s.files         = `git ls-files`.split($/)
+
+  # add submodule files (seed data)
+  `git submodule --quiet foreach pwd`.split($\).each do |submod_path|
+    gem_root = File.expand_path File.dirname(__FILE__)
+    relative_submod_path = submod_path.gsub "#{gem_root}/", ''
+    Dir.chdir(submod_path) do
+      s.files += `git ls-files`.split($\).map do |filename|
+        "#{relative_submod_path}/#{filename}"
+      end
+    end
+  end
 
   s.test_files    = s.files.grep(%r{^(test|spec|features)/})
   s.require_paths = ["lib"]
@@ -50,17 +57,5 @@ Gem::Specification.new do |s|
     s.add_runtime_dependency *dep
   end
 
-  # get an array of submodule dirs by executing 'pwd' inside each submodule
-  `git submodule --quiet foreach pwd`.split($\).each do |submod_path|
-    # for each submodule, change working directory to that submodule
-    Dir.chdir(submod_path) do
-
-      gem.files += `git ls-files`.split($\).map do |filename|
-        filename = "#{submod_path}/#{filename}".gsub "#{File.dirname(__FILE__)}/", ""
-      end
-    end
-  end
-
-  puts "gem.files = #{gem.files}"
 
 end

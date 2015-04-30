@@ -2,23 +2,33 @@ format :html do
   view :menu, :denial=>:blank, :tags=>:unknown_ok do |args|
     return _render_template_closer if args[:menu_hack] == :template_closer
     return '' if card.unknown?
-    content_tag :div, :class=>'menu-slot' do
-      (_optional_render(:horizontal_menu, args, :hide) || _render_menu_link(args)) +
+    wrap_with :div, :class=>'menu-slot' do
+      [
+        _optional_render(:horizontal_menu, args, :hide),
+        _render_menu_link(args),
         _render_modal_slot(args)
+      ]
     end
   end
 
   view :menu_link do |args|
     path_opts = {:slot => {:home_view=>args[:home_view]}}
     path_opts[:is_main] = true if main?
-    content_tag :div, :class=>'btn-group pull-right slotter card-slot card-menu vertical-card-menu' do
-      view_link(glyphicon(args[:menu_icon]), :vertical_menu, :path_opts=>path_opts).html_safe
+    css_class = if show_view?(:horizontal_menu,args.merge(:default_visibility=>:hide, :optional=>true))
+                  'visible-xs'
+                else
+                  'show-on-hover visible-xs'
+                end
+    content_tag :div, :class=>"vertical-card-menu card-menu #{css_class}" do
+      content_tag :div, :class=>'btn-group slotter card-slot pull-right' do
+        view_link(glyphicon(args[:menu_icon]), :vertical_menu, :path_opts=>path_opts).html_safe
+      end
     end
   end
 
   view :vertical_menu, :tags=>:unknown_ok do |args|
     items = menu_item_list(args).map {|item| "<li class='#{args[:item_class]}'>#{item}</li>"}.join "\n"
-    wrap_with :ul, :class=>'btn-group slotter pull-right card-menu vertical-card-menu' do
+    wrap_with :ul, :class=>'btn-group pull-right card-slot slotter' do
       [
         content_tag( :span, "<a href='#'>#{ glyphicon args[:menu_icon] }</a>".html_safe,
                      :class=>'open-menu dropdown-toggle', 'data-toggle'=>'dropdown', 'aria-expanded'=>'false'),
@@ -28,7 +38,7 @@ format :html do
   end
 
   view :horizontal_menu do |args|
-    content_tag :div, :class=>'btn-group slotter pull-right card-menu horizontal-card-menu' do
+    content_tag :div, :class=>'btn-group slotter pull-right card-menu horizontal-card-menu hidden-xs' do
       menu_item_list(args.merge(:html_args=>{:class=>'btn btn-default'})).join("\n").html_safe
     end
   end

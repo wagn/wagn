@@ -85,15 +85,17 @@ body.mceContentBody {
 
 /*---------- Card menu ------------*/
 
-.card-slot {
-  > .menu-slot .card-menu.vertical-card-menu {
+.card-slot > .menu-slot .vertical-card-menu.show-on-hover {
+  .card-slot.open {
+    display: inline-block !important;
+  }
+  .card-slot {
     display: none;
   }
 }
-.card-slot:hover {
-  > .menu-slot .card-menu.vertical-card-menu {
-    display: inline-block;
-  }
+
+.card-slot:hover > .menu-slot .vertical-card-menu.show-on-hover .card-slot {
+  display: inline-block !important;
 }
 
 /*----------- Change View ---------*/

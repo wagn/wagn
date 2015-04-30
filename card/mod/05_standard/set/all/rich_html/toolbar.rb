@@ -47,7 +47,7 @@ format :html do
           wrap_each_with :li do
             [
               (view_link('autosaved draft', :edit, :path_opts=>{:edit_draft=>true, :slot=>{:show=>:edit_toolbar}}, :class=>'navbar-link slotter') if card.drafts.present?),
-              view_link(glyphicon('remove', 'hidden-xs'), :open,  )
+              view_link(glyphicon('remove', 'hidden-xs'), :open)
             ]
           end
         end)

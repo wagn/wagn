@@ -38,7 +38,7 @@ format :html do
       [
         (navbar_toggle(id, opts[:toggle]) unless opts[:toggle] == :hide),
         brand,
-        (content if content),
+        (content if content)
       ]
     end
   end

@@ -2,8 +2,10 @@ format :html do
   view :menu, :denial=>:blank, :tags=>:unknown_ok do |args|
     return _render_template_closer if args[:menu_hack] == :template_closer
     return '' if card.unknown?
-    (_optional_render(:horizontal_menu, args, :hide) || _render_menu_link(args)) +
-      _render_modal_slot(args)
+    content_tag :div, :class=>'menu-slot' do
+      (_optional_render(:horizontal_menu, args, :hide) || _render_menu_link(args)) +
+        _render_modal_slot(args)
+    end
   end
 
   view :menu_link do |args|

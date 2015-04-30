@@ -7,7 +7,6 @@ format :html do
           #{ _optional_render :toggle, args, :hide }
           #{ _optional_render :title, args }
         </div>
-        #{ _optional_render :menu, args }
       </div>
       #{ _optional_render :toolbar, args, :hide}
       #{ _optional_render :edit_toolbar, args, :hide}

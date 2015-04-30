@@ -17,7 +17,7 @@ format :html do
     css_class = if show_view?(:horizontal_menu,args.merge(:default_visibility=>:hide, :optional=>true))
                   'visible-xs'
                 else
-                  'show-on-hover visible-xs'
+                  'show-on-hover'
                 end
     content_tag :div, :class=>"vertical-card-menu card-menu #{css_class}" do
       content_tag :div, :class=>'btn-group slotter card-slot pull-right' do
@@ -28,7 +28,7 @@ format :html do
 
   view :vertical_menu, :tags=>:unknown_ok do |args|
     items = menu_item_list(args).map {|item| "<li class='#{args[:item_class]}'>#{item}</li>"}.join "\n"
-    wrap_with :ul, :class=>'btn-group pull-right card-slot slotter' do
+    wrap_with :ul, :class=>'btn-group pull-right slotter' do
       [
         content_tag( :span, "<a href='#'>#{ glyphicon args[:menu_icon] }</a>".html_safe,
                      :class=>'open-menu dropdown-toggle', 'data-toggle'=>'dropdown', 'aria-expanded'=>'false'),

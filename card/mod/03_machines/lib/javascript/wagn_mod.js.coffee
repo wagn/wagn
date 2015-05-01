@@ -146,6 +146,10 @@ $(window).ready ->
     # sadly, it also causes odd navbox behavior, resetting the search term
   }
 
+  #sidebar
+  $('[data-toggle="offcanvas"]').click ->
+    $('aside').toggleClass('active')
+
   #pointer mod
   $('body').on 'click', '.pointer-item-add', (event)->
     last_item = $(this).closest('.content-editor').find '.pointer-li:last'

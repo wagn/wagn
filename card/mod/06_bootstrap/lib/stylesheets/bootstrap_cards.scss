@@ -83,6 +83,47 @@ body.mceContentBody {
 }
 
 
+/*----------- Sidebar -------------*/
+
+.rotate-cw {
+  -webkit-transform:rotate(90deg);
+  -moz-transform:rotate(90deg);
+  -o-transform:rotate(90deg);
+  transform:rotate(90deg);
+}
+
+@media screen and (max-width: 767px) {
+  .row-offcanvas {
+    position: relative;
+  }
+
+  aside.offcanvas-right {
+    right: -50%; /* 6 columns */
+  }
+
+  aside.offcanvas-left {
+    left: -50%; /* 6 columns */
+  }
+
+  aside.offcanvas-right.active {
+    right: 0%; /* 6 columns */
+
+  }
+  aside.offcanvas-left.active {
+    left: 0%; /* 6 columns */
+  }
+
+  aside.offcanvas-right, aside.offcanvas-left {
+    position: absolute;
+    top: 0;
+    width: 50%; /* 6 columns */
+    -webkit-transition: all .25s ease-out;
+         -o-transition: all .25s ease-out;
+            transition: all .25s ease-out;
+  }
+}
+
+
 /*---------- Card menu ------------*/
 
 .card-slot > .menu-slot .vertical-card-menu.show-on-hover {

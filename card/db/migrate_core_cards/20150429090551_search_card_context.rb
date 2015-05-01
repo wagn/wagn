@@ -6,13 +6,13 @@ class SearchCardContext < Card::CoreMigration
     replace = [
       ['[lr]+','l\\1'],
       ['[LR]+','L\\1'],
-      ["(?=[lrLR]+#{sep})(?=[LR]*[lr]+)(?=[lr]*[LR]+).*",'l\\1'],   # mix of lowercase and uppercase l's and r's
+      ['(?=[LR]*[lr]+)(?=[lr]*[LR]+)[lrLR]+','l\\1'],   # mix of lowercase and uppercase l's and r's
       ['left',   'LL'],
       ['right',  'LR'],
       ['self',   'left'],
       ['',       'left'],
     ]
-    Card.search(:type=>'search').each do |card|
+    Card.search(:type_id=>SearchTypeID).each do |card|
       if card.cardname.junction?
         content = card.content
         replace.each do |key, val|

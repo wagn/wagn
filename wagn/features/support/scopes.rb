@@ -13,7 +13,7 @@ module ScopeHelpers
       '#main > .card-slot > .card-frame > .card-header'
 
     when /main card menu/
-      '#main > .card-slot > .card-frame > .card-header .card-menu'
+      '#main > .card-slot > .menu-slot > .card-menu'
 
     else
       raise "Can't find mapping from \"#{section}\" to a scope.\n" +

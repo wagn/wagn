@@ -119,13 +119,14 @@ format :html do
   view :delete_button do |args|
     toolbar_button('delete', 'trash', 'hidden-xs hidden-sm hidden-md hidden-lg',
                     :action=>:delete,
-                    :class => 'slotter standard-delete',
+                    :class => 'slotter',
                     :remote => true,
+                    :path_opts=> {:success => main? ? 'REDIRECT: *previous' : "TEXT: #{card.name} deleted"},
                     :'data-confirm' => "Are you sure you want to delete #{card.name}?"
                   )
   end
   view :refresh_button do |args|
-    toolbar_button('refresh', 'refresh', 'hidden-xs hidden-sm hidden-md hidden--lg', :view=>args[:home_view] || :open)
+    toolbar_button('refresh', 'refresh', 'hidden-xs hidden-sm hidden-md hidden-lg', :view=>args[:home_view] || :open)
   end
 
 
@@ -170,7 +171,9 @@ format :html do
     else
       target[:class] ||= ''
       target[:class] += " #{btn_class}"
-      link_to link_text, {:action=>target.delete(:action)}, target
+      path_opts = target.delete(:path_opts) || {}
+      path_opts.merge! :action=>target.delete(:action)
+      link_to link_text, path_opts, target
     end
   end
 

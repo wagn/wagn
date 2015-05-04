@@ -276,13 +276,6 @@ $(window).ready ->
       if input and !(input.val().match /^REDIRECT/)
         input.val ( if target == 'REDIRECT' then target + ': ' + input.val() else target )
 
-  #more of this info should be in views; will need to refactor for HTTP DELETE anyway...
-  $('.card-slot').on 'click', '.standard-delete', ->
-    return if $(this).attr('success-ready') == 'true' #prevent double-click weirdness
-    s = if $(this).isMain() then 'REDIRECT: *previous' else 'TEXT:' + $(this).slot().data('cardName') + ' removed'
-    $(this).attr 'href', $(this).attr('href') + '?success=' + encodeURIComponent(s)
-    $(this).attr 'success-ready', 'true'
-
   $('body').on 'change', '.live-type-field', ->
     $(this).data 'params', $(this).closest('form').serialize()
     $(this).data 'url', $(this).attr 'href'
@@ -339,8 +332,6 @@ $( document ).on "mobileinit", ->
     autoInitializePage: false
     ajaxEnabled: false
   }
-
-
 
 
 newCaptcha = (form)->

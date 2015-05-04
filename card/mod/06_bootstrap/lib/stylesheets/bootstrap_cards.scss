@@ -6,6 +6,8 @@
 /*
   These styles are intended to help bridge the default card context with bootstrap styling
 */
+{{bootstrap default skin+variables}}
+
 
 $label_color: #666666;
 $border_color: #999999;
@@ -85,17 +87,19 @@ body.mceContentBody {
 
 /*---------- Card menu ------------*/
 
-.card-slot > .menu-slot .vertical-card-menu.show-on-hover {
-  .card-slot.open {
-    display: inline-block !important;
+@media (min-width: $screen-xs-max) {
+  .card-slot > .menu-slot > .vertical-card-menu.show-on-hover {
+    .btn-group.slotter {
+      display: none;
+      &.open {
+        display: inline-block;
+      }
+    }
   }
-  .card-slot {
-    display: none;
-  }
-}
 
-.card-slot:hover > .menu-slot .vertical-card-menu.show-on-hover .card-slot {
-  display: inline-block !important;
+  .card-slot:hover > .menu-slot > .vertical-card-menu.show-on-hover .btn-group.slotter {
+    display: inline-block;
+  }
 }
 
 /*----------- Change View ---------*/

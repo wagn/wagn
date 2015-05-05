@@ -5,13 +5,12 @@ require 'cardio'
 # TODO: Move these to modules that use them
 require 'htmlentities'
 require 'recaptcha'
-require 'airbrake'
 require 'coderay'
 require 'haml'
 require 'kaminari'
 require 'bootstrap-kaminari-views'
 require 'diff/lcs'
-require 'diffy'
+require 'builder'
 
 require 'wagn'
 

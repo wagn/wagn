@@ -69,14 +69,10 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
     margin-left: 5px;
   }
 
-  .card-menu.btn-group {
-    position: absolute;
-    right: 5px;
-  }
-
   .card-menu {
     position: absolute;
-    z-index: 1;
+    right: 5px;
+    top: 3px;
     li {
       white-space: nowrap;
       text-align: left;
@@ -102,7 +98,12 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
     }
   }
 
+  .vertical-card-menu .dropdwon-menu {
+    z-index: 2;
+  }
+
   .horizontal-card-menu {
+    z-index: 1;
     li {
       height: 30px;
     }
@@ -124,17 +125,9 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 .navbar.toolbar {
   margin-bottom: 0;
 }
+
 .toolbar {
-  .related.dropdown-menu {
-    min-width: 435px;
-    li {
-      float: left;
-    }
-  }
-  .navbar-text span.glyphicon {
-    margin-left: 5px;
-  }
-  span.menu-item-label {
+  .navbar-text span.glyphicon, span.menu-item-label {
     margin-left: 5px;
   }
 }

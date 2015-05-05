@@ -7,13 +7,20 @@ format :html do
 
   # Options
   # :header => { :content=>String, :brand=>( String | {:name=>, :href=>} ) }
-  def navbar id, header={}, opts={}
+  def navbar id, opts={}
     opts[:class] ||= ''
     opts[:class] += " navbar navbar-#{opts.delete(:navbar_type) || 'default'}"
+    header_opts = opts[:header] || {}
+    if opts[:toggle_align] == :left
+      opts[:collapsed_content] ||= ''
+      opts[:collapsed_content] += navbar_toggle(id, opts[:toggle], 'pull-left navbar-link').html_safe
+      opts[:toggle] = :hide
+    end
     wrap_with :nav, :class=>opts[:class] do
       [
-        navbar_header(id, header.delete(:content), header),
-        content_tag(:div, output(yield).html_safe, :class=>"collapse navbar-collapse", :id=>"navbar-collapse-#{id}")
+        navbar_header(id, header_opts.delete(:content), header_opts.reverse_merge(:toggle=>opts[:toggle])),
+        (content_tag(:div, opts[:collapsed_content].html_safe, :class=>'container-fluid') if opts[:collapsed_content]),
+        content_tag(:div, output(yield).html_safe, :class=>"collapse navbar-collapse", :id=>"navbar-collapse-#{id}"),
       ]
     end
   end
@@ -27,20 +34,28 @@ format :html do
                 "<a class='navbar-brand' href='#{link}#'>#{opts[:brand][:name]}</a>"
               end
             end
-    %{
-      <div class="navbar-header">
-         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-#{id}">
-           <span class="sr-only">Toggle navigation</span>
-           <span class="icon-bar"></span>
-           <span class="icon-bar"></span>
-           <span class="icon-bar"></span>
-         </button>
-         #{brand}
-         #{content if content}
-       </div>
-     }.html_safe
+    wrap_with :div, :class=>'navbar-header' do
+      [
+        (navbar_toggle(id, opts[:toggle]) unless opts[:toggle] == :hide),
+        brand,
+        (content if content)
+      ]
+    end
   end
 
+  def navbar_toggle id, content=nil, css_class=''
+    content ||= %{
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                }
+    %{
+      <button type="button" class="navbar-toggle collapsed #{css_class}" data-toggle="collapse" data-target="#navbar-collapse-#{id}">
+        <span class="sr-only">Toggle navigation</span>
+        #{content}
+      </button>
+    }
+  end
 
 
   view :closed do |args|

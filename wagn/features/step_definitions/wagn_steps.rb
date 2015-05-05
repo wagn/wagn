@@ -214,8 +214,8 @@ Then /I submit$/ do
 end
 
 When /^I open the main card menu$/ do
-  page.execute_script "$('#main .card-menu').show()"
-  page.find('#main .card-menu a').click
+  page.execute_script "$('#main .menu-slot .vertical-card-menu.show-on-hover .card-slot').show()"
+  page.find('#main .menu-slot .card-menu a').click
 end
 
 When /^I pick (.*)$/ do |menu_item|

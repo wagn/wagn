@@ -1,17 +1,12 @@
 format :html do
   view :toolbar do |args|
-    navbar 'toolbar', {}, :class=>"slotter toolbar", :navbar_type=>'inverse' do
+    navbar "toolbar-#{card.cardname.safe_key}-#{args[:home_view]}", :toggle_align=>:left, :class=>"slotter toolbar", :navbar_type=>'inverse',
+          :collapsed_content=>close_link('pull-right visible-xs') do
       [
         (wrap_with(:p, :class=>"navbar-text navbar-left") do
           _optional_render(:type_link,args,:show)
         end),
-        (wrap_with :ul, :class=>'nav navbar-nav navbar-right' do
-          wrap_each_with :li do
-            [
-              view_link(glyphicon('remove'), :open)
-            ]
-          end
-        end),
+        close_link('hidden-xs navbar-right'),
         %{
           <form class="navbar-form navbar-right">
             <div class="form-group">
@@ -24,10 +19,21 @@ format :html do
     end
   end
 
+  def close_link css_class
+    wrap_with :ul, :class=>"nav navbar-nav #{css_class}" do
+      wrap_with :li do
+        view_link(glyphicon('remove'), :open)
+      end
+    end
+  end
+
   view :edit_toolbar do |args|
-    navbar 'edit-toolbar', {}, :class=>'slotter toolbar', :navbar_type=>'inverse' do
+    id = "edit-toolbar-#{card.cardname.safe_key}-#{args[:home_view]}"
+
+    navbar id, :toggle=>'Edit<span class="caret"></span>', :toggle_align=>:left,
+               :class=>'slotter toolbar', :navbar_type=>'inverse', :collapsed_content=>close_link('pull-right visible-xs') do
       [
-        content_tag(:span, 'Edit:', :class=>"navbar-text"),
+        content_tag(:span, 'Edit:', :class=>"navbar-text hidden-xs"),
         (wrap_with :ul, :class=>'nav navbar-nav nav-pills' do
           [
             _optional_render(:edit_content_button, args, :show),
@@ -41,10 +47,10 @@ format :html do
           wrap_each_with :li do
             [
               (view_link('autosaved draft', :edit, :path_opts=>{:edit_draft=>true, :slot=>{:show=>:edit_toolbar}}, :class=>'navbar-link slotter') if card.drafts.present?),
-              view_link(glyphicon('remove'), :open)
+              view_link(glyphicon('remove', 'hidden-xs'), :open)
             ]
           end
-        end),
+        end)
       ]
     end
   end
@@ -57,10 +63,10 @@ format :html do
       links << account_pill( 'created')
       links << account_pill( 'edited')
       links << account_pill( 'follow')
-      navbar 'account-toolbar', {}, :navbar_type=>'inverse', :class=>"slotter toolbar", 'data-slot-selector'=>'.card-body > .card-slot' do
+      navbar 'account-toolbar',:toggle_align=>:left, :collapsed_content=>close_link('pull-right visible-xs'), :navbar_type=>'inverse', :class=>"slotter toolbar", 'data-slot-selector'=>'.card-body > .card-slot' do
         [
           content_tag(:ul, links.join("\n").html_safe, :class=>'nav navbar-nav nav-pills'),
-          content_tag(:ul, "<li>#{view_link(glyphicon('remove'), :open)}</li>".html_safe, :class=>'nav navbar-nav navbar-right'),
+          content_tag(:ul, "<li>#{view_link(glyphicon('remove','hidden-xs'), :open)}</li>".html_safe, :class=>'nav navbar-nav navbar-right'),
         ]
       end
     end
@@ -97,7 +103,7 @@ format :html do
   end
 
   view :rules_button do |args|
-    toolbar_button('rules', 'wrench', 'hidden-xs', :view=>'options')
+    toolbar_button('rules', 'wrench', 'hidden-xs hidden-sm', :view=>'options')
   end
   view :related_button do |args|
     btn_dropdown(glyphicon('tree-deciduous')+' related', [
@@ -110,18 +116,19 @@ format :html do
     ], :class=>'related')
   end
   view :history_button do |args|
-    toolbar_button('history', 'time', 'hidden-xs hidden-md hidden-lg', :view=>'history')
+    toolbar_button('history', 'time', 'hidden-xs hidden-sm hidden-md', :view=>'history')
   end
   view :delete_button do |args|
-    toolbar_button('delete', 'trash', 'hidden-xs hidden-md hidden-lg',
+    toolbar_button('delete', 'trash', 'hidden-xs hidden-sm hidden-md hidden-lg',
                     :action=>:delete,
-                    :class => 'slotter standard-delete',
+                    :class => 'slotter',
                     :remote => true,
+                    :path_opts=> {:success => main? ? 'REDIRECT: *previous' : "TEXT: #{card.name} deleted"},
                     :'data-confirm' => "Are you sure you want to delete #{card.name}?"
                   )
   end
   view :refresh_button do |args|
-    toolbar_button('refresh', 'refresh', 'hidden-xs hidden-md hidden-lg', :view=>args[:home_view] || :open)
+    toolbar_button('refresh', 'refresh', 'hidden-xs hidden-sm hidden-md hidden-lg', :view=>args[:home_view] || :open)
   end
 
 
@@ -166,7 +173,9 @@ format :html do
     else
       target[:class] ||= ''
       target[:class] += " #{btn_class}"
-      link_to link_text, {:action=>target.delete(:action)}, target
+      path_opts = target.delete(:path_opts) || {}
+      path_opts.merge! :action=>target.delete(:action)
+      link_to link_text, path_opts, target
     end
   end
 

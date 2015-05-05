@@ -1,15 +1,16 @@
 
+
 format :rss do
-  
+
   attr_accessor :xml
-  
+
   def initialize card, args
     super
     @xml = @parent.xml if @parent
   end
 
   def show view, args
-    @xml = Builder::XmlMarkup.new
+    @xml = ::Builder::XmlMarkup.new
     view ||= :feed
     render view, args
   end
@@ -30,7 +31,7 @@ format :rss do
       @xml.error "\n\nERROR rendering RSS: #{e.inspect}\n\n #{e.backtrace}"
     end
   end
-  
+
   view :feed_item_list do |args|
     items = if card.type_id == Card::SearchTypeID  #FIXME! yuck.
       card.item_cards( search_params.merge(:default_limit => 25) )
@@ -43,12 +44,12 @@ format :rss do
       end
     end
   end
-  
-  
+
+
   view :feed_title do |args|
     Card.setting(:title) + " : " + card.name.gsub(/^\*/,'')
   end
-  
+
   view :feed_item do |args|
     @xml.title card.name
     add_name_context
@@ -62,8 +63,8 @@ format :rss do
   view :feed_description do |args| '' end
   view :comment_box      do |args| '' end
   view :menu             do |args| '' end
-    
-  
+
+
   view :open,         { :view=>:titled, :mod=>All::Base::Format }
   view :content,      { :view=>:core,   :mod=>All::Base::Format }
   view :open_content, { :view=>:core,   :mod=>All::Base::Format }

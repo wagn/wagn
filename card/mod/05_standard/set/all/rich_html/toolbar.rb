@@ -101,10 +101,12 @@ format :html do
   end
   view :related_button do |args|
     btn_dropdown(glyphicon('tree-deciduous')+' related', [
-      menu_item('children',        'baby-formula', :related=>'*children'),
-      menu_item('mates',           'bed',          :related=>'*mates'),
-      menu_item('references to',   'log-in',       :related=>'*refers_to'),
-      menu_item('references from', 'log-out',      :related=>'*referred_to_by')
+      menu_item('children',       'baby-formula', :related=>'*children'),
+      menu_item('mates',          'bed',          :related=>'*mates'),
+
+      menu_item('references out', 'log-out',      :related=>'*refers_to'),
+      menu_item('references in',  'log-in',       :related=>'*referred_to_by')
+
     ], :class=>'related')
   end
   view :history_button do |args|

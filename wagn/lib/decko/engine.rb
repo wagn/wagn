@@ -10,6 +10,7 @@ require 'haml'
 require 'kaminari'
 require 'bootstrap-kaminari-views'
 require 'diff/lcs'
+require 'builder'
 
 require 'wagn'
 

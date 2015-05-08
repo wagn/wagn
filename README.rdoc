@@ -12,7 +12,7 @@ Ruby[http://www.ruby-lang.org/en/]:: version 1.8.7 or higher
 Bundler[http://gembundler.com/]:: version 1.0 or higher
 ImageMagick[http://www.imagemagick.org/]::
 A database engine:: Either MySQL[http://www.mysql.com/] or PostgreSQL[http://www.postgresql.org/]
-Node.js or another {JavaScript runtime}[https://github.com/sstephenson/execjs]
+Node.js:: or another {JavaScript runtime}[https://github.com/sstephenson/execjs]
 
 ==Installation
 

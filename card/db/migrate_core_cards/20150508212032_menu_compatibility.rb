@@ -19,8 +19,9 @@ class MenuCompatibility < Card::CoreMigration
         :right_id=>Card::MachineOutputID,
         :left=>{ :right=>{:codename=>setting.to_s } }
       ).each do |output_card|
-        puts "found #{output_card}"
+        output_card.delete!
       end
     end
+
   end
 end

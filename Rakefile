@@ -1,6 +1,6 @@
-task :build_all do
+task :push_gems do
   %w( card wagn ).each do |gem|
-    system %(cd #{gem}; rm *.gem; gem build #{gem}.gemspec)
+    system %(cd #{gem}; rm *.gem; gem build #{gem}.gemspec; gem push #{gem}.gem)
   end
 end
 

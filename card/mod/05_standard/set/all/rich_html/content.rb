@@ -40,6 +40,7 @@ format :html do
   view :titled, :tags=>:comment do |args|
     wrap args do
       [
+        _optional_render( :menu, args ),
         _render_header( args ),
         wrap_body( :content=>true ) { _render_core args },
         optional_render( :comment_box, args )

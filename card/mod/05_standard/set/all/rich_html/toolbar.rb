@@ -22,7 +22,7 @@ format :html do
   def close_link css_class
     wrap_with :ul, :class=>"nav navbar-nav #{css_class}" do
       wrap_with :li do
-        view_link(glyphicon('remove'), :open)
+        view_link(glyphicon('remove'), :home, :title=>'cancel')
       end
     end
   end
@@ -47,7 +47,7 @@ format :html do
           wrap_each_with :li do
             [
               (view_link('autosaved draft', :edit, :path_opts=>{:edit_draft=>true, :slot=>{:show=>:edit_toolbar}}, :class=>'navbar-link slotter') if card.drafts.present?),
-              view_link(glyphicon('remove', 'hidden-xs'), :open)
+              view_link(glyphicon('remove', 'hidden-xs'), :home)
             ]
           end
         end)
@@ -106,7 +106,7 @@ format :html do
     toolbar_button('rules', 'wrench', 'hidden-xs hidden-sm', :view=>'options')
   end
   view :related_button do |args|
-    btn_dropdown(glyphicon('tree-deciduous')+' related', [
+    btn_dropdown('related', 'tree-deciduous', [
       menu_item('children',       'baby-formula', :related=>'*children'),
       menu_item('mates',          'bed',          :related=>'*mates'),
 
@@ -162,20 +162,20 @@ format :html do
       view_link(glyphicon('edit'),'edit_type', :class=>'navbar-link slotter', 'data-toggle'=>'tooltip', :title=>'edit type')
   end
 
-  def toolbar_button text, symbol, hide, target
-    btn_class = 'btn btn-default'
+  def toolbar_button text, symbol, hide, tag_args
+    tag_args[:class] = [ tag_args[:class], 'btn btn-default' ].compact * ' '
+    tag_args[:title] ||= text
     link_text = "#{glyphicon symbol}<span class='menu-item-label #{hide}'>#{text}</span>"
 
-    if target[:page]
-      card_link target[:page], :class=>btn_class, :text=>link_text, :path_opts=>{:slot=>{:show=>:toolbar}}
-    elsif target[:view]
-      view_link link_text, target[:view], :class=>btn_class, :path_opts=>{:slot=>{:show=>:toolbar}}
+    if cardname = tag_args.delete(:page)
+      card_link cardname, :class=>klass, :text=>link_text
+    elsif viewname = tag_args.delete(:view)
+      tag_args[:path_opts] ||= {:slot=>{:show=>:toolbar}}
+      view_link link_text, viewname, tag_args
     else
-      target[:class] ||= ''
-      target[:class] += " #{btn_class}"
-      path_opts = target.delete(:path_opts) || {}
-      path_opts.merge! :action=>target.delete(:action)
-      link_to link_text, path_opts, target
+      path_opts = tag_args.delete(:path_opts) || {}
+      path_opts.merge! :action=>tag_args.delete(:action)
+      link_to link_text, path_opts, tag_args
     end
   end
 
@@ -215,7 +215,7 @@ format :html do
   end
 
 
-  def btn_dropdown name, items, opts={}
+  def btn_dropdown name, icon, items, opts={}
     dropdown =
       if items.kind_of? Array
         items.map {|item| "<li>#{item}</li>"}.join "\n"
@@ -224,8 +224,8 @@ format :html do
       end
     %{
       <div class="btn-group" role="group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-          #{name}
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="#{name}" aria-expanded="false">
+          #{glyphicon icon} #{name}
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu #{opts[:class] if opts[:class]}" role="menu">

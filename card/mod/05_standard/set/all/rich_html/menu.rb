@@ -2,7 +2,7 @@ format :html do
   view :menu, :denial=>:blank, :tags=>:unknown_ok do |args|
     return _render_template_closer if args[:menu_hack] == :template_closer
     return '' if card.unknown?
-    wrap_with :div, :class=>'menu-slot' do
+    wrap_with :div, :class=>'menu-slot nodblclick' do
       [
         _optional_render(:horizontal_menu, args, :hide),
         _render_menu_link(args),

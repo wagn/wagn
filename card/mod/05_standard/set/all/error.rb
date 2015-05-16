@@ -186,7 +186,7 @@ format :html do
             "or #{ link_to 'sign up', card_url('new/:signup') }"
           end
           save_interrupted_action(request.env['REQUEST_URI'])
-          "You have to #{ link_to 'sign in', card_url(':signin') } #{or_signup} #{to_task}"
+          "Please #{ link_to 'sign in', card_url(':signin') } #{or_signup} #{to_task}"
         end
 
         %{<h1>Sorry!</h1>\n<div>#{ message }</div>}

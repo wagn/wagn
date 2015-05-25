@@ -179,6 +179,12 @@ class Card
         end.gsub(/<\!--.*?-->/, '')
       end
 
+      if Card.config.space_last_in_multispace
+        def clean_with_space_last! string, tags = ALLOWED_TAGS
+          clean_without_space_last!(string, tags).gsub(/(?:^|\b) ((?:&nbsp;)+)/, '\1 ')
+        end
+        alias_method_chain :clean!, :space_last
+      end
       def truncatewords_with_closing_tags(input, words = 25, truncate_string = "...")
         if input.nil? then return end
         wordlist = input.to_s.split

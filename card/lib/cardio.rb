@@ -34,7 +34,6 @@ module Cardio
       config.recaptcha_public_key  = nil
       config.recaptcha_private_key = nil
       config.recaptcha_proxy       = nil
-      config.api_version           = 'v1'
 
       config.cache_store           = :file_store, 'tmp/cache'
       config.override_host         = nil

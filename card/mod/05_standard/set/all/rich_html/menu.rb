@@ -58,14 +58,14 @@ format :html do
   def menu_edit_link args
     opts = {
              :view=>:related,
-             :path_opts=>{ :related=>{:name=>card.name, :view=>:edit, :slot=>{:hide=>'header'}},
+             :path_opts=>{ :related=>{:name=>card.name, :view=>:edit, :slot=>{:hide=>'header menu'}},
                            :slot=>{:show=>'edit_toolbar', :hide=>'type_link'}}
            }
     menu_item('edit', 'edit', opts, args[:html_args] )
   end
 
   def menu_discuss_link args
-    disc_tagname = Card.fetch(:discussion, :skip_modules=>true).name
+    disc_tagname = Card.fetch(:discussion, :skip_modules=>true).key
     menu_item('discuss', 'comment', {:related=>disc_tagname}, args[:html_args])
   end
 

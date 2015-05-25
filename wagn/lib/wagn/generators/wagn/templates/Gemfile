@@ -9,16 +9,6 @@ gem 'wagn'
 
 <%= database_gemfile_entry -%>
 
-gem 'execjs', '<=2.4.0' # locked because 2.5.0 requires Ruby 2
-
-# A javascript runtime is required for JavaScript cards.
-<% if RUBY_PLATFORM =~ /darwin/ -%>
-# Macs have one included, but on other platforms you'll need this or another runtime
-# gem 'therubyracer'
-<% else -%>
-gem 'therubyracer'
-<% end -%>
-
 <% if options['mod-dev'] -%>
 group :test do
   gem 'rspec-rails', '~> 3.1.0'   # behavior-driven-development suite
@@ -39,8 +29,8 @@ group :test, :development do
   # gem 'pry-rescue'
   # gem 'pry-stack_explorer'
   if RUBY_VERSION =~ /^2/
-  gem 'byebug'
-  # gem 'pry-byebug'
+    gem 'byebug'
+    # gem 'pry-byebug'
   else
     gem 'debugger'
   end

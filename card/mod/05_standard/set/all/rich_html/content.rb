@@ -1,3 +1,6 @@
+def show_comment_box_in_related?
+  false
+end
 
 format :html do
 
@@ -40,6 +43,7 @@ format :html do
   view :titled, :tags=>:comment do |args|
     wrap args do
       [
+        _optional_render( :menu, args ),
         _render_header( args ),
         wrap_body( :content=>true ) { _render_core args },
         optional_render( :comment_box, args )
@@ -147,22 +151,22 @@ format :html do
       rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
       rcard = Card.fetch rcardname, :new=>{}
 
-      nest_args = {
-        :view          => ( rparams[:view] || :open ),
+      nest_args = ( rparams[:slot] || {} ).deep_symbolize_keys.reverse_merge(
+        :view            => ( rparams[:view] || :open ),
         :optional_toggle => :hide,
-        :optional_help => :show,
-        :optional_menu => :show,
-        :parent => card
-      }
-      nest_args.merge! ( rparams[:slot] || {} ).deep_symbolize_keys
-
-      nest_args[:optional_comment_box] = :show if rparams[:name] == '+discussion' #fixme.  yuck!
+        :optional_help   => :show,
+        :optional_menu   => :show,
+        :parent          => card
+      )
+      nest_args[:optional_comment_box] = :show if rcard.show_comment_box_in_related?
 
       frame args do
         nest rcard, nest_args
       end
     end
   end
+
+
 
   view :help, :tags=>:unknown_ok do |args|
     text = if args[:help_text]

@@ -163,7 +163,7 @@ format :html do
          save_interrupted_action(request.env['REQUEST_URI'])
          title = "Problems with #{card.name}"
          frame args.merge(:panel_class=>"panel panel-warning", :title=>title, :hide=>'menu' ) do
-           "You have to #{ link_to 'sign in', card_url(':signin') }" #" #{to_task}"
+           "Please #{ link_to 'sign in', card_url(':signin') }" #" #{to_task}"
          end
        else
          super(args)

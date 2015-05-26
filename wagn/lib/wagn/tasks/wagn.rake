@@ -319,10 +319,10 @@ namespace :wagn do
         Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
 
           if card.attach_mod
-            puts "skipping #{card.name}: already in code"
+#            puts "skipping #{card.name}: already in code"
             next
           else
-            puts "working on #{card.name}"
+#            puts "working on #{card.name}"
           end
 
           base_card = card.cardname.junction? ? card.left : card

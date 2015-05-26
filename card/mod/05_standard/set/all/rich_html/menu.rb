@@ -2,7 +2,7 @@ format :html do
   view :menu, :denial=>:blank, :tags=>:unknown_ok do |args|
     return _render_template_closer if args[:menu_hack] == :template_closer
     return '' if card.unknown?
-    wrap_with :div, :class=>'menu-slot' do
+    wrap_with :div, :class=>'menu-slot nodblclick' do
       [
         _optional_render(:horizontal_menu, args, :hide),
         _render_menu_link(args),
@@ -65,8 +65,7 @@ format :html do
   end
 
   def menu_discuss_link args
-    disc_tagname = Card.fetch(:discussion, :skip_modules=>true).name
-    menu_item('discuss', 'comment', {:related=>disc_tagname}, args[:html_args])
+    menu_item('discuss', 'comment', { :related=>Card[:discussion].name }, args[:html_args])
   end
 
   def menu_page_link args
@@ -119,6 +118,7 @@ format :html do
     default_menu_link_args args
     args.merge! :show_menu_item=>show_menu_items
   end
+
   def default_horizontal_menu_args args
     args.merge! :show_menu_item=>show_menu_items
   end
@@ -136,10 +136,9 @@ format :html do
     }
     if card.real?
       res.merge!(
-        :edit      => card.ok?(:update) || show_structure?,
+        :edit      => card.ok?(:update) || structure_editable?,
         :account   => card.account && card.ok?(:update),
         :follow    => show_follow?,
-        :delete    => card.ok?(:delete),
         :more      => true
       )
     end

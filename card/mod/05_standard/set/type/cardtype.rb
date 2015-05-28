@@ -11,7 +11,22 @@ format :html do
       %{<div>Sorry, this card must remain a Cardtype so long as there are <strong>#{ card.name }</strong> cards.</div>}
     else
       super args
-    end  
+    end
+  end
+
+  view :add_button do |args|
+    args[:title] ||= "Add #{card.name}"
+    if args[:params]
+      context = ((@parent && @parent.card) || card).name
+      args[:params].gsub!(/=([^&]+)/) do |match|
+        "=#{$1.to_name.to_absolute context}"
+      end
+    end
+    %{
+      <a class='btn btn-default' href='/new/#{card.key}?#{args[:params]}'>
+        #{ _render_title args }
+      </a>
+    }
   end
 end
 
@@ -28,7 +43,7 @@ def followed_by? user_id = nil
 end
 
 def default_follow_set_card
-  Card.fetch("#{name}+*type") 
+  Card.fetch("#{name}+*type")
 end
 
 

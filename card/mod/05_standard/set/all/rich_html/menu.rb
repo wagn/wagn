@@ -58,14 +58,14 @@ format :html do
   def menu_edit_link args
     opts = {
              :view=>:related,
-             :path_opts=>{ :related=>{:name=>card.name, :view=>:edit, :slot=>{:hide=>'header'}},
+             :path_opts=>{ :related=>{:name=>card.name, :view=>:edit, :slot=>{:hide=>'header menu'}},
                            :slot=>{:show=>'edit_toolbar', :hide=>'type_link'}}
            }
     menu_item('edit', 'edit', opts, args[:html_args] )
   end
 
   def menu_discuss_link args
-    menu_item('discuss', 'comment', { :related=>Card[:discussion].name }, args[:html_args])
+    menu_item('discuss', 'comment', { :related=>Card[:discussion].key }, args[:html_args])
   end
 
   def menu_page_link args

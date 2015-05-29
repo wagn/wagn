@@ -4,6 +4,11 @@ event :add_and_drop_items, :before=>:approve, :on=>:save do
   self.drop_item Env.params['drop_item'] if Env.params['drop_item']
 end
 
+event :insert_item_event, :before=>:approve, :on=>:save, :when=> proc {|c| Env.params['insert_item']} do
+  index = Env.params['item_index'] || 0
+  self.insert_item index.to_i, Env.params['insert_item']
+end
+
 format do
   def item_links args={}
     card.item_cards(args).map do |item_card|
@@ -12,23 +17,23 @@ format do
   end
 
   def wrap_item item, args={}
-    item #no wrap in base    
+    item #no wrap in base
   end
-  
+
   view :core do |args|
     render_pointer_items args.merge(:joint=>', ')
   end
-  
+
   view :pointer_items, :tags=>:unknown_ok do |args|
     item_args = { :view => ( args[:item] || (@inclusion_opts && @inclusion_opts[:view]) || default_item_view ) }
     joint = args[:joint] || ' '
-    
+
     if type = card.item_type
       item_args[:type] = type
     end
 
     card.item_cards.map do |icard|
-      wrap_item nest(icard, item_args.clone), item_args 
+      wrap_item nest(icard, item_args.clone), item_args
     end.join joint
   end
 
@@ -54,7 +59,7 @@ format :html do
     part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/,'') : :list
     hidden_field( :content, :class=>'card-content') +
     raw(_render part_view, args)
-    
+
     #.merge(:pointer_item_class=>'form-control')))
   end
 
@@ -68,7 +73,7 @@ format :html do
 
     %{
       <ul class="pointer-list-editor #{extra_css_class}" options-card="#{options_card_name}">
-        #{ 
+        #{
           items.map do |item|
             _render_list_item args.merge( :pointer_item=>item )
           end * "\n"
@@ -77,7 +82,7 @@ format :html do
       #{ add_item_button }
     }
   end
-  
+
   def add_item_button
     content_tag :span, :class=>'input-group' do
       button_tag :class=>'pointer-item-add' do
@@ -85,7 +90,7 @@ format :html do
       end
     end
   end
-  
+
   view :list_item do |args|
     %{
       <li class="pointer-li">
@@ -135,7 +140,7 @@ format :html do
       checked = (option.name==card.item_names.first)
       id = "pointer-radio-#{option.cardname.key}"
       description = pointer_option_description option
-      %{ 
+      %{
         <li class="pointer-radio radio">
           #{ radio_button_tag input_name, option.name, checked, :id=>id, :class=>'pointer-radio-button' }
           <label for="#{id}">#{ option.label }</label>
@@ -162,14 +167,14 @@ format :html do
       end
     end
   end
-  
 
-  
+
+
   def wrap_item item, args
     %{<div class="pointer-item item-#{args[:view]}">#{item}</div>}
   end
-  
-  
+
+
 end
 
 
@@ -177,15 +182,15 @@ format :css do
   view :titled do |args|
     %(#{major_comment "STYLE GROUP: \"#{card.name}\"", '='}#{ _render_core })
   end
-  
+
   view :core do |args|
     card.item_cards.map do |item|
       nest item, :view=>(params[:item] || args[:item] || :content)
     end.join "\n\n"
   end
-  
+
   view :content, :core
-  
+
 end
 
 
@@ -213,7 +218,7 @@ event :standardize_items, :before=>:approve, :on=>:save do
   end
 end
 
-def diff_args 
+def diff_args
   {:format => :pointer}
 end
 
@@ -222,7 +227,7 @@ def item_cards args={}
     #warn "item_card[#{args.inspect}], :complete"
     Card::Query.new({:referred_to_by=>name}.merge(args)).run
   else
-    
+
     itype = args[:type] || item_type
     #warn "item_card[#{inspect}], :complete"
     item_names(args).map do |name|
@@ -294,7 +299,9 @@ def drop_item name
 end
 
 def insert_item index, name
-  new_names = item_names.insert(index,name)
+  new_names = item_names
+  new_names.delete(name)
+  new_names.insert(index,name)
   self.content =  new_names.map { |name| "[[#{name}]]" }.join "\n"
 end
 
@@ -303,7 +310,7 @@ def options_card
   self.rule_card :options
 end
 
-def options 
+def options
   result_cards = if oc = options_card
     oc.item_cards :default_limit=>50, :context=>name
   else

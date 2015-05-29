@@ -146,45 +146,65 @@ end
 
 format :html do
   view :tabs do |args|
-    tabs = ''
-    tab_panels = ''
-    card.item_cards.each_with_index do |item, index|
-      id = "#{card.cardname.safe_key}-#{item.cardname.safe_key}"
-      tabs += tab( id, item.name, index == 0 )
-      tab_content = nest item, item_args(args)
-      tab_panels += tab_panel( id, tab_content, index == 0 )
+    tab_buttons = ''
+    tab_panes = ''
+    card.item_names.each_with_index do |item, index|
+      id = "#{card.cardname.safe_key}-#{item.to_name.safe_key}"
+      url = page_path(item.to_name, item_args(args).merge(:slot=>inclusion_opts))
+      tab_buttons += tab_button( "##{id}", item, index == 0, 'data-url'=>url, :class=>'load' )
+      tab_content = index == 0 ? nest(Card.fetch(item, :new=>{}), item_args(args)) : ''
+      tab_panes += tab_pane( id, tab_content, index == 0 )
     end
-
-    wrap_with :div, :role=>"tabpanel" do
-      [
-        content_tag(:ul, tabs.html_safe, :class=>"nav #{args[:tab_type]}", :role=>"tablist"),
-        content_tag(:div, tab_panels.html_safe, :class=>'tab-content')
-      ]
-    end
+    tab_panel tab_buttons, tab_panes, args[:tab_type]
   end
   def default_tab_args args
-    args[:tab_type] ||='nav-tabs'
+    args[:tab_type] ||= 'tabs'
   end
 
   view :pills, :view=>:tab
   def default_pill_args args
-    args[:tab_type] ||= 'nav-pills'
+    args[:tab_type] ||= 'pills'
   end
 
-  def tab id, name, active=false
-    %{
-      <li role='presentation' #{'class="active"' if active}>
-        <a href=##{id} role='tab' data-toggle='tab'>#{name}</a>
-      </li>
-    }
+  view :tabs_static do |args|
+    tab_buttons = ''
+    tab_panes = ''
+    card.item_cards.each_with_index do |item, index|
+      id = "#{card.cardname.safe_key}-#{item.cardname.safe_key}"
+      tab_buttons += tab_button( "##{id}", item.name, index == 0 )
+      tab_content = nest item, item_args(args)
+      tab_panes += tab_pane( id, tab_content, index == 0 )
+    end
+    tab_panel tab_buttons, tab_panes, args[:tab_type]
+  end
+  def default_tab_static_args args
+    args[:tab_type] ||= 'tabs'
   end
 
-  def tab_panel id, content, active=false
-    %{
-      <div role='tabpanel' class="tab-pane #{'active' if active}" id=#{id}>
-        #{content}
-      </div>
-    }
+  view :pills_static, :view=>:tab
+  def default_tab_static_args args
+    args[:tab_type] ||= 'pills'
+  end
+
+  def tab_panel tab_buttons, tab_panes, tab_type='tabs'
+    wrap_with :div, :role=>"tabpanel" do
+      [
+        content_tag(:ul, tab_buttons.html_safe, :class=>"nav nav-#{tab_type}", :role=>"tablist"),
+        content_tag(:div, tab_panes.html_safe, :class=>'tab-content')
+      ]
+    end
+  end
+
+  def tab_button target, text, active=false, link_attr={}
+    link = link_to text, target, link_attr.merge('role'=>'tab','data-toggle'=>'tab')
+    li_args = { :role => :presentation }
+    li_args[:class] = 'active' if active
+    content_tag :li, link, li_args
+  end
+
+  def tab_pane id, content, active=false
+    div_args = {:role => :tabpanel, :id=>id, :class=>"tab-pane #{'active' if active}"}
+    content_tag :div, content.html_safe, div_args
   end
 end
 

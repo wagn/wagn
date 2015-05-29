@@ -163,6 +163,12 @@ $(window).ready ->
     else
       item.find('input').val ''
 
+  $('body').on 'show.bs.tab', 'a.load[data-toggle=tab][data-url]', (e) ->
+    tab_id = $(e.target).attr('href')
+    url    = $(e.target).data('url')
+    $(e.target).removeClass('load')
+    $(tab_id).load(url)
+
   # following mod
   $('body').on 'click', '.btn-item-delete', ->
     $(this).find('.glyphicon').addClass("glyphicon-hourglass").removeClass("glyphicon-remove")

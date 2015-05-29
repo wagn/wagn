@@ -14,20 +14,34 @@ format :html do
     end
   end
 
-  view :add_button do |args|
+  view :add_link do |args|
     args[:title] ||= "Add #{card.name}"
+    link_to _render_title(args), _render_add_path(args), :class=>args[:css_class]
+  end
+
+  view :add_button, :view=>:add_link
+  def default_add_button_args args
+    args[:css_class] = 'btn btn-default'
+  end
+
+  view :add_url do |args|
+    card_url _render_add_path(args)
+  end
+
+  view :add_path do |args|
+    path_args = {}
     if args[:params]
       context = ((@parent && @parent.card) || card).name
-      args[:params].gsub!(/=([^&]+)/) do |match|
-        "=#{$1.to_name.to_absolute context}"
+      Rack::Utils.parse_nested_query(args[:params]).each do |key, value|
+         value = value.to_name.to_absolute(context) if value
+         key   = key.to_name.to_absolute(context)
+         path_args[key] = value
       end
     end
-    %{
-      <a class='btn btn-default' href='/new/#{card.key}?#{args[:params]}'>
-        #{ _render_title args }
-      </a>
-    }
+    path_args[:action] = 'new'
+    page_path card.cardname, path_args
   end
+
 end
 
 

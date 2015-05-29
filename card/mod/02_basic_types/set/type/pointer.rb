@@ -25,16 +25,19 @@ format do
   end
 
   view :pointer_items, :tags=>:unknown_ok do |args|
-    item_args = { :view => ( args[:item] || (@inclusion_opts && @inclusion_opts[:view]) || default_item_view ) }
+    i_args = item_args(args)
     joint = args[:joint] || ' '
+    card.item_cards.map do |i_card|
+      wrap_item nest(i_card, i_args.clone), i_args
+    end.join joint
+  end
 
+  def item_args args
+    item_args = { :view => ( args[:item] || (@inclusion_opts && @inclusion_opts[:view]) || default_item_view ) }
     if type = card.item_type
       item_args[:type] = type
     end
-
-    card.item_cards.map do |icard|
-      wrap_item nest(icard, item_args.clone), item_args
-    end.join joint
+    item_args
   end
 
 end

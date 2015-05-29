@@ -17,7 +17,7 @@ module ClassMethods
     search spec.merge(:return=>'count')
   end
 
-  def find_each(options = {}) 
+  def find_each(options = {})
     #this is a copy from rails (3.2.16) and is needed because this is performed by a relation (ActiveRecord::Relation)
     find_in_batches(options) do |records|
       records.each { |record| yield record }
@@ -63,10 +63,10 @@ def extended_item_cards context = nil
   items = self.item_cards(args.merge(:context=>context))
   extended_list = []
   already_extended = ::Set.new # avoid loops
-  
+
   while items.size > 0
     item = items.shift
-    if already_extended.include? item 
+    if already_extended.include? item
       next
     elsif item.item_cards == [item]  # no further level of items
       extended_list << item
@@ -103,16 +103,16 @@ def contextual_content context_card, format_args={}, view_args={}
 end
 
 format do
-  
+
   def item_links(args={})
     raw(render_core).split /[,\n]/
   end
-  
+
   def search_params
     @search_params ||= begin
       p = default_search_params.clone
-    
-      if focal? 
+
+      if focal?
         p[:offset] = params[:offset] if params[:offset]
         p[:limit]  = params[:limit]  if params[:limit]
         p.merge! params[:wql]        if params[:wql]
@@ -141,6 +141,50 @@ format do
       when /^\_(\w+)$/ ;  hash[:vars][$1.to_sym] = val
       end
     end
+  end
+end
+
+format :html do
+  view :tabs do |args|
+    tabs = ''
+    tab_panels = ''
+    card.item_cards.each_with_index do |item, index|
+      id = "#{card.cardname.safe_key}-#{item.cardname.safe_key}"
+      tabs += tab( id, item.name, index == 0 )
+      tab_content = nest item, item_args(args)
+      tab_panels += tab_panel( id, tab_content, index == 0 )
+    end
+
+    wrap_with :div, :role=>"tabpanel" do
+      [
+        content_tag(:ul, tabs.html_safe, :class=>"nav #{args[:tab_type]}", :role=>"tablist"),
+        content_tag(:div, tab_panels.html_safe, :class=>'tab-content')
+      ]
+    end
+  end
+  def default_tab_args args
+    args[:tab_type] ||='nav-tabs'
+  end
+
+  view :pills, :view=>:tab
+  def default_pill_args args
+    args[:tab_type] ||= 'nav-pills'
+  end
+
+  def tab id, name, active=false
+    %{
+      <li role='presentation' #{'class="active"' if active}>
+        <a href=##{id} role='tab' data-toggle='tab'>#{name}</a>
+      </li>
+    }
+  end
+
+  def tab_panel id, content, active=false
+    %{
+      <div role='tabpanel' class="tab-pane #{'active' if active}" id=#{id}>
+        #{content}
+      </div>
+    }
   end
 end
 

@@ -108,6 +108,14 @@ format do
     raw(render_core).split /[,\n]/
   end
 
+  def item_args args
+    item_args = { :view => ( args[:item] || (@inclusion_opts && @inclusion_opts[:view]) || default_item_view ) }
+    if type = card.item_type
+      item_args[:type] = type
+    end
+    item_args
+  end
+
   def search_params
     @search_params ||= begin
       p = default_search_params.clone
@@ -149,11 +157,14 @@ format :html do
     tab_buttons = ''
     tab_panes = ''
     card.item_names.each_with_index do |item, index|
+      active_tab = (index == 0)
       id = "#{card.cardname.safe_key}-#{item.to_name.safe_key}"
-      url = page_path(item.to_name, item_args(args).merge(:slot=>inclusion_opts))
-      tab_buttons += tab_button( "##{id}", item, index == 0, 'data-url'=>url, :class=>'load' )
-      tab_content = index == 0 ? nest(Card.fetch(item, :new=>{}), item_args(args)) : ''
-      tab_panes += tab_pane( id, tab_content, index == 0 )
+      slot_args = inclusion_opts.clone
+      slot_args.delete(:view)
+      url = page_path(item.to_name, item_args(args).merge(:slot=>slot_args))
+      tab_buttons += tab_button( "##{id}", item, active_tab, 'data-url'=>url.html_safe, :class=>(active_tab ? nil : 'load'))
+      tab_content = active_tab ? nest(Card.fetch(item, :new=>{}), item_args(args)) : ''
+      tab_panes += tab_pane( id, tab_content, active_tab )
     end
     tab_panel tab_buttons, tab_panes, args[:tab_type]
   end

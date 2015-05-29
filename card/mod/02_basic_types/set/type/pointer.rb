@@ -31,15 +31,6 @@ format do
       wrap_item nest(i_card, i_args.clone), i_args
     end.join joint
   end
-
-  def item_args args
-    item_args = { :view => ( args[:item] || (@inclusion_opts && @inclusion_opts[:view]) || default_item_view ) }
-    if type = card.item_type
-      item_args[:type] = type
-    end
-    item_args
-  end
-
 end
 
 format :html do

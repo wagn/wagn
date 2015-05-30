@@ -163,6 +163,38 @@ $(window).ready ->
     else
       item.find('input').val ''
 
+  # toolbar mod
+  $('body').on 'click', '.edit-toolbar-pin.active > a', (e) ->
+    e.preventDefault()
+    $(this).blur()
+    $('.edit-toolbar-pin').removeClass('active').addClass('inactive')
+    $.ajax '/*edit_toolbar_pinned',
+      type : 'PUT'
+      data : 'card[content]=false'
+
+  $('body').on 'click', '.edit-toolbar-pin.inactive > a', (e) ->
+    e.preventDefault()
+    $('.edit-toolbar-pin').removeClass('inactive').addClass('active')
+    $.ajax '/*edit_toolbar_pinned',
+      type : 'PUT'
+      data : 'card[content]=true'
+
+  $('body').on 'click', '.toolbar-pin.active > a', (e) ->
+    e.preventDefault()
+    $(this).blur()
+    $('.toolbar-pin').removeClass('active').addClass('inactive')
+    $.ajax '/*toolbar_pinned',
+      type : 'PUT'
+      data : 'card[content]=false'
+
+  $('body').on 'click', '.toolbar-pin.inactive > a', (e) ->
+    e.preventDefault()
+    $('.toolbar-pin').removeClass('inactive').addClass('active')
+    $.ajax '/*toolbar_pinned',
+      type : 'PUT'
+      data : 'card[content]=true'
+
+
   # following mod
   $('body').on 'click', '.btn-item-delete', ->
     $(this).find('.glyphicon').addClass("glyphicon-hourglass").removeClass("glyphicon-remove")

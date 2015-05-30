@@ -37,7 +37,7 @@ class Card
       name = trait_name( tag_code )
       name ? name.s : ( raise Card::NotFound, "unknown codename: #{tag_code}" )
     end
-    
+
     def code
       Card::Codename[ Card.fetch_id self ]
     end

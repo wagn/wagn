@@ -16,6 +16,7 @@ format :html do
   end
 
   def wrap args = {}
+    @slot_view = @current_view
     classes = [
       ( 'card-slot' unless args[:no_slot] ),
       "#{ @current_view }-view",
@@ -60,6 +61,7 @@ format :html do
             _optional_render( :header, args, :show),
             (%{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader]),
             _optional_render( :help, args.merge(:help_class=>'alert alert-info'), :hide),
+            (_render( :close_related_link, args) if @slot_view == :related),
             wrap_body(args) { output( yield args ) } ,
           ]
         end
@@ -118,6 +120,10 @@ format :html do
         item
       end
     end.join "\n"
+  end
+
+  view :close_related_link do |args|
+    card_link( args[:parent], :text=>glyphicon('remove'), :view=>:home, :remote=>true, :class=>'pull-right slotter close-related-view', :title=>'cancel', 'data-slot-selector'=>'.card-slot.related-view')
   end
 
 end

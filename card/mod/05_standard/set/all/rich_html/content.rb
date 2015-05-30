@@ -65,9 +65,10 @@ format :html do
 
   view :title do |args|
     title = fancy_title args[:title], args[:title_class]
-    title =  _optional_render( :title_toolbar, args, (show_view?(:toolbar,args.merge(:default_visibility=>:hide)) ? :show : :hide)) ||
+    title =  _optional_render( :title_toolbar, args, (show_view?(:toolbar,args.merge(:default_visibility=>:hide)) || toolbar_pinned? ? :show : :hide)) ||
              _optional_render( :title_link, args.merge( :title_ready=>title ), :hide )       ||
              title
+    #title += " (#{card.type_name})" if Card[:show_cardtype].content == 'true'
     add_name_context
     title
   end
@@ -115,7 +116,7 @@ format :html do
   end
 
   view :closed do |args|
-    frame args.reverse_merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show ) do
+    frame args.reverse_merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show, :optional_edit_toolbar=>:hide ) do
       _optional_render :closed_content, args
     end
   end
@@ -132,12 +133,6 @@ format :html do
     end
   end
 
-  view :options, :tags=>:unknown_ok do |args|
-    frame args do
-      subformat( current_set_card ).render_content args
-    end
-  end
-
   def current_set_card
     set_name = params[:current_set]
     set_name ||= "#{card.name}+*type" if card.known? && card.type_id==Card::CardtypeID
@@ -147,15 +142,18 @@ format :html do
 
 
   view :related do |args|
-    if rparams = params[:related]
-      rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
-      rcard = Card.fetch rcardname, :new=>{}
+    if rparams = args[:related] || params[:related]
+      rcard = rparams[:card] || begin
+                rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
+                Card.fetch rcardname, :new=>{}
+              end
 
       nest_args = ( rparams[:slot] || {} ).deep_symbolize_keys.reverse_merge(
         :view            => ( rparams[:view] || :open ),
         :optional_toggle => :hide,
         :optional_help   => :show,
         :optional_menu   => :show,
+        :optional_close_related_link => :show,
         :parent          => card
       )
       nest_args[:optional_comment_box] = :show if rcard.show_comment_box_in_related?

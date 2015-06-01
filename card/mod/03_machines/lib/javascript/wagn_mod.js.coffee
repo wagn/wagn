@@ -163,6 +163,13 @@ $(window).ready ->
     else
       item.find('input').val ''
 
+  $('body').on 'show.bs.tab', 'a.load[data-toggle=tab][data-url]', (e) ->
+    tab_id = $(e.target).attr('href')
+    url    = $(e.target).data('url')
+    $(e.target).removeClass('load')
+    $(tab_id).load(url)
+
+
   # toolbar mod
   $('body').on 'click', '.edit-toolbar-pin.active > a', (e) ->
     e.preventDefault()

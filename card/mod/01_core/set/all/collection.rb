@@ -17,7 +17,7 @@ module ClassMethods
     search spec.merge(:return=>'count')
   end
 
-  def find_each(options = {}) 
+  def find_each(options = {})
     #this is a copy from rails (3.2.16) and is needed because this is performed by a relation (ActiveRecord::Relation)
     find_in_batches(options) do |records|
       records.each { |record| yield record }
@@ -63,10 +63,10 @@ def extended_item_cards context = nil
   items = self.item_cards(args.merge(:context=>context))
   extended_list = []
   already_extended = ::Set.new # avoid loops
-  
+
   while items.size > 0
     item = items.shift
-    if already_extended.include? item 
+    if already_extended.include? item
       next
     elsif item.item_cards == [item]  # no further level of items
       extended_list << item
@@ -103,16 +103,28 @@ def contextual_content context_card, format_args={}, view_args={}
 end
 
 format do
-  
+
   def item_links(args={})
     raw(render_core).split /[,\n]/
   end
-  
+
+  def item_view args
+    args[:item] || (@inclusion_opts && @inclusion_opts[:view]) || default_item_view
+  end
+
+  def item_args args
+    i_args = { :view => item_view(args)}
+    if type = card.item_type
+      i_args[:type] = type
+    end
+    i_args
+  end
+
   def search_params
     @search_params ||= begin
       p = default_search_params.clone
-    
-      if focal? 
+
+      if focal?
         p[:offset] = params[:offset] if params[:offset]
         p[:limit]  = params[:limit]  if params[:limit]
         p.merge! params[:wql]        if params[:wql]
@@ -141,6 +153,77 @@ format do
       when /^\_(\w+)$/ ;  hash[:vars][$1.to_sym] = val
       end
     end
+  end
+end
+
+format :html do
+  view :tabs do |args|
+    tab_buttons = ''
+    tab_panes = ''
+    card.item_names.each_with_index do |item, index|
+      active_tab = (index == 0)
+      id = "#{card.cardname.safe_key}-#{item.to_name.safe_key}"
+      i_args = item_args(args)
+      if @inclusion_opts
+        slot_args = @inclusion_opts.clone
+        slot_args.delete(:view)
+        i_args.merge!(:slot=>slot_args)
+      end
+      url = page_path(item.to_name, i_args)
+      tab_buttons += tab_button( "##{id}", item, active_tab, 'data-url'=>url.html_safe, :class=>(active_tab ? nil : 'load'))
+      tab_content = active_tab ? nest(Card.fetch(item, :new=>{}), item_args(args)) : ''
+      tab_panes += tab_pane( id, tab_content, active_tab )
+    end
+    tab_panel tab_buttons, tab_panes, args[:tab_type]
+  end
+  def default_tab_args args
+    args[:tab_type] ||= 'tabs'
+  end
+
+  view :pills, :view=>:tab
+  def default_pill_args args
+    args[:tab_type] ||= 'pills'
+  end
+
+  view :tabs_static do |args|
+    tab_buttons = ''
+    tab_panes = ''
+    card.item_cards.each_with_index do |item, index|
+      id = "#{card.cardname.safe_key}-#{item.cardname.safe_key}"
+      tab_buttons += tab_button( "##{id}", item.name, index == 0 )
+      tab_content = nest item, item_args(args)
+      tab_panes += tab_pane( id, tab_content, index == 0 )
+    end
+    tab_panel tab_buttons, tab_panes, args[:tab_type]
+  end
+  def default_tab_static_args args
+    args[:tab_type] ||= 'tabs'
+  end
+
+  view :pills_static, :view=>:tab
+  def default_tab_static_args args
+    args[:tab_type] ||= 'pills'
+  end
+
+  def tab_panel tab_buttons, tab_panes, tab_type='tabs'
+    wrap_with :div, :role=>"tabpanel" do
+      [
+        content_tag(:ul, tab_buttons.html_safe, :class=>"nav nav-#{tab_type}", :role=>"tablist"),
+        content_tag(:div, tab_panes.html_safe, :class=>'tab-content')
+      ]
+    end
+  end
+
+  def tab_button target, text, active=false, link_attr={}
+    link = link_to text, target, link_attr.merge('role'=>'tab','data-toggle'=>'tab')
+    li_args = { :role => :presentation }
+    li_args[:class] = 'active' if active
+    content_tag :li, link, li_args
+  end
+
+  def tab_pane id, content, active=false
+    div_args = {:role => :tabpanel, :id=>id, :class=>"tab-pane #{'active' if active}"}
+    content_tag :div, content.html_safe, div_args
   end
 end
 

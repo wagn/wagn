@@ -403,24 +403,3 @@ end
 
 
 
-#
-
-=begin
-
-def repair_set
-  @set_repair_attempted = true
-  if real?
-    reset_patterns
-    template # repair happens in template loading
-    include_set_modules
-  end
-end
-
-def method_missing method_id, *args
-  if !@set_repair_attempted and repair_set
-    send method_id, *args
-  else
-    super
-  end
-end
-=end

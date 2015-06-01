@@ -76,7 +76,7 @@ format :html do
   end
 
   def menu_account_link args
-    opts = { :related=>{:name=>'+*account',:view=>:edit},
+    opts = { :related=>{:name=>'+*account',:view=>:edit,:slot=>{:hide=>'edit_toolbar'}},
              :path_opts=>{:slot=>{:show=>:account_toolbar}} }
     menu_item('account', 'user',opts, args[:html_args])
   end

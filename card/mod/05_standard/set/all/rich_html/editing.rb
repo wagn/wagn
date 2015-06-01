@@ -6,7 +6,7 @@ format :html do
       [
         _optional_render( :name_formgroup,     args ),
         _optional_render( :type_formgroup,     args ),
-        _optional_render( :content_formgroups, args ),
+        _optional_render( :content_formgroup, args ),
         _optional_render( :button_formgroup,   args )
       ]
     end
@@ -66,7 +66,7 @@ format :html do
   view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
     frame_and_form :update, args do
       [
-        _optional_render( :content_formgroups, args ),
+        _optional_render( :content_formgroup, args ),
         _optional_render( :button_formgroup,   args )
       ]
     end

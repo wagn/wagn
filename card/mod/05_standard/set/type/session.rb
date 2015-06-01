@@ -1,3 +1,6 @@
+def history?
+  false
+end
 
 event :store_in_session, :after=>:approve, :on=>:create do
   Env.session[key] = db_content

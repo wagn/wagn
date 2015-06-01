@@ -252,8 +252,6 @@ def item_names args={}
 end
 
 
-
-
 def item_ids args={}
   item_names(args).map do |name|
     Card.fetch_id name

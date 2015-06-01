@@ -8,7 +8,7 @@ format :html do
   # Options
   # :header => { :content=>String, :brand=>( String | {:name=>, :href=>} ) }
   def navbar id, opts={}
-    nav_opts = opts[:nav_opts] || {}
+    nav_opts = opts[:navbar_opts] || {}
     nav_opts[:class] ||= (opts[:class] || '')
     nav_opts[:class] += " navbar navbar-#{opts.delete(:navbar_type) || 'default'}"
     header_opts = opts[:header] || {}

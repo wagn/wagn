@@ -55,6 +55,8 @@ format :html do
             _optional_render(:edit_type_button,    args, :show),
             _optional_render(:edit_rules_button,   args, :show),
             _optional_render(:edit_nests_button,   args, :show),
+            _optional_render(:edit_history_button, args, :show),
+            _optional_render(:edit_delete_button, args, (card.ok?(:delete) ? :show : :hide)),
           ]
         end),
         content_tag( :ul, navbar_right.html_safe, :class=>'nav navbar-nav navbar-right' )
@@ -71,7 +73,7 @@ format :html do
       links << account_pill( 'edited')
       links << account_pill( 'follow')
       navbar 'account-toolbar',:toggle_align=>:left, :collapsed_content=>close_link('pull-right visible-xs'), :navbar_type=>'inverse',
-      :class=>"slotter toolbar", :nav_opts=>{'data-slot-selector'=>'.card-slot.related-view > .card-frame > .card-body > .card-slot'} do
+      :class=>"slotter toolbar", :navbar_opts=>{'data-slot-selector'=>'.card-slot.related-view > .card-frame > .card-body > .card-slot'} do
         [
           content_tag(:ul, links.join("\n").html_safe, :class=>'nav navbar-nav nav-pills'),
           content_tag(:ul, "<li>#{view_link(glyphicon('remove','hidden-xs'), :open)}</li>".html_safe, :class=>'nav navbar-nav navbar-right'),
@@ -162,6 +164,20 @@ format :html do
     if (nests = card.fetch(:trait=>:includes)) && nests.item_names.present?
       pill_view_link 'nests', :edit_nests, args
     end
+  end
+  view :edit_history_button do |args|
+    active_view = args[:active_toolbar_view] || args[:home_view]
+    link = view_link "#{glyphicon('time')} history", :history, :class=>'slotter navbar-divide', :role=>'pill'
+    li_pill link, active_view == :history
+  end
+  view :edit_delete_button do |args|
+    active_view = args[:active_toolbar_view] || args[:home_view]
+    link = link_to  glyphicon('trash'),{:action=>:delete, :success => main? ? 'REDIRECT: *previous' : "TEXT: #{card.name} deleted"},
+                    :role=>'pill',
+                    :class => 'slotter',
+                    :remote => true,
+                    :'data-confirm' => "Are you sure you want to delete #{card.name}?"
+    li_pill link, false
   end
 
   view :type_link do |args|

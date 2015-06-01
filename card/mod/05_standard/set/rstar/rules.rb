@@ -156,9 +156,9 @@ format :html do
     args[:remote]  ||= false
     args[:success] ||= {
         :card => args[:parent] || card,
-        :id => (args[:parent] && args[:parent].cardname.url_key) || card.cardname.url_key
+        :id => (args[:parent] && args[:parent].cardname.url_key) || card.cardname.url_key,
         :view => :open,
-        :item => nil,
+        :item => nil
       }
     default_edit_rule_args args
     args[:delete_button] = delete_button '.card-slot.related-view'

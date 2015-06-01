@@ -149,7 +149,7 @@ format :html do
   end
   view :edit_rules_button do |args|
     if structure_editable?
-      active = ( args.delete(:active_toolbar_view) == (:edit_rules || :edit_structure) )
+      active = [:edit_rules, :edit_structure].include? args.delete(:active_toolbar_view)
       rule_items = pill_view_link 'structure', :edit_structure, args
       rule_items += pill_view_link '...', :edit_rules, args
       pill_dropdown 'rules', rule_items, active

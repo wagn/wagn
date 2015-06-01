@@ -29,7 +29,7 @@ module Card::SpecHelper
 
   def debug_assert_view_select(view_html, *args, &block)
     Rails.logger.rspec %(
-      #{CodeRay.scan(view_html, :html).div}
+      #{CodeRay.scan(Nokogiri::XML(view_html,&:noblanks).to_s, :html).div}
       <style>
         .CodeRay {
           background-color: #FFF;

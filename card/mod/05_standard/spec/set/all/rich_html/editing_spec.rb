@@ -8,7 +8,7 @@ describe Card::Set::All::RichHtml::Editing do
 
   def assert_active_toolbar_pill view, content, related_view=false
     view_selector = related_view ? 'related' : view
-    debug_assert_view_select @mycard.render(view), "div[class~='card-slot #{view_selector}-view']" do
+    assert_view_select @mycard.render(view), "div[class~='card-slot #{view_selector}-view']" do
       assert_select 'nav[class="slotter toolbar navbar navbar-inverse"]' do
         assert_select 'ul[class="nav navbar-nav nav-pills"]' do
           assert_select 'li[class~="active"] > a', content
@@ -48,10 +48,13 @@ describe Card::Set::All::RichHtml::Editing do
 
   describe 'edit_nests view' do
     before do
+      Card::Auth.as_bot do
+        Card.create! :name=>'Iliad+author', :content=>'Homer'
+      end
       @mycard = Card["Iliad"].format
     end
     it "has toolbar with active 'nests' pill" do
-      assert_active_toolbar_pill :edit_nests, 'nests', true
+      assert_active_toolbar_pill :edit_nests, 'nests'
     end
   end
 end

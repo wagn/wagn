@@ -269,7 +269,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
   > .card-frame, & {
     > .card-body  {
       background: #bbb;
-      padding: 5px;
+      padding: 35px 5px 5px 5px;
       > .ALL  {
         background: #fff;
         > .card-header {
@@ -281,6 +281,11 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
           padding: 8px 2%;
         }
       }
+    }
+    > a.close-related-view {
+      color: inherit;
+      margin-right: 5px;
+      margin-top: 5px;
     }
   }
 }

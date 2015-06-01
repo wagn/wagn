@@ -129,7 +129,7 @@ format :html do
     %{<div class="form-group"><div>#{ args[:buttons] }</div></div>}
   end
 
-  view :content_formgroups do |args|
+  view :content_formgroup do |args|
     raw %{
       <fieldset class="card-editor editor">
         #{ edit_slot args }

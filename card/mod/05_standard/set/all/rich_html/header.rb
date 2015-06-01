@@ -8,8 +8,8 @@ format :html do
           #{ _optional_render :title, args }
         </div>
       </div>
-      #{ _optional_render :toolbar, args, :hide}
-      #{ _optional_render :edit_toolbar, args, :hide}
+      #{ _optional_render :toolbar, args, (toolbar_pinned? ? :show : :hide) }
+      #{ _optional_render :edit_toolbar, args, (edit_toolbar_pinned? ? :show : :hide)}
       #{ _optional_render :account_toolbar, args, :hide}
     }
   end

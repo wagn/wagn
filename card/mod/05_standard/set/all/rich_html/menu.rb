@@ -19,10 +19,10 @@ format :html do
                 else
                   'show-on-hover'
                 end
-    content_tag :div, :class=>"vertical-card-menu card-menu #{css_class}" do
-      content_tag :div, :class=>'btn-group slotter card-slot pull-right' do
-        view_link(glyphicon(args[:menu_icon]), :vertical_menu, :path_opts=>path_opts).html_safe
-      end
+    wrap_with :div, :class=>"vertical-card-menu card-menu #{css_class}" do
+        content_tag :div, :class=>'btn-group slotter card-slot pull-right' do
+          view_link(glyphicon(args[:menu_icon]), :vertical_menu, :path_opts=>path_opts).html_safe
+        end
     end
   end
 
@@ -57,9 +57,8 @@ format :html do
 
   def menu_edit_link args
     opts = {
-             :view=>:related,
-             :path_opts=>{ :related=>{:name=>card.name, :view=>:edit, :slot=>{:hide=>'header menu'}},
-                           :slot=>{:show=>'edit_toolbar', :hide=>'type_link'}}
+             :view=>:edit,
+             :path_opts=>{ :slot=>{:show=>'edit_toolbar', :hide=>'type_link'}}
            }
     menu_item('edit', 'edit', opts, args[:html_args] )
   end
@@ -77,7 +76,7 @@ format :html do
   end
 
   def menu_account_link args
-    opts = { :related=>{:name=>'+*account',:view=>:edit},
+    opts = { :related=>{:name=>'+*account',:view=>:edit,:slot=>{:hide=>'edit_toolbar'}},
              :path_opts=>{:slot=>{:show=>:account_toolbar}} }
     menu_item('account', 'user',opts, args[:html_args])
   end

@@ -8,15 +8,16 @@ format :html do
   # Options
   # :header => { :content=>String, :brand=>( String | {:name=>, :href=>} ) }
   def navbar id, opts={}
-    opts[:class] ||= ''
-    opts[:class] += " navbar navbar-#{opts.delete(:navbar_type) || 'default'}"
+    nav_opts = opts[:nav_opts] || {}
+    nav_opts[:class] ||= (opts[:class] || '')
+    nav_opts[:class] += " navbar navbar-#{opts.delete(:navbar_type) || 'default'}"
     header_opts = opts[:header] || {}
     if opts[:toggle_align] == :left
       opts[:collapsed_content] ||= ''
       opts[:collapsed_content] += navbar_toggle(id, opts[:toggle], 'pull-left navbar-link').html_safe
       opts[:toggle] = :hide
     end
-    wrap_with :nav, :class=>opts[:class] do
+    wrap_with :nav, nav_opts do
       [
         navbar_header(id, header_opts.delete(:content), header_opts.reverse_merge(:toggle=>opts[:toggle])),
         (content_tag(:div, opts[:collapsed_content].html_safe, :class=>'container-fluid') if opts[:collapsed_content]),

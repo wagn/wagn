@@ -1,5 +1,9 @@
 REVISIONS_PER_PAGE = Card.config.revisions_per_page
 
+def history?
+  true
+end
+
 # must be called on all actions and before :set_name, :process_subcards and :validate_delete_children
 def create_act_and_action
   @current_act = if @supercard
@@ -18,11 +22,11 @@ end
 
 
 
-event(:create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save)   { create_act_and_action }
-event(:create_act_and_action_for_delete, :before =>:validate_delete_children, :on=>:delete) { create_act_and_action }
+event(:create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save, :when=>proc {|c| c.history?} )   { create_act_and_action }
+event(:create_act_and_action_for_delete, :before =>:validate_delete_children, :on=>:delete, :when=>proc {|c| c.history? }) { create_act_and_action }
 
 
-event :remove_empty_act, :after=>:extend do
+event :remove_empty_act, :after=>:extend, :when=>proc {|c| c.history? } do
   # if not @supercard and not @current_act.actions.empty?
   #   @current_act.save
   # end
@@ -35,7 +39,7 @@ end
 
 
 
-event :rollback_actions, :before=>:approve, :on=>:update, :when=>proc{ |c| Env and Env.params['action_ids'] and Env.params['action_ids'].class == Array} do
+event :rollback_actions, :before=>:approve, :on=>:update, :when=>proc{ |c| c.history? && Env && Env.params['action_ids'] && Env.params['action_ids'].class == Array} do
   revision = { :subcards => {}}
   rollback_actions = Env.params['action_ids'].map do |a_id|
     Action.fetch(a_id) || nil

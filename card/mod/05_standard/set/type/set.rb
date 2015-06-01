@@ -22,7 +22,7 @@ format :html do
       if settings.present?
         group_name =  Card::Setting.group_names[group_key] || group.to_s
         heading_id = "heading-#{group_key}"
-        collapse_id = "collpase-#{group_key}"
+        collapse_id = "collapse-#{card.cardname.safe_key}-#{group_key}"
         output [
           (content_tag :div, :class=>'panel panel-default' do
             content_tag :div, :class=>'panel-heading', :role=>'tab', :id=>heading_id do

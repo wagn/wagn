@@ -180,7 +180,7 @@ format :html do
     args[:tab_type] ||= 'tabs'
   end
 
-  view :pills, :view=>:tab
+  view :pills, :view=>:tabs
   def default_pill_args args
     args[:tab_type] ||= 'pills'
   end
@@ -200,7 +200,7 @@ format :html do
     args[:tab_type] ||= 'tabs'
   end
 
-  view :pills_static, :view=>:tab
+  view :pills_static, :view=>:tabs
   def default_tab_static_args args
     args[:tab_type] ||= 'pills'
   end

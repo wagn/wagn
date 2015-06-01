@@ -156,7 +156,9 @@ format :html do
              [
                delete_button,
                button_tag( 'Submit', :class=>'rule-submit-button', :situation=>'primary' ),
-               card_link( args[:success][:id], :text=>'Cancel', :class=>'rule-cancel-button btn btn-default', :path_opts=>{:view=>args[:success][:view]} )
+               card_link( args[:success][:id], :text=>'Cancel', :class=>'rule-cancel-button btn btn-default',
+                 :path_opts=>{:view=>args[:success][:view], :success=>'true'}
+               )
              ]
             end
           }
@@ -277,13 +279,13 @@ format :html do
                       end
                       %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
                     end
-    cancel_path = path :view=>( card.new_card? ? :closed_rule : :open_rule )
+    cancel_path = path :view=>( card.new_card? ? :closed_rule : :open_rule ), :success=>'true'
     wrap_with( :div, :class=>'button-area' ) do
      [
        delete_button,
        button_tag( 'Submit', :class=>'rule-submit-button', :situation=>'primary' ),
        button_tag( 'Cancel', :class=>'rule-cancel-button slotter', :type=>'button',
-                             :href=>cancel_path, :success=>true )
+                             :href=>cancel_path )
      ]
     end
   end
@@ -411,24 +413,3 @@ end
 
 
 
-#
-
-=begin
-
-def repair_set
-  @set_repair_attempted = true
-  if real?
-    reset_patterns
-    template # repair happens in template loading
-    include_set_modules
-  end
-end
-
-def method_missing method_id, *args
-  if !@set_repair_attempted and repair_set
-    send method_id, *args
-  else
-    super
-  end
-end
-=end

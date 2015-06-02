@@ -7,7 +7,7 @@ describe Card::Set::Rstar::Rules do
      expect(r).not_to match('No Card!')
      #warn "r = #{r}"
      assert_view_select r, 'table[class="set-rules table"]' do
-       assert_select 'a[href~="/*read+*right+*read?view=open_rule"]', :text => 'input'
+       assert_select 'a[href~="/*read+*right+*read?view=open_rule"]', :text => 'read'
      end
   end
 

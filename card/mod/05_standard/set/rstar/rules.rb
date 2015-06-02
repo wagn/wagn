@@ -1,7 +1,7 @@
 event :save_recently_edited_settings, :before=>:extend, :on=>:save, :when=>proc{|c| c.is_rule? } do
   if (recent = Card[:recent_settings])
     recent.insert_item 0, cardname.right
-    recent.save!
+    recent.save
   end
 end
 

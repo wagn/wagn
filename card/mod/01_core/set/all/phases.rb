@@ -149,7 +149,7 @@ event :process_subcards, :after=>:approve, :on=>:save do
     opts['subcards'] = extract_subcard_args! opts
 
     opts[:supercard] = self
-    
+
     subcard = if known_card = Card[ab_name]
       known_card.refresh.assign_attributes opts
       known_card

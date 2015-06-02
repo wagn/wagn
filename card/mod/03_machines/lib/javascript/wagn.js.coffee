@@ -81,7 +81,7 @@ jQuery.fn.extend {
       if status == 409 #edit conflict
         @slot().find('.current_revision_id').val @slot().find('.new-current-revision-id').text()
       else if status == 449
-        @slot().find('.recaptcha-box').loadCaptcha()
+        @slot().find('g-recaptcha').reloadCaptcha()
 
   notify: (message) ->
     slot = @slot()
@@ -106,7 +106,8 @@ jQuery.fn.extend {
 
   isMain: -> @slot().parent('#main')[0]
 
-  loadCaptcha: ->
+  reloadCaptcha: ->
+    this[0].empty()
     grecaptcha.render this[0],
       sitekey: wagn.recaptchaKey
 
@@ -188,9 +189,12 @@ $(window).ready ->
       opt.url = wagn.prepUrl opt.url, $(this).slot()
 
     if $(this).is('form')
-      if wagn.recaptchaKey and $(this).attr('recaptcha')=='on' and !($(this).find('.recaptcha-box')[0])
-         newCaptcha(this)
-         return false
+      if wagn.recaptchaKey and $(this).attr('recaptcha')=='on' and !($(this).find('.g-recaptcha')[0])
+        if $('.g-recaptcha')[0]  # if there is already a recaptcha on the page then we don't have to load the recaptcha script
+          addCaptcha(this)
+        else
+          initCaptcha(this)
+        return false
 
       if data = $(this).data 'file-data'
         # NOTE - this entire solution is temporary.
@@ -336,19 +340,18 @@ $( document ).on "mobileinit", ->
   }
 
 
-initCaptcha = () ->
-  recapDiv = $('<div id="recaptcha-box"></div>')
-  alert("hello")
-  $('form').children().last().after recapDiv
-  grecaptcha.render 'recaptcha-box', #this[0],
+initCaptcha = (form)->
+  recapDiv = $("<div class='g-recaptcha' data-sitekey='#{wagn.recaptchaKey}'></div>")
+  $(form).children().last().after recapDiv
+  recapUri = "https://www.google.com/recaptcha/api.js"
+  $.getScript recapUri  # renders the first element with "g-recaptcha" class when loaded
+
+# call this if the recaptcha script is already initialized (via initCaptcha)
+addCaptcha = (form)->
+  recapDiv = $('<div class="g-recaptcha"></div>')
+  $(form).children().last().after recapDiv
+  grecaptcha.render recapDiv,
     sitekey: wagn.recaptchaKey
-
-  #recapDiv.loadCaptcha()
-
-newCaptcha = (form)->
-  recapUri = "https://www.google.com/recaptcha/api.js?onload=initCaptcha&render=explicit"
-  $.getScript recapUri
-  # 'https://www.google.com/recaptcha/api/js/recaptcha_ajax.js'
 
 snakeCase = (str)->
   str.replace /([a-z])([A-Z])/g, (match)-> match[0] + '_' + match[1].toLowerCase()

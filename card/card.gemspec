@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
     [ 'paperclip',    '~> 2.8'  ],
     [ 'htmlentities', '~> 4.3'  ],
     [ 'rmagick',      '~> 2.13' ],
-    [ 'recaptcha',    '~> 0.3'  ],
+    [ 'recaptcha',    '~> 0.4'  ],
     [ 'coderay',      '~> 1.0'  ],
     [ 'sass',         '~> 3.2'  ],
     [ 'coffee-script','~> 2.2'  ],

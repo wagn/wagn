@@ -1,6 +1,6 @@
 
 format :html do
-  
+
   def default_new_args args
     super args
     args.merge!(
@@ -13,23 +13,23 @@ format :html do
         'card[type_id]' => card.type_id
       }
     )
-    
+
     if Auth.signed_in? and args[:account].confirm_ok?
       args[:title] = 'Invite'
       args[:buttons] = button_tag 'Send Invitation', :situation=>'primary'
       args[:hidden][:success] = '_self'
     end
   end
-  
+
   view :new do |args|
     #FIXME - make more use of standard new view?
-    
+
     frame_and_form :create, args, 'main-success'=>"REDIRECT" do
       [
         _render_name_formgroup( :help=>'usually first and last name' ),
         _optional_render( :account_formgroups, args),
         ( card.structure ? edit_slot : ''),
-        _optional_render( :button_formgroup, args )
+        _optional_render( :button_formgroup, args ),
       ]
     end
   end
@@ -68,7 +68,7 @@ format :html do
     %{<div class="invite-links">
         #{ headings.map { |h| "<div>#{h}</div>"} * "\n" }
       </div>
-      #{ process_content render_raw }    
+      #{ process_content render_raw }
     }
   end
 end
@@ -77,7 +77,7 @@ event :activate_by_token, :before=>:approve, :on=>:update, :when=>proc{ |c| c.ha
   result = account ? account.authenticate_by_token( @env_token ) : "no account associated with #{name}"
   case result
   when Integer
-    abort :failure, 'no field manipulation mid-activation' if subcards.present? 
+    abort :failure, 'no field manipulation mid-activation' if subcards.present?
     # necessary because the rest of the action is performed as Wagn Bot
     activate_account
     Auth.signin id
@@ -127,7 +127,7 @@ def signed_in_as_me_without_password?
 end
 
 event :redirect_to_edit_password, :on=>:update, :after=>:store, :when=>proc {|c| c.signed_in_as_me_without_password? } do
-  Env.params[:success] = account.edit_password_success_args  
+  Env.params[:success] = account.edit_password_success_args
 end
 
 event :preprocess_account_subcards, :before=>:process_subcards, :on=>:create do

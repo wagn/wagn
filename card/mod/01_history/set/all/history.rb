@@ -1,5 +1,9 @@
 REVISIONS_PER_PAGE = Card.config.revisions_per_page
 
+def history?
+  true
+end
+
 # must be called on all actions and before :set_name, :process_subcards and :validate_delete_children
 def create_act_and_action
   @current_act = if @supercard
@@ -18,11 +22,11 @@ end
 
 
 
-event(:create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save)   { create_act_and_action }
-event(:create_act_and_action_for_delete, :before =>:validate_delete_children, :on=>:delete) { create_act_and_action }
+event(:create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save, :when=>proc {|c| c.history?} )   { create_act_and_action }
+event(:create_act_and_action_for_delete, :before =>:validate_delete_children, :on=>:delete, :when=>proc {|c| c.history? }) { create_act_and_action }
 
 
-event :remove_empty_act, :after=>:extend do
+event :remove_empty_act, :after=>:extend, :when=>proc {|c| c.history? } do
   # if not @supercard and not @current_act.actions.empty?
   #   @current_act.save
   # end
@@ -35,7 +39,7 @@ end
 
 
 
-event :rollback_actions, :before=>:approve, :on=>:update, :when=>proc{ |c| Env and Env.params['action_ids'] and Env.params['action_ids'].class == Array} do
+event :rollback_actions, :before=>:approve, :on=>:update, :when=>proc{ |c| c.history? && Env && Env.params['action_ids'] && Env.params['action_ids'].class == Array} do
   revision = { :subcards => {}}
   rollback_actions = Env.params['action_ids'].map do |a_id|
     Action.fetch(a_id) || nil
@@ -95,7 +99,7 @@ end
 
 format :html do
   view :history do |args|
-    frame args.merge(:body_class=>"history-slot list-group", :content=>true, :subheader=>_render_revision_subheader ) do
+    frame args.merge(:body_class=>"history-slot list-group", :content=>true, :subheader=>revision_subheader ) do
       _render_revisions
     end
   end
@@ -109,7 +113,7 @@ format :html do
     end.join
   end
 
-  view :revision_subheader do |args|
+  def revision_subheader
     intr = card.intrusive_acts.page(params['page']).per(REVISIONS_PER_PAGE)
     render_haml :intr=>intr do
       %{
@@ -195,7 +199,7 @@ format :html do
         link_to name_changes(action, hide_diff),
                 path(:view=>:related, :related=>{:view=>"history",:name=>action.card.name}),
                 :class=>'slotter label-label-default',
-                :slotSelector=>".card-slot.card-frame",
+                'data-slot-selector'=>".card-slot.history-view",
                 :remote=>true
       end
 
@@ -275,7 +279,7 @@ format :html do
   def rollback_link action_ids
     if card.ok?(:update)
       "| " + link_to('Save as current', path(:action=>:update, :view=>:open, :action_ids=>action_ids),
-        :class=>'slotter',:slotSelector=>'.card-slot.card-frame', :remote=>true, :method=>:post, :rel=>'nofollow')
+        :class=>'slotter','data-slot-selector'=>'.card-slot.history-view', :remote=>true, :method=>:post, :rel=>'nofollow')
     end
   end
 

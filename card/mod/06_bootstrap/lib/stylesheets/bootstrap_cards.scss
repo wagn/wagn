@@ -4,8 +4,11 @@
  */
 
 /*
-  These styles are intended to help bridge the default card context with bootstrap styling
+  These styles are intended to help bridge the default card context with bootstrap styling.
+  Note: these styles do not appear in pre-bootstrap skins.
 */
+{{bootstrap default skin+variables}}
+
 
 $label_color: #666666;
 $border_color: #999999;
@@ -24,11 +27,10 @@ header {
   }
 }
 
+.card-menu  a {
+  color: inherit;
+}
 
-/* 
-the following gives users more explicit control over spacing within tinyMCE
-but leads to lots of empty paragraph tags
-*/
 
 
 label,
@@ -82,12 +84,17 @@ body.mceContentBody {
 
 /*---------- Card menu ------------*/
 
-.card-slot > .card-header .card-menu-link {
-  display: none;
-}
-.card-slot.closed-view,
-.card-slot:hover {
-  > .card-header .card-menu-link {
+@media (min-width: $screen-xs-max) {
+  .card-slot > .menu-slot > .vertical-card-menu.show-on-hover {
+    .btn-group.slotter {
+      display: none;
+      &.open {
+        display: inline-block;
+      }
+    }
+  }
+
+  .card-slot:hover > .menu-slot > .vertical-card-menu.show-on-hover .btn-group.slotter {
     display: inline-block;
   }
 }
@@ -194,9 +201,9 @@ body.mceContentBody {
     max-width: 100%;
   }
   a {
-    color: $credit_color; 
+    color: $credit_color;
   }
-}  
+}
 
 .closed-content {
   font-size: 1em !important;

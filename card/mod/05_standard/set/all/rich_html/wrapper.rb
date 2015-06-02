@@ -2,21 +2,21 @@ format :html do
   def slot_options args
     @@slot_option_keys ||= Card::Chunk::Include.options.reject { |k| k == :view }.unshift :home_view
     options_hash = {}
-  
+
     if @context_names.present?
       options_hash['name_context'] = @context_names.map( &:key ) * ','
     end
-  
+
     @@slot_option_keys.inject(options_hash) do |hash, opt|
       hash[opt] = args[opt] if args[opt].present?
       hash
     end
-  
+
     JSON( options_hash )
   end
-  
-  
+
   def wrap args = {}
+    @slot_view = @current_view
     classes = [
       ( 'card-slot' unless args[:no_slot] ),
       "#{ @current_view }-view",
@@ -24,7 +24,7 @@ format :html do
       ( "STRUCTURE-#{args[:structure].to_name.key}" if args[:structure]),
       card.safe_set_keys
     ].compact
-  
+
     div = %{<div id="#{card.cardname.url_key}" data-card-id="#{card.id}" data-card-name="#{h card.name}" style="#{h args[:style]}" class="#{classes*' '}" } +
       %{data-slot='#{html_escape_except_quotes slot_options( args )}'>#{ output yield }</div>}
 
@@ -45,16 +45,27 @@ format :html do
       yield args
     end
   end
-  
+
+  def panel args={}
+    wrap_with :div, :class=>"card-frame #{args[:panel_class]}" do
+      output(yield)
+    end
+  end
+
   def frame args={}
-    args[:slot_class] = "card-frame #{args[:slot_class]}"
     wrap args do
-      %{
-        #{ _render_header args }
-        #{ %{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader] }
-        #{ _optional_render :help, args.merge(:help_class=>'alert alert-info'), :hide }
-        #{ wrap_body args do output( yield args ) end }
-      }
+      [
+        _optional_render( :menu, args ),
+        panel(args) do
+          [
+            _optional_render( :header, args, :show),
+            (%{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader]),
+            _optional_render( :help, args.merge(:help_class=>'alert alert-info'), :hide),
+            (_render( :close_related_link, args) if @slot_view == :related),
+            wrap_body(args) { output( yield args ) } ,
+          ]
+        end
+      ]
     end
   end
 
@@ -67,7 +78,8 @@ format :html do
       end
     end
   end
-  
+
+
   # alert_types: 'success', 'info', 'warning', 'danger'
   def alert alert_type, args={}
     css_class = "alert alert-#{alert_type} "
@@ -82,24 +94,36 @@ format :html do
       close_button + output( yield args)
     end
   end
-  
+
   def wrap_main(content)
     return content if params[:layout]=='none'
     %{<div id="main">#{content}</div>}
   end
-  
-  def wrap_with tag, html_args={}
-    content_tag( tag, html_args ) do 
-      output( yield ).html_safe
+
+  def wrap_with tag, content_or_args={}, html_args={}
+    if block_given?
+      content_tag( tag, content_or_args ) do
+        output( yield ).html_safe
+      end
+    else
+      content_tag( tag, html_args ) do
+        output( content_or_args ).html_safe
+      end
     end
   end
-  
-  def wrap_each_with tag, args={}
-    yield(args).map do |item|
+
+  def wrap_each_with tag, content_or_args={}, args={}
+    content = block_given? ? yield(args) : content_or_args
+    args    = block_given? ? content_or_args : args
+    content.compact.map do |item|
       wrap_with tag, args do
         item
       end
     end.join "\n"
   end
-  
+
+  view :close_related_link do |args|
+    card_link( args[:parent], :text=>glyphicon('remove'), :view=>:home, :remote=>true, :class=>'pull-right slotter close-related-view', :title=>'cancel', 'data-slot-selector'=>'.card-slot.related-view')
+  end
+
 end

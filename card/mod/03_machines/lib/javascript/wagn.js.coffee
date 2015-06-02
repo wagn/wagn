@@ -34,8 +34,18 @@ $.extend wagn,
 
 jQuery.fn.extend {
   slot: ->
-    if @attr('slotSelector')
-      @closest @attr('slotSelector')
+    if @data('slot-selector')
+      target_slot = @closest(@data('slot-selector'))
+      parent_slot = @closest '.card-slot'
+
+      # if slot-selector doesn't apply to a child, search in all parent slots and finally in the body
+      while target_slot.length == 0 and parent_slot.length > 0
+        target_slot = $(parent_slot).find(@data('slot-selector'))
+        parent_slot = $(parent_slot).parent().closest '.card-slot'
+      if target_slot.length == 0
+        $('body').find(@data('slot-selector'))
+      else
+        target_slot
     else
       @closest '.card-slot'
 
@@ -100,7 +110,6 @@ jQuery.fn.extend {
     grecaptcha.render this[0],
       sitekey: wagn.recaptchaKey
 
-
   autosave: ->
     slot = @slot()
     return if @attr 'no-autosave'
@@ -158,6 +167,12 @@ $(window).ready ->
       if $(this).hasClass "card-paging-link"
         $("body").scrollTop slot_top_pos
       event.slotSuccessful = true
+
+  $('body').on 'loaded.bs.modal', null, (event) ->
+    unless event.slotSuccessful
+      wagn.initializeEditors $(event.target)
+      event.slotSuccessful = true
+
 
   $('body').on 'ajax:error', '.slotter', (event, xhr) ->
     $(this).slotError xhr.status, xhr.responseText
@@ -242,10 +257,14 @@ $(window).ready ->
     $('body').on 'dblclick', 'div', (event) ->
       t = $(this)
       return false if t.closest( '.nodblclick'  )[0]
+      # fail if inside a div with "nodblclick" class
       return false if t.closest( '.card-header' )[0]
-      return false if t.find( '.card-editor' )[0]
+      # fail if inside a card header
       s = t.slot()
+      return false if s.find( '.card-editor' )[0]
+      # fail if there is an editor open in your slot
       return false unless s.data('cardId')
+      # fail if slot has not card id
       s.addClass 'slotter'
       s.attr 'href', wagn.rootPath + '/card/edit/~' + s.data('cardId')
       $.rails.handleRemote(s)
@@ -258,13 +277,6 @@ $(window).ready ->
       input = $(this).find '[name=success]'
       if input and !(input.val().match /^REDIRECT/)
         input.val ( if target == 'REDIRECT' then target + ': ' + input.val() else target )
-
-  #more of this info should be in views; will need to refactor for HTTP DELETE anyway...
-  $('.card-slot').on 'click', '.standard-delete', ->
-    return if $(this).attr('success-ready') == 'true' #prevent double-click weirdness
-    s = if $(this).isMain() then 'REDIRECT: *previous' else 'TEXT:' + $(this).slot().data('cardName') + ' removed'
-    $(this).attr 'href', $(this).attr('href') + '?success=' + encodeURIComponent(s)
-    $(this).attr 'success-ready', 'true'
 
   $('body').on 'change', '.live-type-field', ->
     $(this).data 'params', $(this).closest('form').serialize()

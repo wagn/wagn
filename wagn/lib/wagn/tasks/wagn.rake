@@ -1,13 +1,14 @@
 
 require 'wagn/application'
 
-WAGN_BOOTSTRAP_TABLES = %w{ cards card_actions card_acts card_changes card_references }
+WAGN_SEED_TABLES = %w{ cards card_actions card_acts card_changes card_references }
+WAGN_SEED_PATH   = File.join( Cardio.gem_root, 'db/seed/new')
 
 def prepare_migration
   Card::Cache.reset_global
   Card.config.action_mailer.perform_deliveries = false
   Card.reset_column_information
-  Card::Reference.reset_column_information  # this is needed in production mode to insure core db 
+  Card::Reference.reset_column_information  # this is needed in production mode to insure core db
                                             # structures are loaded before schema_mode is set
 end
 
@@ -47,7 +48,7 @@ namespace :wagn do
     conn = ActiveRecord::Base.connection
 
     puts "delete all data in bootstrap tables"
-    WAGN_BOOTSTRAP_TABLES.each do |table|
+    WAGN_SEED_TABLES.each do |table|
       conn.delete "delete from #{table}"
     end
   end
@@ -159,7 +160,7 @@ namespace :wagn do
       ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       prepare_migration
       paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:core_cards)
-    
+
       Card::CoreMigration.schema_mode :core_cards do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
@@ -174,7 +175,7 @@ namespace :wagn do
       ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       prepare_migration
       paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:deck_cards)
-    
+
       Cardio.schema_mode(:deck_cards) do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
@@ -290,9 +291,9 @@ namespace :wagn do
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,
       # which dumps with slashes that syck can't understand
 
-      WAGN_BOOTSTRAP_TABLES.each do |table|
+      WAGN_SEED_TABLES.each do |table|
         i = "000"
-        File.open("#{Cardio.gem_root}/db/bootstrap/#{table}.yml", 'w') do |file|
+        File.open(File.join(WAGN_SEED_PATH, "#{table}.yml"), 'w') do |file|
           data = ActiveRecord::Base.connection.select_all( "select * from #{table}" )
           file.write YAML::dump( data.inject({}) do |hash, record|
             record['trash'] = false if record.has_key? 'trash'
@@ -316,24 +317,24 @@ namespace :wagn do
       # add a fourth line to the raw content of each image (or file) to identify it as a mod file
       Card::Auth.as_bot do
         Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
-          
+
           if card.attach_mod
-            puts "skipping #{card.name}: already in code"
+#            puts "skipping #{card.name}: already in code"
             next
           else
-            puts "working on #{card.name}"
+#            puts "working on #{card.name}"
           end
 
           base_card = card.cardname.junction? ? card.left : card
           raise "need codename for file" unless base_card.codename.present?
-          
+
           mod_name = base_card.type_id==Card::SkinID ? '06_bootstrap' : '05_standard'
           source_dir =  "#{source_files_dir}/#{card.id}"
 
           target_dir = "#{Cardio.gem_root}/mod/#{mod_name}/file/#{base_card.codename}"
-          FileUtils.remove_dir target_dir, force=true if Dir.exists? target_dir  
+          FileUtils.remove_dir target_dir, force=true if Dir.exists? target_dir
           FileUtils.mkdir_p target_dir
-          
+
 #          if card.name =~ /icon/
 #            require 'pry'; binding.pry
 #          end
@@ -344,8 +345,8 @@ namespace :wagn do
             target_filename = filename.gsub /\d+/, card.type_code.to_s
             FileUtils.cp "#{source_dir}/#{filename}", "#{target_dir}/#{target_filename}"
           end
-          
-          
+
+
           unless card.db_content.split(/\n/).last == mod_name
             new_content = card.db_content + "\n#{mod_name}"
             card.update_column :db_content, new_content
@@ -361,11 +362,11 @@ namespace :wagn do
     task :load => :environment do
       #FIXME - shouldn't we be more standard and use seed.rb for this code?
       Rake.application.options.trace = true
-      puts "bootstrap load starting #{File.join( Cardio.gem_root, 'db/bootstrap')}"
+      puts "bootstrap load starting #{WAGN_SEED_PATH}"
       require 'active_record/fixtures'
 #      require 'time'
 
-      ActiveRecord::Fixtures.create_fixtures File.join( Cardio.gem_root, 'db/bootstrap'), WAGN_BOOTSTRAP_TABLES
+      ActiveRecord::Fixtures.create_fixtures WAGN_SEED_PATH, WAGN_SEED_TABLES
     end
 
   end

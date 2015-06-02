@@ -8,7 +8,7 @@ module Cardio
 
   ActiveSupport.on_load :card do
     if Card.count > 0
-      Card::Loader.load_mods 
+      Card::Loader.load_mods
     else
       Rails.logger.warn "empty database"
     end
@@ -20,7 +20,7 @@ module Cardio
     def cache
       @@cache ||= ::Rails.cache
     end
-    
+
     def set_config config
       @@config, @@root = config, config.root
 
@@ -51,7 +51,7 @@ module Cardio
       config.closed_search_limit   = 50
     end
 
-  
+
     def set_paths paths
       @@paths = paths
       add_path 'tmp/set', :root => root
@@ -64,13 +64,15 @@ module Cardio
       add_path "db/migrate_deck_cards", :root => root, :with => 'db/migrate_cards'
       add_path "db/seeds", :with => "db/seeds.rb"
 
-      add_path 'config/initializers', :glob => '**/*.rb'
+      add_path 'config/initializers',  :glob => '**/*.rb'
+      paths['config/initializers'] << "#{gem_root}/mod/**{,/*/**}/initializers"
+      paths['config/initializers'] << "#{root}/mod/**{,/*/**}/initializers"
     end
 
     def root
       @@config.root
     end
-    
+
     def gem_root
       CARD_GEM_ROOT
     end

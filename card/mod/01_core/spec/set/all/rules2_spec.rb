@@ -44,13 +44,13 @@ describe Card do
     end
 
     describe ".related_sets" do
-      it "should have 2 sets (self and right) for a simple card" do
+      it "has 1 set (right) for a simple card" do
         sets = Card['A'].related_sets.map { |s| s[0] }
-        expect(sets).to eq(['A+*self', 'A+*right'])
+        expect(sets).to eq(['A+*right'])
       end
-      it "should have 3 sets (self, type, and right) for a cardtype card" do
+      it "has 2 sets (type, and right) for a cardtype card" do
         sets = Card['Cardtype A'].related_sets.map { |s| s[0] }
-        expect(sets).to eq(['Cardtype A+*type', 'Cardtype A+*self', 'Cardtype A+*right'])
+        expect(sets).to eq(['Cardtype A+*type', 'Cardtype A+*right'])
       end
 #      it "should show type plus right sets when they exist" do
 #        Card::Auth.as_bot { Card.create :name=>'Basic+A+*type plus right', :content=>'' }
@@ -62,9 +62,9 @@ describe Card do
 #        sets = Card['Cardtype A'].related_sets
 #        sets.should == ['Cardtype A+*self', 'Cardtype A+*type', 'Cardtype A+*right', 'Basic+Cardtype A+*type plus right']
 #      end
-      it "should have sets for a non-simple card" do
+      it "is empty for a non-simple card" do
         sets = Card['A+B'].related_sets.map { |s| s[0] }
-        expect(sets).to eq(['A+B+*self'])
+        expect(sets).to eq([])
       end
     end
 =begin

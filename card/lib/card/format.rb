@@ -6,7 +6,7 @@ class Card
     DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
     INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
       :layout=>:layout, :new=>:edit, :setup=>:edit, :normal=>:normal, :template=>:template } #should be set in views
-    
+
     cattr_accessor :ajax_call, :registered
     [ :perms, :denial_views, :closed_views, :error_codes, :view_tags, :aliases ].each do |acc|
       cattr_accessor acc
@@ -15,14 +15,14 @@ class Card
 
     attr_reader :card, :root, :parent, :main_opts
     attr_accessor :form, :error_status, :inclusion_opts
-  
+
     class << self
       @@registered = []
 
       def register format
         @@registered << format.to_s
       end
-    
+
       def format_class_name format
         format = format.to_s
         format = '' if format == 'base'
@@ -30,7 +30,7 @@ class Card
         "#{ format.camelize }Format"
       end
 
-      
+
 
       def extract_class_vars view, opts
         return unless opts.present?
@@ -56,12 +56,12 @@ class Card
           self == klass ? super : klass.new( card, opts )
         end
       end
-    
+
       def tagged view, tag
         view and tag and view_tags = @@view_tags[view.to_sym] and view_tags[tag.to_sym]
       end
-      
-      
+
+
       def format_ancestry
         ancestry = [ self ]
         unless self == Card::Format
@@ -75,7 +75,7 @@ class Card
       end
     end
 
-    
+
     #~~~~~ INSTANCE METHODS
 
     def initialize card, opts={}
@@ -92,20 +92,20 @@ class Card
       include_set_format_modules
       self
     end
-    
-    def get_context_names      
+
+    def get_context_names
       case
       when @context_names
         part_keys = @card.cardname.part_names.map &:key
         @context_names.reject { |n| !part_keys.include? n.key }
       when params[:slot]
-        context_name_list = params[:slot][:name_context].to_s 
+        context_name_list = params[:slot][:name_context].to_s
         context_name_list.split(',').map &:to_name
       else
         []
       end
     end
-    
+
     def include_set_format_modules
       self.class.format_ancestry.reverse.each do |klass|
         card.set_format_modules( klass ).each do |m|
@@ -113,7 +113,7 @@ class Card
         end
       end
     end
-  
+
     def inclusion_defaults nested_card
       @inclusion_defaults ||= begin
         defaults = get_inclusion_defaults(nested_card).clone
@@ -121,19 +121,19 @@ class Card
         defaults
       end
     end
-    
+
     def get_inclusion_defaults nested_card
       { :view => :name }
     end
-    
+
     def params
       Env.params
     end
-    
+
     def controller
       Env[:controller] ||= CardController.new
     end
-    
+
     def session
       Env.session
     end
@@ -145,7 +145,7 @@ class Card
         @showname ||= card.cardname.to_show *@context_names
       end
     end
-  
+
     def main?
       @depth == 0
     end
@@ -169,14 +169,14 @@ class Card
 
     def method_missing method, *opts, &proc
       case method
-      when /(_)?(optional_)?render(_(\w+))?/  
-        view = $3 ? $4 : opts.shift      
-        args = opts[0] ? opts.shift.clone : {} 
+      when /(_)?(optional_)?render(_(\w+))?/
+        view = $3 ? $4 : opts.shift
+        args = opts[0] ? opts.shift.clone : {}
         args.merge!( :optional=>true, :default_visibility=>opts.shift) if $2
         args[ :skip_permissions ] = true if $1
-        render view, args           
+        render view, args
       when /^_view_(\w+)/
-        view = @current_view || $1 
+        view = @current_view || $1
         unsupported_view view
       else
         proc = proc { |*a| raw yield *a } if proc
@@ -188,12 +188,12 @@ class Card
     #
     # ---------- Rendering ------------
     #
-    
-    
+
+
 
     def render view, args={}
       unless args.delete(:optional) && !show_view?( view, args )
-        @current_view = view = ok_view canonicalize_view( view ), args       
+        @current_view = view = ok_view canonicalize_view( view ), args
         args = default_render_args view, args
         with_inclusion_mode view do
           Card.with_logging :view, :message=>view, :context=>card.name, :details=>args do
@@ -205,34 +205,34 @@ class Card
       rescue_view e, view
     end
 
-    
+
     def show_view? view, args
       default = args.delete(:default_visibility) || :show #FIXME - ugly
       view_key = canonicalize_view view
       api_option = args["optional_#{ view_key }".to_sym]
-      case 
+      case
       # args remove option
       when api_option == :always                   ; true
       when api_option == :never                    ; false
-      # wagneer's choice                           
+      # wagneer's choice
       when show_views( args ).member?( view_key )  ; true
       when hide_views( args ).member?( view_key )  ; false
-      # args override default                      
+      # args override default
       when api_option == :show                     ; true
       when api_option == :hide                     ; false
-      # default                                    
+      # default
       else                                         ; default==:show
       end
     end
-    
+
     def show_views args
       parse_view_visibility args[:show]
     end
-    
+
     def hide_views args
       parse_view_visibility args[:hide]
     end
-    
+
     def parse_view_visibility val
       case val
       when Array; val
@@ -241,7 +241,7 @@ class Card
       else raise Card::Error, "bad show/hide argument: #{val}"
       end.map{ |view| canonicalize_view view }
     end
-    
+
 
     def default_render_args view, a=nil
       args = case a
@@ -250,7 +250,7 @@ class Card
       when Array ; a[0].merge a[1]
       else       ; raise Card::Error, "bad render args: #{a}"
       end
-      
+
       view_key = canonicalize_view view
       default_method = "default_#{ view }_args"
       if respond_to? default_method
@@ -258,7 +258,7 @@ class Card
       end
       args
     end
-    
+
 
     def rescue_view e, view
       if Rails.env =~ /^cucumber|test$/
@@ -274,7 +274,7 @@ class Card
     def error_cardname
       card && card.name.present? ? card.name : 'unknown card'
     end
-  
+
     def unsupported_view view
       "view (#{view}) not supported for #{error_cardname}"
     end
@@ -321,9 +321,9 @@ class Card
         when args.delete(:skip_permissions)             # permission skipping specified in args
           view
         when !card.known? && !tagged(view, :unknown_ok) # handle unknown cards (where view not exempt)
-          view_for_unknown view, args  
+          view_for_unknown view, args
         else                                            # run explicit permission checks
-          permitted_view view, args    
+          permitted_view view, args
         end
 
       args[:denied_view] = view if approved_view != view
@@ -332,11 +332,11 @@ class Card
       end
       approved_view
     end
-  
+
     def tagged view, tag
       self.class.tagged view, tag
     end
-  
+
     def permitted_view view, args
       perms_required = @@perms[view] || :read
       args[:denied_task] =
@@ -345,21 +345,21 @@ class Card
         else
           [perms_required].flatten.find { |task| !ok? task }
         end
-      
+
       if args[:denied_task]
         @@denial_views[view] || :denial
       else
         view
       end
     end
-  
+
     def ok? task
       task = :create if task == :update && card.new_card?
       @ok ||= {}
       @ok[task] = card.ok? task if @ok[task].nil?
       @ok[task]
     end
-  
+
     def view_for_unknown view, args
       # note: overridden in HTML
       focal? ? :not_found : :missing
@@ -367,11 +367,11 @@ class Card
 
     def canonicalize_view view
       unless view.blank?
-        view_key = view.to_name.key.to_sym
+        view_key = view.to_viewname.key.to_sym
         DEPRECATED_VIEWS[view_key] || view_key
       end
     end
-    
+
     def with_inclusion_mode mode
       if switch_mode = INCLUSION_MODES[ mode ] and @mode != switch_mode
         old_mode, @mode = @mode, switch_mode
@@ -387,7 +387,7 @@ class Card
 
     def prepare_nest opts
       @char_count ||= 0
-      
+
       opts ||= {}
       case
       when opts.has_key?( :comment )                            ; opts[:comment]   # as in commented code
@@ -413,8 +413,8 @@ class Card
         result
       end
     end
-    
-    def legacy_main_opts_tweaks! opts 
+
+    def legacy_main_opts_tweaks! opts
       if val=params[:size] and val.present?
         opts[:size] = val.to_sym
       end
@@ -432,7 +432,7 @@ class Card
       #ActiveSupport::Notifications.instrument('card', message: "nest: #{nested_card.name}, #{opts}") do
       opts.delete_if { |k,v| v.nil? }
       opts.reverse_merge! inclusion_defaults(nested_card)
-    
+
       sub = nil
       if opts[:inc_name] =~ /^_(self)?$/
         sub = self
@@ -473,7 +473,7 @@ class Card
       if p = params['subcards'] and card_params = p[cardname.to_s]
         content = card_params['content']
       end
-      content if content.present?  # why is this necessary? - efm  
+      content if content.present?  # why is this necessary? - efm
                                    # probably for blanks?  -- older/wiser efm
     end
 
@@ -490,7 +490,7 @@ class Card
       end
       args
     end
-    
+
     def default_item_view
       :name
     end
@@ -503,7 +503,7 @@ class Card
     def add_class options, klass
       options[:class] = [ options[:class], klass ].flatten.compact * ' '
     end
-    
+
     module Location
       #
       # page_path    takes a Card::Name, adds the format and query string to url_key (site-absolute)
@@ -518,7 +518,7 @@ class Card
         query  = opts.present? ? "?#{opts.to_param}"         : ''
         card_path "#{action}#{title.to_name.url_key}#{format}#{query}"
       end
-      
+
       def card_path rel_path
         Rails.logger.warn "Pass only strings to card_path: #{rel_path.class}, #{rel_path}" unless String===rel_path
         if rel_path =~ /^\//
@@ -535,12 +535,12 @@ class Card
           "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ card_path rel }"
         end
       end
-      
+
     end
     include Location
 
     def unique_id
-      "#{card.key}-#{Time.now.to_i}-#{rand(3)}" 
+      "#{card.key}-#{Time.now.to_i}-#{rand(3)}"
     end
 
     def format_date date, include_time = true

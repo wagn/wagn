@@ -1,11 +1,11 @@
 
 format :html do
   def edit_toolbar_pinned?
-    Card[:edit_toolbar_pinned].content == 'true'
+    (etp = Card[:edit_toolbar_pinned]) && etp.content == 'true'
   end
 
   def toolbar_pinned?
-    Card[:toolbar_pinned].content == 'true'
+    (tp = Card[:toolbar_pinned]) && tp.content == 'true'
   end
 
   view :toolbar do |args|

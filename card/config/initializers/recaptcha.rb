@@ -4,7 +4,7 @@ def load_config_from_card codename
   # if the cards table is ready before we use it here
   if ActiveRecord::Base.connection.table_exists? 'cards'
     ((ca = Card[codename]) && ca.raw_content.present? && ca.raw_content) ||
-    Card::Auth.DEFAULT_RECAPTCHA_SETTINGS[codename] ||
+    Card::Auth::DEFAULT_RECAPTCHA_SETTINGS[codename] ||
     nil
   end
 end

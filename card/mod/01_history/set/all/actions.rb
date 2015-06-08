@@ -5,12 +5,12 @@ def select_action_by_params params
 end
 
 def find_action_by_params args
-  case 
+  case
   when args[:rev]
     nth_action args[:rev]
   when args[:rev_id]
-    if action = Action.fetch(args[:rev_id]) and action.card_id == id 
-      action 
+    if action = Action.fetch(args[:rev_id]) and action.card_id == id
+      action
     end
   end
 end
@@ -37,7 +37,7 @@ end
 def delete_old_actions
   Card::TRACKED_FIELDS.each do |field|
     # assign previous changes on each tracked field to the last action
-    if (not last_action.change_for(field).present?) and (last_change = last_change_on(field))
+    if (la=last_action) && !la.change_for(field).present? && (last_change = last_change_on(field))
       last_change = Card::Change.find(last_change.id)   # last_change comes as readonly record
       last_change.update_attributes!(:card_action_id=>last_action_id)
     end

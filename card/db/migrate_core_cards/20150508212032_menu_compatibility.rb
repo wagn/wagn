@@ -7,8 +7,7 @@ class MenuCompatibility < Card::CoreMigration
     bootswatch_shared = Card[:bootswatch_shared]
     Card.search(:type_id=>Card::SkinID) do |skin|
       if skin.item_cards.find { |item_card| item_card.codename.to_s == 'style_bootstrap_compatible'}
-        skin.add_item bootswatch_shared.name
-        skin.save!
+        skin.add_item! bootswatch_shared.name
       end
     end
 

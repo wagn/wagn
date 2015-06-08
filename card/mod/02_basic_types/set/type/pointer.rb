@@ -283,6 +283,10 @@ def add_item name
     self.content="[[#{(item_names << name).reject(&:blank?)*"]]\n[["}]]"
   end
 end
+def add_item! name
+  add_item name
+  save!
+end
 
 def drop_item name
   if include_item? name
@@ -291,12 +295,20 @@ def drop_item name
     self.content = new_names.empty? ? '' : "[[#{new_names * "]]\n[["}]]"
   end
 end
+def drop_item! name
+  drop_item name
+  save!
+end
 
 def insert_item index, name
   new_names = item_names
   new_names.delete(name)
   new_names.insert(index,name)
   self.content =  new_names.map { |name| "[[#{name}]]" }.join "\n"
+end
+def insert_item! index, name
+  insert_item index, name
+  save!
 end
 
 

@@ -176,7 +176,7 @@ format :html do
     end
     tab_panel tab_buttons, tab_panes, args[:tab_type]
   end
-  def default_tab_args args
+  def default_tabs_args args
     args[:tab_type] ||= 'tabs'
   end
 
@@ -215,7 +215,7 @@ format :html do
   end
 
   def tab_button target, text, active=false, link_attr={}
-    link = link_to text, target, link_attr.merge('role'=>'tab','data-toggle'=>'tab')
+    link = link_to fancy_title(text), target, link_attr.merge('role'=>'tab','data-toggle'=>'tab')
     li_args = { :role => :presentation }
     li_args[:class] = 'active' if active
     content_tag :li, link, li_args

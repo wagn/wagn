@@ -22,7 +22,7 @@ class Card
       :pointer       => "Pointer",
       :other         => "Other"
     }
-    @@groups = @@group_names.keys.inject({}) { |groups, key| groups[key] = []; groups }
+    @@groups = @@group_names.keys.each_with_object({}) { |groups, key| groups[key] = [] }
     @@user_specific = ::Set.new
 
     def self.user_specific? codename

@@ -25,7 +25,7 @@ $.extend wagn,
   }
 
   initPointerList: (input)->
-    optionsCard = input.closest('ul').attr('options-card')
+    optionsCard = input.closest('ul').data('options-card')
     input.autocomplete { source: wagn.prepUrl wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
 
   setTinyMCEConfig: (string)->

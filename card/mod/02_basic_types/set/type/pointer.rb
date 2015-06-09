@@ -61,12 +61,12 @@ format :html do
     args ||= {}
     items = args[:item_list] || card.item_names(:context=>:raw)
     items = [''] if items.empty?
-    options_card_name = (oc = card.options_card) ? oc.cardname.url_key : ':all'
+    options_card_name = (oc = card.options_rule_card) ? oc.cardname.url_key : ':all'
 
     extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
     %{
-      <ul class="pointer-list-editor #{extra_css_class}" options-card="#{options_card_name}">
+      <ul class="pointer-list-editor #{extra_css_class}" data-options-card="#{options_card_name}">
         #{
           items.map do |item|
             _render_list_item args.merge( :pointer_item=>item )
@@ -106,14 +106,15 @@ format :html do
 
 
   view :checkbox do |args|
-    options = card.options.map do |option|
-      checked = card.item_names.include?(option.name)
-      id = "pointer-checkbox-#{option.cardname.key}"
-      description = pointer_option_description option
+    options = card.option_names.map do |option_name|
+      checked = card.item_names.include?(option_name)
+      label = ((o_card = Card.fetch(option_name)) && o_card.label) || option_name
+      id = "pointer-checkbox-#{option_name.to_name.key}"
+      description = pointer_option_description option_name
       %{
         <div class="pointer-checkbox">
-          #{ check_box_tag "pointer_checkbox", option.name, checked, :id=>id, :class=>'pointer-checkbox-button' }
-          <label for="#{id}">#{option.name}</label>
+          #{ check_box_tag "pointer_checkbox", option_name, checked, :id=>id, :class=>'pointer-checkbox-button' }
+          <label for="#{id}">#{label}</label>
           #{ %{<div class="checkbox-option-description">#{ description }</div>} if description }
         </div>
       }
@@ -123,21 +124,23 @@ format :html do
   end
 
   view :multiselect do |args|
-    selected_options = card.item_names.map{|i_n| (c=Card.fetch(i_n) and c.name) or i_n}
-    options = options_from_collection_for_select(card.options,:name,:name,selected_options)
-    select_tag("pointer_multiselect", options, :multiple=>true, :class=>'pointer-multiselect form-control')
+    select_tag("pointer_multiselect",
+      options_for_select(card.option_names, card.item_names),
+      :multiple=>true, :class=>'pointer-multiselect form-control'
+    )
   end
 
   view :radio do |args|
     input_name = "pointer_radio_button-#{card.key}"
-    options = card.options.map do |option|
-      checked = (option.name==card.item_names.first)
-      id = "pointer-radio-#{option.cardname.key}"
-      description = pointer_option_description option
+    options = card.option_names.map do |option_name|
+      checked = (option_name==card.item_names.first)
+      id = "pointer-radio-#{option_name.to_name.key}"
+      label = ((o_card = Card.fetch(option_name)) && o_card.label) || option_name
+      description = pointer_option_description option_name
       %{
         <li class="pointer-radio radio">
-          #{ radio_button_tag input_name, option.name, checked, :id=>id, :class=>'pointer-radio-button' }
-          <label for="#{id}">#{ option.label }</label>
+          #{ radio_button_tag input_name, option_name, checked, :id=>id, :class=>'pointer-radio-button' }
+          <label for="#{id}">#{ label }</label>
           #{ %{<div class="radio-option-description">#{ description }</div>} if description }
         </li>
       }
@@ -147,14 +150,17 @@ format :html do
   end
 
   view :select do |args|
-    options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]}
-    select_tag("pointer_select", options_for_select(options, card.item_names.first), :class=>'pointer-select form-control')
+    options = [["-- Select --",""]] + card.option_names.map{ |x| [x,x]}
+    select_tag("pointer_select",
+      options_for_select(options, card.item_names.first),
+      :class=>'pointer-select form-control'
+    )
   end
 
 
   def pointer_option_description option
     pod_name = card.rule(:options_label) || 'description'
-    dcard = Card[ "#{option.name}+#{pod_name}" ]
+    dcard = Card[ "#{option}+#{pod_name}" ]
     if dcard and dcard.ok? :read
       with_inclusion_mode :normal do
         subformat(dcard).render_core
@@ -255,7 +261,7 @@ def item_ids args={}
 end
 
 def item_type
-  opt = options_card
+  opt = options_rule_card
   if !opt or opt==self #fixme, need better recursion prevention
     nil
   else
@@ -312,12 +318,24 @@ def insert_item! index, name
 end
 
 
-def options_card
+def options_rule_card
   self.rule_card :options
 end
 
-def options
-  result_cards = if oc = options_card
+def option_names
+  result_cards = if oc = options_rule_card
+    oc.item_names :default_limit=>50, :context=>name
+  else
+    Card.search :sort=>'name', :limit=>50, :return=>:name
+  end
+  if selected_options = item_names
+    result_cards = result_cards | selected_options
+  end
+  result_cards
+end
+
+def option_cards
+  result_cards = if oc = options_rule_card
     oc.item_cards :default_limit=>50, :context=>name
   else
     Card.search :sort=>'alpha', :limit=>50

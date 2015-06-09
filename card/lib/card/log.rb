@@ -192,33 +192,6 @@ class Card::Log
         end
       end
 
-
-      def render_html_file content
-        %{
-          <html>
-          <head>
-            <!-- Latest compiled and minified CSS -->
-            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-
-            <!-- Optional theme -->
-            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-
-            <!-- Latest compiled and minified JavaScript -->
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-            <style>
-            .panel-group {
-              margin-bottom: 0;
-            }
-            </style>
-          </head>
-          <body>
-          #{content}
-          </body>
-          </html>
-        }
-      end
-
       def text_log
         @@log.each do |entry|
           Rails.logger.wagn entry.to_s! if entry.valid

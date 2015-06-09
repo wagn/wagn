@@ -12,8 +12,6 @@ format do
   end
 
   def compile_scss scss, style=:expanded
-    Rails.logger.info "----------------\n\ncompress SCSS: #{scss}"
-
     Sass.compile scss, :style=>style
   rescue =>e
     e

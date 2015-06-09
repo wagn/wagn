@@ -10,8 +10,6 @@ machine_input do
 end
 
 def compress_css input
-#  Rails.logger.info "----------------\n\ncompress CSS: #{input}"
-
   begin
     Sass.compile input, :style=>:compressed
   rescue => e

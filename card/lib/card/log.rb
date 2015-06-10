@@ -45,7 +45,7 @@ class Card::Log
     # config.performance_logger = {
     #     :min_time => 100,                              # show only method calls that are slower than 100ms
     #     :max_depth => 3,                               # show nested method calls only up to depth 3
-    #     :details=> true                                # show method arguments and sql
+    #     :details=> true,                                # show method arguments and sql
     #     :methods => [:event, :search, :fetch, :view],  # choose methods to log
     # }
     #
@@ -79,7 +79,7 @@ class Card::Log
                               }
 
     SPECIAL_METHODS     = [:search, :view, :event]  # these methods have already a Wagn.with_logging block
-                                                        # we don't have to monkey patch them, only turn the logging on with adding the symbol to the methods hash
+                                                    # we don't have to monkey patch them, only turn the logging on with adding the symbol to the methods hash
 
 
 
@@ -91,14 +91,31 @@ class Card::Log
 
 
     class << self
+      def params_to_config args
+        args[:details] = args[:details] == 'true' ? true : false
+        args[:max_depth] &&= args[:max_depth].to_i
+        args[:min_time]  &&= args[:min_time].to_i
+        args[:output]    &&= args[:output].to_sym
+        if args[:methods]
+          if args[:methods].kind_of?(String) && args[:methods].match(/^\[.+\]$/)
+            args[:methods] = JSON.parse(args[:methods]).map(&:to_sym)
+          elsif args[:methods].kind_of?(Array)
+            args[:methods].map!(&:to_sym)
+          end
+        end
+        args
+      end
+
       def load_config args
+        args = params_to_config args
         @details   = args[:details]   || false
         @max_depth = args[:max_depth] || false
         @min_time  = args[:min_time]  || false
+        @output    = args[:output]    || :text
         @enabled_methods = ::Set.new
         prepare_methods_for_logging args[:methods] if args[:methods]
       end
-      
+
       def start args={}
         @@current_level = 0
         @@log = []
@@ -118,7 +135,7 @@ class Card::Log
         print_log
       end
 
-      
+
       def with_timer method, args, &block
         if args[:context]
 
@@ -152,7 +169,7 @@ class Card::Log
         end
         result
       end
-      
+
 
       def enable_method method_name
         @enabled_methods ||= ::Set.new
@@ -166,10 +183,73 @@ class Card::Log
       private
 
       def print_log
+        if @output == :card && Card[:performance_log]
+          Card[:performance_log].add_log_entry @@log.first.message, html_log
+        elsif @output == :html
+          html_log
+        else
+          text_log
+        end
+      end
+
+      def text_log
         @@log.each do |entry|
           Rails.logger.wagn entry.to_s! if entry.valid
         end
       end
+
+      def html_log
+        @html_log ||= begin
+          list = @@log.inject([]) do |tree, entry|
+            if entry.parent
+              #entry.parent.children << entry
+            else
+              tree << entry
+            end
+            tree
+          end
+
+          list_to_accordion list
+        end
+      end
+
+      def list_to_accordion list
+        list.map do |entry|
+          if entry.children && entry.children.present?
+            accordion_entry entry
+          else
+            "<li class='list-group-item'>#{simple_entry entry}</li>"
+          end
+        end.join "\n"
+      end
+
+      def simple_entry entry
+        entry.to_html
+      end
+
+      def accordion_entry entry
+        panel_body = list_to_accordion entry.children
+        collapse_id = entry.hash.to_s
+        %{
+          <div class="panel-group" id="accordion-#{collapse_id}" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default #{'panel-danger' if entry.duration > 100 }">
+              <div class="panel-heading" role="tab" id="heading-#{collapse_id}">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion-#{collapse_id}" href="##{collapse_id}" aria-expanded="true" aria-controls="#{collapse_id}">
+                    #{ simple_entry entry }
+                  </a>
+                </h4>
+              </div>
+              <div id="#{collapse_id}" class="panel-collapse collapse #{'in' if entry.duration > 100}" role="tabpanel" aria-labelledby="heading-#{collapse_id}">
+                <div class="panel-body">
+                  #{ panel_body }
+                </div>
+              </div>
+            </div>
+          </div>
+          }
+      end
+
 
       def new_entry args
         args.delete(:details) unless @details
@@ -194,7 +274,7 @@ class Card::Log
         @@active_entries.pop
         @@current_level -= 1
       end
-      
+
       def prepare_methods_for_logging args
         classes = hashify_and_verify_keys( args, DEFAULT_CLASS ) do |key|
           key.kind_of?(Class) || key.kind_of?(Module)
@@ -250,10 +330,11 @@ class Card::Log
       end
 
     end
-    
-    
+
+
     class Entry
-      attr_accessor :level, :valid, :context, :parent, :children_cnt, :duration
+      attr_accessor :level, :valid, :context, :parent, :children_cnt, :duration, :children
+      attr_reader :message
 
       def initialize( parent, level, args )
         @start = Time.new
@@ -266,18 +347,22 @@ class Card::Log
         @valid = true
         @parent = parent
         @children_cnt = 0
+        @children = []
         if @parent
-          @parent.add_children
+          @parent.add_children self
           #@sibling_nr = @parent.children_cnt
         end
       end
 
-      def add_children
+      def add_children child=false
         @children_cnt += 1
+        @children << child if child
       end
 
-      def delete_children
+      def delete_children child=false
         @children_cnt -= 1
+        @children.delete child if child
+
       end
 
       def has_younger_siblings?
@@ -290,7 +375,7 @@ class Card::Log
 
       def delete
         @valid = false
-        @parent.delete_children if @parent
+        @parent.delete_children(self) if @parent
       end
 
 
@@ -311,6 +396,14 @@ class Card::Log
           end
           @parent.delete_children if @parent
           msg
+        end
+      end
+      def to_html
+        @to_html ||= begin
+          msg = "<span title='#{@details}'>"
+          msg += @message if @message
+          msg += "<span class='badge #{"badge-danger" if @duration > 100}'> %d.2ms </span>" % @duration if @duration
+          msg += '</span>'
         end
       end
 
@@ -346,8 +439,8 @@ class Card::Log
       end
 
     end
-    
-    
+
+
     module BigBrother
 
       def watch_method method_name, method_type=:all, options={}
@@ -430,8 +523,8 @@ class Card::Log
       end
 
     end
-    
-    
+
+
   end
 
 end

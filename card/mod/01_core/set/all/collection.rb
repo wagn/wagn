@@ -57,6 +57,27 @@ def include_item? item
   item_names.map{|name| name.to_name.key}.member? key
 end
 
+def add_item item
+  unless include_item? item
+    self.content="#{self.content}\n#{name}"
+  end
+end
+
+def drop_item item
+  if include_item? item
+    new_names = item_names.reject{ |i| i == item }
+    self.content = new_names.empty? ? '' : new_names.join("\n")
+  end
+end
+
+def insert_item index, name
+  new_names = item_names
+  new_names.delete(name)
+  new_names.insert(index,name)
+  self.content =  new_names.join "\n"
+end
+
+
 def extended_item_cards context = nil
   context = (context ? context.cardname : self.cardname)
   args={ :limit=>'' }
@@ -160,18 +181,31 @@ format :html do
   view :tabs do |args|
     tab_buttons = ''
     tab_panes = ''
-    card.item_names.each_with_index do |item, index|
+    Card::Content.new(card.content, card).find_chunks( Card::Chunk::Reference ).each_with_index do |item, index|
       active_tab = (index == 0)
-      id = "#{card.cardname.safe_key}-#{item.to_name.safe_key}"
+      id = "#{card.cardname.safe_key}-#{item.referee_name.safe_key}"
       i_args = item_args(args)
       if @inclusion_opts
         slot_args = @inclusion_opts.clone
         slot_args.delete(:view)
+        if item.kind_of? Card::Chunk::Include
+          slot_args.merge!(item.options)
+        end
         i_args.merge!(:slot=>slot_args)
       end
-      url = page_path(item.to_name, i_args)
-      tab_buttons += tab_button( "##{id}", item, active_tab, 'data-url'=>url.html_safe, :class=>(active_tab ? nil : 'load'))
-      tab_content = active_tab ? nest(Card.fetch(item, :new=>{}), item_args(args)) : ''
+      url = page_path(item.referee_name, i_args)
+      tab_name = (item.respond_to?(:options) && item.options[:title]) || item.name
+      tab_buttons += tab_button( "##{id}", tab_name, active_tab, 'data-url'=>url.html_safe, :class=>(active_tab ? nil : 'load'))
+      tab_content =
+        if active_tab
+          if item.kind_of? Card::Chunk::Include
+            item.process_chunk { |options| prepare_nest options }
+          else
+            nest(Card.fetch(item, :new=>{}), i_args)
+          end
+        else
+          ''
+        end
       tab_panes += tab_pane( id, tab_content, active_tab )
     end
     tab_panel tab_buttons, tab_panes, args[:tab_type]
@@ -181,7 +215,7 @@ format :html do
   end
 
   view :pills, :view=>:tabs
-  def default_pill_args args
+  def default_pills_args args
     args[:tab_type] ||= 'pills'
   end
 
@@ -196,12 +230,12 @@ format :html do
     end
     tab_panel tab_buttons, tab_panes, args[:tab_type]
   end
-  def default_tab_static_args args
+  def default_tabs_static_args args
     args[:tab_type] ||= 'tabs'
   end
 
   view :pills_static, :view=>:tabs
-  def default_tab_static_args args
+  def default_tabs_static_args args
     args[:tab_type] ||= 'pills'
   end
 

@@ -306,6 +306,18 @@ describe Card::Content do
         assert_equal 'yo', Card::Content.clean!('<!-- not me -->yo')
         assert_equal 'joe', Card::Content.clean!('<!-- not me -->joe<!-- not me -->')
       end
+
+      it 'fixes regular nbsp order by default' do
+        assert_equal 'space&nbsp; test&nbsp; two&nbsp;&nbsp; space',
+                      Card::Content.clean!('space&nbsp; test &nbsp;two &nbsp;&nbsp;space')
+      end
+
+      it 'doesn\'t fix regular nbsp order with setting' do
+        # manually configure this setting, then make this one live (test above will then fail)
+        pending "Can't set Card.config.space_last_in_multispace= false for one test"
+        assert_equal 'space&nbsp; test &nbsp;two &nbsp;&nbsp;space',
+                      Card::Content.clean!('space&nbsp; test &nbsp;two &nbsp;&nbsp;space')
+      end
     end
   end
   

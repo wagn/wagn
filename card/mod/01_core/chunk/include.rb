@@ -5,7 +5,7 @@ require_dependency File.expand_path( '../reference', __FILE__ )
 module Card::Chunk
   class Include < Reference
     cattr_reader :options
-    @@options = ::Set.new [ :inc_name, :inc_syntax, :view, :items, :type, :size, :title, :hide, :show, :structure ]
+    @@options = ::Set.new [ :inc_name, :inc_syntax, :view, :items, :type, :size, :title, :hide, :show, :structure, :params ]
     attr_reader :options
 
     Card::Chunk.register_class self, {
@@ -79,6 +79,16 @@ module Card::Chunk
     def replace_reference old_name, new_name
       replace_name_reference old_name, new_name
       @text = "{{#{ [ @name.to_s, @opt_lists ].compact * '|' }}}"
+    end
+
+    def explicit_view= view
+      unless @options[:view] #could check to make sure it's not already the default...
+        if @text =~ /\|/
+          @text.sub! '|', "|#{view};"
+        else
+          @text.sub! '}}', "|#{view}}}"
+        end
+      end
     end
 
   end

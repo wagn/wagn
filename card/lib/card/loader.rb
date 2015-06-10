@@ -1,5 +1,8 @@
 # -*- encoding : utf-8 -*-
 
+require_dependency 'card/set'
+require_dependency 'card/set_pattern'
+
 class Card
   class << self
     def config
@@ -43,8 +46,6 @@ class Card
         end
       end
 
-      private
-
       def mod_dirs
         @@mod_dirs ||= begin
           if Card.paths['local-mod']
@@ -59,6 +60,8 @@ class Card
           end.flatten.compact
         end
       end
+
+      private
 
       def load_set_patterns
         if rewrite_tmp_files?

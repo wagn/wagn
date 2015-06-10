@@ -4,16 +4,16 @@
 
 Wagn is an open web platform for building coherent web systems.
 
-Using simple wiki-inspired building blocks called cards, "Wagneers" construct sites ranging from simple content managers to custom project trackers to fully integrated web suites.  
+Using simple wiki-inspired building blocks called cards, "Wagneers" construct sites ranging from simple content managers to custom project trackers to fully integrated web suites.
 
 ==System Requirements
- 
+
 Ruby[http://www.ruby-lang.org/en/]:: version 1.8.7 or higher
 Bundler[http://gembundler.com/]:: version 1.0 or higher
 ImageMagick[http://www.imagemagick.org/]::
 A database engine:: Either MySQL[http://www.mysql.com/] or PostgreSQL[http://www.postgresql.org/]
+Node.js[https://nodejs.org/]:: or another {JavaScript runtime}[https://github.com/sstephenson/execjs]
 
- 
 ==Installation
 
 ===1. install the gem
@@ -36,7 +36,7 @@ Then run
 
   cd mysite
   wagn seed
-  
+
 ..to create and seed the database
 
 
@@ -45,7 +45,7 @@ Then run
 To fire up the default, built-in WEBrick server, just run:
 
   wagn server
- 
+
 ...and point your browser to http://localhost:3000 (unless otherwise configured).
 
 WEBrick is great for a quick test run.  To run a production website, see http://www.wagn.org/wagn_in_production.
@@ -69,12 +69,12 @@ From your wagn root directory run:
 Run the following:
 
   wagn update
-  
+
 ====4. Restart your server.
 
 ===Upgrading pre-gem Wagn sites
 
-First check the Wagn version of your existing site.  
+First check the Wagn version of your existing site.
 
 ====Version 1.10 or newer
 

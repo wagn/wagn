@@ -1,0 +1,68 @@
+/*
+  This backwards-compatibility stylesheet is intended to keep the old "Classic" skins working.
+  It is NOT intended to be used in new skins.
+*/
+
+#menu {
+  height: 30px;
+  div.container-fluid{
+    display: block;
+  }
+  div.navbar-header {
+    display: none;
+  }
+  ul {
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  li {
+    display: inline;
+  }
+  .navbar-left {
+    float: left;
+  }
+  .navbar-right {
+    float: right;
+    margin-right: 15px;
+  }
+  .navbar-form {
+    width: 30%;
+    margin-top: 5px;
+    margin-left: 10px;
+    input {
+      width: 100%;
+    }
+  }
+  .navbox-form {
+    input {
+      display: inline;
+      min-height: 25px;
+    }
+  }
+}
+
+#primary {
+  clear: both;
+}
+
+
+// removed from standard.scss
+input, select, textarea {
+  padding: 0 1%;
+}
+input, select {
+  max-width: 97.5%;
+}
+
+fieldset {
+  border: 0;
+  padding: 0;
+}
+.form-group {
+  padding: 10px;
+}
+
+.alert-info {
+  background: #ccc;
+  padding: 5px 10px;
+}

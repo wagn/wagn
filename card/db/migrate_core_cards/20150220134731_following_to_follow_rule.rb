@@ -10,7 +10,7 @@ class FollowingToFollowRule < Card::CoreMigration
           set_card = set_card.default_follow_set_card
         end
         rule = Card.fetch set_card.follow_rule_name(user_name), :new=>{:type=>'pointer'}
-        rule.content = "[[always]]"
+        rule.content = "[[*always]]"
         rule.save!
       end
     end

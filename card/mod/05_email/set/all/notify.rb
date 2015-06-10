@@ -29,6 +29,7 @@ class FollowerStash
           end
           
         end      
+
       end
       
     end
@@ -65,7 +66,6 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c|
     !c.supercard and c.current_act and Card::Auth.current_id != WagnBotID 
   }  do
 
-#    binding.pry
   begin
     @current_act.reload
     @follower_stash ||= FollowerStash.new
@@ -74,7 +74,7 @@ event :notify_followers, :after=>:extend, :when=>proc{ |c|
     end
     @follower_stash.each_follower_with_reason do |follower, reason|
       if follower.account and follower != @current_act.actor
-        follower.account.send_change_notice @current_act, reason[:set_card].name, reason[:option_card].name
+        follower.account.send_change_notice @current_act, reason[:set_card].name, reason[:option]
       end
     end
   rescue =>e  #this error handling should apply to all extend callback exceptions
@@ -138,7 +138,9 @@ format do
   view :unfollow_url, :perms=>:none, :closed=>true do |args|
     if args[:followed_set] && (set_card = Card.fetch(args[:followed_set])) && args[:follow_option] && args[:follower]
      rule_name = set_card.follow_rule_name args[:follower]
-     card_url( "update/#{rule_name.to_name.url_key}?card[content]=[[#{Card[:never].name}]]" )  # or drop args[:follow_option] ?
+     target_name = "#{args[:follower]}+#{Card[:follow].name}"
+     update_path = page_path target_name, :action=>:update, :card=>{:subcards=>{rule_name=>Card[:never].name}}
+     card_url update_path # absolutize path
     end
   end
   
@@ -191,16 +193,14 @@ end
 format :email_text do 
   view :last_action, :perms=>:none do |args|
     act = get_act(args)
-    action_on_card =  act.action_on(act.card_id) || act.actions.first
-    "#{action_on_card.action_type}d"
+    "#{act.main_action.action_type}d"
   end
 end
 
 format :email_html do  
   view :last_action, :perms=>:none do |args|
     act = get_act(args)
-    action_on_card =  act.action_on(act.card_id) || act.actions.first
-    "#{action_on_card.action_type}d"
+    "#{act.main_action.action_type}d"
   end
   
   def wrap_list list

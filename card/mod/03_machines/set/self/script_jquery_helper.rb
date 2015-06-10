@@ -9,6 +9,4 @@ view :raw do |args|
   end.join("\n")
 end
 
-view :editor do |args|
-  "Content is stored in file and can't be edited."
-end
+format(:html) { include ScriptAce::HtmlFormat }

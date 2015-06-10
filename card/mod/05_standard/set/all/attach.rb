@@ -1,5 +1,5 @@
 
-require 'RMagick'
+require 'rmagick'
 require 'paperclip'
 
 def attach_array
@@ -96,8 +96,8 @@ def self.included(base)
 
     has_attached_file :attach, :preserve_files=>true,
       :default_url => "missing",
-      :url => ":file_path/:basename-:size:action_id.:extension",
-      :path => ":local/:card_id/:size:action_id.:extension",
+      :url => ":web_dir/:basename-:size:action_id.:extension",
+      :path => ":system_path.:extension",
       :styles => { :icon   => '16x16#', :small  => '75x75',
                  :medium => '200x200>', :large  => '500x500>' }
 
@@ -122,21 +122,19 @@ module Paperclip::Interpolations
   
   extend Card::Format::Location
 
-  def local at, style_name
+  def system_path at, style
+    card = at.instance
     if mod = at.instance.attach_mod
       # generalize this to work with any mod (needs design)
-      "#{Cardio.gem_root}/mod/#{mod}/file"
+      codecard = card.cardname.junction? ? card.left : card
+      "#{ Cardio.gem_root}/mod/#{mod}/file/#{codecard.codename}/#{size at, style}#{card.type_code}"
     else
-      Card.paths['files'].existent.first
+      "#{ Card.paths['files'].existent.first }/#{card.id}/#{size at, style}#{action_id at, style}"
     end
   end
       
-  def file_path at, style_name
+  def web_dir at, style_name
     card_path Card.config.files_web_path
-  end
-
-  def card_id at, style_name
-    at.instance.id
   end
 
   def basename at, style_name

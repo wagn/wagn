@@ -16,15 +16,18 @@ Wagn.application.class.configure do
 
   # Don't check template timestamps - once again this
   # is to avoid IO times overwhelming profile results
-  config.action_view.cache_template_loading            = true
+  config.action_view.cache_template_loading = true
 
   # This is debatable, but turn off action controller
   # caching to see how long it really takes to run
   # queries and render templates
-  config.action_controller.perform_caching             = true
+  config.action_controller.perform_caching = true
 
   # Turn off most logging
   config.log_level = :info
   
   config.active_support.deprecation = :log
+  
+  config.action_mailer.perform_deliveries = false
 end
+

@@ -31,14 +31,15 @@ unless Rake::TaskManager.methods.include?(:redefine_task)
 end
 
 
-namespace :db do  
+namespace :db do
   namespace :fixtures do
     desc "Load fixtures into the current environment's database.  Load specific fixtures using FIXTURES=x,y"
     task :load => :environment do
       require 'active_record/fixtures'
+      fixture_path = File.join(Cardio.gem_root, 'db','seed', 'test', 'fixtures')
       ActiveRecord::Base.establish_connection(::Rails.env.to_sym)
-      (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(Cardio.gem_root, 'test', 'fixtures', '*.{yml,csv}'))).each do |fixture_file|
-        ActiveRecord::Fixtures.create_fixtures(File.join(Cardio.gem_root, 'test', 'fixtures'), File.basename(fixture_file, '.*'))
+      (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(fixture_path, '*.{yml,csv}'))).each do |fixture_file|
+        ActiveRecord::Fixtures.create_fixtures(fixture_path, File.basename(fixture_file, '.*'))
       end
     end
   end
@@ -47,7 +48,7 @@ namespace :db do
     desc 'Prepare the test database and load the schema'
     Rake::Task.redefine_task( :prepare => :environment ) do
       if ENV['RELOAD_TEST_DATA'] == 'true' || ENV['RUN_CODE_RUN']
-        puts `env RAILS_ENV=test rake wagn:create`
+        puts `env RAILS_ENV=test rake wagn:seed`
       else
         puts "skipping loading test data.  to force, run `env RELOAD_TEST_DATA=true rake db:test:prepare`"
       end

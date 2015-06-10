@@ -9,7 +9,7 @@ format :html do
     search_vars[:item] ||= :change
 
     cards_by_day = Hash.new { |h, day| h[day] = [] }
-    search_vars[:results].each do |card|
+    search_results.each do |card|
       begin
         stamp = card.updated_at
         day = Date.new(stamp.year, stamp.month, stamp.day)

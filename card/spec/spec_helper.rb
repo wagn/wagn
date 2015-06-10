@@ -2,9 +2,13 @@
 require 'spork'
 ENV["RAILS_ENV"] = 'test'
 
+require 'timecop'
+require 'rr'
+require File.expand_path('../../db/seed/test/seed.rb', __FILE__) # used for SharedData::Users - required here so code won't show up in coverage
+
 require File.expand_path( '../../lib/card/simplecov_helper.rb', __FILE__ )
 require 'simplecov'
-require 'timecop'
+
 require File.expand_path( '../../mod/03_machines/spec/lib/shared_machine_examples.rb', __FILE__ )
 require File.expand_path( '../../mod/03_machines/spec/lib/shared_machine_input_examples.rb', __FILE__ )
 
@@ -14,15 +18,15 @@ Spork.prefork do
   else
     require File.expand_path( '../../config/environment', __FILE__ )
   end
-  
+
   require 'rspec/rails'
   require File.expand_path( '../../lib/card/spec_helper.rb', __FILE__ )
-  
+
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
 #  Dir[ File.join(Cardio.gem_root, "spec/support/**/*.rb") ].each { |f| require f }
 
-#  FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
+  FIXTURES_PATH =  File.expand_path('../../db/seed/test/fixtures', __FILE__)
   JOE_USER_ID = Card['joe_user'].id
   RSpec.configure do |config|
 
@@ -33,7 +37,7 @@ Spork.prefork do
     # format_index = ARGV.find_index {|arg| arg =~ /--format|-f/ }
     # formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation' #'textmate'
     # config.default_formatter=formatter
-    
+
     config.infer_spec_type_from_file_location!
     #config.include CustomMatchers
     #config.include ControllerMacros, :type=>:controllers
@@ -46,7 +50,7 @@ Spork.prefork do
 
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
-    
+
     config.mock_with :rspec do |mocks|
        mocks.syntax = [:should, :expect]
        mocks.verify_partial_doubles = true
@@ -85,31 +89,31 @@ class Card
       end
     end
   end
-  
+
   def self.gimme! name, args = {}
     Card::Auth.as_bot do
       c = Card.fetch( name, :new => args )
       c.putty args
-      Card.fetch name 
-    end    
+      Card.fetch name
+    end
   end
-  
+
   def self.gimme name, args = {}
     Card::Auth.as_bot do
       c = Card.fetch( name, :new => args )
       if args[:content] and c.content != args[:content]
         c.putty args
-        c = Card.fetch name 
+        c = Card.fetch name
       end
       c
-    end    
+    end
   end
-  
+
   def putty args = {}
     Card::Auth.as_bot do
-      if args.present? 
-        update_attributes! (args) 
-      else 
+      if args.present?
+        update_attributes! (args)
+      else
         save!
       end
     end

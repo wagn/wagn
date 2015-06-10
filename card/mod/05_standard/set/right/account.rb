@@ -65,7 +65,7 @@ event :validate_accountability, :on=>:create, :before=>:approve do
 end
 
 event :require_email, :on=>:create, :after=>:approve do
-  unless subcards["+#{Card[:email].name}"] 
+  unless subcards["+#{Card[:email].name}"]
     errors.add :email, 'required'
   end
 end
@@ -90,7 +90,7 @@ event :generate_confirmation_token, :on=>:create, :before=>:process_subcards, :w
   subcards["+#{Card[:token].name}"] = {:content => generate_token }
 end
 
-event :reset_password, :on=>:update, :before=>:approve, :when=>proc{ |c| c.has_reset_token? } do  
+event :reset_password, :on=>:update, :before=>:approve, :when=>proc{ |c| c.has_reset_token? } do
   case ( result = authenticate_by_token @env_token )
   when Integer
     Auth.signin result
@@ -110,7 +110,7 @@ event :reset_password, :on=>:update, :before=>:approve, :when=>proc{ |c| c.has_r
 end
 
 def edit_password_success_args
-  { 
+  {
     :id=>left.name,
     :view=>:related,
     :related=>{ :name=>"+#{Card[:account].name}", :view=>'edit' }
@@ -126,7 +126,7 @@ event :reset_token do
     token_card.update_attributes! :content => generate_token
   end
 end
-  
+
 
 event :send_welcome_email do
   if ((welcome = Card['welcome email']) && welcome.type_code == :email_template)
@@ -158,12 +158,12 @@ def changes_visible? act
 end
 
 def send_change_notice act, followed_set, follow_option
-  if changes_visible?(act) 
+  if changes_visible?(act)
     Auth.as(left.id) do
       Card[:follower_notification_email].deliver(
         :context       => act.card,
         :to            => email,
-        :follower      => left.name, 
+        :follower      => left.name,
         :followed_set  => followed_set,
         :follow_option => follow_option
       )
@@ -172,9 +172,10 @@ def send_change_notice act, followed_set, follow_option
 end
 
 
-format :email do  
+format :email do
   view :mail do |args|
     args[:to] ||= card.email
     super args
   end
 end
+

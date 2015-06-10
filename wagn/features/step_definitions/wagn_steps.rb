@@ -18,7 +18,7 @@ Given /^site stops simulating setup need$/ do
   Card::Auth.simulate_setup_need! false
   step 'I am signed out'
 end
-  
+
 Given /^I am signed in as (.+)$/ do |account_name|
   accounted = Card[account_name]
   visit "/update/:signin?card[subcards][%2B*email][content]=#{accounted.account.email}&card[subcards][%2B*password][content]=joe_pass"
@@ -129,14 +129,14 @@ end
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
   user = Card::Auth.current.name if user == "I"
   signed_in_as user do
-    step "the card #{cardname}+#{user}+*follow contains \"[[always]]\""
+    step "the card #{cardname}+#{user}+*follow contains \"[[*always]]\""
   end
 end
 
 Given /^(.*) (is|am) not watching "([^\"]+)"$/ do |user, verb, cardname|
   user = Card::Auth.current.name if user == "I"
   signed_in_as user do
-    step "the card #{cardname}+#{user}+*follow contains \"[[never]]\""
+    step "the card #{cardname}+#{user}+*follow contains \"[[*never]]\""
   end
 end
 
@@ -145,7 +145,7 @@ When /I wait a sec/ do
   sleep 1
 end
 
-When /I wait (.+) seconds$/ do |period|
+When /I wait (\d+) seconds$/ do |period|
   sleep period.to_i
 end
 
@@ -213,8 +213,9 @@ Then /I submit$/ do
     click_button("Submit")
 end
 
-When /^I hover over the main menu$/ do
-  page.execute_script "$('#main > .card-slot > .card-header > .card-menu-link').trigger('mouseenter')"
+When /^I open the main card menu$/ do
+  page.execute_script "$('#main .menu-slot .vertical-card-menu.show-on-hover .card-slot').show()"
+  page.find('#main .menu-slot .card-menu a').click
 end
 
 When /^I pick (.*)$/ do |menu_item|

@@ -86,16 +86,16 @@ describe Card::Set::All::Rules do
     
     it "user rule is recognized as rule" do
       Card::Auth.as_bot do
-        card = Card.create(:name => "Book+*type+Joe User+*follow", :content => "[[always]]")
+        card = Card.create(:name => "Book+*type+Joe User+*follow", :content => "[[*always]]")
         expect(card.is_rule?).to be_truthy
       end
     end
     
     it "retrieves Set based value" do
       Card::Auth.as_bot do
-        Card.create :name => "Book+*type+Joe User+*follow", :content => "[[always]]"
+        Card.create :name => "Book+*type+Joe User+*follow", :content => "[[*always]]"
       end
-      expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[always]]")
+      expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[*always]]")
     end
     
     it "retrieves user indepedent Set based value" do
@@ -109,10 +109,10 @@ describe Card::Set::All::Rules do
     
     it "user-specific value overwrites user-independent value" do
       Card::Auth.as_bot do
-        Card.create :name => "Book+*type+Joe User+*follow", :content => "[[never]]"
-        Card.create :name => "Book+*type+*all+*follow", :content => "[[always]]"
+        Card.create :name => "Book+*type+Joe User+*follow", :content => "[[*never]]"
+        Card.create :name => "Book+*type+*all+*follow", :content => "[[*always]]"
       end
-      expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[never]]")
+      expect(Card.new( :type => "Book" ).rule(:follow)).to eq("[[*never]]")
     end
     
     describe '#all_user_ids_with_rule_for' do

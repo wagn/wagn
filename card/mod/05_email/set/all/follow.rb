@@ -18,64 +18,72 @@ event :cache_expired_because_of_new_user_rule, :before=>:extend, :when=>proc { |
   Card.follow_caches_expired
 end
 
+format do
 
+  def follow_link_hash args
+    toggle = args[:toggle] || ( card.followed? ? :off : :on )
+    hash = { :class => "follow-toggle-#{toggle}" }
+    case toggle
+    when :off
+      hash[:content] = '*never'
+      hash[:title]   = "stop sending emails about changes to #{card.follow_label}"
+      hash[:verb]    = 'unfollow'
+    when :on
+      hash[:content] = '*always'
+      hash[:title]   = "send emails about changes to #{card.follow_label}"
+      hash[:verb]    = 'follow'
+    end
+    follow_rule_name = card.default_follow_set_card.follow_rule_name( Auth.current.name )
+    hash[:path] = path :name=>follow_rule_name, :action=>:update,
+                       :success=>{ :view=>:modal_content },
+                       :card=>{ :content=>"[[#{hash[:content]}]]" }
+    hash
+  end
+
+end
+
+format :json do
+  view :follow_status do |args|
+    follow_link_hash args
+  end
+end
 
 format :html do
-  view :follow_menu_link, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|
-    wrap(args) do
-      render_follow_link( args.merge(:label=>'',:main_menu=>true) )
-    end
-  end
-  
-  view :follow_submenu_link, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|
-    wrap(args) do
-      render_follow_link args.merge(:hover=>true)
-    end
-  end
- 
-  view :follow_link, :tags=>[:unknown_ok, :no_wrap_comments], :denial=>:blank, :perms=>:none do |args|   
-    success_view = (args[:main_menu] ? :follow_menu_link : :follow_submenu_link)
-    path_options = { 
-                      :action=>:update,
-                      :success=>{:id=>card.name, :view=>success_view} 
-                   }
-    html_options = {  
-                      :class=>"watch-toggle watch-toggle-#{args[:toggle]} slotter", 
-                      :remote=>true, 
-                      :method=>'post'
-                   }
 
-    case args[:toggle]
-    when :off
-      path_options['card[content]']= '[[never]]'
-      html_options[:title]         = "stop sending emails about changes to #{args[:label]}"
-      if args[:hover]
-        html_options[:hover_content] = "unfollow #{args[:label]}" 
-        html_options[:text]          = "following #{args[:label]}"
-      else
-        html_options[:text]          = "unfollow #{args[:label]}"
-      end
-    when :on
-      path_options['card[content]']= '[[always]]'
-      html_options[:title]         = "send emails about changes to #{args[:label]}"
-      html_options[:text]          = "follow #{args[:label]}"
-    end
-    if html_options[:text].size > 30
-      html_options[:text] = html_options[:text][0..27] + '...'
-    end
-    if args[:main_menu]
-      html_options[:text] = '<span class="ui-menu-icon ui-icon ui-icon-carat-1-w"></span>' + html_options[:text]
-      # html_options[:text] =  glyphicon('menu-left') + html_options[:text]    #TODO use glyphicons instead of ui-cons
-    end
-    follow_rule_name = card.default_follow_set_card.follow_rule_name Auth.current.name
-    card_link follow_rule_name, html_options.merge(:path_opts=>path_options) 
+  view :follow_link, :tags=>:unknown_ok, :perms=>:none do |args|
+    hash = follow_link_hash args
+    text = %[<span class="follow-verb">#{hash[:verb]}</span> #{args[:label]}]
+    opts = {
+      :title           => hash[:title],
+      :class           => "follow-toggle #{hash[:class]}",
+      'data-follow'    => JSON(hash),
+      'data-rule_name' => card.default_follow_set_card.follow_rule_name( Auth.current.name ).to_name.url_key,
+      'data-card_key'  => card.key
+    }
+    link_to text, '', opts
   end
-  
+
   def default_follow_link_args args
     args[:toggle] ||=  card.followed? ? :off : :on
     args[:label]  ||=  card.follow_label
   end
-  
+
+
+  view :follow_modal_link, :tags=>:unknown_ok, :perms=>:none do |args|
+    hash = follow_link_hash args
+    text = %[#{glyphicon 'flag'}<span class="follow-verb menu-item-label">#{hash[:verb]}</span>]
+    follow_rule_card = Card.fetch(card.default_follow_set_card.follow_rule_name( Auth.current.name ), :new=>{})
+    opts = ( args[:html_args] || {} ).clone
+    opts.merge!(
+      :title           => hash[:title],
+      'data-path'      => hash[:path],
+      'data-toggle'    => 'modal',
+      'data-target'    => "#modal-#{card.cardname.safe_key}",
+    )
+    opts[:class] = "follow-link #{opts[:class]}"
+    link_to text, hash[:path], opts
+  end
+
 end
 
 
@@ -99,7 +107,7 @@ def follow_rule_card?
 end
 
 def follow_option?
-  codename && Card::FollowOption.codenames.include?(codename.to_sym) 
+  codename && FollowOption.codenames.include?(codename.to_sym)
 end
 
 # used for the follow menu
@@ -107,33 +115,55 @@ end
 # for sets and cardtypes it doesn't check whether the users is following the card itself
 # instead it checks whether he is following the complete set
 def followed_by? user_id
-  if follow_rule_applies? user_id
-    return true
-  end
-  left_card = left
-  while left_card
-    if left_card.followed_field?(self) && left_card.follow_rule_applies?(user_id)
+  with_follower_candidate_ids do
+    if follow_rule_applies? user_id
       return true
     end
-    left_card = left_card.left
+    if left_card = left and left_card.followed_field?(self) && left_card.followed_by?(user_id)
+      return true
+    end
+    return false
   end
-  return false
 end
 
 def followed?
-  followed_by? Auth.current_id 
+  followed_by? Auth.current_id
 end
 
 
-def follow_rule_applies? user_id
-  if (follow_rule_card=rule_card(:follow, :user_id=>user_id))
-    follow_rule_card.item_cards.each do |item_card|
-      if item_card.respond_to?(:applies_to?) and item_card.applies_to? self, user_id
-         return item_card
-      end
+def follow_rule_applies? follower_id
+  follow_rule = rule :follow, :user_id=>follower_id
+  if follow_rule.present?
+    follow_rule.split("\n").each do |value|
+
+      value_code = value.to_name.code
+      accounted_ids = (
+        @follower_candidate_ids[ value_code ] ||=
+          if block = FollowOption.follower_candidate_ids[ value_code ]
+            block.call self
+          else
+            []
+          end
+      )
+
+      applicable =
+        if test = FollowOption.test[ value_code ]
+          test.call follower_id, accounted_ids
+        else
+          accounted_ids.include? follower_id
+        end
+
+      return value.gsub( /[\[\]]/, '' ) if applicable
     end
-  end 
+  end
   return false
+end
+
+
+def with_follower_candidate_ids
+  @follower_candidate_ids = {}
+  yield
+  @follower_candidate_ids = nil
 end
 
 
@@ -143,7 +173,7 @@ def default_follow_set_card
 end
 
 
-# returns true if according to the follow_field_rule followers of self also 
+# returns true if according to the follow_field_rule followers of self also
 # follow changes of field_card
 def followed_field? field_card
   (follow_field_rule = rule_card(:follow_fields)) || follow_field_rule.item_names.find do |item|
@@ -175,13 +205,15 @@ end
 
 # all ids of users that follow this card because of a follow rule that applies to this card
 # doesn't include users that follow this card because they are following parent cards or other cards that include this card
-def direct_follower_ids args={}  
+def direct_follower_ids args={}
   result = ::Set.new
-  set_names.each do |set_name| 
-    set_card = Card.fetch(set_name)
-    set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
-      if (!result.include? user_id) and self.follow_rule_applies?(user_id)
-        result << user_id
+  with_follower_candidate_ids do
+    set_names.each do |set_name|
+      set_card = Card.fetch(set_name)
+      set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
+        if (!result.include? user_id) and self.follow_rule_applies?(user_id)
+          result << user_id
+        end
       end
     end
   end
@@ -189,17 +221,21 @@ def direct_follower_ids args={}
 end
 
 def all_direct_follower_ids_with_reason
-  visited = ::Set.new
-  set_names.each do |set_name| 
-    set_card = Card.fetch(set_name)
-    set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
-      if (!visited.include?(user_id)) && (follow_option_card = self.follow_rule_applies?(user_id))
-        visited << user_id
-        yield(user_id, :set_card=>set_card, :option_card=>follow_option_card)
+  with_follower_candidate_ids do
+    visited = ::Set.new
+    set_names.each do |set_name|
+      set_card = Card.fetch(set_name)
+      set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
+        if (!visited.include?(user_id)) && (follow_option = self.follow_rule_applies?(user_id))
+          visited << user_id
+          yield(user_id, :set_card=>set_card, :option=>follow_option)
+        end
       end
     end
   end
 end
+
+
 
 #~~~~~ cache methods
 
@@ -223,7 +259,7 @@ module ClassMethods
   def follower_ids_cache
     Card.cache.read(FOLLOWER_IDS_CACHE_KEY) || {}
   end
-  
+
   def write_follower_ids_cache hash
     Card.cache.write FOLLOWER_IDS_CACHE_KEY, hash
   end

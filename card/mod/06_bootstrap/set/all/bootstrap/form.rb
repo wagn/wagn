@@ -1,42 +1,36 @@
 format :html do
   def button_tag content_or_options = nil, options = {}, &block
-    if block_given?
-      content_or_options[:class] ||= ''
-      content_or_options[:class] += ' btn btn-default'
-    else
-      options[:class] ||= ''
-      options[:class] += ' btn btn-default'
-    end
+    bootstrapify_button( block_given? ? content_or_options : options )
     super(content_or_options, options, &block)
   end
-
   
-  
-  def fieldset title, content, opts={}
-    if attribs = opts[:attribs]
-      attrib_string = attribs.keys.map do |key| 
-        %{#{key}="#{attribs[key]}"}
-      end * ' '
-    end
-    help_text = case opts[:help]
-      when String ; _render_help :help_text=> opts[:help]
-      when true   ; _render_help
-      else        ; nil
-    end
-    %{
-      <fieldset #{ attrib_string }>
-        <legend>
-          <h5>#{ title }</h5>
-          #{ help_text }
-        </legend>
-        #{ editor_wrap( opts[:editor] ) { content } }
-      </fieldset>
-    }
+  def bootstrapify_button options
+    situation = options.delete(:situation) || 'default'
+    options[:class] = [ options[:class], 'btn', "btn-#{situation}" ].compact*' '
   end
   
-   def type_field args={}
-     args[:class] ||= ''
-     args[:class] += ' form-control'
-     super(args)
-   end
+  def type_field args={}
+    args[:class] ||= ''
+    args[:class] += ' form-control'
+    super(args)
+  end
+  
+  def bootstrap_options options
+    options[:class] ||= ''
+    options[:class] += ' form-control'
+    options
+  end
+  
+  FIELD_HELPERS = %w{hidden_field color_field date_field datetime_field datetime_local_field
+    email_field month_field number_field password_field phone_field
+    range_field search_field telephone_field text_area text_field time_field
+    url_field week_field file_field}
+
+
+  FIELD_HELPERS.each do |method_name|
+    define_method(method_name) do |name, options = {}|
+      form.send(method_name, name, bootstrap_options(options) )
+    end
+  end
+  
 end

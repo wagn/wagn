@@ -9,14 +9,6 @@ gem 'wagn'
 
 <%= database_gemfile_entry -%>
 
-# A javascript runtime is required for JavaScript cards.
-<% if RUBY_PLATFORM =~ /darwin/ -%>
-# Macs have one included, but on other platforms you'll need this or another runtime
-# gem 'therubyracer'
-<% else -%>
-gem 'therubyracer'
-<% end -%>
-
 <% if options['mod-dev'] -%>
 group :test do
   gem 'rspec-rails', '~> 3.1.0'   # behavior-driven-development suite
@@ -37,8 +29,8 @@ group :test, :development do
   # gem 'pry-rescue'
   # gem 'pry-stack_explorer'
   if RUBY_VERSION =~ /^2/
-  gem 'byebug' 
-  # gem 'pry-byebug'
+    gem 'byebug'
+    # gem 'pry-byebug'
   else
     gem 'debugger'
   end
@@ -46,7 +38,7 @@ end
 
 <% end -%>
 
-<% if options['core-dev'] -%>  
+<% if options['core-dev'] -%>
 group :assets do
   gem 'jquery-rails',  '~> 3.1'                # main js framework, along with rails-specific unobtrusive lib
   gem 'jquery-ui-rails',  '~> 4.2'             # main js framework, along with rails-specific unobtrusive lib
@@ -61,13 +53,13 @@ group :development do
 end
 
 group :test do
-  gem 'rspec' 
+  gem 'rspec'
   gem 'rspec-rails', '~> 3.1.0'                 # behavior-driven-development suite
-  gem 'spork', '>=0.9'                                           
+  gem 'spork', '>=0.9'
   gem 'rr'#, '=1.0.0'
 	gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
-    
-  # gem 'guard-rspec', '~> 4.2'           # trigger test runs based on file edits, 
+
+  # gem 'guard-rspec', '~> 4.2'           # trigger test runs based on file edits,
                                           # currently not compatible with spring-watcher-listen
   if RUBY_PLATFORM =~ /darwin/
     # gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
@@ -77,29 +69,29 @@ group :test do
 
   # CUKES see features dir
   gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite
-  gem 'capybara', '~> 2.4.4'                    
+  gem 'capybara', '~> 2.4.4'
   gem 'selenium-webdriver', '~> 2.39'
 #  gem 'capybara-webkit'
   gem 'launchy'                                # lets cucumber launch browser windows
 
-  gem 'timecop', '=0.3.5'                      # not clear on use/need.  referred to in shared_data.rb 
+  gem 'timecop', '=0.3.5'                      # not clear on use/need.  referred to in shared_data.rb
   # NOTE: had weird errors with timecop 0.4.4.  would like to update when possible
 
 
-  gem 'email_spec'                             # 
+  gem 'email_spec'                             #
   gem 'database_cleaner', '~> 0.7'             # used by cucumber for db transactions
 
   gem 'turn', :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
   gem 'minitest'
 end
 
-gem 'ruby-prof', '~>0.12.1', :group=>:profile  # profiling
+gem 'ruby-prof', :group=>:profile  # profiling
 
 group :development, :test do
   gem 'spring'
   gem 'spring-commands-rspec'
   gem 'spring-commands-cucumber'
-  gem 'spring-watcher-listen' 
+  gem 'spring-watcher-listen'
   gem 'pry-rails'
   gem 'pry-rescue'
   gem 'pry-stack_explorer'

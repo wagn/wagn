@@ -23,15 +23,15 @@ view( :comment_box, :denial=>:blank, :tags=>:unknown_ok, :perms=>lambda { |r| r.
         #{ hidden_field_tag( 'card[name]', card.name ) if card.new_card? 
         # FIXME wish we had more generalized solution for names.  without this, nonexistent cards will often take left's linkname.  (needs test)
         }
-        #{ form.text_area :comment, :rows=>3 }
+        #{ text_area :comment, :rows=>3 }
         <div class="comment-buttons">
           #{
             unless Auth.signed_in?
               card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
-              %{<label>My Name is:</label> #{ form.text_field :comment_author }}
+              %{<label>My Name is:</label> #{ text_field :comment_author }}
             end
           }
-          <input type="submit" value="Comment"/>
+          #{ button_tag 'Comment', :type=>:submit, :disable_with=>"Commenting" }
         </div>
       }
     end}

@@ -23,18 +23,20 @@ module Wagn
   class Application < Rails::Application
 
     initializer :load_wagn_environment_config, :before => :load_environment_config, :group => :all do
-      add_gem_path paths, "lib/wagn/config/environments", :glob => "#{Rails.env}.rb"
+      add_path paths, "lib/wagn/config/environments", :glob => "#{Rails.env}.rb"
       paths["lib/wagn/config/environments"].existent.each do |environment|
         require environment
       end
     end
 
+=begin
     initializer :load_wagn_config_initializers,  :before => :load_config_initializers do
-      add_gem_path paths, 'lib/wagn/config/initializers', :glob => "**/*.rb"
+      add_path paths, 'lib/wagn/config/initializers', :glob => "**/*.rb"
       config.paths['lib/wagn/config/initializers'].existent.sort.each do |initializer|
         load(initializer)
       end
     end
+=end
 
     class << self
       def inherited(base)
@@ -45,7 +47,7 @@ module Wagn
       end
     end
 
-    def add_gem_path paths, path, options={}
+    def add_path paths, path, options={}
       root = options.delete(:root) || Wagn.gem_root
       #gem_path = File.join( root, path )
       options[:with] = File.join(root, (options[:with] || path) )
@@ -84,15 +86,15 @@ module Wagn
       @paths ||= begin
         paths = super
         Cardio.set_paths paths
-        
+
         paths.add 'files'
 
         paths['mod'] << 'mod'
         paths['app/models'] = []
         paths['app/mailers'] = []
-        
-        add_gem_path paths, 'config/routes', :with => 'rails/application-routes.rb'
-        
+
+        add_path paths, 'config/routes', :with => 'rails/application-routes.rb'
+
         paths
       end
     end

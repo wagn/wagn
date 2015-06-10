@@ -1,19 +1,20 @@
 
 require 'wagn/application'
 
-WAGN_BOOTSTRAP_TABLES = %w{ cards card_actions card_acts card_changes card_references }
+WAGN_SEED_TABLES = %w{ cards card_actions card_acts card_changes card_references }
+WAGN_SEED_PATH   = File.join( Cardio.gem_root, 'db/seed/new')
 
 def prepare_migration
   Card::Cache.reset_global
   Card.config.action_mailer.perform_deliveries = false
   Card.reset_column_information
-  Card::Reference.reset_column_information  # this is needed in production mode to insure core db 
+  Card::Reference.reset_column_information  # this is needed in production mode to insure core db
                                             # structures are loaded before schema_mode is set
 end
 
 namespace :wagn do
-  desc "create a wagn database from scratch"
-  task :create do
+  desc "create a wagn database from scratch, load initial data"
+  task :seed do
     ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
 
     puts "dropping"
@@ -30,6 +31,31 @@ namespace :wagn do
     puts "loading schema"
     Rake::Task['db:schema:load'].invoke
 
+    Rake::Task['wagn:load'].invoke
+  end
+
+  desc "clear and load fixtures with existing tables"
+  task :reseed do
+    ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
+
+    Rake::Task['wagn:clear'].invoke
+
+    Rake::Task['wagn:load'].invoke
+  end
+
+  desc "empty the card tables"
+  task :clear do
+    conn = ActiveRecord::Base.connection
+
+    puts "delete all data in bootstrap tables"
+    WAGN_SEED_TABLES.each do |table|
+      conn.delete "delete from #{table}"
+    end
+  end
+
+  desc "Load bootstrap data into database"
+  task :load do
+    require 'decko/engine'
     puts "update card_migrations"
     Rake::Task['wagn:assume_card_migrations'].invoke
 
@@ -106,7 +132,7 @@ namespace :wagn do
   task :assume_card_migrations do
     require 'decko/engine'
 
-    Cardio.assume_migrated_upto_version :cord_cards
+    Cardio.assume_migrated_upto_version :core_cards
   end
 
   namespace :migrate do
@@ -114,6 +140,16 @@ namespace :wagn do
     task :cards do
       Rake::Task['wagn:migrate:core_cards'].invoke
       Rake::Task['wagn:migrate:deck_cards'].invoke
+    end
+
+    desc "migrate structure"
+    task :structure => :environment do
+      ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
+      Cardio.schema_mode(:structure) do
+        paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:structure)
+        ActiveRecord::Migrator.migrate paths
+        Rake::Task['db:_dump'].invoke   # write schema.rb
+      end
     end
 
     desc "migrate core cards"
@@ -124,7 +160,7 @@ namespace :wagn do
       ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       prepare_migration
       paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:core_cards)
-    
+
       Card::CoreMigration.schema_mode :core_cards do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
@@ -139,7 +175,7 @@ namespace :wagn do
       ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       prepare_migration
       paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:deck_cards)
-    
+
       Cardio.schema_mode(:deck_cards) do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
@@ -201,6 +237,7 @@ namespace :wagn do
       Card::Cache.reset_global
       conn =  ActiveRecord::Base.connection
       # Correct time and user stamps
+      # USER related
       who_and_when = [ Card::WagnBotID, Time.now.utc.to_s(:db) ]
       card_sql = "update cards set creator_id=%1$s, created_at='%2$s', updater_id=%1$s, updated_at='%2$s'"
       conn.update( card_sql                                          % who_and_when )
@@ -215,6 +252,7 @@ namespace :wagn do
           end
         end
         Card::Cache.reset_global
+        # FIXME: can this be associated with the machine module somehow?
         %w{ machine_input machine_output }.each do |codename|
           Card.search(:right=>{:codename=>codename }).each do |card|
             FileUtils.rm_rf File.join('files', card.id.to_s ), :secure=>true
@@ -225,6 +263,8 @@ namespace :wagn do
 
       Card.empty_trash
 
+      # FIXME: move this to history
+      # Card::Act.clear_history(:actor_id=>Card::WagnBotID, :card_id=>Card::WagnBotID)
       Card::Action.delete_old
       Card::Change.delete_actionless
 
@@ -251,9 +291,9 @@ namespace :wagn do
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,
       # which dumps with slashes that syck can't understand
 
-      WAGN_BOOTSTRAP_TABLES.each do |table|
+      WAGN_SEED_TABLES.each do |table|
         i = "000"
-        File.open("#{Cardio.gem_root}/db/bootstrap/#{table}.yml", 'w') do |file|
+        File.open(File.join(WAGN_SEED_PATH, "#{table}.yml"), 'w') do |file|
           data = ActiveRecord::Base.connection.select_all( "select * from #{table}" )
           file.write YAML::dump( data.inject({}) do |hash, record|
             record['trash'] = false if record.has_key? 'trash'
@@ -273,16 +313,40 @@ namespace :wagn do
     desc "copy files from template database to standard mod and update cards"
     task :copy_mod_files => :environment do
 
-      mod_name = '05_standard'
-      template_files_dir = "#{Wagn.root}/files"
-      standard_files_dir = "#{Cardio.gem_root}/mod/#{mod_name}/file"
-
-      FileUtils.remove_dir standard_files_dir, force=true
-      FileUtils.cp_r template_files_dir, standard_files_dir
-
+      source_files_dir = "#{Wagn.root}/files"
       # add a fourth line to the raw content of each image (or file) to identify it as a mod file
       Card::Auth.as_bot do
         Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
+
+          if card.attach_mod
+#            puts "skipping #{card.name}: already in code"
+            next
+          else
+#            puts "working on #{card.name}"
+          end
+
+          base_card = card.cardname.junction? ? card.left : card
+          raise "need codename for file" unless base_card.codename.present?
+
+          mod_name = base_card.type_id==Card::SkinID ? '06_bootstrap' : '05_standard'
+          source_dir =  "#{source_files_dir}/#{card.id}"
+
+          target_dir = "#{Cardio.gem_root}/mod/#{mod_name}/file/#{base_card.codename}"
+          FileUtils.remove_dir target_dir, force=true if Dir.exists? target_dir
+          FileUtils.mkdir_p target_dir
+
+#          if card.name =~ /icon/
+#            require 'pry'; binding.pry
+#          end
+          Dir.entries( source_dir ).each do |filename|
+            next if filename =~ /^\./
+            next if filename !~ (Regexp.new card.last_content_action_id.to_s)
+
+            target_filename = filename.gsub /\d+/, card.type_code.to_s
+            FileUtils.cp "#{source_dir}/#{filename}", "#{target_dir}/#{target_filename}"
+          end
+
+
           unless card.db_content.split(/\n/).last == mod_name
             new_content = card.db_content + "\n#{mod_name}"
             card.update_column :db_content, new_content
@@ -298,11 +362,11 @@ namespace :wagn do
     task :load => :environment do
       #FIXME - shouldn't we be more standard and use seed.rb for this code?
       Rake.application.options.trace = true
-      puts "bootstrap load starting #{File.join( Cardio.gem_root, 'db/bootstrap')}"
+      puts "bootstrap load starting #{WAGN_SEED_PATH}"
       require 'active_record/fixtures'
 #      require 'time'
 
-      ActiveRecord::Fixtures.create_fixtures File.join( Cardio.gem_root, 'db/bootstrap'), WAGN_BOOTSTRAP_TABLES
+      ActiveRecord::Fixtures.create_fixtures WAGN_SEED_PATH, WAGN_SEED_TABLES
     end
 
   end

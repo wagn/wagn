@@ -1,4 +1,5 @@
 require_dependency 'json'
+  
 
 view :core do |args|
 
@@ -71,7 +72,7 @@ view :core do |args|
 end
 
 view :rule_help do |args|
-  %{<div class="instruction">#{process_content_object "{{+*right+*help}}"}</div>}
+  %{<div class="alert alert-info">#{process_content_object "{{+*right+*help|content}}"}</div>}
 end
 
 

@@ -2,13 +2,10 @@
 
 Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
 
-
 class Card < ActiveRecord::Base
   require_dependency 'card/active_record_ext'
   require_dependency 'card/codename'
   require_dependency 'card/query'
-  require_dependency 'card/set_pattern'
-  require_dependency 'card/set'
   require_dependency 'card/format'
   require_dependency 'card/exceptions'
   require_dependency 'card/auth'
@@ -31,7 +28,8 @@ class Card < ActiveRecord::Base
 
   attr_accessor :action, :supercard, :current_act, :current_action, 
     :comment, :comment_author,    # obviated soon
-    :update_referencers,           # wrong mechanism for this
+    :update_referencers,          # wrong mechanism for this
+    :update_all_users,                  # if the above is wrong then this one too
     :follower_stash, :remove_rule_stash,
     :last_action_id_before_edit
     

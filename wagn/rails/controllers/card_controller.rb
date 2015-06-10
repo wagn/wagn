@@ -14,23 +14,22 @@ class CardController < ActionController::Base
   before_filter :start_performance_logger  if Wagn.config.performance_logger
   after_filter  :stop_performance_logger   if Wagn.config.performance_logger
   after_filter :request_logger            if Wagn.config.request_logger
-  
+
   before_filter :per_request_setup, :except => [:asset]
   before_filter :load_id, :only => [ :read ]
   before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
-  
-  
 
-  
+
+
   layout nil
 
   attr_reader :card
-  
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #  CORE METHODS
-  
+
   def create
     handle { card.save }
   end
@@ -49,14 +48,14 @@ class CardController < ActionController::Base
     params[:success] ||= 'REDIRECT: *previous'
     handle { card.delete }
   end
-  
+
   def asset
     Rails.logger.info "Routing assets through Card. Recommend symlink from Deck to Card gem using 'rake wagn:update_assets_symlink'"
     send_file_inside Decko::Engine.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
   end
-  
+
   private
-  
+
   # make sure that filename doesn't leave allowed_path using ".."
   def send_file_inside(allowed_path, filename, options = {})
     if filename.include? "../"
@@ -65,7 +64,7 @@ class CardController < ActionController::Base
       send_file File.join(allowed_path, filename), options
     end
   end
-  
+
   #-------( FILTERS )
 
   def per_request_setup
@@ -73,7 +72,7 @@ class CardController < ActionController::Base
     Card::Cache.renew
     Card::Env.reset :controller=>self
     Card::Auth.set_current_from_session
-    
+
     if params[:id] && !params[:id].valid_encoding?  # slightly better way to handle encoding issues (than the rescue in load_id)
                                                     # we should find the place where we produce these bad urls
       params[:id] = params[:id].force_encoding('ISO-8859-1').encode('UTF-8')
@@ -91,13 +90,13 @@ class CardController < ActionController::Base
         params[:card][:name]
       when Card::Format.tagged( params[:view], :unknown_ok )
         ''
-      else  
+      else
         Card.setting(:home) || 'Home'
       end
   rescue ArgumentError # less than perfect way to handle encoding issues.
     raise Wagn::BadAddress
   end
-  
+
 
   def load_card
     @card = case params[:id]
@@ -107,7 +106,7 @@ class CardController < ActionController::Base
         opts = params[:card] ? params[:card].clone : {}   # clone so that original params remain unaltered.  need deeper clone?
         opts[:type] ||= params[:type] if params[:type]    # for /new/:type shortcut.  we should fix and deprecate this.
         opts[:name] ||= params[:id].to_s.gsub( '_', ' ')  # move handling to Card::Name?
-        
+
         if params[:action] == 'create'
           # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
@@ -119,12 +118,10 @@ class CardController < ActionController::Base
         end
       end
     raise Card::NotFound unless @card
-    
-    if action = @card.find_action_by_params( params )
-      @card.selected_action_id = action.id
-    end
+
+    card.select_action_by_params params
     Card::Env[:main_name] = params[:main] || (card && card.name) || ''
-    
+
     render_errors if card.errors.any?
     true
   end
@@ -134,17 +131,17 @@ class CardController < ActionController::Base
   end
 
   def request_logger
-    Card::Log::Request.write_log_entry self    
+    Card::Log::Request.write_log_entry self
   end
-  
+
   def start_performance_logger
-    Card::Log::Performance.start :method=>env["REQUEST_METHOD"], :message=>env["PATH_INFO"] 
+    Card::Log::Performance.start :method=>env["REQUEST_METHOD"], :message=>env["PATH_INFO"]
   end
-  
+
   def stop_performance_logger
     Card::Log::Performance.stop
   end
-  
+
   protected
 
   def ajax?
@@ -228,12 +225,15 @@ class CardController < ActionController::Base
     format = :file if params[:explicit_file] or !Card::Format.registered.member? format #unknown format
 
     opts = ( params[:slot] || {} ).deep_symbolize_keys
-    view ||= params[:view]      
+    view ||= params[:view]
 
+    if params[:edit_draft] && card.drafts.present?
+      card.content = card.drafts.last.changes.last.value
+    end
     formatter = card.format(format.to_sym)
     result = formatter.show view, opts
     status = formatter.error_status || status
-  
+
     if format==:file && status==200
       send_file *result
     elsif status == 302
@@ -252,13 +252,13 @@ class CardController < ActionController::Base
 
     @card ||= Card.new
     Card::Error.current = exception
-    
+
 
     view = case exception
       ## arguably the view and status should be defined in the error class;
       ## some are redundantly defined in view
       when Card::Oops, Card::Query
-        card.errors.add :exception, exception.message 
+        card.errors.add :exception, exception.message
         # these error messages are visible to end users and are generally not treated as bugs.
         # Probably want to rename accordingly.
         :errors
@@ -270,7 +270,7 @@ class CardController < ActionController::Base
         :bad_address
       else #the following indicate a code problem and therefore require full logging
         @card.notable_exception_raised
-        
+
         if ActiveRecord::RecordInvalid === exception
           :errors
         elsif Rails.logger.level == 0 # could also just check non-production mode...

@@ -19,5 +19,5 @@ def anchor_name card
 end
 
 def follow_label name
-  %{all  "+#{name.to_name.tag}" on "#{name.to_name.left_name}s}
+  %{all  "+#{name.to_name.tag}" on "#{name.to_name.left_name}s"}
 end

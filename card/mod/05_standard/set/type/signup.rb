@@ -5,7 +5,7 @@ format :html do
     super args
     args.merge!(
       :optional_help => :show, #, :optional_menu=>:never
-      :buttons => button_tag( 'Submit', :disable_with=>'Submitting' ),
+      :buttons => button_tag( 'Submit', :disable_with=>'Submitting', :situation=>'primary' ),
       :account => card.fetch( :trait=>:account, :new=>{} ),
       :title   => 'Sign up',
       :hidden  => {
@@ -16,7 +16,7 @@ format :html do
     
     if Auth.signed_in? and args[:account].confirm_ok?
       args[:title] = 'Invite'
-      args[:buttons] = button_tag 'Send Invitation'
+      args[:buttons] = button_tag 'Send Invitation', :situation=>'primary'
       args[:hidden][:success] = '_self'
     end
   end
@@ -26,19 +26,19 @@ format :html do
     
     frame_and_form :create, args, 'main-success'=>"REDIRECT" do
       [
-        _render_name_fieldset( :help=>'usually first and last name' ),
-        _optional_render( :account_fieldsets, args),
+        _render_name_formgroup( :help=>'usually first and last name' ),
+        _optional_render( :account_formgroups, args),
         ( card.structure ? edit_slot : ''),
-        _optional_render( :button_fieldset, args )
+        _optional_render( :button_formgroup, args )
       ]
     end
   end
 
 
-  view :account_fieldsets do |args|
+  view :account_formgroups do |args|
     sub_args = { :structure => true }
     sub_args[:no_password] = true if Auth.signed_in?
-    Auth.as_bot { subformat( args[:account] )._render :content_fieldset, sub_args }  #YUCK!!!!
+    Auth.as_bot { subformat( args[:account] )._render :content_formgroup, sub_args }  #YUCK!!!!
   end
 
 

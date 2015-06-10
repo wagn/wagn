@@ -4,7 +4,7 @@ format do
   view :closed_missing, :perms=>:none, :closed=>true do |args|
     ''
   end
-  
+
   view :missing, :perms=>:none do |args|
     ''
   end
@@ -32,7 +32,7 @@ format do
 
   view :too_slow, :perms=>:none, :closed=>true do |args|
     %{ Timed out! #{ showname } took too long to load. }
-  end 
+  end
 end
 
 
@@ -44,43 +44,40 @@ format :html do
     else                               super
     end
   end
-  
+
   def commentable? view, args
-    self.class.tagged view, :comment                                   and 
+    self.class.tagged view, :comment                                   and
     show_view? :comment_box, args.merge( :default_visibility=>:hide )  and #developer or wagneer has overridden default
     ok? :comment
   end
-  
+
   def rendering_error exception, view
-    %{
-      
-      <span class="render-error">
-        error rendering
-        #{
-          if Auth.always_ok?
-            %{
-              #{ card_link error_cardname, :class=>'render-error-link' }
-              <div class="render-error-message errors-view" style="display:none">
-                <h3>Error message (visible to admin only)</h3>
-                <p><strong>#{ exception.message }</strong></p>
-                <div>
-                  #{exception.backtrace * "<br>\n"}
-                </div>
-              </div>
-            }
-          else
-            error_cardname
-          end
-        }
-        (#{view} view)
-      </span>
-    }
+    details = if Auth.always_ok?
+                card_link(error_cardname, :class=>'render-error-link') +
+                    alert('warning', :dismissible=>true, :alert_class=>"render-error-message errors-view admin-error-message") do
+                      %{
+                        <h3>Error message (visible to admin only)</h3>
+                        <p><strong>#{ exception.message }</strong></p>
+                        <div>#{exception.backtrace * "<br>\n"}</div>
+                      }
+                  end
+              else
+                error_cardname
+              end
+
+    content_tag :span, :class=>'render-error alert alert-danger' do
+      [
+        'error rendering',
+        details,
+        "(#{view} view)"
+      ].join "\n"
+    end
   end
 
   def unsupported_view view
     "<strong>view <em>#{view}</em> not supported for <em>#{error_cardname}</em></strong>"
   end
-  
+
   view :message, :perms=>:none, :tags=>:unknown_ok do |args|
     frame args do
       params[:message]
@@ -92,6 +89,7 @@ format :html do
     return '' unless card.ok? :create  # should this be moved into ok_view?
 
     opts = { :remote=>true, :class=>"slotter missing-#{ args[:denied_view] || args[:home_view]}" }
+    opts[:path_opts] = { :type=> args[:type] } if args[:type]
 
     wrap args do
       view_link "Add #{ fancy_title args[:title] }", :new, opts
@@ -101,9 +99,9 @@ format :html do
   view :closed_missing, :perms=>:none do |args|
     %{<span class="faint"> #{ showname } </span>}
   end
-  
-  
-  
+
+
+
   view :conflict, :error_code=>409 do |args|
     # FIXME: hack to get the conflicted update as a proper act for the diff view
     card.current_act.save
@@ -111,7 +109,7 @@ format :html do
     action.card_act_id = card.current_act.id
     action.draft = true
     action.save
-    card.store_changes  # deletes action if there are no changes 
+    card.store_changes  # deletes action if there are no changes
 
     # as a consequence card.current_act.actions can be empty when both users made exactly the same changes
     # but an act is always supposed to have at least one action, so we have to delete the act to avoid bad things
@@ -122,28 +120,32 @@ format :html do
     end
 
     wrap args.merge( :slot_class=>'error-view' ) do  #ENGLISH below
-      %{<strong>Conflict!</strong><span class="new-current-revision-id">#{card.last_action_id}</span>
-        <div>#{ card_link card.last_action.act.actor.cardname } has also been making changes.</div>
-        <div>Please examine below, resolve above, and re-submit.</div>
-        #{ wrap do |args| 
-            if card.current_act
-              _render_act_expanded :act=>card.current_act, :current_rev_nr => 0 
-            else
-              "No difference between your changes and #{card.last_action.act.actor.name}'s version."
-            end 
-          end
-         } 
-      }
+      alert 'warning' do
+        %{<strong>Conflict!</strong><span class="new-current-revision-id">#{card.last_action_id}</span>
+          <div>#{ card_link card.last_action.act.actor.cardname } has also been making changes.</div>
+          <div>Please examine below, resolve above, and re-submit.</div>
+          #{ wrap do |args|
+              if card.current_act
+                _render_act_expanded :act=>card.current_act, :current_rev_nr => 0
+              else
+                "No difference between your changes and #{card.last_action.act.actor.name}'s version."
+              end
+            end
+           }
+        }
+      end
     end
   end
-  
+
   view :errors, :perms=>:none do |args|
     if card.errors.any?
       title = %{ Problems #{%{ with #{card.name} } unless card.name.blank?} }
-      frame args.merge( :title=>title ) do
+      frame args.merge(:panel_class=>"panel panel-warning", :title=>title, :hide=>'menu' ) do
         card.errors.map do |attrib, msg|
-          msg = "#{attrib.to_s.upcase}: #{msg}" unless attrib == :abort
-          %{ <div class="card-error-msg">#{msg}</div> }
+          msg = "<strong>#{attrib.to_s.upcase}:</strong> #{msg}" unless attrib == :abort
+          alert 'warning', :dismissible=>true, :alert_class=>'card-error-msg' do
+            msg
+          end
         end
       end
     end
@@ -170,7 +172,6 @@ format :html do
     else
       'to do that.'
     end
-
     if !focal?
       %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}
     else
@@ -185,7 +186,7 @@ format :html do
             "or #{ link_to 'sign up', card_url('new/:signup') }"
           end
           save_interrupted_action(request.env['REQUEST_URI'])
-          "You have to #{ link_to 'sign in', card_url(':signin') } #{or_signup} #{to_task}"
+          "Please #{ link_to 'sign in', card_url(':signin') } #{or_signup} #{to_task}"
         end
 
         %{<h1>Sorry!</h1>\n<div>#{ message }</div>}
@@ -206,5 +207,5 @@ format :html do
     </body>
     }
   end
-  
+
 end

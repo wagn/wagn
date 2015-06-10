@@ -1,8 +1,8 @@
     
 format :css do
 
-  def get_inclusion_defaults
-    { :view => :content }
+  def get_inclusion_defaults nested_card
+    { :view => :raw }
   end
 
   def show view, args

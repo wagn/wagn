@@ -26,23 +26,23 @@ end
 def last_change_on(field, opts={})
   where_sql =  'card_actions.card_id = :card_id AND field = :field AND (draft is not true) '
   where_sql += if opts[:before]
-    'AND card_action_id < :action_id'      
+    'AND card_action_id < :action_id'
   elsif opts[:not_after]
     'AND card_action_id <= :action_id'
   else
     ''
   end
-  
+
   action_arg = opts[:before] || opts[:not_after]
   action_id = action_arg.kind_of?(Card::Action) ? action_arg.id : action_arg
   field_index = Card::TRACKED_FIELDS.index(field.to_s)
-  Change.joins(:action).where( where_sql, 
+  Change.joins(:action).where( where_sql,
     {:card_id=>id, :field=>field_index, :action_id=>action_id}
   ).order(:id).last
 end
 
 def selected_action_id
-  @selected_action_id || (@current_action and @current_action.id) || last_action_id 
+  @selected_action_id || (@current_action and @current_action.id) || last_action_id
 end
 
 def selected_action_id= action_id
@@ -55,9 +55,9 @@ def selected_action
 end
 
 def selected_content_action_id
-  @selected_action_id ||  
-  (@current_action and @current_action.new_content? and @current_action.id) || 
-  last_content_action_id 
+  @selected_action_id ||
+  (@current_action and @current_action.new_content? and @current_action.id) ||
+  last_content_action_id
 end
 
 def last_action_id
@@ -81,11 +81,13 @@ def last_actor
 end
 
 def last_act
-  last_act_on_self = acts.last
-  if last_act_on_self and (last_action.act == last_act_on_self or last_act_on_self.acted_at > last_action.act.acted_at)
-    last_act_on_self
-  else
-    last_action.act
+  if action = last_action
+    last_act_on_self = acts.last
+    if last_act_on_self and ( action.act==last_act_on_self || last_act_on_self.acted_at>action.act.acted_at )
+      last_act_on_self
+    else
+      action.act
+    end
   end
 end
 

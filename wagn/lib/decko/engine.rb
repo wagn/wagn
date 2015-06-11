@@ -43,7 +43,7 @@ module Decko
 
     initializer :connect_on_load do
       ActiveSupport.on_load(:active_record) do
-        ActiveRecord::Base.establish_connection(::Rails.env)
+        ActiveRecord::Base.establish_connection(::Rails.env.to_sym)
       end
       ActiveSupport.on_load(:after_initialize) do
           begin

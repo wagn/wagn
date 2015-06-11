@@ -38,8 +38,7 @@ class Card::Log
 
 
   class Performance
-    # To enable logging add a performance_logger hash to your configuration and change the log_level to :wagn
-    # config options
+    # To enable logging add a performance_logger hash to your configuration
     #
     # Example:
     # config.performance_logger = {
@@ -47,6 +46,7 @@ class Card::Log
     #     :max_depth => 3,                               # show nested method calls only up to depth 3
     #     :details=> true                                # show method arguments and sql
     #     :methods => [:event, :search, :fetch, :view],  # choose methods to log
+    #     :log_level => :info
     # }
     #
     # If you give :methods a hash you can log arbitrary methods. The syntax is as follows:
@@ -71,6 +71,7 @@ class Card::Log
 
     DEFAULT_CLASS           = Card
     DEFAULT_METHOD_TYPE     = :all
+    DEFAULT_LOG_LEVEL       = :info
     DEFAULT_METHOD_OPTIONS  = {
                                 :title   => :method_name,
                                 :message => 1,
@@ -95,10 +96,11 @@ class Card::Log
         @details   = args[:details]   || false
         @max_depth = args[:max_depth] || false
         @min_time  = args[:min_time]  || false
+        @log_level = args[:log_level] || DEFAULT_LOG_LEVEL
         @enabled_methods = ::Set.new
         prepare_methods_for_logging args[:methods] if args[:methods]
       end
-      
+
       def start args={}
         @@current_level = 0
         @@log = []
@@ -118,7 +120,7 @@ class Card::Log
         print_log
       end
 
-      
+
       def with_timer method, args, &block
         if args[:context]
 
@@ -152,7 +154,7 @@ class Card::Log
         end
         result
       end
-      
+
 
       def enable_method method_name
         @enabled_methods ||= ::Set.new
@@ -167,7 +169,7 @@ class Card::Log
 
       def print_log
         @@log.each do |entry|
-          Rails.logger.wagn entry.to_s! if entry.valid
+          Rails.logger.send @log_level, entry.to_s! if entry.valid
         end
       end
 
@@ -194,7 +196,7 @@ class Card::Log
         @@active_entries.pop
         @@current_level -= 1
       end
-      
+
       def prepare_methods_for_logging args
         classes = hashify_and_verify_keys( args, DEFAULT_CLASS ) do |key|
           key.kind_of?(Class) || key.kind_of?(Module)
@@ -250,8 +252,8 @@ class Card::Log
       end
 
     end
-    
-    
+
+
     class Entry
       attr_accessor :level, :valid, :context, :parent, :children_cnt, :duration
 
@@ -346,8 +348,8 @@ class Card::Log
       end
 
     end
-    
-    
+
+
     module BigBrother
 
       def watch_method method_name, method_type=:all, options={}
@@ -430,8 +432,8 @@ class Card::Log
       end
 
     end
-    
-    
+
+
   end
 
 end

@@ -36,7 +36,7 @@ end
 
 def permission_rule_card action
   opcard = rule_card action
-  
+
   unless opcard # RULE missing.  should not be possible.  generalize this to handling of all required rules
     errors.add :permission_denied, "No #{action} rule for #{name}"
     raise Card::PermissionDenied.new(self)
@@ -76,7 +76,6 @@ def permitted? action
     return true if action != :comment and Auth.always_ok?
 
     permitted_ids = who_can action
-
     if action == :comment && Auth.always_ok?
       # admin can comment if anyone can
       !permitted_ids.empty?
@@ -87,10 +86,11 @@ def permitted? action
 end
 
 def permit action, verb=nil
+
   if Card.config.read_only # not called by ok_to_read
     deny_because "Currently in read-only mode"
   end
-  
+
   verb ||= action.to_s
   unless permitted? action
     deny_because you_cant("#{verb} #{name.present? ? name : 'this'}")
@@ -102,7 +102,7 @@ def ok_to_create
   if @action_ok and junction?
     [:left, :right].each do |side|
       next if side==:left && @superleft   # left is supercard; create permissions will get checked there.
-      part_card = send side, :new=>{}      
+      part_card = send side, :new=>{}
       if part_card && part_card.new_card? # if no card, there must be other errors
         unless part_card.ok? :create
           deny_because you_cant("create #{part_card.name}")
@@ -199,7 +199,6 @@ event :check_permissions, :after=>:approve do
   else
     @action
   end
-  
   track_permission_errors do
     ok? task
   end
@@ -208,12 +207,12 @@ end
 def track_permission_errors
   @permission_errors = []
   result = yield
-  
+
   @permission_errors.each do |message|
     errors.add :permission_denied, message
   end
   @permission_errors = nil
-  
+
   result
 end
 
@@ -224,16 +223,16 @@ def recaptcha_on?
   !Auth.signed_in?     &&
   !Auth.needs_setup?   &&
   !Auth.always_ok?     &&
-  Card.toggle( rule :captcha ) 
+  Card.toggle( rule :captcha )
 end
 
 def have_recaptcha_keys?
-  @@have_recaptcha_keys = defined?(@@have_recaptcha_keys) ? @@have_recaptcha_keys : 
+  @@have_recaptcha_keys = defined?(@@have_recaptcha_keys) ? @@have_recaptcha_keys :
     !!( Card.config.recaptcha_public_key && Card.config.recaptcha_private_key )
 end
 
 event :recaptcha, :before=>:approve do
-  if !@supercard && !Env[:recaptcha_used] && recaptcha_on?     
+  if !@supercard && !Env[:recaptcha_used] && recaptcha_on?
     Env[:recaptcha_used] = true
     Env[:controller].verify_recaptcha :model=>self, :attribute=>:captcha
   end
@@ -242,43 +241,43 @@ end
 module Accounts
   # This is a short-term hack that is used in account-related cards to allow a permissions pattern where
   # permissions are restricted to the owner of the account (and, by default, Admin)
-  # That pattern should be permitted by our card representation (without creating 
+  # That pattern should be permitted by our card representation (without creating
   # separate rules for each account holder) but is not yet.
-  
+
   def permit action, verb=nil
     case
     when action==:comment  ; @action_ok = false
-    when action==:create   ; @superleft ? true : super( action, verb ) 
+    when action==:create   ; @superleft ? true : super( action, verb )
       #restricts account creation to subcard handling on permitted card (unless explicitly permitted)
     when is_own_account?   ; true
     else                   ; super action, verb
     end
   end
-  
+
 end
 
-module Follow  
+module Follow
   def ok_to_update
     permit :update
   end
-  
+
   def ok_to_create
     permit :create
   end
-  
+
   def ok_to_delete
     permit :delete
   end
-  
+
   def permit action, verb=nil
-    if [:create, :delete, :update].include?(action) && Auth.signed_in? && 
+    if [:create, :delete, :update].include?(action) && Auth.signed_in? &&
         (user = rule_user) && Auth.current_id == user.id
       return true
     else
       super action, verb
     end
   end
-  
+
 end
-  
+
 

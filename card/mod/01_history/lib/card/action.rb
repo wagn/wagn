@@ -4,7 +4,7 @@ class Card
 
   class Action < ActiveRecord::Base
     belongs_to :card
-    belongs_to :act,  :foreign_key=>:card_act_id, :inverse_of=>:actions 
+    belongs_to :act,  :foreign_key=>:card_act_id, :inverse_of=>:actions
     has_many   :card_changes, :foreign_key=>:card_action_id, :inverse_of=>:action,
       :dependent=>:delete_all, :class_name=> "Card::Change"
 
@@ -73,7 +73,8 @@ class Card
     end
 
     def new_values
-      @new_values ||= {
+      @new_values ||=
+      {
         :content  => new_value_for(:db_content),
         :name     => new_value_for(:name),
         :cardtype => ( typecard = Card[new_value_for(:type_id).to_i] and typecard.name.capitalize )
@@ -92,7 +93,7 @@ class Card
     def last_value_for field
       ch = self.card.last_change_on(field, :before=>self) and ch.value
     end
-    
+
     def field_index field
       if field.is_a? Integer
         field
@@ -100,23 +101,23 @@ class Card
         Card::TRACKED_FIELDS.index(field.to_s)
       end
     end
-    
+
     def new_value_for field
       ch = card_changes.find_by(field: field_index(field)) and ch.value
     end
-    
+
     def change_for field
       card_changes.where 'card_changes.field = ?', field_index(field)
     end
-    
+
     def new_type?
       new_value_for(:type_id)
     end
-    
+
     def new_content?
       new_value_for(:db_content)
     end
-    
+
     def new_name?
       new_value_for(:name)
     end
@@ -147,7 +148,7 @@ class Card
 
     # def diff
     #   @diff ||= { :cardtype=>type_diff, :content=>content_diff, :name=>name_diff}
-    # end 
+    # end
 
     def name_diff opts={}
       if new_name?

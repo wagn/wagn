@@ -35,7 +35,6 @@ Gem::Specification.new do |s|
     [ 'smartname',    '0.2.3'   ],
 
     [ 'activerecord-session_store'],
-
     [ 'uuid',         '~> 2.3'  ],
     [ 'paperclip',    '~> 4.2'  ],
     [ 'htmlentities', '~> 4.3'  ],
@@ -49,7 +48,7 @@ Gem::Specification.new do |s|
     [ 'haml',         '~> 4.0'  ],
     [ 'kaminari',     '~> 0.16' ],
     [ 'bootstrap-kaminari-views', '~> 0.0.5'],
-    [ 'diff-lcs',     '~> 1.2'  ]
+    [ 'diff-lcs',     '~> 1.2'  ],
 
   ].each do |dep|
     s.add_runtime_dependency *dep

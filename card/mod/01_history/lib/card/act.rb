@@ -2,9 +2,9 @@
 class Card
   class Act < ActiveRecord::Base
     before_save :set_actor
-    has_many :actions, 
-      { :foreign_key=>:card_act_id, :inverse_of=> :act, :class_name=> "Card::Action" },
-      -> { order :id }
+    has_many :actions, -> { order :id },
+      { :foreign_key=>:card_act_id, :inverse_of=> :act, :class_name=> "Card::Action" }
+
     belongs_to :actor, class_name: "Card"
     belongs_to :card
     def set_actor

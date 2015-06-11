@@ -23,8 +23,8 @@ Wagn.application.class.configure do
       skip /view\=status/
     end
   end
-  
-  
+
+
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
 
@@ -40,38 +40,35 @@ Wagn.application.class.configure do
 
   # See everything in the log (default is :info)
   config.log_level = :debug
-  
-  #change log_level to :wagn to activate performance logger
+
   # config.performance_logger = {
-  #     :methods => [:event, :search, :fetch, :view],  # choose methods to log
-  #     :min_time => 100,                              # show only method calls that are slower than 100ms
+  #     :methods   => [:event, :search, :fetch, :view],  # choose methods to log
+  #     :min_time  => 100,                              # show only method calls that are slower than 100ms
   #     :max_depth => 3,                               # show nested method calls only up to depth 3
-  #     :details=> true                                # show method arguments and sql
+  #     :details   => true                                # show method arguments and sql
+  #     :log_level => :info
   # }
-  
+
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
   # Do not compress assets
   # config.assets.compress = false
-# 
+#
 #   # Expands the lines which load the assets
 #   config.assets.debug = false
-# 
+#
 #   # This needs to be on for tinymce to work, because several important files (themes, etc) are only served statically
 #   config.serve_static_files = ENV['STATIC_ASSETS'] || true
-# 
+#
 #   # Setting a bogus directory so rails won't find public/assets in dev mode.
 #   # Normally you could skip that by not serving static assets, but that breaks tinymce (see above)
 #   config.assets.prefix = "dynamic-assets"
 
-  # Raise exception on mass assignment protection for Active Record models
-#  config.active_record.mass_assignment_sanitizer = :strict
-
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)
 #  config.active_record.auto_explain_threshold_in_seconds = 0.5
-  
+
 
   #  if File.exists?(File.join(Rails.root,'tmp', 'debug.txt'))
 #    require 'ruby-debug'
@@ -81,7 +78,7 @@ Wagn.application.class.configure do
 #  end
 
   config.action_mailer.perform_deliveries = false
-  
+
   # Use Pry instead of IRB
   silence_warnings do
     begin

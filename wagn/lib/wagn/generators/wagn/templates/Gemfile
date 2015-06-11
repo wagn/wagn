@@ -64,7 +64,7 @@ group :test do
   if RUBY_PLATFORM =~ /darwin/
     # gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
     # gem 'rspec-legacy_formatters'
-    # gem 'wagn-rspec-formatter', :path=>'/opt/wagn-rspec-formatter'
+    # gem 'wagn-rspec-formatter', :git=>'https://github.com/xithan/wagn-rspec-formatter.git'
   end
 
   # CUKES see features dir
@@ -94,7 +94,7 @@ group :development, :test do
   gem 'spring-watcher-listen'
   gem 'pry-rails'
   gem 'pry-rescue'
-  gem 'pry-stack_explorer'
+  # gem 'pry-stack_explorer'
   gem 'jasmine'
   gem 'jasmine-rails', :git=>"https://github.com/chuenlok/jasmine-rails.git"
   gem 'jasmine-jquery-rails'
@@ -107,6 +107,7 @@ group :debug do
 	else
 		gem 'debugger'
 	end
+  gem 'better_errors', :git=>"https://github.com/xithan/better_errors.git"
 end
 <% end %>
 

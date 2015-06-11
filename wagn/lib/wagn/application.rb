@@ -9,15 +9,6 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
-module ActiveSupport::Logger::Severity
-#  WAGN = UNKNOWN + 1
-  WAGN = 6
-
-  def wagn progname, &block
-    add(WAGN, nil, progname, &block)
-  end
-end
-
 
 module Wagn
   class Application < Rails::Application
@@ -54,7 +45,7 @@ module Wagn
       paths.add path, options
     end
 
-    
+
     def config
       @config ||= begin
         config = super
@@ -81,7 +72,7 @@ module Wagn
         config
       end
     end
-    
+
     def paths
       @paths ||= begin
         paths = super

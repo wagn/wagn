@@ -8,11 +8,13 @@ end
 def create_act_and_action
   @current_act = if @supercard
     @supercard.current_act || @supercard.acts.build(:ip_address=>Env.ip)
+    #@supercard.current_act || @supercard.acts.create(:ip_address=>Env.ip)
   else
     acts.build(:ip_address=>Env.ip)
+    #Card::Act.create :ip_address=>Env.ip
   end
-
-  @current_action = actions.build(:action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
+  #@current_action = Card::Action.create(:card_act_id=>@current_act.id, :action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
+  @current_action = actions(true).build(:action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
   @current_action.act = @current_act
 
   if (@supercard and @supercard !=self)
@@ -25,16 +27,32 @@ end
 event(:create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save, :when=>proc {|c| c.history?} )   { create_act_and_action }
 event(:create_act_and_action_for_delete, :before =>:validate_delete_children, :on=>:delete, :when=>proc {|c| c.history? }) { create_act_and_action }
 
+event :store_changes, :before=>:stored do
+  @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
+  return unless @current_action
+  if @changed_fields.present?
+    @changed_fields.each{ |f| @current_action.card_changes.build :field => f, :value => self[f] }
+    #@changed_fields.each{ |f| Card::Change.create :field => f, :value => self[f], :card_action_id=>@current_action.id }
+    #@current_action.update_attributes! :card_id => id
+    #@current_act.update_attributes! :card_id => id
+  elsif @current_action and @current_action.card_changes.empty?
+    @current_action.delete
+  end
+end
 
 event :remove_empty_act, :after=>:extend, :when=>proc {|c| c.history? } do
   # if not @supercard and not @current_act.actions.empty?
   #   @current_act.save
   # end
   @current_act.reload
-  if not @supercard and @current_act.actions.empty?
-     @current_act.delete
-     @current_act = nil
-   end
+  if not @supercard
+    if @current_act.actions(true).empty?
+      @current_act.delete
+      @current_act = nil
+    else
+      @current_act.update_attributes! :card_id=>id
+    end
+  end
 end
 
 

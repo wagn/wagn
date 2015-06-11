@@ -69,28 +69,38 @@ def identify_action
   end
 end
 
-def store_changes
-  @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
-  return unless @current_action
-  if @changed_fields.present?
-    #@changed_fields.each{ |f| @current_action.card_changes.build :field => f, :value => self[f] }
-    @changed_fields.each{ |f| Card::Change.create :field => f, :value => self[f], :card_action_id=>@current_action.id }
-  elsif @current_action and @current_action.card_changes.empty?
-    @current_action.delete
-  end
-end
-
+# event :store_changes, :before=>:stored do
+# #def store_changes
+#   @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
+#   return unless @current_action
+#   if @changed_fields.present?
+#     #@changed_fields.each{ |f| @current_action.card_changes.build :field => f, :value => self[f] }
+#     @changed_fields.each{ |f| Card::Change.create :field => f, :value => self[f], :card_action_id=>@current_action.id }
+#     @current_action.update_attributes! :card_id => id
+#     @current_act.update_attributes! :card_id => id
+#   elsif @current_action and @current_action.card_changes.empty?
+#     @current_action.delete
+#   end
+# end
+#
+# event :delete_failed_act, :after=>:store_failed do
+#   @current_act.delete if @current_act
+#   @current_action.delete if @current_action
+# end
 
 
 def store
   run_callbacks :store do
     yield #unless @draft
-    store_changes
     @virtual = false
   end
+  run_callbacks :stored
 rescue =>e
+  #run_callbacks :store_failed
   rescue_event e
 ensure
+#  @current_act.save! if @current_act
+#  @current_action.save! if @current_action
   @from_trash = @last_action_id = @last_content_action_id = nil
 end
 
@@ -150,7 +160,7 @@ event :process_subcards, :after=>:approve, :on=>:save do
     opts['subcards'] = extract_subcard_args! opts
 
     opts[:supercard] = self
-    
+
     subcard = if known_card = Card[ab_name]
       known_card.refresh.assign_attributes opts
       known_card

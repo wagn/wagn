@@ -138,6 +138,7 @@ format :html do
   end
 
   view :errors, :perms=>:none do |args|
+
     if card.errors.any?
       title = %{ Problems #{%{ with #{card.name} } unless card.name.blank?} }
       frame args.merge(:panel_class=>"panel panel-warning", :title=>title, :hide=>'menu' ) do

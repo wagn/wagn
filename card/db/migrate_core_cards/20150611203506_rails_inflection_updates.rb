@@ -18,7 +18,7 @@ class RailsInflectionUpdates < Card::CoreMigration
              # plural,     wrong singular,  correct singular
       word([ '(\w+)lice',  '(\w+)louse',    '\1lice' ]),
       word([ '(\w+)mice',  '(\w+)mouse',    '\1mice' ]),
-      word([ 'kine',       'cow',           'kine']),
+      word_end([ 'kine',   'cow',           'kine']),
       word( keep_the_s('analysi')),
     ]
     %w( statu crisi testi alia bu axi octopu viru analysi basi diagnosi parenthesi prognosi synopsi thesi ).each do |word|

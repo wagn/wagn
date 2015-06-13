@@ -94,6 +94,12 @@ describe Card::Set::All::Collection do
         assert_select "li > a[data-toggle=tab][data-url=#{path}]"
       end
     end
-
+    it 'handles nests as items' do
+      tabs = render_card :tabs, :name=>'tab_test', :type_id=>Card::PlainTextID, :content=>"{{A|type;title:my tab title}}"
+      assert_view_select tabs, 'div[role=tabpanel]' do
+        assert_select 'li > a[data-toggle=tab][href=#tab_test-a]', 'my tab title'
+        assert_select 'div.tab-pane#tab_test-a', 'Basic'
+      end
+    end
   end
 end

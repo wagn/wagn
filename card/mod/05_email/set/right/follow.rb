@@ -1,11 +1,11 @@
 include All::Permissions::Follow
 
-def options
+def option_cards
   Card::FollowOption.cards.compact
 end
 
-def options_card
-  Card.new :name=>'follow_options_card', :type_code=>:pointer, :content=>options.map {|oc| "[[#{oc.title}]]" }.join("\n")
+def options_rule_card
+  Card.new :name=>'follow_options_card', :type_code=>:pointer, :content=>option_cards.map {|oc| "[[#{oc.title}]]" }.join("\n")
 end
 
 

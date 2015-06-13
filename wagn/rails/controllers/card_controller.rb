@@ -11,9 +11,9 @@ class CardController < ActionController::Base
   include Card::HtmlFormat::Location
   include Recaptcha::Verify
 
-  before_filter :start_performance_logger  if Wagn.config.performance_logger
-  after_filter  :stop_performance_logger   if Wagn.config.performance_logger
-  after_filter :request_logger            if Wagn.config.request_logger
+  before_filter :start_performance_logger
+  after_filter  :stop_performance_logger
+  after_filter  :request_logger            if Wagn.config.request_logger
 
   before_filter :per_request_setup, :except => [:asset]
   before_filter :load_id, :only => [ :read ]
@@ -139,11 +139,29 @@ class CardController < ActionController::Base
   end
 
   def start_performance_logger
-    Card::Log::Performance.start :method=>env["REQUEST_METHOD"], :message=>env["PATH_INFO"]
+    if params[:performance_log]
+      @old_log_level = Wagn.config.log_level
+      if params[:performance_log].kind_of?(Hash) && params[:performance_log][:output] == 'console'
+        Wagn.config.log_level = :wagn
+      end
+      Card::Log::Performance.load_config params[:performance_log]
+    end
+
+    if Wagn.config.performance_logger || params[:performance_log]
+      Card::Log::Performance.start :method=>env["REQUEST_METHOD"], :message=>env["PATH_INFO"]
+    end
   end
 
   def stop_performance_logger
-    Card::Log::Performance.stop
+    if Wagn.config.performance_logger || params[:performance_log]
+      Card::Log::Performance.stop
+    end
+    if params[:perfomance_log]
+      Wagn.config.log_level = @old_log_level
+      if Wagn.config.performance_logger
+        Card::Log::Performance.load_config Wagn.config.performance_logger
+      end
+    end
   end
 
   protected

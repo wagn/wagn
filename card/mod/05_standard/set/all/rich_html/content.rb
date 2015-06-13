@@ -184,20 +184,24 @@ format :html do
 
 
   view :last_action do |args|
-    action_type = case ( action = card.last_act.action_on(card.id) and action.action_type )
-    when :create then 'added'
-    when :delete then 'deleted'
-    else
-      link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
+    if act = card.last_act and action = act.action_on(card.id)
+      action_verb =
+        case action.action_type
+        when :create then 'added'
+        when :delete then 'deleted'
+        else
+          link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
+        end
+
+      %{
+        <span class="last-update">
+          #{ action_verb }
+          #{ _render_acted_at }
+          ago by
+          #{ subformat(card.last_actor)._render_link }
+        </span>
+      }
     end
-    %{
-      <span class="last-update">
-        #{ action_type }
-        #{ _render_acted_at }
-        ago by
-        #{ subformat(card.last_actor)._render_link }
-      </span>
-    }
   end
 
   private

@@ -48,6 +48,7 @@ module Cardio
 
       config.token_expiry          = 2.days
       config.revisions_per_page    = 10
+      config.space_last_in_multispace = true
       config.closed_search_limit   = 50
     end
 

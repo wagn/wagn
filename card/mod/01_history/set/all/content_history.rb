@@ -81,11 +81,13 @@ def last_actor
 end
 
 def last_act
-  last_act_on_self = acts.last
-  if last_act_on_self and (last_action.act == last_act_on_self or last_act_on_self.acted_at > last_action.act.acted_at)
-    last_act_on_self
-  else
-    last_action.act
+  if action = last_action
+    last_act_on_self = acts.last
+    if last_act_on_self and ( action.act==last_act_on_self || last_act_on_self.acted_at>action.act.acted_at )
+      last_act_on_self
+    else
+      action.act
+    end
   end
 end
 

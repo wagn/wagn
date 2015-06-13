@@ -9,9 +9,7 @@ def item_cards params={}
 end
 
 def item_names params={}
-  ## FIXME - this should just alter the query to have it return name rather than instantiating all the cards!!
-  ## (but need to handle prepend/append)
-  Card.search(query(params)).map(&:cardname)
+  Card.search(query(params.merge(:return=>:name)))
 end
 
 def item_type
@@ -71,7 +69,7 @@ format do
       end.join "\n"
     end
   end
-  
+
   def search_vars args={}
     @search_vars ||=
       begin
@@ -92,7 +90,7 @@ format do
         { :error => e}
       end
   end
-  
+
   def set_inclusion_opts args
     @inclusion_defaults = nil
     @inclusion_opts ||= {}
@@ -100,7 +98,7 @@ format do
     # explicit > inclusion syntax > WQL > inclusion defaults
   end
 
-  
+
 
   def page_link text, page, current=false, options={}
     @paging_path_args[:offset] = page * @paging_limit
@@ -133,17 +131,17 @@ format do
   end
 
 end
-    
-    
+
+
 format :data do
-    
+
   view :card_list do |args|
     search_results.map do |c|
       nest c
     end
   end
 end
-  
+
 format :csv do
   view :card_list do |args|
     items = super args
@@ -154,7 +152,7 @@ format :csv do
     end
   end
 end
-    
+
 format :json do
   def default_search_params
     set_default_search_params :default_limit => 0
@@ -162,12 +160,12 @@ format :json do
 end
 
 format :html do
-    
+
   view :card_list do |args|
     paging = _optional_render :paging, args
 
     if search_results.empty?
-      render_no_search_results(args) 
+      render_no_search_results(args)
     else
       results =
         search_results.map do |c|
@@ -178,7 +176,7 @@ format :html do
             </div>
           }
         end.join "\n"
-        
+
       %{
         #{ paging }
         <div class="search-result-list">
@@ -241,7 +239,7 @@ format :html do
     (window_min .. window_max).each do |page|
       next if page < 0 or page > total_pages
       text = page + 1
-      out << page_li( text, page, page==current_page ) 
+      out << page_li( text, page, page==current_page )
     end
 
     if total_pages > window_max
@@ -255,11 +253,11 @@ format :html do
     out << %{</ul></nav>}
     out.join
   end
-  
+
   def default_search_params
     set_default_search_params :default_limit=>20
   end
-  
+
 end
 
 

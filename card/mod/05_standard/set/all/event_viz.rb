@@ -2,6 +2,7 @@
 # EXPERIMENTAL
 # the following methods are for visualing card events
 #  not ready for prime time!
+#  not working with Rails 4
 
 def events action
   @action = action

@@ -40,8 +40,10 @@ class Card < ActiveRecord::Base
   around_save :store
   after_save :extend
 
+
   TRACKED_FIELDS = %w(name type_id db_content trash)
 
   ActiveSupport.run_load_hooks(:card, self)
 end
+
 

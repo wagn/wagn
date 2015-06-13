@@ -3,7 +3,7 @@ require 'rmagick'
 require 'paperclip'
 
 def attach_array
-  
+
   c= self.content
   !c || c =~ /^\s*<img / ?  ['','',''] : c.split(/\n/)
 end
@@ -38,17 +38,17 @@ STYLES = %w{ icon small medium large original }
 
 
 def attachment_format(ext)
-  if ext.present? and attach and original_ext=attach_extension 
+  if ext.present? and attach and original_ext=attach_extension
     if['file', original_ext].member? ext
       original_ext
-    elsif exts = MIME::Types[attach.content_type] 
+    elsif exts = MIME::Types[attach.content_type]
       if exts.find {|mt| mt.extensions.member? ext }
         ext
       else
         exts[0].extensions[0]
       end
     end
-  end   
+  end
 rescue => e
   Rails.logger.info "attachment_format issue: #{e.message}"
   nil
@@ -65,7 +65,7 @@ def attachment_symlink_to(prior_action_id) # create filesystem links to files fr
   if styles and prior_action_id != last_action_id
     save_action_id = selected_action_id
     links = {}
-    
+
     self.selected_action_id = prior_action_id
     styles.each { |style|  links[style] = ::File.basename(attach.path(style))          }
 
@@ -94,12 +94,14 @@ def self.included(base)
     # this isn't quite right, but without it, we see logging to STDOUT
     Paperclip.options[:log] = false
 
+
     has_attached_file :attach, :preserve_files=>true,
       :default_url => "missing",
       :url => ":web_dir/:basename-:size:action_id.:extension",
       :path => ":system_path.:extension",
       :styles => { :icon   => '16x16#', :small  => '75x75',
                  :medium => '200x200>', :large  => '500x500>' }
+      # :validate_media_type => false
 
     before_post_process :before_post_attach
 
@@ -111,15 +113,25 @@ def self.included(base)
         end
       end
     end
-    
+
     do_not_validate_attachment_file_type :attach
   end
 end
 
 
+# allow empty files
+# without this monkey patch empty files get detected as application/octet-stream
+# and throw a type mismatch exception
+# alternative solution: turn spoof detection always off with option :validate_media_type=>false
+class Paperclip::MediaTypeSpoofDetector
+  alias_method 'content_spoofed?', 'spoofed?'
+  def spoofed?
+    @file.size == 0 ? false : content_spoofed?
+  end
+end
 
 module Paperclip::Interpolations
-  
+
   extend Card::Format::Location
 
   def system_path at, style
@@ -132,7 +144,7 @@ module Paperclip::Interpolations
       "#{ Card.paths['files'].existent.first }/#{card.id}/#{size at, style}#{action_id at, style}"
     end
   end
-      
+
   def web_dir at, style_name
     card_path Card.config.files_web_path
   end
@@ -145,8 +157,8 @@ module Paperclip::Interpolations
     at.instance.type_id==Card::FileID || style_name.blank? ? '' : "#{style_name}-"
   end
 
-  def action_id(at, style_name) 
-    at.instance.selected_content_action_id 
+  def action_id(at, style_name)
+    at.instance.selected_content_action_id
   end
 end
 

@@ -21,7 +21,7 @@ module Decko
 
     paths.add "app/controllers", :with => 'rails/controllers', :eager_load => true
     paths.add 'gem-assets',      :with => 'rails/assets'
-    paths.add 'config/routes',   :with => 'rails/engine-routes.rb'
+    paths.add 'config/routes.rb',   :with => 'rails/engine-routes.rb'
     paths.add 'lib/tasks',       :with => "#{::Wagn.gem_root}/lib/wagn/tasks", :glob => '**/*.rake'
     paths.add 'lib/wagn/config/initializers',
               :with => File.join( Wagn.gem_root, 'lib/wagn/config/initializers' ), :glob => "**/*.rb"

@@ -1,10 +1,9 @@
 # -*- encoding : utf-8 -*-
-i
 class RailsInflectionUpdates < Card::CoreMigration
   def word ar
     return [/(?<=\b|_)#{ar[0]}(?=\b|_)/i, /(?<=\b|_)#{ar[1]}(?=\b|_)/i, ar[2]]
   end
-  def word_end text
+  def word_end ar
     return [/#{ar[0]}(?=\b|_)/i, /#{ar[1]}(?=\b|_)/i, ar[2]]
   end
 
@@ -19,6 +18,7 @@ class RailsInflectionUpdates < Card::CoreMigration
              # plural,     wrong singular,  correct singular
       word([ '(\w+)lice',  '(\w+)louse',    '\1lice' ]),
       word([ '(\w+)mice',  '(\w+)mouse',    '\1mice' ]),
+      word([ 'kine',       'cow',           'kine']),
       word( keep_the_s('analysi')),
     ]
     %w( statu crisi testi alia bu axi octopu viru analysi basi diagnosi parenthesi prognosi synopsi thesi ).each do |word|

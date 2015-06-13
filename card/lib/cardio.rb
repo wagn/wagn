@@ -123,10 +123,11 @@ module Cardio
     def schema_mode type
       new_suffix = Cardio.schema_suffix type
       original_suffix = ActiveRecord::Base.table_name_suffix
-
       ActiveRecord::Base.table_name_suffix = new_suffix
+      ActiveRecord::SchemaMigration.reset_table_name
       yield
       ActiveRecord::Base.table_name_suffix = original_suffix
+      ActiveRecord::SchemaMigration.reset_table_name
     end
 
     def schema type=nil

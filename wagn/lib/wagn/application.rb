@@ -84,12 +84,11 @@ module Wagn
         paths['app/models'] = []
         paths['app/mailers'] = []
 
-        add_path paths, 'config/routes', :with => 'rails/application-routes.rb'
+        add_path paths, 'config/routes.rb', :with => 'rails/application-routes.rb'
 
         paths
       end
     end
-
   end
 end
 

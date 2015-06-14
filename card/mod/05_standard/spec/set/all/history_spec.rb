@@ -79,24 +79,16 @@ describe Card::Set::All::History do
         it "doesn't create an act" do
           Card::Auth.as(:anonymous) do
             act_count = Card::Act.count
-            begin
-              Card.create :name=>"create fail"
-            rescue => e
-            ensure
-              expect(Card::Act.count).to eq act_count
-            end
+            Card.create :name=>"create fail"
+            expect(Card::Act.count).to eq act_count
           end
         end
 
         it "doesn't create an action" do
           Card::Auth.as(:anonymous) do
             action_count = Card::Action.count
-            begin
-              Card.create :name=>"create fail"
-            rescue => e
-            ensure
-              expect(Card::Action.count).to eq action_count
-            end
+            Card.create :name=>"create fail"
+            expect(Card::Action.count).to eq action_count
           end
         end
 
@@ -104,12 +96,9 @@ describe Card::Set::All::History do
           Card::Auth.as(:joe_user) do
             act_count    = Card::Act.count
             action_count = Card::Action.count
-            begin
-              Card.create :name=>"crete fail", :subcards=>{'*all+*create'=>''}
-            ensure
-              expect(Card::Action.count).to eq action_count
-              expect(Card::Act.count).to eq act_count
-            end
+            Card.create :name=>"crete fail", :subcards=>{'*all+*create'=>''}
+            expect(Card::Action.count).to eq action_count
+            expect(Card::Act.count).to eq act_count
           end
         end
 

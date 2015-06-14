@@ -28,7 +28,7 @@ def revision action
     action = Card::Action.fetch(action)
   end
   action and Card::TRACKED_FIELDS.inject({}) do |attr_changes, field|
-    last_change = action.card_changes.find_by_field(field) || last_change_on(field, :not_after=>action)
+    last_change = action.card_changes.find_by_field_name(field) || last_change_on(field, :not_after=>action)
     attr_changes[field.to_sym] = (last_change ? last_change.value : self[field])
     attr_changes
   end

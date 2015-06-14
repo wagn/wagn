@@ -128,7 +128,6 @@ describe Card::Set::All::Account do
       # includes lots of account rules...
       Card::Auth.as(:joe_admin) do
         ids = Card::Auth.as_card.read_rules
-        binding.pry
         expect(ids.length).to eq(@read_rules.size + 12)
       end
     end

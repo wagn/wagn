@@ -80,6 +80,16 @@ describe Card::Set::All::Collection do
       end
     end
 
+    it 'handles relative names' do
+      Card::Auth.as_bot do
+        Card.create! :name=>'G', :content=>"[[+B]]", :type=>'pointer', :subcards=>{'+B'=>'GammaBeta'}
+      end
+      tabs = Card.fetch('G').format.render_tabs
+      assert_view_select tabs, 'div[role=tabpanel]' do
+        assert_select 'div.tab-pane#g-g-b .closed-content', 'GammaBeta'
+      end
+    end
+
     it 'handles item views' do
       tabs = render_content '{{Fruit+*type+*create|tabs|name}}'
       assert_view_select tabs, 'div[role=tabpanel]' do

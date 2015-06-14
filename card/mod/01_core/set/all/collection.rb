@@ -181,27 +181,19 @@ format :html do
   view :tabs do |args|
     tab_buttons = ''
     tab_panes = ''
-    Card::Content.new(card.content, card).find_chunks( Card::Chunk::Reference ).each_with_index do |item, index|
+    Card::Content.new(card.content, card).find_chunks( Card::Chunk::Reference ).each_with_index do |chunk, index|
       active_tab = (index == 0)
-      id = "#{card.cardname.safe_key}-#{item.referee_name.safe_key}"
-      i_args = item_args(args)
-      if @inclusion_opts
-        slot_args = @inclusion_opts.clone
-        slot_args.delete(:view)
-        if item.kind_of? Card::Chunk::Include
-          slot_args.merge!(item.options)
-        end
-        i_args.merge!(:slot=>slot_args)
-      end
-      url = page_path(item.referee_name, i_args)
-      tab_name = (item.respond_to?(:options) && item.options[:title]) || item.name
+      id         = "#{card.cardname.safe_key}-#{chunk.referee_name.safe_key}"
+      r_args     = reference_args chunk, args
+      url        = reference_path chunk, r_args
+      tab_name   = (chunk.respond_to?(:options) && chunk.options[:title]) || chunk.name
       tab_buttons += tab_button( "##{id}", tab_name, active_tab, 'data-url'=>url.html_safe, :class=>(active_tab ? nil : 'load'))
       tab_content =
         if active_tab
-          if item.kind_of? Card::Chunk::Include
-            item.process_chunk { |options| prepare_nest options }
+          if chunk.kind_of? Card::Chunk::Include
+            chunk.process_chunk { |options| prepare_nest options }
           else
-            nest(Card.fetch(item, :new=>{}), i_args)
+            nest(Card.fetch(chunk.referee_name, :new=>{}), r_args)
           end
         else
           ''
@@ -212,6 +204,26 @@ format :html do
   end
   def default_tabs_args args
     args[:tab_type] ||= 'tabs'
+  end
+
+
+  # process args for links and inclusions
+  def reference_args chunk, args
+    r_args = item_args(args)
+    if @inclusion_opts
+      slot_args = @inclusion_opts.clone
+      slot_args.delete(:view)  # view is handled in item_args doesn't belong in the slot hash
+      if chunk.kind_of? Card::Chunk::Include
+        slot_args.merge!(chunk.options)
+      end
+      r_args.merge!(:slot=>slot_args)
+    end
+    r_args
+  end
+
+  # create a path for a link/inclusion that with respect to item and inclusion options
+  def reference_path chunk, reference_args
+    page_path(chunk.referee_name, reference_args)
   end
 
   view :pills, :view=>:tabs

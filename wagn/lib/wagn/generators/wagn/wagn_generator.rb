@@ -24,6 +24,8 @@ class WagnGenerator < Rails::Generators::AppBase
   class_option 'interactive', :type => :boolean, aliases: '-i', :default => false, :group => :runtime,
     desc: "Prompt with dynamic installation options"
 
+
+  public_task :set_default_accessors!
   public_task :create_root
 
 ## should probably eventually use rails-like AppBuilder approach, but this is a first step.

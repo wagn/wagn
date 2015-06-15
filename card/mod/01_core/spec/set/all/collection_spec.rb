@@ -63,14 +63,14 @@ describe Card::Set::All::Collection do
     end
   end
 
-  describe '#map_nest' do
+  describe '#map_nests' do
     before do
       Card::Auth.as_bot do
         @list = Card.create! :name=>'mixed list', :content=>"[[A]]\n{{B}}\n[[C|link C]]\n{{D|name;title:nest D}}"
       end
     end
     it 'handles links and nest arguments' do
-      result = @list.format.map_nest do |name,args|
+      result = @list.format.map_nests do |name,args|
         [name, args]
       end
       expect(result).to eq [

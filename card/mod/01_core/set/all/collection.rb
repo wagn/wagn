@@ -175,21 +175,40 @@ format do
       end
     end
   end
+
+
+  def each_nest args={}
+    Card::Content.new(card.content, card).find_chunks( Card::Chunk::Reference ).each do |chunk|
+      yield(chunk.referee_name, nest_args(chunk, args))
+    end
+  end
+
+  def map_nest args={}
+    result = []
+    each_nest args do |name, nest_args|
+      result << yield(name, nest_args)
+    end
+    result
+  end
+
+  # process args for links and inclusions
+  def nest_args chunk, args
+    r_args = item_args(args)
+    if @inclusion_opts
+      r_args.merge! @inclusion_opts.clone
+    end
+    if chunk.kind_of? Card::Chunk::Include
+      r_args.merge!(chunk.options)
+    elsif chunk.kind_of? Card::Chunk::Link
+      r_args.reverse_merge!(:view=>:link, :title=>chunk.link_text)
+    end
+    r_args
+  end
+
 end
 
-def each_nest args={}
-  Card::Content.new(content, self).find_chunks( Card::Chunk::Reference ).each do |chunk|
-    yield(chunk.referee_name, nest_args(chunk, args))
-  end
-end
 
-def map_nest args={}
-  result = []
-  each_nest args do |name, nest_args|
-    result << yield(name, nest_args)
-  end
-  result
-end
+
 
 format :html do
   view :tabs do |args|
@@ -213,20 +232,6 @@ format :html do
     args[:tab_type] ||= 'tabs'
   end
 
-
-  # process args for links and inclusions
-  def nest_args chunk, args
-    r_args = item_args(args)
-    if @inclusion_opts
-      r_args.merge! @inclusion_opts.clone
-    end
-    if chunk.kind_of? Card::Chunk::Include
-      r_args.merge!(chunk.options)
-    elsif chunk.kind_of? Card::Chunk::Link
-      r_args.reverse_merge!(:view=>:link, :title=>chunk.link_text)
-    end
-    r_args
-  end
 
   # create a path for a nest with respect ot the inclusion options
   def nest_path name, nest_args

@@ -7,7 +7,11 @@ gem 'card',        :path=>"<%= @gemfile_gem_path %>/card", :require => false
 gem 'wagn'
 <% end %>
 
-<%= database_gemfile_entry -%>
+gem '<%= database_gemfile_entry.name %>'<%= %(, '#{database_gemfile_entry.version}') if database_gemfile_entry.version -%>
+
+# Use Unicorn or Thin as server
+# gem 'unicorn'
+# gem 'thin'
 
 <% if options['mod-dev'] -%>
 group :test do
@@ -22,9 +26,12 @@ group :test, :development do
   gem 'jasmine-rails', :git=>"https://github.com/chuenlok/jasmine-rails.git"
   gem 'jasmine-jquery-rails'
   gem 'sprockets' # just so above works
-  # gem 'spring'
-  # gem 'spring-commands-rspec'
-  # gem 'spring-commands-cucumber'
+  <%- if spring_install? %>
+  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  gem 'spring'
+  gem 'spring-commands-rspec'
+  gem 'spring-commands-cucumber'
+  <% end -%>
   # gem 'pry-rails'
   # gem 'pry-rescue'
   # gem 'pry-stack_explorer'
@@ -88,10 +95,13 @@ end
 gem 'ruby-prof', :group=>:profile  # profiling
 
 group :development, :test do
+  <%- if spring_install? %>
+  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-commands-rspec'
   gem 'spring-commands-cucumber'
   gem 'spring-watcher-listen'
+  <% end -%>
   gem 'pry-rails'
   gem 'pry-rescue'
   # gem 'pry-stack_explorer'

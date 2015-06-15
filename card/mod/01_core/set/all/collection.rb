@@ -177,28 +177,35 @@ format do
   end
 end
 
+def each_nest args={}
+  Card::Content.new(content, self).find_chunks( Card::Chunk::Reference ).each do |chunk|
+    yield(chunk.referee_name, nest_args(chunk, args))
+  end
+end
+
+def map_nest args={}
+  result = []
+  each_nest args do |name, nest_args|
+    result << yield(name, nest_args)
+  end
+  result
+end
+
 format :html do
   view :tabs do |args|
     tab_buttons = ''
     tab_panes = ''
-    Card::Content.new(card.content, card).find_chunks( Card::Chunk::Reference ).each_with_index do |chunk, index|
-      active_tab = (index == 0)
-      id         = "#{card.cardname.safe_key}-#{chunk.referee_name.safe_key}"
-      r_args     = reference_args chunk, args
-      url        = reference_path chunk, r_args
-      tab_name   = (chunk.respond_to?(:options) && chunk.options[:title]) || chunk.name
+    active_tab = true
+    each_nest(:item=>:content) do |name, nest_args|
+      id         = "#{card.cardname.safe_key}-#{name.to_name.safe_key}"
+      url        = nest_path name, nest_args
+      tab_name   = nest_args[:title] || name
       tab_buttons += tab_button( "##{id}", tab_name, active_tab, 'data-url'=>url.html_safe, :class=>(active_tab ? nil : 'load'))
-      tab_content =
-        if active_tab
-          if chunk.kind_of? Card::Chunk::Include
-            chunk.process_chunk { |options| prepare_nest options }
-          else
-            nest(Card.fetch(chunk.referee_name, :new=>{}), r_args)
-          end
-        else
-          ''
-        end
+
+      # only render the first active tab, other tabs get loaded via ajax
+      tab_content = active_tab ? nest(Card.fetch(name, :new=>{}), nest_args) : ''
       tab_panes += tab_pane( id, tab_content, active_tab )
+      active_tab = false
     end
     tab_panel tab_buttons, tab_panes, args[:tab_type]
   end
@@ -208,22 +215,24 @@ format :html do
 
 
   # process args for links and inclusions
-  def reference_args chunk, args
+  def nest_args chunk, args
     r_args = item_args(args)
     if @inclusion_opts
-      slot_args = @inclusion_opts.clone
-      slot_args.delete(:view)  # view is handled in item_args doesn't belong in the slot hash
-      if chunk.kind_of? Card::Chunk::Include
-        slot_args.merge!(chunk.options)
-      end
-      r_args.merge!(:slot=>slot_args)
+      r_args.merge! @inclusion_opts.clone
+    end
+    if chunk.kind_of? Card::Chunk::Include
+      r_args.merge!(chunk.options)
+    elsif chunk.kind_of? Card::Chunk::Link
+      r_args.reverse_merge!(:view=>:link, :title=>chunk.link_text)
     end
     r_args
   end
 
-  # create a path for a link/inclusion that with respect to item and inclusion options
-  def reference_path chunk, reference_args
-    page_path(chunk.referee_name, reference_args)
+  # create a path for a nest with respect ot the inclusion options
+  def nest_path name, nest_args
+    path_args = {:view=>nest_args.delete(:view)}
+    path_args[:slot] = nest_args
+    page_path(name, path_args)
   end
 
   view :pills, :view=>:tabs

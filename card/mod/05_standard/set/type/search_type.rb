@@ -16,6 +16,12 @@ def item_type
   query[:type]
 end
 
+def each_nest args={}
+  item_names(args) do |name|
+    yield(name, nest_args(args.reverse_merge!(:item=>:content))
+  end
+end
+
 def count params={}
   Card.count_by_wql query( params )
 end

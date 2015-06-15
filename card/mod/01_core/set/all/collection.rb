@@ -179,20 +179,20 @@ format do
 
   def each_nest args={}
     Card::Content.new(card.content, card).find_chunks( Card::Chunk::Reference ).each do |chunk|
-      yield(chunk.referee_name, nest_args(chunk, args))
+      yield(chunk.referee_name.to_s, nest_args(args,chunk))
     end
   end
 
-  def map_nest args={}
+  def map_nests args={}, &block
     result = []
-    each_nest args do |name, nest_args|
-      result << yield(name, nest_args)
+    each_nest args do |name, n_args|
+      result << block.call(name, n_args)
     end
     result
   end
 
-  # process args for links and inclusions
-  def nest_args chunk, args
+  # process args for links and nests
+  def nest_args args, chunk=nil
     r_args = item_args(args)
     if @inclusion_opts
       r_args.merge! @inclusion_opts.clone
@@ -200,14 +200,13 @@ format do
     if chunk.kind_of? Card::Chunk::Include
       r_args.merge!(chunk.options)
     elsif chunk.kind_of? Card::Chunk::Link
-      r_args.reverse_merge!(:view=>:link, :title=>chunk.link_text)
+      r_args.reverse_merge!(:view=>:link)
+      r_args.reverse_merge!(:title=>chunk.link_text) if chunk.link_text
     end
     r_args
   end
 
 end
-
-
 
 
 format :html do
@@ -235,8 +234,10 @@ format :html do
 
   # create a path for a nest with respect ot the inclusion options
   def nest_path name, nest_args
-    path_args = {:view=>nest_args.delete(:view)}
-    path_args[:slot] = nest_args
+    path_args = {}
+    path_args[:view] = nest_args[:view]
+    path_args[:slot] = nest_args.clone
+    path_args[:slot].delete(:view)
     page_path(name, path_args)
   end
 

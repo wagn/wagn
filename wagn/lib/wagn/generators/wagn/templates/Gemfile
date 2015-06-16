@@ -118,6 +118,7 @@ group :debug do
 		gem 'debugger'
 	end
   gem 'better_errors', :git=>"https://github.com/xithan/better_errors.git"
+  gem 'binding_of_caller'
 end
 <% end %>
 

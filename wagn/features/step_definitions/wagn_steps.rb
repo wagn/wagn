@@ -68,7 +68,6 @@ When /^(.*) edits? "([^\"]*)" entering "([^\"]*)" into wysiwyg$/ do |username, c
   end
 end
 
-
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
@@ -163,8 +162,6 @@ Then /debug/ do
   end
   nil
 end
-
-
 
 def create_card(username,cardtype,cardname,content="")
   signed_in_as(username) do

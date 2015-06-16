@@ -12,15 +12,7 @@ event :create_act_and_action_for_delete, :before =>:validate_delete_children, :o
 end
 
 event :create_card_changes, :after =>:stored, :when=>proc {|c| c.history? } do
-  if @current_action
-    @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
-    if @changed_fields.present?
-      @changed_fields.each{ |f| Card::Change.create :field => f, :value => self[f], :card_action_id=>@current_action.id }
-      @current_action.update_attributes! :card_id => id
-    elsif @current_action.card_changes(true).empty?
-      @current_action.delete
-    end
-  end
+  store_changes
 end
 
 event :finalize_act, :after=>:create_card_changes, :when=>proc {|c| c.history? } do
@@ -45,6 +37,18 @@ def create_act_and_action
   @current_action = Card::Action.create(:card_act_id=>@current_act.id, :action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
   if (@supercard and @supercard !=self)
     @current_action.super_action = @supercard.current_action
+  end
+end
+
+def store_changes
+  if @current_action
+    @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
+    if @changed_fields.present?
+      @changed_fields.each{ |f| Card::Change.create :field => f, :value => self[f], :card_action_id=>@current_action.id }
+      @current_action.update_attributes! :card_id => id
+    elsif @current_action.card_changes(true).empty?
+      @current_action.delete
+    end
   end
 end
 

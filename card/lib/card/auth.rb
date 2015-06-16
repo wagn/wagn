@@ -11,7 +11,7 @@ class Card
 
     class << self
 
-      # Authenticates a user by their login name and unencrypted password.  
+      # Authenticates a user by their login name and unencrypted password.
       def authenticate email, password
         accounted = Auth[ email ]
         if accounted and account = accounted.account and account.active?
@@ -40,7 +40,7 @@ class Card
           ]).first
         end
       end
-        
+
       def signin signin_id
         self.current_id = signin_id
         session[:user] = signin_id if session
@@ -51,7 +51,7 @@ class Card
       end
 
       def set_current_from_session
-        self.current_id = 
+        self.current_id =
           if session
             if card_id=session[:user] and Card.exists? card_id
               card_id
@@ -135,12 +135,12 @@ class Card
           @@simulating_setup_need or Card.cache.write( NEED_SETUP_KEY, (account_count < 3) ) # 3, because
         end
       end
-    
+
       def simulate_setup_need! mode=true
         @@simulating_setup_need = mode
         Card.cache.write NEED_SETUP_KEY, nil
       end
-    
+
 
       def always_ok?
         #warn Rails.logger.warn("aok? #{as_id}, #{as_id&&Card[as_id].id}")
@@ -171,7 +171,7 @@ class Card
       end
 
       private
-  
+
       def account_count
         as_bot { Card.count_by_wql :right=>Card[:account].name }
       end

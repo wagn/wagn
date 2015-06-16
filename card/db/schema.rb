@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 20141216053032) do
     t.integer "card_act_id",     limit: 4
     t.integer "super_action_id", limit: 4
     t.integer "action_type",     limit: 4
-    t.boolean "draft",           limit: 1
+    t.boolean "draft"
   end
 
   add_index "card_actions", ["card_act_id"], name: "card_actions_card_act_id_index", using: :btree
@@ -78,7 +78,7 @@ ActiveRecord::Schema.define(version: 20141216053032) do
     t.string   "read_rule_class",     limit: 255
     t.integer  "read_rule_id",        limit: 4
     t.integer  "references_expired",  limit: 4
-    t.boolean  "trash",               limit: 1,     null: false
+    t.boolean  "trash",                             null: false
     t.integer  "type_id",             limit: 4,     null: false
     t.text     "db_content",          limit: 65535
   end

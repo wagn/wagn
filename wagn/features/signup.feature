@@ -26,7 +26,6 @@ Feature: Signing up
 
     When I go to the home page
     And I follow "Sign out"
-    And I wait a sec
     Then I should not see "Wanna B"
 
     When I follow "Sign in"

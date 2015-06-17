@@ -48,10 +48,14 @@ def store_changes
       @current_action.update_attributes! :card_id => id
     elsif @current_action.card_changes(true).empty?
       @current_action.delete
+      @current_action = nil
     end
   end
 end
 
+
+# alternative to #create_act_and_action
+# currently not used
 def build_act_and_action
   @current_act = if @supercard
     @supercard.current_act || @supercard.acts.build(:ip_address=>Env.ip)

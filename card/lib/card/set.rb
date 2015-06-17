@@ -140,33 +140,86 @@ class Card
 
 
     def event event, opts={}, &final
+      perform_later =  (opts[:before] == :subsequent) || (opts[:after] == :subsequent)
+      final_method = "#{event}_without_callbacks" #should be private?
       opts[:on] = [:create, :update ] if opts[:on] == :save
 
       Card.define_callbacks event
 
       class_eval do
-        final_method = "#{event}_without_callbacks" #should be private?
         define_method final_method, &final
+      end
 
+      if perform_later
+        defer_method = "#{event}_perform_later"
+        define_event_perform_later_method defer_method
+        define_active_job event, final_method, opts[:queue_as]
+        define_event_method event, defer_method, opts
+      else
+        define_event_method event, final_method, opts
+      end
+      set_event_callbacks event, opts
+    end
+
+    def define_event_perform_later_method method_name
+      class_eval do
+        define_method method_name, proc {
+          a_a = self.serializable_attributes.each_with_object({}) do |name, hash|
+                   value = self.instance_variable_get("@#{name}")
+                   hash[name] =
+                     if Symbol === value  # ActiveJob doesn't accept symbols as arguments
+                       { :value => value.to_s, :symbol => true }
+                     else
+                       { :value => value }
+                     end
+                end
+          Object.const_get(event.to_s.camelize).perform_later(self, a_a)
+        }
+      end
+    end
+
+    def define_event_method event, call_method, opts
+      class_eval do
         define_method event do
           run_callbacks event do
             Card.with_logging :event, :message=>event, :context=>self.name, :details=>opts do
-              send final_method
+              send call_method
             end
           end
         end
       end
-
-      set_event_callbacks event, opts
     end
 
 
+    # creates an Active Job.
+    # The scheduled job gets the card object as argument and all serializable attributes of the card.
+    # (when the job is executed ActiveJob fetches the card from the database so all attributes get lost)
+    # @param name [String] the name for the ActiveJob child class
+    # @param final_method [String] the name of the card instance method to be queued
+    # @option queue [Symbol] (:default) the name of the queue
+    def define_active_job name, final_method, queue = :default
+      class_name = name.to_s.camelize
+      eval %{
+        class ::#{class_name} < ActiveJob::Base
+          queue_as #{queue}
+        end
+      }
+      Object.const_get(class_name).class_eval do
+       define_method :perform, proc { |card, attributes|
+          attributes.each do |name, args|
+            # symbols are not allowed so all symbols arrive here as strings
+            # convert strings that were symbols before back to symbols
+            value = args[:symbol] ? args[:value].to_sym : args[:value]
+            card.instance_variable_set("@#{name}", value )
+          end
+          card.send final_method
+      }
+      end
+    end
 
     #
     # ActiveCard support: accessing plus cards as attributes
     #
-
-
     def card_accessor *args
       options = args.extract_options!
       add_traits args, options.merge( :reader=>true, :writer=>true )

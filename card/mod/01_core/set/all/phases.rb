@@ -85,11 +85,14 @@ end
 
 def extend
   run_callbacks :extend
+  run_callbacks :subsequent
 rescue =>e
   rescue_event e
 ensure
   @action = nil
 end
+
+
 
 
 def rescue_event e

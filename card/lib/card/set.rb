@@ -164,7 +164,7 @@ class Card
     def define_event_perform_later_method method_name
       class_eval do
         define_method method_name, proc {
-          a_a = self.serializable_attributes.each_with_object({}) do |name, hash|
+          s_attr = self.serializable_attributes.each_with_object({}) do |name, hash|
                    value = self.instance_variable_get("@#{name}")
                    hash[name] =
                      if Symbol === value  # ActiveJob doesn't accept symbols as arguments
@@ -173,7 +173,7 @@ class Card
                        { :value => value }
                      end
                 end
-          Object.const_get(event.to_s.camelize).perform_later(self, a_a)
+          Object.const_get(event.to_s.camelize).perform_later(self, s_attr)
         }
       end
     end

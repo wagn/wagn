@@ -31,7 +31,7 @@ class Card < ActiveRecord::Base
   has_many :actions, -> { where( :draft=>[nil,false]).order :id }
   has_many :drafts, -> { where( :draft=>true ).order :id }, :class_name=> :Action
 
-  cattr_accessor :set_patterns, :error_codes, :accessible_attributes
+  cattr_accessor :set_patterns, :error_codes, :serializable_attributes
   @@set_patterns, @@error_codes = [], {}
 
   serializable_attr_accessor :action, :supercard, :current_act, :current_action,

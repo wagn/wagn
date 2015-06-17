@@ -70,7 +70,6 @@ class Card
         history = fetch_history
         history[key] ||= 0
         history[key] += 1
-        binding.pry
         Rails.cache.write(HISTORY_KEY, history)
         Rails.cache.fetch(key, &block)
       end

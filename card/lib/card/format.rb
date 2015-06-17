@@ -198,7 +198,6 @@ class Card
         with_inclusion_mode view do
           Card.with_logging :view, :message=>view, :context=>card.name, :details=>args do
             Card::ViewCache.fetch(self, view, args) do
-              binding.pry if view == :open
               send "_view_#{ view }", args
             end
           end

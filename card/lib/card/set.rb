@@ -152,7 +152,7 @@ class Card
 
       if perform_later
         defer_method = "#{event}_perform_later"
-        define_event_perform_later_method defer_method
+        define_event_perform_later_method event, defer_method
         define_active_job event, final_method, opts[:queue_as]
         define_event_method event, defer_method, opts
       else
@@ -161,7 +161,7 @@ class Card
       set_event_callbacks event, opts
     end
 
-    def define_event_perform_later_method method_name
+    def define_event_perform_later_method event, method_name
       class_eval do
         define_method method_name, proc {
           s_attr = self.serializable_attributes.each_with_object({}) do |name, hash|

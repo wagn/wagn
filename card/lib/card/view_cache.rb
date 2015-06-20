@@ -5,6 +5,7 @@ class Card
       LIMIT = 1000 # reduce cache size to VIEW_CACHE_SIZE if VIEW_CACHE_LIMIT is reached
       CNT_KEY = 'view_cache_cnt'
       HISTORY_KEY = 'view_cache_history'
+      KEYS_KEY = 'view_cache_keys'
 
       def increment_cnt
         if !Rails.cache.exist? CNT_KEY
@@ -13,12 +14,23 @@ class Card
         Rails.cache.increment(CNT_KEY)
       end
 
+      def keys
+        Rails.cache.read(KEYS_KEY) || ::Set.new
+      end
+      def add_key key
+        Rails.cache.write(KEYS_KEY, (keys << key) )
+      end
+      def delete_key key
+        Rails.cache.write(KEYS_KEY, keys.delete(key) )
+      end
+
       def reduce_cache
         history = fetch_history
         cnts_with_key = history.keys.map { [history[key], key] }
         SortedSet.new(cnts_with_key).each.with_index do |cnt, key, index|
           if index < (VIEW_CACHE_LIMIT - VIEW_CACHE_SIZE)
             Rails.cache.delete(key)
+            delete_key key
           else
             history[key] = 0
           end
@@ -29,6 +41,7 @@ class Card
       def fetch_history
         Rails.cache.read(HISTORY_KEY) || {}
       end
+
 
       def cache_key obj
         case obj
@@ -61,7 +74,10 @@ class Card
 
         key = "view_#{view}_#{format.card.key}_#{cache_key(args)}_#{role}"
 
-        increment_cnt unless Rails.cache.exist?(key)
+        if !Rails.cache.exist?(key)
+          increment_cnt
+          add_key key
+        end
 
         if Rails.cache.read(CNT_KEY) > LIMIT
           reduce_cache
@@ -75,7 +91,10 @@ class Card
       end
 
       def reset
-        Rails.cache.delete_matched /view_.+/
+        keys.each do |k|
+          Rails.cache.delete k
+        end
+        Rails.cache.write(KEYS_KEY, ::Set.new)
       end
     end
   end

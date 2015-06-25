@@ -2,14 +2,57 @@
 format :html do
 
   view :core do |args|
-    output [
-      _optional_render(:set_label, args, :show),
-      (content_tag(:div, :class=>'panel-group', :id=>'accordion', :role=>'tablist','aria-multiselectable'=>'true') do
+    if Card[:recent_settings].item_names.present?
+      _render_recent_rules(args)
+    else
+      _render_common_rules(args)
+    end
+  end
+
+  def with_label_and_navbar args
+    wrap do
+      [
+        _optional_render(:set_label, args, :show),
+        _optional_render(:rule_navbar, args, :show),
+        yield
+      ]
+    end
+  end
+
+  view :all_rules do |args|
+    with_label_and_navbar args.merge(:active_toolbar_view =>:all_rules) do
+      rules_table (card.visible_setting_codenames.sort & card.visible_setting_codenames), args
+    end
+  end
+
+  view :grouped_rules do |args|
+    with_label_and_navbar args.merge(:active_toolbar_view =>:grouped_rules) do
+      content_tag(:div, :class=>'panel-group', :id=>'accordion', :role=>'tablist','aria-multiselectable'=>'true') do
          Card::Setting.groups.keys.map do |group_key|
            _optional_render(group_key, args, :show)
          end * "\n"
-      end)
-    ]
+      end
+    end
+  end
+
+  view :recent_rules do |args|
+    with_label_and_navbar args.merge(:active_toolbar_view =>:recent_rules) do
+      recent_settings = Card[:recent_settings].item_cards.map(&:codename)
+      rules_table (recent_settings.map(&:to_sym) & card.visible_setting_codenames), args
+    end
+
+  end
+
+  view :common_rules do |args|
+    with_label_and_navbar args.merge(:active_toolbar_view =>:common_rules) do
+      rules_table (card.visible_setting_codenames & [:create, :read, :update, :delete, :structure, :default, :style]), args
+    end
+  end
+
+  view :field_related_rules do |args|
+    with_label_and_navbar args.merge(:active_toolbar_view =>:field_related_rules) do
+      rules_table (card.visible_setting_codenames & [:default, :help, :add_help, :input, :options, :options_label]), args
+    end
   end
 
   view :set_label do |args|
@@ -32,22 +75,26 @@ format :html do
             end
           end),
           (content_tag :div, :id=>collapse_id, :class=>'panel-collapse collapse', :role=>'tabpanel', 'aria-labelledby'=>heading_id do
-            wrap_with :table, :class=>'set-rules table' do
-              [
-                (content_tag(:tr, :class=>"rule-group") do
-                  wrap_each_with :th, %w(Setting Content Set), :class=>'rule-heading'
-                end),
-                (settings.map do |setting|
-                  if show_view? setting.codename, args
-                    rule_card = card.fetch(:trait=>setting.codename, :new=>{})
-                    nest(rule_card, :view=>:closed_rule).html_safe
-                  end
-                end * "\n")
-              ]
-            end
+            rules_table settings.map(&:codename), args
           end)
         ]
       end
+    end
+  end
+
+  def rules_table settings, args={}
+    wrap_with :table, :class=>'set-rules table' do
+      [
+        (content_tag(:tr, :class=>"rule-group") do
+          wrap_each_with :th, %w(Setting Content Set), :class=>'rule-heading'
+        end),
+        (settings.map do |setting|
+          if show_view? setting, args
+            rule_card = card.fetch(:trait=>setting, :new=>{})
+            nest(rule_card, :view=>:closed_rule).html_safe
+          end
+        end * "\n")
+      ]
     end
   end
 
@@ -89,6 +136,26 @@ format :html do
     ''
   end
 
+
+  view :rule_navbar do |args|
+    id = "rule-navbar-#{card.cardname.safe_key}-#{args[:home_view]}"
+
+    navbar id, :toggle=>'Rules<span class="caret"></span>', :toggle_align=>:left,
+               :class=>'slotter toolbar', :navbar_type=>'inverse', :collapsed_content=>close_link('pull-right visible-xs') do
+      [
+        content_tag(:span, 'Rules:', :class=>"navbar-text hidden-xs"),
+        (wrap_with :ul, :class=>'nav navbar-nav nav-pills' do
+          [
+            pill_view_link( 'most common', :common_rules, args),
+            pill_view_link( 'recently edited', :recent_rules, args),
+            pill_view_link( 'grouped', :grouped_rules, args),
+            pill_view_link( 'alphabetical', :all_rules, args),
+            pill_view_link( 'field-related', :field_related_rules, args)
+          ]
+        end),
+      ]
+    end
+  end
 end
 
 
@@ -182,6 +249,13 @@ def setting_codenames_by_group
     end
   end
   result
+end
+
+def visible_setting_codenames
+  @visible_settings ||=
+    Card::Setting.groups.values.flatten.compact.reject do |setting|
+      !setting.applies_to_cardtype(prototype.type_id)
+    end.map(&:codename)
 end
 
 def visible_settings group

@@ -199,7 +199,6 @@ event :check_permissions, :after=>:approve do
   else
     @action
   end
-
   track_permission_errors do
     ok? task
   end

@@ -16,6 +16,13 @@ format :html do
           _optional_render(:type_link,args,:show)
         end),
         close_link('hidden-xs navbar-right'),
+        (wrap_with(:form, :class=>'navbar-form navbar-right') do
+          [
+            engage_split_button,
+            rules_split_button,
+            edit_split_button
+          ]
+        end),
         %{
           <form class="navbar-form navbar-right">
             <div class="form-group">
@@ -28,6 +35,20 @@ format :html do
     end
   end
 
+  def engage_split_button
+    button = smart_link 'engage', { :related=>Card[:discussion].key }, :class=>'btn btn-default', :type=>'button'
+    discuss = smart_link 'discuss', { :related=>Card[:discussion].key }
+    editors = smart_link 'editors', { :related=>Card[:editors].key }
+    split_button button, [discuss, _render_follow_modal_link, editors ]
+  end
+  def rules_split_button
+    split_button 'rules', ['<a>content</a>', '<a>name</a>', 'type']
+  end
+  def edit_split_button
+    button = render_edit_content_link :title=>'edit', :class=>'btn btn-default', :type=>'button'
+    split_button button, [_render_edit_content_link, _render_edit_name_link, _render_edit_type_link, _render_edit_nests_link, separator, _render_history_link ]
+  end
+
   def close_link css_class
     wrap_with :ul, :class=>"nav navbar-nav #{css_class}" do
       [
@@ -35,6 +56,10 @@ format :html do
         "<li>#{view_link(glyphicon('remove'), :home, :title=>'cancel')}</li>"
       ]
     end
+  end
+
+  def separator
+    '<li role="separator" class="divider"></li>'
   end
 
   view :edit_toolbar do |args|
@@ -142,6 +167,42 @@ format :html do
   view :edit_content_button do |args|
     pill_view_link 'content', :edit, args
   end
+
+  def default_edit_content_link_args args
+    args[:title] ||= 'content'
+  end
+  view :edit_content_link do |args|
+    toolbar_view_link :edit, args
+  end
+  def default_edit_name_link_args args
+    args[:title] ||= 'name'
+  end
+  view :edit_name_link do |args|
+    toolbar_view_link :edit_name, args
+  end
+  def default_edit_type_link_args args
+    args[:title] ||= 'type'
+  end
+  view :edit_type_link do |args|
+    toolbar_view_link :edit_type, args
+  end
+  def default_history_link_args args
+    args[:title] ||= 'history'
+  end
+  view :history_link do |args|
+    toolbar_view_link :history, args
+  end
+  def default_edit_nests_link_args args
+    args[:title] ||= 'nests'
+  end
+  view :edit_nests_link do |args|
+    toolbar_view_link :edit_nests, args
+  end
+  def toolbar_view_link view, args
+    text = args.delete(:title)
+    view_link(text, view, args)
+  end
+
   view :edit_name_button do |args|
     pill_view_link 'name',:edit_name, args
   end
@@ -236,6 +297,21 @@ format :html do
       </ul>
     }
   end
+
+
+  def split_button button, items, btn_type='default'
+    content_tag :div, :class=>'btn-group' do
+      %{
+        #{button}
+      <button type="button" class="btn btn-#{btn_type} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      #{ dropdown_list items }
+      }
+    end
+  end
+
 
   def toolbar_pin_link
     %{

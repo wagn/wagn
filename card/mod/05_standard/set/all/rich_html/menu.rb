@@ -87,8 +87,13 @@ format :html do
     menu_item('', 'option-horizontal', opts, args[:html_args])
   end
 
+
   def menu_item text, icon, target, html_args=nil
     link_text = "#{glyphicon(icon)}<span class='menu-item-label'>#{text}</span>".html_safe
+    smart_link link_text, target, html_args
+  end
+
+  def smart_link link_text, target, html_args=nil
     target.merge!(html_args) if html_args
     if target[:view]
       view_link(link_text, target.delete(:view), target)

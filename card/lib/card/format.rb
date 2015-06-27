@@ -392,9 +392,12 @@ class Card
 
       opts ||= {}
       case
-      when opts.has_key?( :comment )                            ; opts[:comment]   # as in commented code
-      when @mode == :closed && @char_count > Card.config.max_char_count   ; ''     # already out of view
-      when opts[:inc_name]=='_main' && !Env.ajax? && @depth==0  ; expand_main opts
+      when opts.has_key?( :comment )                                      ; opts[:comment]
+        # commented nest
+      when @mode == :closed && @char_count > Card.config.max_char_count   ; ''
+        # already out of view
+      when opts[:inc_name]=='_main' && show_layout? && @depth==0          ; expand_main opts
+        # why do we have these restrictions on main?
       else
         nested_card = Card.fetch opts[:inc_name], :new=>new_inclusion_card_args(opts)
         result = nest nested_card, opts
@@ -464,6 +467,7 @@ class Card
       else
         view
       end
+
       sub.render view, opts
       #end
     end

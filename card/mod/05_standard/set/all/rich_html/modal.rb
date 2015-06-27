@@ -1,27 +1,39 @@
 format :html do
-  def default_modal_content_args args
-    args[:buttons] ||= button_tag 'Close', 'data-dismiss'=>'modal'
-  end
+
+
+
 
   view :modal_link do |args|
     args[:html_args] ||= {}
     args[:html_args].merge!('data-target'=>"#modal-#{card.cardname.safe_key}", 'data-toggle'=>'modal')
-    link_to(args[:text] || _render_title(args), path(:view=>:modal_content), args[:html_args])
-  end
-
-  view :modal_link_and_dialog do |args|
-    _render_modal_link(args) + _render_modal(args)
+    link_to(args[:text] || _render_title(args), path(:layout=>:modal), args[:html_args])
   end
 
   view :modal_slot do |args|
     wrap_with(:div, :class=>'modal fade', :role=>'dialog', :id=>"modal-#{card.cardname.safe_key}") do
       wrap_with(:div, :class=>'modal-dialog') do
         content_tag :div, :class=>'modal-content' do
-          _optional_render :modal_content, args, :hide
+          ''
         end
       end
     end
   end
+
+
+  view :modal_menu do |args|
+    link_to glyphicon('remove'), '', 'data-dismiss'=>'modal'
+  end
+
+=begin
+  def default_modal_content_args args
+    args[:buttons] ||= button_tag 'Close', 'data-dismiss'=>'modal'
+  end
+
+  view :modal_link_and_dialog do |args|
+    _render_modal_link(args) + _render_modal(args)
+  end
+
+
 
   # use modal_content for ajax calls to fill a modal_slot with content
   view :modal_content do |args|
@@ -51,4 +63,6 @@ format :html do
   view :modal do |args|
     _render_modal_slot args.merge(:optional_modal_content=>:show)
   end
+=end
+
 end

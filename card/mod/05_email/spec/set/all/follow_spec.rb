@@ -75,7 +75,6 @@ describe "Card::Set::All::Follow" do
       #        end
 
       link_class = 'follow-link'
-      puts follow_view(name)
       assert_view_select follow_view(name), "a[class~=#{link_class}][href*='']", args[:text] || "follow"
     end
 

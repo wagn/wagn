@@ -218,7 +218,7 @@ $(window).ready ->
 
   $('body').on 'hide.bs.modal', (event) ->
     slot = $( event.target ).slot()
-    menu_slot = slot.find ('.menu-slot:first')
+    menu_slot = slot.find '.menu-slot:first'
     url  = wagn.rootPath + '/~' + slot.data('card-id')
     params = { view: 'menu' }
     params['is_main'] = true if slot.isMain()

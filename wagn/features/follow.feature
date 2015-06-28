@@ -21,6 +21,7 @@ Feature: Follow interface
     And In the main card menu I click "follow"
     And I wait a sec
     And I close the modal window
+    And I wait a sec
     And I open the main card menu
     Then In the main card menu I should see "unfollow"
     And the card Home+*self+Joe User+*follow should point to "always"
@@ -33,6 +34,7 @@ Feature: Follow interface
     And In the main card menu I click "unfollow"
     And I wait a sec
     And I close the modal window
+    And I wait a sec
     And I open the main card menu
     Then In the main card menu I should see "follow"
     And the card Home+*self+Joe User+*follow should point to "never"

@@ -219,7 +219,7 @@ When /^I open the main card menu$/ do
 end
 
 When /^I close the modal window$/ do
-  page.find("$('.modal-menu .close-modal)").click
+  page.find('.modal-menu .close-modal').click
 end
 
 When /^I pick (.*)$/ do |menu_item|

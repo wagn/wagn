@@ -35,7 +35,7 @@ format do
     end
     follow_rule_name = card.default_follow_set_card.follow_rule_name( Auth.current.name )
     hash[:path] = path :name=>follow_rule_name, :action=>:update,
-                       :success=>{ :view=>:modal_content },
+                       :success=>{ :layout=>:modal, :view=>:follow_status },
                        :card=>{ :content=>"[[#{hash[:content]}]]" }
     hash
   end
@@ -50,6 +50,8 @@ end
 
 format :html do
 
+
+=begin
   view :follow_link, :tags=>:unknown_ok, :perms=>:none do |args|
     hash = follow_link_hash args
     text = %[<span class="follow-verb">#{hash[:verb]}</span> #{args[:label]}]
@@ -67,7 +69,7 @@ format :html do
     args[:toggle] ||=  card.followed? ? :off : :on
     args[:label]  ||=  card.follow_label
   end
-
+=end
 
   view :follow_modal_link, :tags=>:unknown_ok, :perms=>:none do |args|
     hash = follow_link_hash args

@@ -174,6 +174,13 @@ format :json do
   end
 end
 
+format :rss do
+  def raw_feed_items
+    search_params.merge!(:default_limit => 25) 
+    search_results
+  end
+end
+
 format :html do
 
   view :card_list do |args|

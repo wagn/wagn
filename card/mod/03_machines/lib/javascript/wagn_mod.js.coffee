@@ -5,7 +5,7 @@ window.wagn ||= {} #needed to run w/o *head.  eg. jasmine
 $.extend wagn,
   editorContentFunctionMap: {
     '.tinymce-textarea'      : -> tinyMCE.get(@[0].id).getContent()
-    '.ace_editor'            : -> ace_editor_content this[0]
+    'textarea.form-control'  : -> ace_editor_content this[0]
     '.pointer-select'        : -> pointerContent @val()
     '.pointer-multiselect'   : -> pointerContent @val()
     '.pointer-radio-list'    : -> pointerContent @find('input:checked').val()
@@ -314,7 +314,8 @@ pointerContent = (vals) ->
   $.makeArray(list).join "\n"
 
 ace_editor_content = (element) ->
-  editor = ace.edit(element)
+  ace_div = $(element).siblings(".ace_editor")
+  editor = ace.edit(ace_div[0])
   editor.getSession().getValue()
 
 #navbox mod

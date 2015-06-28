@@ -216,7 +216,7 @@ end
 # this event is only on pointer card. Other type cards do not have this event,
 # so it is not overridden and will be run while updating type and content in the same request. 
 event :standardize_items, :before=>:approve, :on=>:save, :when=>proc{  |c| c.type_id == Card::PointerID  } do
-  if db_content_changed? && 
+  if db_content_changed?
     self.content = item_names(:context=>:raw).map { |name| "[[#{name}]]" }.join "\n"
   end
 end

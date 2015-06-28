@@ -19,7 +19,7 @@ Feature: Follow interface
     And I open the main card menu
     And In the main card menu I should not see "unfollow"
     And In the main card menu I click "follow"
-    And I follow "Close"
+    And I close the modal window
     And I wait a sec
     And I open the main card menu
     Then In the main card menu I should see "unfollow"
@@ -31,7 +31,7 @@ Feature: Follow interface
     And I am on the homepage
     And I open the main card menu
     And In the main card menu I click "unfollow"
-    And I follow "Close"
+    And I close the modal window
     And I wait a sec
     And I open the main card menu
     Then In the main card menu I should see "follow"

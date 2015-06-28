@@ -21,7 +21,16 @@ format :html do
 
 
   view :modal_menu do |args|
-    link_to glyphicon('remove'), '', 'data-dismiss'=>'modal'
+    popout_params = {}
+    popout_params[:view] = params[:view] if params[:view]
+    # we probably want to pass on a lot more params than just view, but not all of them
+    # (eg we don't want layout, id, controller...)
+    wrap_with :div, :class=>'modal-menu' do
+      [
+        link_to( glyphicon('resize-full'), popout_params, :class=>'pop-out-modal' ),
+        link_to( glyphicon('remove'), '', :class=>'close-modal', 'data-dismiss'=>'modal')
+      ]
+    end
   end
 
 =begin

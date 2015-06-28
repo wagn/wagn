@@ -47,7 +47,7 @@ format :html do
     menu_items = []
     menu_items << menu_edit_link(args)            if args[:show_menu_item][:edit]
     menu_items << menu_discuss_link(args)         if args[:show_menu_item][:discuss]
-    menu_items << _render_follow_modal_link(args) if args[:show_menu_item][:follow]
+    menu_items << _render_follow_link(args) if args[:show_menu_item][:follow]
     menu_items << menu_page_link(args)            if args[:show_menu_item][:page]
     menu_items << menu_rules_link(args)           if args[:show_menu_item][:rules]
     menu_items << menu_account_link(args)         if args[:show_menu_item][:account]

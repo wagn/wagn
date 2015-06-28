@@ -51,27 +51,9 @@ end
 format :html do
 
 
-=begin
+
+
   view :follow_link, :tags=>:unknown_ok, :perms=>:none do |args|
-    hash = follow_link_hash args
-    text = %[<span class="follow-verb">#{hash[:verb]}</span> #{args[:label]}]
-    opts = {
-      :title           => hash[:title],
-      :class           => "follow-toggle #{hash[:class]}",
-      'data-follow'    => JSON(hash),
-      'data-rule_name' => card.default_follow_set_card.follow_rule_name( Auth.current.name ).to_name.url_key,
-      'data-card_key'  => card.key
-    }
-    link_to text, '', opts
-  end
-
-  def default_follow_link_args args
-    args[:toggle] ||=  card.followed? ? :off : :on
-    args[:label]  ||=  card.follow_label
-  end
-=end
-
-  view :follow_modal_link, :tags=>:unknown_ok, :perms=>:none do |args|
     hash = follow_link_hash args
     text = %[#{glyphicon 'flag'}<span class="follow-verb menu-item-label">#{hash[:verb]}</span>]
     follow_rule_card = Card.fetch(card.default_follow_set_card.follow_rule_name( Auth.current.name ), :new=>{})

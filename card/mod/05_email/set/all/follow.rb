@@ -50,6 +50,8 @@ end
 
 format :html do
 
+
+=begin
   view :follow_link, :tags=>:unknown_ok, :perms=>:none do |args|
     hash = follow_link_hash args
     text = %[<span class="follow-verb">#{hash[:verb]}</span> #{args[:label]}]
@@ -67,7 +69,7 @@ format :html do
     args[:toggle] ||=  card.followed? ? :off : :on
     args[:label]  ||=  card.follow_label
   end
-
+=end
 
   view :follow_modal_link, :tags=>:unknown_ok, :perms=>:none do |args|
     hash = follow_link_hash args

@@ -216,41 +216,55 @@ $(window).ready ->
     $(this).addClass("btn-primary").removeClass("btn-danger")
 
 
-  $('body').on 'click', '.update-follow-link', (event) ->
-    anchor = $(this)
-    url  = wagn.rootPath + '/' + anchor.data('card_key') + '.json?view=follow_status'
-    modal =  anchor.closest('.modal')
-    modal.removeData()
+  $('body').on 'hide.bs.modal', (event) ->
+    slot = $( event.target ).slot()
+    menu_slot = slot.find ('.menu-slot:first')
+    url  = wagn.rootPath + '/~' + slot.data('card-id')
+    params = { view: 'menu' }
+    params['is_main'] = true if slot.isMain()
+
     $.ajax url, {
       type : 'GET'
-      dataType : 'json'
+      data: params
       success : (data) ->
-        tags = $(modal).parent().find('.follow-link')
-        tags.find('.follow-verb').html data.verb
-        tags.attr 'href', data.path
-        tags.attr 'title', data.title
-        tags.data 'follow', data
+        menu_slot.replaceWith data
     }
 
-  $('body').on 'click', '.follow-toggle', (event) ->
-    anchor = $(this)
-    url  = wagn.rootPath + '/update/' + anchor.data('rule_name') + '.json'
-    $.ajax url, {
-      type : 'POST'
-      dataType : 'json'
-      data : {
-        'card[content]' : '[[' + anchor.data('follow').content + ']]'
-        'success[view]' : 'follow_status'
-        'success[id]'   : anchor.data('card_key')
-      }
-      success : (data) ->
-        tags = anchor.closest('.modal').parent().find('.follow-toggle')
-        tags.find('.follow-verb').html data.verb
-        tags.attr 'title', data.title
-        tags.removeClass( 'follow-toggle-on follow-toggle-off').addClass data.class
-        tags.data 'follow', data
-    }
-    event.preventDefault() # Prevent link from following its href
+#  $('body').on 'click', '.update-follow-link', (event) ->
+#    anchor = $(this)
+#    url  = wagn.rootPath + '/' + anchor.data('card_key') + '.json?view=follow_status'
+#    modal =  anchor.closest('.modal')
+#    modal.removeData()
+#    $.ajax url, {
+#      type : 'GET'
+#      dataType : 'json'
+#      success : (data) ->
+#        tags = $(modal).parent().find('.follow-link')
+#        tags.find('.follow-verb').html data.verb
+#        tags.attr 'href', data.path
+#        tags.attr 'title', data.title
+#        tags.data 'follow', data
+#    }
+
+#  $('body').on 'click', '.follow-toggle', (event) ->
+#    anchor = $(this)
+#    url  = wagn.rootPath + '/update/' + anchor.data('rule_name') + '.json'
+#    $.ajax url, {
+#      type : 'POST'
+#      dataType : 'json'
+#      data : {
+#        'card[content]' : '[[' + anchor.data('follow').content + ']]'
+#        'success[view]' : 'follow_status'
+#        'success[id]'   : anchor.data('card_key')
+#      }
+#      success : (data) ->
+#        tags = anchor.closest('.modal').parent().find('.follow-toggle')
+#        tags.find('.follow-verb').html data.verb
+#        tags.attr 'title', data.title
+#        tags.removeClass( 'follow-toggle-on follow-toggle-off').addClass data.class
+#        tags.data 'follow', data
+#    }
+#    event.preventDefault() # Prevent link from following its href
 
 
   # permissions mod

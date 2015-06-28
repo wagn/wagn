@@ -27,8 +27,8 @@ format :html do
     # (eg we don't want layout, id, controller...)
     wrap_with :div, :class=>'modal-menu' do
       [
-        link_to( glyphicon('resize-full'), popout_params, :class=>'pop-out-modal' ),
-        link_to( glyphicon('remove'), '', :class=>'close-modal', 'data-dismiss'=>'modal')
+        link_to( glyphicon('remove'), '', :class=>'close-modal pull-right close', 'data-dismiss'=>'modal'),
+        link_to( glyphicon('new-window'), popout_params, :class=>'pop-out-modal pull-right close ' )
       ]
     end
   end

@@ -35,7 +35,7 @@ format do
     end
     follow_rule_name = card.default_follow_set_card.follow_rule_name( Auth.current.name )
     hash[:path] = path :name=>follow_rule_name, :action=>:update,
-                       :success=>{ :view=>:modal_content },
+                       :success=>{ :layout=>:modal, :view=>:follow_status },
                        :card=>{ :content=>"[[#{hash[:content]}]]" }
     hash
   end

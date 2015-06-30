@@ -64,7 +64,7 @@ format :html do
 
 
   view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
-    frame_and_form :update, args.merge(:optional_edit_toolbar=>:show) do
+    frame_and_form :update, args.merge(:optional_toolbar=>:show) do
       [
         _optional_render( :content_formgroup, args ),
         _optional_render( :button_formgroup,   args )
@@ -75,7 +75,7 @@ format :html do
 
   def default_edit_args args
     args[:optional_help] ||= :show
-    args[:optional_edit_toolbar] ||= :show
+    args[:optional_toolbar] ||= :show
     args[:active_toolbar_view] ||= :edit
 
     args[:buttons] ||= %{
@@ -123,7 +123,7 @@ format :html do
       :referers => referers.size,
       :card     => { :update_referencers => false }
     )
-    args[:optional_edit_toolbar] ||= :show
+    args[:optional_toolbar] ||= :show
     args[:active_toolbar_view] ||= :edit_name
     args[:buttons] = %{
       #{ button_tag 'Rename and Update', :disable_with=>'Renaming', :class=>'renamer-updater', :situation=>'primary' }
@@ -146,7 +146,7 @@ format :html do
 
   def default_edit_type_args args
     args[:variety] = :edit #YUCK!
-    args[:optional_edit_toolbar] ||= :show
+    args[:optional_toolbar] ||= :show
     args[:active_toolbar_view] ||= :edit_type
     args[:hidden] ||= { :success=>{:view=>:edit} }
     args[:buttons] = %{
@@ -156,13 +156,16 @@ format :html do
   end
 
   view :edit_rules, :tags=>:unknown_ok do |args|
-    frame args do
-      subformat( current_set_card ).render_content args
-    end
+    view = args[:rule_view] || :open
+    _render_related args.merge(:related=>{:card=>current_set_card, :view=>:open, :slot=>{ :rule_view=>view, :optional_set_navbar=>:show, :optional_set_label=>:hide, :optional_rule_navbar=>:hide}})
+
+    # frame args do
+    #   subformat( current_set_card ).render(view, args)
+    # end
   end
 
   def default_edit_rules_args args
-    args[:optional_edit_toolbar] ||= :show
+    args[:optional_toolbar] ||= :show
     args[:active_toolbar_view] ||= :edit_rules
   end
 
@@ -178,27 +181,35 @@ format :html do
   end
 
   def default_edit_structure_args args
-    args[:optional_edit_toolbar] ||= :show
+    args[:optional_toolbar] ||= :show
     args[:active_toolbar_view] ||= :edit_structure
   end
 
   view :edit_nests do |args|
-    #nests = card.fetch(:trait=>:includes)
-    includes = Card::Content.new(card.content, card).find_chunks( Card::Chunk::Include )
-
     frame args do
-      includes.map do |chunk|
-        if chunk.referee_card
-          nest chunk.referee_card, :view=>:edit_rules, :hide=>'set_label'
-        end
+      with_inclusion_mode :edit do
+        process_relative_tags args
       end
-      #nest nests, :view=>:content, :items=>{:view=>:edit_rules, :hide=>'set_label'}
+    end
+  end
+  def default_edit_nests_args args
+    args[:optional_toolbar] ||= :show
+    args[:active_toolbar_view] ||= :edit_nests
+  end
+
+  view :edit_nest_rules do |args|
+    view = args[:rule_view] || :field_related_rules
+    frame args do
+#      with_inclusion_mode :edit do
+       nested_fields.map do |chunk|
+         nest Card.fetch("#{chunk.referee_name}+*self"), :view=>:titled, :rule_view=>view, :optional_set_label=>:hide, :optional_rule_navbar=>:show
+       end
     end
   end
 
-  def default_edit_nests_args args
-    args[:optional_edit_toolbar] ||= :show
-    args[:active_toolbar_view] ||= :edit_nests
+  def default_edit_nest_rules_args args
+    args[:optional_toolbar] ||= :show
+    args[:active_toolbar_view] ||= :edit_nest_rules
   end
 end
 

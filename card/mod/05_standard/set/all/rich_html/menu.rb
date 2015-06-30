@@ -11,6 +11,10 @@ format :html do
     end
   end
 
+  view :subheader_menu do |args| #, :view=>:menu
+    _render_menu(args)
+  end
+
   view :menu_link do |args|
     path_opts = {:slot => {:home_view=>args[:home_view]}}
     path_opts[:is_main] = true if main?
@@ -32,7 +36,7 @@ format :html do
       [
         content_tag( :span, "<a href='#'>#{ glyphicon args[:menu_icon] }</a>".html_safe,
                      :class=>'open-menu dropdown-toggle', 'data-toggle'=>'dropdown', 'aria-expanded'=>'false'),
-        content_tag( :ul, items.html_safe, :class=>'dropdown-menu', :role=>'menu')
+        content_tag( :ul, items.html_safe, :class=>'dropdown-menu', :role=>'menu'),
       ]
     end
   end
@@ -56,11 +60,11 @@ format :html do
   end
 
   def menu_edit_link args
-    opts = {
+    path_opts = {
              :view=>:edit,
-             :path_opts=>{ :slot=>{:show=>'edit_toolbar', :hide=>'type_link'}}
+             :slot=>{:show=>'edit_toolbar', :hide=>'type_link'}
            }
-    menu_item('edit', 'edit', opts, args[:html_args] )
+    menu_item('edit', 'edit', path_opts, args[:html_args] )
   end
 
   def menu_discuss_link args
@@ -68,7 +72,7 @@ format :html do
   end
 
   def menu_page_link args
-    menu_item('page', 'new-window', {:page=>card}, args[:html_args])
+    menu_item('page', 'new-window', {:card=>card}, args[:html_args])
   end
 
   def menu_rules_link args
@@ -76,9 +80,11 @@ format :html do
   end
 
   def menu_account_link args
-    opts = { :related=>{:name=>'+*account',:view=>:edit,:slot=>{:hide=>'edit_toolbar'}},
-             :path_opts=>{:slot=>{:show=>:account_toolbar}} }
-    menu_item('account', 'user',opts, args[:html_args])
+    path_opts = {
+        :related=>{:name=>'+*account',:view=>:edit,:slot=>{:hide=>'edit_toolbar'}},
+        :slot=>{:show=>:account_navbar}
+      }
+    menu_item('account', 'user', path_opts, args[:html_args])
   end
 
   def menu_more_link args
@@ -88,31 +94,11 @@ format :html do
   end
 
 
-  def menu_item text, icon, target, html_args=nil
+  def menu_item text, icon, target, html_args={}
     link_text = "#{glyphicon(icon)}<span class='menu-item-label'>#{text}</span>".html_safe
-    smart_link link_text, target, html_args
+    smart_link link_text, target, html_args || {}
   end
 
-  def smart_link link_text, target, html_args=nil
-    target.merge!(html_args) if html_args
-    if target[:view]
-      view_link(link_text, target.delete(:view), target)
-    elsif target[:page]
-      card_link target.delete(:page), target.merge(:text=>link_text)
-    elsif target[:related]
-      target[:path_opts] ||= {}
-
-      target[:path_opts][:related] =
-        if target[:related].kind_of? String
-          {:name=>"+#{target.delete(:related)}"}
-        else
-          target[:related]
-        end
-      view_link link_text, :related, target
-    else
-      link_to link_text, {:action=>target.delete(:action)}, target
-    end
-  end
 
   def default_menu_link_args args
     args[:menu_icon] ||= 'cog'

@@ -14,15 +14,15 @@ class Card
     end
 
     @@group_names = {
-      :permission    => "Permissions",
-      :event         => "Events",
-      :webpage       => "Webpage",
       :templating    => "Templating",
-      :editing_cue   => "Editing cues",
+      :permission    => "Permissions",
+      :webpage       => "Webpage",
       :pointer       => "Pointer",
+      :editing_cue   => "Editing cues",
+      :event         => "Events",
       :other         => "Other"
     }
-    @@groups = @@group_names.keys.each_with_object({}) { |groups, key| groups[key] = [] }
+    @@groups = @@group_names.keys.each_with_object({}) { |key, groups| groups[key] = [] }
     @@user_specific = ::Set.new
 
     def self.user_specific? codename

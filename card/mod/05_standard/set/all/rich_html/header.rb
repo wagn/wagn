@@ -7,12 +7,30 @@ format :html do
           #{ _optional_render :toggle, args, :hide }
           #{ _optional_render :title, args }
         </div>
+        #{ _optional_render :type_info, args, :hide }
       </div>
       #{ _optional_render :toolbar, args, (toolbar_pinned? ? :show : :hide) }
-      #{ _optional_render :edit_toolbar, args, (edit_toolbar_pinned? ? :show : :hide)}
-      #{ _optional_render :account_toolbar, args, :hide}
+      #{ _optional_render :account_navbar, args, :hide}
     }
   end
+
+  def default_header_args args
+    if (show_view?(:toolbar,args.merge(:default_visibility=>:hide)) || toolbar_pinned?) && card.type_code != :basic
+      args[:optional_type_info] ||= :show
+    end
+  end
+
+  view :subheader do |args|
+    args[:subheader] ||= toolbar_view_title(args[:active_toolbar_view]) || args[:active_toolbar_view]
+    %{
+      <div class="card-subheader navbar-inverse btn-primary active">
+        #{ _optional_render :subheader_menu, args, :hide }
+        #{ args[:subheader] }
+        #{ autosaved_draft_link if card.drafts.present? && @slot_view == :edit }
+      </div>
+    }
+  end
+
 
   view :toggle do |args|
     verb, adjective, direction = ( args[:toggle_mode] == :close ? %w{ open open expand } : %w{ close closed collapse-down } )

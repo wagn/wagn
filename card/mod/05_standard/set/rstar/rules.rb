@@ -143,7 +143,7 @@ format :html do
       :item => 'view_rule'
     })
 
-    args[:delete_button] ||= delete_button
+    args[:delete_button] ||= delete_button args
     args[:cancel_button] ||=
       begin
         cancel_path = path :view=>( card.new_card? ? :closed_rule : :open_rule ), :success=>false
@@ -161,12 +161,12 @@ format :html do
         :item => nil
       }
     default_edit_rule_args args
-    args[:delete_button] = delete_button '.card-slot.related-view'
+    args[:delete_button] = delete_button args, '.card-slot.related-view'
     args[:cancel_button] = card_link( args[:success][:id], :text=>'Cancel',
       :class=>'rule-cancel-button btn btn-default', :path_opts=>{:view=>args[:success][:view]} )
   end
 
-  def delete_button slot_selector=nil
+  def delete_button args, slot_selector=nil
     if !card.new_card?
       b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
       b_args['data-slot-selector'] = slot_selector if slot_selector

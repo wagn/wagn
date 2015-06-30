@@ -14,6 +14,25 @@ format do
     end
   end
 
+  # link to url, view, card or related card
+  #
+  def smart_link link_text, target, html_args={}
+    if (view = target.delete(:view))
+      view_link link_text, view, html_args.merge(:path_opts=>target)
+    elsif (page = target.delete(:card))
+      card_link page, html_args.merge(:path_opts=>target, :text=>link_text)
+    elsif target[:related]
+      if target[:related].kind_of? String
+        target[:related] = {:name=>"+#{target[:related]}"}
+      end
+      view_link link_text, :related, html_args.merge(:path_opts=>target)
+    elsif target[:web]
+    else
+      link_to link_text, target, html_args
+    end
+  end
+
+
   # link to a specific url or path
   def web_link href, opts={}
     text = opts.delete(:text) || href

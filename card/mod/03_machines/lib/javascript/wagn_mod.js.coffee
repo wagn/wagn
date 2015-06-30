@@ -127,6 +127,22 @@ $.extend wagn,
     # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen.
 
 
+  isTouchDevice: ->
+    bool = undefined
+    if 'ontouchstart' of window or window.DocumentTouch and document instanceof DocumentTouch
+      bool = true
+    else
+      injectElementWithStyles [
+        '@media ('
+        prefixes.join('touch-enabled),(')
+        mod
+        ')'
+        '{#modernizr{top:9px;position:absolute}}'
+      ].join(''), (node) ->
+        bool = node.offsetTop == 9
+        return
+    bool
+
 $(window).ready ->
 
   $('body').on 'click', '.cancel-upload', ->
@@ -186,7 +202,7 @@ $(window).ready ->
       type : 'PUT'
       data : 'card[content]=true'
 
-  $('body').on 'click', '.toolbar-pin.active > a', (e) ->
+  $('body').on 'click', '.toolbar-pin.active', (e) ->
     e.preventDefault()
     $(this).blur()
     $('.toolbar-pin').removeClass('active').addClass('inactive')
@@ -194,7 +210,7 @@ $(window).ready ->
       type : 'PUT'
       data : 'card[content]=false'
 
-  $('body').on 'click', '.toolbar-pin.inactive > a', (e) ->
+  $('body').on 'click', '.toolbar-pin.inactive', (e) ->
     e.preventDefault()
     $('.toolbar-pin').removeClass('inactive').addClass('active')
     $.ajax '/*toolbar_pinned',

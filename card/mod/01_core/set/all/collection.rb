@@ -177,15 +177,61 @@ format do
   end
 
 
-  def each_nest args={}
-    Card::Content.new(card.content, card).find_chunks( Card::Chunk::Reference ).each do |chunk|
+  def each_reference_with_args args={}
+    Card::Content.new(render_raw, card).find_chunks( Card::Chunk::Reference ).each do |chunk|
       yield(chunk.referee_name.to_s, nest_args(args,chunk))
     end
   end
 
-  def map_nests args={}, &block
+
+  def each_nested_chunk
+    Card::Content.new(render_raw, card).find_chunks( Card::Chunk::Include).each do |chunk|
+      yield(chunk) if chunk.referee_name # filter commented nests
+    end
+  end
+
+  def has_nested_fields?
+    nested_fields.present?
+  end
+
+  def nested_fields
+    @nested_fields = begin
+      result = []
+      each_nested_field do |chunk|
+        result << chunk
+      end
+      result
+    end
+  end
+
+  def unique_chunks chunk, processed_set, &block
+    if !processed_set.include? chunk.referee_name.key
+      processed_set << chunk.referee_name.key
+      block.call(chunk)
+    end
+  end
+
+  def each_nested_field &block
+    processed_chunk_keys = ::Set.new([card.key])
+
+    each_nested_chunk do |chunk|
+      # TODO handle structures that are non-virtual
+      if chunk.referee_name.to_name.is_a_field_of? card.name
+        if chunk.referee_card && chunk.referee_card.virtual?
+          subformat(chunk.referee_card).each_nested_field do |sub_chunk|
+            unique_chunks sub_chunk, processed_chunk_keys, &block
+          end
+        else
+          unique_chunks chunk, processed_chunk_keys, &block
+        end
+      end
+    end
+
+  end
+
+  def map_references_with_args args={}, &block
     result = []
-    each_nest args do |name, n_args|
+    each_reference_with_args args do |name, n_args|
       result << block.call(name, n_args)
     end
     result
@@ -214,7 +260,7 @@ format :html do
     tab_buttons = ''
     tab_panes = ''
     active_tab = true
-    each_nest(:item=>:content) do |name, nest_args|
+    each_reference_with_args(:item=>:content) do |name, nest_args|
       id         = "#{card.cardname.safe_key}-#{name.to_name.safe_key}"
       url        = nest_path name, nest_args
       tab_name   = nest_args[:title] || name

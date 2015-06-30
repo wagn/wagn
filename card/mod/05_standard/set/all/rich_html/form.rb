@@ -7,7 +7,7 @@ format :html do
       if args[:core_edit] #need better name!
         _render_core args
       else
-        process_relative_tags args
+        process_relative_tags :view=>:titled, :hide=>'toolbar'
       end
 
     else
@@ -195,9 +195,13 @@ format :html do
   end
 
   def process_relative_tags args
-    _render_raw(args).scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc| #fixme - wrong place for regexp!
-      process_content( inc ).strip
-    end.join
+    nested_fields.map do |chunk|
+      nested_card = chunk.referee_card || Card.fetch(chunk.referee_name, :new=>new_inclusion_card_args(chunk_options))
+      nest nested_card, chunk.options.merge(args)
+    end.join "\n"
+    # _render_raw(args).scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc| #fixme - wrong place for regexp!
+    #   process_content( inc, {:=>'edit_rules'} ).strip
+    # end.join
   end
 
   # form helpers

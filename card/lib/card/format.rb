@@ -197,9 +197,9 @@ class Card
         args = default_render_args view, args
         with_inclusion_mode view do
           Card.with_logging :view, :message=>view, :context=>card.name, :details=>args do
-#            Card::ViewCache.fetch(self, view, args) do
+            Card::ViewCache.fetch(self, view, args) do
               send "_view_#{ view }", args
-#            end
+            end
           end
         end
       end

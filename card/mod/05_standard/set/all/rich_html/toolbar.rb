@@ -66,7 +66,7 @@ format :html do
     toolbar_split_button 'engage',  { :related=>Card[:discussion].key }, args do
       {
         :discuss => discuss,
-        :follow  =>_render_follow_modal_link,
+        :follow  =>_render_follow_link(args),
         :editors => editors
       }
     end
@@ -117,8 +117,12 @@ format :html do
   def toolbar_split_button name, button_args, args
     button = button_link name, button_args, :class=>('active' if args[:active_toolbar_button] == name)
     active_item =
-      if @slot_view == :related && args[:related_card] && (r = args[:related_card].right) && (cn = r.codename)
-        cn.to_sym
+      if @slot_view == :related
+        if args[:rule_view]
+          args[:rule_view].to_sym
+        elsif args[:related_card] && (r = args[:related_card].right) && (cn = r.codename)
+          cn.to_sym
+        end
       else
         @slot_view
       end
@@ -142,9 +146,9 @@ format :html do
   view :toolbar_buttons do |args|
     wrap_with(:div, :class=>'btn-group') do
       [
-        _optional_render(:delete_button,  args, (card.ok?(:delete) ? :show : :hide)),
-        toolbar_pin_button,
         _optional_render(:related_button, args, :show),
+        toolbar_pin_button,
+        _optional_render(:delete_button,  args, (card.ok?(:delete) ? :show : :hide)),
         _optional_render(:refresh_button, args, :hide),
         _optional_render(:history_button, args, :hide),
       ]

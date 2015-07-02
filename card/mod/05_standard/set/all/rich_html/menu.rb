@@ -51,7 +51,7 @@ format :html do
     menu_items = []
     menu_items << menu_edit_link(args)            if args[:show_menu_item][:edit]
     menu_items << menu_discuss_link(args)         if args[:show_menu_item][:discuss]
-    menu_items << _render_follow_link(args) if args[:show_menu_item][:follow]
+    menu_items << _render_follow_link(args.merge(:icon=>true)) if args[:show_menu_item][:follow]
     menu_items << menu_page_link(args)            if args[:show_menu_item][:page]
     menu_items << menu_rules_link(args)           if args[:show_menu_item][:rules]
     menu_items << menu_account_link(args)         if args[:show_menu_item][:account]
@@ -88,9 +88,11 @@ format :html do
   end
 
   def menu_more_link args
-    opts = { :view=>args[:home_view] || :open,
-             :path_opts=>{:slot=>{:show=>:toolbar}}}
-    menu_item('', 'option-horizontal', opts, args[:html_args])
+    path_opts = {
+        :view=>args[:home_view] || :open,
+        :slot=>{:show=>:toolbar}
+      }
+    menu_item('', 'option-horizontal', path_opts, args[:html_args])
   end
 
 

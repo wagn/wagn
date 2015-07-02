@@ -144,7 +144,7 @@ format :html do
     related_sets =  card.related_sets(true)
     return '' if related_sets.size <= 1
     navbar id, :toggle=>'Rules<span class="caret"></span>', :toggle_align=>:left,
-               :class=>'slotter toolbar', :navbar_type=>'inverse', :collapsed_content=>close_link('pull-right visible-xs') do
+               :class=>'slotter toolbar', :navbar_type=>'inverse', :collapsed_content=>close_link(:class=>'pull-right visible-xs') do
       [
         content_tag(:span, 'Set:', :class=>"navbar-text hidden-xs"),
         (wrap_with :ul, :class=>'nav navbar-nav nav-pills' do
@@ -165,7 +165,7 @@ format :html do
     id = "rule-navbar-#{card.cardname.safe_key}-#{args[:home_view]}"
     args.merge!(:path_opts=>{:slot=>{:show=>:rule_navbar}})
     navbar id, :toggle=>'Rules<span class="caret"></span>', :toggle_align=>:left,
-               :class=>'slotter toolbar', :navbar_type=>'inverse', :collapsed_content=>close_link('pull-right visible-xs') do
+               :class=>'slotter toolbar', :navbar_type=>'inverse', :collapsed_content=>close_link(:class=>'pull-right visible-xs') do
       [
         content_tag(:span, 'Rules:', :class=>"navbar-text hidden-xs"),
         (wrap_with :ul, :class=>'nav navbar-nav nav-pills' do

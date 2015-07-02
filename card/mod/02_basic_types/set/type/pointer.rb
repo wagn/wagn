@@ -218,6 +218,8 @@ event :standardize_items, :before=>:approve, :on=>:save do
   end
 end
 
+
+
 def diff_args
   {:format => :pointer}
 end

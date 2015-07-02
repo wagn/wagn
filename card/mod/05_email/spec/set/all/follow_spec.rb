@@ -4,9 +4,6 @@ describe "Card::Set::All::Follow" do
   def follow_view card_name
     render_card :follow_link, :name=>card_name
   end
-  def follow_modal_view card_name
-    render_card :follow_modal_link, :name=>card_name
-  end
 
   describe "follower_ids" do
 
@@ -18,7 +15,6 @@ describe "Card::Set::All::Follow" do
         end
       end
     end
-
 
     subject { Card[cardname].follower_names.sort }
     context 'followers of No One Sees Me' do
@@ -61,7 +57,7 @@ describe "Card::Set::All::Follow" do
     end
 
     def assert_following_view name, args
-      assert_follow_view name, args.reverse_merge(:following => true, :text=>"unfollow #{name}")
+      assert_follow_view name, args.reverse_merge(:following => true, :text=>"unfollow" )
     end
 
 #  href="/card/update/Home+*self+philipp+*follow?card%5Bcontent%5D=%5B%5Bnever%5D%5D&success%5Bid%5D=Home&success%5Bview%5D=follow"
@@ -78,14 +74,11 @@ describe "Card::Set::All::Follow" do
       #          CGI.escape("[[*always]]")
       #        end
 
-      link_class = args[:following] ? "follow-toggle-off" : "follow-toggle-on"
-      assert_view_select follow_view(name), "a[class~=#{link_class}][href*='']", args[:text] || "follow #{name}"
+      link_class = 'follow-link'
+      assert_view_select follow_view(name), "a[class~=#{link_class}][href*='']", args[:text] || "follow"
     end
 
-    def assert_follow_modal_view card_name
-      href_part = args[:following] ? "never" : "always"
-      assert_view_select follow_view(name), "a[class~=follow-link][href*=#{href_part}]", args[:text] || "follow #{name}"
-    end
+
 
 
     context "when not following" do
@@ -108,13 +101,13 @@ describe "Card::Set::All::Follow" do
 
     context "when following cardtype card" do
       it 'renders following all link' do
-        assert_following_view 'Optic', :add_set=>'Optic+*type', :text=>'unfollow all "Optics"'
+        assert_following_view 'Optic', :add_set=>'Optic+*type', :text=>'unfollow'
       end
     end
 
     context "when not following cardtype card" do
       it "renders 'follow all' link" do
-        assert_follow_view 'Basic', :add_set=>'Basic+*type', :text=>'follow all "Basics"'
+        assert_follow_view 'Basic', :add_set=>'Basic+*type', :text=>'follow'
       end
     end
 

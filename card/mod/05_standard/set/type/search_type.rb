@@ -91,6 +91,21 @@ format do
       end
   end
 
+  def search_result_names
+    @search_result_names ||=
+      begin
+        card.item_names search_params
+      rescue => e
+        { :error => e}
+      end
+  end
+
+  def each_nest args={}
+    search_result_names.each do |name|
+      yield(name, nest_args(args.reverse_merge!(:item=>:content)))
+    end
+  end
+
   def set_inclusion_opts args
     @inclusion_defaults = nil
     @inclusion_opts ||= {}
@@ -200,9 +215,7 @@ format :html do
     end
   end
 
-  view :editor do |args|
-    text_area :content, :rows=>5, "data-card-type-code"=>card.type_code
-  end
+  view :editor, :mod=>PlainText::HtmlFormat
 
   view :no_search_results do |args|
     %{<div class="search-no-results"></div>}

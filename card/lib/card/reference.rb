@@ -41,11 +41,11 @@ class Card::Reference < ActiveRecord::Base
     end
 
     def repair_missing_referees
-      joins('LEFT JOIN cards ON card_references.referee_id = cards.id').where('(cards.id IS NULL OR cards.trash = 1) AND referee_id IS NOT NULL').update_all :referee_id=>nil
+      joins('LEFT JOIN cards ON card_references.referee_id = cards.id').where('(cards.id IS NULL OR cards.trash IS TRUE) AND referee_id IS NOT NULL').update_all :referee_id=>nil
     end
 
     def delete_missing_referers
-      joins('LEFT JOIN cards ON card_references.referee_id = cards.id').where('cards.id IS NULL OR cards.trash = 1').delete_all
+      joins('LEFT JOIN cards ON card_references.referee_id = cards.id').where('cards.id IS NULL OR cards.trash IS TRUE').delete_all
     end
 
     def repair_all

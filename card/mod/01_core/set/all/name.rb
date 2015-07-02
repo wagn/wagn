@@ -8,19 +8,19 @@ def name= newname
     @superleft = @supercard if relparts.size==2 && relparts.first.blank?
     cardname = @relative_name.to_name.to_absolute_name @supercard.name
   end
-  
+
   newkey = cardname.key
   if key != newkey
     self.key = newkey
     reset_patterns_if_rule # reset the old name - should be handled in tracked_attributes!!
     reset_patterns
   end
-  
+
   subcards.each do |subkey, subcard|
     next unless Card===subcard
     subcard.name = subkey.to_name.to_absolute cardname
   end
-  
+
   super cardname.s
 end
 
@@ -55,7 +55,7 @@ def left *args
     @superleft or begin
       unless name_changed? and name.to_name.trunk_name.key == name_was.to_name.key
         # prevent recursion when, eg, renaming A+B to A+B+C
-        Card.fetch cardname.left, *args      
+        Card.fetch cardname.left, *args
       end
     end
   end
@@ -140,11 +140,11 @@ end
 
 event :validate_unique_codename, :after=>:permit_codename do
   if codename.present? and errors.empty? and Card.find_by_codename(codename).present?
-    errors.add :codename, "codename #{codename} already in use" 
+    errors.add :codename, "codename #{codename} already in use"
   end
 end
 
-event :validate_name, :before=>:approve, :on=>:save do 
+event :validate_name, :before=>:approve, :on=>:save do
   cdname = name.to_name
   if name.length > 255
     errors.add :name, "is too long (255 character maximum)"
@@ -168,7 +168,7 @@ event :validate_name, :before=>:approve, :on=>:save do
       condition_sql << " AND cards.id <> ?"
       condition_params << id
     end
-    if c = Card.find(:first, :conditions=>[condition_sql, *condition_params])
+    if c = Card.find_by(condition_sql, *condition_params)
       errors.add :name, "must be unique; '#{c.name}' already exists."
     end
   end
@@ -233,7 +233,6 @@ end
 
 
 event :cascade_name_changes, :after=>:store, :on=>:update, :changed=>:name do
-
   Rails.logger.debug "-------------------#{name_was}- CASCADE #{self.name} -------------------------------------"
 
   self.update_referencers = false if self.update_referencers == 'false' #handle strings from cgi
@@ -252,7 +251,6 @@ event :cascade_name_changes, :after=>:store, :on=>:update, :changed=>:name do
     Card::Reference.update_on_rename dep, newname, update_referencers
     Card.expire newname
   end
-
   if update_referencers
     Auth.as_bot do
       [self.name_referencers(name_was)+(deps.map &:referencers)].flatten.uniq.each do |card|

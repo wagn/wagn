@@ -1,15 +1,15 @@
 # What is this?
-# The Machine module together with the MachineInput module implements a kind of observer pattern.  
-# It handles a collection of input cards to generate a output card (default is a file card). 
+# The Machine module together with the MachineInput module implements a kind of observer pattern.
+# It handles a collection of input cards to generate a output card (default is a file card).
 # If one of the input cards is changed the output card will be updated.
-# The classic example: 
+# The classic example:
 # A style card observes a collection of css and sccs card to generate a file card with a css file containg the assembled compressed css.
 
 # How to use it?
 # Include the Machine module in the card set that is supposed to produce the output card. If the output card should be autmatically updated when a input card is changed the input card has to be in a set that includes the MachineInput module.
 # The default machine
 #  -  uses its item cards as input cards or the card itself if there are no item cards;
-#     can be changed by passing a block to collect_input_cards 
+#     can be changed by passing a block to collect_input_cards
 #  -  takes the raw view of the input cards to generate the output;
 #     can be changed by passing a block to machine_input (in the input card set)
 #  -  stores the output as a .txt file in the "+machine output" card;
@@ -18,27 +18,27 @@
 
 # How does it work?
 # Machine cards have a +machine input and a +machine output card. The +machine input card is a pointer to all input cards.
-# Including the MachineInput module creates an ":on => save" event that runs the machines of all cards that are linked to that card via the +machine input pointer. 
+# Including the MachineInput module creates an ":on => save" event that runs the machines of all cards that are linked to that card via the +machine input pointer.
 
 
 
 class Card
-  module Machine    
+  module Machine
     module ClassMethods
-      attr_accessor :output_config 
-  
+      attr_accessor :output_config
+
       def collect_input_cards &block
         define_method :engine_input, &block
       end
-      
+
       def prepare_machine_input &block
         define_method :before_engine, &block
       end
-  
+
       def machine_engine &block
         define_method :engine, &block
       end
-  
+
       def store_machine_output args={}, &block
         output_config.merge!(args)
         if block_given?
@@ -50,16 +50,16 @@ class Card
     def self.included(host_class)
       host_class.extend( ClassMethods )
       host_class.output_config = { :filetype => "txt" }
-      
-            
+
+
       if Codename[:machine_output]  # for compatibility with old migrations
         host_class.card_accessor :machine_output, :type=>:file
         host_class.card_accessor :machine_input, :type => :pointer
-  
+
         # define default machine behaviour
-        host_class.collect_input_cards do 
+        host_class.collect_input_cards do
           # traverse through all levels of pointers and
-          # collect all item cards as input 
+          # collect all item cards as input
           items = [self]
           new_input = []
           already_extended = {} # avoid loops
@@ -82,9 +82,10 @@ class Card
 
         host_class.prepare_machine_input {}
         host_class.machine_engine { |input| input }
-        host_class.store_machine_output do |output| 
+        host_class.store_machine_output do |output|
           file = Tempfile.new [ id, ".#{host_class.output_config[:filetype]}" ]
           file.write output
+          file.rewind
           Card::Auth.as_bot do
             p = machine_output_card
             p.attach = file
@@ -93,14 +94,15 @@ class Card
           file.close
           file.unlink
         end
-  
+
+
         host_class.format do
           view :machine_output_url do |args|
             machine_output_url
           end
         end
-  
-        host_class.event "reset_machine_output_#{host_class.name.gsub(':','_')}".to_sym, :after => :store_subcards, :on => :save do  
+
+        host_class.event "reset_machine_output_#{host_class.name.gsub(':','_')}".to_sym, :after => :store_subcards, :on => :save do
           reset_machine_output!
         end
       end
@@ -111,7 +113,7 @@ class Card
       output = input_item_cards.map do |input|
         unless input.kind_of? Card::Set::Type::Pointer
           if input.respond_to? :machine_input
-            engine( input.machine_input ) 
+            engine( input.machine_input )
           else
             engine( input.format._render_raw )
           end
@@ -119,7 +121,7 @@ class Card
       end.select(&:present?).join( joint )
       after_engine output
     end
-    
+
     def reset_machine_output!
       Auth.as_bot do
         moc = machine_output_card and moc.real? and moc.delete!
@@ -127,8 +129,8 @@ class Card
         update_input_card
       end
     end
-    
- 
+
+
     def update_machine_output
       if ok? :read and not was_already_locked = locked?
         Auth.as_bot do
@@ -140,19 +142,19 @@ class Card
     ensure
        unlock! unless was_already_locked
     end
-    
+
     def lock_cache_key
       "UPDATE-LOCK:#{key}"
     end
-    
+
     def locked?
       Card.cache.read lock_cache_key
     end
-    
+
     def lock!
       Card.cache.write lock_cache_key, true
     end
-    
+
     def unlock!
       Card.cache.write lock_cache_key, false
     end
@@ -168,16 +170,16 @@ class Card
     def machine_output_url
       ensure_machine_output
       machine_output_card.attach.url #(:default, :timestamp => false)   # to get rid of additional number in url
-    end 
+    end
 
     def machine_output_path
       ensure_machine_output
       machine_output_card.attach.path
-    end 
+    end
 
     def ensure_machine_output
       if !output = fetch(:trait => :machine_output) or !output.selected_content_action_id
-        update_machine_output 
+        update_machine_output
       end
     end
   end

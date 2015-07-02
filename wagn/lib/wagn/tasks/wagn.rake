@@ -105,7 +105,7 @@ namespace :wagn do
     stamp = ENV['STAMP_MIGRATIONS']
 
     puts 'migrating structure'
-    Rake::Task['db:migrate'].invoke
+    Rake::Task['wagn:migrate:structure'].invoke
     if stamp
       Rake::Task['wagn:migrate:stamp'].invoke :structure
     end
@@ -117,6 +117,7 @@ namespace :wagn do
       Rake::Task['wagn:migrate:stamp'].reenable
       Rake::Task['wagn:migrate:stamp'].invoke :core_cards
     end
+
 
     puts 'migrating deck cards'
     Rake::Task['wagn:migrate:deck_cards'].execute #not invoke because we don't want to reload environment
@@ -137,9 +138,9 @@ namespace :wagn do
 
   namespace :migrate do
     desc "migrate cards"
-    task :cards do
+    task :cards => :environment do
       Rake::Task['wagn:migrate:core_cards'].invoke
-      Rake::Task['wagn:migrate:deck_cards'].invoke
+      Rake::Task['wagn:migrate:deck_cards'].execute
     end
 
     desc "migrate structure"
@@ -160,8 +161,8 @@ namespace :wagn do
       ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       prepare_migration
       paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:core_cards)
+      Cardio.schema_mode :core_cards do
 
-      Card::CoreMigration.schema_mode :core_cards do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       end

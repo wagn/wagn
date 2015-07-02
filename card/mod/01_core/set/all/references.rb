@@ -1,7 +1,7 @@
 
 def name_referencers link_name=nil
   link_name = link_name.nil? ? key : link_name.to_name.key
-  Card.all :joins => :references_to, :conditions => { :card_references => { :referee_key => link_name } }
+  Card.joins( :references_to ).where card_references: { referee_key: link_name }
 end
 
 def extended_referencers
@@ -11,7 +11,7 @@ end
 
 def replace_references old_name, new_name
   obj_content = Card::Content.new raw_content, card=self
-  
+
   obj_content.find_chunks( Card::Chunk::Reference ).select do |chunk|
     if old_ref_name = chunk.referee_name and new_ref_name = old_ref_name.replace_part(old_name, new_name)
       chunk.referee_name = chunk.replace_reference old_name, new_name
@@ -31,28 +31,28 @@ def update_references rendered_content = nil, refresh = false
   #Card.update( id, :references_expired=>nil )
   #  or just this and save it elsewhere?
   #references_expired=nil
-  
-  connection.execute("update cards set references_expired=NULL where id=#{id}")
+
+  Card.connection.execute("update cards set references_expired=NULL where id=#{id}")
 #  references_expired = nil
   expire if refresh
 
   rendered_content ||= Card::Content.new(raw_content, card=self)
-  
+
   rendered_content.find_chunks(Card::Chunk::Reference).each do |chunk|
     if referee_name = chunk.referee_name # name is referenced (not true of commented inclusions)
-      referee_id = chunk.referee_id   
+      referee_id = chunk.referee_id
       if id != referee_id               # not self reference
-        
+
         #update_references chunk.referee_name if Card::Content === chunk.referee_name
         # for the above to work we will need to get past delete_all!
         referee_name.piece_names.each do |name|
           if name.key != key # don't create self reference
-            
+
             # reference types:
             # L = link
             # I = inclusion
             # P = partial (i.e. the name is part of a compound name that is referenced by a link or inclusion)
-            # The partial type is needed to keep track of references of virtual cards. 
+            # The partial type is needed to keep track of references of virtual cards.
             # For example a link [[A+*self]] won't make it to the reference table because A+*self is virtual and
             # doesn't have an id but when A's name is changed we have to find and update that link.
             ref_type = if name == referee_name
@@ -70,7 +70,7 @@ def update_references rendered_content = nil, refresh = false
           end
         end
       end
-      
+
     end
   end
 end

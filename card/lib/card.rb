@@ -28,21 +28,24 @@ class Card < ActiveRecord::Base
   cattr_accessor :set_patterns, :error_codes
   @@set_patterns, @@error_codes = [], {}
 
-  attr_accessor :action, :supercard, :current_act, :current_action, 
+  attr_accessor :action, :supercard, :current_act, :current_action,
     :comment, :comment_author,    # obviated soon
     :update_referencers,          # wrong mechanism for this
     :update_all_users,                  # if the above is wrong then this one too
     :follower_stash, :remove_rule_stash,
     :last_action_id_before_edit
-    
+
   define_callbacks :approve, :store, :extend
-  
+
   before_validation :approve
   around_save :store
   after_save :extend
-  
+
   TRACKED_FIELDS = %w(name type_id db_content trash)
 
   ActiveSupport.run_load_hooks(:card, self)
+
+
+
 end
 

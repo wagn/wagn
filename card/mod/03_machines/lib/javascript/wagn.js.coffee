@@ -171,7 +171,6 @@ $(window).ready ->
       wagn.initializeEditors $(event.target)
       event.slotSuccessful = true
 
-
   $('body').on 'ajax:error', '.slotter', (event, xhr) ->
     $(this).slotError xhr.status, xhr.responseText
 

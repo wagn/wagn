@@ -5,15 +5,19 @@ end
 format :html do
 
   def show view, args
-    if Env.ajax?
-      view ||= args[:home_view] || :open
-      @inclusion_opts = args.delete(:items)
-      render view, args
-    else
+    if show_layout?
       args.merge! :view=>view if view
       @main_opts = args
       self.render :layout
+    else
+      view ||= args[:home_view] || :open
+      @inclusion_opts = args.delete(:items)
+      render view, args
     end
+  end
+
+  def show_layout?
+    !Env.ajax? || params[:layout]
   end
 
   view :layout, :perms=>:none do |args|

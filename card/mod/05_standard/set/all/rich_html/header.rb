@@ -1,6 +1,7 @@
 format :html do
 
   view :header do |args|
+
     %{
       <div class="card-header #{ args[:header_class] }">
         <div class="card-header-title #{ args[:title_class] }">
@@ -9,19 +10,24 @@ format :html do
         </div>
         #{ _optional_render :type_info, args, :hide }
       </div>
-      #{ _optional_render :toolbar, args, (toolbar_pinned? ? :show : :hide) }
+      #{ _optional_render :toolbar, args, :hide }
       #{ _optional_render :account_navbar, args, :hide}
     }
   end
 
   def default_header_args args
-    if (show_view?(:toolbar,args.merge(:default_visibility=>:hide)) || toolbar_pinned?) && card.type_code != :basic
-      args[:optional_type_info] ||= :show
+    if @slot_view == :open
+      if (show_view?(:toolbar,args.merge(:default_visibility=>:hide)) || toolbar_pinned?) && card.type_code != :basic
+        args[:optional_type_info] ||= :show
+      end
+      if toolbar_pinned?
+        args[:optional_toolbar] ||= :show
+      end
     end
   end
 
   view :subheader do |args|
-    args[:subheader] ||= toolbar_view_title(args[:active_toolbar_view]) || args[:active_toolbar_view]
+    args[:subheader] ||= toolbar_view_title(@slot_view) || _render_title(args)
     %{
       <div class="card-subheader navbar-inverse btn-primary active">
         #{ _optional_render :subheader_menu, args, :hide }

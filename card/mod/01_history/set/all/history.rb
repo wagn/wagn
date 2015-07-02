@@ -107,7 +107,6 @@ format :html do
     end
   end
   def default_history_args args
-    args[:active_toolbar_view] = :history
     args[:optional_toolbar] ||= :show
   end
 

@@ -6,9 +6,8 @@ format :html do
     if @context_names.present?
       options_hash['name_context'] = @context_names.map( &:key ) * ','
     end
-    if args[:subframe]
-      options_hash['subframe'] = true
-    end
+
+    options_hash[:subslot] = 'true' if args[:subslot]
 
     @@slot_option_keys.inject(options_hash) do |hash, opt|
       hash[opt] = args[opt] if args[opt].present?
@@ -21,15 +20,20 @@ format :html do
   def wrap args = {}
     @slot_view = @current_view
     classes = [
-      ( 'card-slot' unless args[:no_slot] ),
-      "#{ @current_view }-view",
-      ( args[:slot_class] if args[:slot_class] ),
-      ( "STRUCTURE-#{args[:structure].to_name.key}" if args[:structure]),
-      card.safe_set_keys
-    ].compact
-
-    div = %{<div id="#{card.cardname.url_key}" data-card-id="#{card.id}" data-card-name="#{h card.name}" style="#{h args[:style]}" class="#{classes*' '}" } +
-      %{data-slot='#{html_escape_except_quotes slot_options( args )}'>#{ output yield }</div>}
+        ( 'card-slot' unless args[:no_slot] ),
+        "#{ @current_view }-view",
+        ( args[:slot_class] if args[:slot_class] ),
+        ( "STRUCTURE-#{args[:structure].to_name.key}" if args[:structure]),
+        card.safe_set_keys
+      ].compact.join ' '
+    data = {
+        'card-id'   => card.id,
+        'card-name' => h(card.name),
+        'slot'      => html_escape_except_quotes(slot_options( args ))
+      }
+    div =
+      content_tag :div, output(yield).html_safe,
+      :id=>card.cardname.url_key, :data=>data, :style=>h(args[:style]), :class=>classes
 
     if params[:debug] == 'slot' && !tagged( @current_view, :no_wrap_comments )
       name = h card.name

@@ -21,13 +21,13 @@ format :html do
   end
 
   view :all_rules do |args|
-    with_label_and_navbars args.merge(:active_toolbar_view =>:all_rules) do
+    with_label_and_navbars args.merge(:selected_view =>:all_rules) do
       rules_table (card.visible_setting_codenames.sort & card.visible_setting_codenames), args
     end
   end
 
   view :grouped_rules do |args|
-    with_label_and_navbars args.merge(:active_toolbar_view =>:grouped_rules) do
+    with_label_and_navbars args.merge(:selected_view =>:grouped_rules) do
       content_tag(:div, :class=>'panel-group', :id=>'accordion', :role=>'tablist','aria-multiselectable'=>'true') do
          Card::Setting.groups.keys.map do |group_key|
            _optional_render(group_key, args, :show)
@@ -37,20 +37,20 @@ format :html do
   end
 
   view :recent_rules do |args|
-    with_label_and_navbars args.merge(:active_toolbar_view =>:recent_rules) do
+    with_label_and_navbars args.merge(:selected_view =>:recent_rules) do
       recent_settings = Card[:recent_settings].item_cards.map(&:codename)
       rules_table (recent_settings.map(&:to_sym) & card.visible_setting_codenames), args
     end
   end
 
   view :common_rules do |args|
-    with_label_and_navbars args.merge(:active_toolbar_view =>:common_rules) do
+    with_label_and_navbars args.merge(:selected_view =>:common_rules) do
       rules_table (card.visible_setting_codenames & [:create, :read, :update, :delete, :structure, :default, :style]), args
     end
   end
 
   view :field_related_rules do |args|
-    with_label_and_navbars args.merge(:active_toolbar_view =>:field_related_rules) do
+    with_label_and_navbars args.merge(:selected_view =>:field_related_rules) do
       field_settings = [:default, :help, :structure]
       field_settings +=  [:input, :options, :options_label] if card.type_id == PointerID
       rules_table (card.visible_setting_codenames & field_settings), args
@@ -170,17 +170,22 @@ format :html do
         content_tag(:span, 'Rules:', :class=>"navbar-text hidden-xs"),
         (wrap_with :ul, :class=>'nav navbar-nav nav-pills' do
           [
-            (pill_view_link( 'field', :field_related_rules, args) if card.junction?),
-            pill_view_link( 'common', :common_rules, args),
-            pill_view_link( 'by group', :grouped_rules, args),
-            pill_view_link( 'by name', :all_rules, args),
-           (pill_view_link( 'recent', :recent_rules, args) if recently_edited_settings?),
+            (view_link_pill( 'field', :field_related_rules, args) if card.junction?),
+            view_link_pill( 'common', :common_rules, args),
+            view_link_pill( 'by group', :grouped_rules, args),
+            view_link_pill( 'by name', :all_rules, args),
+           (view_link_pill( 'recent', :recent_rules, args) if recently_edited_settings?),
           ]
         end),
       ]
     end
   end
 
+  def view_link_pill name, view, args
+    selected_view = args[:selected_view] || @slot_view || args[:home_view]
+    opts = {:class=>'slotter', :role=>'pill', :path_opts=>args[:path_opts]}
+    li_pill view_link(name, view, opts), selected_view == view
+  end
 end
 
 

@@ -1,18 +1,14 @@
 
 format :html do
-
   def toolbar_pinned?
     Card[:toolbar_pinned].content == 'true'
   end
 
   view :toolbar do |args|
     navbar "toolbar-#{card.cardname.safe_key}-#{args[:home_view]}", :toggle_align=>:left, :class=>"slotter toolbar", :navbar_type=>'inverse',
-          :collapsed_content=>close_link('pull-right visible-xs') do
+          :collapsed_content=>close_link(args.merge(:class=>'pull-right visible-xs')) do
       [
-        # (wrap_with(:p, :class=>"navbar-text navbar-left") do
-        #   _optional_render(:type_link,args,:hide)
-        # end),
-        close_link('hidden-xs navbar-right'),
+        close_link(args.merge(:class=>'hidden-xs navbar-right')),
         (wrap_with(:form, :class=>'navbar-form navbar-left') do
           [
             (account_split_button(args) if card.accountable?),
@@ -21,37 +17,37 @@ format :html do
             edit_split_button(args),
           ]
         end),
-        %{
-          <form class="navbar-form navbar-right">
-            <div class="form-group">
-              #{_optional_render :toolbar_buttons_advanced, args, :show}
-              #{_optional_render :toolbar_buttons, args, :show}
-            </div>
-          </form>
-        }.html_safe,
+        (wrap_with(:form, :class=>'navbar-form navbar-right') do
+          content_tag :div, :class=>'form-group' do
+            _optional_render(:toolbar_buttons, args, :show)
+          end
+        end)
       ]
     end
   end
   def default_toolbar_args args
-    args[:active_toolbar_button] ||= active_toolbar_button args[:active_toolbar_view], args
+    args[:active_toolbar_button] ||= active_toolbar_button @slot_view, args
   end
 
   def active_toolbar_button active_view, args
-    if @slot_view == :related && args[:related_card] && (tag=args[:related_card].tag)
-      case tag.codename
-      when 'discussion', 'editors'
-        'engage'
-      when 'account', 'roles', 'edited', 'created', 'follow'
-        'account'
-      else
-        'rules'
-      end
-    elsif [:follow, :editors].include? active_view
+    case active_view
+    when :follow, :editors
       'engage'
-    elsif @slot_view == :edit_rules || @slot_view == :edit_nest_rules
+    when :edit_rules, :edit_nest_rules
       'rules'
-    elsif [:edit, :edit_name, :edit_type, :edit_structure, :edit_nests, :history].include? active_view
+    when :edit, :edit_name, :edit_type, :edit_structure, :edit_nests, :history
       'edit'
+    when :related
+      if args[:related_card] && (tag=args[:related_card].tag)
+        case tag.codename
+        when 'discussion', 'editors'
+          'engage'
+        when 'account', 'roles', 'edited', 'created', 'follow'
+          'account'
+        else
+          'rules'
+        end
+      end
     end
   end
 
@@ -117,48 +113,30 @@ format :html do
     end
   end
 
-  def account_pill name, active=false, path_opts={}
-    opts = {:text=>name, :role=>'pill', :remote=>true, :path_opts=>path_opts}
-    opts[:path_opts][:slot] ||= {}
-    opts[:path_opts][:slot][:hide] = "toggle #{opts[:path_opts][:slot][:hide]}"
-    li_pill card_link("#{card.name}+*#{name}", opts), active
-  end
-
-  def li_pill content, active
-    "<li role='presentation' #{"class='active'" if active}>#{content}</li>"
-  end
-
-
 
   def toolbar_split_button name, button_args, args
     button = button_link name, button_args, :class=>('active' if args[:active_toolbar_button] == name)
-    split_button button, args.merge(:active_item=>args[:active_toolbar_view]) do
-      yield
+    active_item =
+      if @slot_view == :related && args[:related_card] && (r = args[:related_card].right) && (cn = r.codename)
+        cn.to_sym
+      else
+        @slot_view
+      end
+    split_button button, args.merge(:active_item=>active_item) do
+        yield
     end
   end
 
-  def split_button button, args={}
-    items = yield
-    args[:btn_type] ||= 'primary'
 
-    content_tag :div, :class=>'btn-group' do
-      %{
-        #{button}
-        <button type="button" class="btn btn-#{args[:btn_type]} dropdown-toggle " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span class="caret"></span>
-          <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        #{ dropdown_list items, nil, args[:active_index] }
-      }
+  def close_link args
+    link_opts = {:title=>'cancel'}
+    if args[:subslot]
+      link_opts[:path_opts] = {:slot=>{:subframe=>true}}
     end
-  end
 
-  def close_link css_class
-    wrap_with :ul, :class=>"nav navbar-nav #{css_class}" do
-      [
-        "<li>#{view_link(glyphicon('remove'), :home, :title=>'cancel')}</li>"
-      ]
-    end
+    link = view_link glyphicon('remove'), :home, link_opts
+    css_class = ['nav navbar-nav', args[:class]].compact.join "\n"
+    list_tag link, :class=>css_class
   end
 
   view :toolbar_buttons do |args|
@@ -205,7 +183,7 @@ format :html do
   end
 
   def toolbar_pin_button
-    toolbar_button '', 'pushpin', nil, :remote=>true, :path_opts=>'#', :title=>"#{'un' if toolbar_pinned?}pin", :class=>"toolbar-pin #{'in' unless toolbar_pinned?}active"
+    button_tag glyphicon('pushpin'), :situation=>:primary, :remote=>true, :title=>"#{'un' if toolbar_pinned?}pin", :class=>"toolbar-pin #{'in' unless toolbar_pinned?}active"
   end
 
   def toolbar_button text, symbol, hide=nil, tag_args={}
@@ -225,7 +203,6 @@ format :html do
       link_to link_text, path_opts, tag_args
     end
   end
-
 
   def autosaved_draft_link
     view_link('autosaved draft', :edit, :path_opts=>{:edit_draft=>true, :slot=>{:show=>:edit_toolbar}}, :class=>'navbar-link slotter pull-right')

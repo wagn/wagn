@@ -78,7 +78,7 @@ format :html do
 
   view :type_info do |args|
     %{
-      <span class="type_info pull-right">
+      <span class="type-info pull-right">
         #{card_link(card.type_name, :text=>"#{card.type_name}", :class=>'navbar-link')}
       </span>
     }.html_safe
@@ -163,8 +163,9 @@ format :html do
                 Card.fetch rcardname, :new=>{}
               end
 
-      subheader =  with_name_context(card.name) { showname rcard.name }
-      add_name_context rcard.name
+      #subheader =  with_name_context(card.name) { showname rcard.name }
+      subheader =  with_name_context(card.name) { subformat(rcard)._render_title(args) }
+      add_name_context card.name
       nest_args = ( rparams[:slot] || {} ).deep_symbolize_keys.reverse_merge(
         :view            => ( rparams[:view] || :open ),
         :optional_header => :hide,
@@ -173,7 +174,8 @@ format :html do
         :optional_toggle => :hide,
         :optional_help   => :show,
         :parent          => card,
-        :subframe        => true
+        :subframe        => true,
+        :subslot         => true
       )
       nest_args[:optional_comment_box] = :show if rcard.show_comment_box_in_related?
 

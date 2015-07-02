@@ -111,4 +111,35 @@ format :html do
       </button>
     }
   end
+
+  def split_button button, args={}
+    items = yield
+    args[:situation] ||= 'primary'
+
+    wrap_with :div, :class=>'btn-group' do
+      [
+        button,
+        button_tag(:situation=>args[:situation], :class=>'dropdown-toggle', 'data-toggle'=>'dropdown', 'aria-haspopup'=>'true', 'aria-expanded'=>'false') do
+          %{
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+          }
+        end,
+        dropdown_list(items, nil, args[:active_item])
+      ]
+    end
+  end
+
+  def list_tag content_or_options = nil, options = {}, &block
+    options = content_or_options if block_given?
+    content = block_given? ? yield : content_or_options
+    content = [content] unless content.kind_of? Array
+    item_options = options.delete(:items) || {}
+    wrap_with :ul, options  do
+      content.map do |item|
+        content_tag :li, item, item_options
+      end.join "\n"
+    end
+  end
+
 end

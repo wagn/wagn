@@ -76,7 +76,6 @@ format :html do
   def default_edit_args args
     args[:optional_help] ||= :show
     args[:optional_toolbar] ||= :show
-    args[:active_toolbar_view] ||= :edit
 
     args[:buttons] ||= %{
       #{ button_tag 'Submit', :class=>'submit-button', :disable_with=>'Submitting', :situation=>'primary' }
@@ -124,7 +123,6 @@ format :html do
       :card     => { :update_referencers => false }
     )
     args[:optional_toolbar] ||= :show
-    args[:active_toolbar_view] ||= :edit_name
     args[:buttons] = %{
       #{ button_tag 'Rename and Update', :disable_with=>'Renaming', :class=>'renamer-updater', :situation=>'primary' }
       #{ button_tag 'Rename',            :disable_with=>'Renaming', :class=>'renamer'         }
@@ -147,7 +145,6 @@ format :html do
   def default_edit_type_args args
     args[:variety] = :edit #YUCK!
     args[:optional_toolbar] ||= :show
-    args[:active_toolbar_view] ||= :edit_type
     args[:hidden] ||= { :success=>{:view=>:edit} }
     args[:buttons] = %{
       #{ button_tag 'Submit', :disable_with=>'Submitting', :situation=>'primary' }
@@ -156,7 +153,7 @@ format :html do
   end
 
   view :edit_rules, :tags=>:unknown_ok do |args|
-    view = args[:rule_view] || :open
+    view = args[:rule_view] || :common_rules
     _render_related args.merge(:related=>{:card=>current_set_card, :view=>:open, :slot=>{ :rule_view=>view, :optional_set_navbar=>:show, :optional_set_label=>:hide, :optional_rule_navbar=>:hide}})
 
     # frame args do
@@ -166,7 +163,6 @@ format :html do
 
   def default_edit_rules_args args
     args[:optional_toolbar] ||= :show
-    args[:active_toolbar_view] ||= :edit_rules
   end
 
   view :options, {:view=>:edit_rules, :mod=>All::RichHtml::Editing::HtmlFormat} # for backwards compatibility
@@ -182,7 +178,6 @@ format :html do
 
   def default_edit_structure_args args
     args[:optional_toolbar] ||= :show
-    args[:active_toolbar_view] ||= :edit_structure
   end
 
   view :edit_nests do |args|
@@ -194,7 +189,6 @@ format :html do
   end
   def default_edit_nests_args args
     args[:optional_toolbar] ||= :show
-    args[:active_toolbar_view] ||= :edit_nests
   end
 
   view :edit_nest_rules do |args|
@@ -209,7 +203,6 @@ format :html do
 
   def default_edit_nest_rules_args args
     args[:optional_toolbar] ||= :show
-    args[:active_toolbar_view] ||= :edit_nest_rules
   end
 end
 

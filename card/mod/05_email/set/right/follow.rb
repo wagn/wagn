@@ -44,32 +44,30 @@ format :html do
     end
   end
 
-  def default_modal_content_args args
+  def default_follow_status_args args
     args[:card_key] ||= card.set_prototype.key
   end
 
-  view :modal_header do |args|
+  view :follow_status do |args|
+    #          #{ link_to '&times;', '', 'aria-hidden'=>true, :class=>'close update-follow-link', 'data-dismiss'=>'modal', 'data-card_key'=>args[:card_key] }
     %{
-      #{ link_to '&times;', '', 'aria-hidden'=>true, :class=>'close update-follow-link', 'data-dismiss'=>'modal', 'data-card_key'=>args[:card_key] }
-       <h4 class="modal-title">Get notified about changes</h4>
+
+      <h4>Get notified about changes</h4>
+
+      #{
+        wrap_with( :ul, :class=>'delete-list list-group') do
+          card.item_names.map do |option|
+            content_tag :li, :class=>'list-group-item' do
+              subformat(card).render_follow_item :condition=>(option == '*never' ? '*always' : option)
+            end
+          end.join "\n"
+        end
+      }
+
+      #{ card_link(args[:card_key], :text=>'more options', :path_opts=>{:view=>:related, :related=>{:name=>card.name,:view=>:related_edit_rule}}, :class=>'btn update-follow-link', 'data-card_key'=>args[:card_key]) }
     }
   end
 
-  view :modal_body do |args|
-    wrap_with :ul, :class=>'delete-list list-group' do
-      card.item_names.map do |option|
-        content_tag :li, :class=>'list-group-item' do
-          subformat(card).render_follow_item :condition=>(option == '*never' ? '*always' : option)
-        end
-      end.join "\n"
-    end
-  end
-
-
-  view :modal_footer do |args|
-    card_link(args[:card_key], :text=>'more options', :path_opts=>{:view=>:related, :related=>{:name=>card.name,:view=>:related_edit_rule}}, :class=>'btn update-follow-link', 'data-card_key'=>args[:card_key]) +
-      link_to('Close', '', :class=>'btn btn-default update-follow-link', 'data-dismiss'=>'modal', 'data-card_key'=>args[:card_key])
-  end
 
   view :delete_follow_rule_button do |args|
     button_tag :type=>:submit, :class=>'btn-xs btn-item-delete btn-primary', 'aria-label'=>'Left Align' do

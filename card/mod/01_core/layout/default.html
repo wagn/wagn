@@ -1,20 +1,10 @@
 <!DOCTYPE HTML>
 <html>
-  <head>
-    {{*head}}
-  </head>
-  
-  <body id="wagn">
-    <div id="menu">
-      [[/ | Home]]   [[/recent | Recent]]   {{*navbox}} {{*account links}}
-    </div>
-    
-    <div id="primary">
-      {{_main}}
-    </div>
-    
-    <div id="secondary">
-      {{*sidebar}}
-    </div>
+  <head>{{*head|core}}</head>
+  <body>
+    <header>{{*header|core}}</header>
+    <article>{{_main|open}}</article>
+    <aside>{{*sidebar|core}}</aside>
+    <footer>{{*footer|core}}</footer>
   </body>
 </html>

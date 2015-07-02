@@ -96,7 +96,7 @@ format :html do
   end
 
   def wrap_main(content)
-    return content if params[:layout]=='none'
+    return content if Env.ajax? || params[:layout]=='none'
     %{<div id="main">#{content}</div>}
   end
 

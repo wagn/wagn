@@ -30,7 +30,13 @@ class RailsInflectionUpdates < Card::CoreMigration
       card_names.each do |name|
         if name =~ plural
           apply_to_content << i
-          Card.find_by_name(name).update_attributes! :key=>name.to_name.key
+          if Card.find_by_key name.to_name.key
+            puts "Could not update #{name}. Key '#{name.to_name.key}' already exists."
+          else
+            # can't use fetch, because it uses the wrong key
+            # find_by_name is case-insensitve and finds the wrong cards for camel case names
+            Card.where(:name=>name).select {|card| card.name == name}.first.update_attributes! :key=>name.to_name.key
+          end
         end
       end
     end

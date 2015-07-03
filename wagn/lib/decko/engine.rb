@@ -1,5 +1,6 @@
 
 require 'rails/all'
+require 'activerecord/session_store'
 require 'cardio'
 
 # TODO: Move these to modules that use them
@@ -20,7 +21,7 @@ module Decko
 
     paths.add "app/controllers", :with => 'rails/controllers', :eager_load => true
     paths.add 'gem-assets',      :with => 'rails/assets'
-    paths.add 'config/routes',   :with => 'rails/engine-routes.rb'
+    paths.add 'config/routes.rb',   :with => 'rails/engine-routes.rb'
     paths.add 'lib/tasks',       :with => "#{::Wagn.gem_root}/lib/wagn/tasks", :glob => '**/*.rake'
     paths.add 'lib/wagn/config/initializers',
               :with => File.join( Wagn.gem_root, 'lib/wagn/config/initializers' ), :glob => "**/*.rb"
@@ -42,7 +43,7 @@ module Decko
 
     initializer :connect_on_load do
       ActiveSupport.on_load(:active_record) do
-        ActiveRecord::Base.establish_connection(::Rails.env)
+        ActiveRecord::Base.establish_connection(::Rails.env.to_sym)
       end
       ActiveSupport.on_load(:after_initialize) do
           begin

@@ -2,7 +2,7 @@ module SpecHelper
 end
 module Card::SpecHelper
 
-  include ActionDispatch::Assertions::SelectorAssertions
+  include Rails::Dom::Testing::Assertions::SelectorAssertions
   #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
 
   def login_as user
@@ -19,7 +19,8 @@ module Card::SpecHelper
   end
 
   def assert_view_select(view_html, *args, &block)
-    node = HTML::Document.new(view_html).root
+    node = Nokogiri::HTML::Document.parse(view_html).root
+    #node = HTML::Document.new(view_html).root
     if block_given?
       assert_select node, *args, &block
     else

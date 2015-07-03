@@ -56,7 +56,7 @@ describe "Card (Cardtype)" do
   end
 
   it "cardtype" do
-    Card.find(:all).each do |card|
+    Card.all.each do |card|
       assert !card.type_card.nil?
     end
   end

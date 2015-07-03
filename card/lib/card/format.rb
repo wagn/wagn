@@ -277,7 +277,11 @@ class Card
         Rails.logger.info "\nError rendering #{error_cardname} / #{view}: #{e.class} : #{e.message}"
         Card::Error.current = e
         card.notable_exception_raised
-        rendering_error e, view
+        if (debug = Card[:debugger]) && debug.content == 'on'
+          raise e
+        else
+          rendering_error e, view
+        end
       end
     end
 

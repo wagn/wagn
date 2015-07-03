@@ -28,7 +28,7 @@ def revision action
     action = Card::Action.fetch(action)
   end
   action and Card::TRACKED_FIELDS.inject({}) do |attr_changes, field|
-    last_change = action.changes.find_by_field(field) || last_change_on(field, :not_after=>action)
+    last_change = action.card_changes.find_by_field_name(field) || last_change_on(field, :not_after=>action)
     attr_changes[field.to_sym] = (last_change ? last_change.value : self[field])
     attr_changes
   end
@@ -37,7 +37,7 @@ end
 def delete_old_actions
   Card::TRACKED_FIELDS.each do |field|
     # assign previous changes on each tracked field to the last action
-    if (la=last_action) && !la.change_for(field).present? && (last_change = last_change_on(field))
+    if (la = last_action) && !la.change_for(field).present? and (last_change = last_change_on(field))
       last_change = Card::Change.find(last_change.id)   # last_change comes as readonly record
       last_change.update_attributes!(:card_action_id=>last_action_id)
     end

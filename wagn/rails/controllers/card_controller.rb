@@ -27,6 +27,9 @@ class CardController < ActionController::Base
   attr_reader :card
 
 
+
+
+
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #  CORE METHODS
 
@@ -53,6 +56,7 @@ class CardController < ActionController::Base
     Rails.logger.info "Routing assets through Card. Recommend symlink from Deck to Card gem using 'rake wagn:update_assets_symlink'"
     send_file_inside Decko::Engine.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
   end
+
 
   private
 
@@ -236,8 +240,6 @@ class CardController < ActionController::Base
     show view, status
   end
 
-
-
   def show view = nil, status = 200
 #    ActiveSupport::Notifications.instrument('card', message: 'CardController#show') do
     format = request.parameters[:format]
@@ -247,7 +249,7 @@ class CardController < ActionController::Base
     view ||= params[:view]
 
     if params[:edit_draft] && card.drafts.present?
-      card.content = card.drafts.last.changes.last.value
+      card.content = card.drafts.last.card_changes.last.value
     end
     formatter = card.format(format.to_sym)
     result = formatter.show view, opts

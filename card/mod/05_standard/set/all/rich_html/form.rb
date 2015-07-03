@@ -25,11 +25,14 @@ format :html do
 
 
   def form_for_multi
-    block = Proc.new {}
-    builder = ActionView::Base.default_form_builder
     card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_card?  ##FIXME -- need to match other relative inclusions.
 
-    builder.new("card[subcards][#{card.relative_name}]", card, template, {}, block)
+    # doesn't work anymore in Rails 4
+    # TODO -- check whether forms work with the new instantiate_builder call
+    # block = Proc.new {}
+    # builder = ActionView::Base.default_form_builder
+    # builder.new("card[subcards][#{card.relative_name}]", card, template, {}, block)
+    builder = instantiate_builder("card[subcards][#{card.relative_name}]", card, {})
   end
 
   def form

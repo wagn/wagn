@@ -80,10 +80,8 @@ module Cardio
 
     def add_path path, options={}
       root = options.delete(:root) || gem_root
-      gem_path = File.join( root, path )
-      with = options.delete(:with)
-      with = with ? File.join(root, with) : gem_path
-      paths[path] = Rails::Paths::Path.new(paths, gem_path, with, options)
+      options[:with] = File.join(root, (options[:with] || path) )
+      paths.add path, options
     end
 
     def future_stamp
@@ -126,10 +124,11 @@ module Cardio
     def schema_mode type
       new_suffix = Cardio.schema_suffix type
       original_suffix = ActiveRecord::Base.table_name_suffix
-
       ActiveRecord::Base.table_name_suffix = new_suffix
+      ActiveRecord::SchemaMigration.reset_table_name
       yield
       ActiveRecord::Base.table_name_suffix = original_suffix
+      ActiveRecord::SchemaMigration.reset_table_name
     end
 
     def schema type=nil

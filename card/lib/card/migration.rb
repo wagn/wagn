@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
- 
+
 class Card::Migration < ActiveRecord::Migration
   @type = :deck_cards
 
@@ -42,8 +42,10 @@ class Card::Migration < ActiveRecord::Migration
       original_suffix = ActiveRecord::Base.table_name_suffix
 
       ActiveRecord::Base.table_name_suffix = new_suffix
+      ActiveRecord::SchemaMigration.reset_table_name
       yield
       ActiveRecord::Base.table_name_suffix = original_suffix
+      ActiveRecord::SchemaMigration.reset_table_name
     end
 
     def assume_migrated_upto_version
@@ -51,12 +53,12 @@ class Card::Migration < ActiveRecord::Migration
         ActiveRecord::Schema.assume_migrated_upto_version schema, migration_paths
       end
     end
-    
+
     def data_path filename=nil
       path = migration_paths.first
       File.join( [ migration_paths.first, 'data', filename ].compact )
     end
-    
+
   end
 
   def contentedly &block
@@ -79,7 +81,7 @@ class Card::Migration < ActiveRecord::Migration
     merge_opts.reverse_merge! :output_file=>File.join(data_path,"unmerged_#{ filename }")
     Card.merge_list read_json(filename), merge_opts
   end
-  
+
   def read_json filename
     raw_json = File.read( data_path filename )
     json = JSON.parse raw_json
@@ -98,49 +100,23 @@ class Card::Migration < ActiveRecord::Migration
     Cardio.paths self.class.type
   end
 
-
   # Execute this migration in the named direction
   # copied from ActiveRecord to wrap "up" in "contentendly"
-  def migrate(direction)
-    return unless respond_to?(direction)
-
-    case direction
-    when :up   then announce "migrating"
-    when :down then announce "reverting"
-    end
-
-    time   = nil
-    ActiveRecord::Base.connection_pool.with_connection do |conn|
-      @connection = conn
-      if respond_to?(:change)
-        if direction == :down
-          recorder = CommandRecorder.new(@connection)
-          suppress_messages do
-            @connection = recorder
-            change
-          end
-          @connection = conn
-          time = Benchmark.measure {
-            self.revert {
-              recorder.inverse.each do |cmd, args|
-                send(cmd, *args)
-              end
-            }
-          }
-        else
-          time = Benchmark.measure { change }
-        end
+  def exec_migration(conn, direction)
+    @connection = conn
+    if respond_to?(:change)
+      if direction == :down
+        revert { change }
       else
-        time = Benchmark.measure { contentedly { send(direction) } }
+        change
       end
-      @connection = nil
+    else
+      contentedly { send(direction) }
     end
-
-    case direction
-    when :up   then announce "migrated (%.4fs)" % time.real; write
-    when :down then announce "reverted (%.4fs)" % time.real; write
-    end
+  ensure
+    @connection = nil
   end
+
 
   def down
     raise ActiveRecord::IrreversibleMigration

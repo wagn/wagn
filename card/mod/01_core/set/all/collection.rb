@@ -178,30 +178,25 @@ format do
 
 
   def each_reference_with_args args={}
-    Card::Content.new(render_raw, card).find_chunks( Card::Chunk::Reference ).each do |chunk|
+    Card::Content.new(_render_raw(args), card).find_chunks( Card::Chunk::Reference ).each do |chunk|
       yield(chunk.referee_name.to_s, nest_args(args,chunk))
     end
   end
 
 
-  def each_nested_chunk
-    Card::Content.new(render_raw, card).find_chunks( Card::Chunk::Include).each do |chunk|
+  def each_nested_chunk args={}
+    Card::Content.new(_render_raw(args), card).find_chunks( Card::Chunk::Include).each do |chunk|
       yield(chunk) if chunk.referee_name # filter commented nests
     end
   end
 
-  def has_nested_fields?
-    nested_fields.present?
-  end
 
-  def nested_fields
-    @nested_fields = begin
-      result = []
-      each_nested_field do |chunk|
-        result << chunk
-      end
-      result
+  def nested_fields args={}
+    result = []
+    each_nested_field(args) do |chunk|
+      result << chunk
     end
+    result
   end
 
   def unique_chunks chunk, processed_set, &block
@@ -211,15 +206,15 @@ format do
     end
   end
 
-  def each_nested_field &block
+  def each_nested_field args, &block
     processed_chunk_keys = ::Set.new([card.key])
 
-    each_nested_chunk do |chunk|
+    each_nested_chunk(args) do |chunk|
       # TODO handle structures that are non-virtual
       if chunk.referee_name.to_name.is_a_field_of? card.name
         if chunk.referee_card && chunk.referee_card.virtual? && !processed_set.include?(chunk.referee_name.key)
           processed_chunk_keys << chunk.referee_name.key
-          subformat(chunk.referee_card).each_nested_field do |sub_chunk|
+          subformat(chunk.referee_card).each_nested_field(args) do |sub_chunk|
             unique_chunks sub_chunk, processed_chunk_keys, &block
           end
         else

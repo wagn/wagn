@@ -26,6 +26,7 @@ format :html do
     end
   end
   def default_toolbar_args args
+    args[:nested_fields] = nested_fields(args)
     args[:active_toolbar_button] ||= active_toolbar_button @slot_view, args
   end
 
@@ -82,9 +83,9 @@ format :html do
         :common_rules  => common,
         :grouped_rules => group,
         :all_rules     => all,
-        :separator       => (separator if has_nested_fields?),
+        :separator       => (separator if args[:nested_fields].present?),
         :recent_rules    => (recent if recently_edited_settings?),
-        :edit_nest_rules => (nests if has_nested_fields?)
+        :edit_nest_rules => (nests if args[:nested_fields].present?)
       }
     end
   end
@@ -92,7 +93,7 @@ format :html do
     toolbar_split_button 'edit', {:view=>:edit}, args do
       {
         :edit           => _render_edit_content_link(args),
-        :edit_nests     => (_render_edit_nests_link if !card.structure && has_nested_fields?),
+        :edit_nests     => (_render_edit_nests_link if !card.structure && args[:nested_fields].present?),
         :edit_structure => (smart_link 'structure', {:view => :edit_structure} if structure_editable?),
         :edit_name      => _render_edit_name_link,
         :edit_type      => _render_edit_type_link,

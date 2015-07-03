@@ -161,6 +161,10 @@ format :html do
     end
   end
 
+  def li_pill content, active
+    "<li role='presentation' #{"class='active'" if active}>#{content}</li>"
+  end
+
   view :rule_navbar do |args|
     id = "rule-navbar-#{card.cardname.safe_key}-#{args[:home_view]}"
     args.merge!(:path_opts=>{:slot=>{:show=>:rule_navbar}})

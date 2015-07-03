@@ -183,7 +183,7 @@ format :html do
   view :edit_nests do |args|
     frame args do
       with_inclusion_mode :edit do
-        process_relative_tags args
+        process_relative_tags :optional_toolbar=>:hide
       end
     end
   end

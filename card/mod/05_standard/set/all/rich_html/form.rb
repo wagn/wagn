@@ -7,7 +7,7 @@ format :html do
       if args[:core_edit] #need better name!
         _render_core args
       else
-        process_relative_tags args.reverse_merge(:view=>:titled, :hide=>'toolbar')
+        process_relative_tags :optional_toolbar=>:hide
       end
 
     else
@@ -188,8 +188,8 @@ format :html do
     content = content_field eform, args.merge( :nested=>true )
     opts = { :editor=>'content', :help=>true, :class=>'card-editor' }
 
-    content      += raw( "\n #{ eform.hidden_field :type_id }" )     if card.new_card?
-    opts[:class] += " RIGHT-#{ card.cardname.tag_name.safe_key }"   if card.cardname.junction?
+    content      += raw( "\n #{ eform.hidden_field :type_id }" )  if card.new_card?
+    opts[:class] += " RIGHT-#{ card.cardname.tag_name.safe_key }" if card.cardname.junction?
 
     formgroup fancy_title( args[:title] ), content, opts
   end
@@ -197,10 +197,10 @@ format :html do
   def process_relative_tags args
     nested_fields(args).map do |chunk|
       nested_card = fetch_nested_card chunk.options
-      nest nested_card, chunk.options.merge(args)
+      nest nested_card, chunk.options.reverse_merge(args)
     end.join "\n"
     # _render_raw(args).scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc| #fixme - wrong place for regexp!
-    #   process_content( inc, {:=>'edit_rules'} ).strip
+    #   process_content( inc ).strip
     # end.join
   end
 

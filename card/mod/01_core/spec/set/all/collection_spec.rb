@@ -70,7 +70,7 @@ describe Card::Set::All::Collection do
       end
     end
     it 'handles links and nest arguments' do
-      result = @list.format.map_nests do |name,args|
+      result = @list.format.map_references_with_args do |name,args|
         [name, args]
       end
       expect(result).to eq [

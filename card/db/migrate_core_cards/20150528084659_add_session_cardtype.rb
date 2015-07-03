@@ -11,6 +11,5 @@ class AddSessionCardtype < Card::CoreMigration
     Card::Cache.reset_global
     Card.create! :name=>'*edit toolbar pinned', :type_code=>:session, :codename=>'edit_toolbar_pinned'
     Card.create! :name=>'*toolbar pinned', :type_code=>:session, :codename=>'toolbar_pinned'
-    #Card.create! :name=>'*show cardtype', :type_code=>:session, :codename=>'show_cardtype'
   end
 end

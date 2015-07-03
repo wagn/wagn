@@ -50,12 +50,10 @@ end
 
 format :html do
 
-
-
-
   view :follow_link, :tags=>:unknown_ok, :perms=>:none do |args|
     hash = follow_link_hash args
-    text = %[#{glyphicon 'flag'}<span class="follow-verb menu-item-label">#{hash[:verb]}</span>]
+    text = args[:icon] ? glyphicon('flag') : ''
+    text += %[<span class="follow-verb menu-item-label">#{hash[:verb]}</span>].html_safe
     follow_rule_card = Card.fetch(card.default_follow_set_card.follow_rule_name( Auth.current.name ), :new=>{})
     opts = ( args[:html_args] || {} ).clone
     opts.merge!(

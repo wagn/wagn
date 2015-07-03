@@ -100,7 +100,7 @@ format do
       end
   end
 
-  def each_nest args={}
+  def each_reference_with_args args={}
     search_result_names.each do |name|
       yield(name, nest_args(args.reverse_merge!(:item=>:content)))
     end

@@ -135,9 +135,15 @@ end
 
 format :html do
   view :history do |args|
-    frame args.merge(:body_class=>"history-slot list-group", :content=>true, :subheader=>revision_subheader ) do
-      _render_revisions
+    frame args.merge(:body_class=>"history-slot list-group", :content=>true) do
+      [
+        history_legend,
+        _render_revisions
+      ]
     end
+  end
+  def default_history_args args
+    args[:optional_toolbar] ||= :show
   end
 
   view :revisions do |args|
@@ -149,7 +155,7 @@ format :html do
     end.join
   end
 
-  def revision_subheader
+  def history_legend
     intr = card.intrusive_acts.page(params['page']).per(REVISIONS_PER_PAGE)
     render_haml :intr=>intr do
       %{

@@ -326,11 +326,11 @@ $(window).ready ->
 
 
 # important: this prevents jquery-mobile from taking over everything
-$( document ).on "mobileinit", ->
-  $.extend $.mobile , {
-    autoInitializePage: false
-    ajaxEnabled: false
-  }
+# $( document ).on "mobileinit", ->
+#   $.extend $.mobile , {
+#     #autoInitializePage: false
+#     #ajaxEnabled: false
+#   }
 
 
 newCaptcha = (form)->

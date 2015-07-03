@@ -1,2 +1,2 @@
 extend Card::Setting
-setting_opts :group=>:other, :position=>3
+setting_opts :group=>:permission, :position=>5

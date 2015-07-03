@@ -41,5 +41,17 @@ class Card
     def code
       Card::Codename[ Card.fetch_id self ]
     end
+
+
+    def is_a_field_of? context_name
+      if context_name.present?
+        # Do I still equal myself after I've been relativised in the context of context_name?
+        relative_name = self.to_show(*context_name.to_name.parts).to_name
+        absolute_name = self.to_absolute_name(context_name)
+        relative_name.key != absolute_name.key
+      else
+        self.s.match /^\s*\+/
+      end
+    end
   end
 end

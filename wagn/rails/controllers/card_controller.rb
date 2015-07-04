@@ -219,7 +219,8 @@ class CardController < ActionController::Base
       render :text => target
     else
       @card = target
-      self.params = self.params.merge new_params #need tests.  insure we get slot, main...
+      #Card::Env[:params] =
+      self.params.merge! new_params #need tests.  insure we get slot, main...
       show
     end
   end

@@ -197,9 +197,9 @@ class Card
         args = default_render_args view, args
         with_inclusion_mode view do
           Card.with_logging :view, :message=>view, :context=>card.name, :details=>args do
-#            Card::ViewCache.fetch(self, view, args) do
+            Card::ViewCache.fetch(self, view, args) do
               send "_view_#{ view }", args
-#            end
+            end
           end
         end
       end
@@ -389,15 +389,17 @@ class Card
 
     def prepare_nest opts
       @char_count ||= 0
-
       opts ||= {}
+
       case
-      when opts.has_key?( :comment )                            ; opts[:comment]   # as in commented code
-      when @mode == :closed && @char_count > Card.config.max_char_count   ; ''     # already out of view
-      when opts[:inc_name]=='_main' && !Env.ajax? && @depth==0  ; expand_main opts
-      else
-        nested_card = Card.fetch opts[:inc_name], :new=>new_inclusion_card_args(opts)
-        result = nest nested_card, opts
+      when opts.has_key?(:comment)                                       # commented nest
+        opts[:comment]
+      when @mode == :closed && @char_count > Card.config.max_char_count  # move on; content out of view
+        ''
+      when opts[:inc_name] == '_main' && show_layout? && @depth==0       # the main card within a layout
+        expand_main opts
+      else                                                               # standard nest
+        result = nest fetch_nested_card(opts), opts
         @char_count += result.length if @mode == :closed && result
         result
       end
@@ -464,6 +466,7 @@ class Card
       else
         view
       end
+
       sub.render view, opts
       #end
     end
@@ -479,7 +482,7 @@ class Card
                                    # probably for blanks?  -- older/wiser efm
     end
 
-    def new_inclusion_card_args options
+    def fetch_nested_card options
       args = { :name=>options[:inc_name], :type=>options[:type], :supercard=>card }
       args.delete(:supercard) if options[:inc_name].strip.blank? # special case.  gets absolutized incorrectly. fix in smartname?
       if options[:inc_name] =~ /^_main\+/
@@ -490,7 +493,7 @@ class Card
       if content=get_inclusion_content(options[:inc_name])
         args[:content]=content
       end
-      args
+      Card.fetch options[:inc_name], :new=>args
     end
 
     def default_item_view

@@ -215,9 +215,7 @@ format :html do
     end
   end
 
-  view :editor do |args|
-    text_area :content, :rows=>5, "data-card-type-code"=>card.type_code
-  end
+  view :editor, :mod=>PlainText::HtmlFormat
 
   view :no_search_results do |args|
     %{<div class="search-no-results"></div>}

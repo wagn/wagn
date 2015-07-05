@@ -45,7 +45,7 @@ class Card::Reference < ActiveRecord::Base
     end
 
     def delete_missing_referers
-      joins('LEFT JOIN cards ON card_references.referee_id = cards.id').where('cards.id IS NULL OR cards.trash IS TRUE').delete_all
+      joins('LEFT JOIN cards ON card_references.referer_id = cards.id').where('cards.id IS NULL OR cards.trash IS TRUE').delete_all
     end
 
     def repair_all

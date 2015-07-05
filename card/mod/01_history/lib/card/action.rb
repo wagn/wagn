@@ -29,7 +29,7 @@ class Card
 
 
       def delete_cardless
-        Card::Action.joins('LEFT JOIN cards ON card_actions.card_id = cards.id').where('cards.id IS NULL')
+        Card::Action.joins('LEFT JOIN cards ON card_actions.card_id = cards.id').where('cards.id IS NULL').delete_all
       end
 
       def delete_old

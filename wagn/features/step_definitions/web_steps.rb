@@ -13,6 +13,20 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "pat
 # Commonly used webrat steps
 # http://github.com/brynary/webrat
 
+def wagn_fill_in field,value
+  input_field = nil
+  begin 
+    input_field = find("#"+field, :visible => false)
+  rescue
+  end
+  normal_textarea_card_type = ["java_script","coffee_script","css","scss","html","search_type","layout_type"]
+  if !input_field or not normal_textarea_card_type.include? input_field["data-card-type-code"] or not page.evaluate_script "typeof ace != 'undefined'"
+    fill_in(field, :with => value)
+  else
+    page.execute_script %{ace.edit($('.ace_editor').get(0)).getSession().setValue('#{value}')}
+  end
+end
+
 Given /^(?:|I )am on (.+)$/ do |page_name|
   visit path_to(page_name)
 end
@@ -34,13 +48,16 @@ When /^(?:|I )follow "([^"]*)" within "([^"]*)"$/ do |link, parent|
 end
 
 When /^(?:|I )fill in "([^"]*)" with "([^"]*)"$/ do |field, value|
-  fill_in(field, :with => value)
+  wagn_fill_in field,value
 end
 
 When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|
-  fill_in(field, :with => value)
+  wagn_fill_in field,value
 end
 
+When /^(?:|I )fill in "(.*)" with "(.*)"$/ do |field, value|
+  wagn_fill_in field,value
+end
 
 When /^(?:|I )select "([^"]*)" from "([^"]*)"$/ do |value, field|
   select(value, :from => field)

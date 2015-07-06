@@ -30,9 +30,6 @@ module NavigationHelpers
     when /new card named (.*)$/
       "/card/new?card[name]=#{CGI.escape($1)}"
 
-    when /edit rule (.*)$/
-      "/#{$1.to_name.url_key}?view=edit_rules"
-
     when /edit (.*)$/
       "/#{$1.to_name.url_key}?view=edit"
 

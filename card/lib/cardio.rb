@@ -50,6 +50,8 @@ module Cardio
       config.revisions_per_page    = 10
       config.space_last_in_multispace = true
       config.closed_search_limit   = 50
+
+      config.view_cache             = false
     end
 
 

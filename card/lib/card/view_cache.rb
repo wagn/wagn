@@ -14,6 +14,10 @@ class Card
         Rails.cache.increment(CNT_KEY)
       end
 
+      def count
+        Rails.cache.read(CNT_KEY) || 0
+      end
+
       def keys
         Rails.cache.read(KEYS_KEY) || ::Set.new
       end
@@ -59,27 +63,19 @@ class Card
       end
 
       def fetch(format, view, args, &block)
-        if !format.view_caching? || view != :open || format.class != HtmlFormat
+        if !config.view_cache || !format.view_caching? || view != :open || format.class != HtmlFormat
           return block.call
         end
 
-        role =
-          if Card::Auth.current_id == AnonymousID
-            AnonymousID
-          elsif Card::Auth.current.all_roles == [AnyoneSignedInID]
-            AnyoneSignedInID
-          end
-
-        return block.call unless role
-
-        key = "view_#{view}_#{format.card.key}_#{cache_key(args)}_#{role}"
+        roles = Card::Auth.current.all_roles.join '_'
+        key = "view_#{view}_#{format.card.key}_args_#{cache_key(args)}_roles_#{roles}"
 
         if !Rails.cache.exist?(key)
           increment_cnt
           add_key key
         end
 
-        if Rails.cache.read(CNT_KEY) > LIMIT
+        if count > LIMIT
           reduce_cache
         end
 

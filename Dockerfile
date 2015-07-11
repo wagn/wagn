@@ -5,5 +5,3 @@ WORKDIR /work
 COPY docker/files/* /tmp/build/
 RUN /tmp/build/setup.sh
 
-CMD ["/sbin/my_init"]
-

@@ -47,28 +47,13 @@ class Card
       end
 
 
-      def cache_key obj
-        case obj
-        when Hash
-          obj.sort.map do |key, value|
-            "#{key}=>(#{cache_key(value)})"
-          end.join ","
-        when Array
-          obj.map do |value|
-            cache_key(value)
-          end.join ","
-        else
-          obj.to_s
-        end
-      end
-
       def fetch(format, view, args, &block)
         if !Card.config.view_cache || !format.view_caching? || !format.main? ||  (view != :open && view != :content) || format.class != HtmlFormat
           return block.call
         end
 
         roles = Card::Auth.current.all_roles.join '_'
-        key = "view_#{view}_#{format.card.key}_args_#{cache_key(args)}_roles_#{roles}"
+        key = "view_#{view}_#{format.card.key}_args_#{Card::Cache.obj_to_key(args)}_roles_#{roles}"
 
         if !Rails.cache.exist?(key)
           increment_cnt

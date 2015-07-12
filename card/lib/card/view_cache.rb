@@ -72,7 +72,7 @@ class Card
           if Rails.cache.exist? key
             "fetched from view cache: #{Rails.cache.read key}"
           else
-            "written to view cache: #{Rails.cache.fetch(key, &block)s}"
+            "written to view cache: #{Rails.cache.fetch(key, &block)}"
           end
         else
           Rails.cache.fetch(key, &block)

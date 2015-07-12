@@ -11,6 +11,19 @@ class RailsInflectionUpdates < Card::CoreMigration
     return [ "#{word}s", word, "#{word}s" ]
   end
 
+  def unless_name_collision card
+    if (twin = Card.find_by_key(card.cardname.key))
+      if twin.trash
+        twin.destroy
+        yield
+      elsif !card.trash
+        raise Card::Oops.new ("Your deck has two different cards with names '#{card.name}' and '#{twin.name}'. After this update it's no longer possible to differentiate between those two names. Please rename or delete one of the two cards and run the update again." )
+      end
+    else
+      yield
+    end
+  end
+
   def up
     card_names = Card.pluck(:name)
     apply_to_content = ::Set.new
@@ -19,23 +32,31 @@ class RailsInflectionUpdates < Card::CoreMigration
       word([ '(\w+)lice',  '(\w+)louse',    '\1lice' ]),
       word([ '(\w+)mice',  '(\w+)mouse',    '\1mice' ]),
       word_end([ 'kine',   'cow',           'kine']),
-      word( keep_the_s('analysi')),
+      word( keep_the_s('analysi') ),
+      word( keep_the_s('axi') )
     ]
-    %w( statu crisi testi alia bu axi octopu viru analysi basi diagnosi parenthesi prognosi synopsi thesi ).each do |word|
+    %w( statu crisi alia bu octopu viru analysi basi diagnosi parenthesi prognosi synopsi thesi ).each do |word|
       corrections << word_end( keep_the_s(word) )
     end
 
+
     corrections.each_with_index do |cors, i|
       plural, wrong_sing, correct_sing = cors
-      card_names.each do |name|
+
+      card_names.reject! do |name|  # change a name only once
         if name =~ plural
-          apply_to_content << i
-          if Card.find_by_key name.to_name.key
-            puts "Could not update #{name}. Key '#{name.to_name.key}' already exists."
-          else
-            # can't use fetch, because it uses the wrong key
-            # find_by_name is case-insensitve and finds the wrong cards for camel case names
-            Card.where(:name=>name).select {|card| card.name == name}.first.update_attributes! :key=>name.to_name.key
+          # can't use fetch, because it uses the wrong key
+          # find_by_name is case-insensitve and finds the wrong cards for camel case names
+          card = Card.where(:name=>name).select {|card| card.name == name}.first
+
+          unless_name_collision(card) do
+            apply_to_content << i
+            new_key = name.to_name.key
+            if Card.find_by_key new_key
+              puts "Could not update #{name}. Key '#{new_key}' already exists."
+            else
+              card.update_attributes! :key=>new_key
+            end
           end
         end
       end

@@ -65,7 +65,7 @@ format :html do
   end
 
   def show_follow?
-    Auth.signed_in? && !card.new_card?
+    Auth.signed_in? && !card.new_card? && card.followable?
   end
 
   def structure_editable?

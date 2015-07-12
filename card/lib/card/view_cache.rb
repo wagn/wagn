@@ -63,7 +63,7 @@ class Card
       end
 
       def fetch(format, view, args, &block)
-        if !config.view_cache || !format.view_caching? || view != :open || format.class != HtmlFormat
+        if !Card.config.view_cache || !format.view_caching? || view != :open || format.class != HtmlFormat
           return block.call
         end
 
@@ -83,7 +83,15 @@ class Card
         history[key] ||= 0
         history[key] += 1
         Rails.cache.write(HISTORY_KEY, history)
-        Rails.cache.fetch(key, &block)
+        if Card.config.view_cache == 'debug'
+          if Rails.cache.exist? key
+            "fetched from view cache: #{Rails.cache.read key}"
+          else
+            "written to view cache: #{Rails.cache.fetch(key, &block)s}"
+          end
+        else
+          Rails.cache.fetch(key, &block)
+        end
       end
 
       def reset

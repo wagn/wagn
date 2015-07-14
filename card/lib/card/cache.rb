@@ -81,7 +81,7 @@ class Card
           end.join ","
         when Array
           obj.map do |value|
-            cache_key(value)
+            obj_to_key(value)
           end.join ","
         else
           obj.to_s
@@ -208,6 +208,10 @@ class Card
 
     def reset_local
       @local = {}
+    end
+
+    def exist? key
+      @local.has_key?(key) || @store.exist?(key)
     end
   end
 end

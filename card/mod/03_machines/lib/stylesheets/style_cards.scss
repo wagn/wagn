@@ -147,6 +147,9 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   text-align: left;
   font-size: 13px;
   padding: 6px 15px 3px 15px;
+  > .card-title.panel-title {
+    font-size: 13px;
+  }
 }
 
 /*-- closed and labeled views --*/

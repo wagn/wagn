@@ -30,7 +30,6 @@ format :html do
     args[:subheader] ||= toolbar_view_title(@slot_view) || _render_title(args)
     %{
       <div class="card-subheader navbar-inverse btn-primary active">
-        #{ _optional_render :subheader_menu, args, :hide }
         #{ args[:subheader] }
         #{ autosaved_draft_link if card.drafts.present? && @slot_view == :edit }
       </div>

@@ -11,10 +11,6 @@ format :html do
     end
   end
 
-  view :subheader_menu do |args| #, :view=>:menu
-    _render_menu(args)
-  end
-
   view :menu_link do |args|
     path_opts = {:slot => {:home_view=>args[:home_view]}}
     path_opts[:is_main] = true if main?

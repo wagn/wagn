@@ -258,6 +258,10 @@ end
 
 
 format :html do
+  view :count do |args|
+    card.item_names(args).size
+  end
+
   view :tabs do |args|
     tab_buttons = ''
     tab_panes = ''

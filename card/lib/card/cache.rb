@@ -211,7 +211,7 @@ class Card
     end
 
     def exist? key
-      @local.has_key?(key) || @store.exist?(key)
+      @local.has_key?(key) || (@store && @store.exist?(key))
     end
   end
 end

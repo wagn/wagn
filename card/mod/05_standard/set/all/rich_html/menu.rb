@@ -6,7 +6,6 @@ format :html do
       [
         _optional_render(:horizontal_menu, args, :hide),
         _render_menu_link(args),
-        _render_modal_slot(args)
       ]
     end
   end

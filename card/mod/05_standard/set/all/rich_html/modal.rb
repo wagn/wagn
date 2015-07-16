@@ -7,13 +7,15 @@ format :html do
     path_opts = args[:path_opts] || {}
     path_opts.merge!(:layout=>:modal)
     html_args = args[:html_args] || {}
-    html_args.merge!('data-target'=>"#modal-#{card.cardname.safe_key}#{args[:modal_slot_id_postfix]}",
+    #html_args.merge!('data-target'=>"#modal-#{card.cardname.safe_key}#{args[:modal_slot_id_postfix]}",
+    html_args.merge!('data-target'=>"#modal-main-slot",
       'data-toggle'=>'modal')
     link_to(args[:text] || _render_title(args), path(path_opts), html_args)
   end
 
   view :modal_slot do |args|
-    wrap_with(:div, :class=>'modal fade', :role=>'dialog', :id=>"modal-#{card.cardname.safe_key}#{args[:modal_slot_id_postfix]}") do
+    #wrap_with(:div, :class=>'modal fade', :role=>'dialog', :id=>"modal-#{card.cardname.safe_key}#{args[:modal_slot_id_postfix]}") do
+    wrap_with(:div, :class=>'modal fade', :role=>'dialog', :id=>"modal-main-slot") do
       wrap_with(:div, :class=>'modal-dialog') do
         content_tag :div, :class=>'modal-content' do
           ''

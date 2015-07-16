@@ -211,6 +211,7 @@ $(window).ready ->
       data : 'card[content]=true'
 
 
+
   # following mod
   $('body').on 'click', '.btn-item-delete', ->
     $(this).find('.glyphicon').addClass("glyphicon-hourglass").removeClass("glyphicon-remove")
@@ -225,19 +226,24 @@ $(window).ready ->
     $(this).addClass("btn-primary").removeClass("btn-danger")
 
 
-  $('body').on 'hide.bs.modal', (event) ->
-    slot = $( event.target ).slot()
-    menu_slot = slot.find '.menu-slot:first'
-    url  = wagn.rootPath + '/~' + slot.data('card-id')
-    params = { view: 'menu' }
-    params['is_main'] = true if slot.isMain()
+  # modal mod
 
-    $.ajax url, {
-      type : 'GET'
-      data: params
-      success : (data) ->
-        menu_slot.replaceWith data
-    }
+  $('body').on 'hide.bs.modal', (event) ->
+    $('#modal-main-slot > .modal-dialog > .modal-content').empty()
+    #slot = $( event.target ).slot()
+    for slot in $('.card-slot')
+      menu_slot = $(slot).find '.menu-slot:first'
+      if menu_slot.size() > 0
+        url  = wagn.rootPath + '/~' + $(slot).data('card-id')
+        params = { view: 'menu' }
+        params['is_main'] = true if $(slot).isMain()
+
+        $.ajax url, {
+          type : 'GET'
+          data: params
+          success : (data) ->
+            menu_slot.replaceWith data
+        }
 
 #  $('body').on 'click', '.update-follow-link', (event) ->
 #    anchor = $(this)

@@ -23,7 +23,7 @@ format :html do
   end
 
 
-  view :modal_menu do |args|
+  view :modal_menu, :tags=>:unknown_ok do |args|
     popout_params = {}
     popout_params[:view] = params[:view] if params[:view]
     # we probably want to pass on a lot more params than just view, but not all of them
@@ -34,6 +34,14 @@ format :html do
         link_to( glyphicon('new-window'), popout_params, :class=>'pop-out-modal pull-right close ' )
       ]
     end
+  end
+
+  view :modal_footer, :tags=>:unknown_ok do |args|
+    args[:buttons] || ''
+  end
+
+  def default_modal_footer_args args
+    args[:buttons] ||=  button_tag 'Close', :class=>'btn-xs close-modal pull-right', 'data-dismiss'=>'modal'
   end
 
 =begin

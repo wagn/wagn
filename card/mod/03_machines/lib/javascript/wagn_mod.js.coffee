@@ -4,8 +4,8 @@ window.wagn ||= {} #needed to run w/o *head.  eg. jasmine
 
 $.extend wagn,
   editorContentFunctionMap: {
+    '.ace-editor-textarea'   : -> ace_editor_content this[0]
     '.tinymce-textarea'      : -> tinyMCE.get(@[0].id).getContent()
-    'textarea.form-control'  : -> ace_editor_content this[0]
     '.pointer-select'        : -> pointerContent @val()
     '.pointer-multiselect'   : -> pointerContent @val()
     '.pointer-radio-list'    : -> pointerContent @find('input:checked').val()

@@ -14,7 +14,7 @@ rescue =>e
   e
 end
 
-machine_input do 
+machine_input do
   Uglifier.compile( compile_coffee format(:js)._render_raw )
 end
 
@@ -26,31 +26,31 @@ end
 
 
 format do
-  def chunk_list  #turn off autodetection of uri's 
+  def chunk_list  #turn off autodetection of uri's
     :inclusion_only
   end
 end
 
 
 format :html do
-  view :editor, :mod=>PlainText::HtmlFormat
+  view :editor, :mod=>Html::HtmlFormat
 
   view :content_changes do |args|
     %{
       <pre>#{super(args)}</pre>
     }
   end
-  
+
   view :core do |args|
     js = card.compile_coffee _render_raw
     highlighted_js = ::CodeRay.scan( js, :js ).div
     process_content highlighted_js
   end
-  
+
 end
 
 
-format do  
+format do
   view :core do |args|
     process_content card.compile_coffee(_render_raw)
   end

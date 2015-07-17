@@ -15,7 +15,9 @@ format :html do
 
   view :modal_slot do |args|
     #wrap_with(:div, :class=>'modal fade', :role=>'dialog', :id=>"modal-#{card.cardname.safe_key}#{args[:modal_slot_id_postfix]}") do
-    wrap_with(:div, :class=>'modal fade', :role=>'dialog', :id=>"modal-main-slot") do
+    id = "modal-"
+    id += (args[:modal_id] || 'main-slot')
+    wrap_with(:div, :class=>'modal fade', :role=>'dialog', :id=>id) do
       wrap_with(:div, :class=>'modal-dialog') do
         content_tag :div, :class=>'modal-content' do
           ''

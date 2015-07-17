@@ -4,10 +4,10 @@ format :html do
     if args[:structure] || card.structure
       # multi-card editing
 
-      if args[:core_edit] #need better name!
+      if args[:core_edit] #need better name
         _render_core args
       else
-        process_relative_tags :optional_toolbar=>:hide
+        process_relative_tags :optional_toolbar=>:hide, :structure=>args[:structure]
       end
 
     else

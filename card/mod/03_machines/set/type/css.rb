@@ -33,7 +33,7 @@ format :html do
     { :view => :closed }
   end
 
-  view :editor, :mod=>PlainText::HtmlFormat
+  view :editor, :mod=>Html::HtmlFormat
 
   view :core do |args|
     # FIXME: scan must happen before process for inclusion interactions to work, but this will likely cause

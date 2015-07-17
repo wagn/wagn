@@ -21,8 +21,12 @@ format :html do
   end
 
   view :layout, :perms=>:none do |args|
-    process_content get_layout_content, :content_opts=>{ :chunk_list=>:references }
+    output [
+      process_content(get_layout_content, :content_opts=>{ :chunk_list=>:references }),
+      _render_modal_slot(args)
+    ]
   end
+
 
   view :content do |args|
     wrap args.reverse_merge(:slot_class=>'card-content') do

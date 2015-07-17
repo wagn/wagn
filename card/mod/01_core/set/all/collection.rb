@@ -48,6 +48,12 @@ def item_type
   nil
 end
 
+def item_keys args={}
+  item_names(args).map do |item|
+    item.to_name.key
+  end
+end
+
 def include_item? item
   key = if Card === item
     item.cardname.key
@@ -252,6 +258,10 @@ end
 
 
 format :html do
+  view :count do |args|
+    card.item_names(args).size
+  end
+
   view :tabs do |args|
     tab_buttons = ''
     tab_panes = ''

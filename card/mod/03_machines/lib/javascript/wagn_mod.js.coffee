@@ -4,8 +4,8 @@ window.wagn ||= {} #needed to run w/o *head.  eg. jasmine
 
 $.extend wagn,
   editorContentFunctionMap: {
+    '.ace-editor-textarea'   : -> ace_editor_content this[0]
     '.tinymce-textarea'      : -> tinyMCE.get(@[0].id).getContent()
-    'textarea.form-control'  : -> ace_editor_content this[0]
     '.pointer-select'        : -> pointerContent @val()
     '.pointer-multiselect'   : -> pointerContent @val()
     '.pointer-radio-list'    : -> pointerContent @find('input:checked').val()
@@ -211,6 +211,7 @@ $(window).ready ->
       data : 'card[content]=true'
 
 
+
   # following mod
   $('body').on 'click', '.btn-item-delete', ->
     $(this).find('.glyphicon').addClass("glyphicon-hourglass").removeClass("glyphicon-remove")
@@ -225,19 +226,37 @@ $(window).ready ->
     $(this).addClass("btn-primary").removeClass("btn-danger")
 
 
-  $('body').on 'hide.bs.modal', (event) ->
-    slot = $( event.target ).slot()
-    menu_slot = slot.find '.menu-slot:first'
-    url  = wagn.rootPath + '/~' + slot.data('card-id')
-    params = { view: 'menu' }
-    params['is_main'] = true if slot.isMain()
+  # modal mod
 
-    $.ajax url, {
-      type : 'GET'
-      data: params
-      success : (data) ->
-        menu_slot.replaceWith data
-    }
+  $('body').on 'hide.bs.modal', (event) ->
+    $(event.target).find('.modal-dialog > .modal-content').empty()
+    if $(event.target).attr('id') != 'modal-main-slot'
+      slot = $( event.target ).slot()
+      menu_slot = slot.find '.menu-slot:first'
+      url  = wagn.rootPath + '/~' + slot.data('card-id')
+      params = { view: 'menu' }
+      params['is_main'] = true if slot.isMain()
+
+      $.ajax url, {
+        type : 'GET'
+        data: params
+        success : (data) ->
+          menu_slot.replaceWith data
+      }
+
+#     for slot in $('.card-slot')
+#       menu_slot = $(slot).find '.menu-slot:first'
+#       if menu_slot.size() > 0
+#         url  = wagn.rootPath + '/~' + $(slot).data('card-id')
+#         params = { view: 'menu' }
+#         params['is_main'] = true if $(slot).isMain()
+#
+#         $.ajax url, {
+#           type: 'GET'
+#           data: params
+#           success : (data) ->
+#             menu_slot.replaceWith data
+#         }
 
 #  $('body').on 'click', '.update-follow-link', (event) ->
 #    anchor = $(this)

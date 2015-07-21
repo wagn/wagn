@@ -2,7 +2,7 @@
 include File
 
 format do
-  
+
   include File::Format
 
   view :closed_content do |args|
@@ -24,6 +24,11 @@ end
 
 format :html do
   include File::HtmlFormat
+
+  view :editor do |args|
+    file_chooser :image
+  end
+
 
   view :core do |args|
     handle_source args do |source|
@@ -50,7 +55,7 @@ format :css do
   view :core do |args|
     render_source
   end
-  
+
   view :content do |args|  #why is this necessary?
     render_core
   end
@@ -62,6 +67,6 @@ format :file do
   view :style do |args|  #should this be in model?
     ['', 'full'].member?( args[:style].to_s ) ? :original : args[:style]
   end
-    
+
 end
 

@@ -1,6 +1,9 @@
 # -*- encoding : utf-8 -*-
 
+
 Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
+require 'carrierwave'
+require 'carrierwave/orm/activerecord'
 
 class Card < ActiveRecord::Base
 
@@ -48,6 +51,11 @@ class Card < ActiveRecord::Base
   before_validation :approve
   around_save :store
   after_save :extend
+
+  mount_uploader :attach, FileUploader, :mount_on=>:db_content
+  mount_uploader :image, ImageUploader, :mount_on=>:db_content
+#  skip_callback :save, :before, :write_attach_identifier
+  skip_callback :commit, :after, :remove_previously_stored_avatar
 
 
   TRACKED_FIELDS = %w(name type_id db_content trash)

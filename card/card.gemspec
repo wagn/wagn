@@ -39,6 +39,8 @@ Gem::Specification.new do |s|
     [ 'paperclip',    '~> 4.2'  ],
     [ 'htmlentities', '~> 4.3'  ],
     [ 'rmagick',      '~> 2.13' ],
+    [ 'carrierwave'             ],
+    [ 'mini_magick'],
     [ 'recaptcha',    '~> 0.3'  ],
     [ 'coderay',      '~> 1.0'  ],
     [ 'sass',         '~> 3.2'  ],

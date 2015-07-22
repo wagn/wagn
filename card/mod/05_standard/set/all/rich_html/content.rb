@@ -131,7 +131,7 @@ format :html do
   end
 
   view :closed do |args|
-    frame args.reverse_merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show, :optional_edit_toolbar=>:hide ) do
+    frame args.reverse_merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show, :optional_toolbar=>:hide ) do
       _optional_render :closed_content, args
     end
   end

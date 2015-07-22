@@ -11,7 +11,6 @@ format :html do
         #{ _optional_render :type_info, args, :hide }
       </div>
       #{ _optional_render :toolbar, args, :hide }
-      #{ _optional_render :account_navbar, args, :hide}
     }
   end
 

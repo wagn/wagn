@@ -146,6 +146,14 @@ class Card
       end
     end
 
+    def with_name_context name
+       old_context = @context_names
+       add_name_context name
+       result = yield
+       @context_names = old_context
+       result
+     end
+
     def main?
       @depth == 0
     end
@@ -471,7 +479,7 @@ class Card
         view
       end
 
-      sub.render view, opts
+      sub.optional_render view, opts
       #end
     end
 

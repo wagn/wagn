@@ -2,6 +2,6 @@
 
 class FixScriptBootstrapCardType < Card::CoreMigration
   def up
-    Card[:script_bootstrap].update_attributes! :type_id=>Card::JavaScriptID
+    Card[:bootstrap_js].update_attributes! :type_id=>Card::JavaScriptID
   end
 end

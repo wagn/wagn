@@ -40,6 +40,18 @@ format :html do
             months
           </td>
         </tr>
+        #{
+          if Card.config.view_cache
+            %{
+              <tr>
+                <td>view cache</td>
+                <td>#{ Card::ViewCache.count }</td>
+                <td>#{link_to 'clear view cache',  card_path( 'update/:all?task=clear_view_cache' ) }</td>
+              </tr>
+            }
+          end
+        }
+
         <tr>
           <td>memory now</td>
           <td>#{ newmem }M</td>
@@ -58,14 +70,14 @@ format :html do
                 <td>#{ newmem - oldmem }M</td>
                 <td></td>
               </tr>
-              
+
             }
           end
         }
       </table>
     }
   end
-  
+
   def delete_sessions_link months
     link_to months, card_path( "update/:all?task=delete_old_sessions&months=#{months}")
   end

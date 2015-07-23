@@ -52,10 +52,10 @@ jQuery.fn.extend {
   setSlotContent: (val) ->
     s = @slot()
     v = $(val)
-    if v[0]
-      if slotdata = s.attr 'data-slot'
-        v.attr 'data-slot', slotdata if slotdata?
-    else #simple text (not html)
+    unless v[0]
+    #   if slotdata = s.attr 'data-slot'
+    #     v.attr 'data-slot', slotdata if slotdata?
+    # else #simple text (not html)
       v = val
     s.replaceWith v
     v.trigger 'slotReady'
@@ -326,11 +326,11 @@ $(window).ready ->
 
 
 # important: this prevents jquery-mobile from taking over everything
-$( document ).on "mobileinit", ->
-  $.extend $.mobile , {
-    autoInitializePage: false
-    ajaxEnabled: false
-  }
+# $( document ).on "mobileinit", ->
+#   $.extend $.mobile , {
+#     #autoInitializePage: false
+#     #ajaxEnabled: false
+#   }
 
 
 newCaptcha = (form)->

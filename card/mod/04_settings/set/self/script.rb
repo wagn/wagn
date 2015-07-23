@@ -1,2 +1,2 @@
 extend Card::Setting
-setting_opts :group=> :look_and_feel, :position=>5
+setting_opts :group=>:webpage, :position=>5

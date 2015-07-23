@@ -1,4 +1,4 @@
-Feature: Set-based Rules
+Feature: Set-based Rles
   In order to control settings in an efficient way
   As a Wagneer
   I want to be able to control rules for sets of cards
@@ -10,7 +10,7 @@ Feature: Set-based Rules
   Scenario: default setting and plus card override
     Given I create Phrase card "color+*right+*add help" with content "If colorblind, leave blank"
     And I am signed in as Joe User
-    When I go to new card "Test"
+    When I go to new card named "Test"
     Then I should see "spicy"
     When I go to new card "Test+color"
     Then I should see "colorblind"

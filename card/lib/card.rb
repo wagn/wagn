@@ -3,6 +3,7 @@
 Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
 
 class Card < ActiveRecord::Base
+
   require_dependency 'card/active_record_ext'
   require_dependency 'card/codename'
   require_dependency 'card/query'
@@ -19,11 +20,9 @@ class Card < ActiveRecord::Base
 
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
-  has_many :acts, :order => :id
-  has_many :actions, :order => :id, :conditions=>{:draft => [nil,false]}
-  has_many :drafts, :order=>:id, :conditions=>{:draft=>true}, :class_name=> :Action
-
-  cache_attributes 'name', 'type_id' # review - still worth it in Rails 3?
+  has_many :acts, -> { order :id }
+  has_many :actions, -> { where( :draft=>[nil,false]).order :id }
+  has_many :drafts, -> { where( :draft=>true ).order :id }, :class_name=> :Action
 
   cattr_accessor :set_patterns, :error_codes
   @@set_patterns, @@error_codes = [], {}
@@ -35,17 +34,16 @@ class Card < ActiveRecord::Base
     :follower_stash, :remove_rule_stash,
     :last_action_id_before_edit
 
-  define_callbacks :approve, :store, :extend
+  define_callbacks :approve, :store, :stored, :extend
 
   before_validation :approve
   around_save :store
   after_save :extend
 
+
   TRACKED_FIELDS = %w(name type_id db_content trash)
 
   ActiveSupport.run_load_hooks(:card, self)
-
-
-
 end
+
 

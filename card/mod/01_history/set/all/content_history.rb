@@ -19,7 +19,7 @@ end
 def save_content_draft content
   super
   acts.create do |act|
-    act.actions.build(:draft => true, :card_id=>id).changes.build(:field=>:db_content, :value=>content)
+    act.actions.build(:draft => true, :card_id=>id).card_changes.build(:field=>:db_content, :value=>content)
   end
 end
 
@@ -125,9 +125,10 @@ def draft_acts
   drafts.created_by(Card::Auth.current_id).map(&:act)
 end
 
-event :detect_conflict, :before=>:approve, :on=>:update do
+event :detect_conflict, :before=>:approve, :on=>:update, :when=>proc {|c| c.history? } do
   if last_action_id_before_edit and last_action_id_before_edit.to_i != last_action_id and last_action.act.actor_id != Auth.current_id
     errors.add :conflict, "changes not based on latest revision"
   end
 end
+
 

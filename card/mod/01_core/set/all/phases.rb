@@ -69,24 +69,13 @@ def identify_action
   end
 end
 
-def store_changes
-  @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
-  return unless @current_action
-  if @changed_fields.present?
-    @current_action.changed_fields(self, @changed_fields)
-  elsif @current_action and @current_action.changes.empty?
-    @current_action.delete
-  end
-end
-
-
 
 def store
   run_callbacks :store do
     yield #unless @draft
-    store_changes
     @virtual = false
   end
+  run_callbacks :stored
 rescue =>e
   rescue_event e
 ensure
@@ -149,7 +138,7 @@ event :process_subcards, :after=>:approve, :on=>:save do
     opts['subcards'] = extract_subcard_args! opts
 
     opts[:supercard] = self
-    
+
     subcard = if known_card = Card[ab_name]
       known_card.refresh.assign_attributes opts
       known_card

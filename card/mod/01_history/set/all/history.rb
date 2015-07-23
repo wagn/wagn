@@ -4,15 +4,61 @@ def history?
   true
 end
 
+event :create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save, :when=>proc {|c| c.history?}  do
+  create_act_and_action
+end
+event :create_act_and_action_for_delete, :before =>:validate_delete_children, :on=>:delete, :when=>proc {|c| c.history? } do
+  create_act_and_action
+end
+
+event :create_card_changes, :after =>:stored, :when=>proc {|c| c.history? } do
+  store_changes
+end
+
+event :finalize_act, :after=>:create_card_changes, :when=>proc {|c| c.history? } do
+  if not @supercard
+    if @current_act.actions(true).empty?
+      @current_act.delete
+      @current_act = nil
+    else
+      @current_act.update_attributes! :card_id=>id
+    end
+  end
+end
+
+
 # must be called on all actions and before :set_name, :process_subcards and :validate_delete_children
 def create_act_and_action
+  @current_act = if @supercard
+    @supercard.current_act || @supercard.acts.create(:ip_address=>Env.ip)
+  else
+    Card::Act.create :ip_address=>Env.ip
+  end
+  @current_action = Card::Action.create(:card_act_id=>@current_act.id, :action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
+  if (@supercard and @supercard !=self)
+    @current_action.super_action = @supercard.current_action
+  end
+end
+
+def store_changes
+  if @current_action
+    @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
+    if @changed_fields.present?
+      @changed_fields.each{ |f| Card::Change.create :field => f, :value => self[f], :card_action_id=>@current_action.id }
+      @current_action.update_attributes! :card_id => id
+    elsif @current_action.card_changes(true).empty?
+      @current_action.delete
+    end
+  end
+end
+
+def build_act_and_action
   @current_act = if @supercard
     @supercard.current_act || @supercard.acts.build(:ip_address=>Env.ip)
   else
     acts.build(:ip_address=>Env.ip)
   end
-
-  @current_action = actions.build(:action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
+  @current_action = actions(true).build(:action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
   @current_action.act = @current_act
 
   if (@supercard and @supercard !=self)
@@ -22,20 +68,6 @@ end
 
 
 
-event(:create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save, :when=>proc {|c| c.history?} )   { create_act_and_action }
-event(:create_act_and_action_for_delete, :before =>:validate_delete_children, :on=>:delete, :when=>proc {|c| c.history? }) { create_act_and_action }
-
-
-event :remove_empty_act, :after=>:extend, :when=>proc {|c| c.history? } do
-  # if not @supercard and not @current_act.actions.empty?
-  #   @current_act.save
-  # end
-  @current_act.reload
-  if not @supercard and @current_act.actions.empty?
-     @current_act.delete
-     @current_act = nil
-   end
-end
 
 
 

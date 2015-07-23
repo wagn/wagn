@@ -1,13 +1,10 @@
+include Pointer
+
 def history?
   false
 end
 
-event :store_in_session, :after=>:approve, :on=>:create do
-  Env.session[key] = db_content
-  self.db_content = ''
-end
-
-event :update_in_session, :after=>:approve, :on=>:update do
+event :store_in_session, :before=>:standardize_items, :on=>:save do
   if db_content_changed?
     Env.session[key] = db_content
     self.db_content = ''
@@ -23,7 +20,15 @@ def content
   Env.session[key]
 end
 
+format do
+  include Pointer::Format
+end
+
 format :html do
-  view :editor, :mod=>PlainText::HtmlFormat
+  include Pointer::HtmlFormat
+
+  def default_core_args args
+    args[:item] = :name
+  end
 end
 

@@ -38,8 +38,7 @@ class Card::Log
 
 
   class Performance
-    # To enable logging add a performance_logger hash to your configuration and change the log_level to :wagn
-    # config options
+    # To enable logging add a performance_logger hash to your configuration
     #
     # Example:
     # config.performance_logger = {
@@ -47,6 +46,7 @@ class Card::Log
     #     :max_depth => 3,                               # show nested method calls only up to depth 3
     #     :details=> true,                                # show method arguments and sql
     #     :methods => [:event, :search, :fetch, :view],  # choose methods to log
+    #     :log_level => :info
     # }
     #
     # If you give :methods a hash you can log arbitrary methods. The syntax is as follows:
@@ -71,6 +71,7 @@ class Card::Log
 
     DEFAULT_CLASS           = Card
     DEFAULT_METHOD_TYPE     = :all
+    DEFAULT_LOG_LEVEL       = :info
     DEFAULT_METHOD_OPTIONS  = {
                                 :title   => :method_name,
                                 :message => 1,
@@ -111,6 +112,7 @@ class Card::Log
         @details   = args[:details]   || false
         @max_depth = args[:max_depth] || false
         @min_time  = args[:min_time]  || false
+        @log_level = args[:log_level] || DEFAULT_LOG_LEVEL
         @output    = args[:output]    || :text
         @enabled_methods = ::Set.new
         prepare_methods_for_logging args[:methods] if args[:methods]
@@ -194,7 +196,7 @@ class Card::Log
 
       def text_log
         @@log.each do |entry|
-          Rails.logger.wagn entry.to_s! if entry.valid
+          Rails.logger.send @log_level, entry.to_s! if entry.valid
         end
       end
 

@@ -29,7 +29,7 @@ class Card
 
 
       def delete_cardless
-        Card::Action.where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
+        Card::Action.joins('LEFT JOIN cards ON card_actions.card_id = cards.id').where('cards.id IS NULL').delete_all
       end
 
       def delete_old

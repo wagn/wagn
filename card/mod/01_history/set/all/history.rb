@@ -16,7 +16,7 @@ event :create_card_changes, :after =>:stored, :when=>proc {|c| c.history? } do
 end
 
 event :finalize_act, :after=>:create_card_changes, :when=>proc {|c| c.history? } do
-  if not @supercard
+  if !@supercard
     if @current_act.actions(true).empty?
       @current_act.delete
       @current_act = nil
@@ -29,11 +29,7 @@ end
 
 # must be called on all actions and before :set_name, :process_subcards and :validate_delete_children
 def create_act_and_action
-  @current_act = if @supercard
-    @supercard.current_act || @supercard.acts.create(:ip_address=>Env.ip)
-  else
-    Card::Act.create :ip_address=>Env.ip
-  end
+  @current_act = (@supercard && @supercard.current_act) || Card::Act.create(:ip_address=>Env.ip)
   @current_action = Card::Action.create(:card_act_id=>@current_act.id, :action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
   if (@supercard and @supercard !=self)
     @current_action.super_action = @supercard.current_action
@@ -48,10 +44,14 @@ def store_changes
       @current_action.update_attributes! :card_id => id
     elsif @current_action.card_changes(true).empty?
       @current_action.delete
+      @current_action = nil
     end
   end
 end
 
+
+# alternative to #create_act_and_action
+# currently not used
 def build_act_and_action
   @current_act = if @supercard
     @supercard.current_act || @supercard.acts.build(:ip_address=>Env.ip)

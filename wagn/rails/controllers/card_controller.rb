@@ -219,8 +219,11 @@ class CardController < ActionController::Base
       render :text => target
     else
       @card = target
-      #Card::Env[:params] =
-      self.params.merge! new_params #need tests.  insure we get slot, main...
+      if params[:soft_redirect]
+        self.params = new_params
+      else
+        params.merge! new_params #      #need tests.  insure we get slot, main...
+      end
       show
     end
   end

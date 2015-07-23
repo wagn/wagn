@@ -2,9 +2,14 @@
 
 ==Basics
 
-Wagn is an open web platform for building coherent web systems.
+Wagn is serious web development made fun.
 
-Using simple wiki-inspired building blocks called cards, "Wagneers" construct sites ranging from simple content managers to custom project trackers to fully integrated web suites.
+"Wagneers" have used Wagn to create open community sites, private knowledge management sites, public proposal submission sites with private back-ends for review, project management systems, wikis, blogs, journals, forums, and more.
+
+Install Wagn, open a webpage, and get started. With Wagn's wiki-inspired building blocks, you can collaborate from day one on content, design, and structure create elegant web systems on the fly.  And ruby developers can take these creations even further with Wagn's development framework. Wagn's innovative Mods API supports boundless creativity while integrating seamlessly with structures created on the site.
+
+FIXME - add cldstr link
+
 
 ==System Requirements
 
@@ -87,6 +92,14 @@ First check the Wagn version of your existing site.
 ====Older than Version 1.10
 
 First update your Wagn to version 1.10 via the old update mechanisms, and then follow the directions above.
+
+
+==Developing
+
+Wagn allows for deep collaboration and integration between "wagneers" (who organize data via a wagn site) and software developers.
+
+Learn more at "GETTING STARTED - Developers"
+FIXME - link
 
 
 

@@ -1,0 +1,532 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Module: Card::HtmlFormat::Location
+  
+    &mdash; Documentation by YARD 0.8.7.6
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../../';
+  framesUrl = "../../frames.html#!Card/HtmlFormat/Location.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../../_index.html">Index (L)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../Card.html" title="Card (class)">Card</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../HtmlFormat.html" title="Card::HtmlFormat (class)">HtmlFormat</a></span></span>
+     &raquo; 
+    <span class="title">Location</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Module: Card::HtmlFormat::Location
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+  
+    
+  
+    
+  
+  
+    <dt class="r1">Included in:</dt>
+    <dd class="r1"><span class='object_link'><a href="../HtmlFormat.html" title="Card::HtmlFormat (class)">Card::HtmlFormat</a></span>, <span class='object_link'><a href="../../CardController.html" title="CardController (class)">CardController</a></span></dd>
+    
+  
+  
+    <dt class="r2 last">Defined in:</dt>
+    <dd class="r2 last">card/mod/01_core/format/html_format.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>session history helpers: we keep a history stack so that in the case of
+card removal we can crawl back up to the last un-removed location</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#discard_locations_for-instance_method" title="#discard_locations_for (instance method)">- (Object) <strong>discard_locations_for</strong>(card) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#interrupted_action-instance_method" title="#interrupted_action (instance method)">- (Object) <strong>interrupted_action</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#location_history-instance_method" title="#location_history (instance method)">- (Object) <strong>location_history</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#previous_location-instance_method" title="#previous_location (instance method)">- (Object) <strong>previous_location</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#save_interrupted_action-instance_method" title="#save_interrupted_action (instance method)">- (Object) <strong>save_interrupted_action</strong>(uri) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#save_location-instance_method" title="#save_location (instance method)">- (Object) <strong>save_location</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#url_key_for_location-instance_method" title="#url_key_for_location (instance method)">- (Object) <strong>url_key_for_location</strong>(location) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="discard_locations_for-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>discard_locations_for</strong>(card) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+89
+90
+91
+92
+93
+94
+95
+96
+97</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'card/mod/01_core/format/html_format.rb', line 89</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_discard_locations_for'>discard_locations_for</span><span class='lparen'>(</span><span class='id identifier rubyid_card'>card</span><span class='rparen'>)</span>
+  <span class='comment'># quoting necessary because cards have things like &quot;+*&quot; in the names..
+</span>  <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='symbol'>:history</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_location_history'>location_history</span><span class='period'>.</span><span class='id identifier rubyid_reject'>reject</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_loc'>loc</span><span class='op'>|</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_url_key'>url_key</span> <span class='op'>=</span> <span class='id identifier rubyid_url_key_for_location'>url_key_for_location</span><span class='lparen'>(</span><span class='id identifier rubyid_loc'>loc</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_url_key'>url_key</span><span class='period'>.</span><span class='id identifier rubyid_to_name'>to_name</span><span class='period'>.</span><span class='id identifier rubyid_key'>key</span> <span class='op'>==</span> <span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_key'>key</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+  <span class='ivar'>@previous_location</span> <span class='op'>=</span> <span class='kw'>nil</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="interrupted_action-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>interrupted_action</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+104
+105
+106</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'card/mod/01_core/format/html_format.rb', line 104</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_interrupted_action'>interrupted_action</span>
+  <span class='id identifier rubyid_session'>session</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span> <span class='symbol'>:interrupted_action</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="location_history-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>location_history</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+69
+70
+71
+72
+73
+74
+75
+76</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'card/mod/01_core/format/html_format.rb', line 69</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_location_history'>location_history</span>
+  <span class='comment'>#warn &quot;sess #{session.class}, #{session.object_id}&quot;
+</span>  <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='symbol'>:history</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='id identifier rubyid_card_path'>card_path</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rbracket'>]</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='symbol'>:history</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='symbol'>:history</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_shift'>shift</span> <span class='kw'>if</span> <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='symbol'>:history</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&gt;</span> <span class='int'>5</span>
+    <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='symbol'>:history</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="previous_location-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>previous_location</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+85
+86
+87</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'card/mod/01_core/format/html_format.rb', line 85</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_previous_location'>previous_location</span>
+  <span class='ivar'>@previous_location</span> <span class='op'>||=</span> <span class='id identifier rubyid_location_history'>location_history</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span> <span class='kw'>if</span> <span class='id identifier rubyid_location_history'>location_history</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="save_interrupted_action-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>save_interrupted_action</strong>(uri) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+99
+100
+101
+102</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'card/mod/01_core/format/html_format.rb', line 99</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_save_interrupted_action'>save_interrupted_action</span> <span class='id identifier rubyid_uri'>uri</span>
+  <span class='id identifier rubyid_uri'>uri</span> <span class='op'>=</span> <span class='id identifier rubyid_path'>path</span><span class='lparen'>(</span><span class='id identifier rubyid_uri'>uri</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='const'>Hash</span> <span class='op'>===</span> <span class='id identifier rubyid_uri'>uri</span>
+  <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='symbol'>:interrupted_action</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_uri'>uri</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="save_location-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>save_location</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+78
+79
+80
+81
+82
+83</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'card/mod/01_core/format/html_format.rb', line 78</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_save_location'>save_location</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_ajax?'>ajax?</span> <span class='op'>||</span> <span class='op'>!</span><span class='id identifier rubyid_html?'>html?</span> <span class='op'>||</span> <span class='op'>!</span><span class='ivar'>@card</span><span class='period'>.</span><span class='id identifier rubyid_known?'>known?</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='ivar'>@card</span><span class='period'>.</span><span class='id identifier rubyid_codename'>codename</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>signin</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_discard_locations_for'>discard_locations_for</span> <span class='ivar'>@card</span>
+  <span class='ivar'>@previous_location</span> <span class='op'>=</span> <span class='id identifier rubyid_card_path'>card_path</span> <span class='ivar'>@card</span><span class='period'>.</span><span class='id identifier rubyid_cardname'>cardname</span><span class='period'>.</span><span class='id identifier rubyid_url_key'>url_key</span>
+  <span class='id identifier rubyid_location_history'>location_history</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='ivar'>@previous_location</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="url_key_for_location-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>url_key_for_location</strong>(location) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+108
+109
+110</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'card/mod/01_core/format/html_format.rb', line 108</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_url_key_for_location'>url_key_for_location</span><span class='lparen'>(</span><span class='id identifier rubyid_location'>location</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_location'>location</span><span class='period'>.</span><span class='id identifier rubyid_match'>match</span><span class='lparen'>(</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\/([^\/]*$)</span><span class='regexp_end'>/</span></span> <span class='rparen'>)</span> <span class='op'>?</span> <span class='backref'>$1</span> <span class='op'>:</span> <span class='kw'>nil</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Thu Jul  2 09:52:25 2015 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.6 (ruby-2.1.5).
+</div>
+
+  </body>
+</html>

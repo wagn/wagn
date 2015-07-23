@@ -1,0 +1,838 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Module: Card::Set::All::Collection
+  
+    &mdash; Documentation by YARD 0.8.7.6
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '../../../';
+  framesUrl = "../../../frames.html#!Card/Set/All/Collection.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="../../../_index.html">Index (C)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../Card.html" title="Card (class)">Card</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Set.html" title="Card::Set (module)">Set</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../All.html" title="Card::Set::All (module)">All</a></span></span>
+     &raquo; 
+    <span class="title">Collection</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="../../../method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="../../../file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Module: Card::Set::All::Collection
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+  
+    
+      <dt class="r1">Extended by:</dt>
+      <dd class="r1"><span class='object_link'><a href="../../Set.html" title="Card::Set (module)">Card::Set</a></span></dd>
+      
+    
+  
+    
+  
+  
+  
+    <dt class="r2 last">Defined in:</dt>
+    <dd class="r2 last">../sites/core-dev/tmp/set/all/1001-collection.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Collection/ClassMethods.html" title="Card::Set::All::Collection::ClassMethods (module)">ClassMethods</a></span>
+    
+  
+    
+  
+</p>
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#add_item-instance_method" title="#add_item (instance method)">- (Object) <strong>add_item</strong>(item) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#contextual_content-instance_method" title="#contextual_content (instance method)">- (Object) <strong>contextual_content</strong>(context_card, format_args = {}, view_args = {}) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#drop_item-instance_method" title="#drop_item (instance method)">- (Object) <strong>drop_item</strong>(item) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#extended_item_cards-instance_method" title="#extended_item_cards (instance method)">- (Object) <strong>extended_item_cards</strong>(context = nil) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#extended_item_contents-instance_method" title="#extended_item_contents (instance method)">- (Object) <strong>extended_item_contents</strong>(context = nil) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#extended_list-instance_method" title="#extended_list (instance method)">- (Object) <strong>extended_list</strong>(context = nil) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#include_item%3F-instance_method" title="#include_item? (instance method)">- (Boolean) <strong>include_item?</strong>(item) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#insert_item-instance_method" title="#insert_item (instance method)">- (Object) <strong>insert_item</strong>(index, name) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#item_cards-instance_method" title="#item_cards (instance method)">- (Object) <strong>item_cards</strong>(args = {}) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>FIXME this is inconsistent with item_names.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#item_names-instance_method" title="#item_names (instance method)">- (Object) <strong>item_names</strong>(args = {}) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#item_type-instance_method" title="#item_type (instance method)">- (Object) <strong>item_type</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../../Set.html" title="Card::Set (module)">Card::Set</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Set.html#all_set%3F-instance_method" title="Card::Set#all_set? (method)">all_set?</a></span>, <span class='object_link'><a href="../../Set.html#card_accessor-instance_method" title="Card::Set#card_accessor (method)">card_accessor</a></span>, <span class='object_link'><a href="../../Set.html#card_reader-instance_method" title="Card::Set#card_reader (method)">card_reader</a></span>, <span class='object_link'><a href="../../Set.html#card_writer-instance_method" title="Card::Set#card_writer (method)">card_writer</a></span>, <span class='object_link'><a href="../../Set.html#clean_empty_module_from_hash-class_method" title="Card::Set.clean_empty_module_from_hash (method)">clean_empty_module_from_hash</a></span>, <span class='object_link'><a href="../../Set.html#clean_empty_modules-class_method" title="Card::Set.clean_empty_modules (method)">clean_empty_modules</a></span>, <span class='object_link'><a href="../../Set.html#define_on_format-instance_method" title="Card::Set#define_on_format (method)">define_on_format</a></span>, <span class='object_link'><a href="../../Set.html#event-instance_method" title="Card::Set#event (method)">event</a></span>, <span class='object_link'><a href="../../Set.html#extended-class_method" title="Card::Set.extended (method)">extended</a></span>, <span class='object_link'><a href="../../Set.html#format-instance_method" title="Card::Set#format (method)">format</a></span>, <span class='object_link'><a href="../../Set.html#process_base_module_list-class_method" title="Card::Set.process_base_module_list (method)">process_base_module_list</a></span>, <span class='object_link'><a href="../../Set.html#process_base_modules-class_method" title="Card::Set.process_base_modules (method)">process_base_modules</a></span>, <span class='object_link'><a href="../../Set.html#register_set-class_method" title="Card::Set.register_set (method)">register_set</a></span>, <span class='object_link'><a href="../../Set.html#register_set_format-instance_method" title="Card::Set#register_set_format (method)">register_set_format</a></span>, <span class='object_link'><a href="../../Set.html#shortname-instance_method" title="Card::Set#shortname (method)">shortname</a></span>, <span class='object_link'><a href="../../Set.html#view-instance_method" title="Card::Set#view (method)">view</a></span>, <span class='object_link'><a href="../../Set.html#write_tmp_file-class_method" title="Card::Set.write_tmp_file (method)">write_tmp_file</a></span></p>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="add_item-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>add_item</strong>(item) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+65
+66
+67
+68
+69</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '../sites/core-dev/tmp/set/all/1001-collection.rb', line 65</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_add_item'>add_item</span> <span class='id identifier rubyid_item'>item</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_include_item?'>include_item?</span> <span class='id identifier rubyid_item'>item</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_content'>content</span><span class='op'>=</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_content'>content</span><span class='embexpr_end'>}</span><span class='tstring_content'>\n</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="contextual_content-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>contextual_content</strong>(context_card, format_args = {}, view_args = {}) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+125
+126
+127
+128
+129</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '../sites/core-dev/tmp/set/all/1001-collection.rb', line 125</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_contextual_content'>contextual_content</span> <span class='id identifier rubyid_context_card'>context_card</span><span class='comma'>,</span> <span class='id identifier rubyid_format_args'>format_args</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='id identifier rubyid_view_args'>view_args</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_context_card'>context_card</span><span class='period'>.</span><span class='id identifier rubyid_format'>format</span><span class='lparen'>(</span><span class='id identifier rubyid_format_args'>format_args</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_process_content'>process_content</span><span class='lparen'>(</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_format'>format</span><span class='lparen'>(</span><span class='id identifier rubyid_format_args'>format_args</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid__render_raw'>_render_raw</span><span class='lparen'>(</span><span class='id identifier rubyid_view_args'>view_args</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_view_args'>view_args</span>
+  <span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="drop_item-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>drop_item</strong>(item) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+71
+72
+73
+74
+75
+76</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '../sites/core-dev/tmp/set/all/1001-collection.rb', line 71</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_drop_item'>drop_item</span> <span class='id identifier rubyid_item'>item</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_include_item?'>include_item?</span> <span class='id identifier rubyid_item'>item</span>
+    <span class='id identifier rubyid_new_names'>new_names</span> <span class='op'>=</span> <span class='id identifier rubyid_item_names'>item_names</span><span class='period'>.</span><span class='id identifier rubyid_reject'>reject</span><span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_i'>i</span><span class='op'>|</span> <span class='id identifier rubyid_i'>i</span> <span class='op'>==</span> <span class='id identifier rubyid_item'>item</span> <span class='rbrace'>}</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_content'>content</span> <span class='op'>=</span> <span class='id identifier rubyid_new_names'>new_names</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span> <span class='op'>:</span> <span class='id identifier rubyid_new_names'>new_names</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="extended_item_cards-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>extended_item_cards</strong>(context = nil) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '../sites/core-dev/tmp/set/all/1001-collection.rb', line 86</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_extended_item_cards'>extended_item_cards</span> <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span> <span class='op'>?</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_cardname'>cardname</span> <span class='op'>:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_cardname'>cardname</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_args'>args</span><span class='op'>=</span><span class='lbrace'>{</span> <span class='symbol'>:limit</span><span class='op'>=&gt;</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_items'>items</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_item_cards'>item_cards</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='symbol'>:context</span><span class='op'>=&gt;</span><span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_extended_list'>extended_list</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_already_extended'>already_extended</span> <span class='op'>=</span> <span class='op'>::</span><span class='const'>Set</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='comment'># avoid loops
+</span>
+  <span class='kw'>while</span> <span class='id identifier rubyid_items'>items</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&gt;</span> <span class='int'>0</span>
+    <span class='id identifier rubyid_item'>item</span> <span class='op'>=</span> <span class='id identifier rubyid_items'>items</span><span class='period'>.</span><span class='id identifier rubyid_shift'>shift</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_already_extended'>already_extended</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_item'>item</span>
+      <span class='kw'>next</span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_item_cards'>item_cards</span> <span class='op'>==</span> <span class='lbracket'>[</span><span class='id identifier rubyid_item'>item</span><span class='rbracket'>]</span>  <span class='comment'># no further level of items
+</span>      <span class='id identifier rubyid_extended_list'>extended_list</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_item'>item</span>
+      <span class='id identifier rubyid_already_extended'>already_extended</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_item'>item</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_items'>items</span><span class='period'>.</span><span class='id identifier rubyid_unshift'>unshift</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_item_cards'>item_cards</span><span class='rparen'>)</span> <span class='comment'># keep items in order
+</span>      <span class='id identifier rubyid_already_extended'>already_extended</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_item'>item</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_extended_list'>extended_list</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="extended_item_contents-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>extended_item_contents</strong>(context = nil) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+108
+109
+110</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '../sites/core-dev/tmp/set/all/1001-collection.rb', line 108</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_extended_item_contents'>extended_item_contents</span> <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='id identifier rubyid_extended_item_cards'>extended_item_cards</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:item_names</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_flatten'>flatten</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="extended_list-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>extended_list</strong>(context = nil) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '../sites/core-dev/tmp/set/all/1001-collection.rb', line 112</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_extended_list'>extended_list</span> <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span> <span class='op'>?</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_cardname'>cardname</span> <span class='op'>:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_cardname'>cardname</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_args'>args</span><span class='op'>=</span><span class='lbrace'>{</span> <span class='symbol'>:limit</span><span class='op'>=&gt;</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_item_cards'>item_cards</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='symbol'>:context</span><span class='op'>=&gt;</span><span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_x'>x</span><span class='op'>|</span>
+    <span class='id identifier rubyid_x'>x</span><span class='period'>.</span><span class='id identifier rubyid_item_cards'>item_cards</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
+  <span class='kw'>end</span><span class='period'>.</span><span class='id identifier rubyid_flatten'>flatten</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_x'>x</span><span class='op'>|</span>
+    <span class='id identifier rubyid_x'>x</span><span class='period'>.</span><span class='id identifier rubyid_item_cards'>item_cards</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
+  <span class='kw'>end</span><span class='period'>.</span><span class='id identifier rubyid_flatten'>flatten</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_y'>y</span><span class='op'>|</span>
+    <span class='id identifier rubyid_y'>y</span><span class='period'>.</span><span class='id identifier rubyid_item_names'>item_names</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
+  <span class='kw'>end</span><span class='period'>.</span><span class='id identifier rubyid_flatten'>flatten</span>
+  <span class='comment'># this could go on and on.  more elegant to recurse until you don&#39;t have a collection
+</span><span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="include_item?-instance_method">
+  
+    - (<tt>Boolean</tt>) <strong>include_item?</strong>(item) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+56
+57
+58
+59
+60
+61
+62
+63</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '../sites/core-dev/tmp/set/all/1001-collection.rb', line 56</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_include_item?'>include_item?</span> <span class='id identifier rubyid_item'>item</span>
+  <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='const'>Card</span> <span class='op'>===</span> <span class='id identifier rubyid_item'>item</span>
+    <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_cardname'>cardname</span><span class='period'>.</span><span class='id identifier rubyid_key'>key</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_to_name'>to_name</span><span class='period'>.</span><span class='id identifier rubyid_key'>key</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_item_names'>item_names</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='op'>|</span> <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_to_name'>to_name</span><span class='period'>.</span><span class='id identifier rubyid_key'>key</span><span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_member?'>member?</span> <span class='id identifier rubyid_key'>key</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="insert_item-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>insert_item</strong>(index, name) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+78
+79
+80
+81
+82
+83</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '../sites/core-dev/tmp/set/all/1001-collection.rb', line 78</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_insert_item'>insert_item</span> <span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span>
+  <span class='id identifier rubyid_new_names'>new_names</span> <span class='op'>=</span> <span class='id identifier rubyid_item_names'>item_names</span>
+  <span class='id identifier rubyid_new_names'>new_names</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_new_names'>new_names</span><span class='period'>.</span><span class='id identifier rubyid_insert'>insert</span><span class='lparen'>(</span><span class='id identifier rubyid_index'>index</span><span class='comma'>,</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_content'>content</span> <span class='op'>=</span>  <span class='id identifier rubyid_new_names'>new_names</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="item_cards-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>item_cards</strong>(args = {}) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>FIXME this is inconsistent with item_names</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+48
+49
+50</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '../sites/core-dev/tmp/set/all/1001-collection.rb', line 48</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_item_cards'>item_cards</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>  <span class='comment'>## FIXME this is inconsistent with item_names
+</span>  <span class='lbracket'>[</span><span class='kw'>self</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="item_names-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>item_names</strong>(args = {}) 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+44
+45
+46</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '../sites/core-dev/tmp/set/all/1001-collection.rb', line 44</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_item_names'>item_names</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_format'>format</span><span class='period'>.</span><span class='id identifier rubyid__render_raw'>_render_raw</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>[,\n]</span><span class='regexp_end'>/</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="item_type-instance_method">
+  
+    - (<tt><span class='object_link'><a href="../../../Object.html" title="Object (class)">Object</a></span></tt>) <strong>item_type</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+52
+53
+54</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File '../sites/core-dev/tmp/set/all/1001-collection.rb', line 52</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_item_type'>item_type</span>
+  <span class='kw'>nil</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Thu Jul  2 10:29:16 2015 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.6 (ruby-2.1.5).
+</div>
+
+  </body>
+</html>

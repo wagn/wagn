@@ -1,0 +1,1109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Class: WagnGenerator
+  
+    &mdash; Documentation by YARD 0.8.7.6
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!WagnGenerator.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index (W)</a> &raquo;
+    
+    
+    <span class="title">WagnGenerator</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Class: WagnGenerator
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+    <dt class="r1">Inherits:</dt>
+    <dd class="r1">
+      <span class="inheritName">Rails::Generators::AppBase</span>
+      
+        <ul class="fullTree">
+          <li><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></li>
+          
+            <li class="next">Rails::Generators::AppBase</li>
+          
+            <li class="next">WagnGenerator</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+      </dd>
+    
+  
+  
+    
+  
+    
+  
+  
+  
+    <dt class="r2 last">Defined in:</dt>
+    <dd class="r2 last">wagn/lib/wagn/generators/wagn/wagn_generator.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#config-instance_method" title="#config (instance method)">- (Object) <strong>config</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#configru-instance_method" title="#configru (instance method)">- (Object) <strong>configru</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#dev_setup-instance_method" title="#dev_setup (instance method)">- (Object) <strong>dev_setup</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>should probably eventually use rails-like AppBuilder approach, but this is
+a first step.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#files-instance_method" title="#files (instance method)">- (Object) <strong>files</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#gemfile-instance_method" title="#gemfile (instance method)">- (Object) <strong>gemfile</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#gitignore-instance_method" title="#gitignore (instance method)">- (Object) <strong>gitignore</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log-instance_method" title="#log (instance method)">- (Object) <strong>log</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#mod-instance_method" title="#mod (instance method)">- (Object) <strong>mod</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>def readme    copy_file “README”, “README.rdoc”  end.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#public-instance_method" title="#public (instance method)">- (Object) <strong>public</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#rakefile-instance_method" title="#rakefile (instance method)">- (Object) <strong>rakefile</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#script-instance_method" title="#script (instance method)">- (Object) <strong>script</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#seed_data-instance_method" title="#seed_data (instance method)">- (Object) <strong>seed_data</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#tmp-instance_method" title="#tmp (instance method)">- (Object) <strong>tmp</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="config-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>config</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'wagn/lib/wagn/generators/wagn/wagn_generator.rb', line 112</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_config'>config</span>
+  <span class='id identifier rubyid_empty_directory'>empty_directory</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>config</span><span class='tstring_end'>&quot;</span></span>
+
+  <span class='id identifier rubyid_inside'>inside</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>config</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>application.rb</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>routes.erb</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>routes.rb</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>environment.rb</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>boot.rb</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>databases/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:database</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'>.yml</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>database.yml</span><span class='tstring_end'>&quot;</span></span>  
+    <span class='kw'>if</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>core-dev</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+      <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>cucumber.yml</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="configru-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>configru</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+104
+105
+106</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'wagn/lib/wagn/generators/wagn/wagn_generator.rb', line 104</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_configru'>configru</span>
+  <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>config.ru</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="dev_setup-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>dev_setup</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>should probably eventually use rails-like AppBuilder approach, but this is
+a first step.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'wagn/lib/wagn/generators/wagn/wagn_generator.rb', line 30</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_dev_setup'>dev_setup</span>
+  <span class='comment'># TODO: rename or split, gem_path points to the source repo, card and wagn gems are subdirs
+</span>  <span class='ivar'>@gemfile_gem_path</span> <span class='op'>=</span> <span class='ivar'>@gem_path</span> <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gem-path</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_env_gem_path'>env_gem_path</span> <span class='op'>=</span> <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>WAGN_GEM_PATH</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_env_gem_path'>env_gem_path</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='ivar'>@gemfile_gem_path</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>%q{</span><span class='tstring_content'>#{ENV[&#39;WAGN_GEM_PATH&#39;]}</span><span class='tstring_end'>}</span></span>
+    <span class='ivar'>@gem_path</span> <span class='op'>=</span> <span class='id identifier rubyid_env_gem_path'>env_gem_path</span>
+  <span class='kw'>end</span>
+  
+  <span class='ivar'>@include_jasmine_engine</span> <span class='op'>=</span> <span class='kw'>false</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>core-dev</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='kw'>unless</span> <span class='ivar'>@gem_path</span>
+      <span class='ivar'>@gemfile_gem_path</span> <span class='op'>=</span> <span class='ivar'>@gem_path</span> <span class='op'>=</span> <span class='id identifier rubyid_ask'>ask</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Enter the path to your local wagn gem installation: </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='ivar'>@include_jasmine_engine</span> <span class='op'>=</span> <span class='kw'>true</span>
+    <span class='ivar'>@spec_path</span> <span class='op'>=</span> <span class='ivar'>@gem_path</span>
+    <span class='ivar'>@spec_helper_path</span> <span class='op'>=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='ivar'>@spec_path</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>card</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>spec</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>spec_helper</span><span class='tstring_end'>&#39;</span></span>
+    <span class='id identifier rubyid_empty_directory'>empty_directory</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>spec</span><span class='tstring_end'>&#39;</span></span>
+    <span class='id identifier rubyid_inside'>inside</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>spec</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_copy_file'>copy_file</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>javascripts</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>support</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>wagn_jasmine.yml</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='comma'>,</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>javascripts</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>support</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>jasmine.yml</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    
+    <span class='ivar'>@features_path</span> <span class='op'>=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='ivar'>@gem_path</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>wagn/features/</span><span class='tstring_end'>&#39;</span></span>  <span class='comment'># ending slash is important in order to load support and step folders
+</span>    <span class='ivar'>@simplecov_config</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>card_core_dev_simplecov_filters</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>mod-dev</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='ivar'>@spec_path</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>mod/</span><span class='tstring_end'>&#39;</span></span>
+    <span class='ivar'>@spec_helper_path</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>./spec/spec_helper</span><span class='tstring_end'>&#39;</span></span>
+    <span class='ivar'>@simplecov_config</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>card_simplecov_filters</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_empty_directory'>empty_directory</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>spec</span><span class='tstring_end'>&#39;</span></span>
+    <span class='id identifier rubyid_inside'>inside</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>spec</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>spec_helper.rb</span><span class='tstring_end'>&#39;</span></span>
+      <span class='id identifier rubyid_copy_file'>copy_file</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span>  <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>javascripts</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>support</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>deck_jasmine.yml</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='comma'>,</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>javascripts</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>support</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>jasmine.yml</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  
+  <span class='kw'>if</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>core-dev</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>mod-dev</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>rspec</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.rspec</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>simplecov</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.simplecov</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_empty_directory'>empty_directory</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>bin</span><span class='tstring_end'>&#39;</span></span>
+    <span class='id identifier rubyid_inside'>inside</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>bin</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>spring</span><span class='tstring_end'>&#39;</span></span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="files-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>files</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+92
+93
+94</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'wagn/lib/wagn/generators/wagn/wagn_generator.rb', line 92</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_files'>files</span>
+  <span class='id identifier rubyid_empty_directory_with_gitkeep'>empty_directory_with_gitkeep</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>files</span><span class='tstring_end'>&#39;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="gemfile-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>gemfile</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+100
+101
+102</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'wagn/lib/wagn/generators/wagn/wagn_generator.rb', line 100</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_gemfile'>gemfile</span>
+  <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Gemfile</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="gitignore-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>gitignore</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+108
+109
+110</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'wagn/lib/wagn/generators/wagn/wagn_generator.rb', line 108</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_gitignore'>gitignore</span>
+  <span class='id identifier rubyid_copy_file'>copy_file</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>gitignore</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.gitignore</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>log</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+88
+89
+90</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'wagn/lib/wagn/generators/wagn/wagn_generator.rb', line 88</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_log'>log</span>
+  <span class='id identifier rubyid_empty_directory_with_gitkeep'>empty_directory_with_gitkeep</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>log</span><span class='tstring_end'>&#39;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="mod-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>mod</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>def readme</p>
+
+<pre class="code ruby"><code class="ruby">  copy_file &quot;README&quot;, &quot;README.rdoc&quot;
+end</code></pre>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+84
+85
+86</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'wagn/lib/wagn/generators/wagn/wagn_generator.rb', line 84</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_mod'>mod</span>
+  <span class='id identifier rubyid_empty_directory_with_gitkeep'>empty_directory_with_gitkeep</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>mod</span><span class='tstring_end'>&#39;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="public-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>public</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'wagn/lib/wagn/generators/wagn/wagn_generator.rb', line 127</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_public'>public</span>
+  <span class='id identifier rubyid_empty_directory'>empty_directory</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>public</span><span class='tstring_end'>&quot;</span></span>
+  
+  <span class='id identifier rubyid_inside'>inside</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>public</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>robots.txt</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_empty_directory'>empty_directory</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>files</span><span class='tstring_end'>&quot;</span></span>
+  
+    <span class='id identifier rubyid_inside'>inside</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>files</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>htaccess</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.htaccess</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="rakefile-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>rakefile</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+76
+77
+78</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'wagn/lib/wagn/generators/wagn/wagn_generator.rb', line 76</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_rakefile'>rakefile</span>
+  <span class='id identifier rubyid_template'>template</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Rakefile</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="script-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>script</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+140
+141
+142
+143
+144
+145</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'wagn/lib/wagn/generators/wagn/wagn_generator.rb', line 140</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_script'>script</span>
+  <span class='id identifier rubyid_directory'>directory</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>script</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_content'>content</span><span class='op'>|</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_shebang'>shebang</span><span class='embexpr_end'>}</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span> <span class='op'>+</span> <span class='id identifier rubyid_content'>content</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_chmod'>chmod</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>script</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='int'>0755</span> <span class='op'>&amp;</span> <span class='op'>~</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_umask'>umask</span><span class='comma'>,</span> <span class='symbol'>:verbose</span> <span class='op'>=&gt;</span> <span class='kw'>false</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="seed_data-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>seed_data</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'wagn/lib/wagn/generators/wagn/wagn_generator.rb', line 149</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_seed_data'>seed_data</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>interactive</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+
+    <span class='id identifier rubyid_require'>require</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='id identifier rubyid_destination_root'>destination_root</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>config</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>application</span><span class='tstring_end'>&#39;</span></span>  <span class='comment'># need this for Rails.env
+</span>    <span class='id identifier rubyid_menu_options'>menu_options</span> <span class='op'>=</span> <span class='const'>ActiveSupport</span><span class='op'>::</span><span class='const'>OrderedHash</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='rparen'>)</span>
+    
+    <span class='id identifier rubyid_database_seeded'>database_seeded</span> <span class='op'>=</span> <span class='id identifier rubyid_proc'>proc</span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_menu_options'>menu_options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>x</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:desc</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>exit</span><span class='tstring_end'>&quot;</span></span>
+      <span class='id identifier rubyid_menu_options'>menu_options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>r</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+        <span class='symbol'>:desc</span>    <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>run wagn server</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='symbol'>:command</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>wagn server</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='symbol'>:code</span>    <span class='op'>=&gt;</span> <span class='id identifier rubyid_proc'>proc</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_system'>system</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>cd </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_destination_root'>destination_root</span><span class='embexpr_end'>}</span><span class='tstring_content'> &amp;&amp; wagn server</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+      <span class='rbrace'>}</span>
+    <span class='kw'>end</span>
+    
+    <span class='id identifier rubyid_menu_options'>menu_options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>d</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lbrace'>{</span> 
+        <span class='symbol'>:desc</span>    <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>edit database configuration file</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='symbol'>:command</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>nano config/database.yml</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='symbol'>:code</span>    <span class='op'>=&gt;</span>  <span class='id identifier rubyid_proc'>proc</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_system'>system</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>nano </span><span class='embexpr_beg'>#{</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='id identifier rubyid_destination_root'>destination_root</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>config</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>database.yml</span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+      <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_menu_options'>menu_options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>c</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=</span>  <span class='lbrace'>{</span> 
+        <span class='symbol'>:desc</span>    <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>configure Wagn (e.g. email settings)</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='symbol'>:command</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>nano config/application.rb</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='symbol'>:code</span>    <span class='op'>=&gt;</span>  <span class='id identifier rubyid_proc'>proc</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_system'>system</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>nano </span><span class='embexpr_beg'>#{</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='id identifier rubyid_destination_root'>destination_root</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>config</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>application.rb</span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+      <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_menu_options'>menu_options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>s</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=</span>  <span class='lbrace'>{</span> 
+        <span class='symbol'>:desc</span>    <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>seed </span><span class='embexpr_beg'>#{</span><span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_env'>env</span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> and test</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>core-dev</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='kw'>or</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>mod-dev</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'> database</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+        <span class='symbol'>:command</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>wagn seed</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='symbol'>:code</span>    <span class='op'>=&gt;</span> <span class='id identifier rubyid_proc'>proc</span> <span class='kw'>do</span>
+          <span class='id identifier rubyid_system'>system</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>cd </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_destination_root'>destination_root</span><span class='embexpr_end'>}</span><span class='tstring_content'> &amp;&amp; bundle exec rake wagn:seed</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> 
+          <span class='kw'>if</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>core-dev</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='kw'>or</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>mod-dev</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+            <span class='id identifier rubyid_system'>system</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>cd </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_destination_root'>destination_root</span><span class='embexpr_end'>}</span><span class='tstring_content'> &amp;&amp; RAILS_ENV=test bundle exec rake wagn:seed</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>  
+          <span class='kw'>end</span>
+          <span class='id identifier rubyid_database_seeded'>database_seeded</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span>
+        <span class='kw'>end</span>
+      <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_menu_options'>menu_options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>a</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lbrace'>{</span> 
+        <span class='symbol'>:desc</span>    <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>seed all databases (production, development, and test)</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='symbol'>:command</span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>wagn seed --all</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='symbol'>:code</span>    <span class='op'>=&gt;</span> <span class='id identifier rubyid_proc'>proc</span> <span class='kw'>do</span>
+          <span class='qwords_beg'>%w( </span><span class='tstring_content'>production</span><span class='words_sep'> </span><span class='tstring_content'>development</span><span class='words_sep'> </span><span class='tstring_content'>test</span><span class='words_sep'> )</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_env'>env</span><span class='op'>|</span>
+            <span class='id identifier rubyid_system'>system</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>cd </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_destination_root'>destination_root</span><span class='embexpr_end'>}</span><span class='tstring_content'> &amp;&amp; RAILS_ENV=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_env'>env</span><span class='embexpr_end'>}</span><span class='tstring_content'> bundle exec rake wagn:seed</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>  
+          <span class='kw'>end</span>
+          <span class='id identifier rubyid_database_seeded'>database_seeded</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span>
+        <span class='kw'>end</span>
+      <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_menu_options'>menu_options</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>x</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=</span>  <span class='lbrace'>{</span> 
+        <span class='symbol'>:desc</span>    <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>exit (run &#39;wagn seed&#39; to complete the installation later)</span><span class='tstring_end'>&quot;</span></span> 
+      <span class='rbrace'>}</span>
+    
+    
+    <span class='kw'>def</span> <span class='id identifier rubyid_build_menu'>build_menu</span> <span class='id identifier rubyid_options'>options</span>
+      <span class='id identifier rubyid_lines'>lines</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>What would you like to do next?</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span>
+      <span class='id identifier rubyid_lines'>lines</span> <span class='op'>+=</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='op'>|</span> 
+        <span class='id identifier rubyid_command'>command</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> </span><span class='tstring_end'>&#39;</span></span><span class='op'>*</span><span class='lparen'>(</span><span class='int'>65</span><span class='op'>-</span><span class='id identifier rubyid_v'>v</span><span class='lbracket'>[</span><span class='symbol'>:desc</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='rparen'>)</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[</span><span class='tstring_end'>&#39;</span></span> <span class='op'>+</span> <span class='id identifier rubyid_v'>v</span><span class='lbracket'>[</span><span class='symbol'>:command</span><span class='rbracket'>]</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>]</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_v'>v</span><span class='lbracket'>[</span><span class='symbol'>:command</span><span class='rbracket'>]</span> 
+        <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>  </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_content'> - </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_v'>v</span><span class='lbracket'>[</span><span class='symbol'>:desc</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_command'>command</span> <span class='kw'>if</span> <span class='id identifier rubyid_command'>command</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>end</span>
+      <span class='id identifier rubyid_lines'>lines</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='embexpr_end'>}</span><span class='tstring_content'>]</span><span class='tstring_end'>&quot;</span></span>
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_lines'>lines</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+    
+    <span class='kw'>while</span>  <span class='lparen'>(</span><span class='id identifier rubyid_answer'>answer</span> <span class='op'>=</span> <span class='id identifier rubyid_ask'>ask</span><span class='lparen'>(</span><span class='id identifier rubyid_build_menu'>build_menu</span><span class='lparen'>(</span><span class='id identifier rubyid_menu_options'>menu_options</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='op'>!=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>x</span><span class='tstring_end'>&#39;</span></span>      
+      <span class='id identifier rubyid_menu_options'>menu_options</span><span class='lbracket'>[</span><span class='id identifier rubyid_answer'>answer</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:code</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span>       
+    <span class='kw'>end</span>
+    
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Review the database configuration in config/database.yml and run &#39;wagn seed&#39; to complete the installation.\nStart the server with &#39;wagn server&#39;.</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="tmp-instance_method">
+  
+    - (<tt><span class='object_link'><a href="Object.html" title="Object (class)">Object</a></span></tt>) <strong>tmp</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+96
+97
+98</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'wagn/lib/wagn/generators/wagn/wagn_generator.rb', line 96</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_tmp'>tmp</span>
+  <span class='id identifier rubyid_empty_directory'>empty_directory</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>tmp</span><span class='tstring_end'>&#39;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Thu Jul  2 10:29:19 2015 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.6 (ruby-2.1.5).
+</div>
+
+  </body>
+</html>

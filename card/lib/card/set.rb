@@ -10,7 +10,7 @@ class Card
 
 
 =begin
-    A "Set" is a group of cards to which "Rules" may be applied.  Sets can be as specific as
+    A "Set" is a group of Cards to which "Rules" may be applied.  Sets can be as specific as
     a single card, as general as all cards, or anywhere in between.
 
     Rules take two main forms: card rules and code rules.

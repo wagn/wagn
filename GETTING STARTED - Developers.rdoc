@@ -1,0 +1,61 @@
+==Is this doc for you?
+
+This page offers a Developer's introduction to the Wagn code base and how to customize it for your own needs. it assumes you're a ruby developer or, at least, someone who does not fear ruby code.
+
+It also assumes that you've experimented with Wagn enough to have some familiarity with the basics (cards, types, rules, etc.) <b>If you have no idea what a card is, you may find it helpful to begin at {http://wagn.org Wagn.org}</b> to get a sense of what Wagn's all about.
+
+And, finally, it assumes you're looking at it from a docs site (ie, NOT GitHub).  The page is peppered with links; if they're breaking, try FIXME - (give links here).
+
+
+==Intro
+
+If you're new to Wagn development, you may be trying to wrap your head around <b>whether Wagn is an application or a development framework.  It's both.</b>
+
+When you install a new Wagn, you get a lot more out of the box than you would with a typical dev framework; you have a working website right away. We often call Wagn sites "decks" (as in groups of cards.)  After seeding your deck (with `wagn seed`), you will have lots of things built in: account handling, edit histories, default layouts, CSS, etc.  In other words: you have a basic application.
+
+But a newly seeded deck is just a starting point. <b>Wagn is a development framework in which you start <i>in the middle of things</i> rather than from scratch</b>.  Seeding is a bit of a headstart, and it means that designers, developers, and content creators can start working in parallel on day 1. But the seeded cards don't determine what you can build with Wagn; you can add things, you can remove things... In fact, we want to make it possible to build pretty much whatever you want.
+
+
+==Ruby on Rails Descendant
+
+It's likely that many folks reading this are Ruby-on-Rails developers.  Wagn owes a great deal of debt to the Rails community, both in terms of code and in stylistic guidance.  Rails developers will find lots of familiar patterns in Wagn, but we should be clear: <b>Wagn development is different</b>.
+
+Typical Rails development will involve creating lots of new models, views, and controllers. Wagn mod developers do create lots of views (though they're quite different from Rails views), but we never create new models or controllers.  In the Wagn gem there is one controller ({CardController}), one main model ({Card}), and several other models to optimize the Card model and track its history ({Card::Reference}, {Card::Act}, {Card::Action}, and {Card::Change}).
+
+Most Wagn developers never have to give the controller or any model besides Card any thought. The equivalent of creating a new model is configuring a new Set of cards. The equivalent of creating new actions on controllers is creating new events that are conditionally triggeres for a Set of cards.
+
+So, as a starting place it's probably <b>best to think of Wagn not as a Rails app but a Rails descendant</b>. Rails development experience is definitely a plus in getting to know Wagn, but Wagn offers a new architecture, and lot of new possibilities.
+
+
+==MoFoS Architecture
+
+Wagn is not, like Rails, an implementation of the "MVC" (Model-View-Controller) architectural pattern, or any well-established pattern, really.  Instead, we like to think that we're the first instance of a new pattern that we call _MoFoS_.
+
+MoFoS stands for "Model-Formats-Sets". It's intentional that the word "Model" alone is singular; the idea is that there is just one primary data model (Card, in Wagn's case), and that this model is given meaning by subdividing into multiple configurable Sets and made productive by connecting cards to multiplfe Formats.
+
+_Sets_ are a central organizing concept for both Wagneers and Wagn developers. If you've edited Rules through a card toolbar in any Wagn deck, you will have encountered Sets. For example, imagine you're on a User card named "Henry Tai", and you decide to edit its structure.  When you edit its rule, you will be prompted to choose the Set of cards to which the rule applies, eg:
+
+* Just "Henry Tai"
+* All Users
+* All Cards
+
+Depending on which Set you choose, the Rule in question will be applied to a specific group of cards.  This same general pattern occurs in Wagn code: <b>code rules (methods) are organized under the Set of cards to which they apply.</b>
+
+The great power of MoFoS is that, unlike in MVC, code rules (and data rules) can be as narrow or specific as desired.  In MVC, it's challenging to create rules that apply to multiple models or single instances of a model; in MoFoS, this is very fluid.
+
+
+==Mods
+
+A Wagn Mod is a discrete piece of Wagn functionality
+
+chunk       format      layout      set         set_pattern spec  file  lib
+
+===Set Patterns
+
+===Formats
+If there are rules on multiple sets of which a given card is a member, then precedence is determined by Set Pattern.  For example, the above three sets have the Self pattern (always a single card), the Type pattern (here "User"), and the All pattern.  Set Patterns have a fixed override order, beginning with a specific model instance and ending with the Set of all cards.
+
+While Set Patterns have a clean hierarchy, sets themselves do not.  This means traditional class hierarchies do not suffice for representing Set code.  A Wagn example: Say A+address is a "Phrase" card and B+address is a "Basic" card.  This implies that the Set of "cards ending in +address" cannot safely inherit rules from any given type Set.
+
+This organizing concept turns out to be remarkably
+

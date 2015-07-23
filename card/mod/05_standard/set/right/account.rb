@@ -74,7 +74,7 @@ end
 event :set_default_salt, :on=>:create, :before=>:process_subcards do
   salt = Digest::SHA1.hexdigest "--#{Time.now.to_s}--"
   Env[:salt] = salt # HACK!!! need viable mechanism to get this to password
-  subcards["+#{Card[:salt].name}"] ||= {:content => salt }
+  subcards["+#{Card[:salt].name}"] ||= { :content => salt }
 end
 
 event :set_default_status, :on=>:create, :before=>:process_subcards do

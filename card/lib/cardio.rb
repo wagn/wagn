@@ -2,9 +2,10 @@
 
 require 'active_support/core_ext/numeric/time'
 
-CARD_GEM_ROOT = File.expand_path('../..', __FILE__)
 
 module Cardio
+
+  CARD_GEM_ROOT = File.expand_path('../..', __FILE__)
 
   ActiveSupport.on_load :card do
     if Card.count > 0

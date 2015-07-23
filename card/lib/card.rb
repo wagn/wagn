@@ -1,6 +1,18 @@
 # -*- encoding : utf-8 -*-
 
+
 Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
+
+
+=begin
+This documentation is intended for developers who want to understand:
+
+a. how ruby Card objects work and
+b. how to extend them.
+
+It assumes that you've already read the introductory text in {file:GETTING STARTED - Developers.rdoc}.
+
+=end
 
 class Card < ActiveRecord::Base
   require_dependency 'card/active_record_ext'

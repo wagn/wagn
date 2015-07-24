@@ -21,7 +21,7 @@ def name= newname
     subcard.name = subkey.to_name.to_absolute cardname
   end
 
-  super cardname.s
+  write_attribute :name, cardname.s
 end
 
 def cardname

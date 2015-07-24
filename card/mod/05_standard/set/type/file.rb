@@ -24,6 +24,32 @@ format do
 end
 
 
+def store_dir
+  if (mod = mod_file?)
+    # generalize this to work with any mod (needs design)
+    codecard = cardname.junction? ? left : self
+    "#{ Cardio.gem_root}/mod/#{mod}/file/#{codecard.codename}"
+  elsif card.id
+    "#{ Card.paths['files'].existent.first }/#{id}"
+  else
+    tmp_store_dir
+  end
+end
+
+def tmp_store_dir
+  "#{ Card.paths['files'].existent.first }/#{card.key}"
+end
+
+def mod_file?
+  if content.present? && !content =~ /^(\d+)\.([^.]+)/
+    return $1
+  end
+end
+
+event :move_file_to_fi, :after=>:store, :on=>:create do
+  #FileUtils.mv tmp_store_dir store_dir
+end
+
 format :file do
 
   view :core do |args|                                    # returns send_file args.  not in love with this...

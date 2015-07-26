@@ -116,7 +116,7 @@ describe Card::HtmlFormat do
         Card::Auth.as_bot { @layout_card.save }
 
         rendered = expect(@layout_card.format.render(:layout)).to eq(
-          %{Mainly <div id="main"><div class="CodeRay">\n  <div class="code"><pre>Mainly {{_main|core}}</pre></div>\n</div>\n</div>}
+          %{Mainly <div id="main"><div class="CodeRay">\n  <div class="code"><pre>Mainly {{_main|core}}</pre></div>\n</div>\n</div>\n<div class="modal fade" role="dialog" id="modal-main-slot"><div class="modal-dialog"><div class="modal-content"></div></div></div>}
         )
           #probably better to check that it matches "Mainly" exactly twice.
       end
@@ -129,7 +129,7 @@ describe Card::HtmlFormat do
           Card.create :name=>"outer space", :content=>"{{_main|name}}"
         end
 
-        expect(@layout_card.format.render(:layout)).to eq('Joe User')
+        expect(@layout_card.format.render(:layout)).to eq(%{Joe User\n<div class="modal fade" role="dialog" id="modal-main-slot"><div class="modal-dialog"><div class="modal-content"></div></div></div>})
       end
     end
 

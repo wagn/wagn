@@ -1,24 +1,25 @@
 # -*- encoding : utf-8 -*-
 
+
 Decko::Engine.routes.draw do
 
   #most common
-  root                      :to => 'card#read', :via=>:get
-  match "#{ Decko::Engine.config.files_web_path }/:id(-:size)-:rev_id.:format" =>
-                                   'card#read', :via=>:get, :id => /[^-]+/, :explicit_file=>true
-  match "assets/*filename"      => 'card#asset', :via=>:get
-  match "javascripts/*filename" => 'card#asset', :via=>:get
-  match "jasmine/*filename"     => 'card#asset', :via=>:get
+  root 'card#read'
+  get "#{ Decko::Engine.config.files_web_path }/:id(-:size)-:rev_id.:format" =>
+                                 'card#read', :id => /[^-]+/, :explicit_file=>true
+  get "assets/*filename"      => 'card#asset'
+  get "javascripts/*filename" => 'card#asset'
+  get "jasmine/*filename"     => 'card#asset'
 
-
-  match 'recent(.:format)'      => 'card#read', :via=>:get, :id => ':recent' #obviate by making links use codename
+  get 'recent(.:format)'      => 'card#read', :id => ':recent' #obviate by making links use codename
 #  match ':view:(:id(.:format))'          => 'card#read', :via=>:get
-  match '(/wagn)/:id(.:format)' => 'card#read', :via=>:get  #/wagn is deprecated
+  get '(/wagn)/:id(.:format)' => 'card#read'  #/wagn is deprecated
+
 
   # RESTful
-  root              :to => 'card#create', :via=>:post
-  root              :to => 'card#update', :via=>:put
-  root              :to => 'card#delete', :via=>:delete
+  post   '/' => 'card#create'
+  put    '/' => 'card#update'
+  delete '/' => 'card#delete'
 
   match ':id(.:format)' => 'card#create', :via=>:post
   match ':id(.:format)' => 'card#update', :via=>:put
@@ -26,24 +27,26 @@ Decko::Engine.routes.draw do
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~
   # legacy
-  match 'new/:type'                  => 'card#read',   :view=>'new'
-  match 'card/:view(/:id(.:format))' => 'card#read',   :view=> /new|options|edit/
+  get 'new/:type'                  => 'card#read',   :view=>'new'
+  get 'card/:view(/:id(.:format))' => 'card#read',   :view=> /new|options|edit/
 
-  match 'account/signin'             => 'card#read',   :id=>':signin'
-  match 'account/signout'            => 'card#delete', :id=>':signin'
-  match 'account/signup'             => 'card#read',   :view=>'new',  :card=>{ :type_code=>:signup }
-  match 'account/invite'             => 'card#read',   :view=>'new',  :card=>{ :type_code=>:signup }
-  match 'account/accept'             => 'card#read',   :view=>'edit', :card=>{ :type_code=>:signup }
+  get 'account/signin'             => 'card#read',   :id=>':signin'
+  get 'account/signout'            => 'card#delete', :id=>':signin'
+  get 'account/signup'             => 'card#read',   :view=>'new',  :card=>{ :type_code=>:signup }
+  get 'account/invite'             => 'card#read',   :view=>'new',  :card=>{ :type_code=>:signup }
+  get 'account/accept'             => 'card#read',   :view=>'edit', :card=>{ :type_code=>:signup }
   # use type_code rather than id because in some cases (eg populating test data) routes must get loaded without loading Card
 
-  match 'admin/stats'                => 'card#read',   :id=>':stats'
-  match 'admin/:task'                => 'card#update', :id=>':all'
+  get 'admin/stats'                => 'card#read',   :id=>':stats'
+  get 'admin/:task'                => 'card#update', :id=>':all'
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   # standard non-RESTful
-  match '(card)/:action(/:id(.:format))' => 'card', :action => /create|read|update|delete|asset/
-
+  get '(card)/:action(/:id(.:format))'  => 'card', :action => /create|read|update|delete|asset/
+  match '(card)/create(/:id(.:format))' => 'card#create', :via=>[:post, :patch]
+  match '(card)/update(/:id(.:format))' => 'card#update', :via=>[:post, :put, :patch]
+  match '(card)/delete(/:id(.:format))' => 'card#delete', :via=>:delete
   # other
-  match '*id' => 'card#read', :view => 'bad_address'
+  get '*id' => 'card#read', :view => 'bad_address'
 
 end

@@ -9,14 +9,6 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
-module ActiveSupport::BufferedLogger::Severity
-  WAGN = UNKNOWN + 1
-  
-  def wagn progname, &block
-    add(WAGN, nil, progname, &block)
-  end
-end
-
 
 module Wagn
   class Application < Rails::Application
@@ -39,19 +31,18 @@ module Wagn
 
     class << self
       def inherited(base)
-        Rails.application = base.instance
-        Rails.application.add_lib_to_load_path!
+        super
+        Rails.app_class = base
+        add_lib_to_load_path!(find_root(base.called_from))
         ActiveSupport.run_load_hooks(:before_configuration, base.instance)
       end
     end
 
     def add_path paths, path, options={}
       root = options.delete(:root) || Wagn.gem_root
-      gem_path = File.join( root, path )
-      with = options.delete(:with)
-      with = with ? File.join(root, with) : gem_path
-      #warn "add gem path #{path}, #{with}, #{gem_path}, #{options.inspect}"
-      paths[path] = Rails::Paths::Path.new(paths, gem_path, with, options)
+      #gem_path = File.join( root, path )
+      options[:with] = File.join(root, (options[:with] || path) )
+      paths.add path, options
     end
 
 
@@ -62,7 +53,7 @@ module Wagn
         Cardio.set_config config
 
         config.i18n.enforce_available_locales = true
-
+        #config.active_record.raise_in_transactional_callbacks = true
 
         config.assets.enabled = false
         config.assets.version = '1.0'
@@ -81,7 +72,7 @@ module Wagn
         config
       end
     end
-    
+
     def paths
       @paths ||= begin
         paths = super
@@ -93,12 +84,11 @@ module Wagn
         paths['app/models'] = []
         paths['app/mailers'] = []
 
-        add_path paths, 'config/routes', :with => 'rails/application-routes.rb'
+        add_path paths, 'config/routes.rb', :with => 'rails/application-routes.rb'
 
         paths
       end
     end
-
   end
 end
 

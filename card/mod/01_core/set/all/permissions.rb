@@ -76,7 +76,6 @@ def permitted? action
     return true if action != :comment and Auth.always_ok?
 
     permitted_ids = who_can action
-
     if action == :comment && Auth.always_ok?
       # admin can comment if anyone can
       !permitted_ids.empty?
@@ -87,6 +86,7 @@ def permitted? action
 end
 
 def permit action, verb=nil
+
   if Card.config.read_only # not called by ok_to_read
     deny_because "Currently in read-only mode"
   end
@@ -199,7 +199,6 @@ event :check_permissions, :after=>:approve do
   else
     @action
   end
-
   track_permission_errors do
     ok? task
   end

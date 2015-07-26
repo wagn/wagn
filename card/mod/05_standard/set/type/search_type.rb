@@ -100,7 +100,7 @@ format do
       end
   end
 
-  def each_nest args={}
+  def each_reference_with_args args={}
     search_result_names.each do |name|
       yield(name, nest_args(args.reverse_merge!(:item=>:content)))
     end
@@ -174,6 +174,13 @@ format :json do
   end
 end
 
+format :rss do
+  def raw_feed_items
+    search_params.merge!(:default_limit => 25) 
+    search_results
+  end
+end
+
 format :html do
 
   view :card_list do |args|
@@ -215,7 +222,7 @@ format :html do
     end
   end
 
-  view :editor, :mod=>PlainText::HtmlFormat
+  view :editor, :mod=>Html::HtmlFormat
 
   view :no_search_results do |args|
     %{<div class="search-no-results"></div>}

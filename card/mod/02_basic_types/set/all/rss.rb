@@ -32,13 +32,12 @@ format :rss do
     end
   end
 
+  def raw_feed_items
+    [card]
+  end
+
   view :feed_item_list do |args|
-    items = if card.type_id == Card::SearchTypeID  #FIXME! yuck.
-      card.item_cards( search_params.merge(:default_limit => 25) )
-    else
-      [card]
-    end
-    items.each do |item|
+    raw_feed_items.each do |item|
       @xml.item do
         subformat(item).render_feed_item :view_changes=>(card.id==RecentID)  #FIXME! yuck.
       end

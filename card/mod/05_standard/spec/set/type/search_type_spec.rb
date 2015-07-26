@@ -25,5 +25,13 @@ describe Card::Set::Type::SearchType do
     expect(r.scan('item-closed').size).to eq(2) #there are two of each
   end
 
-  it ''
+  it 'handles type update from pointer' do
+    pointer_card = Card.create!(
+        :name=>"PointerToSearches",
+        :type_id=>Card::PointerID,
+    )
+    
+    pointer_card.update_attributes! :type_id=>Card::SearchTypeID,:content=>%{{"type":"User"}}
+    expect(pointer_card.content).to eq(%{{"type":"User"}})
+  end
 end

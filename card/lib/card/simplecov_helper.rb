@@ -1,5 +1,6 @@
 def is_in_mod? file,mod_path
-  file.src.join("") =~ /below pulled from #{Rails.root}\/mod/#{mod_path}\//
+  mod_msg = "below pulled from #{Rails.root}/mod/#{mod_path}/"
+  file.src.join("") =~ /#{mod_msg}/
 end
 def card_simplecov_filters
   add_filter 'spec/'

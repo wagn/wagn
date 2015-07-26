@@ -15,6 +15,14 @@ It assumes that you've already read the introductory text in {file:GETTING START
 =end
 
 class Card < ActiveRecord::Base
+
+  # attributes that ActiveJob can handle
+  def self.serializable_attr_accessor *args
+    self.serializable_attributes = args
+    attr_accessor *args
+  end
+
+
   require_dependency 'card/active_record_ext'
   require_dependency 'card/codename'
   require_dependency 'card/query'
@@ -31,33 +39,32 @@ class Card < ActiveRecord::Base
 
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
   has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
-  has_many :acts, :order => :id
-  has_many :actions, :order => :id, :conditions=>{:draft => [nil,false]}
-  has_many :drafts, :order=>:id, :conditions=>{:draft=>true}, :class_name=> :Action
+  has_many :acts, -> { order :id }
+  has_many :actions, -> { where( :draft=>[nil,false]).order :id }
+  has_many :drafts, -> { where( :draft=>true ).order :id }, :class_name=> :Action
 
-  cache_attributes 'name', 'type_id' # review - still worth it in Rails 3?
-
-  cattr_accessor :set_patterns, :error_codes
+  cattr_accessor :set_patterns, :error_codes, :serializable_attributes
   @@set_patterns, @@error_codes = [], {}
 
-  attr_accessor :action, :supercard, :current_act, :current_action,
+  serializable_attr_accessor :action, :supercard, :current_act, :current_action,
     :comment, :comment_author,    # obviated soon
     :update_referencers,          # wrong mechanism for this
-    :update_all_users,                  # if the above is wrong then this one too
-    :follower_stash, :remove_rule_stash,
+    :update_all_users,            # if the above is wrong then this one too
+    :remove_rule_stash,
     :last_action_id_before_edit
 
-  define_callbacks :approve, :store, :extend
+  attr_accessor :follower_stash
+
+  define_callbacks :approve, :store, :stored, :extend, :subsequent
 
   before_validation :approve
   around_save :store
   after_save :extend
 
+
   TRACKED_FIELDS = %w(name type_id db_content trash)
 
   ActiveSupport.run_load_hooks(:card, self)
-
-
-
 end
+
 

@@ -146,6 +146,14 @@ class Card
       end
     end
 
+    def with_name_context name
+       old_context = @context_names
+       add_name_context name
+       result = yield
+       @context_names = old_context
+       result
+     end
+
     def main?
       @depth == 0
     end
@@ -269,7 +277,11 @@ class Card
         Rails.logger.info "\nError rendering #{error_cardname} / #{view}: #{e.class} : #{e.message}"
         Card::Error.current = e
         card.notable_exception_raised
-        rendering_error e, view
+        if (debug = Card[:debugger]) && debug.content == 'on'
+          raise e
+        else
+          rendering_error e, view
+        end
       end
     end
 
@@ -467,7 +479,7 @@ class Card
         view
       end
 
-      sub.render view, opts
+      sub.optional_render view, opts
       #end
     end
 

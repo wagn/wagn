@@ -12,7 +12,7 @@ Feature: Layouts
     And I create Pointer card "User+*type+*layout" with content "[[user layout]]"
     And I wait a sec
     And I create HTML card "user layout" with content "User Header {{_main}}"
-    And I wait a sec  
+    And I wait a sec
 
   Scenario: I visit a Basic card with the simple layout
     When I go to card "*account links"

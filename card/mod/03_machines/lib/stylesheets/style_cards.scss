@@ -54,11 +54,19 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
     span.header-icon {
       margin: 0px 5px;
     }
+
   }
   .toggler {
     display: inline-block;
     position: relative;
   }
+  .type-info {
+    margin-right: 10px;
+  }
+}
+
+.card-subheader {
+  width: 100%;
 }
 
 .menu-slot {
@@ -99,7 +107,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   }
 
   .vertical-card-menu .dropdown-menu {
-    z-index: 2;
+    //z-index: 2;
   }
 
   .horizontal-card-menu {
@@ -124,14 +132,25 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 
 .navbar.toolbar {
   margin-bottom: 0;
-}
-
-.toolbar {
-  .navbar-text span.glyphicon, span.menu-item-label {
-    margin-left: 5px;
+  .collapse > .navbar-form.navbar-left {
+    //padding-left: 0px;
   }
 }
 
+.navbar-divide {
+  margin-left: 30px;
+  border-left: 1px solid;
+}
+
+.card-subheader {
+  height: 30px;
+  text-align: left;
+  font-size: 13px;
+  padding: 6px 15px 3px 15px;
+  > .card-title.panel-title {
+    font-size: 13px;
+  }
+}
 
 /*-- closed and labeled views --*/
 
@@ -265,29 +284,8 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 
 /* related view (used by many menu items, such as "referred to by")  */
 
-.related-view {
-  > .card-frame, & {
-    > .card-body  {
-      background: #bbb;
-      padding: 35px 5px 5px 5px;
-      > .ALL  {
-        background: #fff;
-        > .card-header {
-          background: #ddd;
-          padding: 5px;
-          color: #000;
-        }
-        > .card-body {
-          padding: 8px 2%;
-        }
-      }
-    }
-    > a.close-related-view {
-      color: inherit;
-      margin-right: 5px;
-      margin-top: 5px;
-    }
-  }
+.ALL.related-view > .card-frame > .card-body {
+  padding: 0;
 }
 
 /* navboxes */

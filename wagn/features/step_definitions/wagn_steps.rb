@@ -68,7 +68,6 @@ When /^(.*) edits? "([^\"]*)" entering "([^\"]*)" into wysiwyg$/ do |username, c
   end
 end
 
-
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
@@ -94,7 +93,7 @@ end
 
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do
-    normal_textarea_card_type = ["JavaScript","CoffeeScript","HTML","CSS","SCS","Search"]
+    normal_textarea_card_type = ["JavaScript","CoffeeScript","HTML","CSS","SCSS","Search"]
     if not normal_textarea_card_type.include? cardtype or not page.evaluate_script "typeof ace != 'undefined'"
       fill_in("card[content]", :with=>content)
     else
@@ -163,8 +162,6 @@ Then /debug/ do
   end
   nil
 end
-
-
 
 def create_card(username,cardtype,cardname,content="")
   signed_in_as(username) do

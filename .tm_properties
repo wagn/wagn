@@ -1,4 +1,0 @@
-excludeInFolderSearch = "{$excludeInFolderSearch,coverage,files,log,public,tmp}"
-excludeInFileChooser = "{$excludeInFileChooser,coverage,files,log,public,tmp}"
-TM_RSPEC_MODE = "core"
-TM_WAGN_CORE_TESTDECK = "/Users/phi/dev/wagn/sites/testdeck"

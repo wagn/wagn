@@ -6,19 +6,48 @@ def item_names(args={})  # needed for flexmail attachments.  hacky.
   [self.cardname]
 end
 
+def attachment
+  file
+end
+
 def set_mod_source mod
-  file.mod = mod
+  attachment.mod = mod
 end
 
 def use_mod_file! mod
   set_mod_source mod
-  update_attributes! :content=>file.identifier
+  update_attributes! :content=>attachment.identifier
+end
+
+def original_filename
+  attachment.original_filename
+end
+
+def symlink_to(prior_action_id) # create filesystem links to files from prior action
+  if prior_action_id != last_action_id
+    save_action_id = selected_action_id
+    links = {}
+
+    self.selected_action_id = prior_action_id
+    attachment.versions.each do |name, version|
+      links[name] = ::File.basename(version.path)
+    end
+    original = ::File.basename(attachment.path)
+
+    self.selected_action_id = last_action_id
+    attachment.versions.each do |name, version|
+      ::File.symlink links[name], version.path
+    end
+    ::File.symlink original, attachment.path
+
+    self.selected_action_id = save_action_id
+  end
 end
 
 
 format do
   view :source do |args|
-    card.file.url
+    card.attachment.url
   end
 
   view :core do |args|
@@ -35,31 +64,6 @@ format do
   end
 end
 
-def store_dir
-  if (mod = mod_file?)
-    # generalize this to work with any mod (needs design)
-    codecard = cardname.junction? ? left : self
-    "#{ Cardio.gem_root}/mod/#{mod}/file/#{codecard.codename}"
-  elsif card.id
-    "#{ Card.paths['files'].existent.first }/#{id}"
-  else
-    tmp_store_dir
-  end
-end
-
-def tmp_store_dir
-  "#{ Card.paths['files'].existent.first }/#{key}"
-end
-
-def mod_file?
-  if content.present? && content =~ /^:[^\/]+\/([^.]+)/
-    $1
-  end
-end
-
-def original_filename
-  file.original_filename
-end
 
 event :save_original_filename, :before=>:create_card_changes do
   if @current_action

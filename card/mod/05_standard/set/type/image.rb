@@ -3,17 +3,8 @@ Card.skip_callback :commit, :after, :remove_previously_stored_image
 
 include File
 
-def set_mod_source mod
-  image.mod = mod
-end
-
-def original_filename
-  image.original_filename
-end
-
-def use_mod_file! mod
-  set_mod_source mod
-  update_attributes! :content=>image.identifier
+def attachment
+  image
 end
 
 format do

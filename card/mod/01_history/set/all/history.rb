@@ -86,11 +86,14 @@ event :rollback_actions, :before=>:approve, :on=>:update, :when=>proc{ |c| c.his
   Env.params['action_ids'] = nil
   update_attributes! revision
   rollback_actions.each do |action|
-    action.card.attachment_symlink_to action.id
+    action.card.try :symlink_to, action.id
   end
   clear_drafts
   abort :success
 end
+
+
+
 
 
 

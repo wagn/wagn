@@ -55,9 +55,6 @@ class Card < ActiveRecord::Base
   TRACKED_FIELDS = %w(name type_id db_content trash)
 
   ActiveSupport.run_load_hooks(:card, self)
-
-
-
 end
 
 

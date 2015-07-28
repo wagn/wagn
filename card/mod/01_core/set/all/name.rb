@@ -20,7 +20,6 @@ def name= newname
     next unless Card===subcard
     subcard.name = subkey.to_name.to_absolute cardname
   end
-
   super cardname.s
 end
 

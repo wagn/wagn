@@ -52,12 +52,6 @@ class Card < ActiveRecord::Base
   around_save :store
   after_save :extend
 
-  mount_uploader :attach, FileUploader, :mount_on=>:db_content
-  mount_uploader :image, ImageUploader, :mount_on=>:db_content
-#  skip_callback :save, :before, :write_attach_identifier
-  skip_callback :commit, :after, :remove_previously_stored_avatar
-
-
   TRACKED_FIELDS = %w(name type_id db_content trash)
 
   ActiveSupport.run_load_hooks(:card, self)

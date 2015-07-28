@@ -1,5 +1,20 @@
+Card.mount_uploader :image, ImageUploader, :mount_on=>:db_content
+Card.skip_callback :commit, :after, :remove_previously_stored_image
 
 include File
+
+def set_mod_source mod
+  image.mod = mod
+end
+
+def original_filename
+  image.original_filename
+end
+
+def use_mod_file! mod
+  set_mod_source mod
+  update_attributes! :content=>image.identifier
+end
 
 format do
 
@@ -12,12 +27,16 @@ format do
   view :source do |args|
     style = case
       when @mode==:closed ;  :icon
-      when args[:size]    ;  args[:size]
+      when args[:size]    ;  args[:size].to_sym
       when main?          ;  :large
       else                ;  :medium
       end
     style = :original if style.to_sym == :full
-    card.attach.url style
+    if style == :original
+      card.image.url
+    else
+      card.image.versions[style].url
+    end
   end
 
 end
@@ -26,7 +45,7 @@ format :html do
   include File::HtmlFormat
 
   view :editor do |args|
-    file_chooser :image
+    file_chooser args, :image
   end
 
 

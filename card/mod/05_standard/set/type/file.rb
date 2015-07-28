@@ -1,12 +1,24 @@
+Card.mount_uploader :file, FileUploader, :mount_on=>:db_content
+Card.skip_callback :commit, :after, :remove_previously_stored_file
+#  skip_callback :save, :before, :write_attach_identifier
 
 def item_names(args={})  # needed for flexmail attachments.  hacky.
   [self.cardname]
 end
 
+def set_mod_source mod
+  file.mod = mod
+end
+
+def use_mod_file! mod
+  set_mod_source mod
+  update_attributes! :content=>file.identifier
+end
+
 
 format do
   view :source do |args|
-    card.attach.url
+    card.file.url
   end
 
   view :core do |args|
@@ -23,7 +35,6 @@ format do
   end
 end
 
-
 def store_dir
   if (mod = mod_file?)
     # generalize this to work with any mod (needs design)
@@ -37,17 +48,32 @@ def store_dir
 end
 
 def tmp_store_dir
-  "#{ Card.paths['files'].existent.first }/#{card.key}"
+  "#{ Card.paths['files'].existent.first }/#{key}"
 end
 
 def mod_file?
-  if content.present? && !content =~ /^(\d+)\.([^.]+)/
-    return $1
+  if content.present? && content =~ /^:[^\/]+\/([^.]+)/
+    $1
   end
 end
 
-event :move_file_to_fi, :after=>:store, :on=>:create do
-  #FileUtils.mv tmp_store_dir store_dir
+def original_filename
+  file.original_filename
+end
+
+event :save_original_filename, :before=>:create_card_changes do
+  if @current_action
+    @current_action.update_attributes! :comment=>original_filename
+  end
+end
+
+event :move_file_to_store_dir, :after=>:store, :on=>:create do
+  if ::File.exist? tmp_store_dir
+    FileUtils.mv tmp_store_dir, store_dir
+  end
+  if !(content =~ /^[:~]/)
+    update_attributes! :content=>file.identifier
+  end
 end
 
 format :file do
@@ -90,10 +116,10 @@ format :html do
 
   view :editor do |args|
     #Rails.logger.debug "editor for file #{card.inspect}"
-    file_chooser
+    file_chooser args
   end
 
-  def file_chooser db_column=:attach
+  def file_chooser args, db_column=:file
     out = '<div class="choose-file">'
     if !card.new_card?
       out << %{<div class="attachment-preview" :id="#{card.attach_file_name}-preview"> #{_render_core(args)} </div> }

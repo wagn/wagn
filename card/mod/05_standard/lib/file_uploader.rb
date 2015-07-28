@@ -1,13 +1,18 @@
+module CarrierWave::Uploader::Versions
+  private
+  def full_filename(for_file)
+    [version_name, super(for_file)].compact.join('-')  # use "-" instead of "_" for backwards compatibility
+  end
+end
 
 class FileUploader < CarrierWave::Uploader::Base
-  extend Card::Format::Location
+  attr_accessor :mod
+  include Card::Format::Location
 
   storage :file
 
   def store_dir
-    if (mod = mod_file?)
-      # generalize this to work with any mod (needs design)
-      codecard = model.cardname.junction? ? model.left : model
+    if (mod = mod_file?) # generalize this to work with any mod (needs design)
       "#{ Cardio.gem_root}/mod/#{mod}/file/#{codecard.codename}"
     elsif model.id
       "#{ Card.paths['files'].existent.first }/#{model.id}"
@@ -16,73 +21,79 @@ class FileUploader < CarrierWave::Uploader::Base
     end
   end
 
+  def store_path(for_file=filename)
+    if for_file.include? '/' # store_path was called with identifier. Use filename instead
+      super(filename)
+    else
+      super(for_file)
+    end
+  end
+
+  def filename
+    @name ||=
+      if mod_file?
+        "#{model.type_code}#{extension}"
+      else
+        "#{action_id}#{extension}"
+      end
+  end
+
+  def original_filename
+    @original_filename || model.selected_action.comment
+  end
+
+  def extension
+    if file && file.extension.present?
+      ".#{file.extension}"
+    elsif original_filename
+      File.extname(original_filename)
+    else model.content
+      File.extname(model.content)
+    end
+  end
+
+  # the identifier gets stored in the card's db_content field
+  def identifier
+    if (mod = mod_file?)
+      ":#{codecard.codename}/#{mod}#{extension}"
+    elsif model.id
+      "~#{model.id}/#{filename}"
+    else
+      "#{model.key}/#{filename}" # FIXME what if the card has not a name yet?
+    end
+  end
+
+  def url(options = {})
+    card_identifier =
+      if mod_file?
+        ":#{codecard.codename}"
+      elsif model.id
+        "~#{model.id}"
+      else
+        "#{model.key}"
+      end
+    "%s/%s/%s" % [card_path(Card.config.files_web_path), card_identifier, full_filename(filename)]
+  end
+
+
   def tmp_store_dir
     "#{ Card.paths['files'].existent.first }/#{model.key}"
   end
 
   def mod_file?
-    if model.content.present? && !model.content =~ /^(\d+)\.([^.]+)/
-      return $1
-    end
+    @mod ||=
+      if model.content.present? && model.content =~ /^:[^\/]+\/([^.]+)/
+        $1
+      end
   end
-
-  def filename
-    if super
-      @name ||=
-        if model.mod_file?
-          "#{model.type_code}#{File.extname(super)}"
-        else
-          "#{action_id}#{File.extname(super)}"
-        end
-    end
-  end
-
-  def identifier
-    if @filename =~ /^(\d+)(?:-(#{versions.keys.join '|'}))?\.([^.]+)/
-      "~#{model.id}/#{$1}.#{$3}"
-    elsif  model.codename
-      ":#{codename}/"
-    end
-  end
-
-  # def version_prefix
-  #   model.type_id==Card::FileID || @style.blank? ? '' : "#{@style}-"
-  # end
 
   def action_id
-    model.selected_content_action_id
+    # we can't use selected_content_action_id here because when we create a new file content
+    # the content field hasn't changed yet when we generate the filename
+    model.selected_action_id || (model.current_action && model.current_action.id) || model.last_content_action_id
   end
 
-  # def url arg={}
-  #   'myurl'
-  # end
-  #
-  # def system_path at, style
-  #   card = model
-  #   if mod = card.attach_mod
-  #     # generalize this to work with any mod (needs design)
-  #     codecard = card.cardname.junction? ? card.left : card
-  #     "#{ Cardio.gem_root}/mod/#{mod}/file/#{codecard.codename}/#{size at, style}#{card.type_code}"
-  #   else
-  #     "#{ Card.paths['files'].existent.first }/#{card.id}/#{size at, style}#{action_id at, style}"
-  #   end
-  # end
-  #
-  # def web_dir at, style_name
-  #   card_path Card.config.files_web_path
-  # end
-  #
-  # def basename at, style_name
-  #   at.instance.name.to_name.url_key
-  # end
-  #
-  # def size(at, style_name)
-  #   at.instance.type_id==Card::FileID || style_name.blank? ? '' : "#{style_name}-"
-  # end
-  #
-  # def action_id(at, style_name)
-  #   at.instance.selected_content_action_id
-  # end
-
-
+  def codecard
+    model.cardname.junction? ? model.left : model
+  end
 end

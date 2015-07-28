@@ -88,7 +88,7 @@ class Card
           file.rewind
           Card::Auth.as_bot do
             p = machine_output_card
-            p.attach = file
+            p.file = file
             p.save!
           end
           file.close

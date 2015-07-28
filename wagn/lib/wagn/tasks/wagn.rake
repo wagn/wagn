@@ -319,7 +319,7 @@ namespace :wagn do
       Card::Auth.as_bot do
         Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
 
-          if card.attach_mod
+          if card.mod_file?
 #            puts "skipping #{card.name}: already in code"
             next
           else
@@ -347,13 +347,9 @@ namespace :wagn do
             FileUtils.cp "#{source_dir}/#{filename}", "#{target_dir}/#{target_filename}"
           end
 
-
-          unless card.db_content.split(/\n/).last == mod_name
-            new_content = card.db_content + "\n#{mod_name}"
-            card.update_column :db_content, new_content
-            card.last_action.change_for(2).first.update_column :value, new_content
-            #FIXME - should technically update the change as well...
-          end
+          card.set_mod_source = mod_name
+          card.update_column :db_content, card.file.identifier
+          card.last_action.change_for(2).first.update_column :value, new_content
         end
       end
     end

@@ -2,10 +2,10 @@ require 'mini_magick'
 class ImageUploader < FileUploader
   include CarrierWave::MiniMagick
 
-  version :icon, :from_version=>:small do
+  version :icon do #, :from_version=>:small do
     process :resize_to_fill => [16,16]
   end
-  version :small, :from_version=>:medium do
+  version :small do #, :from_version=>:medium do
     process :resize_to_fill => [75,75]
   end
   version :medium do

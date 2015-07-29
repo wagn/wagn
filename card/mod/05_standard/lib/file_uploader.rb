@@ -12,11 +12,17 @@ class FileUploader < CarrierWave::Uploader::Base
   storage :file
 
   def store_dir
-    model.store_dir
+    if (mod = mod_file?) # generalize this to work with any mod (needs design)
+      "#{ Cardio.gem_root}/mod/#{mod}/file/#{codecard.codename}"
+    elsif model.id
+      "#{ Card.paths['files'].existent.first }/#{model.id}"
+    else
+      tmp_store_dir
+    end
   end
 
   def store_path(for_file=filename)
-    if for_file.include? '/' # store_path was called with identifier. Use filename instead
+    if for_file =~ /^[:~]/ #.include? '/' # store_path was called with identifier. Use filename instead
       super(filename)
     else
       super(for_file)
@@ -70,8 +76,15 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
 
+  def tmp_store_dir
+    "#{ Card.paths['files'].existent.first }/#{model.key}"
+  end
+
   def mod_file?
-    @mod ||= model.mod_file?
+    @mod ||=
+      if model.content.present? && model.content =~ /^:[^\/]+\/([^.]+)/
+        $1
+      end
   end
 
   def action_id

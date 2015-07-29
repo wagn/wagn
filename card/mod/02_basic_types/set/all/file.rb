@@ -3,7 +3,7 @@ def store_dir
     # generalize this to work with any mod (needs design)
     codecard = cardname.junction? ? left : self
     "#{ Cardio.gem_root}/mod/#{mod}/file/#{codecard.codename}"
-  elsif card.id
+  elsif id
     "#{ Card.paths['files'].existent.first }/#{id}"
   else
     tmp_store_dir

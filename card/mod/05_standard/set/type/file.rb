@@ -71,6 +71,23 @@ def symlink_to(prior_action_id) # create filesystem links to files from prior ac
   end
 end
 
+def attachment_format(ext)
+  if ext.present? && attachment && original_ext=attachment.extension
+    if['file', original_ext].member? ext
+      original_ext
+    elsif exts = MIME::Types[attachment.content_type]
+      if exts.find {|mt| mt.extensions.member? ext }
+        ext
+      else
+        exts[0].extensions[0]
+      end
+    end
+  end
+rescue => e
+  Rails.logger.info "attachment_format issue: #{e.message}"
+  nil
+end
+
 
 format do
   view :source do |args|

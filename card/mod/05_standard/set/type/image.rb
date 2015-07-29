@@ -1,10 +1,15 @@
 Card.mount_uploader :image, ImageUploader, :mount_on=>:db_content
 Card.skip_callback :commit, :after, :remove_previously_stored_image
+Card.skip_callback :save, :before, :write_image_identifier
 
 include File
 
 def attachment
   image
+end
+
+def image_identifier
+  image.filename
 end
 
 format do

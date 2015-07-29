@@ -1,3 +1,4 @@
+# FIXME: these methods should move to type/file.rb but some machine stuff is failing if it's not on a "all" set
 def store_dir
   if (mod = mod_file?)
     # generalize this to work with any mod (needs design)

@@ -3,7 +3,7 @@ class ImageUploader < FileUploader
   include CarrierWave::MiniMagick
 
   def path(version=nil)
-    (from_version && version != :original) ? versions[version].path : super()
+    (version && version != :original) ? versions[version].path : super()
   end
 
   version :icon do #, :from_version=>:small do

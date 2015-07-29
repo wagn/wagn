@@ -1,14 +1,40 @@
 Card.mount_uploader :file, FileUploader, :mount_on=>:db_content
 Card.skip_callback :commit, :after, :remove_previously_stored_file
-#  skip_callback :save, :before, :write_attach_identifier
+Card.skip_callback :save, :before, :write_file_identifier
 
-def item_names(args={})  # needed for flexmail attachments.  hacky.
-  [self.cardname]
+
+event :write_identifier, :before=>:store do
+  content = attachment.db_content
+end
+
+# def file_identifier
+#   file.filename
+# end
+
+event :save_original_filename, :before=>:create_card_changes do
+  if @current_action
+    @current_action.update_attributes! :comment=>original_filename
+  end
+end
+
+event :move_file_to_store_dir, :after=>:store, :on=>:create do
+  if ::File.exist? tmp_store_dir
+    FileUtils.mv tmp_store_dir, store_dir
+  end
+  if !(content =~ /^[:~]/)
+    update_column(:db_content,attachment.db_content)
+    expire
+  end
 end
 
 def attachment
   file
 end
+
+def item_names(args={})  # needed for flexmail attachments.  hacky.
+  [self.cardname]
+end
+
 
 def set_mod_source mod
   attachment.mod = mod
@@ -22,6 +48,7 @@ end
 def original_filename
   attachment.original_filename
 end
+
 
 def symlink_to(prior_action_id) # create filesystem links to files from prior action
   if prior_action_id != last_action_id
@@ -65,21 +92,7 @@ format do
 end
 
 
-event :save_original_filename, :before=>:create_card_changes do
-  if @current_action
-    @current_action.update_attributes! :comment=>original_filename
-  end
-end
 
-event :move_file_to_store_dir, :after=>:store, :on=>:create do
-  if ::File.exist? tmp_store_dir
-    FileUtils.mv tmp_store_dir, store_dir
-  end
-  if !(content =~ /^[:~]/)
-    update_column(:db_content,attachment.identifier)
-    expire
-  end
-end
 
 format :file do
 

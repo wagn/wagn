@@ -1,5 +1,7 @@
 module CarrierWave::Uploader::Versions
   private
+
+  # put version at the end of the filename
   def full_filename(for_file)
     name = super(for_file)
     parts = name.split '.'
@@ -12,11 +14,7 @@ class FileUploader < CarrierWave::Uploader::Base
   attr_accessor :mod
   include Card::Format::Location
 
-  storage CarrierWave::Storage::CardFile
-
-  def path(version=nil)
-    version ? versions[version].path : super()
-  end
+  storage :file
 
   def filename
     @name ||=
@@ -25,10 +23,6 @@ class FileUploader < CarrierWave::Uploader::Base
       else
         "#{action_id}#{extension}"
       end
-  end
-
-  def original_filename
-    @original_filename || model.selected_action.comment
   end
 
   def extension
@@ -42,17 +36,21 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   # the identifier gets stored in the card's db_content field
-  def identifier
+  def db_content
     basename =
       if (mod = mod_file?)
         "#{mod}#{extension}"
       else
         filename
       end
-    "%s/%s" % [card_identifier, basename]
+    "%s/%s" % [file_dir, basename]
   end
 
-  def card_identifier
+  def url(options = {})
+    "%s/%s/%s" % [card_path(Card.config.files_web_path), file_dir, full_filename(filename)]
+  end
+
+  def file_dir
     if (mod = mod_file?)
       ":#{codecard.codename}"
     elsif model.id
@@ -62,12 +60,23 @@ class FileUploader < CarrierWave::Uploader::Base
     end
   end
 
-  def url(options = {})
-    "%s/%s/%s" % [card_path(Card.config.files_web_path), card_identifier, full_filename(filename)]
+
+  # Carrierwave usually store the filename as identifier in the database
+  # and retrieve_from_store! calls store_path with the identifier from the db
+  # In our case the first part of our identifier is not part of the path
+  # but we construct the filename from db data. So we don't need the identifier.
+  # We can just call store_path always with the filename
+  def store_path(for_file=filename) #
+    super(filename)
   end
 
-  def tmp_store_dir
-    model.tmp_store_dir
+  # paperclip compatibility used in type/file.rb#core (base format)
+  def path(version=nil)
+    version ? versions[version].path : super()
+  end
+
+  def original_filename
+    @original_filename || model.selected_action.comment
   end
 
   def store_dir

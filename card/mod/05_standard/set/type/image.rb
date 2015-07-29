@@ -8,6 +8,8 @@ def attachment
   image
 end
 
+
+
 format do
 
   include File::Format
@@ -17,14 +19,18 @@ format do
   end
 
   view :source do |args|
-    version = case
+    style = case
       when @mode==:closed ;  :icon
       when args[:size]    ;  args[:size].to_sym
       when main?          ;  :large
       else                ;  :medium
       end
-    version = :original if version.to_sym == :full
-    card.image.url(version)
+    style = :original if style.to_sym == :full
+    if style == :original
+      card.image.url
+    else
+      card.image.versions[style].url
+    end
   end
 
 end

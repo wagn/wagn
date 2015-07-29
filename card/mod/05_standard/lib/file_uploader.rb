@@ -78,9 +78,6 @@ class FileUploader < CarrierWave::Uploader::Base
   def path(version=nil)
     version ? versions[version].path : super()
   end
-  def url(version=nil)
-    version ? versions[version].url : super()
-  end
 
   def original_filename
     @original_filename || model.selected_action.comment

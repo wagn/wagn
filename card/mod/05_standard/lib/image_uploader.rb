@@ -5,9 +5,6 @@ class ImageUploader < FileUploader
   def path(version=nil)
     (version && version != :original) ? versions[version].path : super()
   end
-  def url(version=nil)
-    (version && version != :original) ? versions[version].url : super()
-  end
 
   version :icon do #, :from_version=>:small do
     process :resize_to_fill => [16,16]

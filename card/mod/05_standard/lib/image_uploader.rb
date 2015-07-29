@@ -21,7 +21,12 @@ class ImageUploader < FileUploader
 
   def full_filename(for_file)
     name = super(for_file)
-    version_name ? name : "original-#{name}"
+    if version_name
+      name
+    else
+      parts = name.split '.'
+      "#{parts.shift}-original.#{parts.join('.')}"
+    end
   end
 
 

@@ -1,7 +1,10 @@
 module CarrierWave::Uploader::Versions
   private
   def full_filename(for_file)
-    [super(for_file), version_name].compact.join('-')  # use "-" instead of "_" for backwards compatibility
+    name = super(for_file)
+    parts = name.split '.'
+    basename = [parts.shift, version_name].compact.join('-')
+    "#{basename}.#{parts.join('.')}"
   end
 end
 
@@ -9,18 +12,10 @@ class FileUploader < CarrierWave::Uploader::Base
   attr_accessor :mod
   include Card::Format::Location
 
-  storage :file
+  storage CarrierWave::Storage::CardFile
 
   def path(version=nil)
     version ? versions[version].path : super()
-  end
-
-  def store_path(for_file=filename)
-    if for_file.include? '/' # store_path was called with identifier. Use filename instead
-      super(filename)
-    else
-      super(for_file)
-    end
   end
 
   def filename
@@ -48,24 +43,26 @@ class FileUploader < CarrierWave::Uploader::Base
 
   # the identifier gets stored in the card's db_content field
   def identifier
+    basename =
+      if (mod = mod_file?)
+        "#{mod}#{extension}"
+      else
+        filename
+      end
+    "%s/%s" % [card_identifier, basename]
+  end
+
+  def card_identifier
     if (mod = mod_file?)
-      ":#{codecard.codename}/#{mod}#{extension}"
+      ":#{codecard.codename}"
     elsif model.id
-      "~#{model.id}/#{filename}"
+      "~#{model.id}"
     else
-      "#{model.key}/#{filename}" # FIXME what if the card has not a name yet?
+      "#{model.key}" # FIXME what if the card has not a name yet?
     end
   end
 
   def url(options = {})
-    card_identifier =
-      if mod_file?
-        ":#{codecard.codename}"
-      elsif model.id
-        "~#{model.id}"
-      else
-        "#{model.key}"
-      end
     "%s/%s/%s" % [card_path(Card.config.files_web_path), card_identifier, full_filename(filename)]
   end
 

@@ -12,7 +12,7 @@ describe Card::Set::Type::Image do
     image_card = Card.create! :name => "TestImage", :type=>"Image", :content => '~12345/TestImage.jpg'
     including_card = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
     rendered = including_card.format._render :core
-    assert_view_select rendered, 'img[src=?]', "/files/~#{image_card.id}/small-#{image_card.last_content_action_id}.jpg"
+    debug_assert_view_select rendered, 'img[src=?]', "/files/~#{image_card.id}/#{image_card.last_content_action_id}-small.jpg"
   end
 
   context "new image card" do
@@ -49,13 +49,13 @@ describe Card::Set::Type::Image do
     end
 
     it "has correct url" do
-      expect(subject.image.url).to eq "/files/~#{subject.id}/original-#{subject.last_action_id}.jpg"
+      expect(subject.image.url).to eq "/files/~#{subject.id}/#{subject.last_action_id}-original.jpg"
     end
 
 
     describe 'view: source' do
       it 'renders url' do
-        expect(subject.format.render(:source)).to eq("/files/~#{subject.id}/medium-#{subject.last_action_id}.jpg")
+        expect(subject.format.render(:source)).to eq("/files/~#{subject.id}/#{subject.last_action_id}-medium.jpg")
       end
     end
 
@@ -72,7 +72,7 @@ describe Card::Set::Type::Image do
       end
 
       it "updates url" do
-        expect(subject.image.url).to eq "/files/~#{subject.id}/original-#{subject.last_action_id}.jpg"
+        expect(subject.image.url).to eq "/files/~#{subject.id}/#{subject.last_action_id}-original.jpg"
       end
     end
   end

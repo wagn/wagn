@@ -21,7 +21,7 @@ describe Card::Set::Type::File do
     end
 
     it "has correct originalf filename" do
-      expect(subject.file.original_filename).to eq "file1.txt"
+      expect(subject.original_filename).to eq "file1.txt"
     end
 
     it "has correct url" do
@@ -49,7 +49,7 @@ describe Card::Set::Type::File do
       end
 
       it "updates original file name" do
-        expect(subject.file.original_filename).to eq "file2.txt"
+        expect(subject.original_filename).to eq "file2.txt"
       end
 
       it "updates url" do

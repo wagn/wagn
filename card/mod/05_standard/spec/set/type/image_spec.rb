@@ -45,7 +45,7 @@ describe Card::Set::Type::Image do
     end
 
     it "has correct original filename" do
-      expect(subject.image.original_filename).to eq "mao2.jpg"
+      expect(subject.original_filename).to eq "mao2.jpg"
     end
 
     it "has correct url" do

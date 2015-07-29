@@ -11,18 +11,8 @@ class FileUploader < CarrierWave::Uploader::Base
 
   storage :file
 
-  def store_dir
-    if (mod = mod_file?) # generalize this to work with any mod (needs design)
-      "#{ Cardio.gem_root}/mod/#{mod}/file/#{codecard.codename}"
-    elsif model.id
-      "#{ Card.paths['files'].existent.first }/#{model.id}"
-    else
-      tmp_store_dir
-    end
-  end
-
   def store_path(for_file=filename)
-    if for_file =~ /^[:~]/ #.include? '/' # store_path was called with identifier. Use filename instead
+    if for_file.include? '/' # store_path was called with identifier. Use filename instead
       super(filename)
     else
       super(for_file)
@@ -75,22 +65,20 @@ class FileUploader < CarrierWave::Uploader::Base
     "%s/%s/%s" % [card_path(Card.config.files_web_path), card_identifier, full_filename(filename)]
   end
 
-
   def tmp_store_dir
-    "#{ Card.paths['files'].existent.first }/#{model.key}"
+    model.tmp_store_dir
+  end
+
+  def store_dir
+    model.store_dir
   end
 
   def mod_file?
-    @mod ||=
-      if model.content.present? && model.content =~ /^:[^\/]+\/([^.]+)/
-        $1
-      end
+    @mod ||= model.mod_file?
   end
 
   def action_id
-    # we can't use selected_content_action_id here because when we create a new file content
-    # the content field hasn't changed yet when we generate the filename
-    model.selected_action_id || (model.current_action && model.current_action.id) || model.last_content_action_id
+    model.selected_content_action_id
   end
 
   def codecard

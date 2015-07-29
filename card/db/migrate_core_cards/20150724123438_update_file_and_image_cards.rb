@@ -6,7 +6,7 @@ class UpdateFileAndImageCards < Card::CoreMigration
       card.actions.each do |action|
         if (content_change = action.change_for(:db_content).first)
           original_filename = content_change.value.split("\n").first
-#          action.update_attributes! :comment=>original_filename
+          action.update_attributes! :comment=>original_filename
         end
       end
       if card.content.present?

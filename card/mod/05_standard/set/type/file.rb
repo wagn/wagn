@@ -24,24 +24,24 @@ def original_filename
 end
 
 def symlink_to(prior_action_id) # create filesystem links to files from prior action
-  # if prior_action_id != last_action_id
-  #   save_action_id = selected_action_id
-  #   links = {}
-  #
-  #   self.selected_action_id = prior_action_id
-  #   attachment.versions.each do |name, version|
-  #     links[name] = ::File.basename(version.path)
-  #   end
-  #   original = ::File.basename(attachment.path)
-  #
-  #   self.selected_action_id = last_action_id
-  #   attachment.versions.each do |name, version|
-  #     ::File.symlink links[name], version.path
-  #   end
-  #   ::File.symlink original, attachment.path
-  #
-  #   self.selected_action_id = save_action_id
-  # end
+  if prior_action_id != last_action_id
+    save_action_id = selected_action_id
+    links = {}
+
+    self.selected_action_id = prior_action_id
+    attachment.versions.each do |name, version|
+      links[name] = ::File.basename(version.path)
+    end
+    original = ::File.basename(attachment.path)
+
+    self.selected_action_id = last_action_id
+    attachment.versions.each do |name, version|
+      ::File.symlink links[name], version.path
+    end
+    ::File.symlink original, attachment.path
+
+    self.selected_action_id = save_action_id
+  end
 end
 
 
@@ -75,9 +75,10 @@ event :move_file_to_store_dir, :after=>:store, :on=>:create do
   if ::File.exist? tmp_store_dir
     FileUtils.mv tmp_store_dir, store_dir
   end
-  #if !(content =~ /^[:~]/)
-    update_attributes! :content=>file.identifier
-    #end
+  if !(content =~ /^[:~]/)
+    update_column(:db_content,attachment.identifier)
+    expire
+  end
 end
 
 format :file do

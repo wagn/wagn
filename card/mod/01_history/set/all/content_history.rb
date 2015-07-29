@@ -56,7 +56,7 @@ end
 
 def selected_content_action_id
   @selected_action_id ||
-  (@current_action and @current_action.new_content? and @current_action.id) ||
+  (@current_action && (new_card? || @current_action.new_content?) && @current_action.id) ||
   last_content_action_id
 end
 

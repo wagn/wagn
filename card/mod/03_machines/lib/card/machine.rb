@@ -169,12 +169,12 @@ class Card
 
     def machine_output_url
       ensure_machine_output
-      machine_output_card.attach.url #(:default, :timestamp => false)   # to get rid of additional number in url
+      machine_output_card.file.url #(:default, :timestamp => false)   # to get rid of additional number in url
     end
 
     def machine_output_path
       ensure_machine_output
-      machine_output_card.attach.path
+      machine_output_card.file.path
     end
 
     def ensure_machine_output

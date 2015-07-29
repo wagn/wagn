@@ -1,7 +1,7 @@
 module CarrierWave::Uploader::Versions
   private
   def full_filename(for_file)
-    [version_name, super(for_file)].compact.join('-')  # use "-" instead of "_" for backwards compatibility
+    [super(for_file), version_name].compact.join('-')  # use "-" instead of "_" for backwards compatibility
   end
 end
 
@@ -10,6 +10,10 @@ class FileUploader < CarrierWave::Uploader::Base
   include Card::Format::Location
 
   storage :file
+
+  def path(version=nil)
+    version ? versions[version].path : super()
+  end
 
   def store_path(for_file=filename)
     if for_file.include? '/' # store_path was called with identifier. Use filename instead

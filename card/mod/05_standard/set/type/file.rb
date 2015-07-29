@@ -95,7 +95,7 @@ format :file do
   #        return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #card.attach.url(style) )
 
       style = _render_style :style=>params[:size]         # fixme, shouldn't be in type file
-      [ card.attach.path( *[style].compact ),             # nil or empty arg breaks 1.8.7
+      [ card.attachment.path( *[style].compact ),             # nil or empty arg breaks 1.8.7
         {
           :type => card.attach_content_type,
           :filename =>  "#{card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",

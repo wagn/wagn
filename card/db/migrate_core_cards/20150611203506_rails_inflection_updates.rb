@@ -1,10 +1,10 @@
 # -*- encoding : utf-8 -*-
 class RailsInflectionUpdates < Card::CoreMigration
   def word ar
-    return [/(?<=\b|_)#{ar[0]}(?=\b|_)/i, /(?<=\b|_)#{ar[1]}(?=\b|_)/i, ar[2]]
+    return [/(?<=\W|_|^)#{ar[0]}(?=\W|_|$)/i, /(?<=\W|_|^)#{ar[1]}(?=\W|_|$)/i, ar[2]]
   end
   def word_end ar
-    return [/#{ar[0]}(?=\b|_)/i, /#{ar[1]}(?=\b|_)/i, ar[2]]
+    return [/#{ar[0]}(?=\W|_|$)/i, /#{ar[1]}(?=\W|_|$)/i, ar[2]]
   end
 
   def keep_the_s word

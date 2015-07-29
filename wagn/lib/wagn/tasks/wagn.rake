@@ -288,7 +288,9 @@ namespace :wagn do
 
       Rake::Task['wagn:bootstrap:copy_mod_files'].invoke
 
-      YAML::ENGINE.yamler = 'syck'
+      if RUBY_VERSION !~ /^(2|1\.9)/
+        YAML::ENGINE.yamler = 'syck'
+      end
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,
       # which dumps with slashes that syck can't understand
 
@@ -315,15 +317,15 @@ namespace :wagn do
     task :copy_mod_files => :environment do
 
       source_files_dir = "#{Wagn.root}/files"
+
       # add a fourth line to the raw content of each image (or file) to identify it as a mod file
       Card::Auth.as_bot do
         Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
-
           if card.mod_file?
-#            puts "skipping #{card.name}: already in code"
+            puts "skipping #{card.name}: already in code"
             next
           else
-#            puts "working on #{card.name}"
+            puts "working on #{card.name}"
           end
 
           base_card = card.cardname.junction? ? card.left : card
@@ -336,9 +338,6 @@ namespace :wagn do
           FileUtils.remove_dir target_dir, force=true if Dir.exists? target_dir
           FileUtils.mkdir_p target_dir
 
-#          if card.name =~ /icon/
-#            require 'pry'; binding.pry
-#          end
           Dir.entries( source_dir ).each do |filename|
             next if filename =~ /^\./
             next if filename !~ (Regexp.new card.last_content_action_id.to_s)
@@ -347,9 +346,9 @@ namespace :wagn do
             FileUtils.cp "#{source_dir}/#{filename}", "#{target_dir}/#{target_filename}"
           end
 
-          card.set_mod_source = mod_name
-          card.update_column :db_content, card.file.identifier
-          card.last_action.change_for(2).first.update_column :value, new_content
+          card.set_mod_source mod_name
+          card.update_column :db_content, card.attachment.db_content
+          card.last_action.change_for(2).first.update_column :value, card.attachment.db_content
         end
       end
     end

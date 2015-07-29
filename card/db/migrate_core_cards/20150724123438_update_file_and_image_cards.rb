@@ -15,9 +15,9 @@ class UpdateFileAndImageCards < Card::CoreMigration
           extension = $1
           if attach_array.size > 3  # mod file
             codecard = card.cardname.junction? ? card.left : card
-            card.update_attributes :content=>":#{codecard.codename}/#{attach_array[3]}.#{extension}"
+            card.update_column :db_content, ":#{codecard.codename}/#{attach_array[3]}.#{extension}"
           else
-            card.update_attributes :content=>"~#{card.id}/#{card.last_action_id}.#{extension}"
+            card.update_column :db_content, "~#{card.id}/#{card.last_action_id}.#{extension}"
           end
         end
       end

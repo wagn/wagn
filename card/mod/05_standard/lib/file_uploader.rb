@@ -4,9 +4,13 @@ module CarrierWave::Uploader::Versions
   # put version at the end of the filename
   def full_filename(for_file)
     name = super(for_file)
-    parts = name.split '.'
-    basename = [parts.shift, version_name].compact.join('-')
-    "#{basename}.#{parts.join('.')}"
+    if mod_file?
+      [version_name, name].compact.join('-')
+    else
+      parts = name.split '.'
+      basename = [parts.shift, version_name].compact.join('-')
+      "#{basename}.#{parts.join('.')}"
+    end
   end
 end
 
@@ -73,6 +77,9 @@ class FileUploader < CarrierWave::Uploader::Base
   # paperclip compatibility used in type/file.rb#core (base format)
   def path(version=nil)
     version ? versions[version].path : super()
+  end
+  def url(version=nil)
+    version ? versions[version].url : super()
   end
 
   def original_filename

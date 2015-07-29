@@ -7,10 +7,6 @@ event :write_identifier, :before=>:store do
   content = attachment.db_content
 end
 
-# def file_identifier
-#   file.filename
-# end
-
 event :save_original_filename, :before=>:create_card_changes do
   if @current_action
     @current_action.update_attributes! :comment=>original_filename
@@ -42,7 +38,7 @@ end
 
 def use_mod_file! mod
   set_mod_source mod
-  update_attributes! :content=>attachment.identifier
+  update_attributes! :content=>attachment.db_content
 end
 
 def original_filename
@@ -127,7 +123,7 @@ format :file do
       style = _render_style :style=>params[:size]         # fixme, shouldn't be in type file
       [ card.attachment.path( *[style].compact ),             # nil or empty arg breaks 1.8.7
         {
-          :type => card.attach_content_type,
+          :type => card.attachment.content_type,
           :filename =>  "#{card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
           :x_sendfile => true,
           :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )

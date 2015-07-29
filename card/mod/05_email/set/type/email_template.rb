@@ -102,7 +102,7 @@ format do
       if attachment_list
         attachment_list.each_with_index do |cardname, i|
           if c = Card[ cardname ] and c.respond_to?(:attachment)
-            add_file :filename => "attachment-#{i + 1}.#{c.attach_extension}", :content => File.read( c.attachment.path )
+            add_file :filename => "attachment-#{i + 1}.#{c.attachment.extension}", :content => File.read( c.attachment.path )
           end
         end
       end

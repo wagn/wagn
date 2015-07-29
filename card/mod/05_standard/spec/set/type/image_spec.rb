@@ -77,4 +77,13 @@ describe Card::Set::Type::Image do
     end
   end
 
+  describe '*logo mod image' do
+    it 'exists' do
+      expect(Card[:logo].image.size).to be > 0
+    end
+    it 'has correct url' do
+      expect(Card[:logo].image.url).to eq "/files/:logo/original-image.png"
+    end
+  end
+
 end

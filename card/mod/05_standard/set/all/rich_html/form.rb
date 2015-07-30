@@ -182,7 +182,7 @@ format :html do
 # FIELD VIEWS
 
   view :editor do |args|
-    text_area :content, :rows=>3, :class=>'tinymce-textarea card-content'
+    text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id
   end
 
   view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|

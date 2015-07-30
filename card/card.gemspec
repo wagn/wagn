@@ -28,27 +28,27 @@ Gem::Specification.new do |s|
   s.test_files    = s.files.grep(%r{^(test|spec|features)/})
   s.require_paths = ["lib"]
 
-  s.required_ruby_version = '>= 1.8.7'
+  s.required_ruby_version = '>= 1.9.3'
 
   [
 
-    [ 'smartname',    '0.2.3'   ],
+    [ 'smartname',                  '0.2.3'   ],
 
-    [ 'activerecord-session_store'],
-    [ 'uuid',         '~> 2.3'  ],
-    [ 'paperclip',    '~> 4.2'  ],
-    [ 'htmlentities', '~> 4.3'  ],
-    [ 'rmagick',      '~> 2.13' ],
-    [ 'recaptcha',    '~> 0.3'  ],
-    [ 'coderay',      '~> 1.0'  ],
-    [ 'sass',         '~> 3.2'  ],
-    [ 'coffee-script','~> 2.2'  ],
-    [ 'uglifier',     '~> 2.5'  ],
+    [ 'activerecord-session_store', '~> 0.1'  ],
+    [ 'uuid',                       '~> 2.3'  ],
+    [ 'paperclip',                  '~> 4.2'  ],
+    [ 'htmlentities',               '~> 4.3'  ],
+    [ 'rmagick',                    '~> 2.13' ],
+    [ 'recaptcha',                  '~> 0.3'  ],
+    [ 'coderay',                    '~> 1.0'  ],
+    [ 'sass',                       '~> 3.2'  ],
+    [ 'coffee-script',              '~> 2.2'  ],
+    [ 'uglifier',                   '~> 2.5'  ],
 
-    [ 'haml',         '~> 4.0'  ],
-    [ 'kaminari',     '~> 0.16' ],
-    [ 'bootstrap-kaminari-views', '~> 0.0.5'],
-    [ 'diff-lcs',     '~> 1.2'  ],
+    [ 'haml',                       '~> 4.0'  ],
+    [ 'kaminari',                   '~> 0.16' ],
+    [ 'bootstrap-kaminari-views',   '~> 0.0.5'],
+    [ 'diff-lcs',                   '~> 1.2'  ],
 
   ].each do |dep|
     s.add_runtime_dependency *dep

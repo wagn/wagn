@@ -82,7 +82,7 @@ describe Card::Set::Type::Image do
       expect(Card[:logo].image.size).to be > 0
     end
     it 'has correct url' do
-      expect(Card[:logo].image.url).to eq "/files/:logo/original-image.png"
+      expect(Card[:logo].image.url).to eq "/files/:logo/image-original.png"
     end
   end
 

@@ -53,7 +53,7 @@ $.extend wagn,
       return
     editDiv = $("<div>",
       position: "absolute"
-      width: textarea.width()
+      width: "auto"
       height: textarea.height()
     ).insertBefore(textarea)
     textarea.css "visibility", "hidden"

@@ -45,6 +45,8 @@ format :html do
           'engage'
         when 'account', 'roles', 'edited', 'created', 'follow'
           'account'
+        when 'structure'
+          'edit'
         else
           'rules'
         end
@@ -80,9 +82,9 @@ format :html do
     nests  = smart_link 'nests',    {:view => :edit_nest_rules, :slot=>{:rule_view=>:field_related_rules}}
     toolbar_split_button 'rules',   {:view => :edit_rules }, args do
       {
-        :common_rules  => common,
-        :grouped_rules => group,
-        :all_rules     => all,
+        :common_rules    => common,
+        :grouped_rules   => group,
+        :all_rules       => all,
         :separator       => (separator if args[:nested_fields].present?),
         :recent_rules    => (recent if recently_edited_settings?),
         :edit_nest_rules => (nests if args[:nested_fields].present?)
@@ -92,13 +94,13 @@ format :html do
   def edit_split_button args
     toolbar_split_button 'edit', {:view=>:edit}, args do
       {
-        :edit           => _render_edit_content_link(args),
-        :edit_nests     => (_render_edit_nests_link if !card.structure && args[:nested_fields].present?),
-        :edit_structure => (smart_link 'structure', {:view => :edit_structure} if structure_editable?),
-        :edit_name      => _render_edit_name_link,
-        :edit_type      => _render_edit_type_link,
-        :separator      => separator,
-        :history        => (_render_history_link if card.history?)
+        :edit       => _render_edit_content_link(args),
+        :edit_nests => (_render_edit_nests_link if !card.structure && args[:nested_fields].present?),
+        :structure  => (smart_link 'structure', {:view => :edit_structure} if structure_editable?),
+        :edit_name  => _render_edit_name_link,
+        :edit_type  => _render_edit_type_link,
+        :separator  => separator,
+        :history    => (_render_history_link if card.history?)
       }
     end
   end

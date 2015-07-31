@@ -318,7 +318,7 @@ namespace :wagn do
 
       source_files_dir = "#{Wagn.root}/files"
 
-      # add a fourth line to the raw content of each image (or file) to identify it as a mod file
+      # mark mod files as mod files
       Card::Auth.as_bot do
         Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
           if card.mod_file?
@@ -328,27 +328,29 @@ namespace :wagn do
             puts "working on #{card.name}"
           end
 
-          base_card = card.cardname.junction? ? card.left : card
-          raise "need codename for file" unless base_card.codename.present?
+          raise "need codename for file" unless card.codename.present?
 
-          mod_name = base_card.type_id==Card::SkinID ? '06_bootstrap' : '05_standard'
-          source_dir =  "#{source_files_dir}/#{card.id}"
-
-          target_dir = "#{Cardio.gem_root}/mod/#{mod_name}/file/#{base_card.codename}"
-          FileUtils.remove_dir target_dir, force=true if Dir.exists? target_dir
-          FileUtils.mkdir_p target_dir
-
-          Dir.entries( source_dir ).each do |filename|
-            next if filename =~ /^\./
-            next if filename !~ (Regexp.new card.last_content_action_id.to_s)
-
-            target_filename = filename.gsub /\d+/, card.type_code.to_s
-            FileUtils.cp "#{source_dir}/#{filename}", "#{target_dir}/#{target_filename}"
+          files = {:original => card.attachment.path}
+          card.attachment.versions.each_key do |version|
+            files[version] = card.attachment.path(version)
           end
 
+          # make card a mod file card
+          mod_name = (l = card.left) && l.type_id==Card::SkinID ? '06_bootstrap' : '05_standard'
           card.set_mod_source mod_name
           card.update_column :db_content, card.attachment.db_content
           card.last_action.change_for(2).first.update_column :value, card.attachment.db_content
+          card.expire
+          card = Card.fetch card.name
+
+          target_dir = card.store_dir
+          FileUtils.remove_dir target_dir, force=true if Dir.exists? target_dir
+          FileUtils.mkdir_p target_dir
+
+          files.each do |version, path|
+            FileUtils.cp path, card.attachment.path(version)
+          end
+
         end
       end
     end

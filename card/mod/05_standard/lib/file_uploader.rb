@@ -1,16 +1,47 @@
+=begin
+
+DATABASE_CONTENT
+
+if in mod:
+  :codename/modname.ext
+else
+  ~card_id/action_id.ext
+
+
+FILE SYSTEM
+
+if in mod
+  (mod_dir)/files/codename/type_code-variant.ext  (no colon on codename!)
+else
+  (files_dir)/id/action_id-variant.ext            (no tilde on id!)
+
+variant = icon|small|medium|large|original
+
+
+URLS
+
+mark.ext
+mark/revision.ext
+mark/revision-variant.ext
+
+revision = modname or action_id
+
+Examples:
+~22/33-medium.png
+:yeti_skin/05_standard-large.png
+
+=end
+
+
 module CarrierWave::Uploader::Versions
   private
 
   # put version at the end of the filename
   def full_filename(for_file)
     name = super(for_file)
-    if mod_file?
-      [version_name, name].compact.join('-')
-    else
-      parts = name.split '.'
-      basename = [parts.shift, version_name].compact.join('-')
-      "#{basename}.#{parts.join('.')}"
-    end
+    parts = name.split '.'
+    basename = [parts.shift, version_name].compact.join('-')
+    "#{basename}.#{parts.join('.')}"
   end
 end
 
@@ -56,7 +87,7 @@ class FileUploader < CarrierWave::Uploader::Base
 
   def file_dir
     if (mod = mod_file?)
-      ":#{codecard.codename}"
+      ":#{model.codename}"
     elsif model.id
       "~#{model.id}"
     else
@@ -93,9 +124,5 @@ class FileUploader < CarrierWave::Uploader::Base
 
   def action_id
     model.selected_content_action_id
-  end
-
-  def codecard
-    model.cardname.junction? ? model.left : model
   end
 end

@@ -1,9 +1,7 @@
-# FIXME: these methods should move to type/file.rb but some machine stuff is failing if it's not on a "all" set
+# FIXME: these methods should move to type/file.rb but some machine stuff is failing if it's not in a "all" set
 def store_dir
   if (mod = mod_file?)
-    # generalize this to work with any mod (needs design)
-    codecard = cardname.junction? ? left : self
-    "#{ Cardio.gem_root}/mod/#{mod}/file/#{codecard.codename}"
+    "#{ Cardio.gem_root}/mod/#{mod}/file/#{codename}"
   elsif id
     "#{ Card.paths['files'].existent.first }/#{id}"
   else

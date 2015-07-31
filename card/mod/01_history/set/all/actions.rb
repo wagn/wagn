@@ -5,13 +5,14 @@ def select_action_by_params params
 end
 
 def find_action_by_params args
-  case
-  when args[:rev]
+  if args[:rev]
     nth_action args[:rev]
-  when args[:rev_id]
+  elsif args[:rev_id] =~ /^\d+$/
     if action = Action.fetch(args[:rev_id]) and action.card_id == id
       action
     end
+  else
+    last_action
   end
 end
 

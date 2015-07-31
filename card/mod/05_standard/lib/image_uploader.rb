@@ -24,8 +24,6 @@ class ImageUploader < FileUploader
     name = super(for_file)
     if version_name
       name
-    elsif mod_file?
-      "original-#{name}"
     else
       parts = name.split '.'
       "#{parts.shift}-original.#{parts.join('.')}"

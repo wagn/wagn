@@ -121,10 +121,11 @@ format :file do
   #        return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #card.attach.url(style) )
 
       style = _render_style :style=>params[:size]         # fixme, shouldn't be in type file
-      [ card.attachment.path( *[style].compact ),             # nil or empty arg breaks 1.8.7
+      file = (style && style != :original) ? card.attachment.versions[style] : card.attachment
+      [ file.path,
         {
-          :type => card.attachment.content_type,
-          :filename =>  "#{card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
+          :type => file.content_type,
+          :filename =>  file.filename,
           :x_sendfile => true,
           :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
         }

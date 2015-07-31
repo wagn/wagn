@@ -11,7 +11,7 @@ def find_action_by_params args
     if action = Action.fetch(args[:rev_id]) and action.card_id == id
       action
     end
-  else
+  elsif args[:rev_id]  # revision id is probalby a mod (e.g. if you request files/:logo/05_standard.png)
     last_action
   end
 end

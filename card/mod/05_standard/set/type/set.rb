@@ -12,12 +12,14 @@ format :html do
   end
 
   def with_label_and_navbars args
-    output [
+    wrap do
+      [
         _optional_render(:set_label,   args, :show),
         _optional_render(:rule_navbar, args, :hide),
         _optional_render(:set_navbar,  args, :hide),
         yield
       ]
+    end
   end
 
   view :all_rules do |args|

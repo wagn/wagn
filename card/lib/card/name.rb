@@ -53,5 +53,13 @@ class Card
         self.s.match /^\s*\+/
       end
     end
+    
+    def is_setting?
+      Set::Type::Setting.member_names[ key ]
+    end
+    
+    def is_set?
+      SetPattern.card_keys[ tag_name.key ]
+    end
   end
 end

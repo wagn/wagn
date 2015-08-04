@@ -1,3 +1,3 @@
-include Comment
+include Abstract::Permission
 
-format :html do include Comment::HtmlFormat end
+format :html do include Abstract::Permission::HtmlFormat end

@@ -21,7 +21,7 @@ class Card
         load_set_patterns
         load_formats
         load_sets
-        
+
         if Wagn.config.performance_logger
           Card::Log::Performance.load_config Wagn.config.performance_logger
         end
@@ -103,7 +103,8 @@ class Card
 
 
       def load_sets_by_pattern
-        Card.set_patterns.reverse.map(&:pattern_code).each do |set_pattern|
+        patterns = ['abstract'] + Card.set_patterns.reverse.map(&:pattern_code)
+        patterns.each do |set_pattern|
           pattern_tmp_dir = "#{Card.paths['tmp/set'].first}/#{set_pattern}"
           if rewrite_tmp_files?
             Dir.mkdir pattern_tmp_dir

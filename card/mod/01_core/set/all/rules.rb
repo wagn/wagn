@@ -17,23 +17,25 @@ ReadRuleSQL = %{
   where read_rules.right_id = #{Card::ReadID} and read_rules.trash is false and sets.type_id = #{Card::SetID};
 }
 
-
-def is_rule?
-  cardname.tag_name.is_setting? &&
-  (
-  )
-  is_standard_rule? || is_user_rule?
-end
+ def is_rule?
+   is_standard_rule? || is_user_rule?
+ end
 
 def is_standard_rule?
-  cardname.tag_name.is_setting? &&
-  cardname.trunk_name.is_set?
+  (r = right( :skip_modules=>true )) &&
+  r.type_id == Card::SettingID       &&
+  (l = left( :skip_modules=>true ))  &&
+  l.type_id == Card::SetID
 end
 
 def is_user_rule?
-  cardname.parts.length > 2               &&
-  cardname.tag_name.is_setting?           &&
-  cardname.trunk_name.trunk_name.is_set? 
+  cardname.parts.length > 2                                  &&
+  (r = right( :skip_modules=>true ))                         &&
+   r.type_id == Card::SettingID                              &&
+  (set = self[0..-3, :skip_modules=>true])                   &&
+   set.type_id == Card::SetID                                &&
+  (user = self[-2, :skip_modules=>true] )                    &&
+  (user.type_id == Card::UserID  || user.codename == 'all' )
 end
 
 
@@ -49,8 +51,8 @@ end
 
 def rule_card_id setting_code, options={}
   fallback = options.delete( :fallback )
-  
-  if Card::Setting.user_specific? setting_code 
+
+  if Card::Setting.user_specific? setting_code
     user_id = options[:user_id] || (options[:user] and options[:user].id) || Auth.current_id
     if user_id
       fallback = "#{setting_code}+#{AllID}"
@@ -133,11 +135,11 @@ module ClassMethods
 
   def cache_key row
     setting_code = Codename[ row['setting_id'].to_i ] or return false
-    
+
     anchor_id = row['anchor_id']
     set_class_id = anchor_id.nil? ? row['set_id'] : row['set_tag_id']
     set_class_code = Codename[ set_class_id.to_i ] or return false
-    
+
     key_base = [ anchor_id, set_class_code, setting_code].compact.map( &:to_s ) * '+'
   end
 

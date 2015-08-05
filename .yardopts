@@ -1,9 +1,9 @@
-card/lib/**/*.rb                       \
-wagn/lib/**/*.rb                       \
+card/**/lib/**/*.rb                       \
+wagn/**/lib/**/*.rb                       \
 wagn/rails/**/*.rb                     \
 decko-rails/lib/**/*.rb                \
 ../sites/core-dev/tmp/set*/**/*.rb -   \
-*.rdoc                                 \
+**/*.rdoc                              \
 card/GPL                               \
 card/LICENSE                           \
 card/VERSION

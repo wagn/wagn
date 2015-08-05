@@ -10,10 +10,9 @@ This documentation is intended for developers who want to understand:
 a. how ruby Card objects work and
 b. how to extend them.
 
-It assumes that you've already read the introductory text in {file:GETTING STARTED - Developers.rdoc}.
+It assumes that you've already read the introductory text in {file:README_Developers.rdoc}.
 
 =end
-
 class Card < ActiveRecord::Base
 
   # attributes that ActiveJob can handle

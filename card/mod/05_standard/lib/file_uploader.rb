@@ -1,7 +1,6 @@
 =begin
 
 DATABASE_CONTENT
-
 if in mod:
   :codename/modname.ext
 else
@@ -9,7 +8,6 @@ else
 
 
 FILE SYSTEM
-
 if in mod
   (mod_dir)/files/codename/type_code-variant.ext  (no colon on codename!)
 else
@@ -19,7 +17,6 @@ variant = icon|small|medium|large|original
 
 
 URLS
-
 mark.ext
 mark/revision.ext
 mark/revision-variant.ext

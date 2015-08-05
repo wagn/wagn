@@ -4,6 +4,7 @@ module CarrierWave
   module CardMount
     include CarrierWave::Mount
     Card.cattr_accessor :uploaders, :uploader_options
+#    Card.extend CarrierWave::Mount
 
     def uploaders
       Card.uploaders ||= {}
@@ -17,11 +18,11 @@ module CarrierWave
       super
 
       class_eval <<-RUBY, __FILE__, __LINE__+1
-        event :store_#{column}_event, :on=>:save, :after =>:store  do
+        event :store_#{column}_event, :on=>:save, :after =>:write_identifier  do
           store_#{column}!
         end
         event :remove_#{column}_event, :on =>:delete, :after=>:stored do
-          remove_#{column}_event!
+          remove_#{column}!
         end
         event :mark_remove_#{column}_false_event, :on => :update, :after=>:stored do
           mark_remove_#{column}_false

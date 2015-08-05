@@ -318,7 +318,6 @@ HAML
   end
 
   def rollback_link actions
-    #binding.pry
     not_current = actions.select { |action| action.card.last_action_id != action.id }
     if card.ok?(:update) && not_current.present?
       "| " + link_to('Save as current', path(:action=>:update, :view=>:open, :action_ids=>not_current),

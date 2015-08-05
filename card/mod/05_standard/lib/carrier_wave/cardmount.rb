@@ -14,7 +14,8 @@ module CarrierWave
       Card.uploader_options ||= {}
     end
 
-    def mount_uploader(column, uploader=nil, options={:mount_on=>:db_content}, &block)
+    def mount_uploader(column, uploader=nil, options={}, &block)
+      options[:mount_on] ||= :db_content
       super
 
       class_eval <<-RUBY, __FILE__, __LINE__+1

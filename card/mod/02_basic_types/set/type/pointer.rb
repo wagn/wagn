@@ -65,7 +65,7 @@ format :html do
 
     extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
-    %{
+    <<-HTML
       <ul class="pointer-list-editor #{extra_css_class}" data-options-card="#{options_card_name}">
         #{
           items.map do |item|
@@ -74,7 +74,7 @@ format :html do
         }
       </ul>
       #{ add_item_button }
-    }
+    HTML
   end
 
   def add_item_button
@@ -86,8 +86,8 @@ format :html do
   end
 
   view :list_item do |args|
-    %{
-      <li class="pointer-li">
+   <<-HTML
+    <li class="pointer-li">
       <span class="input-group">
         <span class="input-group-addon handle">
           #{ glyphicon 'option-vertical left' }
@@ -101,7 +101,8 @@ format :html do
         </span>
         </span>
       </li>
-    }
+      }
+    HTML
   end
 
 
@@ -111,13 +112,13 @@ format :html do
       label = ((o_card = Card.fetch(option_name)) && o_card.label) || option_name
       id = "pointer-checkbox-#{option_name.to_name.key}"
       description = pointer_option_description option_name
-      %{
+      <<-HTML
         <div class="pointer-checkbox">
           #{ check_box_tag "pointer_checkbox", option_name, checked, :id=>id, :class=>'pointer-checkbox-button' }
           <label for="#{id}">#{label}</label>
           #{ %{<div class="checkbox-option-description">#{ description }</div>} if description }
         </div>
-      }
+      HTML
     end.join "\n"
 
     %{<div class="pointer-checkbox-list">#{options}</div>}
@@ -137,13 +138,13 @@ format :html do
       id = "pointer-radio-#{option_name.to_name.key}"
       label = ((o_card = Card.fetch(option_name)) && o_card.label) || option_name
       description = pointer_option_description option_name
-      %{
+      <<-HTML
         <li class="pointer-radio radio">
           #{ radio_button_tag input_name, option_name, checked, :id=>id, :class=>'pointer-radio-button' }
           <label for="#{id}">#{ label }</label>
           #{ %{<div class="radio-option-description">#{ description }</div>} if description }
         </li>
-      }
+      HTML
     end.join("\n")
 
     %{<ul class="pointer-radio-list">#{options}</ul>}
@@ -211,10 +212,10 @@ format :data do
   end
 end
 
-# while a card's card type and content are updated in the same request, 
+# while a card's card type and content are updated in the same request,
 # the new module will override the old module's events and functions.
 # this event is only on pointer card. Other type cards do not have this event,
-# so it is not overridden and will be run while updating type and content in the same request. 
+# so it is not overridden and will be run while updating type and content in the same request.
 event :standardize_items, :before=>:approve, :on=>:save, :when=>proc{  |c| c.type_id == Card::PointerID  } do
   if db_content_changed?
     self.content = item_names(:context=>:raw).map { |name| "[[#{name}]]" }.join "\n"

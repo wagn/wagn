@@ -2,10 +2,6 @@ def standardize_items
   # noop to override default behavior, which wouldn't let '_left' through and would therefore break
 end
 
-def testoo
-  'bestoo'
-end
-
 format :html do
 
   view :pointer_core do |args| #, :view=>:core, :mod=>Type::Pointer::HtmlFormat

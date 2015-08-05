@@ -65,12 +65,12 @@ class Card
 
       def load_set_patterns
         if rewrite_tmp_files?
-          load_set_patterns_from_source
+          generate_set_pattern_tmp_files
         end
         load_dir "#{Card.paths['tmp/set_pattern'].first}/*.rb"
       end
 
-      def load_set_patterns_from_source
+      def generate_set_pattern_tmp_files
         prepare_tmp_dir 'tmp/set_pattern'
         seq = 100
         mod_dirs.each do |mod|
@@ -95,44 +95,48 @@ class Card
       end
 
       def load_sets
-        prepare_tmp_dir 'tmp/set'
-        load_sets_by_pattern
+        generate_tmp_set_modules
+        load_tmp_set_modules
         Set.process_base_modules
         Set.clean_empty_modules
       end
 
 
-      def load_sets_by_pattern
-        patterns = ['abstract'] + Card.set_patterns.reverse.map(&:pattern_code)
-        patterns.each do |set_pattern|
-          pattern_tmp_dir = "#{Card.paths['tmp/set'].first}/#{set_pattern}"
-          if rewrite_tmp_files?
-            Dir.mkdir pattern_tmp_dir
-            load_implicit_sets_from_source set_pattern
-          end
-          if Dir.exists? pattern_tmp_dir
-            load_dir "#{pattern_tmp_dir}/**/*.rb"
-          end
-        end
-      end
-
-      def load_implicit_sets_from_source set_pattern
-        seq = 1000
-        mod_dirs.each do |mod_dir|
-          dirname = [mod_dir, 'set', set_pattern] * '/'
-          next unless File.exists?( dirname )
-
-          old_pwd = Dir.pwd
-          Dir.chdir dirname
-          Dir.glob( "**/*.rb" ).sort.each do |anchor_path|
-            path_parts = anchor_path.gsub(/\.rb/,'').split(File::SEPARATOR)
-            filename = File.join dirname, anchor_path
-            Set.write_tmp_file set_pattern, path_parts, filename, seq
+      def generate_tmp_set_modules
+        if prepare_tmp_dir 'tmp/set'
+          seq = 1
+          mod_dirs.each do |mod_dir|
+            mod_tmp_dir = make_set_module_tmp_dir mod_dir, seq
+            Dir.glob("#{mod_dir}/set/**/*.rb").each do |abs_filename|
+              rel_filename = abs_filename.gsub "#{mod_dir}/set/", ''
+              tmp_filename = "#{mod_tmp_dir}/#{rel_filename}"
+              Set.write_tmp_file abs_filename, tmp_filename, rel_filename
+            end
             seq = seq + 1
           end
-          Dir.chdir old_pwd
         end
       end
+
+
+      def load_tmp_set_modules
+        patterns = Card.set_patterns.reverse.map(&:pattern_code).unshift 'abstract'
+        Dir.glob( "#{Card.paths['tmp/set'].first}/*" ).sort.each do |tmp_mod|
+          patterns.each do |pattern|
+            pattern_dir = "#{tmp_mod}/#{pattern}"
+            if Dir.exists? pattern_dir
+              load_dir "#{pattern_dir}/**/*.rb"
+            end
+          end
+        end
+      end
+
+      def make_set_module_tmp_dir mod_dir, seq
+        modname = mod_dir.match(/[^\/]+$/)[0]
+        mod_tmp_dir = "#{Card.paths['tmp/set'].first}/mod#{seq}-#{modname}"
+        Dir.mkdir mod_tmp_dir
+        mod_tmp_dir
+      end
+
 
       def prepare_tmp_dir path
         if rewrite_tmp_files?

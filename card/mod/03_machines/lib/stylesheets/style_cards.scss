@@ -137,6 +137,11 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   }
 }
 
+.navbar .btn.btn-toolbar-control {
+  padding: 5px;
+  border: none;
+}
+
 .navbar-divide {
   margin-left: 30px;
   border-left: 1px solid;

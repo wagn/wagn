@@ -169,6 +169,7 @@ $(window).ready ->
   $('body').on 'loaded.bs.modal', null, (event) ->
     unless event.slotSuccessful
       wagn.initializeEditors $(event.target)
+      $(event.target).find(".card-slot").trigger("slotReady")
       event.slotSuccessful = true
 
   $('body').on 'ajax:error', '.slotter', (event, xhr) ->

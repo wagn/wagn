@@ -18,7 +18,8 @@ $.extend wagn,
 
   editorInitFunctionMap: {
     '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
-    'textarea'               : -> wagn.initAce $(this)#$(this).autosize()
+    'textarea'               : -> $(this).autosize()
+    '.ace-editor-textarea'   : -> wagn.initAce $(this)
     '.tinymce-textarea'      : -> wagn.initTinyMCE @[0].id
     '.pointer-list-editor'   : -> @sortable({handle: '.handle', cancel: ''}); wagn.initPointerList @find('input')
     '.file-upload'           : -> @fileupload( add: wagn.chooseFile )#, forceIframeTransport: true )
@@ -53,7 +54,7 @@ $.extend wagn,
       return
     editDiv = $("<div>",
       position: "absolute"
-      width: textarea.width()
+      width: "auto"
       height: textarea.height()
     ).insertBefore(textarea)
     textarea.css "visibility", "hidden"

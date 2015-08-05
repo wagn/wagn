@@ -3,7 +3,7 @@ Wagn.application.class.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
   config.eager_load = true
-  
+
   # Code is not reloaded between requests
   config.cache_classes = true
 
@@ -34,7 +34,7 @@ Wagn.application.class.configure do
   # config.force_ssl = true
 
   # See everything in the log (default is :info)
-  # config.log_level = :debug
+  config.log_level = :info
 
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new

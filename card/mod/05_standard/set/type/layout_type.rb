@@ -6,6 +6,8 @@ format do
 end
 
 format :html do
+  include Html::HtmlFormat
+
   view :core do |args|
     with_inclusion_mode :template do
       process_content ::CodeRay.scan( _render_raw, :html ).div

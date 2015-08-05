@@ -2,8 +2,7 @@
 
 
 Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
-require 'carrierwave'
-require 'carrierwave/orm/activerecord'
+
 
 class Card < ActiveRecord::Base
 
@@ -12,6 +11,7 @@ class Card < ActiveRecord::Base
     self.serializable_attributes = args
     attr_accessor *args
   end
+
 
 
   require_dependency 'card/active_record_ext'
@@ -34,7 +34,7 @@ class Card < ActiveRecord::Base
   has_many :actions, -> { where( :draft=>[nil,false]).order :id }
   has_many :drafts, -> { where( :draft=>true ).order :id }, :class_name=> :Action
 
-  cattr_accessor :set_patterns, :error_codes, :serializable_attributes
+  cattr_accessor :set_patterns, :error_codes, :serializable_attributes, :set_specific_attributes
   @@set_patterns, @@error_codes = [], {}
 
   serializable_attr_accessor :action, :supercard, :current_act, :current_action,
@@ -46,6 +46,7 @@ class Card < ActiveRecord::Base
 
   attr_accessor :follower_stash
 
+
   define_callbacks :approve, :store, :stored, :extend, :subsequent
 
   before_validation :approve
@@ -55,6 +56,7 @@ class Card < ActiveRecord::Base
   TRACKED_FIELDS = %w(name type_id db_content trash)
 
   ActiveSupport.run_load_hooks(:card, self)
+
 end
 
 

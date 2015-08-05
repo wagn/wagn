@@ -417,6 +417,10 @@ EOF
       end
     end
 
+    def set_specific_attributes *args
+      Card.set_specific_attributes ||= []
+      Card.set_specific_attributes += args.map(&:to_s)
+    end
   end
 end
 

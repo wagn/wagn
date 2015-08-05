@@ -3,8 +3,8 @@ require 'carrierwave'
 module CarrierWave
   module CardMount
     include CarrierWave::Mount
-    Card.cattr_accessor :uploaders, :uploader_options
-#    Card.extend CarrierWave::Mount
+    #Card.cattr_accessor :uploaders, :uploader_options
+    Card.extend CarrierWave::Mount
 
     def uploaders
       Card.uploaders ||= {}

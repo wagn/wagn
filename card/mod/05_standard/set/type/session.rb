@@ -4,7 +4,11 @@ def history?
   false
 end
 
-event :store_in_session, :before=>:standardize_items, :on=>:save do
+def followable?
+  false
+end
+
+event :store_in_session, :before=>:approve, :on=>:save do
   if db_content_changed?
     Env.session[key] = db_content
     self.db_content = ''

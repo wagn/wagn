@@ -206,6 +206,17 @@ When /^In (.*) I find link with class "(.*)" and click it$/ do |section, css_cla
   end
 end
 
+When /^In (.*) I find link with icon "(.*)" and click it$/ do |section, icon|
+  within scope_of(section) do
+    find("a > span.glyphicon-#{icon}").click
+  end
+end
+When /^In (.*) I find button with icon "(.*)" and click it$/ do |section, icon|
+  within scope_of(section) do
+    find("button > span.glyphicon-#{icon}").click
+  end
+end
+
 Then /I submit$/ do
     click_button("Submit")
 end

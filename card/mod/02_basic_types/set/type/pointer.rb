@@ -101,7 +101,6 @@ format :html do
         </span>
         </span>
       </li>
-      }
     HTML
   end
 

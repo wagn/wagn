@@ -157,7 +157,7 @@ format :html do
   def history_legend
     intr = card.intrusive_acts.page(params['page']).per(REVISIONS_PER_PAGE)
     render_haml :intr=>intr do
-      %{
+      <<-HAML
 .history-header
   %span.slotter
     = paginate intr, :remote=>true, :theme=>'twitter-bootstrap-3'
@@ -169,7 +169,7 @@ format :html do
     %span.glyphicon.glyphicon-minus-sign.diff-red
     %span
       = Card::Diff.render_deleted_chunk("Deleted")
-      }
+      HAML
     end
   end
 
@@ -190,7 +190,7 @@ format :html do
       render_haml :card=>card, :act=>act, :act_view=>act_view,
                   :current_rev_nr=>current_rev_nr, :rev_nr=>rev_nr,
                   :hide_diff=> hide_diff do
-        %{
+        <<-HAML
 .act{:style=>"clear:both;"}
   .head
     .nr
@@ -217,7 +217,7 @@ format :html do
   .action-container{:style=>("clear: left;" if act_view == :expanded)}
     - act.relevant_actions_for(card).each do |action|
       = send("_render_action_#{ act_view }", :action=>action )
-      }
+HAML
       end
     end
   end
@@ -239,7 +239,7 @@ format :html do
       else
         link_to name_changes(action, hide_diff),
                 path(:view=>:related, :related=>{:view=>"history",:name=>action.card.name}),
-                :class=>'slotter label-label-default',
+                :class=>'slotter label label-default',
                 'data-slot-selector'=>".card-slot.history-view",
                 :remote=>true
       end
@@ -257,14 +257,14 @@ format :html do
                 :name_diff => name_diff,
                 :type_diff => type_diff,
                 :content_diff => content_diff do
-      %{
+      <<-HAML
 .action
   .summary
     %span.ampel
       = glyphicon 'minus-sign', (action.red? ? 'diff-red' : 'diff-invisible')
       = glyphicon 'plus-sign', (action.green? ? 'diff-green' : 'diff-invisible')
     = wrap_diff :name, name_diff
-    = wrap_diff :type, type_diff if type_diff
+    = wrap_diff :type, type_diff
     -if content_diff
       = glyphicon 'arrow-right', 'arrow'
       -if action_view == :summary
@@ -272,14 +272,14 @@ format :html do
   -if content_diff and action_view == :expanded
     .expanded
       = wrap_diff :content, content_diff
-       }
+HAML
     end
   end
 
   def wrap_diff field, content
     if content.present?
       %{
-         <span class="#{field}-diff#{ ' label label-default' if field == :name }">
+         <span class="#{field}-diff">
          #{content}
          </span>
       }
@@ -317,9 +317,11 @@ format :html do
     end
   end
 
-  def rollback_link action_ids
-    if card.ok?(:update)
-      "| " + link_to('Save as current', path(:action=>:update, :view=>:open, :action_ids=>action_ids),
+  def rollback_link actions
+    #binding.pry
+    not_current = actions.select { |action| action.card.last_action_id != action.id }
+    if card.ok?(:update) && not_current.present?
+      "| " + link_to('Save as current', path(:action=>:update, :view=>:open, :action_ids=>not_current),
         :class=>'slotter','data-slot-selector'=>'.card-slot.history-view', :remote=>true, :method=>:post, :rel=>'nofollow')
     end
   end

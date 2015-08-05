@@ -1,25 +1,32 @@
 require 'carrier_wave/cardmount'
-extend CarrierWave::CardMount
 
-event :write_identifier, :before=>:store do
-  content = attachment.db_content
-end
-event :save_original_filename, :before=>:create_card_changes do
-  if @current_action
-    @current_action.update_attributes! :comment=>original_filename
-  end
-end
+def self.included host_class
+  host_class.extend CarrierWave::CardMount
 
-event :move_file_to_store_dir, :after=>:store, :on=>:create do
-  if ::File.exist? tmp_store_dir
-    FileUtils.mv tmp_store_dir, store_dir
-  end
-  if !(content =~ /^[:~]/)
-    update_column(:db_content,attachment.db_content)
-    expire
-  end
-end
+  set_name = host_class.name.underscore.gsub('/','_')
+  host_class.class_eval <<-RUBY, __FILE__, __LINE__+1
+    event :write_identifier_#{set_name}, :before=>:store do
+      content = attachment.db_content
+    end
 
+    event :save_original_filename_#{set_name}, :before=>:create_card_changes do
+      if @current_action
+        @current_action.update_attributes! :comment=>original_filename
+      end
+    end
+
+    event :move_file_to_store_dir_#{set_name}, :after=>:store, :on=>:create do
+      if ::File.exist? tmp_store_dir
+        FileUtils.mv tmp_store_dir, store_dir
+      end
+      if !(content =~ /^[:~]/)
+        update_column(:db_content,attachment.db_content)
+        expire
+      end
+    end
+
+  RUBY
+end
 
 def item_names(args={})  # needed for flexmail attachments.  hacky.
   [self.cardname]

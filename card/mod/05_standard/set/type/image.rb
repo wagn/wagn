@@ -2,9 +2,6 @@ include Abstract::Attachment
 set_specific_attributes :image
 mount_uploader :image, ImageUploader
 
-def attachment
-  image
-end
 
 format do
 

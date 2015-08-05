@@ -8,7 +8,7 @@ describe Card::Set::Type::File do
       end
     end
     subject { Card['file card'] }
-    it "stores correct identifier" do
+    it "stores correct identifier (<card id>/<action id>.<ext>)" do
       expect(subject.content).to eq "~#{subject.id}/#{subject.last_action_id}.txt"
     end
 

@@ -1,10 +1,7 @@
-include Card::Set::Abstract::Attachment
+include Abstract::Attachment
+
 set_specific_attributes :file
 mount_uploader :file, FileUploader
-
-def attachment
-  file
-end
 
 format do
   view :source do |args|

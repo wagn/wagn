@@ -30,6 +30,10 @@ module CarrierWave
           store_previous_model_for_#{column}
         end
 
+        def attachment
+          #{column}
+        end
+
         def read_uploader *args
           read_attribute *args
         end

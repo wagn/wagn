@@ -1,4 +1,5 @@
 require 'mini_magick'
+
 class ImageUploader < FileUploader
   include CarrierWave::MiniMagick
 

@@ -65,12 +65,12 @@ class Card
 
       def load_set_patterns
         if rewrite_tmp_files?
-          load_set_patterns_from_source
+          generate_set_pattern_tmp_files
         end
         load_dir "#{Card.paths['tmp/set_pattern'].first}/*.rb"
       end
 
-      def load_set_patterns_from_source
+      def generate_set_pattern_tmp_files
         prepare_tmp_dir 'tmp/set_pattern'
         seq = 100
         mod_dirs.each do |mod|
@@ -119,8 +119,8 @@ class Card
 
 
       def load_tmp_set_modules
-        patterns = Card.set_patterns.reverse.map(&:pattern_code).insert 1, 'abstract'
-        Dir.glob( "#{Card.paths['tmp/set'].first}/*" ).each do |tmp_mod|
+        patterns = Card.set_patterns.reverse.map(&:pattern_code).unshift 'abstract'
+        Dir.glob( "#{Card.paths['tmp/set'].first}/*" ).sort.each do |tmp_mod|
           patterns.each do |pattern|
             pattern_dir = "#{tmp_mod}/#{pattern}"
             if Dir.exists? pattern_dir

@@ -9,9 +9,9 @@ Start here before you dig into the code.
 
 This page assumes:
 
-* You're a ruby developer or, at least, someone who does not fear ruby code. <b>Not a techie? Try {http://wagn.org Wagn.org}</b>
-* You've experimented with Wagn enough to know the basics (cards, types, rules, etc.) <b>No idea what a card is? Try {http://wagn.org Wagn.org}</b>.
-* You're looking at this page from a docs site (ie, NOT GitHub) so you can use our links to navigate code. <b>Links look funny? Try {http://rubydoc.info/gems/card/README_Developers.rdoc our page at rubydocs.info}.</b>
+* You're a ruby developer or, at least, someone who does not fear ruby code. <b>Not a techie? {Try Wagn.org}[http://wagn.org]</b>
+* You've experimented with Wagn enough to know the basics (cards, types, rules, etc.) <b>No idea what a card is? {Try Wagn.org}[http://wagn.org]</b>.
+* You're looking at this page from a docs site (ie, NOT GitHub) so you can use our links to navigate code. <b>Links look funny? {Try rubydocs.info}[http://rubydoc.info/gems/card/README_Developers.rdoc].</b>
 
 
 ===Is Wagn an application or a development framework?

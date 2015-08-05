@@ -48,7 +48,7 @@ wagn/lib/wagn/commands/application.rb 60003905aa83daa8d2d3fe08c8719231d7cb7395
 wagn/lib/wagn/config/environments/test.rb f3b0339f9f5b7f0bcbf7d215fd25cb0b61ec1d4c
 wagn/lib/wagn/config/environments/profile.rb 92e0ab7552e8ca773915b041e588e69afe53c3af
 wagn/lib/wagn/config/environments/cucumber.rb e6dbb19180b090e943aebb76ebf5d38d61147aea
-wagn/lib/wagn/config/environments/production.rb 8479ba5174c81596224ebf1d0fdb4405b33eb401
+wagn/lib/wagn/config/environments/production.rb a19da1065c3b8b58572e579a224201d588829e0b
 wagn/lib/wagn/generators/wagn/wagn_generator.rb e412eb41682f5089310aadcc85660208881ebd5b
 wagn/lib/wagn/config/environments/development.rb 39de9a8a7f6eea1cc3754a4d6c4ae9d4bb15e129
 wagn/lib/wagn/config/initializers/secret_token.rb fa122463dce2bd2dad71d34b1e3a0267d7172211

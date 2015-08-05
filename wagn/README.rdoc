@@ -8,7 +8,7 @@ Wagn is serious web development made fun.
 
 Install Wagn, open a webpage, and get started. With Wagn's wiki-inspired building blocks, you can collaborate from day one on content, design, and structure create elegant web systems on the fly.  And ruby developers can take these creations even further with Wagn's development framework. Wagn's innovative Mods API supports boundless creativity while integrating seamlessly with structures created on the site.
 
-FIXME - add cldstr link
+Try it out with automated setup at Cloudstore[https://cldstr.com/wagn.org/wagn] (free hosting for one trial month) or set it up yourself following the instructions below.
 
 
 ==System Requirements
@@ -94,15 +94,11 @@ First check the Wagn version of your existing site.
 First update your Wagn to version 1.10 via the old update mechanisms, and then follow the directions above.
 
 
-==Developing
-
-Wagn allows for deep collaboration and integration between "wagneers" (who organize data via a wagn site) and software developers.
-
-Learn more at "GETTING STARTED - Developers"
-FIXME - link
-
-
-
 ==More Resources
 
-Find lots more info at http://wagn.org
+If you're new to Wagn, you'll find lots more info at http://wagn.org
+
+If you're looking to go deep into the code, start with this introduction
+
+
+

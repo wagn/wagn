@@ -254,10 +254,16 @@ class Card
         register_set mod
       end
 
+
+      # make the set available for use
       def register_set set_module
-        if set_module.all_set?
+        if set_module.abstract_set?
+          # noop; only used by explicit inclusion in other set modules
+        elsif set_module.all_set?
+          # automatically included in Card class
           modules[ :base ] << set_module
         else
+          # made ready for dynamic loading via #include_set_modules
           modules[ :nonbase ][ set_module.shortname ] ||= []
           modules[ :nonbase ][ set_module.shortname ] << set_module
         end
@@ -331,10 +337,14 @@ EOF
 
 
     def register_set_format format_class, mod
-      if self.all_set?
+      if self.abstract_set?
+        # noop; only used by explicit inclusion in other set modules
+      elsif self.all_set?
+        # ready to include in base format classes
         modules[ :base_format ][ format_class ] ||= []
         modules[ :base_format ][ format_class ] << mod
       else
+        # ready to include dynamically in set members' format singletons
         format_hash = modules[ :nonbase_format ][ format_class ] ||= {}
         format_hash[ shortname ] ||= []
         format_hash[ shortname ] << mod
@@ -348,6 +358,10 @@ EOF
 
       last = first + set_class.anchor_parts_count
       parts[first..last].join '::'
+    end
+
+    def abstract_set?
+      name =~ /^Card::Set::Abstract::/
     end
 
     def all_set?

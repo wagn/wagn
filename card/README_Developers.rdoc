@@ -18,9 +18,9 @@ This page assumes:
 
 It's both.
 
-When you install a new Wagn, you have a working "deck" right away.  There are lots of things built in: account handling, edit histories, default layouts, CSS, etc.  In other words: you have a basic application.
+When you install a new Wagn, you have a working "Deck" right away.  There are lots of things built in: account handling, edit histories, default layouts, CSS, etc.  In other words: you have a basic application.
 
-But a newly seeded deck is just a starting point. <b>Wagn is a development framework in which you start <i>in the middle of things</i> rather than from scratch</b>.  Seeding is a bit of a headstart, and it means that designers, developers, and content creators can start working in parallel on day 1. But the seeded cards don't determine what you can build with Wagn; you can add things, you can remove things... In fact, we want to make it possible to build pretty much whatever you want.
+But a newly seeded Deck is just a starting point. <b>Wagn is a development framework in which you start <i>in the middle of things</i> rather than from scratch</b>.  Seeding is a bit of a headstart, and it means that designers, developers, and content creators can start working in parallel on day 1. But the seeded cards don't determine what you can build with Wagn; you can add things, you can remove things... In fact, you can build pretty much whatever you want.
 
 ===Sets
 
@@ -32,25 +32,31 @@ If you've edited Rules through a card toolbar in any Wagn deck, you will have en
 * All Users
 * All Cards
 
-Depending on which Set you choose, the Rule in question will be applied to a specific group of cards.  This same general pattern occurs in Wagn code: <b>code rules (methods) are organized under the Set of cards to which they apply.</b>
+Depending on which Set you choose, the Rule in question will be applied to a specific group of cards.
+
+This same general pattern occurs in Wagn code: <b>code rules (methods) are organized under the Set of cards to which they apply.</b>
 
 
 ===MoFoS Architecture
 
-Sets are central to Wagn's architecture.  Wagn is not, like Rails, an implementation of the "MVC" (Model-View-Controller) architectural pattern.  Instead, we like to think that we're the first instance of a new pattern that we call _MoFoS_.
+Sets are central to Wagn's architecture.  Wagn is not, like Ruby on Rails, an implementation of the "MVC" (Model-View-Controller) architectural pattern.  Instead, we like to think that we're the first instance of a new pattern that we call _MoFoS_.
 
 MoFoS stands for "Model-Formats-Sets": One Model, viewable in many Formats, divisible into Sets.
 
-The great power of MoFoS is that, thanks to Sets, code rules (and data rules) can be as narrow or specific as desired.
+"Everything is a Card" is an idea familiar to any Wagneer. As you may have guessed Cards are Wagn's "one Model" in MoFoS terms.
+
+You may have also noticed that you can add .html (the default), .text, .json, etc to any card's web path to receive the card's contents in a different format. This is the Format in MoFos.
+
+The great power of MoFoS, though, is in the Sets. Thanks to Sets, code rules (and data rules) can be as narrow or specific as desired.  These nonorthogonal groupings open up lots of exciting possibilities, and they're a big part of what makes Wagn so much fun.
 
 
 ===Is Wagn Ruby on Rails?
 
-It's likely that many folks reading this are Ruby-on-Rails developers. They'll find lots of familiar patterns in Wagn, but we should be clear: <b>Wagn is a Rails descendant and owes a ton to the Rails community, but Wagn is not Rails</b>.
+It's likely that many folks reading this are Ruby-on-Rails developers. They'll find lots of familiar patterns in Wagn, and they may have noticed that wagn depends upon rails gems.  We should be clear: <b>Wagn is a Rails descendant and owes a ton to the Rails community, but Wagn is not Rails</b>.
 
 The main difference is that while Rails' core pattern is creating new things (especially models, views, and controllers), Wagn's core pattern is subdividing exising things into new Sets.
 
-Wagn mod developers do create lots of views (though they're quite different from Rails views), but we never create new models or controllers.  In the Wagn gem there is one controller ({CardController}), one main model ({Card}), and several other models to optimize the Card model and track its history ({Card::Reference}, {Card::Act}, {Card::Action}, and {Card::Change}).
+Wagn mod developers do create lots of views (though they're quite different from Rails views), but we never create new models or controllers.  In the Wagn gem there is one controller (CardController), one main model ({Card}), and several other models to optimize the Card model and track its history ({Card::Reference}, {Card::Act}, {Card::Action}, and {Card::Change}).
 
 Wagn's equivalent of creating a new model is configuring a new Set of cards. Its equivalent of creating new actions on controllers is creating new events that are conditionally triggeres for a Set of cards.
 
@@ -75,7 +81,7 @@ Set modules are defined in a mod's set directory, eg:
 
 For example, if your deck has Company cards, you can extend the behavior of those cards by adding a set module like so:
 
-  /mydeck/mod/mymod/type/company.rb
+  /mydeck/mod/mymod/set/type/company.rb
 
 Note that "company" here does not refer to its "name", but rather its "codename" (which an administrator might add to the Company card via the RESTful web API with a url like
 
@@ -86,7 +92,7 @@ Generally speaking, code should never refer to a card by name; otherwise it will
 
 The full path of a set module follows this pattern
 
-  (mod dir)/set/set_pattern(/anchor)(/additional).rb
+  [mod dir]/set/[set_pattern](/[anchor])(/[additional]).rb
 
 ==....more coming soon!
 

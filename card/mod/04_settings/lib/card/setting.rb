@@ -1,8 +1,9 @@
 # -*- encoding : utf-8 -*-
 
-# Used to extend setting modules like Card::Set::Self::Create in the settings mod
 
 class Card
+
+  # Used to extend setting modules like Card::Set::Self::Create in the settings mod
   module Setting
     # Let M = Card::Setting           (module)
     #     E = Card::Set::Self::Create (module extended with M)

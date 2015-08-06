@@ -2,6 +2,12 @@
 def assign_attributes args={}
   if args
     args = args.stringify_keys
+
+    @set_specific = {}
+    Card.set_specific_attributes.each do |key|
+      @set_specific[key] = args.delete(key) if args[key]
+    end
+
     if newtype = args.delete('type')
       args['type_id'] = Card.fetch_id newtype
     end
@@ -11,6 +17,14 @@ def assign_attributes args={}
   params = ActionController::Parameters.new(args)
   params.permit!
   super params
+end
+
+def assign_set_specific_attributes
+  if @set_specific
+    @set_specific.each_pair do |name, value|
+      self.send "#{name}=", value
+    end
+  end
 end
 
 def extract_subcard_args! args={}

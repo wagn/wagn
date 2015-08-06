@@ -1,8 +1,10 @@
+include Abstract::Attachment
+set_specific_attributes :image
+mount_uploader :image, ImageUploader
 
-include File
 
 format do
-  
+
   include File::Format
 
   view :closed_content do |args|
@@ -12,18 +14,27 @@ format do
   view :source do |args|
     style = case
       when @mode==:closed ;  :icon
-      when args[:size]    ;  args[:size]
+      when args[:size]    ;  args[:size].to_sym
       when main?          ;  :large
       else                ;  :medium
       end
     style = :original if style.to_sym == :full
-    card.attach.url style
+    if style == :original
+      card.image.url
+    else
+      card.image.versions[style].url
+    end
   end
 
 end
 
 format :html do
   include File::HtmlFormat
+
+  view :editor do |args|
+    file_chooser args, :image
+  end
+
 
   view :core do |args|
     handle_source args do |source|
@@ -50,7 +61,7 @@ format :css do
   view :core do |args|
     render_source
   end
-  
+
   view :content do |args|  #why is this necessary?
     render_core
   end
@@ -62,6 +73,6 @@ format :file do
   view :style do |args|  #should this be in model?
     ['', 'full'].member?( args[:style].to_s ) ? :original : args[:style]
   end
-    
+
 end
 

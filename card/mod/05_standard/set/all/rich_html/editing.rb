@@ -154,11 +154,10 @@ format :html do
 
   view :edit_rules, :tags=>:unknown_ok do |args|
     view = args[:rule_view] || :common_rules
-    _render_related args.merge(:related=>{:card=>current_set_card, :view=>:open, :slot=>{ :rule_view=>view, :optional_set_navbar=>:show, :optional_set_label=>:hide, :optional_rule_navbar=>:hide}})
-
-    # frame args do
-    #   subformat( current_set_card ).render(view, args)
-    # end
+    slot_args = {
+        :rule_view=>view, :optional_set_navbar=>:show, :optional_set_label=>:hide, :optional_rule_navbar=>:hide
+      }
+    _render_related args.merge(:related=>{:card=>current_set_card, :view=>:open, :slot=>slot_args})
   end
 
   def default_edit_rules_args args
@@ -167,13 +166,14 @@ format :html do
 
   view :options, {:view=>:edit_rules, :mod=>All::RichHtml::Editing::HtmlFormat} # for backwards compatibility
 
-
   view :edit_structure do |args|
-    slot_args = {:cancel_slot_selector=>'.card-slot.related-view', :cancel_path=>card.format.path(:view=>:edit), :optional_edit_toolbar=>:hide, :hidden=>{:success=>"REDIRECT: #{card.structure.key}"}}
+    slot_args = {
+        :cancel_slot_selector=>'.card-slot.related-view',
+        :cancel_path=>card.format.path(:view=>:edit),
+        :optional_edit_toolbar=>:hide,
+        :hidden=>{:success=>{:view=>:open, 'slot[subframe]'=>true}}
+      }
     render_related args.merge(:related=>{:card=>card.structure, :view=>:edit, :slot=>slot_args})
-    # frame args do
-    #   nest card.structure, slot_args.merge(:view=>:edit)
-    # end
   end
 
   def default_edit_structure_args args

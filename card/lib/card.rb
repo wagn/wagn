@@ -1,8 +1,7 @@
 # -*- encoding : utf-8 -*-
-
+require 'carrierwave'
 
 Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
-
 
 # This documentation is intended for developers who want to understand:
 #
@@ -18,6 +17,7 @@ class Card < ActiveRecord::Base
     self.serializable_attributes = args
     attr_accessor *args
   end
+
 
 
   require_dependency 'card/active_record_ext'
@@ -40,7 +40,7 @@ class Card < ActiveRecord::Base
   has_many :actions, -> { where( :draft=>[nil,false]).order :id }
   has_many :drafts, -> { where( :draft=>true ).order :id }, :class_name=> :Action
 
-  cattr_accessor :set_patterns, :error_codes, :serializable_attributes
+  cattr_accessor :set_patterns, :error_codes, :serializable_attributes, :set_specific_attributes
   @@set_patterns, @@error_codes = [], {}
 
   serializable_attr_accessor :action, :supercard, :current_act, :current_action,
@@ -52,16 +52,17 @@ class Card < ActiveRecord::Base
 
   attr_accessor :follower_stash
 
+
   define_callbacks :approve, :store, :stored, :extend, :subsequent
 
   before_validation :approve
   around_save :store
   after_save :extend
 
-
   TRACKED_FIELDS = %w(name type_id db_content trash)
-
+  extend CarrierWave::Mount
   ActiveSupport.run_load_hooks(:card, self)
+
 end
 
 

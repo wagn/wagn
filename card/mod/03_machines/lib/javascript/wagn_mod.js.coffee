@@ -181,21 +181,6 @@ $(window).ready ->
 
 
   # toolbar mod
-  $('body').on 'click', '.edit-toolbar-pin.active > a', (e) ->
-    e.preventDefault()
-    $(this).blur()
-    $('.edit-toolbar-pin').removeClass('active').addClass('inactive')
-    $.ajax '/*edit_toolbar_pinned',
-      type : 'PUT'
-      data : 'card[content]=false'
-
-  $('body').on 'click', '.edit-toolbar-pin.inactive > a', (e) ->
-    e.preventDefault()
-    $('.edit-toolbar-pin').removeClass('inactive').addClass('active')
-    $.ajax '/*edit_toolbar_pinned',
-      type : 'PUT'
-      data : 'card[content]=true'
-
   $('body').on 'click', '.toolbar-pin.active', (e) ->
     e.preventDefault()
     $(this).blur()
@@ -206,6 +191,7 @@ $(window).ready ->
 
   $('body').on 'click', '.toolbar-pin.inactive', (e) ->
     e.preventDefault()
+    $(this).blur()
     $('.toolbar-pin').removeClass('inactive').addClass('active')
     $.ajax '/*toolbar_pinned',
       type : 'PUT'

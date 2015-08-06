@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
 
     [ 'activerecord-session_store', '~> 0.1'  ],
     [ 'uuid',                       '~> 2.3'  ],
-    [ 'paperclip',                  '~> 4.2'  ],
+    [ 'carrierwave' ,               '~> 0.10' ],
     [ 'htmlentities',               '~> 4.3'  ],
     [ 'rmagick',                    '~> 2.13' ],
     [ 'recaptcha',                  '~> 0.3'  ],

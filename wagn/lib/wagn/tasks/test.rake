@@ -65,7 +65,9 @@ namespace :test do
 
   desc "dump current db to test fixtures"
   task :extract_fixtures => :environment do
-    YAML::ENGINE.yamler = 'syck'
+    if RUBY_VERSION !~ /^(2|1\.9)/
+      YAML::ENGINE.yamler = 'syck'
+    end
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,
       # which dumps with slashes that syck can't understand (also !!null stuff)
 

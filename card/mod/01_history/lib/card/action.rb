@@ -16,6 +16,12 @@ class Card
     # replace with enum if we start using rails 4
     TYPE = [:create, :update, :delete]
 
+    def expire
+      self.class.cache.delete id.to_s
+    end
+
+    after_save :expire
+
     class << self
       def cache
         Card::Cache[Action]
@@ -26,7 +32,6 @@ class Card
           cache.write id.to_s, Action.find(id.to_i)
         end
       end
-
 
       def delete_cardless
         Card::Action.joins('LEFT JOIN cards ON card_actions.card_id = cards.id').where('cards.id IS NULL').delete_all
@@ -174,7 +179,7 @@ class Card
 
     def content_diff_builder opts=nil
       @content_diff_builder ||= begin
-        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], opts || card.diff_args)
+        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], opts || card.include_set_modules.diff_args)
       end
     end
 

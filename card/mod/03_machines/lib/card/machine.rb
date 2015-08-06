@@ -83,12 +83,12 @@ class Card
         host_class.prepare_machine_input {}
         host_class.machine_engine { |input| input }
         host_class.store_machine_output do |output|
-          file = Tempfile.new [ id, ".#{host_class.output_config[:filetype]}" ]
+          file = Tempfile.new [ id.to_s, ".#{host_class.output_config[:filetype]}" ]
           file.write output
           file.rewind
           Card::Auth.as_bot do
             p = machine_output_card
-            p.attach = file
+            p.file = file
             p.save!
           end
           file.close
@@ -169,12 +169,12 @@ class Card
 
     def machine_output_url
       ensure_machine_output
-      machine_output_card.attach.url #(:default, :timestamp => false)   # to get rid of additional number in url
+      machine_output_card.file.url #(:default, :timestamp => false)   # to get rid of additional number in url
     end
 
     def machine_output_path
       ensure_machine_output
-      machine_output_card.attach.path
+      machine_output_card.file.path
     end
 
     def ensure_machine_output

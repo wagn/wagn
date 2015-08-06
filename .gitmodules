@@ -2,5 +2,5 @@
 	path = card/db/seed
 	url = https://github.com/wagn/decko-seed
 [submodule "card/tmpsets"]
-	path = card/decko-tmpsets
+	path = card/tmpsets
 	url = https://github.com/wagn/decko-tmpsets.git

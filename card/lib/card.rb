@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-
+require 'carrierwave'
 
 Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
 
@@ -54,7 +54,7 @@ class Card < ActiveRecord::Base
   after_save :extend
 
   TRACKED_FIELDS = %w(name type_id db_content trash)
-
+  extend CarrierWave::Mount
   ActiveSupport.run_load_hooks(:card, self)
 
 end

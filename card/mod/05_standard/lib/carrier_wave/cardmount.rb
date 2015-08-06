@@ -3,7 +3,7 @@ require 'carrierwave'
 module CarrierWave
   module CardMount
     include CarrierWave::Mount
-    Card.extend CarrierWave::Mount
+
 
     def uploaders
       Card.uploaders ||= {}

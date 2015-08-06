@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
     [ 'uuid',                       '~> 2.3'  ],
     [ 'carrierwave' ,               '~> 0.10' ],
     [ 'htmlentities',               '~> 4.3'  ],
-    [ 'rmagick',                    '~> 2.13' ],
+    [ 'mini_magick',                '~> 4.2'  ],
     [ 'recaptcha',                  '~> 0.3'  ],
     [ 'coderay',                    '~> 1.0'  ],
     [ 'sass',                       '~> 3.2'  ],

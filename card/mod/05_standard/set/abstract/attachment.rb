@@ -16,6 +16,9 @@ end
 
 event :move_file_to_store_dir, :after=>:store, :on=>:create do
   if ::File.exist? tmp_store_dir
+    if ::File.exist? store_dir
+      FileUtils.rm_rf store_dir
+    end
     FileUtils.mv tmp_store_dir, store_dir
   end
   if !(content =~ /^[:~]/)

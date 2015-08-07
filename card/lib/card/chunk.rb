@@ -12,24 +12,24 @@ class Card
   module Chunk
     mattr_accessor :raw_list, :prefix_regexp_by_list, :prefix_map
     @@raw_list, @@prefix_regexp_by_list, @@prefix_map = {}, {}, {}
-  
+
     class << self
       def register_class klass, hash
         klass.config = hash.merge :class => klass
-        prefix_index = hash[:idx_char] || :default  # this is gross and needs to be moved out.  
+        prefix_index = hash[:idx_char] || :default  # this is gross and needs to be moved out.
         prefix_map[prefix_index] = klass.config
       end
-    
+
       def register_list key, list
         raw_list[key] = list
       end
-    
+
       def find_class_by_prefix prefix
         config = prefix_map[ prefix[0,1] ] || prefix_map[ prefix[-1,1] ] || prefix_map[:default]
         #prefix identified by first character, last character, or default.  a little ugly...
         config[:class]
       end
-    
+
       def get_prefix_regexp chunk_list_key
         prefix_regexp_by_list[chunk_list_key] ||= begin
           chunk_types = raw_list[chunk_list_key].map { |chunkname| const_get chunkname }
@@ -41,17 +41,18 @@ class Card
       end
 
     end
-  
-  
+
+
     #not sure whether this is best place.  Could really happen almost anywhere (even before chunk classes are loaded).
     register_list :default, [ :URI, :HostURI, :EmailURI, :EscapedLiteral, :Include, :Link ]
     register_list :references,                         [ :EscapedLiteral, :Include, :Link ]
-    register_list :inclusion_only,                     [  :Include ]
-  
+    register_list :inclusion_only,                     [ :Include ]
+    register_list :query,                              [ :QueryReference ]
+
     class Abstract
       class_attribute :config
       attr_reader :text, :process_chunk
-    
+
       class << self
         def full_match content, prefix=nil
   #        warn "attempting full match on #{content}.  class = #{self}"
@@ -61,7 +62,7 @@ class Card
         def full_re prefix
           config[:full_re]
         end
-      
+
         def context_ok? content, chunk_start
           true
         end
@@ -74,15 +75,15 @@ class Card
         interpret match, content
         self
       end
-    
+
       def interpret match_string, content, params
         Rails.logger.info "no #interpret method found for chunk class: #{self.class}"
       end
-    
+
       def format
         @content.format
       end
-    
+
       def card
         @content.card
       end

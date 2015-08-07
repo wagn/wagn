@@ -8,15 +8,16 @@ class Card
     attr_reader :revision, :format, :chunks, :opts
 
     def initialize content, format_or_card, opts={}
-      @format = if Card===format_or_card
-        Format.new format_or_card, :format=>nil
-      else
-        format_or_card
-      end
+      @format =
+        if Card===format_or_card
+          Format.new format_or_card, :format=>nil
+        else
+          format_or_card
+        end
       @opts = opts || {}
-      
+
       unless Array === content
-        content = parse_content content  
+        content = parse_content content
       end
       super content
     end
@@ -24,7 +25,7 @@ class Card
     def card
       format.card
     end
-    
+
     def chunk_list
       @opts[:chunk_list] || @format.chunk_list
     end

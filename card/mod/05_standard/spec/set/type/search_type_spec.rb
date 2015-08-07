@@ -30,8 +30,23 @@ describe Card::Set::Type::SearchType do
         :name=>"PointerToSearches",
         :type_id=>Card::PointerID,
     )
-    
+
     pointer_card.update_attributes! :type_id=>Card::SearchTypeID,:content=>%{{"type":"User"}}
     expect(pointer_card.content).to eq(%{{"type":"User"}})
+  end
+
+  context 'references' do
+    before do
+      Card.create :type=>'Search', :name=>'search with references', :content=>'{"name":"Y"}'
+    end
+    subject do
+      Card['search with references']
+    end
+
+    it 'updates query if referee changed' do
+      Card['Y'].update_attributes! :name=>'YYY', :update_referencers => true
+      expect(subject.content).to eq '{"name":"YYY"}'
+    end
+
   end
 end

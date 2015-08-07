@@ -6,9 +6,15 @@ require 'uri/common'
 # and interrogated by a format. Each Chunk class has a
 # +pattern+ that states what sort of text it matches.
 # Chunks are initalized by passing in the result of a
-# match by its pattern.
+
 
 class Card
+
+  # A chunk is a pattern of text that can be protected
+  # and interrogated by a format. Each Chunk class has a
+  # +pattern+ that states what sort of text it matches.
+  # Chunks are initalized by passing in the result of a
+  # match by its pattern.
   module Chunk
     mattr_accessor :raw_list, :prefix_regexp_by_list, :prefix_map
     @@raw_list, @@prefix_regexp_by_list, @@prefix_map = {}, {}, {}

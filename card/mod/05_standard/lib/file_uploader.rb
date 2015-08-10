@@ -92,7 +92,7 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   def cache_dir
-    Wagn.root.join 'tmp/uploads'
+    Cardio.paths['files'].existent.first + '/tmp'
   end
 
   # Carrierwave usually store the filename as identifier in the database

@@ -2,6 +2,10 @@
 
 require 'uri/common'
 
+# A chunk is a pattern of text that can be protected
+# and interrogated by a format. Each Chunk class has a
+# +pattern+ that states what sort of text it matches.
+# Chunks are initalized by passing in the result of a
 
 
 class Card

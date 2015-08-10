@@ -59,7 +59,7 @@ def update_references rendered_content = nil, refresh = false
             # doesn't have an id but when A's name is changed we have to find and update that link.
             ref_type =
               if name == referee_name
-                case name
+                case chunk
                 when Card::Chunk::Link then 'L'
                 when Card::Chunk::QueryReference then 'Q'
                 else 'I'

@@ -5,7 +5,7 @@ class UpdateFileAndImageCards < Card::CoreMigration
   def up
 
     # use codenames for the filecards not for the left parts
-    if (credit = Card[:credit]) && (card = Card.fetch "#{credit.name}+image")
+    if (credit = Card[:credit]) && (Card.fetch "#{credit.name}+image")
       card.update_attributes! :codename=>'credit_image'
     end
     %w( cerulean_skin cosmo_skin cyborg_skin darkly_skin flatly_skin journal_skin lumen_skin paper_skin readable_skin sandstone_skin simplex_skin slate_skin spacelab_skin superhero_skin united_skin yeti_skin ).each do |name|
@@ -36,11 +36,23 @@ class UpdateFileAndImageCards < Card::CoreMigration
           end
           # swap variant and action_id/type_code in file name
           if Dir.exist? card.store_dir
+            symlink_target_hash = Hash.new
             Dir.entries(card.store_dir).each do |file|
-              if file =~ /^(icon|small|medium|large|original)-([^.]+).(.+)$/
+              if file =~ /^(icon|small|medium|large|original)-([^.]+).(.+)$/ 
+                file_path = File.join(card.store_dir, file)
                 new_filename = "#{$2}-#{$1}.#{$3}"
-                FileUtils.mv File.join(card.store_dir, file), File.join(card.store_dir, new_filename)
+                if File.symlink?(file_path)
+                  symlink_target_hash[new_filename] = File.readlink(file_path)
+                  File.unlink file_path
+                else
+                  FileUtils.mv file_path, File.join(card.store_dir, new_filename)
+                end
               end
+            end
+            symlink_target_hash.each do |symlink,target|
+              target =~ /^(icon|small|medium|large|original)-([^.]+).(.+)$/ 
+              new_target_name = "#{$2}-#{$1}.#{$3}"
+              File.symlink File.join(card.store_dir,new_target_name),File.join(card.store_dir,symlink)
             end
           end
         end

@@ -3,7 +3,13 @@ require 'carrierwave'
 
 Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
 
-
+# This documentation is intended for developers who want to understand:
+#
+# a. how ruby Card objects work, and
+# b. how to extend them.
+#
+# It assumes that you've already read the introductory text in {file:README_Developers.rdoc}.
+#
 class Card < ActiveRecord::Base
 
   # attributes that ActiveJob can handle

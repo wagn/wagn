@@ -132,7 +132,7 @@ class Card
 
       def make_set_module_tmp_dir mod_dir, seq
         modname = mod_dir.match(/[^\/]+$/)[0]
-        mod_tmp_dir = "#{Card.paths['tmp/set'].first}/mod#{seq}-#{modname}"
+        mod_tmp_dir = "#{Card.paths['tmp/set'].first}/mod#{"%03d" % seq}-#{modname}"
         Dir.mkdir mod_tmp_dir
         mod_tmp_dir
       end

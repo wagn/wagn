@@ -10,7 +10,7 @@ class Card
 
 
 =begin
-    A "Set" is a group of cards to which "Rules" may be applied.  Sets can be as specific as
+    A "Set" is a group of Cards to which "Rules" may be applied.  Sets can be as specific as
     a single card, as general as all cards, or anywhere in between.
 
     Rules take two main forms: card rules and code rules.
@@ -236,6 +236,22 @@ class Card
     end
 
 
+    def ensure_set &block
+      begin
+        set_module = block.call
+      rescue NameError => e
+        if e.message.match /uninitialized constant (?:Card::Set::)?(.+)$/
+          $1.split('::').inject(Card::Set) do |set_module, module_name|
+            set_module.const_get_or_set module_name do
+              Module.new
+            end
+          end
+        end
+        ensure_set &block # try again - there might be another submodule that doesn't exist
+      else
+        set_module.extend Card::Set
+      end
+    end
 
 
     # the set loading process has two main phases:

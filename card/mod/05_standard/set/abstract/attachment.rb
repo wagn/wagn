@@ -4,7 +4,7 @@ def self.included host_class
 end
 
 
-event :write_identifier, :before=>:store do
+event :write_identifier, :before=>:approve do
   self.content = attachment.db_content
 end
 
@@ -33,6 +33,14 @@ end
 
 def original_filename
   attachment.original_filename
+end
+
+
+def assign_set_specific_attributes
+  if @set_specific && @set_specific.present?
+    self.content = nil
+  end
+  super
 end
 
 

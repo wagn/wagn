@@ -18,7 +18,7 @@ module CarrierWave
       super
 
       class_eval <<-RUBY, __FILE__, __LINE__+1
-        event :store_#{column}_event, :on=>:save, :after =>:write_identifier  do
+        event :store_#{column}_event, :on=>:save, :before =>:store  do
           store_#{column}!
         end
         event :remove_#{column}_event, :on =>:delete, :after=>:stored do

@@ -72,7 +72,7 @@ describe Card::Set::Type::Image do
       end
 
       it "updates url" do
-        expect(subject.image.url).to eq "/files/~#{subject.id}/#{subject.last_action_id}-original.jpg"
+        expect(subject.image.url).to eq "/files/~#{subject.id}/#{subject.last_action_id}-original.gif"
       end
     end
   end

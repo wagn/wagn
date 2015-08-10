@@ -4,10 +4,7 @@ def history?
   true
 end
 
-event :create_act_and_action_for_save,   :before=>:process_subcards, :on=>:save, :when=>proc {|c| c.history?}  do
-  create_act_and_action
-end
-event :create_act_and_action_for_delete, :before =>:validate_delete_children, :on=>:delete, :when=>proc {|c| c.history? } do
+event :create_act_and_action,   :before=>:approve, :when=>proc {|c| c.history?}  do
   create_act_and_action
 end
 

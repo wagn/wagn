@@ -31,6 +31,7 @@ end
 format :html do
   include File::HtmlFormat
 
+
   view :editor do |args|
     file_chooser args, :image
   end

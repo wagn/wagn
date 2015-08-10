@@ -145,8 +145,10 @@ body.mceContentBody {
   font-style: italic;
 }
 
-.TYPE-image.card-content img {
-  max-width: 100%;
+.TYPE-image.card-content, .TYPE-image .card-body {
+  img {
+    max-width: 100%;
+  }
 }
 
 /*---------( Search ) ---------- */
@@ -223,5 +225,5 @@ body.mceContentBody {
 .modal-menu .close{
   font-size: 16px;
   margin-left: 10px;
-  
+
 }

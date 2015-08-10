@@ -14,7 +14,8 @@ def tmp_store_dir
 end
 
 def mod_file?
-  if content.present? && content =~ /^:[^\/]+\/([^.]+)/
+  # when db_content was changed assume that it's no longer a mod file
+  if !db_content_changed? && content.present? && content =~ /^:[^\/]+\/([^.]+)/
     $1
   end
 end

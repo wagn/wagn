@@ -20,7 +20,7 @@ def assign_attributes args={}
 end
 
 def assign_set_specific_attributes
-  if @set_specific
+  if @set_specific && @set_specific.present?
     @set_specific.each_pair do |name, value|
       self.send "#{name}=", value
     end

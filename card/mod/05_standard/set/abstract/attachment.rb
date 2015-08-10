@@ -5,7 +5,7 @@ end
 
 
 event :write_identifier, :before=>:store do
-  content = attachment.db_content
+  self.content = attachment.db_content
 end
 
 event :save_original_filename, :before=>:create_card_changes do
@@ -29,16 +29,6 @@ end
 
 def item_names(args={})  # needed for flexmail attachments.  hacky.
   [self.cardname]
-end
-
-
-def set_mod_source mod
-  attachment.mod = mod
-end
-
-def use_mod_file! mod
-  set_mod_source mod
-  update_attributes! :content=>attachment.db_content
 end
 
 def original_filename

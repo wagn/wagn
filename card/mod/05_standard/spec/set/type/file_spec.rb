@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Type::File do
+
   context "new file card" do
     before do
       Card::Auth.as_bot do
@@ -54,6 +55,13 @@ describe Card::Set::Type::File do
 
       it "updates url" do
         expect(subject.file.url).to eq "/files/~#{subject.id}/#{subject.last_action_id}.txt"
+      end
+    end
+
+    context 'subcards' do
+      it 'handles file subcards' do
+        Card.create! :name=>'new card with file', :subcards=>{'+my file'=>{:type_id=>Card::FileID, :file=> File.open(File.join(FIXTURES_PATH, 'file1.txt'))}}
+        expect(Card['new card with file+my file'].file.file.read).to eq 'file1'
       end
     end
   end

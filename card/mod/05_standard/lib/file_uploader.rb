@@ -49,12 +49,11 @@ class FileUploader < CarrierWave::Uploader::Base
   storage :file
 
   def filename
-    @name ||=
-      if mod_file?
-        "#{model.type_code}#{extension}"
-      else
-        "#{action_id}#{extension}"
-      end
+    if mod_file?
+      "#{model.type_code}#{extension}"
+    else
+      "#{action_id}#{extension}"
+    end
   end
 
   def extension
@@ -68,10 +67,10 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   # the identifier gets stored in the card's db_content field
-  def db_content
+  def db_content(args={})
     basename =
-      if (mod = mod_file?)
-        "#{mod}#{extension}"
+      if (args[:mod])
+        "#{args[:mod]}#{extension}"
       else
         filename
       end
@@ -92,6 +91,9 @@ class FileUploader < CarrierWave::Uploader::Base
     end
   end
 
+  def cache_dir
+    Wagn.root.join 'tmp/uploads'
+  end
 
   # Carrierwave usually store the filename as identifier in the database
   # and retrieve_from_store! calls store_path with the identifier from the db

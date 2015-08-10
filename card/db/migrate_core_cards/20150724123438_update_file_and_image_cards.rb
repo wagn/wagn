@@ -45,7 +45,7 @@ class UpdateFileAndImageCards < Card::CoreMigration
           if Dir.exist? card.store_dir
             symlink_target_hash = Hash.new
             Dir.entries(card.store_dir).each do |file|
-              if new_filename = get_new_file_name
+              if new_filename = get_new_file_name(file)
                 file_path = File.join(card.store_dir, file)
                 if File.symlink?(file_path)
                   symlink_target_hash[new_filename] = File.readlink(file_path)

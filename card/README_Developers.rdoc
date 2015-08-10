@@ -58,7 +58,7 @@ The main difference is that while Rails' core pattern is creating new things (es
 
 Wagn mod developers do create lots of views (though they're quite different from Rails views), but we never create new models or controllers.  In the Wagn gem there is one controller (CardController), one main model ({Card}), and several other models to optimize the Card model and track its history ({Card::Reference}, {Card::Act}, {Card::Action}, and {Card::Change}).
 
-Wagn's equivalent of creating a new model is configuring a new Set of cards. Its equivalent of creating new actions on controllers is creating new events that are conditionally triggeres for a Set of cards.
+Wagn's equivalent of creating a new model is configuring a new Set of cards. Its equivalent of creating new actions on controllers is creating new events that are conditionally triggered for a Set of cards.
 
 Rails development experience is definitely a plus in getting to know Wagn, but Wagn offers a new architecture, and lot of new possibilities.
 

@@ -4,7 +4,7 @@ def self.included host_class
 end
 
 
-event :write_identifier, :before=>:approve do
+event :write_identifier, :after=>:create_act_and_action do
   self.content = attachment.db_content
 end
 

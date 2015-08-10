@@ -60,8 +60,7 @@ describe Card::Set::Type::File do
 
     context 'subcards' do
       it 'handles file subcards' do
-        Card.create! :name=>'new card with file', :subcards=>{'+my file'=>{:content=>'CHOSEN', :type_id=>Card::FileID, :file=> File.open(File.join(FIXTURES_PATH, 'file1.txt'))}}
-        binding.pry
+        Card.create! :name=>'new card with file', :subcards=>{'+my file'=>{:content=>'ignore content', :type_id=>Card::FileID, :file=> File.open(File.join(FIXTURES_PATH, 'file1.txt'))}}
         expect(Card['new card with file+my file'].file.file.read.strip).to eq 'file1'
       end
     end

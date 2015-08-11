@@ -14,8 +14,10 @@ Feature: Conflict
 
     # We still have Joe Admin's edit in the first window but we're globally signed in as Joe User.
     # We resign-in as Joe Admin in Joe User's window so that we submit Joe Admin's edit as Joe Admin
+    And I wait a sec
     And I am signed out
     And I wait a sec
+
     And I am signed in as Joe Admin
     And I close window
     And I submit

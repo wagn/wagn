@@ -215,10 +215,9 @@ end
 # the new module will override the old module's events and functions.
 # this event is only on pointer card. Other type cards do not have this event,
 # so it is not overridden and will be run while updating type and content in the same request.
-event :standardize_items, :before=>:approve, :on=>:save, :when=>proc{  |c| c.type_id == Card::PointerID  } do
-  if db_content_changed?
+event :standardize_items, :before=>:approve, :on=>:save, :changed=>:content,
+    :when=>proc{  |c| c.type_id == Card::PointerID  } do
     self.content = item_names(:context=>:raw).map { |name| "[[#{name}]]" }.join "\n"
-  end
 end
 
 

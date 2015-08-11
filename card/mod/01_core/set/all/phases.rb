@@ -116,8 +116,10 @@ def event_applies? opts
   if opts[:on]
     return false unless Array.wrap( opts[:on] ).member? @action
   end
-  if opts[:changed]
-    return false if @action == :delete or !changes[ opts[:changed].to_s ]
+  if changed_field = opts[:changed]
+
+    changed_field = 'db_content' if changed_field.to_sym == :content
+    return false if @action == :delete or !changes[ changed_field.to_s ]
   end
   if opts[:when]
     return false unless opts[:when].call self

@@ -4,71 +4,43 @@ def history?
   true
 end
 
-event :create_act_and_action,   :before=>:approve, :when=>proc {|c| c.history?}  do
-  create_act_and_action
-end
-
-event :create_card_changes, :after =>:stored, :when=>proc {|c| c.history? } do
-  store_changes
-end
-
-event :finalize_act, :after=>:create_card_changes, :when=>proc {|c| c.history? } do
-  if !@supercard
-    if @current_act.actions(true).empty?
-      @current_act.delete
-      @current_act = nil
-    else
-      @current_act.update_attributes! :card_id=>id
-    end
-  end
-end
-
-
 # must be called on all actions and before :set_name, :process_subcards and :validate_delete_children
-def create_act_and_action
+event :assign_act,  :before=>:approve, :when=>proc {|c| c.history?}  do
   @current_act = (@supercard && @supercard.current_act) || Card::Act.create(:ip_address=>Env.ip)
+end
+
+event :assign_action, :after=>:assign_act do
   @current_action = Card::Action.create(:card_act_id=>@current_act.id, :action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
   if (@supercard and @supercard !=self)
     @current_action.super_action = @supercard.current_action
   end
 end
 
-def store_changes
-  if @current_action
-    @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
-    if @changed_fields.present?
-      @changed_fields.each{ |f| Card::Change.create :field => f, :value => self[f], :card_action_id=>@current_action.id }
-      @current_action.update_attributes! :card_id => id
-    elsif @current_action.card_changes(true).empty?
-      @current_action.delete
-      @current_action = nil
-    end
+
+# stores changes in the changes table and assigns them to the current action
+# removes the action if there are no changes
+event :finalize_action, :after =>:stored, :when=>proc {|c| c.history? && c.current_action} do
+  @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
+  if @changed_fields.present?
+    @changed_fields.each{ |f| Card::Change.create :field => f, :value => self[f], :card_action_id=>@current_action.id }
+    @current_action.update_attributes! :card_id => id
+  elsif @current_action.card_changes(true).empty?
+    @current_action.delete
+    @current_action = nil
   end
 end
 
-
-# alternative to #create_act_and_action
-# currently not used
-def build_act_and_action
-  @current_act = if @supercard
-    @supercard.current_act || @supercard.acts.build(:ip_address=>Env.ip)
+event :finalize_act, :after=>:finalize_action, :when=>proc {|c| c.history? && !c.supercard } do
+  if @current_act.actions(true).empty?
+    @current_act.delete
+    @current_act = nil
   else
-    acts.build(:ip_address=>Env.ip)
-  end
-  @current_action = actions(true).build(:action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
-  @current_action.act = @current_act
-
-  if (@supercard and @supercard !=self)
-    @current_action.super_action = @supercard.current_action
+    @current_act.update_attributes! :card_id=>id
   end
 end
 
 
-
-
-
-
-event :rollback_actions, :before=>:approve, :on=>:update, :when=>proc{ |c| c.history? && Env && Env.params['action_ids'] && Env.params['action_ids'].class == Array} do
+event :rollback_actions, :before=>:approve, :on=>:update, :when=>proc{ |c| c.rollback_request? } do
   revision = { :subcards => {}}
   rollback_actions = Env.params['action_ids'].map do |a_id|
     Action.fetch(a_id) || nil
@@ -89,9 +61,25 @@ event :rollback_actions, :before=>:approve, :on=>:update, :when=>proc{ |c| c.his
   abort :success
 end
 
+def rollback_request?
+  history? && Env && Env.params['action_ids'] && Env.params['action_ids'].class == Array
+end
 
-
-
+# alternative approach to handle act and action that doesn't change the database in the beginning
+# stopped working with Rails 4
+# def build_act_and_action
+#   @current_act = if @supercard
+#     @supercard.current_act || @supercard.acts.build(:ip_address=>Env.ip)
+#   else
+#     acts.build(:ip_address=>Env.ip)
+#   end
+#   @current_action = actions(true).build(:action_type=>@action, :draft=>(Env.params['draft'] == 'true') )
+#   @current_action.act = @current_act
+#
+#   if (@supercard and @supercard !=self)
+#     @current_action.super_action = @supercard.current_action
+#   end
+# end
 
 
 def intrusive_family_acts args={}   # all acts with actions on self and on cards that are descendants of self and included in self

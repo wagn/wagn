@@ -75,5 +75,9 @@ format :file do
     ['', 'full'].member?( args[:style].to_s ) ? :original : args[:style]
   end
 
+  def selected_file_version
+    style = _render_style(:style=>params[:size]).to_sym
+    (style && style != :original) ? card.attachment.versions[style] : card.attachment
+  end
 end
 

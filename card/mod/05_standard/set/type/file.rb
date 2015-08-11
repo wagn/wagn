@@ -33,16 +33,14 @@ format :file do
         #r.headers["Cache-Control"] = "public"            # currently using default "private", because proxy servers could block needed permission checks
       end
 
-
   #      elsif ![format, 'file'].member? params[:format]  # formerly supported redirecting to correct file format
   #        return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #card.attachment.url(style) )
 
-      style = _render_style :style=>params[:size]         # fixme, shouldn't be in type file
-      file = (style && style != :original) ? card.attachment.versions[style] : card.attachment
+      file = selected_file_version
       [ file.path,
         {
           :type => file.content_type,
-          :filename =>  file.filename,
+          :filename =>  "#{card.cardname.safe_key}.#{file.extension}",
           :x_sendfile => true,
           :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
         }
@@ -50,6 +48,10 @@ format :file do
     else
       _render_not_found
     end
+  end
+
+  def selected_file_version
+    card.attachment
   end
 
 end

@@ -183,6 +183,10 @@ class Card
       end
     end
 
+    def card
+      Card.fetch card_id
+    end
+
   end
 end
 

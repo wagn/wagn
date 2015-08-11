@@ -54,8 +54,8 @@ event :save_draft, :before=>:store, :on=>:update, :when=>proc{ |c| Env.params['d
 end
 
 
-event :set_default_content, :on=>:create, :changed=>:content, :before=>:approve do
-  if template and template.db_content.present?
+event :set_default_content, :on=>:create, :before=>:approve do
+  if !db_content_changed? && template && template.db_content.present?
     self.db_content = template.db_content
   end
 end

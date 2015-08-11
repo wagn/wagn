@@ -63,7 +63,7 @@ class FileUploader < CarrierWave::Uploader::Base
       File.extname(original_filename)
     else model.content
       File.extname(model.content)
-    end
+    end.downcase
   end
 
   # the identifier gets stored in the card's db_content field

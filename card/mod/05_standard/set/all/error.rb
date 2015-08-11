@@ -106,7 +106,7 @@ format :html do
     # FIXME: hack to get the conflicted update as a proper act for the diff view
     card.current_act.update_attributes! :card_id => card.id
     card.current_action.update_attributes! :card_id => card.id, :draft=>true  # the unsaved action with the new changes
-    card.store_changes  # deletes action if there are no changes
+    card.finalize_action  # deletes action if there are no changes
 
     # as a consequence card.current_act.actions can be empty when both users made exactly the same changes
     # but an act is always supposed to have at least one action, so we have to delete the act to avoid bad things

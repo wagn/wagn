@@ -4,11 +4,11 @@ def self.included host_class
 end
 
 
-event :write_identifier, :after=>:create_act_and_action do
+event :write_identifier, :after=>:assign_action do
   self.content = attachment.db_content
 end
 
-event :save_original_filename, :before=>:create_card_changes do
+event :save_original_filename, :before=>:finalize_action do
   if @current_action
     @current_action.update_attributes! :comment=>original_filename
   end
@@ -51,15 +51,15 @@ def symlink_to(prior_action_id) # create filesystem links to files from prior ac
 
     self.selected_action_id = prior_action_id
     attachment.versions.each do |name, version|
-      links[name] = ::File.basename(version.path)
+      links[name] = version.store_path
     end
-    original = ::File.basename(attachment.path)
+    original = attachment.store_path
 
     self.selected_action_id = last_action_id
     attachment.versions.each do |name, version|
-      ::File.symlink links[name], version.path
+      ::File.symlink links[name], version.store_path
     end
-    ::File.symlink original, attachment.path
+    ::File.symlink original, attachment.store_path
 
     self.selected_action_id = save_action_id
   end

@@ -1,7 +1,15 @@
-#~~~~~~~~~~~~~~~~
-# EXPERIMENTAL
-# the following methods are for visualing card events
-
+# the events method is a developer's tool for visualizing the event order for a given card.
+# For example, from a console you might run
+#
+#   puts mycard.events :update
+#
+# to see the order of events that will be executed on mycard.
+# The indention and arrows (^v) indicate event dependencies.
+#
+# Note: as of yet, the functionality is a bit rough.  It does not display events
+# that are called directly from within other events (like :stored), and certain event
+# requirements (like the presence of a "current_act") may prevent events from showing
+# up in the tree.
 def events action
   @action = action
   events = [ events_tree(:validation), events_tree(:save) ]

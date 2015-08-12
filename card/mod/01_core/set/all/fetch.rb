@@ -148,6 +148,7 @@ module ClassMethods
     if opts[:look_in_trash]
       if card.nil? || (card.new_card? && !card.trash)
         card = Card.where( mark_type => val ).take
+        needs_caching = card && !card.trash
       end
     elsif card.nil?
       needs_caching = true
@@ -156,6 +157,7 @@ module ClassMethods
 
     [ card, mark, needs_caching ]
   end
+
 
   def fetch_from_cache_by_id id
     if name = fetch_from_cache("~#{id}")

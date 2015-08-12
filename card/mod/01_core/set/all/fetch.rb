@@ -145,11 +145,13 @@ module ClassMethods
 
     card = send( "fetch_from_cache_by_#{mark_type}", val )
 
-    if card.nil?
+    if opts[:look_in_trash]
+      if card.nil? || (card.new_card? && !card.trash)
+        card = Card.where( mark_type => val ).take
+      end
+    else
       needs_caching = true
       card = Card.where( mark_type => val, trash: false).take
-    elsif opts[:look_in_trash] && !card.trash
-      card = Card.where( mark_type => val ).take
     end
 
     [ card, mark, needs_caching ]

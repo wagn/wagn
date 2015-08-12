@@ -1,5 +1,6 @@
 def new_card?
-  new_record? || !!@from_trash
+  new_record? ||   # not yet in db (from ActiveRecord)
+  !!@from_trash    # in process of restoration from trash, not yet "re-created"
 end
 alias_method :new?, :new_card?
 

@@ -152,7 +152,7 @@ describe Card::Set::All::History do
           expect(act.card).to eq(@card)
         end
         it 'adds action for subcard' do
-          @card.update_attributes :subcards=>{"+right"=>{:content=>"New content", :content=>"New Content"}}
+          @card.update_attributes :subcards=>{"+right"=>{:content=>"New Content"}}
           act = @card.acts.last
           expect(act.actions.count).to eq(1)
           expect(act.actions.last.action_type).to eq(:update)

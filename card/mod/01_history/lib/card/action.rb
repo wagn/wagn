@@ -183,9 +183,9 @@ class Card
       end
     end
 
-#    def card
-#      Card.fetch card_id
-#    end
+    def card
+      Card.fetch card_id, look_in_trash: true
+    end
 
   end
 end

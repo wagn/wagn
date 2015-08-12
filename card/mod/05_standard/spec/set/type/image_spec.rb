@@ -15,7 +15,8 @@ describe Card::Set::Type::Image do
     assert_view_select rendered, 'img[src=?]', "/files/~#{image_card.id}/#{image_card.last_content_action_id}-small.jpg"
   end
 
-  context "new image card" do
+
+  context "newly created image card" do
     before do
       Card::Auth.as_bot do
         Card.create! :name => "image card", :type=>'image', :image=>File.new( File.join FIXTURES_PATH, 'mao2.jpg' )
@@ -58,6 +59,16 @@ describe Card::Set::Type::Image do
         expect(subject.format.render(:source)).to eq("/files/~#{subject.id}/#{subject.last_action_id}-medium.jpg")
       end
     end
+
+
+    describe 'view: act_expanded' do
+      it 'gets image url' do
+        act_summary = subject.format.render(:act_expanded, :act=>subject.last_act)
+        current_url = subject.image.versions[:medium].url
+        expect(act_summary).to match /#{Regexp.quote current_url}/
+      end
+    end
+
 
     context "updated file card" do
       before do

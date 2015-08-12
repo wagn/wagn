@@ -96,7 +96,7 @@ end
 
 def current_rev_nr
   @current_rev_nr ||= begin
-    @intrusive_acts.first.actions.last.draft ? @intrusive_acts.size - 1 : @intrusive_acts.size
+    intrusive_acts.first.actions.last.draft ? @intrusive_acts.size - 1 : @intrusive_acts.size
   end
 end
 

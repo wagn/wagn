@@ -2,6 +2,13 @@
 
 class UpdateFileAndImageCards < Card::CoreMigration
 
+  def get_new_file_name filename
+    if filename =~ /^(icon|small|medium|large|original)-([^.]+).(.+)$/ 
+      "#{$2}-#{$1}.#{$3}"
+    else
+      nil
+    end
+  end
   def up
 
     # use codenames for the filecards not for the left parts
@@ -36,11 +43,21 @@ class UpdateFileAndImageCards < Card::CoreMigration
           end
           # swap variant and action_id/type_code in file name
           if Dir.exist? card.store_dir
+            symlink_target_hash = Hash.new
             Dir.entries(card.store_dir).each do |file|
-              if file =~ /^(icon|small|medium|large|original)-([^.]+).(.+)$/
-                new_filename = "#{$2}-#{$1}.#{$3}"
-                FileUtils.mv File.join(card.store_dir, file), File.join(card.store_dir, new_filename)
+              if new_filename = get_new_file_name(file)
+                file_path = File.join(card.store_dir, file)
+                if File.symlink?(file_path)
+                  symlink_target_hash[new_filename] = File.readlink(file_path)
+                  File.unlink file_path
+                else
+                  FileUtils.mv file_path, File.join(card.store_dir, new_filename)
+                end
               end
+            end
+            symlink_target_hash.each do |symlink,target|
+              new_target_name = get_new_file_name(target)
+              File.symlink File.join(card.store_dir,new_target_name),File.join(card.store_dir,symlink)
             end
           end
         end

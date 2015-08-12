@@ -77,7 +77,8 @@ event :stash_followers, :after=>:approve, :on=>:delete do
   act_card.follower_stash ||=  FollowerStash.new
   act_card.follower_stash.add_affected_card self
 end
-event :notify_followers_after_delete, :after=>:extend, :on=>:delete, :when=>proc{ |ca| ca.notable_change? } do
+event :notify_followers_after_delete, :after=>:extend, :on=>:delete,
+    :when=>proc{ |ca| ca.notable_change? } do
   notify_followers
 end
 

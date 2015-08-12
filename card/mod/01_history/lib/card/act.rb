@@ -47,13 +47,13 @@ class Card
 
     def relevant_drafts_for card
       drafts.select do |action|
-        card.included_card_ids.include?(action.card_id) || (card == action.card)
+        card.included_card_ids.include?(action.card_id) || (card.id == action.card_id)
       end
     end
 
     def relevant_actions_for card, with_drafts=false
       actions.select do |action|
-        card.included_card_ids.include?(action.card_id) || (card == action.card)
+        card.included_card_ids.include?(action.card_id) || (card.id == action.card_id)
       end
     end
 

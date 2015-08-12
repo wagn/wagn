@@ -1,5 +1,5 @@
 include Abstract::Attachment
-set_specific_attributes :image
+set_specific_attributes :image, :remote_image_url
 mount_uploader :image, ImageUploader
 
 

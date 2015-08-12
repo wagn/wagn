@@ -1,6 +1,6 @@
 include Abstract::Attachment
 
-set_specific_attributes :file
+set_specific_attributes :file, :remote_file_url
 mount_uploader :file, FileUploader
 
 format do

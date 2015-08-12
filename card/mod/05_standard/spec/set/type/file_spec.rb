@@ -63,7 +63,15 @@ describe Card::Set::Type::File do
         Card.create! :name=>'new card with file', :subcards=>{'+my file'=>{:content=>'ignore content', :type_id=>Card::FileID, :file=> File.open(File.join(FIXTURES_PATH, 'file1.txt'))}}
         expect(Card['new card with file+my file'].file.file.read.strip).to eq 'file1'
       end
+
     end
+  end
+
+  it 'handles urls' do
+    url = 'http://wagn.org/files/bruce_logo-large-122798.png'
+    Card.create! :name=>'url test', :type_id=>Card::FileID, :remote_file_url=> url
+    expect(Card['url test'].file.size).to be > 0
+    expect(Card['url test'].file.url).to match /\.png$/
   end
 
   context "mod file" do

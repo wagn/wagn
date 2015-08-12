@@ -149,7 +149,7 @@ module ClassMethods
       if card.nil? || (card.new_card? && !card.trash)
         card = Card.where( mark_type => val ).take
       end
-    else
+    elsif card.nil?
       needs_caching = true
       card = Card.where( mark_type => val, trash: false).take
     end

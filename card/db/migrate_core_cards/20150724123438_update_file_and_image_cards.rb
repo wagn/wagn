@@ -3,8 +3,8 @@
 class UpdateFileAndImageCards < Card::CoreMigration
 
   def get_new_file_name filename
-    if filename =~ /^(icon|small|medium|large|original)-([^.]+).(.+)$/ 
-      "#{$2}-#{$1}.#{$3}"
+    if filename =~ /^(icon|small|medium|large|original)-([^.]+).(.+)$/
+      "#{$2}-#{$1}.#{$3.downcase}"
     else
       nil
     end

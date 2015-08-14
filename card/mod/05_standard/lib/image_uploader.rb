@@ -8,16 +8,16 @@ class ImageUploader < FileUploader
   end
 
   version :icon do #, :from_version=>:small do
-    process :resize_to_fill => [16,16]
+    process :resize_and_pad => [16,16]
   end
   version :small do #, :from_version=>:medium do
-    process :resize_to_fill => [75,75]
+    process :resize_to_fit => [75,75]
   end
   version :medium do
-    process :resize_to_fill => [200,200]
+    process :resize_to_fit => [200,200]
   end
   version :large do
-    process :resize_to_fill => [500,500]
+    process :resize_to_fit => [500,500]
   end
 
   # add 'original' if no version is given

@@ -78,13 +78,15 @@ module Wagn
         paths = super
         Cardio.set_paths paths
 
+        paths['mod'] << 'mod'
         paths.add 'files'
 
-        paths['mod'] << 'mod'
         paths['app/models'] = []
         paths['app/mailers'] = []
 
         add_path paths, 'config/routes.rb', :with => 'rails/application-routes.rb'
+
+        Cardio.set_mod_paths  #really this should happen later
 
         paths
       end

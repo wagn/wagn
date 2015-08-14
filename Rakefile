@@ -12,6 +12,17 @@ task :release do
   system %(git tag -a v#{version} -m "Wagn Version #{version}";  git push --tags wagn)
 end
 
+task :cp_tmpsets do
+  system %(
+    cd ..
+    cp -r sites/core-dev/tmp/set* decko-tmpsets
+    cd decko-tmpsets
+    git commit -a -m 'updated from core-dev'
+    git push; git push wagn
+    cd ../gem
+    git submodule update --remote
+  )
+end
 
 def version
   File.open(File.expand_path( '../card/VERSION', __FILE__ )).read.chomp

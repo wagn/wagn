@@ -3,14 +3,15 @@
 class UpdateFileAndImageCards < Card::CoreMigration
 
   def get_new_file_name filename
+    original_filename = filename
     if filename =~ /^(icon|small|medium|large|original)-([^.]+).(.+)$/
-      "#{$2}-#{$1}.#{$3.downcase}"
-    else
-      nil
+      filename = "#{$2}-#{$1}.#{$3}"
     end
+    filename = filename.downcase
+    filename if filename != original_filename
   end
-  def up
 
+  def up
     # use codenames for the filecards not for the left parts
     if (credit = Card[:credit]) && (card = Card.fetch "#{credit.name}+image")
       card.update_attributes! :codename=>'credit_image'

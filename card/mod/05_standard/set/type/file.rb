@@ -40,7 +40,7 @@ format :file do
       [ file.path,
         {
           :type => file.content_type,
-          :filename =>  "#{card.cardname.safe_key}.#{file.extension}",
+          :filename =>  "#{card.cardname.safe_key}#{file.extension}",
           :x_sendfile => true,
           :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
         }

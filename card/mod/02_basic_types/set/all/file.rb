@@ -10,7 +10,7 @@ def store_dir
 end
 
 def tmp_store_dir
-  "#{ Card.paths['files'].existent.first }/#{key}"
+  "#{ Card.paths['files'].existent.first }/tmp"
 end
 
 def mod_file?

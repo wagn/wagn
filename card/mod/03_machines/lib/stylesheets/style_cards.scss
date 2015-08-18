@@ -206,6 +206,26 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   }
 }
 
+/* -- file upload -- */
+.fileupload-buttonbar .btn, .fileupload-buttonbar .toggle {
+  margin-bottom: 5px;
+}
+.fileinput-button {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+.fileinput-button input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    opacity: 0;
+    -ms-filter: 'alpha(opacity=0)';
+    font-size: 200px;
+    direction: ltr;
+    cursor: pointer;
+}
 
 
 /* -- template-editor (editing template rule inclusions inline) -- */

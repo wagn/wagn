@@ -35,6 +35,10 @@ module CarrierWave
           #{column}
         end
 
+        def attachment_name
+          "#{column}".to_sym
+        end
+
         def read_uploader *args
           read_attribute *args
         end

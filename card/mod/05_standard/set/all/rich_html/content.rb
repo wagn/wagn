@@ -5,6 +5,7 @@ end
 format :html do
 
   def show view, args
+    binding.pry
     if show_layout?
       args.merge! :view=>view if view
       @main_opts = args

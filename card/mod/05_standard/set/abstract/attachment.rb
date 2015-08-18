@@ -1,11 +1,18 @@
 require 'carrier_wave/cardmount'
+
 def self.included host_class
   host_class.extend CarrierWave::CardMount
 end
 
 
 event :write_identifier, :after=>:assign_action do
-  self.content = attachment.db_content
+  if Card::Env && Card::Env.params[:cached_upload] && (action_id = Card::Env.params[:cached_upload])
+    with_selected_action_id(action_id) do
+      send "#{attachment_name}=", cached_upload.attachment #TODO: we need a kind of garbage collector for these temp file cards
+    end
+  else
+    self.content = attachment.db_content
+  end
 end
 
 event :save_original_filename, :before=>:finalize_action do
@@ -14,12 +21,9 @@ event :save_original_filename, :before=>:finalize_action do
   end
 end
 
-event :move_file_to_store_dir, :after=>:store, :on=>:create do
-  if ::File.exist? tmp_store_dir
-    if ::File.exist? store_dir
-      FileUtils.rm_rf store_dir
-    end
-    FileUtils.mv tmp_store_dir, store_dir
+event :move_tmp_file_to_store_dir, :after=>:store, :on=>:save do
+  if ::File.exist? attachment.tmp_path
+    FileUtils.mv attachment.tmp_path, attachment.store_path
   end
   if !(content =~ /^[:~]/)
     update_column(:db_content,attachment.db_content)
@@ -35,6 +39,9 @@ def original_filename
   attachment.original_filename
 end
 
+def create_versions?
+  true
+end
 
 def assign_set_specific_attributes
   if @set_specific && @set_specific.present?

@@ -1,7 +1,4 @@
-include Abstract::Attachment
-set_specific_attributes :image, :remote_image_url
-mount_uploader :image, ImageUploader
-
+attachment :image, :uploader=>ImageUploader
 
 format do
 
@@ -31,18 +28,19 @@ end
 format :html do
   include File::HtmlFormat
 
-
-  view :editor do |args|
-    file_chooser args, :image
-  end
-
-
   view :core do |args|
     handle_source args do |source|
       source == 'missing' ? "<!-- image missing #{@card.name} -->" : image_tag(source)
     end
   end
 
+  def preview args
+    output [
+      super(args),
+      content_tag( :div, _render_core(args).html_safe,
+        :class=>'attachment-preview', :id=>"#{card.attachment.filename}-preview")
+    ]
+  end
 
   view :content_changes do |args|
     out = ''

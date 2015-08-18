@@ -1,7 +1,4 @@
-include Abstract::Attachment
-
-set_specific_attributes :file, :remote_file_url
-mount_uploader :file, FileUploader
+attachment :file, :uploader=>FileUploader
 
 format do
   view :source do |args|
@@ -66,29 +63,44 @@ format :html do
   end
 
   view :editor do |args|
-    #Rails.logger.debug "editor for file #{card.inspect}"
     file_chooser args
   end
 
-  def file_chooser args, db_column=:file
-    preview =
-      if !card.new_card?
-        content_tag :div, _render_core(args).html_safe,
-          :class=>'attachment-preview', :id=>"#{card.attachment.filename}-preview"
-      end
 
-    <<-HTML
-      <div class="choose-file">
-        #{preview}
-        <div>#{file_field db_column, :class=>'file-upload slotter'}</div>
+  def preview  args
+    if !card.new_card?
+      <<-HTML
+      <div>
+        <label>File chosen:</label>
+        <span class="chosen-filename">#{card.original_filename}</span>
       </div>
-      <div class="chosen-file" style="display:none">
-        <div>
-          <label>File chosen:</label>
-          <span class="chosen-filename"></span>
-        </div>
+      HTML
+    end
+  end
+
+  view :preview_editor do |args|
+    <<-HTML
+      <div class="chosen-file">
+        #{preview(args)}
+        <input type="hidden" name="cached_upload" value="#{card.name}">
         <div><a class="cancel-upload">Unchoose</a></div>
       </div>
+    HTML
+  end
+
+  def file_chooser args
+    <<-HTML
+      <div class="choose-file">
+        #{preview(args)}
+        <div>#{file_field card.attachment_name, :class=>'file-upload slotter'}</div>
+      </div>
+      <div class="chosen-file">
+      </div>
+      <div id="progress" class="progress"><div class="progress-bar" style="width: 0%;"></div></div>
+
+      <script>
+      #{ ::CoffeeScript.compile ::File.read('/opt/wagn/card/mod/05_standard/lib/chooseFile.js.coffee')}
+      </script>
     HTML
   end
 

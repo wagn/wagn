@@ -19,6 +19,9 @@ module CarrierWave
 
       class_eval <<-RUBY, __FILE__, __LINE__+1
         event :store_#{column}_event, :on=>:save, :before=>:store do
+          if Card::Env && Card::Env.params[:cached_upload] && (cached_upload = Card.fetch(Card::Env.params[:cached_upload]))
+            #{column} = cached_upload.attachment
+          end
           store_#{column}!
         end
         event :remove_#{column}_event, :on =>:delete, :after=>:stored do
@@ -33,6 +36,10 @@ module CarrierWave
 
         def attachment
           #{column}
+        end
+
+        def attachment_name
+          "#{column}".to_sym
         end
 
         def read_uploader *args

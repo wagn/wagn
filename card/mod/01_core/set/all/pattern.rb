@@ -32,6 +32,10 @@ end
 
 def set_modules
   @set_modules ||= patterns_without_new[0..-2].reverse.map(&:module_list).flatten.compact
+  if Card::Env && Card::Env.params[:attachment_upload]
+    @set_modules << Abstract::AttachmentUpload
+  end
+  @set_modules
 end
 
 def set_format_modules klass

@@ -110,7 +110,7 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   def original_filename
-    @original_filename || model.selected_action.comment
+    @original_filename || (model.selected_action && model.selected_action.comment)
   end
 
   def store_dir

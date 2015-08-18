@@ -125,6 +125,11 @@ When /^(?:|I )enter "([^"]*)" into "([^"]*)"$/ do |value, field|
   find( selector ).set value
 end
 
+When /^(?:|I ) upload a (.+)$/ do |attachment_name|
+  binding.pry
+  attach_file(attachment_name.to_sym, File.join(Wagn.root,'features', 'file.txt'))
+end
+
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
   user = Card::Auth.current.name if user == "I"
   signed_in_as user do

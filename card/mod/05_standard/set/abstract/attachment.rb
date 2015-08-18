@@ -1,4 +1,5 @@
 require 'carrier_wave/cardmount'
+
 def self.included host_class
   host_class.extend CarrierWave::CardMount
 end

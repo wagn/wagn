@@ -105,6 +105,9 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   def tmp_path
+    if !Dir.exists? model.tmp_store_dir
+      Dir.mkdir model.tmp_store_dir
+    end
     File.join model.tmp_store_dir, filename
   end
 

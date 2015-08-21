@@ -11,7 +11,7 @@ def abort status, msg='action canceled'
   if status == :failure && errors.empty?
     errors.add :abort, msg
   elsif Hash === status and status[:success]
-    Env.params[:success] = status[:success]
+    @success << status[:success]
     status = :success
   end
   raise Card::Abort.new( status, msg)

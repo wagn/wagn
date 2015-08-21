@@ -8,9 +8,9 @@ end
 
 event :upload_attachment, :before=>:validate_name, :on=>:save do
   binding.pry
-  Env.params[:success] = {
+  @success << {
     :id => '_self',
-:type=> 'file',
+    :type=> 'file',
     :view => 'preview_editor',
     :action_id => current_action.id
   }

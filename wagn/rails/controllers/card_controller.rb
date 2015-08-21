@@ -18,6 +18,7 @@ class CardController < ActionController::Base
   before_filter :per_request_setup, :except => [:asset]
   before_filter :load_id, :only => [ :read ]
   before_filter :load_card, :except => [:asset]
+  before_filter :init_success_object, :only => [ :create, :update, :delete ]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
 
 
@@ -130,6 +131,10 @@ class CardController < ActionController::Base
     true
   end
 
+  def init_success_object
+    @success = Card::Success.new(@card.cardname, previous_location, params[:success])
+  end
+
   def refresh_card
     @card =  card.refresh
   end
@@ -193,41 +198,16 @@ class CardController < ActionController::Base
 
 
   def success
-    redirect, new_params = !ajax?, {}
-
-    target = case params[:success]
-      when Hash
-        new_params = params[:success]
-        redirect ||= !!(new_params.delete :redirect)
-        new_params.delete :id
-      when /^REDIRECT:\s*(.+)/
-        redirect=true
-        $1
-      when nil  ;  '_self'
-      else      ;   params[:success]
-      end
-
-    target = case target
-      when '*previous'     ;  previous_location #could do as *previous
-      when /^(http|\/)/    ;  target
-      when /^TEXT:\s*(.+)/ ;  $1
-      when ''              ;  ''
-      else                 ;  Card.fetch target.to_name.to_absolute(card.cardname), :new=>{}
-      end
-
-    case
-    when redirect
-      target = page_path target.cardname, new_params if Card === target
-      card_redirect target
-    when String===target
-      render :text => target
+    if !ajax? || @success.hard_redirect?
+      card_redirect @success.to_url
+    elsif String === @success.target
+      render :text => @success.target
     else
-      @card = target
-      #Card::Env[:params] =
-      if new_params.delete :soft_redirect
-        self.params = new_params
+      @card = @success.target
+      if @success.soft_redirect?
+        self.params = @success.params
       else
-        self.params.merge! new_params # #need tests. insure we get slot, main...
+        self.params.merge! @success.params # #need tests. insure we get slot, main...
       end
       show
     end

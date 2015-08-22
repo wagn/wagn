@@ -30,8 +30,6 @@ class Card
         "#{ format.camelize }Format"
       end
 
-
-
       def extract_class_vars view, opts
         return unless opts.present?
         perms[view]        = opts.delete(:perms)      if opts[:perms]

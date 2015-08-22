@@ -46,18 +46,22 @@ end
 format do
 
   view :core do |args|
-    search_vars args
+    view = case search_results args
+      when Exception           ;  :search_error
+      when Integer             ;  :search_count
+      when @mode == :template  ;  :raw
+      else                     ;  :card_list
+      end
+    _render view, args
+  end
 
-    case
-    when e = search_vars[:error]
-      %{#{e.class.to_s} :: #{e.message} :: #{card.raw_content}}
-    when search_vars[:query][:return] =='count'
-      search_results.to_s
-    when @mode == :template
-      render :raw
-    else
-      _render_card_list args
-    end
+
+  view :search_count do |args|
+    search_results.to_s
+  end
+
+  view :search_error do |args|
+    %{#{search_results.class.to_s} :: #{search_results.message} :: #{card.raw_content}}
   end
 
   view :card_list do |args|
@@ -74,7 +78,7 @@ format do
     @search_vars ||=
       begin
         v = {}
-        v[:query] = card.query(search_params)
+        v[:query] = card.query( search_params )
         v[:item]  = set_inclusion_opts args.merge( :query_view=>v[:query][:view] )
         v
       rescue =>e
@@ -82,13 +86,17 @@ format do
       end
   end
 
-  def search_results
-    @search_results ||=
-      begin
-        card.item_cards search_params
-      rescue => e
-        { :error => e}
+  def search_results args={}
+    @search_results ||= begin
+      search_vars args
+      if search_vars[:error]
+        search_vars[:error]
+      else
+        raw_results = card.item_cards search_params
+        is_count = search_vars[:query][:return] =='count'
+        is_count ? raw_results.to_i : raw_results
       end
+    end
   end
 
   def search_result_names
@@ -178,9 +186,19 @@ format :json do
 end
 
 format :rss do
-  def raw_feed_items
-    search_params.merge!(:default_limit => 25)
-    search_results
+  view :feed_body do |args|
+    case raw_feed_items args
+    when Exception ; @xml.item { render :search_error }
+    when Integer   ; @xml.item { render :search_count }
+    else super
+    end
+  end
+
+  def raw_feed_items args
+    @raw_feed_items ||= begin
+      search_params.merge!(:default_limit => 25)
+      search_results
+    end
   end
 end
 

@@ -10,15 +10,14 @@ class Card
       @name_context = name_context
       @previous_location = previous_location
       @params = OpenStruct.new
-
       case success_params
       when Hash
         apply(success_params)
       when /^REDIRECT:\s*(.+)/
         @redirect=true
-        target = $1
-      when nil  ;  @name = '_self'
-      else      ;  target = success_params
+        self.target = $1
+      when nil  ;  self.name = '_self'
+      else      ;  self.target = success_params
       end
     end
 
@@ -26,7 +25,7 @@ class Card
     def << value
       case value
       when Hash ; apply value
-      else      ; target = value
+      else      ; self.target = value
       end
     end
 
@@ -41,26 +40,23 @@ class Card
 
     def mark= value
       case value
-      when Integer   ; id   = value
-      when String    ; name = value
-      when Card      ; card = value
-      else           ; target = value
+      when Integer   ; self.id     = value
+      when String    ; self.name   = value
+      when Card      ; self.card   = value
+      else           ; self.target = value
       end
     end
 
     def id= id
       @id     = id
-      @target = id
     end
 
     def name= name
       @name   = name
-      @target = name
     end
 
     def card= card
       @card   = card
-      @target = card
       @id     = card.id
       @name   = card.name
     end
@@ -72,8 +68,12 @@ class Card
         when /^(http|\/)/           ;  value
         when /^TEXT:\s*(.+)/        ;  $1
         when ''                     ;  ''
-        else                        ;  mark = value
+        else                        ;  self.mark = value
         end
+    end
+
+    def redirect= value
+      @redirect = value
     end
 
     def apply args
@@ -112,11 +112,21 @@ class Card
 
     def to_url
       if card
-        page_path card.cardname, @params
+        page_path card.cardname, params
       else
         target
       end
     end
 
+    def method_missing method, *args
+      case method
+      when /^(\w+)=$/
+        self[$1.to_sym] = args[0]
+      when /^(\w+)$/
+        self.params[$1.to_sym]
+      else
+        super
+      end
+    end
   end
 end

@@ -198,6 +198,7 @@ class CardController < ActionController::Base
 
 
   def success
+    binding.pry
     if !ajax? || @success.hard_redirect?
       card_redirect @success.to_url
     elsif String === @success.target

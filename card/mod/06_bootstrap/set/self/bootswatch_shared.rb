@@ -5,7 +5,7 @@ view :raw do |args|
   content = File.read("#{bootstrap_path}/_variables.scss")
   content += %{
       $bootstrap-sass-asset-helper: false;
-      $icon-font-path: "#{card_path '/assets/fonts/'}";
+      $icon-font-path: "#{card_path 'assets/fonts/'}";
     }
   # mixins
   content += Dir.glob("#{bootstrap_path}/mixins/*.scss").map do |name|

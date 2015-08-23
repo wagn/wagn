@@ -145,3 +145,11 @@ format :html do
   end
 
 end
+
+
+format :css do
+  def link_to text, href, opts={}
+    interpret_href href
+  end
+
+end

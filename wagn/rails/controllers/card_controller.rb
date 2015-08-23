@@ -192,10 +192,14 @@ class CardController < ActionController::Base
   end
 
 
+
+  # success param:
+  # if nothing card is self
   def success
     redirect, new_params = !ajax?, {}
 
     target = case params[:success]
+      when nil  ;  '_self'
       when Hash
         new_params = params[:success]
         redirect ||= !!(new_params.delete :redirect)
@@ -203,7 +207,6 @@ class CardController < ActionController::Base
       when /^REDIRECT:\s*(.+)/
         redirect=true
         $1
-      when nil  ;  '_self'
       else      ;   params[:success]
       end
 

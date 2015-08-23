@@ -197,7 +197,7 @@ end
 format :js do
   view :core do |args|
     card.item_cards.map do |item|
-      nest item, :view=>(params[:item] || args[:item] || :core)
+      nest item, :view=>( args[:item] || params[:item] || :core)
     end.join "\n\n"
   end
 end

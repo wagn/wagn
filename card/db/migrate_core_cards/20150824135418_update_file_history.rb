@@ -13,5 +13,6 @@ class UpdateFileHistory < Card::CoreMigration
           end
         end
       end
+    end
   end
 end

@@ -1,4 +1,8 @@
 class Card
+  def success
+    Env[:controller].success_params
+  end
+
   class Success
     include Card::Format::Location
     include Card::HtmlFormat::Location
@@ -6,9 +10,10 @@ class Card
     attr_accessor :params, :redirect
     attr_reader   :target, :id, :name
 
-    def initialize name_context, previous_location, success_params=nil
+    def initialize name_context=nil, previous_location='/', success_params=nil
       @name_context = name_context
       @previous_location = previous_location
+      @new_args = {}
       @params = OpenStruct.new
       case success_params
       when Hash
@@ -48,11 +53,19 @@ class Card
     end
 
     def id= id
-      @id     = id
+      self.mark = id
     end
 
     def name= name
       @name   = name
+    end
+
+    def type= type
+      @new_args[:type] = type
+    end
+
+    def content= content
+      @new_args[:content] = content
     end
 
     def card= card
@@ -88,7 +101,7 @@ class Card
       elsif @id
         Card.find @id
       elsif @name
-        Card.fetch @name.to_name.to_absolute(@name_context), :new=>{}
+        Card.fetch @name.to_name.to_absolute(@name_context), :new=>@new_args
       end
     end
 

@@ -72,13 +72,12 @@ format :html do
   end
 
   view :preview_editor, :tags=>:unknown_ok do |args|
-    binding.pry
     # #{preview(args)}
     #
     # <div><a class="cancel-upload">Unchoose</a></div>
     <<-HTML
       <div class="chosen-file">
-        <input type="hidden" name="cached_upload" value="#{card.name}">
+        <input type="hidden" name="cached_upload" value="#{card.selected_action_id}">
         <table role="presentation" class="table table-striped"><tbody class="files">
           <tr class="template-download fade in">
             <td>

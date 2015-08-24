@@ -53,8 +53,9 @@ class Card < ActiveRecord::Base
   attr_accessor :follower_stash
 
 
-  define_callbacks :approve, :store, :stored, :extend, :subsequent
+  define_callbacks :prepare, :approve, :store, :stored, :extend, :subsequent, :select_action
 
+  before_validation :prepare
   before_validation :approve
   around_save :store
   after_save :extend

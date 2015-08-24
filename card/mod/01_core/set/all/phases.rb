@@ -11,7 +11,7 @@ def abort status, msg='action canceled'
   if status == :failure && errors.empty?
     errors.add :abort, msg
   elsif Hash === status and status[:success]
-    @success << status[:success]
+    success << status[:success]
     status = :success
   end
   raise Card::Abort.new( status, msg)
@@ -49,11 +49,17 @@ end
 # perhaps above should be in separate module?
 #~~~~~~
 
-def approve
+def prepare
   @action = identify_action
   # the following should really happen when type, name etc are changed
   reset_patterns
   include_set_modules
+  run_callbacks :prepare
+rescue =>e
+  rescue_event e
+end
+
+def approve
   run_callbacks :approve
   expire_pieces if errors.any?
   errors.empty?

@@ -104,7 +104,7 @@ $.extend wagn,
 #      s.parentNode.insertBefore ga, s
 #    initfunc()
 
-  # chooseFile: (e, data) ->
+  chooseFile: (e, data) ->
     data.form.find('button[type=submit]').attr('disabled',true)
     editor = $(this).closest '.card-editor'
     $('#progress').show()

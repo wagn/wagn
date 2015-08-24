@@ -20,6 +20,9 @@ class ImageUploader < FileUploader
     process :resize_to_fit => [500,500]
   end
 
+  def identifier
+    full_filename(super())
+  end
   # add 'original' if no version is given
   def full_filename(for_file)
     name = super(for_file)

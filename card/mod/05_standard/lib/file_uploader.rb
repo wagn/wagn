@@ -111,7 +111,7 @@ class FileUploader < CarrierWave::Uploader::Base
     File.join model.tmp_store_dir, filename
   end
 
-  def create_versions?
+  def create_versions? new_file
     model.create_versions?
   end
 

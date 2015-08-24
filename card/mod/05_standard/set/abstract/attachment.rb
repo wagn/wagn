@@ -4,27 +4,29 @@ def self.included host_class
   host_class.extend CarrierWave::CardMount
 end
 
-
-event :write_identifier, :after=>:assign_action do
-  if Card::Env && Card::Env.params[:cached_upload] && (action_id = Card::Env.params[:cached_upload])
-    with_selected_action_id(action_id) do
-      send "#{attachment_name}=", cached_upload.attachment #TODO: we need a kind of garbage collector for these temp file cards
-    end
-  else
-    self.content = attachment.db_content
-  end
+event :select_file_revision, :after=>:select_action do
+  attachment.retrieve_from_store!(attachment.identifier)
 end
 
-event :save_original_filename, :before=>:finalize_action do
+event :write_identifier, :after=>:validate_name do
+  if Card::Env && Card::Env.params[:cached_upload].present?
+    action_id = Card::Env.params[:cached_upload]
+    cached_upload = Card.new :type_id=>type_id
+    cached_upload.selected_action_id = action_id
+    cached_upload.select_file_revision
+    send "#{attachment_name}=", cached_upload.attachment.file
+  end
+  self.content = attachment.db_content
+end
+
+event :save_original_filename, :after=>:write_identifier do
   if @current_action
     @current_action.update_attributes! :comment=>original_filename
   end
 end
 
-event :move_tmp_file_to_store_dir, :after=>:store, :on=>:save do
-  if ::File.exist? attachment.tmp_path
-    FileUtils.mv attachment.tmp_path, attachment.store_path
-  end
+# we need a card id for the path so we have to update db_content when we got an id
+event :update_db_content_with_final_path, :after=>:store, :on=>:create do
   if !(content =~ /^[:~]/)
     update_column(:db_content,attachment.db_content)
     expire
@@ -50,6 +52,17 @@ def assign_set_specific_attributes
   super
 end
 
+def clear_upload_tmp_dir
+  Dir.entries(tmp_store_dir).each do |filename|
+    if filename =~/^\d+/
+      path = File.join(tmp_store_dir, filename )
+      older_than_five_days = ( DateTime.now - File.ctime(path) > 432000)
+      if older_than_five_days
+        FileUtils.rm path
+      end
+    end
+  end
+end
 
 def symlink_to(prior_action_id) # create filesystem links to files from prior action
   if prior_action_id != last_action_id

@@ -7,13 +7,14 @@ def create_versions?
 end
 
 event :upload_attachment, :before=>:validate_name, :on=>:save do
-  binding.pry
-  @success << {
+  success << {
     :id => '_self',
-    :type=> 'file',
+    :type=> type_name,
     :view => 'preview_editor',
-    :action_id => current_action.id
+    :rev_id => current_action.id
   }
+  save_original_filename
+  send "store_#{attachment_name}!"
   abort :success
 end
 

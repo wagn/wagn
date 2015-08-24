@@ -18,12 +18,10 @@ module CarrierWave
       super
 
       class_eval <<-RUBY, __FILE__, __LINE__+1
-        event :store_#{column}_event, :on=>:save, :before=>:store do
-          if Card::Env && Card::Env.params[:cached_upload] && (cached_upload = Card.fetch(Card::Env.params[:cached_upload]))
-            #{column} = cached_upload.attachment
-          end
+        event :store_#{column}_event, :on=>:save, :after=>:store do
           store_#{column}!
         end
+
         event :remove_#{column}_event, :on =>:delete, :after=>:stored do
           remove_#{column}!
         end

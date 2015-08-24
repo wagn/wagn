@@ -279,6 +279,7 @@ describe CardController do
         get :read, :id=>'mao2', :format=>'jpg'
         assert_response 200
       end
+
     end
 
   end

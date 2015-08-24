@@ -1,6 +1,6 @@
 class Card
   def success
-    Env[:controller].success_params
+    Env[:controller].success
   end
 
   class Success

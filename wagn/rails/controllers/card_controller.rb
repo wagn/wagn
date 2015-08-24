@@ -18,16 +18,14 @@ class CardController < ActionController::Base
   before_filter :per_request_setup, :except => [:asset]
   before_filter :load_id, :only => [ :read ]
   before_filter :load_card, :except => [:asset]
-  before_filter :init_success_params, :only => [ :create, :update, :delete ]
+  before_filter :init_success_object, :only => [ :create, :update, :delete ]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
 
 
 
   layout nil
 
-  attr_reader :card, :success_params
-
-
+  attr_reader :card, :success
 
 
 
@@ -131,8 +129,8 @@ class CardController < ActionController::Base
     true
   end
 
-  def init_success_params
-    @success_params = Card::Success.new(@card.cardname, previous_location, params[:success])
+  def init_success_object
+    @success = Card::Success.new(@card.cardname, previous_location, params[:success])
   end
 
   def refresh_card
@@ -193,15 +191,10 @@ class CardController < ActionController::Base
   end
 
   def handle
-    yield ? success : render_errors
+    yield ? render_success : render_errors
   end
 
-
-
-  # success param:
-  # if nothing card is self
-  def success
-    @success = @success_params
+  def render_success
     if !ajax? || @success.hard_redirect?
       card_redirect @success.to_url
     elsif String === @success.target

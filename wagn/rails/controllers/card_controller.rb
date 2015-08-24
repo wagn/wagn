@@ -18,8 +18,8 @@ class CardController < ActionController::Base
   before_filter :per_request_setup, :except => [:asset]
   before_filter :load_id, :only => [ :read ]
   before_filter :load_card, :except => [:asset]
-  before_filter :init_success_object, :only => [ :create, :update, :delete ]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
+  before_filter :init_success_object, :only => [ :create, :update, :delete ]
 
 
 
@@ -135,7 +135,7 @@ class CardController < ActionController::Base
   end
 
   def refresh_card
-    @card =  card.refresh
+    @card = card.refresh
   end
 
   def request_logger
@@ -196,6 +196,7 @@ class CardController < ActionController::Base
   end
 
   def render_success
+    @success.name_context = @card.cardname
     if !ajax? || @success.hard_redirect?
       card_redirect @success.to_url
     elsif String === @success.target
@@ -207,7 +208,7 @@ class CardController < ActionController::Base
         self.params.merge! @success.params # #need tests. insure we get slot, main...
       end
       @card = @success.target
-      card.select_action_by_params params
+      @card.select_action_by_params params
       show
     end
   end

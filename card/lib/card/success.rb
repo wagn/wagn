@@ -3,7 +3,7 @@ class Card
     include Card::Format::Location
     include Card::HtmlFormat::Location
 
-    attr_accessor :params, :redirect, :id, :name, :card
+    attr_accessor :params, :redirect, :id, :name, :card, :name_context
 
     def initialize name_context=nil, previous_location='/', success_params=nil
       @name_context = name_context
@@ -76,18 +76,18 @@ class Card
       end
     end
 
-    def card
+    def card name_context=@name_context
       if @card
         @card
       elsif @id
         Card.find @id
       elsif @name
-        Card.fetch @name.to_name.to_absolute(@name_context), :new=>@new_args
+        Card.fetch @name.to_name.to_absolute(name_context), :new=>@new_args
       end
     end
 
-    def target
-      card || @target
+    def target name_context=@name_context
+      card(name_context) || @target
     end
 
     def []= key, value
@@ -106,11 +106,11 @@ class Card
       @params.to_h
     end
 
-    def to_url
-      if card
+    def to_url name_context=@name_context
+      if card name_context
         page_path card.cardname, params
       else
-        target
+        target name_context
       end
     end
 

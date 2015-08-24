@@ -6,9 +6,8 @@ Feature: Conflict
     Given I am signed in as Joe Admin
 
   Scenario: Uploading a file
-    When I go to url "/new/file"
+    When I go to new File
     And I upload a file
-    And I wait 10 seconds
     And I wait a sec
     Then I should see "file.txt 9 Bytes"
     When I press "Delete"
@@ -20,7 +19,7 @@ Feature: Conflict
     Then I should see "Download a test file"
 
   Scenario: Uploading a image
-    When I go to url "/new/image"
+    When I go to new Image
     And I upload a image
     And I wait a sec
     Then I should see "image.png 169 KB"

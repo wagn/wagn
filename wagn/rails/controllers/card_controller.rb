@@ -197,6 +197,9 @@ class CardController < ActionController::Base
   end
 
 
+
+  # success param:
+  # if nothing card is self
   def success
     @success = @success_params
     if !ajax? || @success.hard_redirect?

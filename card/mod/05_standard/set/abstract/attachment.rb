@@ -8,6 +8,19 @@ event :select_file_revision, :after=>:select_action do
   attachment.retrieve_from_store!(attachment.identifier)
 end
 
+event :upload_attachment, :before=>:validate_name, :on=>:save, :when=>proc { |c| c.preliminary_upload? } do
+  success << {
+    :id => '_self',
+    :type=> type_name,
+    :view => 'preview_editor',
+    :rev_id => current_action.id
+  }
+  save_original_filename
+  send "store_#{attachment_name}!"
+  abort :success
+end
+
+
 event :write_identifier, :after=>:validate_name do
   if Card::Env && Card::Env.params[:cached_upload].present?
     action_id = Card::Env.params[:cached_upload]
@@ -41,8 +54,12 @@ def original_filename
   attachment.original_filename
 end
 
+def preliminary_upload?
+  Card::Env && Card::Env.params[:attachment_upload]
+end
+
 def create_versions?
-  true
+  !preliminary_upload?
 end
 
 def assign_set_specific_attributes

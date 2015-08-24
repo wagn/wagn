@@ -7,8 +7,7 @@ class Card
     include Card::Format::Location
     include Card::HtmlFormat::Location
 
-    attr_accessor :params, :redirect
-    attr_reader   :target, :id, :name
+    attr_accessor :params, :redirect, :id, :name, :card
 
     def initialize name_context=nil, previous_location='/', success_params=nil
       @name_context = name_context
@@ -45,19 +44,15 @@ class Card
 
     def mark= value
       case value
-      when Integer   ; self.id     = value
-      when String    ; self.name   = value
-      when Card      ; self.card   = value
+      when Integer   ; @id   = value
+      when String    ; @name = value
+      when Card      ; @card = value
       else           ; self.target = value
       end
     end
 
     def id= id
-      self.mark = id
-    end
-
-    def name= name
-      @name   = name
+      self.mark = id  # for backwards compatibility use mark here: id was often used for the card name
     end
 
     def type= type
@@ -66,12 +61,6 @@ class Card
 
     def content= content
       @new_args[:content] = content
-    end
-
-    def card= card
-      @card   = card
-      @id     = card.id
-      @name   = card.name
     end
 
     def target= value
@@ -83,10 +72,6 @@ class Card
         when ''                     ;  ''
         else                        ;  self.mark = value
         end
-    end
-
-    def redirect= value
-      @redirect = value
     end
 
     def apply args
@@ -110,7 +95,9 @@ class Card
     end
 
     def []= key, value
-      unless try "#{key}=", value
+      if respond_to? "#{key}="
+        send "#{key}=", value
+      else
         if key.to_sym == :soft_redirect
           @redirect = :soft
         else

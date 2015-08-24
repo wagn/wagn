@@ -25,7 +25,8 @@ class CardController < ActionController::Base
 
   layout nil
 
-  attr_reader :card, :success
+  attr_reader :card
+  attr_accessor :success
 
 
 

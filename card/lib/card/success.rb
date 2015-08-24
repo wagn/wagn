@@ -1,8 +1,4 @@
 class Card
-  def success
-    Env[:controller].success
-  end
-
   class Success
     include Card::Format::Location
     include Card::HtmlFormat::Location
@@ -128,5 +124,9 @@ class Card
         super
       end
     end
+  end
+
+  def success
+    Env[:controller].success ||= Card::Success.new(cardname)
   end
 end

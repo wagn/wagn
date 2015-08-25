@@ -20,6 +20,15 @@ event :upload_attachment, :before=>:validate_name, :on=>:save, :when=>proc { |c|
   abort :success
 end
 
+# has to happen before :write_identifier, but can't use the ':before=>:write_identifier' hook
+# because it triggers the :write_identifier
+event :fetch_cached_upload, :after=>:prepare, :when => proc { |c| Card::Env && Card::Env.params[:cached_upload].present? } do
+  action_id = Card::Env.params[:cached_upload]
+  cached_upload = Card.new :type_id=>type_id
+  cached_upload.selected_action_id = action_id
+  cached_upload.select_file_revision
+  send "#{attachment_name}=", cached_upload.attachment.file
+end
 
 event :write_identifier, :after=>:validate_name, :when=> proc { |c| c.attachment_changed? } do
   self.content = attachment.db_content
@@ -31,14 +40,6 @@ event :correct_identifier, :after=>:store, :on=>:create do
     update_column(:db_content,attachment.db_content)
     expire
   end
-end
-
-event :fetch_cached_upload, :before=>:write_identifier, :when => proc { |c| Card::Env && Card::Env.params[:cached_upload].present? } do
-  action_id = Card::Env.params[:cached_upload]
-  cached_upload = Card.new :type_id=>type_id
-  cached_upload.selected_action_id = action_id
-  cached_upload.select_file_revision
-  send "#{attachment_name}=", cached_upload.attachment.file
 end
 
 event :save_original_filename, :before=>:write_identifier do

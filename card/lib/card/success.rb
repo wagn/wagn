@@ -103,7 +103,7 @@ class Card
     end
 
     def params
-      @params.to_h
+      @params.to_h || {}
     end
 
     def to_url name_context=@name_context

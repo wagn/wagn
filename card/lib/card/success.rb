@@ -87,7 +87,7 @@ class Card
     end
 
     def target name_context=@name_context
-      card(name_context) || ( @target == :previous ? previous_location : @target )
+      card(name_context) || ( @target == :previous ? previous_location : @target ) || Card.fetch(name_context)
     end
 
     def []= key, value

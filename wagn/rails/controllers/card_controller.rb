@@ -125,7 +125,7 @@ class CardController < ActionController::Base
       end
     raise Card::NotFound unless @card
 
-    card.select_action_by_params params
+    @card.select_action_by_params params
     Card::Env[:main_name] = params[:main] || (card && card.name) || ''
 
     render_errors if card.errors.any?

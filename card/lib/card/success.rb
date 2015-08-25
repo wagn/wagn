@@ -97,13 +97,13 @@ class Card
         if key.to_sym == :soft_redirect
           @redirect = :soft
         else
-          @params[key] = value
+          @params.send "#{key}=", value
         end
       end
     end
 
     def params
-      @params.to_h || {}
+      @params.marshal_dump
     end
 
     def to_url name_context=@name_context

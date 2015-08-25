@@ -5,9 +5,8 @@ class Card
 
     attr_accessor :params, :redirect, :id, :name, :card, :name_context
 
-    def initialize name_context=nil, previous_location='/', success_params=nil
+    def initialize name_context=nil, success_params=nil
       @name_context = name_context
-      @previous_location = previous_location
       @new_args = {}
       @params = OpenStruct.new
       case success_params
@@ -60,9 +59,10 @@ class Card
     end
 
     def target= value
+      @id = @name = @card = nil
       @target =
         case value
-        when '*previous', :previous ; @previous_location
+        when '*previous', :previous ;  :previous
         when /^(http|\/)/           ;  value
         when /^TEXT:\s*(.+)/        ;  $1
         when ''                     ;  ''
@@ -87,18 +87,26 @@ class Card
     end
 
     def target name_context=@name_context
-      card(name_context) || @target
+      card(name_context) || ( @target == :previous ? previous_location : @target )
     end
 
     def []= key, value
       if respond_to? "#{key}="
         send "#{key}=", value
+      elsif key.to_sym == :soft_redirect
+        @redirect = :soft
       else
-        if key.to_sym == :soft_redirect
-          @redirect = :soft
-        else
           @params.send "#{key}=", value
-        end
+      end
+    end
+
+    def [] key
+      if respond_to? key.to_sym
+        send key.to_sym
+      elsif key.to_sym == :soft_redirect
+        @redirect == :soft
+      else
+        @params.send key.to_sym
       end
     end
 
@@ -119,14 +127,16 @@ class Card
       when /^(\w+)=$/
         self[$1.to_sym] = args[0]
       when /^(\w+)$/
-        self.params[$1.to_sym]
+        self[$1.to_sym]
       else
         super
       end
     end
+
+    def session
+      Card::Env.session
+    end
   end
 
-  def success
-    Env[:controller].success ||= Card::Success.new(cardname)
-  end
+
 end

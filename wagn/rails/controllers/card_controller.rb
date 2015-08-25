@@ -48,7 +48,9 @@ class CardController < ActionController::Base
 
   def delete
     discard_locations_for card #should be an event
-    params[:success] ||= 'REDIRECT: *previous'
+    if @success.target == card
+      @success.target = :previous
+    end
     handle { card.delete }
   end
 
@@ -131,7 +133,7 @@ class CardController < ActionController::Base
   end
 
   def init_success_object
-    @success = Card::Success.new(@card.cardname, previous_location, params[:success])
+    @success = Card::Success.new(@card.cardname, params[:success])
   end
 
   def refresh_card

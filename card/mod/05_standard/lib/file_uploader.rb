@@ -67,10 +67,10 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   # the identifier gets stored in the card's db_content field
-  def db_content(args={})
+  def db_content
     basename =
-      if (args[:mod])
-        "#{args[:mod]}#{extension}"
+      if mod_file?
+        "#{@mod}#{extension}"
       else
         filename
       end
@@ -82,7 +82,7 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   def file_dir
-    if (mod = mod_file?)
+    if mod_file?
       ":#{model.codename}"
     elsif model.id
       "~#{model.id}"

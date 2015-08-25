@@ -21,30 +21,32 @@ event :upload_attachment, :before=>:validate_name, :on=>:save, :when=>proc { |c|
 end
 
 
-event :write_identifier, :after=>:validate_name do
-  if Card::Env && Card::Env.params[:cached_upload].present?
-    action_id = Card::Env.params[:cached_upload]
-    cached_upload = Card.new :type_id=>type_id
-    cached_upload.selected_action_id = action_id
-    cached_upload.select_file_revision
-    send "#{attachment_name}=", cached_upload.attachment.file
-  end
+event :write_identifier, :after=>:validate_name, :when=> proc { |c| c.attachment_changed? } do
   self.content = attachment.db_content
 end
 
-event :save_original_filename, :after=>:write_identifier do
-  if @current_action
-    @current_action.update_attributes! :comment=>original_filename
-  end
-end
-
 # we need a card id for the path so we have to update db_content when we got an id
-event :update_db_content_with_final_path, :after=>:store, :on=>:create do
+event :correct_identifier, :after=>:store, :on=>:create do
   if !(content =~ /^[:~]/)
     update_column(:db_content,attachment.db_content)
     expire
   end
 end
+
+event :fetch_cached_upload, :before=>:write_identifier, :when => proc { |c| Card::Env && Card::Env.params[:cached_upload].present? } do
+  action_id = Card::Env.params[:cached_upload]
+  cached_upload = Card.new :type_id=>type_id
+  cached_upload.selected_action_id = action_id
+  cached_upload.select_file_revision
+  send "#{attachment_name}=", cached_upload.attachment.file
+end
+
+event :save_original_filename, :before=>:write_identifier do
+  if @current_action
+    @current_action.update_attributes! :comment=>original_filename
+  end
+end
+
 
 def item_names(args={})  # needed for flexmail attachments.  hacky.
   [self.cardname]
@@ -54,8 +56,14 @@ def original_filename
   attachment.original_filename
 end
 
+
+
 def preliminary_upload?
   Card::Env && Card::Env.params[:attachment_upload]
+end
+
+def attachment_changed?
+  send "#{attachment_name}_changed?"
 end
 
 def create_versions?

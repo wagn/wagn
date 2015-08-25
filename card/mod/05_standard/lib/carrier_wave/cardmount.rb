@@ -64,6 +64,14 @@ module CarrierWave
           _mounter(:#{column}).write_identifier
         end
 
+        def #{column}_will_change!
+          @#{column}_changed = true
+        end
+
+        def #{column}_changed?
+          @#{column}_changed
+        end
+
         def serializable_hash(options=nil)
           hash = {}
 

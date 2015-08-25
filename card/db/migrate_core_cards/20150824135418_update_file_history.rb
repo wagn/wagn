@@ -6,10 +6,12 @@ class UpdateFileHistory < Card::CoreMigration
       card.actions.each do |action|
         if (content_change = action.change_for(:db_content).first)
           original_filename, file_type, action_id, mod  = content_change.value.split("\n")
-          if mod.present?
-            content_change.update_attributes! :value=>":#{card.codename}/#{mod}#{::File.extname(original_filename)}"
-          else
-            content_change.update_attributes! :value=>"~#{card.id}/#{action_id}#{::File.extname(original_filename)}"
+          if file_type.present? && action_id.present?
+            if mod.present?
+              content_change.update_attributes! :value=>":#{card.codename}/#{mod}#{::File.extname(original_filename)}"
+            else
+              content_change.update_attributes! :value=>"~#{card.id}/#{action_id}#{::File.extname(original_filename)}"
+            end
           end
         end
       end

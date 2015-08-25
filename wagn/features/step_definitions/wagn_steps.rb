@@ -325,7 +325,11 @@ Then /^I should see$/ do |text|
 end
 
 Then /^I should see a preview image of size (.+)$/ do |size|
-  find("span.preview img[src~='#{size}.png']")
+  find("span.preview img[src*='#{size}.png']")
+end
+
+Then /^I should see an image of size "(.+)" and type "(.+)"$/ do |size, type|
+  find("img[src*='#{size}.#{type}']")
 end
 
 Then /^I should see "([^\"]*)" in color (.*)$/ do |text, css_class|

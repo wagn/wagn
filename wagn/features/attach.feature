@@ -25,4 +25,4 @@ Feature: Conflict
     Then I should see "image.png 169 KB"
     And I fill in "card_name" with "a test image"
     And I press "Submit"
-    Then I should see a preview image of size "large"
+    Then I should see an image of size "large" and type "png"

@@ -47,14 +47,16 @@ module CarrierWave
           write_attribute *args
         end
         def #{column}=(new_file)
-          column = _mounter(:#{column}).serialization_column
-          send(:"\#{column}_will_change!")
+          send(:"#{column}_will_change!")
+          db_column = _mounter(:#{column}).serialization_column
+          send(:"\#{db_column}_will_change!")
           super
         end
 
         def remote_#{column}_url=(url)
-          column = _mounter(:#{column}).serialization_column
-          send(:"\#{column}_will_change!")
+          send(:"#{column}_will_change!")
+          db_column = _mounter(:#{column}).serialization_column
+          send(:"\#{db_column}_will_change!")
           super
         end
 

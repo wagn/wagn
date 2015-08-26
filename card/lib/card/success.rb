@@ -115,10 +115,11 @@ class Card
     end
 
     def to_url name_context=@name_context
-      if card name_context
-        page_path card.cardname, params
+      case (target = target(name_context))
+      when Card
+        page_path target.cardname, params
       else
-        target name_context
+        target
       end
     end
 

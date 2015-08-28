@@ -54,6 +54,17 @@ def selected_action
   selected_action_id and Action.fetch(selected_action_id)
 end
 
+def with_selected_action_id action_id
+  current_action_id = selected_action_id
+  run_callbacks :select_action do
+    self.selected_action_id = action_id
+  end
+  yield
+  run_callbacks :select_action do
+    selected_action_id = current_action_id
+  end
+end
+
 def selected_content_action_id
   @selected_action_id ||
  (@current_action && (new_card? || @current_action.new_content? || db_content_changed?) && @current_action.id) ||

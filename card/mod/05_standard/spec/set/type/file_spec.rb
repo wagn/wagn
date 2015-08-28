@@ -21,7 +21,7 @@ describe Card::Set::Type::File do
       expect(subject.last_action.comment).to eq "file1.txt"
     end
 
-    it "has correct originalf filename" do
+    it "has correct original filename" do
       expect(subject.original_filename).to eq "file1.txt"
     end
 

@@ -1,13 +1,17 @@
 # -*- encoding : utf-8 -*-
 
 def select_action_by_params params
-  action = find_action_by_params(params) and self.selected_action_id = action.id
+  if (action = find_action_by_params(params))
+    run_callbacks :select_action do
+      self.selected_action_id = action.id
+    end
+  end
 end
 
 def find_action_by_params args
   if args[:rev]
     nth_action args[:rev]
-  elsif args[:rev_id] =~ /^\d+$/
+  elsif Integer === args[:rev_id] || args[:rev_id] =~ /^\d+$/
     if action = Action.fetch(args[:rev_id]) and action.card_id == id
       action
     end

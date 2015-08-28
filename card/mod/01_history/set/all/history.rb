@@ -5,7 +5,7 @@ def history?
 end
 
 # must be called on all actions and before :set_name, :process_subcards and :validate_delete_children
-event :assign_act,  :before=>:approve, :when=>proc {|c| c.history?}  do
+event :assign_act,  :before=>:prepare, :when=>proc {|c| c.history?}  do
   @current_act = (@supercard && @supercard.current_act) || Card::Act.create(:ip_address=>Env.ip)
 end
 

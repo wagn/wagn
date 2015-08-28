@@ -67,10 +67,10 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   # the identifier gets stored in the card's db_content field
-  def db_content(args={})
+  def db_content
     basename =
-      if (args[:mod])
-        "#{args[:mod]}#{extension}"
+      if mod_file?
+        "#{@mod}#{extension}"
       else
         filename
       end
@@ -82,26 +82,37 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   def file_dir
-    if (mod = mod_file?)
+    if mod_file?
       ":#{model.codename}"
     elsif model.id
       "~#{model.id}"
     else
-      "#{model.key}" # FIXME what if the card has not a name yet?
+      "tmp"
     end
   end
 
   def cache_dir
-    Cardio.paths['files'].existent.first + '/tmp'
+    Cardio.paths['files'].existent.first + '/cache'
   end
 
-  # Carrierwave usually store the filename as identifier in the database
+  # Carrierwave usually stores the filename as identifier in the database
   # and retrieve_from_store! calls store_path with the identifier from the db
   # In our case the first part of our identifier is not part of the path
-  # but we construct the filename from db data. So we don't need the identifier.
+  # but we can construct the filename from db data. So we don't need the identifier.
   # We can just call store_path always with the filename
   def store_path(for_file=filename) #
     super(filename)
+  end
+
+  def tmp_path
+    if !Dir.exists? model.tmp_store_dir
+      Dir.mkdir model.tmp_store_dir
+    end
+    File.join model.tmp_store_dir, filename
+  end
+
+  def create_versions? new_file
+    model.create_versions?
   end
 
   # paperclip compatibility used in type/file.rb#core (base format)
@@ -110,7 +121,7 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   def original_filename
-    @original_filename || model.selected_action.comment
+    @original_filename || (model.selected_action && model.selected_action.comment)
   end
 
   def store_dir

@@ -1,7 +1,4 @@
-include Abstract::Attachment
-
-set_specific_attributes :file, :remote_file_url
-mount_uploader :file, FileUploader
+attachment :file, :uploader=>FileUploader
 
 format do
   view :source do |args|
@@ -66,30 +63,68 @@ format :html do
   end
 
   view :editor do |args|
-    #Rails.logger.debug "editor for file #{card.inspect}"
     file_chooser args
   end
 
-  def file_chooser args, db_column=:file
-    preview =
-      if !card.new_card?
-        content_tag :div, _render_core(args).html_safe,
-          :class=>'attachment-preview', :id=>"#{card.attachment.filename}-preview"
-      end
 
+  def preview  args
+    ''
+  end
+
+  view :preview_editor, :tags=>:unknown_ok do |args|
+    # #{preview(args)}
+    #
+    # <div><a class="cancel-upload">Unchoose</a></div>
     <<-HTML
-      <div class="choose-file">
-        #{preview}
-        <div>#{file_field db_column, :class=>'file-upload slotter'}</div>
-      </div>
-      <div class="chosen-file" style="display:none">
-        <div>
-          <label>File chosen:</label>
-          <span class="chosen-filename"></span>
-        </div>
-        <div><a class="cancel-upload">Unchoose</a></div>
+      <div class="chosen-file">
+        <input type="hidden" name="cached_upload" value="#{card.selected_action_id}">
+        <table role="presentation" class="table table-striped"><tbody class="files">
+          <tr class="template-download fade in">
+            <td>
+              <span class="preview">
+                #{preview(args)}
+              </span>
+            </td>
+            <td>
+              <p class="name">
+                #{card.original_filename}
+              </p>
+            </td>
+            <td>
+              <span class="size">#{number_to_human_size(card.attachment.size)}</span>
+            </td>
+            <td class="pull-right">
+              <button class="btn btn-danger delete cancel-upload" data-type="DELETE">
+                <i class="glyphicon glyphicon-trash"></i>
+                <span>Delete</span>
+              </button>
+            </td>
+          </tr></tbody>
+        </table>
       </div>
     HTML
+  end
+
+  def file_chooser args
+    <<-HTML
+      <div class="choose-file">
+        #{preview(args)}
+        <span class="btn btn-success fileinput-button">
+            <i class="glyphicon glyphicon-plus"></i>
+            <span>
+                Add #{card.attachment_name}...
+            </span>
+             #{file_field card.attachment_name, :class=>'file-upload slotter'}
+        </span>
+      </div>
+      <div id="progress" class="progress" style="display: none;">
+        <div class="progress-bar progress-bar-success" style="width: 0%;"></div>
+      </div>
+      <div class="chosen-file"></div>
+    HTML
+    # <script>
+    # #{ ::CoffeeScript.compile ::File.read('/opt/wagn/card/mod/05_standard/lib/chooseFile.js.coffee')}
+    # </script>
   end
 
 end

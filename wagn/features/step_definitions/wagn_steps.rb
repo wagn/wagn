@@ -125,6 +125,18 @@ When /^(?:|I )enter "([^"]*)" into "([^"]*)"$/ do |value, field|
   find( selector ).set value
 end
 
+When /^(?:|I )upload a (.+)$/ do |attachment_name|
+  filename =
+    if attachment_name == 'image'
+      'image.png'
+    else
+      'file.txt'
+    end
+  script = "$('input[type=file]').css('opacity','1');"
+  page.driver.browser.execute_script(script)
+  attach_file("card_#{attachment_name}", File.join(Wagn.gem_root,'features', 'support', filename))
+end
+
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
   user = Card::Auth.current.name if user == "I"
   signed_in_as user do
@@ -310,6 +322,14 @@ end
 ## variants of standard steps to handle """ style quoted args
 Then /^I should see$/ do |text|
   expect(page).to have_content(text)
+end
+
+Then /^I should see a preview image of size (.+)$/ do |size|
+  find("span.preview img[src*='#{size}.png']")
+end
+
+Then /^I should see an image of size "(.+)" and type "(.+)"$/ do |size, type|
+  find("img[src*='#{size}.#{type}']")
 end
 
 Then /^I should see "([^\"]*)" in color (.*)$/ do |text, css_class|

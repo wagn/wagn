@@ -444,6 +444,13 @@ EOF
       Card.set_specific_attributes ||= []
       Card.set_specific_attributes += args.map(&:to_s)
     end
+
+    def attachment name, args
+      include Abstract::Attachment
+      set_specific_attributes name, "remote_#{name}_url".to_sym,
+      uploader_class = args[:uploader] || FileUploader
+      mount_uploader name, uploader_class
+    end
   end
 end
 

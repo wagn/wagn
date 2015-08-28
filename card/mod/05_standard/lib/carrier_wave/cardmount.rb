@@ -18,9 +18,10 @@ module CarrierWave
       super
 
       class_eval <<-RUBY, __FILE__, __LINE__+1
-        event :store_#{column}_event, :on=>:save, :before=>:store do
+        event :store_#{column}_event, :on=>:save, :after=>:store do
           store_#{column}!
         end
+
         event :remove_#{column}_event, :on =>:delete, :after=>:stored do
           remove_#{column}!
         end
@@ -35,6 +36,10 @@ module CarrierWave
           #{column}
         end
 
+        def attachment_name
+          "#{column}".to_sym
+        end
+
         def read_uploader *args
           read_attribute *args
         end
@@ -42,14 +47,16 @@ module CarrierWave
           write_attribute *args
         end
         def #{column}=(new_file)
-          column = _mounter(:#{column}).serialization_column
-          send(:"\#{column}_will_change!")
+          send(:"#{column}_will_change!")
+          db_column = _mounter(:#{column}).serialization_column
+          send(:"\#{db_column}_will_change!")
           super
         end
 
         def remote_#{column}_url=(url)
-          column = _mounter(:#{column}).serialization_column
-          send(:"\#{column}_will_change!")
+          send(:"#{column}_will_change!")
+          db_column = _mounter(:#{column}).serialization_column
+          send(:"\#{db_column}_will_change!")
           super
         end
 
@@ -57,6 +64,14 @@ module CarrierWave
           super
           _mounter(:#{column}).remove = true
           _mounter(:#{column}).write_identifier
+        end
+
+        def #{column}_will_change!
+          @#{column}_changed = true
+        end
+
+        def #{column}_changed?
+          @#{column}_changed
         end
 
         def serializable_hash(options=nil)

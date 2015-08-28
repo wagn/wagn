@@ -14,7 +14,6 @@ class Card
           self[:ajax]       = c.request.xhr? || c.request.params[:simulate_xhr]
           self[:host]       = Card.config.override_host     || c.request.env['HTTP_HOST']
           self[:protocol]   = Card.config.override_protocol || c.request.protocol
-
         end
       end
 
@@ -34,6 +33,7 @@ class Card
       def session
         self[:session] ||= {}
       end
+
 
       def ajax?
         self[:ajax]

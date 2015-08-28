@@ -19,10 +19,14 @@ class CardController < ActionController::Base
   before_filter :load_id, :only => [ :read ]
   before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
+  before_filter :init_success_object, :only => [ :create, :update, :delete ]
+
+
 
   layout nil
 
   attr_reader :card
+  attr_accessor :success
 
 
 
@@ -44,7 +48,9 @@ class CardController < ActionController::Base
 
   def delete
     discard_locations_for card #should be an event
-    params[:success] ||= 'REDIRECT: *previous'
+    if @success.target == card
+      @success.target = :previous
+    end
     handle { card.delete }
   end
 
@@ -119,15 +125,19 @@ class CardController < ActionController::Base
       end
     raise Card::NotFound unless @card
 
-    card.select_action_by_params params
+    @card.select_action_by_params params
     Card::Env[:main_name] = params[:main] || (card && card.name) || ''
 
     render_errors if card.errors.any?
     true
   end
 
+  def init_success_object
+    @success = Card::Success.new(@card.cardname, params[:success])
+  end
+
   def refresh_card
-    @card =  card.refresh
+    @card = card.refresh
   end
 
   def request_logger
@@ -184,50 +194,23 @@ class CardController < ActionController::Base
   end
 
   def handle
-    yield ? success : render_errors
+    yield ? render_success : render_errors
   end
 
-
-
-  # success param:
-  # if nothing card is self
-  def success
-    redirect, new_params = !ajax?, {}
-
-    target = case params[:success]
-      when nil  ;  '_self'
-      when Hash
-        new_params = params[:success]
-        redirect ||= !!(new_params.delete :redirect)
-        new_params.delete :id
-      when /^REDIRECT:\s*(.+)/
-        redirect=true
-        $1
-      else      ;   params[:success]
-      end
-
-    target = case target
-      when '*previous'     ;  previous_location #could do as *previous
-      when /^(http|\/)/    ;  target
-      when /^TEXT:\s*(.+)/ ;  $1
-      when ''              ;  ''
-      else                 ;  Card.fetch target.to_name.to_absolute(card.cardname), :new=>{}
-      end
-
-    case
-    when redirect
-      target = page_path target.cardname, new_params if Card === target
-      card_redirect target
-    when String===target
-      render :text => target
+  def render_success
+    @success.name_context = @card.cardname
+    if !ajax? || @success.hard_redirect?
+      card_redirect @success.to_url
+    elsif String === @success.target
+      render :text => @success.target
     else
-      @card = target
-      #Card::Env[:params] =
-      if new_params.delete :soft_redirect
-        self.params = new_params
+      if @success.soft_redirect?
+        self.params = @success.params
       else
-        self.params.merge! new_params # #need tests. insure we get slot, main...
+        self.params.merge! @success.params # #need tests. insure we get slot, main...
       end
+      @card = @success.target
+      @card.select_action_by_params params
       show
     end
   end

@@ -15,8 +15,15 @@ end
 
 def mod_file?
   # when db_content was changed assume that it's no longer a mod file
-  if !db_content_changed? && content.present? && content =~ /^:[^\/]+\/([^.]+)/
-    $1
+  if !db_content_changed? && content.present?
+    case content
+    when /^:[^\/]+\/([^.]+)/ ; $1     # current mod_file format
+    when /^\~/               ; false  # current id file format
+    else
+      if lines = content.split("\n") and lines.size == 4 # old format, still used in card_changes.
+        lines.last
+      end
+    end
   end
 end
 

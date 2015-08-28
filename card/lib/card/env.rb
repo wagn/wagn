@@ -1,6 +1,6 @@
-# Card::Env can differ for each request; Card.config should not
-
 class Card
+
+  # Card::Env can differ for each request; Card.config should not
   module Env
     class << self
       def reset args={}

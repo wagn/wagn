@@ -347,7 +347,7 @@ describe Card::Set::All::Permissions do
       assert_hidden_from( @u1, @c2 )
       assert_hidden_from( @u3, @c2 )
     end
-    
+
     context "create permissions" do
       before do
         Card::Auth.as_bot do
@@ -355,17 +355,17 @@ describe Card::Set::All::Permissions do
           Card.create! :name=>'*self+*right+*create',      :type=>'Pointer', :content=>'[[Anyone Signed In]]'
         end
       end
-      
+
       it "should inherit" do
         Card::Auth.as(:anyone_signed_in) do
           expect(Card.fetch( 'A+*self' ).ok?(:create)).to be_truthy #explicitly granted above
-          expect(Card.fetch( 'A+*right').ok?(:create)).to be_falsey #by default restricted   
-          
+          expect(Card.fetch( 'A+*right').ok?(:create)).to be_falsey #by default restricted
+
           expect(Card.fetch( 'A+*self+*structure',  :new=>{} ).ok?(:create)).to be_truthy # +*structure granted;
           expect(Card.fetch( 'A+*right+*structure', :new=>{} ).ok?(:create)).to be_falsey # can't create A+B, therefore can't create A+B+C
         end
       end
-      
+
     end
 
 
@@ -493,9 +493,9 @@ describe Card::Set::All::Permissions do
       end
     end
   end
-  
-  
-  
+
+
+
 end
 
 

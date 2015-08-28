@@ -12,7 +12,7 @@ class SearchCardContext < Card::CoreMigration
       ['self',   'left'],
       ['',       'left'],
     ]
-    Card.search(:type_id=>SearchTypeID).each do |card|
+    Card.search(:type_id=>Card::SearchTypeID).each do |card|
       if card.cardname.junction?
         content = card.content
         replace.each do |key, val|
@@ -21,5 +21,8 @@ class SearchCardContext < Card::CoreMigration
         card.update_attributes! :content=>content
       end
     end
+    Card["*self+*right+*structure"].update_attributes! :content=>'{"name":"_left"}'
+    Card["*type+*right+*structure"].update_attributes! :content=>'{"type":"_left"}'
+    Card["*type plus right+*right+*structure"].update_attributes! :content=>'{"left\":{"type":"_LL\"}, "right":"_LR"}'
   end
 end

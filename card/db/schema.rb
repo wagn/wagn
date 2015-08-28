@@ -38,7 +38,7 @@ ActiveRecord::Schema.define(version: 20150724210803) do
   create_table "card_changes", force: :cascade do |t|
     t.integer "card_action_id", limit: 4
     t.integer "field",          limit: 4
-    t.text    "value",          limit: 65535
+    t.text    "value",          limit: 16777215
   end
 
   add_index "card_changes", ["card_action_id"], name: "card_changes_card_action_id_index", using: :btree
@@ -66,20 +66,20 @@ ActiveRecord::Schema.define(version: 20150724210803) do
   add_index "card_revisions", ["creator_id"], name: "revisions_created_by_index", using: :btree
 
   create_table "cards", force: :cascade do |t|
-    t.string   "name",                limit: 255,   null: false
-    t.string   "key",                 limit: 255,   null: false
-    t.string   "codename",            limit: 255
     t.integer  "left_id",             limit: 4
-    t.integer  "right_id",            limit: 4
-    t.integer  "current_revision_id", limit: 4
     t.datetime "created_at",                        null: false
     t.datetime "updated_at",                        null: false
+    t.integer  "current_revision_id", limit: 4
+    t.string   "name",                limit: 255,   null: false
     t.integer  "creator_id",          limit: 4,     null: false
     t.integer  "updater_id",          limit: 4,     null: false
+    t.integer  "right_id",            limit: 4
+    t.string   "key",                 limit: 255,   null: false
+    t.boolean  "trash",                             null: false
+    t.integer  "references_expired",  limit: 4
+    t.string   "codename",            limit: 255
     t.string   "read_rule_class",     limit: 255
     t.integer  "read_rule_id",        limit: 4
-    t.integer  "references_expired",  limit: 4
-    t.boolean  "trash",                             null: false
     t.integer  "type_id",             limit: 4,     null: false
     t.text     "db_content",          limit: 65535
   end

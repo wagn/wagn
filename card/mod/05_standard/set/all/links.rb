@@ -14,6 +14,25 @@ format do
     end
   end
 
+  # link to url, view, card or related card
+  #
+  def smart_link link_text, target, html_args={}
+    if (view = target.delete(:view))
+      view_link link_text, view, html_args.merge(:path_opts=>target)
+    elsif (page = target.delete(:card))
+      card_link page, html_args.merge(:path_opts=>target, :text=>link_text)
+    elsif target[:related]
+      if target[:related].kind_of? String
+        target[:related] = {:name=>"+#{target[:related]}"}
+      end
+      view_link link_text, :related, html_args.merge(:path_opts=>target)
+    elsif target[:web]
+    else
+      link_to link_text, target, html_args
+    end
+  end
+
+
   # link to a specific url or path
   def web_link href, opts={}
     text = opts.delete(:text) || href
@@ -32,12 +51,12 @@ format do
 
   # link to a specific card
   def card_link name_or_card, opts={}
-    text = (opts.delete(:text) || name_or_card).to_name.to_show @context_names
     name = case name_or_card
            when Symbol then Card.fetch( name_or_card, :skip_modules=>true ).cardname
            when Card   then name_or_card.cardname
            else             name_or_card
            end
+    text = (opts.delete(:text) || name).to_name.to_show @context_names
 
     path_opts = opts.delete( :path_opts ) || {}
     path_opts[:name ] = name
@@ -72,24 +91,29 @@ format do
 
 
   def path opts={}
-    name = opts.delete(:name) || card.name
-    base = opts[:action] ? "card/#{ opts.delete :action }/" : ''
+    if opts[:action] == :new && opts[:type] && !(opts[:name] || opts[:card] || opts[:id])
+      opts.delete(:action)
+      base = "new/#{opts.delete(:type)}"
+    else
+      name = opts.delete(:name) || card.name
+      base = opts[:action] ? "card/#{ opts.delete :action }/" : ''
 
-    opts[:no_id] = true if [:new, :create].member? opts[:action]
-    #generalize. dislike hardcoding views/actions here
+      opts[:no_id] = true if [:new, :create].member? opts[:action]
+      #generalize. dislike hardcoding views/actions here
 
-    linkname = name.to_name.url_key
-    unless name.empty? || opts.delete(:no_id)
-      base += ( opts[:id] ? "~#{ opts.delete :id }" : linkname )
+      linkname = name.to_name.url_key
+      unless name.empty? || opts.delete(:no_id)
+        base += ( opts[:id] ? "~#{ opts.delete :id }" : linkname )
+      end
+
+      opts[:card] ||= {}
+      opts[:card][:name] = name if opts.delete(:known)==false && name.present? && name.to_s != linkname
+
+      if type = opts.delete(:type) and Card.known?( type )
+        opts[:card][:type] = type
+      end
+      opts.delete(:card) if opts[:card].empty?
     end
-
-    opts[:card] ||= {}
-    opts[:card][:name] = name if opts.delete(:known)==false && name.present? && name.to_s != linkname
-
-    if type = opts.delete(:type) and Card.known?( type )
-      opts[:card][:type] = type
-    end
-    opts.delete(:card) if opts[:card].empty?
 
     query = opts.empty? ? '' : "?#{opts.to_param}"
     internal_url( base + query )
@@ -118,6 +142,14 @@ format :html do
     end
 
     content_tag :a, raw(text), opts.merge(:href=>href)
+  end
+
+end
+
+
+format :css do
+  def link_to text, href, opts={}
+    interpret_href href
   end
 
 end

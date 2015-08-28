@@ -1,3 +1,7 @@
+
+
+
+
 RuleSQL = %{
   select rules.id as rule_id, settings.id as setting_id, sets.id as set_id, sets.left_id as anchor_id, sets.right_id as set_tag_id
   from cards rules
@@ -17,10 +21,9 @@ ReadRuleSQL = %{
   where read_rules.right_id = #{Card::ReadID} and read_rules.trash is false and sets.type_id = #{Card::SetID};
 }
 
-
-def is_rule?
-  is_standard_rule? || is_user_rule?
-end
+ def is_rule?
+   is_standard_rule? || is_user_rule?
+ end
 
 def is_standard_rule?
   (r = right( :skip_modules=>true )) &&
@@ -56,7 +59,7 @@ def rule_card_id setting_code, options={}
   if Card::Setting.user_specific? setting_code
     user_id = options[:user_id] || (options[:user] and options[:user].id) || Auth.current_id
     if user_id
-      fallback = "#{setting_code}+#{Card[:all].id}"
+      fallback = "#{setting_code}+#{AllID}"
       setting_code = "#{setting_code}+#{user_id}"
     end
   end
@@ -69,12 +72,12 @@ def rule_card_id setting_code, options={}
   nil
 end
 
-def related_sets
+def related_sets with_self = false
   # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
 
   sets = []
   sets << ["#{name}+*type",  Card::TypeSet.label( name) ] if known? && type_id==Card::CardtypeID
-  #sets << ["#{name}+*self",  Card::SelfSet.label( name) ]
+  sets << ["#{name}+*self",  Card::SelfSet.label( name) ] if with_self
   sets << ["#{name}+*right", Card::RightSet.label(name) ] if known? && cardname.simple?
 
 #      Card.search(:type=>'Set',:left=>{:right=>name},:right=>'*type plus right',:return=>'name').each do |set_name|
@@ -135,11 +138,11 @@ module ClassMethods
   end
 
   def cache_key row
-    setting_code = Card::Codename[ row['setting_id'].to_i ] or return false
+    setting_code = Codename[ row['setting_id'].to_i ] or return false
 
     anchor_id = row['anchor_id']
     set_class_id = anchor_id.nil? ? row['set_id'] : row['set_tag_id']
-    set_class_code = Card::Codename[ set_class_id.to_i ] or return false
+    set_class_code = Codename[ set_class_id.to_i ] or return false
 
     key_base = [ anchor_id, set_class_code, setting_code].compact.map( &:to_s ) * '+'
   end
@@ -174,15 +177,15 @@ module ClassMethods
 
   def all_user_ids_with_rule_for set_card, setting_code
     key = if (l=set_card.left) and (r=set_card.right)
-        set_class_code = Card::Codename[ r.id ]
+        set_class_code = Codename[ r.id ]
         "#{l.id}+#{set_class_code}+#{setting_code}"
       else
-        set_class_code = Card::Codename[ set_card.id ]
+        set_class_code = Codename[ set_card.id ]
         "#{set_class_code}+#{setting_code}"
       end
     user_ids = user_ids_cache[key] || []
-    if user_ids.include? Card[:all].id  # rule for all -> return all user ids
-      Card.where(:type_id=>Card::UserID).pluck(:id)
+    if user_ids.include? AllID  # rule for all -> return all user ids
+      Card.where(:type_id=>UserID).pluck(:id)
     else
       user_ids
     end

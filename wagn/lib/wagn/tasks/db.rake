@@ -39,7 +39,7 @@ namespace :db do
       fixture_path = File.join(Cardio.gem_root, 'db','seed', 'test', 'fixtures')
       ActiveRecord::Base.establish_connection(::Rails.env.to_sym)
       (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(fixture_path, '*.{yml,csv}'))).each do |fixture_file|
-        ActiveRecord::Fixtures.create_fixtures(fixture_path, File.basename(fixture_file, '.*'))
+        ActiveRecord::FixtureSet.create_fixtures(fixture_path, File.basename(fixture_file, '.*'))
       end
     end
   end

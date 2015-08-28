@@ -68,7 +68,6 @@ When /^(.*) edits? "([^\"]*)" entering "([^\"]*)" into wysiwyg$/ do |username, c
   end
 end
 
-
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
@@ -94,7 +93,7 @@ end
 
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do
-    normal_textarea_card_type = ["JavaScript","CoffeeScript","HTML","CSS","SCS","Search"]
+    normal_textarea_card_type = ["JavaScript","CoffeeScript","HTML","CSS","SCSS","Search"]
     if not normal_textarea_card_type.include? cardtype or not page.evaluate_script "typeof ace != 'undefined'"
       fill_in("card[content]", :with=>content)
     else
@@ -164,8 +163,6 @@ Then /debug/ do
   nil
 end
 
-
-
 def create_card(username,cardtype,cardname,content="")
   signed_in_as(username) do
     if cardtype=='Pointer'
@@ -209,13 +206,28 @@ When /^In (.*) I find link with class "(.*)" and click it$/ do |section, css_cla
   end
 end
 
+When /^In (.*) I find link with icon "(.*)" and click it$/ do |section, icon|
+  within scope_of(section) do
+    find("a > span.glyphicon-#{icon}").click
+  end
+end
+When /^In (.*) I find button with icon "(.*)" and click it$/ do |section, icon|
+  within scope_of(section) do
+    find("button > span.glyphicon-#{icon}").click
+  end
+end
+
 Then /I submit$/ do
     click_button("Submit")
 end
 
 When /^I open the main card menu$/ do
-  page.execute_script "$('#main .card-menu').show()"
-  page.find('#main .card-menu a').click
+  page.execute_script "$('#main .menu-slot .vertical-card-menu.show-on-hover .card-slot').show()"
+  page.find('#main .menu-slot .card-menu a').click
+end
+
+When /^I close the modal window$/ do
+  page.find('.modal-menu .close-modal').click
 end
 
 When /^I pick (.*)$/ do |menu_item|

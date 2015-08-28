@@ -2,6 +2,8 @@
 Wagn.application.class.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
+  config.eager_load = true
+
   # Code is not reloaded between requests
   config.cache_classes = true
 
@@ -10,7 +12,7 @@ Wagn.application.class.configure do
   config.action_controller.perform_caching = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this)
-  config.serve_static_assets = defined?( Rails::Server )
+  config.serve_static_files = defined?( Rails::Server )
 
   # Compress JavaScripts and CSS
   config.assets.compress = true
@@ -32,7 +34,7 @@ Wagn.application.class.configure do
   # config.force_ssl = true
 
   # See everything in the log (default is :info)
-  # config.log_level = :debug
+  config.log_level = :info
 
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new

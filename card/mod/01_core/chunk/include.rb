@@ -5,7 +5,7 @@ require_dependency File.expand_path( '../reference', __FILE__ )
 module Card::Chunk
   class Include < Reference
     cattr_reader :options
-    @@options = ::Set.new [ :inc_name, :inc_syntax, :view, :items, :type, :size, :title, :hide, :show, :structure ]
+    @@options = ::Set.new [ :inc_name, :inc_syntax, :view, :items, :type, :size, :title, :hide, :show, :structure, :params ]
     attr_reader :options
 
     Card::Chunk.register_class self, {

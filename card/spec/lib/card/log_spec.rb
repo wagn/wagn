@@ -40,24 +40,24 @@ describe Card::Log::Performance do
   end
 
   def expect_logger_to_receive_once message
-    allow(Rails.logger).to receive(:wagn).with(/((?!#{message}).)*/ )
-    expect(Rails.logger).to receive(:wagn).once.with(message)
+    allow(Rails.logger).to receive(:info).with(/((?!#{message}).)*/ )
+    expect(Rails.logger).to receive(:info).once.with(message)
     with_logging { yield }
   end
 
 
   def expect_logger_to_receive message
-    allow(Rails.logger).to receive(:wagn)
+    allow(Rails.logger).to receive(:info)
     Array.wrap(message).each do |msg|
-      expect(Rails.logger).to receive(:wagn).with(msg)
+      expect(Rails.logger).to receive(:info).with(msg)
     end
     with_logging { yield }
   end
 
   def expect_logger_not_to_receive message
-    allow(Rails.logger).to receive(:wagn)
+    allow(Rails.logger).to receive(:info)
     Array.wrap(message).each do |msg|
-      expect(Rails.logger).not_to receive(:wagn).with(msg)
+      expect(Rails.logger).not_to receive(:info).with(msg)
     end
     with_logging { yield }
   end
@@ -94,7 +94,7 @@ describe Card::Log::Performance do
     it 'handles instance method type' do
       class Card
         def test a, b
-          Rails.logger.wagn("orignal method is still alive")
+          Rails.logger.info("orignal method is still alive")
         end
         def self.test a, b; end
       end

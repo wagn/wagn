@@ -1,3 +1,9 @@
+event :save_recently_edited_settings, :before=>:extend, :on=>:save, :when=>proc{|c| c.is_rule? } do
+  if (recent = Card[:recent_settings])
+    recent.insert_item 0, cardname.right
+    recent.save
+  end
+end
 
 format :html do
 
@@ -30,8 +36,6 @@ format :html do
     end.join("\n") +
     '</tr>'
   end
-
-
 
 
   view :open_rule, :tags=>:unknown_ok do |args|
@@ -76,7 +80,6 @@ format :html do
         </td>
       </tr>
     }
-
   end
 
   def default_open_rule_args args
@@ -86,7 +89,6 @@ format :html do
 
     args.reverse_merge! :current_rule => current_rule_card, :setting_name => card.rule_setting_name
   end
-
 
   view :show_rule, :tags=>:unknown_ok do |args|
     return 'not a rule' if !card.is_rule?
@@ -107,9 +109,14 @@ format :html do
 
   view :edit_rule, :tags=>:unknown_ok do |args|
     return 'not a rule' if !card.is_rule?
+    form_args = { :url=>path(:action=>:update, :no_id=>true),
+       :html=> {:class=>"card-form card-rule-form" } }
+    if args[:remote]
+      form_args[:remote] = true
+      form_args[:html][:class] += ' slotter'
+    end
 
-    form_for card, :url=>path(:action=>:update, :no_id=>true), :remote=>true, :html=>
-        {:class=>"card-form card-rule-form slotter" } do |form|
+    form_for card, form_args do |form|
       @form = form
       %{
         #{ hidden_success_formgroup args[:success]}
@@ -119,7 +126,10 @@ format :html do
     end
   end
 
+  view :related_edit_rule, :view=>:edit_rule
+
   def default_edit_rule_args args
+    args[:remote]       ||= true
     args[:rule_context] ||= card
     args[:set_context]  ||= card.rule_set_name
     args[:set_selected]   = params[:type_reload] ? card.rule_set_name : false
@@ -132,49 +142,41 @@ format :html do
       :view => 'open_rule',
       :item => 'view_rule'
     })
-  end
 
-  view :related_edit_rule, :tags=>:unknown_ok do |args|
-    delete_button = if !card.new_card?
-                      b_args = { :remote=>true, :class=>'rule-delete-button slotter', 'data-slot-selector'=>'.card-slot.related-view', :type=>'button' }
-                      b_args[:href] = path :action=>:delete, :success=>args[:success]
-                      if (fset = args[:fallback_set]) && (fcard = Card.fetch(fset))
-                        b_args['data-confirm']="Deleting will revert to #{card.rule_setting_name} rule for #{fcard.label }"
-                      end
-                      %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
-                    end
-
-    frame do
-      form_for card, :url=>path(:action=>:update, :no_id=>true), :html=>
-          {:class=>"card-form card-rule-form" } do |form|
-        @form = form
-        %{
-          #{ hidden_success_formgroup args[:success]}
-          #{ editor args }
-          #{
-            wrap_with( :div, :class=>'button-area' ) do
-             [
-               delete_button,
-               button_tag( 'Submit', :class=>'rule-submit-button', :situation=>'primary' ),
-               card_link( args[:success][:id], :text=>'Cancel', :class=>'rule-cancel-button btn btn-default', :path_opts=>{:view=>args[:success][:view]} )
-             ]
-            end
-          }
-        }
+    args[:delete_button] ||= delete_button args
+    args[:cancel_button] ||=
+      begin
+        cancel_path = path :view=>( card.new_card? ? :closed_rule : :open_rule ), :success=>false
+        button_tag( 'Cancel', :class=>'rule-cancel-button slotter', :type=>'button',
+                          :href=>cancel_path )
       end
-    end
   end
 
   def default_related_edit_rule_args args
-    args[:success] = {
-        :view => :open,
-        :item => nil,
+    args[:remote]  ||= false
+    args[:success] ||= {
         :card => args[:parent] || card,
-        :id => (args[:parent] && args[:parent].cardname.url_key) || card.cardname.url_key
+        :id => (args[:parent] && args[:parent].cardname.url_key) || card.cardname.url_key,
+        :view => :open,
+        :item => nil
       }
     default_edit_rule_args args
+    args[:delete_button] = delete_button args, '.card-slot.related-view'
+    args[:cancel_button] = card_link( args[:success][:id], :text=>'Cancel',
+      :class=>'rule-cancel-button btn btn-default', :path_opts=>{:view=>args[:success][:view]} )
   end
 
+  def delete_button args, slot_selector=nil
+    if !card.new_card?
+      b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
+      b_args['data-slot-selector'] = slot_selector if slot_selector
+      b_args[:href] = path :action=>:delete, :success=>args[:success]
+      if (fset = args[:fallback_set]) && (fcard = Card.fetch(fset))
+        b_args['data-confirm']="Deleting will revert to #{card.rule_setting_name} rule for #{fcard.label }"
+      end
+      %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
+    end
+  end
 
   # used keys for args:
   # :success,  :set_selected, :set_options, :rule_context
@@ -269,21 +271,11 @@ format :html do
   end
 
   def edit_buttons  args
-    delete_button = if !card.new_card?
-                      b_args = { :remote=>true, :class=>'rule-delete-button slotter', :type=>'button' }
-                      b_args[:href] = path :action=>:delete, :success=>args[:success]
-                      if (fset = args[:fallback_set]) && (fcard = Card.fetch(fset))
-                        b_args['data-confirm']="Deleting will revert to #{card.rule_setting_name} rule for #{fcard.label }"
-                      end
-                      %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
-                    end
-    cancel_path = path :view=>( card.new_card? ? :closed_rule : :open_rule )
     wrap_with( :div, :class=>'button-area' ) do
      [
-       delete_button,
+       args[:delete_button],
        button_tag( 'Submit', :class=>'rule-submit-button', :situation=>'primary' ),
-       button_tag( 'Cancel', :class=>'rule-cancel-button slotter', :type=>'button',
-                             :href=>cancel_path, :success=>true )
+       args[:cancel_button]
      ]
     end
   end
@@ -411,24 +403,3 @@ end
 
 
 
-#
-
-=begin
-
-def repair_set
-  @set_repair_attempted = true
-  if real?
-    reset_patterns
-    template # repair happens in template loading
-    include_set_modules
-  end
-end
-
-def method_missing method_id, *args
-  if !@set_repair_attempted and repair_set
-    send method_id, *args
-  else
-    super
-  end
-end
-=end

@@ -15,7 +15,7 @@ class BootswatchThemes < Card::CoreMigration
       theme = Card.fetch "#{theme_name} skin"
 
       if theme
-        theme.update_attributes! :type_id=>Card::SkinID, :codename=>nil, :content => "[[themeless bootstrap skin]]\n[[+bootswatch theme]]", :subcards=> {
+        theme.update_attributes! :type_id=>Card::SkinID, :content => "[[themeless bootstrap skin]]\n[[+bootswatch theme]]", :subcards=> {
           "+variables" => {:type_id=>Card::ScssID, :content=>File.read(File.join path, '_variables.scss')},
           "+style"     => {:type_id=>Card::ScssID, :content=>File.read(File.join path, '_bootswatch.scss')}
         }

@@ -35,21 +35,27 @@ $.extend wagn,
 jQuery.fn.extend {
   slot: ->
     if @data('slot-selector')
-      close = @closest(@data('slot-selector'))
-      if close.length == 0
+      target_slot = @closest(@data('slot-selector'))
+      parent_slot = @closest '.card-slot'
+
+      # if slot-selector doesn't apply to a child, search in all parent slots and finally in the body
+      while target_slot.length == 0 and parent_slot.length > 0
+        target_slot = $(parent_slot).find(@data('slot-selector'))
+        parent_slot = $(parent_slot).parent().closest '.card-slot'
+      if target_slot.length == 0
         $('body').find(@data('slot-selector'))
       else
-        close
+        target_slot
     else
       @closest '.card-slot'
 
   setSlotContent: (val) ->
     s = @slot()
     v = $(val)
-    if v[0]
-      if slotdata = s.attr 'data-slot'
-        v.attr 'data-slot', slotdata if slotdata?
-    else #simple text (not html)
+    unless v[0]
+    #   if slotdata = s.attr 'data-slot'
+    #     v.attr 'data-slot', slotdata if slotdata?
+    # else #simple text (not html)
       v = val
     s.replaceWith v
     v.trigger 'slotReady'
@@ -163,8 +169,8 @@ $(window).ready ->
   $('body').on 'loaded.bs.modal', null, (event) ->
     unless event.slotSuccessful
       wagn.initializeEditors $(event.target)
+      $(event.target).find(".card-slot").trigger("slotReady")
       event.slotSuccessful = true
-
 
   $('body').on 'ajax:error', '.slotter', (event, xhr) ->
     $(this).slotError xhr.status, xhr.responseText
@@ -270,13 +276,6 @@ $(window).ready ->
       if input and !(input.val().match /^REDIRECT/)
         input.val ( if target == 'REDIRECT' then target + ': ' + input.val() else target )
 
-  #more of this info should be in views; will need to refactor for HTTP DELETE anyway...
-  $('.card-slot').on 'click', '.standard-delete', ->
-    return if $(this).attr('success-ready') == 'true' #prevent double-click weirdness
-    s = if $(this).isMain() then 'REDIRECT: *previous' else 'TEXT:' + $(this).slot().data('cardName') + ' removed'
-    $(this).attr 'href', $(this).attr('href') + '?success=' + encodeURIComponent(s)
-    $(this).attr 'success-ready', 'true'
-
   $('body').on 'change', '.live-type-field', ->
     $(this).data 'params', $(this).closest('form').serialize()
     $(this).data 'url', $(this).attr 'href'
@@ -328,13 +327,11 @@ $(window).ready ->
 
 
 # important: this prevents jquery-mobile from taking over everything
-$( document ).on "mobileinit", ->
-  $.extend $.mobile , {
-    autoInitializePage: false
-    ajaxEnabled: false
-  }
-
-
+# $( document ).on "mobileinit", ->
+#   $.extend $.mobile , {
+#     #autoInitializePage: false
+#     #ajaxEnabled: false
+#   }
 
 
 newCaptcha = (form)->

@@ -12,7 +12,6 @@ def raw_content
   structure ? template.db_content : content
 end
 
-
 format do
   def chunk_list #override to customize by set
     :default
@@ -35,6 +34,10 @@ def clean_html?
   true
 end
 
+def history?
+  false
+end
+
 def save_content_draft content
   clear_drafts
 end
@@ -51,14 +54,9 @@ event :save_draft, :before=>:store, :on=>:update, :when=>proc{ |c| Env.params['d
 end
 
 
-event :set_default_content, :on=>:create, :before=>:approve do  
-  if !db_content_changed? and template and template.db_content.present?
+event :set_default_content, :on=>:create, :before=>:approve do
+  if !db_content_changed? && template && template.db_content.present?
     self.db_content = template.db_content
   end
 end
 
-event :detect_conflict, :before=>:approve, :on=>:update do
-  if last_action_id_before_edit and last_action_id_before_edit.to_i != last_action_id and last_action.act.actor_id != Auth.current_id
-    errors.add :conflict, "changes not based on latest revision"
-  end
-end

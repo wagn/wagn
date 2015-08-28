@@ -3,6 +3,8 @@ Wagn.application.class.configure do
   # Edit at your own peril - it's recommended to regenerate this file
   # in the future when you upgrade to a newer version of Cucumber.
 
+  config.eager_load = false
+
   # IMPORTANT: Setting config.cache_classes to false is known to
   # break Cucumber's use_transactional_fixtures method.
   # For more information see https://rspec.lighthouseapp.com/projects/16211/tickets/165

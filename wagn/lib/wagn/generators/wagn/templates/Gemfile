@@ -7,17 +7,11 @@ gem 'card',        :path=>"<%= @gemfile_gem_path %>/card", :require => false
 gem 'wagn'
 <% end %>
 
-<%= database_gemfile_entry -%>
+gem '<%= database_gemfile_entry.name %>'<%= %(, '#{database_gemfile_entry.version}') if database_gemfile_entry.version -%>
 
-gem 'execjs', '<=2.4.0' # locked because 2.5.0 requires Ruby 2
-
-# A javascript runtime is required for JavaScript cards.
-<% if RUBY_PLATFORM =~ /darwin/ -%>
-# Macs have one included, but on other platforms you'll need this or another runtime
-# gem 'therubyracer'
-<% else -%>
-gem 'therubyracer'
-<% end -%>
+# Use Unicorn or Thin as server
+# gem 'unicorn'
+# gem 'thin'
 
 <% if options['mod-dev'] -%>
 group :test do
@@ -32,15 +26,18 @@ group :test, :development do
   gem 'jasmine-rails', :git=>"https://github.com/chuenlok/jasmine-rails.git"
   gem 'jasmine-jquery-rails'
   gem 'sprockets' # just so above works
-  # gem 'spring'
-  # gem 'spring-commands-rspec'
-  # gem 'spring-commands-cucumber'
+  <%- if spring_install? %>
+  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  gem 'spring'
+  gem 'spring-commands-rspec'
+  gem 'spring-commands-cucumber'
+  <% end -%>
   # gem 'pry-rails'
   # gem 'pry-rescue'
   # gem 'pry-stack_explorer'
   if RUBY_VERSION =~ /^2/
-  gem 'byebug'
-  # gem 'pry-byebug'
+    gem 'byebug'
+    # gem 'pry-byebug'
   else
     gem 'debugger'
   end
@@ -74,7 +71,7 @@ group :test do
   if RUBY_PLATFORM =~ /darwin/
     # gem 'terminal-notifier-guard', '~> 1.5'    # use growler notifications on macs
     # gem 'rspec-legacy_formatters'
-    # gem 'wagn-rspec-formatter', :path=>'/opt/wagn-rspec-formatter'
+    # gem 'wagn-rspec-formatter', :git=>'https://github.com/xithan/wagn-rspec-formatter.git'
   end
 
   # CUKES see features dir
@@ -89,22 +86,25 @@ group :test do
 
 
   gem 'email_spec'                             #
-  gem 'database_cleaner', '~> 0.7'             # used by cucumber for db transactions
+  gem 'database_cleaner', '~> 1.4'             # used by cucumber for db transactions
 
-  gem 'turn', "~>0.8.3", :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
-  gem 'minitest', "~>4.0"
+  gem 'turn', :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
+  gem 'minitest'
 end
 
 gem 'ruby-prof', :group=>:profile  # profiling
 
 group :development, :test do
+  <%- if spring_install? %>
+  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-commands-rspec'
   gem 'spring-commands-cucumber'
   gem 'spring-watcher-listen'
+  <% end -%>
   gem 'pry-rails'
   gem 'pry-rescue'
-  gem 'pry-stack_explorer'
+  # gem 'pry-stack_explorer'
   gem 'jasmine'
   gem 'jasmine-rails', :git=>"https://github.com/chuenlok/jasmine-rails.git"
   gem 'jasmine-jquery-rails'
@@ -117,6 +117,8 @@ group :debug do
 	else
 		gem 'debugger'
 	end
+  gem 'better_errors', :git=>"https://github.com/xithan/better_errors.git"
+  gem 'binding_of_caller'
 end
 <% end %>
 

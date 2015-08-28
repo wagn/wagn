@@ -45,7 +45,9 @@ describe Card::Set::Type::Pointer do
       pointer.content.should == ""
     end
   end
-   
+
+
+
   describe "html" do
     before do
       Card::Auth.as_bot do
@@ -58,25 +60,27 @@ describe Card::Set::Type::Pointer do
       end
     end
     it "should include nonexistingcardmustnotexistthisistherule in radio options" do
-      option_html ="<input checked=\"checked\" class=\"pointer-radio-button\" id=\"pointer-radio-nonexistingcardmustnotexistthisistherule\" name=\"pointer_radio_button-tp\" type=\"radio\" value=\"nonexistingcardmustnotexistthisistherule\" />"
-      @pointer.format.render_radio.should include(option_html)
-      option_html ="<input checked=\"checked\" class=\"pointer-radio-button\" id=\"pointer-radio-nonexistingcardmustnotexistthisistherule\" name=\"pointer_radio_button-ip\" type=\"radio\" value=\"nonexistingcardmustnotexistthisistherule\" />"
-      @inherit_pointer.format.render_radio.should include(option_html)
+      common_html = 'input[class="pointer-radio-button"][checked="checked"][type="radio"][value="nonexistingcardmustnotexistthisistherule"][id="pointer-radio-nonexistingcardmustnotexistthisistherule"]'
+      option_html = common_html + '[name="pointer_radio_button-tp"]'
+      assert_view_select @pointer.format.render_radio, option_html
+      option_html = common_html + '[name="pointer_radio_button-ip"]'
+      assert_view_select @inherit_pointer.format.render_radio, option_html
     end
+
     it "should include nonexistingcardmustnotexistthisistherule in checkbox options" do
-      option_html = "<input checked=\"checked\" class=\"pointer-checkbox-button\" id=\"pointer-checkbox-nonexistingcardmustnotexistthisistherule\" name=\"pointer_checkbox\" type=\"checkbox\" value=\"nonexistingcardmustnotexistthisistherule\" />"
-      @pointer.format.render_checkbox.should include(option_html)
-      @inherit_pointer.format.render_checkbox.should include(option_html)
+      option_html = 'input[class="pointer-checkbox-button"][checked="checked"][name="pointer_checkbox"][type="checkbox"][value="nonexistingcardmustnotexistthisistherule"][id="pointer-checkbox-nonexistingcardmustnotexistthisistherule"]'
+      assert_view_select @pointer.format.render_checkbox, option_html
+      assert_view_select @inherit_pointer.format.render_checkbox, option_html
     end
     it "should include nonexistingcardmustnotexistthisistherule in select options" do
-      option_html = %{<option value="#{@card_name}" selected="selected">#{@card_name}</option>}
-      @pointer.format.render_select.should include(option_html)
-      @inherit_pointer.format.render_select.should include(option_html)
+      option_html = "option[value='#{@card_name}'][selected='selected']"
+      assert_view_select @pointer.format.render_select, option_html, @card_name
+      assert_view_select @inherit_pointer.format.render_select, option_html, @card_name
     end
     it "should include nonexistingcardmustnotexistthisistherule in multiselect options" do
-      option_html = %{<option value="#{@card_name}" selected="selected">#{@card_name}</option>}
-      @pointer.format.render_multiselect.should include(option_html)
-      @inherit_pointer.format.render_multiselect.should include(option_html)
+      option_html = "option[value='#{@card_name}'][selected='selected']"
+      assert_view_select @pointer.format.render_multiselect, option_html, @card_name
+      assert_view_select @inherit_pointer.format.render_multiselect, option_html, @card_name
     end
   end
   describe "css" do
@@ -85,15 +89,15 @@ describe Card::Set::Type::Pointer do
       Card.create :name=>'my css', :content=> @css
     end
     it "should render CSS of items" do
-      css_list = render_card :content, 
-        { :type=>Card::PointerID, :name=>'my style list', :content=>'[[my css]]' }, 
+      css_list = render_card :content,
+        { :type=>Card::PointerID, :name=>'my style list', :content=>'[[my css]]' },
         :format=>:css
 #      css_list.should =~ /STYLE GROUP\: \"my style list\"/
 #      css_list.should =~ /Style Card\: \"my css\"/
       css_list.should =~ /#{ Regexp.escape @css }/
     end
   end
-  
+
   describe '#standardize_item' do
     it "should handle unlinked items" do
       pointer1 = Card.create! :name=>'pointer1', :type=>'Pointer', :content=>'bracketme'

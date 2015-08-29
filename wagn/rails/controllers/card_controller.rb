@@ -22,7 +22,6 @@ class CardController < ActionController::Base
   before_filter :init_success_object, :only => [ :create, :update, :delete ]
 
 
-
   layout nil
 
   attr_reader :card
@@ -38,7 +37,6 @@ class CardController < ActionController::Base
   end
 
   def read
-    save_location # should be an event!
     show
   end
 
@@ -47,10 +45,6 @@ class CardController < ActionController::Base
   end
 
   def delete
-    discard_locations_for card #should be an event
-    if @success.target == card
-      @success.target = :previous
-    end
     handle { card.delete }
   end
 
@@ -228,6 +222,7 @@ class CardController < ActionController::Base
 
   def show view = nil, status = 200
 #    ActiveSupport::Notifications.instrument('card', message: 'CardController#show') do
+    card.action = :read
     format = request.parameters[:format]
     format = :file if params[:explicit_file] or !Card::Format.registered.member? format #unknown format
 
@@ -248,7 +243,9 @@ class CardController < ActionController::Base
     else
       args = { :text=>result, :status=>status }
       args[:content_type] = 'text/text' if format == :file
-      render args
+      card.run_callbacks :render_view do
+        render args
+      end
     end
 #    end
   end

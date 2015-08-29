@@ -1,6 +1,6 @@
-event :discard_locations, :after=>:store, :on=>:delete do
-  Env[:controller].discard_locations_for card
-  if success.target == card
+event :discard_deleted_locations, :after=>:store, :on=>:delete do
+  Env[:controller].discard_locations_for self
+  if success.target == self
     success.target = :previous
   end
 end

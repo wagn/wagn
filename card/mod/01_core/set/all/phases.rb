@@ -186,6 +186,6 @@ event :store_subcards, :after=>:store do
 end
 
 def success
-  Env[:controller].success ||= Card::Success.new(cardname)
+  Env[:success] ||= Card::Success.new(cardname)
 end
 

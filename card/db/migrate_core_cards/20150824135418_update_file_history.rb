@@ -18,5 +18,8 @@ class UpdateFileHistory < Card::CoreMigration
         end
       end
     end
+    Card.search( :right => { :codename => 'machine_output' } ).each do |card|
+      card.delete!
+    end
   end
 end

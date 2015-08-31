@@ -73,6 +73,7 @@ namespace :wagn do
 
   desc "update wagn gems and database"
   task :update do
+    ENV['NO_RAILS_CACHE'] = 'true'
     #system 'bundle update'
     if Wagn.paths["tmp"].existent
       FileUtils.rm_rf Wagn.paths["tmp"].first, :secure=>true
@@ -100,6 +101,7 @@ namespace :wagn do
 
   desc "migrate structure and cards"
   task :migrate => :environment do
+    ENV['NO_RAILS_CACHE'] = 'true'
     ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
 
     stamp = ENV['STAMP_MIGRATIONS']

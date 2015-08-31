@@ -233,7 +233,7 @@ end
 
 
 event :cascade_name_changes, :after=>:store, :on=>:update, :changed=>:name do
-  Rails.logger.info "------------------- #{name_was} CASCADE #{self.name} -------------------------------------"
+  #Rails.logger.info "------------------- #{name_was} CASCADE #{self.name} -------------------------------------"
 
   self.update_referencers = false if self.update_referencers == 'false' #handle strings from cgi
   Card::Reference.update_on_rename self, name, self.update_referencers
@@ -245,6 +245,7 @@ event :cascade_name_changes, :after=>:store, :on=>:update, :changed=>:name do
 
   deps.each do |dep|
     # here we specifically want NOT to invoke recursive cascades on these cards, have to go this low level to avoid callbacks.
+    Rails.logger.info "cascading name: #{dep.name}"
     Card.expire dep.name #old name
     newname = dep.cardname.replace_part name_was, name
     Card.where( :id=> dep.id ).update_all :name => newname.to_s, :key => newname.key

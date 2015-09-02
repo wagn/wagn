@@ -7,16 +7,16 @@ describe Card::Chunk::Include, "Inclusion" do
       @class= Card::Chunk::Include
     end
 
-    it "should ignore invisible comments" do
+    it "ignores invisible comments" do
       expect(render_content("{{## now you see nothing}}")).to eq('')
     end
 
-    it "should handle visible comments" do
+    it "handles visible comments" do
       expect(render_content("{{# now you see me}}")).to eq('<!-- # now you see me -->')
       expect(render_content("{{# -->}}")).to eq('<!-- # --&gt; -->')
     end
 
-    it "should handle empty inclusions" do
+    it "handles empty inclusions" do
       instance = @class.new( @class.full_match( '{{ }}' ) , nil )
       expect(instance.name).to eq('')
       expect(instance.options[:inc_syntax]).to eq(' ')
@@ -26,25 +26,25 @@ describe Card::Chunk::Include, "Inclusion" do
 
     end
 
-    it "should handle no pipes" do
+    it "handles no pipes" do
       instance = @class.new( @class.full_match( '{{toy}}') , nil )
       expect(instance.name).to eq('toy')
       expect(instance.options[:inc_name]).to eq('toy')
       expect(instance.options.key?(:view)).to eq(false)
     end
 
-    it "should strip the name" do
+    it "strips the name" do
       expect(@class.new( @class.full_match( '{{ toy }}') , nil ).name).to eq('toy')
     end
 
-    it 'should strip html tags' do
+    it 'strips html tags' do
       expect(@class.new( @class.full_match( '{{ <span>toy</span> }}') , nil ).name).to eq('toy')
       instance = @class.new( @class.full_match( '{{ <span>toy|open</span> }}') , nil )
       expect(instance.name).to eq('toy')
       expect(instance.options[:view]).to eq('open')
     end
 
-    it "should handle single pipe" do
+    it "handles single pipe" do
       options = @class.new( @class.full_match('{{toy|view:link;hide:me}}'), nil ).options
       expect(options[:inc_name]).to eq('toy')
       expect(options[:view]).to eq('link')
@@ -52,7 +52,7 @@ describe Card::Chunk::Include, "Inclusion" do
       expect(options.key?(:items)).to eq(false)
     end
 
-    it "should handle multiple pipes" do
+    it "handles multiple pipes" do
       options = @class.new( @class.full_match('{{box|open|closed}}'), nil ).options
       expect(options[:inc_name]).to eq('box')
       expect(options[:view]).to eq('open')
@@ -60,31 +60,36 @@ describe Card::Chunk::Include, "Inclusion" do
       expect(options[:items].key?(:items)).to eq(false)
     end
 
-    it "should handle multiple pipes with blank lists" do
+    it "handles multiple pipes with blank lists" do
       options = @class.new( @class.full_match('{{box||closed}}'), nil ).options
       expect(options[:inc_name]).to eq('box')
       expect(options[:view]).to eq(nil)
       expect(options[:items][:view]).to eq('closed')
     end
 
-    it "should treat :item as view of next level" do
+    it "treats :item as view of next level" do
       options = @class.new( @class.full_match('{{toy|link;item:name}}'), nil ).options
       expect(options[:inc_name]).to eq('toy')
       expect(options[:view]).to eq('link')
       expect(options[:items][:view]).to eq('name')
     end
+
+    it "handles contextual names" do
+      instance = @class.new( @class.full_match( '{"name":"_+toy"}') , nil )
+      expect(instance.name).to eq('toy')
+    end
   end
 
   context "rendering" do
 
-    it "should handle absolute names" do
+    it "handles absolute names" do
       alpha = newcard 'Alpha', "Pooey"
       beta = newcard 'Beta', "{{Alpha}}"
       result = beta.format.render_core
       assert_view_select result, 'div[class~="card-content"]', "Pooey"
     end
 
-    it "should handle simple relative names" do
+    it "handles simple relative names" do
       alpha = newcard 'Alpha', "{{#{Card::Name.joint}Beta}}"
       beta = newcard 'Beta'
       alpha_beta = Card.create :name=>"#{alpha.name}#{Card::Name.joint}Beta", :content=>"Woot"

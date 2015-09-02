@@ -74,10 +74,6 @@ describe Card::Chunk::Include, "Inclusion" do
       expect(options[:items][:view]).to eq('name')
     end
 
-    it "handles contextual names" do
-      instance = @class.new( @class.full_match( '{"name":"_+toy"}') , nil )
-      expect(instance.name).to eq('toy')
-    end
   end
 
   context "rendering" do

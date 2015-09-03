@@ -72,6 +72,8 @@ format :html do
   end
 
   view :preview_editor, :tags=>:unknown_ok do |args|
+
+    #binding.pry
     # #{preview(args)}
     #
     # <div><a class="cancel-upload">Unchoose</a></div>
@@ -110,9 +112,9 @@ format :html do
       <div class="choose-file">
         #{preview(args)}
         <span class="btn btn-success fileinput-button">
-            <i class="glyphicon glyphicon-plus"></i>
+            <i class="glyphicon glyphicon-cloud-upload"></i>
             <span>
-                Add #{card.attachment_name}...
+                #{@slot_view == :edit ? 'Replace' : 'Add'} #{card.attachment_name}...
             </span>
              #{file_field card.attachment_name, :class=>'file-upload slotter'}
         </span>

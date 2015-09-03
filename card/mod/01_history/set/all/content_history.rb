@@ -55,14 +55,15 @@ def selected_action
 end
 
 def with_selected_action_id action_id
-  current_action_id = selected_action_id
+  current_action_id = @selected_action_id
   run_callbacks :select_action do
     self.selected_action_id = action_id
   end
-  yield
+  result = yield
   run_callbacks :select_action do
-    selected_action_id = current_action_id
+    self.selected_action_id = current_action_id
   end
+  result
 end
 
 def selected_content_action_id

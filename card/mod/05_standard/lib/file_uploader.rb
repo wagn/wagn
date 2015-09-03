@@ -87,7 +87,7 @@ class FileUploader < CarrierWave::Uploader::Base
     elsif model.id
       "~#{model.id}"
     else
-      "tmp"
+      "~#{model.upload_cache_card.id}"
     end
   end
 

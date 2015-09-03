@@ -35,12 +35,9 @@ format :html do
   end
 
   def preview args
-    if !card.new_card?
-      output [
-        super(args),
-        content_tag( :div, _render_core(args).html_safe,
+    if !card.new_card? || card.preliminary_upload?
+      content_tag( :div, _render_core(args).html_safe,
           :class=>'attachment-preview', :id=>"#{card.attachment.filename}-preview")
-      ]
     end
   end
 
@@ -49,10 +46,10 @@ format :html do
     size = args[:diff_type]==:summary ? :icon : :medium
     if !args[:hide_diff] and args[:action] and last_change = card.last_change_on(:db_content,:before=>args[:action])
       card.selected_action_id=last_change.card_action_id
-      out << Card::Diff.render_added_chunk(_render_core(:size=>size))
+      out << Card::Diff.render_deleted_chunk(_render_core(:size=>size))
     end
     card.selected_action_id=args[:action].id
-    out <<  Card::Diff.render_deleted_chunk(_render_core(:size=>size))
+    out <<  Card::Diff.render_added_chunk(_render_core(:size=>size))
     out
   end
 

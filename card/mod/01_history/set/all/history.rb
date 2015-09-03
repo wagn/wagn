@@ -21,6 +21,7 @@ end
 # removes the action if there are no changes
 event :finalize_action, :after =>:stored, :when=>proc {|c| c.history? && c.current_action} do
   @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
+  binding.pry
   if @changed_fields.present?
     @changed_fields.each{ |f| Card::Change.create :field => f, :value => self[f], :card_action_id=>@current_action.id }
     @current_action.update_attributes! :card_id => id

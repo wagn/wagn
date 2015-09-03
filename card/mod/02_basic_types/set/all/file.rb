@@ -9,9 +9,7 @@ def store_dir
   end
 end
 
-def tmp_store_dir
-  "#{ Card.paths['files'].existent.first }/tmp"
-end
+
 
 def mod_file?
   # when db_content was changed assume that it's no longer a mod file

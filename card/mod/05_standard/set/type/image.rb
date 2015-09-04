@@ -36,7 +36,7 @@ format :html do
 
   def preview args
     if !card.new_card? || card.preliminary_upload?
-      content_tag( :div, _render_core(args).html_safe,
+      content_tag( :div, _render_core(args.merge(:size=>:medium)).html_safe,
           :class=>'attachment-preview', :id=>"#{card.attachment.filename}-preview")
     end
   end

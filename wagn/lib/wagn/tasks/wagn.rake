@@ -339,9 +339,8 @@ namespace :wagn do
 
           # make card a mod file card
           mod_name = (l = card.left) && l.type_id==Card::SkinID ? '06_bootstrap' : '05_standard'
-          card.attachment.mod = mod_name
-          card.update_column :db_content, card.attachment.db_content
-          card.last_action.change_for(2).first.update_column :value, card.attachment.db_content
+          card.update_column :db_content, card.attachment.db_content(:mod=>mod_name)
+          card.last_action.change_for(2).first.update_column :value, card.attachment.db_content(:mod=>mod_name)
           card.expire
           card = Card.fetch card.name
 

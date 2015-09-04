@@ -72,11 +72,6 @@ format :html do
   end
 
   view :preview_editor, :tags=>:unknown_ok do |args|
-
-    #binding.pry
-    # #{preview(args)}
-    #
-    # <div><a class="cancel-upload">Unchoose</a></div>
     <<-HTML
       <div class="chosen-file">
         <input type="hidden" name="cached_upload" value="#{card.selected_action_id}">
@@ -124,9 +119,6 @@ format :html do
       </div>
       <div class="chosen-file"></div>
     HTML
-    # <script>
-    # #{ ::CoffeeScript.compile ::File.read('/opt/wagn/card/mod/05_standard/lib/chooseFile.js.coffee')}
-    # </script>
   end
 
 end

@@ -8,25 +8,31 @@ event :select_file_revision, :after=>:select_action do
   attachment.retrieve_from_store!(attachment.identifier)
 end
 
+event :determine_store_place, :before=>:prepare, :on=>:update do
+  @store_place = load_from_mod || :deck
+end
+
 event :upload_attachment, :before=>:validate_name, :on=>:save, :when=>proc { |c| c.preliminary_upload? } do
+  save_original_filename  # save original filename as comment in action
+  write_identifier        # set db_content (needs original filename to determine extension)
+  store_attachment!
+  finalize_action         # create Card::Change entry for db_content
+  @current_action.update_attributes! :draft => true, :card_id => (new_card? ? upload_cache_card.id : id)
+
   success << {
     :target => (new_card? ? upload_cache_card : '_self'),
     :type=> type_name,
     :view => 'preview_editor',
     :rev_id => current_action.id
   }
-  @current_action.update_attributes! :draft => true, :card_id => (new_card? ? upload_cache_card.id : id)
-  save_original_filename
-  send "store_#{attachment_name}!"
   abort :success
 end
-
 
 event :assign_attachment_on_create, :after=>:prepare, :on=>:create do
   if save_preliminary_upload? && (action = Card::Action.fetch(Card::Env.params[:cached_upload]))
     upload_cache_card.selected_action_id = action.id
     upload_cache_card.select_file_revision
-    set_attachment upload_cache_card.attachment.file, action.comment
+    assign_attachment upload_cache_card.attachment.file, action.comment
     action.delete # TODO: delete files too
   end
 end
@@ -37,20 +43,20 @@ event :assign_attachment_on_update, :after=>:prepare, :on=>:update do
        with_selected_action_id(action.id) do
          attachment.file
        end
-    set_attachment uploaded_file, action.comment
+    assign_attachment uploaded_file, action.comment
     action.delete
   end
 end
 
-def set_attachment file, original_filename
+def assign_attachment file, original_filename
   send "#{attachment_name}=", file
-  @current_action.update_attributes! :comment=>original_filename
   write_identifier
+  @current_action.update_attributes! :comment=>original_filename
 end
 
 # we need a card id for the path so we have to update db_content when we got an id
 event :correct_identifier, :after=>:store, :on=>:create do
-  update_column(:db_content,attachment.db_content)
+  update_column(:db_content,attachment.db_content(:mod=>load_from_mod))
   expire
 end
 
@@ -62,7 +68,7 @@ event :save_original_filename, :after=>:validate_name, :when => proc {|c| !c.pre
 end
 
 event :write_identifier, :after=>:save_original_filename do
-  self.content = attachment.db_content
+  self.content = attachment.db_content(:mod=>load_from_mod)
 end
 
 
@@ -97,6 +103,45 @@ end
 def create_versions?
   true
 end
+
+def store_place
+  @store_place ||= mod_file? || :deck
+end
+
+def load_from_mod= value
+  @mod = value
+end
+
+def load_from_mod
+  @mod
+end
+
+def store_dir
+  if (store_place == :deck)
+    if id
+      "#{ Card.paths['files'].existent.first }/#{id}"
+    else
+      tmp_store_dir
+    end
+  else
+    "#{ Cardio.gem_root}/mod/#{store_place}/file/#{codename}"
+  end
+end
+
+def mod_file?
+  # when db_content was changed assume that it's no longer a mod file
+  if @store_place != :deck && !db_content_changed? && content.present?
+    case content
+    when /^:[^\/]+\/([^.]+)/ ; $1     # current mod_file format
+    when /^\~/               ; false  # current id file format
+    else
+      if lines = content.split("\n") and lines.size == 4 # old format, still used in card_changes.
+        lines.last
+      end
+    end
+  end
+end
+
 
 def assign_set_specific_attributes
   if @set_specific && @set_specific.present?

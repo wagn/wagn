@@ -23,6 +23,7 @@ module ClassMethods
   #     :new => {  card opts }      Return a new card when not found
   #
   def fetch mark, opts={}
+    Card.with_logging :fetch, :message=>mark, :details=>opts, :category=>'fetch' do
     if String === mark
       case mark
       when /^\~(\d+)$/ # get by id
@@ -65,6 +66,7 @@ module ClassMethods
 
     card.include_set_modules unless opts[:skip_modules]
     card
+    end
   end
 
   def fetch_id mark #should optimize this.  what if mark is int?  or codename?

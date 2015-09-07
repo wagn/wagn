@@ -61,7 +61,9 @@ class Card::Query
   end
 
   def run_sql
-    ActiveRecord::Base.connection.select_all( sql )
+    Card.with_logging :run_sql, :message=>'run sql', :details=>sql, :category=>'SQL' do
+      ActiveRecord::Base.connection.select_all( sql )
+    end
   end
 
 

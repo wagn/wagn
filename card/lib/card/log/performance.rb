@@ -114,6 +114,7 @@ class Card::Log
         @min_time  = args[:min_time]  || false
         @log_level = args[:log_level] || DEFAULT_LOG_LEVEL
         @output    = args[:output]    || :text
+        @output_card = args[:output_card] || '*all'
         @enabled_methods = ::Set.new
         if !args[:methods] || args[:methods] == :default
           args[:methods] = default_methods_config
@@ -195,7 +196,8 @@ class Card::Log
       def print_log
         if @output == :card && Card[:performance_log]
           html_log =  HtmlFormatter.new(self).output
-          Card[:performance_log].add_log_entry @@log.first.message, html_log
+          card = Card.fetch "#{@output_card}+#{Card[:performance_log].name}", :new=>{}
+          card.add_log_entry @@log.first.message, html_log
         elsif @output == :html
           HtmlFormatter.new(self).output
         else

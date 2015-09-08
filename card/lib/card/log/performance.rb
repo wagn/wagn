@@ -119,10 +119,6 @@ class Card::Log
           args[:methods] = default_methods_config
         end
         prepare_methods_for_logging args[:methods]
-        # ActiveSupport::Notifications.subscribe('sql.active_record') do |*args|
-        #   event = ActiveSupport::Notifications::Event.new(*args)
-        #   event.duration #how long it took to run the sql command
-        # end
       end
 
       def start args={}

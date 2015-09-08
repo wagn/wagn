@@ -66,11 +66,6 @@ class Card < ActiveRecord::Base
   ActiveSupport.run_load_hooks(:card, self)
 
 
-  def self.where *args
-    Card.with_logging :where, :message=>args, :context=>name, :category=>'SQL' do
-      super(*args)
-    end
-  end
 end
 
 

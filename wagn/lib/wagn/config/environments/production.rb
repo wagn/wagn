@@ -34,7 +34,7 @@ Wagn.application.class.configure do
   # config.force_ssl = true
 
   # See everything in the log (default is :info)
-  config.log_level = :error
+  config.log_level = :info
 
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new
@@ -60,14 +60,6 @@ Wagn.application.class.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
-
-  config.performance_logger = {
-          :min_time => 0,                              # show only method calls that are slower than 100ms
-          #:max_depth => 3,                               # show nested method calls only up to depth 3
-          :details=> true,                                # show method arguments and sql
-          :methods => [:event, :search, :fetch, :view],  # choose methods to log
-          :log_level => :error
-        }
 
 
 

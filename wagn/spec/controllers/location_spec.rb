@@ -12,7 +12,7 @@ describe CardController, "location test from old integration" do
 
   it "should test_previous_location_should_be_assigned_after_viewing" do
     get :read, :id=>"Joe_User"
-    assert_equal "/Joe_User", assigns['previous_location']
+    assert_equal "/Joe_User", Card::Env.previous_location #assigns['previous_location']
   end
 
   it "should test_previous_location_should_not_be_updated_by_nonexistent_card" do
@@ -25,7 +25,7 @@ describe CardController, "location test from old integration" do
   it "should test_return_to_special_url_when_logging_in_after_visit" do
     # not sure this still tests the case, controller tests do not test routes
     get :read, :id=>'*recent'
-    assert_equal "/*recent",  assigns['previous_location']
+    assert_equal "/*recent",  Card::Env.previous_location
   end
 
   # FIXME: this should probably be files in the spot for a delete test

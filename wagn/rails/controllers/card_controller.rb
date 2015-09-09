@@ -100,7 +100,7 @@ class CardController < ActionController::Base
   def load_card
     @card = case params[:id]
       when '*previous'
-        return card_redirect( previous_location )
+        return card_redirect( Card::Env.previous_location )
       else  # get by name
         opts = params[:card] ? params[:card].clone : {}   # clone so that original params remain unaltered.  need deeper clone?
         opts[:type] ||= params[:type] if params[:type]    # for /new/:type shortcut.  we should fix and deprecate this.

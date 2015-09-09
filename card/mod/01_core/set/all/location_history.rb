@@ -6,5 +6,5 @@ event :discard_deleted_locations, :after=>:store, :on=>:delete do
 end
 
 event :save_current_location, :before=>:render_view, :on=>:read do
-  Env.save_location
+  Env.save_location self
 end

@@ -18,9 +18,9 @@ def add_log_entry request, html_log
   item_name = "%s+%s %s" % [name, time, request.gsub('/','&#47;') ]
   if include_item? item_name
     item_name += 'a'
-    #while include_item? item_name
-    #  item_name.next!
-    #end
+    while include_item? item_name
+     item_name.next!
+    end
   end
 
   Card::Auth.as_bot do

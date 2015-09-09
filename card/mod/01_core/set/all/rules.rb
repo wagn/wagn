@@ -50,7 +50,7 @@ def rule setting_code, options={}
 end
 
 def rule_card setting_code, options={}
-  Card.with_logging :rule_card, :message=>setting_code, :context=>name, :details=>options, :category=>'rule' do
+  Card.with_logging :rule, :message=>setting_code, :context=>name, :details=>options, :category=>'rule' do
     Card.fetch rule_card_id( setting_code, options ), options
   end
 end

@@ -42,7 +42,7 @@ class Card::Log
                                 :context => nil
                               }
 
-    SPECIAL_METHODS     = [:search, :view, :event, :fetch, :rule_card, :execute]  # these methods have already a Wagn.with_logging block
+    SPECIAL_METHODS     = [:search, :view, :event, :fetch, :rule, :execute]  # these methods have already a Wagn.with_logging block
                                                     # we don't have to monkey patch them, only turn the logging on with adding the symbol to the methods hash
 
 
@@ -59,7 +59,7 @@ class Card::Log
 
     class << self
       def default_methods_config
-        [:execute, :rule_card, :fetch, :view]
+        [:execute, :rule, :fetch, :view]
 #         {
 #           # ActiveRecord => {
 #           #   :instance => {
@@ -194,9 +194,9 @@ class Card::Log
       end
 
       def print_log
-        if @output == :card && Card[:performance_log]
+        if @output == :card && @output_card
           html_log =  HtmlFormatter.new(self).output
-          card = Card.fetch "#{@output_card}+#{Card[:performance_log].name}", :new=>{}
+          card = Card.fetch "#{@output_card}+#{Card[:performance_log].name}", :new=>{:type_id=>Card::PointerID}
           card.add_log_entry @@log.first.message, html_log
         elsif @output == :html
           HtmlFormatter.new(self).output

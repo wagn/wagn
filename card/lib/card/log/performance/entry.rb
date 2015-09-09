@@ -1,7 +1,7 @@
 class Card::Log::Performance
   class Entry
     attr_accessor :level, :valid, :context, :parent, :children_cnt, :duration, :children
-    attr_reader :message, :category, :category_duration
+    attr_reader :message, :category, :category_duration, :details
 
     def initialize( parent, level, args )
       @start = Time.new
@@ -88,14 +88,6 @@ class Card::Log::Performance
         end
         @parent.delete_children if @parent
         msg
-      end
-    end
-    def to_html
-      @to_html ||= begin
-        msg = "<span title='#{@details}'>"
-        msg += @message if @message
-        msg += "<span class='badge #{"badge-danger" if @duration > 100}'> %d.2ms </span>" % @duration if @duration
-        msg += '</span>'
       end
     end
 

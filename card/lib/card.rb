@@ -47,6 +47,7 @@ class Card < ActiveRecord::Base
     :comment, :comment_author,    # obviated soon
     :update_referencers,          # wrong mechanism for this
     :update_all_users,            # if the above is wrong then this one too
+    :silent_change,               # and this probably too
     :remove_rule_stash,
     :last_action_id_before_edit
 

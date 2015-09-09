@@ -63,7 +63,7 @@ def followable?
 end
 
 def notable_change?
-  !supercard && current_act && Card::Auth.current_id != WagnBotID && followable?
+  !silent_change && !supercard && current_act && Card::Auth.current_id != WagnBotID && followable?
 end
 
 event :notify_followers_after_save, :after=>:subsequent, :on=>:save, :when=>proc{ |ca| ca.notable_change? } do

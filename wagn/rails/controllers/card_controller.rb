@@ -126,7 +126,7 @@ class CardController < ActionController::Base
   end
 
   def init_success_object
-    @success = Card::Success.new(@card.cardname, params[:success])
+    @success = Card::Env[:success] = Card::Success.new(@card.cardname, params[:success])
   end
 
   def refresh_card

@@ -125,13 +125,7 @@ When /^(?:|I )enter "([^"]*)" into "([^"]*)"$/ do |value, field|
   find( selector ).set value
 end
 
-When /^(?:|I )upload a (.+)$/ do |attachment_name|
-  filename =
-    if attachment_name == 'image'
-      'image.png'
-    else
-      'file.txt'
-    end
+When /^(?:|I )upload the (.+) "(.+)"$/ do |attachment_name, filename|
   script = "$('input[type=file]').css('opacity','1');"
   page.driver.browser.execute_script(script)
   attach_file("card_#{attachment_name}", File.join(Wagn.gem_root,'features', 'support', filename))

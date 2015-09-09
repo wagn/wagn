@@ -60,6 +60,7 @@ rescue =>e
 end
 
 def approve
+  @action ||= identify_action
   run_callbacks :approve
   expire_pieces if errors.any?
   errors.empty?

@@ -73,6 +73,7 @@ namespace :wagn do
 
   desc "update wagn gems and database"
   task :update do
+    ENV['NO_RAILS_CACHE'] = 'true'
     #system 'bundle update'
     if Wagn.paths["tmp"].existent
       FileUtils.rm_rf Wagn.paths["tmp"].first, :secure=>true
@@ -100,6 +101,7 @@ namespace :wagn do
 
   desc "migrate structure and cards"
   task :migrate => :environment do
+    ENV['NO_RAILS_CACHE'] = 'true'
     ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
 
     stamp = ENV['STAMP_MIGRATIONS']
@@ -321,7 +323,7 @@ namespace :wagn do
       # mark mod files as mod files
       Card::Auth.as_bot do
         Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
-          if card.mod_file?
+          if card.mod_file? || card.codename == 'new_file' || card.codename == 'new_image'
             puts "skipping #{card.name}: already in code"
             next
           else
@@ -337,9 +339,8 @@ namespace :wagn do
 
           # make card a mod file card
           mod_name = (l = card.left) && l.type_id==Card::SkinID ? '06_bootstrap' : '05_standard'
-          card.attachment.mod = mod_name
-          card.update_column :db_content, card.attachment.db_content
-          card.last_action.change_for(2).first.update_column :value, card.attachment.db_content
+          card.update_column :db_content, card.attachment.db_content(:mod=>mod_name)
+          card.last_action.change_for(2).first.update_column :value, card.attachment.db_content(:mod=>mod_name)
           card.expire
           card = Card.fetch card.name
 

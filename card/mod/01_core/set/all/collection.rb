@@ -313,7 +313,7 @@ format :html do
     args[:tab_type] ||= 'tabs'
   end
 
-  view :pills_static, :view=>:tabs
+  view :pills_static, :view=>:tabs_static
   def default_tabs_static_args args
     args[:tab_type] ||= 'pills'
   end

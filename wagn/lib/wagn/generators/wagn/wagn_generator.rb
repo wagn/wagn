@@ -214,7 +214,9 @@ class WagnGenerator < Rails::Generators::AppBase
       end
 
     else
-      puts "Review the database configuration in config/database.yml and run 'wagn seed' to complete the installation.\nStart the server with 'wagn server'."
+      puts "Now:
+1. Run `wagn seed` to seed your database (see db configuration in config/database.yml).
+2. Run `wagn server` to start your server"
     end
   end
 

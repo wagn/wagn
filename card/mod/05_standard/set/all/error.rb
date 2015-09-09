@@ -166,7 +166,7 @@ format :html do
           or_signup = if Card.new(:type_id=>Card::SignupID).ok? :create
             "or #{ link_to 'sign up', card_url('new/:signup') }"
           end
-          save_interrupted_action(request.env['REQUEST_URI'])
+          Env.save_interrupted_action(request.env['REQUEST_URI'])
           "Please #{ link_to 'sign in', card_url(':signin') } #{or_signup} #{to_task}"
         end
 

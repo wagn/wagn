@@ -44,7 +44,7 @@ end
 
 class FileUploader < CarrierWave::Uploader::Base
   attr_accessor :mod
-  include Card::Format::Location
+  include Card::Location
 
   storage :file
 

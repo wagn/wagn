@@ -1,7 +1,6 @@
 class Card
   class Success
-    include Card::Format::Location
-    include Card::HtmlFormat::Location
+    include Card::Location
 
     attr_accessor :params, :redirect, :id, :name, :card, :name_context
 
@@ -87,7 +86,7 @@ class Card
     end
 
     def target name_context=@name_context
-      card(name_context) || ( @target == :previous ? previous_location : @target ) || Card.fetch(name_context)
+      card(name_context) || ( @target == :previous ? Card::Env.previous_location : @target ) || Card.fetch(name_context)
     end
 
     def []= key, value

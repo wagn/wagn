@@ -7,8 +7,7 @@ require_dependency 'card/mailer'  #otherwise Net::SMTPError rescues can cause pr
 
 class CardController < ActionController::Base
 
-  include Card::Format::Location
-  include Card::HtmlFormat::Location
+  include Card::Location
   include Recaptcha::Verify
 
   before_filter :start_performance_logger

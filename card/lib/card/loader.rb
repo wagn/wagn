@@ -21,10 +21,6 @@ class Card
         load_set_patterns
         load_formats
         load_sets
-
-        if Card.config.performance_logger
-          ::Logger::Performance.load_config Card.config.performance_logger
-        end
       end
 
       def load_chunks

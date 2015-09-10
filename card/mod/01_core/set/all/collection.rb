@@ -1,8 +1,8 @@
 
 module ClassMethods
-  def search spec
+  def search spec, &block
     query = ::Card::Query.new(spec)
-    execute_query query
+    execute_query query, &block
   end
 
   def execute_query query

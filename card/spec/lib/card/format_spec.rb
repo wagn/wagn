@@ -10,24 +10,24 @@ describe Card::Format do
       expect(format.show_view?( :menu, :default_visibility=>:hide )).to be_falsey
       expect(format.show_view?( :menu, {}                          )).to be_truthy
     end
-    
+
     it "should respect developer default overrides" do
       expect(format.show_view?( :menu, :optional_menu=>:show, :default_visibility=>:hide )).to be_truthy
       expect(format.show_view?( :menu, :optional_menu=>:hide, :default_visibility=>:show )).to be_falsey
       expect(format.show_view?( :menu, :optional_menu=>:hide                             )).to be_falsey
     end
-    
+
     it "should handle args from inclusions" do
       expect(format.show_view?( :menu, :show=>'menu', :default_visibility=>:hide         )).to be_truthy
       expect(format.show_view?( :menu, :hide=>'menu, paging', :default_visibility=>:show )).to be_falsey
-      expect(format.show_view?( :menu, :show=>'menu', :optional_menu=>:hide              )).to be_truthy      
+      expect(format.show_view?( :menu, :show=>'menu', :optional_menu=>:hide              )).to be_truthy
     end
-    
+
     it "should handle hard developer overrides" do
       expect(format.show_view?( :menu, :optional_menu=>:always, :hide=>'menu' )).to be_truthy
       expect(format.show_view?( :menu, :optional_menu=>:never,  :show=>'menu' )).to be_falsey
     end
-    
+
   end
 
   describe 'format helpers and link building' do
@@ -61,11 +61,11 @@ describe Card::Format do
 
     it "should format html links" do
       cobj = Card::Content.new url_text1, html_format
-      expect(cobj.to_s).to eq "with external free link <a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&amp;bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>"
+      expect(cobj.to_s).to eq "with external free link <a target=\"_blank\" class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&amp;bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>"
       cobj = Card::Content.new url_text2+url_text3+url_text4, html_format
       expect(cobj.to_s).to eq url_text2+url_text3+url_text4
       cobj = Card::Content.new url_text5, html_format
-      expect(cobj.to_s).to eq "external with port: <a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo+bar=baz\">http://localhost:2020/path?cgi=foo+bar=baz</a> after "
+      expect(cobj.to_s).to eq "external with port: <a target=\"_blank\" class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo+bar=baz\">http://localhost:2020/path?cgi=foo+bar=baz</a> after "
     end
 
     it "formats page_path" do

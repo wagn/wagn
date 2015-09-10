@@ -626,9 +626,16 @@ $act-gray:  #b7b7b7;
 .diff-red {
   text-decoration: line-through;
   color: $diff-red;
+  img {
+    border: 2px solid $diff-red;
+  }
 }
 .diff-green {
-    color: $diff-green;
+  color: $diff-green;
+  img {
+    margin: 0px 4px 0px 4px;
+    border: 2px solid $diff-green;
+  }
 }
 .diff-invisible {
   color: $action-white;

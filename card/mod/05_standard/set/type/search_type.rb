@@ -36,7 +36,7 @@ def get_query params={}
   if default_limit = query.delete(:default_limit) and !query[:limit]
     query[:limit] = default_limit
   end
-  query[:context] ||= (cardname.junction? ? cardname.left_name : cardname)
+  query[:context] ||= cardname
   query
 end
 

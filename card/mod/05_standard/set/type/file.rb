@@ -72,9 +72,6 @@ format :html do
   end
 
   view :preview_editor, :tags=>:unknown_ok do |args|
-    # #{preview(args)}
-    #
-    # <div><a class="cancel-upload">Unchoose</a></div>
     <<-HTML
       <div class="chosen-file">
         <input type="hidden" name="cached_upload" value="#{card.selected_action_id}">
@@ -110,9 +107,9 @@ format :html do
       <div class="choose-file">
         #{preview(args)}
         <span class="btn btn-success fileinput-button">
-            <i class="glyphicon glyphicon-plus"></i>
+            <i class="glyphicon glyphicon-cloud-upload"></i>
             <span>
-                Add #{card.attachment_name}...
+                #{@slot_view == :edit ? 'Replace' : 'Add'} #{card.attachment_name}...
             </span>
              #{file_field card.attachment_name, :class=>'file-upload slotter'}
         </span>
@@ -122,9 +119,6 @@ format :html do
       </div>
       <div class="chosen-file"></div>
     HTML
-    # <script>
-    # #{ ::CoffeeScript.compile ::File.read('/opt/wagn/card/mod/05_standard/lib/chooseFile.js.coffee')}
-    # </script>
   end
 
 end

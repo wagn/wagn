@@ -2,6 +2,10 @@
 module ClassMethods
   def search spec
     query = ::Card::Query.new(spec)
+    execute_query query
+  end
+
+  def execute_query query
     results = query.run
     if block_given? and Array===results
       results.each { |result| yield result }

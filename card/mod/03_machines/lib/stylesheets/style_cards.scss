@@ -924,7 +924,17 @@ html>body .open-view {
   font-size: .85em;
 }
 
-.SELF-Xperformance_log.open-view .panel-group {
-  margin-bottom: 0;
+.RIGHT-Xperformance_log.open-view {
+  font-size: 12px;
+  .panel-group {
+    margin-bottom: 0;
+  }
+  .panel-body {
+    padding: 0px 0px 0px 15px;
+  }
+  .panel-title {
+    font-size: 14px;
+  }
 }
+
 

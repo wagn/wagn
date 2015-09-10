@@ -72,11 +72,14 @@ describe Card::Log::Performance do
 
   it 'creates tree for nested method calls' do
     log_method [:view]
-    expect_logger_to_receive([
-      /  \|--\([\d.]+ms\) process: c1/,
-      /    \|--\([\d.]+ms\) view\: core/,
-      /      \|--\([\d.]+ms\) view\: raw/,
-    ]) do
+    expect_logger_to_receive(/\n\
+\([\d.]+ms\) test\n\
+\s{2}\|--\([\d.]+ms\) process: c1\n\
+\s{5}\|--\([\d.]+ms\) view\: core\n\
+\s{8}\|--\([\d.]+ms\) view\: raw\n\
+content: [\d.]+ms\n\
+total: [\d.]+ms\n/
+    ) do
       Card['c1'].format.render_core
     end
   end
@@ -164,14 +167,14 @@ describe Card::Log::Performance do
 
       it 'logs views if enabled' do
         log_method [:view]
-        expect_logger_to_receive([/process: \*all/, /view:/ ] ) do
+        expect_logger_to_receive([/process: \*all.+view:/m ] ) do
           Card[:all].format.render_raw
         end
       end
 
       it 'logs events if enabled' do
         log_method [:event]
-        expect_logger_to_receive([/process: c1/, /    \|--\([\d.]+ms\) event:/] ) do
+        expect_logger_to_receive([/process: c1.+    \|--\([\d.]+ms\) event:/m] ) do
           Card::Auth.as_bot { Card.fetch('c1').update_attributes!(:content=>'c1') }
         end
       end
@@ -203,7 +206,7 @@ describe Card::Log::Performance do
       end
 
       it 'does not log instance method' do
-        expect_logger_not_to_receive(/inst_,/) do
+        expect_logger_not_to_receive(/inst_m/) do
           TestClass.new.inst_m
         end
       end
@@ -257,7 +260,7 @@ describe Card::Log::Performance do
       end
 
       it 'logs instance and singleton methods' do
-        expect_logger_to_receive([/inst_m/,/sing_m/]) do
+        expect_logger_to_receive(/inst_m.+sing_m/m) do
           TestClass.new.inst_m
           TestClass.sing_m
         end

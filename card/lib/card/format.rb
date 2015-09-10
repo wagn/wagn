@@ -203,7 +203,7 @@ class Card
         @current_view = view = ok_view canonicalize_view( view ), args
         args = default_render_args view, args
         with_inclusion_mode view do
-          Card.with_logging :view, :message=>view, :context=>card.name, :details=>args do
+          Card.with_logging :view, :message=>view, :context=>card.name, :details=>args, :category=>'content' do
             Card::ViewCache.fetch(self, view, args) do
               send "_view_#{ view }", args
             end

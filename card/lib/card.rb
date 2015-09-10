@@ -65,6 +65,7 @@ class Card < ActiveRecord::Base
   extend CarrierWave::Mount
   ActiveSupport.run_load_hooks(:card, self)
 
+
 end
 
 

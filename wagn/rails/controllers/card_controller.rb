@@ -147,7 +147,7 @@ class CardController < ActionController::Base
     end
 
     if Wagn.config.performance_logger || params[:performance_log]
-      Card::Log::Performance.start :method=>env["REQUEST_METHOD"], :message=>env["PATH_INFO"]
+      Card::Log::Performance.start :method=>env["REQUEST_METHOD"], :message=>env["PATH_INFO"], :category=>'format'
     end
   end
 
@@ -289,4 +289,6 @@ class CardController < ActionController::Base
 
 
 end
+
+
 

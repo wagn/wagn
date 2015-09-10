@@ -26,7 +26,6 @@ class Card < ActiveRecord::Base
   require_dependency 'card/format'
   require_dependency 'card/exceptions'
   require_dependency 'card/auth'
-  require_dependency 'card/log'
   require_dependency 'card/loader'
   require_dependency 'card/content'
   require_dependency 'card/action'
@@ -54,7 +53,7 @@ class Card < ActiveRecord::Base
   attr_accessor :follower_stash
 
 
-  define_callbacks :prepare, :approve, :store, :stored, :extend, :subsequent, :select_action, :render_view
+  define_callbacks :prepare, :approve, :store, :stored, :extend, :subsequent, :select_action, :show, :handle
 
   before_validation :prepare
   before_validation :approve

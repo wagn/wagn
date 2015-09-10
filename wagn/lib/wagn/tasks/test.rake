@@ -41,7 +41,7 @@ namespace :test do
     begin
       # assume we have a good database, ie. just migrated dev db.
       puts "setting database to wagn_test_template"
-      set_database 'wagn_test_template'
+#      set_database 'wagn_test_template'
       Rake::Task['wagn:seed'].invoke
 
       # I spent waay to long trying to do this in a less hacky way--

@@ -12,7 +12,7 @@ class SearchCardContext < Card::CoreMigration
       ['self',   'left'],
       ['',       'left'],
     ]
-    Card.search(:type_id=>['in', Card::SearchTypeID, Card::SetID]).each do |id|
+    Card.search(:type_id=>['in', Card::SearchTypeID, Card::SetID]).each do |card|
       if card.cardname.junction?
         content = card.content
         replace.each do |key, val|

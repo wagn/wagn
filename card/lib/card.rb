@@ -54,7 +54,7 @@ class Card < ActiveRecord::Base
   attr_accessor :follower_stash
 
 
-  define_callbacks :prepare, :approve, :store, :stored, :extend, :subsequent, :select_action
+  define_callbacks :prepare, :approve, :store, :stored, :extend, :subsequent, :select_action, :render_view
 
   before_validation :prepare
   before_validation :approve
@@ -64,6 +64,7 @@ class Card < ActiveRecord::Base
   TRACKED_FIELDS = %w(name type_id db_content trash)
   extend CarrierWave::Mount
   ActiveSupport.run_load_hooks(:card, self)
+
 
 end
 

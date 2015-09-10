@@ -44,7 +44,7 @@ end
 
 class FileUploader < CarrierWave::Uploader::Base
   attr_accessor :mod
-  include Card::Format::Location
+  include Card::Location
 
   storage :file
 
@@ -66,13 +66,18 @@ class FileUploader < CarrierWave::Uploader::Base
     end.downcase
   end
 
-  # the identifier gets stored in the card's db_content field
-  def db_content
+  # generate identifier that gets stored in the card's db_content field
+  def db_content opts={}
+    @mod = opts[:mod] || model.load_from_mod  # don't use mod_file? here
+    # mod_file? looks at the identifier in the db
+    # to figure out whether it's a mod file
+    # so it wouldn't be possible to turn a mod file card into a regular file card
+
     basename =
-      if mod_file?
+      if @mod
         "#{@mod}#{extension}"
       else
-        filename
+        "#{action_id}#{extension}"
       end
     "%s/%s" % [file_dir, basename]
   end
@@ -87,7 +92,7 @@ class FileUploader < CarrierWave::Uploader::Base
     elsif model.id
       "~#{model.id}"
     else
-      "tmp"
+      "~#{model.upload_cache_card.id}"
     end
   end
 

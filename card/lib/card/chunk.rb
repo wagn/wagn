@@ -60,6 +60,8 @@ class Card
       attr_reader :text, :process_chunk
 
       class << self
+
+        # if the prefix regex matched check that chunk against the full regex
         def full_match content, prefix=nil
   #        warn "attempting full match on #{content}.  class = #{self}"
           content.match full_re( prefix )

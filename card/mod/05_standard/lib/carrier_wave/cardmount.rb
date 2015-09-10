@@ -36,6 +36,10 @@ module CarrierWave
           #{column}
         end
 
+        def store_attachment!
+          store_#{column}!
+        end
+
         def attachment_name
           "#{column}".to_sym
         end

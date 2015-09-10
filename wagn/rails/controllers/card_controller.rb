@@ -7,8 +7,7 @@ require_dependency 'card/mailer'  #otherwise Net::SMTPError rescues can cause pr
 
 class CardController < ActionController::Base
 
-  include Card::Format::Location
-  include Card::HtmlFormat::Location
+  include Card::Location
   include Recaptcha::Verify
 
   before_filter :start_performance_logger
@@ -20,7 +19,6 @@ class CardController < ActionController::Base
   before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
   before_filter :init_success_object, :only => [ :create, :update, :delete ]
-
 
 
   layout nil
@@ -38,7 +36,6 @@ class CardController < ActionController::Base
   end
 
   def read
-    save_location # should be an event!
     show
   end
 
@@ -47,10 +44,6 @@ class CardController < ActionController::Base
   end
 
   def delete
-    discard_locations_for card #should be an event
-    if @success.target == card
-      @success.target = :previous
-    end
     handle { card.delete }
   end
 
@@ -107,7 +100,7 @@ class CardController < ActionController::Base
   def load_card
     @card = case params[:id]
       when '*previous'
-        return card_redirect( previous_location )
+        return card_redirect( Card::Env.previous_location )
       else  # get by name
         opts = params[:card] ? params[:card].clone : {}   # clone so that original params remain unaltered.  need deeper clone?
         opts[:type] ||= params[:type] if params[:type]    # for /new/:type shortcut.  we should fix and deprecate this.
@@ -154,7 +147,7 @@ class CardController < ActionController::Base
     end
 
     if Wagn.config.performance_logger || params[:performance_log]
-      Card::Log::Performance.start :method=>env["REQUEST_METHOD"], :message=>env["PATH_INFO"]
+      Card::Log::Performance.start :method=>env["REQUEST_METHOD"], :message=>env["PATH_INFO"], :category=>'format'
     end
   end
 
@@ -228,6 +221,7 @@ class CardController < ActionController::Base
 
   def show view = nil, status = 200
 #    ActiveSupport::Notifications.instrument('card', message: 'CardController#show') do
+    card.action = :read
     format = request.parameters[:format]
     format = :file if params[:explicit_file] or !Card::Format.registered.member? format #unknown format
 
@@ -248,7 +242,9 @@ class CardController < ActionController::Base
     else
       args = { :text=>result, :status=>status }
       args[:content_type] = 'text/text' if format == :file
-      render args
+      card.run_callbacks :render_view do
+        render args
+      end
     end
 #    end
   end
@@ -293,4 +289,6 @@ class CardController < ActionController::Base
 
 
 end
+
+
 

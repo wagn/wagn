@@ -8,29 +8,30 @@ def log_path item
   File.join log_dir, "#{item.gsub('&#47;','_').gsub(/[^0-9A-Za-z.\-]/, '_')}.log"
 end
 
+
 def csv_path
-  File.join log_dir, "#{Card[:performance_log].codename}.csv"
+  File.join log_dir, "#{cardname.safe_key}.csv"
 end
 
 def add_log_entry request, html_log
   time = DateTime.now.utc.strftime "%Y%m%d%H%M%S"
-  name = "%s+%s %s" % [Card[:performance_log].name, time, request.gsub('/','&#47;') ]
-  if Card.fetch name
-    name += 'a'
-    while Card.fetch name
-      name.next!
-    end
+  item_name = "%s+%s %s" % [name, time, request.gsub('/','&#47;') ]
+  if include_item? item_name
+    item_name += 'a'
+    #while include_item? item_name
+    #  item_name.next!
+    #end
   end
 
   Card::Auth.as_bot do
-    File.open(Card[:performance_log].log_path(name), 'w') {|f| f.puts html_log}
-    Card[:performance_log].add_item! name
+    File.open(log_path(item_name), 'w') {|f| f.puts html_log}
+    add_item! item_name
   end
 end
 
 def add_csv_entry page, wbench_data, runs
   if !File.exists? csv_path
-    File.open(csv_path, 'w') { |f| f.puts "page,render time, dom loading time, connection time"}
+    File.open(csv_path, 'w') { |f| f.puts "page, render time, dom loading time, connection time, date"}
   end
   browser = wbench_data.browser
   runs.times do |i|
@@ -39,11 +40,19 @@ def add_csv_entry page, wbench_data, runs
       browser['responseEnd'][i] - browser['requestStart'][i],
       browser['domComplete'][i] - browser['domLoading'][i], # domLoadingTime
       browser['requestStart'][i],  # domLoadingStart
+      DateTime.now.utc.inspect
     ]
     csv_line = CSV.generate_line(csv_data)
     File.open(csv_path, 'a') { |f| f.puts csv_line }
   end
+
+  if left != Card[:all]
+    all = Card.fetch "#{Card[:all].name}+#{Card[:performance_log].name}", :new=>{}
+    all.add_csv_entry page, wbench_data, runs
+  end
 end
+
+
 
 format :html do
   view :core do |args|

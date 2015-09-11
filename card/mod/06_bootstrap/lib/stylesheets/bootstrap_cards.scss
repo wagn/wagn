@@ -84,6 +84,39 @@ body.mceContentBody {
 
 /*----------- Sidebar -------------*/
 
+
+
+/* collapsed sidebar styles */
+@media screen and (max-width: 767px) {
+  .row-offcanvas {
+    position: relative;
+    -webkit-transition: all 0.25s ease-out;
+    -moz-transition: all 0.25s ease-out;
+    transition: all 0.25s ease-out;
+  }
+
+  .sidebar-offcanvas-right {
+    right: -41.6%;
+  }
+
+  .sidebar-offcanvas-left {
+    left: -41.6%;
+  }
+  .row-offcanvas.right-active {
+    right: 41.6%;
+  }
+  .row-offcanvas.left-active {
+    left: 41.6%;
+  }
+  .sidebar-offcanvas {
+    position: absolute;
+    top: 0;
+    width: 41.6%;
+  }
+}
+
+
+
 .rotate-cw {
   -webkit-transform:rotate(90deg);
   -moz-transform:rotate(90deg);

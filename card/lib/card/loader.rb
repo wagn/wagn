@@ -22,8 +22,39 @@ class Card
         load_formats
         load_sets
 
+        update_machine_output_hack
         if Wagn.config.performance_logger
           Card::Log::Performance.load_config Wagn.config.performance_logger
+        end
+      end
+
+      def update_machine_output_hack
+        script = Card["*all+*script"]
+        if (mtime_output = script.machine_output_card.updated_at)
+          [ "wagn_mod.js.coffee", "wagn.js.coffee" ].each do |name|
+            mtime_file = File.mtime "#{Cardio.gem_root}/mod/03_machines/lib/javascript/#{name}"
+            if mtime_file > mtime_output
+              script.update_machine_output
+              return
+            end
+          end
+        end
+
+        style = Card["*all+*style"]
+        if (mtime_output = style.machine_output_card.updated_at)
+          style.machine_input_card.item_cards.each do |i_card|
+            if i_card.codename
+              ["03_machines", "06_bootstrap"].each do |mod|
+                if File.exist? "#{Cardio.gem_root}/mod/#{mod}/lib/stylesheets/#{i_card.codename}.scss"
+                  mtime_file = File.mtime "#{Cardio.gem_root}/mod/#{mod}/lib/stylesheets/#{i_card.codename}.scss"
+                  if mtime_file > mtime_output
+                    style.update_machine_output
+                    return
+                  end
+                end
+              end
+            end
+          end
         end
       end
 

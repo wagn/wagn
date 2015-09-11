@@ -38,7 +38,7 @@ format :html do
   view :core do |args|
     # FIXME: scan must happen before process for inclusion interactions to work, but this will likely cause
     # problems with including other css?
-    process_content ::CodeRay.scan( _render_raw, :css ).div, :size=>:icon
+    process_content ::CodeRay.scan( _render_raw, :css ).div, :content_opts=>{:size=>:icon}
   end
 
   view :content_changes, :mod=>CoffeeScript::HtmlFormat

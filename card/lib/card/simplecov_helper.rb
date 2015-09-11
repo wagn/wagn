@@ -1,3 +1,7 @@
+def is_in_mod? file,mod_path
+  mod_msg = "below pulled from #{Rails.root}/mod/#{mod_path}/"
+  file.src.join("") =~ /#{mod_msg}/
+end
 def card_simplecov_filters
   add_filter 'spec/'
   add_filter '/config/'
@@ -6,7 +10,7 @@ def card_simplecov_filters
 	# filter all card mods
   add_filter do |src_file|
     src_file.filename =~ /tmp\// and not
-    /\d+-(.+\.rb)/.match(src_file.filename) { |m| Dir["mod/**/#{m[1]}"].present? }
+    /\d+-(.+\.rb)/.match(src_file.filename) { |m| Dir["mod/**/#{m[1].gsub("-","/")}"].present? }
   end
 	
 	# add group for each deck mod
@@ -15,7 +19,8 @@ def card_simplecov_filters
       src_file.filename =~ /mod\/#{mod}\// or 
         (
           src_file.filename =~ /tmp\// and
-          /\d+-(.+\.rb)/.match(src_file.filename) { |m| Dir["mod/#{mod}/**/#{m[1]}"].present? } 
+          /\d+-(.+\.rb)/.match(src_file.filename) { |m| Dir["mod/#{mod}/**/#{m[1].gsub("-","/")}"].present? } and
+          is_in_mod? src_file,mod
         )
     end
   end

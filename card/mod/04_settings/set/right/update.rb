@@ -1,2 +1,3 @@
-include Create
-format :html do include Create::HtmlFormat end
+include Abstract::Permission
+
+format :html do include Abstract::Permission::HtmlFormat end

@@ -68,7 +68,6 @@ When /^(.*) edits? "([^\"]*)" entering "([^\"]*)" into wysiwyg$/ do |username, c
   end
 end
 
-
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
@@ -94,7 +93,7 @@ end
 
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do
-    normal_textarea_card_type = ["JavaScript","CoffeeScript","HTML","CSS","SCS","Search"]
+    normal_textarea_card_type = ["JavaScript","CoffeeScript","HTML","CSS","SCSS","Search"]
     if not normal_textarea_card_type.include? cardtype or not page.evaluate_script "typeof ace != 'undefined'"
       fill_in("card[content]", :with=>content)
     else
@@ -124,6 +123,12 @@ end
 When /^(?:|I )enter "([^"]*)" into "([^"]*)"$/ do |value, field|
   selector = ".RIGHT-#{field.to_name.safe_key} input.card-content"
   find( selector ).set value
+end
+
+When /^(?:|I )upload the (.+) "(.+)"$/ do |attachment_name, filename|
+  script = "$('input[type=file]').css('opacity','1');"
+  page.driver.browser.execute_script(script)
+  attach_file("card_#{attachment_name}", File.join(Wagn.gem_root,'features', 'support', filename))
 end
 
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
@@ -163,8 +168,6 @@ Then /debug/ do
   end
   nil
 end
-
-
 
 def create_card(username,cardtype,cardname,content="")
   signed_in_as(username) do
@@ -209,6 +212,17 @@ When /^In (.*) I find link with class "(.*)" and click it$/ do |section, css_cla
   end
 end
 
+When /^In (.*) I find link with icon "(.*)" and click it$/ do |section, icon|
+  within scope_of(section) do
+    find("a > span.glyphicon-#{icon}").click
+  end
+end
+When /^In (.*) I find button with icon "(.*)" and click it$/ do |section, icon|
+  within scope_of(section) do
+    find("button > span.glyphicon-#{icon}").click
+  end
+end
+
 Then /I submit$/ do
     click_button("Submit")
 end
@@ -216,6 +230,10 @@ end
 When /^I open the main card menu$/ do
   page.execute_script "$('#main .menu-slot .vertical-card-menu.show-on-hover .card-slot').show()"
   page.find('#main .menu-slot .card-menu a').click
+end
+
+When /^I close the modal window$/ do
+  page.find('.modal-menu .close-modal').click
 end
 
 When /^I pick (.*)$/ do |menu_item|
@@ -298,6 +316,14 @@ end
 ## variants of standard steps to handle """ style quoted args
 Then /^I should see$/ do |text|
   expect(page).to have_content(text)
+end
+
+Then /^I should see a preview image of size (.+)$/ do |size|
+  find("span.preview img[src*='#{size}.png']")
+end
+
+Then /^I should see an image of size "(.+)" and type "(.+)"$/ do |size, type|
+  find("img[src*='#{size}.#{type}']")
 end
 
 Then /^I should see "([^\"]*)" in color (.*)$/ do |text, css_class|

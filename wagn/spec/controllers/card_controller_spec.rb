@@ -260,7 +260,7 @@ describe CardController do
     context "file" do
       before do
         Card::Auth.as_bot do
-          Card.create :name => "mao2", :type_code=>'image', :attach=>File.new( File.join FIXTURES_PATH, 'mao2.jpg' )
+          Card.create :name => "mao2", :type_code=>'image', :image=>File.new( File.join FIXTURES_PATH, 'mao2.jpg' )
           Card.create :name => 'mao2+*self+*read', :content=>'[[Administrator]]'
         end
       end
@@ -279,6 +279,7 @@ describe CardController do
         get :read, :id=>'mao2', :format=>'jpg'
         assert_response 200
       end
+
     end
 
   end

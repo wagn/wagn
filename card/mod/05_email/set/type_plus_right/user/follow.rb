@@ -160,10 +160,10 @@ format :html do
    view :errors, :perms=>:none do |args|
      if card.errors.any?
        if card.errors.find { |attrib,msg| attrib == :permission_denied }
-         save_interrupted_action(request.env['REQUEST_URI'])
+         Env.save_interrupted_action(request.env['REQUEST_URI'])
          title = "Problems with #{card.name}"
          frame args.merge(:panel_class=>"panel panel-warning", :title=>title, :hide=>'menu' ) do
-           "You have to #{ link_to 'sign in', card_url(':signin') }" #" #{to_task}"
+           "Please #{ link_to 'sign in', card_url(':signin') }" #" #{to_task}"
          end
        else
          super(args)

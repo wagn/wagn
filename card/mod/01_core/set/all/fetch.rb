@@ -3,7 +3,7 @@
 # A multipurpose retrieval operator that incorporates caching, "virtual" card retrieval
 
 module ClassMethods
-  
+
   # === fetch
   #
   # looks for cards in
@@ -11,62 +11,64 @@ module ClassMethods
   #   - database
   #   - virtual cards
   #
-  # "mark" here means a generic identifier -- can be a numeric id, a name, a string name, etc.
+  # "mark" here means one of three unique identifiers
+  #    1. a numeric id (Integer)
+  #    2. a name/key (String or Card::Name)
+  #    3. a codename (Symbol)
   #
   #   Options:
   #     :skip_virtual               Real cards only
   #     :skip_modules               Don't load Set modules
+  #     :look_in_trash              Return trashed card objects
   #     :new => {  card opts }      Return a new card when not found
   #
-  
-
-  
-  
   def fetch mark, opts={}
-    if String === mark
-      case mark
-      when /^\~(\d+)$/ # get by id
-        mark = $1.to_i 
-      when /^\:(\w+)$/ # get by codename
-        mark = $1.to_sym
+    Card.with_logging :fetch, :message=>mark, :details=>opts, :category=>'fetch' do
+      if String === mark
+        case mark
+        when /^\~(\d+)$/ # get by id
+          mark = $1.to_i
+        when /^\:(\w+)$/ # get by codename
+          mark = $1.to_sym
+        end
       end
-    end
-    mark = Card::Codename[mark] if Symbol === mark # id from codename
+      mark = Card::Codename[mark] if Symbol === mark # id from codename
 
-    if mark.present?
-      card, mark, needs_caching = fetch_from_cache_or_db mark, opts # have existing
-    else
-      return unless opts[:new]
-    end
-
-    if Integer===mark
-      return if card.nil? || mark.nil?
-    else
-      return card.renew(opts) if card and card.eager_renew?(opts)
-      if !card or card.type_id==-1 && clean_cache_opts?(opts)       # new (or improved) card for cache
-        needs_caching = true  
-        card = new_for_cache mark, opts
-      end  
-    end
-  
-    write_to_cache card if Card.cache && needs_caching
-  
-    if card.new_card?
-      if opts[:new]
-        return card.renew(opts) if !clean_cache_opts? opts
-      elsif opts[:skip_virtual]
-        return
+      if mark.present?
+        card, mark, needs_caching = fetch_from_cache_or_db mark, opts # have existing
       else
-        card.include_set_modules unless opts[:skip_modules]  # need to load modules here to call the right virtual? method 
-        return unless card.virtual?
+        return unless opts[:new]
       end
-      card.name = mark.to_s if mark && mark.to_s != card.name
-    end
 
-    card.include_set_modules unless opts[:skip_modules]
-    card
+      if Integer===mark
+        return if card.nil? || mark.nil?
+      else
+        return card.renew(opts) if card and card.eager_renew?(opts)
+        if !card or card.type_id==-1 && clean_cache_opts?(opts)       # new (or improved) card for cache
+          needs_caching = true
+          card = new_for_cache mark, opts
+        end
+      end
+
+      write_to_cache card if Card.cache && needs_caching
+
+      if card.new_card?
+        if opts[:new]
+          return card.renew(opts) if !clean_cache_opts? opts
+        elsif opts[:skip_virtual]
+          return
+        else
+          card.include_set_modules unless opts[:skip_modules]  # need to load modules here to call the right virtual? method
+          return unless card.virtual?
+        end
+        card.name = mark.to_s if mark && mark.to_s != card.name
+      end
+
+      card.include_set_modules unless opts[:skip_modules]
+      card
+    end
   end
-  
+
   def fetch_id mark #should optimize this.  what if mark is int?  or codename?
     card = fetch mark, :skip_virtual=>true, :skip_modules=>true
     card and card.id
@@ -80,7 +82,7 @@ module ClassMethods
     card = fetch mark, :skip_virtual=>true, :skip_modules=>true
     card.present?
   end
-  
+
   def known? mark
     card = fetch mark, :skip_modules=>true
     card.present?
@@ -89,7 +91,7 @@ module ClassMethods
   def expire name
     #note: calling instance method breaks on dirty names
     key = name.to_name.key
-    if card = Card.cache.read( key ) 
+    if card = Card.cache.read( key )
       Card.cache.delete key
       Card.cache.delete "~#{card.id}" if card.id
     end
@@ -115,15 +117,15 @@ module ClassMethods
       Card.cache.write skey, h
     end
   end
-  
+
   def cache
     Card::Cache[Card]
   end
-  
+
   def fetch_from_cache cache_key
     Card.cache.read cache_key if Card.cache
   end
-  
+
   def fullname_from_name name, new_opts={}
     if new_opts and supercard = new_opts[:supercard]
       name.to_name.to_absolute_name supercard.name
@@ -131,32 +133,40 @@ module ClassMethods
       name.to_name
     end
   end
-  
+
   def fetch_from_cache_or_db mark, opts
-    needs_caching = false  
+    needs_caching = false
     mark_type = Integer===mark ? :id : :key
-    
+
     if mark_type == :key
       mark = fullname_from_name mark, opts[:new]
       val = mark.key
     else
       val = mark
     end
-    
-    card = send( "fetch_from_cache_by_#{mark_type}", val ) || begin
+
+    card = send( "fetch_from_cache_by_#{mark_type}", val )
+
+    if opts[:look_in_trash]
+      if card.nil? || (card.new_card? && !card.trash)
+        card = Card.where( mark_type => val ).take
+        needs_caching = card && !card.trash
+      end
+    elsif card.nil?
       needs_caching = true
-      send "find_by_#{mark_type}_and_trash", val, false
+      card = Card.where( mark_type => val, trash: false).take
     end
-    
+
     [ card, mark, needs_caching ]
   end
-  
+
+
   def fetch_from_cache_by_id id
     if name = fetch_from_cache("~#{id}")
       fetch_from_cache name
     end
   end
-    
+
   def fetch_from_cache_by_key key
     fetch_from_cache key
   end
@@ -168,16 +178,16 @@ module ClassMethods
     # reinitialization later.  *** It should NEVER be seen elsewhere ***
     new new_args
   end
-  
+
   def clean_cache_opts? opts
     !opts[:skip_virtual] && !opts[:new].present?
   end
-  
+
   def write_to_cache card
     Card.cache.write card.key, card
     Card.cache.write "~#{card.id}", card.key if card.id and card.id != 0
-  end  
-  
+  end
+
 
 end
 

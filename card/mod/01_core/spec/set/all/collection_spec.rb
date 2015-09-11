@@ -23,7 +23,7 @@ describe Card::Set::All::Collection do
       expect(c.extended_list).to eq(["I'm here to be referenced to"])
     end
   end
-  
+
   describe "#extended_item_cards" do
     it "returns the 'leaf cards' of a tree of pointer cards" do
       Card::Auth.as_bot do
@@ -33,7 +33,7 @@ describe Card::Set::All::Collection do
       expect(c.extended_item_cards).to eq([Card.fetch("Z"),Card.fetch("A")],)
     end
   end
-  
+
   describe "#extended_item_contents" do
     it "returns the content of the 'leaf cards' of a tree of pointer cards" do
       Card::Auth.as_bot do
@@ -54,12 +54,89 @@ describe Card::Set::All::Collection do
 
     it "returns content even when context card is hard templated" do #why the heck is this good?  -efm
       context_card = Card["A"] # refers to 'Z'
-      
+
       Card::Auth.as_bot do
         Card.create! :name => "A+*self+*structure", :content => "Banana"
       end
       c = Card.new( :name => "foo", :content => "{{_self+B|core}}" )
       expect(c.contextual_content( context_card )).to eq("AlphaBeta")
+    end
+  end
+
+  describe '#map_nests' do
+    before do
+      Card::Auth.as_bot do
+        @list = Card.create! :name=>'mixed list', :content=>"[[A]]\n{{B}}\n[[C|link C]]\n{{D|name;title:nest D}}"
+      end
+    end
+    it 'handles links and nest arguments' do
+      result = @list.format.map_references_with_args do |name,args|
+        [name, args]
+      end
+      expect(result).to eq [
+        ['A', {:view=>:closed}],
+        ['B', {:view=>:closed, :inc_name=>"B", :inc_syntax=>"B"}],
+        ['C', {:view=>:closed, :title=>'link C'}],
+        ['D', {:view=>"name", :title=>"nest D", :inc_name=>"D", :inc_syntax=>"D|name;title:nest D"}]
+      ]
+    end
+  end
+
+  describe 'tabs view' do
+    it 'renders tab panel' do
+      tabs = render_card :tabs, :content=>"[[A]]\n[[B]]\n[[C]]", :type=>'pointer'
+      assert_view_select tabs, 'div[role=tabpanel]' do
+        assert_select 'li > a[data-toggle=tab]'
+      end
+    end
+
+    it 'loads only the first tab pane' do
+      tabs = render_card :tabs, :content=>"[[A]]\n[[B]]\n[[C]]", :type=>'pointer'
+      assert_view_select tabs, 'div[role=tabpanel]' do
+        assert_select 'div.tab-pane#tempo_rary-a  .card-slot#A'
+        assert_select 'li > a.load[data-toggle=tab][href="#tempo_rary-b"]'
+        assert_select 'div.tab-pane#tempo_rary-b', ''
+      end
+    end
+
+    it 'handles relative names' do
+      Card::Auth.as_bot do
+        Card.create! :name=>'G', :content=>"[[+B]]", :type=>'pointer', :subcards=>{'+B'=>'GammaBeta'}
+      end
+      tabs = Card.fetch('G').format.render_tabs
+      assert_view_select tabs, 'div[role=tabpanel]' do
+        assert_select 'div.tab-pane#g-g-b .card-content', 'GammaBeta'
+      end
+    end
+
+    it 'handles item views' do
+      tabs = render_content '{{Fruit+*type+*create|tabs|name}}'
+      assert_view_select tabs, 'div[role=tabpanel]' do
+        assert_select 'div.tab-pane#fruit-Xtype-Xcreate-anyone', 'Anyone'
+      end
+    end
+
+    it 'handles item params' do
+      tabs = render_content '{{Fruit+*type+*create|tabs|name;structure:Home}}'
+      path = "/Anyone?#{ {:slot=>{:structure=>'Home'},:view=>:name}.to_param}"
+      assert_view_select tabs, 'div[role=tabpanel]' do
+        assert_select %{li > a[data-toggle="tab"][data-url="#{path}"]}
+      end
+    end
+    it 'handles nests as items' do
+      tabs = render_card :tabs, :name=>'tab_test', :type_id=>Card::PlainTextID, :content=>"{{A|type;title:my tab title}}"
+      assert_view_select tabs, 'div[role=tabpanel]' do
+        assert_select 'li > a[data-toggle=tab][href="#tab_test-a"]', 'my tab title'
+        assert_select 'div.tab-pane#tab_test-a', 'Basic'
+      end
+    end
+
+    it 'works with search cards' do
+      Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}
+      tabs=render_content("{{Asearch|tabs;item:name}}")
+      assert_view_select tabs, 'div[role=tabpanel]' do
+        assert_select 'li > a[data-toggle=tab][href="#asearch-joe_admin"] span.card-title', 'Joe Admin'
+      end
     end
   end
 end

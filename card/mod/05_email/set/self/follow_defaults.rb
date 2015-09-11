@@ -1,6 +1,6 @@
 event :update_follow_rules, :after=>:store, :on=>:save, :when=> proc { |c| c.update_all_users } do
   defaults = item_names.map do |item|
-    if ((set_card = Card.fetch item.to_name.left) && set_card.type_code == :set) 
+    if ((set_card = Card.fetch item.to_name.left) && set_card.type_code == :set)
       option_card = Card.fetch(item.to_name.right) || Card[item.to_name.right.to_sym]
       option = if option_card.follow_option?
                  option_card.name
@@ -8,7 +8,7 @@ event :update_follow_rules, :after=>:store, :on=>:save, :when=> proc { |c| c.upd
                  '*always'
                end
       [set_card, option]
-    elsif ((set_card = Card.fetch sug) && set_card.type_code == :set) 
+    elsif ((set_card = Card.fetch sug) && set_card.type_code == :set)
       [set_card, '*always']
     end
   end.compact
@@ -31,14 +31,14 @@ format :html do
   view :edit, :perms=>:update, :tags=>:unknown_ok do |args|
     frame_and_form :update, args do
       [
-        _optional_render( :content_formgroups, args ),
+        _optional_render( :content_formgroup, args ),
         _optional_render( :confirm_update_all, args ),
         _optional_render( :button_formgroup,   args )
       ]
     end
   end
-  
-  
+
+
   view :confirm_update_all do |args|
     wrap args do
       alert 'info' do
@@ -49,7 +49,7 @@ format :html do
       end
     end
   end
-  
+
   def default_edit_args args
     args[:hidden] ||= {}
     args[:hidden].reverse_merge!(
@@ -61,6 +61,6 @@ format :html do
       #{ button_tag 'Submit', :class=>'follow'         }
       #{ button_tag 'Cancel', :class=>'slotter', :type=>'button', :href=>path(:view=>:edit, :id=>card.id)}
     }
-    
+
   end
 end

@@ -8,15 +8,16 @@ class Card
     attr_reader :revision, :format, :chunks, :opts
 
     def initialize content, format_or_card, opts={}
-      @format = if Card===format_or_card
-        Format.new format_or_card, :format=>nil
-      else
-        format_or_card
-      end
+      @format =
+        if Card===format_or_card
+          Format.new format_or_card, :format=>nil
+        else
+          format_or_card
+        end
       @opts = opts || {}
-      
+
       unless Array === content
-        content = parse_content content  
+        content = parse_content content
       end
       super content
     end
@@ -24,7 +25,7 @@ class Card
     def card
       format.card
     end
-    
+
     def chunk_list
       @opts[:chunk_list] || @format.chunk_list
     end
@@ -179,6 +180,12 @@ class Card
         end.gsub(/<\!--.*?-->/, '')
       end
 
+      if Card.config.space_last_in_multispace
+        def clean_with_space_last! string, tags = ALLOWED_TAGS
+          clean_without_space_last!(string, tags).gsub(/(?:^|\b) ((?:&nbsp;)+)/, '\1 ')
+        end
+        alias_method_chain :clean!, :space_last
+      end
       def truncatewords_with_closing_tags(input, words = 25, truncate_string = "...")
         if input.nil? then return end
         wordlist = input.to_s.split

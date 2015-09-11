@@ -1,0 +1,143 @@
+=begin
+
+DATABASE_CONTENT
+if in mod:
+  :codename/modname.ext
+else
+  ~card_id/action_id.ext
+
+
+FILE SYSTEM
+if in mod
+  (mod_dir)/files/codename/type_code-variant.ext  (no colon on codename!)
+else
+  (files_dir)/id/action_id-variant.ext            (no tilde on id!)
+
+variant = icon|small|medium|large|original
+
+
+URLS
+mark.ext
+mark/revision.ext
+mark/revision-variant.ext
+
+revision = modname or action_id
+
+Examples:
+~22/33-medium.png
+:yeti_skin/05_standard-large.png
+
+=end
+
+
+module CarrierWave::Uploader::Versions
+  private
+
+  # put version at the end of the filename
+  def full_filename(for_file)
+    name = super(for_file)
+    parts = name.split '.'
+    basename = [parts.shift, version_name].compact.join('-')
+    "#{basename}.#{parts.join('.')}"
+  end
+end
+
+class FileUploader < CarrierWave::Uploader::Base
+  attr_accessor :mod
+  include Card::Location
+
+  storage :file
+
+  def filename
+    if mod_file?
+      "#{model.type_code}#{extension}"
+    else
+      "#{action_id}#{extension}"
+    end
+  end
+
+  def extension
+    if file && file.extension.present?
+      ".#{file.extension}"
+    elsif original_filename
+      File.extname(original_filename)
+    else model.content
+      File.extname(model.content)
+    end.downcase
+  end
+
+  # generate identifier that gets stored in the card's db_content field
+  def db_content opts={}
+    @mod = opts[:mod] || model.load_from_mod  # don't use mod_file? here
+    # mod_file? looks at the identifier in the db
+    # to figure out whether it's a mod file
+    # so it wouldn't be possible to turn a mod file card into a regular file card
+
+    basename =
+      if @mod
+        "#{@mod}#{extension}"
+      else
+        "#{action_id}#{extension}"
+      end
+    "%s/%s" % [file_dir, basename]
+  end
+
+  def url(options = {})
+    "%s/%s/%s" % [card_path(Card.config.files_web_path), file_dir, full_filename(filename)]
+  end
+
+  def file_dir
+    if mod_file?
+      ":#{model.codename}"
+    elsif model.id
+      "~#{model.id}"
+    else
+      "~#{model.upload_cache_card.id}"
+    end
+  end
+
+  def cache_dir
+    Cardio.paths['files'].existent.first + '/cache'
+  end
+
+  # Carrierwave usually stores the filename as identifier in the database
+  # and retrieve_from_store! calls store_path with the identifier from the db
+  # In our case the first part of our identifier is not part of the path
+  # but we can construct the filename from db data. So we don't need the identifier.
+  # We can just call store_path always with the filename
+  def store_path(for_file=filename) #
+    super(filename)
+  end
+
+  def tmp_path
+    if !Dir.exists? model.tmp_store_dir
+      Dir.mkdir model.tmp_store_dir
+    end
+    File.join model.tmp_store_dir, filename
+  end
+
+  def create_versions? new_file
+    model.create_versions?
+  end
+
+  # paperclip compatibility used in type/file.rb#core (base format)
+  def path(version=nil)
+    version ? versions[version].path : super()
+  end
+
+  def original_filename
+    @original_filename || (model.selected_action && model.selected_action.comment)
+  end
+
+  def store_dir
+    model.store_dir
+  end
+
+  def mod_file?
+    @mod ||= model.mod_file?
+  end
+
+  def action_id
+    model.selected_content_action_id
+  end
+end

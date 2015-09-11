@@ -4,13 +4,13 @@ class Card
   #remove_const :Set if const_defined?(:Set, false)
 
   module Set
-   
+
     mattr_accessor :modules, :traits
     @@modules = { :base=>[], :base_format=>{}, :nonbase=>{}, :nonbase_format=>{} }
-   
-    
+
+
 =begin
-    A "Set" is a group of cards to which "Rules" may be applied.  Sets can be as specific as
+    A "Set" is a group of Cards to which "Rules" may be applied.  Sets can be as specific as
     a single card, as general as all cards, or anywhere in between.
 
     Rules take two main forms: card rules and code rules.
@@ -21,49 +21,49 @@ class Card
     "Code rules" can be defined in a "set file" within any "Mod" (short for both "module" and
     "modification"). In accordance with Wagn's "MoVE" architecture, there are two main kinds of
     code rules you can create in a set file: Views, and Events.  Events are associated with the
-    Card class, and Views are associated with a Format class.  You can also use set files to 
+    Card class, and Views are associated with a Format class.  You can also use set files to
     add or override Card and/or Format methods directly.  The majority of Card code is contained
     in these files.
-    
+
         (FIXME - define mod, add generator)
 
     Whenever you fetch or instantiate a card, it will automatically include all the
-    set modules defined in set files associated with sets of which it is a member.  This 
+    set modules defined in set files associated with sets of which it is a member.  This
     entails both simple model methods and "events", which are special methods explored
     in greater detail below.
-    
+
     For example, say you have a Plaintext card named "Philipp+address", and you have set files
     for the following sets:
-    
+
         * all cards
         * all Plaintext cards
         * all cards ending in +address
-    
+
     When you run this:
-    
+
         mycard = Card.fetch 'Philipp+address'
-    
+
     ...then mycard will include the set modules associated with each of those sets in the above
     order.  (The order is determined by the set pattern; see lib/card/set_pattern.rb for more
     information about set_ptterns and mod/core/set/all/fetch.rb for more about fetching.)
 
     Similarly, whenever a Format object is instantiated for a card, it includes all views
-    associated with BOTH (a) sets of which the card is a member and (b) the current format or 
+    associated with BOTH (a) sets of which the card is a member and (b) the current format or
     its ancestors.  More on defining views below.
 
- 
+
     In order to have a set file associated with "all cards ending in +address", you could create
     a file in mywagn/mod/mymod/set/right/address.rb.  The recommended mechanism for doing so
     is running `wagn generate set modname set_pattern set_anchor`. In the current example, this
-    would translate to `wagn generate set mymod right address`. Note that both the set_pattern 
+    would translate to `wagn generate set mymod right address`. Note that both the set_pattern
     and the set_anchor must correspond to the codename of a card in the database to function
-    correctly but you can add arbitrary subdirectories to organize your code rules. The rule above 
+    correctly but you can add arbitrary subdirectories to organize your code rules. The rule above
     for example could be saved in mywagn/mod/mymod/set/right/address/america/north/canada.rb.
 
-    
+
     When a Card application loads, it uses these files to autogenerate a tmp_file that uses this set file to
     createa Card::Set::Right::Address module which itself is extended with Card::Set. A set file
-    is "just ruby" but is generally quite concise because Card uses its file location to 
+    is "just ruby" but is generally quite concise because Card uses its file location to
     autogenerate ruby module names and then uses Card::Set module to provide additional API.
 
 
@@ -85,9 +85,9 @@ class Card
     module Format
       mattr_accessor :views
       @@views = {}
-      
+
       def view view, *args, &block
-        view = view.to_name.key.to_sym
+        view = view.to_viewname.key.to_sym
         views[self] ||= {}
         view_block = views[self][view] = if block_given?
           Card::Format.extract_class_vars view, args[0]
@@ -97,7 +97,7 @@ class Card
         end
         define_method "_view_#{ view }", view_block
       end
-      
+
       def alias_block view, args
         opts = Hash===args[0] ? args.shift : { :view => args.shift }
         opts[:mod]  ||= self
@@ -106,10 +106,10 @@ class Card
       rescue
         raise "cannot find #{ opts[:view] } view in #{ opts[:mod] }; failed to alias #{view} in #{self}"
       end
-      
+
     end
 
-    
+
     def format *format_names, &block
       if format_names.empty?
         format_names = [:base]
@@ -120,7 +120,7 @@ class Card
         define_on_format f, &block
       end
     end
-    
+
     def define_on_format format_name=:base, &block
       klass = Card::Format.format_class_name format_name   # format class name, eg. HtmlFormat
       mod = const_get_or_set klass do                      # called on current set module, eg Card::Set::Type::Pointer
@@ -128,7 +128,7 @@ class Card
         register_set_format Card.const_get(klass), m
         m.extend Card::Set::Format
         m
-      end                                             
+      end
       mod.class_eval &block
     end
 
@@ -137,36 +137,89 @@ class Card
         view *args, &block
       end
     end
-    
+
 
     def event event, opts={}, &final
+      perform_later =  (opts[:before] == :subsequent) || (opts[:after] == :subsequent)
+      final_method = "#{event}_without_callbacks" #should be private?
       opts[:on] = [:create, :update ] if opts[:on] == :save
 
       Card.define_callbacks event
 
       class_eval do
-        final_method = "#{event}_without_callbacks" #should be private?
         define_method final_method, &final
+      end
 
+      if perform_later
+        defer_method = "#{event}_perform_later"
+        define_event_perform_later_method event, defer_method
+        define_active_job event, final_method, opts[:queue_as]
+        define_event_method event, defer_method, opts
+      else
+        define_event_method event, final_method, opts
+      end
+      set_event_callbacks event, opts
+    end
+
+    def define_event_perform_later_method event, method_name
+      class_eval do
+        define_method method_name, proc {
+          s_attr = self.serializable_attributes.each_with_object({}) do |name, hash|
+                   value = self.instance_variable_get("@#{name}")
+                   hash[name] =
+                     if Symbol === value  # ActiveJob doesn't accept symbols as arguments
+                       { :value => value.to_s, :symbol => true }
+                     else
+                       { :value => value }
+                     end
+                end
+          Object.const_get(event.to_s.camelize).perform_later(self, s_attr)
+        }
+      end
+    end
+
+    def define_event_method event, call_method, opts
+      class_eval do
         define_method event do
           run_callbacks event do
             Card.with_logging :event, :message=>event, :context=>self.name, :details=>opts do
-              send final_method
+              send call_method
             end
           end
         end
       end
-    
-      set_event_callbacks event, opts
     end
 
 
-    
+    # creates an Active Job.
+    # The scheduled job gets the card object as argument and all serializable attributes of the card.
+    # (when the job is executed ActiveJob fetches the card from the database so all attributes get lost)
+    # @param name [String] the name for the ActiveJob child class
+    # @param final_method [String] the name of the card instance method to be queued
+    # @option queue [Symbol] (:default) the name of the queue
+    def define_active_job name, final_method, queue = :default
+      class_name = name.to_s.camelize
+      eval %{
+        class ::#{class_name} < ActiveJob::Base
+          queue_as #{queue}
+        end
+      }
+      Object.const_get(class_name).class_eval do
+       define_method :perform, proc { |card, attributes|
+          attributes.each do |name, args|
+            # symbols are not allowed so all symbols arrive here as strings
+            # convert strings that were symbols before back to symbols
+            value = args[:symbol] ? args[:value].to_sym : args[:value]
+            card.instance_variable_set("@#{name}", value )
+          end
+          card.send final_method
+      }
+      end
+    end
+
     #
     # ActiveCard support: accessing plus cards as attributes
     #
-
-
     def card_accessor *args
       options = args.extract_options!
       add_traits args, options.merge( :reader=>true, :writer=>true )
@@ -183,58 +236,73 @@ class Card
     end
 
 
+    def ensure_set &block
+      begin
+        set_module = block.call
+      rescue NameError => e
+        if e.message.match /uninitialized constant (?:Card::Set::)?(.+)$/
+          $1.split('::').inject(Card::Set) do |set_module, module_name|
+            set_module.const_get_or_set module_name do
+              Module.new
+            end
+          end
+        end
+        ensure_set &block # try again - there might be another submodule that doesn't exist
+      else
+        set_module.extend Card::Set
+      end
+    end
 
 
     # the set loading process has two main phases:
-    
+
     #  1. Definition: interpret each set file, creating/defining set and set_format modules
     #  2. Organization: have base classes include modules associated with the "all" set, and
     #     clean up the other modules
-       
+
     class << self
 
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       # Definition Phase
-    
+
       # each set file calls `extend Card::Set` when loaded
       def extended mod
         register_set mod
       end
-  
+
+
+      # make the set available for use
       def register_set set_module
-        if set_module.all_set?
+        if set_module.abstract_set?
+          # noop; only used by explicit inclusion in other set modules
+        elsif set_module.all_set?
+          # automatically included in Card class
           modules[ :base ] << set_module
         else
+          # made ready for dynamic loading via #include_set_modules
           modules[ :nonbase ][ set_module.shortname ] ||= []
           modules[ :nonbase ][ set_module.shortname ] << set_module
-        end      
+        end
       end
-      
-      def write_tmp_file set_pattern, anchors, from_file, seq
-        # FIXME - this does not properly handle anchorless sets
-        # There are special hacks for *all, but others (like *rstar) will not be found by
-        # include_set_modules, which will look for Card::Set::Rstar, not Card::Set::Rstar::Blah
-        # This issue appears to be addressed by making the entries, in modules arrays.
-        # If yes remove this comment.
 
-        to_file = "#{Cardio.paths['tmp/set'].first}/#{set_pattern}/#{seq}-#{anchors * '-'}.rb"
-        anchor_modules = anchors.map { |a| "module #{a.camelize};" } * ' '
+      def write_tmp_file from_file, to_file, rel_path
+        name_parts = rel_path.gsub(/\.rb/,'').split(File::SEPARATOR)
+        submodules = name_parts.map { |a| "module #{a.camelize};" } * ' '
         file_content = <<EOF
 # -*- encoding : utf-8 -*-
-class Card; module Set; module #{set_pattern.camelize}; #{anchor_modules}
-extend Card::Set
-# ~~~~~~~~~~~ above autogenerated; below pulled from #{from_file} ~~~~~~~~~~~
-
+class Card; module Set; #{submodules} extend Card::Set # ~~~~~~~~~~~ above autogenerated; below pulled from #{from_file} ~~~~~~~~~~~
 #{ File.read from_file }
 
 # ~~~~~~~~~~~ below autogenerated; above pulled from #{from_file} ~~~~~~~~~~~
-end;end;end;#{'end;'*anchors.size}
+end;end;#{'end;'*name_parts.size}
 EOF
+
+        FileUtils.mkdir_p to_file.gsub /[^\/]*$/, ''
         File.write to_file, file_content
         to_file
       end
-      
-      
+
+
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       # Organization Phase
 
@@ -248,7 +316,7 @@ EOF
         modules.delete :base
         modules.delete :base_format
       end
-      
+
       def process_base_module_list list, klass
         list.each do |mod|
           if mod.instance_methods.any?
@@ -259,29 +327,33 @@ EOF
           end
         end
       end
-    
+
       def clean_empty_modules
         clean_empty_module_from_hash modules[ :nonbase ]
         modules[ :nonbase_format ].values.each do |hash|
           clean_empty_module_from_hash hash
         end
       end
-      
+
       def clean_empty_module_from_hash hash
         hash.each do |mod_name, modlist|
           modlist.delete_if { |x| x.instance_methods.empty? }
           hash.delete mod_name if modlist.empty?
         end
       end
-      
+
     end
 
 
     def register_set_format format_class, mod
-      if self.all_set?
+      if self.abstract_set?
+        # noop; only used by explicit inclusion in other set modules
+      elsif self.all_set?
+        # ready to include in base format classes
         modules[ :base_format ][ format_class ] ||= []
         modules[ :base_format ][ format_class ] << mod
       else
+        # ready to include dynamically in set members' format singletons
         format_hash = modules[ :nonbase_format ][ format_class ] ||= {}
         format_hash[ shortname ] ||= []
         format_hash[ shortname ] << mod
@@ -292,9 +364,13 @@ EOF
       parts = name.split '::'
       first = 2 # shortname eliminates Card::Set
       set_class = Card::SetPattern.find parts[first].underscore
-      
+
       last = first + set_class.anchor_parts_count
       parts[first..last].join '::'
+    end
+
+    def abstract_set?
+      name =~ /^Card::Set::Abstract::/
     end
 
     def all_set?
@@ -302,8 +378,8 @@ EOF
     end
 
     private
-    
-    
+
+
     def set_event_callbacks event, opts
       [:before, :after, :around].each do |kind|
         if object_method = opts.delete(kind)
@@ -326,11 +402,11 @@ EOF
       mod = self
   #    raise "Can't define card traits on all set" if mod == Card
       mod_traits = get_traits mod
-    
+
       new_opts = options[:type] ? {:type=>options[:type]} : {}
       new_opts.merge!( {:content => options[:default]} ) if options[:default]
-    
-      args.each do |trait|   
+
+      args.each do |trait|
         define_trait_card trait, new_opts
         define_trait_reader trait if options[:reader]
         define_trait_writer trait if options[:writer]
@@ -338,7 +414,7 @@ EOF
         mod_traits[trait.to_sym] = options
       end
     end
-  
+
     def define_trait_card trait, opts
       define_method "#{trait}_card" do
         trait_var "@#{trait}_card" do
@@ -346,7 +422,7 @@ EOF
         end
       end
     end
-  
+
     def define_trait_reader trait
       define_method trait do
         trait_var "@#{trait}" do
@@ -364,6 +440,17 @@ EOF
       end
     end
 
+    def set_specific_attributes *args
+      Card.set_specific_attributes ||= []
+      Card.set_specific_attributes += args.map(&:to_s)
+    end
+
+    def attachment name, args
+      include Abstract::Attachment
+      set_specific_attributes name,  :load_from_mod, "remote_#{name}_url".to_sym,
+      uploader_class = args[:uploader] || FileUploader
+      mount_uploader name, uploader_class
+    end
   end
 end
 

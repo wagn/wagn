@@ -3,7 +3,6 @@ require 'spork'
 
 ENV["RAILS_ENV"] = 'test'
 
-
 Spork.prefork do
     
   if ENV["RAILS_ROOT"]

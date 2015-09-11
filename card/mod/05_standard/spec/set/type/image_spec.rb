@@ -1,16 +1,100 @@
-# -*- encoding : utf-8 -*-
+# -*- encoding : utf-8 -*-require "image_spec"
+
 
 describe Card::Set::Type::Image do
-  it "should have special editor" do
+  it "has special editor" do
     assert_view_select render_editor('Image'), 'div[class="choose-file"]' do
       assert_select 'input[class~="file-upload slotter"]'
     end
   end
 
-  it "should handle size argument in inclusion syntax" do
-    image_card = Card.create! :name => "TestImage", :type=>"Image", :content => %{TestImage.jpg\nimage/jpeg\n12345}
+  it "handles size argument in inclusion syntax" do
+    image_card = Card.create! :name => "TestImage", :type=>"Image", :content => '~12345/TestImage.jpg'
     including_card = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
     rendered = including_card.format._render :core
-    assert_view_select rendered, 'img[src=?]', "/files/TestImage-small-#{image_card.last_content_action_id}.jpg"
+    assert_view_select rendered, 'img[src=?]', "/files/~#{image_card.id}/#{image_card.last_content_action_id}-small.jpg"
   end
+
+
+  context "newly created image card" do
+    before do
+      Card::Auth.as_bot do
+        Card.create! :name => "image card", :type=>'image', :image=>File.new( File.join FIXTURES_PATH, 'mao2.jpg' )
+      end
+    end
+    subject { Card['image card'] }
+    it "stores correct identifier" do
+      expect(subject.content).to eq "~#{subject.id}/#{subject.last_action_id}.jpg"
+    end
+
+    it "stores image" do
+      expect(subject.image.size).to eq 7202
+    end
+
+    it "stores small size" do
+      expect(subject.image.small.size).to be < 6000
+      expect(subject.image.small.size).to be > 0
+    end
+
+    it "stores icon size" do
+      expect(subject.image.icon.size).to be < 3000
+      expect(subject.image.icon.size).to be > 0
+    end
+
+    it "saves original file name as action comment" do
+      expect(subject.last_action.comment).to eq "mao2.jpg"
+    end
+
+    it "has correct original filename" do
+      expect(subject.original_filename).to eq "mao2.jpg"
+    end
+
+    it "has correct url" do
+      expect(subject.image.url).to eq "/files/~#{subject.id}/#{subject.last_action_id}-original.jpg"
+    end
+
+
+    describe 'view: source' do
+      it 'renders url' do
+        expect(subject.format.render(:source)).to eq("/files/~#{subject.id}/#{subject.last_action_id}-medium.jpg")
+      end
+    end
+
+
+    describe 'view: act_expanded' do
+      it 'gets image url' do
+        act_summary = subject.format.render(:act_expanded, :act=>subject.last_act)
+        current_url = subject.image.versions[:medium].url
+        expect(act_summary).to match /#{Regexp.quote current_url}/
+      end
+    end
+
+
+    context "updated file card" do
+      before do
+        subject.update_attributes! :image=>File.new( File.join FIXTURES_PATH, 'rails.gif' )
+      end
+      it "updates file" do
+        expect(subject.image.size).to eq 8533
+      end
+
+      it "updates original file name" do
+        expect(subject.image.original_filename).to eq "rails.gif"
+      end
+
+      it "updates url" do
+        expect(subject.image.url).to eq "/files/~#{subject.id}/#{subject.last_action_id}-original.gif"
+      end
+    end
+  end
+
+  describe '*logo mod image' do
+    it 'exists' do
+      expect(Card[:logo].image.size).to be > 0
+    end
+    it 'has correct url' do
+      expect(Card[:logo].image.url).to eq "/files/:logo/image-original.png"
+    end
+  end
+
 end

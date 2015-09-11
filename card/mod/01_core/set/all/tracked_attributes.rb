@@ -1,14 +1,30 @@
 #fixme -this is called by both initialize and update_attributes.  really should be optimized for new!
-def assign_attributes args={}, options={}
+def assign_attributes args={}
   if args
     args = args.stringify_keys
+
+    @set_specific = {}
+    Card.set_specific_attributes.each do |key|
+      @set_specific[key] = args.delete(key) if args[key]
+    end
+
     if newtype = args.delete('type')
       args['type_id'] = Card.fetch_id newtype
     end
     @subcards = extract_subcard_args! args
     reset_patterns
   end
-  super args, options
+  params = ActionController::Parameters.new(args)
+  params.permit!
+  super params
+end
+
+def assign_set_specific_attributes
+  if @set_specific && @set_specific.present?
+    @set_specific.each_pair do |name, value|
+      self.send "#{name}=", value
+    end
+  end
 end
 
 def extract_subcard_args! args={}
@@ -43,7 +59,7 @@ event :update_ruled_cards, :after=>:store do
     self.class.clear_rule_cache
     set = rule_set
     set.reset_set_patterns
-    
+
     if right_id==Card::ReadID and (name_changed? or trash_changed?)
       self.class.clear_read_rule_cache
       Card.cache.reset # maybe be more surgical, just Auth.user related

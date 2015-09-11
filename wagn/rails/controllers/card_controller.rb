@@ -7,24 +7,25 @@ require_dependency 'card/mailer'  #otherwise Net::SMTPError rescues can cause pr
 
 class CardController < ActionController::Base
 
-  include Card::Format::Location
-  include Card::HtmlFormat::Location
+  include Card::Location
   include Recaptcha::Verify
 
-  before_filter :start_performance_logger  if Wagn.config.performance_logger
-  after_filter  :stop_performance_logger   if Wagn.config.performance_logger
-  after_filter :request_logger            if Wagn.config.request_logger
+  before_filter :start_performance_logger
+  after_filter  :stop_performance_logger
+  after_filter  :request_logger            if Wagn.config.request_logger
 
   before_filter :per_request_setup, :except => [:asset]
   before_filter :load_id, :only => [ :read ]
   before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
-
+  before_filter :init_success_object, :only => [ :create, :update, :delete ]
 
 
   layout nil
 
   attr_reader :card
+  attr_accessor :success
+
 
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,7 +36,6 @@ class CardController < ActionController::Base
   end
 
   def read
-    save_location # should be an event!
     show
   end
 
@@ -44,8 +44,6 @@ class CardController < ActionController::Base
   end
 
   def delete
-    discard_locations_for card #should be an event
-    params[:success] ||= 'REDIRECT: *previous'
     handle { card.delete }
   end
 
@@ -53,6 +51,7 @@ class CardController < ActionController::Base
     Rails.logger.info "Routing assets through Card. Recommend symlink from Deck to Card gem using 'rake wagn:update_assets_symlink'"
     send_file_inside Decko::Engine.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
   end
+
 
   private
 
@@ -101,7 +100,7 @@ class CardController < ActionController::Base
   def load_card
     @card = case params[:id]
       when '*previous'
-        return card_redirect( previous_location )
+        return card_redirect( Card::Env.previous_location )
       else  # get by name
         opts = params[:card] ? params[:card].clone : {}   # clone so that original params remain unaltered.  need deeper clone?
         opts[:type] ||= params[:type] if params[:type]    # for /new/:type shortcut.  we should fix and deprecate this.
@@ -119,15 +118,19 @@ class CardController < ActionController::Base
       end
     raise Card::NotFound unless @card
 
-    card.select_action_by_params params
+    @card.select_action_by_params params
     Card::Env[:main_name] = params[:main] || (card && card.name) || ''
 
     render_errors if card.errors.any?
     true
   end
 
+  def init_success_object
+    @success = Card::Env[:success] = Card::Success.new(@card.cardname, params[:success])
+  end
+
   def refresh_card
-    @card =  card.refresh
+    @card = card.refresh
   end
 
   def request_logger
@@ -135,11 +138,29 @@ class CardController < ActionController::Base
   end
 
   def start_performance_logger
-    Card::Log::Performance.start :method=>env["REQUEST_METHOD"], :message=>env["PATH_INFO"]
+    if params[:performance_log]
+      @old_log_level = Wagn.config.log_level
+      if params[:performance_log].kind_of?(Hash) && params[:performance_log][:output] == 'console'
+        Wagn.config.log_level = :wagn
+      end
+      Card::Log::Performance.load_config params[:performance_log]
+    end
+
+    if Wagn.config.performance_logger || params[:performance_log]
+      Card::Log::Performance.start :method=>env["REQUEST_METHOD"], :message=>env["PATH_INFO"], :category=>'format'
+    end
   end
 
   def stop_performance_logger
-    Card::Log::Performance.stop
+    if Wagn.config.performance_logger || params[:performance_log]
+      Card::Log::Performance.stop
+    end
+    if params[:perfomance_log]
+      Wagn.config.log_level = @old_log_level
+      if Wagn.config.performance_logger
+        Card::Log::Performance.load_config Wagn.config.performance_logger
+      end
+    end
   end
 
   protected
@@ -166,42 +187,23 @@ class CardController < ActionController::Base
   end
 
   def handle
-    yield ? success : render_errors
+    yield ? render_success : render_errors
   end
 
-
-  def success
-    redirect, new_params = !ajax?, {}
-
-    target = case params[:success]
-      when Hash
-        new_params = params[:success]
-        redirect ||= !!(new_params.delete :redirect)
-        new_params.delete :id
-      when /^REDIRECT:\s*(.+)/
-        redirect=true
-        $1
-      when nil  ;  '_self'
-      else      ;   params[:success]
-      end
-
-    target = case target
-      when '*previous'     ;  previous_location #could do as *previous
-      when /^(http|\/)/    ;  target
-      when /^TEXT:\s*(.+)/ ;  $1
-      when ''              ;  ''
-      else                 ;  Card.fetch target.to_name.to_absolute(card.cardname), :new=>{}
-      end
-
-    case
-    when redirect
-      target = page_path target.cardname, new_params if Card === target
-      card_redirect target
-    when String===target
-      render :text => target
+  def render_success
+    @success.name_context = @card.cardname
+    if !ajax? || @success.hard_redirect?
+      card_redirect @success.to_url
+    elsif String === @success.target
+      render :text => @success.target
     else
-      @card = target
-      self.params = self.params.merge new_params #need tests.  insure we get slot, main...
+      if @success.soft_redirect?
+        self.params = @success.params
+      else
+        self.params.merge! @success.params # #need tests. insure we get slot, main...
+      end
+      @card = @success.target
+      @card.select_action_by_params params
       show
     end
   end
@@ -217,10 +219,9 @@ class CardController < ActionController::Base
     show view, status
   end
 
-
-
   def show view = nil, status = 200
 #    ActiveSupport::Notifications.instrument('card', message: 'CardController#show') do
+    card.action = :read
     format = request.parameters[:format]
     format = :file if params[:explicit_file] or !Card::Format.registered.member? format #unknown format
 
@@ -228,7 +229,7 @@ class CardController < ActionController::Base
     view ||= params[:view]
 
     if params[:edit_draft] && card.drafts.present?
-      card.content = card.drafts.last.changes.last.value
+      card.content = card.drafts.last.card_changes.last.value
     end
     formatter = card.format(format.to_sym)
     result = formatter.show view, opts
@@ -241,7 +242,9 @@ class CardController < ActionController::Base
     else
       args = { :text=>result, :status=>status }
       args[:content_type] = 'text/text' if format == :file
-      render args
+      card.run_callbacks :render_view do
+        render args
+      end
     end
 #    end
   end
@@ -286,4 +289,6 @@ class CardController < ActionController::Base
 
 
 end
+
+
 

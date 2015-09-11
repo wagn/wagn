@@ -28,7 +28,7 @@ end
 
 def get_type_id args={}
   return if args[:type_id] # type_id was set explicitly.  no need to set again.
-  
+
   type_id = case
     when args[:type_code]
       if code=args[:type_code]
@@ -60,11 +60,11 @@ event :validate_type_change, :before=>:approve, :on=>:update, :changed=>:type_id
   end
 end
 
-event :validate_type, :before=>:approve, :changed=>:type_id do    
+event :validate_type, :before=>:approve, :changed=>:type_id do
   if !type_name
     errors.add :type, "No such type"
   end
-  
+
   if rt = structure and rt.assigns_type? and type_id!=rt.type_id
     errors.add :type, "can't be changed because #{name} is hard templated to #{rt.type_name}"
   end
@@ -72,7 +72,7 @@ end
 
 event :reset_type_specific_fields, :after=>:store do
   Auth.as_bot do
-    Card.search :left=>{ :left=>type_name }, :right=>{:codename=>'type_plus_right'} do |set_card|
+    Card.search :left=>{ :left_id=>type_id }, :right=>{:codename=>'type_plus_right'} do |set_card|
       set_card.reset_set_patterns
     end
   end
@@ -82,4 +82,4 @@ end
 #      Card["#{lef}"]
 #      set_card.reset_set_patterns
 #    end
-  
+

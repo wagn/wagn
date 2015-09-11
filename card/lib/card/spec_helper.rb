@@ -2,9 +2,9 @@ module SpecHelper
 end
 module Card::SpecHelper
 
-  include ActionDispatch::Assertions::SelectorAssertions
+  include Rails::Dom::Testing::Assertions::SelectorAssertions
   #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
-  
+
   def login_as user
     Card::Auth.current_id = (uc=Card[user.to_s] and uc.id)
     if @request
@@ -12,23 +12,34 @@ module Card::SpecHelper
     end
     #warn "(ath)login_as #{user.inspect}, #{Card::Auth.current_id}, #{@request.session[:user]}"
   end
-  
+
   def newcard name, content=""
     #FIXME - misleading name; sounds like it doesn't save.
     Card.create! :name=>name, :content=>content
   end
 
   def assert_view_select(view_html, *args, &block)
-    node = HTML::Document.new(view_html).root
+    node = Nokogiri::HTML::Document.parse(view_html).root
+    #node = HTML::Document.new(view_html).root
     if block_given?
       assert_select node, *args, &block
     else
       assert_select node, *args
     end
   end
-  
+
   def debug_assert_view_select(view_html, *args, &block)
-    Rails.logger.rspec "<pre>#{CGI.escapeHTML Nokogiri::XML(view_html,&:noblanks).to_s}</pre>" 
+    Rails.logger.rspec %(
+      #{CodeRay.scan(Nokogiri::XML(view_html,&:noblanks).to_s, :html).div}
+      <style>
+        .CodeRay {
+          background-color: #FFF;
+          border: 1px solid #CCC;
+          padding: 1em 0px 1em 1em;
+        }
+        .CodeRay .code pre { overflow: auto }
+      </style>
+    )
     assert_view_select view_html, *args, &block
   end
 
@@ -40,7 +51,7 @@ module Card::SpecHelper
   def render_content content, format_args={}
     render_content_with_args( content, format_args )
   end
-  
+
   def render_content_with_args content, format_args={}, view_args={}
     @card ||= Card.new :name=>"Tempo Rary 2"
     @card.content = content
@@ -50,7 +61,7 @@ module Card::SpecHelper
   def render_card view, card_args={}, format_args={}
     render_card_with_args view, card_args, format_args
   end
-  
+
   def render_card_with_args view, card_args={}, format_args={}, view_args={}
     card = begin
       if card_args[:name]
@@ -61,7 +72,7 @@ module Card::SpecHelper
     end
     card.format(format_args)._render(view, view_args)
   end
-  
+
   def users
     SharedData::USERS.sort
   end

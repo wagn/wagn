@@ -18,9 +18,8 @@ event :upload_attachment, :before=>:validate_name, :on=>:save, :when=>proc { |c|
   store_attachment!
   finalize_action         # create Card::Change entry for db_content
   @current_action.update_attributes! :draft => true, :card_id => (new_card? ? upload_cache_card.id : id)
-
   success << {
-    :target => (new_card? ? upload_cache_card : '_self'),
+    :target => (new_card? ? upload_cache_card : self),
     :type=> type_name,
     :view => 'preview_editor',
     :rev_id => current_action.id

@@ -22,16 +22,15 @@ class Card
         load_formats
         load_sets
 
-        update_machine_output_hack
-        if Wagn.config.performance_logger
-          Card::Log::Performance.load_config Wagn.config.performance_logger
+        if ENV['RAILS_ENV'] = "development"
+          update_machine_output_hack
         end
       end
 
       def update_machine_output_hack
         script = Card["*all+*script"]
         if (mtime_output = script.machine_output_card.updated_at)
-          [ "wagn_mod.js.coffee", "wagn.js.coffee" ].each do |name|
+          [ "wagn_mod.js.coffee", "wagn.js.coffee", "script_card_menu.js.coffee" ].each do |name|
             mtime_file = File.mtime "#{Cardio.gem_root}/mod/03_machines/lib/javascript/#{name}"
             if mtime_file > mtime_output
               script.update_machine_output

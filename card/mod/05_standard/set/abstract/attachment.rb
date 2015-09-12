@@ -44,6 +44,7 @@ event :assign_attachment_on_update, :after=>:prepare, :on=>:update do
          attachment.file
        end
     assign_attachment uploaded_file, action.comment
+    #delete_tmp_files action
     action.delete
   end
 end
@@ -60,25 +61,21 @@ event :correct_identifier, :after=>:store, :on=>:create do
   expire
 end
 
-
 event :save_original_filename, :after=>:validate_name, :when => proc {|c| !c.preliminary_upload? && !c.save_preliminary_upload? && c.attachment_changed?} do
   if @current_action
     @current_action.update_attributes! :comment=>original_filename
   end
 end
 
+event :clear_tmp_dir, :after=>:extent, :on=>:create do
+  clear_tmp_upload_dir
+end
+
+
 event :write_identifier, :after=>:save_original_filename do
   self.content = attachment.db_content(:mod=>load_from_mod)
 end
 
-
-def upload_cache_card
-  @upload_cache_card ||= Card["new_#{attachment_name}".to_sym ]
-end
-
-def tmp_store_dir action_id=nil
-  "#{ Card.paths['files'].existent.first }/#{upload_cache_card.id}"
-end
 
 def item_names(args={})  # needed for flexmail attachments.  hacky.
   [self.cardname]
@@ -104,12 +101,17 @@ def create_versions?
   true
 end
 
-def store_place
-  @store_place ||= mod_file? || :deck
+# used for uploads for new cards until the new card is created
+def upload_cache_card
+  @upload_cache_card ||= Card["new_#{attachment_name}".to_sym ]
 end
+
 
 def load_from_mod= value
   @mod = value
+  if value
+    @store_in_mod = true
+  end
 end
 
 def load_from_mod
@@ -117,20 +119,52 @@ def load_from_mod
 end
 
 def store_dir
-  if (store_place == :deck)
-    if id
-      "#{ Card.paths['files'].existent.first }/#{id}"
-    else
-      tmp_store_dir
-    end
+  if @store_in_mod
+    mod_dir
   else
-    "#{ Cardio.gem_root}/mod/#{store_place}/file/#{codename}"
+    upload_dir
   end
 end
 
+def retrieve_dir
+  if mod_file?
+    mod_dir
+  else
+    upload_dir
+  end
+end
+
+# place for files of regular file cards
+def upload_dir
+  if id
+    "#{ Card.paths['files'].existent.first }/#{id}"
+  else
+    tmp_upload_dir
+  end
+end
+
+# place for files if card doesn't have an id yet
+def tmp_upload_dir action_id=nil
+  "#{ Card.paths['files'].existent.first }/#{upload_cache_card.id}"
+end
+
+# place for files of mod file cards
+def mod_dir
+  mod = @mod || mod_file?
+  Card.paths['mod'].to_a.each do |mod_path|
+    dir = File.join(mod_path, mod, 'file', codename )
+    if Dir.exist? dir
+      return dir
+    end
+  end
+end
+
+
 def mod_file?
+  if @store_in_mod
+    return @mod
   # when db_content was changed assume that it's no longer a mod file
-  if @store_place != :deck && !db_content_changed? && content.present?
+  elsif !db_content_changed? && content.present?
     case content
     when /^:[^\/]+\/([^.]+)/ ; $1     # current mod_file format
     when /^\~/               ; false  # current id file format
@@ -150,14 +184,23 @@ def assign_set_specific_attributes
   super
 end
 
-def clear_upload_tmp_dir
-  Dir.entries(tmp_store_dir).each do |filename|
+def clear_tmp_upload_dir
+  Dir.entries(tmp_upload_dir).each do |filename|
     if filename =~/^\d+/
-      path = File.join(tmp_store_dir, filename )
+      path = File.join(tmp_upload_dir, filename )
       older_than_five_days = ( DateTime.now - File.ctime(path) > 432000)
       if older_than_five_days
         FileUtils.rm path
       end
+    end
+  end
+end
+
+def delete_tmp_files action
+  with_selected_action_id(action.id) do
+    FileUtils.rm attachment.file.path
+    attachment.versions.each_value do |version|
+      FileUtils.rm version.path
     end
   end
 end

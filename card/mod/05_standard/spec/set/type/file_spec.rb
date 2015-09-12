@@ -74,16 +74,4 @@ describe Card::Set::Type::File do
     expect(Card['url test'].file.url).to match /\.png$/
   end
 
-  context "mod file" do
-    subject { Card[:logo] }
-    describe "#mod_file?" do
-      it "returns the mod name" do
-        expect(subject.mod_file?).to eq('05_standard')
-      end
-    end
-
-    it "has correct url " do
-      expect(subject.content).to eq ":#{subject.codename}/05_standard.png"
-    end
-  end
 end

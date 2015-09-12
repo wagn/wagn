@@ -28,26 +28,24 @@ event :upload_attachment, :before=>:validate_name, :on=>:save, :when=>proc { |c|
   abort :success
 end
 
-event :assign_attachment_on_create, :after=>:prepare, :on=>:create do
-  if save_preliminary_upload? && (action = Card::Action.fetch(Card::Env.params[:cached_upload]))
+event :assign_attachment_on_create, :after=>:prepare, :on=>:create, :when => { |c| c.save_preliminary_upload? } do
+  if (action = Card::Action.fetch(Card::Env.params[:cached_upload]))
     upload_cache_card.selected_action_id = action.id
     upload_cache_card.select_file_revision
     assign_attachment upload_cache_card.attachment.file, action.comment
-    action.delete # TODO: delete files too
   end
 end
 
-event :assign_attachment_on_update, :after=>:prepare, :on=>:update do
-  if save_preliminary_upload? && (action = Card::Action.fetch(Card::Env.params[:cached_upload]))
+event :assign_attachment_on_update, :after=>:prepare, :on=>:update, :when => { |c| c.save_preliminary_upload? } do
+  if (action = Card::Action.fetch(Card::Env.params[:cached_upload]))
     uploaded_file =
        with_selected_action_id(action.id) do
          attachment.file
        end
     assign_attachment uploaded_file, action.comment
-    #delete_tmp_files action
-    action.delete
   end
 end
+
 
 def assign_attachment file, original_filename
   send "#{attachment_name}=", file
@@ -67,8 +65,19 @@ event :save_original_filename, :after=>:validate_name, :when => proc {|c| !c.pre
   end
 end
 
-event :clear_tmp_dir, :after=>:extent, :on=>:create do
-  clear_tmp_upload_dir
+event :delete_cached_upload_file_on_create, :after=>:extend, :on=>:create, :when => proc { |c| c.save.preliminary_upload? } do
+  if (action = Card::Action.fetch(Card::Env.params[:cached_upload]))
+    upload_cache_card.delete_files_for_action action
+    action.delete
+  end
+  clear_upload_cache_dir_for_new_cards
+end
+
+event :delete_cached_upload_file_on_update, :after=>:extend, :on=>:update, :when => proc { |c| c.save.preliminary_upload? } do
+  if (action = Card::Action.fetch(Card::Env.params[:cached_upload]))
+    delete_files_for_action action
+    action.delete
+  end
 end
 
 
@@ -184,19 +193,22 @@ def assign_set_specific_attributes
   super
 end
 
-def clear_tmp_upload_dir
+def clear_upload_cache_dir_for_new_cards
   Dir.entries(tmp_upload_dir).each do |filename|
     if filename =~/^\d+/
       path = File.join(tmp_upload_dir, filename )
-      older_than_five_days = ( DateTime.now - File.ctime(path) > 432000)
-      if older_than_five_days
+      if older_than_five_days? File.ctime(path)
         FileUtils.rm path
       end
     end
   end
 end
 
-def delete_tmp_files action
+def older_than_five_days? time
+  Time.now - time > 432000
+end
+
+def delete_files_for_action action
   with_selected_action_id(action.id) do
     FileUtils.rm attachment.file.path
     attachment.versions.each_value do |version|
@@ -204,6 +216,7 @@ def delete_tmp_files action
     end
   end
 end
+
 
 def symlink_to(prior_action_id) # create filesystem links to files from prior action
   if prior_action_id != last_action_id

@@ -140,10 +140,10 @@ describe Card::Set::Type::EmailTemplate do
          is_expected.to include '*html message'
        end
        it 'renders url' do
-         is_expected.to include 'Url(<a class="external-link" href="http://wagn.org">wagn.org</a>)'
+         is_expected.to include 'Url(<a target="_blank" class="external-link" href="http://wagn.org">wagn.org</a>)'
        end
        it 'renders link' do
-         is_expected.to include 'Link(<a class="external-link" href="http://wagn.org">Wagn</a>)'
+         is_expected.to include 'Link(<a target="_blank" class="external-link" href="http://wagn.org">Wagn</a>)'
        end
        it 'renders inclusion' do
          is_expected.to include 'Inclusion(B)'

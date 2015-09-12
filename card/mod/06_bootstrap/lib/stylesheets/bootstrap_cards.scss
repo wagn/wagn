@@ -109,51 +109,24 @@ body.mceContentBody {
     left: 41.6%;
   }
   .sidebar-offcanvas {
-    position: absolute;
-    top: 0;
-    width: 41.6%;
+    position: absolute !important;
+    top: 0 !important;
+    width: 41.6% !important;
   }
 }
 
-
-
-.rotate-cw {
-  -webkit-transform:rotate(90deg);
-  -moz-transform:rotate(90deg);
-  -o-transform:rotate(90deg);
-  transform:rotate(90deg);
+.offcanvas-toggle {
+  font-size: 10px !important;
+  padding: 5px !important;
+  margin-bottom: 15px !important;
+}
+.offcanvas-toggle-right {
+  float: right;
+}
+.offcanvas-toggle-left {
+  float: left;
 }
 
-@media screen and (max-width: 767px) {
-  .row-offcanvas {
-    position: relative;
-  }
-
-  aside.offcanvas-right {
-    right: -50%; /* 6 columns */
-  }
-
-  aside.offcanvas-left {
-    left: -50%; /* 6 columns */
-  }
-
-  aside.offcanvas-right.active {
-    right: 0%; /* 6 columns */
-
-  }
-  aside.offcanvas-left.active {
-    left: 0%; /* 6 columns */
-  }
-
-  aside.offcanvas-right, aside.offcanvas-left {
-    position: absolute;
-    top: 0;
-    width: 50%; /* 6 columns */
-    -webkit-transition: all .25s ease-out;
-         -o-transition: all .25s ease-out;
-            transition: all .25s ease-out;
-  }
-}
 
 
 /*---------- Card menu ------------*/

@@ -4,7 +4,7 @@
   "card": {
     "name": "export",
     "type": "Pointer",
-    "content": "[[style: right sidebar]]\n[[Default Layout]]\n[[*header]]",
+    "content": "[[style: right sidebar]]\n[[Default Layout]]",
     "value": [
       {
         "name": "style: right sidebar",
@@ -14,12 +14,7 @@
       {
         "name": "Default Layout",
         "type": "Layout",
-        "content": "<!DOCTYPE HTML>\r\n<html>\r\n  <head>{{*head|core}}</head>\r\n  <body>\r\n    <header>{{*header|core}}\r\n    <div class=\"container\">\r\n      <div class=\"row row-offcanvas\">\r\n        <article class=\"col-xs-12 col-sm-9\">{{_main|open}}</article>\r\n        <aside class=\"col-xs-6 col-sm-3 offcanvas-right\">{{*sidebar|core}}</aside>\r\n      </div>\r\n      <footer>{{*footer|core}}</footer>\r\n    </div>\r\n  </body>\r\n</html>"
-      },
-      {
-        "name": "*header",
-        "type": "HTML",
-        "content": "<div class=\"navbar navbar-default navbar-static-top\">\r\n  <div class=\"container-fluid\">\r\n    <div class=\"navbar-header\">\r\n      <button type=\"button\" class=\"navbar-toggle pull-left collapsed\" data-toggle=\"collapse\" data-target=\"#navbar-collapse-1\">\r\n        <span class=\"sr-only\">Toggle navigation</span>\r\n          <span class=\"icon-bar\"></span>\r\n          <span class=\"icon-bar\"></span>\r\n          <span class=\"icon-bar\"></span>\r\n        </button>\r\n        \r\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"offcanvas\">\r\n        <div class=\"rotate-cw\">\r\n          <span class=\"icon-bar\"></span>\r\n          <span class=\"icon-bar\"></span>\r\n          <span class=\"icon-bar\"></span>\r\n          </div>\r\n        </button>\r\n    </div>\r\n    <div class=\"collapse navbar-collapse\" id=\"navbar-collapse-1\">\r\n      {{*main menu|navbar_left}}  \r\n      {{*navbox|navbar_left}}\r\n      {{*account links|navbar_right}}\r\n    </div>\r\n  </div>\r\n</div>"
+        "content": "<!DOCTYPE HTML>\r\n<html>\r\n  <head>{{*head|core}}</head>\r\n  <body class\"right-sidebar\">\r\n    <header>{{*header|core}}\r\n    <article>{{_main|open}}</article>\r\n    <aside>{{*sidebar|core}}</aside>\r\n    <footer>{{*footer|core}}</footer>\r\n  </body>\r\n</html>"
       }
     ]
   }

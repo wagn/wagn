@@ -182,9 +182,7 @@ class Card
       class_eval do
         define_method event do
           run_callbacks event do
-            Card.with_logging :event, :message=>event, :context=>self.name, :details=>opts do
-              send call_method
-            end
+            send call_method
           end
         end
       end

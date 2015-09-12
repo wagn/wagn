@@ -10,22 +10,14 @@ class CardController < ActionController::Base
   include Card::Location
   include Recaptcha::Verify
 
-  before_filter :start_performance_logger
-  after_filter  :stop_performance_logger
-  after_filter  :request_logger            if Wagn.config.request_logger
-
   before_filter :per_request_setup, :except => [:asset]
   before_filter :load_id, :only => [ :read ]
   before_filter :load_card, :except => [:asset]
   before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
-  before_filter :init_success_object, :only => [ :create, :update, :delete ]
-
 
   layout nil
 
   attr_reader :card
-  attr_accessor :success
-
 
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,7 +41,9 @@ class CardController < ActionController::Base
 
   def asset
     Rails.logger.info "Routing assets through Card. Recommend symlink from Deck to Card gem using 'rake wagn:update_assets_symlink'"
-    send_file_inside Decko::Engine.paths['gem-assets'].existent.first, [ params[:filename], params[:format] ].join('.'), :x_sendfile => true
+    asset_path = Decko::Engine.paths['gem-assets'].existent.first
+    filename   = [ params[:filename], params[:format] ].join('.')
+    send_file_inside asset_path, filename , :x_sendfile => true
   end
 
 
@@ -125,43 +119,10 @@ class CardController < ActionController::Base
     true
   end
 
-  def init_success_object
-    @success = Card::Env[:success] = Card::Success.new(@card.cardname, params[:success])
-  end
-
   def refresh_card
     @card = card.refresh
   end
 
-  def request_logger
-    Card::Log::Request.write_log_entry self
-  end
-
-  def start_performance_logger
-    if params[:performance_log]
-      @old_log_level = Wagn.config.log_level
-      if params[:performance_log].kind_of?(Hash) && params[:performance_log][:output] == 'console'
-        Wagn.config.log_level = :wagn
-      end
-      Card::Log::Performance.load_config params[:performance_log]
-    end
-
-    if Wagn.config.performance_logger || params[:performance_log]
-      Card::Log::Performance.start :method=>env["REQUEST_METHOD"], :message=>env["PATH_INFO"], :category=>'format'
-    end
-  end
-
-  def stop_performance_logger
-    if Wagn.config.performance_logger || params[:performance_log]
-      Card::Log::Performance.stop
-    end
-    if params[:perfomance_log]
-      Wagn.config.log_level = @old_log_level
-      if Wagn.config.performance_logger
-        Card::Log::Performance.load_config Wagn.config.performance_logger
-      end
-    end
-  end
 
   protected
 
@@ -169,8 +130,8 @@ class CardController < ActionController::Base
     Card::Env.ajax?
   end
 
-  def html?
-    [nil, 'html'].member?(params[:format])
+  def success
+    Card::Env[:success]
   end
 
   # ----------( rendering methods ) -------------
@@ -187,22 +148,24 @@ class CardController < ActionController::Base
   end
 
   def handle
-    yield ? render_success : render_errors
+    card.run_callbacks :handle do
+      yield ? render_success : render_errors
+    end
   end
 
   def render_success
-    @success.name_context = @card.cardname
-    if !ajax? || @success.hard_redirect?
-      card_redirect @success.to_url
-    elsif String === @success.target
-      render :text => @success.target
+    success.name_context = @card.cardname
+    if !ajax? || success.hard_redirect?
+      card_redirect success.to_url
+    elsif String === success.target
+      render :text => success.target
     else
-      if @success.soft_redirect?
-        self.params = @success.params
+      if success.soft_redirect?
+        self.params = success.params
       else
-        self.params.merge! @success.params # #need tests. insure we get slot, main...
+        self.params.merge! success.params # #need tests. insure we get slot, main...
       end
-      @card = @success.target
+      @card = success.target
       @card.select_action_by_params params
       show
     end
@@ -232,9 +195,16 @@ class CardController < ActionController::Base
       card.content = card.drafts.last.card_changes.last.value
     end
     formatter = card.format(format.to_sym)
-    result = formatter.show view, opts
+    result = card.run_callbacks :show do
+      formatter.show view, opts
+    end
     status = formatter.error_status || status
 
+    deliver format, result, status
+  end
+
+
+  def deliver format, result, status
     if format==:file && status==200
       send_file *result
     elsif status == 302
@@ -242,13 +212,9 @@ class CardController < ActionController::Base
     else
       args = { :text=>result, :status=>status }
       args[:content_type] = 'text/text' if format == :file
-      card.run_callbacks :render_view do
-        render args
-      end
+      render args
     end
-#    end
   end
-
 
   rescue_from StandardError do |exception|
     Rails.logger.info "exception = #{exception.class}: #{exception.message}"

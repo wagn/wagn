@@ -48,3 +48,8 @@ def include_set_modules
   end
   self
 end
+
+
+event :initialize_success_object, :before=>:handle do
+  Env[:success] = Success.new(cardname, Env.params[:success])
+end

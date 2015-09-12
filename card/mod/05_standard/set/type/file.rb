@@ -109,7 +109,7 @@ format :html do
         <span class="btn btn-success fileinput-button">
             <i class="glyphicon glyphicon-cloud-upload"></i>
             <span>
-                #{@slot_view == :edit ? 'Replace' : 'Add'} #{card.attachment_name}...
+                #{card.new_card? ? 'Add' : 'Replace'} #{card.attachment_name}...
             </span>
              #{file_field card.attachment_name, :class=>'file-upload slotter'}
         </span>

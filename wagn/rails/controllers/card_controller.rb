@@ -131,7 +131,7 @@ class CardController < ActionController::Base
   end
 
   def success
-    Card::Env[:success]
+    Card::Env.success(@card)
   end
 
   # ----------( rendering methods ) -------------

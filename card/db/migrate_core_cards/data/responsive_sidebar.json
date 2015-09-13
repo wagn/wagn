@@ -14,7 +14,7 @@
       {
         "name": "Default Layout",
         "type": "Layout",
-        "content": "<!DOCTYPE HTML>\r\n<html>\r\n  <head>{{*head|core}}</head>\r\n  <body class\"right-sidebar\">\r\n    <header>{{*header|core}}\r\n    <article>{{_main|open}}</article>\r\n    <aside>{{*sidebar|core}}</aside>\r\n    <footer>{{*footer|core}}</footer>\r\n  </body>\r\n</html>"
+        "content": "<!DOCTYPE HTML>\r\n<html>\r\n  <head>{{*head|core}}</head>\r\n  <body class=\"right-sidebar\">\r\n    <header>{{*header|core}}</header>\r\n    <article>{{_main|open}}</article>\r\n    <aside>{{*sidebar|core}}</aside>\r\n    <footer>{{*footer|core}}</footer>\r\n  </body>\r\n</html>"
       }
     ]
   }

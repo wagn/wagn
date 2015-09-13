@@ -1,4 +1,3 @@
-
 require 'wagn/application'
 
 WAGN_SEED_TABLES = %w{ cards card_actions card_acts card_changes card_references }
@@ -16,7 +15,6 @@ namespace :wagn do
   desc "create a wagn database from scratch, load initial data"
   task :seed do
     ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
-
     puts "dropping"
     #fixme - this should be an option, but should not happen on standard creates!
     begin

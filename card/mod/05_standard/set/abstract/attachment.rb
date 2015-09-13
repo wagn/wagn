@@ -64,7 +64,7 @@ event :save_original_filename, :after=>:validate_name, :when => proc {|c| !c.pre
   end
 end
 
-event :delete_cached_upload_file_on_create, :after=>:extend, :on=>:create, :when => proc { |c| c.save.preliminary_upload? } do
+event :delete_cached_upload_file_on_create, :after=>:extend, :on=>:create, :when => proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(Card::Env.params[:cached_upload]))
     upload_cache_card.delete_files_for_action action
     action.delete
@@ -72,7 +72,7 @@ event :delete_cached_upload_file_on_create, :after=>:extend, :on=>:create, :when
   clear_upload_cache_dir_for_new_cards
 end
 
-event :delete_cached_upload_file_on_update, :after=>:extend, :on=>:update, :when => proc { |c| c.save.preliminary_upload? } do
+event :delete_cached_upload_file_on_update, :after=>:extend, :on=>:update, :when => proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(Card::Env.params[:cached_upload]))
     delete_files_for_action action
     action.delete
@@ -117,6 +117,7 @@ end
 
 def load_from_mod= value
   @mod = value
+  write_identifier
   if value
     @store_in_mod = true
   end

@@ -91,6 +91,7 @@ end
 
 
 def extend
+
   run_callbacks :extend
   run_callbacks :subsequent
 rescue =>e

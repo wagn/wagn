@@ -22,7 +22,7 @@ class Card
         load_formats
         load_sets
 
-        if ENV['RAILS_ENV'] = "development"
+        if ENV['RAILS_ENV'] == "development"
           update_machine_output_hack
         end
       end

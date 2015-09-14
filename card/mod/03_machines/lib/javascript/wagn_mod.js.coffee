@@ -149,18 +149,30 @@ sidebarToggle = (side) ->
   "<button class='offcanvas-toggle offcanvas-toggle-#{side} btn btn-secondary visible-xs' data-toggle='offcanvas-#{side}'><span class='glyphicon glyphicon-chevron-#{if side == 'left' then 'right' else 'left'}'/></button>"
 
 singleSidebar = (side) ->
+  $article = $('body > article').first()
+  $aside   = $('body > aside').first()
+  $article.addClass("col-xs-12 col-sm-9")
+  $aside.addClass("col-xs-6 col-sm-3 sidebar-offcanvas sidebar-offcanvas-#{side}")
+  if side == 'left'
+    $('body').append($aside).append($article)
+  else
+    $('body').append($article).append($aside)
+
   wrapDeckoLayout()
-  $('article').addClass("col-xs-12 col-sm-9")
-  $('aside').addClass("col-xs-6 col-sm-3 sidebar-offcanvas sidebar-offcanvas-#{side}")
-  $('article').prepend(wrapSidebarToggle(sidebarToggle(side)))
+  $article.prepend(wrapSidebarToggle(sidebarToggle(side)))
+
 
 doubleSidebar = ->
+  $article    = $('body > article').first()
+  $asideLeft  = $('body > aside').first()
+  $asideRight = $($('body > aside')[1])
+  $article.addClass("col-xs-12 col-sm-6")
+  $asideLeft.addClass("col-xs-6 col-sm-3 sidebar-offcanvas sidebar-offcanvas-left")
+  $asideRight.addClass("col-xs-6 col-sm-3 sidebar-offcanvas sidebar-offcanvas-right")
+  $('body').append($asideLeft).append($article).append($asideRight)
+
   wrapDeckoLayout()
-  $('article').addClass("col-xs-12 col-sm-6")
-  $('aside').addClass("col-xs-6 col-sm-3 sidebar-offcanvas")
-  $($('aside')[0]).addClass("sidebar-offcanvas-left")
-  $($('aside')[1]).addClass("sidebar-offcanvas-right")
-  $('article').prepend(wrapSidebarToggle("#{sidebarToggle('right')}#{sidebarToggle('left')}"))
+  $article.prepend(wrapSidebarToggle("#{sidebarToggle('right')}#{sidebarToggle('left')}"))
 
 $(window).ready ->
 

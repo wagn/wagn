@@ -13,7 +13,7 @@ class SearchCardContext < Card::CoreMigration
       ['',       'left'],
     ]
     Card.search(:type_id=>['in', Card::SearchTypeID, Card::SetID]).each do |card|
-      if card.cardname.junction?
+      if card.cardname.junction? && !card.virtual?
         content = card.content
         replace.each do |key, val|
           content.gsub!(/(?<=#{sep})_(#{key})(?=#{sep})/, "_#{val}")

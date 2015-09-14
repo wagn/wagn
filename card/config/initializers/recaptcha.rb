@@ -2,8 +2,8 @@
 def load_config_from_card codename
   # the seed task runs initializers so we have to check
   # if the cards table is ready before we use it here
-  if ActiveRecord::Base.connection.table_exists? 'cards'
-    ((ca = Card[codename]) && ca.raw_content.present? && ca.raw_content) ||
+  if ActiveRecord::Base.connection.table_exists?('cards') && Card.ancestors.include?(ActiveRecord::Base)
+    ((ca = Card.find_by_codename codename) && ca.raw_content.present? && ca.raw_content) ||
     Card::Auth::DEFAULT_RECAPTCHA_SETTINGS[codename] ||
     nil
   end

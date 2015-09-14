@@ -24,11 +24,13 @@ module ClassMethods
   end
 
   def delete_tmp_files_of_cached_uploads
-    actions = Card::Actions.find_by_sql "SELECT * FROM card_actions
+    actions = Card::Action.find_by_sql "SELECT * FROM card_actions
       INNER JOIN cards ON card_actions.card_id = cards.id
       WHERE cards.type_id IN (#{Card::FileID}, #{Card::ImageID}) AND card_actions.draft = true"
-    if older_than_five_days? actions.created_at && card = action.card # we don't want to delete uploads in progress
-      card.delete_files_for_action action
+    actions.each do |action|
+      if older_than_five_days? action.created_at && card = action.card # we don't want to delete uploads in progress
+        card.delete_files_for_action action
+      end
     end
   end
 

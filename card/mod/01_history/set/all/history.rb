@@ -5,7 +5,7 @@ def history?
 end
 
 # must be called on all actions and before :set_name, :process_subcards and :validate_delete_children
-event :assign_act,  :before=>:prepare, :when=>proc {|c| c.history?}  do
+event :assign_act,  :before=>:prepare, :when=>proc {|c| c.history? || c.respond_to?(:attachment) }  do
   @current_act = (@supercard && @supercard.current_act) || Card::Act.create(:ip_address=>Env.ip)
 end
 
@@ -19,7 +19,7 @@ end
 
 # stores changes in the changes table and assigns them to the current action
 # removes the action if there are no changes
-event :finalize_action, :after =>:stored, :when=>proc {|c| c.history? && c.current_action} do
+event :finalize_action, :after =>:stored, :when=>proc {|c| (c.history? || c.respond_to?(:attachment)) && c.current_action} do
   @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
   if @changed_fields.present?
     @changed_fields.each{ |f| Card::Change.create :field => f, :value => self[f], :card_action_id=>@current_action.id }
@@ -30,7 +30,7 @@ event :finalize_action, :after =>:stored, :when=>proc {|c| c.history? && c.curre
   end
 end
 
-event :finalize_act, :after=>:finalize_action, :when=>proc {|c| c.history? && !c.supercard } do
+event :finalize_act, :after=>:finalize_action, :when=>proc {|c| !c.supercard } do
   if @current_act.actions(true).empty?
     @current_act.delete
     @current_act = nil

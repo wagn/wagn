@@ -246,7 +246,7 @@ describe CardController do
         @all_style.reset_machine_output!
       end
 
-      it 'should create missing machine output file' do
+      it 'creates missing machine output file' do
         args = { :id=>@all_style.machine_output_card.name, :format=>'css', :explicit_file=>true }
         get :read, args
         output_card = Card[ "#{ Card[:all].name }+#{ Card[:style].name }+#{ Card[:machine_output].name}" ]

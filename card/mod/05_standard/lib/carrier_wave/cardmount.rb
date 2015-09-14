@@ -22,14 +22,18 @@ module CarrierWave
           store_#{column}!
         end
 
-        event :remove_#{column}_event, :on =>:delete, :after=>:stored do
+        # remove files only if card has no history
+        event :remove_#{column}_event, :on =>:delete, :after=>:stored, :when => proc { |c| !c.history? } do
           remove_#{column}!
         end
         event :mark_remove_#{column}_false_event, :on => :update, :after=>:stored do
           mark_remove_#{column}_false
         end
-        event :store_previous_model_for_#{column}_event, :on=>:update, :before =>:store do
+        event :store_previous_model_for_#{column}_event, :on=>:update, :before =>:store, :when => proc { |c| !c.history? } do
           store_previous_model_for_#{column}
+        end
+        event :remove_previously_stored_#{column}_event, :on=>:update, :after => :store, :when => proc { |c| !c.history?} do
+          remove_previously_stored_#{column}
         end
 
         def attachment

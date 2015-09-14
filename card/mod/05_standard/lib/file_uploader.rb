@@ -59,7 +59,7 @@ class FileUploader < CarrierWave::Uploader::Base
       ".#{file.extension}"
     elsif original_filename
       File.extname(original_filename)
-    elsif model.content
+    else
       File.extname(model.content)
     end.downcase
   end

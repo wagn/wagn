@@ -5,20 +5,28 @@ end
 format :html do
 
   def show view, args
-    if Env.ajax?
-      view ||= args[:home_view] || :open
-      @inclusion_opts = args.delete(:items)
-      render view, args
-    else
+    if show_layout?
       args.merge! :view=>view if view
       @main_opts = args
       self.render :layout
+    else
+      view ||= args[:home_view] || :open
+      @inclusion_opts = args.delete(:items)
+      render view, args
     end
   end
 
-  view :layout, :perms=>:none do |args|
-    process_content get_layout_content, :content_opts=>{ :chunk_list=>:references }
+  def show_layout?
+    !Env.ajax? || params[:layout]
   end
+
+  view :layout, :perms=>:none do |args|
+    output [
+      process_content(get_layout_content, :content_opts=>{ :chunk_list=>:references }),
+      _render_modal_slot(args)
+    ]
+  end
+
 
   view :content do |args|
     wrap args.reverse_merge(:slot_class=>'card-content') do
@@ -65,10 +73,9 @@ format :html do
 
   view :title do |args|
     title = fancy_title args[:title], args[:title_class]
-    title =  _optional_render( :title_toolbar, args, (show_view?(:toolbar,args.merge(:default_visibility=>:hide)) || toolbar_pinned? ? :show : :hide)) ||
-             _optional_render( :title_link, args.merge( :title_ready=>title ), :hide )       ||
+    title =  _optional_render( :title_editable, args, :hide) ||
+             _optional_render( :title_link, args.merge( :title_ready=>title ), :hide ) ||
              title
-    #title += " (#{card.type_name})" if Card[:show_cardtype].content == 'true'
     add_name_context
     title
   end
@@ -77,7 +84,15 @@ format :html do
     card_link card.cardname, :text=>( args[:title_ready] || showname(args[:title]) )
   end
 
-  view :title_toolbar do |args|
+  view :type_info do |args|
+    %{
+      <span class="type-info pull-right">
+        #{card_link(card.type_name, :text=>"#{card.type_name}", :class=>'navbar-link')}
+      </span>
+    }.html_safe
+  end
+
+  view :title_editable do |args|
     links = card.cardname.parts.map do |name|
       card_link name
     end
@@ -88,7 +103,7 @@ format :html do
     end
     res += ' '
     res.concat view_link(glyphicon('edit','header-icon'),:edit_name, :class=>'slotter', 'data-toggle'=>'tooltip', :title=>'edit name')
-    res
+    res.concat _optional_render(:type_link,args,:show)
   end
 
   view :open, :tags=>:comment do |args|
@@ -116,7 +131,7 @@ format :html do
   end
 
   view :closed do |args|
-    frame args.reverse_merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show, :optional_edit_toolbar=>:hide ) do
+    frame args.reverse_merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show, :optional_toolbar=>:hide ) do
       _optional_render :closed_content, args
     end
   end
@@ -142,25 +157,38 @@ format :html do
 
 
   view :related do |args|
+    if args[:related_card]
+      frame args.merge(:optional_toolbar=>:show) do
+        nest( args[:related_card], args[:related_args])
+      end
+    end
+  end
+
+  def default_related_args args
     if rparams = args[:related] || params[:related]
       rcard = rparams[:card] || begin
                 rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
                 Card.fetch rcardname, :new=>{}
               end
 
+      #subheader =  with_name_context(card.name) { showname rcard.name }
+      subheader =  with_name_context(card.name) { subformat(rcard)._render_title(args) }
+      add_name_context card.name
       nest_args = ( rparams[:slot] || {} ).deep_symbolize_keys.reverse_merge(
         :view            => ( rparams[:view] || :open ),
+        :optional_header => :hide,
+        :optional_menu   => :show,
+        :subheader       => subheader,
         :optional_toggle => :hide,
         :optional_help   => :show,
-        :optional_menu   => :show,
-        :optional_close_related_link => :show,
-        :parent          => card
+        :parent          => card,
+        :subframe        => true,
+        :subslot         => true
       )
       nest_args[:optional_comment_box] = :show if rcard.show_comment_box_in_related?
 
-      frame args do
-        nest rcard, nest_args
-      end
+      args[:related_args] = nest_args
+      args[:related_card] = rcard
     end
   end
 
@@ -184,20 +212,24 @@ format :html do
 
 
   view :last_action do |args|
-    action_type = case ( action = card.last_act.action_on(card.id) and action.action_type )
-    when :create then 'added'
-    when :delete then 'deleted'
-    else
-      link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
+    if act = card.last_act and action = act.action_on(card.id)
+      action_verb =
+        case action.action_type
+        when :create then 'added'
+        when :delete then 'deleted'
+        else
+          link_to('edited', path(:view=>:history), :class=>'last-edited', :rel=>'nofollow')
+        end
+
+      %{
+        <span class="last-update">
+          #{ action_verb }
+          #{ _render_acted_at }
+          ago by
+          #{ subformat(card.last_actor)._render_link }
+        </span>
+      }
     end
-    %{
-      <span class="last-update">
-        #{ action_type }
-        #{ _render_acted_at }
-        ago by
-        #{ subformat(card.last_actor)._render_link }
-      </span>
-    }
   end
 
   private

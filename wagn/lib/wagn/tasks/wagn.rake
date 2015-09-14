@@ -73,6 +73,7 @@ namespace :wagn do
 
   desc "update wagn gems and database"
   task :update do
+    ENV['NO_RAILS_CACHE'] = 'true'
     #system 'bundle update'
     if Wagn.paths["tmp"].existent
       FileUtils.rm_rf Wagn.paths["tmp"].first, :secure=>true
@@ -100,12 +101,13 @@ namespace :wagn do
 
   desc "migrate structure and cards"
   task :migrate => :environment do
+    ENV['NO_RAILS_CACHE'] = 'true'
     ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
 
     stamp = ENV['STAMP_MIGRATIONS']
 
     puts 'migrating structure'
-    Rake::Task['db:migrate'].invoke
+    Rake::Task['wagn:migrate:structure'].invoke
     if stamp
       Rake::Task['wagn:migrate:stamp'].invoke :structure
     end
@@ -117,6 +119,7 @@ namespace :wagn do
       Rake::Task['wagn:migrate:stamp'].reenable
       Rake::Task['wagn:migrate:stamp'].invoke :core_cards
     end
+
 
     puts 'migrating deck cards'
     Rake::Task['wagn:migrate:deck_cards'].execute #not invoke because we don't want to reload environment
@@ -137,9 +140,9 @@ namespace :wagn do
 
   namespace :migrate do
     desc "migrate cards"
-    task :cards do
+    task :cards => :environment do
       Rake::Task['wagn:migrate:core_cards'].invoke
-      Rake::Task['wagn:migrate:deck_cards'].invoke
+      Rake::Task['wagn:migrate:deck_cards'].execute
     end
 
     desc "migrate structure"
@@ -160,8 +163,8 @@ namespace :wagn do
       ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       prepare_migration
       paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:core_cards)
+      Cardio.schema_mode :core_cards do
 
-      Card::CoreMigration.schema_mode :core_cards do
         ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
         ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       end
@@ -287,7 +290,9 @@ namespace :wagn do
 
       Rake::Task['wagn:bootstrap:copy_mod_files'].invoke
 
-      YAML::ENGINE.yamler = 'syck'
+      if RUBY_VERSION !~ /^(2|1\.9)/
+        YAML::ENGINE.yamler = 'syck'
+      end
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,
       # which dumps with slashes that syck can't understand
 
@@ -314,45 +319,39 @@ namespace :wagn do
     task :copy_mod_files => :environment do
 
       source_files_dir = "#{Wagn.root}/files"
-      # add a fourth line to the raw content of each image (or file) to identify it as a mod file
+
+      # mark mod files as mod files
       Card::Auth.as_bot do
         Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
-
-          if card.attach_mod
-#            puts "skipping #{card.name}: already in code"
+          if card.mod_file? || card.codename == 'new_file' || card.codename == 'new_image'
+            puts "skipping #{card.name}: already in code"
             next
           else
-#            puts "working on #{card.name}"
+            puts "working on #{card.name}"
           end
 
-          base_card = card.cardname.junction? ? card.left : card
-          raise "need codename for file" unless base_card.codename.present?
+          raise "need codename for file" unless card.codename.present?
 
-          mod_name = base_card.type_id==Card::SkinID ? '06_bootstrap' : '05_standard'
-          source_dir =  "#{source_files_dir}/#{card.id}"
+          files = {:original => card.attachment.path}
+          card.attachment.versions.each_key do |version|
+            files[version] = card.attachment.path(version)
+          end
 
-          target_dir = "#{Cardio.gem_root}/mod/#{mod_name}/file/#{base_card.codename}"
+          # make card a mod file card
+          mod_name = (l = card.left) && l.type_id==Card::SkinID ? '06_bootstrap' : '05_standard'
+          card.update_column :db_content, card.attachment.db_content(:mod=>mod_name)
+          card.last_action.change_for(2).first.update_column :value, card.attachment.db_content(:mod=>mod_name)
+          card.expire
+          card = Card.fetch card.name
+
+          target_dir = card.store_dir
           FileUtils.remove_dir target_dir, force=true if Dir.exists? target_dir
           FileUtils.mkdir_p target_dir
 
-#          if card.name =~ /icon/
-#            require 'pry'; binding.pry
-#          end
-          Dir.entries( source_dir ).each do |filename|
-            next if filename =~ /^\./
-            next if filename !~ (Regexp.new card.last_content_action_id.to_s)
-
-            target_filename = filename.gsub /\d+/, card.type_code.to_s
-            FileUtils.cp "#{source_dir}/#{filename}", "#{target_dir}/#{target_filename}"
+          files.each do |version, path|
+            FileUtils.cp path, card.attachment.path(version)
           end
 
-
-          unless card.db_content.split(/\n/).last == mod_name
-            new_content = card.db_content + "\n#{mod_name}"
-            card.update_column :db_content, new_content
-            card.last_action.change_for(2).first.update_column :value, new_content
-            #FIXME - should technically update the change as well...
-          end
         end
       end
     end

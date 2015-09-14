@@ -1,17 +1,23 @@
-#~~~~~~~~~~~~~~~~
-# EXPERIMENTAL
-# the following methods are for visualing card events
-#  not ready for prime time!
-
+# the events method is a developer's tool for visualizing the event order for a given card.
+# For example, from a console you might run
+#
+#   puts mycard.events :update
+#
+# to see the order of events that will be executed on mycard.
+# The indention and arrows (^v) indicate event dependencies.
+#
+# Note: as of yet, the functionality is a bit rough.  It does not display events
+# that are called directly from within other events (like :stored), and certain event
+# requirements (like the presence of a "current_act") may prevent events from showing
+# up in the tree.
 def events action
   @action = action
-  root = _validate_callbacks + _save_callbacks
-  events = [ events_tree(:validation), events_tree(:save)]
+  events = [ events_tree(:validation), events_tree(:save) ]
   @action = nil
   puts_events events
 end
 
-private
+#private
 
 def puts_events events, prefix='', depth=0
   r = ''
@@ -21,19 +27,19 @@ def puts_events events, prefix='', depth=0
 
     #FIXME - this is not right.  before and around callbacks are processed in declaration order regardless of kind.
     # not all befores then all arounds
-    
+
     if e[:before]
       r += puts_events( e[:before], space+'v  ', depth)
     end
     if e[:around]
       r += puts_events( e[:around], space+'vv ', depth )
     end
-    
-    
+
+
     output = "#{prefix}#{e[:name]}"
     #warn output
     r+= "#{output}\n"
-    
+
     if e[:after]
       r += puts_events( e[:after ].reverse, space+'^  ', depth )
     end
@@ -46,17 +52,18 @@ def events_tree filt
   if respond_to? "_#{filt}_callbacks"
     send( "_#{filt}_callbacks" ).each do |callback|
       next unless callback.applies? self
-      hash[callback.kind] ||= []    
+      hash[callback.kind] ||= []
       hash[callback.kind] << events_tree( callback.filter )
     end
   end
+
   hash
 end
-#FIXME - this doesn't belong here!!
+
 
 class ::ActiveSupport::Callbacks::Callback
   def applies? object
-    object.send :eval, "value=nil;halted=false;!!(#{@compiled_options})"
+    conditions_lambdas.all? { |c| c.call(object, nil) }
   end
 end
 

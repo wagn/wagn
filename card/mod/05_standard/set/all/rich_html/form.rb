@@ -4,10 +4,10 @@ format :html do
     if args[:structure] || card.structure
       # multi-card editing
 
-      if args[:core_edit] #need better name!
+      if args[:core_edit] #need better name
         _render_core args
       else
-        process_relative_tags args
+        process_relative_tags :optional_toolbar=>:hide, :structure=>args[:structure]
       end
 
     else
@@ -25,11 +25,14 @@ format :html do
 
 
   def form_for_multi
-    block = Proc.new {}
-    builder = ActionView::Base.default_form_builder
     card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_card?  ##FIXME -- need to match other relative inclusions.
 
-    builder.new("card[subcards][#{card.relative_name}]", card, template, {}, block)
+    # doesn't work anymore in Rails 4
+    # TODO -- check whether forms work with the new instantiate_builder call
+    # block = Proc.new {}
+    # builder = ActionView::Base.default_form_builder
+    # builder.new("card[subcards][#{card.relative_name}]", card, template, {}, block)
+    builder = instantiate_builder("card[subcards][#{card.relative_name}]", card, {})
   end
 
   def form
@@ -179,7 +182,7 @@ format :html do
 # FIELD VIEWS
 
   view :editor do |args|
-    text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id, "data-card-type-code"=>card.type_code
+    text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id
   end
 
   view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
@@ -188,16 +191,20 @@ format :html do
     content = content_field eform, args.merge( :nested=>true )
     opts = { :editor=>'content', :help=>true, :class=>'card-editor' }
 
-    content      += raw( "\n #{ eform.hidden_field :type_id }" )     if card.new_card?
-    opts[:class] += " RIGHT-#{ card.cardname.tag_name.safe_key }"   if card.cardname.junction?
+    content      += raw( "\n #{ eform.hidden_field :type_id }" )  if card.new_card?
+    opts[:class] += " RIGHT-#{ card.cardname.tag_name.safe_key }" if card.cardname.junction?
 
     formgroup fancy_title( args[:title] ), content, opts
   end
 
   def process_relative_tags args
-    _render_raw(args).scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc| #fixme - wrong place for regexp!
-      process_content( inc ).strip
-    end.join
+    nested_fields(args).map do |chunk|
+      nested_card = fetch_nested_card chunk.options
+      nest nested_card, chunk.options.reverse_merge(args)
+    end.join "\n"
+    # _render_raw(args).scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc| #fixme - wrong place for regexp!
+    #   process_content( inc ).strip
+    # end.join
   end
 
   # form helpers

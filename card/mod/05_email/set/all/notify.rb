@@ -57,15 +57,32 @@ def act_card
   @supercard || self
 end
 
+
+def followable?
+  true
+end
+
+def notable_change?
+  !silent_change && !supercard && current_act && Card::Auth.current_id != WagnBotID && followable?
+end
+
+event :notify_followers_after_save, :after=>:subsequent, :on=>:save, :when=>proc{ |ca| ca.notable_change? } do
+  notify_followers
+end
+
+# in the delete case we have to calculate the follower_stash beforehand
+# but we can't pass the follower_stash through the ActiveJob queue.
+# We have to deal with the notifications in the extend phase instead of the subsequent phase
 event :stash_followers, :after=>:approve, :on=>:delete do
   act_card.follower_stash ||=  FollowerStash.new
   act_card.follower_stash.add_affected_card self
 end
+event :notify_followers_after_delete, :after=>:extend, :on=>:delete,
+    :when=>proc{ |ca| ca.notable_change? } do
+  notify_followers
+end
 
-event :notify_followers, :after=>:extend, :when=>proc{ |c|
-    !c.supercard and c.current_act and Card::Auth.current_id != WagnBotID
-  }  do
-
+def notify_followers
   begin
     @current_act.reload
     @follower_stash ||= FollowerStash.new

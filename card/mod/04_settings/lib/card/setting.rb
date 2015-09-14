@@ -1,8 +1,9 @@
 # -*- encoding : utf-8 -*-
 
-# Used to extend setting modules like Card::Set::Self::Create in the settings mod
 
 class Card
+
+  # Used to extend setting modules like Card::Set::Self::Create in the settings mod
   module Setting
     # Let M = Card::Setting           (module)
     #     E = Card::Set::Self::Create (module extended with M)
@@ -13,15 +14,16 @@ class Card
        host_class.mattr_accessor :restricted_to_type, :rule_type_editable  # accessible in E and O
     end
 
-    @@groups = { :permission =>[], :look_and_feel=>[], :communication => [], :pointer=>[], :other =>[] }
     @@group_names = {
-      :permission    => "Permission",
-      :look_and_feel => "Look and Feel",
-      :communication => "Communication",
+      :templating    => "Templating",
+      :permission    => "Permissions",
+      :webpage       => "Webpage",
       :pointer       => "Pointer",
-      :other         => "Other",
-      :config        => "Config"
+      :editing_cue   => "Editing cues",
+      :event         => "Events",
+      :other         => "Other"
     }
+    @@groups = @@group_names.keys.each_with_object({}) { |key, groups| groups[key] = [] }
     @@user_specific = ::Set.new
 
     def self.user_specific? codename
@@ -33,7 +35,7 @@ class Card
     end
 
     # usage:
-    # setting_opts :group              => :permission | :look_and_feel | ...
+    # setting_opts :group              => :permission | :event | ...
     #              :position           => <Fixnum> (starting at 1, default: add to end)
     #              :rule_type_editable => true | false (default: false)
     #              :restricted_to_type => <cardtype> | [ <cardtype>, ...]

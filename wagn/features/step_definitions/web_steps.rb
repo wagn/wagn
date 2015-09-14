@@ -46,6 +46,7 @@ When /^(?:|I )select "([^"]*)" from "([^"]*)"$/ do |value, field|
   select(value, :from => field)
 end
 
+
 # Use this step in conjunction with Rail's datetime_select helper. For example:
 # When I select "December 25, 2008 10:00" as the date and time
 When /^(?:|I )select "([^"]*)" as the date and time$/ do |time|

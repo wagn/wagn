@@ -7,6 +7,8 @@ format :html do
       options_hash['name_context'] = @context_names.map( &:key ) * ','
     end
 
+    options_hash[:subslot] = 'true' if args[:subslot]
+
     @@slot_option_keys.inject(options_hash) do |hash, opt|
       hash[opt] = args[opt] if args[opt].present?
       hash
@@ -18,15 +20,20 @@ format :html do
   def wrap args = {}
     @slot_view = @current_view
     classes = [
-      ( 'card-slot' unless args[:no_slot] ),
-      "#{ @current_view }-view",
-      ( args[:slot_class] if args[:slot_class] ),
-      ( "STRUCTURE-#{args[:structure].to_name.key}" if args[:structure]),
-      card.safe_set_keys
-    ].compact
-
-    div = %{<div id="#{card.cardname.url_key}" data-card-id="#{card.id}" data-card-name="#{h card.name}" style="#{h args[:style]}" class="#{classes*' '}" } +
-      %{data-slot='#{html_escape_except_quotes slot_options( args )}'>#{ output yield }</div>}
+        ( 'card-slot' unless args[:no_slot] ),
+        "#{ @current_view }-view",
+        ( args[:slot_class] if args[:slot_class] ),
+        ( "STRUCTURE-#{args[:structure].to_name.key}" if args[:structure]),
+        card.safe_set_keys
+      ].compact.join ' '
+    data = {
+        'card-id'   => card.id,
+        'card-name' => h(card.name),
+        'slot'      => html_escape_except_quotes(slot_options( args ))
+      }
+    div =
+      content_tag :div, output(yield).html_safe,
+      :id=>card.cardname.url_key, :data=>data, :style=>h(args[:style]), :class=>classes
 
     if params[:debug] == 'slot' && !tagged( @current_view, :no_wrap_comments )
       name = h card.name
@@ -52,16 +59,37 @@ format :html do
     end
   end
 
-  def frame args={}
+  def frame args={}, &block
+    if args[:subframe]
+      args.delete(:panel_class)
+      subframe args, &block
+    else
+      show_subheader = show_view?(:toolbar, args.merge(:default_visibility=>:hide)) && @current_view != :related && @current_view != :open
+      wrap args do
+        [
+          _optional_render( :menu, args ),
+          panel(args) do
+            [
+              _optional_render( :header, args, :show),
+              _optional_render( :subheader, args,(show_subheader ? :show : :hide)),
+              _optional_render( :help, args.merge(:help_class=>'alert alert-info'), :hide),
+              wrap_body(args) { output( block.call(args) ) } ,
+            ]
+          end
+        ]
+      end
+    end
+  end
+
+  def subframe args={}
     wrap args do
       [
-        _optional_render( :menu, args ),
+        _optional_render( :menu, args.merge(:optional_horizontal_menu=>:hide) ),
+        _optional_render( :subheader, args, :show),
+        _optional_render( :help, args.merge(:help_class=>'alert alert-info'), :hide),
         panel(args) do
           [
-            _optional_render( :header, args, :show),
-            (%{ <div class="card-subheader">#{ args[:subheader] }</div> } if args[:subheader]),
-            _optional_render( :help, args.merge(:help_class=>'alert alert-info'), :hide),
-            (_render( :close_related_link, args) if @slot_view == :related),
+            _optional_render( :header, args, :hide),
             wrap_body(args) { output( yield args ) } ,
           ]
         end
@@ -96,7 +124,7 @@ format :html do
   end
 
   def wrap_main(content)
-    return content if params[:layout]=='none'
+    return content if Env.ajax? || params[:layout]=='none'
     %{<div id="main">#{content}</div>}
   end
 
@@ -121,9 +149,4 @@ format :html do
       end
     end.join "\n"
   end
-
-  view :close_related_link do |args|
-    card_link( args[:parent], :text=>glyphicon('remove'), :view=>:home, :remote=>true, :class=>'pull-right slotter close-related-view', :title=>'cancel', 'data-slot-selector'=>'.card-slot.related-view')
-  end
-
 end

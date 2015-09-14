@@ -15,5 +15,6 @@ Recaptcha.configure do |config|
   Cardio.config.recaptcha_proxy       ||= load_config_from_card( :recaptcha_proxy )
   config.public_key  = Cardio.config.recaptcha_public_key
   config.private_key = Cardio.config.recaptcha_private_key
+  # config.api_version = 'v1' if config.respond_to?(:api_version=)
   config.proxy       = Cardio.config.recaptcha_proxy
 end

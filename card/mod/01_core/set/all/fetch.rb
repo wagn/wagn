@@ -11,17 +11,17 @@ module ClassMethods
   #   - database
   #   - virtual cards
   #
-  # "mark" here means a generic identifier -- can be a numeric id, a name, a string name, etc.
+  # "mark" here means one of three unique identifiers
+  #    1. a numeric id (Integer)
+  #    2. a name/key (String or Card::Name)
+  #    3. a codename (Symbol)
   #
   #   Options:
   #     :skip_virtual               Real cards only
   #     :skip_modules               Don't load Set modules
+  #     :look_in_trash              Return trashed card objects
   #     :new => {  card opts }      Return a new card when not found
   #
-
-
-
-
   def fetch mark, opts={}
     if String === mark
       case mark
@@ -143,13 +143,21 @@ module ClassMethods
       val = mark
     end
 
-    card = send( "fetch_from_cache_by_#{mark_type}", val ) || begin
+    card = send( "fetch_from_cache_by_#{mark_type}", val )
+
+    if opts[:look_in_trash]
+      if card.nil? || (card.new_card? && !card.trash)
+        card = Card.where( mark_type => val ).take
+        needs_caching = card && !card.trash
+      end
+    elsif card.nil?
       needs_caching = true
-      send "find_by_#{mark_type}_and_trash", val, false
+      card = Card.where( mark_type => val, trash: false).take
     end
 
     [ card, mark, needs_caching ]
   end
+
 
   def fetch_from_cache_by_id id
     if name = fetch_from_cache("~#{id}")

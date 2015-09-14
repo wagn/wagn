@@ -12,27 +12,32 @@ def template
   # note that a *default template is never returned for an existing card.
   @template ||= begin
     @virtual = false
+
+    # NEW CARDS
     if new_card?
-      default_card = rule_card :default, :skip_modules=>true
+      default = rule_card :default, :skip_modules=>true
 
       dup_card = dup
-      dup_card.type_id = default_card ? default_card.type_id : Card.default_type_id
+      dup_card.type_id = default ? default.type_id : Card.default_type_id
 
-
-      if content_card = dup_card.structure_rule_card
+      if structure = dup_card.structure_rule_card
         @virtual = true if junction?
-        content_card
+        self.type_id = structure.type_id if assign_type_to?(structure)
+        structure
       else
-        default_card
+        default
       end
-    elsif tmpl = structure_rule_card
-      # this is a mechanism for repairing bad data.  like #repair_key, it should be obviated and removed.
-      if type_id != tmpl.type_id and tmpl.assigns_type?
-        repair_type tmpl.type_id
-      end
-      tmpl
+
+    # EXISTING CARDS
+    elsif structure = structure_rule_card
+      repair_type structure.type_id if assign_type_to?(structure)
+      structure
     end
   end
+end
+
+def assign_type_to? structure
+  type_id != structure.type_id and structure.assigns_type?
 end
 
 def structure
@@ -102,6 +107,7 @@ end
 private
 
 def repair_type template_type_id
+  # this is a mechanism for repairing bad data.  like #repair_key, it should be obviated and removed.
   self.type_id = template_type_id
   update_column :type_id, type_id
   reset_patterns

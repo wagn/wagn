@@ -74,7 +74,7 @@ end
 event :set_default_salt, :on=>:create, :before=>:process_subcards do
   salt = Digest::SHA1.hexdigest "--#{Time.now.to_s}--"
   Env[:salt] = salt # HACK!!! need viable mechanism to get this to password
-  subcards["+#{Card[:salt].name}"] ||= {:content => salt }
+  subcards["+#{Card[:salt].name}"] ||= { :content => salt }
 end
 
 event :set_default_status, :on=>:create, :before=>:process_subcards do
@@ -94,11 +94,11 @@ event :reset_password, :on=>:update, :before=>:approve, :when=>proc{ |c| c.has_r
   case ( result = authenticate_by_token @env_token )
   when Integer
     Auth.signin result
-    Env.params[:success] = edit_password_success_args
+    success << edit_password_success_args
     abort :success
   when :token_expired
     send_reset_password_token
-    Env.params[:success] = {
+    success << {
       :id => '_self',
       :view => 'message',
       :message => "Sorry, this token has expired. Please check your email for a new password reset link."

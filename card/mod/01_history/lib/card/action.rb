@@ -5,7 +5,8 @@ class Card
   class Action < ActiveRecord::Base
     belongs_to :card
     belongs_to :act,  :foreign_key=>:card_act_id, :inverse_of=>:actions
-    has_many   :changes, :foreign_key=>:card_action_id, :inverse_of=>:action, :dependent=>:delete_all
+    has_many   :card_changes, :foreign_key=>:card_action_id, :inverse_of=>:action,
+      :dependent=>:delete_all, :class_name=> "Card::Change"
 
     belongs_to :super_action, :class_name=> "Action", :inverse_of=>:sub_actions
     has_many   :sub_actions,  :class_name=> "Action", :inverse_of=>:super_action
@@ -14,6 +15,12 @@ class Card
 
     # replace with enum if we start using rails 4
     TYPE = [:create, :update, :delete]
+
+    def expire
+      self.class.cache.delete id.to_s
+    end
+
+    after_save :expire
 
     class << self
       def cache
@@ -26,9 +33,8 @@ class Card
         end
       end
 
-
       def delete_cardless
-        Card::Action.where( Card.where( :id=>arel_table[:card_id] ).exists.not ).delete_all
+        Card::Action.joins('LEFT JOIN cards ON card_actions.card_id = cards.id').where('cards.id IS NULL').delete_all
       end
 
       def delete_old
@@ -72,7 +78,8 @@ class Card
     end
 
     def new_values
-      @new_values ||= {
+      @new_values ||=
+      {
         :content  => new_value_for(:db_content),
         :name     => new_value_for(:name),
         :cardtype => ( typecard = Card[new_value_for(:type_id).to_i] and typecard.name.capitalize )
@@ -89,28 +96,36 @@ class Card
     end
 
     def last_value_for field
-       ch = self.card.last_change_on(field, :before=>self) and ch.value
+      ch = self.card.last_change_on(field, :before=>self) and ch.value
     end
 
-    def new_value_for(field)
-       ch = changes.find_by_field(field) and ch.value
-    end
-    def change_for(field)
-      field_integer = ( field.is_a?(Integer) ? field : Card::TRACKED_FIELDS.index(field.to_s) )
-      changes.where 'card_changes.field = ?', field_integer
+    def field_index field
+      if field.is_a? Integer
+        field
+      else
+        Card::TRACKED_FIELDS.index(field.to_s)
+      end
     end
 
+    def new_value_for field
+      ch = card_changes.find_by(field: field_index(field)) and ch.value
+    end
+
+    def change_for field
+      card_changes.where 'card_changes.field = ?', field_index(field)
+    end
 
     def new_type?
       new_value_for(:type_id)
     end
+
     def new_content?
       new_value_for(:db_content)
     end
+
     def new_name?
       new_value_for(:name)
     end
-
 
     def action_type=(value)
       write_attribute(:action_type, TYPE.index(value))
@@ -136,11 +151,9 @@ class Card
       content_diff_builder.green?
     end
 
-
     # def diff
     #   @diff ||= { :cardtype=>type_diff, :content=>content_diff, :name=>name_diff}
     # end
-
 
     def name_diff opts={}
       if new_name?
@@ -166,8 +179,12 @@ class Card
 
     def content_diff_builder opts=nil
       @content_diff_builder ||= begin
-        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], opts || card.diff_args)
+        Card::Diff::DiffBuilder.new(old_values[:content], new_values[:content], opts || card.include_set_modules.diff_args)
       end
+    end
+
+    def card
+      Card.fetch card_id, look_in_trash: true
     end
 
   end

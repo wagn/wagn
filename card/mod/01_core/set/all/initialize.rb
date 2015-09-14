@@ -20,7 +20,7 @@ def initialize args={}
     :type_code => args.delete('type_code'),
     :type_id   => args[       'type_id'  ]
   }
-  
+
   args['db_content'] = args.delete('content') if args['content']
 
   #FIXME -- too much of the above is duplicated by assign_attributes (tracked_attributes.rb)
@@ -29,11 +29,11 @@ def initialize args={}
   skip_modules = args.delete 'skip_modules'
 
   super args # ActiveRecord #initialize
-  
+
   if tid = get_type_id( @type_args )
     self.type_id = tid
   end
-  
+
   include_set_modules unless skip_modules
   self
 end
@@ -43,7 +43,13 @@ def include_set_modules
     set_modules.each do |m|
       singleton_class.send :include, m
     end
+    assign_set_specific_attributes
     @set_mods_loaded=true
   end
   self
+end
+
+
+event :initialize_success_object, :before=>:handle do
+  Env[:success] = Success.new(cardname, Env.params[:success])
 end

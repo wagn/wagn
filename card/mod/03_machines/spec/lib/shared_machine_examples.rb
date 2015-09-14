@@ -33,12 +33,14 @@ shared_examples_for 'machine' do |filetype|
 end
 
 shared_examples_for 'content machine' do |filetype|
+
   it_should_behave_like 'machine', that_produces(filetype) do
     let(:machine) { machine_card }
   end
   
-  
   context '+machine_input card' do
+    
+    
     it "points to self" do
       Card::Auth.as_bot do
         machine_card.update_input_card

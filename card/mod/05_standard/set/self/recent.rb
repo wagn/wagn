@@ -17,7 +17,7 @@ format :html do
         day = Date.today
         card.content = "(error getting date)"
       end
-      cards_by_day[day] << card
+      cards_by_day[day] << card if card.followable?
     end
 
     paging = _optional_render :paging, args

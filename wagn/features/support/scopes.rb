@@ -15,6 +15,12 @@ module ScopeHelpers
     when /main card menu/
       '#main > .card-slot > .menu-slot > .card-menu'
 
+    when /main card toolbar/
+      '#main > .card-slot > .card-frame > nav.toolbar'
+
+    when /main card frame/
+      '#main > .card-slot > .card-frame'
+
     else
       raise "Can't find mapping from \"#{section}\" to a scope.\n" +
         "Now, go and add a mapping in #{__FILE__}"

@@ -6,11 +6,10 @@ format :rss do
 
   def initialize card, args
     super
-    @xml = @parent.xml if @parent
+    @xml = @parent ? @parent.xml : ::Builder::XmlMarkup.new
   end
 
   def show view, args
-    @xml = ::Builder::XmlMarkup.new
     view ||= :feed
     render view, args
   end
@@ -24,7 +23,7 @@ format :rss do
           @xml.title       render_feed_title
           @xml.description render_feed_description
           @xml.link        render_url
-          render_feed_item_list
+          render_feed_body
         end
       end
     rescue =>e
@@ -32,13 +31,16 @@ format :rss do
     end
   end
 
+  def raw_feed_items args
+    [card]
+  end
+
+  view :feed_body do |args|
+    render_feed_item_list
+  end
+
   view :feed_item_list do |args|
-    items = if card.type_id == Card::SearchTypeID  #FIXME! yuck.
-      card.item_cards( search_params.merge(:default_limit => 25) )
-    else
-      [card]
-    end
-    items.each do |item|
+    raw_feed_items(args).each do |item|
       @xml.item do
         subformat(item).render_feed_item :view_changes=>(card.id==RecentID)  #FIXME! yuck.
       end

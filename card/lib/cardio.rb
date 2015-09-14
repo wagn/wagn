@@ -2,9 +2,10 @@
 
 require 'active_support/core_ext/numeric/time'
 
-CARD_GEM_ROOT = File.expand_path('../..', __FILE__)
 
 module Cardio
+
+  CARD_GEM_ROOT = File.expand_path('../..', __FILE__)
 
   ActiveSupport.on_load :card do
     if Card.count > 0
@@ -28,27 +29,37 @@ module Cardio
       config.autoload_paths += Dir["#{gem_root}/lib/**/"]
       config.autoload_paths += Dir["#{root}/mod/*/lib/**/"]
 
-      config.read_only             = !!ENV['WAGN_READ_ONLY']
-      config.allow_inline_styles   = false
+      set_default_value config, :read_only,              !!ENV['WAGN_READ_ONLY']
+      set_default_value config, :allow_inline_styles,    false
 
-      config.recaptcha_public_key  = nil
-      config.recaptcha_private_key = nil
-      config.recaptcha_proxy       = nil
+      set_default_value config, :recaptcha_public_key,   nil
+      set_default_value config, :recaptcha_private_key,  nil
+      set_default_value config, :recaptcha_proxy,        nil
 
-      config.cache_store           = :file_store, 'tmp/cache'
-      config.override_host         = nil
-      config.override_protocol     = nil
+      set_default_value config, :cache_store,            :file_store, 'tmp/cache'
+      set_default_value config, :override_host,          nil
+      set_default_value config, :override_protocol,      nil
 
-      config.no_authentication     = false
-      config.files_web_path        = 'files'
+      set_default_value config, :no_authentication,      false
+      set_default_value config, :files_web_path,         'files'
 
-      config.max_char_count        = 200
-      config.max_depth             = 20
-      config.email_defaults        = nil
+      set_default_value config, :max_char_count,         200
+      set_default_value config, :max_depth,              20
+      set_default_value config, :email_defaults,         nil
 
-      config.token_expiry          = 2.days
-      config.revisions_per_page    = 10
-      config.closed_search_limit   = 50
+      set_default_value config, :token_expiry,           2.days
+      set_default_value config, :revisions_per_page,     10
+      set_default_value config, :space_last_in_multispace, true
+      set_default_value config, :closed_search_limit,    50
+
+      set_default_value config, :view_cache,             false
+    end
+
+    # In production mode set_config gets called twice.
+    # The second call overrides all deck config settings
+    # so don't change settings here if they already exist
+    def set_default_value config, setting, *value
+      config.send("#{setting}=", *value) unless config.respond_to? setting
     end
 
 
@@ -58,6 +69,7 @@ module Cardio
       add_path 'tmp/set_pattern', :root => root
 
       add_path 'mod'
+
       add_path "db"
       add_path 'db/migrate'
       add_path "db/migrate_core_cards"
@@ -65,8 +77,22 @@ module Cardio
       add_path "db/seeds", :with => "db/seeds.rb"
 
       add_path 'config/initializers',  :glob => '**/*.rb'
-      paths['config/initializers'] << "#{gem_root}/mod/**{,/*/**}/initializers"
-      paths['config/initializers'] << "#{root}/mod/**{,/*/**}/initializers"
+
+    end
+
+
+    def set_mod_paths
+      each_mod_path do |mod_path|
+        Dir.glob( "#{mod_path}/*/initializers" ).each do |initializers_dir|
+          paths['config/initializers'] << initializers_dir
+        end
+      end
+    end
+
+    def each_mod_path
+      paths['mod'].each do |mod_path|
+        yield mod_path
+      end
     end
 
     def root
@@ -79,10 +105,8 @@ module Cardio
 
     def add_path path, options={}
       root = options.delete(:root) || gem_root
-      gem_path = File.join( root, path )
-      with = options.delete(:with)
-      with = with ? File.join(root, with) : gem_path
-      paths[path] = Rails::Paths::Path.new(paths, gem_path, with, options)
+      options[:with] = File.join(root, (options[:with] || path) )
+      paths.add path, options
     end
 
     def future_stamp
@@ -125,10 +149,11 @@ module Cardio
     def schema_mode type
       new_suffix = Cardio.schema_suffix type
       original_suffix = ActiveRecord::Base.table_name_suffix
-
       ActiveRecord::Base.table_name_suffix = new_suffix
+      ActiveRecord::SchemaMigration.reset_table_name
       yield
       ActiveRecord::Base.table_name_suffix = original_suffix
+      ActiveRecord::SchemaMigration.reset_table_name
     end
 
     def schema type=nil

@@ -9,9 +9,7 @@ def item_cards params={}
 end
 
 def item_names params={}
-  ## FIXME - this should just alter the query to have it return name rather than instantiating all the cards!!
-  ## (but need to handle prepend/append)
-  Card.search(query(params)).map(&:cardname)
+  Card.search(query(params.merge(:return=>:name)))
 end
 
 def item_type
@@ -38,7 +36,7 @@ def get_query params={}
   if default_limit = query.delete(:default_limit) and !query[:limit]
     query[:limit] = default_limit
   end
-  query[:context] ||= (cardname.junction? ? cardname.left_name : cardname)
+  query[:context] ||= cardname
   query
 end
 
@@ -48,18 +46,22 @@ end
 format do
 
   view :core do |args|
-    search_vars args
+    view = case search_results args
+      when Exception           ;  :search_error
+      when Integer             ;  :search_count
+      when @mode == :template  ;  :raw
+      else                     ;  :card_list
+      end
+    _render view, args
+  end
 
-    case
-    when e = search_vars[:error]
-      %{#{e.class.to_s} :: #{e.message} :: #{card.raw_content}}
-    when search_vars[:query][:return] =='count'
-      search_results.to_s
-    when @mode == :template
-      render :raw
-    else
-      _render_card_list args
-    end
+
+  view :search_count do |args|
+    search_results.to_s
+  end
+
+  view :search_error do |args|
+    %{#{search_results.class.to_s} :: #{search_results.message} :: #{card.raw_content}}
   end
 
   view :card_list do |args|
@@ -71,12 +73,12 @@ format do
       end.join "\n"
     end
   end
-  
+
   def search_vars args={}
     @search_vars ||=
       begin
         v = {}
-        v[:query] = card.query(search_params)
+        v[:query] = card.query( search_params )
         v[:item]  = set_inclusion_opts args.merge( :query_view=>v[:query][:view] )
         v
       rescue =>e
@@ -84,15 +86,34 @@ format do
       end
   end
 
-  def search_results
-    @search_results ||=
+  def search_results args={}
+    @search_results ||= begin
+      search_vars args
+      if search_vars[:error]
+        search_vars[:error]
+      else
+        raw_results = card.item_cards search_params
+        is_count = search_vars[:query][:return] =='count'
+        is_count ? raw_results.to_i : raw_results
+      end
+    end
+  end
+
+  def search_result_names
+    @search_result_names ||=
       begin
-        card.item_cards search_params
+        card.item_names search_params
       rescue => e
         { :error => e}
       end
   end
-  
+
+  def each_reference_with_args args={}
+    search_result_names.each do |name|
+      yield(name, nest_args(args.reverse_merge!(:item=>:content)))
+    end
+  end
+
   def set_inclusion_opts args
     @inclusion_defaults = nil
     @inclusion_opts ||= {}
@@ -100,7 +121,7 @@ format do
     # explicit > inclusion syntax > WQL > inclusion defaults
   end
 
-  
+
 
   def page_link text, page, current=false, options={}
     @paging_path_args[:offset] = page * @paging_limit
@@ -132,18 +153,21 @@ format do
     content_tag :li, content_tag(:span, '...')
   end
 
+  def chunk_list
+    :query
+  end
 end
-    
-    
+
+
 format :data do
-    
+
   view :card_list do |args|
     search_results.map do |c|
       nest c
     end
   end
 end
-  
+
 format :csv do
   view :card_list do |args|
     items = super args
@@ -154,20 +178,37 @@ format :csv do
     end
   end
 end
-    
+
 format :json do
   def default_search_params
     set_default_search_params :default_limit => 0
   end
 end
 
+format :rss do
+  view :feed_body do |args|
+    case raw_feed_items args
+    when Exception ; @xml.item { render :search_error }
+    when Integer   ; @xml.item { render :search_count }
+    else super
+    end
+  end
+
+  def raw_feed_items args
+    @raw_feed_items ||= begin
+      search_params.merge!(:default_limit => 25)
+      search_results
+    end
+  end
+end
+
 format :html do
-    
+
   view :card_list do |args|
     paging = _optional_render :paging, args
 
     if search_results.empty?
-      render_no_search_results(args) 
+      render_no_search_results(args)
     else
       results =
         search_results.map do |c|
@@ -178,7 +219,7 @@ format :html do
             </div>
           }
         end.join "\n"
-        
+
       %{
         #{ paging }
         <div class="search-result-list">
@@ -202,9 +243,7 @@ format :html do
     end
   end
 
-  view :editor do |args|
-    text_area :content, :rows=>5, "data-card-type-code"=>card.type_code
-  end
+  view :editor, :mod=>Html::HtmlFormat
 
   view :no_search_results do |args|
     %{<div class="search-no-results"></div>}
@@ -241,7 +280,7 @@ format :html do
     (window_min .. window_max).each do |page|
       next if page < 0 or page > total_pages
       text = page + 1
-      out << page_li( text, page, page==current_page ) 
+      out << page_li( text, page, page==current_page )
     end
 
     if total_pages > window_max
@@ -255,11 +294,10 @@ format :html do
     out << %{</ul></nav>}
     out.join
   end
-  
+
   def default_search_params
     set_default_search_params :default_limit=>20
   end
-  
-end
 
+end
 

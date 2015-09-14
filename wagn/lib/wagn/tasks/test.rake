@@ -41,7 +41,7 @@ namespace :test do
     begin
       # assume we have a good database, ie. just migrated dev db.
       puts "setting database to wagn_test_template"
-      set_database 'wagn_test_template'
+#      set_database 'wagn_test_template'
       Rake::Task['wagn:seed'].invoke
 
       # I spent waay to long trying to do this in a less hacky way--
@@ -65,7 +65,9 @@ namespace :test do
 
   desc "dump current db to test fixtures"
   task :extract_fixtures => :environment do
-    YAML::ENGINE.yamler = 'syck'
+    if RUBY_VERSION !~ /^(2|1\.9)/
+      YAML::ENGINE.yamler = 'syck'
+    end
       # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,
       # which dumps with slashes that syck can't understand (also !!null stuff)
 

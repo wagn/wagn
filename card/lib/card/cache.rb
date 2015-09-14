@@ -15,17 +15,17 @@ class Card
 
   class Cache
 
-    TEST_ENVS = %w{test cucumber}
-    @@prepopulating     = TEST_ENVS.include? Rails.env
-    @@using_rails_cache = TEST_ENVS.include? Rails.env
-    @@cache_by_class    = {}
+    TEST_ENVS         = %w{test cucumber}
+    @@prepopulating   = TEST_ENVS.include? Rails.env
+    @@no_rails_cache  = TEST_ENVS.include?(Rails.env) || ENV['NO_RAILS_CACHE']
+    @@cache_by_class  = {}
 
     cattr_reader :cache_by_class
 
     class << self
       def [] klass
         raise "nil klass" if klass.nil?
-        cache_by_class[klass] ||= new :class=>klass, :store=>(@@using_rails_cache ? nil : Cardio.cache)
+        cache_by_class[klass] ||= new :class=>klass, :store=>(@@no_rails_cache ? nil : Cardio.cache)
       end
 
       def renew
@@ -73,6 +73,21 @@ class Card
         end
       end
 
+      def obj_to_key obj
+        case obj
+        when Hash
+          obj.sort.map do |key, value|
+            "#{key}=>(#{obj_to_key(value)})"
+          end.join ","
+        when Array
+          obj.map do |value|
+            obj_to_key(value)
+          end.join ","
+        else
+          obj.to_s
+        end
+      end
+
       private
 
       def prepopulate
@@ -103,7 +118,7 @@ class Card
       self.system_prefix = opts[:prefix] || self.class.system_prefix(opts[:class])
       cache_by_class[klass] = self
     end
-    
+
 
     def system_prefix= system_prefix
       @system_prefix = system_prefix
@@ -125,11 +140,11 @@ class Card
         write_local key, @store.read(@prefix + key)
       end
     end
-    
+
     def read_local key
       @local[key]
     end
-    
+
     def write_variable key, variable, value
       key = @prefix + key
       if @store and object = @store.read(key)
@@ -157,7 +172,7 @@ class Card
         end
       end
     end
-    
+
     def fetch_local key
       read_local key or write_local key, yield
     end
@@ -190,9 +205,13 @@ class Card
       end
       @prefix = @system_prefix + @cache_id + "/"
     end
-    
+
     def reset_local
       @local = {}
+    end
+
+    def exist? key
+      @local.has_key?(key) || @store.exist?(key)
     end
   end
 end

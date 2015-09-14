@@ -26,32 +26,32 @@ describe Card::Set::All::Name do
       expect(b1.name).to eq('b1')
     end
   end
-  
+
   describe 'codename' do
     before :each do
       @card = Card['a']
     end
-    
+
     it 'should require admin permission' do
       @card.update_attributes :codename=>'structure'
       expect(@card.errors[:codename].first).to match(/only admins/)
     end
-    
+
     it 'should check uniqueness' do
       Card::Auth.as_bot do
         @card.update_attributes :codename=>'structure'
         expect(@card.errors[:codename].first).to match(/already in use/)
       end
     end
-    
+
   end
-  
+
   describe 'repair_key' do
     it 'should fix broken keys' do
       a = Card['a']
       a.update_column 'key', 'broken_a'
       a.expire
-      
+
       a = Card.find a.id
       expect(a.key).to eq('broken_a')
       a.repair_key

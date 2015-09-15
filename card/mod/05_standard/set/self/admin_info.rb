@@ -7,9 +7,10 @@ view :core do |args|
     warning +=  "<li class='list-group-item list-group-item-warning'>" + process_content(
                    "You are using Wagn's default recaptcha key.
                     That's fine for a local installation.
-                    If you want to use recaptchas for a publicly available Wagn installation
+                    If you want to use recaptcha for a publicly available Wagn installation
                     you have to register your domain at http://google.com/recaptcha and
-                    add your keys to [[*recaptcha settings]].") + "</li>"
+                    add your keys to [[*recaptcha settings]]. To turn off captchas go to the
+                    captcha rule card [[*all+*captcha]]") + "</li>"
   end
   if warning.present?
     content_tag :div, :class=>"alert alert-warning alert-dismissible", :role=>"alert" do

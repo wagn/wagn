@@ -50,6 +50,7 @@ Feature: Follow interface
     And I go to card Joe User
     And I open the main card menu
     Then In the main card menu I should see "(following)|unfollow"
+    And I wait a sec
 
 #too long for menu
 #

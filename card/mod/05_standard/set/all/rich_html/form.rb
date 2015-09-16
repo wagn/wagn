@@ -4,10 +4,10 @@ format :html do
     if args[:structure] || card.structure
       # multi-card editing
 
-      if args[:core_edit] #need better name!
+      if args[:core_edit] #need better name
         _render_core args
       else
-        process_relative_tags :optional_toolbar=>:hide
+        process_relative_tags :optional_toolbar=>:hide, :structure=>args[:structure]
       end
 
     else
@@ -182,7 +182,7 @@ format :html do
 # FIELD VIEWS
 
   view :editor do |args|
-    text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id, "data-card-type-code"=>card.type_code
+    text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id
   end
 
   view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|

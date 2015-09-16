@@ -21,8 +21,12 @@ format :html do
   end
 
   view :layout, :perms=>:none do |args|
-    process_content get_layout_content, :content_opts=>{ :chunk_list=>:references }
+    output [
+      process_content(get_layout_content, :content_opts=>{ :chunk_list=>:references }),
+      _render_modal_slot(args)
+    ]
   end
+
 
   view :content do |args|
     wrap args.reverse_merge(:slot_class=>'card-content') do
@@ -127,7 +131,7 @@ format :html do
   end
 
   view :closed do |args|
-    frame args.reverse_merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show, :optional_edit_toolbar=>:hide ) do
+    frame args.reverse_merge(:content=>true, :body_class=>'closed-content', :toggle_mode=>:close, :optional_toggle=>:show, :optional_toolbar=>:hide ) do
       _optional_render :closed_content, args
     end
   end

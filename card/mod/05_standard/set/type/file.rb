@@ -1,12 +1,8 @@
-  
-def item_names(args={})  # needed for flexmail attachments.  hacky.
-  [self.cardname]
-end
-
+attachment :file, :uploader=>FileUploader
 
 format do
   view :source do |args|
-    card.attach.url
+    card.attachment.url
   end
 
   view :core do |args|
@@ -24,24 +20,24 @@ format do
 end
 
 
+
 format :file do
-      
+
   view :core do |args|                                    # returns send_file args.  not in love with this...
     if format = card.attachment_format( params[:format] ) # this means we only support known formats.  dislike.
       if params[:explicit_file] and r = controller.response
         r.headers["Expires"] = 1.year.from_now.httpdate
         #r.headers["Cache-Control"] = "public"            # currently using default "private", because proxy servers could block needed permission checks
       end
-      
-   
-  #      elsif ![format, 'file'].member? params[:format]  # formerly supported redirecting to correct file format 
-  #        return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #card.attach.url(style) )
 
-      style = _render_style :style=>params[:size]         # fixme, shouldn't be in type file
-      [ card.attach.path( *[style].compact ),             # nil or empty arg breaks 1.8.7
+  #      elsif ![format, 'file'].member? params[:format]  # formerly supported redirecting to correct file format
+  #        return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #card.attachment.url(style) )
+
+      file = selected_file_version
+      [ file.path,
         {
-          :type => card.attach_content_type,
-          :filename =>  "#{card.cardname.url_key}#{style.blank? ? '' : '-'}#{style}.#{format}",
+          :type => file.content_type,
+          :filename =>  "#{card.cardname.safe_key}#{file.extension}",
           :x_sendfile => true,
           :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
         }
@@ -49,13 +45,17 @@ format :file do
     else
       _render_not_found
     end
-  end  
+  end
+
+  def selected_file_version
+    card.attachment
+  end
 
 end
 
 
 format :html do
-  
+
   view :core do |args|
     handle_source args do |source|
       "<a href=\"#{source}\">Download #{ showname args[:title] }</a>"
@@ -63,23 +63,64 @@ format :html do
   end
 
   view :editor do |args|
-    #Rails.logger.debug "editor for file #{card.inspect}"
-    out = '<div class="choose-file">'
-    if !card.new_card?
-      out << %{<div class="attachment-preview" :id="#{card.attach_file_name}-preview"> #{_render_core(args)} </div> }
-    end
-    out << %{
-      <div>#{file_field :attach, :class=>'file-upload slotter'}</div>
-    </div>
-    <div class="chosen-file" style="display:none">
-      <div><label>File chosen:</label> <span class="chosen-filename"></span></div>
-      <div><a class="cancel-upload">Unchoose</a></div>
-    </div>
-      }
-    out
+    file_chooser args
   end
-  
-end
 
+
+  def preview  args
+    ''
+  end
+
+  view :preview_editor, :tags=>:unknown_ok do |args|
+    <<-HTML
+      <div class="chosen-file">
+        <input type="hidden" name="cached_upload" value="#{card.selected_action_id}">
+        <table role="presentation" class="table table-striped"><tbody class="files">
+          <tr class="template-download fade in">
+            <td>
+              <span class="preview">
+                #{preview(args)}
+              </span>
+            </td>
+            <td>
+              <p class="name">
+                #{card.original_filename}
+              </p>
+            </td>
+            <td>
+              <span class="size">#{number_to_human_size(card.attachment.size)}</span>
+            </td>
+            <td class="pull-right">
+              <button class="btn btn-danger delete cancel-upload" data-type="DELETE">
+                <i class="glyphicon glyphicon-trash"></i>
+                <span>Delete</span>
+              </button>
+            </td>
+          </tr></tbody>
+        </table>
+      </div>
+    HTML
+  end
+
+  def file_chooser args
+    <<-HTML
+      <div class="choose-file">
+        #{preview(args)}
+        <span class="btn btn-success fileinput-button">
+            <i class="glyphicon glyphicon-cloud-upload"></i>
+            <span>
+                #{card.new_card? ? 'Add' : 'Replace'} #{card.attachment_name}...
+            </span>
+             #{file_field card.attachment_name, :class=>'file-upload slotter'}
+        </span>
+      </div>
+      <div id="progress" class="progress" style="display: none;">
+        <div class="progress-bar progress-bar-success" style="width: 0%;"></div>
+      </div>
+      <div class="chosen-file"></div>
+    HTML
+  end
+
+end
 
 

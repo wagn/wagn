@@ -137,6 +137,11 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   }
 }
 
+.navbar .btn.btn-toolbar-control {
+  padding: 5px;
+  border: none;
+}
+
 .navbar-divide {
   margin-left: 30px;
   border-left: 1px solid;
@@ -201,6 +206,26 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   }
 }
 
+/* -- file upload -- */
+.fileupload-buttonbar .btn, .fileupload-buttonbar .toggle {
+  margin-bottom: 5px;
+}
+.fileinput-button {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+.fileinput-button input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    opacity: 0;
+    -ms-filter: 'alpha(opacity=0)';
+    font-size: 200px;
+    direction: ltr;
+    cursor: pointer;
+}
 
 
 /* -- template-editor (editing template rule inclusions inline) -- */
@@ -601,9 +626,16 @@ $act-gray:  #b7b7b7;
 .diff-red {
   text-decoration: line-through;
   color: $diff-red;
+  img {
+    border: 2px solid $diff-red;
+  }
 }
 .diff-green {
-    color: $diff-green;
+  color: $diff-green;
+  img {
+    margin: 0px 4px 0px 4px;
+    border: 2px solid $diff-green;
+  }
 }
 .diff-invisible {
   color: $action-white;
@@ -892,7 +924,17 @@ html>body .open-view {
   font-size: .85em;
 }
 
-.SELF-Xperformance_log.open-view .panel-group {
-  margin-bottom: 0;
+.RIGHT-Xperformance_log.open-view {
+  font-size: 12px;
+  .panel-group {
+    margin-bottom: 0;
+  }
+  .panel-body {
+    padding: 0px 0px 0px 15px;
+  }
+  .panel-title {
+    font-size: 14px;
+  }
 }
+
 

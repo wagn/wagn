@@ -12,7 +12,7 @@ format :html do
         (wrap_with(:form, :class=>'navbar-form navbar-left') do
           [
             (account_split_button(args) if card.accountable?),
-            engage_split_button(args),
+            activity_split_button(args),
             rules_split_button(args),
             edit_split_button(args),
           ]
@@ -32,11 +32,11 @@ format :html do
 
   def active_toolbar_button active_view, args
     case active_view
-    when :follow, :editors
-      'engage'
+    when :follow, :editors, :history
+      'activity'
     when :edit_rules, :edit_nest_rules
       'rules'
-    when :edit, :edit_name, :edit_type, :edit_structure, :edit_nests, :history
+    when :edit, :edit_name, :edit_type, :edit_structure, :edit_nests
       'edit'
     when :related
       if args[:related_card] && (tag=args[:related_card].tag)
@@ -45,6 +45,8 @@ format :html do
           'engage'
         when 'account', 'roles', 'edited', 'created', 'follow'
           'account'
+        when 'structure'
+          'edit'
         else
           'rules'
         end
@@ -61,11 +63,12 @@ format :html do
     end
   end
 
-  def engage_split_button args
-    discuss = smart_link 'discuss', { :related=>Card[:discussion].key }
-    editors = smart_link 'editors', { :related=>Card[:editors].key }
-    toolbar_split_button 'engage',  { :related=>Card[:discussion].key }, args do
+  def activity_split_button args
+    discuss = smart_link 'discuss',  { :related=>Card[:discussion].key }
+    editors = smart_link 'editors',  { :related=>Card[:editors].key }
+    toolbar_split_button 'activity', { :view=>:history }, args do
       {
+        :history    => (_render_history_link if card.history?),
         :discuss => discuss,
         :follow  =>_render_follow_link(args),
         :editors => editors
@@ -80,9 +83,9 @@ format :html do
     nests  = smart_link 'nests',    {:view => :edit_nest_rules, :slot=>{:rule_view=>:field_related_rules}}
     toolbar_split_button 'rules',   {:view => :edit_rules }, args do
       {
-        :common_rules  => common,
-        :grouped_rules => group,
-        :all_rules     => all,
+        :common_rules    => common,
+        :grouped_rules   => group,
+        :all_rules       => all,
         :separator       => (separator if args[:nested_fields].present?),
         :recent_rules    => (recent if recently_edited_settings?),
         :edit_nest_rules => (nests if args[:nested_fields].present?)
@@ -92,13 +95,11 @@ format :html do
   def edit_split_button args
     toolbar_split_button 'edit', {:view=>:edit}, args do
       {
-        :edit           => _render_edit_content_link(args),
-        :edit_nests     => (_render_edit_nests_link if !card.structure && args[:nested_fields].present?),
-        :edit_structure => (smart_link 'structure', {:view => :edit_structure} if structure_editable?),
-        :edit_name      => _render_edit_name_link,
-        :edit_type      => _render_edit_type_link,
-        :separator      => separator,
-        :history        => (_render_history_link if card.history?)
+        :edit       => _render_edit_content_link(args),
+        :edit_nests => (_render_edit_nests_link if !card.structure && args[:nested_fields].present?),
+        :structure  => (smart_link 'structure', {:view => :edit_structure} if structure_editable?),
+        :edit_name  => _render_edit_name_link,
+        :edit_type  => _render_edit_type_link,
       }
     end
   end
@@ -139,37 +140,38 @@ format :html do
       link_opts[:path_opts] = {:slot=>{:subframe=>true}}
     end
 
-    link = view_link glyphicon('remove'), :home, link_opts
+    link = view_link glyphicon('remove'), :home, link_opts.merge(:class=>'btn-toolbar-control btn btn-primary')
     css_class = ['nav navbar-nav', args[:class]].compact.join "\n"
-    list_tag link, :class=>css_class
+    wrap_with :div, :class=>css_class do
+      [
+        toolbar_pin_button,
+        link
+      ]
+    end
+    #list_tag link, :class=>css_class
+  end
+  def toolbar_pin_button
+    button_tag glyphicon('pushpin'), :situation=>:primary, :remote=>true, :title=>"#{'un' if toolbar_pinned?}pin", :class=>"btn-toolbar-control toolbar-pin #{'in' unless toolbar_pinned?}active"
   end
 
   view :toolbar_buttons do |args|
     wrap_with(:div, :class=>'btn-group') do
       [
-        _optional_render(:related_button, args, :show),
-        toolbar_pin_button,
         _optional_render(:delete_button,  args, (card.ok?(:delete) ? :show : :hide)),
-        _optional_render(:refresh_button, args, :hide),
+        _optional_render(:refresh_button, args, :show),
+        _optional_render(:related_button, args, :show),
         _optional_render(:history_button, args, :hide),
       ]
     end
   end
 
 
+
+
   view :related_button do |args|
     path_opts = {:slot=>{:show=>:toolbar}}
-    page_link =
-      if main?
-        menu_item ' refresh', 'refresh', path_opts.merge(:card=>card), args[:html_args]
-      else
-        menu_item ' page', 'new-window', path_opts.merge(:card=>card), args[:html_args]
-      end
-
-    dropdown_button '', :class=>'related', :icon=>'eye-open' do
+    dropdown_button '', :icon=>'education', :class=>'related' do #, :icon=>'eye-open' do
       [
-        page_link,
-        separator,
         menu_item(' children',       'baby-formula', path_opts.merge(:related=>'*children')),
         menu_item(' mates',          'bed',          path_opts.merge(:related=>'*mates')),
         menu_item(' references out', 'log-out',      path_opts.merge(:related=>'*refers_to')),
@@ -177,6 +179,13 @@ format :html do
       ]
     end
   end
+  view :refresh_button do |args|
+    path_opts = {:slot=>{:show=>:toolbar},:page=>card}
+    icon = main? ? 'refresh' : 'new-window'
+    toolbar_button('refresh', icon, 'hidden-xs hidden-sm hidden-md hidden-lg', :path_opts=>path_opts)
+  end
+
+
   view :delete_button do |args|
     toolbar_button('delete', 'trash', 'hidden-xs hidden-sm hidden-md hidden-lg',
                     :action=>:delete,
@@ -187,9 +196,7 @@ format :html do
                   )
   end
 
-  def toolbar_pin_button
-    button_tag glyphicon('pushpin'), :situation=>:primary, :remote=>true, :title=>"#{'un' if toolbar_pinned?}pin", :class=>"toolbar-pin #{'in' unless toolbar_pinned?}active"
-  end
+
 
   def toolbar_button text, symbol, hide=nil, tag_args={}
     hide ||= 'hidden-xs hidden-sm hidden-md hidden-lg'
@@ -210,7 +217,7 @@ format :html do
   end
 
   def autosaved_draft_link
-    view_link('autosaved draft', :edit, :path_opts=>{:edit_draft=>true, :slot=>{:show=>:edit_toolbar}}, :class=>'navbar-link slotter pull-right')
+    view_link('autosaved draft', :edit, :path_opts=>{:edit_draft=>true, :slot=>{:show=>:toolbar}}, :class=>'navbar-link slotter pull-right')
   end
 
 

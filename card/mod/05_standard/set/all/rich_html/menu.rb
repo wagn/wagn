@@ -6,7 +6,7 @@ format :html do
       [
         _optional_render(:horizontal_menu, args, :hide),
         _render_menu_link(args),
-        _render_modal_slot(args)
+        _render_modal_slot(args.merge(:modal_id=>card.cardname.safe_key))
       ]
     end
   end
@@ -56,10 +56,7 @@ format :html do
   end
 
   def menu_edit_link args
-    path_opts = {
-             :view=>:edit,
-             :slot=>{:show=>'edit_toolbar', :hide=>'type_link'}
-           }
+    path_opts = { :view=>:edit }
     menu_item('edit', 'edit', path_opts, args[:html_args] )
   end
 
@@ -76,10 +73,7 @@ format :html do
   end
 
   def menu_account_link args
-    path_opts = {
-        :related=>{:name=>'+*account',:view=>:edit,:slot=>{:hide=>'edit_toolbar'}},
-        :slot=>{:show=>:account_navbar}
-      }
+    path_opts = { :related=>{:name=>'+*account',:view=>:edit} }
     menu_item('account', 'user', path_opts, args[:html_args])
   end
 

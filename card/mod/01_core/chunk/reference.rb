@@ -5,12 +5,12 @@ module Card::Chunk
 
     def referee_name
       return if name.nil?
-      
+
       @referee_name ||= begin
         rendered_name = render_obj( name )
         ref_card = case rendered_name
         when /^\~(\d+)$/ # get by id
-          Card.fetch $1.to_i 
+          Card.fetch $1.to_i
         when /^\:(\w+)$/ # get by codename
           Card.fetch $1.to_sym
         end
@@ -39,7 +39,7 @@ module Card::Chunk
         @name = name.to_name.replace_part( old_name, new_name )
       end
     end
-    
+
     def render_obj raw
       if format && Card::Content===raw
         format.card.references_expired = nil # don't love this; this is to keep from running update_references again

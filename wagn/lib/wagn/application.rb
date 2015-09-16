@@ -20,15 +20,6 @@ module Wagn
       end
     end
 
-=begin
-    initializer :load_wagn_config_initializers,  :before => :load_config_initializers do
-      add_path paths, 'lib/wagn/config/initializers', :glob => "**/*.rb"
-      config.paths['lib/wagn/config/initializers'].existent.sort.each do |initializer|
-        load(initializer)
-      end
-    end
-=end
-
     class << self
       def inherited(base)
         super
@@ -78,13 +69,15 @@ module Wagn
         paths = super
         Cardio.set_paths paths
 
+        paths['mod'] << 'mod'
         paths.add 'files'
 
-        paths['mod'] << 'mod'
         paths['app/models'] = []
         paths['app/mailers'] = []
 
         add_path paths, 'config/routes.rb', :with => 'rails/application-routes.rb'
+
+        Cardio.set_mod_paths  #really this should happen later
 
         paths
       end

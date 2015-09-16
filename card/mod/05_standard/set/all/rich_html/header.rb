@@ -11,18 +11,15 @@ format :html do
         #{ _optional_render :type_info, args, :hide }
       </div>
       #{ _optional_render :toolbar, args, :hide }
-      #{ _optional_render :account_navbar, args, :hide}
     }
   end
 
   def default_header_args args
-    if @slot_view == :open
-      if (show_view?(:toolbar,args.merge(:default_visibility=>:hide)) || toolbar_pinned?) && card.type_code != :basic
-        args[:optional_type_info] ||= :show
-      end
-      if toolbar_pinned?
-        args[:optional_toolbar] ||= :show
-      end
+    if @slot_view == :open && toolbar_pinned?
+      args[:optional_toolbar] ||= :show
+    end
+    if show_view?(:toolbar,args.merge(:default_visibility=>:hide)) && card.type_code != :basic
+      args[:optional_type_info] ||= :show
     end
   end
 

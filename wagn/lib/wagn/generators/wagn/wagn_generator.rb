@@ -214,8 +214,18 @@ class WagnGenerator < Rails::Generators::AppBase
       end
 
     else
-      puts "Review the database configuration in config/database.yml and run 'wagn seed' to complete the installation.\nStart the server with 'wagn server'."
+      puts "Now:
+1. Run `wagn seed` to seed your database (see db configuration in config/database.yml).
+2. Run `wagn server` to start your server"
     end
+  end
+
+  def database_gemfile_entry
+    return [] if options[:skip_active_record]
+    gem_name = gem_for_database
+    gem_version =  gem_name == 'mysql2' ? '0.3.20' : nil
+    GemfileEntry.version gem_name, gem_version,
+                        "Use #{options[:database]} as the database for Active Record"
   end
 
   protected

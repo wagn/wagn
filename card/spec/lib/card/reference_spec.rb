@@ -161,7 +161,28 @@ describe Card::Reference do
     expect(Card['beta'].referees.map(&:name)).to eq(['alpha'])
     expect(Card['alpha'].referencers.map(&:name)).to eq(['beta'])
   end
-  
+
+  it "query" do
+    Card.create :type=>'Search', :name=>'search with references',
+      :content=>'{"name":"X", "right_plus":["Y",{"content":["in","A","B"]}]}'
+    expect(Card['Y'].referencers.map(&:name)).to include('search with references')
+    expect(Card['search with references'].referees.map(&:name).sort).to eq ["A","B","X","Y"]
+  end
+
+  it "handles contextual names in Basic cards" do
+    card = Card.create :type=>'Basic', :name=>'basic with references',
+      :content=>'{{_+A}}'
+    Card['A'].update_attributes! :name=>'AAA', :update_referencers=>true
+    expect(Card['basic with references'].content).to eq '{{_+AAA}}'
+  end
+
+  it "handles contextual names in Search cards" do
+    card = Card.create :type=>'Search', :name=>'search with references',
+      :content=>'{"name":"_+A"}'
+    Card['A'].update_attributes! :name=>'AAA', :update_referencers=>true
+    expect(Card['search with references'].content).to eq '{"name":"_+AAA"}'
+  end
+
   it "should handle commented inclusion" do
     c = Card.create :name=>'inclusion comment test', :content=>'{{## hi mom }}'
     expect(c.errors.any?).to be_falsey

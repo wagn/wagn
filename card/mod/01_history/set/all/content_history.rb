@@ -4,7 +4,7 @@
 def content
   if @selected_action_id
     @selected_content ||= begin
-      (change = last_change_on( :db_content, :not_after=> @selected_action_id ) and change.value) || db_content
+      (change = last_change_on( :db_content, :not_after=> @selected_action_id, :including_drafts=>true ) and change.value) || db_content
     end
   else
     super
@@ -24,7 +24,10 @@ def save_content_draft content
 end
 
 def last_change_on(field, opts={})
-  where_sql =  'card_actions.card_id = :card_id AND field = :field AND (draft is not true) '
+  where_sql =  'card_actions.card_id = :card_id AND field = :field '
+  if !opts[:including_drafts]
+    where_sql += 'AND (draft is not true) '
+  end
   where_sql += if opts[:before]
     'AND card_action_id < :action_id'
   elsif opts[:not_after]
@@ -54,9 +57,21 @@ def selected_action
   selected_action_id and Action.fetch(selected_action_id)
 end
 
+def with_selected_action_id action_id
+  current_action_id = @selected_action_id
+  run_callbacks :select_action do
+    self.selected_action_id = action_id
+  end
+  result = yield
+  run_callbacks :select_action do
+    self.selected_action_id = current_action_id
+  end
+  result
+end
+
 def selected_content_action_id
   @selected_action_id ||
-  (@current_action and @current_action.new_content? and @current_action.id) ||
+ (@current_action && (new_card? || @current_action.new_content? || db_content_changed?) && @current_action.id) ||
   last_content_action_id
 end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141216053032) do
+ActiveRecord::Schema.define(version: 20150724210803) do
 
   create_table "card_actions", force: :cascade do |t|
     t.integer "card_id",         limit: 4
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20141216053032) do
     t.integer "super_action_id", limit: 4
     t.integer "action_type",     limit: 4
     t.boolean "draft"
+    t.text    "comment",         limit: 65535
   end
 
   add_index "card_actions", ["card_act_id"], name: "card_actions_card_act_id_index", using: :btree

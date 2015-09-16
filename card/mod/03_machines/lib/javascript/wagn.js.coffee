@@ -52,10 +52,10 @@ jQuery.fn.extend {
   setSlotContent: (val) ->
     s = @slot()
     v = $(val)
-    if v[0]
-      if slotdata = s.attr 'data-slot'
-        v.attr 'data-slot', slotdata if slotdata?
-    else #simple text (not html)
+    unless v[0]
+    #   if slotdata = s.attr 'data-slot'
+    #     v.attr 'data-slot', slotdata if slotdata?
+    # else #simple text (not html)
       v = val
     s.replaceWith v
     v.trigger 'slotReady'
@@ -151,11 +151,14 @@ jQuery.fn.extend {
 
 setInterval (-> $('.card-form').setContentFieldsFromMap()), 20000
 
+
+
 $(window).ready ->
   $.ajaxSetup cache: false
 
   setTimeout (-> wagn.initializeEditors $('body')), 10
   #  dislike the timeout, but without this forms with multiple TinyMCE editors were failing to load properly
+
 
   $('body').on 'ajax:success', '.slotter', (event, data, c, d) ->
     unless event.slotSuccessful
@@ -169,6 +172,7 @@ $(window).ready ->
   $('body').on 'loaded.bs.modal', null, (event) ->
     unless event.slotSuccessful
       wagn.initializeEditors $(event.target)
+      $(event.target).find(".card-slot").trigger("slotReady")
       event.slotSuccessful = true
 
   $('body').on 'ajax:error', '.slotter', (event, xhr) ->

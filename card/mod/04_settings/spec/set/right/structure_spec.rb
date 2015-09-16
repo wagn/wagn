@@ -14,4 +14,9 @@ describe Card::Set::Right::Structure do
       '<a class="cardtype known-card" href="/HTML">HTML</a> : [[link]] {{inclusion}}'
     )
   end
+
+  it 'renders core as raw' do
+    trs = Card.fetch('*type+*right+*structure').format.render_core
+    expect(trs).to eq '{"type":"_left"}'
+  end
 end

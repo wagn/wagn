@@ -1,17 +1,22 @@
 # -*- encoding : utf-8 -*-
 
 def select_action_by_params params
-  action = find_action_by_params(params) and self.selected_action_id = action.id
+  if (action = find_action_by_params(params))
+    run_callbacks :select_action do
+      self.selected_action_id = action.id
+    end
+  end
 end
 
 def find_action_by_params args
-  case
-  when args[:rev]
+  if args[:rev]
     nth_action args[:rev]
-  when args[:rev_id]
+  elsif Integer === args[:rev_id] || args[:rev_id] =~ /^\d+$/
     if action = Action.fetch(args[:rev_id]) and action.card_id == id
       action
     end
+  elsif args[:rev_id]  # revision id is probalby a mod (e.g. if you request files/:logo/05_standard.png)
+    last_action
   end
 end
 

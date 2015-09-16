@@ -14,13 +14,14 @@ module Card::Chunk
     }
 
     def interpret match, content
-      target, @link_text = if raw_syntax = match[1]
-        if i = divider_index( raw_syntax )  # [[ A | B ]]
-          [ raw_syntax[0..(i-1)], raw_syntax[(i+1)..-1] ]
-        else                                # [[ A ]]
-          [ raw_syntax, nil ]
+      target, @link_text =
+        if (raw_syntax = match[1])
+          if i = divider_index( raw_syntax )  # [[ A | B ]]
+            [ raw_syntax[0..(i-1)], raw_syntax[(i+1)..-1] ]
+          else                                # [[ A ]]
+            [ raw_syntax, nil ]
+          end
         end
-      end
 
       @link_text = objectify @link_text
       if target =~ /\/|mailto:/

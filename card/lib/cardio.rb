@@ -2,9 +2,10 @@
 
 require 'active_support/core_ext/numeric/time'
 
-CARD_GEM_ROOT = File.expand_path('../..', __FILE__)
 
 module Cardio
+
+  CARD_GEM_ROOT = File.expand_path('../..', __FILE__)
 
   ActiveSupport.on_load :card do
     if Card.count > 0
@@ -68,6 +69,7 @@ module Cardio
       add_path 'tmp/set_pattern', :root => root
 
       add_path 'mod'
+
       add_path "db"
       add_path 'db/migrate'
       add_path "db/migrate_core_cards"
@@ -75,8 +77,22 @@ module Cardio
       add_path "db/seeds", :with => "db/seeds.rb"
 
       add_path 'config/initializers',  :glob => '**/*.rb'
-      paths['config/initializers'] << "#{gem_root}/mod/**{,/*/**}/initializers"
-      paths['config/initializers'] << "#{root}/mod/**{,/*/**}/initializers"
+
+    end
+
+
+    def set_mod_paths
+      each_mod_path do |mod_path|
+        Dir.glob( "#{mod_path}/*/initializers" ).each do |initializers_dir|
+          paths['config/initializers'] << initializers_dir
+        end
+      end
+    end
+
+    def each_mod_path
+      paths['mod'].each do |mod_path|
+        yield mod_path
+      end
     end
 
     def root

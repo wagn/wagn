@@ -1,21 +1,23 @@
-#~~~~~~~~~~~~~~~~
-# EXPERIMENTAL
-# the following methods are for visualing card events
-#  not ready for prime time!
-#  not working with Rails 4
-
+# the events method is a developer's tool for visualizing the event order for a given card.
+# For example, from a console you might run
+#
+#   puts mycard.events :update
+#
+# to see the order of events that will be executed on mycard.
+# The indention and arrows (^v) indicate event dependencies.
+#
+# Note: as of yet, the functionality is a bit rough.  It does not display events
+# that are called directly from within other events (like :stored), and certain event
+# requirements (like the presence of a "current_act") may prevent events from showing
+# up in the tree.
 def events action
   @action = action
-
-  # don't know what this line is for but it breaks with Rails 4
-  # root = _validate_callbacks + _save_callbacks
-
-  events = [ events_tree(:validation), events_tree(:save)]
+  events = [ events_tree(:validation), events_tree(:save) ]
   @action = nil
   puts_events events
 end
 
-private
+#private
 
 def puts_events events, prefix='', depth=0
   r = ''
@@ -54,13 +56,14 @@ def events_tree filt
       hash[callback.kind] << events_tree( callback.filter )
     end
   end
+
   hash
 end
-#FIXME - this doesn't belong here!!
+
 
 class ::ActiveSupport::Callbacks::Callback
   def applies? object
-    object.send :eval, "value=nil;halted=false;!!(#{@compiled_options})"
+    conditions_lambdas.all? { |c| c.call(object, nil) }
   end
 end
 

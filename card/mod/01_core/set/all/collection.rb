@@ -1,14 +1,16 @@
 
 module ClassMethods
-  def search spec
+  def search spec, &block
     query = ::Card::Query.new(spec)
-    Card.with_logging :search, :message=>spec, :details=>query.sql.strip do
-      results = query.run
-      if block_given? and Array===results
-        results.each { |result| yield result }
-      end
-      results
+    execute_query query, &block
+  end
+
+  def execute_query query
+    results = query.run
+    if block_given? and Array===results
+      results.each { |result| yield result }
     end
+    results
   end
 
   def count_by_wql(spec)
@@ -313,7 +315,7 @@ format :html do
     args[:tab_type] ||= 'tabs'
   end
 
-  view :pills_static, :view=>:tabs
+  view :pills_static, :view=>:tabs_static
   def default_tabs_static_args args
     args[:tab_type] ||= 'pills'
   end

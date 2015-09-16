@@ -1,0 +1,6 @@
+**/lib/**/*.rb                    \
+tmpsets/set*/**/*.rb -            \
+**/*.rdoc                         \
+GPL                               \
+LICENSE                           \
+VERSION

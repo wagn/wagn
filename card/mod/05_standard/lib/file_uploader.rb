@@ -57,8 +57,8 @@ class FileUploader < CarrierWave::Uploader::Base
   def extension
     if file && file.extension.present?
       ".#{file.extension}"
-    elsif original_filename
-      File.extname(original_filename)
+#    elsif original_filename
+#      File.extname(original_filename)
     else
       File.extname(model.content)
     end.downcase
@@ -135,7 +135,7 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   def original_filename
-    @original_filename || (model.selected_action && model.selected_action.comment)
+    @original_filename ||= (model.selected_action && model.selected_action.comment)
   end
 
   def store_dir

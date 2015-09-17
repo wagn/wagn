@@ -1,5 +1,15 @@
 attachment :file, :uploader=>FileUploader
 
+module SelectedAction
+  def select_action_by_params params
+    # test whether request is for current action using card content
+    # if so, we can skip the action lookup
+    rev_id = params[:rev_id]
+    super unless rev_id && db_content =~ /\/#{rev_id}\./
+  end
+end
+include SelectedAction
+
 format do
   view :source do |args|
     card.attachment.url

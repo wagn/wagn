@@ -179,13 +179,19 @@ end
 
 
 format :css do
+
+  #generalize to all collections?
+  def default_item_view
+    params[:item] || :content
+  end
+
   view :titled do |args|
     %(#{major_comment "STYLE GROUP: \"#{card.name}\"", '='}#{ _render_core })
   end
 
   view :core do |args|
     card.item_cards.map do |item|
-      nest item, :view=>(args[:item] || :content)
+      nest item, :view=>item_view(args)
     end.join "\n\n"
   end
 
@@ -195,6 +201,7 @@ end
 
 
 format :js do
+
   view :core do |args|
     card.item_cards.map do |item|
       nest item, :view=>( args[:item] || :core)

@@ -55,12 +55,11 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   def extension
-    if file && file.extension.present?
-      ".#{file.extension}"
-#    elsif original_filename
-#      File.extname(original_filename)
-    else
-      File.extname(model.content)
+    case
+    when file && file.extension.present? ; ".#{file.extension}"
+    when card_content = model.content    ; File.extname(card_content)
+    when orig = original_filename        ; File.extname(orig)
+    else                                   ''
     end.downcase
   end
 

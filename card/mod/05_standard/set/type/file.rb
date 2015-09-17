@@ -3,12 +3,13 @@ attachment :file, :uploader=>FileUploader
 module SelectedAction
   def select_action_by_params params
     # skip action table lookups for current revision
-    super unless params[:rev_id] == last_content_action_id
+    rev_id = params[:rev_id]
+    super unless rev_id && rev_id == last_content_action_id
   end
 
   def last_content_action_id
     # find action id from content (saves lookups)
-    db_content.split(/[\/\.]/)[1]
+    db_content.to_s.split(/[\/\.]/)[1]
   end
 
 end

@@ -190,7 +190,7 @@ format :rss do
     case raw_feed_items args
     when Exception ; @xml.item { render :search_error }
     when Integer   ; @xml.item { render :search_count }
-    else super
+    else super args
     end
   end
 

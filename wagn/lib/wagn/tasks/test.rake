@@ -27,44 +27,25 @@ namespace :test do
   ##  setting it by hand after fixture generation.
   desc "recreate test fixtures from fresh db"
   task :generate_fixtures => :environment do
+    ENV['GENERATE_FIXTURES'] = 'true'
+    raise "must be test env" unless Rails.env == 'test'
+
     Rake::Task['wagn:reset_cache']
-    # env gets auto-set to 'test' somehow.
-    # but we need development to get the right schema dumped.
-    ENV['RAILS_ENV'] = 'development'
 
-    abcs = ActiveRecord::Base.configurations
-    config = ENV['RAILS_ENV'] || 'development'
-    olddb = abcs[config]["database"]
-    abcs[config]["database"] = "wagn_test_template"
+    puts "reseed test db"
+    Rake::Task['wagn:seed'].invoke
 
-  #=begin
-    begin
-      # assume we have a good database, ie. just migrated dev db.
-      puts "setting database to wagn_test_template"
-#      set_database 'wagn_test_template'
-      Rake::Task['wagn:seed'].invoke
+    puts ">>populating test data"
+    puts `rake test:populate_template_database --trace`
 
-      # I spent waay to long trying to do this in a less hacky way--
-      # Basically initial database setup/migration breaks your models and you really
-      # need to start rails over to get things going again I tried ActiveRecord::Base.reset_subclasses etc. to no avail. -LWH
-      puts ">>populating test data"
-      puts `rake test:populate_template_database --trace`
-      puts ">>extracting to fixtures"
-      puts `rake test:extract_fixtures --trace`
-    ensure
-      set_database olddb
-    end
-    # go ahead and load the fixtures into the test database
-    puts ">> preparing test database"
-    puts `env RELOAD_TEST_DATA=true rake db:test:prepare --trace`
-
-    Rake::Task['wagn:assume_card_migrations'].invoke
-
+    puts ">>extracting to fixtures"
+    puts `rake test:extract_fixtures --trace`
   end
 
 
   desc "dump current db to test fixtures"
   task :extract_fixtures => :environment do
+    raise "must be test env" unless Rails.env == 'test'
     if RUBY_VERSION !~ /^(2|1\.9)/
       YAML::ENGINE.yamler = 'syck'
     end
@@ -90,6 +71,7 @@ namespace :test do
 
   desc "create sample data for testing"
   task :populate_template_database => :environment do
+    raise "must be test env" unless Rails.env == 'test'
     puts "populate test data\n"
     load "#{Cardio.gem_root}/db/seed/test/seed.rb"
     SharedData.add_test_data

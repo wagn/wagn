@@ -51,9 +51,11 @@ module CarrierWave
         def read_uploader *args
           read_attribute *args
         end
+
         def write_uploader *args
           write_attribute *args
         end
+
         def #{column}=(new_file)
           send(:"#{column}_will_change!")
           db_column = _mounter(:#{column}).serialization_column

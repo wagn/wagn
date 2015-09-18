@@ -57,7 +57,7 @@ namespace :wagn do
     puts "update card_migrations"
     Rake::Task['wagn:assume_card_migrations'].invoke
 
-    if Rails.env == 'test'
+    if Rails.env == 'test' && !ENV['GENERATE_FIXTURES']
       puts "loading test fixtures"
       Rake::Task['db:fixtures:load'].invoke
     else
@@ -286,7 +286,8 @@ namespace :wagn do
     task :dump => :environment do
       Card::Cache.reset_global
 
-      Rake::Task['wagn:bootstrap:copy_mod_files'].invoke
+      # FIXME temporarily taking this out!!
+#      Rake::Task['wagn:bootstrap:copy_mod_files'].invoke
 
       if RUBY_VERSION !~ /^(2|1\.9)/
         YAML::ENGINE.yamler = 'syck'

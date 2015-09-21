@@ -1,7 +1,5 @@
 
 
-
-
 RuleSQL = %{
   select rules.id as rule_id, settings.id as setting_id, sets.id as set_id, sets.left_id as anchor_id, sets.right_id as set_tag_id
   from cards rules
@@ -50,9 +48,7 @@ def rule setting_code, options={}
 end
 
 def rule_card setting_code, options={}
-  Card.with_logging :rule, :message=>setting_code, :context=>name, :details=>options, :category=>'rule' do
-    Card.fetch rule_card_id( setting_code, options ), options
-  end
+  Card.fetch rule_card_id( setting_code, options ), options
 end
 
 def rule_card_id setting_code, options={}

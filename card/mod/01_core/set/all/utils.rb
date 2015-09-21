@@ -7,6 +7,7 @@ module ClassMethods
     Card::Action.delete_cardless
     Card::Reference.repair_missing_referees
     Card::Reference.delete_missing_referers
+    Card.delete_tmp_files_of_cached_uploads
   end
 
   def delete_trashed_files #deletes any file not associated with a real card.
@@ -18,6 +19,17 @@ module ClassMethods
       if trashed_card_ids.member?(file_id)
         raise Card::Error, "Narrowly averted deleting current file" if Card.exists?(file_id) #double check!
         FileUtils.rm_rf "#{dir}/#{file_id}", :secure => true
+      end
+    end
+  end
+
+  def delete_tmp_files_of_cached_uploads
+    actions = Card::Action.find_by_sql "SELECT * FROM card_actions
+      INNER JOIN cards ON card_actions.card_id = cards.id
+      WHERE cards.type_id IN (#{Card::FileID}, #{Card::ImageID}) AND card_actions.draft = true"
+    actions.each do |action|
+      if older_than_five_days? action.created_at && card = action.card # we don't want to delete uploads in progress
+        card.delete_files_for_action action
       end
     end
   end

@@ -5,8 +5,8 @@ describe Card::Success do
   let(:previous) { '/B' }
   let(:home)     { Card['Home'] }
   def success_params params
+    Card::Env.save_location Card['B']
     @success = Card::Success.new(context, params)
-    Card::Env.stub(:previous_location) { previous }
   end
   describe '#target' do
     subject { @success.target }

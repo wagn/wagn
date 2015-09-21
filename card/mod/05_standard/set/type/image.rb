@@ -1,5 +1,7 @@
 attachment :image, :uploader=>ImageUploader
 
+include File::SelectedAction
+
 format do
 
   include File::Format

@@ -1,8 +1,8 @@
-
 require 'wagn/application'
 
 WAGN_SEED_TABLES = %w{ cards card_actions card_acts card_changes card_references }
-WAGN_SEED_PATH   = File.join( Cardio.gem_root, 'db/seed/new')
+WAGN_SEED_PATH   = "#{ ENV['DECKO_SEED_REPO_PATH'] }/new"
+
 
 def prepare_migration
   Card::Cache.reset_global
@@ -16,7 +16,6 @@ namespace :wagn do
   desc "create a wagn database from scratch, load initial data"
   task :seed do
     ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
-
     puts "dropping"
     #fixme - this should be an option, but should not happen on standard creates!
     begin
@@ -59,7 +58,7 @@ namespace :wagn do
     puts "update card_migrations"
     Rake::Task['wagn:assume_card_migrations'].invoke
 
-    if Rails.env == 'test'
+    if Rails.env == 'test' && !ENV['GENERATE_FIXTURES']
       puts "loading test fixtures"
       Rake::Task['db:fixtures:load'].invoke
     else
@@ -288,6 +287,7 @@ namespace :wagn do
     task :dump => :environment do
       Card::Cache.reset_global
 
+      # FIXME temporarily taking this out!!
       Rake::Task['wagn:bootstrap:copy_mod_files'].invoke
 
       if RUBY_VERSION !~ /^(2|1\.9)/
@@ -345,8 +345,9 @@ namespace :wagn do
           card = Card.fetch card.name
 
           target_dir = card.store_dir
-          FileUtils.remove_dir target_dir, force=true if Dir.exists? target_dir
-          FileUtils.mkdir_p target_dir
+
+          #FileUtils.remove_dir target_dir, force=true if Dir.exists? target_dir
+          #FileUtils.mkdir_p target_dir
 
           files.each do |version, path|
             FileUtils.cp path, card.attachment.path(version)

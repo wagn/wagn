@@ -70,9 +70,13 @@ def with_selected_action_id action_id
 end
 
 def selected_content_action_id
-  @selected_action_id ||
- (@current_action && (new_card? || @current_action.new_content? || db_content_changed?) && @current_action.id) ||
-  last_content_action_id
+  @selected_action_id || new_content_action_id || last_content_action_id
+end
+
+def new_content_action_id
+  if @current_action && (new_card? || @current_action.new_content? || db_content_changed?)
+    @current_action.id
+  end
 end
 
 def last_action_id

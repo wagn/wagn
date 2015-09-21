@@ -246,7 +246,7 @@ describe CardController do
         @all_style.reset_machine_output!
       end
 
-      it 'should create missing machine output file' do
+      it 'creates missing machine output file' do
         args = { :id=>@all_style.machine_output_card.name, :format=>'css', :explicit_file=>true }
         get :read, args
         output_card = Card[ "#{ Card[:all].name }+#{ Card[:style].name }+#{ Card[:machine_output].name}" ]
@@ -337,13 +337,35 @@ describe CardController do
     end
 
 
+    describe "delete" do
+      it "works" do
+        c = Card.create( :name=>"Boo", :content=>"booya")
+        post :delete, :id=>"~#{c.id}"
+        assert_response :redirect
+        expect(Card["Boo"]).to eq(nil)
+      end
 
-    it "delete" do
-      c = Card.create( :name=>"Boo", :content=>"booya")
-      post :delete, :id=>"~#{c.id}"
-      assert_response :redirect
-      expect(Card["Boo"]).to eq(nil)
+      # FIXME: this should probably be files in the spot for a delete test
+      it "returns to previous undeleted card after deletion" do
+        t1 = t2 = nil
+        Card::Auth.as_bot do
+          t1 = Card.create! :name => "Testable1", :content => "hello"
+          t2 = Card.create! :name => "Testable1+bandana", :content => "world"
+        end
+
+        get :read, :id => t1.key
+        get :read, :id => t2.key
+
+        post :delete, :id=> '~'+t2.id.to_s
+        assert_nil Card[ t2.name ]
+        assert_redirected_to "/#{t1.name}"
+
+        post :delete, :id => '~'+t1.id.to_s
+        assert_redirected_to '/'
+        assert_nil Card[ t1.name ]
+      end
     end
+
 
     it "should comment" do
       Card::Auth.as_bot do

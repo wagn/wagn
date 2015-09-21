@@ -1,5 +1,20 @@
 attachment :file, :uploader=>FileUploader
 
+module SelectedAction
+  def select_action_by_params params
+    # skip action table lookups for current revision
+    rev_id = params[:rev_id]
+    super unless rev_id && rev_id == last_content_action_id
+  end
+
+  def last_content_action_id
+    # find action id from content (saves lookups)
+    db_content.to_s.split(/[\/\.]/)[1]
+  end
+
+end
+include SelectedAction
+
 format do
   view :source do |args|
     card.attachment.url
@@ -109,7 +124,7 @@ format :html do
         <span class="btn btn-success fileinput-button">
             <i class="glyphicon glyphicon-cloud-upload"></i>
             <span>
-                #{@slot_view == :edit ? 'Replace' : 'Add'} #{card.attachment_name}...
+                #{card.new_card? ? 'Add' : 'Replace'} #{card.attachment_name}...
             </span>
              #{file_field card.attachment_name, :class=>'file-upload slotter'}
         </span>

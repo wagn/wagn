@@ -1,104 +1,111 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Type::ListedBy do
-  let(:list) { Card.fetch("A+books").item_names.sort }
+  let(:listed_by) { Card.fetch("Darles Chickens+books").item_names.sort }
   before do
     Card::Auth.as_bot do
-      Card.create! :name=>'Perry Hotter', :type=>'book', :subcards=>{'+basics'=>{:content=>"[[A]]", :type=>'list'}}
-      Card.create! :name=>'50 grades of shy' , :type=>'book', :subcards=>{'+basics'=>{:content=>"[[A]]\n[[B]]", :type=>'list'}}
+      Card.create! :name=>'Parry Hotter+authors', :content=>"[[Darles Chickens]]", :type=>'list'
+      Card.create! :name=>'50 grades of shy+authors', :content=>"[[Darles Chickens]]\n[[Stam Broker]]", :type=>'list'
     end
   end
-  context "when A is listed by 'Perry Hotter' and '50 grades of shy'" do
+  it "doesn't allow non-cardtype as right part" do
+    expect do
+      Card['Parry Hotter+authors'].update_attributes! :name => 'Parry Hotter+hidden'
+    end.to raise_error
+  end
+
+  context "when Darles Chickens is in the author list of 'Parry Hotter' and '50 grades of shy'" do
     before do
-      Card.create! :name=>'A+books', :type=>'listed by'
+      Card.create! :name=>'Darles Chickens+books', :type=>'listed by'
     end
-    describe 'cached content' do
-      subject { list }
-      it { is_expected.to eq ['50 grades of shy','Perry Hotter'] }
+    describe 'Darles Chickens+books' do
+      subject { listed_by }
+      it { is_expected.to eq ['50 grades of shy','Parry Hotter'] }
 
-      context "when A is removed from Perry Hotter's list" do
+      context "when Darles Chickens is removed from Parry Hotter's list" do
         before do
-          Card['Perry Hotter+basics'].update_attributes! :content=>'[[B]]'
+          Card['Parry Hotter+authors'].update_attributes! :content=>'[[Stam Broker]]'
         end
         it { is_expected.to eq ['50 grades of shy'] }
       end
-      context 'when a Perry Hotter is deleted' do
+      context 'when Parry Hotter is deleted' do
         before do
-          Card['Perry Hotter'].delete
+          Card['Parry Hotter'].delete
         end
         it { is_expected.to eq ['50 grades of shy'] }
       end
-      context 'when a new book is created that lists A' do
+      context 'when a new book is created that lists Darles Chickens' do
         before do
           Card::Auth.as_bot do
-            Card.create! :name=>'Adventures of Buckleharry Finn', :type=>'book', :subcards=>{'+basics'=>{:content=>"[[A]]", :type=>'list'}}
+            Card.create! :name=>'Adventures of Buckleharry Finn', :type=>'book', :subcards=>{'+authors'=>{:content=>"[[Darles Chickens]]", :type=>'list'}}
           end
         end
-        it { is_expected.to eq ['50 grades of shy', 'Adventures of Buckleharry Finn', 'Perry Hotter'] }
+        it { is_expected.to eq ['50 grades of shy', 'Adventures of Buckleharry Finn', 'Parry Hotter'] }
       end
-      context "when A is added to a book's list" do
+      context "when Darles Chickens is added to a book's list" do
         before do
           Card::Auth.as_bot do
-            Card.create! :name=>'Adventures of Buckleharry Finn', :type=>'book', :subcards=>{'+basics'=>{:content=>"[[B]]", :type=>'list'}}
-            Card.fetch('Adventures of Buckleharry Finn+basics').update_attributes! :content=>'[[A]]'
+            Card.create! :name=>'Adventures of Buckleharry Finn', :type=>'book', :subcards=>{'+authors'=>{:content=>"[[Stam Broker]]", :type=>'list'}}
+            Card.fetch('Adventures of Buckleharry Finn+authors').update_attributes! :content=>'[[Darles Chickens]]'
           end
         end
-        it { is_expected.to eq ['50 grades of shy', 'Adventures of Buckleharry Finn', 'Perry Hotter'] }
+        it { is_expected.to eq ['50 grades of shy', 'Adventures of Buckleharry Finn', 'Parry Hotter'] }
       end
 
-      context 'when the cardtype of Perry Hotter changed' do
+      context 'when the cardtype of Parry Hotter changed' do
         before do
-          Card['50 grades of shy'].update_attributes! :type_id => Card::BasicID
+          Card['Parry Hotter'].update_attributes! :type_id => Card::BasicID
         end
         it { is_expected.to eq ['50 grades of shy'] }
       end
-      context 'when the name of Perry Hotter changed to Parry Moppins' do
+      context 'when the name of Parry Hotter changed to Parry Moppins' do
         before do
-          Card['Perry Hotter'].update_attributes! :name => 'Parry Moppins'
+          Card::Auth.as_bot do
+            Card['Parry Hotter'].update_attributes! :name => 'Parry Moppins', :update_referencers=>true
+          end
         end
-        it { is_expected.to eq ['50 grades of shy','Perry Moppins'] }
+        it { is_expected.to eq ['50 grades of shy','Parry Moppins'] }
       end
-      context 'when the name of Perry Hotter+basics changed' do
+      context 'when the name of Parry Hotter+authors changed' do
         before do
-          Card['Perry Hotter+basics'].update_attributes! :name => 'Perry Hotter+hidden'
+          Card['Parry Hotter+authors'].update_attributes! :name => 'Parry Hotter+basic'
         end
         it { is_expected.to eq ['50 grades of shy'] }
       end
-      context 'when the name of A changed' do
+      context 'when the name of Darles Chickens changed' do
         before do
-          Card['A'].update_attributes! :name=>'G'
+          Card['Darles Chickens'].update_attributes! :name=>'Darles Eggs', :update_referencers=>true
         end
-        it { is_expected.to eq ['Perry Hotter', '50 grades of shy'] }
+        subject { Card.fetch("Darles Eggs+books").item_names.sort }
+        it { is_expected.to eq ['50 grades of shy', 'Parry Hotter'] }
       end
-      context 'when the name of A+books changed' do
+      context 'when the cartype of Darles Chickens changed' do
         before do
-          Card['A+books'].update_attributes! :name=>'A+basics'
+          Card['Darles Chickens'].update_attributes! :type_id=>Card::BasicID
+        end
+        it { is_expected.to eq [] }
+      end
+      context 'when the name of Darles Chickens+books changed' do
+        subject { Card.fetch("Darles Chickens+authors").item_names.sort }
+        before do
+          Card['Darles Chickens+books'].update_attributes! :name=>'Darles Chickens+authors'
         end
         it { is_expected.to eq [] }
       end
       context 'when the name of the cardtype books changed' do
         before do
-          Card['50 grades of shy'].update_attributes! :type_id => Card::BasicID
+          Card['book'].update_attributes! :name=>'literature'
         end
-        it { is_expected.to eq ['Perry Hotter'] }
+        subject { Card.fetch("Darles Chickens+literature").item_names.sort }
+        it { is_expected.to eq ['50 grades of shy','Parry Hotter'] }
       end
-      context 'when the name of the cardtype basics changed' do
+      context 'when the name of the cardtype authors changed' do
         before do
-          Card['50 grades of shy'].update_attributes! :type_id => Card::BasicID
+          Card['author'].update_attributes! :type_id => Card::BasicID
         end
-        it { is_expected.to eq ['Perry Hotter'] }
+        it { is_expected.to eq ['50 grades of shy','Parry Hotter'] }
       end
     end
-    # context 'and a book is added to A' do
-    #   it "updates the book's list" do
-    #     Card::Auth.as_bot do
-    #       Card.create! :name=>'Adventures of Buckleharry Finn', :type=>'book', :subcards=>{'+basics'=>{:content=>"", :type=>'list'}}
-    #       Card['A+books'].update_attributes! :content=>"[[Adventures of Buckleharry Finn]]"
-    #     end
-    #     expect(content).to eq("[[Perry Hotter]]\n[[50 grades of shy]]\n[[Adventures of Buckleharry Finn]]")
-    #     expect(Card['Adventures of Buckleharry Finn'].content).to eq('[[A]]')
-    #   end
-    # end
   end
 
 end

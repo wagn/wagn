@@ -432,8 +432,7 @@ EOF
     def define_trait_writer trait
       define_method "#{trait}=" do |value|
         card = send "#{trait}_card"
-        self.subcards ||= {}
-        self.subcards[card.name] = {:type_id => card.type_id, :content=>value }
+        subcards.add :name=>card.name, :type_id => card.type_id, :content=>value
         instance_variable_set "@#{trait}", value
       end
     end

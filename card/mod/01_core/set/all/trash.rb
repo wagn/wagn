@@ -39,7 +39,7 @@ end
 event :validate_delete_children, :after=>:approve, :on=>:delete do
   children.each do |child|
     child.supercard = self
-    subcards[child.name]=child
+    subcards[child.key]=child
     child.trash = true
     unless child.valid?
       child.errors.each do |field, message|

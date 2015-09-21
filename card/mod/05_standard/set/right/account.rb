@@ -65,7 +65,7 @@ event :validate_accountability, :on=>:create, :before=>:approve do
 end
 
 event :require_email, :on=>:create, :after=>:approve do
-  unless subcards["+#{Card[:email].name}"]
+  unless subcards.field(:email)
     errors.add :email, 'required'
   end
 end
@@ -74,12 +74,12 @@ end
 event :set_default_salt, :on=>:create, :before=>:process_subcards do
   salt = Digest::SHA1.hexdigest "--#{Time.now.to_s}--"
   Env[:salt] = salt # HACK!!! need viable mechanism to get this to password
-  subcards["+#{Card[:salt].name}"] ||= { :content => salt }
+  subcards.field(:salt) ||= { :content => salt }
 end
 
 event :set_default_status, :on=>:create, :before=>:process_subcards do
   default_status = ( Auth.needs_setup? ? 'active' : 'pending' )
-  subcards["+#{Card[:status].name}"] = { :content => default_status }
+  subcards.field(:status) = { :content => default_status }
 end
 
 def confirm_ok?
@@ -87,7 +87,7 @@ def confirm_ok?
 end
 
 event :generate_confirmation_token, :on=>:create, :before=>:process_subcards, :when=>proc{ |c| c.confirm_ok? } do
-  subcards["+#{Card[:token].name}"] = {:content => generate_token }
+  subcards.field(:token) = {:content => generate_token }
 end
 
 event :reset_password, :on=>:update, :before=>:approve, :when=>proc{ |c| c.has_reset_token? } do

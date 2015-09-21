@@ -72,6 +72,15 @@ module ClassMethods
     card and card.id
   end
 
+  def assign_or_initialize_by name, attributes
+    if known_card = Card[name]
+      known_card.refresh.assign_attributes attributes
+      known_card
+    else
+      Card.new attributes.reverse_merge :name => name
+    end
+  end
+
   def [](mark)
     fetch mark, :skip_virtual=>true
   end

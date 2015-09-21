@@ -1,51 +1,77 @@
+# My claim+sources (list)
+# content:
+# My source+claims (listed by)
+#
 
-event :update_related_listed_by_card_on_update, :after=>:store, :on=>:save, :changed=>:name, :when=>proc {|c| c.junction? } do
-  new_items = item_keys
-  changed_items =
-    if db_content_was
-      old_items = item_keys(:content=>db_content_was)
-      old_items + new_items - (old_items & new_items)
-    else
-      new_items
-    end
-  update_listed_by_cache_for changed_items
+event :validate_list_name, :before=>:validate, :on=>:save, :changed=>:name do
+  if !junction? || !right || right.type_id != CardtypeID
+    errors.add :name, "must have a cardtype name as right part"
+  end
 end
 
-event :update_related_listed_by_card_on_update, :after=>:store, :on=>:save, :changed=>:type, :when=>proc {|c| c.junction? } do
-  new_items = item_keys
-  changed_items =
-    if db_content_was
-      old_items = item_keys(:content=>db_content_was)
-      old_items + new_items - (old_items & new_items)
-    else
-      new_items
+event :validate_list_content, :before=>:validate, :on=>:save, :changed=>:content do
+  item_cards.each do |item_card|
+    if item_card.type_id != right.id
+      errors.add :content, "#{item_card.name} has wrong cardtype; only cards of type #{cardname.right} are allowed"
     end
-  update_listed_by_cache_for changed_items
+  end
 end
 
-event :update_related_listed_by_card_on_update, :after=>:store, :on=>:save, :changed=>:content, :when=>proc {|c| c.junction? } do
-  new_items = item_keys
-  changed_items =
-    if db_content_was
-      old_items = item_keys(:content=>db_content_was)
-      old_items + new_items - (old_items & new_items)
-    else
-      new_items
-    end
-  update_listed_by_cache_for changed_items
+event :update_related_listed_by_card_on_name_update, :after=>:store, :on=>:update, :changed=>:name do
+  update_all_items
 end
 
-event :update_related_listed_by_card_on_delete, :after=>:store, :on=>:delete, :when=>proc {|c| c.junction? } do
+event :update_related_listed_by_card_on_type_update, :after=>:store, :on=>:update, :changed=>:type_id do
+  update_all_items
+end
+
+event :update_related_listed_by_card_on_create, :after=>:store, :on=>:create do
   update_listed_by_cache_for item_keys
 end
 
-def update_listed_by_cache_for item_keys
-  type_key = left.type_card.key
+
+def update_all_items
+  current_items = item_keys
+  if db_content_was
+    old_items = item_keys(:content=>db_content_was)
+    update_listed_by_cache_for old_items
+  end
+  update_listed_by_cache_for current_items
+end
+
+event :update_related_listed_by_card_on_content_update, :after=>:store, :on=>:update, :changed=>:content do
+  new_items = item_keys
+  changed_items =
+    if db_content_was
+      old_items = item_keys(:content=>db_content_was)
+      old_items + new_items - (old_items & new_items)
+    else
+      new_items
+    end
+  update_listed_by_cache_for changed_items
+end
+
+
+event :cache_type_key, :before=>:store, :on=>:delete, :when=>proc {|c| c.junction? } do
+  @left_type_key = left.type_card.key
+
+end
+
+event :update_related_listed_by_card_on_delete, :after=>:store, :on=>:delete, :when=>proc {|c| c.junction? } do
+  update_listed_by_cache_for item_keys, :type_key => @left_type_key
+end
+
+def update_listed_by_cache_for item_keys, args={}
+  type_key = args[:type_key] || left.type_card.key
 
   item_keys.each do |item_key|
     key = "#{item_key}+#{type_key}"
     if Card::Cache[Card::Set::Type::ListedBy].exist? key
-      Card.fetch(key).update_cached_list
+      if (card = Card.fetch(key))
+        Card.fetch(key).update_cached_list
+      else
+        Card::Cache[Card::Set::Type::ListedBy].delete key
+      end
     end
   end
 end

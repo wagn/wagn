@@ -11,7 +11,8 @@ def assign_attributes args={}
     if newtype = args.delete('type')
       args['type_id'] = Card.fetch_id newtype
     end
-    @subcards = extract_subcard_args! args
+    subcards << args.delete('subcards')
+    subcards.extract_fields! args
     reset_patterns
   end
   params = ActionController::Parameters.new(args)

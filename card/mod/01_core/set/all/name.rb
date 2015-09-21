@@ -16,8 +16,7 @@ def name= newname
     reset_patterns
   end
 
-  subcards.each do |subkey, subcard|
-    next unless Card===subcard
+  subcards.each_with_key do |subcard, subkey|
     subcard.name = subkey.to_name.to_absolute cardname
   end
 

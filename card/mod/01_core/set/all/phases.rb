@@ -124,8 +124,8 @@ def event_applies? opts
     return false unless Array.wrap( opts[:on] ).member? @action
   end
   if changed_field = opts[:changed]
-
     changed_field = 'db_content' if changed_field.to_sym == :content
+    changed_field = 'type_id' if changed_field.to_sym == :type
     return false if @action == :delete or !changes[ changed_field.to_s ]
   end
   if opts[:when]
@@ -134,42 +134,20 @@ def event_applies? opts
   true
 end
 
-def subcards
-  @subcards ||= {}
-end
-
 
 event :process_subcards, :after=>:approve, :on=>:save do
-  subcards.keys.each do |sub_name|
-    opts = @subcards[sub_name] || {}
-    opts = { 'content' => opts } if String===opts
-    ab_name = sub_name.to_name.to_absolute_name name
-    next if ab_name.key == key # don't resave self!
-
-    opts = opts.stringify_keys
-    opts['subcards'] = extract_subcard_args! opts
-
-    opts[:supercard] = self
-
-    subcard =
-      if known_card = Card[ab_name]
-        known_card.refresh.assign_attributes opts
-        known_card
-      elsif (opts['content'].present? && opts['content'].strip.present?) ||
-        opts['subcards'].present? || opts['file'].present? || opts['image'].present?
-        Card.new opts.reverse_merge 'name' => sub_name
-      end
-
-    if subcard
-      @subcards[sub_name] = subcard
-    else
-      @subcards.delete sub_name
-    end
+  subcards.process_if(:context=>self) do |sub_key, opts|
+    sub_key != key &&
+      (
+        Card[sub_key] ||
+        (opts[:content].present? && opts[:content].strip.present?) ||
+        opts[:subcards].present? || opts[:file].present? || opts[:image].present?
+      )
   end
 end
 
 event :approve_subcards, :after=>:process_subcards do
-  subcards.each do |key, subcard|
+  subcards.each do |subcard|
     if !subcard.valid_subcard?
       subcard.errors.each do |field, err|
         err = "#{field} #{err}" unless [:content, :abort].member? field
@@ -180,8 +158,8 @@ event :approve_subcards, :after=>:process_subcards do
 end
 
 event :store_subcards, :after=>:store do
-  subcards.each do |key, sub|
-    sub.save! :validate=>false #unless @draft
+  subcards.each do |subcard|
+    subcard.save! :validate=>false #unless @draft
   end
 end
 

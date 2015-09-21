@@ -1,6 +1,6 @@
 
 format :html do
-  
+
   def default_new_args args
     super args
     args.merge!(
@@ -13,17 +13,17 @@ format :html do
         'card[type_id]' => card.type_id
       }
     )
-    
+
     if Auth.signed_in? and args[:account].confirm_ok?
       args[:title] = 'Invite'
       args[:buttons] = button_tag 'Send Invitation', :situation=>'primary'
       args[:hidden][:success] = '_self'
     end
   end
-  
+
   view :new do |args|
     #FIXME - make more use of standard new view?
-    
+
     frame_and_form :create, args, 'main-success'=>"REDIRECT" do
       [
         _render_name_formgroup( :help=>'usually first and last name' ),
@@ -68,7 +68,7 @@ format :html do
     %{<div class="invite-links">
         #{ headings.map { |h| "<div>#{h}</div>"} * "\n" }
       </div>
-      #{ process_content render_raw }    
+      #{ process_content render_raw }
     }
   end
 end
@@ -77,7 +77,7 @@ event :activate_by_token, :before=>:approve, :on=>:update, :when=>proc{ |c| c.ha
   result = account ? account.authenticate_by_token( @env_token ) : "no account associated with #{name}"
   case result
   when Integer
-    abort :failure, 'no field manipulation mid-activation' if subcards.present? 
+    abort :failure, 'no field manipulation mid-activation' if subcards.present?
     # necessary because the rest of the action is performed as Wagn Bot
     activate_account
     Auth.signin id
@@ -96,7 +96,7 @@ def has_token?
 end
 
 event :activate_account do
-  subcards['+*account'] = {'+*status'=>'active'}
+  subcards.field[:account] = {'+*status'=>'active'}
   self.type_id = Card.default_accounted_type_id
   account.send_welcome_email
 end
@@ -127,15 +127,19 @@ def signed_in_as_me_without_password?
 end
 
 event :redirect_to_edit_password, :on=>:update, :after=>:store, :when=>proc {|c| c.signed_in_as_me_without_password? } do
-  Env.params[:success] = account.edit_password_success_args  
+  Env.params[:success] = account.edit_password_success_args
 end
 
 event :preprocess_account_subcards, :before=>:process_subcards, :on=>:create do
   #FIXME: use codenames!
   email, password = subcards.delete('+*account+*email'), subcards.delete('+*account+*password')
-  subcards['+*account'] ||={}
-  subcards['+*account']['+*email']   = email if email
-  subcards['+*account']['+*password' ]=password if password
+  account_subcards = {}
+  account_subcards["+#{Card[:email].name}"] = email if email
+  account_subcards["+#{Card[:password].name}"] = password if password
+  subcards.field(:account) ||= {}
+  subcards.field(:account)[:subcards] ||= {}
+  subcards.field(:account)[:subcards].merge account_subcards
+
 end
 
 event :act_as_current_for_extend_phase, :before=>:extend, :on=>:create do

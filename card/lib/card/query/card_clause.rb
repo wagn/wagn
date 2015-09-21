@@ -18,7 +18,7 @@ class Card
       CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
 
       attr_reader :query, :rawclause, :selfname
-      attr_accessor :sql, :joins, :join_count, :on
+      attr_accessor :sql, :joins, :join_count, :clause_seq
 
       class << self
         def build query
@@ -363,15 +363,26 @@ class Card
 
 
       def table_alias
-        case
-        when @mods[:return]=='condition'
-          @parent ? @parent.table_alias : "t"
-        when @parent
-          @parent.table_alias + "x"
-        else
-          "t"
+        @table_alias ||= begin
+          if @mods[:return]=='condition' && @parent
+            @parent.table_alias
+          else
+            "c#{clause_id}"
+          end
         end
       end
+
+      def clause_id
+        @clause_id ||= begin
+          if root == self
+            0
+          else
+            root.clause_seq = root.clause_seq.to_i + 1
+          end
+        end
+      end
+
+
 
       def add_join(name, table, cardfield, otherfield, opts={})
         root.join_count = root.join_count.to_i + 1
@@ -456,23 +467,28 @@ class Card
 
 
       def to_sql *args
+        if @mods[:return]=='condition'
+          sql.conditions << basic_conditions
+          conds = sql.conditions.last
+          return (conds.blank? ? nil : "(#{conds})")
+        else
 
+          sql.tables = "cards #{table_alias}"
+          sql.fields.unshift fields_to_sql
+          build_sql
 
-        sql.tables = "cards #{table_alias}"
-        sql.fields.unshift fields_to_sql
-        build_sql
+          sql.order = sort_to_sql  # has side effects!
 
-        sql.order = sort_to_sql  # has side effects!
-
-        sql.group = "GROUP BY #{safe_sql(@mods[:group])}" if !@mods[:group].blank?
-        unless @parent or @mods[:return]=='count'
-          if @mods[:limit].to_i > 0
-            sql.limit  = "LIMIT #{  @mods[:limit ].to_i }"
-            sql.offset = "OFFSET #{ @mods[:offset].to_i }" if !@mods[:offset].blank?
+          sql.group = "GROUP BY #{safe_sql(@mods[:group])}" if !@mods[:group].blank?
+          unless @parent or @mods[:return]=='count'
+            if @mods[:limit].to_i > 0
+              sql.limit  = "LIMIT #{  @mods[:limit ].to_i }"
+              sql.offset = "OFFSET #{ @mods[:offset].to_i }" if !@mods[:offset].blank?
+            end
           end
-        end
 
-        sql.to_s
+          sql.to_s
+        end
       end
 
 
@@ -488,11 +504,6 @@ class Card
 
       def build_conditions
         sql.conditions << basic_conditions
-
-        if @mods[:return]=='condition'
-          conds = sql.conditions.last
-          return conds.blank? ? nil : "(#{conds})"
-        end
 
         if pconds = permission_conditions
           sql.conditions << pconds

@@ -17,8 +17,8 @@ class Card
       DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
       CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
 
-      attr_reader :sql, :query, :rawclause, :selfname
-      attr_accessor :joins, :join_count
+      attr_reader :query, :rawclause, :selfname
+      attr_accessor :sql, :joins, :join_count, :on
 
       class << self
         def build query
@@ -31,6 +31,7 @@ class Card
         @mods = MODIFIERS.clone
         @clause, @joins = {}, {}
         @selfname, @parent = '', nil
+
         @sql = SqlStatement.new
 
         @query = query.clone
@@ -39,6 +40,7 @@ class Card
         @vars.symbolize_keys!
         @query = clean(@query)
         @rawclause = @query.deep_clone
+        @subclauses = []
 
         @sql.distinct = 'DISTINCT' if @parent
 
@@ -382,6 +384,7 @@ class Card
           merge field(:cond) => SqlCond.new(on)
         end
         @joins[join_alias] = ["\n  ", opts[:side], 'JOIN', table, 'AS', join_alias, 'ON', on, "\n"].compact.join ' '
+#        @joins << ( ["\n  ", opts[:side], 'JOIN', table, 'AS', join_alias, 'ON', on, "\n"].compact.join ' ' )
         join_alias
       end
 
@@ -401,6 +404,7 @@ class Card
         cardclause = CardClause.build( args )
         merge field(:cond) => cardclause.merge(val)
         self.joins.merge! cardclause.joins
+        #joins += cardclause.joins
       end
 
       def action_clause(field, linkfield, val)
@@ -421,8 +425,22 @@ class Card
         if id = id_from_clause(val)
           merge field(id_field) => id
         else
-          restrict_by_join id_field, val, opts
+          restrict_by_subclause id_field, val, opts
         end
+      end
+
+      def restrict_by_subclause id_field, val, opts
+        puts "#{id_field}, #{val}, #{opts}"
+        s = subclause opts
+        s.merge(val)
+        s.joins[field(id_field)] = "JOIN cards #{s.table_alias} ON #{table_alias}.#{id_field} = #{s.table_alias}.id"
+      end
+
+      def subclause opts={}
+        subclause = CardClause.build opts.reverse_merge(:_parent=>self)
+        subclause.sql = sql
+        @subclauses << subclause
+        subclause
       end
 
       def restrict_by_join id_field, val, opts={}
@@ -436,24 +454,15 @@ class Card
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+
       def to_sql *args
-        sql.conditions << basic_conditions
 
-        if @mods[:return]=='condition'
-          conds = sql.conditions.last
-          return conds.blank? ? nil : "(#{conds})"
-        end
 
-        if pconds = permission_conditions
-          sql.conditions << pconds
-        end
-
-        sql.fields.unshift fields_to_sql
-        sql.order = sort_to_sql  # has side effects!
         sql.tables = "cards #{table_alias}"
-        sql.joins += @joins.values
+        sql.fields.unshift fields_to_sql
+        build_sql
 
-        sql.conditions << "#{table_alias}.trash is false"
+        sql.order = sort_to_sql  # has side effects!
 
         sql.group = "GROUP BY #{safe_sql(@mods[:group])}" if !@mods[:group].blank?
         unless @parent or @mods[:return]=='count'
@@ -465,6 +474,33 @@ class Card
 
         sql.to_s
       end
+
+
+      def build_sql
+        build_conditions
+
+        sql.joins += @joins.values
+
+        @subclauses.each do |clause|
+          clause.build_sql
+        end
+      end
+
+      def build_conditions
+        sql.conditions << basic_conditions
+
+        if @mods[:return]=='condition'
+          conds = sql.conditions.last
+          return conds.blank? ? nil : "(#{conds})"
+        end
+
+        if pconds = permission_conditions
+          sql.conditions << pconds
+        end
+
+        sql.conditions << "#{table_alias}.trash is false"
+      end
+
 
       def basic_conditions
         @clause.map { |key, val| val.to_sql field_root(key) }.compact.join " #{ current_conjunction } "

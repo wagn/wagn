@@ -38,6 +38,7 @@ class Card::Query
 
 
   def simple_run retrn
+    puts "sql = #{sql}"
     rows = run_sql
 
     case retrn

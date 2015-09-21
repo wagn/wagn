@@ -60,13 +60,13 @@ describe Card::Query do
       expect(Card::Query.new(:plus=>"A", :not=>{:plus=>"A+B"}).run.map(&:name).sort).to eq(%w{ B D E F })
     end
   end
-  
-  
+
+
   describe "multiple values" do
     it "should handle multiple values for relational keys" do
       expect(Card::Query.new( :member_of=>[:all, {:name=>'r1'}, {:key=>'r2'} ], :return=>:name).run.sort).to eq(%w{ u1 u2 })
       expect(Card::Query.new( :member_of=>[      {:name=>'r1'}, {:key=>'r2'} ], :return=>:name).run.sort).to eq(%w{ u1 u2 })
-      expect(Card::Query.new( :member_of=>[:any, {:name=>'r1'}, {:key=>'r2'} ], :return=>:name).run.sort).to eq(%w{ u1 u2 u3 })      
+      expect(Card::Query.new( :member_of=>[:any, {:name=>'r1'}, {:key=>'r2'} ], :return=>:name).run.sort).to eq(%w{ u1 u2 u3 })
     end
 
     it "should handle multiple values for plus_relational keys" do
@@ -76,11 +76,11 @@ describe Card::Query do
     end
 
     it "should handle multiple values for plus_relational keys" do
-      expect(Card::Query.new( :refer_to=>[ :and, 'a', 'b' ], :return=>:name ).run.sort).to eq(%w{ Y }) 
+      expect(Card::Query.new( :refer_to=>[ :and, 'a', 'b' ], :return=>:name ).run.sort).to eq(%w{ Y })
       expect(Card::Query.new( :refer_to=>[       'a', 'T' ], :return=>:name ).run.sort).to eq(%w{ X Y })
       expect(Card::Query.new( :refer_to=>[ :or,  'b', 'z' ], :return=>:name ).run.sort).to eq(%w{ A B Y})
     end
-        
+
   end
 
 
@@ -215,7 +215,10 @@ describe Card::Query do
     end
 
     it "should find right connection cards" do
-      expect(Card::Query.new( :right=>"A" ).run.map(&:name).sort).to eq(["C+A", "D+A", "F+A"])
+      Card::Auth.as_bot
+#      expect(Card::Query.new( :right=>"A" ).run.map(&:name).sort).to eq(["C+A", "D+A", "F+A"])
+      expect(Card::Query.new( :right=>{:content=>"Alpha [[Z]]"} ).run.map(&:name).sort).to eq(["C+A", "D+A", "F+A"])
+
     end
 
     it "should return count" do
@@ -343,8 +346,8 @@ describe Card::Query do
       expect(Card::Query.new(:and=>{:match=>'two'}).run.map(&:name).sort).to eq(CARDS_MATCHING_TWO)
       expect(Card::Query.new(:and=>{}, :type=>"Cardtype E").run.first.name).to eq('type-e-card')
     end
-    
-    
+
+
     it "should work within 'or'" do
       results = Card::Query.new(:or=>{:name=>'Z', :and=>{:left=>'A', :right=>'C'}}).run
       expect(results.length).to eq(2)
@@ -383,7 +386,7 @@ describe Card::Query do
     it "should play nicely with other properties and relationships" do
       expect(Card::Query.new(:plus=>{:found_by=>'Simple Search'}).run.map(&:name).sort).to eq(Card::Query.new(:plus=>{:name=>'A'}).run.map(&:name).sort)
       expect(Card::Query.new(:found_by=>'A+*self', :plus=>'C').run.map(&:name)).to eq(%w{ A })
-      
+
     end
     it "should be able to handle _self" do
       expect(Card::Query.new(:context=>'Simple Search', :left=>{:found_by=>'_self'}, :right=>'B').run.first.name).to eq('A+B')

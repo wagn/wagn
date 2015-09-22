@@ -29,7 +29,7 @@ def get_query params={}
   query = Auth.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
     query_content = params.delete(:query) || raw_content
     #warn "get_query #{name}, #{query_content}, #{params.inspect}"
-    raise("Error in card '#{self.name}':can't run search with empty content") if query_content.empty?
+    raise(JSON::ParserError, "Error in card '#{self.name}':can't run search with empty content") if query_content.empty?
     String === query_content ? JSON.parse( query_content ) : query_content
   end
   query.symbolize_keys!.merge! params.symbolize_keys
@@ -81,7 +81,7 @@ format do
         v[:query] = card.query( search_params )
         v[:item]  = set_inclusion_opts args.merge( :query_view=>v[:query][:view] )
         v
-      rescue =>e
+      rescue JSON::ParserError => e
         { :error => e }
       end
   end

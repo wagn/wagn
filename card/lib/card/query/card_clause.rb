@@ -284,7 +284,7 @@ class Card
           unless c && [SearchTypeID,SetID].include?(c.type_id)
             raise BadQuery, %{"found_by" value needs to be valid Search, but #{c.name} is a #{c.type_name}}
           end
-          restrict_by_join :id, CardClause.new(c.get_query).rawclause
+          restrict_by_subclause :id, CardClause.new(c.get_query).rawclause
         end
       end
 
@@ -440,11 +440,12 @@ class Card
         end
       end
 
-      def restrict_by_subclause id_field, val, opts
-        puts "#{id_field}, #{val}, #{opts}"
+      def restrict_by_subclause sub_field, val, opts={}
+        super_field = opts.delete(:return) || 'id'
+        #puts "#{id_field}, #{val}, #{opts}"
         s = subclause opts
         s.merge(val)
-        s.joins[field(id_field)] = "JOIN cards #{s.table_alias} ON #{table_alias}.#{id_field} = #{s.table_alias}.id"
+        s.joins[field(sub_field)] = "JOIN cards #{s.table_alias} ON #{table_alias}.#{sub_field} = #{s.table_alias}.#{super_field}"
       end
 
       def subclause opts={}

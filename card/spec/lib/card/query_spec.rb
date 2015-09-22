@@ -117,6 +117,7 @@ describe Card::Query do
     end
 
     it "should find Joe User as the card's creator" do
+            Card::Auth.as_bot
       c = Card.fetch 'Create Test'
       expect(Card::Query.new(:creator_of=>'Create Test').run.first.name).to eq('Joe User')
     end
@@ -215,10 +216,8 @@ describe Card::Query do
     end
 
     it "should find right connection cards" do
-      Card::Auth.as_bot
-#      expect(Card::Query.new( :right=>"A" ).run.map(&:name).sort).to eq(["C+A", "D+A", "F+A"])
+      expect(Card::Query.new( :right=>"A" ).run.map(&:name).sort).to eq(["C+A", "D+A", "F+A"])
       expect(Card::Query.new( :right=>{:content=>"Alpha [[Z]]"} ).run.map(&:name).sort).to eq(["C+A", "D+A", "F+A"])
-
     end
 
     it "should return count" do

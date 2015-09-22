@@ -135,6 +135,17 @@ def event_applies? opts
 end
 
 
+event :initialize_subcards, :after=>:prepare, :on=>:save do
+  subcards.process_if(:context=>self) do |sub_key, opts|
+    sub_key != key &&
+      (
+        Card[sub_key] ||
+        (opts[:content].present? && opts[:content].strip.present?) ||
+        opts[:subcards].present? || opts[:file].present? || opts[:image].present?
+      )
+  end
+end
+
 event :process_subcards, :after=>:approve, :on=>:save do
   subcards.process_if(:context=>self) do |sub_key, opts|
     sub_key != key &&

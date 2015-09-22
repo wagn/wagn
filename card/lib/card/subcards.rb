@@ -10,6 +10,17 @@
 
 class Card
 
+  def subcard field_name
+    subcards.field field_name
+  end
+
+  def add_subcard name, args
+    add_field name, args
+  end
+
+  def remove_subcard name
+  end
+
   def subcards
     @subcards ||= Subcards.new
   end
@@ -90,14 +101,19 @@ class Card
       end
     end
 
-    def add card_or_attr, &block
+    def add name_or_card_or_attr, card_or_attr=nil
+      if card_or_attr
+        name = name_or_card_or_attr
+      else
+        card_or_attr = name_or_card_or_attr
+      end
+
       case card_or_attr
       when Hash
-        if @processed
-          raise Card::Error, "subcard attributes added after subcards have been processed"
-        end
         args = card_or_attr
-        if args[:name]
+        if name
+          add_attributes name, args
+        elsif args[:name]
           add_attributes args[:name], args
         else
           args.keys.each_pair do |key, val|
@@ -110,9 +126,6 @@ class Card
         end
       when Card
         add_card card_or_attr
-      end
-      if block_given?
-
       end
     end
 
@@ -270,11 +283,32 @@ class Card
     end
 
     def add_attributes name, attributes
-      @attributes[name.to_name.key] = attributes.symbolize_keys.reverse_merge(:name=>name)
+      if name.kind_of? Symbol
+        codename = name
+        name =
+          if attributes.delete(:absolute)
+            Card[name].name
+          else
+            "+#{Card[name].name}"
+          end
+      end
+      absolute_name = name.to_name.to_absolute_name(@context_card.name)
+      attributes[:name] ||= absolute_name
+      attributes[:supercard] = @context_card
+      card = Card.assign_or_initialize_by attributes
+
+      if codename
+        @cards[codename] = card
+      end
+      @cards[name.to_name.key] = card
     end
 
     def add_card card
+      card.supercard = @context_card
       @cards[card.key] = card
+      if card.codename
+        @cards[card.codename] = card
+      end
     end
   end
 end

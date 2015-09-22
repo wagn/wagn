@@ -96,7 +96,8 @@ def has_token?
 end
 
 event :activate_account do
-  subcards.field[:account] = {'+*status'=>'active'}
+  add_subcard(:account)
+  subcard(:account).add_subcard :status, :content =>'active'
   self.type_id = Card.default_accounted_type_id
   account.send_welcome_email
 end
@@ -133,12 +134,9 @@ end
 event :preprocess_account_subcards, :before=>:process_subcards, :on=>:create do
   #FIXME: use codenames!
   email, password = subcards.delete('+*account+*email'), subcards.delete('+*account+*password')
-  account_subcards = {}
-  account_subcards["+#{Card[:email].name}"] = email if email
-  account_subcards["+#{Card[:password].name}"] = password if password
-  subcards.field(:account) ||= {}
-  subcards.field(:account)[:subcards] ||= {}
-  subcards.field(:account)[:subcards].merge account_subcards
+  add_subcard(:account)
+  subcard(:account).add_subcard( :email, :content => email) if email
+  subcard(:account).add_subcard( :password, :content => password) if password
 
 end
 

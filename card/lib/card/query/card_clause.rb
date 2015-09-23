@@ -415,16 +415,16 @@ class Card
       #~~~~~~~  CONJUNCTION
 
       def all val
-        any_or_all val, :and
+        conjoin val, :and
       end
       alias :and :all
 
       def any val
-        any_or_all val, :or
+        conjoin val, :or
       end
       alias :or :any
 
-      def any_or_all val, conj
+      def conjoin val, conj
         clause = subclause( :return=>:condition, :conj=>conj )
 
         list = case val

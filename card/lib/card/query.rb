@@ -38,7 +38,7 @@ class Card::Query
 
 
   def simple_run retrn
-    puts "sql = #{sql}"
+#    puts "sql = #{sql}"
     rows = run_sql
 
     case retrn
@@ -75,15 +75,16 @@ class Card::Query
     attr_accessor :fields, :tables, :joins, :conditions, :group, :order, :limit, :offset, :distinct
 
     def initialize
-      @fields, @joins, @conditions = [],[],[],[]
+      @fields, @joins, @conditions = [],[],[]
       @tables = @group = @order = @limit =  @offset = @distinct = nil
     end
 
     def to_s
       select = fields.reject(&:blank?) * ', '
       where = conditions.reject(&:blank?) * ' and '
+      where = "WHERE #{where}" unless where.blank?
 
-      ['(SELECT', distinct, select, 'FROM', tables, joins, 'WHERE', where, group, order, limit, offset, ')'].compact * ' '
+      ['(SELECT DISTINCT', select, 'FROM', tables, joins, where, group, order, limit, offset, ')'].compact * ' '
     end
   end
 

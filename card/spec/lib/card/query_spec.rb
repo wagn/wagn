@@ -204,6 +204,7 @@ describe Card::Query do
     end
 
     it "should find plus cards" do
+      Card::Auth.as_bot
       expect(Card::Query.new( :plus=>"A" ).run.map(&:name).sort).to eq(A_JOINEES)
     end
 
@@ -383,7 +384,12 @@ describe Card::Query do
       expect(Card::Query.new(:found_by=>'Image+*type+by name').run.map(&:name).sort).to eq(Card.search(:type=>'Image').map(&:name).sort)
     end
     it "should play nicely with other properties and relationships" do
-      expect(Card::Query.new(:plus=>{:found_by=>'Simple Search'}).run.map(&:name).sort).to eq(Card::Query.new(:plus=>{:name=>'A'}).run.map(&:name).sort)
+      found_by_simple = Card::Query.new( :plus=>{:found_by=>'Simple Search'}, :return=>:name, :sort=>:name ).run
+
+puts "plus_name_A"
+      plus_name_A =     Card::Query.new( :plus=>{:name=>'A'},                 :return=>:name, :sort=>:name ).run
+
+      expect(found_by_simple).to eq(plus_name_A)
       expect(Card::Query.new(:found_by=>'A+*self', :plus=>'C').run.map(&:name)).to eq(%w{ A })
 
     end

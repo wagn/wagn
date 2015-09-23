@@ -29,7 +29,7 @@ class Card
 
       def initialize query
         @mods = MODIFIERS.clone
-        @clause, @joins = {}, {}
+        @conditions, @joins = {}, {}
         @selfname, @parent = '', nil
 
         @sql = SqlStatement.new
@@ -96,16 +96,16 @@ class Card
         s = hashify s
         translate_to_attributes s
         ready_to_sqlize s
-        @clause.merge! s
+        @conditions.merge! s
         self
       end
 
       def hashify s
         case s
+          when Hash;     s
           when String;   { :key => s.to_name.key }
           when Integer;  { :id => s              }
-          when Hash;     s
-          else; raise BadQuery, "Invalid cardclause args #{s.inspect}"
+          else;          raise BadQuery, "Invalid cardclause args #{s.inspect}"
         end
       end
 
@@ -189,10 +189,9 @@ class Card
       end
 
       def part val
-        right = Integer===val ? val : val.clone
-        subcondition :left=>val, :right=>right, :conj=>:or
+        right_val = Integer===val ? val : val.clone
+        any( :left=>val, :right=>right_val)
       end
-
 
       def left val
         restrict :left_id, val
@@ -211,7 +210,7 @@ class Card
       end
 
       def last_editor_of val
-        restrict_by_join :id, val, :return=>'updater_id'
+        restrict_by_subclause :id, val, :return=>'updater_id'
       end
 
       def last_edited_by val
@@ -219,7 +218,7 @@ class Card
       end
 
       def creator_of val
-        restrict_by_join :id, val, :return=>'creator_id'
+        restrict_by_subclause :id, val, :return=>'creator_id'
       end
 
       def created_by val
@@ -251,21 +250,9 @@ class Card
 
       def junction side, val
         part_clause, junction_clause = val.is_a?(Array) ? val : [ val, {} ]
-        restrict_by_join :id, junction_clause, side=>part_clause, :return=>"#{ side==:left ? :right : :left}_id"
+        restrict_by_subclause :id, junction_clause, side=>part_clause, :return=>"#{ side==:left ? :right : :left}_id"
       end
 
-
-      #~~~~~~~  CONJUNCTION
-
-      def and val
-        subcondition val
-      end
-      alias :all :and
-
-      def or val
-        subcondition val, :conj=>:or
-      end
-      alias :any :or
 
       #~~~~~~ SPECIAL
 
@@ -288,11 +275,7 @@ class Card
         end
       end
 
-      def not val
-        subselect = CardClause.build(:return=>:id, :_parent=>self).merge(val).to_sql
-        join_alias = add_join :not, subselect, :id, :id, :side=>'LEFT'
-        merge field(:cond) => SqlCond.new("#{join_alias}.id is null")
-      end
+
 
       def sort val
         return nil if @parent
@@ -410,14 +393,6 @@ class Card
         key.to_s.gsub /\_\d+/, ''
       end
 
-      def subcondition(val, args={})
-        args = { :return=>:condition, :_parent=>self }.merge(args)
-        cardclause = CardClause.build( args )
-        merge field(:cond) => cardclause.merge(val)
-        self.joins.merge! cardclause.joins
-        #joins += cardclause.joins
-      end
-
       def action_clause(field, linkfield, val)
         card_select = CardClause.build(:_parent=>self, :return=>'id').merge(val).to_sql
         sql =  "(SELECT DISTINCT #{field} AS join_card_id FROM card_acts INNER JOIN card_actions ON card_acts.id = card_act_id "
@@ -432,6 +407,41 @@ class Card
         end
       end
 
+
+
+
+
+
+      #~~~~~~~  CONJUNCTION
+
+      def all val
+        any_or_all val, :and
+      end
+      alias :and :all
+
+      def any val
+        any_or_all val, :or
+      end
+      alias :or :any
+
+      def any_or_all val, conj
+        clause = subclause( :return=>:condition, :conj=>conj )
+
+        list = case val
+          when Array; val
+          when Hash; val.map { |key, value| {key => value} }
+          end
+        list.each do |val|
+          clause.merge val
+        end
+      end
+
+      def not val
+        subselect = CardClause.build(:return=>:id, :_parent=>self).merge(val).to_sql
+        join_alias = add_join :not, subselect, :id, :id, :side=>'LEFT'
+        merge field(:cond) => SqlCond.new("#{join_alias}.id is null")
+      end
+
       def restrict id_field, val, opts={}
         if id = id_from_clause(val)
           merge field(id_field) => id
@@ -442,10 +452,15 @@ class Card
 
       def restrict_by_subclause sub_field, val, opts={}
         super_field = opts.delete(:return) || 'id'
-        #puts "#{id_field}, #{val}, #{opts}"
+        join_side = @mods[:conj] == 'or' ? 'LEFT' : ''   #and is_subselect  opts.delete(:join_side)
         s = subclause opts
+        #FIXME - this is SQL before SQL phase!!
+        s.joins[field(sub_field)] = "
+#{join_side} JOIN cards #{s.table_alias} ON #{table_alias}.#{sub_field} = #{s.table_alias}.#{super_field}
+      AND #{s.standard_table_conditions}"
+
         s.merge(val)
-        s.joins[field(sub_field)] = "JOIN cards #{s.table_alias} ON #{table_alias}.#{sub_field} = #{s.table_alias}.#{super_field}"
+        s
       end
 
       def subclause opts={}
@@ -455,71 +470,71 @@ class Card
         subclause
       end
 
-      def restrict_by_join id_field, val, opts={}
-        opts.reverse_merge!(:return=>:id, :_parent=>self)
-        subselect = CardClause.build(opts).merge(val).to_sql
-        add_join "card_#{id_field}", subselect, id_field, opts[:return]
-      end
-
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       # SQL GENERATION - translate merged hash into complete SQL statement.
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 
-      def to_sql *args
-        if @mods[:return]=='condition'
-          sql.conditions << basic_conditions
-          conds = sql.conditions.last
-          return (conds.blank? ? nil : "(#{conds})")
-        else
+       def to_sql *args
 
-          sql.tables = "cards #{table_alias}"
-          sql.fields.unshift fields_to_sql
-          build_sql
+        sql.tables = "cards #{table_alias}"
+        sql.fields.unshift fields_to_sql
+        sql.joins = build_joins
 
-          sql.order = sort_to_sql  # has side effects!
+        sql.conditions = build_conditions << standard_table_conditions
 
-          sql.group = "GROUP BY #{safe_sql(@mods[:group])}" if !@mods[:group].blank?
-          unless @parent or @mods[:return]=='count'
-            if @mods[:limit].to_i > 0
-              sql.limit  = "LIMIT #{  @mods[:limit ].to_i }"
-              sql.offset = "OFFSET #{ @mods[:offset].to_i }" if !@mods[:offset].blank?
-            end
+        sql.order = sort_to_sql  # has side effects!
+
+        sql.group = "GROUP BY #{safe_sql(@mods[:group])}" if !@mods[:group].blank?
+        unless @parent or @mods[:return]=='count'
+          if @mods[:limit].to_i > 0
+            sql.limit  = "LIMIT #{  @mods[:limit ].to_i }"
+            sql.offset = "OFFSET #{ @mods[:offset].to_i }" if !@mods[:offset].blank?
           end
-
-          sql.to_s
         end
+
+        sql.to_s
       end
 
 
-      def build_sql
-        build_conditions
+      def build_joins
 
-        sql.joins += @joins.values
-
-        @subclauses.each do |clause|
-          clause.build_sql
-        end
+        [ @joins.values, @subclauses.map( &:build_joins ) ].flatten.compact
       end
 
       def build_conditions
-        sql.conditions << basic_conditions
+        cond_list = basic_conditions
+        cond_list +=
+          @subclauses.map do |clause|
+            clause.build_conditions
+          end
+        cond_list.compact!
 
-        if pconds = permission_conditions
-          sql.conditions << pconds
+        if @mods[:return] == 'condition'
+          cond_list.empty? ? [] : [ "(#{ cond_list.join " #{ current_conjunction } " })" ]
+        else
+          cond_list
         end
-
-        sql.conditions << "#{table_alias}.trash is false"
       end
 
 
       def basic_conditions
-        @clause.map { |key, val| val.to_sql field_root(key) }.compact.join " #{ current_conjunction } "
+        @conditions.map do |key, val|
+          val.to_sql field_root(key)
+        end
       end
 
       def current_conjunction
         @mods[:conj].blank? ? :and : @mods[:conj]
+      end
+
+      def standard_table_conditions
+        [trash_condition, permission_conditions].compact * ' AND '
+      end
+
+      def trash_condition
+        "#{table_alias}.trash is false"
       end
 
       def permission_conditions

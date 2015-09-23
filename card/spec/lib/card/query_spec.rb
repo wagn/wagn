@@ -386,8 +386,6 @@ describe Card::Query do
     end
     it "should play nicely with other properties and relationships" do
       found_by_simple = Card::Query.new( :plus=>{:found_by=>'Simple Search'}, :return=>:name, :sort=>:name ).run
-
-puts "plus_name_A"
       plus_name_A =     Card::Query.new( :plus=>{:name=>'A'},                 :return=>:name, :sort=>:name ).run
 
       expect(found_by_simple).to eq(plus_name_A)

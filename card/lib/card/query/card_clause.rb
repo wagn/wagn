@@ -18,7 +18,7 @@ class Card
       CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
 
       attr_reader :query, :rawclause, :selfname
-      attr_accessor :sql, :joins, :join_count, :clause_seq
+      attr_accessor :sql, :joins, :join_count, :table_seq
 
       class << self
         def build query
@@ -139,7 +139,7 @@ class Card
             case ATTRIBUTES[keyroot]
               when :ignore                               #noop
               when :relational, :special, :conjunction ; relate is_array, keyroot, val, :send
-              when :ref_relational                     ; relate is_array, keyroot, val, :refclause
+              when :ref_relational                     ; relate is_array, keyroot, val, :restrict_by_reference
               when :plus_relational
                 # Arrays can have multiple interpretations for these, so we have to look closer...
                 subcond = is_array && ( Array===val.first || conjunction(val.first) )
@@ -165,8 +165,28 @@ class Card
         end
       end
 
-      def refclause key, val
-        add_join :ref, RefClause.new( key, val, self ).to_sql, :id, :ref_id
+
+      def restrict_by_reference key, val
+        join_side = @mods[:conj] == 'or' ? 'LEFT' : ''
+        #FIXME - this is SQL before SQL phase!!
+
+        r = RefClause.new( key, val, self )
+
+        joins[field(key)] = "
+#{join_side} JOIN card_references #{r.table_alias} ON #{table_alias}.id = #{r.table_alias}.#{r.infield}
+        "
+        s = nil
+        if r.cardquery
+          s = restrict_by_subclause r.outfield, r.cardquery, :join_to=>r.table_alias
+        end
+        if r.conditions.any?
+          s ||= subclause
+          s.add_condition r.conditions.map { |condition| "#{r.table_alias}.#{condition}" } * ' AND '
+        end
+      end
+
+      def add_condition condition
+        merge field(:cond) => SqlCond.new(condition)
       end
 
 
@@ -271,6 +291,7 @@ class Card
           unless c && [SearchTypeID,SetID].include?(c.type_id)
             raise BadQuery, %{"found_by" value needs to be valid Search, but #{c.name} is a #{c.type_name}}
           end
+          #FIXME - this is silly.  joining id on id??
           restrict_by_subclause :id, CardClause.new(c.get_query).rawclause
         end
       end
@@ -350,22 +371,23 @@ class Card
           if @mods[:return]=='condition' && @parent
             @parent.table_alias
           else
-            "c#{clause_id}"
-          end
-        end
-      end
-
-      def clause_id
-        @clause_id ||= begin
-          if root == self
-            0
-          else
-            root.clause_seq = root.clause_seq.to_i + 1
+            "c#{table_id}"
           end
         end
       end
 
 
+      def table_id force=false
+        if force
+          tick_table_seq!
+        else
+          @table_id ||= tick_table_seq!
+        end
+      end
+
+      def tick_table_seq!
+        root.table_seq = root.table_seq.to_i + 1
+      end
 
       def add_join(name, table, cardfield, otherfield, opts={})
         root.join_count = root.join_count.to_i + 1
@@ -408,10 +430,6 @@ class Card
       end
 
 
-
-
-
-
       #~~~~~~~  CONJUNCTION
 
       def all val
@@ -452,14 +470,17 @@ class Card
 
       def restrict_by_subclause sub_field, val, opts={}
         super_field = opts.delete(:return) || 'id'
+        join_to = opts.delete(:join_to) || table_alias
         join_side = @mods[:conj] == 'or' ? 'LEFT' : ''   #and is_subselect  opts.delete(:join_side)
         s = subclause opts
         #FIXME - this is SQL before SQL phase!!
+# WQL: #{s.query}
+
         s.joins[field(sub_field)] = "
-#{join_side} JOIN cards #{s.table_alias} ON #{table_alias}.#{sub_field} = #{s.table_alias}.#{super_field}
+#{join_side} JOIN cards #{s.table_alias} ON #{join_to}.#{sub_field} = #{s.table_alias}.#{super_field}
       AND #{s.standard_table_conditions}"
 
-        s.merge(val)
+        s.merge(val)  # not sure it makes sense to have val separate from opts?
         s
       end
 
@@ -499,7 +520,6 @@ class Card
 
 
       def build_joins
-
         [ @joins.values, @subclauses.map( &:build_joins ) ].flatten.compact
       end
 
@@ -509,10 +529,10 @@ class Card
           @subclauses.map do |clause|
             clause.build_conditions
           end
-        cond_list.compact!
+        cond_list.reject! &:blank?
 
-        if @mods[:return] == 'condition'
-          cond_list.empty? ? [] : [ "(#{ cond_list.join " #{ current_conjunction } " })" ]
+        if cond_list.size > 1
+          [ "(#{ cond_list.join " #{ current_conjunction.upcase } " })" ]
         else
           cond_list
         end

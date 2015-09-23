@@ -173,9 +173,7 @@ class Card
 
         r = RefClause.new( key, val, self )
 
-        joins[field(key)] = "
-#{join_side} JOIN card_references #{r.table_alias} ON #{table_alias}.id = #{r.table_alias}.#{r.infield}
-        "
+        joins[field(key)] = "\n#{join_side} JOIN card_references #{r.table_alias} ON #{table_alias}.id = #{r.table_alias}.#{r.infield}\n"
         s = nil
         if r.cardquery
           s = restrict_by_subclause r.outfield, r.cardquery, :join_to=>r.table_alias
@@ -606,8 +604,8 @@ class Card
           else
             safe_sql(key)
           end
-        sql.fields << order_field if self == root
         order_field = "CAST(#{order_field} AS #{cast_type(as)})" if as
+        sql.fields << order_field if self == root
         "#{order_field} #{dir}"
 
       end

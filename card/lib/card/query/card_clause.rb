@@ -18,7 +18,7 @@ class Card
       CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
 
       attr_reader :query, :rawclause, :selfname
-      attr_accessor :sql, :joins, :join_count, :table_seq
+      attr_accessor :sql, :joins, :join_count, :table_seq, :deleteme
 
       class << self
         def build query
@@ -138,7 +138,8 @@ class Card
             is_array = Array===val
             case ATTRIBUTES[keyroot]
               when :ignore                               #noop
-              when :relational, :special, :conjunction ; relate is_array, keyroot, val, :send
+              when :conjunction                        ; send keyroot, val
+              when :relational, :special               ; relate is_array, keyroot, val, :send
               when :ref_relational                     ; relate is_array, keyroot, val, :restrict_by_reference
               when :plus_relational
                 # Arrays can have multiple interpretations for these, so we have to look closer...
@@ -445,6 +446,8 @@ class Card
       def conjoin val, conj
         clause = subclause( :return=>:condition, :conj=>conj )
 
+        clause.deleteme = "BLARRB"
+
         list = case val
           when Array; val
           when Hash; val.map { |key, value| {key => value} }
@@ -503,7 +506,7 @@ class Card
         sql.fields.unshift fields_to_sql
         sql.joins = build_joins
 
-        sql.conditions = build_conditions << standard_table_conditions
+        sql.conditions = [ build_conditions, standard_table_conditions ].reject( &:blank? ).join " AND \n    "
 
         sql.order = sort_to_sql  # has side effects!
 
@@ -532,9 +535,9 @@ class Card
         cond_list.reject! &:blank?
 
         if cond_list.size > 1
-          [ "(#{ cond_list.join " #{ current_conjunction.upcase } " })" ]
+          "(#{ cond_list.join " #{ current_conjunction.upcase }\n" })"
         else
-          cond_list
+          cond_list.join
         end
       end
 

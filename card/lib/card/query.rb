@@ -82,8 +82,7 @@ class Card::Query
 
     def to_s
       select = fields.reject(&:blank?) * ', '
-      where = conditions.reject(&:blank?) * ' and '
-      where = "WHERE #{where}" unless where.blank?
+      where = "WHERE #{conditions}" unless conditions.blank?
 
       ['(SELECT DISTINCT', select, 'FROM', tables, joins, where, group, order, limit, offset, ')'].compact * ' '
     end

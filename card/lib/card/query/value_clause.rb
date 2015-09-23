@@ -1,51 +1,48 @@
 class Card::Query
   class ValueClause < Clause
-    def initialize clause, cardclause
+
+    attr_reader :cardclause, :operator, :value
+
+    def initialize rawvalue, cardclause
       @cardclause = cardclause
-
-      # bare value shortcut
-      @clause = case clause
-        when ValueClause; clause.instance_variable_get('@clause')  # FIXME what a hack (what's this for?)
-        when Array;     clause
-        when String;    ['=', clause]
-        when Integer;   ['=', clause]
-        else raise("Invalid Condition Clause #{clause.inspect}")
-      end
-
-      # operator aliases
-      @clause[0] = @clause[0].to_s
-      if target = OPERATORS[@clause[0]]
-        @clause[0] = target
-      end
-
-      # check valid operator
-      raise("Invalid Operator #{@clause[0]}") unless OPERATORS.has_key?(@clause[0])
-
-      # handle IN  #FIXME -- shouldn't this handle "not in", too?
-      if @clause[0]=='in' and !@clause[1].is_a?(CardClause) and !@clause[1].is_a?(RefClause)
-        @clause = [@clause[0], @clause[1..-1]]
-      end
+      @operator, @value = parse_value rawvalue
+      canonicalize_operator
     end
 
-    def op
-      @clause[0]
+    def parse_value rawvalue
+      operator =
+        case rawvalue
+        when Array;     rawvalue.shift
+        when String;    '='
+        when Integer;   '='
+        else raise("Invalid Condition Clause #{rawvalue}.inspect}")
+        end
+      [operator, rawvalue]
     end
+
+    def canonicalize_operator
+      @operator = @operator.to_s
+
+      if target = OPERATORS[@operator]
+        @operator = target
+      end
+
+      raise "Invalid Operator #{@operator}" unless OPERATORS.has_key?(@operator)
+    end
+
 
     def sqlize(v)
       case v
-        when CardClause, RefClause, SqlCond; v.to_sql
-        when Array;    "(" + v.flatten.collect {|x| sqlize(x)}.join(',') + ")"
-        else quote(v.to_s)
+      when CardClause, SqlCond; v.to_sql
+      when Array;    "(" + v.flatten.collect {|x| sqlize(x)}.join(',') + ")"
+      else quote(v.to_s)
       end
     end
 
     def to_sql field
-      op,v = @clause
-      #warn "to_sql(#{field}), #{op}, #{v}, #{@cardclause.inspect}"
-      v=@cardclause.selfname if v=='_self'
+      op,v = @operator, @value
       table = @cardclause.table_alias
 
-      #warn "to_sql #{field}, #{v} (#{op})"
       field, v = case field
         when "cond";     return "(#{sqlize(v)})"
         when "name";     ["#{table}.key",      [v].flatten.map(&:to_name).map(&:key)]
@@ -61,5 +58,6 @@ class Card::Query
         "#{field} #{op} #{sqlize(v)}"
       end
     end
+
   end
 end

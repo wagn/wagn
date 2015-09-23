@@ -302,6 +302,7 @@ class Card
       def sort val
         return nil if @parent
         val[:return] = val[:return] ? safe_sql(val[:return]) : 'db_content'
+        val[:_parent] = self
         item = val.delete(:item) || 'left'
 
         if val[:return] == 'count'
@@ -605,6 +606,7 @@ class Card
           else
             safe_sql(key)
           end
+        sql.fields << order_field if self == root
         order_field = "CAST(#{order_field} AS #{cast_type(as)})" if as
         "#{order_field} #{dir}"
 

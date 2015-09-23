@@ -28,19 +28,6 @@ def assign_set_specific_attributes
   end
 end
 
-def extract_subcard_args! args={}
-  extracted_subcards = args.delete('subcards') || {}
-  args.keys.each do |key|
-    if key =~ /^\+/
-      val = args.delete key
-      val = { 'content' => val } if String === val
-      extracted_subcards[key] = val
-    end
-  end
-  extracted_subcards
-end
-
-
 protected
 
 event :set_content, :before=>:store, :on=>:save do

@@ -25,7 +25,7 @@ rescue Card::Abort => e
     @supercard ? raise( e ) : true
   elsif e.status == :success
     if @supercard
-      @supercard.subcards.delete_if { |k,v| v==self }
+      @supercard.subcards.delete(key)
     end
     true
   end
@@ -105,8 +105,7 @@ end
 def rescue_event e
   @action = nil
   expire_pieces
-  subcards.each do |key, card|
-    next unless Card===card
+  subcards.each do |card|
     card.expire_pieces
   end
   raise e
@@ -135,34 +134,37 @@ def event_applies? opts
 end
 
 
-event :initialize_subcards, :after=>:prepare, :on=>:save do
-  subcards.process_if(:context=>self) do |sub_key, opts|
-    sub_key != key &&
-      (
-        Card[sub_key] ||
-        (opts[:content].present? && opts[:content].strip.present?) ||
-        opts[:subcards].present? || opts[:file].present? || opts[:image].present?
-      )
+
+event :filter_empty_subcards, :after=>:approve, :on=>:save do
+  subcards.each_card do |subcard|
+    if subcard.new? && (subcard.content.empty? || subcard.content.strip.empty?) &&
+      !subcard.subcards.present? && !subcard.file.present? && !subcard.image.present?   # TODO: check if file and image checks are necessary. Depends on whether attachment cards write the identifier to db_content before or after this event
+      remove_subcard subcard
+    end
   end
 end
 
-event :process_subcards, :after=>:approve, :on=>:save do
-  subcards.process_if(:context=>self) do |sub_key, opts|
-    sub_key != key &&
-      (
-        Card[sub_key] ||
-        (opts[:content].present? && opts[:content].strip.present?) ||
-        opts[:subcards].present? || opts[:file].present? || opts[:image].present?
-      )
-  end
+# left for compatibility reasons because other events refer to this
+event :process_subcards, :after=>:filter_empty_subcards, :on=>:save do
 end
+
+# event :process_subcards, :after=>:approve, :on=>:save do
+#   subcards.process_if(:context=>self) do |sub_key, opts|
+#     sub_key != key &&
+#       (
+#         Card[sub_key] ||
+#         (opts[:content].present? && opts[:content].strip.present?) ||
+#         opts[:subcards].present? || opts[:file].present? || opts[:image].present?
+#       )
+#   end
+# end
 
 event :approve_subcards, :after=>:process_subcards do
   subcards.each do |subcard|
     if !subcard.valid_subcard?
       subcard.errors.each do |field, err|
         err = "#{field} #{err}" unless [:content, :abort].member? field
-        errors.add subcard.relative_name, err
+        errors.add subcard.relative_name.s, err
       end
     end
   end
@@ -170,7 +172,7 @@ end
 
 event :store_subcards, :after=>:store do
   subcards.each do |subcard|
-    subcard.save! :validate=>false #unless @draft
+    subcard.save! :validate=>false if subcard != self#unless @draft
   end
 end
 

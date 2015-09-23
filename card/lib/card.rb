@@ -32,6 +32,7 @@ class Card < ActiveRecord::Base
   require_dependency 'card/act'
   require_dependency 'card/change'
   require_dependency 'card/reference'
+  require_dependency 'card/subcards'
   require_dependency 'card/view_cache'
 
   has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id

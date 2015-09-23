@@ -3,10 +3,12 @@ require 'uuid'
 def name= newname
   cardname = newname.to_name
   if @supercard
-    @relative_name = cardname.to_s
-    relparts = @relative_name.to_name.parts
-    @superleft = @supercard if relparts.size==2 && relparts.first.blank?
-    cardname = @relative_name.to_name.to_absolute_name @supercard.name
+    @given_name = cardname.to_s   # fixme either we have to recognise relative names here or use leading + in subcards
+    relparts = @given_name.to_name.parts
+    if relparts.size==2 && ( relparts.first.blank? || relparts.first.to_name.key == @supercard.key )
+      @superleft = @supercard
+    end
+    cardname = @given_name.to_name.to_absolute_name @supercard.name
   end
 
   newkey = cardname.key
@@ -16,8 +18,8 @@ def name= newname
     reset_patterns
   end
 
-  subcards.each_with_key do |subcard, subkey|
-    subcard.name = subkey.to_name.to_absolute cardname
+  subcards.each do |subcard|
+    subcard.name = subcard.cardname.replace_part name, newname
   end
 
   write_attribute :name, cardname.s
@@ -44,9 +46,22 @@ def junction?
   cardname.junction?
 end
 
+def relative_name context_name=nil
+  if !context_name && @supercard
+    context_name = @supercard.cardname
+  end
+  cardname.relative_name(context_name)
+end
 
-def relative_name
-  @relative_name || name
+def absolute_name context_name=nil
+  if !context_name && @supercard
+    context_name = @supercard.cardname
+  end
+  cardname.absolute_name(context_name)
+end
+
+def given_name
+  @given_name || name
 end
 
 def left *args

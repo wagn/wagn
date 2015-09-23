@@ -58,7 +58,7 @@ module ClassMethods
         return
       else
         card.include_set_modules unless opts[:skip_modules]  # need to load modules here to call the right virtual? method
-        return unless card.virtual?
+        return unless card.virtual? || opts[:subcard]
       end
       card.name = mark.to_s if mark && mark.to_s != card.name
     end

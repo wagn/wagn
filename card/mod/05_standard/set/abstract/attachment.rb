@@ -12,6 +12,7 @@ event :determine_store_place, :before=>:prepare, :on=>:update do
   @store_place = load_from_mod || :deck
 end
 
+
 event :upload_attachment, :before=>:validate_name, :on=>:save, :when=>proc { |c| c.preliminary_upload? } do
   save_original_filename  # save original filename as comment in action
   write_identifier        # set db_content (needs original filename to determine extension)
@@ -106,6 +107,7 @@ end
 def store_place
   @store_place ||= mod_file? || :deck
 end
+
 
 def load_from_mod= value
   @mod = value

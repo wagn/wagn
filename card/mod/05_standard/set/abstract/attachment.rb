@@ -94,7 +94,7 @@ def preliminary_upload?
 end
 
 def save_preliminary_upload?
-  !@cached_upload.nil?
+  @cached_upload.present?
 end
 
 def attachment_changed?

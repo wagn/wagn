@@ -5,6 +5,8 @@ class Card
     require_dependency 'card/query/clause'
     require_dependency 'card/query/value_clause'
     require_dependency 'card/query/ref_clause'
+    require_dependency 'card/query/attributes'
+    require_dependency 'card/query/sql_statement'
 
 
     include Clause
@@ -346,21 +348,7 @@ class Card
     end
 
 
-    class SqlStatement
-      attr_accessor :fields, :tables, :joins, :conditions, :group, :order, :limit, :offset, :distinct
 
-      def initialize
-        @fields, @joins, @conditions = [],[],[]
-        @tables = @group = @order = @limit =  @offset = @distinct = nil
-      end
-
-      def to_s
-        select = fields.reject(&:blank?) * ', '
-        where = "WHERE #{conditions}" unless conditions.blank?
-
-        ['(SELECT DISTINCT', select, 'FROM', tables, joins, where, group, order, limit, offset, ')'].compact * ' '
-      end
-    end
 
   end
 end

@@ -26,7 +26,6 @@ class Card
       end
 
 
-
       def editor_of val
         acts_tbl    = "a#{table_id force=true}"
         actions_tbl = "an#{table_id force=true}"
@@ -256,6 +255,20 @@ class Card
       end
 
 
+      def join_cards sub_field, val, opts={}
+        super_field = opts[:return]  || 'id'
+        join_to     = opts[:join_to] || table_alias
+
+        #FIXME - this is SQL before SQL phase!!
+        s = subclause
+        s.joins[field(sub_field)] = "
+  #{join_table} cards #{s.table_alias} ON #{join_to}.#{sub_field} = #{s.table_alias}.#{super_field}
+      AND #{s.standard_table_conditions}"
+        s.interpret(val)
+        s
+      end
+
+
       def field name
         @fields ||= {}
         @fields[name] ||= 0
@@ -268,12 +281,7 @@ class Card
       end
 
 
-      def id_from_clause clause
-        case clause
-        when Integer ; clause
-        when String  ; Card.fetch_id(clause)
-        end
-      end
+
 
 
       #~~~~~~~  CONJUNCTION
@@ -310,19 +318,15 @@ class Card
         end
       end
 
-
-      def join_cards sub_field, val, opts={}
-        super_field = opts[:return]  || 'id'
-        join_to     = opts[:join_to] || table_alias
-
-        #FIXME - this is SQL before SQL phase!!
-        s = subclause
-        s.joins[field(sub_field)] = "
-  #{join_table} cards #{s.table_alias} ON #{join_to}.#{sub_field} = #{s.table_alias}.#{super_field}
-      AND #{s.standard_table_conditions}"
-        s.interpret(val)
-        s
+      def id_from_clause clause
+        case clause
+        when Integer ; clause
+        when String  ; Card.fetch_id(clause)
+        end
       end
+
+
+
 
     end
   end

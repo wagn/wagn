@@ -18,7 +18,7 @@ class Card
       CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
 
       attr_reader :query, :rawclause, :selfname
-      attr_accessor :sql, :joins, :join_count, :table_seq, :deleteme
+      attr_accessor :sql, :joins, :join_count, :table_seq
 
       class << self
         def build query
@@ -140,7 +140,7 @@ class Card
               when :ignore                               #noop
               when :conjunction                        ; send keyroot, val
               when :relational, :special               ; relate is_array, keyroot, val, :send
-              when :ref_relational                     ; relate is_array, keyroot, val, :restrict_by_reference
+              when :ref_relational                     ; relate is_array, keyroot, val, :join_references
               when :plus_relational
                 # Arrays can have multiple interpretations for these, so we have to look closer...
                 subcond = is_array && ( Array===val.first || conjunction(val.first) )
@@ -167,16 +167,15 @@ class Card
       end
 
 
-      def restrict_by_reference key, val
-        join_side = @mods[:conj] == 'or' ? 'LEFT' : ''
+      def join_references key, val
         #FIXME - this is SQL before SQL phase!!
 
         r = RefClause.new( key, val, self )
 
-        joins[field(key)] = "\n#{join_side} JOIN card_references #{r.table_alias} ON #{table_alias}.id = #{r.table_alias}.#{r.infield}\n"
+        joins[field(key)] = "\n#{join_table} card_references #{r.table_alias} ON #{table_alias}.id = #{r.table_alias}.#{r.infield}\n"
         s = nil
         if r.cardquery
-          s = restrict_by_subclause r.outfield, r.cardquery, :join_to=>r.table_alias
+          s = join_cards r.outfield, r.cardquery, :join_to=>r.table_alias
         end
         if r.conditions.any?
           s ||= subclause
@@ -220,16 +219,35 @@ class Card
         restrict :right_id, val
       end
 
+
+
       def editor_of val
-        action_clause :actor_id, "card_actions.card_id", val
+        acts_tbl    = "a#{table_id force=true}"
+        actions_tbl = "an#{table_id force=true}"
+
+        joins[field(:actor_id)] = %(
+        #{join_table} card_acts #{acts_tbl} ON #{table_alias}.id = #{acts_tbl}.#{:actor_id}
+        JOIN card_actions #{actions_tbl} ON #{acts_tbl}.id = #{actions_tbl}.card_act_id
+        )
+
+        sub = join_cards :card_id, val, :join_to=>actions_tbl
       end
 
+
       def edited_by val
-        action_clause "card_actions.card_id", :actor_id, val
+        acts_tbl    = "a#{table_id force=true}"
+        actions_tbl = "an#{table_id force=true}"
+
+        joins[field(:actor_id)] = %(
+        #{join_table} card_actions #{actions_tbl} ON #{table_alias}.id = #{actions_tbl}.card_id
+        JOIN card_acts #{acts_tbl} ON #{actions_tbl}.card_act_id = #{acts_tbl}.id
+        )
+
+        sub = join_cards :actor_id, val, :join_to=>acts_tbl
       end
 
       def last_editor_of val
-        restrict_by_subclause :id, val, :return=>'updater_id'
+        join_cards :id, val, :return=>'updater_id'
       end
 
       def last_edited_by val
@@ -237,7 +255,7 @@ class Card
       end
 
       def creator_of val
-        restrict_by_subclause :id, val, :return=>'creator_id'
+        join_cards :id, val, :return=>'creator_id'
       end
 
       def created_by val
@@ -269,7 +287,7 @@ class Card
 
       def junction side, val
         part_clause, junction_clause = val.is_a?(Array) ? val : [ val, {} ]
-        restrict_by_subclause :id, junction_clause, side=>part_clause, :return=>"#{ side==:left ? :right : :left}_id"
+        join_cards :id, junction_clause, side=>part_clause, :return=>"#{ side==:left ? :right : :left}_id"
       end
 
 
@@ -291,7 +309,7 @@ class Card
             raise BadQuery, %{"found_by" value needs to be valid Search, but #{c.name} is a #{c.type_name}}
           end
           #FIXME - this is silly.  joining id on id??
-          restrict_by_subclause :id, CardClause.new(c.get_query).rawclause
+          join_cards :id, CardClause.new(c.get_query).rawclause
         end
       end
 
@@ -415,11 +433,9 @@ class Card
         key.to_s.gsub /\_\d+/, ''
       end
 
-      def action_clause(field, linkfield, val)
-        card_select = CardClause.build(:_parent=>self, :return=>'id').merge(val).to_sql
-        sql =  "(SELECT DISTINCT #{field} AS join_card_id FROM card_acts INNER JOIN card_actions ON card_acts.id = card_act_id "
-        sql += " JOIN (#{card_select}) AS ss ON #{linkfield}=ss.id AND (draft is not true))"
-        add_join :ac, sql, :id, :join_card_id
+
+      def join_table
+        @mods[:conj] == 'or' ? 'LEFT JOIN' : 'JOIN'
       end
 
       def id_from_clause clause
@@ -444,9 +460,6 @@ class Card
 
       def conjoin val, conj
         clause = subclause( :return=>:condition, :conj=>conj )
-
-        clause.deleteme = "BLARRB"
-
         list = case val
           when Array; val
           when Hash; val.map { |key, value| {key => value} }
@@ -466,20 +479,19 @@ class Card
         if id = id_from_clause(val)
           merge field(id_field) => id
         else
-          restrict_by_subclause id_field, val, opts
+          join_cards id_field, val, opts
         end
       end
 
-      def restrict_by_subclause sub_field, val, opts={}
+      def join_cards sub_field, val, opts={}
         super_field = opts.delete(:return) || 'id'
         join_to = opts.delete(:join_to) || table_alias
-        join_side = @mods[:conj] == 'or' ? 'LEFT' : ''   #and is_subselect  opts.delete(:join_side)
         s = subclause opts
         #FIXME - this is SQL before SQL phase!!
 # WQL: #{s.query}
 
         s.joins[field(sub_field)] = "
-#{join_side} JOIN cards #{s.table_alias} ON #{join_to}.#{sub_field} = #{s.table_alias}.#{super_field}
+#{join_table} cards #{s.table_alias} ON #{join_to}.#{sub_field} = #{s.table_alias}.#{super_field}
       AND #{s.standard_table_conditions}"
 
         s.merge(val)  # not sure it makes sense to have val separate from opts?
@@ -605,7 +617,7 @@ class Card
             safe_sql(key)
           end
         order_field = "CAST(#{order_field} AS #{cast_type(as)})" if as
-        sql.fields << order_field if self == root
+        sql.fields << order_field if self == root  #a bit hacky?
         "#{order_field} #{dir}"
 
       end

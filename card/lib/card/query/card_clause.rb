@@ -18,7 +18,7 @@ class Card
       CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
 
       attr_reader :query, :rawclause, :selfname
-      attr_accessor :sql, :joins, :join_count, :table_seq
+      attr_accessor :sql, :joins, :table_seq
 
       class << self
         def build query
@@ -287,7 +287,8 @@ class Card
 
       def junction side, val
         part_clause, junction_clause = val.is_a?(Array) ? val : [ val, {} ]
-        join_cards :id, junction_clause, side=>part_clause, :return=>"#{ side==:left ? :right : :left}_id"
+        junction_val = hashify(junction_clause).merge side=>part_clause
+        join_cards :id, junction_val, :return=>"#{ side==:left ? :right : :left}_id"
       end
 
 
@@ -408,17 +409,9 @@ class Card
       end
 
       def add_join(name, table, cardfield, otherfield, opts={})
-        root.join_count = root.join_count.to_i + 1
-        join_alias = "#{name}_#{root.join_count}"
+        join_alias = "#{name}_#{table_id force=true}"
         on = "#{table_alias}.#{cardfield} = #{join_alias}.#{otherfield}"
-        #is_subselect = !table.is_a?( Symbol )
-
-        if @mods[:conj] == 'or'  #and is_subselect
-          opts[:side] ||= 'LEFT'
-          merge field(:cond) => SqlCond.new(on)
-        end
         @joins[join_alias] = ["\n  ", opts[:side], 'JOIN', table, 'AS', join_alias, 'ON', on, "\n"].compact.join ' '
-#        @joins << ( ["\n  ", opts[:side], 'JOIN', table, 'AS', join_alias, 'ON', on, "\n"].compact.join ' ' )
         join_alias
       end
 
@@ -460,12 +453,9 @@ class Card
 
       def conjoin val, conj
         clause = subclause( :return=>:condition, :conj=>conj )
-        list = case val
-          when Array; val
-          when Hash; val.map { |key, value| {key => value} }
-          end
-        list.each do |val|
-          clause.merge val
+        array = Array===val ? val : hashify(val).map { |key, value| {field(key) => value} }
+        array.each do |val_item|
+          clause.merge val_item
         end
       end
 
@@ -475,26 +465,25 @@ class Card
         merge field(:cond) => SqlCond.new("#{join_alias}.id is null")
       end
 
-      def restrict id_field, val, opts={}
+      def restrict id_field, val
         if id = id_from_clause(val)
           merge field(id_field) => id
         else
-          join_cards id_field, val, opts
+          join_cards id_field, val
         end
       end
 
-      def join_cards sub_field, val, opts={}
-        super_field = opts.delete(:return) || 'id'
-        join_to = opts.delete(:join_to) || table_alias
-        s = subclause opts
-        #FIXME - this is SQL before SQL phase!!
-# WQL: #{s.query}
 
+      def join_cards sub_field, val, opts={}
+        super_field = opts[:return]  || 'id'
+        join_to     = opts[:join_to] || table_alias
+
+        #FIXME - this is SQL before SQL phase!!
+        s = subclause
         s.joins[field(sub_field)] = "
 #{join_table} cards #{s.table_alias} ON #{join_to}.#{sub_field} = #{s.table_alias}.#{super_field}
       AND #{s.standard_table_conditions}"
-
-        s.merge(val)  # not sure it makes sense to have val separate from opts?
+        s.merge(val)
         s
       end
 
@@ -511,7 +500,7 @@ class Card
 
 
 
-       def to_sql *args
+      def to_sql *args
 
         sql.tables = "cards #{table_alias}"
         sql.fields.unshift fields_to_sql

@@ -20,8 +20,8 @@ module Card::Chunk
       (
         Card::Query::MODIFIERS.keys                +
         Card::Query::OPERATORS.keys                +
-        Card::Query::CardClause::ATTRIBUTES.keys   +
-        Card::Query::CardClause::CONJUNCTIONS.keys +
+        Card::Query::ATTRIBUTES.keys   +
+        Card::Query::CONJUNCTIONS.keys +
         ['desc', 'asc', 'count']
       ).map(&:to_name)
     )

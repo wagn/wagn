@@ -1,5 +1,6 @@
 class Card::Query
-  class RefClause < Clause
+  class RefClause
+    include Clause
     REFERENCE_DEFINITIONS = {
       # syntax:
       # wql query key => [ direction, {reference_type} ]

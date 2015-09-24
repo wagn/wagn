@@ -1,4 +1,4 @@
-
+=begin
 class Card
   class Query
     class CardClause < Clause
@@ -42,14 +42,12 @@ class Card
         @rawclause = @query.deep_clone
         @subclauses = []
 
-        @sql.distinct = 'DISTINCT' if @parent
-
         self
       end
 
 
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      # QUERY CLEANING - strip strings, absolutize names, interpret contextual parameters
+      # QUERY CLEANING - strip strings, absolutize names, replace contextual parameters
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -93,14 +91,14 @@ class Card
 
 
       def interpret s
-        s = hashify s
+        s = normalize s
         translate_to_attributes s
         ready_to_sqlize s
         @conditions.merge! s
         self
       end
 
-      def hashify s
+      def normalize s
         case s
           when Hash;     s
           when String;   { :key => s.to_name.key }
@@ -287,7 +285,7 @@ class Card
 
       def junction side, val
         part_clause, junction_clause = val.is_a?(Array) ? val : [ val, {} ]
-        junction_val = hashify(junction_clause).merge side=>part_clause
+        junction_val = normalize(junction_clause).merge side=>part_clause
         join_cards :id, junction_val, :return=>"#{ side==:left ? :right : :left}_id"
       end
 
@@ -451,7 +449,7 @@ class Card
 
       def conjoin val, conj
         clause = subclause( :return=>:condition, :conj=>conj )
-        array = Array===val ? val : hashify(val).map { |key, value| {field(key) => value} }
+        array = Array===val ? val : normalize(val).map { |key, value| {field(key) => value} }
         array.each do |val_item|
           clause.interpret val_item
         end
@@ -559,7 +557,7 @@ class Card
       end
 
       def permission_conditions
-        unless Auth.always_ok? #or ( Card::Query.root_perms_only && !root? )
+        unless Auth.always_ok?
           read_rules = Auth.as_card.read_rules
           read_rule_list = read_rules.nil? ? 1 : read_rules.join(',')
           "(#{table_alias}.read_rule_id IN (#{ read_rule_list }))"
@@ -611,3 +609,4 @@ class Card
     end
   end
 end
+=end

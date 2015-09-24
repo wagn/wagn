@@ -23,7 +23,7 @@ class Card
       class << self
         def build query
           cardclause = self.new query
-          cardclause.merge cardclause.rawclause
+          cardclause.interpret cardclause.rawclause
         end
       end
 
@@ -92,7 +92,7 @@ class Card
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-      def merge s
+      def interpret s
         s = hashify s
         translate_to_attributes s
         ready_to_sqlize s
@@ -184,7 +184,7 @@ class Card
       end
 
       def add_condition condition
-        merge field(:cond) => SqlCond.new(condition)
+        interpret field(:cond) => SqlCond.new(condition)
       end
 
 
@@ -196,7 +196,7 @@ class Card
 
 
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      # ATTRIBUTE METHODS - called during merge
+      # ATTRIBUTE METHODS - called during interpret
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -263,11 +263,11 @@ class Card
       end
 
       def member_of val
-        merge field(:right_plus) => [RolesID, {:refer_to=>val}]
+        interpret field(:right_plus) => [RolesID, {:refer_to=>val}]
       end
 
       def member val
-        merge field(:referred_to_by) => {:left=>val, :right=>RolesID }
+        interpret field(:referred_to_by) => {:left=>val, :right=>RolesID }
       end
 
 
@@ -364,19 +364,19 @@ class Card
           "(#{val_list.join ' AND '})"
         end
 
-        merge field(:cond)=>SqlCond.new(cond)
+        interpret field(:cond)=>SqlCond.new(cond)
       end
 
 
       def complete(val)
         no_plus_card = (val=~/\+/ ? '' : "and right_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
-        merge field(:cond) => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
+        interpret field(:cond) => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
       end
 
       def extension_type val
         # DEPRECATED LONG AGO!!!
         Rails.logger.info "using DEPRECATED extension_type in WQL"
-        merge field(:right_plus) => AccountID
+        interpret field(:right_plus) => AccountID
       end
 
 
@@ -394,7 +394,6 @@ class Card
           end
         end
       end
-
 
       def table_id force=false
         if force
@@ -426,7 +425,6 @@ class Card
         key.to_s.gsub /\_\d+/, ''
       end
 
-
       def join_table
         @mods[:conj] == 'or' ? 'LEFT JOIN' : 'JOIN'
       end
@@ -455,19 +453,19 @@ class Card
         clause = subclause( :return=>:condition, :conj=>conj )
         array = Array===val ? val : hashify(val).map { |key, value| {field(key) => value} }
         array.each do |val_item|
-          clause.merge val_item
+          clause.interpret val_item
         end
       end
 
       def not val
-        subselect = CardClause.build(:return=>:id, :_parent=>self).merge(val).to_sql
+        subselect = CardClause.build(:return=>:id, :_parent=>self).interpret(val).to_sql
         join_alias = add_join :not, subselect, :id, :id, :side=>'LEFT'
-        merge field(:cond) => SqlCond.new("#{join_alias}.id is null")
+        interpret field(:cond) => SqlCond.new("#{join_alias}.id is null")
       end
 
       def restrict id_field, val
         if id = id_from_clause(val)
-          merge field(id_field) => id
+          interpret field(id_field) => id
         else
           join_cards id_field, val
         end
@@ -483,7 +481,7 @@ class Card
         s.joins[field(sub_field)] = "
 #{join_table} cards #{s.table_alias} ON #{join_to}.#{sub_field} = #{s.table_alias}.#{super_field}
       AND #{s.standard_table_conditions}"
-        s.merge(val)
+        s.interpret(val)
         s
       end
 
@@ -495,7 +493,7 @@ class Card
       end
 
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      # SQL GENERATION - translate merged hash into complete SQL statement.
+      # SQL GENERATION - translate interpretd hash into complete SQL statement.
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 

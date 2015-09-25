@@ -35,30 +35,30 @@ class Card
     DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
     CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
 
-    attr_reader :query, :selfname, :mods, :conditions, :subqueries, :super
+    attr_reader :statement, :selfname, :mods, :conditions, :subqueries, :super
     attr_accessor :joins, :table_seq
 
-    def initialize query
+    def initialize statement
       @conditions = {}
       @selfname, @super = '', nil
       @subqueries, @joins = [], []
 
       @mods = MODIFIERS.clone
-      @query = query.clone
+      @statement = statement.clone
 
-      @query.merge! @query.delete(:params) if @query[:params]
-      @vars = @query.delete(:vars) || {}
+      @statement.merge! @statement.delete(:params) if @statement[:params]
+      @vars = @statement.delete(:vars) || {}
       @vars.symbolize_keys!
 
-      @query = clean @query
-      interpret @query.deep_clone
+      @statement = clean @statement
+      interpret @statement.deep_clone
 
       self
     end
 
 
     def run
-      retrn = query[:return].present? ? query[:return].to_s : 'card'
+      retrn = statement[:return].present? ? statement[:return].to_s : 'card'
       if retrn == 'card'
         simple_run('name').map do |name|
           Card.fetch name, :new=>{}
@@ -74,9 +74,9 @@ class Card
 
       case retrn
       when 'name' #common case
-        if query[:prepend] || query[:append]
+        if statement[:prepend] || statement[:append]
           rows.map do |row|
-            [ query[:prepend], row['name'], query[:append] ].compact * '+'
+            [ statement[:prepend], row['name'], statement[:append] ].compact * '+'
           end
         else
           rows.map { |row| row['name'] }
@@ -94,7 +94,7 @@ class Card
 
     def run_sql
 
-#      puts "query = #{@query}"
+#      puts "statement = #{@statement}"
 #      puts "sql = #{sql}"
       ActiveRecord::Base.connection.select_all( sql )
     end
@@ -109,14 +109,14 @@ class Card
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-    def clean query
-      query = query.symbolize_keys
-      if s = query.delete(:context) then @selfname = s end
-      if p = query.delete(:_super)  then @super    = p end
-      query.each do |key,val|
-        query[key] = clean_val val
+    def clean statement
+      statement = statement.symbolize_keys
+      if s = statement.delete(:context) then @selfname = s end
+      if p = statement.delete(:_super)  then @super    = p end
+      statement.each do |key,val|
+        statement[key] = clean_val val
       end
-      query
+      statement
     end
 
     def clean_val val

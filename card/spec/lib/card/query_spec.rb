@@ -36,8 +36,8 @@ describe Card::Query do
 
   describe "symbolization" do
     it "should handle array values" do
-      query = {'plus'=>['tags',{'refer_to'=>'cookies'}]}
-      expect(Card::Query.new(query).query).to eq({:plus=>['tags',{:refer_to=>'cookies'}]})
+      statement = {'plus'=>['tags',{'refer_to'=>'cookies'}]}
+      expect(Card::Query.new(statement).statement).to eq({:plus=>['tags',{:refer_to=>'cookies'}]})
     end
   end
 
@@ -403,8 +403,8 @@ describe Card::Query do
 
   describe "relative" do
     it "should clean wql" do
-      wql = Card::Query.new( :part=>"_self",:context=>'A' )
-      expect(wql.query[:part]).to eq('A')
+      query = Card::Query.new( :part=>"_self",:context=>'A' )
+      expect(query.statement[:part]).to eq('A')
     end
 
     it "should find connection cards" do

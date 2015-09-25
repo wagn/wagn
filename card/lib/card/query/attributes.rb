@@ -107,7 +107,7 @@ class Card
             raise BadQuery, %{"found_by" value needs to be valid Search, but #{c.name} is a #{c.type_name}}
           end
           #FIXME - this is silly.  joining id on id??
-          join_cards Query.new(c.get_query).query.deep_clone
+          join_cards Query.new(c.get_query).statement.deep_clone
         end
       end
 

@@ -39,14 +39,17 @@ class Card
     attr_accessor :joins, :table_seq
 
     def initialize statement
-      @selfname, @super = '', nil
       @subqueries, @joins, @conditions = [], [], []
 
       @mods = MODIFIERS.clone
       @statement = statement.clone
 
-      @statement.merge! @statement.delete(:params) if @statement[:params]
-      @vars = @statement.delete(:vars) || {}
+      @selfname = @statement.delete(:context) || ''
+      @super    = @statement.delete(:_super)  || nil
+      @params   = @statement.delete(:params)  || {}
+      @vars     = @statement.delete(:vars) || {}
+
+      @statement.merge! @params
       @vars.symbolize_keys!
 
       @statement = clean @statement
@@ -110,8 +113,6 @@ class Card
 
     def clean statement
       statement = statement.symbolize_keys
-      if s = statement.delete(:context) then @selfname = s end
-      if p = statement.delete(:_super)  then @super    = p end
       statement.each do |key,val|
         statement[key] = clean_val val
       end

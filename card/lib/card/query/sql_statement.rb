@@ -32,13 +32,16 @@ class Card
         field = @mods[:return]
         field = field.blank? ? :card : field.to_sym
 
-        case field
-        when :raw;     "#{table}.*"
-        when :card;    "#{table}.name"
-        when :count;   "coalesce(count(*),0) as count"
-        when :content; "#{table}.db_content"
-        else           ATTRIBUTES[field.to_sym]==:basic ? "#{table}.#{field}" : safe_sql(field)
-        end #.reject(&:blank?) * ', '
+        field =
+          case field
+          when :raw;     "#{table}.*"
+          when :card;    "#{table}.name"
+          when :count;   "coalesce(count(*),0) as count"
+          when :content; "#{table}.db_content"
+          else           ATTRIBUTES[field.to_sym]==:basic ? "#{table}.#{field}" : safe_sql(field)
+          end
+
+        [ field, @mods[:sort_join_field] ].compact * ', '
       end
 
       def joins query

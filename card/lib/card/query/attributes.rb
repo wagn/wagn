@@ -175,16 +175,11 @@ class Card
         interpret field(:cond) => SqlCond.new(condition)
       end
 
-
       def conjunction val
         if [String, Symbol].member? val.class
           CONJUNCTIONS[val.to_sym]
         end
       end
-
-
-
-
 
 
       def sort val
@@ -213,7 +208,7 @@ class Card
           cs = Query.new(val)
         end
 
-        cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"
+        cs.mods[:sort_join_field] = "#{cs.table_alias}.#{join_field} as sort_join_field" #HACK!
         join_table = add_join :sort, cs.sql, :id, :sort_join_field, :side=>'LEFT'
         @mods[:sort] ||= "#{join_table}.#{val[:return]}"
 
@@ -255,19 +250,6 @@ class Card
       end
 
 
-#      def join_cards sub_field, val, opts={}
-#        super_field = opts[:return]  || 'id'
-#        join_to     = opts[:join_to] || table_alias
-#
-#        #FIXME - this is SQL before SQL phase!!
-#        s = subquery
-#        s.joins[field(sub_field)] = "
-#  #{join_table} cards #{s.table_alias} ON #{join_to}.#{sub_field} = #{s.table_alias}.#{super_field}
-#      AND #{SqlStatement.new(s).standard_conditions(s)}"
-#
-#      end
-
-
       def join_cards from_field, val, opts={}
         # FIXME get rid of join_to
 
@@ -288,10 +270,6 @@ class Card
       def field_root key
         key.to_s.gsub /\_\d+/, ''
       end
-
-
-
-
 
       #~~~~~~~  CONJUNCTION
 
@@ -333,9 +311,6 @@ class Card
         when String  ; Card.fetch_id(clause)
         end
       end
-
-
-
 
     end
   end

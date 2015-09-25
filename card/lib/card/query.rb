@@ -52,8 +52,8 @@ class Card
       @statement.merge! @params
       @vars.symbolize_keys!
 
-      @statement = clean @statement
-      interpret @statement.deep_clone
+      #@statement = clean @statement
+      interpret @statement
 
       self
     end
@@ -111,28 +111,7 @@ class Card
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-    def clean statement
-      statement = statement.symbolize_keys
-      statement.each do |key,val|
-        statement[key] = clean_val val
-      end
-      statement
-    end
 
-    def clean_val val
-      case val
-      when String
-        if val =~ /^\$(\w+)$/
-          val = @vars[$1.to_sym].to_s.strip
-        end
-        absolute_name val
-      when Card::Name             ; clean_val val.s
-      when Hash                   ; clean val
-      when Array                  ; val.map { |v| clean_val v }
-      when Integer, Float, Symbol ; val
-      else                        ; raise BadQuery, "unknown WQL value type: #{val.class}"
-      end
-    end
 
     def root
       @super ? @super.root : self
@@ -150,24 +129,42 @@ class Card
     end
 
 
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # MERGE - reduce query to basic attributes and SQL subconditions
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-    def interpret statement
-      statement = normalize statement
-      translate_to_attributes statement
-      ready_to_sqlize statement
-      statement.map { |key, value| @conditions << [ key, value ] }
+    def interpret clause
+      clause = normalize_clause clause
+      clause = clause.deep_clone
+      translate_to_attributes clause
+      ready_to_sqlize clause
+      clause.map { |key, value| @conditions << [ key, value ] }
     end
 
-    def normalize s
-      case s
-        when Hash;     s
-        when String;   { :key => s.to_name.key }
-        when Integer;  { :id => s              }
-        else;          raise BadQuery, "Invalid cardclause args #{s.inspect}"
+    def normalize_clause clause
+      clause = clause_to_hash clause
+      clause.symbolize_keys!
+      clause.each do |key,val|
+        clause[key] = normalize_value val
+      end
+      clause
+    end
+
+    def clause_to_hash clause
+      case clause
+      when Hash;     clause
+      when String;   { :key => clause.to_name.key }
+      when Integer;  { :id => clause }
+      else;          raise BadQuery, "Invalid cardclause args #{clause.inspect}"
+      end
+    end
+
+    def normalize_value val
+      case val
+      when Integer, Float, Symbol, Hash ; val
+      when String, Card::Name
+        if val =~ /^\$(\w+)$/
+          val = @vars[$1.to_sym].to_s.strip
+        end
+        absolute_name val
+      when Array                  ; val.map { |v| normalize_value v }
+      else                        ; raise BadQuery, "unknown WQL value type: #{val.class}"
       end
     end
 

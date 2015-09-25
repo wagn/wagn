@@ -84,7 +84,7 @@ class Card
 
       def junction side, val
         part_clause, junction_clause = val.is_a?(Array) ? val : [ val, {} ]
-        junction_val = normalize(junction_clause).merge side=>part_clause
+        junction_val = clause_to_hash(junction_clause).merge side=>part_clause
         join_cards junction_val, :to_field=>"#{ side==:left ? :right : :left}_id"
       end
 
@@ -264,7 +264,7 @@ class Card
 
       def conjoin val, conj
         clause = subquery( :return=>:condition, :conj=>conj )
-        array = Array===val ? val : normalize(val).map { |key, value| {key => value} }
+        array = Array===val ? val : clause_to_hash(val).map { |key, value| {key => value} }
         array.each do |val_item|
           clause.interpret val_item
         end

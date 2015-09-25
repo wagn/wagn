@@ -106,15 +106,8 @@ class Card
     end
 
 
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # QUERY CLEANING - strip strings, absolutize names, replace contextual parameters
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
-
     def root
-      @super ? @super.root : self
+      @root ||= @super ? @super.root : self
     end
 
 
@@ -127,9 +120,7 @@ class Card
     def interpret clause
       clause = normalize_clause clause
       clause = clause.deep_clone
-      translate_to_attributes clause
-      ready_to_sqlize clause
-      clause.map { |key, value| @conditions << [ key, value ] }
+      interpret_by_key clause
     end
 
     def normalize_clause clause
@@ -172,48 +163,43 @@ class Card
     end
 
 
-    def translate_to_attributes clause
-      content = nil
+    def interpret_by_key clause
       clause.each do |key,val|
-        if key == :_super
-          @super = clause.delete(key)
-        elsif OPERATORS.has_key?(key.to_s) && !ATTRIBUTES[key]
-          clause.delete(key)
-          content = [key,val]
-        elsif MODIFIERS.has_key?(key)
-          next if clause[key].is_a? Hash
-          val = clause.delete key
+        case
+        when OPERATORS.has_key?(key.to_s) && !ATTRIBUTES[key]
+          # eg match is both operator and attribute;
+          # interpret as attribute when match is key
+          interpret content: [key,val]
+        when MODIFIERS.has_key?(key) && !clause[key].is_a?(Hash)
+          # eg when sort is hash, it can have subqueries
+          # and may need to be treated like an attribute
           @mods[key] = Array === val ? val : val.to_s
+        when key==:cond
+          @conditions << [ key, val ]
+        else
+          interpret_attributes key, val
         end
       end
-      clause[:content] = content if content
     end
 
 
-    def ready_to_sqlize clause
-      clause.each do |key,val|
-        if key==:cond                                # internal SQL cond (already ready)
-        elsif ATTRIBUTES[key] == :basic              # sqlize knows how to handle these keys; just process value
-          clause[key] = ValueClause.new(val, self)
-        else                                         # keys need additional processing
-          val = clause.delete key
-          is_array = Array===val
-          case ATTRIBUTES[key]
-            when :ignore                               #noop
-            when :conjunction                        ; send key, val
-            when :relational, :special               ; relate is_array, key, val, :send
-            when :ref_relational                     ; relate is_array, key, val, :join_references
-            when :plus_relational
-              # Arrays can have multiple interpretations for these, so we have to look closer...
-              subcond = is_array && ( Array===val.first || conjunction(val.first) )
+    def interpret_attributes key, val
+      is_array = Array===val
+      case ATTRIBUTES[key]
+        when :ignore                               #noop
+        when :basic                              ; @conditions << [ key, ValueClause.new(val, self) ]
+        when :conjunction                        ; send key, val
+        when :relational, :special               ; relate is_array, key, val, :send
+        when :ref_relational                     ; relate is_array, key, val, :join_references
+        when :plus_relational
+          # Arrays can have multiple interpretations for these, so we have to look closer...
+          subcond = is_array && ( Array===val.first || conjunction(val.first) )
 
-                                                       relate subcond, key, val, :send
-            else                                     ; raise BadQuery, "Invalid attribute #{key}"
-          end
-        end
+                                                   relate subcond, key, val, :send
+        else                                     ; raise BadQuery, "Invalid attribute #{key}"
       end
-
     end
+
 
     def relate subcond, key, val, method
       if subcond

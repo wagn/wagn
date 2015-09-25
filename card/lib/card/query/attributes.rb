@@ -27,32 +27,24 @@ class Card
 
 
       def editor_of val
-        acts_tbl    = "a#{table_id force=true}"
-        actions_tbl = "an#{table_id force=true}"
+        acts_alias, actions_alias = "a#{table_id force=true}", "an#{table_id force=true}"
 
-        joins <<  %(
-        #{join_table} card_acts #{acts_tbl} ON #{table_alias}.id = #{acts_tbl}.#{:actor_id}
-        JOIN card_actions #{actions_tbl} ON #{acts_tbl}.id = #{actions_tbl}.card_act_id
-        )
-
-        sub = join_cards :card_id, val, :join_to=>actions_tbl
+        joins <<  Join.new( from: self, to: ['card_acts', acts_alias, 'actor_id' ] )
+        joins <<  Join.new( from: ['card_acts', acts_alias], to: ['card_actions', actions_alias, 'card_act_id'] )
+        join_cards val, from_alias: actions_alias, from_field: 'card_id'
       end
 
 
       def edited_by val
-        acts_tbl    = "a#{table_id force=true}"
-        actions_tbl = "an#{table_id force=true}"
+        acts_alias, actions_alias = "a#{table_id force=true}", "an#{table_id force=true}"
 
-        joins << %(
-        #{join_table} card_actions #{actions_tbl} ON #{table_alias}.id = #{actions_tbl}.card_id
-        JOIN card_acts #{acts_tbl} ON #{actions_tbl}.card_act_id = #{acts_tbl}.id
-        )
-
-        sub = join_cards :actor_id, val, :join_to=>acts_tbl
+        joins <<  Join.new( from: self, to: ['card_actions', actions_alias, 'card_id' ] )
+        joins <<  Join.new( from: ['card_actions', actions_alias, 'card_act_id' ], to: ['card_acts', acts_alias] )
+        join_cards val, from_alias: acts_alias, from_field: 'actor_id'
       end
 
       def last_editor_of val
-        join_cards :id, val, :return=>'updater_id'
+        join_cards val, :to_field=>'updater_id'
       end
 
       def last_edited_by val
@@ -60,7 +52,7 @@ class Card
       end
 
       def creator_of val
-        join_cards :id, val, :return=>'creator_id'
+        join_cards val, :to_field=>'creator_id'
       end
 
       def created_by val
@@ -93,7 +85,7 @@ class Card
       def junction side, val
         part_clause, junction_clause = val.is_a?(Array) ? val : [ val, {} ]
         junction_val = normalize(junction_clause).merge side=>part_clause
-        join_cards :id, junction_val, :return=>"#{ side==:left ? :right : :left}_id"
+        join_cards junction_val, :to_field=>"#{ side==:left ? :right : :left}_id"
       end
 
 
@@ -115,7 +107,7 @@ class Card
             raise BadQuery, %{"found_by" value needs to be valid Search, but #{c.name} is a #{c.type_name}}
           end
           #FIXME - this is silly.  joining id on id??
-          join_cards :id, Query.new(c.get_query).query.deep_clone
+          join_cards Query.new(c.get_query).query.deep_clone
         end
       end
 
@@ -156,14 +148,11 @@ class Card
 
 
       def join_references key, val
-        #FIXME - this is SQL before SQL phase!!
-
         r = RefClause.new( key, val, self )
-
-        joins << "\n#{join_table} card_references #{r.table_alias} ON #{table_alias}.id = #{r.table_alias}.#{r.infield}\n"
+        joins << Join.new(:from=>self, :to=>r, :to_field=>r.infield)
         s = nil
         if r.cardquery
-          s = join_cards r.outfield, r.cardquery, :join_to=>r.table_alias
+          s = join_cards r.cardquery, from_alias: r.table_alias, from_field: r.outfield
         end
         if r.conditions.any?
           s ||= subquery
@@ -250,12 +239,12 @@ class Card
       end
 
 
-      def join_cards from_field, val, opts={}
-        # FIXME get rid of join_to
+      def join_cards val, opts={}
+        # FIXME get rid of from_alias
 
         s = subquery
-  #      s.joins FIXME - make array
-        s.joins << Join.new( from: self, to: s, from_field: from_field, :from_alias=>opts[:join_to], :to_field=>opts[:return] )
+        join_opts = { from: self, to: s }.merge opts
+        s.joins << Join.new( join_opts )
         s.interpret val
         s
       end
@@ -301,7 +290,7 @@ class Card
         if id = id_from_clause(val)
           interpret field(id_field) => id
         else
-          join_cards id_field, val
+          join_cards val, from_field: id_field
         end
       end
 

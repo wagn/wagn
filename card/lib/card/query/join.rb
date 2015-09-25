@@ -21,6 +21,10 @@ class Card
           object = opts[value]
           case object
           when nil; next
+          when Array
+            send "#{value}_table=", object.shift
+            send "#{value}_alias=", object.shift
+            send "#{value}_field=", object.shift
           when Card::Query
             send "#{value}_table=", 'cards'
             send "#{value}_alias=", object.table_alias

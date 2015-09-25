@@ -56,6 +56,7 @@ class Card
             clause =  join.to_sql
             clause += " AND #{standard_conditions query}" if join.to_table == 'cards'
           end
+          clause
         end
       end
 

@@ -49,7 +49,7 @@ class Card
       end
 
       def join_clause query
-        query.joins.values.map do |join|
+        query.joins.map do |join|
           if String === join #FIXME obviate!
             clause = join
           else

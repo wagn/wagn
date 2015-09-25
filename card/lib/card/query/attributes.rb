@@ -30,7 +30,7 @@ class Card
         acts_tbl    = "a#{table_id force=true}"
         actions_tbl = "an#{table_id force=true}"
 
-        joins[field(:actor_id)] = %(
+        joins <<  %(
         #{join_table} card_acts #{acts_tbl} ON #{table_alias}.id = #{acts_tbl}.#{:actor_id}
         JOIN card_actions #{actions_tbl} ON #{acts_tbl}.id = #{actions_tbl}.card_act_id
         )
@@ -43,7 +43,7 @@ class Card
         acts_tbl    = "a#{table_id force=true}"
         actions_tbl = "an#{table_id force=true}"
 
-        joins[field(:actor_id)] = %(
+        joins << %(
         #{join_table} card_actions #{actions_tbl} ON #{table_alias}.id = #{actions_tbl}.card_id
         JOIN card_acts #{acts_tbl} ON #{actions_tbl}.card_act_id = #{acts_tbl}.id
         )
@@ -160,7 +160,7 @@ class Card
 
         r = RefClause.new( key, val, self )
 
-        joins[field(key)] = "\n#{join_table} card_references #{r.table_alias} ON #{table_alias}.id = #{r.table_alias}.#{r.infield}\n"
+        joins << "\n#{join_table} card_references #{r.table_alias} ON #{table_alias}.id = #{r.table_alias}.#{r.infield}\n"
         s = nil
         if r.cardquery
           s = join_cards r.outfield, r.cardquery, :join_to=>r.table_alias
@@ -241,7 +241,7 @@ class Card
       def add_join(name, table, cardfield, otherfield, opts={})
         join_alias = "#{name}_#{table_id force=true}"
         on = "#{table_alias}.#{cardfield} = #{join_alias}.#{otherfield}"
-        @joins[join_alias] = ["\n  ", opts[:side], 'JOIN', table, 'AS', join_alias, 'ON', on, "\n"].compact.join ' '
+        joins << ["\n  ", opts[:side], 'JOIN', table, 'AS', join_alias, 'ON', on, "\n"].compact.join(' ')
         join_alias
       end
 
@@ -255,7 +255,7 @@ class Card
 
         s = subquery
   #      s.joins FIXME - make array
-        s.joins[field(from_field)] = Join.new from: self, to: s, from_field: from_field, :from_alias=>opts[:join_to], :to_field=>opts[:return]
+        s.joins << Join.new( from: self, to: s, from_field: from_field, :from_alias=>opts[:join_to], :to_field=>opts[:return] )
         s.interpret val
         s
       end

@@ -39,9 +39,9 @@ class Card
     attr_accessor :joins, :table_seq
 
     def initialize query
-      @conditions, @joins = {}, {}
+      @conditions = {}
       @selfname, @super = '', nil
-      @subqueries = []
+      @subqueries, @joins = [], []
 
       @mods = MODIFIERS.clone
       @query = query.clone

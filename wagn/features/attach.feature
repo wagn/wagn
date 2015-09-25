@@ -1,5 +1,5 @@
 @javascript
-Feature: Conflict
+Feature: File Upload
   I want to be able to upload files and images.
 
   Background:
@@ -40,5 +40,20 @@ Feature: Conflict
     Then I should see "image2.jpg 69.8 KB"
     And I press "Submit"
     Then I should see an image of size "large" and type "jpg"
+
+  Scenario: uploading a file as a field in a form
+    When I go to  "/new Cardtype"
+    And I fill in "card_name" with "complicated_card"
+    And I press "Submit"
+    And I create HTML card "complicated card+*type+*structure" with content "{{+image}}{{+description}}"
+    And I go to "/new complicated_card"
+    And I fill in "card_name" with "Vignesh has a complicated relationship"
+    And I wait a sec
+    And I upload the image "image.png"
+    And I wait a sec
+    Then I should see "image.png 34.3 KB"
+    And I press "Submit" 
+    Then I should see an image of size "medium" and type "png"
+
 
 

@@ -219,7 +219,7 @@ class Card
         if conj == current_conjunction                # same conjunction as container, no need for subcondition
           val.each { |v| send method, key, v }
         else
-          send conj, val.map { |v| { key => v } }  # subcondition
+          send conj, val.map { |v| { key => v } }
         end
       else
         send method, key, val

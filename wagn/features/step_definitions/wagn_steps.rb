@@ -154,6 +154,13 @@ When /I wait (\d+) seconds$/ do |period|
   sleep period.to_i
 end
 
+When /^I wait until ajax response done$/ do
+  Timeout.timeout(Capybara.default_wait_time) do
+    while page.evaluate_script('jQuery.active') != 0 do
+      sleep(0.5)
+    end
+  end
+end
 
 Then /what/ do
   save_and_open_page

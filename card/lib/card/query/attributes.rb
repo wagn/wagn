@@ -98,7 +98,7 @@ class Card
           Query.new(val).run
         else
           Array.wrap(val).map do |v|
-            Card.fetch absolute_name(val), :new=>{}
+            Card.fetch val.to_name.to_absolute(root.selfname), :new=>{}
           end
         end
 

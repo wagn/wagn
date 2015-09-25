@@ -124,11 +124,6 @@ class Card
       subquery
     end
 
-    def absolute_name name
-      name =~ /\b_/ ? name.to_name.to_absolute(root.selfname) : name
-    end
-
-
     def interpret clause
       clause = normalize_clause clause
       clause = clause.deep_clone
@@ -158,15 +153,24 @@ class Card
     def normalize_value val
       case val
       when Integer, Float, Symbol, Hash ; val
-      when String, Card::Name
-        if val =~ /^\$(\w+)$/
-          val = @vars[$1.to_sym].to_s.strip
-        end
-        absolute_name val
-      when Array                  ; val.map { |v| normalize_value v }
-      else                        ; raise BadQuery, "unknown WQL value type: #{val.class}"
+      when String, Card::Name           ; normalize_string_value val
+      when Array                        ; val.map { |v| normalize_value v }
+      else                              ; raise BadQuery, "unknown WQL value type: #{val.class}"
       end
     end
+
+
+    def normalize_string_value val
+      case val.to_s
+      when /^\$(\w+)$/                       # replace from @vars
+        @vars[$1.to_sym].to_s.strip
+      when /\b_/                             # absolutize based on @selfname
+        val.to_name.to_absolute(root.selfname)
+      else
+        val
+      end
+    end
+
 
     def translate_to_attributes clause
       content = nil

@@ -82,8 +82,9 @@ class Card
       end
 
       def basic_conditions query
-        query.conditions.map do |key, val|
-          val.to_sql query.field_root(key)
+        query.conditions.map do |condition|
+          field, val = condition
+          val.to_sql field
         end
       end
 

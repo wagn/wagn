@@ -39,9 +39,8 @@ class Card
     attr_accessor :joins, :table_seq
 
     def initialize statement
-      @conditions = {}
       @selfname, @super = '', nil
-      @subqueries, @joins = [], []
+      @subqueries, @joins, @conditions = [], [], []
 
       @mods = MODIFIERS.clone
       @statement = statement.clone
@@ -94,8 +93,8 @@ class Card
 
     def run_sql
 
-#      puts "statement = #{@statement}"
-#      puts "sql = #{sql}"
+      #puts "statement = #{@statement}"
+      #puts "sql = #{sql}"
       ActiveRecord::Base.connection.select_all( sql )
     end
 
@@ -155,12 +154,11 @@ class Card
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-    def interpret s
-      s = normalize s
-      translate_to_attributes s
-      ready_to_sqlize s
-      @conditions.merge! s
-      self
+    def interpret statement
+      statement = normalize statement
+      translate_to_attributes statement
+      ready_to_sqlize statement
+      statement.map { |key, value| @conditions << [ key, value ] }
     end
 
     def normalize s
@@ -192,23 +190,22 @@ class Card
 
     def ready_to_sqlize clause
       clause.each do |key,val|
-        keyroot = field_root(key).to_sym
-        if keyroot==:cond                            # internal SQL cond (already ready)
-        elsif ATTRIBUTES[keyroot] == :basic          # sqlize knows how to handle these keys; just process value
+        if key==:cond                                # internal SQL cond (already ready)
+        elsif ATTRIBUTES[key] == :basic              # sqlize knows how to handle these keys; just process value
           clause[key] = ValueClause.new(val, self)
         else                                         # keys need additional processing
           val = clause.delete key
           is_array = Array===val
-          case ATTRIBUTES[keyroot]
+          case ATTRIBUTES[key]
             when :ignore                               #noop
-            when :conjunction                        ; send keyroot, val
-            when :relational, :special               ; relate is_array, keyroot, val, :send
-            when :ref_relational                     ; relate is_array, keyroot, val, :join_references
+            when :conjunction                        ; send key, val
+            when :relational, :special               ; relate is_array, key, val, :send
+            when :ref_relational                     ; relate is_array, key, val, :join_references
             when :plus_relational
               # Arrays can have multiple interpretations for these, so we have to look closer...
               subcond = is_array && ( Array===val.first || conjunction(val.first) )
 
-                                                       relate subcond, keyroot, val, :send
+                                                       relate subcond, key, val, :send
             else                                     ; raise BadQuery, "Invalid attribute #{key}"
           end
         end
@@ -222,7 +219,7 @@ class Card
         if conj == current_conjunction                # same conjunction as container, no need for subcondition
           val.each { |v| send method, key, v }
         else
-          send conj, val.inject({}) { |h,v| h[field key] = v; h }  # subcondition
+          send conj, val.map { |v| { key => v } }  # subcondition
         end
       else
         send method, key, val

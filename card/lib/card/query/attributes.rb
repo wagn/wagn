@@ -60,11 +60,11 @@ class Card
       end
 
       def member_of val
-        interpret field(:right_plus) => [RolesID, {:refer_to=>val}]
+        interpret :right_plus => [RolesID, {:refer_to=>val}]
       end
 
       def member val
-        interpret field(:referred_to_by) => {:left=>val, :right=>RolesID }
+        interpret :referred_to_by => {:left=>val, :right=>RolesID }
       end
 
 
@@ -128,19 +128,19 @@ class Card
           "(#{val_list.join ' AND '})"
         end
 
-        interpret field(:cond)=>SqlCond.new(cond)
+        interpret :cond=>SqlCond.new(cond)
       end
 
 
       def complete(val)
         no_plus_card = (val=~/\+/ ? '' : "and right_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
-        interpret field(:cond) => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
+        interpret :cond=>SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
       end
 
       def extension_type val
         # DEPRECATED LONG AGO!!!
         Rails.logger.info "using DEPRECATED extension_type in WQL"
-        interpret field(:right_plus) => AccountID
+        interpret :right_plus => AccountID
       end
 
 
@@ -161,7 +161,7 @@ class Card
       end
 
       def add_condition condition
-        interpret field(:cond) => SqlCond.new(condition)
+        interpret :cond => SqlCond.new(condition)
       end
 
       def conjunction val
@@ -183,7 +183,7 @@ class Card
           case item
           when 'referred_to'
             join_field = 'id'
-            cs = Query.new cs_args.merge( field(:cond)=>SqlCond.new("referer_id in #{Query.new( val.merge(:return=>'id')).sql}") )
+            cs = Query.new cs_args.merge( :cond=>SqlCond.new("referer_id in #{Query.new( val.merge(:return=>'id')).sql}") )
             cs.add_join :wr, :card_references, :id, :referee_id
           else
             raise BadQuery, "count with item: #{item} not yet implemented"
@@ -249,16 +249,6 @@ class Card
         s
       end
 
-      def field name
-        @fields ||= {}
-        @fields[name] ||= 0
-        @fields[name] += 1
-        "#{ name }_#{ @fields[name] }"
-      end
-
-      def field_root key
-        key.to_s.gsub /\_\d+/, ''
-      end
 
       #~~~~~~~  CONJUNCTION
 
@@ -271,24 +261,26 @@ class Card
         conjoin val, :or
       end
       alias :or :any
+      alias :in :any
 
       def conjoin val, conj
         clause = subquery( :return=>:condition, :conj=>conj )
-        array = Array===val ? val : normalize(val).map { |key, value| {field(key) => value} }
+        array = Array===val ? val : normalize(val).map { |key, value| {key => value} }
         array.each do |val_item|
           clause.interpret val_item
         end
       end
 
       def not val
-        subselect = Query.new(:return=>:id, :_super=>self).interpret(val).sql
-        join_alias = add_join :not, subselect, :id, :id, :side=>'LEFT'
-        interpret field(:cond) => SqlCond.new("#{join_alias}.id is null")
+        subselect = Query.new(:return=>:id, :_super=>self)
+        subselect.interpret(val)
+        join_alias = add_join :not, subselect.sql, :id, :id, :side=>'LEFT'
+        interpret :cond => SqlCond.new("#{join_alias}.id is null")
       end
 
       def restrict id_field, val
         if id = id_from_clause(val)
-          interpret field(id_field) => id
+          interpret id_field => id
         else
           join_cards val, from_field: id_field
         end

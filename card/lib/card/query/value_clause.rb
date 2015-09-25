@@ -46,7 +46,7 @@ class Card
         op,v = @operator, @value
         table = @cardclause.table_alias
 
-        field, v = case field
+        field, v = case field.to_s
           when "cond";     return "(#{sqlize(v)})"
           when "name";     ["#{table}.key",      [v].flatten.map(&:to_name).map(&:key)]
           when "content";  ["#{table}.db_content", v]

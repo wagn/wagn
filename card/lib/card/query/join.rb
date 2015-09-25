@@ -1,7 +1,7 @@
 class Card
   class Query
     class Join
-      attr_accessor :from, :to, :from_table, :from_alias, :from_field, :to_table, :to_alias, :to_field
+      attr_accessor :from, :to, :from_table, :from_alias, :from_field, :to_table, :to_alias, :to_field, :side
 
       def initialize opts={}
         from_and_to opts
@@ -13,34 +13,30 @@ class Card
       end
 
       def to_sql
-        ([ side, to_table, to_alias ] * ' ') + on_condition
+        ([ side, 'JOIN', to_table, to_alias ].compact * ' ') + on_condition
       end
 
       def from_and_to opts
-        [:from, :to].each do |value|
-          object = opts[value]
+        [:from, :to].each do |side|
+          object = opts[side]
           case object
           when nil; next
           when Array
-            send "#{value}_table=", object.shift
-            send "#{value}_alias=", object.shift
-            send "#{value}_field=", object.shift
+            { table: object.shift, alias: object.shift, field: object.shift }
           when Card::Query
-            send "#{value}_table=", 'cards'
-            send "#{value}_alias=", object.table_alias
+            { table: 'cards', alias: object.table_alias }
           when Card::Query::RefClause
-            send "#{value}_table=", 'card_references'
-            send "#{value}_alias=", object.table_alias
+            { table: 'card_references', alias: object.table_alias }
+          else
+            raise "invalid #{side} option: #{object}"
+          end.map do |key, value|
+            opts[:"#{side}_#{key}"] ||= value
           end
         end
       end
 
       def side
-        if from && from.mods[:conj] == 'or'
-          'LEFT JOIN'
-        else
-          'JOIN'
-        end
+        @side ||= (from && from.mods[:conj] == 'or') ? 'LEFT' : nil
       end
 
 

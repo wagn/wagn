@@ -7,7 +7,7 @@ class Card
     require_dependency 'card/query/ref_clause'
     require_dependency 'card/query/attributes'
     require_dependency 'card/query/sql_statement'
-
+    require_dependency 'card/query/join'
 
     include Clause
     include Attributes
@@ -35,23 +35,24 @@ class Card
     DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
     CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
 
-    attr_reader :query, :selfname
-    attr_accessor :sql, :joins, :table_seq
+    attr_reader :query, :selfname, :mods, :conditions, :subqueries, :super
+    attr_accessor :joins, :table_seq
 
     def initialize query
-      @mods = MODIFIERS.clone
       @conditions, @joins = {}, {}
       @selfname, @super = '', nil
-      @subclauses = []
-      @sql = SqlStatement.new
+      @subqueries = []
 
+      @mods = MODIFIERS.clone
       @query = query.clone
+
       @query.merge! @query.delete(:params) if @query[:params]
       @vars = @query.delete(:vars) || {}
       @vars.symbolize_keys!
 
       @query = clean @query
       interpret @query.deep_clone
+
       self
     end
 
@@ -92,7 +93,14 @@ class Card
     end
 
     def run_sql
-      ActiveRecord::Base.connection.select_all( to_sql )
+
+#      puts "query = #{@query}"
+#      puts "sql = #{sql}"
+      ActiveRecord::Base.connection.select_all( sql )
+    end
+
+    def sql
+      @sql ||= SqlStatement.new( self ).build.to_s
     end
 
 
@@ -104,7 +112,7 @@ class Card
     def clean query
       query = query.symbolize_keys
       if s = query.delete(:context) then @selfname = s end
-      if p = query.delete(:_super) then @super   = p end
+      if p = query.delete(:_super)  then @super    = p end
       query.each do |key,val|
         query[key] = clean_val val
       end
@@ -131,11 +139,10 @@ class Card
     end
 
 
-    def subclause opts={}
-      subclause = Query.new opts.reverse_merge(:_super=>self)
-      subclause.sql = sql
-      @subclauses << subclause
-      subclause
+    def subquery opts={}
+      subquery = Query.new opts.reverse_merge(:_super=>self)
+      @subqueries << subquery
+      subquery
     end
 
     def absolute_name name
@@ -223,131 +230,9 @@ class Card
     end
 
 
-
-
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # SQL GENERATION - translate interpretd hash into complete SQL statement.
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
-    def to_sql *args
-
-      sql.tables = "cards #{table_alias}"
-      sql.fields.unshift fields_to_sql
-      sql.joins = build_joins
-
-      sql.conditions = [ build_conditions, standard_table_conditions ].reject( &:blank? ).join " AND \n    "
-
-      sql.order = sort_to_sql  # has side effects!
-
-      sql.group = "GROUP BY #{safe_sql(@mods[:group])}" if !@mods[:group].blank?
-      unless @super or @mods[:return]=='count'
-        if @mods[:limit].to_i > 0
-          sql.limit  = "LIMIT #{  @mods[:limit ].to_i }"
-          sql.offset = "OFFSET #{ @mods[:offset].to_i }" if !@mods[:offset].blank?
-        end
-      end
-
-      sql.to_s
-    end
-
-
-    def build_joins
-      [ @joins.values, @subclauses.map( &:build_joins ) ].flatten.compact
-    end
-
-    def build_conditions
-      cond_list = basic_conditions
-      cond_list +=
-        @subclauses.map do |clause|
-          clause.build_conditions
-        end
-      cond_list.reject! &:blank?
-
-      if cond_list.size > 1
-        "(#{ cond_list.join " #{ current_conjunction.upcase }\n" })"
-      else
-        cond_list.join
-      end
-    end
-
-
-    def basic_conditions
-      @conditions.map do |key, val|
-        val.to_sql field_root(key)
-      end
-    end
-
     def current_conjunction
       @mods[:conj].blank? ? :and : @mods[:conj]
     end
-
-    def standard_table_conditions
-      [trash_condition, permission_conditions].compact * ' AND '
-    end
-
-    def trash_condition
-      "#{table_alias}.trash is false"
-    end
-
-    def permission_conditions
-      unless Auth.always_ok?
-        read_rules = Auth.as_card.read_rules
-        read_rule_list = read_rules.nil? ? 1 : read_rules.join(',')
-        "(#{table_alias}.read_rule_id IN (#{ read_rule_list }))"
-      end
-    end
-
-    def fields_to_sql
-      field = @mods[:return]
-      case (field.blank? ? :card : field.to_sym)
-      when :raw;  "#{table_alias}.*"
-      when :card; "#{table_alias}.name"
-      when :count; "coalesce(count(*),0) as count"
-      when :content; "#{table_alias}.db_content"
-      else
-        ATTRIBUTES[field.to_sym]==:basic ? "#{table_alias}.#{field}" : safe_sql(field)
-      end
-    end
-
-    def sort_to_sql
-      #fail "order_key = #{@mods[:sort]}, class = #{order_key.class}"
-
-      return nil if @super or @mods[:return]=='count' #FIXME - extend to all root-only clauses
-      order_key ||= @mods[:sort].blank? ? "update" : @mods[:sort]
-
-      order_directives = [order_key].flatten.map do |key|
-        dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[key.to_sym]||'asc') : safe_sql(@mods[:dir]) #wonky
-        sort_field key, @mods[:sort_as], dir
-      end.join ', '
-      "ORDER BY #{order_directives}"
-
-    end
-
-    def sort_field key, as, dir
-      order_field = case key
-        when "id";              "#{table_alias}.id"
-        when "update";          "#{table_alias}.updated_at"
-        when "create";          "#{table_alias}.created_at"
-        when /^(name|alpha)$/;  "LOWER( #{table_alias}.key )"
-        when 'content';         "#{table_alias}.db_content"
-        when "relevance";       "#{table_alias}.updated_at" #deprecated
-        else
-          safe_sql(key)
-        end
-      order_field = "CAST(#{order_field} AS #{cast_type(as)})" if as
-      sql.fields << order_field if self == root  #a bit hacky?
-      "#{order_field} #{dir}"
-
-    end
-
-
-    class SqlCond < String
-      def to_sql(*args) self end
-    end
-
-
 
 
   end

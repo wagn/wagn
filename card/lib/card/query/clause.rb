@@ -14,9 +14,5 @@ module Card::Query::Clause
       [cxn, v]
     end
 
-    def cast_type(type)
-      cxn ||= ActiveRecord::Base.connection
-      (val = cxn.cast_types[type.to_sym]) ? val[:name] : safe_sql(type)
-    end
 
 end

@@ -166,7 +166,7 @@ class Card
           s = join_cards r.outfield, r.cardquery, :join_to=>r.table_alias
         end
         if r.conditions.any?
-          s ||= subclause
+          s ||= subquery
           s.add_condition r.conditions.map { |condition| "#{r.table_alias}.#{condition}" } * ' AND '
         end
       end
@@ -199,7 +199,7 @@ class Card
           case item
           when 'referred_to'
             join_field = 'id'
-            cs = Query.new cs_args.merge( field(:cond)=>SqlCond.new("referer_id in #{Query.new( val.merge(:return=>'id')).to_sql}") )
+            cs = Query.new cs_args.merge( field(:cond)=>SqlCond.new("referer_id in #{Query.new( val.merge(:return=>'id')).sql}") )
             cs.add_join :wr, :card_references, :id, :referee_id
           else
             raise BadQuery, "count with item: #{item} not yet implemented"
@@ -214,7 +214,7 @@ class Card
         end
 
         cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"
-        join_table = add_join :sort, cs.to_sql, :id, :sort_join_field, :side=>'LEFT'
+        join_table = add_join :sort, cs.sql, :id, :sort_join_field, :side=>'LEFT'
         @mods[:sort] ||= "#{join_table}.#{val[:return]}"
 
       end
@@ -255,19 +255,28 @@ class Card
       end
 
 
-      def join_cards sub_field, val, opts={}
-        super_field = opts[:return]  || 'id'
-        join_to     = opts[:join_to] || table_alias
+#      def join_cards sub_field, val, opts={}
+#        super_field = opts[:return]  || 'id'
+#        join_to     = opts[:join_to] || table_alias
+#
+#        #FIXME - this is SQL before SQL phase!!
+#        s = subquery
+#        s.joins[field(sub_field)] = "
+#  #{join_table} cards #{s.table_alias} ON #{join_to}.#{sub_field} = #{s.table_alias}.#{super_field}
+#      AND #{SqlStatement.new(s).standard_conditions(s)}"
+#
+#      end
 
-        #FIXME - this is SQL before SQL phase!!
-        s = subclause
-        s.joins[field(sub_field)] = "
-  #{join_table} cards #{s.table_alias} ON #{join_to}.#{sub_field} = #{s.table_alias}.#{super_field}
-      AND #{s.standard_table_conditions}"
-        s.interpret(val)
+
+      def join_cards from_field, val, opts={}
+        # FIXME get rid of join_to
+
+        s = subquery
+  #      s.joins FIXME - make array
+        s.joins[field(from_field)] = Join.new from: self, to: s, from_field: from_field, :from_alias=>opts[:join_to], :to_field=>opts[:return]
+        s.interpret val
         s
       end
-
 
       def field name
         @fields ||= {}
@@ -297,7 +306,7 @@ class Card
       alias :or :any
 
       def conjoin val, conj
-        clause = subclause( :return=>:condition, :conj=>conj )
+        clause = subquery( :return=>:condition, :conj=>conj )
         array = Array===val ? val : normalize(val).map { |key, value| {field(key) => value} }
         array.each do |val_item|
           clause.interpret val_item
@@ -305,7 +314,7 @@ class Card
       end
 
       def not val
-        subselect = Query.new(:return=>:id, :_super=>self).interpret(val).to_sql
+        subselect = Query.new(:return=>:id, :_super=>self).interpret(val).sql
         join_alias = add_join :not, subselect, :id, :id, :side=>'LEFT'
         interpret field(:cond) => SqlCond.new("#{join_alias}.id is null")
       end

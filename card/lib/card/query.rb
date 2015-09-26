@@ -19,13 +19,10 @@ class Card
       :match => '~',   :ne => '!=',   'not in' => nil
     }.stringify_keys)
 
-
-    PLUS_ATTRIBUTES = %w{ plus left_plus right_plus }
-
     ATTRIBUTES = {
       :basic           => %w{ name type_id content id key updater_id left_id right_id creator_id updater_id codename },
       :relational      => %w{ type part left right editor_of edited_by last_editor_of last_edited_by creator_of created_by member_of member },
-      :plus_relational => PLUS_ATTRIBUTES,
+      :plus_relational => %w{ plus left_plus right_plus },
       :ref_relational  => %w{ refer_to referred_to_by link_to linked_to_by include included_by },
       :conjunction     => %w{ and or all any },
       :special         => %w{ found_by not sort match complete extension_type },
@@ -58,7 +55,6 @@ class Card
       self
     end
 
-
     def run
       retrn = statement[:return].present? ? statement[:return].to_s : 'card'
       if retrn == 'card'
@@ -70,27 +66,19 @@ class Card
       end
     end
 
-
     def simple_run retrn
       rows = run_sql
-
-      case retrn
-      when 'name' #common case
-        if statement[:prepend] || statement[:append]
-          rows.map do |row|
-            [ statement[:prepend], row['name'], statement[:append] ].compact * '+'
-          end
-        else
-          rows.map { |row| row['name'] }
+      if retrn == 'name' && (statement[:prepend] || statement[:append])
+        rows.map do |row|
+          [ statement[:prepend], row['name'], statement[:append] ].compact * '+'
         end
-      when 'count'
-        rows.first['count'].to_i
-      when 'raw'
-        rows
-      when /id$/
-        rows.map { |row| row[retrn].to_i }
       else
-        rows.map { |row| row[retrn]      }
+        case retrn
+        when 'count'                 ; rows.first['count'].to_i
+        when 'raw'                   ; rows
+        when /id$/                   ; rows.map { |row| row[retrn].to_i }
+        else                         ; rows.map { |row| row[retrn]      }
+        end
       end
     end
 
@@ -104,11 +92,9 @@ class Card
       @sql ||= SqlStatement.new( self ).build.to_s
     end
 
-
     def root
       @root ||= @superquery ? @superquery.root : self
     end
-
 
     def subquery opts={}
       subquery = Query.new opts.reverse_merge(:superquery=>self)
@@ -147,7 +133,6 @@ class Card
       end
     end
 
-
     def normalize_string_value val
       case val.to_s
       when /^\$(\w+)$/                       # replace from @vars
@@ -158,7 +143,6 @@ class Card
         val
       end
     end
-
 
     def interpret_by_key clause
       clause.each do |key,val|
@@ -179,27 +163,28 @@ class Card
       end
     end
 
-
     def interpret_attributes key, val
-      is_array = Array===val
       case ATTRIBUTES[key]
         when :ignore                               #noop
         when :basic                              ; @conditions << [ key, ValueClause.new(val, self) ]
         when :conjunction                        ; send key, val
-        when :relational, :special               ; relate is_array, key, val, :send
-        when :ref_relational                     ; relate is_array, key, val, :join_references
-        when :plus_relational
-          # Arrays can have multiple interpretations for these, so we have to look closer...
-          subcond = is_array && ( Array===val.first || conjunction(val.first) )
-
-                                                   relate subcond, key, val, :send
+        when :relational, :special               ; relate key, val
+        when :ref_relational                     ; relate key, val, method: :join_references
+        when :plus_relational                    ; compound_relate key, val
         else                                     ; raise BadQuery, "Invalid attribute #{key}"
       end
     end
 
+    def compound_relate key, val
+      multiple = Array===val && ( Array===val.first || !!conjunction(val.first) )
+      relate key, val, multiple: multiple
+    end
 
-    def relate subcond, key, val, method
-      if subcond
+    def relate key, val, opts={}
+      multiple = opts[:multiple].nil? ? Array===val : opts[:multiple]
+      method = opts[:method] || :send
+
+      if multiple
         conj = conjunction( val.first ) ? conjunction( val.shift ) : :and
         if conj == current_conjunction                # same conjunction as container, no need for subcondition
           val.each { |v| send method, key, v }
@@ -211,11 +196,9 @@ class Card
       end
     end
 
-
     def current_conjunction
       @mods[:conj].blank? ? :and : @mods[:conj]
     end
-
 
   end
 end

@@ -116,8 +116,7 @@ class Card
         val.gsub! /[^#{Card::Name::OK4KEY_RE}]+/, ' '
         return nil if val.strip.empty?
 
-
-        cond = begin
+        add_condition begin
           val_list = val.split(/\s+/).map do |v|
             name_or_content = ["replace(#{self.table_alias}.name,'+',' ')","#{self.table_alias}.db_content"].map do |field|
               %{#{field} #{ cxn.match quote("[[:<:]]#{v}[[:>:]]") }}
@@ -126,14 +125,12 @@ class Card
           end
           "(#{val_list.join ' AND '})"
         end
-
-        interpret :cond=>cond
       end
 
 
       def complete(val)
         no_plus_card = (val=~/\+/ ? '' : "and right_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
-        interpret :cond => " lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}"
+        add_condition " lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}"
       end
 
       def extension_type val
@@ -155,7 +152,7 @@ class Card
         end
         if r.conditions.any?
           s ||= subquery
-          s.interpret :cond => r.conditions.map { |condition| "#{r.table_alias}.#{condition}" } * ' AND '
+          s.add_condition r.conditions.map { |condition| "#{r.table_alias}.#{condition}" } * ' AND '
         end
       end
 
@@ -169,33 +166,33 @@ class Card
 
       def sort val
         return nil if @superquery
-        val[:return] = val[:return] ? safe_sql(val[:return]) : 'db_content'
-        val[:superquery] = self
+        sort_field = val[:return] || 'db_content'
+        #sq = subquery
         item = val.delete(:item) || 'left'
 
-        if val[:return] == 'count'
-          cs_args = { :return=>'count', :group=>'sort_join_field', :superquery=>self }
-          @mods[:sort] = "coalesce(count,0)" # needed for postgres
-          case item
-          when 'referred_to'
-            join_field = 'id'
-            cs = Query.new cs_args.merge( :cond=>"referer_id in #{Query.new( val.merge(:return=>'id')).sql}" )
-            cs.add_join :wr, :card_references, :id, :referee_id
-          else
-            raise BadQuery, "count with item: #{item} not yet implemented"
-          end
+        if sort_field == 'count'
+#          cs_args = { :return=>'count', :group=>'sort_join_field', :superquery=>self }
+#          @mods[:sort] = "coalesce(count,0)" # needed for postgres
+#          case item
+#          when 'referred_to'
+#            join_field = 'id'
+#            cs = Query.new cs_args.merge( :cond=>"referer_id in #{Query.new( val.merge(:return=>'id')).sql}" )
+#            cs.add_join :wr, :card_references, :id, :referee_id
+#          else
+#            raise BadQuery, "count with item: #{item} not yet implemented"
+#          end
         else
           join_field = case item
             when 'left'  ; 'left_id'
             when 'right' ; 'right_id'
             else         ;  raise BadQuery, "sort item: #{item} not yet implemented"
           end
-          cs = Query.new(val)
         end
 
-        cs.mods[:sort_join_field] = "#{cs.table_alias}.#{join_field} as sort_join_field" #HACK!
-        join_table = add_join :sort, cs.sql, :id, :sort_join_field, :side=>'LEFT'
-        @mods[:sort] ||= "#{join_table}.#{val[:return]}"
+#        sq.mods[:sort_join_field] = "#{cs.table_alias}.#{join_field} as sort_join_field" #HACK!
+        sq = join_cards val, :to_field=>join_field, :side=>'LEFT'
+#        join_table = add_join :sort, cs.sql, :id, :sort_join_field, :side=>'LEFT'
+        @mods[:sort] ||= "#{sq.table_alias}.#{sort_field}"
 
       end
 
@@ -228,12 +225,9 @@ class Card
         join_alias
       end
 
-
       def join_cards val, opts={}
-        # FIXME get rid of from_alias
-        s = subquery
-        join_opts = { from: self, to: s }.merge opts
-        s.joins << Join.new( join_opts )
+        s = subquery #clause_to_hash(val)
+        s.joins << Join.new( { from: self, to: s }.merge opts )
         s.interpret val
         s
       end
@@ -264,7 +258,7 @@ class Card
         subselect = Query.new(:return=>:id, :superquery=>self)
         subselect.interpret(val)
         join_alias = add_join :not, subselect.sql, :id, :id, :side=>'LEFT'
-        interpret :cond => "#{join_alias}.id is null"
+        add_condition "#{join_alias}.id is null"
       end
 
       def restrict id_field, val

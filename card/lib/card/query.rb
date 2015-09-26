@@ -148,34 +148,36 @@ class Card
       clause.each do |key,val|
         case
         when OPERATORS.has_key?(key.to_s) && !ATTRIBUTES[key]
-          # eg match is both operator and attribute;
-          # interpret as attribute when match is key
+          # eg "match" is both operator and attribute;
+          # interpret as attribute when "match" is key
           interpret content: [key,val]
         when MODIFIERS.has_key?(key) && !clause[key].is_a?(Hash)
-          # eg when sort is hash, it can have subqueries
-          # and may need to be treated like an attribute
+          # eg when "sort" is hash, it can have subqueries
+          # and must be interpreted like an attribute
           @mods[key] = Array === val ? val : val.to_s
-        when key==:cond
-          @conditions << [ key, SqlCond.new(val) ]
         else
           interpret_attributes key, val
         end
       end
     end
 
+    def add_condition *args
+      @conditions << ( args.size > 1 ? args : [ :cond, SqlCond.new(args[0]) ] )
+    end
+
     def interpret_attributes key, val
       case ATTRIBUTES[key]
-        when :ignore                               #noop
-        when :basic                              ; @conditions << [ key, ValueClause.new(val, self) ]
-        when :conjunction                        ; send key, val
-        when :relational, :special               ; relate key, val
-        when :ref_relational                     ; relate key, val, method: :join_references
-        when :plus_relational                    ; compound_relate key, val
-        else                                     ; raise BadQuery, "Invalid attribute #{key}"
+        when :basic                ; add_condition key, ValueClause.new(val, self)
+        when :conjunction          ; send key, val
+        when :relational, :special ; relate key, val
+        when :ref_relational       ; relate key, val, method: :join_references
+        when :plus_relational      ; relate_compound key, val
+        when :ignore               ; #noop
+        else                       ; raise BadQuery, "Invalid attribute #{key}"
       end
     end
 
-    def compound_relate key, val
+    def relate_compound key, val
       multiple = Array===val && ( Array===val.first || !!conjunction(val.first) )
       relate key, val, multiple: multiple
     end

@@ -151,7 +151,7 @@ class Card
           else
             safe_sql(key)
           end
-        order_field = "CAST(#{order_field} AS #{cast_type(as)})" if as
+        order_field = "CAST(#{order_field} AS #{cast_type(safe_sql as)})" if as
         @fields += ", #{order_field}"
         "#{order_field} #{dir}"
 

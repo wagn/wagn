@@ -1,7 +1,7 @@
 class Card
   class Query
     class Join
-      attr_accessor :from, :to, :from_table, :from_alias, :from_field, :to_table, :to_alias, :to_field, :side
+      attr_accessor :from, :to, :from_table, :from_alias, :from_field, :to_table, :to_alias, :to_field, :side, :conditions
 
       def initialize opts={}
         from_and_to opts
@@ -10,11 +10,10 @@ class Card
         end
         @from_field ||= :id
         @to_field   ||= :id
+
+        @conditions = [ [ :cond, SqlCond.new( "#{from_alias}.#{from_field} = #{to_alias}.#{to_field}") ] ]
       end
 
-      def to_sql
-        ([ side, 'JOIN', to_table, to_alias ].compact * ' ') + on_condition
-      end
 
       def from_and_to opts
         [:from, :to].each do |side|
@@ -39,9 +38,15 @@ class Card
         @side ||= (from && from.mods[:conj] == 'or') ? 'LEFT' : nil
       end
 
+      def to_sql
+        [ side, 'JOIN', to_table, to_alias, 'ON', on_clause ].compact * ' '
+      end
 
-      def on_condition
-        " ON #{from_alias}.#{from_field} = #{to_alias}.#{to_field}"
+      def on_clause
+        @conditions.map do |condition|
+          field, val = condition
+          val.to_sql field
+        end * ' AND '
       end
 
     end

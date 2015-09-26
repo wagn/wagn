@@ -35,7 +35,7 @@ class Card
     DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
     CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
 
-    attr_reader :statement, :selfname, :mods, :conditions, :subqueries, :super
+    attr_reader :statement, :context, :mods, :conditions, :subqueries, :superquery
     attr_accessor :joins, :table_seq
 
     def initialize statement
@@ -44,10 +44,10 @@ class Card
       @mods = MODIFIERS.clone
       @statement = statement.clone
 
-      @selfname = @statement.delete(:context) || ''
-      @super    = @statement.delete(:_super)  || nil
-      @params   = @statement.delete(:params)  || {}
-      @vars     = @statement.delete(:vars) || {}
+      @context    = @statement.delete(:context)    || ''
+      @superquery = @statement.delete(:superquery) || nil
+      @params     = @statement.delete(:params)     || {}    # not a great name; it's more like edits/overwrites to the statement
+      @vars       = @statement.delete(:vars)       || {}
 
       @statement.merge! @params
       @vars.symbolize_keys!
@@ -95,7 +95,6 @@ class Card
     end
 
     def run_sql
-
       #puts "statement = #{@statement}"
       #puts "sql = #{sql}"
       ActiveRecord::Base.connection.select_all( sql )
@@ -107,20 +106,18 @@ class Card
 
 
     def root
-      @root ||= @super ? @super.root : self
+      @root ||= @superquery ? @superquery.root : self
     end
 
 
     def subquery opts={}
-      subquery = Query.new opts.reverse_merge(:_super=>self)
+      subquery = Query.new opts.reverse_merge(:superquery=>self)
       @subqueries << subquery
       subquery
     end
 
     def interpret clause
-      clause = normalize_clause clause
-      clause = clause.deep_clone
-      interpret_by_key clause
+      interpret_by_key( normalize_clause clause )
     end
 
     def normalize_clause clause
@@ -155,8 +152,8 @@ class Card
       case val.to_s
       when /^\$(\w+)$/                       # replace from @vars
         @vars[$1.to_sym].to_s.strip
-      when /\b_/                             # absolutize based on @selfname
-        val.to_name.to_absolute(root.selfname)
+      when /\b_/                             # absolutize based on @context
+        val.to_name.to_absolute(root.context)
       else
         val
       end
@@ -175,7 +172,7 @@ class Card
           # and may need to be treated like an attribute
           @mods[key] = Array === val ? val : val.to_s
         when key==:cond
-          @conditions << [ key, val ]
+          @conditions << [ key, SqlCond.new(val) ]
         else
           interpret_attributes key, val
         end

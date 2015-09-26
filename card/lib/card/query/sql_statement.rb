@@ -121,7 +121,7 @@ class Card
       end
 
       def full_syntax
-        unless @query.super or @mods[:return]=='count'
+        unless @query.superquery or @mods[:return]=='count'
           yield
         end
       end

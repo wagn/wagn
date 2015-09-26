@@ -98,7 +98,7 @@ class Card
           Query.new(val).run
         else
           Array.wrap(val).map do |v|
-            Card.fetch val.to_name.to_absolute(root.selfname), :new=>{}
+            Card.fetch val.to_name.to_absolute(root.context), :new=>{}
           end
         end
 
@@ -127,13 +127,13 @@ class Card
           "(#{val_list.join ' AND '})"
         end
 
-        interpret :cond=>SqlCond.new(cond)
+        interpret :cond=>cond
       end
 
 
       def complete(val)
         no_plus_card = (val=~/\+/ ? '' : "and right_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
-        interpret :cond=>SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
+        interpret :cond => " lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}"
       end
 
       def extension_type val
@@ -155,13 +155,10 @@ class Card
         end
         if r.conditions.any?
           s ||= subquery
-          s.add_condition r.conditions.map { |condition| "#{r.table_alias}.#{condition}" } * ' AND '
+          s.interpret :cond => r.conditions.map { |condition| "#{r.table_alias}.#{condition}" } * ' AND '
         end
       end
 
-      def add_condition condition
-        interpret :cond => SqlCond.new(condition)
-      end
 
       def conjunction val
         if [String, Symbol].member? val.class
@@ -171,18 +168,18 @@ class Card
 
 
       def sort val
-        return nil if @super
+        return nil if @superquery
         val[:return] = val[:return] ? safe_sql(val[:return]) : 'db_content'
-        val[:_super] = self
+        val[:superquery] = self
         item = val.delete(:item) || 'left'
 
         if val[:return] == 'count'
-          cs_args = { :return=>'count', :group=>'sort_join_field', :_super=>self }
+          cs_args = { :return=>'count', :group=>'sort_join_field', :superquery=>self }
           @mods[:sort] = "coalesce(count,0)" # needed for postgres
           case item
           when 'referred_to'
             join_field = 'id'
-            cs = Query.new cs_args.merge( :cond=>SqlCond.new("referer_id in #{Query.new( val.merge(:return=>'id')).sql}") )
+            cs = Query.new cs_args.merge( :cond=>"referer_id in #{Query.new( val.merge(:return=>'id')).sql}" )
             cs.add_join :wr, :card_references, :id, :referee_id
           else
             raise BadQuery, "count with item: #{item} not yet implemented"
@@ -202,12 +199,10 @@ class Card
 
       end
 
-
-
       def table_alias
         @table_alias ||= begin
-          if @mods[:return]=='condition' && @super
-            @super.table_alias
+          if @mods[:return]=='condition' && @superquery
+            @superquery.table_alias
           else
             "c#{table_id}"
           end
@@ -233,14 +228,9 @@ class Card
         join_alias
       end
 
-      def join_table
-        @mods[:conj] == 'or' ? 'LEFT JOIN' : 'JOIN'
-      end
-
 
       def join_cards val, opts={}
         # FIXME get rid of from_alias
-
         s = subquery
         join_opts = { from: self, to: s }.merge opts
         s.joins << Join.new( join_opts )
@@ -271,24 +261,24 @@ class Card
       end
 
       def not val
-        subselect = Query.new(:return=>:id, :_super=>self)
+        subselect = Query.new(:return=>:id, :superquery=>self)
         subselect.interpret(val)
         join_alias = add_join :not, subselect.sql, :id, :id, :side=>'LEFT'
-        interpret :cond => SqlCond.new("#{join_alias}.id is null")
+        interpret :cond => "#{join_alias}.id is null"
       end
 
       def restrict id_field, val
-        if id = id_from_clause(val)
+        if id = id_from_val(val)
           interpret id_field => id
         else
           join_cards val, from_field: id_field
         end
       end
 
-      def id_from_clause clause
-        case clause
-        when Integer ; clause
-        when String  ; Card.fetch_id(clause)
+      def id_from_val val
+        case val
+        when Integer ; val
+        when String  ; Card.fetch_id(val)
         end
       end
 

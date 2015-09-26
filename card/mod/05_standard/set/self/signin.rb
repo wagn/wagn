@@ -75,9 +75,9 @@ end
 
 event :signin, :before=>:approve, :on=>:update do
   email = subfield(:email)
-  email &&= email['content']
+  email &&= email.content
   pword = subfield(:password)
-  pword &&= pword['content']
+  pword &&= pword.content
 
   abort :failure, 'bad signin args' unless email && pword
 
@@ -100,7 +100,7 @@ end
 
 event :send_reset_password_token, :before=>:signin, :on=>:update, :when=>proc{ |c| Env.params[:reset_password] } do
   email = subfield(:email)
-  email &&= email['content']
+  email &&= email.content
 
   if accted = Auth[ email.strip.downcase ] and accted.account.active?
     accted.account.send_reset_password_token

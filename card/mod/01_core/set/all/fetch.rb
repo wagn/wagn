@@ -23,15 +23,7 @@ module ClassMethods
   #     :new => {  card opts }      Return a new card when not found
   #
   def fetch mark, opts={}
-    if String === mark
-      case mark
-      when /^\~(\d+)$/ # get by id
-        mark = $1.to_i
-      when /^\:(\w+)$/ # get by codename
-        mark = $1.to_sym
-      end
-    end
-    mark = Card::Codename[mark] if Symbol === mark # id from codename
+    mark = canonicalize_mark mark
 
     if mark.present?
       card, mark, needs_caching = fetch_from_cache_or_db mark, opts # have existing
@@ -60,11 +52,29 @@ module ClassMethods
         card.include_set_modules unless opts[:skip_modules]  # need to load modules here to call the right virtual? method
         return unless card.virtual? || opts[:subcard]
       end
-      card.name = mark.to_s if mark && mark.to_s != card.name
+      card.name = mark.to_s if mark && mark.to_s != card.name && !opts[:subcard]
     end
 
     card.include_set_modules unless opts[:skip_modules]
     card
+  end
+
+  def canonicalize_mark mark
+    case mark
+    when String
+      case mark
+      when /^\~(\d+)$/ # get by id
+        $1.to_i
+      when /^\:(\w+)$/ # get by codename
+        Card::Codename[$1.to_sym]
+      else
+        mark
+      end
+    when Symbol
+      Card::Codename[mark] # id from codename
+    else
+      mark
+    end
   end
 
   def fetch_id mark #should optimize this.  what if mark is int?  or codename?
@@ -73,11 +83,11 @@ module ClassMethods
   end
 
   def assign_or_initialize_by name, attributes
-    if known_card = Card[name]
+    if known_card = Card.fetch(name, :subcard=>true)
       known_card.refresh.assign_attributes attributes
       known_card
     else
-      Card.new attributes.reverse_merge :name => name
+      Card.new attributes.merge(:name => name)
     end
   end
 

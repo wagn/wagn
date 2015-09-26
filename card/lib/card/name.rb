@@ -38,6 +38,10 @@ class Card
       name ? name.s : ( raise Card::NotFound, "unknown codename: #{tag_code}" )
     end
 
+    def field tag_name
+      field_name( tag_name).s
+    end
+
     def code
       Card::Codename[ Card.fetch_id self ]
     end
@@ -51,8 +55,8 @@ class Card
       end
     end
 
-    def field tag_name
-      field_name( tag_name).s
+    def relative_field_name tag_name
+      field_name(tag_name).relative_name(self)
     end
 
     def relative_name context_name

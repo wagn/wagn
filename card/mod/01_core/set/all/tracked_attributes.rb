@@ -11,13 +11,17 @@ def assign_attributes args={}
     if newtype = args.delete('type')
       args['type_id'] = Card.fetch_id newtype
     end
-    subcards << args.delete('subcards')
-    subcards.extract_fields! args
+    subcard_args = extract_subcard_args! args
     reset_patterns
   end
   params = ActionController::Parameters.new(args)
   params.permit!
+
+  # import: first set name before process subcards
   super params
+  if args && subcard_args.present?
+    subcards.add subcard_args
+  end
 end
 
 def assign_set_specific_attributes
@@ -26,6 +30,16 @@ def assign_set_specific_attributes
       self.send "#{name}=", value
     end
   end
+end
+
+def extract_subcard_args! args
+  subcards = args.delete('subcards') || {}
+  args.keys.each do |key|
+    if key =~ /^\+/
+      subcards[key] = args.delete(key)
+    end
+  end
+  subcards
 end
 
 protected

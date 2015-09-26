@@ -132,8 +132,8 @@ event :redirect_to_edit_password, :on=>:update, :after=>:store, :when=>proc {|c|
 end
 
 event :preprocess_account_subcards, :before=>:process_subcards, :on=>:create do
-  #FIXME: use codenames!
-  email, password = subcards.delete('+*account+*email'), subcards.delete('+*account+*password')
+  email = remove_subfield("+#{Card[:account].name}+#{Card[:email].name}")
+  password = remove_subfield("+#{Card[:account].name}+#{Card[:password].name}")
   account = add_subfield :account
   account.add_subfield( :email, :content => email) if email
   account.add_subfield( :password, :content => password) if password

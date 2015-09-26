@@ -11,13 +11,13 @@ def name= newname
     cardname = @given_name.to_name.to_absolute_name @supercard.name
   end
 
+
   newkey = cardname.key
   if key != newkey
     self.key = newkey
     reset_patterns_if_rule # reset the old name - should be handled in tracked_attributes!!
     reset_patterns
   end
-
   subcards.each do |subcard|
     subcard.name = subcard.cardname.replace_part name, newname
   end

@@ -44,7 +44,7 @@ class Card < ActiveRecord::Base
   cattr_accessor :set_patterns, :error_codes, :serializable_attributes, :set_specific_attributes
   @@set_patterns, @@error_codes = [], {}
 
-  serializable_attr_accessor :action, :supercard, :current_act, :current_action,
+  serializable_attr_accessor :action, :supercard, :superleft, :current_act, :current_action,
     :comment, :comment_author,    # obviated soon
     :update_referencers,          # wrong mechanism for this
     :update_all_users,            # if the above is wrong then this one too

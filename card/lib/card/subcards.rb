@@ -28,7 +28,7 @@ class Card
     subcards.add name_or_card, args
   end
 
-  def add_subfield name, args
+  def add_subfield name, args=nil
     subcards.add_field name, args
   end
 
@@ -49,14 +49,16 @@ class Card
     end
 
     def remove name_or_card
-      case name_or_card
+      key = case name_or_card
       when Card
-        @keys.delete name_or_card.key
+        name_or_card.key
       when Symbol
-        @keys.delete fetch_subcard(name_or_card).key
+        fetch_subcard(name_or_card).key
       else
-        @keys.delete name_or_card.to_name.key
+        name_or_card.to_name.key
       end
+
+      @keys.include? key && @keys.delete(key)
     end
 
     def add name_or_card_or_attr, card_or_attr=nil
@@ -65,18 +67,17 @@ class Card
       else
         card_or_attr = name_or_card_or_attr
       end
-
       case card_or_attr
       when Hash
         args = card_or_attr
         if name
           add_attributes name, args
         elsif args[:name]
-          add_attributes args[:name], args
+          add_attributes args.delete(:name), args
         else
           args.each_pair do |key, val|
             if val.kind_of? String
-              add_attributes key, {:content => val }
+              add_attributes key, :content => val
             else
               add_attributes key, val
             end
@@ -84,21 +85,13 @@ class Card
         end
       when Card
         add_card card_or_attr
-      when Symbol
-        add_attributes name, {}
+      when Symbol, String
+        add_attributes card_or_attr, {}
       end
     end
 
     def << value
       add value
-    end
-
-    def extract_fields! args
-      args.keys.each do |key|
-        if key =~ /^\+/
-          add( key => args.delete(key) )
-        end
-      end
     end
 
     def method_missing method, *args
@@ -149,28 +142,19 @@ class Card
     end
 
     def add_child name, args
-      args_with_name  =
-        case name
-        when Symbol
-          args.merge :name=>"+#{Card[name].key}"
-        when /^\+/
-          args.merge :name=>name
-        else
-          args.merge :name=>"+#{name}"
-        end
-      add args_with_name
+      add prepend_plus(name), args
     end
 
     def remove_child name_or_card
-      case name
-      when Symbol
-        remove "+#{Card[name]}"
-      when /^\+/
-        remove name
-      when Card
-        remove name
+      if name_or_card.kind_of? Card
+        remove name_or_card
       else
-        remove "+#{name}"
+        absolute_name = @context_card.cardname.field_name(name_or_card)
+        if @keys.include? absolute_name.key
+          remove absolute_name
+        else
+          remove @context_card.cardname.relative_field_name(name_or_card)
+        end
       end
     end
 
@@ -184,28 +168,46 @@ class Card
     end
 
 
-    def field_name_to_key name
-      @context_card.cardname.field_name(name.remove /^\+/).key
+    def prepend_plus name
+      case name
+      when Symbol
+        "+#{Card[name].name}"
+      when /^\+/
+        name
+      else
+        "+#{name}"
+      end
     end
 
-    def add_attributes name, attributes
-      if name.kind_of? Symbol
-        codename = name
-        name =
-          if attributes.delete(:absolute)
-            Card[name].name
-          else
-            "+#{Card[name].name}"
-          end
+    def field_name_to_key name
+      if @context_card.name =~ /^\+/
+        @context_card.cardname.relative_field_name(name).key
+      else
+        absolute_key = @context_card.cardname.field_name(name).key
+        if @keys.include? absolute_key
+         absolute_key
+        else
+          @context_card.cardname.relative_field_name(name).key
+        end
       end
-      absolute_name = name.to_name.to_absolute_name(@context_card.name).s
-      card = Card.assign_or_initialize_by absolute_name, attributes
+    end
 
+    def add_attributes name, attributes={}
+      absolute_name =
+        if @context_card.name =~ /^\+/
+          name
+        else
+          name.to_name.to_absolute_name(@context_card.name).s
+        end
+      card = Card.assign_or_initialize_by absolute_name, attributes
       add_card card
     end
 
     def add_card card
       card.supercard = @context_card
+      if !card.cardname.simple? && card.cardname.is_a_field_of?(@context_card.cardname)
+        card.superleft = @context_card
+      end
       @keys << card.key
       Card.write_to_cache card
       card

@@ -6,7 +6,7 @@ format do
   end
 
   # NAME VIEWS
-                                                                              
+
   view :name,     :closed=>true, :perms=>:none do |args| card.name                           end
   view :key,      :closed=>true, :perms=>:none do |args| card.key                            end
   view :title,    :closed=>true, :perms=>:none do |args| args[:title] || card.name           end
@@ -22,8 +22,8 @@ format do
       :path_opts=>{ :type=>args[:type] }
     )
   end
-        
-  view :codename, :closed=>true do |args| card.codename.to_s  end  
+
+  view :codename, :closed=>true do |args| card.codename.to_s  end
   view :id,       :closed=>true do |args| card.id             end
   view :type,     :closed=>true do |args| card.type_name      end
 
@@ -96,11 +96,11 @@ format do
 
   view :template_rule, :tags=>:unknown_ok do |args|
     #FIXME - relativity should be handled in smartname
-  
+
     name = args[:inc_name] or return ''
     regexp = /\b_(left|right|whole|self|user|main|\d+|L*R?)\b/
     absolute = name !~ regexp && name !~ /^\+/
-    
+
     tname = name.gsub regexp, ''
     if tname !~ /^\+/ and !absolute
       "{{#{args[:inc_syntax]}}}"
@@ -115,7 +115,7 @@ format do
           "#{tname.gsub /^\+/,''}+#{Card[:right].name}"                                      # *right
         end
       end
-    
+
       subformat( Card.fetch(set_name) ).render_template_link args
     end
   end

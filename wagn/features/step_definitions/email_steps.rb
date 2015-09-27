@@ -193,7 +193,7 @@ Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
   email = address_for_user username
   begin
     step %{"#{email}" should receive 1 email}
-  rescue RSpec::Expectations::ExpectationNotMetError e
+  rescue RSpec::Expectations::ExpectationNotMetError => e
     raise RSpec::Expectations::ExpectationNotMetError, %(#{e.message}\n Found the following emails:\n\n #{all_emails*"\n\n~~~~~~~~\n\n"})
   end
   open_email(email, with_subject: /#{subject}/)

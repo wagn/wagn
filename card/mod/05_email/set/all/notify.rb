@@ -118,7 +118,8 @@ format do
 
 
   view :subedits, perms: :none do |args|
-    subedits = get_act(args).relevant_actions_for(card).map do |action|
+    subedits =
+      get_act(args).relevant_actions_for(card).map do |action|
         if action.card_id != card.id
           action.card.format(format: @format).render_subedit_notice(action: action)
         end
@@ -171,11 +172,12 @@ format do
     end
     item_title +=  "#{field}: "
 
-    item_value = if action.action_type == :delete
-      action.old_values[field]
-    else
-      action.new_values[field]
-    end
+    item_value =
+      if action.action_type == :delete
+        action.old_values[field]
+      else
+        action.new_values[field]
+      end
 
      wrap_list_item "#{item_title}#{item_value}"
   end

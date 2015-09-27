@@ -24,7 +24,7 @@ class Card
     end
 
     def layout_from_rule
-      if rule = card.rule_card(:layout) and rule.type_id==Card::PointerID and layout_name=rule.item_names.first
+      if (rule = card.rule_card(:layout)) && rule.type_id == Card::PointerID && (layout_name = rule.item_names.first)
         layout_from_card_or_code layout_name
       end
     end
@@ -33,7 +33,7 @@ class Card
       layout_card = Card.fetch name.to_s, skip_virtual: true, skip_modules: true
       if layout_card and layout_card.ok? :read
         layout_card.content
-      elsif hardcoded_layout = LAYOUTS[name]
+      elsif (hardcoded_layout = LAYOUTS[name])
         hardcoded_layout
       else
         "<h1>Unknown layout: #{name}</h1>Built-in Layouts: #{LAYOUTS.keys.join(', ')}"

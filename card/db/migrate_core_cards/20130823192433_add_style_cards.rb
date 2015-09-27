@@ -62,14 +62,15 @@ class AddStyleCards < Card::CoreMigration
     # CREATE DEFAULT STYLE RULE
     # (this auto-generates cached file)
 
-    default_skin = if old_css.content =~ /\S/
-      name = 'customized classic skin'
-      Card.create! name: name, type: 'Skin', content: "[[classic skin]]\n[[*css]]"
-      name
-    else
-      old_css.delete!
-      'classic skin'
-    end
+    default_skin =
+      if old_css.content =~ /\S/
+        name = 'customized classic skin'
+        Card.create! name: name, type: 'Skin', content: "[[classic skin]]\n[[*css]]"
+        name
+      else
+        old_css.delete!
+        'classic skin'
+      end
 
     Card::Cache.reset_global
     begin

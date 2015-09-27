@@ -50,7 +50,7 @@ class UserDataToCards < Card::CoreMigration
         [ :email, :salt, :password, :status ].each do |field|
           cardname = "#{base.name}+#{Card[:account].name}+#{Card[field].name}"
           user_field = ( field==:password ? :crypted_password : field )
-          if content = user.send( user_field )
+          if (content = user.send( user_field ))
             begin
               Card.create! date_args.merge( name: cardname, content: content)
             rescue => e

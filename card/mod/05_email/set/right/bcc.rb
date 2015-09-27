@@ -26,7 +26,7 @@ format :email_text do
       # note that context is processed twice here because pointers absolutize item_names by default
       # while other types can return relative names.  That's poor default behavior and should be fixed!
       item_name = item_name.to_name.to_absolute(context).to_s
-      if item_name.match /.+\@.+\..+/
+      if item_name.match(/.+\@.+\..+/)
         item_name
       elsif item_card = Card.fetch( item_name )
         if item_card.account

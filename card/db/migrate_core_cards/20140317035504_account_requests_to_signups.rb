@@ -8,7 +8,6 @@ class AccountRequestsToSignups < Card::CoreMigration
 
     #get old codename and name out of the way
     old_signup = Card[:signup]
-    old_signup_name = old_signup.name
     old_signup.name = "#{newname} - old"
     old_signup.codename = nil
     old_signup.save!
@@ -26,7 +25,7 @@ class AccountRequestsToSignups < Card::CoreMigration
 
     # move old "*signup+*thanks" to "Sign up+*type+*thanks"
     thanks = Card[:thanks]
-    if signup_thanks = Card["#{old_signup.name}+#{thanks.name}"]
+    if (signup_thanks = Card["#{old_signup.name}+#{thanks.name}"])
       signup_thanks.name = "#{new_signup.name}+#{Card[:type].name}+#{thanks.name}"
       signup_thanks.update_referencers = true
       signup_thanks.save!

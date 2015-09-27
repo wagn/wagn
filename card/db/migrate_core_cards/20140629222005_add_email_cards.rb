@@ -73,7 +73,7 @@ class AddEmailCards < Card::CoreMigration
     )
     if request_card = Card[:request]
       [:to, :from].each do |field|
-        if old_card = request_card.fetch(trait: field) and !old_card.content.blank?
+        if old_card = request_card.fetch(trait: field) && !old_card.content.blank?
           Card.create! name: "signup alert email+#{Card[field].name}", content: old_card.content
         end
       end

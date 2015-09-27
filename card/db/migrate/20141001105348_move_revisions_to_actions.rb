@@ -38,7 +38,7 @@ class MoveRevisionsToActions < ActiveRecord::Migration
         TmpAction.connection.execute "INSERT INTO card_actions (id, card_id, card_act_id, action_type) VALUES
                                                               ('#{rev.id}', '#{rev.card_id}', '#{rev.id}', 0)"
 
-        if tmp_card = rev.tmp_card
+        if (tmp_card = rev.tmp_card)
           TmpChange.connection.execute "INSERT INTO card_changes (card_action_id, field, value) VALUES
               ('#{rev.id}', 0, #{conn.quote tmp_card.name}),
               ('#{rev.id}', 1, '#{tmp_card.type_id}'),
@@ -50,7 +50,7 @@ class MoveRevisionsToActions < ActiveRecord::Migration
     end
 
     TmpCard.find_each do |card|
-      card.update_column(:db_content,card.tmp_revision.content) if card.tmp_revision
+      card.update_column(:db_content, card.tmp_revision.content) if card.tmp_revision
     end
 
     #drop_table :card_revisions

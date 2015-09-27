@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 class CreateNewRevisionTables < ActiveRecord::Migration
-
   def up
     add_column :cards, :db_content, :text
 
@@ -30,8 +29,8 @@ class CreateNewRevisionTables < ActiveRecord::Migration
     add_index :card_actions, :card_id, name: 'card_id_index'
     add_index :card_actions, :card_act_id, name: 'card_act_id_index'
     add_index :card_changes, :card_action_id, name: 'card_action_id_index'
-    #add_index :card_actions, [:card_id, :draft], name: 'card_id_and_draft_index'
-    #add_index :card_changes, [:card_action_id, :field], name: 'card_action_id_and_field_index'
+    # add_index :card_actions, [:card_id, :draft], name: 'card_id_and_draft_index'
+    # add_index :card_changes, [:card_action_id, :field], name: 'card_action_id_and_field_index'
   end
 
   def down

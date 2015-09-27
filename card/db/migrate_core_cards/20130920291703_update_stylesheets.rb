@@ -10,7 +10,7 @@ class UpdateStylesheets < Card::CoreMigration
       end
     end
 
-    if c = Card['*all+*style+file']
+    if (c = Card['*all+*style+file'])
       c.delete!
     end
   end

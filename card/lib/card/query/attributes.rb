@@ -119,15 +119,13 @@ class Card
         val.gsub! /[^#{Card::Name::OK4KEY_RE}]+/, ' '
         return nil if val.strip.empty?
 
-        add_condition begin
-          val_list = val.split(/\s+/).map do |v|
-            name_or_content = ["replace(#{self.table_alias}.name,'+',' ')","#{self.table_alias}.db_content"].map do |field|
-              %{#{field} #{ cxn.match quote("[[:<:]]#{v}[[:>:]]") }}
-            end
-            "(#{name_or_content.join ' OR '})"
+        val_list = val.split(/\s+/).map do |v|
+          name_or_content = ["replace(#{self.table_alias}.name,'+',' ')","#{self.table_alias}.db_content"].map do |field|
+            %{#{field} #{ cxn.match quote("[[:<:]]#{v}[[:>:]]") }}
           end
-          "(#{val_list.join ' AND '})"
+          "(#{name_or_content.join ' OR '})"
         end
+        add_condition "(#{val_list.join ' AND '})"
       end
 
 
@@ -172,31 +170,24 @@ class Card
         sort_field = val[:return] || 'db_content'
         item = val.delete(:item)  || 'left'
 
-        join_table =
-          if sort_field == 'count'
-            sort_by_count val, item
-          else
-            join_field = SORT_JOIN_TO_ITEM_MAP[item.to_sym] or raise BadQuery, "sort item: #{item} not yet implemented"
-            sq = join_cards val, to_field: join_field, side: 'LEFT', conditions_on_join: true
-            sq.table_alias
-          end
-        @mods[:sort] ||= "#{join_table}.#{sort_field}"
+        if sort_field == 'count'
+          sort_by_count val, item
+        else
+          join_field = SORT_JOIN_TO_ITEM_MAP[item.to_sym] or raise BadQuery, "sort item: #{item} not yet implemented"
+          sq = join_cards val, to_field: join_field, side: 'LEFT', conditions_on_join: true
+          @mods[:sort] ||= "#{sq.table_alias}.#{sort_field}"
+        end
+
       end
 
       # EXPERIMENTAL!
-
-
-
       def sort_by_count val, item
         raise BadQuery, "count with item: #{item} not yet implemented" unless item == 'referred_to'
-        val.merge! return: 'count', superquery: self
         @mods[:sort] = "coalesce(count,0)" # needed for postgres
-        cs_args = { :return=>'count', :group=>'sort_join_field', :superquery=>self }
-        join_field = 'id'
-        cs = Query.new cs_args
-        cs.add_condition "referer_id in #{Query.new( val.merge(:return=>'id')).sql}"
+        cs = Query.new :return=>'count', :group=>'sort_join_field', :superquery=>self
+        cs.add_condition "referer_id in #{Query.new( val.merge(return: 'id', superquery: self)).sql}"
         cs.add_join :wr, :card_references, :id, :referee_id
-        cs.mods[:sort_join_field] = "#{cs.table_alias}.#{join_field} as sort_join_field" #HACK!
+        cs.mods[:sort_join_field] = "#{cs.table_alias}.id as sort_join_field" #HACK!
         add_join :sort, cs.sql, :id, :sort_join_field, :side=>'LEFT'
       end
 

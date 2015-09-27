@@ -8,7 +8,7 @@ end
 def email_templates_for setting
 
   if (email_templates = @email_template_cache ||
-      (event_card = self.rule_card(setting) && event_card.extended_item_cards))
+      ((event_card = self.rule_card(setting)) && event_card.extended_item_cards))
     email_templates.each do |mailcard|
       yield(mailcard)
     end

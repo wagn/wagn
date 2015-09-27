@@ -20,7 +20,7 @@ end
 
 def abortable
   yield
-rescue Card:Abort: e
+rescue Card::Abort => e
   if e.status == :triumph
     @supercard ? raise( e ) : true
   elsif e.status == :success

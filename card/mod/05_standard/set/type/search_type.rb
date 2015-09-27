@@ -81,7 +81,7 @@ format do
         v[:query] = card.query( search_params )
         v[:item]  = set_inclusion_opts args.merge( query_view: v[:query][:view] )
         v
-      rescue JSON:ParserError: e
+      rescue JSON::ParserError => e
         { error: e }
       end
   end

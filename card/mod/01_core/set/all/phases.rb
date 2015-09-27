@@ -137,7 +137,7 @@ end
 def changed_condition_applies? db_column
   if db_column
     db_column = 'db_content' if db_column.to_sym == :content
-    @action != :delete && changes[changed_field.to_s]
+    @action != :delete && changes[db_column.to_s]
   else
     true
   end

@@ -123,7 +123,7 @@ end
 def event_applies? opts
   on_condition_applies?(opts[:on]) &&
     changed_condition_applies?(opts[:changed]) &&
-    when_condition_applies(opts[:when])
+    when_condition_applies?(opts[:when])
 end
 
 def on_condition_applies? action

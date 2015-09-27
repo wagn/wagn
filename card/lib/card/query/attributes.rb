@@ -172,13 +172,15 @@ class Card
         sort_field = val[:return] || 'db_content'
         item = val.delete(:item)  || 'left'
 
-        if sort_field == 'count'
-          sort_by_count val, item
-        else
-          join_field = SORT_JOIN_TO_ITEM_MAP[item.to_sym] or raise BadQuery, "sort item: #{item} not yet implemented"
-          sq = join_cards val, to_field: join_field, side: 'LEFT', conditions_on_join: true
-          @mods[:sort] ||= "#{sq.table_alias}.#{sort_field}"
-        end
+        join_table =
+          if sort_field == 'count'
+            sort_by_count val, item
+          else
+            join_field = SORT_JOIN_TO_ITEM_MAP[item.to_sym] or raise BadQuery, "sort item: #{item} not yet implemented"
+            sq = join_cards val, to_field: join_field, side: 'LEFT', conditions_on_join: true
+            sq.table_alias
+          end
+        @mods[:sort] ||= "#{join_table}.#{sort_field}"
       end
 
       # EXPERIMENTAL!
@@ -195,8 +197,7 @@ class Card
         cs.add_condition "referer_id in #{Query.new( val.merge(:return=>'id')).sql}"
         cs.add_join :wr, :card_references, :id, :referee_id
         cs.mods[:sort_join_field] = "#{cs.table_alias}.#{join_field} as sort_join_field" #HACK!
-        join_table = add_join :sort, cs.sql, :id, :sort_join_field, :side=>'LEFT'
-        @mods[:sort] ||= "#{join_table}.#{val[:return]}"
+        add_join :sort, cs.sql, :id, :sort_join_field, :side=>'LEFT'
       end
 
 

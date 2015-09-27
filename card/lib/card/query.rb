@@ -33,7 +33,7 @@ class Card
     CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
 
     attr_reader :statement, :context, :mods, :conditions, :subqueries, :superquery
-    attr_accessor :joins, :table_seq
+    attr_accessor :joins, :table_seq, :conditions_on_join
 
     def initialize statement
       @subqueries, @joins, @conditions = [], [], []
@@ -45,6 +45,8 @@ class Card
       @superquery = @statement.delete(:superquery) || nil
       @params     = @statement.delete(:params)     || {}    # not a great name; it's more like edits/overwrites to the statement
       @vars       = @statement.delete(:vars)       || {}
+
+      @conditions_on_join = @superquery && @superquery.conditions_on_join
 
       @statement.merge! @params
       @vars.symbolize_keys!
@@ -83,7 +85,7 @@ class Card
     end
 
     def run_sql
-      #puts "statement = #{@statement}"
+      #puts "\nstatement = #{@statement}"
       #puts "sql = #{sql}"
       ActiveRecord::Base.connection.select_all( sql )
     end
@@ -162,7 +164,8 @@ class Card
     end
 
     def add_condition *args
-      @conditions << ( args.size > 1 ? args : [ :cond, SqlCond.new(args[0]) ] )
+      condition_array = @conditions_on_join ? joins.last.conditions : @conditions
+      condition_array << ( args.size > 1 ? args : [ :cond, SqlCond.new(args[0]) ] )
     end
 
     def interpret_attributes key, val

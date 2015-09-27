@@ -2,7 +2,7 @@
 format :html do
 
   view :type do |args|
-    args.merge!(:type_class=>'no-edit') if card.cards_of_type_exist?
+    args.merge!(type_class: 'no-edit') if card.cards_of_type_exist?
     super args
   end
 
@@ -16,10 +16,10 @@ format :html do
 
   view :add_link do |args|
     args[:title] ||= "Add #{card.name}"
-    link_to _render_title(args), _render_add_path(args), :class=>args[:css_class]
+    link_to _render_title(args), _render_add_path(args), class: args[:css_class]
   end
 
-  view :add_button, :view=>:add_link
+  view :add_button, view: :add_link
   def default_add_button_args args
     args[:css_class] = 'btn btn-default'
   end
@@ -62,10 +62,10 @@ end
 
 
 def cards_of_type_exist?
-  !new_card? and Auth.as_bot { Card.count_by_wql :type_id=>id } > 0
+  !new_card? and Auth.as_bot { Card.count_by_wql type_id: id } > 0
 end
 
-event :check_for_cards_of_type, :after=>:validate_delete do
+event :check_for_cards_of_type, after: :validate_delete do
   if cards_of_type_exist?
     errors.add :cardtype, "can't alter this type; #{name} cards still exist"
   end

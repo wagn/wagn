@@ -1,7 +1,7 @@
 @@options = {
-  :junction_only=>true,
-  :assigns_type=>true,
-  :anchor_parts_count=>2
+  junction_only: true,
+  assigns_type: true,
+  anchor_parts_count: 2
 }
 
 def label name
@@ -9,7 +9,7 @@ def label name
 end
 
 def prototype_args anchor
-  { :name=>"+#{anchor.tag}", :supercard=>Card.new( :name=>'*dummy', :type=>anchor.trunk_name ) }
+  { name: "+#{anchor.tag}", supercard: Card.new( name: '*dummy', type: anchor.trunk_name ) }
 end
 
 def anchor_name card

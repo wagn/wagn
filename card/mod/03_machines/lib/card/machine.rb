@@ -18,7 +18,7 @@
 
 # How does it work?
 # Machine cards have a +machine input and a +machine output card. The +machine input card is a pointer to all input cards.
-# Including the MachineInput module creates an ":on => save" event that runs the machines of all cards that are linked to that card via the +machine input pointer.
+# Including the MachineInput module creates an "on: save" event that runs the machines of all cards that are linked to that card via the +machine input pointer.
 
 
 
@@ -49,12 +49,12 @@ class Card
 
     def self.included(host_class)
       host_class.extend( ClassMethods )
-      host_class.output_config = { :filetype => "txt" }
+      host_class.output_config = { filetype: "txt" }
 
 
       if Codename[:machine_output]  # for compatibility with old migrations
-        host_class.card_accessor :machine_output, :type=>:file
-        host_class.card_accessor :machine_input, :type => :pointer
+        host_class.card_accessor :machine_output, type: :file
+        host_class.card_accessor :machine_input, type: :pointer
 
         # define default machine behaviour
         host_class.collect_input_cards do
@@ -102,7 +102,7 @@ class Card
           end
         end
 
-        host_class.event "reset_machine_output_#{host_class.name.gsub(':','_')}".to_sym, :after => :store_subcards, :on => :save do
+        host_class.event "reset_machine_output_#{host_class.name.gsub(':','_')}".to_sym, after: :store_subcards, on: :save do
           reset_machine_output!
         end
       end
@@ -169,7 +169,7 @@ class Card
 
     def machine_output_url
       ensure_machine_output
-      machine_output_card.file.url #(:default, :timestamp => false)   # to get rid of additional number in url
+      machine_output_card.file.url #(:default, timestamp: false)   # to get rid of additional number in url
     end
 
     def machine_output_path
@@ -178,7 +178,7 @@ class Card
     end
 
     def ensure_machine_output
-      if !output = fetch(:trait => :machine_output) or !output.selected_content_action_id
+      if !output = fetch(trait: :machine_output) or !output.selected_content_action_id
         update_machine_output
       end
     end

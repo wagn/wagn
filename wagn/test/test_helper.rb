@@ -15,8 +15,8 @@ unless defined? TEST_ROOT
     #fixtures :all
 
     # Add more helper methods to be used by all tests here...
-    
-    
+
+
     # Transactional fixtures accelerate your tests by wrapping each test method
     # in a transaction that's rolled back on completion.  This ensures that the
     # test database remains unchanged so your fixtures don't have to be reloaded
@@ -81,7 +81,7 @@ unless defined? TEST_ROOT
       def initialize(test_class,url,args={})
         @test_class,@url = test_class,url
 
-        args[:users] ||= { :anonymous=>200 }
+        args[:users] ||= { anonymous: 200 }
         args[:cardtypes] ||= ['Basic']
         if args[:cardtypes]==:all
           # FIXME: need a better data source for this?

@@ -4,7 +4,7 @@ class Card
   cattr_accessor :count
 
   module Set::Type
-  
+
     module CardtypeA
       extend Card::Set
 
@@ -42,7 +42,7 @@ end
 describe Card, "with role" do
   before do
     Card::Auth.as_bot do
-      @role = Card.search(:type=>'Role')[0]
+      @role = Card.search(type: 'Role')[0]
     end
   end
 
@@ -132,7 +132,7 @@ end
 describe Card, "type transition create callback" do
   before do
     Card::Auth.as_bot do
-      Card.create(:name=>'Basic+*type+*delete', :type=>'Pointer', :content=>"[[Anyone Signed in]]")
+      Card.create(name: 'Basic+*type+*delete', type: 'Pointer', content: "[[Anyone Signed in]]")
     end
     @c = change_card_to_type("basicname", :cardtype_f)
   end

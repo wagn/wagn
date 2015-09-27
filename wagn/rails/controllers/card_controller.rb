@@ -10,10 +10,10 @@ class CardController < ActionController::Base
   include Card::Location
   include Recaptcha::Verify
 
-  before_filter :per_request_setup, :except => [:asset]
-  before_filter :load_id, :only => [ :read ]
-  before_filter :load_card, :except => [:asset]
-  before_filter :refresh_card, :only=> [ :create, :update, :delete, :rollback ]
+  before_filter :per_request_setup, except: [:asset]
+  before_filter :load_id, only: [ :read ]
+  before_filter :load_card, except: [:asset]
+  before_filter :refresh_card, only: [ :create, :update, :delete, :rollback ]
 
   layout nil
 
@@ -43,7 +43,7 @@ class CardController < ActionController::Base
     Rails.logger.info "Routing assets through Card. Recommend symlink from Deck to Card gem using 'rake wagn:update_assets_symlink'"
     asset_path = Decko::Engine.paths['gem-assets'].existent.first
     filename   = [ params[:filename], params[:format] ].join('.')
-    send_file_inside asset_path, filename , :x_sendfile => true
+    send_file_inside asset_path, filename , x_sendfile: true
   end
 
 
@@ -63,7 +63,7 @@ class CardController < ActionController::Base
   def per_request_setup
     request.format = :html if !params[:format] #is this used??
     Card::Cache.renew
-    Card::Env.reset :controller=>self
+    Card::Env.reset controller: self
     Card::Auth.set_current_from_session
 
     if params[:id] && !params[:id].valid_encoding?  # slightly better way to handle encoding issues (than the rescue in load_id)
@@ -76,7 +76,7 @@ class CardController < ActionController::Base
   def load_id
     params[:id] ||= case
       when Card::Auth.needs_setup?
-        params[:card] = { :type_id => Card.default_accounted_type_id }
+        params[:card] = { type_id: Card.default_accounted_type_id }
         params[:view] = 'setup'
         ''
       when params[:card] && params[:card][:name]
@@ -107,7 +107,7 @@ class CardController < ActionController::Base
           Card.new opts
         else
           mark = params[:id] || opts[:name]
-          Card.fetch mark, :new=>opts
+          Card.fetch mark, new: opts
         end
       end
     raise Card::NotFound unless @card
@@ -141,7 +141,7 @@ class CardController < ActionController::Base
     if ajax?
       # lets client reset window location (not just receive redirected response)
       # formerly used 303 response, but that gave IE the fits
-      render :json => {:redirect=> url}
+      render json: {redirect: url}
     else
       redirect_to url
     end
@@ -158,7 +158,7 @@ class CardController < ActionController::Base
     if !ajax? || success.hard_redirect?
       card_redirect success.to_url
     elsif String === success.target
-      render :text => success.target
+      render text: success.target
     else
       if success.soft_redirect?
         self.params = success.params
@@ -210,7 +210,7 @@ class CardController < ActionController::Base
     elsif status == 302
       card_redirect result
     else
-      args = { :text=>result, :status=>status }
+      args = { text: result, status: status }
       args[:content_type] = 'text/text' if format == :file
       render args
     end

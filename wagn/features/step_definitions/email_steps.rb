@@ -63,7 +63,7 @@ Then /^(?:I|they|"([^"]*?)") should receive (an|no|\d+) emails? with subject "([
 end
 
 Then /^(?:I|they|"([^"]*?)") should receive an email with the following body:$/ do |address, expected_body|
-  open_email(address, :with_text => expected_body)
+  open_email(address, with_text: expected_body)
 end
 
 #
@@ -76,11 +76,11 @@ When /^(?:I|they|"([^"]*?)") opens? the email$/ do |address|
 end
 
 When /^(?:I|they|"([^"]*?)") opens? the email with subject "([^"]*?)"$/ do |address, subject|
-  open_email(address, :with_subject => subject)
+  open_email(address, with_subject: subject)
 end
 
 When /^(?:I|they|"([^"]*?)") opens? the email with text "([^"]*?)"$/ do |address, text|
-  open_email(address, :with_text => text)
+  open_email(address, with_text: text)
 end
 
 #
@@ -193,10 +193,10 @@ Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
   email = address_for_user username
   begin
     step %{"#{email}" should receive 1 email}
-  rescue RSpec::Expectations::ExpectationNotMetError=>e
+  rescue RSpec::Expectations:ExpectationNotMetError: e
     raise RSpec::Expectations::ExpectationNotMetError, %(#{e.message}\n Found the following emails:\n\n #{all_emails*"\n\n~~~~~~~~\n\n"})
   end
-  open_email(email, :with_subject => /#{subject}/)
+  open_email(email, with_subject: /#{subject}/)
 end
 
 Then /^No notification should be sent$/ do

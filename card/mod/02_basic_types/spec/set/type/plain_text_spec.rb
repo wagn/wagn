@@ -6,6 +6,6 @@ describe Card::Set::Type::PlainText do
   end
 
   it "should have special content that escapes HTML" do
-    render_card(:core, :type=>'Plain Text', :content=>"<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
+    render_card(:core, type: 'Plain Text', content: "<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
   end
 end

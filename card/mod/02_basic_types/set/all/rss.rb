@@ -17,8 +17,8 @@ format :rss do
   # FIXME: integrate this with common XML features when it is added
   view :feed do |args|
     begin
-      @xml.instruct! :xml, :version => "1.0"
-      @xml.rss :version => "2.0" do
+      @xml.instruct! :xml, version: "1.0"
+      @xml.rss version: "2.0" do
         @xml.channel do
           @xml.title       render_feed_title
           @xml.description render_feed_description
@@ -42,7 +42,7 @@ format :rss do
   view :feed_item_list do |args|
     raw_feed_items(args).each do |item|
       @xml.item do
-        subformat(item).render_feed_item :view_changes=>(card.id==RecentID)  #FIXME! yuck.
+        subformat(item).render_feed_item view_changes: (card.id==RecentID)  #FIXME! yuck.
       end
     end
   end
@@ -67,9 +67,9 @@ format :rss do
   view :menu             do |args| '' end
 
 
-  view :open,         { :view=>:titled, :mod=>All::Base::Format }
-  view :content,      { :view=>:core,   :mod=>All::Base::Format }
-  view :open_content, { :view=>:core,   :mod=>All::Base::Format }
-  view :closed,       { :view=>:link,   :mod=>All::Base::Format }
+  view :open,         { view: :titled, mod: All::Base::Format }
+  view :content,      { view: :core,   mod: All::Base::Format }
+  view :open_content, { view: :core,   mod: All::Base::Format }
+  view :closed,       { view: :link,   mod: All::Base::Format }
 
 end

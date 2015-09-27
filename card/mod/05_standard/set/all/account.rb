@@ -5,7 +5,7 @@ module ClassMethods
 end
 
 def account
-  fetch :trait=>:account
+  fetch trait: :account
 end
 
 def accountable?
@@ -44,12 +44,12 @@ def read_rules
 end
 
 def all_roles
-  @all_roles ||= 
+  @all_roles ||=
     if id == Card::AnonymousID
       []
     else
       Auth.as_bot do
-        role_trait = fetch :trait=>:roles
+        role_trait = fetch trait: :roles
         [ Card::AnyoneSignedInID ] + ( role_trait ? role_trait.item_ids : [] )
       end
     end
@@ -57,10 +57,10 @@ end
 
 
 event :generate_token do
-  Digest::SHA1.hexdigest "--#{Time.now.to_f}--#{rand 10}--" 
+  Digest::SHA1.hexdigest "--#{Time.now.to_f}--#{rand 10}--"
 end
 
-event :set_stamper, :before=>:approve do
+event :set_stamper, before: :approve do
   self.updater_id = Auth.current_id
   self.creator_id = self.updater_id if new_card?
 end

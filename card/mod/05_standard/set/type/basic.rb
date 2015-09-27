@@ -16,7 +16,7 @@ format :html do
         tag, value = $~[1,2]
         value = ActionView::Base.new.strip_tags(value).strip
         next if value.empty?
-        item = { :value => value, :uri => URI.escape(value) }
+        item = { value: value, uri: URI.escape(value) }
         case tag.downcase
         when 'h1'
           item[:depth] = dep = 1; toc << item

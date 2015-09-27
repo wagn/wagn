@@ -4,25 +4,25 @@ describe Card::Set::All::Name do
   describe 'autoname' do
     before do
       Card::Auth.as_bot do
-        @b1 = Card.create! :name=>'Book+*type+*autoname', :content=>'b1'
+        @b1 = Card.create! name: 'Book+*type+*autoname', content: 'b1'
       end
     end
 
     it "should handle cards without names" do
-      c = Card.create! :type=>'Book'
+      c = Card.create! type: 'Book'
       expect(c.name).to eq('b1')
     end
 
     it "should increment again if name already exists" do
-      b1 = Card.create! :type=>'Book'
-      b2 = Card.create! :type=>'Book'
+      b1 = Card.create! type: 'Book'
+      b2 = Card.create! type: 'Book'
       expect(b2.name).to eq('b2')
     end
 
     it "should handle trashed names" do
-      b1 = Card.create! :type=>'Book'
+      b1 = Card.create! type: 'Book'
       Card::Auth.as_bot { b1.delete }
-      b1 = Card.create! :type=>'Book'
+      b1 = Card.create! type: 'Book'
       expect(b1.name).to eq('b1')
     end
   end
@@ -33,13 +33,13 @@ describe Card::Set::All::Name do
     end
 
     it 'should require admin permission' do
-      @card.update_attributes :codename=>'structure'
+      @card.update_attributes codename: 'structure'
       expect(@card.errors[:codename].first).to match(/only admins/)
     end
 
     it 'should check uniqueness' do
       Card::Auth.as_bot do
-        @card.update_attributes :codename=>'structure'
+        @card.update_attributes codename: 'structure'
         expect(@card.errors[:codename].first).to match(/already in use/)
       end
     end

@@ -1,4 +1,4 @@
-attachment :file, :uploader=>FileUploader
+attachment :file, uploader: FileUploader
 
 module SelectedAction
   def select_action_by_params params
@@ -51,10 +51,10 @@ format :file do
       file = selected_file_version
       [ file.path,
         {
-          :type => file.content_type,
-          :filename =>  "#{card.cardname.safe_key}#{file.extension}",
-          :x_sendfile => true,
-          :disposition => (params[:format]=='file' ? 'attachment' : 'inline' )
+          type: file.content_type,
+          filename:  "#{card.cardname.safe_key}#{file.extension}",
+          x_sendfile: true,
+          disposition: (params[:format]=='file' ? 'attachment' : 'inline' )
         }
       ]
     else
@@ -86,7 +86,7 @@ format :html do
     ''
   end
 
-  view :preview_editor, :tags=>:unknown_ok do |args|
+  view :preview_editor, tags: :unknown_ok do |args|
     <<-HTML
       <div class="chosen-file">
         <input type="hidden" name="cached_upload" value="#{card.selected_action_id}">
@@ -126,7 +126,7 @@ format :html do
             <span>
                 #{card.new_card? ? 'Add' : 'Replace'} #{card.attachment_name}...
             </span>
-             #{file_field card.attachment_name, :class=>'file-upload slotter'}
+             #{file_field card.attachment_name, class: 'file-upload slotter'}
         </span>
       </div>
       <div id="progress" class="progress" style="display: none;">

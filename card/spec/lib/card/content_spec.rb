@@ -2,51 +2,47 @@
 require 'card/content'
 
 EXAMPLES = {
-  :nests => {
-    :content  =>
-      [
+  nests: {
+    content:        [
         "Some Literals: \\[{I'm not| a link]}, and ",
         "\\{{This Card|Is not Included}}",
         ", but ",
         "{{this is}}",
         ", and some tail"
       ].join(''),
-    :rendered =>
-      [
+    rendered:       [
         "Some Literals: \\[{I'm not| a link]}, and ",
         "<span>{</span>{This Card|Is not Included}}",
         ", but ",
-        {:options => {:inc_name=>"this is",:inc_syntax=>"this is"}},
+        {options: {inc_name: "this is",inc_syntax: "this is"}},
         ", and some tail"
       ],
-    :classes => [String, :EscapedLiteral, String, :Include, String ]
+    classes: [String, :EscapedLiteral, String, :Include, String ]
   },
 
-  :links_and_nests => {
-    :content => %(Some Links and includes: [[the card|the text]], and {{This Card|Is Included}}{{this too}}
+  links_and_nests: {
+    content: %(Some Links and includes: [[the card|the text]], and {{This Card|Is Included}}{{this too}}
         and [[http://external.wagn.org/path|link text]]{{Included|open}}),
-    :rendered =>
-      [
+    rendered:       [
         "Some Links and includes: ",
         "<a class=\"wanted-card\" href=\"/the_card?card%5Bname%5D=the+card\">the text</a>",
         ", and ",
-        { :options => { :view => "Is Included", :inc_name=>"This Card", :inc_syntax => "This Card|Is Included"}},
-        { :options => { :inc_name=>"this too", :inc_syntax=>"this too"}},
+        { options: { view: "Is Included", inc_name: "This Card", inc_syntax: "This Card|Is Included"}},
+        { options: { inc_name: "this too", inc_syntax: "this too"}},
         "\n        and ",
         "<a target=\"_blank\" class=\"external-link\" href=\"http://external.wagn.org/path\">link text</a>",
-        { :options => { :view=>"open", :inc_name=>"Included", :inc_syntax=>"Included|open" }}
+        { options: { view: "open", inc_name: "Included", inc_syntax: "Included|open" }}
       ],
-    :classes => [String, :Link, String, :Include, :Include, String, :Link, :Include ]
+    classes: [String, :Link, String, :Include, :Include, String, :Link, :Include ]
   },
 
-  :uris_and_links => {
-    :content => %(Some URIs and Links: http://a.url.com/
+  uris_and_links: {
+    content: %(Some URIs and Links: http://a.url.com/
         More urls: wagn.com/a/path/to.html
         http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain.org/Home|extra]]
         [ http://gerry.wagn.com/a/path ]
         { https://brain.org/more?args }),
-    :rendered =>
-      [
+    rendered:       [
         "Some URIs and Links: ", '<a target="_blank" class="external-link" href="http://a.url.com/">http://a.url.com/</a>',
         "\n        More urls: ",
         "<a target=\"_blank\" class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>",
@@ -60,8 +56,7 @@ EXAMPLES = {
         "<a target=\"_blank\" class=\"external-link\" href=\"https://brain.org/more?args\">https://brain.org/more?args</a>",
         " }"
       ],
-    :text_rendered =>
-      [
+    text_rendered:       [
          "Some URIs and Links: ", 'http://a.url.com/',
          "\n        More urls: ",
          "wagn.com/a/path/to.html[http://wagn.com/a/path/to.html]",
@@ -75,17 +70,16 @@ EXAMPLES = {
          "https://brain.org/more?args",
          " }"
        ],
-    :classes => [String, :URI, String, :HostURI, String, :URI, String, :Link, String, :URI, String, :URI, String ]
+    classes: [String, :URI, String, :HostURI, String, :URI, String, :Link, String, :URI, String, :URI, String ]
   },
 
-  :uris_and_links_2 => {
-    :content => %(Some URIs and Links: http://a.url.com
+  uris_and_links_2: {
+    content: %(Some URIs and Links: http://a.url.com
         More urls: wagn.com/a/path/to.html
         [ http://gerry.wagn.com/a/path ]
         { https://brain.org/more?args }
         http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain.org/Home|extra]]),
-    :rendered =>
-      [
+    rendered:       [
         "Some URIs and Links: ","<a target=\"_blank\" class=\"external-link\" href=\"http://a.url.com\">http://a.url.com</a>",
         "\n        More urls: ",
         "<a target=\"_blank\" class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>",
@@ -98,21 +92,21 @@ EXAMPLES = {
         "  ",
         "<a target=\"_blank\" class=\"external-link\" href=\"http://brain.org/Home\">extra</a>"
       ],
-    :classes =>  [String, :URI, String, :HostURI, String, :URI, String, :URI, String, :URI, String, :Link ]
+    classes:  [String, :URI, String, :HostURI, String, :URI, String, :URI, String, :URI, String, :Link ]
   },
 
-  :no_chunks => {
-    :content => "No chunks",
-    :rendered => "No chunks"
+  no_chunks: {
+    content: "No chunks",
+    rendered: "No chunks"
   },
 
-  :single_nest => {
-    :content => "{{one inclusion|size;large}}",
-    :classes => [:Include]
+  single_nest: {
+    content: "{{one inclusion|size;large}}",
+    classes: [:Include]
   },
 
-  :css => {
-    :content => %~
+  css: {
+    content: %~
      /* body text */
      body {
        color: #444444;
@@ -171,7 +165,7 @@ describe Card::Content do
       @card = card
 
       # non-nil valued opts only ...
-      @render_block =  Proc.new do |opts| {:options => opts.inject({}) {|i,v| !v[1].nil? && i[v[0]]=v[1]; i } } end
+      @render_block =  Proc.new do |opts| {options: opts.inject({}) {|i,v| !v[1].nil? && i[v[0]]=v[1]; i } } end
     end
 
     let(:example)       { EXAMPLES[@example] }
@@ -254,7 +248,7 @@ describe Card::Content do
       it "renders links correctly for text formatters" do
         @example = :uris_and_links
         card2 = Card[@card.id]
-        format = card2.format :format => :text
+        format = card2.format format: :text
         cobj = Card::Content.new content, format
         cobj.process_content_object &@render_block
         expect(cobj.as_json.to_json).to eq(text_rendered.to_json)

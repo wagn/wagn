@@ -2,7 +2,7 @@ require_dependency 'json'
 
 def self.member_names
   @@member_names ||= begin
-    Card.search( :type_id=>SettingID, :return=>'key' ).inject({}) do |hash, card_key|
+    Card.search( type_id: SettingID, return: 'key' ).inject({}) do |hash, card_key|
       hash[card_key] = true
       hash
     end
@@ -12,12 +12,12 @@ end
 view :core do |args|
 
   klasses = Card.set_patterns.reverse.map do |set_class|
-    wql = { :left  => { :type =>Card::SetID },
-            :right => card.id,
-            #:sort  => 'content',
-            
-            :sort  => ['content', 'name'],
-            :limit => 0
+    wql = { left:  { type: Card::SetID },
+            right: card.id,
+            #sort:  'content',
+
+            sort:  ['content', 'name'],
+            limit: 0
           }
     wql[:left][ (set_class.anchorless? ? :id : :right_id )] = set_class.pattern_id
 
@@ -26,14 +26,14 @@ view :core do |args|
   end.compact
 
 
-  
-  %{ 
+
+  %{
     #{ _render_rule_help args }
     <table class="setting-rules">
       <tr><th>Set</th><th>Rule</th></tr>
       #{
         klasses.map do |klass, rules|
-          %{ 
+          %{
             <tr class="klass-row anchorless-#{ klass.anchorless? }">
               <td class="setting-klass">#{ klass.anchorless? ? card_link( klass.pattern ) : klass.pattern }</td>
               <td class="rule-content-container">
@@ -50,8 +50,8 @@ view :core do |args|
                   previous_content = current_content
                   %{
                     <tr class="#{ 'rule-changeover' if changeover }">
-                    <td class="rule-anchor">#{ card_link rule.cardname.trunk_name, :text=> rule.cardname.trunk_name.trunk_name }</td>
-                    
+                    <td class="rule-anchor">#{ card_link rule.cardname.trunk_name, text: rule.cardname.trunk_name.trunk_name }</td>
+
                       #{
                         if duplicate
                           %{ <td></td> }
@@ -68,11 +68,11 @@ view :core do |args|
 
                 end * "\n"
               end
-            
+
             }
           }
         end * "\n"
-      
+
       }
     </table>
   }

@@ -5,17 +5,17 @@ class Card
       PLUS_ATTRIBUTES = %w{ plus left_plus right_plus }
 
       ATTRIBUTES = {
-        :basic           => %w{ name type_id content id key updater_id left_id right_id creator_id updater_id codename },
-        :relational      => %w{ type part left right editor_of edited_by last_editor_of last_edited_by creator_of created_by member_of member },
-        :plus_relational => PLUS_ATTRIBUTES,
-        :ref_relational  => %w{ refer_to referred_to_by link_to linked_to_by include included_by },
-        :conjunction     => %w{ and or all any },
-        :special         => %w{ found_by not sort match complete extension_type },
-        :ignore          => %w{ prepend append view params vars size }
+        basic:           %w{ name type_id content id key updater_id left_id right_id creator_id updater_id codename },
+        relational:      %w{ type part left right editor_of edited_by last_editor_of last_edited_by creator_of created_by member_of member },
+        plus_relational: PLUS_ATTRIBUTES,
+        ref_relational:  %w{ refer_to referred_to_by link_to linked_to_by include included_by },
+        conjunction:     %w{ and or all any },
+        special:         %w{ found_by not sort match complete extension_type },
+        ignore:          %w{ prepend append view params vars size }
       }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
 
-      DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
-      CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
+      DEFAULT_ORDER_DIRS =  { update: "desc", relevance: "desc" }
+      CONJUNCTIONS = { any: :or, in: :or, or: :or, all: :and, and: :and }
 
       attr_reader :sql, :query, :rawclause, :selfname
       attr_accessor :joins, :join_count
@@ -100,8 +100,8 @@ class Card
 
       def hashify s
         case s
-          when String;   { :key => s.to_name.key }
-          when Integer;  { :id => s              }
+          when String;   { key: s.to_name.key }
+          when Integer;  { id: s              }
           when Hash;     s
           else; raise BadQuery, "Invalid cardclause args #{s.inspect}"
         end
@@ -188,7 +188,7 @@ class Card
 
       def part val
         right = Integer===val ? val : val.clone
-        subcondition :left=>val, :right=>right, :conj=>:or
+        subcondition left: val, right: right, conj: :or
       end
 
 
@@ -209,7 +209,7 @@ class Card
       end
 
       def last_editor_of val
-        restrict_by_join :id, val, :return=>'updater_id'
+        restrict_by_join :id, val, return: 'updater_id'
       end
 
       def last_edited_by val
@@ -217,7 +217,7 @@ class Card
       end
 
       def creator_of val
-        restrict_by_join :id, val, :return=>'creator_id'
+        restrict_by_join :id, val, return: 'creator_id'
       end
 
       def created_by val
@@ -225,11 +225,11 @@ class Card
       end
 
       def member_of val
-        merge field(:right_plus) => [RolesID, {:refer_to=>val}]
+        merge field(:right_plus) => [RolesID, {refer_to: val}]
       end
 
       def member val
-        merge field(:referred_to_by) => {:left=>val, :right=>RolesID }
+        merge field(:referred_to_by) => {left: val, right: RolesID }
       end
 
 
@@ -244,12 +244,12 @@ class Card
       end
 
       def plus val
-        any( { :left_plus=>val, :right_plus=>val.deep_clone } )
+        any( { left_plus: val, right_plus: val.deep_clone } )
       end
 
       def junction side, val
         part_clause, junction_clause = val.is_a?(Array) ? val : [ val, {} ]
-        restrict_by_join :id, junction_clause, side=>part_clause, :return=>"#{ side==:left ? :right : :left}_id"
+        restrict_by_join :id, junction_clause, side=>part_clause, return: "#{ side==:left ? :right : :left}_id"
       end
 
 
@@ -261,7 +261,7 @@ class Card
       alias :all :and
 
       def or val
-        subcondition val, :conj=>:or
+        subcondition val, conj: :or
       end
       alias :any :or
 
@@ -274,7 +274,7 @@ class Card
           Query.new(val).run
         else
           Array.wrap(val).map do |v|
-            Card.fetch absolute_name(val), :new=>{}
+            Card.fetch absolute_name(val), new: {}
           end
         end
 
@@ -287,8 +287,8 @@ class Card
       end
 
       def not val
-        subselect = CardClause.build(:return=>:id, :_parent=>self).merge(val).to_sql
-        join_alias = add_join :not, subselect, :id, :id, :side=>'LEFT'
+        subselect = CardClause.build(return: :id, _parent: self).merge(val).to_sql
+        join_alias = add_join :not, subselect, :id, :id, side: 'LEFT'
         merge field(:cond) => SqlCond.new("#{join_alias}.id is null")
       end
 
@@ -298,12 +298,12 @@ class Card
         item = val.delete(:item) || 'left'
 
         if val[:return] == 'count'
-          cs_args = { :return=>'count', :group=>'sort_join_field', :_parent=>self }
+          cs_args = { return: 'count', group: 'sort_join_field', _parent: self }
           @mods[:sort] = "coalesce(count,0)" # needed for postgres
           case item
           when 'referred_to'
             join_field = 'id'
-            cs = CardClause.build cs_args.merge( field(:cond)=>SqlCond.new("referer_id in #{CardClause.build( val.merge(:return=>'id')).to_sql}") )
+            cs = CardClause.build cs_args.merge( field(:cond)=>SqlCond.new("referer_id in #{CardClause.build( val.merge(return: 'id')).to_sql}") )
             cs.add_join :wr, :card_references, :id, :referee_id
           else
             raise BadQuery, "count with item: #{item} not yet implemented"
@@ -318,7 +318,7 @@ class Card
         end
 
         cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"
-        join_table = add_join :sort, cs.to_sql, :id, :sort_join_field, :side=>'LEFT'
+        join_table = add_join :sort, cs.to_sql, :id, :sort_join_field, side: 'LEFT'
         @mods[:sort] ||= "#{join_table}.#{val[:return]}"
 
       end
@@ -397,14 +397,14 @@ class Card
       end
 
       def subcondition(val, args={})
-        args = { :return=>:condition, :_parent=>self }.merge(args)
+        args = { return: :condition, _parent: self }.merge(args)
         cardclause = CardClause.build( args )
         merge field(:cond) => cardclause.merge(val)
         self.joins.merge! cardclause.joins
       end
 
       def action_clause(field, linkfield, val)
-        card_select = CardClause.build(:_parent=>self, :return=>'id').merge(val).to_sql
+        card_select = CardClause.build(_parent: self, return: 'id').merge(val).to_sql
         sql =  "(SELECT DISTINCT #{field} AS join_card_id FROM card_acts INNER JOIN card_actions ON card_acts.id = card_act_id "
         sql += " JOIN (#{card_select}) AS ss ON #{linkfield}=ss.id AND (draft is not true))"
         add_join :ac, sql, :id, :join_card_id
@@ -426,7 +426,7 @@ class Card
       end
 
       def restrict_by_join id_field, val, opts={}
-        opts.reverse_merge!(:return=>:id, :_parent=>self)
+        opts.reverse_merge!(return: :id, _parent: self)
         subselect = CardClause.build(opts).merge(val).to_sql
         add_join "card_#{id_field}", subselect, id_field, opts[:return]
       end

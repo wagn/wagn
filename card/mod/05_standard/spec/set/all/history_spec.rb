@@ -2,10 +2,10 @@
 describe Card::Set::All::History do
   context "history view" do
     # before do
-    #   Card.create! :name=>"my histoer card"
+    #   Card.create! name: "my histoer card"
     # end
     it 'should have a frame' do
-      history = render_card :history, :name=>"A"
+      history = render_card :history, name: "A"
       assert_view_select history, 'div[class~="card-frame"]'
     end
 
@@ -16,8 +16,8 @@ describe Card::Set::All::History do
         first.format.render_action_summary
       end
       it 'should have a summary' do
-        assert_view_select subject, 'del[class="diffdel diff-red"]', :text=>'chicken'
-        assert_view_select subject, 'ins[class="diffins diff-green"]', :text=>'chick'
+        assert_view_select subject, 'del[class="diffdel diff-red"]', text: 'chicken'
+        assert_view_select subject, 'ins[class="diffins diff-green"]', text: 'chick'
       end
     end
   end
@@ -32,7 +32,7 @@ describe Card::Set::All::History do
     context 'for single card' do
       before do
         @card = Card::Auth.as_bot do
-          Card.create :name=>"single card", :content=>content
+          Card.create name: "single card", content: content
         end
       end
 
@@ -48,11 +48,11 @@ describe Card::Set::All::History do
 
       context 'when updated' do
         it 'adds no act if nothing changed' do
-          @card.update_attributes  :name=>"single card", :content=>content
+          @card.update_attributes  name: "single card", content: content
           expect(Card::Act.count).to eq(act_start_cnt+1)
         end
         it 'adds new act' do
-          @card.update_attributes :content=>"new content"
+          @card.update_attributes content: "new content"
           expect(Card::Act.count).to eq(act_start_cnt+2)
         end
       end
@@ -79,7 +79,7 @@ describe Card::Set::All::History do
         it "doesn't create an act" do
           Card::Auth.as(:anonymous) do
             act_count = Card::Act.count
-            Card.create :name=>"create fail"
+            Card.create name: "create fail"
             expect(Card::Act.count).to eq act_count
           end
         end
@@ -87,7 +87,7 @@ describe Card::Set::All::History do
         it "doesn't create an action" do
           Card::Auth.as(:anonymous) do
             action_count = Card::Action.count
-            Card.create :name=>"create fail"
+            Card.create name: "create fail"
             expect(Card::Action.count).to eq action_count
           end
         end
@@ -96,7 +96,7 @@ describe Card::Set::All::History do
           Card::Auth.as(:joe_user) do
             act_count    = Card::Act.count
             action_count = Card::Action.count
-            Card.create :name=>"crete fail", :subcards=>{'*all+*create'=>''}
+            Card.create name: "crete fail", subcards: {'*all+*create'=>''}
             expect(Card::Action.count).to eq action_count
             expect(Card::Act.count).to eq act_count
           end
@@ -109,7 +109,7 @@ describe Card::Set::All::History do
     context 'for subcard' do
       before do
         Card::Auth.as_bot do
-          @card = Card.create :name=>"left", :subcards=>{"+right" =>{ :content=>content}}
+          @card = Card.create name: "left", subcards: {"+right" =>{ content: content}}
           @left_action = act.actions[0]
           @right_action = act.actions[2]
           @plus_action = act.actions[1]
@@ -147,12 +147,12 @@ describe Card::Set::All::History do
 
       context 'when updated' do
         it 'adds act for left card' do
-          @card.update_attributes :subcards=>{"+right"=>{:content=>"New content", :db_content=>"New Content"}}
+          @card.update_attributes subcards: {"+right"=>{content: "New content", db_content: "New Content"}}
           expect(Card::Act.count).to eq(act_start_cnt+2)
           expect(act.card).to eq(@card)
         end
         it 'adds action for subcard' do
-          @card.update_attributes :subcards=>{"+right"=>{:content=>"New Content"}}
+          @card.update_attributes subcards: {"+right"=>{content: "New Content"}}
           act = @card.acts.last
           expect(act.actions.count).to eq(1)
           expect(act.actions.last.action_type).to eq(:update)
@@ -164,7 +164,7 @@ describe Card::Set::All::History do
     context 'for plus card' do
       before do
         Card::Auth.as_bot do
-          @card = Card.create :name=>'left+right', :content=>content
+          @card = Card.create name: 'left+right', content: content
           @left_action = act.actions[1]
           @plus_action = act.actions[0]
           @right_action = act.actions[2]

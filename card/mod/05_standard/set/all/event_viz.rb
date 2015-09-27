@@ -48,7 +48,7 @@ def puts_events events, prefix='', depth=0
 end
 
 def events_tree filt
-  hash = {:name => filt }
+  hash = {name: filt }
   if respond_to? "_#{filt}_callbacks"
     send( "_#{filt}_callbacks" ).each do |callback|
       next unless callback.applies? self

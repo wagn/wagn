@@ -3,7 +3,7 @@ def label name
 end
 
 def prototype_args anchor
-  { :name=>anchor }
+  { name: anchor }
 end
 
 def anchor_name card

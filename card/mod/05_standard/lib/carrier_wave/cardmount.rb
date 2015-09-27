@@ -18,21 +18,21 @@ module CarrierWave
       super
 
       class_eval <<-RUBY, __FILE__, __LINE__+1
-        event :store_#{column}_event, :on=>:save, :after=>:store do
+        event :store_#{column}_event, on: :save, after: :store do
           store_#{column}!
         end
 
         # remove files only if card has no history
-        event :remove_#{column}_event, :on =>:delete, :after=>:stored, :when => proc { |c| !c.history? } do
+        event :remove_#{column}_event, on: :delete, after: :stored, when: proc { |c| !c.history? } do
           remove_#{column}!
         end
-        event :mark_remove_#{column}_false_event, :on => :update, :after=>:stored do
+        event :mark_remove_#{column}_false_event, on: :update, after: :stored do
           mark_remove_#{column}_false
         end
-        event :store_previous_model_for_#{column}_event, :on=>:update, :before =>:store, :when => proc { |c| !c.history? } do
+        event :store_previous_model_for_#{column}_event, on: :update, before: :store, when: proc { |c| !c.history? } do
           store_previous_model_for_#{column}
         end
-        event :remove_previously_stored_#{column}_event, :on=>:update, :after => :store, :when => proc { |c| !c.history?} do
+        event :remove_previously_stored_#{column}_event, on: :update, after: :store, when: proc { |c| !c.history?} do
           remove_previously_stored_#{column}
         end
 

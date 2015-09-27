@@ -4,18 +4,18 @@ class Card::Query
       # syntax:
       # wql query key => [ direction, {reference_type} ]
           # direction      = :out | :in
-          # reference_type =  'L' | 'I' | 'P' 
+          # reference_type =  'L' | 'I' | 'P'
 
-      :refer_to => [ :out, 'L','I' ], :referred_to_by => [ :in, 'L','I' ],
-      :link_to  => [ :out, 'L' ],     :linked_to_by   => [ :in, 'L' ],
-      :include  => [ :out, 'I' ],     :included_by    => [ :in, 'I' ]
+      refer_to: [ :out, 'L','I' ], referred_to_by: [ :in, 'L','I' ],
+      link_to:  [ :out, 'L' ],     linked_to_by:   [ :in, 'L' ],
+      include:  [ :out, 'I' ],     included_by:    [ :in, 'I' ]
     }
-    
+
     REFERENCE_FIELDS = {
-      :out => [ :referer_id, :referee_id ],
-      :in  => [ :referee_id, :referer_id ]
+      out: [ :referer_id, :referee_id ],
+      in:  [ :referee_id, :referer_id ]
     }
-        
+
     def initialize key, val, parent
       @key, @val, @parent = key, val, parent
     end
@@ -34,11 +34,11 @@ class Card::Query
       if @val == '_none'
         cond << "present = 0"
       else
-        cardclause = CardClause.build(:return=>'id', :_parent=>@parent).merge(@val)
+        cardclause = CardClause.build(return: 'id', _parent: @parent).merge(@val)
         sql << %[ join #{ cardclause.to_sql } as c on #{field2} = c.id]
       end
       sql << %[ where #{ cond * ' and ' }] if cond.any?
-      
+
       "(#{sql})"
     end
   end

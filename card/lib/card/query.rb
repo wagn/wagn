@@ -10,7 +10,7 @@ class Card::Query
 
   OPERATORS = %w{ != = =~ < > in ~ }.inject({}) {|h,v| h[v]=nil; h }.merge({
     :eq    => '=',   :gt => '>',    :lt      => '<',
-    :match => '~',   :ne => '!=',   'not in' => nil
+    :match  => '~',  :ne => '!=',   'not in' => nil
   }.stringify_keys)
 
   def initialize query
@@ -29,7 +29,7 @@ class Card::Query
     retrn = query[:return].present? ? query[:return].to_s : 'card'
     if retrn == 'card'
       simple_run('name').map do |name|
-        Card.fetch name, :new=>{}
+        Card.fetch name, new: {}
       end
     else
       simple_run retrn

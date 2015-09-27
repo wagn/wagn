@@ -6,10 +6,10 @@ class UpdateStylesheets < Card::CoreMigration
     %w{ common traditional }.each do |sheetname|
       card = Card["style: #{sheetname}"]
       if card && card.pristine?
-        card.update_attributes! :content=>File.read("#{dir}/#{sheetname}.scss")
+        card.update_attributes! content: File.read("#{dir}/#{sheetname}.scss")
       end
     end
-    
+
     if c = Card['*all+*style+file']
       c.delete!
     end

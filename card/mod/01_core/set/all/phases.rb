@@ -20,7 +20,7 @@ end
 
 def abortable
   yield
-rescue Card::Abort => e
+rescue Card:Abort: e
   if e.status == :triumph
     @supercard ? raise( e ) : true
   elsif e.status == :success
@@ -140,7 +140,7 @@ def subcards
 end
 
 
-event :process_subcards, :after=>:approve, :on=>:save do
+event :process_subcards, after: :approve, on: :save do
   subcards.keys.each do |sub_name|
     opts = @subcards[sub_name] || {}
     opts = { 'content' => opts } if String===opts
@@ -169,7 +169,7 @@ event :process_subcards, :after=>:approve, :on=>:save do
   end
 end
 
-event :approve_subcards, :after=>:process_subcards do
+event :approve_subcards, after: :process_subcards do
   subcards.each do |key, subcard|
     if !subcard.valid_subcard?
       subcard.errors.each do |field, err|
@@ -180,9 +180,9 @@ event :approve_subcards, :after=>:process_subcards do
   end
 end
 
-event :store_subcards, :after=>:store do
+event :store_subcards, after: :store do
   subcards.each do |key, sub|
-    sub.save! :validate=>false #unless @draft
+    sub.save! validate: false #unless @draft
   end
 end
 

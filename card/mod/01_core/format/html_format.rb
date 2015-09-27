@@ -30,7 +30,7 @@ class Card
     end
 
     def layout_from_card_or_code name
-      layout_card = Card.fetch name.to_s, :skip_virtual=>true, :skip_modules=>true
+      layout_card = Card.fetch name.to_s, skip_virtual: true, skip_modules: true
       if layout_card and layout_card.ok? :read
         layout_card.content
       elsif hardcoded_layout = LAYOUTS[name]
@@ -41,7 +41,7 @@ class Card
     end
 
     def get_inclusion_defaults nested_card
-      {:view => (nested_card.rule( :default_html_view ) || :titled) }
+      {view: (nested_card.rule( :default_html_view ) || :titled) }
     end
 
     def default_item_view

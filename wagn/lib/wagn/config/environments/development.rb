@@ -44,11 +44,11 @@ Wagn.application.class.configure do
   config.active_record.raise_in_transactional_callbacks = true
 
   # config.performance_logger = {
-  #     :methods   => [:event, :search, :fetch, :view],  # choose methods to log
-  #     :min_time  => 100,                              # show only method calls that are slower than 100ms
-  #     :max_depth => 3,                               # show nested method calls only up to depth 3
-  #     :details   => true                                # show method arguments and sql
-  #     :log_level => :info
+  #     methods:   [:event, :search, :fetch, :view],  # choose methods to log
+  #     min_time:  100,                              # show only method calls that are slower than 100ms
+  #     max_depth: 3,                               # show nested method calls only up to depth 3
+  #     details:   true                                # show method arguments and sql
+  #     log_level: :info
   # }
 
   # Only use best-standards-support built into browsers

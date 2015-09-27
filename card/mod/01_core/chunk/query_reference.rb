@@ -28,12 +28,12 @@ module Card::Chunk
     word = /\s*([^"]+)\s*/
 
     Card::Chunk.register_class self, {
-      :prefix_re => '(?<=[:,\\[])\\s*"',  # we check for colon, comma or square bracket before a quote
+      prefix_re: '(?<=[:,\\[])\\s*"',  # we check for colon, comma or square bracket before a quote
                                           # we have to use a lookbehind, otherwise
                                           # if the colon matches it would be
                                           # identified mistakenly as an URI chunk
-      :full_re   => /"([^"]+)"/,
-      :idx_char  => '"'
+      full_re:   /"([^"]+)"/,
+      idx_char:  '"'
     }
     # OPTIMIZE: instead of comma or square bracket check for operator followed by comma or "plus_right"|"plus_left"|"plus" followed by square bracket
     # something like
@@ -42,7 +42,7 @@ module Card::Chunk
     #     "\"\\s*(?:#{Card::Query::CardClause::PLUS_ATTRIBUTES}.keys.join('|')})\\s*:\\s*\\[\\s*",
     #     "\"\\s*(?:#{(QUERY_KEYWORDS - Card::Query::CardClause::PLUS_ATTRIBUTES).join('|')})\"\\s*:",
     #   ]
-    # :prefix_re => '(?<=#{prefix_patterns.join('|')})\\s*"'
+    # prefix_re: '(?<=#{prefix_patterns.join('|')})\\s*"'
     # But: What do we do with the "in" operator? After the first value there is no prefix which we can use to detect the following values as QueryReference chunks
 
     class << self

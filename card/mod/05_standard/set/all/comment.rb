@@ -1,4 +1,4 @@
-event :add_comment, :after=>:approve, :on=>:save, :when=> proc {|c| c.comment } do
+event :add_comment, after: :approve, on: :save, when: proc {|c| c.comment } do
   self.content = %{
     #{ content }
     #{ '<hr>' unless content.blank? }
@@ -14,16 +14,16 @@ event :add_comment, :after=>:approve, :on=>:save, :when=> proc {|c| c.comment } 
   }
 end
 
-view( :comment_box, :denial=>:blank, :tags=>:unknown_ok, :perms=>lambda { |r| r.card.ok? :comment } ) do |args|
-  
-  
+view( :comment_box, denial: :blank, tags: :unknown_ok, perms: lambda { |r| r.card.ok? :comment } ) do |args|
+
+
   %{<div class="comment-box nodblclick"> #{
     card_form :update do
       %{
-        #{ hidden_field_tag( 'card[name]', card.name ) if card.new_card? 
+        #{ hidden_field_tag( 'card[name]', card.name ) if card.new_card?
         # FIXME wish we had more generalized solution for names.  without this, nonexistent cards will often take left's linkname.  (needs test)
         }
-        #{ text_area :comment, :rows=>3 }
+        #{ text_area :comment, rows: 3 }
         <div class="comment-buttons">
           #{
             unless Auth.signed_in?
@@ -31,7 +31,7 @@ view( :comment_box, :denial=>:blank, :tags=>:unknown_ok, :perms=>lambda { |r| r.
               %{<label>My Name is:</label> #{ text_field :comment_author }}
             end
           }
-          #{ button_tag 'Comment', :type=>:submit, :disable_with=>"Commenting" }
+          #{ button_tag 'Comment', type: :submit, disable_with: "Commenting" }
         </div>
       }
     end}

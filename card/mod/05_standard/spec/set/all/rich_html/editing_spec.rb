@@ -11,7 +11,7 @@ describe Card::Set::All::RichHtml::Editing do
     assert_view_select @mycard.render(view), "div[class~='card-slot #{view_selector}-view']" do
       assert_select 'nav[class="slotter toolbar navbar navbar-inverse"]' do
         assert_select 'ul[class="nav navbar-nav nav-pills"]' do
-          assert_select 'li[class~="active"] > a', content
+          assert_select 'li[class~='active'] > a', content
         end
       end
     end
@@ -39,7 +39,7 @@ describe Card::Set::All::RichHtml::Editing do
   #
   # describe 'edit_structure view' do
   #   before do
-  #     @mycard = Card["Iliad"].format
+  #     @mycard = Card['Iliad'].format
   #   end
   #   it "has toolbar with active 'rules' pill" do
   #     Card::Auth.as_bot do
@@ -53,7 +53,7 @@ describe Card::Set::All::RichHtml::Editing do
   #     Card::Auth.as_bot do
   #       Card.create! name: 'Iliad+author', content: 'Homer'
   #     end
-  #     @mycard = Card["Iliad"].format
+  #     @mycard = Card['Iliad'].format
   #   end
   #   it "has toolbar with active 'nests' pill" do
   #     assert_active_toolbar_pill :edit_nests, 'nests'

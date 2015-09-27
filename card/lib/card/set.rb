@@ -10,7 +10,7 @@ class Card
 
 
 =begin
-    A "Set" is a group of Cards to which "Rules" may be applied.  Sets can be as specific as
+    A 'Set' is a group of Cards to which 'Rules' may be applied.  Sets can be as specific as
     a single card, as general as all cards, or anywhere in between.
 
     Rules take two main forms: card rules and code rules.
@@ -18,8 +18,8 @@ class Card
     "Card rules" are defined in card content. These are generally configured via the web
     interface and are thus documented at http://wagn.org/rules.
 
-    "Code rules" can be defined in a "set file" within any "Mod" (short for both "module" and
-    "modification"). In accordance with Wagn's "MoVE" architecture, there are two main kinds of
+    "Code rules" can be defined in a "set file" within any 'Mod' (short for both 'module' and
+    'modification'). In accordance with Wagn's 'MoVE' architecture, there are two main kinds of
     code rules you can create in a set file: Views, and Events.  Events are associated with the
     Card class, and Views are associated with a Format class.  You can also use set files to
     add or override Card and/or Format methods directly.  The majority of Card code is contained
@@ -29,7 +29,7 @@ class Card
 
     Whenever you fetch or instantiate a card, it will automatically include all the
     set modules defined in set files associated with sets of which it is a member.  This
-    entails both simple model methods and "events", which are special methods explored
+    entails both simple model methods and 'events', which are special methods explored
     in greater detail below.
 
     For example, say you have a Plaintext card named "Philipp+address", and you have set files
@@ -255,7 +255,7 @@ class Card
     # the set loading process has two main phases:
 
     #  1. Definition: interpret each set file, creating/defining set and set_format modules
-    #  2. Organization: have base classes include modules associated with the "all" set, and
+    #  2. Organization: have base classes include modules associated with the 'all' set, and
     #     clean up the other modules
 
     class << self

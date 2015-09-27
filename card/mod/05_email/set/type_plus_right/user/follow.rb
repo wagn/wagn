@@ -31,15 +31,15 @@ format :html do
 
    view :core do |args|
      %{
-      <div role="tabpanel">
-       <ul class="nav nav-tabs" role="tablist" id="myTab">
-         <li role="presentation" class="active"><a href="#following" aria-controls="following" role="tab" data-toggle="tab">Follow</a></li>
-         <li role="presentation"><a href="#ignoring" aria-controls="ignoring" role="tab" data-toggle="tab">Ignore</a></li>
+      <div role='tabpanel'>
+       <ul class="nav nav-tabs" role='tablist' id='myTab'>
+         <li role='presentation' class='active'><a href="#following" aria-controls='following' role='tab' data-toggle='tab'>Follow</a></li>
+         <li role='presentation'><a href="#ignoring" aria-controls='ignoring' role='tab' data-toggle='tab'>Ignore</a></li>
        </ul>
 
        <div class="tab-content">
-         <div role="tabpanel" class="tab-pane active" id="following">#{render_following_list args}</div>
-         <div role="tabpanel" class="tab-pane" id="ignoring">#{render_ignoring_list}</div>
+         <div role='tabpanel' class="tab-pane active" id='following'>#{render_following_list args}</div>
+         <div role='tabpanel' class="tab-pane" id='ignoring'>#{render_ignoring_list}</div>
        </div>
       </div>
      }

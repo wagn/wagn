@@ -77,13 +77,13 @@ describe Card, "type transition approve create" do
   end
 
   it "should have errors" do
-    c = change_card_to_type("basicname", "cardtype_b")
+    c = change_card_to_type('basicname', 'cardtype_b')
     expect(c.errors[:permission_denied]).not_to be_empty
   end
 
   it "should be the original type" do
-    lambda { change_card_to_type("basicname", "cardtype_b") }
-    expect(Card["basicname"].type_code).to eq(:basic)
+    lambda { change_card_to_type('basicname', 'cardtype_b') }
+    expect(Card['basicname'].type_code).to eq(:basic)
   end
 end
 
@@ -96,12 +96,12 @@ end
 #  end
 #
 #  it "should retain original type" do
-#    Card["type_c_card"].type_code.should == :cardtype_c
+#    Card['type_c_card'].type_code.should == :cardtype_c
 #  end
 #end
 
 describe Card, "type transition validate_create" do
-  before do @c = change_card_to_type("basicname", "cardtype_d") end
+  before do @c = change_card_to_type('basicname', 'cardtype_d') end
 
   it "should have errors" do
     pending "CardtypeD does not have a codename, so this is an invalid test"
@@ -110,7 +110,7 @@ describe Card, "type transition validate_create" do
 
   it "should retain original type" do
     pending "CardtypeD does not have a codename, so this is an invalid test"
-    expect(Card["basicname"].type_code).to eq(:basic)
+    expect(Card['basicname'].type_code).to eq(:basic)
   end
 end
 
@@ -134,7 +134,7 @@ describe Card, "type transition create callback" do
     Card::Auth.as_bot do
       Card.create(name: 'Basic+*type+*delete', type: 'Pointer', content: "[[Anyone Signed in]]")
     end
-    @c = change_card_to_type("basicname", :cardtype_f)
+    @c = change_card_to_type('basicname', :cardtype_f)
   end
 
   it "should increment counter"  do
@@ -143,7 +143,7 @@ describe Card, "type transition create callback" do
   end
 
   it "should change type of card" do
-    expect(Card["basicname"].type_code).to eq(:cardtype_f)
+    expect(Card['basicname'].type_code).to eq(:cardtype_f)
   end
 end
 

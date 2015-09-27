@@ -1,6 +1,6 @@
 # = Card#fetch
 #
-# A multipurpose retrieval operator that incorporates caching, "virtual" card retrieval
+# A multipurpose retrieval operator that incorporates caching, 'virtual' card retrieval
 
 module ClassMethods
 
@@ -11,7 +11,7 @@ module ClassMethods
   #   - database
   #   - virtual cards
   #
-  # "mark" here means one of three unique identifiers
+  # 'mark' here means one of three unique identifiers
   #    1. a numeric id (Integer)
   #    2. a name/key (String or Card::Name)
   #    3. a codename (Symbol)

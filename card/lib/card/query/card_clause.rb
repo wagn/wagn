@@ -14,7 +14,7 @@ class Card
         ignore:          %w{ prepend append view params vars size }
       }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
 
-      DEFAULT_ORDER_DIRS =  { update: "desc", relevance: "desc" }
+      DEFAULT_ORDER_DIRS =  { update: 'desc', relevance: 'desc' }
       CONJUNCTIONS = { any: :or, in: :or, or: :or, all: :and, and: :and }
 
       attr_reader :sql, :query, :rawclause, :selfname
@@ -280,7 +280,7 @@ class Card
 
         cards.each do |c|
           unless c && [SearchTypeID,SetID].include?(c.type_id)
-            raise BadQuery, %{"found_by" value needs to be valid Search, but #{c.name} is a #{c.type_name}}
+            raise BadQuery, %{'found_by' value needs to be valid Search, but #{c.name} is a #{c.type_name}}
           end
           restrict_by_join :id, CardClause.new(c.get_query).rawclause
         end
@@ -363,11 +363,11 @@ class Card
       def table_alias
         case
         when @mods[:return]=='condition'
-          @parent ? @parent.table_alias : "t"
+          @parent ? @parent.table_alias : 't'
         when @parent
-          @parent.table_alias + "x"
+          @parent.table_alias + 'x'
         else
-          "t"
+          't'
         end
       end
 
@@ -498,7 +498,7 @@ class Card
         #fail "order_key = #{@mods[:sort]}, class = #{order_key.class}"
 
         return nil if @parent or @mods[:return]=='count' #FIXME - extend to all root-only clauses
-        order_key ||= @mods[:sort].blank? ? "update" : @mods[:sort]
+        order_key ||= @mods[:sort].blank? ? 'update' : @mods[:sort]
 
         order_directives = [order_key].flatten.map do |key|
           dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[key.to_sym]||'asc') : safe_sql(@mods[:dir]) #wonky
@@ -510,12 +510,12 @@ class Card
 
       def sort_field key, as, dir
         order_field = case key
-          when "id";              "#{table_alias}.id"
-          when "update";          "#{table_alias}.updated_at"
-          when "create";          "#{table_alias}.created_at"
+          when 'id';              "#{table_alias}.id"
+          when 'update';          "#{table_alias}.updated_at"
+          when 'create';          "#{table_alias}.created_at"
           when /^(name|alpha)$/;  "LOWER( #{table_alias}.key )"
           when 'content';         "#{table_alias}.db_content"
-          when "relevance";       "#{table_alias}.updated_at" #deprecated
+          when 'relevance';       "#{table_alias}.updated_at" #deprecated
           else
             safe_sql(key)
           end

@@ -70,7 +70,7 @@ module Cardio
 
       add_path 'mod'
 
-      add_path "db"
+      add_path 'db'
       add_path 'db/migrate'
       add_path "db/migrate_core_cards"
       add_path "db/migrate_deck_cards", root: root, with: 'db/migrate_cards'

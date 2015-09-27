@@ -8,7 +8,7 @@ describe Card do
     end
   end
 
-  describe "creation" do
+  describe 'creation' do
     before(:each) do
       Card::Auth.as_bot do
         @b = Card.create! name: "New Card", content: "Great Content"
@@ -18,7 +18,7 @@ describe Card do
 
     it "should not have errors"        do expect(@b.errors.size).to eq(0)        end
     it "should have the right class"   do expect(@c.class).to    eq(Card)        end
-    it "should have the right key"     do expect(@c.key).to      eq("new_card")  end
+    it "should have the right key"     do expect(@c.key).to      eq('new_card')  end
     it "should have the right name"    do expect(@c.name).to     eq("New Card")  end
     it "should have the right content" do expect(@c.content).to  eq("Great Content") end
 
@@ -83,10 +83,10 @@ describe "basic card tests" do
   end
 
   it 'should remove cards' do
-    forba = Card.create! name: "Forba"
-    torga = Card.create! name: "TorgA"
-    torgb = Card.create! name: "TorgB"
-    torgc = Card.create! name: "TorgC"
+    forba = Card.create! name: 'Forba'
+    torga = Card.create! name: 'TorgA'
+    torgb = Card.create! name: 'TorgB'
+    torgc = Card.create! name: 'TorgC'
 
     forba_torga = Card.create! name: "Forba+TorgA";
     torgb_forba = Card.create! name: "TorgB+Forba";
@@ -94,7 +94,7 @@ describe "basic card tests" do
 
     Card['Forba'].delete!
 
-    expect(Card["Forba"]).to be_nil
+    expect(Card['Forba']).to be_nil
     expect(Card["Forba+TorgA"]).to be_nil
     expect(Card["TorgB+Forba"]).to be_nil
     expect(Card["Forba+TorgA+TorgC"]).to be_nil
@@ -130,10 +130,10 @@ describe "basic card tests" do
 
   it 'update_should_create_subcards' do
     banana = Card.create! name: 'Banana'
-    Card.update banana.id, subcards: { "+peel" => { content: "yellow" }}
+    Card.update banana.id, subcards: { "+peel" => { content: 'yellow' }}
 
     peel = Card['Banana+peel']
-    expect(peel.content).       to eq("yellow")
+    expect(peel.content).       to eq('yellow')
     expect(Card['joe_user'].id).to eq(peel.creator_id)
   end
 
@@ -143,22 +143,22 @@ describe "basic card tests" do
     expect(Card['Banana']).not_to be
     expect(Card['Basic'].ok?(:create)).to be_falsey, "anon can't creat"
 
-    Card.create! type: "Fruit", name: 'Banana', subcards: { "+peel" => { content: "yellow" }}
+    Card.create! type: 'Fruit', name: 'Banana', subcards: { "+peel" => { content: 'yellow' }}
     expect(Card['Banana']).to be
     peel = Card["Banana+peel"]
 
-    expect(peel.db_content).to eq("yellow")
+    expect(peel.db_content).to eq('yellow')
     expect(peel.creator_id).to eq(Card::AnonymousID)
   end
 
   it 'update_should_not_create_subcards_if_missing_main_card_permissions' do
     b = Card.create!( name: 'Banana' )
     Card::Auth.as Card::AnonymousID do
-      b.update_attributes subcards: { "+peel" => { content: "yellow" }}
+      b.update_attributes subcards: { "+peel" => { content: 'yellow' }}
       expect(b.errors[:permission_denied]).not_to be_empty
 
 
-      c = Card.update(b.id, subcards: { "+peel" => { content: "yellow" }})
+      c = Card.update(b.id, subcards: { "+peel" => { content: 'yellow' }})
       expect(c.errors[:permission_denied]).not_to be_empty
       expect(Card['Banana+peel']).to be_nil
     end
@@ -166,7 +166,7 @@ describe "basic card tests" do
 
 
   it 'create_without_read_permission' do
-    c = Card.create!({name: "Banana", type: "Fruit", content: "mush"})
+    c = Card.create!({name: 'Banana', type: 'Fruit', content: 'mush'})
     Card::Auth.as Card::AnonymousID do
       assert_raises Card::PermissionDenied do
         c.ok! :read

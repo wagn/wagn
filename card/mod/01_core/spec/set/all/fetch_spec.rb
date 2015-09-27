@@ -3,26 +3,26 @@
 describe Card::Set::All::Fetch do
   describe ".fetch" do
     it "returns and caches existing cards" do
-      card_double = class_double("Card")
-      expect(Card.fetch("A")).to be_instance_of(Card)
-      expect(Card.cache.read("a")).to be_instance_of(Card)
+      card_double = class_double('Card')
+      expect(Card.fetch('A')).to be_instance_of(Card)
+      expect(Card.cache.read('a')).to be_instance_of(Card)
       expect(card_double).not_to receive(:find_by_key)
-      expect(Card.fetch("A")).to be_instance_of(Card)
+      expect(Card.fetch('A')).to be_instance_of(Card)
     end
 
     it "returns nil and caches missing cards" do
-      expect(Card.fetch("Zork")).to be_nil
-      expect(Card.cache.read("zork").new_card?).to be_truthy
-      expect(Card.fetch("Zork")).to be_nil
+      expect(Card.fetch('Zork')).to be_nil
+      expect(Card.cache.read('zork').new_card?).to be_truthy
+      expect(Card.fetch('Zork')).to be_nil
     end
 
     it "returns nil and caches trash cards" do
       Card::Auth.as_bot do
-        card_double = class_double("Card")
-        Card.fetch("A").delete!
-        expect(Card.fetch("A")).to be_nil
+        card_double = class_double('Card')
+        Card.fetch('A').delete!
+        expect(Card.fetch('A')).to be_nil
         expect(card_double).not_to receive(:find_by_key_and_trash)
-        expect(Card.fetch("A")).to be_nil
+        expect(Card.fetch('A')).to be_nil
       end
     end
 
@@ -74,7 +74,7 @@ describe Card::Set::All::Fetch do
       expect(Card.cache.local.keys).to eq([])
 
       Card::Auth.as_bot do
-        a = Card.fetch("A")
+        a = Card.fetch('A')
         expect(a).to be_instance_of(Card)
 
         # expires the saved card
@@ -97,7 +97,7 @@ describe Card::Set::All::Fetch do
       end
     end
 
-    describe "preferences" do
+    describe 'preferences' do
       before do
         Card::Auth.current_id = Card::WagnBotID
       end
@@ -143,7 +143,7 @@ describe Card::Set::All::Fetch do
       end
 
       it "should not hit the database for every fetch_virtual lookup" do
-        card_double = class_double("Card")
+        card_double = class_double('Card')
         Card.create!(name: "y+*right+*structure", content: "Formatted Content")
         Card.fetch("a+y")
         expect(card_double).not_to receive(:find_by_key)
@@ -172,7 +172,7 @@ describe Card::Set::All::Fetch do
     end
 
     it "takes a second hash of options as new card options" do
-      new_card = Card.fetch "Never Before", new: { type: "Image" }
+      new_card = Card.fetch "Never Before", new: { type: 'Image' }
       expect(new_card).to be_instance_of(Card)
       expect(new_card.type_code).to eq(:image)
       expect(new_card.new_record?).to be_truthy
@@ -183,7 +183,7 @@ describe Card::Set::All::Fetch do
   describe "#fetch_virtual" do
     it "should find cards with *right+*structure specified" do
       Card::Auth.as_bot do
-        Card.create! name: "testsearch+*right+*structure", content: '{"plus":"_self"}', type: 'Search'
+        Card.create! name: "testsearch+*right+*structure", content: '{'plus':'_self'}', type: 'Search'
       end
       c = Card.fetch("A+testsearch".to_name)
       assert c.virtual?
@@ -194,7 +194,7 @@ describe Card::Set::All::Fetch do
 
   describe "#exists?" do
     it "is true for cards that are there" do
-      expect(Card.exists?("A")).to eq(true)
+      expect(Card.exists?('A')).to eq(true)
     end
 
     it "is false for cards that arent'" do

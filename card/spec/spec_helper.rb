@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'spork'
-ENV["RAILS_ENV"] = 'test'
+ENV['RAILS_ENV'] = 'test'
 
 require 'timecop'
 require 'rr'
@@ -13,8 +13,8 @@ require File.expand_path( '../../mod/03_machines/spec/lib/shared_machine_example
 require File.expand_path( '../../mod/03_machines/spec/lib/shared_machine_input_examples.rb', __FILE__ )
 
 Spork.prefork do
-  if ENV["RAILS_ROOT"]
-    require File.join( ENV["RAILS_ROOT"], '/config/environment')
+  if ENV['RAILS_ROOT']
+    require File.join( ENV['RAILS_ROOT'], '/config/environment')
   else
     require File.expand_path( '../../config/environment', __FILE__ )
   end

@@ -57,11 +57,12 @@ def item_keys args={}
 end
 
 def include_item? item
-  key = if Card === item
-    item.cardname.key
-  else
-    item.to_name.key
-  end
+  key =
+    if Card === item
+      item.cardname.key
+    else
+      item.to_name.key
+    end
   item_names.map{|name| name.to_name.key}.member? key
 end
 
@@ -143,7 +144,7 @@ format do
 
   def item_args args
     i_args = { view: item_view(args)}
-    if type = card.item_type
+    if (type = card.item_type)
       i_args[:type] = type
     end
     i_args
@@ -167,19 +168,20 @@ format do
   end
 
   def set_default_search_params overrides={}
-    @default_search_params ||= begin
-      p = { default_limit: 100 }.merge overrides
-      set_search_params_variables! p
-      p
-    end
+    @default_search_params ||=
+      begin
+        p = { default_limit: 100 }.merge overrides
+        set_search_params_variables! p
+        p
+      end
   end
 
   def set_search_params_variables! hash
     hash[:vars] = params[:vars] || {}
     params.each do |key,val|
       case key.to_s
-      when '_wql'      ;  hash.merge! val
-      when /^\_(\w+)$/ ;  hash[:vars][$1.to_sym] = val
+      when '_wql'      then hash.merge! val
+      when /^\_(\w+)$/ then hash[:vars][$1.to_sym] = val
       end
     end
   end
@@ -321,9 +323,9 @@ format :html do
   end
 
   def tab_panel tab_buttons, tab_panes, tab_type='tabs'
-    wrap_with :div, role: "tabpanel" do
+    wrap_with :div, role: 'tabpanel' do
       [
-        content_tag(:ul, tab_buttons.html_safe, class: "nav nav-#{tab_type}", role: "tablist"),
+        content_tag(:ul, tab_buttons.html_safe, class: "nav nav-#{tab_type}", role: 'tablist'),
         content_tag(:div, tab_panes.html_safe, class: 'tab-content')
       ]
     end

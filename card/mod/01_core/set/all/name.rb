@@ -255,7 +255,7 @@ event :cascade_name_changes, after: :store, on: :update, changed: :name do
   if update_referencers
     Auth.as_bot do
       [self.name_referencers(name_was)+(deps.map &:referencers)].flatten.uniq.each do |card|
-        # FIXME  using "name_referencers" instead of plain "referencers" for self because there are cases where trunk and tag
+        # FIXME  using 'name_referencers' instead of plain 'referencers' for self because there are cases where trunk and tag
         # have already been saved via association by this point and therefore referencers misses things
         # eg.  X includes Y, and Y is renamed to X+Z.  When X+Z is saved, X is first updated as a trunk before X+Z gets to this point.
         # so at this time X is still including Y, which does not exist.  therefore #referencers doesn't find it, but name_referencers(old_name) does.

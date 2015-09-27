@@ -36,10 +36,10 @@ end
 
 describe Card, "in trash" do
   it "should be retrieved by fetch with new" do
-    Card.create(name: "Betty").delete
-    c=Card.fetch "Betty", new: {}
+    Card.create(name: 'Betty').delete
+    c=Card.fetch 'Betty', new: {}
     c.save
-    expect(Card["Betty"]).to be_instance_of(Card)
+    expect(Card['Betty']).to be_instance_of(Card)
   end
 end
 
@@ -113,12 +113,12 @@ end
 describe Card, "rename to trashed name" do
   before do
     Card::Auth.as_bot do
-      @a = Card["A"]
-      @b = Card["B"]
+      @a = Card['A']
+      @b = Card['B']
       @a.delete!  #trash
       Rails.logger.info "\n\n~~~~~~~deleted~~~~~~~~\n\n\n"
 
-      @b.update_attributes! name: "A", update_referencers: true
+      @b.update_attributes! name: 'A', update_referencers: true
     end
   end
 
@@ -137,7 +137,7 @@ end
 describe Card, "sent to trash" do
   before do
     Card::Auth.as_bot do
-      @c = Card["basicname"]
+      @c = Card['basicname']
       @c.delete!
     end
   end
@@ -147,7 +147,7 @@ describe Card, "sent to trash" do
   end
 
   it "should not be findable by name" do
-    expect(Card["basicname"]).to eq(nil)
+    expect(Card['basicname']).to eq(nil)
   end
 
   it "should still have actions" do
@@ -159,7 +159,7 @@ end
 describe Card, "revived from trash" do
   before do
     Card::Auth.as_bot do
-      Card["basicname"].delete!
+      Card['basicname'].delete!
 
       @c = Card.create! name: 'basicname', content: 'revived content'
     end
@@ -186,13 +186,13 @@ end
 describe Card, "recreate trashed card via new" do
 #  before do
 #    Card::Auth.as(Card::WagnBotID)
-#    @c = Card.create! type: 'Basic', name: "BasicMe"
+#    @c = Card.create! type: 'Basic', name: 'BasicMe'
 #  end
 
 #  this test is known to be broken; we've worked around it for now
 #  it "should delete and recreate with a different cardtype" do
 #    @c.delete!
-#    @re_c = Card.new type: "Phrase", name: "BasicMe", content: "Banana"
+#    @re_c = Card.new type: 'Phrase', name: 'BasicMe', content: 'Banana'
 #    @re_c.save!
 #  end
 
@@ -201,7 +201,7 @@ end
 describe Card, "junction revival" do
   before do
     Card::Auth.as_bot do
-      @c = Card.create! name: "basicname+woot", content: "basiccontent"
+      @c = Card.create! name: "basicname+woot", content: 'basiccontent'
       @c.delete!
       @c = Card.create! name: "basicname+woot", content: "revived content"
     end
@@ -227,31 +227,31 @@ end
 describe "remove tests" do
 
   before do
-    @a = Card["A"]
+    @a = Card['A']
   end
 
   # I believe this is here to test a bug where cards with certain kinds of references
   # would fail to delete.  probably less of an issue now that delete is done through
   # trash.
-  it "test_remove" do
+  it 'test_remove' do
     assert @a.delete!, "card should be deleteable"
-    assert_nil Card["A"]
+    assert_nil Card['A']
   end
 
-  it "test_recreate_plus_card_name_variant" do
+  it 'test_recreate_plus_card_name_variant' do
     Card.create( name: "rta+rtb" ).delete
-    Card["rta"].update_attributes name: "rta!"
+    Card['rta'].update_attributes name: "rta!"
     c = Card.create! name: "rta!+rtb"
     assert Card["rta!+rtb"]
     assert !Card["rta!+rtb"].trash
     assert Card.find_by_key('rtb*trash').nil?
   end
 
-  it "test_multiple_trash_collision" do
-    Card.create( name: "alpha" ).delete
+  it 'test_multiple_trash_collision' do
+    Card.create( name: 'alpha' ).delete
     3.times do
-      b = Card.create( name: "beta" )
-      b.name = "alpha"
+      b = Card.create( name: 'beta' )
+      b.name = 'alpha'
       assert b.save!
       b.delete
     end

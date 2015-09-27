@@ -1,12 +1,12 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::Codename, "Codename" do
+describe Card::Codename, 'Codename' do
 
   before do
     @codename = :default
   end
 
-  it "should be sane" do    
+  it "should be sane" do
     expect(Card[@codename].codename).to eq(@codename.to_s) #would prefer Symbol eventually
     card_id = Card::Codename[@codename]
     expect(card_id).to be_a_kind_of Integer
@@ -21,5 +21,5 @@ describe Card::Codename, "Codename" do
       expect(Card[@codename]).to be
     end
   end
-  
+
 end

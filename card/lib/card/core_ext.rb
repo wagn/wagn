@@ -92,12 +92,12 @@ class Kaminari::Helpers::Tag
 
     if Kaminari.config.respond_to?(:params_on_first_page) && !Kaminari.config.params_on_first_page && page <= 1
       # This converts a hash:
-      #   from: {other: "params", page: 1}
-      #     to: {other: "params", page: nil}
-      #   (when @param_name == "page")
+      #   from: {other: 'params', page: 1}
+      #     to: {other: 'params', page: nil}
+      #   (when @param_name == 'page')
       #
-      #   from: {other: "params", user: {name: "yuki", page: 1}}
-      #     to: {other: "params", user: {name: "yuki", page: nil}}
+      #   from: {other: 'params', user: {name: 'yuki', page: 1}}
+      #     to: {other: 'params', user: {name: 'yuki', page: nil}}
       #   (when @param_name == "user[page]")
       @param_name.to_s.scan(/\w+/)[0..-2].inject(page_params){|h, k| h[k] }[$&] = nil
     end

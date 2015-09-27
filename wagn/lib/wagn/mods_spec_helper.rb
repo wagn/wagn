@@ -1,12 +1,12 @@
 # -*- encoding : utf-8 -*-
 require 'spork'
 
-ENV["RAILS_ENV"] = 'test'
+ENV['RAILS_ENV'] = 'test'
 
 Spork.prefork do
 
-  if ENV["RAILS_ROOT"]
-    require File.join( ENV["RAILS_ROOT"], '/config/environment')
+  if ENV['RAILS_ROOT']
+    require File.join( ENV['RAILS_ROOT'], '/config/environment')
   else
     require File.expand_path( '../../config/environment', __FILE__ )
   end

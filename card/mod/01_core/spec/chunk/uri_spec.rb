@@ -57,12 +57,12 @@ describe Card::Chunk::URI, "URI chunk tests" do
       scheme: 'http', host: 'example.com.au', link_text: 'http://example.com.au/'
     )
   end
-  it 'should work with "unusual" base domain without http://' do
+  it 'should work with 'unusual' base domain without http://' do
     match_chunk(Card::Chunk::URI, 'example.com.au',
       scheme: 'http', host: 'example.com.au', text: 'example.com.au', link_text: 'http://example.com.au'
     )
   end
-  it 'should work with another "unusual" base domain' do
+  it 'should work with another 'unusual' base domain' do
     match_chunk(Card::Chunk::URI, 'http://www.example.co.uk/',
       scheme: 'http', host: 'www.example.co.uk',
       link_text: 'http://www.example.co.uk/'
@@ -186,7 +186,7 @@ describe Card::Chunk::URI, "URI chunk tests" do
   end
 
   it "should test_non_uri" do
-    # "so" is a valid country code; "libproxy.so" is a valid url
+    # 'so' is a valid country code; "libproxy.so" is a valid url
     match_chunk(Card::Chunk::URI, 'libproxy.so', host: 'libproxy.so', text: 'libproxy.so', link_text: 'http://libproxy.so')
 
     no_match Card::Chunk::URI, 'httpd.conf'
@@ -210,7 +210,7 @@ describe Card::Chunk::URI, "URI chunk tests" do
     # check that trailing punctuation is not included in the hostname
     match_chunk(Card::Chunk::URI, 'Hey dude, http://fake.link.com.', scheme: 'http', host: 'fake.link.com')
     # this is a textile link, no match please.
-    no_match(Card::Chunk::URI, '"link":http://fake.link.com.')
+    no_match(Card::Chunk::URI, ''link':http://fake.link.com.')
    end
 
   it "should test_uri_in_parentheses" do

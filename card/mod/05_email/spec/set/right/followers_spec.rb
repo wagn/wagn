@@ -15,7 +15,7 @@ describe Card::Set::Right::Followers do
     it 'contains follower' do
       card = Card.fetch 'All Eyes on me'
       view = card.followers_card.format.render_core
-      expect(view).to include("Sara")
+      expect(view).to include('Sara')
     end
   end
 

@@ -235,7 +235,7 @@ format :html do
   private
 
   def fancy_title title=nil, title_class=nil
-    raw %{<span class="card-title#{" #{title_class}"if title_class}">#{ showname(title).to_name.parts.join %{<span class="joint">+</span>} }</span>}
+    raw %{<span class="card-title#{" #{title_class}"if title_class}">#{ showname(title).to_name.parts.join %{<span class='joint'>+</span>} }</span>}
   end
 end
 

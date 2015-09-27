@@ -16,7 +16,7 @@ def pending?  ; status=='pending' end
 def authenticate_by_token val
   tcard = token_card                               or return :token_not_found
   token == val                                     or return :incorrect_token
-  tcard.updated_at > Card.config.token_expiry.ago  or return :token_expired  # > means "after"
+  tcard.updated_at > Card.config.token_expiry.ago  or return :token_expired  # > means 'after'
   left and left.accountable?                       or return :illegal_account  #(overkill?)
   Auth.as_bot { tcard.delete! }
   left.id

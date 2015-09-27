@@ -40,7 +40,7 @@ TASK_COMMANDS = %w[seed reseed load update]
 
 if supported_rails_command? ARGV.first
   if ARGV.delete('--rescue')
-    ENV["PRY_RESCUE_RAILS"]="1"
+    ENV['PRY_RESCUE_RAILS']='1'
   end
   command = ARGV.first
   command = ALIAS[command] || command
@@ -125,7 +125,7 @@ WAGN
         opts[:files] = "#{Cardio.gem_root}/mod/#{file}"
       elsif File.exists? mod_path = "#{Cardio.gem_root}/mod/#{file}"
         opts[:files] = "#{Cardio.gem_root}/mod/#{file}"
-      elsif (opts[:files] = find_spec_file( file, "mod")).present?
+      elsif (opts[:files] = find_spec_file( file, 'mod')).present?
       else
         opts[:files] = find_spec_file( file, "#{Cardio.gem_root}/mod")
       end
@@ -183,24 +183,24 @@ WAGN
                new deck called MyDeck in "./my_deck"
    seed        Create and seed the database specified in config/database.yml
 
-   server      Start the Rails server (short-cut alias: "s")
-   console     Start the Rails console (short-cut alias: "c")
+   server      Start the Rails server (short-cut alias: 's')
+   console     Start the Rails console (short-cut alias: 'c')
    dbconsole   Start a console for the database specified in config/database.yml
-               (short-cut alias: "db")
+               (short-cut alias: 'db')
 
   For core developers
-   cucumber     Run cucumber features (short-cut alias: "cc")
-   rspec        Run rspec tests (short-cut alias: "rs")
+   cucumber     Run cucumber features (short-cut alias: 'cc')
+   rspec        Run rspec tests (short-cut alias: 'rs')
    update       Run card migrations
 
   In addition to those, there are the standard rails commands:
-   generate     Generate new code (short-cut alias: "g")
+   generate     Generate new code (short-cut alias: 'g')
    application  Generate the Rails application code
-   destroy      Undo code generated with "generate" (short-cut alias: "d")
+   destroy      Undo code generated with 'generate' (short-cut alias: 'd')
    benchmarker  See how fast a piece of code runs
    profiler     Get profile information from a piece of code
    plugin       Install a plugin
-   runner       Run a piece of code in the application environment (short-cut alias: "r")
+   runner       Run a piece of code in the application environment (short-cut alias: 'r')
 
   All commands can be run with -h (or --help) for more information.
     EOT

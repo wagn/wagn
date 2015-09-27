@@ -97,7 +97,7 @@ class Card
           end
 
           if !match || !context_ok
-            interval_string += content[chunk_start..position-1]                    # moving beyond the alleged chunk.  append failed string to "nonchunk" string
+            interval_string += content[chunk_start..position-1]                    # moving beyond the alleged chunk.  append failed string to 'nonchunk' string
           end
         end
       end

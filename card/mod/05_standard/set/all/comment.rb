@@ -27,11 +27,11 @@ view( :comment_box, denial: :blank, tags: :unknown_ok, perms: lambda { |r| r.car
         <div class="comment-buttons">
           #{
             unless Auth.signed_in?
-              card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") #ENGLISH
+              card.comment_author= (session[:comment_author] || params[:comment_author] || 'Anonymous') #ENGLISH
               %{<label>My Name is:</label> #{ text_field :comment_author }}
             end
           }
-          #{ button_tag 'Comment', type: :submit, disable_with: "Commenting" }
+          #{ button_tag 'Comment', type: :submit, disable_with: 'Commenting' }
         </div>
       }
     end}

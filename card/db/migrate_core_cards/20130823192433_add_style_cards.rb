@@ -2,7 +2,7 @@
 
 class AddStyleCards < Card::CoreMigration
   def up
-    # TAKE "CSS" CODENAME FROM OLD *CSS CARD
+    # TAKE 'CSS' CODENAME FROM OLD *CSS CARD
     old_css = Card[:css]
     old_css.update_attributes codename: nil  #old *css card no longer needs this codename
 
@@ -38,7 +38,7 @@ class AddStyleCards < Card::CoreMigration
     style_set = "*style+#{Card[:right].name}"
     Card.create! name: "#{style_set}+#{Card[:default].name}", type_id: Card::PointerID
     Card.create! name: "#{style_set}+#{Card[:read].name}",    content: "[[#{Card[:anyone].name}]]"
-    Card.create! name: "#{style_set}+#{Card[:options].name}", content: %({"type":"Skin"}), type: Card::SearchTypeID
+    Card.create! name: "#{style_set}+#{Card[:options].name}", content: %({'type':'Skin'}), type: Card::SearchTypeID
     Card.create! name: "#{style_set}+#{Card[:input].name}",   content: 'select'
     Card.create! name: "#{style_set}+#{Card[:help].name}",    content:       %{Skin (collection of stylesheets) for card's page. [[http://wagn.org/skins|more]]}
 

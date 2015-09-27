@@ -5,7 +5,7 @@ describe "Card::Set::All::Follow" do
     render_card :follow_link, name: card_name
   end
 
-  describe "follower_ids" do
+  describe 'follower_ids' do
 
     context 'when a new +*follow rule created' do
       it 'contains id of a new follower' do
@@ -57,12 +57,12 @@ describe "Card::Set::All::Follow" do
     end
 
     def assert_following_view name, args
-      assert_follow_view name, args.reverse_merge(following: true, text: "unfollow" )
+      assert_follow_view name, args.reverse_merge(following: true, text: 'unfollow' )
     end
 
 #  href="/card/update/Home+*self+philipp+*follow?card%5Bcontent%5D=%5B%5Bnever%5D%5D&success%5Bid%5D=Home&success%5Bview%5D=follow"
     def assert_follow_view name, args
-      args[:user] ||= "Big_Brother"
+      args[:user] ||= 'Big_Brother'
       #      href = "/card/update/#{args[:add_set].to_name.url_key}+#{args[:user]}+*follow?"
       #      href += CGI.escape("card[content]") + '='
       #      href +=
@@ -75,7 +75,7 @@ describe "Card::Set::All::Follow" do
       #        end
 
       link_class = 'follow-link'
-      assert_view_select follow_view(name), "a[class~=#{link_class}][href*='']", args[:text] || "follow"
+      assert_view_select follow_view(name), "a[class~=#{link_class}][href*='']", args[:text] || 'follow'
     end
 
 

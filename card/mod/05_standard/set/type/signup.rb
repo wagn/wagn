@@ -24,7 +24,7 @@ format :html do
   view :new do |args|
     #FIXME - make more use of standard new view?
 
-    frame_and_form :create, args, 'main-success'=>"REDIRECT" do
+    frame_and_form :create, args, 'main-success'=>'REDIRECT' do
       [
         _render_name_formgroup( help: 'usually first and last name' ),
         _optional_render( :account_formgroups, args),

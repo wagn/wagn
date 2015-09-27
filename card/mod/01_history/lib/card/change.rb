@@ -14,7 +14,7 @@ class Card
     def self.delete_actionless
       Card::Change.where(
         "card_action_id NOT IN (?)",
-        Card::Action.pluck("id"),
+        Card::Action.pluck('id'),
       ).delete_all
     end
 

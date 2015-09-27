@@ -8,50 +8,50 @@ describe Card::Reference do
 
   describe "references on hard templated cards should get updated" do
     it "on structuree creation" do
-      Card.create! name: "JoeForm", type: 'UserForm'
-      Card["JoeForm"].format.render(:core)
+      Card.create! name: 'JoeForm', type: 'UserForm'
+      Card['JoeForm'].format.render(:core)
       assert_equal ["joe_form+age", "joe_form+description", "joe_form+name"],
-        Card["JoeForm"].includees.map(&:key).sort
-      expect(Card["JoeForm"].references_expired).not_to eq(true)
+        Card['JoeForm'].includees.map(&:key).sort
+      expect(Card['JoeForm'].references_expired).not_to eq(true)
     end
 
     it "on template creation" do
-      Card.create! name: "SpecialForm", type: 'Cardtype'
-      Card.create! name: "Form1", type: 'SpecialForm', content: "foo"
-      c = Card["Form1"]
+      Card.create! name: 'SpecialForm', type: 'Cardtype'
+      Card.create! name: 'Form1', type: 'SpecialForm', content: 'foo'
+      c = Card['Form1']
       expect(c.references_expired).to be_nil
       Card.create! name: "SpecialForm+*type+*structure", content: "{{+bar}}"
-      c = Card["Form1"]
+      c = Card['Form1']
       expect(c.references_expired).to be_truthy
-      Card["Form1"].format.render(:core)
-      c = Card["Form1"]
+      Card['Form1'].format.render(:core)
+      c = Card['Form1']
       expect(c.references_expired).to be_nil
-      expect(Card["Form1"].includees.map(&:key)).to eq(["form1+bar"])
+      expect(Card['Form1'].includees.map(&:key)).to eq(["form1+bar"])
     end
 
     it "on template update" do
-      Card.create! name: "JoeForm", type: 'UserForm'
+      Card.create! name: 'JoeForm', type: 'UserForm'
       tmpl = Card["UserForm+*type+*structure"]
       tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}";
       tmpl.save!
-      expect(Card["JoeForm"].references_expired).to be_truthy
-      Card["JoeForm"].format.render(:core)
+      expect(Card['JoeForm'].references_expired).to be_truthy
+      Card['JoeForm'].format.render(:core)
       assert_equal ["joe_form+banana", "joe_form+fruit", "joe_form+monkey"],
-        Card["JoeForm"].includees.map(&:key).sort
-      expect(Card["JoeForm"].references_expired).not_to eq(true)
+        Card['JoeForm'].includees.map(&:key).sort
+      expect(Card['JoeForm'].references_expired).not_to eq(true)
     end
   end
 
   it "in references should survive cardtype change" do
-    newcard("Banana","[[Yellow]]")
-    newcard("Submarine","[[Yellow]]")
-    newcard("Sun","[[Yellow]]")
-    newcard("Yellow")
-    expect(Card["Yellow"].referencers.map(&:name).sort).to eq(%w{ Banana Submarine Sun })
-    y=Card["Yellow"];
-    y.type_id= Card.fetch_id "UserForm";
+    newcard('Banana',"[[Yellow]]")
+    newcard('Submarine',"[[Yellow]]")
+    newcard('Sun',"[[Yellow]]")
+    newcard('Yellow')
+    expect(Card['Yellow'].referencers.map(&:name).sort).to eq(%w{ Banana Submarine Sun })
+    y=Card['Yellow'];
+    y.type_id= Card.fetch_id 'UserForm';
     y.save!
-    expect(Card["Yellow"].referencers.map(&:name).sort).to eq(%w{ Banana Submarine Sun })
+    expect(Card['Yellow'].referencers.map(&:name).sort).to eq(%w{ Banana Submarine Sun })
   end
 
   it "container inclusion" do
@@ -63,12 +63,12 @@ describe Card::Reference do
   end
 
   it "pickup new links on rename" do
-    @l = newcard("L", "[[Ethan]]")  # no Ethan card yet...
-    @e = newcard("Earthman")
-    @e.update_attributes! name: "Ethan"  # NOW there is an Ethan card
-    # @e.referencers.map(&:name).include("L")  as the test was originally written, fails
+    @l = newcard('L', "[[Ethan]]")  # no Ethan card yet...
+    @e = newcard('Earthman')
+    @e.update_attributes! name: 'Ethan'  # NOW there is an Ethan card
+    # @e.referencers.map(&:name).include('L')  as the test was originally written, fails
     #  do we need the links to be caught before reloading the card?
-    expect(Card["Ethan"].referencers.map(&:name).include?("L")).not_to eq(nil)
+    expect(Card['Ethan'].referencers.map(&:name).include?('L')).not_to eq(nil)
   end
 
   it "should update references on rename when requested" do
@@ -78,7 +78,7 @@ describe Card::Reference do
 
     watermelon = Card['watermelon']
     watermelon.update_referencers = true
-    watermelon.name="grapefruit"
+    watermelon.name='grapefruit'
     watermelon.save!
     expect(lew.reload.content).to eq("likes [[grapefruit]] and [[grapefruit+seeds|seeds]]")
   end
@@ -101,7 +101,7 @@ describe Card::Reference do
     assert_equal [1,1,1,1], lew.references_to.map(&:present), "links should not be Wanted before"
     watermelon = Card['watermelon']
     watermelon.update_referencers = false
-    watermelon.name="grapefruit"
+    watermelon.name='grapefruit'
     watermelon.save!
     expect(lew.reload.content).to eq("likes [[watermelon]] and [[watermelon+seeds|seeds]]")
     assert_equal lew.references_to.order(:id).map(&:ref_type), ['L','P','P','L'], "links should be a LINK"
@@ -123,9 +123,9 @@ describe Card::Reference do
   end
 
   it "template inclusion" do
-    cardtype = Card.create! name: "ColorType", type: 'Cardtype', content: ""
+    cardtype = Card.create! name: 'ColorType', type: 'Cardtype', content: ""
     Card.create! name: "ColorType+*type+*structure", content: "{{+rgb}}"
-    green = Card.create! name: "green", type: 'ColorType'
+    green = Card.create! name: 'green', type: 'ColorType'
     rgb = newcard 'rgb'
     green_rgb = Card.create! name: "green+rgb", content: "#00ff00"
 
@@ -162,11 +162,11 @@ describe Card::Reference do
     expect(Card['alpha'].referencers.map(&:name)).to eq(['beta'])
   end
 
-  it "query" do
+  it 'query' do
     Card.create type: 'Search', name: 'search with references',
-      content: '{"name":"X", "right_plus":["Y",{"content":["in","A","B"]}]}'
+      content: '{'name':'X', 'right_plus':['Y',{'content':['in','A','B']}]}'
     expect(Card['Y'].referencers.map(&:name)).to include('search with references')
-    expect(Card['search with references'].referees.map(&:name).sort).to eq ["A","B","X","Y"]
+    expect(Card['search with references'].referees.map(&:name).sort).to eq ['A','B','X','Y']
   end
 
   it "handles contextual names in Basic cards" do
@@ -178,9 +178,9 @@ describe Card::Reference do
 
   it "handles contextual names in Search cards" do
     card = Card.create type: 'Search', name: 'search with references',
-      content: '{"name":"_+A"}'
+      content: '{'name':"_+A"}'
     Card['A'].update_attributes! name: 'AAA', update_referencers: true
-    expect(Card['search with references'].content).to eq '{"name":"_+AAA"}'
+    expect(Card['search with references'].content).to eq '{'name':"_+AAA"}'
   end
 
   it "should handle commented inclusion" do
@@ -190,16 +190,16 @@ describe Card::Reference do
 
 
   it "pickup new links on create" do
-    @l = newcard("woof", "[[Lewdog]]")  # no Lewdog card yet...
-    @e = newcard("Lewdog")              # now there is
+    @l = newcard('woof', "[[Lewdog]]")  # no Lewdog card yet...
+    @e = newcard('Lewdog')              # now there is
     # NOTE @e.referencers does not work, you have to reload
-    expect(@e.reload.referencers.map(&:name).include?("woof")).not_to eq(nil)
+    expect(@e.reload.referencers.map(&:name).include?('woof')).not_to eq(nil)
   end
 
   it "pickup new inclusions on create" do
-    @l = Card.create! name: "woof", content: "{{Lewdog}}"  # no Lewdog card yet...
-    @e = Card.new(name: "Lewdog", content: "grrr")              # now there is
-    expect(@e.name_referencers.map(&:name).include?("woof")).not_to eq(nil)
+    @l = Card.create! name: 'woof', content: "{{Lewdog}}"  # no Lewdog card yet...
+    @e = Card.new(name: 'Lewdog', content: 'grrr')              # now there is
+    expect(@e.name_referencers.map(&:name).include?('woof')).not_to eq(nil)
   end
 
 =begin

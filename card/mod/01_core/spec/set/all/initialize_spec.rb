@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::All::Initialize do
-  describe "new" do
+  describe 'new' do
     it "handles explicit nil as parameters" do
       c = Card.new nil
       expect(c).to be_instance_of(Card)

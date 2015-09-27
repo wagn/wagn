@@ -37,12 +37,12 @@ describe Card::Set::Type::EmailTemplate do
     end
 
     it 'renders text email if text message given' do
-      @fields = { "+*text_message" => "text" }
+      @fields = { "+*text_message" => 'text' }
       expect(content_type).to include 'text/plain'
     end
 
     it 'renders html email if html message given' do
-      @fields = { "+*html_message" =>  "text" }
+      @fields = { "+*html_message" =>  'text' }
       expect(content_type).to include 'text/html'
     end
 
@@ -87,7 +87,7 @@ describe Card::Set::Type::EmailTemplate do
       # end
 
       it 'handles search card' do
-        create_field '*bcc', content: '{"name":"Joe Admin","append":"*email"}', type: 'Search'
+        create_field '*bcc', content: '{'name':"Joe Admin",'append':"*email"}', type: 'Search'
         expect( mailconfig[:bcc] ).to eq 'joe@admin.com'
       end
 
@@ -140,10 +140,10 @@ describe Card::Set::Type::EmailTemplate do
          is_expected.to include '*html message'
        end
        it 'renders url' do
-         is_expected.to include 'Url(<a target="_blank" class="external-link" href="http://wagn.org">wagn.org</a>)'
+         is_expected.to include 'Url(<a target='_blank' class="external-link" href="http://wagn.org">wagn.org</a>)'
        end
        it 'renders link' do
-         is_expected.to include 'Link(<a target="_blank" class="external-link" href="http://wagn.org">Wagn</a>)'
+         is_expected.to include 'Link(<a target='_blank' class="external-link" href="http://wagn.org">Wagn</a>)'
        end
        it 'renders inclusion' do
          is_expected.to include 'Inclusion(B)'
@@ -159,7 +159,7 @@ describe Card::Set::Type::EmailTemplate do
      context 'with context card' do
        let(:context_card) do
          Card.create(
-           name:    "Banana",
+           name:    'Banana',
            content: "data content [[A]]",
            subcards: {
              '+email'      => {content: 'gary@gary.com'},
@@ -171,15 +171,15 @@ describe Card::Set::Type::EmailTemplate do
        subject {  mailconfig( context: context_card ) }
 
        it 'handles contextual name in address search' do
-         update_field '*from', content: '{"left":"_self", "right":"email"}', type: 'Search'
-         update_field '*from', content: '{"left":"_self", "right":"email"}'                  #FIXME: have to do this twice to get the right content.
+         update_field '*from', content: '{'left':'_self', 'right':'email'}', type: 'Search'
+         update_field '*from', content: '{'left':'_self', 'right':'email'}'                  #FIXME: have to do this twice to get the right content.
                                                                                                 #       After the first update the content is empty
          expect(subject[:from]).to eq "gary@gary.com"
        end
 
        it 'handles contextual names and structure rules in subject' do
          Card.create! name: 'default subject', content: 'a very nutty thang', type: 'Phrase'
-         Card.create! name: "subject search+*right+*structure", content: %{{"referred_to_by":"_left+subject"}}, type: 'Search'
+         Card.create! name: "subject search+*right+*structure", content: %{{'referred_to_by':"_left+subject"}}, type: 'Search'
          update_field '*subject', content: "{{+subject search|core;item:core}}"
          expect(subject[:subject]).to eq("a very nutty thang")
        end
@@ -198,7 +198,7 @@ describe Card::Set::Type::EmailTemplate do
        end
 
        it 'handles contextual name for attachments' do
-         create_field '*attach', type: "Pointer", content: "[[_self+attachment]]"
+         create_field '*attach', type: 'Pointer', content: "[[_self+attachment]]"
          expect(subject[:attach]).to eq ['Banana+attachment'.to_name]
        end
      end

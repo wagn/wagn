@@ -1,7 +1,6 @@
 
 Card.error_codes.merge! permission_denied: [:denial, 403], captcha: [:errors,449]
 
-
 # ok? and ok! are public facing methods to approve one action at a time
 #
 #   fetching: if the optional :trait parameter is supplied, it is passed
@@ -9,8 +8,6 @@ Card.error_codes.merge! permission_denied: [:denial, 403], captcha: [:errors,449
 #
 #      trait: :account         would fetch this card plus a tag codenamed :account
 #      trait: :roles, new: {} would initialize a new card with default ({}) options.
-
-
 def ok? action
   @action_ok = true
   send "ok_to_#{action}"
@@ -30,7 +27,7 @@ end
 
 def who_can action
   #warn "who_can[#{name}] #{(prc=permission_rule_card(action)).inspect}, #{prc.first.item_cards.map(&:id)}" if action == :update
-  permission_rule_card(action).first.item_cards.map &:id
+  permission_rule_card(action).first.item_cards.map(&:id)
 end
 
 
@@ -194,14 +191,15 @@ end
 
 
 event :check_permissions, after: :approve do
-  task = if @action != :delete && comment #will be obviated by new comment handling
-    :comment
-  else
-    @action
-  end
-  track_permission_errors do
-    ok? task
-  end
+  task =
+    if @action != :delete && comment #will be obviated by new comment handling
+      :comment
+    else
+      @action
+    end
+    track_permission_errors do
+      ok? task
+    end
 end
 
 def track_permission_errors

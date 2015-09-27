@@ -41,8 +41,8 @@ format :file do
   view :core do |args|                                    # returns send_file args.  not in love with this...
     if format = card.attachment_format( params[:format] ) # this means we only support known formats.  dislike.
       if params[:explicit_file] and r = controller.response
-        r.headers["Expires"] = 1.year.from_now.httpdate
-        #r.headers["Cache-Control"] = "public"            # currently using default "private", because proxy servers could block needed permission checks
+        r.headers['Expires'] = 1.year.from_now.httpdate
+        #r.headers["Cache-Control"] = 'public'            # currently using default 'private', because proxy servers could block needed permission checks
       end
 
   #      elsif ![format, 'file'].member? params[:format]  # formerly supported redirecting to correct file format
@@ -89,24 +89,24 @@ format :html do
   view :preview_editor, tags: :unknown_ok do |args|
     <<-HTML
       <div class="chosen-file">
-        <input type="hidden" name="cached_upload" value="#{card.selected_action_id}">
-        <table role="presentation" class="table table-striped"><tbody class="files">
+        <input type='hidden' name='cached_upload' value="#{card.selected_action_id}">
+        <table role='presentation' class="table table-striped"><tbody class='files'>
           <tr class="template-download fade in">
             <td>
-              <span class="preview">
+              <span class='preview'>
                 #{preview(args)}
               </span>
             </td>
             <td>
-              <p class="name">
+              <p class='name'>
                 #{card.original_filename}
               </p>
             </td>
             <td>
-              <span class="size">#{number_to_human_size(card.attachment.size)}</span>
+              <span class='size'>#{number_to_human_size(card.attachment.size)}</span>
             </td>
             <td class="pull-right">
-              <button class="btn btn-danger delete cancel-upload" data-type="DELETE">
+              <button class="btn btn-danger delete cancel-upload" data-type='DELETE'>
                 <i class="glyphicon glyphicon-trash"></i>
                 <span>Delete</span>
               </button>
@@ -129,7 +129,7 @@ format :html do
              #{file_field card.attachment_name, class: 'file-upload slotter'}
         </span>
       </div>
-      <div id="progress" class="progress" style="display: none;">
+      <div id='progress' class='progress' style="display: none;">
         <div class="progress-bar progress-bar-success" style="width: 0%;"></div>
       </div>
       <div class="chosen-file"></div>

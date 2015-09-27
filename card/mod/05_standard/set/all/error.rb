@@ -97,7 +97,7 @@ format :html do
   end
 
   view :closed_missing, perms: :none do |args|
-    %{<span class="faint"> #{ showname } </span>}
+    %{<span class='faint'> #{ showname } </span>}
   end
 
 
@@ -154,7 +154,7 @@ format :html do
       'to do that.'
     end
     if !focal?
-      %{<span class="denied"><!-- Sorry, you don't have permission #{to_task} --></span>}
+      %{<span class='denied'><!-- Sorry, you don't have permission #{to_task} --></span>}
     else
       frame args do #ENGLISH below
         message = case
@@ -179,7 +179,7 @@ format :html do
   view :server_error do |args|
     %{
     <body>
-      <div class="dialog">
+      <div class='dialog'>
         <h1>Wagn Hitch :(</h1>
         <p>Server Error. Yuck, sorry about that.</p>
         <p><a href="http://www.wagn.org/new/Support_Ticket">Add a support ticket</a>

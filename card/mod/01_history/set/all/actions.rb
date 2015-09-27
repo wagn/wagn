@@ -28,7 +28,7 @@ def nth_action index
 end
 
 def revision action
-  # a "revision" refers to the state of all tracked fields at the time of a given action
+  # a 'revision' refers to the state of all tracked fields at the time of a given action
   if action.is_a? Integer
     action = Card::Action.fetch(action)
   end

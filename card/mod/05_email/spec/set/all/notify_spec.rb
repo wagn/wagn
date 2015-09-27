@@ -264,14 +264,14 @@ Use this link to unfollow /update/Joe_User+*follow?card%5Bsubcards%5D%5Banother+
       end
 
       it "sends notifications of new card" do
-        new_card = Card.new name: "Microscope", type: "Optic"
+        new_card = Card.new name: 'Microscope', type: 'Optic'
         expect_user("Optic fan").to be_notified_of "Optic+*type", "*always"
         new_card.save!
       end
 
       it "sends notification of update" do
         expect_user("Optic fan").to be_notified_of "Optic+*type", '*always'
-        update "Sunglasses"
+        update 'Sunglasses'
       end
     end
 

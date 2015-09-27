@@ -149,11 +149,11 @@ format :html do
   %div.history-legend
     %span.glyphicon.glyphicon-plus-sign.diff-green
     %span
-      = Card::Diff.render_added_chunk("Added")
+      = Card::Diff.render_added_chunk('Added')
       |
     %span.glyphicon.glyphicon-minus-sign.diff-red
     %span
-      = Card::Diff.render_deleted_chunk("Deleted")
+      = Card::Diff.render_deleted_chunk('Deleted')
       HAML
     end
   end
@@ -170,7 +170,7 @@ format :html do
     act = (params['act_id'] and Card::Act.find(params['act_id'])) || args[:act]
     rev_nr = params['rev_nr'] || args[:rev_nr]
     current_rev_nr = params['current_rev_nr'] || args[:current_rev_nr] || card.current_rev_nr
-    hide_diff = (params["hide_diff"]=="true") || args[:hide_diff]
+    hide_diff = (params['hide_diff']=='true') || args[:hide_diff]
     wrap( args.merge(slot_class: "revision-#{act.id} history-slot list-group-item") ) do
       render_haml card: card, act: act, act_view: act_view,
                   current_rev_nr: current_rev_nr, rev_nr: rev_nr,
@@ -217,13 +217,13 @@ HAML
 
   def render_action action_view, args
     action = args[:action] || card.last_action
-    hide_diff = Env.params["hide_diff"]=="true" || args[:hide_diff]
+    hide_diff = Env.params['hide_diff']=='true' || args[:hide_diff]
     name_diff =
       if action.card == card
         name_changes(action, hide_diff)
       else
         link_to name_changes(action, hide_diff),
-                path(view: :related, related: {view: "history",name: action.card.name}),
+                path(view: :related, related: {view: 'history',name: action.card.name}),
                 class: 'slotter label label-default',
                 'data-slot-selector'=>".card-slot.history-view",
                 remote: true
@@ -322,7 +322,7 @@ HAML
   end
 
   def show_or_hide_changes_link hide_diff, args
-    "| " +  view_link( (hide_diff ? "Show" : "Hide") + " changes", :act_expanded,
+    "| " +  view_link( (hide_diff ? 'Show' : 'Hide') + " changes", :act_expanded,
       path_opts: args.merge(hide_diff: !hide_diff),
       class: 'slotter', remote: true )
   end

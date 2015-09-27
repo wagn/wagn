@@ -30,10 +30,10 @@ describe "Card (Cardtype)" do
   it "cardtype creation and dynamic cardtype" do
 
     assert Card.create( name: 'BananaPudding', type: 'Cardtype' ).type_id == Card::Codename[:cardtype]
-    assert_instance_of Card, c=Card.fetch("BananaPudding")
+    assert_instance_of Card, c=Card.fetch('BananaPudding')
 
     # you have to have a module to include or it's just a Basic (type_code fielde excepted)
-    cd = Card.create(type: 'banana_pudding',name: "figgy" )
+    cd = Card.create(type: 'banana_pudding',name: 'figgy' )
     assert cd.type_name == 'BananaPudding'
     assert Card.find_by_type_id(c.id)
   end
@@ -55,7 +55,7 @@ describe "Card (Cardtype)" do
     end
   end
 
-  it "cardtype" do
+  it 'cardtype' do
     Card.all.each do |card|
       assert !card.type_card.nil?
     end
@@ -203,10 +203,10 @@ describe Card::Set::Type::Cardtype do
 
   it "should handle changing away from Cardtype" do
     Card::Auth.as_bot do
-      ctg = Card.create! name: "CardtypeG", type: "Cardtype"
+      ctg = Card.create! name: 'CardtypeG', type: 'Cardtype'
       ctg.type_id = Card::BasicID
       ctg.save!
-      ctg = Card["CardtypeG"]
+      ctg = Card['CardtypeG']
       expect(ctg.type_code).to eq(:basic)
       #ctg.extension.should == nil
     end

@@ -3,37 +3,37 @@
 describe Card::Name do
 
   describe "#key" do
-    
+
     it "should lowercase and underscore" do
-      expect("This Name".to_name.key).to eq("this_name")
-    end
-    
-    it "should remove spaces" do
-      expect("this    Name".to_name.key).to eq("this_name")
+      expect("This Name".to_name.key).to eq('this_name')
     end
 
-    describe "underscores" do
-      
+    it "should remove spaces" do
+      expect("this    Name".to_name.key).to eq('this_name')
+    end
+
+    describe 'underscores' do
+
       it "should be treated like spaces" do
         expect('weird_ combo'.to_name.key).to eq('weird  combo'.to_name.key)
       end
-      
+
       it "should not impede pluralization checks" do
         expect('Mamas_and_Papas'.to_name.key).to eq("Mamas and Papas".to_name.key)
       end
-      
+
       it "should be removed when before first word character" do
-        expect("_This Name".to_name.key).to eq("this_name")
+        expect("_This Name".to_name.key).to eq('this_name')
       end
-      
+
     end
 
     it "should singularize" do
-      expect("ethans".to_name.key).to eq("ethan")
+      expect('ethans'.to_name.key).to eq('ethan')
     end
 
     it "should change CamelCase to snake case" do
-      expect("ThisThing".to_name.key).to eq("this_thing")
+      expect('ThisThing'.to_name.key).to eq('this_thing')
     end
 
     it "should handle plus cards" do
@@ -45,7 +45,7 @@ describe Card::Name do
     end
 
     it "should not singularize double s's" do
-      expect("grass".to_name.key).to eq('grass')
+      expect('grass'.to_name.key).to eq('grass')
     end
 
     it "should not singularize letter 'S'" do
@@ -53,7 +53,7 @@ describe Card::Name do
     end
 
     it "should handle unicode characters" do
-      expect("Mañana".to_name.key).to eq('mañana')
+      expect('Mañana'.to_name.key).to eq('mañana')
     end
 
     it "should handle weird initial characters" do
@@ -62,7 +62,7 @@ describe Card::Name do
     end
 
     it "should allow numbers" do
-      expect("3way".to_name.key).to eq('3way')
+      expect('3way'.to_name.key).to eq('3way')
     end
 
     it "internal plurals" do
@@ -80,7 +80,7 @@ describe Card::Name do
 
 
   describe "#url_key" do
-    cardnames = ["GrassCommons.org", 'Oh you @##', "Alice's Restaurant!", "PB &amp; J", "Mañana"].map(&:to_name)
+    cardnames = ["GrassCommons.org", 'Oh you @##', "Alice's Restaurant!", "PB &amp; J", 'Mañana'].map(&:to_name)
 
     cardnames.each do |cardname|
       it "should have the same key as the name" do
@@ -104,14 +104,14 @@ describe Card::Name do
 
     it "rejects long names" do
       card = Card.new
-      card.name="1"*256
+      card.name='1'*256
       expect(card).not_to be_valid
-    end 
-  end 
+    end
+  end
 
   describe "#left_name" do
     it "returns nil for non junction" do
-      expect("a".to_name.left_name).to eq(nil)
+      expect('a'.to_name.left_name).to eq(nil)
     end
 
     it "returns parent for parent" do
@@ -121,11 +121,11 @@ describe Card::Name do
 
   describe "#tag_name" do
     it "returns last part of plus card" do
-      expect("a+b+c".to_name.tag).to eq("c")
+      expect("a+b+c".to_name.tag).to eq('c')
     end
 
     it "returns name of simple card" do
-      expect("a".to_name.tag).to eq("a")
+      expect('a'.to_name.tag).to eq('a')
     end
   end
 
@@ -189,9 +189,9 @@ describe Card::Name do
 
   describe "#to_absolute" do
     it "handles _self, _whole, _" do
-      expect("_self".to_name.to_absolute("foo")).to eq("foo")
-      expect("_whole".to_name.to_absolute("foo")).to eq("foo")
-      expect("_".to_name.to_absolute("foo")).to eq("foo")
+      expect('_self'.to_name.to_absolute('foo')).to eq('foo')
+      expect('_whole'.to_name.to_absolute('foo')).to eq('foo')
+      expect('_'.to_name.to_absolute('foo')).to eq('foo')
     end
 
     it "handles _left" do
@@ -208,58 +208,58 @@ describe Card::Name do
     end
 
     it "handles leading +" do
-      expect("+bug".to_name.to_absolute("hum")).to eq("hum+bug")
+      expect("+bug".to_name.to_absolute('hum')).to eq("hum+bug")
     end
 
     it "handles trailing +" do
-      expect("bug+".to_name.to_absolute("tracks")).to eq("bug+tracks")
+      expect("bug+".to_name.to_absolute('tracks')).to eq("bug+tracks")
     end
 
     it "handles _(numbers)" do
-      expect("_1".to_name.to_absolute("A+B+C")).to eq("A")
+      expect('_1'.to_name.to_absolute("A+B+C")).to eq('A')
       expect("_1+_2".to_name.to_absolute("A+B+C")).to eq("A+B")
       expect("_2+_3".to_name.to_absolute("A+B+C")).to eq("B+C")
     end
 
     it "handles _LLR etc" do
-      expect("_R".to_name.to_absolute("A+B+C+D+E")).to    eq("E")
-      expect("_L".to_name.to_absolute("A+B+C+D+E")).to    eq("A+B+C+D")
-      expect("_LR".to_name.to_absolute("A+B+C+D+E")).to   eq("D")
-      expect("_LL".to_name.to_absolute("A+B+C+D+E")).to   eq("A+B+C")
-      expect("_LLR".to_name.to_absolute("A+B+C+D+E")).to  eq("C")
-      expect("_LLL".to_name.to_absolute("A+B+C+D+E")).to  eq("A+B")
-      expect("_LLLR".to_name.to_absolute("A+B+C+D+E")).to eq("B")
-      expect("_LLLL".to_name.to_absolute("A+B+C+D+E")).to eq("A")
+      expect('_R'.to_name.to_absolute("A+B+C+D+E")).to    eq('E')
+      expect('_L'.to_name.to_absolute("A+B+C+D+E")).to    eq("A+B+C+D")
+      expect('_LR'.to_name.to_absolute("A+B+C+D+E")).to   eq('D')
+      expect('_LL'.to_name.to_absolute("A+B+C+D+E")).to   eq("A+B+C")
+      expect('_LLR'.to_name.to_absolute("A+B+C+D+E")).to  eq('C')
+      expect('_LLL'.to_name.to_absolute("A+B+C+D+E")).to  eq("A+B")
+      expect('_LLLR'.to_name.to_absolute("A+B+C+D+E")).to eq('B')
+      expect('_LLLL'.to_name.to_absolute("A+B+C+D+E")).to eq('A')
     end
 
     context "mismatched requests" do
       it "returns _self for _left or _right on simple cards" do
-        expect("_left+Z".to_name.to_absolute("A")).to eq("A+Z")
-        expect("_right+Z".to_name.to_absolute("A")).to eq("A+Z")
+        expect("_left+Z".to_name.to_absolute('A')).to eq("A+Z")
+        expect("_right+Z".to_name.to_absolute('A')).to eq("A+Z")
       end
 
       it "handles bogus numbers" do
-        expect("_1".to_name.to_absolute("A")).to eq("A")
-        expect("_1+_2".to_name.to_absolute("A")).to eq("A+A")
-        expect("_2+_3".to_name.to_absolute("A")).to eq("A+A")
+        expect('_1'.to_name.to_absolute('A')).to eq('A')
+        expect("_1+_2".to_name.to_absolute('A')).to eq("A+A")
+        expect("_2+_3".to_name.to_absolute('A')).to eq("A+A")
       end
 
       it "handles bogus _llr requests" do
-           expect("_R".to_name.to_absolute("A")).to eq("A")
-           expect("_L".to_name.to_absolute("A")).to eq("A")
-          expect("_LR".to_name.to_absolute("A")).to eq("A")
-          expect("_LL".to_name.to_absolute("A")).to eq("A")
-         expect("_LLR".to_name.to_absolute("A")).to eq("A")
-         expect("_LLL".to_name.to_absolute("A")).to eq("A")
-        expect("_LLLR".to_name.to_absolute("A")).to eq("A")
-        expect("_LLLL".to_name.to_absolute("A")).to eq("A")
+           expect('_R'.to_name.to_absolute('A')).to eq('A')
+           expect('_L'.to_name.to_absolute('A')).to eq('A')
+          expect('_LR'.to_name.to_absolute('A')).to eq('A')
+          expect('_LL'.to_name.to_absolute('A')).to eq('A')
+         expect('_LLR'.to_name.to_absolute('A')).to eq('A')
+         expect('_LLL'.to_name.to_absolute('A')).to eq('A')
+        expect('_LLLR'.to_name.to_absolute('A')).to eq('A')
+        expect('_LLLL'.to_name.to_absolute('A')).to eq('A')
       end
     end
 
     it "does session user substitution" do
-      expect("_user".to_name.to_absolute("A")).to eq(Card::Auth.current.name)
+      expect('_user'.to_name.to_absolute('A')).to eq(Card::Auth.current.name)
       Card::Auth.as_bot do
-        expect("_user".to_name.to_absolute("A")).to eq(Card::Auth.current.name)
+        expect('_user'.to_name.to_absolute('A')).to eq(Card::Auth.current.name)
       end
     end
   end

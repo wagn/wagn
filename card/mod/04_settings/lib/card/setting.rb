@@ -15,13 +15,13 @@ class Card
     end
 
     @@group_names = {
-      templating:  "Templating",
-      permission:  "Permissions",
-      webpage:     "Webpage",
-      pointer:     "Pointer",
+      templating:  'Templating',
+      permission:  'Permissions',
+      webpage:     'Webpage',
+      pointer:     'Pointer',
       editing_cue: "Editing cues",
-      event:       "Events",
-      other:       "Other"
+      event:       'Events',
+      other:       'Other'
     }
     @@groups = @@group_names.keys.each_with_object({}) { |key, groups| groups[key] = [] }
     @@user_specific = ::Set.new

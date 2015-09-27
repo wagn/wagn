@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'uri'
 require 'cgi'
-require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", 'support', 'paths'))
 
 if RUBY_VERSION =~ /^2/
   require 'byebug'
@@ -64,7 +64,7 @@ When /^(.*) edits? "([^\"]*)" entering "([^\"]*)" into wysiwyg$/ do |username, c
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
     page.execute_script "$('#main .card-content').val('#{content}')"
-    click_button("Submit")
+    click_button('Submit')
   end
 end
 
@@ -72,7 +72,7 @@ When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardnam
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
     fill_in 'card[content]', with: content
-    click_button("Submit")
+    click_button('Submit')
   end
 end
 
@@ -87,13 +87,13 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
     plusses.hashes.first.each do |name, content|
       fill_in "card[subcards][#{cardname}+#{name}][content]", with: content
     end
-    click_button("Submit")
+    click_button('Submit')
   end
 end
 
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do
-    normal_textarea_card_type = ["JavaScript","CoffeeScript","HTML","CSS","SCSS","Search"]
+    normal_textarea_card_type = ['JavaScript','CoffeeScript','HTML','CSS','SCSS','Search']
     if not normal_textarea_card_type.include? cardtype or not page.evaluate_script "typeof ace != 'undefined'"
       fill_in("card[content]", with: content)
     else
@@ -132,14 +132,14 @@ When /^(?:|I )upload the (.+) "(.+)"$/ do |attachment_name, filename|
 end
 
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, verb, cardname|
-  user = Card::Auth.current.name if user == "I"
+  user = Card::Auth.current.name if user == 'I'
   signed_in_as user do
     step "the card #{cardname}+#{user}+*follow contains \"[[*always]]\""
   end
 end
 
 Given /^(.*) (is|am) not watching "([^\"]+)"$/ do |user, verb, cardname|
-  user = Card::Auth.current.name if user == "I"
+  user = Card::Auth.current.name if user == 'I'
   signed_in_as user do
     step "the card #{cardname}+#{user}+*follow contains \"[[*never]]\""
   end
@@ -176,13 +176,13 @@ def create_card(username,cardtype,cardname,content="")
     else
       visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"
       yield if block_given?
-      click_button("Submit")
+      click_button('Submit')
     end
   end
 end
 
 def signed_in_as username
-  sameuser = (username == "I" or Card::Auth.current.key == username.to_name.key)
+  sameuser = (username == 'I' or Card::Auth.current.key == username.to_name.key)
   was_signed_in = Card::Auth.current_id if Card::Auth.signed_in?
   unless sameuser
     step "I am signed in as #{username}"
@@ -224,7 +224,7 @@ When /^In (.*) I find button with icon "(.*)" and click it$/ do |section, icon|
 end
 
 Then /I submit$/ do
-    click_button("Submit")
+    click_button('Submit')
 end
 
 When /^I open the main card menu$/ do

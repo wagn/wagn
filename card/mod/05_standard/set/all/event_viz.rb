@@ -8,7 +8,7 @@
 #
 # Note: as of yet, the functionality is a bit rough.  It does not display events
 # that are called directly from within other events (like :stored), and certain event
-# requirements (like the presence of a "current_act") may prevent events from showing
+# requirements (like the presence of a 'current_act') may prevent events from showing
 # up in the tree.
 def events action
   @action = action

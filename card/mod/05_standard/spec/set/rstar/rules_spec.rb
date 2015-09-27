@@ -18,7 +18,7 @@ describe Card::Set::Rstar::Rules do
       expect(r).not_to match('No Card!')
       #warn "r = #{r}"
       assert_view_select r, 'tr[class="card-slot open-rule edit-rule"]' do
-        assert_select 'input[id="success_id"][name=?][type="hidden"][value="*read+*right+*input"]', 'success[id]'
+        assert_select 'input[id='success_id'][name=?][type='hidden'][value="*read+*right+*input"]', 'success[id]'
       end
     end
   end

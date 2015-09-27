@@ -47,9 +47,9 @@ class Card::Query
 
       #warn "to_sql #{field}, #{v} (#{op})"
       field, v = case field
-        when "cond";     return "(#{sqlize(v)})"
-        when "name";     ["#{table}.key",      [v].flatten.map(&:to_name).map(&:key)]
-        when "content";  ["#{table}.db_content", v]
+        when 'cond';     return "(#{sqlize(v)})"
+        when 'name';     ["#{table}.key",      [v].flatten.map(&:to_name).map(&:key)]
+        when 'content';  ["#{table}.db_content", v]
         else;            ["#{table}.#{safe_sql(field)}", v]
         end
 

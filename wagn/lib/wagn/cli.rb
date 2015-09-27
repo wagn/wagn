@@ -6,7 +6,7 @@ require 'wagn/script_wagn_loader'
 Wagn::ScriptWagnLoader.exec_script_wagn!
 
 require 'rails/ruby_version_check'
-Signal.trap("INT") { puts; exit(1) }
+Signal.trap('INT') { puts; exit(1) }
 
 #if ARGV.first == 'plugin'
 #  ARGV.shift

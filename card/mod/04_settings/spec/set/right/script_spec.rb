@@ -1,12 +1,12 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Right::Script do
-  let(:js)                    { 'alert( "Hi" );'    }
-  let(:compressed_js)         { 'alert("Hi");'      }
-  let(:changed_js)            { 'alert( "Hello" );' }
-  let(:compressed_changed_js) { 'alert("Hello");'   }
-  let(:new_js)                { 'alert( "Hey" );'   }
-  let(:compressed_new_js)     { 'alert("Hey");'   }
+  let(:js)                    { 'alert( 'Hi' );'    }
+  let(:compressed_js)         { 'alert('Hi');'      }
+  let(:changed_js)            { 'alert( 'Hello' );' }
+  let(:compressed_changed_js) { 'alert('Hello');'   }
+  let(:new_js)                { 'alert( 'Hey' );'   }
+  let(:compressed_new_js)     { 'alert('Hey');'   }
 
   it_should_behave_like 'pointer machine', that_produces_js do
     let(:machine_card)  { Card.gimme! "test my style+*script", type: :pointer, content: ''}

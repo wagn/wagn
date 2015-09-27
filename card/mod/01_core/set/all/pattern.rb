@@ -43,7 +43,7 @@ end
 
 def set_names
   if @set_names.nil?
-    @set_names = patterns.map &:to_s
+    @set_names = patterns.map(&:to_s)
     Card.set_members @set_names, key
   end
   @set_names

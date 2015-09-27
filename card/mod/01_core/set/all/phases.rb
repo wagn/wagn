@@ -121,19 +121,36 @@ end
 
 
 def event_applies? opts
-  if opts[:on]
-    return false unless Array.wrap( opts[:on] ).member? @action
-  end
-  if changed_field = opts[:changed]
-
-    changed_field = 'db_content' if changed_field.to_sym == :content
-    return false if @action == :delete or !changes[ changed_field.to_s ]
-  end
-  if opts[:when]
-    return false unless opts[:when].call self
-  end
-  true
+  on_condition_applies?(opts[:on]) &&
+    changed_condition_applies?(opts[:changed]) &&
+    when_condition_applies(opts[:when])
 end
+
+def on_condition_applies? action
+  if action
+    Array.wrap(action).member? @action
+  else
+    true
+  end
+end
+
+def changed_condition_applies? db_column
+  if db_column
+    db_column = 'db_content' if db_column.to_sym == :content
+    @action != :delete && changes[changed_field.to_s]
+  else
+    true
+  end
+end
+
+def when_condition_applies? block
+  if block
+    block.call self
+  else
+    true
+  end
+end
+
 
 def subcards
   @subcards ||= {}

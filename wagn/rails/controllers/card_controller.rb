@@ -101,7 +101,7 @@ class CardController < ActionController::Base
         opts[:name] ||= params[:id].to_s.gsub( '_', ' ')  # move handling to Card::Name?
 
         if params[:action] == 'create'
-          # FIXME we currently need a 'new' card to catch duplicates (otherwise #save will just act like a normal update)
+          # FIXME we currently need a "new" card to catch duplicates (otherwise #save will just act like a normal update)
           # I think we may need to create a "#create" instance method that handles this checking.
           # that would let us get rid of this...
           Card.new opts

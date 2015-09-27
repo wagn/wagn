@@ -147,8 +147,8 @@ describe Card::Set::Right::Account do
         skip
         Card.create(name: "A+B+*self+*read", type: 'Pointer', content: "[[u1]]")
         u2 = Card.fetch 'u2+*following', new: {type: 'Pointer'}
-        u2.add_item 'A'
-        a = Card.fetch 'A'
+        u2.add_item "A"
+        a = Card.fetch "A"
         a.update_attributes( content: "new content", subcards: {'+B'=>{content: 'hidden content'}})
       end
 

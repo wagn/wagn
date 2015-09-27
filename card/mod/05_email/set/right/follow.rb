@@ -71,14 +71,14 @@ format :html do
 
   view :delete_follow_rule_button do |args|
     button_tag type: :submit, class: 'btn-xs btn-item-delete btn-primary', 'aria-label'=>'Left Align' do
-      tag :span, class: "glyphicon glyphicon-ok", 'aria-hidden'=>'true'
+      tag :span, class: "glyphicon glyphicon-ok", 'aria-hidden'=>"true"
     end
 
   end
 
   view :add_follow_rule_button do |args|
     button_tag type: :submit, class: 'btn-xs btn-item-add', 'aria-label'=>'Left Align' do
-      tag :span, class: "glyphicon glyphicon-plus", 'aria-hidden'=>'true'
+      tag :span, class: "glyphicon glyphicon-plus", 'aria-hidden'=>"true"
     end
   end
 

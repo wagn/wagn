@@ -14,7 +14,7 @@ describe Card::Set::Type::File do
     end
 
     it "stores file" do
-      expect(subject.file.read.strip).to eq 'file1'
+      expect(subject.file.read.strip).to eq "file1"
     end
 
     it "saves original file name as action comment" do
@@ -46,7 +46,7 @@ describe Card::Set::Type::File do
         subject.update_attributes! file: File.new( File.join FIXTURES_PATH, 'file2.txt' )
       end
       it "updates file" do
-        expect(subject.file.read.strip).to eq 'file2'
+        expect(subject.file.read.strip).to eq "file2"
       end
 
       it "updates original file name" do

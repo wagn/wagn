@@ -5,12 +5,12 @@ require_dependency File.expand_path( '../reference', __FILE__ )
 module Card::Chunk
 
   # This should find +Alfred+ in expressions like
-  # 1) {'name':'Alfred'}
-  # 2a) {'name':['in','Alfred']}
-  # 3a) {'plus_right':['Alfred']}
+  # 1) {"name":"Alfred"}
+  # 2a) {"name":["in","Alfred"]}
+  # 3a) {"plus_right":["Alfred"]}
   # but not in
-  # 2b) 'content':'foo', 'Alfred':'bar'
-  # 3b) {'name':['Alfred', 'Toni']}      ('Alfred' is an operator here)
+  # 2b) "content":"foo", "Alfred":"bar"
+  # 3b) {"name":["Alfred", "Toni"]}      ("Alfred" is an operator here)
   # It's not possible to distinguish between 2a) and 2b) or 3a) and 3b) with a simple regex
   # hence we use a too general regex and check for query keywords after the match
   # which of course means that we don't find references with query keywords as name
@@ -35,7 +35,7 @@ module Card::Chunk
       full_re:   /"([^"]+)"/,
       idx_char:  '"'
     }
-    # OPTIMIZE: instead of comma or square bracket check for operator followed by comma or 'plus_right'|'plus_left'|'plus' followed by square bracket
+    # OPTIMIZE: instead of comma or square bracket check for operator followed by comma or "plus_right"|"plus_left"|"plus" followed by square bracket
     # something like
     # prefix_patterns = [
     #     "\"\\s*(?:#{Card::Query::OPERATORS.keys.join('|')})\"\\s*,",
@@ -43,7 +43,7 @@ module Card::Chunk
     #     "\"\\s*(?:#{(QUERY_KEYWORDS - Card::Query::CardClause::PLUS_ATTRIBUTES).join('|')})\"\\s*:",
     #   ]
     # prefix_re: '(?<=#{prefix_patterns.join('|')})\\s*"'
-    # But: What do we do with the 'in' operator? After the first value there is no prefix which we can use to detect the following values as QueryReference chunks
+    # But: What do we do with the "in" operator? After the first value there is no prefix which we can use to detect the following values as QueryReference chunks
 
     class << self
       def full_match content, prefix

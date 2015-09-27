@@ -31,7 +31,7 @@ EXAMPLES = {
         { options: { inc_name: "this too", inc_syntax: "this too"}},
         "\n        and ",
         "<a target=\"_blank\" class=\"external-link\" href=\"http://external.wagn.org/path\">link text</a>",
-        { options: { view: 'open', inc_name: 'Included', inc_syntax: "Included|open" }}
+        { options: { view: "open", inc_name: "Included", inc_syntax: "Included|open" }}
       ],
     classes: [String, :Link, String, :Include, :Include, String, :Link, :Include ]
   },
@@ -43,7 +43,7 @@ EXAMPLES = {
         [ http://gerry.wagn.com/a/path ]
         { https://brain.org/more?args }),
     rendered:       [
-        "Some URIs and Links: ", '<a target='_blank' class="external-link" href="http://a.url.com/">http://a.url.com/</a>',
+        "Some URIs and Links: ", '<a target="_blank" class="external-link" href="http://a.url.com/">http://a.url.com/</a>',
         "\n        More urls: ",
         "<a target=\"_blank\" class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>",
         "\n        ",
@@ -148,7 +148,7 @@ end
 
 
 describe Card::Content do
-  context 'instance' do
+  context "instance" do
 
     before do
       @check_proc = Proc.new do |m, v|
@@ -161,7 +161,7 @@ describe Card::Content do
         else false end
       end
 
-      assert card = Card['One']
+      assert card = Card["One"]
       @card = card
 
       # non-nil valued opts only ...
@@ -229,7 +229,7 @@ describe Card::Content do
       end
     end
 
-    describe 'render' do
+    describe "render" do
       it "renders all nests" do
         @example = :nests
         expect(cobj.as_json.to_s).to match /not rendered/
@@ -271,9 +271,9 @@ describe Card::Content do
   end
 
   UNTAGGED_CASES = [ ' [grrew][/wiki/grrew]ss ', ' {{this is a test}}, {{this|view|is:too}} and',
-    ' so is http://foo.bar.come//', ' and foo="my attr, not int a tag" <not a=tag ', ' p class'foobar'> and more' ]
+    ' so is http://foo.bar.come//', ' and foo="my attr, not int a tag" <not a=tag ', ' p class"foobar"> and more' ]
 
-  context 'class' do
+  context "class" do
     describe '#clean!' do
       it 'should not alter untagged content' do
         UNTAGGED_CASES.each do |test_case|
@@ -282,8 +282,8 @@ describe Card::Content do
       end
 
       it 'should strip disallowed html class attributes' do
-        assert_equal '<p>html<div>with</div> funky tags</p>', Card::Content.clean!('<p>html<div class='boo'>with</div><monkey>funky</butts>tags</p>')
-        assert_equal '<span>foo</span>', Card::Content.clean!('<span class='banana'>foo</span>')
+        assert_equal '<p>html<div>with</div> funky tags</p>', Card::Content.clean!('<p>html<div class="boo">with</div><monkey>funky</butts>tags</p>')
+        assert_equal '<span>foo</span>', Card::Content.clean!('<span class="banana">foo</span>')
       end
 
       it 'should not strip permitted_classes' do
@@ -298,17 +298,17 @@ describe Card::Content do
       end
 
       it 'should allow permitted attributes' do
-        assert_equal '<img src='foo'>',   Card::Content.clean!('<img src='foo'>')
+        assert_equal '<img src="foo">',   Card::Content.clean!('<img src="foo">')
         assert_equal "<img alt='foo'>",   Card::Content.clean!("<img alt='foo'>")
-        assert_equal '<img title='foo'>', Card::Content.clean!('<img title=foo>')
-        assert_equal '<a href='foo'>',    Card::Content.clean!('<a href='foo'>')
-        assert_equal '<code lang='foo'>', Card::Content.clean!('<code lang='foo'>')
-        assert_equal '<blockquote cite='foo'>', Card::Content.clean!('<blockquote cite='foo'>')
+        assert_equal '<img title="foo">', Card::Content.clean!('<img title=foo>')
+        assert_equal '<a href="foo">',    Card::Content.clean!('<a href="foo">')
+        assert_equal '<code lang="foo">', Card::Content.clean!('<code lang="foo">')
+        assert_equal '<blockquote cite="foo">', Card::Content.clean!('<blockquote cite="foo">')
       end
 
       it 'should not allow nonpermitted attributes' do
-        assert_equal '<img>', Card::Content.clean!('<img size='25'>')
-        assert_equal '<p>',   Card::Content.clean!('<p font='blah'>')
+        assert_equal '<img>', Card::Content.clean!('<img size="25">')
+        assert_equal '<p>',   Card::Content.clean!('<p font="blah">')
       end
 
       it 'should remove comments' do

@@ -126,7 +126,7 @@ class Card
         @prefix = system_prefix + self.class.generate_cache_id + "/"
       else
         @system_prefix += '/' unless @system_prefix[-1] == '/'
-        @cache_id = @store.fetch(@system_prefix + 'cache_id') do
+        @cache_id = @store.fetch(@system_prefix + "cache_id") do
           self.class.generate_cache_id
         end
         @prefix = @system_prefix + @cache_id + "/"
@@ -200,7 +200,7 @@ class Card
             Rails.logger.debug "Problem clearing cache: #{e.message}"
           end
         else
-          @store.write @system_prefix + 'cache_id', @cache_id
+          @store.write @system_prefix + "cache_id", @cache_id
         end
       end
       @prefix = @system_prefix + @cache_id + "/"

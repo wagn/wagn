@@ -16,7 +16,7 @@ class BootstrapThemes < Card::CoreMigration
     style_right = Card[:style].fetch trait: :right, new: {}
 
     style_right_options = style_right.fetch trait: :options, new: {}
-    style_right_options.content = %[{'type':'Skin','sort':'name'}]
+    style_right_options.content = %[{"type":"Skin","sort":"name"}]
     style_right_options.save!
 
     style_right_input = style_right.fetch trait: :input, new: {}

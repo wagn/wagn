@@ -3,7 +3,7 @@ format :html do
   view :raw do |args|
     %(
       <meta charset="UTF-8">
-      <meta name='viewport' content="width=device-width, initial-scale=1.0"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
       #{ head_title       }
       #{ head_buttons     }
       #{ head_stylesheets }
@@ -38,14 +38,14 @@ format :html do
     #Universal Edit Button
     if root.card
       if !root.card.new_record? && root.card.ok?(:update)
-        bits << %{<link rel='alternate' type="application/x-wiki" title="Edit this page!" href="#{ root.path view: :edit }"/>}
+        bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{ root.path view: :edit }"/>}
       end
 
       # RSS # move to mods!
       if root.card.type_id == SearchTypeID
         opts = { format: :rss }
         root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
-        bits << %{<link rel='alternate' type="application/rss+xml" title='RSS' href=#{page_path root.card.cardname, opts} />}
+        bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{page_path root.card.cardname, opts} />}
       end
     end
     bits.join "\n      "
@@ -62,7 +62,7 @@ format :html do
     end
 
     if @css_path
-      %{<link href="#{@css_path}" media='all' rel='stylesheet' type="text/css" />}
+      %{<link href="#{@css_path}" media="all" rel="stylesheet" type="text/css" />}
     end
   end
 

@@ -2,9 +2,9 @@
 
 describe Card::HtmlFormat do
 
-  describe 'views' do
+  describe "views" do
 
-    it 'content' do
+    it "content" do
       result = render_card(:content, name: 'A+B')
       assert_view_select result, 'div[class="card-slot content-view card-content ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]'
     end
@@ -19,7 +19,7 @@ describe Card::HtmlFormat do
       end
     end
 
-    it 'titled' do
+    it "titled" do
       result = render_card :titled, name: 'A+B'
       assert_view_select result, 'div[class~="titled-view"]' do
         assert_select 'div[class~="card-header"]' do
@@ -48,7 +48,7 @@ describe Card::HtmlFormat do
           assert_select 'a[class="internal-link"][href="/"]', 'Home'
           assert_select 'a[class="internal-link"][href="/:recent"]', 'Recent'
           assert_select 'form.navbox-form[action="/:search"]' do
-            assert_select 'input[name='_keyword']'
+            assert_select 'input[name="_keyword"]'
           end
         end
       end
@@ -72,7 +72,7 @@ describe Card::HtmlFormat do
       end
     end
 
-    context 'layout' do
+    context "layout" do
       before do
         Card::Auth.as_bot do
           @layout_card = Card.create name: 'tmp layout', type: 'Layout'
@@ -116,9 +116,9 @@ describe Card::HtmlFormat do
         Card::Auth.as_bot { @layout_card.save }
 
         rendered = expect(@layout_card.format.render(:layout)).to eq(
-          %{Mainly <div id='main'><div class='CodeRay'>\n  <div class='code'><pre>Mainly {{_main|core}}</pre></div>\n</div>\n</div>\n<div class="modal fade" role='dialog' id="modal-main-slot"><div class="modal-dialog"><div class="modal-content"></div></div></div>}
+          %{Mainly <div id="main"><div class="CodeRay">\n  <div class="code"><pre>Mainly {{_main|core}}</pre></div>\n</div>\n</div>\n<div class="modal fade" role="dialog" id="modal-main-slot"><div class="modal-dialog"><div class="modal-content"></div></div></div>}
         )
-          #probably better to check that it matches 'Mainly' exactly twice.
+          #probably better to check that it matches "Mainly" exactly twice.
       end
 
 
@@ -129,7 +129,7 @@ describe Card::HtmlFormat do
           Card.create name: "outer space", content: "{{_main|name}}"
         end
 
-        expect(@layout_card.format.render(:layout)).to eq(%{Joe User\n<div class="modal fade" role='dialog' id="modal-main-slot"><div class="modal-dialog"><div class="modal-content"></div></div></div>})
+        expect(@layout_card.format.render(:layout)).to eq(%{Joe User\n<div class="modal fade" role="dialog" id="modal-main-slot"><div class="modal-dialog"><div class="modal-content"></div></div></div>})
       end
     end
 

@@ -17,8 +17,8 @@ describe Card::Mailer do
   # context "change notice" do
   #   before do
   #     user =  Card['sara'].id
-  #     card =  Card['Sunglasses']
-  #     action = 'edited'
+  #     card =  Card["Sunglasses"]
+  #     action = "edited"
   #     Card::Mailer.change_notice( user, card, action, card.name ).deliver
   #   end
   #
@@ -39,20 +39,20 @@ describe Card::Mailer do
   #   end
   # end
   #
-  # describe 'flexmail' do
+  # describe "flexmail" do
   #   # FIXME: at least two tests should be here, with & w/o attachment.
   # end
 
 
 
-  # describe 'cardmail' do
+  # describe "cardmail" do
   #   before do
-  #     Card.gimme 'mailtest', content: 'test'
+  #     Card.gimme "mailtest", content: "test"
   #   end
   #   it "renders email text" do
   #     Card::Mailer.cardmail(to: "sara@user.com").deliver
   #     @mail = ActionMailer::Base.deliveries.last
-  #     expect(@mail.body).to eq('test')
+  #     expect(@mail.body).to eq("test")
   #   end
   # end
 

@@ -16,7 +16,7 @@ format :html do
   view :status do |args|
     if (rcard = current_follow_rule_card)
       rcard.item_cards.map do |item|
-        %{<div class="alert alert-success" role='alert'>
+        %{<div class="alert alert-success" role="alert">
           <strong>#{rcard.rule_set.follow_label}</strong>: #{item.title}
          </div>}
       end.join

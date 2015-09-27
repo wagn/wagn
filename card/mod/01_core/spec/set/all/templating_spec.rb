@@ -8,7 +8,7 @@ describe Card::Set::All::Templating do
         c=Card.create(name: 'User+*type+*structure')
         users
 
-        expect(c.structuree_names.sort).to eq(["Big Brother", "Joe Admin", "Joe Camel", "Joe User", 'John', 'Narcissist', "No Count", "Optic fan", "Sample User", 'Sara', "Sunglasses fan", 'u1', 'u2', 'u3'])
+        expect(c.structuree_names.sort).to eq(["Big Brother", "Joe Admin", "Joe Camel", "Joe User", "John", "Narcissist", "No Count", "Optic fan", "Sample User", "Sara", "Sunglasses fan", "u1", "u2", "u3"])
       end
     end
   end
@@ -32,7 +32,7 @@ describe Card::Set::All::Templating do
 
     it "should change type and content with template" do
       Card::Auth.as_bot do
-        @bt.content = 'Tomorrow'
+        @bt.content = "Tomorrow"
         @bt.type = 'Phrase'
         @bt.save!
       end
@@ -91,7 +91,7 @@ describe Card::Set::All::Templating do
       before do
         Card::Auth.as_bot do
           Card.create name: "Jim+birthday", content: 'Yesterday'
-          @bt = Card.create! name: "birthday+*right+*structure", type: 'Date', content: 'Today'
+          @bt = Card.create! name: "birthday+*right+*structure", type: 'Date', content: "Today"
         end
       end
 

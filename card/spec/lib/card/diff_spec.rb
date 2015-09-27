@@ -32,29 +32,29 @@ describe Card::Diff do
 
   describe 'traffic light' do
     it 'is green for addition' do
-      a = 'a'
+      a = "a"
       b = "a b"
       db = Card::Diff::DiffBuilder.new(a,b)
       expect(db.green?).to be_truthy
       expect(db.red?).to be_falsey
     end
     it 'is red for deletion' do
-      a = 'a'
+      a = "a"
       b = ""
       db = Card::Diff::DiffBuilder.new(a,b)
       expect(db.green?).to be_falsey
       expect(db.red?).to be_truthy
     end
     it 'is green and red for change' do
-      a = 'a'
-      b = 'b'
+      a = "a"
+      b = "b"
       db = Card::Diff::DiffBuilder.new(a,b)
       expect(db.green?).to be_truthy
       expect(db.red?).to be_truthy
     end
     it 'is off for no change' do
-      a = 'a'
-      b = 'a'
+      a = "a"
+      b = "a"
       db = Card::Diff::DiffBuilder.new(a,b)
       expect(db.green?).to be_falsey
       expect(db.red?).to be_falsey
@@ -76,16 +76,16 @@ describe Card::Diff do
     end
 
     it 'no ellipsis if changes fit exactly' do
-      a = '123'
-      b = '456'
+      a = "123"
+      b = "456"
       expect(summary a, b, summary: {length: 6}).to eq(
         "#{del '123'}#{ins '456'}"
       )
     end
 
     it 'green ellipsis if added text does not fit' do
-      a = '123'
-      b = '5678'
+      a = "123"
+      b = "5678"
       expect(summary a, b, summary: {length: 6}).to eq(
         "#{del '123'}#{ins '...'}"
       )
@@ -100,16 +100,16 @@ describe Card::Diff do
     end
 
     it 'red ellipsis if deleted text partially fits' do
-      a = '123456'
-      b = '567'
+      a = "123456"
+      b = "567"
       expect(summary a, b, summary: {length: 4}).to eq(
         "#{del '1...'}"
       )
     end
 
     it 'green ellipsis if added text partially fits' do
-      a = '1234'
-      b = '56789'
+      a = "1234"
+      b = "56789"
       expect(summary a, b, summary: {length: 8}).to eq(
         "#{del '1234'}#{ins '5...'}"
       )

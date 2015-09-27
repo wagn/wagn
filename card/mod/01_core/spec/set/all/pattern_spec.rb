@@ -5,10 +5,10 @@ describe Card::Set::All::Pattern do
   describe :set_names do
     it "returns self, type, all for simple cards" do
       Card::Auth.as_bot do
-        card = Card.new( name: 'AnewCard' )
+        card = Card.new( name: "AnewCard" )
         expect(card.set_names).to eq([ "Basic+*type","*all"])
         card.save!
-        card = Card.fetch('AnewCard')
+        card = Card.fetch("AnewCard")
         expect(card.set_names).to eq([ "AnewCard+*self","Basic+*type","*all"])
       end
     end
@@ -47,8 +47,8 @@ describe Card::Set::All::Pattern do
 
   describe :rule_set_keys do
     it "returns correct set names for new cards" do
-      card = Card.new name: 'AnewCard'
-      expect(card.rule_set_keys).to eq([ "#{Card::BasicID}+type", 'all'])
+      card = Card.new name: "AnewCard"
+      expect(card.rule_set_keys).to eq([ "#{Card::BasicID}+type", "all"])
     end
 
   end

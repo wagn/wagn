@@ -39,7 +39,7 @@ class FollowerStash
     @followed_affected_cards.keys
   end
 
-  def each_follower_with_reason  # 'follower' is a card object, 'followed' a card name
+  def each_follower_with_reason  # "follower" is a card object, "followed" a card name
     @followed_affected_cards.each do |user, reasons|
       yield(user,reasons.first)
     end

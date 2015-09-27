@@ -45,7 +45,7 @@ format do
       else
         return card_link href, opts
       end
-    opts[:target] = '_blank' if new_class == 'external-link'
+    opts[:target] = "_blank" if new_class == 'external-link'
     add_class opts, new_class
     link_to text, href, opts
   end

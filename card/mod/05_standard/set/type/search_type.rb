@@ -142,11 +142,11 @@ format do
   end
 
   def previous_page_link page
-    page_li '<span aria-hidden='true'>&laquo;</span>', page, false, 'aria-label'=>'Previous'
+    page_li '<span aria-hidden="true">&laquo;</span>', page, false, 'aria-label'=>"Previous"
   end
 
   def next_page_link page
-    page_li '<span aria-hidden='true'>&raquo;</span>', page, false, 'aria-label'=>'Next'
+    page_li '<span aria-hidden="true">&raquo;</span>', page, false, 'aria-label'=>"Next"
   end
 
   def ellipse_page
@@ -239,7 +239,7 @@ format :html do
       search_params[:limit] = search_limit && search_limit < Card.config.closed_search_limit ?
                                 search_limit : Card.config.closed_search_limit
       _render_core args.merge( hide: 'paging', item: :link )
-      # TODO: if item is queryified to be 'name', then that should work.  otherwise use link
+      # TODO: if item is queryified to be "name", then that should work.  otherwise use link
     end
   end
 

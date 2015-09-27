@@ -1,10 +1,10 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Type::JavaScript do
-  let(:js)                    { 'alert( 'Hi' );'    }
-  let(:compressed_js)         { 'alert('Hi');'      }
-  let(:changed_js)            { 'alert( 'Hello' );' }
-  let(:compressed_changed_js) { 'alert('Hello');'   }
+  let(:js)                    { 'alert( "Hi" );'    }
+  let(:compressed_js)         { 'alert("Hi");'      }
+  let(:changed_js)            { 'alert( "Hello" );' }
+  let(:compressed_changed_js) { 'alert("Hello");'   }
 
 
   it_should_behave_like 'content machine', that_produces_js do

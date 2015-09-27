@@ -26,8 +26,8 @@ describe Card, "validate name" do
 
   # maybe the @c.key= should just throw an error, but now it doesn't take anyway
   it "should not allow mismatched name and key" do
-    @c = Card.new name: 'Test'
-    @c.key='foo'
+    @c = Card.new name: "Test"
+    @c.key="foo"
     #@c.key.should == 'test'
     expect(@c.valid?).to eq(false)
     #@c.errors[:key].should_not be_blank

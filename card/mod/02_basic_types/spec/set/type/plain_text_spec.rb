@@ -2,7 +2,7 @@
 
 describe Card::Set::Type::PlainText do
   it "should have special editor" do
-    assert_view_select render_editor('Plain Text'), 'textarea[rows='5']'
+    assert_view_select render_editor('Plain Text'), 'textarea[rows="5"]'
   end
 
   it "should have special content that escapes HTML" do

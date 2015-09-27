@@ -15,7 +15,7 @@ describe CardController do
     end
 
     it "should recognize .rss on /recent" do
-      expect({get: "/recent.rss"}).to route_to(controller: 'card', action: 'read', id: ":recent", format: 'rss')
+      expect({get: "/recent.rss"}).to route_to(controller: "card", action: "read", id: ":recent", format: "rss")
     end
 
     it "should handle RESTful posts" do
@@ -32,19 +32,19 @@ describe CardController do
       describe "routes prefixed with '#{prefix}'" do
         it "should recognize .rss format" do
           expect({get: "#{prefix}/*recent.rss"}).to route_to(
-            controller: 'card', action: 'read', id: "*recent", format: 'rss'
+            controller: "card", action: "read", id: "*recent", format: "rss"
           )
         end
 
         it "should recognize .xml format" do
           expect({get: "#{prefix}/*recent.xml"}).to route_to(
-            controller: 'card', action: 'read', id: "*recent", format: 'xml'
+            controller: "card", action: "read", id: "*recent", format: "xml"
           )
         end
 
         it "should accept cards without dots" do
           expect({get: "#{prefix}/random"}).to route_to(
-            controller: 'card',action: 'read',id: 'random'
+            controller: "card",action: "read",id: "random"
           )
         end
 
@@ -63,14 +63,14 @@ describe CardController do
     #  test dependencies.
     it "creates cards" do
       post :create, card: {
-        name: 'NewCardFoo',
-        type: 'Basic',
-        content: 'Bananas'
+        name: "NewCardFoo",
+        type: "Basic",
+        content: "Bananas"
       }
       assert_response 302
-      c=Card['NewCardFoo']
+      c=Card["NewCardFoo"]
       expect(c.type_code).to eq(:basic)
-      expect(c.content).to eq('Bananas')
+      expect(c.content).to eq("Bananas")
     end
 
     it "handles permission denials" do
@@ -84,20 +84,20 @@ describe CardController do
 
     # no controller-specific handling.  move test elsewhere
     it "creates cardtype cards" do
-      xhr :post, :create, card: {'content'=>'test', type: 'Cardtype', name: 'Editor'}
+      xhr :post, :create, card: {"content"=>"test", type: 'Cardtype', name: "Editor"}
       expect(assigns['card']).not_to be_nil
       assert_response 200
-      c=Card['Editor']
+      c=Card["Editor"]
       expect(c.type_code).to eq(:cardtype)
     end
 
     # no controller-specific handling.  move test elsewhere
     it "pulls deleted cards from trash" do
-      @c = Card.create! name: 'Problem', content: 'boof'
+      @c = Card.create! name: "Problem", content: "boof"
       @c.delete!
-      post :create, card: {'name'=>'Problem','type'=>'Phrase','content'=>'noof'}
+      post :create, card: {"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
       assert_response 302
-      c=Card['Problem']
+      c=Card["Problem"]
       expect(c.type_code).to eq(:phrase)
     end
 
@@ -105,11 +105,11 @@ describe CardController do
 
     context "multi-create" do
       it "catches missing name error" do
-        post :create, 'card'=>{
-            'name'=>"",
-            'type'=>'Fruit',
-            'subcards'=>{"+text"=>{'content'=>"<p>abraid</p>"}}
-          }, 'view'=>'open'
+        post :create, "card"=>{
+            "name"=>"",
+            "type"=>"Fruit",
+            "subcards"=>{"+text"=>{"content"=>"<p>abraid</p>"}}
+          }, "view"=>"open"
         assert_response 422
         expect(assigns['card'].errors[:name].first).to eq("can't be blank")
       end
@@ -117,28 +117,28 @@ describe CardController do
       it "creates card with subcards" do
         login_as 'joe_admin'
         xhr :post, :create, success: 'REDIRECT: /', card: {
-          name: 'Gala',
-          type: 'Fruit',
+          name: "Gala",
+          type: "Fruit",
           subcards: {
-            "+kind"  => { content: 'apple'} ,
-            "+color" => { type: 'Phrase', content: 'red'  }
+            "+kind"  => { content: "apple"} ,
+            "+color" => { type: 'Phrase', content: "red"  }
           }
         }
         assert_response 200
-        expect(Card['Gala']).not_to be_nil
+        expect(Card["Gala"]).not_to be_nil
         expect(Card["Gala+kind"].content).to eq('apple')
         expect(Card["Gala+color"].type_name).to eq('Phrase')
       end
     end
 
     it "renders errors if create fails" do
-      post :create, 'card'=>{'name'=>"Joe User"}
+      post :create, "card"=>{"name"=>"Joe User"}
       assert_response 422
     end
 
     it "redirects to thanks if present" do
       login_as 'joe_admin'
-      xhr :post, :create, success: 'REDIRECT: /thank_you', card: { 'name' => 'Wombly' }
+      xhr :post, :create, success: 'REDIRECT: /thank_you', card: { "name" => "Wombly" }
       assert_response 200
       json = JSON.parse response.body
       expect(json['redirect']).to match(/^http.*\/thank_you$/)
@@ -146,14 +146,14 @@ describe CardController do
 
     it "redirects to card if thanks is blank" do
       login_as 'joe_admin'
-      post :create, success: 'REDIRECT: _self', 'card' => { 'name' => "Joe+boop" }
+      post :create, success: 'REDIRECT: _self', "card" => { "name" => "Joe+boop" }
       assert_redirected_to "/Joe+boop"
     end
 
     it "redirects to previous" do
       # Fruits (from shared_data) are anon creatable but not readable
       login_as :anonymous
-      post :create, { success: 'REDIRECT: *previous', 'card' => { 'type'=>'Fruit', name: 'papaya' } }, history: ['/blam']
+      post :create, { success: 'REDIRECT: *previous', "card" => { "type"=>"Fruit", name: "papaya" } }, history: ['/blam']
       assert_redirected_to "/blam"
     end
   end
@@ -209,13 +209,13 @@ describe CardController do
       end
 
       it "new with name" do
-        post :read, card: {name: 'BananaBread'}, view: 'new'
+        post :read, card: {name: "BananaBread"}, view: 'new'
         assert_response :success, "response should succeed"
         assert_equal 'BananaBread', assigns['card'].name, "@card.name should == BananaBread"
       end
 
       it "new with existing name" do
-        get :read, card: {name: 'A'}, view: 'new'
+        get :read, card: {name: "A"}, view: 'new'
         assert_response :success, "response should succeed"  #really?? how come this is ok?
       end
 
@@ -227,7 +227,7 @@ describe CardController do
 
       it "new should work for creatable nonviewable cardtype" do
         login_as :anonymous
-        get :read, type: 'Fruit', view: 'new'
+        get :read, type: "Fruit", view: 'new'
         assert_response :success
       end
 
@@ -257,10 +257,10 @@ describe CardController do
     end
 
 
-    context 'file' do
+    context "file" do
       before do
         Card::Auth.as_bot do
-          Card.create name: 'mao2', type_code: 'image', image: File.new( File.join FIXTURES_PATH, 'mao2.jpg' )
+          Card.create name: "mao2", type_code: 'image', image: File.new( File.join FIXTURES_PATH, 'mao2.jpg' )
           Card.create name: 'mao2+*self+*read', content: '[[Administrator]]'
         end
       end
@@ -289,7 +289,7 @@ describe CardController do
       filename = "asset-test.txt"
       args = { id: filename, format: 'txt', explicit_file: true }
       path = File.join( Decko::Engine.paths['gem-assets'].existent.first, filename)
-      File.open(path, 'w') { |f| f.puts 'test' }
+      File.open(path, "w") { |f| f.puts "test" }
       args = { filename: "#{filename}" }
       visit "/assets/#{filename}"
       expect(page.body).to eq ("test\n")
@@ -311,7 +311,7 @@ describe CardController do
 
 
     describe "#update" do
-      it 'works' do
+      it "works" do
         xhr :post, :update, { id: "~#{@simple_card.id}",
           card: {content: 'brand new content' }}
         assert_response :success, "edited card"
@@ -319,38 +319,38 @@ describe CardController do
       end
 
       it "rename without update references should work" do
-        f = Card.create! type: 'Cardtype', name: 'Apple'
+        f = Card.create! type: "Cardtype", name: "Apple"
         xhr :post, :update, id: "~#{f.id}", card: {
-          name: 'Newt',
-          update_referencers: 'false',
+          name: "Newt",
+          update_referencers: "false",
         }
         expect(assigns['card'].errors.empty?).not_to be_nil
         assert_response :success
-        expect(Card['Newt']).not_to be_nil
+        expect(Card["Newt"]).not_to be_nil
       end
 
       it "update type_code" do
-        xhr :post, :update, id: "~#{@simple_card.id}", card: { type: 'Date' }
+        xhr :post, :update, id: "~#{@simple_card.id}", card: { type: "Date" }
         assert_response :success, "changed card type"
         expect(Card['Sample Basic'].type_code).to eq(:date)
       end
     end
 
 
-    describe 'delete' do
-      it 'works' do
-        c = Card.create( name: 'Boo', content: 'booya')
+    describe "delete" do
+      it "works" do
+        c = Card.create( name: "Boo", content: "booya")
         post :delete, id: "~#{c.id}"
         assert_response :redirect
-        expect(Card['Boo']).to eq(nil)
+        expect(Card["Boo"]).to eq(nil)
       end
 
       # FIXME: this should probably be files in the spot for a delete test
       it "returns to previous undeleted card after deletion" do
         t1 = t2 = nil
         Card::Auth.as_bot do
-          t1 = Card.create! name: 'Testable1', content: 'hello'
-          t2 = Card.create! name: "Testable1+bandana", content: 'world'
+          t1 = Card.create! name: "Testable1", content: "hello"
+          t2 = Card.create! name: "Testable1+bandana", content: "world"
         end
 
         get :read, id: t1.key

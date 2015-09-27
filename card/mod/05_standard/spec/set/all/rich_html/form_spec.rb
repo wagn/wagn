@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::All::RichHtml::Form do
-  describe 'type_list' do
+  describe "type_list" do
     before do
       @card = Card['UserForm']  # no cards with this type
     end

@@ -85,7 +85,7 @@ class Card::Migration < ActiveRecord::Migration
   def read_json filename
     raw_json = File.read( data_path filename )
     json = JSON.parse raw_json
-    json['card']['value']
+    json["card"]["value"]
   end
 
   def data_path filename=nil
@@ -101,7 +101,7 @@ class Card::Migration < ActiveRecord::Migration
   end
 
   # Execute this migration in the named direction
-  # copied from ActiveRecord to wrap 'up' in 'contentendly'
+  # copied from ActiveRecord to wrap "up" in "contentendly"
   def exec_migration(conn, direction)
     @connection = conn
     if respond_to?(:change)

@@ -90,7 +90,7 @@ def inspect
   "[#{debug_type}]" + "(#{self.name})" + #"#{object_id}" +
   #(errors.any? ? '*Errors*' : 'noE') +
   (errors.any? ? "<E*#{errors.full_messages*', '}*>" : '') +
-  #"{#{references_expired==1 ? 'Exp' : 'noEx'}:" +
+  #"{#{references_expired==1 ? 'Exp' : "noEx"}:" +
   "{#{trash&&'trash:'||''}#{new_card? &&'new:'||''}#{frozen? ? 'Fz' : readonly? ? 'RdO' : ''}" +
   "#{@virtual &&'virtual:'||''}#{@set_mods_loaded&&'I'||'!loaded' }:#{references_expired.inspect}}" +
   '>'
@@ -134,7 +134,7 @@ format :html do
       accordions << accordion(title, content, "#{collapse_id}-#{index}")
       index += 1
     end
-    content_tag :div, accordions.html_safe, class: "panel-group", id: "accordion-#{collapse_id}", role: 'tablist', 'aria-multiselectable'=>'true'
+    content_tag :div, accordions.html_safe, class: "panel-group", id: "accordion-#{collapse_id}", role: "tablist", 'aria-multiselectable'=>"true"
   end
 
   def accordion title, content, collapse_id=card.cardname.safe_key
@@ -149,14 +149,14 @@ format :html do
       end
     %{
       <div class="panel panel-default">
-        <div class="panel-heading" role='tab' id="heading-#{collapse_id}">
+        <div class="panel-heading" role="tab" id="heading-#{collapse_id}">
           <h4 class="panel-title">
-            <a data-toggle='collapse' data-parent="#accordion-#{collapse_id}" href="##{collapse_id}" aria-expanded='true' aria-controls="#{collapse_id}">
+            <a data-toggle="collapse" data-parent="#accordion-#{collapse_id}" href="##{collapse_id}" aria-expanded="true" aria-controls="#{collapse_id}">
               #{ title }
             </a>
           </h4>
         </div>
-        <div id="#{collapse_id}" class="panel-collapse collapse" role='tabpanel' aria-labelledby="heading-#{collapse_id}">
+        <div id="#{collapse_id}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-#{collapse_id}">
           <div class="panel-body">
             #{ panel_body }
           </div>

@@ -9,7 +9,7 @@ class WagnGenerator < Rails::Generators::AppBase
 
   argument :deck_path, required: false
 
-  class_option :database, type: :string, aliases: "-d", default: 'mysql',
+  class_option :database, type: :string, aliases: "-d", default: "mysql",
     desc: "Preconfigure for selected database (options: #{DATABASES.join('/')})"
 
   class_option 'core-dev', type: :boolean, aliases: '-c', default: false, group: :runtime,
@@ -53,11 +53,11 @@ class WagnGenerator < Rails::Generators::AppBase
       end
 
       @features_path = File.join @gem_path, 'wagn/features/'  # ending slash is important in order to load support and step folders
-      @simplecov_config = 'card_core_dev_simplecov_filters'
+      @simplecov_config = "card_core_dev_simplecov_filters"
     elsif options['mod-dev']
       @spec_path = 'mod/'
       @spec_helper_path = './spec/spec_helper'
-      @simplecov_config = 'card_simplecov_filters'
+      @simplecov_config = "card_simplecov_filters"
       empty_directory 'spec'
       inside 'spec' do
         template 'spec_helper.rb'
@@ -66,8 +66,8 @@ class WagnGenerator < Rails::Generators::AppBase
     end
 
     if options['core-dev'] || options['mod-dev']
-      template 'rspec', ".rspec"
-      template 'simplecov', ".simplecov"
+      template "rspec", ".rspec"
+      template "simplecov", ".simplecov"
       empty_directory 'bin'
       inside 'bin' do
         template 'spring'
@@ -76,11 +76,11 @@ class WagnGenerator < Rails::Generators::AppBase
   end
 
   def rakefile
-    template 'Rakefile'
+    template "Rakefile"
   end
 
 #  def readme
-#    copy_file 'README', "README.rdoc"
+#    copy_file "README", "README.rdoc"
 #  end
 
   def mod
@@ -100,7 +100,7 @@ class WagnGenerator < Rails::Generators::AppBase
   end
 
   def gemfile
-    template 'Gemfile'
+    template "Gemfile"
   end
 
   def configru
@@ -108,13 +108,13 @@ class WagnGenerator < Rails::Generators::AppBase
   end
 
   def gitignore
-    copy_file 'gitignore', ".gitignore"
+    copy_file "gitignore", ".gitignore"
   end
 
   def config
-    empty_directory 'config'
+    empty_directory "config"
 
-    inside 'config' do
+    inside "config" do
       template "application.rb"
       template 'routes.erb', "routes.rb"
       template "environment.rb"
@@ -127,23 +127,23 @@ class WagnGenerator < Rails::Generators::AppBase
   end
 
   def public
-    empty_directory 'public'
+    empty_directory "public"
 
-    inside 'public' do
+    inside "public" do
       template "robots.txt"
-      empty_directory 'files'
+      empty_directory "files"
 
-      inside 'files' do
-        template 'htaccess', ".htaccess"
+      inside "files" do
+        template "htaccess", ".htaccess"
       end
     end
   end
 
   def script
-    directory 'script' do |content|
+    directory "script" do |content|
       "#{shebang}\n" + content
     end
-    chmod 'script', 0755 & ~File.umask, verbose: false
+    chmod "script", 0755 & ~File.umask, verbose: false
   end
 
   public_task :run_bundle
@@ -155,7 +155,7 @@ class WagnGenerator < Rails::Generators::AppBase
       menu_options = ActiveSupport::OrderedHash.new()
 
       database_seeded = proc do
-        menu_options['x'][:desc] = 'exit'
+        menu_options['x'][:desc] = "exit"
         menu_options['r'] = {
           desc:    'run wagn server',
           command: 'wagn server',

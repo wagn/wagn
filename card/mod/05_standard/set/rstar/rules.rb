@@ -64,7 +64,7 @@ format :html do
 
     %{
       <tr class="card-slot open-rule #{rule_view.to_s.sub '_', '-'}">
-        <td class="rule-cell" colspan='3'>
+        <td class="rule-cell" colspan="3">
           <div class="rule-setting">
             #{ view_link setting_name.sub(/^\*/,''), :closed_rule, class: 'close-rule-link slotter' }
             #{ card_link setting_name, text: "all #{setting_name} rules", class: 'setting-link', target: 'wagn_setting' }
@@ -386,7 +386,7 @@ def set_options
   # [res[first..last], fallback_set]
   #
   # The broadest set should always be the currently applied rule
-  # (for anything more general, they must explicitly choose to 'DELETE' the current one)
+  # (for anything more general, they must explicitly choose to "DELETE" the current one)
   # the narrowest rule should be the one attached to the set being viewed.  So, eg, if you're looking at the "*all plus" set, you shouldn't
   # have the option to create rules based on arbitrary narrower sets, though narrower sets will always apply to whatever prototype we create
 

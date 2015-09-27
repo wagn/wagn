@@ -2,10 +2,10 @@
 
 
 describe Card::Set::Type::CoffeeScript do
-  let(:coffee)                    { 'alert 'Hi'  '    }
-  let(:compressed_coffee)         { '(function(){alert('Hi')}).call(this);'    }
-  let(:changed_coffee)            { 'alert 'Hello'  ' }
-  let(:compressed_changed_coffee) { '(function(){alert('Hello')}).call(this);' }
+  let(:coffee)                    { 'alert "Hi"  '    }
+  let(:compressed_coffee)         { '(function(){alert("Hi")}).call(this);'    }
+  let(:changed_coffee)            { 'alert "Hello"  ' }
+  let(:compressed_changed_coffee) { '(function(){alert("Hello")}).call(this);' }
 
 
   it_should_behave_like 'content machine', that_produces_js do

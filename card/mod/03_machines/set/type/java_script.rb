@@ -4,7 +4,7 @@ require 'uglifier'
 include Machine
 include MachineInput
 
-store_machine_output filetype: 'js'
+store_machine_output filetype: "js"
 
 machine_input do
   Uglifier.compile(format(:js)._render_core)

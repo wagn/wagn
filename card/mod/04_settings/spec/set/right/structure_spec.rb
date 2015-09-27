@@ -17,6 +17,6 @@ describe Card::Set::Right::Structure do
 
   it 'renders core as raw' do
     trs = Card.fetch('*type+*right+*structure').format.render_core
-    expect(trs).to eq '{'type':'_left'}'
+    expect(trs).to eq '{"type":"_left"}'
   end
 end

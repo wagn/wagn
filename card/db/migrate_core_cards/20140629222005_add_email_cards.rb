@@ -23,7 +23,7 @@ class AddEmailCards < Card::CoreMigration
 
       options_rule = set.fetch(trait: :options, new: { type_code: :search_type })
       options_rule.type_id = Card::SearchTypeID
-      options_rule.content = %( { 'right_plus':{'codename':'account'} } )
+      options_rule.content = %( { "right_plus":{"codename":"account"} } )
       options_rule.save!
     end
 

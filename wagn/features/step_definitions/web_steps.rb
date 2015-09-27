@@ -8,7 +8,7 @@
 
 require 'uri'
 require 'cgi'
-require File.expand_path(File.join(File.dirname(__FILE__), "..", 'support', 'paths'))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths"))
 
 # Commonly used webrat steps
 # http://github.com/brynary/webrat
@@ -60,8 +60,8 @@ end
 #   <%= f.label :alternative %><br />
 #   <%= f.datetime_select :alternative %>
 # The following steps would fill out the form:
-# When I select "November 23, 2004 11:20" as the 'Preferred' date and time
-# And I select "November 25, 2004 10:30" as the 'Alternative' date and time
+# When I select "November 23, 2004 11:20" as the "Preferred" date and time
+# And I select "November 25, 2004 10:30" as the "Alternative" date and time
 When /^(?:|I )select "([^"]*)" as the "([^"]*)" date and time$/ do |datetime, datetime_label|
   select_datetime(datetime, from: datetime_label)
 end
@@ -76,7 +76,7 @@ end
 
 # Use this step when using multiple time_select helpers on a page or you want to
 # specify the name of the time on the form.  For example:
-# When I select "7:30AM" as the 'Gym' time
+# When I select "7:30AM" as the "Gym" time
 When /^(?:|I )select "([^"]*)" as the "([^"]*)" time$/ do |time, time_label|
   select_time(time, from: time_label)
 end
@@ -113,13 +113,13 @@ When /^(?:|I )attach the file "([^"]*)" to "([^"]*)"$/ do |path, field|
   type = path.split(".")[1]
 
   case type
-  when 'jpg'
+  when "jpg"
     type = "image/jpg"
-  when 'jpeg'
+  when "jpeg"
     type = "image/jpeg"
-  when 'png'
+  when "png"
     type = "image/png"
-  when 'gif'
+  when "gif"
     type = "image/gif"
   end
 

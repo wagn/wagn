@@ -2,7 +2,7 @@ require 'pathname'
 
 module Wagn
   module ScriptWagnLoader
-    RUBY = File.join(*RbConfig::CONFIG.values_at('bindir', 'ruby_install_name')) + RbConfig::CONFIG['EXEEXT']
+    RUBY = File.join(*RbConfig::CONFIG.values_at("bindir", "ruby_install_name")) + RbConfig::CONFIG["EXEEXT"]
     SCRIPT_WAGN = File.join('script', 'wagn')
 
     def self.exec_script_wagn!

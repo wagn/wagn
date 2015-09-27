@@ -20,8 +20,8 @@ describe Card do
 
     describe ".rule" do
       it "should have a value of 2" do
-        expect(@rule_card.content).to eq('2')
-        expect(@c1.rule(:table_of_contents)).to eq('2')
+        expect(@rule_card.content).to eq("2")
+        expect(@c1.rule(:table_of_contents)).to eq("2")
       end
     end
 
@@ -84,13 +84,13 @@ describe Card do
       expect(@c2 = Card["Twwo Heading"]).to be
       expect(@c1.type_id).to eq(Card::BasicID)
       expect(@rule_card = @c1.rule_card(:table_of_contents)).to be
-      @rule_card.content = '1'
+      @rule_card.content = "1"
     end
 
     describe ".rule" do
       it "should have a value of 1" do
-        expect(@rule_card.content).to eq('1')
-        expect(@c1.rule(:table_of_contents)).to eq('1')
+        expect(@rule_card.content).to eq("1")
+        expect(@c1.rule(:table_of_contents)).to eq("1")
       end
     end
 
@@ -102,8 +102,8 @@ describe Card do
         expect(@c2.format.render_open_content).to match /Table of Contents/
       end
       it "should not render for 'Twwo Heading' when changed to 3" do
-        @rule_card.content = '3'
-        expect(@c2.rule(:table_of_contents)).to eq('3')
+        @rule_card.content = "3"
+        expect(@c2.rule(:table_of_contents)).to eq("3")
         expect(@c2.format.render_open_content).not_to match /Table of Contents/
       end
     end
@@ -114,11 +114,11 @@ describe Card do
 
     before do
       Card::Auth.as_bot do
-        @c1 = Card.create name: 'toc1', type: 'CardtypeE',
+        @c1 = Card.create name: 'toc1', type: "CardtypeE",
           content: Card['Onne Heading'].content
-        @c2 = Card.create name: 'toc2', type: 'CardtypeE',
+        @c2 = Card.create name: 'toc2', type: "CardtypeE",
           content: Card['Twwo Heading'].content
-        @c3 = Card.create name: 'toc3', type: 'CardtypeE',
+        @c3 = Card.create name: 'toc3', type: "CardtypeE",
           content: Card['Three Heading'].content
       end
       expect(@c1.type_name).to eq('Cardtype E')
@@ -132,8 +132,8 @@ describe Card do
 
     describe ".rule" do
       it "should have a value of 0" do
-        expect(@c1.rule(:table_of_contents)).to eq('0')
-        expect(@rule_card.content).to eq('0')
+        expect(@c1.rule(:table_of_contents)).to eq("0")
+        expect(@rule_card.content).to eq("0")
       end
     end
 
@@ -174,7 +174,7 @@ describe Card do
     before do
       Card::Auth.as_bot do
         Card.create! name: 'Basic+*type+*table of contents', content: '2'
-        @c1 = Card.create! name: 'toc1', type: 'CardtypeE', content: Card['Onne Heading'].content
+        @c1 = Card.create! name: 'toc1', type: "CardtypeE", content: Card['Onne Heading'].content
         @c2 = Card.create! name: 'toc2', content: Card['Twwo Heading'].content
         @c3 = Card.create! name: 'toc3', content: Card['Three Heading'].content
         expect(@c1.type_name).to eq('Cardtype E')
@@ -195,7 +195,7 @@ describe Card do
     it "should take on new setting value" do
       c = Card['toc1']
       expect(c.rule_card(:table_of_contents).name).to eq('CardtypeE+*type+*table of content')
-      expect(c.rule(:table_of_contents)).to eq('2')
+      expect(c.rule(:table_of_contents)).to eq("2")
     end
 
     describe "renders with/without toc" do
@@ -203,7 +203,7 @@ describe Card do
         expect(@c1.format.render_open_content).not_to match /Table of Contents/
       end
       it "should render for 'Twwo Heading'" do
-        expect(@c2.rule(:table_of_contents)).to eq('2')
+        expect(@c2.rule(:table_of_contents)).to eq("2")
         expect(@c2.format.render_open_content).to match /Table of Contents/
       end
       it "should render for 'Three Heading'" do
@@ -218,17 +218,17 @@ describe Card do
     before do
       expect(@c1 = Card["Onne Heading"]).to be
       # FIXME: CardtypeE should inherit from *default => Basic
-      #@c2 = Card.create name: 'toc2', type: 'CardtypeE', content: Card['Twwo Heading'].content
+      #@c2 = Card.create name: 'toc2', type: "CardtypeE", content: Card['Twwo Heading'].content
       expect(@c2 = Card["Twwo Heading"]).to be
       expect(@c1.type_id).to eq(Card::BasicID)
       expect(@rule_card = @c1.rule_card(:table_of_contents)).to be
-      @rule_card.content = '1'
+      @rule_card.content = "1"
     end
 
     describe ".rule" do
       it "should have a value of 1" do
-        expect(@rule_card.content).to eq('1')
-        expect(@c1.rule(:table_of_contents)).to eq('1')
+        expect(@rule_card.content).to eq("1")
+        expect(@c1.rule(:table_of_contents)).to eq("1")
       end
     end
 
@@ -240,7 +240,7 @@ describe Card do
         expect(@c2.format.render_open_content).to match /Table of Contents/
       end
       it "should not render for 'Twwo Heading' when changed to 3" do
-        @rule_card.content = '3'
+        @rule_card.content = "3"
         expect(@c2.format.render_open_content).not_to match /Table of Contents/
       end
     end

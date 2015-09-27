@@ -17,7 +17,7 @@ describe Card::Set::All::Account do
 
   end
 
-  describe 'parties' do
+  describe "parties" do
 
     it "for Wagn Bot" do
       Card::Auth.current_id = Card::WagnBotID

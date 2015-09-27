@@ -3,7 +3,7 @@ require 'sass'
 include Machine
 include MachineInput
 
-store_machine_output filetype: 'css'
+store_machine_output filetype: "css"
 
 machine_input do
   compress_css format(format: :css)._render_core

@@ -5,7 +5,7 @@ class Card
     has_many :actions, -> { order :id },
       { foreign_key: :card_act_id, inverse_of: :act, class_name: "Card::Action" }
 
-    belongs_to :actor, class_name: 'Card'
+    belongs_to :actor, class_name: "Card"
     belongs_to :card
     def set_actor
       self.actor_id ||= Auth.current_id
@@ -14,7 +14,7 @@ class Card
     def self.delete_actionless
       Card::Act.where(
         "id NOT IN (?)",
-        Card::Action.pluck('card_act_id'),
+        Card::Action.pluck("card_act_id"),
       ).delete_all
     end
 

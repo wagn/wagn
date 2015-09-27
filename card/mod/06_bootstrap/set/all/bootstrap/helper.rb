@@ -12,10 +12,10 @@ format :html do
 
   def dropdown_button name, opts={}
     %{
-      <div class="btn-group" role='group'>
-        <button type='button' class="btn btn-primary dropdown-toggle" data-toggle='dropdown' title="#{name}" aria-expanded='false' aria-haspopup='true'>
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" title="#{name}" aria-expanded="false" aria-haspopup="true">
           #{glyphicon opts[:icon] if opts[:icon]} #{name}
-          <span class='caret'></span>
+          <span class="caret"></span>
         </button>
         #{ dropdown_list yield, opts[:class], opts[:active] }
       </div>
@@ -41,14 +41,14 @@ format :html do
         items
       end
     %{
-      <ul class="dropdown-menu #{extra_css_class}" role='menu'>
+      <ul class="dropdown-menu #{extra_css_class}" role="menu">
         #{item_list}
       </ul>
     }
   end
 
   def separator
-    '<li role='separator' class='divider'></li>'
+    '<li role="separator" class="divider"></li>'
   end
 
   def breadcrumb items
@@ -105,7 +105,7 @@ format :html do
                   <span class="icon-bar"></span>
                 }
     %{
-      <button type='button' class="navbar-toggle collapsed #{css_class}" data-toggle='collapse' data-target="#navbar-collapse-#{id}">
+      <button type="button" class="navbar-toggle collapsed #{css_class}" data-toggle="collapse" data-target="#navbar-collapse-#{id}">
         <span class="sr-only">Toggle navigation</span>
         #{content}
       </button>
@@ -121,7 +121,7 @@ format :html do
         button,
         button_tag(situation: args[:situation], class: 'dropdown-toggle', 'data-toggle'=>'dropdown', 'aria-haspopup'=>'true', 'aria-expanded'=>'false') do
           %{
-            <span class='caret'></span>
+            <span class="caret"></span>
             <span class="sr-only">Toggle Dropdown</span>
           }
         end,

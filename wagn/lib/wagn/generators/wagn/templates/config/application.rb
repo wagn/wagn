@@ -25,7 +25,7 @@ module <%= app_const_base %>
     # Example configuration for mailcatcher, a simple smtp server.
     # See http://mailcatcher.me for more information
     # config.action_mailer.delivery_method = :smtp
-    # config.action_mailer.smtp_settings = { address: 'localhost', port: 1025 }
+    # config.action_mailer.smtp_settings = { address: "localhost", port: 1025 }
 
     # The below keys are fine for testing but should not be used in production sites.
 
@@ -44,7 +44,7 @@ module <%= app_const_base %>
     # where uploaded files are actually stored. (eg Image and File cards)
 
     # config.paths['mod'] << 'my-mod-dir'
-    # add a new directory for code customizations, or 'mods'
+    # add a new directory for code customizations, or "mods"
 
     # config.allow_inline_styles = false
     # don't strip style attributes (not recommended)

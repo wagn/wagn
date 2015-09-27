@@ -1,4 +1,4 @@
-# -*- encoding : utf-8 -*-require 'image_spec'
+# -*- encoding : utf-8 -*-require "image_spec"
 
 
 describe Card::Set::Type::Image do
@@ -9,7 +9,7 @@ describe Card::Set::Type::Image do
   end
 
   it "handles size argument in inclusion syntax" do
-    image_card = Card.create! name: 'TestImage', type: 'Image', content: '~12345/TestImage.jpg'
+    image_card = Card.create! name: "TestImage", type: "Image", content: '~12345/TestImage.jpg'
     including_card = Card.new name: 'Image1', content: "{{TestImage | core; size:small }}"
     rendered = including_card.format._render :core
     assert_view_select rendered, 'img[src=?]', "/files/~#{image_card.id}/#{image_card.last_content_action_id}-small.jpg"

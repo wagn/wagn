@@ -95,7 +95,7 @@ format :html do
         </span>
         #{ text_field_tag 'pointer_item', args[:pointer_item], class: 'pointer-item-text form-control' }
         <span class="input-group-btn">
-          <button class="pointer-item-delete btn btn-default" type='button'>
+          <button class="pointer-item-delete btn btn-default" type="button">
             #{ glyphicon 'remove'}
           </button>
         </span>
@@ -113,7 +113,7 @@ format :html do
       description = pointer_option_description option_name
       <<-HTML
         <div class="pointer-checkbox">
-          #{ check_box_tag 'pointer_checkbox', option_name, checked, id: id, class: 'pointer-checkbox-button' }
+          #{ check_box_tag "pointer_checkbox", option_name, checked, id: id, class: 'pointer-checkbox-button' }
           <label for="#{id}">#{label}</label>
           #{ %{<div class="checkbox-option-description">#{ description }</div>} if description }
         </div>
@@ -124,7 +124,7 @@ format :html do
   end
 
   view :multiselect do |args|
-    select_tag('pointer_multiselect',
+    select_tag("pointer_multiselect",
       options_for_select(card.option_names, card.item_names),
       multiple: true, class: 'pointer-multiselect form-control'
     )
@@ -151,7 +151,7 @@ format :html do
 
   view :select do |args|
     options = [["-- Select --",""]] + card.option_names.map{ |x| [x,x]}
-    select_tag('pointer_select',
+    select_tag("pointer_select",
       options_for_select(options, card.item_names.first),
       class: 'pointer-select form-control'
     )

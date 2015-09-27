@@ -114,8 +114,8 @@ format :html do
     css_class += 'alert-dismissible ' if args[:dismissible]
     css_class += args[:alert_class] if args[:alert_class]
     close_button = args[:dismissible] ? %{
-        <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-          <span aria-hidden='true'>&times;</span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
         </button>
       } : ''
     content_tag :div, class: css_class, role: 'alert' do
@@ -125,7 +125,7 @@ format :html do
 
   def wrap_main(content)
     return content if Env.ajax? || params[:layout]=='none'
-    %{<div id='main'>#{content}</div>}
+    %{<div id="main">#{content}</div>}
   end
 
   def wrap_with tag, content_or_args={}, html_args={}

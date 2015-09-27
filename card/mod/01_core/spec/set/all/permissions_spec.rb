@@ -229,7 +229,7 @@ describe Card::Set::All::Permissions do
       end
       Card::Auth.as(:joe_admin) do
         expect(Card::Auth.always_ok?).to eq(true)
-        Card.create! name: 'Hidden'
+        Card.create! name: "Hidden"
         Card.create(name: 'Hidden+*self+*read', type: 'Pointer', content: '[[Anyone Signed In]]')
       end
 

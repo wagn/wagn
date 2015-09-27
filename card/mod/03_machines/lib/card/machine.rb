@@ -49,7 +49,7 @@ class Card
 
     def self.included(host_class)
       host_class.extend( ClassMethods )
-      host_class.output_config = { filetype: 'txt' }
+      host_class.output_config = { filetype: "txt" }
 
 
       if Codename[:machine_output]  # for compatibility with old migrations

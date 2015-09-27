@@ -51,9 +51,7 @@ class Card
       @statement.merge! @params
       @vars.symbolize_keys!
 
-      #@statement = clean @statement
       interpret @statement
-
       self
     end
 
@@ -165,12 +163,16 @@ class Card
 
     def add_condition *args
       condition_array = @conditions_on_join ? joins.last.conditions : @conditions
-      condition_array << ( args.size > 1 ? args : [ :cond, SqlCond.new(args[0]) ] )
+      condition_array << if args.size > 1
+        [ args.shift, ValueClause.new(args.shift, self) ]
+      else
+        [ :cond, SqlCond.new(args[0]) ]
+      end
     end
 
     def interpret_attributes key, val
       case ATTRIBUTES[key]
-        when :basic                ; add_condition key, ValueClause.new(val, self)
+        when :basic                ; add_condition key, val
         when :conjunction          ; send key, val
         when :relational, :special ; relate key, val
         when :ref_relational       ; relate key, val, method: :join_references

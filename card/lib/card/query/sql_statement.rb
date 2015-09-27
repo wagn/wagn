@@ -20,7 +20,7 @@ class Card
       end
 
       def to_s
-        ['(SELECT DISTINCT', @fields, 'FROM', @tables, @joins, @where, @group, @order, @limit_and_offset, ')'].compact * ' '
+        ['SELECT DISTINCT', @fields, 'FROM', @tables, @joins, @where, @group, @order, @limit_and_offset].compact * ' '
       end
 
       def tables
@@ -50,13 +50,7 @@ class Card
 
       def join_clause query
         query.joins.map do |join|
-          if String === join #FIXME obviate!
-            clause = join
-          else
-            clause =  join.to_sql
-            clause += " AND #{standard_conditions query}" if join.to_table == 'cards'
-          end
-          clause
+          join.to_sql + (join.to_table == 'cards' ?  " AND #{standard_conditions query}" : '')
         end
       end
 
@@ -170,7 +164,9 @@ class Card
     end
 
     class SqlCond < String
-      def to_sql(*args) self end
+      def to_sql *args
+        self
+      end
     end
   end
 end

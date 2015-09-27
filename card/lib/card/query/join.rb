@@ -39,6 +39,7 @@ class Card
       end
 
       def to_sql
+        @to_table = "(#{@to_table.sql})" if Card::Query===@to_table
         [ side, 'JOIN', to_table, to_alias, 'ON', on_clause ].compact * ' '
       end
 

@@ -157,13 +157,11 @@ class Card
         end
       end
 
-
       def conjunction val
         if [String, Symbol].member? val.class
           CONJUNCTIONS[val.to_sym]
         end
       end
-
 
       def sort val
         return nil if @superquery
@@ -185,10 +183,11 @@ class Card
         raise BadQuery, "count with item: #{item} not yet implemented" unless item == 'referred_to'
         @mods[:sort] = "coalesce(count,0)" # needed for postgres
         cs = Query.new :return=>'count', :group=>'sort_join_field', :superquery=>self
-        cs.add_condition "referer_id in #{Query.new( val.merge(return: 'id', superquery: self)).sql}"
-        cs.add_join :wr, :card_references, :id, :referee_id
+        cs.add_condition "referer_id in (#{Query.new( val.merge(return: 'id', superquery: self)).sql})"
+        # FIXME - SQL generated before SQL phase
+        cs.joins << Join.new(from: cs, to:['card_references', 'wr', 'referee_id'])
         cs.mods[:sort_join_field] = "#{cs.table_alias}.id as sort_join_field" #HACK!
-        add_join :sort, cs.sql, :id, :sort_join_field, :side=>'LEFT'
+        @joins << Join.new( from: self, to: [cs, 'srtbl', 'sort_join_field'] )
       end
 
 
@@ -215,13 +214,6 @@ class Card
         root.table_seq = root.table_seq.to_i + 1
       end
 
-      def add_join(name, table, cardfield, otherfield, opts={})
-        join_alias = "#{name}_#{table_id force=true}"
-        on = "#{table_alias}.#{cardfield} = #{join_alias}.#{otherfield}"
-        joins << ["\n  ", opts[:side], 'JOIN', table, 'AS', join_alias, 'ON', on, "\n"].compact.join(' ')
-        join_alias
-      end
-
       def join_cards val, opts={}
         conditions_on_join = opts.delete(:conditions_on_join)
         s = subquery
@@ -246,17 +238,17 @@ class Card
       alias :in :any
 
       def conjoin val, conj
-        clause = subquery( :return=>:condition, :conj=>conj )
+        sq = subquery( :return=>:condition, :conj=>conj )
         array = Array===val ? val : clause_to_hash(val).map { |key, value| {key => value} }
         array.each do |val_item|
-          clause.interpret val_item
+          sq.interpret val_item
         end
       end
 
       def not val
-        subselect = Query.new(:return=>:id, :superquery=>self)
-        subselect.interpret(val)
-        join_alias = add_join :not, subselect.sql, :id, :id, :side=>'LEFT'
+        subselect = Query.new clause_to_hash(val).merge( :return=>:id )
+        join_alias = "not#{table_id force=true}"
+        @joins << Join.new( from: self, to_table: subselect, to_alias: join_alias, :side=>'LEFT' )
         add_condition "#{join_alias}.id is null"
       end
 

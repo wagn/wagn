@@ -51,12 +51,11 @@ describe Card::Query do
     end
   end
 
-
   describe "multiple values" do
     it "should handle multiple values for relational keys" do
       expect(Card::Query.new( member_of: [:all, {name: 'r1'}, {key: 'r2'} ], return: :name).run.sort).to eq(%w{ u1 u2 })
       expect(Card::Query.new( member_of: [      {name: 'r1'}, {key: 'r2'} ], return: :name).run.sort).to eq(%w{ u1 u2 })
-      expect(Card::Query.new( member_of: [any: [{name: 'r1'}, {key: 'r2'} ]},return: :name).run.sort).to eq(%w{ u1 u2 u3 })
+      expect(Card::Query.new( member_of: {any: [{name: 'r1'}, {key: 'r2'} ]},return: :name).run.sort).to eq(%w{ u1 u2 u3 })
       expect(Card::Query.new( member_of: [:any, {name: 'r1'}, {key: 'r2'} ], return: :name).run.sort).to eq(%w{ u1 u2 u3 })
     end
 
@@ -338,7 +337,6 @@ describe Card::Query do
       expect(Card::Query.new(and: {match: 'two'}).run.map(&:name).sort).to eq(CARDS_MATCHING_TWO)
       expect(Card::Query.new(and: {}, type: "Cardtype E").run.first.name).to eq('type-e-card')
     end
-
 
     it "should work within 'or'" do
       results = Card::Query.new(or: {name: 'Z', and: {left: 'A', right: 'C'}}).run

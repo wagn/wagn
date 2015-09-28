@@ -64,6 +64,7 @@ describe Card::Set::Type::Signup do
 
     it 'should be activated by an update' do
       Card::Env.params[:token] = @token
+      @signup = Card.fetch "big bad wolf"
       @signup.update_attributes({})
       #puts @signup.errors.full_messages * "\n"
       expect(@signup.errors).to be_empty

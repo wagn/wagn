@@ -40,6 +40,22 @@ class Card
     subcards.remove_field name_or_card
   end
 
+  def preserve_subcards
+    if subcards.present?
+      Card::Cache[Card::Subcards].write key, @subcards
+    end
+  end
+
+  def restore_subcards
+    if Card::Cache[Card::Subcards].exist? key
+      @subcards = Card::Cache[Card::Subcards].fetch key
+    end
+  end
+
+  def expire_subcards
+    Card::Cache[Card::Subcards].delete key
+  end
+
 
   class Subcards
 
@@ -160,6 +176,10 @@ class Card
 
     alias_method :add_field, :add_child
     alias_method :remove_field, :remove_child
+
+    def present?
+      @keys.present?
+    end
 
     private
 

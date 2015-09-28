@@ -174,6 +174,11 @@ event :store_subcards, :after=>:store do
   subcards.each do |subcard|
     subcard.save! :validate=>false if subcard != self#unless @draft
   end
+
+  # ensures that a supercard can access subcards of self
+  # eg. <user> creates <user+*account> creates <user+*account+*status>
+  # <user> changes <user+*account+*status> in event activate_account
+  Card.write_to_cache self
 end
 
 def success

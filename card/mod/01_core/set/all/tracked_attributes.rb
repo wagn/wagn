@@ -115,18 +115,18 @@ end
 #  set_callback :store, :after, :process_read_rule_update_queue, :prepend=>true
 
 event :expire_related, :after=>:store do
-  self.expire
+  self.expire(true)
 
   if self.is_structure?
     self.structuree_names.each do |name|
-      Card.expire name
+      Card.expire name, true
     end
   end
   # FIXME really shouldn't be instantiating all the following bastards.  Just need the key.
   # fix in id_cache branch
-  self.dependents.each       { |c| c.expire }
-  # self.referencers.each      { |c| c.expire }
-  self.name_referencers.each { |c| c.expire }
+  self.dependents.each       { |c| c.expire(true) }
+  # self.referencers.each      { |c| c.expire(true) }
+  self.name_referencers.each { |c| c.expire(true) }
   # FIXME: this will need review when we do the new defaults/templating system
 end
 

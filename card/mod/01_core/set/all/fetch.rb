@@ -105,11 +105,15 @@ module ClassMethods
     card.present?
   end
 
-  def expire name
+  def expire name, subcards=false
     #note: calling instance method breaks on dirty names
     key = name.to_name.key
     if card = Card.cache.read( key )
-      preserve_subcards
+      if subcards
+        card.expire_subcards
+      else
+        card.preserve_subcards
+      end
       Card.cache.delete key
       Card.cache.delete "~#{card.id}" if card.id
     end
@@ -166,13 +170,13 @@ module ClassMethods
     card = send( "fetch_from_cache_by_#{mark_type}", val )
 
     if card.nil? || ( opts[:look_in_trash] && card.new_card? && !card.trash )
-      needs_caching = card.nil?
       query = { mark_type => val }
       query[:trash] = false unless opts[:look_in_trash]
       card = fetch_from_db query
-      needs_caching ||= card && !card.trash
+      needs_caching = card && !card.trash
       card.restore_subcards if card
     end
+
 
     [ card, mark, needs_caching ]
   end
@@ -236,8 +240,13 @@ def expire_pieces
 end
 
 
-def expire
+def expire subcards=false
   #Rails.logger.warn "expiring i:#{id}, #{inspect}"
+  if subcards
+    expire_subcards
+  else
+    preserve_subcards
+  end
   Card.cache.delete key
   Card.cache.delete "~#{id}" if id
 end

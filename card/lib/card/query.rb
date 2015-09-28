@@ -16,7 +16,7 @@ class Card
     MODIFIERS = {};  %w{ conj return sort sort_as group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }
 
     OPERATORS = %w{ != = =~ < > in ~ }.inject({}) {|h,v| h[v]=nil; h }.merge({
-      eq: '=', gt: '>', lt: '<', match: '~', ne: '!=', 'not in': nil
+      eq: '=', gt: '>', lt: '<', match: '~', ne: '!=', :'not in'=> nil
     }.stringify_keys)
 
     ATTRIBUTES = {

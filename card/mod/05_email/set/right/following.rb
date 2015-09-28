@@ -40,7 +40,7 @@ format :html do
   view :rule_editor do |args|
     preference_name = [
       card.left.default_follow_set_card.name,
-      Auth.current.name
+      Auth.current.name,
       Card[:follow].name
     ]*'+'
     rule_context = Card.fetch preference_name, new: { type_id: PointerID }

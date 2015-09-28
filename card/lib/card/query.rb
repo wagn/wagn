@@ -10,51 +10,30 @@ class Card
     require_dependency 'card/query/sql_statement'
     require_dependency 'card/query/join'
 
-<<<<<<< HEAD
-  OPERATORS = %w{ != = =~ < > in ~ }.inject({}) {|h,v| h[v]=nil; h }.merge({
-    :eq    => '=',   :gt => '>',    :lt      => '<',
-    :match  => '~',  :ne => '!=',   'not in' => nil
-  }.stringify_keys)
-=======
     include Clause
     include Attributes
->>>>>>> fastquery
 
     MODIFIERS = {};  %w{ conj return sort sort_as group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }
 
     OPERATORS = %w{ != = =~ < > in ~ }.inject({}) {|h,v| h[v]=nil; h }.merge({
-      :eq    => '=',   :gt => '>',    :lt      => '<',
-      :match => '~',   :ne => '!=',   'not in' => nil
+      eq: '=', gt: '>', lt: '<', match: '~', ne: '!=', 'not in': nil
     }.stringify_keys)
 
     ATTRIBUTES = {
-      :basic           => %w{ name type_id content id key updater_id left_id right_id creator_id updater_id codename },
-      :relational      => %w{ type part left right editor_of edited_by last_editor_of last_edited_by creator_of created_by member_of member },
-      :plus_relational => %w{ plus left_plus right_plus },
-      :ref_relational  => %w{ refer_to referred_to_by link_to linked_to_by include included_by },
-      :conjunction     => %w{ and or all any },
-      :special         => %w{ found_by not sort match complete extension_type },
-      :ignore          => %w{ prepend append view params vars size }
+      basic:           %w{ name type_id content id key updater_id left_id right_id creator_id updater_id codename },
+      relational:      %w{ type part left right editor_of edited_by last_editor_of last_edited_by creator_of created_by member_of member },
+      plus_relational: %w{ plus left_plus right_plus },
+      ref_relational:  %w{ refer_to referred_to_by link_to linked_to_by include included_by },
+      conjunction:     %w{ and or all any },
+      special:         %w{ found_by not sort match complete extension_type },
+      ignore:          %w{ prepend append view params vars size }
     }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
 
-<<<<<<< HEAD
-  def run
-    retrn = query[:return].present? ? query[:return].to_s : 'card'
-    if retrn == 'card'
-      simple_run('name').map do |name|
-        Card.fetch name, new: {}
-      end
-    else
-      simple_run retrn
-    end
-  end
-=======
     DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
-    CONJUNCTIONS = { :any=>:or, :in=>:or, :or=>:or, :all=>:and, :and=>:and }
+    CONJUNCTIONS = { any: :or, in: :or, or: :or, all: :and, and: :and }
 
     attr_reader :statement, :context, :mods, :conditions, :subqueries, :superquery
     attr_accessor :joins, :table_seq, :conditions_on_join
->>>>>>> fastquery
 
     def initialize statement
       @subqueries, @joins, @conditions = [], [], []
@@ -80,7 +59,7 @@ class Card
       retrn = statement[:return].present? ? statement[:return].to_s : 'card'
       if retrn == 'card'
         simple_run('name').map do |name|
-          Card.fetch name, :new=>{}
+          Card.fetch name, new: {}
         end
       else
         simple_run retrn

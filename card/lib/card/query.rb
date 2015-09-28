@@ -2,6 +2,7 @@
 
 class Card
   class Query
+
     require_dependency 'card/query/clause'
     require_dependency 'card/query/value_clause'
     require_dependency 'card/query/ref_clause'

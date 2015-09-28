@@ -1,7 +1,6 @@
 class Card
   class Query
     class SqlStatement
-#      attr_reader :fields, :tables, :joins, :where, :group, :order, :limit_and_offset
 
       def initialize query
         @query = query

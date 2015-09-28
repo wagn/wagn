@@ -8,7 +8,6 @@ class Card
 
       SORT_JOIN_TO_ITEM_MAP = { :left=>'left_id', :right=>'right_id'}
 
-
       #~~~~~~ RELATIONAL
 
       def type val
@@ -28,19 +27,15 @@ class Card
         restrict :right_id, val
       end
 
-
       def editor_of val
         acts_alias, actions_alias = "a#{table_id force=true}", "an#{table_id force=true}"
-
         joins <<  Join.new( from: self, to: ['card_acts', acts_alias, 'actor_id' ] )
         joins <<  Join.new( from: ['card_acts', acts_alias], to: ['card_actions', actions_alias, 'card_act_id'] )
         join_cards val, from_alias: actions_alias, from_field: 'card_id'
       end
 
-
       def edited_by val
         acts_alias, actions_alias = "a#{table_id force=true}", "an#{table_id force=true}"
-
         joins <<  Join.new( from: self, to: ['card_actions', actions_alias, 'card_id' ] )
         joins <<  Join.new( from: ['card_actions', actions_alias, 'card_act_id' ], to: ['card_acts', acts_alias] )
         join_cards val, from_alias: acts_alias, from_field: 'actor_id'
@@ -239,8 +234,10 @@ class Card
 
       def conjoin val, conj
         sq = subquery( :return=>:condition, :conj=>conj )
-        array = Array===val ? val : clause_to_hash(val).map { |key, value| {key => value} }
-        array.each do |val_item|
+        unless Array===val
+          val = clause_to_hash(val).map { |key, value| { key => value } }
+        end
+        val.each do |val_item|
           sq.interpret val_item
         end
       end

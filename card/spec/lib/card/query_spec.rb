@@ -34,16 +34,6 @@ describe Card::Query do
     end
   end
 
-  #describe "symbolization" do
-  #  it "should handle array values" do
-  #    statement = {'plus'=>['tags',{'refer_to'=>'cookies'}]}
-  #    expect(Card::Query.new(statement).statement).to eq({:plus=>['tags',{:refer_to=>'cookies'}]})
-  #  end
-  #end
-
-
-
-
 
   describe "member_of/member" do
     it "member_of should find members" do

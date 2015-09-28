@@ -13,17 +13,24 @@ class Card
     include Clause
     include Attributes
 
-    MODIFIERS = {};  %w{ conj return sort sort_as group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }
+    MODIFIERS = {}
+    %w{ conj return sort sort_as group dir limit offset }.each do |key|
+      MODIFIERS[key.to_sym] = nil
+    end
 
     OPERATORS = %w{ != = =~ < > in ~ }.inject({}) {|h,v| h[v]=nil; h }.merge({
       eq: '=', gt: '>', lt: '<', match: '~', ne: '!=', :'not in'=> nil
     }.stringify_keys)
 
     ATTRIBUTES = {
-      basic:           %w{ name type_id content id key updater_id left_id right_id creator_id updater_id codename },
-      relational:      %w{ type part left right editor_of edited_by last_editor_of last_edited_by creator_of created_by member_of member },
+      basic:           %w{ name type_id content id key updater_id left_id
+                           right_id creator_id updater_id codename },
+      relational:      %w{ type part left right editor_of edited_by
+                           last_editor_of last_edited_by creator_of created_by
+                           member_of member },
       plus_relational: %w{ plus left_plus right_plus },
-      ref_relational:  %w{ refer_to referred_to_by link_to linked_to_by include included_by },
+      ref_relational:  %w{ refer_to referred_to_by link_to linked_to_by include
+                           included_by },
       conjunction:     %w{ and or all any },
       special:         %w{ found_by not sort match complete extension_type },
       ignore:          %w{ prepend append view params vars size }
@@ -43,12 +50,13 @@ class Card
 
       @context    = @statement.delete(:context)    || ''
       @superquery = @statement.delete(:superquery) || nil
-      @params     = @statement.delete(:params)     || {}    # not a great name; it's more like edits/overwrites to the statement
       @vars       = @statement.delete(:vars)       || {}
 
-      @conditions_on_join = @superquery && @superquery.conditions_on_join
+      # FIXME "params" are really just adjustments to the statement and should
+      # be merged prior to initialization
+      @statement.merge!(@statement.delete(:params) || {})
 
-      @statement.merge! @params
+      @conditions_on_join = @superquery && @superquery.conditions_on_join
       @vars.symbolize_keys!
 
       interpret @statement
@@ -183,8 +191,9 @@ class Card
     end
 
     def relate_compound key, val
-      multiple = Array===val && ( Array===val.first || !!conjunction(val.first) )
-      relate key, val, multiple: multiple
+      has_multiple_values = Array===val &&
+        ( Array===val.first || !!conjunction(val.first) )
+      relate key, val, multiple: has_multiple_values
     end
 
     def relate key, val, opts={}
@@ -193,7 +202,8 @@ class Card
 
       if multiple
         conj = conjunction( val.first ) ? conjunction( val.shift ) : :and
-        if conj == current_conjunction                # same conjunction as container, no need for subcondition
+        if conj == current_conjunction
+          # same conjunction as container, no need for subcondition
           val.each { |v| send method, key, v }
         else
           send conj, val.map { |v| { key => v } }

@@ -1,24 +1,34 @@
-# What is this?
-# The Machine module together with the MachineInput module implements a kind of observer pattern.
-# It handles a collection of input cards to generate a output card (default is a file card).
-# If one of the input cards is changed the output card will be updated.
-# The classic example:
-# A style card observes a collection of css and sccs card to generate a file card with a css file containg the assembled compressed css.
-
-# How to use it?
-# Include the Machine module in the card set that is supposed to produce the output card. If the output card should be autmatically updated when a input card is changed the input card has to be in a set that includes the MachineInput module.
+# WHAT IS THIS?
+# The Machine module together with the MachineInput module implements a kind of
+# observer pattern. It handles a collection of input cards to generate an
+# outputcard (default is a file card). If one of the input cards is changed the
+# output card will be updated.
+#
+# The classic example: A style card observes a collection of css and sccs card
+# to generate a file card with a css file containg the assembled compressed css.
+#
+# HOW TO USE IT?
+# Include the Machine module in the card set that is supposed to produce the
+# output card. If the output card should be autmatically updated when a input
+# card is changed the input card has to be in a set that includes the
+# MachineInput module.
+#
 # The default machine
-#  -  uses its item cards as input cards or the card itself if there are no item cards;
-#     can be changed by passing a block to collect_input_cards
+#  -  uses its item cards as input cards or the card itself if there are no item
+#     cards;
+#  -  can be changed by passing a block to collect_input_cards
 #  -  takes the raw view of the input cards to generate the output;
-#     can be changed by passing a block to machine_input (in the input card set)
+#  -  can be changed by passing a block to machine_input (in the input card set)
 #  -  stores the output as a .txt file in the "+machine output" card;
-#     can be cahnged by passing a filetype and/or a block to store_machine_output
-
-
-# How does it work?
-# Machine cards have a +machine input and a +machine output card. The +machine input card is a pointer to all input cards.
-# Including the MachineInput module creates an "on: save" event that runs the machines of all cards that are linked to that card via the +machine input pointer.
+#  -  can be changed by passing a filetype and/or a block to
+#     store_machine_output
+#
+#
+# HOW DOES IT WORK?
+# Machine cards have a "+machine input" and a "+machine output" card. The
+# "+machine input" card is a pointer to all input cards. Including the
+# MachineInput module creates an "on: save" event that runs the machines of
+# all cards that are linked to that card via the +machine input pointer.
 
 
 
@@ -49,7 +59,7 @@ class Card
 
     def self.included(host_class)
       host_class.extend( ClassMethods )
-      host_class.output_config = { filetype: "txt" }
+      host_class.output_config = { filetype: 'txt' }
 
 
       if Codename[:machine_output]  # for compatibility with old migrations
@@ -66,15 +76,15 @@ class Card
           loop_limit = 5
           while items.size > 0
             item = items.shift
-            if item.trash or ( already_extended[item.id] and already_extended[item.id] > loop_limit)
-              next
-            elsif item.item_cards == [item]  # no pointer card
+            next if item.trash
+            next if already_extended[item.id].to_i > loop_limit
+            if item.item_cards == [item]  # no pointer card
               new_input << item
             else
               items.insert(0, item.item_cards)
               items.flatten!
               new_input << item if item != self
-              already_extended[item] = already_extended[item] ? already_extended[item] + 1 : 1
+              already_extended[item] = already_extended[item].to_i + 1
             end
           end
           new_input
@@ -83,7 +93,8 @@ class Card
         host_class.prepare_machine_input {}
         host_class.machine_engine { |input| input }
         host_class.store_machine_output do |output|
-          file = Tempfile.new [ id.to_s, ".#{host_class.output_config[:filetype]}" ]
+          filetype = host_class.output_config[:filetype]
+          file = Tempfile.new [ id.to_s, ".#{filetype}" ]
           file.write output
           file.rewind
           Card::Auth.as_bot do
@@ -102,7 +113,11 @@ class Card
           end
         end
 
-        host_class.event "reset_machine_output_#{host_class.name.gsub(':','_')}".to_sym, after: :store_subcards, on: :save do
+        event_suffix = host_class.name.gsub ':', '_'
+        host_class.event(
+          "reset_machine_output_#{ event_suffix }".to_sym,
+          after: :store_subcards, on: :save
+        ) do
           reset_machine_output!
         end
       end
@@ -169,7 +184,8 @@ class Card
 
     def machine_output_url
       ensure_machine_output
-      machine_output_card.file.url #(:default, timestamp: false)   # to get rid of additional number in url
+      machine_output_card.file.url #(:default, timestamp: false)
+      # to get rid of additional number in url
     end
 
     def machine_output_path
@@ -178,7 +194,8 @@ class Card
     end
 
     def ensure_machine_output
-      if !output = fetch(trait: :machine_output) or !output.selected_content_action_id
+      output = fetch trait: :machine_output
+      if !output || !output.selected_content_action_id
         update_machine_output
       end
     end

@@ -1,8 +1,8 @@
 include Card::FollowOption
 
-self.follow_opts position: 2
+follow_opts position: 2
 
-self.follow_test { |follower_id, accounted_ids| true }
+follow_test { |follower_id, accounted_ids| true }
 
 def title
   'Following'

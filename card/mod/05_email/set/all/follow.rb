@@ -2,19 +2,23 @@ card_accessor :followers
 
 FOLLOWER_IDS_CACHE_KEY = 'FOLLOWER_IDS'
 
-event :cache_expired_because_of_new_set, before: :store, on: :create, when: proc { |c| c.type_id == Card::SetID } do
+event :cache_expired_for_new_set, before: :store, on: :create,
+  when: proc { |c| c.type_id == Card::SetID } do
   Card.follow_caches_expired
 end
 
-event :cache_expired_because_of_type_change, before: :store, changed: :type_id do  #FIXME expire (also?) after save
+event :cache_expired_for_type_change, before: :store, changed: :type_id do
+  #FIXME expire (also?) after save
   Card.follow_caches_expired
 end
 
-event :cache_expired_because_of_name_change, before: :store, changed: :name do
+event :cache_expired_for_name_change, before: :store, changed: :name do
   Card.follow_caches_expired
 end
 
-event :cache_expired_because_of_new_user_rule, before: :extend, when: proc { |c| c.follow_rule_card? }  do
+event :cache_expired_for_new_user_rule, before: :extend,
+  when: proc { |c| c.follow_rule_card? }  do
+
   Card.follow_caches_expired
 end
 
@@ -23,20 +27,24 @@ format do
   def follow_link_hash args
     toggle = args[:toggle] || ( card.followed? ? :off : :on )
     hash = { class: "follow-toggle-#{toggle}" }
+    these_emails = "emails about changes to #{card.follow_label}"
     case toggle
     when :off
       hash[:content] = '*never'
-      hash[:title]   = "stop sending emails about changes to #{card.follow_label}"
+      hash[:title]   = "stop sending #{these_emails}"
       hash[:verb]    = 'unfollow'
     when :on
       hash[:content] = '*always'
-      hash[:title]   = "send emails about changes to #{card.follow_label}"
+      hash[:title]   = "send #{these_emails}"
       hash[:verb]    = 'follow'
     end
-    follow_rule_name = card.default_follow_set_card.follow_rule_name( Auth.current.name )
-    hash[:path] = path name: follow_rule_name, action: :update,
-                       success: { layout: :modal, view: :follow_status },
-                       card: { content: "[[#{hash[:content]}]]" }
+    set_card = card.default_follow_set_card
+    hash[:path] = path(
+      name: set_card.follow_rule_name( Auth.current.name),
+      action: :update,
+      success: { layout: :modal, view: :follow_status },
+      card: { content: "[[#{hash[:content]}]]" }
+    )
     hash
   end
 

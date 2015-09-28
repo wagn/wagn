@@ -5,11 +5,12 @@ def virtual?; true end
 format :html do
 
   view :core do |args|
-    if card.left and Auth.signed_in?
+    if card.left && Auth.signed_in?
       render_rule_editor args
     else
-      followers_card = Card.fetch("#{card.cardname.left}+#{Card[:followers].name}")
-      nest followers_card, view: :titled, item: :link
+      fname = "#{card.cardname.left}+#{Card[:followers].name}"
+      fcard = Card.fetch fname
+      nest fcard, view: :titled, item: :link
     end
   end
 
@@ -21,7 +22,7 @@ format :html do
          </div>}
       end.join
     else
-      "No following preference"
+      'No following preference'
     end
   end
 
@@ -36,17 +37,25 @@ format :html do
    end
 =end
 
- view :rule_editor do |args|
-   preference_name = "#{card.left.default_follow_set_card.name}+#{Auth.current.name}+#{Card[:follow].name}"
-   rule_context = Card.fetch preference_name, new: {type_id: PointerID}
-   wrap_with :div, class: 'edit-rule' do
-     subformat(current_follow_rule_card || rule_context).render_edit_rule rule_context: rule_context,
-       success: { view: 'status', id: card.name }
-   end
- end
+  view :rule_editor do |args|
+    preference_name = [
+      card.left.default_follow_set_card.name,
+      Auth.current.name
+      Card[:follow].name
+    ]*'+'
+    rule_context = Card.fetch preference_name, new: { type_id: PointerID }
 
- def current_follow_rule_card
-   card.left.rule_card :follow, user: Auth.current
- end
+    wrap_with :div, class: 'edit-rule' do
+      follow_context = current_follow_rule_card || rule_context
+      subformat(follow_context).render_edit_rule(
+        rule_context: rule_context,
+        success: { view: 'status', id: card.name }
+      )
+    end
+  end
+
+  def current_follow_rule_card
+    card.left.rule_card :follow, user: Auth.current
+  end
 
 end

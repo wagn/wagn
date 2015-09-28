@@ -18,8 +18,14 @@ class Card
       host_class.machine_input do
         format._render_raw
       end
-      after_update_event_name = "after_machine_input_updated_#{host_class.name.gsub(':', '_')}"
-      host_class.event after_update_event_name.to_sym, after: :extend, on: :save do
+
+      event_suffix = host_class.name.gsub ':', '_'
+
+      host_class.event(
+        "after_machine_input_updated_#{ event_suffix }".to_sym,
+        after: :extend, on: :save
+      ) do
+
         wql_statement = { right_plus: [
           { codename: "machine_input" },
           { link_to: name}
@@ -30,11 +36,24 @@ class Card
         end
       end
 
-      host_class.event "before_machine_input_deleted_#{host_class.name.gsub(':','_')}".to_sym, after: :approve, on: :delete do
-        @involved_machines = Card.search( {right_plus: [{codename: "machine_input"}, {link_to: name}]}.merge(host_class.machines_wql) )
+      host_class.event(
+        "before_machine_input_deleted_#{ event_suffix }".to_sym,
+        after: :approve, on: :delete
+      ) do
+
+        @involved_machines = Card.search(
+          {right_plus: [
+            {codename: "machine_input"},
+            {link_to: name}
+          ]}.merge(host_class.machines_wql)
+        )
       end
 
-      host_class.event "after_machine_input_deleted_#{host_class.name.gsub(':','_')}".to_sym, after: :store_subcards, on: :delete do
+      host_class.event(
+       "after_machine_input_deleted_#{ event_suffix }".to_sym,
+       after: :store_subcards, on: :delete
+      ) do
+
         @involved_machines.each do |item|
           item.reset_machine_output! if item.kind_of? Machine
         end

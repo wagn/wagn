@@ -109,6 +109,7 @@ module ClassMethods
     #note: calling instance method breaks on dirty names
     key = name.to_name.key
     if card = Card.cache.read( key )
+      preserve_subcards
       Card.cache.delete key
       Card.cache.delete "~#{card.id}" if card.id
     end
@@ -164,14 +165,13 @@ module ClassMethods
 
     card = send( "fetch_from_cache_by_#{mark_type}", val )
 
-    if opts[:look_in_trash]
-      if card.nil? || (card.new_card? && !card.trash)
-        card = Card.where( mark_type => val ).take
-        needs_caching = card && !card.trash
-      end
-    elsif card.nil?
-      needs_caching = true
-      card = Card.where( mark_type => val, trash: false).take
+    if card.nil? || ( opts[:look_in_trash] && card.new_card? && !card.trash )
+      needs_caching = card.nil?
+      query = { mark_type => val }
+      query[:trash] = false unless opts[:look_in_trash]
+      card = fetch_from_db query
+      needs_caching ||= card && !card.trash
+      card.restore_subcards if card
     end
 
     [ card, mark, needs_caching ]
@@ -186,6 +186,10 @@ module ClassMethods
 
   def fetch_from_cache_by_key key
     fetch_from_cache key
+  end
+
+  def fetch_from_db query
+    Card.where(query).take
   end
 
   def new_for_cache name, opts

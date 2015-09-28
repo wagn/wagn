@@ -47,11 +47,15 @@ describe Card::Reference do
     newcard("Submarine","[[Yellow]]")
     newcard("Sun","[[Yellow]]")
     newcard("Yellow")
-    expect(Card["Yellow"].referencers.map(&:name).sort).to eq(%w{ Banana Submarine Sun })
+    yellow_refs = Card["Yellow"].referencers.map(&:name).sort
+    expect(yellow_refs).to eq(%w{ Banana Submarine Sun })
+
     y=Card["Yellow"];
     y.type_id= Card.fetch_id "UserForm";
     y.save!
-    expect(Card["Yellow"].referencers.map(&:name).sort).to eq(%w{ Banana Submarine Sun })
+
+    yellow_refs = Card["Yellow"].referencers.map(&:name).sort
+    expect(yellow_refs).to eq(%w{ Banana Submarine Sun })
   end
 
   it "container inclusion" do
@@ -80,16 +84,22 @@ describe Card::Reference do
     watermelon.update_referencers = true
     watermelon.name="grapefruit"
     watermelon.save!
-    expect(lew.reload.content).to eq("likes [[grapefruit]] and [[grapefruit+seeds|seeds]]")
+    result = "likes [[grapefruit]] and [[grapefruit+seeds|seeds]]"
+    expect(lew.reload.content).to eq(result)
   end
 
   it "should update referencers on rename when requested (case 2)" do
     card = Card['Administrator Menu+*self+*read']
-    refs = Card::Reference.where(referee_id: Card::AdministratorID).map(&:referer_id).sort
+    old_refs = Card::Reference.where(referee_id: Card::AdministratorID)
+    old_referers = old_refs.map(&:referer_id).sort
+
     card.update_referencers = true
     card.name='Administrator Menu+*type+*read'
     card.save
-    expect(Card::Reference.where(referee_id: Card::AdministratorID).map(&:referer_id).sort).to eq(refs)
+
+    new_refs = Card::Reference.where(referee_id: Card::AdministratorID)
+    new_referers = new_refs.map(&:referer_id).sort
+    expect(old_refs).to eq(new_refs)
   end
 
   it "should not update references when not requested" do
@@ -98,14 +108,21 @@ describe Card::Reference do
     watermelon_seeds = newcard('watermelon+seeds', 'black')
     lew = newcard('Lew', "likes [[watermelon]] and [[watermelon+seeds|seeds]]")
 
-    assert_equal [1,1,1,1], lew.references_to.map(&:present), "links should not be Wanted before"
+    assert_equal [1,1,1,1], lew.references_to.map(&:present),
+      "links should not be Wanted before"
+
     watermelon = Card['watermelon']
     watermelon.update_referencers = false
-    watermelon.name="grapefruit"
+    watermelon.name = 'grapefruit'
     watermelon.save!
-    expect(lew.reload.content).to eq("likes [[watermelon]] and [[watermelon+seeds|seeds]]")
-    assert_equal lew.references_to.order(:id).map(&:ref_type), ['L','P','P','L'], "links should be a LINK"
-    assert_equal lew.references_to.order(:id).map(&:present), [ 0, 0, 1, 0 ],  "only reference to +seeds should be present"
+    correct_content = 'likes [[watermelon]] and [[watermelon+seeds|seeds]]'
+    expect(lew.reload.content).to eq(correct_content)
+
+    ref_types = lew.references_to.order(:id).map(&:ref_type)
+    assert_equal ref_types, ['L','P','P','L'], "links should be a LINK"
+    refs_are_present = lew.references_to.order(:id).map(&:present)
+    assert_equal refs_are_present, [ 0, 0, 1, 0 ],
+      "only reference to +seeds should be present"
   end
 
   it "update referencing content on rename junction card" do
@@ -170,17 +187,15 @@ describe Card::Reference do
   end
 
   it "handles contextual names in Basic cards" do
-    card = Card.create type: 'Basic', name: 'basic with references',
-      content: '{{_+A}}'
+    Card.create type: 'Basic', name: 'basic w refs', content: '{{_+A}}'
     Card['A'].update_attributes! name: 'AAA', update_referencers: true
-    expect(Card['basic with references'].content).to eq '{{_+AAA}}'
+    expect(Card['basic w refs'].content).to eq '{{_+AAA}}'
   end
 
   it "handles contextual names in Search cards" do
-    card = Card.create type: 'Search', name: 'search with references',
-      content: '{"name":"_+A"}'
+    Card.create type: 'Search', name: 'search w refs', content: '{"name":"_+A"}'
     Card['A'].update_attributes! name: 'AAA', update_referencers: true
-    expect(Card['search with references'].content).to eq '{"name":"_+AAA"}'
+    expect(Card['search w refs'].content).to eq '{"name":"_+AAA"}'
   end
 
   it "should handle commented inclusion" do
@@ -201,34 +216,5 @@ describe Card::Reference do
     @e = Card.new(name: "Lewdog", content: "grrr")              # now there is
     expect(@e.name_referencers.map(&:name).include?("woof")).not_to eq(nil)
   end
-
-=begin
-
-  # This test doesn't make much sense to me... LWH
-  it "revise changes references from wanted to linked for new cards" do
-    new_card = Card.create(name: 'NewCard')
-    new_card.revise('Reference to [[WantedCard]], and to [[WantedCard2]]', Time.now, Card['quentin'].account),
-        new_format)
-
-    references = new_card.card_references(true)
-    references.size.should == 2
-    references[0].referee_key.should == 'WantedCard'
-    references[0].ref_type.should == Card::Reference::WANTED_PAGE
-    references[1].referee_key.should == 'WantedCard2'
-    references[1].ref_type.should == Card::Reference::WANTED_PAGE
-
-    wanted_card = Card.create(name: 'WantedCard')
-    wanted_card.revise('And here it is!', Time.now, Card['quentin'].account), new_format)
-
-    # link type stored for NewCard -> WantedCard reference should change from WANTED to LINKED
-    # reference NewCard -> WantedCard2 should remain the same
-    references = new_card.card_references(true)
-    references.size.should == 2
-    references[0].referee_key.should == 'WantedCard'
-    references[0].ref_type.should == Card::Reference::LINKED_PAGE
-    references[1].referee_key.should == 'WantedCard2'
-    references[1].ref_type.should == Card::Reference::WANTED_PAGE
-  end
-=end
 
 end

@@ -23,7 +23,7 @@ describe Card::RightSet do
 end
 
 describe Card::TypeSet do
-  it_generates name: "Book+*type", from: Card.new( type: "Book" )
+  it_generates name: 'Book+*type', from: Card.new(type: "Book")
 end
 
 describe Card::TypeSet do
@@ -44,13 +44,14 @@ describe Card::TypeSet do
 end
 
 describe Card::AllPlusSet do
-  it_generates name: "*all plus", from: Card.new( name: "Book+author" )
+  it_generates name: '*all plus', from: Card.new(name: 'Book+author')
 end
 
 describe Card::AllSet do
-  it_generates name: "*all", from: Card.new( type: "Book" )
+  it_generates name: '*all', from: Card.new(type: 'Book')
 end
 
 describe Card::TypePlusRightSet do
-  it_generates name: "Book+author+*type plus right", from: Card.new( name: "Iliad+author" )
+  author_card = Card.new(name: 'Iliad+author')
+  it_generates name: 'Book+author+*type plus right', from: author_card
 end

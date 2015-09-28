@@ -123,8 +123,8 @@ describe Card::Reference do
   end
 
   it "template inclusion" do
-    cardtype = Card.create! name: "ColorType", type: 'Cardtype', content: ""
-    Card.create! name: "ColorType+*type+*structure", content: "{{+rgb}}"
+    Card.create! name: 'ColorType', type: 'Cardtype', content: ''
+    Card.create! name: 'ColorType+*type+*structure', content: '{{+rgb}}'
     green = Card.create! name: "green", type: 'ColorType'
     rgb = newcard 'rgb'
     green_rgb = Card.create! name: "green+rgb", content: "#00ff00"
@@ -134,30 +134,30 @@ describe Card::Reference do
   end
 
   it "simple link" do
-    alpha = Card.create name: 'alpha'
-    beta = Card.create name: 'beta', content: "I link to [[alpha]]"
+    Card.create name: 'alpha'
+    Card.create name: 'beta', content: 'I link to [[alpha]]'
     expect(Card['alpha'].referencers.map(&:name)).to eq(['beta'])
     expect(Card['beta'].referees.map(&:name)).to eq(['alpha'])
   end
 
   it "link with spaces" do
-    alpha = Card.create! name: 'alpha card'
-    beta =  Card.create! name: 'beta card', content: "I link to [[alpha_card|ALPHA CARD]]"
+    Card.create! name: 'alpha card'
+    Card.create! name: 'beta card', content: 'I link to [[alpha_card]]'
     expect(Card['beta card'].referees.map(&:name)).to eq(['alpha card'])
     expect(Card['alpha card'].referencers.map(&:name)).to eq(['beta card'])
   end
 
 
   it "simple inclusion" do
-    alpha = Card.create name: 'alpha'
-    beta = Card.create name: 'beta', content: "I include to {{alpha}}"
+    Card.create name: 'alpha'
+    Card.create name: 'beta', content: 'I nest {{alpha}}'
     expect(Card['beta'].includees.map(&:name)).to eq(['alpha'])
     expect(Card['alpha'].includers.map(&:name)).to eq(['beta'])
   end
 
   it "non simple link" do
-    alpha = Card.create name: 'alpha'
-    beta = Card.create name: 'beta', content: "I link to [[alpha|ALPHA]]"
+    Card.create name: 'alpha'
+    Card.create name: 'beta', content: 'I link to [[alpha|ALPHA]]'
     expect(Card['beta'].referees.map(&:name)).to eq(['alpha'])
     expect(Card['alpha'].referencers.map(&:name)).to eq(['beta'])
   end

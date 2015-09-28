@@ -1,5 +1,6 @@
 class Card::Query
-  class RefClause < Clause
+  class RefClause
+    include Clause
     REFERENCE_DEFINITIONS = {
       # syntax:
       # wql query key => [ direction, {reference_type} ]
@@ -16,30 +17,33 @@ class Card::Query
       in:  [ :referee_id, :referer_id ]
     }
 
-    def initialize key, val, parent
-      @key, @val, @parent = key, val, parent
+    attr_accessor :conditions, :cardquery, :infield, :outfield
+
+    def table_alias
+      @table_alias ||= "cr#{@parent.table_id force=true}"
     end
 
-    def to_sql *args
-      dir, *type = REFERENCE_DEFINITIONS[ @key.to_sym ]
-      field1, field2 = REFERENCE_FIELDS[ dir ]
-      cond = []
+
+    def initialize key, val, parent
+      key, val, @parent = key, val, parent
+      @conditions = []
+
+      dir, *type = REFERENCE_DEFINITIONS[ key.to_sym ]
+      @infield, @outfield = REFERENCE_FIELDS[ dir ]
+
       if type.present?
         operator = (type.size==1 ? '=' : 'IN')
         quoted_letters = type.map { |letter| "'#{letter}'" } * ', '
-        cond << "ref_type #{operator} (#{quoted_letters})"
+        @conditions << "ref_type #{operator} (#{quoted_letters})"
       end
 
-      sql =  %[select distinct #{field1} as ref_id from card_references]
-      if @val == '_none'
-        cond << "present = 0"
+      if val == '_none'
+        @conditions << "present = 0"
       else
-        cardclause = CardClause.build(return: 'id', _parent: @parent).merge(@val)
-        sql << %[ join #{ cardclause.to_sql } as c on #{field2} = c.id]
+        @cardquery = val
       end
-      sql << %[ where #{ cond * ' and ' }] if cond.any?
 
-      "(#{sql})"
+      self
     end
   end
 end

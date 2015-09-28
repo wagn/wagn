@@ -20,8 +20,8 @@ module Card::Chunk
       (
         Card::Query::MODIFIERS.keys                +
         Card::Query::OPERATORS.keys                +
-        Card::Query::CardClause::ATTRIBUTES.keys   +
-        Card::Query::CardClause::CONJUNCTIONS.keys +
+        Card::Query::ATTRIBUTES.keys   +
+        Card::Query::CONJUNCTIONS.keys +
         ['desc', 'asc', 'count']
       ).map(&:to_name)
     )
@@ -39,8 +39,8 @@ module Card::Chunk
     # something like
     # prefix_patterns = [
     #     "\"\\s*(?:#{Card::Query::OPERATORS.keys.join('|')})\"\\s*,",
-    #     "\"\\s*(?:#{Card::Query::CardClause::PLUS_ATTRIBUTES}.keys.join('|')})\\s*:\\s*\\[\\s*",
-    #     "\"\\s*(?:#{(QUERY_KEYWORDS - Card::Query::CardClause::PLUS_ATTRIBUTES).join('|')})\"\\s*:",
+    #     "\"\\s*(?:#{Card::Query::PLUS_ATTRIBUTES}.keys.join('|')})\\s*:\\s*\\[\\s*",
+    #     "\"\\s*(?:#{(QUERY_KEYWORDS - Card::Query::PLUS_ATTRIBUTES).join('|')})\"\\s*:",
     #   ]
     # prefix_re: '(?<=#{prefix_patterns.join('|')})\\s*"'
     # But: What do we do with the "in" operator? After the first value there is no prefix which we can use to detect the following values as QueryReference chunks

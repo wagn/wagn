@@ -445,7 +445,7 @@ EOF
 
     def attachment name, args
       include Abstract::Attachment
-      set_specific_attributes name,  :load_from_mod, :cached_upload, "remote_#{name}_url".to_sym
+      set_specific_attributes name, :load_from_mod, :cached_upload, "remote_#{name}_url".to_sym
       uploader_class = args[:uploader] || FileUploader
       mount_uploader name, uploader_class
     end

@@ -88,7 +88,7 @@ format :html do
 
   view :preview_editor, :tags=>:unknown_ok do |args|
     cached_upload_card_name = Card::Env.params[:attachment_card_name]
-    cached_upload_card_name.gsub!(/\[\w+\]$/,"[cached_upload]")
+    cached_upload_card_name.gsub!(/\[\w+\]$/, "[cached_upload]")
     <<-HTML
       <div class="chosen-file">
         <input type="hidden" name="#{cached_upload_card_name}" value="#{card.selected_action_id}">
@@ -128,9 +128,11 @@ format :html do
             <span>
                 #{card.new_card? ? 'Add' : 'Replace'} #{card.attachment_name}...
             </span>
-             <input class="file-upload slotter form-control" type="file" name="card[#{card.type_code}]" id="card_#{card.type_code}">
-             #{hidden_field_tag 'attachment_type_id', card.type_id}
-             #{hidden_field card.attachment_name, {:class=>"attachment_card_name"}}
+             <input class="file-upload slotter form-control" type="file" 
+                name="card[#{card.type_code}]" id="card_#{card.type_code}">
+             #{ hidden_field_tag 'attachment_type_id', card.type_id }
+             #{ hidden_field card.attachment_name, :class => "attachment_card_name" }
+             #{ hidden_field_tag 'file_card_name', card.cardname.url_key }
         </span>
       </div>
       <div id="progress" class="progress" style="display: none;">

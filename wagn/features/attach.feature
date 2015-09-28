@@ -4,6 +4,10 @@ Feature: File Upload
 
   Background:
     Given I am signed in as Joe Admin
+    Then I go to  "/new Cardtype"
+    And I fill in "card_name" with "complicated_card"
+    And I press "Submit"
+    And I create HTML card "complicated card+*type+*structure" with content "{{+image}}{{+description}}"
 
   Scenario: Uploading a file
     When I go to new File
@@ -42,11 +46,7 @@ Feature: File Upload
     Then I should see an image of size "large" and type "jpg"
 
   Scenario: uploading a file as a field in a form
-    When I go to  "/new Cardtype"
-    And I fill in "card_name" with "complicated_card"
-    And I press "Submit"
-    And I create HTML card "complicated card+*type+*structure" with content "{{+image}}{{+description}}"
-    And I go to "/new complicated_card"
+    When I go to "/new complicated_card"
     And I fill in "card_name" with "Vignesh has a complicated relationship"
     And I wait until ajax response done
     And I upload the image "image.png"
@@ -54,6 +54,20 @@ Feature: File Upload
     Then I should see "image.png 34.3 KB"
     And I press "Submit" 
     Then I should see an image of size "medium" and type "png"
+
+  Scenario: updating a file as a field in a form
+    When I go to "/new complicated_card"
+    And I fill in "card_name" with "Vignesh has a complicated relationship"
+    And I wait until ajax response done
+    And I upload the image "image.png"
+    And I wait until ajax response done
+    And I press "Submit" 
+    And I edit "Vignesh has a complicated relationship"
+    And I upload the image "image2.jpg"
+    And I wait until ajax response done
+    Then I should see "image2.jpg 69.8 KB"
+    And I press "Submit"
+    Then I should see an image of size "medium" and type "jpg"
 
 
 

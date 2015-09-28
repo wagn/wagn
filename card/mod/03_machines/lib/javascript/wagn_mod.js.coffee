@@ -25,16 +25,22 @@ $.extend wagn,
     '.file-upload'           : -> wagn.upload_file(this)
     '.etherpad-textarea'     : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
   }
-  upload_file: (fileupload)->
-    # for file as a subcard in a form, excess parameters are inlcuded in the request which cause errors.
+  upload_file: (fileupload) ->
+    # for file as a subcard in a form, 
+    # excess parameters are inlcuded in the request which cause errors.
     # only the file, type_id and attachment_card_name are needed
     # attachment_card_name is the original card name, ex: card[subcards][+logo][image], card[file]
-    $(fileupload).bind 'fileuploadsubmit', (e,data)->
+    $(fileupload).bind 'fileuploadsubmit', (e,data) ->
       $_this = $(this)
       card_name = $_this.siblings(".attachment_card_name:first").attr("name")
       type_id = $_this.siblings("#attachment_type_id").val()
       data.formData = {"card[type_id]":type_id,"attachment_card_name":card_name}
-    $(fileupload).fileupload( dataType: 'html', done: wagn.doneFile, add: wagn.chooseFile, progressall: wagn.progressallFile )#, forceIframeTransport: true )    
+    $_fileupload = $(fileupload)
+    if $_fileupload.closest("form").attr("action").indexOf("update") > -1
+      url = "/card/update/"+$(fileupload).siblings("#file_card_name").val()
+    else
+      url = "/card/create"
+    $(fileupload).fileupload( url: url, dataType: 'html', done: wagn.doneFile, add: wagn.chooseFile, progressall: wagn.progressallFile )#, forceIframeTransport: true )    
 
   initPointerList: (input)->
     optionsCard = input.closest('ul').data('options-card')

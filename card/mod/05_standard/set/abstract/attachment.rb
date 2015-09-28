@@ -110,6 +110,7 @@ def upload_cache_card
   @upload_cache_card ||= Card["new_#{attachment_name}".to_sym ]
 end
 
+# action id of the cached upload
 def cached_upload= value
   @cached_upload = value
 end

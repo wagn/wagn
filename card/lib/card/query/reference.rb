@@ -1,7 +1,7 @@
 class Card::Query
-  class RefClause
-    include Clause
-    REFERENCE_DEFINITIONS = {
+  class Reference
+
+    DEFINITIONS = {
       # syntax:
       # wql query key => [ direction, {reference_type} ]
           # direction      = :out | :in
@@ -12,7 +12,7 @@ class Card::Query
       include:  [ :out, 'I' ],     included_by:    [ :in, 'I' ]
     }
 
-    REFERENCE_FIELDS = {
+    FIELDMAP = {
       out: [ :referer_id, :referee_id ],
       in:  [ :referee_id, :referer_id ]
     }
@@ -28,12 +28,12 @@ class Card::Query
       key, val, @parent = key, val, parent
       @conditions = []
 
-      dir, *type = REFERENCE_DEFINITIONS[ key.to_sym ]
-      @infield, @outfield = REFERENCE_FIELDS[ dir ]
+      direction, *reftype = DEFINITIONS[ key.to_sym ]
+      @infield, @outfield = FIELDMAP[ direction ]
 
-      if type.present?
-        operator = (type.size==1 ? '=' : 'IN')
-        quoted_letters = type.map { |letter| "'#{letter}'" } * ', '
+      if reftype.present?
+        operator = (reftype.size==1 ? '=' : 'IN')
+        quoted_letters = reftype.map { |letter| "'#{letter}'" } * ', '
         @conditions << "ref_type #{operator} (#{quoted_letters})"
       end
 

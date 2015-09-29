@@ -140,7 +140,7 @@ class Card
 
 
       def join_references key, val
-        r = RefClause.new( key, val, self )
+        r = Reference.new( key, val, self )
         joins << Join.new(:from=>self, :to=>r, :to_field=>r.infield)
         s = nil
         if r.cardquery

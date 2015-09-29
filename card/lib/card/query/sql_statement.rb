@@ -19,7 +19,11 @@ class Card
       end
 
       def to_s
-        ['SELECT DISTINCT', @fields, 'FROM', @tables, @joins, @where, @group, @order, @limit_and_offset].compact * ' '
+        ['SELECT DISTINCT',
+          @fields, 'FROM', @tables, @joins,
+          @where, @group,
+          @order, @limit_and_offset
+        ].compact * ' '
       end
 
       def tables
@@ -37,19 +41,28 @@ class Card
           when :card;    "#{table}.name"
           when :count;   "coalesce(count(*),0) as count"
           when :content; "#{table}.db_content"
-          else           ATTRIBUTES[field.to_sym]==:basic ? "#{table}.#{field}" : safe_sql(field)
+          else
+            if ATTRIBUTES[field.to_sym]==:basic
+              "#{table}.#{field}"
+            else
+              safe_sql field
+            end
           end
 
         [ field, @mods[:sort_join_field] ].compact * ', '
       end
 
       def joins query
-        [ join_clause(query), query.subqueries.map { |sq| joins sq }  ].flatten * "\n"
+        [ join_clause(query),
+          query.subqueries.map { |sq| joins sq }
+        ].flatten * "\n"
       end
 
       def join_clause query
         query.joins.map do |join|
-          join.to_sql + (join.to_table == 'cards' ?  " AND #{standard_conditions query}" : '')
+          j =  join.to_sql
+          j += " AND #{standard_conditions query}" if join.to_table == 'cards'
+          j
         end
       end
 
@@ -124,7 +137,11 @@ class Card
           order_key ||= @mods[:sort].blank? ? "update" : @mods[:sort]
 
           order_directives = [order_key].flatten.map do |key|
-            dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[key.to_sym]||'asc') : safe_sql(@mods[:dir]) #wonky
+            dir = if @mods[:dir].blank?
+                    DEFAULT_ORDER_DIRS[key.to_sym] || 'asc'
+                  else
+                    safe_sql @mods[:dir]
+                  end
             sort_field key, @mods[:sort_as], dir
           end.join ', '
           "ORDER BY #{order_directives}"

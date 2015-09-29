@@ -1,11 +1,27 @@
 # -*- encoding : utf-8 -*-
 
 class Card
+  # Card::Query is for finding implicit lists (or counts of lists) of cards.
+  #
+  # Search and Set cards use Card::Query to query the database, and it's also
+  # frequently used directly in code.
+  #
+  # Query "statements" (objects, really) are made in WQL (Wagn Query
+  # Language). Because WQL is used by Wagneers, the primary language
+  # documentation is on wagn.org. (http://wagn.org/WQL_Syntax). Note that the
+  # examples there are in JSON, like Search card content, but statements in
+  # Card::Query are in ruby form.
+  #
+  # In Wagn's current form, Card::Query generates and executes SQL statements.
+  # However, the SQL generation is largely (not yet fully) separated from the
+  # WQL statement interpretation.
+
   class Query
 
+
     require_dependency 'card/query/clause'
-    require_dependency 'card/query/value_clause'
-    require_dependency 'card/query/ref_clause'
+    require_dependency 'card/query/value'
+    require_dependency 'card/query/reference'
     require_dependency 'card/query/attributes'
     require_dependency 'card/query/sql_statement'
     require_dependency 'card/query/join'
@@ -13,14 +29,6 @@ class Card
     include Clause
     include Attributes
 
-    MODIFIERS = {}
-    %w{ conj return sort sort_as group dir limit offset }.each do |key|
-      MODIFIERS[key.to_sym] = nil
-    end
-
-    OPERATORS = %w{ != = =~ < > in ~ }.inject({}) {|h,v| h[v]=nil; h }.merge({
-      eq: '=', gt: '>', lt: '<', match: '~', ne: '!=', :'not in'=> nil
-    }.stringify_keys)
 
     ATTRIBUTES = {
       basic:           %w{ name type_id content id key updater_id left_id
@@ -36,45 +44,49 @@ class Card
       ignore:          %w{ prepend append view params vars size }
     }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
 
-    DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
     CONJUNCTIONS = { any: :or, in: :or, or: :or, all: :and, and: :and }
 
-    attr_reader :statement, :context, :mods, :conditions, :subqueries, :superquery
+    MODIFIERS = %w{ conj return sort sort_as group dir limit offset }
+      .inject({}) { |h,v| h[v.to_sym]=nil; h }
+
+    OPERATORS = %w{ != = =~ < > in ~ }.inject({}) {|h,v| h[v]=v; h }.merge({
+      eq: '=', gt: '>', lt: '<', match: '~', ne: '!=', :'not in'=> nil
+    }.stringify_keys)
+
+    DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
+
+    attr_reader :statement, :context, :mods, :conditions,
+      :subqueries, :superquery
     attr_accessor :joins, :table_seq, :conditions_on_join
 
     def initialize statement
       @subqueries, @joins, @conditions = [], [], []
-
-      @mods = MODIFIERS.clone
+      @mods = {}
       @statement = statement.clone
 
       @context    = @statement.delete(:context)    || ''
       @superquery = @statement.delete(:superquery) || nil
       @vars       = @statement.delete(:vars)       || {}
-
-      # FIXME "params" are really just adjustments to the statement and should
-      # be merged prior to initialization
-      @statement.merge!(@statement.delete(:params) || {})
-
-      @conditions_on_join = @superquery && @superquery.conditions_on_join
       @vars.symbolize_keys!
 
       interpret @statement
       self
     end
 
+    # RUNNING QUERIES
+
     def run
       retrn = statement[:return].present? ? statement[:return].to_s : 'card'
       if retrn == 'card'
-        simple_run('name').map do |name|
+        get_results('name').map do |name|
           Card.fetch name, new: {}
         end
       else
-        simple_run retrn
+        get_results retrn
       end
     end
 
-    def simple_run retrn
+    def get_results retrn
       rows = run_sql
       if retrn == 'name' && (statement[:prepend] || statement[:append])
         rows.map do |row|
@@ -97,8 +109,10 @@ class Card
     end
 
     def sql
-      @sql ||= SqlStatement.new( self ).build.to_s
+      @sql ||= SqlStatement.new(self).build.to_s
     end
+
+    # QUERY HIERARCHY
 
     def root
       @root ||= @superquery ? @superquery.root : self
@@ -128,7 +142,7 @@ class Card
       when Hash;     clause
       when String;   { :key => clause.to_name.key }
       when Integer;  { :id => clause }
-      else;          raise BadQuery, "Invalid cardclause args #{clause.inspect}"
+      else raise BadQuery, "Invalid query args #{clause.inspect}"
       end
     end
 
@@ -137,7 +151,7 @@ class Card
       when Integer, Float, Symbol, Hash ; val
       when String, Card::Name           ; normalize_string_value val
       when Array                        ; val.map { |v| normalize_value v }
-      else                              ; raise BadQuery, "unknown WQL value type: #{val.class}"
+      else raise BadQuery, "unknown WQL value type: #{val.class}"
       end
     end
 
@@ -170,11 +184,19 @@ class Card
     end
 
     def add_condition *args
-      condition_array = @conditions_on_join ? joins.last.conditions : @conditions
-      condition_array << if args.size > 1
-        [ args.shift, ValueClause.new(args.shift, self) ]
+      cond = conditions_on_join ? joins.last.conditions : @conditions
+      cond << if args.size > 1
+        [ args.shift, Value.new(args.shift, self) ]
       else
         [ :cond, SqlCond.new(args[0]) ]
+      end
+    end
+
+    def conditions_on_join
+      if @conditions_on_join.present?
+        @conditions_on_join = !!@superquery && @superquery.conditions_on_join
+      else
+        @conditions_on_join
       end
     end
 

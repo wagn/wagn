@@ -1,7 +1,11 @@
 class Card
   class Query
     class Join
-      attr_accessor :from, :to, :from_table, :from_alias, :from_field, :to_table, :to_alias, :to_field, :side, :conditions
+      attr_accessor :conditions, :side,
+        :from, :to,
+        :from_table, :to_table,
+        :from_alias, :to_alias,
+        :from_field, :to_field
 
       def initialize opts={}
         from_and_to opts
@@ -11,9 +15,9 @@ class Card
         @from_field ||= :id
         @to_field   ||= :id
 
-        @conditions = [ [ :cond, SqlCond.new( "#{from_alias}.#{from_field} = #{to_alias}.#{to_field}") ] ]
+        on = SqlCond.new "#{from_alias}.#{from_field} = #{to_alias}.#{to_field}"
+        @conditions = [[:cond, on]]
       end
-
 
       def from_and_to opts
         [:from, :to].each do |side|
@@ -24,7 +28,7 @@ class Card
             { table: object.shift, alias: object.shift, field: object.shift }
           when Card::Query
             { table: 'cards', alias: object.table_alias }
-          when Card::Query::RefClause
+          when Card::Query::Reference
             { table: 'card_references', alias: object.table_alias }
           else
             raise "invalid #{side} option: #{object}"

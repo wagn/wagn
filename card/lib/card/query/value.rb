@@ -1,13 +1,13 @@
 class Card
   class Query
-    class ValueClause
+    class Value
 
       include Clause
 
-      attr_reader :cardclause, :operator, :value
+      attr_reader :query, :operator, :value
 
-      def initialize rawvalue, cardclause
-        @cardclause = cardclause
+      def initialize rawvalue, query
+        @query = query
         @operator, @value = parse_value rawvalue
         canonicalize_operator
       end
@@ -24,17 +24,15 @@ class Card
       end
 
       def canonicalize_operator
-        @operator = @operator.to_s
-
-        if target = OPERATORS[@operator]
+        if target = OPERATORS[@operator.to_s]
           @operator = target
+        else
+          raise "Invalid Operator #{@operator}"
         end
-
-        raise "Invalid Operator #{@operator}" unless OPERATORS.has_key?(@operator)
       end
 
 
-      def sqlize(v)
+      def sqlize v
         case v
         when Query, SqlCond; v.to_sql
         when Array;    "(" + v.flatten.collect {|x| sqlize(x)}.join(',') + ")"
@@ -44,13 +42,17 @@ class Card
 
       def to_sql field
         op,v = @operator, @value
-        table = @cardclause.table_alias
+        table = @query.table_alias
 
         field, v = case field.to_s
-          when "cond";     return "(#{sqlize(v)})"
-          when "name";     ["#{table}.key",      [v].flatten.map(&:to_name).map(&:key)]
-          when "content";  ["#{table}.db_content", v]
-          else;            ["#{table}.#{safe_sql(field)}", v]
+          when "cond"
+            return "(#{sqlize(v)})"
+          when "name"
+            ["#{table}.key", [v].flatten.map(&:to_name).map(&:key)]
+          when "content"
+            ["#{table}.db_content", v]
+          else
+            ["#{table}.#{safe_sql field}", v]
           end
 
         v = v[0] if Array===v && v.length==1 && op != 'in'

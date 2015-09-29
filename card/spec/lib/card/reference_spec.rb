@@ -198,7 +198,7 @@ describe Card::Reference do
   end
 
   it 'handles contextual names in Search cards' do
-    Card.create type: 'Search', name: 'search w refs', content: '{"name:"_+A"}'
+    Card.create type: 'Search', name: 'search w refs', content: '{"name":"_+A"}'
     Card['A'].update_attributes! name: 'AAA', update_referencers: true
     expect(Card['search w refs'].content).to eq '{"name":"_+AAA"}'
   end

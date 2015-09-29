@@ -311,13 +311,6 @@ describe Card::Query do
 
   end
 
-  describe "params" do
-    it "should merge in params as normal WQL" do
-      expect(Card::Query.new( params: {name: "two"}).run.first.name).to eq('Two')
-    end
-  end
-
-
   describe "match" do
     it "should reach content and name via shortcut" do
       expect(Card::Query.new( match: "two").run.map(&:name).sort).to eq(CARDS_MATCHING_TWO)

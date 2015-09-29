@@ -104,14 +104,7 @@ describe Card::Set::Type::ListedBy do
         end
         it { is_expected.to eq ['50 grades of shy','Parry Moppins'] }
       end
-      context 'when the name of Parry Hotter+authors changed' do
-        before do
-          Card['Parry Hotter+authors'].update_attributes!(
-            name: 'Parry Hotter+basic'
-          )
-        end
-        it { is_expected.to eq ['50 grades of shy'] }
-      end
+
       context 'when the name of Darles Chickens changed' do
         before do
           Card['Darles Chickens'].update_attributes!(
@@ -123,10 +116,11 @@ describe Card::Set::Type::ListedBy do
         it { is_expected.to eq ['50 grades of shy', 'Parry Hotter'] }
       end
       context 'when the cartype of Darles Chickens changed' do
-        before do
-          Card['Darles Chickens'].update_attributes! type_id: Card::BasicID
+        it 'raises error' do
+          expect do
+            Card['Darles Chickens'].update_attributes! type_id: Card::BasicID
+          end.to raise_error
         end
-        it { is_expected.to eq [] }
       end
       context 'when the name of Darles Chickens+books changed' do
         subject { Card.fetch('Darles Chickens+authors').item_names.sort }

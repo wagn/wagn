@@ -87,7 +87,7 @@ format :html do
   end
 
   view :preview_editor, tags: :unknown_ok do |args|
-    cached_upload_card_name = Card::Env.params[:attachment_card_name]
+    cached_upload_card_name = Card::Env.params[:attachment_upload]
     cached_upload_card_name.gsub!(/\[\w+\]$/, "[cached_upload]")
     <<-HTML
       <div class="chosen-file">

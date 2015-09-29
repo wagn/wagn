@@ -23,7 +23,7 @@ event :upload_attachment, before: :validate_name, on: :save, when: proc { |c| c.
   abort :success
 end
 
-event :assign_attachment_on_create, after: :prepare, on: create, when: proc { |c| c.save_preliminary_upload? } do
+event :assign_attachment_on_create, after: :prepare, on: :create, when: proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@cached_upload))
     upload_cache_card.selected_action_id = action.id
     upload_cache_card.select_file_revision

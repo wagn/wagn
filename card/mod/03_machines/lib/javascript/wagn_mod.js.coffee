@@ -34,7 +34,7 @@ $.extend wagn,
       $_this = $(this)
       card_name = $_this.siblings(".attachment_card_name:first").attr("name")
       type_id = $_this.siblings("#attachment_type_id").val()
-      data.formData = {"card[type_id]":type_id,"attachment_card_name":card_name}
+      data.formData = {"card[type_id]":type_id,"attachment_upload":card_name}
     $_fileupload = $(fileupload)
     if $_fileupload.closest("form").attr("action").indexOf("update") > -1
       url = "/card/update/"+$(fileupload).siblings("#file_card_name").val()

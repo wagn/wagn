@@ -15,7 +15,24 @@ class Card
   # In Wagn's current form, Card::Query generates and executes SQL statements.
   # However, the SQL generation is largely (not yet fully) separated from the
   # WQL statement interpretation.
-
+  #
+  # The most common way to use Card::Query is as follows:
+  #     list_of_cards = Card::Query.run(statement)
+  #
+  # This is equivalent to:
+  #     query = Card::Query.new(statement)
+  #     list_of_cards = query.run
+  #
+  # Upon initiation, the query is interpreted, and the following key objects
+  # are populated:
+  #
+  # - @join - an Array of Card::Query::Join objects
+  # - @conditions - an Array of conditions
+  # - @mod - a Hash of other query-altering keys
+  # - @subqueries - a list of other queries nested within this one
+  #
+  # Each condition is either a SQL-ready string (boo) or an Array in this form:
+  #    [ field_string_or_sym, Card::Value::Query object ]
   class Query
 
 
@@ -78,14 +95,13 @@ class Card
     # a card identifier from SQL and then hooking into our caching system (see
     # Card::Fetch)
 
-    # run the current query
-    # @return array of card objects by default
-
     def self.run statement
       query = new statement
       query.run
     end
 
+    # run the current query
+    # @return array of card objects by default
     def run
       retrn = statement[:return].present? ? statement[:return].to_s : 'card'
       if retrn == 'card'
@@ -97,6 +113,7 @@ class Card
       end
     end
 
+    # @return Integer for :count, otherwise Array of Strings or Integers
     def get_results retrn
       rows = run_sql
       if retrn == 'name' && (statement[:prepend] || statement[:append])

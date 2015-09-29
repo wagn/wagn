@@ -7,10 +7,10 @@ class Card
     class SetGenerator < NamedBase
       source_root File.expand_path('../templates', __FILE__)
 
-      argument :set_pattern, :required => true
-      argument :anchors, :required=>true, :type=>:array
-      class_option 'core', :type => :boolean, aliases: '-c', :default => false, :group => :runtime, 
-       :desc=>'create set files in Card gem'
+      argument :set_pattern, required: true
+      argument :anchors, required: true, type: :array
+      class_option 'core', type: :boolean, aliases: '-c', default: false, group: :runtime,
+       desc: 'create set files in Card gem'
 
       def create_files
         mod_path = if options.core?

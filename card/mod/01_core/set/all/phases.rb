@@ -91,6 +91,7 @@ end
 
 
 def extend
+
   run_callbacks :extend
   run_callbacks :subsequent
 rescue =>e
@@ -119,18 +120,35 @@ end
 
 
 def event_applies? opts
-  if opts[:on]
-    return false unless Array.wrap( opts[:on] ).member? @action
+  on_condition_applies?(opts[:on]) &&
+    changed_condition_applies?(opts[:changed]) &&
+    when_condition_applies?(opts[:when])
+end
+
+def on_condition_applies? action
+  if action
+    Array.wrap(action).member? @action
+  else
+    true
   end
-  if changed_field = opts[:changed]
-    changed_field = 'db_content' if changed_field.to_sym == :content
+end
+
+def changed_condition_applies? db_column
+  if db_column
+    db_column = 'db_content' if db_column.to_sym == :content
     changed_field = 'type_id' if changed_field.to_sym == :type
-    return false if @action == :delete or !changes[ changed_field.to_s ]
+    @action != :delete && changes[db_column.to_s]
+  else
+    true
   end
-  if opts[:when]
-    return false unless opts[:when].call self
+end
+
+def when_condition_applies? block
+  if block
+    block.call self
+  else
+    true
   end
-  true
 end
 
 
@@ -148,7 +166,7 @@ end
 event :process_subcards, :after=>:filter_empty_subcards, :on=>:save do
 end
 
-# event :process_subcards, :after=>:approve, :on=>:save do
+# event :approve_subcards, after: :process_subcards do
 #   subcards.process_if(:context=>self) do |sub_key, opts|
 #     sub_key != key &&
 #       (
@@ -170,9 +188,9 @@ event :approve_subcards, :after=>:process_subcards do
   end
 end
 
-event :store_subcards, :after=>:store do
+event :store_subcards, after: store do
   subcards.each do |subcard|
-    subcard.save! :validate=>false if subcard != self#unless @draft
+    subcard.save! validate: false if subcard != self#unless @draft
   end
 
   # ensures that a supercard can access subcards of self

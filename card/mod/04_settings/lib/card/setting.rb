@@ -15,13 +15,13 @@ class Card
     end
 
     @@group_names = {
-      :templating    => "Templating",
-      :permission    => "Permissions",
-      :webpage       => "Webpage",
-      :pointer       => "Pointer",
-      :editing_cue   => "Editing cues",
-      :event         => "Events",
-      :other         => "Other"
+      templating:  "Templating",
+      permission:  "Permissions",
+      webpage:     "Webpage",
+      pointer:     "Pointer",
+      editing_cue: "Editing cues",
+      event:       "Events",
+      other:       "Other"
     }
     @@groups = @@group_names.keys.each_with_object({}) { |key, groups| groups[key] = [] }
     @@user_specific = ::Set.new
@@ -35,10 +35,10 @@ class Card
     end
 
     # usage:
-    # setting_opts :group              => :permission | :event | ...
-    #              :position           => <Fixnum> (starting at 1, default: add to end)
-    #              :rule_type_editable => true | false (default: false)
-    #              :restricted_to_type => <cardtype> | [ <cardtype>, ...]
+    # setting_opts group:              :permission | :event | ...
+    #              position:           <Fixnum> (starting at 1, default: add to end)
+    #              rule_type_editable: true | false (default: false)
+    #              restricted_to_type: <cardtype> | [ <cardtype>, ...]
     def setting_opts opts
       group = opts[:group] || :other
       @@groups[group] ||= []

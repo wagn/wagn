@@ -1,26 +1,26 @@
 class Card
 
   class SetPattern
-    
+
     class << self
       attr_accessor :pattern_code, :pattern_id, :junction_only, :assigns_type, :anchorless, :anchor_parts_count
-      
+
       def card_keys
         @@card_keys ||= Card.set_patterns.inject({}) do |hash, set_pattern|
-          card_key = Card.fetch( set_pattern.pattern_code.to_sym, :skip_modules=>true ).key
+          card_key = Card.fetch( set_pattern.pattern_code.to_sym, skip_modules: true ).key
           hash[ card_key ] = true
           hash
         end
       end
-      
+
       def find pattern_code
-        Card.set_patterns.find { |sub| sub.pattern_code == pattern_code }        
+        Card.set_patterns.find { |sub| sub.pattern_code == pattern_code }
       end
-    
+
       def junction_only?
         !!junction_only
       end
-    
+
       def anchorless?
         !!anchorless
       end
@@ -30,7 +30,7 @@ class Card
       end
 
       def pattern
-        Card.fetch(self.pattern_id, :skip_modules=>true).cardname
+        Card.fetch(self.pattern_id, skip_modules: true).cardname
       end
 
       def register pattern_code, opts={}
@@ -48,7 +48,7 @@ class Card
         junction_only? ? card.cardname.junction? : true
       end
 
-      def anchor_parts_count 
+      def anchor_parts_count
         @anchor_parts_count ||= ( anchorless? ? 0 : 1 )
       end
 

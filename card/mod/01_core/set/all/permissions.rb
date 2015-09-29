@@ -1,5 +1,5 @@
 
-Card.error_codes.merge! :permission_denied=>[:denial, 403], :captcha=>[:errors,449]
+Card.error_codes.merge! permission_denied: [:denial, 403], captcha: [:errors,449]
 
 
 # ok? and ok! are public facing methods to approve one action at a time
@@ -7,8 +7,8 @@ Card.error_codes.merge! :permission_denied=>[:denial, 403], :captcha=>[:errors,4
 #   fetching: if the optional :trait parameter is supplied, it is passed
 #      to fetch and the test is perfomed on the fetched card, therefore:
 #
-#      :trait=>:account         would fetch this card plus a tag codenamed :account
-#      :trait=>:roles, :new=>{} would initialize a new card with default ({}) options.
+#      trait: :account         would fetch this card plus a tag codenamed :account
+#      trait: :roles, new: {} would initialize a new card with default ({}) options.
 
 
 def ok? action
@@ -44,7 +44,7 @@ def permission_rule_card action
 
   rcard = Auth.as_bot do
     if ['_left','[[_left]]'].member?(opcard.db_content) && self.junction?  # compound cards can inherit permissions from left parent
-      lcard = left_or_new( :skip_virtual=>true, :skip_modules=>true )
+      lcard = left_or_new( skip_virtual: true, skip_modules: true )
       if action==:create && lcard.real? && !lcard.action==:create
         action = :update
       end
@@ -102,7 +102,7 @@ def ok_to_create
   if @action_ok and junction?
     [:left, :right].each do |side|
       next if side==:left && @superleft   # left is supercard; create permissions will get checked there.
-      part_card = send side, :new=>{}
+      part_card = send side, new: {}
       if part_card && part_card.new_card? # if no card, there must be other errors
         unless part_card.ok? :create
           deny_because you_cant("create #{part_card.name}")
@@ -142,7 +142,7 @@ def ok_to_comment
 end
 
 
-event :set_read_rule, :before=>:store do
+event :set_read_rule, before: :store do
   if trash == true
     self.read_rule_id = self.read_rule_class = nil
   else
@@ -155,7 +155,7 @@ event :set_read_rule, :before=>:store do
 
     if !new_card? && type_id_changed?
       Auth.as_bot do
-        Card.search(:left=>self.name).each do |plus_card|
+        Card.search(left: self.name).each do |plus_card|
           plus_card = plus_card.refresh.update_read_rule
         end
       end
@@ -172,12 +172,12 @@ def update_read_rule
   #warn "updating read rule for #{inspect} to #{rcard.inspect}, #{rclass}"
 
   self.read_rule_class = rclass
-  Card.where(:id=>self.id).update_all(:read_rule_id=>rcard.id, :read_rule_class=>rclass)
+  Card.where(id: self.id).update_all(read_rule_id: rcard.id, read_rule_class: rclass)
   expire
 
   # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
   Auth.as_bot do
-    Card.search(:left=>self.name).each do |plus_card|
+    Card.search(left: self.name).each do |plus_card|
       if plus_card.rule(:read) == '_left'
         plus_card.update_read_rule
       end
@@ -193,7 +193,7 @@ def add_to_read_rule_update_queue updates
 end
 
 
-event :check_permissions, :after=>:approve do
+event :check_permissions, after: :approve do
   task = if @action != :delete && comment #will be obviated by new comment handling
     :comment
   else
@@ -231,10 +231,10 @@ def have_recaptcha_keys?
     !!( Card.config.recaptcha_public_key && Card.config.recaptcha_private_key )
 end
 
-event :recaptcha, :before=>:approve do
+event :recaptcha, before: :approve do
   if !@supercard && !Env[:recaptcha_used] && recaptcha_on?
     Env[:recaptcha_used] = true
-    Env[:controller].verify_recaptcha :model=>self, :attribute=>:captcha
+    Env[:controller].verify_recaptcha model: self, attribute: :captcha
   end
 end
 

@@ -5,7 +5,7 @@ describe Card::Set::Type::File do
   context "new file card" do
     before do
       Card::Auth.as_bot do
-        Card.create :name => "file card", :type_code=>'file', :file=>File.new( File.join FIXTURES_PATH, 'file1.txt' )
+        Card.create name: "file card", type_code: 'file', file: File.new( File.join FIXTURES_PATH, 'file1.txt' )
       end
     end
     subject { Card['file card'] }
@@ -43,7 +43,7 @@ describe Card::Set::Type::File do
 
     context "updated file card" do
       before do
-        subject.update_attributes! :file=>File.new( File.join FIXTURES_PATH, 'file2.txt' )
+        subject.update_attributes! file: File.new( File.join FIXTURES_PATH, 'file2.txt' )
       end
       it "updates file" do
         expect(subject.file.read.strip).to eq "file2"
@@ -60,7 +60,7 @@ describe Card::Set::Type::File do
 
     context 'subcards' do
       it 'handles file subcards' do
-        Card.create! :name=>'new card with file', :subcards=>{'+my file'=>{:content=>'ignore content', :type_id=>Card::FileID, :file=> File.open(File.join(FIXTURES_PATH, 'file1.txt'))}}
+        Card.create! name: 'new card with file', subcards: {'+my file'=>{content: 'ignore content', type_id: Card::FileID, file: File.open(File.join(FIXTURES_PATH, 'file1.txt'))}}
         expect(Card['new card with file+my file'].file.file.read.strip).to eq 'file1'
       end
 
@@ -69,21 +69,9 @@ describe Card::Set::Type::File do
 
   it 'handles urls' do
     url = 'http://wagn.org/files/bruce_logo-large-122798.png'
-    Card.create! :name=>'url test', :type_id=>Card::FileID, :remote_file_url=> url
+    Card.create! name: 'url test', type_id: Card::FileID, remote_file_url: url
     expect(Card['url test'].file.size).to be > 0
     expect(Card['url test'].file.url).to match /\.png$/
   end
 
-  context "mod file" do
-    subject { Card[:logo] }
-    describe "#mod_file?" do
-      it "returns the mod name" do
-        expect(subject.mod_file?).to eq('05_standard')
-      end
-    end
-
-    it "has correct url " do
-      expect(subject.content).to eq ":#{subject.codename}/05_standard.png"
-    end
-  end
 end

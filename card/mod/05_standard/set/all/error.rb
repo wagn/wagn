@@ -1,36 +1,36 @@
 
 
 format do
-  view :closed_missing, :perms=>:none, :closed=>true do |args|
+  view :closed_missing, perms: :none, closed: true do |args|
     ''
   end
 
-  view :missing, :perms=>:none do |args|
+  view :missing, perms: :none do |args|
     ''
   end
 
-  view :not_found, :perms=>:none, :error_code=>404 do |args|
+  view :not_found, perms: :none, error_code: 404 do |args|
     %{ Could not find #{card.name.present? ? %{"#{card.name}"} : 'the card requested'}. }
   end
 
-  view :server_error, :perms=>:none, :error_code=>500 do |args|
+  view :server_error, perms: :none, error_code: 500 do |args|
     %{ Wagn Hitch!  Server Error. Yuck, sorry about that.\n}+
     %{ To tell us more and follow the fix, add a support ticket at http://wagn.org/new/Support_Ticket }
   end
 
-  view :denial, :perms=>:none, :error_code=>403 do |args|
+  view :denial, perms: :none, error_code: 403 do |args|
     focal? ? 'Permission Denied' : ''
   end
 
-  view :bad_address, :perms=>:none, :error_code=>404 do |args|
+  view :bad_address, perms: :none, error_code: 404 do |args|
     %{ 404: Bad Address }
   end
 
-  view :too_deep, :perms=>:none, :closed=>true do |args|
+  view :too_deep, perms: :none, closed: true do |args|
     %{ Man, you're too deep.  (Too many levels of inclusions at a time) }
   end
 
-  view :too_slow, :perms=>:none, :closed=>true do |args|
+  view :too_slow, perms: :none, closed: true do |args|
     %{ Timed out! #{ showname } took too long to load. }
   end
 end
@@ -47,14 +47,14 @@ format :html do
 
   def commentable? view, args
     self.class.tagged view, :comment                                   and
-    show_view? :comment_box, args.merge( :default_visibility=>:hide )  and #developer or wagneer has overridden default
+    show_view? :comment_box, args.merge( default_visibility: :hide )  and #developer or wagneer has overridden default
     ok? :comment
   end
 
   def rendering_error exception, view
     details = if Auth.always_ok?
-                card_link(error_cardname, :class=>'render-error-link') +
-                    alert('warning', :dismissible=>true, :alert_class=>"render-error-message errors-view admin-error-message") do
+                card_link(error_cardname, class: 'render-error-link') +
+                    alert('warning', dismissible: true, alert_class: "render-error-message errors-view admin-error-message") do
                       %{
                         <h3>Error message (visible to admin only)</h3>
                         <p><strong>#{ exception.message }</strong></p>
@@ -65,7 +65,7 @@ format :html do
                 error_cardname
               end
 
-    content_tag :span, :class=>'render-error alert alert-danger' do
+    content_tag :span, class: 'render-error alert alert-danger' do
       [
         'error rendering',
         details,
@@ -78,7 +78,7 @@ format :html do
     "<strong>view <em>#{view}</em> not supported for <em>#{error_cardname}</em></strong>"
   end
 
-  view :message, :perms=>:none, :tags=>:unknown_ok do |args|
+  view :message, perms: :none, tags: :unknown_ok do |args|
     frame args do
       params[:message]
     end
@@ -88,28 +88,28 @@ format :html do
   view :missing do |args|
     return '' unless card.ok? :create  # should this be moved into ok_view?
 
-    opts = { :remote=>true, :class=>"slotter missing-#{ args[:denied_view] || args[:home_view]}" }
-    opts[:path_opts] = { :type=> args[:type] } if args[:type]
+    opts = { remote: true, class: "slotter missing-#{ args[:denied_view] || args[:home_view]}" }
+    opts[:path_opts] = { type: args[:type] } if args[:type]
 
     wrap args do
       view_link "Add #{ fancy_title args[:title] }", :new, opts
     end
   end
 
-  view :closed_missing, :perms=>:none do |args|
+  view :closed_missing, perms: :none do |args|
     %{<span class="faint"> #{ showname } </span>}
   end
 
 
 
-  view :conflict, :error_code=>409 do |args|
-    wrap args.merge( :slot_class=>'error-view' ) do  #ENGLISH below
+  view :conflict, error_code: 409 do |args|
+    wrap args.merge( slot_class: 'error-view' ) do  #ENGLISH below
       alert 'warning' do
         %{<strong>Conflict!</strong><span class="new-current-revision-id">#{card.last_action_id}</span>
           <div>#{ card_link card.last_action.act.actor.cardname } has also been making changes.</div>
           <div>Please examine below, resolve above, and re-submit.</div>
           #{ wrap do |args|
-              _render_act_expanded :act=>card.last_action.act, :current_rev_nr => 0
+              _render_act_expanded act: card.last_action.act, current_rev_nr: 0
             end
            }
         }
@@ -117,14 +117,14 @@ format :html do
     end
   end
 
-  view :errors, :perms=>:none do |args|
+  view :errors, perms: :none do |args|
 
     if card.errors.any?
       title = %{ Problems #{%{ with #{card.name} } unless card.name.blank?} }
-      frame args.merge(:panel_class=>"panel panel-warning", :title=>title, :hide=>'menu' ) do
+      frame args.merge(panel_class: "panel panel-warning", title: title, hide: 'menu' ) do
         card.errors.map do |attrib, msg|
           msg = "<strong>#{attrib.to_s.upcase}:</strong> #{msg}" unless attrib == :abort
-          alert 'warning', :dismissible=>true, :alert_class=>'card-error-msg' do
+          alert 'warning', dismissible: true, alert_class: 'card-error-msg' do
             msg
           end
         end
@@ -135,11 +135,11 @@ format :html do
   view :not_found do |args| #ug.  bad name.
     sign_in_or_up_links = if !Auth.signed_in?
       %{<div>
-        #{ card_link :signin, :text=>'Sign in' } or
+        #{ card_link :signin, text: 'Sign in' } or
         #{ link_to 'Sign up', card_path('new/:signup') } to create it.
        </div>}
     end
-    frame args.merge(:title=>'Not Found', :optional_menu=>:never) do
+    frame args.merge(title: 'Not Found', optional_menu: :never) do
       %{
         <h2>Could not find #{card.name.present? ? "<em>#{card.name}</em>" : 'that'}.</h2>
         #{sign_in_or_up_links}
@@ -163,7 +163,7 @@ format :html do
         when Auth.signed_in?
           "You need permission #{to_task}"
         else
-          or_signup = if Card.new(:type_id=>Card::SignupID).ok? :create
+          or_signup = if Card.new(type_id: Card::SignupID).ok? :create
             "or #{ link_to 'sign up', card_url('new/:signup') }"
           end
           Env.save_interrupted_action(request.env['REQUEST_URI'])

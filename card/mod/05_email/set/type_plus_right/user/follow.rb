@@ -75,13 +75,13 @@ format :html do
 
    # returns hashes with existing and suggested follow options
    # structure:
-   # set_pattern_class => [ {:card=>rule_card, :options=>['*always', '*created'] },.... ]
+   # set_pattern_class => [ {card: rule_card, options: ['*always', '*created'] },.... ]
    def followed_by_set
      res = Hash.new { |h,k| h[k] = [] }
      never = Card[:never].name
      card.item_cards.each do |follow_rule|
        options = follow_rule.item_names.reject { |item| item == never}
-       res[follow_rule.rule_set.subclass_for_set] << { :card=>follow_rule, :options=>options }
+       res[follow_rule.rule_set.subclass_for_set] << { card: follow_rule, options: options }
      end
 
      if Auth.signed_in? && Auth.current_id == card.left.id
@@ -92,8 +92,8 @@ format :html do
              rule[:options] << option
            end
          else
-           rule_card =  Card.new(:name=>suggested_rule_name)
-           res[set_card.subclass_for_set] << {:card=>rule_card, :options=>[option]}
+           rule_card =  Card.new(name: suggested_rule_name)
+           res[set_card.subclass_for_set] << {card: rule_card, options: [option]}
          end
        end
      end
@@ -107,15 +107,15 @@ format :html do
      end
 
      sets = followed_by_set
-     wrap_with :div, :class=>'pointer-list-editor' do
-       wrap_with :ul, :class=>'delete-list list-group' do
+     wrap_with :div, class: 'pointer-list-editor' do
+       wrap_with :ul, class: 'delete-list list-group' do
 
          Card.set_patterns.select{|p| sets[p]}.reverse.map do |set_pattern|
            sets[set_pattern].map do |rule|
              rule[:options].map do |option|
 
-                 content_tag :li, :class=>'list-group-item' do
-                   subformat(rule[:card]).render_follow_item :condition=>option, :hide=>hide_buttons
+                 content_tag :li, class: 'list-group-item' do
+                   subformat(rule[:card]).render_follow_item condition: option, hide: hide_buttons
                  end
 
              end.join("\n")
@@ -140,12 +140,12 @@ format :html do
        hide_buttons = [:delete_follow_rule_button, :add_follow_rule_button]
      end
      never = Card[:never].name
-     wrap_with :div, :class=>'pointer-list-editor' do
-       wrap_with :ul, :class=>'delete-list list-group' do
+     wrap_with :div, class: 'pointer-list-editor' do
+       wrap_with :ul, class: 'delete-list list-group' do
 
          ignore_list.map do |rule_card|
-           content_tag :li, :class=>'list-group-item' do
-             subformat(rule_card).render_follow_item :condition=>never, :hide=>hide_buttons
+           content_tag :li, class: 'list-group-item' do
+             subformat(rule_card).render_follow_item condition: never, hide: hide_buttons
            end
          end.join "\n"
 
@@ -153,16 +153,16 @@ format :html do
      end
    end
 
-   view :pointer_items, :tags=>:unknown_ok do |args|
-     super(args.merge(:item=>:link))
+   view :pointer_items, tags: :unknown_ok do |args|
+     super(args.merge(item: :link))
    end
 
-   view :errors, :perms=>:none do |args|
+   view :errors, perms: :none do |args|
      if card.errors.any?
        if card.errors.find { |attrib,msg| attrib == :permission_denied }
          Env.save_interrupted_action(request.env['REQUEST_URI'])
          title = "Problems with #{card.name}"
-         frame args.merge(:panel_class=>"panel panel-warning", :title=>title, :hide=>'menu' ) do
+         frame args.merge(panel_class: "panel panel-warning", title: title, hide: 'menu' ) do
            "Please #{ link_to 'sign in', card_url(':signin') }" #" #{to_task}"
          end
        else

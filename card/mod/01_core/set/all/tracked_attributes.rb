@@ -44,7 +44,7 @@ end
 
 protected
 
-event :set_content, :before=>:store, :on=>:save do
+event :set_content, before: :store, on: :save do
   self.db_content = content || '' #necessary?
   self.db_content = Card::Content.clean! self.db_content if clean_html?
   @selected_action_id = @selected_content = nil
@@ -55,7 +55,7 @@ end
 
 #fixme - the following don't really belong here, but they have to come after the reference stuff.  we need to organize a bit!
 
-event :update_ruled_cards, :after=>:store do
+event :update_ruled_cards, after: :store do
   if is_rule?
 #      warn "updating ruled cards for #{name}"
     self.class.clear_rule_cache
@@ -78,7 +78,7 @@ event :update_ruled_cards, :after=>:store do
            Auth.as_bot do
              cur_index = rule_class_ids.index Card[read_rule_class].id
              if rule_class_index = rule_class_ids.index( class_id )
-                set.item_cards(:limit=>0).each do |item_card|
+                set.item_cards(limit: 0).each do |item_card|
                   in_set[item_card.key] = true
                   next if cur_index < rule_class_index
                   if cur_index >= rule_class_index
@@ -98,7 +98,7 @@ event :update_ruled_cards, :after=>:store do
 
       #then find all cards with me as read_rule_id that were not just updated and regenerate their read_rules
       if !new_record?
-        Card.where( :read_rule_id=>self.id, :trash=>false ).reject do |w|
+        Card.where( read_rule_id: self.id, trash: false ).reject do |w|
           in_set[ w.key ]
         end.each &:update_read_rule
       end
@@ -107,15 +107,15 @@ event :update_ruled_cards, :after=>:store do
   end
 end
 
-event :process_read_rule_update_queue, :after=>:store do
+event :process_read_rule_update_queue, after: :store do
   Array.wrap(@read_rule_update_queue).each { |card| card.update_read_rule }
   @read_rule_update_queue = []
 end
 
-#  set_callback :store, :after, :process_read_rule_update_queue, :prepend=>true
+#  set_callback :store, :after, :process_read_rule_update_queue, prepend: true
 
-event :expire_related, :after=>:store do
-  self.expire(true)
+event :expire_related, after: :store do
+  self.expire true
 
   if self.is_structure?
     self.structuree_names.each do |name|

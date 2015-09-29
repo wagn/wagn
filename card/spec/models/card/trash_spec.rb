@@ -11,7 +11,7 @@ describe Card, "deleting card" do
       expect(a.errors[:permission_denied]).not_to be_empty
       expect(Card['a'].trash).to eq(false)
     end
-    
+
   end
 end
 
@@ -27,7 +27,7 @@ describe Card, "deleted card" do
   end
   it "should come out of the trash when a plus card is created" do
     Card::Auth.as_bot do
-      Card.create(:name=>'A+*acct')
+      Card.create(name: 'A+*acct')
       c = Card[ 'A' ]
       expect(c.trash).to be_falsey
     end
@@ -36,8 +36,8 @@ end
 
 describe Card, "in trash" do
   it "should be retrieved by fetch with new" do
-    Card.create(:name=>"Betty").delete
-    c=Card.fetch "Betty", :new=>{}
+    Card.create(name: "Betty").delete
+    c=Card.fetch "Betty", new: {}
     c.save
     expect(Card["Betty"]).to be_instance_of(Card)
   end
@@ -47,7 +47,7 @@ end
 describe Card, "plus cards" do
   it "should be deleted when root is" do
     Card::Auth.as :joe_admin do
-      c = Card.create! :name=>'zz+top'
+      c = Card.create! name: 'zz+top'
       root = Card['zz']
       root.delete
 #      Rails.logger.info "ERRORS = #{root.errors.full_messages*''}"
@@ -69,7 +69,7 @@ describe Card do
   context "without revisions" do
     before do
       Card::Auth.as_bot do
-        @c = Card.create! :name=>'User Must Die', :type=>'User'
+        @c = Card.create! name: 'User Must Die', type: 'User'
       end
     end
     it "should be removable" do
@@ -86,7 +86,7 @@ end
 #  before do
 #     Card::Auth.as(Card::WagnBotID)
 #     # this ugly setup makes it so A+Admin is the actual user with edits..
-#     Card["Wagn Bot"].update_attributes! :name=>"A+Wagn Bot"
+#     Card["Wagn Bot"].update_attributes! name: "A+Wagn Bot"
 #  end
 #  it "should not be removable" do
 #    @a = Card['A']
@@ -117,8 +117,8 @@ describe Card, "rename to trashed name" do
       @b = Card["B"]
       @a.delete!  #trash
       Rails.logger.info "\n\n~~~~~~~deleted~~~~~~~~\n\n\n"
-      
-      @b.update_attributes! :name=>"A", :update_referencers=>true
+
+      @b.update_attributes! name: "A", update_referencers: true
     end
   end
 
@@ -160,8 +160,8 @@ describe Card, "revived from trash" do
   before do
     Card::Auth.as_bot do
       Card["basicname"].delete!
-      
-      @c = Card.create! :name=>'basicname', :content=>'revived content'
+
+      @c = Card.create! name: 'basicname', content: 'revived content'
     end
   end
 
@@ -186,13 +186,13 @@ end
 describe Card, "recreate trashed card via new" do
 #  before do
 #    Card::Auth.as(Card::WagnBotID)
-#    @c = Card.create! :type=>'Basic', :name=>"BasicMe"
+#    @c = Card.create! type: 'Basic', name: "BasicMe"
 #  end
 
 #  this test is known to be broken; we've worked around it for now
 #  it "should delete and recreate with a different cardtype" do
 #    @c.delete!
-#    @re_c = Card.new :type=>"Phrase", :name=>"BasicMe", :content=>"Banana"
+#    @re_c = Card.new type: "Phrase", name: "BasicMe", content: "Banana"
 #    @re_c.save!
 #  end
 
@@ -201,9 +201,9 @@ end
 describe Card, "junction revival" do
   before do
     Card::Auth.as_bot do
-      @c = Card.create! :name=>"basicname+woot", :content=>"basiccontent"
+      @c = Card.create! name: "basicname+woot", content: "basiccontent"
       @c.delete!
-      @c = Card.create! :name=>"basicname+woot", :content=>"revived content"
+      @c = Card.create! name: "basicname+woot", content: "revived content"
     end
   end
 
@@ -239,18 +239,18 @@ describe "remove tests" do
   end
 
   it "test_recreate_plus_card_name_variant" do
-    Card.create( :name => "rta+rtb" ).delete
-    Card["rta"].update_attributes :name=> "rta!"
-    c = Card.create! :name=>"rta!+rtb"
+    Card.create( name: "rta+rtb" ).delete
+    Card["rta"].update_attributes name: "rta!"
+    c = Card.create! name: "rta!+rtb"
     assert Card["rta!+rtb"]
     assert !Card["rta!+rtb"].trash
     assert Card.find_by_key('rtb*trash').nil?
   end
 
   it "test_multiple_trash_collision" do
-    Card.create( :name => "alpha" ).delete
+    Card.create( name: "alpha" ).delete
     3.times do
-      b = Card.create( :name => "beta" )
+      b = Card.create( name: "beta" )
       b.name = "alpha"
       assert b.save!
       b.delete

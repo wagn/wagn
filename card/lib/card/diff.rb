@@ -38,7 +38,7 @@ module Card::Diff
     #   :pointer = remove all double square brackets
     #   :raw     = escape html tags and compare everything
     #
-    # :summary => {:length=><number> , :joint=><string> }
+    # summary: {length: <number> , joint: <string> }
 
     def initialize(old_version, new_version, opts={})
       @new_version = new_version
@@ -141,12 +141,12 @@ module Card::Diff
         new_words, new_ex = separate_comparables_from_excludees new_text
 
         @words = {
-          :old => old_words,
-          :new => new_words
+          old: old_words,
+          new: new_words
         }
         @excludees = {
-          :old => ExcludeeIterator.new(old_ex),
-          :new => ExcludeeIterator.new(new_ex)
+          old: ExcludeeIterator.new(old_ex),
+          new: ExcludeeIterator.new(new_ex)
         }
       end
 
@@ -283,9 +283,9 @@ module Card::Diff
           list.each_with_index.inject([[],[]]) do |res, pair|
             element, index = pair
             if element.match @disjunction_pattern
-              res[1] << {:chunk_index=>index, :element=>element, :type=>:disjunction}
+              res[1] << {chunk_index: index, element: element, type: :disjunction}
             elsif element.match @exclude_pattern
-              res[1] << {:chunk_index=>index, :element=>element, :type=>:excludee}
+              res[1] << {chunk_index: index, element: element, type: :excludee}
             else
               res[0] << element
             end
@@ -357,7 +357,7 @@ module Card::Diff
 
         def add_chunk text, action
           if @remaining_chars > 0
-            @chunks << {:action => action, :text=>text}
+            @chunks << {action: action, text: text}
             @remaining_chars -= text.size
           end
         end
@@ -382,9 +382,9 @@ module Card::Diff
                 @chunks.pop
                 if index-1 >= 0
                   if @chunks[index-1][:action] == :added
-                    @chunks << {:action => :ellipsis, :text=>@joint}
+                    @chunks << {action: :ellipsis, text: @joint}
                   elsif @chunks[index-1][:action] == :deleted
-                    @chunks << {:action => :added, :text=>@joint}
+                    @chunks << {action: :added, text: @joint}
                   end
                 end
                 break

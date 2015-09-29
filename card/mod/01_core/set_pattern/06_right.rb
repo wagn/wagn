@@ -1,6 +1,6 @@
-@@options = { 
-  :junction_only => true,
-  :assigns_type=>true
+@@options = {
+  junction_only: true,
+  assigns_type: true
 }
 
 def label name
@@ -8,7 +8,7 @@ def label name
 end
 
 def prototype_args anchor
-  { :name=>"*dummy+#{anchor}" }
+  { name: "*dummy+#{anchor}" }
 end
 
 def anchor_name card

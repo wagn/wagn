@@ -88,14 +88,14 @@ describe Card::Chunk::Include, "Inclusion" do
     it "handles simple relative names" do
       alpha = newcard 'Alpha', "{{#{Card::Name.joint}Beta}}"
       beta = newcard 'Beta'
-      alpha_beta = Card.create :name=>"#{alpha.name}#{Card::Name.joint}Beta", :content=>"Woot"
+      alpha_beta = Card.create name: "#{alpha.name}#{Card::Name.joint}Beta", content: "Woot"
       assert_view_select alpha.format.render_core, 'div[class~=card-content]', "Woot"
     end
 
     it "should handle complex relative names" do
-      bob_city = Card.create! :name=>'bob+city', :content=> "Sparta"
-      Card::Auth.as_bot { address_tmpl = Card.create! :name=>'address+*right+*structure', :content =>"{{_left+city}}" }
-      bob_address = Card.create! :name=>'bob+address'
+      bob_city = Card.create! name: 'bob+city', content: "Sparta"
+      Card::Auth.as_bot { address_tmpl = Card.create! name: 'address+*right+*structure', content: "{{_left+city}}" }
+      bob_address = Card.create! name: 'bob+address'
 
       r=bob_address.reload.format.render_core
       assert_view_select r, 'div[class~=card-content]', "Sparta"
@@ -113,24 +113,24 @@ describe Card::Chunk::Include, "Inclusion" do
     end
 
     it "should handle options when nesting" do
-      Card.create! :type=>'Pointer', :name=>'Livable', :content=>'[[Earth]]'
-      Card.create! :name=>'Earth'
+      Card.create! type: 'Pointer', name: 'Livable', content: '[[Earth]]'
+      Card.create! name: 'Earth'
 
       expect(render_content('{{Livable|core;item:link}}')).to eq(render_content('{{Livable|core|link}}'))
       expect(render_content('{{Livable|core;item:name}}')).to eq(render_content('{{Livable|core|name}}'))
     end
 
     it "should prevent recursion" do
-      oak = Card.create! :name=>'Oak', :content=>'{{Quentin}}'
-      qnt = Card.create! :name=>'Quentin', :content=>'{{Admin}}'
+      oak = Card.create! name: 'Oak', content: '{{Quentin}}'
+      qnt = Card.create! name: 'Quentin', content: '{{Admin}}'
       adm = Card['Quentin']
-      adm.update_attributes :content => "{{Oak}}"
+      adm.update_attributes content: "{{Oak}}"
       result = adm.format.render_core
       expect(result).to match('too deep')
     end
 
     it "should handle missing cards" do
-      @a = Card.create :name=>'boo', :content=>"hey {{+there}}"
+      @a = Card.create name: 'boo', content: "hey {{+there}}"
       r=@a.format.render_core
       assert_view_select r, 'div[data-card-name="boo+there"][class~="missing-view"]'
     end
@@ -138,15 +138,15 @@ describe Card::Chunk::Include, "Inclusion" do
     it "should handle structured cards" do
       age = newcard('age')
       template = Card['*template']
-      specialtype = Card.create :type_code=>'Cardtype', :name=>'SpecialType'
+      specialtype = Card.create type_code: 'Cardtype', name: 'SpecialType'
 
-      specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:structure,:new=>{})
+      specialtype_template = specialtype.fetch(trait: :type,new: {}).fetch(trait: :structure,new: {})
       specialtype_template.content = "{{#{Card::Name.joint}age}}"
       Card::Auth.as_bot { specialtype_template.save! }
       assert_equal "{{#{Card::Name.joint}age}}", specialtype_template.format.render_raw
 
-      wooga = Card.create! :name=>'Wooga', :type=>'SpecialType'
-      wooga_age = Card.create!( :name=>"#{wooga.name}#{Card::Name.joint}age", :content=> "39" )
+      wooga = Card.create! name: 'Wooga', type: 'SpecialType'
+      wooga_age = Card.create!( name: "#{wooga.name}#{Card::Name.joint}age", content: "39" )
       expect(wooga_age.format.render_core).to eq("39")
       #warn "cards #{wooga.inspect}, #{wooga_age.inspect}"
       expect(wooga_age.includers.map(&:name)).to eq(['Wooga'])
@@ -177,8 +177,8 @@ describe Card::Chunk::Include, "Inclusion" do
     it 'Hash.new_from_semicolon_attr_list should work' do
       expect(Hash.new_from_semicolon_attr_list("")).to eq({})
       expect(Hash.new_from_semicolon_attr_list(nil)).to eq({})
-      expect(Hash.new_from_semicolon_attr_list("a:b;c:4"  )).to eq({:a=>'b', :c=>'4'})
-      expect(Hash.new_from_semicolon_attr_list("d:b;e:4; ")).to eq({:d=>'b', :e=>'4'})
+      expect(Hash.new_from_semicolon_attr_list("a:b;c:4"  )).to eq({a: 'b', c: '4'})
+      expect(Hash.new_from_semicolon_attr_list("d:b;e:4; ")).to eq({d: 'b', e: '4'})
     end
 
   end

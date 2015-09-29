@@ -7,7 +7,7 @@ describe Card::Set::Right::Account do
       #note - much of this is tested in account_request_spec
       before do
         Card::Auth.as_bot do
-          @user_card = Card.create! :name=>'TmpUser', :type_id=>Card::UserID, '+*account'=>{
+          @user_card = Card.create! name: 'TmpUser', type_id: Card::UserID, '+*account'=>{
             '+*email'=>'tmpuser@wagn.org', '+*password'=>'tmp_pass'
           }
         end
@@ -20,12 +20,12 @@ describe Card::Set::Right::Account do
     end
 
     it "should check accountability of 'accounted' card" do
-      @unaccountable = Card.create :name=>'BasicUnaccountable', '+*account'=>{ '+*email'=>'tmpuser@wagn.org', '+*password'=>'tmp_pass' }
+      @unaccountable = Card.create name: 'BasicUnaccountable', '+*account'=>{ '+*email'=>'tmpuser@wagn.org', '+*password'=>'tmp_pass' }
       expect(@unaccountable.errors['+*account'].first).to eq('not allowed on this card')
     end
 
     it "should require email" do
-      @no_email = Card.create :name=>'TmpUser', :type_id=>Card::UserID, '+*account'=>{ '+*password'=>'tmp_pass' }
+      @no_email = Card.create name: 'TmpUser', type_id: Card::UserID, '+*account'=>{ '+*password'=>'tmp_pass' }
       expect(@no_email.errors['+*account'].first).to match(/email required/)
     end
   end
@@ -87,12 +87,12 @@ describe Card::Set::Right::Account do
     end
 
     it 'should reset password' do
-      @user_card.account.password_card.update_attributes!(:content => 'new password')
+      @user_card.account.password_card.update_attributes!(content: 'new password')
       assert_equal @user_card.id, Card::Auth.authenticate('joe@user.com', 'new password')
     end
 
     it 'should not rehash password when updating email' do
-      @user_card.account.email_card.update_attributes!(:content => 'joe2@user.com')
+      @user_card.account.email_card.update_attributes!(content: 'joe2@user.com')
       assert_equal @user_card.id, Card::Auth.authenticate('joe2@user.com', 'joe_pass')
     end
   end
@@ -113,7 +113,7 @@ describe Card::Set::Right::Account do
       expect(@account.save).to eq(true)
       expect(Card::Auth.current_id).to eq(@account.left_id)
       @account = @account.refresh force=true
-      expect(@account.fetch(:trait => :token)).to be_nil
+      expect(@account.fetch(trait: :token)).to be_nil
       expect(@account.save).to be_falsey
     end
 
@@ -145,11 +145,11 @@ describe Card::Set::Right::Account do
     context 'denied access' do
       it 'excludes protected subcards' do
         skip
-        Card.create(:name=>"A+B+*self+*read", :type=>'Pointer', :content=>"[[u1]]")
-        u2 = Card.fetch 'u2+*following', :new=>{:type=>'Pointer'}
+        Card.create(name: "A+B+*self+*read", type: 'Pointer', content: "[[u1]]")
+        u2 = Card.fetch 'u2+*following', new: {type: 'Pointer'}
         u2.add_item "A"
         a = Card.fetch "A"
-        a.update_attributes( :content=> "new content", :subcards=>{'+B'=>{:content=>'hidden content'}})
+        a.update_attributes( content: "new content", subcards: {'+B'=>{content: 'hidden content'}})
       end
 
       it 'sends no email if changes not visible' do

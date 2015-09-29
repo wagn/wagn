@@ -31,7 +31,7 @@ Spork.prefork do
   RSpec.configure do |config|
 
     config.include RSpec::Rails::Matchers::RoutingMatchers,  {
-      :file_path => /\bspec\/controllers\//
+      file_path: /\bspec\/controllers\//
     }
 
     # format_index = ARGV.find_index {|arg| arg =~ /--format|-f/ }
@@ -40,7 +40,7 @@ Spork.prefork do
 
     config.infer_spec_type_from_file_location!
     #config.include CustomMatchers
-    #config.include ControllerMacros, :type=>:controllers
+    #config.include ControllerMacros, type: :controllers
 
     # == Mock Framework
     # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:
@@ -85,14 +85,14 @@ class Card
       if c = Card.fetch(name)
         c.update_attributes!(args)
       else
-        Card.create! args.merge({:name=>name})
+        Card.create! args.merge({name: name})
       end
     end
   end
 
   def self.gimme! name, args = {}
     Card::Auth.as_bot do
-      c = Card.fetch( name, :new => args )
+      c = Card.fetch( name, new: args )
       c.putty args
       Card.fetch name
     end
@@ -100,7 +100,7 @@ class Card
 
   def self.gimme name, args = {}
     Card::Auth.as_bot do
-      c = Card.fetch( name, :new => args )
+      c = Card.fetch( name, new: args )
       if args[:content] and c.content != args[:content]
         c.putty args
         c = Card.fetch name

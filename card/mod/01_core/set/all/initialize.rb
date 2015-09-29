@@ -16,9 +16,9 @@ def initialize args={}
 
   args.delete('type_id') if args['type_id'] == 0 # can come in as 0, '', or nil
   @type_args = {
-    :type      => args.delete('type'     ),
-    :type_code => args.delete('type_code'),
-    :type_id   => args[       'type_id'  ]
+    type:      args.delete('type'     ),
+    type_code: args.delete('type_code'),
+    type_id:   args[       'type_id'  ]
   }
 
   args['db_content'] = args.delete('content') if args['content']
@@ -50,6 +50,6 @@ def include_set_modules
 end
 
 
-event :initialize_success_object, :before=>:handle do
+event :initialize_success_object, before: :handle do
   Env[:success] = Success.new(cardname, Env.params[:success])
 end

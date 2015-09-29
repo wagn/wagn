@@ -5,13 +5,13 @@ describe Card::HtmlFormat do
   describe "views" do
 
     it "content" do
-      result = render_card(:content, :name=>'A+B')
+      result = render_card(:content, name: 'A+B')
       assert_view_select result, 'div[class="card-slot content-view card-content ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]'
     end
 
 
     it "inclusions in multi edit" do
-      c = Card.new :name => 'ABook', :type => 'Book'
+      c = Card.new name: 'ABook', type: 'Book'
       rendered =  c.format.render( :edit )
 
       assert_view_select rendered, 'fieldset' do
@@ -20,7 +20,7 @@ describe Card::HtmlFormat do
     end
 
     it "titled" do
-      result = render_card :titled, :name=>'A+B'
+      result = render_card :titled, name: 'A+B'
       assert_view_select result, 'div[class~="titled-view"]' do
         assert_select 'div[class~="card-header"]' do
           assert_select 'span[class~="card-title"]'
@@ -75,7 +75,7 @@ describe Card::HtmlFormat do
     context "layout" do
       before do
         Card::Auth.as_bot do
-          @layout_card = Card.create :name=>'tmp layout', :type=>'Layout'
+          @layout_card = Card.create name: 'tmp layout', type: 'Layout'
           #warn "layout #{@layout_card.inspect}"
         end
         c = Card['*all+*layout'] and c.content = '[[tmp layout]]'
@@ -126,7 +126,7 @@ describe Card::HtmlFormat do
         Card::Auth.as_bot do
           @layout_card.content="{{outer space|core}}"
           @layout_card.save!
-          Card.create :name=>"outer space", :content=>"{{_main|name}}"
+          Card.create name: "outer space", content: "{{_main|name}}"
         end
 
         expect(@layout_card.format.render(:layout)).to eq(%{Joe User\n<div class="modal fade" role="dialog" id="modal-main-slot"><div class="modal-dialog"><div class="modal-content"></div></div></div>})

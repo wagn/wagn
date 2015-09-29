@@ -16,7 +16,7 @@ def replace_references old_name, new_name
   obj_content.find_chunks( Card::Chunk::Reference ).select do |chunk|
     if old_ref_name = chunk.referee_name and new_ref_name = old_ref_name.replace_part(old_name, new_name)
       chunk.referee_name = chunk.replace_reference old_name, new_name
-      Card::Reference.where( :referee_key => old_ref_name.key ).update_all :referee_key => new_ref_name.key
+      Card::Reference.where( referee_key: old_ref_name.key ).update_all referee_key: new_ref_name.key
     end
   end
 
@@ -30,7 +30,7 @@ def update_references rendered_content = nil, refresh = false
   Card::Reference.delete_all_from self
 
   # FIXME: why not like this: references_expired = nil # do we have to make sure this is saved?
-  #Card.update( id, :references_expired=>nil )
+  #Card.update( id, references_expired: nil )
   #  or just this and save it elsewhere?
   #references_expired=nil
 
@@ -67,11 +67,11 @@ def update_references rendered_content = nil, refresh = false
               else 'P'
               end
             Card::Reference.create!(
-              :referer_id  => id,
-              :referee_id  => Card.where(:key=>name.key).pluck(:id).first,
-              :referee_key => name.key,
-              :ref_type    => ref_type,
-              :present     => 1
+              referer_id:  id,
+              referee_id:  Card.where(key: name.key).pluck(:id).first,
+              referee_key: name.key,
+              ref_type:    ref_type,
+              present:     1
             )
           end
         end
@@ -89,18 +89,18 @@ def referencers
 end
 
 def includers
-  return [] unless refs = references_from.where( :ref_type => 'I' )
+  return [] unless refs = references_from.where( ref_type: 'I' )
   refs.map(&:referer_id).map( &Card.method(:fetch) ).compact
 end
 
 def referees
   return [] unless refs = references_to
-  refs.map { |ref| Card.fetch ref.referee_key, :new=>{} }.compact
+  refs.map { |ref| Card.fetch ref.referee_key, new: {} }.compact
 end
 
 def includees
-  return [] unless refs = references_to.where( :ref_type => 'I' )
-  refs.map { |ref| Card.fetch ref.referee_key, :new=>{} }.compact
+  return [] unless refs = references_to.where( ref_type: 'I' )
+  refs.map { |ref| Card.fetch ref.referee_key, new: {} }.compact
 end
 
 
@@ -108,17 +108,17 @@ end
 protected
 
 
-event :refresh_references, :after=>:store, :on=>:save do
+event :refresh_references, after: :store, on: :save do
   self.update_references
   expire_structuree_references
 end
 
-event :refresh_references_on_create, :before=>:refresh_references, :on=>:create do
+event :refresh_references_on_create, before: :refresh_references, on: :create do
   Card::Reference.update_existing_key self
   # FIXME: bogus blank default content is set on structured cards...
 end
 
-event :refresh_references_on_delete, :after=>:store, :on=>:delete do
+event :refresh_references_on_delete, after: :store, on: :delete do
   Card::Reference.update_on_delete self
   expire_structuree_references
 end

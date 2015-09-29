@@ -34,9 +34,9 @@ class Card
       # find accounted by email
       def [] email
         Auth.as_bot do
-          Card.search( :right_plus=>[
-            {:id=>Card::AccountID},
-            {:right_plus=>[{:id=>Card::EmailID},{ :content=>email.strip.downcase }]}
+          Card.search( right_plus: [
+            {id: Card::AccountID},
+            {right_plus: [{id: Card::EmailID},{ content: email.strip.downcase }]}
           ]).first
         end
       end
@@ -163,17 +163,17 @@ class Card
 
       def createable_types
         type_names = Auth.as_bot do
-          Card.search :type=>Card::CardtypeID, :return=>:name, :not => { :codename => ['in'] + NON_CREATEABLE_TYPES }
+          Card.search type: Card::CardtypeID, return: :name, not: { codename: ['in'] + NON_CREATEABLE_TYPES }
         end
         type_names.reject do |name|
-          !Card.new( :type=>name ).ok? :create
+          !Card.new( type: name ).ok? :create
         end.sort
       end
 
       private
 
       def account_count
-        as_bot { Card.count_by_wql :right=>Card[:account].name }
+        as_bot { Card.count_by_wql right: Card[:account].name }
       end
 
     end

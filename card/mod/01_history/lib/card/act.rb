@@ -3,7 +3,7 @@ class Card
   class Act < ActiveRecord::Base
     before_save :set_actor
     has_many :actions, -> { order :id },
-      { :foreign_key=>:card_act_id, :inverse_of=> :act, :class_name=> "Card::Action" }
+      { foreign_key: :card_act_id, inverse_of: :act, class_name: "Card::Action" }
 
     belongs_to :actor, class_name: "Card"
     belongs_to :card
@@ -21,7 +21,7 @@ class Card
     def self.find_all_with_actions_on card_ids, args={}
       sql = 'card_actions.card_id IN (:card_ids) AND ( (draft is not true) '
       sql << ( args[:with_drafts] ? 'OR actor_id = :current_user_id)' : ')' )
-      vars = {:card_ids => card_ids, :current_user_id=>Card::Auth.current_id }
+      vars = {card_ids: card_ids, current_user_id: Card::Auth.current_id }
       Card::Act.joins(:actions).where( sql, vars ).uniq.order(:id).reverse_order
     end
 

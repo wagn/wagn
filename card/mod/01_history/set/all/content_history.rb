@@ -4,7 +4,7 @@
 def content
   if @selected_action_id
     @selected_content ||= begin
-      (change = last_change_on( :db_content, :not_after=> @selected_action_id, :including_drafts=>true ) and change.value) || db_content
+      (change = last_change_on( :db_content, not_after: @selected_action_id, including_drafts: true ) and change.value) || db_content
     end
   else
     super
@@ -19,7 +19,7 @@ end
 def save_content_draft content
   super
   acts.create do |act|
-    act.actions.build(:draft => true, :card_id=>id).card_changes.build(:field=>:db_content, :value=>content)
+    act.actions.build(draft: true, card_id: id).card_changes.build(field: :db_content, value: content)
   end
 end
 
@@ -40,7 +40,7 @@ def last_change_on(field, opts={})
   action_id = action_arg.kind_of?(Card::Action) ? action_arg.id : action_arg
   field_index = Card::TRACKED_FIELDS.index(field.to_s)
   Change.joins(:action).where( where_sql,
-    {:card_id=>id, :field=>field_index, :action_id=>action_id}
+    {card_id: id, field: field_index, action_id: action_id}
   ).order(:id).last
 end
 
@@ -70,9 +70,13 @@ def with_selected_action_id action_id
 end
 
 def selected_content_action_id
-  @selected_action_id ||
- (@current_action && (new_card? || @current_action.new_content? || db_content_changed?) && @current_action.id) ||
-  last_content_action_id
+  @selected_action_id || new_content_action_id || last_content_action_id
+end
+
+def new_content_action_id
+  if @current_action && (new_card? || @current_action.new_content? || db_content_changed?)
+    @current_action.id
+  end
 end
 
 def last_action_id
@@ -140,7 +144,7 @@ def draft_acts
   drafts.created_by(Card::Auth.current_id).map(&:act)
 end
 
-event :detect_conflict, :before=>:approve, :on=>:update, :when=>proc {|c| c.history? } do
+event :detect_conflict, before: :approve, on: :update, when: proc {|c| c.history? } do
   if last_action_id_before_edit and last_action_id_before_edit.to_i != last_action_id and last_action.act.actor_id != Auth.current_id
     errors.add :conflict, "changes not based on latest revision"
   end

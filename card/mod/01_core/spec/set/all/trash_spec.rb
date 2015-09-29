@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::All::Trash do
-  
+
   it "certain 'all rules' should be indestructable" do
     Card::Auth.as_bot do
       name = '*all+*default'
@@ -11,7 +11,7 @@ describe Card::Set::All::Trash do
       expect(Card[name]).to be
     end
   end
-  
+
   it 'does not delete account with edits' do
     Card::Auth.as_bot do
       name = 'Joe User'
@@ -21,11 +21,11 @@ describe Card::Set::All::Trash do
       expect(Card[name]).to be
     end
   end
-  
+
   it 'deletes account without edits' do
     Card::Auth.as_bot do
       name = 'born to die'
-      card = Card.create! :name=>name, :type_code=>:user
+      card = Card.create! name: name, type_code: :user
       card.delete
       expect(Card[name]).not_to be
     end

@@ -72,7 +72,7 @@ format :html do
   end
 
 end
-event :signin, before: approve, on: update do
+event :signin, before: :approve, on: :update do
   email = subfield :email
   email &&= email.content
   pword = subfield :password
@@ -97,7 +97,7 @@ event :signin_success, after: :signin do
   abort :success
 end
 
-event :send_reset_password_token, before: signin, on: update, when: proc{ |c| Env.params[:reset_password] } do
+event :send_reset_password_token, before: :signin, on: :update, when: proc{ |c| Env.params[:reset_password] } do
   email = subfield(:email)
   email &&= email.content
 

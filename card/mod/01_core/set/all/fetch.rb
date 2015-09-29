@@ -23,7 +23,7 @@ module ClassMethods
   #     new: {  card opts }      Return a new card when not found
   #
   def fetch mark, opts={}
-    mark = canonicalize_mark mark
+    mark = normalize_mark mark
 
     if mark.present?
       card, mark, needs_caching = fetch_from_cache_or_db mark, opts # have existing
@@ -59,7 +59,7 @@ module ClassMethods
     card
   end
 
-  def canonicalize_mark mark
+  def normalize_mark mark
     case mark
     when String
       case mark

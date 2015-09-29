@@ -78,6 +78,17 @@ describe Card::Subcards do
       expect(@card.subfield(':phrase').content).to eq 'this is a sub'
     end
   end
+
+  describe '#add' do
+    before do
+      @card = Card['A']
+    end
+    it 'adds a subcard' do
+      @card.add_subcard 'sub', :content=>'sub content'
+      @card.save!
+      expect(Card['A+sub'].content).to eq 'sub content'
+    end
+  end
   #
   # describe '#remove_subfield' do
   #

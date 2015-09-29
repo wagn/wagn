@@ -3,15 +3,26 @@
 # My source+claims (listed by)
 #
 
+
+
 event :validate_list_name, :before=>:validate, :on=>:save, :changed=>:name do
   if !junction? || !right || right.type_id != CardtypeID
     errors.add :name, "must have a cardtype name as right part"
   end
 end
 
+event :validate_list_item_type_change, :before=>:validate, :on=>:save, :changed=>:name do
+
+  item_cards.each do |item_card|
+    if item_card.type_cardname.key != item_type_name.key
+      errors.add :name, "name conflicts with list items' type; delete content first"
+    end
+  end
+end
+
 event :validate_list_content, :before=>:validate, :on=>:save, :changed=>:content do
   item_cards.each do |item_card|
-    if item_card.type_id != right.id
+    if item_card.type_cardname.key != item_type_name.key
       errors.add :content, "#{item_card.name} has wrong cardtype; only cards of type #{cardname.right} are allowed"
     end
   end
@@ -92,4 +103,20 @@ format :js do
 end
 format :data do
   include Pointer::DataFormat
+end
+
+def item_type
+  cardname.right
+end
+
+def item_type_name
+  cardname.right_name
+end
+
+def item_type_card
+  cardname.right
+end
+
+def item_type_id
+  right.id
 end

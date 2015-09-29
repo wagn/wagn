@@ -91,7 +91,6 @@ end
 
 
 def extend
-
   run_callbacks :extend
   run_callbacks :subsequent
 rescue =>e
@@ -135,9 +134,13 @@ end
 
 def changed_condition_applies? db_column
   if db_column
-    db_column = 'db_content' if db_column.to_sym == :content
-    changed_field = 'type_id' if changed_field.to_sym == :type
-    @action != :delete && changes[db_column.to_s]
+    db_column =
+      case db_column.to_sym
+      when :content then 'db_content'
+      when :type    then 'type_id'
+      else db_column.to_s
+      end
+    @action != :delete && changes[db_column]
   else
     true
   end
@@ -153,7 +156,7 @@ end
 
 
 
-event :filter_empty_subcards, :after=>:approve, :on=>:save do
+event :filter_empty_subcards, after: :approve, on: :save do
   subcards.each_card do |subcard|
     if subcard.new? && (subcard.content.empty? || subcard.content.strip.empty?) &&
       !subcard.subcards.present? && !subcard.file.present? && !subcard.image.present?   # TODO: check if file and image checks are necessary. Depends on whether attachment cards write the identifier to db_content before or after this event
@@ -163,7 +166,7 @@ event :filter_empty_subcards, :after=>:approve, :on=>:save do
 end
 
 # left for compatibility reasons because other events refer to this
-event :process_subcards, :after=>:filter_empty_subcards, :on=>:save do
+event :process_subcards, after: :filter_empty_subcards, on: :save do
 end
 
 # event :approve_subcards, after: :process_subcards do
@@ -177,7 +180,7 @@ end
 #   end
 # end
 
-event :approve_subcards, :after=>:process_subcards do
+event :approve_subcards, after: :process_subcards do
   subcards.each do |subcard|
     if !subcard.valid_subcard?
       subcard.errors.each do |field, err|
@@ -188,7 +191,7 @@ event :approve_subcards, :after=>:process_subcards do
   end
 end
 
-event :store_subcards, after: store do
+event :store_subcards, after: :store do
   subcards.each do |subcard|
     subcard.save! validate: false if subcard != self#unless @draft
   end

@@ -316,15 +316,51 @@ describe Card::Query do
       )
     end
 
-    it("should handle link_to")       { expect(Card::Query.new( link_to: 'Z').run.map(&:name)).to eq(%w{ A }) }
-    it("should handle include" )      { expect(Card::Query.new( include: 'Z').run.map(&:name)).to eq(%w{ B }) }
-    it("should handle linked_to_by")   { expect(Card::Query.new( linked_to_by: 'A').run.map(&:name)).to eq(%w{ Z }) }
-    it("should handle included_by")    { expect(Card::Query.new( included_by: 'B').run.map(&:name)).to eq(%w{ Z }) }
-    it("should handle referred_to_by") { expect(Card::Query.new( referred_to_by: 'X').run.map(&:name).sort).to eq(%w{ A A+B T }) }
+    it "should handle link_to" do
+      expect(Card::Query.run(
+        link_to: 'Z'
+      ).map(&:name)).to eq(
+        %w{ A }
+      )
+    end
+
+    it "should handle include" do
+      expect(Card::Query.run(
+        include: 'Z'
+      ).map(&:name)).to eq(
+        %w{ B }
+      )
+    end
+
+    it "should handle linked_to_by" do
+      expect(Card::Query.run(
+        linked_to_by: 'A'
+      ).map(&:name)).to eq(
+        %w{ Z }
+      )
+    end
+
+    it "should handle included_by" do
+      expect(Card::Query.run(
+        included_by: 'B'
+      ).map(&:name)).to eq(
+        %w{ Z }
+      )
+    end
+
+    it "should handle referred_to_by" do
+      expect(Card::Query.run(
+        referred_to_by: 'X'
+      ).map(&:name).sort).to eq(
+        %w{ A A+B T }
+      )
+    end
   end
 
   describe "relative links" do
-    it("should handle relative refer_to")  { expect(Card::Query.new( refer_to: '_self', context: 'Z').run.map(&:name).sort).to eq(%w{ A B }) }
+    it("should handle relative refer_to")  { expect(Card::Query.run(
+      refer_to: '_self', context: 'Z'
+      ).map(&:name).sort).to eq(%w{ A B }) }
   end
 
   describe "permissions" do
@@ -332,102 +368,162 @@ describe Card::Query do
       Card::Auth.as_bot  do
         Card.create name: "C+*self+*read", type: 'Pointer', content: "[[R1]]"
       end
-      expect(Card::Query.new( plus: "A" ).run.map(&:name).sort).to eq(%w{ B D E F })
+      expect(Card::Query.run(
+        plus: "A"
+      ).map(&:name).sort).to eq(
+        %w{ B D E F }
+      )
     end
   end
 
   describe "basics" do
     it "should be case insensitive for name" do
-      expect(Card::Query.new( name: "a" ).run.first.name).to eq('A')
+      expect(Card::Query.run(
+        name: "a"
+      ).first.name).to eq(
+        'A'
+      )
     end
 
     it "should find plus cards" do
-      expect(Card::Query.new( plus: "A" ).run.map(&:name).sort).to eq(A_JOINEES)
+      expect(Card::Query.run(
+        plus: "A"
+      ).map(&:name).sort).to eq(
+        A_JOINEES
+      )
     end
 
     it "should find connection cards" do
-      expect(Card::Query.new( part: "A" ).run.map(&:name).sort).to eq(["A+B", "A+C", "A+D", "A+E", "C+A", "D+A", "F+A"])
+      expect(Card::Query.run(
+        part: "A"
+      ).map(&:name).sort).to eq(
+        ["A+B", "A+C", "A+D", "A+E", "C+A", "D+A", "F+A"]
+      )
     end
 
     it "should find left connection cards" do
-      expect(Card::Query.new( left: "A" ).run.map(&:name).sort).to eq(["A+B", "A+C", "A+D", "A+E"])
+      expect(Card::Query.run(
+      left: "A"
+      ).map(&:name).sort).to eq(["A+B", "A+C", "A+D", "A+E"])
     end
 
     it "should find right connection cards" do
       [ { right: "A"},                         # query by name
         { right: { content: "Alpha [[Z]]" } }  # query by content
       ].each do |statement|
-        expect(Card::Query.new( statement ).run.map(&:name).sort).to eq(["C+A", "D+A", "F+A"])
+        expect(Card::Query.run(
+      statement
+      ).map(&:name).sort).to eq(["C+A", "D+A", "F+A"])
       end
     end
 
     it "should return count" do
       expect(Card.count_by_wql( part: "A" )).to eq(7)
     end
-
-
   end
 
   describe "limit and offset" do
     it "should return limit" do
-      expect(Card::Query.new( part: "A", limit: 5 ).run.size).to eq(5)
+      expect(Card::Query.run(
+      part: "A", limit: 5
+      ).size).to eq(5)
     end
 
     it "should not break if offset but no limit" do
-      expect(Card::Query.new( part: "A", offset: 5 ).run.size).not_to eq(0)
+      expect(Card::Query.run(
+      part: "A", offset: 5
+      ).size).not_to eq(0)
     end
 
   end
 
   describe "type" do
-    user_cards =  ["Big Brother", "Joe Admin", "Joe Camel", "Joe User", "John", "Narcissist", "No Count", "Optic fan", "Sample User", "Sara", "Sunglasses fan", "u1", "u2", "u3"].sort
+    user_cards = [
+      "Big Brother", "Joe Admin", "Joe Camel", "Joe User", "John",
+      "Narcissist", "No Count", "Optic fan", "Sample User", "Sara",
+      "Sunglasses fan", "u1", "u2", "u3"
+    ].sort
 
     it "should find cards of this type" do
-      expect(Card::Query.new( type: "_self", context: 'User').run.map(&:name).sort).to eq(user_cards)
+      expect(Card::Query.run(
+        type: "_self", context: 'User'
+      ).map(&:name).sort).to eq(
+        user_cards
+      )
     end
 
     it "should find User cards " do
-      expect(Card::Query.new( type: "User" ).run.map(&:name).sort).to eq(user_cards)
+      expect(Card::Query.run(
+        type: "User"
+      ).map(&:name).sort).to eq(
+        user_cards
+      )
     end
 
     it "should handle casespace variants" do
-      expect(Card::Query.new( type: "users" ).run.map(&:name).sort).to eq(user_cards)
+      expect(Card::Query.run(
+        type: "users"
+      ).map(&:name).sort).to eq(
+        user_cards
+      )
     end
-
   end
-
 
   describe "trash handling" do
     it "should not find cards in the trash" do
       Card["A+B"].delete!
-      expect(Card::Query.new( left: "A" ).run.map(&:name).sort).to eq(["A+C", "A+D", "A+E"])
+      expect(Card::Query.run(
+        left: "A"
+      ).map(&:name).sort).to eq(
+        ["A+C", "A+D", "A+E"]
+      )
     end
   end
-
-
-
 
   describe "order" do
     it "should sort by create" do
       Card.create! name: "classic bootstrap skin head"
-      # classic skin head is created more recently than classic skin, which is in the seed data
-      wql = { sort: "create", name: [:match,'classic bootstrap skin']}
-      expect( Card::Query.new(wql).run.map(&:name) ).to eq( ["classic bootstrap skin","classic bootstrap skin head"] )
+      # classic skin head is created more recently than classic skin,
+      # which is in the seed data
+      expect( Card::Query.run(
+        sort: "create", name: [:match,'classic bootstrap skin']
+      ).map(&:name) ).to eq(
+        ["classic bootstrap skin","classic bootstrap skin head"]
+      )
     end
 
     it "should sort by name" do
-      expect(Card::Query.new( name: %w{ in B Z A Y C X }, sort: "alpha", dir: "desc" ).run.map(&:name)).to eq(%w{ Z Y X C B A })
-      expect(Card::Query.new( name: %w{ in B Z A Y C X }, sort: "name", dir: "desc"  ).run.map(&:name)).to eq(%w{ Z Y X C B A })
+      expect(Card::Query.run(
+        name: %w{ in B Z A Y C X }, sort: "alpha", dir: "desc"
+      ).map(&:name)).to eq(
+        %w{ Z Y X C B A }
+      )
+
+      expect(Card::Query.run(
+        name: %w{ in B Z A Y C X }, sort: "name", dir: "desc"
+      ).map(&:name)).to eq(
+        %w{ Z Y X C B A }
+      )
       #Card.create! name: 'the alphabet'
-      #Card::Query.new( name: ["in", "B", "C", "the alphabet"], sort: "name").run.map(&:name).should ==  ["the alphabet", "B", "C"]
+      #Card::Query.run(
+      #name: ["in", "B", "C", "the alphabet"], sort: "name"
+      #).map(&:name).should ==  ["the alphabet", "B", "C"]
     end
 
     it "should sort by content" do
-      expect(Card::Query.new( name: %w{ in Z T A }, sort: "content").run.map(&:name)).to eq(%w{ A Z T })
+      expect(Card::Query.run(
+        name: %w{ in Z T A }, sort: "content"
+      ).map(&:name)).to eq(
+        %w{ A Z T }
+      )
     end
 
     it "should play nice with match" do
-      expect(Card::Query.new( match: 'Z', type: 'Basic', sort: "content").run.map(&:name)).to eq(%w{ A B Z })
+      expect(Card::Query.run(
+        match: 'Z', type: 'Basic', sort: "content"
+      ).map(&:name)).to eq(
+        %w{ A B Z }
+      )
     end
 
     it "should sort by plus card content" do
@@ -437,24 +533,35 @@ describe Card::Query do
         c.save
         c = Card.create! name: 'Basic+*type+*table of contents', content: '3'
 
-        w = Card::Query.new( right_plus: '*table of contents', sort: { right: '*table_of_contents'}, sort_as: 'integer'  )
-        #warn "sql from new wql = #{w.sql}"
-        expect(w.run.map(&:name)).to eq(%w{ *all Basic+*type Setting+*self })
+        expect(Card::Query.run(
+          right_plus: '*table of contents',
+          sort: { right: '*table_of_contents'}, sort_as: 'integer'
+        ).map(&:name)).to eq(
+          %w{ *all Basic+*type Setting+*self }
+        )
       end
     end
 
     it "should sort by count" do
       Card::Auth.as_bot do
-        w = Card::Query.new( name: [:in,'*always','*never','*edited'], sort: { right: '*follow', item: 'referred_to', return: 'count' } )
-        expect(w.run.map(&:name)).to eq(['*never','*edited','*always'])
+        expect(Card::Query.run(
+          name: [:in,'*always', '*never', '*edited'],
+          sort: { right: '*follow', item: 'referred_to', return: 'count' }
+        ).map(&:name)).to eq(
+          ['*never', '*edited', '*always']
+        )
       end
     end
 
   #  it "should sort by update" do
   #    # do this on a restricted set so it won't change every time we add a card..
-  #    Card::Query.new( match: "two", sort: "update", dir: "desc").run.map(&:name).should == ["One+Two+Three", "One+Two","Two","Joe User"]
+  #    Card::Query.run(
+  #    match: "two", sort: "update", dir: "desc"
+  #    ).map(&:name).should == ["One+Two+Three", "One+Two","Two","Joe User"]
   #    Card["Two"].update_attributes! content: "new bar"
-  #    Card::Query.new( match: "two", sort: "update", dir: "desc").run.map(&:name).should == ["Two","One+Two+Three", "One+Two","Joe User"]
+  #    Card::Query.run(
+  #    match: "two", sort: "update", dir: "desc"
+  #    ).map(&:name).should == ["Two","One+Two+Three", "One+Two","Joe User"]
   #  end
   #
 
@@ -462,42 +569,84 @@ describe Card::Query do
 
   describe "match" do
     it "should reach content and name via shortcut" do
-      expect(Card::Query.new( match: "two").run.map(&:name).sort).to eq(CARDS_MATCHING_TWO)
+      expect(Card::Query.run(
+        match: "two"
+      ).map(&:name).sort).to eq(
+        CARDS_MATCHING_TWO
+      )
     end
 
     it "should get only content when content is explicit" do
-      expect(Card::Query.new( content: [:match, "two"] ).run.map(&:name).sort).to eq(["Joe User"])
+      expect(Card::Query.run(
+        content: [:match, "two"]
+      ).map(&:name).sort).to eq(
+        ["Joe User"]
+      )
     end
 
     it "should get only name when name is explicit" do
-      expect(Card::Query.new( name: [:match, "two"] ).run.map(&:name).sort).to eq(["One+Two","One+Two+Three","Two"].sort)
+      expect(Card::Query.run(
+        name: [:match, "two"]
+      ).map(&:name).sort).to eq(
+        ["One+Two","One+Two+Three","Two"].sort
+      )
     end
   end
 
   describe "and" do
     it "should act as a simple passthrough" do
-      expect(Card::Query.new(and: {match: 'two'}).run.map(&:name).sort).to eq(CARDS_MATCHING_TWO)
-      expect(Card::Query.new(and: {}, type: "Cardtype E").run.first.name).to eq('type-e-card')
+      expect(Card::Query.run(
+        and: { match: 'two' }
+      ).map(&:name).sort).to eq(
+        CARDS_MATCHING_TWO
+      )
+
+      expect(Card::Query.run(
+        and: {}, type: "Cardtype E"
+      ).first.name).to eq(
+        'type-e-card'
+      )
     end
 
     it "should work within 'or'" do
-      results = Card::Query.new(or: {name: 'Z', and: {left: 'A', right: 'C'}}).run
-      expect(results.length).to eq(2)
-      expect(results.map(&:name).sort).to eq(['A+C','Z'])
+      expect(Card::Query.run(
+        or: { name: 'Z', and: { left: 'A', right: 'C' } },
+        return: :name, sort: :name
+      )).to eq(
+        ['A+C','Z']
+      )
     end
   end
 
   describe "any/or" do
     it "should work with :plus" do
-      expect(Card::Query.new(plus: "A", or: {name: 'B', match: 'K'}, return: 'name').run.sort).to eq(%w{ B })
-      expect(Card::Query.new(plus: "A", any: {name: 'B', match: 'K'}, return: 'name').run.sort).to eq(%w{ B })
-      expect(Card::Query.new(or: {right_plus: "A", plus: 'B'}, return: 'name').run.sort).to eq(%w{ A C D F })
+      expect(Card::Query.run(
+        plus: "A", or: { name: 'B', match: 'K' }, return: :name, sort: :name
+      )).to eq(
+        %w{ B }
+      )
+
+      expect(Card::Query.run(
+        plus: "A", any: { name: 'B', match: 'K'}, return: :name, sort: :name
+      )).to eq(
+        %w{ B }
+      )
+
+      expect(Card::Query.run(
+        or: { right_plus: "A", plus: 'B' }, return: :name, sort: :name
+      )).to eq(
+        %w{ A C D F }
+      )
     end
   end
 
   describe "offset" do
     it "should not break count" do
-      expect(Card.count_by_wql({match: 'two', offset: 1})).to eq(CARDS_MATCHING_TWO.length)
+      expect(Card.count_by_wql(
+        match: 'two', offset: 1
+      )).to eq(
+        CARDS_MATCHING_TWO.length
+      )
     end
   end
 
@@ -506,36 +655,39 @@ describe Card::Query do
   describe "found_by" do
     before do
       Card::Auth.current_id = Card::WagnBotID
-      c = Card.create(name: 'Simple Search', type: 'Search', content: '{"name":"A"}')
+      c = Card.create(
+        name: 'Simple Search', type: 'Search', content: '{"name":"A"}'
+      )
     end
 
     it "should find cards returned by search of given name" do
-      expect(Card::Query.new(
+      expect(Card::Query.run(
         found_by: 'Simple Search'
-      ).run.first.name).to eq('A')
+      ).first.name).to eq(
+        'A'
+      )
     end
 
     it "should find cards returned by virtual cards" do
-      expect(Card::Query.new(
-        found_by: 'Image+*type+by name').run.map(&:name).sort
-      ).to eq(Card.search(type: 'Image').map(&:name).sort)
+      expect(Card::Query.run(
+        found_by: 'Image+*type+by name', return: :name, sort: :name
+      )).to eq(
+        Card.search type: 'Image', return: :name, sort: :name
+      )
     end
 
     it "should play nicely with other properties and relationships" do
-      found_by_simple = Card::Query.new(
+      expect(Card::Query.run(
         plus: { found_by: 'Simple Search' }, return: :name, sort: :name
-      ).run
-
-      plus_name_A = Card::Query.new(
+      )).to eq( Card::Query.run(
         plus: { name: 'A' }, return: :name, sort: :name
-      ).run
-
-      expect(found_by_simple).to eq(plus_name_A)
+      ))
 
       expect(Card::Query.run(
         found_by: 'A+*self', plus: 'C', return: :name, sort: :name
-      )).to eq(%w{ A })
-
+      )).to eq(
+        %w{ A }
+      )
     end
 
     it "should be able to handle _self" do
@@ -544,7 +696,9 @@ describe Card::Query do
         left: {found_by: '_self'},
         right: 'B',
         return: :name
-      ).first).to eq('A+B')
+      ).first).to eq(
+        'A+B'
+      )
     end
 
   end
@@ -555,29 +709,52 @@ describe Card::Query do
 
   describe "relative" do
     it "should clean wql" do
-      query = Card::Query.new( part: "_self",context: 'A' )
-      expect(query.statement[:part]).to eq('A')
+      expect( Card::Query.new(
+        part: "_self",context: 'A'
+      ).statement[:part]).to eq(
+        'A'
+      )
     end
 
     it "should find connection cards" do
-      expect(Card::Query.new( part: "_self", context: 'A' ).run.map(&:name).sort).to eq(["A+B", "A+C", "A+D", "A+E", "C+A", "D+A", "F+A"])
+      expect(Card::Query.run(
+        part: "_self", context: 'A'
+      ).map(&:name).sort).to eq(
+        ["A+B", "A+C", "A+D", "A+E", "C+A", "D+A", "F+A"]
+      )
     end
 
     it "should be able to use parts of nonexistent cards in search" do
       expect(Card['B+A']).to be_nil
-      expect(Card::Query.new( left: '_right', right: '_left', context: 'B+A' ).run.map(&:name)).to eq(['A+B'])
+      expect(Card::Query.run(
+        left: '_right', right: '_left', context: 'B+A'
+      ).map(&:name)).to eq(
+        ['A+B']
+      )
     end
 
     it "should find plus cards for _self" do
-      expect(Card::Query.new( plus: "_self", context: "A" ).run.map(&:name).sort).to eq(A_JOINEES)
+      expect(Card::Query.run(
+        plus: "_self", context: "A"
+      ).map(&:name).sort).to eq(
+        A_JOINEES
+      )
     end
 
     it "should find plus cards for _left" do
-      expect(Card::Query.new( plus: "_left", context: "A+B" ).run.map(&:name).sort).to eq(A_JOINEES)
+      expect(Card::Query.run(
+        plus: "_left", context: "A+B"
+      ).map(&:name).sort).to eq(
+        A_JOINEES
+      )
     end
 
     it "should find plus cards for _right" do
-      expect(Card::Query.new( plus: "_right", context: "C+A" ).run.map(&:name).sort).to eq(A_JOINEES)
+      expect(Card::Query.run(
+        plus: "_right", context: "C+A"
+      ).map(&:name).sort).to eq(
+        A_JOINEES
+      )
     end
 
   end
@@ -586,7 +763,8 @@ describe Card::Query do
   describe "nested permissions" do
     it "are generated by default" do
       perm_count = 0
-      Card::Query.new( { left: {name: "X"}}).sql.scan( /read_rule_id IN \([\d\,]+\)/ ) do |m|
+      sql = Card::Query.new(left: { name: "X" }).sql
+      sql.scan( /read_rule_id IN \([\d\,]+\)/ ) do |m|
         perm_count+=1
       end
       expect(perm_count).to eq(2)
@@ -595,7 +773,8 @@ describe Card::Query do
 #    it "are not generated inside .without_nested_permissions block" do
 #      perm_count = 0
 #      Card::Query.without_nested_permissions do
-#        Card::Query.new( { left: {name: "X"}}).sql.scan( /read_rule_id IN \([\d\,]+\)/ ) do |m|
+#        Card::Query.run(
+#      { left: {name: "X"}}).sql.scan( /read_rule_id IN \([\d\,]+\)/ ) do |m|
 #          perm_count+=1
 #        end
 #      end
@@ -606,7 +785,9 @@ describe Card::Query do
   #describe "return values" do
   #  # FIXME: should do other return thingies here
   #  it "returns name_content" do
-  #    Card::Query.new( { name: "A+B", return: "name_content" } ).run.should == {
+  #    Card::Query.run(
+  #    { name: "A+B", return: "name_content" }
+  #    ).should == {
   #      "A+B" => "AlphaBeta"
   #    }
   #  end

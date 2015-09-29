@@ -2,19 +2,17 @@
 
 describe Card::Set::Self::All do
   before do
-
     @all = Card[:all]
-
   end
 
   context '#update' do
     it 'should trigger empty trash (with right params)' do
       Card::Auth.as_bot do
         Card['A'].delete!
-        expect(Card.where( trash: true )).not_to be_empty
+        expect(Card.where(trash: true)).not_to be_empty
         Card::Env.params[:task] = :empty_trash
         @all.update_attributes({})
-        expect(Card.where( trash: true )).to be_empty
+        expect(Card.where(trash: true)).to be_empty
       end
     end
 
@@ -43,6 +41,5 @@ describe Card::Set::Self::All do
       end
     end
 =end
-
   end
 end

@@ -73,8 +73,13 @@ class Card
       self
     end
 
-    # RUNNING QUERIES
+    # Query Execution
+    # By default a query returns card objects. This is accomplished by returning
+    # a card identifier from SQL and then hooking into our caching system (see
+    # Card::Fetch)
 
+    # run the current query
+    # @return array of card objects by default
     def run
       retrn = statement[:return].present? ? statement[:return].to_s : 'card'
       if retrn == 'card'
@@ -112,7 +117,10 @@ class Card
       @sql ||= SqlStatement.new(self).build.to_s
     end
 
-    # QUERY HIERARCHY
+    # Query Hierarchy
+    # @root, @subqueries, and @superquery are used to track a hierarchy of
+    # query objects.  This nesting allows to find, for example, cards that
+    # link to cards that link to cards....
 
     def root
       @root ||= @superquery ? @superquery.root : self
@@ -124,8 +132,12 @@ class Card
       subquery
     end
 
+    # Query Interpretation
+
+    # normalize and extract meaning from a clause
+    # @param clause [Hash, String, Integer] statement or chunk thereof
     def interpret clause
-      interpret_by_key( normalize_clause clause )
+      interpret_by_key normalize_clause(clause)
     end
 
     def normalize_clause clause

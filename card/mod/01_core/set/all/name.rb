@@ -45,25 +45,25 @@ def junction?
   cardname.junction?
 end
 
-def relative_name context_name=nil
+def relative_name context_name = nil
   if !context_name && @supercard
     context_name = @supercard.cardname
   end
   cardname.relative_name(context_name)
 end
 
-def absolute_name context_name=nil
+def absolute_name context_name = nil
   if !context_name && @supercard
     context_name = @supercard.cardname
   end
   cardname.absolute_name(context_name)
 end
 
-
 def left *args
   if !simple?
-    @superleft or begin
-      unless name_changed? and name.to_name.trunk_name.key == name_was.to_name.key
+    @superleft || begin
+      unless name_changed? &&
+             name.to_name.trunk_name.key == name_was.to_name.key
         # prevent recursion when, eg, renaming A+B to A+B+C
         Card.fetch cardname.left, *args
       end
@@ -72,32 +72,32 @@ def left *args
 end
 
 def right *args
-  Card.fetch( cardname.right, *args ) if !simple?
+  Card.fetch(cardname.right, *args) if !simple?
 end
 
 def [] *args
-  if args[0].kind_of?(Fixnum) || args[0].kind_of?(Range)
+  if args[0].is_a?(Fixnum) || args[0].is_a?(Range)
     fetch_name = Array.wrap(cardname.parts[args[0]]).compact.join '+'
-    Card.fetch( fetch_name, args[1] || {} ) if !simple?
+    Card.fetch(fetch_name, args[1] || {}) if !simple?
   else
     super
   end
 end
 
 def trunk *args
-  simple? ? self : left( *args )
+  simple? ? self : left(*args)
 end
 
 def tag *args
-  simple? ? self : Card.fetch( cardname.right, *args )
+  simple? ? self : Card.fetch(cardname.right, *args)
 end
 
-def left_or_new args={}
-  left args or Card.new args.merge(name: cardname.left)
+def left_or_new args = {}
+  left(args) || Card.new(args.merge(name: cardname.left))
 end
 
 def children
-  Card.search( { (simple? ? :part : :left) => name } ).to_a
+  Card.search((simple? ? :part : :left) => name).to_a
 end
 
 def dependents
@@ -111,7 +111,7 @@ def dependents
           array + card.dependents
         end
       end
-    #Rails.logger.warn "dependents[#{inspect}] #{@dependents.inspect}"
+    # Rails.logger.warn "dependents[#{inspect}] #{@dependents.inspect}"
   end
   @dependents
 end
@@ -143,13 +143,12 @@ rescue
   self
 end
 
-
 event :permit_codename, before: :approve, on: :update, changed: :codename do
   errors.add :codename, 'only admins can set codename' unless Auth.always_ok?
 end
 
 event :validate_unique_codename, after: :permit_codename do
-  if codename.present? and errors.empty? and Card.find_by_codename(codename).present?
+  if codename.present? && errors.empty? && Card.find_by_codename(codename).present?
     errors.add :codename, "codename #{codename} already in use"
   end
 end

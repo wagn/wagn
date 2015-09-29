@@ -90,7 +90,7 @@ describe Card::Set::Type::List do
       end
       it { is_expected.to eq ['Darles Chickens', 'Stam Broker'] }
     end
-    context 'when Parry Hotter+authors to Parry Hotter+dancers' do
+    context 'when Parry Hotter+authors to Parry Hotter+basics' do
       it 'raises error because content is invalid' do
         expect do
           Card['Parry Hotter+authors'].update_attributes! name: 'Parry Hotter+basics'

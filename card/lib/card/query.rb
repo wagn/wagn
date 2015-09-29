@@ -55,7 +55,7 @@ class Card
 
     DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
 
-    attr_reader :statement, :context, :mods, :conditions,
+    attr_reader :statement, :mods, :conditions,
       :subqueries, :superquery
     attr_accessor :joins, :table_seq, :conditions_on_join
 
@@ -64,7 +64,7 @@ class Card
       @mods = {}
       @statement = statement.clone
 
-      @context    = @statement.delete(:context)    || ''
+      @context    = @statement.delete(:context)    || nil
       @superquery = @statement.delete(:superquery) || nil
       @vars       = @statement.delete(:vars)       || {}
       @vars.symbolize_keys!
@@ -80,6 +80,12 @@ class Card
 
     # run the current query
     # @return array of card objects by default
+
+    def self.run statement
+      query = new statement
+      query.run
+    end
+
     def run
       retrn = statement[:return].present? ? statement[:return].to_s : 'card'
       if retrn == 'card'
@@ -127,7 +133,7 @@ class Card
     end
 
     def subquery opts={}
-      subquery = Query.new opts.reverse_merge(:superquery=>self)
+      subquery = Query.new opts.merge(:superquery=>self)
       @subqueries << subquery
       subquery
     end
@@ -172,9 +178,17 @@ class Card
       when /^\$(\w+)$/                       # replace from @vars
         @vars[$1.to_sym].to_s.strip
       when /\b_/                             # absolutize based on @context
-        val.to_name.to_absolute(root.context)
+        val.to_name.to_absolute(context)
       else
         val
+      end
+    end
+
+    def context
+      if !@context.nil?
+        @context
+      else
+        @context = @superquery ? @superquery.context : ''
       end
     end
 

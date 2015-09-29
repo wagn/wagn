@@ -119,8 +119,8 @@ class Card
         full_syntax do
           limit, offset = @mods[:limit], @mods[:offset]
           if limit.to_i > 0
-            string =  "LIMIT  #{ limit.to_i  }"
-            string += "OFFSET #{ offset.to_i }" if offset.present?
+            string =  "LIMIT  #{ limit.to_i  } "
+            string += "OFFSET #{ offset.to_i } " if offset.present?
             string
           end
         end

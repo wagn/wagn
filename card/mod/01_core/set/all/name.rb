@@ -3,12 +3,11 @@ require 'uuid'
 def name= newname
   cardname = newname.to_name
   if @supercard
-    @given_name = cardname.to_s   # fixme either we have to recognise relative names here or use leading + in subcards
-    relparts = @given_name.to_name.parts
+    relparts = cardname.parts
     if relparts.size==2 && ( relparts.first.blank? || relparts.first.to_name.key == @supercard.key )
       @superleft = @supercard
     end
-    cardname = @given_name.to_name.to_absolute_name @supercard.name
+    cardname = cardname.to_absolute_name @supercard.name
   end
 
 
@@ -60,9 +59,6 @@ def absolute_name context_name=nil
   cardname.absolute_name(context_name)
 end
 
-def given_name
-  @given_name || name
-end
 
 def left *args
   if !simple?

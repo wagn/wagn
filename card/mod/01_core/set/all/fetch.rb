@@ -20,7 +20,7 @@ module ClassMethods
   #     :skip_virtual               Real cards only
   #     :skip_modules               Don't load Set modules
   #     :look_in_trash              Return trashed card objects
-  #     :new => {  card opts }      Return a new card when not found
+  #     new: {  card opts }      Return a new card when not found
   #
   def fetch mark, opts={}
     if String === mark
@@ -68,21 +68,21 @@ module ClassMethods
   end
 
   def fetch_id mark #should optimize this.  what if mark is int?  or codename?
-    card = fetch mark, :skip_virtual=>true, :skip_modules=>true
+    card = fetch mark, skip_virtual: true, skip_modules: true
     card and card.id
   end
 
   def [](mark)
-    fetch mark, :skip_virtual=>true
+    fetch mark, skip_virtual: true
   end
 
   def exists? mark
-    card = fetch mark, :skip_virtual=>true, :skip_modules=>true
+    card = fetch mark, skip_virtual: true, skip_modules: true
     card.present?
   end
 
   def known? mark
-    card = fetch mark, :skip_modules=>true
+    card = fetch mark, skip_modules: true
     card.present?
   end
 
@@ -170,7 +170,7 @@ module ClassMethods
   end
 
   def new_for_cache name, opts
-    new_args = { :name=>name, :skip_modules=>true }
+    new_args = { name: name, skip_modules: true }
     new_args[:type_id] = -1 unless clean_cache_opts? opts
     # The -1 type_id allows us to skip all the type lookup and flag the need for
     # reinitialization later.  *** It should NEVER be seen elsewhere ***

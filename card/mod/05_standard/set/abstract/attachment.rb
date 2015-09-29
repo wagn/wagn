@@ -4,26 +4,26 @@ def self.included host_class
   host_class.extend CarrierWave::CardMount
 end
 
-event :select_file_revision, :after=>:select_action do
+event :select_file_revision, after: :select_action do
   attachment.retrieve_from_store!(attachment.identifier)
 end
 
-event :upload_attachment, :before=>:validate_name, :on=>:save, :when=>proc { |c| c.preliminary_upload? } do
+event :upload_attachment, before: :validate_name, on: :save, when: proc { |c| c.preliminary_upload? } do
   save_original_filename  # save original filename as comment in action
   write_identifier        # set db_content (needs original filename to determine extension)
   store_attachment!
   finalize_action         # create Card::Change entry for db_content
-  @current_action.update_attributes! :draft => true, :card_id => (new_card? ? upload_cache_card.id : id)
+  @current_action.update_attributes! draft: true, card_id: (new_card? ? upload_cache_card.id : id)
   success << {
-    :target => (new_card? ? upload_cache_card : self),
-    :type=> type_name,
-    :view => 'preview_editor',
-    :rev_id => current_action.id
+    target: (new_card? ? upload_cache_card : self),
+    type: type_name,
+    view: 'preview_editor',
+    rev_id: current_action.id
   }
   abort :success
 end
 
-event :assign_attachment_on_create, :after=>:prepare, :on=>:create, :when => proc { |c| c.save_preliminary_upload? } do
+event :assign_attachment_on_create, after: :prepare, on: create, when: proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@cached_upload))
     upload_cache_card.selected_action_id = action.id
     upload_cache_card.select_file_revision
@@ -31,7 +31,7 @@ event :assign_attachment_on_create, :after=>:prepare, :on=>:create, :when => pro
   end
 end
 
-event :assign_attachment_on_update, :after=>:prepare, :on=>:update, :when => proc { |c| c.save_preliminary_upload? } do
+event :assign_attachment_on_update, after: :prepare, on: :update, when:  proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@cached_upload))
     uploaded_file =
        with_selected_action_id(action.id) do
@@ -45,22 +45,22 @@ end
 def assign_attachment file, original_filename
   send "#{attachment_name}=", file
   write_identifier
-  @current_action.update_attributes! :comment=>original_filename
+  @current_action.update_attributes! comment: original_filename
 end
 
 # we need a card id for the path so we have to update db_content when we got an id
-event :correct_identifier, :after=>:store, :on=>:create do
-  update_column(:db_content,attachment.db_content(:mod=>load_from_mod))
+event :correct_identifier, after: :store, on: :create do
+  update_column(:db_content,attachment.db_content(mod: load_from_mod))
   expire
 end
 
-event :save_original_filename, :after=>:validate_name, :when => proc {|c| !c.preliminary_upload? && !c.save_preliminary_upload? && c.attachment_changed?} do
+event :save_original_filename, after: :validate_name, when: proc {|c| !c.preliminary_upload? && !c.save_preliminary_upload? && c.attachment_changed?} do
   if @current_action
-    @current_action.update_attributes! :comment=>original_filename
+    @current_action.update_attributes! comment: original_filename
   end
 end
 
-event :delete_cached_upload_file_on_create, :after=>:extend, :on=>:create, :when => proc { |c| c.save_preliminary_upload? } do
+event :delete_cached_upload_file_on_create, after: :extend, on: :create, when: proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@cached_upload))
     upload_cache_card.delete_files_for_action action
     action.delete
@@ -68,7 +68,7 @@ event :delete_cached_upload_file_on_create, :after=>:extend, :on=>:create, :when
   clear_upload_cache_dir_for_new_cards
 end
 
-event :delete_cached_upload_file_on_update, :after=>:extend, :on=>:update, :when => proc { |c| c.save_preliminary_upload? } do
+event :delete_cached_upload_file_on_update, after: :extend, on: :update, when: proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@cached_upload))
     delete_files_for_action action
     action.delete
@@ -76,8 +76,8 @@ event :delete_cached_upload_file_on_update, :after=>:extend, :on=>:update, :when
 end
 
 
-event :write_identifier, :after=>:save_original_filename do
-  self.content = attachment.db_content(:mod=>load_from_mod)
+event :write_identifier, after: :save_original_filename do
+  self.content = attachment.db_content(mod: load_from_mod)
 end
 
 
@@ -90,7 +90,7 @@ def original_filename
 end
 
 def preliminary_upload?
-  Card::Env && Card::Env.params[:attachment_card_name]
+  Card::Env && Card::Env.params[:attachment_upload]
 end
 
 def save_preliminary_upload?

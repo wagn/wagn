@@ -1,4 +1,4 @@
-event :clear_view_cache, :after=>:store do
+event :clear_view_cache, after: :store do
   Card::ViewCache.reset
 end
 

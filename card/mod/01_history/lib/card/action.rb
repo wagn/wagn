@@ -4,12 +4,12 @@ class Card
 
   class Action < ActiveRecord::Base
     belongs_to :card
-    belongs_to :act,  :foreign_key=>:card_act_id, :inverse_of=>:actions
-    has_many   :card_changes, :foreign_key=>:card_action_id, :inverse_of=>:action,
-      :dependent=>:delete_all, :class_name=> "Card::Change"
+    belongs_to :act,  foreign_key: :card_act_id, inverse_of: :actions
+    has_many   :card_changes, foreign_key: :card_action_id, inverse_of: :action,
+      dependent: :delete_all, class_name: "Card::Change"
 
-    belongs_to :super_action, :class_name=> "Action", :inverse_of=>:sub_actions
-    has_many   :sub_actions,  :class_name=> "Action", :inverse_of=>:super_action
+    belongs_to :super_action, class_name: "Action", inverse_of: :sub_actions
+    has_many   :sub_actions,  class_name: "Action", inverse_of: :super_action
 
     scope :created_by, lambda { |actor_id| joins(:act).where('card_acts.actor_id = ?', actor_id) }
 
@@ -61,42 +61,42 @@ class Card
     # another way.
     #
     def changed_fields obj, changed_fields
-      #changed_fields.each{ |f| changes.build :field => f, :value => self[f] }
-      changed_fields.each{ |f| Card::Change.create :field => f, :value => obj[f], :card_action_id=>id }
+      #changed_fields.each{ |f| changes.build field: f, value: self[f] }
+      changed_fields.each{ |f| Card::Change.create field: f, value: obj[f], card_action_id: id }
     end
 
     def edit_info
       @edit_info ||= {
-        :action_type  => "#{action_type}d",
-        :new_content  => new_values[:content],
-        :new_name     => new_values[:name],
-        :new_cardtype => new_values[:cardtype],
-        :old_content  => old_values[:content],
-        :old_name     => old_values[:name],
-        :old_cardtype => old_values[:cardtype]
+        action_type:  "#{action_type}d",
+        new_content:  new_values[:content],
+        new_name:     new_values[:name],
+        new_cardtype: new_values[:cardtype],
+        old_content:  old_values[:content],
+        old_name:     old_values[:name],
+        old_cardtype: old_values[:cardtype]
       }
     end
 
     def new_values
       @new_values ||=
       {
-        :content  => new_value_for(:db_content),
-        :name     => new_value_for(:name),
-        :cardtype => ( typecard = Card[new_value_for(:type_id).to_i] and typecard.name.capitalize )
+        content:  new_value_for(:db_content),
+        name:     new_value_for(:name),
+        cardtype: ( typecard = Card[new_value_for(:type_id).to_i] and typecard.name.capitalize )
       }
     end
 
     def old_values
       @old_values ||= {
-        :content  => last_value_for(:db_content),
-        :name     => last_value_for(:name),
-        :cardtype => ( value = last_value_for(:type_id) and
+        content:  last_value_for(:db_content),
+        name:     last_value_for(:name),
+        cardtype: ( value = last_value_for(:type_id) and
                        typecard = Card.find(value) and  typecard.name.capitalize )
       }
     end
 
     def last_value_for field
-      ch = self.card.last_change_on(field, :before=>self) and ch.value
+      ch = self.card.last_change_on(field, before: self) and ch.value
     end
 
     def field_index field
@@ -152,7 +152,7 @@ class Card
     end
 
     # def diff
-    #   @diff ||= { :cardtype=>type_diff, :content=>content_diff, :name=>name_diff}
+    #   @diff ||= { cardtype: type_diff, content: content_diff, name: name_diff}
     # end
 
     def name_diff opts={}

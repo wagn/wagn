@@ -22,14 +22,14 @@ class Card
       junction? && begin
         right_key = right_name.key
         !!traitlist.find do |codename|
-          card_id = Card::Codename[ codename ] and card = Card.fetch( card_id, :skip_modules=>true, :skip_virtual=>true ) and
+          card_id = Card::Codename[ codename ] and card = Card.fetch( card_id, skip_modules: true, skip_virtual: true ) and
             card.key == right_key
         end
       end
     end
 
     def trait_name tag_code
-      card_id = Card::Codename[ tag_code ] and card = Card.fetch( card_id, :skip_modules=>true, :skip_virtual=>true ) and
+      card_id = Card::Codename[ tag_code ] and card = Card.fetch( card_id, skip_modules: true, skip_virtual: true ) and
         [ self, card.cardname ].to_name
     end
 
@@ -53,11 +53,11 @@ class Card
         self.s.match /^\s*\+/
       end
     end
-    
+
     def is_setting?
       Set::Type::Setting.member_names[ key ]
     end
-    
+
     def is_set?
       SetPattern.card_keys[ tag_name.key ]
     end

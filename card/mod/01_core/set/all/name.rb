@@ -83,7 +83,7 @@ def tag *args
 end
 
 def left_or_new args={}
-  left args or Card.new args.merge(:name=>cardname.left)
+  left args or Card.new args.merge(name: cardname.left)
 end
 
 def children
@@ -134,17 +134,17 @@ rescue
 end
 
 
-event :permit_codename, :before=>:approve, :on=>:update, :changed=>:codename do
+event :permit_codename, before: :approve, on: :update, changed: :codename do
   errors.add :codename, 'only admins can set codename' unless Auth.always_ok?
 end
 
-event :validate_unique_codename, :after=>:permit_codename do
+event :validate_unique_codename, after: :permit_codename do
   if codename.present? and errors.empty? and Card.find_by_codename(codename).present?
     errors.add :codename, "codename #{codename} already in use"
   end
 end
 
-event :validate_name, :before=>:approve, :on=>:save do
+event :validate_name, before: :approve, on: :save do
   cdname = name.to_name
   if name.length > 255
     errors.add :name, "is too long (255 character maximum)"
@@ -157,7 +157,7 @@ event :validate_name, :before=>:approve, :on=>:save do
       errors.add :name, "may not contain any of the following characters: #{ Card::Name.banned_array * ' ' }"
     end
     # this is to protect against using a plus card as a tag
-    if cdname.junction? and simple? and id and Auth.as_bot { Card.count_by_wql :right_id=>id } > 0
+    if cdname.junction? and simple? and id and Auth.as_bot { Card.count_by_wql right_id: id } > 0
       errors.add :name, "#{name} in use as a tag"
     end
 
@@ -175,15 +175,15 @@ event :validate_name, :before=>:approve, :on=>:save do
 end
 
 
-event :set_autoname, :before=>:validate_name, :on=>:create do
+event :set_autoname, before: :validate_name, on: :create do
   if name.blank? and autoname_card = rule_card(:autoname)
     self.name = autoname autoname_card.content
-    Auth.as_bot { autoname_card.refresh.update_attributes! :content=>name }   #fixme, should give placeholder on new, do next and save on create
+    Auth.as_bot { autoname_card.refresh.update_attributes! content: name }   #fixme, should give placeholder on new, do next and save on create
   end
 end
 
 
-event :validate_key, :after=>:validate_name, :on=>:save do
+event :validate_key, after: :validate_name, on: :save do
   if key.empty?
     errors.add :key, "cannot be blank" if errors.empty?
   elsif key != cardname.key
@@ -191,7 +191,7 @@ event :validate_key, :after=>:validate_name, :on=>:save do
   end
 end
 
-event :set_name, :before=>:store, :changed=>:name do
+event :set_name, before: :store, changed: :name do
   Card.expire name
   Card.expire name_was
   if cardname.junction?
@@ -203,7 +203,7 @@ event :set_name, :before=>:store, :changed=>:name do
       suspend_name(sidename) if old_name_in_way
       send "#{side}_id=", begin
         if !sidecard || old_name_in_way
-          Card.create! :name=>sidename, :supercard => self
+          Card.create! name: sidename, supercard: self
         else
           sidecard
         end.id
@@ -215,7 +215,7 @@ event :set_name, :before=>:store, :changed=>:name do
 end
 
 
-event :rename, :after=>:set_name, :on=>:update do
+event :rename, after: :set_name, on: :update do
   if existing_card = Card.find_by_key_and_trash(cardname.key, true) and existing_card != self
     existing_card.name = existing_card.name+'*trash'
     existing_card.rename_without_callbacks
@@ -228,11 +228,11 @@ def suspend_name(name)
   # re-creating a card with the current name, ie.  A -> A+B
   Card.expire name
   tmp_name = "tmp:" + UUID.new.generate
-  Card.where(:id=>self.id).update_all(:name=>tmp_name, :key=>tmp_name)
+  Card.where(id: self.id).update_all(name: tmp_name, key: tmp_name)
 end
 
 
-event :cascade_name_changes, :after=>:store, :on=>:update, :changed=>:name do
+event :cascade_name_changes, after: :store, on: :update, changed: :name do
   #Rails.logger.info "------------------- #{name_was} CASCADE #{self.name} -------------------------------------"
 
   self.update_referencers = false if self.update_referencers == 'false' #handle strings from cgi
@@ -248,7 +248,7 @@ event :cascade_name_changes, :after=>:store, :on=>:update, :changed=>:name do
     Rails.logger.info "cascading name: #{dep.name}"
     Card.expire dep.name #old name
     newname = dep.cardname.replace_part name_was, name
-    Card.where( :id=> dep.id ).update_all :name => newname.to_s, :key => newname.key
+    Card.where( id: dep.id ).update_all name: newname.to_s, key: newname.key
     Card::Reference.update_on_rename dep, newname, update_referencers
     Card.expire newname
   end

@@ -25,7 +25,7 @@ class Card
     class << self
       def [] klass
         raise "nil klass" if klass.nil?
-        cache_by_class[klass] ||= new :class=>klass, :store=>(@@no_rails_cache ? nil : Cardio.cache)
+        cache_by_class[klass] ||= new class: klass, store: (@@no_rails_cache ? nil : Cardio.cache)
       end
 
       def renew

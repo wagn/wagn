@@ -21,7 +21,7 @@ def reset_patterns_if_rule saving=false
 
     #this is really messy.
     if saving
-      self.add_to_read_rule_update_queue( set.item_cards :limit=>0 ) if right.id == Card::ReadID
+      self.add_to_read_rule_update_queue( set.item_cards limit: 0 ) if right.id == Card::ReadID
     end
   end
 end

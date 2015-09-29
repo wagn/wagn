@@ -8,7 +8,7 @@ describe Card::Chunk::QueryReference, "QueryReference" do
     end
 
     let :query_refs do
-       content = Card::Content.new @content, Card.new(:type=>'Search')
+       content = Card::Content.new @content, Card.new(type: 'Search')
        content.find_chunks(Card::Chunk::QueryReference)
     end
 

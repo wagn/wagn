@@ -3,7 +3,7 @@ module ClassMethods
 
   def empty_trash
     Card.delete_trashed_files
-    Card.where(:trash=>true).delete_all
+    Card.where(trash: true).delete_all
     Card::Action.delete_cardless
     Card::Reference.repair_missing_referees
     Card::Reference.delete_missing_referers
@@ -18,7 +18,7 @@ module ClassMethods
     file_ids.each do |file_id|
       if trashed_card_ids.member?(file_id)
         raise Card::Error, "Narrowly averted deleting current file" if Card.exists?(file_id) #double check!
-        FileUtils.rm_rf "#{dir}/#{file_id}", :secure => true
+        FileUtils.rm_rf "#{dir}/#{file_id}", secure: true
       end
     end
   end
@@ -64,7 +64,7 @@ module ClassMethods
 
   def merge name, attribs={}, opts={}
     puts "merging #{ name }"
-    card = fetch name, :new=>{}
+    card = fetch name, new: {}
 
     if opts[:pristine] && !card.pristine?
       false
@@ -134,7 +134,7 @@ format :html do
       accordions << accordion(title, content, "#{collapse_id}-#{index}")
       index += 1
     end
-    content_tag :div, accordions.html_safe, :class=>"panel-group", :id=>"accordion-#{collapse_id}", :role=>"tablist", 'aria-multiselectable'=>"true"
+    content_tag :div, accordions.html_safe, class: "panel-group", id: "accordion-#{collapse_id}", role: "tablist", 'aria-multiselectable'=>"true"
   end
 
   def accordion title, content, collapse_id=card.cardname.safe_key

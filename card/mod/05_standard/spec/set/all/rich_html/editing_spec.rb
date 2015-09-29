@@ -51,7 +51,7 @@ describe Card::Set::All::RichHtml::Editing do
   # describe 'edit_nests view' do
   #   before do
   #     Card::Auth.as_bot do
-  #       Card.create! :name=>'Iliad+author', :content=>'Homer'
+  #       Card.create! name: 'Iliad+author', content: 'Homer'
   #     end
   #     @mycard = Card["Iliad"].format
   #   end

@@ -15,7 +15,7 @@ module Card::SpecHelper
 
   def newcard name, content=""
     #FIXME - misleading name; sounds like it doesn't save.
-    Card.create! :name=>name, :content=>content
+    Card.create! name: name, content: content
   end
 
   def assert_view_select(view_html, *args, &block)
@@ -44,7 +44,7 @@ module Card::SpecHelper
   end
 
   def render_editor(type)
-    card = Card.create(:name=>"my favority #{type} + #{rand(4)}", :type=>type)
+    card = Card.create(name: "my favority #{type} + #{rand(4)}", type: type)
     card.format.render(:edit)
   end
 
@@ -53,7 +53,7 @@ module Card::SpecHelper
   end
 
   def render_content_with_args content, format_args={}, view_args={}
-    @card ||= Card.new :name=>"Tempo Rary 2"
+    @card ||= Card.new name: "Tempo Rary 2"
     @card.content = content
     @card.format(format_args)._render :core, view_args
   end
@@ -65,9 +65,9 @@ module Card::SpecHelper
   def render_card_with_args view, card_args={}, format_args={}, view_args={}
     card = begin
       if card_args[:name]
-        Card.fetch card_args[:name], :new=>card_args
+        Card.fetch card_args[:name], new: card_args
       else
-        Card.new card_args.merge( :name=> 'Tempo Rary' )
+        Card.new card_args.merge( name: 'Tempo Rary' )
       end
     end
     card.format(format_args)._render(view, view_args)

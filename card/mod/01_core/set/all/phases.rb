@@ -121,26 +121,43 @@ end
 
 
 def event_applies? opts
-  if opts[:on]
-    return false unless Array.wrap( opts[:on] ).member? @action
-  end
-  if changed_field = opts[:changed]
-
-    changed_field = 'db_content' if changed_field.to_sym == :content
-    return false if @action == :delete or !changes[ changed_field.to_s ]
-  end
-  if opts[:when]
-    return false unless opts[:when].call self
-  end
-  true
+  on_condition_applies?(opts[:on]) &&
+    changed_condition_applies?(opts[:changed]) &&
+    when_condition_applies?(opts[:when])
 end
+
+def on_condition_applies? action
+  if action
+    Array.wrap(action).member? @action
+  else
+    true
+  end
+end
+
+def changed_condition_applies? db_column
+  if db_column
+    db_column = 'db_content' if db_column.to_sym == :content
+    @action != :delete && changes[db_column.to_s]
+  else
+    true
+  end
+end
+
+def when_condition_applies? block
+  if block
+    block.call self
+  else
+    true
+  end
+end
+
 
 def subcards
   @subcards ||= {}
 end
 
 
-event :process_subcards, :after=>:approve, :on=>:save do
+event :process_subcards, after: :approve, on: :save do
   subcards.keys.each do |sub_name|
     opts = @subcards[sub_name] || {}
     opts = { 'content' => opts } if String===opts
@@ -169,7 +186,7 @@ event :process_subcards, :after=>:approve, :on=>:save do
   end
 end
 
-event :approve_subcards, :after=>:process_subcards do
+event :approve_subcards, after: :process_subcards do
   subcards.each do |key, subcard|
     if !subcard.valid_subcard?
       subcard.errors.each do |field, err|
@@ -180,9 +197,9 @@ event :approve_subcards, :after=>:process_subcards do
   end
 end
 
-event :store_subcards, :after=>:store do
+event :store_subcards, after: :store do
   subcards.each do |key, sub|
-    sub.save! :validate=>false #unless @draft
+    sub.save! validate: false #unless @draft
   end
 end
 

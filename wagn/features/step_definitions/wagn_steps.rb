@@ -38,8 +38,8 @@ Given /^I sign in as (.+)$/ do |account_name|
   accounted = Card[account_name]
   @current_id = accounted.id
   visit "/:signin"
-  fill_in "card[subcards][+*email][content]", :with=> accounted.account.email
-  fill_in "card[subcards][+*password][content]", :with=> 'joe_pass'
+  fill_in "card[subcards][+*email][content]", with: accounted.account.email
+  fill_in "card[subcards][+*password][content]", with: 'joe_pass'
   click_button "Sign in"
   page.should have_content(account_name)
 end
@@ -48,7 +48,7 @@ end
 
 Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
   Card::Auth.as_bot do
-    card = Card.fetch cardname, :new=>{}
+    card = Card.fetch cardname, new: {}
     card.content = content
     card.save!
   end
@@ -71,21 +71,21 @@ end
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
-    fill_in 'card[content]', :with=>content
+    fill_in 'card[content]', with: content
     click_button("Submit")
   end
 end
 
 When /^(.*) edits? "([^\"]*)" filling in "([^\"]*)"$/ do |username, cardname, content|
   visit "/card/edit/#{cardname.to_name.url_key}"
-  fill_in 'card[content]', :with=>content
+  fill_in 'card[content]', with: content
 end
 
 When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
     plusses.hashes.first.each do |name, content|
-      fill_in "card[subcards][#{cardname}+#{name}][content]", :with=>content
+      fill_in "card[subcards][#{cardname}+#{name}][content]", with: content
     end
     click_button("Submit")
   end
@@ -95,7 +95,7 @@ When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |usern
   create_card(username, cardtype, cardname, content) do
     normal_textarea_card_type = ["JavaScript","CoffeeScript","HTML","CSS","SCSS","Search"]
     if not normal_textarea_card_type.include? cardtype or not page.evaluate_script "typeof ace != 'undefined'"
-      fill_in("card[content]", :with=>content)
+      fill_in("card[content]", with: content)
     else
       page.execute_script %{ace.edit($('.ace_editor').get(0)).getSession().setValue('#{content}')}
     end
@@ -109,7 +109,7 @@ end
 When /^(.*) creates?\s*([^\s]*) card "([^"]*)" with plusses:$/ do |username,cardtype,cardname,plusses|
   create_card(username,cardtype,cardname) do
     plusses.hashes.first.each do |name, content|
-      fill_in "card[subcards][+#{name}][content]", :with=>content
+      fill_in "card[subcards][+#{name}][content]", with: content
     end
   end
 end
@@ -179,7 +179,7 @@ end
 def create_card(username,cardtype,cardname,content="")
   signed_in_as(username) do
     if cardtype=='Pointer'
-      Card.create :name=>cardname, :type=>cardtype, :content=>content
+      Card.create name: cardname, type: cardtype, content: content
     else
       visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"
       yield if block_given?
@@ -304,7 +304,7 @@ Then /^In (.*) I should (not )?see a ([^\"]*) with content "([^\"]*)"$/ do |sele
   # checks for existence of a element with a class in a selection context
   element = 'a' if element == 'link'
   within scope_of(selection) do
-    page.send( ( neg ? :should_not : :should ), have_css( element, :text=>content ) )
+    page.send( ( neg ? :should_not : :should ), have_css( element, text: content ) )
   end
 end
 
@@ -338,6 +338,6 @@ Then /^I should see "([^\"]*)" in color (.*)$/ do |text, css_class|
 end
 
 When /^I fill in "([^\"]*)" with$/ do |field, value|
-  fill_in(field, :with => value)
+  fill_in(field, with: value)
 end
 

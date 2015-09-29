@@ -8,8 +8,8 @@ module Card::Chunk
   class EscapedLiteral < Abstract
     FULL_RE = { '[' => /^\\\[\[[^\]]*\]\]/, '{' => /^\\\{\{[^\}]*\}\}/ }
     Card::Chunk.register_class self, {
-      :prefix_re => '\\\\(?:\\[\\[|\\{\\{)',
-      :idx_char  => '\\'
+      prefix_re: '\\\\(?:\\[\\[|\\{\\{)',
+      idx_char:  '\\'
     }
 
     def self.full_re prefix

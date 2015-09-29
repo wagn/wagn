@@ -9,7 +9,7 @@ def item_cards params={}
 end
 
 def item_names params={}
-  Card.search(query(params.merge(:return=>:name)))
+  Card.search(query(params.merge(return: :name)))
 end
 
 def item_type
@@ -29,7 +29,7 @@ def get_query params={}
   query = Auth.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
     query_content = params.delete(:query) || raw_content
     #warn "get_query #{name}, #{query_content}, #{params.inspect}"
-    raise("Error in card '#{self.name}':can't run search with empty content") if query_content.empty?
+    raise(JSON::ParserError, "Error in card '#{self.name}':can't run search with empty content") if query_content.empty?
     String === query_content ? JSON.parse( query_content ) : query_content
   end
   query.symbolize_keys!.merge! params.symbolize_keys
@@ -79,10 +79,10 @@ format do
       begin
         v = {}
         v[:query] = card.query( search_params )
-        v[:item]  = set_inclusion_opts args.merge( :query_view=>v[:query][:view] )
+        v[:item]  = set_inclusion_opts args.merge( query_view: v[:query][:view] )
         v
-      rescue =>e
-        { :error => e }
+      rescue JSON::ParserError => e
+        { error: e }
       end
   end
 
@@ -104,13 +104,13 @@ format do
       begin
         card.item_names search_params
       rescue => e
-        { :error => e}
+        { error: e}
       end
   end
 
   def each_reference_with_args args={}
     search_result_names.each do |name|
-      yield(name, nest_args(args.reverse_merge!(:item=>:content)))
+      yield(name, nest_args(args.reverse_merge!(item: :content)))
     end
   end
 
@@ -125,7 +125,7 @@ format do
 
   def page_link text, page, current=false, options={}
     @paging_path_args[:offset] = page * @paging_limit
-    options.merge!(:class=>'card-paging-link slotter', :remote => true)
+    options.merge!(class: 'card-paging-link slotter', remote: true)
     link_to raw(text), path(@paging_path_args), options
   end
 
@@ -136,7 +136,7 @@ format do
                   'disabled'
                 end
     page ||= 0
-    content_tag :li, :class=>css_class do
+    content_tag :li, class: css_class do
       page_link text, page, current, options
     end
   end
@@ -181,7 +181,7 @@ end
 
 format :json do
   def default_search_params
-    set_default_search_params :default_limit => 0
+    set_default_search_params default_limit: 0
   end
 end
 
@@ -196,7 +196,7 @@ format :rss do
 
   def raw_feed_items args
     @raw_feed_items ||= begin
-      search_params.merge!(:default_limit => 25)
+      search_params.merge!(default_limit: 25)
       search_results
     end
   end
@@ -215,7 +215,7 @@ format :html do
           item_view = inclusion_defaults(c)[:view]
           %{
             <div class="search-result-item item-#{ item_view }">
-              #{nest(c, :size=>args[:size], :view=>item_view)}
+              #{nest(c, size: args[:size], view: item_view)}
             </div>
           }
         end.join "\n"
@@ -238,12 +238,12 @@ format :html do
       search_limit = args[:closed_search_limit]
       search_params[:limit] = search_limit && search_limit < Card.config.closed_search_limit ?
                                 search_limit : Card.config.closed_search_limit
-      _render_core args.merge( :hide=>'paging', :item=>:link )
+      _render_core args.merge( hide: 'paging', item: :link )
       # TODO: if item is queryified to be "name", then that should work.  otherwise use link
     end
   end
 
-  view :editor, :mod=>Html::HtmlFormat
+  view :editor, mod: Html::HtmlFormat
 
   view :no_search_results do |args|
     %{<div class="search-no-results"></div>}
@@ -257,7 +257,7 @@ format :html do
     total = card.count search_params
     return '' if limit >= total # should only happen if limit exactly equals the total
 
-    @paging_path_args = { :limit => limit, :item=> inclusion_defaults(card)[:view] }
+    @paging_path_args = { limit: limit, item: inclusion_defaults(card)[:view] }
     @paging_limit = limit
 
     s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }
@@ -296,7 +296,7 @@ format :html do
   end
 
   def default_search_params
-    set_default_search_params :default_limit=>20
+    set_default_search_params default_limit: 20
   end
 
 end

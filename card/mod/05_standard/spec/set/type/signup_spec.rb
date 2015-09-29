@@ -9,7 +9,7 @@ describe Card::Set::Type::Signup do
 
   context 'signup form form' do
     before do
-      card = Card.new :type_id=>Card::SignupID
+      card = Card.new type_id: Card::SignupID
       @form = card.format.render_new
     end
 
@@ -27,11 +27,11 @@ describe Card::Set::Type::Signup do
       ActionMailer::Base.deliveries = [] #needed?
 
       Card::Auth.as_bot do
-        Card.create! :name=>'User+*type+*create', :content=>'[[Anyone]]'
+        Card.create! name: 'User+*type+*create', content: '[[Anyone]]'
       end
 
       Card::Auth.current_id = Card::AnonymousID
-      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID,
+      @signup = Card.create! name: 'Big Bad Wolf', type_id: Card::SignupID,
         '+*account'=>{'+*email'=>'wolf@wagn.org', '+*password'=>'wolf'}
 
       @account = @signup.account
@@ -55,7 +55,7 @@ describe Card::Set::Type::Signup do
     it 'should create an authenticable token' do
       expect(@account.token).to eq(@token)
       expect(@account.authenticate_by_token(@token)).to eq(@signup.id)
-      expect(@account.fetch(:trait=> :token)).not_to be_present
+      expect(@account.fetch(trait: :token)).not_to be_present
     end
 
     it 'should notify someone' do
@@ -92,7 +92,7 @@ describe Card::Set::Type::Signup do
       # NOTE: by default Anonymous does not have permission to create User cards.
       Mail::TestMailer.deliveries.clear
       Card::Auth.current_id = Card::AnonymousID
-      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID,
+      @signup = Card.create! name: 'Big Bad Wolf', type_id: Card::SignupID,
         '+*account'=>{ '+*email'=>'wolf@wagn.org', '+*password'=>'wolf' }
       @account = @signup.account
     end
@@ -158,11 +158,11 @@ describe Card::Set::Type::Signup do
   context 'a welcome email card exists' do
     before do
       Card::Auth.as_bot do
-        Card.create! :name=>'welcome email', :subcards=>{'+*subject'=>'welcome',
-                     '+*html_message'=>'Welcome {{_self|name}}'}, :type_id=>Card::EmailTemplateID
+        Card.create! name: 'welcome email', subcards: {'+*subject'=>'welcome',
+                     '+*html_message'=>'Welcome {{_self|name}}'}, type_id: Card::EmailTemplateID
       end
       Mail::TestMailer.deliveries.clear
-      @signup = Card.create! :name=>'Big Bad Sheep', :type_id=>Card::SignupID,
+      @signup = Card.create! name: 'Big Bad Sheep', type_id: Card::SignupID,
         '+*account'=>{'+*email'=>'sheep@wagn.org', '+*password'=>'sheep'}
 
     end
@@ -180,7 +180,7 @@ describe Card::Set::Type::Signup do
     before do
       # NOTE: by default Anonymous does not have permission to create User cards.
       Card::Auth.current_id = Card::WagnBotID
-      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ '+*email'=>'wolf@wagn.org'}
+      @signup = Card.create! name: 'Big Bad Wolf', type_id: Card::SignupID, '+*account'=>{ '+*email'=>'wolf@wagn.org'}
       @account = @signup.account
     end
 
@@ -198,11 +198,11 @@ describe Card::Set::Type::Signup do
   # describe '#signup_notifications' do
   #   before do
   #     Card::Auth.as_bot do
-  #       Card.create! :name=>'*request+*to', :content=>'signups@wagn.org'
+  #       Card.create! name: '*request+*to', content: 'signups@wagn.org'
   #     end
   #     @user_name = 'Big Bad Wolf'
   #     @user_email = 'wolf@wagn.org'
-  #     @signup = Card.create! :name=>@user_name, :type_id=>Card::SignupID, '+*account'=>{
+  #     @signup = Card.create! name: @user_name, type_id: Card::SignupID, '+*account'=>{
   #       '+*email'=>@user_email, '+*password'=>'wolf'}
   #     ActionMailer::Base.deliveries = []
   #     @signup.signup_notifications

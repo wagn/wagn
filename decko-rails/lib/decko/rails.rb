@@ -15,7 +15,7 @@ module Decko
   if defined? ::Rails::Railtie
     class Railtie < ::Rails::Railtie
 
-      initializer 'decko-rails.load_task_path', :before => 'decko.engine.load_config_initializers' do
+      initializer 'decko-rails.load_task_path', before: 'decko.engine.load_config_initializers' do
         Cardio.set_config ::Rails.application.config
         Cardio.set_paths ::Rails.application.paths
       end

@@ -9,13 +9,13 @@ describe Card::Set::All::Json, "JSON mod" do
       virtual_json = jf.new(Card.fetch('T+*self')).show :status, {}
       expect(JSON[virtual_json]).to eq({"key"=>"t+*self","status"=>"virtual",'url_key'=>'T+*self'})
     end
-    
+
     it "should treat both unknown and unreadable cards as unknown" do
       Card::Auth.as Card::AnonymousID do
         jf = Card::JsonFormat
-        
-        unknown = Card.new :name=>'sump'
-        unreadable = Card.new :name=>'kumq', :type=>'Fruit'
+
+        unknown = Card.new name: 'sump'
+        unreadable = Card.new name: 'kumq', type: 'Fruit'
         unknown_json = jf.new(unknown).show :status, {}
         expect(JSON[unknown_json]).to eq({"key"=>"sump","status"=>"unknown", 'url_key'=>'sump'})
         unreadable_json = jf.new(unreadable).show :status, {}

@@ -3,7 +3,7 @@ def clean_html?
 end
 
 def diff_args
- {:format=>:raw}
+ {format: :raw}
 end
 
 format do
@@ -19,7 +19,7 @@ end
 
 format :html do
   view :editor do |args|
-    text_area :content, :rows=>5, :class=>'card-content ace-editor-textarea', "data-card-type-code"=>card.type_code
+    text_area :content, rows: 5, class: 'card-content ace-editor-textarea', "data-card-type-code"=>card.type_code
   end
 end
 

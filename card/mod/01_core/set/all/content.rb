@@ -48,13 +48,13 @@ def clear_drafts
   end
 end
 
-event :save_draft, :before=>:store, :on=>:update, :when=>proc{ |c| Env.params['draft'] == 'true' } do
+event :save_draft, before: :store, on: :update, when: proc{ |c| Env.params['draft'] == 'true' } do
   save_content_draft content
   abort :success
 end
 
 
-event :set_default_content, :on=>:create, :before=>:approve do
+event :set_default_content, on: :create, before: :approve do
   if !db_content_changed? && template && template.db_content.present?
     self.db_content = template.db_content
   end

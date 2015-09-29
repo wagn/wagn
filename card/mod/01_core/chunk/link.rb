@@ -8,9 +8,9 @@ module Card::Chunk
     word = /\s*([^\]\|]+)\s*/
     # Groups: $1, [$2]: [[$1]] or [[$1|$2]] or $3, $4: [$3][$4]
     Card::Chunk.register_class self, {
-      :prefix_re => '\\[',
-      :full_re   => /^\[\[([^\]]+)\]\]/,
-      :idx_char  => '['
+      prefix_re: '\\[',
+      full_re:   /^\[\[([^\]]+)\]\]/,
+      idx_char:  '['
     }
 
     def interpret match, content
@@ -60,9 +60,9 @@ module Card::Chunk
 
       if @explicit_link
         @explicit_link = render_obj @explicit_link
-        format.web_link @explicit_link, :text=> @link_text
+        format.web_link @explicit_link, text: @link_text
       elsif @name
-        format.card_link referee_name, :text=>@link_text, :known=>referee_card.send_if(:known?)
+        format.card_link referee_name, text: @link_text, known: referee_card.send_if(:known?)
       end
     end
 

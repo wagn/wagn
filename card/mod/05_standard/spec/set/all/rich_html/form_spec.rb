@@ -8,7 +8,7 @@ describe Card::Set::All::RichHtml::Form do
 
     it "should get type options from type_field renderer method" do
       expect(@card.format.type_field).to match(/<option [^>]*selected/)
-      tf=@card.format.type_field(:no_current_type=>true)
+      tf=@card.format.type_field(no_current_type: true)
       expect(tf).not_to match(/<option [^>]*selected/)
       expect(tf.scan(/<option /).length).to eq(26)
       tf=@card.format.type_field
@@ -18,7 +18,7 @@ describe Card::Set::All::RichHtml::Form do
 
     it "should get type list" do
       Card::Auth.as :anonymous do
-        tf=@card.format.type_field(:no_current_type=>true)
+        tf=@card.format.type_field(no_current_type: true)
         expect(tf).not_to match(/<option [^>]*selected/)
         expect(tf.scan(/<option /).length).to eq(1)
         tf=@card.format.type_field

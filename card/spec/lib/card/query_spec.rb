@@ -84,7 +84,7 @@ describe Card::Query do
   describe 'not' do
     it 'should exclude cards matching not criteria' do
       expect(Card::Query.run(
-        plus: 'A', not: {plus: 'A+B'}
+        plus: 'A', not: { plus: 'A+B' }
       ).map(&:name).sort).to eq(
         %w{ B D E F }
       )
@@ -112,7 +112,7 @@ describe Card::Query do
       )
 
       expect(Card::Query.run(
-        member_of: [:any, { name: 'r1' }, { key: 'r2' } ], return: :name
+        member_of: [:any, { name: 'r1' }, { key: 'r2' }], return: :name
       ).sort).to eq(
         %w{ u1 u2 u3 }
       )
@@ -172,8 +172,9 @@ describe Card::Query do
     end
 
     it 'should find card edited by Wagn Bot' do
-      #this is a weak test, since it gives the name, but different sorting mechanisms in other db setups
-      #was having it return *account in some cases and 'A' in others
+      # this is a weak test, since it gives the name, but different sorting
+      # mechanisms in other db setups
+      # was having it return *account in some cases and 'A' in others
       expect(Card::Query.run(
         edited_by: 'Wagn Bot', name: 'A', return: 'name', limit: 1
       ).first).to eq(
@@ -190,7 +191,7 @@ describe Card::Query do
     end
 
     it 'should not give duplicate results for multiple edits' do
-      c=Card['JoeNow']
+      c = Card['JoeNow']
       c.content = 'testagagin'
       c.save
       c.content = 'test3'
@@ -282,7 +283,7 @@ describe Card::Query do
   describe 'cgi_params' do
     it 'should match content from cgi' do
       expect(Card::Query.run(
-        match: '$keyword', vars: {keyword: 'two'}
+        match: '$keyword', vars: { keyword: 'two' }
       ).map(&:name).sort).to eq(
         CARDS_MATCHING_TWO
       )
@@ -300,7 +301,7 @@ describe Card::Query do
 
     it 'should match via shortcut' do
       expect(Card::Query.run(
-        '='=>"I'm number two"
+        '=' => "I'm number two"
       ).map(&:name)).to eq(
         ['Joe User']
       )
@@ -423,7 +424,7 @@ describe Card::Query do
     end
 
     it 'should return count' do
-      expect(Card.count_by_wql( part: 'A' )).to eq(7)
+      expect(Card.count_by_wql part: 'A').to eq(7)
     end
   end
 
@@ -494,9 +495,9 @@ describe Card::Query do
       Card.create! name: 'classic bootstrap skin head'
       # classic skin head is created more recently than classic skin,
       # which is in the seed data
-      expect( Card::Query.run(
+      expect(Card::Query.run(
         sort: 'create', name: [:match,'classic bootstrap skin']
-      ).map(&:name) ).to eq(
+      ).map(&:name)).to eq(
         ['classic bootstrap skin', 'classic bootstrap skin head']
       )
     end
@@ -544,7 +545,7 @@ describe Card::Query do
 
         expect(Card::Query.run(
           right_plus: '*table of contents',
-          sort: { right: '*table_of_contents'}, sort_as: 'integer'
+          sort: { right: '*table_of_contents' }, sort_as: 'integer'
         ).map(&:name)).to eq(
           %w{ *all Basic+*type Setting+*self }
         )
@@ -554,7 +555,7 @@ describe Card::Query do
     it 'should sort by count' do
       Card::Auth.as_bot do
         expect(Card::Query.run(
-          name: [:in,'*always', '*never', '*edited'],
+          name: [:in, '*always', '*never', '*edited'],
           sort: { right: '*follow', item: 'referred_to', return: 'count' }
         ).map(&:name)).to eq(
           ['*never', '*edited', '*always']
@@ -598,7 +599,7 @@ describe Card::Query do
       expect(Card::Query.run(
         name: [:match, 'two']
       ).map(&:name).sort).to eq(
-        ['One+Two','One+Two+Three','Two'].sort
+        ['One+Two', 'One+Two+Three', 'Two']
       )
     end
   end
@@ -623,7 +624,7 @@ describe Card::Query do
         or: { name: 'Z', and: { left: 'A', right: 'C' } },
         return: :name, sort: :name
       )).to eq(
-        ['A+C','Z']
+        ['A+C', 'Z']
       )
     end
   end
@@ -689,7 +690,7 @@ describe Card::Query do
     it 'should play nicely with other properties and relationships' do
       expect(Card::Query.run(
         plus: { found_by: 'Simple Search' }, return: :name, sort: :name
-      )).to eq( Card::Query.run(
+      )).to eq(Card::Query.run(
         plus: { name: 'A' }, return: :name, sort: :name
       ))
 
@@ -703,7 +704,7 @@ describe Card::Query do
     it 'should be able to handle _self' do
       expect(Card::Query.run(
         context: 'Simple Search',
-        left: {found_by: '_self'},
+        left: { found_by: '_self' },
         right: 'B',
         return: :name
       ).first).to eq(
@@ -715,8 +716,8 @@ describe Card::Query do
 
   describe 'relative' do
     it 'should clean wql' do
-      expect( Card::Query.new(
-        part: '_self',context: 'A'
+      expect(Card::Query.new(
+        part: '_self', context: 'A'
       ).statement[:part]).to eq(
         'A'
       )

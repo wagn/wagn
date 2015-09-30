@@ -217,7 +217,7 @@ class Card
         if item == 'referred_to'
           @mods[:sort] = "coalesce(count,0)" # needed for postgres
           cs = Query.new(
-            :return=>'count',
+            :return=>'coalesce(count(*), 0) as count',
             :group=>'sort_join_field',
             :superquery=>self
           )

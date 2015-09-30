@@ -1,27 +1,112 @@
 # -*- encoding : utf-8 -*-
 require 'card/content'
 
-CONTENT = {
-  :one => %(Some Literals: \\[{I'm not| a link]}, and \\{{This Card|Is not Included}}, but {{this is}}, and some tail),
-  #:two => %(Some Links and includes: [[the card|the text]], and {{This Card|Is Included}}{{this too}}
-  #       more formats for links and includes: [the card][the text],
-  #       and [[http://external.wagn.org/path|link text]][This Card][Is linked]{{Included|open}}),
-  :two => %(Some Links and includes: [[the card|the text]], and {{This Card|Is Included}}{{this too}}
+EXAMPLES = {
+  nests: {
+    content:        [
+        "Some Literals: \\[{I'm not| a link]}, and ",
+        "\\{{This Card|Is not Included}}",
+        ", but ",
+        "{{this is}}",
+        ", and some tail"
+      ].join(''),
+    rendered:       [
+        "Some Literals: \\[{I'm not| a link]}, and ",
+        "<span>{</span>{This Card|Is not Included}}",
+        ", but ",
+        {options: {inc_name: "this is",inc_syntax: "this is"}},
+        ", and some tail"
+      ],
+    classes: [String, :EscapedLiteral, String, :Include, String ]
+  },
+
+  links_and_nests: {
+    content: %(Some Links and includes: [[the card|the text]], and {{This Card|Is Included}}{{this too}}
         and [[http://external.wagn.org/path|link text]]{{Included|open}}),
-         
-  :three =>%(Some URIs and Links: http://a.url.com/
+    rendered:       [
+        "Some Links and includes: ",
+        "<a class=\"wanted-card\" href=\"/the_card?card%5Bname%5D=the+card\">the text</a>",
+        ", and ",
+        { options: { view: "Is Included", inc_name: "This Card", inc_syntax: "This Card|Is Included"}},
+        { options: { inc_name: "this too", inc_syntax: "this too"}},
+        "\n        and ",
+        "<a target=\"_blank\" class=\"external-link\" href=\"http://external.wagn.org/path\">link text</a>",
+        { options: { view: "open", inc_name: "Included", inc_syntax: "Included|open" }}
+      ],
+    classes: [String, :Link, String, :Include, :Include, String, :Link, :Include ]
+  },
+
+  uris_and_links: {
+    content: %(Some URIs and Links: http://a.url.com/
         More urls: wagn.com/a/path/to.html
         http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain.org/Home|extra]]
         [ http://gerry.wagn.com/a/path ]
         { https://brain.org/more?args }),
-  :three_b => %(Some URIs and Links: http://a.url.com
+    rendered:       [
+        "Some URIs and Links: ", '<a target="_blank" class="external-link" href="http://a.url.com/">http://a.url.com/</a>',
+        "\n        More urls: ",
+        "<a target=\"_blank\" class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>",
+        "\n        ",
+        "<a target=\"_blank\" class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&amp;bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>",
+        "  ",
+        "<a target=\"_blank\" class=\"external-link\" href=\"http://brain.org/Home\">extra</a>",
+        "\n        [ ",
+        "<a target=\"_blank\" class=\"external-link\" href=\"http://gerry.wagn.com/a/path\">http://gerry.wagn.com/a/path</a>",
+        " ]\n        { ",
+        "<a target=\"_blank\" class=\"external-link\" href=\"https://brain.org/more?args\">https://brain.org/more?args</a>",
+        " }"
+      ],
+    text_rendered:       [
+         "Some URIs and Links: ", 'http://a.url.com/',
+         "\n        More urls: ",
+         "wagn.com/a/path/to.html[http://wagn.com/a/path/to.html]",
+         "\n        ",
+         "http://localhost:2020/path?cgi=foo&bar=baz",
+         "  ",
+         "extra[http://brain.org/Home]",
+         "\n        [ ",
+         "http://gerry.wagn.com/a/path",
+         " ]\n        { ",
+         "https://brain.org/more?args",
+         " }"
+       ],
+    classes: [String, :URI, String, :HostURI, String, :URI, String, :Link, String, :URI, String, :URI, String ]
+  },
+
+  uris_and_links_2: {
+    content: %(Some URIs and Links: http://a.url.com
         More urls: wagn.com/a/path/to.html
         [ http://gerry.wagn.com/a/path ]
         { https://brain.org/more?args }
         http://localhost:2020/path?cgi=foo&bar=baz  [[http://brain.org/Home|extra]]),
-   :four => "No chunks",
-   :five => "{{one inclusion|size;large}}",
-   :six  => %~
+    rendered:       [
+        "Some URIs and Links: ","<a target=\"_blank\" class=\"external-link\" href=\"http://a.url.com\">http://a.url.com</a>",
+        "\n        More urls: ",
+        "<a target=\"_blank\" class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>",
+        "\n        [ ",
+        "<a target=\"_blank\" class=\"external-link\" href=\"http://gerry.wagn.com/a/path\">http://gerry.wagn.com/a/path</a>",
+        " ]\n        { ",
+        "<a target=\"_blank\" class=\"external-link\" href=\"https://brain.org/more?args\">https://brain.org/more?args</a>",
+        " }\n        ",
+        "<a target=\"_blank\" class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&amp;bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>",
+        "  ",
+        "<a target=\"_blank\" class=\"external-link\" href=\"http://brain.org/Home\">extra</a>"
+      ],
+    classes:  [String, :URI, String, :HostURI, String, :URI, String, :URI, String, :URI, String, :Link ]
+  },
+
+  no_chunks: {
+    content: "No chunks",
+    rendered: "No chunks"
+  },
+
+  single_nest: {
+    content: "{{one inclusion|size;large}}",
+    classes: [:Include]
+  },
+
+  css: {
+    content: %~
      /* body text */
      body {
        color: #444444;
@@ -44,91 +129,23 @@ CONTENT = {
      h1, h2 {
        color: #664444;
      }
-     h1.page-header, 
+     h1.page-header,
      h2.page-header {
-       color: #222299; 
+       color: #222299;
      }
    ~
+  }
 }
 
-CLASSES = {
-   :one => [String, :EscapedLiteral, String, :Include, String ],
-#   :two => [String, Chunk::Link, String, Chunk::Include, Chunk::Include, String, Chunk::Link, String, Chunk::Link, Chunk::Link, Chunk::Include ],
-   :two => [String, :Link, String, :Include, :Include, String, :Link, :Include ],
-   :three => [String, :URI, String, :HostURI, String, :URI, String, :Link, String, :URI, String, :URI, String ],
-   :three_b => [String, :URI, String, :HostURI, String, :URI, String, :URI, String, :URI, String, :Link ],
-   :five => [:Include]
-}
 
-CLASSES.each do |key, val|
-  CLASSES[key] = val.map do |klass|
-    Class === klass ? klass : Card::Chunk.const_get(klass)
+EXAMPLES.each do |key, val|
+  if val[:classes]
+    val[:classes] = val[:classes].map do |klass|
+      Class === klass ? klass : Card::Chunk.const_get(klass)
+    end
   end
 end
 
-RENDERED = {
-  :one => [
-    "Some Literals: \\[{I'm not| a link]}, and ",
-    "<span>{</span>{This Card|Is not Included}}",
-    ", but ",
-    {:options => {:inc_name=>"this is",:inc_syntax=>"this is"}},
-    ", and some tail"
-  ],
-  :two => [
-    "Some Links and includes: ",
-    "<a class=\"wanted-card\" href=\"/the_card?card%5Bname%5D=the+card\">the text</a>",
-    ", and ",
-    { :options => { :view => "Is Included", :inc_name=>"This Card", :inc_syntax => "This Card|Is Included"}},
-    { :options => { :inc_name=>"this too", :inc_syntax=>"this too"}},
-    "\n        and ",
-    "<a class=\"external-link\" href=\"http://external.wagn.org/path\">link text</a>",
-    { :options => { :view=>"open", :inc_name=>"Included", :inc_syntax=>"Included|open" }}
-  ],
-  :three => [
-    "Some URIs and Links: ", '<a class="external-link" href="http://a.url.com/">http://a.url.com/</a>',
-    "\n        More urls: ",
-    "<a class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>",
-    "\n        ",
-    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&amp;bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>",
-    "  ",
-    "<a class=\"external-link\" href=\"http://brain.org/Home\">extra</a>",
-    "\n        [ ",
-    "<a class=\"external-link\" href=\"http://gerry.wagn.com/a/path\">http://gerry.wagn.com/a/path</a>",
-    " ]\n        { ",
-    "<a class=\"external-link\" href=\"https://brain.org/more?args\">https://brain.org/more?args</a>",
-    " }"
-  ],
-  :three_b => [
-    "Some URIs and Links: ","<a class=\"external-link\" href=\"http://a.url.com\">http://a.url.com</a>",
-    "\n        More urls: ",
-    "<a class=\"external-link\" href=\"http://wagn.com/a/path/to.html\">wagn.com/a/path/to.html</a>",
-    "\n        [ ",
-    "<a class=\"external-link\" href=\"http://gerry.wagn.com/a/path\">http://gerry.wagn.com/a/path</a>",
-    " ]\n        { ",
-    "<a class=\"external-link\" href=\"https://brain.org/more?args\">https://brain.org/more?args</a>",
-    " }\n        ",
-    "<a class=\"external-link\" href=\"http://localhost:2020/path?cgi=foo&amp;bar=baz\">http://localhost:2020/path?cgi=foo&bar=baz</a>",
-    "  ",
-    "<a class=\"external-link\" href=\"http://brain.org/Home\">extra</a>"
-  ],
-  :four => "No chunks"
-}
-TEXT_RENDERED = {
-  :three => [
-    "Some URIs and Links: ", 'http://a.url.com/',
-    "\n        More urls: ",
-    "wagn.com/a/path/to.html[http://wagn.com/a/path/to.html]",
-    "\n        ",
-    "http://localhost:2020/path?cgi=foo&bar=baz",
-    "  ",
-    "extra[http://brain.org/Home]",
-    "\n        [ ",
-    "http://gerry.wagn.com/a/path",
-    " ]\n        { ",
-    "https://brain.org/more?args",
-    " }"
-  ],
-}
 
 describe Card::Content do
   context "instance" do
@@ -148,119 +165,111 @@ describe Card::Content do
       @card = card
 
       # non-nil valued opts only ...
-      @render_block =  Proc.new do |opts| {:options => opts.inject({}) {|i,v| !v[1].nil? && i[v[0]]=v[1]; i } } end
+      @render_block =  Proc.new do |opts| {options: opts.inject({}) {|i,v| !v[1].nil? && i[v[0]]=v[1]; i } } end
     end
 
+    let(:example)       { EXAMPLES[@example] }
+    let(:cobj)          { Card::Content.new example[:content], @card }
+    let(:classes)       { example[:classes] }
+    let(:rendered)      { example[:rendered] }
+    let(:text_rendered) { example[:text_rendered] }
+    let(:content)       { example[:content] }
 
     describe 'parse' do
-      it "should find all the chunks and strings" do
+      def check_chunk_classes
+        expect(cobj.inject(classes, &@check_proc)).to eq(true)
+        clist = classes.find_all {|c| String != c }
+        cobj.each_chunk do |chk|
+          expect(chk).to be_instance_of clist.shift
+        end
+        expect(clist).to be_empty
+      end
+
+      it "finds all the chunks and strings" do
         # note the mixed [} that are considered matching, needs some cleanup ...
-        #warn "cont? #{CONTENT[:one].inspect}"
-        cobj = Card::Content.new CONTENT[:one], @card
-        expect(cobj.inject(CLASSES[:one], &@check_proc)).to eq(true)
+        @example = :nests
+        expect(cobj.inject(classes, &@check_proc)).to eq(true)
       end
 
-      it "should give just the chunks" do
-        cobj = Card::Content.new CONTENT[:one], @card
-        clist = CLASSES[:one].find_all {|c| String != c }
-        #warn "clist #{clist.inspect}"
-        cobj.each_chunk do |chk|
-          expect(chk).to be_instance_of clist.shift
-        end
-        expect(clist).to be_empty
+      it "gives just the chunks" do
+        @example = :nests
+        check_chunk_classes
       end
 
-      it "should find all the chunks links and trasclusions" do
-        cobj = Card::Content.new CONTENT[:two], @card
-        expect(cobj.inject(CLASSES[:two], &@check_proc)).to eq(true)
+      it "finds all the chunks links and trasclusions" do
+        @example = :links_and_nests
+        expect(cobj.inject(classes, &@check_proc)).to eq(true)
       end
 
-      it "should find uri chunks " do
+      it "finds uri chunks " do
         # tried some tougher cases that failed, don't know the spec, so hard to form better tests for URIs here
-        cobj = Card::Content.new CONTENT[:three], @card
-        expect(cobj.inject(CLASSES[:three], &@check_proc)).to eq(true)
-        clist = CLASSES[:three].find_all {|c| String != c }
-        #warn "clist #{clist.inspect}, #{cobj.inspect}"
-        cobj.each_chunk do |chk|
-          expect(chk).to be_instance_of clist.shift
-        end
-        expect(clist).to be_empty
+        @example = :uris_and_links
+        check_chunk_classes
       end
 
-      it "should find uri chunks (b)" do
+      it "finds uri chunks (b)" do
         # tried some tougher cases that failed, don't know the spec, so hard to form better tests for URIs here
-        cobj = Card::Content.new CONTENT[:three_b], @card
-        #warn "cobj #{cobj.inspect} #{CLASSES[:three_b].inspect}"
-        expect(cobj.inject(CLASSES[:three_b], &@check_proc)).to eq(true)
-        clist = CLASSES[:three_b].find_all {|c| String != c }
-        #warn "clist #{clist.inspect}, #{cobj.inspect}"
-        cobj.each_chunk do |chk|
-          expect(chk).to be_instance_of clist.shift
-        end
-        expect(clist).to be_empty
+        @example = :uris_and_links_2
+        check_chunk_classes
       end
 
-      it "should parse just a string" do
-        cobj = Card::Content.new CONTENT[:four], @card
-        expect(cobj).to eq(RENDERED[:four])
+      it "parses just a string" do
+        @example = :no_chunks
+        expect(cobj).to eq(rendered)
       end
 
-      it "should parse a single chunk" do
-        cobj = Card::Content.new CONTENT[:five], @card
-        expect(cobj.inject(CLASSES[:five], &@check_proc)).to eq(true)
-        clist = CLASSES[:five].find_all {|c| String != c }
-        cobj.each_chunk do |chk|
-          expect(chk).to be_instance_of clist.shift
-        end
-        expect(clist).to be_empty
+      it "parses a single chunk" do
+        @example = :single_nest
+        check_chunk_classes
       end
-    
-      it "should leave css alone" do
-        cobj = Card::Content.new CONTENT[:six], @card
-        expect(cobj).to eq(CONTENT[:six])
+
+      it "leaves css alone" do
+        @example = :css
+        expect(cobj).to eq(content)
       end
     end
 
     describe "render" do
-      it "should render all includes" do
-        cobj = Card::Content.new CONTENT[:one], @card
+      it "renders all nests" do
+        @example = :nests
         expect(cobj.as_json.to_s).to match /not rendered/
         cobj.process_content_object &@render_block
         expect(rdr=cobj.as_json.to_json).not_to match /not rendered/
-        expect(rdr).to eq(RENDERED[:one].to_json)
+        expect(rdr).to eq(rendered.to_json)
       end
 
-      it "should render links and inclusions" do
-        cobj = Card::Content.new CONTENT[:two], @card
+      it "renders links and nests" do
+        @example = :links_and_nests
         cobj.process_content_object &@render_block
         expect(rdr=cobj.as_json.to_json).not_to match /not rendered/
-        expect(rdr).to eq(RENDERED[:two].to_json)
+        expect(rdr).to eq(rendered.to_json)
       end
 
       it "renders links correctly for text formatters" do
+        @example = :uris_and_links
         card2 = Card[@card.id]
-        format = card2.format :format => :text
-        cobj = Card::Content.new CONTENT[:three], format
+        format = card2.format format: :text
+        cobj = Card::Content.new content, format
         cobj.process_content_object &@render_block
-        expect(cobj.as_json.to_json).to eq(TEXT_RENDERED[:three].to_json)
+        expect(cobj.as_json.to_json).to eq(text_rendered.to_json)
       end
 
-      it "should not need rendering if no inclusions" do
-        cobj = Card::Content.new CONTENT[:three], @card
+      it "does not need rendering if no nests" do
+        @example = :uris_and_links
         cobj.process_content_object &@render_block
-        expect(cobj.as_json.to_json).to eq(RENDERED[:three].to_json)
+        expect(cobj.as_json.to_json).to eq(rendered.to_json)
       end
 
-      it "should not need rendering if no inclusions (b)" do
-        cobj = Card::Content.new CONTENT[:three_b], @card
+      it "does not need rendering if no nests (b)" do
+        @example = :uris_and_links_2
         expect(rdr=cobj.as_json.to_json).to match /not rendered/ # links are rendered too, but not with a block
         cobj.process_content_object &@render_block
         expect(rdr=cobj.as_json.to_json).not_to match /not rendered/
-        expect(rdr).to eq(RENDERED[:three_b].to_json)
+        expect(rdr).to eq(rendered.to_json)
       end
     end
   end
-  
+
   UNTAGGED_CASES = [ ' [grrew][/wiki/grrew]ss ', ' {{this is a test}}, {{this|view|is:too}} and',
     ' so is http://foo.bar.come//', ' and foo="my attr, not int a tag" <not a=tag ', ' p class"foobar"> and more' ]
 
@@ -271,7 +280,7 @@ describe Card::Content do
           assert_equal test_case,Card::Content.clean!(test_case)
         end
       end
-    
+
       it 'should strip disallowed html class attributes' do
         assert_equal '<p>html<div>with</div> funky tags</p>', Card::Content.clean!('<p>html<div class="boo">with</div><monkey>funky</butts>tags</p>')
         assert_equal '<span>foo</span>', Card::Content.clean!('<span class="banana">foo</span>')
@@ -320,7 +329,7 @@ describe Card::Content do
       end
     end
   end
-  
-  
+
+
 end
 

@@ -6,33 +6,33 @@ format do
   end
 
   # NAME VIEWS
-                                                                              
-  view :name,     :closed=>true, :perms=>:none do |args| card.name                           end
-  view :key,      :closed=>true, :perms=>:none do |args| card.key                            end
-  view :title,    :closed=>true, :perms=>:none do |args| args[:title] || card.name           end
 
-  view :linkname, :closed=>true, :perms=>:none do |args| card.cardname.url_key               end
-  view :url,      :closed=>true, :perms=>:none do |args| card_url _render_linkname           end
-  view :url_link, :closed=>true, :perms=>:none do |args| web_link card_url(_render_linkname) end
+  view :name,     closed: true, perms: :none do |args| card.name                           end
+  view :key,      closed: true, perms: :none do |args| card.key                            end
+  view :title,    closed: true, perms: :none do |args| args[:title] || card.name           end
 
-  view :link, :closed=>true, :perms=>:none do |args|
+  view :linkname, closed: true, perms: :none do |args| card.cardname.url_key               end
+  view :url,      closed: true, perms: :none do |args| card_url _render_linkname           end
+  view :url_link, closed: true, perms: :none do |args| web_link card_url(_render_linkname) end
+
+  view :link, closed: true, perms: :none do |args|
     card_link( card.name,
-      :text=>showname( args[:title] ),
-      :known=>card.known?,
-      :path_opts=>{ :type=>args[:type] }
+      text: showname( args[:title] ),
+      known: card.known?,
+      path_opts: { type: args[:type] }
     )
   end
-        
-  view :codename, :closed=>true do |args| card.codename.to_s  end  
-  view :id,       :closed=>true do |args| card.id             end
-  view :type,     :closed=>true do |args| card.type_name      end
+
+  view :codename, closed: true do |args| card.codename.to_s  end
+  view :id,       closed: true do |args| card.id             end
+  view :type,     closed: true do |args| card.type_name      end
 
 
   # DATE VIEWS
 
-  view :created_at, :closed=>true do |args| time_ago_in_words card.created_at end
-  view :updated_at, :closed=>true do |args| time_ago_in_words card.updated_at end
-  view :acted_at,   :closed=>true do |args| time_ago_in_words card.acted_at   end
+  view :created_at, closed: true do |args| time_ago_in_words card.created_at end
+  view :updated_at, closed: true do |args| time_ago_in_words card.updated_at end
+  view :acted_at,   closed: true do |args| time_ago_in_words card.acted_at   end
 
 
   # CONTENT VIEWS
@@ -54,11 +54,11 @@ format do
     _render_core args
   end
 
-  view :closed_content, :closed=>true do |args|
+  view :closed_content, closed: true do |args|
     Card::Content.truncatewords_with_closing_tags _render_core(args) #{ yield }
   end
 
-  view :blank, :closed=>true, :perms=>:none do |args|
+  view :blank, closed: true, perms: :none do |args|
     ''
   end
 
@@ -84,7 +84,7 @@ format do
   # SPECIAL VIEWS
 
   view :array do |args|
-    card.item_cards(:limit=>0).map do |item_card|
+    card.item_cards(limit: 0).map do |item_card|
       subformat(item_card)._render_core(args)
     end.inspect
   end
@@ -94,13 +94,13 @@ format do
   #none of the below belongs here!!
 
 
-  view :template_rule, :tags=>:unknown_ok do |args|
+  view :template_rule, tags: :unknown_ok do |args|
     #FIXME - relativity should be handled in smartname
-  
+
     name = args[:inc_name] or return ''
     regexp = /\b_(left|right|whole|self|user|main|\d+|L*R?)\b/
     absolute = name !~ regexp && name !~ /^\+/
-    
+
     tname = name.gsub regexp, ''
     if tname !~ /^\+/ and !absolute
       "{{#{args[:inc_syntax]}}}"
@@ -115,7 +115,7 @@ format do
           "#{tname.gsub /^\+/,''}+#{Card[:right].name}"                                      # *right
         end
       end
-    
+
       subformat( Card.fetch(set_name) ).render_template_link args
     end
   end

@@ -2,7 +2,7 @@
 
 describe "Card::Set::All::Follow" do
   def follow_view card_name
-    render_card :follow_link, :name=>card_name
+    render_card :follow_link, name: card_name
   end
 
   describe "follower_ids" do
@@ -57,7 +57,7 @@ describe "Card::Set::All::Follow" do
     end
 
     def assert_following_view name, args
-      assert_follow_view name, args.reverse_merge(:following => true, :text=>"unfollow" )
+      assert_follow_view name, args.reverse_merge(following: true, text: "unfollow" )
     end
 
 #  href="/card/update/Home+*self+philipp+*follow?card%5Bcontent%5D=%5B%5Bnever%5D%5D&success%5Bid%5D=Home&success%5Bview%5D=follow"
@@ -83,51 +83,51 @@ describe "Card::Set::All::Follow" do
 
     context "when not following" do
       it 'renders follow link' do
-        assert_follow_view 'No One Sees Me', :add_set=>'No One Sees Me+*self'
+        assert_follow_view 'No One Sees Me', add_set: 'No One Sees Me+*self'
       end
     end
 
     context "when following *self" do
       it 'renders following link' do
-        assert_following_view 'Look At Me', :add_set=>'Look at me+*self'
+        assert_following_view 'Look At Me', add_set: 'Look at me+*self'
       end
     end
 
     context "when following *type" do
       it 'renders following link' do
-        assert_following_view 'Sunglasses', :add_set=>'Sunglasses+*self'
+        assert_following_view 'Sunglasses', add_set: 'Sunglasses+*self'
       end
     end
 
     context "when following cardtype card" do
       it 'renders following all link' do
-        assert_following_view 'Optic', :add_set=>'Optic+*type', :text=>'unfollow'
+        assert_following_view 'Optic', add_set: 'Optic+*type', text: 'unfollow'
       end
     end
 
     context "when not following cardtype card" do
       it "renders 'follow all' link" do
-        assert_follow_view 'Basic', :add_set=>'Basic+*type', :text=>'follow'
+        assert_follow_view 'Basic', add_set: 'Basic+*type', text: 'follow'
       end
     end
 
     context "when following *right" do
       it "renders following link" do
-        assert_following_view 'Magnifier+lens', :add_set=>'Magnifier+lens+*self'
+        assert_following_view 'Magnifier+lens', add_set: 'Magnifier+lens+*self'
       end
     end
 
     context 'when following content I created' do
       before { Card::Auth.current_id = Card['Narcissist'].id }
       it "renders following link" do
-        assert_following_view 'Sunglasses', :add_set=>'Sunglasses+*self', :user=>'Narcissist'
+        assert_following_view 'Sunglasses', add_set: 'Sunglasses+*self', user: 'Narcissist'
       end
     end
 
     context 'when following content I edited' do
       before { Card::Auth.current_id = Card['Narcissist'].id }
       it "renders following link" do
-        assert_following_view 'Magnifier+lens', :add_set=>'Magnifier+lens+*self', :user=>'Narcissist'
+        assert_following_view 'Magnifier+lens', add_set: 'Magnifier+lens+*self', user: 'Narcissist'
       end
     end
   end

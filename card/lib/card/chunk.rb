@@ -21,7 +21,7 @@ class Card
 
     class << self
       def register_class klass, hash
-        klass.config = hash.merge :class => klass
+        klass.config = hash.merge class: klass
         prefix_index = hash[:idx_char] || :default  # this is gross and needs to be moved out.
         prefix_map[prefix_index] = klass.config
       end
@@ -60,6 +60,8 @@ class Card
       attr_reader :text, :process_chunk
 
       class << self
+
+        # if the prefix regex matched check that chunk against the full regex
         def full_match content, prefix=nil
   #        warn "attempting full match on #{content}.  class = #{self}"
           content.match full_re( prefix )

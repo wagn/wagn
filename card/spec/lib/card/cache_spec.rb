@@ -4,7 +4,7 @@ describe Card::Cache do
   describe "with nil store" do
     before do
       expect(Card::Cache).to receive(:generate_cache_id).exactly(2).times.and_return("cache_id")
-      @cache = Card::Cache.new :prefix=>"prefix"
+      @cache = Card::Cache.new prefix: "prefix"
     end
 
     describe "#basic operations" do
@@ -22,7 +22,7 @@ describe Card::Cache do
     before :each do
       @store = ActiveSupport::Cache::MemoryStore.new
       expect(Card::Cache).to receive(:generate_cache_id).and_return("cache_id")
-      @cache = Card::Cache.new :store=>@store, :prefix=>"prefix"
+      @cache = Card::Cache.new store: @store, prefix: "prefix"
     end
 
     it "#read" do
@@ -58,7 +58,7 @@ describe Card::Cache do
   it "#reset" do
     expect(Card::Cache).to receive(:generate_cache_id).and_return("cache_id1")
     @store = ActiveSupport::Cache::MemoryStore.new
-    @cache = Card::Cache.new :store=>@store, :prefix=>"prefix"
+    @cache = Card::Cache.new store: @store, prefix: "prefix"
     expect(@cache.prefix).to eq("prefix/cache_id1/")
     @cache.write("foo","bar")
     expect(@cache.read("foo")).to eq("bar")
@@ -70,7 +70,7 @@ describe Card::Cache do
     expect(@cache.store.read("prefix/cache_id")).to eq("cache_id2")
     expect(@cache.read("foo")).to be_nil
 
-    cache2 = Card::Cache.new :store=>@store, :prefix=>"prefix"
+    cache2 = Card::Cache.new store: @store, prefix: "prefix"
     expect(cache2.prefix).to eq("prefix/cache_id2/")
   end
 
@@ -92,13 +92,13 @@ describe Card::Cache do
       #FileUtils.rm_r(files_to_remove)
 
       expect(Card::Cache).to receive(:generate_cache_id).exactly(2).times.and_return("cache_id1")
-      @cache = Card::Cache.new :store=>@store, :prefix=>"prefix"
+      @cache = Card::Cache.new store: @store, prefix: "prefix"
     end
 
     describe "#basic operations with special symbols" do
       it "should work" do
         @cache.write('%\\/*:?"<>|', "foo")
-        cache2 = Card::Cache.new :store=>@store, :prefix=>"prefix"
+        cache2 = Card::Cache.new store: @store, prefix: "prefix"
         expect(cache2.read('%\\/*:?"<>|')).to eq("foo")
         @cache.reset
       end
@@ -108,7 +108,7 @@ describe Card::Cache do
       it "should work" do
         @cache.write('(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén', "foo")
         @cache.write('русский', "foo")
-        cache3 = Card::Cache.new :store=>@store, :prefix=>"prefix"
+        cache3 = Card::Cache.new store: @store, prefix: "prefix"
         expect(cache3.read('(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén')).to eq("foo")
         expect(cache3.read('русский')).to eq("foo")
         @cache.reset

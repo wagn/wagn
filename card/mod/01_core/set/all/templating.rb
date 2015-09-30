@@ -15,7 +15,7 @@ def template
 
     # NEW CARDS
     if new_card?
-      default = rule_card :default, :skip_modules=>true
+      default = rule_card :default, skip_modules: true
 
       dup_card = dup
       dup_card.type_id = default ? default.type_id : Card.default_type_id
@@ -55,14 +55,14 @@ def virtual?
 end
 
 def structure_rule_card
-  card = rule_card :structure, :skip_modules=>true
+  card = rule_card :structure, skip_modules: true
   card && card.db_content.strip == '_self' ? nil : card
 end
 
 def structuree_names
   if wql = structuree_spec
     Auth.as_bot do
-      Card::Query.new(wql.merge :return=>:name).run
+      Card::Query.run(wql.merge return: :name)
     end
   else
     []
@@ -75,7 +75,7 @@ end
 # I'll leave the FIXME here until the need (and/or other solution) is well documented.  -efm
 
 def expire_structuree_references
-  update_structurees :references_expired => 1
+  update_structurees references_expired: 1
 end
 
 def update_structurees args
@@ -84,8 +84,9 @@ def update_structurees args
   # by a +*type plus right+*structure rule, the override would not be respected.
   if query = structuree_spec
     Auth.as_bot do
-      Card::Query.new( query.merge(:return => :id) ).run.each_slice(100) do |id_batch|
-        Card.where( :id => id_batch ).update_all args
+      query[:return] = :id
+      Card::Query.run(query).each_slice(100) do |id_batch|
+        Card.where( id: id_batch ).update_all args
       end
     end
   end
@@ -96,7 +97,7 @@ def assigns_type?
   # for example, X+*type+*structure governs all cards of type X,
   # but the content rule does not (in fact cannot) have the type X.
   if is_structure?
-    if set_pattern = Card.fetch( cardname.trunk_name.tag_name, :skip_modules=>true )
+    if set_pattern = Card.fetch( cardname.trunk_name.tag_name, skip_modules: true )
       pattern_code = set_pattern.codename and
       set_class    = Card::SetPattern.find( pattern_code ) and
       set_class.assigns_type
@@ -119,8 +120,8 @@ def structuree_spec
   end
 end
 
-event :update_structurees_type, :after=>:store, :changed=>:type_id do
+event :update_structurees_type, after: :store, changed: :type_id do
   if assigns_type? # certain *structure templates
-    update_structurees :type_id => type_id
+    update_structurees type_id: type_id
   end
 end

@@ -22,7 +22,7 @@ $.extend wagn,
     '.ace-editor-textarea'   : -> wagn.initAce $(this)
     '.tinymce-textarea'      : -> wagn.initTinyMCE @[0].id
     '.pointer-list-editor'   : -> @sortable({handle: '.handle', cancel: ''}); wagn.initPointerList @find('input')
-    '.file-upload'           : -> @fileupload( add: wagn.chooseFile )#, forceIframeTransport: true )
+    '.file-upload'           : -> @fileupload( dataType: 'html', done: wagn.doneFile, add: wagn.chooseFile, progressall: wagn.progressallFile )#, forceIframeTransport: true )
     '.etherpad-textarea'     : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
   }
 
@@ -105,23 +105,23 @@ $.extend wagn,
 #    initfunc()
 
   chooseFile: (e, data) ->
-    file = data.files[0]
-  #  $(this).fileupload '_normalizeFile', 0, file # so file objects have same fields in all browsers
-    $(this).closest('form').data 'file-data', data # stores data on form for use at submission time
-
-    if name_field = $(this).slot().find( '.name-editor input' )
-      # populates card name if blank
-      if name_field[0] and name_field.val() == ''
-        name_field.val file.name.replace( /\..*$/, '' ).replace( /_/g, ' ')
-
+    data.form.find('button[type=submit]').attr('disabled',true)
     editor = $(this).closest '.card-editor'
+    $('#progress').show()
+    editor.append '<input type="hidden" class="extra_upload_param" value="true" name="attachment_upload">'
+    editor.append '<input type="hidden" class="extra_upload_param" value="preview_editor" name="view">'
+    data.submit()
     editor.find('.choose-file').hide()
-    editor.find('.chosen-filename').text file.name
-    editor.find('.chosen-file').show()
+    editor.find('.extra_upload_param').remove()
 
-    contentFieldName = this.name.replace( /attach\]$/, 'content]' )
-    editor.append '<input type="hidden" value="CHOSEN" class="upload-card-content" name="' + contentFieldName + '">'
-    # we add and remove the contentField to insure that nothing is added / updated when nothing is chosen.
+  progressallFile: (e, data) ->
+    progress = parseInt(data.loaded / data.total * 100, 10)
+    $('#progress .progress-bar').css('width', progress + '%')
+
+  doneFile: (e, data) ->
+    editor = $(this).closest '.card-editor'
+    editor.find('.chosen-file').replaceWith data.result
+    data.form.find('button[type=submit]').attr('disabled',false)
 
   isTouchDevice: ->
     if 'ontouchstart' of window or window.DocumentTouch and document instanceof DocumentTouch
@@ -141,10 +141,12 @@ $(window).ready ->
 
   $('body').on 'click', '.cancel-upload', ->
     editor = $(this).closest '.card-editor'
-    editor.find('.chosen-file').hide()
     editor.find('.choose-file').show()
-    $(this).closest('form').data 'file-data', null
-    contentField = editor.find( '.upload-card-content' ).remove()
+    editor.find('.chosen-file').empty()
+    editor.find('.progress').show()
+    editor.find('#progress .progress-bar').css('width', '0%')
+    editor.find('#progress').hide()
+
 
   #navbox mod
   $('.navbox').autocomplete {
@@ -331,6 +333,44 @@ $(window).ready ->
     if val != ''
       window.location = wagn.rootPath + escape( val )
 
+  # performance log mod
+  $('body').on 'click', '.open-slow-items', ->
+
+    panel = $(this).closest('.panel-group')
+    panel.find('.open-slow-items').removeClass('open-slow-items').addClass('close-slow-items')
+    panel.find('.toggle-fast-items').text("show < 100ms")
+    panel.find('.duration-ok').hide()
+    panel.find('.panel-danger > .panel-collapse').collapse('show').find('a > span').addClass('show-fast-items')
+
+  $('body').on 'click', '.close-slow-items', ->
+    panel = $(this).closest('.panel-group')
+    panel.find('.close-slow-items').removeClass('close-slow-items').addClass('open-slow-items')
+    panel.find('.toggle-fast-items').text("hide < 100ms")
+    panel.find('.panel-danger > .panel-collapse').collapse('hide').removeClass('show-fast-items')
+    panel.find('.duration-ok').show()
+
+  $('body').on 'click', '.toggle-fast-items', ->
+    panel = $(this).closest('.panel-group')
+    if $(this).text() == 'hide < 100ms'
+      panel.find('.duration-ok').hide()
+      $(this).text("show < 100ms")
+    else
+      panel.find('.duration-ok').show()
+      $(this).text("hide < 100ms")
+
+  $('body').on 'click', '.show-fast-items', (event) ->
+    $(this).removeClass('show-fast-items')
+    panel = $(this).closest('.panel-group')
+    panel.find('.duration-ok').show()
+    panel.find('.show-fast-items').removeClass('show-fast-items')
+    panel.find('.panel-collapse').collapse('show')
+    event.stopPropagation()
+
+
+
+
+
+
 
 toggleShade = (shadeSlot) ->
   shadeSlot.find('.shade-content').slideToggle 1000
@@ -403,6 +443,7 @@ navbox_select = (event, ui) ->
     window.location = wagn.rootPath + ui.item.href
 
   $(this).attr('disabled', 'disabled')
+
 
 
 

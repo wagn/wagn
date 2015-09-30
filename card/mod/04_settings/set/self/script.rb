@@ -1,2 +1,2 @@
 extend Card::Setting
-setting_opts :group=>:webpage, :position=>5
+setting_opts group: :webpage, position: 5

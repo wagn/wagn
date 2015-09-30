@@ -2,7 +2,7 @@
 format :html do
 
   view :open do |args|
-    args.merge! :optional_help=>:show
+    args.merge! optional_help: :show
     super args
   end
 
@@ -20,27 +20,26 @@ format :html do
   end
 
   def default_core_args args={}
-    args[:buttons] = button_tag 'Sign in', :situation=>'primary'
-    if Card.new(:type_id=>Card::SignupID).ok? :create
+    args[:buttons] = button_tag 'Sign in', situation: 'primary'
+    if Card.new(type_id: Card::SignupID).ok? :create
       args[:buttons] += link_to( '...or sign up!', card_path("account/signup"))
     end
-    args[:buttons] += raw("<div style='float:right'>#{ view_link 'RESET PASSWORD', :edit, :path_opts=>{:slot=>{:hide=>:toolbar}} }</div>") #FIXME - hardcoded styling
+    args[:buttons] += raw("<div style='float:right'>#{ view_link 'RESET PASSWORD', :edit, path_opts: {slot: {hide: :toolbar}} }</div>") #FIXME - hardcoded styling
     args
   end
 
   view :core do |args|
-    account = card.fetch :trait=>:account, :new=>{}
-
+    account = card.fetch trait: :account, new: {}
     form_args = {
-      :hidden => { :success=>"REDIRECT: #{interrupted_action || '*previous'}" },
-      :recaptcha => :off
+      hidden: { success: "REDIRECT: #{Env.interrupted_action || '*previous'}" },
+      recaptcha: :off
     }
 
     with_inclusion_mode :edit do
       card_form :update, form_args do
         [
           Auth.as_bot do
-            subformat(account)._render :content_formgroup, :structure=>true, :items=>{:autocomplete=>'on'}
+            subformat(account)._render :content_formgroup, structure: true, items: {autocomplete: 'on'}
           end,
           _optional_render( :button_formgroup, args )
         ].join
@@ -51,13 +50,13 @@ format :html do
   #FORGOT PASSWORD
   view :edit do |args|
     args.merge!( {
-      :title=>'Forgot Password',
-      :optional_help=>:hide,
-      :buttons => button_tag( 'Reset my password', :situation=>'primary' ),
-      :structure => true,
-      :hidden => {
-        :reset_password => true,
-        :success => { :view => :reset_password_success }
+      title: 'Forgot Password',
+      optional_help: :hide,
+      buttons: button_tag( 'Reset my password', situation: 'primary' ),
+      structure: true,
+      hidden: {
+        reset_password: true,
+        success: { view: :reset_password_success }
       }
     } )
 
@@ -74,7 +73,7 @@ format :html do
 
 end
 
-event :signin, :before=>:approve, :on=>:update do
+event :signin, before: :approve, on: :update do
   email = subcards["+#{Card[:email   ].name}"]
   email &&= email['content']
   pword = subcards["+#{Card[:password].name}"]
@@ -95,11 +94,11 @@ event :signin, :before=>:approve, :on=>:update do
   end
 end
 
-event :signin_success, :after=>:signin do
+event :signin_success, after: :signin do
   abort :success
 end
 
-event :send_reset_password_token, :before=>:signin, :on=>:update, :when=>proc{ |c| Env.params[:reset_password] } do
+event :send_reset_password_token, before: :signin, on: :update, when: proc{ |c| Env.params[:reset_password] } do
   email = subcards["+#{Card[:email].name}"]
   email &&= email['content']
 
@@ -116,7 +115,7 @@ event :send_reset_password_token, :before=>:signin, :on=>:update, :when=>proc{ |
   end
 end
 
-event :signout, :before=>:approve, :on=>:delete do
+event :signout, before: :approve, on: :delete do
   Auth.signin nil
   abort :success
 end

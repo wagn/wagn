@@ -10,7 +10,7 @@ class Card
     def initialize content, format_or_card, opts={}
       @format =
         if Card===format_or_card
-          Format.new format_or_card, :format=>nil
+          Format.new format_or_card, format: nil
         else
           format_or_card
         end

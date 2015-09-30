@@ -18,14 +18,14 @@ format do
   #
   def smart_link link_text, target, html_args={}
     if (view = target.delete(:view))
-      view_link link_text, view, html_args.merge(:path_opts=>target)
+      view_link link_text, view, html_args.merge(path_opts: target)
     elsif (page = target.delete(:card))
-      card_link page, html_args.merge(:path_opts=>target, :text=>link_text)
+      card_link page, html_args.merge(path_opts: target, text: link_text)
     elsif target[:related]
       if target[:related].kind_of? String
-        target[:related] = {:name=>"+#{target[:related]}"}
+        target[:related] = {name: "+#{target[:related]}"}
       end
-      view_link link_text, :related, html_args.merge(:path_opts=>target)
+      view_link link_text, :related, html_args.merge(path_opts: target)
     elsif target[:web]
     else
       link_to link_text, target, html_args
@@ -45,6 +45,7 @@ format do
       else
         return card_link href, opts
       end
+    opts[:target] = "_blank" if new_class == 'external-link'
     add_class opts, new_class
     link_to text, href, opts
   end
@@ -52,7 +53,7 @@ format do
   # link to a specific card
   def card_link name_or_card, opts={}
     name = case name_or_card
-           when Symbol then Card.fetch( name_or_card, :skip_modules=>true ).cardname
+           when Symbol then Card.fetch( name_or_card, skip_modules: true ).cardname
            when Card   then name_or_card.cardname
            else             name_or_card
            end
@@ -78,12 +79,12 @@ format do
 
   def related_link name_or_card, opts={}
     name = case name_or_card
-           when Symbol then Card.fetch( name_or_card, :skip_modules=>true ).cardname
+           when Symbol then Card.fetch( name_or_card, skip_modules: true ).cardname
            when Card   then name_or_card.cardname
            else             name_or_card
            end
-   opts[:path_opts] ||= {:view=>:related}
-   opts[:path_opts][:related] = {:name=>"+#{name}"}
+   opts[:path_opts] ||= {view: :related}
+   opts[:path_opts][:related] = {name: "+#{name}"}
    opts[:path_opts][:related].merge! opts[:related_opts] if opts[:related_opts]
    view_link( opts[:text] || name, :related, opts)
   end
@@ -141,7 +142,7 @@ format :html do
       end
     end
 
-    content_tag :a, raw(text), opts.merge(:href=>href)
+    content_tag :a, raw(text), opts.merge(href: href)
   end
 
 end

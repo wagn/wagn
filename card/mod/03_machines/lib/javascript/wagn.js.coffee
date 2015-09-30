@@ -151,11 +151,14 @@ jQuery.fn.extend {
 
 setInterval (-> $('.card-form').setContentFieldsFromMap()), 20000
 
+
+
 $(window).ready ->
   $.ajaxSetup cache: false
 
   setTimeout (-> wagn.initializeEditors $('body')), 10
   #  dislike the timeout, but without this forms with multiple TinyMCE editors were failing to load properly
+
 
   $('body').on 'ajax:success', '.slotter', (event, data, c, d) ->
     unless event.slotSuccessful

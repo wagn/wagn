@@ -9,8 +9,8 @@ describe Card::Set::All::Account do
 
     it 'should be true for cards with *accountable rule on' do
       Card::Auth.as_bot do
-        Card.create :name=>'A+*self+*accountable', :content=>'1'
-        Card.create :name=>'*account+*right+*create', :content=>'[[Anyone Signed In]]'
+        Card.create name: 'A+*self+*accountable', content: '1'
+        Card.create name: '*account+*right+*create', content: '[[Anyone Signed In]]'
       end
       expect(Card['A'].accountable?).to eq(true)
     end
@@ -40,7 +40,7 @@ describe Card::Set::All::Account do
       end
 
       it 'should update when new roles are set' do
-        roles_card = @joe_user_card.fetch :trait=>:roles, :new=>{}
+        roles_card = @joe_user_card.fetch trait: :roles, new: {}
         r1 = Card['r1']
 
         Card::Auth.as_bot { roles_card.items = [ r1.id ] }
@@ -72,8 +72,8 @@ describe Card::Set::All::Account do
       Card::Auth.current_id = jadmin.id #simulate login to get correct from address
       ja_email = jadmin.account.email
 
-      Card::Env[:params] = { :email => {:subject=>'Hey Joe!', :message=>'Come on in.'} }
-      Card.create :name=>'Joe New', :type_id=>Card::UserID, '+*account'=>{ '+*email'=> 'joe@new.com' }
+      Card::Env[:params] = { email: {subject: 'Hey Joe!', message: 'Come on in.'} }
+      Card.create name: 'Joe New', type_id: Card::UserID, '+*account'=>{ '+*email'=> 'joe@new.com' }
 
       c = Card['Joe New']
       u = Card::Auth[ 'joe@new.com' ]
@@ -100,7 +100,7 @@ describe Card::Set::All::Account do
 
     it "should let Wagn Bot block accounts" do
       Card::Auth.as_bot do
-        @card.account.status_card.update_attributes! :content => 'blocked'
+        @card.account.status_card.update_attributes! content: 'blocked'
         expect(@card.account.blocked?).to be_truthy
       end
     end
@@ -108,7 +108,7 @@ describe Card::Set::All::Account do
 
     it "should not allow a user to block or unblock himself" do
       expect do
-        @card.account.status_card.update_attributes! :content => 'blocked'
+        @card.account.status_card.update_attributes! content: 'blocked'
       end.to raise_error
       expect(@card.account.blocked?).to be_falsey
     end

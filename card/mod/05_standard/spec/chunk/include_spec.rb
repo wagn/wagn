@@ -7,16 +7,16 @@ describe Card::Chunk::Include, "Inclusion" do
       @class= Card::Chunk::Include
     end
 
-    it "should ignore invisible comments" do
+    it "ignores invisible comments" do
       expect(render_content("{{## now you see nothing}}")).to eq('')
     end
 
-    it "should handle visible comments" do
+    it "handles visible comments" do
       expect(render_content("{{# now you see me}}")).to eq('<!-- # now you see me -->')
       expect(render_content("{{# -->}}")).to eq('<!-- # --&gt; -->')
     end
 
-    it "should handle empty inclusions" do
+    it "handles empty inclusions" do
       instance = @class.new( @class.full_match( '{{ }}' ) , nil )
       expect(instance.name).to eq('')
       expect(instance.options[:inc_syntax]).to eq(' ')
@@ -26,25 +26,25 @@ describe Card::Chunk::Include, "Inclusion" do
 
     end
 
-    it "should handle no pipes" do
+    it "handles no pipes" do
       instance = @class.new( @class.full_match( '{{toy}}') , nil )
       expect(instance.name).to eq('toy')
       expect(instance.options[:inc_name]).to eq('toy')
       expect(instance.options.key?(:view)).to eq(false)
     end
 
-    it "should strip the name" do
+    it "strips the name" do
       expect(@class.new( @class.full_match( '{{ toy }}') , nil ).name).to eq('toy')
     end
 
-    it 'should strip html tags' do
+    it 'strips html tags' do
       expect(@class.new( @class.full_match( '{{ <span>toy</span> }}') , nil ).name).to eq('toy')
       instance = @class.new( @class.full_match( '{{ <span>toy|open</span> }}') , nil )
       expect(instance.name).to eq('toy')
       expect(instance.options[:view]).to eq('open')
     end
 
-    it "should handle single pipe" do
+    it "handles single pipe" do
       options = @class.new( @class.full_match('{{toy|view:link;hide:me}}'), nil ).options
       expect(options[:inc_name]).to eq('toy')
       expect(options[:view]).to eq('link')
@@ -52,7 +52,7 @@ describe Card::Chunk::Include, "Inclusion" do
       expect(options.key?(:items)).to eq(false)
     end
 
-    it "should handle multiple pipes" do
+    it "handles multiple pipes" do
       options = @class.new( @class.full_match('{{box|open|closed}}'), nil ).options
       expect(options[:inc_name]).to eq('box')
       expect(options[:view]).to eq('open')
@@ -60,41 +60,42 @@ describe Card::Chunk::Include, "Inclusion" do
       expect(options[:items].key?(:items)).to eq(false)
     end
 
-    it "should handle multiple pipes with blank lists" do
+    it "handles multiple pipes with blank lists" do
       options = @class.new( @class.full_match('{{box||closed}}'), nil ).options
       expect(options[:inc_name]).to eq('box')
       expect(options[:view]).to eq(nil)
       expect(options[:items][:view]).to eq('closed')
     end
 
-    it "should treat :item as view of next level" do
+    it "treats :item as view of next level" do
       options = @class.new( @class.full_match('{{toy|link;item:name}}'), nil ).options
       expect(options[:inc_name]).to eq('toy')
       expect(options[:view]).to eq('link')
       expect(options[:items][:view]).to eq('name')
     end
+
   end
 
   context "rendering" do
 
-    it "should handle absolute names" do
+    it "handles absolute names" do
       alpha = newcard 'Alpha', "Pooey"
       beta = newcard 'Beta', "{{Alpha}}"
       result = beta.format.render_core
       assert_view_select result, 'div[class~="card-content"]', "Pooey"
     end
 
-    it "should handle simple relative names" do
+    it "handles simple relative names" do
       alpha = newcard 'Alpha', "{{#{Card::Name.joint}Beta}}"
       beta = newcard 'Beta'
-      alpha_beta = Card.create :name=>"#{alpha.name}#{Card::Name.joint}Beta", :content=>"Woot"
+      alpha_beta = Card.create name: "#{alpha.name}#{Card::Name.joint}Beta", content: "Woot"
       assert_view_select alpha.format.render_core, 'div[class~=card-content]', "Woot"
     end
 
     it "should handle complex relative names" do
-      bob_city = Card.create! :name=>'bob+city', :content=> "Sparta"
-      Card::Auth.as_bot { address_tmpl = Card.create! :name=>'address+*right+*structure', :content =>"{{_left+city}}" }
-      bob_address = Card.create! :name=>'bob+address'
+      bob_city = Card.create! name: 'bob+city', content: "Sparta"
+      Card::Auth.as_bot { address_tmpl = Card.create! name: 'address+*right+*structure', content: "{{_left+city}}" }
+      bob_address = Card.create! name: 'bob+address'
 
       r=bob_address.reload.format.render_core
       assert_view_select r, 'div[class~=card-content]', "Sparta"
@@ -112,24 +113,24 @@ describe Card::Chunk::Include, "Inclusion" do
     end
 
     it "should handle options when nesting" do
-      Card.create! :type=>'Pointer', :name=>'Livable', :content=>'[[Earth]]'
-      Card.create! :name=>'Earth'
+      Card.create! type: 'Pointer', name: 'Livable', content: '[[Earth]]'
+      Card.create! name: 'Earth'
 
       expect(render_content('{{Livable|core;item:link}}')).to eq(render_content('{{Livable|core|link}}'))
       expect(render_content('{{Livable|core;item:name}}')).to eq(render_content('{{Livable|core|name}}'))
     end
 
     it "should prevent recursion" do
-      oak = Card.create! :name=>'Oak', :content=>'{{Quentin}}'
-      qnt = Card.create! :name=>'Quentin', :content=>'{{Admin}}'
+      oak = Card.create! name: 'Oak', content: '{{Quentin}}'
+      qnt = Card.create! name: 'Quentin', content: '{{Admin}}'
       adm = Card['Quentin']
-      adm.update_attributes :content => "{{Oak}}"
+      adm.update_attributes content: "{{Oak}}"
       result = adm.format.render_core
       expect(result).to match('too deep')
     end
 
     it "should handle missing cards" do
-      @a = Card.create :name=>'boo', :content=>"hey {{+there}}"
+      @a = Card.create name: 'boo', content: "hey {{+there}}"
       r=@a.format.render_core
       assert_view_select r, 'div[data-card-name="boo+there"][class~="missing-view"]'
     end
@@ -137,15 +138,15 @@ describe Card::Chunk::Include, "Inclusion" do
     it "should handle structured cards" do
       age = newcard('age')
       template = Card['*template']
-      specialtype = Card.create :type_code=>'Cardtype', :name=>'SpecialType'
+      specialtype = Card.create type_code: 'Cardtype', name: 'SpecialType'
 
-      specialtype_template = specialtype.fetch(:trait=>:type,:new=>{}).fetch(:trait=>:structure,:new=>{})
+      specialtype_template = specialtype.fetch(trait: :type,new: {}).fetch(trait: :structure,new: {})
       specialtype_template.content = "{{#{Card::Name.joint}age}}"
       Card::Auth.as_bot { specialtype_template.save! }
       assert_equal "{{#{Card::Name.joint}age}}", specialtype_template.format.render_raw
 
-      wooga = Card.create! :name=>'Wooga', :type=>'SpecialType'
-      wooga_age = Card.create!( :name=>"#{wooga.name}#{Card::Name.joint}age", :content=> "39" )
+      wooga = Card.create! name: 'Wooga', type: 'SpecialType'
+      wooga_age = Card.create!( name: "#{wooga.name}#{Card::Name.joint}age", content: "39" )
       expect(wooga_age.format.render_core).to eq("39")
       #warn "cards #{wooga.inspect}, #{wooga_age.inspect}"
       expect(wooga_age.includers.map(&:name)).to eq(['Wooga'])
@@ -176,8 +177,8 @@ describe Card::Chunk::Include, "Inclusion" do
     it 'Hash.new_from_semicolon_attr_list should work' do
       expect(Hash.new_from_semicolon_attr_list("")).to eq({})
       expect(Hash.new_from_semicolon_attr_list(nil)).to eq({})
-      expect(Hash.new_from_semicolon_attr_list("a:b;c:4"  )).to eq({:a=>'b', :c=>'4'})
-      expect(Hash.new_from_semicolon_attr_list("d:b;e:4; ")).to eq({:d=>'b', :e=>'4'})
+      expect(Hash.new_from_semicolon_attr_list("a:b;c:4"  )).to eq({a: 'b', c: '4'})
+      expect(Hash.new_from_semicolon_attr_list("d:b;e:4; ")).to eq({d: 'b', e: '4'})
     end
 
   end

@@ -1,7 +1,7 @@
 include Type::Css
 
 def diff_args
-  {:format=>:text}
+  {format: :text}
 end
 
 format do
@@ -12,7 +12,7 @@ format do
   end
 
   def compile_scss scss, style=:expanded
-    Sass.compile scss, :style=>style
+    Sass.compile scss, style: style
   rescue =>e
     e
   end

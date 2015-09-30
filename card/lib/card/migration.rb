@@ -78,7 +78,7 @@ class Card::Migration < ActiveRecord::Migration
 
   def import_json filename, merge_opts={}
     Card.config.action_mailer.perform_deliveries = false
-    merge_opts.reverse_merge! :output_file=>File.join(data_path,"unmerged_#{ filename }")
+    merge_opts.reverse_merge! output_file: File.join(data_path,"unmerged_#{ filename }")
     Card.merge_list read_json(filename), merge_opts
   end
 

@@ -4,7 +4,7 @@ require 'decko/engine'
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
-  Bundler.require *Rails.groups(:assets => %w(development test))
+  Bundler.require *Rails.groups(assets: %w(development test))
   # If you want your assets lazily compiled in production, use this line
   # Bundler.require(:default, :assets, Rails.env)
 end
@@ -13,21 +13,12 @@ end
 module Wagn
   class Application < Rails::Application
 
-    initializer :load_wagn_environment_config, :before => :load_environment_config, :group => :all do
-      add_path paths, "lib/wagn/config/environments", :glob => "#{Rails.env}.rb"
+    initializer :load_wagn_environment_config, before: :load_environment_config, group: :all do
+      add_path paths, "lib/wagn/config/environments", glob: "#{Rails.env}.rb"
       paths["lib/wagn/config/environments"].existent.each do |environment|
         require environment
       end
     end
-
-=begin
-    initializer :load_wagn_config_initializers,  :before => :load_config_initializers do
-      add_path paths, 'lib/wagn/config/initializers', :glob => "**/*.rb"
-      config.paths['lib/wagn/config/initializers'].existent.sort.each do |initializer|
-        load(initializer)
-      end
-    end
-=end
 
     class << self
       def inherited(base)
@@ -84,7 +75,7 @@ module Wagn
         paths['app/models'] = []
         paths['app/mailers'] = []
 
-        add_path paths, 'config/routes.rb', :with => 'rails/application-routes.rb'
+        add_path paths, 'config/routes.rb', with: 'rails/application-routes.rb'
 
         Cardio.set_mod_paths  #really this should happen later
 

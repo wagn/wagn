@@ -6,8 +6,8 @@ class Card
   module Generators
     class MigrationGenerator < MigrationBase
       source_root File.expand_path('../templates', __FILE__)
-  
-      class_option 'core', :type => :boolean, aliases: '-c', :default => false, :group => :runtime, 
+
+      class_option 'core', type: :boolean, aliases: '-c', default: false, group: :runtime,
         desc: "Create card migration for card core"
 
       def create_migration_file
@@ -17,11 +17,11 @@ class Card
         set_local_assigns!
         migration_template @migration_template, File.join( mig_paths.first, "#{file_name}.rb")
       end
-  
+
     protected
-  
+
       # sets the default migration template that is being used for the generation of the migration
-      # depending on the arguments which would be sent out in the command line, the migration template 
+      # depending on the arguments which would be sent out in the command line, the migration template
       # and the table name instance variables are setup.
 
       def set_local_assigns!

@@ -3,14 +3,14 @@
 # module Card::Set::Right::Account # won't this conflict with a real set (and fail to provide controlled test?)
 #   extend Card::Set
 #
-#   card_accessor :role,   :default => "request", :type=>:phrase
-#   card_writer   :write,  :default => "request", :type=>:phrase
-#   card_reader   :read,   :default => "request", :type=>:phrase
+#   card_accessor :role,   default: "request", type: :phrase
+#   card_writer   :write,  default: "request", type: :phrase
+#   card_reader   :read,   default: "request", type: :phrase
 # end
 #
 # describe Card do
 #   before do
-#     @account_card = Card['sara'].fetch :trait=>:account
+#     @account_card = Card['sara'].fetch trait: :account
 #   end
 #
 #   describe "Read and write card attribute" do
@@ -34,19 +34,19 @@
 # #      @account_card.status.should == 'pending'
 #       Card::Auth.as_bot { @account_card.save }
 # #      Card.cache.reset
-#       expect(tcard = Card['sara'].fetch(:trait=>:account)).to be
+#       expect(tcard = Card['sara'].fetch(trait: :account)).to be
 #       expect(tcard.status).to eq('pending')
-#       expect(tcard.fetch(:trait=>:write).content).to eq('test_value')
+#       expect(tcard.fetch(trait: :write).content).to eq('test_value')
 #     end
 #
 #   end
 #
-#   let(:card) { Card.new(:name=>'simple') }
-#   let(:card_self) { Card.new(:name=>'*navbox') }
-#   let(:card_right) { Card.new(:name=>'card+*right') }
-#   let(:card_type_search) { Card.new(:name=>'search_me', :type=>Card::SearchID) }
+#   let(:card) { Card.new(name: 'simple') }
+#   let(:card_self) { Card.new(name: '*navbox') }
+#   let(:card_right) { Card.new(name: 'card+*right') }
+#   let(:card_type_search) { Card.new(name: 'search_me', type: Card::SearchID) }
 #   let(:card_double) { Card }
-#   let(:format_double) { object_double(Card.new(:name=>'card+*right').format) }
+#   let(:format_double) { object_double(Card.new(name: 'card+*right').format) }
 #
 #   #let(:html_format_double) { Card::HtmlFormat }
 #   let(:html_format_double) { double("Card::HtmlFormat") }

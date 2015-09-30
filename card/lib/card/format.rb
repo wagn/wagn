@@ -2,10 +2,11 @@
 
 class Card
   class Format
+    include Card::Location
 
-    DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
-    INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
-      :layout=>:layout, :new=>:edit, :setup=>:edit, :normal=>:normal, :template=>:template } #should be set in views
+    DEPRECATED_VIEWS = { view: :open, card: :open, line: :closed, bare: :core, naked: :core }
+    INCLUSION_MODES  = { closed: :closed, closed_content: :closed, edit: :edit,
+      layout: :layout, new: :edit, setup: :edit, normal: :normal, template: :template } #should be set in views
 
     cattr_accessor :ajax_call, :registered
     [ :perms, :denial_views, :closed_views, :error_codes, :view_tags, :aliases ].each do |acc|
@@ -121,7 +122,7 @@ class Card
     end
 
     def get_inclusion_defaults nested_card
-      { :view => :name }
+      { view: :name }
     end
 
     def params
@@ -167,7 +168,7 @@ class Card
     def template
       @template ||= begin
         c = controller
-        t = ActionView::Base.new c.class.view_paths, {:_routes=>c._routes}, c
+        t = ActionView::Base.new c.class.view_paths, {_routes: c._routes}, c
         t.extend c.class._helpers
         t
       end
@@ -178,7 +179,7 @@ class Card
       when /(_)?(optional_)?render(_(\w+))?/
         view = $3 ? $4 : opts.shift
         args = opts[0] ? opts.shift.clone : {}
-        args.merge!( :optional=>true, :default_visibility=>opts.shift) if $2
+        args.merge!( optional: true, default_visibility: opts.shift) if $2
         args[ :skip_permissions ] = true if $1
         render view, args
       when /^_view_(\w+)/
@@ -202,10 +203,8 @@ class Card
         @current_view = view = ok_view canonicalize_view( view ), args
         args = default_render_args view, args
         with_inclusion_mode view do
-          Card.with_logging :view, :message=>view, :context=>card.name, :details=>args do
-            Card::ViewCache.fetch(self, view, args) do
-              send "_view_#{ view }", args
-            end
+          Card::ViewCache.fetch(self, view, args) do
+            send "_view_#{ view }", args
           end
         end
       end
@@ -300,11 +299,11 @@ class Card
     #
 
     def subformat subcard
-      subcard = Card.fetch( subcard, :new=>{} ) if String===subcard
-      sub = self.class.new subcard, :parent=>self, :depth=>@depth+1, :root=>@root,
+      subcard = Card.fetch( subcard, new: {} ) if String===subcard
+      sub = self.class.new subcard, parent: self, depth: @depth+1, root: @root,
         # FIXME - the following four should not be hard-coded here.  need a generalized mechanism
         # for attribute inheritance
-        :context_names=>@context_names, :mode=>@mode, :mainline=>@mainline, :form=>@form
+        context_names: @context_names, mode: @mode, mainline: @mainline, form: @form
     end
 
 
@@ -434,7 +433,7 @@ class Card
       end
 
       if val=params[:item] and val.present?
-        opts[:items] = (opts[:items] || {}).reverse_merge :view=>val.to_sym
+        opts[:items] = (opts[:items] || {}).reverse_merge view: val.to_sym
       end
     end
 
@@ -493,7 +492,7 @@ class Card
     end
 
     def fetch_nested_card options
-      args = { :name=>options[:inc_name], :type=>options[:type], :supercard=>card }
+      args = { name: options[:inc_name], type: options[:type], supercard: card }
       args.delete(:supercard) if options[:inc_name].strip.blank? # special case.  gets absolutized incorrectly. fix in smartname?
       if options[:inc_name] =~ /^_main\+/
         # FIXME this is a rather hacky (and untested) way to get @superleft to work on new cards named _main+whatever
@@ -503,7 +502,7 @@ class Card
       if content=get_inclusion_content(options[:inc_name])
         args[:content]=content
       end
-      Card.fetch options[:inc_name], :new=>args
+      Card.fetch options[:inc_name], new: args
     end
 
     def default_item_view
@@ -519,40 +518,6 @@ class Card
       options[:class] = [ options[:class], klass ].flatten.compact * ' '
     end
 
-    module Location
-      #
-      # page_path    takes a Card::Name, adds the format and query string to url_key (site-absolute)
-      # card_path    makes a relative path site-absolute (if not already)
-      # card_url     makes it a full url (if not already)
-
-      # TESTME
-      def page_path title, opts={}
-        Rails.logger.warn "Pass only Card::Name to page_path #{title.class}, #{title}" unless Card::Name===title
-        format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
-        action = opts[:action] ? "#{opts.delete(:action)}/" : ''
-        query  = opts.present? ? "?#{opts.to_param}"         : ''
-        card_path "#{action}#{title.to_name.url_key}#{format}#{query}"
-      end
-
-      def card_path rel_path
-        Rails.logger.warn "Pass only strings to card_path: #{rel_path.class}, #{rel_path}" unless String===rel_path
-        if rel_path =~ /^\//
-          rel_path
-        else
-          "#{ Wagn.config.relative_url_root }/#{ rel_path }"
-        end
-      end
-
-      def card_url rel
-        if rel =~ /^https?\:/
-          rel
-        else
-          "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ card_path rel }"
-        end
-      end
-
-    end
-    include Location
 
     def unique_id
       "#{card.key}-#{Time.now.to_i}-#{rand(3)}"

@@ -4,7 +4,7 @@ end
 
 format :html do
 
-  view :pointer_core do |args| #, :view=>:core, :mod=>Type::Pointer::HtmlFormat
+  view :pointer_core do |args| #, view: :core, mod: Type::Pointer::HtmlFormat
     %{<div class="pointer-list">#{ render_pointer_items args }</div>}
   end
 
@@ -22,7 +22,7 @@ format :html do
     set_card = Card.fetch(set_name)
     not_set = set_card && set_card.type_id != SetID
 
-    group_options = Auth.as_bot { Card.search(:type_id=>RoleID, :sort=>'name') }
+    group_options = Auth.as_bot { Card.search(type_id: RoleID, sort: 'name') }
 
     inheritable = not_set ? false : set_card.inheritable?
     inheriting = inheritable && card.content=='_left'
@@ -30,15 +30,15 @@ format :html do
     item_names = inheriting ? [] : card.item_names
 
     %{
-      #{ hidden_field :content, :class=>'card-content' }
+      #{ hidden_field :content, class: 'card-content' }
       <div class="perm-editor">
 
         #{ if inheritable; %{
           <div class="perm-inheritance perm-section">
             #{ check_box_tag 'inherit', 'inherit', inheriting }
             <label>
-              #{ core_inherit_content args.merge(:target=>'wagn_role') }
-              #{ content_tag( :a, :title=>"use left's #{card.cardname.tag} rule") { '?' } }
+              #{ core_inherit_content args.merge(target: 'wagn_role') }
+              #{ content_tag( :a, title: "use left's #{card.cardname.tag} rule") { '?' } }
             </label>
           </div>
         } end }
@@ -50,8 +50,8 @@ format :html do
               checked = !!item_names.delete(option.name)
               %{
                 <div class="group-option">
-                  #{ check_box_tag( "#{option.key}-perm-checkbox", option.name, checked, :class=>'perm-checkbox-button'  ) }
-                  <label>#{ card_link option.name, :target=>'wagn_role' }</label>
+                  #{ check_box_tag( "#{option.key}-perm-checkbox", option.name, checked, class: 'perm-checkbox-button'  ) }
+                  <label>#{ card_link option.name, target: 'wagn_role' }</label>
                 </div>
               }
             end * "\n"
@@ -60,7 +60,7 @@ format :html do
 
         <div class="perm-indiv perm-vals perm-section">
           <h5>Individuals</h5>
-          #{ _render_list :item_list=>item_names, :extra_css_class=>'perm-indiv-ul' }
+          #{ _render_list item_list: item_names, extra_css_class: 'perm-indiv-ul' }
         </div>
 
       </div>
@@ -79,7 +79,7 @@ format :html do
         task = card.tag.codename
         ancestor = Card[sc.trunk_name.trunk_name]
         links = ancestor.who_can( task.to_sym ).map do |card_id|
-          card_link Card[card_id].name, :target=>args[:target]
+          card_link Card[card_id].name, target: args[:target]
         end*", "
         "Inherit ( #{links} )"
       rescue

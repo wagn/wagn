@@ -26,19 +26,19 @@ class Card < ActiveRecord::Base
   require_dependency 'card/format'
   require_dependency 'card/exceptions'
   require_dependency 'card/auth'
-  require_dependency 'card/log'
   require_dependency 'card/loader'
   require_dependency 'card/content'
   require_dependency 'card/action'
   require_dependency 'card/act'
   require_dependency 'card/change'
   require_dependency 'card/reference'
+  require_dependency 'card/view_cache'
 
-  has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
-  has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
+  has_many :references_from, class_name: :Reference, foreign_key: :referee_id
+  has_many :references_to,   class_name: :Reference, foreign_key: :referer_id
   has_many :acts, -> { order :id }
-  has_many :actions, -> { where( :draft=>[nil,false]).order :id }
-  has_many :drafts, -> { where( :draft=>true ).order :id }, :class_name=> :Action
+  has_many :actions, -> { where( draft: [nil,false]).order :id }
+  has_many :drafts, -> { where( draft: true ).order :id }, class_name: :Action
 
   cattr_accessor :set_patterns, :error_codes, :serializable_attributes, :set_specific_attributes
   @@set_patterns, @@error_codes = [], {}
@@ -54,8 +54,9 @@ class Card < ActiveRecord::Base
   attr_accessor :follower_stash
 
 
-  define_callbacks :approve, :store, :stored, :extend, :subsequent
+  define_callbacks :prepare, :approve, :store, :stored, :extend, :subsequent, :select_action, :show, :handle
 
+  before_validation :prepare
   before_validation :approve
   around_save :store
   after_save :extend
@@ -63,6 +64,7 @@ class Card < ActiveRecord::Base
   TRACKED_FIELDS = %w(name type_id db_content trash)
   extend CarrierWave::Mount
   ActiveSupport.run_load_hooks(:card, self)
+
 
 end
 

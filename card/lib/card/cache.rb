@@ -15,17 +15,17 @@ class Card
 
   class Cache
 
-    TEST_ENVS = %w{test cucumber}
-    @@prepopulating     = TEST_ENVS.include? Rails.env
-    @@using_rails_cache = TEST_ENVS.include? Rails.env
-    @@cache_by_class    = {}
+    TEST_ENVS         = %w{test cucumber}
+    @@prepopulating   = TEST_ENVS.include? Rails.env
+    @@no_rails_cache  = TEST_ENVS.include?(Rails.env) || ENV['NO_RAILS_CACHE']
+    @@cache_by_class  = {}
 
     cattr_reader :cache_by_class
 
     class << self
       def [] klass
         raise "nil klass" if klass.nil?
-        cache_by_class[klass] ||= new :class=>klass, :store=>(@@using_rails_cache ? nil : Cardio.cache)
+        cache_by_class[klass] ||= new class: klass, store: (@@no_rails_cache ? nil : Cardio.cache)
       end
 
       def renew

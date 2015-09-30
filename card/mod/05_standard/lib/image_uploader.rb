@@ -7,19 +7,22 @@ class ImageUploader < FileUploader
     (version && version != :original) ? versions[version].path : super()
   end
 
-  version :icon do #, :from_version=>:small do
-    process :resize_and_pad => [16,16]
+  version :icon, if: :create_versions?, from_version: :small do
+    process resize_and_pad: [16,16]
   end
-  version :small do #, :from_version=>:medium do
-    process :resize_to_fit => [75,75]
+  version :small, if: :create_versions?, from_version: :medium do
+    process resize_to_fit: [75,75]
   end
-  version :medium do
-    process :resize_to_fit => [200,200]
+  version :medium, if: :create_versions? do
+    process resize_to_fit: [200,200]
   end
-  version :large do
-    process :resize_to_fit => [500,500]
+  version :large, if: :create_versions? do
+    process resize_to_fit: [500,500]
   end
 
+  def identifier
+    full_filename(super())
+  end
   # add 'original' if no version is given
   def full_filename(for_file)
     name = super(for_file)

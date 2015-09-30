@@ -8,7 +8,7 @@ module Cardio
   CARD_GEM_ROOT = File.expand_path('../..', __FILE__)
 
   ActiveSupport.on_load :card do
-    if Card.count > 0
+    if Card.take
       Card::Loader.load_mods
     else
       Rails.logger.warn "empty database"
@@ -65,18 +65,18 @@ module Cardio
 
     def set_paths paths
       @@paths = paths
-      add_path 'tmp/set', :root => root
-      add_path 'tmp/set_pattern', :root => root
+      add_path 'tmp/set', root: root
+      add_path 'tmp/set_pattern', root: root
 
       add_path 'mod'
 
       add_path "db"
       add_path 'db/migrate'
       add_path "db/migrate_core_cards"
-      add_path "db/migrate_deck_cards", :root => root, :with => 'db/migrate_cards'
-      add_path "db/seeds", :with => "db/seeds.rb"
+      add_path "db/migrate_deck_cards", root: root, with: 'db/migrate_cards'
+      add_path "db/seeds", with: "db/seeds.rb"
 
-      add_path 'config/initializers',  :glob => '**/*.rb'
+      add_path 'config/initializers',  glob: '**/*.rb'
 
     end
 
@@ -141,7 +141,7 @@ module Cardio
     def delete_tmp_files id=nil
       dir = Cardio.paths['files'].existent.first + '/tmp'
       dir += "/#{id}" if id
-      FileUtils.rm_rf dir, :secure=>true
+      FileUtils.rm_rf dir, secure: true
     rescue
       Rails.logger.info "failed to remove tmp files"
     end

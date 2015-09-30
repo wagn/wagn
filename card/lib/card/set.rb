@@ -6,7 +6,7 @@ class Card
   module Set
 
     mattr_accessor :modules, :traits
-    @@modules = { :base=>[], :base_format=>{}, :nonbase=>{}, :nonbase_format=>{} }
+    @@modules = { base: [], base_format: {}, nonbase: {}, nonbase_format: {} }
 
 
 =begin
@@ -99,7 +99,7 @@ class Card
       end
 
       def alias_block view, args
-        opts = Hash===args[0] ? args.shift : { :view => args.shift }
+        opts = Hash===args[0] ? args.shift : { view: args.shift }
         opts[:mod]  ||= self
         opts[:view] ||= view
         views[ opts[:mod] ][ opts[:view] ] or fail
@@ -168,9 +168,9 @@ class Card
                    value = self.instance_variable_get("@#{name}")
                    hash[name] =
                      if Symbol === value  # ActiveJob doesn't accept symbols as arguments
-                       { :value => value.to_s, :symbol => true }
+                       { value: value.to_s, symbol: true }
                      else
-                       { :value => value }
+                       { value: value }
                      end
                 end
           Object.const_get(event.to_s.camelize).perform_later(self, s_attr)
@@ -182,9 +182,7 @@ class Card
       class_eval do
         define_method event do
           run_callbacks event do
-            Card.with_logging :event, :message=>event, :context=>self.name, :details=>opts do
-              send call_method
-            end
+            send call_method
           end
         end
       end
@@ -222,17 +220,17 @@ class Card
     #
     def card_accessor *args
       options = args.extract_options!
-      add_traits args, options.merge( :reader=>true, :writer=>true )
+      add_traits args, options.merge( reader: true, writer: true )
     end
 
     def card_reader *args
       options = args.extract_options!
-      add_traits args, options.merge( :reader=>true )
+      add_traits args, options.merge( reader: true )
     end
 
     def card_writer *args
       options = args.extract_options!
-      add_traits args, options.merge( :writer=>true )
+      add_traits args, options.merge( writer: true )
     end
 
 
@@ -385,7 +383,7 @@ EOF
         if object_method = opts.delete(kind)
           this_set_module = self
           Card.class_eval do
-            set_callback object_method, kind, event, :prepend=>true, :if=> proc { |c|
+            set_callback object_method, kind, event, prepend: true, if: proc { |c|
               c.singleton_class.include?( this_set_module ) and c.event_applies? opts
             }
           end
@@ -403,8 +401,8 @@ EOF
   #    raise "Can't define card traits on all set" if mod == Card
       mod_traits = get_traits mod
 
-      new_opts = options[:type] ? {:type=>options[:type]} : {}
-      new_opts.merge!( {:content => options[:default]} ) if options[:default]
+      new_opts = options[:type] ? {type: options[:type]} : {}
+      new_opts.merge!( {content: options[:default]} ) if options[:default]
 
       args.each do |trait|
         define_trait_card trait, new_opts
@@ -418,7 +416,7 @@ EOF
     def define_trait_card trait, opts
       define_method "#{trait}_card" do
         trait_var "@#{trait}_card" do
-          fetch :trait=>trait.to_sym, :new=>opts.clone
+          fetch trait: trait.to_sym, new: opts.clone
         end
       end
     end
@@ -435,7 +433,7 @@ EOF
       define_method "#{trait}=" do |value|
         card = send "#{trait}_card"
         self.subcards ||= {}
-        self.subcards[card.name] = {:type_id => card.type_id, :content=>value }
+        self.subcards[card.name] = {type_id: card.type_id, content: value }
         instance_variable_set "@#{trait}", value
       end
     end
@@ -443,6 +441,13 @@ EOF
     def set_specific_attributes *args
       Card.set_specific_attributes ||= []
       Card.set_specific_attributes += args.map(&:to_s)
+    end
+
+    def attachment name, args
+      include Abstract::Attachment
+      set_specific_attributes name,  :load_from_mod, "remote_#{name}_url".to_sym,
+      uploader_class = args[:uploader] || FileUploader
+      mount_uploader name, uploader_class
     end
   end
 end

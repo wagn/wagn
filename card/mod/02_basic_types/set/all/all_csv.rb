@@ -2,19 +2,19 @@ require 'csv'
 
 format :csv  do
   def get_inclusion_defaults nested_card
-    { :view => :core }
+    { view: :core }
   end
-  
-  def default_item_view 
+
+  def default_item_view
     @depth == 0 ? :csv_row : :name
   end
 
-  
+
   view :csv_row do |args|
     array = _render_raw.scan( /\{\{[^\}]*\}\}/ ).map do |inc|
       process_content( inc ).strip
     end
-    
+
     CSV.generate_line(array).strip
     #strip is because search already joins with newlines
   end
@@ -27,7 +27,7 @@ format :csv  do
     #NOTE: assumes all cards have the same structure!
     begin
       card1 = search_results.first
-    
+
       parsed_content = Card::Content.new card1.raw_content, self
       unless String === parsed_content.__getobj__
         titles = parsed_content.map do |chunk|
@@ -40,7 +40,7 @@ format :csv  do
           end
         end.compact.map {|title| title.to_s.upcase }
         CSV.generate_line titles
-        
+
       else
         ''
       end

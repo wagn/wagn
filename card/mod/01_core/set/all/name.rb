@@ -106,6 +106,23 @@ def dependents
   @dependents
 end
 
+def dependents_count card_id=id, simple=simple?
+  return 0 if new_card?
+
+  @dependents_count ||=
+    begin
+      query = if simple
+                { :or =>{:left_id => card_id, :right_id => card_id } }
+              else
+                { :left_id => card_id }
+              end
+      ids = Card.search query.merge(:return=>:id)
+      ids.inject(ids.size) do |cnt, id|
+        cnt += dependents_count id, false
+      end
+    end
+end
+
 def repair_key
   Auth.as_bot do
     correct_key = cardname.key

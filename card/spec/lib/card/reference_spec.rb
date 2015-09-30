@@ -169,7 +169,14 @@ describe Card::Reference do
     expect(Card['search with references'].referees.map(&:name).sort).to eq ["A","B","X","Y"]
   end
 
-  it "should handle commented inclusion" do
+  it "handles contextual names in queries" do
+    card = Card.create :type=>'Search', :name=>'search with references',
+      :content=>'{"name":"_+A"}'
+    Card['A'].update_attributes! :name=>'AAA', :update_referencers=>true
+    expect(Card['Search'].content).to eq '{"name":"_+AAA"}'
+  end
+
+  it "handles commented inclusion" do
     c = Card.create :name=>'inclusion comment test', :content=>'{{## hi mom }}'
     expect(c.errors.any?).to be_falsey
   end

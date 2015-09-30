@@ -1,11 +1,12 @@
 # -*- encoding : utf-8 -*-
 
 # API to create/update/delete additional cards together with the main card.
-# The most common case is for fields. For example toghether with "my address" you want to create the subcards "my address+name", "my address+street", etc. but subcards don't have to be descendants.
-
+# The most common case is for fields but subcards don't have to be descendants.
+#
+# Example toghether with "my address" you want to create the subcards
+# "my address+name", "my address+street", etc.
+#
 # Subcards can be added as card objects or attribute hashes.
-
-
 
 class Card
   def subcards
@@ -24,11 +25,11 @@ class Card
     subcards.field field_name
   end
 
-  def add_subcard name_or_card, args=nil
+  def add_subcard name_or_card, args = nil
     subcards.add name_or_card, args
   end
 
-  def add_subfield name, args=nil
+  def add_subfield name, args = nil
     subcards.add_field name, args
   end
 
@@ -56,28 +57,26 @@ class Card
     Card::Cache[Card::Subcards].delete key
   end
 
-
   class Subcards
-
-    def initialize(context_card)
+    def initialize context_card
       @context_card = context_card
       @keys = ::Set.new
     end
 
     def remove name_or_card
       key = case name_or_card
-      when Card
-        name_or_card.key
-      when Symbol
-        fetch_subcard(name_or_card).key
-      else
-        name_or_card.to_name.key
-      end
+            when Card
+              name_or_card.key
+            when Symbol
+              fetch_subcard(name_or_card).key
+            else
+              name_or_card.to_name.key
+            end
 
       @keys.include? key && @keys.delete(key)
     end
 
-    def add name_or_card_or_attr, card_or_attr=nil
+    def add name_or_card_or_attr, card_or_attr = nil
       if card_or_attr
         name = name_or_card_or_attr
       else
@@ -92,8 +91,8 @@ class Card
           add_attributes args.delete(:name), args
         else
           args.each_pair do |key, val|
-            if val.kind_of? String
-              add_attributes key, :content => val
+            if val.is_a? String
+              add_attributes key, content: val
             else
               add_attributes key, val
             end
@@ -115,7 +114,6 @@ class Card
         @keys.send method, *args
       end
     end
-
 
     def each_card
       @keys.each do |key|
@@ -162,7 +160,7 @@ class Card
     end
 
     def remove_child name_or_card
-      if name_or_card.kind_of? Card
+      if name_or_card.is_a? Card
         remove name_or_card
       else
         absolute_name = @context_card.cardname.field_name(name_or_card)
@@ -184,9 +182,8 @@ class Card
     private
 
     def fetch_subcard key
-      Card.fetch key, :subcard => true
+      Card.fetch key, subcard: true
     end
-
 
     def prepend_plus name
       case name
@@ -205,14 +202,14 @@ class Card
       else
         absolute_key = @context_card.cardname.field_name(name).key
         if @keys.include? absolute_key
-         absolute_key
+          absolute_key
         else
           @context_card.cardname.relative_field_name(name).key
         end
       end
     end
 
-    def add_attributes name, attributes={}
+    def add_attributes name, attributes = {}
       absolute_name =
         if @context_card.name =~ /^\+/
           name
@@ -225,7 +222,8 @@ class Card
 
     def add_card card
       card.supercard = @context_card
-      if !card.cardname.simple? && card.cardname.is_a_field_of?(@context_card.cardname)
+      if !card.cardname.simple? &&
+         card.cardname.is_a_field_of?(@context_card.cardname)
         card.superleft = @context_card
       end
       @keys << card.key

@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 event :trunk_cardtype_of_a_list_relation_changed,
       changed: :type, after: :store, on: :update,
       when: proc { |c| Codename[:list] } do
@@ -31,8 +33,11 @@ event :cardtype_of_list_item_changed,
       when: proc { |c| Codename[:list] } do
   Card.search(type_id: Card::ListID, link_to: name).each do |card|
     if card.item_type_id != type_id
-      errors.add :type, "can't be changed because #{name} is referenced by list card #{card.name}"
+      errors.add(
+        :type,
+        "can't be changed because #{name} " \
+        "is referenced by list card #{card.name}"
+      )
     end
   end
 end
-

@@ -34,7 +34,10 @@ describe Card::Set::Type::ListedBy do
       it { is_expected.to eq ['50 grades of shy', 'Parry Hotter'] }
 
       it 'is recorded in the reference table' do
-        search_result = Card.search right_plus: ['books', link_to: '50 grades of shy'], return: :name
+        search_result = Card.search(
+          right_plus: ['books', link_to: '50 grades of shy'],
+          return: :name
+        )
         expect(search_result).to eq ['Darles Chickens']
       end
 
@@ -64,7 +67,11 @@ describe Card::Set::Type::ListedBy do
             )
           end
         end
-        it { is_expected.to eq ['50 grades of shy', 'Adventures of Buckleharry Finn', 'Parry Hotter'] }
+        it do
+          is_expected.to eq(
+            ['50 grades of shy', 'Adventures of Buckleharry Finn', 'Parry Hotter']
+          )
+        end
       end
       context "when Darles Chickens is added to a book's list" do
         before do
@@ -76,9 +83,8 @@ describe Card::Set::Type::ListedBy do
                 '+authors' => { content: '[[Stam Broker]]', type: 'list' }
               }
             )
-            Card.fetch('Adventures of Buckleharry Finn+authors').update_attributes!(
-              content: '[[Darles Chickens]]'
-            )
+            Card.fetch('Adventures of Buckleharry Finn+authors')
+              .update_attributes!(content: '[[Darles Chickens]]')
           end
         end
         it do
@@ -94,7 +100,7 @@ describe Card::Set::Type::ListedBy do
 
       context 'when the cardtype of Parry Hotter changed' do
         before do
-          Card['Parry Hotter'].update_attributes! type_id:  Card::BasicID
+          Card['Parry Hotter'].update_attributes! type_id: Card::BasicID
         end
         it { is_expected.to eq ['50 grades of shy'] }
       end
@@ -145,7 +151,7 @@ describe Card::Set::Type::ListedBy do
       end
       context 'when the name of the cardtype authors changed' do
         before do
-          Card['author'].update_attributes! type_id:  Card::BasicID
+          Card['author'].update_attributes! type_id: Card::BasicID
         end
         it { is_expected.to eq ['50 grades of shy', 'Parry Hotter'] }
       end

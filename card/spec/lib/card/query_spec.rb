@@ -261,6 +261,18 @@ describe Card::Query do
     end
   end
 
+  describe 'compound relationships' do
+    it 'right_plus should handle subqueries' do
+      @query = { right_plus: ['*create', refer_to: 'Anyone']}
+      is_expected.to eq(['Fruit+*type', 'Sign up+*type'])
+    end
+
+    it 'plus should handle subqueries' do # albeit more slowly :)
+      @query = { plus: ['*create', refer_to: 'Anyone']}
+      is_expected.to eq(['Fruit+*type', 'Sign up+*type'])
+    end
+  end
+
   describe 'relative links' do
     it 'should handle relative refer_to' do
       @query = { refer_to: '_self', context: 'Z' }

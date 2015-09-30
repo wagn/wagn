@@ -39,7 +39,7 @@ class Card
           case field
           when :raw;     "#{table}.*"
           when :card;    "#{table}.name"
-          when :count;   "coalesce(count(*),0) as count"
+          when :count;   "coalesce(count( distinct #{table}.id),0) as count"
           when :content; "#{table}.db_content"
           else
             if ATTRIBUTES[field.to_sym]==:basic

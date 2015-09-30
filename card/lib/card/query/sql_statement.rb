@@ -36,26 +36,27 @@ class Card
         table = @query.table_alias
         field = @mods[:return]
         field = field.blank? ? :card : field.to_sym
+        field = full_field(table, field)
+        [field, @mods[:sort_join_field]].compact * ', '
+      end
 
-        field =
-          case field
-          when :raw;     "#{table}.*"
-          when :card;    "#{table}.name"
-          when :count;   "coalesce(count( distinct #{table}.id),0) as count"
-          when :content; "#{table}.db_content"
+      def full_field table, field
+        case field
+        when :raw      then "#{table}.*"
+        when :card     then "#{table}.name"
+        when :content  then "#{table}.db_content"
+        when :count
+          "coalesce(count( distinct #{table}.id),0) as count"
+        else
+          if ATTRIBUTES[field.to_sym] == :basic
+            "#{table}.#{field}"
           else
-            if ATTRIBUTES[field.to_sym]==:basic
-              "#{table}.#{field}"
-            else
-              safe_sql field
-            end
+            safe_sql field
           end
-
-        [ field, @mods[:sort_join_field] ].compact * ', '
+        end
       end
 
       def joins query
-        #binding.pry
         if query.left_joined?
           join_on_clause query, query.joins.first
         else
@@ -67,36 +68,36 @@ class Card
 
       def join_on_clause query, ready_joins
         Array.wrap(ready_joins).map do |join|
-          [join_clause(query,join),
+          [join_clause(query, join),
            'ON',
            on_clause(query, join)
-          ] * ' '
+          ].join ' '
         end
       end
 
       def join_clause query, join
         to_table = join.to_table
-        to_table = "(#{to_table.sql})" if Card::Query===to_table
-        table_segment = [to_table, join.to_alias] * ' '
+        to_table = "(#{to_table.sql})" if to_table.is_a? Card::Query
+        table_segment = [to_table, join.to_alias].join ' '
         if query.left_joined? && join == query.joins.first
           deeper_joins = [
             join_on_clause(query, query.joins[1..-1]),
             query.subqueries.map { |sq| joins sq }
-          ].flatten * "\n"
-          table_segment = "(#{table_segment} #{deeper_joins})"
+          ].flatten
+          if !deeper_joins.empty?
+            table_segment = "(#{table_segment} #{deeper_joins * ' '})"
+          end
         end
 
-        [ join.side, 'JOIN', table_segment].compact * ' '
+        [join.side, 'JOIN', table_segment].compact.join ' '
       end
 
       def on_clause query, join
-        #binding.pry
-
         on_conditions = join.conditions
         on_ids = [
           "#{join.from_alias}.#{join.from_field}",
           "#{join.to_alias}.#{join.to_field}"
-          ] * ' = '
+        ].join ' = '
         on_conditions.unshift on_ids
         if join.to_table == 'cards'
           on_conditions.push(standard_conditions query)
@@ -105,21 +106,22 @@ class Card
       end
 
       def where
-        conditions = [ query_conditions(@query), standard_conditions(@query) ]
-        conditions = conditions.reject( &:blank? ).join "\nAND "
-        where = "WHERE #{conditions}" unless conditions.blank?
+        conditions = [query_conditions(@query), standard_conditions(@query)]
+        conditions = conditions.reject(&:blank?).join "\nAND "
+        "WHERE #{conditions}" unless conditions.blank?
       end
 
       def query_conditions query
         cond_list = basic_conditions query.conditions
         cond_list +=
-          query.subqueries.map do |query|
-            query_conditions query
+          query.subqueries.map do |subquery|
+            query_conditions subquery
           end
-        cond_list.reject! &:blank?
+        cond_list.reject!(&:blank?)
 
         if cond_list.size > 1
-          "(#{ cond_list.join "\n#{ query.current_conjunction.upcase } " })"
+          cond_list = cond_list.join "\n#{query.current_conjunction.upcase} "
+          "(#{cond_list})"
         else
           cond_list.join
         end
@@ -127,7 +129,7 @@ class Card
 
       def basic_conditions conditions
         conditions.map do |condition|
-          if String===condition
+          if condition.is_a? String
             condition
           else
             field, val = condition
@@ -145,38 +147,37 @@ class Card
       end
 
       def permission_conditions query
-        unless Auth.always_ok?
-          read_rules = Auth.as_card.read_rules
-          read_rule_list = read_rules.nil? ? 1 : read_rules.join(',')
-          "#{query.table_alias}.read_rule_id IN (#{ read_rule_list })"
-        end
+        return if Auth.always_ok?
+        read_rules = Auth.as_card.read_rules
+        read_rule_list = read_rules.nil? ? 1 : read_rules.join(',')
+        "#{query.table_alias}.read_rule_id IN (#{read_rule_list})"
       end
 
       def group
         group = @mods[:group]
-        "GROUP BY #{ safe_sql group }" if group.present?
+        "GROUP BY #{safe_sql group}" if group.present?
       end
 
       def limit_and_offset
         full_syntax do
-          limit, offset = @mods[:limit], @mods[:offset]
+          limit = @mods[:limit]
+          offset = @mods[:offset]
           if limit.to_i > 0
-            string =  "LIMIT  #{ limit.to_i  } "
-            string += "OFFSET #{ offset.to_i } " if offset.present?
+            string =  "LIMIT  #{limit.to_i} "
+            string += "OFFSET #{offset.to_i} " if offset.present?
             string
           end
         end
       end
 
       def full_syntax
-        unless @query.superquery or @mods[:return]=='count'
-          yield
-        end
+        return if @query.superquery || @mods[:return]=='count'
+        yield
       end
 
       def order
         full_syntax do
-          order_key ||= @mods[:sort].blank? ? "update" : @mods[:sort]
+          order_key ||= @mods[:sort].blank? ? 'update' : @mods[:sort]
 
           order_directives = [order_key].flatten.map do |key|
             dir = if @mods[:dir].blank?
@@ -190,16 +191,16 @@ class Card
         end
       end
 
-
       def sort_field key, as, dir
         table = @query.table_alias
-        order_field = case key
-          when "id";              "#{table}.id"
-          when "update";          "#{table}.updated_at"
-          when "create";          "#{table}.created_at"
-          when /^(name|alpha)$/;  "LOWER( #{table}.key )"
-          when 'content';         "#{table}.db_content"
-          when "relevance";       "#{table}.updated_at" #deprecated
+        order_field =
+          case key
+          when 'id'             then "#{table}.id"
+          when 'update'         then "#{table}.updated_at"
+          when 'create'         then "#{table}.created_at"
+          when /^(name|alpha)$/ then "LOWER( #{table}.key )"
+          when 'content'        then "#{table}.db_content"
+          when 'relevance'      then "#{table}.updated_at" # deprecated
           else
             safe_sql(key)
           end
@@ -211,7 +212,11 @@ class Card
 
       def safe_sql(txt)
         txt = txt.to_s
-        txt.match( /[^\w\*\(\)\s\.\,]/ ) ? raise( "WQL contains disallowed characters: #{txt}" ) : txt
+        if txt.match(/[^\w\*\(\)\s\.\,]/)
+          fail "WQL contains disallowed characters: #{txt}"
+        else
+          txt
+        end
       end
 
       def cast_type(type)

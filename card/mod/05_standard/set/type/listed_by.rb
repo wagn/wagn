@@ -48,12 +48,15 @@ end
 
 def generate_content
   listed_by.map do |item|
-    "[[%s]]" % item.to_name.left
+    '[[%s]]' % item.to_name.left
   end.join "\n"
 end
 
 def listed_by
-  Card.search(type: 'list', right: trunk.type_name, left: {type: cardname.tag}, refer_to: cardname.trunk, return: :name)
+  Card.search(
+    type: 'list', right: trunk.type_name,
+    left: {type: cardname.tag}, refer_to: cardname.trunk, return: :name
+  )
 end
 
 def update_cached_list
@@ -64,33 +67,6 @@ end
 def list_card item
   Card.fetch "#{item}+#{left.type_name}" #, new: {type: 'list'}
 end
-
-# def add_item name
-#   unless include_item? name
-#     lc = list_card
-#     lc.add_item name
-#     @subcards[name] = lc
-#   end
-# end
-#
-# def add_item! name
-#   unless include_item? name
-#     list_card.add_item! name
-#   end
-# end
-#
-# def drop_item name
-#   if include_item? name
-#     lc = list_card
-#     lc.drop_item name
-#     @subcards[name] = lc
-#   end
-# end
-# def drop_item! name
-#   if include_item? name
-#     list_card.drop_item! name
-#   end
-# end
 
 include Pointer
 format do

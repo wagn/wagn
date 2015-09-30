@@ -33,6 +33,11 @@ describe Card::Set::Type::ListedBy do
       subject { listed_by }
       it { is_expected.to eq ['50 grades of shy', 'Parry Hotter'] }
 
+      it 'is recorded in the reference table' do
+        search_result = Card.search right_plus: ['books', link_to: '50 grades of shy'], return: :name
+        expect(search_result).to eq ['Darles Chickens']
+      end
+
       context "when Darles Chickens is removed from Parry Hotter's list" do
         before do
           Card['Parry Hotter+authors'].update_attributes!(

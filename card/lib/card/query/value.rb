@@ -34,8 +34,8 @@ class Card
 
       def sqlize v
         case v
-        when Query, SqlCond; v.to_sql
-        when Array;    "(" + v.flatten.collect {|x| sqlize(x)}.join(',') + ")"
+        when Query;  v.to_sql
+        when Array;  "(" + v.flatten.collect {|x| sqlize(x)}.join(',') + ")"
         else quote(v.to_s)
         end
       end
@@ -45,8 +45,6 @@ class Card
         table = @query.table_alias
 
         field, v = case field.to_s
-          when "cond"
-            return "(#{sqlize(v)})"
           when "name"
             ["#{table}.key", [v].flatten.map(&:to_name).map(&:key)]
           when "content"

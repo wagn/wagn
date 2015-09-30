@@ -35,7 +35,6 @@ class Card
   #    [ field_string_or_sym, Card::Value::Query object ]
   class Query
 
-
     require_dependency 'card/query/clause'
     require_dependency 'card/query/value'
     require_dependency 'card/query/reference'
@@ -131,9 +130,9 @@ class Card
     end
 
     def run_sql
-      #puts "\nstatement = #{@statement}"
-      #puts "sql = #{sql}"
-      ActiveRecord::Base.connection.select_all( sql )
+      # puts "\nstatement = #{@statement}"
+      # puts "sql = #{sql}"
+      ActiveRecord::Base.connection.select_all(sql)
     end
 
     def sql
@@ -153,6 +152,18 @@ class Card
       subquery = Query.new opts.merge(:superquery=>self)
       @subqueries << subquery
       subquery
+    end
+
+    def left_joined?
+      if !@left_joined.nil?
+        @left_joined
+      else
+        @left_joined =
+          !@superquery.nil? &&
+          !joins.empty? &&
+          joins.first.to_table == 'cards' &&
+          joins.first.side == 'LEFT'
+      end
     end
 
     # Query Interpretation
@@ -231,7 +242,7 @@ class Card
       cond << if args.size > 1
         [ args.shift, Value.new(args.shift, self) ]
       else
-        [ :cond, SqlCond.new(args[0]) ]
+        args[0]
       end
     end
 

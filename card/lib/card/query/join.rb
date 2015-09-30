@@ -14,9 +14,7 @@ class Card
         end
         @from_field ||= :id
         @to_field   ||= :id
-
-        on = SqlCond.new "#{from_alias}.#{from_field} = #{to_alias}.#{to_field}"
-        @conditions = [[:cond, on]]
+        @conditions = []
       end
 
       def from_and_to opts
@@ -40,18 +38,6 @@ class Card
 
       def side
         @side ||= (from && from.mods[:conj] == 'or') ? 'LEFT' : nil
-      end
-
-      def to_sql
-        @to_table = "(#{@to_table.sql})" if Card::Query===@to_table
-        [ side, 'JOIN', to_table, to_alias, 'ON', on_clause ].compact * ' '
-      end
-
-      def on_clause
-        @conditions.map do |condition|
-          field, val = condition
-          val.to_sql field
-        end * ' AND '
       end
 
     end

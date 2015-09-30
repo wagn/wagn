@@ -113,6 +113,7 @@ describe Card::Query do
     end
 
     it 'should handle :or for references' do
+      Card::Auth.as_bot
       @query = { refer_to: [:or, 'b', 'z'] }
       is_expected.to eq(%w( A B Y))
     end

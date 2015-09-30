@@ -1,7 +1,6 @@
 class Card
   class Query
     class SqlStatement
-
       def initialize query
         @query = query
         @mods = query.mods
@@ -19,11 +18,14 @@ class Card
       end
 
       def to_s
-        ['SELECT DISTINCT',
-          @fields, 'FROM', @tables, @joins,
-          @where, @group,
-          @order, @limit_and_offset
-        ].compact * ' '
+        ["SELECT DISTINCT #{@fields}",
+         "FROM #{@tables}",
+         @joins,
+         @where,
+         @group,
+         @order,
+         @limit_and_offset
+        ].compact * "\n"
       end
 
       def tables
@@ -53,27 +55,63 @@ class Card
       end
 
       def joins query
-        [ join_clause(query),
-          query.subqueries.map { |sq| joins sq }
-        ].flatten * "\n"
+        #binding.pry
+        if query.left_joined?
+          join_on_clause query, query.joins.first
+        else
+          [join_on_clause(query, query.joins),
+           query.subqueries.map { |sq| joins sq }
+          ].flatten * "\n"
+        end
       end
 
-      def join_clause query
-        query.joins.map do |join|
-          j =  join.to_sql
-          j += " AND #{standard_conditions query}" if join.to_table == 'cards'
-          j
+      def join_on_clause query, ready_joins
+        Array.wrap(ready_joins).map do |join|
+          [join_clause(query,join),
+           'ON',
+           on_clause(query, join)
+          ] * ' '
         end
+      end
+
+      def join_clause query, join
+        to_table = join.to_table
+        to_table = "(#{to_table.sql})" if Card::Query===to_table
+        table_segment = [to_table, join.to_alias] * ' '
+        if query.left_joined? && join == query.joins.first
+          deeper_joins = [
+            join_on_clause(query, query.joins[1..-1]),
+            query.subqueries.map { |sq| joins sq }
+          ].flatten * "\n"
+          table_segment = "(#{table_segment} #{deeper_joins})"
+        end
+
+        [ join.side, 'JOIN', table_segment].compact * ' '
+      end
+
+      def on_clause query, join
+        #binding.pry
+
+        on_conditions = join.conditions
+        on_ids = [
+          "#{join.from_alias}.#{join.from_field}",
+          "#{join.to_alias}.#{join.to_field}"
+          ] * ' = '
+        on_conditions.unshift on_ids
+        if join.to_table == 'cards'
+          on_conditions.push(standard_conditions query)
+        end
+        basic_conditions(on_conditions) * ' AND '
       end
 
       def where
         conditions = [ query_conditions(@query), standard_conditions(@query) ]
-        conditions = conditions.reject( &:blank? ).join " AND \n    "
+        conditions = conditions.reject( &:blank? ).join "\nAND "
         where = "WHERE #{conditions}" unless conditions.blank?
       end
 
       def query_conditions query
-        cond_list = basic_conditions query
+        cond_list = basic_conditions query.conditions
         cond_list +=
           query.subqueries.map do |query|
             query_conditions query
@@ -81,16 +119,20 @@ class Card
         cond_list.reject! &:blank?
 
         if cond_list.size > 1
-          "(#{ cond_list.join " #{ query.current_conjunction.upcase }\n" })"
+          "(#{ cond_list.join "\n#{ query.current_conjunction.upcase } " })"
         else
           cond_list.join
         end
       end
 
-      def basic_conditions query
-        query.conditions.map do |condition|
-          field, val = condition
-          val.to_sql field
+      def basic_conditions conditions
+        conditions.map do |condition|
+          if String===condition
+            condition
+          else
+            field, val = condition
+            val.to_sql field
+          end
         end
       end
 
@@ -175,13 +217,6 @@ class Card
       def cast_type(type)
         cxn ||= ActiveRecord::Base.connection
         (val = cxn.cast_types[type.to_sym]) ? val[:name] : safe_sql(type)
-      end
-
-    end
-
-    class SqlCond < String
-      def to_sql *args
-        self
       end
     end
   end

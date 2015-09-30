@@ -265,7 +265,7 @@ class Card
       def join_cards val, opts={}
         conditions_on_join = opts.delete(:conditions_on_join)
         s = subquery
-        s.joins << Join.new( { from: self, to: s }.merge opts )
+        s.joins << Join.new({ from: self, to: s }.merge opts)
         s.conditions_on_join = conditions_on_join
         s.interpret val
         s

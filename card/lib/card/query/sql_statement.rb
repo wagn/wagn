@@ -9,7 +9,7 @@ class Card
       def build
         @fields = fields
         @tables = tables
-        @joins  = joins @query
+        @joins  = joins @query.all_joins
         @where  = where
         @group  = group
         @order  = order
@@ -56,47 +56,53 @@ class Card
         end
       end
 
-      def joins query
-        [join_on_clause(query, query.joins),
-         query.subqueries.map { |sq| joins sq }
-        ].flatten * "\n"
-      end
-
-      def join_on_clause query, joins
-        joins.map do |join|
-          [join_clause(query, join),
-           'ON',
-           on_clause(query, join)
-          ].join ' '
+      def joins join_list
+        clauses = []
+        join_list.each do |join|
+          clauses << join_on_clause(join)
+          unless join.left?
+            clauses << joins(deeper_joins join)
+          end
         end
+        clauses.flatten * "\n"
       end
 
-      def join_clause query, join
+      def join_on_clause join
+        [join_clause(join), 'ON', on_clause(join)].join ' '
+      end
+
+
+      def deeper_joins join
+        deeper_joins = join.subjoins
+        deeper_joins += join.to.all_joins if join.to.is_a? Card::Query
+        deeper_joins
+      end
+
+      def join_clause join
         to_table = join.to_table
         to_table = "(#{to_table.sql})" if to_table.is_a? Card::Query
         table_segment = [to_table, join.to_alias].join ' '
-        if query.left_joined? && join == query.joins.first
-          deeper_joins = [
-            join_on_clause(query, query.joins[1..-1]),
-            query.subqueries.map { |sq| joins sq }
-          ].flatten
-          if !deeper_joins.empty?
-            table_segment = "(#{table_segment} #{deeper_joins * ' '})"
+
+
+        if join.left?
+          djoins = deeper_joins(join)
+          unless djoins.empty?
+            table_segment = "(#{table_segment} #{joins djoins})"
           end
         end
-
         [join.side, 'JOIN', table_segment].compact.join ' '
+
       end
 
-      def on_clause query, join
+      def on_clause join
         on_conditions = join.conditions
         on_ids = [
           "#{join.from_alias}.#{join.from_field}",
           "#{join.to_alias}.#{join.to_field}"
         ].join ' = '
         on_conditions.unshift on_ids
-        if join.to_table == 'cards'
-          on_conditions.push(standard_conditions query)
+        if join.to.is_a? Card::Query
+          on_conditions.push(standard_conditions join.to)
         end
         basic_conditions(on_conditions) * ' AND '
       end

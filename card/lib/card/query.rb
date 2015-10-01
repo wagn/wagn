@@ -72,13 +72,14 @@ class Card
 
     attr_reader :statement, :mods, :conditions,
       :subqueries, :superquery
-    attr_accessor :joins, :table_seq #, :conditions_on_join
+    attr_accessor :joins, :table_seq, :unjoined #, :conditions_on_join
 
     def initialize statement
       @subqueries, @joins, @conditions = [], [], []
       @mods = {}
       @statement = statement.clone
 
+      @unjoined   = @statement.delete(:unjoined)   || nil
       @context    = @statement.delete(:context)    || nil
       @superquery = @statement.delete(:superquery) || nil
       @vars       = @statement.delete(:vars)       || {}
@@ -237,7 +238,8 @@ class Card
     end
 
     def add_condition *args
-      conditions_bucket << if args.size > 1
+      #conditions_bucket
+      @conditions << if args.size > 1
         [args.shift, Value.new(args.shift, self)]
       else
         args[0]
@@ -290,6 +292,10 @@ class Card
 
     def current_conjunction
       @mods[:conj].blank? ? :and : @mods[:conj]
+    end
+
+    def all_joins
+      (joins + subqueries.find_all(&:unjoined).map(&:joins)).flatten
     end
 
   end

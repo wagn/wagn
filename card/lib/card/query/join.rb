@@ -17,8 +17,9 @@ class Card
         @to_field   ||= :id
         @conditions = []
         @subjoins = []
-        if @superjoin
-          @superjoin.@subjoins << self
+        if @from.is_a? Join
+          @superjoin = @from
+          @superjoin.subjoins << self
         end
         self
       end
@@ -46,7 +47,12 @@ class Card
       end
 
       def side
-        @side ||= (from && from.mods[:conj] == 'or') ? 'LEFT' : nil
+        if !@side.nil?
+          @side
+        else
+          in_or = from && from.is_a?(Card::Query) && from.mods[:conj] == 'or'
+          @side = in_or ? 'LEFT' : nil
+        end
       end
 
       def left?
@@ -54,7 +60,11 @@ class Card
       end
 
       def in_left?
-#        @superjoin.lef
+        if !@in_left.nil?
+          @in_left
+        else
+          @in_left = left? || (!@superjoin.nil? && @superjoin.in_left?)
+        end
       end
 
     end

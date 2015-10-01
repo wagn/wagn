@@ -47,6 +47,7 @@ describe Card::Query do
     end
 
     it 'should work on types' do
+      Card::Auth.as_bot
       @query = { type: [:in, 'Cardtype E', 'Cardtype F'] }
       is_expected.to eq(%w(type-e-card type-f-card))
     end

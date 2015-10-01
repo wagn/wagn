@@ -49,7 +49,7 @@ class Card
           from_field: 'card_act_id',
           to: ['card_acts', "a#{table_id force=true}"]
         )
-        join_cards val, from_alias: acts_alias, from_field: 'actor_id'
+        join_cards val, from: act_join, from_field: 'actor_id'
       end
 
       def last_editor_of val
@@ -108,7 +108,7 @@ class Card
           if c && [SearchTypeID, SetID].include?(c.type_id)
             #FIXME - move this check to set mods!
             statement = c.get_query.symbolize_keys.merge(
-              return: :condition, context: c.name
+              unjoined: true, context: c.name
             )
             sq = subquery statement
           else
@@ -197,7 +197,8 @@ class Card
           if join_field = SORT_JOIN_TO_ITEM_MAP[item.to_sym]
             sq = join_cards val,
               to_field: join_field,
-              side: 'LEFT',
+              side: 'LEFT'
+              #,
               #conditions_on_join: true
             @mods[:sort] ||= "#{sq.table_alias}.#{sort_field}"
           else
@@ -237,7 +238,7 @@ class Card
 
       def table_alias
         @table_alias ||= begin
-          if @statement[:return] == :condition && @superquery
+          if @unjoined
             @superquery.table_alias
           else
             "c#{table_id}"
@@ -283,7 +284,7 @@ class Card
       alias :in :any
 
       def conjoin val, conj
-        sq = subquery( return: :condition, conj: conj )
+        sq = subquery( unjoined: true, conj: conj )
         unless Array===val
           val = clause_to_hash(val).map { |key, value| { key => value } }
         end

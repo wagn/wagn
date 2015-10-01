@@ -1,7 +1,6 @@
 class Card
   class Query
     class SqlStatement
-
       def initialize query
         @query = query
         @mods = query.mods
@@ -10,7 +9,7 @@ class Card
       def build
         @fields = fields
         @tables = tables
-        @joins  = joins @query
+        @joins  = joins @query.all_joins
         @where  = where
         @group  = group
         @order  = order
@@ -19,11 +18,14 @@ class Card
       end
 
       def to_s
-        ['SELECT DISTINCT',
-          @fields, 'FROM', @tables, @joins,
-          @where, @group,
-          @order, @limit_and_offset
-        ].compact * ' '
+        ["SELECT DISTINCT #{@fields}",
+         "FROM #{@tables}",
+         @joins,
+         @where,
+         @group,
+         @order,
+         @limit_and_offset
+        ].compact * "\n"
       end
 
       def tables
@@ -34,63 +36,102 @@ class Card
         table = @query.table_alias
         field = @mods[:return]
         field = field.blank? ? :card : field.to_sym
+        field = full_field(table, field)
+        [field, @mods[:sort_join_field]].compact * ', '
+      end
 
-        field =
-          case field
-          when :raw;     "#{table}.*"
-          when :card;    "#{table}.name"
-          when :count;   "coalesce(count(*),0) as count"
-          when :content; "#{table}.db_content"
+      def full_field table, field
+        case field
+        when :raw      then "#{table}.*"
+        when :card     then "#{table}.name"
+        when :content  then "#{table}.db_content"
+        when :count
+          "coalesce(count( distinct #{table}.id),0) as count"
+        else
+          if ATTRIBUTES[field.to_sym] == :basic
+            "#{table}.#{field}"
           else
-            if ATTRIBUTES[field.to_sym]==:basic
-              "#{table}.#{field}"
-            else
-              safe_sql field
-            end
+            safe_sql field
           end
-
-        [ field, @mods[:sort_join_field] ].compact * ', '
-      end
-
-      def joins query
-        [ join_clause(query),
-          query.subqueries.map { |sq| joins sq }
-        ].flatten * "\n"
-      end
-
-      def join_clause query
-        query.joins.map do |join|
-          j =  join.to_sql
-          j += " AND #{standard_conditions query}" if join.to_table == 'cards'
-          j
         end
       end
 
+      def joins join_list
+        clauses = []
+        join_list.each do |join|
+          clauses << join_on_clause(join)
+          clauses << joins(deeper_joins join) unless join.left?
+        end
+        clauses.flatten * "\n"
+      end
+
+      def join_on_clause join
+        [join_clause(join), 'ON', on_clause(join)].join ' '
+      end
+
+      def deeper_joins join
+        deeper_joins = join.subjoins
+        deeper_joins += join.to.all_joins if join.to.is_a? Card::Query
+        deeper_joins
+      end
+
+      def join_clause join
+        to_table = join.to_table
+        to_table = "(#{to_table.sql})" if to_table.is_a? Card::Query
+        table_segment = [to_table, join.to_alias].join ' '
+
+        if join.left?
+          djoins = deeper_joins(join)
+          unless djoins.empty?
+            table_segment = "(#{table_segment} #{joins djoins})"
+          end
+        end
+        [join.side, 'JOIN', table_segment].compact.join ' '
+      end
+
+      def on_clause join
+        on_conditions = join.conditions
+        on_ids = [
+          "#{join.from_alias}.#{join.from_field}",
+          "#{join.to_alias}.#{join.to_field}"
+        ].join ' = '
+        on_conditions.unshift on_ids
+        if join.to.is_a? Card::Query
+          on_conditions.push(standard_conditions join.to)
+        end
+        basic_conditions(on_conditions) * ' AND '
+      end
+
       def where
-        conditions = [ query_conditions(@query), standard_conditions(@query) ]
-        conditions = conditions.reject( &:blank? ).join " AND \n    "
-        where = "WHERE #{conditions}" unless conditions.blank?
+        conditions = [query_conditions(@query), standard_conditions(@query)]
+        conditions = conditions.reject(&:blank?).join "\nAND "
+        "WHERE #{conditions}" unless conditions.blank?
       end
 
       def query_conditions query
-        cond_list = basic_conditions query
+        cond_list = basic_conditions query.conditions
         cond_list +=
-          query.subqueries.map do |query|
-            query_conditions query
+          query.subqueries.map do |subquery|
+            query_conditions subquery
           end
-        cond_list.reject! &:blank?
+        cond_list.reject!(&:blank?)
 
         if cond_list.size > 1
-          "(#{ cond_list.join " #{ query.current_conjunction.upcase }\n" })"
+          cond_list = cond_list.join "\n#{query.current_conjunction.upcase} "
+          "(#{cond_list})"
         else
           cond_list.join
         end
       end
 
-      def basic_conditions query
-        query.conditions.map do |condition|
-          field, val = condition
-          val.to_sql field
+      def basic_conditions conditions
+        conditions.map do |condition|
+          if condition.is_a? String
+            condition
+          else
+            field, val = condition
+            val.to_sql field
+          end
         end
       end
 
@@ -103,38 +144,37 @@ class Card
       end
 
       def permission_conditions query
-        unless Auth.always_ok?
-          read_rules = Auth.as_card.read_rules
-          read_rule_list = read_rules.nil? ? 1 : read_rules.join(',')
-          "#{query.table_alias}.read_rule_id IN (#{ read_rule_list })"
-        end
+        return if Auth.always_ok?
+        read_rules = Auth.as_card.read_rules
+        read_rule_list = read_rules.nil? ? 1 : read_rules.join(',')
+        "#{query.table_alias}.read_rule_id IN (#{read_rule_list})"
       end
 
       def group
         group = @mods[:group]
-        "GROUP BY #{ safe_sql group }" if group.present?
+        "GROUP BY #{safe_sql group}" if group.present?
       end
 
       def limit_and_offset
         full_syntax do
-          limit, offset = @mods[:limit], @mods[:offset]
+          limit = @mods[:limit]
+          offset = @mods[:offset]
           if limit.to_i > 0
-            string =  "LIMIT  #{ limit.to_i  }"
-            string += "OFFSET #{ offset.to_i }" if offset.present?
+            string =  "LIMIT  #{limit.to_i} "
+            string += "OFFSET #{offset.to_i} " if offset.present?
             string
           end
         end
       end
 
       def full_syntax
-        unless @query.superquery or @mods[:return]=='count'
-          yield
-        end
+        return if @query.superquery || @mods[:return]=='count'
+        yield
       end
 
       def order
         full_syntax do
-          order_key ||= @mods[:sort].blank? ? "update" : @mods[:sort]
+          order_key ||= @mods[:sort].blank? ? 'update' : @mods[:sort]
 
           order_directives = [order_key].flatten.map do |key|
             dir = if @mods[:dir].blank?
@@ -148,40 +188,36 @@ class Card
         end
       end
 
-
       def sort_field key, as, dir
         table = @query.table_alias
-        order_field = case key
-          when "id";              "#{table}.id"
-          when "update";          "#{table}.updated_at"
-          when "create";          "#{table}.created_at"
-          when /^(name|alpha)$/;  "LOWER( #{table}.key )"
-          when 'content';         "#{table}.db_content"
-          when "relevance";       "#{table}.updated_at" #deprecated
+        order_field =
+          case key
+          when 'id'             then "#{table}.id"
+          when 'update'         then "#{table}.updated_at"
+          when 'create'         then "#{table}.created_at"
+          when /^(name|alpha)$/ then "LOWER( #{table}.key )"
+          when 'content'        then "#{table}.db_content"
+          when 'relevance'      then "#{table}.updated_at" # deprecated
           else
             safe_sql(key)
           end
         order_field = "CAST(#{order_field} AS #{cast_type(safe_sql as)})" if as
         @fields += ", #{order_field}"
         "#{order_field} #{dir}"
-
       end
 
       def safe_sql(txt)
         txt = txt.to_s
-        txt.match( /[^\w\*\(\)\s\.\,]/ ) ? raise( "WQL contains disallowed characters: #{txt}" ) : txt
+        if txt.match(/[^\w\*\(\)\s\.\,]/)
+          fail "WQL contains disallowed characters: #{txt}"
+        else
+          txt
+        end
       end
 
       def cast_type(type)
         cxn ||= ActiveRecord::Base.connection
         (val = cxn.cast_types[type.to_sym]) ? val[:name] : safe_sql(type)
-      end
-
-    end
-
-    class SqlCond < String
-      def to_sql *args
-        self
       end
     end
   end

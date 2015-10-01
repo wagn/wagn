@@ -15,9 +15,25 @@ class Card
   # In Wagn's current form, Card::Query generates and executes SQL statements.
   # However, the SQL generation is largely (not yet fully) separated from the
   # WQL statement interpretation.
-
+  #
+  # The most common way to use Card::Query is as follows:
+  #     list_of_cards = Card::Query.run(statement)
+  #
+  # This is equivalent to:
+  #     query = Card::Query.new(statement)
+  #     list_of_cards = query.run
+  #
+  # Upon initiation, the query is interpreted, and the following key objects
+  # are populated:
+  #
+  # - @join - an Array of Card::Query::Join objects
+  # - @conditions - an Array of conditions
+  # - @mod - a Hash of other query-altering keys
+  # - @subqueries - a list of other queries nested within this one
+  #
+  # Each condition is either a SQL-ready string (boo) or an Array in this form:
+  #    [ field_string_or_sym, Card::Value::Query object ]
   class Query
-
 
     require_dependency 'card/query/clause'
     require_dependency 'card/query/value'
@@ -28,7 +44,6 @@ class Card
 
     include Clause
     include Attributes
-
 
     ATTRIBUTES = {
       basic:           %w{ name type_id content id key updater_id left_id
@@ -55,16 +70,17 @@ class Card
 
     DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
 
-    attr_reader :statement, :context, :mods, :conditions,
+    attr_reader :statement, :mods, :conditions,
       :subqueries, :superquery
-    attr_accessor :joins, :table_seq, :conditions_on_join
+    attr_accessor :joins, :table_seq, :unjoined, :conditions_bucket
 
     def initialize statement
       @subqueries, @joins, @conditions = [], [], []
       @mods = {}
       @statement = statement.clone
 
-      @context    = @statement.delete(:context)    || ''
+      @unjoined   = @statement.delete(:unjoined)   || nil
+      @context    = @statement.delete(:context)    || nil
       @superquery = @statement.delete(:superquery) || nil
       @vars       = @statement.delete(:vars)       || {}
       @vars.symbolize_keys!
@@ -77,6 +93,11 @@ class Card
     # By default a query returns card objects. This is accomplished by returning
     # a card identifier from SQL and then hooking into our caching system (see
     # Card::Fetch)
+
+    def self.run statement
+      query = new statement
+      query.run
+    end
 
     # run the current query
     # @return array of card objects by default
@@ -91,6 +112,7 @@ class Card
       end
     end
 
+    # @return Integer for :count, otherwise Array of Strings or Integers
     def get_results retrn
       rows = run_sql
       if retrn == 'name' && (statement[:prepend] || statement[:append])
@@ -108,9 +130,9 @@ class Card
     end
 
     def run_sql
-      #puts "\nstatement = #{@statement}"
-      #puts "sql = #{sql}"
-      ActiveRecord::Base.connection.select_all( sql )
+      # puts "\nstatement = #{@statement}"
+      # puts "sql = #{sql}"
+      ActiveRecord::Base.connection.select_all(sql)
     end
 
     def sql
@@ -127,7 +149,7 @@ class Card
     end
 
     def subquery opts={}
-      subquery = Query.new opts.reverse_merge(:superquery=>self)
+      subquery = Query.new opts.merge(:superquery=>self)
       @subqueries << subquery
       subquery
     end
@@ -172,9 +194,17 @@ class Card
       when /^\$(\w+)$/                       # replace from @vars
         @vars[$1.to_sym].to_s.strip
       when /\b_/                             # absolutize based on @context
-        val.to_name.to_absolute(root.context)
+        val.to_name.to_absolute(context)
       else
         val
+      end
+    end
+
+    def context
+      if !@context.nil?
+        @context
+      else
+        @context = @superquery ? @superquery.context : ''
       end
     end
 
@@ -196,19 +226,20 @@ class Card
     end
 
     def add_condition *args
-      cond = conditions_on_join ? joins.last.conditions : @conditions
-      cond << if args.size > 1
-        [ args.shift, Value.new(args.shift, self) ]
+      bucket = @conditions_bucket || @conditions
+      bucket << if args.size > 1
+        [args.shift, Value.new(args.shift, self)]
       else
-        [ :cond, SqlCond.new(args[0]) ]
+        args[0]
       end
     end
 
-    def conditions_on_join
-      if @conditions_on_join.present?
-        @conditions_on_join = !!@superquery && @superquery.conditions_on_join
+    def conditions_bucket
+      if @conditions_bucket.nil?
+        @conditions_bucket =
+          (@superquery && @superquery.conditions_bucket) || false
       else
-        @conditions_on_join
+        @conditions_bucket
       end
     end
 
@@ -249,6 +280,11 @@ class Card
 
     def current_conjunction
       @mods[:conj].blank? ? :and : @mods[:conj]
+    end
+
+    def all_joins
+      @all_joins ||=
+        (joins + subqueries.find_all(&:unjoined).map(&:all_joins)).flatten
     end
 
   end

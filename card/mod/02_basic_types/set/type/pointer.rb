@@ -235,8 +235,8 @@ end
 
 def item_cards args={}
   if args[:complete]
-    #warn "item_card[#{args.inspect}], :complete"
-    Card::Query.new({referred_to_by: name}.merge(args)).run
+    query = { referred_to_by: name }.merge args
+    Card::Query.run query
   else
 
     itype = args[:type] || item_type

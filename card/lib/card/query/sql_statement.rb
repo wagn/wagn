@@ -60,9 +60,7 @@ class Card
         clauses = []
         join_list.each do |join|
           clauses << join_on_clause(join)
-          unless join.left?
-            clauses << joins(deeper_joins join)
-          end
+          clauses << joins(deeper_joins join) unless join.left?
         end
         clauses.flatten * "\n"
       end
@@ -70,7 +68,6 @@ class Card
       def join_on_clause join
         [join_clause(join), 'ON', on_clause(join)].join ' '
       end
-
 
       def deeper_joins join
         deeper_joins = join.subjoins
@@ -83,7 +80,6 @@ class Card
         to_table = "(#{to_table.sql})" if to_table.is_a? Card::Query
         table_segment = [to_table, join.to_alias].join ' '
 
-
         if join.left?
           djoins = deeper_joins(join)
           unless djoins.empty?
@@ -91,7 +87,6 @@ class Card
           end
         end
         [join.side, 'JOIN', table_segment].compact.join ' '
-
       end
 
       def on_clause join
@@ -209,7 +204,6 @@ class Card
         order_field = "CAST(#{order_field} AS #{cast_type(safe_sql as)})" if as
         @fields += ", #{order_field}"
         "#{order_field} #{dir}"
-
       end
 
       def safe_sql(txt)

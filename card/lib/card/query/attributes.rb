@@ -197,9 +197,8 @@ class Card
           if join_field = SORT_JOIN_TO_ITEM_MAP[item.to_sym]
             sq = join_cards val,
               to_field: join_field,
-              side: 'LEFT'
-              #,
-              #conditions_on_join: true
+              side: 'LEFT',
+              conditions_bucket: true
             @mods[:sort] ||= "#{sq.table_alias}.#{sort_field}"
           else
             raise BadQuery, "sort item: #{item} not yet implemented"
@@ -259,12 +258,11 @@ class Card
       end
 
       def join_cards val, opts={}
-
-#        conditions_on_join = opts.delete(:conditions_on_join)
+        add_bucket = opts.delete(:conditions_bucket)
         s = subquery
         card_join = Join.new({ from: self, to: s }.merge opts)
         joins << card_join unless opts[:from].is_a? Join
-#        s.conditions_on_join = conditions_on_join
+        s.conditions_bucket = card_join.conditions if add_bucket
         s.interpret val
         s
       end

@@ -388,15 +388,8 @@ describe Card::Query do
     end
 
     it 'should sort by name' do
-      @query = { name: %w( in B Z A Y C X ), sort: 'alpha', dir: 'desc' }
-      is_expected.to eq(%w( Z Y X C B A ))
-
       @query = { name: %w( in B Z A Y C X ), sort: 'name', dir: 'desc' }
       is_expected.to eq(%w( Z Y X C B A ))
-      # Card.create! name: 'the alphabet'
-      # Card::Query.run(
-      # name: ['in', 'B', 'C', 'the alphabet'], sort: 'name'
-      # ).map(&:name).should ==  ['the alphabet', 'B', 'C']
     end
 
     it 'should sort by content' do

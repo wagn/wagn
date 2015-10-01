@@ -72,7 +72,7 @@ class Card
 
     attr_reader :statement, :mods, :conditions,
       :subqueries, :superquery
-    attr_accessor :joins, :table_seq, :unjoined #, :conditions_on_join
+    attr_accessor :joins, :table_seq, :unjoined, :conditions_bucket
 
     def initialize statement
       @subqueries, @joins, @conditions = [], [], []
@@ -154,18 +154,6 @@ class Card
       subquery
     end
 
-#    def left_joined?
-#      if !@left_joined.nil?
-#        @left_joined
-#      else
-#        @left_joined =
-#          !@superquery.nil? &&
-#          !joins.empty? &&
-#          joins.first.to_table == 'cards' &&
-#          joins.first.side == 'LEFT'
-#      end
-#    end
-
     # Query Interpretation
 
     # normalize and extract meaning from a clause
@@ -238,8 +226,8 @@ class Card
     end
 
     def add_condition *args
-      #conditions_bucket
-      @conditions << if args.size > 1
+      bucket = @conditions_bucket || @conditions
+      bucket << if args.size > 1
         [args.shift, Value.new(args.shift, self)]
       else
         args[0]
@@ -249,7 +237,7 @@ class Card
     def conditions_bucket
       if @conditions_bucket.nil?
         @conditions_bucket =
-          @superquery ? @superquery.conditions_bucket : @conditions
+          (@superquery && @superquery.conditions_bucket) || false
       else
         @conditions_bucket
       end
@@ -295,7 +283,8 @@ class Card
     end
 
     def all_joins
-      (joins + subqueries.find_all(&:unjoined).map(&:joins)).flatten
+      @all_joins ||=
+        (joins + subqueries.find_all(&:unjoined).map(&:all_joins)).flatten
     end
 
   end

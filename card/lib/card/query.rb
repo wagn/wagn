@@ -45,7 +45,6 @@ class Card
     include Clause
     include Attributes
 
-
     ATTRIBUTES = {
       basic:           %w{ name type_id content id key updater_id left_id
                            right_id creator_id updater_id codename },
@@ -73,7 +72,7 @@ class Card
 
     attr_reader :statement, :mods, :conditions,
       :subqueries, :superquery
-    attr_accessor :joins, :table_seq, :conditions_on_join
+    attr_accessor :joins, :table_seq #, :conditions_on_join
 
     def initialize statement
       @subqueries, @joins, @conditions = [], [], []
@@ -154,17 +153,17 @@ class Card
       subquery
     end
 
-    def left_joined?
-      if !@left_joined.nil?
-        @left_joined
-      else
-        @left_joined =
-          !@superquery.nil? &&
-          !joins.empty? &&
-          joins.first.to_table == 'cards' &&
-          joins.first.side == 'LEFT'
-      end
-    end
+#    def left_joined?
+#      if !@left_joined.nil?
+#        @left_joined
+#      else
+#        @left_joined =
+#          !@superquery.nil? &&
+#          !joins.empty? &&
+#          joins.first.to_table == 'cards' &&
+#          joins.first.side == 'LEFT'
+#      end
+#    end
 
     # Query Interpretation
 
@@ -238,19 +237,19 @@ class Card
     end
 
     def add_condition *args
-      cond = conditions_on_join ? joins.last.conditions : @conditions
-      cond << if args.size > 1
-        [ args.shift, Value.new(args.shift, self) ]
+      conditions_bucket << if args.size > 1
+        [args.shift, Value.new(args.shift, self)]
       else
         args[0]
       end
     end
 
-    def conditions_on_join
-      if @conditions_on_join.present?
-        @conditions_on_join = !!@superquery && @superquery.conditions_on_join
+    def conditions_bucket
+      if @conditions_bucket.nil?
+        @conditions_bucket =
+          @superquery ? @superquery.conditions_bucket : @conditions
       else
-        @conditions_on_join
+        @conditions_bucket
       end
     end
 

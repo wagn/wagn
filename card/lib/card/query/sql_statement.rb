@@ -57,17 +57,13 @@ class Card
       end
 
       def joins query
-        if query.left_joined?
-          join_on_clause query, query.joins.first
-        else
-          [join_on_clause(query, query.joins),
-           query.subqueries.map { |sq| joins sq }
-          ].flatten * "\n"
-        end
+        [join_on_clause(query, query.joins),
+         query.subqueries.map { |sq| joins sq }
+        ].flatten * "\n"
       end
 
-      def join_on_clause query, ready_joins
-        Array.wrap(ready_joins).map do |join|
+      def join_on_clause query, joins
+        joins.map do |join|
           [join_clause(query, join),
            'ON',
            on_clause(query, join)

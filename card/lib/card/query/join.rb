@@ -5,7 +5,8 @@ class Card
         :from, :to,
         :from_table, :to_table,
         :from_alias, :to_alias,
-        :from_field, :to_field
+        :from_field, :to_field,
+        :superjoin, :subjoins
 
       def initialize opts={}
         from_and_to opts
@@ -15,6 +16,11 @@ class Card
         @from_field ||= :id
         @to_field   ||= :id
         @conditions = []
+        @subjoins = []
+        if @superjoin
+          @superjoin.@subjoins << self
+        end
+        self
       end
 
       def from_and_to opts
@@ -28,6 +34,9 @@ class Card
             { table: 'cards', alias: object.table_alias }
           when Card::Query::Reference
             { table: 'card_references', alias: object.table_alias }
+          when Card::Query::Join
+            fail "to: cannot be Join" if side == :to
+            { table: object.to_table, alias: object.to_alias }
           else
             raise "invalid #{side} option: #{object}"
           end.map do |key, value|
@@ -38,6 +47,14 @@ class Card
 
       def side
         @side ||= (from && from.mods[:conj] == 'or') ? 'LEFT' : nil
+      end
+
+      def left?
+        side == 'LEFT'
+      end
+
+      def in_left?
+#        @superjoin.lef
       end
 
     end

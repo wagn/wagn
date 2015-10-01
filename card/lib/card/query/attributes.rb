@@ -25,29 +25,29 @@ class Card
       end
 
       def editor_of val
-        acts_alias, actions_alias =
-          "a#{table_id force=true}", "an#{table_id force=true}"
-        joins << Join.new(
+        act_join = Join.new(
           from: self,
-          to: ['card_acts', acts_alias, 'actor_id' ]
+          to: ['card_acts', "a#{table_id force=true}", 'actor_id' ]
         )
-        joins << Join.new(
-          from: ['card_acts', acts_alias],
-          to: ['card_actions', actions_alias, 'card_act_id']
+        joins << act_join
+        action_join = Join.new(
+          from: act_join,
+          to: ['card_actions', "an#{table_id force=true}", 'card_act_id'],
+          superjoin: act_join
         )
-        join_cards val, from_alias: actions_alias, from_field: 'card_id'
+        join_cards val, from: action_join, from_field: 'card_id'
       end
 
       def edited_by val
-        acts_alias, actions_alias =
-          "a#{table_id force=true}", "an#{table_id force=true}"
-        joins << Join.new(
+        action_join = Join.new(
           from: self,
-          to: ['card_actions', actions_alias, 'card_id' ]
+          to: ['card_actions', "an#{table_id force=true}", 'card_id']
         )
-        joins << Join.new(
-          from: ['card_actions', actions_alias, 'card_act_id' ],
-          to: ['card_acts', acts_alias]
+        joins << action_join
+        act_join = Join.new(
+          from: action_join,
+          from_field: 'card_act_id',
+          to: ['card_acts', "a#{table_id force=true}"]
         )
         join_cards val, from_alias: acts_alias, from_field: 'actor_id'
       end
@@ -94,7 +94,8 @@ class Card
       def junction side, val
         part_clause, junction_clause = val.is_a?(Array) ? val : [ val, {} ]
         junction_val = clause_to_hash(junction_clause).merge side=>part_clause
-        join_cards junction_val, :to_field=>"#{ side==:left ? :right : :left}_id"
+        to_field = side == :left ? 'right_id' : 'left_id'
+        join_cards junction_val, to_field: to_field
       end
 
 
@@ -170,31 +171,25 @@ class Card
 
       def join_references key, val
         r = Reference.new( key, val, self )
-        joins << Join.new(:from=>self, :to=>r, :to_field=>r.infield)
-        s = nil
+        refjoin = Join.new(:from=>self, :to=>r, :to_field=>r.infield)
+        joins << refjoin
         if r.cardquery
-          s = join_cards r.cardquery,
-            from_alias: r.table_alias,
-            from_field: r.outfield
+          join_cards r.cardquery, from: refjoin, from_field: r.outfield
         end
-        if r.conditions.any?
-          s ||= subquery
-          s.add_condition( r.conditions.map do |condition|
-            "#{r.table_alias}.#{condition}"
-          end * ' AND ')
+        r.conditions.each do |condition|
+          refjoin.conditions << "#{r.table_alias}.#{condition}"
         end
       end
 
       def conjunction val
-        if [String, Symbol].member? val.class
-          CONJUNCTIONS[val.to_sym]
-        end
+        return unless [String, Symbol].member? val.class
+        CONJUNCTIONS[val.to_sym]
       end
 
       def sort val
         return nil if @superquery
         sort_field = val[:return] || 'db_content'
-        item = val.delete(:item)  || 'left'
+        item = val.delete(:item) || 'left'
 
         if sort_field == 'count'
           sort_by_count val, item
@@ -203,7 +198,7 @@ class Card
             sq = join_cards val,
               to_field: join_field,
               side: 'LEFT',
-              conditions_on_join: true
+              #conditions_on_join: true
             @mods[:sort] ||= "#{sq.table_alias}.#{sort_field}"
           else
             raise BadQuery, "sort item: #{item} not yet implemented"
@@ -231,7 +226,7 @@ class Card
           cs.mods[:sort_join_field] = "#{cs.table_alias}.id as sort_join_field"
           #HACK!
 
-          @joins << Join.new(
+          joins << Join.new(
             from: self,
             to: [cs, 'srtbl', 'sort_join_field']
           )
@@ -263,10 +258,12 @@ class Card
       end
 
       def join_cards val, opts={}
-        conditions_on_join = opts.delete(:conditions_on_join)
+
+#        conditions_on_join = opts.delete(:conditions_on_join)
         s = subquery
-        s.joins << Join.new({ from: self, to: s }.merge opts)
-        s.conditions_on_join = conditions_on_join
+        card_join = Join.new({ from: self, to: s }.merge opts)
+        joins << card_join unless opts[:from].is_a? Join
+#        s.conditions_on_join = conditions_on_join
         s.interpret val
         s
       end
@@ -298,7 +295,7 @@ class Card
       def not val
         subselect = Query.new clause_to_hash(val).merge( return: :id )
         join_alias = "not#{table_id force=true}"
-        @joins << Join.new(
+        joins << Join.new(
           from: self,
           to_table: subselect,
           to_alias: join_alias,

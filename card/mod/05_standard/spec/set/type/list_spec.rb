@@ -31,7 +31,9 @@ describe Card::Set::Type::List do
     context "when 'Parry Hotter' is dropped from Stam Brokers's books" do
       before do
         Card::Auth.as_bot do
-          Card['Stam Brokers+books'].update_attributes! :content=>"[[50 grades of shy]]"
+          Card['Stam Brokers+books'].update_attributes!(
+            content: '[[50 grades of shy]]'
+          )
         end
       end
       it { is_expected.to eq ['Darles Chickens'] }
@@ -43,15 +45,17 @@ describe Card::Set::Type::List do
       it { is_expected.to eq ['Darles Chickens', 'Stam Broker'] }
     end
     context 'when the cardtype of Stam Broker changed' do
-      it "raises an error" do
+      it 'raises an error' do
         @card = Card['Stam Broker']
-        @card.update_attributes type_id:  Card::BasicID
-        expect(@card.errors[:type].first).to match(/can't be changed because .+ is referenced by list/)
+        @card.update_attributes type_id: Card::BasicID
+        expect(@card.errors[:type].first).to match(
+          /can't be changed because .+ is referenced by list/
+        )
       end
     end
     context 'when the name of Parry Hotter changed to Parry Moppins' do
       before do
-        Card['Parry Hotter'].update_attributes! name:  'Parry Moppins'
+        Card['Parry Hotter'].update_attributes! name: 'Parry Moppins'
       end
       subject do
         Card.fetch('Parry Moppins+authors').item_names.sort
@@ -61,7 +65,9 @@ describe Card::Set::Type::List do
 
     context 'when the name of Stam Broker changed to Stam Trader' do
       before do
-        Card['Stam Broker'].update_attributes! name: 'Stam Trader', :update_referencers=>true
+        Card['Stam Broker'].update_attributes!(
+          name: 'Stam Trader', update_referencers: true
+        )
       end
       it { is_expected.to eq ['Darles Chickens', 'Stam Trader'] }
     end
@@ -93,7 +99,9 @@ describe Card::Set::Type::List do
     context 'when Parry Hotter+authors to Parry Hotter+basics' do
       it 'raises error because content is invalid' do
         expect do
-          Card['Parry Hotter+authors'].update_attributes! name: 'Parry Hotter+basics'
+          Card['Parry Hotter+authors'].update_attributes!(
+            name: 'Parry Hotter+basics'
+          )
         end.to raise_error
       end
     end
@@ -112,18 +120,21 @@ describe Card::Set::Type::List do
     end
   end
 
-
   context 'when the name of the cardtype books changed' do
     before do
-      Card['book'].update_attributes! type_id:  Card::BasicID, update_referencers: true
+      Card['book'].update_attributes!(
+        type_id: Card::BasicID, update_referencers: true
+      )
     end
-    it { is_expected.to eq ["Darles Chickens", "Stam Broker"] }
+    it { is_expected.to eq ['Darles Chickens', 'Stam Broker'] }
   end
 
   context 'when the name of the cardtype authors changed' do
     before do
-      Card['author'].update_attributes! type_id:  Card::BasicID, update_referencers: true
+      Card['author'].update_attributes!(
+        type_id: Card::BasicID, update_referencers: true
+      )
     end
-    it { is_expected.to eq ["Darles Chickens", "Stam Broker"] }
+    it { is_expected.to eq ['Darles Chickens', 'Stam Broker'] }
   end
 end

@@ -97,7 +97,7 @@ describe Card::Subcards do
     it 'adds a subcard' do
       @card.add_subcard 'sub', content: 'sub content'
       @card.save!
-      expect(Card['A+sub'].content).to eq 'sub content'
+      expect(Card['sub'].content).to eq 'sub content'
     end
   end
 end

@@ -38,7 +38,7 @@ describe Card::Set::Type::ListedBy do
           right_plus: ['books', link_to: '50 grades of shy'],
           return: :name
         )
-        expect(search_result).to eq ['Darles Chickens']
+        expect(search_result.sort).to eq ['Darles Chickens', 'Stam Broker']
       end
 
       context "when Darles Chickens is removed from Parry Hotter's list" do

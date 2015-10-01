@@ -72,7 +72,7 @@ class Card
 
     attr_reader :statement, :mods, :conditions,
       :subqueries, :superquery
-    attr_accessor :joins, :table_seq, :unjoined, :conditions_bucket
+    attr_accessor :joins, :table_seq, :unjoined, :conditions_on_join
 
     def initialize statement
       @subqueries = []

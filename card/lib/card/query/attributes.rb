@@ -192,7 +192,7 @@ class Card
             sq = join_cards val,
               to_field: join_field,
               side: 'LEFT',
-              add_bucket: true
+              conditions_on_join: true
             @mods[:sort] ||= "#{sq.table_alias}.#{sort_field}"
           else
             raise BadQuery, "sort item: #{item} not yet implemented"
@@ -252,11 +252,11 @@ class Card
       end
 
       def join_cards val, opts={}
-        add_bucket = opts.delete :add_bucket
+        conditions_on_join = opts.delete :conditions_on_join
         s = subquery
         card_join = Join.new({ from: self, to: s }.merge opts)
         joins << card_join unless opts[:from].is_a? Join
-        s.conditions_bucket = card_join if add_bucket
+        s.conditions_on_join = card_join if conditions_on_join
         s.interpret val
         s
       end
@@ -286,18 +286,8 @@ class Card
       end
 
       def not val
-        notjoin = join_cards val, add_bucket: true, side: 'LEFT'
+        notjoin = join_cards val, conditions_on_join: true, side: 'LEFT'
         add_condition "#{notjoin.table_alias}.id is null"
-
-        #subselect = Query.new clause_to_hash(val).merge( return: :id )
-        #join_alias = "not#{table_id force=true}"
-        #joins << Join.new(
-        #  from: self,
-        #  to_table: subselect,
-        #  to_alias: join_alias,
-        #  side: 'LEFT'
-        #)
-        #add_condition "#{join_alias}.id is null"
       end
 
       def restrict id_field, val

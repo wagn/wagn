@@ -97,7 +97,7 @@ class Card
         ].join ' = '
         on_conditions.unshift on_ids
         if join.to.is_a? Card::Query
-          if join.to.conditions_bucket == join
+          if join.to.conditions_on_join == join
             on_conditions.push query_conditions(join.to)
           end
           on_conditions.push standard_conditions(join.to)
@@ -115,7 +115,7 @@ class Card
         cond_list = basic_conditions query.conditions
         cond_list +=
           query.subqueries.map do |subquery|
-            next if subquery.conditions_bucket
+            next if subquery.conditions_on_join
             query_conditions subquery
           end
         cond_list.reject!(&:blank?)

@@ -2,18 +2,17 @@
 class Card
   class Query
     module Attributes
+      SORT_JOIN_TO_ITEM_MAP = { left: 'left_id', right: 'right_id' }
 
-      SORT_JOIN_TO_ITEM_MAP = { :left=>'left_id', :right=>'right_id'}
-
-      #~~~~~~ RELATIONAL
+      # ~~~~~~ RELATIONAL
 
       def type val
         restrict :type_id, val
       end
 
       def part val
-        right_val = Integer===val ? val : val.clone
-        any( :left=>val, :right=>right_val)
+        right_val = val.is_a?(Integer) ? val : val.clone
+        any(left: val, right: right_val)
       end
 
       def left val
@@ -27,7 +26,7 @@ class Card
       def editor_of val
         act_join = Join.new(
           from: self,
-          to: ['card_acts', "a#{table_id force=true}", 'actor_id' ]
+          to: ['card_acts', "a#{table_id force=true}", 'actor_id']
         )
         joins << act_join
         action_join = Join.new(
@@ -53,7 +52,7 @@ class Card
       end
 
       def last_editor_of val
-        join_cards val, :to_field=>'updater_id'
+        join_cards val, to_field: 'updater_id'
       end
 
       def last_edited_by val
@@ -61,7 +60,7 @@ class Card
       end
 
       def creator_of val
-        join_cards val, :to_field=>'creator_id'
+        join_cards val, to_field: 'creator_id'
       end
 
       def created_by val
@@ -69,48 +68,43 @@ class Card
       end
 
       def member_of val
-        interpret :right_plus => [RolesID, {:refer_to=>val}]
+        interpret right_plus: [RolesID, refer_to: val]
       end
 
       def member val
-        interpret :referred_to_by => {:left=>val, :right=>RolesID }
+        interpret referred_to_by: { left: val, right: RolesID }
       end
 
-
-      #~~~~~~ PLUS RELATIONAL
+      # ~~~~~~ PLUS RELATIONAL
 
       def left_plus val
-        junction :left, val
+        junction val, :left, :right_id
       end
 
       def right_plus val
-        junction :right, val
+        junction val, :right, :left_id
       end
 
       def plus val
-        any( { :left_plus=>val, :right_plus=>val.deep_clone } )
+        any(left_plus: val, right_plus: val.deep_clone)
       end
 
-      def junction side, val
-        part_clause, junction_clause = val.is_a?(Array) ? val : [ val, {} ]
-        junction_val = clause_to_hash(junction_clause).merge side=>part_clause
-        to_field = side == :left ? 'right_id' : 'left_id'
+      def junction val, side, to_field
+        part_clause, junction_clause = val.is_a?(Array) ? val : [val, {}]
+        junction_val = clause_to_hash(junction_clause).merge side => part_clause
         join_cards junction_val, to_field: to_field
       end
 
-
-      #~~~~~~ SPECIAL
-
+      # ~~~~~~ SPECIAL
 
       def found_by val
-        #binding.pry
         found_by_cards(val).compact.each do |c|
           if c && [SearchTypeID, SetID].include?(c.type_id)
             #FIXME - move this check to set mods!
-            statement = c.get_query.symbolize_keys.merge(
-              unjoined: true, context: c.name
+
+            subquery(
+              c.get_query.merge unjoined: true, context: c.name
             )
-            sq = subquery statement
           else
             raise BadQuery,
               '"found_by" value must be valid Search, ' +
@@ -198,7 +192,7 @@ class Card
             sq = join_cards val,
               to_field: join_field,
               side: 'LEFT',
-              conditions_bucket: true
+              add_bucket: true
             @mods[:sort] ||= "#{sq.table_alias}.#{sort_field}"
           else
             raise BadQuery, "sort item: #{item} not yet implemented"
@@ -258,11 +252,11 @@ class Card
       end
 
       def join_cards val, opts={}
-        add_bucket = opts.delete(:conditions_bucket)
+        add_bucket = opts.delete :add_bucket
         s = subquery
         card_join = Join.new({ from: self, to: s }.merge opts)
         joins << card_join unless opts[:from].is_a? Join
-        s.conditions_bucket = card_join.conditions if add_bucket
+        s.conditions_bucket = card_join if add_bucket
         s.interpret val
         s
       end
@@ -292,15 +286,18 @@ class Card
       end
 
       def not val
-        subselect = Query.new clause_to_hash(val).merge( return: :id )
-        join_alias = "not#{table_id force=true}"
-        joins << Join.new(
-          from: self,
-          to_table: subselect,
-          to_alias: join_alias,
-          side: 'LEFT'
-        )
-        add_condition "#{join_alias}.id is null"
+        notjoin = join_cards val, add_bucket: true, side: 'LEFT'
+        add_condition "#{notjoin.table_alias}.id is null"
+
+        #subselect = Query.new clause_to_hash(val).merge( return: :id )
+        #join_alias = "not#{table_id force=true}"
+        #joins << Join.new(
+        #  from: self,
+        #  to_table: subselect,
+        #  to_alias: join_alias,
+        #  side: 'LEFT'
+        #)
+        #add_condition "#{join_alias}.id is null"
       end
 
       def restrict id_field, val

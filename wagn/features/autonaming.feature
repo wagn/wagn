@@ -13,7 +13,7 @@ Feature: autonaming
     Then I should see "Book_1"
     And I go to new Book
     And I press "Submit"
-    And I wait until ajax response done
+    And I wait a sec
     Then I should see "Book_2"
 
 #    And I go to new Book

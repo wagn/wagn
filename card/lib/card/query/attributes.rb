@@ -272,8 +272,8 @@ class Card
       def any val
         conjoin val, :or
       end
-      alias :or :any
-      alias :in :any
+      alias_method :or, :any
+      alias_method :in, :any
 
       def conjoin val, conj
         sq = subquery( unjoined: true, conj: conj )

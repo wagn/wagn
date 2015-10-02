@@ -27,7 +27,7 @@ class Card
         if target = OPERATORS[@operator.to_s]
           @operator = target
         else
-          raise "Invalid Operator #{@operator}"
+          fail BadQuery, "Invalid Operator #{@operator}"
         end
       end
 

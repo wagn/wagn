@@ -218,6 +218,14 @@ format :data do
   end
 end
 
+format :rss do
+  def raw_feed_items args
+    @raw_feed_items ||= begin
+      card.item_cards
+    end
+  end
+end
+
 # while a card's card type and content are updated in the same request,
 # the new module will override the old module's events and functions.
 # this event is only on pointer card. Other type cards do not have this event,
@@ -235,8 +243,8 @@ end
 
 def item_cards args={}
   if args[:complete]
-    #warn "item_card[#{args.inspect}], :complete"
-    Card::Query.new({referred_to_by: name}.merge(args)).run
+    query = { referred_to_by: name }.merge args
+    Card::Query.run query
   else
 
     itype = args[:type] || item_type

@@ -5,7 +5,8 @@ class Card
         :from, :to,
         :from_table, :to_table,
         :from_alias, :to_alias,
-        :from_field, :to_field
+        :from_field, :to_field,
+        :superjoin, :subjoins
 
       def initialize opts={}
         from_and_to opts
@@ -14,9 +15,13 @@ class Card
         end
         @from_field ||= :id
         @to_field   ||= :id
-
-        on = SqlCond.new "#{from_alias}.#{from_field} = #{to_alias}.#{to_field}"
-        @conditions = [[:cond, on]]
+        @conditions = []
+        @subjoins = []
+        if @from.is_a? Join
+          @superjoin = @from
+          @superjoin.subjoins << self
+        end
+        self
       end
 
       def from_and_to opts
@@ -30,6 +35,9 @@ class Card
             { table: 'cards', alias: object.table_alias }
           when Card::Query::Reference
             { table: 'card_references', alias: object.table_alias }
+          when Card::Query::Join
+            fail "to: cannot be Join" if side == :to
+            { table: object.to_table, alias: object.to_alias }
           else
             raise "invalid #{side} option: #{object}"
           end.map do |key, value|
@@ -39,19 +47,24 @@ class Card
       end
 
       def side
-        @side ||= (from && from.mods[:conj] == 'or') ? 'LEFT' : nil
+        if !@side.nil?
+          @side
+        else
+          in_or = from && from.is_a?(Card::Query) && from.mods[:conj] == 'or'
+          @side = in_or ? 'LEFT' : nil
+        end
       end
 
-      def to_sql
-        @to_table = "(#{@to_table.sql})" if Card::Query===@to_table
-        [ side, 'JOIN', to_table, to_alias, 'ON', on_clause ].compact * ' '
+      def left?
+        side == 'LEFT'
       end
 
-      def on_clause
-        @conditions.map do |condition|
-          field, val = condition
-          val.to_sql field
-        end * ' AND '
+      def in_left?
+        if !@in_left.nil?
+          @in_left
+        else
+          @in_left = left? || (!@superjoin.nil? && @superjoin.in_left?)
+        end
       end
 
     end

@@ -28,8 +28,10 @@ end
 def get_query params={}
   query = Auth.as_bot do ## why is this a wagn_bot thing?  can't deny search content??
     query_content = params.delete(:query) || raw_content
-    #warn "get_query #{name}, #{query_content}, #{params.inspect}"
-    raise(JSON::ParserError, "Error in card '#{self.name}':can't run search with empty content") if query_content.empty?
+    if query_content.empty?
+      raise JSON::ParserError,
+        "Error in card '#{self.name}':can't run search with empty content"
+    end
     String === query_content ? JSON.parse( query_content ) : query_content
   end
   query.symbolize_keys!.merge! params.symbolize_keys
@@ -92,9 +94,13 @@ format do
       if search_vars[:error]
         search_vars[:error]
       else
-        raw_results = card.item_cards search_params
-        is_count = search_vars[:query][:return] =='count'
-        is_count ? raw_results.to_i : raw_results
+        begin
+          raw_results = card.item_cards search_params
+          is_count = search_vars[:query][:return] == 'count'
+          is_count ? raw_results.to_i : raw_results
+        rescue BadQuery => e
+          e 
+        end
       end
     end
   end
@@ -188,8 +194,8 @@ end
 format :rss do
   view :feed_body do |args|
     case raw_feed_items args
-    when Exception ; @xml.item { render :search_error }
-    when Integer   ; @xml.item { render :search_count }
+    when Exception ; @xml.item(render :search_error)
+    when Integer   ; @xml.item(render :search_count)
     else super args
     end
   end

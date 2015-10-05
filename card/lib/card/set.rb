@@ -170,6 +170,43 @@ class Card
       set_event_callbacks event, opts
     end
 
+    def phase_method method, opts = {}, &block
+      #method_body =
+
+      class_eval do
+        define_method method, method_body, proc { |*args|
+          if phase_ok? opts
+            block.call(*args)
+          else
+            raise Card::Error,
+                  "#{opts[:on]} method #{method} called in phase #{@phase}"
+          end
+        }
+      end
+
+    end
+
+    def phase_ok? opts
+      (opts[:during] && in?(opts[:during])) ||
+        (opts[:before] && before?(opts[:before])) ||
+        (opts[:after]  && after?(opts[:after]))
+    end
+
+    def before? phase
+      PHASES[phase] > PHASES[@phase] ||
+        (PHASES[phase] == PHASES[@phase] && @subphase == :before)
+    end
+
+    def after? phase
+      PHASES[phase] < PHASES[@phase] ||
+        (PHASES[phase] == PHASES[@phase] && @subphase == :after)
+    end
+
+    def in? phase
+      (phase.is_a?(Array) && phase.include?(@phase)) ||
+        phase == @phase
+    end
+
     def define_event_perform_later_method event, method_name
       class_eval do
         define_method method_name, proc {
@@ -192,6 +229,8 @@ class Card
     def define_event_method event, call_method, _opts
       class_eval do
         define_method event do
+          # Rails.logger.rspec event
+          # puts "#{self.name}: #{event}"
           run_callbacks event do
             send call_method
           end

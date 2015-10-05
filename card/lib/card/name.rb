@@ -83,5 +83,9 @@ class Card
     def is_set?
       SetPattern.card_keys[ tag_name.key ]
     end
+
+    def to_sym
+      s.to_sym
+    end
   end
 end

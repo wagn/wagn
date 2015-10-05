@@ -13,51 +13,28 @@ class Card
     @subcards ||= Subcards.new(self)
   end
 
-  def field tag
-    Card[cardname.field(tag)]
-  end
-
-  def subcard card_name
-    subcards.card card_name
-  end
-
-  def subfield field_name
-    subcards.field field_name
-  end
-
-  def add_subcard name_or_card, args = nil
-    subcards.add name_or_card, args
-  end
-
-  def add_subfield name, args = nil
-    subcards.add_field name, args
-  end
-
-  def remove_subcard name_or_card
-    subcards.remove name_or_card
-  end
-
-  def remove_subfield name_or_card
-    subcards.remove_field name_or_card
-  end
-
   def preserve_subcards
     if subcards.present?
-      Card::Cache[Card::Subcards].write key, @subcards
+      Card.cache.write_local subcards_cache_key, @subcards
     end
   end
 
   def restore_subcards
-    if Card::Cache[Card::Subcards].exist? key
-      @subcards = Card::Cache[Card::Subcards].fetch key
+    if (cached_subcards = Card.cache.read_local(subcards_cache_key))
+      @subcards = cached_subcards
     end
   end
 
   def expire_subcards
-    Card::Cache[Card::Subcards].delete key
+    Card.cache.delete_local subcards_cache_key
+  end
+
+  def subcards_cache_key
+    "#{key}#SUBCARDS#"
   end
 
   class Subcards
+    attr_accessor :context_card, :keys
     def initialize context_card
       @context_card = context_card
       @keys = ::Set.new
@@ -117,7 +94,8 @@ class Card
 
     def each_card
       @keys.each do |key|
-        yield(fetch_subcard key)
+        card = fetch_subcard key
+        yield(card) if card
       end
     end
 
@@ -125,7 +103,8 @@ class Card
 
     def each_with_key
       @keys.each do |key|
-        yield(fetch_subcard(key), key)
+        card = fetch_subcard(key)
+        yield(card, key) if card
       end
     end
 
@@ -182,7 +161,7 @@ class Card
     private
 
     def fetch_subcard key
-      Card.fetch key, subcard: true
+      Card.fetch key, subcard: true, local_only: true
     end
 
     def prepend_plus name
@@ -212,11 +191,18 @@ class Card
     def add_attributes name, attributes = {}
       absolute_name =
         if @context_card.name =~ /^\+/
-          name
+          name.to_name
         else
-          name.to_name.to_absolute_name(@context_card.name).s
+          name.to_name.to_absolute_name(@context_card.name)
         end
-      card = Card.assign_or_initialize_by absolute_name, attributes
+
+      if absolute_name.is_a_field_of?(@context_card.name) &&
+         (absolute_name.parts.size - @context_card.cardname.parts.size) > 2
+         add_attributes absolute_name.left
+      end
+
+      card = Card.assign_or_initialize_by absolute_name.s, attributes,
+                                          local_only: true
       add_card card
     end
 
@@ -227,7 +213,7 @@ class Card
         card.superleft = @context_card
       end
       @keys << card.key
-      Card.write_to_cache card
+      Card.write_to_local_cache card
       card
     end
   end

@@ -13,7 +13,9 @@ def item_names params={}
 end
 
 def item_type
-  query[:type]
+  if !query[:type].is_a?(Array) && !query[:type].is_a?(Hash)
+    query[:type]
+  end
 end
 
 def count params={}

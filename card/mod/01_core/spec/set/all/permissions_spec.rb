@@ -1,54 +1,52 @@
 # -*- encoding : utf-8 -*-
 
 class ::Card
-  def writeable_by(user)
+  def writeable_by user
     Card::Auth.as(user.id) do
     #warn "writeable #{Card::Auth.as_id}, #{user.inspect}"
       ok? :update
     end
   end
 
-  def readable_by(user)
+  def readable_by user
     Card::Auth.as(user.id) do
       ok? :read
     end
   end
 end
 
-
 module PermissionSpecHelper
-
-  def assert_hidden_from( user, card, msg='')
-    Card::Auth.as(user.id) { assert_hidden( card, msg ) }
+  def assert_hidden_from user, card, msg = ''
+    Card::Auth.as(user.id) { assert_hidden(card, msg) }
   end
 
-  def assert_not_hidden_from( user, card, msg='')
-    Card::Auth.as(user.id) { assert_not_hidden( card, msg ) }
+  def assert_not_hidden_from user, card, msg = ''
+    Card::Auth.as(user.id) { assert_not_hidden(card, msg) }
   end
 
-  def assert_locked_from( user, card, msg='')
-    Card::Auth.as(user.id) { assert_locked( card, msg ) }
+  def assert_locked_from user, card, msg = ''
+    Card::Auth.as(user.id) { assert_locked(card, msg) }
   end
 
-  def assert_not_locked_from( user, card, msg='')
-    Card::Auth.as(user.id) { assert_not_locked( card, msg ) }
+  def assert_not_locked_from user, card, msg = ''
+    Card::Auth.as(user.id) { assert_not_locked(card, msg) }
   end
 
-  def assert_hidden( card, msg='' )
+  def assert_hidden card, msg = ''
     assert !card.ok?(:read)
     assert_equal [], Card.search(id: card.id).map(&:name), msg
   end
 
-  def assert_not_hidden( card, msg='' )
+  def assert_not_hidden card, msg = ''
     assert card.ok?(:read)
     assert_equal [card.name], Card.search(id: card.id).map(&:name), msg
   end
 
-  def assert_locked( card, msg='' )
+  def assert_locked card, msg = ''
     assert_equal false, card.ok?(:update), msg
   end
 
-  def assert_not_locked( card, msg='' )
+  def assert_not_locked card, msg = ''
     assert_equal true, card.ok?(:update), msg
   end
 end
@@ -56,8 +54,7 @@ end
 include PermissionSpecHelper
 
 describe Card::Set::All::Permissions do
-
-  #FIXME - lots of good tests here, but generally disorganized.
+  #FIXME - lots of good tests here, butmysql generally disorganized.
 
   describe "reader rules" do
     before do
@@ -250,11 +247,11 @@ describe Card::Set::All::Permissions do
     end
 
     it "reader setting" do
-      Card.where(trash: false).each do |c|
-        prc = c.permission_rule_card(:read)
+      Card.where(trash: false).each do |ca|
+        rule_card, rule_class = ca.permission_rule_card(:read)
         #warn "C #{c.inspect}, #{c.read_rule_id}, #{prc.first.id}, #{c.read_rule_class}, #{prc.second}, #{prc.first.inspect}" unless prc.last == c.read_rule_class && prc.first.id == c.read_rule_id
-        expect(prc.last).to eq(c.read_rule_class)
-        expect(prc.first.id).to eq(c.read_rule_id)
+        expect(rule_class).to eq(ca.read_rule_class)
+        expect(rule_card.id).to eq(ca.read_rule_id)
       end
     end
 

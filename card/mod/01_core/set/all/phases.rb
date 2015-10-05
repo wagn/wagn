@@ -51,19 +51,36 @@ end
 # perhaps above should be in separate module?
 # ~~~~~~
 
+PHASES = {}
+[:prepare, :approve, :store, :stored, :extend, :subsequent]
+  .each_with_index do |phase, i|
+    PHASES[phase] = i
+  end
+
+def run_phase phase, &block
+  @phase = phase
+  @subphase = :before
+  if block_given?
+    block.call
+  else
+    run_callbacks phase
+  end
+  @subphase = :after
+end
+
 def prepare
   @action = identify_action
   # the following should really happen when type, name etc are changed
   reset_patterns
   include_set_modules
-  run_callbacks :prepare
+  run_phase :prepare
 rescue => e
   rescue_event e
 end
 
 def approve
   @action ||= identify_action
-  run_callbacks :approve
+  run_phase :approve
   expire_pieces if errors.any?
   errors.empty?
 rescue => e
@@ -79,11 +96,13 @@ def identify_action
 end
 
 def store
-  run_callbacks :store do
-    yield # unless @draft
-    @virtual = false
+  run_phase :store do
+    run_callbacks :store do
+      yield # unless @draft
+      @virtual = false
+    end
   end
-  run_callbacks :stored
+  run_phase :stored
 rescue => e
   rescue_event e
 ensure
@@ -91,8 +110,8 @@ ensure
 end
 
 def extend
-  run_callbacks :extend
-  run_callbacks :subsequent
+  run_phase :extend
+  run_phase :subsequent
 rescue => e
   rescue_event e
 ensure
@@ -146,46 +165,6 @@ def when_condition_applies? block
   else
     true
   end
-end
-
-event :filter_empty_subcards, after: :approve, on: :save do
-  subcards.each_card do |subcard|
-    if subcard.new? &&
-       (subcard.content.empty? || subcard.content.strip.empty?) &&
-       !subcard.subcards.present? &&
-       (!subcard.respond_to? :attachment || !subcard.attachment.present?)
-      # TODO: check if attachment check is necessary; depends on whether
-      # attachment cards write the identifier to db_content before or after
-      # this event
-      remove_subcard subcard
-    end
-  end
-end
-
-# left for compatibility reasons because other events refer to this
-event :process_subcards, after: :filter_empty_subcards, on: :save do
-end
-
-event :approve_subcards, after: :process_subcards do
-  subcards.each do |subcard|
-    if !subcard.valid_subcard?
-      subcard.errors.each do |field, err|
-        err = "#{field} #{err}" unless [:content, :abort].member? field
-        errors.add subcard.relative_name.s, err
-      end
-    end
-  end
-end
-
-event :store_subcards, after: :store do
-  subcards.each do |subcard|
-    subcard.save! validate: false if subcard != self # unless @draft
-  end
-
-  # ensures that a supercard can access subcards of self
-  # eg. <user> creates <user+*account> creates <user+*account+*status>
-  # <user> changes <user+*account+*status> in event activate_account
-  Card.write_to_cache self
 end
 
 def success

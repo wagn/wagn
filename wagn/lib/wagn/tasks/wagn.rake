@@ -366,7 +366,7 @@ namespace :wagn do
       require 'active_record/fixtures'
 #      require 'time'
 
-      ActiveRecord::Fixtures.create_fixtures WAGN_SEED_PATH, WAGN_SEED_TABLES
+      ActiveRecord::FixtureSet.create_fixtures WAGN_SEED_PATH, WAGN_SEED_TABLES
     end
 
   end

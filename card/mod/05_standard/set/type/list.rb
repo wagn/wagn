@@ -76,7 +76,7 @@ end
 def update_all_items
   current_items = item_keys
   if db_content_was
-    old_items = item_keys(:content=>db_content_was)
+    old_items = item_keys(content: db_content_was)
     update_listed_by_cache_for old_items
   end
   update_listed_by_cache_for current_items

@@ -103,7 +103,6 @@ class Card
 
 
       def found_by val
-        #binding.pry
         found_by_cards(val).compact.each do |c|
           if c && [SearchTypeID, SetID].include?(c.type_id)
             #FIXME - move this check to set mods!

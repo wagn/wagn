@@ -182,6 +182,10 @@ class Card
       @local.delete key
     end
 
+    def delete_local key
+      @local.delete key
+    end
+
     def dump
       p "dumping local...."
       @local.each do |k, v|

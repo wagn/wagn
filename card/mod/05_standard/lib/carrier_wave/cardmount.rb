@@ -36,7 +36,6 @@ module CarrierWave
         end
         event :remove_previously_stored_#{column}_event,
               on: :update, after: :store, when: proc { |c| !c.history?} do
-#        require 'pry'
           if @previous_model_for_#{column}
             @previous_model_for_#{column}.include_set_modules
           end

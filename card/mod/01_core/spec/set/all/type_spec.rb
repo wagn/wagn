@@ -1,25 +1,6 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::All::Type do
-
-  describe 'get_type_id (#new)' do
-    it "should accept cardtype name and casespace variant as type" do
-      expect(Card.new( type: 'Phrase'   ).type_id).to eq(Card::PhraseID)
-      expect(Card.new( type: 'PHRASE'   ).type_id).to eq(Card::PhraseID)
-      expect(Card.new( type: 'phrase'   ).type_id).to eq(Card::PhraseID)
-      expect(Card.new( type: 'phrase??' ).type_id).to eq(Card::PhraseID)
-    end
-
-    it 'should accept type_code' do
-      expect(Card.new( type_code: 'phrase'   ).type_id).to eq(Card::PhraseID)
-      expect(Card.new( type_code: :phrase    ).type_id).to eq(Card::PhraseID)
-    end
-
-    it 'should accept type_id' do
-      expect(Card.new( type_id: Card::PhraseID   ).type_code).to eq(:phrase)
-    end
-  end
-
   describe 'card with wagneered type' do
     before do
       Card::Auth.as_bot do

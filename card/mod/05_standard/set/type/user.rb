@@ -46,12 +46,14 @@ event :setup_as_bot, before: :check_permissions, on: :create, when: proc{ |c| Ca
   # flexibility and security when configuring initial setups
 end
 
-event :setup_first_user, before: :process_subcards, on: :create, when: proc{ |c| Card::Env.params[:setup] } do
-  subcards['signup alert email+*to'] = name
-  subcards['+*roles'] = { content: Card[:administrator].name }
-
-  email, password = subcards.delete('+*account+*email'), subcards.delete('+*account+*password')
-  subcards.add_field :account, :subcards=> { "+#{Card[:email].name}"=>email, "+#{Card[:password].name}"=>password }
+event :setup_first_user,
+      before: :process_subcards, on: :create,
+      when: proc{ |c| Card::Env.params[:setup] } do
+  add_subcard 'signup alert email+*to', content: name
+  add_subfield :roles, content: Card[:administrator].name
+  # binding.pry
+  # email, password = subcards.delete('+*account+*email'), subcards.delete('+*account+*password')
+  # add_subfield :account, :subcards=> { "+#{Card[:email].name}"=>email, "+#{Card[:password].name}"=>password }
 end
 
 event :signin_after_setup, before: :extend, on: :create, when: proc{ |c| Card::Env.params[:setup] } do

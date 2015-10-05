@@ -7,20 +7,28 @@ def assign_attributes args={}
     Card.set_specific_attributes.each do |key|
       @set_specific[key] = args.delete(key) if args[key]
     end
-
-    if newtype = args.delete('type')
-      args['type_id'] = Card.fetch_id newtype
-    end
+    new_type_id = extract_type_id! args
     subcard_args = extract_subcard_args! args
+
+    if new_type_id
+      args['type_id'] = new_type_id
+    end
     reset_patterns
   end
   params = ActionController::Parameters.new(args)
   params.permit!
 
-  # import: first set name before process subcards
   super params
-  if args && subcard_args.present?
-    subcards.add subcard_args
+
+  if args
+    # if new_type_id
+    #   self.type_id = new_type_id
+    #   #self.expire true
+    # end
+    # name= must come before process subcards
+    if subcard_args.present?
+      subcards.add subcard_args
+    end
   end
 end
 
@@ -32,6 +40,8 @@ def assign_set_specific_attributes
   end
 end
 
+protected
+
 def extract_subcard_args! args
   subcards = args.delete('subcards') || {}
   args.keys.each do |key|
@@ -42,7 +52,26 @@ def extract_subcard_args! args
   subcards
 end
 
-protected
+def extract_type_id! args = {}
+  type_id =
+    case
+    when args['type_id']
+      id = args.delete('type_id').to_i
+      # type_id can come in as 0,'' or nil
+      id == 0 ? nil : id
+    when args['type_code']
+      Card.fetch_id args.delete('type_code')
+    when args['type']
+      Card.fetch_id args.delete('type')
+    else
+      return nil
+    end
+
+  if !type_id
+    errors.add :type, "#{args[:type] || args[:type_code]} is not a known type."
+  end
+  type_id
+end
 
 event :set_content, before: :store, on: :save do
   self.db_content = content || '' #necessary?

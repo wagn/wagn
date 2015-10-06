@@ -71,7 +71,7 @@ module ClassMethods
   def fetch_id mark
     if mark.is_a?(Integer)
       mark
-    elsif Card::Codename[mark]
+    elsif mark.is_a?(Symbol) && Card::Codename[mark]
       Card::Codename[mark]
     else
       card = fetch mark.to_s, skip_virtual: true, skip_modules: true

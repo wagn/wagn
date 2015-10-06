@@ -60,7 +60,7 @@ def extract_type_id! args = {}
       # type_id can come in as 0,'' or nil
       id == 0 ? nil : id
     when args['type_code']
-      Card.fetch_id args.delete('type_code')
+      Card.fetch_id args.delete('type_code').to_sym
     when args['type']
       Card.fetch_id args.delete('type')
     else

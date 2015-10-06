@@ -153,7 +153,7 @@ Style/EmptyLinesAroundModuleBody:
 Style/Encoding:
   Description: Use UTF-8 as the source file encoding.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#utf-8
-  Enabled: true
+  Enabled: false
   EnforcedStyle: when_needed
   SupportedStyles:
   - when_needed
@@ -535,7 +535,7 @@ Metrics/PerceivedComplexity:
 Lint/AssignmentInCondition:
   Description: Don't use assignment in conditions.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#safe-assignment-in-condition
-  Enabled: false
+  Enabled: true
   AllowSafeAssignment: true
 Lint/EndAlignment:
   Description: Align ends correctly.

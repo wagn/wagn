@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-# FIXME need more specific assertions
+# FIXME: need more specific assertions
 
 describe Card::Set::Self::Signin do
   before :each do

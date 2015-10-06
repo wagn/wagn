@@ -96,9 +96,13 @@ format do
       if search_vars[:error]
         search_vars[:error]
       else
-        raw_results = card.item_cards search_params
-        is_count = search_vars[:query][:return] =='count'
-        is_count ? raw_results.to_i : raw_results
+        begin
+          raw_results = card.item_cards search_params
+          is_count = search_vars[:query][:return] == 'count'
+          is_count ? raw_results.to_i : raw_results
+        rescue BadQuery => e
+          e 
+        end
       end
     end
   end
@@ -192,8 +196,8 @@ end
 format :rss do
   view :feed_body do |args|
     case raw_feed_items args
-    when Exception ; @xml.item { render :search_error }
-    when Integer   ; @xml.item { render :search_count }
+    when Exception ; @xml.item(render :search_error)
+    when Integer   ; @xml.item(render :search_count)
     else super args
     end
   end

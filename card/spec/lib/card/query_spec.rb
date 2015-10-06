@@ -47,7 +47,6 @@ describe Card::Query do
     end
 
     it 'should work on types' do
-      Card::Auth.as_bot
       @query = { type: [:in, 'Cardtype E', 'Cardtype F'] }
       is_expected.to eq(%w(type-e-card type-f-card))
     end
@@ -67,6 +66,7 @@ describe Card::Query do
 
   describe 'not' do
     it 'should exclude cards matching not criteria' do
+      Card::Auth.as_bot
       @query = { plus: 'A', not: { plus: 'A+B' } }
       is_expected.to eq(%w( B D E F ))
     end
@@ -114,7 +114,6 @@ describe Card::Query do
     end
 
     it 'should handle :or for references' do
-      Card::Auth.as_bot
       @query = { refer_to: [:or, 'b', 'z'] }
       is_expected.to eq(%w( A B Y))
     end

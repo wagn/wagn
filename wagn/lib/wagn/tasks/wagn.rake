@@ -1,7 +1,9 @@
 require 'wagn/application'
 
 WAGN_SEED_TABLES = %w{ cards card_actions card_acts card_changes card_references }
-WAGN_SEED_PATH   = "#{ ENV['DECKO_SEED_REPO_PATH'] }/new"
+WAGN_SEED_PATH = File.join(
+  ENV['DECKO_SEED_REPO_PATH'] || [Cardio.gem_root, 'db','seed'], 'new'
+)
 
 
 def prepare_migration

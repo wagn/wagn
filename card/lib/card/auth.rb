@@ -139,6 +139,13 @@ class Card
         @@simulating_setup_need = mode
       end
 
+      def instant_account_activation
+        simulate_setup_need!
+        yield
+      ensure
+        simulate_setup_need! false
+      end
+
       def always_ok?
         # warn Rails.logger.warn("aok? #{as_id}, #{as_id&&Card[as_id].id}")
         return false unless usr_id = as_id

@@ -57,7 +57,6 @@ event :setup_first_user,
 end
 
 event :signin_after_setup, before: :extend, on: :create, when: proc{ |c| Card::Env.params[:setup] } do
-  Card.cache.delete Auth::NEED_SETUP_KEY
   Auth.signin id
 end
 

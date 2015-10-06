@@ -72,6 +72,10 @@ def list_card item
   Card.fetch "#{item}+#{left.type_name}"
 end
 
+def unfilled?
+  false
+end
+
 include Pointer
 format do
   include Pointer::Format

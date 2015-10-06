@@ -132,21 +132,11 @@ def signed_in_as_me_without_password?
   Auth.signed_in? && Auth.current_id == id && account.password.blank?
 end
 
-event :redirect_to_edit_password, on: :update, after: :store, when: proc {|c| c.signed_in_as_me_without_password? } do
+event :redirect_to_edit_password, on: :update, after: :store,
+      when: proc {|c| c.signed_in_as_me_without_password? } do
   Env.params[:success] = account.edit_password_success_args
 end
-
-# event :preprocess_account_subcards, before: :process_subcards, on: :create do
-#   email = remove_subfield("+#{Card[:account].name}+#{Card[:email].name}")
-#   password = remove_subfield("+#{Card[:account].name}+#{Card[:password].name}")
-#   account = add_subfield :account
-#   require 'pry'
-#   account.add_subfield( :email, :content => email) if email
-#   account.add_subfield( :password, :content => password) if password
-#
-# end
 
 event :act_as_current_for_extend_phase, before: :extend, on: :create do
   Auth.current_id = self.id
 end
-

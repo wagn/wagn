@@ -195,7 +195,6 @@ class Card
         else
           name.to_name.to_absolute_name(@context_card.name)
         end
-
       if absolute_name.is_a_field_of?(@context_card.name) &&
          (absolute_name.parts.size - @context_card.cardname.parts.size) > 2
         left_card = add_attributes absolute_name.left

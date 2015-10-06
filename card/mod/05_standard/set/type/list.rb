@@ -28,9 +28,11 @@ end
 event :create_listed_by_cards,
       before: :approve, on: :save, changed: :content do
   item_names.each do |item_name|
-    listed_by_name = "#{item_name}+#{item_type_name}"
+    listed_by_name = "#{item_name}+#{left.type_name}"
     if !Card[listed_by_name]
       add_subcard listed_by_name, type_id: ListedByID
+    else
+      Card[listed_by_name].update_references
     end
   end
 end
@@ -90,6 +92,7 @@ def update_listed_by_cache_for item_keys, args = {}
     if Card::Cache[Card::Set::Type::ListedBy].exist? key
       if (card = Card.fetch(key))
         card.update_cached_list
+        card.update_references
       else
         Card::Cache[Card::Set::Type::ListedBy].delete key
       end

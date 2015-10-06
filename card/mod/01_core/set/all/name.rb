@@ -3,6 +3,7 @@ require 'uuid'
 def name= newname
   cardname = newname.to_name
   if @supercard
+    @contextual_name = cardname.to_s
     relparts = cardname.parts
     if relparts.size==2 && ( relparts.first.blank? || relparts.first.to_name.key == @supercard.key )
       @superleft = @supercard
@@ -43,6 +44,10 @@ end
 
 def junction?
   cardname.junction?
+end
+
+def contextual_name
+  @contextual_name || name
 end
 
 def relative_name context_name = nil

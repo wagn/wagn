@@ -26,9 +26,6 @@ describe Card::Set::Type::ListedBy do
 
   context 'when Darles Chickens is in the author list of \
            "Parry Hotter" and "50 grades of shy"' do
-    before do
-      Card.create! name: 'Darles Chickens+books', type: 'listed by'
-    end
     describe 'Darles Chickens+books' do
       subject { listed_by }
       it { is_expected.to eq ['50 grades of shy', 'Parry Hotter'] }

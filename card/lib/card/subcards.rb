@@ -198,12 +198,16 @@ class Card
 
       if absolute_name.is_a_field_of?(@context_card.name) &&
          (absolute_name.parts.size - @context_card.cardname.parts.size) > 2
-         add_attributes absolute_name.left
+        left_card = add_attributes absolute_name.left
+        add_card left_card
+        left_card.add_attributes absolute_name, attributes
+      else
+        card = Card.assign_or_initialize_by absolute_name.s, attributes,
+                                            local_only: true
+        add_card card
       end
 
-      card = Card.assign_or_initialize_by absolute_name.s, attributes,
-                                          local_only: true
-      add_card card
+
     end
 
     def add_card card

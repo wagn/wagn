@@ -89,6 +89,10 @@ def original_filename
   attachment.original_filename
 end
 
+def unfilled?
+  !attachment.present? && !save_preliminary_upload? && super
+end
+
 def preliminary_upload?
   Card::Env && Card::Env.params[:attachment_upload]
 end

@@ -30,16 +30,14 @@ end
 
 event :reject_empty_subcards, after: :approve, on: :save do
   subcards.each_card do |subcard|
-    if subcard.new? &&
-       (subcard.content.empty? || subcard.content.strip.empty?) &&
-       !subcard.subcards.present? &&
-       (!subcard.respond_to? :attachment || !subcard.attachment.present?)
-      # TODO: check if attachment check is necessary; depends on whether
-      # attachment cards write the identifier to db_content before or after
-      # this event
+    if subcard.new? && subcard.unfilled?
       remove_subcard subcard
     end
   end
+end
+
+def unfilled?
+  (content.empty? || content.strip.empty?) && !subcards.present?
 end
 
 # left for compatibility reasons because other events refer to this

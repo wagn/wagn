@@ -28,7 +28,7 @@ def remove_subfield name_or_card
   subcards.remove_field name_or_card
 end
 
-event :filter_empty_subcards, after: :approve, on: :save do
+event :reject_empty_subcards, after: :approve, on: :save do
   subcards.each_card do |subcard|
     if subcard.new? &&
        (subcard.content.empty? || subcard.content.strip.empty?) &&
@@ -43,7 +43,7 @@ event :filter_empty_subcards, after: :approve, on: :save do
 end
 
 # left for compatibility reasons because other events refer to this
-event :process_subcards, after: :filter_empty_subcards, on: :save do
+event :process_subcards, after: :reject_empty_subcards, on: :save do
 end
 
 event :approve_subcards, after: :process_subcards do

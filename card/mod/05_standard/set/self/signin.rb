@@ -14,7 +14,7 @@ format :html do
     _render_core(args)
   end
 
-  view :closed_content do |args|
+  view :closed_content do |_args|
     ''
   end
 
@@ -27,7 +27,7 @@ format :html do
       "<div style='float:right'>" \
       "#{ view_link 'RESET PASSWORD', :edit,
                     path_opts: { slot: { hide: :toolbar } } }" \
-      "</div>") # FIXME - hardcoded styling
+      '</div>') # FIXME: hardcoded styling
     args
   end
 
@@ -63,18 +63,18 @@ format :html do
     Auth.as_bot { super args }
   end
 
-  view :raw do |args|
+  view :raw do |_args|
     if @forgot_password
       "{{+#{Card[:email].name}|title:email;type:Phrase}}"
     else
       %(
-        {{+#{Card[:email   ].name}|titled;title:email}}
+        {{+#{Card[:email].name}|titled;title:email}}
         {{+#{Card[:password].name}|titled;title:password}}
       )
     end
   end
 
-  view :reset_password_success do |args|
+  view :reset_password_success do |_args|
     frame { 'Check your email for a link to reset your password' }
   end
 end
@@ -108,7 +108,7 @@ end
 
 event :send_reset_password_token,
       before: :signin, on: :update,
-      when: proc { |c| Env.params[:reset_password] } do
+      when: proc { Env.params[:reset_password] } do
   email = subfield :email
   email &&= email.content
 

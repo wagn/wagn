@@ -84,7 +84,7 @@ def update_all_items
   update_listed_by_cache_for current_items
 end
 
-def update_listed_by_cache_for item_keys, args = {}
+def update_listed_by_cache_for item_keys, args={}
   type_key = args[:type_key] || left.type_card.key
 
   item_keys.each do |item_key|

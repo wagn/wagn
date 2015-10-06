@@ -72,6 +72,7 @@ Feature: File Upload
     Then I should see "image2.jpg 69.8 KB"
     And I press "Submit"
     Then I should see an image of size "medium" and type "jpg"
+    Then I wait until ajax response done
 
 
 

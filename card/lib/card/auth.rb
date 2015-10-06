@@ -6,7 +6,7 @@ class Card
     @@simulating_setup_need = nil
 
     NON_CREATEABLE_TYPES = %w{ signup setting set } # NEED API
-    NEED_SETUP_KEY = 'NEED_SETUP'
+    SETUP_COMPLETED_KEY = 'SETUP_COMPLETED'
 
     # after_save :reset_instance_cache
 
@@ -129,18 +129,14 @@ class Card
       end
 
       def needs_setup?
-        !has_setup?
-      end
-
-      def has_setup?
-        !@@simulating_setup_need &&
-          !Card.cache.read(NEED_SETUP_KEY).nil? &&
-          Card.cache.write(NEED_SETUP_KEY, (account_count < 3))
+        @@simulating_setup_need || !Card.cache.fetch(SETUP_COMPLETED_KEY) do
+          # every deck starts with WagnBot and Anonymous account
+          account_count > 2
+        end
       end
 
       def simulate_setup_need! mode = true
         @@simulating_setup_need = mode
-        Card.cache.write NEED_SETUP_KEY, nil
       end
 
       def always_ok?

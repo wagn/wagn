@@ -127,6 +127,29 @@ def rescue_event e
   # false
 end
 
+def phase_ok? opts
+  @phase && (
+    (opts[:during] && in?(opts[:during])) ||
+    (opts[:before] && before?(opts[:before])) ||
+    (opts[:after]  && after?(opts[:after]))
+  )
+end
+
+def before? phase
+  PHASES[phase] > PHASES[@phase] ||
+    (PHASES[phase] == PHASES[@phase] && @subphase == :before)
+end
+
+def after? phase
+  PHASES[phase] < PHASES[@phase] ||
+    (PHASES[phase] == PHASES[@phase] && @subphase == :after)
+end
+
+def in? phase
+  (phase.is_a?(Array) && phase.include?(@phase)) ||
+    phase == @phase
+end
+
 event :notable_exception_raised do
   Rails.logger.debug "BT:  #{Card::Error.current.backtrace * "\n  "}"
 end

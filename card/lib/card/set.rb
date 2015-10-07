@@ -127,7 +127,7 @@ class Card
       end
     end
 
-    def define_on_format format_name = :base, &block
+    def define_on_format format_name=:base, &block
       # format class name, eg. HtmlFormat
       klass = Card::Format.format_class_name format_name
       # called on current set module, eg Card::Set::Type::Pointer
@@ -147,7 +147,7 @@ class Card
       end
     end
 
-    def event event, opts = {}, &final
+    def event event, opts={}, &final
       perform_later = (opts[:before] == :subsequent) ||
                       (opts[:after] == :subsequent)
       final_method = "#{event}_without_callbacks" # should be private?
@@ -170,41 +170,26 @@ class Card
       set_event_callbacks event, opts
     end
 
-    def phase_method method, opts = {}, &block
-      #method_body =
-
+    def phase_method method, opts={}, &block
       class_eval do
-        define_method method, method_body, proc { |*args|
-          if phase_ok? opts
-            block.call(*args)
+        define_method method, proc { |*args|
+          error =
+            if !phase_ok? opts
+              if !@phase
+                "phase method #{method} called outside of event phases"
+              else
+                "#{opts.inspect} method #{method} called in phase #{@phase}"
+              end
+            elsif !on_condition_applies?(opts[:on])
+              "on: #{opts[:on]} method #{method} called on #{@action}"
+            end
+          if error
+            raise Card::Error, error
           else
-            raise Card::Error,
-                  "#{opts[:on]} method #{method} called in phase #{@phase}"
+            block.call(*args)
           end
         }
       end
-
-    end
-
-    def phase_ok? opts
-      (opts[:during] && in?(opts[:during])) ||
-        (opts[:before] && before?(opts[:before])) ||
-        (opts[:after]  && after?(opts[:after]))
-    end
-
-    def before? phase
-      PHASES[phase] > PHASES[@phase] ||
-        (PHASES[phase] == PHASES[@phase] && @subphase == :before)
-    end
-
-    def after? phase
-      PHASES[phase] < PHASES[@phase] ||
-        (PHASES[phase] == PHASES[@phase] && @subphase == :after)
-    end
-
-    def in? phase
-      (phase.is_a?(Array) && phase.include?(@phase)) ||
-        phase == @phase
     end
 
     def define_event_perform_later_method event, method_name

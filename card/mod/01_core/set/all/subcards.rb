@@ -10,13 +10,11 @@ def subfield field_name
   subcards.field field_name
 end
 
-#phase_method :add_subcard, :before=>:approve do |name_or_card, args = nil|
-def add_subcard name_or_card, args = nil
+phase_method :add_subcard, before: :approve do |name_or_card, args=nil|
   subcards.add name_or_card, args
 end
 
-def add_subfield name, args = nil
-#phase_method :add_subfield, :before=>:approve do |name, args = nil|
+phase_method :add_subfield, before: :approve do |name_or_card, args=nil|
   subcards.add_field name, args
 end
 

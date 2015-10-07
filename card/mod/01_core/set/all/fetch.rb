@@ -67,8 +67,12 @@ module ClassMethods
     card
   end
 
+  def quick_fetch mark
+    fetch mark, skip_virtual: true, skip_modules: true
+  end
+
   def fetch_id mark #should optimize this.  what if mark is int?  or codename?
-    card = fetch mark, skip_virtual: true, skip_modules: true
+    card = quick_fetch mark
     card and card.id
   end
 
@@ -77,7 +81,7 @@ module ClassMethods
   end
 
   def exists? mark
-    card = fetch mark, skip_virtual: true, skip_modules: true
+    card = quick_fetch mark
     card.present?
   end
 

@@ -8,11 +8,11 @@ describe Card::Set::Type::JavaScript do
 
   it_should_behave_like 'content machine', that_produces_js do
     let(:machine_card) do
-      Card.gimme! "test javascript", type: :java_script, content: js
+      Card.gimme! 'test javascript', type: :java_script, content: js
     end
     let(:card_content) do
-      { in:           js,         out:     compressed_js,
-        changed_in:   changed_js, changed_out: compressed_changed_js }
+      { in:         js,         out:     compressed_js,
+        changed_in: changed_js, changed_out: compressed_changed_js }
     end
   end
 
@@ -27,8 +27,8 @@ describe Card::Set::Type::JavaScript do
       Card.gimme! 'script with js+*script', type: :pointer
     end
     let(:card_content) do
-      { in:       js,         out:     compressed_js,
-        changed_in:   changed_js, changed_out: compressed_changed_js }
+      { in:         js,         out:     compressed_js,
+        changed_in: changed_js, changed_out: compressed_changed_js }
     end
   end
 end

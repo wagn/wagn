@@ -12,7 +12,7 @@ module CarrierWave
       Card.uploader_options ||= {}
     end
 
-    def mount_uploader column, uploader = nil, options = {}, &block
+    def mount_uploader column, uploader=nil, options={}, &block
       options[:mount_on] ||= :db_content
       super
 

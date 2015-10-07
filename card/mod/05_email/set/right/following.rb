@@ -1,5 +1,5 @@
 
-def virtual?; true end
+def virtual?; !real? end
 
 
 format :html do

@@ -161,7 +161,7 @@ class Card
     private
 
     def fetch_subcard key
-      Card.fetch key, subcard: true, local_only: true
+      Card.fetch key, local_only: true, new: {}
     end
 
     def prepend_plus name

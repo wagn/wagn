@@ -13,7 +13,7 @@ def raw_content
     end
 end
 
-def virtual?; true end
+def virtual?; !real? end
 
 
 

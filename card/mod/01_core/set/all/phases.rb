@@ -68,6 +68,18 @@ def run_phase phase, &block
   @subphase = :after
 end
 
+def simulate_phase opts, &block
+  @phase
+end
+
+def phase
+  @phase || (@supercard && @supercard.phase)
+end
+
+def subphase
+  @subphase || (@supercard && @supercard.subphase)
+end
+
 def prepare
   @action = identify_action
   # the following should really happen when type, name etc are changed
@@ -106,7 +118,7 @@ def store
 rescue => e
   rescue_event e
 ensure
-  @from_trash = @last_action_id = @last_content_action_id = nil
+  @from_trash =  @last_content_action_id = nil
 end
 
 def extend
@@ -128,26 +140,26 @@ def rescue_event e
 end
 
 def phase_ok? opts
-  @phase && (
+  phase && (
     (opts[:during] && in?(opts[:during])) ||
     (opts[:before] && before?(opts[:before])) ||
     (opts[:after]  && after?(opts[:after]))
   )
 end
 
-def before? phase
-  PHASES[phase] > PHASES[@phase] ||
-    (PHASES[phase] == PHASES[@phase] && @subphase == :before)
+def before? allowed_phase
+  PHASES[allowed_phase] > PHASES[phase] ||
+    (PHASES[allowed_phase] == PHASES[phase] && subphase == :before)
 end
 
-def after? phase
-  PHASES[phase] < PHASES[@phase] ||
-    (PHASES[phase] == PHASES[@phase] && @subphase == :after)
+def after? allowed_phase
+  PHASES[allowed_phase] < PHASES[phase] ||
+    (PHASES[allowed_phase] == PHASES[phase] && subphase == :after)
 end
 
-def in? phase
-  (phase.is_a?(Array) && phase.include?(@phase)) ||
-    phase == @phase
+def in? allowed_phase
+  (allowed_phase.is_a?(Array) && allowed_phase.include?(phase)) ||
+    allowed_phase == phase
 end
 
 event :notable_exception_raised do

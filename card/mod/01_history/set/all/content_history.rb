@@ -88,11 +88,13 @@ def last_action
 end
 
 def last_content_action
-  l_c = last_change_on(:db_content) and l_c.action
+  l_c = last_change_on :db_content
+  l_c && l_c.action
 end
 
 def last_content_action_id
-  l_c = last_change_on(:db_content) and l_c.card_action_id
+  l_c = last_change_on :db_content
+  l_c && l_c.card_action_id
 end
 
 def last_actor
@@ -100,7 +102,7 @@ def last_actor
 end
 
 def last_act
-  if action = last_action
+  if (action = last_action)
     last_act_on_self = acts.last
     if last_act_on_self and ( action.act==last_act_on_self || last_act_on_self.acted_at>action.act.acted_at )
       last_act_on_self

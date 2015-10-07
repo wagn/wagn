@@ -62,14 +62,14 @@ describe Card::Subcards do
     before do
       @card = Card['A']
     end
-    subject { Card.fetch("#{@card.name}+sub", subcard: true).content }
+    subject { Card.fetch("#{@card.name}+sub", new: {}, local_only: true).content }
     it 'works with string' do
       @card._add_subfield 'sub', content: 'this is a sub'
       is_expected.to eq 'this is a sub'
     end
     it 'works with codename' do
       @card._add_subfield :phrase, content: 'this is a sub'
-      subcard = Card.fetch('A+phrase', subcard: true)
+      subcard = Card.fetch('A+phrase', new: {}, local_only: true)
       expect(subcard.content).to eq 'this is a sub'
     end
   end
@@ -78,7 +78,7 @@ describe Card::Subcards do
     before do
       @card = Card['A']
     end
-    subject { Card.fetch("#{@card.name}+sub", subcard: true).content }
+    subject { Card.fetch("#{@card.name}+sub", new: {}, local_only: true).content }
     it 'works with string' do
       @card._add_subfield 'sub', content: 'this is a sub'
       expect(@card.subfield('sub').content).to eq 'this is a sub'

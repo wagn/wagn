@@ -176,10 +176,10 @@ class Card
         define_method method do |*args|
           error =
             if !phase_ok? opts
-              if !@phase
+              if !phase
                 "phase method #{method} called outside of event phases"
               else
-                "#{opts.inspect} method #{method} called in phase #{@phase}"
+                "#{opts.inspect} method #{method} called in phase #{phase}"
               end
             elsif !on_condition_applies?(opts[:on])
               "on: #{opts[:on]} method #{method} called on #{@action}"
@@ -290,9 +290,10 @@ class Card
 
     # the set loading process has two main phases:
 
-    #  1. Definition: interpret each set file, creating/defining set and set_format modules
-    #  2. Organization: have base classes include modules associated with the "all" set, and
-    #     clean up the other modules
+    #  1. Definition: interpret each set file, creating/defining set and
+    #     set_format modules
+    #  2. Organization: have base classes include modules associated with the
+    #     "all" set, and clean up the other modules
 
     class << self
       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

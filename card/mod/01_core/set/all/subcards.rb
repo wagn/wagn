@@ -26,6 +26,10 @@ def remove_subfield name_or_card
   subcards.remove_field name_or_card
 end
 
+def unfilled?
+  (content.empty? || content.strip.empty?) && !subcards.present?
+end
+
 event :reject_empty_subcards, after: :approve, on: :save do
   subcards.each_card do |subcard|
     if subcard.new? && subcard.unfilled?
@@ -34,11 +38,8 @@ event :reject_empty_subcards, after: :approve, on: :save do
   end
 end
 
-def unfilled?
-  (content.empty? || content.strip.empty?) && !subcards.present?
-end
-
-# left for compatibility reasons because other events refer to this
+# deprecated; left for compatibility reasons because other events refer to this
+# especially wikirate
 event :process_subcards, after: :reject_empty_subcards, on: :save do
 end
 

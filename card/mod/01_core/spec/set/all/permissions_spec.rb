@@ -3,7 +3,7 @@
 class ::Card
   def writeable_by user
     Card::Auth.as(user.id) do
-    #warn "writeable #{Card::Auth.as_id}, #{user.inspect}"
+      # warn "writeable #{Card::Auth.as_id}, #{user.inspect}"
       ok? :update
     end
   end
@@ -16,37 +16,37 @@ class ::Card
 end
 
 module PermissionSpecHelper
-  def assert_hidden_from user, card, msg = ''
+  def assert_hidden_from user, card, msg=''
     Card::Auth.as(user.id) { assert_hidden(card, msg) }
   end
 
-  def assert_not_hidden_from user, card, msg = ''
+  def assert_not_hidden_from user, card, msg=''
     Card::Auth.as(user.id) { assert_not_hidden(card, msg) }
   end
 
-  def assert_locked_from user, card, msg = ''
+  def assert_locked_from user, card, msg=''
     Card::Auth.as(user.id) { assert_locked(card, msg) }
   end
 
-  def assert_not_locked_from user, card, msg = ''
+  def assert_not_locked_from user, card, msg=''
     Card::Auth.as(user.id) { assert_not_locked(card, msg) }
   end
 
-  def assert_hidden card, msg = ''
+  def assert_hidden card, msg=''
     assert !card.ok?(:read)
     assert_equal [], Card.search(id: card.id).map(&:name), msg
   end
 
-  def assert_not_hidden card, msg = ''
+  def assert_not_hidden card, msg=''
     assert card.ok?(:read)
     assert_equal [card.name], Card.search(id: card.id).map(&:name), msg
   end
 
-  def assert_locked card, msg = ''
+  def assert_locked card, msg=''
     assert_equal false, card.ok?(:update), msg
   end
 
-  def assert_not_locked card, msg = ''
+  def assert_not_locked card, msg=''
     assert_equal true, card.ok?(:update), msg
   end
 end
@@ -54,14 +54,14 @@ end
 include PermissionSpecHelper
 
 describe Card::Set::All::Permissions do
-  #FIXME - lots of good tests here, butmysql generally disorganized.
+  # FIXME: lots of good tests here, butmysql generally disorganized.
 
-  describe "reader rules" do
+  describe 'reader rules' do
     before do
       @perm_card =  Card.new(name: 'Home+*self+*read', type: 'Pointer', content: '[[Anyone Signed In]]')
     end
 
-    it "should be *all+*read by default" do
+    it 'should be *all+*read by default' do
       card = Card.fetch('Home')
       expect(card.read_rule_id).to eq(Card.fetch('*all+*read').id)
       expect(card.who_can(:read)).to eq([Card::AnyoneID])
@@ -74,7 +74,7 @@ describe Card::Set::All::Permissions do
       Card::Auth.as_bot { @perm_card.save! }
       pc = Card[name]
       card = Card['Home']
-      #warn "card #{name}, #{card.inspect}, #{pc.inspect}"
+      # warn "card #{name}, #{card.inspect}, #{pc.inspect}"
       expect(pc).to be
       expect(card.read_rule_id).to eq(pc.id)
       expect(card.who_can(:read)).to eq([Card::AnyoneSignedInID])
@@ -94,7 +94,7 @@ describe Card::Set::All::Permissions do
       Card::Auth.as_bot         { expect(card.ok?(:read)).to be_truthy  }
     end
 
-    it "should revert to more general rule when more specific (self) rule is deleted" do
+    it 'reverts to more general rule when more specific (self) rule is deleted' do
       Card::Auth.as_bot do
         @perm_card.save!
         @perm_card.delete!
@@ -103,7 +103,7 @@ describe Card::Set::All::Permissions do
       expect(card.read_rule_id).to eq(Card.fetch('*all+*read').id)
     end
 
-    it "should revert to more general rule when more specific (right) rule is deleted" do
+    it 'reverts to more general rule when more specific (right) rule is deleted' do
       pc = nil
       Card::Auth.as_bot do
         pc=Card.create(name: 'B+*right+*read', type: 'Pointer', content: '[[Anyone Signed In]]')
@@ -117,8 +117,7 @@ describe Card::Set::All::Permissions do
       expect(card.read_rule_id).to eq(Card.fetch('*all+*read').id)
     end
 
-    it "should revert to more general rule when more specific rule is renamed" do
-
+    it 'should revert to more general rule when more specific rule is renamed' do
       Card::Auth.as_bot do
         @perm_card.save!
         @perm_card = Card[@perm_card.name]
@@ -130,7 +129,7 @@ describe Card::Set::All::Permissions do
       expect(card.read_rule_id).to eq(Card.fetch('*all+*read').id)
     end
 
-    it "should not be overruled by a more general rule added later" do
+    it 'should not be overruled by a more general rule added later' do
       Card::Auth.as_bot do
         @perm_card.save!
         c= Card.fetch('Home')
@@ -143,8 +142,8 @@ describe Card::Set::All::Permissions do
       expect(card.read_rule_id).to eq(@perm_card.id)
     end
 
-    it "should get updated when trunk type change makes type-plus-right apply / unapply" do
-      @perm_card.name = "Phrase+B+*type plus right+*read"
+    it 'should get updated when trunk type change makes type-plus-right apply / unapply' do
+      @perm_card.name = 'Phrase+B+*type plus right+*read'
       Card::Auth.as_bot { @perm_card.save! }
       expect(Card.fetch('A+B').read_rule_id).to eq(Card.fetch('*all+*read').id)
       c = Card.fetch('A')
@@ -153,7 +152,7 @@ describe Card::Set::All::Permissions do
       expect(Card.fetch('A+B').read_rule_id).to eq(@perm_card.id)
     end
 
-    it "should work with relative settings" do
+    it 'should work with relative settings' do
       Card::Auth.as_bot do
         @perm_card.save!
         all_plus = Card.fetch '*all plus+*read', new: {content: '_left'}
@@ -166,7 +165,7 @@ describe Card::Set::All::Permissions do
       expect(c.read_rule_id).to eq(@perm_card.id)
     end
 
-    it "should get updated when relative settings change" do
+    it 'should get updated when relative settings change' do
       Card::Auth.as_bot do
         all_plus = Card.fetch '*all plus+*read', new: {content: '_left'}
         all_plus.save
@@ -186,7 +185,7 @@ describe Card::Set::All::Permissions do
       expect(Card.fetch('Home+Heart').read_rule_id).to eq(Card.fetch('*all+*read').id)
     end
 
-    it "should insure that class overrides work with relative settings" do
+    it 'should insure that class overrides work with relative settings' do
       Card::Auth.as_bot do
         all_plus = Card.fetch '*all plus+*read', new: { content: '_left' }
         all_plus.save
@@ -198,26 +197,22 @@ describe Card::Set::All::Permissions do
       end
     end
 
-    it "should work on virtual+virtual cards" do
+    it 'should work on virtual+virtual cards' do
       c = Card.fetch('Number+*type+by name')
       expect(c.ok?(:read)).to be_truthy
     end
-
   end
-
-
 
   context '??' do
     before do
       Card::Auth.as_bot do
-  #      Card::Auth.cache.reset
+        # Card::Auth.cache.reset
         @u1, @u2, @u3, @r1, @r2, @r3, @c1, @c2, @c3 =
-          %w( u1 u2 u3 r1 r2 r3 c1 c2 c3 ).map do |x| Card[x] end
+          %w( u1 u2 u3 r1 r2 r3 c1 c2 c3 ).map { |x| Card[x] }
       end
     end
 
-
-    it "checking ok read should not add to errors" do
+    it 'checking ok read should not add to errors' do
       Card::Auth.as_bot do
         expect(Card::Auth.always_ok?).to eq(true)
       end
@@ -226,8 +221,9 @@ describe Card::Set::All::Permissions do
       end
       Card::Auth.as(:joe_admin) do
         expect(Card::Auth.always_ok?).to eq(true)
-        Card.create! name: "Hidden"
-        Card.create(name: 'Hidden+*self+*read', type: 'Pointer', content: '[[Anyone Signed In]]')
+        Card.create! name: 'Hidden'
+        Card.create name: 'Hidden+*self+*read', type: 'Pointer',
+                    content: '[[Anyone Signed In]]'
       end
 
       Card::Auth.as(:anonymous) do
@@ -237,70 +233,73 @@ describe Card::Set::All::Permissions do
       end
     end
 
-    it "should be granted to admin if to anybody" do
+    it 'should be granted to admin if to anybody' do
       Card::Auth.as_bot do
         c1 = Card['c1']
-        Card.create! name: 'c1+*self+*comment', type: 'Pointer', content: '[[r1]]'
-        expect(c1.who_can( :comment )).to eq([Card['r1'].id])
+        Card.create! name: 'c1+*self+*comment', type: 'Pointer',
+                     content: '[[r1]]'
+        expect(c1.who_can(:comment)).to eq([Card['r1'].id])
         expect(c1.ok?(:comment)).to be_truthy
       end
     end
 
-    it "reader setting" do
+    it 'reader setting' do
       Card.where(trash: false).each do |ca|
         rule_card, rule_class = ca.permission_rule_card(:read)
-        #warn "C #{c.inspect}, #{c.read_rule_id}, #{prc.first.id}, #{c.read_rule_class}, #{prc.second}, #{prc.first.inspect}" unless prc.last == c.read_rule_class && prc.first.id == c.read_rule_id
+        # warn "C #{c.inspect}, #{c.read_rule_id}, #{prc.first.id}, #{c.read_rule_class}, #{prc.second}, #{prc.first.inspect}" unless prc.last == c.read_rule_class && prc.first.id == c.read_rule_id
         expect(rule_class).to eq(ca.read_rule_class)
         expect(rule_card.id).to eq(ca.read_rule_id)
       end
     end
 
-
-    it "write user permissions" do
+    it 'write user permissions' do
       Card::Auth.as_bot do
         @u1.fetch(trait: :roles, new: {}).items = [@r1, @r2]
         @u2.fetch(trait: :roles, new: {}).items = [@r1, @r3]
         @u3.fetch(trait: :roles, new: {}).items = [@r1, @r2, @r3]
 
-        cards=[1,2,3].map do |num|
-          Card.create(name: "c#{num}+*self+*update", type: 'Pointer', content: "[[u#{num}]]")
+        cards = [1,2,3].map do |num|
+          Card.create name: "c#{num}+*self+*update", type: 'Pointer',
+                      content: "[[u#{num}]]"
         end
       end
 
       @c1 = Card['c1']
-      assert_not_locked_from( @u1, @c1 )
-      assert_locked_from( @u2, @c1 )
-      assert_locked_from( @u3, @c1 )
+      assert_not_locked_from(@u1, @c1)
+      assert_locked_from(@u2, @c1)
+      assert_locked_from(@u3, @c1)
 
       @c2 = Card['c2']
-      assert_locked_from( @u1, @c2 )
-      assert_not_locked_from( @u2, @c2 )
-      assert_locked_from( @u3, @c2 )
+      assert_locked_from(@u1, @c2)
+      assert_not_locked_from(@u2, @c2)
+      assert_locked_from(@u3, @c2)
     end
 
-    it "read group permissions" do
+    it 'read group permissions' do
       Card::Auth.as_bot do
         @u1.fetch(trait: :roles).items = [@r1, @r2]
         @u2.fetch(trait: :roles).items = [@r1, @r3]
 
-        [1,2,3].each do |num|
-          Card.create(name: "c#{num}+*self+*read", type: 'Pointer', content: "[[r#{num}]]")
+        [1, 2, 3].each do |num|
+          Card.create name: "c#{num}+*self+*read", type: 'Pointer',
+                      content: "[[r#{num}]]"
         end
       end
 
-      assert_not_hidden_from( @u1, @c1 )
-      assert_not_hidden_from( @u1, @c2 )
-      assert_hidden_from( @u1, @c3 )
+      assert_not_hidden_from(@u1, @c1)
+      assert_not_hidden_from(@u1, @c2)
+      assert_hidden_from(@u1, @c3)
 
-      assert_not_hidden_from( @u2, @c1 )
-      assert_hidden_from( @u2, @c2 )
-      assert_not_hidden_from( @u2, @c3 )
+      assert_not_hidden_from(@u2, @c1)
+      assert_hidden_from(@u2, @c2)
+      assert_not_hidden_from(@u2, @c3)
     end
 
-    it "write group permissions" do
+    it 'write group permissions' do
       Card::Auth.as_bot do
         [1,2,3].each do |num|
-          Card.create(name: "c#{num}+*self+*update", type: 'Pointer', content: "[[r#{num}]]")
+          Card.create name: "c#{num}+*self+*update", type: 'Pointer',
+                      content: "[[r#{num}]]"
         end
 
         @u3.fetch(trait: :roles, new: {}).items = [@r1]
@@ -312,40 +311,41 @@ describe Card::Set::All::Permissions do
         c3(r3)  T  F  F
       }
 
-      assert_equal true,  @c1.writeable_by(@u1), "c1 writeable by u1"
-      assert_equal true,  @c1.writeable_by(@u2), "c1 writeable by u2"
-      assert_equal true,  @c1.writeable_by(@u3), "c1 writeable by u3"
-      assert_equal true,  @c2.writeable_by(@u1), "c2 writeable by u1"
-      assert_equal true,  @c2.writeable_by(@u2), "c2 writeable by u2"
-      assert_equal false, @c2.writeable_by(@u3), "c2 writeable by u3"
-      assert_equal true,  @c3.writeable_by(@u1), "c3 writeable by u1"
-      assert_equal false, @c3.writeable_by(@u2), "c3 writeable by u2"
-      assert_equal false, @c3.writeable_by(@u3), "c3 writeable by u3"
+      assert_equal true,  @c1.writeable_by(@u1), 'c1 writeable by u1'
+      assert_equal true,  @c1.writeable_by(@u2), 'c1 writeable by u2'
+      assert_equal true,  @c1.writeable_by(@u3), 'c1 writeable by u3'
+      assert_equal true,  @c2.writeable_by(@u1), 'c2 writeable by u1'
+      assert_equal true,  @c2.writeable_by(@u2), 'c2 writeable by u2'
+      assert_equal false, @c2.writeable_by(@u3), 'c2 writeable by u3'
+      assert_equal true,  @c3.writeable_by(@u1), 'c3 writeable by u1'
+      assert_equal false, @c3.writeable_by(@u2), 'c3 writeable by u2'
+      assert_equal false, @c3.writeable_by(@u3), 'c3 writeable by u3'
     end
 
-    it "read user permissions" do
-      Card::Auth.as_bot {
+    it 'read user permissions' do
+      Card::Auth.as_bot do
         @u1.fetch(trait: :roles, new: {}).items = [@r1, @r2]
         @u2.fetch(trait: :roles, new: {}).items = [@r1, @r3]
         @u3.fetch(trait: :roles, new: {}).items = [@r1, @r2, @r3]
 
-        [1,2,3].each do |num|
-          Card.create(name: "c#{num}+*self+*read", type: 'Pointer', content: "[[u#{num}]]")
+        [1, 2, 3].each do |num|
+          Card.create name: "c#{num}+*self+*read", type: 'Pointer',
+                      content: "[[u#{num}]]"
         end
-      }
+      end
 
 
       # NOTE: retrieving private cards is known not to work now.
-      # assert_not_hidden_from( @u1, @c1 )
-      # assert_not_hidden_from( @u2, @c2 )
+      # assert_not_hidden_from(@u1, @c1)
+      # assert_not_hidden_from(@u2, @c2)
 
-      assert_hidden_from( @u2, @c1 )
-      assert_hidden_from( @u3, @c1 )
-      assert_hidden_from( @u1, @c2 )
-      assert_hidden_from( @u3, @c2 )
+      assert_hidden_from(@u2, @c1)
+      assert_hidden_from(@u3, @c1)
+      assert_hidden_from(@u1, @c2)
+      assert_hidden_from(@u3, @c2)
     end
 
-    context "create permissions" do
+    context 'create permissions' do
       before do
         Card::Auth.as_bot do
           Card.create! name: '*structure+*right+*create', type: 'Pointer', content: '[[Anyone Signed In]]'
@@ -353,26 +353,24 @@ describe Card::Set::All::Permissions do
         end
       end
 
-      it "should inherit" do
+      it 'should inherit' do
         Card::Auth.as(:anyone_signed_in) do
-          expect(Card.fetch( 'A+*self' ).ok?(:create)).to be_truthy #explicitly granted above
+          expect(Card.fetch('A+*self').ok?(:create)).to be_truthy #explicitly granted above
           expect(Card.fetch( 'A+*right').ok?(:create)).to be_falsey #by default restricted
 
-          expect(Card.fetch( 'A+*self+*structure',  new: {} ).ok?(:create)).to be_truthy # +*structure granted;
-          expect(Card.fetch( 'A+*right+*structure', new: {} ).ok?(:create)).to be_falsey # can't create A+B, therefore can't create A+B+C
+          expect(Card.fetch('A+*self+*structure',  new: {}).ok?(:create)).to be_truthy # +*structure granted;
+          expect(Card.fetch('A+*right+*structure', new: {}).ok?(:create)).to be_falsey # can't create A+B, therefore can't create A+B+C
         end
       end
-
     end
 
-
-    it "private wql" do
+    it 'private wql' do
       # set up cards of type TestType, 2 with nil reader, 1 with role1 reader
        Card::Auth.as_bot do
          [@c1,@c2,@c3].each do |c|
            c.update_attributes content: 'WeirdWord'
          end
-         Card.create(name: "c1+*self+*read", type: 'Pointer', content: "[[u1]]")
+         Card.create(name: 'c1+*self+*read', type: 'Pointer', content: '[[u1]]')
        end
 
        Card::Auth.as(@u1) do
@@ -383,15 +381,15 @@ describe Card::Set::All::Permissions do
        end
     end
 
-    it "role wql" do
-      #warn "u1 roles #{Card[ @u1.id ].fetch(trait: :roles).item_names.inspect}"
+    it 'role wql' do
+      # warn "u1 roles #{Card[ @u1.id ].fetch(trait: :roles).item_names.inspect}"
 
       # set up cards of type TestType, 2 with nil reader, 1 with role1 reader
       Card::Auth.as_bot do
         [@c1,@c2,@c3].each do |c|
           c.update_attributes content: 'WeirdWord'
         end
-        Card.create(name: "c1+*self+*read", type: 'Pointer', content: "[[r3]]")
+        Card.create(name: 'c1+*self+*read', type: 'Pointer', content: '[[r3]]')
       end
 
       Card::Auth.as(@u1) do
@@ -422,48 +420,42 @@ describe Card::Set::All::Permissions do
   }
 
     end
-
   end
 
-
-
-
-  it "should let joe view new cards" do
+  it 'should let joe view new cards' do
     expect(Card.new.ok?(:read)).to be_truthy
   end
 
-
-  context "default permissions" do
+  context 'default permissions' do
     before do
-      @c = Card.create! name: "sky blue"
+      @c = Card.create! name: 'sky blue'
     end
 
-    it "should let anonymous users view basic cards" do
+    it 'should let anonymous users view basic cards' do
       Card::Auth.as :anonymous do
         expect(@c.ok?(:read)).to be_truthy
       end
     end
 
-    it "should let joe user basic cards" do
+    it 'should let joe user basic cards' do
       Card::Auth.as :joe_user do
         expect(@c.ok?(:read)).to be_truthy
       end
     end
   end
 
-  it "should allow anyone signed in to create Basic Cards" do
+  it 'should allow anyone signed in to create Basic Cards' do
     expect(Card.new.ok?(:create)).to be_truthy
   end
 
-  it "should not allow someone not signed in to create Basic Cards" do
+  it 'should not allow someone not signed in to create Basic Cards' do
     Card::Auth.as :anonymous do
       expect(Card.new.ok?(:create)).not_to be_truthy
     end
   end
 
 
-
-  context "settings based permissions" do
+  context 'settings based permissions' do
     before do
       Card::Auth.as_bot do
         @delete_rule_card = Card.fetch '*all+*delete', new: {}
@@ -473,7 +465,7 @@ describe Card::Set::All::Permissions do
       end
     end
 
-    it "should handle delete as a setting" do
+    it 'should handle delete as a setting' do
       c = Card.new name: 'whatever'
       expect(c.who_can(:delete)).to eq([Card['joe_user'].id])
       Card::Auth.as(:joe_user) do
@@ -490,13 +482,10 @@ describe Card::Set::All::Permissions do
       end
     end
   end
-
-
-
 end
-
 
 # FIXME-perm
 
 # need test for
-# changing cardtypes gives you correct permissions (changing cardtype in general...)
+# changing cardtypes gives you correct permissions
+# (changing cardtype in general...)

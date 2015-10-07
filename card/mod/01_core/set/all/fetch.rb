@@ -20,13 +20,14 @@ module ClassMethods
   #     :skip_virtual               Real cards only
   #     :skip_modules               Don't load Set modules
   #     :look_in_trash              Return trashed card objects
+  #     :local_only                 Use only local cache for lookup and storing
   #     new: {  card opts }      Return a new card when not found
   #
   def fetch mark, opts = {}
+    validate_fetch_opts! opts
     mark = normalize_mark mark
 
     if mark.present?
-      # have existing
       card, mark, needs_caching = fetch_from_cache_or_db mark, opts
     else
       return unless opts[:new]
@@ -34,35 +35,29 @@ module ClassMethods
 
     if mark.is_a?(Integer)
       return if card.nil?
-    elsif card && card.eager_renew?(opts)
+    elsif card && card.new_card? && opts[:new].present?
       return card.renew(opts)
-    # new (or improved) card for cache
-    elsif !card || (card.type_id == -1 && clean_cache_opts?(opts))
-      return if opts[:subcard]
+    elsif !card || (card.type_unknown? && !skip_type_lookup?(opts))
       needs_caching = true
-      card = new_for_cache mark, opts
+      card = new_for_cache mark, opts # new (or improved) card for cache
     end
 
-    if needs_caching
-      write_to_cache card, opts[:local_only]
-    end
+    write_to_cache card, opts if needs_caching
 
     if card.new_card?
-      if opts[:new]
-        return card.renew(opts) if !clean_cache_opts? opts
-      elsif opts[:skip_virtual]
-        return
-      else
-        # need to load modules here to call the right virtual? method
-        card.include_set_modules unless opts[:skip_modules]
-        return unless card.virtual? || opts[:subcard]
+      case
+      when opts[:new].present? then return card.renew(opts)
+      when opts[:new] # noop for empty hash
+      when opts[:skip_virtual] then return nil
       end
-      card.name = mark.to_s if mark && mark.to_s != card.name && !opts[:subcard]
+      card.rename_from_mark mark unless opts[:local_only]
     end
-
+    # need to load modules here to call the right virtual? method
     card.include_set_modules unless opts[:skip_modules]
-    card
+    card if opts[:new] || card.known?
   end
+
+
 
   def fetch_local mark, opts = {}
     fetch mark, opts.merge(:local_only=>true)
@@ -137,6 +132,12 @@ module ClassMethods
     end
   end
 
+  def validate_fetch_opts! opts
+    if opts[:new] && opts[:skip_virtual]
+      fail Card::Error, 'fetch called with new args and skip_virtual'
+    end
+  end
+
   def cache
     Card::Cache[Card]
   end
@@ -184,19 +185,21 @@ module ClassMethods
   end
 
   def new_for_cache name, opts
-    new_args = { name: name, skip_modules: true }
-    new_args[:type_id] = -1 unless clean_cache_opts? opts
-    # The -1 type_id allows us to skip all the type lookup and flag the need for
-    # reinitialization later.  *** It should NEVER be seen elsewhere ***
-    new new_args
+    new name: name,
+        skip_modules: true,
+        skip_type_lookup: skip_type_lookup?(opts)
   end
 
-  def clean_cache_opts? opts
-    !opts[:skip_virtual] && !opts[:new].present?
+  def skip_type_lookup? opts
+    # if opts[:new] is not empty then we are initializing a variant that is
+    # different from the cached variant
+    # and can postpone type lookup for the cached variant
+    # if skipping virtual no need to look for actual type
+    opts[:skip_virtual] || opts[:new].present?
   end
 
-  def write_to_cache card, local_only = false
-    if local_only
+  def write_to_cache card, opts
+    if opts[:local_only]
       write_to_local_cache card
     elsif Card.cache
       Card.cache.write card.key, card
@@ -294,3 +297,13 @@ end
 def eager_renew? opts
   opts[:skip_virtual] && new_card? && opts[:new].present?
 end
+
+def type_unknown?
+  type_id.nil?
+end
+
+def rename_from_mark mark
+  return unless mark && mark.to_s != name
+  self.name = mark.to_s
+end
+

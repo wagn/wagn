@@ -15,9 +15,10 @@ def initialize args = {}
   args['db_content'] = args.delete('content') if args['content']
   @supercard = args.delete 'supercard' # must come before name =
   skip_modules = args.delete 'skip_modules'
+  skip_type_lookup = args['skip_type_lookup']
 
   super args # ActiveRecord #initialize
-  if !type_id
+  if !type_id && !skip_type_lookup
     self.type_id = get_type_id_from_structure
   end
   include_set_modules unless skip_modules

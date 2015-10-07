@@ -7,7 +7,8 @@ def assign_attributes args={}
     Card.set_specific_attributes.each do |key|
       @set_specific[key] = args.delete(key) if args[key]
     end
-    new_type_id = extract_type_id! args
+
+    new_type_id = extract_type_id! args unless args.delete('skip_type_lookup')
     subcard_args = extract_subcard_args! args
 
     if new_type_id

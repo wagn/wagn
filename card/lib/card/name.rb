@@ -67,7 +67,7 @@ class Card
 
 
     def relative?
-      s =~ RELATIVE_REGEXP || s.starts_with_joint?
+      s =~ RELATIVE_REGEXP || starts_with_joint?
     end
 
     def absolute?

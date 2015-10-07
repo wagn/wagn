@@ -15,7 +15,7 @@ phase_method :add_subcard, before: :approve do |name_or_card, args=nil|
 end
 
 phase_method :add_subfield, before: :approve do |name_or_card, args=nil|
-  subcards.add_field name, args
+  subcards.add_field name_or_card, args
 end
 
 def remove_subcard name_or_card

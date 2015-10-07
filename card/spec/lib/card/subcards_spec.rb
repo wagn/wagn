@@ -64,11 +64,11 @@ describe Card::Subcards do
     end
     subject { Card.fetch("#{@card.name}+sub", subcard: true).content }
     it 'works with string' do
-      @card.add_subfield 'sub', content: 'this is a sub'
+      @card._add_subfield 'sub', content: 'this is a sub'
       is_expected.to eq 'this is a sub'
     end
     it 'works with codename' do
-      @card.add_subfield :phrase, content: 'this is a sub'
+      @card._add_subfield :phrase, content: 'this is a sub'
       subcard = Card.fetch('A+phrase', subcard: true)
       expect(subcard.content).to eq 'this is a sub'
     end
@@ -80,12 +80,12 @@ describe Card::Subcards do
     end
     subject { Card.fetch("#{@card.name}+sub", subcard: true).content }
     it 'works with string' do
-      @card.add_subfield 'sub', content: 'this is a sub'
+      @card._add_subfield 'sub', content: 'this is a sub'
       expect(@card.subfield('sub').content).to eq 'this is a sub'
     end
 
     it 'works with codename' do
-      @card.add_subfield :phrase, content: 'this is a sub'
+      @card._add_subfield :phrase, content: 'this is a sub'
       expect(@card.subfield(':phrase').content).to eq 'this is a sub'
     end
   end
@@ -95,7 +95,7 @@ describe Card::Subcards do
       @card = Card['A']
     end
     it 'adds a subcard' do
-      @card.add_subcard 'sub', content: 'sub content'
+      @card._add_subcard 'sub', content: 'sub content'
       @card.save!
       expect(Card['sub'].content).to eq 'sub content'
     end

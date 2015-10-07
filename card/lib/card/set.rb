@@ -172,7 +172,8 @@ class Card
 
     def phase_method method, opts={}, &block
       class_eval do
-        define_method method, proc { |*args|
+        define_method "_#{method}", &block
+        define_method method do |*args|
           error =
             if !phase_ok? opts
               if !@phase
@@ -186,9 +187,9 @@ class Card
           if error
             raise Card::Error, error
           else
-            block.call(*args)
+            send "_#{method}", *args
           end
-        }
+        end
       end
     end
 

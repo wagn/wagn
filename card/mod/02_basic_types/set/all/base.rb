@@ -57,7 +57,9 @@ format do
     Card::Content.truncatewords_with_closing_tags _render_core(args)
   end
 
-  view(:blank, closed: true, perms: :none) { '' }
+  view :blank, closed: true, perms: :none do
+    ''
+  end
 
   # note: content and open_content may look like they should be aliased to
   # core, but it's important that they render core explicitly so that core view
@@ -99,24 +101,23 @@ format do
       set_name =
         case
         when name.absolute?
-          "#{name}+#{Card[:self].name}"                    # *self set
+          "#{name}+#{Card[:self].name}" # *self set
         when type = on_type_set
-          "#{type}#{name}+#{Card[:type_plus_right].name}"  # *type plus right
+          "#{type}#{name}+#{Card[:type_plus_right].name}" # *type plus right
         else
-          "#{tname.gsub(/^\+/, '')}+#{Card[:right].name}"  # *right
+          "#{stripped_name.gsub(/^\+/, '')}+#{Card[:right].name}" # *right
         end
       subformat(Card.fetch set_name).render_template_link args
     end
   end
 
   def on_type_set
-    if (tmpl_set_name = parent.card.cardname.trunk_name) &&
-       (tmpl_set_class_name = tmpl_set_name.tag_name) &&
-       (tmpl_set_class_card = Card[tmpl_set_name.tag_name]) &&
-       (tmpl_set_class.codename == 'type')
+    return unless
+      (tmpl_set_name = parent.card.cardname.trunk_name) &&
+      (tmpl_set_class_name = tmpl_set_name.tag_name) &&
+      (tmpl_set_class_card = Card[tmpl_set_class_name]) &&
+      (tmpl_set_class_card.codename == 'type')
 
-       tmpl_set_name.left_name
-    end
+    tmpl_set_name.left_name
   end
-
 end

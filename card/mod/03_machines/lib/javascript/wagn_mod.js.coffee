@@ -10,19 +10,15 @@ $.extend wagn,
     '.pointer-multiselect' : -> pointerContent @val()
     '.pointer-radio-list' : -> pointerContent @find('input:checked').val()
     '.pointer-list-ul' : -> 
-                            pointerContent @find('input')
-                            .map( -> $(this).val() )
+      pointerContent @find('input').map( -> $(this).val() )
     '.pointer-checkbox-list' : -> 
-                                pointerContent @find('input:checked')
-                                .map( -> $(this).val() )
+      pointerContent @find('input:checked').map( -> $(this).val() )
     '.pointer-select-list' : -> 
-                                pointerContent @find('.pointer-select select')
-                                .map( -> $(this).val() )
+      pointerContent @find('.pointer-select select').map( -> $(this).val() )
     '.pointer-mixed' : -> 
-                          element = '.pointer-checkbox-sublist input:checked,\
-                                    .pointer-sublist-ul input'
-                          pointerContent @find(element)
-                                          .map( -> $(this).val() )
+      element = '.pointer-checkbox-sublist input:checked,\
+                .pointer-sublist-ul input'
+      pointerContent @find(element).map( -> $(this).val() )
     # must happen after pointer-list-ul, I think
     '.perm-editor' : -> permissionsContent this 
   }
@@ -33,13 +29,13 @@ $.extend wagn,
     '.ace-editor-textarea' : -> wagn.initAce $(this)
     '.tinymce-textarea' : -> wagn.initTinyMCE @[0].id
     '.pointer-list-editor' : -> 
-                                @sortable({handle : '.handle', cancel : ''})
-                                wagn.initPointerList @find('input')
+      @sortable({handle : '.handle', cancel : ''})
+      wagn.initPointerList @find('input')
     '.file-upload' : -> wagn.upload_file(this)
     '.etherpad-textarea' : -> 
-                              $(this).closest('form')
-                              .find('.edit-submit-button')
-                              .attr('class', 'etherpad-submit-button')
+      $(this).closest('form')
+      .find('.edit-submit-button')
+      .attr('class', 'etherpad-submit-button')
   }
   upload_file: (fileupload) ->
     # for file as a subcard in a form,

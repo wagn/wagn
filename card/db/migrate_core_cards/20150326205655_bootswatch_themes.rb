@@ -13,7 +13,6 @@ class BootswatchThemes < Card::CoreMigration
     %w{bootstrap_default cerulean cosmo cyborg darkly flatly journal lumen paper readable sandstone simplex slate spacelab superhero united yeti }.each do |theme_name|
       path = data_path "themes/#{theme_name}"
       theme = Card.fetch "#{theme_name} skin"
-
       if theme
         theme.update_attributes! type_id: Card::SkinID, content: "[[themeless bootstrap skin]]\n[[+bootswatch theme]]", subcards: {
           "+variables" => {type_id: Card::ScssID, content: File.read(File.join path, '_variables.scss')},

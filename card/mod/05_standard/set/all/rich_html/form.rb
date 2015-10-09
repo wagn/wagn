@@ -1,20 +1,22 @@
 format :html do
   def edit_slot args={}
-    #note: @mode should already be :edit here...
+    # note: @mode should already be :edit here...
     if args[:structure] || card.structure
       # multi-card editing
 
       if args[:core_edit] #need better name
         _render_core args
       else
-        process_relative_tags optional_toolbar: :hide, structure: args[:structure]
+        process_relative_tags optional_toolbar: :hide,
+                              structure: args[:structure]
       end
 
     else
       # single-card edit mode
       field = content_field form, args
 
-      if [ args[:optional_type_formgroup], args[:optional_name_formgroup] ].member? :show
+      if [args[:optional_type_formgroup], args[:optional_name_formgroup]]
+         .member? :show
         # display content field in formgroup for consistency with other fields
         formgroup '', field, editor: :content
       else
@@ -23,16 +25,13 @@ format :html do
     end
   end
 
-
   def form_for_multi
-    card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_card?  ##FIXME -- need to match other relative inclusions.
+    instantiate_builder("card[subcards]#{subcard_input_names}", card, {})
+  end
 
-    # doesn't work anymore in Rails 4
-    # TODO -- check whether forms work with the new instantiate_builder call
-    # block = Proc.new {}
-    # builder = ActionView::Base.default_form_builder
-    # builder.new("card[subcards][#{card.relative_name}]", card, template, {}, block)
-    builder = instantiate_builder("card[subcards][#{card.relative_name}]", card, {})
+  def subcard_input_names
+    return '' if !form_root_format || form_root_format == self
+    "#{@parent.subcard_input_names}[#{card.contextual_name}]"
   end
 
   def form
@@ -40,6 +39,7 @@ format :html do
   end
 
   def card_form action, opts={}
+    @form_root = true
     hidden_args = opts.delete :hidden
     form_for card, card_form_opts(action, opts) do |form|
       @form = form
@@ -47,6 +47,16 @@ format :html do
         #{ hidden_tags hidden_args if hidden_args }
         #{ yield form }
       }
+    end
+  end
+
+  def form_root_format
+    if @form_root
+      self
+    elsif !@parent
+      nil
+    else
+      @parent.form_root_format
     end
   end
 

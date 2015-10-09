@@ -26,33 +26,12 @@ def type= type_name
   self.type_id = Card.fetch_id type_name
 end
 
-def get_type_id args={}
-  return if args[:type_id] # type_id was set explicitly.  no need to set again.
-
-  type_id = case
-    when args[:type_code]
-      if code=args[:type_code]
-        Card::Codename[code] || ( c=Card[code] and c.id)
-      end
-    when args[:type]
-      Card.fetch_id args[:type]
-    else :noop
-    end
-
-  case type_id
-  when :noop
-  when false, nil
-    errors.add :type, "#{args[:type] || args[:type_code]} is not a known type."
-  else
-    return type_id
-  end
-
-  if name && t=template
-    reset_patterns #still necessary even with new template handling?
+def get_type_id_from_structure
+  if name && (t = template)
+    reset_patterns # still necessary even with new template handling?
     t.type_id
   end
 end
-
 
 event :validate_type_change, before: :approve, on: :update, changed: :type_id do
   if c = dup and c.action == :create and !c.valid?

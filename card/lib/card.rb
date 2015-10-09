@@ -32,6 +32,7 @@ class Card < ActiveRecord::Base
   require_dependency 'card/act'
   require_dependency 'card/change'
   require_dependency 'card/reference'
+  require_dependency 'card/subcards'
   require_dependency 'card/view_cache'
 
   has_many :references_from, class_name: :Reference, foreign_key: :referee_id
@@ -43,7 +44,7 @@ class Card < ActiveRecord::Base
   cattr_accessor :set_patterns, :error_codes, :serializable_attributes, :set_specific_attributes
   @@set_patterns, @@error_codes = [], {}
 
-  serializable_attr_accessor :action, :supercard, :current_act, :current_action,
+  serializable_attr_accessor :action, :supercard, :superleft, :current_act, :current_action,
     :comment, :comment_author,    # obviated soon
     :update_referencers,          # wrong mechanism for this
     :update_all_users,            # if the above is wrong then this one too

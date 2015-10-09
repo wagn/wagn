@@ -172,8 +172,6 @@ describe Card::Set::Type::EmailTemplate do
 
        it 'handles contextual name in address search' do
          update_field '*from', content: '{"left":"_self", "right":"email"}', type: 'Search'
-         update_field '*from', content: '{"left":"_self", "right":"email"}'                  #FIXME: have to do this twice to get the right content.
-                                                                                                #       After the first update the content is empty
          expect(subject[:from]).to eq "gary@gary.com"
        end
 

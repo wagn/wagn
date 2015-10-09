@@ -8,15 +8,29 @@ def assign_attributes args={}
       @set_specific[key] = args.delete(key) if args[key]
     end
 
-    if newtype = args.delete('type')
-      args['type_id'] = Card.fetch_id newtype
+    new_type_id = extract_type_id! args unless args.delete('skip_type_lookup')
+    subcard_args = extract_subcard_args! args
+
+    if new_type_id
+      args['type_id'] = new_type_id
     end
-    @subcards = extract_subcard_args! args
     reset_patterns
   end
   params = ActionController::Parameters.new(args)
   params.permit!
+
   super params
+
+  if args
+    # if new_type_id
+    #   self.type_id = new_type_id
+    #   #self.expire true
+    # end
+    # name= must come before process subcards
+    if subcard_args.present?
+      subcards.add subcard_args
+    end
+  end
 end
 
 def assign_set_specific_attributes
@@ -27,20 +41,38 @@ def assign_set_specific_attributes
   end
 end
 
-def extract_subcard_args! args={}
-  extracted_subcards = args.delete('subcards') || {}
+protected
+
+def extract_subcard_args! args
+  subcards = args.delete('subcards') || {}
   args.keys.each do |key|
     if key =~ /^\+/
-      val = args.delete key
-      val = { 'content' => val } if String === val
-      extracted_subcards[key] = val
+      subcards[key] = args.delete(key)
     end
   end
-  extracted_subcards
+  subcards
 end
 
+def extract_type_id! args = {}
+  type_id =
+    case
+    when args['type_id']
+      id = args.delete('type_id').to_i
+      # type_id can come in as 0,'' or nil
+      id == 0 ? nil : id
+    when args['type_code']
+      Card.fetch_id args.delete('type_code').to_sym
+    when args['type']
+      Card.fetch_id args.delete('type')
+    else
+      return nil
+    end
 
-protected
+  if !type_id
+    errors.add :type, "#{args[:type] || args[:type_code]} is not a known type."
+  end
+  type_id
+end
 
 event :set_content, before: :store, on: :save do
   self.db_content = content || '' #necessary?
@@ -113,18 +145,18 @@ end
 #  set_callback :store, :after, :process_read_rule_update_queue, prepend: true
 
 event :expire_related, after: :store do
-  self.expire
+  self.expire true
 
   if self.is_structure?
     self.structuree_names.each do |name|
-      Card.expire name
+      Card.expire name, true
     end
   end
   # FIXME really shouldn't be instantiating all the following bastards.  Just need the key.
   # fix in id_cache branch
-  self.dependents.each       { |c| c.expire }
-  # self.referencers.each      { |c| c.expire }
-  self.name_referencers.each { |c| c.expire }
+  self.dependents.each       { |c| c.expire(true) }
+  # self.referencers.each      { |c| c.expire(true) }
+  self.name_referencers.each { |c| c.expire(true) }
   # FIXME: this will need review when we do the new defaults/templating system
 end
 

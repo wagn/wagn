@@ -116,7 +116,8 @@ class Card
         event_suffix = host_class.name.gsub ':', '_'
         host_class.event(
           "reset_machine_output_#{ event_suffix }".to_sym,
-          after: :store_subcards, on: :save
+          after: :expire_related, on: :save
+          #after: :store_subcards, on: :save
         ) do
           reset_machine_output!
         end

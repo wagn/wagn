@@ -4,7 +4,6 @@ module CarrierWave
   module CardMount
     include CarrierWave::Mount
 
-
     def uploaders
       Card.uploaders ||= {}
     end
@@ -13,26 +12,33 @@ module CarrierWave
       Card.uploader_options ||= {}
     end
 
-    def mount_uploader(column, uploader=nil, options={}, &block)
+    def mount_uploader column, uploader=nil, options={}, &block
       options[:mount_on] ||= :db_content
       super
 
-      class_eval <<-RUBY, __FILE__, __LINE__+1
+      class_eval <<-RUBY, __FILE__, __LINE__ + 1
         event :store_#{column}_event, on: :save, after: :store do
           store_#{column}!
         end
 
         # remove files only if card has no history
-        event :remove_#{column}_event, on: :delete, after: :stored, when: proc { |c| !c.history? } do
+        event :remove_#{column}_event,
+              on: :delete, after: :stored, when: proc { |c| !c.history? } do
           remove_#{column}!
         end
-        event :mark_remove_#{column}_false_event, on: :update, after: :stored do
+        event :mark_remove_#{column}_false_event,
+              on: :update, after: :stored do
           mark_remove_#{column}_false
         end
-        event :store_previous_model_for_#{column}_event, on: :update, before: :store, when: proc { |c| !c.history? } do
+        event :store_previous_model_for_#{column}_event,
+              on: :update, before: :store, when: proc { |c| !c.history? } do
           store_previous_model_for_#{column}
         end
-        event :remove_previously_stored_#{column}_event, on: :update, after: :store, when: proc { |c| !c.history?} do
+        event :remove_previously_stored_#{column}_event,
+              on: :update, after: :store, when: proc { |c| !c.history?} do
+          if @previous_model_for_#{column}
+            @previous_model_for_#{column}.include_set_modules
+          end
           remove_previously_stored_#{column}
         end
 
@@ -87,11 +93,14 @@ module CarrierWave
         def serializable_hash(options=nil)
           hash = {}
 
-          except = options && options[:except] && Array.wrap(options[:except]).map(&:to_s)
-          only   = options && options[:only]   && Array.wrap(options[:only]).map(&:to_s)
+          except = options && options[:except] &&
+                   Array.wrap(options[:except]).map(&:to_s)
+          only   = options && options[:only]   &&
+                   Array.wrap(options[:only]).map(&:to_s)
 
           self.class.uploaders.each do |column, uploader|
-            if (!only && !except) || (only && only.include?(column.to_s)) || (!only && except && !except.include?(column.to_s))
+            if (!only && !except) || (only && only.include?(column.to_s)) ||
+               (!only && except && !except.include?(column.to_s))
               hash[column.to_s] = _mounter(column).uploader.serializable_hash
             end
           end
@@ -99,6 +108,5 @@ module CarrierWave
         end
       RUBY
     end
-
   end
 end

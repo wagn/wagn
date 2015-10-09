@@ -193,7 +193,6 @@ format do
     end
   end
 
-
   def nested_fields args={}
     result = []
     each_nested_field(args) do |chunk|

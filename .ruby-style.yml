@@ -102,14 +102,14 @@ Style/CollectionMethods:
   PreferredMethods:
     collect: map
     collect!: map!
-    find: detect
+    detect: find
     find_all: select
     reduce: inject
 Style/CommentAnnotation:
   Description: Checks formatting of special comments (TODO, FIXME, OPTIMIZE, HACK,
     REVIEW).
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#annotate-keywords
-  Enabled: false
+  Enabled: true
   Keywords:
   - TODO
   - FIXME
@@ -120,7 +120,7 @@ Style/DotPosition:
   Description: Checks the position of the dot in multi-line method calls.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#consistent-multi-line-chains
   Enabled: true
-  EnforcedStyle: trailing
+  EnforcedStyle: leading
   SupportedStyles:
   - leading
   - trailing
@@ -154,7 +154,7 @@ Style/Encoding:
   Description: Use UTF-8 as the source file encoding.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#utf-8
   Enabled: false
-  EnforcedStyle: always
+  EnforcedStyle: when_needed
   SupportedStyles:
   - when_needed
   - always
@@ -196,7 +196,7 @@ Style/GlobalVars:
 Style/GuardClause:
   Description: Check for conditionals that can be replaced with guard clauses
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#no-nested-conditionals
-  Enabled: false
+  Enabled: true
   MinBodyLength: 1
 Style/HashSyntax:
   Description: 'Prefer Ruby 1.9 hash syntax { a: 1, b: 2 } over 1.8 syntax { :a =>
@@ -250,7 +250,7 @@ Style/MethodDefParentheses:
   Description: Checks if the method definitions have or don't have parentheses.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#method-parens
   Enabled: true
-  EnforcedStyle: require_parentheses
+  EnforcedStyle: require_no_parentheses
   SupportedStyles:
   - require_parentheses
   - require_no_parentheses
@@ -330,7 +330,7 @@ Style/RegexpLiteral:
     characters. Use %r only for regular expressions matching more than `MaxSlashes`
     '/' character.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#percent-r
-  Enabled: false
+  Enabled: true
   MaxSlashes: 1
 Style/Semicolon:
   Description: Don't use semicolons to terminate expressions.
@@ -390,7 +390,7 @@ Style/SpaceAroundEqualsInParameterDefault:
     or don't have surrounding space depending on configuration.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#spaces-around-equals
   Enabled: true
-  EnforcedStyle: space
+  EnforcedStyle: no_space
   SupportedStyles:
   - space
   - no_space
@@ -518,9 +518,9 @@ Metrics/LineLength:
 Metrics/MethodLength:
   Description: Avoid methods longer than 10 lines of code.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#short-methods
-  Enabled: false
+  Enabled: true
   CountComments: false
-  Max: 10
+  Max: 15
 Metrics/ParameterLists:
   Description: Avoid parameter lists longer than three or four parameters.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#too-many-params
@@ -535,7 +535,7 @@ Metrics/PerceivedComplexity:
 Lint/AssignmentInCondition:
   Description: Don't use assignment in conditions.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#safe-assignment-in-condition
-  Enabled: false
+  Enabled: true
   AllowSafeAssignment: true
 Lint/EndAlignment:
   Description: Align ends correctly.
@@ -606,7 +606,7 @@ Style/SymbolArray:
   Enabled: false
 Style/ExtraSpacing:
   Description: Do not use unnecessary spacing.
-  Enabled: true
+  Enabled: false
 Style/AccessorMethodName:
   Description: Check the naming of accessor methods for get_/set_.
   Enabled: false

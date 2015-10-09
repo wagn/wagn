@@ -32,6 +32,7 @@ Feature: File Upload
     Then I should see "image2.jpg 69.8 KB"
     And I press "Submit"
     Then I should see an image of size "large" and type "jpg"
+    And I wait until ajax response done
 
   Scenario: Changing a mod image
     When I edit "*logo"
@@ -40,6 +41,7 @@ Feature: File Upload
     Then I should see "image2.jpg 69.8 KB"
     And I press "Submit"
     Then I should see an image of size "large" and type "jpg"
+    And I wait until ajax response done
 
   Scenario: uploading a file as a field in a form
     When I go to  "/new Cardtype"
@@ -54,6 +56,7 @@ Feature: File Upload
     Then I should see "image.png 34.3 KB"
     And I press "Submit" 
     Then I should see an image of size "medium" and type "png"
+    And I wait until ajax response done
 
   Scenario: updating a file as a field in a form
     When I go to  "/new Cardtype"
@@ -72,7 +75,7 @@ Feature: File Upload
     Then I should see "image2.jpg 69.8 KB"
     And I press "Submit"
     Then I should see an image of size "medium" and type "jpg"
-    Then I wait until ajax response done
+    And I wait until ajax response done
 
 
 

@@ -57,8 +57,6 @@ module ClassMethods
     card if opts[:new] || card.known?
   end
 
-
-
   def fetch_local mark, opts = {}
     fetch mark, opts.merge(:local_only=>true)
   end
@@ -69,9 +67,13 @@ module ClassMethods
     elsif mark.is_a?(Symbol) && Card::Codename[mark]
       Card::Codename[mark]
     else
-      card = fetch mark.to_s, skip_virtual: true, skip_modules: true
+      card = quick_fetch mark.to_s
       card && card.id
     end
+  end
+
+  def quick_fetch mark
+    fetch mark, skip_virtual: true, skip_modules: true
   end
 
   def assign_or_initialize_by name, attributes, fetch_opts = {}
@@ -88,7 +90,7 @@ module ClassMethods
   end
 
   def exists? mark
-    card = fetch mark, skip_virtual: true, skip_modules: true
+    card = quick_fetch mark
     card.present?
   end
 

@@ -41,7 +41,7 @@ $.extend wagn,
       url = "/card/update/"+$(fileupload).siblings("#file_card_name").val()
     else
       url = "/card/create"
-    $(fileupload).fileupload( 
+    $(fileupload).fileupload(
       url: url,
       dataType: 'html',
       done: wagn.doneFile,

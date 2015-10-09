@@ -32,7 +32,7 @@ $.extend wagn,
       @sortable({handle : '.handle', cancel : ''})
       wagn.initPointerList @find('input')
     '.file-upload' : -> wagn.upload_file(this)
-    '.etherpad-textarea' : -> 
+    '.etherpad-textarea' : ->
       $(this).closest('form')
       .find('.edit-submit-button')
       .attr('class', 'etherpad-submit-button')

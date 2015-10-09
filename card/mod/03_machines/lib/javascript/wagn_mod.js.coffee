@@ -4,32 +4,33 @@ window.wagn ||= {} #needed to run w/o *head.  eg. jasmine
 
 $.extend wagn,
   editorContentFunctionMap: {
-    '.ace-editor-textarea'   : -> ace_editor_content this[0]
-    '.tinymce-textarea'      : -> tinyMCE.get(@[0].id).getContent()
-    '.pointer-select'        : -> pointerContent @val()
-    '.pointer-multiselect'   : -> pointerContent @val()
-    '.pointer-radio-list'    : -> pointerContent @find('input:checked').val()
-    '.pointer-list-ul'       : -> pointerContent @find('input'        ).map( -> $(this).val() )
+    '.ace-editor-textarea' : -> ace_editor_content this[0]
+    '.tinymce-textarea' : -> tinyMCE.get(@[0].id).getContent()
+    '.pointer-select' : -> pointerContent @val()
+    '.pointer-multiselect' : -> pointerContent @val()
+    '.pointer-radio-list' : -> pointerContent @find('input:checked').val()
+    '.pointer-list-ul' : -> pointerContent @find('input'        ).map( -> $(this).val() )
     '.pointer-checkbox-list' : -> pointerContent @find('input:checked').map( -> $(this).val() )
-    '.pointer-select-list'   : -> pointerContent @find('.pointer-select select').map( -> $(this).val() )
-    '.pointer-mixed'         : -> pointerContent @find('.pointer-checkbox-sublist input:checked, .pointer-sublist-ul input').map( -> $(this).val() )
-    '.perm-editor'           : -> permissionsContent this # must happen after pointer-list-ul, I think
+    '.pointer-select-list' : -> pointerContent @find('.pointer-select select').map( -> $(this).val() )
+    '.pointer-mixed' : -> pointerContent @find('.pointer-checkbox-sublist input:checked, .pointer-sublist-ul input').map( -> $(this).val() )
+    '.perm-editor' : -> permissionsContent this # must happen after pointer-list-ul, I think
   }
 
   editorInitFunctionMap: {
-    '.date-editor'           : -> @datepicker { dateFormat: 'yy-mm-dd' }
-    'textarea'               : -> $(this).autosize()
-    '.ace-editor-textarea'   : -> wagn.initAce $(this)
-    '.tinymce-textarea'      : -> wagn.initTinyMCE @[0].id
-    '.pointer-list-editor'   : -> @sortable({handle: '.handle', cancel: ''}); wagn.initPointerList @find('input')
-    '.file-upload'           : -> wagn.upload_file(this)
-    '.etherpad-textarea'     : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
+    '.date-editor' : -> @datepicker { dateFormat: 'yy-mm-dd' }
+    'textarea' : -> $(this).autosize()
+    '.ace-editor-textarea' : -> wagn.initAce $(this)
+    '.tinymce-textarea' : -> wagn.initTinyMCE @[0].id
+    '.pointer-list-editor' : -> @sortable({handle: '.handle', cancel: ''}); wagn.initPointerList @find('input')
+    '.file-upload' : -> wagn.upload_file(this)
+    '.etherpad-textarea' : -> $(this).closest('form').find('.edit-submit-button').attr('class', 'etherpad-submit-button')
   }
   upload_file: (fileupload) ->
-    # for file as a subcard in a form, 
+    # for file as a subcard in a form,
     # excess parameters are inlcuded in the request which cause errors.
     # only the file, type_id and attachment_card_name are needed
-    # attachment_card_name is the original card name, ex: card[subcards][+logo][image], card[file]
+    # attachment_card_name is the original card name, 
+    # ex: card[subcards][+logo][image], card[file]
     $(fileupload).bind 'fileuploadsubmit', (e,data) ->
       $_this = $(this)
       card_name = $_this.siblings(".attachment_card_name:first").attr("name")
@@ -40,7 +41,13 @@ $.extend wagn,
       url = "/card/update/"+$(fileupload).siblings("#file_card_name").val()
     else
       url = "/card/create"
-    $(fileupload).fileupload( url: url, dataType: 'html', done: wagn.doneFile, add: wagn.chooseFile, progressall: wagn.progressallFile )#, forceIframeTransport: true )    
+    $(fileupload).fileupload( 
+      url: url,
+      dataType: 'html',
+      done: wagn.doneFile,
+      add: wagn.chooseFile,
+      progressall: wagn.progressallFile
+    )#, forceIframeTransport: true )
 
   initPointerList: (input)->
     optionsCard = input.closest('ul').data('options-card')

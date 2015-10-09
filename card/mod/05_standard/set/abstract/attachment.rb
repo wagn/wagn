@@ -31,7 +31,9 @@ event :assign_attachment_on_create, after: :prepare, on: :create, when: proc { |
   end
 end
 
-event :assign_attachment_on_update, after: :prepare, on: :update, when:  proc { |c| c.save_preliminary_upload? } do
+event :assign_attachment_on_update, after: :prepare, on: :update, when:  proc {
+ |c| c.save_preliminary_upload? 
+} do
   if (action = Card::Action.fetch(@cached_upload))
     uploaded_file =
        with_selected_action_id(action.id) do

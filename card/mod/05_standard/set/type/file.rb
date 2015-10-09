@@ -131,7 +131,7 @@ format :html do
              <input class="file-upload slotter form-control" type="file" 
                 name="card[#{card.type_code}]" id="card_#{card.type_code}">
              #{ hidden_field_tag 'attachment_type_id', card.type_id }
-             #{ hidden_field card.attachment_name, class: "attachment_card_name" }
+             #{ hidden_field card.attachment_name, class: "attachment_card_name", value: '' }
              #{ hidden_field_tag 'file_card_name', card.cardname.url_key }
         </span>
       </div>

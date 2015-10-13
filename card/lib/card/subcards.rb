@@ -68,10 +68,12 @@ class Card
           new_by_attributes args.delete(:name), args
         else
           args.each_pair do |key, val|
-            if val.is_a? String
-              new_by_attributes key, content: val
-            else
-              new_by_attributes key, val
+            case val
+            when String then new_by_attributes key, content: val
+            when Card
+              val.name = absolutize_subcard_name key
+              new_by_card val
+            else new_by_attributes key, val
             end
           end
         end
@@ -193,12 +195,7 @@ class Card
     end
 
     def new_by_attributes name, attributes={}
-      absolute_name =
-        if @context_card.name =~ /^\+/
-          name.to_name
-        else
-          name.to_name.to_absolute_name(@context_card.name)
-        end
+      absolute_name = absolutize_subcard_name name
       if absolute_name.a_field_of?(@context_card.name) &&
          (absolute_name.parts.size - @context_card.cardname.parts.size) > 2
         left_card = new_by_attributes absolute_name.left
@@ -208,6 +205,14 @@ class Card
         card = Card.assign_or_initialize_by absolute_name.s, attributes,
                                             local_only: true
         new_by_card card
+      end
+    end
+
+    def absolutize_subcard_name name
+      if @context_card.name =~ /^\+/
+        name.to_name
+      else
+        name.to_name.to_absolute_name(@context_card.name)
       end
     end
 

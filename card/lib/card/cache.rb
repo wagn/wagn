@@ -173,8 +173,8 @@ class Card
       end
     end
 
-    def fetch_local key, &block
-      read_local(key) || write_local(key, block.call)
+    def fetch_local key
+      read_local(key) || write_local(key, yield)
     end
 
     def delete key

@@ -4,23 +4,35 @@ def history?
   true
 end
 
-# must be called on all actions and before :set_name, :process_subcards and :validate_delete_children
-event :assign_act,  before: :prepare, when: proc {|c| c.history? || c.respond_to?(:attachment) }  do
-  @current_act = (@supercard && @supercard.current_act) || Card::Act.create(ip_address: Env.ip)
+# must be called on all actions and before :set_name, :process_subcards and
+# :validate_delete_children
+event :assign_act,
+      before: :prepare,
+      when: proc { |c| c.history? || c.respond_to?(:attachment) }  do
+  @current_act = (@supercard && @supercard.current_act) ||
+                 Card::Act.create(ip_address: Env.ip)
 end
 
 event :assign_action, after: :assign_act do
-  @current_action = Card::Action.create(card_act_id: @current_act.id, action_type: @action, draft: (Env.params['draft'] == 'true') )
-  if (@supercard and @supercard !=self)
+  @current_action = Card::Action.create(
+    card_act_id: @current_act.id, action_type: @action,
+    draft: (Env.params['draft'] == 'true')
+  )
+  if @supercard && @supercard != self
     @current_action.super_action = @supercard.current_action
   end
 end
 
-
 # stores changes in the changes table and assigns them to the current action
 # removes the action if there are no changes
-event :finalize_action, after: :stored, when: proc {|c| (c.history? || c.respond_to?(:attachment)) && c.current_action} do
-  @changed_fields = Card::TRACKED_FIELDS.select{ |f| changed_attributes.member? f }
+event :finalize_action,
+      after: :stored,
+      when: proc { |c|
+        (c.history? || c.respond_to?(:attachment)) && c.current_action
+      } do
+  @changed_fields = Card::TRACKED_FIELDS.select do |f|
+    changed_attributes.member? f
+  end
   if @changed_fields.present?
     @changed_fields.each{ |f| Card::Change.create field: f, value: self[f], card_action_id: @current_action.id }
     @current_action.update_attributes! card_id: id
@@ -30,7 +42,9 @@ event :finalize_action, after: :stored, when: proc {|c| (c.history? || c.respond
   end
 end
 
-event :finalize_act, after: :finalize_action, when: proc {|c| !c.supercard } do
+event :finalize_act,
+      after: :finalize_action,
+      when: proc { |c| !c.supercard } do
   if @current_act.actions(true).empty?
     @current_act.delete
     @current_act = nil
@@ -39,9 +53,10 @@ event :finalize_act, after: :finalize_action, when: proc {|c| !c.supercard } do
   end
 end
 
-
-event :rollback_actions, before: :approve, on: :update, when: proc{ |c| c.rollback_request? } do
-  revision = { subcards: {}}
+event :rollback_actions,
+      before: :approve, on: :update,
+      when: proc { |c| c.rollback_request? } do
+  revision = { subcards: {} }
   rollback_actions = Env.params['action_ids'].map do |a_id|
     Action.fetch(a_id) || nil
   end
@@ -62,18 +77,20 @@ event :rollback_actions, before: :approve, on: :update, when: proc{ |c| c.rollba
 end
 
 def rollback_request?
-  history? && Env && Env.params['action_ids'] && Env.params['action_ids'].class == Array
+  history? && Env && Env.params['action_ids'] &&
+    Env.params['action_ids'].class == Array
 end
 
-# alternative approach to handle act and action that doesn't change the database in the beginning
-# stopped working with Rails 4
+# alternative approach to handle act and action that doesn't change the
+# database in the beginning stopped working with Rails 4
 # def build_act_and_action
 #   @current_act = if @supercard
 #     @supercard.current_act || @supercard.acts.build(ip_address: Env.ip)
 #   else
 #     acts.build(ip_address: Env.ip)
 #   end
-#   @current_action = actions(true).build(action_type: @action, draft: (Env.params['draft'] == 'true') )
+#   @current_action = actions(true).build(action_type: @action, draft:
+#   (Env.params['draft'] == 'true') )
 #   @current_action.act = @current_act
 #
 #   if (@supercard and @supercard !=self)
@@ -81,27 +98,35 @@ end
 #   end
 # end
 
-
-def intrusive_family_acts args={}   # all acts with actions on self and on cards that are descendants of self and included in self
+# all acts with actions on self and on cards that are descendants of self and
+# included in self
+def intrusive_family_acts args={}
   @intrusive_family_acts ||= begin
-    Act.find_all_with_actions_on( (included_descendant_card_ids << id), args)
+    Act.find_all_with_actions_on((included_descendant_card_ids << id), args)
   end
 end
 
-def intrusive_acts  args={with_drafts: true} # all acts with actions on self and on cards included in self
+# all acts with actions on self and on cards included in self
+def intrusive_acts  args={ with_drafts: true }
   @intrusive_acts ||= begin
-    Act.find_all_with_actions_on( (included_card_ids << id), args)
+    Act.find_all_with_actions_on((included_card_ids << id), args)
   end
 end
 
 def current_rev_nr
   @current_rev_nr ||= begin
-    intrusive_acts.first.actions.last.draft ? @intrusive_acts.size - 1 : @intrusive_acts.size
+    if intrusive_acts.first.actions.last.draft
+      @intrusive_acts.size - 1
+    else
+      @intrusive_acts.size
+    end
   end
 end
 
 def included_card_ids
-  Card::Reference.select(:referee_id).where( ref_type: 'I', referer_id: id ).pluck('referee_id').compact.uniq
+  Card::Reference.select(:referee_id).where(
+    ref_type: 'I', referer_id: id
+  ).pluck('referee_id').compact.uniq
 end
 
 def descendant_card_ids parent_ids=[id]
@@ -119,7 +144,7 @@ end
 
 format :html do
   view :history do |args|
-    frame args.merge(body_class: "history-slot list-group", content: true) do
+    frame args.merge(body_class: 'history-slot list-group', content: true) do
       [
         history_legend,
         _render_revisions
@@ -149,11 +174,11 @@ format :html do
   %div.history-legend
     %span.glyphicon.glyphicon-plus-sign.diff-green
     %span
-      = Card::Diff.render_added_chunk("Added")
+      = Card::Diff.render_added_chunk('Added')
       |
     %span.glyphicon.glyphicon-minus-sign.diff-red
     %span
-      = Card::Diff.render_deleted_chunk("Deleted")
+      = Card::Diff.render_deleted_chunk('Deleted')
       HAML
     end
   end
@@ -170,7 +195,7 @@ format :html do
     act = (params['act_id'] and Card::Act.find(params['act_id'])) || args[:act]
     rev_nr = params['rev_nr'] || args[:rev_nr]
     current_rev_nr = params['current_rev_nr'] || args[:current_rev_nr] || card.current_rev_nr
-    hide_diff = (params["hide_diff"]=="true") || args[:hide_diff]
+    hide_diff = (params['hide_diff'] == ' true') || args[:hide_diff]
     wrap( args.merge(slot_class: "revision-#{act.id} history-slot list-group-item") ) do
       render_haml card: card, act: act, act_view: act_view,
                   current_rev_nr: current_rev_nr, rev_nr: rev_nr,
@@ -182,7 +207,7 @@ format :html do
       = "##{rev_nr}"
     .title
       .actor
-        = link_to act.actor.name, card_url( act.actor.cardname.url_key )
+        = link_to act.actor.name, card_url(act.actor.cardname.url_key)
       .time.timeago
         = time_ago_in_words(act.acted_at)
         ago
@@ -217,15 +242,17 @@ HAML
 
   def render_action action_view, args
     action = args[:action] || card.last_action
-    hide_diff = Env.params["hide_diff"]=="true" || args[:hide_diff]
+    hide_diff = Env.params['hide_diff'] == ' true' || args[:hide_diff]
     name_diff =
       if action.card == card
         name_changes(action, hide_diff)
       else
         link_to name_changes(action, hide_diff),
-                path(view: :related, related: {view: "history",name: action.card.name}),
+                path(view: :related, related: {
+                  view: 'history',name: action.card.name
+                }),
                 class: 'slotter label label-default',
-                'data-slot-selector'=>".card-slot.history-view",
+                'data-slot-selector'=>'.card-slot.history-view',
                 remote: true
       end
 
@@ -305,8 +332,12 @@ HAML
   def rollback_link actions
     not_current = actions.select { |action| action.card.last_action_id != action.id }
     if card.ok?(:update) && not_current.present?
-      "| " + link_to('Save as current', path(action: :update, view: :open, action_ids: not_current),
-        class: 'slotter','data-slot-selector'=>'.card-slot.history-view', remote: true, method: :post, rel: 'nofollow')
+      link_path = path action: :update, view: :open, action_ids: not_current
+      '| ' + link_to(
+        'Save as current', link_path,
+        class: 'slotter','data-slot-selector'=>'.card-slot.history-view',
+        remote: true, method: :post, rel: 'nofollow'
+      )
     end
   end
 
@@ -317,14 +348,17 @@ HAML
       toggled_view = :act_expanded
     end
     link_to '', args.merge(view: toggled_view),
-              class: "slotter revision-#{args[:act_id]} #{ args[:act_view]==:expanded ? "arrow-down" : "arrow-right"}",
+              class: "slotter revision-#{args[:act_id]} #{ args[:act_view] == : expanded ? 'arrow-down' : 'arrow-right'}",
               remote: true
   end
 
   def show_or_hide_changes_link hide_diff, args
-    "| " +  view_link( (hide_diff ? "Show" : "Hide") + " changes", :act_expanded,
+    text = (hide_diff ? 'Show' : 'Hide') + ' changes'
+    '| ' +  view_link(
+      text, :act_expanded,
       path_opts: args.merge(hide_diff: !hide_diff),
-      class: 'slotter', remote: true )
+      class: 'slotter', remote: true
+    )
   end
 end
 
@@ -334,6 +368,6 @@ end
 
 
 def has_edits?
-  Card::Act.where(:actor_id=>id).where('card_id IS NOT NULL').present?
+  Card::Act.where(actor_id: id).where('card_id IS NOT NULL').present?
 end
 

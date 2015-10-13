@@ -119,7 +119,7 @@ event :update_ruled_cards, after: :store do
       if !new_record?
         Card.where(read_rule_id: self.id, trash: false).reject do |w|
           in_set[w.key]
-        end.each &:update_read_rule
+        end.each(&:update_read_rule)
       end
     end
   end
@@ -140,9 +140,7 @@ event :expire_related, after: :store do
       Card.expire name, true
     end
   end
-  subcards.each do |ca|
-    ca.expire_related
-  end
+  subcards.each(&:expire_related)
   # FIXME: really shouldn't be instantiating all the following bastards.
   # Just need the key.
   # fix in id_cache branch

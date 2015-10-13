@@ -147,7 +147,7 @@ class Card
 
     def write_variable key, variable, value
       key = @prefix + key
-      if @store and object = @store.read(key)
+      if @store && (object = @store.read key)
         object.instance_variable_set "@#{ variable }", value
         @store.write key, object
       end
@@ -173,8 +173,8 @@ class Card
       end
     end
 
-    def fetch_local key
-      read_local key or write_local key, yield
+    def fetch_local key, &block
+      read_local(key) || write_local(key, block.call)
     end
 
     def delete key

@@ -1,17 +1,16 @@
 # -*- encoding : utf-8 -*-
 
 class Card::Migration < ActiveRecord::Migration
+  include Card::ActiveRecordHelper
   @type = :deck_cards
 
   class << self
-    include Card::ActiveRecordHelper
-
     # Rake tasks use class methods, migrations use instance methods.
-    # To avoid repetition a lot of instance methods here just call class 
+    # To avoid repetition a lot of instance methods here just call class
     # methods.
     # The subclass Card::CoreMigration needs a different @type so we can't use a
     # class variable @@type. It has to be a class instance variable.
-    # Migrations are subclasses of Card::Migration or Card::CoreMigration 
+    # Migrations are subclasses of Card::Migration or Card::CoreMigration
     # but they don't inherit the @type. The method below solves this problem.
     def type
       @type || (ancestors[1] && ancestors[1].type)

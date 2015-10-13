@@ -17,7 +17,7 @@ module ClassMethods
 end
 
 def name= newname
-  Card.cache.delete_local key
+  # Card.cache.delete_local key
   cardname = newname.to_name
   if @supercard
     @contextual_name = cardname.to_s

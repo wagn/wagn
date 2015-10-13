@@ -128,7 +128,7 @@ class Card
 
       def needs_setup?
         @@simulating_setup_need || (
-          !Card.cache.fetch(SETUP_COMPLETED_KEY) &&
+          !Card.cache.read(SETUP_COMPLETED_KEY) &&
           !Card.cache.write(SETUP_COMPLETED_KEY, account_count > 2)
         )
         # every deck starts with WagnBot and Anonymous account

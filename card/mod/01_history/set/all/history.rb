@@ -348,7 +348,7 @@ HAML
       toggled_view = :act_expanded
     end
     link_to '', args.merge(view: toggled_view),
-              class: "slotter revision-#{args[:act_id]} #{ args[:act_view] == : expanded ? 'arrow-down' : 'arrow-right'}",
+              class: "slotter revision-#{args[:act_id]} #{ args[:act_view] == :expanded ? 'arrow-down' : 'arrow-right'}",
               remote: true
   end
 

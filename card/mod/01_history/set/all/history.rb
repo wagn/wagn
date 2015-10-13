@@ -333,3 +333,7 @@ def diff_args
 end
 
 
+def has_edits?
+  Card::Act.where(:actor_id=>id).where('card_id IS NOT NULL').present?
+end
+

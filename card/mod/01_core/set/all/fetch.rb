@@ -57,8 +57,6 @@ module ClassMethods
     card if opts[:new] || card.known?
   end
 
-
-
   def fetch_local mark, opts = {}
     fetch mark, opts.merge(:local_only=>true)
   end

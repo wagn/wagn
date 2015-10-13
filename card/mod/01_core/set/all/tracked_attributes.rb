@@ -1,4 +1,3 @@
-#fixme -this is called by both initialize and update_attributes.  really should be optimized for new!
 def assign_attributes args={}
   if args
     args = args.stringify_keys
@@ -10,34 +9,21 @@ def assign_attributes args={}
 
     new_type_id = extract_type_id! args unless args.delete('skip_type_lookup')
     subcard_args = extract_subcard_args! args
-
-    if new_type_id
-      args['type_id'] = new_type_id
-    end
+    args['type_id'] = new_type_id if new_type_id
     reset_patterns
   end
   params = ActionController::Parameters.new(args)
   params.permit!
-
   super params
-
-  if args
-    # if new_type_id
-    #   self.type_id = new_type_id
-    #   #self.expire true
-    # end
-    # name= must come before process subcards
-    if subcard_args.present?
-      subcards.add subcard_args
-    end
-  end
+  return unless args && subcard_args.present?
+  # name= must come before process subcards
+  subcards.add subcard_args
 end
 
 def assign_set_specific_attributes
-  if @set_specific && @set_specific.present?
-    @set_specific.each_pair do |name, value|
-      self.send "#{name}=", value
-    end
+  return unless @set_specific && @set_specific.present?
+  @set_specific.each_pair do |name, value|
+    send "#{name}=", value
   end
 end
 
@@ -53,7 +39,7 @@ def extract_subcard_args! args
   subcards
 end
 
-def extract_type_id! args = {}
+def extract_type_id! args={}
   type_id =
     case
     when args['type_id']
@@ -75,88 +61,93 @@ def extract_type_id! args = {}
 end
 
 event :set_content, before: :store, on: :save do
-  self.db_content = content || '' #necessary?
-  self.db_content = Card::Content.clean! self.db_content if clean_html?
+  self.db_content = content || '' # necessary?
+  self.db_content = Card::Content.clean!(db_content) if clean_html?
   @selected_action_id = @selected_content = nil
   clear_drafts
   reset_patterns_if_rule saving=true
 end
 
-
-#fixme - the following don't really belong here, but they have to come after the reference stuff.  we need to organize a bit!
+# FIXME: the following don't really belong here, but they have to come after
+# the reference stuff.  we need to organize a bit!
 
 event :update_ruled_cards, after: :store do
   if is_rule?
-#      warn "updating ruled cards for #{name}"
+    # warn "updating ruled cards for #{name}"
     self.class.clear_rule_cache
     set = rule_set
     set.reset_set_patterns
 
-    if right_id==Card::ReadID and (name_changed? or trash_changed?)
+    if right_id == Card::ReadID && (name_changed? || trash_changed?)
       self.class.clear_read_rule_cache
       Card.cache.reset # maybe be more surgical, just Auth.user related
-      expire #probably shouldn't be necessary,
-      # but was sometimes getting cached version when card should be in the trash.
-      # could be related to other bugs?
+      expire # probably shouldn't be necessary,
+      # but was sometimes getting cached version when card should be in the
+      # trash.  could be related to other bugs?
       in_set = {}
-      if !(self.trash)
-        if class_id = (set and set_class=set.tag and set_class.id)
+      if !trash && set && (set_class = set.tag)
+        if (class_id =  set_class.id)
           rule_class_ids = set_patterns.map &:pattern_id
-          #warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
+          # warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
 
-          #first update all cards in set that aren't governed by narrower rule
-           Auth.as_bot do
-             cur_index = rule_class_ids.index Card[read_rule_class].id
-             if rule_class_index = rule_class_ids.index( class_id )
-                set.item_cards(limit: 0).each do |item_card|
-                  in_set[item_card.key] = true
-                  next if cur_index < rule_class_index
-                  if cur_index >= rule_class_index
-                    item_card.update_read_rule
-                  end
+          # first update all cards in set that aren't governed by narrower rule
+          Auth.as_bot do
+            cur_index = rule_class_ids.index Card[read_rule_class].id
+            if (rule_class_index = rule_class_ids.index(class_id))
+              set.item_cards(limit: 0).each do |item_card|
+                in_set[item_card.key] = true
+                next if cur_index < rule_class_index
+                if cur_index >= rule_class_index
+                  item_card.update_read_rule
                 end
-             # elsif rule_class_index = rule_class_ids.index( 0 )
- #               in_set[trunk.key] = true
- #               #warn "self rule update: #{trunk.inspect}, #{rule_class_index}, #{cur_index}"
- #   trunk.update_read_rule if cur_index > rule_class_index
-             else warn "No current rule index #{class_id}, #{rule_class_ids.inspect}"
-             end
+              end
+            # elsif rule_class_index = rule_class_ids.index( 0 )
+            #   in_set[trunk.key] = true
+            #   #warn "self rule update: #{trunk.inspect}, #{rule_class_index},
+            #   #{cur_index}"
+            #   trunk.update_read_rule if cur_index > rule_class_index
+            else warn "No current rule index #{class_id}, " \
+                      "#{rule_class_ids.inspect}"
+            end
           end
 
         end
       end
 
-      #then find all cards with me as read_rule_id that were not just updated and regenerate their read_rules
+      # then find all cards with me as read_rule_id that were not just updated
+      # and regenerate their read_rules
       if !new_record?
-        Card.where( read_rule_id: self.id, trash: false ).reject do |w|
-          in_set[ w.key ]
+        Card.where(read_rule_id: self.id, trash: false).reject do |w|
+          in_set[w.key]
         end.each &:update_read_rule
       end
     end
-
   end
 end
 
 event :process_read_rule_update_queue, after: :store do
-  Array.wrap(@read_rule_update_queue).each { |card| card.update_read_rule }
+  Array.wrap(@read_rule_update_queue).each(&:update_read_rule)
   @read_rule_update_queue = []
 end
 
 #  set_callback :store, :after, :process_read_rule_update_queue, prepend: true
 
 event :expire_related, after: :store do
-  self.expire true
+  expire true
 
   if self.is_structure?
-    self.structuree_names.each do |name|
+    structuree_names.each do |name|
       Card.expire name, true
     end
   end
-  # FIXME really shouldn't be instantiating all the following bastards.  Just need the key.
+  subcards.each do |ca|
+    ca.expire_related
+  end
+  # FIXME: really shouldn't be instantiating all the following bastards.
+  # Just need the key.
   # fix in id_cache branch
-  self.dependents.each       { |c| c.expire(true) }
+  dependents.each       { |c| c.expire(true) }
   # self.referencers.each      { |c| c.expire(true) }
-  self.name_referencers.each { |c| c.expire(true) }
+  name_referencers.each { |c| c.expire(true) }
   # FIXME: this will need review when we do the new defaults/templating system
 end
-

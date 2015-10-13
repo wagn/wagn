@@ -7,17 +7,17 @@ class Card
     mattr_accessor :modules, :traits
     @@modules = { base: [], base_format: {}, nonbase: {}, nonbase_format: {} }
 
- #    A "Set" is a group of Cards to which "Rules" may be applied.
+ #    A 'Set' is a group of Cards to which 'Rules' may be applied.
  #    Sets can be as specific as a single card, as general as all cards, or
  #    anywhere in between.
  #
  #    Rules take two main forms: card rules and code rules.
  #
- #    "Card rules" are defined in card content. These are generally configured
+ #    'Card rules' are defined in card content. These are generally configured
  #    via the web interface and are thus documented at http://wagn.org/rules.
  #
- #    "Code rules" can be defined in a "set file" within any "Mod" (short for
- #    both "module" and "modification"). In accordance with Wagn's "MoVE"
+ #    'Code rules' can be defined in a 'set file' within any 'Mod' (short for
+ #    both 'module' and 'modification'). In accordance with Wagn's 'MoVE'
  #    architecture, there are two main kinds of code rules you can create in
  #    set file: Views, and Events.
  #    Events are associated with the Card class, and Views are associated with
@@ -29,10 +29,10 @@ class Card
  #
  #    Whenever you fetch or instantiate a card, it will automatically include
  #    all the set modules defined in set files associated with sets of which it
- #    is a member.  This entails both simple model methods and "events", which
+ #    is a member.  This entails both simple model methods and 'events', which
  #    are special methods explored in greater detail below.
  #
- #    For example, say you have a Plaintext card named "Philipp+address", and
+ #    For example, say you have a Plaintext card named 'Philipp+address', and
  #    you have set files for the following sets:
  #
  #        * all cards
@@ -69,7 +69,7 @@ class Card
  #
  #    When a Card application loads, it uses these files to autogenerate a
  #    tmp_file that uses this set file to create a Card::Set::Right::Address
- #    module which itself is extended with Card::Set. A set file is "just ruby"
+ #    module which itself is extended with Card::Set. A set file is 'just ruby'
  #    but is generally quite concise because Card uses its file location to
  #    autogenerate ruby module names and then uses Card::Set module to provide
  #    additional API.
@@ -232,7 +232,7 @@ class Card
     # @param name [String] the name for the ActiveJob child class
     # @param final_method [String] the name of the card instance method to be queued
     # @option queue [Symbol] (:default) the name of the queue
-    def define_active_job name, final_method, queue = :default
+    def define_active_job name, final_method, queue=:default
       class_name = name.to_s.camelize
       eval %{
         class ::#{class_name} < ActiveJob::Base
@@ -275,8 +275,8 @@ class Card
         set_module = block.call
       rescue NameError => e
         if e.message.match /uninitialized constant (?:Card::Set::)?(.+)$/
-          $1.split('::').inject(Card::Set) do |set_module, module_name|
-            set_module.const_get_or_set module_name do
+          $1.split('::').inject(Card::Set) do |set_mod, module_name|
+            set_mod.const_get_or_set module_name do
               Module.new
             end
           end
@@ -287,13 +287,12 @@ class Card
         set_module.extend Card::Set
       end
     end
-
     # the set loading process has two main phases:
 
     #  1. Definition: interpret each set file, creating/defining set and
     #     set_format modules
     #  2. Organization: have base classes include modules associated with the
-    #     "all" set, and clean up the other modules
+    #     'all' set, and clean up the other modules
 
     class << self
       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -310,11 +309,11 @@ class Card
           # noop; only used by explicit inclusion in other set modules
         elsif set_module.all_set?
           # automatically included in Card class
-          modules[ :base ] << set_module
+          modules[:base] << set_module
         else
           # made ready for dynamic loading via #include_set_modules
-          modules[ :nonbase ][ set_module.shortname ] ||= []
-          modules[ :nonbase ][ set_module.shortname ] << set_module
+          modules[:nonbase][set_module.shortname] ||= []
+          modules[:nonbase][set_module.shortname] << set_module
         end
       end
 
@@ -338,9 +337,9 @@ EOF
       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       # Organization Phase
 
-      # "base modules" are modules that are permanently included on the Card or
+      # 'base modules' are modules that are permanently included on the Card or
       # Format class
-      # "nonbase modules" are included dynamically on singleton_classes
+      # 'nonbase modules' are included dynamically on singleton_classes
       def process_base_modules
         process_base_module_list modules[:base], Card
         modules[:base_format].each do |format_class, modules_list|
@@ -362,8 +361,8 @@ EOF
       end
 
       def clean_empty_modules
-        clean_empty_module_from_hash modules[ :nonbase ]
-        modules[ :nonbase_format ].values.each do |hash|
+        clean_empty_module_from_hash modules[:nonbase]
+        modules[:nonbase_format].values.each do |hash|
           clean_empty_module_from_hash hash
         end
       end
@@ -383,13 +382,13 @@ EOF
         # noop; only used by explicit inclusion in other set modules
       elsif self.all_set?
         # ready to include in base format classes
-        modules[ :base_format ][ format_class ] ||= []
-        modules[ :base_format ][ format_class ] << mod
+        modules[:base_format ][ format_class] ||= []
+        modules[:base_format ][ format_class] << mod
       else
         # ready to include dynamically in set members' format singletons
-        format_hash = modules[ :nonbase_format ][ format_class ] ||= {}
-        format_hash[ shortname ] ||= []
-        format_hash[ shortname ] << mod
+        format_hash = modules[:nonbase_format ][ format_class] ||= {}
+        format_hash[shortname] ||= []
+        format_hash[shortname] << mod
       end
     end
 
@@ -418,7 +417,7 @@ EOF
           this_set_module = self
           Card.class_eval do
             set_callback object_method, kind, event, prepend: true, if: proc { |c|
-              c.singleton_class.include?( this_set_module ) and c.event_applies? opts
+              c.singleton_class.include?(this_set_module) and c.event_applies? opts
             }
           end
         end

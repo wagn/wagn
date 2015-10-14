@@ -242,36 +242,15 @@ HAML
     render_action :expanded, args
   end
 
+
   def render_action action_view, args
     action = args[:action] || card.last_action
     hide_diff = Env.params['hide_diff'] == 'true' || args[:hide_diff]
-    name_diff =
-      if action.card == card
-        name_changes(action, hide_diff)
-      else
-        link_path = path(
-          view: :related,
-          related: { view: 'history', name: action.card.name }
-        )
-        link_to name_changes(action, hide_diff), link_path,
-                class: 'slotter label label-default',
-                'data-slot-selector' => '.card-slot.history-view',
-                remote: true
-      end
-
-    type_diff = action.new_type? && type_changes(action, hide_diff)
-
-    content_diff =
-      action.new_content? &&
-      action.card.format.render_content_changes(
-        action: action, diff_type: action_view, hide_diff: hide_diff
-      )
-
     render_haml action: action,
                 action_view: action_view,
-                name_diff: name_diff,
-                type_diff: type_diff,
-                content_diff: content_diff do
+                name_diff: name_diff(action, hide_diff),
+                type_diff: type_diff(action, hide_diff),
+                content_diff: content_diff(action, action_view, hide_diff) do
       <<-HAML
 .action
   .summary
@@ -291,27 +270,48 @@ HAML
     end
   end
 
-  def wrap_diff field, content
-    if content.present?
-      %{
-         <span class="#{field}-diff">
-         #{content}
-         </span>
-      }
+  def name_diff action, hide_diff
+    if action.card == card
+      name_changes(action, hide_diff)
     else
-      ''
+      link_path = path(
+        view: :related,
+        related: { view: 'history', name: action.card.name }
+      )
+      link_to name_changes(action, hide_diff), link_path,
+              class: 'slotter label label-default',
+              'data-slot-selector' => '.card-slot.history-view',
+              remote: true
     end
   end
 
+  def type_diff action, hide_diff
+    action.new_type? && type_changes(action, hide_diff)
+  end
+
+  def content_diff action, action_view, hide_diff
+    action.new_content? && action.card.format.render_content_changes(
+      action: action, diff_type: action_view, hide_diff: hide_diff
+    )
+  end
+
+  def wrap_diff field, content
+    return '' unless content.present?
+    %{
+       <span class="#{field}-diff">
+       #{content}
+       </span>
+    }
+  end
 
   def name_changes action, hide_diff=false
-    old_name = (name = action.old_values[:name] and showname(name).to_s)
+    old_name = (name = action.old_values[:name]) && showname(name).to_s
     if action.new_name?
       new_name = showname(action.new_values[:name]).to_s
       if hide_diff
         new_name
       else
-        Card::Diff.complete(old_name,new_name)
+        Card::Diff.complete(old_name, new_name)
       end
     else
       old_name
@@ -323,7 +323,6 @@ HAML
     "(#{change})"
   end
 
-
   view :content_changes do |args|
     if args[:hide_diff]
       args[:action].new_values[:content]
@@ -333,25 +332,22 @@ HAML
   end
 
   def rollback_link actions
-    not_current = actions.select { |action| action.card.last_action_id != action.id }
-    if card.ok?(:update) && not_current.present?
-      link_path = path action: :update, view: :open, action_ids: not_current
-      '| ' + link_to(
-        'Save as current', link_path,
-        class: 'slotter','data-slot-selector'=>'.card-slot.history-view',
-        remote: true, method: :post, rel: 'nofollow'
-      )
-    end
+    not_current =
+      actions.select { |action| action.card.last_action_id != action.id }
+    return unless card.ok?(:update) && not_current.present?
+    link_path = path action: :update, view: :open, action_ids: not_current
+    '| ' + link_to(
+      'Save as current', link_path,
+      class: 'slotter', 'data-slot-selector' => '.card-slot.history-view',
+      remote: true, method: :post, rel: 'nofollow'
+    )
   end
 
   def fold_or_unfold_link args
-    if (args[:act_view] == :expanded)
-      toggled_view = :act_summary
-    else
-      toggled_view = :act_expanded
-    end
+    toggled_view = args[:act_view] == :expanded ? :act_summary : :act_expanded
+    arrow_dir = args[:act_view] == :expanded ? 'arrow-down' : 'arrow-right'
     link_to '', args.merge(view: toggled_view),
-              class: "slotter revision-#{args[:act_id]} #{ args[:act_view] == :expanded ? 'arrow-down' : 'arrow-right'}",
+              class: "slotter revision-#{args[:act_id]} #{arrow_dir}",
               remote: true
   end
 

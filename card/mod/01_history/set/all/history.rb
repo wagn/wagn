@@ -244,7 +244,7 @@ HAML
 
   def render_action action_view, args
     action = args[:action] || card.last_action
-    hide_diff = Env.params['hide_diff'] == ' true' || args[:hide_diff]
+    hide_diff = Env.params['hide_diff'] == 'true' || args[:hide_diff]
     name_diff =
       if action.card == card
         name_changes(action, hide_diff)
@@ -357,7 +357,7 @@ HAML
 
   def show_or_hide_changes_link hide_diff, args
     text = (hide_diff ? 'Show' : 'Hide') + ' changes'
-    '| ' +  view_link(
+    '| ' + view_link(
       text, :act_expanded,
       path_opts: args.merge(hide_diff: !hide_diff),
       class: 'slotter', remote: true
@@ -366,11 +366,9 @@ HAML
 end
 
 def diff_args
-  {format: :text}
+  { format: :text }
 end
-
 
 def has_edits?
   Card::Act.where(actor_id: id).where('card_id IS NOT NULL').present?
 end
-

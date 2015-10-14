@@ -133,6 +133,9 @@ end
 #  set_callback :store, :after, :process_read_rule_update_queue, prepend: true
 
 event :expire_related, after: :store do
+  subcards.keys.each do |key|
+    Card.cache.delete_local key
+  end
   expire true
 
   if self.is_structure?
@@ -140,7 +143,7 @@ event :expire_related, after: :store do
       Card.expire name, true
     end
   end
-  subcards.each(&:expire_related)
+
   # FIXME: really shouldn't be instantiating all the following bastards.
   # Just need the key.
   # fix in id_cache branch

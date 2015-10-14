@@ -23,7 +23,7 @@ class Card
       junction? && begin
         right_key = right_name.key
         traitlist.find do |codename|
-          (card_id = Codename[codename]) &&
+          (card_id = Card::Codename[codename]) &&
             (card = Card.quick_fetch card_id) &&
             card.key == right_key
         end.present?

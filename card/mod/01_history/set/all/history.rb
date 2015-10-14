@@ -157,10 +157,10 @@ format :html do
 
   view :revisions do |args|
     page = params['page'] || 1
-    count = card.intrusive_acts.size+1-(page.to_i-1)*REVISIONS_PER_PAGE
+    count = card.intrusive_acts.size + 1 - (page.to_i - 1) * REVISIONS_PER_PAGE
     card.intrusive_acts.page(page).per(REVISIONS_PER_PAGE).map do |act|
       count -= 1
-      render_act_summary args.merge(act: act,rev_nr: count)
+      render_act_summary args.merge(act: act, rev_nr: count)
     end.join
   end
 
@@ -192,11 +192,13 @@ format :html do
   end
 
   def render_act act_view, args
-    act = (params['act_id'] and Card::Act.find(params['act_id'])) || args[:act]
+    act = (params['act_id'] && Card::Act.find(params['act_id'])) || args[:act]
     rev_nr = params['rev_nr'] || args[:rev_nr]
-    current_rev_nr = params['current_rev_nr'] || args[:current_rev_nr] || card.current_rev_nr
+    current_rev_nr = params['current_rev_nr'] || args[:current_rev_nr] ||
+                     card.current_rev_nr
     hide_diff = (params['hide_diff'] == ' true') || args[:hide_diff]
-    wrap( args.merge(slot_class: "revision-#{act.id} history-slot list-group-item") ) do
+    args[:slot_class] = "revision-#{act.id} history-slot list-group-item"
+    wrap(args) do
       render_haml card: card, act: act, act_view: act_view,
                   current_rev_nr: current_rev_nr, rev_nr: rev_nr,
                   hide_diff: hide_diff do
@@ -247,22 +249,23 @@ HAML
       if action.card == card
         name_changes(action, hide_diff)
       else
-        link_to name_changes(action, hide_diff),
-                path(view: :related, related: {
-                  view: 'history',name: action.card.name
-                }),
+        link_path = path(
+          view: :related,
+          related: { view: 'history', name: action.card.name }
+        )
+        link_to name_changes(action, hide_diff), link_path,
                 class: 'slotter label label-default',
-                'data-slot-selector'=>'.card-slot.history-view',
+                'data-slot-selector' => '.card-slot.history-view',
                 remote: true
       end
 
-    type_diff =
-        action.new_type? &&
-        type_changes(action, hide_diff)
+    type_diff = action.new_type? && type_changes(action, hide_diff)
 
     content_diff =
-        action.new_content? &&
-        action.card.format.render_content_changes(action: action, diff_type: action_view, hide_diff: hide_diff)
+      action.new_content? &&
+      action.card.format.render_content_changes(
+        action: action, diff_type: action_view, hide_diff: hide_diff
+      )
 
     render_haml action: action,
                 action_view: action_view,

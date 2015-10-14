@@ -50,7 +50,12 @@ class Card
               name_or_card.to_name.key
             end
 
-      @keys.include? key && @keys.delete(key)
+      if @keys.include? key
+        @keys.delete key
+      else
+        ab_key = absolutize_subcard_name(key).key
+        @keys.delete ab_key if @keys.include? ab_key
+      end
     end
 
     def add name_or_card_or_attr, card_or_attr=nil

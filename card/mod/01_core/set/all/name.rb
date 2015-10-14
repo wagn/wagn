@@ -271,9 +271,8 @@ end
 event :cascade_name_changes, after: :store, on: :update, changed: :name do
   # Rails.logger.info "------------------- #{name_was} CASCADE #{self.name} " \
   #                   " -------------------------------------"
-
   # handle strings from cgi
-  update_referencers = false if update_referencers == 'false'
+  self.update_referencers = false if update_referencers == 'false'
   Card::Reference.update_on_rename self, name, self.update_referencers
 
   deps = dependents

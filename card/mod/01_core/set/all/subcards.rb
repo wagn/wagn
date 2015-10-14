@@ -31,9 +31,9 @@ def unfilled?
 end
 
 event :reject_empty_subcards, after: :approve, on: :save do
-  subcards.each_card do |subcard|
+  subcards.each_with_key do |subcard, key|
     if subcard.new? && subcard.unfilled?
-      remove_subcard subcard
+      remove_subcard key
     end
   end
 end

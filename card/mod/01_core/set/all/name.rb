@@ -19,6 +19,7 @@ end
 def name= newname
   cardname = newname.to_name
   if @supercard
+    @supercard.subcards.rename key, cardname.key
     @contextual_name = cardname.to_s
     relparts = cardname.parts
     if relparts.size == 2 &&

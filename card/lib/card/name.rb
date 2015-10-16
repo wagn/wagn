@@ -74,7 +74,7 @@ class Card
       to_absolute_name(context_name)
     end
 
-    def a_field_of? context_name
+    def field_of? context_name
       if context_name.present?
         # Do I still equal myself after I've been relativised in the context
         # of context_name?

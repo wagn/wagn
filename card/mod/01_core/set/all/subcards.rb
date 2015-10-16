@@ -26,6 +26,10 @@ def remove_subfield name_or_card
   subcards.remove_field name_or_card
 end
 
+def clear_subcards
+  subcards.clear
+end
+
 def unfilled?
   (content.empty? || content.strip.empty?) && !subcards.present?
 end

@@ -215,7 +215,7 @@ class Card
 
     def new_by_attributes name, attributes={}
       absolute_name = absolutize_subcard_name name
-      if absolute_name.a_field_of?(@context_card.name) &&
+      if absolute_name.field_of?(@context_card.name) &&
          (absolute_name.parts.size - @context_card.cardname.parts.size) > 2
         left_card = new_by_attributes absolute_name.left
         new_by_card left_card
@@ -238,7 +238,7 @@ class Card
     def new_by_card card
       card.supercard = @context_card
       if !card.cardname.simple? &&
-         card.cardname.a_field_of?(@context_card.cardname)
+         card.cardname.field_of?(@context_card.cardname)
         card.superleft = @context_card
       end
       @keys << card.key

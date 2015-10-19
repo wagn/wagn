@@ -76,7 +76,7 @@ class CardController < ActionController::Base
   def load_id
     params[:id] ||=
       case
-      when Card::Auth.needs_setup?
+      when Card::Auth.needs_setup? && Card::Env.html?
         params[:card] = { type_id: Card.default_accounted_type_id }
         params[:view] = 'setup'
         ''

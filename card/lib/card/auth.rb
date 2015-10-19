@@ -14,11 +14,11 @@ class Card
       # Authenticates a user by their login name and unencrypted password.
       def authenticate email, password
         accounted = Auth[email]
-        if accounted && (account = accounted.account) && account.active?
-          if Card.config.no_authentication ||
-             password_authenticated?(account, password.strip)
-            accounted.id
-          end
+        return unless accounted && (account = accounted.account) &&
+                      account.active?
+        if Card.config.no_authentication ||
+           password_authenticated?(account, password.strip)
+          accounted.id
         end
       end
 
@@ -91,17 +91,15 @@ class Card
 
       def as given_user
         tmp_id, tmp_card = @@as_id, @@as_card
-        @@as_id, @@as_card = get_user_id( given_user ), nil  # we could go ahead and set as_card if given a card...
+        # we could go ahead and set as_card if given a card...
+        @@as_id, @@as_card = get_user_id(given_user), nil
 
         @@current_id = @@as_id if @@current_id.nil?
 
-        if block_given?
-          value = yield
-          @@as_id, @@as_card = tmp_id, tmp_card
-          return value
-        else
-          #fail "BLOCK REQUIRED with Card#as"
-        end
+        return unless block_given?
+        value = yield
+        @@as_id, @@as_card = tmp_id, tmp_card
+        value
       end
 
       def as_bot &block
@@ -129,13 +127,14 @@ class Card
       end
 
       def needs_setup?
-        @@simulating_setup_need || !Card.cache.fetch(SETUP_COMPLETED_KEY) do
-          # every deck starts with WagnBot and Anonymous account
-          account_count > 2
-        end
+        @@simulating_setup_need || (
+          !Card.cache.read(SETUP_COMPLETED_KEY) &&
+          !Card.cache.write(SETUP_COMPLETED_KEY, account_count > 2)
+        )
+        # every deck starts with WagnBot and Anonymous account
       end
 
-      def simulate_setup_need! mode = true
+      def simulate_setup_need! mode=true
         @@simulating_setup_need = mode
       end
 
@@ -148,15 +147,17 @@ class Card
 
       def always_ok?
         # warn Rails.logger.warn("aok? #{as_id}, #{as_id&&Card[as_id].id}")
-        return false unless usr_id = as_id
+        return false unless (usr_id = as_id)
         return true if usr_id == Card::WagnBotID # cannot disable
 
         always = Card.cache.read('ALWAYS') || {}
         # warn(Rails.logger.warn "Auth.always_ok? #{usr_id}")
         if always[usr_id].nil?
           always = always.dup if always.frozen?
-          always[usr_id] = !!Card[usr_id].all_roles.detect { |r| r == Card::AdministratorID }
-          # warn(Rails.logger.warn "update always hash #{always[usr_id]}, #{always.inspect}")
+          always[usr_id] =
+            !!Card[usr_id].all_roles.find { |r| r == Card::AdministratorID }
+          # warn(Rails.logger.warn "update always hash #{always[usr_id]},
+          # #{always.inspect}")
           Card.cache.write 'ALWAYS', always
         end
         # warn Rails.logger.warn("aok? #{usr_id}, #{always[usr_id]}")

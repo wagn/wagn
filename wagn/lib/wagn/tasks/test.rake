@@ -1,4 +1,6 @@
-TEST_SEED_PATH = ENV['DECKO_SEED_REPO_PATH']
+TEST_SEED_PATH = File.join(
+  ENV['DECKO_SEED_REPO_PATH'] || [Cardio.gem_root, 'db','seed'], 'test'
+)
 
 namespace :test do
   task :all => :environment do
@@ -47,7 +49,7 @@ namespace :test do
     ActiveRecord::Base.establish_connection
     tables.each do |table_name|
       i = "000"
-      File.open("#{ TEST_SEED_PATH }/test/fixtures/#{table_name}.yml", 'w') do |file|
+      File.open("#{ TEST_SEED_PATH }/fixtures/#{table_name}.yml", 'w') do |file|
         data = ActiveRecord::Base.connection.select_all(sql % table_name)
         file.write data.inject({}) { |hash, record|
           record['trash'] = false if record.has_key? 'trash'
@@ -63,7 +65,7 @@ namespace :test do
   task :populate_template_database => :environment do
     raise "must be test env" unless Rails.env == 'test'
     puts "populate test data\n"
-    load "#{ TEST_SEED_PATH }/test/seed.rb"
+    load "#{ TEST_SEED_PATH }/seed.rb"
     SharedData.add_test_data
   end
 

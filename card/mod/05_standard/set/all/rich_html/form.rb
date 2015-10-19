@@ -26,12 +26,12 @@ format :html do
   end
 
   def form_for_multi
-    instantiate_builder("card[subcards]#{subcard_input_names}", card, {})
+    instantiate_builder("card#{subcard_input_names}", card, {})
   end
 
   def subcard_input_names
     return '' if !form_root_format || form_root_format == self
-    "#{@parent.subcard_input_names}[#{card.contextual_name}]"
+    "#{@parent.subcard_input_names}[subcards][#{card.contextual_name}]"
   end
 
   def form

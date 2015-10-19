@@ -154,6 +154,13 @@ When /I wait (\d+) seconds$/ do |period|
   sleep period.to_i
 end
 
+When /^I wait until ajax response done$/ do
+  Timeout.timeout(Capybara.default_wait_time) do
+    while page.evaluate_script('jQuery.active') != 0
+      sleep(0.5)
+    end
+  end
+end
 
 Then /what/ do
   save_and_open_page
@@ -324,6 +331,11 @@ end
 
 Then /^I should see an image of size "(.+)" and type "(.+)"$/ do |size, type|
   find("img[src*='#{size}.#{type}']")
+end
+
+Then /^I should see a non-mod image of size "(.+)" and type "(.+)"$/ do |size, type|
+  element = find("img[src*='#{size}.#{type}']")
+  expect(element[:src]).to match(%r(/~\d+/))
 end
 
 Then /^I should see "([^\"]*)" in color (.*)$/ do |text, css_class|

@@ -146,7 +146,7 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   def mod_file?
-    @mod ||= model.mod_file?
+    model.mod_file?
   end
 
   def action_id

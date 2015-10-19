@@ -39,6 +39,7 @@ Feature: Conflict
     And I wait a sec
     Then I should see "image2.jpg 69.8 KB"
     And I press "Submit"
-    Then I should see an image of size "large" and type "jpg"
+    And I wait until ajax response done
+    Then I should see a non-mod image of size "large" and type "jpg"
 
 

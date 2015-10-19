@@ -88,7 +88,7 @@ format :html do
 
   view :preview_editor, tags: :unknown_ok do |args|
     cached_upload_card_name = Card::Env.params[:attachment_upload]
-    cached_upload_card_name.gsub!(/\[\w+\]$/, "[cached_upload]")
+    cached_upload_card_name.gsub!(/\[\w+\]$/, "[action_id_of_cached_upload]")
     <<-HTML
       <div class="chosen-file">
         <input type="hidden" name="#{cached_upload_card_name}" value="#{card.selected_action_id}">

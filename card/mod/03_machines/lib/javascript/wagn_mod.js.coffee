@@ -41,7 +41,7 @@ $.extend wagn,
     # for file as a subcard in a form,
     # excess parameters are inlcuded in the request which cause errors.
     # only the file, type_id and attachment_card_name are needed
-    # attachment_card_name is the original card name, 
+    # attachment_card_name is the original card name,
     # ex: card[subcards][+logo][image], card[file]
     $(fileupload).bind 'fileuploadsubmit', (e,data) ->
       $_this = $(this)

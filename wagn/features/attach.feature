@@ -25,6 +25,7 @@ Feature: File Upload
     Then I should see "image.png 34.3 KB"
     And I fill in "card_name" with "a test image"
     And I press "Submit"
+    # And I wait until ajax response done
     Then I should see an image of size "large" and type "png"
     And I edit "a test image"
     And I upload the image "image2.jpg"

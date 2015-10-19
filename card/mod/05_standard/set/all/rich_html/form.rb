@@ -31,7 +31,11 @@ format :html do
 
   def subcard_input_names
     return '' if !form_root_format || form_root_format == self
-    "#{@parent.subcard_input_names}[#{card.contextual_name}]"
+    if card.contextual_name[0] == '+'
+      "#{@parent.subcard_input_names}[#{card.contextual_name}]"
+    else
+      "#{@parent.subcard_input_names}[subcards][#{card.contextual_name}]"
+    end
   end
 
   def form

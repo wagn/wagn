@@ -24,15 +24,16 @@ event :upload_attachment, before: :validate_name, on: :save, when: proc { |c| c.
 end
 
 event :assign_attachment_on_create, after: :prepare, on: :create, when: proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(Card::Env.params[:cached_upload]))
+  if (action = Card::Action.fetch(@cached_upload))
     upload_cache_card.selected_action_id = action.id
     upload_cache_card.select_file_revision
     assign_attachment upload_cache_card.attachment.file, action.comment
   end
 end
 
-event :assign_attachment_on_update, after: :prepare, on: :update, when: proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(Card::Env.params[:cached_upload]))
+event :assign_attachment_on_update, after: :prepare, on: :update,
+      when:  proc { |c| c.save_preliminary_upload? } do
+  if (action = Card::Action.fetch(@cached_upload))
     uploaded_file =
        with_selected_action_id(action.id) do
          attachment.file
@@ -61,7 +62,7 @@ event :save_original_filename, after: :validate_name, when: proc {|c| !c.prelimi
 end
 
 event :delete_cached_upload_file_on_create, after: :extend, on: :create, when: proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(Card::Env.params[:cached_upload]))
+  if (action = Card::Action.fetch(@cached_upload))
     upload_cache_card.delete_files_for_action action
     action.delete
   end
@@ -69,7 +70,7 @@ event :delete_cached_upload_file_on_create, after: :extend, on: :create, when: p
 end
 
 event :delete_cached_upload_file_on_update, after: :extend, on: :update, when: proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(Card::Env.params[:cached_upload]))
+  if (action = Card::Action.fetch(@cached_upload))
     delete_files_for_action action
     action.delete
   end
@@ -98,7 +99,7 @@ def preliminary_upload?
 end
 
 def save_preliminary_upload?
-  Card::Env.params[:cached_upload].present?
+  @cached_upload.present?
 end
 
 def attachment_changed?
@@ -114,6 +115,14 @@ def upload_cache_card
   @upload_cache_card ||= Card["new_#{attachment_name}".to_sym ]
 end
 
+# action id of the cached upload
+def cached_upload= value
+  @cached_upload = value
+end
+
+def cached_upload
+  @cached_upload
+end
 
 def load_from_mod= value
   @mod = value
@@ -167,7 +176,6 @@ def mod_dir
     end
   end
 end
-
 
 def mod_file?
   if @store_in_mod

@@ -253,12 +253,10 @@ class CardController < ActionController::Base
   end
 
   def format_from_params
-    if params[:explicit_file] ||
-       !Card::Format.registered.member?(format) # unknown format
-      :file
-    else
-      request.parameters[:format]
-    end
+    return :file if params[:explicit_file]
+    format = request.parameters[:format]
+    return :file if !Card::Format.registered.member?(format) # unknown format
+    format
   end
 
   def update_params_for_success

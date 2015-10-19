@@ -1,4 +1,6 @@
 # -*- encoding : utf-8 -*-
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
 require 'spork'
 
 ENV["RAILS_ENV"] = 'test'

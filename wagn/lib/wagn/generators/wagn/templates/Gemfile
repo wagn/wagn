@@ -66,7 +66,7 @@ group :test do
   gem 'spork', '>=0.9'
   gem 'rr'#, '=1.0.0'
 	gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
-
+  gem 'codeclimate-test-reporter', require: nil
   # gem 'guard-rspec', '~> 4.2'           # trigger test runs based on file edits,
                                           # currently not compatible with spring-watcher-listen
   if RUBY_PLATFORM =~ /darwin/

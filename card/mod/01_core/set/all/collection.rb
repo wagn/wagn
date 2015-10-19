@@ -213,7 +213,7 @@ format do
 
     each_nested_chunk(args) do |chunk|
       # TODO handle structures that are non-virtual
-      if chunk.referee_name.to_name.is_a_field_of? card.name
+      if chunk.referee_name.to_name.field_of? card.name
         if chunk.referee_card && chunk.referee_card.virtual? && !processed_chunk_keys.include?(chunk.referee_name.key)
           processed_chunk_keys << chunk.referee_name.key
           subformat(chunk.referee_card).each_nested_field(args) do |sub_chunk|

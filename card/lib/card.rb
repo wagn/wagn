@@ -18,8 +18,6 @@ class Card < ActiveRecord::Base
     attr_accessor *args
   end
 
-
-
   require_dependency 'card/active_record_ext'
   require_dependency 'card/codename'
   require_dependency 'card/query'

@@ -1,41 +1,43 @@
 require 'wagn/application'
 
-WAGN_SEED_TABLES = %w{ cards card_actions card_acts card_changes card_references }
+WAGN_SEED_TABLES = %w{ cards card_actions card_acts card_changes
+                       card_references }
 WAGN_SEED_PATH = File.join(
-  ENV['DECKO_SEED_REPO_PATH'] || [Cardio.gem_root, 'db','seed'], 'new'
+  ENV['DECKO_SEED_REPO_PATH'] || [Cardio.gem_root, 'db', 'seed'], 'new'
 )
-
 
 def prepare_migration
   Card::Cache.reset_global
   Card.config.action_mailer.perform_deliveries = false
   Card.reset_column_information
-  Card::Reference.reset_column_information  # this is needed in production mode to insure core db
-                                            # structures are loaded before schema_mode is set
+  # this is needed in production mode to insure core db
+  Card::Reference.reset_column_information
+  # structures are loaded before schema_mode is set
 end
 
 namespace :wagn do
-  desc "create a wagn database from scratch, load initial data"
+  desc 'create a wagn database from scratch, load initial data'
   task :seed do
     ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
-    puts "dropping"
-    #fixme - this should be an option, but should not happen on standard creates!
+    puts 'dropping'
+    # FIXME: this should be an option, but should not happen on standard
+    # creates!
     begin
       Rake::Task['db:drop'].invoke
     rescue
-      puts "not dropped"
+      puts 'not dropped'
     end
 
-    puts "creating"
+    puts 'creating'
     Rake::Task['db:create'].invoke
 
-    puts "loading schema"
+    puts 'loading schema'
     Rake::Task['db:schema:load'].invoke
 
     Rake::Task['wagn:load'].invoke
   end
 
-  desc "clear and load fixtures with existing tables"
+  desc 'clear and load fixtures with existing tables'
   task :reseed do
     ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
 
@@ -44,64 +46,64 @@ namespace :wagn do
     Rake::Task['wagn:load'].invoke
   end
 
-  desc "empty the card tables"
+  desc 'empty the card tables'
   task :clear do
     conn = ActiveRecord::Base.connection
 
-    puts "delete all data in bootstrap tables"
+    puts 'delete all data in bootstrap tables'
     WAGN_SEED_TABLES.each do |table|
       conn.delete "delete from #{table}"
     end
   end
 
-  desc "Load bootstrap data into database"
+  desc 'Load bootstrap data into database'
   task :load do
     require 'decko/engine'
-    puts "update card_migrations"
+    puts 'update card_migrations'
     Rake::Task['wagn:assume_card_migrations'].invoke
 
     if Rails.env == 'test' && !ENV['GENERATE_FIXTURES']
-      puts "loading test fixtures"
+      puts 'loading test fixtures'
       Rake::Task['db:fixtures:load'].invoke
     else
-      puts "loading bootstrap"
+      puts 'loading bootstrap'
       Rake::Task['wagn:bootstrap:load'].invoke
     end
 
-    puts "set symlink for assets"
+    puts 'set symlink for assets'
     Rake::Task['wagn:update_assets_symlink'].invoke
   end
 
-  desc "update wagn gems and database"
+  desc 'update wagn gems and database'
   task :update do
     ENV['NO_RAILS_CACHE'] = 'true'
-    #system 'bundle update'
-    if Wagn.paths["tmp"].existent
-      FileUtils.rm_rf Wagn.paths["tmp"].first, :secure=>true
+    # system 'bundle update'
+    if Wagn.paths['tmp'].existent
+      FileUtils.rm_rf Wagn.paths['tmp'].first, secure: true
     end
-    Dir.mkdir Wagn.paths["tmp"].first
+    Dir.mkdir Wagn.paths['tmp'].first
     Rake::Task['wagn:migrate'].invoke
     # FIXME remove tmp dir / clear cache
-    puts "set symlink for assets"
+    puts 'set symlink for assets'
     Rake::Task['wagn:update_assets_symlink'].invoke
   end
 
-  desc "reset cache"
-  task :reset_cache => :environment do
+  desc 'reset cache'
+  task reset_cache: :environment do
     Card::Cache.reset_global
   end
 
-  desc "set symlink for assets"
+  desc 'set symlink for assets'
   task :update_assets_symlink do
-    assets_path = File.join(Rails.public_path, "assets")
+    assets_path = File.join(Rails.public_path, 'assets')
     if Rails.root.to_s != Wagn.gem_root and not File.exists? assets_path
       FileUtils.rm assets_path if File.symlink? assets_path
-      FileUtils.ln_s( Decko::Engine.paths['gem-assets'].first, assets_path )
+      FileUtils.ln_s(Decko::Engine.paths['gem-assets'].first, assets_path)
     end
   end
 
-  desc "migrate structure and cards"
-  task :migrate => :environment do
+  desc 'migrate structure and cards'
+  task migrate: :environment do
     ENV['NO_RAILS_CACHE'] = 'true'
     ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
 
@@ -140,14 +142,14 @@ namespace :wagn do
   end
 
   namespace :migrate do
-    desc "migrate cards"
-    task :cards => :environment do
+    desc 'migrate cards'
+    task cards: :environment do
       Rake::Task['wagn:migrate:core_cards'].invoke
       Rake::Task['wagn:migrate:deck_cards'].execute
     end
 
-    desc "migrate structure"
-    task :structure => :environment do
+    desc 'migrate structure'
+    task structure: :environment do
       ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       Cardio.schema_mode(:structure) do
         paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:structure)
@@ -156,23 +158,26 @@ namespace :wagn do
       end
     end
 
-    desc "migrate core cards"
-    task :core_cards => :environment do
+    desc 'migrate core cards'
+    task core_cards: :environment do
       require 'card/core_migration'
 
       Card::Cache.reset_global
       ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       prepare_migration
-      paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:core_cards)
-      Cardio.schema_mode :core_cards do
+      paths = Cardio.migration_paths(:core_cards)
+      verbose = ENV['VERBOSE'] ? ENV['VERBOSE'] == 'true' : true
+      version = ENV['VERSION'] ? ENV['VERSION'].to_i : nil
 
-        ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
-        ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+      ActiveRecord::Migrator.migrations_paths = paths
+      Cardio.schema_mode :core_cards do
+        ActiveRecord::Migration.verbose = verbose
+        ActiveRecord::Migrator.migrate paths, version
       end
     end
 
-    desc "migrate deck cards"
-    task :deck_cards => :environment do
+    desc 'migrate deck cards'
+    task deck_cards: :environment do
       require 'card/migration'
 
       Card::Cache.reset_global
@@ -181,17 +186,18 @@ namespace :wagn do
       paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:deck_cards)
 
       Cardio.schema_mode(:deck_cards) do
-        ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
-        ActiveRecord::Migrator.migrate paths, ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+        ActiveRecord::Migration.verbose = ENV['VERBOSE'] ? ENV['VERBOSE'] == 'true' : true
+        ActiveRecord::Migrator.migrate paths, ENV['VERSION'] ? ENV['VERSION'].to_i : nil
       end
     end
 
-    desc 'write the version to a file (not usually called directly)' #maybe we should move this to a method?
+# maybe we should move this to a method?
+    desc 'write the version to a file (not usually called directly)'
     task :stamp, :type do |t, args|
       ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       Cardio.config.action_mailer.perform_deliveries = false
 
-      stamp_file = Cardio.schema_stamp_path( args[:type] )
+      stamp_file = Cardio.schema_stamp_path(args[:type])
 
       Cardio.schema_mode args[:type] do
         version = ActiveRecord::Migrator.current_version
@@ -205,10 +211,10 @@ namespace :wagn do
 
 
   namespace :emergency do
-    task :rescue_watchers => :environment do
+    task rescue_watchers: :environment do
       follower_hash = Hash.new { |h, v| h[v] = [] }
 
-      Card.where("right_id" => 219).each do |watcher_list|
+      Card.where('right_id' => 219).each do |watcher_list|
         watcher_list.include_set_modules
         if watcher_list.left
           watching = watcher_list.left.name
@@ -218,16 +224,16 @@ namespace :wagn do
         end
       end
 
-      Card.search(:right=>{:codename=>"following"}).each do |following|
+      Card.search(right: {codename: 'following'}).each do |following|
         Card::Auth.as_bot do
-          following.update_attributes! :content=>''
+          following.update_attributes! content: ''
         end
       end
 
       follower_hash.each do |user, items|
         if card=Card.fetch(user) and card.account
           Card::Auth.as(user) do
-            following = card.fetch :trait=>"following", :new=>{}
+            following = card.fetch trait: 'following', new: {}
             following.items = items
           end
         end
@@ -236,57 +242,18 @@ namespace :wagn do
   end
 
   namespace :bootstrap do
-    desc "rid template of unneeded cards, acts, actions, changes, and references"
-    task :clean => :environment do
+    desc 'rid template of unneeded cards, acts, actions, changes, and references'
+    task clean: :environment do
       Card::Cache.reset_global
-      conn =  ActiveRecord::Base.connection
-      # Correct time and user stamps
-      # USER related
-      who_and_when = [ Card::WagnBotID, Time.now.utc.to_s(:db) ]
-      card_sql = "update cards set creator_id=%1$s, created_at='%2$s', updater_id=%1$s, updated_at='%2$s'"
-      conn.update( card_sql                                          % who_and_when )
-      conn.update( "update card_acts set actor_id=%s, acted_at='%s'" % who_and_when )
-
-      Card::Auth.as_bot do
-        # delete ignored cards
-
-        if ignoramus = Card['*ignore']
-          ignoramus.item_cards.each do |card|
-            card.delete!
-          end
-        end
-        Card::Cache.reset_global
-        # FIXME: can this be associated with the machine module somehow?
-        %w{ machine_input machine_output }.each do |codename|
-          Card.search(:right=>{:codename=>codename }).each do |card|
-            FileUtils.rm_rf File.join('files', card.id.to_s ), :secure=>true
-            card.delete!
-          end
-        end
-      end
-
+      clear_history
+      delete_unwanted_cards
       Card.empty_trash
-
-      # FIXME: move this to history
-      # Card::Act.clear_history(:actor_id=>Card::WagnBotID, :card_id=>Card::WagnBotID)
-      Card::Action.delete_old
-      Card::Change.delete_actionless
-
-      conn.execute( "truncate card_acts" )
-      conn.execute( "truncate sessions" )
-
-
-      act = Card::Act.create!(:actor_id=>Card::WagnBotID, :card_id=>Card::WagnBotID)
-      Card::Action.find_each do |action|
-        action.update_attributes!(:card_act_id=>act.id)
-      end
-
+      correct_time_and_user_stamps
       Card::Cache.reset_global
-
     end
 
-    desc "dump db to bootstrap fixtures"
-    task :dump => :environment do
+    desc 'dump db to bootstrap fixtures'
+    task dump: :environment do
       Card::Cache.reset_global
 
       # FIXME temporarily taking this out!!
@@ -299,9 +266,11 @@ namespace :wagn do
       # which dumps with slashes that syck can't understand
 
       WAGN_SEED_TABLES.each do |table|
-        i = "000"
+        i = '000'
         File.open(File.join(WAGN_SEED_PATH, "#{table}.yml"), 'w') do |file|
-          data = ActiveRecord::Base.connection.select_all( "select * from #{table}" )
+          data = ActiveRecord::Base.connection.select_all(
+            "select * from #{table}"
+          )
           file.write YAML::dump( data.inject({}) do |hash, record|
             record['trash'] = false if record.has_key? 'trash'
             record['draft'] = false if record.has_key? 'draft'
@@ -317,60 +286,92 @@ namespace :wagn do
 
     end
 
-    desc "copy files from template database to standard mod and update cards"
-    task :copy_mod_files => :environment do
+    desc 'copy files from template database to standard mod and update cards'
+    task copy_mod_files: :environment do
 
       source_files_dir = "#{Wagn.root}/files"
 
       # mark mod files as mod files
       Card::Auth.as_bot do
-        Card.search( :type=>['in', 'Image', 'File'], :ne=>'' ).each do |card|
-          if card.mod_file? || card.codename == 'new_file' || card.codename == 'new_image'
+        Card.search(type: ['in', 'Image', 'File'], ne: '').each do |card|
+          if card.mod_file? || card.codename == 'new_file' ||
+             card.codename == 'new_image'
             puts "skipping #{card.name}: already in code"
             next
           else
             puts "working on #{card.name}"
           end
 
-          raise "need codename for file" unless card.codename.present?
+          raise 'need codename for file' unless card.codename.present?
 
-          files = {:original => card.attachment.path}
+          files = {original: card.attachment.path}
           card.attachment.versions.each_key do |version|
             files[version] = card.attachment.path(version)
           end
 
           # make card a mod file card
           mod_name = (l = card.left) && l.type_id==Card::SkinID ? '06_bootstrap' : '05_standard'
-          card.update_column :db_content, card.attachment.db_content(:mod=>mod_name)
-          card.last_action.change_for(2).first.update_column :value, card.attachment.db_content(:mod=>mod_name)
+          card.update_column :db_content, card.attachment.db_content(mod: mod_name)
+          card.last_action.change_for(2).first.update_column :value, card.attachment.db_content(mod: mod_name)
           card.expire
           card = Card.fetch card.name
 
           target_dir = card.store_dir
 
-          #FileUtils.remove_dir target_dir, force=true if Dir.exists? target_dir
-          #FileUtils.mkdir_p target_dir
-
           files.each do |version, path|
             FileUtils.cp path, card.attachment.path(version)
           end
-
         end
       end
     end
 
-
-    desc "load bootstrap fixtures into db"
-    task :load => :environment do
-      #FIXME - shouldn't we be more standard and use seed.rb for this code?
+    desc 'load bootstrap fixtures into db'
+    task load: :environment do
+      # FIXME: shouldn't we be more standard and use seed.rb for this code?
       Rake.application.options.trace = true
       puts "bootstrap load starting #{WAGN_SEED_PATH}"
       require 'active_record/fixtures'
-#      require 'time'
-
       ActiveRecord::FixtureSet.create_fixtures WAGN_SEED_PATH, WAGN_SEED_TABLES
     end
-
   end
+end
 
+def correct_time_and_user_stamps
+  conn =  ActiveRecord::Base.connection
+  who_and_when = [ Card::WagnBotID, Time.now.utc.to_s(:db) ]
+  card_sql = "update cards set creator_id=%1$s, created_at='%2$s', updater_id=%1$s, updated_at='%2$s'"
+  conn.update(card_sql                                          % who_and_when)
+  conn.update("update card_acts set actor_id=%s, acted_at='%s'" % who_and_when)
+end
+
+def delete_unwanted_cards
+  Card::Auth.as_bot do
+    if ignoramus = Card['*ignore']
+      ignoramus.item_cards.each do |card|
+        card.delete!
+      end
+    end
+    Card::Cache.reset_global
+    # FIXME: can this be associated with the machine module somehow?
+    %w{ machine_input machine_output }.each do |codename|
+      Card.search(:right=>{:codename=>codename }).each do |card|
+        FileUtils.rm_rf File.join('files', card.id.to_s ), :secure=>true
+        card.delete!
+      end
+    end
+  end
+end
+
+def clear_history
+  Card::Action.delete_old
+  Card::Change.delete_actionless
+
+  conn =  ActiveRecord::Base.connection
+  conn.execute( "truncate card_acts" )
+  conn.execute( "truncate sessions" )
+  act = Card::Act.create! actor_id: Card::WagnBotID,
+                          :card_id=>Card::WagnBotID
+  Card::Action.find_each do |action|
+    action.update_attributes!(:card_act_id=>act.id)
+  end
 end

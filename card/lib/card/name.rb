@@ -23,7 +23,7 @@ class Card
       junction? && begin
         right_key = right_name.key
         traitlist.find do |codename|
-          (card_id = Codename[codename]) &&
+          (card_id = Card::Codename[codename]) &&
             (card = Card.quick_fetch card_id) &&
             card.key == right_key
         end.present?
@@ -49,11 +49,15 @@ class Card
       Card::Codename[Card.fetch_id self]
     end
 
+    # returns full name for a field
     def field_name tag_name
       case tag_name
       when Symbol
         trait_name tag_name
       else
+        if tag_name.to_s[0] == '+'
+          tag_name = tag_name.to_s[1..-1]
+        end
         [ self, tag_name ].to_name
       end
     end
@@ -63,14 +67,14 @@ class Card
     end
 
     def relative_name context_name
-      self.to_show(*context_name.to_name.parts).to_name
+      to_show(*context_name.to_name.parts).to_name
     end
 
     def absolute_name context_name
-      self.to_absolute_name(context_name)
+      to_absolute_name(context_name)
     end
 
-    def is_a_field_of? context_name
+    def field_of? context_name
       if context_name.present?
         # Do I still equal myself after I've been relativised in the context
         # of context_name?
@@ -80,11 +84,11 @@ class Card
       end
     end
 
-    def is_setting?
+    def setting?
       Set::Type::Setting.member_names[key]
     end
 
-    def is_set?
+    def set?
       SetPattern.card_keys[tag_name.key]
     end
 

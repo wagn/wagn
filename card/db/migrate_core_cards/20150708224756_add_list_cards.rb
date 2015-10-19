@@ -2,16 +2,17 @@
 
 class AddListCards < Card::CoreMigration
   def up
-    Card.create! name: 'List', type_code: :cardtype, codename: :list
-    Card.create! name: 'Listed by',
-                 type_code: :cardtype, codename: :listed_by
-    Card.create! name: '*cached count', codename: :cached_count,
+    create_card! name: 'List', codename: :list,
+                 type_code: :cardtype
+    create_card! name: 'Listed by', codename: :listed_by,
+                 type_code: :cardtype
+    create_card! name: '*cached count', codename: :cached_count,
                  subcards: {
                     '+*right+*update'=>'[[Administrator]]',
                     '+*right+*create'=>'[[Administrator]]',
                     '+*right+*delete'=>'[[Administrator]]'
                   }
-    Card.create! name: '*cached content', codename: :cached_content,
+    create_card! name: '*cached content', codename: :cached_content,
                  subcards: {
                    '+*right+*update'=>'[[Administrator]]',
                    '+*right+*create'=>'[[Administrator]]',

@@ -26,14 +26,18 @@ def remove_subfield name_or_card
   subcards.remove_field name_or_card
 end
 
+def clear_subcards
+  subcards.clear
+end
+
 def unfilled?
   (content.empty? || content.strip.empty?) && !subcards.present?
 end
 
 event :reject_empty_subcards, after: :approve, on: :save do
-  subcards.each_card do |subcard|
+  subcards.each_with_key do |subcard, key|
     if subcard.new? && subcard.unfilled?
-      remove_subcard subcard
+      remove_subcard key
     end
   end
 end

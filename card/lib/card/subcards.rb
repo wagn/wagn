@@ -14,19 +14,20 @@ class Card
   end
 
   def preserve_subcards
-    if subcards.present?
-      Card.cache.write_local subcards_cache_key, @subcards
-    end
+    return unless subcards.present?
+    Card.cache.write_local subcards_cache_key, @subcards
   end
 
   def restore_subcards
-    if (cached_subcards = Card.cache.read_local(subcards_cache_key))
-      @subcards = cached_subcards
-    end
+    cached_subcards = Card.cache.read_local(subcards_cache_key)
+    return unless cached_subcards
+    @subcards = cached_subcards
+    @subcards.context_card = self
   end
 
   def expire_subcards
     Card.cache.delete_local subcards_cache_key
+    subcards.clear
   end
 
   def subcards_cache_key
@@ -40,6 +41,13 @@ class Card
       @keys = ::Set.new
     end
 
+    def clear
+      @keys.each do |key|
+        Card.cache.delete_local key
+      end
+      @keys = ::Set.new
+    end
+
     def remove name_or_card
       key = case name_or_card
             when Card
@@ -50,10 +58,14 @@ class Card
               name_or_card.to_name.key
             end
 
-      @keys.include? key && @keys.delete(key)
+      key = absolutize_subcard_name(key).key unless @keys.include?(key)
+      @keys.delete key
+      removed_card = fetch_subcard key
+      Card.cache.delete_local key
+      removed_card
     end
 
-    def add name_or_card_or_attr, card_or_attr = nil
+    def add name_or_card_or_attr, card_or_attr=nil
       if card_or_attr
         name = name_or_card_or_attr
       else
@@ -63,38 +75,52 @@ class Card
       when Hash
         args = card_or_attr
         if name
-          add_attributes name, args
+          new_by_attributes name, args
         elsif args[:name]
-          add_attributes args.delete(:name), args
+          new_by_attributes args.delete(:name), args
         else
           args.each_pair do |key, val|
-            if val.is_a? String
-              add_attributes key, content: val
-            else
-              add_attributes key, val
+            case val
+            when String then new_by_attributes key, content: val
+            when Card
+              val.name = absolutize_subcard_name key
+              new_by_card val
+            else new_by_attributes key, val
             end
           end
         end
       when Card
-        add_card card_or_attr
+        new_by_card card_or_attr
       when Symbol, String
-        add_attributes card_or_attr, {}
+        new_by_attributes card_or_attr, {}
       end
     end
+
+    def rename old_name, new_name
+      return unless @keys.include? old_name.to_name.key
+
+    end
+
+
 
     def << value
       add value
     end
 
     def method_missing method, *args
-      if @keys.respond_to? method
-        @keys.send method, *args
-      end
+      return unless @keys.respond_to? method
+      @keys.send method, *args
     end
 
     def each_card
-      @keys.each do |key|
-        card = fetch_subcard key
+      # fetch all cards first to avoid side effects
+      # e.g. deleting a user adds follow rules and +*account to subcards
+      # for deleting but deleting follow rules can remove +*account from the
+      # cache if it belongs to the rule cards
+      cards = @keys.map do |key|
+        fetch_subcard key
+      end
+      cards.each do |card|
         yield(card) if card
       end
     end
@@ -111,14 +137,14 @@ class Card
     def []= name, card_or_attr
       case card_or_attr
       when Hash
-        add_attributes name, card_or_attr
+        new_by_attributes name, card_or_attr
       when Card
-        add_card name, card_or_attr
+        new_by_card card_or_attr
       end
     end
 
     def [] name
-      card name
+      card(name) || field(name)
     end
 
     def field name
@@ -129,9 +155,8 @@ class Card
     end
 
     def card name
-      if @keys.include? name.to_name.key
-        fetch_subcard name
-      end
+      return unless @keys.include? name.to_name.key
+      fetch_subcard name
     end
 
     def add_child name, args
@@ -188,31 +213,32 @@ class Card
       end
     end
 
-    def add_attributes name, attributes = {}
-      absolute_name =
-        if @context_card.name =~ /^\+/
-          name.to_name
-        else
-          name.to_name.to_absolute_name(@context_card.name)
-        end
-      if absolute_name.is_a_field_of?(@context_card.name) &&
+    def new_by_attributes name, attributes={}
+      absolute_name = absolutize_subcard_name name
+      if absolute_name.field_of?(@context_card.name) &&
          (absolute_name.parts.size - @context_card.cardname.parts.size) > 2
-        left_card = add_attributes absolute_name.left
-        add_card left_card
-        left_card.add_attributes absolute_name, attributes
+        left_card = new_by_attributes absolute_name.left
+        new_by_card left_card
+        left_card.new_by_attributes absolute_name, attributes
       else
         card = Card.assign_or_initialize_by absolute_name.s, attributes,
                                             local_only: true
-        add_card card
+        new_by_card card
       end
-
-
     end
 
-    def add_card card
+    def absolutize_subcard_name name
+      if @context_card.name =~ /^\+/
+        name.to_name
+      else
+        name.to_name.to_absolute_name(@context_card.name)
+      end
+    end
+
+    def new_by_card card
       card.supercard = @context_card
       if !card.cardname.simple? &&
-         card.cardname.is_a_field_of?(@context_card.cardname)
+         card.cardname.field_of?(@context_card.cardname)
         card.superleft = @context_card
       end
       @keys << card.key

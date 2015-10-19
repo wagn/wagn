@@ -204,7 +204,8 @@ class Card
         args = default_render_args view, args
         with_inclusion_mode view do
           Card::ViewCache.fetch(self, view, args) do
-            send "_view_#{ view }", args
+            method = method "_view_#{ view }"
+            method.arity == 0 ? method.call : method.call(args)
           end
         end
       end

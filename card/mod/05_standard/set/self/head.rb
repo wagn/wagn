@@ -84,7 +84,6 @@ format :html do
     elsif script_card
       javascript_include_tag script_card.machine_output_url
     end
-
     ie9_card    = Card[:script_html5shiv_printshiv]
     %(#{ javascript_tag do varvals * ';' end  }
       #{ @js_tag if @js_tag }

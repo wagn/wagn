@@ -182,6 +182,10 @@ class Card
       @local.delete key
     end
 
+    def delete_local key
+      @local.delete key
+    end
+
     def dump
       p "dumping local...."
       @local.each do |k, v|
@@ -211,7 +215,7 @@ class Card
     end
 
     def exist? key
-      @local.has_key?(key) || @store.exist?(key)
+      @local.has_key?(key) || (@store && @store.exist?(key))
     end
   end
 end

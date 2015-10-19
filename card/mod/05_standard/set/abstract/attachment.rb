@@ -53,8 +53,8 @@ event :correct_identifier, after: :store, on: :create do
   update_column(:db_content,attachment.db_content(mod: load_from_mod))
   expire
 end
-
 event :save_original_filename, after: :validate_name, when: proc {|c| !c.preliminary_upload? && !c.save_preliminary_upload? && c.attachment_changed?} do
+
   if @current_action
     @current_action.update_attributes! comment: original_filename
   end
@@ -87,6 +87,10 @@ end
 
 def original_filename
   attachment.original_filename
+end
+
+def unfilled?
+  !attachment.present? && !save_preliminary_upload? && super
 end
 
 def preliminary_upload?

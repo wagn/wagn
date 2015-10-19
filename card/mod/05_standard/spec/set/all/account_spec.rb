@@ -73,7 +73,7 @@ describe Card::Set::All::Account do
       ja_email = jadmin.account.email
 
       Card::Env[:params] = { email: {subject: 'Hey Joe!', message: 'Come on in.'} }
-      Card.create name: 'Joe New', type_id: Card::UserID, '+*account'=>{ '+*email'=> 'joe@new.com' }
+      Card.create! name: 'Joe New', type_id: Card::UserID, '+*account'=>{ '+*email'=> 'joe@new.com' }
 
       c = Card['Joe New']
       u = Card::Auth[ 'joe@new.com' ]

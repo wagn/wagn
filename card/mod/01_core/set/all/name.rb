@@ -3,11 +3,14 @@ require 'uuid'
 def name= newname
   cardname = newname.to_name
   if @supercard
-    @relative_name = cardname.to_s
-    relparts = @relative_name.to_name.parts
-    @superleft = @supercard if relparts.size==2 && relparts.first.blank?
-    cardname = @relative_name.to_name.to_absolute_name @supercard.name
+    @contextual_name = cardname.to_s
+    relparts = cardname.parts
+    if relparts.size==2 && ( relparts.first.blank? || relparts.first.to_name.key == @supercard.key )
+      @superleft = @supercard
+    end
+    cardname = cardname.to_absolute_name @supercard.name
   end
+
 
   newkey = cardname.key
   if key != newkey
@@ -15,10 +18,8 @@ def name= newname
     reset_patterns_if_rule # reset the old name - should be handled in tracked_attributes!!
     reset_patterns
   end
-
-  subcards.each do |subkey, subcard|
-    next unless Card===subcard
-    subcard.name = subkey.to_name.to_absolute cardname
+  subcards.each do |subcard|
+    subcard.name = subcard.cardname.replace_part name, newname
   end
 
   write_attribute :name, cardname.s
@@ -45,15 +46,29 @@ def junction?
   cardname.junction?
 end
 
+def contextual_name
+  @contextual_name || name
+end
 
-def relative_name
-  @relative_name || name
+def relative_name context_name = nil
+  if !context_name && @supercard
+    context_name = @supercard.cardname
+  end
+  cardname.relative_name(context_name)
+end
+
+def absolute_name context_name = nil
+  if !context_name && @supercard
+    context_name = @supercard.cardname
+  end
+  cardname.absolute_name(context_name)
 end
 
 def left *args
   if !simple?
-    @superleft or begin
-      unless name_changed? and name.to_name.trunk_name.key == name_was.to_name.key
+    @superleft || begin
+      unless name_changed? &&
+             name.to_name.trunk_name.key == name_was.to_name.key
         # prevent recursion when, eg, renaming A+B to A+B+C
         Card.fetch cardname.left, *args
       end
@@ -62,32 +77,32 @@ def left *args
 end
 
 def right *args
-  Card.fetch( cardname.right, *args ) if !simple?
+  Card.fetch(cardname.right, *args) if !simple?
 end
 
 def [] *args
-  if args[0].kind_of?(Fixnum) || args[0].kind_of?(Range)
+  if args[0].is_a?(Fixnum) || args[0].is_a?(Range)
     fetch_name = Array.wrap(cardname.parts[args[0]]).compact.join '+'
-    Card.fetch( fetch_name, args[1] || {} ) if !simple?
+    Card.fetch(fetch_name, args[1] || {}) if !simple?
   else
     super
   end
 end
 
 def trunk *args
-  simple? ? self : left( *args )
+  simple? ? self : left(*args)
 end
 
 def tag *args
-  simple? ? self : Card.fetch( cardname.right, *args )
+  simple? ? self : Card.fetch(cardname.right, *args)
 end
 
-def left_or_new args={}
-  left args or Card.new args.merge(name: cardname.left)
+def left_or_new args = {}
+  left(args) || Card.new(args.merge(name: cardname.left))
 end
 
 def children
-  Card.search( { (simple? ? :part : :left) => name } ).to_a
+  Card.search((simple? ? :part : :left) => name).to_a
 end
 
 def dependents
@@ -101,7 +116,7 @@ def dependents
           array + card.dependents
         end
       end
-    #Rails.logger.warn "dependents[#{inspect}] #{@dependents.inspect}"
+    # Rails.logger.warn "dependents[#{inspect}] #{@dependents.inspect}"
   end
   @dependents
 end
@@ -133,13 +148,12 @@ rescue
   self
 end
 
-
 event :permit_codename, before: :approve, on: :update, changed: :codename do
   errors.add :codename, 'only admins can set codename' unless Auth.always_ok?
 end
 
 event :validate_unique_codename, after: :permit_codename do
-  if codename.present? and errors.empty? and Card.find_by_codename(codename).present?
+  if codename.present? && errors.empty? && Card.find_by_codename(codename).present?
     errors.add :codename, "codename #{codename} already in use"
   end
 end

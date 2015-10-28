@@ -213,6 +213,12 @@ When /^In (.*) I click "(.*)"$/ do |section, link|
   end
 end
 
+When /^I click "(.*)" within "(.*)"$/ do |link, selector|
+  within selector do
+    click_link link
+  end
+end
+
 When /^In (.*) I find link with class "(.*)" and click it$/ do |section, css_class|
   within scope_of(section) do
     find("a.#{css_class}").click
@@ -340,6 +346,12 @@ end
 
 Then /^I should see "([^\"]*)" in color (.*)$/ do |text, css_class|
   page.has_css?(".diff-#{css_class}", text: text)
+end
+
+Then /^I should see css class "([^\"]*)" within "(.*)"$/ do |css_class, selector|
+  within selector do
+    find(css_class)
+  end
 end
 
 When /^I fill in "([^\"]*)" with$/ do |field, value|

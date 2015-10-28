@@ -11,9 +11,9 @@ format :html do
 
     @@slot_option_keys.inject(options_hash) do |hash, opt|
       if args[opt].present?
-        hash[opt] = args[opt] 
+        hash[opt] = args[opt]
       elsif Env.params['slot'].present? && Env.params['slot'][opt.to_s].present?
-        hash[opt] = Env.params['slot'][opt.to_s] 
+        hash[opt] = Env.params['slot'][opt.to_s]
       end
       hash
     end

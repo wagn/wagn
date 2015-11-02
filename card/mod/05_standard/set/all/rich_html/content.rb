@@ -114,8 +114,8 @@ format :html do
     args[:optional_toggle] ||= main? ? :hide : :show
     frame args.merge(content: true) do
       [
-        _render_open_content( args ),
-        optional_render( :comment_box, args )
+        _render_open_content(args),
+        optional_render(:comment_box, args)
       ]
     end
   end
@@ -126,114 +126,129 @@ format :html do
 
   view :type do |args|
     klasses = ['cardtype']
-    klass = args[:type_class] and klasses << klass
+    klass = args[:type_class]
+    klasses << klass if klass
     card_link card.type_card.name, class: klasses
   end
 
   view :closed do |args|
-    frame args.reverse_merge(content: true, body_class: 'closed-content', toggle_mode: :close, optional_toggle: :show, optional_toolbar: :hide ) do
+    frame args.reverse_merge(
+      content: true,
+      body_class: 'closed-content',
+      toggle_mode: :close,
+      optional_toggle: :show,
+      optional_toolbar: :hide
+    ) do
       _optional_render :closed_content, args
     end
   end
-
 
   view :change do |args|
     args[:optional_title_link] = :show
     wrap args do
       [
-        _optional_render( :title, args       ),
-        _optional_render( :menu, args, :hide ),
-        _optional_render( :last_action, args )
+        _optional_render(:title, args),
+        _optional_render(:menu, args, :hide),
+        _optional_render(:last_action, args)
       ]
     end
   end
 
   def current_set_card
     set_name = params[:current_set]
-    set_name ||= "#{card.name}+*type" if card.known? && card.type_id==Card::CardtypeID
+    if card.known? && card.type_id == Card::CardtypeID
+      set_name ||= "#{card.name}+*type"
+    end
     set_name ||= "#{card.name}+*self"
     Card.fetch(set_name)
   end
 
-
   view :related do |args|
     if args[:related_card]
       frame args.merge(optional_toolbar: :show) do
-        nest( args[:related_card], args[:related_args])
+        nest(args[:related_card], args[:related_args])
       end
     end
   end
 
   def default_related_args args
-    if rparams = args[:related] || params[:related]
-      rcard = rparams[:card] || begin
-                rcardname = rparams[:name].to_name.to_absolute_name( card.cardname)
-                Card.fetch rcardname, new: {}
-              end
-
-      #subheader =  with_name_context(card.name) { showname rcard.name }
-      subheader =  with_name_context(card.name) { subformat(rcard)._render_title(args) }
-      add_name_context card.name
-      nest_args = ( rparams[:slot] || {} ).deep_symbolize_keys.reverse_merge(
-        view:            ( rparams[:view] || :open ),
-        optional_header: :hide,
-        optional_menu:   :show,
-        subheader:       subheader,
-        optional_toggle: :hide,
-        optional_help:   :show,
-        parent:          card,
-        subframe:        true,
-        subslot:         true
-      )
-      nest_args[:optional_comment_box] = :show if rcard.show_comment_box_in_related?
-
-      args[:related_args] = nest_args
-      args[:related_card] = rcard
+    rparams = args[:related] || params[:related]
+    return unless rparams
+    rcard = rparams[:card] || begin
+      rcardname = rparams[:name].to_name.to_absolute_name(card.cardname)
+      Card.fetch rcardname, new: {}
     end
+
+    subheader =  with_name_context(card.name) do
+      subformat(rcard)._render_title(args)
+    end
+    add_name_context card.name
+    nest_args = (rparams[:slot] || {}).deep_symbolize_keys.reverse_merge(
+      view:            (rparams[:view] || :open),
+      optional_header: :hide,
+      optional_menu:   :show,
+      subheader:       subheader,
+      optional_toggle: :hide,
+      optional_help:   :show,
+      parent:          card,
+      subframe:        true,
+      subslot:         true
+    )
+    if rcard.show_comment_box_in_related?
+      nest_args[:optional_comment_box] = :show
+    end
+    args[:related_args] = nest_args
+    args[:related_card] = rcard
   end
 
-
   view :help, tags: :unknown_ok do |args|
-    text = if args[:help_text]
-      args[:help_text]
-    else
-      setting = card.new_card? ? [ :add_help, { fallback: :help } ] : :help
-      if help_card = card.rule_card( *setting ) and help_card.ok? :read
+    text = args[:help_text] || begin
+      setting = card.new_card? ? [:add_help, { fallback: :help }] : :help
+      help_card = card.rule_card(*setting)
+      if help_card && help_card.ok?(:read)
         with_inclusion_mode :normal do
-          process_content _render_raw( args.merge structure: help_card.name ), content_opts: { chunk_list: :references }
-          # render help card with current card's format so current card's context is used in help card inclusions
+          raw_help_content = _render_raw args.merge(structure: help_card.name)
+          process_content raw_help_content, content_opts:
+            { chunk_list: :references }
+          # render help card with current card's format
+          # so current card's context is used in help card inclusions
         end
       end
     end
-    klass = [args[:help_class], 'help-text'].compact*' '
+    klass = [args[:help_class], 'help-text'].compact * ' '
     %{<div class="#{klass}">#{raw text}</div>} if text
   end
 
+  view :last_action do
+    act = card.last_act
+    return unless act
+    action = act.action_on card.id
+    return unless action
+    action_verb =
+      case action.action_type
+      when :create then 'added'
+      when :delete then 'deleted'
+      else
+        link_to(
+          'edited',
+          path(view: :history),
+          class: 'last-edited', rel: 'nofollow'
+        )
+      end
 
-  view :last_action do |args|
-    if act = card.last_act and action = act.action_on(card.id)
-      action_verb =
-        case action.action_type
-        when :create then 'added'
-        when :delete then 'deleted'
-        else
-          link_to('edited', path(view: :history), class: 'last-edited', rel: 'nofollow')
-        end
-
-      %{
-        <span class="last-update">
-          #{ action_verb }
-          #{ _render_acted_at }
-          ago by
-          #{ subformat(card.last_actor)._render_link }
-        </span>
-      }
-    end
+    %{
+      <span class="last-update">
+        #{action_verb} #{_render_acted_at} ago by
+        #{subformat(card.last_actor)._render_link}
+      </span>
+    }
   end
 
   private
 
   def fancy_title title=nil, title_class=nil
-    raw %{<span class="card-title#{" #{title_class}"if title_class}">#{ showname(title).to_name.parts.join %{<span class="joint">+</span>} }</span>}
+    klasses = ['card-title', title_class].compact * ' '
+    title = showname(title).to_name.parts.join %{<span class="joint">+</span>}
+    raw %{<span class="#{klasses}">#{title}</span>}
   end
 end

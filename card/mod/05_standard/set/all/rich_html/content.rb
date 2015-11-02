@@ -11,7 +11,7 @@ format :html do
       self.render :layout
     else
       view ||= args[:home_view] || :open
-      @inclusion_opts = args.delete(:items)
+      @inclusion_opts = args[:items].clone
       render view, args
     end
   end

@@ -24,7 +24,7 @@ event :upload_attachment, before: :validate_name, on: :save, when: proc { |c| c.
 end
 
 event :assign_attachment_on_create, after: :prepare, on: :create, when: proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(@cached_upload))
+  if (action = Card::Action.fetch(@action_id_of_cached_upload))
     upload_cache_card.selected_action_id = action.id
     upload_cache_card.select_file_revision
     assign_attachment upload_cache_card.attachment.file, action.comment
@@ -33,7 +33,7 @@ end
 
 event :assign_attachment_on_update, after: :prepare, on: :update,
       when:  proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(@cached_upload))
+  if (action = Card::Action.fetch(@action_id_of_cached_upload))
     uploaded_file =
        with_selected_action_id(action.id) do
          attachment.file
@@ -62,7 +62,7 @@ event :save_original_filename, after: :validate_name, when: proc {|c| !c.prelimi
 end
 
 event :delete_cached_upload_file_on_create, after: :extend, on: :create, when: proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(@cached_upload))
+  if (action = Card::Action.fetch(@action_id_of_cached_upload))
     upload_cache_card.delete_files_for_action action
     action.delete
   end
@@ -70,7 +70,7 @@ event :delete_cached_upload_file_on_create, after: :extend, on: :create, when: p
 end
 
 event :delete_cached_upload_file_on_update, after: :extend, on: :update, when: proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(@cached_upload))
+  if (action = Card::Action.fetch(@action_id_of_cached_upload))
     delete_files_for_action action
     action.delete
   end
@@ -99,7 +99,7 @@ def preliminary_upload?
 end
 
 def save_preliminary_upload?
-  @cached_upload.present?
+  @action_id_of_cached_upload.present?
 end
 
 def attachment_changed?
@@ -116,12 +116,12 @@ def upload_cache_card
 end
 
 # action id of the cached upload
-def cached_upload= value
-  @cached_upload = value
+def action_id_of_cached_upload= value
+  @action_id_of_cached_upload = value
 end
 
-def cached_upload
-  @cached_upload
+def action_id_of_cached_upload
+  @action_id_of_cached_upload
 end
 
 def load_from_mod= value

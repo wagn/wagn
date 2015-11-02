@@ -3,15 +3,14 @@ def show_comment_box_in_related?
 end
 
 format :html do
-
   def show view, args
     if show_layout?
       args.merge! view: view if view
       @main_opts = args
-      self.render :layout
+      render :layout
     else
       view ||= args[:home_view] || :open
-      @inclusion_opts = args[:items].clone
+      @inclusion_opts = (args[:items] || {}).clone
       render view, args
     end
   end
@@ -22,17 +21,17 @@ format :html do
 
   view :layout, perms: :none do |args|
     output [
-      process_content(get_layout_content, content_opts: { chunk_list: :references }),
+      process_content(get_layout_content, content_opts:
+        { chunk_list: :references }),
       _render_modal_slot(args)
     ]
   end
 
-
   view :content do |args|
     wrap args.reverse_merge(slot_class: 'card-content') do
       [
-        _optional_render( :menu, args, :hide ),
-        _render_core( args )
+        _optional_render(:menu, args, :hide),
+        _render_core(args)
       ]
     end
   end
@@ -41,9 +40,9 @@ format :html do
     wrap args.reverse_merge(slot_class: 'card-content panel panel-default') do
       wrap_with :div, class: 'panel-body' do
         [
-          _optional_render( :menu, args, :hide ),
-          _render_core( args )
-          ]*"\n"
+          _optional_render(:menu, args, :hide),
+          _render_core(args)
+        ] * "\n"
       end
     end
   end
@@ -51,10 +50,10 @@ format :html do
   view :titled, tags: :comment do |args|
     wrap args do
       [
-        _optional_render( :menu, args ),
-        _render_header( args ),
-        wrap_body( content: true ) { _render_core args },
-        optional_render( :comment_box, args )
+        _optional_render(:menu, args),
+        _render_header(args),
+        wrap_body(content: true) { _render_core args },
+        optional_render(:comment_box, args)
       ]
     end
   end
@@ -62,9 +61,9 @@ format :html do
   view :labeled do |args|
     wrap args do
       [
-        _optional_render( :menu, args ),
-        "<label>#{ _render_title args }</label>",
-        wrap_body( body_class: 'closed-content', content: true ) do
+        _optional_render(:menu, args),
+        "<label>#{_render_title args}</label>",
+        wrap_body(body_class: 'closed-content', content: true) do
           _render_closed_content args
         end
       ]
@@ -73,23 +72,23 @@ format :html do
 
   view :title do |args|
     title = fancy_title args[:title], args[:title_class]
-    title =  _optional_render( :title_editable, args, :hide) ||
-             _optional_render( :title_link, args.merge( title_ready: title ), :hide ) ||
-             title
+    title =
+      _optional_render(:title_editable, args, :hide) ||
+      _optional_render(:title_link, args.merge(title_ready: title), :hide) ||
+      title
     add_name_context
     title
   end
 
   view :title_link do |args|
-    card_link card.cardname, text: ( args[:title_ready] || showname(args[:title]) )
+    title_text = args[:title_ready] || showname(args[:title])
+    card_link card.cardname, text: title_text
   end
 
-  view :type_info do |args|
-    %{
-      <span class="type-info pull-right">
-        #{card_link(card.type_name, text: "#{card.type_name}", class: 'navbar-link')}
-      </span>
-    }.html_safe
+  view :type_info do
+    link_args = { text: "#{card.type_name}", class: 'navbar-link' }
+    link = card_link card.type_name, link_args
+    %{<span class="type-info pull-right">#{link}</span>}.html_safe
   end
 
   view :title_editable do |args|
@@ -98,12 +97,17 @@ format :html do
     end
     res = links.shift
     links.each_with_index do |link, index|
-      res += card_link card.cardname.parts[0..index+1].join('+'), text: glyphicon('plus','header-icon')
+      name = card.cardname.parts[0..index + 1].join '+'
+      res += card_link name, text: glyphicon('plus', 'header-icon')
       res += link
     end
     res += ' '
-    res.concat view_link(glyphicon('edit','header-icon'),:edit_name, class: 'slotter', 'data-toggle'=>'tooltip', title: 'edit name')
-    res.concat _optional_render(:type_link,args,:show)
+    res.concat view_link(
+      glyphicon('edit', 'header-icon'),
+      :edit_name,
+      class: 'slotter', 'data-toggle' => 'tooltip', title: 'edit name'
+    )
+    res.concat _optional_render(:type_link, args, :show)
   end
 
   view :open, tags: :comment do |args|
@@ -116,13 +120,9 @@ format :html do
     end
   end
 
-
-
-=begin
-  view :anchor, perms: :none, tags: :unknown_ok do |args|
-    %{ <a id="#{card.cardname.url_key}" name="#{card.cardname.url_key}"></a> }
-  end
-=end
+  # view :anchor, perms: :none, tags: :unknown_ok do |args|
+  #   %{ <a id="#{card.cardname.url_key}" name="#{card.cardname.url_key}"></a> }
+  # end
 
   view :type do |args|
     klasses = ['cardtype']
@@ -193,7 +193,6 @@ format :html do
   end
 
 
-
   view :help, tags: :unknown_ok do |args|
     text = if args[:help_text]
       args[:help_text]
@@ -238,5 +237,3 @@ format :html do
     raw %{<span class="card-title#{" #{title_class}"if title_class}">#{ showname(title).to_name.parts.join %{<span class="joint">+</span>} }</span>}
   end
 end
-
-

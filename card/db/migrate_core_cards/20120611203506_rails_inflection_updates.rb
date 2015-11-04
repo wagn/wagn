@@ -52,7 +52,9 @@ class RailsInflectionUpdates < Card::CoreMigration
           unless_name_collision(card) do
             apply_to_content << i
             new_key = name.to_name.key
-            if Card.find_by_key new_key
+            if card.key == new_key
+              # noop.  probably means this was already migrated?
+            elsif Card.find_by_key new_key
               puts "Could not update #{name}. Key '#{new_key}' already exists."
             else
               card.update_attributes! key: new_key

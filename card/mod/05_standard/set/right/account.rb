@@ -7,47 +7,66 @@ card_accessor :salt
 card_accessor :status
 card_accessor :token
 
-def active?   ; status=='active'  end
-def blocked?  ; status=='blocked' end
-def built_in? ; status=='system'  end
-def pending?  ; status=='pending' end
-
+def active?;   status == 'active'  end
+def blocked?;  status == 'blocked' end
+def built_in?; status == 'system'  end
+def pending?;  status == 'pending' end
 
 def authenticate_by_token val
-  tcard = token_card                               or return :token_not_found
-  token == val                                     or return :incorrect_token
-  tcard.updated_at > Card.config.token_expiry.ago  or return :token_expired  # > means "after"
-  left and left.accountable?                       or return :illegal_account  #(overkill?)
-  Auth.as_bot { tcard.delete! }
-  left.id
+  tcard = token_card
+  error = token_error(tcard, val)
+  if error == :none
+    Auth.as_bot { tcard.delete! }
+    left.id
+  else
+    error
+  end
 end
 
+def token_error tcard, val
+  case
+  when !tcard
+    :token_not_found
+  when token != val
+    :incorrect_token
+  when tcard.updated_at <= Card.config.token_expiry.ago
+    # < means "before"
+    :token_expired
+  when !left || !left.accountable?
+    :illegal_account
+  else
+    :none
+  end
+end
 
 format do
-  view :verify_url do |args|
+  view :verify_url do
     card_url "update/#{card.cardname.left_name.url_key}?token=#{card.token}"
   end
 
-  view :verify_days do |args|
-    ( Card.config.token_expiry / 1.day ).to_s
+  view :verify_days do
+    (Card.config.token_expiry / 1.day).to_s
   end
 
-  view :reset_password_url do |args|
-    card_url "update/#{card.cardname.url_key}?reset_token=#{card.token_card.refresh(true).content}"
+  view :reset_password_url do
+    card_url "update/#{card.cardname.url_key}?" \
+             "reset_token=#{card.token_card.refresh(true).content}"
   end
 
-  view :reset_password_days do |args|
-    ( Card.config.token_expiry / 1.day ).to_s
+  view :reset_password_days do
+    (Card.config.token_expiry / 1.day).to_s
   end
 end
 
-
 format :html do
-
   view :raw do |args|
     content = []
-    content << "{{+#{Card[:email   ].name}|titled;title:email}}"    unless args[:no_email]
-    content << "{{+#{Card[:password].name}|titled;title:password}}" unless args[:no_password]
+    unless args[:no_email]
+      content << "{{+#{Card[:email].name}|titled;title:email}}"
+    end
+    unless args[:no_password]
+      content << "{{+#{Card[:password].name}|titled;title:password}}"
+    end
     content * ' '
   end
 

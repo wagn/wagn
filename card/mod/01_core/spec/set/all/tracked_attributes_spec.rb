@@ -1,12 +1,11 @@
 # -*- encoding : utf-8 -*-
 
-
 module RenameMethods
   def name_invariant_attributes card
     {
       content:     card.content,
-      #updater_id:  card.updater_id,
-      #revisions:   card.actions.count,
+      # updater_id:  card.updater_id,
+      # revisions:   card.actions.count,
       referencers: card.referencers.map(&:name).sort,
       referees:    card.referees.map(&:name).sort,
       descendants:  card.descendants.map(&:id).sort
@@ -14,30 +13,26 @@ module RenameMethods
   end
 
   def assert_rename card, new_name
-    attrs_before = name_invariant_attributes( card )
+    attrs_before = name_invariant_attributes(card)
     actions_count_before = card.actions.count
-    card.name=new_name
+    card.name = new_name
     card.update_referencers = true
     card.save!
-    expect(card.actions.count).to eq(actions_count_before+1)
+    expect(card.actions.count).to eq(actions_count_before + 1)
     assert_equal attrs_before, name_invariant_attributes(card)
     assert_equal new_name, card.name
     assert Card[new_name]
   end
 
   def card name
-    Card[name].refresh or raise "Couldn't find card named #{name}"
+    Card[name].refresh || raise("Couldn't find card named #{name}")
   end
 end
 
 include RenameMethods
 
-
 describe Card::Set::All::TrackedAttributes do
-
-
   describe 'set_name' do
-
     it 'should handle case variants' do
       @c = Card.create! name: 'chump'
       expect(@c.name).to eq('chump')
@@ -55,12 +50,13 @@ describe Card::Set::All::TrackedAttributes do
       expect(c.right_id).to eq(nil)
     end
 
-    #FIXME - following tests more about fetch than set_name.  this spec still needs lots of cleanup
+    # FIXME: - following tests more about fetch than set_name.
+    # this spec still needs lots of cleanup
 
     it 'test fetch with new when present' do
       Card.create!(name: 'Carrots')
       cards_should_be_added 0 do
-        c=Card.fetch 'Carrots', new: {}
+        c = Card.fetch 'Carrots', new: {}
         c.save
         expect(c).to be_instance_of(Card)
         expect(Card.fetch('Carrots')).to be_instance_of(Card)
@@ -75,10 +71,9 @@ describe Card::Set::All::TrackedAttributes do
       end
     end
 
-
     it 'test fetch with new when not present' do
       cards_should_be_added 1 do
-        c=Card.fetch('Tomatoes', new: {})
+        c = Card.fetch('Tomatoes', new: {})
         c.save
         expect(c).to be_instance_of(Card)
         expect(Card.fetch('Tomatoes')).to be_instance_of(Card)
@@ -87,7 +82,8 @@ describe Card::Set::All::TrackedAttributes do
 
     it 'test_create_junction' do
       cards_should_be_added 3 do
-        expect(Card.create(name: 'Peach+Pear', content: 'juicy')).to be_instance_of(Card)
+        pearch = Card.create name: 'Peach+Pear', content: 'juicy'
+        expect(pearch).to be_instance_of(Card)
       end
       expect(Card['Peach']).to be_instance_of(Card)
       expect(Card['Pear']).to be_instance_of(Card)
@@ -101,19 +97,14 @@ describe Card::Set::All::TrackedAttributes do
       yield
       expect(Card.all.count).to eq(number)
     end
-
   end
 
-
-
   describe 'renaming' do
-
-
-    # FIXME: these tests are TOO SLOW!  8s against server, 12s from command line.
+    # FIXME: these tests are TOO SLOW!
+    # 8s against server, 12s from command line.
     # not sure if it's the card creation or the actual renaming process.
     # Card#save needs optimized in general.
     # Can't we just move this data to fixtures?
-
 
     it 'renaming plus card to its own child' do
       assert_rename card('A+B'), 'A+B+T'
@@ -145,19 +136,21 @@ describe Card::Set::All::TrackedAttributes do
       assert_rename card('A+B'), 'K'
     end
 
-
     it 'handles flipped parts' do
       assert_rename card('A+B'), 'B+A'
     end
 
     it 'test_should_error_card_exists' do
-      @t=card('T'); @t.name='A+B';
+      @t = card 'T'
+      @t.name = 'A+B'
       assert !@t.save, 'save should fail'
       assert @t.errors[:name], 'should have errors on key'
     end
 
     it 'test_used_as_tag' do
-      @b=card('B'); @b.name='A+D'; @b.save
+      @b = card 'B'
+      @b.name = 'A+D'
+      @b.save
       assert @b.errors[:name]
     end
 
@@ -194,13 +187,11 @@ describe Card::Set::All::TrackedAttributes do
 
     it 'test_reset_key' do
       c = Card['Basic Card']
-      c.name='banana card'
+      c.name = 'banana card'
       c.save!
-      assert_equal 'banana_card', c.key
-      assert Card['Banana Card'] != nil
+      expect(c.key).to eq('banana_card')
+      expect(Card['Banana Card']).not_to be_nil
     end
-
-
 
     it 'test_rename_should_not_fail_when_updating_inaccessible_referencer' do
       Card.create! name: 'Joe Card', content: 'Whattup'
@@ -214,7 +205,7 @@ describe Card::Set::All::TrackedAttributes do
 
     it 'test_rename_should_update_structured_referencer' do
       Card::Auth.as_bot do
-        c=Card.create! name: 'Pit'
+        c = Card.create! name: 'Pit'
         Card.create! name: 'Orange', type: 'Fruit', content: '[[Pit]]'
         Card.create! name: 'Fruit+*type+*structure', content: 'this [[Pit]]'
 
@@ -232,7 +223,6 @@ describe Card::Set::All::TrackedAttributes do
       end
     end
 
-
     context 'chuck' do
       before do
         Card::Auth.as_bot do
@@ -241,26 +231,29 @@ describe Card::Set::All::TrackedAttributes do
       end
 
       it 'test_rename_name_substitution' do
-        c1, c2 = Card['chuck_wagn+chuck'], Card['chuck']
+        c1 = Card['chuck_wagn+chuck']
+        c2 = Card['chuck']
         assert_rename c2, 'buck'
         assert_equal 'chuck_wagn+buck', Card.find(c1.id).name
       end
 
       it 'test_reference_updates_plus_to_simple' do
-         c1 = Card::Auth.as_bot do
-           Card.create! name: 'Huck', content: '[[chuck wagn+chuck]]'
-         end
-         c2 = Card['chuck_wagn+chuck']
-         assert_rename c2, 'schmuck'
-         c1 = Card.find(c1.id)
-         assert_equal '[[schmuck]]', c1.content
+        c1 = Card::Auth.as_bot do
+          Card.create! name: 'Huck', content: '[[chuck wagn+chuck]]'
+        end
+        c2 = Card['chuck_wagn+chuck']
+        assert_rename c2, 'schmuck'
+        c1 = Card.find(c1.id)
+        assert_equal '[[schmuck]]', c1.content
       end
     end
 
     context 'dairy' do
       before do
         Card::Auth.as_bot do
-          Card.create! type: 'Cardtype', name: 'Dairy', content: '[[/new/{{_self|name}}|new]]'
+          Card.create! name:    'Dairy',
+                       type:    'Cardtype',
+                       content: '[[/new/{{_self|name}}|new]]'
         end
       end
 
@@ -272,9 +265,9 @@ describe Card::Set::All::TrackedAttributes do
         assert_equal '[[/new/{{_self|name}}|new]]', Card['Buttah'].content
       end
 
-      it 'test_renaming_card_without_updating_references_should_not_have_errors' do
+      it 'should rename card without updating references' do
         c = Card['Dairy']
-        c.update_attributes 'name'=>'Newt', 'update_referencers'=>'false'
+        c.update_attributes name: 'Newt', update_referencers: false
         assert_equal '[[/new/{{_self|name}}|new]]', Card['Newt'].content
       end
     end
@@ -283,19 +276,21 @@ describe Card::Set::All::TrackedAttributes do
     context 'blues' do
       before do
         Card::Auth.as_bot do
-          Card.create! name: 'Blue'
-
-          Card.create! name: 'blue includer 1', content: '{{Blue}}'
-          Card.create! name: 'blue includer 2', content: '{{blue|closed;other:stuff}}'
-
-          Card.create! name: 'blue linker 1', content: '[[Blue]]'
-          Card.create! name: 'blue linker 2', content: '[[blue]]'
+          [['Blue', ''],
+           ['blue includer 1', '{{Blue}}'],
+           ['blue includer 2', '{{blue|closed;other:stuff}}'],
+           ['blue linker 1', '[[Blue]]'],
+           ['blue linker 2', '[[blue]]']
+          ].each do |name, content|
+            Card.create! name: name, content: content
+          end
         end
       end
 
-
       it 'test_updates_inclusions_when_renaming' do
-        c1,c2,c3 = Card['Blue'], Card['blue includer 1'], Card['blue includer 2']
+        c1 = Card['Blue']
+        c2 = Card['blue includer 1']
+        c3 = Card['blue includer 2']
         c1.update_attributes name: 'Red', update_referencers: true
         assert_equal '{{Red}}', Card.find(c2.id).content
         # NOTE these attrs pass through a hash stage that may not preserve order
@@ -303,13 +298,17 @@ describe Card::Set::All::TrackedAttributes do
       end
 
       it 'test_updates_inclusions_when_renaming_to_plus' do
-        c1,c2 = Card['Blue'], Card['blue includer 1']
-        c1.update_attributes name: 'blue includer 1+color', update_referencers: true
+        c1 = Card['Blue']
+        c2 = Card['blue includer 1']
+        c1.update_attributes name: 'blue includer 1+color',
+                             update_referencers: true
         assert_equal '{{blue includer 1+color}}', Card.find(c2.id).content
       end
 
       it 'test_reference_updates_on_case_variants' do
-        c1,c2,c3 = Card['Blue'], Card['blue linker 1'], Card['blue linker 2']
+        c1 = Card['Blue']
+        c2 = Card['blue linker 1']
+        c3 = Card['blue linker 2']
         c1.reload.name = 'Red'
         c1.update_referencers = true
         c1.save!
@@ -317,7 +316,5 @@ describe Card::Set::All::TrackedAttributes do
         assert_equal '[[Red]]', Card.find(c3.id).content
       end
     end
-
   end
-
 end

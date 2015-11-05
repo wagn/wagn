@@ -12,18 +12,18 @@ class AddListCards < Card::CoreMigration
                      codename: :cached_count,
                      rename_if_conflict: false,
                      subcards: {
-                        '+*right+*update'=>'[[Administrator]]',
-                        '+*right+*create'=>'[[Administrator]]',
-                        '+*right+*delete'=>'[[Administrator]]'
-                      }
+                       '+*right+*update' => '[[Administrator]]',
+                       '+*right+*create' => '[[Administrator]]',
+                       '+*right+*delete' => '[[Administrator]]'
+                     }
 
     create_or_update name: '*cached content',
                      codename: :cached_content,
                      rename_if_conflict: false,
                      subcards: {
-                       '+*right+*update'=>'[[Administrator]]',
-                       '+*right+*create'=>'[[Administrator]]',
-                       '+*right+*delete'=>'[[Administrator]]'
+                       '+*right+*update' => '[[Administrator]]',
+                       '+*right+*create' => '[[Administrator]]',
+                       '+*right+*delete' => '[[Administrator]]'
                      }
   end
 end

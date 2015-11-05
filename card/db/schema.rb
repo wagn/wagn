@@ -66,21 +66,21 @@ ActiveRecord::Schema.define(version: 20151105225558) do
   add_index "card_revisions", ["creator_id"], name: "revisions_created_by_index", using: :btree
 
   create_table "cards", force: :cascade do |t|
-    t.string   "name",                limit: 255,      null: false
-    t.string   "key",                 limit: 255,      null: false
-    t.string   "codename",            limit: 255
     t.integer  "left_id",             limit: 4
-    t.integer  "right_id",            limit: 4
-    t.integer  "creator_id",          limit: 4,        null: false
-    t.integer  "updater_id",          limit: 4,        null: false
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
+    t.integer  "current_revision_id", limit: 4
+    t.string   "name",                limit: 255,      null: false
+    t.integer  "creator_id",          limit: 4,        null: false
+    t.integer  "updater_id",          limit: 4,        null: false
+    t.integer  "right_id",            limit: 4
+    t.string   "key",                 limit: 255,      null: false
     t.boolean  "trash",                                null: false
-    t.integer  "type_id",             limit: 4,        null: false
     t.integer  "references_expired",  limit: 4
+    t.string   "codename",            limit: 255
     t.string   "read_rule_class",     limit: 255
     t.integer  "read_rule_id",        limit: 4
-    t.integer  "current_revision_id", limit: 4
+    t.integer  "type_id",             limit: 4,        null: false
     t.text     "db_content",          limit: 16777215
   end
 
@@ -117,7 +117,7 @@ ActiveRecord::Schema.define(version: 20151105225558) do
     t.string "version", limit: 255, null: false
   end
 
-  add_index "schema_migrations_core_cards", ["version"], name: "unique_schema_migrations_cards", unique: true, using: :btree
+  add_index "schema_migrations_core_cards", ["version"], name: "unique_schema_migrations_core_cards", unique: true, using: :btree
 
   create_table "schema_migrations_deck_cards", id: false, force: :cascade do |t|
     t.string "version", limit: 255, null: false

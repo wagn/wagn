@@ -83,47 +83,31 @@ describe Card, "created without permission" do
   end
 end
 
-
-describe Card, "Normal card with descendants" do
+describe Card, 'Normal card with descendants' do
   before do
     @a = Card['A']
   end
-  it "should confirm that it has descendants" do
+
+  it 'should confirm that it has descendants' do
     expect(@a.descendants.length).to be > 0
   end
-  it "should successfully have its type changed" do
+
+  it 'should successfully have its type changed' do
     Card::Auth.as_bot do
-      @a.type_id = Card::PhraseID;
+      @a.type_id = Card::PhraseID
       @a.save!
       expect(Card['A'].type_code).to eq(:phrase)
     end
   end
-  it "should still have its descendants after changing type" do
+  it 'should still have its descendants after changing type' do
     Card::Auth.as_bot do
       assert type_id = Card.fetch_id('cardtype_e')
-      @a.type_id = type_id; @a.save!
+      @a.type_id = type_id
+      @a.save!
       expect(Card['A'].descendants.length).to be > 0
     end
   end
 end
-
-
-=begin No extension any more, is there a modified version of this we need?
-describe Card, "Recreated Card" do
-  before do
-    Card::Auth.as_bot do
-    @ct = Card.create! name: 'Species', type: 'Cardtype'
-    @ct.delete!
-    @ct = Card.create! name: 'Species', type: 'Cardtype'
-    end
-  end
-
-  it "should have a cardtype extension" do
-    @ct.extension.should_not be_nil
-  end
-
-end
-=end
 
 describe Card, "New Cardtype" do
   before do

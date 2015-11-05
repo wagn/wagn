@@ -125,32 +125,27 @@ end
 
 def children_names parent_name=nil
   # eg, A+B is a child of A and B
-  field = simple? ? :part : :left
   parent_name ||= name
+  field = parent_name.to_name.simple? ? :part : :left
   Card.search field => parent_name, return: :name
 end
 
 def descendant_names parent_name=nil
-  puts "finding descendants of #{parent_name}"
   return [] if new_card?
   parent_name ||= name
-  if @descendant_names.nil?
-    @descendant_names =
-      Auth.as_bot do
-        deps = children_names parent_name
-        deps.inject(deps) do |array, childname|
-          array + descendant_names( childname )
-        end
-      end
+  Auth.as_bot do
+    deps = children_names parent_name
+    deps.inject(deps) do |array, childname|
+      array + descendant_names(childname)
+    end
   end
-  @descendant_names
 end
 
 def descendants
   # children and children's children
   # NOTE - set modules are not loaded
   # -- should only be used for name manipulations
-  descendant_names.map { |name| Card.quick_fetch name }
+  @descendants ||= descendant_names.map { |name| Card.quick_fetch name }
 end
 
 def repair_key
@@ -290,7 +285,7 @@ event :cascade_name_changes, after: :store, on: :update, changed: :name do
   Card::Reference.update_on_rename self, name, self.update_referencers
 
   des = descendants
-  @descendant_names = nil # reset
+  @descendants = nil # reset
 
   des.each do |de|
     # here we specifically want NOT to invoke recursive cascades on these

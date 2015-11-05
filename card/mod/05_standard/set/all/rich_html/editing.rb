@@ -2,31 +2,35 @@ format :html do
   ###---( TOP_LEVEL (used by menu) NEW / EDIT VIEWS )
 
   view :new, perms: :create, tags: :unknown_ok do |args|
-    frame_and_form :create, args, 'main-success'=>'REDIRECT' do
+    frame_and_form :create, args, 'main-success' => 'REDIRECT' do
       [
-        _optional_render( :name_formgroup,     args ),
-        _optional_render( :type_formgroup,     args ),
-        _optional_render( :content_formgroup, args ),
-        _optional_render( :button_formgroup,   args )
+        _optional_render(:name_formgroup, args),
+        _optional_render(:type_formgroup, args),
+        _optional_render(:content_formgroup, args),
+        _optional_render(:button_formgroup, args)
       ]
     end
   end
 
-
   def default_new_args args
     hidden = args[:hidden] ||= {}
     hidden[:success] ||= card.rule(:thanks) || '_self'
-    hidden[:card   ] ||={}
+    hidden[:card] ||= {}
 
     args[:optional_help] ||= :show
 
     # name field / title
-    if !params[:name_prompt] and !card.cardname.blank?
+    if !params[:name_prompt] && !card.cardname.blank?
       # name is ready and will show up in title
       hidden[:card][:name] ||= card.name
     else
       # name is not ready; need generic title
-      args[:title] ||= "New #{ card.type_name unless card.type_id == Card.default_type_id }" #fixme - overrides nest args
+      args[:title] ||= if card.type_id == Card.default_type_id
+                         'New'
+                       else
+                         "New #{card.type_name}"
+                       end
+      # FIXME: - overrides nest args
       unless card.rule_card :autoname
         # prompt for name
         hidden[:name_prompt] = true unless hidden.has_key? :name_prompt
@@ -35,39 +39,43 @@ format :html do
     end
     args[:optional_name_formgroup] ||= :hide
 
-
     # type field
-    if ( !params[:type] and !args[:type] and
-        ( main? || card.simple? || card.is_template? ) and
-        Card.new( type_id: card.type_id ).ok? :create #otherwise current type won't be on menu
-      )
+    if !params[:type] &&
+       !args[:type] &&
+       (main? || card.simple? || card.is_template?) &&
+       Card.new(type_id: card.type_id).ok?(:create)
+      # otherwise current type won't be on menu
+
       args[:optional_type_formgroup] = :show
     else
       hidden[:card][:type_id] ||= card.type_id
       args[:optional_type_formgroup] = :hide
     end
 
-
-    cancel = if main?
-      { class: 'redirecter', href: Card.path_setting('/*previous') }
-    else
-      { class: 'slotter',    href: path( view: :missing         ) }
-    end
+    cancel =
+      if main?
+        { class: 'redirecter', href: Card.path_setting('/*previous') }
+      else
+        { class: 'slotter', href: path(view: :missing) }
+      end
 
     args[:buttons] ||= %{
-      #{ button_tag 'Submit', class: 'create-submit-button', disable_with: 'Submitting', situation: 'primary' }
-      #{ button_tag 'Cancel', type: 'button', class: "create-cancel-button #{cancel[:class]}", href: cancel[:href] }
+      #{button_tag 'Submit',
+                   class: 'create-submit-button',
+                   disable_with: 'Submitting',
+                   situation: 'primary'}
+      #{button_tag 'Cancel',
+                   type: 'button',
+                   class: "create-cancel-button #{cancel[:class]}",
+                   href: cancel[:href]}
     }
-
   end
-
-
 
   view :edit, perms: :update, tags: :unknown_ok do |args|
     frame_and_form :update, args.merge(optional_toolbar: :show) do
       [
-        _optional_render( :content_formgroup, args ),
-        _optional_render( :button_formgroup,   args )
+        _optional_render(:content_formgroup, args),
+        _optional_render(:button_formgroup, args)
       ]
     end
   end

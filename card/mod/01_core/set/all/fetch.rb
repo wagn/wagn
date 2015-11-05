@@ -210,10 +210,9 @@ module ClassMethods
   end
 
   def write_to_local_cache card
-    if Card.cache
-      Card.cache.write_local card.key, card
-      Card.cache.write_local "~#{card.id}", card.key if card.id && card.id != 0
-    end
+    return unless Card.cache
+    Card.cache.write_local card.key, card
+    Card.cache.write_local "~#{card.id}", card.key if card.id && card.id != 0
   end
 
   def expand_mark mark, opts
@@ -242,7 +241,7 @@ module ClassMethods
     end
   end
 
-  def fullname_from_name name, new_opts = {}
+  def fullname_from_name name, new_opts={}
     if new_opts && supercard = new_opts[:supercard]
       name.to_name.to_absolute_name supercard.name
     else
@@ -253,16 +252,17 @@ end
 
 # ~~~~~~~~~~ Instance ~~~~~~~~~~~~~
 
-def fetch opts = {}
-  if traits = opts.delete(:trait)
-    traits = Array.wrap traits
-    traits.inject(self) do |card, trait|
-      Card.fetch card.cardname.trait(trait), opts
-    end
+def fetch opts={}
+  traits = opts.delete(:trait)
+  return unless traits
+  # should this fail as an incorrect api call?
+  traits = Array.wrap traits
+  traits.inject(self) do |card, trait|
+    Card.fetch card.cardname.trait(trait), opts
   end
 end
 
-def renew args = {}
+def renew args={}
   opts = args[:new].clone
   opts[:name] ||= cardname
   opts[:skip_modules] = args[:skip_modules]
@@ -275,7 +275,7 @@ def expire_pieces
   end
 end
 
-def expire subcards = false
+def expire subcards=false
   # Rails.logger.warn "expiring i:#{id}, #{inspect}"
   if subcards
     expire_subcards
@@ -286,7 +286,7 @@ def expire subcards = false
   Card.cache.delete "~#{id}" if id
 end
 
-def refresh force = false
+def refresh force=false
   if force || self.frozen? || self.readonly?
     fresh_card = self.class.find id
     fresh_card.include_set_modules
@@ -308,4 +308,3 @@ def rename_from_mark mark
   return unless mark && mark.to_s != name
   self.name = mark.to_s
 end
-

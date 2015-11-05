@@ -14,7 +14,7 @@ module Card::ActiveRecordHelper
   end
 
   def update_card! args
-    update_card args.merge(resolve_name_conflict: :other)
+    update_card args.merge(rename_if_conflict: :other)
   end
 
   def create_or_update name_or_args, args=nil
@@ -29,9 +29,9 @@ module Card::ActiveRecordHelper
 
   def create_or_update! name_or_args, args=nil
     if args
-      args[:resolve_name_conflict] = :other
+      args[:rename_if_conflict] = :other
     else
-      name_or_args[:resolve_name_conflict] = :other
+      name_or_args[:rename_if_conflict] = :other
     end
     create_or_update name_or_args, args
   end

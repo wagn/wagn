@@ -6,7 +6,7 @@ end
 
 def extended_referencers
   # FIXME .. we really just need a number here.
-  (dependents + [self]).map(&:referencers).flatten.uniq
+  (descendants + [self]).map(&:referencers).flatten.uniq
 end
 
 

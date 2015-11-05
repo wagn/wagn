@@ -98,13 +98,13 @@ format :html do
 
   view :confirm_rename do |args|
     referers = args[:referers]
-    dependents = card.dependents
+    descendants = card.descendants
     alert 'warning' do
       %{
         <h5>Are you sure you want to rename <em>#{card.name}</em>?</h5>
-        #{ %{ <h6>This change will...</h6> } if referers.any? || dependents.any? }
+        #{ %{ <h6>This change will...</h6> } if referers.any? || descendants.any? }
         <ul>
-          #{ %{<li>automatically alter #{ dependents.size } related name(s). </li>} if dependents.any? }
+          #{ %{<li>automatically alter #{ descendants.size } related name(s). </li>} if descendants.any? }
           #{ %{<li>affect at least #{referers.size} reference(s) to "#{card.name}".</li>} if referers.any? }
         </ul>
         #{ %{<p>You may choose to <em>update or ignore</em> the references.</p>} if referers.any? }

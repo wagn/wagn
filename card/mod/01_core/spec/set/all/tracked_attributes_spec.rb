@@ -9,7 +9,7 @@ module RenameMethods
       #revisions:   card.actions.count,
       referencers: card.referencers.map(&:name).sort,
       referees:    card.referees.map(&:name).sort,
-      dependents:  card.dependents.map(&:id).sort
+      descendants:  card.descendants.map(&:id).sort
     }
   end
 
@@ -161,7 +161,7 @@ describe Card::Set::All::TrackedAttributes do
       assert @b.errors[:name]
     end
 
-    it "test_update_dependents" do
+    it "test_update_descendants" do
       c1 =   Card["One"]
       c12 =  Card["One+Two"]
       c123 = Card["One+Two+Three"]

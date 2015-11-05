@@ -117,7 +117,6 @@ class Card
         host_class.event(
           "reset_machine_output_#{ event_suffix }".to_sym,
           after: :expire_related, on: :save
-          #after: :store_subcards, on: :save
         ) do
           reset_machine_output!
         end

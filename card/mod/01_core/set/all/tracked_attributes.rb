@@ -143,12 +143,10 @@ event :expire_related, after: :store do
       Card.expire name, true
     end
   end
+end
 
-  # FIXME: really shouldn't be instantiating all the following bastards.
-  # Just need the key.
-  # fix in id_cache branch
-  dependents.each       { |c| c.expire(true) }
-  # self.referencers.each      { |c| c.expire(true) }
+event :expire_related_names, before: :expire_related, changed: :name do
+  # FIXME: look for opportunities to avoid instantiating the following
+  descendants.each { |c| c.expire(true) }
   name_referencers.each { |c| c.expire(true) }
-  # FIXME: this will need review when we do the new defaults/templating system
 end

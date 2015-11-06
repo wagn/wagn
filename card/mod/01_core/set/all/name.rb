@@ -1,18 +1,20 @@
 require 'uuid'
 
 module ClassMethods
-  def uniquify_name name, rename=false
+  def uniquify_name name, rename=:new
     return name unless Card.exists?(name)
     uniq_name = "#{name} 1"
     while Card.exists?(uniq_name)
       uniq_name.next!
     end
-    return uniq_name unless rename
-
-    Card[name].update_attributes! name: uniq_name,
-                                  update_referencers: true
-    # name conflict resolved; original name can be used
-    name
+    if rename == :old
+      # name conflict resolved; original name can be used
+      Card[name].update_attributes! name: uniq_name,
+                                    update_referencers: true
+      name
+    else
+      uniq_name
+    end
   end
 end
 

@@ -5,7 +5,7 @@ module Card::ActiveRecordHelper
   end
 
   def create_card! args
-    create_card args.merge(rename_if_conflict: :other)
+    create_card args.reverse_merge(rename_if_conflict: :new)
   end
 
   def update_card name, args
@@ -14,7 +14,7 @@ module Card::ActiveRecordHelper
   end
 
   def update_card! args
-    update_card args.merge(rename_if_conflict: :other)
+    update_card args.reverse_merge(rename_if_conflict: :new)
   end
 
   def create_or_update name_or_args, args=nil
@@ -23,22 +23,20 @@ module Card::ActiveRecordHelper
     if Card[name]
       update_card name, args
     else
-      create_card args.merge(:name=>name)
+      create_card args.merge(name: name)
     end
   end
 
   def create_or_update! name_or_args, args=nil
-    if args
-      args[:rename_if_conflict] = :other
-    else
-      name_or_args[:rename_if_conflict] = :other
-    end
-    create_or_update name_or_args, args
+    name = args ? name_or_args : name_or_args[:name]
+    args ||= {}
+    create_or_update name, args.reverse_merge(rename_if_conflict: :new)
   end
 
   def resolve_name_conflict args
-    if (rename = args.delete :rename_if_conflict)
-      args[:name] = Card.uniquify_name args[:name], rename == :other
+    rename = args.delete :rename_if_conflict
+    if rename
+      args[:name] = Card.uniquify_name args[:name], rename
     end
   end
 end

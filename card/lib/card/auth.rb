@@ -13,17 +13,34 @@ class Card
     class << self
       # Authenticates a user by their login name and unencrypted password.
       def authenticate email, password
-        accounted = Auth[email]
-        return unless accounted && (account = accounted.account) &&
-                      account.active?
-        if Card.config.no_authentication ||
-           password_authenticated?(account, password.strip)
-          accounted.id
+        account = Auth[email]
+        case
+        when !account                                 then nil
+        when !account.active?                         then nil
+        when Card.config.no_authentication            then account.left_id
+        when password_valid?(account, password.strip) then account.left_id
         end
       end
 
-      def password_authenticated? account, password
+      def password_valid? account, password
         account.password == encrypt(password, account.salt)
+      end
+
+      def authenticate_by_token token, user_id
+        accounted_id = find_by_token token
+        return unless accounted_id
+        user_id || accounted_id
+      end
+
+      def find_by_token token
+        Auth.as_bot do
+          Card.search(right_plus: [
+            { id: Card::AccountID },
+            { right_plus: [
+              { id: Card::EmailID }, { content: token.strip }
+            ] }
+          ]).first
+        end
       end
 
       # Encrypts some data with the salt.
@@ -34,12 +51,10 @@ class Card
       # find accounted by email
       def [] email
         Auth.as_bot do
-          Card.search(right_plus: [
-            { id: Card::AccountID },
-            { right_plus: [
-              { id: Card::EmailID }, { content: email.strip.downcase }
-            ] }
-          ]).first
+          Card.search(right: Card::AccountID,
+                      right_plus: [{ id: Card::EmailID },
+                                   { content: email.strip.downcase }
+                      ]).first
         end
       end
 

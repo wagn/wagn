@@ -87,14 +87,14 @@ event :signin, before: :approve, on: :update do
 
   abort :failure, 'bad signin args' unless email && pword
 
-  if (signin_id = Auth.authenticate(email, pword))
-    Auth.signin signin_id
+  if (account = Auth.authenticate(email, pword))
+    Auth.signin account.left_id
   else
-    accted = Auth[email.strip.downcase]
+    account = Auth[email.strip.downcase]
     error_msg =
       case
-      when accted.nil?             then 'Unrecognized email.'
-      when !accted.account.active? then 'Sorry, that account is not active.'
+      when account.nil?     then 'Unrecognized email.'
+      when !account.active? then 'Sorry, that account is not active.'
       else 'Wrong password'
       end
     errors.add :signin, error_msg
@@ -112,15 +112,17 @@ event :send_reset_password_token,
   email = subfield :email
   email &&= email.content
 
-  if (accted = Auth[email.strip.downcase]) && accted.account.active?
-    accted.account.send_reset_password_token
-    abort :success
-  else
-    if accted
-      errors.add :account, 'not active'
+  account = Auth[email.strip.downcase]
+  if account
+    if account.active?
+      account.send_reset_password_token
+      abort :success
     else
-      errors.add :email, 'not recognized'
+      errors.add :account, 'not active'
+      abort :failure
     end
+  else
+    errors.add :email, 'not recognized'
     abort :failure
   end
 end

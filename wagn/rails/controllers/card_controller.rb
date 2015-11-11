@@ -62,7 +62,7 @@ class CardController < ActionController::Base
 
   def authenticate
     if params[:token]
-      Card::Auth.auth
+      Card::Auth.set_current_from_token params[:token], params[:user_id]
     else
       Card::Auth.set_current_from_session
     end

@@ -17,8 +17,8 @@ class Card
         case
         when !account                                 then nil
         when !account.active?                         then nil
-        when Card.config.no_authentication            then account.left_id
-        when password_valid?(account, password.strip) then account.left_id
+        when Card.config.no_authentication            then account
+        when password_valid?(account, password.strip) then account
         end
       end
 
@@ -26,20 +26,16 @@ class Card
         account.password == encrypt(password, account.salt)
       end
 
-      def authenticate_by_token token, user_id
-        accounted_id = find_by_token token
-        return unless accounted_id
-        user_id || accounted_id
+      def authenticate_by_token token
+        account = find_by_token token
       end
 
       def find_by_token token
         Auth.as_bot do
-          Card.search(right_plus: [
-            { id: Card::AccountID },
-            { right_plus: [
-              { id: Card::EmailID }, { content: token.strip }
-            ] }
-          ]).first
+          Card.search(
+            right_id: Card::AccountID,
+            right_plus: [{ id: Card::TokenID }, { content: token.strip }]
+          ).first
         end
       end
 
@@ -50,11 +46,12 @@ class Card
 
       # find accounted by email
       def [] email
+        email = email.strip.downcase
         Auth.as_bot do
-          Card.search(right: Card::AccountID,
-                      right_plus: [{ id: Card::EmailID },
-                                   { content: email.strip.downcase }
-                      ]).first
+          Card.search(
+            right_id: Card::AccountID,
+            right_plus: [{ id: Card::EmailID }, { content: email }]
+          ).first
         end
       end
 
@@ -77,6 +74,9 @@ class Card
             end
           end
         current_id
+      end
+
+      def set_current_from_token token, user_id
       end
 
       def current_id

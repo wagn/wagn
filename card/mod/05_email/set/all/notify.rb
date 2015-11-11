@@ -1,37 +1,30 @@
 
 class FollowerStash
   def initialize card=nil
-    @followed_affected_cards = Hash.new { |h,v| h[v]=[] }
+    @followed_affected_cards = Hash.new { |h, v| h[v] = [] }
     @visited = ::Set.new
     add_affected_card(card) if card
   end
 
   def add_affected_card card
+    return if @visited.include? card.key
     Auth.as_bot do
-      if !@visited.include? card.key
-        @visited.add card.key
-        card.all_direct_follower_ids_with_reason do |user_id, reason|
-          notify Card.fetch(user_id), of: reason
-        end
-        if card.left and !@visited.include?(card.left.name) and follow_field_rule = card.left.rule_card(:follow_fields)
-
-          follow_field_rule.item_names(context: card.left.cardname).each do |item|
-            if @visited.include? item.to_name.key
-              add_affected_card card.left
-              break
-            elsif item.to_name.key == Card[:includes].key
-              includee_set = Card.search(included_by: card.left.name).map(&:key)
-              if !@visited.intersection(includee_set).empty?
-                add_affected_card card.left
-                break
-              end
-            end
+      @visited.add card.key
+      notify_direct_followers card
+      return if !(left_card = card.left) || @visited.include?(left_card.key) ||
+                !(follow_field_rule = left_card.rule_card(:follow_fields))
+      follow_field_rule.item_names(context: left_card.cardname).each do |item|
+        if @visited.include? item.to_name.key
+          add_affected_card left_card
+          break
+        elsif item.to_name.key == Card[:includes].key
+          includee_set = Card.search(included_by: left_card.name).map(&:key)
+          if !@visited.intersection(includee_set).empty?
+            add_affected_card left_card
+            break
           end
-
         end
-
       end
-
     end
   end
 
@@ -47,26 +40,32 @@ class FollowerStash
 
   private
 
+  def notify_direct_followers card
+    card.all_direct_follower_ids_with_reason do |user_id, reason|
+      notify Card.fetch(user_id), of: reason
+    end
+  end
+
   def notify follower, because
     @followed_affected_cards[follower] << because[:of]
   end
-
 end
 
 def act_card
   @supercard || self
 end
 
-
 def followable?
   true
 end
 
 def notable_change?
-  !silent_change && !supercard && current_act && Card::Auth.current_id != WagnBotID && followable?
+  Card::Env[:controller] && !silent_change && !supercard && current_act &&
+    Card::Auth.current_id != WagnBotID && followable?
 end
 
-event :notify_followers_after_save, after: :subsequent, on: :save, when: proc{ |ca| ca.notable_change? } do
+event :notify_followers_after_save,
+      after: :subsequent, on: :save, when: proc { |ca| ca.notable_change? } do
   notify_followers
 end
 
@@ -77,8 +76,8 @@ event :stash_followers, after: :approve, on: :delete do
   act_card.follower_stash ||=  FollowerStash.new
   act_card.follower_stash.add_affected_card self
 end
-event :notify_followers_after_delete, after: :extend, on: :delete,
-    when: proc{ |ca| ca.notable_change? } do
+event :notify_followers_after_delete,
+      after: :extend, on: :delete, when: proc { |ca| ca.notable_change? } do
   notify_followers
 end
 
@@ -94,7 +93,7 @@ def notify_followers
         follower.account.send_change_notice @current_act, reason[:set_card].name, reason[:option]
       end
     end
-  rescue =>e  #this error handling should apply to all extend callback exceptions
+  rescue => e  # this error handling should apply to all extend callback exceptions
     Rails.logger.info "\nController exception: #{e.message}"
     Card::Error.current = e
     notable_exception_raised

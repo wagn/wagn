@@ -11,9 +11,6 @@ class Card
       case success_params
       when Hash
         apply(success_params)
-      when /^REDIRECT:\s*(.+)/
-        @redirect=true
-        self.target = $1
       when nil  ;  self.name = '_self'
       else      ;  self.target = success_params
       end
@@ -64,6 +61,9 @@ class Card
         when '*previous', :previous ;  :previous
         when /^(http|\/)/           ;  value
         when /^TEXT:\s*(.+)/        ;  $1
+        when /^REDIRECT:\s*(.+)/
+          @redirect = true
+          self.target = $1
         when ''                     ;  ''
         else                        ;  self.mark = value
         end

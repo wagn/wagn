@@ -87,7 +87,7 @@ describe Card::Set::Right::Account do
 
     it 'contains password resset link' do
       token = @account.token_card.refresh(true).content
-      url = "/update/#{@account.cardname.url_key}?reset_token=#{token}"
+      url = "/update/#{@account.cardname.url_key}?token=#{token}"
       expect(@mail.parts[0].body.raw_source).to include(url)
     end
 
@@ -121,7 +121,7 @@ describe Card::Set::Right::Account do
       @account = Card::Auth[@email]
       @account.send_reset_password_token
       @token = @account.token
-      Card::Env.params[:reset_token] = @token
+      Card::Env.params[:token] = @token
       Card::Auth.current_id = Card::AnonymousID
     end
 
@@ -151,7 +151,7 @@ describe Card::Set::Right::Account do
     end
 
     it 'should not work if token is wrong' do
-      Card::Env.params[:reset_token] = @token + 'xxx'
+      Card::Env.params[:token] = @token + 'xxx'
       @account.save
       expect(@account.errors[:abort].first).to match(/incorrect_token/)
     end

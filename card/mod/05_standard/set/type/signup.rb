@@ -101,25 +101,19 @@ end
 
 event :activate_by_token, before: :approve, on: :update,
                           when: proc { |c| c.has_token? } do
-  result = if account
-             account.authenticate_by_token(@env_token)
-           else
-             "no account associated with #{name}"
-           end
+  abort :failure, 'no field manipulation mid-activation' if subcards.present?
+  # necessary because this performs actions as Wagn Bot
+  abort :failure, "no account associated with #{name}" if !account
 
-  case result
-  when Integer
-    abort :failure, 'no field manipulation mid-activation' if subcards.present?
-    # necessary because the rest of the action is performed as Wagn Bot
+  account.validate_token! @env_token
+  if errors.empty?
     activate_account
     Auth.signin id
-    Auth.as_bot
-    Env.params[:success] = ''
-  when :token_expired
+    Auth.as_bot # use admin permissions for rest of action
+    success << ''
+  else
     resend_activation_token
     abort :success
-  else
-    abort :failure, "signup activation error: #{result}" # bad token or account
   end
 end
 
@@ -128,6 +122,7 @@ def has_token?
 end
 
 event :activate_account do
+  # FIXME: -- sends email before account is fully activated
   add_subfield :account
   subfield(:account).add_subfield :status, content: 'active'
   self.type_id = Card.default_accounted_type_id
@@ -152,12 +147,9 @@ end
 event :resend_activation_token do
   account.reset_token
   account.send_account_verification_email
-  Env.params[:success] = {
-    id: '_self',
-    view: 'message',
-    message: 'Sorry, this token has expired. ' \
-             ' Please check your email for a new password reset link.'
-  }
+  message = 'Please check your email for a new password reset link.'
+  message = "Sorry, #{errors.first.last}. #{message}" if errors.any?
+  success << { id: '_self', view: 'message', message: message }
 end
 
 def signed_in_as_me_without_password?

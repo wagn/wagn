@@ -26,8 +26,18 @@ class Card
         account.password == encrypt(password, account.salt)
       end
 
-      def authenticate_by_token token
+      def set_current_from_token token, user_id
         account = find_by_token token
+        if account && account.validate_token!(token)
+          user_id = account.id unless user_id && always_ok?(account.id)
+          self.current_id = user_id
+        elsif Env.params[:live_token]
+          # do not raise error. Used for activations and resets.
+          # Continue as anonymous and address problem later
+        else
+          error = account ? account.errors.first.last : 'account not found'
+          raise Card::PermissionDenied, error
+        end
       end
 
       def find_by_token token
@@ -76,9 +86,6 @@ class Card
         current_id
       end
 
-      def set_current_from_token token, user_id
-      end
-
       def current_id
         @@current_id ||= Card::AnonymousID
       end
@@ -105,15 +112,21 @@ class Card
       end
 
       def as given_user
-        tmp_id, tmp_card = @@as_id, @@as_card
+        tmp_id   = @@as_id
+        tmp_card = @@as_card
+
+        @@as_id   = get_user_id(given_user)
+        @@as_card = nil
         # we could go ahead and set as_card if given a card...
-        @@as_id, @@as_card = get_user_id(given_user), nil
 
         @@current_id = @@as_id if @@current_id.nil?
 
         return unless block_given?
         value = yield
-        @@as_id, @@as_card = tmp_id, tmp_card
+
+        @@as_id   = tmp_id
+        @@as_card = tmp_card
+
         value
       end
 
@@ -161,8 +174,12 @@ class Card
       end
 
       def always_ok?
-        # warn Rails.logger.warn("aok? #{as_id}, #{as_id&&Card[as_id].id}")
-        return false unless (usr_id = as_id)
+        usr_id = as_id
+        return false if !usr_id
+        always_ok_usr_id? usr_id
+      end
+
+      def always_ok_usr_id? usr_id
         return true if usr_id == Card::WagnBotID # cannot disable
 
         always = Card.cache.read('ALWAYS') || {}
@@ -178,6 +195,7 @@ class Card
         # warn Rails.logger.warn("aok? #{usr_id}, #{always[usr_id]}")
         always[usr_id]
       end
+
       # PERMISSIONS
 
       def createable_types

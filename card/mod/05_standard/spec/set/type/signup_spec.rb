@@ -52,7 +52,8 @@ describe Card::Set::Type::Signup do
 
     it 'creates an authenticable token' do
       expect(@account.token).to eq(@token)
-      expect(@account.authenticate_by_token(@token)).to eq(@signup.id)
+      expect(@account.validate_token!(@token)).to be_truthy
+      expect(@account.errors).to be_empty
       expect(@account.fetch(trait: :token)).not_to be_present
     end
 

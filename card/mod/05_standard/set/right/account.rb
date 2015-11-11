@@ -12,36 +12,22 @@ def blocked?;  status == 'blocked' end
 def built_in?; status == 'system'  end
 def pending?;  status == 'pending' end
 
-def authenticate_by_token val
+def validate_token! test_token
   tcard = token_card
-  error = token_error(tcard, val)
-  if error == :none
-    Auth.as_bot { tcard.delete! }
-    left.id
+  if !tcard
+    errors.add :token_not_found, 'Account has no token'
   else
-    error
+    tcard.validate! test_token
+    copy_errors tcard
   end
-end
-
-def token_error tcard, val
-  case
-  when !tcard
-    :token_not_found
-  when token != val
-    :incorrect_token
-  when tcard.updated_at <= Card.config.token_expiry.ago
-    # < means "before"
-    :token_expired
-  when !left || !left.accountable?
-    :illegal_account
-  else
-    :none
-  end
+  errors.empty?
 end
 
 format do
   view :verify_url do
-    card_url "update/#{card.cardname.left_name.url_key}?token=#{card.token}"
+    card_url "update/#{card.cardname.left_name.url_key}" \
+             "?token=#{card.token}" \
+             '&live_token=true'
   end
 
   view :verify_days do
@@ -49,8 +35,9 @@ format do
   end
 
   view :reset_password_url do
-    card_url "update/#{card.cardname.url_key}?" \
-             "reset_token=#{card.token_card.refresh(true).content}"
+    card_url "update/#{card.cardname.url_key}" \
+             "?token=#{card.token_card.refresh(true).content}" \
+             '&live_token=true'
   end
 
   view :reset_password_days do
@@ -76,19 +63,15 @@ format :html do
   end
 end
 
-
 event :validate_accountability, on: :create, before: :approve do
-  unless left and left.accountable?
-    errors.add :content, "not allowed on this card"
+  unless left && left.accountable?
+    errors.add :content, 'not allowed on this card'
   end
 end
 
 event :require_email, on: :create, after: :approve do
-  unless subfield(:email)
-    errors.add :email, 'required'
-  end
+  errors.add :email, 'required' unless subfield(:email)
 end
-
 
 event :set_default_salt, on: :create, before: :process_subcards do
   salt = Digest::SHA1.hexdigest "--#{Time.now.to_s}--"
@@ -97,35 +80,35 @@ event :set_default_salt, on: :create, before: :process_subcards do
 end
 
 event :set_default_status, on: :create, before: :process_subcards do
-  default_status = ( Auth.needs_setup? ? 'active' : 'pending' )
+  default_status = Auth.needs_setup? ? 'active' : 'pending'
   add_subfield :status, content: default_status
 end
 
 def confirm_ok?
-  Card.new( type_id: Card.default_accounted_type_id ).ok? :create
+  Card.new(type_id: Card.default_accounted_type_id).ok? :create
 end
 
-event :generate_confirmation_token, :on=>:create, :before=>:process_subcards, :when=>proc{ |c| c.confirm_ok? } do
+event :generate_confirmation_token, on: :create,
+                                    before: :process_subcards,
+                                    when: proc { |c| c.confirm_ok? } do
   add_subfield :token, content: generate_token
 end
 
-event :reset_password, on: :update, before: :approve, when: proc{ |c| c.has_reset_token? } do
-  case ( result = authenticate_by_token @env_token )
-  when Integer
-    Auth.signin result
+event :reset_password, on: :update,
+                       before: :approve,
+                       when: proc { |c| c.has_token? } do
+  if validate_token! @env_token
+    token_card.used!
+    Auth.signin left_id
     success << edit_password_success_args
-    abort :success
-  when :token_expired
-    send_reset_password_token
-    success << {
-      id: '_self',
-      view: 'message',
-      message: "Sorry, this token has expired. Please check your email for a new password reset link."
-    }
-    abort :success
   else
-    abort :failure, "error resetting password: #{result}" # bad token or account
+    error_msg = errors.first.last
+    send_reset_password_token
+    msg = "Sorry, #{error_msg}. " \
+          'Please check your email for a new password reset link.'
+    success << { id: '_self', view: 'message', message: msg }
   end
+  abort :success
 end
 
 def edit_password_success_args
@@ -136,8 +119,8 @@ def edit_password_success_args
   }
 end
 
-def has_reset_token?
-  @env_token = Env.params[:reset_token]
+def has_token?
+  @env_token = Env.params[:token]
 end
 
 event :reset_token do
@@ -146,50 +129,48 @@ event :reset_token do
   end
 end
 
-
 event :send_welcome_email do
-  if ((welcome = Card['welcome email']) && welcome.type_code == :email_template)
-    welcome.deliver(context: left, to: self.email)
+  welcome = Card['welcome email']
+  if welcome && welcome.type_code == :email_template
+    welcome.deliver context: left, to: email
   end
 end
 
-event :send_account_verification_email, on: :create, after: :extend, when: proc{ |c| c.token.present? } do
-  Card[:verification_email].deliver( context: self, to: self.email )
+event :send_account_verification_email,
+      on: :create, after: :extend, when: proc { |c| c.token.present? } do
+  Card[:verification_email].deliver context: self, to: email
 end
 
 event :send_reset_password_token do
   Auth.as_bot do
     token_card.update_attributes! content: generate_token
   end
-  Card[:password_reset_email].deliver( context: self, to: self.email )
+  Card[:password_reset_email].deliver context: self, to: email
 end
 
 def ok_to_read
   is_own_account? ? true : super
 end
 
-
 def changes_visible? act
   act.relevant_actions_for(act.card).each do |action|
     return true if action.card.ok? :read
   end
-  return false
+  false
 end
 
 def send_change_notice act, followed_set, follow_option
-  if changes_visible?(act)
-    Auth.as(left.id) do
-      Card[:follower_notification_email].deliver(
-        context:       act.card,
-        to:            email,
-        follower:      left.name,
-        followed_set:  followed_set,
-        follow_option: follow_option
-      )
-    end
+  return unless changes_visible?(act)
+  Auth.as(left.id) do
+    Card[:follower_notification_email].deliver(
+      context:       act.card,
+      to:            email,
+      follower:      left.name,
+      followed_set:  followed_set,
+      follow_option: follow_option
+    )
   end
 end
-
 
 format :email do
   view :mail do |args|
@@ -197,4 +178,3 @@ format :email do
     super args
   end
 end
-

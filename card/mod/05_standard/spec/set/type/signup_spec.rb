@@ -54,7 +54,6 @@ describe Card::Set::Type::Signup do
       expect(@account.token).to eq(@token)
       expect(@account.validate_token!(@token)).to be_truthy
       expect(@account.errors).to be_empty
-      expect(@account.fetch(trait: :token)).not_to be_present
     end
 
     it 'notifies someone' do

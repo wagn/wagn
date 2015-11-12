@@ -21,8 +21,8 @@ format :html do
     args.merge!(
       title: 'Invite',
       buttons: button_tag('Send Invitation', situation: 'primary'),
-      hidden: { success: '_self' }
     )
+    args[:hidden][:success] = '_self'
   end
 
   view :new do |args|

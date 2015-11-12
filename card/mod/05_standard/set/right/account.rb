@@ -16,15 +16,13 @@ def validate_token! test_token
   tcard = token_card
   tcard.validate! test_token
   copy_errors tcard
-  if errors.empty?
-    tcard.used!
-    true
-  end
+  errors.empty?
 end
 
 format do
   view :verify_url do
-    card_url "update/#{card.cardname.left_name.url_key}" \
+    signup_name = card.cardname.left_name
+    card_url "update/#{signup_name.url_key}" \
              "?token=#{card.token}" \
              '&live_token=true'
   end
@@ -96,6 +94,7 @@ end
 event :reset_password, on: :update, before: :approve, when:
     proc { |c| c.reset_password? } do
   if validate_token! @env_token
+    token_card.used!
     Auth.signin left_id
     success << edit_password_success_args
   else

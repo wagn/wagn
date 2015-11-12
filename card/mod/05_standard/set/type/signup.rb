@@ -106,7 +106,9 @@ event :activate_by_token, before: :approve, on: :update,
   abort :failure, "no account associated with #{name}" if !account
 
   account.validate_token! @env_token
+
   if account.errors.empty?
+    account.token_card.used!
     activate_account
     Auth.signin id
     Auth.as_bot # use admin permissions for rest of action

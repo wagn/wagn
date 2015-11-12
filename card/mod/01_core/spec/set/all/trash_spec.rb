@@ -53,7 +53,6 @@ describe Card::Set::All::Trash do
       expect(Card["#{name}+sub+s1"]).not_to be
       expect(Card["#{name}+sub+s1+s2"]).not_to be
       expect(Card["#{name}+sub+s1+s2+s3"]).not_to be
-      
     end
   end
 

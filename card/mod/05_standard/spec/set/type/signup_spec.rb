@@ -84,9 +84,8 @@ describe Card::Set::Type::Signup do
       @account.reload
       # token gets updated
       expect(@account.token).not_to eq(@token)
-      success = Card::Env.params[:success]
       # user notified of expired token
-      expect(success[:message]).to match(/expired/)
+      expect(Card::Env.success.message).to match(/expired/)
     end
   end
 

@@ -230,7 +230,7 @@ class CardController < ActionController::Base
       case exception
       ## arguably the view and status should be defined in the error class;
       ## some are redundantly defined in view
-      when Card::Oops, Card::Query
+      when Card::Oops, Card::BadQuery
         card.errors.add :exception, exception.message
         # these error messages are visible to end users and are generally not
         # treated as bugs.

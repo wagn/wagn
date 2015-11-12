@@ -122,6 +122,7 @@ describe Card::Set::Right::Account do
       @account.send_reset_password_token
       @token = @account.token
       Card::Env.params[:token] = @token
+      Card::Env.params[:event] = 'reset_password'
       Card::Auth.current_id = Card::AnonymousID
     end
 
@@ -131,7 +132,6 @@ describe Card::Set::Right::Account do
       expect(Card::Auth.current_id).to eq(@account.left_id)
       @account = @account.refresh true
       expect(@account.fetch(trait: :token)).to be_nil
-      expect(@account.save).to be_falsey
     end
 
     it 'should not work if token is expired' do
@@ -152,8 +152,9 @@ describe Card::Set::Right::Account do
 
     it 'should not work if token is wrong' do
       Card::Env.params[:token] = @token + 'xxx'
+      Card::Env.params[:event] = 'reset_password'
       @account.save
-      expect(@account.errors[:abort].first).to match(/incorrect_token/)
+      expect(@account.errors[:incorrect_token].first).to match(/mismatch/)
     end
   end
 

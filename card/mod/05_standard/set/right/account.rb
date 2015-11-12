@@ -14,13 +14,12 @@ def pending?;  status == 'pending' end
 
 def validate_token! test_token
   tcard = token_card
-  if !tcard
-    errors.add :token_not_found, 'Account has no token'
-  else
-    tcard.validate! test_token
-    copy_errors tcard
+  tcard.validate! test_token
+  copy_errors tcard
+  if errors.empty?
+    tcard.used!
+    true
   end
-  errors.empty?
 end
 
 format do
@@ -37,7 +36,7 @@ format do
   view :reset_password_url do
     card_url "update/#{card.cardname.url_key}" \
              "?token=#{card.token_card.refresh(true).content}" \
-             '&live_token=true'
+             '&live_token=true&event=reset_password'
   end
 
   view :reset_password_days do
@@ -88,17 +87,15 @@ def confirm_ok?
   Card.new(type_id: Card.default_accounted_type_id).ok? :create
 end
 
-event :generate_confirmation_token, on: :create,
-                                    before: :process_subcards,
-                                    when: proc { |c| c.confirm_ok? } do
+event :generate_confirmation_token,
+      on: :create, before: :process_subcards,
+      when: proc { |c| c.confirm_ok? } do
   add_subfield :token, content: generate_token
 end
 
-event :reset_password, on: :update,
-                       before: :approve,
-                       when: proc { |c| c.has_token? } do
+event :reset_password, on: :update, before: :approve, when:
+    proc { |c| c.reset_password? } do
   if validate_token! @env_token
-    token_card.used!
     Auth.signin left_id
     success << edit_password_success_args
   else
@@ -119,8 +116,9 @@ def edit_password_success_args
   }
 end
 
-def has_token?
+def reset_password?
   @env_token = Env.params[:token]
+  @env_token && Env.params[:event] == 'reset_password'
 end
 
 event :reset_token do
@@ -136,8 +134,8 @@ event :send_welcome_email do
   end
 end
 
-event :send_account_verification_email,
-      on: :create, after: :extend, when: proc { |c| c.token.present? } do
+event :send_account_verification_email, on: :create, after: :extend, when:
+    proc { |c| c.token.present? } do
   Card[:verification_email].deliver context: self, to: email
 end
 

@@ -106,7 +106,7 @@ event :activate_by_token, before: :approve, on: :update,
   abort :failure, "no account associated with #{name}" if !account
 
   account.validate_token! @env_token
-  if errors.empty?
+  if account.errors.empty?
     activate_account
     Auth.signin id
     Auth.as_bot # use admin permissions for rest of action
@@ -148,7 +148,9 @@ event :resend_activation_token do
   account.reset_token
   account.send_account_verification_email
   message = 'Please check your email for a new password reset link.'
-  message = "Sorry, #{errors.first.last}. #{message}" if errors.any?
+  if account.errors.any?
+    message = "Sorry, #{account.errors.first.last}. #{message}"
+  end
   success << { id: '_self', view: 'message', message: message }
 end
 

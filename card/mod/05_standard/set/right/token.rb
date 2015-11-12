@@ -5,8 +5,13 @@ view :raw do |args|
 end
 
 def validate! token
-  errors.add :incorrect_token, 'token mismatch' if content != token
-  errors.add :token_expired,   'expired token'  if expired?
+  error =
+    case
+    when !real?           then [:token_not_found, 'no token found']
+    when expired?         then [:token_expired, 'expired token']
+    when content != token then [:incorrect_token, 'token mismatch']
+    end
+  errors.add *error if error
 end
 
 def expired?

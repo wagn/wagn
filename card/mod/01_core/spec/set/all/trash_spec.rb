@@ -40,6 +40,23 @@ describe Card::Set::All::Trash do
     end
   end
 
+  it 'deletes children of a middle child' do
+    Card::Auth.as_bot do
+      name = 'born to die'
+      Card.create! name: name, '+sub' => 'a subcard'
+      Card.create! name: name + '+sub+s1', content: 'sigh'
+      Card.create! name: name + '+sub+s1+s2', content: 'sigh again'
+      Card.create! name: name + '+sub+s1+s2+s3', content: 'sigh again again'
+      expect(Card['sub']).to be
+      Card['sub'].delete
+      expect(Card["#{name}+sub"]).not_to be
+      expect(Card["#{name}+sub+s1"]).not_to be
+      expect(Card["#{name}+sub+s1+s2"]).not_to be
+      expect(Card["#{name}+sub+s1+s2+s3"]).not_to be
+      
+    end
+  end
+
   it 'deletes account of user' do
     Card::Auth.as_bot do
       @signup = Card.create!(

@@ -67,6 +67,11 @@ describe Card::Set::Type::File do
     end
   end
 
+  it 'creates empty file card without content' do
+    card = Card.create name: 'hide and seek', type_id: Card::FileID
+    expect(card.content).to eq('')
+  end
+
   it 'handles urls' do
     url = 'http://wagn.org/files/bruce_logo-large-122798.png'
     Card.create! name: 'url test', type_id: Card::FileID, remote_file_url: url

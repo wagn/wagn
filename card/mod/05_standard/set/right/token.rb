@@ -1,7 +1,7 @@
 include All::Permissions::Accounts
 
 view :raw do |args|
-  "Private data"
+  'Private data'
 end
 
 def validate! token
@@ -23,7 +23,7 @@ def permanent?
 end
 
 def used!
-  Auth.as_bot{ delete! } unless permanent?
+  Auth.as_bot { delete! } unless permanent?
 end
 
 def term

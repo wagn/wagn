@@ -110,7 +110,7 @@ class AddEmailCards < Card::CoreMigration
         referred_to_by: { right: {codename: 'send'} }
       ).each do |card|
         set_name = card.cardname.left
-        card.name = "#{ set_name.gsub('*','' ).gsub('+', '_') }_email_template"
+        card.name = "#{ set_name.tr('*','' ).tr('+', '_') }_email_template"
         card.type = 'Email Template'
         card.save!
         Card.create! name: "#{set_name}+*on create", content: card.name

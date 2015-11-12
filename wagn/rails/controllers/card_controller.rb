@@ -72,13 +72,13 @@ class CardController < ActionController::Base
     params[:id] =
       case params[:id]
       when '*previous' then return card_redirect(Card::Env.previous_location)
-      when nil         then find_id
+      when nil         then determine_id
       else                  validate_id_encoding params[:id]
       end
   end
 
   def load_card
-    @card = get_main_card
+    @card = new_or_fetch_card
     raise Card::NotFound unless @card
 
     @card.select_action_by_params params #
@@ -93,8 +93,8 @@ class CardController < ActionController::Base
 
   # ----------( HELPER METHODS ) -------------
 
-  def get_main_card
-    opts = card_attr_from_params
+  def new_or_fetch_card
+    opts = card_opts
     if params[:action] == 'create'
       # FIXME: we currently need a "new" card to catch duplicates
       # (otherwise save will just act like a normal update)
@@ -106,17 +106,17 @@ class CardController < ActionController::Base
     end
   end
 
-  def card_attr_from_params
+  def card_opts
+    opts = (params[:card] || {}).clone
     # clone so that original params remain unaltered.  need deeper clone?
-    opts = params[:card] ? params[:card].clone : {}
-    # for /new/:type shortcut.  we should fix and deprecate this.
     opts[:type] ||= params[:type] if params[:type]
+    # for /new/:type shortcut.  we should fix and deprecate this.
+    opts[:name] ||= params[:id].to_s.tr('_', ' ')
     # move handling to Card::Name?
-    opts[:name] ||= params[:id].to_s.gsub('_', ' ')
     opts
   end
 
-  def find_id
+  def determine_id
     case
     when needs_setup?
       prepare_setup_card!

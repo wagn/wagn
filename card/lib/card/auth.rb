@@ -54,7 +54,7 @@ class Card
         Digest::SHA1.hexdigest "#{salt}--#{password}--"
       end
 
-      # find accounted by email
+      # find account by email
       def [] email
         email = email.strip.downcase
         Auth.as_bot do

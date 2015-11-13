@@ -223,9 +223,10 @@ class WagnGenerator < Rails::Generators::AppBase
   def database_gemfile_entry
     return [] if options[:skip_active_record]
     gem_name = gem_for_database
+    gem_name = gem_name.first if gem_name.is_a? Array # FIXME: should never be!!
     gem_version =  gem_name == 'mysql2' ? '0.3.20' : nil
-    GemfileEntry.version gem_name, gem_version,
-                        "Use #{options[:database]} as the database for Active Record"
+    msg = "Use #{options[:database]} as the database for Active Record"
+    GemfileEntry.version gem_name, gem_version, msg
   end
 
   protected

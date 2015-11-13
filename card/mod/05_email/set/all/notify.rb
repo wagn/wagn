@@ -59,8 +59,12 @@ def followable?
   true
 end
 
+def silent_change?
+  silent_change.nil? ? !Card::Env[:controller] : silent_change
+end
+
 def notable_change?
-  Card::Env[:controller] && !silent_change && !supercard && current_act &&
+  !silent_change? && !supercard && current_act &&
     Card::Auth.current_id != WagnBotID && followable?
 end
 

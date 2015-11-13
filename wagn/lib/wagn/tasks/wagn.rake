@@ -72,6 +72,9 @@ namespace :wagn do
 
     puts 'set symlink for assets'
     Rake::Task['wagn:update_assets_symlink'].invoke
+
+    puts 'reset cache'
+    system 'bundle exec rake wagn:reset_cache' # needs loaded environment
   end
 
   desc 'update wagn gems and database'

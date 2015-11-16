@@ -15,7 +15,10 @@ class Card
       def parse_value rawvalue
         operator =
           case rawvalue
-          when Array;     rawvalue.shift
+          when Array
+            _operator = rawvalue[0]
+            rawvalue = rawvalue[1..-1]
+            _operator
           when String;    '='
           when Integer;   '='
           else raise("Invalid Condition Clause #{rawvalue}.inspect}")

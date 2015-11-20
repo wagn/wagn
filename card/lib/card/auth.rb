@@ -112,7 +112,8 @@ class Card
 
       def current_id= card_id
         @@current = @@as_id = @@as_card = nil
-        @@current_id = card_id.to_i
+        card_id = card_id.to_i if card_id.present?
+        @@current_id = card_id
       end
 
       def get_user_id user

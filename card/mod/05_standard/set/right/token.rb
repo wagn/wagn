@@ -2,7 +2,7 @@ include All::Permissions::Accounts
 
 DURATIONS = 'second|minute|hour|day|week|month|year'
 
-card_reader :expiration
+card_accessor :expiration
 
 view :raw do
   'Private data'
@@ -32,7 +32,7 @@ end
 
 def term
   @term ||=
-    if expiration_card
+    if expiration.present?
       term_from_string expiration
     else
       Card.config.token_expiry
@@ -42,7 +42,8 @@ end
 def term_from_string string
   string.strip!
   return 'permanent' if string == 'none'
-  number, unit = /^(\d+)[\.\s]*(#{DURATIONS})s?$/.match(string).captures
+  re_match = /^(\d+)[\.\s]*(#{DURATIONS})s?$/.match(string)
+  number, unit = re_match.captures if re_match
   if unit
     number.to_i.send unit
   else

@@ -84,7 +84,11 @@ body.mceContentBody {
 
 /*----------- Sidebar -------------*/
 
-
+.row.row-offcanvas {
+  > aside, article {
+    margin: 0;
+  }
+}
 
 /* collapsed sidebar styles */
 @media screen and (max-width: 767px) {

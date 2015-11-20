@@ -32,9 +32,10 @@ class FollowerStash
     @followed_affected_cards.keys
   end
 
-  def each_follower_with_reason  # "follower" is a card object, "followed" a card name
+  def each_follower_with_reason
+    # "follower"(=user) is a card object, "followed"(=reasons) a card name
     @followed_affected_cards.each do |user, reasons|
-      yield(user,reasons.first)
+      yield(user, reasons.first)
     end
   end
 
@@ -75,9 +76,10 @@ end
 
 # in the delete case we have to calculate the follower_stash beforehand
 # but we can't pass the follower_stash through the ActiveJob queue.
-# We have to deal with the notifications in the extend phase instead of the subsequent phase
+# We have to deal with the notifications in the extend phase instead of the
+# subsequent phase
 event :stash_followers, after: :approve, on: :delete do
-  act_card.follower_stash ||=  FollowerStash.new
+  act_card.follower_stash ||= FollowerStash.new
   act_card.follower_stash.add_affected_card self
 end
 event :notify_followers_after_delete,
@@ -86,29 +88,30 @@ event :notify_followers_after_delete,
 end
 
 def notify_followers
-  begin
-    @current_act.reload
-    @follower_stash ||= FollowerStash.new
-    @current_act.actions.each do |a|
-      @follower_stash.add_affected_card a.card if a.card
-    end
-    @follower_stash.each_follower_with_reason do |follower, reason|
-      if follower.account and follower != @current_act.actor
-        follower.account.send_change_notice @current_act, reason[:set_card].name, reason[:option]
-      end
-    end
-  rescue => e  # this error handling should apply to all extend callback exceptions
-    Rails.logger.info "\nController exception: #{e.message}"
-    Card::Error.current = e
-    notable_exception_raised
+  @current_act.reload
+  @follower_stash ||= FollowerStash.new
+  @current_act.actions.each do |a|
+    @follower_stash.add_affected_card a.card if a.card
   end
+  @follower_stash.each_follower_with_reason do |follower, reason|
+    if follower.account && follower != @current_act.actor
+      follower.account.send_change_notice @current_act, reason[:set_card].name,
+                                          reason[:option]
+    end
+  end
+# this error handling should apply to all extend callback exceptions
+rescue => e
+  Rails.logger.info "\nController exception: #{e.message}"
+  Card::Error.current = e
+  notable_exception_raised
 end
 
 format do
   view :list_of_changes, denial: :blank do |args|
     action = get_action(args)
 
-    relevant_fields = case action.action_type
+    relevant_fields =
+      case action.action_type
       when :create then [:cardtype, :content]
       when :update then [:name, :cardtype, :content]
       when :delete then [:content]
@@ -119,12 +122,12 @@ format do
     end.compact.join
   end
 
-
   view :subedits, perms: :none do |args|
     subedits =
       get_act(args).relevant_actions_for(card).map do |action|
         if action.card_id != card.id
-          action.card.format(format: @format).render_subedit_notice(action: action)
+          action.card.format(format: @format)
+            .render_subedit_notice(action: action)
         end
       end.compact.join
 
@@ -137,16 +140,19 @@ format do
 
   view :subedit_notice, denial: :blank do |args|
     action = get_action(args)
-    name_before_action = (action.new_values[:name] && action.old_values[:name]) || card.name
+    name_before_action =
+      (action.new_values[:name] && action.old_values[:name]) || card.name
 
     wrap_subedit_item %{#{name_before_action} #{action.action_type}d
 #{ render_list_of_changes(args) }}
   end
 
   view :followed, perms: :none, closed: true do |args|
-    if args[:followed_set] && (set_card = Card.fetch(args[:followed_set])) &&
-         args[:follow_option] && (option_card = Card.fetch(args[:follow_option]))
-       option_card.description set_card
+    if args[:followed_set] &&
+       (set_card = Card.fetch(args[:followed_set])) &&
+       args[:follow_option] &&
+       (option_card = Card.fetch(args[:follow_option]))
+      option_card.description set_card
     else
       'followed card'
     end
@@ -157,23 +163,29 @@ format do
   end
 
   view :unfollow_url, perms: :none, closed: true do |args|
-    if args[:followed_set] && (set_card = Card.fetch(args[:followed_set])) && args[:follow_option] && args[:follower]
-     rule_name = set_card.follow_rule_name args[:follower]
-     target_name = "#{args[:follower]}+#{Card[:follow].name}"
-     update_path = page_path target_name, action: :update, card: {subcards: {rule_name=>Card[:never].name}}
-     card_url update_path # absolutize path
+    if args[:followed_set] && (set_card = Card.fetch(args[:followed_set])) &&
+       args[:follow_option] && args[:follower]
+      rule_name = set_card.follow_rule_name args[:follower]
+      target_name = "#{args[:follower]}+#{Card[:follow].name}"
+      update_path = page_path target_name,
+                              action: :update,
+                              card: { subcards: {
+                                rule_name => Card[:never].name
+                              } }
+      card_url update_path # absolutize path
     end
   end
 
   def edit_info_for field, action
     return nil unless action.new_values[field]
 
-    item_title = case action.action_type
-    when :update then 'new '
-    when :delete then 'deleted '
-    else ''
-    end
-    item_title +=  "#{field}: "
+    item_title =
+      case action.action_type
+      when :update then 'new '
+      when :delete then 'deleted '
+      else ''
+      end
+    item_title += "#{field}: "
 
     item_value =
       if action.action_type == :delete
@@ -182,17 +194,19 @@ format do
         action.new_values[field]
       end
 
-     wrap_list_item "#{item_title}#{item_value}"
+    wrap_list_item "#{item_title}#{item_value}"
   end
 
   def get_act args
-    @notification_act ||= args[:act] || (args[:act_id] and Act.find(args[:act_id])) || card.acts.last
+    @notification_act ||= args[:act] ||
+                          (args[:act_id] && Act.find(args[:act_id])) ||
+                          card.acts.last
   end
 
   def get_action args
-    args[:action] || (args[:action_id] and Action.fetch(args[:action_id])) || card.last_action
+    args[:action] || (args[:action_id] && Action.fetch(args[:action_id])) ||
+      card.last_action
   end
-
 
   def wrap_subedits subedits
     "\nThis update included the following changes:#{wrap_list subedits}"
@@ -210,7 +224,6 @@ format do
     "\n#{text}\n"
   end
 end
-
 
 format :email_text do
   view :last_action, perms: :none do |args|
@@ -237,7 +250,3 @@ format :email_html do
     "<li>#{text}</li>\n"
   end
 end
-
-
-
-

@@ -1,10 +1,10 @@
 include All::Permissions::Accounts
 
-DURATIONS= 'second|minute|hour|day|week|month|year'
+DURATIONS = 'second|minute|hour|day|week|month|year'
 
 card_reader :expiration
 
-view :raw do |args|
+view :raw do
   'Private data'
 end
 

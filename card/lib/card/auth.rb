@@ -26,18 +26,30 @@ class Card
         account.password == encrypt(password, account.salt)
       end
 
-      def set_current_from_token token, user_id
+      def set_current_from_token token, current=nil
         account = find_by_token token
         if account && account.validate_token!(token)
-          user_id = account.id unless user_id && always_ok?(account.id)
-          self.current_id = user_id
+          unless current && always_ok_usr_id?(account.left_id)
+            current = account.left_id
+          end
+          set_current_from_mark current
         elsif Env.params[:live_token]
-          # do not raise error. Used for activations and resets.
+          true
+          # Used for activations and resets.
           # Continue as anonymous and address problem later
         else
-          error = account ? account.errors.first.last : 'account not found'
-          raise Card::PermissionDenied, error
+          false
         end
+      end
+
+      def set_current_from_mark mark
+        self.current_id =
+          if mark.to_s =~ /@/
+            account = Auth[mark.downcase]
+            account && account.active? ? account.left_id : Card::AnonymousID
+          else
+            mark
+          end
       end
 
       def find_by_token token
@@ -100,7 +112,7 @@ class Card
 
       def current_id= card_id
         @@current = @@as_id = @@as_card = nil
-        @@current_id = card_id
+        @@current_id = card_id.to_i
       end
 
       def get_user_id user

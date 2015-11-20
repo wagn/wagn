@@ -62,7 +62,10 @@ class CardController < ActionController::Base
 
   def authenticate
     if params[:token]
-      Card::Auth.set_current_from_token params[:token], params[:user_id]
+      ok = Card::Auth.set_current_from_token params[:token], params[:current]
+      raise Card::Oops, 'token authentication failed' unless ok
+      # arguably should be PermissionDenied; that requires a card object,
+      # and that's not loaded yet.
     else
       Card::Auth.set_current_from_session
     end

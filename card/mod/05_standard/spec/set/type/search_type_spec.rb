@@ -54,7 +54,8 @@ describe Card::Set::Type::SearchType do
               "right_plus":{
                 "name":["in","tag","source"]
               },
-              "limit":1
+              "limit":1,
+              "sort":"name"
             }
         }
       )

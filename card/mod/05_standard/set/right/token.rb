@@ -27,7 +27,6 @@ def permanent?
 end
 
 def used!
-  binding.pry
   Auth.as_bot { delete! } unless permanent?
 end
 

@@ -1,6 +1,6 @@
 
 view :title do |args|
-   super args.merge( :title=>'Recent Changes' )
+   super args.merge( title: 'Recent Changes' )
 end
 
 format :html do
@@ -32,7 +32,7 @@ format :html do
                  cards_by_day[day].map do |card|
                    %{
                      <div class="search-result-item item-#{ search_vars[:item] }">
-                      #{ nest(card, :view=>search_vars[:item]) }
+                      #{ nest(card, view: search_vars[:item]) }
                     </div>
                    }
                  end * ' '

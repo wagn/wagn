@@ -2,6 +2,10 @@ def followable?
   false
 end
 
+def history?
+  false
+end
+
 format do
   view :not_found do |args|
     if update_machine_output_live?

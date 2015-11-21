@@ -14,13 +14,13 @@ describe Card::Set::Type::EmailTemplate do
   end
 
   def create_field name, args={}
-    Card.create! args.merge(:name=>"#{email_name}+#{name}")
+    Card.create! args.merge(name: "#{email_name}+#{name}")
   end
 
   before do
     Card::Auth.current_id = Card::WagnBotID
     chunk_test = "Url(wagn.org) Link([[http://wagn.org|Wagn]]) Inclusion({{B|name}}) Card link([[A]])"
-    Card.create! :name => email_name, :type=>:email_template, :subcards=>{
+    Card.create! name: email_name, type: :email_template, subcards: {
       "+*to"           =>  "joe@user.com",
       "+*from"         =>  "from@user.com",
       "+*subject"      =>  "*subject #{chunk_test}",
@@ -31,7 +31,7 @@ describe Card::Set::Type::EmailTemplate do
 
   describe "mail view" do
     let(:content_type) do
-      card = Card.create!(:name => 'content type test', :type=>:email_template, :subcards=>@fields)
+      card = Card.create!(name: 'content type test', type: :email_template, subcards: @fields)
       email = card.format.render_mail
       email[:content_type].value
     end
@@ -66,34 +66,34 @@ describe Card::Set::Type::EmailTemplate do
       end
 
       it 'handles pointer values' do
-        create_field '*cc', :content => "[[joe@user.com]]", :type=>'Pointer'
+        create_field '*cc', content: "[[joe@user.com]]", type: 'Pointer'
         expect( mailconfig[:cc] ).to eq 'joe@user.com'
       end
 
 
       #it 'handles email syntax in pointer values' do
-      #  create_field '*cc', :content => "[[Joe User <joe@user.com>]]", :type=>'Pointer'
+      #  create_field '*cc', content: "[[Joe User <joe@user.com>]]", type: 'Pointer'
       #  expect( mailconfig[:cc] ).to eq 'Joe User <joe@user.com>'
       #end
 
       it 'handles link to email card' do
-        create_field '*cc', :content => "[[Joe User+*email]]", :type=>'Pointer'
+        create_field '*cc', content: "[[Joe User+*email]]", type: 'Pointer'
         expect( mailconfig[:cc] ).to eq 'joe@user.com'
       end
 
       # it 'handles link with valid email address' do
-      #   create_field '*cc', :content => "[[joe@admin.com|Joe]]", :type=>'Phrase'
+      #   create_field '*cc', content: "[[joe@admin.com|Joe]]", type: 'Phrase'
       #   expect( mailconfig[:cc] ).to eq 'Joe<joe@user.com>'
       # end
 
       it 'handles search card' do
-        create_field '*bcc', :content => '{"name":"Joe Admin","append":"*email"}', :type=>'Search'
+        create_field '*bcc', content: '{"name":"Joe Admin","append":"*email"}', type: 'Search'
         expect( mailconfig[:bcc] ).to eq 'joe@admin.com'
       end
 
       # it 'handles invalid email address' do  #TODO not obvious how to deal with that.
                                               #      we can't decided whether a email address like [[_left]] is valid; depends on the context
-      #   Card.fetch("a mail template+*to").update_attributes(:content=>"invalid mail address")
+      #   Card.fetch("a mail template+*to").update_attributes(content: "invalid mail address")
       # end
     end
 
@@ -159,46 +159,44 @@ describe Card::Set::Type::EmailTemplate do
      context 'with context card' do
        let(:context_card) do
          Card.create(
-           :name    => "Banana",
-           :content => "data content [[A]]",
-           :subcards=> {
-             '+email'      => {:content=>'gary@gary.com'},
-             '+subject'    => {:type=>'Pointer', :content=>'[[default subject]]'},
-             '+attachment' => {:type=>'File', :content=>"notreally.txt" }
+           name:    "Banana",
+           content: "data content [[A]]",
+           subcards: {
+             '+email'      => {content: 'gary@gary.com'},
+             '+subject'    => {type: 'Pointer', content: '[[default subject]]'},
+             '+attachment' => {type: 'File', content: "notreally.txt" }
            }
          )
        end
        subject {  mailconfig( context: context_card ) }
 
        it 'handles contextual name in address search' do
-         update_field '*from', :content => '{"left":"_self", "right":"email"}', :type=>'Search'
-         update_field '*from', :content => '{"left":"_self", "right":"email"}'                  #FIXME: have to do this twice to get the right content.
-                                                                                                #       After the first update the content is empty
+         update_field '*from', content: '{"left":"_self", "right":"email"}', type: 'Search'
          expect(subject[:from]).to eq "gary@gary.com"
        end
 
        it 'handles contextual names and structure rules in subject' do
-         Card.create! :name => 'default subject', :content=>'a very nutty thang', :type=>'Phrase'
-         Card.create! :name => "subject search+*right+*structure", :content => %{{"referred_to_by":"_left+subject"}}, :type=>'Search'
-         update_field '*subject', :content => "{{+subject search|core;item:core}}"
+         Card.create! name: 'default subject', content: 'a very nutty thang', type: 'Phrase'
+         Card.create! name: "subject search+*right+*structure", content: %{{"referred_to_by":"_left+subject"}}, type: 'Search'
+         update_field '*subject', content: "{{+subject search|core;item:core}}"
          expect(subject[:subject]).to eq("a very nutty thang")
        end
 
        it 'handles _self in html message' do
-          update_field '*html message', :content => "Triggered by {{_self|name}}"
+          update_field '*html message', content: "Triggered by {{_self|name}}"
           expect(subject[:html_message]).to  include("Triggered by Banana")
        end
 
        it 'handles _left in html message' do
-         update_field '*html_message', :content => "Nobody expects {{_left+surprise|core}}"
-         Card.create :name=>'Banana+surprise', :content=>"the Spanish Inquisition"
-         c = Card.create :name => "Banana+emailtest", :content => "data content"
+         update_field '*html_message', content: "Nobody expects {{_left+surprise|core}}"
+         Card.create name: 'Banana+surprise', content: "the Spanish Inquisition"
+         c = Card.create name: "Banana+emailtest", content: "data content"
          expect( mailconfig( context: c )[:html_message] ).to include 'Nobody expects the Spanish Inquisition'
 
        end
 
        it 'handles contextual name for attachments' do
-         create_field '*attach', :type=>"Pointer", :content => "[[_self+attachment]]"
+         create_field '*attach', type: "Pointer", content: "[[_self+attachment]]"
          expect(subject[:attach]).to eq ['Banana+attachment'.to_name]
        end
      end

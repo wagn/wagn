@@ -4,7 +4,7 @@
 #   context "new card" do
 #     before(:each) do
 #       Card::Auth.as_bot do
-#         @c = Card.new :name=>"New Card", :content=>"Great Content"
+#         @c = Card.new name: "New Card", content: "Great Content"
 #       end
 #     end
 #

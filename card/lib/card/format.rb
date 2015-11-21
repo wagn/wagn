@@ -4,9 +4,9 @@ class Card
   class Format
     include Card::Location
 
-    DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
-    INCLUSION_MODES  = { :closed=>:closed, :closed_content=>:closed, :edit=>:edit,
-      :layout=>:layout, :new=>:edit, :setup=>:edit, :normal=>:normal, :template=>:template } #should be set in views
+    DEPRECATED_VIEWS = { view: :open, card: :open, line: :closed, bare: :core, naked: :core }
+    INCLUSION_MODES  = { closed: :closed, closed_content: :closed, edit: :edit,
+      layout: :layout, new: :edit, setup: :edit, normal: :normal, template: :template } #should be set in views
 
     cattr_accessor :ajax_call, :registered
     [ :perms, :denial_views, :closed_views, :error_codes, :view_tags, :aliases ].each do |acc|
@@ -122,7 +122,7 @@ class Card
     end
 
     def get_inclusion_defaults nested_card
-      { :view => :name }
+      { view: :name }
     end
 
     def params
@@ -168,7 +168,7 @@ class Card
     def template
       @template ||= begin
         c = controller
-        t = ActionView::Base.new c.class.view_paths, {:_routes=>c._routes}, c
+        t = ActionView::Base.new c.class.view_paths, {_routes: c._routes}, c
         t.extend c.class._helpers
         t
       end
@@ -179,7 +179,7 @@ class Card
       when /(_)?(optional_)?render(_(\w+))?/
         view = $3 ? $4 : opts.shift
         args = opts[0] ? opts.shift.clone : {}
-        args.merge!( :optional=>true, :default_visibility=>opts.shift) if $2
+        args.merge!( optional: true, default_visibility: opts.shift) if $2
         args[ :skip_permissions ] = true if $1
         render view, args
       when /^_view_(\w+)/
@@ -204,7 +204,8 @@ class Card
         args = default_render_args view, args
         with_inclusion_mode view do
           Card::ViewCache.fetch(self, view, args) do
-            send "_view_#{ view }", args
+            method = method "_view_#{ view }"
+            method.arity == 0 ? method.call : method.call(args)
           end
         end
       end
@@ -299,11 +300,11 @@ class Card
     #
 
     def subformat subcard
-      subcard = Card.fetch( subcard, :new=>{} ) if String===subcard
-      sub = self.class.new subcard, :parent=>self, :depth=>@depth+1, :root=>@root,
+      subcard = Card.fetch( subcard, new: {} ) if String===subcard
+      sub = self.class.new subcard, parent: self, depth: @depth+1, root: @root,
         # FIXME - the following four should not be hard-coded here.  need a generalized mechanism
         # for attribute inheritance
-        :context_names=>@context_names, :mode=>@mode, :mainline=>@mainline, :form=>@form
+        context_names: @context_names, mode: @mode, mainline: @mainline, form: @form
     end
 
 
@@ -433,7 +434,7 @@ class Card
       end
 
       if val=params[:item] and val.present?
-        opts[:items] = (opts[:items] || {}).reverse_merge :view=>val.to_sym
+        opts[:items] = (opts[:items] || {}).reverse_merge view: val.to_sym
       end
     end
 
@@ -442,8 +443,9 @@ class Card
     end
 
     def nest nested_card, opts={}
-      #ActiveSupport::Notifications.instrument('card', message: "nest: #{nested_card.name}, #{opts}") do
-      opts.delete_if { |k,v| v.nil? }
+      # ActiveSupport::Notifications.instrument('card', message:
+      # "nest: #{nested_card.name}, #{opts}") do
+      opts.delete_if { |_k, v| v.nil? }
       opts.reverse_merge! inclusion_defaults(nested_card)
 
       sub = nil
@@ -454,37 +456,48 @@ class Card
         sub.inclusion_opts = opts[:items] ? opts[:items].clone : {}
       end
 
-
       view = canonicalize_view opts.delete :view
       opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
       # FIXME: special views should be represented in view definitions
 
-      view = case @mode
-      when :edit
-        not_ready_for_form = @@perms[view]==:none || nested_card.structure || nested_card.key.blank? # eg {{_self|type}} on new cards
-        not_ready_for_form ? :blank : :edit_in_form
-      when :template
-        :template_rule
-      when :closed
-        case
-        when @@closed_views[view] == true || @@error_codes[view] ; view
-        when specified_view = @@closed_views[view]               ; specified_view
-        when !nested_card.known?                                 ; :closed_missing
-        else                                                     ; :closed_content
+      view =
+        case @mode
+        when :edit     then view_in_edit_mode(view, nested_card)
+        when :template then :template_rule
+        when :closed   then view_in_closed_mode(view, nested_card)
+        else                view
         end
-      else
-        view
-      end
 
       sub.optional_render view, opts
-      #end
+      # end
+    end
+
+    def view_in_edit_mode homeview, nested_card
+      not_in_form =
+        @@perms[homeview] == :none || # view configured not to keep in form
+        nested_card.structure || #      not yet nesting structures
+        nested_card.key.blank? #        eg {{_self|type}} on new cards
+
+      not_in_form ? :blank : :edit_in_form
+    end
+
+    def view_in_closed_mode homeview, nested_card
+      approved_view = @@closed_views[homeview]
+      case
+      when approved_view == true   then homeview
+      when @@error_codes[homeview] then homeview
+      when approved_view           then approved_view
+      when !nested_card.known?     then :closed_missing
+      else                              :closed_content
+      end
     end
 
     def get_inclusion_content cardname
-      content = params[cardname.to_s.gsub(/\+/,'_')]
+      content = params[cardname.to_s.tr('+', '_')]
 
-      # CLEANME This is a hack to get it so plus cards re-populate on failed signups
-      if p = params['subcards'] and card_params = p[cardname.to_s]
+      # CLEANME This is a hack so plus cards re-populate on failed signups
+      p = params['subcards']
+      if p && card_params = p[cardname.to_s]
         content = card_params['content']
       end
       content if content.present?  # why is this necessary? - efm
@@ -492,7 +505,7 @@ class Card
     end
 
     def fetch_nested_card options
-      args = { :name=>options[:inc_name], :type=>options[:type], :supercard=>card }
+      args = { name: options[:inc_name], type: options[:type], supercard: card }
       args.delete(:supercard) if options[:inc_name].strip.blank? # special case.  gets absolutized incorrectly. fix in smartname?
       if options[:inc_name] =~ /^_main\+/
         # FIXME this is a rather hacky (and untested) way to get @superleft to work on new cards named _main+whatever
@@ -502,33 +515,33 @@ class Card
       if content=get_inclusion_content(options[:inc_name])
         args[:content]=content
       end
-      Card.fetch options[:inc_name], :new=>args
+      Card.fetch options[:inc_name], new: args
     end
 
     def default_item_view
       :name
     end
 
-
     #
     # ------------ LINKS ---------------
     #
 
     def add_class options, klass
-      options[:class] = [ options[:class], klass ].flatten.compact * ' '
+      options[:class] = [options[:class], klass].flatten.compact * ' '
     end
-
 
     def unique_id
       "#{card.key}-#{Time.now.to_i}-#{rand(3)}"
     end
 
-    def format_date date, include_time = true
-      # Must use DateTime because Time doesn't support %e on at least some platforms
+    def format_date date, include_time=true
+      # using DateTime because Time doesn't support %e on some platforms
       if include_time
-        DateTime.new(date.year, date.mon, date.day, date.hour, date.min, date.sec).strftime("%B %e, %Y %H:%M:%S")
+        DateTime.new(
+          date.year, date.mon, date.day, date.hour, date.min, date.sec
+        ).strftime('%B %e, %Y %H:%M:%S')
       else
-        DateTime.new(date.year, date.mon, date.day).strftime("%B %e, %Y")
+        DateTime.new(date.year, date.mon, date.day).strftime('%B %e, %Y')
       end
     end
 
@@ -537,7 +550,6 @@ class Card
       @context_names += name.to_name.part_names
       @context_names.uniq!
     end
-
   end
 end
 

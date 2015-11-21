@@ -11,17 +11,17 @@ end
 
 view :core, :raw
 
-event :validate_email, :after=>:approve, :on=>:save do
+event :validate_email, after: :approve, on: :save do
   if content.present? && content !~ /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
     errors.add :content, 'must be valid address'
   end
 end
 
-event :validate_unique_email, :after=>:validate_email, :on=>:save do
+event :validate_unique_email, after: :validate_email, on: :save do
   if content.present?
     Auth.as_bot do
-      wql = { :right_id=>Card::EmailID, :eq=>content }
-      wql[:not] = { :id => id } if id
+      wql = { right_id: Card::EmailID, eq: content }
+      wql[:not] = { id: id } if id
       if Card.search( wql ).first
         errors.add :content, 'must be unique'
       end
@@ -29,7 +29,7 @@ event :validate_unique_email, :after=>:validate_email, :on=>:save do
   end
 end
 
-event :downcase_email, :before=>:approve, :on=>:save do
+event :downcase_email, before: :approve, on: :save do
   if content and content != content.downcase
     self.content = content.downcase
   end

@@ -35,10 +35,10 @@ Wagn.application.class.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
   config.action_mailer.perform_deliveries = true
-  config.action_mailer.default :charset=>"utf-8"
+  config.action_mailer.default charset: "utf-8"
 
   #config.action_mailer.delivery_method = :smtp
-  #config.action_mailer.smtp_settings = { :address => "localhost", :port => 1025 }
+  #config.action_mailer.smtp_settings = { address: "localhost", port: 1025 }
 
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper,

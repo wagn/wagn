@@ -7,13 +7,13 @@ describe Card::Set::Rstar::Rules do
      expect(r).not_to match('No Card!')
      #warn "r = #{r}"
      assert_view_select r, 'table[class="set-rules table"]' do
-       assert_select 'a[href~="/*read+*right+*read?view=open_rule"]', :text => 'read'
+       assert_select 'a[href~="/*read+*right+*read?view=open_rule"]', text: 'read'
      end
   end
 
   it "should render setting view for a *input rule" do
     Card::Auth.as_bot do
-      r = Card.fetch('*read+*right+*input',:new=>{}).format.render_open_rule
+      r = Card.fetch('*read+*right+*input',new: {}).format.render_open_rule
       expect(r).not_to match(/error/i)
       expect(r).not_to match('No Card!')
       #warn "r = #{r}"

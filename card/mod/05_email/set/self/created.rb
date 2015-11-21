@@ -1,6 +1,6 @@
 include Card::FollowOption
 
-self.restrictive_follow_opts :position=>1
+self.restrictive_follow_opts position: 1
 
 self.follower_candidate_ids do |card|
   [ card.creator_id ]

@@ -7,9 +7,4 @@ end
 
 format :html do
   include AddHelp::HtmlFormat
-
-  view :core do |args|
-    render_raw args
-  end
-
 end

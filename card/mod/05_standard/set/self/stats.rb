@@ -12,12 +12,12 @@ format :html do
         </tr>
         <tr>
           <td>cards</td>
-          <td>#{ Card.where(:trash=>false).count }</td>
+          <td>#{ Card.where(trash: false).count }</td>
           <td></td>
         </tr>
         <tr>
           <td>trashed cards</td>
-          <td>#{ Card.where(:trash=>true).count  }</td>
+          <td>#{ Card.where(trash: true).count  }</td>
           <td>#{link_to 'delete all', card_path( 'update/:all?task=empty_trash' )}</td>
         </tr>
         <tr>

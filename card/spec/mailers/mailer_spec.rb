@@ -42,15 +42,15 @@ describe Card::Mailer do
   # describe "flexmail" do
   #   # FIXME: at least two tests should be here, with & w/o attachment.
   # end
-  
-  
-  
+
+
+
   # describe "cardmail" do
   #   before do
-  #     Card.gimme "mailtest", :content => "test"
+  #     Card.gimme "mailtest", content: "test"
   #   end
   #   it "renders email text" do
-  #     Card::Mailer.cardmail(:to => "sara@user.com").deliver
+  #     Card::Mailer.cardmail(to: "sara@user.com").deliver
   #     @mail = ActionMailer::Base.deliveries.last
   #     expect(@mail.body).to eq("test")
   #   end

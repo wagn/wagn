@@ -17,7 +17,7 @@ class RailsInflectionUpdates < Card::CoreMigration
         twin.destroy
         yield
       elsif !card.trash
-        raise Card::Oops.new ("Your deck has two different cards with names '#{card.name}' and '#{twin.name}'. After this update it's no longer possible to differentiate between those two names. Please rename or delete one of the two cards and run the update again." )
+        raise Card::Oops.new("Your deck has two different cards with names '#{card.name}' and '#{twin.name}'. After this update it's no longer possible to differentiate between those two names. Please rename or delete one of the two cards and run the update again." )
       end
     else
       yield
@@ -47,22 +47,24 @@ class RailsInflectionUpdates < Card::CoreMigration
         if name =~ plural
           # can't use fetch, because it uses the wrong key
           # find_by_name is case-insensitve and finds the wrong cards for camel case names
-          card = Card.where(:name=>name).select {|card| card.name == name}.first
+          card = Card.where(name: name).select {|card| card.name == name}.first
 
           unless_name_collision(card) do
             apply_to_content << i
             new_key = name.to_name.key
-            if Card.find_by_key new_key
+            if card.key == new_key
+              # noop.  probably means this was already migrated?
+            elsif Card.find_by_key new_key
               puts "Could not update #{name}. Key '#{new_key}' already exists."
             else
-              card.update_attributes! :key=>new_key
+              card.update_attributes! key: new_key
             end
           end
         end
       end
     end
 
-    cards_with_css = Card.search :type=>['in','html', 'css', 'scss']
+    cards_with_css = Card.search type: ['in','html', 'css', 'scss']
     cards_with_css.each do |card|
       new_content = card.content
       content_changed = false
@@ -75,7 +77,7 @@ class RailsInflectionUpdates < Card::CoreMigration
         end
       end
       if content_changed
-        card.update_attributes! :content=>new_content
+        card.update_attributes! content: new_content
       end
     end
   end

@@ -3,7 +3,7 @@
 describe Card::Set::Self::Stats do
   before do
     Card::Auth.as_bot do
-      @core = render_card :core, :name=>:stats
+      @core = render_card :core, name: :stats
     end
   end
   it "should render a table" do

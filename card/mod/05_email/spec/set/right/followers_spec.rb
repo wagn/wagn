@@ -38,7 +38,7 @@ describe Card::Set::Right::Followers do
     it 'recognizes card name changes' do
       @card = Card['Look At Me']
       @card.update_referencers = true
-      @card.update_attributes! :name=>'Look away'
+      @card.update_attributes! name: 'Look away'
       is_expected.to eq ['Big Brother']
     end
 
@@ -66,14 +66,14 @@ describe Card::Set::Right::Followers do
 
     context 'when following a *type set' do
       it 'contains follower' do
-        @card = Card.create! :name=>'telescope', :type=>'Optic'
+        @card = Card.create! name: 'telescope', type: 'Optic'
         is_expected.to include('Big Brother')
       end
     end
 
     context 'when following a *right set' do
       it 'contains follower' do
-        @card = Card.create! :name=>'telescope+lens'
+        @card = Card.create! name: 'telescope+lens'
         is_expected.to include('Big Brother')
       end
     end
@@ -88,7 +88,7 @@ describe Card::Set::Right::Followers do
     context 'when following content I created' do
       it 'contains creator' do
         Card::Auth.current_id = Card['Big Brother'].id
-        @card = Card.create! :name=>"created by Follower"
+        @card = Card.create! name: "created by Follower"
         is_expected.to include('Big Brother')
       end
     end
@@ -99,9 +99,9 @@ describe Card::Set::Right::Followers do
           Card['Sara'].follow '*all', '*edited'
         end
 
-        @card = Card.create! :name=>"edited by Sara"
+        @card = Card.create! name: "edited by Sara"
         Card::Auth.current_id = Card['Sara'].id
-        @card.update_attributes! :content=> 'some content'
+        @card.update_attributes! content: 'some content'
         is_expected.to include('Sara')
       end
     end

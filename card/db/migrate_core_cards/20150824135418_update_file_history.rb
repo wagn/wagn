@@ -2,7 +2,7 @@
 
 class UpdateFileHistory < Card::CoreMigration
   def up
-    Card.search(:type=>[:in, 'file', 'image']).each do |card|
+    Card.search(type: [:in, 'file', 'image']).each do |card|
       card.actions.each do |action|
         if (content_change = action.change_for(:db_content).first)
           original_filename, file_type, action_id, mod  = content_change.value.split("\n")
@@ -13,12 +13,12 @@ class UpdateFileHistory < Card::CoreMigration
               else
                 "~#{card.id}/#{action_id}#{::File.extname(original_filename)}"
               end
-            content_change.update_attributes! :value=>value
+            content_change.update_attributes! value: value
           end
         end
       end
     end
-    Card.search( :right => { :codename => 'machine_output' } ).each do |card|
+    Card.search( right: { codename: 'machine_output' } ).each do |card|
       card.delete!
     end
   end

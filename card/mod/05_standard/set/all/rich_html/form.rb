@@ -1,38 +1,37 @@
 format :html do
   def edit_slot args={}
-    #note: @mode should already be :edit here...
+    # note: @mode should already be :edit here...
     if args[:structure] || card.structure
       # multi-card editing
 
       if args[:core_edit] #need better name
         _render_core args
       else
-        process_relative_tags :optional_toolbar=>:hide, :structure=>args[:structure]
+        process_relative_tags optional_toolbar: :hide,
+                              structure: args[:structure]
       end
 
     else
       # single-card edit mode
       field = content_field form, args
 
-      if [ args[:optional_type_formgroup], args[:optional_name_formgroup] ].member? :show
+      if [args[:optional_type_formgroup], args[:optional_name_formgroup]]
+         .member? :show
         # display content field in formgroup for consistency with other fields
-        formgroup '', field, :editor=>:content
+        formgroup '', field, editor: :content
       else
         editor_wrap( :content ) { field }
       end
     end
   end
 
-
   def form_for_multi
-    card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_card?  ##FIXME -- need to match other relative inclusions.
+    instantiate_builder("card#{subcard_input_names}", card, {})
+  end
 
-    # doesn't work anymore in Rails 4
-    # TODO -- check whether forms work with the new instantiate_builder call
-    # block = Proc.new {}
-    # builder = ActionView::Base.default_form_builder
-    # builder.new("card[subcards][#{card.relative_name}]", card, template, {}, block)
-    builder = instantiate_builder("card[subcards][#{card.relative_name}]", card, {})
+  def subcard_input_names
+    return '' if !form_root_format || form_root_format == self
+    "#{@parent.subcard_input_names}[subcards][#{card.contextual_name}]"
   end
 
   def form
@@ -40,6 +39,7 @@ format :html do
   end
 
   def card_form action, opts={}
+    @form_root = true
     hidden_args = opts.delete :hidden
     form_for card, card_form_opts(action, opts) do |form|
       @form = form
@@ -50,9 +50,19 @@ format :html do
     end
   end
 
+  def form_root_format
+    if @form_root
+      self
+    elsif !@parent
+      nil
+    else
+      @parent.form_root_format
+    end
+  end
+
   def card_form_opts action, html={}
     url, action = case action
-      when Symbol ;  [ path(:action=>action) , action          ]
+      when Symbol ;  [ path(action: action) , action          ]
       when Hash   ;  [ path(action)          , action[:action] ]
       when String ;  [ card_path(action)     , nil             ] #deprecated
       else        ;  raise Card::Error, "unsupported card_form action class: #{action.class}"
@@ -66,22 +76,22 @@ format :html do
     html[:recaptcha] ||= 'on' if card.recaptcha_on?
     html.delete :recaptcha if html[:recaptcha] == :off
 
-    { :url=>url, :remote=>true, :html=>html }
+    { url: url, remote: true, html: html }
   end
 
   def editor_wrap type=nil
-    content_tag( :div, :class=>"editor#{ " #{type}-editor" if type }" ) { yield.html_safe }
+    content_tag( :div, class: "editor#{ " #{type}-editor" if type }" ) { yield.html_safe }
   end
 
   def formgroup title, content, opts={}
     help_text =
       case opts[:help]
-      when String ; _render_help :help_class=>'help-block', :help_text=> opts[:help]
-      when true   ; _render_help :help_class=>'help-block'
+      when String ; _render_help help_class: 'help-block', help_text: opts[:help]
+      when true   ; _render_help help_class: 'help-block'
       else        ; nil
       end
 
-    div_args = { :class=>['form-group', opts[:class]].compact*' ' }
+    div_args = { class: ['form-group', opts[:class]].compact*' ' }
     div_args[:card_id  ] = card.id     if card.real?
     div_args[:card_name] = h card.name if card.name.present?
 
@@ -115,16 +125,16 @@ format :html do
   # FIELDSET VIEWS
 
   view :name_formgroup do |args|
-    formgroup 'name', raw( name_field form ), :editor=>'name', :help=>args[:help]
+    formgroup 'name', raw( name_field form ), editor: 'name', help: args[:help]
   end
 
   view :type_formgroup do |args|
     field = if args[:variety] == :edit #FIXME dislike this api -ef
-      type_field :class=>'type-field edit-type-field'
+      type_field class: 'type-field edit-type-field'
     else
-      type_field :class=>"type-field live-type-field", :href=>path(:view=>:new), 'data-remote'=>true
+      type_field class: "type-field live-type-field", href: path(view: :new), 'data-remote'=>true
     end
-    formgroup 'type', field, :editor => 'type', :class=>'type-formgroup'
+    formgroup 'type', field, editor: 'type', class: 'type-formgroup'
   end
 
 
@@ -144,8 +154,8 @@ format :html do
   def name_field form=nil, options={}
     form ||= self.form
     text_field( :name, {
-      :value=>card.name, #needed because otherwise gets wrong value if there are updates
-      :autocomplete=>'off'
+      value: card.name, #needed because otherwise gets wrong value if there are updates
+      autocomplete: 'off'
     }.merge(options))
   end
 
@@ -168,8 +178,8 @@ format :html do
     @nested = options[:nested]
     card.last_action_id_before_edit = card.last_action_id
     revision_tracking = if card && !card.new_card? && !options[:skip_rev_id]
-      hidden_field :last_action_id_before_edit, :class=>'current_revision_id'
-      #hidden_field_tag 'card[last_action_id_before_edit]', card.last_action_id, :class=>'current_revision_id'
+      hidden_field :last_action_id_before_edit, class: 'current_revision_id'
+      #hidden_field_tag 'card[last_action_id_before_edit]', card.last_action_id, class: 'current_revision_id'
     end
     %{
       #{ revision_tracking
@@ -182,14 +192,14 @@ format :html do
 # FIELD VIEWS
 
   view :editor do |args|
-    text_area :content, :rows=>3, :class=>'tinymce-textarea card-content', :id=>unique_id
+    text_area :content, rows: 3, class: 'tinymce-textarea card-content', id: unique_id
   end
 
-  view :edit_in_form, :perms=>:update, :tags=>:unknown_ok do |args|
+  view :edit_in_form, perms: :update, tags: :unknown_ok do |args|
     eform = form_for_multi
 
-    content = content_field eform, args.merge( :nested=>true )
-    opts = { :editor=>'content', :help=>true, :class=>'card-editor' }
+    content = content_field eform, args.merge( nested: true )
+    opts = { editor: 'content', help: true, class: 'card-editor' }
 
     content      += raw( "\n #{ eform.hidden_field :type_id }" )  if card.new_card?
     opts[:class] += " RIGHT-#{ card.cardname.tag_name.safe_key }" if card.cardname.junction?

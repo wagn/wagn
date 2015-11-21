@@ -24,14 +24,14 @@ module Card::Chunk
     REJECTED_PREFIX_RE = %w{ ! ": " ' ]( }.map{|s|Regexp.escape s} * '|'
 
     attr_reader :uri, :link_text
-    delegate :to, :scheme, :host, :port, :path, :query, :fragment, :to => :uri
+    delegate :to, :scheme, :host, :port, :path, :query, :fragment, to: :uri
 
     Card::Chunk.register_class self, {
-      :prefix_re => "(?:(?!#{REJECTED_PREFIX_RE})(?:#{SCHEMES * '|'})\\:)",
-      :full_re    => /^#{::URI.regexp( SCHEMES )}/,
-      :idx_char  => ':'
+      prefix_re: "(?:(?!#{REJECTED_PREFIX_RE})(?:#{SCHEMES * '|'})\\:)",
+      full_re:    /^#{::URI.regexp( SCHEMES )}/,
+      idx_char:  ':'
     }
-    
+
     class << self
       def full_match content, prefix
         prepend_str = if prefix[-1,1] != ':' && config[:prepend_str]
@@ -49,7 +49,7 @@ module Card::Chunk
         !( preceding_string =~ /(?:#{REJECTED_PREFIX_RE})$/ )
       end
     end
-    
+
     def interpret match, content
       chunk = match[0]
       last_char = chunk[-1,1]
@@ -67,7 +67,7 @@ module Card::Chunk
       #warn "uri parse[#{match.inspect}]"
       @uri = ::URI.parse( chunk )
       @process_chunk = "#{format.web_link(@link_text)}#{@trailing_punctuation}"
-    rescue ::URI::Error=>e
+    rescue ::URI::Error => e
       #warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect} #{e.backtrace*"\n"}"
       Rails.logger.warn "rescue parse #{self.class}: #{e.inspect}"
     end
@@ -80,18 +80,18 @@ module Card::Chunk
 
     PREPEND_STR = 'mailto:'
     EMAIL = "[a-zA-Z\d](?:[-a-zA-Z\d]*[a-zA-Z\d])?\\@"
-        
+
     Card::Chunk.register_class self, {
-      :prefix_re => "(?:(?!#{REJECTED_PREFIX_RE})#{EMAIL})\\b",
-      :full_re    => /^#{::URI.regexp( SCHEMES )}/,
-      :prepend_str => PREPEND_STR,
-      :idx_char  => '@'
+      prefix_re: "(?:(?!#{REJECTED_PREFIX_RE})#{EMAIL})\\b",
+      full_re:    /^#{::URI.regexp( SCHEMES )}/,
+      prepend_str: PREPEND_STR,
+      idx_char:  '@'
     }
 
     def interpret match, content
       super
       @text = @text.sub(/^mailto:/,'')  # this removes the prepended string from the unchanged match text
-      @process_chunk = "#{format.web_link(@link_text, :text=> @text)}#{@trailing_punctuation}"
+      @process_chunk = "#{format.web_link(@link_text, text: @text)}#{@trailing_punctuation}"
     end
   end
 
@@ -118,18 +118,18 @@ module Card::Chunk
 
     PREPEND_STR = 'http://'
     HOST = "(?:[a-zA-Z\d](?:[-a-zA-Z\d]*[a-zA-Z\d])?\\.)+#{TLDS}"
-    
+
     Card::Chunk.register_class self, {
-      :prefix_re => "(?:(?!#{REJECTED_PREFIX_RE})#{HOST})\\b",
-      :full_re    => /^#{::URI.regexp( SCHEMES )}/,
-      :prepend_str => PREPEND_STR
+      prefix_re: "(?:(?!#{REJECTED_PREFIX_RE})#{HOST})\\b",
+      full_re:    /^#{::URI.regexp( SCHEMES )}/,
+      prepend_str: PREPEND_STR
     }
 
     def interpret match, content
       super
       @text = @text.sub(/^http:\/\//,'')  # this removes the prepended string from the unchanged match text
       #warn "huri t:#{@text}, #{match}, #{params.inspect}"
-      @process_chunk = "#{format.web_link(@link_text, :text=>@text)}#{@trailing_punctuation}"
+      @process_chunk = "#{format.web_link(@link_text, text: @text)}#{@trailing_punctuation}"
     end
   end
 end

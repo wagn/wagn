@@ -1,5 +1,5 @@
 require 'optparse'
-require 'active_support/core_ext/object/inclusion' # adds method in? to Object class 
+require 'active_support/core_ext/object/inclusion' # adds method in? to Object class
 
 def load_rake_tasks
   require './config/environment'
@@ -158,8 +158,7 @@ WAGN
     rspec_args.shift
 
     parser.parse!(wagn_args)
-
-    rspec_command = "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} #{opts[:rescue]} rspec #{rspec_args*' '} #{opts[:files]} 2>&1" 
+    rspec_command = "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} #{opts[:rescue]} rspec #{rspec_args*' '} #{opts[:files]} 2>&1"
     unless system rspec_command
       exit $?.exitstatus
     end

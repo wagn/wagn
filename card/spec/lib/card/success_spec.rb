@@ -20,7 +20,7 @@ describe Card::Success do
 
     context 'initialized with hash' do
       before do
-        success_params :id=>home.id, :view=>'closed'
+        success_params id: home.id, view: 'closed'
       end
       it { is_expected.to eq home}
     end
@@ -59,7 +59,7 @@ describe Card::Success do
     context 'with params' do
       context 'using initilization' do
         before do
-          success_params :id=>home.id, :view=>'closed', :layout=>'my_layout'
+          success_params id: home.id, view: 'closed', layout: 'my_layout'
         end
         it { is_expected.to eq '/Home?layout=my_layout&view=closed' }
       end
@@ -80,7 +80,7 @@ describe Card::Success do
       context 'using <<' do
         before do
           success_params nil
-          @success << { :card=>home, :view=>'closed'}
+          @success << { card: home, view: 'closed'}
         end
         it { is_expected.to eq '/Home?view=closed' }
       end
@@ -95,7 +95,7 @@ describe Card::Success do
 
   describe '#soft_redirect?' do
     it 'returns true if soft_redirect parameter is true' do
-      success_params :soft_redirect=>true
+      success_params soft_redirect: true
       expect(@success.soft_redirect?).to be_truthy
     end
   end
@@ -128,14 +128,22 @@ describe Card::Success do
 
   describe 'params' do
     it 'returns params hash' do
-      success_params :name=>'Home', :view=>'View'
+      success_params name: 'Home', view: 'View'
       @success.layout = 'Layout'
-      @success.apply :script => 'Script'
-      @success << {:structure => 'Structure'}
+      @success.apply script: 'Script'
+      @success << { structure: 'Structure' }
       expect(@success.params.keys.sort).to eq [:layout, :script, :structure, :view]
     end
     it 'ignores "id", "name", "mark", "card"", target", and "redirect"' do
-      success_params :id=>5, :name=>'Home', :card=>Card['Home'], :mark=>'Home', :target=>'Home', :redirect=>false, :view=>'View'
+      success_params({
+        id: 5,
+        name: 'Home',
+        card: Card['Home'],
+        mark: 'Home',
+        target: 'Home',
+        redirect: false,
+        view: 'View'
+      })
       expect(@success.params.keys).to eq [:view]
     end
   end

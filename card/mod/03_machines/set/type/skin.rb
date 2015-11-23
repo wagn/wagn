@@ -1,7 +1,7 @@
 include Machine
 include MachineInput
 
-store_machine_output :filetype => "css"
+store_machine_output filetype: "css"
 
 include Pointer
 format()      { include Pointer::Format     }

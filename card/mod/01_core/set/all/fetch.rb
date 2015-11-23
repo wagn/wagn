@@ -20,80 +20,98 @@ module ClassMethods
   #     :skip_virtual               Real cards only
   #     :skip_modules               Don't load Set modules
   #     :look_in_trash              Return trashed card objects
-  #     :new => {  card opts }      Return a new card when not found
+  #     :local_only                 Use only local cache for lookup and storing
+  #     new: {  card opts }      Return a new card when not found
   #
-  def fetch mark, opts={}
-    if String === mark
-      case mark
-      when /^\~(\d+)$/ # get by id
-        mark = $1.to_i
-      when /^\:(\w+)$/ # get by codename
-        mark = $1.to_sym
-      end
-    end
-    mark = Card::Codename[mark] if Symbol === mark # id from codename
+  def fetch mark, opts = {}
+    validate_fetch_opts! opts
+    mark = normalize_mark mark
 
     if mark.present?
-      card, mark, needs_caching = fetch_from_cache_or_db mark, opts # have existing
+      card, mark, needs_caching = fetch_from_cache_or_db mark, opts
     else
       return unless opts[:new]
     end
 
-    if Integer===mark
-      return if card.nil? || mark.nil?
-    else
-      return card.renew(opts) if card and card.eager_renew?(opts)
-      if !card or card.type_id==-1 && clean_cache_opts?(opts)       # new (or improved) card for cache
-        needs_caching = true
-        card = new_for_cache mark, opts
-      end
+    if mark.is_a?(Integer)
+      return if card.nil?
+    elsif card && card.new_card? && opts[:new].present?
+      return card.renew(opts)
+    elsif !card || (card.type_unknown? && !skip_type_lookup?(opts))
+      needs_caching = true
+      card = new_for_cache mark, opts # new (or improved) card for cache
     end
 
-    write_to_cache card if Card.cache && needs_caching
+    write_to_cache card, opts if needs_caching
 
     if card.new_card?
-      if opts[:new]
-        return card.renew(opts) if !clean_cache_opts? opts
-      elsif opts[:skip_virtual]
-        return
-      else
-        card.include_set_modules unless opts[:skip_modules]  # need to load modules here to call the right virtual? method
-        return unless card.virtual?
+      case
+      when opts[:new].present? then return card.renew(opts)
+      when opts[:new] # noop for empty hash
+      when opts[:skip_virtual] then return nil
       end
-      card.name = mark.to_s if mark && mark.to_s != card.name
+      card.rename_from_mark mark unless opts[:local_only]
     end
-
+    # need to load modules here to call the right virtual? method
     card.include_set_modules unless opts[:skip_modules]
-    card
+    card if opts[:new] || card.known?
   end
 
-  def fetch_id mark #should optimize this.  what if mark is int?  or codename?
-    card = fetch mark, :skip_virtual=>true, :skip_modules=>true
-    card and card.id
+  def fetch_local mark, opts = {}
+    fetch mark, opts.merge(:local_only=>true)
   end
 
-  def [](mark)
-    fetch mark, :skip_virtual=>true
+  def fetch_id mark
+    if mark.is_a?(Integer)
+      mark
+    elsif mark.is_a?(Symbol) && Card::Codename[mark]
+      Card::Codename[mark]
+    else
+      card = quick_fetch mark.to_s
+      card && card.id
+    end
+  end
+
+  def quick_fetch mark
+    fetch mark, skip_virtual: true, skip_modules: true
+  end
+
+  def assign_or_initialize_by name, attributes, fetch_opts = {}
+    if (known_card = Card.fetch(name, fetch_opts))
+      known_card.refresh.assign_attributes attributes
+      known_card
+    else
+      Card.new attributes.merge(name: name)
+    end
+  end
+
+  def [] mark
+    fetch mark, skip_virtual: true
   end
 
   def exists? mark
-    card = fetch mark, :skip_virtual=>true, :skip_modules=>true
+    card = quick_fetch mark
     card.present?
   end
 
   def known? mark
-    card = fetch mark, :skip_modules=>true
+    card = fetch mark, skip_modules: true
     card.present?
   end
 
-  def expire name
-    #note: calling instance method breaks on dirty names
+  def expire name, subcards = false
+    # note: calling instance method breaks on dirty names
     key = name.to_name.key
-    if card = Card.cache.read( key )
+    if card = Card.cache.read(key)
+      if subcards
+        card.expire_subcards
+      else
+        card.preserve_subcards
+      end
       Card.cache.delete key
       Card.cache.delete "~#{card.id}" if card.id
     end
-    #Rails.logger.warn "expiring #{name}, #{card.inspect}"
+    # Rails.logger.warn "expiring #{name}, #{card.inspect}"
   end
 
   # set_names reverse map (cached)
@@ -116,88 +134,133 @@ module ClassMethods
     end
   end
 
+  def validate_fetch_opts! opts
+    if opts[:new] && opts[:skip_virtual]
+      fail Card::Error, 'fetch called with new args and skip_virtual'
+    end
+  end
+
   def cache
     Card::Cache[Card]
   end
 
-  def fetch_from_cache cache_key
-    Card.cache.read cache_key if Card.cache
-  end
-
-  def fullname_from_name name, new_opts={}
-    if new_opts and supercard = new_opts[:supercard]
-      name.to_name.to_absolute_name supercard.name
-    else
-      name.to_name
+  def fetch_from_cache cache_key, local_only=false
+    if Card.cache
+      if local_only
+        Card.cache.read_local cache_key
+      else
+        Card.cache.read cache_key
+      end
     end
   end
 
   def fetch_from_cache_or_db mark, opts
     needs_caching = false
-    mark_type = Integer===mark ? :id : :key
+    mark_type = mark.is_a?(Integer) ? :id : :key
+    expanded_mark = expand_mark mark, opts
+    card = send("fetch_from_cache_by_#{mark_type}",
+                expanded_mark, opts[:local_only])
 
-    if mark_type == :key
-      mark = fullname_from_name mark, opts[:new]
-      val = mark.key
-    else
-      val = mark
+    if card.nil? || (opts[:look_in_trash] && card.new_card? && !card.trash)
+      query = { mark_type => expanded_mark }
+      query[:trash] = false unless opts[:look_in_trash]
+      card = fetch_from_db query
+      needs_caching = card && !card.trash
+      card.restore_subcards if card
     end
 
-    card = send( "fetch_from_cache_by_#{mark_type}", val )
-
-    if opts[:look_in_trash]
-      if card.nil? || (card.new_card? && !card.trash)
-        card = Card.where( mark_type => val ).take
-        needs_caching = card && !card.trash
-      end
-    elsif card.nil?
-      needs_caching = true
-      card = Card.where( mark_type => val, trash: false).take
-    end
-
-    [ card, mark, needs_caching ]
+    [card, mark, needs_caching]
   end
 
-
-  def fetch_from_cache_by_id id
-    if name = fetch_from_cache("~#{id}")
-      fetch_from_cache name
+  def fetch_from_cache_by_id id, local_only = false
+    if name = fetch_from_cache("~#{id}", local_only)
+      fetch_from_cache name, local_only
     end
   end
 
-  def fetch_from_cache_by_key key
-    fetch_from_cache key
+  def fetch_from_cache_by_key key, local_only = false
+    fetch_from_cache key, local_only
+  end
+
+  def fetch_from_db query
+    Card.where(query).take
   end
 
   def new_for_cache name, opts
-    new_args = { :name=>name, :skip_modules=>true }
-    new_args[:type_id] = -1 unless clean_cache_opts? opts
-    # The -1 type_id allows us to skip all the type lookup and flag the need for
-    # reinitialization later.  *** It should NEVER be seen elsewhere ***
-    new new_args
+    new name: name,
+        skip_modules: true,
+        skip_type_lookup: skip_type_lookup?(opts)
   end
 
-  def clean_cache_opts? opts
-    !opts[:skip_virtual] && !opts[:new].present?
+  def skip_type_lookup? opts
+    # if opts[:new] is not empty then we are initializing a variant that is
+    # different from the cached variant
+    # and can postpone type lookup for the cached variant
+    # if skipping virtual no need to look for actual type
+    opts[:skip_virtual] || opts[:new].present?
   end
 
-  def write_to_cache card
-    Card.cache.write card.key, card
-    Card.cache.write "~#{card.id}", card.key if card.id and card.id != 0
+  def write_to_cache card, opts
+    if opts[:local_only]
+      write_to_local_cache card
+    elsif Card.cache
+      Card.cache.write card.key, card
+      Card.cache.write "~#{card.id}", card.key if card.id && card.id != 0
+    end
   end
 
+  def write_to_local_cache card
+    return unless Card.cache
+    Card.cache.write_local card.key, card
+    Card.cache.write_local "~#{card.id}", card.key if card.id && card.id != 0
+  end
 
+  def expand_mark mark, opts
+    if mark.is_a?(Integer)
+      mark
+    else
+      fullname_from_name(mark, opts[:new]).key
+    end
+  end
+
+  def normalize_mark mark
+    case mark
+    when String
+      case mark
+      when /^\~(\d+)$/ # get by id
+        $1.to_i
+      when /^\:(\w+)$/ # get by codename
+        Card::Codename[$1.to_sym]
+      else
+        mark
+      end
+    when Symbol
+      Card::Codename[mark] # id from codename
+    else
+      mark
+    end
+  end
+
+  def fullname_from_name name, new_opts={}
+    if new_opts && supercard = new_opts[:supercard]
+      name.to_name.to_absolute_name supercard.name
+    else
+      name.to_name
+    end
+  end
 end
 
 # ~~~~~~~~~~ Instance ~~~~~~~~~~~~~
 
 def fetch opts={}
-  if traits = opts.delete(:trait)
-    traits = [traits] unless Array===traits
-    traits.inject(self) { |card, trait| Card.fetch( card.cardname.trait(trait), opts ) }
+  traits = opts.delete(:trait)
+  return unless traits
+  # should this fail as an incorrect api call?
+  traits = Array.wrap traits
+  traits.inject(self) do |card, trait|
+    Card.fetch card.cardname.trait(trait), opts
   end
 end
-
 
 def renew args={}
   opts = args[:new].clone
@@ -208,13 +271,17 @@ end
 
 def expire_pieces
   cardname.piece_names.each do |piece|
-    Card.expire piece
+    Card.expire piece, !cardname.field_of?(piece)
   end
 end
 
-
-def expire
-  #Rails.logger.warn "expiring i:#{id}, #{inspect}"
+def expire subcards=false
+  # Rails.logger.warn "expiring i:#{id}, #{inspect}"
+  if subcards
+    expire_subcards
+  else
+    preserve_subcards
+  end
   Card.cache.delete key
   Card.cache.delete "~#{id}" if id
 end
@@ -233,4 +300,11 @@ def eager_renew? opts
   opts[:skip_virtual] && new_card? && opts[:new].present?
 end
 
+def type_unknown?
+  type_id.nil?
+end
 
+def rename_from_mark mark
+  return unless mark && mark.to_s != name
+  self.name = mark.to_s
+end

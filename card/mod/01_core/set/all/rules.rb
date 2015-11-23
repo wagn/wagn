@@ -24,19 +24,19 @@ ReadRuleSQL = %{
  end
 
 def is_standard_rule?
-  (r = right( :skip_modules=>true )) &&
+  (r = right( skip_modules: true )) &&
   r.type_id == Card::SettingID       &&
-  (l = left( :skip_modules=>true ))  &&
+  (l = left( skip_modules: true ))  &&
   l.type_id == Card::SetID
 end
 
 def is_user_rule?
   cardname.parts.length > 2                                  &&
-  (r = right( :skip_modules=>true ))                         &&
+  (r = right( skip_modules: true ))                         &&
    r.type_id == Card::SettingID                              &&
-  (set = self[0..-3, :skip_modules=>true])                   &&
+  (set = self[0..-3, skip_modules: true])                   &&
    set.type_id == Card::SetID                                &&
-  (user = self[-2, :skip_modules=>true] )                    &&
+  (user = self[-2, skip_modules: true] )                    &&
   (user.type_id == Card::UserID  || user.codename == 'all' )
 end
 
@@ -78,7 +78,7 @@ def related_sets with_self = false
   sets << ["#{name}+*self",  Card::SelfSet.label( name) ] if with_self
   sets << ["#{name}+*right", Card::RightSet.label(name) ] if known? && cardname.simple?
 
-#      Card.search(:type=>'Set',:left=>{:right=>name},:right=>'*type plus right',:return=>'name').each do |set_name|
+#      Card.search(type: 'Set',left: {right: name},right: '*type plus right',return: 'name').each do |set_name|
 #        sets<< set_name
 #      end
   sets
@@ -183,7 +183,7 @@ module ClassMethods
       end
     user_ids = user_ids_cache[key] || []
     if user_ids.include? AllID  # rule for all -> return all user ids
-      Card.where(:type_id=>UserID).pluck(:id)
+      Card.where(type_id: UserID).pluck(:id)
     else
       user_ids
     end
@@ -191,7 +191,7 @@ module ClassMethods
   end
 
   def user_rule_cards user_name, setting_code
-    Card.search :right=>{:codename=>setting_code}, :left=>{:left=>{:type_id=>SetID}, :right=>user_name}
+    Card.search right: {codename: setting_code}, left: {left: {type_id: SetID}, right: user_name}
   end
 
   def rule_cache

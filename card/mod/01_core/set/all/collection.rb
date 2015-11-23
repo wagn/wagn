@@ -1,12 +1,7 @@
 
 module ClassMethods
-  def search spec, &block
-    query = ::Card::Query.new(spec)
-    execute_query query, &block
-  end
-
-  def execute_query query
-    results = query.run
+  def search spec
+    results = ::Card::Query.run(spec)
     if block_given? and Array===results
       results.each { |result| yield result }
     end
@@ -16,7 +11,7 @@ module ClassMethods
   def count_by_wql(spec)
     spec = spec.clone
     spec.delete(:offset)
-    search spec.merge(:return=>'count')
+    search spec.merge(return: 'count')
   end
 
   def find_each(options = {})
@@ -88,8 +83,8 @@ end
 
 def extended_item_cards context = nil
   context = (context ? context.cardname : self.cardname)
-  args={ :limit=>'' }
-  items = self.item_cards(args.merge(:context=>context))
+  args={ limit: '' }
+  items = self.item_cards(args.merge(context: context))
   extended_list = []
   already_extended = ::Set.new # avoid loops
 
@@ -114,8 +109,8 @@ end
 
 def extended_list context = nil
   context = (context ? context.cardname : self.cardname)
-  args={ :limit=>'' }
-  self.item_cards(args.merge(:context=>context)).map do |x|
+  args={ limit: '' }
+  self.item_cards(args.merge(context: context)).map do |x|
     x.item_cards(args)
   end.flatten.map do |x|
     x.item_cards(args)
@@ -142,7 +137,7 @@ format do
   end
 
   def item_args args
-    i_args = { :view => item_view(args)}
+    i_args = { view: item_view(args)}
     if type = card.item_type
       i_args[:type] = type
     end
@@ -168,7 +163,7 @@ format do
 
   def set_default_search_params overrides={}
     @default_search_params ||= begin
-      p = { :default_limit=> 100 }.merge overrides
+      p = { default_limit: 100 }.merge overrides
       set_search_params_variables! p
       p
     end
@@ -198,7 +193,6 @@ format do
     end
   end
 
-
   def nested_fields args={}
     result = []
     each_nested_field(args) do |chunk|
@@ -219,7 +213,7 @@ format do
 
     each_nested_chunk(args) do |chunk|
       # TODO handle structures that are non-virtual
-      if chunk.referee_name.to_name.is_a_field_of? card.name
+      if chunk.referee_name.to_name.field_of? card.name
         if chunk.referee_card && chunk.referee_card.virtual? && !processed_chunk_keys.include?(chunk.referee_name.key)
           processed_chunk_keys << chunk.referee_name.key
           subformat(chunk.referee_card).each_nested_field(args) do |sub_chunk|
@@ -250,8 +244,8 @@ format do
     if chunk.kind_of? Card::Chunk::Include
       r_args.merge!(chunk.options)
     elsif chunk.kind_of? Card::Chunk::Link
-      r_args.reverse_merge!(:view=>:link)
-      r_args.reverse_merge!(:title=>chunk.link_text) if chunk.link_text
+      r_args.reverse_merge!(view: :link)
+      r_args.reverse_merge!(title: chunk.link_text) if chunk.link_text
     end
     r_args
   end
@@ -268,14 +262,14 @@ format :html do
     tab_buttons = ''
     tab_panes = ''
     active_tab = true
-    each_reference_with_args(:item=>:content) do |name, nest_args|
+    each_reference_with_args(item: :content) do |name, nest_args|
       id         = "#{card.cardname.safe_key}-#{name.to_name.safe_key}"
       url        = nest_path name, nest_args
       tab_name   = nest_args[:title] || name
-      tab_buttons += tab_button( "##{id}", tab_name, active_tab, 'data-url'=>url.html_safe, :class=>(active_tab ? nil : 'load'))
+      tab_buttons += tab_button( "##{id}", tab_name, active_tab, 'data-url'=>url.html_safe, class: (active_tab ? nil : 'load'))
 
       # only render the first active tab, other tabs get loaded via ajax
-      tab_content = active_tab ? nest(Card.fetch(name, :new=>{}), nest_args) : ''
+      tab_content = active_tab ? nest(Card.fetch(name, new: {}), nest_args) : ''
       tab_panes += tab_pane( id, tab_content, active_tab )
       active_tab = false
     end
@@ -295,7 +289,7 @@ format :html do
     page_path(name, path_args)
   end
 
-  view :pills, :view=>:tabs
+  view :pills, view: :tabs
   def default_pills_args args
     args[:tab_type] ||= 'pills'
   end
@@ -315,29 +309,29 @@ format :html do
     args[:tab_type] ||= 'tabs'
   end
 
-  view :pills_static, :view=>:tabs_static
+  view :pills_static, view: :tabs_static
   def default_tabs_static_args args
     args[:tab_type] ||= 'pills'
   end
 
   def tab_panel tab_buttons, tab_panes, tab_type='tabs'
-    wrap_with :div, :role=>"tabpanel" do
+    wrap_with :div, role: "tabpanel" do
       [
-        content_tag(:ul, tab_buttons.html_safe, :class=>"nav nav-#{tab_type}", :role=>"tablist"),
-        content_tag(:div, tab_panes.html_safe, :class=>'tab-content')
+        content_tag(:ul, tab_buttons.html_safe, class: "nav nav-#{tab_type}", role: "tablist"),
+        content_tag(:div, tab_panes.html_safe, class: 'tab-content')
       ]
     end
   end
 
   def tab_button target, text, active=false, link_attr={}
     link = link_to fancy_title(text), target, link_attr.merge('role'=>'tab','data-toggle'=>'tab')
-    li_args = { :role => :presentation }
+    li_args = { role: :presentation }
     li_args[:class] = 'active' if active
     content_tag :li, link, li_args
   end
 
   def tab_pane id, content, active=false
-    div_args = {:role => :tabpanel, :id=>id, :class=>"tab-pane #{'active' if active}"}
+    div_args = {role: :tabpanel, id: id, class: "tab-pane #{'active' if active}"}
     content_tag :div, content.html_safe, div_args
   end
 end

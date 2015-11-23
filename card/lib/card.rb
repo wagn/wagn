@@ -18,8 +18,6 @@ class Card < ActiveRecord::Base
     attr_accessor *args
   end
 
-
-
   require_dependency 'card/active_record_ext'
   require_dependency 'card/codename'
   require_dependency 'card/query'
@@ -32,18 +30,19 @@ class Card < ActiveRecord::Base
   require_dependency 'card/act'
   require_dependency 'card/change'
   require_dependency 'card/reference'
+  require_dependency 'card/subcards'
   require_dependency 'card/view_cache'
 
-  has_many :references_from, :class_name => :Reference, :foreign_key => :referee_id
-  has_many :references_to,   :class_name => :Reference, :foreign_key => :referer_id
+  has_many :references_from, class_name: :Reference, foreign_key: :referee_id
+  has_many :references_to,   class_name: :Reference, foreign_key: :referer_id
   has_many :acts, -> { order :id }
-  has_many :actions, -> { where( :draft=>[nil,false]).order :id }
-  has_many :drafts, -> { where( :draft=>true ).order :id }, :class_name=> :Action
+  has_many :actions, -> { where( draft: [nil,false]).order :id }
+  has_many :drafts, -> { where( draft: true ).order :id }, class_name: :Action
 
   cattr_accessor :set_patterns, :error_codes, :serializable_attributes, :set_specific_attributes
   @@set_patterns, @@error_codes = [], {}
 
-  serializable_attr_accessor :action, :supercard, :current_act, :current_action,
+  serializable_attr_accessor :action, :supercard, :superleft, :current_act, :current_action,
     :comment, :comment_author,    # obviated soon
     :update_referencers,          # wrong mechanism for this
     :update_all_users,            # if the above is wrong then this one too

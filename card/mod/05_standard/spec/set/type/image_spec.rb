@@ -9,8 +9,8 @@ describe Card::Set::Type::Image do
   end
 
   it "handles size argument in inclusion syntax" do
-    image_card = Card.create! :name => "TestImage", :type=>"Image", :content => '~12345/TestImage.jpg'
-    including_card = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
+    image_card = Card.create! name: "TestImage", type: "Image", content: '~12345/TestImage.jpg'
+    including_card = Card.new name: 'Image1', content: "{{TestImage | core; size:small }}"
     rendered = including_card.format._render :core
     assert_view_select rendered, 'img[src=?]', "/files/~#{image_card.id}/#{image_card.last_content_action_id}-small.jpg"
   end
@@ -19,7 +19,7 @@ describe Card::Set::Type::Image do
   context "newly created image card" do
     before do
       Card::Auth.as_bot do
-        Card.create! :name => "image card", :type=>'image', :image=>File.new( File.join FIXTURES_PATH, 'mao2.jpg' )
+        Card.create! name: "image card", type: 'image', image: File.new( File.join FIXTURES_PATH, 'mao2.jpg' )
       end
     end
     subject { Card['image card'] }
@@ -63,7 +63,7 @@ describe Card::Set::Type::Image do
 
     describe 'view: act_expanded' do
       it 'gets image url' do
-        act_summary = subject.format.render(:act_expanded, :act=>subject.last_act)
+        act_summary = subject.format.render(:act_expanded, act: subject.last_act)
         current_url = subject.image.versions[:medium].url
         expect(act_summary).to match /#{Regexp.quote current_url}/
       end
@@ -72,7 +72,7 @@ describe Card::Set::Type::Image do
 
     context "updated file card" do
       before do
-        subject.update_attributes! :image=>File.new( File.join FIXTURES_PATH, 'rails.gif' )
+        subject.update_attributes! image: File.new( File.join FIXTURES_PATH, 'rails.gif' )
       end
       it "updates file" do
         expect(subject.image.size).to eq 8533
@@ -89,11 +89,35 @@ describe Card::Set::Type::Image do
   end
 
   describe '*logo mod image' do
+    subject { Card[:logo] }
     it 'exists' do
-      expect(Card[:logo].image.size).to be > 0
+      expect(subject.image.size).to be > 0
     end
     it 'has correct url' do
-      expect(Card[:logo].image.url).to eq "/files/:logo/image-original.png"
+      expect(subject.image.url).to eq "/files/:logo/05_standard-original.png"
+    end
+    it "has correct url as content" do
+      expect(subject.content).to eq ":#{subject.codename}/05_standard.png"
+    end
+
+    it "becomes a regular file when changed" do
+      Card::Auth.as_bot do
+        subject.update_attributes! image: File.new( File.join FIXTURES_PATH, 'rails.gif' )
+      end
+      expect(subject.mod_file?).to be_falsey
+      expect(subject.image.url).to eq "/files/~#{subject.id}/#{subject.last_action_id}-original.gif"
+    end
+
+    describe "#mod_file?" do
+      it "returns the mod name" do
+        expect(subject.mod_file?).to eq('05_standard')
+      end
+    end
+
+    describe "source view" do
+      it "renders url with medium version" do
+        expect(subject.format.render_source).to eq "/files/:#{subject.codename}/05_standard-medium.png"
+      end
     end
   end
 

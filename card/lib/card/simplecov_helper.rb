@@ -6,20 +6,24 @@ def card_simplecov_filters
   add_filter 'spec/'
   add_filter '/config/'
   add_filter '/tasks/'
-	
-	# filter all card mods
+  # filter all card mods
   add_filter do |src_file|
     src_file.filename =~ /tmp\// and not
-    /\d+-(.+\.rb)/.match(src_file.filename) { |m| Dir["mod/**/#{m[1].gsub("-","/")}"].present? }
+    /\d+-(.+\.rb)/.match(src_file.filename) do |m|
+      Dir["mod/**/#{m[1].gsub("-","/").sub("/","/set/")}"].present?
+    end
   end
-	
-	# add group for each deck mod
+  # add group for each deck mod
   Dir['mod/*'].map{ |path| path.sub('mod/','') }.each do |mod|
     add_group mod.capitalize do |src_file|
-      src_file.filename =~ /mod\/#{mod}\// or 
+      src_file.filename =~ /mod\/#{mod}\// or
         (
           src_file.filename =~ /tmp\// and
-          /\d+-(.+\.rb)/.match(src_file.filename) { |m| Dir["mod/#{mod}/**/#{m[1].gsub("-","/")}"].present? } and
+          match = /\d+-(.+\.rb)/.match(src_file.filename) do |m|
+            # '/set' is not in the path anymore after some updates
+            # but `set` exists in the path of the source files
+            Dir["mod/**/#{m[1].gsub("-","/").sub("/","/set/")}"].present?
+          end and
           is_in_mod? src_file,mod
         )
     end

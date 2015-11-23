@@ -7,9 +7,9 @@ class Card
     class FormatGenerator < NamedBase
       source_root File.expand_path('../templates', __FILE__)
 
-      argument :module_name, :required => true
-      class_option 'core', :type => :boolean, aliases: '-c', :default => false, :group => :runtime, 
-       :desc=>'create format files in Card gem'
+      argument :module_name, required: true
+      class_option 'core', type: :boolean, aliases: '-c', default: false, group: :runtime,
+       desc: 'create format files in Card gem'
 
       def create_files
         mod_path = if options.core?

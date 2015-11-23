@@ -1,98 +1,99 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Type::Signup do
-
   before do
     Card::Auth.current_id = Card::AnonymousID
   end
 
-
   context 'signup form form' do
     before do
-      card = Card.new :type_id=>Card::SignupID
+      card = Card.new type_id: Card::SignupID
       @form = card.format.render_new
     end
 
-    it 'should prompt to signup' do
+    it 'prompts to signup' do
       Card::Auth.as :anonymous do
-        expect(@form.match( /Sign up/ )).to be_truthy
+        expect(@form.match(/Sign up/)).to be_truthy
       end
     end
   end
 
-
-
   context 'signup (without approval)' do
     before do
-      ActionMailer::Base.deliveries = [] #needed?
+      ActionMailer::Base.deliveries = [] # needed?
 
       Card::Auth.as_bot do
-        Card.create! :name=>'User+*type+*create', :content=>'[[Anyone]]'
+        Card.create! name: 'User+*type+*create', content: '[[Anyone]]'
       end
 
       Card::Auth.current_id = Card::AnonymousID
-      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID,
-        '+*account'=>{'+*email'=>'wolf@wagn.org', '+*password'=>'wolf'}
+      @signup = Card.create!(
+        name: 'Big Bad Wolf', type_id: Card::SignupID,
+        '+*account' => { '+*email' => 'wolf@wagn.org', '+*password' => 'wolf' }
+      )
 
       @account = @signup.account
       @token = @account.token
     end
 
-    it 'should create all the necessary cards' do
+    it 'creates all the necessary cards' do
       expect(@signup.type_id).to eq(Card::SignupID)
       expect(@account.email).to eq('wolf@wagn.org')
       expect(@account.status).to eq('pending')
       expect(@account.salt).not_to eq('')
-      expect(@account.password.length).to be > 10 #encrypted
+      expect(@account.password.length).to be > 10 # encrypted
       expect(@account.token).to be_present
     end
 
-    it 'should send email with an appropriate link' do
+    it 'sends email with an appropriate link' do
       @mail = ActionMailer::Base.deliveries.last
-      expect( @mail.parts[0].body.raw_source ).to match(Card.setting( :title ))
+      expect(@mail.parts[0].body.raw_source).to match(Card.setting(:title))
     end
 
-    it 'should create an authenticable token' do
+    it 'creates an authenticable token' do
       expect(@account.token).to eq(@token)
-      expect(@account.authenticate_by_token(@token)).to eq(@signup.id)
-      expect(@account.fetch(:trait=> :token)).not_to be_present
+      expect(@account.validate_token!(@token)).to be_truthy
+      expect(@account.errors).to be_empty
     end
 
-    it 'should notify someone' do
+    it 'notifies someone' do
       expect(ActionMailer::Base.deliveries.last.to).to eq(['signups@wagn.org'])
     end
 
-    it 'should be activated by an update' do
+    it 'is activated by an update' do
       Card::Env.params[:token] = @token
+      @signup = Card.fetch 'big bad wolf'
       @signup.update_attributes({})
-      #puts @signup.errors.full_messages * "\n"
+      # puts @signup.errors.full_messages * "\n"
       expect(@signup.errors).to be_empty
       expect(@signup.type_id).to eq(Card::UserID)
       expect(@account.status).to eq('active')
-      expect(Card[ @account.name ].active?).to be_truthy
+      expect(Card[@account.name].active?).to be_truthy
     end
 
-    it 'should reject expired token and create new token' do
-      @account.token_card.update_column :updated_at, 8.days.ago.strftime("%F %T")
+    it 'rejects expired token and creates new token' do
+      @account.token_card.update_column :updated_at,
+                                        8.days.ago.strftime('%F %T')
       @account.token_card.expire
       Card::Env.params[:token] = @token
 
       result = @signup.update_attributes!({})
-      expect(result).to eq(true)                 # successfully completes save
+      # successfully completes save
+      expect(result).to eq(true)
       @account.reload
-      expect(@account.token).not_to eq(@token)   # token gets updated
-      success = Card::Env.params[:success]
-      expect(success[:message]).to match(/expired/) # user notified of expired token
+      # token gets updated
+      expect(@account.token).not_to eq(@token)
+      # user notified of expired token
+      expect(Card::Env.success.message).to match(/expired/)
     end
   end
-
 
   context 'signup (with approval)' do
     before do
       # NOTE: by default Anonymous does not have permission to create User cards.
       Mail::TestMailer.deliveries.clear
       Card::Auth.current_id = Card::AnonymousID
-      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID,
+      @signup = Card.create! name: 'Big Bad Wolf', type_id: Card::SignupID,
         '+*account'=>{ '+*email'=>'wolf@wagn.org', '+*password'=>'wolf' }
       @account = @signup.account
     end
@@ -158,33 +159,37 @@ describe Card::Set::Type::Signup do
   context 'a welcome email card exists' do
     before do
       Card::Auth.as_bot do
-        Card.create! :name=>'welcome email', :subcards=>{'+*subject'=>'welcome',
-                     '+*html_message'=>'Welcome {{_self|name}}'}, :type_id=>Card::EmailTemplateID
+        Card.create! name: 'welcome email', subcards: {'+*subject'=>'welcome',
+                     '+*html_message'=>'Welcome {{_self|name}}'}, type_id: Card::EmailTemplateID
       end
       Mail::TestMailer.deliveries.clear
-      @signup = Card.create! :name=>'Big Bad Sheep', :type_id=>Card::SignupID,
+      @signup = Card.create! name: 'Big Bad Sheep', type_id: Card::SignupID,
         '+*account'=>{'+*email'=>'sheep@wagn.org', '+*password'=>'sheep'}
 
     end
     it 'sends welcome email when account is activated' do
-      @signup.activate_account
-      @mail = ActionMailer::Base.deliveries.find{ |a| a.subject == 'welcome' }
+      @signup.run_phase :approve do
+        @signup.activate_account
+      end
+      @mail = ActionMailer::Base.deliveries.find { |a| a.subject == 'welcome' }
       Mail::TestMailer.deliveries.clear
 
       expect(@mail).to be_truthy
-      expect(@mail.body.raw_source ).to include('Welcome Big Bad Sheep')
+      expect(@mail.body.raw_source).to include('Welcome Big Bad Sheep')
     end
   end
 
   context 'invitation' do
     before do
-      # NOTE: by default Anonymous does not have permission to create User cards.
+      # NOTE:
+      # by default Anonymous does not have permission to create User cards.
       Card::Auth.current_id = Card::WagnBotID
-      @signup = Card.create! :name=>'Big Bad Wolf', :type_id=>Card::SignupID, '+*account'=>{ '+*email'=>'wolf@wagn.org'}
+      @signup = Card.create! name: 'Big Bad Wolf', type_id: Card::SignupID,
+                             '+*account' => { '+*email' => 'wolf@wagn.org' }
       @account = @signup.account
     end
 
-    it 'should create all the necessary cards, but no password' do
+    it 'creates all the necessary cards, but no password' do
       expect(@signup.type_id).to eq(Card::SignupID)
       expect(@account.email).to eq('wolf@wagn.org')
       expect(@account.status).to eq('pending')
@@ -192,17 +197,17 @@ describe Card::Set::Type::Signup do
       expect(@account.token).to be_present
       expect(@account.password).not_to be_present
     end
-
   end
 
   # describe '#signup_notifications' do
   #   before do
   #     Card::Auth.as_bot do
-  #       Card.create! :name=>'*request+*to', :content=>'signups@wagn.org'
+  #       Card.create! name: '*request+*to', content: 'signups@wagn.org'
   #     end
   #     @user_name = 'Big Bad Wolf'
   #     @user_email = 'wolf@wagn.org'
-  #     @signup = Card.create! :name=>@user_name, :type_id=>Card::SignupID, '+*account'=>{
+  #     @signup = Card.create! name: @user_name, type_id: Card::SignupID,
+  #                            '+*account'=>{
   #       '+*email'=>@user_email, '+*password'=>'wolf'}
   #     ActionMailer::Base.deliveries = []
   #     @signup.signup_notifications

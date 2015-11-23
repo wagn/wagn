@@ -1,16 +1,17 @@
 # -*- encoding : utf-8 -*-
 
 class Card::Migration < ActiveRecord::Migration
+  include Card::ActiveRecordHelper
   @type = :deck_cards
 
   class << self
-
     # Rake tasks use class methods, migrations use instance methods.
-    # To avoid repetition a lot of instance methods here just call class methods.
+    # To avoid repetition a lot of instance methods here just call class
+    # methods.
     # The subclass Card::CoreMigration needs a different @type so we can't use a
     # class variable @@type. It has to be a class instance variable.
-    # Migrations are subclasses of Card::Migration or Card::CoreMigration but they
-    # don't inherit the @type. The method below solves this problem.
+    # Migrations are subclasses of Card::Migration or Card::CoreMigration
+    # but they don't inherit the @type. The method below solves this problem.
     def type
       @type || (ancestors[1] && ancestors[1].type)
     end
@@ -18,9 +19,9 @@ class Card::Migration < ActiveRecord::Migration
     def find_unused_name base_name
       test_name = base_name
       add = 1
-      while Card.exists?(test_name) do
+      while Card.exists?(test_name)
         test_name = "#{base_name}#{add}"
-        add +=1
+        add += 1
       end
       test_name
     end
@@ -50,18 +51,18 @@ class Card::Migration < ActiveRecord::Migration
 
     def assume_migrated_upto_version
       schema_mode do
-        ActiveRecord::Schema.assume_migrated_upto_version schema, migration_paths
+        ActiveRecord::Schema.assume_migrated_upto_version schema,
+                                                          migration_paths
       end
     end
 
     def data_path filename=nil
       path = migration_paths.first
-      File.join( [ migration_paths.first, 'data', filename ].compact )
+      File.join([path, 'data', filename].compact)
     end
-
   end
 
-  def contentedly &block
+  def contentedly
     Card::Cache.reset_global
     Cardio.schema_mode '' do
       Card::Auth.as_bot do
@@ -78,14 +79,15 @@ class Card::Migration < ActiveRecord::Migration
 
   def import_json filename, merge_opts={}
     Card.config.action_mailer.perform_deliveries = false
-    merge_opts.reverse_merge! :output_file=>File.join(data_path,"unmerged_#{ filename }")
+    output_file = File.join data_path, "unmerged_#{ filename }"
+    merge_opts[:output_file] ||= output_file
     Card.merge_list read_json(filename), merge_opts
   end
 
   def read_json filename
-    raw_json = File.read( data_path filename )
+    raw_json = File.read data_path(filename)
     json = JSON.parse raw_json
-    json["card"]["value"]
+    json['card']['value']
   end
 
   def data_path filename=nil
@@ -101,8 +103,8 @@ class Card::Migration < ActiveRecord::Migration
   end
 
   # Execute this migration in the named direction
-  # copied from ActiveRecord to wrap "up" in "contentendly"
-  def exec_migration(conn, direction)
+  # copied from ActiveRecord to wrap 'up' in 'contentendly'
+  def exec_migration conn, direction
     @connection = conn
     if respond_to?(:change)
       if direction == :down
@@ -116,7 +118,6 @@ class Card::Migration < ActiveRecord::Migration
   ensure
     @connection = nil
   end
-
 
   def down
     raise ActiveRecord::IrreversibleMigration

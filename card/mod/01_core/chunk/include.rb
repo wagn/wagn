@@ -9,9 +9,9 @@ module Card::Chunk
     attr_reader :options
 
     Card::Chunk.register_class self, {
-      :prefix_re => '\\{\\{',
-      :full_re   =>  /^\{\{([^\}]*)\}\}/,
-      :idx_char  => '{'
+      prefix_re: '\\{\\{',
+      full_re:    /^\{\{([^\}]*)\}\}/,
+      idx_char:  '{'
     }
 
     def interpret match, content
@@ -27,7 +27,7 @@ module Card::Chunk
           @options = @opt_lists.to_s.split('|').reverse.inject(nil) do |prev_level, level_options|
             process_options level_options, prev_level
           end || {}
-          @options.merge! :inc_name => name, :inc_syntax => in_brackets
+          @options.merge! inc_name: name, inc_syntax: in_brackets
           @name = name
         end
 

@@ -9,7 +9,7 @@ describe Card do
 
     before do
       Card::Auth.as_bot do
-        Card.create! :name=>'Basic+*type+*table of contents', :content=>'2'
+        Card.create! name: 'Basic+*type+*table of contents', content: '2'
       end
       expect(@c1 = Card['Onne Heading']).to be
       expect(@c2 = Card['Twwo Heading']).to be
@@ -53,12 +53,12 @@ describe Card do
         expect(sets).to eq(['Cardtype A+*type', 'Cardtype A+*right'])
       end
 #      it "should show type plus right sets when they exist" do
-#        Card::Auth.as_bot { Card.create :name=>'Basic+A+*type plus right', :content=>'' }
+#        Card::Auth.as_bot { Card.create name: 'Basic+A+*type plus right', content: '' }
 #        sets = Card['A'].related_sets
 #        sets.should == ['A+*self', 'A+*right', 'Basic+A+*type plus right']
 #      end
 #      it "should show type plus right sets when they exist, and type" do
-#        Card::Auth.as_bot { Card.create :name=>'Basic+Cardtype A+*type plus right', :content=>'' }
+#        Card::Auth.as_bot { Card.create name: 'Basic+Cardtype A+*type plus right', content: '' }
 #        sets = Card['Cardtype A'].related_sets
 #        sets.should == ['Cardtype A+*self', 'Cardtype A+*type', 'Cardtype A+*right', 'Basic+Cardtype A+*type plus right']
 #      end
@@ -114,12 +114,12 @@ describe Card do
 
     before do
       Card::Auth.as_bot do
-        @c1 = Card.create :name=>'toc1', :type=>"CardtypeE",
-          :content=>Card['Onne Heading'].content
-        @c2 = Card.create :name=>'toc2', :type=>"CardtypeE",
-          :content=>Card['Twwo Heading'].content
-        @c3 = Card.create :name=>'toc3', :type=>"CardtypeE",
-          :content=>Card['Three Heading'].content
+        @c1 = Card.create name: 'toc1', type: "CardtypeE",
+          content: Card['Onne Heading'].content
+        @c2 = Card.create name: 'toc2', type: "CardtypeE",
+          content: Card['Twwo Heading'].content
+        @c3 = Card.create name: 'toc3', type: "CardtypeE",
+          content: Card['Three Heading'].content
       end
       expect(@c1.type_name).to eq('Cardtype E')
       @rule_card = @c1.rule_card(:table_of_contents)
@@ -173,10 +173,10 @@ describe Card do
   context "when I create a new rule" do
     before do
       Card::Auth.as_bot do
-        Card.create! :name=>'Basic+*type+*table of contents', :content=>'2'
-        @c1 = Card.create! :name=>'toc1', :type=>"CardtypeE", :content=>Card['Onne Heading'].content
-        @c2 = Card.create! :name=>'toc2', :content=>Card['Twwo Heading'].content
-        @c3 = Card.create! :name=>'toc3', :content=>Card['Three Heading'].content
+        Card.create! name: 'Basic+*type+*table of contents', content: '2'
+        @c1 = Card.create! name: 'toc1', type: "CardtypeE", content: Card['Onne Heading'].content
+        @c2 = Card.create! name: 'toc2', content: Card['Twwo Heading'].content
+        @c3 = Card.create! name: 'toc3', content: Card['Three Heading'].content
         expect(@c1.type_name).to eq('Cardtype E')
         @rule_card = @c1.rule_card(:table_of_contents)
 
@@ -188,7 +188,7 @@ describe Card do
           c.content = '2'
           c.save!
         else
-          c=Card.create! :name=>'CardtypeE+*type+*table of content', :content=>'2'
+          c=Card.create! name: 'CardtypeE+*type+*table of content', content: '2'
         end
       end
     end
@@ -218,7 +218,7 @@ describe Card do
     before do
       expect(@c1 = Card["Onne Heading"]).to be
       # FIXME: CardtypeE should inherit from *default => Basic
-      #@c2 = Card.create :name=>'toc2', :type=>"CardtypeE", :content=>Card['Twwo Heading'].content
+      #@c2 = Card.create name: 'toc2', type: "CardtypeE", content: Card['Twwo Heading'].content
       expect(@c2 = Card["Twwo Heading"]).to be
       expect(@c1.type_id).to eq(Card::BasicID)
       expect(@rule_card = @c1.rule_card(:table_of_contents)).to be

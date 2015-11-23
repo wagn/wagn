@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
     [ 'carrierwave' ,               '~> 0.10' ],
     [ 'htmlentities',               '~> 4.3'  ],
     [ 'mini_magick',                '~> 4.2.10'  ],
-    [ 'recaptcha',                  '~> 0.4'  ],
+    [ 'recaptcha',                  '~> 0.4.0'],
     [ 'coderay',                    '~> 1.0'  ],
     [ 'sass',                       '~> 3.2'  ],
     [ 'coffee-script',              '~> 2.2'  ],

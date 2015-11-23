@@ -11,11 +11,6 @@ Feature: autonaming
     When I go to new Book
     And I press "Submit"
     Then I should see "Book_1"
-    
     And I go to new Book
     And I press "Submit"
     Then I should see "Book_2"
-
-#    And I go to new Book
-#    Then I should see "Book 2"
-

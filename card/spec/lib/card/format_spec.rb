@@ -6,26 +6,26 @@ describe Card::Format do
     let(:format) { described_class.new Card.new }
 
     it "should respect defaults" do
-      expect(format.show_view?( :menu, :default_visibility=>:show )).to be_truthy
-      expect(format.show_view?( :menu, :default_visibility=>:hide )).to be_falsey
+      expect(format.show_view?( :menu, default_visibility: :show )).to be_truthy
+      expect(format.show_view?( :menu, default_visibility: :hide )).to be_falsey
       expect(format.show_view?( :menu, {}                          )).to be_truthy
     end
 
     it "should respect developer default overrides" do
-      expect(format.show_view?( :menu, :optional_menu=>:show, :default_visibility=>:hide )).to be_truthy
-      expect(format.show_view?( :menu, :optional_menu=>:hide, :default_visibility=>:show )).to be_falsey
-      expect(format.show_view?( :menu, :optional_menu=>:hide                             )).to be_falsey
+      expect(format.show_view?( :menu, optional_menu: :show, default_visibility: :hide )).to be_truthy
+      expect(format.show_view?( :menu, optional_menu: :hide, default_visibility: :show )).to be_falsey
+      expect(format.show_view?( :menu, optional_menu: :hide                             )).to be_falsey
     end
 
     it "should handle args from inclusions" do
-      expect(format.show_view?( :menu, :show=>'menu', :default_visibility=>:hide         )).to be_truthy
-      expect(format.show_view?( :menu, :hide=>'menu, paging', :default_visibility=>:show )).to be_falsey
-      expect(format.show_view?( :menu, :show=>'menu', :optional_menu=>:hide              )).to be_truthy
+      expect(format.show_view?( :menu, show: 'menu', default_visibility: :hide         )).to be_truthy
+      expect(format.show_view?( :menu, hide: 'menu, paging', default_visibility: :show )).to be_falsey
+      expect(format.show_view?( :menu, show: 'menu', optional_menu: :hide              )).to be_truthy
     end
 
     it "should handle hard developer overrides" do
-      expect(format.show_view?( :menu, :optional_menu=>:always, :hide=>'menu' )).to be_truthy
-      expect(format.show_view?( :menu, :optional_menu=>:never,  :show=>'menu' )).to be_falsey
+      expect(format.show_view?( :menu, optional_menu: :always, hide: 'menu' )).to be_truthy
+      expect(format.show_view?( :menu, optional_menu: :never,  show: 'menu' )).to be_falsey
     end
 
   end
@@ -71,7 +71,7 @@ describe Card::Format do
     it "formats page_path" do
       expect(text_format.page_path card.cardname).to eq '/'+card.name
       expect(html_format.page_path card.cardname).to eq '/'+card.name
-      expect(text_format.page_path card.cardname, :format => 'txt', :opt1 => 11, :opt2 => 'foo').to eq "/#{card.name}.txt?opt1=11&opt2=foo"
+      expect(text_format.page_path card.cardname, format: 'txt', opt1: 11, opt2: 'foo').to eq "/#{card.name}.txt?opt1=11&opt2=foo"
     end
 
     it "fomats full path and url" do

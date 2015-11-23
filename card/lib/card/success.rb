@@ -56,17 +56,20 @@ class Card
 
     def target= value
       @id = @name = @card = nil
-      @target =
-        case value
-        when '*previous', :previous ;  :previous
-        when /^(http|\/)/           ;  value
-        when /^TEXT:\s*(.+)/        ;  $1
-        when /^REDIRECT:\s*(.+)/
-          @redirect = true
-          self.target = $1
-        when ''                     ;  ''
-        else                        ;  self.mark = value
-        end
+      @target = process_target value
+    end
+
+    def process_target value
+      case value
+      when ''                     then ''
+      when '*previous', :previous then :previous
+      when /^(http|\/)/           then value
+      when /^TEXT:\s*(.+)/        then  $1
+      when /^REDIRECT:\s*(.+)/
+        @redirect = true
+        process_target $1
+      else self.mark = value
+      end
     end
 
     def apply args

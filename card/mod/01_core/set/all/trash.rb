@@ -28,7 +28,10 @@ event :validate_delete, before: :approve, on: :delete do
     errors.add :delete, "#{name} is is a system card. (#{codename})"
   end
 
-  undeletable_all_rules_tags = %w{ default style layout create read update delete }
+  undeletable_all_rules_tags =
+    %w{ default style layout create read update delete }
+  # FIXME: HACK! should be configured in the rule
+
   if junction? && (l = left) && l.codename == 'all' &&
      undeletable_all_rules_tags.member?(right.codename)
     errors.add :delete, "#{name} is an indestructible rule"

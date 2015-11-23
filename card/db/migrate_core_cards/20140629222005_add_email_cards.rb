@@ -100,17 +100,16 @@ class AddEmailCards < Card::CoreMigration
       invite_card.delete!
     end
 
-
     # migrate old flexmail cards
 
     if email_config_card = Card['email_config']
       Card.search(
         left: { type_id: Card::SetID },
         right: 'email_config',
-        referred_to_by: { right: {codename: 'send'} }
+        referred_to_by: { right: { codename: 'send' } }
       ).each do |card|
         set_name = card.cardname.left
-        card.name = "#{ set_name.gsub('*','' ).gsub('+', '_') }_email_template"
+        card.name = "#{set_name.tr('*', '').tr('+', '_')}_email_template"
         card.type = 'Email Template'
         card.save!
         Card.create! name: "#{set_name}+*on create", content: card.name
@@ -119,16 +118,12 @@ class AddEmailCards < Card::CoreMigration
       email_config_card.delete!
     end
 
-
     # the new following rule
     Card.create! name: '*following', type_code: :pointer, codename: 'following'
 
-    if send = Card[:send]
-      send.update_attributes codename: nil
-      send.delete!
-    end
-
-
+    send = Card[:send]
+    return unless send
+    send.update_attributes codename: nil
+    send.delete!
   end
 end
-

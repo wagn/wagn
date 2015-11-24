@@ -231,13 +231,14 @@ class WagnGenerator < Rails::Generators::AppBase
       # Could also be that ruby 1.9.3 is the problem.
       gem_version = '0.3.20'
     end
-    GemfileEntry.version gem_name, gem_version,
-                        "Use #{options[:database]} as the database for Active Record"
+    msg = "Use #{options[:database]} as the database for Active Record"
+    GemfileEntry.version gem_name, gem_version, msg
   end
 
   protected
+
   def self.banner
-     "wagn new #{self.arguments.map(&:usage).join(' ')} [options]"
+    "wagn new #{arguments.map(&:usage).join(' ')} [options]"
   end
 
   def mysql_socket

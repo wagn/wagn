@@ -1,7 +1,20 @@
-languages:
-  Ruby: true
-  JavaScript: true
-  PHP: false
-  Python: false
+engines:
+  rubocop:
+    enabled: true
+  golint:
+    enabled: false
+  gofmt:
+    enabled: false
+  eslint:
+    enabled: true
+  csslint:
+    enabled: true
+ratings:
+   paths:
+   - card/**
+   - wagn/**
+   - "**.rb"
 exclude_paths:
-- "wagn/rails/assets"
+- wagn/rails/assets/**/*
+- card/mod/03_machines/lib/javascript/**/*
+- card/mod/06_bootstrap/lib/javascript/**/*

@@ -54,11 +54,13 @@ class Card
       end
 
       def generate_cache_id
-        ((Time.now.to_f * 100).to_i).to_s + ('a'..'z').to_a[rand(26)] + ('a'..'z').to_a[rand(26)]
+        ((Time.now.to_f * 100).to_i).to_s +
+          ('a'..'z').to_a[rand(26)] +
+          ('a'..'z').to_a[rand(26)]
       end
 
       def reset_global
-        cache_by_class.each do |klass, cache|
+        cache_by_class.each do |_klass, cache|
           cache.reset hard=true
         end
         Card::Codename.reset_cache
@@ -67,9 +69,11 @@ class Card
 
       def reset_local
         cache_by_class.each do |cc, cache|
-          if Card::Cache===cache
+          if Card::Cache === cache
             cache.reset_local
-          else warn "reset class #{cc}, #{cache.class} #{caller[0..8]*"\n"} ???" end
+          else
+            warn "reset class #{cc}, #{cache.class} #{caller[0..8] * "\n"} ???"
+          end
         end
       end
 
@@ -91,20 +95,16 @@ class Card
       private
 
       def prepopulate
-        if @@prepopulating
-          @@rule_cache      ||= Card.rule_cache
-          @@read_rule_cache ||= Card.read_rule_cache
-          @@user_ids_cache  ||= Card.user_ids_cache
-          @@rule_keys_cache ||= Card.rule_keys_cache
-          Card.cache.write_local 'RULES', @@rule_cache
-          Card.cache.write_local 'READRULES', @@read_rule_cache
-          Card.cache.write_local 'USER_IDS', @@user_ids_cache
-          Card.cache.write_local 'RULE_KEYS', @@rule_keys_cache
-        end
+        return unless @@prepopulating
+        @@rule_cache ||= Card.rule_cache
+        @@user_ids_cache ||= Card.user_ids_cache
+        @@read_rule_cache ||= Card.read_rule_cache
+        @@rule_keys_cache ||= Card.rule_keys_cache
+        Card.cache.write_local 'RULES', @@rule_cache
+        Card.cache.write_local 'READRULES', @@read_rule_cache
+        Card.cache.write_local 'USER_IDS', @@user_ids_cache
+        Card.cache.write_local 'RULE_KEYS', @@rule_keys_cache
       end
-
-
-
     end
 
     attr_reader :prefix, :store, :klass
@@ -179,7 +179,7 @@ class Card
 
     def delete key
       @store.delete(@prefix + key) if @store
-      @local.delete key
+      delete_local key
     end
 
     def delete_local key

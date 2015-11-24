@@ -98,10 +98,7 @@ class Card
 
     def rename old_name, new_name
       return unless @keys.include? old_name.to_name.key
-
     end
-
-
 
     def << value
       add value

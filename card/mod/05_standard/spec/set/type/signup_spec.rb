@@ -52,8 +52,8 @@ describe Card::Set::Type::Signup do
 
     it 'creates an authenticable token' do
       expect(@account.token).to eq(@token)
-      expect(@account.authenticate_by_token(@token)).to eq(@signup.id)
-      expect(@account.fetch(trait: :token)).not_to be_present
+      expect(@account.validate_token!(@token)).to be_truthy
+      expect(@account.errors).to be_empty
     end
 
     it 'notifies someone' do
@@ -83,9 +83,8 @@ describe Card::Set::Type::Signup do
       @account.reload
       # token gets updated
       expect(@account.token).not_to eq(@token)
-      success = Card::Env.params[:success]
       # user notified of expired token
-      expect(success[:message]).to match(/expired/)
+      expect(Card::Env.success.message).to match(/expired/)
     end
   end
 

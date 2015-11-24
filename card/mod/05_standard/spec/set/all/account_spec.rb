@@ -78,7 +78,7 @@ describe Card::Set::All::Account do
       c = Card['Joe New']
       u = Card::Auth[ 'joe@new.com' ]
 
-      expect(c).to eq(u)
+      expect(c.account).to eq(u)
       expect(c.type_id).to eq(Card::UserID)
 =begin
       email = ActionMailer::Base.deliveries.last

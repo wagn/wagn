@@ -10,17 +10,11 @@ class CardController < ActionController::Base
   include Card::Location
   include Recaptcha::Verify
 
-  before_filter :per_request_setup, except: [:asset]
-  before_filter :load_id, only: [:read]
-  before_filter :load_card, except: [:asset]
-  before_filter :refresh_card, only: [:create, :update, :delete, :rollback]
-
   layout nil
-
   attr_reader :card
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #  CORE METHODS
+  #  PUBLIC METHODS
 
   def create
     handle { card.save }
@@ -38,93 +32,129 @@ class CardController < ActionController::Base
     handle { card.delete }
   end
 
+  # DEPRECATED
   def asset
     Rails.logger.info 'Routing assets through Card. Recommend symlink from ' \
                       'Deck to Card gem using "rake wagn:update_assets_symlink"'
     asset_path = Decko::Engine.paths['gem-assets'].existent.first
     filename   = [params[:filename], params[:format]].join('.')
-    send_file_inside asset_path, filename, x_sendfile: true
+    send_asset asset_path, filename, x_sendfile: true
   end
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  #  PRIVATE METHODS
 
   private
 
-  # make sure that filename doesn't leave allowed_path using ".."
-  def send_file_inside allowed_path, filename, options={}
-    if filename.include? '../'
-      raise Wagn::BadAddress
-    else
-      send_file File.join(allowed_path, filename), options
-    end
-  end
-
   #-------( FILTERS )
 
-  def per_request_setup
+  before_filter :setup, except: [:asset]
+  before_filter :authenticate, except: [:asset]
+  before_filter :load_id, only: [:read]
+  before_filter :load_card, except: [:asset]
+  before_filter :refresh_card, only: [:create, :update, :delete, :rollback]
+
+  def setup
     request.format = :html if !params[:format] # is this used??
     Card::Cache.renew
     Card::Env.reset controller: self
-    Card::Auth.set_current_from_session
+  end
 
-    if params[:id] && !params[:id].valid_encoding?
-      # slightly better way to handle encoding issues (than the rescue in
-      # load_id)
-      # we should find the place where we produce these bad urls
-      params[:id] = params[:id].force_encoding('ISO-8859-1').encode('UTF-8')
+  def authenticate
+    if params[:token]
+      ok = Card::Auth.set_current_from_token params[:token], params[:current]
+      raise Card::Oops, 'token authentication failed' unless ok
+      # arguably should be PermissionDenied; that requires a card object,
+      # and that's not loaded yet.
+    else
+      Card::Auth.set_current_from_session
     end
   end
 
   def load_id
-    params[:id] ||=
-      case
-      when Card::Auth.needs_setup? && Card::Env.html?
-        params[:card] = { type_id: Card.default_accounted_type_id }
-        params[:view] = 'setup'
-        ''
-      when params[:card] && params[:card][:name]
-        params[:card][:name]
-      when Card::Format.tagged(params[:view], :unknown_ok)
-        ''
-      else
-        Card.setting(:home) || 'Home'
+    params[:id] =
+      case params[:id]
+      when '*previous' then return card_redirect(Card::Env.previous_location)
+      when nil         then determine_id
+      else                  validate_id_encoding params[:id]
       end
-  rescue ArgumentError # less than perfect way to handle encoding issues.
-    raise Wagn::BadAddress
   end
 
   def load_card
-    if params[:id] == '*previous'
-      return card_redirect(Card::Env.previous_location)
-    end
-
-    opts = card_attr_from_params
-    @card =
-      if params[:action] == 'create'
-        # FIXME: we currently need a "new" card to catch duplicates (otherwise
-        # save will just act like a normal update)
-        # I think we may need to create a "#create" instance method that
-        # handles this checking.
-        # that would let us get rid of this...
-        Card.new opts
-      else
-        mark = params[:id] || opts[:name]
-        Card.fetch mark, new: opts
-      end
+    @card = new_or_fetch_card
     raise Card::NotFound unless @card
 
-    @card.select_action_by_params params
+    @card.select_action_by_params params #
     Card::Env[:main_name] = params[:main] || (card && card.name) || ''
 
-    render_errors if card.errors.any?
-    true
+    card.errors.any? ? render_errors : true
   end
 
   def refresh_card
     @card = card.refresh
   end
 
-  protected
+  # ----------( HELPER METHODS ) -------------
 
-  # ----------( rendering methods ) -------------
+  def new_or_fetch_card
+    opts = card_opts
+    if params[:action] == 'create'
+      # FIXME: we currently need a "new" card to catch duplicates
+      # (otherwise save will just act like a normal update)
+      # We may need a "#create" instance method to handle this checking?
+      Card.new opts
+    else
+      mark = params[:id] || opts[:name]
+      Card.fetch mark, new: opts
+    end
+  end
+
+  def card_opts
+    opts = (params[:card] || {}).clone
+    # clone so that original params remain unaltered.  need deeper clone?
+    opts[:type] ||= params[:type] if params[:type]
+    # for /new/:type shortcut.  we should fix and deprecate this.
+    opts[:name] ||= params[:id].to_s.tr('_', ' ')
+    # move handling to Card::Name?
+    opts
+  end
+
+  def determine_id
+    case
+    when needs_setup?
+      prepare_setup_card!
+    when params[:card] && params[:card][:name]
+      params[:card][:name]
+    when Card::Format.tagged(params[:view], :unknown_ok)
+      ''
+    else
+      Card.setting(:home) || 'Home'
+    end
+  end
+
+  def needs_setup?
+    Card::Auth.needs_setup? && Card::Env.html?
+  end
+
+  def prepare_setup_card!
+    params[:card] = { type_id: Card.default_accounted_type_id }
+    params[:view] = 'setup'
+    ''
+  end
+
+  def validate_id_encoding id
+    # we should find the place where we produce these bad urls
+    id.valid_encoding? ? id : id.force_encoding('ISO-8859-1').encode('UTF-8')
+  end
+
+  def send_asset path, filename, options={}
+    if filename.include? '../'
+      # for security, block relative paths
+      raise Wagn::BadAddress
+    else
+      send_file File.join(path, filename), options
+    end
+  end
 
   def card_redirect url
     url = card_url url # make sure we have absolute url
@@ -203,7 +233,7 @@ class CardController < ActionController::Base
       case exception
       ## arguably the view and status should be defined in the error class;
       ## some are redundantly defined in view
-      when Card::Oops, Card::Query
+      when Card::Oops, Card::BadQuery
         card.errors.add :exception, exception.message
         # these error messages are visible to end users and are generally not
         # treated as bugs.
@@ -242,16 +272,6 @@ class CardController < ActionController::Base
     Card::Env[:success]
   end
 
-  def card_attr_from_params
-    # clone so that original params remain unaltered.  need deeper clone?
-    opts = params[:card] ? params[:card].clone : {}
-    # for /new/:type shortcut.  we should fix and deprecate this.
-    opts[:type] ||= params[:type] if params[:type]
-    # move handling to Card::Name?
-    opts[:name] ||= params[:id].to_s.gsub('_', ' ')
-    opts
-  end
-
   def format_from_params
     return :file if params[:explicit_file]
     format = request.parameters[:format]
@@ -264,7 +284,7 @@ class CardController < ActionController::Base
       self.params = success.params
     else
       # need tests. insure we get slot, main...
-      self.params.merge! success.params
+      params.merge! success.params
     end
   end
 

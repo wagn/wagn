@@ -1,8 +1,7 @@
 class Card
-
   module Location
-    #
-    # page_path    takes a Card::Name, adds the format and query string to url_key (site-absolute)
+    # page_path    takes a Card::Name, adds the format and query string to
+    #              url_key (site-absolute)
     # card_path    makes a relative path site-absolute (if not already)
     # card_url     makes it a full url (if not already)
 
@@ -34,5 +33,4 @@ class Card
 
     extend Location
   end
-
 end

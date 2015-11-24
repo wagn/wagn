@@ -66,29 +66,29 @@ class Card
       #include Card::Location
 
       def location_history
-        #warn "sess #{session.class}, #{session.object_id}"
         session[:history] ||= [Card::Location.card_path('')]
-        if session[:history]
-          session[:history].shift if session[:history].size > 5
-          session[:history]
-        end
+        session[:history].shift if session[:history].size > 5
+        session[:history]
       end
 
       def save_location card
-        return if Env.ajax? || !Env.html? || !card.known? || (card.codename == 'signin')
+        return if Env.ajax? || !Env.html? || !card.known? ||
+                  (card.codename == 'signin')
         discard_locations_for card
-        session[:previous_location] = Card::Location.card_path card.cardname.url_key
+        session[:previous_location] =
+          Card::Location.card_path card.cardname.url_key
         location_history.push previous_location
       end
 
       def previous_location
-        session[:previous_location] ||= location_history.last if location_history
+        return unless location_history
+        session[:previous_location] ||= location_history.last
       end
 
-      def discard_locations_for(card)
+      def discard_locations_for card
         # quoting necessary because cards have things like "+*" in the names..
         session[:history] = location_history.reject do |loc|
-          if url_key = url_key_for_location(loc)
+          if (url_key = url_key_for_location(loc))
             url_key.to_name.key == card.key
           end
         end.compact

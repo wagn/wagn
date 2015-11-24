@@ -52,7 +52,6 @@ describe Card::Set::All::Base do
       end
     end
     it 'renders template rule of embed cards based on set' do
-      
       Card::Auth.as_bot
       content = '{{_left+test_another_card|content|content;'\
                 'structure:test_another_card_structure}}'

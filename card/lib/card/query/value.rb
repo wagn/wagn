@@ -14,9 +14,8 @@ class Card
 
       def parse_value rawvalue
         case rawvalue
-        when String  then ['=', rawvalue]
-        when Integer then ['=', rawvalue]
-        when Array   then [rawvalue[0], rawvalue[1..-1]]
+        when String, Integer then ['=', rawvalue]
+        when Array           then [rawvalue[0], rawvalue[1..-1]]
         else raise("Invalid Condition Clause #{rawvalue}.inspect}")
         end
       end

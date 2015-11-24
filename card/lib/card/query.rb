@@ -97,7 +97,7 @@ class Card
     # Card::Fetch)
 
     def self.run statement
-      new(statement.deep_clone).run
+      new(statement).run
     end
 
     # run the current query

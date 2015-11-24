@@ -35,42 +35,6 @@ describe Card::Set::Type::SearchType do
     expect(pointer_card.content).to eq(%{{"type":"User"}})
   end
 
-  context 'with right plus array' do
-    it 'render the card list and paging correctly' do
-      Card.create! name: 'Samsung'
-      Card.create! name: 'Samsung+tag'
-      Card.create! name: 'Samsung+source'
-      Card.create! name: 'Apple'
-      Card.create! name: 'Apple+tag'
-      Card.create! name: 'Apple+source'
-      Card.create! name: 'HTC'
-      Card.create! name: 'HTC+tag'
-      Card.create! name: 'HTC+source'
-      search_card = Card.create!(
-        name: 'search_with_right_plus',
-        type_id: Card::SearchTypeID,
-        content: %{
-            {
-              "right_plus":{
-                "name":["in","tag","source"]
-              },
-              "limit":1,
-              "sort":"name"
-            }
-        }
-      )
-      html = search_card.format.render_open
-      expect(html).to have_tag('ul', with: { class: 'pagination paging' }) do
-        with_tag 'a', text: '1'
-        with_tag 'a', text: '2'
-        with_tag 'a', text: '3'
-      end
-      expect(html).to have_tag('div', with: { class: 'search-result-list' }) do
-        with_tag 'div', with: { id: 'Apple' }
-      end
-    end
-  end
-
   context 'references' do
     before do
       Card.create type: 'Search', name: 'search with references', content: '{"name":"Y"}'

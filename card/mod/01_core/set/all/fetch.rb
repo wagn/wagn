@@ -197,7 +197,7 @@ module ClassMethods
     # different from the cached variant
     # and can postpone type lookup for the cached variant
     # if skipping virtual no need to look for actual type
-    opts[:skip_virtual] || opts[:new].present?
+    opts[:skip_virtual] || opts[:new].present? || opts[:skip_type_lookup]
   end
 
   def write_to_cache card, opts

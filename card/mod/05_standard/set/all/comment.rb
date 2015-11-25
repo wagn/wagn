@@ -1,16 +1,22 @@
-event :add_comment, after: :approve, on: :save, when: proc {|c| c.comment } do
+event :add_comment, after: :approve, on: :save, when: proc { |c| c.comment } do
+  cleaned_comment =
+    comment.split(/\n/).map do |line|
+      "<p>#{line.strip.empty? ? '&nbsp;' : line}</p>"
+    end * "\n"
+
+  signature =
+    if Auth.signed_in?
+      "[[#{Auth.current.name}]]"
+    else
+      Env.session[:comment_author] = comment_author if Env.session
+      "#{ comment_author } (Not signed in)"
+    end
+
   self.content = %{
-    #{ content }
-    #{ '<hr>' unless content.blank? }
-    #{ comment.split(/\n/).map {|line| "<p>#{line.strip.empty? ? '&nbsp;' : line}</p>"} * "\n" }
-    <div class="w-comment-author">--#{
-      if Auth.signed_in?
-        "[[#{Auth.current.name}]]"
-      else
-        Env.session[:comment_author] = comment_author if Env.session
-        "#{ comment_author } (Not signed in)"
-      end
-    }.....#{Time.now}</div>
+    #{content}
+    #{'<hr>' unless content.blank?}
+    #{cleaned_comment}
+    <div class="w-comment-author">--#{signature}.....#{Time.now}</div>
   }
 end
 

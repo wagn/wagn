@@ -13,17 +13,52 @@ class Card
     class << self
       # Authenticates a user by their login name and unencrypted password.
       def authenticate email, password
-        accounted = Auth[email]
-        return unless accounted && (account = accounted.account) &&
-                      account.active?
-        if Card.config.no_authentication ||
-           password_authenticated?(account, password.strip)
-          accounted.id
+        account = Auth[email]
+        case
+        when !account                                 then nil
+        when !account.active?                         then nil
+        when Card.config.no_authentication            then account
+        when password_valid?(account, password.strip) then account
         end
       end
 
-      def password_authenticated? account, password
+      def password_valid? account, password
         account.password == encrypt(password, account.salt)
+      end
+
+      def set_current_from_token token, current=nil
+        account = find_by_token token
+        if account && account.validate_token!(token)
+          unless current && always_ok_usr_id?(account.left_id)
+            current = account.left_id
+          end
+          set_current_from_mark current
+        elsif Env.params[:live_token]
+          true
+          # Used for activations and resets.
+          # Continue as anonymous and address problem later
+        else
+          false
+        end
+      end
+
+      def set_current_from_mark mark
+        self.current_id =
+          if mark.to_s =~ /@/
+            account = Auth[mark.downcase]
+            account && account.active? ? account.left_id : Card::AnonymousID
+          else
+            mark
+          end
+      end
+
+      def find_by_token token
+        Auth.as_bot do
+          Card.search(
+            right_id: Card::AccountID,
+            right_plus: [{ id: Card::TokenID }, { content: token.strip }]
+          ).first
+        end
       end
 
       # Encrypts some data with the salt.
@@ -31,15 +66,14 @@ class Card
         Digest::SHA1.hexdigest "#{salt}--#{password}--"
       end
 
-      # find accounted by email
+      # find account by email
       def [] email
+        email = email.strip.downcase
         Auth.as_bot do
-          Card.search(right_plus: [
-            { id: Card::AccountID },
-            { right_plus: [
-              { id: Card::EmailID }, { content: email.strip.downcase }
-            ] }
-          ]).first
+          Card.search(
+            right_id: Card::AccountID,
+            right_plus: [{ id: Card::EmailID }, { content: email }]
+          ).first
         end
       end
 
@@ -78,6 +112,7 @@ class Card
 
       def current_id= card_id
         @@current = @@as_id = @@as_card = nil
+        card_id = card_id.to_i if card_id.present?
         @@current_id = card_id
       end
 
@@ -90,15 +125,21 @@ class Card
       end
 
       def as given_user
-        tmp_id, tmp_card = @@as_id, @@as_card
+        tmp_id   = @@as_id
+        tmp_card = @@as_card
+
+        @@as_id   = get_user_id(given_user)
+        @@as_card = nil
         # we could go ahead and set as_card if given a card...
-        @@as_id, @@as_card = get_user_id(given_user), nil
 
         @@current_id = @@as_id if @@current_id.nil?
 
         return unless block_given?
         value = yield
-        @@as_id, @@as_card = tmp_id, tmp_card
+
+        @@as_id   = tmp_id
+        @@as_card = tmp_card
+
         value
       end
 
@@ -146,8 +187,12 @@ class Card
       end
 
       def always_ok?
-        # warn Rails.logger.warn("aok? #{as_id}, #{as_id&&Card[as_id].id}")
-        return false unless (usr_id = as_id)
+        usr_id = as_id
+        return false if !usr_id
+        always_ok_usr_id? usr_id
+      end
+
+      def always_ok_usr_id? usr_id
         return true if usr_id == Card::WagnBotID # cannot disable
 
         always = Card.cache.read('ALWAYS') || {}
@@ -163,6 +208,7 @@ class Card
         # warn Rails.logger.warn("aok? #{usr_id}, #{always[usr_id]}")
         always[usr_id]
       end
+
       # PERMISSIONS
 
       def createable_types

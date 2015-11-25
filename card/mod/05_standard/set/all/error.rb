@@ -1,4 +1,8 @@
-
+def copy_errors card
+  card.errors.each do |att, msg|
+    errors.add att, msg
+  end
+end
 
 format do
   view :closed_missing, perms: :none, closed: true do |args|

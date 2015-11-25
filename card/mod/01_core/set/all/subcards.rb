@@ -31,7 +31,9 @@ def clear_subcards
 end
 
 def unfilled?
-  (content.empty? || content.strip.empty?) && !subcards.present?
+  (content.empty? || content.strip.empty?) &&
+    (comment.blank? || comment.strip.blank?) &&
+    !subcards.present?
 end
 
 event :reject_empty_subcards, after: :approve, on: :save do

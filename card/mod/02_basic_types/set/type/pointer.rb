@@ -1,7 +1,10 @@
 
+
 event :add_and_drop_items, before: :approve, on: :save do
-  self.add_item Env.params['add_item']   if Env.params['add_item']
-  self.drop_item Env.params['drop_item'] if Env.params['drop_item']
+  adds = Env.params['add_item']
+  drops = Env.params['drop_item']
+  Array.wrap(adds).each { |i| add_item i } if adds
+  Array.wrap(drops).each { |i| drop_item i } if drops
 end
 
 event :insert_item_event, before: :approve, on: :save, when: proc {|c| Env.params['insert_item']} do

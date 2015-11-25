@@ -5,7 +5,7 @@ class AttachmentUploadCards < Card::CoreMigration
     Card.create! name: '*new file', type: 'File', codename: 'new_file'
     Card.create! name: '*new image', type: 'Image', codename: 'new_image'
 
-    if js_output = Card['*all+*script+*machine output']
+    if (js_output = Card['*all+*script+*machine output'])
       #perhaps too narrow?
       js_output.delete!
     end

@@ -122,6 +122,12 @@ class Card::Migration < ActiveRecord::Migration
   def down
     raise ActiveRecord::IrreversibleMigration
   end
+
+  def update_machine_output
+    Card.search(right: { codename: 'machine_output'}).each do |output_card|
+      output_card.delete
+    end
+  end
 end
 
 require 'card/core_migration'

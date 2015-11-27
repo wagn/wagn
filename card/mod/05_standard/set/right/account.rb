@@ -71,7 +71,7 @@ event :require_email, on: :create, after: :approve do
 end
 
 event :set_default_salt, on: :create, before: :process_subcards do
-  salt = Digest::SHA1.hexdigest "--#{Time.zone.now.to_s}--"
+  salt = Digest::SHA1.hexdigest "--#{Time.zone.now}--"
   Env[:salt] = salt # HACK!!! need viable mechanism to get this to password
   add_subfield :salt, content: salt
 end

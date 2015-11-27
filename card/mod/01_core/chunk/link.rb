@@ -83,7 +83,7 @@ module Card::Chunk
         @link_text = new_name if old_name.to_name == @link_text
       end
 
-      @text = @link_text.nil? ? "[[#{referee_name.to_s}]]" : "[[#{referee_name.to_s}|#{@link_text}]]"
+      @text = @link_text.nil? ? "[[#{referee_name}]]" : "[[#{referee_name}|#{@link_text}]]"
     end
   end
 end

@@ -68,7 +68,7 @@ module Card::Chunk
 
     def replace_reference old_name, new_name
       replace_name_reference old_name, new_name
-      @text = "\"#{@name.to_s}\""
+      @text = "\"#{@name}\""
     end
   end
 end

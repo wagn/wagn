@@ -121,7 +121,7 @@ end
 
 def ok_to_update
   permit :update
-  if @action_ok && type_id_changed? && !permitted? :create
+  if @action_ok && type_id_changed? && !permitted?(:create)
     deny_because you_cant('change to this type (need create permission)')
   end
   ok_to_read if @action_ok

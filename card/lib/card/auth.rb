@@ -5,7 +5,6 @@ class Card
     @@as_card = @@as_id = @@current_id = @@current = nil
     @@simulating_setup_need = nil
 
-    NON_CREATEABLE_TYPES = %w{ signup setting set } # NEED API
     SETUP_COMPLETED_KEY = 'SETUP_COMPLETED'
 
     # after_save :reset_instance_cache
@@ -214,7 +213,9 @@ class Card
       def createable_types
         type_names = Auth.as_bot do
           Card.search type: Card::CardtypeID, return: :name,
-                      not: { codename: ['in'] + NON_CREATEABLE_TYPES }
+                      not: {
+                        codename: ['in'] + Card.config.non_createable_types
+                      }
         end
         type_names.select do |name|
           Card.new(type: name).ok? :create

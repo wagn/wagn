@@ -115,8 +115,9 @@ def repair_type template_type_id
 end
 
 def structuree_spec
-  if is_structure? and c=trunk and c.type_id = Card::SetID  #could use is_rule?...
-    c.get_query
+  # could use is_rule?...
+  if is_structure? && (ca = trunk) && (ca.type_id = Card::SetID)
+    ca.get_query
   end
 end
 

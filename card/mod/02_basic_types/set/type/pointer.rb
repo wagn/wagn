@@ -343,24 +343,24 @@ def options_rule_card
 end
 
 def option_names
-  result_cards = if oc = options_rule_card
+  result_cards = if (oc = options_rule_card)
     oc.item_names default_limit: 50, context: name
   else
     Card.search sort: 'name', limit: 50, return: :name
   end
-  if selected_options = item_names
+  if (selected_options = item_names)
     result_cards = result_cards | selected_options
   end
   result_cards
 end
 
 def option_cards
-  result_cards = if oc = options_rule_card
+  result_cards = if (oc = options_rule_card)
     oc.item_cards default_limit: 50, context: name
   else
     Card.search sort: 'alpha', limit: 50
   end
-  if selected_options = item_names
+  if (selected_options = item_names)
     selected_options.each do |item|
       result_cards.push Card.fetch(item,new: {})
     end

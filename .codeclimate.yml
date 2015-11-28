@@ -3,5 +3,12 @@ languages:
   JavaScript: true
   PHP: false
   Python: false
+engines:
+  rubocop:
+    enabled: true
+    checks:
+      Rubocop/Style/SpaceInsideStringInterpolation:
+        enabled: false
+
 exclude_paths:
 - "wagn/rails/assets"

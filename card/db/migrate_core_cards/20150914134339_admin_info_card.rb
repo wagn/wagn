@@ -32,7 +32,7 @@ class AdminInfoCard < Card::CoreMigration
     ['public_key', 'private_key', 'proxy'].each do |name|
       card = Card["recaptcha_#{name}".to_sym]
       card.update_attributes!(
-        name: "#{Card[:recaptcha_settings].name}+#{name.gsub('_', ' ')}"
+        name: "#{Card[:recaptcha_settings].name}+#{name.tr('_', ' ')}"
       )
     end
     Card.fetch('*recaptcha settings+*self+*structure').delete

@@ -308,9 +308,10 @@ format :html do
   end
 
   def option_list title
-    list = wrap_each_with(:li, class: 'radio') do
-             yield
-           end
+    list =
+      wrap_each_with(:li, class: 'radio') do
+        yield
+      end
     formgroup title, "<ul>#{ list }</ul>", editor: 'set', class: 'col-xs-6'
   end
 

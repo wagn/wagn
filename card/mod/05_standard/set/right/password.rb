@@ -4,7 +4,7 @@ include All::Permissions::Accounts
 view :editor do
   card.content = ''
 
-  # hack
+  # HACK
   autocomplete = if @parent && @parent.card.name == '*signin+*account'
                    'on'
                  else
@@ -22,7 +22,7 @@ event :encrypt_password, on: :save, after: :process_subcards,
                          when: proc { !Card::Env[:no_password_encryptions] } do
   # no_password_encryptions = hack for import - fix with api for ignoring events
   salt = left && left.salt
-  # hack - fix with better ORM handling
+  # HACK: fix with better ORM handling
   salt = Card::Env[:salt] unless salt.present?
   self.content = Auth.encrypt content, salt
 

@@ -68,7 +68,7 @@ class Card
           dirname = "#{mod}/set_pattern"
           if Dir.exists? dirname
             Dir.entries( dirname ).sort.each do |filename|
-              if m = filename.match( /^(\d+_)?([^\.]*).rb/) and key = m[2]
+              if (m = filename.match( /^(\d+_)?([^\.]*).rb/)) && key = m[2]
                 filename = [ dirname, filename ] * '/'
                 SetPattern.write_tmp_file key, filename, seq
                 seq = seq + 1

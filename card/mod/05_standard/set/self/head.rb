@@ -29,7 +29,7 @@ format :html do
   def head_buttons
     bits = []
     [:favicon, :logo].each do |name|
-      if c = Card[name] and c.type_id == ImageID and !c.db_content.blank?
+      if (c = Card[name]) && c.type_id == ImageID && !c.db_content.blank?
         bits << %{<link rel="shortcut icon" href="#{ subformat(c)._render_source size: :small }" />}
         break
       end

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency File.expand_path( '../reference', __FILE__ )
+require_dependency File.expand_path('../reference', __FILE__)
 
 module Card::Chunk
   class Link < Reference
@@ -16,10 +16,10 @@ module Card::Chunk
     def interpret match, content
       target, @link_text =
         if (raw_syntax = match[1])
-          if i = divider_index( raw_syntax )  # [[ A | B ]]
+          if (i = divider_index(raw_syntax))  # [[A | B]]
             [ raw_syntax[0..(i-1)], raw_syntax[(i+1)..-1] ]
           else                                # [[ A ]]
-            [ raw_syntax, nil ]
+            [raw_syntax, nil]
           end
         end
 
@@ -32,7 +32,7 @@ module Card::Chunk
     end
 
     def divider_index string
-      #there's probably a better way to do the following.  point is to find the first pipe that's not inside an inclusion
+      # there's probably a better way to do the following.  point is to find the first pipe that's not inside an inclusion
 
       if string.index '|'
         string_copy = "#{string}" # had to do this to create new string?!
@@ -77,13 +77,13 @@ module Card::Chunk
     def replace_reference old_name, new_name
       replace_name_reference old_name, new_name
 
-      if Card::Content===@link_text
+      if Card::Content == =@link_text
         @link_text.find_chunks(Card::Chunk::Reference).each { |chunk| chunk.replace_reference old_name, new_name }
       else
         @link_text = new_name if old_name.to_name == @link_text
       end
 
-      @text = @link_text.nil? ? "[[#{referee_name}]]" : "[[#{referee_name}|#{@link_text}]]"
+      @text = @link_text.nil? ? "[[#{referee_name}]]' : '[[#{referee_name}|#{@link_text}]]"
     end
   end
 end

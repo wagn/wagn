@@ -8,8 +8,8 @@ class Card
     NON_CREATEABLE_TYPES = %w{ signup setting set } # NEED API
     SETUP_COMPLETED_KEY = 'SETUP_COMPLETED'
     DEFAULT_RECAPTCHA_SETTINGS = {
-      :recaptcha_public_key => '6LeoHfESAAAAAN1NdQeYHREq4jTSQhu1foEzv6KC',
-      :recaptcha_private_key => '6LeoHfESAAAAAHLZpn7ijrO4_KGLEr2nGL4qjjis'
+      recaptcha_public_key: '6LeoHfESAAAAAN1NdQeYHREq4jTSQhu1foEzv6KC',
+      recaptcha_private_key: '6LeoHfESAAAAAHLZpn7ijrO4_KGLEr2nGL4qjjis'
     }
 
     # after_save :reset_instance_cache
@@ -139,12 +139,12 @@ class Card
         @@current_id = @@as_id if @@current_id.nil?
 
         return unless block_given?
-        value = yield
-
-        @@as_id   = tmp_id
-        @@as_card = tmp_card
-
-        value
+        yield
+      ensure
+        if block_given?
+          @@as_id   = tmp_id
+          @@as_card = tmp_card
+        end
       end
 
       def as_bot &block

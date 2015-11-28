@@ -135,10 +135,10 @@ format :html do
   view :related_edit_rule, view: :edit_rule
 
   def default_edit_rule_args args
-    args[:remote]       ||= true
+    args[:remote] ||= true
     args[:rule_context] ||= card
-    args[:set_context]  ||= card.rule_set_name
-    args[:set_selected]   = params[:type_reload] ? card.rule_set_name : false
+    args[:set_context] ||= card.rule_set_name
+    args[:set_selected] = params[:type_reload] ? card.rule_set_name : false
     args[:set_options], args[:fallback_set] = args[:rule_context].set_options
 
     args[:success] ||= {}
@@ -148,7 +148,10 @@ format :html do
       view: 'open_rule',
       item: 'view_rule'
     )
+    edit_rule_button_args args
+  end
 
+  def edit_rule_button_args args
     args[:delete_button] ||= delete_button args
     args[:cancel_button] ||=
       begin
@@ -170,6 +173,10 @@ format :html do
       item: nil
     }
     default_edit_rule_args args
+    related_edit_rule_button_args args
+  end
+
+  def related_edit_rule_button_args args
     args[:delete_button] = delete_button args, '.card-slot.related-view'
     args[:cancel_button] = card_link(
       args[:success][:id],
@@ -317,19 +324,17 @@ format :html do
     end
   end
 
-=begin
-  view :edit_rule2 do |args|
-
-    card_form :update do
-      [
-        _optional_render(:type_formgroup,    args),
-        _optional_render(:content_formgroup, args),
-        _optional_render(:set_formgroup,     args),
-        _optional_render(:button_formgroup,  args)
-      ]
-    end
-  end
-=end
+  # view :edit_rule2 do |args|
+  #
+  #   card_form :update do
+  #     [
+  #       _optional_render(:type_formgroup,    args),
+  #       _optional_render(:content_formgroup, args),
+  #       _optional_render(:set_formgroup,     args),
+  #       _optional_render(:button_formgroup,  args)
+  #     ]
+  #   end
+  # end
 
   private
 

@@ -1,4 +1,4 @@
-event :update_recaptcha_proxy, :after=>:store do
+event :update_recaptcha_proxy, after: :store do
   Recaptcha.configure do |config|
     Cardio.config.recaptcha_proxy = raw_content
     config.proxy  = raw_content
@@ -6,4 +6,4 @@ event :update_recaptcha_proxy, :after=>:store do
 end
 
 extend Card::Setting
-setting_opts :group=> :config, :position=>3, :rule_type_editable=>false
+setting_opts group: :config, position: 3, rule_type_editable: false

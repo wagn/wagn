@@ -45,8 +45,8 @@ format :html do
       subformat(args[:account])._render :content_formgroup, sub_args
     end # YUCK!!!!
   end
-  view :core do |_args|
 
+  view :core do |_args|
     return if card.new_card? # necessary?
     headings = []
     by_anon = card.creator_id == AnonymousID

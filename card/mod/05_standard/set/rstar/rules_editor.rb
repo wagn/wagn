@@ -7,8 +7,9 @@ format :html do
     rule_card = find_current_rule_card
     rule_content =
       if rule_card
-        subformat(rule_card)
-          ._render_closed_content(set_context: card.cardname.trunk_name)
+        subformat(rule_card)._render_closed_content(
+          set_context: card.cardname.trunk_name
+        )
       else
         ''
       end
@@ -243,27 +244,34 @@ format :html do
   end
 
   def set_formgroup args
-    current_set_key =
-      card.new_card? ? Card[:all].cardname.key : card.rule_set_key
-    # (should have a constant for this?)
-
     tag = args[:rule_context].rule_user_setting_name
     narrower_rules = []
     option_list 'set' do
       args[:set_options].map do |set_name, state|
-        checked = (args[:set_selected] == set_name) ||
-                  (current_set_key && args[:set_options].length == 1)
-        warning = narrower_rule_warning(narrower_rules)
         label = Card.fetch(set_name).label
-        if state.in? [:current, :overwritten]
-          narrower_rules << label
-          narrower_rules.last[0] = narrower_rules.last[0].downcase
-        end
-        rule_name = "#{set_name}+#{tag}"
-        radio_button(:name, rule_name, checked: checked, warning: warning) +
-          set_label(card, set_name, label, state)
+        set_radio_button set_name, tag, label, state, narrower_rules
       end
     end
+  end
+
+  def set_radio_button set_name, tag, label, state, narrower_rules
+    button = radio_button :name, "#{set_name}+#{tag}",
+                          checked: check_set_button?(set_name, args),
+                          warning: narrower_rule_warning(narrower_rules)
+    if state.in? [:current, :overwritten]
+      narrower_rules << label
+      narrower_rules.last[0] = narrower_rules.last[0].downcase
+    end
+    button + set_label(card, set_name, label, state)
+  end
+
+  def check_set_button? set_name, args
+    args[:set_selected] == set_name ||
+      (current_set_key && args[:set_options].length == 1)
+  end
+
+  def current_set_key
+    card.new_card? ? Card[:all].cardname.key : card.rule_set_key
   end
 
   def related_set_formgroup args
@@ -275,7 +283,7 @@ format :html do
       related_sets.map do |set_name, label|
         rule_name = "#{set_name}+#{tag}"
         rule_card = Card.fetch rule_name, skip_modules: true
-        state = rule_card && :exists
+        state = (rule_card && :exists)
         radio_button(:name, rule_name) +
           set_label(card, set_name, label, state)
       end

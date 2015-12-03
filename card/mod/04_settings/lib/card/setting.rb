@@ -21,7 +21,8 @@ class Card
       pointer:     "Pointer",
       editing_cue: "Editing cues",
       event:       "Events",
-      other:       "Other"
+      other:       "Other",
+      config:      "Config"
     }
     @@groups = @@group_names.keys.each_with_object({}) { |key, groups| groups[key] = [] }
     @@user_specific = ::Set.new

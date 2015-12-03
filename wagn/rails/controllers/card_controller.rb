@@ -128,7 +128,7 @@ class CardController < ActionController::Base
     when Card::Format.tagged(params[:view], :unknown_ok)
       ''
     else
-      Card.setting(:home) || 'Home'
+      Card.global_setting(:home) || 'Home'
     end
   end
 

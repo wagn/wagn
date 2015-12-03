@@ -115,9 +115,10 @@ def repair_type template_type_id
 end
 
 def structuree_spec
-  if is_structure? and c=trunk and c.type_id = Card::SetID  #could use is_rule?...
-    c.get_query
-  end
+  return unless is_structure?
+  set_card = trunk
+  return unless set_card.type_id == SetID
+  set_card.get_query
 end
 
 event :update_structurees_type, after: :store, changed: :type_id do

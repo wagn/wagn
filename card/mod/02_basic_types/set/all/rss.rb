@@ -49,7 +49,7 @@ format :rss do
 
 
   view :feed_title do |args|
-    Card.setting(:title) + " : " + card.name.gsub(/^\*/,'')
+    Card.global_setting(:title) + " : " + card.name.gsub(/^\*/,'')
   end
 
   view :feed_item do |args|

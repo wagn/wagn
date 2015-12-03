@@ -44,16 +44,15 @@ def read_rules
 end
 
 def all_roles
-  @all_roles ||=
-    if id == Card::AnonymousID
-      []
-    else
-      Auth.as_bot do
-        role_trait = fetch trait: :roles
-        return [Card::AnyoneSignedInID] unless role_trait
-        [Card::AnyoneSignedInID] + role_trait.item_ids
-      end
-    end
+  @all_roles ||= (id == Card::AnonymousID ? [] : fetch_roles)
+end
+
+def fetch_roles
+  Auth.as_bot do
+    role_trait = fetch trait: :roles
+    next [Card::AnyoneSignedInID] unless role_trait
+    [Card::AnyoneSignedInID] + (role_trait.item_ids)
+  end
 end
 
 event :generate_token do

@@ -40,7 +40,7 @@ def email_required?
 end
 
 def ok_to_read
-  if own_account? || Auth.always_ok?
+  if own_email? || Auth.always_ok?
     true
   else
     deny_because 'viewing email is restricted to administrators and ' \
@@ -48,6 +48,6 @@ def ok_to_read
   end
 end
 
-def own_account?
-  cardname.parts[0].to_name.key == Auth.as_card.cardname.key
+def own_email?
+  cardname.part_names[0].key == Auth.as_card.key
 end

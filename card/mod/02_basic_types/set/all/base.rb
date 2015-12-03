@@ -92,9 +92,9 @@ format do
     # FIXME: - relativity should be handled in smartname
     return '' unless args[:inc_name]
     name = args[:inc_name].to_name
-    stripped_name = name.stripped.to_name
+    stripped = name.stripped
 
-    if name.relative? && !stripped_name.starts_with_joint?
+    if name.relative? && !stripped.to_name.starts_with_joint?
       # not a simple relative name; just return the original syntax
       "{{#{args[:inc_syntax]}}}"
     else
@@ -105,7 +105,7 @@ format do
         when type = on_type_set
           "#{type}#{name}+#{Card[:type_plus_right].name}" # *type plus right
         else
-          "#{stripped_name.gsub(/^\+/, '')}+#{Card[:right].name}" # *right
+          "#{stripped.gsub(/^\+/, '')}+#{Card[:right].name}" # *right
         end
       subformat(Card.fetch set_name).render_template_link args
     end

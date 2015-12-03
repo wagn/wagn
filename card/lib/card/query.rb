@@ -97,8 +97,7 @@ class Card
     # Card::Fetch)
 
     def self.run statement
-      query = new statement
-      query.run
+      new(statement).run
     end
 
     # run the current query

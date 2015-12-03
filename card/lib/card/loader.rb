@@ -110,18 +110,20 @@ class Card
           dirname = "#{mod}/set_pattern"
           if Dir.exists? dirname
             Dir.entries(dirname).sort.each do |filename|
-              if m = filename.match( /^(\d+_)?([^\.]*).rb/) and key = m[2]
-                filename = [dirname, filename] * '/'
-                SetPattern.write_tmp_file key, filename, seq
-                seq = seq + 1
-              end
+              m = filename.match(/^(\d+_)?([^\.]*).rb/)
+              key = m && m[2]
+              next unless key
+              filename = [dirname, filename] * '/'
+              SetPattern.write_tmp_file key, filename, seq
+              seq = seq + 1
             end
           end
         end
       end
 
       def load_formats
-        # cheating on load issues now by putting all inherited-from formats in core mod.
+        # cheating on load issues now by putting all inherited-from formats in
+        # core mod.
         mod_dirs.each do |mod|
           load_dir "#{mod}/format/*.rb"
         end

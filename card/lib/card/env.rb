@@ -9,7 +9,7 @@ class Card
       def reset args={}
         @@env = { main_name: nil }
 
-        if c = args[:controller]
+        if (c = args[:controller])
           self[:controller] = c
           self[:session]    = c.request.session
           self[:params]     = c.params

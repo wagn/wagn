@@ -44,7 +44,7 @@ unless defined? TEST_ROOT
         # find by naming convention in test data:
         renames = { 'layout_type'=> 'Layout', 'search_type' => 'Search' }
         if card = Card["Sample #{renames[cardtype] || cardtype}"]
-          url.gsub!(/:id/,"~#{card.id.to_s}")
+          url.gsub!(/:id/,"~#{card.id}")
         else puts("ERROR finding 'Sample #{cardtype}'") end
       end
       url

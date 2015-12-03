@@ -233,7 +233,7 @@ def reset_set_patterns
 end
 
 def label
-  if klass = subclass_for_set
+  if (klass = subclass_for_set)
     klass.label cardname.left
   else
     ''
@@ -241,7 +241,7 @@ def label
 end
 
 def follow_label
-  if klass = subclass_for_set
+  if (klass = subclass_for_set)
     klass.follow_label cardname.left
   else
     ''

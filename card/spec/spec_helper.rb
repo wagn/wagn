@@ -82,7 +82,7 @@ end
 class Card
   def self.create_or_update! name, args={}
     Card::Auth.as_bot do
-      if c = Card.fetch(name)
+      if (c = Card.fetch(name))
         c.update_attributes!(args)
       else
         Card.create! args.merge({name: name})

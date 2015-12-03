@@ -15,12 +15,53 @@ class Card
   end
 
   module Loader
-
     class << self
       def load_mods
         load_set_patterns
         load_formats
         load_sets
+
+        if ENV['RAILS_ENV'] == 'development'
+          update_machine_output_hack
+        end
+      end
+
+      def update_machine_output_hack
+        update_script_output
+        update_style_output
+      end
+
+      def update_script_output
+        script = Card['*all+*script']
+        return unless (mtime_output = script.machine_output_card.updated_at)
+        ['wagn_mod.js.coffee', 'wagn.js.coffee',
+         'script_card_menu.js.coffee'].each do |name|
+          mtime_file = File.mtime(
+            "#{Cardio.gem_root}/mod/03_machines/lib/javascript/#{name}"
+          )
+          if mtime_file > mtime_output
+            script.update_machine_output
+            break
+          end
+        end
+      end
+
+      def update_style_output
+        style = Card['*all+*style']
+        return unless (mtime_output = style.machine_output_card.updated_at)
+        style.machine_input_card.item_cards.each do |i_card|
+          next unless i_card.codename
+          ['03_machines', '06_bootstrap'].each do |mod|
+            style_dir = "#{Cardio.gem_root}/mod/#{mod}/lib/stylesheets"
+            file_path = "#{style_dir}/#{i_card.codename}.scss"
+            next unless File.exist? file_path
+            mtime_file = File.mtime file_path
+            if mtime_file > mtime_output
+              style.update_machine_output
+              break
+            end
+          end
+        end
       end
 
       def load_chunks
@@ -33,9 +74,10 @@ class Card
         mod_dirs.inject({}) do |hash, mod|
           dirname = "#{mod}/layout"
           if File.exists? dirname
-            Dir.foreach( dirname ) do |filename|
+            Dir.foreach(dirname) do |filename|
               next if filename =~ /^\./
-              hash[ filename.gsub /\.html$/, '' ] = File.read( [dirname, filename] * '/' )
+              hash[filename.gsub /\.html$/, ''] =
+                File.read([dirname, filename] * '/')
             end
           end
           hash
@@ -45,7 +87,7 @@ class Card
       def mod_dirs
         @@mod_dirs ||= begin
           Card.paths['mod'].existent.map do |dirname|
-            Dir.entries( dirname ).sort.map do |filename|
+            Dir.entries(dirname).sort.map do |filename|
               "#{dirname}/#{filename}" if filename !~ /^\./
             end.compact
           end.flatten.compact
@@ -67,9 +109,9 @@ class Card
         mod_dirs.each do |mod|
           dirname = "#{mod}/set_pattern"
           if Dir.exists? dirname
-            Dir.entries( dirname ).sort.each do |filename|
+            Dir.entries(dirname).sort.each do |filename|
               if m = filename.match( /^(\d+_)?([^\.]*).rb/) and key = m[2]
-                filename = [ dirname, filename ] * '/'
+                filename = [dirname, filename] * '/'
                 SetPattern.write_tmp_file key, filename, seq
                 seq = seq + 1
               end
@@ -79,7 +121,7 @@ class Card
       end
 
       def load_formats
-        #cheating on load issues now by putting all inherited-from formats in core mod.
+        # cheating on load issues now by putting all inherited-from formats in core mod.
         mod_dirs.each do |mod|
           load_dir "#{mod}/format/*.rb"
         end
@@ -92,26 +134,24 @@ class Card
         Set.clean_empty_modules
       end
 
-
       def generate_tmp_set_modules
-        if prepare_tmp_dir 'tmp/set'
-          seq = 1
-          mod_dirs.each do |mod_dir|
-            mod_tmp_dir = make_set_module_tmp_dir mod_dir, seq
-            Dir.glob("#{mod_dir}/set/**/*.rb").each do |abs_filename|
-              rel_filename = abs_filename.gsub "#{mod_dir}/set/", ''
-              tmp_filename = "#{mod_tmp_dir}/#{rel_filename}"
-              Set.write_tmp_file abs_filename, tmp_filename, rel_filename
-            end
-            seq = seq + 1
+        return unless prepare_tmp_dir 'tmp/set'
+        seq = 1
+        mod_dirs.each do |mod_dir|
+          mod_tmp_dir = make_set_module_tmp_dir mod_dir, seq
+          Dir.glob("#{mod_dir}/set/**/*.rb").each do |abs_filename|
+            rel_filename = abs_filename.gsub "#{mod_dir}/set/", ''
+            tmp_filename = "#{mod_tmp_dir}/#{rel_filename}"
+            Set.write_tmp_file abs_filename, tmp_filename, rel_filename
           end
+          seq = seq + 1
         end
       end
 
-
       def load_tmp_set_modules
-        patterns = Card.set_patterns.reverse.map(&:pattern_code).unshift 'abstract'
-        Dir.glob( "#{Card.paths['tmp/set'].first}/*" ).sort.each do |tmp_mod|
+        patterns = Card.set_patterns.reverse.map(&:pattern_code)
+          .unshift 'abstract'
+        Dir.glob("#{Card.paths['tmp/set'].first}/*").sort.each do |tmp_mod|
           patterns.each do |pattern|
             pattern_dir = "#{tmp_mod}/#{pattern}"
             if Dir.exists? pattern_dir
@@ -122,40 +162,37 @@ class Card
       end
 
       def make_set_module_tmp_dir mod_dir, seq
-        modname = mod_dir.match(/[^\/]+$/)[0]
-        mod_tmp_dir = "#{Card.paths['tmp/set'].first}/mod#{"%03d" % seq}-#{modname}"
+        modname = mod_dir.match(%r{[^/]+$})[0]
+        mod_tmp_dir = "#{Card.paths['tmp/set'].first}/mod#{'%03d' % seq}-#{modname}"
         Dir.mkdir mod_tmp_dir
         mod_tmp_dir
       end
 
-
       def prepare_tmp_dir path
-        if rewrite_tmp_files?
-          p = Card.paths[ path ]
-          if p.existent.first
-            FileUtils.rm_rf p.first, secure: true
-          end
-          Dir.mkdir p.first
+        return unless rewrite_tmp_files?
+        p = Card.paths[path]
+        if p.existent.first
+          FileUtils.rm_rf p.first, secure: true
         end
+        Dir.mkdir p.first
       end
 
       def rewrite_tmp_files?
-        if defined?( @@rewrite )
+        if defined?(@@rewrite)
           @@rewrite
         else
-          @@rewrite = !( Rails.env.production? and Card.paths['tmp/set'].existent.first )
+          @@rewrite = !(Rails.env.production? &&
+                      Card.paths['tmp/set'].existent.first)
         end
       end
 
       def load_dir dir
         Dir[dir].sort.each do |file|
-#          puts Benchmark.measure("from #load_dir: rd: #{file}") {
+          # puts Benchmark.measure("from #load_dir: rd: #{file}") {
           require_dependency file
-#          }.format("%n: %t %r")
+          # }.format('%n: %t %r')
         end
       end
     end
   end
-
 end
-

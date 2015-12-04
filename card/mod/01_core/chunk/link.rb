@@ -74,7 +74,7 @@ module Card::Chunk
     def replace_reference old_name, new_name
       replace_name_reference old_name, new_name
 
-      if Card::Content == @link_text
+      if Card::Content === @link_text
         @link_text.find_chunks(Card::Chunk::Reference).each do |chunk|
           chunk.replace_reference old_name, new_name
         end

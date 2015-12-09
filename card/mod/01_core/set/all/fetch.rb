@@ -30,9 +30,7 @@ module ClassMethods
       card, mark, needs_caching = fetch_from_cache_or_db mark, opts
     end
 
-    if renew? card, opts
-      needs_caching = false
-    elsif (new_card = new_for_cache card, mark, opts)
+    if (new_card = new_for_cache card, mark, opts)
       card = new_card
       needs_caching = true
     end
@@ -42,9 +40,9 @@ module ClassMethods
     standard_fetch_results card, mark, opts
   end
 
-  def renew? card, opts
-    card && card.new_card? && opts[:new].present?
-  end
+#  def renew? card, opts
+#    card && card.new_card? && opts[:new].present?
+#  end
 
   def standard_fetch_results card, mark, opts
     if card.new_card?
@@ -175,7 +173,7 @@ module ClassMethods
     # if that doesn't work, look in db
     if card.nil? || retrieve_trashed_from_db?(card, opts)
       card = fetch_from_db mark_type, mark_key, opts
-      needs_caching = card && !card.trash
+      needs_caching = card && !card.trash && !opts[:new].present?
     end
 
     [card, mark, needs_caching]

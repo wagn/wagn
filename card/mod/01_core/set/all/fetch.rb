@@ -169,7 +169,7 @@ module ClassMethods
       card.restore_subcards if card
     end
 
-    [card, mark, needs_caching]
+    [card, expanded_mark, needs_caching]
   end
 
   def fetch_from_cache_by_id id, local_only = false

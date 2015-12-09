@@ -28,8 +28,6 @@ module ClassMethods
 
     if mark.present?
       card, mark, needs_caching = fetch_from_cache_or_db mark, opts
-    else
-      return unless opts[:new]
     end
 
     if renew? card, opts
@@ -206,6 +204,7 @@ module ClassMethods
 
   def new_for_cache card, name, opts
     return if name.is_a? Integer
+    return if !name.present? && !opts[:new]
     return unless !card || (card.type_unknown? && !skip_type_lookup?(opts))
     new name: name,
         skip_modules: true,

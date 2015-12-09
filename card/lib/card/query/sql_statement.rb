@@ -30,7 +30,8 @@ class Card
       end
 
       def comment
-        "# #{@query.comment}" if @query.comment
+        return nil unless Card.config.sql_comments && @query.comment
+        "/* #{@query.comment} */"
       end
 
       def tables

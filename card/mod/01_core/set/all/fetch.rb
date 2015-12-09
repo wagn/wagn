@@ -1,9 +1,8 @@
 # = Card#fetch
 #
-# A multipurpose retrieval operator that incorporates caching, "virtual" card retrieval
-
+# A multipurpose retrieval operator that integrates caching, database lookups,
+# and "virtual" card construction
 module ClassMethods
-
   # === fetch
   #
   # looks for cards in
@@ -23,7 +22,7 @@ module ClassMethods
   #     :local_only                 Use only local cache for lookup and storing
   #     new: {  card opts }      Return a new card when not found
   #
-  def fetch mark, opts = {}
+  def fetch mark, opts={}
     validate_fetch_opts! opts
     mark = normalize_mark mark
 
@@ -43,22 +42,25 @@ module ClassMethods
     end
 
     write_to_cache card, opts if needs_caching
+    standard_fetch_results card, mark, opts
+  end
 
+  def standard_fetch_results card, mark, opts
     if card.new_card?
       case
       when opts[:new].present? then return card.renew(opts)
       when opts[:new] # noop for empty hash
       when opts[:skip_virtual] then return nil
       end
-      card.rename_from_mark mark unless opts[:local_only]
+      card.name_from_mark! mark, opts
     end
     # need to load modules here to call the right virtual? method
     card.include_set_modules unless opts[:skip_modules]
     card if opts[:new] || card.known?
   end
 
-  def fetch_local mark, opts = {}
-    fetch mark, opts.merge(:local_only=>true)
+  def fetch_local mark, opts={}
+    fetch mark, opts.merge(local_only: true)
   end
 
   def fetch_id mark
@@ -76,7 +78,7 @@ module ClassMethods
     fetch mark, skip_virtual: true, skip_modules: true
   end
 
-  def assign_or_initialize_by name, attributes, fetch_opts = {}
+  def assign_or_initialize_by name, attributes, fetch_opts={}
     if (known_card = Card.fetch(name, fetch_opts))
       known_card.refresh.assign_attributes attributes
       known_card
@@ -99,24 +101,24 @@ module ClassMethods
     card.present?
   end
 
-  def expire name, subcards = false
+  def expire name, subcards=false
     # note: calling instance method breaks on dirty names
     key = name.to_name.key
-    if card = Card.cache.read(key)
-      if subcards
-        card.expire_subcards
-      else
-        card.preserve_subcards
-      end
-      Card.cache.delete key
-      Card.cache.delete "~#{card.id}" if card.id
+    return unless (card = Card.cache.read key)
+    if subcards
+      card.expire_subcards
+    else
+      card.preserve_subcards
     end
-    # Rails.logger.warn "expiring #{name}, #{card.inspect}"
+    Card.cache.delete key
+    Card.cache.delete "~#{card.id}" if card.id
   end
 
   # set_names reverse map (cached)
-  def members key
-    (v=Card.cache.read "$#{key}").nil? ? [] : v.keys
+  # FIXME: move to set handling
+  def cached_set_members key
+    set_cache_list = Card.cache.read "$#{key}"
+    set_cache_list.nil? ? [] : set_cache_list.keys
   end
 
   def set_members set_names, key
@@ -135,9 +137,8 @@ module ClassMethods
   end
 
   def validate_fetch_opts! opts
-    if opts[:new] && opts[:skip_virtual]
-      fail Card::Error, 'fetch called with new args and skip_virtual'
-    end
+    return unless opts[:new] && opts[:skip_virtual]
+    fail Card::Error, 'fetch called with new args and skip_virtual'
   end
 
   def cache
@@ -145,30 +146,33 @@ module ClassMethods
   end
 
   def fetch_from_cache cache_key, local_only=false
-    if Card.cache
-      if local_only
-        Card.cache.read_local cache_key
-      else
-        Card.cache.read cache_key
-      end
+    return unless Card.cache
+    if local_only
+      Card.cache.read_local cache_key
+    else
+      Card.cache.read cache_key
+    end
+  end
+
+  def parse_mark! mark, opts
+    # return mark_type, mark_value, and absolutized mark
+    if mark.is_a? Integer
+      [:id, mark, mark]
+    else
+      fullname = fullname_from_name mark, opts[:new]
+      [:key, fullname.key, fullname.s]
     end
   end
 
   def fetch_from_cache_or_db mark, opts
-    needs_caching = false
-    if mark.is_a? Integer
-      mark_type = :id
-      mark_key = mark
-    else
-      mark_type = :key
-      fullname = fullname_from_name mark, opts[:new]
-      mark = fullname.s
-      mark_key = fullname.key
-    end
+    mark_type, mark_key, mark = parse_mark! mark, opts
+    needs_caching = false # until proven true :)
 
+    # look in cache
     card = send "fetch_from_cache_by_#{mark_type}", mark_key, opts[:local_only]
 
-    if card.nil? || (opts[:look_in_trash] && card.new_card? && !card.trash)
+    # if that doesn't work, look in db
+    if card.nil? || retrieve_trashed_from_db?(card, opts)
       card = fetch_from_db mark_type, mark_key, opts
       needs_caching = card && !card.trash
     end
@@ -176,13 +180,16 @@ module ClassMethods
     [card, mark, needs_caching]
   end
 
-  def fetch_from_cache_by_id id, local_only = false
-    if name = fetch_from_cache("~#{id}", local_only)
-      fetch_from_cache name, local_only
-    end
+  def retrieve_trashed_from_db? card, opts
+    opts[:look_in_trash] && card.new_card? && !card.trash
   end
 
-  def fetch_from_cache_by_key key, local_only = false
+  def fetch_from_cache_by_id id, local_only=false
+    name = fetch_from_cache "~#{id}", local_only
+    fetch_from_cache name, local_only if name
+  end
+
+  def fetch_from_cache_by_key key, local_only=false
     fetch_from_cache key, local_only
   end
 
@@ -223,8 +230,6 @@ module ClassMethods
     Card.cache.write_local "~#{card.id}", card.key if card.id && card.id != 0
   end
 
-
-
   def normalize_mark mark
     case mark
     when String
@@ -244,7 +249,7 @@ module ClassMethods
   end
 
   def fullname_from_name name, new_opts={}
-    if new_opts && supercard = new_opts[:supercard]
+    if new_opts && (supercard = new_opts[:supercard])
       name.to_name.to_absolute_name supercard.name
     else
       name.to_name
@@ -306,7 +311,8 @@ def type_unknown?
   type_id.nil?
 end
 
-def rename_from_mark mark
+def name_from_mark! mark, opts
+  return if opts[:local_only]
   return unless mark && mark.to_s != name
   self.name = mark.to_s
 end

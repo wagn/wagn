@@ -36,6 +36,8 @@ Wagn.application.class.configure do
   # See everything in the log (default is :info)
   config.log_level = :info
 
+  config.sql_comments = false
+
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new
 

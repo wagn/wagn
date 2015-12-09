@@ -227,7 +227,7 @@ def junction_only?()
 end
 
 def reset_set_patterns
-  Card.members( key ).each do |mem|
+  Card.cached_set_members(key).each do |mem|
     Card.expire mem
   end
 end

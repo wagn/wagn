@@ -18,7 +18,8 @@ class Card
       end
 
       def to_s
-        ["SELECT DISTINCT #{@fields}",
+        [comment,
+         "SELECT DISTINCT #{@fields}",
          "FROM #{@tables}",
          @joins,
          @where,
@@ -26,6 +27,10 @@ class Card
          @order,
          @limit_and_offset
         ].compact * "\n"
+      end
+
+      def comment
+        "# #{@query.comment}" if @query.comment
       end
 
       def tables

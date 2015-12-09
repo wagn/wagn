@@ -156,20 +156,24 @@ module ClassMethods
 
   def fetch_from_cache_or_db mark, opts
     needs_caching = false
-    mark_type = mark.is_a?(Integer) ? :id : :key
-    expanded_mark = expand_mark mark, opts
-    card = send("fetch_from_cache_by_#{mark_type}",
-                expanded_mark, opts[:local_only])
-
-    if card.nil? || (opts[:look_in_trash] && card.new_card? && !card.trash)
-      query = { mark_type => expanded_mark }
-      query[:trash] = false unless opts[:look_in_trash]
-      card = fetch_from_db query
-      needs_caching = card && !card.trash
-      card.restore_subcards if card
+    if mark.is_a? Integer
+      mark_type = :id
+      mark_key = mark
+    else
+      mark_type = :key
+      fullname = fullname_from_name mark, opts[:new]
+      mark = fullname.s
+      mark_key = fullname.key
     end
 
-    [card, expanded_mark, needs_caching]
+    card = send "fetch_from_cache_by_#{mark_type}", mark_key, opts[:local_only]
+
+    if card.nil? || (opts[:look_in_trash] && card.new_card? && !card.trash)
+      card = fetch_from_db mark_type, mark_key, opts
+      needs_caching = card && !card.trash
+    end
+
+    [card, mark, needs_caching]
   end
 
   def fetch_from_cache_by_id id, local_only = false
@@ -182,8 +186,12 @@ module ClassMethods
     fetch_from_cache key, local_only
   end
 
-  def fetch_from_db query
-    Card.where(query).take
+  def fetch_from_db mark_type, mark_key, opts
+    query = { mark_type => mark_key }
+    query[:trash] = false unless opts[:look_in_trash]
+    card = Card.where(query).take
+    card.restore_subcards if card
+    card
   end
 
   def new_for_cache name, opts
@@ -215,13 +223,7 @@ module ClassMethods
     Card.cache.write_local "~#{card.id}", card.key if card.id && card.id != 0
   end
 
-  def expand_mark mark, opts
-    if mark.is_a?(Integer)
-      mark
-    else
-      fullname_from_name(mark, opts[:new]).key
-    end
-  end
+
 
   def normalize_mark mark
     case mark

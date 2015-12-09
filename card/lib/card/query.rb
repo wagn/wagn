@@ -70,11 +70,12 @@ class Card
 
     DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
 
-    attr_reader :statement, :mods, :conditions,
+    attr_reader :statement, :mods, :conditions, :comment,
       :subqueries, :superquery
     attr_accessor :joins, :table_seq, :unjoined, :conditions_on_join
 
-    def initialize statement
+    def initialize statement, comment=nil
+      @comment = comment
       @subqueries = []
       @conditions = []
       @joins = []
@@ -96,8 +97,8 @@ class Card
     # a card identifier from SQL and then hooking into our caching system (see
     # Card::Fetch)
 
-    def self.run statement
-      new(statement).run
+    def self.run statement, comment=nil
+      new(statement, comment).run
     end
 
     # run the current query

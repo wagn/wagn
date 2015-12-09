@@ -32,17 +32,20 @@ module ClassMethods
       return unless opts[:new]
     end
 
-    if mark.is_a?(Integer)
-      return if card.nil?
-    elsif card && card.new_card? && opts[:new].present?
-      return card.renew(opts)
-    elsif !card || (card.type_unknown? && !skip_type_lookup?(opts))
+    if renew? card, opts
+      needs_caching = false
+    elsif (new_card = new_for_cache card, mark, opts)
+      card = new_card
       needs_caching = true
-      card = new_for_cache mark, opts # new (or improved) card for cache
     end
 
+    return if card.nil?
     write_to_cache card, opts if needs_caching
     standard_fetch_results card, mark, opts
+  end
+
+  def renew? card, opts
+    card && card.new_card? && opts[:new].present?
   end
 
   def standard_fetch_results card, mark, opts
@@ -201,7 +204,9 @@ module ClassMethods
     card
   end
 
-  def new_for_cache name, opts
+  def new_for_cache card, name, opts
+    return if name.is_a? Integer
+    return unless !card || (card.type_unknown? && !skip_type_lookup?(opts))
     new name: name,
         skip_modules: true,
         skip_type_lookup: skip_type_lookup?(opts)

@@ -7,6 +7,8 @@ describe Card::Set::All::Base do
     it("name"    ) { expect(render_card(:name)).to      eq('Tempo Rary') }
     it("key"     ) { expect(render_card(:key)).to       eq('tempo_rary') }
     it("linkname") { expect(render_card(:linkname)).to  eq('Tempo_Rary') }
+    it("plural")   { expect(render_card(:plural)).to    eq('Tempo Raries') }
+    it("singular")   { expect(render_card(:singular)).to    eq('Tempo Rary') }
 
     it "url" do
       Card::Env[:protocol] = 'http://'

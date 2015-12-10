@@ -14,6 +14,8 @@ format do
   view(:linkname, simple_args) { card.cardname.url_key               }
   view(:url,      simple_args) { card_url _render_linkname           }
   view(:url_link, simple_args) { web_link card_url(_render_linkname) }
+  view(:singular, simple_args) { card.name.singularize               }
+  view(:plural,   simple_args) { card.name.pluralize                 }
 
   view :link, closed: true, perms: :none do |args|
     card_link(

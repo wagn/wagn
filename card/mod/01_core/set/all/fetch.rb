@@ -38,10 +38,6 @@ module ClassMethods
     standard_fetch_results card, mark, opts
   end
 
-#  def renew? card, opts
-#    card && card.new_card? && opts[:new].present?
-#  end
-
   def standard_fetch_results card, mark, opts
     if card.new_card?
       case
@@ -60,13 +56,12 @@ module ClassMethods
     fetch mark, opts.merge(local_only: true)
   end
 
-  def fetch_id mark
+  def fetch_id mark, opts={}
+    mark = normalize_mark mark, opts
     if mark.is_a?(Integer)
       mark
-    elsif mark.is_a?(Symbol) && Card::Codename[mark]
-      Card::Codename[mark]
     else
-      card = quick_fetch mark.to_s
+      card = quick_fetch mark
       card && card.id
     end
   end

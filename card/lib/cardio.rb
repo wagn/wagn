@@ -2,16 +2,14 @@
 
 require 'active_support/core_ext/numeric/time'
 
-
 module Cardio
-
   CARD_GEM_ROOT = File.expand_path('../..', __FILE__)
 
   ActiveSupport.on_load :card do
     if Card.take
       Card::Loader.load_mods
     else
-      Rails.logger.warn "empty database"
+      Rails.logger.warn 'empty database'
     end
   end
 
@@ -36,7 +34,7 @@ module Cardio
       set_default_value config, :recaptcha_private_key,  nil
       set_default_value config, :recaptcha_proxy,        nil
 
-      set_default_value config, :cache_store,            :file_store, 'tmp/cache'
+      set_default_value config, :cache_store,           :file_store, 'tmp/cache'
       set_default_value config, :override_host,          nil
       set_default_value config, :override_protocol,      nil
 
@@ -52,6 +50,7 @@ module Cardio
       set_default_value config, :space_last_in_multispace, true
       set_default_value config, :closed_search_limit,    50
 
+      set_default_value config, :non_createable_types,  %w{ signup setting set }
       set_default_value config, :view_cache,             false
     end
 
@@ -62,7 +61,6 @@ module Cardio
       config.send("#{setting}=", *value) unless config.respond_to? setting
     end
 
-
     def set_paths paths
       @@paths = paths
       add_path 'tmp/set', root: root
@@ -70,20 +68,18 @@ module Cardio
 
       add_path 'mod'
 
-      add_path "db"
+      add_path 'db'
       add_path 'db/migrate'
-      add_path "db/migrate_core_cards"
-      add_path "db/migrate_deck_cards", root: root, with: 'db/migrate_cards'
-      add_path "db/seeds", with: "db/seeds.rb"
+      add_path 'db/migrate_core_cards'
+      add_path 'db/migrate_deck_cards', root: root, with: 'db/migrate_cards'
+      add_path 'db/seeds', with: 'db/seeds.rb'
 
       add_path 'config/initializers',  glob: '**/*.rb'
-
     end
-
 
     def set_mod_paths
       each_mod_path do |mod_path|
-        Dir.glob( "#{mod_path}/*/initializers" ).each do |initializers_dir|
+        Dir.glob("#{mod_path}/*/initializers").each do |initializers_dir|
           paths['config/initializers'] << initializers_dir
         end
       end
@@ -105,13 +101,13 @@ module Cardio
 
     def add_path path, options={}
       root = options.delete(:root) || gem_root
-      options[:with] = File.join(root, (options[:with] || path) )
+      options[:with] = File.join(root, (options[:with] || path))
       paths.add path, options
     end
 
     def future_stamp
-      ## used in test data
-      @@future_stamp ||= Time.local 2020,1,1,0,0,0
+      # # used in test data
+      @@future_stamp ||= Time.zone.local 2020, 1, 1, 0, 0, 0
     end
 
     def migration_paths type
@@ -126,7 +122,9 @@ module Cardio
 
     def assume_migrated_upto_version type
       Cardio.schema_mode(type) do
-        ActiveRecord::Schema.assume_migrated_upto_version Cardio.schema(type), Cardio.migration_paths(type)
+        ActiveRecord::Schema.assume_migrated_upto_version(
+          Cardio.schema(type), Cardio.migration_paths(type)
+        )
       end
     end
 
@@ -143,7 +141,7 @@ module Cardio
       dir += "/#{id}" if id
       FileUtils.rm_rf dir, secure: true
     rescue
-      Rails.logger.info "failed to remove tmp files"
+      Rails.logger.info 'failed to remove tmp files'
     end
 
     def schema_mode type
@@ -157,16 +155,14 @@ module Cardio
     end
 
     def schema type=nil
-      File.read( schema_stamp_path type ).strip
+      File.read(schema_stamp_path type).strip
     end
 
     def schema_stamp_path type
-      root_dir = ( type == :deck_cards ? root : gem_root )
-      stamp_dir = ENV['SCHEMA_STAMP_PATH'] || File.join( root_dir, 'db' )
+      root_dir = (type == :deck_cards ? root : gem_root)
+      stamp_dir = ENV['SCHEMA_STAMP_PATH'] || File.join(root_dir, 'db')
 
       File.join stamp_dir, "version#{ schema_suffix(type) }.txt"
     end
-
   end
 end
-

@@ -8,6 +8,13 @@ describe Card::Query do
     Card::Query.run @query.reverse_merge return: :name, sort: :name
   end
 
+  it 'should not alter original statement' do
+    @query = { right_plus: { name: %w( in tag source ) } }
+    query_clone = @query.deep_clone
+    subject # runs query
+    expect(query_clone).to eq(@query)
+  end
+
   describe 'append' do
     it 'should find real cards' do
       @query = {

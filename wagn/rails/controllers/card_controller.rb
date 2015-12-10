@@ -228,8 +228,8 @@ class CardController < ActionController::Base
 
     @card ||= Card.new
     Card::Error.current = exception
-
     view =
+
       case exception
       ## arguably the view and status should be defined in the error class;
       ## some are redundantly defined in view

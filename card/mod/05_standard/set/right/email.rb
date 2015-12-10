@@ -1,10 +1,11 @@
-#event :
 include All::Permissions::Accounts
 
-view :raw do |args|
+view :raw do
   case
-  when card.real?          ; card.content
-  when card.left.account   ; card.left.account.email #this supports legacy behavior (should be moved to User+*email+*type plus right)
+  when card.real? then card.content
+  # following supports legacy behavior
+  # (should be moved to User+*email+*type plus right)
+  when card.left.account then card.left.account.email
   else ''
   end
 end
@@ -22,7 +23,7 @@ event :validate_unique_email, after: :validate_email, on: :save do
     Auth.as_bot do
       wql = { right_id: Card::EmailID, eq: content }
       wql[:not] = { id: id } if id
-      if Card.search( wql ).first
+      if Card.search(wql).first
         errors.add :content, 'must be unique'
       end
     end
@@ -30,9 +31,8 @@ event :validate_unique_email, after: :validate_email, on: :save do
 end
 
 event :downcase_email, before: :approve, on: :save do
-  if content and content != content.downcase
-    self.content = content.downcase
-  end
+  return if !content || content == content.downcase
+  self.content = content.downcase
 end
 
 def email_required?
@@ -40,13 +40,14 @@ def email_required?
 end
 
 def ok_to_read
-  if is_own_account? or Auth.always_ok?
+  if own_email? || Auth.always_ok?
     true
   else
-    deny_because "viewing email is restricted to administrators and account holders"
+    deny_because 'viewing email is restricted to administrators and ' \
+                 'account holders'
   end
 end
 
-def is_own_account?
-  cardname.parts[0].to_name.key == Auth.as_card.cardname.key
+def own_email?
+  cardname.part_names[0].key == Auth.as_card.key
 end

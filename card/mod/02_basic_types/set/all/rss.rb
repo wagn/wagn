@@ -59,9 +59,9 @@ format :rss do
     @xml.guid render_url
   end
 
-  view :feed_description { '' }
-  view :comment_box      { '' }
-  view :menu             { '' }
+  view :feed_description do '' end
+  view :comment_box      do '' end
+  view :menu             do '' end
 
   view :open,         view: :titled, mod: All::Base::Format
   view :content,      view: :core,   mod: All::Base::Format

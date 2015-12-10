@@ -86,7 +86,7 @@ class Card
 
     def field_of? context_name
       if context_name.present?
-        children_of?(context_name) && relative_name(context_name).length == 2
+        child_of?(context_name) && relative_name(context_name).length == 2
       else
         s.match(/^\s*\+[^+]+$/)
       end

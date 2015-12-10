@@ -8,15 +8,6 @@ module <%= app_const_base %>
 
     # Wagn inherits Rails configuration options.  See http://guides.rubyonrails.org/configuring.html
 
-    config.recaptcha_public_key  = '6LeoHfESAAAAAN1NdQeYHREq4jTSQhu1foEzv6KC'
-    config.recaptcha_private_key = '6LeoHfESAAAAAHLZpn7ijrO4_KGLEr2nGL4qjjis'
-
-    # config.recaptcha_proxy = ...
-    #
-    # IMPORTANT: please be sure to register for your own recaptcha keys before deploying a live site
-    # It's quick and easy.  Just follow instructions at https://www.google.com/recaptcha/admin/create
-
-
     # Email configuration
 
     config.action_mailer.perform_deliveries = false

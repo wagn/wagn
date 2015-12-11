@@ -61,7 +61,7 @@ module ClassMethods
     if mark.is_a?(Integer)
       mark
     else
-      card = quick_fetch mark
+      card = quick_fetch mark.to_s
       card && card.id
     end
   end
@@ -231,13 +231,13 @@ module ClassMethods
 
   def normalize_mark mark, opts
     case mark
-    when Symbol  then Card::Codename[mark]
-    when Integer then mark
+    when Symbol        then Card::Codename[mark]
+    when Integer       then mark.to_i
     when String, Card::Name
       case mark.to_s
       when /^\~(\d+)$/ then $1.to_i                   # id
       when /^\:(\w+)$/ then Card::Codename[$1.to_sym] # codename
-      else fullname_from_mark mark, opts[:new]        # name
+      else fullname_from_mark mark, opts[:new]          # name
       end
     end
   end

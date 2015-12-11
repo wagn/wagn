@@ -1,38 +1,33 @@
-=begin
-
-*DATABASE_CONTENT*
-if in mod:
-  :codename/modname.ext
-else
-  ~card_id/action_id.ext
-
-*FILE SYSTEM*
-if in mod
-  (mod_dir)/files/codename/type_code-variant.ext  (no colon on codename!)
-else
-  (files_dir)/id/action_id-variant.ext            (no tilde on id!)
-
-variant = icon|small|medium|large|original  (only for images)
-
-*URLS*
-mark.ext
-mark/revision.ext
-mark/revision-variant.ext
-
-revision = modname or action_id
-
-Examples:
-~22/33-medium.png
-:yeti_skin/05_standard-large.png
-
-=end
-
+# *DATABASE_CONTENT*
+# if in mod:
+#   :codename/modname.ext
+# else
+#   ~card_id/action_id.ext
+#
+# *FILE SYSTEM*
+# if in mod
+#   (mod_dir)/files/codename/type_code-variant.ext  (no colon on codename!)
+# else
+#   (files_dir)/id/action_id-variant.ext            (no tilde on id!)
+#
+# variant = icon|small|medium|large|original  (only for images)
+#
+# *URLS*
+# mark.ext
+# mark/revision.ext
+# mark/revision-variant.ext
+#
+# revision = modname or action_id
+#
+# Examples:
+# ~22/33-medium.png
+# :yeti_skin/05_standard-large.png
 
 module CarrierWave::Uploader::Versions
   private
 
   # put version at the end of the filename
-  def full_filename(for_file)
+  def full_filename for_file
     name = super(for_file)
     parts = name.split '.'
     basename = [parts.shift, version_name].compact.join('-')
@@ -56,9 +51,9 @@ class FileUploader < CarrierWave::Uploader::Base
 
   def extension
     case
-    when file && file.extension.present? ; ".#{file.extension}"
-    when card_content = model.content    ; File.extname(card_content)
-    when orig = original_filename        ; File.extname(orig)
+    when file && file.extension.present? then ".#{file.extension}"
+    when card_content = model.content    then File.extname(card_content)
+    when orig = original_filename        then File.extname(orig)
     else                                   ''
     end.downcase
   end
@@ -68,7 +63,7 @@ class FileUploader < CarrierWave::Uploader::Base
     if opts[:mod] && !model.load_from_mod
       model.load_from_mod = opts[:mod]
     end
-    "%s/%s" % [file_dir, url_filename(opts)]
+    '%s/%s' % [file_dir, url_filename(opts)]
   end
 
   def url_filename opts={}
@@ -84,7 +79,8 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   def url opts = {}
-    "%s/%s/%s" % [card_path(Card.config.files_web_path), file_dir, full_filename(url_filename(opts))]
+    '%s/%s/%s' % [card_path(Card.config.files_web_path), file_dir,
+                  full_filename(url_filename(opts))]
   end
 
   def file_dir
@@ -104,8 +100,9 @@ class FileUploader < CarrierWave::Uploader::Base
   # Carrierwave calls store_path without argument when it stores the file
   # and with the identifier from the db when it retrieves the file
   # In our case the first part of our identifier is not part of the path
-  # but we can construct the filename from db data. So we don't need the identifier.
-  def store_path(for_file=nil) #
+  # but we can construct the filename from db data. So we don't need the
+  # identifier.
+  def store_path for_file=nil
     if for_file
       retrieve_path
     else
@@ -124,17 +121,18 @@ class FileUploader < CarrierWave::Uploader::Base
     File.join model.tmp_upload_dir, filename
   end
 
-  def create_versions? new_file
+  def create_versions? _new_file
     model.create_versions?
   end
 
   # paperclip compatibility used in type/file.rb#core (base format)
-  def path(version=nil)
+  def path version=nil
     version ? versions[version].path : super()
   end
 
   def original_filename
-    @original_filename ||= (model.selected_action && model.selected_action.comment)
+    @original_filename ||= model.selected_action &&
+                           model.selected_action.comment
   end
 
   def store_dir

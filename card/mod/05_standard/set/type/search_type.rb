@@ -4,11 +4,12 @@ def item_cards params={}
   raise('OH NO.. no limit') unless s[:limit]
   # forces explicit limiting
   # can be 0 or less to force no limit
-  Card.search(s)
+  Query.run(s, name)
 end
 
 def item_names params={}
-  Card.search(query(params.merge(return: :name)))
+  statement = query params.merge(return: :name)
+  Query.run(statement, name)
 end
 
 def item_type

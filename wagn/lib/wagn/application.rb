@@ -49,8 +49,9 @@ module Wagn
         config.assets.enabled = false
         config.assets.version = '1.0'
 
-        config.encoding              = "utf-8"
-        config.filter_parameters    += [:password]
+        config.filter_parameters += [:password]
+
+        config.encoding              = 'utf-8'
         config.no_authentication     = false
         config.files_web_path        = 'files'
 
@@ -60,6 +61,7 @@ module Wagn
         config.revisions_per_page    = 10
         config.request_logger        = false
         config.performance_logger    = false
+        config.sql_comments          = true
         config
       end
     end

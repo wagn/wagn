@@ -13,14 +13,11 @@ class Card
       end
 
       def parse_value rawvalue
-        operator =
-          case rawvalue
-          when Array;     rawvalue.shift
-          when String;    '='
-          when Integer;   '='
-          else raise("Invalid Condition Clause #{rawvalue}.inspect}")
-          end
-        [operator, rawvalue]
+        case rawvalue
+        when String, Integer then ['=', rawvalue]
+        when Array           then [rawvalue[0], rawvalue[1..-1]]
+        else raise("Invalid Condition Clause #{rawvalue}.inspect}")
+        end
       end
 
       def canonicalize_operator

@@ -1,30 +1,29 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency File.expand_path( '../reference', __FILE__ )
+require_dependency File.expand_path('../reference', __FILE__)
 
 module Card::Chunk
   class Link < Reference
     attr_reader :link_text
     word = /\s*([^\]\|]+)\s*/
     # Groups: $1, [$2]: [[$1]] or [[$1|$2]] or $3, $4: [$3][$4]
-    Card::Chunk.register_class self, {
-      prefix_re: '\\[',
-      full_re:   /^\[\[([^\]]+)\]\]/,
-      idx_char:  '['
-    }
+    Card::Chunk.register_class self,
+                               prefix_re: '\\[',
+                               full_re:   /^\[\[([^\]]+)\]\]/,
+                               idx_char:  '['
 
-    def interpret match, content
+    def interpret match, _content
       target, @link_text =
         if (raw_syntax = match[1])
-          if i = divider_index( raw_syntax )  # [[ A | B ]]
-            [ raw_syntax[0..(i-1)], raw_syntax[(i+1)..-1] ]
+          if (i = divider_index(raw_syntax))  # [[A | B]]
+            [raw_syntax[0..(i-1)], raw_syntax[(i+1)..-1]]
           else                                # [[ A ]]
-            [ raw_syntax, nil ]
+            [raw_syntax, nil]
           end
         end
 
       @link_text = objectify @link_text
-      if target =~ /\/|mailto:/
+      if target =~ %r(/|mailto:)
         @explicit_link = objectify target
       else
         @name = target
@@ -32,28 +31,24 @@ module Card::Chunk
     end
 
     def divider_index string
-      #there's probably a better way to do the following.  point is to find the first pipe that's not inside an inclusion
-
-      if string.index '|'
-        string_copy = "#{string}" # had to do this to create new string?!
-        string.scan /\{\{[^\}]*\}\}/ do |incl|
-          string_copy.gsub! incl, ('x'*incl.length)
-        end
-        string_copy.index '|'
+      # there's probably a better way to do the following.  point is to find the first pipe that's not inside an inclusion
+      return unless string.index '|'
+      string_copy = "#{string}" # had to do this to create new string?!
+      string.scan /\{\{[^\}]*\}\}/ do |incl|
+        string_copy.gsub! incl, ('x' * incl.length)
       end
+      string_copy.index '|'
     end
 
     def objectify raw
-      if raw
-        raw.strip!
-        if raw =~ /(^|[^\\])\{\{/
-          Card::Content.new raw, format
-        else
-          raw
-        end
+      return unless raw
+      raw.strip!
+      if raw =~ /(^|[^\\])\{\{/
+        Card::Content.new raw, format
+      else
+        raw
       end
     end
-
 
     def render_link
       @link_text = render_obj @link_text
@@ -62,7 +57,8 @@ module Card::Chunk
         @explicit_link = render_obj @explicit_link
         format.web_link @explicit_link, text: @link_text
       elsif @name
-        format.card_link referee_name, text: @link_text, known: referee_card.send_if(:known?)
+        format.card_link referee_name, text: @link_text,
+                                       known: referee_card.send_if(:known?)
       end
     end
 
@@ -71,19 +67,26 @@ module Card::Chunk
     end
 
     def inspect
-      "<##{self.class}:e[#{@explicit_link}]n[#{@name}]l[#{@link_text}] p[#{@process_chunk}] txt:#{@text}>"
+      "<##{self.class}:e[#{@explicit_link}]n[#{@name}]l[#{@link_text}]" \
+      "p[#{@process_chunk}] txt:#{@text}>"
     end
 
     def replace_reference old_name, new_name
       replace_name_reference old_name, new_name
 
-      if Card::Content===@link_text
-        @link_text.find_chunks(Card::Chunk::Reference).each { |chunk| chunk.replace_reference old_name, new_name }
-      else
-        @link_text = new_name if old_name.to_name == @link_text
+      if Card::Content === @link_text
+        @link_text.find_chunks(Card::Chunk::Reference).each do |chunk|
+          chunk.replace_reference old_name, new_name
+        end
+      elsif old_name.to_name == @link_text
+        @link_text = new_name
       end
 
-      @text = @link_text.nil? ? "[[#{referee_name.to_s}]]" : "[[#{referee_name.to_s}|#{@link_text}]]"
+      @text = if @link_text.nil?
+                "[[#{referee_name}]]"
+              else
+                "[[#{referee_name}|#{@link_text}]]"
+              end
     end
   end
 end

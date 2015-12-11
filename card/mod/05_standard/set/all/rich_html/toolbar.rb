@@ -213,9 +213,9 @@ format :html do
       path_opts = tag_args.delete(:path_opts) || {}
       path_opts.merge! action: tag_args.delete(:action) if tag_args[:action]
       link_to link_text, path_opts, tag_args
+
     end
   end
-
   def autosaved_draft_link
     view_link('autosaved draft', :edit, path_opts: {edit_draft: true, slot: {show: :toolbar}}, class: 'navbar-link slotter pull-right')
   end

@@ -51,7 +51,7 @@ describe Card::Set::All::Base do
         Card.create! name: 'n+c', type: 'Number', content: '30'
         c = Card.new name: 'nplusarray',
                      content: '{{n+*children+by create|array}}'
-        expect(c.format._render(:core)).to eq(%{['10', "say:\\"what\\"', '30"]})
+        expect(c.format._render(:core)).to eq(%{["10", "say:\\"what\\"", "30"]})
       end
 
       it 'of pointer items' do
@@ -61,11 +61,11 @@ describe Card::Set::All::Base do
         Card.create! name: 'npoint', type: 'Pointer',
                      content: "[[n+a]]\n[[n+b]]\n[[n+c]]"
         c = Card.new name: 'npointArray', content: '{{npoint|array}}'
-        expect(c.format._render(:core)).to eq(%q{['10', '20', '30']})
+        expect(c.format._render(:core)).to eq(%{["10", "20", "30"]})
       end
 
       it 'of basic items' do
-        expect(render_card(:array, content: 'yoing')).to eq(%{['yoing']})
+        expect(render_card(:array, content: 'yoing')).to eq(%{["yoing"]})
       end
     end
     it 'renders template rule of embed cards based on set' do

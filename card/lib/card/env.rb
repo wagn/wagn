@@ -9,7 +9,7 @@ class Card
       def reset args={}
         @@env = { main_name: nil }
 
-        if c = args[:controller]
+        if (c = args[:controller])
           self[:controller] = c
           self[:session]    = c.request.session
           self[:params]     = c.params
@@ -42,6 +42,9 @@ class Card
         self[:success] ||= Card::Success.new(cardname, params[:success])
       end
 
+      def localhost?
+        self[:host] && self[:host] =~ /^localhost/
+      end
 
       def ajax?
         self[:ajax]

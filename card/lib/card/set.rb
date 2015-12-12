@@ -216,7 +216,6 @@ class Card
       class_eval do
         define_method event do
           # Rails.logger.rspec event
-          # puts "#{self.name}: #{event}"
           run_callbacks event do
             send call_method
           end

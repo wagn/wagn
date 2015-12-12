@@ -82,6 +82,56 @@ body.mceContentBody {
 }
 
 
+/*----------- Sidebar -------------*/
+
+.row.row-offcanvas {
+  > aside, article {
+    margin: 0;
+  }
+}
+
+/* collapsed sidebar styles */
+@media screen and (max-width: 767px) {
+  .row-offcanvas {
+    position: relative;
+    -webkit-transition: all 0.25s ease-out;
+    -moz-transition: all 0.25s ease-out;
+    transition: all 0.25s ease-out;
+  }
+
+  .sidebar-offcanvas-right {
+    right: -41.6%;
+  }
+
+  .sidebar-offcanvas-left {
+    left: -41.6%;
+  }
+  .row-offcanvas.right-active {
+    right: 41.6%;
+  }
+  .row-offcanvas.left-active {
+    left: 41.6%;
+  }
+  .sidebar-offcanvas {
+    position: absolute !important;
+    top: 0 !important;
+    width: 41.6% !important;
+  }
+}
+
+.offcanvas-toggle {
+  font-size: 10px !important;
+  padding: 5px !important;
+  margin-bottom: 15px !important;
+}
+.offcanvas-toggle-right {
+  float: right;
+}
+.offcanvas-toggle-left {
+  float: left;
+}
+
+
 /*---------- Card menu ------------*/
 
 @media (min-width: $screen-xs-max) {

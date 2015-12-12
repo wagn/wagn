@@ -18,7 +18,8 @@ class Card
       end
 
       def to_s
-        ["SELECT DISTINCT #{@fields}",
+        [comment,
+         "SELECT DISTINCT #{@fields}",
          "FROM #{@tables}",
          @joins,
          @where,
@@ -26,6 +27,11 @@ class Card
          @order,
          @limit_and_offset
         ].compact * "\n"
+      end
+
+      def comment
+        return nil unless Card.config.sql_comments && @query.comment
+        "/* #{@query.comment} */"
       end
 
       def tables
@@ -150,7 +156,7 @@ class Card
       def permission_conditions query
         return if Auth.always_ok?
         read_rules = Auth.as_card.read_rules
-        read_rule_list = read_rules.nil? ? 1 : read_rules.join(',')
+        read_rule_list = read_rules.present? ? read_rules.join(',') : 1
         "#{query.table_alias}.read_rule_id IN (#{read_rule_list})"
       end
 
@@ -210,7 +216,7 @@ class Card
         "#{order_field} #{dir}"
       end
 
-      def safe_sql(txt)
+      def safe_sql txt
         txt = txt.to_s
         if txt.match(/[^\w\*\(\)\s\.\,]/)
           fail "WQL contains disallowed characters: #{txt}"
@@ -219,7 +225,7 @@ class Card
         end
       end
 
-      def cast_type(type)
+      def cast_type type
         cxn ||= ActiveRecord::Base.connection
         (val = cxn.cast_types[type.to_sym]) ? val[:name] : safe_sql(type)
       end

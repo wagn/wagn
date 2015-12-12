@@ -186,22 +186,22 @@ def follower_ids
   end
 end
 
-
 def direct_followers
   direct_follower_ids.map do |id|
     Card.fetch(id)
   end
 end
 
-# all ids of users that follow this card because of a follow rule that applies to this card
-# doesn't include users that follow this card because they are following parent cards or other cards that include this card
+# all ids of users that follow this card because of a follow rule that applies
+# to this card doesn't include users that follow this card because they are
+# following parent cards or other cards that include this card
 def direct_follower_ids args={}
   result = ::Set.new
   with_follower_candidate_ids do
     set_names.each do |set_name|
       set_card = Card.fetch(set_name)
       set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
-        if (!result.include? user_id) and self.follow_rule_applies?(user_id)
+        if (!result.include? user_id) && self.follow_rule_applies?(user_id)
           result << user_id
         end
       end
@@ -216,7 +216,8 @@ def all_direct_follower_ids_with_reason
     set_names.each do |set_name|
       set_card = Card.fetch(set_name)
       set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
-        if (!visited.include?(user_id)) && (follow_option = self.follow_rule_applies?(user_id))
+        if (!visited.include?(user_id)) &&
+           (follow_option = self.follow_rule_applies?(user_id))
           visited << user_id
           yield(user_id, set_card: set_card, option: follow_option)
         end
@@ -224,8 +225,6 @@ def all_direct_follower_ids_with_reason
     end
   end
 end
-
-
 
 #~~~~~ cache methods
 
@@ -240,7 +239,6 @@ def read_follower_ids_cache
 end
 
 module ClassMethods
-
   def follow_caches_expired
     Card.clear_follower_ids_cache
     Card.clear_user_rule_cache
@@ -257,6 +255,4 @@ module ClassMethods
   def clear_follower_ids_cache
     Card.cache.write FOLLOWER_IDS_CACHE_KEY, nil
   end
-
 end
-

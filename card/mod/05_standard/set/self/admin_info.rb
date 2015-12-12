@@ -1,3 +1,7 @@
+def clean_html?
+  false
+end
+
 format :html do
   view :core do
     warnings = []
@@ -5,7 +9,8 @@ format :html do
       warnings << email_warning
     end
     if Card.config.recaptcha_public_key ==
-       Card::Auth::DEFAULT_RECAPTCHA_SETTINGS[:recaptcha_public_key]
+       Card::Auth::DEFAULT_RECAPTCHA_SETTINGS[:recaptcha_public_key] &&
+       card.rule(:captcha) == '1'
       warnings << recaptcha_warning
     end
     return '' if warnings.empty?
@@ -32,13 +37,46 @@ format :html do
   end
 
   def recaptcha_warning
-    process_content(%{
-      You are using Wagn's default recaptcha key.
-      That's fine for a local installation.
-      If you want to use recaptcha for a publicly available Wagn installation
-      you have to register your domain at http://google.com/recaptcha and
-      add your keys to [[*recaptcha settings]]. To turn off captchas go to the
-      captcha rule card [[*all+*captcha]]
-    }).html_safe
+    warning =
+      if Card::Env.localhost?
+        %{Your captcha is currently working with temporary settings. This is fine for a local installation, but you will need new recaptcha keys if you want to make this site public.}
+      else
+        process_content(%{You are configured to use [[*captcha]], but for that to work you need new recaptcha keys.
+          })
+      end
+    <<-HTML
+      <p>
+        #{warning}
+      </p>
+      <h4>Instructions</h4>
+      #{howto_add_new_recaptcha_keys}
+      #{howto_turn_captcha_off}
+    HTML
+  end
+
+  def instructions title, steps
+    steps = list_tag steps, class: 'list-group',
+                            items: { class: 'list-group-item' }
+    "#{title}#{steps}"
+  end
+
+  def howto_add_new_recaptcha_keys
+    instructions(
+      'How to add new recaptcha keys:',
+      [
+        "1. Register your domain at  #{web_link 'http://google.com/recaptcha'}",
+        "2. Add your keys to #{card_link :recaptcha_settings}"
+      ]
+    )
+  end
+
+  def howto_turn_captcha_off
+    instructions(
+      'How to turn captcha off:',
+      [
+        "1. Go to #{card_link :captcha}",
+        '2. Update all *captcha rules to "no".'
+      ]
+    )
   end
 end

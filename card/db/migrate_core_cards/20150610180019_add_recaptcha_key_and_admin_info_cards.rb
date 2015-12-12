@@ -1,18 +1,18 @@
 # -*- encoding : utf-8 -*-
 
-class AddRecaptchaKeyCards < Card::CoreMigration
+class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
   def up
-    create_admin_cards
     create_recaptcha_settings
+    Card::Cache.reset_global
+    create_admin_cards
     update_machine_output
   end
 
   def create_admin_cards
     admin_only name: '*admin info',
-               codename: 'admin_info',
+               codename: 'admin_info'
     admin_only name: '*google_analytics_key',
-               codename: 'google_analytics_key',
-
+               codename: 'google_analytics_key'
 
     codenames = %w(debugger recaptcha_settings)
     content =
@@ -21,7 +21,8 @@ class AddRecaptchaKeyCards < Card::CoreMigration
       end.join "\n"
     admin_only name: '*admin settings',
                codename: 'admin_settings',
-               type_id: Card::PointerID, content: content,
+               type_id: Card::PointerID,
+               content: content
 
     home = Card['Home+original']
     new_content = home.content.prepend "{{*admin info|content}}\n"
@@ -33,11 +34,11 @@ class AddRecaptchaKeyCards < Card::CoreMigration
                codename: :recaptcha_settings, type_id: Card::PointerID,
                content: "[[+public key]]\n" \
                         "[[+private key]]\n" \
-                        "[[+proxy]]"
-
+                        '[[+proxy]]'
+    Card::Cache.reset_global
     ['public_key', 'private_key', 'proxy'].each do |name|
       Card.create!(
-        name: "#{Card[:recaptcha_settings].name}+#{name.gsub('_', ' ')}"
+        name: "#{Card[:recaptcha_settings].name}+#{name.gsub('_', ' ')}",
         codename: "recaptcha_#{name}"
       )
     end
@@ -48,7 +49,7 @@ class AddRecaptchaKeyCards < Card::CoreMigration
                     subcards: {
                       '+*self+*read' => { content: '[[Administrator]]' },
                       '+*self+*update' => { content: '[[Administrator]]' },
-                      '+*self+*delete' => { content: '[[Administrator]]' },
+                      '+*self+*delete' => { content: '[[Administrator]]' }
                     }
                   }
     if args[:subcards]

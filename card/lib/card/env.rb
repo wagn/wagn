@@ -42,6 +42,9 @@ class Card
         self[:success] ||= Card::Success.new(cardname, params[:success])
       end
 
+      def localhost?
+        self[:host] && self[:host] =~ /^localhost/
+      end
 
       def ajax?
         self[:ajax]

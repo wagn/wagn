@@ -201,7 +201,6 @@ def followed_by? user_id = nil
   all_members_followed_by? user_id
 end
 
-
 def default_follow_set_card
   self
 end

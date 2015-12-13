@@ -6,9 +6,20 @@ format do
   end
 
   # NAME VIEWS
-
   simple_args = { closed: true, perms: :none }
-  view(:name,     simple_args) { card.name                           }
+  view :name, simple_args do |args|
+    return card.name unless args[:variant]
+    args[:variant].split(/[\s,]+/).inject(card.name) do |name, variant|
+      if ::Set.new([
+        :downcase, :upcase, :singularize, :pluralize, :capitalize,
+        :swapcase, :reverse, :succ
+      ]).include?(variant.to_sym)
+        name.send variant
+      else
+        name
+      end
+    end
+  end
   view(:key,      simple_args) { card.key                            }
   view(:title,    simple_args) { |args| args[:title] || card.name    }
   view(:linkname, simple_args) { card.cardname.url_key               }

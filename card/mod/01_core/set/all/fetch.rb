@@ -233,11 +233,14 @@ module ClassMethods
     case mark
     when Symbol        then Card::Codename[mark]
     when Integer       then mark.to_i
-    when String, Card::Name
+    when String, SmartName
+      # there are some situations where this breaks if we use Card::Name
+      # rather than SmartName, which would seem more correct.
+      # very hard to reproduce, not captured in a spec :(
       case mark.to_s
       when /^\~(\d+)$/ then $1.to_i                   # id
       when /^\:(\w+)$/ then Card::Codename[$1.to_sym] # codename
-      else fullname_from_mark mark, opts[:new]          # name
+      else fullname_from_mark mark, opts[:new]        # name
       end
     end
   end

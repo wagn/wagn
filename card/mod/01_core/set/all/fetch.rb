@@ -233,7 +233,7 @@ module ClassMethods
     case mark
     when Symbol        then Card::Codename[mark]
     when Integer       then mark.to_i
-    when String, Card::Name
+    when String, SmartName
       case mark.to_s
       when /^\~(\d+)$/ then $1.to_i                   # id
       when /^\:(\w+)$/ then Card::Codename[$1.to_sym] # codename

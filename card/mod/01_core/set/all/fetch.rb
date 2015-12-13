@@ -24,23 +24,16 @@ module ClassMethods
   #
   def fetch mark, opts={}
     validate_fetch_opts! opts
-    mark = normalize_mark mark
+    mark = normalize_mark mark, opts
 
-    if mark.present?
-      card, mark, needs_caching = fetch_from_cache_or_db mark, opts
-    else
-      return unless opts[:new]
-    end
+    card, needs_caching = fetch_existing mark, opts
 
-    if mark.is_a?(Integer)
-      return if card.nil?
-    elsif card && card.new_card? && opts[:new].present?
-      return card.renew(opts)
-    elsif !card || (card.type_unknown? && !skip_type_lookup?(opts))
+    if (new_card = new_for_cache card, mark, opts)
+      card = new_card
       needs_caching = true
-      card = new_for_cache mark, opts # new (or improved) card for cache
     end
 
+    return if card.nil?
     write_to_cache card, opts if needs_caching
     standard_fetch_results card, mark, opts
   end
@@ -63,11 +56,10 @@ module ClassMethods
     fetch mark, opts.merge(local_only: true)
   end
 
-  def fetch_id mark
+  def fetch_id mark, opts={}
+    mark = normalize_mark mark, opts
     if mark.is_a?(Integer)
       mark
-    elsif mark.is_a?(Symbol) && Card::Codename[mark]
-      Card::Codename[mark]
     else
       card = quick_fetch mark.to_s
       card && card.id
@@ -154,34 +146,38 @@ module ClassMethods
     end
   end
 
-  def parse_mark! mark, opts
+  def parse_mark! mark
     # return mark_type, mark_value, and absolutized mark
     if mark.is_a? Integer
-      [:id, mark, mark]
+      [:id, mark]
     else
-      fullname = fullname_from_name mark, opts[:new]
-      [:key, fullname.key, fullname.s]
+      [:key, mark.key]
     end
   end
 
-  def fetch_from_cache_or_db mark, opts
-    mark_type, mark_key, mark = parse_mark! mark, opts
+  def fetch_existing mark, opts
+    return [nil, false] if !mark.present?
+    mark_type, mark_key = parse_mark! mark
     needs_caching = false # until proven true :)
 
     # look in cache
     card = send "fetch_from_cache_by_#{mark_type}", mark_key, opts[:local_only]
 
-    # if that doesn't work, look in db
-    if card.nil? || retrieve_trashed_from_db?(card, opts)
+    if retrieve_from_db?(card, opts)
+      # look in db if needed
       card = fetch_from_db mark_type, mark_key, opts
-      needs_caching = card && !card.trash
+      needs_caching = cache_ready_from_db? card, opts
     end
 
-    [card, mark, needs_caching]
+    [card, needs_caching]
   end
 
-  def retrieve_trashed_from_db? card, opts
-    opts[:look_in_trash] && card.new_card? && !card.trash
+  def cache_ready_from_db? card, opts
+    card && !card.trash && !opts[:new].present?
+  end
+
+  def retrieve_from_db? card, opts
+    card.nil? || (opts[:look_in_trash] && card.new_card? && !card.trash)
   end
 
   def fetch_from_cache_by_id id, local_only=false
@@ -201,7 +197,10 @@ module ClassMethods
     card
   end
 
-  def new_for_cache name, opts
+  def new_for_cache card, name, opts
+    return if name.is_a? Integer
+    return if !name.present? && !opts[:new]
+    return unless !card || (card.type_unknown? && !skip_type_lookup?(opts))
     new name: name,
         skip_modules: true,
         skip_type_lookup: skip_type_lookup?(opts)
@@ -230,25 +229,20 @@ module ClassMethods
     Card.cache.write_local "~#{card.id}", card.key if card.id && card.id != 0
   end
 
-  def normalize_mark mark
+  def normalize_mark mark, opts
     case mark
-    when String
-      case mark
-      when /^\~(\d+)$/ # get by id
-        $1.to_i
-      when /^\:(\w+)$/ # get by codename
-        Card::Codename[$1.to_sym]
-      else
-        mark
+    when Symbol        then Card::Codename[mark]
+    when Integer       then mark.to_i
+    when String, Card::Name
+      case mark.to_s
+      when /^\~(\d+)$/ then $1.to_i                   # id
+      when /^\:(\w+)$/ then Card::Codename[$1.to_sym] # codename
+      else fullname_from_mark mark, opts[:new]          # name
       end
-    when Symbol
-      Card::Codename[mark] # id from codename
-    else
-      mark
     end
   end
 
-  def fullname_from_name name, new_opts={}
+  def fullname_from_mark name, new_opts={}
     if new_opts && (supercard = new_opts[:supercard])
       name.to_name.to_absolute_name supercard.name
     else

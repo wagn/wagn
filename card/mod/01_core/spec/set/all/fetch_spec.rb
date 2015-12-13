@@ -1,13 +1,13 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::All::Fetch do
-  describe ".fetch" do
-    it "returns and caches existing cards" do
-      card_double = class_double("Card")
-      expect(Card.fetch("A")).to be_instance_of(Card)
-      expect(Card.cache.read("a")).to be_instance_of(Card)
+  describe '.fetch' do
+    it 'returns and caches existing cards' do
+      card_double = class_double('Card')
+      expect(Card.fetch('A')).to be_instance_of(Card)
+      expect(Card.cache.read('a')).to be_instance_of(Card)
       expect(card_double).not_to receive(:find_by_key)
-      expect(Card.fetch("A")).to be_instance_of(Card)
+      expect(Card.fetch('A')).to be_instance_of(Card)
     end
 
     it "returns nil and caches missing cards" do

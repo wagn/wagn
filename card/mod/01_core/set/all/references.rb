@@ -68,7 +68,7 @@ def update_references rendered_content = nil, refresh = false
               end
             Card::Reference.create!(
               referer_id:  id,
-              referee_id:  Card.where(key: name.key).pluck(:id).first,
+              referee_id:  Card.fetch_id(name),
               referee_key: name.key,
               ref_type:    ref_type,
               present:     1
@@ -108,7 +108,7 @@ end
 protected
 
 
-event :refresh_references, after: :store, on: :save do
+event :refresh_references, after: :store, on: :save, changed: :content do
   self.update_references
   expire_structuree_references
 end

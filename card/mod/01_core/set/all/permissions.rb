@@ -32,32 +32,39 @@ end
 def who_can action
   # warn "who_can[#{name}] #{(prc=permission_rule_card(action)).inspect},
   # #{prc.first.item_cards.map(&:id)}" if action == :update
-  permission_rule_card(action).first.item_cards.map &:id
+  permission_rule_card(action).item_cards.map &:id
+end
+
+def permission_rule_id_and_class action
+  direct_rule_id = rule_card_id action
+  require_permission_rule! direct_rule_id, action
+  direct_rule = Card.fetch direct_rule_id, skip_modules: true
+  [applicable_permission_rule_id(direct_rule, action),
+   direct_rule.rule_class_name]
+end
+
+def applicable_permission_rule_id direct_rule, action
+  if junction? && direct_rule.db_content =~ /^\[?\[?_left\]?\]?$/
+    lcard = left_or_new(skip_virtual: true, skip_modules: true)
+    if action == :create && lcard.real? && !lcard.action == :create
+      action = :update
+    end
+    lcard.permission_rule_id_and_class(action).first
+  else
+    direct_rule.id
+  end
 end
 
 def permission_rule_card action
-  opcard = rule_card action
+  Card.fetch permission_rule_id_and_class(action).first
+end
 
+def require_permission_rule! rule_id, action
+  return if rule_id
   # RULE missing.  should not be possible.
   # generalize this to handling of all required rules
-  unless opcard
-    errors.add :permission_denied, "No #{action} rule for #{name}"
-    raise Card::PermissionDenied.new(self)
-  end
-
-  rcard = Auth.as_bot do
-    # compound cards can inherit permissions from left parent
-    if ['_left', '[[_left]]'].member?(opcard.db_content) && self.junction?
-      lcard = left_or_new(skip_virtual: true, skip_modules: true)
-      if action == :create && lcard.real? && !lcard.action == :create
-        action = :update
-      end
-      lcard.permission_rule_card(action).first
-    else
-      opcard
-    end
-  end
-  return rcard, opcard.rule_class_name
+  errors.add :permission_denied, "No #{action} rule for #{name}"
+  raise Card::PermissionDenied.new(self)
 end
 
 def rule_class_name
@@ -114,7 +121,7 @@ end
 
 def ok_to_read
   return if Auth.always_ok?
-  @read_rule_id ||= permission_rule_card(:read).first.id.to_i
+  @read_rule_id ||= permission_rule_id_and_class(:read).first
   return if Auth.as_card.read_rules.member? @read_rule_id
   deny_because you_cant 'read this'
 end
@@ -143,9 +150,9 @@ event :set_read_rule, before: :store do
     self.read_rule_id = self.read_rule_class = nil
   else
     # avoid doing this on simple content saves?
-    rcard, rclass = permission_rule_card(:read)
-    self.read_rule_id = rcard.id
-    self.read_rule_class = rclass
+    read_rule_id, read_rule_class = permission_rule_id_and_class(:read)
+    self.read_rule_id = read_rule_id
+    self.read_rule_class = read_rule_class
     # find all cards with me as trunk and update their read_rule
     # (because of *type plus right)
     # skip if name is updated because will already be resaved

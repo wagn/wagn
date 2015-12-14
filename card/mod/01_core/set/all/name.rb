@@ -223,8 +223,9 @@ end
 event :set_autoname, before: :validate_name, on: :create do
   if name.blank? && (autoname_card = rule_card(:autoname))
     self.name = autoname autoname_card.content
-    # FIXME: should give placeholder on new, do next and save on create
-    Auth.as_bot { autoname_card.refresh.update_attributes! content: name }
+    # FIXME: should give placeholder in approve phase
+    # and finalize/commit change in store phase
+    autoname_card.refresh.update_column :db_content, name
   end
 end
 

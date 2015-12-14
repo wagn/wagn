@@ -30,11 +30,16 @@ event :finalize_action,
       when: proc { |c|
         (c.history? || c.respond_to?(:attachment)) && c.current_action
       } do
+
   @changed_fields = Card::TRACKED_FIELDS.select do |f|
     changed_attributes.member? f
   end
   if @changed_fields.present?
-    @changed_fields.each{ |f| Card::Change.create field: f, value: self[f], card_action_id: @current_action.id }
+    @changed_fields.each do |f|
+      Card::Change.create field: f,
+                          value: self[f],
+                          card_action_id: @current_action.id
+    end
     @current_action.update_attributes! card_id: id
   elsif @current_action.card_changes(true).empty?
     @current_action.delete

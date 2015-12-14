@@ -7,7 +7,7 @@ end
 
 def type_card
   return if type_id.nil?
-  Card.fetch type_id.to_i, skip_modules: true
+  Card.quick_fetch type_id.to_i
 end
 
 def type_code

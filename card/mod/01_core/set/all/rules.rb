@@ -48,7 +48,7 @@ def rule setting_code, options={}
 end
 
 def rule_card setting_code, options={}
-  Card.fetch rule_card_id( setting_code, options ), options
+  Card.fetch rule_card_id(setting_code, options), options
 end
 
 def rule_card_id setting_code, options={}
@@ -282,15 +282,15 @@ module ClassMethods
     Card.cache.write 'RULE_KEYS', hash
   end
 
-
-
   def read_rule_cache
     Card.cache.read('READRULES') || begin
       hash = {}
-      ActiveRecord::Base.connection.select_all( Card::Set::All::Rules::ReadRuleSQL ).each do |row|
-        party_id, read_rule_id = row['party_id'].to_i, row['read_rule_id'].to_i
+      ActiveRecord::Base.connection.select_all(
+        Card::Set::All::Rules::ReadRuleSQL
+      ).each do |row|
+        party_id = row['party_id'].to_i
         hash[party_id] ||= []
-        hash[party_id] << read_rule_id
+        hash[party_id] << row['read_rule_id'].to_i
       end
       Card.cache.write 'READRULES', hash
     end
@@ -299,18 +299,4 @@ module ClassMethods
   def clear_read_rule_cache
     Card.cache.write 'READRULES', nil
   end
-=begin
-  def default_rule setting_code, fallback=nil
-    card = default_rule_card setting_code, fallback
-    return card && card.content
-  end
-
-  def default_rule_card setting_code, fallback=nil
-    rule_id = rule_cache["all+#{setting_code}"]
-    rule_id ||= fallback && rule_cache["all+#{fallback}"]
-    Card[rule_id] if rule_id
-  end
-=end
 end
-
-

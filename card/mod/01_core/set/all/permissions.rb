@@ -145,27 +145,30 @@ def ok_to_comment
   deny_because 'No comments allowed on structured content' if structure
 end
 
-event :set_read_rule, before: :store do
-  if trash == true
-    self.read_rule_id = self.read_rule_class = nil
-  else
-    # avoid doing this on simple content saves?
-    read_rule_id, read_rule_class = permission_rule_id_and_class(:read)
-    self.read_rule_id = read_rule_id
-    self.read_rule_class = read_rule_class
-    # find all cards with me as trunk and update their read_rule
-    # (because of *type plus right)
-    # skip if name is updated because will already be resaved
+event :clear_read_rule, before: :store, on: :delete do
+  self.read_rule_id = self.read_rule_class = nil
+end
 
-    if !new_card? && type_id_changed?
-      Auth.as_bot do
-        Card.search(left: self.name).each do |plus_card|
-          plus_card = plus_card.refresh.update_read_rule
-        end
-      end
+event :set_read_rule, before: :store, on: :save do
+  # avoid doing this on simple content saves?
+  read_rule_id, read_rule_class = permission_rule_id_and_class(:read)
+  self.read_rule_id = read_rule_id
+  self.read_rule_class = read_rule_class
+end
+
+event :set_field_read_rules,
+      after: :set_read_rule, on: :update, changed: :type_id do
+  # find all cards with me as trunk and update their read_rule
+  # (because of *type plus right)
+  # skip if name is updated because will already be resaved
+
+  Auth.as_bot do
+    Card.search(left: name) do |field|
+      field.refresh.update_read_rule
     end
   end
 end
+
 
 def update_read_rule
   Card.record_timestamps = false

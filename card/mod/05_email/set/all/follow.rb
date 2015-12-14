@@ -2,17 +2,19 @@ card_accessor :followers
 
 FOLLOWER_IDS_CACHE_KEY = 'FOLLOWER_IDS'
 
+
+# FIXME: this should be in type/set
 event :cache_expired_for_new_set, before: :store, on: :create,
   when: proc { |c| c.type_id == Card::SetID } do
   Card.follow_caches_expired
 end
 
-event :cache_expired_for_type_change, before: :store, changed: :type_id do
+event :cache_expired_for_type_change, before: :store, on: :update, changed: :type_id do
   #FIXME expire (also?) after save
   Card.follow_caches_expired
 end
 
-event :cache_expired_for_name_change, before: :store, changed: :name do
+event :cache_expired_for_name_change, before: :store, on: :update, changed: :name do
   Card.follow_caches_expired
 end
 
@@ -240,6 +242,7 @@ end
 
 module ClassMethods
   def follow_caches_expired
+#    raise "follow cache expired!"
     Card.clear_follower_ids_cache
     Card.clear_user_rule_cache
   end

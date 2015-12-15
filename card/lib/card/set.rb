@@ -215,7 +215,6 @@ class Card
     def define_event_method event, call_method, _opts
       class_eval do
         define_method event do
-          "puts #{event} running on #{self.name}"
           run_callbacks event do
             send call_method
           end

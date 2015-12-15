@@ -169,7 +169,6 @@ event :set_field_read_rules,
   end
 end
 
-
 def update_read_rule
   Card.record_timestamps = false
 

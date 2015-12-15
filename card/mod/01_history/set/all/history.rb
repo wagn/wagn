@@ -23,14 +23,13 @@ event :assign_action, after: :assign_act do
   end
 end
 
+def finalize_action?
+  (history? || respond_to?(:attachment)) && current_action
+end
+
 # stores changes in the changes table and assigns them to the current action
 # removes the action if there are no changes
-event :finalize_action,
-      after: :stored,
-      when: proc { |c|
-        (c.history? || c.respond_to?(:attachment)) && c.current_action
-      } do
-
+event :finalize_action, after: :stored, when: proc { |c| c.finalize_action? } do
   @changed_fields = Card::TRACKED_FIELDS.select do |f|
     changed_attributes.member? f
   end
@@ -233,7 +232,7 @@ format :html do
 
   .action-container{style: ("clear: left;" if act_view == :expanded)}
     - act.relevant_actions_for(card).each do |action|
-      = send("_render_action_#{ act_view }", action: action )
+      = send("_render_action_#{act_view}", action: action )
 HAML
       end
     end
@@ -246,7 +245,6 @@ HAML
   view :action_expanded do |args|
     render_action :expanded, args
   end
-
 
   def render_action action_view, args
     action = args[:action] || card.last_action
@@ -352,8 +350,8 @@ HAML
     toggled_view = args[:act_view] == :expanded ? :act_summary : :act_expanded
     arrow_dir = args[:act_view] == :expanded ? 'arrow-down' : 'arrow-right'
     link_to '', args.merge(view: toggled_view),
-              class: "slotter revision-#{args[:act_id]} #{arrow_dir}",
-              remote: true
+            class: "slotter revision-#{args[:act_id]} #{arrow_dir}",
+            remote: true
   end
 
   def show_or_hide_changes_link hide_diff, args

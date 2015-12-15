@@ -2,32 +2,33 @@ card_accessor :followers
 
 FOLLOWER_IDS_CACHE_KEY = 'FOLLOWER_IDS'
 
-
 # FIXME: this should be in type/set
-event :cache_expired_for_new_set, before: :store, on: :create,
-  when: proc { |c| c.type_id == Card::SetID } do
+event :cache_expired_for_new_set,
+      before: :store, on: :create,
+      when: proc { |c| c.type_id == Card::SetID } do
   Card.follow_caches_expired
 end
 
-event :cache_expired_for_type_change, before: :store, on: :update, changed: :type_id do
-  #FIXME expire (also?) after save
+event :cache_expired_for_type_change, before: :store, on: :update,
+                                      changed: :type_id do
+  # FIXME: expire (also?) after save
   Card.follow_caches_expired
 end
 
-event :cache_expired_for_name_change, before: :store, on: :update, changed: :name do
+event :cache_expired_for_name_change, before: :store, on: :update,
+                                      changed: :name do
   Card.follow_caches_expired
 end
 
-event :cache_expired_for_new_user_rule, before: :extend,
-  when: proc { |c| c.follow_rule_card? }  do
-
+event :cache_expired_for_new_user_rule,
+      before: :extend,
+      when: proc { |c| c.follow_rule_card? }  do
   Card.follow_caches_expired
 end
 
 format do
-
   def follow_link_hash args
-    toggle = args[:toggle] || ( card.followed? ? :off : :on )
+    toggle = args[:toggle] || (card.followed? ? :off : :on)
     hash = { class: "follow-toggle-#{toggle}" }
     these_emails = "emails about changes to #{card.follow_label}"
     case toggle
@@ -42,14 +43,13 @@ format do
     end
     set_card = card.default_follow_set_card
     hash[:path] = path(
-      name: set_card.follow_rule_name( Auth.current.name),
+      name: set_card.follow_rule_name(Auth.current.name),
       action: :update,
       success: { layout: :modal, view: :follow_status },
       card: { content: "[[#{hash[:content]}]]" }
     )
     hash
   end
-
 end
 
 format :json do
@@ -59,13 +59,16 @@ format :json do
 end
 
 format :html do
-
   view :follow_link, tags: :unknown_ok, perms: :none do |args|
     hash = follow_link_hash args
     text = args[:icon] ? glyphicon('flag') : ''
-    text += %[<span class="follow-verb menu-item-label">#{hash[:verb]}</span>].html_safe
-    follow_rule_card = Card.fetch(card.default_follow_set_card.follow_rule_name( Auth.current.name ), new: {})
-    opts = ( args[:html_args] || {} ).clone
+    span_attrs = 'follow-verb menu-item-label'
+    text += %[<span class="#{span_attrs}">#{hash[:verb]}</span>].html_safe
+    # follow_rule_card = Card.fetch(
+    #   card.default_follow_set_card.follow_rule_name(Auth.current.name),
+    #   new: {}
+    # )
+    opts = (args[:html_args] || {}).clone
     opts.merge!(
       title:           hash[:title],
       'data-path'      => hash[:path],
@@ -75,9 +78,7 @@ format :html do
     opts[:class] = "follow-link #{opts[:class]}"
     link_to text, hash[:path], opts
   end
-
 end
-
 
 def follow_label
   name
@@ -92,7 +93,6 @@ end
 def follower_names
   followers.map(&:name)
 end
-
 
 def follow_rule_card?
   is_user_rule? && rule_setting_name == '*follow'

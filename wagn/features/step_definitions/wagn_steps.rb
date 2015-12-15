@@ -173,16 +173,16 @@ end
 # Then /what/ do
 #   save_and_open_page
 # end
-#
-# Then /debug/ do
-#   if RUBY_VERSION =~ /^2/
-#     require 'pry'
-#     binding.pry
-#   else
-#     debugger
-#   end
-#   nil
-# end
+
+Then /debug/ do
+  if RUBY_VERSION =~ /^2/
+    require 'pry'
+    binding.pry
+  else
+    debugger
+  end
+  nil
+end
 
 def create_card username, cardtype, cardname, content=''
   signed_in_as(username) do
@@ -356,6 +356,13 @@ end
 
 Then /^I should see an image of size "(.+)" and type "(.+)"$/ do |size, type|
   find("img[src*='#{size}.#{type}']")
+end
+
+img_sld = /^within "(.+)" I should see an image of size "(.+)" and type "(.+)"$/
+Then img_sld do |selector, size, type|
+  within selector do
+    find("img[src*='#{size}.#{type}']")
+  end
 end
 
 img_should = /^I should see a non-mod image of size "(.+)" and type "(.+)"$/

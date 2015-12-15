@@ -174,11 +174,12 @@ module ClassMethods
   end
 
   def all_user_ids_with_rule_for set_card, setting_code
-    key = if (l=set_card.left) and (r=set_card.right)
-        set_class_code = Codename[ r.id ]
+    key =
+      if (l = set_card.left) && (r = set_card.right)
+        set_class_code = Codename[r.id]
         "#{l.id}+#{set_class_code}+#{setting_code}"
       else
-        set_class_code = Codename[ set_card.id ]
+        set_class_code = Codename[set_card.id]
         "#{set_class_code}+#{setting_code}"
       end
     user_ids = user_ids_cache[key] || []
@@ -187,11 +188,13 @@ module ClassMethods
     else
       user_ids
     end
-
   end
 
   def user_rule_cards user_name, setting_code
-    Card.search right: {codename: setting_code}, left: {left: {type_id: SetID}, right: user_name}
+    Card.search(
+      right: { codename: setting_code },
+      left: { left: { type_id: SetID }, right: user_name }
+    )
   end
 
   def rule_cache

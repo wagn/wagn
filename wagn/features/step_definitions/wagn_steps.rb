@@ -173,16 +173,16 @@ end
 # Then /what/ do
 #   save_and_open_page
 # end
-
-Then /debug/ do
-  if RUBY_VERSION =~ /^2/
-    require 'pry'
-    binding.pry
-  else
-    debugger
-  end
-  nil
-end
+#
+# Then /debug/ do
+#   if RUBY_VERSION =~ /^2/
+#     require 'pry'
+#     binding.pry
+#   else
+#     debugger
+#   end
+#   nil
+# end
 
 def create_card username, cardtype, cardname, content=''
   signed_in_as(username) do

@@ -163,7 +163,7 @@ event :set_field_read_rules,
   # skip if name is updated because will already be resaved
 
   Auth.as_bot do
-    Card.search(left: name) do |field|
+    fields.each do |field|
       field.refresh.update_read_rule
     end
   end
@@ -185,9 +185,9 @@ def update_read_rule
   # currently doing a brute force search for every card that may be impacted.
   # may want to optimize(?)
   Auth.as_bot do
-    Card.search(left: name).each do |plus_card|
-      if plus_card.rule(:read) == '_left'
-        plus_card.update_read_rule
+    fields.each do |field|
+      if field.rule(:read) == '_left'
+        field.update_read_rule
       end
     end
   end

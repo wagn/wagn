@@ -102,19 +102,16 @@ def follow_option?
   codename && FollowOption.codenames.include?(codename.to_sym)
 end
 
-# used for the follow menu
-# overwritten in type/set.rb and type/cardtype.rb
-# for sets and cardtypes it doesn't check whether the users is following the card itself
-# instead it checks whether he is following the complete set
+# used for the follow menu overwritten in type/set.rb and type/cardtype.rb
+# for sets and cardtypes it doesn't check whether the users is following the
+# card itself instead it checks whether he is following the complete set
 def followed_by? user_id
   with_follower_candidate_ids do
-    if follow_rule_applies? user_id
-      return true
-    end
-    if left_card = left and left_card.followed_field?(self) && left_card.followed_by?(user_id)
-      return true
-    end
-    return false
+    return true if follow_rule_applies? user_id
+    return true if (left_card = left) &&
+                   left_card.followed_field?(self) &&
+                   left_card.followed_by?(user_id)
+    false
   end
 end
 
@@ -122,16 +119,14 @@ def followed?
   followed_by? Auth.current_id
 end
 
-
 def follow_rule_applies? follower_id
   follow_rule = rule :follow, user_id: follower_id
   if follow_rule.present?
     follow_rule.split("\n").each do |value|
-
       value_code = value.to_name.code
       accounted_ids = (
-        @follower_candidate_ids[ value_code ] ||=
-          if block = FollowOption.follower_candidate_ids[ value_code ]
+        @follower_candidate_ids[value_code] ||=
+          if (block = FollowOption.follower_candidate_ids[value_code])
             block.call self
           else
             []
@@ -139,18 +134,17 @@ def follow_rule_applies? follower_id
       )
 
       applicable =
-        if test = FollowOption.test[ value_code ]
+        if (test = FollowOption.test[value_code])
           test.call follower_id, accounted_ids
         else
           accounted_ids.include? follower_id
         end
 
-      return value.gsub( /[\[\]]/, '' ) if applicable
+      return value.gsub(/[\[\]]/, '') if applicable
     end
   end
-  return false
+  false
 end
-
 
 def with_follower_candidate_ids
   @follower_candidate_ids = {}
@@ -158,18 +152,17 @@ def with_follower_candidate_ids
   @follower_candidate_ids = nil
 end
 
-
 # the set card to be followed if you want to follow changes of card
 def default_follow_set_card
   Card.fetch("#{name}+*self")
 end
 
-
 # returns true if according to the follow_field_rule followers of self also
 # follow changes of field_card
 def followed_field? field_card
-  (follow_field_rule = rule_card(:follow_fields)) || follow_field_rule.item_names.find do |item|
-     item.to_name.key == field_card.key ||  (item.to_name.key == Card[:includes].key && included_card_ids.include?(field_card.id) )
+  (follow_field_rule = rule_card(:follow_fields)) ||
+    follow_field_rule.item_names.find do |item|
+     item.to_name.key == field_card.key || (item.to_name.key == Card[:includes].key && included_card_ids.include?(field_card.id) )
   end
 end
 
@@ -197,7 +190,7 @@ end
 # all ids of users that follow this card because of a follow rule that applies
 # to this card doesn't include users that follow this card because they are
 # following parent cards or other cards that include this card
-def direct_follower_ids args={}
+def direct_follower_ids _args={}
   result = ::Set.new
   with_follower_candidate_ids do
     set_names.each do |set_name|
@@ -228,7 +221,7 @@ def all_direct_follower_ids_with_reason
   end
 end
 
-#~~~~~ cache methods
+# ~~~~~ cache methods
 
 def write_follower_ids_cache user_ids
   hash = Card.follower_ids_cache
@@ -242,7 +235,6 @@ end
 
 module ClassMethods
   def follow_caches_expired
-#    raise "follow cache expired!"
     Card.clear_follower_ids_cache
     Card.clear_user_rule_cache
   end

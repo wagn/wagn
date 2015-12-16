@@ -213,12 +213,14 @@ class Card
       # PERMISSIONS
 
       def createable_types
-        type_names = Auth.as_bot do
-          Card.search(
-            { type: Card::CardtypeID, return: :name,
-              not: { codename: ['in'] + Card.config.non_createable_types }
-              }, 'find createeable types')
-        end
+        type_names =
+          Auth.as_bot do
+            Card.search(
+              { type: Card::CardtypeID, return: :name,
+                not: { codename: ['in'] + Card.config.non_createable_types } },
+              'find createable types'
+            )
+          end
 
         type_names.select do |name|
           Card.new(type: name).ok? :create

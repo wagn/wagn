@@ -51,8 +51,6 @@ event :validate_type, before: :approve, changed: :type_id do
 end
 
 event :reset_type_specific_fields, after: :store do
-  # FIXME: does this really work?  seems like type_id should be id here
-  # - efm
   wql = { left: { left_id: type_id },
           right: { codename: 'type_plus_right' }
         }

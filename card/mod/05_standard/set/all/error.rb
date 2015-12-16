@@ -155,7 +155,7 @@ format :html do
     end
   end
 
-  view :not_found do |args| # ug.  bad name.
+  view :not_found do # ug.  bad name.
     sign_in_or_up_links =
       if !Auth.signed_in?
         signin_link = card_link :signin, text: 'Sign in'

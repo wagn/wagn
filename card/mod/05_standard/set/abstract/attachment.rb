@@ -54,7 +54,15 @@ event :correct_identifier, after: :store, on: :create do
   update_column(:db_content,attachment.db_content(mod: load_from_mod))
   expire
 end
-event :save_original_filename, after: :validate_name, when: proc {|c| !c.preliminary_upload? && !c.save_preliminary_upload? && c.attachment_changed?} do
+
+event :save_original_filename,
+      after: :validate_name,
+      when: proc {|c|
+        c.attachment.file &&
+        !c.preliminary_upload? &&
+        !c.save_preliminary_upload? &&
+        c.attachment_changed?
+      } do
 
   if @current_action
     @current_action.update_attributes! comment: original_filename

@@ -1,14 +1,14 @@
 
 format :html do
-
   view :core do |args|
     _render args[:rule_view], args
   end
+
   def default_core_args args
     args[:rule_view] ||= :common_rules
-    args[:optional_set_label]   ||= :show
+    args[:optional_set_label] ||= :show
+    args[:optional_set_navbar] ||= :hide
     args[:optional_rule_navbar] ||= :show
-    args[:optional_set_navbar]  ||= :hide
   end
 
   def with_label_and_navbars args
@@ -24,16 +24,20 @@ format :html do
 
   view :all_rules do |args|
     with_label_and_navbars args.merge(selected_view: :all_rules) do
-      rules_table (card.visible_setting_codenames.sort & card.visible_setting_codenames), args
+      rules_table card.visible_setting_codenames.sort, args
     end
   end
 
   view :grouped_rules do |args|
     with_label_and_navbars args.merge(selected_view: :grouped_rules) do
-      content_tag(:div, class: 'panel-group', id: 'accordion', role: 'tablist','aria-multiselectable'=>'true') do
-         Card::Setting.groups.keys.map do |group_key|
-           _optional_render(group_key, args, :show)
-         end * "\n"
+      content_tag(:div, class: 'panel-group',
+                        id: 'accordion',
+                        role: 'tablist',
+                        'aria-multiselectable' => 'true'
+                 ) do
+        Card::Setting.groups.keys.map do |group_key|
+          _optional_render(group_key, args, :show)
+        end * "\n"
       end
     end
   end
@@ -211,9 +215,9 @@ def inheritable?
 end
 
 def subclass_for_set
-  set_class_key = tag.codename
-  Card.set_patterns.find do |sub|
-    cardname.tag_name.key == sub.pattern.key
+  current_set_pattern_code = tag.codename
+  Card.set_patterns.find do |set|
+    current_set_pattern_code == set.pattern_code
   end
 end
 

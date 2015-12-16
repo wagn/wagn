@@ -248,16 +248,17 @@ format :html do
     narrower_rules = []
     option_list 'set' do
       args[:set_options].map do |set_name, state|
-        label = Card.fetch(set_name).label
-        set_radio_button set_name, tag, label, state, narrower_rules
+        set_radio_button set_name, tag, state, narrower_rules,
+                         checked: checked_set_button?(set_name, args)
       end
     end
   end
 
-  def set_radio_button set_name, tag, label, state, narrower_rules
+  def set_radio_button set_name, tag, state, narrower_rules, opts
     button = radio_button :name, "#{set_name}+#{tag}",
-                          checked: check_set_button?(set_name, args),
+                          checked: opts[:checked],
                           warning: narrower_rule_warning(narrower_rules)
+    label = Card.fetch(set_name).label
     if state.in? [:current, :overwritten]
       narrower_rules << label
       narrower_rules.last[0] = narrower_rules.last[0].downcase
@@ -265,7 +266,7 @@ format :html do
     button + set_label(card, set_name, label, state)
   end
 
-  def check_set_button? set_name, args
+  def checked_set_button? set_name, args
     args[:set_selected] == set_name ||
       (current_set_key && args[:set_options].length == 1)
   end

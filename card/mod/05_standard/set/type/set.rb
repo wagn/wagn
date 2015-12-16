@@ -211,12 +211,13 @@ end
 
 def inheritable?
   return true if junction_only?
-  cardname.trunk_name.junction? and cardname.tag_name.key == Card::SelfSet.pattern.key
+  cardname.trunk_name.junction? &&
+    cardname.tag_name.key == Card::SelfSet.pattern.key
 end
 
 def subclass_for_set
   current_set_pattern_code = tag.codename
-  Card.set_patterns.find do |set|
+  Card.set_patterns.detect do |set|
     current_set_pattern_code == set.pattern_code
   end
 end

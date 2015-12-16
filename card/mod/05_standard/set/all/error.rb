@@ -17,7 +17,7 @@ format do
     ''
   end
 
-  view :not_found, perms: :none, error_code: 404 do
+  view :not_found, perms: :none, error_code: 404 do |_args|
     error_name = card.name.present? ? card.name : 'the card requested'
     %{ Could not find #{error_name}. }
   end
@@ -155,7 +155,7 @@ format :html do
     end
   end
 
-  view :not_found do # ug.  bad name.
+  view :not_found do |args| # ug.  bad name.
     sign_in_or_up_links =
       if !Auth.signed_in?
         signin_link = card_link :signin, text: 'Sign in'

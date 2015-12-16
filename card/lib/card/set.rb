@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 
 class Card
-  # remove_const :Set if const_defined?(:Set, false)
 
   module Set
     mattr_accessor :modules, :traits
@@ -101,16 +100,16 @@ class Card
           else
             alias_block view, args
           end
-        define_method "_view_#{ view }", view_block
+        define_method "_view_#{view}", view_block
       end
 
       def alias_block view, args
         opts = args[0].is_a?(Hash) ? args.shift : { view: args.shift }
-        opts[:mod]  ||= self
+        opts[:mod] ||= self
         opts[:view] ||= view
         views[opts[:mod]][opts[:view]] || fail
       rescue
-        raise "cannot find #{ opts[:view] } view in #{ opts[:mod] }; " \
+        raise "cannot find #{opts[:view]} view in #{opts[:mod]}; " \
               "failed to alias #{view} in #{self}"
       end
     end
@@ -119,8 +118,8 @@ class Card
       if format_names.empty?
         format_names = [:base]
       elsif format_names.first == :all
-        format_names = Card::Format.registered
-          .reject { |f| Card::Format.aliases[f] }
+        format_names =
+          Card::Format.registered.reject { |f| Card::Format.aliases[f] }
       end
       format_names.each do |f|
         define_on_format f, &block
@@ -228,7 +227,8 @@ class Card
     # (when the job is executed ActiveJob fetches the card from the database so
     #  all attributes get lost)
     # @param name [String] the name for the ActiveJob child class
-    # @param final_method [String] the name of the card instance method to be queued
+    # @param final_method [String] the name of the card instance method to be
+    #   queued
     # @option queue [Symbol] (:default) the name of the queue
     def define_active_job name, final_method, queue=:default
       class_name = name.to_s.camelize
@@ -239,11 +239,11 @@ class Card
       }
       Object.const_get(class_name).class_eval do
         define_method :perform, proc { |card, attributes|
-          attributes.each do |name, args|
+          attributes.each do |attname, args|
             # symbols are not allowed so all symbols arrive here as strings
             # convert strings that were symbols before back to symbols
             value = args[:symbol] ? args[:value].to_sym : args[:value]
-            card.instance_variable_set("@#{name}", value)
+            card.instance_variable_set("@#{attname}", value)
           end
           card.send final_method
         }
@@ -480,7 +480,7 @@ EOF
     def attachment name, args
       include Abstract::Attachment
       set_specific_attributes name, :load_from_mod, :action_id_of_cached_upload,
-                                    "remote_#{name}_url".to_sym
+                              "remote_#{name}_url".to_sym
       uploader_class = args[:uploader] || FileUploader
       mount_uploader name, uploader_class
     end

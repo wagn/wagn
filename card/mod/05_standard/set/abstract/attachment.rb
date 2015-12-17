@@ -54,7 +54,10 @@ event :correct_identifier, after: :store, on: :create do
   update_column(:db_content,attachment.db_content(mod: load_from_mod))
   expire
 end
-event :save_original_filename, after: :validate_name, when: proc {|c| !c.preliminary_upload? && !c.save_preliminary_upload? && c.attachment_changed?} do
+event :save_original_filename,
+      after: :validate_name,
+      when: proc {|c| c.attachment.file.present? && !c.preliminary_upload? &&
+                      !c.save_preliminary_upload? && c.attachment_changed?} do
 
   if @current_action
     @current_action.update_attributes! comment: original_filename
@@ -195,7 +198,10 @@ end
 
 
 def assign_set_specific_attributes
-  if @set_specific && @set_specific.present?
+  # if the attachment is a empty string, just keep the content
+  if @set_specific && @set_specific.present? &&
+     (!@set_specific.has_key?(attachment_name) ||
+      !@set_specific[attachment_name].blank?)
     self.content = nil
   end
   super

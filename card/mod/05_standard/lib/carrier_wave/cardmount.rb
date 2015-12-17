@@ -63,6 +63,7 @@ module CarrierWave
         end
 
         def #{column}=(new_file)
+          return if new_file.blank?
           send(:"#{column}_will_change!")
           db_column = _mounter(:#{column}).serialization_column
           send(:"\#{db_column}_will_change!")

@@ -6,6 +6,13 @@ Feature: File Upload
     Given I am signed in as Joe Admin
     And I wait until ajax response done
 
+  Scenario: Block creating a new empty file
+    When I go to new File
+    And I fill in "card_name" with "a test file"
+    And I press "Submit"
+    Then I should see "Problems with"
+    And I should see "is missing"
+
   Scenario: Uploading a file
     When I go to new File
     And I upload the file "file.txt"

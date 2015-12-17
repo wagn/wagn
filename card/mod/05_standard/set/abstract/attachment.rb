@@ -83,6 +83,11 @@ event :delete_cached_upload_file_on_update, after: :extend, on: :update, when: p
   end
 end
 
+event :validate_file_exist, before: :validate, on: :create do
+  unless attachment.file.present?
+    errors.add attachment_name, 'is missing'
+  end
+end
 
 event :write_identifier, after: :save_original_filename do
   self.content = attachment.db_content(mod: load_from_mod)

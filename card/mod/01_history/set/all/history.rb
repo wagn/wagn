@@ -202,8 +202,10 @@ format :html do
                      card.current_rev_nr
     hide_diff = (params['hide_diff'] == ' true') || args[:hide_diff]
     args[:slot_class] = "revision-#{act.id} history-slot list-group-item"
+    draft = (last_action = act.actions.last) && last_action.draft
+
     wrap(args) do
-      render_haml card: card, act: act, act_view: act_view,
+      render_haml card: card, act: act, act_view: act_view, draft: draft,
                   current_rev_nr: current_rev_nr, rev_nr: rev_nr,
                   hide_diff: hide_diff do
         <<-HAML
@@ -217,7 +219,7 @@ format :html do
       .time.timeago
         = time_ago_in_words(act.acted_at)
         ago
-        - if act.actions.last.draft
+        - if draft
           |
           %em.info
             Autosave
@@ -225,7 +227,7 @@ format :html do
           %em.label.label-info
             Current
         - elsif act_view == :expanded
-          = rollback_link act.relevant_actions_for(card, act.actions.last.draft)
+          = rollback_link act.relevant_actions_for(card, draft)
           = show_or_hide_changes_link hide_diff, act_id: act.id, act_view: act_view, rev_nr: rev_nr, current_rev_nr: current_rev_nr
   .toggle
     = fold_or_unfold_link act_id: act.id, act_view: act_view, rev_nr: rev_nr, current_rev_nr: current_rev_nr

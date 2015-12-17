@@ -42,26 +42,30 @@ event :assign_attachment_on_update, after: :prepare, on: :update,
   end
 end
 
-
 def assign_attachment file, original_filename
   send "#{attachment_name}=", file
   write_identifier
   @current_action.update_attributes! comment: original_filename
 end
 
-# we need a card id for the path so we have to update db_content when we got an id
+# we need a card id for the path so we have to update db_content when we have
+# an id
 event :correct_identifier, after: :store, on: :create do
-  update_column(:db_content,attachment.db_content(mod: load_from_mod))
+  update_column(:db_content, attachment.db_content(mod: load_from_mod))
   expire
 end
-event :save_original_filename,
-      after: :validate_name,
-      when: proc {|c| c.attachment.file.present? && !c.preliminary_upload? &&
-                      !c.save_preliminary_upload? && c.attachment_changed?} do
 
-  if @current_action
-    @current_action.update_attributes! comment: original_filename
-  end
+def file_ready_to_save?
+  attachment.file.present? &&
+    !preliminary_upload? &&
+    !save_preliminary_upload? &&
+    attachment_changed?
+end
+
+event :save_original_filename, after: :validate_name,
+                               when: proc { |c| c.file_ready_to_save? } do
+  return unless @current_action
+  @current_action.update_attributes! comment: original_filename
 end
 
 event :delete_cached_upload_file_on_create, after: :extend, on: :create, when: proc { |c| c.save_preliminary_upload? } do

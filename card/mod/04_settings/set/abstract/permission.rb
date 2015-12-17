@@ -3,13 +3,16 @@ def standardize_items
 end
 
 format :html do
-
-  view :pointer_core do |args| #, view: :core, mod: Type::Pointer::HtmlFormat
-    %{<div class="pointer-list">#{ render_pointer_items args }</div>}
+  view :pointer_core do |args| # view: :core, mod: Type::Pointer::HtmlFormat
+    %{<div class="pointer-list">#{render_pointer_items args}</div>}
   end
 
   view :core do |args|
-    card.content=='_left' ? core_inherit_content(args) : render( :pointer_core, args )
+    if card.content == '_left'
+      core_inherit_content args
+    else
+      render :pointer_core, args
+    end
   end
 
   view :closed_content do |args|
@@ -22,7 +25,9 @@ format :html do
     set_card = Card.fetch(set_name)
     not_set = set_card && set_card.type_id != SetID
 
-    group_options = Auth.as_bot { Card.search(type_id: RoleID, sort: 'name') }
+    group_options = Auth.as_bot do
+      Card.search({ type_id: RoleID, sort: 'name' }, 'roles by name')
+    end
 
     inheritable = not_set ? false : set_card.inheritable?
     inheriting = inheritable && card.content=='_left'

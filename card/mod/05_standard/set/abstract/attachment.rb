@@ -203,9 +203,10 @@ end
 
 def assign_set_specific_attributes
   # if the attachment is a empty string, just keep the content
+  attachment_name_str = attachment_name.to_s
   if @set_specific && @set_specific.present? &&
-     (!@set_specific.has_key?(attachment_name) ||
-      !@set_specific[attachment_name].blank?)
+     (!@set_specific.has_key?(attachment_name_str) ||
+      !@set_specific[attachment_name_str].blank?)
     self.content = nil
   end
   super

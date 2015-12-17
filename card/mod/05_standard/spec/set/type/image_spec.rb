@@ -9,7 +9,8 @@ describe Card::Set::Type::Image do
   end
 
   it "handles size argument in inclusion syntax" do
-    image_card = Card.create! name: "TestImage", type: "Image", content: '~12345/TestImage.jpg'
+    file = File.new(File.join FIXTURES_PATH, 'mao2.jpg')
+    image_card = Card.create! name: 'TestImage', type: 'Image', image: file
     including_card = Card.new name: 'Image1', content: "{{TestImage | core; size:small }}"
     rendered = including_card.format._render :core
     assert_view_select rendered, 'img[src=?]', "/files/~#{image_card.id}/#{image_card.last_content_action_id}-small.jpg"

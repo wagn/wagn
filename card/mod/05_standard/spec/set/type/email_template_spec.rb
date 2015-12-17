@@ -158,13 +158,14 @@ describe Card::Set::Type::EmailTemplate do
 
      context 'with context card' do
        let(:context_card) do
+        file = File.new(File.join FIXTURES_PATH, 'mao2.jpg')
          Card.create(
            name:    "Banana",
            content: "data content [[A]]",
            subcards: {
              '+email'      => {content: 'gary@gary.com'},
              '+subject'    => {type: 'Pointer', content: '[[default subject]]'},
-             '+attachment' => {type: 'File', content: "notreally.txt" }
+             '+attachment' => { type: 'File', file: file }
            }
          )
        end

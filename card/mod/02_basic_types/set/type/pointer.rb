@@ -12,6 +12,20 @@ event :insert_item_event, before: :approve, on: :save, when: proc {|c| Env.param
   self.insert_item index.to_i, Env.params['insert_item']
 end
 
+phase_method :changed_item_names do
+  dropped_item_names + added_item_names
+end
+
+phase_method :dropped_item_names do
+  old_items = item_names content: db_content_was
+  old_items - item_names
+end
+
+phase_method :added_item_names do
+  old_items = item_names content: db_content_was
+  items_names - old_items
+end
+
 format do
   def item_links args={}
     card.item_cards(args).map do |item_card|

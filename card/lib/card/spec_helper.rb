@@ -76,4 +76,33 @@ module Card::SpecHelper
   def users
     SharedData::USERS.sort
   end
+
+  def in_phase opts, &event_block
+    $rspec_binding = binding
+    Card.class_eval do
+      alias_method :original_method_missing, :method_missing
+      def method_missing(m, *args)
+        begin
+          method = eval("method(%s)" % m.inspect, $rspec_binding)
+        rescue NameError
+        else
+          return method.call(*args)
+        end
+        begin
+          value = eval(m.to_s, $rspec_binding)
+          return value
+        rescue NameError
+        end
+        raise NoMethodError
+      end
+      define_method :in_phase_test, event_block
+    end
+    Card.define_callbacks :in_phase_test
+    kind =  ([:before, :after, :around] & opts.keys).first
+    name = opts.delete(kind)
+    Card.set_callback name, kind, :in_phase_test, prepend: true
+    opts[:trigger].call
+    Card.skip_callback name, kind, :in_phase_test
+  end
+
 end

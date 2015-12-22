@@ -166,14 +166,10 @@ module ClassMethods
     if retrieve_from_db?(card, opts)
       # look in db if needed
       card = fetch_from_db mark_type, mark_key, opts
-      needs_caching = cache_ready_from_db? card, opts
+      needs_caching = !card.nil? && !card.trash
     end
 
     [card, needs_caching]
-  end
-
-  def cache_ready_from_db? card, opts
-    card && !card.trash && !opts[:new].present?
   end
 
   def retrieve_from_db? card, opts

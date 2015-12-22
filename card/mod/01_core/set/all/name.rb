@@ -121,22 +121,31 @@ def left_or_new args={}
   left(args) || Card.new(args.merge(name: cardname.left))
 end
 
-def children
-  children_names.map { |name| Card[name] }
+def fields
+  field_names.map { |name| Card[name] }
 end
 
-def children_names parent_name=nil
+def field_names parent_name=nil
+  child_names parent_name, :left
+end
+
+def children
+  child_names.map { |name| Card[name] }
+end
+
+def child_names parent_name=nil, side=nil
   # eg, A+B is a child of A and B
   parent_name ||= name
-  field = parent_name.to_name.simple? ? :part : :left
-  Card.search field => parent_name, return: :name
+  side ||= parent_name.to_name.simple? ? :part : :left
+  Card.search({ side => parent_name, return: :name },
+              "(#{side}) children of #{parent_name}")
 end
 
 def descendant_names parent_name=nil
   return [] if new_card?
   parent_name ||= name
   Auth.as_bot do
-    deps = children_names parent_name
+    deps = child_names parent_name
     deps.inject(deps) do |array, childname|
       array + descendant_names(childname)
     end

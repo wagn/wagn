@@ -2,7 +2,10 @@ require_dependency 'json'
 
 def self.member_names
   @@member_names ||= begin
-    Card.search( type_id: SettingID, return: 'key' ).inject({}) do |hash, card_key|
+    Card.search(
+      { type_id: SettingID, return: 'key' },
+      'all setting cards'
+    ).inject({}) do |hash, card_key|
       hash[card_key] = true
       hash
     end

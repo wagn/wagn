@@ -358,6 +358,13 @@ Then /^I should see an image of size "(.+)" and type "(.+)"$/ do |size, type|
   find("img[src*='#{size}.#{type}']")
 end
 
+img_sld = /^within "(.+)" I should see an image of size "(.+)" and type "(.+)"$/
+Then img_sld do |selector, size, type|
+  within selector do
+    find("img[src*='#{size}.#{type}']")
+  end
+end
+
 img_should = /^I should see a non-mod image of size "(.+)" and type "(.+)"$/
 Then img_should do |size, type|
   element = find("img[src*='#{size}.#{type}']")

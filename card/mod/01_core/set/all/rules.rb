@@ -71,20 +71,23 @@ def rule_card_id setting_code, options={}
 end
 
 def related_sets with_self = false
-  # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
+  # refers to sets that users may configure from the current card -
+  # NOT to sets to which the current card belongs
+
+  # FIXME: change to use codenames!!
 
   sets = []
-  sets << ["#{name}+*type",  Card::TypeSet.label( name) ] if known? && type_id==Card::CardtypeID
-  sets << ["#{name}+*self",  Card::SelfSet.label( name) ] if with_self
-  sets << ["#{name}+*right", Card::RightSet.label(name) ] if known? && cardname.simple?
-
-#      Card.search(type: 'Set',left: {right: name},right: '*type plus right',return: 'name').each do |set_name|
-#        sets<< set_name
-#      end
+  if known? && type_id == Card::CardtypeID # FIXME: belongs in type/cardtype
+    sets << ["#{name}+*type", Card::TypeSet.label(name)]
+  end
+  if with_self
+    sets << ["#{name}+*self", Card::SelfSet.label(name)]
+  end
+  if known? && cardname.simple?
+    sets << ["#{name}+*right", Card::RightSet.label(name)]
+  end
   sets
 end
-
-
 
 module ClassMethods
 
@@ -192,8 +195,9 @@ module ClassMethods
 
   def user_rule_cards user_name, setting_code
     Card.search(
-      right: { codename: setting_code },
-      left: { left: { type_id: SetID }, right: user_name }
+      { right: { codename: setting_code },
+        left: { left: { type_id: SetID }, right: user_name }
+        }, "rule cards for user: #{user_name}"
     )
   end
 

@@ -228,18 +228,15 @@ end
 
 def clear_upload_cache_dir_for_new_cards
   Dir.entries(tmp_upload_dir).each do |filename|
-    if filename =~ /^\d+/
-      path = File.join(tmp_upload_dir, filename)
-      if older_than_five_days? File.ctime(path)
+    if filename =~/^\d+/
+      path = File.join(tmp_upload_dir, filename )
+      if Card.older_than_five_days? File.ctime(path)
         FileUtils.rm path
       end
     end
   end
 end
 
-def older_than_five_days? time
-  Time.now - time > 432000
-end
 
 def delete_files_for_action action
   with_selected_action_id(action.id) do

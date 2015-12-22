@@ -28,7 +28,7 @@ module ClassMethods
       INNER JOIN cards ON card_actions.card_id = cards.id
       WHERE cards.type_id IN (#{Card::FileID}, #{Card::ImageID}) AND card_actions.draft = true"
     actions.each do |action|
-      if older_than_five_days? action.created_at && card = action.card # we don't want to delete uploads in progress
+      if older_than_five_days?(action.created_at) && card = action.card # we don't want to delete uploads in progress
         card.delete_files_for_action action
       end
     end
@@ -72,6 +72,11 @@ module ClassMethods
       card.attributes = attribs
       card.save!
     end
+  end
+
+
+  def older_than_five_days? time
+    Time.now - time > 432000
   end
 
 end

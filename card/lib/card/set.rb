@@ -245,6 +245,7 @@ class Card
             value = args[:symbol] ? args[:value].to_sym : args[:value]
             card.instance_variable_set("@#{attname}", value)
           end
+          card.include_set_modules
           card.send final_method
         }
       end

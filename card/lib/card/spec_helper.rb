@@ -101,7 +101,8 @@ module Card::SpecHelper
           return value
         rescue NameError
         end
-        raise NoMethodError
+        super
+#        raise NoMethodError
       end
       define_method :in_phase_test, event_block
     end
@@ -110,6 +111,7 @@ module Card::SpecHelper
     name = opts.delete(kind)
     Card.set_callback name, kind, :in_phase_test, prepend: true
     opts[:trigger].call
+  ensure
     Card.skip_callback name, kind, :in_phase_test
   end
 end

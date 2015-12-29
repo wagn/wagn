@@ -12,7 +12,7 @@ def find_action_by_params args
   if args[:rev]
     nth_action args[:rev]
   elsif Integer === args[:rev_id] || args[:rev_id] =~ /^\d+$/
-    if action = Action.fetch(args[:rev_id]) and action.card_id == id
+    if (action = Action.fetch(args[:rev_id])) and action.card_id == id
       action
     end
   elsif args[:rev_id]  # revision id is probalby a mod (e.g. if you request files/:logo/05_standard.png)

@@ -23,7 +23,7 @@ end
 
 phase_method :added_item_names do
   old_items = item_names content: db_content_was
-  items_names - old_items
+  item_names - old_items
 end
 
 format do

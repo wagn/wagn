@@ -99,7 +99,7 @@ event :delete_cached_upload_file_on_update,
 end
 
 event :validate_file_exist, before: :validate, on: :create do
-  unless attachment.file.present?
+  unless attachment.file.present? || empty_ok?
     errors.add attachment_name, 'is missing'
   end
 end
@@ -148,6 +148,14 @@ end
 
 def action_id_of_cached_upload
   @action_id_of_cached_upload
+end
+
+def empty_ok= value
+  @empty_ok = value
+end
+
+def empty_ok?
+  @empty_ok
 end
 
 def load_from_mod= value

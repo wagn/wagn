@@ -146,7 +146,7 @@ format :html do
     args[:delete_button] ||= delete_button args
     args[:cancel_button] ||=
       begin
-        cancel_view = card.new_card? ? :closed_rule : :open_rule )
+        cancel_view = card.new_card? ? :closed_rule : :open_rule
         cancel_button class: 'rule-cancel-button',
                       href: path(view: cancel_view, success: false)
       end

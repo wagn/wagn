@@ -271,7 +271,7 @@ format :html do
 
   # redirect to *previous if no :href is given
   def cancel_button args={}
-    args.reverse_merge! type: 'button',
+    args.reverse_merge! type: 'button'
     if args[:href]
       add_class args, 'slotter'
     else

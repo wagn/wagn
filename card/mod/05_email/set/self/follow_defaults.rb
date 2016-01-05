@@ -19,10 +19,10 @@ event :update_follow_rules,
       defaults.each do |set_card, option|
         follow_rule = Card.fetch(set_card.follow_rule_name(user.name), new: {})
         if follow_rule
-         follow_rule.drop_item '*never'
-         follow_rule.drop_item '*always'
-         follow_rule.add_item option
-         follow_rule.save!
+          follow_rule.drop_item '*never'
+          follow_rule.drop_item '*always'
+          follow_rule.add_item option
+          follow_rule.save!
         end
       end
     end

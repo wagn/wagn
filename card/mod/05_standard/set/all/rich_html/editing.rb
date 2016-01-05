@@ -1,5 +1,5 @@
 format :html do
-  # ##---( TOP_LEVEL (used by menu) NEW / EDIT VIEWS )
+  ###---( TOP_LEVEL (used by menu) NEW / EDIT VIEWS )
 
   view :new, perms: :create, tags: :unknown_ok do |args|
     frame_and_form :create, args, 'main-success' => 'REDIRECT' do
@@ -12,14 +12,7 @@ format :html do
     end
   end
 
-  def default_new_args args
-    hidden = args[:hidden] ||= {}
-    hidden[:success] ||= card.rule(:thanks) || '_self'
-    hidden[:card] ||= {}
-
-    args[:optional_help] ||= :show
-
-    # name field / title
+  def default_new_args_for_name_field_or_title args
     if !params[:name_prompt] && !card.cardname.blank?
       # name is ready and will show up in title
       hidden[:card][:name] ||= card.name
@@ -30,7 +23,7 @@ format :html do
                        else
                          "New #{card.type_name}"
                        end
-      # FIXME: overrides nest args
+      # FIXME: - overrides nest args
       unless card.rule_card :autoname
         # prompt for name
         hidden[:name_prompt] = true unless hidden.has_key? :name_prompt
@@ -38,8 +31,9 @@ format :html do
       end
     end
     args[:optional_name_formgroup] ||= :hide
+  end
 
-    # type field
+  def default_new_args_for_type_field args
     if !params[:type] &&
        !args[:type] &&
        (main? || card.simple? || card.is_template?) &&
@@ -51,7 +45,9 @@ format :html do
       hidden[:card][:type_id] ||= card.type_id
       args[:optional_type_formgroup] = :hide
     end
+  end
 
+  def default_new_args_buttons args
     cancel =
       if main?
         { class: 'redirecter', href: Card.path_setting('/*previous') }
@@ -66,6 +62,18 @@ format :html do
                    class: "create-cancel-button #{cancel[:class]}",
                    href: cancel[:href]}
     }
+  end
+
+  def default_new_args args
+    hidden = args[:hidden] ||= {}
+    hidden[:success] ||= card.rule(:thanks) || '_self'
+    hidden[:card] ||= {}
+
+    args[:optional_help] ||= :show
+
+    default_new_args_for_name_field_or_title args
+    default_new_args_for_type_field args
+    default_new_args_buttons args
   end
 
   view :edit, perms: :update, tags: :unknown_ok do |args|
@@ -86,12 +94,14 @@ format :html do
       #{button_tag 'Cancel',
                    class: 'cancel-button slotter',
                    href: (args[:cancel_path] || path), type: 'button',
-                  'data-slot-selector' => args[:cancel_slot_selector]}
+                   'data-slot-selector' => args[:cancel_slot_selector]}
     }
   end
 
   view :edit_name, perms: :update do |args|
-    frame_and_form({ action: :update, id: card.id }, args, 'main-success'=>'REDIRECT') do
+    frame_and_form(
+      { action: :update, id: card.id }, args, 'main-success' => 'REDIRECT'
+    ) do
       [
         _render_name_formgroup(args),
         _optional_render(:confirm_rename, args),
@@ -154,7 +164,8 @@ format :html do
 
   view :edit_type, perms: :update do |args|
     frame_and_form :update, args do
-    # 'main-success'=>'REDIRECT: _self', # adding this back in would make main cards redirect on cardtype changes
+      # 'main-success'=>'REDIRECT: _self', # adding this back in would make
+      # main cards redirect on cardtype changes
       [
         _render_type_formgroup(args),
         optional_render(:button_formgroup, args)

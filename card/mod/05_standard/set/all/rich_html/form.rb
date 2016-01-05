@@ -244,9 +244,9 @@ format :html do
      situation: 'primary',
      data: {}
     )
-    text = options.delete(:text) || 'Submit'
-    args.data[:disable_with] ||= options.delete(:disable_with) || 'Submitting'
-    button_tag text, options
+    text = args.delete(:text) || 'Submit'
+    args.data[:disable_with] ||= args.delete(:disable_with) || 'Submitting'
+    button_tag text, args
   end
 
 end

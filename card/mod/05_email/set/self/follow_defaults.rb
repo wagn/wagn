@@ -57,9 +57,11 @@ format :html do
       card:    { update_all_users: false }
     )
     args[:buttons] = %{
-      #{ button_tag 'Submit and update all users', disable_with: 'Updating', class: 'follow-updater', situation: 'primary' }
-      #{ button_tag 'Submit', class: 'follow'         }
-      #{ button_tag 'Cancel', class: 'slotter', type: 'button', href: path(view: :edit, id: card.id)}
+      #{ submit_button text: 'Submit and update all users',
+                       disable_with: 'Updating', class: 'follow-updater' }
+      #{ button_tag 'Submit', class: 'follow' }
+      #{ button_tag 'Cancel', class: 'slotter', type: 'button',
+                              href: path(view: :edit, id: card.id)}
     }
 
   end

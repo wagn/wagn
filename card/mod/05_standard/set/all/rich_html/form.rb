@@ -239,4 +239,14 @@ format :html do
     form.radio_button method, tag_value, options
   end
 
+  def submit_button args={}
+    args.reverse_merge!(
+     situation: 'primary',
+     data: {}
+    )
+    text = options.delete(:text) || 'Submit'
+    args.data[:disable_with] ||= options.delete(:disable_with) || 'Submitting'
+    button_tag text, options
+  end
+
 end

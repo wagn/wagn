@@ -60,10 +60,7 @@ format :html do
       end
 
     args[:buttons] ||= %{
-      #{button_tag 'Submit',
-                   class: 'create-submit-button',
-                   disable_with: 'Submitting',
-                   situation: 'primary'}
+      #{submit_button class: 'create-submit-button'}
       #{button_tag 'Cancel',
                    type: 'button',
                    class: "create-cancel-button #{cancel[:class]}",
@@ -86,7 +83,7 @@ format :html do
     args[:optional_toolbar] ||= :show
 
     args[:buttons] ||= %{
-      #{ button_tag 'Submit', class: 'submit-button', disable_with: 'Submitting', situation: 'primary' }
+      #{ submit_button class: 'submit-button' }
       #{ button_tag 'Cancel', class: 'cancel-button slotter', 'data-slot-selector'=>args[:cancel_slot_selector],
        href: (args[:cancel_path] || path), type: 'button' }
     }
@@ -120,7 +117,6 @@ format :html do
     end
   end
 
-
   def default_edit_name_args args
     referers = args[:referers] = card.extended_referencers
     args[:hidden] ||= {}
@@ -132,8 +128,11 @@ format :html do
     )
     args[:optional_toolbar] ||= :show
     args[:buttons] = %{
-      #{ button_tag 'Rename and Update', disable_with: 'Renaming', class: 'renamer-updater', situation: 'primary' }
-      #{ button_tag 'Rename',            disable_with: 'Renaming', class: 'renamer'         }
+      #{ submit_button text: 'Rename and Update', disable_with: 'Renaming',
+                       class: 'renamer-updater' }
+      #{ button_tag 'Rename',
+                    data: { disable_with: 'Renaming' },
+                    class: 'renamer' }
       #{ button_tag 'Cancel', class: 'slotter',  type: 'button', href: path }
     }
 
@@ -155,8 +154,9 @@ format :html do
     args[:optional_toolbar] ||= :show
     args[:hidden] ||= { success: {view: :edit} }
     args[:buttons] = %{
-      #{ button_tag 'Submit', disable_with: 'Submitting', situation: 'primary' }
-      #{ button_tag 'Cancel', href: path(view: :edit), type: 'button', class: 'slotter' }
+      #{ submit_button }
+      #{ button_tag 'Cancel', href: path(view: :edit), type: 'button',
+                              class: 'slotter' }
     }
   end
 

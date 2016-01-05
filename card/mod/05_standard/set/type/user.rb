@@ -45,7 +45,7 @@ format :html do
   end
 
   def setup_button
-    button_tag 'Set up', disable_with: 'Setting up', situation: 'primary'
+    submit_button text: 'Set up', disable_with: 'Setting up'
   end
 end
 

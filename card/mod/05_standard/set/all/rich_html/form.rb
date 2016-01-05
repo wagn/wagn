@@ -245,7 +245,7 @@ format :html do
      data: {}
     )
     text = args.delete(:text) || 'Submit'
-    args.data[:disable_with] ||= args.delete(:disable_with) || 'Submitting'
+    args[:data][:disable_with] ||= args.delete(:disable_with) || 'Submitting'
     button_tag text, args
   end
 

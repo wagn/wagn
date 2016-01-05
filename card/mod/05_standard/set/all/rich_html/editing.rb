@@ -12,6 +12,18 @@ format :html do
     end
   end
 
+  def default_new_args args
+    hidden = args[:hidden] ||= {}
+    hidden[:success] ||= card.rule(:thanks) || '_self'
+    hidden[:card] ||= {}
+
+    args[:optional_help] ||= :show
+
+    default_new_args_for_name_field_or_title args
+    default_new_args_for_type_field args
+    default_new_args_buttons args
+  end
+
   def default_new_args_for_name_field_or_title args
     hidden = args[:hidden]
     if !params[:name_prompt] && !card.cardname.blank?
@@ -35,12 +47,7 @@ format :html do
   end
 
   def default_new_args_for_type_field args
-    if !params[:type] &&
-       !args[:type] &&
-       (main? || card.simple? || card.is_template?) &&
-       Card.new(type_id: card.type_id).ok?(:create)
-      # otherwise current type won't be on menu
-
+    if show_type_formgroup?(args)
       args[:optional_type_formgroup] = :show
     else
       args[:hidden][:card][:type_id] ||= card.type_id
@@ -48,33 +55,27 @@ format :html do
     end
   end
 
-  def default_new_args_buttons args
-    cancel =
-      if main?
-        { class: 'redirecter', href: Card.path_setting('/*previous') }
-      else
-        { class: 'slotter', href: path(view: :missing) }
-      end
+  def show_type_formgroup? args
+    !params[:type] && !args[:type] &&
+      (main? || card.simple? || card.is_template?) &&
+      Card.new(type_id: card.type_id).ok?(:create)
+  end
 
+  def default_new_args_buttons args
+    cancel_path = !main? && path(view: :missing)
     args[:buttons] ||= %{
       #{submit_button class: 'create-submit-button'}
-      #{button_tag 'Cancel',
-                   type: 'button',
-                   class: "create-cancel-button #{cancel[:class]}",
-                   href: cancel[:href]}
+      #{cancel_button class: 'create-cancel-button',
+                      href: cancel_path}
     }
   end
 
-  def default_new_args args
-    hidden = args[:hidden] ||= {}
-    hidden[:success] ||= card.rule(:thanks) || '_self'
-    hidden[:card] ||= {}
-
-    args[:optional_help] ||= :show
-
-    default_new_args_for_name_field_or_title args
-    default_new_args_for_type_field args
-    default_new_args_buttons args
+  def add_class args, html_class
+    if args[:class]
+      args[:class] += " #{html_class}"
+    else
+      args[:class] = html_class
+    end
   end
 
   view :edit, perms: :update, tags: :unknown_ok do |args|
@@ -92,10 +93,9 @@ format :html do
 
     args[:buttons] ||= %{
       #{submit_button class: 'submit-button'}
-      #{button_tag 'Cancel',
-                   class: 'cancel-button slotter',
-                   href: (args[:cancel_path] || path), type: 'button',
-                   'data-slot-selector' => args[:cancel_slot_selector]}
+      #{cancel_button href: (args[:cancel_path] || path),
+                      class: 'cancel-button',
+                      'data-slot-selector' => args[:cancel_slot_selector]}
     }
   end
 
@@ -127,7 +127,7 @@ format :html do
     msg = '<h6>This change will...</h6>'
     msg << '<ul>'
     if descendants.any?
-      msg << "<li>automatically alter #{descendants.size} related name(s)."\
+      msg << "<li>automatically alter #{descendants.size} related name(s)." \
              '</li>'
     end
     if referers.any?
@@ -159,7 +159,7 @@ format :html do
         #{button_tag 'Rename',
                      data: { disable_with: 'Renaming' },
                      class: 'renamer'}
-        #{button_tag 'Cancel', class: 'slotter',  type: 'button', href: path}
+        #{cancel_button href: path}
       }
   end
 
@@ -180,8 +180,7 @@ format :html do
     args[:hidden] ||= { success: { view: :edit } }
     args[:buttons] = %{
       #{submit_button}
-      #{button_tag 'Cancel', href: path(view: :edit), type: 'button',
-                             class: 'slotter'}
+      #{cancel_button href: path(view: :edit)}
     }
   end
 

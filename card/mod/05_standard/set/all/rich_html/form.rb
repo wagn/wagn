@@ -77,7 +77,7 @@ format :html do
     { url: url, remote: true, html: html }
   end
 
-  def url_from_action
+  def url_from_action action
     case action
     when Symbol
       [path(action: action), action]
@@ -266,6 +266,19 @@ format :html do
     )
     text = args.delete(:text) || 'Submit'
     args[:data][:disable_with] ||= args.delete(:disable_with) || 'Submitting'
+    button_tag text, args
+  end
+
+  # redirect to *previous if no :href is given
+  def cancel_button args={}
+    args.reverse_merge! type: 'button',
+    if args[:href]
+      add_class args, 'slotter'
+    else
+      add_class args, 'redirecter'
+      args[:href] = Card.path_setting('/*previous')
+    end
+    text = args.delete(:text) || 'Cancel'
     button_tag text, args
   end
 end

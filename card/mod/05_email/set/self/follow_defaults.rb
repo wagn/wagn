@@ -63,8 +63,7 @@ format :html do
       #{submit_button text: 'Submit and update all users',
                       disable_with: 'Updating', class: 'follow-updater'}
       #{button_tag 'Submit', class: 'follow'}
-      #{button_tag 'Cancel', class: 'slotter', type: 'button',
-                             href: path(view: :edit, id: card.id)}
+      #{cancel_button href: path(view: :edit, id: card.id)}
     }
   end
 end

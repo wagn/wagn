@@ -146,9 +146,9 @@ format :html do
     args[:delete_button] ||= delete_button args
     args[:cancel_button] ||=
       begin
-        cancel_path = path view: ( card.new_card? ? :closed_rule : :open_rule ), success: false
-        button_tag( 'Cancel', class: 'rule-cancel-button slotter', type: 'button',
-                          href: cancel_path )
+        cancel_view = card.new_card? ? :closed_rule : :open_rule )
+        cancel_button class: 'rule-cancel-button',
+                      href: path(view: cancel_view, success: false)
       end
   end
 

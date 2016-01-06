@@ -29,7 +29,11 @@ end
 def update_references rendered_content=nil
   raise 'update references should not be called on new cards' if id.nil?
 
-  Card::Reference.delete_all_from self
+  Card::Reference.delete_all_from self unless self.new_card?
+  Card.connection.execute('update cards set references_expired=NULL ' \
+                          "where id=#{id}")
+  # this update is necessary (for now), because references are often
+  # updated outside of the context of an act.
   self.references_expired = nil
   rendered_content ||= Card::Content.new raw_content, self
   rendered_content.find_chunks(Card::Chunk::Reference).each do |chunk|

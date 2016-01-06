@@ -50,8 +50,8 @@ class Card
       when Array then each       { |e| yield e if e.is_a?(Chunk::Abstract) }
       when String # noop. strings are parsed in self, so no chunks in a String
       else
-        Rails.logger.warn msg, 'error self is unrecognized type'\
-                                " #{self.class} #{__getobj__.class}"
+        Rails.logger.warn 'error self is unrecognized type' \
+                          " #{self.class} #{__getobj__.class}"
       end
     end
 

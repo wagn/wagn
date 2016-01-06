@@ -23,18 +23,22 @@ event :assign_action, after: :assign_act do
   end
 end
 
+def finalize_action?
+  (history? || respond_to?(:attachment)) && current_action
+end
+
 # stores changes in the changes table and assigns them to the current action
 # removes the action if there are no changes
-event :finalize_action,
-      after: :stored,
-      when: proc { |c|
-        (c.history? || c.respond_to?(:attachment)) && c.current_action
-      } do
+event :finalize_action, after: :stored, when: proc { |c| c.finalize_action? } do
   @changed_fields = Card::TRACKED_FIELDS.select do |f|
     changed_attributes.member? f
   end
   if @changed_fields.present?
-    @changed_fields.each{ |f| Card::Change.create field: f, value: self[f], card_action_id: @current_action.id }
+    @changed_fields.each do |f|
+      Card::Change.create field: f,
+                          value: self[f],
+                          card_action_id: @current_action.id
+    end
     @current_action.update_attributes! card_id: id
   elsif @current_action.card_changes(true).empty?
     @current_action.delete
@@ -198,8 +202,10 @@ format :html do
                      card.current_rev_nr
     hide_diff = (params['hide_diff'] == ' true') || args[:hide_diff]
     args[:slot_class] = "revision-#{act.id} history-slot list-group-item"
+    draft = (last_action = act.actions.last) && last_action.draft
+
     wrap(args) do
-      render_haml card: card, act: act, act_view: act_view,
+      render_haml card: card, act: act, act_view: act_view, draft: draft,
                   current_rev_nr: current_rev_nr, rev_nr: rev_nr,
                   hide_diff: hide_diff do
         <<-HAML
@@ -213,7 +219,7 @@ format :html do
       .time.timeago
         = time_ago_in_words(act.acted_at)
         ago
-        - if act.actions.last.draft
+        - if draft
           |
           %em.info
             Autosave
@@ -221,14 +227,14 @@ format :html do
           %em.label.label-info
             Current
         - elsif act_view == :expanded
-          = rollback_link act.relevant_actions_for(card, act.actions.last.draft)
+          = rollback_link act.relevant_actions_for(card, draft)
           = show_or_hide_changes_link hide_diff, act_id: act.id, act_view: act_view, rev_nr: rev_nr, current_rev_nr: current_rev_nr
   .toggle
     = fold_or_unfold_link act_id: act.id, act_view: act_view, rev_nr: rev_nr, current_rev_nr: current_rev_nr
 
   .action-container{style: ("clear: left;" if act_view == :expanded)}
     - act.relevant_actions_for(card).each do |action|
-      = send("_render_action_#{ act_view }", action: action )
+      = send("_render_action_#{act_view}", action: action )
 HAML
       end
     end
@@ -241,7 +247,6 @@ HAML
   view :action_expanded do |args|
     render_action :expanded, args
   end
-
 
   def render_action action_view, args
     action = args[:action] || card.last_action
@@ -347,8 +352,8 @@ HAML
     toggled_view = args[:act_view] == :expanded ? :act_summary : :act_expanded
     arrow_dir = args[:act_view] == :expanded ? 'arrow-down' : 'arrow-right'
     link_to '', args.merge(view: toggled_view),
-              class: "slotter revision-#{args[:act_id]} #{arrow_dir}",
-              remote: true
+            class: "slotter revision-#{args[:act_id]} #{arrow_dir}",
+            remote: true
   end
 
   def show_or_hide_changes_link hide_diff, args

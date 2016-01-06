@@ -19,26 +19,28 @@ def reset_patterns_if_rule saving=false
     set.reset_patterns
     set.include_set_modules
 
-    #this is really messy.
-    if saving
-      self.add_to_read_rule_update_queue( set.item_cards limit: 0 ) if right.id == Card::ReadID
+    # FIXME: should be in right/read.rb
+    if saving && right.id == Card::ReadID
+      self.add_to_read_rule_update_queue(set.item_cards limit: 0)
     end
   end
 end
 
 def safe_set_keys
-  patterns.map( &:safe_key ).reverse * " "
+  patterns.map(&:safe_key).reverse * " "
 end
 
 def set_modules
-  @set_modules ||= patterns_without_new[0..-2].reverse.map(&:module_list).flatten.compact
+  @set_modules ||=
+    patterns_without_new[0..-2].reverse.map(&:module_list).flatten.compact
 end
 
 def set_format_modules klass
   @set_format_modules ||= {}
-  @set_format_modules[klass] = patterns_without_new[0..-2].reverse.map do |pattern|
-    pattern.format_module_list klass
-  end.flatten.compact
+  @set_format_modules[klass] =
+    patterns_without_new[0..-2].reverse.map do |pattern|
+      pattern.format_module_list klass
+    end.flatten.compact
 end
 
 def set_names
@@ -50,7 +52,6 @@ def set_names
 end
 
 def rule_set_keys
-  set_names #this triggers set_members cache.  need better solution!
-  @rule_set_keys ||= patterns.map( &:rule_set_key ).compact
+  set_names # this triggers set_members cache.  need better solution!
+  @rule_set_keys ||= patterns.map(&:rule_set_key).compact
 end
-

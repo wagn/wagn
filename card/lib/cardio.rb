@@ -20,38 +20,56 @@ module Cardio
       @@cache ||= ::Rails.cache
     end
 
+    def default_configs
+      {
+        read_only:              read_only?,
+        allow_inline_styles:    false,
+
+        recaptcha_public_key:   nil,
+        recaptcha_private_key:  nil,
+        recaptcha_proxy:        nil,
+
+        cache_store:            [:file_store, 'tmp/cache'],
+        override_host:          nil,
+        override_protocol:      nil,
+
+        no_authentication:      false,
+        files_web_path:         'files',
+
+        max_char_count:         200,
+        max_depth:              20,
+        email_defaults:         nil,
+
+        token_expiry:           2.days,
+        revisions_per_page:     10,
+        space_last_in_multispace: true,
+        closed_search_limit:    50,
+
+        non_createable_types:   [%w{ signup setting set }],
+        view_cache:             false,
+
+        encoding:               'utf-8',
+        request_logger:         false,
+        performance_logger:     false,
+        sql_comments:           true
+      }
+    end
+
     def set_config config
-      @@config, @@root = config, config.root
+      @@config = config
+      @@root = config.root
 
       config.autoload_paths += Dir["#{gem_root}/mod/*/lib/**/"]
       config.autoload_paths += Dir["#{gem_root}/lib/**/"]
       config.autoload_paths += Dir["#{root}/mod/*/lib/**/"]
 
-      set_default_value config, :read_only,              !!ENV['WAGN_READ_ONLY']
-      set_default_value config, :allow_inline_styles,    false
+      default_configs.each_pair do |setting, value|
+        set_default_value(config, setting, *value)
+      end
+    end
 
-      set_default_value config, :recaptcha_public_key,   nil
-      set_default_value config, :recaptcha_private_key,  nil
-      set_default_value config, :recaptcha_proxy,        nil
-
-      set_default_value config, :cache_store,           :file_store, 'tmp/cache'
-      set_default_value config, :override_host,          nil
-      set_default_value config, :override_protocol,      nil
-
-      set_default_value config, :no_authentication,      false
-      set_default_value config, :files_web_path,         'files'
-
-      set_default_value config, :max_char_count,         200
-      set_default_value config, :max_depth,              20
-      set_default_value config, :email_defaults,         nil
-
-      set_default_value config, :token_expiry,           2.days
-      set_default_value config, :revisions_per_page,     10
-      set_default_value config, :space_last_in_multispace, true
-      set_default_value config, :closed_search_limit,    50
-
-      set_default_value config, :non_createable_types,  %w{ signup setting set }
-      set_default_value config, :view_cache,             false
+    def read_only?
+      !ENV['WAGN_READ_ONLY'].nil?
     end
 
     # In production mode set_config gets called twice.
@@ -162,7 +180,7 @@ module Cardio
       root_dir = (type == :deck_cards ? root : gem_root)
       stamp_dir = ENV['SCHEMA_STAMP_PATH'] || File.join(root_dir, 'db')
 
-      File.join stamp_dir, "version#{ schema_suffix(type) }.txt"
+      File.join stamp_dir, "version#{schema_suffix type}.txt"
     end
   end
 end

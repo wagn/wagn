@@ -133,7 +133,7 @@ describe Card::Set::Type::Signup do
     context 'approval with token' do
       it 'should create token' do
         Card::Env.params[:approve_with_token] = true
-        Card::Auth.as :joe_admin
+        Card::Auth.as 'joe_admin'
 
         @signup = Card.fetch @signup.id
         @signup.save!
@@ -144,7 +144,7 @@ describe Card::Set::Type::Signup do
     context 'approval without token' do
       it 'should create token' do
         Card::Env.params[:approve_without_token] = true
-        Card::Auth.as :joe_admin
+        Card::Auth.as 'joe_admin'
 
         @signup = Card.fetch @signup.id
         @signup.save!

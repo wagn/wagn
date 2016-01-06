@@ -58,8 +58,9 @@ class Card
       def find_by_token token
         Auth.as_bot do
           Card.search(
-            right_id: Card::AccountID,
-            right_plus: [{ id: Card::TokenID }, { content: token.strip }]
+            { right_id: Card::AccountID,
+              right_plus: [{ id: Card::TokenID }, { content: token.strip }]
+              }, 'find +*account card by token'
           ).first
         end
       end
@@ -74,8 +75,9 @@ class Card
         email = email.strip.downcase
         Auth.as_bot do
           Card.search(
-            right_id: Card::AccountID,
-            right_plus: [{ id: Card::EmailID }, { content: email }]
+            { right_id: Card::AccountID,
+              right_plus: [{ id: Card::EmailID }, { content: email }]
+              }, "find +*account for email(#{email})"
           ).first
         end
       end
@@ -215,12 +217,15 @@ class Card
       # PERMISSIONS
 
       def createable_types
-        type_names = Auth.as_bot do
-          Card.search type: Card::CardtypeID, return: :name,
-                      not: {
-                        codename: ['in'] + Card.config.non_createable_types
-                      }
-        end
+        type_names =
+          Auth.as_bot do
+            Card.search(
+              { type: Card::CardtypeID, return: :name,
+                not: { codename: ['in'] + Card.config.non_createable_types } },
+              'find createable types'
+            )
+          end
+
         type_names.select do |name|
           Card.new(type: name).ok? :create
         end.sort

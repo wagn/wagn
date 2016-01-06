@@ -5,18 +5,20 @@ require_dependency File.expand_path('../reference', __FILE__)
 module Card::Chunk
   class Link < Reference
     attr_reader :link_text
-    word = /\s*([^\]\|]+)\s*/
     # Groups: $1, [$2]: [[$1]] or [[$1|$2]] or $3, $4: [$3][$4]
     Card::Chunk.register_class self,
                                prefix_re: '\\[',
                                full_re:   /^\[\[([^\]]+)\]\]/,
                                idx_char:  '['
+    def reference_code
+      'L' # L for "Link"
+    end
 
     def interpret match, _content
       target, @link_text =
         if (raw_syntax = match[1])
           if (i = divider_index(raw_syntax))  # [[A | B]]
-            [raw_syntax[0..(i-1)], raw_syntax[(i+1)..-1]]
+            [raw_syntax[0..(i - 1)], raw_syntax[(i + 1)..-1]]
           else                                # [[ A ]]
             [raw_syntax, nil]
           end
@@ -31,7 +33,8 @@ module Card::Chunk
     end
 
     def divider_index string
-      # there's probably a better way to do the following.  point is to find the first pipe that's not inside an inclusion
+      # there's probably a better way to do the following.
+      # point is to find the first pipe that's not inside an inclusion
       return unless string.index '|'
       string_copy = "#{string}" # had to do this to create new string?!
       string.scan /\{\{[^\}]*\}\}/ do |incl|

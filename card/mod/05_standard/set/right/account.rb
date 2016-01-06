@@ -70,13 +70,13 @@ event :require_email, on: :create, after: :approve do
   errors.add :email, 'required' unless subfield(:email)
 end
 
-event :set_default_salt, on: :create, before: :process_subcards do
+event :set_default_salt, on: :create, before: :approve_subcards do
   salt = Digest::SHA1.hexdigest "--#{Time.zone.now}--"
   Env[:salt] = salt # HACK!!! need viable mechanism to get this to password
   add_subfield :salt, content: salt
 end
 
-event :set_default_status, on: :create, before: :process_subcards do
+event :set_default_status, on: :create, before: :approve_subcards do
   default_status = Auth.needs_setup? ? 'active' : 'pending'
   add_subfield :status, content: default_status
 end

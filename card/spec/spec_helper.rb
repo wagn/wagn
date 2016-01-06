@@ -127,4 +127,3 @@ class ActiveSupport::Logger
     Thread.current['logger-output'] << msg
   end
 end
-

@@ -21,7 +21,7 @@ def assign_attributes args={}
 end
 
 def assign_set_specific_attributes
-  return unless @set_specific && @set_specific.present?
+  return unless @set_specific.present?
   @set_specific.each_pair do |name, value|
     send "#{name}=", value
   end

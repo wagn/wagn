@@ -93,7 +93,7 @@ describe Card::Set::All::History do
         end
 
         it "doesn't create act and actions if subcard fails" do
-          Card::Auth.as(:joe_user) do
+          Card::Auth.as('joe_user') do
             act_count    = Card::Act.count
             action_count = Card::Action.count
             Card.create name: "crete fail", subcards: {'*all+*create'=>''}

@@ -7,7 +7,7 @@ end
 
 def type_card
   return if type_id.nil?
-  Card.fetch type_id.to_i, skip_modules: true
+  Card.quick_fetch type_id.to_i
 end
 
 def type_code
@@ -16,6 +16,10 @@ end
 
 def type_name
   type_card.try :name
+end
+
+def type_name_or_default
+  type_card.try(:name) || Card.quick_fetch(Card.default_type_id).name
 end
 
 def type_cardname
@@ -51,16 +55,12 @@ event :validate_type, before: :approve, changed: :type_id do
 end
 
 event :reset_type_specific_fields, after: :store do
+  wql = { left: { left_id: type_id },
+          right: { codename: 'type_plus_right' }
+        }
+  wql_comment = "sets with a type_plus_right rule for #{name}"
+
   Auth.as_bot do
-    Card.search left: { left_id: type_id },
-                right: { codename: 'type_plus_right' } do |set_card|
-      set_card.reset_set_patterns
-    end
+    Card.search(wql, wql_comment).each &:reset_set_patterns
   end
 end
-
-#    Card.search left_plus: [ type_name, right_plus: {codename:
-#      'type_plus_right'}] do |right_anchor|
-#      Card["#{lef}"]
-#      set_card.reset_set_patterns
-#    end

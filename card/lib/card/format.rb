@@ -4,14 +4,18 @@ class Card
   class Format
     include Card::Location
 
-    DEPRECATED_VIEWS = { view: :open, card: :open, line: :closed, bare: :core, naked: :core }
+    DEPRECATED_VIEWS = { view: :open, card: :open, line: :closed,
+                         bare: :core, naked: :core }
     INCLUSION_MODES  = { closed: :closed, closed_content: :closed, edit: :edit,
-      layout: :layout, new: :edit, setup: :edit, normal: :normal, template: :template } #should be set in views
+                         layout: :layout, new: :edit, setup: :edit,
+                         normal: :normal, template: :template }
+    # FIXME: should be set in views
 
     cattr_accessor :ajax_call, :registered
-    [ :perms, :denial_views, :closed_views, :error_codes, :view_tags, :aliases ].each do |acc|
-      cattr_accessor acc
-      self.send "#{acc}=", {}
+    [:perms, :denial, :closed, :error_code, :view_tags, :aliases
+    ].each do |accessor_name|
+      cattr_accessor accessor_name
+      send "#{accessor_name}=", {}
     end
 
     attr_reader :card, :root, :parent, :main_opts
@@ -27,42 +31,45 @@ class Card
       def format_class_name format
         format = format.to_s
         format = '' if format == 'base'
-        format = @@aliases[ format ] if @@aliases[ format ]
-        "#{ format.camelize }Format"
+        format = @@aliases[format] if @@aliases[format]
+        "#{format.camelize}Format"
       end
 
       def extract_class_vars view, opts
         return unless opts.present?
-        perms[view]        = opts.delete(:perms)      if opts[:perms]
-        error_codes[view]  = opts.delete(:error_code) if opts[:error_code]
-        denial_views[view] = opts.delete(:denial)     if opts[:denial]
-        closed_views[view] = opts.delete(:closed)     if opts[:closed]
-
-        if tags = opts.delete(:tags)
-          Array.wrap(tags).each do |tag|
-            view_tags[view] ||= {}
-            view_tags[view][tag] = true
-          end
+        [:perms, :error_code, :denial, :closed].each do |varname|
+          class_var = send varname
+          class_var[view] = opts.delete(varname) if opts[varname]
         end
+        extract_view_tags view, opts
+      end
 
+      def extract_view_tags view, opts
+        tags = opts.delete :tags
+        return unless tags
+        Array.wrap(tags).each do |tag|
+          view_tags[view] ||= {}
+          view_tags[view][tag] = true
+        end
       end
 
       def new card, opts={}
         if self != Format
           super
         else
-          klass = Card.const_get format_class_name( opts[:format] || :html )
-          self == klass ? super : klass.new( card, opts )
+          format = opts[:format] || :html
+          klass = Card.const_get format_class_name(format)
+          self == klass ? super : klass.new(card, opts)
         end
       end
 
       def tagged view, tag
-        view and tag and view_tags = @@view_tags[view.to_sym] and view_tags[tag.to_sym]
+        return unless view && tag && (view_tags = @@view_tags[view.to_sym])
+        view_tags[tag.to_sym]
       end
 
-
       def format_ancestry
-        ancestry = [ self ]
+        ancestry = [self]
         unless self == Card::Format
           ancestry = ancestry + superclass.format_ancestry
         end
@@ -74,18 +81,19 @@ class Card
       end
     end
 
-
-    #~~~~~ INSTANCE METHODS
+    # ~~~~~ INSTANCE METHODS
 
     def initialize card, opts={}
-      @card = card or raise Card::Error, "format initialized without card"
+      unless (@card = card)
+        raise Card::Error, 'format initialized without card'
+      end
       opts.each do |key, value|
         instance_variable_set "@#{key}", value
       end
 
-      @mode  ||= :normal
+      @mode ||= :normal
+      @root ||= self
       @depth ||= 0
-      @root  ||= self
 
       @context_names = get_context_names
       include_set_format_modules
@@ -106,8 +114,8 @@ class Card
     end
 
     def include_set_format_modules
-      self.class.format_ancestry.reverse.each do |klass|
-        card.set_format_modules( klass ).each do |m|
+      self.class.format_ancestry.reverse_each do |klass|
+        card.set_format_modules(klass).each do |m|
           singleton_class.send :include, m
         end
       end
@@ -121,7 +129,7 @@ class Card
       end
     end
 
-    def get_inclusion_defaults nested_card
+    def get_inclusion_defaults _nested_card
       { view: :name }
     end
 
@@ -146,12 +154,12 @@ class Card
     end
 
     def with_name_context name
-       old_context = @context_names
-       add_name_context name
-       result = yield
-       @context_names = old_context
-       result
-     end
+      old_context = @context_names
+      add_name_context name
+      result = yield
+      @context_names = old_context
+      result
+    end
 
     def main?
       @depth == 0
@@ -168,27 +176,23 @@ class Card
     def template
       @template ||= begin
         c = controller
-        t = ActionView::Base.new c.class.view_paths, {_routes: c._routes}, c
+        t = ActionView::Base.new c.class.view_paths, { _routes: c._routes }, c
         t.extend c.class._helpers
         t
       end
     end
 
     def method_missing method, *opts, &proc
-      case method
-      when /(_)?(optional_)?render(_(\w+))?/
+      if method =~ /(_)?(optional_)?render(_(\w+))?/
         view = $3 ? $4 : opts.shift
         args = opts[0] ? opts.shift.clone : {}
-        args.merge!( optional: true, default_visibility: opts.shift) if $2
-        args[ :skip_permissions ] = true if $1
+        args.merge!(optional: true, default_visibility: opts.shift) if $2
+        args[:skip_permissions] = true if $1
         render view, args
-      when /^_view_(\w+)/
-        view = @current_view || $1
-        unsupported_view view
       else
         proc = proc { |*a| raw yield *a } if proc
         response = root.template.send method, *opts, &proc
-        String===response ? root.template.raw( response ) : response
+        response.is_a?(String) ? root.template.raw(response) : response
       end
     end
 
@@ -196,83 +200,88 @@ class Card
     # ---------- Rendering ------------
     #
 
-
-
     def render view, args={}
-      unless args.delete(:optional) && !show_view?( view, args )
-        @current_view = view = ok_view canonicalize_view( view ), args
-        args = default_render_args view, args
-        with_inclusion_mode view do
-          Card::ViewCache.fetch(self, view, args) do
-            method = method "_view_#{ view }"
-            method.arity == 0 ? method.call : method.call(args)
-          end
+      view = canonicalize_view view
+      return if hidden_view? view, args
+      @current_view = view = ok_view view, args
+      args = default_render_args view, args
+      with_inclusion_mode view do
+        Card::ViewCache.fetch(self, view, args) do
+          method = view_method view, args
+          method.arity == 0 ? method.call : method.call(args)
         end
       end
     rescue => e
       rescue_view e, view
     end
 
+    def view_method view, args
+      method "_view_#{view}"
+    rescue
+      args[:unsupported_view] = view
+      method '_view_unsupported_view'
+    end
+
+    def hidden_view? view, args
+      args.delete(:optional) && !show_view?(view, args)
+    end
 
     def show_view? view, args
-      default = args.delete(:default_visibility) || :show #FIXME - ugly
-      view_key = canonicalize_view view
-      api_option = args["optional_#{ view_key }".to_sym]
+      default = args.delete(:default_visibility) || :show # FIXME: - ugly
+      api_option = args["optional_#{view}".to_sym]
       case
-      # args remove option
-      when api_option == :always                   ; true
-      when api_option == :never                    ; false
-      # wagneer's choice
-      when show_views( args ).member?( view_key )  ; true
-      when hide_views( args ).member?( view_key )  ; false
-      # args override default
-      when api_option == :show                     ; true
-      when api_option == :hide                     ; false
-      # default
-      else                                         ; default==:show
+      # permanent visibility specified in code
+      when api_option == :always then true
+      when api_option == :never  then false
+      else
+        # wagneer can override code settings
+        contextual_setting = nest_arg_visibility(view, args) || api_option
+        case contextual_setting
+        when :show               then true
+        when :hide               then false
+        else default == :show
+        end
       end
     end
 
-    def show_views args
-      parse_view_visibility args[:show]
-    end
-
-    def hide_views args
-      parse_view_visibility args[:hide]
+    def nest_arg_visibility view, args
+      [:show, :hide].each do |setting|
+        return setting if parse_view_visibility(args[setting]).member?(view)
+      end
+      false
     end
 
     def parse_view_visibility val
       case val
-      when Array; val
-      when String; val.split(/[\s,]+/)
-      when NilClass; []
+      when NilClass then []
+      when Array    then val
+      when String   then val.split(/[\s,]+/)
       else raise Card::Error, "bad show/hide argument: #{val}"
-      end.map{ |view| canonicalize_view view }
+      end.map { |view| canonicalize_view view }
     end
 
-
     def default_render_args view, a=nil
-      args = case a
-      when nil   ; {}
-      when Hash  ; a.clone
-      when Array ; a[0].merge a[1]
-      else       ; raise Card::Error, "bad render args: #{a}"
-      end
+      args =
+        case a
+        when nil   then {}
+        when Hash  then a.clone
+        when Array then a[0].merge a[1]
+        else       raise Card::Error, "bad render args: #{a}"
+        end
 
-      view_key = canonicalize_view view
-      default_method = "default_#{ view }_args"
+      default_method = "default_#{view}_args"
       if respond_to? default_method
         send default_method, args
       end
       args
     end
 
-
     def rescue_view e, view
       if Rails.env =~ /^cucumber|test$/
         raise e
       else
-        Rails.logger.info "\nError rendering #{error_cardname} / #{view}: #{e.class} : #{e.message}"
+        Rails.logger.info "\nError rendering #{error_cardname} / #{view}: "\
+                          "#{e.class} : #{e.message}"
         Card::Error.current = e
         card.notable_exception_raised
         if (debug = Card[:debugger]) && debug.content == 'on'
@@ -287,11 +296,7 @@ class Card
       card && card.name.present? ? card.name : 'unknown card'
     end
 
-    def unsupported_view view
-      "view (#{view}) not supported for #{error_cardname}"
-    end
-
-    def rendering_error exception, view
+    def rendering_error _exception, view
       "Error rendering: #{error_cardname} (#{view} view)"
     end
 
@@ -300,49 +305,67 @@ class Card
     #
 
     def subformat subcard
-      subcard = Card.fetch( subcard, new: {} ) if String===subcard
-      sub = self.class.new subcard, parent: self, depth: @depth+1, root: @root,
-        # FIXME - the following four should not be hard-coded here.  need a generalized mechanism
-        # for attribute inheritance
-        context_names: @context_names, mode: @mode, mainline: @mainline, form: @form
+      subcard = Card.fetch(subcard, new: {}) if subcard.is_a?(String)
+      self.class.new subcard,
+                     parent: self, depth: @depth + 1, root: @root,
+                     # FIXME: - the following four should not be hard-coded
+                     # here.  need a generalized mechanism
+                     # for attribute inheritance
+                     context_names: @context_names, mode: @mode,
+                     mainline: @mainline, form: @form
     end
 
-
-    def process_content content=nil, opts={}
-      process_content_object(content, opts).to_s
+    def process_content override_content=nil, opts={}
+      process_content_object(override_content, opts).to_s
     end
 
-    def process_content_object content=nil, opts={}
-      return content unless card
-      content = card.raw_content || '' if content.nil?
-
-      obj_content = Card::Content===content ? content : Card::Content.new( content, format=self, opts.delete(:content_opts) )
-      card.update_references( obj_content, refresh=true ) if card.references_expired  # I thik we need this generalized
-      obj_content.process_content_object do |chunk_opts|
+    def process_content_object override_content=nil, opts={}
+      content = override_content || render_raw || ''
+      content_object = get_content_object content, opts
+      if card.references_expired
+        card.update_references content_object
+      end
+      content_object.process_each_chunk do |chunk_opts|
         prepare_nest chunk_opts.merge(opts) { yield }
+      end
+    end
+
+    def get_content_object content, opts
+      if content.is_a? Content
+        content
+      else
+        Content.new content, self, opts.delete(:content_opts)
       end
     end
 
     def ok_view view, args={}
       return view if args.delete :skip_permissions
-      approved_view = case
-        when @depth >= Card.config.max_depth            # prevent recursion. @depth tracks subformats
-          :too_deep
-        when @@perms[view] == :none                     # permission skipping specified in view definition
-          view
-        when args.delete(:skip_permissions)             # permission skipping specified in args
-          view
-        when !card.known? && !tagged(view, :unknown_ok) # handle unknown cards (where view not exempt)
-          view_for_unknown view, args
-        else                                            # run explicit permission checks
-          permitted_view view, args
-        end
-
+      approved_view = approved_view view, args
       args[:denied_view] = view if approved_view != view
-      if focal? && error_code = @@error_codes[ approved_view ]
+      if focal? && (error_code = @@error_code[approved_view])
         root.error_status = error_code
       end
       approved_view
+    end
+
+    def approved_view view, args={}
+      case
+      when @depth >= Card.config.max_depth
+        # prevent recursion. @depth tracks subformats
+        :too_deep
+      when @@perms[view] == :none
+        # permission skipping specified in view definition
+        view
+      when args.delete(:skip_permissions)
+        # permission skipping specified in args
+        view
+      when !card.known? && !tagged(view, :unknown_ok)
+        # handle unknown cards (where view not exempt)
+        view_for_unknown view, args
+      else
+        # run explicit permission checks
+        permitted_view view, args
+      end
     end
 
     def tagged view, tag
@@ -359,7 +382,7 @@ class Card
         end
 
       if args[:denied_task]
-        @@denial_views[view] || :denial
+        @@denial[view] || :denial
       else
         view
       end
@@ -372,20 +395,19 @@ class Card
       @ok[task]
     end
 
-    def view_for_unknown view, args
+    def view_for_unknown _view, _args
       # note: overridden in HTML
       focal? ? :not_found : :missing
     end
 
     def canonicalize_view view
-      unless view.blank?
-        view_key = view.to_viewname.key.to_sym
-        DEPRECATED_VIEWS[view_key] || view_key
-      end
+      return if view.blank?
+      view_key = view.to_viewname.key.to_sym
+      DEPRECATED_VIEWS[view_key] || view_key
     end
 
     def with_inclusion_mode mode
-      if switch_mode = INCLUSION_MODES[ mode ] and @mode != switch_mode
+      if (switch_mode = INCLUSION_MODES[mode]) && @mode != switch_mode
         old_mode, @mode = @mode, switch_mode
         @inclusion_defaults = nil
       end
@@ -402,13 +424,17 @@ class Card
       opts ||= {}
 
       case
-      when opts.has_key?(:comment)                                       # commented nest
+      when opts.has_key?(:comment)
+        # commented nest
         opts[:comment]
-      when @mode == :closed && @char_count > Card.config.max_char_count  # move on; content out of view
+      when @mode == :closed && @char_count > Card.config.max_char_count
+        # move on; content out of view
         ''
-      when opts[:inc_name] == '_main' && show_layout? && @depth==0       # the main card within a layout
+      when opts[:inc_name] == '_main' && show_layout? && @depth == 0
+        # the main card within a layout
         expand_main opts
-      else                                                               # standard nest
+      else
+        # standard nest
         result = nest fetch_nested_card(opts), opts
         @char_count += result.length if @mode == :closed && result
         result
@@ -419,27 +445,26 @@ class Card
       opts.merge! root.main_opts if root.main_opts
       legacy_main_opts_tweaks! opts
 
-      #opts[:view] ||= :open
       with_inclusion_mode :normal do
         @mainline = true
-        result = wrap_main nest( root.card, opts )
+        result = wrap_main nest(root.card, opts)
         @mainline = false
         result
       end
     end
 
     def legacy_main_opts_tweaks! opts
-      if val=params[:size] and val.present?
+      if (val = params[:size]) && val.present?
         opts[:size] = val.to_sym
       end
 
-      if val=params[:item] and val.present?
+      if (val = params[:item]) && val.present?
         opts[:items] = (opts[:items] || {}).reverse_merge view: val.to_sym
       end
     end
 
     def wrap_main content
-      content  #no wrapping in base format
+      content  # no wrapping in base format
     end
 
     def nest nested_card, opts={}
@@ -482,13 +507,13 @@ class Card
     end
 
     def view_in_closed_mode homeview, nested_card
-      approved_view = @@closed_views[homeview]
+      approved_view = @@closed[homeview]
       case
-      when approved_view == true   then homeview
-      when @@error_codes[homeview] then homeview
-      when approved_view           then approved_view
-      when !nested_card.known?     then :closed_missing
-      else                              :closed_content
+      when approved_view == true  then homeview
+      when @@error_code[homeview] then homeview
+      when approved_view          then approved_view
+      when !nested_card.known?    then :closed_missing
+      else                             :closed_content
       end
     end
 
@@ -497,23 +522,24 @@ class Card
 
       # CLEANME This is a hack so plus cards re-populate on failed signups
       p = params['subcards']
-      if p && card_params = p[cardname.to_s]
+      if p && (card_params = p[cardname.to_s])
         content = card_params['content']
       end
-      content if content.present?  # why is this necessary? - efm
-                                   # probably for blanks?  -- older/wiser efm
+      content if content.present? # returns nil for empty string
     end
 
     def fetch_nested_card options
       args = { name: options[:inc_name], type: options[:type], supercard: card }
-      args.delete(:supercard) if options[:inc_name].strip.blank? # special case.  gets absolutized incorrectly. fix in smartname?
+      args.delete(:supercard) if options[:inc_name].strip.blank?
+      # special case.  gets absolutized incorrectly. fix in smartname?
       if options[:inc_name] =~ /^_main\+/
-        # FIXME this is a rather hacky (and untested) way to get @superleft to work on new cards named _main+whatever
+        # FIXME: this is a rather hacky (and untested) way to get @superleft
+        # to work on new cards named _main+whatever
         args[:name] = args[:name].gsub /^_main\+/, '+'
         args[:supercard] = root.card
       end
-      if content=get_inclusion_content(options[:inc_name])
-        args[:content]=content
+      if (content = get_inclusion_content options[:inc_name])
+        args[:content] = content
       end
       Card.fetch options[:inc_name], new: args
     end
@@ -552,4 +578,3 @@ class Card
     end
   end
 end
-

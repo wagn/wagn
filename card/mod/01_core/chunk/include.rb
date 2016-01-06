@@ -32,20 +32,13 @@ module Card::Chunk
       in_brackets = strip_tags match[1]
       name, @opt_lists = in_brackets.split '|', 2
       name = name.to_s.strip
-      result =
-        case name
-        when /^\#\#/ then '' # invisible comment
-        when /^\#/   then "<!-- #{CGI.escapeHTML in_brackets} -->"
-        else
-          raw_options = @opt_lists.to_s.split('|').reverse
-          @options = raw_options.inject(nil) do |prev_level, level_options|
-            process_options level_options, prev_level
-          end || {}
-          @options.merge! inc_name: name, inc_syntax: in_brackets
-          @name = name
-        end
-
-      @process_chunk = result if !@name
+      if name =~ /^\#/
+        @process_chunk = name =~ /^\#\#/ ? '' : visible_comment(in_brackets)
+      else
+        @options = interpret_options
+        @options.merge! inc_name: name, inc_syntax: in_brackets
+        @name = name
+      end
     end
 
     def strip_tags string
@@ -54,28 +47,44 @@ module Card::Chunk
       string.gsub /\<[^\>]*\>/, ''
     end
 
-    def process_options list_string, items
-      hash = {}
+    def visible_comment message
+      "<!-- #{CGI.escapeHTML message} -->"
+    end
+
+    def interpret_options
+      raw_options = @opt_lists.to_s.split('|').reverse
+      raw_options.inject(nil) do |prev_level, level_options|
+        interpret_piped_options level_options, prev_level
+      end || {}
+    end
+
+    def interpret_piped_options list_string, items
+      options_hash = items.nil? ? {} : { items: items }
       style_hash = {}
-      hash[:items] = items unless items.nil?
+      option_string_to_hash list_string, options_hash, style_hash
+      style_hash_to_string options_hash, style_hash
+      options_hash
+    end
+
+    def option_string_to_hash list_string, options_hash, style_hash
       Hash.new_from_semicolon_attr_list(list_string).each do |key, value|
         key = key.to_sym
         if key == :item
-          hash[:items] ||= {}
-          hash[:items][:view] = value
+          options_hash[:items] ||= {}
+          options_hash[:items][:view] = value
         elsif @@options.include? key
-          hash[key] = value
+          options_hash[key] = value
         else
           style_hash[key] = value
         end
       end
+    end
 
-      if !style_hash.empty?
-        hash[:style] = style_hash.map do |key, value|
-          CGI.escapeHTML "#{key}:#{value};"
-        end * ''
-      end
-      hash
+    def style_hash_to_string options_hash, style_hash
+      return if style_hash.empty?
+      options_hash[:style] = style_hash.map do |key, value|
+        CGI.escapeHTML "#{key}:#{value};"
+      end * ''
     end
 
     def inspect

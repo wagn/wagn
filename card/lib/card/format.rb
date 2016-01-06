@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-
 class Card
   class Format
     include Card::Location

@@ -245,6 +245,7 @@ class Card
             value = args[:symbol] ? args[:value].to_sym : args[:value]
             card.instance_variable_set("@#{attname}", value)
           end
+          card.include_set_modules
           card.send final_method
         }
       end
@@ -479,7 +480,10 @@ EOF
 
     def attachment name, args
       include Abstract::Attachment
-      set_specific_attributes name, :load_from_mod, :action_id_of_cached_upload,
+      set_specific_attributes name,
+                              :load_from_mod,
+                              :action_id_of_cached_upload,
+                              :empty_ok,
                               "remote_#{name}_url".to_sym
       uploader_class = args[:uploader] || FileUploader
       mount_uploader name, uploader_class

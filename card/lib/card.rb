@@ -8,10 +8,10 @@ Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
 # a. how ruby Card objects work, and
 # b. how to extend them.
 #
-# It assumes that you've already read the introductory text in {file:README_Developers.rdoc}.
+# It assumes that you've already read the introductory text
+# in {file:README_Developers.rdoc}.
 #
 class Card < ActiveRecord::Base
-
   # attributes that ActiveJob can handle
   def self.serializable_attr_accessor *args
     self.serializable_attributes = args
@@ -36,24 +36,29 @@ class Card < ActiveRecord::Base
   has_many :references_from, class_name: :Reference, foreign_key: :referee_id
   has_many :references_to,   class_name: :Reference, foreign_key: :referer_id
   has_many :acts, -> { order :id }
-  has_many :actions, -> { where( draft: [nil,false]).order :id }
-  has_many :drafts, -> { where( draft: true ).order :id }, class_name: :Action
+  has_many :actions, -> { where(draft: [nil, false]).order :id }
+  has_many :drafts, -> { where(draft: true).order :id }, class_name: :Action
 
-  cattr_accessor :set_patterns, :error_codes, :serializable_attributes, :set_specific_attributes
-  @@set_patterns, @@error_codes = [], {}
+  cattr_accessor :set_patterns, :serializable_attributes, :error_codes,
+                 :set_specific_attributes
+  @@set_patterns = []
+  @@error_codes = {}
 
-  serializable_attr_accessor :action, :supercard, :superleft, :current_act, :current_action,
+  serializable_attr_accessor(
+    :action, :supercard, :superleft,
+    :current_act, :current_action,
     :comment, :comment_author,    # obviated soon
     :update_referencers,          # wrong mechanism for this
     :update_all_users,            # if the above is wrong then this one too
     :silent_change,               # and this probably too
     :remove_rule_stash,
     :last_action_id_before_edit
+  )
 
   attr_accessor :follower_stash
 
-
-  define_callbacks :prepare, :approve, :store, :stored, :extend, :subsequent, :select_action, :show, :handle
+  define_callbacks :prepare, :approve, :store, :stored, :extend, :subsequent,
+                   :select_action, :show, :handle
 
   before_validation :prepare
   before_validation :approve
@@ -63,8 +68,4 @@ class Card < ActiveRecord::Base
   TRACKED_FIELDS = %w(name type_id db_content trash)
   extend CarrierWave::Mount
   ActiveSupport.run_load_hooks(:card, self)
-
-
 end
-
-

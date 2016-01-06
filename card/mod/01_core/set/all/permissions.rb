@@ -1,6 +1,6 @@
 
 Card.error_codes.merge! permission_denied: [:denial, 403],
-                        captcha: [:errors, 449]
+                       captcha: [:errors, 449]
 
 # ok? and ok! are public facing methods to approve one action at a time
 #

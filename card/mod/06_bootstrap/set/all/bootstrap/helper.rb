@@ -137,7 +137,7 @@ format :html do
     item_options = options.delete(:items) || {}
     wrap_with :ul, options  do
       content.map do |item|
-        content_tag :li, item, item_options
+        content_tag :li, item.html_safe, item_options
       end.join "\n"
     end
   end

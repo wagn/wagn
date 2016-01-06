@@ -21,8 +21,8 @@ format :html do
   def head_title
     title = root.card && root.card.name
     title = nil if title.blank?
-    title = params[:action] if title == '*placeholder'
-    %(<title>#{title ? "#{title} - " : ''}#{ Card.setting :title }</title>)
+    title = params[:action] if title=='*placeholder'
+    %(<title>#{title ? "#{title} - " : ''}#{ Card.global_setting :title }</title>)
   end
 
   def head_buttons
@@ -101,7 +101,7 @@ format :html do
       #{ javascript_tag do varvals * ';' end  }
       #{ @js_tag if @js_tag }
       <!--[if lt IE 9]>#{ javascript_include_tag ie9_card.machine_output_url if ie9_card }<![endif]-->
-      #{ javascript_tag { "wagn.setTinyMCEConfig('#{ escape_javascript Card.setting(:tiny_mce).to_s }')" } }
+      #{ javascript_tag { "wagn.setTinyMCEConfig('#{ escape_javascript Card.global_setting(:tiny_mce).to_s }')" } }
       #{ google_analytics_head_javascript }
       <script type="text/javascript">
         $('document').ready(function() {
@@ -111,22 +111,23 @@ format :html do
     HTML
   end
 
+
   def google_analytics_head_javascript
-    if (ga_key = Card.setting("*google analytics key")) # FIXME: escape this?
-      <<-HTML
-        <script type="text/javascript">
-          var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', '#{ga_key}']);
-          _gaq.push(['_trackPageview']);
-          (function() {
-            var ga = document.createElement('script');
-            ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(ga, s);
-          })();
-        </script>
-      HTML
-    end
+    return unless (ga_key = Card.global_setting(:google_analytics_key))
+    <<-JAVASCRIPT
+      <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', '#{ga_key}']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+          var ga = document.createElement('script');
+          ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(ga, s);
+          s.parentNode.insertBefore(ga, s);
+        })();
+      </script>
+    JAVASCRIPT
   end
 end

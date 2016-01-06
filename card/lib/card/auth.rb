@@ -6,6 +6,10 @@ class Card
     @@simulating_setup_need = nil
 
     SETUP_COMPLETED_KEY = 'SETUP_COMPLETED'
+    DEFAULT_RECAPTCHA_SETTINGS = {
+      :recaptcha_public_key => '6LeoHfESAAAAAN1NdQeYHREq4jTSQhu1foEzv6KC',
+      :recaptcha_private_key => '6LeoHfESAAAAAHLZpn7ijrO4_KGLEr2nGL4qjjis'
+    }
 
     # after_save :reset_instance_cache
 

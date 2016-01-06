@@ -46,7 +46,7 @@ def delete_old_actions
   Card::TRACKED_FIELDS.each do |field|
     # assign previous changes on each tracked field to the last action
     if (la = last_action) && !la.change_for(field).present? &&
-       (last_change = last_change_on(field))
+       (last_change = last_change_on field)
       # last_change comes as readonly record
       last_change = Card::Change.find(last_change.id)
       last_change.update_attributes!(card_action_id: last_action_id)

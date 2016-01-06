@@ -47,7 +47,8 @@ describe Card::Set::Type::Signup do
 
     it 'sends email with an appropriate link' do
       @mail = ActionMailer::Base.deliveries.last
-      expect(@mail.parts[0].body.raw_source).to match(Card.setting(:title))
+      body = @mail.parts[0].body.raw_source
+      expect(body).to match(Card.global_setting(:title))
     end
 
     it 'creates an authenticable token' do
@@ -90,21 +91,25 @@ describe Card::Set::Type::Signup do
 
   context 'signup (with approval)' do
     before do
-      # NOTE: by default Anonymous does not have permission to create User cards.
+      # NOTE: by default Anonymous does not have permission
+      # to create User cards.
       Mail::TestMailer.deliveries.clear
       Card::Auth.current_id = Card::AnonymousID
-      @signup = Card.create! name: 'Big Bad Wolf', type_id: Card::SignupID,
-        '+*account'=>{ '+*email'=>'wolf@wagn.org', '+*password'=>'wolf' }
+      @signup = Card.create! name: 'Big Bad Wolf',
+                             type_id: Card::SignupID,
+                             '+*account' => {
+                               '+*email' => 'wolf@wagn.org',
+                               '+*password' => 'wolf'
+                             }
       @account = @signup.account
     end
-
 
     it 'should create all the necessary cards, but no token' do
       expect(@signup.type_id).to eq(Card::SignupID)
       expect(@account.email).to eq('wolf@wagn.org')
       expect(@account.status).to eq('pending')
       expect(@account.salt).not_to eq('')
-      expect(@account.password.length).to be > 10 #encrypted
+      expect(@account.password.length).to be > 10 # encrypted
     end
 
     it 'should not create a token' do
@@ -119,16 +124,13 @@ describe Card::Set::Type::Signup do
         expect(body).to include(@signup.name)
         expect(body).to include('wolf@wagn.org')
       end
-
     end
 
     it 'does not send verification email' do
       expect(Mail::TestMailer.deliveries[-2]).to be_nil
     end
 
-
     context 'approval with token' do
-
       it 'should create token' do
         Card::Env.params[:approve_with_token] = true
         Card::Auth.as 'joe_admin'
@@ -137,11 +139,9 @@ describe Card::Set::Type::Signup do
         @signup.save!
         expect(@signup.account.token).to be_present
       end
-
     end
 
     context 'approval without token' do
-
       it 'should create token' do
         Card::Env.params[:approve_without_token] = true
         Card::Auth.as 'joe_admin'
@@ -153,20 +153,27 @@ describe Card::Set::Type::Signup do
         expect(@signup.account.status).to eq('active')
       end
     end
-
   end
 
   context 'a welcome email card exists' do
     before do
       Card::Auth.as_bot do
-        Card.create! name: 'welcome email', subcards: {'+*subject'=>'welcome',
-                     '+*html_message'=>'Welcome {{_self|name}}'}, type_id: Card::EmailTemplateID
+        Card.create! name: 'welcome email',
+                     type_id: Card::EmailTemplateID,
+                     subcards: {
+                       '+*subject' => 'welcome',
+                       '+*html_message' => 'Welcome {{_self|name}}'
+                     }
       end
       Mail::TestMailer.deliveries.clear
-      @signup = Card.create! name: 'Big Bad Sheep', type_id: Card::SignupID,
-        '+*account'=>{'+*email'=>'sheep@wagn.org', '+*password'=>'sheep'}
-
+      @signup = Card.create! name: 'Big Bad Sheep',
+                             type_id: Card::SignupID,
+                             '+*account' => {
+                               '+*email' => 'sheep@wagn.org',
+                               '+*password' => 'sheep'
+                             }
     end
+
     it 'sends welcome email when account is activated' do
       @signup.run_phase :approve do
         @signup.activate_account

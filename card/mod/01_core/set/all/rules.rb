@@ -1,7 +1,6 @@
-
-
 RuleSQL = %{
-  select rules.id as rule_id, settings.id as setting_id, sets.id as set_id, sets.left_id as anchor_id, sets.right_id as set_tag_id
+  select rules.id as rule_id, settings.id as setting_id, sets.id as set_id,
+    sets.left_id as anchor_id, sets.right_id as set_tag_id
   from cards rules
   join cards sets     on rules.left_id  = sets.id
   join cards settings on rules.right_id = settings.id
@@ -19,15 +18,15 @@ ReadRuleSQL = %{
   where read_rules.right_id = #{Card::ReadID} and read_rules.trash is false and sets.type_id = #{Card::SetID};
 }
 
- def is_rule?
-   is_standard_rule? || is_user_rule?
- end
+def is_rule?
+  is_standard_rule? || is_user_rule?
+end
 
 def is_standard_rule?
-  (r = right( skip_modules: true )) &&
-  r.type_id == Card::SettingID       &&
-  (l = left( skip_modules: true ))  &&
-  l.type_id == Card::SetID
+  (r = right( skip_modules: true ))  &&
+    r.type_id == Card::SettingID     &&
+    (l = left( skip_modules: true )) &&
+    l.type_id == Card::SetID
 end
 
 def is_user_rule?
@@ -113,18 +112,20 @@ module ClassMethods
       join cards settings  on user_rules.right_id = settings.id
       join cards users     on user_sets.right_id  = users.id
       join cards sets      on user_sets.left_id = sets.id
-      where   sets.type_id      = #{Card::SetID }               and sets.trash       is false
-        and   settings.type_id  = #{Card::SettingID}            and settings.trash   is false
-        and   ( #{user_restriction} or users.codename = 'all' ) and users.trash      is false
-        and                                                         user_sets.trash  is false
-        and                                                         user_rules.trash is false;
+      where sets.type_id     = #{Card::SetID }
+        and settings.type_id = #{Card::SettingID}
+        and (#{user_restriction} or users.codename = 'all')
+        and sets.trash       is false
+        and settings.trash   is false
+        and users.trash      is false
+        and user_sets.trash  is false
+        and user_rules.trash is false;
     }
   end
 
-
-  def setting name
+  def global_setting name
     Auth.as_bot do
-      card=Card[name] and !card.db_content.strip.empty? and card.db_content
+      (card = Card[name]) && !card.db_content.strip.empty? && card.db_content
     end
   end
 

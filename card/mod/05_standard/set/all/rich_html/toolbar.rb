@@ -1,7 +1,7 @@
 
 format :html do
   def toolbar_pinned?
-    Card[:toolbar_pinned].content == 'true'
+    (tp = Card[:toolbar_pinned]) && tp.content == 'true'
   end
 
   view :toolbar do |args|

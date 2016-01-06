@@ -74,13 +74,21 @@ class Card
       to_absolute_name(context_name)
     end
 
-    def field_of? context_name
+    def child_of? context_name
       if context_name.present?
         # Do I still equal myself after I've been relativised in the context
         # of context_name?
         relative_name(context_name).key != absolute_name(context_name).key
       else
         s.match(/^\s*\+/)
+      end
+    end
+
+    def field_of? context_name
+      if context_name.present?
+        child_of?(context_name) && relative_name(context_name).length == 2
+      else
+        s.match(/^\s*\+[^+]+$/)
       end
     end
 

@@ -26,22 +26,11 @@ def replace_references old_name, new_name
 end
 
 # update entries in reference table
-def update_references rendered_content=nil, refresh=false
+def update_references rendered_content=nil
   raise 'update references should not be called on new cards' if id.nil?
 
   Card::Reference.delete_all_from self
-
-  # FIXME: why not like this: references_expired = nil
-  # do we have to make sure this is saved?
-  # Card.update( id, references_expired: nil )
-  # or just this and save it elsewhere?
-  # references_expired=nil
-
-  Card.connection.execute(
-    "update cards set references_expired=NULL where id=#{id}"
-  )
-  expire if refresh
-
+  self.references_expired = nil
   rendered_content ||= Card::Content.new raw_content, self
   rendered_content.find_chunks(Card::Chunk::Reference).each do |chunk|
     create_reference_to chunk

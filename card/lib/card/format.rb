@@ -329,9 +329,9 @@ class Card
       content_object = get_content_object content, opts
       if card.references_expired
         # FIXME: should be handled with method on Card
-        card.update_references content_object, true
+        card.update_references content_object
       end
-      content_object.process_content_object do |chunk_opts|
+      content_object.process_each_chunk do |chunk_opts|
         prepare_nest chunk_opts.merge(opts) { yield }
       end
     end

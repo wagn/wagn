@@ -59,7 +59,7 @@ class Card
       each_chunk.select { |chunk| chunk.is_a?(chunk_type) }
     end
 
-    def process_content_object &block
+    def process_each_chunk &block
       each_chunk { |chunk| chunk.process_chunk &block }
       self
     end

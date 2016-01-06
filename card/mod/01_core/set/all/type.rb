@@ -18,6 +18,10 @@ def type_name
   type_card.try :name
 end
 
+def type_name_or_default
+  type_card.try(:name) || Card.quick_fetch(Card.default_type_id).name
+end
+
 def type_cardname
   type_card.try :cardname
 end

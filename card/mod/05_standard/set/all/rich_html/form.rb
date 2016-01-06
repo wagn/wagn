@@ -2,26 +2,29 @@ format :html do
   def edit_slot args={}
     # note: @mode should already be :edit here...
     if args[:structure] || card.structure
-      # multi-card editing
-
-      if args[:core_edit] #need better name
-        _render_core args
-      else
-        process_relative_tags optional_toolbar: :hide,
-                              structure: args[:structure]
-      end
-
+      multi_card_edit_slot args
     else
-      # single-card edit mode
-      field = content_field form, args
+      single_card_edit_slot args
+    end
+  end
 
-      if [args[:optional_type_formgroup], args[:optional_name_formgroup]]
-         .member? :show
-        # display content field in formgroup for consistency with other fields
-        formgroup '', field, editor: :content
-      else
-        editor_wrap( :content ) { field }
-      end
+  def multi_card_edit_slot args
+    if args[:core_edit] # need better name
+      _render_core args
+    else
+      process_relative_tags optional_toolbar: :hide,
+                            structure: args[:structure]
+    end
+  end
+
+  def single_card_edit_slot args
+    field = content_field form, args
+    if [args[:optional_type_formgroup], args[:optional_name_formgroup]]
+       .member? :show
+      # display content field in formgroup for consistency with other fields
+      formgroup '', field, editor: :content
+    else
+      editor_wrap(:content) { field }
     end
   end
 
@@ -44,8 +47,8 @@ format :html do
     form_for card, card_form_opts(action, opts) do |form|
       @form = form
       %{
-        #{ hidden_tags hidden_args if hidden_args }
-        #{ yield form }
+        #{hidden_tags hidden_args if hidden_args}
+        #{yield form}
       }
     end
   end
@@ -61,14 +64,9 @@ format :html do
   end
 
   def card_form_opts action, html={}
-    url, action = case action
-      when Symbol ;  [ path(action: action) , action          ]
-      when Hash   ;  [ path(action)          , action[:action] ]
-      when String ;  [ card_path(action)     , nil             ] #deprecated
-      else        ;  raise Card::Error, "unsupported card_form action class: #{action.class}"
-      end
+    url, action = url_from_action(action)
 
-    klasses = Array.wrap( html[:class] )
+    klasses = Array.wrap(html[:class])
     klasses << 'card-form slotter'
     klasses << 'autosave' if action == :update
     html[:class] = klasses.join ' '
@@ -79,30 +77,48 @@ format :html do
     { url: url, remote: true, html: html }
   end
 
+  def url_from_action action
+    case action
+    when Symbol
+      [path(action: action), action]
+    when Hash
+      [path(action), action[:action]]
+    when String # deprecated
+      [card_path(action), nil]
+    else
+      raise Card::Error, "unsupported card_form action class: #{action.class}"
+    end
+  end
+
   def editor_wrap type=nil
-    content_tag( :div, class: "editor#{ " #{type}-editor" if type }" ) { yield.html_safe }
+    html_class = 'editor'
+    html_class << " #{type}-editor" if type
+    content_tag(:div, class: html_class) { yield.html_safe }
   end
 
   def formgroup title, content, opts={}
-    help_text =
-      case opts[:help]
-      when String ; _render_help help_class: 'help-block', help_text: opts[:help]
-      when true   ; _render_help help_class: 'help-block'
-      else        ; nil
-      end
-
-    div_args = { class: ['form-group', opts[:class]].compact*' ' }
-    div_args[:card_id  ] = card.id     if card.real?
-    div_args[:card_name] = h card.name if card.name.present?
-
-    wrap_with :div, div_args do
+    wrap_with :div, formgroup_div_args(opts[:class]) do
       %{
-        <label>#{ title }</label>
+        <label>#{title}</label>
         <div>
-          #{ editor_wrap( opts[:editor] ) { content } }
-          #{ help_text }
+          #{editor_wrap(opts[:editor]) { content }}
+          #{formgroup_help_text opts[:help]}
         </div>
       }
+    end
+  end
+
+  def formgroup_div_args html_class
+    div_args = { class: ['form-group', html_class].compact.join(' ') }
+    div_args[:card_id] = card.id if card.real?
+    div_args[:card_name] = h card.name if card.name.present?
+    div_args
+  end
+
+  def formgroup_help_text text=nil
+    case text
+    when String then _render_help help_class: 'help-block', help_text: text
+    when true   then _render_help help_class: 'help-block'
     end
   end
 
@@ -125,7 +141,7 @@ format :html do
   # FIELDSET VIEWS
 
   view :name_formgroup do |args|
-    formgroup 'name', raw( name_field form ), editor: 'name', help: args[:help]
+    formgroup 'name', raw(name_field form), editor: 'name', help: args[:help]
   end
 
   view :type_formgroup do |args|
@@ -150,26 +166,29 @@ format :html do
     }
   end
 
-
   def name_field form=nil, options={}
     form ||= self.form
-    text_field( :name, {
-      value: card.name, #needed because otherwise gets wrong value if there are updates
+    text_field(:name, {
+      # needed because otherwise gets wrong value if there are updates
+      value: card.name,
       autocomplete: 'off'
     }.merge(options))
   end
 
   def type_field args={}
     typelist = Auth.createable_types
-    current_type = unless args.delete :no_current_type
-        unless card.new_card? || typelist.include?( card.type_name )
-          # current type should be an option on existing cards, regardless of create perms
-          typelist = (typelist << card.type_name).sort
+    current_type =
+      unless args.delete :no_current_type
+        if !card.new_card? && !typelist.include?(card.type_name)
+          # current type should be an option on existing cards,
+          # regardless of create perms
+          typelist.push(card.type_name).sort!
         end
-        Card[ card ? card.type_id : Card.default_type_id ].name
+        card.type_name_or_default
       end
 
-    options = options_from_collection_for_select typelist, :to_s, :to_s, current_type
+    options = options_from_collection_for_select typelist, :to_s, :to_s,
+                                                 current_type
     template.select_tag 'card[type]', options, args
   end
 
@@ -177,34 +196,36 @@ format :html do
     @form = form
     @nested = options[:nested]
     card.last_action_id_before_edit = card.last_action_id
-    revision_tracking = if card && !card.new_card? && !options[:skip_rev_id]
-      hidden_field :last_action_id_before_edit, class: 'current_revision_id'
-      #hidden_field_tag 'card[last_action_id_before_edit]', card.last_action_id, class: 'current_revision_id'
-    end
+    revision_tracking =
+      if card && !card.new_card? && !options[:skip_rev_id]
+        hidden_field :last_action_id_before_edit, class: 'current_revision_id'
+        # hidden_field_tag 'card[last_action_id_before_edit]',
+        # card.last_action_id, class: 'current_revision_id'
+      end
     %{
-      #{ revision_tracking
-       }
-      #{ _render_editor options }
+      #{revision_tracking}
+      #{_render_editor options}
     }
   end
 
+  # FIELD VIEWS
 
-# FIELD VIEWS
-
-  view :editor do |args|
-    text_area :content, rows: 3, class: 'tinymce-textarea card-content', id: unique_id
+  view :editor do |_args|
+    text_area :content, rows: 3, class: 'tinymce-textarea card-content',
+                        id: unique_id
   end
 
   view :edit_in_form, perms: :update, tags: :unknown_ok do |args|
     eform = form_for_multi
-
-    content = content_field eform, args.merge( nested: true )
+    content = content_field eform, args.merge(nested: true)
+    if card.new_card?
+      content += raw("\n #{ eform.hidden_field :type_id }")
+    end
     opts = { editor: 'content', help: true, class: 'card-editor' }
-
-    content      += raw( "\n #{ eform.hidden_field :type_id }" )  if card.new_card?
-    opts[:class] += " RIGHT-#{ card.cardname.tag_name.safe_key }" if card.cardname.junction?
-
-    formgroup fancy_title( args[:title] ), content, opts
+    if card.cardname.junction?
+      opts[:class] += " RIGHT-#{ card.cardname.tag_name.safe_key }"
+    end
+    formgroup fancy_title(args[:title]), content, opts
   end
 
   def process_relative_tags args
@@ -212,31 +233,52 @@ format :html do
       nested_card = fetch_nested_card chunk.options
       nest nested_card, chunk.options.reverse_merge(args)
     end.join "\n"
-    # _render_raw(args).scan( /\{\{\s*\+[^\}]*\}\}/ ).map do |inc| #fixme - wrong place for regexp!
-    #   process_content( inc ).strip
-    # end.join
   end
 
   # form helpers
 
-  FIELD_HELPERS = %w{hidden_field color_field date_field datetime_field datetime_local_field
-    email_field month_field number_field password_field phone_field
-    range_field search_field telephone_field text_area text_field time_field
-    url_field week_field file_field}
-
+  FIELD_HELPERS =
+    %w{
+      hidden_field color_field date_field datetime_field datetime_local_field
+      email_field month_field number_field password_field phone_field
+      range_field search_field telephone_field text_area text_field time_field
+      url_field week_field file_field
+    }
 
   FIELD_HELPERS.each do |method_name|
-    define_method(method_name) do |name, options = {}|
+    define_method(method_name) do |name, options={}|
       form.send(method_name, name, options)
     end
   end
 
-  def check_box method, options={}, checked_value = "1", unchecked_value = "0"
+  def check_box method, options={}, checked_value = '1', unchecked_value = '0'
     form.check_box method, options, checked_value, unchecked_value
   end
 
-  def radio_button method, tag_value, options = {}
+  def radio_button method, tag_value, options={}
     form.radio_button method, tag_value, options
   end
 
+  def submit_button args={}
+    args.reverse_merge!(
+      situation: 'primary',
+      data: {}
+    )
+    text = args.delete(:text) || 'Submit'
+    args[:data][:disable_with] ||= args.delete(:disable_with) || 'Submitting'
+    button_tag text, args
+  end
+
+  # redirect to *previous if no :href is given
+  def cancel_button args={}
+    args.reverse_merge! type: 'button'
+    if args[:href]
+      add_class args, 'slotter'
+    else
+      add_class args, 'redirecter'
+      args[:href] = Card.path_setting('/*previous')
+    end
+    text = args.delete(:text) || 'Cancel'
+    button_tag text, args
+  end
 end

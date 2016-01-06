@@ -70,14 +70,6 @@ format :html do
     }
   end
 
-  def add_class args, html_class
-    if args[:class]
-      args[:class] += " #{html_class}"
-    else
-      args[:class] = html_class
-    end
-  end
-
   view :edit, perms: :update, tags: :unknown_ok do |args|
     frame_and_form :update, args.merge(optional_toolbar: :show) do
       [

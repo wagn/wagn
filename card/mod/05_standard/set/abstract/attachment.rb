@@ -117,7 +117,7 @@ def original_filename
 end
 
 def unfilled?
-  !attachment.present? && !save_preliminary_upload? && super
+  !attachment.present? && !save_preliminary_upload? && !subcards.present?
 end
 
 def preliminary_upload?

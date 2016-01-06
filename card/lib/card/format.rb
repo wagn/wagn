@@ -12,7 +12,7 @@ class Card
     # FIXME: should be set in views
 
     cattr_accessor :ajax_call, :registered
-    [:perms, :denial_views, :closed_views, :error_codes, :view_tags, :aliases
+    [:perms, :denial, :closed, :error_code, :view_tags, :aliases
     ].each do |accessor_name|
       cattr_accessor accessor_name
       send "#{accessor_name}=", {}
@@ -37,10 +37,10 @@ class Card
 
       def extract_class_vars view, opts
         return unless opts.present?
-        perms[view]        = opts.delete(:perms)      if opts[:perms]
-        error_codes[view]  = opts.delete(:error_code) if opts[:error_code]
-        denial_views[view] = opts.delete(:denial)     if opts[:denial]
-        closed_views[view] = opts.delete(:closed)     if opts[:closed]
+        [:perms, :error_code, :denial, :closed].each do |varname|
+          class_var = send varname
+          class_var[view] = opts.delete(varname) if opts[varname]
+        end
         extract_view_tags view, opts
       end
 
@@ -183,16 +183,12 @@ class Card
     end
 
     def method_missing method, *opts, &proc
-      case method
-      when /(_)?(optional_)?render(_(\w+))?/
+      if method =~ /(_)?(optional_)?render(_(\w+))?/
         view = $3 ? $4 : opts.shift
         args = opts[0] ? opts.shift.clone : {}
         args.merge!(optional: true, default_visibility: opts.shift) if $2
         args[:skip_permissions] = true if $1
         render view, args
-#      when /^_view_(\w+)/
-#        view = @current_view || $1
-#        unsupported_view view
       else
         proc = proc { |*a| raw yield *a } if proc
         response = root.template.send method, *opts, &proc
@@ -319,19 +315,17 @@ class Card
                      mainline: @mainline, form: @form
     end
 
-    def process_content content=nil, opts={}
-      process_content_object(content, opts).to_s
+    def process_content override_content=nil, opts={}
+      process_content_object(override_content, opts).to_s
     end
 
-    def process_content_object content=nil, opts={}
-      return content unless card
-      content = card.raw_content || '' if content.nil?
+    def process_content_object override_content=nil, opts={}
+      content = override_content || render_raw || ''
       content_object = get_content_object content, opts
       if card.references_expired
-        # FIXME: should be handled with method on Card
-        card.update_references content_object, true
+        card.update_references content_object
       end
-      content_object.process_content_object do |chunk_opts|
+      content_object.process_each_chunk do |chunk_opts|
         prepare_nest chunk_opts.merge(opts) { yield }
       end
     end
@@ -346,30 +340,32 @@ class Card
 
     def ok_view view, args={}
       return view if args.delete :skip_permissions
-      approved_view =
-        case
-        when @depth >= Card.config.max_depth
-          # prevent recursion. @depth tracks subformats
-          :too_deep
-        when @@perms[view] == :none
-          # permission skipping specified in view definition
-          view
-        when args.delete(:skip_permissions)
-          # permission skipping specified in args
-          view
-        when !card.known? && !tagged(view, :unknown_ok)
-          # handle unknown cards (where view not exempt)
-          view_for_unknown view, args
-        else
-          # run explicit permission checks
-          permitted_view view, args
-        end
-
+      approved_view = approved_view view, args
       args[:denied_view] = view if approved_view != view
-      if focal? && (error_code = @@error_codes[approved_view])
+      if focal? && (error_code = @@error_code[approved_view])
         root.error_status = error_code
       end
       approved_view
+    end
+
+    def approved_view view, args={}
+      case
+      when @depth >= Card.config.max_depth
+        # prevent recursion. @depth tracks subformats
+        :too_deep
+      when @@perms[view] == :none
+        # permission skipping specified in view definition
+        view
+      when args.delete(:skip_permissions)
+        # permission skipping specified in args
+        view
+      when !card.known? && !tagged(view, :unknown_ok)
+        # handle unknown cards (where view not exempt)
+        view_for_unknown view, args
+      else
+        # run explicit permission checks
+        permitted_view view, args
+      end
     end
 
     def tagged view, tag
@@ -386,7 +382,7 @@ class Card
         end
 
       if args[:denied_task]
-        @@denial_views[view] || :denial
+        @@denial[view] || :denial
       else
         view
       end
@@ -511,13 +507,13 @@ class Card
     end
 
     def view_in_closed_mode homeview, nested_card
-      approved_view = @@closed_views[homeview]
+      approved_view = @@closed[homeview]
       case
-      when approved_view == true   then homeview
-      when @@error_codes[homeview] then homeview
-      when approved_view           then approved_view
-      when !nested_card.known?     then :closed_missing
-      else                              :closed_content
+      when approved_view == true  then homeview
+      when @@error_code[homeview] then homeview
+      when approved_view          then approved_view
+      when !nested_card.known?    then :closed_missing
+      else                             :closed_content
       end
     end
 

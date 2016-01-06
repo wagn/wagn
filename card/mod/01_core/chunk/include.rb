@@ -1,64 +1,90 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency File.expand_path( '../reference', __FILE__ )
+require_dependency File.expand_path('../reference', __FILE__)
 
 module Card::Chunk
   class Include < Reference
     cattr_reader :options
-    @@options = ::Set.new [ :inc_name, :inc_syntax, :view, :items, :type, :size, :title, :hide, :show, :structure, :params, :variant ]
+    @@options = ::Set.new [
+      :inc_name,   # name as used in nest
+      :inc_syntax, # full nest syntax
+      :items,      # handles pipe-based recursion
+
+      # _conventional options_
+      :view,       #
+      :type,       #
+      :size,       # images only
+      :title,      #
+      :hide,       # affects optional rendering
+      :show,       # affects optional rendering
+      :structure,  # override raw_content
+      :params,     #
+      :variant     #
+    ]
     attr_reader :options
 
-    Card::Chunk.register_class self, {
-      prefix_re: '\\{\\{',
-      full_re:    /^\{\{([^\}]*)\}\}/,
-      idx_char:  '{'
-    }
+    Card::Chunk.register_class(
+      self, prefix_re: '\\{\\{',
+            full_re:    /^\{\{([^\}]*)\}\}/,
+            idx_char:  '{')
 
-    def interpret match, content
+    def interpret match, _content
       in_brackets = strip_tags match[1]
-#      warn "in_brackets = #{in_brackets}"
       name, @opt_lists = in_brackets.split '|', 2
       name = name.to_s.strip
-      result = case name
-        when /^\#\#/ ; '' # invisible comment
-        when /^\#/   ; "<!-- #{CGI.escapeHTML in_brackets} -->"
-#        when /^\s*$/ ; '' # no name
-        else
-          @options = @opt_lists.to_s.split('|').reverse.inject(nil) do |prev_level, level_options|
-            process_options level_options, prev_level
-          end || {}
-          @options.merge! inc_name: name, inc_syntax: in_brackets
-          @name = name
-        end
-
-      @process_chunk = result if !@name
+      if name =~ /^\#/
+        @process_chunk = name =~ /^\#\#/ ? '' : visible_comment(in_brackets)
+      else
+        @options = interpret_options
+        @options.merge! inc_name: name, inc_syntax: in_brackets
+        @name = name
+      end
     end
 
     def strip_tags string
-      #note: not using ActionView's strip_tags here because this needs to be super fast.
+      # note: not using ActionView's strip_tags here
+      # because this needs to be super fast.
       string.gsub /\<[^\>]*\>/, ''
     end
 
-    def process_options list_string, items
-      hash = {}
+    def visible_comment message
+      "<!-- #{CGI.escapeHTML message} -->"
+    end
+
+    def interpret_options
+      raw_options = @opt_lists.to_s.split('|').reverse
+      raw_options.inject(nil) do |prev_level, level_options|
+        interpret_piped_options level_options, prev_level
+      end || {}
+    end
+
+    def interpret_piped_options list_string, items
+      options_hash = items.nil? ? {} : { items: items }
       style_hash = {}
-      hash[:items] = items unless items.nil?
-      Hash.new_from_semicolon_attr_list( list_string ).each do |key, value|
+      option_string_to_hash list_string, options_hash, style_hash
+      style_hash_to_string options_hash, style_hash
+      options_hash
+    end
+
+    def option_string_to_hash list_string, options_hash, style_hash
+      Hash.new_from_semicolon_attr_list(list_string).each do |key, value|
         key = key.to_sym
-        if key==:item
-          hash[:items] ||= {}
-          hash[:items][:view] = value
+        if key == :item
+          options_hash[:items] ||= {}
+          options_hash[:items][:view] = value
         elsif @@options.include? key
-          hash[key] = value
+          options_hash[key] = value
         else
           style_hash[key] = value
         end
       end
+    end
 
-      if !style_hash.empty?
-        hash[:style] = style_hash.map { |key, value| CGI.escapeHTML "#{key}:#{value};" } * ''
-      end
-      hash
+    def style_hash_to_string options_hash, style_hash
+      return if style_hash.empty?
+      options_hash[:style] = style_hash.map do |key, value|
+        CGI.escapeHTML "#{key}:#{value};"
+      end * ''
     end
 
     def inspect
@@ -69,27 +95,24 @@ module Card::Chunk
       return @process_chunk if @process_chunk
 
       referee_name
-      if view = @options[:view]
-        view = view.to_sym
-      end
-
-      @processed = yield @options # this is not necessarily text, sometimes objects for json
+      @processed = yield @options
+      # this is not necessarily text, sometimes objects for json
     end
 
     def replace_reference old_name, new_name
       replace_name_reference old_name, new_name
-      @text = "{{#{ [ @name.to_s, @opt_lists ].compact * '|' }}}"
+      nest_body = [@name.to_s, @opt_lists].compact * '|'
+      @text = "{{#{nest_body}}}"
     end
 
     def explicit_view= view
-      unless @options[:view] #could check to make sure it's not already the default...
-        if @text =~ /\|/
-          @text.sub! '|', "|#{view};"
-        else
-          @text.sub! '}}', "|#{view}}}"
-        end
+      return if @options[:view]
+      # could check to make sure it's not already the default...
+      if @text =~ /\|/
+        @text.sub! '|', "|#{view};"
+      else
+        @text.sub! '}}', "|#{view}}}"
       end
     end
-
   end
 end

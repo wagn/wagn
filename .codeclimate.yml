@@ -1,6 +1,14 @@
+languages:
+  Ruby: true
+  JavaScript: true
+  PHP: false
+  Python: false
 engines:
   rubocop:
     enabled: true
+    checks:
+      Rubocop/Style/SpaceInsideStringInterpolation:
+        enabled: false
   golint:
     enabled: false
   gofmt:

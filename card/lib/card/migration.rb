@@ -124,9 +124,7 @@ class Card::Migration < ActiveRecord::Migration
   end
 
   def update_machine_output
-    Card.search(right: { codename: 'machine_output'}).each do |output_card|
-      output_card.delete
-    end
+    Card.search(right: { codename: 'machine_output' }).each(&:delete)
   end
 end
 

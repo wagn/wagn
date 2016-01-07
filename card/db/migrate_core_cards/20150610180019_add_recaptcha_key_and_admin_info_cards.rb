@@ -23,11 +23,13 @@ class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
                codename: 'admin_settings',
                type_id: Card::PointerID,
                content: content
+    add_admin_info_to_home_card
+  end
 
-    if (home = Card[Card[:home].content])
-      new_content = home.content.prepend "{{*admin info|content}}\n"
-      home.update_attributes! content: new_content
-    end
+  def add_admin_info_to_home_card
+    return unless (home = Card[Card[:home].content])
+    new_content = home.content.prepend "{{*admin info|content}}\n"
+    home.update_attributes! content: new_content
   end
 
   def create_recaptcha_settings
@@ -39,7 +41,7 @@ class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
     Card::Cache.reset_global
     ['public_key', 'private_key', 'proxy'].each do |name|
       Card.create!(
-        name: "#{Card[:recaptcha_settings].name}+#{name.gsub('_', ' ')}",
+        name: "#{Card[:recaptcha_settings].name}+#{name.tr('_', ' ')}",
         codename: "recaptcha_#{name}"
       )
     end

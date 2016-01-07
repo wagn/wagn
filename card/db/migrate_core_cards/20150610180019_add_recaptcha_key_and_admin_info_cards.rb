@@ -24,9 +24,10 @@ class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
                type_id: Card::PointerID,
                content: content
 
-    home = Card['Home+original']
-    new_content = home.content.prepend "{{*admin info|content}}\n"
-    home.update_attributes! content: new_content
+    if (home = Card[Card[:home].content])
+      new_content = home.content.prepend "{{*admin info|content}}\n"
+      home.update_attributes! content: new_content
+    end
   end
 
   def create_recaptcha_settings
@@ -55,6 +56,6 @@ class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
     if args[:subcards]
       shared_args[:subcards].merge! args.delete(:subcards)
     end
-    Card.create! shared_args.merge(args)
+    create_or_update shared_args.merge(args)
   end
 end

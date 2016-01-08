@@ -295,6 +295,7 @@ class Card
 
     def current_view view
       old_view = @current_view
+      @current_view = view
       yield
     ensure
       @current_view = old_view

@@ -203,12 +203,14 @@ class Card
     def render view, args={}
       view = canonicalize_view view
       return if hidden_view? view, args
-      @current_view = view = ok_view view, args
-      args = default_render_args view, args
-      with_inclusion_mode view do
-        Card::ViewCache.fetch(self, view, args) do
-          method = view_method view, args
-          method.arity == 0 ? method.call : method.call(args)
+      view = ok_view view, args
+      current_view(view) do
+        args = default_render_args view, args
+        with_inclusion_mode view do
+          Card::ViewCache.fetch(self, view, args) do
+            method = view_method view, args
+            method.arity == 0 ? method.call : method.call(args)
+          end
         end
       end
     rescue => e
@@ -290,6 +292,14 @@ class Card
           rendering_error e, view
         end
       end
+    end
+
+    def current_view view
+      old_view = @current_view
+      @current_view = view
+      yield
+    ensure
+      @current_view = old_view
     end
 
     def error_cardname

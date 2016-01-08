@@ -33,7 +33,7 @@ format :html do
     row =
       cells.map do |css_class, content|
         %{<td class="rule-cell #{css_class} #{extra_css_class}">#{content}</td>}
-      end.join('\n')
+      end.join("\n")
 
     %{<tr class="card-slot closed-rule"> #{row} </tr>}
   end

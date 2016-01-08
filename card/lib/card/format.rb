@@ -203,6 +203,7 @@ class Card
     def render view, args={}
       view = canonicalize_view view
       return if hidden_view? view, args
+      view = ok_view view, args
       current_view(view) do
         args = default_render_args view, args
         with_inclusion_mode view do

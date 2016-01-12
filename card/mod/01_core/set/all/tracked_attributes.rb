@@ -65,7 +65,7 @@ event :set_content, before: :store, on: :save do
   self.db_content = Card::Content.clean!(db_content) if clean_html?
   @selected_action_id = @selected_content = nil
   clear_drafts
-  reset_patterns_if_rule saving=true
+  reset_patterns_if_rule true
 end
 
 # FIXME: the following don't really belong here, but they have to come after
@@ -101,11 +101,6 @@ event :update_ruled_cards, after: :store do
                   item_card.update_read_rule
                 end
               end
-            # elsif rule_class_index = rule_class_ids.index( 0 )
-            #   in_set[trunk.key] = true
-            #   #warn "self rule update: #{trunk.inspect}, #{rule_class_index},
-            #   #{cur_index}"
-            #   trunk.update_read_rule if cur_index > rule_class_index
             else warn "No current rule index #{class_id}, " \
                       "#{rule_class_ids.inspect}"
             end
@@ -130,15 +125,13 @@ event :process_read_rule_update_queue, after: :store do
   @read_rule_update_queue = []
 end
 
-#  set_callback :store, :after, :process_read_rule_update_queue, prepend: true
-
 event :expire_related, after: :store do
   subcards.keys.each do |key|
     Card.cache.delete_local key
   end
   expire true
 
-  if self.is_structure?
+  if is_structure?
     structuree_names.each do |name|
       Card.expire name, true
     end

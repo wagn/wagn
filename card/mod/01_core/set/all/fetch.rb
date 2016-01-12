@@ -276,7 +276,6 @@ def expire_pieces
 end
 
 def expire subcards=false
-  # Rails.logger.warn "expiring i:#{id}, #{inspect}"
   if subcards
     expire_subcards
   else

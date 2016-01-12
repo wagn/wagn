@@ -43,8 +43,6 @@ module Card::Chunk
 
     def render_obj raw
       if format && Card::Content === raw
-        format.card.references_expired = nil
-        # don't love this; this is to keep from running update_references again
         format.process_content raw
       else
         raw

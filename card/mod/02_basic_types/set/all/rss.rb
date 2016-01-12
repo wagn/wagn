@@ -32,11 +32,11 @@ format :rss do
     [card]
   end
 
-  view :feed_body do
+  view :feed_body do |_args|
     render_feed_item_list
   end
 
-  view :feed_item_list do
+  view :feed_item_list do |args|
     raw_feed_items(args).each do |item|
       @xml.item do
         # FIXME: yuck.

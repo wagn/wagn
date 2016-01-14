@@ -28,5 +28,6 @@ exclude_paths:
 - wagn/rails/assets/**/*
 - card/mod/03_machines/lib/javascript/**/*
 - card/mod/06_bootstrap/lib/javascript/**/*
+- card/db/**/*
 - card/spec/**/*
 - wagn/spec/**/*

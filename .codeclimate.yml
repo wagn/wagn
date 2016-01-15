@@ -6,6 +6,7 @@ languages:
 engines:
   rubocop:
     enabled: true
+    config: .codeclimate-rubocop.yml
     checks:
       Rubocop/Style/SpaceInsideStringInterpolation:
         enabled: false

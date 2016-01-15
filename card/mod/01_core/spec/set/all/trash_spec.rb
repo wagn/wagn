@@ -48,7 +48,7 @@ describe Card::Set::All::Trash do
       )
       @signup.update_attributes!({})
     end
-    Card::Cache.reset_global
+    Card::Cache.reset_all
 
     Card::Auth.as_bot do
       expect(Card.search :right=>'*account').not_to be_empty

@@ -70,8 +70,8 @@ describe Card::Set::All::Fetch do
 
     it "expires card and dependencies on save" do
       #Card.cache.dump # should be empty
-      Card.cache.reset_local
-      expect(Card.cache.local.keys).to eq([])
+      Card.cache.soft.reset
+      expect(Card.cache.soft.store.keys).to eq([])
 
       Card::Auth.as_bot do
         a = Card.fetch("A")
@@ -95,6 +95,23 @@ describe Card::Set::All::Fetch do
         #expect(Card.cache).to receive(:delete).with('y').exactly(2).times
 
         a.save!
+      end
+    end
+    describe 'default option' do
+      context "when card doesn't exist" do
+        it 'initializes new cards' do
+          card = Card.fetch 'non-existent',
+                            new: { default_content: 'default content' }
+          expect(card.content).to eq 'default content'
+        end
+      end
+      context "when new card exist" do
+        it "doesn't change anything" do
+          Card.new name: 'new card',
+                   '+sub' => { content: 'some content' }
+          card = Card.fetch 'new card+sub', new: { default_content: 'new content' }
+          expect(card.content).to eq 'some content'
+        end
       end
     end
 
@@ -155,6 +172,25 @@ describe Card::Set::All::Fetch do
         Card.create!(name: 'growing up')
         card = Card.fetch('growing up')
         expect(card.new_record?).to be_falsey
+      end
+    end
+
+    describe 'default_content option' do
+      context "when card doesn't exist" do
+        it 'initializes card with default content' do
+          card = Card.fetch 'non-existent',
+                            new: { default_content: 'default content' }
+          expect(card.content).to eq 'default content'
+        end
+      end
+      context "when new card exist" do
+        it "doesn't change content" do
+          Card.new name: 'new card',
+                   '+sub' => { content: 'some content' }
+          card = Card.fetch 'new card+sub',
+                            new: { default_content: 'new content' }
+          expect(card.content).to eq 'some content'
+        end
       end
     end
   end

@@ -8,7 +8,7 @@ class AddSessionCardtype < Card::CoreMigration
                   They are not stored in the database and can have different values for different users.
                   You can use a Session card to keep track of certain state of a particular user like the content
                   of shopping basket.'}}
-    Card::Cache.reset_global
+    Card::Cache.reset_all
     Card.create! name: '*edit toolbar pinned', type_code: :session, codename: 'edit_toolbar_pinned'
     Card.create! name: '*toolbar pinned', type_code: :session, codename: 'toolbar_pinned'
   end

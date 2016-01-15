@@ -50,7 +50,7 @@ class AddEmailCards < Card::CoreMigration
     Card.create! name: "*text message+*right+*default", type_code: :plain_text
 
 
-    Card::Cache.reset_global
+    Card::Cache.reset_all
 
 
     # create system email cards

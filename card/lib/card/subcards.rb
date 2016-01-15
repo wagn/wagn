@@ -15,18 +15,18 @@ class Card
 
   def preserve_subcards
     return unless subcards.present?
-    Card.cache.write_local subcards_cache_key, @subcards
+    Card.cache.soft.write subcards_cache_key, @subcards
   end
 
   def restore_subcards
-    cached_subcards = Card.cache.read_local(subcards_cache_key)
+    cached_subcards = Card.cache.soft.read(subcards_cache_key)
     return unless cached_subcards
     @subcards = cached_subcards
     @subcards.context_card = self
   end
 
   def expire_subcards
-    Card.cache.delete_local subcards_cache_key
+    Card.cache.soft.delete subcards_cache_key
     subcards.clear
   end
 
@@ -43,7 +43,7 @@ class Card
 
     def clear
       @keys.each do |key|
-        Card.cache.delete_local key
+        Card.cache.soft.delete key
       end
       @keys = ::Set.new
     end
@@ -61,7 +61,7 @@ class Card
       key = absolutize_subcard_name(key).key unless @keys.include?(key)
       @keys.delete key
       removed_card = fetch_subcard key
-      Card.cache.delete_local key
+      Card.cache.soft.delete key
       removed_card
     end
 
@@ -239,7 +239,7 @@ class Card
         card.superleft = @context_card
       end
       @keys << card.key
-      Card.write_to_local_cache card
+      Card.write_to_soft_cache card
       card
     end
   end

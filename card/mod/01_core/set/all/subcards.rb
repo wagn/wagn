@@ -68,5 +68,5 @@ event :store_subcards, after: :store do
   # ensures that a supercard can access subcards of self
   # eg. <user> creates <user+*account> creates <user+*account+*status>
   # <user> changes <user+*account+*status> in event activate_account
-  Card.write_to_local_cache self
+  Card.write_to_soft_cache self
 end

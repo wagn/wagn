@@ -20,45 +20,45 @@ describe Card::Cache do
 
   describe "with same cache_id" do
     before :each do
-      @store = ActiveSupport::Cache::MemoryStore.new
+      @hard = ActiveSupport::Cache::MemoryStore.new
       expect(Card::Cache).to receive(:generate_cache_id).and_return("cache_id")
-      @cache = Card::Cache.new store: @store, prefix: "prefix"
+      @cache = Card::Cache.new store: @hard, prefix: "prefix"
     end
 
     it "#read" do
-      expect(@store).to receive(:read).with("prefix/cache_id/foo")
+      expect(@hard).to receive(:read).with("prefix/cache_id/foo")
       @cache.read("foo")
     end
 
     it "#write" do
-      expect(@store).to receive(:write).with("prefix/cache_id/foo", "val")
+      expect(@hard).to receive(:write).with("prefix/cache_id/foo", "val")
       @cache.write("foo", "val")
       expect(@cache.read('foo')).to eq("val")
     end
 
     it "#fetch" do
       block = Proc.new { "hi" }
-      expect(@store).to receive(:fetch).with("prefix/cache_id/foo", &block)
+      expect(@hard).to receive(:fetch).with("prefix/cache_id/foo", &block)
       @cache.fetch("foo", &block)
     end
 
     it "#delete" do
-      expect(@store).to receive(:delete).with("prefix/cache_id/foo")
+      expect(@hard).to receive(:delete).with("prefix/cache_id/foo")
       @cache.delete "foo"
     end
 
-    it "#write_local" do
-      @cache.write_local('a', 'foo')
+    it "#soft.write" do
+      @cache.soft.write('a', 'foo')
       expect(@cache.read("a")).to eq('foo')
-      expect(@store).not_to receive(:write)
-      expect(@cache.store.read("a")).to eq(nil)
+      expect(@hard).not_to receive(:write)
+      expect(@cache.hard.read("a")).to eq(nil)
     end
   end
 
   it "#reset" do
     expect(Card::Cache).to receive(:generate_cache_id).and_return("cache_id1")
-    @store = ActiveSupport::Cache::MemoryStore.new
-    @cache = Card::Cache.new store: @store, prefix: "prefix"
+    @hard = ActiveSupport::Cache::MemoryStore.new
+    @cache = Card::Cache.new store: @hard, prefix: "prefix"
     expect(@cache.prefix).to eq("prefix/cache_id1/")
     @cache.write("foo","bar")
     expect(@cache.read("foo")).to eq("bar")
@@ -67,10 +67,10 @@ describe Card::Cache do
     expect(Card::Cache).to receive(:generate_cache_id).and_return("cache_id2")
     @cache.reset
     expect(@cache.prefix).to eq("prefix/cache_id2/")
-    expect(@cache.store.read("prefix/cache_id")).to eq("cache_id2")
+    expect(@cache.hard.read("prefix/cache_id")).to eq("cache_id2")
     expect(@cache.read("foo")).to be_nil
 
-    cache2 = Card::Cache.new store: @store, prefix: "prefix"
+    cache2 = Card::Cache.new store: @hard, prefix: "prefix"
     expect(cache2.prefix).to eq("prefix/cache_id2/")
   end
 
@@ -80,9 +80,9 @@ describe Card::Cache do
       unless File.directory?(cache_path)
         FileUtils.mkdir_p(cache_path)
       end
-      @store = ActiveSupport::Cache::FileStore.new cache_path
+      @hard = ActiveSupport::Cache::FileStore.new cache_path
 
-      @store.clear
+      @hard.clear
       #cache_path = cache_path + "/prefix"
       #p = Pathname.new(cache_path)
       #p.mkdir if !p.exist?
@@ -92,13 +92,13 @@ describe Card::Cache do
       #FileUtils.rm_r(files_to_remove)
 
       expect(Card::Cache).to receive(:generate_cache_id).exactly(2).times.and_return("cache_id1")
-      @cache = Card::Cache.new store: @store, prefix: "prefix"
+      @cache = Card::Cache.new store: @hard, prefix: "prefix"
     end
 
     describe "#basic operations with special symbols" do
       it "should work" do
         @cache.write('%\\/*:?"<>|', "foo")
-        cache2 = Card::Cache.new store: @store, prefix: "prefix"
+        cache2 = Card::Cache.new store: @hard, prefix: "prefix"
         expect(cache2.read('%\\/*:?"<>|')).to eq("foo")
         @cache.reset
       end
@@ -108,7 +108,7 @@ describe Card::Cache do
       it "should work" do
         @cache.write('(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén', "foo")
         @cache.write('русский', "foo")
-        cache3 = Card::Cache.new store: @store, prefix: "prefix"
+        cache3 = Card::Cache.new store: @hard, prefix: "prefix"
         expect(cache3.read('(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén')).to eq("foo")
         expect(cache3.read('русский')).to eq("foo")
         @cache.reset

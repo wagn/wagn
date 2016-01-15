@@ -134,7 +134,7 @@ end
 
 event :expire_related, after: :store do
   subcards.keys.each do |key|
-    Card.cache.delete_local key
+    Card.cache.soft.delete key
   end
   expire true
 

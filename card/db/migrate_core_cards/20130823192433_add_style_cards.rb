@@ -86,7 +86,7 @@ class AddStyleCards < Card::CoreMigration
         'classic skin'
       end
 
-    Card::Cache.reset_global
+    Card::Cache.reset_all
     begin
       Card.create! name: "#{Card[:all].name}+*style",
                    content: "[[#{default_skin}]]"

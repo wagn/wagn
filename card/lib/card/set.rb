@@ -438,7 +438,7 @@ EOF
       mod_traits = get_traits mod
 
       new_opts = options[:type] ? { type: options[:type] } : {}
-      new_opts.merge!(content: options[:default]) if options[:default]
+      new_opts.merge!(default_content: options[:default]) if options[:default]
 
       args.each do |trait|
         define_trait_card trait, new_opts

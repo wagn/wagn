@@ -7,7 +7,7 @@ WAGN_SEED_PATH = File.join(
 )
 
 def prepare_migration
-  Card::Cache.reset_global
+  Card::Cache.reset_all
   Card.config.action_mailer.perform_deliveries = false
   Card.reset_column_information
   # this is needed in production mode to insure core db
@@ -93,7 +93,7 @@ namespace :wagn do
 
   desc 'reset cache'
   task reset_cache: :environment do
-    Card::Cache.reset_global
+    Card::Cache.reset_all
   end
 
   desc 'set symlink for assets'
@@ -119,7 +119,7 @@ namespace :wagn do
     end
 
     puts 'migrating core cards'
-    Card::Cache.reset_global
+    Card::Cache.reset_all
     Rake::Task['wagn:migrate:core_cards'].execute #not invoke because we don't want to reload environment
     if stamp
       Rake::Task['wagn:migrate:stamp'].reenable
@@ -134,7 +134,7 @@ namespace :wagn do
       Rake::Task['wagn:migrate:stamp'].invoke :deck_cards
     end
 
-    Card::Cache.reset_global
+    Card::Cache.reset_all
   end
 
   desc 'insert existing card migrations into schema_migrations_cards to avoid re-migrating'
@@ -165,7 +165,7 @@ namespace :wagn do
     task core_cards: :environment do
       require 'card/core_migration'
 
-      Card::Cache.reset_global
+      Card::Cache.reset_all
       ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       prepare_migration
       paths = Cardio.migration_paths(:core_cards)
@@ -183,7 +183,7 @@ namespace :wagn do
     task deck_cards: :environment do
       require 'card/migration'
 
-      Card::Cache.reset_global
+      Card::Cache.reset_all
       ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
       prepare_migration
       paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:deck_cards)
@@ -247,17 +247,17 @@ namespace :wagn do
   namespace :bootstrap do
     desc 'rid template of unneeded cards, acts, actions, changes, and references'
     task clean: :environment do
-      Card::Cache.reset_global
+      Card::Cache.reset_all
       clear_history
       delete_unwanted_cards
       Card.empty_trash
       correct_time_and_user_stamps
-      Card::Cache.reset_global
+      Card::Cache.reset_all
     end
 
     desc 'dump db to bootstrap fixtures'
     task dump: :environment do
-      Card::Cache.reset_global
+      Card::Cache.reset_all
 
       # FIXME temporarily taking this out!!
       Rake::Task['wagn:bootstrap:copy_mod_files'].invoke
@@ -354,7 +354,7 @@ def delete_unwanted_cards
         card.delete!
       end
     end
-    Card::Cache.reset_global
+    Card::Cache.reset_all
     # FIXME: can this be associated with the machine module somehow?
     %w{ machine_input machine_output }.each do |codename|
       Card.search(:right=>{:codename=>codename }).each do |card|

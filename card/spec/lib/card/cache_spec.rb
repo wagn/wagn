@@ -3,7 +3,6 @@
 describe Card::Cache do
   describe 'with nil store' do
     before do
-      expect(Card::Cache).to receive(:generate_cache_id).exactly(2).times.and_return('cache_id')
       @cache = Card::Cache.new prefix: 'prefix'
     end
 
@@ -21,29 +20,28 @@ describe Card::Cache do
   describe 'with same cache_id' do
     before :each do
       @hard = ActiveSupport::Cache::MemoryStore.new
-      expect(Card::Cache).to receive(:generate_cache_id).and_return('cache_id')
       @cache = Card::Cache.new store: @hard, prefix: 'prefix'
     end
 
     it '#read' do
-      expect(@hard).to receive(:read).with('prefix/cache_id/foo')
+      expect(@hard).to receive(:read).with('prefix/foo')
       @cache.read('foo')
     end
 
     it '#write' do
-      expect(@hard).to receive(:write).with('prefix/cache_id/foo', 'val')
+      expect(@hard).to receive(:write).with('prefix/foo', 'val')
       @cache.write('foo', 'val')
       expect(@cache.read('foo')).to eq('val')
     end
 
     it '#fetch' do
       block = Proc.new { 'hi' }
-      expect(@hard).to receive(:fetch).with('prefix/cache_id/foo', &block)
+      expect(@hard).to receive(:fetch).with('prefix/foo', &block)
       @cache.fetch('foo', &block)
     end
 
     it '#delete' do
-      expect(@hard).to receive(:delete).with('prefix/cache_id/foo')
+      expect(@hard).to receive(:delete).with('prefix/foo')
       @cache.delete 'foo'
     end
 
@@ -56,22 +54,19 @@ describe Card::Cache do
   end
 
   it '#reset' do
-    expect(Card::Cache).to receive(:generate_cache_id).and_return('cache_id1')
     @hard = ActiveSupport::Cache::MemoryStore.new
     @cache = Card::Cache.new store: @hard, prefix: 'prefix'
-    expect(@cache.prefix).to eq('prefix/cache_id1/')
+    expect(@cache.hard.prefix).to eq('prefix/')
     @cache.write('foo','bar')
     expect(@cache.read('foo')).to eq('bar')
 
     # reset
-    expect(Card::Cache).to receive(:generate_cache_id).and_return('cache_id2')
     @cache.reset
-    expect(@cache.prefix).to eq('prefix/cache_id2/')
-    expect(@cache.hard.read('prefix/cache_id')).to eq('cache_id2')
+    expect(@cache.hard.prefix).to eq('prefix/')
     expect(@cache.read('foo')).to be_nil
 
     cache2 = Card::Cache.new store: @hard, prefix: 'prefix'
-    expect(cache2.prefix).to eq('prefix/cache_id2/')
+    expect(cache2.hard.prefix).to eq('prefix/')
   end
 
   describe 'with file store' do
@@ -90,8 +85,6 @@ describe Card::Cache do
       # root_dirs = Dir.entries(cache_path).reject{|f| ['.', '..'].include?(f)}
       # files_to_remove = root_dirs.collect{|f| File.join(cache_path, f)}
       # FileUtils.rm_r(files_to_remove)
-
-      expect(Card::Cache).to receive(:generate_cache_id).exactly(2).times.and_return('cache_id1')
       @cache = Card::Cache.new store: @hard, prefix: 'prefix'
     end
 

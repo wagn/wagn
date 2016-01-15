@@ -62,7 +62,7 @@ class Card
 
       def reset_hard
         cache_by_class.each do |_klass, cache|
-          cache.hard.reset
+          cache.hard.reset if cache.hard
         end
       end
 
@@ -139,7 +139,7 @@ class Card
     end
 
     def delete key
-      @hard.delete if @hard
+      @hard.delete key if @hard
       @soft.delete key
     end
 

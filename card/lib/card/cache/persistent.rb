@@ -11,7 +11,7 @@ class Card::Cache::Persistent
 
   def system_prefix= system_prefix
     @system_prefix = system_prefix
-    @prefix = system_prefix
+    @prefix = "#{system_prefix}/"
   end
 
   def read key

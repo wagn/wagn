@@ -23,6 +23,7 @@ Feature: Signing up
     When I open the email
     And I click the first link in the email
     Then I should see "Wanna B"
+    And "Wanna B" should be signed in
 
     When I go to the home page
     And I follow "Sign out"
@@ -33,7 +34,7 @@ Feature: Signing up
     And I enter "wanna_pass" into "*password"
     And I press "Sign in"
     Then I should see "Wanna B"
-
+    And "Wanna B" should be signed in
   Scenario: Signing up with approval
     #When I go to card "AccountRequest"
     #And In the main card content I click "Wanna B"

@@ -42,7 +42,7 @@ def find_spec_file filename, base_dir
   end
 end
 
-TASK_COMMANDS = %w[seed reseed load update]
+WAGN_DB_TASKS = %w[seed reseed load update]
 
 if supported_rails_command? ARGV.first
   if ARGV.delete('--rescue')
@@ -59,9 +59,9 @@ else
   command = ALIAS[command] || command
 
   case command
-  when *TASK_COMMANDS
+  when *WAGN_DB_TASKS
     envs = []
-    Wagn::Parser.wagn(envs).parse!(ARGV)
+    Wagn::Parser.db_task(command, envs).parse!(ARGV)
     task_cmd = "bundle exec rake wagn:#{command}"
     if envs.empty?
       puts task_cmd
@@ -72,9 +72,6 @@ else
         puts `env RAILS_ENV=#{env} #{task_cmd}`
       end
     end
-  #  when 'update'
-  #    load_rake_tasks
-  #    Rake::Task['wagn:update'].invoke
   when 'cucumber'
     require 'wagn'
     require './config/environment'
@@ -84,11 +81,12 @@ else
     require_args = "-r #{Wagn.gem_root}/features "
     require_args += feature_paths.map { |path| "-r #{path}" }.join(' ')
     feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.join(' ')
-    unless system "RAILS_ROOT=. bundle exec cucumber #{require_args} #{feature_args} 2>&1"
+    unless system "RAILS_ROOT=. bundle exec cucumber " \
+                  "#{require_args} #{feature_args} 2>&1"
       exit $?.exitstatus
     end
   when 'jasmine'
-    unless system "RAILS_ENV=test bundle exec rake spec:javascript 2>&1"
+    unless system 'RAILS_ENV=test bundle exec rake spec:javascript 2>&1'
       exit $?.exitstatus
     end
   when 'rspec'
@@ -139,6 +137,7 @@ else
    cucumber     Run cucumber features (short-cut alias: "cc")
    rspec        Run rspec tests (short-cut alias: "rs")
    update       Run card migrations
+   load         Load bootstrap data into database
 
   In addition to those, there are the standard rails commands:
    generate     Generate new code (short-cut alias: "g")

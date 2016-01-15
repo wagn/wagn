@@ -3,7 +3,7 @@
 module Wagn
   class Parser
     class << self
-      def wagn envs
+      def db_task command, envs
         OptionParser.new do |parser|
           parser.banner = "Usage: wagn #{command} [options]\n\n" \
                           "Run wagn:#{command} task on the production "\

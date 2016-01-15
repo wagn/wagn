@@ -62,21 +62,13 @@ class Card
 
       def reset_hard
         cache_by_class.each do |_klass, cache|
-          if cache.is_a? Card::Cache
-            cache.hard.reset
-          else
-            warn "reset class #{cc}, #{cache.class} #{caller[0..8] * "\n"} ???"
-          end
+          cache.hard.reset
         end
       end
 
       def reset_soft
         cache_by_class.each do |_klass, cache|
-          if cache.is_a? Card::Cache
-            cache.soft.reset
-          else
-            warn "reset class #{cc}, #{cache.class} #{caller[0..8] * "\n"} ???"
-          end
+          cache.soft.reset
         end
       end
 

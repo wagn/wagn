@@ -11,7 +11,7 @@ class Card
       end
 
       def increment_cnt
-        cache.write(CNT_KEY, count+1)
+        cache.write(CNT_KEY, count + 1)
       end
 
       def count
@@ -22,7 +22,7 @@ class Card
         update_frequency do |freq|
           cnts_with_key = freq.keys.map { |key| [freq[key], key] }
           index = 1
-          SortedSet.new(cnts_with_key).each do |cnt, key|
+          SortedSet.new(cnts_with_key).each do |_cnt, key|
             if index < (LIMIT - SIZE)
               cache.delete(key)
               freq.delete(key)
@@ -69,8 +69,8 @@ class Card
         end
       end
 
-      def reset hard=false
-        cache.reset hard
+      def reset
+        cache.reset
       end
     end
   end

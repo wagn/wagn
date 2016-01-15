@@ -1,13 +1,12 @@
 # -*- encoding : utf-8 -*-
 
 class Card::Cache::Persistent
-
-
   attr_reader :prefix
 
   def initialize opts
     @store = opts[:store]
-    self.system_prefix = opts[:prefix] || Card::Cache.system_prefix(opts[:class])
+    self.system_prefix =
+      opts[:prefix] || Card::Cache.system_prefix(opts[:class])
   end
 
   def system_prefix= system_prefix
@@ -22,7 +21,7 @@ class Card::Cache::Persistent
   def write_variable key, variable, value
     key = @prefix + key
     if @store && (object = @store.read key)
-      object.instance_variable_set "@#{ variable }", value
+      object.instance_variable_set "@#{variable}", value
       @store.write key, object
     end
     value
@@ -41,11 +40,9 @@ class Card::Cache::Persistent
   end
 
   def reset
-    begin
-      @store.clear
-    rescue => e
-      Rails.logger.debug "Problem clearing cache: #{e.message}"
-    end
+    @store.clear
+  rescue => e
+    Rails.logger.debug "Problem clearing cache: #{e.message}"
   end
 
   def exist? key

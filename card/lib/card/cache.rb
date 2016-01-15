@@ -149,7 +149,7 @@ class Card
     end
 
     def reset hard=false
-      @hard.reset(hard) if @hard
+      @hard.reset if @hard
       @soft.reset
     end
 

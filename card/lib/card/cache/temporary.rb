@@ -28,7 +28,7 @@ class Card::Cache::Temporary
     end
   end
 
-  def reset hard=false
+  def reset
     @store = {}
   end
 

@@ -60,6 +60,7 @@ else
 
   case command
   when *TASK_COMMANDS
+    envs = []
     Wagn::Parser.wagn(envs).parse!(ARGV)
     task_cmd = "bundle exec rake wagn:#{command}"
     if envs.empty?

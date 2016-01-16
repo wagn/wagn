@@ -1,13 +1,12 @@
 
 
 format do
-
   # link is called by web_link, card_link, and view_link
   # (and is overridden in other formats)
-  def link_to text, href, opts={}
+  def link_to text, href, _opts={}
     href = interpret_href href
 
-    if text and href != text
+    if text && href != text
       "#{text}[#{href}]"
     else
       href
@@ -15,15 +14,14 @@ format do
   end
 
   # link to url, view, card or related card
-  #
   def smart_link link_text, target, html_args={}
     if (view = target.delete(:view))
       view_link link_text, view, html_args.merge(path_opts: target)
     elsif (page = target.delete(:card))
       card_link page, html_args.merge(path_opts: target, text: link_text)
     elsif target[:related]
-      if target[:related].kind_of? String
-        target[:related] = {name: "+#{target[:related]}"}
+      if target[:related].is_a? String
+        target[:related] = { name: "+#{target[:related]}" }
       end
       view_link link_text, :related, html_args.merge(path_opts: target)
     elsif target[:web]
@@ -32,16 +30,16 @@ format do
     end
   end
 
-
   # link to a specific url or path
   def web_link href, opts={}
     text = opts.delete(:text) || href
-    new_class = case href
-      when /^https?:/                      ; 'external-link'
-      when /^mailto:/                      ; 'email-link'
-      when /^([a-zA-Z][\-+\.a-zA-Z\d]*):/  ; $1 + '-link'
+    new_class =
+      case href
+      when /^https?\:/                     then 'external-link'
+      when /^mailto\:/                     then 'email-link'
+      when /^([a-zA-Z][\-+\.a-zA-Z\d]*):/  then $1 + '-link'
       when /^\//
-        href = internal_url href[1..-1]    ; 'internal-link'
+        (href = internal_url href[1..-1]) ;     'internal-link'
       else
         return card_link href, opts
       end
@@ -52,17 +50,19 @@ format do
 
   # link to a specific card
   def card_link name_or_card, opts={}
-    name = case name_or_card
-           when Symbol then Card.fetch( name_or_card, skip_modules: true ).cardname
-           when Card   then name_or_card.cardname
-           else             name_or_card
-           end
+    name =
+      case name_or_card
+      when Symbol then Card.fetch(name_or_card, skip_modules: true).cardname
+      when Card   then name_or_card.cardname
+      else             name_or_card
+      end
     text = (opts.delete(:text) || name).to_name.to_show @context_names
 
-    path_opts = opts.delete( :path_opts ) || {}
-    path_opts[:name ] = name
-    path_opts[:known] = opts[:known].nil? ? Card.known?(name) : opts.delete(:known)
-    add_class opts, ( path_opts[:known] ? 'known-card' : 'wanted-card' )
+    path_opts = opts.delete(:path_opts) || {}
+    path_opts[:name] = name
+    path_opts[:known] =
+      opts[:known].nil? ? Card.known?(name) : opts.delete(:known)
+    add_class opts, (path_opts[:known] ? 'known-card' : 'wanted-card')
     link_to text, path_opts, opts
   end
 
@@ -78,11 +78,12 @@ format do
   end
 
   def related_link name_or_card, opts={}
-    name = case name_or_card
-           when Symbol then Card.fetch( name_or_card, skip_modules: true ).cardname
-           when Card   then name_or_card.cardname
-           else             name_or_card
-           end
+    name =
+      case name_or_card
+      when Symbol then Card.fetch(name_or_card, skip_modules: true).cardname
+      when Card   then name_or_card.cardname
+      else             name_or_card
+      end
    opts[:path_opts] ||= {view: :related}
    opts[:path_opts][:related] = {name: "+#{name}"}
    opts[:path_opts][:related].merge! opts[:related_opts] if opts[:related_opts]

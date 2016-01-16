@@ -11,7 +11,6 @@ module ClassMethods
 
   # deletes any file not associated with a real card.
   def delete_trashed_files
-    dir = Card.paths['files'].existent.first
     trashed_card_ids = all_trashed_card_ids
     file_ids = all_file_ids
     file_ids.each do |file_id|
@@ -25,6 +24,7 @@ module ClassMethods
   end
 
   def all_file_ids
+    dir = Card.paths['files'].existent.first
     Dir.entries(dir)[2..-1].map(&:to_i)
   end
 

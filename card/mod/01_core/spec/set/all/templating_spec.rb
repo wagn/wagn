@@ -37,7 +37,7 @@ describe Card::Set::All::Templating do
         @bt.save!
       end
       jb = @jb.refresh true
-      expect(jb.format.render(:raw)).to eq('Tomorrow')
+      expect(jb.format.render :raw).to eq('Tomorrow')
       expect(jb.type_id).to eq(Card::PhraseID)
     end
 

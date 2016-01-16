@@ -52,7 +52,7 @@ end
 # ~~~~~~
 
 PHASES = {}
-[:prepare, :approve, :store, :stored, :extend, :subsequent]
+[:prepare, :approve, :store, :clean, :extend, :subsequent]
   .each_with_index do |phase, i|
     PHASES[phase] = i
   end
@@ -114,7 +114,11 @@ def store
       @virtual = false
     end
   end
-  run_phase :stored
+  return unless @supercard
+    run_phase :clean do
+      run_callbacks :clean
+    end
+  end
 rescue => e
   rescue_event e
 ensure
@@ -129,6 +133,9 @@ rescue => e
 ensure
   @action = nil
 end
+
+
+
 
 def rescue_event e
   @action = nil

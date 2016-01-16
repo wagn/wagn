@@ -54,7 +54,7 @@ event :validate_type, before: :approve, changed: :type_id do
   end
 end
 
-event :reset_type_specific_fields, after: :store do
+event :reset_type_specific_fields, before: :clean do
   wql = { left: { left_id: type_id },
           right: { codename: 'type_plus_right' }
         }

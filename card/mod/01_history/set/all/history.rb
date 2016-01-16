@@ -29,7 +29,7 @@ end
 
 # stores changes in the changes table and assigns them to the current action
 # removes the action if there are no changes
-event :finalize_action, after: :stored, when: proc { |c| c.finalize_action? } do
+event :finalize_action, after: :clean, when: proc { |c| c.finalize_action? } do
   @changed_fields = Card::TRACKED_FIELDS.select do |f|
     changed_attributes.member? f
   end

@@ -70,3 +70,9 @@ event :store_subcards, after: :store do
   # <user> changes <user+*account+*status> in event activate_account
   Card.write_to_soft_cache self
 end
+
+event :clean_subcards, after: :clean do
+  subcards.each do |subcard|
+    subcard.run_callbacks :clean
+  end
+end

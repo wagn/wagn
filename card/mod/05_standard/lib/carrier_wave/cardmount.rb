@@ -23,11 +23,11 @@ module CarrierWave
 
         # remove files only if card has no history
         event :remove_#{column}_event,
-              on: :delete, after: :stored, when: proc { |c| !c.history? } do
+              on: :delete, after: :clean, when: proc { |c| !c.history? } do
           remove_#{column}!
         end
         event :mark_remove_#{column}_false_event,
-              on: :update, after: :stored do
+              on: :update, after: :clean do
           mark_remove_#{column}_false
         end
         event :store_previous_model_for_#{column}_event,

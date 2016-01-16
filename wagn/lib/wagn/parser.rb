@@ -10,15 +10,15 @@ module Wagn
                           " database specified in config/database.yml\n\n"
           parser.on('--production', '-p',
                     "#{command} production database (default)") do
-            opts[:envs] << 'production'
+            opts[:envs] = ['production']
           end
           parser.on('--test', '-t',
                     "#{command} test database") do
-            opts[:envs] << 'test'
+            opts[:envs] = ['test']
           end
           parser.on('--development', '-d',
                     "#{command} development database") do
-            opts[:envs] << 'development'
+            opts[:envs] = ['development']
           end
           parser.on('--all', '-a',
                     "#{command} production, test, and development database") do

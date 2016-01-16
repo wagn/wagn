@@ -3,9 +3,7 @@ event :admin_tasks, on: :update, before: :approve do
   if (task = Env.params[:task])
     if Auth.always_ok?
       case task.to_sym
-      when :clear_cache
-        Card::Cache.reset_all
-        Card::ViewCache.reset
+      when :clear_cache          then Card::Cache.reset_all
       when :repair_references    then Card::Reference.repair_all
       when :empty_trash          then Card.empty_trash
       when :clear_view_cache     then Card::ViewCache.reset

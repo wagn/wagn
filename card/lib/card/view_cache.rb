@@ -10,11 +10,42 @@ class Card
         Card::Cache[Card::ViewCache]
       end
 
-      def increment_cnt
+      def fetch format, view, args, &block
+        return block.call if cacheable_view?(view, format)
+
+        key = cache_key view, format, args
+        if !cache.exist?(key)
+          increment_cached_views_cnt
+          reduce_cache if cached_views_cnt > LIMIT
+        end
+        increment_frequency key
+
+        if Card.config.view_cache == 'debug'
+          verbose_fetch key, &bloack
+        else
+          cache.fetchkey, &block
+        end
+      end
+
+      def reset
+        cache.reset
+      end
+
+      private
+
+      def verbose_fetch
+        if cache.exist? key
+          "fetched from view cache: #{cache.read key}"
+        else
+          "written to view cache: #{cache.fetch(key, &block)}"
+        end
+      end
+
+      def increment_cached_views_cnt
         cache.write(CNT_KEY, count + 1)
       end
 
-      def count
+      def cached_views_cnt
         cache.read(CNT_KEY) || 0
       end
 
@@ -40,37 +71,23 @@ class Card
         cache.write(FREQUENCY_KEY, freq)
       end
 
-      def fetch(format, view, args, &block)
-        if !Card.config.view_cache || !format.view_caching? || !format.main? ||  (view != :open && view != :content) || format.class != HtmlFormat
-          return block.call
-        end
-
-        roles = Card::Auth.current.all_roles.sort.join '_'
-        key = "view_#{view}_#{format.card.key}_args_#{Card::Cache.obj_to_key(args)}_roles_#{roles}"
-
-        if !cache.exist?(key)
-          increment_cnt
-          reduce_cache if count > LIMIT
-        end
-
+      def increment_frequency key
         update_frequency do |freq|
           freq[key] ||= 0
           freq[key] += 1
         end
-
-        if Card.config.view_cache == 'debug'
-          if cache.exist? key
-            "fetched from view cache: #{cache.read key}"
-          else
-            "written to view cache: #{cache.fetch(key, &block)}"
-          end
-        else
-          cache.fetch(key, &block)
-        end
       end
 
-      def reset
-        cache.reset
+      def cache_key view, format, args
+        roles_key = Card::Auth.current.all_roles.sort.join '_'
+        args_key = Card::Cache.obj_to_key(args)
+        '%s#%s__args__%s__roles__%s' %
+          [format.card.key, view, args_key, roles_key]
+      end
+
+      def cacheable_view? view, format
+        !Card.config.view_cache || !format.view_caching? || !format.main? ||
+          (view != :open && view != :content) || format.class != HtmlFormat
       end
     end
   end

@@ -3,26 +3,26 @@
 module Wagn
   class Parser
     class << self
-      def db_task command, envs
+      def db_task command, opts
         OptionParser.new do |parser|
           parser.banner = "Usage: wagn #{command} [options]\n\n" \
                           "Run wagn:#{command} task on the production "\
                           " database specified in config/database.yml\n\n"
           parser.on('--production', '-p',
                     "#{command} production database (default)") do
-            envs = ['production']
+            opts[:envs] << 'production'
           end
           parser.on('--test', '-t',
                     "#{command} test database") do
-            envs = ['test']
+            opts[:envs] << 'test'
           end
           parser.on('--development', '-d',
                     "#{command} development database") do
-            envs = ['development']
+            opts[:envs] << 'development'
           end
           parser.on('--all', '-a',
                     "#{command} production, test, and development database") do
-            envs = %w( production development test)
+            opts[:envs] = %w( production development test)
           end
         end
       end

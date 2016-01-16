@@ -60,14 +60,14 @@ else
 
   case command
   when *WAGN_DB_TASKS
-    envs = []
-    Wagn::Parser.db_task(command, envs).parse!(ARGV)
+    opts = {}
+    Wagn::Parser.db_task(command, opts).parse!(ARGV)
     task_cmd = "bundle exec rake wagn:#{command}"
-    if envs.empty?
+    if !opts[:envs] || opts[:envs].empty?
       puts task_cmd
       puts `#{task_cmd}`
     else
-      envs.each do |env|
+      opts[:envs].each do |env|
         puts "env RAILS_ENV=#{env} #{task_cmd}"
         puts `env RAILS_ENV=#{env} #{task_cmd}`
       end
@@ -81,7 +81,7 @@ else
     require_args = "-r #{Wagn.gem_root}/features "
     require_args += feature_paths.map { |path| "-r #{path}" }.join(' ')
     feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.join(' ')
-    unless system "RAILS_ROOT=. bundle exec cucumber " \
+    unless system 'RAILS_ROOT=. bundle exec cucumber ' \
                   "#{require_args} #{feature_args} 2>&1"
       exit $?.exitstatus
     end
@@ -94,15 +94,16 @@ else
     require 'wagn/application'
 
     before_split = true
-    wagn_args, rspec_args = ARGV.partition do |a|
-                              before_split = (a == '--' ? false : before_split)
-                            end
+    wagn_args, rspec_args =
+      ARGV.partition do |a|
+        before_split = (a == '--' ? false : before_split)
+      end
     rspec_args.shift
     opts = {}
     Wagn::Parser.rspec(opts).parse!(wagn_args)
     rspec_command =
       "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} " \
-      " #{opts[:rescue]} rspec #{rspec_args*' '} #{opts[:files]} 2>&1"
+      " #{opts[:rescue]} rspec #{rspec_args.join(' ')} #{opts[:files]} 2>&1"
     unless system rspec_command
       exit $?.exitstatus
     end

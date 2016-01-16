@@ -195,7 +195,7 @@ describe Card::Set::All::TrackedAttributes do
 
     it 'test_rename_should_not_fail_when_updating_inaccessible_referencer' do
       Card.create! name: 'Joe Card', content: 'Whattup'
-      Card::Auth.as :joe_admin do
+      Card::Auth.as 'joe_admin' do
         Card.create! name: 'Admin Card', content: '[[Joe Card]]'
       end
       c = Card['Joe Card']

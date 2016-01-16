@@ -46,7 +46,7 @@ class Card
 
     ATTRIBUTES = {
       basic:           %w( id name key type_id content left_id right_id
-                           creator_id updater_id codename                     ),
+                           creator_id updater_id codename read_rule_id ),
       relational:      %w( type part left right
                            editor_of edited_by last_editor_of last_edited_by
                            creator_of created_by member_of member             ),
@@ -57,38 +57,45 @@ class Card
       conjunction:     %w( and or all any                                     ),
       special:         %w( found_by not sort match complete extension_type    ),
       ignore:          %w( prepend append view params vars size )
-    }.inject({}) {|h,pair| pair[1].each { |v| h[v.to_sym]=pair[0] }; h }
+    }.inject({}) { |h, pair| pair[1].each { |v| h[v.to_sym] = pair[0] }; h }
 
     CONJUNCTIONS = { any: :or, in: :or, or: :or, all: :and, and: :and }
 
     MODIFIERS = %w( conj return sort sort_as group dir limit offset )
-      .inject({}) { |h,v| h[v.to_sym]=nil; h }
+                .inject({}) { |h,v| h[v.to_sym] = nil; h }
 
     OPERATORS = %w( != = =~ < > in ~ ).inject({}) {|h,v| h[v]=v; h }.merge({
-      eq: '=', gt: '>', lt: '<', match: '~', ne: '!=', :'not in'=> nil
+      eq: '=', gt: '>', lt: '<', match: '~', ne: '!=', 'not in' => nil
     }.stringify_keys)
 
     DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
 
-    attr_reader :statement, :mods, :conditions,
-      :subqueries, :superquery
+    attr_reader :statement, :mods, :conditions, :comment,
+                :subqueries, :superquery
     attr_accessor :joins, :table_seq, :unjoined, :conditions_on_join
 
-    def initialize statement
+    def initialize statement, comment=nil
       @subqueries = []
       @conditions = []
       @joins = []
       @mods = {}
       @statement = statement.clone
 
-      @unjoined   = @statement.delete(:unjoined  ) || nil
-      @context    = @statement.delete(:context   ) || nil
+      @context    = @statement.delete(:context) || nil
+      @unjoined   = @statement.delete(:unjoined) || nil
       @superquery = @statement.delete(:superquery) || nil
-      @vars       = @statement.delete(:vars      ) || {}
+      @vars       = @statement.delete(:vars) || {}
       @vars.symbolize_keys!
+
+      @comment = comment || default_comment
 
       interpret @statement
       self
+    end
+
+    def default_comment
+      return if @superquery || !Card.config.sql_comments
+      statement.to_s
     end
 
     # Query Execution
@@ -96,9 +103,8 @@ class Card
     # a card identifier from SQL and then hooking into our caching system (see
     # Card::Fetch)
 
-    def self.run statement
-      query = new statement
-      query.run
+    def self.run statement, comment=nil
+      new(statement, comment).run
     end
 
     # run the current query
@@ -185,7 +191,7 @@ class Card
     def normalize_value val
       case val
       when Integer, Float, Symbol, Hash then val
-      when String, Card::Name           then normalize_string_value val
+      when String, SmartName            then normalize_string_value val
       when Array                        then val.map { |v| normalize_value v }
       else fail BadQuery, "unknown WQL value type: #{val.class}"
       end

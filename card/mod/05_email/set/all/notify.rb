@@ -18,7 +18,10 @@ class FollowerStash
           add_affected_card left_card
           break
         elsif item.to_name.key == Card[:includes].key
-          includee_set = Card.search(included_by: left_card.name).map(&:key)
+          includee_set = Card.search(
+            { included_by: left_card.name },
+            "follow cards included by #{left_card.name}"
+          ).map(&:key)
           if !@visited.intersection(includee_set).empty?
             add_affected_card left_card
             break

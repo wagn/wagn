@@ -26,12 +26,12 @@ class Card
       def editor_of val
         act_join = Join.new(
           from: self,
-          to: ['card_acts', "a#{table_id force=true}", 'actor_id']
+          to: ['card_acts', "a#{table_id true}", 'actor_id']
         )
         joins << act_join
         action_join = Join.new(
           from: act_join,
-          to: ['card_actions', "an#{table_id force=true}", 'card_act_id'],
+          to: ['card_actions', "an#{table_id true}", 'card_act_id'],
           superjoin: act_join
         )
         join_cards val, from: action_join, from_field: 'card_id'
@@ -40,13 +40,13 @@ class Card
       def edited_by val
         action_join = Join.new(
           from: self,
-          to: ['card_actions', "an#{table_id force=true}", 'card_id']
+          to: ['card_actions', "an#{table_id true}", 'card_id']
         )
         joins << action_join
         act_join = Join.new(
           from: action_join,
           from_field: 'card_act_id',
-          to: ['card_acts', "a#{table_id force=true}"]
+          to: ['card_acts', "a#{table_id true}"]
         )
         join_cards val, from: act_join, from_field: 'actor_id'
       end
@@ -100,72 +100,68 @@ class Card
       def found_by val
         found_by_cards(val).compact.each do |c|
           if c && [SearchTypeID, SetID].include?(c.type_id)
-            #FIXME - move this check to set mods!
+            # FIXME: - move this check to set mods!
 
             subquery(
               c.get_query.merge unjoined: true, context: c.name
             )
           else
             raise BadQuery,
-              '"found_by" value must be valid Search, ' +
-              "but #{c.name} is a #{c.type_name}"
+                  '"found_by" value must be valid Search, ' \
+                  "but #{c.name} is a #{c.type_name}"
           end
         end
       end
 
-
       def found_by_cards val
-        if Hash===val
+        if val.is_a? Hash
           Query.run val
         else
           Array.wrap(val).map do |v|
-            Card.fetch val.to_name.to_absolute(context), :new=>{}
+            Card.fetch v.to_name.to_absolute(context), new: {}
           end
         end
-
       end
 
-      def match(val)
+      def match val
         cxn, val = match_prep val
         val.gsub! /[^#{Card::Name::OK4KEY_RE}]+/, ' '
         return nil if val.strip.empty?
 
         val_list = val.split(/\s+/).map do |v|
           name_or_content = [
-            "replace(#{self.table_alias}.name,'+',' ')",
-            "#{self.table_alias}.db_content"
+            "replace(#{table_alias}.name,'+',' ')",
+            "#{table_alias}.db_content"
           ].map do |field|
-            %{#{field} #{ cxn.match quote("[[:<:]]#{v}[[:>:]]") }}
+            %{#{field} #{cxn.match quote("[[:<:]]#{v}[[:>:]]")}}
           end
           "(#{name_or_content.join ' OR '})"
         end
         add_condition "(#{val_list.join ' AND '})"
       end
 
-
-      def complete(val)
-        no_plus_card = (val =~ /\+/ ? '' : "and right_id is null")
-        # FIXME -- this should really be more nuanced --
+      def complete val
+        no_plus_card = (val =~ /\+/ ? '' : 'and right_id is null')
+        # FIXME: -- this should really be more nuanced --
         # it breaks down after one plus
 
         add_condition(
-          " lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}"
+          " lower(#{table_alias}.name) LIKE" \
+          " lower(#{quote(val.to_s + '%')}) #{no_plus_card}"
         )
       end
 
-      def extension_type val
+      def extension_type _val
         # DEPRECATED LONG AGO!!!
-        Rails.logger.info "using DEPRECATED extension_type in WQL"
-        interpret :right_plus => AccountID
+        Rails.logger.info 'using DEPRECATED extension_type in WQL'
+        interpret right_plus: AccountID
       end
-
 
       # ATTRIBUTE HELPERS
 
-
       def join_references key, val
-        r = Reference.new( key, val, self )
-        refjoin = Join.new(:from=>self, :to=>r, :to_field=>r.infield)
+        r = Reference.new(key, val, self)
+        refjoin = Join.new(from: self, to: r, to_field: r.infield)
         joins << refjoin
         if r.cardquery
           join_cards r.cardquery, from: refjoin, from_field: r.outfield
@@ -188,37 +184,35 @@ class Card
         if sort_field == 'count'
           sort_by_count val, item
         else
-          if join_field = SORT_JOIN_TO_ITEM_MAP[item.to_sym]
-            sq = join_cards val,
-              to_field: join_field,
-              side: 'LEFT',
-              conditions_on_join: true
+          if (join_field = SORT_JOIN_TO_ITEM_MAP[item.to_sym])
+            sq = join_cards(val, to_field: join_field,
+                                 side: 'LEFT',
+                                 conditions_on_join: true)
             @mods[:sort] ||= "#{sq.table_alias}.#{sort_field}"
           else
             raise BadQuery, "sort item: #{item} not yet implemented"
           end
         end
-
       end
 
       # EXPERIMENTAL!
       def sort_by_count val, item
         if item == 'referred_to'
-          @mods[:sort] = "coalesce(count,0)" # needed for postgres
+          @mods[:sort] = 'coalesce(count,0)' # needed for postgres
           cs = Query.new(
-            :return=>'coalesce(count(*), 0) as count',
-            :group=>'sort_join_field',
-            :superquery=>self
+            return: 'coalesce(count(*), 0) as count',
+            group: 'sort_join_field',
+            superquery: self
           )
           subselect = Query.new(val.merge return: 'id', superquery: self)
           cs.add_condition "referer_id in (#{subselect.sql})"
-          # FIXME - SQL generated before SQL phase
+          # FIXME: - SQL generated before SQL phase
           cs.joins << Join.new(
             from: cs,
-            to:['card_references', 'wr', 'referee_id']
+            to: ['card_references', 'wr', 'referee_id']
           )
           cs.mods[:sort_join_field] = "#{cs.table_alias}.id as sort_join_field"
-          #HACK!
+          # HACK!
 
           joins << Join.new(
             from: self,
@@ -261,8 +255,7 @@ class Card
         s
       end
 
-
-      #~~~~~~~  CONJUNCTION
+      # ~~~~~~~  CONJUNCTION
 
       def all val
         conjoin val, :and
@@ -276,8 +269,8 @@ class Card
       alias_method :in, :any
 
       def conjoin val, conj
-        sq = subquery( unjoined: true, conj: conj )
-        unless Array===val
+        sq = subquery unjoined: true, conj: conj
+        unless val.is_a? Array
           val = clause_to_hash(val).map { |key, value| { key => value } }
         end
         val.each do |val_item|
@@ -291,7 +284,7 @@ class Card
       end
 
       def restrict id_field, val
-        if id = id_from_val(val)
+        if (id = id_from_val(val))
           interpret id_field => id
         else
           join_cards val, from_field: id_field
@@ -300,11 +293,10 @@ class Card
 
       def id_from_val val
         case val
-        when Integer ; val
-        when String  ; Card.fetch_id(val)
+        when Integer then val
+        when String  then Card.fetch_id(val)
         end
       end
-
     end
   end
 end

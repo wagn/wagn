@@ -34,10 +34,6 @@ def clean_html?
   true
 end
 
-def history?
-  false
-end
-
 def save_content_draft _content
   clear_drafts
 end

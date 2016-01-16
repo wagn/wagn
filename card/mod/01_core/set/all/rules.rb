@@ -1,7 +1,6 @@
-
-
 RuleSQL = %{
-  select rules.id as rule_id, settings.id as setting_id, sets.id as set_id, sets.left_id as anchor_id, sets.right_id as set_tag_id
+  select rules.id as rule_id, settings.id as setting_id, sets.id as set_id,
+    sets.left_id as anchor_id, sets.right_id as set_tag_id
   from cards rules
   join cards sets     on rules.left_id  = sets.id
   join cards settings on rules.right_id = settings.id
@@ -19,15 +18,15 @@ ReadRuleSQL = %{
   where read_rules.right_id = #{Card::ReadID} and read_rules.trash is false and sets.type_id = #{Card::SetID};
 }
 
- def is_rule?
-   is_standard_rule? || is_user_rule?
- end
+def is_rule?
+  is_standard_rule? || is_user_rule?
+end
 
 def is_standard_rule?
-  (r = right( skip_modules: true )) &&
-  r.type_id == Card::SettingID       &&
-  (l = left( skip_modules: true ))  &&
-  l.type_id == Card::SetID
+  (r = right( skip_modules: true ))  &&
+    r.type_id == Card::SettingID     &&
+    (l = left( skip_modules: true )) &&
+    l.type_id == Card::SetID
 end
 
 def is_user_rule?
@@ -48,7 +47,7 @@ def rule setting_code, options={}
 end
 
 def rule_card setting_code, options={}
-  Card.fetch rule_card_id( setting_code, options ), options
+  Card.fetch rule_card_id(setting_code, options), options
 end
 
 def rule_card_id setting_code, options={}
@@ -71,20 +70,23 @@ def rule_card_id setting_code, options={}
 end
 
 def related_sets with_self = false
-  # refers to sets that users may configure from the current card - NOT to sets to which the current card belongs
+  # refers to sets that users may configure from the current card -
+  # NOT to sets to which the current card belongs
+
+  # FIXME: change to use codenames!!
 
   sets = []
-  sets << ["#{name}+*type",  Card::TypeSet.label( name) ] if known? && type_id==Card::CardtypeID
-  sets << ["#{name}+*self",  Card::SelfSet.label( name) ] if with_self
-  sets << ["#{name}+*right", Card::RightSet.label(name) ] if known? && cardname.simple?
-
-#      Card.search(type: 'Set',left: {right: name},right: '*type plus right',return: 'name').each do |set_name|
-#        sets<< set_name
-#      end
+  if known? && type_id == Card::CardtypeID # FIXME: belongs in type/cardtype
+    sets << ["#{name}+*type", Card::TypeSet.label(name)]
+  end
+  if with_self
+    sets << ["#{name}+*self", Card::SelfSet.label(name)]
+  end
+  if known? && cardname.simple?
+    sets << ["#{name}+*right", Card::RightSet.label(name)]
+  end
   sets
 end
-
-
 
 module ClassMethods
 
@@ -110,18 +112,20 @@ module ClassMethods
       join cards settings  on user_rules.right_id = settings.id
       join cards users     on user_sets.right_id  = users.id
       join cards sets      on user_sets.left_id = sets.id
-      where   sets.type_id      = #{Card::SetID }               and sets.trash       is false
-        and   settings.type_id  = #{Card::SettingID}            and settings.trash   is false
-        and   ( #{user_restriction} or users.codename = 'all' ) and users.trash      is false
-        and                                                         user_sets.trash  is false
-        and                                                         user_rules.trash is false;
+      where sets.type_id     = #{Card::SetID }
+        and settings.type_id = #{Card::SettingID}
+        and (#{user_restriction} or users.codename = 'all')
+        and sets.trash       is false
+        and settings.trash   is false
+        and users.trash      is false
+        and user_sets.trash  is false
+        and user_rules.trash is false;
     }
   end
 
-
-  def setting name
+  def global_setting name
     Auth.as_bot do
-      card=Card[name] and !card.db_content.strip.empty? and card.db_content
+      (card = Card[name]) && !card.db_content.strip.empty? && card.db_content
     end
   end
 
@@ -174,11 +178,12 @@ module ClassMethods
   end
 
   def all_user_ids_with_rule_for set_card, setting_code
-    key = if (l=set_card.left) and (r=set_card.right)
-        set_class_code = Codename[ r.id ]
+    key =
+      if (l = set_card.left) && (r = set_card.right)
+        set_class_code = Codename[r.id]
         "#{l.id}+#{set_class_code}+#{setting_code}"
       else
-        set_class_code = Codename[ set_card.id ]
+        set_class_code = Codename[set_card.id]
         "#{set_class_code}+#{setting_code}"
       end
     user_ids = user_ids_cache[key] || []
@@ -187,11 +192,14 @@ module ClassMethods
     else
       user_ids
     end
-
   end
 
   def user_rule_cards user_name, setting_code
-    Card.search right: {codename: setting_code}, left: {left: {type_id: SetID}, right: user_name}
+    Card.search(
+      { right: { codename: setting_code },
+        left: { left: { type_id: SetID }, right: user_name }
+        }, "rule cards for user: #{user_name}"
+    )
   end
 
   def rule_cache
@@ -282,15 +290,15 @@ module ClassMethods
     Card.cache.write 'RULE_KEYS', hash
   end
 
-
-
   def read_rule_cache
     Card.cache.read('READRULES') || begin
       hash = {}
-      ActiveRecord::Base.connection.select_all( Card::Set::All::Rules::ReadRuleSQL ).each do |row|
-        party_id, read_rule_id = row['party_id'].to_i, row['read_rule_id'].to_i
+      ActiveRecord::Base.connection.select_all(
+        Card::Set::All::Rules::ReadRuleSQL
+      ).each do |row|
+        party_id = row['party_id'].to_i
         hash[party_id] ||= []
-        hash[party_id] << read_rule_id
+        hash[party_id] << row['read_rule_id'].to_i
       end
       Card.cache.write 'READRULES', hash
     end
@@ -299,18 +307,4 @@ module ClassMethods
   def clear_read_rule_cache
     Card.cache.write 'READRULES', nil
   end
-=begin
-  def default_rule setting_code, fallback=nil
-    card = default_rule_card setting_code, fallback
-    return card && card.content
-  end
-
-  def default_rule_card setting_code, fallback=nil
-    rule_id = rule_cache["all+#{setting_code}"]
-    rule_id ||= fallback && rule_cache["all+#{fallback}"]
-    Card[rule_id] if rule_id
-  end
-=end
 end
-
-

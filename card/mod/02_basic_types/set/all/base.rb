@@ -6,9 +6,30 @@ format do
   end
 
   # NAME VIEWS
-
   simple_args = { closed: true, perms: :none }
-  view(:name,     simple_args) { card.name                           }
+  view :name, simple_args do |args|
+    return card.name unless args[:variant]
+    args[:variant].split(/[\s,]+/).inject(card.name) do |name, variant|
+      case variant.to_sym
+      when :capitalized
+        name.capitalize
+      when :singular
+        name.singularize
+      when :plural
+        name.pluralize
+      when :title
+        name.titleize
+      else
+        if ::Set.new([
+          :downcase, :upcase, :swapcase, :reverse, :succ
+        ]).include?(variant.to_sym)
+          name.send variant
+        else
+          name
+        end
+      end
+    end
+  end
   view(:key,      simple_args) { card.key                            }
   view(:title,    simple_args) { |args| args[:title] || card.name    }
   view(:linkname, simple_args) { card.cardname.url_key               }
@@ -92,9 +113,9 @@ format do
     # FIXME: - relativity should be handled in smartname
     return '' unless args[:inc_name]
     name = args[:inc_name].to_name
-    stripped_name = name.stripped.to_name
+    stripped = name.stripped
 
-    if name.relative? && !stripped_name.starts_with_joint?
+    if name.relative? && !stripped.to_name.starts_with_joint?
       # not a simple relative name; just return the original syntax
       "{{#{args[:inc_syntax]}}}"
     else
@@ -105,7 +126,7 @@ format do
         when type = on_type_set
           "#{type}#{name}+#{Card[:type_plus_right].name}" # *type plus right
         else
-          "#{stripped_name.gsub(/^\+/, '')}+#{Card[:right].name}" # *right
+          "#{stripped.gsub(/^\+/, '')}+#{Card[:right].name}" # *right
         end
       subformat(Card.fetch set_name).render_template_link args
     end

@@ -33,7 +33,7 @@ Spork.prefork do
     config.include RSpec::Rails::Matchers::RoutingMatchers,  {
       file_path: /\bspec\/controllers\//
     }
-
+    config.include RSpecHtmlMatchers
     # format_index = ARGV.find_index {|arg| arg =~ /--format|-f/ }
     # formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation' #'textmate'
     # config.default_formatter=formatter
@@ -82,7 +82,7 @@ end
 class Card
   def self.create_or_update! name, args={}
     Card::Auth.as_bot do
-      if c = Card.fetch(name)
+      if (c = Card.fetch(name))
         c.update_attributes!(args)
       else
         Card.create! args.merge({name: name})
@@ -127,4 +127,3 @@ class ActiveSupport::Logger
     Thread.current['logger-output'] << msg
   end
 end
-

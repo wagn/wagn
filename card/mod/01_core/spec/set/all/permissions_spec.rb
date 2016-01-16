@@ -89,8 +89,8 @@ describe Card::Set::All::Permissions do
       expect(card.read_rule_id).to eq(@perm_card.id)
       expect(card.who_can(:read)).to eq([Card['joe_admin'].id])
       Card::Auth.as(:anonymous) { expect(card.ok?(:read)).to be_falsey }
-      Card::Auth.as(:joe_user)  { expect(card.ok?(:read)).to be_falsey }
-      Card::Auth.as(:joe_admin) { expect(card.ok?(:read)).to be_truthy  }
+      Card::Auth.as('joe_user')  { expect(card.ok?(:read)).to be_falsey }
+      Card::Auth.as('joe_admin') { expect(card.ok?(:read)).to be_truthy  }
       Card::Auth.as_bot         { expect(card.ok?(:read)).to be_truthy  }
     end
 
@@ -171,7 +171,7 @@ describe Card::Set::All::Permissions do
       end
       c = Card.new(name: 'Home+Heart')
       expect(c.who_can(:read)).to eq([Card::AnyoneSignedInID])
-      expect(c.permission_rule_card(:read).first.id).to eq(@perm_card.id)
+      expect(c.permission_rule_id_and_class(:read).first).to eq(@perm_card.id)
       c.save
       expect(c.read_rule_id).to eq(@perm_card.id)
     end
@@ -183,7 +183,7 @@ describe Card::Set::All::Permissions do
       end
       c = Card.new(name: 'Home+Heart')
       expect(c.who_can(:read)).to eq([Card::AnyoneID])
-      expect(c.permission_rule_card(:read).first.id).to(
+      expect(c.permission_rule_id_and_class(:read).first).to(
         eq(Card.fetch('*all+*read').id)
       )
       c.save
@@ -234,10 +234,10 @@ describe Card::Set::All::Permissions do
       Card::Auth.as_bot do
         expect(Card::Auth.always_ok?).to eq(true)
       end
-      Card::Auth.as(:joe_user) do
+      Card::Auth.as('joe_user') do
         expect(Card::Auth.always_ok?).to eq(false)
       end
-      Card::Auth.as(:joe_admin) do
+      Card::Auth.as('joe_admin') do
         expect(Card::Auth.always_ok?).to eq(true)
         Card.create! name: 'Hidden'
         Card.create name: 'Hidden+*self+*read', type: 'Pointer',
@@ -263,12 +263,12 @@ describe Card::Set::All::Permissions do
 
     it 'reader setting' do
       Card.where(trash: false).each do |ca|
-        rule_card, rule_class = ca.permission_rule_card(:read)
+        rule_id, rule_class = ca.permission_rule_id_and_class(:read)
         # warn "C #{c.inspect}, #{c.read_rule_id}, #{prc.first.id},
         # {c.read_rule_class}, #{prc.second}, #{prc.first.inspect}" unless
         # prc.last == c.read_rule_class && prc.first.id == c.read_rule_id
         expect(rule_class).to eq(ca.read_rule_class)
-        expect(rule_card.id).to eq(ca.read_rule_id)
+        expect(rule_id).to eq(ca.read_rule_id)
       end
     end
 
@@ -474,7 +474,7 @@ describe Card::Set::All::Permissions do
     end
 
     it 'should let joe user basic cards' do
-      Card::Auth.as :joe_user do
+      Card::Auth.as 'joe_user' do
         expect(@c.ok?(:read)).to be_truthy
       end
     end
@@ -503,10 +503,10 @@ describe Card::Set::All::Permissions do
     it 'should handle delete as a setting' do
       c = Card.new name: 'whatever'
       expect(c.who_can(:delete)).to eq([Card['joe_user'].id])
-      Card::Auth.as(:joe_user) do
+      Card::Auth.as('joe_user') do
         expect(c.ok?(:delete)).to eq(true)
       end
-      Card::Auth.as(:u1) do
+      Card::Auth.as('u1') do
         expect(c.ok?(:delete)).to eq(false)
       end
       Card::Auth.as(:anonymous) do

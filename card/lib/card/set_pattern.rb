@@ -1,14 +1,13 @@
 class Card
-
   class SetPattern
-
     class << self
-      attr_accessor :pattern_code, :pattern_id, :junction_only, :assigns_type, :anchorless, :anchor_parts_count
+      attr_accessor :pattern_code, :pattern_id, :junction_only, :assigns_type,
+                    :anchorless, :anchor_parts_count
 
       def card_keys
         @@card_keys ||= Card.set_patterns.inject({}) do |hash, set_pattern|
-          card_key = Card.fetch( set_pattern.pattern_code.to_sym, skip_modules: true ).key
-          hash[ card_key ] = true
+          card_key = Card.quick_fetch(set_pattern.pattern_code.to_sym).key
+          hash[card_key] = true
           hash
         end
       end

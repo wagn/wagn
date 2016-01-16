@@ -5,8 +5,11 @@ class Card
     @@as_card = @@as_id = @@current_id = @@current = nil
     @@simulating_setup_need = nil
 
-    NON_CREATEABLE_TYPES = %w{ signup setting set } # NEED API
     SETUP_COMPLETED_KEY = 'SETUP_COMPLETED'
+    DEFAULT_RECAPTCHA_SETTINGS = {
+      recaptcha_public_key: '6LeoHfESAAAAAN1NdQeYHREq4jTSQhu1foEzv6KC',
+      recaptcha_private_key: '6LeoHfESAAAAAHLZpn7ijrO4_KGLEr2nGL4qjjis'
+    }
 
     # after_save :reset_instance_cache
 
@@ -55,8 +58,9 @@ class Card
       def find_by_token token
         Auth.as_bot do
           Card.search(
-            right_id: Card::AccountID,
-            right_plus: [{ id: Card::TokenID }, { content: token.strip }]
+            { right_id: Card::AccountID,
+              right_plus: [{ id: Card::TokenID }, { content: token.strip }]
+              }, 'find +*account card by token'
           ).first
         end
       end
@@ -71,8 +75,9 @@ class Card
         email = email.strip.downcase
         Auth.as_bot do
           Card.search(
-            right_id: Card::AccountID,
-            right_plus: [{ id: Card::EmailID }, { content: email }]
+            { right_id: Card::AccountID,
+              right_plus: [{ id: Card::EmailID }, { content: email }]
+              }, "find +*account for email(#{email})"
           ).first
         end
       end
@@ -135,12 +140,12 @@ class Card
         @@current_id = @@as_id if @@current_id.nil?
 
         return unless block_given?
-        value = yield
-
-        @@as_id   = tmp_id
-        @@as_card = tmp_card
-
-        value
+        yield
+      ensure
+        if block_given?
+          @@as_id   = tmp_id
+          @@as_card = tmp_card
+        end
       end
 
       def as_bot &block
@@ -212,10 +217,15 @@ class Card
       # PERMISSIONS
 
       def createable_types
-        type_names = Auth.as_bot do
-          Card.search type: Card::CardtypeID, return: :name,
-                      not: { codename: ['in'] + NON_CREATEABLE_TYPES }
-        end
+        type_names =
+          Auth.as_bot do
+            Card.search(
+              { type: Card::CardtypeID, return: :name,
+                not: { codename: ['in'] + Card.config.non_createable_types } },
+              'find createable types'
+            )
+          end
+
         type_names.select do |name|
           Card.new(type: name).ok? :create
         end.sort

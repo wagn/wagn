@@ -21,7 +21,7 @@ def assign_attributes args={}
 end
 
 def assign_set_specific_attributes
-  return unless @set_specific && @set_specific.present?
+  return unless @set_specific.present?
   @set_specific.each_pair do |name, value|
     send "#{name}=", value
   end
@@ -116,10 +116,10 @@ event :update_ruled_cards, after: :store do
 
       # then find all cards with me as read_rule_id that were not just updated
       # and regenerate their read_rules
-      if !new_record?
-        Card.where(read_rule_id: self.id, trash: false).reject do |w|
-          in_set[w.key]
-        end.each(&:update_read_rule)
+      if !new_card?
+        Card.search(read_rule_id: self.id) do |card|
+          card.update_read_rule unless in_set[card.key]
+        end
       end
     end
   end
@@ -134,7 +134,7 @@ end
 
 event :expire_related, after: :store do
   subcards.keys.each do |key|
-    Card.cache.delete_local key
+    Card.cache.soft.delete key
   end
   expire true
 

@@ -58,7 +58,8 @@ describe Card::Set::Right::Account do
     end
 
     it 'contains deck title' do
-      expect(@mail.parts[0].body.raw_source).to match(Card.setting(:title))
+      body = @mail.parts[0].body.raw_source
+      expect(body).to match(Card.global_setting(:title))
     end
 
     it 'contains link to verify account' do
@@ -82,7 +83,8 @@ describe Card::Set::Right::Account do
     end
 
     it 'contains deck title' do
-      expect(@mail.parts[0].body.raw_source).to match(Card.setting(:title))
+      body = @mail.parts[0].body.raw_source
+      expect(body).to match(Card.global_setting(:title))
     end
 
     it 'contains password resset link' do

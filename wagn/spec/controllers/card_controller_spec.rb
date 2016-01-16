@@ -273,7 +273,7 @@ describe CardController do
       end
 
       it "handles image with read permission" do
-        login_as :joe_admin
+        login_as 'joe_admin'
         get :read, id: 'mao2'
         assert_response 200
         get :read, id: 'mao2', format: 'jpg'

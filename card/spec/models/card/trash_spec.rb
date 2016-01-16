@@ -46,7 +46,7 @@ end
 
 describe Card, "plus cards" do
   it "should be deleted when root is" do
-    Card::Auth.as :joe_admin do
+    Card::Auth.as 'joe_admin' do
       c = Card.create! name: 'zz+top'
       root = Card['zz']
       root.delete

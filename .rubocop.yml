@@ -1,1 +1,2 @@
+require: rubocop-decko
 inherit_from: .ruby-style.yml

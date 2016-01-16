@@ -1,5 +1,9 @@
 =Wagn: how pioneers roll
 
+{<img src="https://semaphoreci.com/api/v1/projects/0d61c1f9-5ef0-4c5c-89c6-7664e247e4be/294670/shields_badge.svg" />}[https://semaphoreci.com/ethan/wagn]
+{<img src="https://badge.fury.io/rb/wagn.svg" alt="Gem Version" />}[https://badge.fury.io/rb/wagn]
+{<img src="https://codeclimate.com/repos/56548cb6fafb98574e013c39/badges/be88db3f72d0fd06ace3/gpa.svg" />}[https://codeclimate.com/repos/56548cb6fafb98574e013c39/feed]
+
 ==Basics
 
 Wagn is serious web development made fun.

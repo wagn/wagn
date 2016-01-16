@@ -63,14 +63,14 @@ class Card::Migration < ActiveRecord::Migration
   end
 
   def contentedly
-    Card::Cache.reset_global
+    Card::Cache.reset_all
     Cardio.schema_mode '' do
       Card::Auth.as_bot do
         ActiveRecord::Base.transaction do
           begin
             yield
           ensure
-            Card::Cache.reset_global
+            Card::Cache.reset_all
           end
         end
       end
@@ -121,6 +121,10 @@ class Card::Migration < ActiveRecord::Migration
 
   def down
     raise ActiveRecord::IrreversibleMigration
+  end
+
+  def update_machine_output
+    Card.search(right: { codename: 'machine_output' }).each(&:delete)
   end
 end
 

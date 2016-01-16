@@ -50,6 +50,93 @@ describe Card::Set::Type::Pointer do
   end
 
 
+  let(:pointer) do
+    Card.create name: 'tp', type: 'pointer',
+                content: "[[item1]]\n[[item2]]"
+  end
+
+  describe '#added_item_names' do
+    it 'recognizes added items' do
+      Card::Auth.as_bot do
+        pointer
+        in_phase before: :approve,
+                 on: :save,
+                 trigger: ->{
+                   pointer.update_attributes!(
+                     content: "[[item1]]\n[[item2]]\n[[item3]]"
+                  )
+                } do
+          expect(added_item_names).to eq ['item3']
+        end
+      end
+    end
+
+    it 'ignores order' do
+      Card::Auth.as_bot do
+        pointer
+        in_phase before: :approve,
+                 on: :save,
+                 trigger: ->{
+                   pointer.update_attributes!(
+                     content: "[[item2]]\n[[item1]]"
+                   )
+                 } do
+          expect(added_item_names).to eq []
+        end
+      end
+    end
+  end
+
+  describe '#dropped_item_names' do
+    it 'recognizes dropped items' do
+      Card::Auth.as_bot do
+        pointer
+        in_phase before: :approve,
+                 on: :save,
+                 trigger: ->{
+                   pointer.update_attributes!(
+                     content: "[[item1]]"
+                   )
+                 } do
+          expect(dropped_item_names).to eq ['item2']
+        end
+      end
+    end
+
+    it 'ignores order' do
+      Card::Auth.as_bot do
+        pointer
+        in_phase before: :approve,
+                 on: :save,
+                 trigger: ->{
+                   pointer.update_attributes!(
+                     content: "[[item2]]\n[[item1]]"
+                   )
+                 } do
+          expect(dropped_item_names).to eq []
+        end
+      end
+    end
+  end
+
+  describe '#changed_item_names' do
+    it 'recognizes changed items' do
+      Card::Auth.as_bot do
+        pointer
+        in_phase before: :approve,
+                 on: :save,
+                 trigger: ->{
+                   pointer.update_attributes!(
+                     content: "[[item1]]\n[[item3]]"
+                   )
+                 } do
+          expect(changed_item_names.sort).to eq ['item2','item3']
+        end
+      end
+    end
+  end
+
+
 
   describe 'html' do
     before do

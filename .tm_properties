@@ -1,3 +1,4 @@
 excludeInFolderSearch = "{$excludeInFolderSearch,coverage,files,log,public,tmp}"
 excludeInFileChooser = "{$excludeInFileChooser,coverage,files,log,public,tmp}"
 TM_RSPEC_MODE = "core"
+include = "{$include,.*.yml}"

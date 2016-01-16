@@ -50,7 +50,7 @@ class AddEmailCards < Card::CoreMigration
     Card.create! name: "*text message+*right+*default", type_code: :plain_text
 
 
-    Card::Cache.reset_global
+    Card::Cache.reset_all
 
 
     # create system email cards
@@ -90,7 +90,7 @@ class AddEmailCards < Card::CoreMigration
     end
 
     wagn_bot = Card[:wagn_bot].account.email.present? ? Card[:wagn_bot].name : nil
-    token_emails_from = Card.setting( '*invite+*from' ) || wagn_bot || '_user'
+    token_emails_from = Card.global_setting( '*invite+*from' ) || wagn_bot || '_user'
     [ 'verification email', 'password reset email'].each do |token_email_template_name|
       Card.create! name: "#{token_email_template_name}+#{Card[:from].name}", content: token_emails_from
     end

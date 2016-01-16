@@ -12,6 +12,20 @@ event :insert_item_event, before: :approve, on: :save, when: proc {|c| Env.param
   self.insert_item index.to_i, Env.params['insert_item']
 end
 
+phase_method :changed_item_names do
+  dropped_item_names + added_item_names
+end
+
+phase_method :dropped_item_names do
+  old_items = item_names content: db_content_was
+  old_items - item_names
+end
+
+phase_method :added_item_names do
+  old_items = item_names content: db_content_was
+  item_names - old_items
+end
+
 format do
   def item_links args={}
     card.item_cards(args).map do |item_card|
@@ -290,37 +304,38 @@ def item_type
 end
 
 def items= array
-  self.content=''
+  self.content = ''
   array.each { |i| self << i }
   save!
 end
 
 def << item
-  newname = case item
-    when Card     ;  item.name
-    when Integer  ;  c = Card[item] and c.name
-    else             item
+  newname =
+    case item
+    when Card    then item.name
+    when Integer then (c = Card[item]) && c.name
+    else              item
     end
   add_item newname
 end
 
 def add_item name
-  unless include_item? name
-    self.content="[[#{(item_names << name).reject(&:blank?)*"]]\n[["}]]"
-  end
+  return if include_item? name
+  self.content = "[[#{(item_names << name).reject(&:blank?) * "]]\n[["}]]"
 end
+
 def add_item! name
   add_item name
   save!
 end
 
 def drop_item name
-  if include_item? name
-    key = name.to_name.key
-    new_names = item_names.reject{ |n| n.to_name.key == key }
-    self.content = new_names.empty? ? '' : "[[#{new_names * "]]\n[["}]]"
-  end
+  return unless include_item? name
+  key = name.to_name.key
+  new_names = item_names.reject { |n| n.to_name.key == key }
+  self.content = new_names.empty? ? '' : "[[#{new_names * "]]\n[["}]]"
 end
+
 def drop_item! name
   drop_item name
   save!
@@ -328,43 +343,37 @@ end
 
 def insert_item index, name
   new_names = item_names
-  new_names.delete(name)
-  new_names.insert(index,name)
-  self.content =  new_names.map { |name| "[[#{name}]]" }.join "\n"
+  new_names.delete name
+  new_names.insert index, name
+  self.content = new_names.map { |new_name| "[[#{new_name}]]" }.join "\n"
 end
+
 def insert_item! index, name
   insert_item index, name
   save!
 end
 
-
 def options_rule_card
-  self.rule_card :options
+  rule_card :options
 end
 
 def option_names
-  result_cards = if oc = options_rule_card
-    oc.item_names default_limit: 50, context: name
-  else
-    Card.search sort: 'name', limit: 50, return: :name
+  result_names =
+    if (oc = options_rule_card)
+      oc.item_names default_limit: 50, context: name
+    else
+      Card.search({ sort: 'name', limit: 50, return: :name },
+                  "option names for pointer: #{name}")
+    end
+  if (selected_options = item_names)
+    result_names += selected_options
+    result_names.uniq!
   end
-  if selected_options = item_names
-    result_cards = result_cards | selected_options
-  end
-  result_cards
+  result_names
 end
 
 def option_cards
-  result_cards = if oc = options_rule_card
-    oc.item_cards default_limit: 50, context: name
-  else
-    Card.search sort: 'alpha', limit: 50
+  option_names.map do |name|
+    Card.fetch name, new: {}
   end
-  if selected_options = item_names
-    selected_options.each do |item|
-      result_cards.push Card.fetch(item,new: {})
-    end
-    result_cards.uniq!
-  end
-  result_cards
 end

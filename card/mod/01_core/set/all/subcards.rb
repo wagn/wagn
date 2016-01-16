@@ -36,7 +36,18 @@ def unfilled?
     !subcards.present?
 end
 
-event :reject_empty_subcards, after: :approve, on: :save do
+event :approve_subcards, after: :approve, on: :save do
+  subcards.each do |subcard|
+    if !subcard.valid_subcard?
+      subcard.errors.each do |field, err|
+        err = "#{field} #{err}" unless [:content, :abort].member? field
+        errors.add subcard.relative_name.s, err
+      end
+    end
+  end
+end
+
+event :reject_empty_subcards, before: :approve_subcards do
   subcards.each_with_key do |subcard, key|
     if subcard.new? && subcard.unfilled?
       remove_subcard key
@@ -49,17 +60,6 @@ end
 event :process_subcards, after: :reject_empty_subcards, on: :save do
 end
 
-event :approve_subcards, after: :process_subcards do
-  subcards.each do |subcard|
-    if !subcard.valid_subcard?
-      subcard.errors.each do |field, err|
-        err = "#{field} #{err}" unless [:content, :abort].member? field
-        errors.add subcard.relative_name.s, err
-      end
-    end
-  end
-end
-
 event :store_subcards, after: :store do
   subcards.each do |subcard|
     subcard.save! validate: false if subcard != self # unless @draft
@@ -68,5 +68,5 @@ event :store_subcards, after: :store do
   # ensures that a supercard can access subcards of self
   # eg. <user> creates <user+*account> creates <user+*account+*status>
   # <user> changes <user+*account+*status> in event activate_account
-  Card.write_to_local_cache self
+  Card.write_to_soft_cache self
 end

@@ -29,7 +29,7 @@ def template
       end
 
     # EXISTING CARDS
-    elsif structure = structure_rule_card
+    elsif (structure = structure_rule_card)
       repair_type structure.type_id if assign_type_to?(structure)
       structure
     end
@@ -60,7 +60,7 @@ def structure_rule_card
 end
 
 def structuree_names
-  if wql = structuree_spec
+  if (wql = structuree_spec)
     Auth.as_bot do
       Card::Query.run(wql.merge return: :name)
     end
@@ -82,7 +82,7 @@ def update_structurees args
   # note that this is not smart about overriding templating rules
   # for example, if someone were to change the type of a +*right+*structure rule that was overridden
   # by a +*type plus right+*structure rule, the override would not be respected.
-  if query = structuree_spec
+  if (query = structuree_spec)
     Auth.as_bot do
       query[:return] = :id
       Card::Query.run(query).each_slice(100) do |id_batch|
@@ -115,9 +115,10 @@ def repair_type template_type_id
 end
 
 def structuree_spec
-  if is_structure? and c=trunk and c.type_id = Card::SetID  #could use is_rule?...
-    c.get_query
-  end
+  return unless is_structure?
+  set_card = trunk
+  return unless set_card.type_id == SetID
+  set_card.get_query
 end
 
 event :update_structurees_type, after: :store, changed: :type_id do

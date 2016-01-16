@@ -78,11 +78,8 @@ describe Card::Set::All::Fetch do
         expect(a).to be_instance_of(Card)
 
         # expires the saved card
-        #expect(Card.cache.soft).to receive(:delete).with('a').and_call_original
         expect(a).to receive(:expire).and_call_original
-        #        expect().to receive(:delete).with('a#SUBCARDS#').and_call_original
-        #expect(Card.cache.soft).to receive(:delete).with('a').and_call_original
-        #expect(Card.cache.hard).to receive(:delete).with(/~\d+/).at_least(1)
+        # expect().to receive(:delete).with('a#SUBCARDS#').and_call_original
         # expires plus cards
         # expect(Card.cache).to receive(:delete).with('c+a')
         # expect(Card.cache).to receive(:delete).with('d+a')
@@ -96,7 +93,6 @@ describe Card::Set::All::Fetch do
         # expired including? cards
         # expect(Card.cache).to receive(:delete).with('x').exactly(2).times
         # expect(Card.cache).to receive(:delete).with('y').exactly(2).times
-
         a.save!
       end
     end

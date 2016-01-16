@@ -18,7 +18,6 @@ event :admin_tasks, on: :update, before: :approve do
   end
 end
 
-
 module ClassMethods
   def delete_old_sessions
     if (months = Env.params[:months].to_i) && months > 0

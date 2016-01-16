@@ -23,7 +23,7 @@ class Card
         if Card.config.view_cache == 'debug'
           verbose_fetch key, &bloack
         else
-          cache.fetchkey, &block
+          cache.fetch key, &block
         end
       end
 

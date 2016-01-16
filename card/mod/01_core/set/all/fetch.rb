@@ -264,15 +264,19 @@ end
 
 def renew args={}
   opts = args[:new].clone
+  handle_default_content opts
+  opts[:name] ||= cardname
+  opts[:skip_modules] = args[:skip_modules]
+  Card.new opts
+end
+
+def handle_default_content opts
   if (default_content = opts.delete(:default_content)) && content.empty?
     opts[:content] ||= default_content
   elsif content.present? && !opts[:content]
     # don't overwrite existing content
     opts[:content] = content
   end
-  opts[:name] ||= cardname
-  opts[:skip_modules] = args[:skip_modules]
-  Card.new opts
 end
 
 def expire_pieces
@@ -310,6 +314,12 @@ def refresh force=false
   else
     self
   end
+end
+
+# update only the card object in the soft cache
+def update_soft args
+  return unless (card = Card.fetch id)
+  card.assign_attributes args
 end
 
 def eager_renew? opts

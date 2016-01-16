@@ -20,10 +20,9 @@ end
 
 module ClassMethods
   def delete_old_sessions
-    if (months = Env.params[:months].to_i) && months > 0
-      ActiveRecord::SessionStore::Session.delete_all(
-        ['updated_at < ?', months.months.ago]
-      )
-    end
+    return unless (months = Env.params[:months].to_i) && months > 0
+    ActiveRecord::SessionStore::Session.delete_all(
+      ['updated_at < ?', months.months.ago]
+    )
   end
 end

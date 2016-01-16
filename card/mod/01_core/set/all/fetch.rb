@@ -93,6 +93,13 @@ module ClassMethods
     card.present?
   end
 
+  def expire_hard name
+    return unless Card.cache.hard
+    key = name.to_name.key
+    Card.cache.hard.delete key
+    Card.cache.hard.delete "~#{card.id}" if card.id
+  end
+
   def expire name, subcards=false
     # note: calling instance method breaks on dirty names
     key = name.to_name.key
@@ -314,12 +321,6 @@ def refresh force=false
   else
     self
   end
-end
-
-# update only the card object in the soft cache
-def update_soft args
-  return unless (card = Card.fetch id)
-  card.assign_attributes args
 end
 
 def eager_renew? opts

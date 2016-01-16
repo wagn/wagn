@@ -265,7 +265,7 @@ format :html do
   end
 
   def checked_set_button? set_name, args
-    args[:set_selected] == set_name ||
+    (args[:set_selected] == set_name) ||
       (current_set_key && args[:set_options].length == 1)
   end
 

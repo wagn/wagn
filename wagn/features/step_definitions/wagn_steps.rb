@@ -341,6 +341,10 @@ Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
   expect(selected.inner_html).to match /#{value}/
 end
 
+Then /^"([^"]*)" should be signed in$/ do |user|  # "
+  has_css?('#my-card-link', text: user)
+end
+
 When /^I press enter to search$/ do
   find('#_keyword').native.send_keys(:return)
 end

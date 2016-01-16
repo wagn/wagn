@@ -111,6 +111,16 @@ describe Card::Subcards do
       @card._add_subfield :phrase, content: 'this is a sub'
       expect(@card.subfield(':phrase').content).to eq 'this is a sub'
     end
+
+    it 'works together with type change' do
+      Card::Auth.as_bot do
+        @card = Card.create!(
+          name: 'card with subs', '+sub1' => 'first'
+        )
+        @card.update_attributes! type_id: Card::PhraseID, '+sub1' => 'second'
+      end
+      expect(Card['card with subs+sub1'].content).to eq 'second'
+    end
   end
 
   describe '#add' do
@@ -121,6 +131,34 @@ describe Card::Subcards do
       @card._add_subcard 'sub', content: 'sub content'
       @card.save!
       expect(Card['sub'].content).to eq 'sub content'
+    end
+  end
+  describe 'two levels of subcards' do
+    it 'creates cards with subcards with subcards' do
+      Card::Auth.as_bot do
+        in_phase before: :approve, trigger: -> {
+          Card.create! name: 'test'
+        } do
+          if name == 'test'
+            add_subfield('first-level')
+            subfield('first-level').add_subfield 'second-level', content: 'yeah'
+          end
+        end
+      end
+      expect(Card.fetch('test+first-level+second-level').content).to eq 'yeah'
+    end
+    it 'creates cards with subcards with subcards using codenames' do
+      Card::Auth.as_bot do
+        in_phase before: :approve, trigger: -> {
+          Card.create! name: 'test'
+        } do
+          if name == 'test'
+            add_subfield :children
+            subfield(:children).add_subfield :title, content: 'yeah'
+          end
+        end
+      end
+      expect(Card.fetch('test+*child+*title').content).to eq 'yeah'
     end
   end
 end

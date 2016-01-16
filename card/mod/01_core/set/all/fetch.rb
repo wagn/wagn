@@ -52,7 +52,7 @@ module ClassMethods
     card if opts[:new] || card.known?
   end
 
-  def fetch_local mark, opts={}
+  def fetch_soft mark, opts={}
     fetch mark, opts.merge(local_only: true)
   end
 
@@ -91,6 +91,13 @@ module ClassMethods
   def known? mark
     card = fetch mark, skip_modules: true
     card.present?
+  end
+
+  def expire_hard name
+    return unless Card.cache.hard
+    key = name.to_name.key
+    Card.cache.hard.delete key
+    Card.cache.hard.delete "~#{card.id}" if card.id
   end
 
   def expire name, subcards=false
@@ -140,7 +147,7 @@ module ClassMethods
   def fetch_from_cache cache_key, local_only=false
     return unless Card.cache
     if local_only
-      Card.cache.read_local cache_key
+      Card.cache.soft.read cache_key
     else
       Card.cache.read cache_key
     end
@@ -212,17 +219,17 @@ module ClassMethods
 
   def write_to_cache card, opts
     if opts[:local_only]
-      write_to_local_cache card
+      write_to_soft_cache card
     elsif Card.cache
       Card.cache.write card.key, card
       Card.cache.write "~#{card.id}", card.key if card.id && card.id != 0
     end
   end
 
-  def write_to_local_cache card
+  def write_to_soft_cache card
     return unless Card.cache
-    Card.cache.write_local card.key, card
-    Card.cache.write_local "~#{card.id}", card.key if card.id && card.id != 0
+    Card.cache.soft.write card.key, card
+    Card.cache.soft.write "~#{card.id}", card.key if card.id && card.id != 0
   end
 
   def normalize_mark mark, opts
@@ -264,9 +271,19 @@ end
 
 def renew args={}
   opts = args[:new].clone
+  handle_default_content opts
   opts[:name] ||= cardname
   opts[:skip_modules] = args[:skip_modules]
   Card.new opts
+end
+
+def handle_default_content opts
+  if (default_content = opts.delete(:default_content)) && content.empty?
+    opts[:content] ||= default_content
+  elsif content.present? && !opts[:content]
+    # don't overwrite existing content
+    opts[:content] = content
+  end
 end
 
 def expire_pieces
@@ -275,15 +292,25 @@ def expire_pieces
   end
 end
 
-def expire subcards=false
-  # Rails.logger.warn "expiring i:#{id}, #{inspect}"
+def expire_hard
+  return unless Card.cache.hard
+  Card.cache.hard.delete key
+  Card.cache.hard.delete "~#{id}" if id
+end
+
+def expire_soft subcards=false
   if subcards
     expire_subcards
   else
     preserve_subcards
   end
-  Card.cache.delete key
-  Card.cache.delete "~#{id}" if id
+  Card.cache.soft.delete key
+  Card.cache.soft.delete "~#{id}" if id
+end
+
+def expire subcards=false
+  expire_hard
+  expire_soft subcards
 end
 
 def refresh force=false

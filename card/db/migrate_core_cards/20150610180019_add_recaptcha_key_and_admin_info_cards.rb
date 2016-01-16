@@ -3,7 +3,7 @@
 class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
   def up
     create_recaptcha_settings
-    Card::Cache.reset_global
+    Card::Cache.reset_all
     create_admin_cards
     update_machine_output
   end
@@ -38,7 +38,7 @@ class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
                content: "[[+public key]]\n" \
                         "[[+private key]]\n" \
                         '[[+proxy]]'
-    Card::Cache.reset_global
+    Card::Cache.reset_all
     ['public_key', 'private_key', 'proxy'].each do |name|
       Card.create!(
         name: "#{Card[:recaptcha_settings].name}+#{name.tr('_', ' ')}",

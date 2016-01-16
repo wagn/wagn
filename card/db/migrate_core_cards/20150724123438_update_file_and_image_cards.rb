@@ -25,7 +25,7 @@ class UpdateFileAndImageCards < Card::CoreMigration
       end
     end
 
-    Card::Cache.reset_global
+    Card::Cache.reset_all
     Card.search(type: [:in, 'file', 'image']).each do |card|
       card.actions.each do |action|
         if (content_change = action.change_for(:db_content).first)

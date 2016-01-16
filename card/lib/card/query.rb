@@ -46,7 +46,7 @@ class Card
 
     ATTRIBUTES = {
       basic:           %w( id name key type_id content left_id right_id
-                           creator_id updater_id codename                     ),
+                           creator_id updater_id codename read_rule_id ),
       relational:      %w( type part left right
                            editor_of edited_by last_editor_of last_edited_by
                            creator_of created_by member_of member             ),

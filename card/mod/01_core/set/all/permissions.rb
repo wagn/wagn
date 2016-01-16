@@ -171,16 +171,13 @@ end
 
 def update_read_rule
   Card.record_timestamps = false
-
   reset_patterns # why is this needed?
   rcard, rclass = permission_rule_card :read
   # these two are just to make sure vals are correct on current object
   self.read_rule_id = rcard.id
-  # warn "updating read rule for #{inspect} to #{rcard.inspect}, #{rclass}"
-
   self.read_rule_class = rclass
   Card.where(id: id).update_all read_rule_id: rcard.id, read_rule_class: rclass
-  expire
+  expire_hard
 
   # currently doing a brute force search for every card that may be impacted.
   # may want to optimize(?)
@@ -195,6 +192,7 @@ def update_read_rule
 ensure
   Card.record_timestamps = true
 end
+
 
 def add_to_read_rule_update_queue updates
   @read_rule_update_queue = Array.wrap(@read_rule_update_queue).concat updates

@@ -64,7 +64,7 @@ class ImportBootstrapLayout < Card::CoreMigration
       lcard.update_attributes! content: lcontent.to_s
     end
 
-    Card::Cache.reset_global
+    Card::Cache.reset_all
 
   end
 end

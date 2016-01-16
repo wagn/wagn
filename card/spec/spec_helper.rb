@@ -33,7 +33,7 @@ Spork.prefork do
     config.include RSpec::Rails::Matchers::RoutingMatchers,  {
       file_path: /\bspec\/controllers\//
     }
-
+    config.include RSpecHtmlMatchers
     # format_index = ARGV.find_index {|arg| arg =~ /--format|-f/ }
     # formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation' #'textmate'
     # config.default_formatter=formatter

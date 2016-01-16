@@ -9,15 +9,18 @@ def label name
 end
 
 def prototype_args anchor
-  { name: "+#{anchor.tag}", supercard: Card.new( name: '*dummy', type: anchor.trunk_name ) }
+  {
+    name: "+#{anchor.tag}",
+    supercard: Card.new(name: '*dummy', type: anchor.trunk_name)
+  }
 end
 
 def anchor_name card
   left = card.left
-  type_name = (left && left.type_name) || Card[ Card.default_type_id ].name
+  type_name = (left && left.type_name) || Card[Card.default_type_id].name
   "#{type_name}+#{card.cardname.tag}"
 end
 
 def follow_label name
-  %{all  "+#{name.to_name.tag}" on "#{name.to_name.left_name}s"}
+  %{all "+#{name.to_name.tag}" on "#{name.to_name.left_name}s"}
 end

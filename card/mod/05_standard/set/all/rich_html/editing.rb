@@ -231,7 +231,7 @@ format :html do
       # with_inclusion_mode :edit do
       nested_fields(args).map do |chunk|
         nest Card.fetch("#{chunk.referee_name}+*self"),
-             view: :titled, rule_view: view,
+             view: :titled, title: chunk.referee_name, rule_view: view,
              optional_set_label: :hide,
              optional_rule_navbar: :show
       end

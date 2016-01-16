@@ -9,7 +9,7 @@
 #   triumph: similar to success, but if called on a subcard
 #            it causes the entire action to abort (not just the subcard)
 
-def abort status, msg = 'action canceled'
+def abort status, msg='action canceled'
   if status == :failure && errors.empty?
     errors.add :abort, msg
   elsif Hash === status && status[:success]
@@ -68,10 +68,6 @@ def run_phase phase, &block
   @subphase = :after
 end
 
-def simulate_phase opts, &block
-  @phase
-end
-
 def phase
   @phase || (@supercard && @supercard.phase)
 end
@@ -114,10 +110,9 @@ def store
       @virtual = false
     end
   end
-  return unless @supercard
-    run_phase :clean do
-      run_callbacks :clean
-    end
+  return if @supercard
+  run_phase :clean do
+    run_callbacks :clean
   end
 rescue => e
   rescue_event e
@@ -126,16 +121,16 @@ ensure
 end
 
 def extend
-  run_phase :extend
-  run_phase :subsequent
+  run_phase :extend     # deprecated
+  run_phase :subsequent # deprecated
+  return if @supercard
+  run_phase :finish
+  run_phase :followup
 rescue => e
   rescue_event e
 ensure
   @action = nil
 end
-
-
-
 
 def rescue_event e
   @action = nil

@@ -36,6 +36,12 @@ def unfilled?
     !subcards.present?
 end
 
+event :prepare_subcards, after: :prepare do
+  subcards.each do |subcard|
+    subcard.run_callbacks :prepare
+  end
+end
+
 event :approve_subcards, after: :approve, on: :save do
   subcards.each do |subcard|
     if !subcard.valid_subcard?
@@ -74,5 +80,17 @@ end
 event :clean_subcards, after: :clean do
   subcards.each do |subcard|
     subcard.run_callbacks :clean
+  end
+end
+
+event :finish_subcards, after: :finish do
+  subcards.each do |subcard|
+    subcard.run_callbacks :finish
+  end
+end
+
+event :followup_subcards, after: :followup do
+  subcards.each do |subcard|
+    subcard.run_callbacks :followup
   end
 end

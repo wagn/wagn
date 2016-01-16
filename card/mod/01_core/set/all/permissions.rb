@@ -180,7 +180,7 @@ def update_read_rule
 
   self.read_rule_class = rclass
   Card.where(id: id).update_all read_rule_id: rcard.id, read_rule_class: rclass
-  expire #_hard
+  expire_hard
 
   # currently doing a brute force search for every card that may be impacted.
   # may want to optimize(?)

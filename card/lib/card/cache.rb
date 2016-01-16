@@ -120,7 +120,7 @@ class Card
 
     def read key
       @soft.read(key) ||
-        (@hard && (ret = @hard.read(key))  && @soft.write(key, ret))
+        (@hard && (ret = @hard.read(key)) && @soft.write(key, ret))
     end
 
     def write key, value
@@ -148,7 +148,7 @@ class Card
       @soft.dump
     end
 
-    def reset hard=false
+    def reset
       @hard.reset if @hard
       @soft.reset
     end

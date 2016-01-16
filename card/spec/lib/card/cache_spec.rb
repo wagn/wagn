@@ -102,7 +102,8 @@ describe Card::Cache do
         @cache.write('(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén', 'foo')
         @cache.write('русский', 'foo')
         cache3 = Card::Cache.new store: @hard, prefix: 'prefix'
-        expect(cache3.read('(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén')).to eq('foo')
+        cached = cache3.read '(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén'
+        expect(cached).to eq('foo')
         expect(cache3.read('русский')).to eq('foo')
         @cache.reset
       end

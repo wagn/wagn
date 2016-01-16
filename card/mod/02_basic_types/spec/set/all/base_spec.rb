@@ -2,7 +2,6 @@
 require 'rspec-html-matchers'
 
 describe Card::Set::All::Base do
-  include RSpecHtmlMatchers
   describe 'handles view' do
     describe 'name view' do
       it('name') { expect(render_card(:name)).to eq('Tempo Rary') }

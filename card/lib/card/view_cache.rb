@@ -42,7 +42,7 @@ class Card
       end
 
       def increment_cached_views_cnt
-        cache.write(CNT_KEY, count + 1)
+        cache.write(CNT_KEY, cached_views_cnt + 1)
       end
 
       def cached_views_cnt

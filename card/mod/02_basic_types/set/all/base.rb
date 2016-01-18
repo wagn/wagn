@@ -6,8 +6,7 @@ format do
   end
 
   # NAME VIEWS
-  simple_args = { closed: true, perms: :none }
-  view :name, simple_args do |args|
+  view :name, closed: true, perms: :none do |args|
     return card.name unless args[:variant]
     args[:variant].split(/[\s,]+/).inject(card.name) do |name, variant|
       case variant.to_sym
@@ -30,11 +29,18 @@ format do
       end
     end
   end
-  view(:key,      simple_args) { card.key                            }
-  view(:title,    simple_args) { |args| args[:title] || card.name    }
-  view(:linkname, simple_args) { card.cardname.url_key               }
-  view(:url,      simple_args) { card_url _render_linkname           }
-  view(:url_link, simple_args) { web_link card_url(_render_linkname) }
+
+  view(:key,      closed: true, perms: :none) { card.key }
+  view(:linkname, closed: true, perms: :none) { card.cardname.url_key }
+  view(:url,      closed: true, perms: :none) { card_url _render_linkname }
+
+  view :title, closed: true, perms: :none do |args|
+    args[:title] || card.name
+  end
+
+  view :url_link, closed: true, perms: :none do
+    web_link card_url(_render_linkname)
+  end
 
   view :link, closed: true, perms: :none do |args|
     card_link(

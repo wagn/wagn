@@ -17,19 +17,26 @@ module Card::ActiveRecordHelper
     update_card args.reverse_merge(rename_if_conflict: :new)
   end
 
-  def create_or_update name_or_args, args=nil
-    name = args ? name_or_args : name_or_args[:name]
-    args ||= name_or_args
-    if Card[name]
-      update_card name, args
+def create_or_update name_or_args, args={}
+  	    if name_or_args.is_a?(Hash)
+  	      name = name_or_args.delete :name
+  	      args = name_or_args
+	    else
+  	      name = name_or_args
+	    end
     else
       create_card args.merge(name: name)
     end
   end
 
   def create_or_update! name_or_args, args=nil
-    name = args ? name_or_args : name_or_args[:name]
-    args ||= {}
+    if name_or_args.is_a?(Hash)
+      name = name_or_args.delete(:name)
+      args = name_or_args
+    else
+      name = name_or_args
+      args ||= {}
+    end
     create_or_update name, args.reverse_merge(rename_if_conflict: :new)
   end
 

@@ -38,7 +38,7 @@ format do
     args[:title] || card.name
   end
 
-  view :url_link, closed: true, perms: :none) do
+  view :url_link, closed: true, perms: :none do
     web_link card_url(_render_linkname)
   end
 

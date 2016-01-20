@@ -278,11 +278,11 @@ def renew args={}
 end
 
 def handle_default_content opts
-  if (default_content = opts.delete(:default_content)) && content.empty?
+  if (default_content = opts.delete(:default_content)) && db_content.empty?
     opts[:content] ||= default_content
-  elsif content.present? && !opts[:content]
+  elsif db_content.present? && !opts[:content]
     # don't overwrite existing content
-    opts[:content] = content
+    opts[:content] = db_content
   end
 end
 

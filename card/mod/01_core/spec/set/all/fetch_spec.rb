@@ -232,17 +232,14 @@ describe Card::Set::All::Fetch do
     end
     context 'fetched virtual card with new args' do
       it 'should fetch the virtual card with type set in patterns' do
-        virtual_with_new = Card.fetch '+testsearch',
-                                      new: { name: '+testsearch',
-                                             supercard: Card['home']}
+        Card.fetch '+testsearch', new: { name: '+testsearch',
+                                         supercard: Card['home'] }
 
         c = Card.fetch('Home+testsearch'.to_name)
         assert c.virtual?
         expect(c.type_code).to eq(:search_type)
         expect(c.raw_content).to eq('{"plus":"_self"}')
-        patterns = c.instance_variable_get('@patterns').map do |pattern|
-          pattern.to_s
-        end
+        patterns = c.instance_variable_get('@patterns').map(&:to_s)
         expect(patterns).to include('Search+*type')
       end
     end

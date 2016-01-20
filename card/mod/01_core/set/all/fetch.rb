@@ -163,7 +163,7 @@ module ClassMethods
   end
 
   def fetch_existing mark, opts
-    return [nil, false] if !mark.present?
+    return [nil, false] unless mark.present?
     mark_type, mark_key = parse_mark! mark
     needs_caching = false # until proven true :)
 
@@ -314,7 +314,7 @@ def expire subcards=false
 end
 
 def refresh force=false
-  if force || self.frozen? || self.readonly?
+  if force || frozen? || readonly?
     fresh_card = self.class.find id
     fresh_card.include_set_modules
     fresh_card

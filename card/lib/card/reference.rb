@@ -51,7 +51,7 @@ class Card::Reference < ActiveRecord::Base
       joins(
         'LEFT JOIN cards ON card_references.referer_id = cards.id'
       ).where(
-        'cards.id IS NULL OR cards.trash IS TRUE'
+        'cards.id IS NULL'
       ).delete_all
     end
 

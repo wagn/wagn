@@ -19,7 +19,6 @@ class Card::Cache::Persistent
   end
 
   def write_variable key, variable, value
-    key = @prefix + key
     if @store && (object = @store.read key)
       object.instance_variable_set "@#{variable}", value
       @store.write key, object
@@ -46,6 +45,6 @@ class Card::Cache::Persistent
   end
 
   def exist? key
-    @store.exist? key
+    @store.exist? @prefix + key
   end
 end

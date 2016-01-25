@@ -1,4 +1,4 @@
-event :discard_deleted_locations, after: :store, on: :delete do
+event :discard_deleted_locations, in: :finalize, on: :delete do
   Env.discard_locations_for self
   if success.target == self
     success.target = :previous

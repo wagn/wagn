@@ -47,14 +47,19 @@ def last_draft_content
 end
 
 event :save_draft,
-      before: :store, on: :update,
+      before: :store_stage, on: :update,
       when: proc { Env.params['draft'] == 'true' } do
   save_content_draft content
   abort :success
 end
 
-event :set_default_content, on: :create, before: :approve do
-  if !db_content_changed? && template && template.db_content.present?
-    self.db_content = template.db_content
-  end
+event :set_default_content,
+      on: :create,
+      in: :prepare_to_validate,
+      when: proc {|c| c.use_default_content? } do
+  self.db_content = template.db_content
+end
+
+def use_default_content?
+  !db_content_changed? && template && template.db_content.present?
 end

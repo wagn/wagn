@@ -57,9 +57,21 @@ class Card < ActiveRecord::Base
 
   attr_accessor :follower_stash
 
-  define_callbacks :prepare, :approve, :store, :clean, :finish, :followup
+  define_callbacks :prepare, :approve, :store, :clean, :finish, :followup,
                    :extend, :subsequent, # deprecated
-                   :select_action, :show, :handle
+                   :select_action, :show, :handle,
+                   :initialize_stage,
+                   :prepare_to_validate_stage, :validate_stage,
+                   :prepare_to_store_stage, :store_stage,
+                   :prepare_to_finalize_stage, :finalize_stage,
+                   :integrate_stage, :integrate_with_delay_stage
+
+
+
+
+  before_validation :validation_phase
+#  around_save :storage_phase
+#  after_save :integrate_phase
 
   before_validation :prepare
   before_validation :approve

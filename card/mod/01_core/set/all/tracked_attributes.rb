@@ -60,7 +60,7 @@ def extract_type_id! args={}
   type_id
 end
 
-event :set_content, before: :store, on: :save do
+event :set_content, before: :store_stage, on: :save do
   self.db_content = content || '' # necessary?
   self.db_content = Card::Content.clean!(db_content) if clean_html?
   @selected_action_id = @selected_content = nil

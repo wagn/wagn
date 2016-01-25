@@ -57,7 +57,8 @@ PHASES = {}
     PHASES[phase] = i
   end
 
-def run_phase phase, &block
+def run_phase phase,&block
+  return if errors.any?
   @phase = phase
   @subphase = :before
   if block_given?
@@ -66,6 +67,15 @@ def run_phase phase, &block
     run_callbacks phase
   end
   @subphase = :after
+  #run_phase_on_subcards phase
+rescue => e
+  rescue_event e
+end
+
+def run_phase_on_subcards phase
+  subcards.each do |subcard|
+    subcard.run_callbacks phase
+  end
 end
 
 def phase
@@ -77,7 +87,7 @@ def subphase
 end
 
 def prepare
-  @action = identify_action
+  @action = old_identify_action
   # the following should really happen when type, name etc are changed
   reset_patterns
   include_set_modules
@@ -87,20 +97,12 @@ rescue => e
 end
 
 def approve
-  @action ||= identify_action
+  @action ||= old_identify_action
   run_phase :approve
   expire_pieces if errors.any?
   errors.empty?
 rescue => e
   rescue_event e
-end
-
-def identify_action
-  case
-  when trash     then :delete
-  when new_card? then :create
-  else :update
-  end
 end
 
 def store
@@ -110,27 +112,28 @@ def store
       @virtual = false
     end
   end
-  return if @supercard
+  #return if @supercard
   run_phase :clean do
     run_callbacks :clean
   end
 rescue => e
   rescue_event e
 ensure
-  @from_trash =  @last_content_action_id = nil
+  @from_trash = nil
 end
 
 def extend
   run_phase :extend     # deprecated
   run_phase :subsequent # deprecated
-  return if @supercard
-  run_phase :finish
-  run_phase :followup
+  #return if @supercard
+  #run_phase :finish
+  #run_phase :followup
 rescue => e
   rescue_event e
 ensure
   @action = nil
 end
+
 
 def rescue_event e
   @action = nil
@@ -139,6 +142,14 @@ def rescue_event e
   raise e
   # rescue Card::Cancel
   # false
+end
+
+def old_identify_action # TODO: remove we
+  case
+  when trash     then :delete
+  when new_card? then :create
+  else :update
+  end
 end
 
 def phase_ok? opts
@@ -183,7 +194,19 @@ def on_condition_applies? action
   end
 end
 
-def changed_condition_applies? db_column
+def changed_condition_applies? db_columns
+  case db_columns
+  when Symbol
+    return single_changed_condition_applies?(db_columns)
+  else
+    db_columns.each do |col|
+      return true if single_changed_condition_applies? col
+    end
+  end
+  false
+end
+
+def single_changed_condition_applies? db_column
   if db_column
     db_column =
       case db_column.to_sym

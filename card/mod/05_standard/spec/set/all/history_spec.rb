@@ -109,7 +109,8 @@ describe Card::Set::All::History do
     context 'for subcard' do
       before do
         Card::Auth.as_bot do
-          @card = Card.create name: "left", subcards: {"+right" =>{ content: content}}
+          @card = Card.create name: "left",
+                              subcards: { '+right' => { content: content } }
           @left_action = act.actions[0]
           @right_action = act.actions[2]
           @plus_action = act.actions[1]

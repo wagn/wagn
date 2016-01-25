@@ -145,12 +145,12 @@ def ok_to_comment
   deny_because 'No comments allowed on structured content' if structure
 end
 
-event :clear_read_rule, before: :store, on: :delete do
+event :clear_read_rule, before: :store_stage, on: :delete do
   self.read_rule_id = self.read_rule_class = nil
 end
 
-event :set_read_rule, before: :store, on: :save do
-  # avoid doing this on simple content saves?
+event :set_read_rule,
+      before: :store_stage, on: :save, changed: [:type_id, :name] do
   read_rule_id, read_rule_class = permission_rule_id_and_class(:read)
   self.read_rule_id = read_rule_id
   self.read_rule_class = read_rule_class
@@ -192,7 +192,6 @@ def update_read_rule
 ensure
   Card.record_timestamps = true
 end
-
 
 def add_to_read_rule_update_queue updates
   @read_rule_update_queue = Array.wrap(@read_rule_update_queue).concat updates
@@ -240,7 +239,7 @@ def have_recaptcha_keys?
     end
 end
 
-event :recaptcha, before: :approve do
+event :recaptcha, in: :validate do
   if !@supercard && !Env[:recaptcha_used] && recaptcha_on?
     Env[:recaptcha_used] = true
     Env[:controller].verify_recaptcha model: self, attribute: :captcha

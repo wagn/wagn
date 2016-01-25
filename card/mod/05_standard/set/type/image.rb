@@ -12,10 +12,10 @@ format do
 
   view :source do |args|
     style = case
-      when @mode==:closed ;  :icon
-      when args[:size]    ;  args[:size].to_sym
-      when main?          ;  :large
-      else                ;  :medium
+      when @mode==:closed then :icon
+      when args[:size]    then args[:size].to_sym
+      when main?          then :large
+      else                then :medium
       end
     style = :original if style.to_sym == :full
     if style == :original
@@ -24,7 +24,6 @@ format do
       card.image.versions[style].url
     end
   end
-
 end
 
 format :html do

@@ -19,19 +19,19 @@ module ClassMethods
 end
 
 def name= newname
-  cardname = newname.to_name
+  @cardname = newname.to_name
   if @supercard
-    @supercard.subcards.rename key, cardname.key
-    @contextual_name = cardname.to_s
-    relparts = cardname.parts
+    @supercard.subcards.rename key, @cardname.key
+    @contextual_name = @cardname.to_s
+    relparts = @cardname.parts
     if relparts.size == 2 &&
        (relparts.first.blank? || relparts.first.to_name.key == @supercard.key)
       @superleft = @supercard
     end
-    cardname = cardname.to_absolute_name @supercard.name
+    @cardname = @cardname.to_absolute_name @supercard.name
   end
 
-  newkey = cardname.key
+  newkey = @cardname.key
   if key != newkey
     self.key = newkey
     # reset the old name - should be handled in tracked_attributes!!
@@ -42,10 +42,11 @@ def name= newname
     subcard.name = subcard.cardname.replace_part name, newname
   end
 
-  write_attribute :name, cardname.s
+  write_attribute :name, @cardname.to_s
 end
 
 def cardname
+  #@cardname ||= name.to_name
   name.to_name
 end
 
@@ -186,89 +187,36 @@ rescue
   self
 end
 
-event :permit_codename, before: :approve, on: :update, changed: :codename do
-  errors.add :codename, 'only admins can set codename' unless Auth.always_ok?
+event :initialize_left_and_right, in: :initialize do
+
+  set_left_and_right
 end
 
-event :validate_unique_codename, after: :permit_codename do
-  if codename.present? && errors.empty? &&
-     Card.find_by_codename(codename).present?
-    errors.add :codename, "codename #{codename} already in use"
-  end
-end
-
-event :validate_name, before: :approve, on: :save do
-  cdname = name.to_name
-  if name.length > 255
-    errors.add :name, 'is too long (255 character maximum)'
-  elsif cdname.blank?
-    errors.add :name, "can't be blank"
-  elsif name_changed?
-    # Rails.logger.debug "valid name #{card.name.inspect} New #{name.inspect}"
-
-    unless cdname.valid?
-      errors.add :name, 'may not contain any of the following characters: ' \
-                        "#{ Card::Name.banned_array * ' ' }"
-    end
-    # this is to protect against using a plus card as a tag
-    if cdname.junction? && simple? && id &&
-       Auth.as_bot { Card.count_by_wql right_id: id } > 0
-      errors.add :name, "#{name} in use as a tag"
-    end
-
-    # validate uniqueness of name
-    condition_sql = 'cards.key = ? and trash=?'
-    condition_params = [cdname.key, false]
-    unless new_record?
-      condition_sql << ' AND cards.id <> ?'
-      condition_params << id
-    end
-    if (c = Card.find_by(condition_sql, *condition_params))
-      errors.add :name, "must be unique; '#{c.name}' already exists."
-    end
-  end
-end
-
-event :set_autoname, before: :validate_name, on: :create do
-  if name.blank? && (autoname_card = rule_card(:autoname))
-    self.name = autoname autoname_card.content
-    # FIXME: should give placeholder in approve phase
-    # and finalize/commit change in store phase
-    autoname_card.refresh.update_column :db_content, name
-  end
-end
-
-event :validate_key, after: :validate_name, on: :save do
-  if key.empty?
-    errors.add :key, 'cannot be blank' if errors.empty?
-  elsif key != cardname.key
-    errors.add :key, "wrong key '#{key}' for name #{name}"
-  end
-end
-
-event :set_name, before: :store, changed: :name do
+event :set_name, before: :storage_stage, changed: :name do
   Card.expire name
   Card.expire name_was
   if cardname.junction?
-    [:left, :right].each do |side|
-      sidename = cardname.send "#{side}_name"
-      # warn "sidename #{name} / #{name_was} / #{cardname},
-      # #{side}: #{sidename}"
-      sidecard = Card[sidename]
-
-      # eg, renaming A to A+B
-      old_name_in_way = (sidecard && sidecard.id == id)
-      suspend_name(sidename) if old_name_in_way
-      send "#{side}_id=", begin
-        if !sidecard || old_name_in_way
-          Card.create! name: sidename, supercard: self
-        else
-          sidecard
-        end.id
-      end
-    end
+    set_left_and_right
   else
     self.left_id = self.right_id = nil
+  end
+end
+
+def set_left_and_right
+  [:left, :right].each do |side|
+    sidename = cardname.send "#{side}_name"
+    sidecard = Card[sidename]
+
+    # eg, renaming A to A+B
+    old_name_in_way = (sidecard && sidecard.id == id)
+    suspend_name(sidename) if old_name_in_way
+    side_id_or_card =
+      if !sidecard || old_name_in_way
+        add_subcard(sidename.s)
+      else
+        sidecard.id
+      end
+    send "#{side}_id=", side_id_or_card
   end
 end
 

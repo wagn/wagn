@@ -3,29 +3,29 @@
 describe Card::Name do
 
   describe "#key" do
-    
+
     it "should lowercase and underscore" do
       expect("This Name".to_name.key).to eq("this_name")
     end
-    
+
     it "should remove spaces" do
       expect("this    Name".to_name.key).to eq("this_name")
     end
 
     describe "underscores" do
-      
+
       it "should be treated like spaces" do
         expect('weird_ combo'.to_name.key).to eq('weird  combo'.to_name.key)
       end
-      
+
       it "should not impede pluralization checks" do
         expect('Mamas_and_Papas'.to_name.key).to eq("Mamas and Papas".to_name.key)
       end
-      
+
       it "should be removed when before first word character" do
         expect("_This Name".to_name.key).to eq("this_name")
       end
-      
+
     end
 
     it "should singularize" do
@@ -106,8 +106,8 @@ describe Card::Name do
       card = Card.new
       card.name="1"*256
       expect(card).not_to be_valid
-    end 
-  end 
+    end
+  end
 
   describe "#left_name" do
     it "returns nil for non junction" do
@@ -276,4 +276,12 @@ describe Card::Name do
     end
   end
 
+  describe 'part creation' do
+    it 'creates parts' do
+      Card::Auth.as_bot do
+        Card.create name: 'left+right'
+      end
+      expect(Card.fetch 'right').to be_truthy
+    end
+  end
 end

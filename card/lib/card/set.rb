@@ -146,7 +146,18 @@ class Card
       end
     end
 
+    def process_stags_opts opts
+      case
+      when opts[:after] || opts[:before]
+        # ignore :in options
+      when opts[:in]
+        opts[:after] = :"#{opts.delete(:in)}_stage" if opts[:in]
+      end
+    end
+
     def event event, opts={}, &final
+      process_stage_opts opts
+
       perform_later = (opts[:before] == :subsequent) ||
                       (opts[:after] == :subsequent)
       final_method = "#{event}_without_callbacks" # should be private?

@@ -40,7 +40,7 @@ class Card
       end
 
       def system_prefix klass
-        "#{Rails.env}/#{klass}"
+e        "#{Rails.env}/#{klass}"
       end
 
       def restore

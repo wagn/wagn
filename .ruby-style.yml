@@ -1,18 +1,19 @@
-Exclude:
-  - "vendor/**/*"
-  - "db/schema.rb"
+AllCops:
+  Exclude:
+    - "vendor/**/*"
+    - "db/schema.rb"
 Style/CommentAnnotation:
   Enabled: true
 Style/CollectionMethods:
   Description: Preferred collection methods.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#map-find-select-reduce-size
-	Enabled: true
-	PreferredMethods:
-	  collect: map
-	  collect!: map!
-	  detect: find
-	  find_all: select
-	  reduce: inject
+  Enabled: true
+  PreferredMethods:
+    collect: map
+    collect!: map!
+    detect: find
+    find_all: select
+    reduce: inject
 Style/DotPosition:
   EnforcedStyle: leading
 Style/Encoding:
@@ -40,9 +41,9 @@ Metrics/MethodLength:
   Enabled: true
   CountComments: false
   Max: 15
+Style/ExtraSpacing:
+  Description: Do not use unnecessary spacing.
+  Enabled: false
 Lint/AssignmentInCondition:
   Enabled: true
   AllowSafeAssignment: true
-Style/ExtraSpacing:
-	Description: Do not use unnecessary spacing.
-  Enabled: false

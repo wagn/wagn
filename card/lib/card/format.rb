@@ -100,6 +100,12 @@ class Card
       self
     end
 
+    def page
+      @card.run_callbacks :show_page do
+        show view, slot_opts
+      end
+    end
+
     def get_context_names
       case
       when @context_names

@@ -146,7 +146,7 @@ class Card
       end
     end
 
-    def process_stags_opts opts
+    def process_stage_opts opts
       case
       when opts[:after] || opts[:before]
         # ignore :in options
@@ -155,7 +155,12 @@ class Card
       end
     end
 
-    def event event, opts={}, &final
+    def event event, stage_or_opts={}, opts={}, &final
+      if stage_or_opts.is_a? Symbol
+        opts[:in] = stage_or_opts
+      else
+        opts = stage_or_opts
+      end
       process_stage_opts opts
 
       perform_later = (opts[:before] == :subsequent) ||

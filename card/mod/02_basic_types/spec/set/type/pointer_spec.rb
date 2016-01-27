@@ -59,7 +59,7 @@ describe Card::Set::Type::Pointer do
     it 'recognizes added items' do
       Card::Auth.as_bot do
         pointer
-        in_phase before: :approve,
+        in_phase before: :validate,
                  on: :save,
                  trigger: ->{
                    pointer.update_attributes!(
@@ -74,7 +74,7 @@ describe Card::Set::Type::Pointer do
     it 'ignores order' do
       Card::Auth.as_bot do
         pointer
-        in_phase before: :approve,
+        in_phase before: :validate,
                  on: :save,
                  trigger: ->{
                    pointer.update_attributes!(
@@ -91,7 +91,7 @@ describe Card::Set::Type::Pointer do
     it 'recognizes dropped items' do
       Card::Auth.as_bot do
         pointer
-        in_phase before: :approve,
+        in_phase before: :validate,
                  on: :save,
                  trigger: ->{
                    pointer.update_attributes!(
@@ -106,7 +106,7 @@ describe Card::Set::Type::Pointer do
     it 'ignores order' do
       Card::Auth.as_bot do
         pointer
-        in_phase before: :approve,
+        in_phase before: :validate,
                  on: :save,
                  trigger: ->{
                    pointer.update_attributes!(
@@ -123,7 +123,7 @@ describe Card::Set::Type::Pointer do
     it 'recognizes changed items' do
       Card::Auth.as_bot do
         pointer
-        in_phase before: :approve,
+        in_phase before: :validate,
                  on: :save,
                  trigger: ->{
                    pointer.update_attributes!(

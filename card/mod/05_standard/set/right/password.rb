@@ -17,9 +17,9 @@ view :raw do
   '<em>encrypted</em>'
 end
 
-event :encrypt_password, on: :save, after: :process_subcards,
-                         changed: :content,
-                         when: proc { !Card::Env[:no_password_encryptions] } do
+event :encrypt_password, :store,
+      on: :save, changed: :content,
+      when: proc { !Card::Env[:no_password_encryptions] } do
   # no_password_encryptions = hack for import - fix with api for ignoring events
   salt = left && left.salt
   # HACK: fix with better ORM handling
@@ -31,13 +31,14 @@ event :encrypt_password, on: :save, after: :process_subcards,
   # not sure when that broke??
 end
 
-event :validate_password, on: :save, before: :approve do
+event :validate_password, :validate,
+      on: :save do
   unless content.length > 3
     errors.add :password, 'must be at least 4 characters'
   end
 end
 
-event :validate_password_present, on: :update, before: :approve do
+event :validate_password_present, :prepare_to_validate, on: :update do
   abort :success if content.blank?
 end
 

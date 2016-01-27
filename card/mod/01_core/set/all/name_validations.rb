@@ -1,5 +1,5 @@
-event :permit_codename,
-      in: :validate, on: :update, changed: :codename do
+event :permit_codename, :validate,
+      on: :update, changed: :codename do
   errors.add :codename, 'only admins can set codename' unless Auth.always_ok?
   validate_unique_codename
 end
@@ -10,8 +10,8 @@ event :validate_unique_codename do
   errors.add :codename, "codename #{codename} already in use"
 end
 
-event :validate_name,
-      in: :validate, on: :save, changed: :name do
+event :validate_name, :validate,
+      on: :save, changed: :name do
   validate_legal_name
   return if errors.any?
   validate_unique_name
@@ -47,7 +47,8 @@ event :validate_legal_name do
   end
 end
 
-event :set_autoname, in: :prepare_to_validate, on: :create, changed: :name do
+event :set_autoname, :prepare_to_validate,
+      on: :create, changed: :name do
   if name.blank? && (autoname_card = rule_card(:autoname))
     self.name = autoname autoname_card.content
     # FIXME: should give placeholder in approve phase

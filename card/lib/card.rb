@@ -40,7 +40,7 @@ class Card < ActiveRecord::Base
   has_many :drafts, -> { where(draft: true).order :id }, class_name: :Action
 
   cattr_accessor :set_patterns, :serializable_attributes, :error_codes,
-                 :set_specific_attributes
+                 :set_specific_attributes, :current_act, :already_saved
   @@set_patterns = []
   @@error_codes = {}
 
@@ -52,31 +52,29 @@ class Card < ActiveRecord::Base
     :update_all_users,            # if the above is wrong then this one too
     :silent_change,               # and this probably too
     :remove_rule_stash,
-    :last_action_id_before_edit
+    :last_action_id_before_edit,
+    :skip_phases
   )
 
   attr_accessor :follower_stash
 
-  define_callbacks :prepare, :approve, :store, :clean, :finish, :followup,
-                   :extend, :subsequent, # deprecated
-                   :select_action, :show, :handle,
+  define_callbacks :select_action, :show_page, :handle, :act,
+                   #:prepare, :approve, :store, :clean, :finish, :followup,
+                   #:extend, :subsequent, # deprecated
                    :initialize_stage,
                    :prepare_to_validate_stage, :validate_stage,
                    :prepare_to_store_stage, :store_stage,
-                   :prepare_to_finalize_stage, :finalize_stage,
+                   :finalize_stage,
                    :integrate_stage, :integrate_with_delay_stage
 
+  before_validation :validation_phase, unless: :skip_phases
+  around_save :storage_phase, unless: :skip_phases
+  after_save :integration_phase, unless: :skip_phases
 
-
-
-  before_validation :validation_phase
-#  around_save :storage_phase
-#  after_save :integrate_phase
-
-  before_validation :prepare
-  before_validation :approve
-  around_save :store
-  after_save :extend
+  #before_validation :prepare
+  #before_validation :approve
+  #around_save :store
+  #after_save :extend
 
   TRACKED_FIELDS = %w(name type_id db_content trash)
   extend CarrierWave::Mount

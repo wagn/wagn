@@ -203,9 +203,7 @@ class CardController < ActionController::Base
 
     format = format_from_params
     formatter = card.format(format.to_sym)
-    result = card.run_callbacks :show do
-      formatter.show view, slot_opts
-    end
+    result = formatter.page view, slot_opts
     status = formatter.error_status || status
 
     deliver format, result, status

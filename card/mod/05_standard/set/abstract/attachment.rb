@@ -59,7 +59,7 @@ end
 
 # we need a card id for the path so we have to update db_content when we have
 # an id
-event :correct_identifier, after: :store, on: :create do
+event :correct_identifier, :finalize, on: :create do
   update_column(:db_content, attachment.db_content(mod: load_from_mod))
   expire
 end
@@ -77,10 +77,8 @@ event :save_original_filename, after: :validate_name,
   @current_action.update_attributes! comment: original_filename
 end
 
-event :delete_cached_upload_file_on_create,
-      after: :extend,
-      on: :create,
-      when: proc { |c| c.save_preliminary_upload? } do
+event :delete_cached_upload_file_on_create, :integrate,
+      on: :create, when: proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@action_id_of_cached_upload))
     upload_cache_card.delete_files_for_action action
     action.delete
@@ -88,17 +86,15 @@ event :delete_cached_upload_file_on_create,
   clear_upload_cache_dir_for_new_cards
 end
 
-event :delete_cached_upload_file_on_update,
-      after: :extend,
-      on: :update,
-      when: proc { |c| c.save_preliminary_upload? } do
+event :delete_cached_upload_file_on_update, :integrate,
+      on: :update, when: proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@action_id_of_cached_upload))
     delete_files_for_action action
     action.delete
   end
 end
 
-event :validate_file_exist, before: :validate, on: :create do
+event :validate_file_exist, :validate, on: :create do
   unless attachment.file.present? || empty_ok?
     errors.add attachment_name, 'is missing'
   end

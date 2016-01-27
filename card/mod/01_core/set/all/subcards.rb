@@ -10,14 +10,14 @@ def subfield field_name
   subcards.field field_name
 end
 
-#phase_method :add_subcard, before: :store do |name_or_card, args=nil|
+# phase_method :add_subcard, before: :store do |name_or_card, args=nil|
 # TODO: handle differently in different stages
 def add_subcard name_or_card, args=nil
   subcards.add name_or_card, args
 end
-  #end
 
-phase_method :add_subfield, before: :approve do |name_or_card, args=nil|
+# phase_method :add_subfield, before: :approve do |name_or_card, args=nil|
+def add_subfield name_or_card, args=nil
   subcards.add_field name_or_card, args
 end
 
@@ -39,22 +39,18 @@ def unfilled?
     !subcards.present?
 end
 
-event :approve_subcards, after: :approve, on: :save do
+event :handle_subcard_errors do
   subcards.each do |subcard|
-    if !subcard.valid_subcard?
-      subcard.errors.each do |field, err|
-        err = "#{field} #{err}" unless [:content, :abort].member? field
-        errors.add subcard.relative_name.s, err
-      end
+    subcard.errors.each do |field, err|
+      err = "#{field} #{err}" unless [:content, :abort].member? field
+      errors.add subcard.relative_name.s, err
     end
   end
 end
 
-event :reject_empty_subcards, before: :approve_subcards do
+event :reject_empty_subcards, :prepare_to_validate do
   subcards.each_with_key do |subcard, key|
-    if subcard.new? && subcard.unfilled?
-      remove_subcard key
-    end
+    subcard.new? && subcard.unfilled? && remove_subcard(key)
   end
 end
 
@@ -66,9 +62,11 @@ end
 def right_id= card_or_id
   write_card_or_id :right_id, card_or_id
 end
+
 def left_id= card_or_id
   write_card_or_id :left_id, card_or_id
 end
+
 def type_id= card_or_id
   write_card_or_id :type_id, card_or_id
 end
@@ -78,11 +76,10 @@ def write_card_or_id attribute, card_or_id
     if card_or_id.id
       write_attribute attribute, card_or_id.id
     else
-      @prior_save << proc do
-        save_only_once(card_or_id) do
-          card_or_id.save! validate: false
-        end
+      prior_save << proc do
+        card = save_only_once(card_or_id) { card_or_id.subcard_save! }
         write_attribute attribute, card.id
+        card
       end
     end
   else
@@ -90,8 +87,19 @@ def write_card_or_id attribute, card_or_id
   end
 end
 
-def save_only_once card, &block
-  return card if saved_card_keys.include?(card.key) || card != self
+def subcard_save!
+  self.skip_phases = true
+  catch_up_to_stage :store
+  store_prior_subcards
+  save! validate: false
+  store_subcards
+  self
+end
+
+
+# expects a block that saves and returns a card
+def save_only_once card
+  return card if saved_card_keys.include?(card.key)
   card = yield
   saved_card_keys << card.key
   card
@@ -102,16 +110,18 @@ def saved_card_keys
   @saved_card_keys ||= ::Set.new
 end
 
+def prior_save
+  @prior_save ||= []
+end
+
 event :store_prior_subcards do
-  @prior_save.each do |save_block|
-    save_block.call
-  end
+  prior_save.each(&:call)
 end
 
 event :store_subcards do
   subcards.each do |subcard|
     save_only_once(subcard) do
-      subcard.save! validate: false
+      subcard.subcard_save!
     end
   end
 
@@ -120,22 +130,3 @@ event :store_subcards do
   # <user> changes <user+*account+*status> in event activate_account
   Card.write_to_soft_cache self
 end
-
-
-# event :clean_subcards, after: :clean do
-#   subcards.each do |subcard|
-#     subcard.run_callbacks :clean
-#   end
-# end
-
-# event :finish_subcards, after: :finish do
-#   subcards.each do |subcard|
-#     subcard.run_callbacks :finish
-#   end
-# end
-#
-# event :followup_subcards, after: :followup do
-#   subcards.each do |subcard|
-#     subcard.run_callbacks :followup
-#   end
-# end

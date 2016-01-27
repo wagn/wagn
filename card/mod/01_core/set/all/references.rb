@@ -89,19 +89,19 @@ end
 
 protected
 
-event :refresh_references, in: :finalize, on: :save, changed: :content do
+event :refresh_references, :finalize,
+      on: :save, changed: :content do
   update_references
   expire_structuree_references
 end
 
-event :refresh_references_on_create,
-      in: :finalize,
+event :refresh_references_on_create, :finalize,
       before: :refresh_references, on: :create do
   Card::Reference.update_existing_key self
   # FIXME: bogus blank default content is set on structured cards...
 end
 
-event :refresh_references_on_delete, after: :store, on: :delete do
+event :refresh_references_on_delete, :finalize, on: :delete do
   Card::Reference.update_on_delete self
   expire_structuree_references
 end

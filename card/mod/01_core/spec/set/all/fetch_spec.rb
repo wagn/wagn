@@ -218,7 +218,7 @@ describe Card::Set::All::Fetch do
   end
 
   describe '#fetch_virtual' do
-    it 'should find cards with *right+*structure specified' do
+    it 'find cards with *right+*structure specified' do
       Card::Auth.as_bot do
         Card.create! name: 'testsearch+*right+*structure',
                      content: '{"plus":"_self"}', type: 'Search'

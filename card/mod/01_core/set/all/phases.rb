@@ -198,10 +198,12 @@ def changed_condition_applies? db_columns
   case db_columns
   when Symbol
     return single_changed_condition_applies?(db_columns)
-  else
+  when Array
     db_columns.each do |col|
       return true if single_changed_condition_applies? col
     end
+  else
+    return  true
   end
   false
 end

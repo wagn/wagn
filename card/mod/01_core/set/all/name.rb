@@ -187,36 +187,35 @@ rescue
   self
 end
 
-event :initialize_left_and_right, in: :initialize do
-
+event :initialize_left_and_right, :initialize, changed: :name do
   set_left_and_right
 end
 
-event :set_name, before: :storage_stage, changed: :name do
+event :set_name, :store, changed: :name do
   Card.expire name
   Card.expire name_was
-  if cardname.junction?
-    set_left_and_right
-  else
-    self.left_id = self.right_id = nil
-  end
+  set_left_and_right
 end
 
 def set_left_and_right
-  [:left, :right].each do |side|
-    sidename = cardname.send "#{side}_name"
-    sidecard = Card[sidename]
+  if cardname.junction?
+    [:left, :right].each do |side|
+      sidename = cardname.send "#{side}_name"
+      sidecard = Card[sidename]
 
-    # eg, renaming A to A+B
-    old_name_in_way = (sidecard && sidecard.id == id)
-    suspend_name(sidename) if old_name_in_way
-    side_id_or_card =
-      if !sidecard || old_name_in_way
-        add_subcard(sidename.s)
-      else
-        sidecard.id
-      end
-    send "#{side}_id=", side_id_or_card
+      # eg, renaming A to A+B
+      old_name_in_way = (sidecard && sidecard.id == id)
+      suspend_name(sidename) if old_name_in_way
+      side_id_or_card =
+          if !sidecard || old_name_in_way
+            add_subcard(sidename.s)
+          else
+            sidecard.id
+          end
+      send "#{side}_id=", side_id_or_card
+    end
+  else
+    self.left_id = self.right_id = nil
   end
 end
 
@@ -237,7 +236,7 @@ def suspend_name name
   Card.where(id: id).update_all(name: tmp_name, key: tmp_name)
 end
 
-event :cascade_name_changes, after: :store, on: :update, changed: :name do
+event :cascade_name_changes, :finalize, on: :update, changed: :name do
   # Rails.logger.info "------------------- #{name_was} CASCADE #{self.name} " \
   #                   " -------------------------------------"
   # handle strings from cgi

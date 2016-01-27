@@ -1,13 +1,13 @@
 
 
-event :add_and_drop_items, before: :approve, on: :save do
+event :add_and_drop_items, :prepare_to_validate, on: :save do
   adds = Env.params['add_item']
   drops = Env.params['drop_item']
   Array.wrap(adds).each { |i| add_item i } if adds
   Array.wrap(drops).each { |i| drop_item i } if drops
 end
 
-event :insert_item_event, before: :approve, on: :save, when: proc {|c| Env.params['insert_item']} do
+event :insert_item_event, :prepare_to_validate, on: :save, when: proc {|c| Env.params['insert_item']} do
   index = Env.params['item_index'] || 0
   self.insert_item index.to_i, Env.params['insert_item']
 end
@@ -247,7 +247,7 @@ end
 # the new module will override the old module's events and functions.
 # this event is only on pointer card. Other type cards do not have this event,
 # so it is not overridden and will be run while updating type and content in the same request.
-event :standardize_items, before: :approve, on: :save, changed: :content,
+event :standardize_items, :prepare_to_validate, on: :save, changed: :content,
     when: proc{  |c| c.type_id == Card::PointerID  } do
     self.content = item_names(context: :raw).map { |name| "[[#{name}]]" }.join "\n"
 end

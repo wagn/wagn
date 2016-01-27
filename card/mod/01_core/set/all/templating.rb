@@ -121,7 +121,7 @@ def structuree_spec
   set_card.get_query
 end
 
-event :update_structurees_type, after: :store, changed: :type_id do
+event :update_structurees_type, :finalize, changed: :type_id do
   if assigns_type? # certain *structure templates
     update_structurees type_id: type_id
   end

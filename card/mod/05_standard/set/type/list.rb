@@ -1,11 +1,11 @@
-event :validate_list_name, before: :validate, on: :save, changed: :name do
+event :validate_list_name, :validate, on: :save, changed: :name do
   if !junction? || !right || right.type_id != CardtypeID
     errors.add :name, 'must have a cardtype name as right part'
   end
 end
 
-event :validate_list_item_type_change,
-      before: :validate, on: :save, changed: :name do
+event :validate_list_item_type_change, :validate,
+      on: :save, changed: :name do
   item_cards.each do |item_card|
     if item_card.type_cardname.key != item_type_name.key
       errors.add :name,
@@ -15,7 +15,8 @@ event :validate_list_item_type_change,
   end
 end
 
-event :validate_list_content, before: :validate, on: :save, changed: :content do
+event :validate_list_content, :validate,
+      on: :save, changed: :content do
   item_cards.each do |item_card|
     if item_card.type_cardname.key != item_type_name.key
       errors.add :content,
@@ -25,8 +26,8 @@ event :validate_list_content, before: :validate, on: :save, changed: :content do
   end
 end
 
-event :create_listed_by_cards,
-      before: :approve, on: :save, changed: :content do
+event :create_listed_by_cards, :prepare_to_validate,
+      on: :save, changed: :content do
   item_names.each do |item_name|
     listed_by_name = "#{item_name}+#{left.type_name}"
     if !Card[listed_by_name]
@@ -37,13 +38,13 @@ event :create_listed_by_cards,
   end
 end
 
-event :update_related_listed_by_card_on_create,
-      after: :store, on: :create do
+event :update_related_listed_by_card_on_create, :finalize,
+      on: :create do
   update_listed_by_cache_for item_keys
 end
 
-event :update_related_listed_by_card_on_content_update,
-      after: :store, on: :update, changed: :content do
+event :update_related_listed_by_card_on_content_update, :finalize,
+      on: :update, changed: :content do
   new_items = item_keys
   changed_items =
     if db_content_was
@@ -55,23 +56,18 @@ event :update_related_listed_by_card_on_content_update,
   update_listed_by_cache_for changed_items
 end
 
-event :update_related_listed_by_card_on_name_update,
-      after: :store, on: :update, changed: :name do
+event :update_related_listed_by_card_on_name_and_type_changes, :finalize,
+      on: :update, changed: [:name, :type_id] do
   update_all_items
 end
 
-event :update_related_listed_by_card_on_type_update,
-      after: :store, on: :update, changed: :type_id do
-  update_all_items
-end
-
-event :update_related_listed_by_card_on_delete,
-      after: :store, on: :delete, when: proc { |c| c.junction? } do
+event :update_related_listed_by_card_on_delete, :finalize,
+      on: :delete, when: proc { |c| c.junction? } do
   update_listed_by_cache_for item_keys, type_key: @left_type_key
 end
 
-event :cache_type_key,
-      before: :store, on: :delete, when: proc { |c| c.junction? } do
+event :cache_type_key, :store,
+      on: :delete, when: proc { |c| c.junction? } do
   @left_type_key = left.type_card.key
 end
 

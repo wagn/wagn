@@ -1,6 +1,4 @@
-
 module ClassMethods
-
   def empty_trash
     Card.delete_trashed_files
     Card.where(trash: true).delete_all
@@ -10,14 +8,18 @@ module ClassMethods
     Card.delete_tmp_files_of_cached_uploads
   end
 
-  def delete_trashed_files #deletes any file not associated with a real card.
+  def delete_trashed_files # deletes any file not associated with a real card.
     dir = Card.paths['files'].existent.first
     trashed_card_sql = %{ select id from cards where trash is true }
-    trashed_card_ids = Card.connection.select_all( trashed_card_sql ).map( &:values ).flatten.map &:to_i
-    file_ids = Dir.entries( dir )[2..-1].map( &:to_i )
+    trashed_card_ids =
+      Card.connection.select_all(trashed_card_sql).map(&:values)
+        .flatten.map(&:to_i)
+    file_ids = Dir.entries(dir)[2..-1].map(&:to_i)
     file_ids.each do |file_id|
       if trashed_card_ids.member?(file_id)
-        raise Card::Error, "Narrowly averted deleting current file" if Card.exists?(file_id) #double check!
+        if Card.exists?(file_id) #double check!
+          raise Card::Error, 'Narrowly averted deleting current file'
+        end
         FileUtils.rm_rf "#{dir}/#{file_id}", secure: true
       end
     end
@@ -28,7 +30,8 @@ module ClassMethods
       INNER JOIN cards ON card_actions.card_id = cards.id
       WHERE cards.type_id IN (#{Card::FileID}, #{Card::ImageID}) AND card_actions.draft = true"
     actions.each do |action|
-      if older_than_five_days?(action.created_at) && card = action.card # we don't want to delete uploads in progress
+      # we don't want to delete uploads in progress
+      if older_than_five_days?(action.created_at) && (card = action.card)
         card.delete_files_for_action action
       end
     end
@@ -61,7 +64,6 @@ module ClassMethods
     unmerged
   end
 
-
   def merge name, attribs={}, opts={}
     puts "merging #{ name }"
     card = fetch name, new: {}
@@ -73,7 +75,6 @@ module ClassMethods
       card.save!
     end
   end
-
 
   def older_than_five_days? time
     Time.now - time > 432000
@@ -129,9 +130,6 @@ format :html do
     </ul>"
   end
 
-
-
-
   def accordion_group list, collapse_id=card.cardname.safe_key
     accordions = ''
     index = 1
@@ -139,7 +137,9 @@ format :html do
       accordions << accordion(title, content, "#{collapse_id}-#{index}")
       index += 1
     end
-    content_tag :div, accordions.html_safe, class: "panel-group", id: "accordion-#{collapse_id}", role: "tablist", 'aria-multiselectable'=>"true"
+    content_tag :div, accordions.html_safe,
+                class: 'panel-group', id: "accordion-#{collapse_id}",
+                role: 'tablist', 'aria-multiselectable' => 'true'
   end
 
   def accordion title, content, collapse_id=card.cardname.safe_key

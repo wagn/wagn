@@ -1,5 +1,3 @@
-
-
 class Card
   require 'card/location'
 
@@ -16,8 +14,10 @@ class Card
           self[:ip]         = c.request.remote_ip
           self[:ajax]       = c.request.xhr? || c.request.params[:simulate_xhr]
           self[:html]       = [nil, 'html'].member?(c.params[:format])
-          self[:host]       = Card.config.override_host     || c.request.env['HTTP_HOST']
-          self[:protocol]   = Card.config.override_protocol || c.request.protocol
+          self[:host]       = Card.config.override_host ||
+                              c.request.env['HTTP_HOST']
+          self[:protocol]   = Card.config.override_protocol ||
+                              c.request.protocol
         end
       end
 
@@ -28,7 +28,6 @@ class Card
       def []= key, value
         @@env[key.to_sym] = value
       end
-
 
       def params
         self[:params] ||= {}
@@ -56,9 +55,9 @@ class Card
 
       def method_missing method_id, *args
         case args.length
-        when 0 ; self[ method_id ]
-        when 1 ; self[ method_id ] = args[0]
-        else   ; super
+        when 0 then self[method_id]
+        when 1 then self[method_id] = args[0]
+        else super
         end
       end
     end
@@ -66,8 +65,6 @@ class Card
     # session history helpers: we keep a history stack so that in the case of
     # card removal we can crawl back up to the last un-removed location
     module LocationHistory
-      #include Card::Location
-
       def location_history
         session[:history] ||= [Card::Location.card_path('')]
         session[:history].shift if session[:history].size > 5
@@ -75,12 +72,15 @@ class Card
       end
 
       def save_location card
-        return if Env.ajax? || !Env.html? || !card.known? ||
-                  (card.codename == 'signin')
+        return unless save_location?(card)
         discard_locations_for card
         session[:previous_location] =
           Card::Location.card_path card.cardname.url_key
         location_history.push previous_location
+      end
+
+      def save_location? card
+        !Env.ajax? && Env.html? && card.known? && (card.codename != 'signin')
       end
 
       def previous_location
@@ -106,16 +106,13 @@ class Card
         session.delete :interrupted_action
       end
 
-      def url_key_for_location(location)
-        location.match( /\/([^\/]*$)/ ) ? $1 : nil
+      def url_key_for_location location
+        (%r{/([^/]*$)} =~ location) ? Regexp.last_match[1] : nil
       end
     end
 
     extend LocationHistory
-
   end
-
-
 
   Env.reset
 end

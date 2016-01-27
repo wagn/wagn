@@ -57,26 +57,31 @@ describe Card, "create junction" do
     @c = Card.create! name: "Peach+Pear", content: "juicy"
   end
 
-  it "should not have errors" do
+  it "doesn't have errors" do
     expect(@c.errors.size).to eq(0)
   end
 
-  it "should create junction card" do
-    expect(Card["Peach+Pear"].class).to eq(Card)
+  it 'creates junction card' do
+    expect(Card['Peach+Pear'].class).to eq(Card)
   end
 
-  it "should create trunk card" do
-    expect(Card["Peach"].class).to eq(Card)
+  it 'creates trunk card' do
+    expect(Card['Peach'].class).to eq(Card)
   end
 
-  it "should create tag card" do
-    expect(Card["Pear"].class).to eq(Card)
+  it 'creates tag card' do
+    expect(Card['Pear'].class).to eq(Card)
+  end
+
+  it 'creates very left card' do
+    Card.create! name: 'Apple+Peach+Pear', content: 'juicy'
+    expect(Card['Apple'].class).to eq(Card)
   end
 end
 
 
 
-describe Card, "types" do
+describe Card, 'types' do
 
 end
 

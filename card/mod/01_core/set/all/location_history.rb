@@ -5,6 +5,6 @@ event :discard_deleted_locations, in: :finalize, on: :delete do
   end
 end
 
-event :save_current_location, before: :show, on: :read do
+event :save_current_location, before: :show_page, on: :read do
   Env.save_location self
 end

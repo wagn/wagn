@@ -22,8 +22,8 @@ class Card
       event_suffix = host_class.name.gsub ':', '_'
 
       host_class.event(
-        "after_machine_input_updated_#{ event_suffix }".to_sym,
-        after: :extend, on: :save
+        "after_machine_input_updated_#{ event_suffix }".to_sym, :integrate,
+         on: :save
       ) do
 
         wql_statement = { right_plus: [
@@ -38,7 +38,7 @@ class Card
 
       host_class.event(
         "before_machine_input_deleted_#{ event_suffix }".to_sym,
-        after: :approve, on: :delete
+        :store, on: :delete
       ) do
 
         @involved_machines = Card.search(
@@ -51,7 +51,7 @@ class Card
 
       host_class.event(
        "after_machine_input_deleted_#{ event_suffix }".to_sym,
-       after: :store_subcards, on: :delete
+       :finalize, on: :delete
       ) do
 
         @involved_machines.each do |item|

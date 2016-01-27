@@ -60,7 +60,7 @@ def extract_type_id! args={}
   type_id
 end
 
-event :set_content, before: :store_stage, on: :save do
+event :set_content, :store, on: :save do
   self.db_content = content || '' # necessary?
   self.db_content = Card::Content.clean!(db_content) if clean_html?
   @selected_action_id = @selected_content = nil
@@ -71,68 +71,70 @@ end
 # FIXME: the following don't really belong here, but they have to come after
 # the reference stuff.  we need to organize a bit!
 
-event :update_ruled_cards, after: :store do
+event :update_ruled_cards, :finalize do
   if is_rule?
     # warn "updating ruled cards for #{name}"
     self.class.clear_rule_cache
+    binding.pry
     set = rule_set
     set.reset_set_patterns
 
     if right_id == Card::ReadID && (name_changed? || trash_changed?)
-      self.class.clear_read_rule_cache
-      Card.cache.reset # maybe be more surgical, just Auth.user related
-      expire # probably shouldn't be necessary,
-      # but was sometimes getting cached version when card should be in the
-      # trash.  could be related to other bugs?
-      in_set = {}
-      if !trash && set && (set_class = set.tag)
-        if (class_id =  set_class.id)
-          rule_class_ids = set_patterns.map &:pattern_id
-          # warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
-
-          # first update all cards in set that aren't governed by narrower rule
-          Auth.as_bot do
-            cur_index = rule_class_ids.index Card[read_rule_class].id
-            if (rule_class_index = rule_class_ids.index(class_id))
-              set.item_cards(limit: 0).each do |item_card|
-                in_set[item_card.key] = true
-                next if cur_index < rule_class_index
-                if cur_index >= rule_class_index
-                  item_card.update_read_rule
-                end
-              end
-            # elsif rule_class_index = rule_class_ids.index( 0 )
-            #   in_set[trunk.key] = true
-            #   #warn "self rule update: #{trunk.inspect}, #{rule_class_index},
-            #   #{cur_index}"
-            #   trunk.update_read_rule if cur_index > rule_class_index
-            else warn "No current rule index #{class_id}, " \
-                      "#{rule_class_ids.inspect}"
-            end
-          end
-
-        end
-      end
-
-      # then find all cards with me as read_rule_id that were not just updated
-      # and regenerate their read_rules
-      if !new_card?
-        Card.search(read_rule_id: self.id) do |card|
-          card.update_read_rule unless in_set[card.key]
-        end
-      end
+      update_read_ruled_cards set
     end
   end
 end
 
-event :process_read_rule_update_queue, after: :store do
+def update_read_ruled_cards set
+  self.class.clear_read_rule_cache
+  Card.cache.reset # maybe be more surgical, just Auth.user related
+  expire # probably shouldn't be necessary,
+  # but was sometimes getting cached version when card should be in the
+  # trash.  could be related to other bugs?
+  in_set = {}
+  if !trash && set && (set_class = set.tag) && (class_id = set_class.id)
+    rule_class_ids = set_patterns.map &:pattern_id
+    # warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
+
+    # first update all cards in set that aren't governed by narrower rule
+    Auth.as_bot do
+      cur_index = rule_class_ids.index Card[read_rule_class].id
+      if (rule_class_index = rule_class_ids.index(class_id))
+        set.item_cards(limit: 0).each do |item_card|
+          in_set[item_card.key] = true
+          next if cur_index < rule_class_index
+          if cur_index >= rule_class_index
+            item_card.update_read_rule
+          end
+        end
+      # elsif rule_class_index = rule_class_ids.index( 0 )
+      #   in_set[trunk.key] = true
+      #   #warn "self rule update: #{trunk.inspect}, #{rule_class_index},
+      #   #{cur_index}"
+      #   trunk.update_read_rule if cur_index > rule_class_index
+      else warn "No current rule index #{class_id}, " \
+                "#{rule_class_ids.inspect}"
+      end
+    end
+  end
+
+  # then find all cards with me as read_rule_id that were not just updated
+  # and regenerate their read_rules
+  return if new_card?
+  Card.search(read_rule_id: self.id) do |card|
+    card.update_read_rule unless in_set[card.key]
+  end
+end
+
+event :process_read_rule_update_queue, :finalize do
   Array.wrap(@read_rule_update_queue).each(&:update_read_rule)
   @read_rule_update_queue = []
 end
 
 #  set_callback :store, :after, :process_read_rule_update_queue, prepend: true
 
-event :expire_related, after: :store do
+event :expire_related, :finalize do
+  binding.pry
   subcards.keys.each do |key|
     Card.cache.soft.delete key
   end

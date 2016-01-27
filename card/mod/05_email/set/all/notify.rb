@@ -72,8 +72,8 @@ def notable_change?
     Card::Auth.current_id != WagnBotID && followable?
 end
 
-event :notify_followers_after_save,
-      after: :subsequent, on: :save, when: proc { |ca| ca.notable_change? } do
+event :notify_followers_after_save, :integrate_with_delay,
+      on: :save, when: proc { |ca| ca.notable_change? } do
   notify_followers
 end
 
@@ -81,12 +81,12 @@ end
 # but we can't pass the follower_stash through the ActiveJob queue.
 # We have to deal with the notifications in the extend phase instead of the
 # subsequent phase
-event :stash_followers, after: :approve, on: :delete do
+event :stash_followers, :store, on: :delete do
   act_card.follower_stash ||= FollowerStash.new
   act_card.follower_stash.add_affected_card self
 end
-event :notify_followers_after_delete,
-      after: :extend, on: :delete, when: proc { |ca| ca.notable_change? } do
+event :notify_followers_after_delete, :finalize,
+      on: :delete, when: proc { |ca| ca.notable_change? } do
   notify_followers
 end
 

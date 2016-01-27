@@ -15,7 +15,7 @@ format do
       when @mode==:closed then :icon
       when args[:size]    then args[:size].to_sym
       when main?          then :large
-      else                then :medium
+      else :medium
       end
     style = :original if style.to_sym == :full
     if style == :original

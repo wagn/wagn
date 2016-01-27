@@ -32,7 +32,8 @@ end
 
 # stores changes in the changes table and assigns them to the current action
 # removes the action if there are no changes
-event :finalize_action, after: :clean, when: proc { |c| c.finalize_action? } do
+event :finalize_action, :finalize,
+      when: proc { |c| c.finalize_action? } do
   @changed_fields = Card::TRACKED_FIELDS.select do |f|
     changed_attributes.member? f
   end
@@ -60,8 +61,8 @@ event :finalize_act,
   end
 end
 
-event :rollback_actions,
-      before: :approve, on: :update,
+event :rollback_actions, :prepare_to_validate,
+      on: :update,
       when: proc { |c| c.rollback_request? } do
   revision = { subcards: {} }
   rollback_actions = Env.params['action_ids'].map do |a_id|

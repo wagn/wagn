@@ -1,5 +1,5 @@
 
-event :admin_tasks, on: :update, before: :approve do
+event :admin_tasks, :initialize, on: :update do
   if (task = Env.params[:task])
     if Auth.always_ok?
       case task.to_sym

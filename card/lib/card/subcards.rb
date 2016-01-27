@@ -34,7 +34,9 @@ class Card
     "#{key}#SUBCARDS#"
   end
 
+
   class Subcards
+    STAGES = [:initialize, :prepare_to_validate, :validate, ]
     attr_accessor :context_card, :keys
     def initialize context_card
       @context_card = context_card
@@ -93,6 +95,12 @@ class Card
         new_by_card card_or_attr
       when Symbol, String
         new_by_attributes card_or_attr, {}
+      end
+    end
+
+    def catch_up_to_stage stage_index
+      each_card do |subcard|
+        subcard.catch_up_to_stage stage_index
       end
     end
 

@@ -22,7 +22,7 @@ class Card
 
     class << self
       def [] klass
-        raise 'nil klass' if klass.nil?
+        fail 'nil klass' if klass.nil?
         cache_type = (@@no_rails_cache ? nil : Cardio.cache)
         cache_by_class[klass] ||= new class: klass,
                                       store: cache_type
@@ -30,17 +30,20 @@ class Card
 
       def renew
         cache_by_class.keys do |klass|
-          if klass.cache
-            cache_by_class[klass].system_prefix = system_prefix(klass)
-          else
-            raise "renewing nil cache: #{klass}"
-          end
+          fail "renewing nil cache: #{klass}" unless klass.cache
+          cache_by_class[klass].system_prefix = system_prefix(klass)
         end
         reset_soft
       end
 
+      def database_name
+        @database_name ||= (cfg = Cardio.config) &&
+                           (dbcfg = cfg.database_configuration) &&
+                           dbcfg[Rails.env]['database']
+      end
+
       def system_prefix klass
-        "#{Rails.env}/#{klass}"
+        "#{database_name}/#{klass}"
       end
 
       def restore

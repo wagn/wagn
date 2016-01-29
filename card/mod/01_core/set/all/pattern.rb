@@ -1,6 +1,6 @@
 
 def patterns
-  @patterns ||= set_patterns.map { |sub| sub.new(self) }.compact
+  @patterns ||= set_patterns.map { |sub| sub.new self }.compact
 end
 
 def patterns_with_new
@@ -9,7 +9,10 @@ end
 alias_method_chain :patterns, :new
 
 def reset_patterns
-  @set_mods_loaded = @patterns = @set_modules = @junction_only = @set_names = @template = @rule_set_keys = @virtual = nil
+  @patterns = nil
+  @template = @virtual = nil
+  @set_mods_loaded = @set_modules = @set_names = @rule_set_keys = nil
+  @junction_only = nil # only applies to set cards
   true
 end
 
@@ -45,7 +48,7 @@ end
 
 def set_names
   if @set_names.nil?
-    @set_names = patterns.map &:to_s
+    @set_names = patterns.map(&:to_s)
     Card.set_members @set_names, key
   end
   @set_names

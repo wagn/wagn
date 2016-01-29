@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151105225559) do
+ActiveRecord::Schema.define(version: 20160122153608) do
 
   create_table "card_actions", force: :cascade do |t|
     t.integer "card_id",         limit: 4
@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(version: 20151105225559) do
     t.string   "ip_address", limit: 255
   end
 
+  add_index "card_acts", ["acted_at"], name: "acts_acted_at_index", using: :btree
   add_index "card_acts", ["actor_id"], name: "card_acts_actor_id_index", using: :btree
   add_index "card_acts", ["card_id"], name: "card_acts_card_id_index", using: :btree
 
@@ -51,6 +52,7 @@ ActiveRecord::Schema.define(version: 20151105225559) do
     t.integer "present",     limit: 4
   end
 
+  add_index "card_references", ["ref_type"], name: "card_references_ref_type_index", using: :btree
   add_index "card_references", ["referee_id"], name: "card_references_referee_id_index", using: :btree
   add_index "card_references", ["referee_key"], name: "card_references_referee_key_index", using: :btree
   add_index "card_references", ["referer_id"], name: "card_references_referer_id_index", using: :btree
@@ -84,12 +86,14 @@ ActiveRecord::Schema.define(version: 20151105225559) do
     t.text     "db_content",          limit: 16777215
   end
 
+  add_index "cards", ["created_at"], name: "cards_created_at_index", using: :btree
   add_index "cards", ["key"], name: "cards_key_index", unique: true, using: :btree
   add_index "cards", ["left_id"], name: "cards_left_id_index", using: :btree
   add_index "cards", ["name"], name: "cards_name_index", using: :btree
   add_index "cards", ["read_rule_id"], name: "cards_read_rule_id_index", using: :btree
   add_index "cards", ["right_id"], name: "cards_right_id_index", using: :btree
   add_index "cards", ["type_id"], name: "cards_type_id_index", using: :btree
+  add_index "cards", ["updated_at"], name: "cards_updated_at_index", using: :btree
 
   create_table "schema_migrations_core_cards", id: false, force: :cascade do |t|
     t.string "version", limit: 255, null: false

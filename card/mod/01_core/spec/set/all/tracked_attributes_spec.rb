@@ -29,11 +29,12 @@ module RenameMethods
   end
 end
 
-include RenameMethods
-
 describe Card::Set::All::TrackedAttributes do
+  include RenameMethods
+
   describe 'set_name' do
-    it 'should handle case variants' do
+    it 'should han
+    dle case variants' do
       @c = Card.create! name: 'chump'
       expect(@c.name).to eq('chump')
       @c.name = 'Chump'

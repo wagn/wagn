@@ -104,11 +104,11 @@ module ClassMethods
     # note: calling instance method breaks on dirty names
     key = name.to_name.key
     return unless (card = Card.cache.read key)
-    if subcards
-      card.expire_subcards
-    else
-      card.preserve_subcards
-    end
+    # if subcards
+    #   card.expire_subcards
+    # else
+    #   card.preserve_subcards
+    # end
     Card.cache.delete key
     Card.cache.delete "~#{card.id}" if card.id
   end
@@ -120,9 +120,14 @@ module ClassMethods
     set_cache_list.nil? ? [] : set_cache_list.keys
   end
 
+  # updates the members hash for all sets self is a member of
+  # QUESTION: why map and not each?
+  # I don't see where that array is useful. It contains
+  # nil for all sets for which self was already cached as a member
   def set_members set_names, key
-    set_names.compact.map(&:to_name).map(&:key).map do |set_key|
-      skey = "$#{set_key}" # dollar sign avoids conflict with card keys
+    set_names.compact.map do |set_name|
+      # dollar sign avoids conflict with card keys
+      skey = "$#{set_name.to_name.key}"
       h = Card.cache.read skey
       if h.nil?
         h = {}
@@ -196,7 +201,7 @@ module ClassMethods
     query = { mark_type => mark_key }
     query[:trash] = false unless opts[:look_in_trash]
     card = Card.where(query).take
-    card.restore_subcards if card
+    #card.restore_subcards if card
     card
   end
 
@@ -299,11 +304,11 @@ def expire_hard
 end
 
 def expire_soft subcards=false
-  if subcards
-    expire_subcards
-  else
-    preserve_subcards
-  end
+  # if subcards
+  #   expire_subcards
+  # else
+  #   preserve_subcards
+  # end
   Card.cache.soft.delete key
   Card.cache.soft.delete "~#{id}" if id
 end

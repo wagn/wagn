@@ -55,6 +55,9 @@ event :validate_type, :validate, changed: :type_id do
 end
 
 event :reset_type_specific_fields, :finalize do
+  # Example: if you save a card of type Phrase
+  # then reset set patterns for update all
+  # "Phrase+Something+*type plus right" cards
   wql = { left: { left_id: type_id },
           right: { codename: 'type_plus_right' }
         }

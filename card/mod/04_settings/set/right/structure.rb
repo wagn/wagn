@@ -9,8 +9,7 @@ format :html do
   include AddHelp::HtmlFormat
 end
 
-event :update_structurees_references,
-      before: :subsequent,
+event :update_structurees_references, :integrate,
       when: proc { |c| c.db_content_changed? || c.action == :delete } do
   return unless (statement = structuree_statement)
   Auth.as_bot do
@@ -18,8 +17,8 @@ event :update_structurees_references,
   end
 end
 
-event :update_structurees_type, after: :store, changed: :type_id,
-                                when: proc { |c| c.assigns_type? } do
+event :update_structurees_type, :finalize,
+      changed: :type_id, when: proc { |c| c.assigns_type? } do
   update_structurees type_id: type_id
 end
 

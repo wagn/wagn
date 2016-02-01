@@ -21,6 +21,7 @@ end
 def name= newname
   @cardname = newname.to_name
   if @supercard
+    binding.pry
     @supercard.subcards.rename key, @cardname.key
     @contextual_name = @cardname.to_s
     relparts = @cardname.parts
@@ -38,15 +39,18 @@ def name= newname
     reset_patterns_if_rule
     reset_patterns
   end
-  subcards.each do |subcard|
-    subcard.name = subcard.cardname.replace_part name, newname
+  binding.pry
+  if subcards
+    subcards.each do |subcard|
+      subcard.name = subcard.cardname.replace_part name, newname
+    end
   end
 
   write_attribute :name, @cardname.to_s
 end
 
 def cardname
-  #@cardname ||= name.to_name
+  # @cardname ||= name.to_name
   name.to_name
 end
 
@@ -72,9 +76,7 @@ def contextual_name
 end
 
 def relative_name context_name=nil
-  if !context_name && @supercard
-    context_name = @supercard.cardname
-  end
+  !context_name && @supercard && (context_name = @supercard.cardname)
   cardname.relative_name(context_name)
 end
 
@@ -187,17 +189,18 @@ rescue
   self
 end
 
-event :initialize_left_and_right, :initialize, changed: :name do
-  set_left_and_right
-end
+# event :initialize_left_and_right, :initialize, changed: :name do
+#   set_left_and_right
+# end
+
 
 event :set_name, :store, changed: :name do
   Card.expire name
   Card.expire name_was
-  set_left_and_right
 end
 
-def set_left_and_right
+event :set_left_and_right, :store,
+      changed: :name, on: :save do
   if cardname.junction?
     [:left, :right].each do |side|
       sidename = cardname.send "#{side}_name"
@@ -207,11 +210,11 @@ def set_left_and_right
       old_name_in_way = (sidecard && sidecard.id == id)
       suspend_name(sidename) if old_name_in_way
       side_id_or_card =
-          if !sidecard || old_name_in_way
-            add_subcard(sidename.s)
-          else
-            sidecard.id
-          end
+        if !sidecard || old_name_in_way
+          add_subcard(sidename.s)
+        else
+          sidecard.id
+        end
       send "#{side}_id=", side_id_or_card
     end
   else
@@ -241,7 +244,7 @@ event :cascade_name_changes, :finalize, on: :update, changed: :name do
   #                   " -------------------------------------"
   # handle strings from cgi
   self.update_referencers = false if update_referencers == 'false'
-  Card::Reference.update_on_rename self, name, self.update_referencers
+  Card::Reference.update_on_rename self, name, update_referencers
 
   des = descendants
   @descendants = nil # reset

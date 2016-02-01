@@ -56,7 +56,7 @@ class Card < ActiveRecord::Base
     :skip_phases
   )
 
-  attr_accessor :follower_stash
+  attr_accessor :follower_stash, :director
 
   define_callbacks :select_action, :show_page, :handle, :act,
                    #:prepare, :approve, :store, :clean, :finish, :followup,

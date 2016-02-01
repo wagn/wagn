@@ -79,13 +79,13 @@ end
 
 # in the delete case we have to calculate the follower_stash beforehand
 # but we can't pass the follower_stash through the ActiveJob queue.
-# We have to deal with the notifications in the extend phase instead of the
-# subsequent phase
+# We have to deal with the notifications in the integrate phase instead of the
+# integrate_with_delay phase
 event :stash_followers, :store, on: :delete do
   act_card.follower_stash ||= FollowerStash.new
   act_card.follower_stash.add_affected_card self
 end
-event :notify_followers_after_delete, :finalize,
+event :notify_followers_after_delete, :integrate,
       on: :delete, when: proc { |ca| ca.notable_change? } do
   notify_followers
 end

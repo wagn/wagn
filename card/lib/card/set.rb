@@ -163,8 +163,8 @@ class Card
       end
       process_stage_opts opts
 
-      perform_later = (opts[:before] == :subsequent) ||
-                      (opts[:after] == :subsequent)
+      perform_later = (opts[:before] == :integrate_with_delay) ||
+                      (opts[:after] == :integrate_with_delay)
       final_method = "#{event}_without_callbacks" # should be private?
       opts[:on] = [:create, :update] if opts[:on] == :save
 
@@ -230,6 +230,11 @@ class Card
     def define_event_method event, call_method, _opts
       class_eval do
         define_method event do
+          if subfield('right')
+            puts "#{event}:#{subfield('right').instance_variable_get(:"@stage")}"
+                     .red
+          end
+
           run_callbacks event do
             send call_method
           end

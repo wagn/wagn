@@ -139,7 +139,7 @@ EOF
       if self.class.anchorless?
         self.class.pattern_code
       elsif @anchor_id
-        [ @anchor_id, self.class.pattern_code ].map( &:to_s ) * '+'
+        "#{@anchor_id}+#{self.class.pattern_code}"
       end
     end
   end

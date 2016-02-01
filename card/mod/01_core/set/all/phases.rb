@@ -9,6 +9,8 @@
 #   triumph: similar to success, but if called on a subcard
 #            it causes the entire action to abort (not just the subcard)
 
+
+
 def abort status, msg='action canceled'
   if status == :failure && errors.empty?
     errors.add :abort, msg
@@ -232,4 +234,28 @@ end
 
 def success
   Env.success(cardname)
+end
+
+
+def prepare_for_phases
+  identify_action
+  reset_patterns
+  include_set_modules
+end
+
+def validation_phase
+  # TODO: try to use Card.current_act as condition in callback definition
+  return true if Card.current_director # act handles validation of other cards
+  Card.current_director = StageMaindirector.new self
+  Card.current_director.validation_phase
+end
+
+def storage_phase &block
+  return true if Card.current_director
+  Card.current_director.storage_phase &block
+end
+
+def integration_phase
+  return true if Card.current_director
+  Card.current_director.integration_phase
 end

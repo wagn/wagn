@@ -33,10 +33,18 @@ def clear_subcards
   subcards.clear
 end
 
+def deep_clear_subcards
+  subcards.deep_clear
+end
+
 def unfilled?
   (content.empty? || content.strip.empty?) &&
     (comment.blank? || comment.strip.blank?) &&
     !subcards.present?
+end
+
+def with_id_when_exists card, &block
+  @director.call_after_store card, &block
 end
 
 event :handle_subcard_errors do
@@ -73,14 +81,16 @@ end
 
 def write_card_or_id attribute, card_or_id
   if card_or_id.is_a? Card
-    if card_or_id.id
-      write_attribute attribute, card_or_id.id
+    card = card_or_id
+    if card.id
+      write_attribute attribute, card.id
     else
-      prior_save << proc do
-        card = save_only_once(card_or_id) { card_or_id.subcard_save! }
-        write_attribute attribute, card.id
-        card
+      add_subcard card
+      card.director.prior_store = true
+      with_id_when_exists(card) do |id|
+        write_attribute attribute, id
       end
+
     end
   else
     write_attribute attribute, card_or_id
@@ -92,6 +102,7 @@ def subcard_save!
   catch_up_to_stage :store
   store_prior_subcards
   save! validate: false
+  @virtual = false
   store_subcards
   self
 end
@@ -127,6 +138,6 @@ event :store_subcards do
 
   # ensures that a supercard can access subcards of self
   # eg. <user> creates <user+*account> creates <user+*account+*status>
-  # <user> changes <user+*account+*status> in event activate_account
+f  # <user> changes <user+*account+*status> in event activate_account
   Card.write_to_soft_cache self
 end

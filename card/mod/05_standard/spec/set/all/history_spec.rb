@@ -24,10 +24,10 @@ describe Card::Set::All::History do
 
 
   describe '#create_act_and_action' do
-    let!(:act_start_cnt) {Card::Act.count}
-    let(:content)        {"Nobody expects the Spanish inquisition"}
-    let(:act)            {@card.acts.last}
-    let(:action)         {act.actions.last}
+    #let!(:act_start_cnt) {Card::Act.count}
+    #let(:content)        {"Nobody expects the Spanish inquisition"}
+    #let(:act)            {@card.acts.last}
+    #let(:action)         {act.actions.last}
 
     context 'for single card' do
       before do
@@ -109,8 +109,10 @@ describe Card::Set::All::History do
     context 'for subcard' do
       before do
         Card::Auth.as_bot do
+          content = "Nobody expects the Spanish inquisition"
           @card = Card.create name: "left",
                               subcards: { '+right' => { content: content } }
+          act = @card.acts.last
           @left_action = act.actions[0]
           @right_action = act.actions[2]
           @plus_action = act.actions[1]
@@ -124,6 +126,7 @@ describe Card::Set::All::History do
         end
 
         it 'adds three actions' do
+          act = @card.acts.last
           expect(act.actions.size).to eq(3)
         end
         it 'adds action for left part of type create' do
@@ -165,7 +168,9 @@ describe Card::Set::All::History do
     context 'for plus card' do
       before do
         Card::Auth.as_bot do
+          content = "Nobody expects the Spanish inquisition"
           @card = Card.create name: 'left+right', content: content
+          act = @card.acts.last
           @left_action = act.actions[1]
           @plus_action = act.actions[0]
           @right_action = act.actions[2]
@@ -178,6 +183,7 @@ describe Card::Set::All::History do
           expect(act.card_id).to eq(@card.id)
         end
         it 'three actions' do
+          act = @card.acts.last
           expect(act.actions.size).to eq(3)
         end
         it 'action for left part of type create' do
@@ -196,7 +202,8 @@ describe Card::Set::All::History do
           expect(@plus_action.action_type).to eq(:create)
         end
         it 'content change' do
-          expect(@plus_action.card_changes(true).find_by_field_name(:db_content).value).to eq(content)
+          expect(@plus_action.card_changes(true)
+            .find_by_field_name(:db_content).value).to eq(content)
         end
       end
     end

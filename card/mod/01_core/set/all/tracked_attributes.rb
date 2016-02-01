@@ -75,7 +75,6 @@ event :update_ruled_cards, :finalize do
   if is_rule?
     # warn "updating ruled cards for #{name}"
     self.class.clear_rule_cache
-    binding.pry
     set = rule_set
     set.reset_set_patterns
 
@@ -107,11 +106,7 @@ def update_read_ruled_cards set
             item_card.update_read_rule
           end
         end
-      # elsif rule_class_index = rule_class_ids.index( 0 )
-      #   in_set[trunk.key] = true
-      #   #warn "self rule update: #{trunk.inspect}, #{rule_class_index},
-      #   #{cur_index}"
-      #   trunk.update_read_rule if cur_index > rule_class_index
+
       else warn "No current rule index #{class_id}, " \
                 "#{rule_class_ids.inspect}"
       end
@@ -131,14 +126,12 @@ event :process_read_rule_update_queue, :finalize do
   @read_rule_update_queue = []
 end
 
-o
-vent :expire_related, :finalize do
-  binding.pry
+event :expire_related, :finalize do
   subcards.keys.each do |key|
-    Card.cache.soft.delete key
+    #Card.cache.soft.delete key
   end
-  expire true
-
+  #expire #true  # FIXME: where do we put this. Here it deletes @stage
+  reset_patterns
   if is_structure?
     structuree_names.each do |name|
       Card.expire name, true

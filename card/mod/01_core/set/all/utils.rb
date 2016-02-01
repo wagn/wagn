@@ -11,8 +11,6 @@ module ClassMethods
   # deletes any file not associated with a real card.
   def delete_trashed_files
     trashed_card_ids = all_trashed_card_ids
-      Card.connection.select_all(trashed_card_sql).map(&:values)
-        .flatten.map(&:to_i)
     file_ids = all_file_ids
     file_ids.each do |file_id|
       if trashed_card_ids.member?(file_id)

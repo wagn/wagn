@@ -65,7 +65,7 @@ event :set_content, :store, on: :save do
   self.db_content = Card::Content.clean!(db_content) if clean_html?
   @selected_action_id = @selected_content = nil
   clear_drafts
-  reset_patterns_if_rule saving=true
+  reset_patterns_if_rule true
 end
 
 # FIXME: the following don't really belong here, but they have to come after
@@ -131,16 +131,15 @@ event :process_read_rule_update_queue, :finalize do
   @read_rule_update_queue = []
 end
 
-#  set_callback :store, :after, :process_read_rule_update_queue, prepend: true
-
-event :expire_related, :finalize do
+o
+vent :expire_related, :finalize do
   binding.pry
   subcards.keys.each do |key|
     Card.cache.soft.delete key
   end
   expire true
 
-  if self.is_structure?
+  if is_structure?
     structuree_names.each do |name|
       Card.expire name, true
     end

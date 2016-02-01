@@ -163,7 +163,7 @@ module ClassMethods
   end
 
   def fetch_existing mark, opts
-    return [nil, false] if !mark.present?
+    return [nil, false] unless mark.present?
     mark_type, mark_key = parse_mark! mark
     needs_caching = false # until proven true :)
 
@@ -278,11 +278,11 @@ def renew args={}
 end
 
 def handle_default_content opts
-  if (default_content = opts.delete(:default_content)) && content.empty?
+  if (default_content = opts.delete(:default_content)) && db_content.blank?
     opts[:content] ||= default_content
-  elsif content.present? && !opts[:content]
+  elsif db_content.present? && !opts[:content]
     # don't overwrite existing content
-    opts[:content] = content
+    opts[:content] = db_content
   end
 end
 
@@ -314,7 +314,7 @@ def expire subcards=false
 end
 
 def refresh force=false
-  if force || self.frozen? || self.readonly?
+  if force || frozen? || readonly?
     fresh_card = self.class.find id
     fresh_card.include_set_modules
     fresh_card

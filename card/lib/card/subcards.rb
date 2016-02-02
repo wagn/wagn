@@ -10,7 +10,6 @@
 
 class Card
   def subcards
-    director
     @subcards ||= (director && director.subcards)
   end
 

@@ -41,7 +41,7 @@ class Card < ActiveRecord::Base
   has_many :drafts, -> { where(draft: true).order :id }, class_name: :Action
 
   cattr_accessor :set_patterns, :serializable_attributes, :error_codes,
-                 :set_specific_attributes, :current_act, :already_saved,
+                 :set_specific_attributes, :current_act,
                  :current_director, :directors
   @@set_patterns = []
   @@error_codes = {}

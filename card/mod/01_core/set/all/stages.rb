@@ -1,4 +1,10 @@
+def director
+  @director ||= Card::StageDirector.fetch self
+end
 
+def director= dir
+  @director = dir
+end
 
 def stage_index stage
   case stage
@@ -8,8 +14,6 @@ def stage_index stage
     raise Card::Error, "not a valid stage: #{stage}"
   end
 end
-
-
 
 def run_stage_on_subcards stage
   puts "#{name}: #{phase} stage on subcards"
@@ -43,8 +47,7 @@ def current_act= act
 end
 
 def current_act
-  Card.current_act
+  @current_act ||= Card.current_act
 end
-
 
 

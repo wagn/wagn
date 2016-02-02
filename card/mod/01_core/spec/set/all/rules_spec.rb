@@ -27,7 +27,6 @@ describe Card::Set::All::Rules do
 
     it 'retrieves single values' do
       Card.create! name: 'banana+*self+*help', content: 'pebbles'
-      binding.pry
       expect(Card['banana'].rule(:help)).to eq('pebbles')
     end
 

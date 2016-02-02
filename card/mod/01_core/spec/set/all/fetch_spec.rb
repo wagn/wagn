@@ -55,6 +55,15 @@ describe Card::Set::All::Fetch do
       expect(Card.fetch('A+virtual')).not_to be_nil
     end
 
+    it 'fetches virtual set cards' do
+      binding.pry
+      aself = Card.fetch('A+*self')
+      Card::Cache.reset_all
+      Card.fetch 'A+*self'
+
+      expect(aself.set_names).to include('Set+*type')
+    end
+
     it 'handles name variants of cached cards' do
       expect(Card.fetch('yomama+*self').name).to eq('yomama+*self')
       expect(Card.fetch('YOMAMA+*self').name).to eq('YOMAMA+*self')

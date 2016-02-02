@@ -246,16 +246,16 @@ end
 def validation_phase
   # TODO: try to use Card.current_act as condition in callback definition
   return true if Card.current_director # act handles validation of other cards
-  Card.current_director = StageMaindirector.new self
-  Card.current_director.validation_phase
+  Card.new_director(self).validation_phase
 end
 
 def storage_phase &block
-  return true if Card.current_director
+  return true unless director.main?
   Card.current_director.storage_phase &block
 end
 
 def integration_phase
-  return true if Card.current_director
+  return true unless director.main?
   Card.current_director.integration_phase
+  Card.current_director = nil
 end

@@ -66,6 +66,7 @@ def virtual?
 end
 
 def structure_rule_card
+  binding.pry
   card = rule_card :structure, skip_modules: true
   card && card.db_content.strip == '_self' ? nil : card
 end

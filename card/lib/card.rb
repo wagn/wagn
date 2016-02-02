@@ -32,6 +32,7 @@ class Card < ActiveRecord::Base
   require_dependency 'card/reference'
   require_dependency 'card/subcards'
   require_dependency 'card/view_cache'
+  require_dependency 'card/stage_director'
 
   has_many :references_from, class_name: :Reference, foreign_key: :referee_id
   has_many :references_to,   class_name: :Reference, foreign_key: :referer_id
@@ -40,7 +41,8 @@ class Card < ActiveRecord::Base
   has_many :drafts, -> { where(draft: true).order :id }, class_name: :Action
 
   cattr_accessor :set_patterns, :serializable_attributes, :error_codes,
-                 :set_specific_attributes, :current_act, :already_saved
+                 :set_specific_attributes, :current_act, :already_saved,
+                 :current_director, :directors
   @@set_patterns = []
   @@error_codes = {}
 
@@ -56,7 +58,7 @@ class Card < ActiveRecord::Base
     :skip_phases
   )
 
-  attr_accessor :follower_stash, :director
+  attr_accessor :follower_stash
 
   define_callbacks :select_action, :show_page, :handle, :act,
                    #:prepare, :approve, :store, :clean, :finish, :followup,

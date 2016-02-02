@@ -230,10 +230,8 @@ class Card
     def define_event_method event, call_method, _opts
       class_eval do
         define_method event do
-          if subfield('right')
-            puts "#{event}:#{subfield('right').instance_variable_get(:"@stage")}"
+            puts "#{event}"
                      .red
-          end
 
           run_callbacks event do
             send call_method

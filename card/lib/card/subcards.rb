@@ -10,13 +10,11 @@
 
 class Card
   def subcards
-    @subcards ||= director.subcards
+    director
+    @subcards ||= (director && director.subcards)
   end
 
-  def director
-    binding.pry
-    @director ||= Card.current_director.responsible_director self
-  end
+
 
   # def preserve_subcards
   #   return unless subcards.present?

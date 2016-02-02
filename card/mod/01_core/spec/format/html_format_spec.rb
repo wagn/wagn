@@ -11,6 +11,7 @@ describe Card::HtmlFormat do
 
 
     it "inclusions in multi edit" do
+      binding.pry
       c = Card.new name: 'ABook', type: 'Book'
       rendered =  c.format.render( :edit )
 

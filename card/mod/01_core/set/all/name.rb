@@ -21,7 +21,6 @@ end
 def name= newname
   @cardname = newname.to_name
   if @supercard
-    binding.pry
     @supercard.subcards.rename key, @cardname.key
     @contextual_name = @cardname.to_s
     relparts = @cardname.parts
@@ -39,7 +38,6 @@ def name= newname
     reset_patterns_if_rule
     reset_patterns
   end
-  binding.pry
   if subcards
     subcards.each do |subcard|
       subcard.name = subcard.cardname.replace_part name, newname

@@ -45,10 +45,6 @@ class Card
         cache.write(CNT_KEY, cached_views_cnt + 1)
       end
 
-      def count
-        cache.read(CNT_KEY) || 0
-      end
-
       def cached_views_cnt
         cache.read(CNT_KEY) || 0
       end

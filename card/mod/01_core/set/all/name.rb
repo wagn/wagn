@@ -19,19 +19,19 @@ module ClassMethods
 end
 
 def name= newname
-  @cardname = newname.to_name
+  cardname = newname.to_name
   if @supercard
-    @supercard.subcards.rename key, @cardname.key
-    @contextual_name = @cardname.to_s
-    relparts = @cardname.parts
+    @supercard.subcards.rename key, cardname.key
+    @contextual_name = cardname.to_s
+    relparts = cardname.parts
     if relparts.size == 2 &&
        (relparts.first.blank? || relparts.first.to_name.key == @supercard.key)
       @superleft = @supercard
     end
-    @cardname = @cardname.to_absolute_name @supercard.name
+    cardname = cardname.to_absolute_name @supercard.name
   end
 
-  newkey = @cardname.key
+  newkey = cardname.key
   if key != newkey
     self.key = newkey
     # reset the old name - should be handled in tracked_attributes!!
@@ -44,11 +44,10 @@ def name= newname
     end
   end
 
-  write_attribute :name, @cardname.to_s
+  write_attribute :name, cardname.s
 end
 
 def cardname
-  # @cardname ||= name.to_name
   name.to_name
 end
 

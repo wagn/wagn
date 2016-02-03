@@ -227,7 +227,7 @@ format :html do
           %em.label.label-info
             Current
         - elsif act_view == :expanded
-          = rollback_link act.relevant_actions_for(card, draft)
+          = rollback_link act.relevant_actions_for(card)
           = show_or_hide_changes_link hide_diff, act_id: act.id, act_view: act_view, rev_nr: rev_nr, current_rev_nr: current_rev_nr
   .toggle
     = fold_or_unfold_link act_id: act.id, act_view: act_view, rev_nr: rev_nr, current_rev_nr: current_rev_nr

@@ -48,9 +48,11 @@ class Card::Reference < ActiveRecord::Base
     end
 
     def delete_missing_referers
-      joins('LEFT JOIN cards ON card_references.referer_id = cards.id')
-        .where('cards.id IS NULL')
-        .find_in_batches do |group|
+      joins(
+        'LEFT JOIN cards ON card_references.referer_id = cards.id'
+      ).where(
+        'cards.id IS NULL'
+      ).find_in_batches do |group|
         # used to be .delete_all here, but that was failing on large dbs
         puts 'deleting batch of references'
         where("id in (#{group.map(&:id).join ','})").delete_all

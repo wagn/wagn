@@ -10,7 +10,11 @@ class Card
           'ON card_changes.card_action_id = card_actions.id '
         ).where(
           'card_actions.id is null'
-        ).delete_all
+        ).find_in_batches do |group|
+          # used to be .delete_all here, but that was failing on large dbs
+          puts 'deleting batch of changes'
+          where("id in (#{group.map(&:id).join ','})").delete_all
+        end
       end
 
       def field_index value
@@ -35,4 +39,3 @@ class Card
     end
   end
 end
-

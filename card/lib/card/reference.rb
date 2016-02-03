@@ -52,7 +52,7 @@ class Card::Reference < ActiveRecord::Base
         .where('cards.id IS NULL')
         .find_in_batches do |group|
         # used to be .delete_all here, but that was failing on large dbs
-        puts 'deleting first batch of references'
+        puts 'deleting batch of references'
         where("id in (#{group.map(&:id).join ','})").delete_all
       end
     end

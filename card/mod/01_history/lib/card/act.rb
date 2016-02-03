@@ -2,39 +2,39 @@
 class Card
   class Act < ActiveRecord::Base
     before_save :set_actor
-    has_many :actions, -> { order :id },
-      { foreign_key: :card_act_id, inverse_of: :act, class_name: "Card::Action" }
+    has_many :actions,
+             -> { order :id },
+             foreign_key: :card_act_id,
+             inverse_of: :act,
+             class_name: 'Card::Action'
 
-    belongs_to :actor, class_name: "Card"
+    belongs_to :actor, class_name: 'Card'
     belongs_to :card
+
+    class << self
+      def delete_actionless
+        joins(
+          'LEFT JOIN card_actions '\
+          'ON card_acts.id = card_actions.card_act_id'
+        ).where(
+          'card_actions.id is null'
+        ).delete_all
+      end
+
+      def find_all_with_actions_on card_ids, args={}
+        sql = 'card_actions.card_id IN (:card_ids) AND ( (draft is not true) '
+        sql << (args[:with_drafts] ? 'OR actor_id = :current_user_id)' : ')')
+        vars = { card_ids: card_ids, current_user_id: Card::Auth.current_id }
+        joins(:actions).where(sql, vars).uniq.order(:id).reverse_order
+      end
+    end
+
     def set_actor
       self.actor_id ||= Auth.current_id
     end
 
-    def self.delete_actionless
-      Card::Act.where(
-        "id NOT IN (?)",
-        Card::Action.pluck("card_act_id"),
-      ).delete_all
-    end
-
-    def self.find_all_with_actions_on card_ids, args={}
-      sql = 'card_actions.card_id IN (:card_ids) AND ( (draft is not true) '
-      sql << ( args[:with_drafts] ? 'OR actor_id = :current_user_id)' : ')' )
-      vars = {card_ids: card_ids, current_user_id: Card::Auth.current_id }
-      Card::Act.joins(:actions).where( sql, vars ).uniq.order(:id).reverse_order
-    end
-
-    # def actor
-    #   Card[ actor_id ]
-    # end
-
-    # def card
- #      Card[ card_id ]
- #    end
-
     def action_on card_id
-      actions.where( "card_id = #{card_id} and draft is not true" ).first
+      actions.where("card_id = #{card_id} and draft is not true").first
     end
 
     def main_action
@@ -47,20 +47,22 @@ class Card
 
     def relevant_drafts_for card
       drafts.select do |action|
-        card.included_card_ids.include?(action.card_id) || (card.id == action.card_id)
+        card.included_card_ids.include?(action.card_id) ||
+          (card.id == action.card_id)
       end
     end
 
-    def relevant_actions_for card, with_drafts=false
+    def relevant_actions_for card
       actions.select do |action|
-        card.included_card_ids.include?(action.card_id) || (card.id == action.card_id)
+        card.included_card_ids.include?(action.card_id) ||
+          (card.id == action.card_id)
       end
     end
 
-  private
+    private
+
     def timestamp_attributes_for_create
       super << :acted_at
     end
-
   end
 end

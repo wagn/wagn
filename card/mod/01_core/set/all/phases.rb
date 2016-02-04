@@ -53,32 +53,32 @@ end
 # perhaps above should be in separate module?
 # ~~~~~~
 
-PHASES = {}
-[:prepare, :approve, :store, :clean, :extend, :subsequent]
-  .each_with_index do |phase, i|
-    PHASES[phase] = i
-  end
-
-def run_phase phase,&block
-  return if errors.any?
-  @phase = phase
-  @subphase = :before
-  if block_given?
-    block.call
-  else
-    run_callbacks phase
-  end
-  @subphase = :after
-  #run_phase_on_subcards phase
-rescue => e
-  rescue_event e
-end
-
-def run_phase_on_subcards phase
-  subcards.each do |subcard|
-    subcard.run_callbacks phase
-  end
-end
+# PHASES = {}
+# [:prepare, :approve, :store, :clean, :extend, :subsequent]
+#   .each_with_index do |phase, i|
+#     PHASES[phase] = i
+#   end
+#
+# def run_phase phase,&block
+#   return if errors.any?
+#   @phase = phase
+#   @subphase = :before
+#   if block_given?
+#     block.call
+#   else
+#     run_callbacks phase
+#   end
+#   @subphase = :after
+#   #run_phase_on_subcards phase
+# rescue => e
+#   rescue_event e
+# end
+#
+# def run_phase_on_subcards phase
+#   subcards.each do |subcard|
+#     subcard.run_callbacks phase
+#   end
+# end
 
 def phase
   @phase || (@supercard && @supercard.phase)
@@ -88,53 +88,53 @@ def subphase
   @subphase || (@supercard && @supercard.subphase)
 end
 
-def prepare
-  @action = old_identify_action
-  # the following should really happen when type, name etc are changed
-  reset_patterns
-  include_set_modules
-  run_phase :prepare
-rescue => e
-  rescue_event e
-end
-
-def approve
-  @action ||= old_identify_action
-  run_phase :approve
-  expire_pieces if errors.any?
-  errors.empty?
-rescue => e
-  rescue_event e
-end
-
-def store
-  run_phase :store do
-    run_callbacks :store do
-      yield # unless @draft
-      @virtual = false
-    end
-  end
-  #return if @supercard
-  run_phase :clean do
-    run_callbacks :clean
-  end
-rescue => e
-  rescue_event e
-ensure
-  @from_trash = nil
-end
-
-def extend
-  run_phase :extend     # deprecated
-  run_phase :subsequent # deprecated
-  #return if @supercard
-  #run_phase :finish
-  #run_phase :followup
-rescue => e
-  rescue_event e
-ensure
-  @action = nil
-end
+# def prepare
+#   @action = old_identify_action
+#   # the following should really happen when type, name etc are changed
+#   reset_patterns
+#   include_set_modules
+#   run_phase :prepare
+# rescue => e
+#   rescue_event e
+# end
+#
+# def approve
+#   @action ||= old_identify_action
+#   run_phase :approve
+#   expire_pieces if errors.any?
+#   errors.empty?
+# rescue => e
+#   rescue_event e
+# end
+#
+# def store
+#   run_phase :store do
+#     run_callbacks :store do
+#       yield # unless @draft
+#       @virtual = false
+#     end
+#   end
+#   #return if @supercard
+#   run_phase :clean do
+#     run_callbacks :clean
+#   end
+# rescue => e
+#   rescue_event e
+# ensure
+#   @from_trash = nil
+# end
+#
+# def extend
+#   run_phase :extend     # deprecated
+#   run_phase :subsequent # deprecated
+#   #return if @supercard
+#   #run_phase :finish
+#   #run_phase :followup
+# rescue => e
+#   rescue_event e
+# ensure
+#   @action = nil
+# end
 
 
 def rescue_event e
@@ -146,13 +146,13 @@ def rescue_event e
   # false
 end
 
-def old_identify_action # TODO: remove we
-  case
-  when trash     then :delete
-  when new_card? then :create
-  else :update
-  end
-end
+# def old_identify_action # TODO: remove we
+#   case
+#   when trash     then :delete
+#   when new_card? then :create
+#   else :update
+#   end
+# end
 
 def phase_ok? opts
   phase && (
@@ -236,26 +236,34 @@ def success
   Env.success(cardname)
 end
 
-
 def prepare_for_phases
   identify_action
   reset_patterns
   include_set_modules
 end
 
+def run_phase?
+  director.main?
+end
+
 def validation_phase
   # TODO: try to use Card.current_act as condition in callback definition
-  return true if Card.current_director # act handles validation of other cards
-  Card.new_director(self).validation_phase
+  return true unless run_phase?
+  #return true if Card.current_director # act handles validation of other cards
+  director.validation_phase
 end
 
 def storage_phase &block
-  return true unless director.main?
-  Card.current_director.storage_phase &block
+  return true unless run_phase?
+  director.storage_phase &block
 end
 
 def integration_phase
-  return true unless director.main?
-  Card.current_director.integration_phase
-  Card.current_director = nil
+  return true unless run_phase?
+  director.integration_phase
+end
+
+def clean_up
+  return true unless run_phase?
+  Card.clean_up_act
 end

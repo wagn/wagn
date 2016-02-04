@@ -141,6 +141,7 @@ class Card
       Auth.as_bot do
         moc = machine_output_card and moc.real? and moc.delete!
         #mic = machine_input_card  and mic.real? and mic.delete!
+        require 'pry'
         update_input_card
       end
     end

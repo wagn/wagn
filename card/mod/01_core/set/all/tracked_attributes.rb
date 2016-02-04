@@ -130,7 +130,7 @@ event :expire_related, :finalize do
   subcards.keys.each do |key|
     #Card.cache.soft.delete key
   end
-  #expire #true  # FIXME: where do we put this. Here it deletes @stage
+  expire #true  # FIXME: where do we put this. Here it deletes @stage
   reset_patterns
   if is_structure?
     structuree_names.each do |name|

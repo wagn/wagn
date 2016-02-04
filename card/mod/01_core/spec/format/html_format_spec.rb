@@ -11,9 +11,8 @@ describe Card::HtmlFormat do
 
 
     it "inclusions in multi edit" do
-      binding.pry
       c = Card.new name: 'ABook', type: 'Book'
-      rendered =  c.format.render( :edit )
+      rendered = c.format.render( :edit )
 
       assert_view_select rendered, 'fieldset' do
         assert_select 'textarea[name=?][class~="tinymce-textarea card-content"]', 'card[subcards][+illustrator][content]'
@@ -31,18 +30,18 @@ describe Card::HtmlFormat do
     end
 
     context "Cards with special views" do
-
     end
 
     context "Simple page with Default Layout" do
       before do
+        ca = Card.new name: 'ABook', type: 'Book'
+        rendered =  ca.format.render( :edit )
         Card::Auth.as_bot do
           card = Card['A+B']
           @simple_page = card.format.render(:layout)
           #warn "render sp: #{card.inspect} :: #{@simple_page}"
         end
       end
-
 
       it "renders top menu" do
         assert_view_select @simple_page, 'header' do
@@ -133,8 +132,5 @@ describe Card::HtmlFormat do
         expect(@layout_card.format.render(:layout)).to eq(%{Joe User\n<div class="modal fade" role="dialog" id="modal-main-slot"><div class="modal-dialog"><div class="modal-content"></div></div></div>})
       end
     end
-
-
   end
-
 end

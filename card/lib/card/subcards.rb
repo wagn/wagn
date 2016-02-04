@@ -115,6 +115,8 @@ class Card
 
     def rename old_name, new_name
       return unless @keys.include? old_name.to_name.key
+      # FIXME: something should happen here
+
     end
 
     def << value

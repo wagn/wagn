@@ -31,12 +31,9 @@ def identify_action
 end
 
 def initialize_act
-  return true if Card.current_act # act handles validation of other cards
   identify_action
   reset_patterns
   include_set_modules
-  current_act = Card::Act.new(self, @action)
-  current_act.run
 end
 
 def current_act= act

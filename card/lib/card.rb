@@ -42,7 +42,7 @@ class Card < ActiveRecord::Base
 
   cattr_accessor :set_patterns, :serializable_attributes, :error_codes,
                  :set_specific_attributes, :current_act,
-                 :current_director, :directors
+                 :current_director, :current_act_card, :directors
   @@set_patterns = []
   @@error_codes = {}
 
@@ -72,6 +72,8 @@ class Card < ActiveRecord::Base
   before_validation :validation_phase, unless: :skip_phases
   around_save :storage_phase, unless: :skip_phases
   after_save :integration_phase, unless: :skip_phases
+  after_commit :clean_up, unless: :skip_phases
+  after_rollback :clean_up, unless: :skip_phases
 
   #before_validation :prepare
   #before_validation :approve

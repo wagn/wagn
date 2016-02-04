@@ -14,7 +14,9 @@ end
 #   assign_action
 # end
 #
-event :assign_action do
+event :assign_action, :initialize,
+      when: proc { |c| c.history? || c.respond_to?(:attachment) } do
+  @current_act = director.need_act
   @current_action = Card::Action.create(
     card_act_id: @current_act.id,
     action_type: @action,
@@ -25,6 +27,9 @@ event :assign_action do
     @current_action.super_action = @supercard.current_action
   end
 end
+
+
+
 
 def finalize_action?
   (history? || respond_to?(:attachment)) && current_action

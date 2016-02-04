@@ -230,9 +230,7 @@ class Card
     def define_event_method event, call_method, _opts
       class_eval do
         define_method event do
-            puts "#{event}"
-                     .red
-
+          #puts "#{name}: ##############{event}"
           run_callbacks event do
             send call_method
           end
@@ -248,7 +246,7 @@ class Card
     # @param name [String] the name for the ActiveJob child class
     # @param final_method [String] the name of the card instance method to be
     #   queued
-    # @option queue [Symbol] (:default) the name of the queue
+    # @option queue [Symbol] (:default) the name of the queue8
     def define_active_job name, final_method, queue=:default
       class_name = name.to_s.camelize
       eval %{

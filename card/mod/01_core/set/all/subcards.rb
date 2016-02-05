@@ -44,7 +44,7 @@ def unfilled?
 end
 
 def with_id_when_exists card, &block
-  @director.call_after_store card, &block
+  card.director.call_after_store &block
 end
 
 event :handle_subcard_errors do
@@ -90,7 +90,6 @@ def write_card_or_id attribute, card_or_id
       with_id_when_exists(card) do |id|
         write_attribute attribute, id
       end
-
     end
   else
     write_attribute attribute, card_or_id

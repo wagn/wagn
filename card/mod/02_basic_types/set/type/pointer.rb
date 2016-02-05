@@ -12,16 +12,16 @@ event :insert_item_event, :prepare_to_validate, on: :save, when: proc {|c| Env.p
   self.insert_item index.to_i, Env.params['insert_item']
 end
 
-phase_method :changed_item_names do
+stage_method :changed_item_names do
   dropped_item_names + added_item_names
 end
 
-phase_method :dropped_item_names do
+stage_method :dropped_item_names do
   old_items = item_names content: db_content_was
   old_items - item_names
 end
 
-phase_method :added_item_names do
+stage_method :added_item_names do
   old_items = item_names content: db_content_was
   item_names - old_items
 end

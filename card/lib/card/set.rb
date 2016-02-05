@@ -185,16 +185,16 @@ class Card
       set_event_callbacks event, opts
     end
 
-    def phase_method method, opts={}, &block
+    def stage_method method, opts={}, &block
       class_eval do
         define_method "_#{method}", &block
         define_method method do |*args|
           error =
-            if !phase_ok? opts
-              if !phase
+            if !director.stage_ok? opts
+              if !stage
                 "phase method #{method} called outside of event phases"
               else
-                "#{opts.inspect} method #{method} called in phase #{phase}"
+                "#{opts.inspect} method #{method} called in phase #{stage}"
               end
             elsif !on_condition_applies?(opts[:on])
               "on: #{opts[:on]} method #{method} called on #{@action}"

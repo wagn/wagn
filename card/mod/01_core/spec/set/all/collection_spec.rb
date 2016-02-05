@@ -52,7 +52,7 @@ describe Card::Set::All::Collection do
       expect(c.contextual_content( context_card )).to eq("AlphaBeta")
     end
 
-    it "returns content even when context card is hard templated" do #why the heck is this good?  -efm
+    it "returns contesnt even when context card is hard templated" do #why the heck is this good?  -efm
       context_card = Card["A"] # refers to 'Z'
 
       Card::Auth.as_bot do

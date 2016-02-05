@@ -20,7 +20,6 @@ describe Card::Set::All::Fetch do
       Card::Auth.as_bot do
         card_double = class_double('Card')
         Card.fetch('A').delete!
-        binding.pry
         expect(Card.fetch('A')).to be_nil
         expect(card_double).not_to receive(:find_by_key_and_trash)
         expect(Card.fetch('A')).to be_nil
@@ -53,7 +52,6 @@ describe Card::Set::All::Fetch do
     it 'fetches newly virtual cards' do
       expect(Card.fetch('A+virtual')).to be_nil
       Card::Auth.as_bot { Card.create name: 'virtual+*right+*structure' }
-      binding.pry
       expect(Card.fetch('A+virtual')).not_to be_nil
     end
 

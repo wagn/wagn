@@ -10,6 +10,28 @@
 #            it causes the entire action to abort (not just the subcard)
 
 
+def self.create! opts
+  card = Card.new opts
+  card.act do
+    card.save!
+  end
+  card
+end
+
+def self.create opts
+  card = Card.new opts
+  card.act do
+    card.save
+  end
+  card
+end
+
+def update_attributes opts
+  act do
+    super opts
+  end
+end
+
 
 def abort status, msg='action canceled'
   if status == :failure && errors.empty?
@@ -81,7 +103,7 @@ end
 # end
 
 def phase
-  @phase || (@supercard && @supercard.phase)
+  director.stage || (@supercard && @supercard.phase)
 end
 
 def subphase
@@ -146,37 +168,6 @@ def rescue_event e
   # false
 end
 
-# def old_identify_action # TODO: remove we
-#   case
-#   when trash     then :delete
-#   when new_card? then :create
-#   else :update
-#   end
-# end
-
-def phase_ok? opts
-  phase && (
-    (opts[:during] && in?(opts[:during])) ||
-    (opts[:before] && before?(opts[:before])) ||
-    (opts[:after]  && after?(opts[:after])) ||
-    true # no phase restriction in opts
-  )
-end
-
-def before? allowed_phase
-  PHASES[allowed_phase] > PHASES[phase] ||
-    (PHASES[allowed_phase] == PHASES[phase] && subphase == :before)
-end
-
-def after? allowed_phase
-  PHASES[allowed_phase] < PHASES[phase] ||
-    (PHASES[allowed_phase] == PHASES[phase] && subphase == :after)
-end
-
-def in? allowed_phase
-  (allowed_phase.is_a?(Array) && allowed_phase.include?(phase)) ||
-    allowed_phase == phase
-end
 
 event :notable_exception_raised do
   Rails.logger.debug "BT:  #{Card::Error.current.backtrace * "\n  "}"
@@ -249,12 +240,10 @@ end
 def validation_phase
   # TODO: try to use Card.current_act as condition in callback definition
   return true unless run_phase?
-  #return true if Card.current_director # act handles validation of other cards
   director.validation_phase
 end
 
 def storage_phase &block
-  return true unless run_phase?
   director.storage_phase &block
 end
 

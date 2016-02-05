@@ -70,7 +70,7 @@ class Card < ActiveRecord::Base
                    :integrate_stage, :integrate_with_delay_stage
 
   before_validation :validation_phase, unless: :skip_phases
-  around_save :storage_phase, unless: :skip_phases
+  around_save :storage_phase
   after_save :integration_phase, unless: :skip_phases
   after_commit :clean_up, unless: :skip_phases
   after_rollback :clean_up, unless: :skip_phases

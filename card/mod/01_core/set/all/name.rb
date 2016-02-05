@@ -20,9 +20,7 @@ end
 
 def name= newname
   cardname = newname.to_name
-  #binding.pry
   if @supercard
-    binding.pry
     @supercard.subcards.rename key, cardname.key
     @contextual_name = cardname.to_s
     relparts = cardname.parts

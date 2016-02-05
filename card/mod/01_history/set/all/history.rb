@@ -28,9 +28,6 @@ event :assign_action, :initialize,
   end
 end
 
-
-
-
 def finalize_action?
   (history? || respond_to?(:attachment)) && current_action
 end

@@ -25,44 +25,73 @@ def replace_references old_name, new_name
   obj_content.to_s
 end
 
-# update entries in reference table
-def update_references rendered_content=nil
-  raise 'update references should not be called on new cards' if id.nil?
+# delete current references where applicable,
+# interpret references from content and
+# insert entries in reference table
+def update_references
+  fail 'update references should not be called on new cards' if id.nil?
 
-  Card::Reference.delete_all_from self unless self.new_card?
+  Card::Reference.delete_all_from self unless new_card?
+  ref_hash = {}
+  content_object = Card::Content.new(raw_content, self)
+  content_object.find_chunks(Card::Chunk::Reference).each do |chunk|
+    interpret_reference ref_hash, chunk.referee_name, chunk.reference_code
+  end
+  create_references_from_hash ref_hash
+end
 
-  rendered_content ||= Card::Content.new raw_content, self
-  rendered_content.find_chunks(Card::Chunk::Reference).each do |chunk|
-    create_reference_to chunk
+# interpretation phase helps to prevent duplicate references
+# results in hash like:
+# { referee1_key: [referee1_id, referee1_type1, referee1_type2],
+#   referee2_key...
+# }
+def interpret_reference ref_hash, referee_name, ref_type
+  return unless referee_name # eg commented nest has no referee_name
+  referee_key = (referee_name = referee_name.to_name).key
+  return if referee_key == key # don't create self reference
+
+  referee_id = Card.fetch_id(referee_name)
+  ref_hash[referee_key] ||= [referee_id]
+  ref_hash[referee_key] << ref_type
+
+  return if referee_id
+  # Partial references are needed to track references to virtual cards.
+  # For example a link to virual card [[A+*self]] won't have a referee_id,
+  # but when A's name is changed we have to find and update that link.
+  [referee_name.left, referee_name.right].each do |sidename|
+    interpret_reference ref_hash, sidename, PARTIAL_REF_CODE
   end
 end
 
-def create_reference_to chunk
-  referee_name = chunk.referee_name
-  return false unless referee_name # eg no commented nest
-
-  referee_name.piece_names.each do |name|
-    next if name.key == key # don't create self reference
-
-    # reference types:
-    # L = link
-    # I = inclusion
-    # P = partial (i.e. the name is part of a compound name that is
-    #  referenced by a link or inclusion)
-
-    # The partial type is needed to keep track of references of virtual cards.
-    # For example a link [[A+*self]] won't make it to the reference table
-    # because A+*self is virtual and doesn't have an id but when A's name is
-    # changed we have to find and update that link.
-    ref_type = name != referee_name ? PARTIAL_REF_CODE : chunk.reference_code
-    Card::Reference.create!(
-      referer_id:  id,
-      referee_id:  Card.fetch_id(name),
-      referee_key: name.key,
-      ref_type:    ref_type,
-      present:     1
-    )
+# translate hash into values array, removing duplicate and unnecessary
+# ref_types, and create with values_array
+def create_references_from_hash ref_hash
+  values = []
+  ref_hash.each do |referee_key, hash_val|
+    referee_id = hash_val.shift
+    ref_types = hash_val.uniq
+    if ref_types.size > 1
+      # partial references are not necessary if there are explicit references
+      ref_types.delete PARTIAL_REF_CODE
+    end
+    ref_types.each do |ref_type|
+      values << [id, referee_id, "'#{referee_key}'", "'#{ref_type}'"]
+    end
   end
+  create_references_from_array values
+end
+
+# array takes form [ [referer_id, referee_id, referee_key, ref_type], ...]
+def create_references_from_array array
+  return if array.empty?
+  value_statements = array.map do |values|
+    "\n(#{values.join ', '})"
+  end
+  sql = 'INSERT into card_references '\
+        '(referer_id, referee_id, referee_key, ref_type) '\
+        "VALUES #{value_statements.join ', '}"
+  Card.connection.execute sql
+  # bulk insert improves performance considerably
 end
 
 def referencers
@@ -71,7 +100,7 @@ end
 
 def includers
   references_from.where(ref_type: 'I')
-    .map(&:referer_id).map(&Card.method(:fetch)).compact
+                 .map(&:referer_id).map(&Card.method(:fetch)).compact
 end
 
 def referees
@@ -80,7 +109,7 @@ end
 
 def includees
   references_to.where(ref_type: 'I')
-    .map { |ref| Card.fetch ref.referee_key, new: {} }
+               .map { |ref| Card.fetch ref.referee_key, new: {} }
 end
 
 protected

@@ -87,30 +87,30 @@ describe Card, "type transition approve create" do
   end
 end
 
-
-#describe Card, "type transition validate_delete" do
-#  before do @c = change_card_to_type("type-c-card", :basic) end
+# describe Card, "type transition validate_delete" do
+#   before do @c = change_card_to_type("type-c-card", :basic) end
 #
-#  it "should have errors" do
-#    @c.errors[:delete_error].first.should == "card c is indestructible"
-#  end
+#   it "should have errors" do
+#     @c.errors[:delete_error].first.should == "card c is indestructible"
+#   end
 #
-#  it "should retain original type" do
-#    Card["type_c_card"].type_code.should == :cardtype_c
-#  end
-#end
+#   it "should retain original type" do
+#     Card["type_c_card"].type_code.should == :cardtype_c
+#   end
+# end
 
-describe Card, "type transition validate_create" do
-  before do @c = change_card_to_type("basicname", "cardtype_d") end
+describe Card, 'type transition validate_create' do
+  before do @c = change_card_to_type('basicname', 'cardtype_d') end
 
-  it "should have errors" do
-    pending "CardtypeD does not have a codename, so this is an invalid test"
-    expect(@c.errors[:type].first.match(/card d always has errors/)).to be_truthy
+  it 'should have errors' do
+    pending 'CardtypeD does not have a codename, so this is an invalid test'
+    expect(@c.errors[:type].first.match(/card d always has errors/))
+      .to be_truthy
   end
 
-  it "should retain original type" do
-    pending "CardtypeD does not have a codename, so this is an invalid test"
-    expect(Card["basicname"].type_code).to eq(:basic)
+  it 'should retain original type' do
+    pending 'CardtypeD does not have a codename, so this is an invalid test'
+    expect(Card['basicname'].type_code).to eq(:basic)
   end
 end
 

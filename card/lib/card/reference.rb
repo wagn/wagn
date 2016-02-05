@@ -15,12 +15,12 @@ class Card::Reference < ActiveRecord::Base
     end
 
     def delete_all_to card
-      where(referee_id: card.id).update_all present: 0, referee_id: nil
+      where(referee_id: card.id).update_all referee_id: nil
     end
 
     def update_existing_key card, name=nil
       key = (name || card.name).to_name.key
-      where(referee_key: key).update_all present: 1, referee_id: card.id
+      where(referee_key: key).update_all referee_id: card.id
     end
 
     def update_on_rename card, newname, update_referers=false

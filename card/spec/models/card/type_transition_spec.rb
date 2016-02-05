@@ -4,22 +4,21 @@ class Card
   cattr_accessor :count
 
   module Set::Type
-
     module CardtypeA
       extend Card::Set
 
       def ok_to_delete
-        deny_because("not allowed to delete card a")
+        deny_because 'not allowed to delete card a'
       end
     end
 
-#    module CardtypeC
-#      extend Card::Set
-#    end
+    # module CardtypeC
+    #   extend Card::Set
+    # end
 
     module CardtypeD
       def valid?
-        errors.add :create_error, "card d always has errors"
+        errors.add :create_error, 'card d always has errors'
         errors.empty?
       end
     end
@@ -39,51 +38,51 @@ class Card
   end
 end
 
-describe Card, "with role" do
+describe Card, 'with role' do
   before do
     Card::Auth.as_bot do
       @role = Card.search(type: 'Role')[0]
     end
   end
 
-  it "should have a role type" do
+  it 'should have a role type' do
     expect(@role.type_id).to eq(Card::RoleID)
   end
 end
 
 
 
-describe Card, "with account" do
+describe Card, 'with account' do
   before do
     Card::Auth.as_bot do
       @joe = change_card_to_type('Joe User', :basic)
     end
   end
 
-  it "should not have errors" do
+  it 'should not have errors' do
     expect(@joe.errors.empty?).to eq(true)
   end
 
-  it "should allow type changes" do
+  it 'should allow type changes' do
     expect(@joe.type_code).to eq(:basic)
   end
 
 end
 
-describe Card, "type transition approve create" do
+describe Card, 'type transition approve create' do
   it 'should have cardtype b create role r1' do
     expect((c=Card.fetch('Cardtype B+*type+*create')).content).to eq('[[r1]]')
     expect(c.type_code).to eq(:pointer)
   end
 
-  it "should have errors" do
-    c = change_card_to_type("basicname", "cardtype_b")
+  it 'should have errors' do
+    c = change_card_to_type 'basicname', 'cardtype_b'
     expect(c.errors[:permission_denied]).not_to be_empty
   end
 
-  it "should be the original type" do
-    lambda { change_card_to_type("basicname", "cardtype_b") }
-    expect(Card["basicname"].type_code).to eq(:basic)
+  it 'should be the original type' do
+    lambda { change_card_to_type 'basicname', 'cardtype_b' }
+    expect(Card['basicname'].type_code).to eq(:basic)
   end
 end
 
@@ -100,12 +99,12 @@ end
 # end
 
 describe Card, 'type transition validate_create' do
-  before do @c = change_card_to_type('basicname', 'cardtype_d') end
+  before { @c = change_card_to_type 'basicname', 'cardtype_d' }
 
   it 'should have errors' do
     pending 'CardtypeD does not have a codename, so this is an invalid test'
-    expect(@c.errors[:type].first.match(/card d always has errors/))
-      .to be_truthy
+    msg = /card d always has errors/
+    expect(@c.errors[:type].first.match msg).to be_truthy
   end
 
   it 'should retain original type' do

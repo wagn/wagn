@@ -294,7 +294,7 @@ event :cascade_name_changes, after: :store, on: :update, changed: :name do
   #                   " -------------------------------------"
   # handle strings from cgi
   self.update_referencers = false if update_referencers == 'false'
-  Card::Reference.update_on_rename self, name, self.update_referencers
+  Card::Reference.update_on_rename self, name, update_referencers
 
   des = descendants
   @descendants = nil # reset

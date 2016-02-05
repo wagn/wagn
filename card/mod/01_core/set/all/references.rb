@@ -66,9 +66,10 @@ end
 # translate hash into values array, removing duplicate and unnecessary
 # ref_types, and create with values_array
 def create_references_from_hash ref_hash
+  return if ref_hash.empty?
   values = []
   ref_hash.each do |referee_key, hash_val|
-    referee_id = hash_val.shift
+    referee_id = hash_val.shift || 'null'
     ref_types = hash_val.uniq
     if ref_types.size > 1
       # partial references are not necessary if there are explicit references

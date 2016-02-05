@@ -90,25 +90,29 @@ describe Card::Reference do
   end
 
   it 'should not update references when not requested' do
-    newcard 'watermelon', 'mmmm'
-    newcard 'watermelon+seeds', 'black'
+    watermelon = newcard 'watermelon', 'mmmm'
+    watermelon_seeds = newcard 'watermelon+seeds', 'black'
     lew = newcard('Lew', 'likes [[watermelon]] and [[watermelon+seeds|seeds]]')
 
-    assert_equal [1, 1, 1, 1], lew.references_to.map(&:present),
-                 'links should not be Wanted before'
+    assert_equal [watermelon.id, watermelon_seeds.id],
+                 lew.references_to.map(&:referee_id),
+                 'should store referee ids'
 
     watermelon = Card['watermelon']
     watermelon.update_referencers = false
     watermelon.name = 'grapefruit'
     watermelon.save!
+
     correct_content = 'likes [[watermelon]] and [[watermelon+seeds|seeds]]'
     expect(lew.reload.content).to eq(correct_content)
 
     ref_types = lew.references_to.order(:id).map(&:ref_type)
-    assert_equal ref_types, ['L', 'P', 'P', 'L'], 'links should be a LINK'
-    refs_are_present = lew.references_to.order(:id).map(&:present)
-    assert_equal refs_are_present, [0, 0, 1, 0],
-                 'only reference to +seeds should be present'
+    assert_equal ref_types, %w(L P P L), 'links should be a LINK'
+
+    expected_referee_ids = [nil, nil, Card.fetch_id('seed'), nil]
+    actual_referee_ids = lew.references_to.order(:id).map(&:referee_id)
+    assert_equal expected_referee_ids, actual_referee_ids,
+                 'only partial reference to "seeds" should have referee_id'
   end
 
   it 'update referencing content on rename junction card' do

@@ -6,9 +6,9 @@ def name_referers link_name=nil
   Card.joins(:references_out).where card_references: { referee_key: link_name }
 end
 
-def extended_referencers
+def extended_referers
   # FIXME: .. we really just need a number here.
-  (descendants + [self]).map(&:referencers).flatten.uniq
+  (descendants + [self]).map(&:referers).flatten.uniq
 end
 
 # replace references in card content
@@ -91,7 +91,7 @@ def reference_values_array ref_hash
   values
 end
 
-def referencers
+def referers
   references_in.map(&:referer_id).map(&Card.method(:fetch)).compact
 end
 

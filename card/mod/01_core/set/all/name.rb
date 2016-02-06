@@ -204,7 +204,7 @@ event :validate_name, before: :approve, on: :save do
 
     unless cdname.valid?
       errors.add :name, 'may not contain any of the following characters: ' \
-                        "#{ Card::Name.banned_array * ' ' }"
+                        "#{Card::Name.banned_array * ' '}"
     end
     # this is to protect against using a plus card as a tag
     if cdname.junction? && simple? && id &&
@@ -302,21 +302,21 @@ event :cascade_name_changes, after: :store, on: :update, changed: :name do
     Card::Reference.update_on_rename de, newname, update_referers
     Card.expire newname
   end
-  execute_referencers_update(des) if update_referers
+  execute_referers_update(des) if update_referers
 end
 
-def execute_referencers_update descendants
+def execute_referers_update descendants
   Auth.as_bot do
-    [name_referers(name_was) + descendants.map(&:referencers)]
+    [name_referers(name_was) + descendants.map(&:referers)]
       .flatten.uniq.each do |card|
-      # FIXME:  using 'name_referers' instead of plain 'referencers' for self
+      # FIXME:  using 'name_referers' instead of plain 'referers' for self
       # because there are cases where trunk and tag
       # have already been saved via association by this point and therefore
-      # referencers misses things
+      # referers misses things
       # eg.  X includes Y, and Y is renamed to X+Z.  When X+Z is saved, X is
       # first updated as a trunk before X+Z gets to this point.
       # so at this time X is still including Y, which does not exist.
-      # therefore #referencers doesn't find it, but name_referers(old_name)
+      # therefore #referers doesn't find it, but name_referers(old_name)
       # does.
       # some even more complicated scenario probably breaks on the descendants,
       # so this probably needs a more thoughtful refactor

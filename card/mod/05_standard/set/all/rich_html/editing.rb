@@ -135,7 +135,7 @@ format :html do
   end
 
   def default_edit_name_args args
-    referers = args[:referers] = card.extended_referencers
+    referers = args[:referers] = card.extended_referers
     args[:hidden] ||= {}
     args[:hidden].reverse_merge!(
       success:  '_self',

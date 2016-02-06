@@ -6,7 +6,7 @@ module RenameMethods
       content:     card.content,
       # updater_id:  card.updater_id,
       # revisions:   card.actions.count,
-      referencers: card.referencers.map(&:name).sort,
+      referers: card.referers.map(&:name).sort,
       referees:    card.referees.map(&:name).sort,
       descendants:  card.descendants.map(&:id).sort
     }
@@ -193,7 +193,7 @@ describe Card::Set::All::TrackedAttributes do
       expect(Card['Banana Card']).not_to be_nil
     end
 
-    it 'test_rename_should_not_fail_when_updating_inaccessible_referencer' do
+    it 'test_rename_should_not_fail_when_updating_inaccessible_referer' do
       Card.create! name: 'Joe Card', content: 'Whattup'
       Card::Auth.as 'joe_admin' do
         Card.create! name: 'Admin Card', content: '[[Joe Card]]'
@@ -203,7 +203,7 @@ describe Card::Set::All::TrackedAttributes do
       assert_equal '[[Card of Joe]]', Card['Admin Card'].content
     end
 
-    it 'test_rename_should_update_structured_referencer' do
+    it 'test_rename_should_update_structured_referer' do
       Card::Auth.as_bot do
         c = Card.create! name: 'Pit'
         Card.create! name: 'Orange', type: 'Fruit', content: '[[Pit]]'

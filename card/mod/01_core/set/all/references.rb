@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Cards can refer to other cards in their content, eg via links and nests.
 # The card that refers is the "referer", the card that is referred to is
 # the "referee". The reference itself has its own class (Card::Reference),
@@ -12,8 +14,8 @@ end
 
 # cards that include self
 def includers
-  references_in.where(ref_type: 'I')
-               .map(&:referer_id).map(&Card.method(:fetch)).compact
+  refs = references_in.where(ref_type: 'I')
+  refs.map(&:referer_id).map(&Card.method(:fetch)).compact
 end
 
 # cards that self refers to
@@ -23,8 +25,8 @@ end
 
 # cards that self includes
 def includees
-  references_out.where(ref_type: 'I')
-                .map { |ref| Card.fetch ref.referee_key, new: {} }
+  refs = references_out.where(ref_type: 'I')
+  refs.map { |ref| Card.fetch ref.referee_key, new: {} }
 end
 
 # cards that refer to self by name
@@ -46,8 +48,8 @@ def replace_reference_syntax old_name, new_name
     next unless (old_ref_name = chunk.referee_name)
     next unless (new_ref_name = old_ref_name.replace_part old_name, new_name)
     chunk.referee_name = chunk.replace_reference old_name, new_name
-    Card::Reference.where(referee_key: old_ref_name.key)
-                   .update_all referee_key: new_ref_name.key
+    refs = Card::Reference.where referee_key: old_ref_name.key
+    refs.update_all referee_key: new_ref_name.key
   end
 
   obj_content.to_s
@@ -63,8 +65,8 @@ end
 # insert entries in reference table
 def create_references_out
   ref_hash = {}
-  Card::Content.new(raw_content, self)
-               .find_chunks(Card::Chunk::Reference).each do |chunk|
+  content_obj = Card::Content.new raw_content, self
+  content_obj.find_chunks(Card::Chunk::Reference).each do |chunk|
     interpret_reference ref_hash, chunk.referee_name, chunk.reference_code
   end
   return if ref_hash.empty?

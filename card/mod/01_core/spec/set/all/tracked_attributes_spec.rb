@@ -155,15 +155,9 @@ describe Card::Set::All::TrackedAttributes do
     end
 
     it 'test_update_descendants' do
-      card_list = [
-        Card['One+Two'],
-        Card['One+Two+Three'],
-        Card['Four+One'],
-        Card['Four+One+Five']
-      ]
-
-      old_names = %w{ One+Two One+Two+Three Four+One Four+One+Five }
-      new_names = %w{ Uno+Two Uno+Two+Three Four+Uno Four+Uno+Five }
+      old_names = %w( One+Two One+Two+Three Four+One Four+One+Five )
+      new_names = %w( Uno+Two Uno+Two+Three Four+Uno Four+Uno+Five )
+      card_list = old_names.map { |name| Card[name] }
 
       assert_equal old_names, card_list.map(&:name)
       Card['One'].update_attributes! name: 'Uno'

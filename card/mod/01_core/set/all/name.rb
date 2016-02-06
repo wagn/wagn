@@ -148,11 +148,22 @@ def descendant_names parent_name=nil
   end
 end
 
+# ids of children and children's children
+def descendant_ids parent_id=nil
+  return [] if new_card?
+  parent_id ||= id
+  Auth.as_bot do
+    child_ids = Card.search part: parent_id, return: :id
+    child_descendant_ids = child_ids.map { |cid| descendant_ids cid }
+    (child_ids + child_descendant_ids).flatten.uniq
+  end
+end
+
+# children and children's children
+# NOTE - set modules are not loaded
+# -- should only be used for name manipulations
 def descendants
-  # children and children's children
-  # NOTE - set modules are not loaded
-  # -- should only be used for name manipulations
-  @descendants ||= descendant_names.map { |name| Card.quick_fetch name }
+  @descendants ||= descendant_ids.map { |id| Card.quick_fetch id }
 end
 
 def repair_key
@@ -286,9 +297,6 @@ def suspend_name name
 end
 
 event :cascade_name_changes, after: :store, on: :update, changed: :name do
-  self.update_referers = false if update_referers == 'false'
-  Card::Reference.update_on_rename self, name, update_referers
-
   des = descendants
   @descendants = nil # reset
 
@@ -299,36 +307,8 @@ event :cascade_name_changes, after: :store, on: :update, changed: :name do
     Card.expire de.name # old name
     newname = de.cardname.replace_part name_was, name
     Card.where(id: de.id).update_all name: newname.to_s, key: newname.key
-    Card::Reference.update_on_rename de, newname, update_referers
+    de.update_referers = update_referers
+    de.refresh_references_in
     Card.expire newname
-  end
-  execute_referers_update(des) if update_referers
-end
-
-def execute_referers_update descendants
-  Auth.as_bot do
-    [name_referers(name_was) + descendants.map(&:referers)]
-      .flatten.uniq.each do |card|
-      # FIXME:  using 'name_referers' instead of plain 'referers' for self
-      # because there are cases where trunk and tag
-      # have already been saved via association by this point and therefore
-      # referers misses things
-      # eg.  X includes Y, and Y is renamed to X+Z.  When X+Z is saved, X is
-      # first updated as a trunk before X+Z gets to this point.
-      # so at this time X is still including Y, which does not exist.
-      # therefore #referers doesn't find it, but name_referers(old_name)
-      # does.
-      # some even more complicated scenario probably breaks on the descendants,
-      # so this probably needs a more thoughtful refactor
-      # aligning the dependent saving with the name cascading
-
-      Rails.logger.debug "------------------ UPDATE REFERER #{card.name} " \
-                         '------------------------'
-      unless card == self || card.structure
-        card = card.refresh
-        card.db_content = card.replace_reference_syntax name_was, name
-        card.save!
-      end
-    end
   end
 end

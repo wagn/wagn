@@ -1,14 +1,42 @@
+# Cards can refer to other cards in their content, eg via links and nests.
+# The card that refers is the "referer", the card that is referred to is
+# the "referee". The reference itself has its own class (Card::Reference),
+# which handles id-based reference tracking.
 
-PARTIAL_REF_CODE = 'P'
+PARTIAL_REF_CODE = 'P'.freeze
 
-def name_referers link_name=nil
-  link_name = link_name.nil? ? key : link_name.to_name.key
-  Card.joins(:references_out).where card_references: { referee_key: link_name }
+# cards that refer to self
+def referers
+  references_in.map(&:referer_id).map(&Card.method(:fetch)).compact
 end
 
-def extended_referers
-  # FIXME: .. we really just need a number here.
-  (descendants + [self]).map(&:referers).flatten.uniq
+# cards that include self
+def includers
+  references_in.where(ref_type: 'I')
+               .map(&:referer_id).map(&Card.method(:fetch)).compact
+end
+
+# cards that self refers to
+def referees
+  references_out.map { |ref| Card.fetch ref.referee_key, new: {} }
+end
+
+# cards that self includes
+def includees
+  references_out.where(ref_type: 'I')
+                .map { |ref| Card.fetch ref.referee_key, new: {} }
+end
+
+# cards that refer to self by name
+# (finds cards not yet linked by id)
+def name_referers
+  Card.joins(:references_out).where card_references: { referee_key: key }
+end
+
+# cards that refer to self or any descendant
+def family_referers
+  @family_referers ||= ([self] + descendants).map(&:referers).flatten.uniq
+  # FIXME: could be much more efficient!
 end
 
 # replace references in card content
@@ -19,7 +47,7 @@ def replace_reference_syntax old_name, new_name
     next unless (new_ref_name = old_ref_name.replace_part old_name, new_name)
     chunk.referee_name = chunk.replace_reference old_name, new_name
     Card::Reference.where(referee_key: old_ref_name.key)
-      .update_all referee_key: new_ref_name.key
+                   .update_all referee_key: new_ref_name.key
   end
 
   obj_content.to_s
@@ -35,8 +63,8 @@ end
 # insert entries in reference table
 def create_references_out
   ref_hash = {}
-  content_object = Card::Content.new(raw_content, self)
-  content_object.find_chunks(Card::Chunk::Reference).each do |chunk|
+  Card::Content.new(raw_content, self)
+               .find_chunks(Card::Chunk::Reference).each do |chunk|
     interpret_reference ref_hash, chunk.referee_name, chunk.reference_code
   end
   return if ref_hash.empty?
@@ -91,38 +119,52 @@ def reference_values_array ref_hash
   values
 end
 
-def referers
-  references_in.map(&:referer_id).map(&Card.method(:fetch)).compact
-end
-
-def includers
-  references_in.where(ref_type: 'I')
-               .map(&:referer_id).map(&Card.method(:fetch)).compact
-end
-
-def referees
-  references_out.map { |ref| Card.fetch ref.referee_key, new: {} }
-end
-
-def includees
-  references_out.where(ref_type: 'I')
-                .map { |ref| Card.fetch ref.referee_key, new: {} }
-end
-
 protected
 
-event :refresh_references, after: :store, on: :save, changed: :content do
+# test for updating referer content & preload referer list
+event :prepare_referer_update, before: :approve, on: :update, changed: :name do
+  self.update_referers = ![nil, false, 'false'].member?(update_referers)
+  family_referers
+end
+
+# when name changes, update references to card
+event :refresh_references_in, after: :store, on: :save, changed: :name do
+  Card::Reference.unmap_referees id if @action == :update && !update_referers
+  Card::Reference.map_referees key, id
+end
+
+# when content changes, update references to other cards
+event :refresh_references_out, after: :store, on: :save, changed: :content do
   update_references_out
 end
 
-
-#event :refresh_references
-
-event :refresh_references_on_create, before: :refresh_references, on: :create do
-  Card::Reference.update_referee_key_with_id key, id
+# clean up reference table when card is deleted
+event :clear_references, after: :store, on: :delete do
+  delete_references_out
+  Card::Reference.unmap_referees id
 end
 
-event :refresh_references_on_delete, after: :store, on: :delete do
-  delete_references_out
-  Card::Reference.reset_referee id
+# on rename, update names in cards that refer to self by name (as directed)
+event :update_referer_content,
+      after: :store, on: :update, changed: :name,
+      when: proc { |c| c.update_referers } do
+  # FIXME: break into correct stages
+  Auth.as_bot do
+    family_referers.each do |card|
+      next if card == self || card.structure
+      card = card.refresh
+      card.db_content = card.replace_reference_syntax name_was, name
+      card.save!
+    end
+  end
+end
+
+# on rename, when NOT updating referer content, update references to ensure
+# that partial references are correctly tracked
+# eg.  A links to X+Y.  if X+Y is renamed and we're not updating the link in A,
+# then we need to be sure that A has a partial reference
+event :update_referer_references_out,
+      after: :store, on: :update, changed: :name,
+      when: proc { |c| !c.update_referers } do
+  family_referers.map(&:update_references_out)
 end

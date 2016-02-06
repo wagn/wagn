@@ -107,11 +107,9 @@ describe Card::Reference do
     expect(lew.reload.content).to eq(correct_content)
 
     ref_types = lew.references_out.order(:id).map(&:ref_type)
-    assert_equal ref_types, %w(L P P L), 'links should be a LINK'
-
-    expected_referee_ids = [nil, nil, Card.fetch_id('seed'), nil]
+    assert_equal ref_types, %w(L L P), 'need partial references!'
     actual_referee_ids = lew.references_out.order(:id).map(&:referee_id)
-    assert_equal expected_referee_ids, actual_referee_ids,
+    assert_equal actual_referee_ids, [nil, nil, Card.fetch_id('seed')]
                  'only partial reference to "seeds" should have referee_id'
   end
 

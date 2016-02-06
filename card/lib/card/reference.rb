@@ -15,11 +15,18 @@ class Card
         Card.connection.execute sql
       end
 
-      def reset_referee referee_id
+      # map existing reference to name to card via id
+      def map_referees referee_key, referee_id
+        where(referee_key: referee_key).update_all referee_id: referee_id
+      end
+
+      # references no longer refer to card, so remove id
+      def unmap_referees referee_id
         where(referee_id: referee_id).update_all referee_id: nil
       end
 
-      def reset_referee_if_missing
+      # find all references to missing (eg deleted) cards and reset them
+      def unmap_if_referee_missing
         joins(
           'LEFT JOIN cards ON card_references.referee_id = cards.id'
         ).where(
@@ -27,21 +34,8 @@ class Card
         ).update_all referee_id: nil
       end
 
-      def update_referee_key_with_id referee_key, referee_id
-        where(referee_key: referee_key).update_all referee_id: referee_id
-      end
-
-      def update_on_rename card, newname, update_referers=false
-        if update_referers
-          # not currently needed because references are deleted and re-created
-          # in the process of adding new revision
-        else
-          reset_referee card.id
-        end
-        update_referee_key_with_id newname.to_name.key, card.id
-      end
-
-      def delete_referer_if_missing
+      # remove all references from missing (eg deleted) cards
+      def delete_if_referer_missing
         joins(
           'LEFT JOIN cards ON card_references.referer_id = cards.id'
         ).where(
@@ -53,20 +47,33 @@ class Card
         end
       end
 
+      # repair references one by one (delete, create, delete, create...)
       def repair_all
-        delete_referer_if_missing
+        delete_if_referer_missing
         Card.where(trash: false).find_each do |card|
           Rails.logger.info "updating references from #{card}"
           card.include_set_modules
           card.update_references_out
         end
       end
+
+      # delete all references, then recreate them one by one
+      def recreate_all
+        delete_all
+        Card.where(trash: false).find_each do |card|
+          Rails.logger.info "updating references from #{card}"
+          card.include_set_modules
+          card.create_references_out
+        end
+      end
     end
 
+    # card that refers
     def referer
       Card[referer_id]
     end
 
+    # card that is referred to
     def referee
       Card[referee_id]
     end

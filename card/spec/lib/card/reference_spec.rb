@@ -95,7 +95,7 @@ describe Card::Reference do
     lew = newcard('Lew', 'likes [[watermelon]] and [[watermelon+seeds|seeds]]')
 
     assert_equal [watermelon.id, watermelon_seeds.id],
-                 lew.references_out.map(&:referee_id),
+                 lew.references_out.order(:id).map(&:referee_id),
                  'should store referee ids'
 
     watermelon = Card['watermelon']

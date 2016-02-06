@@ -141,7 +141,7 @@ format :html do
       success:  '_self',
       old_name: card.name,
       referers: referers.size,
-      card:     { update_referencers: false }
+      card:     { update_referers: false }
     )
     args[:optional_toolbar] ||= :show
     args[:buttons] =

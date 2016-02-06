@@ -4,8 +4,8 @@ module ClassMethods
     Card.delete_trashed_files
     Card.where(trash: true).delete_all
     Card::Action.delete_cardless
-    Card::Reference.repair_missing_referees
-    Card::Reference.delete_missing_referers
+    Card::Reference.reset_referee_if_missing
+    Card::Reference.delete_referer_if_missing
     Card.delete_tmp_files_of_cached_uploads
   end
 

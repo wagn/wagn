@@ -118,7 +118,7 @@ describe Card, "rename to trashed name" do
       @a.delete!  #trash
       Rails.logger.info "\n\n~~~~~~~deleted~~~~~~~~\n\n\n"
 
-      @b.update_attributes! name: "A", update_referencers: true
+      @b.update_attributes! name: "A", update_referers: true
     end
   end
 

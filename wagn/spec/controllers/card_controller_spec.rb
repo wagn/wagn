@@ -322,7 +322,7 @@ describe CardController do
         f = Card.create! type: "Cardtype", name: "Apple"
         xhr :post, :update, id: "~#{f.id}", card: {
           name: "Newt",
-          update_referencers: "false",
+          update_referers: "false",
         }
         expect(assigns['card'].errors.empty?).not_to be_nil
         assert_response :success

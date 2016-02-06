@@ -10,7 +10,7 @@ module ClassMethods
     if rename == :old
       # name conflict resolved; original name can be used
       Card[name].update_attributes! name: uniq_name,
-                                    update_referencers: true
+                                    update_referers: true
       name
     else
       uniq_name
@@ -71,39 +71,35 @@ def contextual_name
 end
 
 def relative_name context_name=nil
-  if !context_name && @supercard
-    context_name = @supercard.cardname
-  end
-  cardname.relative_name(context_name)
+  context_name ||= @supercard.cardname if @supercard
+  cardname.relative_name context_name
 end
 
 def absolute_name context_name=nil
-  if !context_name && @supercard
-    context_name = @supercard.cardname
-  end
-  cardname.absolute_name(context_name)
+  context_name ||= @supercard.cardname if @supercard
+  cardname.absolute_name context_name
 end
 
 def left *args
-  return if simple?
-  @superleft || begin
-    unless name_changed? &&
-           name.to_name.trunk_name.key == name_was.to_name.key
-      # prevent recursion when, eg, renaming A+B to A+B+C
-      Card.fetch cardname.left, *args
-    end
+  case
+  when simple?    then nil
+  when @superleft then @superleft
+  when name_changed? && name.to_name.trunk_name.key == name_was.to_name.key
+    nil # prevent recursion when, eg, renaming A+B to A+B+C
+  else
+    Card.fetch cardname.left, *args
   end
 end
 
 def right *args
-  Card.fetch(cardname.right, *args) if !simple?
+  Card.fetch(cardname.right, *args) unless simple?
 end
 
 def [] *args
   case args[0]
   when Fixnum, Range
     fetch_name = Array.wrap(cardname.parts[args[0]]).compact.join '+'
-    Card.fetch(fetch_name, args[1] || {}) if !simple?
+    Card.fetch(fetch_name, args[1] || {}) unless simple?
   else
     super
   end
@@ -290,11 +286,8 @@ def suspend_name name
 end
 
 event :cascade_name_changes, after: :store, on: :update, changed: :name do
-  # Rails.logger.info "------------------- #{name_was} CASCADE #{self.name} " \
-  #                   " -------------------------------------"
-  # handle strings from cgi
-  self.update_referencers = false if update_referencers == 'false'
-  Card::Reference.update_on_rename self, name, update_referencers
+  self.update_referers = false if update_referers == 'false'
+  Card::Reference.update_on_rename self, name, update_referers
 
   des = descendants
   @descendants = nil # reset
@@ -306,24 +299,24 @@ event :cascade_name_changes, after: :store, on: :update, changed: :name do
     Card.expire de.name # old name
     newname = de.cardname.replace_part name_was, name
     Card.where(id: de.id).update_all name: newname.to_s, key: newname.key
-    Card::Reference.update_on_rename de, newname, update_referencers
+    Card::Reference.update_on_rename de, newname, update_referers
     Card.expire newname
   end
-  execute_referencers_update(des) if update_referencers
+  execute_referencers_update(des) if update_referers
 end
 
 def execute_referencers_update descendants
   Auth.as_bot do
-    [name_referencers(name_was) + descendants.map(&:referencers)]
+    [name_referers(name_was) + descendants.map(&:referencers)]
       .flatten.uniq.each do |card|
-      # FIXME:  using 'name_referencers' instead of plain 'referencers' for self
+      # FIXME:  using 'name_referers' instead of plain 'referencers' for self
       # because there are cases where trunk and tag
       # have already been saved via association by this point and therefore
       # referencers misses things
       # eg.  X includes Y, and Y is renamed to X+Z.  When X+Z is saved, X is
       # first updated as a trunk before X+Z gets to this point.
       # so at this time X is still including Y, which does not exist.
-      # therefore #referencers doesn't find it, but name_referencers(old_name)
+      # therefore #referencers doesn't find it, but name_referers(old_name)
       # does.
       # some even more complicated scenario probably breaks on the descendants,
       # so this probably needs a more thoughtful refactor
@@ -333,7 +326,7 @@ def execute_referencers_update descendants
                          '------------------------'
       unless card == self || card.structure
         card = card.refresh
-        card.db_content = card.replace_references name_was, name
+        card.db_content = card.replace_reference_syntax name_was, name
         card.save!
       end
     end

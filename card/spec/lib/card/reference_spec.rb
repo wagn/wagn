@@ -70,7 +70,7 @@ describe Card::Reference do
     lew = newcard('Lew', 'likes [[watermelon]] and [[watermelon+seeds|seeds]]')
 
     watermelon = Card['watermelon']
-    watermelon.update_referencers = true
+    watermelon.update_referers = true
     watermelon.name = 'grapefruit'
     watermelon.save!
     result = 'likes [[grapefruit]] and [[grapefruit+seeds|seeds]]'
@@ -81,7 +81,7 @@ describe Card::Reference do
     card = Card['Administrator Menu+*self+*read']
     old_refs = Card::Reference.where(referee_id: Card::AdministratorID)
 
-    card.update_referencers = true
+    card.update_referers = true
     card.name = 'Administrator Menu+*type+*read'
     card.save
 
@@ -95,36 +95,36 @@ describe Card::Reference do
     lew = newcard('Lew', 'likes [[watermelon]] and [[watermelon+seeds|seeds]]')
 
     assert_equal [watermelon.id, watermelon_seeds.id],
-                 lew.references_to.map(&:referee_id),
+                 lew.references_out.map(&:referee_id),
                  'should store referee ids'
 
     watermelon = Card['watermelon']
-    watermelon.update_referencers = false
+    watermelon.update_referers = false
     watermelon.name = 'grapefruit'
     watermelon.save!
 
     correct_content = 'likes [[watermelon]] and [[watermelon+seeds|seeds]]'
     expect(lew.reload.content).to eq(correct_content)
 
-    ref_types = lew.references_to.order(:id).map(&:ref_type)
+    ref_types = lew.references_out.order(:id).map(&:ref_type)
     assert_equal ref_types, %w(L P P L), 'links should be a LINK'
 
     expected_referee_ids = [nil, nil, Card.fetch_id('seed'), nil]
-    actual_referee_ids = lew.references_to.order(:id).map(&:referee_id)
+    actual_referee_ids = lew.references_out.order(:id).map(&:referee_id)
     assert_equal expected_referee_ids, actual_referee_ids,
                  'only partial reference to "seeds" should have referee_id'
   end
 
   it 'update referencing content on rename junction card' do
     @ab = Card['A+B'] # linked to from X, included by Y
-    @ab.update_attributes! name: 'Peanut+Butter', update_referencers: true
+    @ab.update_attributes! name: 'Peanut+Butter', update_referers: true
     @x = Card['X']
     expect(@x.content).to eq('[[A]] [[Peanut+Butter]] [[T]]')
   end
 
   it 'update referencing content on rename junction card' do
     @ab = Card['A+B'] # linked to from X, included by Y
-    @ab.update_attributes! name: 'Peanut+Butter', update_referencers: false
+    @ab.update_attributes! name: 'Peanut+Butter', update_referers: false
     @x = Card['X']
     expect(@x.content).to eq('[[A]] [[A+B]] [[T]]')
   end
@@ -183,13 +183,13 @@ describe Card::Reference do
 
   it 'handles contextual names in Basic cards' do
     Card.create type: 'Basic', name: 'basic w refs', content: '{{_+A}}'
-    Card['A'].update_attributes! name: 'AAA', update_referencers: true
+    Card['A'].update_attributes! name: 'AAA', update_referers: true
     expect(Card['basic w refs'].content).to eq '{{_+AAA}}'
   end
 
   it 'handles contextual names in Search cards' do
     Card.create type: 'Search', name: 'search w refs', content: '{"name":"_+A"}'
-    Card['A'].update_attributes! name: 'AAA', update_referencers: true
+    Card['A'].update_attributes! name: 'AAA', update_referers: true
     expect(Card['search w refs'].content).to eq '{"name":"_+AAA"}'
   end
 
@@ -210,6 +210,6 @@ describe Card::Reference do
     # no Lewdog card yet...
     @e = Card.new name: 'Lewdog', content: 'grrr'
     # now it's inititated
-    expect(@e.name_referencers.map(&:name).include?('woof')).not_to eq(nil)
+    expect(@e.name_referers.map(&:name).include?('woof')).not_to eq(nil)
   end
 end

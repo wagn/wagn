@@ -16,11 +16,11 @@ class RenamingForMenu < Card::CoreMigration
     renames.each do |oldname, newname|
       puts "updating: #{oldname}"
       c = Card[oldname]
-      c.update_referencers = true
+      c.update_referers = true
       c.name = newname
       c.save!
     end
-    
+
     codenames = %w{
       by_name
       by_update

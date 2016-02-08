@@ -109,7 +109,7 @@ describe Card::Reference do
     ref_types = lew.references_out.order(:id).map(&:ref_type)
     assert_equal ref_types, %w(L L P), 'need partial references!'
     actual_referee_ids = lew.references_out.order(:id).map(&:referee_id)
-    assert_equal actual_referee_ids, [nil, nil, Card.fetch_id('seed')]
+    assert_equal actual_referee_ids, [nil, nil, Card.fetch_id('seed')],
                  'only partial reference to "seeds" should have referee_id'
   end
 
@@ -172,7 +172,7 @@ describe Card::Reference do
       name: 'search with references',
       content: '{"name":"X", "right_plus":["Y",{"content":["in","A","B"]}]}'
     )
-    y_referers = Card['Y'].referers.map &:name
+    y_referers = Card['Y'].referers.map(&:name)
     expect(y_referers).to include('search with references')
 
     search_referees = Card['search with references'].referees.map(&:name).sort

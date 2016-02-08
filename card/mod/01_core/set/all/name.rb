@@ -137,17 +137,6 @@ def child_names parent_name=nil, side=nil
               "(#{side}) children of #{parent_name}")
 end
 
-def descendant_names parent_name=nil
-  return [] if new_card?
-  parent_name ||= name
-  Auth.as_bot do
-    deps = child_names parent_name
-    deps.inject(deps) do |array, childname|
-      array + descendant_names(childname)
-    end
-  end
-end
-
 # ids of children and children's children
 def descendant_ids parent_id=nil
   return [] if new_card?

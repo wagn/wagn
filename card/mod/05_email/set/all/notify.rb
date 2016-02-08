@@ -73,7 +73,7 @@ def notable_change?
 end
 
 event :notify_followers_after_save,
-      after: :subsequent, on: :save, when: proc { |ca| ca.notable_change? } do
+      after: :extend, on: :save, when: proc { |ca| ca.notable_change? } do
   notify_followers
 end
 

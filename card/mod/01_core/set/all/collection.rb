@@ -26,7 +26,7 @@ module ClassMethods
     if block_given?
       super(options) do |records|
         yield(records)
-        Card::Cache.reset_all
+        Card::Cache.reset_soft
       end
     else
       super(options)

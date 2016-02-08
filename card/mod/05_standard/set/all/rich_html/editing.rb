@@ -30,20 +30,23 @@ format :html do
       # name is ready and will show up in title
       hidden[:card][:name] ||= card.name
     else
-      # name is not ready; need generic title
-      args[:title] ||= if card.type_id == Card.default_type_id
-                         'New'
-                       else
-                         "New #{card.type_name}"
-                       end
+      args[:title] ||= generic_new_card_title
       # FIXME: - overrides nest args
       unless card.rule_card :autoname
         # prompt for name
-        hidden[:name_prompt] = true unless hidden.has_key? :name_prompt
+        hidden[:name_prompt] = true unless hidden.key? :name_prompt
         args[:optional_name_formgroup] ||= :show
       end
     end
     args[:optional_name_formgroup] ||= :hide
+  end
+
+  def generic_new_card_title
+    if card.type_id == Card.default_type_id
+      "New #{card.type_name}"
+    else
+      'New'
+    end
   end
 
   def default_new_args_for_type_field args
@@ -63,11 +66,10 @@ format :html do
 
   def default_new_args_buttons args
     cancel_path = !main? && path(view: :missing)
-    args[:buttons] ||= %{
-      #{submit_button class: 'create-submit-button'}
-      #{cancel_button class: 'create-cancel-button',
-                      href: cancel_path}
-    }
+    args[:buttons] ||= [
+      submit_button(class: 'create-submit-button'),
+      cancel_button(class: 'create-cancel-button', href: cancel_path)
+    ].join "\n"
   end
 
   view :edit, perms: :update, tags: :unknown_ok do |args|
@@ -110,49 +112,45 @@ format :html do
     if referers.any? || descendants.any?
       msg << rename_info(referers, descendants)
     end
-    alert 'warning' do
-      msg
-    end
+    alert('warning') { msg }
   end
 
   def rename_info referers, descendants
-    msg = '<h6>This change will...</h6>'
-    msg << '<ul>'
-    if descendants.any?
-      msg << "<li>automatically alter #{descendants.size} related name(s)." \
-             '</li>'
+    effects = []
+    options = ''
+    if descendants.any? # FIXME: count, don't instantiate
+      effects << "automatically alter #{descendants.size} related name(s)."
     end
-    if referers.any?
-      msg << "<li>affect at least #{referers.size} reference(s) to " \
-             "\"#{card.name}\".</li>"
+    if referers.any? # FIXME: count, don't instantiate
+      count = referers.size
+      refs = count == 1 ? 'reference' : 'references'
+      effects << "affect at least #{count} #{refs} to \"#{card.name}\""
+      options = 'You may choose to <em>update or ignore</em> the referers.'
     end
-    msg << '</ul>'
-    if referers.any?
-      msg << '<p>You may choose to <em>update or ignore</em> the references.' \
-             '</p>'
-    end
-    msg
+    effects = effects.map { |effect| "<li>#{effect}</li>" }
+    "<h6>This change will...</h6><ul>#{effects}</ul><p>#{options}</p>"
   end
 
   def default_edit_name_args args
-    referers = args[:referers] = card.extended_referencers
+    referers = args[:referers] = card.family_referers
     args[:hidden] ||= {}
     args[:hidden].reverse_merge!(
       success:  '_self',
       old_name: card.name,
-      referers: referers.size,
-      card:     { update_referencers: false }
+      referers: referers.size, # FIXME: count, don't instantiate
+      card:     { update_referers: false }
     )
     args[:optional_toolbar] ||= :show
-    args[:buttons] =
-      %{
-        #{submit_button text: 'Rename and Update', disable_with: 'Renaming',
-                        class: 'renamer-updater'}
-        #{button_tag 'Rename',
-                     data: { disable_with: 'Renaming' },
-                     class: 'renamer'}
-        #{cancel_button href: path}
-      }
+    args[:buttons] = default_rename_buttons
+  end
+
+  def default_rename_buttons
+    [submit_button(text: 'Rename and Update',
+                   disable_with: 'Renaming',
+                   class: 'renamer-updater'),
+     button_tag('Rename', data: { disable_with: 'Renaming' }, class: 'renamer'),
+     cancel_button(href: path)
+    ].join "\n"
   end
 
   view :edit_type, perms: :update do |args|
@@ -170,10 +168,9 @@ format :html do
     args[:variety] = :edit # YUCK!
     args[:optional_toolbar] ||= :show
     args[:hidden] ||= { success: { view: :edit } }
-    args[:buttons] = %{
-      #{submit_button}
-      #{cancel_button href: path(view: :edit)}
-    }
+    args[:buttons] = [
+      submit_button, cancel_button(href: path(view: :edit))
+    ].join "\n"
   end
 
   view :edit_rules, tags: :unknown_ok do |args|

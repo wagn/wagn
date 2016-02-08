@@ -1,72 +1,84 @@
 # -*- encoding : utf-8 -*-
 
-class Card::Reference < ActiveRecord::Base
-  def referencer
-    Card[referer_id]
-  end
-
-  def referencee
-    Card[referee_id]
-  end
-
-  class << self
-    def delete_all_from card
-      delete_all referer_id: card.id
-    end
-
-    def delete_all_to card
-      where(referee_id: card.id).update_all present: 0, referee_id: nil
-    end
-
-    def update_existing_key card, name=nil
-      key = (name || card.name).to_name.key
-      where(referee_key: key).update_all present: 1, referee_id: card.id
-    end
-
-    def update_on_rename card, newname, update_referers=false
-      if update_referers
-        # not currently needed because references are deleted and re-created
-        # in the process of adding new revision
-        # where referee_id: card.id).update_all referee_key: newname.to_name.key
-      else
-        delete_all_to card
+class Card
+  # a Reference is a directional relationship from one card (the referer)
+  # to another (the referee).
+  class Reference < ActiveRecord::Base
+    class << self
+      # bulk insert improves performance considerably
+      # array takes form [ [referer_id, referee_id, referee_key, ref_type], ...]
+      def mass_insert array
+        return if array.empty?
+        value_statements = array.map { |values| "\n(#{values.join ', '})" }
+        sql = 'INSERT into card_references '\
+              '(referer_id, referee_id, referee_key, ref_type) '\
+              "VALUES #{value_statements.join ', '}"
+        Card.connection.execute sql
       end
-      update_existing_key card, newname
-    end
 
-    def update_on_delete card
-      delete_all_from card
-      delete_all_to card
-    end
+      # map existing reference to name to card via id
+      def map_referees referee_key, referee_id
+        where(referee_key: referee_key).update_all referee_id: referee_id
+      end
 
-    def repair_missing_referees
-      joins(
-        'LEFT JOIN cards ON card_references.referee_id = cards.id'
-      ).where(
-        '(cards.id IS NULL OR cards.trash IS TRUE) AND referee_id IS NOT NULL'
-      ).update_all referee_id: nil
-    end
+      # references no longer refer to card, so remove id
+      def unmap_referees referee_id
+        where(referee_id: referee_id).update_all referee_id: nil
+      end
 
-    def delete_missing_referers
-      joins(
-        'LEFT JOIN cards ON card_references.referer_id = cards.id'
-      ).where(
-        'cards.id IS NULL'
-      ).find_in_batches do |group|
-        # used to be .delete_all here, but that was failing on large dbs
-        puts 'deleting batch of references'
-        where("id in (#{group.map(&:id).join ','})").delete_all
+      # find all references to missing (eg deleted) cards and reset them
+      def unmap_if_referee_missing
+        joins(
+          'LEFT JOIN cards ON card_references.referee_id = cards.id'
+        ).where(
+          '(cards.id IS NULL OR cards.trash IS TRUE) AND referee_id IS NOT NULL'
+        ).update_all referee_id: nil
+      end
+
+      # remove all references from missing (eg deleted) cards
+      def delete_if_referer_missing
+        joins(
+          'LEFT JOIN cards ON card_references.referer_id = cards.id'
+        ).where(
+          'cards.id IS NULL'
+        ).find_in_batches do |group|
+          # used to be .delete_all here, but that was failing on large dbs
+          puts 'deleting batch of references'
+          where("id in (#{group.map(&:id).join ','})").delete_all
+        end
+      end
+
+      # repair references one by one (delete, create, delete, create...)
+      # slower, but better than #repair_all for use on running sites
+      def repair_all
+        delete_if_referer_missing
+        Card.where(trash: false).find_each do |card|
+          Rails.logger.info "updating references from #{card}"
+          card.include_set_modules
+          card.update_references_out
+        end
+      end
+
+      # delete all references, then recreate them one by one
+      # faster than #repair_all, but not recommended for use on running sites
+      def recreate_all
+        delete_all
+        Card.where(trash: false).find_each do |card|
+          Rails.logger.info "updating references from #{card}"
+          card.include_set_modules
+          card.create_references_out
+        end
       end
     end
 
-    def repair_all
-      delete_missing_referers
+    # card that refers
+    def referer
+      Card[referer_id]
+    end
 
-      Card.where(trash: false).find_each do |card|
-        Rails.logger.info "Repairing references for '#{card.name}'" \
-                          "(id: #{card.id}) ... "
-        card.update_references
-      end
+    # card that is referred to
+    def referee
+      Card[referee_id]
     end
   end
 end

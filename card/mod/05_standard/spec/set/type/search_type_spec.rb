@@ -44,7 +44,7 @@ describe Card::Set::Type::SearchType do
     end
 
     it 'updates query if referee changed' do
-      Card['Y'].update_attributes! name: 'YYY', update_referencers: true
+      Card['Y'].update_attributes! name: 'YYY', update_referers: true
       expect(subject.content).to eq '{"name":"YYY"}'
     end
 

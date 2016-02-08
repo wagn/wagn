@@ -14,7 +14,7 @@ event :update_structurees_references,
       when: proc { |c| c.db_content_changed? || c.action == :delete } do
   return unless (statement = structuree_statement)
   Auth.as_bot do
-    Card::Query.run(statement).each(&:update_references)
+    Card::Query.run(statement).each(&:update_references_out)
   end
 end
 

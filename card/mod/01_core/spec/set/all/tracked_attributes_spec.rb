@@ -6,7 +6,7 @@ module RenameMethods
       content:     card.content,
       # updater_id:  card.updater_id,
       # revisions:   card.actions.count,
-      referencers: card.referencers.map(&:name).sort,
+      referers: card.referers.map(&:name).sort,
       referees:    card.referees.map(&:name).sort,
       descendants:  card.descendants.map(&:id).sort
     }
@@ -16,7 +16,7 @@ module RenameMethods
     attrs_before = name_invariant_attributes(card)
     actions_count_before = card.actions.count
     card.name = new_name
-    card.update_referencers = true
+    card.update_referers = true
     card.save!
     expect(card.actions.count).to eq(actions_count_before + 1)
     assert_equal attrs_before, name_invariant_attributes(card)
@@ -119,13 +119,13 @@ describe Card::Set::All::TrackedAttributes do
       c = Card['Menu']
       c.name = 'manure'
       c.save!
-      expect(Card['manure'].references_from.size).to eq(0)
+      expect(Card['manure'].references_in.size).to eq(0)
     end
 
     it 'picks up new references' do
       Card.create name: 'kinds of poop', content: '[[manure]]'
       assert_rename Card['Menu'], 'manure'
-      expect(Card['manure'].references_from.size).to eq(2)
+      expect(Card['manure'].references_in.size).to eq(2)
     end
 
     it 'handles name variants' do
@@ -155,15 +155,9 @@ describe Card::Set::All::TrackedAttributes do
     end
 
     it 'test_update_descendants' do
-      card_list = [
-        Card['One+Two'],
-        Card['One+Two+Three'],
-        Card['Four+One'],
-        Card['Four+One+Five']
-      ]
-
-      old_names = %w{ One+Two One+Two+Three Four+One Four+One+Five }
-      new_names = %w{ Uno+Two Uno+Two+Three Four+Uno Four+Uno+Five }
+      old_names = %w( One+Two One+Two+Three Four+One Four+One+Five )
+      new_names = %w( Uno+Two Uno+Two+Three Four+Uno Four+Uno+Five )
+      card_list = old_names.map { |name| Card[name] }
 
       assert_equal old_names, card_list.map(&:name)
       Card['One'].update_attributes! name: 'Uno'
@@ -193,24 +187,24 @@ describe Card::Set::All::TrackedAttributes do
       expect(Card['Banana Card']).not_to be_nil
     end
 
-    it 'test_rename_should_not_fail_when_updating_inaccessible_referencer' do
+    it 'test_rename_should_not_fail_when_updating_inaccessible_referer' do
       Card.create! name: 'Joe Card', content: 'Whattup'
       Card::Auth.as 'joe_admin' do
         Card.create! name: 'Admin Card', content: '[[Joe Card]]'
       end
       c = Card['Joe Card']
-      c.update_attributes! name: 'Card of Joe', update_referencers: true
+      c.update_attributes! name: 'Card of Joe', update_referers: true
       assert_equal '[[Card of Joe]]', Card['Admin Card'].content
     end
 
-    it 'test_rename_should_update_structured_referencer' do
+    it 'test_rename_should_update_structured_referer' do
       Card::Auth.as_bot do
         c = Card.create! name: 'Pit'
         Card.create! name: 'Orange', type: 'Fruit', content: '[[Pit]]'
         Card.create! name: 'Fruit+*type+*structure', content: 'this [[Pit]]'
 
         assert_equal 'this [[Pit]]', Card['Orange'].raw_content
-        c.update_attributes! name: 'Seed', update_referencers: true
+        c.update_attributes! name: 'Seed', update_referers: true
         assert_equal 'this [[Seed]]', Card['Orange'].raw_content
       end
     end
@@ -260,14 +254,14 @@ describe Card::Set::All::TrackedAttributes do
       it 'test_renaming_card_with_self_link_should_not_hang' do
         c = Card['Dairy']
         c.name = 'Buttah'
-        c.update_referencers = true
+        c.update_referers = true
         c.save!
         assert_equal '[[/new/{{_self|name}}|new]]', Card['Buttah'].content
       end
 
       it 'should rename card without updating references' do
         c = Card['Dairy']
-        c.update_attributes name: 'Newt', update_referencers: false
+        c.update_attributes name: 'Newt', update_referers: false
         assert_equal '[[/new/{{_self|name}}|new]]', Card['Newt'].content
       end
     end
@@ -291,7 +285,7 @@ describe Card::Set::All::TrackedAttributes do
         c1 = Card['Blue']
         c2 = Card['blue includer 1']
         c3 = Card['blue includer 2']
-        c1.update_attributes name: 'Red', update_referencers: true
+        c1.update_attributes name: 'Red', update_referers: true
         assert_equal '{{Red}}', Card.find(c2.id).content
         # NOTE these attrs pass through a hash stage that may not preserve order
         assert_equal '{{Red|closed;other:stuff}}', Card.find(c3.id).content
@@ -301,7 +295,7 @@ describe Card::Set::All::TrackedAttributes do
         c1 = Card['Blue']
         c2 = Card['blue includer 1']
         c1.update_attributes name: 'blue includer 1+color',
-                             update_referencers: true
+                             update_referers: true
         assert_equal '{{blue includer 1+color}}', Card.find(c2.id).content
       end
 
@@ -310,7 +304,7 @@ describe Card::Set::All::TrackedAttributes do
         c2 = Card['blue linker 1']
         c3 = Card['blue linker 2']
         c1.reload.name = 'Red'
-        c1.update_referencers = true
+        c1.update_referers = true
         c1.save!
         assert_equal '[[Red]]', Card.find(c2.id).content
         assert_equal '[[Red]]', Card.find(c3.id).content

@@ -124,35 +124,32 @@ end
 protected
 
 # test for updating referer content & preload referer list
-event :prepare_referer_update, before: :approve, on: :update, changed: :name do
+event :prepare_referer_update, :validate, on: :update, changed: :name do
   self.update_referers = ![nil, false, 'false'].member?(update_referers)
   family_referers
 end
 
 # when name changes, update references to card
-event :refresh_references_in, after: :store, on: :save, changed: :name do
+event :refresh_references_in, :finalize, on: :save, changed: :name do
   Card::Reference.unmap_referees id if @action == :update && !update_referers
   Card::Reference.map_referees key, id
 end
 
 # when content changes, update references to other cards
-event :refresh_references_out, after: :store, on: :save, changed: :content do
+event :refresh_references_out, :finalize, on: :save, changed: :content do
   update_references_out
 end
-# clean up reference table when card is deleted
 
+# clean up reference table when card is deleted
 event :clear_references, :finalize, on: :delete do
   delete_references_out
   Card::Reference.unmap_referees id
-event :refresh_references, :finalize,
-      on: :save, changed: :content do
-  update_references
 end
 
 # on rename, update names in cards that refer to self by name (as directed)
-event :update_referer_content, :finalize
+event :update_referer_content, :finalize,
       on: :update, changed: :name,
-      when: proc { |c| c.update_referers } do
+      when: proc { |card| card.update_referers } do
   # FIXME: break into correct stages
   Auth.as_bot do
     family_referers.each do |card|

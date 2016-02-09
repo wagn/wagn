@@ -3,8 +3,8 @@ module ClassMethods
     Card.delete_trashed_files
     Card.where(trash: true).delete_all
     Card::Action.delete_cardless
-    Card::Reference.repair_missing_referees
-    Card::Reference.delete_missing_referers
+    Card::Reference.unmap_if_referee_missing
+    Card::Reference.delete_if_referer_missing
     Card.delete_tmp_files_of_cached_uploads
   end
 
@@ -12,13 +12,13 @@ module ClassMethods
   def delete_trashed_files
     trashed_card_ids = all_trashed_card_ids
     file_ids = all_file_ids
+    dir = Cardio.paths['files'].existent.first
     file_ids.each do |file_id|
-      if trashed_card_ids.member?(file_id)
-        if Card.exists?(file_id) # double check!
-          fail Card::Error, 'Narrowly averted deleting current file'
-        end
-        FileUtils.rm_rf "#{dir}/#{file_id}", secure: true
+      next unless trashed_card_ids.member?(file_id)
+      if Card.exists?(file_id) # double check!
+        fail Card::Error, 'Narrowly averted deleting current file'
       end
+      FileUtils.rm_rf "#{dir}/#{file_id}", secure: true
     end
   end
 

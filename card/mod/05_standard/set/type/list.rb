@@ -34,7 +34,7 @@ event :create_listed_by_cards, :prepare_to_validate,
     if !Card[listed_by_name]
       add_subcard listed_by_name, type_id: ListedByID
     else
-      Card[listed_by_name].update_references
+      Card[listed_by_name].update_references_out
     end
   end
 end
@@ -89,7 +89,7 @@ def update_listed_by_cache_for item_keys, args={}
     if Card::Cache[Card::Set::Type::ListedBy].exist? key
       if (card = Card.fetch(key))
         card.update_cached_list
-        card.update_references
+        card.update_references_out
       else
         Card::Cache[Card::Set::Type::ListedBy].delete key
       end

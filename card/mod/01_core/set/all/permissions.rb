@@ -2,6 +2,22 @@
 Card.error_codes.merge! permission_denied: [:denial, 403],
                         captcha: [:errors, 449]
 
+module ClassMethods
+  def repair_all_permissions
+    Card.where(
+      '(read_rule_class is null or read_rule_id is null) and trash is false'
+    ).each do |broken_card|
+      broken_card.include_set_modules
+      broken_card.repair_permissions!
+    end
+  end
+end
+
+def repair_permissions!
+  rule_id, rule_class = permission_rule_id_and_class :read
+  update_columns read_rule_id: rule_id, read_rule_class: rule_class
+end
+
 # ok? and ok! are public facing methods to approve one action at a time
 #
 #   fetching: if the optional :trait parameter is supplied, it is passed

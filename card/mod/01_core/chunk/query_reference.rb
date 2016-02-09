@@ -77,7 +77,7 @@ module Card::Chunk
     end
 
     def reference_code
-      'Q' # Q for "Query"
+      'Q' # for "Query"
     end
   end
 end

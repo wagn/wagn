@@ -106,7 +106,7 @@ describe Card::Set::Type::ListedBy do
           Card::Auth.as_bot do
             Card['Parry Hotter'].update_attributes!(
               name: 'Parry Moppins',
-              update_referencers: true
+              update_referers: true
             )
           end
         end
@@ -117,7 +117,7 @@ describe Card::Set::Type::ListedBy do
         before do
           Card['Darles Chickens'].update_attributes!(
             name: 'Darles Eggs',
-            update_referencers: true
+            update_referers: true
           )
         end
         subject { Card.fetch('Darles Eggs+books').item_names.sort }

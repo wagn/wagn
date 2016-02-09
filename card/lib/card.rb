@@ -34,8 +34,8 @@ class Card < ActiveRecord::Base
   require_dependency 'card/view_cache'
   require_dependency 'card/stage_director'
 
-  has_many :references_from, class_name: :Reference, foreign_key: :referee_id
-  has_many :references_to,   class_name: :Reference, foreign_key: :referer_id
+  has_many :references_in,  class_name: :Reference, foreign_key: :referee_id
+  has_many :references_out, class_name: :Reference, foreign_key: :referer_id
   has_many :acts, -> { order :id }
   has_many :actions, -> { where(draft: [nil, false]).order :id }
   has_many :drafts, -> { where(draft: true).order :id }, class_name: :Action
@@ -50,7 +50,7 @@ class Card < ActiveRecord::Base
     :action, :supercard, :superleft,
     :current_act, :current_action,
     :comment, :comment_author,    # obviated soon
-    :update_referencers,          # wrong mechanism for this
+    :update_referers,          # wrong mechanism for this
     :update_all_users,            # if the above is wrong then this one too
     :silent_change,               # and this probably too
     :remove_rule_stash,

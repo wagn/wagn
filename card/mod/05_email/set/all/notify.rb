@@ -72,7 +72,7 @@ def notable_change?
     Card::Auth.current_id != WagnBotID && followable?
 end
 
-event :notify_followers_after_save, :integrate_with_delay,
+event :notify_followers_after_save, :integrate,
       on: :save, when: proc { |ca| ca.notable_change? } do
   notify_followers
 end

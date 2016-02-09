@@ -37,7 +37,7 @@ describe Card::Set::Right::Followers do
 
     it 'recognizes card name changes' do
       @card = Card['Look At Me']
-      @card.update_referencers = true
+      @card.update_referers = true
       @card.update_attributes! name: 'Look away'
       is_expected.to eq ['Big Brother']
     end

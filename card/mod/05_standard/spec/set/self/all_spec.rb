@@ -32,11 +32,11 @@ describe Card::Set::Self::All do
     it 'should be trigger reference repair' do
       Card::Auth.as_bot do
         a = Card['A']
-        puts a.references_to.count
+        puts a.references_out.count
         Card::Env.params[:task] = :repair_references
-        puts a.references_to.count
+        puts a.references_out.count
         @all.update_attributes({})
-        puts a.references_to.count
+        puts a.references_out.count
 
       end
     end

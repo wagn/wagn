@@ -5,7 +5,7 @@ class ImportBootstrapLayout < Card::CoreMigration
     layout = Card.fetch "Default Layout"
     if layout
       layout.name = "Classic Layout"
-      layout.update_referencers = true
+      layout.update_referers = true
       layout.save!
     end
 
@@ -32,7 +32,7 @@ class ImportBootstrapLayout < Card::CoreMigration
     old_func = Card[:style_functional]
     old_func.name = 'style: cards'
     old_func.codename = 'style_cards'
-    old_func.update_referencers = true
+    old_func.update_referers = true
     old_func.save!
 
     old_stand = Card[:style_standard]

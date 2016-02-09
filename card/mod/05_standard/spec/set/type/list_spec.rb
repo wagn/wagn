@@ -67,7 +67,7 @@ describe Card::Set::Type::List do
     context 'when the name of Stam Broker changed to Stam Trader' do
       before do
         Card['Stam Broker'].update_attributes!(
-          name: 'Stam Trader', update_referencers: true
+          name: 'Stam Trader', update_referers: true
         )
       end
       it { is_expected.to eq ['Darles Chickens', 'Stam Trader'] }
@@ -124,7 +124,7 @@ describe Card::Set::Type::List do
   context 'when the name of the cardtype books changed' do
     before do
       Card['book'].update_attributes!(
-        type_id: Card::BasicID, update_referencers: true
+        type_id: Card::BasicID, update_referers: true
       )
     end
     it { is_expected.to eq ['Darles Chickens', 'Stam Broker'] }
@@ -133,7 +133,7 @@ describe Card::Set::Type::List do
   context 'when the name of the cardtype authors changed' do
     before do
       Card['author'].update_attributes!(
-        type_id: Card::BasicID, update_referencers: true
+        type_id: Card::BasicID, update_referers: true
       )
     end
     it { is_expected.to eq ['Darles Chickens', 'Stam Broker'] }

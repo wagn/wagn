@@ -1,53 +1,5 @@
+
 class Card
-  def act opts={}
-    if !Card.current_act_card
-      Card.directors = nil
-      self.director = nil
-      Card.current_act_card = self
-      main_act_block = true
-      if opts[:success]
-        Env[:success] = Success.new(cardname, Env.params[:success])
-      end
-    else
-      main_act_block = false
-    end
-    yield
-  ensure
-    Card.clean_up_act if main_act_block
-  end
-
-  def self.clean_up_act
-    Card.current_act_card = nil
-    Card.directors = nil
-  end
-
-  def self.new_director card, opts={}
-    if opts[:parent]
-      StageSubdirector.new card, opts
-    elsif Card.current_act_card &&
-          Card.current_act_card != card &&
-          Card.current_act_card.director.running?
-      Card.current_act_card.director.add_subdirector(card)
-    else
-      StageDirector.new card
-    end
-  end
-
-  def self.fetch_director card, opts={}
-    Card.directors ||= {}
-    Card.directors[card] ||= Card.new_director card, opts
-  end
-
-  def self.register_director director
-    Card.directors ||= {}
-    Card.directors[director.card] = director
-  end
-
-  def self.unregister_director director
-    return unless Card.directors
-    Card.directors.delete director.card
-  end
-
   class StageDirector
     include Stage
 
@@ -71,7 +23,7 @@ class Card
     end
 
     def register
-      Card.register_director self
+      Card::DirectorRegister.add self
     end
 
     def unregister
@@ -79,7 +31,7 @@ class Card
       @subdirectors = nil
       @stage = nil
       @action = nil
-      Card.unregister_director self
+      Card::DirectorRegister.delete self
     end
 
     def validation_phase
@@ -114,7 +66,7 @@ class Card
       @subdirectors.each do |subdir|
         return subdir if subdir.card == card
       end
-      subdir = Card.fetch_director card, parent: self
+      subdir = Card::DirectorRegister.fetch card, parent: self
       subdir.main = false
       subdir.parent = self
       @subdirectors << subdir
@@ -149,10 +101,8 @@ class Card
     def main_director
       if main?
         self
-      elsif Card.current_act_card
-        Card.current_act_card.director
-      elsif @parent
-        @parent.main_director
+      else
+        DirectorRegister.act_director || (@parent && @parent.main_director)
       end
     end
 
@@ -258,5 +208,3 @@ class Card
     end
   end
 end
-
-

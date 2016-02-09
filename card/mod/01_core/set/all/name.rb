@@ -195,7 +195,7 @@ event :validate_unique_codename, after: :permit_codename do
   end
 end
 
-event :validate_name, before: :approve, on: :save do
+event :validate_name, :validate, on: :save do
   cdname = name.to_name
   if name.length > 255
     errors.add :name, 'is too long (255 character maximum)'
@@ -213,17 +213,19 @@ event :validate_name, before: :approve, on: :save do
        Auth.as_bot { Card.count_by_wql right_id: id } > 0
       errors.add :name, "#{name} in use as a tag"
     end
+    validate_uniqueness_of_name cdname
+  end
+end
 
-    # validate uniqueness of name
-    condition_sql = 'cards.key = ? and trash=?'
-    condition_params = [cdname.key, false]
-    unless new_record?
-      condition_sql << ' AND cards.id <> ?'
-      condition_params << id
-    end
-    if (c = Card.find_by(condition_sql, *condition_params))
-      errors.add :name, "must be unique; '#{c.name}' already exists."
-    end
+def validate_uniqueness_of_name new_name
+  condition_sql = 'cards.key = ? and trash=?'
+  condition_params = [new_name.key, false]
+  unless new_record?
+    condition_sql << ' AND cards.id <> ?'
+    condition_params << id
+  end
+  if (c = Card.find_by(condition_sql, *condition_params))
+    errors.add :name, "must be unique; '#{c.name}' already exists."
   end
 end
 

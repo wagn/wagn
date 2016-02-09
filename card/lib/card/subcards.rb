@@ -262,4 +262,37 @@ class Card
       card
     end
   end
+
+  def right_id= card_or_id
+    write_card_or_id :right_id, card_or_id
+  end
+
+  def left_id= card_or_id
+    write_card_or_id :left_id, card_or_id
+  end
+
+  def type_id= card_or_id
+    write_card_or_id :type_id, card_or_id
+  end
+
+  def write_card_or_id attribute, card_or_id
+    if card_or_id.is_a? Card
+      card = card_or_id
+      if card.id
+        write_attribute attribute, card.id
+      else
+        add_subcard card
+        card.director.prior_store = true
+        with_id_when_exists(card) do |id|
+          write_attribute attribute, id
+        end
+      end
+    else
+      write_attribute attribute, card_or_id
+    end
+  end
+
+  def with_id_when_exists card, &block
+    card.director.call_after_store &block
+  end
 end

@@ -13,7 +13,8 @@ class Card::Format
 
     def with_inclusion_mode mode
       if (switch_mode = INCLUSION_MODES[mode]) && @mode != switch_mode
-        old_mode, @mode = @mode, switch_mode
+        old_mode = @mode
+        @mode = switch_mode
         @inclusion_defaults = nil
       end
       result = yield
@@ -29,7 +30,7 @@ class Card::Format
       opts ||= {}
 
       case
-      when opts.has_key?(:comment)
+      when opts.key?(:comment)
         # commented nest
         opts[:comment]
       when @mode == :closed && @char_count > Card.config.max_char_count
@@ -88,19 +89,23 @@ class Card::Format
     end
 
     def fetch_nested_card options
+      Card.fetch options[:inc_name], new: nest_new_args(options)
+    end
+
+    def nest_new_args options
       args = { name: options[:inc_name], type: options[:type], supercard: card }
       args.delete(:supercard) if options[:inc_name].strip.blank?
       # special case.  gets absolutized incorrectly. fix in smartname?
       if options[:inc_name] =~ /^_main\+/
         # FIXME: this is a rather hacky (and untested) way to get @superleft
         # to work on new cards named _main+whatever
-        args[:name] = args[:name].gsub /^_main\+/, '+'
+        args[:name] = args[:name].gsub(/^_main\+/, '+')
         args[:supercard] = root.card
       end
       if (content = get_inclusion_content options[:inc_name])
         args[:content] = content
       end
-      Card.fetch options[:inc_name], new: args
+      args
     end
 
     def wrap_main content

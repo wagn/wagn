@@ -16,7 +16,6 @@ describe Card::Set::Type::List do
     context "when 'Parry Hotter' is added to Joe-Ann Rolwings's books" do
       before do
         Card.create! name: 'Joe-Ann Rolwing', type: 'author'
-        binding.pry
         Card.create!(
           name: 'Joe-Ann Rolwing+books', type: 'listed by',
           content: '[[Parry Hotter]]'

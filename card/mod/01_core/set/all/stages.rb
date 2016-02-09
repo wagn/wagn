@@ -1,5 +1,5 @@
 def director
-  @director ||= Card.fetch_director self
+  @director ||= Card::DirectorRegister.fetch self
 end
 
 def director= dir

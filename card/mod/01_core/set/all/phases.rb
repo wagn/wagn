@@ -273,5 +273,5 @@ end
 
 def clean_up
   return true unless run_phase?
-  Card.clean_up_act
+  Card::DirectorRegister.clear
 end

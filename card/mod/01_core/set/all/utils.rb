@@ -13,13 +13,13 @@ module ClassMethods
   def delete_trashed_files
     trashed_card_ids = all_trashed_card_ids
     file_ids = all_file_ids
+    dir = Cardio.paths['files'].existent.first
     file_ids.each do |file_id|
-      if trashed_card_ids.member?(file_id)
-        if Card.exists?(file_id) # double check!
-          fail Card::Error, 'Narrowly averted deleting current file'
-        end
-        FileUtils.rm_rf "#{dir}/#{file_id}", secure: true
+      next unless trashed_card_ids.member?(file_id)
+      if Card.exists?(file_id) # double check!
+        fail Card::Error, 'Narrowly averted deleting current file'
       end
+      FileUtils.rm_rf "#{dir}/#{file_id}", secure: true
     end
   end
 

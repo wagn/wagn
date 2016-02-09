@@ -76,7 +76,8 @@ describe Card::Name do
   end
 
   describe '#url_key' do
-    cardnames = ['GrassCommons.org', 'Oh you @##', "Alice's Restaurant!", 'PB &amp; J', 'Mañana'].map(&:to_name)
+    cardnames = ['GrassCommons.org', 'Oh you @##', "Alice's Restaurant!",
+                 'PB &amp; J', 'Mañana'].map(&:to_name)
 
     cardnames.each do |cardname|
       it 'should have the same key as the name' do
@@ -101,7 +102,7 @@ describe Card::Name do
 
     it 'rejects long names' do
       card = Card.new
-      card.name='1'*256
+      card.name = '1' * 256
       expect(card).not_to be_valid
     end
   end
@@ -189,7 +190,7 @@ describe Card::Name do
     end
   end
 
-  describe "#to_absolute" do
+  describe '#to_absolute' do
     it 'handles _self, _whole, _' do
       expect('_self'.to_name.to_absolute('foo')).to eq('foo')
       expect('_whole'.to_name.to_absolute('foo')).to eq('foo')
@@ -249,12 +250,12 @@ describe Card::Name do
       end
 
       it 'handles bogus _llr requests' do
-           expect('_R'.to_name.to_absolute('A')).to eq('A')
-           expect('_L'.to_name.to_absolute('A')).to eq('A')
-          expect('_LR'.to_name.to_absolute('A')).to eq('A')
-          expect('_LL'.to_name.to_absolute('A')).to eq('A')
-         expect('_LLR'.to_name.to_absolute('A')).to eq('A')
-         expect('_LLL'.to_name.to_absolute('A')).to eq('A')
+        expect('_R'.to_name.to_absolute('A')).to eq('A')
+        expect('_L'.to_name.to_absolute('A')).to eq('A')
+        expect('_LR'.to_name.to_absolute('A')).to eq('A')
+        expect('_LL'.to_name.to_absolute('A')).to eq('A')
+        expect('_LLR'.to_name.to_absolute('A')).to eq('A')
+        expect('_LLL'.to_name.to_absolute('A')).to eq('A')
         expect('_LLLR'.to_name.to_absolute('A')).to eq('A')
         expect('_LLLL'.to_name.to_absolute('A')).to eq('A')
       end

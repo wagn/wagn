@@ -61,8 +61,6 @@ class Card < ActiveRecord::Base
   attr_accessor :follower_stash
 
   define_callbacks :select_action, :show_page, :handle, :act,
-                   #:prepare, :approve, :store, :clean, :finish, :followup,
-                   #:extend, :subsequent, # deprecated
                    :initialize_stage,
                    :prepare_to_validate_stage, :validate_stage,
                    :prepare_to_store_stage, :store_stage,
@@ -74,11 +72,6 @@ class Card < ActiveRecord::Base
   after_save :integration_phase, unless: :skip_phases
   after_commit :clean_up, unless: :skip_phases
   after_rollback :clean_up, unless: :skip_phases
-
-  #before_validation :prepare
-  #before_validation :approve
-  #around_save :store
-  #after_save :extend
 
   TRACKED_FIELDS = %w(name type_id db_content trash)
   extend CarrierWave::Mount

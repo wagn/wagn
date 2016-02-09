@@ -30,6 +30,7 @@ event :create_listed_by_cards, :prepare_to_validate,
       on: :save, changed: :content do
   item_names.each do |item_name|
     listed_by_name = "#{item_name}+#{left.type_name}"
+    next if director.main_director.card.key == listed_by_name.to_name.key
     if !Card[listed_by_name]
       add_subcard listed_by_name, type_id: ListedByID
     else

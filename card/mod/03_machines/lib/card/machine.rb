@@ -19,15 +19,15 @@
 #  -  can be changed by passing a block to collect_input_cards
 #  -  takes the raw view of the input cards to generate the output;
 #  -  can be changed by passing a block to machine_input (in the input card set)
-#  -  stores the output as a .txt file in the "+machine output" card;
+#  -  stores the output as a .txt file in the '+machine output' card;
 #  -  can be changed by passing a filetype and/or a block to
 #     store_machine_output
 #
 #
 # HOW DOES IT WORK?
-# Machine cards have a "+machine input" and a "+machine output" card. The
-# "+machine input" card is a pointer to all input cards. Including the
-# MachineInput module creates an "on: save" event that runs the machines of
+# Machine cards have a '+machine input' and a '+machine output' card. The
+# '+machine input' card is a pointer to all input cards. Including the
+# MachineInput module creates an 'on: save' event that runs the machines of
 # all cards that are linked to that card via the +machine input pointer.
 
 
@@ -57,12 +57,11 @@ class Card
       end
     end
 
-    def self.included(host_class)
-      host_class.extend( ClassMethods )
+    def self.included host_class
+      host_class.extend(ClassMethods)
       host_class.output_config = { filetype: 'txt' }
 
-
-      if Codename[:machine_output]  # for compatibility with old migrations
+      if Codename[:machine_output] # for compatibility with old migrations
         host_class.card_accessor :machine_output, type: :file
         host_class.card_accessor :machine_input, type: :pointer
 
@@ -81,9 +80,10 @@ class Card
             if item.item_cards == [item]  # no pointer card
               new_input << item
             else
-              items.insert(0, item.item_cards)
+              items.insert(0, item.item_cards.reject(&:new_card?))
               items.flatten!
-              new_input << item if item != self
+
+              new_input << item if item != self && !item.new_card?
               already_extended[item] = already_extended[item].to_i + 1
             end
           end
@@ -94,7 +94,7 @@ class Card
         host_class.machine_engine { |input| input }
         host_class.store_machine_output do |output|
           filetype = host_class.output_config[:filetype]
-          file = Tempfile.new [ id.to_s, ".#{filetype}" ]
+          file = Tempfile.new [id.to_s, ".#{filetype}"]
           file.write output
           file.rewind
           Card::Auth.as_bot do
@@ -106,16 +106,15 @@ class Card
           file.unlink
         end
 
-
         host_class.format do
-          view :machine_output_url do |args|
+          view :machine_output_url do |_args|
             machine_output_url
           end
         end
 
-        event_suffix = host_class.name.gsub ':', '_'
+        event_suffix = host_class.name.tr ':', '_'
         host_class.event(
-          "reset_machine_output_#{ event_suffix }".to_sym,
+          "reset_machine_output_#{event_suffix}".to_sym,
           after: :expire_related, on: :save
         ) do
           reset_machine_output!
@@ -126,28 +125,27 @@ class Card
     def run_machine joint="\n"
       before_engine
       output = input_item_cards.map do |input|
-        unless input.kind_of? Card::Set::Type::Pointer
+        unless input.is_a? Card::Set::Type::Pointer
           if input.respond_to? :machine_input
-            engine( input.machine_input )
+            engine(input.machine_input)
           else
-            engine( input.format._render_raw )
+            engine(input.format._render_raw)
           end
         end
-      end.select(&:present?).join( joint )
+      end.select(&:present?).join(joint)
       after_engine output
     end
 
     def reset_machine_output!
       Auth.as_bot do
-        moc = machine_output_card and moc.real? and moc.delete!
-        #mic = machine_input_card  and mic.real? and mic.delete!
+        (moc = machine_output_card) && moc.real? && moc.delete!
+        # mic = machine_input_card  and mic.real? and mic.delete!
         update_input_card
       end
     end
 
-
     def update_machine_output
-      if ok? :read and not was_already_locked = locked?
+      if ok?(:read) && !(was_already_locked = locked?)
         Auth.as_bot do
           lock!
           update_input_card
@@ -155,7 +153,7 @@ class Card
         end
       end
     ensure
-       unlock! unless was_already_locked
+      unlock! unless was_already_locked
     end
 
     def lock_cache_key
@@ -184,7 +182,7 @@ class Card
 
     def machine_output_url
       ensure_machine_output
-      machine_output_card.file.url #(:default, timestamp: false)
+      machine_output_card.file.url # (:default, timestamp: false)
       # to get rid of additional number in url
     end
 
@@ -195,9 +193,8 @@ class Card
 
     def ensure_machine_output
       output = fetch trait: :machine_output
-      if !output || !output.selected_content_action_id
-        update_machine_output
-      end
+      return if output && output.selected_content_action_id
+      update_machine_output
     end
   end
 end

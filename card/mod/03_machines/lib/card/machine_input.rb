@@ -26,7 +26,12 @@ class Card
     def self.define_delete_events event_suffix, host_class
       event_name = "before_machine_input_deleted_#{event_suffix}".to_sym
       host_class.event event_name, :store, on: :delete do
-        @involved_machines = Card::MachineInput.search_involved_machines host_class
+        # exclude self because it's on the way to the trash
+        # otherwise it will be created again with the reset_machine_output
+        # call in the event below
+        @involved_machines =
+          Card::MachineInput.search_involved_machines(name, host_class)
+                            .reject { |card| card == self }
       end
       event_name = "after_machine_input_deleted_#{event_suffix}".to_sym
       host_class.event event_name, :finalize, on: :delete do
@@ -41,13 +46,14 @@ class Card
         "after_machine_input_updated_#{event_suffix}".to_sym, :integrate,
         on: :save
       ) do
-        Card::MachineInput.search_involved_machines(host_class).each do |item|
+        Card::MachineInput.search_involved_machines(name, host_class)
+                          .each do |item|
           item.reset_machine_output! if item.is_a? Machine
         end
       end
     end
 
-    def self.search_involved_machines host_class
+    def self.search_involved_machines name, host_class
       wql_statement =
         { right_plus: [
           { codename: 'machine_input' },

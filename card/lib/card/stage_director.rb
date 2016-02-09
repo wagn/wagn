@@ -132,8 +132,6 @@ class Card
       end
     end
 
-
-
     def call_after_store &block
       @call_after_store ||= []
       @call_after_store << block
@@ -199,7 +197,7 @@ class Card
     end
 
     def run_single_stage stage, &block
-      puts "#{@card.name}: #{stage} stage".red
+      # puts "#{@card.name}: #{stage} stage".red
       return if @card.errors.any?
       @stage = stage_index stage
 
@@ -216,7 +214,13 @@ class Card
     end
 
     def run_stage_callbacks stage
-      @card.run_callbacks :"#{stage}_stage"
+      if stage_index(stage) <= stage_index(:validate)
+        @card.abortable do
+          @card.run_callbacks :"#{stage}_stage"
+        end
+      else
+        @card.run_callbacks :"#{stage}_stage"
+      end
     end
 
     def run_subdirector_stages stage

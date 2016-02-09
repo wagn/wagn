@@ -92,7 +92,7 @@ def update_read_ruled_cards set
   # trash.  could be related to other bugs?
   in_set = {}
   if !trash && set && (set_class = set.tag) && (class_id = set_class.id)
-    rule_class_ids = set_patterns.map &:pattern_id
+    rule_class_ids = set_patterns.map(&:pattern_id)
     # warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
 
     # first update all cards in set that aren't governed by narrower rule
@@ -102,9 +102,7 @@ def update_read_ruled_cards set
         set.item_cards(limit: 0).each do |item_card|
           in_set[item_card.key] = true
           next if cur_index < rule_class_index
-          if cur_index >= rule_class_index
-            item_card.update_read_rule
-          end
+          item_card.update_read_rule if cur_index >= rule_class_index
         end
 
       else warn "No current rule index #{class_id}, " \
@@ -116,7 +114,7 @@ def update_read_ruled_cards set
   # then find all cards with me as read_rule_id that were not just updated
   # and regenerate their read_rules
   return if new_card?
-  Card.search(read_rule_id: self.id) do |card|
+  Card.search(read_rule_id: id) do |card|
     card.update_read_rule unless in_set[card.key]
   end
 end
@@ -130,7 +128,7 @@ event :expire_related, :finalize do
   subcards.keys.each do |key|
     Card.cache.soft.delete key
   end
-  expire #true  # FIXME: where do we put this. Here it deletes @stage
+  expire # FIXME: where do we put this. Here it deletes @stage
   reset_patterns
   if is_structure?
     structuree_names.each do |name|

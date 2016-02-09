@@ -9,6 +9,7 @@ event :admin_tasks, on: :update, before: :approve do
       when :clear_view_cache     then Card::ViewCache.reset
       when :delete_old_revisions then Card::Action.delete_old
       when :delete_old_sessions  then Card.delete_old_sessions
+      when :repair_permissions   then Card.repair_all_permissions
       end
       Env.params[:success] = Card[:stats].name
       abort :success

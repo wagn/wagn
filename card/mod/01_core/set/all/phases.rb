@@ -26,7 +26,25 @@ def self.create opts
   card
 end
 
+def delete
+  card.act do
+    card.delete
+  end
+end
+
+def delete!
+  card.act do
+    card.delete!
+  end
+end
+
 def update_attributes opts
+  act do
+    super opts
+  end
+end
+
+def update_attributes! opts
   act do
     super opts
   end
@@ -51,6 +69,7 @@ rescue Card::Abort => e
   elsif e.status == :success
     if @supercard
       @supercard.subcards.delete(key)
+      @supercard.director.delete_subdirector(self)
     end
     true
   end

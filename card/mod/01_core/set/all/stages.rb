@@ -1,5 +1,5 @@
 def director
-  @director ||= Card::StageDirector.fetch self
+  @director ||= Card.fetch_director self
 end
 
 def director= dir

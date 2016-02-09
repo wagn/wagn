@@ -1,6 +1,8 @@
 class Card
   def act opts={}
     if !Card.current_act_card
+      Card.directors = nil
+      self.director = nil
       Card.current_act_card = self
       main_act_block = true
       if opts[:success]
@@ -20,40 +22,41 @@ class Card
   end
 
   def self.new_director card, opts={}
-    if Card.current_act_card &&
-       Card.current_act_card != card &&
-       Card.current_act_card.director.running?
+    if opts[:parent]
+      StageSubdirector.new card, opts
+    elsif Card.current_act_card &&
+          Card.current_act_card != card &&
+          Card.current_act_card.director.running?
       Card.current_act_card.director.add_subdirector(card)
     else
-      StageDirector.new card, main: true
+      StageDirector.new card
     end
+  end
+
+  def self.fetch_director card, opts={}
+    Card.directors ||= {}
+    Card.directors[card] ||= Card.new_director card, opts
   end
 
   def self.register_director director
     Card.directors ||= {}
-    Card.directors[director.card.key] = director
+    Card.directors[director.card] = director
   end
 
   def self.unregister_director director
     return unless Card.directors
-    Card.directors.delete director.card.key
+    Card.directors.delete director.card
   end
 
   class StageDirector
     include Stage
 
-    def self.fetch card
-      Card.directors ||= {}
-      Card.directors[card.key] ||= Card.new_director card
-    end
-
-    attr_accessor :subcards, :prior_store, :act, :card, :stage
+    attr_accessor :subcards, :prior_store, :act, :card, :stage, :parent, :main
 
     def initialize card, opts={}, main=true
       @card = card
       @card.director = self
       @card.prepare_for_phases
-      @call_after_store = []
       @stage = nil
       @running = false
       @parent = opts[:parent]
@@ -61,11 +64,10 @@ class Card
       @prior_store = opts[:priority]
       @main = main
       @subdirectors = []
+      card.subcards.each_card do |subcard|
+        add_subdirector subcard
+      end
       register
-    end
-
-    def subcards
-      @subcards ||= Subcards.new(card)
     end
 
     def register
@@ -80,23 +82,6 @@ class Card
       Card.unregister_director self
     end
 
-    def running?
-      @running
-    end
-
-    def add_subdirector card
-      subdir = StageSubdirector.new(card, parent: self)
-      @subdirectors << subdir
-      subdir
-    end
-
-    def catch_up_to_stage next_stage
-      @stage ||= -1
-      (@stage + 1).upto(stage_index(next_stage)) do |i|
-        run_single_stage stage_symbol(i)
-      end
-    end
-
     def validation_phase
       @running = true
       run_single_stage :initialize
@@ -107,7 +92,7 @@ class Card
     end
 
     def storage_phase &block
-      run_single_stage :prepare_to_store if main?
+      catch_up_to_stage :prepare_to_store
       run_single_stage :store, &block
       run_single_stage :finalize
     ensure
@@ -121,12 +106,37 @@ class Card
       unregister
     end
 
-    def call_after_store &block
-      @call_after_store << block
+    def running?
+      @running
     end
 
-    def add_to_priority_queue card, subcard
-      @store_priority_queue
+    def add_subdirector card
+      @subdirectors.each do |subdir|
+        return subdir if subdir.card == card
+      end
+      subdir = Card.fetch_director card, parent: self
+      subdir.main = false
+      subdir.parent = self
+      @subdirectors << subdir
+      subdir
+    end
+
+    def delete_subdirector card
+      @subdirectors.delete_if { |subdir| subdir.card == card }
+    end
+
+    def catch_up_to_stage next_stage
+      @stage ||= -1
+      (@stage + 1).upto(stage_index(next_stage)) do |i|
+        run_single_stage stage_symbol(i)
+      end
+    end
+
+
+
+    def call_after_store &block
+      @call_after_store ||= []
+      @call_after_store << block
     end
 
     def need_act
@@ -177,11 +187,42 @@ class Card
     def store_with_subcards
       store_prior_subcards
       yield
-      @call_after_store.each do |handle_id|
-        handle_id.call(@card.id)
+      if @call_after_store
+        @call_after_store.each do |handle_id|
+          handle_id.call(@card.id)
+        end
       end
       store_subcards
       @virtual = false # TODO: find a better place for this
+    ensure
+      @card.handle_subcard_errors
+    end
+
+    def run_single_stage stage, &block
+      puts "#{@card.name}: #{stage} stage".red
+      return if @card.errors.any?
+      @stage = stage_index stage
+
+      # in the store stage it can be necessary that
+      # other subcards must be saved before this card gets saved
+      if stage == :store
+        store &block
+      else
+        run_stage_callbacks stage
+        run_subdirector_stages stage unless stage == :finalize
+      end
+    rescue => e
+      rescue_event e
+    end
+
+    def run_stage_callbacks stage
+      @card.run_callbacks :"#{stage}_stage"
+    end
+
+    def run_subdirector_stages stage
+      @subdirectors.each do |subdir|
+        subdir.catch_up_to_stage stage
+      end
     ensure
       @card.handle_subcard_errors
     end
@@ -200,38 +241,10 @@ class Card
       end
     end
 
-    def run_single_stage stage, &block
-      # puts "#{name}: #{stage} stage".red
-      return if @card.errors.any?
-      @stage = stage_index stage
-
-      # in the store stage it can be necessary that
-      # other subcards must be saved before this card gets saved
-      if stage == :store
-        store &block
-      else
-        run_stage_callbacks stage
-        run_subdirector_stages stage unless stage == :finalize
-      end
-    rescue => e
-      rescue_event e
-    end
-
     def store_and_finalize_as_subcard
       @card.skip_phases = true
-      @card.save! validate: false
-    end
-
-    def run_stage_callbacks stage
-      @card.run_callbacks :"#{stage}_stage"
-    end
-
-    def run_subdirector_stages stage
-      @subdirectors.each do |subdir|
-        subdir.catch_up_to_stage stage
-      end
-    ensure
-      @card.handle_subcard_errors
+      #catch_up_to_stage :store
+      @card.save! validate: false #
     end
   end
 

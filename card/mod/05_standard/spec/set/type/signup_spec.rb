@@ -175,9 +175,9 @@ describe Card::Set::Type::Signup do
     end
 
     it 'sends welcome email when account is activated' do
-      @signup.run_phase :approve do
+      #@signup.run_phase :approve do
         @signup.activate_account
-      end
+      #end
       @mail = ActionMailer::Base.deliveries.find { |a| a.subject == 'welcome' }
       Mail::TestMailer.deliveries.clear
 

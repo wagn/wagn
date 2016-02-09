@@ -128,7 +128,7 @@ end
 
 event :expire_related, :finalize do
   subcards.keys.each do |key|
-    #Card.cache.soft.delete key
+    Card.cache.soft.delete key
   end
   expire #true  # FIXME: where do we put this. Here it deletes @stage
   reset_patterns

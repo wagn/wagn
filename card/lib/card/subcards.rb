@@ -10,10 +10,9 @@
 
 class Card
   def subcards
-    @subcards ||= (director && director.subcards)
+    @subcards ||= Subcards.new(self)
+    #@subcards ||= (director && director.subcards)
   end
-
-
 
   # def preserve_subcards
   #   return unless subcards.present?

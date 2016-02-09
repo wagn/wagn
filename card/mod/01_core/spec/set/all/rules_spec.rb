@@ -15,14 +15,18 @@ describe Card::Set::All::Rules do
   describe '#rule' do
     it 'retrieves Set based value' do
       Card.create name: 'Book+*type+*add help', content: 'authorize'
-      expect(Card.new(type: 'Book').rule(:add_help, fallback: :help)).to eq('authorize')
+      add_help_rule = Card.new(type: 'Book').rule(:add_help, fallback: :help)
+      expect(add_help_rule).to eq('authorize')
     end
 
     it 'retrieves default values' do
-      # Card.create name: 'all Basic cards', type: 'Set', content: "{\"type\": \"Basic\'}'  #defaults should work when other Sets are present
-      assert c=Card.create(name: '*all+*add help', content: 'lobotomize')
-#      Card.default_rule(:add_help, fallback: :help).should == 'lobotomize'
-      expect(Card.new(type: 'Basic').rule(:add_help, fallback: :help)).to eq('lobotomize')
+      # Card.create name: 'all Basic cards', type: 'Set',
+      #            content: "{\"type\": \"Basic\'}'
+      # defaults should work when other Sets are present
+      assert Card.create(name: '*all+*add help', content: 'lobotomize')
+      # Card.default_rule(:add_help, fallback: :help).should == 'lobotomize'
+      add_help_rule = Card.new(type: 'Basic').rule(:add_help, fallback: :help)
+      expect(add_help_rule).to eq('lobotomize')
     end
 
     it 'retrieves single values' do
@@ -52,13 +56,13 @@ describe Card::Set::All::Rules do
     end
   end
 
-
-  describe "#setting_codenames_by_group" do
+  describe '#setting_codenames_by_group' do
     before do
-      @pointer_settings =  [:options, :options_label, :input]
+      @pointer_settings = [:options, :options_label, :input]
     end
     it "doesn't fail on nonexistent trunks" do
-      expect(Card.new(name: 'foob+*right').setting_codenames_by_group.class).to eq(Hash)
+      codenames = Card.new(name: 'foob+*right').setting_codenames_by_group
+      expect(codenames.class).to eq(Hash)
     end
 
     it 'returns universal setting names for non-pointer set' do
@@ -70,13 +74,11 @@ describe Card::Set::All::Rules do
       expect(snbg.keys.member?(:pointer)).not_to be_truthy
     end
 
-
     it 'returns pointer-specific setting names for pointer card' do
       c = Card.fetch 'Fruit+*type+*create+*self', new: {}
       snbg = c.setting_codenames_by_group
       expect(snbg[:pointer]).to eq(@pointer_settings)
     end
-
   end
 
   describe 'user specific rules' do
@@ -86,7 +88,8 @@ describe Card::Set::All::Rules do
 
     it 'user rule is recognized as rule' do
       Card::Auth.as_bot do
-        card = Card.create(name: 'Book+*type+Joe User+*follow', content: '[[*always]]')
+        card = Card.create name: 'Book+*type+Joe User+*follow',
+                           content: '[[*always]]'
         expect(card.is_rule?).to be_truthy
       end
     end
@@ -121,8 +124,12 @@ describe Card::Set::All::Rules do
           Card.create(name: 'Book+*type+Joe User+*follow', content: '[[Home]]')
           Card::Auth.current_id = Card.fetch('Joe Admin').id
           Card.create(name: 'Book+*type+Joe Admin+*follow', content: '[[Home]]')
-          user_ids = Card.all_user_ids_with_rule_for( Card.fetch('Book+*type'), :follow ).sort
-          expect(user_ids).to eq [Card['Joe User'].id, Card['Joe Admin'].id].sort
+          user_ids = Card.all_user_ids_with_rule_for(
+            Card.fetch('Book+*type'), :follow
+          )
+          expect(user_ids.sort).to eq(
+            [Card['Joe User'].id, Card['Joe Admin'].id].sort
+          )
         end
       end
     end

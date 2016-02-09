@@ -86,7 +86,7 @@ module Card::SpecHelper
   #          trigger: ->{ test_card.update_attributes! content: '' } do
   #            expect(item_names).to eq []
   #          end
-  def in_phase opts, &event_block
+  def in_stage stage, opts={}, &event_block
     $rspec_binding = binding
     Card.class_eval do
       def method_missing m, *args
@@ -104,14 +104,13 @@ module Card::SpecHelper
         super
 #        raise NoMethodError
       end
-      define_method :in_phase_test, event_block
+      define_method :in_stage_test, event_block
     end
-    Card.define_callbacks :in_phase_test
-    kind =  ([:before, :after, :around] & opts.keys).first
-    name = opts.delete(kind)
-    Card.set_callback name, kind, :in_phase_test, prepend: true
+    Card.define_callbacks :in_stage_test
+    stage_sym = :"#{stage}_stage"
+    Card.set_callback stage_sym, :before, :in_stage_test, prepend: true
     opts[:trigger].call
   ensure
-    Card.skip_callback name, kind, :in_phase_test
+    Card.skip_callback stage_sym, :before, :in_stage_test
   end
 end

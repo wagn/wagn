@@ -1,6 +1,6 @@
 class Card::Format
   module Render
-    def page
+    def page view, slot_opts
       @card.run_callbacks :show_page do
         show view, slot_opts
       end

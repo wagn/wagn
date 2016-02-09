@@ -58,7 +58,9 @@ describe Card::Set::Type::Signup do
     end
 
     it 'notifies someone' do
-      expect(ActionMailer::Base.deliveries.last.to).to eq(['signups@wagn.org'])
+      expect(ActionMailer::Base.deliveries.map(&:to).sort).to(
+        eq [['signups@wagn.org'], ['wolf@wagn.org']]
+      )
     end
 
     it 'is activated by an update' do
@@ -77,7 +79,7 @@ describe Card::Set::Type::Signup do
                                         8.days.ago.strftime('%F %T')
       @account.token_card.expire
       Card::Env.params[:token] = @token
-
+      @signup = Card.fetch 'big bad wolf'
       result = @signup.update_attributes!({})
       # successfully completes save
       expect(result).to eq(true)
@@ -175,9 +177,9 @@ describe Card::Set::Type::Signup do
     end
 
     it 'sends welcome email when account is activated' do
-      #@signup.run_phase :approve do
-        @signup.activate_account
-      #end
+      # @signup.run_phase :approve do
+      @signup.activate_account
+      # end
       @mail = ActionMailer::Base.deliveries.find { |a| a.subject == 'welcome' }
       Mail::TestMailer.deliveries.clear
 

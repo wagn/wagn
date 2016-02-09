@@ -81,9 +81,10 @@ class Card
             if item.item_cards == [item]  # no pointer card
               new_input << item
             else
-              items.insert(0, item.item_cards)
+              items.insert(0, item.item_cards.reject { |ca| ca.new_card? } )
               items.flatten!
-              new_input << item if item != self
+
+              new_input << item if item != self && !item.new_card?
               already_extended[item] = already_extended[item].to_i + 1
             end
           end

@@ -25,8 +25,6 @@ describe Card::Set::Self::Signin do
   end
 
   it 'delete action should sign out account' do
-    edit_view = @card.format.render_edit
-@card.director = nil
     expect(Card::Auth.current_id).to eq(Card['joe_user'].id)
     @card.delete
     expect(Card::Auth.current_id).to eq(Card::AnonymousID)

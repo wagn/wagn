@@ -216,7 +216,9 @@ class Card
     end
 
     def run_stage_callbacks stage
-      @card.run_callbacks :"#{stage}_stage"
+      #@card.abortable do
+        @card.run_callbacks :"#{stage}_stage"
+        #end
     end
 
     def run_subdirector_stages stage

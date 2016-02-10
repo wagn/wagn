@@ -30,14 +30,13 @@ end
 def last_change_on field, opts={}
   where_sql = 'card_actions.card_id = :card_id AND field = :field '
   where_sql += 'AND (draft is not true) ' unless opts[:including_drafts]
-  where_sql +=
-    if opts[:before]
-      'AND card_action_id < :action_id'
-    elsif opts[:not_after]
-      'AND card_action_id <= :action_id'
-    else
-      ''
-    end
+  where_sql += if opts[:before]
+                 'AND card_action_id < :action_id'
+               elsif opts[:not_after]
+                 'AND card_action_id <= :action_id'
+               else
+                 ''
+               end
 
   action_arg = opts[:before] || opts[:not_after]
   action_id = action_arg.is_a?(Card::Action) ? action_arg.id : action_arg

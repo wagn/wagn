@@ -33,10 +33,10 @@ describe Card::Reference do
   end
 
   it 'in references should survive cardtype change' do
-    newcard 'Banana', '[[Yellow]]'
-    newcard 'Submarine', '[[Yellow]]'
-    newcard 'Sun', '[[Yellow]]'
-    newcard 'Yellow'
+    create! 'Banana', '[[Yellow]]'
+    create! 'Submarine', '[[Yellow]]'
+    create! 'Sun', '[[Yellow]]'
+    create! 'Yellow'
     yellow_refs = Card['Yellow'].referers.map(&:name).sort
     expect(yellow_refs).to eq(%w{ Banana Submarine Sun })
 
@@ -57,17 +57,17 @@ describe Card::Reference do
   end
 
   it 'pickup new links on rename' do
-    @l = newcard('L', '[[Ethan]]')  # no Ethan card yet...
-    @e = newcard('Earthman')
+    @l = create!('L', '[[Ethan]]')  # no Ethan card yet...
+    @e = create!('Earthman')
     @e.update_attributes! name: 'Ethan' # NOW there is an Ethan card
     #  do we need the links to be caught before reloading the card?
     expect(Card['Ethan'].referers.map(&:name).include?('L')).not_to eq(nil)
   end
 
   it 'should update references on rename when requested' do
-    newcard 'watermelon', 'mmmm'
-    newcard 'watermelon+seeds', 'black'
-    lew = newcard('Lew', 'likes [[watermelon]] and [[watermelon+seeds|seeds]]')
+    create! 'watermelon', 'mmmm'
+    create! 'watermelon+seeds', 'black'
+    lew = create!('Lew', 'likes [[watermelon]] and [[watermelon+seeds|seeds]]')
 
     watermelon = Card['watermelon']
     watermelon.update_referers = true
@@ -90,9 +90,9 @@ describe Card::Reference do
   end
 
   it 'should not update references when not requested' do
-    watermelon = newcard 'watermelon', 'mmmm'
-    watermelon_seeds = newcard 'watermelon+seeds', 'black'
-    lew = newcard('Lew', 'likes [[watermelon]] and [[watermelon+seeds|seeds]]')
+    watermelon = create! 'watermelon', 'mmmm'
+    watermelon_seeds = create! 'watermelon+seeds', 'black'
+    lew = create!('Lew', 'likes [[watermelon]] and [[watermelon+seeds|seeds]]')
 
     assert_equal [watermelon.id, watermelon_seeds.id],
                  lew.references_out.order(:id).map(&:referee_id),
@@ -131,7 +131,7 @@ describe Card::Reference do
     Card.create! name: 'ColorType', type: 'Cardtype', content: ''
     Card.create! name: 'ColorType+*type+*structure', content: '{{+rgb}}'
     green = Card.create! name: 'green', type: 'ColorType'
-    newcard 'rgb'
+    create! 'rgb'
     green_rgb = Card.create! name: 'green+rgb', content: '#00ff00'
 
     expect(green.reload.includees.map(&:name)).to eq(['green+rgb'])
@@ -197,8 +197,8 @@ describe Card::Reference do
   end
 
   it 'pickup new links on create' do
-    @l = newcard('woof', '[[Lewdog]]')  # no Lewdog card yet...
-    @e = newcard('Lewdog')              # now there is
+    @l = create!('woof', '[[Lewdog]]')  # no Lewdog card yet...
+    @e = create!('Lewdog')              # now there is
     # NOTE @e.referers does not work, you have to reload
     expect(@e.reload.referers.map(&:name).include?('woof')).not_to eq(nil)
   end

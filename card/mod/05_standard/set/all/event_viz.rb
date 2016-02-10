@@ -28,21 +28,10 @@ def puts_events events, prefix='', depth=0
 
     # FIXME: this is not right.  before and around callbacks are processed in
     # declaration order regardless of kind.  not all befores then all arounds
-
-    if e[:before]
-      r += puts_events(e[:before], space+'v  ', depth)
-    end
-    if e[:around]
-      r += puts_events(e[:around], space+'vv ', depth)
-    end
-
-    output = "#{prefix}#{e[:name]}"
-    # warn output
-    r+= "#{output}\n"
-
-    if e[:after]
-      r += puts_events(e[:after ].reverse, space+'^  ', depth)
-    end
+    e[:before] && r += puts_events(e[:before], space + 'v  ', depth)
+    e[:around] && r += puts_events(e[:around], space + 'vv ', depth)
+    r += "#{prefix}#{e[:name]}\n"
+    e[:after] && r += puts_events(e[:after].reverse, space + '^  ', depth)
   end
   r
 end

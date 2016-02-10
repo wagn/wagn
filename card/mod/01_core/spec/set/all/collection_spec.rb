@@ -8,7 +8,7 @@ describe Card::Set::All::Collection do
     end
     it 'returns item for each line of basic content' do
       @args = { name: 'foo', content: "X\nY" }
-      is_expected.to eq(['X', 'Y'])
+      is_expected.to eq(%w(X Y))
     end
 
     it 'returns list of card names for search' do

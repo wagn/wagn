@@ -100,15 +100,10 @@ module ClassMethods
     Card.cache.hard.delete "~#{card.id}" if card.id
   end
 
-  def expire name, subcards=false
+  def expire name
     # note: calling instance method breaks on dirty names
     key = name.to_name.key
     return unless (card = Card.cache.read key)
-    # if subcards
-    #   card.expire_subcards
-    # else
-    #   card.preserve_subcards
-    # end
     Card.cache.delete key
     Card.cache.delete "~#{card.id}" if card.id
   end
@@ -201,7 +196,6 @@ module ClassMethods
     query = { mark_type => mark_key }
     query[:trash] = false unless opts[:look_in_trash]
     card = Card.where(query).take
-    #card.restore_subcards if card
     card
   end
 
@@ -303,19 +297,14 @@ def expire_hard
   Card.cache.hard.delete "~#{id}" if id
 end
 
-def expire_soft subcards=false
-  # if subcards
-  #   expire_subcards
-  # else
-  #   preserve_subcards
-  # end
+def expire_soft
   Card.cache.soft.delete key
   Card.cache.soft.delete "~#{id}" if id
 end
 
-def expire subcards=false
+def expire
   expire_hard
-  expire_soft subcards
+  expire_soft
 end
 
 def refresh force=false

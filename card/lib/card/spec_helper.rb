@@ -11,8 +11,7 @@ module Card::SpecHelper
     # warn "(ath)login_as #{user.inspect}, #{Card::Auth.current_id}, #{@request.session[:user]}"
   end
 
-  def newcard name, content=''
-    #FIXME - misleading name; sounds like it doesn't save.
+  def create! name, content=''
     Card.create! name: name, content: content
   end
 

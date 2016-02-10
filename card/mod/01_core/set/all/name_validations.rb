@@ -6,7 +6,7 @@ end
 
 event :validate_unique_codename do
   return unless codename.present? && errors.empty? &&
-     Card.find_by_codename(codename).present?
+                Card.find_by_codename(codename).present?
   errors.add :codename, "codename #{codename} already in use"
 end
 
@@ -38,11 +38,11 @@ event :validate_legal_name do
   else
     unless cardname.valid?
       errors.add :name, 'may not contain any of the following characters: ' \
-                        "#{ Card::Name.banned_array * ' ' }"
+                        "#{Card::Name.banned_array * ' '}"
     end
     # this is to protect against using a plus card as a tag
     return unless cardname.junction? && simple? && id &&
-    Auth.as_bot { Card.count_by_wql right_id: id } > 0
+                  Auth.as_bot { Card.count_by_wql right_id: id } > 0
     errors.add :name, "#{name} in use as a tag"
   end
 end

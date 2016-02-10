@@ -89,7 +89,6 @@ end
 # perhaps above should be in separate module?
 # ~~~~~~
 
-
 def rescue_event e
   @action = nil
   expire_pieces
@@ -98,7 +97,6 @@ def rescue_event e
   # rescue Card::Cancel
   # false
 end
-
 
 event :notable_exception_raised do
   Rails.logger.debug "BT:  #{Card::Error.current.backtrace * "\n  "}"
@@ -173,7 +171,7 @@ def validation_phase
 end
 
 def storage_phase &block
-  director.storage_phase &block
+  director.storage_phase(&block)
 end
 
 def integration_phase

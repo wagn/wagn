@@ -135,13 +135,13 @@ event :expire_related, :finalize do
   reset_patterns
   if is_structure?
     structuree_names.each do |name|
-      Card.expire name, true
+      Card.expire name
     end
   end
 end
 
 event :expire_related_names, before: :expire_related, changed: :name do
   # FIXME: look for opportunities to avoid instantiating the following
-  descendants.each { |c| c.expire(true) }
-  name_referers.each { |c| c.expire(true) }
+  descendants.each { |c| c.expire }
+  name_referers.each { |c| c.expire }
 end

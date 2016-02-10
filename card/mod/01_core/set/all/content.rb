@@ -53,7 +53,7 @@ event :save_draft, :store,
 end
 
 event :set_default_content, :prepare_to_validate,
-      on: :create, when: proc {|c| c.use_default_content? } do
+      on: :create, when: proc { |c| c.use_default_content? } do
   self.db_content = template.db_content
 end
 

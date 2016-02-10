@@ -5,19 +5,24 @@ describe Card::Set::Type::Html do
     Card::Auth.current_id = Card::WagnBotID
   end
 
-  it "should have special editor" do
+  it 'has special editor' do
     assert_view_select render_editor('Html'), 'textarea[rows="5"]'
   end
 
-  it "should not render any content in closed view" do
-    expect(render_card(:closed_content, type: 'Html', content: "<strong>Lions and Tigers</strong>")).to eq('')
+  it 'does not render any content in closed view' do
+    rendered = render_card :closed_content,
+                           type: 'Html',
+                           content: '<strong>Lions and Tigers</strong>'
+    expect(rendered).to eq('')
   end
 
-  it "should render nests" do
-    expect(render_card( :core, type: 'HTML', content: '{{a}}' )).to match(/slot/)
+  it 'renders nests' do
+    rendered = render_card :core, type: 'HTML', content: '{{a}}'
+    expect(rendered).to match(/slot/)
   end
 
-  it 'should not render uris' do
-    expect(render_card( :core, type: 'HTML', content: 'http://google.com' )).not_to match(/\<a/)
+  it 'does not render uris' do
+    rendered = render_card :core, type: 'HTML', content: 'http://google.com'
+    expect(rendered).not_to match(/\<a/)
   end
 end

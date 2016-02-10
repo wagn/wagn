@@ -14,7 +14,7 @@ format :css do
   end
 
   view :content do |args|
-   _render_core args
+    _render_core args
   end
 
   view :missing do |_args|

@@ -1,9 +1,8 @@
+attr_writer :director
+delegate :stage, to: :director
+
 def director
   @director ||= Card::DirectorRegister.fetch self
-end
-
-def director= dir
-  @director = dir
 end
 
 def identify_action
@@ -16,15 +15,10 @@ def identify_action
 end
 
 def current_act= act
-  if Card.current_act
-    fail Card::Error, 'not allowed to override current act'
-  end
+  fail Card::Error, 'not allowed to override current act' if Card.current_act
   Card.current_act = act
 end
 
 def current_act
   @current_act ||= Card.current_act
 end
-
-delegate :stage, to: :director
-

@@ -11,29 +11,12 @@
 class Card
   def subcards
     @subcards ||= Subcards.new(self)
-    #@subcards ||= (director && director.subcards)
+    # @subcards ||= (director && director.subcards)
   end
-
-  # def preserve_subcards
-  #   return unless subcards.present?
-  #   Card.cache.soft.write subcards_cache_key, @subcards
-  # end
-  #
-  # def restore_subcards
-  #   cached_subcards = Card.cache.soft.read(subcards_cache_key)
-  #   return unless cached_subcards
-  #   @subcards = cached_subcards
-  #   @subcards.context_card = self
-  # end
 
   def expire_subcards
-    #Card.cache.soft.delete subcards_cache_key
     subcards.clear
   end
-
-  # def subcards_cache_key
-  #   "#{key}#SUBCARDS#"
-  # end
 
   class Subcards
     attr_accessor :context_card, :keys
@@ -115,7 +98,6 @@ class Card
     def rename old_name, new_name
       return unless @keys.include? old_name.to_name.key
       # FIXME: something should happen here
-
     end
 
     def << value
@@ -293,6 +275,6 @@ class Card
   end
 
   def with_id_when_exists card, &block
-    card.director.call_after_store &block
+    card.director.call_after_store(&block)
   end
 end

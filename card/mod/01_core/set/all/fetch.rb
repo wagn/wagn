@@ -287,7 +287,7 @@ end
 
 def expire_pieces
   cardname.piece_names.each do |piece|
-    Card.expire piece, !cardname.field_of?(piece)
+    Card.expire piece
   end
 end
 

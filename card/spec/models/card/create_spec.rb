@@ -3,7 +3,9 @@
 # FIXME: this shouldn't be here
 describe Card::Set::Type::Cardtype, '.create with :codename' do
   it 'should work' do
-    expect(Card.create!(name: 'Foo Type', codename: 'foo', type: 'Cardtype').type_code).to eq(:cardtype)
+    card = Card.create! name: 'Foo Type', codename: 'foo',
+                        type: 'Cardtype'
+    expect(card.type_code).to eq(:cardtype)
   end
 end
 

@@ -206,7 +206,7 @@ format :html do
       setting = card.new_card? ? [:add_help, { fallback: :help }] : :help
       help_card = card.rule_card(*setting)
       if help_card && help_card.ok?(:read)
-        with_inclusion_mode :normal do
+        with_nest_mode :normal do
           raw_help_content = _render_raw args.merge(structure: help_card.name)
           process_content raw_help_content, content_opts:
             { chunk_list: :references }

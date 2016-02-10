@@ -258,7 +258,7 @@ class Card
       end
       @keys << card.key
       Card.write_to_soft_cache card
-      card.director = @context_card.director.add_subdirector(card)
+      card.director = @context_card.director.subdirectors.add(card)
       card
     end
   end

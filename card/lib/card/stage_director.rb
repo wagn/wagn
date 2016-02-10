@@ -3,7 +3,8 @@ class Card
   class StageDirector
     include Stage
 
-    attr_accessor :subcards, :prior_store, :act, :card, :stage, :parent, :main
+    attr_accessor :prior_store, :act, :card, :stage, :parent, :main,
+                  :subdirectors
 
     def initialize card, opts={}, main=true
       @card = card
@@ -15,10 +16,7 @@ class Card
       # Has card to be stored before the supercard?
       @prior_store = opts[:priority]
       @main = main
-      @subdirectors = []
-      card.subcards.each_card do |subcard|
-        add_subdirector subcard
-      end
+      @subdirectors = SubdirectorArray.initialize_with_subcards(self)
       register
     end
 
@@ -58,25 +56,6 @@ class Card
       unregister
     end
 
-    def running?
-      @running
-    end
-
-    def add_subdirector card
-      @subdirectors.each do |subdir|
-        return subdir if subdir.card == card
-      end
-      subdir = Card::DirectorRegister.fetch card, parent: self
-      subdir.main = false
-      subdir.parent = self
-      @subdirectors << subdir
-      subdir
-    end
-
-    def delete_subdirector card
-      @subdirectors.delete_if { |subdir| subdir.card == card }
-    end
-
     def catch_up_to_stage next_stage
       @stage ||= -1
       (@stage + 1).upto(stage_index(next_stage)) do |i|
@@ -110,20 +89,17 @@ class Card
       @main
     end
 
-    private
-
-    def rescue_event e
-      @card.action = nil
-      @card.expire_pieces
-      @subcards.each(&:expire_pieces) if @subcards
-      raise e
+    def running?
+      @running
     end
+
+    private
 
     def store &save_block
       if main? && !block_given?
         fail Card::Error, 'need block to store main card'
       end
-      # the block from the around save callback that saves the card
+      # the block is the block from the around save callback that saves the card
       if block_given?
         run_stage_callbacks :store
         store_with_subcards &save_block
@@ -160,7 +136,7 @@ class Card
         run_subdirector_stages stage unless stage == :finalize
       end
     rescue => e
-      rescue_event e
+      @card.rescue_event e
     end
 
     def run_stage_callbacks stage
@@ -197,8 +173,7 @@ class Card
 
     def store_and_finalize_as_subcard
       @card.skip_phases = true
-      #catch_up_to_stage :store
-      @card.save! validate: false #
+      @card.save! validate: false
     end
   end
 

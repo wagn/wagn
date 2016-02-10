@@ -47,6 +47,11 @@ class Card
         end
       end
 
+      def view_for_unknown _view, _args
+        # note: overridden in HTML
+        focal? ? :not_found : :missing
+      end
+
       def ok? task
         task = :create if task == :update && card.new_card?
         @ok ||= {}

@@ -32,9 +32,7 @@ protected
 def extract_subcard_args! args
   subcards = args.delete('subcards') || {}
   args.keys.each do |key|
-    if key =~ /^\+/
-      subcards[key] = args.delete(key)
-    end
+    subcards[key] = args.delete(key) if key =~ /^\+/
   end
   subcards
 end
@@ -54,7 +52,7 @@ def extract_type_id! args={}
       return nil
     end
 
-  if !type_id
+  unless type_id
     errors.add :type, "#{args[:type] || args[:type_code]} is not a known type."
   end
   type_id
@@ -84,18 +82,11 @@ event :update_ruled_cards, :finalize do
   end
 end
 
-def update_read_ruled_cards set
-  self.class.clear_read_rule_cache
-  Card.cache.reset # maybe be more surgical, just Auth.user related
-  expire # probably shouldn't be necessary,
-  # but was sometimes getting cached version when card should be in the
-  # trash.  could be related to other bugs?
+def update_read_rules_of_set_members_not_governed_by_narrower_rules set
   in_set = {}
   if !trash && set && (set_class = set.tag) && (class_id = set_class.id)
     rule_class_ids = set_patterns.map(&:pattern_id)
-    # warn "rule_class_id #{class_id}, #{rule_class_ids.inspect}"
 
-    # first update all cards in set that aren't governed by narrower rule
     Auth.as_bot do
       cur_index = rule_class_ids.index Card[read_rule_class].id
       if (rule_class_index = rule_class_ids.index(class_id))
@@ -105,17 +96,29 @@ def update_read_ruled_cards set
           item_card.update_read_rule if cur_index >= rule_class_index
         end
 
-      else warn "No current rule index #{class_id}, " \
+      else
+        warn "No current rule index #{class_id}, " \
                 "#{rule_class_ids.inspect}"
       end
     end
   end
+  in_set
+end
+
+def update_read_ruled_cards set
+  self.class.clear_read_rule_cache
+  Card.cache.reset # maybe be more surgical, just Auth.user related
+  expire # probably shouldn't be necessary,
+  # but was sometimes getting cached version when card should be in the
+  # trash.  could be related to other bugs?
+
+  updated = update_read_rules_of_set_members_not_governed_by_narrower_rules set
 
   # then find all cards with me as read_rule_id that were not just updated
   # and regenerate their read_rules
   return if new_card?
   Card.search(read_rule_id: id) do |card|
-    card.update_read_rule unless in_set[card.key]
+    card.update_read_rule unless updated[card.key]
   end
 end
 

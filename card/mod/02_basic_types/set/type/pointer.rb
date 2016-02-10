@@ -58,7 +58,7 @@ format :html do
 
   view :closed_content do |args|
     args[:item] =
-      if (args[:item] || inclusion_defaults(card)[:view]) == 'name'
+      if (args[:item] || nest_defaults(card)[:view]) == 'name'
         'name'
       else
         'link'
@@ -184,7 +184,7 @@ format :html do
     pod_name = card.rule(:options_label) || 'description'
     dcard = Card[ "#{option}+#{pod_name}" ]
     if dcard and dcard.ok? :read
-      with_inclusion_mode :normal do
+      with_nest_mode :normal do
         subformat(dcard).render_core
       end
     end

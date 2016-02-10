@@ -66,7 +66,8 @@ event :validate_accountability, :prepare_to_validate, on: :create do
   end
 end
 
-event :require_email, :prepare_to_validate, after: :validate_accountability, on: :create do
+event :require_email, :prepare_to_validate,
+      after: :validate_accountability, on: :create do
   errors.add :email, 'required' unless subfield(:email)
 end
 

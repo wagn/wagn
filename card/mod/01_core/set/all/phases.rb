@@ -9,7 +9,6 @@
 #   triumph: similar to success, but if called on a subcard
 #            it causes the entire action to abort (not just the subcard)
 
-
 def self.create! opts
   card = Card.new opts
   card.act do
@@ -27,14 +26,14 @@ def self.create opts
 end
 
 def delete
-  card.act do
-    card.delete
+  act do
+    super
   end
 end
 
 def delete!
-  card.act do
-    card.delete!
+  act do
+    super
   end
 end
 
@@ -50,15 +49,14 @@ def update_attributes! opts
   end
 end
 
-
 def abort status, msg='action canceled'
   if status == :failure && errors.empty?
     errors.add :abort, msg
-  elsif Hash === status && status[:success]
+  elsif status.is_a?(Hash) && status[:success]
     success << status[:success]
     status = :success
   end
-  raise Card::Abort.new(status, msg)
+  fail Card::Abort.new(status, msg)
 end
 
 def abortable
@@ -68,16 +66,12 @@ rescue Card::Abort => e
     @supercard ? raise(e) : true
   elsif e.status == :success
     if @supercard
-      @supercard.subcards.delete(key)
-      @supercard.director.delete_subdirector(self)
+      @supercard.subcards.delete key
+      @supercard.director.subdirectors.delete self
       expire_soft
     end
     true
   end
-end
-
-def valid_subcard?
-  abortable { valid? }
 end
 
 # this is an override of standard rails behavior that rescues abort
@@ -87,96 +81,13 @@ def with_transaction_returning_status
   self.class.transaction do
     add_to_transaction
     status = abortable { yield }
-    raise ActiveRecord::Rollback unless status
+    fail ActiveRecord::Rollback unless status
   end
   status
 end
 
 # perhaps above should be in separate module?
 # ~~~~~~
-
-# PHASES = {}
-# [:prepare, :approve, :store, :clean, :extend, :subsequent]
-#   .each_with_index do |phase, i|
-#     PHASES[phase] = i
-#   end
-#
-# def run_phase phase,&block
-#   return if errors.any?
-#   @phase = phase
-#   @subphase = :before
-#   if block_given?
-#     block.call
-#   else
-#     run_callbacks phase
-#   end
-#   @subphase = :after
-#   #run_phase_on_subcards phase
-# rescue => e
-#   rescue_event e
-# end
-#
-# def run_phase_on_subcards phase
-#   subcards.each do |subcard|
-#     subcard.run_callbacks phase
-#   end
-# end
-
-def phase
-  director.stage || (@supercard && @supercard.phase)
-end
-
-def subphase
-  @subphase || (@supercard && @supercard.subphase)
-end
-
-# def prepare
-#   @action = old_identify_action
-#   # the following should really happen when type, name etc are changed
-#   reset_patterns
-#   include_set_modules
-#   run_phase :prepare
-# rescue => e
-#   rescue_event e
-# end
-#
-# def approve
-#   @action ||= old_identify_action
-#   run_phase :approve
-#   expire_pieces if errors.any?
-#   errors.empty?
-# rescue => e
-#   rescue_event e
-# end
-#
-# def store
-#   run_phase :store do
-#     run_callbacks :store do
-#       yield # unless @draft
-#       @virtual = false
-#     end
-#   end
-#   #return if @supercard
-#   run_phase :clean do
-#     run_callbacks :clean
-#   end
-# rescue => e
-#   rescue_event e
-# ensure
-#   @from_trash = nil
-# end
-#
-# def extend
-#   run_phase :extend     # deprecated
-#   run_phase :subsequent # deprecated
-#   #return if @supercard
-#   #run_phase :finish
-#   #run_phase :followup
-# rescue => e
-#   rescue_event e
-# ensure
-#   @action = nil
-# end
 
 
 def rescue_event e
@@ -253,13 +164,11 @@ def prepare_for_phases
   include_set_modules
 end
 
-def run_phase?
-  director.main?
+def run_phases?
+  director.main? && !skip_phases
 end
 
 def validation_phase
-  # TODO: try to use Card.current_act as condition in callback definition
-  return true unless run_phase?
   director.validation_phase
 end
 
@@ -268,11 +177,9 @@ def storage_phase &block
 end
 
 def integration_phase
-  return true unless run_phase?
   director.integration_phase
 end
 
 def clean_up
-  return true unless run_phase?
   Card::DirectorRegister.clear
 end

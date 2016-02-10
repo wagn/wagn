@@ -6,7 +6,6 @@ class Card
     include Nest
     include Permission
     include Render
-    include View
 
     DEPRECATED_VIEWS = { view: :open, card: :open, line: :closed,
                          bare: :core, naked: :core }.freeze

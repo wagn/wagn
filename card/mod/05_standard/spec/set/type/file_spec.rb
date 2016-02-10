@@ -48,7 +48,8 @@ describe Card::Set::Type::File do
 
     context 'updated file card' do
       before do
-        subject.update_attributes! file: File.new(File.join FIXTURES_PATH, 'file2.txt')
+        file = File.new File.join(FIXTURES_PATH, 'file2.txt')
+        subject.update_attributes! file: file
       end
       it 'updates file' do
         expect(subject.file.read.strip).to eq 'file2'

@@ -67,11 +67,11 @@ class Card < ActiveRecord::Base
                    :finalize_stage,
                    :integrate_stage, :integrate_with_delay_stage
 
-  before_validation :validation_phase, unless: :skip_phases
+  before_validation :validation_phase, if: -> { run_phases? }
   around_save :storage_phase
-  after_save :integration_phase, unless: :skip_phases
-  after_commit :clean_up, unless: :skip_phases
-  after_rollback :clean_up, unless: :skip_phases
+  after_save :integration_phase, if: -> { run_phases? }
+  after_commit :clean_up, if: -> { run_phases? }
+  after_rollback :clean_up, if: -> { run_phases? }
 
   TRACKED_FIELDS = %w(name type_id db_content trash)
   extend CarrierWave::Mount

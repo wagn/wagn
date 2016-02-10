@@ -1,6 +1,6 @@
 format :html do
   view :core do |args|
-    with_inclusion_mode :template do
+    with_nest_mode :template do
       super args
     end
   end

@@ -36,7 +36,7 @@ format :html do
       hidden: { success: "REDIRECT: #{Env.interrupted_action || '*previous'}" },
       recaptcha: :off
     }
-    with_inclusion_mode :edit do
+    with_nest_mode :edit do
       card_form :update, form_args do
         [
           _optional_render(:content_formgroup, args.merge(structure: true)),

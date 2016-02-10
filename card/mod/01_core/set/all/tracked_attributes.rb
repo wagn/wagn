@@ -83,7 +83,7 @@ event :update_ruled_cards, :finalize do
 end
 
 def update_read_rules_of_set_members_not_governed_by_narrower_rules set
-  return {} if trash || !set && !(set_class = set.tag) &&
+  return {} if trash || !set || !(set_class = set.tag) ||
                !(class_id = set_class.id)
   in_set = {}
   rule_class_ids = set_patterns.map(&:pattern_id)

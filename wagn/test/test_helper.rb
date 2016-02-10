@@ -112,7 +112,6 @@ unless defined? TEST_ROOT
             }
 
             @test_class.class_eval test_def
-            #puts test_def
           end
         end
       end

@@ -22,7 +22,6 @@ event :assign_action, :initialize,
     action_type: @action,
     draft: (Env.params['draft'] == 'true')
   )
-  puts "#{name}:#{@action}"
   if @supercard && @supercard != self
     @current_action.super_action = @supercard.current_action
   end

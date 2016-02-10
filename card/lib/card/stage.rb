@@ -1,4 +1,23 @@
 class Card
+  # The process of writing a card change to the database is divided into
+  # 8 stages that are grouped in 3 phases.
+  #
+  # 'validation phase'
+  #   * initialize stage
+  #   * prepare_to_validate stage
+  #   * validate stage
+  #
+  # 'storage phase'
+  #   * prepare_to_store stage
+  #   * store stage
+  #   * finalize stage
+  #
+  # 'integration phase'
+  #   * integrate stage
+  #   * integrate_with_delay stage
+  #
+  #
+
   module Stage
     STAGE_INDEX = {}
     STAGES = [:initialize, :prepare_to_validate, :validate, :prepare_to_store,

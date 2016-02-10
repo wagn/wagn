@@ -11,7 +11,7 @@ def rule_set_key
 end
 
 def rule_set_name
-  if is_user_rule?
+  if is_preference?
     cardname.trunk_name.trunk_name
   else
     cardname.trunk_name
@@ -19,7 +19,7 @@ def rule_set_name
 end
 
 def rule_set
-  if is_user_rule?
+  if is_preference?
     self[0..-3]
   else
     trunk
@@ -31,7 +31,7 @@ def rule_setting_name
 end
 
 def rule_user_setting_name
-  if is_user_rule?
+  if is_preference?
     "#{rule_user_name}+#{rule_setting_name}"
   else
     rule_setting_name
@@ -39,11 +39,11 @@ def rule_user_setting_name
 end
 
 def rule_user_name
-  is_user_rule? ? cardname.trunk_name.tag : nil
+  is_preference? ? cardname.trunk_name.tag : nil
 end
 
 def rule_user
-  is_user_rule? ? self[-2] : nil
+  is_preference? ? self[-2] : nil
 end
 
 # ~~~~~~~~~~ determine the set options to which the user can apply the rule.
@@ -92,7 +92,7 @@ def set_options
 end
 
 def set_prototype
-  if is_user_rule?
+  if is_preference?
     self[0..-3].prototype
   else
     trunk.prototype

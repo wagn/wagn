@@ -5,7 +5,7 @@ def raw_content
   @raw_content ||= if left
       items = if left.type_id == Card::UserID
          user = left
-         follow_rules = Card.user_rule_cards left.name, 'follow'
+         follow_rules = Card.preference_cards left.name, 'follow'
          follow_rules.map {|card| "[[#{card.name}]]" }
       end.join "\n"
     else

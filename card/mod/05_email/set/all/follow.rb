@@ -20,7 +20,7 @@ event :cache_expired_for_name_change, before: :store, on: :update,
   Card.follow_caches_expired
 end
 
-event :cache_expired_for_new_user_rule,
+event :cache_expired_for_new_preference,
       before: :extend,
       when: proc { |c| c.follow_rule_card? }  do
   Card.follow_caches_expired
@@ -95,7 +95,7 @@ def follower_names
 end
 
 def follow_rule_card?
-  is_user_rule? && rule_setting_name == '*follow'
+  is_preference? && rule_setting_name == '*follow'
 end
 
 def follow_option?
@@ -236,7 +236,7 @@ end
 module ClassMethods
   def follow_caches_expired
     Card.clear_follower_ids_cache
-    Card.clear_user_rule_cache
+    Card.clear_preference_cache
   end
 
   def follower_ids_cache

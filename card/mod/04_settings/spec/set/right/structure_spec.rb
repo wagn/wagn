@@ -2,16 +2,16 @@
 
 describe Card::Set::Right::Structure do
   it "closed_content is rendered as type + raw" do
-    template = Card.new(name: 'A+*right+*structure', content: '[[link]] {{inclusion}}')
+    template = Card.new(name: 'A+*right+*structure', content: '[[link]] {{nest}}')
     expect(template.format._render(:closed_content)).to eq(
-      '<a class="cardtype known-card" href="/Basic">Basic</a> : [[link]] {{inclusion}}'
+      '<a class="cardtype known-card" href="/Basic">Basic</a> : [[link]] {{nest}}'
     )
   end
 
   it "closed_content is rendered as type + raw" do
-    template = Card.new(name: 'A+*right+*structure', type: 'Html', content: '[[link]] {{inclusion}}')
+    template = Card.new(name: 'A+*right+*structure', type: 'Html', content: '[[link]] {{nest}}')
     expect(template.format._render(:closed_content)).to eq(
-      '<a class="cardtype known-card" href="/HTML">HTML</a> : [[link]] {{inclusion}}'
+      '<a class="cardtype known-card" href="/HTML">HTML</a> : [[link]] {{nest}}'
     )
   end
 

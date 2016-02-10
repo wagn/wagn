@@ -59,7 +59,7 @@ class Card
           sub = self
         else
           sub = subformat nested_card
-          sub.inclusion_opts = opts[:items] ? opts[:items].clone : {}
+          sub.nest_opts = opts[:items] ? opts[:items].clone : {}
         end
 
         view = canonicalize_view opts.delete :view
@@ -120,7 +120,7 @@ class Card
       def nest_defaults nested_card
         @nest_defaults ||= begin
           defaults = get_nest_defaults(nested_card).clone
-          defaults.merge! @inclusion_opts if @inclusion_opts
+          defaults.merge! @nest_opts if @nest_opts
           defaults
         end
       end

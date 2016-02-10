@@ -37,7 +37,7 @@ describe Card::Set::Type::Scss do
     end
   end
 
-  it "should process links and inclusions but not urls" do
+  it "should process links and nests but not urls" do
     Card::Auth.as_bot do
       scss = ".TYPE-X.no-citations {\n  color: #BA5B5B;\n}\n"
       card = Card.create! name: 'minimal css', type: 'scss', content: scss

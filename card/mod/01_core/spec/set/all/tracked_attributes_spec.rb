@@ -281,7 +281,7 @@ describe Card::Set::All::TrackedAttributes do
         end
       end
 
-      it 'test_updates_inclusions_when_renaming' do
+      it 'test_updates_nests_when_renaming' do
         c1 = Card['Blue']
         c2 = Card['blue includer 1']
         c3 = Card['blue includer 2']
@@ -291,7 +291,7 @@ describe Card::Set::All::TrackedAttributes do
         assert_equal '{{Red|closed;other:stuff}}', Card.find(c3.id).content
       end
 
-      it 'test_updates_inclusions_when_renaming_to_plus' do
+      it 'test_updates_nests_when_renaming_to_plus' do
         c1 = Card['Blue']
         c2 = Card['blue includer 1']
         c1.update_attributes name: 'blue includer 1+color',

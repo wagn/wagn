@@ -8,7 +8,7 @@ describe Card::Set::Type::Image do
     end
   end
 
-  it "handles size argument in inclusion syntax" do
+  it "handles size argument in nest syntax" do
     file = File.new(File.join FIXTURES_PATH, 'mao2.jpg')
     image_card = Card.create! name: 'TestImage', type: 'Image', image: file
     including_card = Card.new name: 'Image1', content: "{{TestImage | core; size:small }}"

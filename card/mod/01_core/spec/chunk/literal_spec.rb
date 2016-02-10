@@ -6,7 +6,7 @@ describe Card::Chunk::EscapedLiteral, "literal chunk tests" do
     expect(render_content('write this: \[[text]]')).to eq('write this: <span>[</span>[text]]')
   end
 
-  it "should handle escaped inclusion" do
+  it "should handle escaped nest" do
     expect(render_content('write this: \{{cardname}}')).to eq('write this: <span>{</span>{cardname}}')
   end
 

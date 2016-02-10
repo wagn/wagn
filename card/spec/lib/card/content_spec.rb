@@ -145,7 +145,7 @@ EXAMPLES = {
   },
 
   single_nest: {
-    content: '{{one inclusion|size;large}}',
+    content: '{{one nest|size;large}}',
     classes: [:Include]
   },
 

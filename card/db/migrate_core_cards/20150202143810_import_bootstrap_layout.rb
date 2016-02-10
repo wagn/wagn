@@ -55,7 +55,7 @@ class ImportBootstrapLayout < Card::CoreMigration
     # retain old behavior (default view was content, now titled)
     Card.create! name: '*all+*default html view', content: 'content'
 
-    # update layouts to have explicit views in inclusions
+    # update layouts to have explicit views in nests
     Card.search( type_id: Card::LayoutTypeID ) do |lcard|
       lcontent = Card::Content.new lcard.content, lcard
       lcontent.find_chunks( Card::Chunk::Include ).each do |nest|

@@ -13,7 +13,7 @@ describe Card::Set::Type::Html do
     expect(render_card(:closed_content, type: 'Html', content: "<strong>Lions and Tigers</strong>")).to eq('')
   end
 
-  it "should render inclusions" do
+  it "should render nests" do
     expect(render_card( :core, type: 'HTML', content: '{{a}}' )).to match(/slot/)
   end
 

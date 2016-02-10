@@ -10,7 +10,7 @@ format :html do
       render :layout
     else
       view ||= args[:home_view] || :open
-      @inclusion_opts = (args[:items] || {}).clone
+      @nest_opts = (args[:items] || {}).clone
       render view, args
     end
   end
@@ -211,7 +211,7 @@ format :html do
           process_content raw_help_content, content_opts:
             { chunk_list: :references }
           # render help card with current card's format
-          # so current card's context is used in help card inclusions
+          # so current card's context is used in help card nests
         end
       end
     end

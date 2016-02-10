@@ -16,7 +16,7 @@ describe Card::Chunk::Include, "Inclusion" do
       expect(render_content("{{# -->}}")).to eq('<!-- # --&gt; -->')
     end
 
-    it "handles empty inclusions" do
+    it "handles empty nests" do
       instance = @class.new( @class.full_match( '{{ }}' ) , nil )
       expect(instance.name).to eq('')
       expect(instance.options[:inc_syntax]).to eq(' ')

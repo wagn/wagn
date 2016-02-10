@@ -30,8 +30,6 @@
 # MachineInput module creates an 'on: save' event that runs the machines of
 # all cards that are linked to that card via the +machine input pointer.
 
-
-
 class Card
   module Machine
     module ClassMethods
@@ -51,9 +49,8 @@ class Card
 
       def store_machine_output args={}, &block
         output_config.merge!(args)
-        if block_given?
-          define_method :after_engine, &block
-        end
+        return unless block_given?
+        define_method :after_engine, &block
       end
     end
 
@@ -124,15 +121,15 @@ class Card
 
     def run_machine joint="\n"
       before_engine
-      output = input_item_cards.map do |input|
-        unless input.is_a? Card::Set::Type::Pointer
+      output =
+        input_item_cards.map do |input|
+          next if input.is_a? Card::Set::Type::Pointer
           if input.respond_to? :machine_input
             engine(input.machine_input)
           else
             engine(input.format._render_raw)
           end
-        end
-      end.select(&:present?).join(joint)
+        end.select(&:present?).join(joint)
       after_engine output
     end
 
@@ -198,4 +195,3 @@ class Card
     end
   end
 end
-

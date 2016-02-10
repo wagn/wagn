@@ -47,7 +47,7 @@ def email_config args={}
   process_email_field( :attach, config, args ) do |field_card|
     field_card.extended_item_contents args[:context]
   end
-  process_message_field :subject,      config, args, 'email_text', content_opts: { chunk_list: :inclusion_only }
+  process_message_field :subject,      config, args, 'email_text', content_opts: { chunk_list: :nest_only }
   process_message_field :text_message, config, args, 'email_text'
   process_message_field :html_message, config, args, 'email_html'
   config[:html_message] = Card::Mailer.layout config[:html_message] if config[:html_message].present?

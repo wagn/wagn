@@ -17,7 +17,7 @@ describe Card::Format do
       expect(format.show_view?( :menu, optional_menu: :hide                             )).to be_falsey
     end
 
-    it "should handle args from inclusions" do
+    it "should handle args from nests" do
       expect(format.show_view?( :menu, show: 'menu', default_visibility: :hide         )).to be_truthy
       expect(format.show_view?( :menu, hide: 'menu, paging', default_visibility: :show )).to be_falsey
       expect(format.show_view?( :menu, show: 'menu', optional_menu: :hide              )).to be_truthy

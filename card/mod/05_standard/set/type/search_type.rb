@@ -85,7 +85,7 @@ format do
       begin
         v = {}
         v[:query] = card.query(search_params)
-        v[:item] = set_inclusion_opts args.merge(query_view: v[:query][:view])
+        v[:item] = set_nest_opts args.merge(query_view: v[:query][:view])
         v
       rescue JSON::ParserError => e
         { error: e }
@@ -124,12 +124,12 @@ format do
     end
   end
 
-  def set_inclusion_opts args
+  def set_nest_opts args
     @nest_defaults = nil
-    @inclusion_opts ||= {}
-    @inclusion_opts[:view] = args[:item] || inclusion_opts[:view] ||
+    @nest_opts ||= {}
+    @nest_opts[:view] = args[:item] || nest_opts[:view] ||
                              args[:query_view] || default_item_view
-    # explicit > inclusion syntax > WQL > inclusion defaults
+    # explicit > nest syntax > WQL > nest defaults
   end
 
   def page_link text, page, _current=false, options={}

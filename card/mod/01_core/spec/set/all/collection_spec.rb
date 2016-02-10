@@ -54,7 +54,7 @@ describe Card::Set::All::Collection do
   end
 
   describe '#contextual_content' do
-    it 'processes inclusions relative to context card' do
+    it 'processes nests relative to context card' do
       context_card = Card['A'] # refers to 'Z'
       c = Card.new(name: 'foo', content: '{{_self+B|core}}')
       expect(c.contextual_content(context_card)).to eq('AlphaBeta')

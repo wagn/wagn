@@ -177,7 +177,7 @@ describe Card::Diff do
       expect(diff).to eq( "[[A]]\n#{del '[[B]]'}#{ins '[[C]]'}")
     end
 
-    it 'compares complete inclusions' do
+    it 'compares complete nests' do
       diff = Card::Diff.complete("{{A}}\n{{B}}", "{{A}}\n{{C}}", format: :html)
       expect(diff).to eq( "{{A}}\n#{del '{{B}}'}#{ins '{{C}}'}")
     end

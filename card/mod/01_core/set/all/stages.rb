@@ -26,6 +26,5 @@ def current_act
   @current_act ||= Card.current_act
 end
 
-def stage
-  director.stage
-end
+delegate :stage, to: :director
+

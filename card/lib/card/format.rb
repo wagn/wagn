@@ -22,7 +22,7 @@ class Card
     end
 
     attr_reader :card, :root, :parent, :main_opts
-    attr_accessor :form, :error_status, :inclusion_opts
+    attr_accessor :form, :error_status, :nest_opts
 
     class << self
       @@registered = []

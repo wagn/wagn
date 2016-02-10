@@ -48,7 +48,7 @@ describe Card::Reference do
     expect(yellow_refs).to eq(%w{ Banana Submarine Sun })
   end
 
-  it 'container inclusion' do
+  it 'container nest' do
     Card.create name: 'bob+city'
     Card.create name: 'address+*right+*default', content: '{{_L+city}}'
     Card.create name: 'bob+address'
@@ -127,7 +127,7 @@ describe Card::Reference do
     expect(@x.content).to eq('[[A]] [[A+B]] [[T]]')
   end
 
-  it 'template inclusion' do
+  it 'template nest' do
     Card.create! name: 'ColorType', type: 'Cardtype', content: ''
     Card.create! name: 'ColorType+*type+*structure', content: '{{+rgb}}'
     green = Card.create! name: 'green', type: 'ColorType'
@@ -152,7 +152,7 @@ describe Card::Reference do
     expect(Card['alpha card'].referers.map(&:name)).to eq(['beta card'])
   end
 
-  it 'simple inclusion' do
+  it 'simple nest' do
     Card.create name: 'alpha'
     Card.create name: 'beta', content: 'I nest {{alpha}}'
     expect(Card['beta'].includees.map(&:name)).to eq(['alpha'])
@@ -191,8 +191,8 @@ describe Card::Reference do
     expect(Card['search w refs'].content).to eq '{"name":"_+AAA"}'
   end
 
-  it 'should handle commented inclusion' do
-    c = Card.create name: 'inclusion comment test', content: '{{## hi mom }}'
+  it 'should handle commented nest' do
+    c = Card.create name: 'nest comment test', content: '{{## hi mom }}'
     expect(c.errors.any?).to be_falsey
   end
 
@@ -203,7 +203,7 @@ describe Card::Reference do
     expect(@e.reload.referers.map(&:name).include?('woof')).not_to eq(nil)
   end
 
-  it 'pickup new inclusions on create' do
+  it 'pickup new nests on create' do
     @l = Card.create! name: 'woof', content: '{{Lewdog}}'
     # no Lewdog card yet...
     @e = Card.new name: 'Lewdog', content: 'grrr'

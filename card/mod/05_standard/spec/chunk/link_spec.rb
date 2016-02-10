@@ -58,7 +58,7 @@ describe Card::Chunk::Link do
     expect(content).to eq "wgw&nbsp; <a target=\"_blank\" class=\"external-link\" href=\"http://www.google.com\">google</a> &nbsp;  <br>"
   end
 
-  it "handles inclusions in link text" do
+  it "handles nests in link text" do
     assert_link '[[linkies|{{namies|name}}]]', class: "wanted-card", href: "/linkies", text: 'namies'
   end
 

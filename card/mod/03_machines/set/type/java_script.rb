@@ -17,7 +17,7 @@ end
 
 format do
   def chunk_list  #turn off autodetection of uri's
-    :inclusion_only
+    :nest_only
   end
 end
 

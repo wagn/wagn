@@ -1,9 +1,8 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Right::Password do
-
   before :each do
-    @account = Card::Auth[ 'joe@user.com' ]
+    @account = Card::Auth['joe@user.com']
   end
 
   describe '#update_attributes' do
@@ -28,17 +27,15 @@ describe Card::Set::Right::Password do
         pw_card = acct.password_card
         pw_card.content = ''
         pw_card.save
-        expect(original_pw).to eq(pw_card.refresh(force=true).content)
+        expect(original_pw).to eq(pw_card.refresh(_force = true).content)
       end
 
       it "shouldn't break email editing" do
-        @account.update_attributes! subcards: {'+*password'=>'', '+*email'=>'joe2@user.com'}
+        @account.update_attributes! subcards: { '+*password' => '',
+                                                '+*email' => 'joe2@user.com' }
         expect(@account.email).to eq('joe2@user.com')
         expect(@account.password).not_to be_empty
       end
     end
   end
-
-
-
 end

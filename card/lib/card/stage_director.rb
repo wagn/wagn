@@ -164,7 +164,7 @@ class Card
     end
 
     def run_stage_callbacks stage
-      if stage_index(stage) <= stage_index(:validate)
+      if stage_index(stage) <= stage_index(:validate) && !main?
         @card.abortable do
           @card.run_callbacks :"#{stage}_stage"
         end

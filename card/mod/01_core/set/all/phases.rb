@@ -70,6 +70,7 @@ rescue Card::Abort => e
     if @supercard
       @supercard.subcards.delete(key)
       @supercard.director.delete_subdirector(self)
+      expire_soft
     end
     true
   end

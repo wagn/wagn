@@ -22,7 +22,7 @@ class Card
     elsif DirectorRegister.act_card &&
           DirectorRegister.act_card != card &&
           DirectorRegister.act_card.director.running?
-      DirectorRegister.director.add_subdirector(card)
+      DirectorRegister.act_card.director.add_subdirector(card)
     else
       StageDirector.new card
     end

@@ -24,7 +24,7 @@ class Card
       dir
     end
 
-    def delete  card
+    def delete card
       delete_if { |dir| dir.card == card }
     end
   end

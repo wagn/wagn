@@ -17,17 +17,15 @@ class Card
   #   * integrate_with_delay stage
   #
   #
-
   module Stage
     STAGE_INDEX = {}
     STAGES = [:initialize, :prepare_to_validate, :validate, :prepare_to_store,
               :store, :finalize, :integrate, :integrate_with_delay].freeze
-    
+
     STAGES.each_with_index do |stage, i|
       STAGE_INDEX[stage] = i
     end
     STAGE_INDEX.freeze
-
 
     def stage_symbol index
       case index
@@ -46,15 +44,15 @@ class Card
       when Integer then
         return stage
       else
-        raise Card::Error, "not a valid stage: #{stage}"
+        fail Card::Error, "not a valid stage: #{stage}"
       end
     end
-    
+
     def stage_ok? opts
       stage && (
       (opts[:during] && in?(opts[:during])) ||
         (opts[:before] && before?(opts[:before])) ||
-        (opts[:after]  && after?(opts[:after])) ||
+        (opts[:after] && after?(opts[:after])) ||
         true # no phase restriction in opts
       )
     end

@@ -48,20 +48,16 @@ class Card
       def show_view? view, args
         default = args.delete(:default_visibility) || :show # FIXME: - ugly
         api_option = args["optional_#{view}".to_sym]
-        case
+        case api_option
           # permanent visibility specified in code
-        when api_option == :always then
-          true
-        when api_option == :never then
-          false
+        when :always then true
+        when  :never then false
         else
           # wagneer can override code settings
           contextual_setting = nest_arg_visibility(view, args) || api_option
           case contextual_setting
-          when :show then
-            true
-          when :hide then
-            false
+          when :show then true
+          when :hide then false
           else
             default == :show
           end

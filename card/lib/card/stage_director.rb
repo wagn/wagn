@@ -36,6 +36,9 @@ class Card
 
     attr_accessor :prior_store, :act, :card, :stage, :parent, :main,
                   :subdirectors
+    attr_reader :running
+    alias_method :running?, :running
+    alias_method :main?, :main
 
     def initialize card, opts={}, main=true
       @card = card
@@ -105,10 +108,10 @@ class Card
 
     def need_act
       act_director = main_director
-      if !act_director
+      unless act_director
         fail Card::Error, 'act requested without a main stage director'
       end
-      act_director.act ||=  Card::Act.create(ip_address: Env.ip)
+      act_director.act ||= Card::Act.create(ip_address: Env.ip)
       @card.current_act = @act = act_director.act
     end
 
@@ -118,14 +121,6 @@ class Card
       else
         DirectorRegister.act_director || (@parent && @parent.main_director)
       end
-    end
-
-    def main?
-      @main
-    end
-
-    def running?
-      @running
     end
 
     private
@@ -138,7 +133,7 @@ class Card
       # in the store stage it can be necessary that
       # other subcards must be saved before we save this card
       if stage == :store
-        store &block
+        store(&block)
       else
         run_stage_callbacks stage
         run_subdirector_stages stage unless stage == :finalize
@@ -182,7 +177,7 @@ class Card
       # saves the card
       if block_given?
         run_stage_callbacks :store
-        store_with_subcards &save_block
+        store_with_subcards(&save_block)
       else
         store_and_finalize_as_subcard
       end

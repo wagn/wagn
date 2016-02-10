@@ -81,7 +81,7 @@ describe Card::Set::Type::Image do
     context 'updated file card' do
       before do
         subject.update_attributes!(
-          image: File.new(File.join FIXTURES_PATH, 'rails.gif')
+          image: File.new(File.join(FIXTURES_PATH, 'rails.gif'))
         )
       end
       it 'updates file' do
@@ -114,7 +114,7 @@ describe Card::Set::Type::Image do
     it 'becomes a regular file when changed' do
       Card::Auth.as_bot do
         subject.update_attributes!(
-          image: File.new(File.join FIXTURES_PATH, 'rails.gif')
+          image: File.new(File.join(FIXTURES_PATH, 'rails.gif'))
         )
       end
       expect(subject.mod_file?).to be_falsey

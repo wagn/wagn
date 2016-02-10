@@ -58,65 +58,86 @@ class Card
       host_class.extend(ClassMethods)
       host_class.output_config = { filetype: 'txt' }
 
-      if Codename[:machine_output] # for compatibility with old migrations
-        host_class.card_accessor :machine_output, type: :file
-        host_class.card_accessor :machine_input, type: :pointer
+      # for compatibility with old migrations
+      return unless  Codename[:machine_output]
 
-        # define default machine behaviour
-        host_class.collect_input_cards do
-          # traverse through all levels of pointers and
-          # collect all item cards as input
-          items = [self]
-          new_input = []
-          already_extended = {} # avoid loops
-          loop_limit = 5
-          while items.size > 0
-            item = items.shift
-            next if item.trash
-            next if already_extended[item.id].to_i > loop_limit
-            if item.item_cards == [item]  # no pointer card
-              new_input << item
-            else
-              items.insert(0, item.item_cards.reject(&:new_card?))
-              items.flatten!
+      host_class.card_accessor :machine_output, type: :file
+      host_class.card_accessor :machine_input, type: :pointer
 
-              new_input << item if item != self && !item.new_card?
-              already_extended[item] = already_extended[item].to_i + 1
-            end
-          end
-          new_input
-        end
+      set_default_machine_behaviour host_class
+      define_machine_views host_class
+      define_machine_events host_class
+    end
 
-        host_class.prepare_machine_input {}
-        host_class.machine_engine { |input| input }
-        host_class.store_machine_output do |output|
-          filetype = host_class.output_config[:filetype]
-          file = Tempfile.new [id.to_s, ".#{filetype}"]
-          file.write output
-          file.rewind
-          Card::Auth.as_bot do
-            p = machine_output_card
-            p.file = file
-            p.save!
-          end
-          file.close
-          file.unlink
-        end
+    def self.define_machine_events host_class
+      event_suffix = host_class.name.tr ':', '_'
+      event_name = "reset_machine_output_#{event_suffix}".to_sym
+      host_class.event event_name, after: :expire_related, on: :save do
+        reset_machine_output!
+      end
+    end
 
-        host_class.format do
-          view :machine_output_url do |_args|
-            machine_output_url
-          end
-        end
-
-        event_suffix = host_class.name.tr ':', '_'
-        host_class.event(
-          "reset_machine_output_#{event_suffix}".to_sym,
-          after: :expire_related, on: :save
-        ) do
-          reset_machine_output!
+    def self.define_machine_views host_class
+      host_class.format do
+        view :machine_output_url do |_args|
+          machine_output_url
         end
       end
+    end
+
+    def self.set_default_machine_behaviour host_class
+      set_default_input_collection_method host_class
+      set_default_input_preparation_method host_class
+      set_default_output_storage_method host_class
+      host_class.machine_engine { |input| input }
+    end
+
+    def self.set_default_input_preparation_method host_class
+      host_class.prepare_machine_input {}
+    end
+
+    def self.set_default_output_storage_method host_class
+      host_class.store_machine_output do |output|
+        filetype = host_class.output_config[:filetype]
+        file = Tempfile.new [id.to_s, ".#{filetype}"]
+        file.write output
+        file.rewind
+        Card::Auth.as_bot do
+          p = machine_output_card
+          p.file = file
+          p.save!
+        end
+        file.close
+        file.unlink
+      end
+    end
+
+    def self.set_default_input_collection_method host_class
+      host_class.collect_input_cards do
+        # traverse through all levels of pointers and
+        # collect all item cards as input
+        items = [self]
+        new_input = []
+        already_extended = {} # avoid loops
+        loop_limit = 5
+        while items.size > 0
+          item = items.shift
+          next if item.trash || already_extended[item.id].to_i > loop_limit
+          if item.item_cards == [item] # no pointer card
+            new_input << item
+          else
+            items.insert(0, item.item_cards.reject(&:new_card?))
+            items.flatten!
+
+            new_input << item if item != self && !item.new_card?
+            already_extended[item] = already_extended[item].to_i + 1
+          end
+        end
+        new_input
+      end
+    end
+
+    def set_default_collect_input_cards host_class
     end
 
     def run_machine joint="\n"

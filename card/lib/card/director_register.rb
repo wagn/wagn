@@ -2,7 +2,7 @@ class Card
   def act opts={}
     if !DirectorRegister.act_card
       DirectorRegister.clear
-      director = nil
+      self.director = nil
       DirectorRegister.act_card = self
       main_act_block = true
       if opts[:success]

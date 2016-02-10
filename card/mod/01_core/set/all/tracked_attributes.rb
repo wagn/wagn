@@ -83,23 +83,20 @@ event :update_ruled_cards, :finalize do
 end
 
 def update_read_rules_of_set_members_not_governed_by_narrower_rules set
+  return {} if trash || !set && !(set_class = set.tag) &&
+               !(class_id = set_class.id)
   in_set = {}
-  if !trash && set && (set_class = set.tag) && (class_id = set_class.id)
-    rule_class_ids = set_patterns.map(&:pattern_id)
-
-    Auth.as_bot do
-      cur_index = rule_class_ids.index Card[read_rule_class].id
-      if (rule_class_index = rule_class_ids.index(class_id))
-        set.item_cards(limit: 0).each do |item_card|
-          in_set[item_card.key] = true
-          next if cur_index < rule_class_index
-          item_card.update_read_rule if cur_index >= rule_class_index
-        end
-
-      else
-        warn "No current rule index #{class_id}, " \
-                "#{rule_class_ids.inspect}"
+  rule_class_ids = set_patterns.map(&:pattern_id)
+  Auth.as_bot do
+    cur_index = rule_class_ids.index Card[read_rule_class].id
+    if (rule_class_index = rule_class_ids.index(class_id))
+      set.item_cards(limit: 0).each do |item_card|
+        in_set[item_card.key] = true
+        next if cur_index < rule_class_index
+        item_card.update_read_rule if cur_index >= rule_class_index
       end
+    else
+      warn "No current rule index #{class_id}, #{rule_class_ids.inspect}"
     end
   end
   in_set
@@ -142,6 +139,6 @@ end
 
 event :expire_related_names, before: :expire_related, changed: :name do
   # FIXME: look for opportunities to avoid instantiating the following
-  descendants.each { |c| c.expire }
-  name_referers.each { |c| c.expire }
+  descendants.each(&:expire)
+  name_referers.each(&:expire)
 end

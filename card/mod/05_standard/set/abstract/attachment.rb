@@ -27,9 +27,8 @@ event :upload_attachment, before: :validate_name, on: :save,
   abort :success
 end
 
-event :assign_attachment_on_create,
-      after: :initialize,
-      on: :create,
+event :assign_attachment_on_create, :initialize,
+      after: :assign_action, on: :create,
       when: proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@action_id_of_cached_upload))
     upload_cache_card.selected_action_id = action.id
@@ -38,9 +37,8 @@ event :assign_attachment_on_create,
   end
 end
 
-event :assign_attachment_on_update,
-      after: :initialize,
-      on: :update,
+event :assign_attachment_on_update, :initialize,
+      after: :assign_action, on: :update,
       when:  proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@action_id_of_cached_upload))
     uploaded_file =

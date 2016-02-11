@@ -12,7 +12,7 @@ RULE_SQL = %(
   and   (settings.codename != 'follow' or rules.db_content != '');
 ).freeze
 
-# FIXME - "follow" hardcoded above
+# FIXME: "follow" hardcoded above
 
 READ_RULE_SQL = %(
   select refs.referee_id as party_id, read_rules.id as read_rule_id
@@ -99,7 +99,7 @@ def rule_card_id setting_code, options={}
   nil
 end
 
-def related_sets with_self = false
+def related_sets with_self=false
   # refers to sets that users may configure from the current card -
   # NOT to sets to which the current card belongs
 

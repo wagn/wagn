@@ -174,6 +174,7 @@ class Card
         define_method final_method, &final
       end
 
+      # TODO: refactor and adapt to stages changes
       if perform_later
         defer_method = "#{event}_perform_later"
         define_event_perform_later_method event, defer_method
@@ -185,6 +186,7 @@ class Card
       set_event_callbacks event, opts
     end
 
+    # TODO: check if this is used
     def stage_method method, opts={}, &block
       class_eval do
         define_method "_#{method}", &block

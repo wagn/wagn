@@ -26,7 +26,7 @@ module Card::SpecHelper
 
   def debug_assert_view_select view_html, *args, &block
     Rails.logger.rspec %(
-      #{CodeRay.scan(Nokogiri::XML(view_html, &:noblanks).to_s, :html).div}
+                       #{CodeRay.scan(Nokogiri::XML(view_html, &:noblanks).to_s, :html).div}
       <style>
         .CodeRay {
           background-color: #FFF;
@@ -86,7 +86,15 @@ module Card::SpecHelper
   #            expect(item_names).to eq []
   #          end
   def in_stage stage, opts={}, &event_block
+    stage_sym = :"#{stage}_stage"
     $rspec_binding = binding
+    add_test_event stage_sym, :in_stage_test, &event_block
+    opts[:trigger].call
+  ensure
+    remove_test_event stage_sym, :in_stage_test
+  end
+
+  def add_test_event stage, name, &event_block
     Card.class_eval do
       def method_missing m, *args
         begin
@@ -103,13 +111,31 @@ module Card::SpecHelper
         super
 #        raise NoMethodError
       end
-      define_method :in_stage_test, event_block
+
+      define_method name, event_block
     end
-    Card.define_callbacks :in_stage_test
+    Card.define_callbacks name
+    Card.set_callback stage, :before, name, prepend: true
+  end
+
+  def remove_test_event stage, name
+    Card.skip_callback stage, :before, name
+  end
+
+  def test_event stage, opts, &block
+    event_name = :"test_event_#{@events.size}"
     stage_sym = :"#{stage}_stage"
-    Card.set_callback stage_sym, :before, :in_stage_test, prepend: true
-    opts[:trigger].call
+    @events << [stage_sym, event_name]
+    add_test_event stage_sym, event_name, &block
+  end
+
+  def with_test_events
+    @events = []
+    $rspec_binding = binding
+    yield
   ensure
-    Card.skip_callback stage_sym, :before, :in_stage_test
+    @events.each do |stage, name|
+      remove_test_event stage, name
+    end
   end
 end

@@ -54,7 +54,7 @@ class Card
                 value = instance_variable_get("@#{name}")
                 hash[name] =
                   # ActiveJob doesn't accept symbols as arguments
-                  if Symbol === value
+                  if value.is_a? Symbol
                     { value: value.to_s, symbol: true }
                   else
                     { value: value }
@@ -79,19 +79,19 @@ class Card
       # creates an Active Job.
       # The scheduled job gets the card object as argument and all serializable
       # attributes of the card.
-      # (when the job is executed ActiveJob fetches the card from the database so
-      #  all attributes get lost)
+      # (when the job is executed ActiveJob fetches the card from the database
+      # so all attributes get lost)
       # @param name [String] the name for the ActiveJob child class
       # @param final_method [String] the name of the card instance method to be
-      #   queued
+      # queued
       # @option queue [Symbol] (:default) the name of the queue8
       def define_active_job name, final_method, queue=:default
         class_name = name.to_s.camelize
         eval %{
-        class ::#{class_name} < ActiveJob::Base
-          queue_as #{queue}
-        end
-      }
+          class ::#{class_name} < ActiveJob::Base
+            queue_as #{queue}
+          end
+        }
         Object.const_get(class_name).class_eval do
           define_method :perform, proc { |card, attributes|
             attributes.each do |attname, args|
@@ -108,17 +108,16 @@ class Card
 
       def set_event_callbacks event, opts
         [:before, :after, :around].each do |kind|
-          if (object_method = opts.delete(kind))
-            this_set_module = self
-            Card.class_eval do
-              set_callback(
-                object_method, kind, event,
-                prepend: true, if: proc do |c|
+          next unless (object_method = opts.delete(kind))
+          this_set_module = self
+          Card.class_eval do
+            set_callback(
+              object_method, kind, event,
+              prepend: true, if: proc do |c|
                 c.singleton_class.include?(this_set_module) &&
                   c.event_applies?(opts)
               end
-              )
-            end
+            )
           end
         end
       end

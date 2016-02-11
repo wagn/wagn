@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 RULE_SQL = %(
   select rules.id as rule_id, settings.id as setting_id, sets.id as set_id,
@@ -10,6 +11,8 @@ RULE_SQL = %(
   and                                             rules.trash    is false
   and   (settings.codename != 'follow' or rules.db_content != '');
 ).freeze
+
+# FIXME - "follow" hardcoded above
 
 READ_RULE_SQL = %(
   select refs.referee_id as party_id, read_rules.id as read_rule_id
@@ -49,9 +52,9 @@ def is_rule?
 end
 
 def is_standard_rule?
-  (r = right( skip_modules: true ))  &&
-    r.type_id == Card::SettingID     &&
-    (l = left( skip_modules: true )) &&
+  (r = right(skip_modules: true)) &&
+    r.type_id == Card::SettingID &&
+    (l = left(skip_modules: true)) &&
     l.type_id == Card::SetID
 end
 
@@ -229,15 +232,16 @@ module ClassMethods
     Card.cache.read('USER_IDS') || begin
       clear_rule_cache
       rule_cache
-      Card.cache.read('USER_IDS')
+      @user_ids_hash
     end
   end
 
   # all keys of user-specific rules for a given user
   def rule_keys_cache
     Card.cache.read('RULE_KEYS') || begin
+      clear_rule_cache
       rule_cache
-      Card.cache.read('RULE_KEYS')
+      @rule_keys_hash
     end
   end
 

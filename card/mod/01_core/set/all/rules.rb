@@ -1,50 +1,59 @@
 # frozen_string_literal: true
 
 RULE_SQL = %(
-  select rules.id as rule_id, settings.id as setting_id, sets.id as set_id,
-    sets.left_id as anchor_id, sets.right_id as set_tag_id
-  from cards rules
-  join cards sets     on rules.left_id  = sets.id
-  join cards settings on rules.right_id = settings.id
-  where sets.type_id     = #{Card::SetID}     and sets.trash     is false
-  and   settings.type_id = #{Card::SettingID} and settings.trash is false
-  and                                             rules.trash    is false
-  and   (settings.codename != 'follow' or rules.db_content != '');
+  SELECT
+    rules.id      AS rule_id,
+    settings.id   AS setting_id,
+    sets.id       AS set_id,
+    sets.left_id  AS anchor_id,
+    sets.right_id AS set_tag_id
+  FROM cards rules
+  JOIN cards sets     ON rules.left_id  = sets.id
+  JOIN cards settings ON rules.right_id = settings.id
+  WHERE     sets.type_id = #{Card::SetID}
+    AND settings.type_id = #{Card::SettingID}
+    AND (settings.codename != 'follow' OR rules.db_content != '')
+    AND    rules.trash is false
+    AND     sets.trash is false
+    AND settings.trash is false;
 ).freeze
 
 # FIXME: "follow" hardcoded above
 
 READ_RULE_SQL = %(
-  select refs.referee_id as party_id, read_rules.id as read_rule_id
-  from cards read_rules
-  join card_references refs on refs.referer_id    = read_rules.id
-  join cards sets           on read_rules.left_id = sets.id
-  where read_rules.right_id = #{Card::ReadID}
-  and sets.type_id = #{Card::SetID}
-  and read_rules.trash is false;
+  SELECT
+    refs.referee_id AS party_id,
+    read_rules.id   AS read_rule_id
+  FROM cards read_rules
+  JOIN card_references refs ON refs.referer_id    = read_rules.id
+  JOIN cards sets           ON read_rules.left_id = sets.id
+  WHERE read_rules.right_id = #{Card::ReadID}
+    AND       sets.type_id  = #{Card::SetID}
+    AND read_rules.trash is false
+    AND       sets.trash is false;
 ).freeze
 
 PREFERENCE_SQL = %(
-  select
-    preferences.id as rule_id,
-    settings.id   as setting_id,
-    sets.id       as set_id,
-    sets.left_id  as anchor_id,
-    sets.right_id as set_tag_id,
-    users.id      as user_id
-  from cards preferences
-  join cards user_sets on preferences.left_id  = user_sets.id
-  join cards settings  on preferences.right_id = settings.id
-  join cards users     on user_sets.right_id  = users.id
-  join cards sets      on user_sets.left_id = sets.id
-  where sets.type_id     = #{Card::SetID}
-    and settings.type_id = #{Card::SettingID}
-    and (%s or users.codename = 'all')
-    and sets.trash       is false
-    and settings.trash   is false
-    and users.trash      is false
-    and user_sets.trash  is false
-    and preferences.trash is false;
+  SELECT
+    preferences.id AS rule_id,
+    settings.id    AS setting_id,
+    sets.id        AS set_id,
+    sets.left_id   AS anchor_id,
+    sets.right_id  AS set_tag_id,
+    users.id       AS user_id
+  FROM cards preferences
+  JOIN cards user_sets ON preferences.left_id  = user_sets.id
+  JOIN cards settings  ON preferences.right_id = settings.id
+  JOIN cards users     ON user_sets.right_id   = users.id
+  JOIN cards sets      ON user_sets.left_id    = sets.id
+  WHERE sets.type_id     = #{Card::SetID}
+    AND settings.type_id = #{Card::SettingID}
+    AND (%s or users.codename = 'all')
+    AND sets.trash        is false
+    AND settings.trash    is false
+    AND users.trash       is false
+    AND user_sets.trash   is false
+    AND preferences.trash is false;
 ).freeze
 
 def is_rule?
@@ -82,13 +91,7 @@ def rule_card_id setting_code, options={}
   fallback = options.delete :fallback
 
   if Card::Setting.user_specific? setting_code
-    user_id = options[:user_id] ||
-              (options[:user] && options[:user].id) ||
-              Auth.current_id
-    if user_id
-      fallback = "#{setting_code}+#{AllID}"
-      setting_code = "#{setting_code}+#{user_id}"
-    end
+    fallback, setting_code = preference_card_id_lookups setting_code, options
   end
 
   rule_set_keys.each do |rule_set_key|
@@ -97,6 +100,14 @@ def rule_card_id setting_code, options={}
     return rule_id if rule_id
   end
   nil
+end
+
+def preference_card_id_lookups setting_code, options={}
+  user_id = options[:user_id] ||
+            (options[:user] && options[:user].id) ||
+            Auth.current_id
+  return unless user_id
+  ["#{setting_code}+#{AllID}", "#{setting_code}+#{user_id}"]
 end
 
 def related_sets with_self=false
@@ -158,14 +169,14 @@ module ClassMethods
   end
 
   def interpret_simple_rules
-    Card.connection.select_all(RULE_SQL).each do |row|
+    ActiveRecord::Base.connection.select_all(RULE_SQL).each do |row|
       next unless (key = rule_cache_key row)
-      @rule_hash[key] = row['rule_id']
+      @rule_hash[key] = row['rule_id'].to_i
     end
   end
 
   def interpret_preferences
-    Card.connection.select_all(preference_sql).each do |row|
+    ActiveRecord::Base.connection.select_all(preference_sql).each do |row|
       next unless (key = rule_cache_key row) && (user_id = row['user_id'])
       add_preference_hash_values key, row['rule_id'].to_i, user_id.to_i
     end

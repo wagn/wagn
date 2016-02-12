@@ -14,7 +14,7 @@ describe Card::StageDirector do
 
       it 'does not stop act in storage phase' do
         in_stage :store, on: :save,
-                 trigger: -> { create_card } do
+                         trigger: -> { create_card } do
           errors.add :stop, "don't do this"
         end
         is_expected.to be_truthy
@@ -27,9 +27,9 @@ describe Card::StageDirector do
           in_stage :finalize,
                    on: :save,
                    trigger: -> { create_card } do
-            raise Card::Error, "rollback"
+            raise Card::Error, 'rollback'
           end
-        rescue
+        rescue Card::Error => e
         ensure
           is_expected.to be_falsey
         end
@@ -41,10 +41,10 @@ describe Card::StageDirector do
             in_stage :integrate,
                      on: :save,
                      trigger: -> { create_card } do
-              raise Card::Abort, "rollback"
+              raise Card::Abort, 'rollback'
             end
           end
-        rescue
+        rescue Card::Abort => e
         ensure
           is_expected.to be_truthy
         end
@@ -104,7 +104,7 @@ describe Card::StageDirector do
       it 'is pre-order depth-first' do
         $order = []
         in_stage :validate, on: :create,
-                 trigger: -> { create_card_with_subcards } do
+                            trigger: -> { create_card_with_subcards } do
           $order << name
         end
         expect($order).to eq(preorder)
@@ -121,9 +121,9 @@ describe Card::StageDirector do
           end
           create_card_with_subcards
         end
-        expect($order).to eq(%w(
-          v:1 v:11 v:111 v:12 v:121 pts:1 pts:11 pts:111 pts:12
-pts:121))
+        expect($order).to eq(
+          %w(v:1 v:11 v:111 v:12 v:121 pts:1 pts:11 pts:111 pts:12 pts:121)
+        )
       end
     end
 
@@ -131,7 +131,7 @@ pts:121))
       it 'is post-order depth-first' do
         $order = []
         in_stage :finalize, on: :create,
-                 trigger: -> { create_card_with_subcards } do
+                            trigger: -> { create_card_with_subcards } do
           $order << name
         end
         expect($order).to eq(postorder)
@@ -142,7 +142,7 @@ pts:121))
       it 'is pre-order depth-first' do
         $order = []
         in_stage :store, on: :create,
-                 trigger: -> { create_card_with_subcards } do
+                         trigger: -> { create_card_with_subcards } do
           $order << name
         end
         expect($order).to eq(preorder)
@@ -161,10 +161,10 @@ pts:121))
           end
           create_card_with_subcards
         end
-        expect($order).to eq(%w(
-          store:1 store:11 store:111 finalize:111 finalize:11
-          store:12 store:121 finalize:121 finalize:12 finalize:1)
-                          )
+        expect($order).to eq(
+          %w(store:1 store:11 store:111 finalize:111 finalize:11
+             store:12 store:121 finalize:121 finalize:12 finalize:1)
+        )
       end
     end
 
@@ -180,9 +180,7 @@ pts:121))
           end
           test_event :validate, on: :create do
             $order << "v:#{name}"
-            if name == '11'
-              add_subcard '112v'
-            end
+            add_subcard '112v' if name == '11'
           end
           test_event :prepare_to_store, on: :create do
             $order << "pts:#{name}"
@@ -201,7 +199,8 @@ pts:121))
           end
           create_card_with_subcards
         end
-        expect($order).to eq(%w(
+        expect($order).to eq(
+          %w(
             i:1 i:11 i:111 i:12 i:121
             ptv:1 ptv:11 ptv:111 ptv:12 ptv:121
             v:1 v:11 v:111
@@ -210,7 +209,9 @@ pts:121))
             pts:1 pts:11 pts:111 pts:112v pts:12 pts:121
             s:1 s:11 s:111 f:111 s:112v f:112v f:11 s:12 s:121 f:121 f:12 f:1
             ig:1 ig:11 ig:111 ig:112v ig:12 ig:121
-            igwd:1 igwd:11 igwd:111 igwd:112v igwd:12 igwd:121))
+            igwd:1 igwd:11 igwd:111 igwd:112v igwd:12 igwd:121
+          )
+        )
       end
     end
   end

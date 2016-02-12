@@ -1,19 +1,18 @@
 
 class Card
-
   # A 'StageDirector' executes the stages of a card when the card gets created,
   # updated or deleted.
   # For subcards, i.e. other cards that are changed in the same act, a
   # StageDirector has StageSubdirectors that take care of the stages for
   # those cards
   #
-  # In general a stage gets executed for all involved cards before the
+  # In general a stage is executed for all involved cards before the
   # StageDirector proceeds with the next stage.
   # Only exception is the finalize stage.
-  # The finalize stage of a subcards is executed immediately after its store
+  # The finalize stage of a subcard is executed immediately after its store
   # stage. When all subcards are finalized the supercard's finalize stage is
   # executed.
-  # TODO: Write tests to check if we are telling the truth here
+  #
   # If a subcard is added in a stage then it catches up at the end of the stage
   # to the current stage.
   # For example if you add a subcard in a card's :prepare_to_store stage then
@@ -21,14 +20,14 @@ class Card
   # :validate and :prepare_to_store are executed for the subcard.
   #
   # Stages are executed with pre-order depth-first search.
-  # That means if A has subcards AA, AB and AAA and ABA are subcards of
-  # AB and AB the order of execution is
+  # That means if A has subcards AA and AB; AAA is subcard of AA and ABA
+  # subcard of AB then the order of execution is
   # A -> AA -> AAA -> AB -> ABA
   #
   # A special case can happen in the store phase.
   # If the id of a subcard is needed for a supercard
   # (for example as left_id or as type_id) and the subcard doesn't
-  # have an id yes (because it gets created in the same act)
+  # have an id yet (because it gets created in the same act)
   # then the subcard's store stage is executed before the supercard's store
   # stage
   class StageDirector
@@ -216,8 +215,8 @@ class Card
 
     # trigger the storage_phase, skip the other phases
     # At this point the :prepare_to_store stage was already executed
-    # by the parent director. So this runs only the :store stage and the
-    # :finalize stage
+    # by the parent director. So the storage phase will only run
+    # the :store stage and the :finalize stage
     def store_and_finalize_as_subcard
       @card.skip_phases = true
       @card.save! validate: false

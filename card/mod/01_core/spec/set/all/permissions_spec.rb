@@ -265,7 +265,6 @@ describe Card::Set::All::Permissions do
       Card.where(trash: false).each do |ca|
         rule_id, rule_class = ca.permission_rule_id_and_class(:read)
         if rule_class != ca.read_rule_class
-          puts "#{ca.name}".red
           next
         end
         expect(rule_class).to eq(ca.read_rule_class)
@@ -521,10 +520,10 @@ describe Card::Set::All::Permissions do
 
   it 'create read rule as subcard' do
     Card::Auth.as_bot do
-      Card.create!( name: 'read rule test',
-        subcards: {
-         '+*self+*read' => { content: '[[Administrator]]' }
-        })
+      Card.create! name: 'read rule test',
+                   subcards: {
+                     '+*self+*read' => { content: '[[Administrator]]' }
+                   }
       expect(Card['read rule test'].read_rule_class)
         .to eq('*self')
       rule_id = Card.fetch_id 'read rule test+*self+*read'

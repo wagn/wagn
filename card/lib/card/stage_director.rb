@@ -91,11 +91,9 @@ class Card
       run_single_stage :integrate
       run_single_stage :integrate_with_delay
     rescue => e  # don't rollback
-     Card::Error.current = e
-     @card.notable_exception_raised
-     return false
-    ensure
-      unregister
+      Card::Error.current = e
+      @card.notable_exception_raised
+      return false
     end
 
     def catch_up_to_stage next_stage

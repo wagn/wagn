@@ -18,21 +18,24 @@ def abort status, msg='action canceled'
   fail Card::Abort.new(status, msg)
 end
 
-def self.create! opts
-  card = Card.new opts
-  card.act do
-    card.save!
+module ClassMethods
+  def create! opts
+    card = Card.new opts
+    card.act do
+      card.save!
+    end
+    card
   end
-  card
+
+  def create opts
+    card = Card.new opts
+    card.act do
+      card.save
+    end
+    card
+  end
 end
 
-def self.create opts
-  card = Card.new opts
-  card.act do
-    card.save
-  end
-  card
-end
 
 def delete
   act do

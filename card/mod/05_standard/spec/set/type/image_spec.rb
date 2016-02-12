@@ -13,7 +13,7 @@ describe Card::Set::Type::Image do
     including_card = Card.new name: 'Image1',
                               content: '{{TestImage | core; size:small }}'
     rendered = including_card.format._render :core
-    debug_assert_view_select(
+    assert_view_select(
       rendered, 'img[src=?]',
       "/files/~#{image_card.id}/#{image_card.last_content_action_id}-small.jpg"
     )

@@ -43,6 +43,9 @@ class Card
 
       def clear
         DirectorRegister.act_card = nil
+        directors.each_pair do |card, dir|
+          card.director = nil
+        end
         @directors = nil
       end
 

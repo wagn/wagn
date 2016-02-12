@@ -8,8 +8,8 @@ event :select_file_revision, after: :select_action do
   attachment.retrieve_from_store!(attachment.identifier)
 end
 
-event :upload_attachment, :prepare_to_validate, on: :save,
-      when: proc { |c| c.preliminary_upload? } do
+event :upload_attachment, :prepare_to_validate,
+      on: :save, when: proc { |c| c.preliminary_upload? } do
   save_original_filename  # save original filename as comment in action
   write_identifier        # set db_content
   # (needs original filename to determine extension)
@@ -70,7 +70,7 @@ def file_ready_to_save?
 end
 
 event :save_original_filename, :prepare_to_store,
-                               when: proc { |c| c.file_ready_to_save? } do
+      when: proc { |c| c.file_ready_to_save? } do
   return unless @current_action
   @current_action.update_attributes! comment: original_filename
 end

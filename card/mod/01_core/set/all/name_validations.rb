@@ -1,10 +1,10 @@
 event :permit_codename, :validate,
       on: :update, changed: :codename do
   errors.add :codename, 'only admins can set codename' unless Auth.always_ok?
-  validate_unique_codename
+  validate_uniqueness_of_codename
 end
 
-event :validate_unique_codename do
+event :validate_uniqueness_of_codename do
   return unless codename.present? && errors.empty? &&
                 Card.find_by_codename(codename).present?
   errors.add :codename, "codename #{codename} already in use"
@@ -12,12 +12,12 @@ end
 
 event :validate_name, :validate,
       on: :save, changed: :name do
-  validate_legal_name
+  validate_legality_of_name
   return if errors.any?
-  validate_unique_name
+  validate_uniqueness_of_name
 end
 
-event :validate_unique_name do
+event :validate_uniqueness_of_name do
   # validate uniqueness of name
   condition_sql = 'cards.key = ? and trash=?'
   condition_params = [cardname.key, false]
@@ -30,7 +30,7 @@ event :validate_unique_name do
   end
 end
 
-event :validate_legal_name do
+event :validate_legality_of_name do
   if name.length > 255
     errors.add :name, 'is too long (255 character maximum)'
   elsif cardname.blank?
@@ -44,16 +44,6 @@ event :validate_legal_name do
     return unless cardname.junction? && simple? && id &&
                   Auth.as_bot { Card.count_by_wql right_id: id } > 0
     errors.add :name, "#{name} in use as a tag"
-  end
-end
-
-event :set_autoname, :prepare_to_validate,
-      on: :create, changed: :name do
-  if name.blank? && (autoname_card = rule_card(:autoname))
-    self.name = autoname autoname_card.content
-    # FIXME: should give placeholder in approve phase
-    # and finalize/commit change in store phase
-    autoname_card.refresh.update_column :db_content, name
   end
 end
 

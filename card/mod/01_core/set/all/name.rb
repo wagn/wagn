@@ -184,52 +184,8 @@ rescue
   self
 end
 
-event :permit_codename, :validate, on: :update, changed: :codename do
-  errors.add :codename, 'only admins can set codename' unless Auth.always_ok?
-end
 
-event :validate_unique_codename, after: :permit_codename do
-  if codename.present? && errors.empty? &&
-     Card.find_by_codename(codename).present?
-    errors.add :codename, "codename #{codename} already in use"
-  end
-end
-
-event :validate_name, :validate, on: :save do
-  cdname = name.to_name
-  if name.length > 255
-    errors.add :name, 'is too long (255 character maximum)'
-  elsif cdname.blank?
-    errors.add :name, "can't be blank"
-  elsif name_changed?
-    # Rails.logger.debug "valid name #{card.name.inspect} New #{name.inspect}"
-
-    unless cdname.valid?
-      errors.add :name, 'may not contain any of the following characters: ' \
-                        "#{Card::Name.banned_array * ' '}"
-    end
-    # this is to protect against using a plus card as a tag
-    if cdname.junction? && simple? && id &&
-       Auth.as_bot { Card.count_by_wql right_id: id } > 0
-      errors.add :name, "#{name} in use as a tag"
-    end
-    validate_uniqueness_of_name cdname
-  end
-end
-
-def validate_uniqueness_of_name new_name
-  condition_sql = 'cards.key = ? and trash=?'
-  condition_params = [new_name.key, false]
-  unless new_record?
-    condition_sql << ' AND cards.id <> ?'
-    condition_params << id
-  end
-  if (c = Card.find_by(condition_sql, *condition_params))
-    errors.add :name, "must be unique; '#{c.name}' already exists."
-  end
-end
-
-event :set_autoname, before: :validate_name, on: :create do
+event :set_autoname, :prepare_to_validate, on: :create do
   if name.blank? && (autoname_card = rule_card(:autoname))
     self.name = autoname autoname_card.content
     # FIXME: should give placeholder in approve phase
@@ -237,7 +193,6 @@ event :set_autoname, before: :validate_name, on: :create do
     autoname_card.refresh.update_column :db_content, name
   end
 end
-
 
 event :set_name, :store, changed: :name do
   Card.expire name

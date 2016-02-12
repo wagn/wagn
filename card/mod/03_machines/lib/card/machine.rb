@@ -1,15 +1,16 @@
 # WHAT IS THIS?
 # The Machine module together with the MachineInput module implements a kind of
 # observer pattern. It handles a collection of input cards to generate an
-# outputcard (default is a file card). If one of the input cards is changed the
+# output card (default is a file card). If one of the input cards is changed the
 # output card will be updated.
 #
 # The classic example: A style card observes a collection of css and sccs card
-# to generate a file card with a css file containg the assembled compressed css.
+# to generate a file card with a css file that contains the assembled
+# compressed  css.
 #
 # HOW TO USE IT?
 # Include the Machine module in the card set that is supposed to produce the
-# output card. If the output card should be autmatically updated when a input
+# output card. If the output card should be automatically updated when a input
 # card is changed the input card has to be in a set that includes the
 # MachineInput module.
 #
@@ -126,18 +127,17 @@ class Card
           if item.item_cards == [item] # no pointer card
             new_input << item
           else
-            items.insert(0, item.item_cards.reject(&:new_card?))
+            # item_cards instantiates non-existing cards
+            # we don't want those
+            items.insert(0, item.item_cards.reject(&:unknown?))
             items.flatten!
 
-            new_input << item if item != self && !item.new_card?
+            new_input << item if item != self && item.known?
             already_extended[item] = already_extended[item].to_i + 1
           end
         end
         new_input
       end
-    end
-
-    def set_default_collect_input_cards host_class
     end
 
     def run_machine joint="\n"

@@ -188,11 +188,11 @@ end
 def update_read_rule
   Card.record_timestamps = false
   reset_patterns # why is this needed?
-  rcard, rclass = permission_rule_card :read
+  rcard_id, rclass = permission_rule_id_and_class :read
   # these two are just to make sure vals are correct on current object
-  self.read_rule_id = rcard.id
+  self.read_rule_id = rcard_id
   self.read_rule_class = rclass
-  Card.where(id: id).update_all read_rule_id: rcard.id, read_rule_class: rclass
+  Card.where(id: id).update_all read_rule_id: rcard_id, read_rule_class: rclass
   expire_hard
 
   # currently doing a brute force search for every card that may be impacted.

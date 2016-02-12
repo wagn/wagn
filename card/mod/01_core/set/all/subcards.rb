@@ -54,6 +54,11 @@ end
 
 event :reject_empty_subcards, :prepare_to_validate do
   subcards.each_with_key do |subcard, key|
-    subcard.new? && subcard.unfilled? && remove_subcard(key)
+    if subcard.new? && subcard.unfilled?
+      remove_subcard(key)
+      # FIXME: something has to happen here with the director
+      # next line caused a lot failing tests
+        director.subdirectors.delete(subcard)
+    end
   end
 end

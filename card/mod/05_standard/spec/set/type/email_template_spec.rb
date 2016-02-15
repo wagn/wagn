@@ -111,7 +111,7 @@ describe Card::Set::Type::EmailTemplate do
       it 'does not render link' do
         is_expected.to include 'Link([[http://wagn.org|Wagn]])'
       end
-      it 'renders inclusion' do
+      it 'renders nest' do
         is_expected.to include 'Inclusion(B)'
       end
     end
@@ -128,7 +128,7 @@ describe Card::Set::Type::EmailTemplate do
       it 'renders link' do
         is_expected.to include 'Link(Wagn[http://wagn.org])'
       end
-      it 'renders inclusion' do
+      it 'renders nest' do
         is_expected.to include 'Inclusion(B)'
       end
     end
@@ -147,7 +147,7 @@ describe Card::Set::Type::EmailTemplate do
         is_expected.to include 'Link(<a target="_blank" class="external-link" '\
                                'href="http://wagn.org">Wagn</a>)'
       end
-      it 'renders inclusion' do
+      it 'renders nest' do
         is_expected.to include 'Inclusion(B)'
       end
       it 'renders absolute urls' do

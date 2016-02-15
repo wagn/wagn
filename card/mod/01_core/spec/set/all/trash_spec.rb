@@ -40,6 +40,28 @@ describe Card::Set::All::Trash do
     end
   end
 
+  it 'deletes children under a set' do
+    Card::Auth.as_bot do
+      type = Card.create! name: 'Metric Value', type_id: Card::CardtypeID
+      Card.create! name: 'Metric value+value+*type plus right',
+                   type_id: Card::SetID
+      mv1_name = 'Richard Mills+Annual Sales+CA+2014'
+      mv2_name = 'Richard Mills+Annual Profits+CA+2014'
+      Card.create! name: mv1_name, type_id: type.id
+      Card.create! name: mv2_name, type_id: type.id
+      Card.create! name: "#{mv1_name}+value", type_id: Card::BasicID
+      Card.create! name: "#{mv2_name}+value", type_id: Card::BasicID
+
+      expect(Card['CA']).to be
+      Card['CA'].delete
+      expect(Card['CA']).not_to be
+      expect(Card[mv1_name]).not_to be
+      expect(Card["#{mv1_name}+value"]).not_to be
+      expect(Card[mv2_name]).not_to be
+      expect(Card["#{mv2_name}+value"]).not_to be
+    end
+  end
+
   it 'deletes account of user' do
     Card::Auth.as_bot do
       @signup = Card.create!(

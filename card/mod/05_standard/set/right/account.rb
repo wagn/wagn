@@ -60,23 +60,24 @@ format :html do
   end
 end
 
-event :validate_accountability, on: :create, before: :approve do
+event :validate_accountability, :prepare_to_validate, on: :create do
   unless left && left.accountable?
     errors.add :content, 'not allowed on this card'
   end
 end
 
-event :require_email, on: :create, after: :approve do
+event :require_email, :prepare_to_validate,
+      after: :validate_accountability, on: :create do
   errors.add :email, 'required' unless subfield(:email)
 end
 
-event :set_default_salt, on: :create, before: :approve_subcards do
+event :set_default_salt, :prepare_to_validate, on: :create do
   salt = Digest::SHA1.hexdigest "--#{Time.zone.now}--"
   Env[:salt] = salt # HACK!!! need viable mechanism to get this to password
   add_subfield :salt, content: salt
 end
 
-event :set_default_status, on: :create, before: :approve_subcards do
+event :set_default_status, :prepare_to_validate, on: :create do
   default_status = Auth.needs_setup? ? 'active' : 'pending'
   add_subfield :status, content: default_status
 end
@@ -85,14 +86,14 @@ def confirm_ok?
   Card.new(type_id: Card.default_accounted_type_id).ok? :create
 end
 
-event :generate_confirmation_token,
-      on: :create, before: :process_subcards,
+event :generate_confirmation_token, :prepare_to_store,
+      on: :create,
       when: proc { |c| c.confirm_ok? } do
   add_subfield :token, content: generate_token
 end
 
-event :reset_password, on: :update, before: :approve, when:
-    proc { |c| c.reset_password? } do
+event :reset_password,
+      :prepare_to_validate, on: :update, when: proc { |c| c.reset_password? } do
   if validate_token! @env_token
     token_card.used!
     Auth.signin left_id
@@ -133,8 +134,8 @@ event :send_welcome_email do
   end
 end
 
-event :send_account_verification_email, on: :create, after: :extend, when:
-    proc { |c| c.token.present? } do
+event :send_account_verification_email, :integrate,
+      on: :create, when: proc { |c| c.token.present? } do
   Card[:verification_email].deliver context: self, to: email
 end
 

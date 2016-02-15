@@ -1,5 +1,3 @@
-
-
 format do
   # link is called by web_link, card_link, and view_link
   # (and is overridden in other formats)
@@ -35,15 +33,19 @@ format do
     text = opts.delete(:text) || href
     new_class =
       case href
-      when /^https?\:/                     then 'external-link'
-      when /^mailto\:/                     then 'email-link'
-      when /^([a-zA-Z][\-+\.a-zA-Z\d]*):/  then $1 + '-link'
+      when /^https?\:/
+        opts[:target] = '_blank'
+        'external-link'
+      when /^mailto\:/
+        'email-link'
+      when /^([a-zA-Z][\-+\.a-zA-Z\d]*):/
+        $1 + '-link'
       when /^\//
-        (href = internal_url href[1..-1]) ;     'internal-link'
+        href = internal_url href[1..-1]
+        'internal-link'
       else
         return card_link href, opts
       end
-    opts[:target] = "_blank" if new_class == 'external-link'
     add_class opts, new_class
     link_to text, href, opts
   end
@@ -69,7 +71,7 @@ format do
   # link to a specific view (defaults to current card)
   # this is generally used for ajax calls
   def view_link text, view, opts={}
-    path_opts = opts.delete( :path_opts ) || {}
+    path_opts = opts.delete(:path_opts) || {}
     path_opts[:view] = view unless view == :home
     opts[:remote] = true
     opts[:rel] = 'nofollow'
@@ -84,41 +86,34 @@ format do
       when Card   then name_or_card.cardname
       else             name_or_card
       end
-   opts[:path_opts] ||= {view: :related}
-   opts[:path_opts][:related] = {name: "+#{name}"}
-   opts[:path_opts][:related].merge! opts[:related_opts] if opts[:related_opts]
-   view_link( opts[:text] || name, :related, opts)
+    opts[:path_opts] ||= { view: :related }
+    opts[:path_opts][:related] = { name: "+#{name}" }
+    opts[:path_opts][:related].merge! opts[:related_opts] if opts[:related_opts]
+    view_link(opts[:text] || name, :related, opts)
   end
 
-
-
   def path opts={}
-    if opts[:action] == :new && opts[:type] && !(opts[:name] || opts[:card] || opts[:id])
+    if opts[:action] == :new && opts[:type] &&
+       !(opts[:name] || opts[:card] || opts[:id])
       opts.delete(:action)
       base = "new/#{opts.delete(:type)}"
     else
       name = opts.delete(:name) || card.name
-      base = opts[:action] ? "card/#{ opts.delete :action }/" : ''
+      base = opts[:action] ? "card/#{opts.delete :action}/" : ''
 
       opts[:no_id] = true if [:new, :create].member? opts[:action]
-      #generalize. dislike hardcoding views/actions here
+      # generalize. dislike hardcoding views/actions here
 
       linkname = name.to_name.url_key
       unless name.empty? || opts.delete(:no_id)
-        base += ( opts[:id] ? "~#{ opts.delete :id }" : linkname )
+        base += (opts[:id] ? "~#{opts.delete :id}" : linkname)
       end
 
-      opts[:card] ||= {}
-      opts[:card][:name] = name if opts.delete(:known)==false && name.present? && name.to_s != linkname
-
-      if type = opts.delete(:type) and Card.known?( type )
-        opts[:card][:type] = type
-      end
-      opts.delete(:card) if opts[:card].empty?
+      process_path_card_opts opts, name, linkname
     end
 
     query = opts.empty? ? '' : "?#{opts.to_param}"
-    internal_url( base + query )
+    internal_url(base + query)
   end
 
   def internal_url relative_path
@@ -126,32 +121,38 @@ format do
   end
 
   def interpret_href href
-    Hash===href ? path(href) : href
+    href.is_a?(Hash) ? path(href) : href
   end
 
+  def process_path_card_opts opts, name, linkname
+    opts[:card] ||= {}
+    if opts.delete(:known) == false && name.present? && name.to_s != linkname
+      opts[:card][:name] = name
+    end
+
+    if (type = opts.delete(:type)) && Card.known?(type)
+      opts[:card][:type] = type
+    end
+    opts.delete(:card) if opts[:card].empty?
+  end
 end
 
 format :html do
-
-
   def link_to text, href, opts={}
     href = interpret_href href
 
     [:remote, :method].each do |key|
-      if val = opts.delete(key)
+      if (val = opts.delete(key))
         opts["data-#{key}"] = val
       end
     end
 
     content_tag :a, raw(text), opts.merge(href: href)
   end
-
 end
 
-
 format :css do
-  def link_to text, href, opts={}
+  def link_to _text, href, _opts={}
     interpret_href href
   end
-
 end

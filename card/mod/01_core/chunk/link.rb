@@ -34,7 +34,7 @@ module Card::Chunk
 
     def divider_index string
       # there's probably a better way to do the following.
-      # point is to find the first pipe that's not inside an inclusion
+      # point is to find the first pipe that's not inside an nest
       return unless string.index '|'
       string_copy = "#{string}" # had to do this to create new string?!
       string.scan /\{\{[^\}]*\}\}/ do |incl|

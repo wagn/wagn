@@ -14,8 +14,8 @@ def linker_lists
               "lists that link to #{name}")
 end
 
-event :trunk_cardtype_of_a_list_relation_changed,
-      changed: :type, after: :store, on: :update,
+event :trunk_cardtype_of_a_list_relation_changed, :finalize,
+      changed: :type, on: :update,
       when: proc { Codename[:list] } do
   type_key_was = (tk = Card.quick_fetch(type_id_was)) && tk.key
 
@@ -26,8 +26,8 @@ event :trunk_cardtype_of_a_list_relation_changed,
   listed_by_fields.each &:update_cached_list
 end
 
-event :trunk_name_of_a_list_relation_changed,
-      changed: :name, after: :store, on: :update,
+event :trunk_name_of_a_list_relation_changed, :finalize,
+      changed: :name,  on: :update,
       when: proc { Codename[:list] } do
   list_fields.each do |card|
     card.update_listed_by_cache_for card.item_keys
@@ -35,8 +35,8 @@ event :trunk_name_of_a_list_relation_changed,
   listed_by_fields.each &:update_cached_list
 end
 
-event :cardtype_of_list_item_changed,
-      changed: :type, before: :approve, on: :save,
+event :cardtype_of_list_item_changed, :validate,
+      changed: :type, on: :save,
       when: proc { Codename[:list] } do
   linker_lists.each do |card|
     if card.item_type_id != type_id

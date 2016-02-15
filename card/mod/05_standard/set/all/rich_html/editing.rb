@@ -213,7 +213,7 @@ format :html do
 
   view :edit_nests do |args|
     frame args do
-      with_inclusion_mode :edit do
+      with_nest_mode :edit do
         process_relative_tags optional_toolbar: :hide
       end
     end
@@ -225,7 +225,7 @@ format :html do
   view :edit_nest_rules do |args|
     view = args[:rule_view] || :field_related_rules
     frame args do
-      # with_inclusion_mode :edit do
+      # with_nest_mode :edit do
       nested_fields(args).map do |chunk|
         nest Card.fetch("#{chunk.referee_name}+*self"),
              view: :titled, title: chunk.referee_name, rule_view: view,

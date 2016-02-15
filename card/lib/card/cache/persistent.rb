@@ -15,7 +15,7 @@ class Card::Cache::Persistent
   end
 
   def read key
-    @store.read(@prefix + key)
+    @store.read(full_key(key))
   end
 
   def write_variable key, variable, value
@@ -27,15 +27,15 @@ class Card::Cache::Persistent
   end
 
   def write key, value
-    @store.write(@prefix + key, value)
+    @store.write(full_key(key), value)
   end
 
   def fetch key, &block
-    @store.fetch @prefix + key, &block
+    @store.fetch full_key(key), &block
   end
 
   def delete key
-    @store.delete @prefix + key
+    @store.delete full_key(key)
   end
 
   def reset
@@ -45,6 +45,10 @@ class Card::Cache::Persistent
   end
 
   def exist? key
-    @store.exist? @prefix + key
+    @store.exist? full_key(key)
+  end
+
+  def full_key key
+    @prefix + key
   end
 end

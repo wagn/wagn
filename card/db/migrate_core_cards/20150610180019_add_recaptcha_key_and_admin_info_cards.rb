@@ -48,16 +48,10 @@ class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
   end
 
   def admin_only args
-    shared_args = { type_id: Card::PhraseID,
-                    subcards: {
-                      '+*self+*read' => { content: '[[Administrator]]' },
-                      '+*self+*update' => { content: '[[Administrator]]' },
-                      '+*self+*delete' => { content: '[[Administrator]]' }
-                    }
-                  }
-    if args[:subcards]
-      shared_args[:subcards].merge! args.delete(:subcards)
+    create_or_update args.reverse_merge(type_id: Card::PhraseID)
+    %w(*read *update *delete).each do |perm|
+      create_or_update name: "#{args[:name]}+*self+#{perm}",
+                       content: '[[Administrator]]'
     end
-    create_or_update shared_args.merge(args)
   end
 end

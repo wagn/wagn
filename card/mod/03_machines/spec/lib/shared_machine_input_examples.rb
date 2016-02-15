@@ -11,7 +11,7 @@ shared_examples_for 'machine input' do
     f.putty
     f
   end
-  let!(:more_input) do
+  let(:more_input) do
     moreinput = create_another_machine_input_card
     moreinput
   end
@@ -22,8 +22,8 @@ shared_examples_for 'machine input' do
       Card::Auth.as_bot do
         input.delete!
       end
-      f = Card.gimme machine.name
-      expect(f.machine_input_card.item_cards).to eq([])
+      ca = Card.gimme machine.name
+      expect(ca.machine_input_card.item_cards).to eq([])
     end
 
     it 'updates output of machine card' do

@@ -36,14 +36,14 @@ def get_type_id_from_structure
   t.type_id
 end
 
-event :validate_type_change, before: :approve, on: :update, changed: :type_id do
+event :validate_type_change, :validate, on: :update, changed: :type_id do
   if (c = dup) && c.action == :create && !c.valid?
     errors.add :type, "of #{ name } can't be changed; errors creating new " \
                       "#{ type_id }: #{ c.errors.full_messages * ', ' }"
   end
 end
 
-event :validate_type, before: :approve, changed: :type_id do
+event :validate_type, :validate, changed: :type_id do
   if !type_name
     errors.add :type, 'No such type'
   end
@@ -54,7 +54,10 @@ event :validate_type, before: :approve, changed: :type_id do
   end
 end
 
-event :reset_type_specific_fields, after: :store do
+event :reset_type_specific_fields, :finalize do
+  # Example: if you save a card of type Phrase
+  # then reset set patterns for update all
+  # "Phrase+Something+*type plus right" cards
   wql = { left: { left_id: type_id },
           right: { codename: 'type_plus_right' }
         }

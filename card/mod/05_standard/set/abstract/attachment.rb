@@ -8,8 +8,8 @@ event :select_file_revision, after: :select_action do
   attachment.retrieve_from_store!(attachment.identifier)
 end
 
-event :upload_attachment, before: :validate_name, on: :save,
-                          when: proc { |c| c.preliminary_upload? } do
+event :upload_attachment, :prepare_to_validate,
+      on: :save, when: proc { |c| c.preliminary_upload? } do
   save_original_filename  # save original filename as comment in action
   write_identifier        # set db_content
   # (needs original filename to determine extension)
@@ -27,9 +27,8 @@ event :upload_attachment, before: :validate_name, on: :save,
   abort :success
 end
 
-event :assign_attachment_on_create,
-      after: :prepare,
-      on: :create,
+event :assign_attachment_on_create, :initialize,
+      after: :assign_action, on: :create,
       when: proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@action_id_of_cached_upload))
     upload_cache_card.selected_action_id = action.id
@@ -38,9 +37,8 @@ event :assign_attachment_on_create,
   end
 end
 
-event :assign_attachment_on_update,
-      after: :prepare,
-      on: :update,
+event :assign_attachment_on_update, :initialize,
+      after: :assign_action, on: :update,
       when:  proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@action_id_of_cached_upload))
     uploaded_file =
@@ -59,7 +57,7 @@ end
 
 # we need a card id for the path so we have to update db_content when we have
 # an id
-event :correct_identifier, after: :store, on: :create do
+event :correct_identifier, :finalize, on: :create do
   update_column(:db_content, attachment.db_content(mod: load_from_mod))
   expire
 end
@@ -71,16 +69,14 @@ def file_ready_to_save?
     attachment_changed?
 end
 
-event :save_original_filename, after: :validate_name,
-                               when: proc { |c| c.file_ready_to_save? } do
+event :save_original_filename, :prepare_to_store,
+      when: proc { |c| c.file_ready_to_save? } do
   return unless @current_action
   @current_action.update_attributes! comment: original_filename
 end
 
-event :delete_cached_upload_file_on_create,
-      after: :extend,
-      on: :create,
-      when: proc { |c| c.save_preliminary_upload? } do
+event :delete_cached_upload_file_on_create, :integrate,
+      on: :create, when: proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@action_id_of_cached_upload))
     upload_cache_card.delete_files_for_action action
     action.delete
@@ -88,17 +84,15 @@ event :delete_cached_upload_file_on_create,
   clear_upload_cache_dir_for_new_cards
 end
 
-event :delete_cached_upload_file_on_update,
-      after: :extend,
-      on: :update,
-      when: proc { |c| c.save_preliminary_upload? } do
+event :delete_cached_upload_file_on_update, :integrate,
+      on: :update, when: proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@action_id_of_cached_upload))
     delete_files_for_action action
     action.delete
   end
 end
 
-event :validate_file_exist, before: :validate, on: :create do
+event :validate_file_exist, :validate, on: :create do
   unless attachment.file.present? || empty_ok?
     errors.add attachment_name, 'is missing'
   end

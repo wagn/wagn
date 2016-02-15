@@ -6,16 +6,20 @@ end
 
 # must be called on all actions and before :set_name, :process_subcards and
 # :validate_delete_children
-event :assign_act,
-      before: :prepare,
-      when: proc { |c| c.history? || c.respond_to?(:attachment) }  do
-  @current_act = (@supercard && @supercard.current_act) ||
-                 Card::Act.create(ip_address: Env.ip)
-end
-
-event :assign_action, after: :assign_act do
+# event :assign_act,
+#       after: :identify_action,
+#       when: proc { |c| c.history? || c.respond_to?(:attachment) }  do
+#   @current_act = (@supercard && @supercard.current_act) ||
+#                  Card::Act.create(ip_address: Env.ip)
+#   assign_action
+# end
+#
+event :assign_action, :initialize,
+      when: proc { |c| c.history? || c.respond_to?(:attachment) } do
+  @current_act = director.need_act
   @current_action = Card::Action.create(
-    card_act_id: @current_act.id, action_type: @action,
+    card_act_id: @current_act.id,
+    action_type: @action,
     draft: (Env.params['draft'] == 'true')
   )
   if @supercard && @supercard != self
@@ -29,7 +33,8 @@ end
 
 # stores changes in the changes table and assigns them to the current action
 # removes the action if there are no changes
-event :finalize_action, after: :stored, when: proc { |c| c.finalize_action? } do
+event :finalize_action, :finalize,
+      when: proc { |c| c.finalize_action? } do
   @changed_fields = Card::TRACKED_FIELDS.select do |f|
     changed_attributes.member? f
   end
@@ -57,8 +62,8 @@ event :finalize_act,
   end
 end
 
-event :rollback_actions,
-      before: :approve, on: :update,
+event :rollback_actions, :prepare_to_validate,
+      on: :update,
       when: proc { |c| c.rollback_request? } do
   revision = { subcards: {} }
   rollback_actions = Env.params['action_ids'].map do |a_id|

@@ -128,7 +128,7 @@ format do
 
   def item_view args
     args[:item] ||
-      (@inclusion_opts && @inclusion_opts[:view]) ||
+      (@nest_opts && @nest_opts[:view]) ||
       default_item_view
   end
 
@@ -235,7 +235,7 @@ format do
   # process args for links and nests
   def nest_args args, chunk=nil
     r_args = item_args(args)
-    r_args.merge! @inclusion_opts.clone if @inclusion_opts
+    r_args.merge! @nest_opts.clone if @nest_opts
 
     case chunk
     when Card::Chunk::Include
@@ -276,7 +276,7 @@ format :html do
     args[:tab_type] ||= 'tabs'
   end
 
-  # create a path for a nest with respect ot the inclusion options
+  # create a path for a nest with respect ot the nest options
   def nest_path name, nest_args
     path_args = {}
     path_args[:view] = nest_args[:view]

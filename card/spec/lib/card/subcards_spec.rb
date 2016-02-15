@@ -87,11 +87,11 @@ describe Card::Subcards do
     end
     subject { Card.fetch("#{@card.name}+sub", new: {}, local_only: true).content }
     it 'works with string' do
-      @card._add_subfield 'sub', content: 'this is a sub'
+      @card.add_subfield 'sub', content: 'this is a sub'
       is_expected.to eq 'this is a sub'
     end
     it 'works with codename' do
-      @card._add_subfield :phrase, content: 'this is a sub'
+      @card.add_subfield :phrase, content: 'this is a sub'
       subcard = Card.fetch('A+phrase', new: {}, local_only: true)
       expect(subcard.content).to eq 'this is a sub'
     end
@@ -103,12 +103,12 @@ describe Card::Subcards do
     end
     subject { Card.fetch("#{@card.name}+sub", new: {}, local_only: true).content }
     it 'works with string' do
-      @card._add_subfield 'sub', content: 'this is a sub'
+      @card.add_subfield 'sub', content: 'this is a sub'
       expect(@card.subfield('sub').content).to eq 'this is a sub'
     end
 
     it 'works with codename' do
-      @card._add_subfield :phrase, content: 'this is a sub'
+      @card.add_subfield :phrase, content: 'this is a sub'
       expect(@card.subfield(':phrase').content).to eq 'this is a sub'
     end
 
@@ -128,7 +128,7 @@ describe Card::Subcards do
       @card = Card['A']
     end
     it 'adds a subcard' do
-      @card._add_subcard 'sub', content: 'sub content'
+      @card.add_subcard 'sub', content: 'sub content'
       @card.save!
       expect(Card['sub'].content).to eq 'sub content'
     end
@@ -136,9 +136,7 @@ describe Card::Subcards do
   describe 'two levels of subcards' do
     it 'creates cards with subcards with subcards' do
       Card::Auth.as_bot do
-        in_phase before: :approve, trigger: -> {
-          Card.create! name: 'test'
-        } do
+        in_stage :validate, trigger: -> { Card.create!(name: 'test') } do
           if name == 'test'
             add_subfield('first-level')
             subfield('first-level').add_subfield 'second-level', content: 'yeah'
@@ -149,9 +147,7 @@ describe Card::Subcards do
     end
     it 'creates cards with subcards with subcards using codenames' do
       Card::Auth.as_bot do
-        in_phase before: :approve, trigger: -> {
-          Card.create! name: 'test'
-        } do
+        in_stage :validate, trigger: -> { Card.create!(name: 'test') } do
           if name == 'test'
             add_subfield :children
             subfield(:children).add_subfield :title, content: 'yeah'

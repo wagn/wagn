@@ -1,4 +1,3 @@
-
 module ClassMethods
   def empty_trash
     Card.delete_trashed_files
@@ -40,6 +39,7 @@ module ClassMethods
       WHERE cards.type_id IN (#{Card::FileID}, #{Card::ImageID})
       AND card_actions.draft = true"
     actions.each do |action|
+      # we don't want to delete uploads in progress
       if older_than_five_days?(action.created_at) && (card = action.card)
         # we don't want to delete uploads in progress
         card.delete_files_for_action action

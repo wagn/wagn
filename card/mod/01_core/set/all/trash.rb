@@ -6,7 +6,7 @@ def delete!
   update_attributes! trash: true unless new_card?
 end
 
-event :pull_from_trash, before: :store, on: :create do
+event :pull_from_trash, :prepare_to_store, on: :create do
   if (trashed_card = Card.find_by_key_and_trash(key, true))
     # a. (Rails way) tried Card.where(key: 'wagn_bot').select(:id), but it
     # wouldn't work.  This #select generally breaks on cards. I think our
@@ -16,6 +16,7 @@ event :pull_from_trash, before: :store, on: :create do
     #    likely low ROI, but would be nice to have interface to retrieve cards
     #    from trash...m
     self.id = trashed_card.id
+    # update instead of create
     @from_trash = true
     @new_record = false
   end
@@ -23,7 +24,7 @@ event :pull_from_trash, before: :store, on: :create do
   true
 end
 
-event :validate_delete, before: :approve, on: :delete do
+event :validate_delete, :validate, on: :delete do
   if !codename.blank?
     errors.add :delete, "#{name} is is a system card. (#{codename})"
   end
@@ -43,7 +44,7 @@ event :validate_delete, before: :approve, on: :delete do
   end
 end
 
-event :validate_delete_children, after: :approve, on: :delete do
+event :validate_delete_children, :validate, on: :delete do
   children.each do |child|
     child.trash = true
     add_subcard child

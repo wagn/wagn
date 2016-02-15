@@ -11,27 +11,11 @@
 class Card
   def subcards
     @subcards ||= Subcards.new(self)
-  end
-
-  def preserve_subcards
-    return unless subcards.present?
-    Card.cache.soft.write subcards_cache_key, @subcards
-  end
-
-  def restore_subcards
-    cached_subcards = Card.cache.soft.read(subcards_cache_key)
-    return unless cached_subcards
-    @subcards = cached_subcards
-    @subcards.context_card = self
+    # @subcards ||= (director && director.subcards)
   end
 
   def expire_subcards
-    Card.cache.soft.delete subcards_cache_key
     subcards.clear
-  end
-
-  def subcards_cache_key
-    "#{key}#SUBCARDS#"
   end
 
   class Subcards
@@ -46,6 +30,15 @@ class Card
         Card.cache.soft.delete key
       end
       @keys = ::Set.new
+    end
+
+    def deep_clear cleared=::Set.new
+      each_card do |card|
+        next if cleared.include? card.id
+        cleared << card.id
+        card.subcards.deep_clear cleared
+      end
+      clear
     end
 
     def remove name_or_card
@@ -96,8 +89,15 @@ class Card
       end
     end
 
+    def catch_up_to_stage stage_index
+      each_card do |subcard|
+        subcard.catch_up_to_stage stage_index
+      end
+    end
+
     def rename old_name, new_name
       return unless @keys.include? old_name.to_name.key
+      # FIXME: something should happen here
     end
 
     def << value
@@ -240,7 +240,41 @@ class Card
       end
       @keys << card.key
       Card.write_to_soft_cache card
+      card.director = @context_card.director.subdirectors.add(card)
       card
     end
+  end
+
+  def right_id= card_or_id
+    write_card_or_id :right_id, card_or_id
+  end
+
+  def left_id= card_or_id
+    write_card_or_id :left_id, card_or_id
+  end
+
+  def type_id= card_or_id
+    write_card_or_id :type_id, card_or_id
+  end
+
+  def write_card_or_id attribute, card_or_id
+    if card_or_id.is_a? Card
+      card = card_or_id
+      if card.id
+        write_attribute attribute, card.id
+      else
+        add_subcard card
+        card.director.prior_store = true
+        with_id_when_exists(card) do |id|
+          write_attribute attribute, id
+        end
+      end
+    else
+      write_attribute attribute, card_or_id
+    end
+  end
+
+  def with_id_when_exists card, &block
+    card.director.call_after_store(&block)
   end
 end

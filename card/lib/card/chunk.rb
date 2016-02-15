@@ -57,7 +57,7 @@ class Card
       :URI, :HostURI, :EmailURI, :EscapedLiteral, :Include, :Link
     ]
     register_list :references,  [:EscapedLiteral, :Include, :Link]
-    register_list :inclusion_only, [:Include]
+    register_list :nest_only, [:Include]
     register_list :query, [:QueryReference]
 
     class Abstract

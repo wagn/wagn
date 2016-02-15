@@ -2,6 +2,7 @@ AllCops:
   Exclude:
     - "vendor/**/*"
     - "db/schema.rb"
+    - "card/tmpsets/**/*"
 Style/CommentAnnotation:
   Enabled: true
 Style/CollectionMethods:

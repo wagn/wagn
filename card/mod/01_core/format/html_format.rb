@@ -40,7 +40,7 @@ class Card
       end
     end
 
-    def get_inclusion_defaults nested_card
+    def get_nest_defaults nested_card
       {view: (nested_card.rule( :default_html_view ) || :titled) }
     end
 

@@ -85,7 +85,7 @@ format do
       begin
         v = {}
         v[:query] = card.query(search_params)
-        v[:item] = set_inclusion_opts args.merge(query_view: v[:query][:view])
+        v[:item] = set_nest_opts args.merge(query_view: v[:query][:view])
         v
       rescue JSON::ParserError => e
         { error: e }
@@ -124,12 +124,12 @@ format do
     end
   end
 
-  def set_inclusion_opts args
-    @inclusion_defaults = nil
-    @inclusion_opts ||= {}
-    @inclusion_opts[:view] = args[:item] || inclusion_opts[:view] ||
+  def set_nest_opts args
+    @nest_defaults = nil
+    @nest_opts ||= {}
+    @nest_opts[:view] = args[:item] || nest_opts[:view] ||
                              args[:query_view] || default_item_view
-    # explicit > inclusion syntax > WQL > inclusion defaults
+    # explicit > nest syntax > WQL > nest defaults
   end
 
   def page_link text, page, _current=false, options={}
@@ -220,7 +220,7 @@ format :html do
     else
       results =
         search_results.map do |c|
-          item_view = inclusion_defaults(c)[:view]
+          item_view = nest_defaults(c)[:view]
           %{
             <div class="search-result-item item-#{ item_view }">
               #{nest(c, size: args[:size], view: item_view)}
@@ -267,7 +267,7 @@ format :html do
     # should only happen if limit exactly equals the total
     return '' if limit >= total
 
-    @paging_path_args = { limit: limit, item: inclusion_defaults(card)[:view] }
+    @paging_path_args = { limit: limit, item: nest_defaults(card)[:view] }
     @paging_limit = limit
 
     s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }

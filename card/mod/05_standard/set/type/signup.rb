@@ -97,7 +97,7 @@ format :html do
   end
 end
 
-event :activate_by_token, before: :approve, on: :update,
+event :activate_by_token, :validate, on: :update,
                           when: proc { |c| c.has_token? } do
   abort :failure, 'no field manipulation mid-activation' if subcards.present?
   # necessary because this performs actions as Wagn Bot
@@ -129,16 +129,16 @@ event :activate_account do
   account.send_welcome_email
 end
 
-event :approve_with_token,
-      on: :update, before: :approve,
+event :approve_with_token, :validate,
+      on: :update,
       when: proc { Env.params[:approve_with_token] } do
   abort :failure, 'illegal approval' unless account.confirm_ok?
   account.reset_token
   account.send_account_verification_email
 end
 
-event :approve_without_token,
-      on: :update, before: :approve,
+event :approve_without_token, :validate,
+      on: :update,
       when: proc { Env.params[:approve_without_token] } do
   abort :failure, 'illegal approval' unless account.confirm_ok?
   activate_account
@@ -158,12 +158,13 @@ def signed_in_as_me_without_password?
   Auth.signed_in? && Auth.current_id == id && account.password.blank?
 end
 
-event :redirect_to_edit_password,
-      on: :update, after: :store,
+event :redirect_to_edit_password, :finalize,
+      on: :update,
       when: proc { |c| c.signed_in_as_me_without_password? } do
   Env.params[:success] = account.edit_password_success_args
 end
 
-event :act_as_current_for_extend_phase, before: :extend, on: :create do
+event :act_as_current_for_integrate_stage, :integrate,
+      on: :create do
   Auth.current_id = id
 end

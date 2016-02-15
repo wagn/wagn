@@ -39,7 +39,7 @@ format do
   end
 
   view :too_deep, perms: :none, closed: true do
-    %{ Man, you're too deep.  (Too many levels of inclusions at a time) }
+    %{ Man, you're too deep.  (Too many levels of nests at a time) }
   end
 
   view :too_slow, perms: :none, closed: true do

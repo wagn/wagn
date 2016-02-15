@@ -161,12 +161,12 @@ def ok_to_comment
   deny_because 'No comments allowed on structured content' if structure
 end
 
-event :clear_read_rule, before: :store, on: :delete do
+event :clear_read_rule, :store, on: :delete do
   self.read_rule_id = self.read_rule_class = nil
 end
 
-event :set_read_rule, before: :store, on: :save do
-  # avoid doing this on simple content saves?
+event :set_read_rule, :store,
+      on: :save, changed: [:type_id, :name] do
   read_rule_id, read_rule_class = permission_rule_id_and_class(:read)
   self.read_rule_id = read_rule_id
   self.read_rule_class = read_rule_class
@@ -188,11 +188,11 @@ end
 def update_read_rule
   Card.record_timestamps = false
   reset_patterns # why is this needed?
-  rcard, rclass = permission_rule_card :read
+  rcard_id, rclass = permission_rule_id_and_class :read
   # these two are just to make sure vals are correct on current object
-  self.read_rule_id = rcard.id
+  self.read_rule_id = rcard_id
   self.read_rule_class = rclass
-  Card.where(id: id).update_all read_rule_id: rcard.id, read_rule_class: rclass
+  Card.where(id: id).update_all read_rule_id: rcard_id, read_rule_class: rclass
   expire_hard
 
   # currently doing a brute force search for every card that may be impacted.
@@ -209,12 +209,11 @@ ensure
   Card.record_timestamps = true
 end
 
-
 def add_to_read_rule_update_queue updates
   @read_rule_update_queue = Array.wrap(@read_rule_update_queue).concat updates
 end
 
-event :check_permissions, after: :approve do
+event :check_permissions, :validate do
   task =
     if @action != :delete && comment # will be obviated by new comment handling
       :comment
@@ -256,7 +255,7 @@ def have_recaptcha_keys?
     end
 end
 
-event :recaptcha, before: :approve do
+event :recaptcha, :validate do
   if !@supercard && !Env[:recaptcha_used] && recaptcha_on?
     Env[:recaptcha_used] = true
     Env[:controller].verify_recaptcha model: self, attribute: :captcha

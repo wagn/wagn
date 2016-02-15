@@ -1,27 +1,28 @@
 
 
-event :add_and_drop_items, before: :approve, on: :save do
+event :add_and_drop_items, :prepare_to_validate, on: :save do
   adds = Env.params['add_item']
   drops = Env.params['drop_item']
   Array.wrap(adds).each { |i| add_item i } if adds
   Array.wrap(drops).each { |i| drop_item i } if drops
 end
 
-event :insert_item_event, before: :approve, on: :save, when: proc {|c| Env.params['insert_item']} do
+event :insert_item_event, :prepare_to_validate,
+      on: :save, when: proc { Env.params['insert_item'] } do
   index = Env.params['item_index'] || 0
-  self.insert_item index.to_i, Env.params['insert_item']
+  insert_item index.to_i, Env.params['insert_item']
 end
 
-phase_method :changed_item_names do
+stage_method :changed_item_names do
   dropped_item_names + added_item_names
 end
 
-phase_method :dropped_item_names do
+stage_method :dropped_item_names do
   old_items = item_names content: db_content_was
   old_items - item_names
 end
 
-phase_method :added_item_names do
+stage_method :added_item_names do
   old_items = item_names content: db_content_was
   item_names - old_items
 end
@@ -33,8 +34,8 @@ format do
     end
   end
 
-  def wrap_item item, args={}
-    item #no wrap in base
+  def wrap_item item, _args={}
+    item # no wrap in base
   end
 
   view :core do |args|
@@ -51,46 +52,49 @@ format do
 end
 
 format :html do
-
   view :core do |args|
-    %{<div class="pointer-list">#{ render_pointer_items args }</div>}
+    %{<div class="pointer-list">#{render_pointer_items args}</div>}
   end
 
   view :closed_content do |args|
-    args[:item] = (args[:item] || inclusion_defaults(card)[:view])=='name' ? 'name' : 'link'
+    args[:item] =
+      if (args[:item] || nest_defaults(card)[:view]) == 'name'
+        'name'
+      else
+        'link'
+      end
     args[:joint] ||= ', '
     _render_core args
   end
 
-#  view :edit do |args|
-#    super(args.merge(pointer_item_class: 'form-control'))
-#  end
+  #  view :edit do |args|
+  #    super(args.merge(pointer_item_class: 'form-control'))
+  #  end
 
   view :editor do |args|
-    part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/,'') : :list
-    hidden_field( :content, class: 'card-content') +
-    raw(_render part_view, args)
+    part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/, '') : :list
+    hidden_field(:content, class: 'card-content') +
+      raw(_render(part_view, args))
+    # .merge(pointer_item_class: 'form-control')))
+  end
 
-    #.merge(pointer_item_class: 'form-control')))
+  def options_card_name
+    (oc = card.options_rule_card) ? oc.cardname.url_key : ':all'
   end
 
   view :list do |args|
     args ||= {}
     items = args[:item_list] || card.item_names(context: :raw)
     items = [''] if items.empty?
-    options_card_name = (oc = card.options_rule_card) ? oc.cardname.url_key : ':all'
-
     extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
     <<-HTML
       <ul class="pointer-list-editor #{extra_css_class}" data-options-card="#{options_card_name}">
-        #{
-          items.map do |item|
-            _render_list_item args.merge( pointer_item: item )
-          end * "\n"
-        }
+        #{items.map do |item|
+            _render_list_item args.merge(pointer_item: item)
+          end.join "\n"}
       </ul>
-      #{ add_item_button }
+      #{add_item_button}
     HTML
   end
 
@@ -103,24 +107,24 @@ format :html do
   end
 
   view :list_item do |args|
-   <<-HTML
-    <li class="pointer-li">
-      <span class="input-group">
-        <span class="input-group-addon handle">
-          #{ glyphicon 'option-vertical left' }
-          #{ glyphicon 'option-vertical right'}
-        </span>
-        #{ text_field_tag 'pointer_item', args[:pointer_item], class: 'pointer-item-text form-control' }
-        <span class="input-group-btn">
-          <button class="pointer-item-delete btn btn-default" type="button">
-            #{ glyphicon 'remove'}
-          </button>
-        </span>
+    <<-HTML
+      <li class="pointer-li">
+        <span class="input-group">
+          <span class="input-group-addon handle">
+            #{glyphicon 'option-vertical left'}
+            #{glyphicon 'option-vertical right'}
+          </span>
+          #{text_field_tag 'pointer_item', args[:pointer_item],
+                           class: 'pointer-item-text form-control'}
+          <span class="input-group-btn">
+            <button class="pointer-item-delete btn btn-default" type="button">
+              #{glyphicon 'remove'}
+            </button>
+          </span>
         </span>
       </li>
     HTML
   end
-
 
   view :checkbox do |args|
     options = card.option_names.map do |option_name|
@@ -140,8 +144,9 @@ format :html do
     %{<div class="pointer-checkbox-list">#{options}</div>}
   end
 
-  view :multiselect do |args|
-    select_tag("pointer_multiselect",
+  view :multiselect do |_args|
+    select_tag(
+      'pointer_multiselect',
       options_for_select(card.option_names, card.item_names),
       multiple: true, class: 'pointer-multiselect form-control'
     )
@@ -179,7 +184,7 @@ format :html do
     pod_name = card.rule(:options_label) || 'description'
     dcard = Card[ "#{option}+#{pod_name}" ]
     if dcard and dcard.ok? :read
-      with_inclusion_mode :normal do
+      with_nest_mode :normal do
         subformat(dcard).render_core
       end
     end
@@ -247,7 +252,7 @@ end
 # the new module will override the old module's events and functions.
 # this event is only on pointer card. Other type cards do not have this event,
 # so it is not overridden and will be run while updating type and content in the same request.
-event :standardize_items, before: :approve, on: :save, changed: :content,
+event :standardize_items, :prepare_to_validate, on: :save, changed: :content,
     when: proc{  |c| c.type_id == Card::PointerID  } do
     self.content = item_names(context: :raw).map { |name| "[[#{name}]]" }.join "\n"
 end

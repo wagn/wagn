@@ -55,6 +55,14 @@ describe Card::Set::All::Fetch do
       expect(Card.fetch('A+virtual')).not_to be_nil
     end
 
+    it 'fetches virtual set cards' do
+      aself = Card.fetch('A+*self')
+      Card::Cache.reset_all
+      Card.fetch 'A+*self'
+
+      expect(aself.set_names).to include('Set+*type')
+    end
+
     it 'handles name variants of cached cards' do
       expect(Card.fetch('yomama+*self').name).to eq('yomama+*self')
       expect(Card.fetch('YOMAMA+*self').name).to eq('YOMAMA+*self')
@@ -121,8 +129,9 @@ describe Card::Set::All::Fetch do
       end
 
       it 'prefers db cards to pattern virtual cards' do
-        c1=Card.create!(name: 'y+*right+*structure', content: 'Formatted Content')
-        c2=Card.create!(name: 'a+y', content: 'DB Content')
+        Card.create! name: 'y+*right+*structure',
+                     content: 'Formatted Content'
+        Card.create! name: 'a+y', content: 'DB Content'
         card = Card.fetch('a+y')
         expect(card.virtual?).to be_falsey
         expect(card.rule(:structure)).to eq('Formatted Content')
@@ -141,7 +150,7 @@ describe Card::Set::All::Fetch do
 
       it 'should recognize pattern overrides' do
         # ~~~ create right rule
-        tc=Card.create!(name: 'y+*right+*structure', content: 'Right Content')
+        Card.create!(name: 'y+*right+*structure', content: 'Right Content')
         card = Card.fetch('a+y')
         expect(card.virtual?).to be
         expect(card.raw_content).to eq('Right Content')

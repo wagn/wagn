@@ -60,6 +60,7 @@ class FileUploader < CarrierWave::Uploader::Base
 
   # generate identifier that gets stored in the card's db_content field
   def db_content opts={}
+    return '' unless file.present?
     if opts[:mod] && !model.load_from_mod
       model.load_from_mod = opts[:mod]
     end

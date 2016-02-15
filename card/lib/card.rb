@@ -32,6 +32,8 @@ class Card < ActiveRecord::Base
   require_dependency 'card/reference'
   require_dependency 'card/subcards'
   require_dependency 'card/view_cache'
+  require_dependency 'card/stage_director'
+  require_dependency 'card/director_register'
 
   has_many :references_in,  class_name: :Reference, foreign_key: :referee_id
   has_many :references_out, class_name: :Reference, foreign_key: :referer_id
@@ -40,7 +42,7 @@ class Card < ActiveRecord::Base
   has_many :drafts, -> { where(draft: true).order :id }, class_name: :Action
 
   cattr_accessor :set_patterns, :serializable_attributes, :error_codes,
-                 :set_specific_attributes
+                 :set_specific_attributes, :current_act
   @@set_patterns = []
   @@error_codes = {}
 
@@ -52,18 +54,24 @@ class Card < ActiveRecord::Base
     :update_all_users,            # if the above is wrong then this one too
     :silent_change,               # and this probably too
     :remove_rule_stash,
-    :last_action_id_before_edit
+    :last_action_id_before_edit,
+    :skip_phases
   )
 
   attr_accessor :follower_stash
 
-  define_callbacks :prepare, :approve, :store, :stored, :extend, :subsequent,
-                   :select_action, :show, :handle
+  define_callbacks :select_action, :show_page, :handle, :act,
+                   :initialize_stage,
+                   :prepare_to_validate_stage, :validate_stage,
+                   :prepare_to_store_stage, :store_stage,
+                   :finalize_stage,
+                   :integrate_stage, :integrate_with_delay_stage
 
-  before_validation :prepare
-  before_validation :approve
-  around_save :store
-  after_save :extend
+  before_validation :validation_phase, if: -> { run_phases? }
+  around_save :storage_phase
+  after_save :integration_phase, if: -> { run_phases? }
+  after_commit :clean_up, if: -> { run_phases? }
+  after_rollback :clean_up, if: -> { run_phases? }
 
   TRACKED_FIELDS = %w(name type_id db_content trash)
   extend CarrierWave::Mount

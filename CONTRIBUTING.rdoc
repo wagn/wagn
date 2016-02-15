@@ -1,7 +1,9 @@
 =Thinking about contributing to Wagn?
-Thank you!
+Welcome! And thanks for taking the first step.
 
-In coming months we plan to work to make the process of contributing and entering the Wagn developer community as rewarding an experience as possible.  In the meantime, please be vocal about any way we can help.
+We want to make contributing to Wagn as rewarding an experience as possible. Please jump in, and ask away for help.
+
+FIXME - contact routes here (support ticket, google group, etc.  slack?)
 
 ==Basics
 The Wagn team makes heavy use of {GitHub's pull request system}[https://help.github.com/articles/using-pull-requests].  If you're not familiar with pull requests, that's the best place to start.
@@ -19,6 +21,6 @@ Documentation is still sparse, but you can get a sense for how to start by readi
 To install in a mod-developer friendly mode, try `wagn new mydeckname --mod-dev` (still uses standard gem installation).
 
 ==Developing the Core
-If you're interested in working on the Wagn gem, you'll need to clone a copy of the wagn code from the Github repository.  If, for example, you clone it in /opt/wagn, you can then use the gem by adding `gem 'wagn', :path=>'/opt/wagn'` to your Gemfile.  
 
 To install in a core-developer friendly mode, try `wagn new mydeckname --core-dev`.  Doing so will let you run all core specs using `wagn rspec`.
+

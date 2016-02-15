@@ -1,7 +1,0 @@
-{{_name}} ({{_email}})
-has requested an account ({{_requests_url}})
-on {{_site}}.
-
-See {{_request_url}} for {{_name}}&#39;s request.
-
--- the machines running {{_site}}

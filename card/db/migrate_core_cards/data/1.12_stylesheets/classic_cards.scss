@@ -1,0 +1,104 @@
+/*
+This stylesheet defines the core rules of the "classic" Wagn look.
+*/
+
+body {
+  font: 12px verdana, arial, helvetica, sans-serif;
+  background: #ccc;
+  color: #444;
+  margin: 0px;
+  min-width: 480px;
+}
+
+.card-frame {
+  margin: 1px 0;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  border: 1px solid #aaa;
+  border-bottom: 2px solid #ccc;
+  border-right: 2px solid #ccc;
+  background: #fff;
+  margin: 0;
+  padding: 0 !important;
+  > .card-body {
+    min-height: 20px;
+  }
+  > .card-header {
+    margin: 0;
+    color: #333333;
+    background: #8AB;
+    text-align: left;
+    .toggler {
+      top: 2px;
+    }
+  }
+  > .instruction {
+    color: #440;
+    background: #ddc;
+  }
+}
+
+
+
+
+/*------------- closed view -------*/
+.closed-view {
+  border: 0;
+  border-bottom: 1px solid #ccc;
+  -moz-border-radius: 0 !important;
+  border-radius: 0 !important;
+  .card-header {
+    -moz-border-radius: 0 6px 6px 0;
+    border-radius: 0 6px 6px 0;
+    margin-right: 4px;
+  }
+}
+
+
+.errors-view {
+  > .card-frame, & {
+    > .card-body {
+      border: 2px solid #b44;
+      background: #ffb;
+    }
+  }
+}
+
+
+/*--------- links --------------*/
+a {
+  color: #279;
+}
+a.wanted-card {
+  color: #990000;
+}
+a.email-link {
+  color: #997799;
+}
+
+
+
+/*-- misc --*/
+
+p {
+  line-height: 1.5em;
+}
+pre {
+  background-color: #e5f0f5;
+  padding: 10px;
+}
+li {
+  margin-bottom: 2px;
+}
+hr {
+  margin: 10px
+}
+
+
+.card-notice {
+  color: #009;
+}
+.joint {
+  color: #960;
+}
+

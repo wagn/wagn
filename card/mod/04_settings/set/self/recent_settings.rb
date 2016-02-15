@@ -1,0 +1,3 @@
+def followable?
+  false
+end

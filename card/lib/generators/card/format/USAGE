@@ -1,0 +1,9 @@
+Description:
+    Generates a new format
+
+Example:
+    wagn generate card:format 01_core backup
+
+    This will create:
+        mod/01_core/format/backup_format.rb
+        spec/mod/01_core/format/backup_format_spec.rb

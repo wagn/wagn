@@ -1,0 +1,228 @@
+/*
+This stylesheet outlines a host of commonly-used styles.  Unlike the "standard" stylesheet, this
+sheet will likely affect prominent pages seen even by casual users, so any major style tweaking will
+likely alter some of the style rules below.
+
+We do not expect migrations to alter this card frequently
+*/
+
+
+$input_color: #f9f9ed;
+$input_focus_color: #ffffee;
+$label_color: #666666;
+$border_color: #999999;
+$header_color: #eeeeee;
+
+h1 {
+  font-size: 1.2em;
+}
+h2 {
+  font-size: 1.1em;
+}
+
+textarea, input {
+  font-size: 1em;
+  line-height: 1.5em;
+}
+
+/*
+the following gives users more explicit control over spacing within tinyMCE
+but leads to lots of empty paragraph tags
+*/
+
+h1, h2, p {
+  margin: 0px;
+}
+
+label,
+.navbox-item-label {
+  color: $label_color;
+}
+table {
+  border-collapse: collapse;
+}
+th {
+  color: $label_color;
+  font-weight: normal;
+  font-style: italic;
+}
+td, th {
+  vertical-align: top;
+  padding: 0px;
+}
+a:link,
+a:visited {
+	text-decoration: none;
+}
+a:hover,
+a:focus {
+  text-decoration: underline;
+}
+form {
+  margin: 0px;
+  padding: 0px;
+}
+
+
+.card-header,
+.card-body {
+  padding: 5px 0;
+}
+
+.card-frame {
+  border: 1px solid $border_color;
+  > .card-header {
+    background: $header_color;
+    padding: 5px 12px;
+  }
+  > .card-body {
+    padding: 5px 12px;
+  }
+  > .instruction {
+    background: #ccc;
+  }
+}
+
+.card-header > .instruction {
+  font-weight: normal;
+  font-size: 0.9em;
+}
+
+.closed-view {
+  border: 0;
+  border-bottom: 1px solid #eee
+}
+
+/*-------- Special Pages --------*/
+
+/*-- sign in page --*/
+
+#sign-in input#login_field,
+#sign-in input#password,
+#forgot-password input#email {
+  width: 50%;
+}
+#forgot-password {
+  margin-top: 40px;
+}
+
+
+
+
+/*----------- inputs ---------*/
+
+
+input[type=text],
+input[type=password],
+input[type=checkbox],
+textarea,
+select {
+  border: 1px solid #aaa;
+  border-top: 2px solid #666;
+  border-left: 2px solid #666;
+  background: $input_color;
+  :focus {
+    background: $input_focus_color;
+  }
+}
+.history-view > .card-frame > .card-content,
+.conflict-view,
+body#tinymce {
+  background: $input_color;
+}
+body.mceContentBody {
+  margin: 4px;
+}
+
+
+/*----------- Change View ---------*/
+
+.change-view {
+  padding: 5px 0px;
+  border-bottom: 1px dotted $border_color;
+  .card-title {
+    font-weight: bold;
+  }
+  .last-update {
+    color: $label_color;
+  }
+}
+
+
+
+/*---------- ( Richtext )-------------*/
+
+.table-of-contents {
+  background: $header_color;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  padding: 4px;
+  margin: 5px 20px 20px 20px;
+  h5 {
+    margin: 0 0 0 40px;
+  }
+  ol {
+    list-style-type: upper-roman;
+    ol {
+      list-style-type: upper-alpha;
+      padding-left: 25px
+    }
+  }
+}
+
+
+/* CARDTYPE_SPECIFIC ------------------------------*/
+
+
+.TYPE-toggle.card-content {
+  font-style: italic;
+}
+
+.TYPE-image.card-content, .TYPE-image .card-body {
+  img {
+    max-width: 100%;
+  }
+}
+
+/*---------( Search ) ---------- */
+
+.search-keyword {
+  font-style: italic;
+}
+
+.search-count {
+  float: right;
+  color: $label_color;
+}
+
+
+/*----------- (Account Request)--------------*/
+
+.invite-links {
+  padding: 10px;
+  margin-top: 10px;
+  background: $header_color;
+  text-align: center;
+}
+.invite-links a {
+  font-weight: bold;
+  margin: 0 20px;
+}
+
+
+/*---------- comments -------------------------------------- */
+
+.comment-box {
+  padding: 8px;
+  margin: 0px;
+  input {
+    padding: 0px;
+  }
+  textarea {
+    margin-bottom:5px;
+  }
+}
+.w-comment-author {
+  font-style: italic;
+  margin-left: 10px;
+}

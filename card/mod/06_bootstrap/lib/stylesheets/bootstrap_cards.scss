@@ -1,0 +1,279 @@
+/*!
+ * Wagn: [[http://wagn.org]]
+ * Copyright 2015 Grass Commons and other contributors; Licensed GPL
+ */
+
+/*
+  These styles are intended to help bridge the default card context with bootstrap styling.
+  Note: these styles do not appear in pre-bootstrap skins.
+*/
+{{bootstrap default skin+variables}}
+
+
+$label_color: #666666;
+$border_color: #999999;
+$header_color: #eeeeee;
+$credit_color: #186886; /* wagn blue */
+
+header {
+  a {
+    font-size: 1.3em;
+  }
+}
+
+@media print {
+  header {
+    display: none;
+  }
+}
+
+.card-menu  a {
+  color: inherit;
+}
+
+
+
+label,
+.navbox-item-label {
+  color: $label_color;
+}
+table {
+  border-collapse: collapse;
+}
+th {
+  color: $label_color;
+  font-weight: normal;
+  font-style: italic;
+}
+td, th {
+  vertical-align: top;
+  padding: 0px;
+}
+a:link,
+a:visited {
+	text-decoration: none;
+}
+a:hover,
+a:focus {
+  text-decoration: underline;
+}
+form {
+  margin: 0px;
+  padding: 0px;
+}
+
+
+/*-------- Special Pages --------*/
+
+/*-- sign in page --*/
+
+#sign-in input#login_field,
+#sign-in input#password,
+#forgot-password input#email {
+  width: 50%;
+}
+#forgot-password {
+  margin-top: 40px;
+}
+
+
+body.mceContentBody {
+  margin: 4px;
+}
+
+
+/*----------- Sidebar -------------*/
+
+.row.row-offcanvas {
+  > aside, article {
+    margin: 0;
+  }
+}
+
+/* collapsed sidebar styles */
+@media screen and (max-width: 767px) {
+  .row-offcanvas {
+    position: relative;
+    -webkit-transition: all 0.25s ease-out;
+    -moz-transition: all 0.25s ease-out;
+    transition: all 0.25s ease-out;
+  }
+
+  .sidebar-offcanvas-right {
+    right: -41.6%;
+  }
+
+  .sidebar-offcanvas-left {
+    left: -41.6%;
+  }
+  .row-offcanvas.right-active {
+    right: 41.6%;
+  }
+  .row-offcanvas.left-active {
+    left: 41.6%;
+  }
+  .sidebar-offcanvas {
+    position: absolute !important;
+    top: 0 !important;
+    width: 41.6% !important;
+  }
+}
+
+.offcanvas-toggle {
+  font-size: 10px !important;
+  padding: 5px !important;
+  margin-bottom: 15px !important;
+}
+.offcanvas-toggle-right {
+  float: right;
+}
+.offcanvas-toggle-left {
+  float: left;
+}
+
+
+/*---------- Card menu ------------*/
+
+@media (min-width: $screen-xs-max) {
+  .card-slot > .menu-slot > .vertical-card-menu.show-on-hover {
+    .btn-group.slotter {
+      display: none;
+      &.open {
+        display: inline-block;
+      }
+    }
+  }
+
+  .card-slot:hover > .menu-slot > .vertical-card-menu.show-on-hover .btn-group.slotter {
+    display: inline-block;
+  }
+}
+
+/*----------- Change View ---------*/
+
+.change-view {
+  padding: 5px 0px;
+  border-bottom: 1px dotted $border_color;
+  .change-card{
+    font-weight: bold;
+  }
+  .last-update {
+    color: $label_color;
+  }
+}
+
+.titled-view > .card-header {
+  font-size: 1.3em;
+  margin: 3px 0
+}
+
+/*---------- ( Richtext )-------------*/
+
+.table-of-contents {
+  background: $header_color;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  padding: 4px;
+  margin: 5px 20px 20px 20px;
+  h5 {
+    margin: 0 0 0 40px;
+  }
+  ol {
+    list-style-type: upper-roman;
+    ol {
+      list-style-type: upper-alpha;
+      padding-left: 25px
+    }
+  }
+}
+
+
+/* CARDTYPE_SPECIFIC ------------------------------*/
+
+
+.TYPE-toggle.card-content {
+  font-style: italic;
+}
+
+.TYPE-image.card-content, .TYPE-image .card-body {
+  img {
+    max-width: 100%;
+  }
+}
+
+/*---------( Search ) ---------- */
+
+.search-keyword {
+  font-style: italic;
+}
+
+.search-count {
+  float: right;
+  color: $label_color;
+}
+
+
+/*----------- (Account Request)--------------*/
+
+.invite-links {
+  padding: 10px;
+  margin-top: 10px;
+  background: $header_color;
+  text-align: center;
+}
+.invite-links a {
+  font-weight: bold;
+  margin: 0 20px;
+}
+
+
+/*---------- comments -------------------------------------- */
+
+.comment-box {
+  padding: 8px;
+  margin: 0px;
+  input {
+    padding: 0px;
+  }
+  textarea {
+    margin-bottom:5px;
+  }
+}
+.w-comment-author {
+  font-style: italic;
+  margin-left: 10px;
+}
+
+
+.SELF-Xlogo.content_panel-view,
+.SELF-Xcredit.content_panel-view {
+  text-align: center;
+  background: #fff;
+  img {
+    max-width: 100%;
+  }
+  a {
+    color: $credit_color;
+  }
+}
+
+.closed-content {
+  font-size: 1em !important;
+}
+
+
+/* english content in css.  ugh */
+.search-no-results:after {
+  content:'0 results';
+}
+.closed-content .search-no-results:after {
+  content:'';
+}
+
+/*---------- Modal Window -------------------------------------- */
+
+.modal-menu .close{
+  font-size: 16px;
+  margin-left: 10px;
+
+}

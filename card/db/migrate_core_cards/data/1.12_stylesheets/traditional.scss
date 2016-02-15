@@ -1,0 +1,152 @@
+/*
+This "traditional" styling is for backwards compatibility.  It is not intended for use in Wagns created after version 1.12.
+
+There are three types of rules here:
+  1. rules applying to selectors no longer included in standard layouts (#menu, #logo, #credit)
+  2. rules enforcing now-deprecated styling patterns
+  3. rules enforcing default content expected to change soon
+
+*/
+
+@mixin no_external_icon {
+  list-style-type: none;
+  padding-right: 0 !important;
+  background: inherit;
+}
+
+
+/* #menu is being replaced with #header */
+#menu {
+  font-size: 14px;
+  background: #8AB;
+  margin-bottom: 20px;
+  padding: 2px;
+  a {
+    color: #000;
+    padding: 0px 4px;
+  }
+  div {
+    display: inline;
+  }
+  #logging {  /* signing in and out */
+    float:right;
+    right: 0.5%;
+    top: 2px;
+  }
+  #my-card-link {
+    font-weight: bold;
+  }
+  .navbox {
+    height: 18px;
+    width: 30%;
+  }
+}
+@media print {
+  #menu {
+    display: none;
+  }
+}
+
+
+/* -------  Secondary --------- */
+
+/* #logo is being replaced with *logo card slot wrappers */
+#logo {
+  text-align: center;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #777;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  a,
+  a:link,
+  a:visited {
+    color: #448;
+    text-decoration: none;
+    text-align: center;
+  }
+  img {
+    max-width: 100%;
+  }
+}
+
+/* #credit is being replaced with *credit card slot wrappers */
+#credit {
+  margin: 30px 0;
+}
+
+
+/* the logo and credit will not be in the sidebar in most new layouts */
+
+#secondary {
+  > div {
+    > a > .SELF-Xlogo.content-view,
+    > .SELF-Xcredit.content-view {
+      display: block;
+      text-align: center;
+      padding: 10px;
+      background: #fff;
+      border: 1px solid #bbb;
+      -moz-border-radius: 8px;
+      border-radius: 8px;
+      img {
+        max-width: 100%;
+      }
+      a {
+        color: #186886; /* NOTGREY - Wagn blue */
+      }
+    }
+  }  
+}
+
+
+/*
+The following are specifically NOT recommended but are included here to avoid disrupting behavior in old sites
+*/
+
+/* best not to overspecify these properties */
+body, p, ol, ul, td, th, textarea {
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size:   12px;
+  font-weight: normal;
+}
+
+body, p, ol, ul {
+  line-height: 21px;
+}
+
+.closed-content {
+  font-size: 11px !important;
+}
+
+/* creates lots of inline divs.  confusing */
+.content-view {
+  display: inline;
+}
+
+/* english content in css.  ugh */
+.search-no-results:after {
+  content:'0 results';
+}
+.closed-content .search-no-results:after {
+  content:'';
+}
+
+/* many sites may want this external link behavior; it's here because it's a nuisance to override when not desired */
+
+a.external-link,
+.closed-content a.external-link {
+  color: #729;
+  background: url([[/assets/external_link.png]]) center right no-repeat;
+  padding-right: 13px !important;
+}
+
+.SELF-home-original > .card-content p,
+.SELF-wagneer_menu > .card-content {
+  a.external-link {
+    list-style-type: none;
+    padding-right: 0 !important;
+    background: inherit;
+  }
+}
+

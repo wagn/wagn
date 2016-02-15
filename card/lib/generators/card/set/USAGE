@@ -1,0 +1,15 @@
+Description:
+    Generates new set files in mods and matching specs.
+
+Example:
+    wagn generate card:set 05_standard type tshirt
+
+    This will create:
+        mod/05_standard/set/type/tshirt.rb
+        spec/mod/05_standard/set/type/tshirt_spec.rb
+
+    wagn generate card:set 05_standard type_plus_right basic about tshirt
+
+    This will create:
+        mods/05_standard/set/type_plus_right/basic/about/tshirt.rb
+        mods/05_standard/spec/set/type_plus_right/basic/about/tshirt_spec.rb

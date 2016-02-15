@@ -102,26 +102,26 @@ describe Card::StageDirector do
     let(:postorder) { %w(111 11 121 12 1) }
     describe 'validate' do
       it 'is pre-order depth-first' do
-        $order = []
+        order = []
         in_stage :validate, on: :create,
                             trigger: -> { create_card_with_subcards } do
-          $order << name
+          order << name
         end
-        expect($order).to eq(preorder)
+        expect(order).to eq(preorder)
       end
 
       it 'executes all validate stages before next stage' do
-        $order = []
+        order = []
         with_test_events do
           test_event :validate, on: :create do
-            $order << "v:#{name}"
+            order << "v:#{name}"
           end
           test_event :prepare_to_store, on: :create do
-            $order << "pts:#{name}"
+            order << "pts:#{name}"
           end
           create_card_with_subcards
         end
-        expect($order).to eq(
+        expect(order).to eq(
           %w(v:1 v:11 v:111 v:12 v:121 pts:1 pts:11 pts:111 pts:12 pts:121)
         )
       end
@@ -129,39 +129,39 @@ describe Card::StageDirector do
 
     describe 'finalize' do
       it 'is post-order depth-first' do
-        $order = []
+        order = []
         in_stage :finalize, on: :create,
                             trigger: -> { create_card_with_subcards } do
-          $order << name
+          order << name
         end
-        expect($order).to eq(postorder)
+        expect(order).to eq(postorder)
       end
     end
 
     describe 'store' do
       it 'is pre-order depth-first' do
-        $order = []
+        order = []
         in_stage :store, on: :create,
                          trigger: -> { create_card_with_subcards } do
-          $order << name
+          order << name
         end
-        expect($order).to eq(preorder)
+        expect(order).to eq(preorder)
       end
     end
 
     describe 'store and finalize' do
       it 'executes finalize when all subcards are stored and finalized' do
-        $order = []
+        order = []
         with_test_events do
           test_event :store, on: :create do
-            $order << "store:#{name}"
+            order << "store:#{name}"
           end
           test_event :finalize, on: :create do
-            $order << "finalize:#{name}"
+            order << "finalize:#{name}"
           end
           create_card_with_subcards
         end
-        expect($order).to eq(
+        expect(order).to eq(
           %w(store:1 store:11 store:111 finalize:111 finalize:11
              store:12 store:121 finalize:121 finalize:12 finalize:1)
         )
@@ -170,36 +170,36 @@ describe Card::StageDirector do
 
     describe 'complete run' do
       it 'is in correct order' do
-        $order = []
+        order = []
         with_test_events do
           test_event :initialize, on: :create do
-            $order << "i:#{name}"
+            order << "i:#{name}"
           end
           test_event :prepare_to_validate, on: :create do
-            $order << "ptv:#{name}"
+            order << "ptv:#{name}"
           end
           test_event :validate, on: :create do
-            $order << "v:#{name}"
+            order << "v:#{name}"
             add_subcard '112v' if name == '11'
           end
           test_event :prepare_to_store, on: :create do
-            $order << "pts:#{name}"
+            order << "pts:#{name}"
           end
           test_event :store, on: :create do
-            $order << "s:#{name}"
+            order << "s:#{name}"
           end
           test_event :finalize, on: :create do
-            $order << "f:#{name}"
+            order << "f:#{name}"
           end
           test_event :integrate, on: :create do
-            $order << "ig:#{name}"
+            order << "ig:#{name}"
           end
           test_event :integrate_with_delay, on: :create do
-            $order << "igwd:#{name}"
+            order << "igwd:#{name}"
           end
           create_card_with_subcards
         end
-        expect($order).to eq(
+        expect(order).to eq(
           %w(
             i:1 i:11 i:111 i:12 i:121
             ptv:1 ptv:11 ptv:111 ptv:12 ptv:121

@@ -8,7 +8,7 @@ describe Card::Set::Type::Uri do
   it 'renders core view links' do
     card = Card.create(type: 'URI', name: 'A URI card', content: 'http://wagn.org/Home')
     assert_view_select card.format.render('core'), 'a[class="external-link"][href="http://wagn.org/Home"]' do
-      assert_select 'span[class="card-title"]', { text: 'A URI card' }
+      assert_select 'span[class="card-title"]', text: 'A URI card'
     end
   end
 

@@ -4,7 +4,8 @@ describe Card::Set::Right::Followers do
   describe '#raw_content' do
     it 'returns a pointer list of followers' do
       card = Card.fetch 'All Eyes on me'
-      expect(card.followers_card.item_names.sort).to eq ['Big Brother', 'John', 'Sara']
+      expect(card.followers_card.item_names.sort)
+        .to eq ['Big Brother', 'John', 'Sara']
     end
   end
 
@@ -20,7 +21,8 @@ describe Card::Set::Right::Followers do
     it 'renders a pointer list of followers' do
       card = Card.fetch 'All Eyes on me'
       view = card.followers_card.format.render_raw
-      expect(view.split("\n").sort).to eq ['[[Big Brother]]', '[[John]]', '[[Sara]]']
+      expect(view.split("\n").sort)
+        .to eq ['[[Big Brother]]', '[[John]]', '[[Sara]]']
     end
   end
 

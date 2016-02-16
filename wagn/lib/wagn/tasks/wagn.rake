@@ -268,7 +268,7 @@ namespace :wagn do
           data = ActiveRecord::Base.connection.select_all(
             "select * from #{table}"
           )
-          file.write YAML::dump(data.inject({}) do |hash, record|
+          file.write YAML.dump(data.inject({}) do |hash, record|
             record['trash'] = false if record.key? 'trash'
             record['draft'] = false if record.key? 'draft'
             if record.key? 'content'
@@ -349,9 +349,7 @@ end
 def delete_unwanted_cards
   Card::Auth.as_bot do
     if ignoramus = Card['*ignore']
-      ignoramus.item_cards.each do |card|
-        card.delete!
-      end
+      ignoramus.item_cards.each(&:delete!)
     end
     Card::Cache.reset_all
     # FIXME: can this be associated with the machine module somehow?

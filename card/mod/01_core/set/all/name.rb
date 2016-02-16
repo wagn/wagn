@@ -38,11 +38,11 @@ def name= newname
     reset_patterns_if_rule
     reset_patterns
   end
-  if @director
-    subcards.each do |subcard|
-      subcard.name = subcard.cardname.replace_part name, newname
-    end
+  subcards.each do |subcard|
+    binding.pry
+    subcard.name = subcard.cardname.replace_part name, newname
   end
+
 
   write_attribute :name, cardname.s
 end
@@ -186,6 +186,7 @@ end
 
 
 event :set_autoname, :prepare_to_validate, on: :create do
+  binding.pry
   if name.blank? && (autoname_card = rule_card(:autoname))
     self.name = autoname autoname_card.content
     # FIXME: should give placeholder in approve phase

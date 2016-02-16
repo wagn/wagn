@@ -79,6 +79,7 @@ class Card
       # for a subcard :prepare_to_store was already executed
       # don't execute it twice
       catch_up_to_stage :prepare_to_store
+      binding.pry
       run_single_stage :store, &block
       run_single_stage :finalize
     ensure
@@ -122,6 +123,12 @@ class Card
       else
         DirectorRegister.act_director || (@parent && @parent.main_director)
       end
+    end
+
+    def to_s
+      subs = subdirectors.map(&:card)
+                         .map { |card| "  #{card.name}" }.join "\n"
+      "#{@card.name}\n#{subs}"
     end
 
     private

@@ -215,4 +215,20 @@ describe Card::StageDirector do
       end
     end
   end
+
+  describe 'subcards' do
+    it "has correct name if supercard's name get changed" do
+      Card::Auth.as_bot do
+        in_stage(:prepare_to_validate, on: :create,
+                 trigger: -> do
+                    Card.create! name:'hi', subcards: { '+sub' => 'some
+content' }
+                 end
+        ) do
+          self.name = 'main'
+        end
+        expect(Card['main+sub'].class).to eq(Card)
+      end
+    end
+  end
 end

@@ -68,7 +68,7 @@ class Card
       def define_event_method event, call_method, _opts
         class_eval do
           define_method event do
-            # puts "#{name}:#{event}".green
+            puts "#{name}:#{event}\n#{Card::DirectorRegister.to_s}".green
             run_callbacks event do
               send call_method
             end

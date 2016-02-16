@@ -73,9 +73,7 @@ class Card
 
       def format_ancestry
         ancestry = [self]
-        unless self == Card::Format
-          ancestry = ancestry + superclass.format_ancestry
-        end
+        ancestry += superclass.format_ancestry unless self == Card::Format
         ancestry
       end
 
@@ -87,9 +85,7 @@ class Card
     # ~~~~~ INSTANCE METHODS
 
     def initialize card, opts={}
-      unless (@card = card)
-        fail Card::Error, 'format initialized without card'
-      end
+      raise Card::Error, 'format initialized without card' unless (@card = card)
       opts.each do |key, value|
         instance_variable_set "@#{key}", value
       end
@@ -175,10 +171,13 @@ class Card
 
     def method_missing method, *opts, &proc
       if method =~ /(_)?(optional_)?render(_(\w+))?/
-        view = $3 ? $4 : opts.shift
+        view = Regexp.last_match(3) ? Regexp.last_match(4) : opts.shift
         args = opts[0] ? opts.shift.clone : {}
-        args.merge!(optional: true, default_visibility: opts.shift) if $2
-        args[:skip_permissions] = true if $1
+        if Regexp.last_match(2)
+          args[:optional] = true
+          args[:default_visibility] = opts.shift
+        end
+        args[:skip_permissions] = true if Regexp.last_match(1)
         render view, args
       else
         proc = proc { |*a| raw yield *a } if proc

@@ -218,8 +218,8 @@ class Card
 
       def safe_sql txt
         txt = txt.to_s
-        if txt.match(/[^\w\*\(\)\s\.\,]/)
-          fail "WQL contains disallowed characters: #{txt}"
+        if txt =~ /[^\w\*\(\)\s\.\,]/
+          raise "WQL contains disallowed characters: #{txt}"
         else
           txt
         end

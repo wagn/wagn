@@ -98,7 +98,7 @@ end
 
 def permitted? action
   return if Card.config.read_only
-  return true if action != :comment and Auth.always_ok?
+  return true if action != :comment && Auth.always_ok?
 
   permitted_ids = who_can action
   if action == :comment && Auth.always_ok?
@@ -110,9 +110,7 @@ def permitted? action
 end
 
 def permit action, verb=nil
-  if Card.config.read_only # not called by ok_to_read
-    deny_because 'Currently in read-only mode'
-  end
+  deny_because 'Currently in read-only mode' if Card.config.read_only # not called by ok_to_read
 
   return if permitted? action
   verb ||= action.to_s
@@ -127,10 +125,9 @@ def ok_to_create
     # left is supercard; create permissions will get checked there.
     next if side == :left && @superleft
     part_card = send side, new: {}
-    if part_card && part_card.new_card? # if no card, there must be other errors
-      unless part_card.ok? :create
-        deny_because you_cant("create #{part_card.name}")
-      end
+    next unless part_card && part_card.new_card? # if no card, there must be other errors
+    unless part_card.ok? :create
+      deny_because you_cant("create #{part_card.name}")
     end
   end
 end
@@ -199,9 +196,7 @@ def update_read_rule
   # may want to optimize(?)
   Auth.as_bot do
     fields.each do |field|
-      if field.rule(:read) == '_left'
-        field.update_read_rule
-      end
+      field.update_read_rule if field.rule(:read) == '_left'
     end
   end
 

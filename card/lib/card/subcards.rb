@@ -95,7 +95,7 @@ class Card
       end
     end
 
-    def rename old_name, new_name
+    def rename old_name, _new_name
       return unless @keys.include? old_name.to_name.key
       # FIXME: something should happen here
     end
@@ -122,7 +122,7 @@ class Card
       end
     end
 
-    alias_method :each, :each_card
+    alias each each_card
 
     def each_with_key
       @keys.each do |key|
@@ -146,9 +146,7 @@ class Card
 
     def field name
       key = field_name_to_key name
-      if @keys.include? key
-        fetch_subcard key
-      end
+      fetch_subcard key if @keys.include? key
     end
 
     def card name
@@ -173,8 +171,8 @@ class Card
       end
     end
 
-    alias_method :add_field, :add_child
-    alias_method :remove_field, :remove_child
+    alias add_field add_child
+    alias remove_field remove_child
 
     def present?
       @keys.present?

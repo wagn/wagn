@@ -1,6 +1,6 @@
 card_accessor :followers
 
-FOLLOWER_IDS_CACHE_KEY = 'FOLLOWER_IDS'
+FOLLOWER_IDS_CACHE_KEY = 'FOLLOWER_IDS'.freeze
 
 # FIXME: this should be in type/set
 event :cache_expired_for_new_set, :store,
@@ -57,7 +57,7 @@ format :html do
     hash = follow_link_hash args
     text = args[:icon] ? glyphicon('flag') : ''
     span_attrs = 'follow-verb menu-item-label'
-    text += %[<span class="#{span_attrs}">#{hash[:verb]}</span>].html_safe
+    text += %(<span class="#{span_attrs}">#{hash[:verb]}</span>).html_safe
     # follow_rule_card = Card.fetch(
     #   card.default_follow_set_card.follow_rule_name(Auth.current.name),
     #   new: {}
@@ -67,7 +67,7 @@ format :html do
       title:           hash[:title],
       'data-path'      => hash[:path],
       'data-toggle'    => 'modal',
-      'data-target'    => "#modal-#{card.cardname.safe_key}",
+      'data-target'    => "#modal-#{card.cardname.safe_key}"
     )
     opts[:class] = "follow-link #{opts[:class]}"
     link_to text, hash[:path], opts
@@ -156,8 +156,8 @@ end
 def followed_field? field_card
   (follow_field_rule = rule_card(:follow_fields)) ||
     follow_field_rule.item_names.find do |item|
-     item.to_name.key == field_card.key || (item.to_name.key == Card[:includes].key && included_card_ids.include?(field_card.id) )
-  end
+      item.to_name.key == field_card.key || (item.to_name.key == Card[:includes].key && included_card_ids.include?(field_card.id))
+    end
 end
 
 def follower_ids
@@ -165,9 +165,7 @@ def follower_ids
     result = direct_follower_ids
     left_card = left
     while left_card
-      if left_card.followed_field? self
-        result += left_card.direct_follower_ids
-      end
+      result += left_card.direct_follower_ids if left_card.followed_field? self
       left_card = left_card.left
     end
     write_follower_ids_cache result
@@ -190,7 +188,7 @@ def direct_follower_ids _args={}
     set_names.each do |set_name|
       set_card = Card.fetch(set_name)
       set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
-        if (!result.include? user_id) && self.follow_rule_applies?(user_id)
+        unless result.include? user_id && follow_rule_applies?(user_id)
           result << user_id
         end
       end
@@ -205,8 +203,8 @@ def all_direct_follower_ids_with_reason
     set_names.each do |set_name|
       set_card = Card.fetch(set_name)
       set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
-        if (!visited.include?(user_id)) &&
-           (follow_option = self.follow_rule_applies?(user_id))
+        if !visited.include?(user_id) &&
+           (follow_option = follow_rule_applies?(user_id))
           visited << user_id
           yield(user_id, set_card: set_card, option: follow_option)
         end

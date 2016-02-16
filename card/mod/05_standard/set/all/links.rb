@@ -39,7 +39,7 @@ format do
       when /^mailto\:/
         'email-link'
       when /^([a-zA-Z][\-+\.a-zA-Z\d]*):/
-        $1 + '-link'
+        Regexp.last_match(1) + '-link'
       when /^\//
         href = internal_url href[1..-1]
         'internal-link'

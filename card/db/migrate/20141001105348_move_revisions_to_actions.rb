@@ -3,7 +3,7 @@ class MoveRevisionsToActions < ActiveRecord::Migration
     belongs_to :tmp_card, foreign_key: :card_id
     self.table_name = 'card_revisions'
     def self.delete_cardless
-      TmpRevision.where( TmpCard.where( id: arel_table[:card_id] ).exists.not ).delete_all
+      TmpRevision.where(TmpCard.where(id: arel_table[:card_id]).exists.not).delete_all
     end
   end
   class TmpAct < ActiveRecord::Base
@@ -28,7 +28,7 @@ class MoveRevisionsToActions < ActiveRecord::Migration
     created = Set.new
 
     TmpRevision.find_each do |rev|
-      TmpAct.create({id: rev.id, card_id: rev.card_id, actor_id: rev.creator_id, acted_at: rev.created_at}, without_protection: true)
+      TmpAct.create({ id: rev.id, card_id: rev.card_id, actor_id: rev.creator_id, acted_at: rev.created_at }, without_protection: true)
       if created.include? rev.card_id
         TmpAction.connection.execute "INSERT INTO card_actions (id, card_id, card_act_id, action_type) VALUES
                                                                ('#{rev.id}', '#{rev.card_id}', '#{rev.id}', 1)"
@@ -53,8 +53,8 @@ class MoveRevisionsToActions < ActiveRecord::Migration
       card.update_column(:db_content, card.tmp_revision.content) if card.tmp_revision
     end
 
-    #drop_table :card_revisions
-    #remove_column :cards, :current_revision
+    # drop_table :card_revisions
+    # remove_column :cards, :current_revision
   end
 
   def down

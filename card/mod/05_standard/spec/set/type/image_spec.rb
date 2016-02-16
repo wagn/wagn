@@ -59,14 +59,12 @@ describe Card::Set::Type::Image do
         .to eq "/files/~#{subject.id}/#{subject.last_action_id}-original.jpg"
     end
 
-
     describe 'view: source' do
       it 'renders url' do
         expect(subject.format.render(:source))
           .to eq("/files/~#{subject.id}/#{subject.last_action_id}-medium.jpg")
       end
     end
-
 
     describe 'view: act_expanded' do
       it 'gets image url' do
@@ -76,7 +74,6 @@ describe Card::Set::Type::Image do
         expect(act_summary).to match(/#{Regexp.quote current_url}/)
       end
     end
-
 
     context 'updated file card' do
       before do
@@ -122,7 +119,7 @@ describe Card::Set::Type::Image do
         .to eq "/files/~#{subject.id}/#{subject.last_action_id}-original.gif"
     end
 
-    describe "#mod_file?" do
+    describe '#mod_file?' do
       it 'returns the mod name' do
         expect(subject.mod_file?).to eq('05_standard')
       end

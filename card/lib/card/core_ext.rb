@@ -2,31 +2,31 @@ class Object
   # FIXME: move this, mixin, don't extend Object
   def deep_clone
     case self
-    when Fixnum,Bignum,Float,NilClass,FalseClass,TrueClass,Symbol
+    when Fixnum, Bignum, Float, NilClass, FalseClass, TrueClass, Symbol
       klone = self
     when Hash
-      klone = self.clone
-      self.each{|k,v| klone[k] = v.deep_clone}
+      klone = clone
+      each { |k, v| klone[k] = v.deep_clone }
     when Array
-      klone = self.clone
+      klone = clone
       klone.clear
-      self.each{|v| klone << v.deep_clone}
+      each { |v| klone << v.deep_clone }
     else
-      klone = self.clone
+      klone = clone
     end
-    klone.instance_variables.each {|v|
+    klone.instance_variables.each do |v|
       klone.instance_variable_set(v,
-      klone.instance_variable_get(v).deep_clone)
-    }
+                                  klone.instance_variable_get(v).deep_clone)
+    end
     klone
   end
 
-  def send_unless method, *args, &block
-    ( block_given? ? yield : self ) or  send method, *args
+  def send_unless method, *args, &_block
+    (block_given? ? yield : self) || send(method, *args)
   end
 
-  def send_if     method, *args, &block
-    ( block_given? ? yield : self ) and send method, *args
+  def send_if     method, *args, &_block
+    (block_given? ? yield : self) && send(method, *args)
   end
 
   def to_name
@@ -38,29 +38,23 @@ class Object
   end
 end
 
-
-
 class Module
   RUBY_VERSION_18 = !!(RUBY_VERSION =~ /^1\.8/)
 
   def const_get_if_defined const
-    args = RUBY_VERSION_18 ? [ const ] : [ const, false ]
-    if const_defined? *args
-      const_get *args
-    end
+    args = RUBY_VERSION_18 ? [const] : [const, false]
+    const_get *args if const_defined? *args
   end
 
   def const_get_or_set const
-    const_get_if_defined const or const_set const, yield
+    const_get_if_defined(const) || const_set(const, yield)
   end
 end
-
-
 
 class Hash
   # FIXME: this is too ugly and narrow for a core extension.
   class << self
-    def new_from_semicolon_attr_list(attr_string)
+    def new_from_semicolon_attr_list attr_string
       return {} if attr_string.blank?
       attr_string.strip.split(';').inject({}) do |result, pair|
         value, key = pair.split(':').reverse
@@ -71,9 +65,7 @@ class Hash
       end
     end
   end
-
 end
-
 
 class Kaminari::Helpers::Tag
   def page_url_for page
@@ -81,12 +73,12 @@ class Kaminari::Helpers::Tag
     p.delete :controller
     p.delete :action
     card = Card[p.delete('id')]
-    card.format.path  p
+    card.format.path p
   end
 
   private
 
-  def params_for(page)
+  def params_for page
     page_params = Rack::Utils.parse_nested_query("#{@param_name}=#{page}")
     page_params = @params.with_indifferent_access.deep_merge(page_params)
 
@@ -99,11 +91,9 @@ class Kaminari::Helpers::Tag
       #   from: {other: "params", user: {name: "yuki", page: 1}}
       #     to: {other: "params", user: {name: "yuki", page: nil}}
       #   (when @param_name == "user[page]")
-      @param_name.to_s.scan(/\w+/)[0..-2].inject(page_params){|h, k| h[k] }[$&] = nil
+      @param_name.to_s.scan(/\w+/)[0..-2].inject(page_params) { |h, k| h[k] }[$&] = nil
     end
 
     page_params
   end
 end
-
-

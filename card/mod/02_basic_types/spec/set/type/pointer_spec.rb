@@ -1,9 +1,9 @@
 # -*- encoding : utf-8 -*-
 describe Card::Set::Type::Pointer do
-  describe "item_names" do
+  describe 'item_names' do
     it 'should return array of names of items referred to by a pointer' do
-      card = Card.new(type: 'Pointer', content:"[[Busy]]\n[[Body]]")
-      card.item_names.should == ['Busy', 'Body']
+      card = Card.new(type: 'Pointer', content: "[[Busy]]\n[[Body]]")
+      card.item_names.should == %w(Busy Body)
     end
   end
 
@@ -49,7 +49,6 @@ describe Card::Set::Type::Pointer do
     end
   end
 
-
   let(:pointer) do
     Card.create name: 'tp', type: 'pointer',
                 content: "[[item1]]\n[[item2]]"
@@ -61,11 +60,11 @@ describe Card::Set::Type::Pointer do
         pointer
         in_stage :validate,
                  on: :save,
-                 trigger: ->{
-                   pointer.update_attributes!(
-                     content: "[[item1]]\n[[item2]]\n[[item3]]"
-                  )
-                } do
+                 trigger: -> do
+                            pointer.update_attributes!(
+                              content: "[[item1]]\n[[item2]]\n[[item3]]"
+                            )
+                          end do
           expect(added_item_names).to eq ['item3']
         end
       end
@@ -76,11 +75,11 @@ describe Card::Set::Type::Pointer do
         pointer
         in_stage :validate,
                  on: :save,
-                 trigger: ->{
+                 trigger: -> do
                    pointer.update_attributes!(
                      content: "[[item2]]\n[[item1]]"
                    )
-                 } do
+                 end do
           expect(added_item_names).to eq []
         end
       end
@@ -93,11 +92,11 @@ describe Card::Set::Type::Pointer do
         pointer
         in_stage :validate,
                  on: :save,
-                 trigger: ->{
+                 trigger: -> do
                    pointer.update_attributes!(
-                     content: "[[item1]]"
+                     content: '[[item1]]'
                    )
-                 } do
+                 end do
           expect(dropped_item_names).to eq ['item2']
         end
       end
@@ -108,11 +107,11 @@ describe Card::Set::Type::Pointer do
         pointer
         in_stage :validate,
                  on: :save,
-                 trigger: ->{
+                 trigger: -> do
                    pointer.update_attributes!(
                      content: "[[item2]]\n[[item1]]"
                    )
-                 } do
+                 end do
           expect(dropped_item_names).to eq []
         end
       end
@@ -125,18 +124,16 @@ describe Card::Set::Type::Pointer do
         pointer
         in_stage :validate,
                  on: :save,
-                 trigger: ->{
+                 trigger: -> do
                    pointer.update_attributes!(
                      content: "[[item1]]\n[[item3]]"
                    )
-                 } do
-          expect(changed_item_names.sort).to eq ['item2','item3']
+                 end do
+          expect(changed_item_names.sort).to eq %w(item2 item3)
         end
       end
     end
   end
-
-
 
   describe 'html' do
     before do
@@ -184,17 +181,17 @@ describe Card::Set::Type::Pointer do
     end
     it 'should render CSS of items' do
       css_list = render_card(:content,
-        { type: Card::PointerID, name: 'my style list', content: '[[my css]]' },
-        format: :css
-      )
-#      css_list.should =~ /STYLE GROUP\: \"my style list\"/
-#      css_list.should =~ /Style Card\: \"my css\"/
+                             { type: Card::PointerID, name: 'my style list', content: '[[my css]]' },
+                             format: :css
+                            )
+      #      css_list.should =~ /STYLE GROUP\: \"my style list\"/
+      #      css_list.should =~ /Style Card\: \"my css\"/
       css_list.should =~ /#{ Regexp.escape @css }/
     end
   end
 
   describe '#standardize_item' do
-    it "should handle unlinked items" do
+    it 'should handle unlinked items' do
       pointer1 = Card.create!(
         name: 'pointer1', type: 'Pointer', content: 'bracketme'
       )

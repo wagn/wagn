@@ -9,8 +9,8 @@ class Card
 
     class << self
       def new obj
-        return obj if self.class===obj
-        str = Array===obj ? obj*joint : obj.to_s
+        return obj if self.class === obj
+        str = Array === obj ? obj * joint : obj.to_s
         if known_name = @@name2viewnameobject[str]
           known_name
         else
@@ -23,12 +23,12 @@ class Card
       @s = str.to_s.strip
       @s = @s.encode('UTF-8') if RUBYENCODING
       @key = if @s.index(self.class.joint)
-          @parts = @s.split(/\s*#{JOINT_RE}\s*/)
-          @parts << '' if @s[-1,1] == self.class.joint
+               @parts = @s.split(/\s*#{JOINT_RE}\s*/)
+          @parts << '' if @s[-1, 1] == self.class.joint
           @simple = false
           @parts.map { |p| p.to_name.key } * self.class.joint
-        else
-          @parts = [str]
+             else
+               @parts = [str]
           @simple = true
           str.empty? ? '' : simple_key
         end
@@ -36,9 +36,11 @@ class Card
     end
 
     def simple_key
-      decoded.underscore.gsub(/[^#{OK4KEY_RE}]+/,'_').split(/_+/).reject(&:empty?)*'_'
+      decoded.underscore.gsub(/[^#{OK4KEY_RE}]+/, '_').split(/_+/).reject(&:empty?) * '_'
     end
 
-    def to_viewname() self end
+    def to_viewname
+      self
+    end
   end
 end

@@ -3,11 +3,11 @@ def clean_html?
 end
 
 def diff_args
- {format: :raw}
+  { format: :raw }
 end
 
 format do
-  view :closed_content do |args|
+  view :closed_content do |_args|
     ''
   end
 
@@ -16,12 +16,8 @@ format do
   end
 end
 
-
 format :html do
-  view :editor do |args|
-    text_area :content, rows: 5, class: 'card-content ace-editor-textarea', "data-card-type-code"=>card.type_code
+  view :editor do |_args|
+    text_area :content, rows: 5, class: 'card-content ace-editor-textarea', 'data-card-type-code' => card.type_code
   end
 end
-
-
-

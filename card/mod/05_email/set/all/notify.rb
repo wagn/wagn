@@ -22,7 +22,7 @@ class FollowerStash
             { included_by: left_card.name },
             "follow cards included by #{left_card.name}"
           ).map(&:key)
-          if !@visited.intersection(includee_set).empty?
+          unless @visited.intersection(includee_set).empty?
             add_affected_card left_card
             break
           end
@@ -130,7 +130,7 @@ format do
       get_act(args).relevant_actions_for(card).map do |action|
         if action.card_id != card.id
           action.card.format(format: @format)
-            .render_subedit_notice(action: action)
+                .render_subedit_notice(action: action)
         end
       end.compact.join
 
@@ -146,8 +146,8 @@ format do
     name_before_action =
       (action.new_values[:name] && action.old_values[:name]) || card.name
 
-    wrap_subedit_item %{#{name_before_action} #{action.action_type}d
-#{ render_list_of_changes(args) }}
+    wrap_subedit_item %(#{name_before_action} #{action.action_type}d
+#{render_list_of_changes(args)})
   end
 
   view :followed, perms: :none, closed: true do |args|

@@ -22,40 +22,40 @@ describe Card::Success do
       before do
         success_params id: home.id, view: 'closed'
       end
-      it { is_expected.to eq home}
+      it { is_expected.to eq home }
     end
 
     context 'initialized with REDIRECT string' do
       before do
         success_params 'REDIRECT: Home'
       end
-      it { is_expected.to eq home}
+      it { is_expected.to eq home }
     end
 
     context 'initialized with TEXT string' do
       before do
         success_params 'TEXT: Hi'
       end
-      it { is_expected.to eq 'Hi'}
+      it { is_expected.to eq 'Hi' }
     end
 
     context 'initialized with card object' do
       before do
         success_params home
       end
-      it { is_expected.to eq home}
+      it { is_expected.to eq home }
     end
 
     context 'initialized with url' do
       before do
         success_params 'http://wagn.org'
       end
-      it  { is_expected.to eq 'http://wagn.org'}
+      it  { is_expected.to eq 'http://wagn.org' }
     end
   end
 
   describe '#to_url' do
-    subject { @success.to_url}
+    subject { @success.to_url }
     context 'with params' do
       context 'using initilization' do
         before do
@@ -80,7 +80,7 @@ describe Card::Success do
       context 'using <<' do
         before do
           success_params nil
-          @success << { card: home, view: 'closed'}
+          @success << { card: home, view: 'closed' }
         end
         it { is_expected.to eq '/Home?view=closed' }
       end
@@ -89,7 +89,7 @@ describe Card::Success do
       before do
         success_params 'REDIRECT: *previous'
       end
-      it { is_expected.to eq previous}
+      it { is_expected.to eq previous }
     end
   end
 
@@ -102,7 +102,7 @@ describe Card::Success do
 
   describe '#hard_redirect?' do
     it 'true for "REDIRECT: anywhere"' do
-      success_params "REDIRECT: anywhere"
+      success_params 'REDIRECT: anywhere'
       expect(@success.hard_redirect?).to be_truthy
     end
   end
@@ -135,15 +135,13 @@ describe Card::Success do
       expect(@success.params.keys.sort).to eq [:layout, :script, :structure, :view]
     end
     it 'ignores "id", "name", "mark", "card"", target", and "redirect"' do
-      success_params({
-        id: 5,
-        name: 'Home',
-        card: Card['Home'],
-        mark: 'Home',
-        target: 'Home',
-        redirect: false,
-        view: 'View'
-      })
+      success_params(id: 5,
+                     name: 'Home',
+                     card: Card['Home'],
+                     mark: 'Home',
+                     target: 'Home',
+                     redirect: false,
+                     view: 'View')
       expect(@success.params.keys).to eq [:view]
     end
   end

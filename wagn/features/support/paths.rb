@@ -6,7 +6,7 @@ module NavigationHelpers
   #
   # step definition in web_steps.rb
   #
-  def path_to(page_name)
+  def path_to page_name
     case page_name
 
     when /the home\s?page/
@@ -19,37 +19,37 @@ module NavigationHelpers
     #     user_profile_path(Auth[ $1 ])
 
     when /card (.*) with (.*) layout$/
-      "/#{$1.to_name.url_key}?layout=$2"
+      "/#{Regexp.last_match(1).to_name.url_key}?layout=$2"
 
     when /card (.*)$/
-      "/#{$1.to_name.url_key}"
+      "/#{Regexp.last_match(1).to_name.url_key}"
 
     when /new (.*) presetting name to "(.*)" and author to "(.*)"/
-      url = "/new/#{$1}?card[name]=#{$2.to_name.url_key}&_author=#{CGI.escape($3)}"
+      url = "/new/#{Regexp.last_match(1)}?card[name]=#{Regexp.last_match(2).to_name.url_key}&_author=#{CGI.escape(Regexp.last_match(3))}"
 
     when /new card named (.*)$/
-      "/card/new?card[name]=#{CGI.escape($1)}"
+      "/card/new?card[name]=#{CGI.escape(Regexp.last_match(1))}"
 
     when /edit (.*)$/
-      "/#{$1.to_name.url_key}?view=edit"
+      "/#{Regexp.last_match(1).to_name.url_key}?view=edit"
 
     when /new (.*)$/
-      "/new/#{$1.to_name.url_key}"
+      "/new/#{Regexp.last_match(1).to_name.url_key}"
 
     when /kml source/
-       "/House+*type+by_name.kml"
+      '/House+*type+by_name.kml'
 
     when /url "(.*)"/
-      "#{$1}"
+      Regexp.last_match(1).to_s
 
     else
       begin
         page_name =~ /the (.*) page/
-        path_components = $1.split(/\s+/)
-        self.send(path_components.push('path').join('_').to_sym)
+        path_components = Regexp.last_match(1).split(/\s+/)
+        send(path_components.push('path').join('_').to_sym)
       rescue Object => e
-        raise "#{e.message} Can't find mapping from \"#{page_name}\" to a path.\n" +
-          "Now, go and add a mapping in #{__FILE__}"
+        raise "#{e.message} Can't find mapping from \"#{page_name}\" to a path.\n" \
+              "Now, go and add a mapping in #{__FILE__}"
       end
     end
   end

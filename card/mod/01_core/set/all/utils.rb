@@ -16,7 +16,7 @@ module ClassMethods
     file_ids.each do |file_id|
       next unless trashed_card_ids.member?(file_id)
       if Card.exists?(file_id) # double check!
-        fail Card::Error, 'Narrowly averted deleting current file'
+        raise Card::Error, 'Narrowly averted deleting current file'
       end
       FileUtils.rm_rf "#{dir}/#{file_id}", secure: true
     end
@@ -28,7 +28,7 @@ module ClassMethods
   end
 
   def all_trashed_card_ids
-    trashed_card_sql = %{ select id from cards where trash is true }
+    trashed_card_sql = %( select id from cards where trash is true )
     sql_results = Card.connection.select_all(trashed_card_sql)
     sql_results.map(&:values).flatten.map(&:to_i)
   end
@@ -88,7 +88,7 @@ module ClassMethods
   end
 
   def older_than_five_days? time
-    Time.now - time > 432000
+    Time.now - time > 432_000
   end
 end
 
@@ -120,13 +120,11 @@ format :html do
       self.class.ancestors.each_with_object({}) do |format_class, hash|
         views =
           format_class.instance_methods.map do |method|
-            if method.to_s.match(/^_view_(.+)$/)
-              "<li>#{$1}</li>"
-            end
+            "<li>#{Regexp.last_match(1)}</li>" if method.to_s =~ /^_view_(.+)$/
           end.compact.join "\n"
         if views.present?
-          format_class.name.match(/^Card(::Set)?::(.+?)$/) #::(\w+Format)
-          hash[$2] = views
+          format_class.name =~ /^Card(::Set)?::(.+?)$/ #::(\w+Format)
+          hash[Regexp.last_match(2)] = views
         end
       end
     accordion_group format_views
@@ -134,9 +132,7 @@ format :html do
 
   view :views_by_name do
     views = methods.map do |method|
-      if method.to_s.match(/^_view_(.+)$/)
-        $1
-      end
+      Regexp.last_match(1) if method.to_s =~ /^_view_(.+)$/
     end.compact.sort
     "<ul>#{wrap_each_with :li, views}</ul>"
   end
@@ -161,7 +157,7 @@ format :html do
       when Array then content.join "\n"
       else            content
       end
-    %{
+    %(
       <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="heading-#{collapse_id}">
           <h4 class="panel-title">
@@ -179,6 +175,6 @@ format :html do
           </div>
         </div>
       </div>
-      }.html_safe
+      ).html_safe
   end
 end

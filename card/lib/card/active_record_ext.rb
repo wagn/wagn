@@ -1,10 +1,9 @@
 # -*- encoding : utf-8 -*-
 module ActiveRecord
-
   module ConnectionAdapters
     class AbstractAdapter
-      def match(string)
-        raise "match not implemented"
+      def match _string
+        raise 'match not implemented'
       end
 
       def cast_types
@@ -17,13 +16,13 @@ module ActiveRecord
     end
 
     class PostgreSQLAdapter
-      def match(string)
+      def match string
         "~* #{string}"
       end
     end
 
     module MysqlCommon
-      def match(string)
+      def match string
         "REGEXP #{string}"
       end
 
@@ -45,14 +44,14 @@ module ActiveRecord
     end
 
     class SQLiteAdapter
-      def match(string)
+      def match string
         "REGEXP #{string}"
       end
     end
   end
 
   module Transactions
-    #FIXME!!
+    # FIXME!!
     # the following code is already in Rails 4 (see https://github.com/rails/rails/commit/c8792c7b2ea4f5fe7a5610225433ea8dd8d0f83e)
     # it allows manual rollbacks in after_save (eg store events) to reset the object correctly
     #  hopefully we can soon get rid of this code!
@@ -73,5 +72,4 @@ module ActiveRecord
       status
     end
   end
-
 end

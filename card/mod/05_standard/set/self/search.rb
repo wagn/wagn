@@ -3,7 +3,7 @@ format :html do
   view :title do |args|
     vars = root.search_params[:vars]
     if vars && vars[:keyword]
-      args.merge! title: %{Search results for: <span class="search-keyword">}\
+      args[:title] = %(Search results for: <span class="search-keyword">)\
                          "#{vars[:keyword]}</span>"
     end
     super args
@@ -39,9 +39,7 @@ format :json do
 
   def goto_items term, exact
     goto_names = Card.search goto_wql(term), "goto items for term: #{term}"
-    if add_exact_to_goto_names? exact, goto_names
-      goto_names.unshift exact.name
-    end
+    goto_names.unshift exact.name if add_exact_to_goto_names? exact, goto_names
     goto_names.map do |name|
       [name, highlight(name, term), name.to_name.url_key]
     end

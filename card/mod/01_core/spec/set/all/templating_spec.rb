@@ -117,4 +117,3 @@ describe Card::Set::All::Templating do
     end
   end
 end
-

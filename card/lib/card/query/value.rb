@@ -1,7 +1,6 @@
 class Card
   class Query
     class Value
-
       include Clause
 
       attr_reader :query, :operator, :value
@@ -24,36 +23,36 @@ class Card
         if target = OPERATORS[@operator.to_s]
           @operator = target
         else
-          fail BadQuery, "Invalid Operator #{@operator}"
+          raise BadQuery, "Invalid Operator #{@operator}"
         end
       end
 
-
       def sqlize v
         case v
-        when Query;  v.to_sql
-        when Array;  "(" + v.flatten.collect {|x| sqlize(x)}.join(',') + ")"
+        when Query then  v.to_sql
+        when Array then  '(' + v.flatten.map { |x| sqlize(x) }.join(',') + ')'
         else quote(v.to_s)
         end
       end
 
       def to_sql field
-        op,v = @operator, @value
+        op = @operator
+        v = @value
         table = @query.table_alias
 
         field, v = case field.to_s
-          when "name"
-            ["#{table}.key", [v].flatten.map(&:to_name).map(&:key)]
-          when "content"
-            ["#{table}.db_content", v]
-          else
-            ["#{table}.#{safe_sql field}", v]
+                   when 'name'
+                     ["#{table}.key", [v].flatten.map(&:to_name).map(&:key)]
+                   when 'content'
+                     ["#{table}.db_content", v]
+                   else
+                     ["#{table}.#{safe_sql field}", v]
           end
 
-        v = v[0] if Array===v && v.length==1 && op != 'in'
-        if op=='~'
+        v = v[0] if Array === v && v.length == 1 && op != 'in'
+        if op == '~'
           cxn, v = match_prep(v)
-          %{#{field} #{cxn.match(sqlize(v))}}
+          %(#{field} #{cxn.match(sqlize(v))})
         else
           "#{field} #{op} #{sqlize(v)}"
         end

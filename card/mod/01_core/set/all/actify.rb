@@ -15,7 +15,7 @@ def abort status, msg='action canceled'
     success << status[:success]
     status = :success
   end
-  fail Card::Abort.new(status, msg)
+  raise Card::Abort.new(status, msg)
 end
 
 module ClassMethods
@@ -35,7 +35,6 @@ module ClassMethods
     card
   end
 end
-
 
 def delete
   act do
@@ -83,7 +82,7 @@ def with_transaction_returning_status
   self.class.transaction do
     add_to_transaction
     status = abortable { yield }
-    fail ActiveRecord::Rollback unless status
+    raise ActiveRecord::Rollback unless status
   end
   status
 end

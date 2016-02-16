@@ -51,7 +51,7 @@ def fetch_roles
   Auth.as_bot do
     role_trait = fetch trait: :roles
     next [Card::AnyoneSignedInID] unless role_trait
-    [Card::AnyoneSignedInID] + (role_trait.item_ids)
+    [Card::AnyoneSignedInID] + role_trait.item_ids
   end
 end
 

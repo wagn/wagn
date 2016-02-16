@@ -63,7 +63,8 @@ class Card
   end
 
   def self.const_missing const
-    if const.to_s =~ /^([A-Z]\S*)ID$/ && (code = Regexp.last_match(1).underscore.to_sym)
+    if const.to_s =~ /^([A-Z]\S*)ID$/ &&
+       (code = Regexp.last_match(1).underscore.to_sym)
       if (card_id = Codename[code])
         const_set const, card_id
       else

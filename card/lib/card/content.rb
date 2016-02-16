@@ -175,7 +175,8 @@ class Card
                 rest_value = nil
                 if raw[3] =~ /\b#{attr}\s*=\s*(?=(.))/i
                   rest_value = $'
-                  (idx = %w(' ").index(Regexp.last_match(1))) && (q = Regexp.last_match(1))
+                  (idx = %w(' ").index(Regexp.last_match(1))) &&
+                    (q = Regexp.last_match(1))
                   re = ATTR_VALUE_RE[idx || 2]
                   if (match = rest_value.match(re))
                     rest_value = match[0]

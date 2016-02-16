@@ -201,7 +201,7 @@ def mod_file?
   # when db_content was changed assume that it's no longer a mod file
   elsif !db_content_changed? && content.present?
     case content
-    when %r{^:[^/]+/([^.]+)} then Regexp.last_match(1)     # current mod_file format
+    when %r{^:[^/]+/([^.]+)} then Regexp.last_match(1) # current mod_file format
     when /^\~/               then false  # current id file format
     else
       if (lines = content.split("\n")) && (lines.size == 4)

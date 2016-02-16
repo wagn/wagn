@@ -7,25 +7,31 @@ class WagnGenerator < Rails::Generators::AppBase
 
   argument :deck_path, required: false
 
-  class_option :database, type: :string, aliases: '-d', default: 'mysql',
-                          desc: "Preconfigure for selected database (options: #{DATABASES.join('/')})"
+  class_option :database,
+               type: :string, aliases: '-d', default: 'mysql',
+               desc: "Preconfigure for selected database (options: #{DATABASES.join('/')})"
 
-  class_option 'core-dev', type: :boolean, aliases: '-c', default: false, group: :runtime,
-                           desc: 'Prepare deck for wagn core testing'
+  class_option 'core-dev',
+               type: :boolean, aliases: '-c', default: false, group: :runtime,
+               desc: 'Prepare deck for wagn core testing'
 
-  class_option 'gem-path', type: :string, aliases: '-g', default: false, group: :runtime,
-                           desc: 'Path to local gem installation (Default, use env WAGN_GEM_PATH)'
+  class_option 'gem-path',
+               type: :string, aliases: '-g', default: false, group: :runtime,
+               desc: 'Path to local gem installation (Default, use env WAGN_GEM_PATH)'
 
-  class_option 'mod-dev', type: :boolean, aliases: '-m', default: false, group: :runtime,
-                          desc: 'Prepare deck for mod testing'
+  class_option 'mod-dev',
+               type: :boolean, aliases: '-m', default: false, group: :runtime,
+               desc: 'Prepare deck for mod testing'
 
-  class_option 'interactive', type: :boolean, aliases: '-i', default: false, group: :runtime,
-                              desc: 'Prompt with dynamic installation options'
+  class_option 'interactive',
+               type: :boolean, aliases: '-i', default: false, group: :runtime,
+               desc: 'Prompt with dynamic installation options'
 
   public_task :set_default_accessors!
   public_task :create_root
 
-  ## should probably eventually use rails-like AppBuilder approach, but this is a first step.
+  ## should probably eventually use rails-like AppBuilder approach,
+  # but this is a first step.
   def dev_setup
     # TODO: rename or split, gem_path points to the source repo, card and wagn gems are subdirs
     @gemfile_gem_path = @gem_path = options['gem-path']
@@ -149,59 +155,26 @@ class WagnGenerator < Rails::Generators::AppBase
       require File.join destination_root, 'config', 'application'  # need this for Rails.env
       menu_options = ActiveSupport::OrderedHash.new
 
-      database_seeded = proc do
-        menu_options['x'][:desc] = 'exit'
-        menu_options['r'] = {
-          desc:    'run wagn server',
-          command: 'wagn server',
-          code:    proc { system "cd #{destination_root} && wagn server" }
-        }
-      end
-
       menu_options['d'] = {
         desc:    'edit database configuration file',
         command: 'nano config/database.yml',
-        code:     proc { system "nano #{File.join destination_root, 'config', 'database.yml'}" }
+        code:     proc do
+                    path = File.join destination_root, 'config', 'database.yml'
+                    system "nano #{path}"
+                  end
       }
       menu_options['c'] = {
         desc:    'configure Wagn (e.g. email settings)',
         command: 'nano config/application.rb',
-        code:     proc { system "nano #{File.join destination_root, 'config', 'application.rb'}" }
-      }
-      menu_options['s'] = {
-        desc:    "seed #{Rails.env}#{' and test' if options['core-dev'] || options['mod-dev']} database",
-        command: 'wagn seed',
-        code:    proc do
-                   system("cd #{destination_root} && bundle exec rake wagn:seed")
-            if options['core-dev'] || options['mod-dev']
-              system("cd #{destination_root} && RAILS_ENV=test bundle exec rake wagn:seed")
-            end
-            database_seeded.call
-                 end
-      }
-      menu_options['a'] = {
-        desc:    'seed all databases (production, development, and test)',
-        command: 'wagn seed --all',
-        code:    proc do
-                   %w( production development test ).each do |env|
-                     system("cd #{destination_root} && RAILS_ENV=#{env} bundle exec rake wagn:seed")
-                   end
-            database_seeded.call
-                 end
-      }
+        code:     proc do
+                    path = File.join destination_root, 'config',
+                                     'application.rb'
+                    system "nano #{path}"
+                  end
+      add_seed_options menu_options
       menu_options['x'] = {
         desc:    "exit (run 'wagn seed' to complete the installation later)"
       }
-
-      def build_menu options
-        lines = ['What would you like to do next?']
-        lines += options.map do |key, v|
-          command = ' ' * (65 - v[:desc].size) + '[' + v[:command] + ']' if v[:command]
-          "  #{key} - #{v[:desc]}#{command if command}"
-        end
-        lines << "[#{options.keys.join}]"
-        "\n#{lines.join("\n")}\n"
-      end
 
       while  (answer = ask(build_menu(menu_options))) != 'x'
         menu_options[answer][:code].call
@@ -213,6 +186,8 @@ class WagnGenerator < Rails::Generators::AppBase
 2. Run `wagn server` to start your server"
     end
   end
+
+
 
   def database_gemfile_entry
     return [] if options[:skip_active_record]
@@ -230,6 +205,51 @@ class WagnGenerator < Rails::Generators::AppBase
   end
 
   protected
+
+  def add_seed_options menu_options
+    database_seeded = proc do
+      menu_options['x'][:desc] = 'exit'
+      menu_options['r'] = {
+        desc:    'run wagn server',
+        command: 'wagn server',
+        code:    proc { system "cd #{destination_root} && wagn server" }
+      }
+    end
+
+    menu_options['s'] = {
+      desc: "seed #{Rails.env}#{' and test' if options['core-dev'] || options['mod-dev']} database",
+      command: 'wagn seed',
+      code: proc do
+        system("cd #{destination_root} && bundle exec rake wagn:seed")
+        if options['core-dev'] || options['mod-dev']
+          system("cd #{destination_root} && RAILS_ENV=test bundle exec rake wagn:seed")
+        end
+        database_seeded.call
+      end
+    }
+    menu_options['a'] = {
+      desc: 'seed all databases (production, development, and test)',
+      command: 'wagn seed --all',
+      code: proc do
+        %w( production development test ).each do |env|
+          system("cd #{destination_root} && RAILS_ENV=#{env} bundle exec rake wagn:seed")
+        end
+        database_seeded.call
+      end
+    }
+  end
+
+  def build_menu options
+    lines = ['What would you like to do next?']
+    lines += options.map do |key, v|
+      if v[:command]
+        command = ' ' * (65 - v[:desc].size) + '[' + v[:command] + ']'
+      end
+      "  #{key} - #{v[:desc]}#{command if command}"
+    end
+    lines << "[#{options.keys.join}]"
+    "\n#{lines.join("\n")}\n"
+  end
 
   def self.banner
     "wagn new #{arguments.map(&:usage).join(' ')} [options]"
@@ -249,8 +269,8 @@ class WagnGenerator < Rails::Generators::AppBase
     ].find { |f| File.exist?(f) } unless RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
   end
 
-  ### the following is straight from rails and is focused on checking the validity of the app name.
-  ### needs wagn-specific tuning
+  ### the following is straight from rails and is focused on checking
+  # the validity of the app name.needs wagn-specific tuning
 
   def app_name
     @app_name ||= defined_app_const_base? ? defined_app_name : File.basename(destination_root)

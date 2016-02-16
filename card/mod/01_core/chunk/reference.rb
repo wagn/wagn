@@ -11,9 +11,9 @@ module Card::Chunk
         ref_card =
           case rendered_name # FIXME: this should be standard fetch option.
           when /^\~(\d+)$/ # get by id
-            Card.fetch $1.to_i
+            Card.fetch Regexp.last_match(1).to_i
           when /^\:(\w+)$/ # get by codename
-            Card.fetch $1.to_sym
+            Card.fetch Regexp.last_match(1).to_sym
           end
         ref_card ? ref_card.cardname : rendered_name.to_name
       end

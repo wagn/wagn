@@ -1,10 +1,10 @@
 format :html do
   view :modal_link do |args|
     path_opts = args[:path_opts] || {}
-    path_opts.merge!(layout: :modal)
+    path_opts[:layout] = :modal
     html_args = args[:html_args] || {}
-    html_args.merge!('data-target' => '#modal-main-slot',
-                     'data-toggle' => 'modal')
+    html_args['data-target'] = '#modal-main-slot'
+    html_args['data-toggle'] = 'modal'
     link_to(args[:text] || _render_title(args), path(path_opts), html_args)
   end
 

@@ -59,7 +59,7 @@ def email_config args={}
 
   from_name, from_email =
     if config[:from] =~ /(.*)\<(.*)>/
-      [$1.strip, $2]
+      [Regexp.last_match(1).strip, Regexp.last_match(2)]
     else
       [nil, config[:from]]
     end

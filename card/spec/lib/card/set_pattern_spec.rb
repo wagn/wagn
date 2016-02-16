@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 module SetPatternSpecHelper
-  def it_generates( opts )
+  def it_generates opts
     name = opts[:name]
     card = opts[:from]
     it "generates name '#{name}' for card '#{card.name}'" do
@@ -15,7 +15,7 @@ include SetPatternSpecHelper
 describe Card::SetPattern do
 end
 
-#FIXME - these should probably be in pattern-specific specs, though that may not leave much to test in the base class :)
+# FIXME: - these should probably be in pattern-specific specs, though that may not leave much to test in the base class :)
 
 describe Card::RightSet do
   it_generates name: 'author+*right', from: Card.new(name: 'Iliad+author')
@@ -23,7 +23,7 @@ describe Card::RightSet do
 end
 
 describe Card::TypeSet do
-  it_generates name: 'Book+*type', from: Card.new(type: "Book")
+  it_generates name: 'Book+*type', from: Card.new(type: 'Book')
 end
 
 describe Card::TypeSet do

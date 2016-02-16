@@ -1,44 +1,39 @@
 format :html do
-
   view :header do |args|
-
-    %{
-      <div class="card-header #{ args[:header_class] }">
-        <div class="card-header-title #{ args[:title_class] }">
-          #{ _optional_render :toggle, args, :hide }
-          #{ _optional_render :title, args }
+    %(
+      <div class="card-header #{args[:header_class]}">
+        <div class="card-header-title #{args[:title_class]}">
+          #{_optional_render :toggle, args, :hide}
+          #{_optional_render :title, args}
         </div>
-        #{ _optional_render :type_info, args, :hide }
+        #{_optional_render :type_info, args, :hide}
       </div>
-      #{ _optional_render :toolbar, args, :hide }
-    }
+      #{_optional_render :toolbar, args, :hide}
+    )
   end
 
   def default_header_args args
-    if @slot_view == :open && toolbar_pinned?
-      args[:optional_toolbar] ||= :show
-    end
-    if show_view?(:toolbar,args.merge(default_visibility: :hide)) && card.type_code != :basic
+    args[:optional_toolbar] ||= :show if @slot_view == :open && toolbar_pinned?
+    if show_view?(:toolbar, args.merge(default_visibility: :hide)) && card.type_code != :basic
       args[:optional_type_info] ||= :show
     end
   end
 
   view :subheader do |args|
     args[:subheader] ||= toolbar_view_title(@slot_view) || _render_title(args)
-    %{
+    %(
       <div class="card-subheader navbar-inverse btn-primary active">
-        #{ args[:subheader] }
-        #{ autosaved_draft_link if card.drafts.present? && @slot_view == :edit }
+        #{args[:subheader]}
+        #{autosaved_draft_link if card.drafts.present? && @slot_view == :edit}
       </div>
-    }
+    )
   end
 
-
   view :toggle do |args|
-    verb, adjective, direction = ( args[:toggle_mode] == :close ? %w{ open open expand } : %w{ close closed collapse-down } )
+    verb, adjective, direction = (args[:toggle_mode] == :close ? %w( open open expand ) : %w( close closed collapse-down ))
 
     link_to  glyphicon(direction),
-             path( view: adjective ),
+             path(view: adjective),
              remote: true,
              title: "#{verb} #{card.name}",
              class: "#{verb}-icon toggler slotter nodblclick"
@@ -53,11 +48,11 @@ format :html do
   end
 
   view :navbar_right do |args|
-    render_link_list args.merge(class: "nav navbar-nav navbar-right")
+    render_link_list args.merge(class: 'nav navbar-nav navbar-right')
   end
 
   view :navbar_left do |args|
-    render_link_list args.merge(class: "nav navbar-nav navbar-left")
+    render_link_list args.merge(class: 'nav navbar-nav navbar-left')
   end
 
   def show_follow?
@@ -67,6 +62,4 @@ format :html do
   def structure_editable?
     card.structure && card.template.ok?(:update)
   end
-
 end
-

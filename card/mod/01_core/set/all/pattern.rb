@@ -24,13 +24,13 @@ def reset_patterns_if_rule saving=false
 
     # FIXME: should be in right/read.rb
     if saving && right.id == Card::ReadID
-      self.add_to_read_rule_update_queue(set.item_cards limit: 0)
+      add_to_read_rule_update_queue(set.item_cards limit: 0)
     end
   end
 end
 
 def safe_set_keys
-  patterns.map(&:safe_key).reverse * " "
+  patterns.map(&:safe_key).reverse * ' '
 end
 
 def set_modules

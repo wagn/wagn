@@ -7,19 +7,19 @@ class Card
 
     # TESTME
     def page_path title, opts={}
-      Rails.logger.warn "Pass only Card::Name to page_path #{title.class}, #{title}" unless Card::Name===title
-      format = opts[:format] ? ".#{opts.delete(:format)}"  : ''
+      Rails.logger.warn "Pass only Card::Name to page_path #{title.class}, #{title}" unless Card::Name === title
+      format = opts[:format] ? ".#{opts.delete(:format)}" : ''
       action = opts[:action] ? "#{opts.delete(:action)}/" : ''
-      query  = opts.present? ? "?#{opts.to_param}"         : ''
+      query  = opts.present? ? "?#{opts.to_param}" : ''
       card_path "#{action}#{title.to_name.url_key}#{format}#{query}"
     end
 
     def card_path rel_path
-      Rails.logger.warn "Pass only strings to card_path: #{rel_path.class}, #{rel_path}" unless String===rel_path
+      Rails.logger.warn "Pass only strings to card_path: #{rel_path.class}, #{rel_path}" unless String === rel_path
       if rel_path =~ /^\//
         rel_path
       else
-        "#{ Card.config.relative_url_root }/#{ rel_path }"
+        "#{Card.config.relative_url_root}/#{rel_path}"
       end
     end
 
@@ -27,7 +27,7 @@ class Card
       if rel =~ /^https?\:/
         rel
       else
-        "#{ Card::Env[:protocol] }#{ Card::Env[:host] }#{ card_path rel }"
+        "#{Card::Env[:protocol]}#{Card::Env[:host]}#{card_path rel}"
       end
     end
 

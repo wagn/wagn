@@ -5,11 +5,11 @@ class Card
     @@as_card = @@as_id = @@current_id = @@current = nil
     @@simulating_setup_need = nil
 
-    SETUP_COMPLETED_KEY = 'SETUP_COMPLETED'
+    SETUP_COMPLETED_KEY = 'SETUP_COMPLETED'.freeze
     DEFAULT_RECAPTCHA_SETTINGS = {
       recaptcha_public_key: '6LeoHfESAAAAAN1NdQeYHREq4jTSQhu1foEzv6KC',
       recaptcha_private_key: '6LeoHfESAAAAAHLZpn7ijrO4_KGLEr2nGL4qjjis'
-    }
+    }.freeze
 
     # after_save :reset_instance_cache
 
@@ -193,7 +193,7 @@ class Card
 
       def always_ok?
         usr_id = as_id
-        return false if !usr_id
+        return false unless usr_id
         always_ok_usr_id? usr_id
       end
 

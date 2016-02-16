@@ -141,9 +141,7 @@ end
 def descendant_card_ids parent_ids=[id]
   more_ids = Card.where('left_id IN (?)', parent_ids).pluck('id')
 
-  if !more_ids.empty?
-    more_ids += descendant_card_ids more_ids
-  end
+  more_ids += descendant_card_ids more_ids unless more_ids.empty?
   more_ids
 end
 
@@ -307,11 +305,11 @@ HAML
 
   def wrap_diff field, content
     return '' unless content.present?
-    %{
+    %(
        <span class="#{field}-diff">
        #{content}
        </span>
-    }
+    )
   end
 
   def name_changes action, hide_diff=false

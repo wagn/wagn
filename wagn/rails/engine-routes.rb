@@ -1,22 +1,19 @@
 # -*- encoding : utf-8 -*-
 
-
 Decko::Engine.routes.draw do
-
-  #most common
+  # most common
   root 'card#read'
-  get "#{ Decko::Engine.config.files_web_path }/:id/:rev_id(-:size).:format" =>
+  get "#{Decko::Engine.config.files_web_path}/:id/:rev_id(-:size).:format" =>
                                  'card#read', id: /[^-]+/, rev_id: /[^-]+/, explicit_file: true
-  get "#{ Decko::Engine.config.files_web_path }/:id(-:size)-:rev_id.:format" =>
+  get "#{Decko::Engine.config.files_web_path}/:id(-:size)-:rev_id.:format" =>
                                  'card#read', id: /[^-]+/, explicit_file: true  # deprecated
-  get "assets/*filename"      => 'card#asset'
-  get "javascripts/*filename" => 'card#asset'
-  get "jasmine/*filename"     => 'card#asset'
+  get 'assets/*filename'      => 'card#asset'
+  get 'javascripts/*filename' => 'card#asset'
+  get 'jasmine/*filename'     => 'card#asset'
 
-  get 'recent(.:format)'      => 'card#read', id: ':recent' #obviate by making links use codename
-#  match ':view:(:id(.:format))'          => 'card#read', via: :get
-  get '(/wagn)/:id(.:format)' => 'card#read'  #/wagn is deprecated
-
+  get 'recent(.:format)'      => 'card#read', id: ':recent' # obviate by making links use codename
+  #  match ':view:(:id(.:format))'          => 'card#read', via: :get
+  get '(/wagn)/:id(.:format)' => 'card#read'  # /wagn is deprecated
 
   # RESTful
   post   '/' => 'card#create'
@@ -50,5 +47,4 @@ Decko::Engine.routes.draw do
   match '(card)/delete(/:id(.:format))' => 'card#delete', via: :delete
   # other
   get '*id' => 'card#read', view: 'bad_address'
-
 end

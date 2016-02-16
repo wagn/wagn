@@ -16,9 +16,7 @@ class Card
         end
       @opts = opts || {}
 
-      unless Array === content
-        content = parse_content content
-      end
+      content = parse_content content unless Array === content
       super content
     end
 
@@ -114,11 +112,10 @@ class Card
             # no match.  look at the next character
           end
 
-          if !match || !context_ok
-            interval_string += content[chunk_start..position - 1]
-            # moving beyond the alleged chunk.
-            # append failed string to "nonchunk" string
-          end
+          next unless !match || !context_ok
+          interval_string += content[chunk_start..position - 1]
+          # moving beyond the alleged chunk.
+          # append failed string to "nonchunk" string
         end
       end
 
@@ -134,22 +131,22 @@ class Card
       end
     end
 
-    ALLOWED_TAGS = {}
-    %w{
+    ALLOWED_TAGS = {}.freeze
+    %w(
       br i b pre cite caption strong em ins sup sub del ol hr ul li p
       div h1 h2 h3 h4 h5 h6 span table tr td th tbody thead tfoot
-    }.each { |tag| ALLOWED_TAGS[tag] = [] }
+    ).each { |tag| ALLOWED_TAGS[tag] = [] }
 
     # allowed attributes
     ALLOWED_TAGS.merge!(
-      'a' => ['href', 'title', 'target'],
-      'img' => ['src', 'alt', 'title'],
+      'a' => %w(href title target),
+      'img' => %w(src alt title),
       'code' => ['lang'],
       'blockquote' => ['cite']
     )
 
     if Card.config.allow_inline_styles
-      ALLOWED_TAGS['table'] += %w[ cellpadding align border cellspacing ]
+      ALLOWED_TAGS['table'] += %w( cellpadding align border cellspacing )
     end
 
     ALLOWED_TAGS.each_key do |k|
@@ -159,7 +156,7 @@ class Card
     end
     ALLOWED_TAGS
 
-    ATTR_VALUE_RE = [/(?<=^')[^']+(?=')/, /(?<=^")[^"]+(?=")/, /\S+/]
+    ATTR_VALUE_RE = [/(?<=^')[^']+(?=')/, /(?<=^")[^"]+(?=")/, /\S+/].freeze
 
     class << self
       ## Method that cleans the String of HTML tags
@@ -167,9 +164,9 @@ class Card
 
       # this has been hacked for card to allow classes if
       # the class begins with "w-"
-      def clean!(string, tags=ALLOWED_TAGS)
+      def clean! string, tags=ALLOWED_TAGS
         string.gsub(/<(\/*)(\w+)([^>]*)>/) do
-          raw = $~
+          raw = $LAST_MATCH_INFO
           tag = raw[2].downcase
           if (attrs = tags[tag])
             html_attribs =
@@ -178,7 +175,7 @@ class Card
                 rest_value = nil
                 if raw[3] =~ /\b#{attr}\s*=\s*(?=(.))/i
                   rest_value = $'
-                  (idx = %w{' "}.index($1)) && (q = $1)
+                  (idx = %w(' ").index(Regexp.last_match(1))) && (q = Regexp.last_match(1))
                   re = ATTR_VALUE_RE[idx || 2]
                   if (match = rest_value.match(re))
                     rest_value = match[0]
@@ -208,8 +205,8 @@ class Card
         alias_method_chain :clean!, :space_last
       end
 
-      def truncatewords_with_closing_tags input, words=25, truncate_string='...'
-        if input.nil? then return end
+      def truncatewords_with_closing_tags input, words=25, _truncate_string='...'
+        return if input.nil?
         wordlist = input.to_s.split
         l = words.to_i - 1
         l = 0 if l < 0
@@ -225,11 +222,11 @@ class Card
         end
         # match tags with self closing and mark them as closed
         wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\/\>/).each do |t|
-          if !(x = tags.index(t[0])).nil? then tags.slice!(x) end
+          unless (x = tags.index(t[0])).nil? then tags.slice!(x) end
         end
         # match close tags
         wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each do |t|
-          if !(x = tags.rindex(t[0])).nil? then tags.slice!(x) end
+          unless (x = tags.rindex(t[0])).nil? then tags.slice!(x) end
         end
 
         tags.each { |t| wordstring += "</#{t}>" }

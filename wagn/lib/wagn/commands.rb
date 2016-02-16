@@ -11,7 +11,7 @@ def load_rake_tasks
 end
 
 RAILS_COMMANDS = %w( generate destroy plugin benchmarker profiler console
-                     server dbconsole application runner )
+                     server dbconsole application runner ).freeze
 ALIAS = {
   'rs' => 'rspec',
   'cc' => 'cucumber',
@@ -22,7 +22,7 @@ ALIAS = {
   's'  => 'server',
   'db' => 'dbconsole',
   'r'  => 'runner'
-}
+}.freeze
 
 ARGV << '--help' if ARGV.empty?
 
@@ -42,12 +42,10 @@ def find_spec_file filename, base_dir
   end
 end
 
-WAGN_DB_TASKS = %w[seed reseed load update]
+WAGN_DB_TASKS = %w(seed reseed load update).freeze
 
 if supported_rails_command? ARGV.first
-  if ARGV.delete('--rescue')
-    ENV['PRY_RESCUE_RAILS'] = '1'
-  end
+  ENV['PRY_RESCUE_RAILS'] = '1' if ARGV.delete('--rescue')
   command = ARGV.first
   command = ALIAS[command] || command
 
@@ -59,19 +57,6 @@ else
   command = ALIAS[command] || command
 
   case command
-  when *WAGN_DB_TASKS
-    opts = {}
-    Wagn::Parser.db_task(command, opts).parse!(ARGV)
-    task_cmd = "bundle exec rake wagn:#{command}"
-    if !opts[:envs] || opts[:envs].empty?
-      puts task_cmd
-      puts `#{task_cmd}`
-    else
-      opts[:envs].each do |env|
-        puts "env RAILS_ENV=#{env} #{task_cmd}"
-        puts `env RAILS_ENV=#{env} #{task_cmd}`
-      end
-    end
   when 'cucumber'
     require 'wagn'
     require './config/environment'
@@ -83,11 +68,11 @@ else
     feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.join(' ')
     unless system 'RAILS_ROOT=. bundle exec cucumber ' \
                   "#{require_args} #{feature_args} 2>&1"
-      exit $?.exitstatus
+      exit $CHILD_STATUS.exitstatus
     end
   when 'jasmine'
     unless system 'RAILS_ENV=test bundle exec rake spec:javascript 2>&1'
-      exit $?.exitstatus
+      exit $CHILD_STATUS.exitstatus
     end
   when 'rspec'
     require 'rspec/core'
@@ -104,9 +89,7 @@ else
     rspec_command =
       "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} " \
       " #{opts[:rescue]} rspec #{rspec_args.join(' ')} #{opts[:files]} 2>&1"
-    unless system rspec_command
-      exit $?.exitstatus
-    end
+    exit $CHILD_STATUS.exitstatus unless system rspec_command
   when '--version', '-v'
     puts "Wagn #{Card::Version.release}"
   when 'new'
@@ -117,6 +100,19 @@ else
            "please change to a non-deck directory first.\n"
       puts "Type 'wagn' for help."
       exit(1)
+    end
+  when *WAGN_DB_TASKS
+    opts = {}
+    Wagn::Parser.db_task(command, opts).parse!(ARGV)
+    task_cmd = "bundle exec rake wagn:#{command}"
+    if !opts[:envs] || opts[:envs].empty?
+      puts task_cmd
+      puts `#{task_cmd}`
+    else
+      opts[:envs].each do |env|
+        puts "env RAILS_ENV=#{env} #{task_cmd}"
+        puts `env RAILS_ENV=#{env} #{task_cmd}`
+      end
     end
 
   else

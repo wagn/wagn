@@ -85,12 +85,12 @@ format :html do
     args[:optional_help] ||= :show
     args[:optional_toolbar] ||= :show
 
-    args[:buttons] ||= %{
+    args[:buttons] ||= %(
       #{submit_button class: 'submit-button'}
       #{cancel_button href: (args[:cancel_path] || path),
                       class: 'cancel-button',
                       'data-slot-selector' => args[:cancel_slot_selector]}
-    }
+    )
   end
 
   view :edit_name, perms: :update do |args|

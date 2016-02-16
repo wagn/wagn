@@ -11,12 +11,11 @@ module SelectedAction
     # find action id from content (saves lookups)
     db_content.to_s.split(/[\/\.]/)[1]
   end
-
 end
 include SelectedAction
 
 format do
-  view :source do |args|
+  view :source do |_args|
     card.attachment.url
   end
 
@@ -28,34 +27,31 @@ format do
 
   def handle_source args
     source = _render_source args
-    source ? yield( source ) : ''
+    source ? yield(source) : ''
   rescue
     'File Error'
   end
 end
 
-
-
 format :file do
-
-  view :core do |args|                                    # returns send_file args.  not in love with this...
-    if format = card.attachment_format( params[:format] ) # this means we only support known formats.  dislike.
-      if params[:explicit_file] and r = controller.response
-        r.headers["Expires"] = 1.year.from_now.httpdate
-        #r.headers["Cache-Control"] = "public"            # currently using default "private", because proxy servers could block needed permission checks
+  view :core do |_args|                                    # returns send_file args.  not in love with this...
+    if format = card.attachment_format(params[:format]) # this means we only support known formats.  dislike.
+      if params[:explicit_file] && (r = controller.response)
+        r.headers['Expires'] = 1.year.from_now.httpdate
+        # r.headers["Cache-Control"] = "public"            # currently using default "private", because proxy servers could block needed permission checks
       end
 
-  #      elsif ![format, 'file'].member? params[:format]  # formerly supported redirecting to correct file format
-  #        return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #card.attachment.url(style) )
+      #      elsif ![format, 'file'].member? params[:format]  # formerly supported redirecting to correct file format
+      #        return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #card.attachment.url(style) )
 
       file = selected_file_version
-      [ file.path,
-        {
-          type: file.content_type,
-          filename:  "#{card.cardname.safe_key}#{file.extension}",
-          x_sendfile: true,
-          disposition: (params[:format]=='file' ? 'attachment' : 'inline' )
-        }
+      [file.path,
+       {
+         type: file.content_type,
+         filename:  "#{card.cardname.safe_key}#{file.extension}",
+         x_sendfile: true,
+         disposition: (params[:format] == 'file' ? 'attachment' : 'inline')
+       }
       ]
     else
       _render_not_found
@@ -65,15 +61,12 @@ format :file do
   def selected_file_version
     card.attachment
   end
-
 end
 
-
 format :html do
-
   view :core do |args|
     handle_source args do |source|
-      "<a href=\"#{source}\">Download #{ showname args[:title] }</a>"
+      "<a href=\"#{source}\">Download #{showname args[:title]}</a>"
     end
   end
 
@@ -81,14 +74,13 @@ format :html do
     file_chooser args
   end
 
-
-  def preview  args
+  def preview  _args
     ''
   end
 
   view :preview_editor, tags: :unknown_ok do |args|
     cached_upload_card_name = Card::Env.params[:attachment_upload]
-    cached_upload_card_name.gsub!(/\[\w+\]$/, "[action_id_of_cached_upload]")
+    cached_upload_card_name.gsub!(/\[\w+\]$/, '[action_id_of_cached_upload]')
     <<-HTML
       <div class="chosen-file">
         <input type="hidden" name="#{cached_upload_card_name}" value="#{card.selected_action_id}">
@@ -128,11 +120,11 @@ format :html do
             <span>
                 #{card.new_card? ? 'Add' : 'Replace'} #{card.attachment_name}...
             </span>
-             <input class="file-upload slotter form-control" type="file" 
+             <input class="file-upload slotter form-control" type="file"
                 name="card[#{card.type_code}]" id="card_#{card.type_code}">
              #{hidden_field_tag 'attachment_type_id', card.type_id}
-             #{hidden_field card.attachment_name, class: "attachment_card_name",
-                            value: ''}
+             #{hidden_field card.attachment_name, class: 'attachment_card_name',
+                                                  value: ''}
              #{hidden_field_tag 'file_card_name', card.cardname.url_key}
         </span>
       </div>
@@ -142,7 +134,4 @@ format :html do
       <div class="chosen-file"></div>
     HTML
   end
-
 end
-
-

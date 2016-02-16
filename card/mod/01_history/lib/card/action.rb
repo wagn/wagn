@@ -15,7 +15,7 @@ class Card
                        }
 
     # replace with enum if we start using rails 4
-    TYPE = [:create, :update, :delete]
+    TYPE = [:create, :update, :delete].freeze
 
     def expire
       self.class.cache.delete id.to_s
@@ -40,9 +40,7 @@ class Card
       end
 
       def delete_old
-        Card.find_each do |card|
-          card.delete_old_actions
-        end
+        Card.find_each(&:delete_old_actions)
         Card::Act.delete_actionless
       end
     end
@@ -83,12 +81,12 @@ class Card
 
     def new_values
       @new_values ||=
-      {
-        content:  new_value_for(:db_content),
-        name:     new_value_for(:name),
-        cardtype: ((typecard = Card[new_value_for(:type_id).to_i]) &&
-                   typecard.name.capitalize)
-      }
+        {
+          content:  new_value_for(:db_content),
+          name:     new_value_for(:name),
+          cardtype: ((typecard = Card[new_value_for(:type_id).to_i]) &&
+                     typecard.name.capitalize)
+        }
     end
 
     def old_values

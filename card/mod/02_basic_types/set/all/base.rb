@@ -20,8 +20,8 @@ format do
         name.titleize
       else
         if ::Set.new([
-          :downcase, :upcase, :swapcase, :reverse, :succ
-        ]).include?(variant.to_sym)
+                       :downcase, :upcase, :swapcase, :reverse, :succ
+                     ]).include?(variant.to_sym)
           name.send variant
         else
           name

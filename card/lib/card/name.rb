@@ -38,7 +38,7 @@ class Card
 
     def trait tag_code
       name = trait_name(tag_code)
-      name ? name.s : (fail Card::NotFound, "unknown codename: #{tag_code}")
+      name ? name.s : (raise Card::NotFound, "unknown codename: #{tag_code}")
     end
 
     def field tag_name
@@ -55,10 +55,8 @@ class Card
       when Symbol
         trait_name tag_name
       else
-        if tag_name.to_s[0] == '+'
-          tag_name = tag_name.to_s[1..-1]
-        end
-        [ self, tag_name ].to_name
+        tag_name = tag_name.to_s[1..-1] if tag_name.to_s[0] == '+'
+        [self, tag_name].to_name
       end
     end
 
@@ -99,7 +97,6 @@ class Card
     def set?
       SetPattern.card_keys[tag_name.key]
     end
-
 
     def relative?
       s =~ RELATIVE_REGEXP || starts_with_joint?

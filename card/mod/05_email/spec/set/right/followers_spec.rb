@@ -1,13 +1,10 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Right::Followers do
-
-
-
   describe '#raw_content' do
     it 'returns a pointer list of followers' do
       card = Card.fetch 'All Eyes on me'
-      expect( card.followers_card.item_names.sort).to eq ['Big Brother','John','Sara']
+      expect(card.followers_card.item_names.sort).to eq ['Big Brother', 'John', 'Sara']
     end
   end
 
@@ -15,7 +12,7 @@ describe Card::Set::Right::Followers do
     it 'contains follower' do
       card = Card.fetch 'All Eyes on me'
       view = card.followers_card.format.render_core
-      expect(view).to include("Sara")
+      expect(view).to include('Sara')
     end
   end
 
@@ -23,16 +20,15 @@ describe Card::Set::Right::Followers do
     it 'renders a pointer list of followers' do
       card = Card.fetch 'All Eyes on me'
       view = card.followers_card.format.render_raw
-      expect(view.split("\n").sort).to eq ['[[Big Brother]]','[[John]]','[[Sara]]']
+      expect(view.split("\n").sort).to eq ['[[Big Brother]]', '[[John]]', '[[Sara]]']
     end
   end
-
 
   describe 'item_names' do
     subject { @card.followers_card.item_names.sort }
     it 'is an array of followers' do
       @card = Card['All Eyes On Me']
-      is_expected.to eq ['Big Brother','John','Sara']
+      is_expected.to eq ['Big Brother', 'John', 'Sara']
     end
 
     it 'recognizes card name changes' do
@@ -88,7 +84,7 @@ describe Card::Set::Right::Followers do
     context 'when following content I created' do
       it 'contains creator' do
         Card::Auth.current_id = Card['Big Brother'].id
-        @card = Card.create! name: "created by Follower"
+        @card = Card.create! name: 'created by Follower'
         is_expected.to include('Big Brother')
       end
     end
@@ -99,13 +95,12 @@ describe Card::Set::Right::Followers do
           Card['Sara'].follow '*all', '*edited'
         end
 
-        @card = Card.create! name: "edited by Sara"
+        @card = Card.create! name: 'edited by Sara'
         Card::Auth.current_id = Card['Sara'].id
         @card.update_attributes! content: 'some content'
         is_expected.to include('Sara')
       end
     end
-
 
     context 'for a set card' do
       it 'contains followers of that set' do
@@ -120,7 +115,5 @@ describe Card::Set::Right::Followers do
         is_expected.to include('Optic fan')
       end
     end
-
   end
-
 end

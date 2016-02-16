@@ -1,10 +1,9 @@
 
 view :title do |args|
-   super args.merge( title: 'Recent Changes' )
+  super args.merge(title: 'Recent Changes')
 end
 
 format :html do
-
   view :card_list do |args|
     search_vars[:item] ||= :change
 
@@ -13,36 +12,31 @@ format :html do
       begin
         stamp = card.updated_at
         day = Date.new(stamp.year, stamp.month, stamp.day)
-      rescue =>e
+      rescue => e
         day = Date.today
-        card.content = "(error getting date)"
+        card.content = '(error getting date)'
       end
       cards_by_day[day] << card if card.followable?
     end
 
     paging = _optional_render :paging, args
-    %{
-      #{ paging }
-      #{
-        cards_by_day.keys.sort.reverse.map do |day|
-          %{
-            <h2>#{format_date(day, include_time = false) }</h2>
+    %(
+      #{paging}
+      #{cards_by_day.keys.sort.reverse.map do |day|
+          %(
+            <h2>#{format_date(day, include_time = false)}</h2>
             <div class="search-result-list">
-              #{
-                 cards_by_day[day].map do |card|
-                   %{
-                     <div class="search-result-item item-#{ search_vars[:item] }">
-                      #{ nest(card, view: search_vars[:item]) }
-                    </div>
-                   }
-                 end * ' '
-              }
+              #{cards_by_day[day].map do |card|
+                  %(
+                    <div class="search-result-item item-#{search_vars[:item]}">
+                     #{nest(card, view: search_vars[:item])}
+                   </div>
+                  )
+                end * ' '}
             </div>
-          }
-        end * "\n"
-      }
-      #{ paging }
-    }
+          )
+        end * "\n"}
+      #{paging}
+    )
   end
-
 end

@@ -2,7 +2,7 @@
 class Card
   class Query
     module Attributes
-      SORT_JOIN_TO_ITEM_MAP = { left: 'left_id', right: 'right_id' }
+      SORT_JOIN_TO_ITEM_MAP = { left: 'left_id', right: 'right_id' }.freeze
 
       # ~~~~~~ RELATIONAL
 
@@ -133,7 +133,7 @@ class Card
             "replace(#{table_alias}.name,'+',' ')",
             "#{table_alias}.db_content"
           ].map do |field|
-            %{#{field} #{cxn.match quote("[[:<:]]#{v}[[:>:]]")}}
+            %(#{field} #{cxn.match quote("[[:<:]]#{v}[[:>:]]")})
           end
           "(#{name_or_content.join ' OR '})"
         end
@@ -209,7 +209,7 @@ class Card
           # FIXME: - SQL generated before SQL phase
           cs.joins << Join.new(
             from: cs,
-            to: ['card_references', 'wr', 'referee_id']
+            to: %w(card_references wr referee_id)
           )
           cs.mods[:sort_join_field] = "#{cs.table_alias}.id as sort_join_field"
           # HACK!
@@ -260,13 +260,13 @@ class Card
       def all val
         conjoin val, :and
       end
-      alias :and :all
+      alias and all
 
       def any val
         conjoin val, :or
       end
-      alias_method :or, :any
-      alias_method :in, :any
+      alias or any
+      alias in any
 
       def conjoin val, conj
         sq = subquery unjoined: true, conj: conj

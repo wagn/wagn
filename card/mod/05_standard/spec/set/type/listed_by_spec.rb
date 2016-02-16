@@ -81,7 +81,7 @@ describe Card::Set::Type::ListedBy do
               }
             )
             Card.fetch('Adventures of Buckleharry Finn+authors')
-              .update_attributes!(content: '[[Darles Chickens]]')
+                .update_attributes!(content: '[[Darles Chickens]]')
           end
         end
         it do
@@ -110,7 +110,7 @@ describe Card::Set::Type::ListedBy do
             )
           end
         end
-        it { is_expected.to eq ['50 grades of shy','Parry Moppins'] }
+        it { is_expected.to eq ['50 grades of shy', 'Parry Moppins'] }
       end
 
       context 'when the name of Darles Chickens changed' do

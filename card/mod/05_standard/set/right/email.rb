@@ -32,7 +32,7 @@ event :validate_unique_email, after: :validate_email, on: :save do
 end
 
 event :downcase_email, :prepare_to_validate, on: :save do
-  return if !content || content == content.downcase
+  return if !content || content.casecmp(content).zero?
   self.content = content.downcase
 end
 

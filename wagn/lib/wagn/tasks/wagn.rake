@@ -99,7 +99,7 @@ namespace :wagn do
   desc 'set symlink for assets'
   task :update_assets_symlink do
     assets_path = File.join(Rails.public_path, 'assets')
-    if Rails.root.to_s != Wagn.gem_root && !File.exist? assets_path
+    if Rails.root.to_s != Wagn.gem_root && !File.exist?(assets_path)
       FileUtils.rm assets_path if File.symlink? assets_path
       FileUtils.ln_s(Decko::Engine.paths['gem-assets'].first, assets_path)
     end
@@ -118,14 +118,16 @@ namespace :wagn do
 
     puts 'migrating core cards'
     Card::Cache.reset_all
-    Rake::Task['wagn:migrate:core_cards'].execute # not invoke because we don't want to reload environment
+    # not invoke because we don't want to reload environment
+    Rake::Task['wagn:migrate:core_cards'].execute
     if stamp
       Rake::Task['wagn:migrate:stamp'].reenable
       Rake::Task['wagn:migrate:stamp'].invoke :core_cards
     end
 
     puts 'migrating deck cards'
-    Rake::Task['wagn:migrate:deck_cards'].execute # not invoke because we don't want to reload environment
+    # not invoke because we don't want to reload environment
+    Rake::Task['wagn:migrate:deck_cards'].execute
     if stamp
       Rake::Task['wagn:migrate:stamp'].reenable
       Rake::Task['wagn:migrate:stamp'].invoke :deck_cards
@@ -257,8 +259,8 @@ namespace :wagn do
       Rake::Task['wagn:bootstrap:copy_mod_files'].invoke
 
       YAML::ENGINE.yamler = 'syck' if RUBY_VERSION !~ /^(2|1\.9)/
-      # use old engine while we're supporting ruby 1.8.7 because it can't support Psych,
-      # which dumps with slashes that syck can't understand
+      # use old engine while we're supporting ruby 1.8.7 because it can't
+      # support Psych, which dumps with slashes that syck can't understand
 
       WAGN_SEED_TABLES.each do |table|
         i = '000'
@@ -266,12 +268,13 @@ namespace :wagn do
           data = ActiveRecord::Base.connection.select_all(
             "select * from #{table}"
           )
-          file.write YAML.dump(data.inject({}) do |hash, record|
+          file.write YAML::dump(data.inject({}) do |hash, record|
             record['trash'] = false if record.key? 'trash'
             record['draft'] = false if record.key? 'draft'
             if record.key? 'content'
-              record['content'] = record['content'].gsub /\u00A0/, '&nbsp;'
-              # sych was handling nonbreaking spaces oddly.  would not be needed with psych.
+              record['content'] = record['content'].gsub(/\u00A0/, '&nbsp;')
+              # sych was handling nonbreaking spaces oddly.
+              # would not be needed with psych.
             end
             hash["#{table}_#{i.succ!}"] = record
             hash
@@ -303,9 +306,15 @@ namespace :wagn do
           end
 
           # make card a mod file card
-          mod_name = (l = card.left) && l.type_id == Card::SkinID ? '06_bootstrap' : '05_standard'
-          card.update_column :db_content, card.attachment.db_content(mod: mod_name)
-          card.last_action.change_for(2).first.update_column :value, card.attachment.db_content(mod: mod_name)
+          mod_name = if (l = card.left) && l.type_id == Card::SkinID
+                       '06_bootstrap'
+                     else
+                       '05_standard'
+                     end
+          card.update_column :db_content,
+                             card.attachment.db_content(mod: mod_name)
+          card.last_action.change_for(2).first
+              .update_column :value, card.attachment.db_content(mod: mod_name)
           card.expire
           card = Card.fetch card.name
 
@@ -340,7 +349,9 @@ end
 def delete_unwanted_cards
   Card::Auth.as_bot do
     if ignoramus = Card['*ignore']
-      ignoramus.item_cards.each(&:delete!)
+      ignoramus.item_cards.each do |card|
+        card.delete!
+      end
     end
     Card::Cache.reset_all
     # FIXME: can this be associated with the machine module somehow?

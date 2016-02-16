@@ -131,7 +131,7 @@ class Card
       end
     end
 
-    ALLOWED_TAGS = {}.freeze
+    ALLOWED_TAGS = {}
     %w(
       br i b pre cite caption strong em ins sup sub del ol hr ul li p
       div h1 h2 h3 h4 h5 h6 span table tr td th tbody thead tfoot
@@ -205,7 +205,8 @@ class Card
         alias_method_chain :clean!, :space_last
       end
 
-      def truncatewords_with_closing_tags input, words=25, _truncate_string='...'
+      def truncatewords_with_closing_tags input, words=25,
+                                          _truncate_string='...'
         return if input.nil?
         wordlist = input.to_s.split
         l = words.to_i - 1

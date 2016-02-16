@@ -18,10 +18,9 @@ class Card
   #
   #
   module Stage
-    STAGE_INDEX = {}.freeze
     STAGES = [:initialize, :prepare_to_validate, :validate, :prepare_to_store,
               :store, :finalize, :integrate, :integrate_with_delay].freeze
-
+    STAGE_INDEX = {}
     STAGES.each_with_index do |stage, i|
       STAGE_INDEX[stage] = i
     end

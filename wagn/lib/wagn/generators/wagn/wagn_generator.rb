@@ -170,7 +170,8 @@ class WagnGenerator < Rails::Generators::AppBase
                     path = File.join destination_root, 'config',
                                      'application.rb'
                     system "nano #{path}"
-                  end
+        end
+      }
       add_seed_options menu_options
       menu_options['x'] = {
         desc:    "exit (run 'wagn seed' to complete the installation later)"

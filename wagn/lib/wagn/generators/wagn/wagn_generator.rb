@@ -9,7 +9,8 @@ class WagnGenerator < Rails::Generators::AppBase
 
   class_option :database,
                type: :string, aliases: '-d', default: 'mysql',
-               desc: "Preconfigure for selected database (options: #{DATABASES.join('/')})"
+               desc: 'Preconfigure for selected database ' \
+                     "(options: #{DATABASES.join('/')})"
 
   class_option 'core-dev',
                type: :boolean, aliases: '-c', default: false, group: :runtime,
@@ -17,7 +18,8 @@ class WagnGenerator < Rails::Generators::AppBase
 
   class_option 'gem-path',
                type: :string, aliases: '-g', default: false, group: :runtime,
-               desc: 'Path to local gem installation (Default, use env WAGN_GEM_PATH)'
+               desc: 'Path to local gem installation ' \
+                     '(Default, use env WAGN_GEM_PATH)'
 
   class_option 'mod-dev',
                type: :boolean, aliases: '-m', default: false, group: :runtime,
@@ -33,7 +35,8 @@ class WagnGenerator < Rails::Generators::AppBase
   ## should probably eventually use rails-like AppBuilder approach,
   # but this is a first step.
   def dev_setup
-    # TODO: rename or split, gem_path points to the source repo, card and wagn gems are subdirs
+    # TODO: rename or split, gem_path points to the source repo,
+    # card and wagn gems are subdirs
     @gemfile_gem_path = @gem_path = options['gem-path']
     env_gem_path = ENV['WAGN_GEM_PATH']
     if env_gem_path.present?
@@ -43,38 +46,11 @@ class WagnGenerator < Rails::Generators::AppBase
 
     @include_jasmine_engine = false
     if options['core-dev']
-      unless @gem_path
-        @gemfile_gem_path = @gem_path = ask('Enter the path to your local wagn gem installation: ')
-      end
-
-      @include_jasmine_engine = true
-      @spec_path = @gem_path
-      @spec_helper_path = File.join @spec_path, 'card', 'spec', 'spec_helper'
-      empty_directory 'spec'
-      inside 'spec' do
-        copy_file File.join('javascripts', 'support', 'wagn_jasmine.yml'), File.join('javascripts', 'support', 'jasmine.yml')
-      end
-
-      @features_path = File.join @gem_path, 'wagn/features/'  # ending slash is important in order to load support and step folders
-      @simplecov_config = 'card_core_dev_simplecov_filters'
+      core_dev_setup
+      shared_dev_setup
     elsif options['mod-dev']
-      @spec_path = 'mod/'
-      @spec_helper_path = './spec/spec_helper'
-      @simplecov_config = 'card_simplecov_filters'
-      empty_directory 'spec'
-      inside 'spec' do
-        template 'spec_helper.rb'
-        copy_file File.join('javascripts', 'support', 'deck_jasmine.yml'), File.join('javascripts', 'support', 'jasmine.yml')
-      end
-    end
-
-    if options['core-dev'] || options['mod-dev']
-      template 'rspec', '.rspec'
-      template 'simplecov', '.simplecov'
-      empty_directory 'bin'
-      inside 'bin' do
-        template 'spring'
-      end
+      mod_dev_setup
+      shared_dev_setup
     end
   end
 
@@ -151,45 +127,13 @@ class WagnGenerator < Rails::Generators::AppBase
 
   def seed_data
     if options['interactive']
-
-      # need this for Rails.env
-      require File.join destination_root, 'config', 'application'
-      menu_options = ActiveSupport::OrderedHash.new
-
-      menu_options['d'] = {
-        desc:    'edit database configuration file',
-        command: 'nano config/database.yml',
-        code:     proc do
-                    path = File.join destination_root, 'config', 'database.yml'
-                    system "nano #{path}"
-                  end
-      }
-      menu_options['c'] = {
-        desc:    'configure Wagn (e.g. email settings)',
-        command: 'nano config/application.rb',
-        code:     proc do
-                    path = File.join destination_root, 'config',
-                                     'application.rb'
-                    system "nano #{path}"
-        end
-      }
-      add_seed_options menu_options
-      menu_options['x'] = {
-        desc:    "exit (run 'wagn seed' to complete the installation later)"
-      }
-
-      while  (answer = ask(build_menu(menu_options))) != 'x'
-        menu_options[answer][:code].call
-      end
-
+      interactive_menu
     else
       puts "Now:
 1. Run `wagn seed` to seed your database (see db configuration in config/database.yml).
 2. Run `wagn server` to start your server"
     end
   end
-
-
 
   def database_gemfile_entry
     return [] if options[:skip_active_record]
@@ -206,7 +150,83 @@ class WagnGenerator < Rails::Generators::AppBase
     GemfileEntry.version gem_name, gem_version, msg
   end
 
+  def self.banner
+    "wagn new #{arguments.map(&:usage).join(' ')} [options]"
+  end
+
   protected
+
+  def interactive_menu
+    require config_path('application') # need this for Rails.env
+    menu_options = ActiveSupport::OrderedHash.new
+    add_config_options menu_options
+    add_seed_options menu_options
+    menu_options['x'] = {
+      desc: "exit (run 'wagn seed' to complete the installation later)"
+    }
+    while (answer = ask(build_menu(menu_options))) != 'x'
+      menu_options[answer][:code].call
+    end
+  end
+
+  def config_path file
+    File.join destination_root, 'config', file
+  end
+
+  def core_dev_setup
+    unless @gem_path
+      @gemfile_gem_path =
+        @gem_path = ask('Enter the path to your local wagn gem installation: ')
+    end
+
+    @include_jasmine_engine = true
+    @spec_path = @gem_path
+    @spec_helper_path = File.join @spec_path, 'card', 'spec', 'spec_helper'
+    empty_directory 'spec'
+    inside 'spec' do
+      copy_file File.join('javascripts', 'support', 'wagn_jasmine.yml'),
+                File.join('javascripts', 'support', 'jasmine.yml')
+    end
+
+    # ending slash is important in order to load support and step folders
+    @features_path = File.join @gem_path, 'wagn/features/'
+
+    @simplecov_config = 'card_core_dev_simplecov_filters'
+  end
+
+  def mod_dev_setup
+    @spec_path = 'mod/'
+    @spec_helper_path = './spec/spec_helper'
+    @simplecov_config = 'card_simplecov_filters'
+    empty_directory 'spec'
+    inside 'spec' do
+      template 'spec_helper.rb'
+      copy_file File.join('javascripts', 'support', 'deck_jasmine.yml'),
+                File.join('javascripts', 'support', 'jasmine.yml')
+    end
+  end
+
+  def shared_dev_setup
+    template 'rspec', '.rspec'
+    template 'simplecov', '.simplecov'
+    empty_directory 'bin'
+    inside 'bin' do
+      template 'spring'
+    end
+  end
+
+  def add_config_options menu_options
+    menu_options['d'] = {
+      desc: 'edit database configuration file',
+      command: 'nano config/database.yml',
+      code: proc { system "nano #{config_path 'database.yml'}" }
+    }
+    menu_options['c'] = {
+      desc: 'configure Wagn (e.g. email settings)',
+      command: 'nano config/application.rb',
+      code: proc { system "nano #{config_path 'application.rb'}" }
+    }
+  end
 
   def add_seed_options menu_options
     database_seeded = proc do
@@ -214,18 +234,16 @@ class WagnGenerator < Rails::Generators::AppBase
       menu_options['r'] = {
         desc:    'run wagn server',
         command: 'wagn server',
-        code:    proc { system "cd #{destination_root} && wagn server" }
+        code:    proc { bundle_exec 'wagn server' }
       }
     end
 
     menu_options['s'] = {
-      desc: "seed #{Rails.env}#{' and test' if options['core-dev'] || options['mod-dev']} database",
+      desc: "seed #{Rails.env}#{' and test' if dev?} database",
       command: 'wagn seed',
       code: proc do
-        system("cd #{destination_root} && bundle exec rake wagn:seed")
-        if options['core-dev'] || options['mod-dev']
-          system("cd #{destination_root} && RAILS_ENV=test bundle exec rake wagn:seed")
-        end
+        bundle_exec 'rake wagn:seed'
+        bundle_exec 'rake wagn:seed', rails_env: 'test' if dev?
         database_seeded.call
       end
     }
@@ -234,11 +252,20 @@ class WagnGenerator < Rails::Generators::AppBase
       command: 'wagn seed --all',
       code: proc do
         %w( production development test ).each do |env|
-          system("cd #{destination_root} && RAILS_ENV=#{env} bundle exec rake wagn:seed")
+          bundle_exec 'rake wagn:seed', rails_env: env
         end
         database_seeded.call
       end
     }
+  end
+
+  def dev?
+    options['core-dev'] || options['mod-dev']
+  end
+
+  def bundle_exec command, opts={}
+    rails_env = "RAILS_ENV=#{opts[:rails_env]}" if opts[:rails_env]
+    system "cd #{destination_root} && #{rails_env} bundle exec #{command}"
   end
 
   def build_menu options
@@ -251,10 +278,6 @@ class WagnGenerator < Rails::Generators::AppBase
     end
     lines << "[#{options.keys.join}]"
     "\n#{lines.join("\n")}\n"
-  end
-
-  def self.banner
-    "wagn new #{arguments.map(&:usage).join(' ')} [options]"
   end
 
   def mysql_socket
@@ -275,7 +298,11 @@ class WagnGenerator < Rails::Generators::AppBase
   # the validity of the app name.needs wagn-specific tuning
 
   def app_name
-    @app_name ||= defined_app_const_base? ? defined_app_name : File.basename(destination_root)
+    @app_name ||= if defined_app_const_base?
+                    defined_app_name
+                  else
+                    File.basename(destination_root)
+                  end
   end
 
   def defined_app_name
@@ -284,13 +311,15 @@ class WagnGenerator < Rails::Generators::AppBase
 
   def defined_app_const_base
     Rails.respond_to?(:application) && defined?(Rails::Application) &&
-      Wagn.application.is_a?(Rails::Application) && Wagn.application.class.name.sub(/::Application$/, '')
+      Wagn.application.is_a?(Rails::Application) &&
+      Wagn.application.class.name.sub(/::Application$/, '')
   end
 
   alias defined_app_const_base? defined_app_const_base
 
   def app_const_base
-    @app_const_base ||= defined_app_const_base || app_name.gsub(/\W/, '_').squeeze('_').camelize
+    @app_const_base ||= defined_app_const_base ||
+                        app_name.gsub(/\W/, '_').squeeze('_').camelize
   end
   alias camelized app_const_base
 
@@ -300,11 +329,15 @@ class WagnGenerator < Rails::Generators::AppBase
 
   def valid_const?
     if app_const =~ /^\d/
-      raise Error, "Invalid application name #{app_name}. Please give a name which does not start with numbers."
+      raise Error, "Invalid application name #{app_name}. " \
+                   'Please give a name which does not start with numbers.'
     #    elsif RESERVED_NAMES.include?(app_name)
-    #      raise Error, "Invalid application name #{app_name}. Please give a name which does not match one of the reserved rails words."
+    #      raise Error, "Invalid application name #{app_name}." \
+    # "Please give a name which does not match one of the reserved rails words."
     elsif Object.const_defined?(app_const_base)
-      raise Error, "Invalid application name #{app_name}, constant #{app_const_base} is already in use. Please choose another application name."
+      raise Error, "Invalid application name #{app_name}, " \
+                   "constant #{app_const_base} is already in use. " \
+                   'Please choose another application name.'
     end
   end
 end

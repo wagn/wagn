@@ -7,7 +7,7 @@ class Card
   class HtmlFormat < Format
     include Diff
 
-    attr_accessor  :options_need_save, :start_time, :skip_autosave
+    attr_accessor :options_need_save, :start_time, :skip_autosave
 
     # builtin layouts allow for rescue / testing
     LAYOUTS = Loader.load_layouts.merge 'none' => '{{_main}}'
@@ -31,7 +31,7 @@ class Card
 
     def layout_from_card_or_code name
       layout_card = Card.fetch name.to_s, skip_virtual: true, skip_modules: true
-      if layout_card and layout_card.ok? :read
+      if layout_card && layout_card.ok?(:read)
         layout_card.content
       elsif (hardcoded_layout = LAYOUTS[name])
         hardcoded_layout
@@ -41,7 +41,7 @@ class Card
     end
 
     def get_nest_defaults nested_card
-      {view: (nested_card.rule( :default_html_view ) || :titled) }
+      { view: (nested_card.rule(:default_html_view) || :titled) }
     end
 
     def default_item_view
@@ -50,23 +50,19 @@ class Card
 
     def output content
       case content
-      when String; content
-      when Array ; content.compact.join "\n"
+      when String then content
+      when Array then content.compact.join "\n"
       end
     end
 
     def html_escape_except_quotes s
       # to be used inside single quotes (makes for readable json attributes)
-      s.to_s.gsub(/&/, "&amp;").gsub(/\'/, "&apos;").gsub(/>/, "&gt;").gsub(/</, "&lt;")
+      s.to_s.gsub(/&/, '&amp;').gsub(/\'/, '&apos;').gsub(/>/, '&gt;').gsub(/</, '&lt;')
     end
-
-
-
-
 
     def main?
       if show_layout?
-        @depth == 1 && @mainline #assumes layout includes {{_main}}
+        @depth == 1 && @mainline # assumes layout includes {{_main}}
       else
         @depth == 0 && params[:is_main]
       end

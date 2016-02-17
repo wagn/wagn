@@ -25,9 +25,8 @@ Wagn.application.class.configure do
 
   # Turn off most logging
   config.log_level = :info
-  
+
   config.active_support.deprecation = :log
-  
+
   config.action_mailer.perform_deliveries = false
 end
-

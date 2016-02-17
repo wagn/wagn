@@ -36,7 +36,8 @@ module Card::Chunk
         @process_chunk = name =~ /^\#\#/ ? '' : visible_comment(in_brackets)
       else
         @options = interpret_options
-        @options.merge! inc_name: name, inc_syntax: in_brackets
+        @options[:inc_name] = name
+        @options[:inc_syntax] = in_brackets
         @name = name
       end
     end

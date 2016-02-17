@@ -35,7 +35,7 @@ describe Card::Cache do
     end
 
     it '#fetch' do
-      block = Proc.new { 'hi' }
+      block = proc { 'hi' }
       expect(@hard).to receive(:fetch).with('prefix/foo', &block)
       @cache.fetch('foo', &block)
     end
@@ -57,7 +57,7 @@ describe Card::Cache do
     @hard = ActiveSupport::Cache::MemoryStore.new
     @cache = Card::Cache.new store: @hard, prefix: 'prefix'
     expect(@cache.hard.prefix).to eq('prefix/')
-    @cache.write('foo','bar')
+    @cache.write('foo', 'bar')
     expect(@cache.read('foo')).to eq('bar')
 
     # reset
@@ -72,9 +72,7 @@ describe Card::Cache do
   describe 'with file store' do
     before do
       cache_path = "#{Wagn.root}/tmp/cache"
-      unless File.directory?(cache_path)
-        FileUtils.mkdir_p(cache_path)
-      end
+      FileUtils.mkdir_p(cache_path) unless File.directory?(cache_path)
       @hard = ActiveSupport::Cache::FileStore.new cache_path
 
       @hard.clear

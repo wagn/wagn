@@ -13,7 +13,7 @@ class Card
   end
 
   class Cache
-    TEST_ENVS         = %w{test cucumber}
+    TEST_ENVS         = %w(test cucumber).freeze
     @@prepopulating   = TEST_ENVS.include? Rails.env
     @@no_rails_cache  = TEST_ENVS.include?(Rails.env) || ENV['NO_RAILS_CACHE']
     @@cache_by_class  = {}
@@ -22,7 +22,7 @@ class Card
 
     class << self
       def [] klass
-        fail 'nil klass' if klass.nil?
+        raise 'nil klass' if klass.nil?
         cache_type = (@@no_rails_cache ? nil : Cardio.cache)
         cache_by_class[klass] ||= new class: klass,
                                       store: cache_type
@@ -30,7 +30,7 @@ class Card
 
       def renew
         cache_by_class.keys do |klass|
-          fail "renewing nil cache: #{klass}" unless klass.cache
+          raise "renewing nil cache: #{klass}" unless klass.cache
           cache_by_class[klass].system_prefix = system_prefix(klass)
         end
         reset_soft
@@ -136,7 +136,7 @@ class Card
         if @hard
           @hard.fetch(key, &block)
         else
-          block.call
+          yield
         end
       end
     end

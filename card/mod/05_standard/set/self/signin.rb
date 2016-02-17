@@ -1,7 +1,7 @@
 
 format :html do
   view :open do |args|
-    args.merge! optional_help: :show
+    args[:optional_help] = :show
     super args
   end
 
@@ -25,8 +25,8 @@ format :html do
     end
     args[:buttons] += raw(
       "<div style='float:right'>" \
-      "#{ view_link 'RESET PASSWORD', :edit,
-                    path_opts: { slot: { hide: :toolbar } } }" \
+      "#{view_link 'RESET PASSWORD', :edit,
+                   path_opts: { slot: { hide: :toolbar } }}" \
       '</div>') # FIXME: hardcoded styling
     args
   end

@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 
 module Card::Diff
-
   def self.complete a, b, opts={}
     DiffBuilder.new(a, b, opts).complete
   end
@@ -14,7 +13,7 @@ module Card::Diff
     "<ins class='diffins diff-green'>#{text}</ins>"
   end
 
-  def self.render_deleted_chunk text, count=true
+  def self.render_deleted_chunk text, _count=true
     "<del class='diffdel diff-red'>#{text}</del>"
   end
 
@@ -40,7 +39,7 @@ module Card::Diff
     #
     # summary: {length: <number> , joint: <string> }
 
-    def initialize(old_version, new_version, opts={})
+    def initialize old_version, new_version, opts={}
       @new_version = new_version
       @old_version = old_version
       @lcs_opts = lcs_opts_for_format opts[:format]
@@ -48,7 +47,7 @@ module Card::Diff
       @dels_cnt = 0
       @adds_cnt = 0
 
-      if not @new_version
+      if !@new_version
         @complete = ''
         @summary  = ''
       else
@@ -71,16 +70,16 @@ module Card::Diff
         opts[:exclude] = /^</
       when :text
         opts[:reject] =  /^</
-        opts[:postprocess] = Proc.new do |word|
-          word.gsub("\n",'<br>')
+        opts[:postprocess] = proc do |word|
+          word.gsub("\n", '<br>')
         end
       when :pointer
-        opts[:preprocess] = Proc.new do |word|
-          word.gsub('[[','').gsub(']]','')
+        opts[:preprocess] = proc do |word|
+          word.gsub('[[', '').gsub(']]', '')
         end
       else #:raw
-        opts[:preprocess] = Proc.new do |word|
-          CGI::escapeHTML(word)
+        opts[:preprocess] = proc do |word|
+          CGI.escapeHTML(word)
         end
       end
       opts
@@ -94,10 +93,9 @@ module Card::Diff
       @adds_cnt = @lcs.adds_cnt
     end
 
-
     class LCS
       attr_reader :adds_cnt, :dels_cnt
-      def initialize old_text, new_text, opts, summary=nil
+      def initialize old_text, new_text, opts, _summary=nil
         @reject_pattern  = opts[:reject]        # regex; remove match completely from diff
         @exclude_pattern = opts[:exclude]       # regex; put back to the result after diff
         @preprocess      = opts[:preprocess]    # block; called with every word
@@ -109,10 +107,10 @@ module Card::Diff
         @splitters = %w( <[^>]+>  \[\[[^\]]+\]\]  \{\{[^}]+\}\}  \s+ )
         @disjunction_pattern = /^\s/
         @summary ||= Summary.new opts[:summary]
-        if not old_text
+        if !old_text
           list = split_and_preprocess(new_text)
           if @exclude_pattern
-            list = list.reject{ |word| word.match @exclude_pattern }
+            list = list.reject { |word| word.match @exclude_pattern }
           end
           text = postprocess list.join
           @result = added_chunk text
@@ -153,11 +151,10 @@ module Card::Diff
       def run_diff
         prev_action = nil
         ::Diff::LCS.traverse_balanced(@words[:old], @words[:new]) do |word|
-
           if prev_action
-            if prev_action != word.action and
-              !(prev_action == '-' and word.action == '!') and
-              !(prev_action == '!' and word.action == '+')
+            if prev_action != word.action &&
+               !(prev_action == '-' && word.action == '!') &&
+               !(prev_action == '!' && word.action == '+')
 
               # delete and/or add section stops here; write changes to result
               write_dels
@@ -192,7 +189,6 @@ module Card::Diff
         @result = postprocess @result
       end
 
-
       def added_chunk text, count=true
         @adds_cnt += 1 if count
         Card::Diff.render_added_chunk text
@@ -203,14 +199,13 @@ module Card::Diff
         Card::Diff.render_deleted_chunk text
       end
 
-
       def write_unchanged text
         @result << text
         @summary.omit
       end
 
       def write_dels
-        if !@dels.empty?
+        unless @dels.empty?
           @result << deleted_chunk(@dels.join)
           @summary.delete @dels.join
           @dels = []
@@ -218,7 +213,7 @@ module Card::Diff
       end
 
       def write_adds
-        if !@adds.empty?
+        unless @adds.empty?
           @result << added_chunk(@adds.join)
           @summary.add @adds.join
           @adds = []
@@ -280,12 +275,12 @@ module Card::Diff
         # return two arrays, one with all words, one with pairs (index in word list, html_tag)
         list = split_and_preprocess text
         if @exclude_pattern
-          list.each_with_index.inject([[],[]]) do |res, pair|
+          list.each_with_index.inject([[], []]) do |res, pair|
             element, index = pair
             if element.match @disjunction_pattern
-              res[1] << {chunk_index: index, element: element, type: :disjunction}
+              res[1] << { chunk_index: index, element: element, type: :disjunction }
             elsif element.match @exclude_pattern
-              res[1] << {chunk_index: index, element: element, type: :excludee}
+              res[1] << { chunk_index: index, element: element, type: :excludee }
             else
               res[0] << element
             end
@@ -298,9 +293,9 @@ module Card::Diff
 
       def split_and_preprocess text
         splitted = split_to_list_of_words(text).select do |s|
-          s.size > 0 and (!@reject_pattern or !s.match @reject_pattern)
+          s.size > 0 && (!@reject_pattern || !s.match(@reject_pattern))
         end
-        @preprocess ? splitted.map {|s| @preprocess.call(s) } : splitted
+        @preprocess ? splitted.map { |s| @preprocess.call(s) } : splitted
       end
 
       def split_to_list_of_words text
@@ -323,7 +318,6 @@ module Card::Diff
           text
         end
       end
-
 
       class Summary
         def initialize opts
@@ -348,16 +342,16 @@ module Card::Diff
         end
 
         def omit
-           if @chunks.empty? or @chunks.last[:action] != :ellipsis
+          if @chunks.empty? || @chunks.last[:action] != :ellipsis
             add_chunk @joint, :ellipsis
-          end
+         end
         end
 
         private
 
         def add_chunk text, action
           if @remaining_chars > 0
-            @chunks << {action: action, text: text}
+            @chunks << { action: action, text: text }
             @remaining_chars -= text.size
           end
         end
@@ -365,7 +359,7 @@ module Card::Diff
         def render_chunks
           truncate_overlap
           @chunks.map do |chunk|
-              Card::Diff.render_chunk chunk[:action], chunk[:text]
+            Card::Diff.render_chunk chunk[:action], chunk[:text]
           end.join
         end
 
@@ -377,19 +371,19 @@ module Card::Diff
             end
 
             index = @chunks.size - 1
-            while @remaining_chars < @joint.size and index >= 0
+            while @remaining_chars < @joint.size && index >= 0
               if @remaining_chars + @chunks[index][:text].size == @joint.size   # d
                 @chunks.pop
-                if index-1 >= 0
-                  if @chunks[index-1][:action] == :added
-                    @chunks << {action: :ellipsis, text: @joint}
-                  elsif @chunks[index-1][:action] == :deleted
-                    @chunks << {action: :added, text: @joint}
+                if index - 1 >= 0
+                  if @chunks[index - 1][:action] == :added
+                    @chunks << { action: :ellipsis, text: @joint }
+                  elsif @chunks[index - 1][:action] == :deleted
+                    @chunks << { action: :added, text: @joint }
                   end
                 end
                 break
               elsif @remaining_chars + @chunks[index][:text].size > @joint.size
-                @chunks[index][:text] =  @chunks[index][:text][0..(@remaining_chars-@joint.size-1)]
+                @chunks[index][:text] =  @chunks[index][:text][0..(@remaining_chars - @joint.size - 1)]
                 @chunks[index][:text] += @joint
                 break
               else
@@ -400,7 +394,6 @@ module Card::Diff
             end
           end
         end
-
       end
 
       class ExcludeeIterator
@@ -415,16 +408,14 @@ module Card::Diff
         end
 
         def next
-          if @index < @list.size and @list[@index][:chunk_index] == @chunk_index
+          if @index < @list.size && @list[@index][:chunk_index] == @chunk_index
             res = @list[@index]
             @index += 1
-            @chunk_index +=1
+            @chunk_index += 1
             res
           end
         end
       end
-
     end
   end
 end
-

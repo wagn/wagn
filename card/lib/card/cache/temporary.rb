@@ -2,11 +2,11 @@ class Card::Cache::Temporary
   attr_reader :store
 
   def initialize
-    @store = Hash.new
+    @store = {}
   end
 
   def read key
-    return unless @store.has_key? key
+    return unless @store.key? key
     @store[key]
   end
 
@@ -14,8 +14,8 @@ class Card::Cache::Temporary
     @store[key] = value
   end
 
-  def fetch key, &block
-    read(key) || write(key, block.call)
+  def fetch key, &_block
+    read(key) || write(key, yield)
   end
 
   def delete key
@@ -33,6 +33,6 @@ class Card::Cache::Temporary
   end
 
   def exist? key
-    @store.has_key? key
+    @store.key? key
   end
 end

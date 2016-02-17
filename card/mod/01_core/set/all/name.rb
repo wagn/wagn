@@ -4,9 +4,7 @@ module ClassMethods
   def uniquify_name name, rename=:new
     return name unless Card.exists?(name)
     uniq_name = "#{name} 1"
-    while Card.exists?(uniq_name)
-      uniq_name.next!
-    end
+    uniq_name.next! while Card.exists?(uniq_name)
     if rename == :old
       # name conflict resolved; original name can be used
       Card[name].update_attributes! name: uniq_name,
@@ -168,8 +166,8 @@ def repair_key
       key_blocker.save
     end
 
-    saved =   (self.key      = correct_key) && self.save!
-    saved ||= (self.cardname = current_key) && self.save!
+    saved =   (self.key      = correct_key) && save!
+    saved ||= (self.cardname = current_key) && save!
 
     if saved
       descendants.each(&:repair_key)
@@ -183,7 +181,6 @@ rescue
   Rails.logger.info "BROKE ATTEMPTING TO REPAIR BROKEN KEY: #{key}"
   self
 end
-
 
 event :set_autoname, :prepare_to_validate, on: :create do
   if name.blank? && (autoname_card = rule_card(:autoname))

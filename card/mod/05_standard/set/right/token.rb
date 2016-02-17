@@ -1,6 +1,6 @@
 include All::Permissions::Accounts
 
-DURATIONS = 'second|minute|hour|day|week|month|year'
+DURATIONS = 'second|minute|hour|day|week|month|year'.freeze
 
 card_accessor :expiration
 

@@ -4,7 +4,7 @@
 }
 
 def label name
-  %{All "+#{name}" cards}
+  %(All "+#{name}" cards)
 end
 
 def prototype_args anchor
@@ -16,5 +16,5 @@ def anchor_name card
 end
 
 def follow_label name
-   %{all "+#{name}s"}
+  %(all "+#{name}s")
 end

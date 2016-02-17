@@ -88,7 +88,7 @@ def set_options
   # have the option to create rules based on arbitrary narrower sets, though
   # narrower sets will always apply to whatever prototype we create
 
-  return res, fallback_set
+  [res, fallback_set]
 end
 
 def set_prototype

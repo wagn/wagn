@@ -22,7 +22,7 @@ module Card::Chunk
         Card::Query::OPERATORS.keys +
         Card::Query::ATTRIBUTES.keys +
         Card::Query::CONJUNCTIONS.keys +
-        ['desc', 'asc', 'count']
+        %w(desc asc count)
       ).map(&:to_name)
     )
 

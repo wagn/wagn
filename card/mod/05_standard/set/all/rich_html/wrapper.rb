@@ -4,7 +4,7 @@ format :html do
     options_hash = {}
 
     if @context_names.present?
-      options_hash['name_context'] = @context_names.map( &:key ) * ','
+      options_hash['name_context'] = @context_names.map(&:key) * ','
     end
 
     options_hash[:subslot] = 'true' if args[:subslot]
@@ -14,41 +14,41 @@ format :html do
       hash
     end
 
-    JSON( options_hash )
+    JSON(options_hash)
   end
 
-  def wrap args = {}
+  def wrap args={}
     @slot_view = @current_view
     classes = [
-        ( 'card-slot' unless args[:no_slot] ),
-        "#{ @current_view }-view",
-        ( args[:slot_class] if args[:slot_class] ),
-        ( "STRUCTURE-#{args[:structure].to_name.key}" if args[:structure]),
-        card.safe_set_keys
-      ].compact.join ' '
+      ('card-slot' unless args[:no_slot]),
+      "#{@current_view}-view",
+      (args[:slot_class] if args[:slot_class]),
+      ("STRUCTURE-#{args[:structure].to_name.key}" if args[:structure]),
+      card.safe_set_keys
+    ].compact.join ' '
     data = {
-        'card-id'   => card.id,
-        'card-name' => h(card.name),
-        'slot'      => html_escape_except_quotes(slot_options( args ))
-      }
+      'card-id' => card.id,
+      'card-name' => h(card.name),
+      'slot'      => html_escape_except_quotes(slot_options(args))
+    }
     div =
       content_tag :div, output(yield).html_safe,
-      id: card.cardname.url_key, data: data, style: h(args[:style]), class: classes
+                  id: card.cardname.url_key, data: data, style: h(args[:style]), class: classes
 
-    if params[:debug] == 'slot' && !tagged( @current_view, :no_wrap_comments )
+    if params[:debug] == 'slot' && !tagged(@current_view, :no_wrap_comments)
       name = h card.name
       space = '  ' * @depth
-      %{<!--\n\n#{ space }BEGIN SLOT: #{ name }\n\n-->#{ div }<!--\n\n#{space}END SLOT: #{ name }\n\n-->}
+      %(<!--\n\n#{space}BEGIN SLOT: #{name}\n\n-->#{div}<!--\n\n#{space}END SLOT: #{name}\n\n-->)
     else
       div
     end
   end
 
   def wrap_body args={}
-    css_classes = [ 'card-body' ]
+    css_classes = ['card-body']
     css_classes << args[:body_class]                      if args[:body_class]
-    css_classes += [ 'card-content', card.safe_set_keys ] if args[:content]
-    content_tag :div, class: css_classes.compact*' ' do
+    css_classes += ['card-content', card.safe_set_keys] if args[:content]
+    content_tag :div, class: css_classes.compact * ' ' do
       yield args
     end
   end
@@ -67,13 +67,13 @@ format :html do
       show_subheader = show_view?(:toolbar, args.merge(default_visibility: :hide)) && @current_view != :related && @current_view != :open
       wrap args do
         [
-          _optional_render( :menu, args ),
+          _optional_render(:menu, args),
           panel(args) do
             [
-              _optional_render( :header, args, :show),
-              _optional_render( :subheader, args,(show_subheader ? :show : :hide)),
-              _optional_render( :help, args.merge(help_class: 'alert alert-info'), :hide),
-              wrap_body(args) { output( block.call(args) ) } ,
+              _optional_render(:header, args, :show),
+              _optional_render(:subheader, args, (show_subheader ? :show : :hide)),
+              _optional_render(:help, args.merge(help_class: 'alert alert-info'), :hide),
+              wrap_body(args) { output(yield(args)) }
             ]
           end
         ]
@@ -84,13 +84,13 @@ format :html do
   def subframe args={}
     wrap args do
       [
-        _optional_render( :menu, args.merge(optional_horizontal_menu: :hide) ),
-        _optional_render( :subheader, args, :show),
-        _optional_render( :help, args.merge(help_class: 'alert alert-info'), :hide),
+        _optional_render(:menu, args.merge(optional_horizontal_menu: :hide)),
+        _optional_render(:subheader, args, :show),
+        _optional_render(:help, args.merge(help_class: 'alert alert-info'), :hide),
         panel(args) do
           [
-            _optional_render( :header, args, :hide),
-            wrap_body(args) { output( yield args ) } ,
+            _optional_render(:header, args, :hide),
+            wrap_body(args) { output(yield args) }
           ]
         end
       ]
@@ -102,40 +102,39 @@ format :html do
     form_opts[:hidden] = args.delete(:hidden)
     frame args do
       card_form action, form_opts do
-        output( yield args )
+        output(yield args)
       end
     end
   end
-
 
   # alert_types: 'success', 'info', 'warning', 'danger'
   def alert alert_type, args={}
     css_class = "alert alert-#{alert_type} "
     css_class += 'alert-dismissible ' if args[:dismissible]
     css_class += args[:alert_class] if args[:alert_class]
-    close_button = args[:dismissible] ? %{
+    close_button = args[:dismissible] ? %(
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-      } : ''
+      ) : ''
     content_tag :div, class: css_class, role: 'alert' do
-      close_button + output( yield args)
+      close_button + output(yield args)
     end
   end
 
-  def wrap_main(content)
-    return content if Env.ajax? || params[:layout]=='none'
-    %{<div id="main">#{content}</div>}
+  def wrap_main content
+    return content if Env.ajax? || params[:layout] == 'none'
+    %(<div id="main">#{content}</div>)
   end
 
   def wrap_with tag, content_or_args={}, html_args={}
     if block_given?
-      content_tag( tag, content_or_args ) do
-        output( yield ).html_safe
+      content_tag(tag, content_or_args) do
+        output(yield).html_safe
       end
     else
-      content_tag( tag, html_args ) do
-        output( content_or_args ).html_safe
+      content_tag(tag, html_args) do
+        output(content_or_args).html_safe
       end
     end
   end

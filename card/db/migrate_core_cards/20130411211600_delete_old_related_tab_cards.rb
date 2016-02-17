@@ -13,6 +13,6 @@ class DeleteOldRelatedTabCards < Card::CoreMigration
       c = Card[name]
       c.codename = nil
       c.delete!
-    end      
+    end
   end
 end

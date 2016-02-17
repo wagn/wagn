@@ -8,9 +8,9 @@ end
 format :html do
   include Html::HtmlFormat
 
-  view :core do |args|
+  view :core do |_args|
     with_nest_mode :template do
-      process_content ::CodeRay.scan( _render_raw, :html ).div
+      process_content ::CodeRay.scan(_render_raw, :html).div
     end
   end
 end

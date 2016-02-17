@@ -1,10 +1,9 @@
 
 format :html do
-
-  view :raw do |args|
+  view :raw do |_args|
     input_args = { class: 'navbox form-control' }
     @@placeholder ||= begin
-      p = Card["#{Card[:navbox].name}+*placeholder"] and p.raw_content
+      (p = Card["#{Card[:navbox].name}+*placeholder"]) && p.raw_content
     end
     input_args[:placeholder] = @@placeholder if @@placeholder
 
@@ -22,12 +21,9 @@ format :html do
   end
 
   view :core do |args|
-    tag_args = { method: 'get', role: 'search', class: "nodblclick navbox-form #{args[:navbar_class]}"}
+    tag_args = { method: 'get', role: 'search', class: "nodblclick navbox-form #{args[:navbar_class]}" }
     form_tag Card.path_setting('/:search'), tag_args do
       _render_raw args
     end
-
   end
-
 end
-

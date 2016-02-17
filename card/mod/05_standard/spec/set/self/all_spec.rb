@@ -28,18 +28,16 @@ describe Card::Set::Self::All do
       end
     end
 
-=begin
-    it 'should be trigger reference repair' do
-      Card::Auth.as_bot do
-        a = Card['A']
-        puts a.references_out.count
-        Card::Env.params[:task] = :repair_references
-        puts a.references_out.count
-        @all.update_attributes({})
-        puts a.references_out.count
-
-      end
-    end
-=end
+    #     it 'should be trigger reference repair' do
+    #       Card::Auth.as_bot do
+    #         a = Card['A']
+    #         puts a.references_out.count
+    #         Card::Env.params[:task] = :repair_references
+    #         puts a.references_out.count
+    #         @all.update_attributes({})
+    #         puts a.references_out.count
+    #
+    #       end
+    #     end
   end
 end

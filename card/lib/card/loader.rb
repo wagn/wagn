@@ -21,9 +21,7 @@ class Card
         load_formats
         load_sets
 
-        if ENV['RAILS_ENV'] == 'development'
-          update_machine_output_hack
-        end
+        update_machine_output_hack if ENV['RAILS_ENV'] == 'development'
       end
 
       def update_machine_output_hack
@@ -51,7 +49,7 @@ class Card
         return unless (mtime_output = style.machine_output_card.updated_at)
         style.machine_input_card.item_cards.each do |i_card|
           next unless i_card.codename
-          ['03_machines', '06_bootstrap'].each do |mod|
+          %w(03_machines 06_bootstrap).each do |mod|
             style_dir = "#{Cardio.gem_root}/mod/#{mod}/lib/stylesheets"
             file_path = "#{style_dir}/#{i_card.codename}.scss"
             next unless File.exist? file_path
@@ -73,11 +71,11 @@ class Card
       def load_layouts
         mod_dirs.inject({}) do |hash, mod|
           dirname = "#{mod}/layout"
-          if File.exists? dirname
+          if File.exist? dirname
             Dir.foreach(dirname) do |filename|
               next if filename =~ /^\./
               hash[filename.gsub /\.html$/, ''] =
-                File.read([dirname, filename] * '/')
+                File.read([dirname, filename].join('/'))
             end
           end
           hash
@@ -97,9 +95,7 @@ class Card
       private
 
       def load_set_patterns
-        if rewrite_tmp_files?
-          generate_set_pattern_tmp_files
-        end
+        generate_set_pattern_tmp_files if rewrite_tmp_files?
         load_dir "#{Card.paths['tmp/set_pattern'].first}/*.rb"
       end
 
@@ -108,15 +104,14 @@ class Card
         seq = 100
         mod_dirs.each do |mod|
           dirname = "#{mod}/set_pattern"
-          if Dir.exists? dirname
-            Dir.entries(dirname).sort.each do |filename|
-              m = filename.match(/^(\d+_)?([^\.]*).rb/)
-              key = m && m[2]
-              next unless key
-              filename = [dirname, filename] * '/'
-              SetPattern.write_tmp_file key, filename, seq
-              seq = seq + 1
-            end
+          next unless Dir.exist? dirname
+          Dir.entries(dirname).sort.each do |filename|
+            m = filename.match(/^(\d+_)?([^\.]*).rb/)
+            key = m && m[2]
+            next unless key
+            filename = [dirname, filename].join('/')
+            SetPattern.write_tmp_file key, filename, seq
+            seq += 1
           end
         end
       end
@@ -146,19 +141,17 @@ class Card
             tmp_filename = "#{mod_tmp_dir}/#{rel_filename}"
             Set.write_tmp_file abs_filename, tmp_filename, rel_filename
           end
-          seq = seq + 1
+          seq += 1
         end
       end
 
       def load_tmp_set_modules
         patterns = Card.set_patterns.reverse.map(&:pattern_code)
-          .unshift 'abstract'
+                       .unshift 'abstract'
         Dir.glob("#{Card.paths['tmp/set'].first}/*").sort.each do |tmp_mod|
           patterns.each do |pattern|
             pattern_dir = "#{tmp_mod}/#{pattern}"
-            if Dir.exists? pattern_dir
-              load_dir "#{pattern_dir}/**/*.rb"
-            end
+            load_dir "#{pattern_dir}/**/*.rb" if Dir.exist? pattern_dir
           end
         end
       end
@@ -173,9 +166,7 @@ class Card
       def prepare_tmp_dir path
         return unless rewrite_tmp_files?
         p = Card.paths[path]
-        if p.existent.first
-          FileUtils.rm_rf p.first, secure: true
-        end
+        FileUtils.rm_rf p.first, secure: true if p.existent.first
         Dir.mkdir p.first
       end
 

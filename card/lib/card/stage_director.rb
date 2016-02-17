@@ -36,8 +36,8 @@ class Card
     attr_accessor :prior_store, :act, :card, :stage, :parent, :main,
                   :subdirectors
     attr_reader :running
-    alias_method :running?, :running
-    alias_method :main?, :main
+    alias running? running
+    alias main? main
 
     def initialize card, opts={}, main=true
       @card = card
@@ -110,7 +110,7 @@ class Card
     def need_act
       act_director = main_director
       unless act_director
-        fail Card::Error, 'act requested without a main stage director'
+        raise Card::Error, 'act requested without a main stage director'
       end
       act_director.act ||= Card::Act.create(ip_address: Env.ip)
       @card.current_act = @act = act_director.act
@@ -172,7 +172,7 @@ class Card
     # :finalize stages
     def store &save_block
       if main? && !block_given?
-        fail Card::Error, 'need block to store main card'
+        raise Card::Error, 'need block to store main card'
       end
       # the block is the ActiveRecord block from the around save callback that
       # saves the card

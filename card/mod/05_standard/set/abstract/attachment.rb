@@ -42,9 +42,9 @@ event :assign_attachment_on_update, :initialize,
       when:  proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@action_id_of_cached_upload))
     uploaded_file =
-       with_selected_action_id(action.id) do
-         attachment.file
-       end
+      with_selected_action_id(action.id) do
+        attachment.file
+      end
     assign_attachment uploaded_file, action.comment
   end
 end
@@ -136,17 +136,11 @@ def upload_cache_card
 end
 
 # action id of the cached upload
-def action_id_of_cached_upload= value
-  @action_id_of_cached_upload = value
-end
+attr_writer :action_id_of_cached_upload
 
-def action_id_of_cached_upload
-  @action_id_of_cached_upload
-end
+attr_reader :action_id_of_cached_upload
 
-def empty_ok= value
-  @empty_ok = value
-end
+attr_writer :empty_ok
 
 def empty_ok?
   @empty_ok
@@ -197,9 +191,7 @@ def mod_dir
   mod = @mod || mod_file?
   Card.paths['mod'].to_a.each do |mod_path|
     dir = File.join(mod_path, mod, 'file', codename)
-    if Dir.exist? dir
-      return dir
-    end
+    return dir if Dir.exist? dir
   end
 end
 
@@ -209,7 +201,7 @@ def mod_file?
   # when db_content was changed assume that it's no longer a mod file
   elsif !db_content_changed? && content.present?
     case content
-    when %r{^:[^/]+/([^.]+)} then $1     # current mod_file format
+    when %r{^:[^/]+/([^.]+)} then Regexp.last_match(1) # current mod_file format
     when /^\~/               then false  # current id file format
     else
       if (lines = content.split("\n")) && (lines.size == 4)
@@ -230,15 +222,12 @@ end
 
 def clear_upload_cache_dir_for_new_cards
   Dir.entries(tmp_upload_dir).each do |filename|
-    if filename =~/^\d+/
-      path = File.join(tmp_upload_dir, filename )
-      if Card.older_than_five_days? File.ctime(path)
-        FileUtils.rm path
-      end
+    if filename =~ /^\d+/
+      path = File.join(tmp_upload_dir, filename)
+      FileUtils.rm path if Card.older_than_five_days? File.ctime(path)
     end
   end
 end
-
 
 def delete_files_for_action action
   with_selected_action_id(action.id) do
@@ -272,7 +261,7 @@ end
 
 def attachment_format ext
   if ext.present? && attachment && (original_ext = attachment.extension)
-    if['file', original_ext].member? ext
+    if ['file', original_ext].member? ext
       original_ext
     elsif (exts = MIME::Types[attachment.content_type])
       if exts.find { |mt| mt.extensions.member? ext }

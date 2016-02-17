@@ -188,7 +188,7 @@ def direct_follower_ids _args={}
     set_names.each do |set_name|
       set_card = Card.fetch(set_name)
       set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
-        unless result.include?(user_id) && follow_rule_applies?(user_id)
+        if !result.include?(user_id) && follow_rule_applies?(user_id)
           result << user_id
         end
       end

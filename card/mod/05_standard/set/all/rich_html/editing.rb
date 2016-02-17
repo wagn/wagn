@@ -128,7 +128,7 @@ format :html do
       options = 'You may choose to <em>update or ignore</em> the referers.'
     end
     effects = effects.map { |effect| "<li>#{effect}</li>" }
-    "<h6>This change will...</h6><ul>#{effects}</ul><p>#{options}</p>"
+    "<h6>This change will...</h6><ul>#{effects.join('')}</ul><p>#{options}</p>"
   end
 
   def default_edit_name_args args

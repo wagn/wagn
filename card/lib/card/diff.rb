@@ -259,8 +259,8 @@ module Card::Diff
         when '+'
           plus new_element
         when '!'
-          minus  old_element
-          plus new_elemen
+          minus old_element
+          plus new_element
         else
           write_unchanged new_element
           @excludees[:new].word_step
@@ -282,20 +282,24 @@ module Card::Diff
         # (index in word list, html_tag)
         list = split_and_preprocess text
         if @exclude_pattern
-          list.each_with_index.each_with_object([[], []]) do |pair, res|
-            element, index = pair
-            if element.match @disjunction_pattern
-              res[1] << { chunk_index: index, element: element,
-                          type: :disjunction }
-            elsif element.match @exclude_pattern
-              res[1] << { chunk_index: index, element: element,
-                          type: :excludee }
-            else
-              res[0] << element
-            end
-          end
+          check_exclude_and_disjunction_pattern list
         else
           [list, []]
+        end
+      end
+
+      def check_exclude_and_disjunction_pattern list
+        list.each_with_index.each_with_object([[], []]) do |pair, res|
+          element, index = pair
+          if element.match @disjunction_pattern
+            res[1] << { chunk_index: index, element: element,
+                        type: :disjunction }
+          elsif element.match @exclude_pattern
+            res[1] << { chunk_index: index, element: element, type:
+                        :excludee }
+          else
+            res[0] << element
+          end
         end
       end
 

@@ -58,7 +58,7 @@ class Card
     end
 
     def process_each_chunk &block
-      each_chunk { |chunk| chunk.process_chunk(&block)}
+      each_chunk { |chunk| chunk.process_chunk(&block) }
       self
     end
 
@@ -191,9 +191,8 @@ class Card
         if (match = rest_value.match(re))
           rest_value = match[0]
           if attr == 'class'
-            rest_value = rest_value.split(/\s+/).select do |s|
-                           s =~ /^w-/i
-                         end.join(' ')
+            rest_value =
+              rest_value.split(/\s+/).select { |s| s =~ /^w-/i }.join(' ')
           end
         end
         [q, rest_value]

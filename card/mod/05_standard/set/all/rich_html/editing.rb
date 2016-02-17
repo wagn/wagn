@@ -127,7 +127,7 @@ format :html do
       effects << "affect at least #{count} #{refs} to \"#{card.name}\""
       options = 'You may choose to <em>update or ignore</em> the referers.'
     end
-    effects = effects.map { |effect| "<li>#{effect}</li>" }
+    effects = effects.map { |effect| "<li>#{effect}</li>" }.join('')
     "<h6>This change will...</h6><ul>#{effects}</ul><p>#{options}</p>"
   end
 

@@ -152,7 +152,8 @@ class WagnGenerator < Rails::Generators::AppBase
   def seed_data
     if options['interactive']
 
-      require File.join destination_root, 'config', 'application'  # need this for Rails.env
+      # need this for Rails.env
+      require File.join destination_root, 'config', 'application'
       menu_options = ActiveSupport::OrderedHash.new
 
       menu_options['d'] = {

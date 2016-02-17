@@ -166,7 +166,6 @@ class Card
       if ok?(:read) && !(was_already_locked = locked?)
         Auth.as_bot do
           lock!
-          binding.pry
           update_input_card
           run_machine
         end

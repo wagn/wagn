@@ -60,6 +60,7 @@ class Card
       def delete director
         return unless @directors
         @directors.delete director.card
+        director.delete
       end
 
       def to_s

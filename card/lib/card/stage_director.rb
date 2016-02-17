@@ -58,11 +58,14 @@ class Card
     end
 
     def unregister
+      Card::DirectorRegister.delete self
+    end
+
+    def delete
       @card.director = nil
-      @subdirectors = nil
+      @subdirectors.clear
       @stage = nil
       @action = nil
-      Card::DirectorRegister.delete self
     end
 
     def validation_phase
@@ -79,7 +82,6 @@ class Card
       # for a subcard :prepare_to_store was already executed
       # don't execute it twice
       catch_up_to_stage :prepare_to_store
-      binding.pry
       run_single_stage :store, &block
       run_single_stage :finalize
     ensure
@@ -126,9 +128,13 @@ class Card
     end
 
     def to_s
-      subs = subdirectors.map(&:card)
-                         .map { |card| "  #{card.name}" }.join "\n"
-      "#{@card.name}\n#{subs}"
+      str = @card.name.to_s.clone
+      if @subdirectors
+        subs = subdirectors.map(&:card)
+                 .map { |card| "  #{card.name}" }.join "\n"
+        str << "\n#{subs}"
+      end
+      str
     end
 
     private
@@ -233,6 +239,11 @@ class Card
   class StageSubdirector < StageDirector
     def initialize card, opts={}
       super card, opts, false
+    end
+
+    def delete
+      @parent.subdirectors.delete self if @parent
+      super
     end
   end
 end

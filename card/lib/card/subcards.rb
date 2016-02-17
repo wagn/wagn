@@ -27,6 +27,9 @@ class Card
 
     def clear
       @keys.each do |key|
+        if (subcard = fetch_subcard key)
+          Card::DirectorRegister.delete subcard.director
+        end
         Card.cache.soft.delete key
       end
       @keys = ::Set.new
@@ -54,6 +57,7 @@ class Card
       key = absolutize_subcard_name(key).key unless @keys.include?(key)
       @keys.delete key
       removed_card = fetch_subcard key
+      Card::DirectorRegister.delete removed_card.director
       Card.cache.soft.delete key
       removed_card
     end
@@ -97,7 +101,8 @@ class Card
 
     def rename old_name, new_name
       return unless @keys.include? old_name.to_name.key
-      # FIXME: something should happen here
+      @keys.delete old_name.to_name.key
+      @keys << new_name.to_name.key
     end
 
     def << value

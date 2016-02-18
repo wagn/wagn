@@ -55,8 +55,8 @@ def name= newname
     end
   end
 
-
   write_attribute :name, cardname.s
+  Card.write_to_soft_cache self
 end
 
 def cardname

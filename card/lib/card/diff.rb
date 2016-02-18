@@ -87,72 +87,32 @@ module Card::Diff
       @adds_cnt = @lcs.adds_cnt
     end
 
-    class LCS
-      attr_reader :adds_cnt, :dels_cnt
-      def initialize old_text, new_text, opts, _summary=nil
-        # regex; remove match completely from diff
-        @reject_pattern  = opts[:reject]
-
-        # regex; put back to the result after diff
-        @exclude_pattern = opts[:exclude]
-
-        @preprocess      = opts[:preprocess]  # block; called with every word
-        @postprocess     = opts[:postprocess] # block; called with complete diff
-
-        @adds_cnt = 0
-        @dels_cnt = 0
-
-        @splitters = %w( <[^>]+>  \[\[[^\]]+\]\]  \{\{[^}]+\}\}  \s+ )
-        @disjunction_pattern = /^\s/
-        @summary ||= Summary.new opts[:summary]
-        if !old_text
-          list = split_and_preprocess(new_text)
-          if @exclude_pattern
-            list = list.reject { |word| word.match @exclude_pattern }
-          end
-          text = postprocess list.join
-          @result = added_chunk text
-          @summary.add text
-        else
-          init_diff old_text, new_text
-          run_diff
-        end
-      end
-
-      def summary
-        @summary.result
-      end
-
-      def complete
-        @result
-      end
-
-      private
-
-      def init_diff old_text, new_text
+    class WordProcessor
+      attr_reader :result, :summary, :dels_cnt, :adds_cnt
+      def initialize old_words, new_words, old_excludees, new_excludees
         @adds = []
         @dels = []
+        @adds_cnt = 0
+        @dels_cnt = 0
         @result = ''
-        old_words, old_ex = separate_comparables_from_excludees old_text
-        new_words, new_ex = separate_comparables_from_excludees new_text
-
+        @summary ||= Summary.new opts[:summary]
         @words = {
           old: old_words,
           new: new_words
         }
         @excludees = {
-          old: ExcludeeIterator.new(old_ex),
-          new: ExcludeeIterator.new(new_ex)
+          old: ExcludeeIterator.new(old_excludees),
+          new: ExcludeeIterator.new(new_excludees)
         }
       end
 
-      def run_diff
+      def run
         prev_action = nil
         ::Diff::LCS.traverse_balanced(@words[:old], @words[:new]) do |word|
           if prev_action
             if prev_action != word.action &&
-               !(prev_action == '-' && word.action == '!') &&
-               !(prev_action == '!' && word.action == '+')
+              !(prev_action == '-' && word.action == '!') &&
+              !(prev_action == '!' && word.action == '+')
 
               # delete and/or add section stops here; write changes to result
               write_dels
@@ -186,8 +146,10 @@ module Card::Diff
         write_adds
         write_excludees
 
-        @result = postprocess @result
+        @result
       end
+
+      private
 
       def added_chunk text, count=true
         @adds_cnt += 1 if count
@@ -276,6 +238,61 @@ module Card::Diff
         @dels << old_element
         @excludees[:old].word_step
       end
+    end
+
+    class LCS
+      attr_reader :adds_cnt, :dels_cnt
+      def initialize old_text, new_text, opts, _summary=nil
+        # regex; remove match completely from diff
+        @reject_pattern  = opts[:reject]
+
+        # regex; put back to the result after diff
+        @exclude_pattern = opts[:exclude]
+
+        @preprocess      = opts[:preprocess]  # block; called with every word
+        @postprocess     = opts[:postprocess] # block; called with complete diff
+
+        @adds_cnt = 0
+        @dels_cnt = 0
+
+        @splitters = %w( <[^>]+>  \[\[[^\]]+\]\]  \{\{[^}]+\}\}  \s+ )
+        @disjunction_pattern = /^\s/
+
+        if old_text
+          run_diff old_text, new_text
+        else
+          list = split_and_preprocess(new_text)
+          if @exclude_pattern
+            list = list.reject { |word| word.match @exclude_pattern }
+          end
+          text = postprocess list.join
+          @result = added_chunk text
+          @summary ||= Summary.new opts[:summary]
+          @summary.add text
+        end
+      end
+
+      def summary
+        @summary.result
+      end
+
+      def complete
+        @result
+      end
+
+      private
+
+      def run_diff
+        old_words, old_ex = separate_comparables_from_excludees old_text
+        new_words, new_ex = separate_comparables_from_excludees new_text
+        wp = WordProcessor.new(old_words, new_words, old_ex, new_ex)
+        @result = wp.run
+        @result = postprocess @result
+        @summary = wp.summary
+        @dels_cnt = wp.dels_cnt
+        @adds_cnt = wp.adds_cnt
+      end
+
 
       def separate_comparables_from_excludees text
         # return two arrays, one with all words, one with pairs
@@ -293,10 +310,10 @@ module Card::Diff
           element, index = pair
           if element.match @disjunction_pattern
             res[1] << { chunk_index: index, element: element,
-                        type: :disjunction }
+              type: :disjunction }
           elsif element.match @exclude_pattern
             res[1] << { chunk_index: index, element: element, type:
-                        :excludee }
+              :excludee }
           else
             res[0] << element
           end

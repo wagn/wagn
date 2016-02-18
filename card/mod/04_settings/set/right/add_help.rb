@@ -4,8 +4,8 @@ format :html do
       super args
     end
   end
-  
-  view :closed_content do |args|
+
+  view :closed_content do |_args|
     "#{_render_type} : #{_render_raw}"
   end
 end

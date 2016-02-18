@@ -30,19 +30,19 @@ format :html do
   end
 
   def email_warning
-    %{
+    %(
       Email delivery is turned off.
       Change settings in config/application.rb to send sign up notifications.
-    }
+    )
   end
 
   def recaptcha_warning
     warning =
       if Card::Env.localhost?
-        %{Your captcha is currently working with temporary settings. This is fine for a local installation, but you will need new recaptcha keys if you want to make this site public.}
+        %(Your captcha is currently working with temporary settings. This is fine for a local installation, but you will need new recaptcha keys if you want to make this site public.)
       else
-        process_content(%{You are configured to use [[*captcha]], but for that to work you need new recaptcha keys.
-          })
+        process_content(%(You are configured to use [[*captcha]], but for that to work you need new recaptcha keys.
+          ))
       end
     <<-HTML
       <p>

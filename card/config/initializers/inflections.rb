@@ -5,7 +5,7 @@
 ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'grave', 'graveyard'
   inflect.uncountable 'this'
-#  inflect.uncountable 'plus'
+  #  inflect.uncountable 'plus'
   inflect.uncountable 'anonymous'
   inflect.uncountable 's'
   inflect.singular(/(ss)$/i, '\1')

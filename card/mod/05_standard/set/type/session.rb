@@ -33,4 +33,3 @@ format :html do
     args[:item] = :name
   end
 end
-

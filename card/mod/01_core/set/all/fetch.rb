@@ -137,7 +137,7 @@ module ClassMethods
 
   def validate_fetch_opts! opts
     return unless opts[:new] && opts[:skip_virtual]
-    fail Card::Error, 'fetch called with new args and skip_virtual'
+    raise Card::Error, 'fetch called with new args and skip_virtual'
   end
 
   def cache

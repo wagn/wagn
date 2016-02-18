@@ -39,7 +39,7 @@ class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
                         "[[+private key]]\n" \
                         '[[+proxy]]'
     Card::Cache.reset_all
-    ['public_key', 'private_key', 'proxy'].each do |name|
+    %w(public_key private_key proxy).each do |name|
       Card.create!(
         name: "#{Card[:recaptcha_settings].name}+#{name.tr('_', ' ')}",
         codename: "recaptcha_#{name}"

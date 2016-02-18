@@ -85,12 +85,12 @@ format :html do
     args[:optional_help] ||= :show
     args[:optional_toolbar] ||= :show
 
-    args[:buttons] ||= %{
+    args[:buttons] ||= %(
       #{submit_button class: 'submit-button'}
       #{cancel_button href: (args[:cancel_path] || path),
                       class: 'cancel-button',
                       'data-slot-selector' => args[:cancel_slot_selector]}
-    }
+    )
   end
 
   view :edit_name, perms: :update do |args|
@@ -127,7 +127,7 @@ format :html do
       effects << "affect at least #{count} #{refs} to \"#{card.name}\""
       options = 'You may choose to <em>update or ignore</em> the referers.'
     end
-    effects = effects.map { |effect| "<li>#{effect}</li>" }
+    effects = effects.map { |effect| "<li>#{effect}</li>" }.join('')
     "<h6>This change will...</h6><ul>#{effects}</ul><p>#{options}</p>"
   end
 

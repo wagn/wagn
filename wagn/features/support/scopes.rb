@@ -22,8 +22,8 @@ module ScopeHelpers
       '#main > .card-slot > .card-frame'
 
     else
-      raise "Can't find mapping from \"#{section}\" to a scope.\n" +
-        "Now, go and add a mapping in #{__FILE__}"
+      raise "Can't find mapping from \"#{section}\" to a scope.\n" \
+            "Now, go and add a mapping in #{__FILE__}"
     end
   end
 end

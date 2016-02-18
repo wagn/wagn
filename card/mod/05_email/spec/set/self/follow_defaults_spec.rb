@@ -12,7 +12,7 @@ describe Card::Set::Self::FollowDefaults do
 
     it 'updates follow rules of users' do
       ca = Card.fetch 'A'
-      expect(ca.follower_names).to include "Joe User"
+      expect(ca.follower_names).to include 'Joe User'
     end
   end
 end

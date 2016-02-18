@@ -26,7 +26,7 @@ class AddStyleCards < Card::CoreMigration
 
     # PERMISSIONS FOR CSS AND SCSS TYPES
 
-    ['CSS', 'SCSS', 'Skin'].each do |type|
+    %w(CSS SCSS Skin).each do |type|
       [:create, :update, :delete].each do |action|
         Card.create! name: "#{type}+#{Card[:type].name}+#{Card[action].name}",
                      content: "[[#{Card[:administrator].name}]]"
@@ -53,10 +53,10 @@ class AddStyleCards < Card::CoreMigration
 
     simple_styles = []
     classic_styles = []
-    %w{
+    %w(
       jquery-ui-smoothness.css functional.scss standard.scss right_sidebar.scss
       common.scss classic_cards.scss traditional.scss
-    }.each_with_index do |sheet, index|
+    ).each_with_index do |sheet, index|
       name, type = sheet.split '.'
       name.tr! '_', ' '
       index < 5 ? simple_styles << name : classic_styles << name

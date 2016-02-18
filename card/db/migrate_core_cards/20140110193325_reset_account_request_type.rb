@@ -7,5 +7,4 @@ class ResetAccountRequestType < Card::CoreMigration
       arcard.update_attributes type_id: Card::CardtypeID
     end
   end
-
 end

@@ -80,7 +80,7 @@ class Card
         when String then
           val.split(/[\s,]+/)
         else
-          fail Card::Error, "bad show/hide argument: #{val}"
+          raise Card::Error, "bad show/hide argument: #{val}"
         end.map { |view| canonicalize_view view }
       end
 
@@ -94,7 +94,7 @@ class Card
           when Array then
             a[0].merge a[1]
           else
-            fail Card::Error, "bad render args: #{a}"
+            raise Card::Error, "bad render args: #{a}"
           end
 
         default_method = "default_#{view}_args"
@@ -103,12 +103,12 @@ class Card
       end
 
       def rescue_view e, view
-        fail e if Rails.env =~ /^cucumber|test$/
+        raise e if Rails.env =~ /^cucumber|test$/
         Rails.logger.info "\nError rendering #{error_cardname} / #{view}: "\
                         "#{e.class} : #{e.message}"
         Card::Error.current = e
         card.notable_exception_raised
-        fail e if (debug = Card[:debugger]) && debug.content == 'on'
+        raise e if (debug = Card[:debugger]) && debug.content == 'on'
         rendering_error e, view
       end
 

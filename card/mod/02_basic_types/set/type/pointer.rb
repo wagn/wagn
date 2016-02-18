@@ -53,7 +53,7 @@ end
 
 format :html do
   view :core do |args|
-    %{<div class="pointer-list">#{render_pointer_items args}</div>}
+    %(<div class="pointer-list">#{render_pointer_items args}</div>)
   end
 
   view :closed_content do |args|
@@ -126,7 +126,7 @@ format :html do
     HTML
   end
 
-  view :checkbox do |args|
+  view :checkbox do |_args|
     options = card.option_names.map do |option_name|
       checked = card.item_names.include?(option_name)
       label = ((o_card = Card.fetch(option_name)) && o_card.label) || option_name
@@ -134,14 +134,14 @@ format :html do
       description = pointer_option_description option_name
       <<-HTML
         <div class="pointer-checkbox">
-          #{ check_box_tag "pointer_checkbox", option_name, checked, id: id, class: 'pointer-checkbox-button' }
+          #{check_box_tag 'pointer_checkbox', option_name, checked, id: id, class: 'pointer-checkbox-button'}
           <label for="#{id}">#{label}</label>
-          #{ %{<div class="checkbox-option-description">#{ description }</div>} if description }
+          #{%(<div class="checkbox-option-description">#{description}</div>) if description}
         </div>
       HTML
     end.join "\n"
 
-    %{<div class="pointer-checkbox-list">#{options}</div>}
+    %(<div class="pointer-checkbox-list">#{options}</div>)
   end
 
   view :multiselect do |_args|
@@ -152,63 +152,56 @@ format :html do
     )
   end
 
-  view :radio do |args|
+  view :radio do |_args|
     input_name = "pointer_radio_button-#{card.key}"
     options = card.option_names.map do |option_name|
-      checked = (option_name==card.item_names.first)
+      checked = (option_name == card.item_names.first)
       id = "pointer-radio-#{option_name.to_name.key}"
       label = ((o_card = Card.fetch(option_name)) && o_card.label) || option_name
       description = pointer_option_description option_name
       <<-HTML
         <li class="pointer-radio radio">
-          #{ radio_button_tag input_name, option_name, checked, id: id, class: 'pointer-radio-button' }
-          <label for="#{id}">#{ label }</label>
-          #{ %{<div class="radio-option-description">#{ description }</div>} if description }
+          #{radio_button_tag input_name, option_name, checked, id: id, class: 'pointer-radio-button'}
+          <label for="#{id}">#{label}</label>
+          #{%(<div class="radio-option-description">#{description}</div>) if description}
         </li>
       HTML
     end.join("\n")
 
-    %{<ul class="pointer-radio-list">#{options}</ul>}
+    %(<ul class="pointer-radio-list">#{options}</ul>)
   end
 
-  view :select do |args|
-    options = [["-- Select --",""]] + card.option_names.map{ |x| [x,x]}
-    select_tag("pointer_select",
-      options_for_select(options, card.item_names.first),
-      class: 'pointer-select form-control'
-    )
+  view :select do |_args|
+    options = [['-- Select --', '']] + card.option_names.map { |x| [x, x] }
+    select_tag('pointer_select',
+               options_for_select(options, card.item_names.first),
+               class: 'pointer-select form-control'
+              )
   end
-
 
   def pointer_option_description option
     pod_name = card.rule(:options_label) || 'description'
-    dcard = Card[ "#{option}+#{pod_name}" ]
-    if dcard and dcard.ok? :read
+    dcard = Card["#{option}+#{pod_name}"]
+    if dcard && dcard.ok?(:read)
       with_nest_mode :normal do
         subformat(dcard).render_core
       end
     end
   end
 
-
-
   def wrap_item item, args
-    %{<div class="pointer-item item-#{args[:view]}">#{item}</div>}
+    %(<div class="pointer-item item-#{args[:view]}">#{item}</div>)
   end
-
-
 end
 
-
 format :css do
-
-  #generalize to all collections?
+  # generalize to all collections?
   def default_item_view
     params[:item] || :content
   end
 
-  view :titled do |args|
-    %(#{major_comment "STYLE GROUP: \"#{card.name}\"", '='}#{ _render_core })
+  view :titled do |_args|
+    %(#{major_comment "STYLE GROUP: \"#{card.name}\"", '='}#{_render_core})
   end
 
   view :core do |args|
@@ -218,22 +211,18 @@ format :css do
   end
 
   view :content, :core
-
 end
 
-
 format :js do
-
   view :core do |args|
     card.item_cards.map do |item|
-      nest item, view: ( args[:item] || :core)
+      nest item, view: (args[:item] || :core)
     end.join "\n\n"
   end
 end
 
-
 format :data do
-  view :core do |args|
+  view :core do |_args|
     card.item_cards.map do |c|
       nest c
     end
@@ -241,7 +230,7 @@ format :data do
 end
 
 format :rss do
-  def raw_feed_items args
+  def raw_feed_items _args
     @raw_feed_items ||= begin
       card.item_cards
     end
@@ -253,14 +242,12 @@ end
 # this event is only on pointer card. Other type cards do not have this event,
 # so it is not overridden and will be run while updating type and content in the same request.
 event :standardize_items, :prepare_to_validate, on: :save, changed: :content,
-    when: proc{  |c| c.type_id == Card::PointerID  } do
-    self.content = item_names(context: :raw).map { |name| "[[#{name}]]" }.join "\n"
+                                                when: proc {  |c| c.type_id == Card::PointerID  } do
+  self.content = item_names(context: :raw).map { |name| "[[#{name}]]" }.join "\n"
 end
 
-
-
 def diff_args
-  {format: :pointer}
+  { format: :pointer }
 end
 
 def item_cards args={}
@@ -270,7 +257,7 @@ def item_cards args={}
   else
 
     itype = args[:type] || item_type
-    #warn "item_card[#{inspect}], :complete"
+    # warn "item_card[#{inspect}], :complete"
     item_names(args).map do |name|
       new_args = itype ? { type: itype } : {}
       Card.fetch name, new: new_args
@@ -278,12 +265,11 @@ def item_cards args={}
   end
 end
 
-
 def item_names args={}
-  context = args[:context] || self.cardname
-  content = args[:content] || self.raw_content
+  context = args[:context] || cardname
+  content = args[:content] || raw_content
   content.to_s.split(/\n+/).map do |line|
-    item_name = line.gsub( /\[\[|\]\]/, '').strip
+    item_name = line.gsub(/\[\[|\]\]/, '').strip
     if context == :raw
       item_name
     else
@@ -291,7 +277,6 @@ def item_names args={}
     end
   end
 end
-
 
 def item_ids args={}
   item_names(args).map do |name|
@@ -301,7 +286,7 @@ end
 
 def item_type
   opt = options_rule_card
-  if !opt or opt==self #fixme, need better recursion prevention
+  if !opt || opt == self # fixme, need better recursion prevention
     nil
   else
     opt.item_type

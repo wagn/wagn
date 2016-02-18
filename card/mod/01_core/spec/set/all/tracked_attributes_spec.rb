@@ -266,7 +266,6 @@ describe Card::Set::All::TrackedAttributes do
       end
     end
 
-
     context 'blues' do
       before do
         Card::Auth.as_bot do

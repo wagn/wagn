@@ -2,7 +2,7 @@ format :html do
   view :closed_rule, tags: :unknown_ok do
     # these are helpful for handling non-rule rstar cards until we have real
     # rule sets
-    return 'not a rule' if !card.is_rule?
+    return 'not a rule' unless card.is_rule?
 
     rule_card = find_current_rule_card
     rule_content =
@@ -22,24 +22,24 @@ format :html do
        )
       ],
       ['rule-content',
-       %{<div class="rule-content-container">
+       %(<div class="rule-content-container">
            <span class="closed-content content">#{rule_content}</span>
-         </div> }],
-      ['rule-set', (rule_card ? rule_card.trunk.label : '')],
+         </div> )],
+      ['rule-set', (rule_card ? rule_card.trunk.label : '')]
     ]
     extra_css_class =
       rule_card && !rule_card.new_card? ? 'known-rule' : 'missing-rule'
 
     row =
       cells.map do |css_class, content|
-        %{<td class="rule-cell #{css_class} #{extra_css_class}">#{content}</td>}
+        %(<td class="rule-cell #{css_class} #{extra_css_class}">#{content}</td>)
       end.join("\n")
 
-    %{<tr class="card-slot closed-rule"> #{row} </tr>}
+    %(<tr class="card-slot closed-rule"> #{row} </tr>)
   end
 
   view :open_rule, tags: :unknown_ok do |args|
-    return 'not a rule' if !card.is_rule?
+    return 'not a rule' unless card.is_rule?
     current_rule = args[:current_rule]
     setting_name = args[:setting_name]
 
@@ -59,7 +59,7 @@ format :html do
 
     opts = {
       rule_context: card,   # determines the set options and the success view
-      set_context:  card.rule_set_name,
+      set_context:  card.rule_set_name
     }
     rule_view = edit_mode ? :edit_rule : :show_rule
 
@@ -67,20 +67,20 @@ format :html do
       <tr class="card-slot open-rule #{rule_view.to_s.sub '_', '-'}">
         <td class="rule-cell" colspan="3">
           <div class="rule-setting">
-            #{ view_link setting_name.sub(/^\*/, ''), :closed_rule,
-                         class: 'close-rule-link slotter' }
-            #{ card_link setting_name,
-                         text: "all #{setting_name} rules",
-                         class: 'setting-link',
-                         target: 'wagn_setting' }
+            #{view_link setting_name.sub(/^\*/, ''), :closed_rule,
+                        class: 'close-rule-link slotter'}
+            #{card_link setting_name,
+                        text: "all #{setting_name} rules",
+                        class: 'setting-link',
+                        target: 'wagn_setting'}
           </div>
 
           <div class="alert alert-info rule-instruction">
-            #{ process_content "{{#{setting_name}+*right+*help|content}}" }
+            #{process_content "{{#{setting_name}+*right+*help|content}}"}
           </div>
 
           <div class="card-body">
-            #{ subformat(current_rule)._render rule_view, opts }
+            #{subformat(current_rule)._render rule_view, opts}
           </div>
         </td>
       </tr>
@@ -96,24 +96,24 @@ format :html do
   end
 
   view :show_rule, tags: :unknown_ok do |args|
-    return 'not a rule' if !card.is_rule?
+    return 'not a rule' unless card.is_rule?
 
     if !card.new_card?
       set = card.rule_set
       args[:item] ||= :link
-      %{
+      %(
         <div class="rule-set">
-        <label>Applies to</label> #{ card_link set.cardname, text: set.label }:
+        <label>Applies to</label> #{card_link set.cardname, text: set.label}:
         </div>
-        #{ _render_core args }
-      }
+        #{_render_core args}
+      )
     else
       'No Current Rule'
     end
   end
 
   view :edit_rule, tags: :unknown_ok do |args|
-    return 'not a rule' if !card.is_rule?
+    return 'not a rule' unless card.is_rule?
     form_args = {
       url: path(action: :update, no_id: true),
       html: { class: 'card-form card-rule-form' }
@@ -125,11 +125,11 @@ format :html do
 
     form_for card, form_args do |form|
       @form = form
-      %{
-        #{ hidden_success_formgroup args[:success]}
-        #{ editor args }
-        #{ edit_buttons args }
-      }
+      %(
+        #{hidden_success_formgroup args[:success]}
+        #{editor args}
+        #{edit_buttons args}
+      )
     end
   end
 
@@ -194,10 +194,10 @@ format :html do
     b_args[:href] = path action: :delete, success: args[:success]
     if (fset = args[:fallback_set]) && (fcard = Card.fetch(fset))
       b_args['data-confirm'] =
-        "Deleting will revert to #{ card.rule_setting_name } rule for " \
-        "#{ fcard.label }"
+        "Deleting will revert to #{card.rule_setting_name} rule for " \
+        "#{fcard.label}"
     end
-    %{<span class="rule-delete-section">#{ button_tag 'Delete', b_args }</span>}
+    %(<span class="rule-delete-section">#{button_tag 'Delete', b_args}</span>)
   end
 
   # used keys for args:
@@ -225,11 +225,11 @@ format :html do
   end
 
   def hidden_success_formgroup args
-    %{
-      #{ hidden_field_tag 'success[id]', args[:id] || args[:card].name }
-      #{ hidden_field_tag 'success[view]', args[:view] }
-      #{ hidden_field_tag 'success[item]', args[:item] }
-    }
+    %(
+      #{hidden_field_tag 'success[id]', args[:id] || args[:card].name}
+      #{hidden_field_tag 'success[view]', args[:view]}
+      #{hidden_field_tag 'success[item]', args[:item]}
+    )
   end
 
   def set_selection args
@@ -299,9 +299,9 @@ format :html do
                   text: "(#{state})"
       end
     label = <<-HTML
-      <label class="set-label #{ 'current-set-label' if state == :current }">
-        #{ card_link set_name, text: label, target: 'wagn_set' }
-        #{"<em> #{info} </em>" if info }
+      <label class="set-label #{'current-set-label' if state == :current}">
+        #{card_link set_name, text: label, target: 'wagn_set'}
+        #{"<em> #{info} </em>" if info}
       </label>
     HTML
     label.html_safe
@@ -319,7 +319,7 @@ format :html do
       wrap_each_with(:li, class: 'radio') do
         yield
       end
-    formgroup title, "<ul>#{ list }</ul>", editor: 'set', class: 'col-xs-6'
+    formgroup title, "<ul>#{list}</ul>", editor: 'set', class: 'col-xs-6'
   end
 
   def edit_buttons  args

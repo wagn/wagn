@@ -264,9 +264,7 @@ describe Card::Set::All::Permissions do
     it 'reader setting' do
       Card.where(trash: false).each do |ca|
         rule_id, rule_class = ca.permission_rule_id_and_class(:read)
-        if rule_class != ca.read_rule_class
-          next
-        end
+        next if rule_class != ca.read_rule_class
         expect(rule_class).to eq(ca.read_rule_class)
         expect(rule_id).to eq(ca.read_rule_id)
       end
@@ -447,14 +445,14 @@ describe Card::Set::All::Permissions do
 
       # X,Y in Anon, auth Member, auth Nonmember, admin
 
-      %{
+      %(
     A V C J G
   A * * * * *
   V * * . * .
   C * * * . .
   J * * . . .
   G * . . . .
-  }
+  )
     end
   end
 

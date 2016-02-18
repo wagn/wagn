@@ -75,7 +75,7 @@ def insert_item index, name
   self.content = new_names.join "\n"
 end
 
-def extended_item_cards context = nil
+def extended_item_cards context=nil
   context = (context ? context.cardname : cardname)
   args = { limit: '' }
   items = item_cards(args.merge(context: context))
@@ -170,7 +170,7 @@ format do
     params.each do |key, val|
       case key.to_s
       when '_wql'      then hash.merge! val
-      when /^\_(\w+)$/ then hash[:vars][$1.to_sym] = val
+      when /^\_(\w+)$/ then hash[:vars][Regexp.last_match(1).to_sym] = val
       end
     end
   end
@@ -197,10 +197,10 @@ format do
     result
   end
 
-  def unique_chunks chunk, processed_set, &block
+  def unique_chunks chunk, processed_set, &_block
     return if processed_set.include? chunk.referee_name.key
     processed_set << chunk.referee_name.key
-    block.call(chunk)
+    yield(chunk)
   end
 
   def each_nested_field args, &block
@@ -208,26 +208,25 @@ format do
 
     each_nested_chunk(args) do |chunk|
       # TODO: handle structures that are non-virtual
-      if chunk.referee_name.to_name.field_of? card.name
-        if chunk.referee_card &&
-           chunk.referee_card.virtual? &&
-           !processed_chunk_keys.include?(chunk.referee_name.key)
+      next unless chunk.referee_name.to_name.field_of? card.name
+      if chunk.referee_card &&
+         chunk.referee_card.virtual? &&
+         !processed_chunk_keys.include?(chunk.referee_name.key)
 
-          processed_chunk_keys << chunk.referee_name.key
-          subformat(chunk.referee_card).each_nested_field(args) do |sub_chunk|
-            unique_chunks sub_chunk, processed_chunk_keys, &block
-          end
-        else
-          unique_chunks chunk, processed_chunk_keys, &block
+        processed_chunk_keys << chunk.referee_name.key
+        subformat(chunk.referee_card).each_nested_field(args) do |sub_chunk|
+          unique_chunks sub_chunk, processed_chunk_keys, &block
         end
+      else
+        unique_chunks chunk, processed_chunk_keys, &block
       end
     end
   end
 
-  def map_references_with_args args={}, &block
+  def map_references_with_args args={}, &_block
     result = []
     each_reference_with_args args do |name, n_args|
-      result << block.call(name, n_args)
+      result << yield(name, n_args)
     end
     result
   end

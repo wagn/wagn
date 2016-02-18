@@ -156,9 +156,9 @@ class Card
       def view_in_edit_mode homeview, nested_card
         not_in_form =
           Card::Format.perms[homeview] == :none || # view configured not to keep
-            # in form
-            nested_card.structure || # not yet nesting structures
-            nested_card.key.blank? # eg {{_self|type}} on new cards
+          # in form
+          nested_card.structure || # not yet nesting structures
+          nested_card.key.blank? # eg {{_self|type}} on new cards
 
         not_in_form ? :blank : :edit_in_form
       end

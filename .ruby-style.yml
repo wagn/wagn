@@ -3,6 +3,7 @@ AllCops:
     - "vendor/**/*"
     - "db/schema.rb"
     - "card/tmpsets/**/*"
+    - "/opt/wagn/card/mod/05_standard/set/all/comment.rb"
 Style/CommentAnnotation:
   Enabled: true
 Style/CollectionMethods:

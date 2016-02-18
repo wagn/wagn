@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Right::Email do
-
   context '<User>+*email' do
     before do
       @card = Card.fetch 'u1+*email'
@@ -26,7 +25,7 @@ describe Card::Set::Right::Email do
     end
   end
 
-  context "+*account+*email" do
+  context '+*account+*email' do
     context 'update' do
       before :each do
         @email_card = email_card = Card['u1'].account.email_card
@@ -48,8 +47,6 @@ describe Card::Set::Right::Email do
         @email_card.update_attributes content: 'joe@user.com'
         expect(@email_card.errors[:content].first).to match(/must be unique/)
       end
-
     end
   end
-
 end

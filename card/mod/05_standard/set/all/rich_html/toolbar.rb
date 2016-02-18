@@ -5,8 +5,8 @@ format :html do
   end
 
   view :toolbar do |args|
-    navbar "toolbar-#{card.cardname.safe_key}-#{args[:home_view]}", toggle_align: :left, class: "slotter toolbar", navbar_type: 'inverse',
-          collapsed_content: close_link(args.merge(class: 'pull-right visible-xs')) do
+    navbar "toolbar-#{card.cardname.safe_key}-#{args[:home_view]}", toggle_align: :left, class: 'slotter toolbar', navbar_type: 'inverse',
+                                                                    collapsed_content: close_link(args.merge(class: 'pull-right visible-xs')) do
       [
         close_link(args.merge(class: 'hidden-xs navbar-right')),
         (wrap_with(:form, class: 'navbar-form navbar-left') do
@@ -14,7 +14,7 @@ format :html do
             (account_split_button(args) if card.accountable?),
             activity_split_button(args),
             rules_split_button(args),
-            edit_split_button(args),
+            edit_split_button(args)
           ]
         end),
         (wrap_with(:form, class: 'navbar-form navbar-right') do
@@ -39,7 +39,7 @@ format :html do
     when :edit, :edit_name, :edit_type, :edit_structure, :edit_nests
       'edit'
     when :related
-      if args[:related_card] && (tag=args[:related_card].tag)
+      if args[:related_card] && (tag = args[:related_card].tag)
         case tag.codename
         when 'discussion', 'editors'
           'engage'
@@ -54,18 +54,17 @@ format :html do
     end
   end
 
-
   def toolbar_view_title view
-    if view  == :edit_rules
+    if view == :edit_rules
       current_set_card.name
     else
-      {edit: 'content', edit_name: 'name', edit_type: 'type', edit_structure: 'structure', edit_nests: 'nests', history: 'history', common_rules: 'common', recent_rules: 'recent', grouped_rules: 'all', edit_nest_rules: 'nests'}[view]
+      { edit: 'content', edit_name: 'name', edit_type: 'type', edit_structure: 'structure', edit_nests: 'nests', history: 'history', common_rules: 'common', recent_rules: 'recent', grouped_rules: 'all', edit_nest_rules: 'nests' }[view]
     end
   end
 
   def activity_split_button args
-    discuss = smart_link 'discuss',  { related: Card[:discussion].key }
-    editors = smart_link 'editors',  { related: Card[:editors].key }
+    discuss = smart_link 'discuss',  related: Card[:discussion].key
+    editors = smart_link 'editors',  related: Card[:editors].key
     toolbar_split_button 'activity', { view: :history }, args do
       {
         history:    (_render_history_link if card.history?),
@@ -75,13 +74,14 @@ format :html do
       }
     end
   end
+
   def rules_split_button args
-    recent = smart_link 'recent',   {view: :edit_rules, slot: {rule_view: :recent_rules}}
-    common = smart_link 'common',   {view: :edit_rules, slot: {rule_view: :common_rules}}
-    group  = smart_link 'by group', {view: :edit_rules, slot: {rule_view: :grouped_rules}}
-    all    = smart_link 'by name',  {view: :edit_rules, slot: {rule_view: :all_rules}}
-    nests  = smart_link 'nests',    {view: :edit_nest_rules, slot: {rule_view: :field_related_rules}}
-    toolbar_split_button 'rules',   {view: :edit_rules }, args do
+    recent = smart_link 'recent',   view: :edit_rules, slot: { rule_view: :recent_rules }
+    common = smart_link 'common',   view: :edit_rules, slot: { rule_view: :common_rules }
+    group  = smart_link 'by group', view: :edit_rules, slot: { rule_view: :grouped_rules }
+    all    = smart_link 'by name',  view: :edit_rules, slot: { rule_view: :all_rules }
+    nests  = smart_link 'nests',    view: :edit_nest_rules, slot: { rule_view: :field_related_rules }
+    toolbar_split_button 'rules',   { view: :edit_rules }, args do
       {
         common_rules:    common,
         grouped_rules:   group,
@@ -92,29 +92,30 @@ format :html do
       }
     end
   end
+
   def edit_split_button args
-    toolbar_split_button 'edit', {view: :edit}, args do
+    toolbar_split_button 'edit', { view: :edit }, args do
       {
         edit:       _render_edit_content_link(args),
         edit_nests: (_render_edit_nests_link if !card.structure && args[:nested_fields].present?),
-        structure:  (smart_link 'structure', {view: :edit_structure} if structure_editable?),
+        structure:  (smart_link 'structure', view: :edit_structure if structure_editable?),
         edit_name:  _render_edit_name_link,
-        edit_type:  _render_edit_type_link,
-      }
-    end
-  end
-  def account_split_button args
-    toolbar_split_button 'account', {related: Card[:account].key}, args do
-      {
-        account: smart_link('details',{related: {name: "#{card.name}+#{Card[:account].key}", view: :edit}}),
-        roles:   smart_link('roles',  {related: Card[:roles].key}),
-        created: smart_link('created',{related: Card[:created].key}),
-        edited:  smart_link('edited', {related: Card[:edited].key}),
-        follow:  smart_link('follow', {related: Card[:follow].key})
+        edit_type:  _render_edit_type_link
       }
     end
   end
 
+  def account_split_button args
+    toolbar_split_button 'account', { related: Card[:account].key }, args do
+      {
+        account: smart_link('details', related: { name: "#{card.name}+#{Card[:account].key}", view: :edit }),
+        roles:   smart_link('roles',  related: Card[:roles].key),
+        created: smart_link('created', related: Card[:created].key),
+        edited:  smart_link('edited', related: Card[:edited].key),
+        follow:  smart_link('follow', related: Card[:follow].key)
+      }
+    end
+  end
 
   def toolbar_split_button name, button_args, args
     button = button_link name, button_args, class: ('active' if args[:active_toolbar_button] == name)
@@ -129,16 +130,13 @@ format :html do
         @slot_view
       end
     split_button button, args.merge(active_item: active_item) do
-        yield
+      yield
     end
   end
 
-
   def close_link args
-    link_opts = {title: 'cancel'}
-    if args[:subslot]
-      link_opts[:path_opts] = {slot: {subframe: true}}
-    end
+    link_opts = { title: 'cancel' }
+    link_opts[:path_opts] = { slot: { subframe: true } } if args[:subslot]
 
     link = view_link glyphicon('remove'), :home, link_opts.merge(class: 'btn-toolbar-control btn btn-primary')
     css_class = ['nav navbar-nav', args[:class]].compact.join "\n"
@@ -148,8 +146,9 @@ format :html do
         link
       ]
     end
-    #list_tag link, class: css_class
+    # list_tag link, class: css_class
   end
+
   def toolbar_pin_button
     button_tag glyphicon('pushpin'), situation: :primary, remote: true, title: "#{'un' if toolbar_pinned?}pin", class: "btn-toolbar-control toolbar-pin #{'in' unless toolbar_pinned?}active"
   end
@@ -160,17 +159,14 @@ format :html do
         _optional_render(:delete_button,  args, (card.ok?(:delete) ? :show : :hide)),
         _optional_render(:refresh_button, args, :show),
         _optional_render(:related_button, args, :show),
-        _optional_render(:history_button, args, :hide),
+        _optional_render(:history_button, args, :hide)
       ]
     end
   end
 
-
-
-
-  view :related_button do |args|
-    path_opts = {slot: {show: :toolbar}}
-    dropdown_button '', icon: 'education', class: 'related' do #, icon: 'eye-open' do
+  view :related_button do |_args|
+    path_opts = { slot: { show: :toolbar } }
+    dropdown_button '', icon: 'education', class: 'related' do # , icon: 'eye-open' do
       [
         menu_item(' children',       'baby-formula', path_opts.merge(related: '*children')),
         menu_item(' mates',          'bed',          path_opts.merge(related: '*mates')),
@@ -179,48 +175,44 @@ format :html do
       ]
     end
   end
-  view :refresh_button do |args|
-    path_opts = {slot: {show: :toolbar},page: card}
+  view :refresh_button do |_args|
+    path_opts = { slot: { show: :toolbar }, page: card }
     icon = main? ? 'refresh' : 'new-window'
     toolbar_button('refresh', icon, 'hidden-xs hidden-sm hidden-md hidden-lg', path_opts: path_opts)
   end
 
-
-  view :delete_button do |args|
+  view :delete_button do |_args|
     toolbar_button('delete', 'trash', 'hidden-xs hidden-sm hidden-md hidden-lg',
-                    action: :delete,
-                    class: 'slotter',
-                    remote: true,
-                    path_opts: {success: main? ? 'REDIRECT: *previous' : "TEXT: #{card.name} deleted"},
-                    :'data-confirm' => "Are you sure you want to delete #{card.name}?"
+                   action: :delete,
+                   class: 'slotter',
+                   remote: true,
+                   path_opts: { success: main? ? 'REDIRECT: *previous' : "TEXT: #{card.name} deleted" },
+                   :'data-confirm' => "Are you sure you want to delete #{card.name}?"
                   )
   end
 
-
-
   def toolbar_button text, symbol, hide=nil, tag_args={}
     hide ||= 'hidden-xs hidden-sm hidden-md hidden-lg'
-    tag_args[:class] = [ tag_args[:class], 'btn btn-primary' ].compact * ' '
+    tag_args[:class] = [tag_args[:class], 'btn btn-primary'].compact * ' '
     tag_args[:title] ||= text
     link_text = "#{glyphicon symbol}<span class='menu-item-label #{hide}'>#{text}</span>"
 
     if cardname = tag_args.delete(:page)
       card_link cardname, class: klass, text: link_text
     elsif viewname = tag_args.delete(:view)
-      tag_args[:path_opts] ||= {slot: {show: :toolbar}}
+      tag_args[:path_opts] ||= { slot: { show: :toolbar } }
       view_link link_text, viewname, tag_args
     else
       path_opts = tag_args.delete(:path_opts) || {}
-      path_opts.merge! action: tag_args.delete(:action) if tag_args[:action]
+      path_opts[:action] = tag_args.delete(:action) if tag_args[:action]
       link_to link_text, path_opts, tag_args
 
     end
   end
+
   def autosaved_draft_link
-    view_link('autosaved draft', :edit, path_opts: {edit_draft: true, slot: {show: :toolbar}}, class: 'navbar-link slotter pull-right')
+    view_link('autosaved draft', :edit, path_opts: { edit_draft: true, slot: { show: :toolbar } }, class: 'navbar-link slotter pull-right')
   end
-
-
 
   def default_edit_content_link_args args
     args[:title] ||= 'content'
@@ -258,8 +250,7 @@ format :html do
     view_link text, view, args
   end
 
-
   def recently_edited_settings?
-     (rs = Card[:recent_settings]) && rs.item_names.present?
+    (rs = Card[:recent_settings]) && rs.item_names.present?
   end
 end

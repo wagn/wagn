@@ -38,15 +38,13 @@ end
 
 event :validate_type_change, :validate, on: :update, changed: :type_id do
   if (c = dup) && c.action == :create && !c.valid?
-    errors.add :type, "of #{ name } can't be changed; errors creating new " \
-                      "#{ type_id }: #{ c.errors.full_messages * ', ' }"
+    errors.add :type, "of #{name} can't be changed; errors creating new " \
+                      "#{type_id}: #{c.errors.full_messages * ', '}"
   end
 end
 
 event :validate_type, :validate, changed: :type_id do
-  if !type_name
-    errors.add :type, 'No such type'
-  end
+  errors.add :type, 'No such type' unless type_name
 
   if (rt = structure) && rt.assigns_type? && type_id != rt.type_id
     errors.add :type, "can't be changed because #{name} is hard templated " \

@@ -44,7 +44,7 @@ describe Card::Set::Type::EmailTemplate do
     end
 
     it 'renders html email if html message given' do
-      @fields = { '+*html_message' =>  'text' }
+      @fields = { '+*html_message' => 'text' }
       expect(content_type).to include 'text/html'
     end
 
@@ -183,7 +183,7 @@ describe Card::Set::Type::EmailTemplate do
         Card.create! name: 'default subject', content: 'a very nutty thang',
                      type: 'Phrase'
         Card.create! name: 'subject search+*right+*structure',
-                     content: %{{"referred_to_by":"_left+subject"}},
+                     content: %({"referred_to_by":"_left+subject"}),
                      type: 'Search'
         update_field '*subject', content: '{{+subject search|core;item:core}}'
         expect(subject[:subject]).to eq('a very nutty thang')

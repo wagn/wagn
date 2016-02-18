@@ -236,9 +236,9 @@ describe Card::StageDirector do
         expect(Card['main+sub2+sub3'].class).to eq(Card)
       end
     end
-    it "has correct name if supercard's name get changed" do
+    it "has correct name if supercard's name get changed to a junction card" do
       Card::Auth.as_bot do
-        $changed = false
+        changed = false
         in_stage(:prepare_to_validate, on: :create,
           trigger: -> do
             Card.create! name: '', subcards: {
@@ -247,12 +247,16 @@ describe Card::StageDirector do
             }
           end
         ) do
-          if name.empty? && !$changed
+          if name.empty? && !changed
             self.name = 'main1+main2'
+            expect(self.subfield('sub1')).to be
+            expect(self.subfield('sub1').content).to eq('some content')
           end
         end
         expect(Card['main1+main2+sub1'].class).to eq(Card)
+        expect(Card['main1+main2+sub1'].content).to eq('some content')
         expect(Card['main1+main2+sub2+sub3'].class).to eq(Card)
+        expect(Card['main1+main2+sub2+sub3'].content).to eq('content')
       end
     end
   end

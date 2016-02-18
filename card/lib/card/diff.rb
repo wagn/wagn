@@ -70,17 +70,11 @@ module Card::Diff
         opts[:exclude] = /^</
       when :text
         opts[:reject] =  /^</
-        opts[:postprocess] = proc do |word|
-          word.gsub("\n", '<br>')
-        end
+        opts[:postprocess] = proc { |word| word.gsub("\n", '<br>') }
       when :pointer
-        opts[:preprocess] = proc do |word|
-          word.gsub('[[', '').gsub(']]', '')
-        end
-      else #:raw
-        opts[:preprocess] = proc do |word|
-          CGI.escapeHTML(word)
-        end
+        opts[:preprocess] = proc { |word| word.gsub('[[', '').gsub(']]', '') }
+      else # :raw
+        opts[:preprocess] = proc { |word| CGI.escapeHTML(word) }
       end
       opts
     end
@@ -96,10 +90,14 @@ module Card::Diff
     class LCS
       attr_reader :adds_cnt, :dels_cnt
       def initialize old_text, new_text, opts, _summary=nil
-        @reject_pattern  = opts[:reject]        # regex; remove match completely from diff
-        @exclude_pattern = opts[:exclude]       # regex; put back to the result after diff
-        @preprocess      = opts[:preprocess]    # block; called with every word
-        @postprocess     = opts[:postprocess]   # block; called with complete diff
+        # regex; remove match completely from diff
+        @reject_pattern  = opts[:reject]
+
+        # regex; put back to the result after diff
+        @exclude_pattern = opts[:exclude]
+
+        @preprocess      = opts[:preprocess]  # block; called with every word
+        @postprocess     = opts[:postprocess] # block; called with complete diff
 
         @adds_cnt = 0
         @dels_cnt = 0
@@ -160,7 +158,9 @@ module Card::Diff
               write_dels
               write_adds
 
-              write_excludees # new neutral section starts, we can just write excludees to result
+              # new neutral section starts
+              # we can just write excludees to result
+              write_excludees
 
             else # current word belongs to edit of previous word
               case word.action
@@ -221,13 +221,13 @@ module Card::Diff
       end
 
       def write_excludees
-        while ex = @excludees[:new].next
+        while (ex = @excludees[:new].next)
           @result << ex[:element]
         end
       end
 
       def del_old_excludees
-        while ex = @excludees[:old].next
+        while (ex = @excludees[:old].next)
           if ex[:type] == :disjunction
             @dels << ex[:element]
           else
@@ -238,7 +238,7 @@ module Card::Diff
       end
 
       def add_new_excludees
-        while ex = @excludees[:new].next
+        while (ex = @excludees[:new].next)
           if ex[:type] == :disjunction
             @adds << ex[:element]
           else
@@ -255,45 +255,57 @@ module Card::Diff
       def process_element old_element, new_element, action
         case action
         when '-'
-          @dels << old_element
-          @excludees[:old].word_step
+          minus old_element
         when '+'
-          @adds << new_element
-          @excludees[:new].word_step
+          plus new_element
         when '!'
-          @dels << old_element
-          @adds << new_element
-          @excludees[:old].word_step
-          @excludees[:new].word_step
+          minus old_element
+          plus new_element
         else
           write_unchanged new_element
           @excludees[:new].word_step
         end
       end
 
+      def plus new_element
+        @adds << new_element
+        @excludees[:new].word_step
+      end
+
+      def minus old_element
+        @dels << old_element
+        @excludees[:old].word_step
+      end
+
       def separate_comparables_from_excludees text
-        # return two arrays, one with all words, one with pairs (index in word list, html_tag)
+        # return two arrays, one with all words, one with pairs
+        # (index in word list, html_tag)
         list = split_and_preprocess text
         if @exclude_pattern
-          list.each_with_index.inject([[], []]) do |res, pair|
-            element, index = pair
-            if element.match @disjunction_pattern
-              res[1] << { chunk_index: index, element: element, type: :disjunction }
-            elsif element.match @exclude_pattern
-              res[1] << { chunk_index: index, element: element, type: :excludee }
-            else
-              res[0] << element
-            end
-            res
-          end
+          check_exclude_and_disjunction_pattern list
         else
           [list, []]
         end
       end
 
+      def check_exclude_and_disjunction_pattern list
+        list.each_with_index.each_with_object([[], []]) do |pair, res|
+          element, index = pair
+          if element.match @disjunction_pattern
+            res[1] << { chunk_index: index, element: element,
+                        type: :disjunction }
+          elsif element.match @exclude_pattern
+            res[1] << { chunk_index: index, element: element, type:
+                        :excludee }
+          else
+            res[0] << element
+          end
+        end
+      end
+
       def split_and_preprocess text
         splitted = split_to_list_of_words(text).select do |s|
-          s.size > 0 && (!@reject_pattern || !s.match(@reject_pattern))
+          !s.empty? && (!@reject_pattern || !s.match(@reject_pattern))
         end
         @preprocess ? splitted.map { |s| @preprocess.call(s) } : splitted
       end
@@ -344,7 +356,7 @@ module Card::Diff
         def omit
           if @chunks.empty? || @chunks.last[:action] != :ellipsis
             add_chunk @joint, :ellipsis
-         end
+          end
         end
 
         private
@@ -372,25 +384,34 @@ module Card::Diff
 
             index = @chunks.size - 1
             while @remaining_chars < @joint.size && index >= 0
-              if @remaining_chars + @chunks[index][:text].size == @joint.size   # d
-                @chunks.pop
-                if index - 1 >= 0
-                  if @chunks[index - 1][:action] == :added
-                    @chunks << { action: :ellipsis, text: @joint }
-                  elsif @chunks[index - 1][:action] == :deleted
-                    @chunks << { action: :added, text: @joint }
-                  end
-                end
+              if @remaining_chars + @chunks[index][:text].size == @joint.size
+                replace_with_joint index
                 break
               elsif @remaining_chars + @chunks[index][:text].size > @joint.size
-                @chunks[index][:text] =  @chunks[index][:text][0..(@remaining_chars - @joint.size - 1)]
-                @chunks[index][:text] += @joint
+                cut_with_joint index
                 break
               else
                 @remaining_chars += @chunks[index][:text].size
                 @chunks.delete_at(index)
               end
               index -= 1
+            end
+          end
+        end
+
+        def cut_with_joint index
+          @chunks[index][:text] =
+            @chunks[index][:text][0..(@remaining_chars - @joint.size - 1)]
+          @chunks[index][:text] += @joint
+        end
+
+        def replace_with_joint index
+          @chunks.pop
+          if index - 1 >= 0
+            if @chunks[index - 1][:action] == :added
+              @chunks << { action: :ellipsis, text: @joint }
+            elsif @chunks[index - 1][:action] == :deleted
+              @chunks << { action: :added, text: @joint }
             end
           end
         end

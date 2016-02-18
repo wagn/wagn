@@ -16,7 +16,7 @@ class Card
         end
       @opts = opts || {}
 
-      content = parse_content content unless Array === content
+      content = parse_content content unless content.is_a?(Array)
       super content
     end
 
@@ -58,7 +58,7 @@ class Card
     end
 
     def process_each_chunk &block
-      each_chunk { |chunk| chunk.process_chunk &block }
+      each_chunk { |chunk| chunk.process_chunk(&block) }
       self
     end
 
@@ -97,7 +97,7 @@ class Card
             position += (match.end(0) - offset.to_i)
             # move scanning position up to end of chunk
             if context_ok
-              @chunks << interval_string if interval_string.size > 0
+              @chunks << interval_string unless interval_string.empty?
               # add the nonchunk string to the chunk list
               @chunks << chunk_class.new(match, self)
               # add the chunk to the chunk list
@@ -154,7 +154,7 @@ class Card
       ALLOWED_TAGS[k] << 'style' if Card.config.allow_inline_styles
       ALLOWED_TAGS[k]
     end
-    ALLOWED_TAGS
+    ALLOWED_TAGS.freeze
 
     ATTR_VALUE_RE = [/(?<=^')[^']+(?=')/, /(?<=^")[^"]+(?=")/, /\S+/].freeze
 
@@ -165,37 +165,37 @@ class Card
       # this has been hacked for card to allow classes if
       # the class begins with "w-"
       def clean! string, tags=ALLOWED_TAGS
-        string.gsub(/<(\/*)(\w+)([^>]*)>/) do
+        string.gsub(%r{<(/*)(\w+)([^>]*)>}) do
           raw = $LAST_MATCH_INFO
           tag = raw[2].downcase
           if (attrs = tags[tag])
             html_attribs =
-              attrs.inject([tag]) do |pcs, attr|
-                q = '"'
-                rest_value = nil
-                if raw[3] =~ /\b#{attr}\s*=\s*(?=(.))/i
-                  rest_value = $'
-                  (idx = %w(' ").index(Regexp.last_match(1))) &&
-                    (q = Regexp.last_match(1))
-                  re = ATTR_VALUE_RE[idx || 2]
-                  if (match = rest_value.match(re))
-                    rest_value = match[0]
-                    if attr == 'class'
-                      rest_value =
-                        rest_value.split(/\s+/).select do |s|
-                          s =~ /^w-/i
-                        end * ' '
-                    end
-                  end
-                end
+              attrs.each_with_object([tag]) do |attr, pcs|
+                q, rest_value = process_attribute attr, raw[3]
                 pcs << "#{attr}=#{q}#{rest_value}#{q}" unless rest_value.blank?
-                pcs
               end * ' '
             "<#{raw[1]}#{html_attribs}>"
           else
             ' '
           end
         end.gsub(/<\!--.*?-->/, '')
+      end
+
+      def process_attribute attr, all_attributes
+        return ['"', nil] unless all_attributes =~ /\b#{attr}\s*=\s*(?=(.))/i
+        q = '"'
+        rest_value = $'
+        (idx = %w(' ").index(Regexp.last_match(1))) &&
+          (q = Regexp.last_match(1))
+        re = ATTR_VALUE_RE[idx || 2]
+        if (match = rest_value.match(re))
+          rest_value = match[0]
+          if attr == 'class'
+            rest_value =
+              rest_value.split(/\s+/).select { |s| s =~ /^w-/i }.join(' ')
+          end
+        end
+        [q, rest_value]
       end
 
       if Card.config.space_last_in_multispace
@@ -216,21 +216,7 @@ class Card
         # nuke partial tags at end of snippet
         wordstring.gsub!(/(<[^\>]+)$/, '')
 
-        tags = []
-
-        # match tags with or without self closing (ie. <foo />)
-        wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\>/).each do |t|
-          tags.unshift(t[0])
-        end
-        # match tags with self closing and mark them as closed
-        wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\/\>/).each do |t|
-          unless (x = tags.index(t[0])).nil? then tags.slice!(x) end
-        end
-        # match close tags
-        wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each do |t|
-          unless (x = tags.rindex(t[0])).nil? then tags.slice!(x) end
-        end
-
+        tags = find_tags wordstring
         tags.each { |t| wordstring += "</#{t}>" }
 
         if wordlist.length > l
@@ -238,11 +224,31 @@ class Card
         end
 
         # wordstring += '...' if wordlist.length > l
-        wordstring.gsub! /<[\/]?br[\s\/]*>/, ' '
+        wordstring.gsub! %r{<[/]?br[\s/]*>}, ' '
         # Also a hack -- get rid of <br>'s -- they make line view ugly.
-        wordstring.gsub! /<[\/]?p[^>]*>/, ' '
+        wordstring.gsub! %r{<[/]?p[^>]*>}, ' '
         ## Also a hack -- get rid of <br>'s -- they make line view ugly.
         wordstring
+      end
+
+      def find_tags wordstring
+        tags = []
+
+        # match tags with or without self closing (ie. <foo />)
+        wordstring.scan(%r{\<([^\>\s/]+)[^\>]*?\>}).each do |t|
+          tags.unshift(t[0])
+        end
+        # match tags with self closing and mark them as closed
+        wordstring.scan(%r{\<([^\>\s/]+)[^\>]*?/\>}).each do |t|
+          next unless (x = tags.index(t[0]))
+          tags.slice!(x)
+        end
+        # match close tags
+        wordstring.scan(%r{\</([^\>\s/]+)[^\>]*?\>}).each do |t|
+          next unless (x = tags.rindex(t[0]))
+          tags.slice!(x)
+        end
+        tags
       end
     end
   end

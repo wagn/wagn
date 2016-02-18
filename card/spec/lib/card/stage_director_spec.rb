@@ -219,7 +219,7 @@ describe Card::StageDirector do
   describe 'subcards' do
     it "has correct name if supercard's name get changed" do
       Card::Auth.as_bot do
-        $changed = false
+        changed = false
         in_stage(:prepare_to_validate, on: :create,
                  trigger: -> do
                     Card.create! name: '', subcards: {
@@ -228,7 +228,7 @@ describe Card::StageDirector do
                     }
                  end
         ) do
-          if name.empty? && !$changed
+          if name.empty? && !changed
             self.name = 'main'
           end
         end

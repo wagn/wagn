@@ -177,14 +177,14 @@ format do
 
   def each_reference_with_args args={}
     content_object = Card::Content.new _render_raw(args), card
-    content_object.find_chunks(Card::Chunk::Reference).each do |chunk|
+    content_object.find_chunks(Card::Content::Chunk::Reference).each do |chunk|
       yield chunk.referee_name.to_s, nest_args(args, chunk)
     end
   end
 
   def each_nested_chunk args={}
     content_object = Card::Content.new(_render_raw(args), card)
-    content_object.find_chunks(Card::Chunk::Include).each do |chunk|
+    content_object.find_chunks(Card::Content::Chunk::Include).each do |chunk|
       yield(chunk) if chunk.referee_name # filter commented nests
     end
   end
@@ -237,9 +237,9 @@ format do
     r_args.merge! @nest_opts.clone if @nest_opts
 
     case chunk
-    when Card::Chunk::Include
+    when Card::Content::Chunk::Include
       r_args.merge!(chunk.options)
-    when Card::Chunk::Link
+    when Card::Content::Chunk::Link
       r_args.reverse_merge!(view: :link)
       r_args.reverse_merge!(title: chunk.link_text) if chunk.link_text
     end

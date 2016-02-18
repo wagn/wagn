@@ -1,12 +1,17 @@
+require_dependency 'card/content/chunk'
+
 class Card
-  class Content
-    class ChunkParser
-      def parse content, chunk_list
+ class Content
+    class Parser
+      def initialize chunk_list
+        @chunk_list = chunk_list
+      end
+      def parse content, content_object
         chunks = []
         return chunks unless content.is_a? String
 
         position = last_position = 0
-        prefix_regexp = Chunk.get_prefix_regexp chunk_list
+        prefix_regexp = Chunk.get_prefix_regexp @chunk_list
         interval_string = ''
 
         while (prefix_match = content[position..-1].match(prefix_regexp))
@@ -38,7 +43,7 @@ class Card
             if context_ok
               chunks << interval_string unless interval_string.empty?
               # add the nonchunk string to the chunk list
-              chunks << chunk_class.new(match, self)
+              chunks << chunk_class.new(match, content_object)
               # add the chunk to the chunk list
               interval_string = ''
               # reset interval string for next go-round

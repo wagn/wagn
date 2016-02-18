@@ -4,10 +4,10 @@
 # They are used by rendering process to prevent wiki rendering
 # occuring within literal areas such as <code> and <pre> blocks
 # and within HTML tags.
-module Card::Chunk
+module Card::Content::Chunk
   class EscapedLiteral < Abstract
     FULL_RE = { '[' => /^\\\[\[[^\]]*\]\]/, '{' => /^\\\{\{[^\}]*\}\}/ }.freeze
-    Card::Chunk.register_class self,       prefix_re: '\\\\(?:\\[\\[|\\{\\{)',
+    Card::Content::Chunk.register_class self,       prefix_re: '\\\\(?:\\[\\[|\\{\\{)',
                                            idx_char:  '\\'
 
     def self.full_re prefix

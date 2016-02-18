@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-module Card::Chunk
+module Card::Content::Chunk
   class Reference < Abstract
     attr_accessor :referee_name, :name
 

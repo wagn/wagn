@@ -2,7 +2,7 @@
 
 require_dependency File.expand_path('../reference', __FILE__)
 
-module Card::Chunk
+module Card::Content::Chunk
   # This should find +Alfred+ in expressions like
   # 1) {"name":"Alfred"}
   # 2a) {"name":["in","Alfred"]}
@@ -26,7 +26,7 @@ module Card::Chunk
       ).map(&:to_name)
     )
 
-    Card::Chunk.register_class(
+    Card::Content::Chunk.register_class(
       self, prefix_re: '(?<=[:,\\[])\\s*"',
             # we check for colon, comma or square bracket before a quote
             # we have to use a lookbehind, otherwise

@@ -35,6 +35,7 @@ class Card < ActiveRecord::Base
   require_dependency 'card/stage_director'
   require_dependency 'card/director_register'
 
+
   has_many :references_in,  class_name: :Reference, foreign_key: :referee_id
   has_many :references_out, class_name: :Reference, foreign_key: :referer_id
   has_many :acts, -> { order :id }

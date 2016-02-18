@@ -1,8 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-# TODO: move Card::Chunk to Card::Content::Chunk...
-require_dependency 'card/chunk'
-require_dependency 'card/content/chunk_parser'
+require_dependency 'card/content/chunk'
+require_dependency 'card/content/parser'
 
 class Card
   class Content < SimpleDelegator
@@ -17,8 +16,8 @@ class Card
         end
       @opts = opts || {}
 
-      @chunks = ChunkParser.parse(content, chunk_list)
-      super(@chunks.any? : @chunks : content)
+      @chunks = Parser.new(chunk_list).parse(content, self)
+      super(@chunks.any? ? @chunks : content)
     end
 
     def card

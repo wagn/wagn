@@ -1,14 +1,14 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::Chunk::QueryReference, 'QueryReference' do
+describe Card::Content::Chunk::QueryReference, 'QueryReference' do
   context 'syntax parsing' do
     before do
-      @class = Card::Chunk::QueryReference
+      @class = Card::Content::Chunk::QueryReference
     end
 
     let :query_refs do
       content = Card::Content.new @content, Card.new(type: 'Search')
-       content.find_chunks(Card::Chunk::QueryReference)
+       content.find_chunks(Card::Content::Chunk::QueryReference)
     end
 
     subject { query_refs.first.name }

@@ -1,6 +1,6 @@
 format :html do
   def slot_options args
-    @@slot_option_keys ||= Card::Chunk::Include.options.reject { |k| k == :view }.unshift :home_view
+    @@slot_option_keys ||= Card::Content::Chunk::Include.options.reject { |k| k == :view }.unshift :home_view
     options_hash = {}
 
     if @context_names.present?

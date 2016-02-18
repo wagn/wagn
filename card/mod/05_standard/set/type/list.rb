@@ -7,22 +7,20 @@ end
 event :validate_list_item_type_change, :validate,
       on: :save, changed: :name do
   item_cards.each do |item_card|
-    if item_card.type_cardname.key != item_type_name.key
-      errors.add :name,
-                 "name conflicts with list items' type; " \
-                 'delete content first'
-    end
+    next unless item_card.type_cardname.key != item_type_name.key
+    errors.add :name,
+               "name conflicts with list items' type; " \
+               'delete content first'
   end
 end
 
 event :validate_list_content, :validate,
       on: :save, changed: :content do
   item_cards.each do |item_card|
-    if item_card.type_cardname.key != item_type_name.key
-      errors.add :content,
-                 "#{item_card.name} has wrong cardtype; " \
-                 "only cards of type #{cardname.right} are allowed"
-    end
+    next unless item_card.type_cardname.key != item_type_name.key
+    errors.add :content,
+               "#{item_card.name} has wrong cardtype; " \
+               "only cards of type #{cardname.right} are allowed"
   end
 end
 
@@ -86,13 +84,12 @@ def update_listed_by_cache_for item_keys, args={}
 
   item_keys.each do |item_key|
     key = "#{item_key}+#{type_key}"
-    if Card::Cache[Card::Set::Type::ListedBy].exist? key
-      if (card = Card.fetch(key))
-        card.update_cached_list
-        card.update_references_out
-      else
-        Card::Cache[Card::Set::Type::ListedBy].delete key
-      end
+    next unless Card::Cache[Card::Set::Type::ListedBy].exist? key
+    if (card = Card.fetch(key))
+      card.update_cached_list
+      card.update_references_out
+    else
+      Card::Cache[Card::Set::Type::ListedBy].delete key
     end
   end
 end

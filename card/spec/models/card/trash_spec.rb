@@ -11,7 +11,6 @@ describe Card, 'deleting card' do
       expect(a.errors[:permission_denied]).not_to be_empty
       expect(Card['a'].trash).to eq(false)
     end
-
   end
 end
 
@@ -28,7 +27,7 @@ describe Card, 'deleted card' do
   it 'should come out of the trash when a plus card is created' do
     Card::Auth.as_bot do
       Card.create(name: 'A+*acct')
-      c = Card[ 'A' ]
+      c = Card['A']
       expect(c.trash).to be_falsey
     end
   end
@@ -37,12 +36,11 @@ end
 describe Card, 'in trash' do
   it 'should be retrieved by fetch with new' do
     Card.create(name: 'Betty').delete
-    c=Card.fetch 'Betty', new: {}
+    c = Card.fetch 'Betty', new: {}
     c.save
     expect(Card['Betty']).to be_instance_of(Card)
   end
 end
-
 
 describe Card, 'plus cards' do
   it 'should be deleted when root is' do
@@ -50,7 +48,7 @@ describe Card, 'plus cards' do
       c = Card.create! name: 'zz+top'
       root = Card['zz']
       root.delete
-#      Rails.logger.info "ERRORS = #{root.errors.full_messages*''}"
+      #      Rails.logger.info "ERRORS = #{root.errors.full_messages*''}"
       expect(Card.find(c.id).trash).to be_truthy
       expect(Card['zz']).to be_nil
     end
@@ -60,7 +58,7 @@ end
 # FIXME: these user tests should probably be in a set of cardtype specific tests somewhere..
 describe Card do
   context 'with revisions' do
-    before do Card::Auth.as_bot { @c = Card['Wagn Bot'] } end
+    before { Card::Auth.as_bot { @c = Card['Wagn Bot'] } }
     it 'should not be removable' do
       expect(@c.delete).not_to be_truthy
     end
@@ -78,11 +76,8 @@ describe Card do
   end
 end
 
-
-
-
-#NOT WORKING, BUT IT SHOULD
-#describe Card, "a part of an unremovable card" do
+# NOT WORKING, BUT IT SHOULD
+# describe Card, "a part of an unremovable card" do
 #  before do
 #     Card::Auth.as(Card::WagnBotID)
 #     # this ugly setup makes it so A+Admin is the actual user with edits..
@@ -92,7 +87,7 @@ end
 #    @a = Card['A']
 #    @a.delete.should_not be_true
 #  end
-#end
+# end
 
 describe Card, 'dependent removal' do
   before do
@@ -115,7 +110,7 @@ describe Card, 'rename to trashed name' do
     Card::Auth.as_bot do
       @a = Card['A']
       @b = Card['B']
-      @a.delete!  #trash
+      @a.delete!  # trash
       Rails.logger.info "\n\n~~~~~~~deleted~~~~~~~~\n\n\n"
 
       @b.update_attributes! name: 'A', update_referers: true
@@ -132,7 +127,6 @@ describe Card, 'rename to trashed name' do
     expect(c.key).to eq('a*trash')
   end
 end
-
 
 describe Card, 'sent to trash' do
   before do
@@ -179,23 +173,22 @@ describe Card, 'revived from trash' do
 
   it 'should have the same content' do
     expect(@c.content).to eq('revived content')
-#    Card.fetch(@c.name).content.should == 'revived content'
+    #    Card.fetch(@c.name).content.should == 'revived content'
   end
 end
 
 describe Card, 'recreate trashed card via new' do
-#  before do
-#    Card::Auth.as(Card::WagnBotID)
-#    @c = Card.create! type: 'Basic', name: "BasicMe"
-#  end
+  #  before do
+  #    Card::Auth.as(Card::WagnBotID)
+  #    @c = Card.create! type: 'Basic', name: "BasicMe"
+  #  end
 
-#  this test is known to be broken; we've worked around it for now
-#  it "should delete and recreate with a different cardtype" do
-#    @c.delete!
-#    @re_c = Card.new type: "Phrase", name: "BasicMe", content: "Banana"
-#    @re_c.save!
-#  end
-
+  #  this test is known to be broken; we've worked around it for now
+  #  it "should delete and recreate with a different cardtype" do
+  #    @c.delete!
+  #    @re_c = Card.new type: "Phrase", name: "BasicMe", content: "Banana"
+  #    @re_c.save!
+  #  end
 end
 
 describe Card, 'junction revival' do
@@ -225,7 +218,6 @@ describe Card, 'junction revival' do
 end
 
 describe 'remove tests' do
-
   before do
     @a = Card['A']
   end
@@ -239,7 +231,7 @@ describe 'remove tests' do
   end
 
   it 'test_recreate_plus_card_name_variant' do
-    Card.create( name: 'rta+rtb' ).delete
+    Card.create(name: 'rta+rtb').delete
     Card['rta'].update_attributes name: 'rta!'
     c = Card.create! name: 'rta!+rtb'
     assert Card['rta!+rtb']
@@ -248,13 +240,12 @@ describe 'remove tests' do
   end
 
   it 'test_multiple_trash_collision' do
-    Card.create( name: 'alpha' ).delete
+    Card.create(name: 'alpha').delete
     3.times do
-      b = Card.create( name: 'beta' )
+      b = Card.create(name: 'beta')
       b.name = 'alpha'
       assert b.save!
       b.delete
     end
   end
 end
-

@@ -2,11 +2,11 @@ class Card
   class Query
     class Join
       attr_accessor :conditions, :side,
-        :from, :to,
-        :from_table, :to_table,
-        :from_alias, :to_alias,
-        :from_field, :to_field,
-        :superjoin, :subjoins
+                    :from, :to,
+                    :from_table, :to_table,
+                    :from_alias, :to_alias,
+                    :from_field, :to_field,
+                    :superjoin, :subjoins
 
       def initialize opts={}
         from_and_to opts
@@ -28,7 +28,7 @@ class Card
         [:from, :to].each do |side|
           object = opts[side]
           case object
-          when nil; next
+          when nil then next
           when Array
             { table: object.shift, alias: object.shift, field: object.shift }
           when Card::Query
@@ -36,7 +36,7 @@ class Card
           when Card::Query::Reference
             { table: 'card_references', alias: object.table_alias }
           when Card::Query::Join
-            fail "to: cannot be Join" if side == :to
+            raise 'to: cannot be Join' if side == :to
             { table: object.to_table, alias: object.to_alias }
           else
             raise "invalid #{side} option: #{object}"
@@ -66,8 +66,6 @@ class Card
           @in_left = left? || (!@superjoin.nil? && @superjoin.in_left?)
         end
       end
-
     end
   end
 end
-

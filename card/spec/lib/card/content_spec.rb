@@ -150,7 +150,7 @@ EXAMPLES = {
   },
 
   css: {
-    content: %~
+    content: %(
      /* body text */
      body {
        color: #444444;
@@ -177,29 +177,26 @@ EXAMPLES = {
      h2.page-header {
        color: #222299;
      }
-   ~
+   )
   }
-}
+}.freeze
 
 EXAMPLES.each_value do |val|
-  if val[:classes]
-    val[:classes] = val[:classes].map do |klass|
-      Class === klass ? klass : Card::Chunk.const_get(klass)
-    end
+  next unless val[:classes]
+  val[:classes] = val[:classes].map do |klass|
+    Class === klass ? klass : Card::Chunk.const_get(klass)
   end
 end
 
 describe Card::Content do
   context 'instance' do
     before do
-      @check_proc = Proc.new do |m, v|
+      @check_proc = proc do |m, v|
         if Array === m
           wrong_class = m[0] != v.class
           expect(wrong_class).to be_falsey
           is_last = m.size == 1
-          if !wrong_class
-            is_last ? true : m[1..-1]
-          end
+          is_last ? true : m[1..-1] unless wrong_class
         end
       end
 
@@ -207,11 +204,9 @@ describe Card::Content do
       @card = card
 
       # non-nil valued opts only ...
-      @render_block = Proc.new do |opts|
+      @render_block = proc do |opts|
         options = opts.inject({}) do |i, v|
-          if !v[1].nil? && (i[v[0]] = v[1])
-            i
-          end
+          i if !v[1].nil? && (i[v[0]] = v[1])
         end
         { options: options }
       end
@@ -331,7 +326,7 @@ describe Card::Content do
                     ' so is http://foo.bar.come//',
                     ' and foo="my attr, not int a tag" <not a=tag ',
                     ' p class"foobar"> and more'
-                   ]
+                   ].freeze
 
   context 'class' do
     describe '#clean!' do

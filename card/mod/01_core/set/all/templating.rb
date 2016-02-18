@@ -59,9 +59,7 @@ end
 
 def virtual?
   return false unless new_card?
-  if @virtual.nil?
-    cardname.simple? ? (@virtual = false) : template
-  end
+  cardname.simple? ? (@virtual = false) : template if @virtual.nil?
   @virtual
 end
 

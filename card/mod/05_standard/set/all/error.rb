@@ -19,15 +19,15 @@ format do
 
   view :not_found, perms: :none, error_code: 404 do |_args|
     error_name = card.name.present? ? card.name : 'the card requested'
-    %{ Could not find #{error_name}. }
+    %( Could not find #{error_name}. )
   end
 
   view :server_error, perms: :none, error_code: 500 do
-    %{
+    %(
       Wagn Hitch!  Server Error. Yuck, sorry about that.
       To tell us more and follow the fix,
       add a support ticket at http://wagn.org/new/Support_Ticket
-    }
+    )
   end
 
   view :denial, perms: :none, error_code: 403 do
@@ -35,7 +35,7 @@ format do
   end
 
   view :bad_address, perms: :none, error_code: 404 do
-    %{ 404: Bad Address }
+    %( 404: Bad Address )
   end
 
   view :too_deep, perms: :none, closed: true do
@@ -43,7 +43,7 @@ format do
   end
 
   view :too_slow, perms: :none, closed: true do
-    %{ Timed out! #{showname} took too long to load. }
+    %( Timed out! #{showname} took too long to load. )
   end
 end
 
@@ -86,12 +86,12 @@ format :html do
   end
 
   view :unsupported_view, perms: :none, tags: :unknown_ok do |args|
-    %{
+    %(
       <strong>
         view <em>#{args[:unsupported_view]}</em>
         not supported for <em>#{error_cardname}</em>
       </strong>
-    }
+    )
   end
 
   view :message, perms: :none, tags: :unknown_ok do |args|
@@ -115,7 +115,7 @@ format :html do
   end
 
   view :closed_missing, perms: :none do
-    %{<span class="faint"> #{showname} </span>}
+    %(<span class="faint"> #{showname} </span>)
   end
 
   view :conflict, error_code: 409 do |args|
@@ -125,13 +125,13 @@ format :html do
     end
     wrap args.merge(slot_class: 'error-view') do # ENGLISH below
       alert 'warning' do
-        %{
+        %(
           <strong>Conflict!</strong>
           <span class="new-current-revision-id">#{card.last_action_id}</span>
           <div>#{actor_link} has also been making changes.</div>
           <div>Please examine below, resolve above, and re-submit.</div>
           #{expanded_act}
-        }
+        )
       end
     end
   end
@@ -157,14 +157,14 @@ format :html do
 
   view :not_found do |args| # ug.  bad name.
     sign_in_or_up_links =
-      if !Auth.signed_in?
+      unless Auth.signed_in?
         signin_link = card_link :signin, text: 'Sign in'
         signup_link = link_to 'Sign up', card_path('new/:signup')
-        %{<div>#{signin_link} or #{signup_link} to create it.</div>}
+        %(<div>#{signin_link} or #{signup_link} to create it.</div>)
       end
     frame args.merge(title: 'Not Found', optional_menu: :never) do
       card_label = card.name.present? ? "<em>#{card.name}</em>" : 'that'
-      %{<h2>Could not find #{card_label}.</h2> #{sign_in_or_up_links}}
+      %(<h2>Could not find #{card_label}.</h2> #{sign_in_or_up_links})
     end
   end
 
@@ -172,11 +172,11 @@ format :html do
     task = args[:denied_task]
     to_task = task ? "to #{task} this." : 'to do that.'
     if !focal?
-      %{
+      %(
         <span class="denied">
           <!-- Sorry, you don't have permission #{to_task} -->
         </span>
-      }
+      )
     else
       frame args do # ENGLISH below
         message =
@@ -195,10 +195,10 @@ format :html do
             "Please #{signin_link} #{or_signup_link} #{to_task}"
           end
 
-        %{
+        %(
           <h1>Sorry!</h1>
           <div>#{message}</div>
-        }
+        )
       end
     end
   end

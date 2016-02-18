@@ -25,15 +25,13 @@ def nth_action index
   index = index.to_i
   return unless id && index > 0
   Action.where("draft is not true AND card_id = #{id}")
-    .order(:id).limit(1).offset(index - 1).first
+        .order(:id).limit(1).offset(index - 1).first
 end
 
 def revision action
   # a "revision" refers to the state of all tracked fields
   # at the time of a given action
-  if action.is_a? Integer
-    action = Card::Action.fetch(action)
-  end
+  action = Card::Action.fetch(action) if action.is_a? Integer
   action && Card::TRACKED_FIELDS.inject({}) do |attr_changes, field|
     last_change = action.card_changes.find_by_field_name(field) ||
                   last_change_on(field, not_after: action)

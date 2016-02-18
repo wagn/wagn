@@ -57,22 +57,22 @@ describe Card::Subcards do
       expect(Card['supermen+pseudonym'].name).to eq 'supermen+pseudonym'
     end
 
-    it "cleans the cache for autonaming case" do
+    it 'cleans the cache for autonaming case' do
       Card::Auth.as_bot do
         Card.create!(
           name: 'Book+*type+*autoname', content: 'Book_1',
           type_id: Card::PhraseID
         )
         card = Card.create!(
-          type: "Book",
-          subcards: { '+editable' => 'yes'}
+          type: 'Book',
+          subcards: { '+editable' => 'yes' }
         )
         expect(card.errors).to be_empty
         expect(Card["#{card.name}+editable"]).to be_truthy
 
         @card = Card.create!(
-          type: "Book",
-          subcards: { '+editable' => 'sure'}
+          type: 'Book',
+          subcards: { '+editable' => 'sure' }
         )
       end
 

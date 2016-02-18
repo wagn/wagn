@@ -1,6 +1,5 @@
 format :html do
-
-  def frame args={}, &block
+  def frame args={}, &_block
     args.reverse_merge!(
       panel_class:  'panel panel-default',
       header_class: 'panel-heading',

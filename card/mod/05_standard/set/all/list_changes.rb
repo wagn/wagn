@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-
 def list_fields
   Card.search({ left: name, type_id: Card::ListID }, 'list fields')
 end
@@ -39,10 +38,9 @@ event :cardtype_of_list_item_changed, :validate,
       changed: :type, on: :save,
       when: proc { Codename[:list] } do
   linker_lists.each do |card|
-    if card.item_type_id != type_id
-      errors.add(:type,
-                 "can't be changed because #{name} " \
-                 "is referenced by list card #{card.name}")
-    end
+    next unless card.item_type_id != type_id
+    errors.add(:type,
+               "can't be changed because #{name} " \
+               "is referenced by list card #{card.name}")
   end
 end

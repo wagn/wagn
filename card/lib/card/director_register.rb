@@ -43,7 +43,7 @@ class Card
 
       def clear
         DirectorRegister.act_card = nil
-        directors.each_pair do |card, dir|
+        directors.each_pair do |card, _dir|
           card.director = nil
         end
         @directors = nil
@@ -60,6 +60,11 @@ class Card
       def delete director
         return unless @directors
         @directors.delete director.card
+        director.delete
+      end
+
+      def to_s
+        directors.values.map(&:to_s).join "\n"
       end
     end
   end

@@ -68,7 +68,8 @@ class Card
       def define_event_method event, call_method, _opts
         class_eval do
           define_method event do
-            # puts "#{name}:#{event}".green
+            # puts "#{name}:#{event}\n".red
+            # puts "#{Card::DirectorRegister.to_s}".green
             run_callbacks event do
               send call_method
             end
@@ -87,11 +88,11 @@ class Card
       # @option queue [Symbol] (:default) the name of the queue8
       def define_active_job name, final_method, queue=:default
         class_name = name.to_s.camelize
-        eval %{
+        eval %(
           class ::#{class_name} < ActiveJob::Base
             queue_as #{queue}
           end
-        }
+        )
         Object.const_get(class_name).class_eval do
           define_method :perform, proc { |card, attributes|
             attributes.each do |attname, args|

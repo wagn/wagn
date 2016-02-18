@@ -5,7 +5,7 @@
 }
 
 def label name
-  %{All "+#{name.to_name.tag}" cards on "#{name.to_name.left_name}" cards}
+  %(All "+#{name.to_name.tag}" cards on "#{name.to_name.left_name}" cards)
 end
 
 def prototype_args anchor
@@ -22,5 +22,5 @@ def anchor_name card
 end
 
 def follow_label name
-  %{all "+#{name.to_name.tag}" on "#{name.to_name.left_name}s"}
+  %(all "+#{name.to_name.tag}" on "#{name.to_name.left_name}s")
 end

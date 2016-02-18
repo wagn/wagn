@@ -23,12 +23,12 @@ format :rss do
           render_feed_body
         end
       end
-    rescue =>e
+    rescue => e
       @xml.error "\n\nERROR rendering RSS: #{e.inspect}\n\n #{e.backtrace}"
     end
   end
 
-  def raw_feed_items args
+  def raw_feed_items _args
     [card]
   end
 
@@ -46,7 +46,7 @@ format :rss do
   end
 
   view :feed_title do
-    Card.global_setting(:title) + ' : ' + card.name.gsub(/^\*/,'')
+    Card.global_setting(:title) + ' : ' + card.name.gsub(/^\*/, '')
   end
 
   view :feed_item do |args|

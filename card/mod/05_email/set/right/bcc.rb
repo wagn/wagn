@@ -3,13 +3,11 @@ def process_email_addresses context_card, format_args, args
   format(format_args).render_email_addresses(args.merge(context: context_card))
 end
 
-
 format do
-  def chunk_list  #turn off autodetection of uri's
+  def chunk_list  # turn off autodetection of uri's
     :references
   end
 end
-
 
 format :html do
   view :pointer_items do |args|
@@ -26,20 +24,17 @@ format :email_text do
       # note that context is processed twice here because pointers absolutize item_names by default
       # while other types can return relative names.  That's poor default behavior and should be fixed!
       item_name = item_name.to_name.to_absolute(context).to_s
-      if item_name.match(/.+\@.+\..+/)
+      if item_name =~ /.+\@.+\..+/
         item_name
-      elsif item_card = Card.fetch( item_name )
+      elsif item_card = Card.fetch(item_name)
         if item_card.account
           item_card.account.email
         else
-          item_card.contextual_content(context,format: :email_text).split( /[,\n]/ )
+          item_card.contextual_content(context, format: :email_text).split(/[,\n]/)
         end
       end
     end.flatten.compact.join(', ')
   end
 end
 
-
-
 # _user, info@mail.com, Ethan, Pointer -> ..., _left+email, my email address -> info@mail.com
-

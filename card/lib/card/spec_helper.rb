@@ -109,7 +109,7 @@ module Card::SpecHelper
         rescue NameError
         end
         super
-#        raise NoMethodError
+        #        raise NoMethodError
       end
 
       define_method name, event_block

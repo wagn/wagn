@@ -34,7 +34,7 @@ format :csv  do
         titles = parsed_content.map do |chunk|
           next if chunk.class != Card::Chunk::Include
           opts = chunk.options
-          if ['name', 'link'].member? opts[:view]
+          if %w(name link).member? opts[:view]
             opts[:view]
           else
             opts[:inc_name].to_name.tag

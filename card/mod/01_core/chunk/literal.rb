@@ -6,19 +6,16 @@
 # and within HTML tags.
 module Card::Chunk
   class EscapedLiteral < Abstract
-    FULL_RE = { '[' => /^\\\[\[[^\]]*\]\]/, '{' => /^\\\{\{[^\}]*\}\}/ }
-    Card::Chunk.register_class self, {
-      prefix_re: '\\\\(?:\\[\\[|\\{\\{)',
-      idx_char:  '\\'
-    }
+    FULL_RE = { '[' => /^\\\[\[[^\]]*\]\]/, '{' => /^\\\{\{[^\}]*\}\}/ }.freeze
+    Card::Chunk.register_class self,       prefix_re: '\\\\(?:\\[\\[|\\{\\{)',
+                                           idx_char:  '\\'
 
     def self.full_re prefix
-      re = FULL_RE[ prefix[1,1] ]
+      re = FULL_RE[prefix[1, 1]]
     end
 
-    def interpret match, content
-      @process_chunk = match[0].sub(/^\\(.)/, "<span>\\1</span>")
+    def interpret match, _content
+      @process_chunk = match[0].sub(/^\\(.)/, '<span>\\1</span>')
     end
   end
-
 end

@@ -4,9 +4,7 @@ module ClassMethods
   def uniquify_name name, rename=:new
     return name unless Card.exists?(name)
     uniq_name = "#{name} 1"
-    while Card.exists?(uniq_name)
-      uniq_name.next!
-    end
+    uniq_name.next! while Card.exists?(uniq_name)
     if rename == :old
       # name conflict resolved; original name can be used
       Card[name].update_attributes! name: uniq_name,
@@ -38,11 +36,25 @@ def name= newname
     reset_patterns_if_rule
     reset_patterns
   end
-  if @director
+  if @subcards
     subcards.each do |subcard|
-      subcard.name = subcard.cardname.replace_part name, newname
+      # if subcard has a relative name like +C
+      # and self is a subcard as well that changed from +B to A+B then
+      # +C should change to A+B+C. #replace_part doesn't work in this case
+      # because the old name +B is not a part of +C
+      # name_to_replace =
+      name_to_replace =
+        if subcard.cardname.junction? && subcard.cardname.parts
+                                                       .first.empty? &&
+         cardname.parts.first.present?
+          ''.to_name
+        else
+          name
+        end
+      subcard.name = subcard.cardname.replace_part name_to_replace, newname
     end
   end
+
 
   write_attribute :name, cardname.s
 end
@@ -168,8 +180,8 @@ def repair_key
       key_blocker.save
     end
 
-    saved =   (self.key      = correct_key) && self.save!
-    saved ||= (self.cardname = current_key) && self.save!
+    saved =   (self.key      = correct_key) && save!
+    saved ||= (self.cardname = current_key) && save!
 
     if saved
       descendants.each(&:repair_key)
@@ -183,7 +195,6 @@ rescue
   Rails.logger.info "BROKE ATTEMPTING TO REPAIR BROKEN KEY: #{key}"
   self
 end
-
 
 event :set_autoname, :prepare_to_validate, on: :create do
   if name.blank? && (autoname_card = rule_card(:autoname))

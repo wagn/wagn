@@ -2,7 +2,7 @@
 require 'card/mailer'
 
 describe Card::Mailer do
-  #include ActionMailer::Quoting
+  # include ActionMailer::Quoting
 
   before do
     ActionMailer::Base.deliveries = []
@@ -43,8 +43,6 @@ describe Card::Mailer do
   #   # FIXME: at least two tests should be here, with & w/o attachment.
   # end
 
-
-
   # describe "cardmail" do
   #   before do
   #     Card.gimme "mailtest", content: "test"
@@ -57,8 +55,8 @@ describe Card::Mailer do
   # end
 
   private
-    def encode(subject)
+
+    def encode subject
       quoted_printable(subject, Card::Mailer::CHARSET)
     end
-
 end

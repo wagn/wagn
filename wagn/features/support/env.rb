@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
-ENV['RAILS_ENV'] = "cucumber"
+ENV['RAILS_ENV'] = 'cucumber'
 
-require File.expand_path( '../../../lib/wagn/simplecov_helper.rb', __FILE__ )
+require File.expand_path('../../../lib/wagn/simplecov_helper.rb', __FILE__)
 require 'simplecov'
 require 'minitest/autorun'
 
@@ -43,7 +43,7 @@ ActionController::Base.allow_rescue = false
 begin
   DatabaseCleaner.strategy = :transaction
 rescue NameError
-  raise "You need to add database_cleaner to your Gemfile (in the :test group) if you wish to use it."
+  raise 'You need to add database_cleaner to your Gemfile (in the :test group) if you wish to use it.'
 end
 
 # You may also want to configure DatabaseCleaner to use different strategies for certain features and scenarios.

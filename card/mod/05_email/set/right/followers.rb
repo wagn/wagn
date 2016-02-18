@@ -21,7 +21,9 @@ def raw_content
   end
 end
 
-def virtual?; !real? end
+def virtual?
+  !real?
+end
 
 format do
   include Card::Set::Type::Pointer::Format

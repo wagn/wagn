@@ -18,10 +18,9 @@ class Card
   #
   #
   module Stage
-    STAGE_INDEX = {}
     STAGES = [:initialize, :prepare_to_validate, :validate, :prepare_to_store,
               :store, :finalize, :integrate, :integrate_with_delay].freeze
-
+    STAGE_INDEX = {}
     STAGES.each_with_index do |stage, i|
       STAGE_INDEX[stage] = i
     end
@@ -34,7 +33,7 @@ class Card
       when Integer
         return STAGES[index] if index < STAGES.size
       end
-      fail Card::Error, "not a valid stage index: #{index}"
+      raise Card::Error, "not a valid stage index: #{index}"
     end
 
     def stage_index stage
@@ -44,7 +43,7 @@ class Card
       when Integer then
         return stage
       else
-        fail Card::Error, "not a valid stage: #{stage}"
+        raise Card::Error, "not a valid stage: #{stage}"
       end
     end
 

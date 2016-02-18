@@ -75,7 +75,7 @@ end
 
 # delete references from this card
 def delete_references_out
-  fail 'id required to delete references' if id.nil?
+  raise 'id required to delete references' if id.nil?
   Card::Reference.delete_all referer_id: id
 end
 

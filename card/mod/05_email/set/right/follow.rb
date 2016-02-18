@@ -8,10 +8,9 @@ def options_rule_card
   Card.new(
     name: 'follow_options_card',
     type_code: :pointer,
-    content: option_cards.map {|oc| "[[#{oc.title}]]" }.join("\n")
+    content: option_cards.map { |oc| "[[#{oc.title}]]" }.join("\n")
   )
 end
-
 
 format :html do
   def default_follow_item_args args
@@ -21,10 +20,10 @@ format :html do
   view :follow_item, tags: :unknown_ok do |args|
     if card.new_card? || !card.include_item?(args[:condition])
       button_view = :add_follow_rule_button
-      form_opts = {add_item: args[:condition]}
+      form_opts = { add_item: args[:condition] }
     else
       button_view = :delete_follow_rule_button
-      form_opts = {drop_item: args[:condition]}
+      form_opts = { drop_item: args[:condition] }
     end
 
     text = if (option_card = Card.fetch args[:condition])
@@ -42,10 +41,9 @@ format :html do
         { action: :update, name: card.name, success: { view: :follow_item } },
         hidden: { condition: args[:condition] }.merge(form_opts)
       ) do
-
         output [
           _optional_render(button_view, args),
-          card_link( link_target, text: text)
+          card_link(link_target, text: text)
         ]
       end
     end
@@ -56,57 +54,46 @@ format :html do
   end
 
   view :follow_status do |args|
-    %{
+    %(
       <h4>Get notified about changes</h4>
 
-      #{
-        wrap_with( :ul, class: 'delete-list list-group') do
+      #{wrap_with(:ul, class: 'delete-list list-group') do
           card.item_names.map do |option|
             content_tag :li, class: 'list-group-item' do
               condition = option == '*never' ? '*always' : option
               subformat(card).render_follow_item condition: condition
             end
           end.join "\n"
-        end
-      }
+        end}
 
-      #{
-        card_link(args[:card_key], {
-          text: 'more options',
-          path_opts: {
-            view: :related,
-            related: {
-              name: card.name,
-              view: :related_edit_rule
-            }
-          },
-          class: 'btn update-follow-link',
-          'data-card_key'=>args[:card_key]
-        })
-      }
-    }
+      #{card_link(args[:card_key],                     text: 'more options',
+                                                       path_opts: {
+                                                         view: :related,
+                                                         related: {
+                                                           name: card.name,
+                                                           view: :related_edit_rule
+                                                         }
+                                                       },
+                                                       class: 'btn update-follow-link',
+                                                       'data-card_key' => args[:card_key])}
+    )
   end
 
-
-  view :delete_follow_rule_button do |args|
+  view :delete_follow_rule_button do |_args|
     button_tag(
       type: :submit,
-      class: 'btn-xs btn-item-delete btn-primary', 'aria-label'=>'Left Align'
+      class: 'btn-xs btn-item-delete btn-primary', 'aria-label' => 'Left Align'
     ) do
-
-      tag :span, class: "glyphicon glyphicon-ok", 'aria-hidden'=>"true"
-    end
-
-  end
-
-  view :add_follow_rule_button do |args|
-    button_tag(
-      type: :submit,
-      class: 'btn-xs btn-item-add', 'aria-label'=>'Left Align'
-    ) do
-
-      tag :span, class: "glyphicon glyphicon-plus", 'aria-hidden'=>"true"
+      tag :span, class: 'glyphicon glyphicon-ok', 'aria-hidden' => 'true'
     end
   end
 
+  view :add_follow_rule_button do |_args|
+    button_tag(
+      type: :submit,
+      class: 'btn-xs btn-item-add', 'aria-label' => 'Left Align'
+    ) do
+      tag :span, class: 'glyphicon glyphicon-plus', 'aria-hidden' => 'true'
+    end
+  end
 end

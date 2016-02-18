@@ -7,10 +7,21 @@ card_accessor :salt
 card_accessor :status
 card_accessor :token
 
-def active?;   status == 'active'  end
-def blocked?;  status == 'blocked' end
-def built_in?; status == 'system'  end
-def pending?;  status == 'pending' end
+def active?
+  status == 'active'
+end
+
+def blocked?
+  status == 'blocked'
+end
+
+def built_in?
+  status == 'system'
+end
+
+def pending?
+  status == 'pending'
+end
 
 def validate_token! test_token
   tcard = token_card

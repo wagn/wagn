@@ -2,11 +2,10 @@
 
 class AccountRequestsToSignups < Card::CoreMigration
   def up
-
     newname = 'Sign up'
     newname = '*signup' if Card.exists? newname
 
-    #get old codename and name out of the way
+    # get old codename and name out of the way
     old_signup = Card[:signup]
     old_signup.name = "#{newname} - old"
     old_signup.codename = nil
@@ -41,10 +40,5 @@ class AccountRequestsToSignups < Card::CoreMigration
     captcha_rule = Card.fetch rulename, new: {}
     captcha_rule.content = '0'
     captcha_rule.save!
-
-
   end
-
 end
-
-

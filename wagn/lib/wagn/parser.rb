@@ -54,9 +54,9 @@ module Wagn
           parser.on('-m', '--mod MODNAME',
                     'Run all specs for a mod or matching a mod') do |file|
             opts[:files] =
-              if File.exists?("mod/#{file}")
+              if File.exist?("mod/#{file}")
                 "#{Cardio.gem_root}/mod/#{file}"
-              elsif File.exists?("#{Cardio.gem_root}/mod/#{file}")
+              elsif File.exist?("#{Cardio.gem_root}/mod/#{file}")
                 "#{Cardio.gem_root}/mod/#{file}"
               elsif (files = find_spec_file(file, 'mod')) && files.present?
                 files
@@ -78,7 +78,7 @@ module Wagn
             if spring
               opts[:executer] = 'spring'
               if opts[:rescue]
-                opts[:rescue]  = ''
+                opts[:rescue] = ''
                 puts 'Disabled pry-rescue. Not compatible with spring.'
               end
             else

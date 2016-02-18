@@ -5,7 +5,7 @@ attr_accessor :email
 
 format :html do
   view :setup, tags: :unknown_ok,
-               perms: lambda { |_r| Auth.needs_setup? } do |args|
+               perms: ->(_r) { Auth.needs_setup? } do |args|
     account = card.fetch trait: :account, new: {}
     Auth.as_bot do
       frame_and_form :create, args do
@@ -26,7 +26,7 @@ format :html do
       help_text: help_text,
       buttons: setup_button,
       hidden: {
-        success: "REDIRECT: #{ Card.path_setting '/' }",
+        success: "REDIRECT: #{Card.path_setting '/'}",
         'card[type_id]' => Card.default_accounted_type_id,
         'setup' => true
       }
@@ -59,13 +59,13 @@ event :setup_as_bot, before: :check_permissions, on: :create,
 end
 
 event :setup_first_user, :prepare_to_store, on: :create,
-                         when: proc { Card::Env.params[:setup] } do
+                                            when: proc { Card::Env.params[:setup] } do
   add_subcard 'signup alert email+*to', content: name
   add_subfield :roles, content: Card[:administrator].name
 end
 
 event :signin_after_setup, :integrate, on: :create,
-                           when: proc { Card::Env.params[:setup] } do
+                                       when: proc { Card::Env.params[:setup] } do
   Auth.signin id
 end
 

@@ -69,7 +69,6 @@ describe Card::Subcards do
         )
         expect(card.errors).to be_empty
         expect(Card["#{card.name}+editable"]).to be_truthy
-
         @card = Card.create!(
           type: 'Book',
           subcards: { '+editable' => 'sure' }

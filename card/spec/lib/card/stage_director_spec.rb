@@ -249,8 +249,8 @@ describe Card::StageDirector do
         ) do
           if name.empty? && !changed
             self.name = 'main1+main2'
-            expect(self.subfield('sub1')).to be
-            expect(self.subfield('sub1').content).to eq('some content')
+            expect(subfield('sub1')).to be
+            expect(subfield('sub1').content).to eq('some content')
           end
         end
         expect(Card['main1+main2+sub1'].class).to eq(Card)

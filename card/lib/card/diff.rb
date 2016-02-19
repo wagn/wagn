@@ -18,17 +18,6 @@ class Card
       def render_deleted_chunk text, _count=true
         "<del class='diffdel diff-red'>#{text}</del>"
       end
-
-      def render_chunk action, text
-        case action
-        when '+'      then render_added_chunk text
-        when :added   then render_added_chunk text
-        when '-'      then render_deleted_chunk text
-        when :deleted then render_deleted_chunk text
-        else text
-        end
-      end
     end
   end
 end
-

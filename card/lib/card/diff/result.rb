@@ -45,7 +45,13 @@ class Card
         end
 
         def rendered
-          @summary ||= render_chunks
+          @summary ||=
+            begin
+              truncate_overlap
+              @chunks.map do |chunk|
+                render_chunk chunk[:action], chunk[:text]
+              end.join
+            end
         end
 
         def add text
@@ -71,11 +77,12 @@ class Card
           end
         end
 
-        def render_chunks
-          truncate_overlap
-          @chunks.map do |chunk|
-            Card::Diff.render_chunk chunk[:action], chunk[:text]
-          end.join
+        def render_chunk action, text
+          case action
+          when '+', :added then Card::Diff.render_added_chunk text
+          when '-', :deleted then Card::Diff.render_deleted_chunk text
+          else text
+          end
         end
 
         def truncate_overlap

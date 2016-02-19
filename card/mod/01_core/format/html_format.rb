@@ -5,8 +5,6 @@ require_dependency 'card/diff'
 class Card
   Format.register :html
   class HtmlFormat < Format
-    include Diff
-
     attr_accessor :options_need_save, :start_time, :skip_autosave
 
     # builtin layouts allow for rescue / testing

@@ -9,12 +9,6 @@ format :html do
   include AddHelp::HtmlFormat
 end
 
-event :reset_cache_to_use_new_structure,
-      before: :update_structurees_references do
-  Card::Cache.reset_hard
-  Card::Cache.reset_soft
-end
-
 event :update_structurees_references,
       before: :subsequent,
       when: proc { |c| c.db_content_changed? || c.action == :delete } do
@@ -22,6 +16,12 @@ event :update_structurees_references,
   Auth.as_bot do
     Card::Query.run(statement).each(&:update_references_out)
   end
+end
+
+event :reset_cache_to_use_new_structure,
+      before: :update_structurees_references do
+  Card::Cache.reset_hard
+  Card::Cache.reset_soft
 end
 
 event :update_structurees_type, after: :store, changed: :type_id,

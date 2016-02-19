@@ -113,28 +113,6 @@ module ClassMethods
     Card.cache.delete "~#{card.id}" if card.id
   end
 
-  # set_names reverse map (cached)
-  # FIXME: move to set handling
-  def cached_set_members key
-    set_cache_list = Card.cache.read "$#{key}"
-    set_cache_list.nil? ? [] : set_cache_list.keys
-  end
-
-  def set_members set_names, key
-    set_names.compact.map(&:to_name).map(&:key).map do |set_key|
-      skey = "$#{set_key}" # dollar sign avoids conflict with card keys
-      h = Card.cache.read skey
-      if h.nil?
-        h = {}
-      elsif h[key]
-        next
-      end
-      h = h.dup if h.frozen?
-      h[key] = true
-      Card.cache.write skey, h
-    end
-  end
-
   def validate_fetch_opts! opts
     return unless opts[:new] && opts[:skip_virtual]
     fail Card::Error, 'fetch called with new args and skip_virtual'

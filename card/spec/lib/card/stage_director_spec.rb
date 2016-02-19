@@ -260,4 +260,20 @@ describe Card::StageDirector do
       end
     end
   end
+
+  it 'update_attributes works integrate stage' do
+    in_stage(:integrate, on: :create,
+             trigger: -> do
+               binding.pryc
+               Card.create! name: 'act card'
+             end
+    ) do
+      # binding.pry
+      Card['A'].update_attributes content: 'changed content'
+    end
+    # binding.pry
+    expect(Card['A'].content).to eq 'changed content'
+    expect(Card['A'].acts.size).to eq 1
+    expect(Card['act card'].acts.size).to eq 1
+  end
 end

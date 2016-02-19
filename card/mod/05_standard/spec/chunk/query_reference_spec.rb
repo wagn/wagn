@@ -8,7 +8,7 @@ describe Card::Content::Chunk::QueryReference, 'QueryReference' do
 
     let :query_refs do
       content = Card::Content.new @content, Card.new(type: 'Search')
-       content.find_chunks(Card::Content::Chunk::QueryReference)
+      content.find_chunks(Card::Content::Chunk::QueryReference)
     end
 
     subject { query_refs.first.name }
@@ -34,7 +34,8 @@ describe Card::Content::Chunk::QueryReference, 'QueryReference' do
     end
 
     it 'handles nested query structures' do
-      @content = '{"any":{"content":"Where", "right_plus":["is",{"name":"Waldo"}]}}'
+      @content = '{"any":{"content":"Where", ' \
+                 '"right_plus":["is",{"name":"Waldo"}]}}'
       expect(query_refs[0].name).to eq 'Where'
       expect(query_refs[1].name).to eq 'is'
       expect(query_refs[2].name).to eq 'Waldo'

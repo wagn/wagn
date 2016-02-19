@@ -1,6 +1,7 @@
 class Card
   class Diff
     class Builder
+      attr_reader :result
       delegate :summary, :complete, to: :result
 
       # diff options
@@ -13,10 +14,10 @@ class Card
       # summary: {length: <number> , joint: <string> }
 
       def initialize old_version, new_version, opts={}
-        @result = Result.new('', Summary.new(opts[:summary])
+        @result = Result.new opts[:summary]
         if new_version
           @lcs_opts = lcs_opts_for_format opts[:format]
-          LCS.new(@lcs_opts).run(old_version, new_version, result)
+          LCS.new(@lcs_opts).run(old_version, new_version, @result)
         end
       end
 

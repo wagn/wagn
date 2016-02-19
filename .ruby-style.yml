@@ -8,7 +8,6 @@ Style/CommentAnnotation:
   Enabled: true
 Style/CollectionMethods:
   Description: Preferred collection methods.
-  StyleGuide: https://github.com/bbatsov/ruby-style-guide#map-find-select-reduce-size
   Enabled: true
   PreferredMethods:
     collect: map

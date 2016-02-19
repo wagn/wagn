@@ -112,11 +112,17 @@ format :html do
     css_class = "alert alert-#{alert_type} "
     css_class += 'alert-dismissible ' if args[:dismissible]
     css_class += args[:alert_class] if args[:alert_class]
-    close_button = args[:dismissible] ? %(
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      ) : ''
+    close_button =
+      if args[:dismissible]
+        %(
+          <button type="button" class="close" data-dismiss="alert"
+                  aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        )
+      else
+        ''
+      end
     content_tag :div, class: css_class, role: 'alert' do
       close_button + output(yield args)
     end

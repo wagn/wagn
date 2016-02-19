@@ -2,11 +2,11 @@ class Card
   class Diff
     class Result
       attr_accessor :complete, :summary, :dels_cnt, :adds_cnt
-      def initialize complete='', summary=nil
+      def initialize summary_opts=nil
         @dels_cnt = 0
         @adds_cnt = 0
-        @complete = complete
-        @summary = summary || Summary.new
+        @complete = ''
+        @summary = Summary.new summary_opts
       end
 
       def summary
@@ -14,7 +14,7 @@ class Card
       end
 
       def write_added_chunk text
-        @add_cnt += 1
+        @adds_cnt += 1
         @complete << Card::Diff.render_added_chunk(text)
         @summary.add text
       end
@@ -22,7 +22,7 @@ class Card
       def write_deleted_chunk text
         @dels_cnt += 1
         @complete << Card::Diff.render_deleted_chunk(text)
-        @summary.add text
+        @summary.delete text
       end
 
       def write_unchanged_chunk text

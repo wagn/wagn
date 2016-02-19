@@ -2,6 +2,7 @@
 # !/usr/bin/env ruby
 
 require 'card/diff'
+require 'card/diff/builder'
 
 describe Card::Diff do
   def del text

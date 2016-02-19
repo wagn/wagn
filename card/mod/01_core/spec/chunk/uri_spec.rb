@@ -16,7 +16,7 @@ describe Card::Content::Chunk::URI, 'URI chunk tests' do
                    host: 'www.example.com', path: '/'
   end
   it 'works with trailing slash inside html tags' do
-    match_http_uri '<p>http://www.example.com</p>',
+    match_http_uri '<p>http://www.example.com/</p>',
                    host: 'www.example.com', path: '/',
                    link_text: 'http://www.example.com/'
   end
@@ -262,7 +262,8 @@ describe Card::Content::Chunk::URI, 'URI chunk tests' do
   end
 
   def match_chunk type, test_text, expected
-    expect(get_chunk(type, test_text)).not_to be_nil
+    chunk = get_chunk(type, test_text)
+    expect(chunk).not_to be_nil
 
     expected.each_pair do |method_sym, value|
       # assert_respond_to(chunk, method_sym)

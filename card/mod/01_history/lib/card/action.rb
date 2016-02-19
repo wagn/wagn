@@ -183,7 +183,7 @@ class Card
     def content_diff_builder opts=nil
       @content_diff_builder ||= begin
         diff_args = opts || card.include_set_modules.diff_args
-        Card::Diff::DiffBuilder.new(
+        Card::Diff::Builder.new(
           old_values[:content], new_values[:content], diff_args
         )
       end

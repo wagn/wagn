@@ -35,28 +35,28 @@ describe Card::Diff do
     it 'is green for addition' do
       a = 'a'
       b = 'a b'
-      db = Card::Diff::DiffBuilder.new(a, b)
+      db = Card::Diff::Builder.new(a, b)
       expect(db.green?).to be_truthy
       expect(db.red?).to be_falsey
     end
     it 'is red for deletion' do
       a = 'a'
       b = ''
-      db = Card::Diff::DiffBuilder.new(a, b)
+      db = Card::Diff::Builder.new(a, b)
       expect(db.green?).to be_falsey
       expect(db.red?).to be_truthy
     end
     it 'is green and red for change' do
       a = 'a'
       b = 'b'
-      db = Card::Diff::DiffBuilder.new(a, b)
+      db = Card::Diff::Builder.new(a, b)
       expect(db.green?).to be_truthy
       expect(db.red?).to be_truthy
     end
     it 'is off for no change' do
       a = 'a'
       b = 'a'
-      db = Card::Diff::DiffBuilder.new(a, b)
+      db = Card::Diff::Builder.new(a, b)
       expect(db.green?).to be_falsey
       expect(db.red?).to be_falsey
     end

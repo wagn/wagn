@@ -33,6 +33,9 @@ module NavigationHelpers
     when /edit (.*)$/
       "/#{$1.to_name.url_key}?view=edit"
 
+    when /rename (.*)$/
+      "/#{$1.to_name.url_key}?view=edit_name"
+
     when /new (.*)$/
       "/new/#{$1.to_name.url_key}"
 

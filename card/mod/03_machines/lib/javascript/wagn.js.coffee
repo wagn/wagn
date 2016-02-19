@@ -232,7 +232,7 @@ $(window).ready ->
     $(this).closest('form').submit()
 
   $('body').on 'click', '.renamer-updater', ->
-    $(this).closest('form').find('#card_update_referencers').val 'true'
+    $(this).closest('form').find('#card_update_referers').val 'true'
 
   $('body').on 'submit', '.edit_name-view .card-form', ->
     confirmer = $(this).find '.alert'

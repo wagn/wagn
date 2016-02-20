@@ -58,11 +58,14 @@ class Card
     end
 
     def unregister
+      Card::DirectorRegister.delete self
+    end
+
+    def delete
       @card.director = nil
-      @subdirectors = nil
+      @subdirectors.clear
       @stage = nil
       @action = nil
-      Card::DirectorRegister.delete self
     end
 
     def validation_phase
@@ -122,6 +125,16 @@ class Card
       else
         DirectorRegister.act_director || (@parent && @parent.main_director)
       end
+    end
+
+    def to_s
+      str = @card.name.to_s.clone
+      if @subdirectors
+        subs = subdirectors.map(&:card)
+                 .map { |card| "  #{card.name}" }.join "\n"
+        str << "\n#{subs}"
+      end
+      str
     end
 
     private
@@ -226,6 +239,11 @@ class Card
   class StageSubdirector < StageDirector
     def initialize card, opts={}
       super card, opts, false
+    end
+
+    def delete
+      @parent.subdirectors.delete self if @parent
+      super
     end
   end
 end

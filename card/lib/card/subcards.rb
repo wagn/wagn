@@ -27,6 +27,9 @@ class Card
 
     def clear
       @keys.each do |key|
+        if (subcard = fetch_subcard key)
+          Card::DirectorRegister.delete subcard.director
+        end
         Card.cache.soft.delete key
       end
       @keys = ::Set.new
@@ -54,6 +57,7 @@ class Card
       key = absolutize_subcard_name(key).key unless @keys.include?(key)
       @keys.delete key
       removed_card = fetch_subcard key
+      Card::DirectorRegister.delete removed_card.director
       Card.cache.soft.delete key
       removed_card
     end
@@ -95,9 +99,10 @@ class Card
       end
     end
 
-    def rename old_name, _new_name
+    def rename old_name, new_name
       return unless @keys.include? old_name.to_name.key
-      # FIXME: something should happen here
+      @keys.delete old_name.to_name.key
+      @keys << new_name.to_name.key
     end
 
     def << value
@@ -223,7 +228,7 @@ class Card
     end
 
     def absolutize_subcard_name name
-      if @context_card.name =~ /^\+/
+      if @context_card.name =~ /^\+/ || name.blank?
         name.to_name
       else
         name.to_name.to_absolute_name(@context_card.name)

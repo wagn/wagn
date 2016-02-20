@@ -60,6 +60,11 @@ class Card
       def delete director
         return unless @directors
         @directors.delete director.card
+        director.delete
+      end
+
+      def to_s
+        directors.values.map(&:to_s).join "\n"
       end
     end
   end

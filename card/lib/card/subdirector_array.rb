@@ -14,6 +14,9 @@ class Card
     end
 
     def add card
+      if card.is_a? Card::StageDirector
+        card = card.card
+      end
       each do |dir|
         return dir if dir.card == card
       end
@@ -24,8 +27,18 @@ class Card
       dir
     end
 
+    alias_method :delete_director, :delete
+
     def delete card
-      delete_if { |dir| dir.card == card }
+      if card.is_a? Card::StageDirector
+        delete_director card
+      else
+        delete_if { |dir| dir.card == card }
+      end
+    end
+
+    def add_director dir
+      add dir.card
     end
   end
 end

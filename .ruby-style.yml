@@ -4,6 +4,8 @@ AllCops:
     - "db/schema.rb"
     - "card/tmpsets/**/*"
     - "/opt/wagn/card/mod/05_standard/set/all/comment.rb"
+    - "card/mod/06_bootstrap/lib/stylesheets/smartmenu.css"
+    - "wagn/lib/wagn/generators/wagn/templates/Gemfile"
 Style/CommentAnnotation:
   Enabled: true
 Style/CollectionMethods:

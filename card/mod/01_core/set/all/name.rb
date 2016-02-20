@@ -66,7 +66,6 @@ def update_subcard_names cardname
   end
 end
 
-
 def cardname
   name.to_name
 end

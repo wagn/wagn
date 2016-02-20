@@ -51,17 +51,3 @@ event :validate_type, :validate, changed: :type_id do
                       "to #{rt.type_name}"
   end
 end
-
-event :reset_type_specific_fields, :finalize do
-  # Example: if you save a card of type Phrase
-  # then reset set patterns for update all
-  # "Phrase+Something+*type plus right" cards
-  wql = { left: { left_id: type_id },
-          right: { codename: 'type_plus_right' }
-        }
-  wql_comment = "sets with a type_plus_right rule for #{name}"
-
-  Auth.as_bot do
-    Card.search(wql, wql_comment).each &:reset_set_patterns
-  end
-end

@@ -17,6 +17,12 @@ event :update_structurees_references, :integrate,
   end
 end
 
+event :reset_cache_to_use_new_structure,
+      before: :update_structurees_references do
+  Card::Cache.reset_hard
+  Card::Cache.reset_soft
+end
+
 event :update_structurees_type, :finalize,
       changed: :type_id, when: proc { |c| c.assigns_type? } do
   update_structurees type_id: type_id
@@ -25,7 +31,7 @@ end
 def structuree_names
   if (wql = structuree_statement)
     Auth.as_bot do
-      Card::Query.run(wql.merge return: :name)
+      Card::Query.run wql.merge(return: :name)
     end
   else
     []

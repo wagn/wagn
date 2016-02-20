@@ -74,7 +74,6 @@ event :update_ruled_cards, :finalize do
     # warn "updating ruled cards for #{name}"
     self.class.clear_rule_cache
     set = rule_set
-    set.reset_set_patterns
 
     if right_id == Card::ReadID && (name_changed? || trash_changed?)
       update_read_ruled_cards set

@@ -228,12 +228,6 @@ def junction_only?
   end
 end
 
-def reset_set_patterns
-  Card.cached_set_members(key).each do |mem|
-    Card.expire mem
-  end
-end
-
 def label
   if (klass = subclass_for_set)
     klass.label cardname.left

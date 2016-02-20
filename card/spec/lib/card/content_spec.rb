@@ -184,7 +184,7 @@ EXAMPLES = {
 EXAMPLES.each_value do |val|
   next unless val[:classes]
   val[:classes] = val[:classes].map do |klass|
-    Class === klass ? klass : Card::Chunk.const_get(klass)
+    klass.is_a?(Class) ? klass : Card::Content::Chunk.const_get(klass)
   end
 end
 

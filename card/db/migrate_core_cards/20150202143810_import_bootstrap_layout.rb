@@ -57,7 +57,7 @@ class ImportBootstrapLayout < Card::CoreMigration
     # update layouts to have explicit views in nests
     Card.search(type_id: Card::LayoutTypeID) do |lcard|
       lcontent = Card::Content.new lcard.content, lcard
-      lcontent.find_chunks(Card::Chunk::Include).each do |nest|
+      lcontent.find_chunks(Card::Content::Chunk::Include).each do |nest|
         nest.explicit_view = (nest.options[:inc_name] == '_main' ? 'open' : 'core')
       end
       lcard.update_attributes! content: lcontent.to_s

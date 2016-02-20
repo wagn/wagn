@@ -16,7 +16,7 @@ require 'uri'
 # I'm using a part of the [ISO 3166-1 Standard][iso3166] for country name suffixes.
 # The generic names are from www.bnoack.com/data/countrycode2.html)
 #   [iso3166]: http://geotags.com/iso3166/
-module Card::Chunk
+module Card::Content::Chunk
   class URI < Abstract
     SCHEMES = %w(irc http https ftp ssh git sftp file ldap ldaps mailto).freeze
 
@@ -25,9 +25,11 @@ module Card::Chunk
     attr_reader :uri, :link_text
     delegate :to, :scheme, :host, :port, :path, :query, :fragment, to: :uri
 
-    Card::Chunk.register_class self,       prefix_re: "(?:(?!#{REJECTED_PREFIX_RE})(?:#{SCHEMES * '|'})\\:)",
-                                           full_re:    /^#{::URI.regexp(SCHEMES)}/,
-                                           idx_char:  ':'
+    Card::Content::Chunk.register_class(
+      self, prefix_re: "(?:(?!#{REJECTED_PREFIX_RE})(?:#{SCHEMES * '|'})\\:)",
+            full_re: /^#{::URI.regexp(SCHEMES)}/,
+            idx_char: ':'
+    )
 
     class << self
       def full_match content, prefix
@@ -75,11 +77,12 @@ module Card::Chunk
     PREPEND_STR = 'mailto:'.freeze
     EMAIL = '[a-zA-Zd](?:[-a-zA-Zd]*[a-zA-Zd])?\\@'.freeze
 
-    Card::Chunk.register_class self,       prefix_re: "(?:(?!#{REJECTED_PREFIX_RE})#{EMAIL})\\b",
-                                           full_re:    /^#{::URI.regexp(SCHEMES)}/,
-                                           prepend_str: PREPEND_STR,
-                                           idx_char:  '@'
-
+    Card::Content::Chunk.register_class(
+      self, prefix_re: "(?:(?!#{REJECTED_PREFIX_RE})#{EMAIL})\\b",
+            full_re: /^#{::URI.regexp(SCHEMES)}/,
+            prepend_str: PREPEND_STR,
+            idx_char: '@'
+    )
     def interpret match, content
       super
       @text = @text.sub(/^mailto:/, '')  # this removes the prepended string from the unchanged match text
@@ -110,10 +113,11 @@ module Card::Chunk
     PREPEND_STR = 'http://'.freeze
     HOST = "(?:[a-zA-Z\d](?:[-a-zA-Z\d]*[a-zA-Z\d])?\\.)+#{TLDS}".freeze
 
-    Card::Chunk.register_class self,       prefix_re: "(?:(?!#{REJECTED_PREFIX_RE})#{HOST})\\b",
-                                           full_re:    /^#{::URI.regexp(SCHEMES)}/,
-                                           prepend_str: PREPEND_STR
-
+    Card::Content::Chunk.register_class(
+      self, prefix_re: "(?:(?!#{REJECTED_PREFIX_RE})#{HOST})\\b",
+            full_re: /^#{::URI.regexp(SCHEMES)}/,
+            prepend_str: PREPEND_STR
+    )
     def interpret match, content
       super
       @text = @text.sub(/^http:\/\//, '')  # this removes the prepended string from the unchanged match text

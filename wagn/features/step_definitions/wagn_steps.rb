@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+# rubocop:disable Lint/AmbiguousRegexpLiteral
 require 'uri'
 require 'cgi'
 support_paths_file = File.join File.dirname(__FILE__), '..', 'support', 'paths'

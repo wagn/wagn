@@ -62,7 +62,7 @@ def update_subcard_names cardname
       else
         name
       end
-    subcard.name = subcard.cardname.replace_part name_to_replace, newname
+    subcard.name = subcard.cardname.replace_part name_to_replace, cardname.s
   end
 end
 

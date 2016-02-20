@@ -30,35 +30,40 @@ def name= newname
   end
 
   newkey = cardname.key
-  if key != newkey
-    was_in_cache = Card.cache.soft.delete key
-    self.key = newkey
-    # keep the soft cache up-to-date
-    Card.write_to_soft_cache self if was_in_cache
-    # reset the old name - should be handled in tracked_attributes!!
-    reset_patterns_if_rule
-    reset_patterns
-
-  end
-  if @subcards
-    subcards.each do |subcard|
-      # if subcard has a relative name like +C
-      # and self is a subcard as well that changed from +B to A+B then
-      # +C should change to A+B+C. #replace_part doesn't work in this case
-      # because the old name +B is not a part of +C
-      # name_to_replace =
-      name_to_replace =
-        if subcard.cardname.junction? && subcard.cardname.parts
-                                                       .first.empty? &&
-         cardname.parts.first.present?
-          ''.to_name
-        else
-          name
-        end
-      subcard.name = subcard.cardname.replace_part name_to_replace, newname
-    end
-  end
+  self.key = newkey if key != newkey
+  update_subcard_names cardname
   write_attribute :name, cardname.s
+end
+
+def key= newkey
+  was_in_cache = Card.cache.soft.delete key
+  write_attribute :key, newkey
+  # keep the soft cache up-to-date
+  Card.write_to_soft_cache self if was_in_cache
+  # reset the old name - should be handled in tracked_attributes!!
+  reset_patterns_if_rule
+  reset_patterns
+  newkey
+end
+
+def update_subcard_names cardname
+  return unless @subcards
+  subcards.each do |subcard|
+    # if subcard has a relative name like +C
+    # and self is a subcard as well that changed from +B to A+B then
+    # +C should change to A+B+C. #replace_part doesn't work in this case
+    # because the old name +B is not a part of +C
+    # name_to_replace =
+    name_to_replace =
+      if subcard.cardname.junction? &&
+         subcard.cardname.parts.first.empty? &&
+         cardname.parts.first.present?
+        ''.to_name
+      else
+        name
+      end
+    subcard.name = subcard.cardname.replace_part name_to_replace, cardname.s
+  end
 end
 
 def cardname

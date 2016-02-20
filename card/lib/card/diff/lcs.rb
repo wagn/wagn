@@ -234,7 +234,7 @@ class Card
 
         def next
           if @index < @list.size &&
-            @list[@index][:chunk_index] == @chunk_index
+             @list[@index][:chunk_index] == @chunk_index
             res = @list[@index]
             @index += 1
             @chunk_index += 1

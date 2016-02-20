@@ -1,7 +1,7 @@
 require_dependency 'card/content/chunk'
 
 class Card
- class Content
+  class Content
     class Parser
       def initialize chunk_list
         @chunk_list = chunk_list

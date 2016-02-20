@@ -9,7 +9,8 @@ class Card
           return if name.nil?
           @referee_name ||=
             begin
-              ref_card = fetch_referee_card
+              rendered_name = render_obj(name)
+              ref_card = fetch_referee_card rendered_name
               ref_card ? ref_card.cardname : rendered_name.to_name
             end
           @referee_name = @referee_name.to_absolute(card.cardname).to_name
@@ -46,8 +47,7 @@ class Card
 
         private
 
-        def fetch_referee_card
-          rendered_name = render_obj(name)
+        def fetch_referee_card rendered_name
           case rendered_name # FIXME: this should be standard fetch option.
           when /^\~(\d+)$/ # get by id
             Card.fetch Regexp.last_match(1).to_i

@@ -172,7 +172,7 @@ class Card
       def restrict_reference ref, refjoin
         val = ref.cardquery
         if (id = id_from_val(val))
-          refjoin.conditions << "#{ref.table_alias}.#{ref.outfield} = #{id}"
+          add_condition "#{ref.table_alias}.#{ref.outfield} = #{id}"
         else
           join_cards val, from: refjoin, from_field: ref.outfield
         end

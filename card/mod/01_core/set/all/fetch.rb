@@ -100,44 +100,17 @@ module ClassMethods
     Card.cache.hard.delete "~#{card.id}" if card.id
   end
 
-  def expire name, subcards=false
+  def expire name
     # note: calling instance method breaks on dirty names
     key = name.to_name.key
     return unless (card = Card.cache.read key)
-    if subcards
-      card.expire_subcards
-    else
-      card.preserve_subcards
-    end
     Card.cache.delete key
     Card.cache.delete "~#{card.id}" if card.id
   end
 
-  # set_names reverse map (cached)
-  # FIXME: move to set handling
-  def cached_set_members key
-    set_cache_list = Card.cache.read "$#{key}"
-    set_cache_list.nil? ? [] : set_cache_list.keys
-  end
-
-  def set_members set_names, key
-    set_names.compact.map(&:to_name).map(&:key).map do |set_key|
-      skey = "$#{set_key}" # dollar sign avoids conflict with card keys
-      h = Card.cache.read skey
-      if h.nil?
-        h = {}
-      elsif h[key]
-        next
-      end
-      h = h.dup if h.frozen?
-      h[key] = true
-      Card.cache.write skey, h
-    end
-  end
-
   def validate_fetch_opts! opts
     return unless opts[:new] && opts[:skip_virtual]
-    fail Card::Error, 'fetch called with new args and skip_virtual'
+    raise Card::Error, 'fetch called with new args and skip_virtual'
   end
 
   def cache
@@ -163,7 +136,7 @@ module ClassMethods
   end
 
   def fetch_existing mark, opts
-    return [nil, false] if !mark.present?
+    return [nil, false] unless mark.present?
     mark_type, mark_key = parse_mark! mark
     needs_caching = false # until proven true :)
 
@@ -196,7 +169,6 @@ module ClassMethods
     query = { mark_type => mark_key }
     query[:trash] = false unless opts[:look_in_trash]
     card = Card.where(query).take
-    card.restore_subcards if card
     card
   end
 
@@ -278,17 +250,17 @@ def renew args={}
 end
 
 def handle_default_content opts
-  if (default_content = opts.delete(:default_content)) && content.empty?
+  if (default_content = opts.delete(:default_content)) && db_content.blank?
     opts[:content] ||= default_content
-  elsif content.present? && !opts[:content]
+  elsif db_content.present? && !opts[:content]
     # don't overwrite existing content
-    opts[:content] = content
+    opts[:content] = db_content
   end
 end
 
 def expire_pieces
   cardname.piece_names.each do |piece|
-    Card.expire piece, !cardname.field_of?(piece)
+    Card.expire piece
   end
 end
 
@@ -298,23 +270,18 @@ def expire_hard
   Card.cache.hard.delete "~#{id}" if id
 end
 
-def expire_soft subcards=false
-  if subcards
-    expire_subcards
-  else
-    preserve_subcards
-  end
+def expire_soft
   Card.cache.soft.delete key
   Card.cache.soft.delete "~#{id}" if id
 end
 
-def expire subcards=false
+def expire
   expire_hard
-  expire_soft subcards
+  expire_soft
 end
 
 def refresh force=false
-  if force || self.frozen? || self.readonly?
+  if force || frozen? || readonly?
     fresh_card = self.class.find id
     fresh_card.include_set_modules
     fresh_card

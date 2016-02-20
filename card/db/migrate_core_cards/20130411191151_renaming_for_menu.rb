@@ -11,17 +11,17 @@ class RenamingForMenu < Card::CoreMigration
       '*includers'  => '*included by',
       '*plus cards' => '*children',
       '*plus parts' => '*mates',
-      '*editing'    => '*edited',
+      '*editing'    => '*edited'
     }
     renames.each do |oldname, newname|
       puts "updating: #{oldname}"
       c = Card[oldname]
-      c.update_referencers = true
+      c.update_referers = true
       c.name = newname
       c.save!
     end
-    
-    codenames = %w{
+
+    codenames = %w(
       by_name
       by_update
       by_create
@@ -37,7 +37,7 @@ class RenamingForMenu < Card::CoreMigration
       discussion
       created
       edited
-    }
+    )
     codenames.each do |codename|
       name = codename =~ /^by|disc/ ? codename : '*' + codename
       c = Card[name]
@@ -45,5 +45,4 @@ class RenamingForMenu < Card::CoreMigration
       c.save!
     end
   end
-
 end

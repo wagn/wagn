@@ -11,8 +11,7 @@ module Card::SpecHelper
     # warn "(ath)login_as #{user.inspect}, #{Card::Auth.current_id}, #{@request.session[:user]}"
   end
 
-  def newcard name, content=''
-    #FIXME - misleading name; sounds like it doesn't save.
+  def create! name, content=''
     Card.create! name: name, content: content
   end
 
@@ -27,7 +26,7 @@ module Card::SpecHelper
 
   def debug_assert_view_select view_html, *args, &block
     Rails.logger.rspec %(
-      #{CodeRay.scan(Nokogiri::XML(view_html, &:noblanks).to_s, :html).div}
+                       #{CodeRay.scan(Nokogiri::XML(view_html, &:noblanks).to_s, :html).div}
       <style>
         .CodeRay {
           background-color: #FFF;
@@ -75,19 +74,27 @@ module Card::SpecHelper
   end
 
   # Make expectations in the event phase.
-  # Takes the usual event options :on and :before/:after/:around
-  # and registers the event_block with these options as an event.
+  # Takes a stage and registers the event_block in this stage as an event.
   # Unknown methods in the event_block are executed in the rspec context
   # instead of the card's context.
-  # An additionaly :trigger block in opts is expected that is called
+  # An additionally :trigger block in opts is expected that is called
   # to start the event phase.
+  # Other event options like :on or :when are not supported yet.
   # Example:
-  # in_phase before: :approve, on: :save,
+  # in_stage :initialize,
   #          trigger: ->{ test_card.update_attributes! content: '' } do
   #            expect(item_names).to eq []
   #          end
-  def in_phase opts, &event_block
+  def in_stage stage, opts={}, &event_block
+    stage_sym = :"#{stage}_stage"
     $rspec_binding = binding
+    add_test_event stage_sym, :in_stage_test, &event_block
+    opts[:trigger].call
+  ensure
+    remove_test_event stage_sym, :in_stage_test
+  end
+
+  def add_test_event stage, name, &event_block
     Card.class_eval do
       def method_missing m, *args
         begin
@@ -102,16 +109,33 @@ module Card::SpecHelper
         rescue NameError
         end
         super
-#        raise NoMethodError
+        #        raise NoMethodError
       end
-      define_method :in_phase_test, event_block
+
+      define_method name, event_block
     end
-    Card.define_callbacks :in_phase_test
-    kind =  ([:before, :after, :around] & opts.keys).first
-    name = opts.delete(kind)
-    Card.set_callback name, kind, :in_phase_test, prepend: true
-    opts[:trigger].call
+    Card.define_callbacks name
+    Card.set_callback stage, :before, name, prepend: true
+  end
+
+  def remove_test_event stage, name
+    Card.skip_callback stage, :before, name
+  end
+
+  def test_event stage, _opts, &block
+    event_name = :"test_event_#{@events.size}"
+    stage_sym = :"#{stage}_stage"
+    @events << [stage_sym, event_name]
+    add_test_event stage_sym, event_name, &block
+  end
+
+  def with_test_events
+    @events = []
+    $rspec_binding = binding
+    yield
   ensure
-    Card.skip_callback name, kind, :in_phase_test
+    @events.each do |stage, name|
+      remove_test_event stage, name
+    end
   end
 end

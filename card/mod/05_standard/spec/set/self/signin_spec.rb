@@ -31,7 +31,7 @@ describe Card::Set::Self::Signin do
   end
 
   context '#update' do
-    it 'triggerk signin with valid credentials' do
+    it 'triggers signin with valid credentials' do
       @card.update_attributes! '+*email' => 'joe@admin.com',
                                '+*password' => 'joe_pass'
       expect(Card::Auth.current).to eq(Card['joe admin'])

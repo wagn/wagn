@@ -46,15 +46,17 @@ def last_draft_content
   drafts.last.card_changes.last.value
 end
 
-event :save_draft,
-      before: :store, on: :update,
-      when: proc { Env.params['draft'] == 'true' } do
+event :save_draft, :store,
+      on: :update, when: proc { Env.params['draft'] == 'true' } do
   save_content_draft content
   abort :success
 end
 
-event :set_default_content, on: :create, before: :approve do
-  if !db_content_changed? && template && template.db_content.present?
-    self.db_content = template.db_content
-  end
+event :set_default_content, :prepare_to_validate,
+      on: :create, when: proc { |c| c.use_default_content? } do
+  self.db_content = template.db_content
+end
+
+def use_default_content?
+  !db_content_changed? && template && template.db_content.present?
 end

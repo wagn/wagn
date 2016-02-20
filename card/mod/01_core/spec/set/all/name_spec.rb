@@ -8,18 +8,18 @@ describe Card::Set::All::Name do
       end
     end
 
-    it "should handle cards without names" do
+    it 'should handle cards without names' do
       c = Card.create! type: 'Book'
       expect(c.name).to eq('b1')
     end
 
-    it "should increment again if name already exists" do
+    it 'should increment again if name already exists' do
       b1 = Card.create! type: 'Book'
       b2 = Card.create! type: 'Book'
       expect(b2.name).to eq('b2')
     end
 
-    it "should handle trashed names" do
+    it 'should handle trashed names' do
       b1 = Card.create! type: 'Book'
       Card::Auth.as_bot { b1.delete }
       b1 = Card.create! type: 'Book'
@@ -43,7 +43,6 @@ describe Card::Set::All::Name do
         expect(@card.errors[:codename].first).to match(/already in use/)
       end
     end
-
   end
 
   describe 'repair_key' do

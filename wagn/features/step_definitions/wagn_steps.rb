@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+# rubocop:disable Lint/AmbiguousRegexpLiteral
 require 'uri'
 require 'cgi'
 support_paths_file = File.join File.dirname(__FILE__), '..', 'support', 'paths'
@@ -28,9 +29,7 @@ end
 
 Given /^I am signed out$/ do
   visit '/'
-  if page.has_content? 'Sign out'
-    step 'I follow "Sign out"'
-  end
+  step 'I follow "Sign out"' if page.has_content? 'Sign out'
 end
 
 # Given /^I sign in as (.+)$/ do |account_name|
@@ -164,9 +163,7 @@ end
 
 When /^I wait until ajax response done$/ do
   Timeout.timeout(Capybara.default_wait_time) do
-    while page.evaluate_script('jQuery.active') != 0
-      sleep(0.5)
-    end
+    sleep(0.5) while page.evaluate_script('jQuery.active') != 0
   end
 end
 
@@ -200,9 +197,7 @@ def signed_in_as username
   sameuser = (username == 'I')
   sameuser ||= (Card::Auth.current.key == username.to_name.key)
   was_signed_in = Card::Auth.current_id if Card::Auth.signed_in?
-  unless sameuser
-    step "I am signed in as #{username}"
-  end
+  step "I am signed in as #{username}" unless sameuser
   yield
   return if sameuser
   msg = if was_signed_in
@@ -317,7 +312,7 @@ Then class_re do |selection, neg, element, selector|
   element = 'a' if element == 'link'
   within scope_of(selection) do
     verb = neg ? :should_not : :should
-    page.send(verb, have_css([element, selector] * '.'))
+    page.send(verb, have_css([element, selector].join('.')))
   end
 end
 
@@ -372,7 +367,7 @@ end
 img_should = /^I should see a non-mod image of size "(.+)" and type "(.+)"$/
 Then img_should do |size, type|
   element = find("img[src*='#{size}.#{type}']")
-  expect(element[:src]).to match(%r(/~\d+/))
+  expect(element[:src]).to match(%r{/~\d+/})
 end
 
 Then /^I should see "([^\"]*)" in color (.*)$/ do |text, css_class|

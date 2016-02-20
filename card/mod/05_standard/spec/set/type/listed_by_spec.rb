@@ -81,7 +81,7 @@ describe Card::Set::Type::ListedBy do
               }
             )
             Card.fetch('Adventures of Buckleharry Finn+authors')
-              .update_attributes!(content: '[[Darles Chickens]]')
+                .update_attributes!(content: '[[Darles Chickens]]')
           end
         end
         it do
@@ -106,18 +106,18 @@ describe Card::Set::Type::ListedBy do
           Card::Auth.as_bot do
             Card['Parry Hotter'].update_attributes!(
               name: 'Parry Moppins',
-              update_referencers: true
+              update_referers: true
             )
           end
         end
-        it { is_expected.to eq ['50 grades of shy','Parry Moppins'] }
+        it { is_expected.to eq ['50 grades of shy', 'Parry Moppins'] }
       end
 
       context 'when the name of Darles Chickens changed' do
         before do
           Card['Darles Chickens'].update_attributes!(
             name: 'Darles Eggs',
-            update_referencers: true
+            update_referers: true
           )
         end
         subject { Card.fetch('Darles Eggs+books').item_names.sort }

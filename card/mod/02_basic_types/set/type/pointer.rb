@@ -1,27 +1,28 @@
 
 
-event :add_and_drop_items, before: :approve, on: :save do
+event :add_and_drop_items, :prepare_to_validate, on: :save do
   adds = Env.params['add_item']
   drops = Env.params['drop_item']
   Array.wrap(adds).each { |i| add_item i } if adds
   Array.wrap(drops).each { |i| drop_item i } if drops
 end
 
-event :insert_item_event, before: :approve, on: :save, when: proc {|c| Env.params['insert_item']} do
+event :insert_item_event, :prepare_to_validate,
+      on: :save, when: proc { Env.params['insert_item'] } do
   index = Env.params['item_index'] || 0
-  self.insert_item index.to_i, Env.params['insert_item']
+  insert_item index.to_i, Env.params['insert_item']
 end
 
-phase_method :changed_item_names do
+stage_method :changed_item_names do
   dropped_item_names + added_item_names
 end
 
-phase_method :dropped_item_names do
+stage_method :dropped_item_names do
   old_items = item_names content: db_content_was
   old_items - item_names
 end
 
-phase_method :added_item_names do
+stage_method :added_item_names do
   old_items = item_names content: db_content_was
   item_names - old_items
 end
@@ -33,8 +34,8 @@ format do
     end
   end
 
-  def wrap_item item, args={}
-    item #no wrap in base
+  def wrap_item item, _args={}
+    item # no wrap in base
   end
 
   view :core do |args|
@@ -51,46 +52,49 @@ format do
 end
 
 format :html do
-
   view :core do |args|
-    %{<div class="pointer-list">#{ render_pointer_items args }</div>}
+    %(<div class="pointer-list">#{render_pointer_items args}</div>)
   end
 
   view :closed_content do |args|
-    args[:item] = (args[:item] || inclusion_defaults(card)[:view])=='name' ? 'name' : 'link'
+    args[:item] =
+      if (args[:item] || nest_defaults(card)[:view]) == 'name'
+        'name'
+      else
+        'link'
+      end
     args[:joint] ||= ', '
     _render_core args
   end
 
-#  view :edit do |args|
-#    super(args.merge(pointer_item_class: 'form-control'))
-#  end
+  #  view :edit do |args|
+  #    super(args.merge(pointer_item_class: 'form-control'))
+  #  end
 
   view :editor do |args|
-    part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/,'') : :list
-    hidden_field( :content, class: 'card-content') +
-    raw(_render part_view, args)
+    part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/, '') : :list
+    hidden_field(:content, class: 'card-content') +
+      raw(_render(part_view, args))
+    # .merge(pointer_item_class: 'form-control')))
+  end
 
-    #.merge(pointer_item_class: 'form-control')))
+  def options_card_name
+    (oc = card.options_rule_card) ? oc.cardname.url_key : ':all'
   end
 
   view :list do |args|
     args ||= {}
     items = args[:item_list] || card.item_names(context: :raw)
     items = [''] if items.empty?
-    options_card_name = (oc = card.options_rule_card) ? oc.cardname.url_key : ':all'
-
     extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
     <<-HTML
       <ul class="pointer-list-editor #{extra_css_class}" data-options-card="#{options_card_name}">
-        #{
-          items.map do |item|
-            _render_list_item args.merge( pointer_item: item )
-          end * "\n"
-        }
+        #{items.map do |item|
+            _render_list_item args.merge(pointer_item: item)
+          end.join "\n"}
       </ul>
-      #{ add_item_button }
+      #{add_item_button}
     HTML
   end
 
@@ -103,26 +107,26 @@ format :html do
   end
 
   view :list_item do |args|
-   <<-HTML
-    <li class="pointer-li">
-      <span class="input-group">
-        <span class="input-group-addon handle">
-          #{ glyphicon 'option-vertical left' }
-          #{ glyphicon 'option-vertical right'}
-        </span>
-        #{ text_field_tag 'pointer_item', args[:pointer_item], class: 'pointer-item-text form-control' }
-        <span class="input-group-btn">
-          <button class="pointer-item-delete btn btn-default" type="button">
-            #{ glyphicon 'remove'}
-          </button>
-        </span>
+    <<-HTML
+      <li class="pointer-li">
+        <span class="input-group">
+          <span class="input-group-addon handle">
+            #{glyphicon 'option-vertical left'}
+            #{glyphicon 'option-vertical right'}
+          </span>
+          #{text_field_tag 'pointer_item', args[:pointer_item],
+                           class: 'pointer-item-text form-control'}
+          <span class="input-group-btn">
+            <button class="pointer-item-delete btn btn-default" type="button">
+              #{glyphicon 'remove'}
+            </button>
+          </span>
         </span>
       </li>
     HTML
   end
 
-
-  view :checkbox do |args|
+  view :checkbox do |_args|
     options = card.option_names.map do |option_name|
       checked = card.item_names.include?(option_name)
       label = ((o_card = Card.fetch(option_name)) && o_card.label) || option_name
@@ -130,80 +134,74 @@ format :html do
       description = pointer_option_description option_name
       <<-HTML
         <div class="pointer-checkbox">
-          #{ check_box_tag "pointer_checkbox", option_name, checked, id: id, class: 'pointer-checkbox-button' }
+          #{check_box_tag 'pointer_checkbox', option_name, checked, id: id, class: 'pointer-checkbox-button'}
           <label for="#{id}">#{label}</label>
-          #{ %{<div class="checkbox-option-description">#{ description }</div>} if description }
+          #{%(<div class="checkbox-option-description">#{description}</div>) if description}
         </div>
       HTML
     end.join "\n"
 
-    %{<div class="pointer-checkbox-list">#{options}</div>}
+    %(<div class="pointer-checkbox-list">#{options}</div>)
   end
 
-  view :multiselect do |args|
-    select_tag("pointer_multiselect",
+  view :multiselect do |_args|
+    select_tag(
+      'pointer_multiselect',
       options_for_select(card.option_names, card.item_names),
       multiple: true, class: 'pointer-multiselect form-control'
     )
   end
 
-  view :radio do |args|
+  view :radio do |_args|
     input_name = "pointer_radio_button-#{card.key}"
     options = card.option_names.map do |option_name|
-      checked = (option_name==card.item_names.first)
+      checked = (option_name == card.item_names.first)
       id = "pointer-radio-#{option_name.to_name.key}"
       label = ((o_card = Card.fetch(option_name)) && o_card.label) || option_name
       description = pointer_option_description option_name
       <<-HTML
         <li class="pointer-radio radio">
-          #{ radio_button_tag input_name, option_name, checked, id: id, class: 'pointer-radio-button' }
-          <label for="#{id}">#{ label }</label>
-          #{ %{<div class="radio-option-description">#{ description }</div>} if description }
+          #{radio_button_tag input_name, option_name, checked, id: id, class: 'pointer-radio-button'}
+          <label for="#{id}">#{label}</label>
+          #{%(<div class="radio-option-description">#{description}</div>) if description}
         </li>
       HTML
     end.join("\n")
 
-    %{<ul class="pointer-radio-list">#{options}</ul>}
+    %(<ul class="pointer-radio-list">#{options}</ul>)
   end
 
-  view :select do |args|
-    options = [["-- Select --",""]] + card.option_names.map{ |x| [x,x]}
-    select_tag("pointer_select",
-      options_for_select(options, card.item_names.first),
-      class: 'pointer-select form-control'
-    )
+  view :select do |_args|
+    options = [['-- Select --', '']] + card.option_names.map { |x| [x, x] }
+    select_tag('pointer_select',
+               options_for_select(options, card.item_names.first),
+               class: 'pointer-select form-control'
+              )
   end
-
 
   def pointer_option_description option
     pod_name = card.rule(:options_label) || 'description'
-    dcard = Card[ "#{option}+#{pod_name}" ]
-    if dcard and dcard.ok? :read
-      with_inclusion_mode :normal do
+    dcard = Card["#{option}+#{pod_name}"]
+    if dcard && dcard.ok?(:read)
+      with_nest_mode :normal do
         subformat(dcard).render_core
       end
     end
   end
 
-
-
   def wrap_item item, args
-    %{<div class="pointer-item item-#{args[:view]}">#{item}</div>}
+    %(<div class="pointer-item item-#{args[:view]}">#{item}</div>)
   end
-
-
 end
 
-
 format :css do
-
-  #generalize to all collections?
+  # generalize to all collections?
   def default_item_view
     params[:item] || :content
   end
 
-  view :titled do |args|
-    %(#{major_comment "STYLE GROUP: \"#{card.name}\"", '='}#{ _render_core })
+  view :titled do |_args|
+    %(#{major_comment "STYLE GROUP: \"#{card.name}\"", '='}#{_render_core})
   end
 
   view :core do |args|
@@ -213,22 +211,18 @@ format :css do
   end
 
   view :content, :core
-
 end
 
-
 format :js do
-
   view :core do |args|
     card.item_cards.map do |item|
-      nest item, view: ( args[:item] || :core)
+      nest item, view: (args[:item] || :core)
     end.join "\n\n"
   end
 end
 
-
 format :data do
-  view :core do |args|
+  view :core do |_args|
     card.item_cards.map do |c|
       nest c
     end
@@ -236,7 +230,7 @@ format :data do
 end
 
 format :rss do
-  def raw_feed_items args
+  def raw_feed_items _args
     @raw_feed_items ||= begin
       card.item_cards
     end
@@ -247,15 +241,13 @@ end
 # the new module will override the old module's events and functions.
 # this event is only on pointer card. Other type cards do not have this event,
 # so it is not overridden and will be run while updating type and content in the same request.
-event :standardize_items, before: :approve, on: :save, changed: :content,
-    when: proc{  |c| c.type_id == Card::PointerID  } do
-    self.content = item_names(context: :raw).map { |name| "[[#{name}]]" }.join "\n"
+event :standardize_items, :prepare_to_validate, on: :save, changed: :content,
+                                                when: proc {  |c| c.type_id == Card::PointerID  } do
+  self.content = item_names(context: :raw).map { |name| "[[#{name}]]" }.join "\n"
 end
 
-
-
 def diff_args
-  {format: :pointer}
+  { format: :pointer }
 end
 
 def item_cards args={}
@@ -265,7 +257,7 @@ def item_cards args={}
   else
 
     itype = args[:type] || item_type
-    #warn "item_card[#{inspect}], :complete"
+    # warn "item_card[#{inspect}], :complete"
     item_names(args).map do |name|
       new_args = itype ? { type: itype } : {}
       Card.fetch name, new: new_args
@@ -273,12 +265,11 @@ def item_cards args={}
   end
 end
 
-
 def item_names args={}
-  context = args[:context] || self.cardname
-  content = args[:content] || self.raw_content
+  context = args[:context] || cardname
+  content = args[:content] || raw_content
   content.to_s.split(/\n+/).map do |line|
-    item_name = line.gsub( /\[\[|\]\]/, '').strip
+    item_name = line.gsub(/\[\[|\]\]/, '').strip
     if context == :raw
       item_name
     else
@@ -286,7 +277,6 @@ def item_names args={}
     end
   end
 end
-
 
 def item_ids args={}
   item_names(args).map do |name|
@@ -296,7 +286,7 @@ end
 
 def item_type
   opt = options_rule_card
-  if !opt or opt==self #fixme, need better recursion prevention
+  if !opt || opt == self # fixme, need better recursion prevention
     nil
   else
     opt.item_type

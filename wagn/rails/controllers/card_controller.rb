@@ -55,7 +55,7 @@ class CardController < ActionController::Base
   before_filter :refresh_card, only: [:create, :update, :delete, :rollback]
 
   def setup
-    request.format = :html if !params[:format] # is this used??
+    request.format = :html unless params[:format] # is this used??
     Card::Cache.renew
     Card::Env.reset controller: self
   end
@@ -168,7 +168,7 @@ class CardController < ActionController::Base
   end
 
   def handle
-    card.run_callbacks :handle do
+    card.act(success: true) do
       yield ? render_success : render_errors
     end
   end
@@ -203,9 +203,7 @@ class CardController < ActionController::Base
 
     format = format_from_params
     formatter = card.format(format.to_sym)
-    result = card.run_callbacks :show do
-      formatter.show view, slot_opts
-    end
+    result = card.act { formatter.page view, slot_opts }
     status = formatter.error_status || status
 
     deliver format, result, status
@@ -275,7 +273,7 @@ class CardController < ActionController::Base
   def format_from_params
     return :file if params[:explicit_file]
     format = request.parameters[:format]
-    return :file if !Card::Format.registered.member?(format) # unknown format
+    return :file unless Card::Format.registered.member?(format) # unknown format
     format
   end
 

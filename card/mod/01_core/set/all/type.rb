@@ -36,31 +36,18 @@ def get_type_id_from_structure
   t.type_id
 end
 
-event :validate_type_change, before: :approve, on: :update, changed: :type_id do
+event :validate_type_change, :validate, on: :update, changed: :type_id do
   if (c = dup) && c.action == :create && !c.valid?
-    errors.add :type, "of #{ name } can't be changed; errors creating new " \
-                      "#{ type_id }: #{ c.errors.full_messages * ', ' }"
+    errors.add :type, "of #{name} can't be changed; errors creating new " \
+                      "#{type_id}: #{c.errors.full_messages * ', '}"
   end
 end
 
-event :validate_type, before: :approve, changed: :type_id do
-  if !type_name
-    errors.add :type, 'No such type'
-  end
+event :validate_type, :validate, changed: :type_id do
+  errors.add :type, 'No such type' unless type_name
 
   if (rt = structure) && rt.assigns_type? && type_id != rt.type_id
     errors.add :type, "can't be changed because #{name} is hard templated " \
                       "to #{rt.type_name}"
-  end
-end
-
-event :reset_type_specific_fields, after: :store do
-  wql = { left: { left_id: type_id },
-          right: { codename: 'type_plus_right' }
-        }
-  wql_comment = "sets with a type_plus_right rule for #{name}"
-
-  Auth.as_bot do
-    Card.search(wql, wql_comment).each &:reset_set_patterns
   end
 end

@@ -27,8 +27,8 @@ class Card
       config:      'Config'
     }
     @@groups = @@group_names.keys.each_with_object({}) do |key, groups|
-                 groups[key] = []
-               end
+      groups[key] = []
+    end
     @@user_specific = ::Set.new
 
     def self.user_specific? codename
@@ -55,8 +55,8 @@ class Card
       self.restricted_to_type =
         if opts[:restricted_to_type]
           type_ids = [opts[:restricted_to_type]].flatten.map do |cardtype|
-                       to_type_id(cardtype)
-                     end
+            to_type_id(cardtype)
+          end
           ::Set.new(type_ids)
         end
       return unless opts[:user_specific]

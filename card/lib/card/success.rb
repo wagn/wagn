@@ -11,16 +11,15 @@ class Card
       case success_params
       when Hash
         apply(success_params)
-      when nil  ;  self.name = '_self'
-      else      ;  self.target = success_params
+      when nil then  self.name = '_self'
+      else;  self.target = success_params
       end
     end
 
-
     def << value
       case value
-      when Hash ; apply value
-      else      ; self.target = value
+      when Hash then apply value
+      else; self.target = value
       end
     end
 
@@ -35,10 +34,10 @@ class Card
 
     def mark= value
       case value
-      when Integer   ; @id   = value
-      when String    ; @name = value
-      when Card      ; @card = value
-      else           ; self.target = value
+      when Integer then @id = value
+      when String then @name = value
+      when Card then @card = value
+      else; self.target = value
       end
     end
 
@@ -64,10 +63,10 @@ class Card
       when ''                     then ''
       when '*previous', :previous then :previous
       when /^(http|\/)/           then value
-      when /^TEXT:\s*(.+)/        then  $1
+      when /^TEXT:\s*(.+)/        then  Regexp.last_match(1)
       when /^REDIRECT:\s*(.+)/
         @redirect = true
-        process_target $1
+        process_target Regexp.last_match(1)
       else self.mark = value
       end
     end
@@ -89,7 +88,7 @@ class Card
     end
 
     def target name_context=@name_context
-      card(name_context) || ( @target == :previous ? Card::Env.previous_location : @target ) || Card.fetch(name_context)
+      card(name_context) || (@target == :previous ? Card::Env.previous_location : @target) || Card.fetch(name_context)
     end
 
     def []= key, value
@@ -98,7 +97,7 @@ class Card
       elsif key.to_sym == :soft_redirect
         @redirect = :soft
       else
-          @params.send "#{key}=", value
+        @params.send "#{key}=", value
       end
     end
 
@@ -128,9 +127,9 @@ class Card
     def method_missing method, *args
       case method
       when /^(\w+)=$/
-        self[$1.to_sym] = args[0]
+        self[Regexp.last_match(1).to_sym] = args[0]
       when /^(\w+)$/
-        self[$1.to_sym]
+        self[Regexp.last_match(1).to_sym]
       else
         super
       end
@@ -140,6 +139,4 @@ class Card
       Card::Env.session
     end
   end
-
-
 end

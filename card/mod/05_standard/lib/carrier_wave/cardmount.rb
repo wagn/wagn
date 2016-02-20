@@ -17,25 +17,25 @@ module CarrierWave
       super
 
       class_eval <<-RUBY, __FILE__, __LINE__ + 1
-        event :store_#{column}_event, on: :save, after: :store do
+        event :store_#{column}_event, :finalize, on: :save do
           store_#{column}!
         end
 
         # remove files only if card has no history
-        event :remove_#{column}_event,
-              on: :delete, after: :stored, when: proc { |c| !c.history? } do
+        event :remove_#{column}_event, :finalize,
+              on: :delete, when: proc { |c| !c.history? } do
           remove_#{column}!
         end
-        event :mark_remove_#{column}_false_event,
-              on: :update, after: :stored do
+        event :mark_remove_#{column}_false_event, :finalize,
+              on: :update do
           mark_remove_#{column}_false
         end
-        event :store_previous_model_for_#{column}_event,
-              on: :update, before: :store, when: proc { |c| !c.history? } do
+        event :store_previous_model_for_#{column}_event, :store,
+              on: :update, when: proc { |c| !c.history? } do
           store_previous_model_for_#{column}
         end
-        event :remove_previously_stored_#{column}_event,
-              on: :update, after: :store, when: proc { |c| !c.history?} do
+        event :remove_previously_stored_#{column}_event, :store,
+              on: :update, when: proc { |c| !c.history?} do
           if @previous_model_for_#{column}
             @previous_model_for_#{column}.include_set_modules
           end

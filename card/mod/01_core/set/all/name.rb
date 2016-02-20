@@ -4,13 +4,11 @@ module ClassMethods
   def uniquify_name name, rename=:new
     return name unless Card.exists?(name)
     uniq_name = "#{name} 1"
-    while Card.exists?(uniq_name)
-      uniq_name.next!
-    end
+    uniq_name.next! while Card.exists?(uniq_name)
     if rename == :old
       # name conflict resolved; original name can be used
       Card[name].update_attributes! name: uniq_name,
-                                    update_referencers: true
+                                    update_referers: true
       name
     else
       uniq_name
@@ -32,17 +30,40 @@ def name= newname
   end
 
   newkey = cardname.key
-  if key != newkey
-    self.key = newkey
-    # reset the old name - should be handled in tracked_attributes!!
-    reset_patterns_if_rule
-    reset_patterns
-  end
-  subcards.each do |subcard|
-    subcard.name = subcard.cardname.replace_part name, newname
-  end
-
+  self.key = newkey if key != newkey
+  update_subcard_names cardname
   write_attribute :name, cardname.s
+end
+
+def key= newkey
+  was_in_cache = Card.cache.soft.delete key
+  write_attribute :key, newkey
+  # keep the soft cache up-to-date
+  Card.write_to_soft_cache self if was_in_cache
+  # reset the old name - should be handled in tracked_attributes!!
+  reset_patterns_if_rule
+  reset_patterns
+  newkey
+end
+
+def update_subcard_names cardname
+  return unless @subcards
+  subcards.each do |subcard|
+    # if subcard has a relative name like +C
+    # and self is a subcard as well that changed from +B to A+B then
+    # +C should change to A+B+C. #replace_part doesn't work in this case
+    # because the old name +B is not a part of +C
+    # name_to_replace =
+    name_to_replace =
+      if subcard.cardname.junction? &&
+         subcard.cardname.parts.first.empty? &&
+         cardname.parts.first.present?
+        ''.to_name
+      else
+        name
+      end
+    subcard.name = subcard.cardname.replace_part name_to_replace, cardname.s
+  end
 end
 
 def cardname
@@ -71,39 +92,35 @@ def contextual_name
 end
 
 def relative_name context_name=nil
-  if !context_name && @supercard
-    context_name = @supercard.cardname
-  end
-  cardname.relative_name(context_name)
+  context_name ||= @supercard.cardname if @supercard
+  cardname.relative_name context_name
 end
 
 def absolute_name context_name=nil
-  if !context_name && @supercard
-    context_name = @supercard.cardname
-  end
-  cardname.absolute_name(context_name)
+  context_name ||= @supercard.cardname if @supercard
+  cardname.absolute_name context_name
 end
 
 def left *args
-  return if simple?
-  @superleft || begin
-    unless name_changed? &&
-           name.to_name.trunk_name.key == name_was.to_name.key
-      # prevent recursion when, eg, renaming A+B to A+B+C
-      Card.fetch cardname.left, *args
-    end
+  case
+  when simple?    then nil
+  when @superleft then @superleft
+  when name_changed? && name.to_name.trunk_name.key == name_was.to_name.key
+    nil # prevent recursion when, eg, renaming A+B to A+B+C
+  else
+    Card.fetch cardname.left, *args
   end
 end
 
 def right *args
-  Card.fetch(cardname.right, *args) if !simple?
+  Card.fetch(cardname.right, *args) unless simple?
 end
 
 def [] *args
   case args[0]
   when Fixnum, Range
     fetch_name = Array.wrap(cardname.parts[args[0]]).compact.join '+'
-    Card.fetch(fetch_name, args[1] || {}) if !simple?
+    Card.fetch(fetch_name, args[1] || {}) unless simple?
   else
     super
   end
@@ -141,22 +158,22 @@ def child_names parent_name=nil, side=nil
               "(#{side}) children of #{parent_name}")
 end
 
-def descendant_names parent_name=nil
+# ids of children and children's children
+def descendant_ids parent_id=nil
   return [] if new_card?
-  parent_name ||= name
+  parent_id ||= id
   Auth.as_bot do
-    deps = child_names parent_name
-    deps.inject(deps) do |array, childname|
-      array + descendant_names(childname)
-    end
+    child_ids = Card.search part: parent_id, return: :id
+    child_descendant_ids = child_ids.map { |cid| descendant_ids cid }
+    (child_ids + child_descendant_ids).flatten.uniq
   end
 end
 
+# children and children's children
+# NOTE - set modules are not loaded
+# -- should only be used for name manipulations
 def descendants
-  # children and children's children
-  # NOTE - set modules are not loaded
-  # -- should only be used for name manipulations
-  @descendants ||= descendant_names.map { |name| Card.quick_fetch name }
+  @descendants ||= descendant_ids.map { |id| Card.quick_fetch id }
 end
 
 def repair_key
@@ -170,8 +187,8 @@ def repair_key
       key_blocker.save
     end
 
-    saved =   (self.key      = correct_key) && self.save!
-    saved ||= (self.cardname = current_key) && self.save!
+    saved =   (self.key      = correct_key) && save!
+    saved ||= (self.cardname = current_key) && save!
 
     if saved
       descendants.each(&:repair_key)
@@ -186,50 +203,7 @@ rescue
   self
 end
 
-event :permit_codename, before: :approve, on: :update, changed: :codename do
-  errors.add :codename, 'only admins can set codename' unless Auth.always_ok?
-end
-
-event :validate_unique_codename, after: :permit_codename do
-  if codename.present? && errors.empty? &&
-     Card.find_by_codename(codename).present?
-    errors.add :codename, "codename #{codename} already in use"
-  end
-end
-
-event :validate_name, before: :approve, on: :save do
-  cdname = name.to_name
-  if name.length > 255
-    errors.add :name, 'is too long (255 character maximum)'
-  elsif cdname.blank?
-    errors.add :name, "can't be blank"
-  elsif name_changed?
-    # Rails.logger.debug "valid name #{card.name.inspect} New #{name.inspect}"
-
-    unless cdname.valid?
-      errors.add :name, 'may not contain any of the following characters: ' \
-                        "#{ Card::Name.banned_array * ' ' }"
-    end
-    # this is to protect against using a plus card as a tag
-    if cdname.junction? && simple? && id &&
-       Auth.as_bot { Card.count_by_wql right_id: id } > 0
-      errors.add :name, "#{name} in use as a tag"
-    end
-
-    # validate uniqueness of name
-    condition_sql = 'cards.key = ? and trash=?'
-    condition_params = [cdname.key, false]
-    unless new_record?
-      condition_sql << ' AND cards.id <> ?'
-      condition_params << id
-    end
-    if (c = Card.find_by(condition_sql, *condition_params))
-      errors.add :name, "must be unique; '#{c.name}' already exists."
-    end
-  end
-end
-
-event :set_autoname, before: :validate_name, on: :create do
+event :set_autoname, :prepare_to_validate, on: :create do
   if name.blank? && (autoname_card = rule_card(:autoname))
     self.name = autoname autoname_card.content
     # FIXME: should give placeholder in approve phase
@@ -238,34 +212,28 @@ event :set_autoname, before: :validate_name, on: :create do
   end
 end
 
-event :validate_key, after: :validate_name, on: :save do
-  if key.empty?
-    errors.add :key, 'cannot be blank' if errors.empty?
-  elsif key != cardname.key
-    errors.add :key, "wrong key '#{key}' for name #{name}"
-  end
-end
-
-event :set_name, before: :store, changed: :name do
+event :set_name, :store, changed: :name do
   Card.expire name
   Card.expire name_was
+end
+
+event :set_left_and_right, :store,
+      changed: :name, on: :save do
   if cardname.junction?
     [:left, :right].each do |side|
       sidename = cardname.send "#{side}_name"
-      # warn "sidename #{name} / #{name_was} / #{cardname},
-      # #{side}: #{sidename}"
       sidecard = Card[sidename]
 
       # eg, renaming A to A+B
       old_name_in_way = (sidecard && sidecard.id == id)
       suspend_name(sidename) if old_name_in_way
-      send "#{side}_id=", begin
+      side_id_or_card =
         if !sidecard || old_name_in_way
-          Card.create! name: sidename, supercard: self
+          add_subcard(sidename.s)
         else
-          sidecard
-        end.id
-      end
+          sidecard.id
+        end
+      send "#{side}_id=", side_id_or_card
     end
   else
     self.left_id = self.right_id = nil
@@ -289,13 +257,7 @@ def suspend_name name
   Card.where(id: id).update_all(name: tmp_name, key: tmp_name)
 end
 
-event :cascade_name_changes, after: :store, on: :update, changed: :name do
-  # Rails.logger.info "------------------- #{name_was} CASCADE #{self.name} " \
-  #                   " -------------------------------------"
-  # handle strings from cgi
-  self.update_referencers = false if update_referencers == 'false'
-  Card::Reference.update_on_rename self, name, self.update_referencers
-
+event :cascade_name_changes, :finalize, on: :update, changed: :name do
   des = descendants
   @descendants = nil # reset
 
@@ -306,36 +268,8 @@ event :cascade_name_changes, after: :store, on: :update, changed: :name do
     Card.expire de.name # old name
     newname = de.cardname.replace_part name_was, name
     Card.where(id: de.id).update_all name: newname.to_s, key: newname.key
-    Card::Reference.update_on_rename de, newname, update_referencers
+    de.update_referers = update_referers
+    de.refresh_references_in
     Card.expire newname
-  end
-  execute_referencers_update(des) if update_referencers
-end
-
-def execute_referencers_update descendants
-  Auth.as_bot do
-    [name_referencers(name_was) + descendants.map(&:referencers)]
-      .flatten.uniq.each do |card|
-      # FIXME:  using 'name_referencers' instead of plain 'referencers' for self
-      # because there are cases where trunk and tag
-      # have already been saved via association by this point and therefore
-      # referencers misses things
-      # eg.  X includes Y, and Y is renamed to X+Z.  When X+Z is saved, X is
-      # first updated as a trunk before X+Z gets to this point.
-      # so at this time X is still including Y, which does not exist.
-      # therefore #referencers doesn't find it, but name_referencers(old_name)
-      # does.
-      # some even more complicated scenario probably breaks on the descendants,
-      # so this probably needs a more thoughtful refactor
-      # aligning the dependent saving with the name cascading
-
-      Rails.logger.debug "------------------ UPDATE REFERER #{card.name} " \
-                         '------------------------'
-      unless card == self || card.structure
-        card = card.refresh
-        card.db_content = card.replace_references name_was, name
-        card.save!
-      end
-    end
   end
 end

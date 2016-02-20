@@ -1,25 +1,23 @@
-event :validate_listed_by_name, before: :validate, on: :save, changed: :name do
+event :validate_listed_by_name, :validate, on: :save, changed: :name do
   if !junction? || !right || right.type_id != CardtypeID
     errors.add :name, 'must have a cardtype name as right part'
   end
 end
 
-event :validate_listed_by_content,
-      before: :validate, on: :save,
-      changed: :content do
+event :validate_listed_by_content, :validate,
+      on: :save, changed: :content do
   item_cards(content: content).each do |item_card|
-    if item_card.type_id != right.id
-      errors.add(
-        :content,
-        "#{item_card.name} has wrong cardtype; " \
-        "only cards of type #{cardname.right} are allowed"
-      )
-    end
+    next unless item_card.type_id != right.id
+    errors.add(
+      :content,
+      "#{item_card.name} has wrong cardtype; " \
+      "only cards of type #{cardname.right} are allowed"
+    )
   end
 end
 
-event :update_content_in_list_cards,
-      before: :approve_subcards, on: :save, changed: :content do
+event :update_content_in_list_cards, :prepare_to_validate,
+      on: :save, changed: :content do
   if content.present?
     new_items = item_keys(content: content)
     old_items = item_keys

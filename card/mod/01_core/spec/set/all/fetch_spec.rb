@@ -55,6 +55,14 @@ describe Card::Set::All::Fetch do
       expect(Card.fetch('A+virtual')).not_to be_nil
     end
 
+    it 'fetches virtual set cards' do
+      aself = Card.fetch('A+*self')
+      Card::Cache.reset_all
+      Card.fetch 'A+*self'
+
+      expect(aself.set_names).to include('Set+*type')
+    end
+
     it 'handles name variants of cached cards' do
       expect(Card.fetch('yomama+*self').name).to eq('yomama+*self')
       expect(Card.fetch('YOMAMA+*self').name).to eq('YOMAMA+*self')
@@ -121,8 +129,9 @@ describe Card::Set::All::Fetch do
       end
 
       it 'prefers db cards to pattern virtual cards' do
-        c1=Card.create!(name: 'y+*right+*structure', content: 'Formatted Content')
-        c2=Card.create!(name: 'a+y', content: 'DB Content')
+        Card.create! name: 'y+*right+*structure',
+                     content: 'Formatted Content'
+        Card.create! name: 'a+y', content: 'DB Content'
         card = Card.fetch('a+y')
         expect(card.virtual?).to be_falsey
         expect(card.rule(:structure)).to eq('Formatted Content')
@@ -141,7 +150,7 @@ describe Card::Set::All::Fetch do
 
       it 'should recognize pattern overrides' do
         # ~~~ create right rule
-        tc=Card.create!(name: 'y+*right+*structure', content: 'Right Content')
+        Card.create!(name: 'y+*right+*structure', content: 'Right Content')
         card = Card.fetch('a+y')
         expect(card.virtual?).to be
         expect(card.raw_content).to eq('Right Content')
@@ -218,15 +227,30 @@ describe Card::Set::All::Fetch do
   end
 
   describe '#fetch_virtual' do
-    it 'should find cards with *right+*structure specified' do
+    before do
       Card::Auth.as_bot do
         Card.create! name: 'testsearch+*right+*structure',
                      content: '{"plus":"_self"}', type: 'Search'
       end
+    end
+    it 'should find cards with *right+*structure specified' do
       c = Card.fetch('A+testsearch'.to_name)
       assert c.virtual?
       expect(c.type_code).to eq(:search_type)
       expect(c.raw_content).to eq('{"plus":"_self"}')
+    end
+    context 'fetched virtual card with new args' do
+      it 'should fetch the virtual card with type set in patterns' do
+        Card.fetch '+testsearch', new: { name: '+testsearch',
+                                         supercard: Card['home'] }
+
+        c = Card.fetch('Home+testsearch'.to_name)
+        assert c.virtual?
+        expect(c.type_code).to eq(:search_type)
+        expect(c.raw_content).to eq('{"plus":"_self"}')
+        patterns = c.instance_variable_get('@patterns').map(&:to_s)
+        expect(patterns).to include('Search+*type')
+      end
     end
   end
 

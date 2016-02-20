@@ -15,7 +15,7 @@ class Card
                        }
 
     # replace with enum if we start using rails 4
-    TYPE = [:create, :update, :delete]
+    TYPE = [:create, :update, :delete].freeze
 
     def expire
       self.class.cache.delete id.to_s
@@ -40,9 +40,7 @@ class Card
       end
 
       def delete_old
-        Card.find_each do |card|
-          card.delete_old_actions
-        end
+        Card.find_each(&:delete_old_actions)
         Card::Act.delete_actionless
       end
     end
@@ -83,12 +81,12 @@ class Card
 
     def new_values
       @new_values ||=
-      {
-        content:  new_value_for(:db_content),
-        name:     new_value_for(:name),
-        cardtype: ((typecard = Card[new_value_for(:type_id).to_i]) &&
-                   typecard.name.capitalize)
-      }
+        {
+          content:  new_value_for(:db_content),
+          name:     new_value_for(:name),
+          cardtype: ((typecard = Card[new_value_for(:type_id).to_i]) &&
+                     typecard.name.capitalize)
+        }
     end
 
     def old_values
@@ -152,11 +150,11 @@ class Card
     end
 
     def red?
-      content_diff_builder.red?
+      content_diff_object.red?
     end
 
     def green?
-      content_diff_builder.green?
+      content_diff_object.green?
     end
 
     # def diff
@@ -176,18 +174,16 @@ class Card
     def content_diff diff_type=:expanded, opts=nil
       return unless new_content?
       if diff_type == :summary
-        content_diff_builder(opts).summary
+        content_diff_object(opts).summary
       else
-        content_diff_builder(opts).complete
+        content_diff_object(opts).complete
       end
     end
 
-    def content_diff_builder opts=nil
-      @content_diff_builder ||= begin
+    def content_diff_object opts=nil
+      @diff ||= begin
         diff_args = opts || card.include_set_modules.diff_args
-        Card::Diff::DiffBuilder.new(
-          old_values[:content], new_values[:content], diff_args
-        )
+        Card::Diff.new old_values[:content], new_values[:content], diff_args
       end
     end
 

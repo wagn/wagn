@@ -8,12 +8,12 @@ def followable?
   false
 end
 
-event :store_in_session, before: :approve, on: :save, changed: :content do
+event :store_in_session, :prepare_to_validate, on: :save, changed: :content do
   Env.session[key] = db_content
   self.db_content = ''
 end
 
-event :delete_in_session, after: :approve, on: :delete do
+event :delete_in_session, :validate, on: :delete do
   Env.session[key] = nil
   abort :success
 end
@@ -33,4 +33,3 @@ format :html do
     args[:item] = :name
   end
 end
-

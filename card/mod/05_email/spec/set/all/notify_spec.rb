@@ -46,7 +46,7 @@ shared_examples_for 'notifications' do
           name: 'bnn card', type: :pointer, content: 'changed content'
         )
         @card.format(format: format)
-          .render_list_of_changes(action_id: action_id)
+             .render_list_of_changes(action_id: action_id)
       end
       it { is_expected.to include "content: #{content}" }
     end
@@ -102,11 +102,11 @@ describe Card::Set::All::Notify do
       before do
         Card::Auth.as_bot do
           @card = Card.create!(name: name, content: content,
-                               subcards: { '+s1'=>{content: sub1_content},
-                                           '+s2'=>{content: sub2_content} })
+                               subcards: { '+s1' => { content: sub1_content },
+                                           '+s2' => { content: sub2_content } })
         end
       end
-      subject {
+      subject do
         Card[:follower_notification_email].format.render_mail(
           context:   @card.refresh(true),
           to:        Card['Joe User'].email,
@@ -114,7 +114,7 @@ describe Card::Set::All::Notify do
           followed_set:  "#{@card.name}+*self",
           follow_option: '*always'
         ).text_part.body.raw_source
-      }
+      end
 
       it { is_expected.to include content }
       it { is_expected.to include sub1_content }
@@ -132,20 +132,20 @@ describe Card::Set::All::Notify do
           end
         end
         context 'for main card' do
-          subject {
+          subject do
             Card[:follower_notification_email].format.render_mail(
-                context:   @card.refresh(true),
-                to:        Card['Joe User'].email,
-                follower:  Card['Joe User'].name,
-                followed_set:  @card.name+'+s1+*self',
-                follow_option: '*always'
-              ).text_part.body.raw_source
-          }
+              context:   @card.refresh(true),
+              to:        Card['Joe User'].email,
+              follower:  Card['Joe User'].name,
+              followed_set:  @card.name + '+s1+*self',
+              follow_option: '*always'
+            ).text_part.body.raw_source
+          end
           before do
             Card.create_or_update! "#{name}+*self+*read",
                                    type: 'Pointer', content: '[[Administrator]]'
             Card.create_or_update! "#{name}+s1+*self+*read",
-                                   type: 'Pointer',content: '[[Anyone]]'
+                                   type: 'Pointer', content: '[[Anyone]]'
           end
           it 'includes subcard content' do
             is_expected.to include sub1_content
@@ -194,17 +194,17 @@ describe Card::Set::All::Notify do
       sub2_content = 'new content of subcard 2'
       Card::Auth.as_bot do
         @card = Card.create!(name: name, content: content,
-                             subcards: { '+s1'=>{content: sub1_content},
-                                          '+s2'=>{content: sub2_content} })
+                             subcards: { '+s1' => { content: sub1_content },
+                                         '+s2' => { content: sub2_content } })
       end
-      result =  Card[:follower_notification_email].format.render_mail(
+      result = Card[:follower_notification_email].format.render_mail(
         context:   @card,
         to:        Card['Joe User'].email,
         follower:  Card['Joe User'].name,
         followed_set:  "#{@card.name}+*self",
         follow_option: '*always'
       ).text_part.body.raw_source
-      expect(result).to eq(%{"another card with subcards" was just created by Joe User.
+      expect(result).to eq(%("another card with subcards" was just created by Joe User.
 
    cardtype: Basic
    content: main content {{+s1}}  {{+s2}}
@@ -230,12 +230,11 @@ See the card: /another_card_with_subcards
 You received this email because you're following "another card with subcards".
 
 Use this link to unfollow /update/Joe_User+*follow?card%5Bsubcards%5D%5Banother+card+with+subcards%2B%2Aself%2BJoe+User%2B%2Afollow%5D=%2Anever
-})
+))
     end
   end
 
-
-  describe "#notify_followers" do
+  describe '#notify_followers' do
     def expect_user user_name
       expect(Card.fetch(user_name).account)
     end
@@ -251,8 +250,6 @@ Use this link to unfollow /update/Joe_User+*follow?card%5Bsubcards%5D%5Banother+
     def update card_name, new_content='updated content'
       Card[card_name].update_attributes! content: new_content
     end
-
-
 
     it 'sends notifications of edits' do
       expect_user('Big Brother').to be_notified_of 'All Eyes On Me+*self'
@@ -274,8 +271,6 @@ Use this link to unfollow /update/Joe_User+*follow?card%5Bsubcards%5D%5Banother+
       expect_user('Big Brother').not_to be_notified
       update 'No One Sees Me'
     end
-
-
 
     context 'when following *type sets' do
       before do
@@ -343,7 +338,7 @@ Use this link to unfollow /update/Joe_User+*follow?card%5Bsubcards%5D%5Banother+
 
         context 'and follow fields rule contains *include' do
           it 'sends notification of new included card' do
-            new_card =  Card.new name: 'Sunglasses+lens'
+            new_card = Card.new name: 'Sunglasses+lens'
             expect_user('Sunglasses fan').to be_notified_of 'Sunglasses+*self'
             new_card.save!
           end

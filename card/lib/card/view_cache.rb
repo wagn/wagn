@@ -3,18 +3,18 @@ class Card
     class << self
       SIZE = 500
       LIMIT = 1000 # reduce cache size to SIZE if LIMIT is reached
-      CNT_KEY = 'view_cache_cnt'
-      FREQUENCY_KEY = 'view_cache_frequency'
+      CNT_KEY = 'view_cache_cnt'.freeze
+      FREQUENCY_KEY = 'view_cache_frequency'.freeze
 
       def cache
         Card::Cache[Card::ViewCache]
       end
 
       def fetch format, view, args, &block
-        return block.call if cacheable_view?(view, format)
+        return yield if cacheable_view?(view, format)
 
         key = cache_key view, format, args
-        if !cache.exist?(key)
+        unless cache.exist?(key)
           increment_cached_views_cnt
           reduce_cache if cached_views_cnt > LIMIT
         end

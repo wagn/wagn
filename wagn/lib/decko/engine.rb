@@ -47,11 +47,11 @@ module Decko
         ActiveRecord::Base.establish_connection(::Rails.env.to_sym)
       end
       ActiveSupport.on_load(:after_initialize) do
-        require_card
+        Decko::Engine.require_card
       end
     end
 
-    def require_card
+    def self.require_card
       require_dependency 'card' unless defined?(Card)
     rescue ActiveRecord::StatementInvalid => e
       ::Rails.logger.warn "database not available[#{::Rails.env}] #{e}"

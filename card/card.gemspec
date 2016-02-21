@@ -41,7 +41,9 @@ Gem::Specification.new do |s|
     ['carrierwave',                '~> 0.10'],
     ['htmlentities',               '~> 4.3'],
     ['mini_magick',                '~> 4.2'],
-    ['recaptcha',                  '~> 1.0'],
+    ['recaptcha',                  '~> 0.4.0'],
+    # 0.4.0 is last version that doesn't require ruby 2.0
+
     ['coderay',                    '~> 1.0'],
     ['sass',                       '~> 3.2'],
     ['coffee-script',              '~> 2.2'],

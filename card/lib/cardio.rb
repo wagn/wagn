@@ -93,14 +93,16 @@ module Cardio
       add_path 'db/seeds', with: 'db/seeds.rb'
 
       add_path 'config/initializers', glob: '**/*.rb'
-#      add_path 'config/initializers', root: root, glob: '**/*.rb'
+      add_initializers root
     end
 
     def set_mod_paths
-      each_mod_path do |mod_path|
-        Dir.glob("#{mod_path}/*/initializers").each do |initializers_dir|
-          paths['config/initializers'] << initializers_dir
-        end
+      each_mod_path { |mod_path| add_initializers mod_path }
+    end
+
+    def add_initializers dir
+      Dir.glob("#{dir}/config/initializers").each do |initializers_dir|
+        paths['config/initializers'] << initializers_dir
       end
     end
 

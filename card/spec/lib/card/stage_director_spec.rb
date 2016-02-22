@@ -260,4 +260,23 @@ describe Card::StageDirector do
       end
     end
   end
+
+  describe 'creating and updating cards in stages' do
+
+  it 'update_attributes works integrate stage' do
+    act_cnt = Card['A'].acts.size
+    in_stage(:integrate, on: :create,
+             trigger: -> do
+               Card.create! name: 'act card'
+             end
+    ) do
+      Card['A'].update_attributes content: 'changed content'
+    end
+    expect(Card['A'].content).to eq 'changed content'
+    # no act added to A
+    expect(Card['A'].acts.size).to eq act_cnt
+    # new act for 'act card'
+    expect(Card['act card'].acts.size).to eq 1
+    end
+  end
 end

@@ -17,7 +17,6 @@ def abort status, msg='action canceled'
   end
   raise Card::Abort.new(status, msg)
 end
-
 module ClassMethods
   def create! opts
     card = Card.new opts

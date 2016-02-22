@@ -1,3 +1,6 @@
+# -*- encoding : utf-8 -*-
+# rubocop:disable Lint/AmbiguousRegexpLiteral
+
 When /^I open a new window for (.*)$/ do |account_name|
   str =
     <<END_TAG

@@ -108,33 +108,6 @@ module ClassMethods
     Card.cache.delete "~#{card.id}" if card.id
   end
 
-  # set_names reverse map (cached)
-  # FIXME: move to set handling
-  def cached_set_members key
-    set_cache_list = Card.cache.read "$#{key}"
-    set_cache_list.nil? ? [] : set_cache_list.keys
-  end
-
-  # updates the members hash for all sets self is a member of
-  # QUESTION: why map and not each?
-  # I don't see where that array is useful. It contains
-  # nil for all sets for which self was already cached as a member
-  def set_members set_names, key
-    set_names.compact.map do |set_name|
-      # dollar sign avoids conflict with card keys
-      skey = "$#{set_name.to_name.key}"
-      h = Card.cache.read skey
-      if h.nil?
-        h = {}
-      elsif h[key]
-        next
-      end
-      h = h.dup if h.frozen?
-      h[key] = true
-      Card.cache.write skey, h
-    end
-  end
-
   def validate_fetch_opts! opts
     return unless opts[:new] && opts[:skip_virtual]
     raise Card::Error, 'fetch called with new args and skip_virtual'

@@ -24,7 +24,7 @@ def reset_patterns_if_rule saving=false
 
     # FIXME: should be in right/read.rb
     if saving && right.id == Card::ReadID
-      add_to_read_rule_update_queue(set.item_cards limit: 0)
+      add_to_read_rule_update_queue set.item_cards(limit: 0)
     end
   end
 end
@@ -47,14 +47,10 @@ def set_format_modules klass
 end
 
 def set_names
-  if @set_names.nil?
-    @set_names = patterns.map(&:to_s)
-    Card.set_members @set_names, key
-  end
+  @set_names = patterns.map(&:to_s) if @set_names.nil?
   @set_names
 end
 
 def rule_set_keys
-  set_names # this triggers set_members cache.  need better solution!
   @rule_set_keys ||= patterns.map(&:rule_set_key).compact
 end

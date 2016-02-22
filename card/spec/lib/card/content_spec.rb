@@ -184,7 +184,7 @@ EXAMPLES = {
 EXAMPLES.each_value do |val|
   next unless val[:classes]
   val[:classes] = val[:classes].map do |klass|
-    Class === klass ? klass : Card::Chunk.const_get(klass)
+    klass.is_a?(Class) ? klass : Card::Content::Chunk.const_get(klass)
   end
 end
 
@@ -401,16 +401,16 @@ describe Card::Content do
                      )
       end
 
-      it "doesn't fix regular nbsp order with setting" do
-        # manually configure this setting, then make this one live
-        # (test above will then fail)
-        pending "Can't set Card.config.space_last_in_multispace= false "\
-                'for one test'
-        assert_equal 'space&nbsp; test &nbsp;two &nbsp;&nbsp;space',
-                     Card::Content.clean!(
-                       'space&nbsp; test &nbsp;two &nbsp;&nbsp;space'
-                     )
-      end
+      # it "doesn't fix regular nbsp order with setting" do
+      #   # manually configure this setting, then make this one live
+      #   # (test above will then fail)
+      #   pending "Can't set Card.config.space_last_in_multispace= false "\
+      #           'for one test'
+      #   assert_equal 'space&nbsp; test &nbsp;two &nbsp;&nbsp;space',
+      #                Card::Content.clean!(
+      #                  'space&nbsp; test &nbsp;two &nbsp;&nbsp;space'
+      #                )
+      # end
     end
   end
 end

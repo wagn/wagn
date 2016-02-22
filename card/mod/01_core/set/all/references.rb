@@ -44,7 +44,7 @@ end
 # replace references in card content
 def replace_reference_syntax old_name, new_name
   obj_content = Card::Content.new raw_content, self
-  obj_content.find_chunks(Card::Chunk::Reference).select do |chunk|
+  obj_content.find_chunks(Card::Content::Chunk::Reference).select do |chunk|
     next unless (old_ref_name = chunk.referee_name)
     next unless (new_ref_name = old_ref_name.replace_part old_name, new_name)
     chunk.referee_name = chunk.replace_reference old_name, new_name
@@ -66,7 +66,7 @@ end
 def create_references_out
   ref_hash = {}
   content_obj = Card::Content.new raw_content, self
-  content_obj.find_chunks(Card::Chunk::Reference).each do |chunk|
+  content_obj.find_chunks(Card::Content::Chunk::Reference).each do |chunk|
     interpret_reference ref_hash, chunk.referee_name, chunk.reference_code
   end
   return if ref_hash.empty?

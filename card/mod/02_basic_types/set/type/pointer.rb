@@ -250,18 +250,25 @@ def diff_args
   { format: :pointer }
 end
 
+
+def known_item_cards args={}
+  item_cards args.merge(known_only: true)
+end
+
 def item_cards args={}
   if args[:complete]
     query = { referred_to_by: name }.merge args
     Card::Query.run query
+  elsif args[:known_only]
+    item_names(args).map do |name|
+      Card.fetch name
+    end.compact
   else
-
     itype = args[:type] || item_type
-    # warn "item_card[#{inspect}], :complete"
     item_names(args).map do |name|
       new_args = itype ? { type: itype } : {}
       Card.fetch name, new: new_args
-    end.compact # compact?  can't be nil, right?
+    end
   end
 end
 

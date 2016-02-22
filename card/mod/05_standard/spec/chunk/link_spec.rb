@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::Chunk::Link do
+describe Card::Content::Chunk::Link do
   def assert_link target, args
     text = args.delete(:text)
     format_args = args.delete(:format_args)

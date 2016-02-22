@@ -37,8 +37,9 @@ format :html do
                 <td>#{Card::ViewCache.count}</td>
                 <td>#{link_to 'clear view cache',  card_path('update/:all?task=clear_view_cache')}</td>
               </tr>
-            )
-          end}
+            }
+          end
+        }
 
         <tr>
           <td>memory now</td>

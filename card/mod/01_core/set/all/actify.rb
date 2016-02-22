@@ -47,6 +47,18 @@ def delete!
   end
 end
 
+def save!(*)
+  act do
+    super
+  end
+end
+
+def save(*)
+  act do
+    super
+  end
+end
+
 def update_attributes opts
   act do
     super opts

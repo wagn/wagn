@@ -29,19 +29,9 @@ format :html do
           <td>#{Card::Reference.count}</td>
           <td>#{link_to 'repair all', card_path('update/:all?task=repair_references')}</td>
         </tr>
-        <tr>
-          <td>sessions</td>
-          <td>#{ActiveRecord::SessionStore::Session.count}</td>
-          <td>
-            delete older than
-            #{delete_sessions_link 1}
-            #{delete_sessions_link 2}
-            #{delete_sessions_link 3}
-            months
-          </td>
-        </tr>
-        #{if Card.config.view_cache
-            %(
+        #{
+          if Card.config.view_cache
+            %{
               <tr>
                 <td>view cache</td>
                 <td>#{Card::ViewCache.count}</td>

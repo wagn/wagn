@@ -1,16 +1,19 @@
 include Card::Set::Type::Pointer
 
 def raw_content
-  @raw_content ||=
-    if left
-      items = if left.type_id == Card::UserID
-                user = left
-                follow_rules = Card.preference_cards left.name, 'follow'
-                follow_rules.map { |card| "[[#{card.name}]]" }
-              end.join "\n"
-    else
-      ''
-    end
+  item_names.map { |name| "[[#{card.name}]]" }
+end
+
+def item_names
+  if (user = left)
+    Card.preference_names user.name, 'follow'
+  else
+    []
+  end
+end
+
+def item_cards
+  item_names.map { |name| Card.fetch name }
 end
 
 def virtual?

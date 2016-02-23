@@ -54,29 +54,29 @@ format :html do
   end
 
   view :follow_status do |args|
-    %(
-      <h4>Get notified about changes</h4>
+    delete_options =
+      wrap_with(:ul, class: 'delete-list list-group') do
+        card.item_names.map do |option|
+          content_tag :li, class: 'list-group-item' do
+            condition = option == '*never' ? '*always' : option
+            subformat(card).render_follow_item condition: condition
+          end
+        end.join "\n"
+      end
 
-      #{wrap_with(:ul, class: 'delete-list list-group') do
-          card.item_names.map do |option|
-            content_tag :li, class: 'list-group-item' do
-              condition = option == '*never' ? '*always' : option
-              subformat(card).render_follow_item condition: condition
-            end
-          end.join "\n"
-        end}
+    follow_link =
+      card_link args[:card_key],
+                text: 'more options',
+                path_opts: {
+                  view: :related,
+                  related: { name: card.name, view: :related_edit_rule }
+                },
+                class: 'btn update-follow-link',
+                'data-card_key' => args[:card_key]
 
-      #{card_link(args[:card_key],                     text: 'more options',
-                                                       path_opts: {
-                                                         view: :related,
-                                                         related: {
-                                                           name: card.name,
-                                                           view: :related_edit_rule
-                                                         }
-                                                       },
-                                                       class: 'btn update-follow-link',
-                                                       'data-card_key' => args[:card_key])}
-    )
+    header = '<h4>Get notified about changes</h4>'
+
+    [header, delete_options, follow_link].join "\n\n"
   end
 
   view :delete_follow_rule_button do |_args|

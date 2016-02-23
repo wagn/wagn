@@ -209,12 +209,19 @@ module ClassMethods
     end
   end
 
-  def preference_cards user_name, setting_code
+  def preference_names user_name, setting_code
     Card.search(
       { right: { codename: setting_code },
-        left: { left: { type_id: SetID }, right: user_name }
-      }, "rule cards for user: #{user_name}"
+        left: {
+          left: { type_id: SetID }, right: user_name
+        },
+        return: :name
+      }, "preference cards for user: #{user_name}"
     )
+  end
+
+  def preference_cards user_name, setting_code
+    preference_names.map { |name| Card.fetch name }
   end
 
   def rule_cache

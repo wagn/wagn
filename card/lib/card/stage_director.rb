@@ -150,6 +150,7 @@ class Card
 
     def run_single_stage stage, &block
       # puts "#{@card.name}: #{stage} stage".red
+      @running ||= true
       @stage = stage_index stage
       return if @card.errors.any? && @stage <= stage_index(:validate)
 

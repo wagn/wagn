@@ -221,7 +221,7 @@ module ClassMethods
   end
 
   def preference_cards user_name, setting_code
-    preference_names.map { |name| Card.fetch name }
+    preference_names(user_name, setting_code).map { |name| Card.fetch name }
   end
 
   def rule_cache

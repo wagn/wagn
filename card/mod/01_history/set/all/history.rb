@@ -55,7 +55,6 @@ event :finalize_act,
       after: :finalize_action,
       when: proc { |c|  c.act_card? } do
   # removed subcards can leave behind actions without card id
-  @current_act.actions.where(card_id: nil).delete_all
   if @current_act.actions(true).empty?
     @current_act.delete
     @current_act = nil

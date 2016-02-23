@@ -220,13 +220,15 @@ describe Card::StageDirector do
     it "has correct name if supercard's name get changed" do
       Card::Auth.as_bot do
         changed = false
-        in_stage(:prepare_to_validate, on: :create,
-                 trigger: -> do
-                    Card.create! name: '', subcards: {
-                      '+sub1' => 'some content',
-                      '+sub2' => { '+sub3' => 'content' }
-                    }
-                 end
+        in_stage(
+          :prepare_to_validate, 
+          on: :create,
+          trigger: -> do
+             Card.create! name: '', subcards: {
+               '+sub1' => 'some content',
+               '+sub2' => { '+sub3' => 'content' }
+             }
+          end
         ) do
           if name.empty? && !changed
             self.name = 'main'
@@ -239,7 +241,9 @@ describe Card::StageDirector do
     it "has correct name if supercard's name get changed to a junction card" do
       Card::Auth.as_bot do
         changed = false
-        in_stage(:prepare_to_validate, on: :create,
+        in_stage(
+          :prepare_to_validate, 
+          on: :create,
           trigger: -> do
             Card.create! name: '', subcards: {
               '+sub1' => 'some content',
@@ -262,21 +266,22 @@ describe Card::StageDirector do
   end
 
   describe 'creating and updating cards in stages' do
-
-  it 'update_attributes works integrate stage' do
-    act_cnt = Card['A'].acts.size
-    in_stage(:integrate, on: :create,
-             trigger: -> do
-               Card.create! name: 'act card'
-             end
-    ) do
-      Card['A'].update_attributes content: 'changed content'
-    end
-    expect(Card['A'].content).to eq 'changed content'
-    # no act added to A
-    expect(Card['A'].acts.size).to eq act_cnt
-    # new act for 'act card'
-    expect(Card['act card'].acts.size).to eq 1
+   it 'update_attributes works integrate stage' do
+     act_cnt = Card['A'].acts.size
+     in_stage(
+       :integrate, 
+       on: :create,
+       trigger: -> do
+         Card.create! name: 'act card'
+       end
+     ) do
+       Card['A'].update_attributes content: 'changed content'
+     end
+     expect(Card['A'].content).to eq 'changed content'
+     # no act added to A
+     expect(Card['A'].acts.size).to eq act_cnt
+     # new act for 'act card'
+     expect(Card['act card'].acts.size).to eq 1
     end
   end
 end

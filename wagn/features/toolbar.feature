@@ -17,6 +17,7 @@ Feature: Toolbar
 
  Scenario: pin and unpin toolbar
    When In main card toolbar I find button with icon "pushpin" and click it
+   And I wait until ajax response done
    And I go to card "Home"
    Then In main card frame I should see a nav with class "toolbar"
    And In main card toolbar I should see a button with class "toolbar-pin.active"

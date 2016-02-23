@@ -129,7 +129,8 @@ format :html do
   view :checkbox do |_args|
     options = card.option_names.map do |option_name|
       checked = card.item_names.include?(option_name)
-      label = ((o_card = Card.fetch(option_name)) && o_card.label) || option_name
+      o_card = Card.fetch option_name
+      label = (o_card && o_card.label) || option_name
       id = "pointer-checkbox-#{option_name.to_name.key}"
       description = pointer_option_description option_name
       <<-HTML

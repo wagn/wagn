@@ -8,7 +8,7 @@ def options_rule_card
   Card.new(
     name: 'follow_options_card',
     type_code: :pointer,
-    content: option_cards.map { |oc| "[[#{oc.title}]]" }.join("\n")
+    content: option_cards.map { |oc| "[[#{oc.name}]]" }.join("\n")
   )
 end
 
@@ -69,7 +69,7 @@ format :html do
                 text: 'more options',
                 path_opts: {
                   view: :related,
-                  related: { name: card.name, view: :related_edit_rule }
+                  related: { name: card.name, view: :edit_single_rule }
                 },
                 class: 'btn update-follow-link',
                 'data-card_key' => args[:card_key]

@@ -17,6 +17,9 @@ class Card
                                       store: cache_type
       end
 
+      # establish clean context;
+      # clear the temporary caches and ensure we're using the latest stamp
+      # on the persistent caches.
       def renew
         cache_by_class.each do |_klass, cache|
           cache.soft.reset

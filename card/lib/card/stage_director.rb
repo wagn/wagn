@@ -77,8 +77,6 @@ class Card
     end
 
     def validation_phase
-      @running = true
-      prepare_for_phases
       run_single_stage :initialize
       run_single_stage :prepare_to_validate
       run_single_stage :validate
@@ -150,10 +148,12 @@ class Card
 
     def run_single_stage stage, &block
       # puts "#{@card.name}: #{stage} stage".red
-      @running ||= true
       @stage = stage_index stage
       return if @card.errors.any? && @stage <= stage_index(:validate)
-
+      if stage == :initialize
+        @running ||= true
+        prepare_for_phases
+      end
       # in the store stage it can be necessary that
       # other subcards must be saved before we save this card
       if stage == :store

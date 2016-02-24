@@ -56,7 +56,7 @@ class CardController < ActionController::Base
 
   def setup
     request.format = :html unless params[:format] # is this used??
-    Card::Cache.renew
+    Card::Cache.reset_soft
     Card::Env.reset controller: self
   end
 

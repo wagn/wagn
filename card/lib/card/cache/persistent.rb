@@ -1,33 +1,67 @@
 # -*- encoding : utf-8 -*-
 
 class Card::Cache::Persistent
-  attr_reader :prefix
+  attr_accessor :prefix
+
+  class << self
+    def database_name
+      @database_name ||= (cfg = Cardio.config) &&
+                         (dbcfg = cfg.database_configuration) &&
+                         dbcfg[Rails.env]['database']
+    end
+  end
 
   def initialize opts
     @store = opts[:store]
-    self.system_prefix =
-      opts[:prefix] || Card::Cache.system_prefix(opts[:class])
+    @klass = opts[:klass]
+    @database = opts[:database] || self.class.database_name
   end
 
-  def system_prefix= system_prefix
-    @system_prefix = system_prefix
-    @prefix = "#{system_prefix}/"
+  def renew
+    @stamp = nil
+    @prefix = nil
+  end
+
+  def reset
+    @stamp = new_stamp
+    @prefix = nil
+    Cardio.cache.write stamp_key, @stamp
+  end
+
+  def stamp
+    @stamp ||= Cardio.cache.fetch stamp_key { new_stamp }
+  end
+
+  def stamp_key
+    "#{@database}/#{@klass}/stamp"
+  end
+
+  def new_stamp
+    Time.now.to_i.to_s 32
+  end
+
+  def prefix
+    @prefix ||= "#{@database}/#{@klass}/#{stamp}"
+  end
+
+  def full_key key
+    "#{prefix}/#{key}"
   end
 
   def read key
-    @store.read(full_key(key))
+    @store.read full_key(key)
   end
 
   def write_variable key, variable, value
-    if @store && (object = @store.read key)
+    if @store && (object = read key)
       object.instance_variable_set "@#{variable}", value
-      @store.write key, object
+      write key, object
     end
     value
   end
 
   def write key, value
-    @store.write(full_key(key), value)
+    @store.write full_key(key), value
   end
 
   def fetch key, &block
@@ -38,17 +72,11 @@ class Card::Cache::Persistent
     @store.delete full_key(key)
   end
 
-  def reset
+  def annihilate
     @store.clear
-  rescue => e
-    Rails.logger.debug "Problem clearing cache: #{e.message}"
   end
 
   def exist? key
     @store.exist? full_key(key)
-  end
-
-  def full_key key
-    @prefix + key
   end
 end

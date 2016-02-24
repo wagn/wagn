@@ -48,6 +48,7 @@ class Card
 
       @stage = nil
       @running = false
+      @prepared = false
       @parent = opts[:parent]
       # has card to be stored before the supercard?
       @prior_store = opts[:priority]
@@ -72,7 +73,8 @@ class Card
     end
 
     def prepare_for_phases
-      @card.prepare_for_phases
+      @card.prepare_for_phases unless @prepared
+      @prepared = true
       @subdirectors.each(&:prepare_for_phases)
     end
 

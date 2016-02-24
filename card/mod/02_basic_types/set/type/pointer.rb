@@ -1,5 +1,4 @@
 
-
 event :add_and_drop_items, :prepare_to_validate, on: :save do
   adds = Env.params['add_item']
   drops = Env.params['drop_item']
@@ -249,7 +248,6 @@ end
 def diff_args
   { format: :pointer }
 end
-
 
 def known_item_cards args={}
   item_cards args.merge(known_only: true)

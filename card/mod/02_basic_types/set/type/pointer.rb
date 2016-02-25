@@ -249,11 +249,6 @@ def diff_args
   { format: :pointer }
 end
 
-def known_item_cards args={}
-  item_names(args).map do |name|
-    Card.fetch name
-  end.compact
-end
 
 def item_cards args={}
   if args[:complete]
@@ -262,12 +257,18 @@ def item_cards args={}
   elsif args[:known_only]
     known_item_cards args
   else
-    fetch_item_cards args[:type]
+    fetch_or_initialize_item_cards args
   end
 end
 
-def fetch_item_cards default_type=nil
-  itype = default_type || item_type
+def known_item_cards args={}
+  item_names(args).map do |name|
+    Card.fetch name
+  end.compact
+end
+
+def fetch_or_initialize_item_cards args
+  itype = args[:type] || item_type
   new_args = itype ? { type: itype } : {}
   item_names(args).map do |name|
     Card.fetch name, new: new_args

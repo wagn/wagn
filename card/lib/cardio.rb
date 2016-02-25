@@ -41,7 +41,7 @@ module Cardio
         email_defaults:         nil,
 
         token_expiry:           2.days,
-        revisions_per_page:     10,
+        acts_per_page:          10,
         space_last_in_multispace: true,
         closed_search_limit:    50,
 

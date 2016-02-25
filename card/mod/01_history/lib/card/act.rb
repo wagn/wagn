@@ -9,7 +9,10 @@ class Card
              class_name: 'Card::Action'
 
     belongs_to :actor, class_name: 'Card'
-    belongs_to :card
+
+    def card
+      Card.fetch card_id, look_in_trash: true, skip_modules: true
+    end
 
     class << self
       def delete_actionless

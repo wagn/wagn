@@ -1,4 +1,4 @@
-REVISIONS_PER_PAGE = 20
+ACTS_PER_PAGE = 20
 
 
 view :title do |args|
@@ -17,7 +17,7 @@ format :html do
 
   view :recent_acts do |args|
     page = params['page'] || 1
-    rpp = REVISIONS_PER_PAGE
+    rpp = ACTS_PER_PAGE
     acts = Act.all.order(acted_at: :desc).page(page).per(rpp)
     acts.map do |act|
       render_complete_act_summary args.merge(act: act)

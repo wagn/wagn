@@ -144,7 +144,7 @@ format do
   view :subedit_notice, denial: :blank do |args|
     action = get_action(args)
     name_before_action =
-      (action.value(:name) && action.old_values[:name]) || card.name
+      (action.value(:name) && action.previous_value(:name)) || card.name
 
     wrap_subedit_item %(#{name_before_action} #{action.action_type}d
 #{render_list_of_changes(args)})
@@ -192,7 +192,7 @@ format do
 
     item_value =
       if action.action_type == :delete
-        action.old_values[field]
+        action.previous_value field
       else
         action.value field
       end

@@ -2,7 +2,6 @@
 
 class Card
   class Action < ActiveRecord::Base
-    #belongs_to :card
     belongs_to :act,  foreign_key: :card_act_id, inverse_of: :actions
     has_many :card_changes, foreign_key: :card_action_id, inverse_of: :action,
                             dependent: :delete_all, class_name: 'Card::Change'
@@ -61,49 +60,19 @@ class Card
     # writing here (disabled history), we still have to generate change stream
     # events in another way.
 
-    def card
-      Card[card_id]
-    end
-
     # def changed_fields obj, changed_fields
     #   changed_fields.each do |f|
     #     Card::Change.create field: f, value: obj[f], card_action_id: id
     #   end
     # end
 
-    def edit_info
-      @edit_info ||= {
-        action_type:  "#{action_type}d",
-        new_content:  value(:content),
-        new_name:     value(:name),
-        new_cardtype: value(:cardtype),
-        old_content:  old_values[:content],
-        old_name:     old_values[:name],
-        old_cardtype: old_values[:cardtype]
-      }
-    end
-
-    def old_values
-      @old_values ||= {
-        content:  last_value_for(:db_content),
-        name:     last_value_for(:name),
-        cardtype: ((value = last_value_for(:type_id)) &&
-                   (typecard = Card.find(value)) &&
-                   typecard.name.capitalize)
-      }
-    end
-
-    def last_value_for field
-      return unless (change = card.last_change_on field, before: self)
+    def value field
+      return unless (change = change field)
       interpret_value field, change.value
     end
 
-    def field_index field
-      if field.is_a? Integer
-        field
-      else
-        Card::TRACKED_FIELDS.index(field.to_s)
-      end
+    def change field
+      changes[interpret_field field]
     end
 
     def changes
@@ -117,6 +86,38 @@ class Card
         end
     end
 
+    def previous_value field
+      return if action_type == :create
+      return unless (previous_change = previous_change field)
+      interpret_value field, previous_change.value
+    end
+
+    def previous_change field
+      field = interpret_field field
+      if @previous_changes && @previous_changes.key?(field)
+        @previous_changes[field]
+      else
+        @previous_changes ||= {}
+        @previous_changes[field] = card.last_change_on field, before: self
+      end
+    end
+
+    def field_index field
+      if field.is_a? Integer
+        field
+      else
+        Card::TRACKED_FIELDS.index(field.to_s)
+      end
+    end
+
+    def interpret_field field
+      case field
+      when :content then :db_content
+      when :cardtype then :type_id
+      else field.to_sym
+      end
+    end
+
     def interpret_value field, value
       case field.to_sym
       when :type_id
@@ -126,20 +127,6 @@ class Card
         type_card && type_card.name.capitalize
       else value
       end
-    end
-
-    def value field
-      return unless (change = change field)
-      interpret_value field, change.value
-    end
-
-    def change field
-      field = case field
-              when :content then :db_content
-              when :cardtype then :type_id
-              else field.to_sym
-              end
-      changes[field]
     end
 
     def new_type?
@@ -178,18 +165,14 @@ class Card
       content_diff_object.green?
     end
 
-    # def diff
-    #   @diff ||= { cardtype: type_diff, content: content_diff, name: name_diff}
-    # end
-
     def name_diff opts={}
       return unless new_name?
-      Card::Diff.complete old_values[:name], value(:name), opts
+      Card::Diff.complete previous_value(:name), value(:name), opts
     end
 
     def cardtype_diff opts={}
       return unless new_type?
-      Card::Diff.complete old_values[:cardtype], value(:cardtype), opts
+      Card::Diff.complete previous_value(:cardtype), value(:cardtype), opts
     end
 
     def content_diff diff_type=:expanded, opts=nil
@@ -204,12 +187,12 @@ class Card
     def content_diff_object opts=nil
       @diff ||= begin
         diff_args = opts || card.include_set_modules.diff_args
-        Card::Diff.new old_values[:content], value(:content), diff_args
+        Card::Diff.new previous_value(:content), value(:content), diff_args
       end
     end
 
     def card
-      Card.fetch card_id, look_in_trash: true
+      Card.fetch card_id, look_in_trash: true, skip_modules: true
     end
   end
 end

@@ -1,4 +1,4 @@
-REVISIONS_PER_PAGE = Card.config.revisions_per_page
+ACTS_PER_PAGE = Card.config.acts_per_page
 
 def history?
   true
@@ -122,7 +122,6 @@ end
 
 def descendant_card_ids parent_ids=[id]
   more_ids = Card.where('left_id IN (?)', parent_ids).pluck('id')
-
   more_ids += descendant_card_ids more_ids unless more_ids.empty?
   more_ids
 end
@@ -134,7 +133,7 @@ end
 format :html do
   view :history do |args|
     frame args.merge(body_class: 'history-slot list-group', content: true) do
-      [history_legend, _render_revisions]
+      [history_legend, _render_act_list]
     end
   end
 
@@ -142,17 +141,17 @@ format :html do
     args[:optional_toolbar] ||= :show
   end
 
-  view :revisions do |args|
+  view :act_list do |args|
     page = params['page'] || 1
-    count = card.intrusive_acts.size + 1 - (page.to_i - 1) * REVISIONS_PER_PAGE
-    card.intrusive_acts.page(page).per(REVISIONS_PER_PAGE).map do |act|
+    count = card.intrusive_acts.size + 1 - (page.to_i - 1) * ACTS_PER_PAGE
+    card.intrusive_acts.page(page).per(ACTS_PER_PAGE).map do |act|
       count -= 1
-      render_act args.merge(act: act, rev_nr: count, act_view: :summary)
+      render_act args.merge(act: act, act_seq: count, act_view: :summary)
     end.join
   end
 
   def history_legend
-    intr = card.intrusive_acts.page(params['page']).per(REVISIONS_PER_PAGE)
+    intr = card.intrusive_acts.page(params['page']).per(ACTS_PER_PAGE)
     render_haml intr: intr do
       <<-HAML
 .history-header
@@ -171,11 +170,10 @@ format :html do
   end
 
   def default_act_args args
-    act = args[:act]  ||= Act.find(params['act_id'])
+    act = (args[:act] ||= Act.find(params['act_id']))
     args[:hide_diff]  ||= hide_diff?
     args[:slot_class] ||= "revision-#{act.id} history-slot list-group-item"
     args[:act_view]   ||= act_view
-    args[:act_seq] = 44
   end
 
   def hide_diff?
@@ -288,7 +286,7 @@ HAML
   end
 
   def name_changes action, hide_diff=false
-    old_name = (name = action.old_values[:name]) && showname(name).to_s
+    old_name = (name = action.previous_value :name) && showname(name).to_s
     if action.new_name?
       new_name = showname(action.value :name).to_s
       if hide_diff

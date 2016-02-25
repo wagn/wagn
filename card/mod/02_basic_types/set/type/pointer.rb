@@ -250,23 +250,27 @@ def diff_args
 end
 
 def known_item_cards args={}
-  item_cards args.merge(known_only: true)
+  item_names(args).map do |name|
+    Card.fetch name
+  end.compact
 end
 
 def item_cards args={}
   if args[:complete]
-    query = { referred_to_by: name }.merge args
+    query = args.reverse_merge referred_to_by: name
     Card::Query.run query
   elsif args[:known_only]
-    item_names(args).map do |name|
-      Card.fetch name
-    end.compact
+    known_item_cards args
   else
-    itype = args[:type] || item_type
-    item_names(args).map do |name|
-      new_args = itype ? { type: itype } : {}
-      Card.fetch name, new: new_args
-    end
+    fetch_item_cards args[:type]
+  end
+end
+
+def fetch_item_cards default_type=nil
+  itype = default_type || item_type
+  new_args = itype ? { type: itype } : {}
+  item_names(args).map do |name|
+    Card.fetch name, new: new_args
   end
 end
 

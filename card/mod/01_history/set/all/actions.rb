@@ -33,7 +33,7 @@ def revision action
   # at the time of a given action
   action = Card::Action.fetch(action) if action.is_a? Integer
   action && Card::TRACKED_FIELDS.inject({}) do |attr_changes, field|
-    last_change = action.card_changes.find_by_field_name(field) ||
+    last_change = action.change_for(field) ||
                   last_change_on(field, not_after: action)
     attr_changes[field.to_sym] = (last_change ? last_change.value : self[field])
     attr_changes

@@ -83,16 +83,6 @@ class Card
       }
     end
 
-    def new_values
-      @new_values ||=
-        {
-          content:  value(:db_content),
-          name:     value(:name),
-          cardtype: ((typecard = Card[value(:type_id).to_i]) &&
-                     typecard.name.capitalize)
-        }
-    end
-
     def old_values
       @old_values ||= {
         content:  last_value_for(:db_content),
@@ -105,8 +95,7 @@ class Card
 
     def last_value_for field
       return unless (change = card.last_change_on field, before: self)
-      value = change.value
-      field == :type_id ? value.to_i : value
+      interpret_value field, change.value
     end
 
     def field_index field
@@ -128,14 +117,29 @@ class Card
         end
     end
 
+    def interpret_value field, value
+      case field.to_sym
+      when :type_id
+        value && value.to_i
+      when :cardtype
+        type_card = value && Card.quick_fetch(value.to_i)
+        type_card && type_card.name.capitalize
+      else value
+      end
+    end
+
     def value field
-      ch = change field
-      ch && ch.value
+      return unless (change = change field)
+      interpret_value field, change.value
     end
 
     def change field
-      #card_changes.where 'card_changes.field = ?', field_index(field)
-      changes[field.to_sym]
+      field = case field
+              when :content then :db_content
+              when :cardtype then :type_id
+              else field.to_sym
+              end
+      changes[field]
     end
 
     def new_type?
@@ -180,12 +184,12 @@ class Card
 
     def name_diff opts={}
       return unless new_name?
-      Card::Diff.complete old_values[:name], new_values[:name], opts
+      Card::Diff.complete old_values[:name], value(:name), opts
     end
 
     def cardtype_diff opts={}
       return unless new_type?
-      Card::Diff.complete old_values[:cardtype], new_values[:cardtype], opts
+      Card::Diff.complete old_values[:cardtype], value(:cardtype), opts
     end
 
     def content_diff diff_type=:expanded, opts=nil
@@ -200,7 +204,7 @@ class Card
     def content_diff_object opts=nil
       @diff ||= begin
         diff_args = opts || card.include_set_modules.diff_args
-        Card::Diff.new old_values[:content], new_values[:content], diff_args
+        Card::Diff.new old_values[:content], value(:content), diff_args
       end
     end
 

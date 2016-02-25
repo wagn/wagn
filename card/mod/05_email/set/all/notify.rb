@@ -144,7 +144,7 @@ format do
   view :subedit_notice, denial: :blank do |args|
     action = get_action(args)
     name_before_action =
-      (action.new_values[:name] && action.old_values[:name]) || card.name
+      (action.value(:name) && action.old_values[:name]) || card.name
 
     wrap_subedit_item %(#{name_before_action} #{action.action_type}d
 #{render_list_of_changes(args)})
@@ -180,7 +180,7 @@ format do
   end
 
   def edit_info_for field, action
-    return nil unless action.new_values[field]
+    return nil unless action.value field
 
     item_title =
       case action.action_type
@@ -194,7 +194,7 @@ format do
       if action.action_type == :delete
         action.old_values[field]
       else
-        action.new_values[field]
+        action.value field
       end
 
     wrap_list_item "#{item_title}#{item_value}"

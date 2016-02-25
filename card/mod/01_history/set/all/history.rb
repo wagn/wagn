@@ -290,7 +290,7 @@ HAML
   def name_changes action, hide_diff=false
     old_name = (name = action.old_values[:name]) && showname(name).to_s
     if action.new_name?
-      new_name = showname(action.new_values[:name]).to_s
+      new_name = showname(action.value :name).to_s
       if hide_diff
         new_name
       else
@@ -302,13 +302,13 @@ HAML
   end
 
   def type_changes action, hide_diff=false
-    change = hide_diff ? action.new_values[:cardtype] : action.cardtype_diff
+    change = hide_diff ? action.value(:cardtype) : action.cardtype_diff
     "(#{change})"
   end
 
   view :content_changes do |args|
     if args[:hide_diff]
-      args[:action].new_values[:content]
+      args[:action].value :db_content
     else
       args[:action].content_diff(args[:diff_type])
     end

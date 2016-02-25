@@ -74,9 +74,9 @@ class Card
     def edit_info
       @edit_info ||= {
         action_type:  "#{action_type}d",
-        new_content:  new_values[:content],
-        new_name:     new_values[:name],
-        new_cardtype: new_values[:cardtype],
+        new_content:  value(:content),
+        new_name:     value(:name),
+        new_cardtype: value(:cardtype),
         old_content:  old_values[:content],
         old_name:     old_values[:name],
         old_cardtype: old_values[:cardtype]
@@ -104,8 +104,9 @@ class Card
     end
 
     def last_value_for field
-      ch = card.last_change_on(field, before: self)
-      ch && ch.value
+      return unless (change = card.last_change_on field, before: self)
+      value = change.value
+      field == :type_id ? value.to_i : value
     end
 
     def field_index field

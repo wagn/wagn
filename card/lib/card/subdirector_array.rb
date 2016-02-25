@@ -23,7 +23,6 @@ class Card
       dir = Card::DirectorRegister.fetch card, parent: @parent
       dir.main = false
       dir.parent = @parent
-      dir.prepare_for_phases if @parent.running?
       self << dir
       dir
     end

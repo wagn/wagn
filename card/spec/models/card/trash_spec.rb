@@ -168,7 +168,7 @@ describe Card, 'revived from trash' do
   end
 
   it 'should still have old content' do
-    expect(@c.nth_action(1).change_for(2).first.value).to eq('basiccontent')
+    expect(@c.nth_action(1).value :db_content).to eq('basiccontent')
   end
 
   it 'should have the same content' do
@@ -209,7 +209,7 @@ describe Card, 'junction revival' do
   end
 
   it 'should still have old action' do
-    expect(@c.nth_action(1).change_for(2).first.value).to eq('basiccontent')
+    expect(@c.nth_action(1).value :db_content).to eq('basiccontent')
   end
 
   it 'should have old content' do

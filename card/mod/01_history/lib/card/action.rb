@@ -2,7 +2,7 @@
 
 class Card
   class Action < ActiveRecord::Base
-    belongs_to :card
+    #belongs_to :card
     belongs_to :act,  foreign_key: :card_act_id, inverse_of: :actions
     has_many :card_changes, foreign_key: :card_action_id, inverse_of: :action,
                             dependent: :delete_all, class_name: 'Card::Change'
@@ -29,8 +29,8 @@ class Card
       end
 
       def fetch id
-        cache.read(id.to_s) || begin
-          cache.write id.to_s, Action.find(id.to_i)
+        cache.fetch id.to_s do
+          Action.find id.to_i
         end
       end
 
@@ -61,11 +61,15 @@ class Card
     # writing here (disabled history), we still have to generate change stream
     # events in another way.
 
-    def changed_fields obj, changed_fields
-      changed_fields.each do |f|
-        Card::Change.create field: f, value: obj[f], card_action_id: id
-      end
+    def card
+      Card[card_id]
     end
+
+    # def changed_fields obj, changed_fields
+    #   changed_fields.each do |f|
+    #     Card::Change.create field: f, value: obj[f], card_action_id: id
+    #   end
+    # end
 
     def edit_info
       @edit_info ||= {
@@ -82,9 +86,9 @@ class Card
     def new_values
       @new_values ||=
         {
-          content:  new_value_for(:db_content),
-          name:     new_value_for(:name),
-          cardtype: ((typecard = Card[new_value_for(:type_id).to_i]) &&
+          content:  value(:db_content),
+          name:     value(:name),
+          cardtype: ((typecard = Card[value(:type_id).to_i]) &&
                      typecard.name.capitalize)
         }
     end
@@ -112,25 +116,37 @@ class Card
       end
     end
 
-    def new_value_for field
-      ch = card_changes.find_by(field: field_index(field))
+    def changes
+      @changes ||=
+        begin
+          hash = {}
+          card_changes.each do |change|
+            hash[change.field.to_sym] = change
+          end
+          hash
+        end
+    end
+
+    def value field
+      ch = change field
       ch && ch.value
     end
 
-    def change_for field
-      card_changes.where 'card_changes.field = ?', field_index(field)
+    def change field
+      #card_changes.where 'card_changes.field = ?', field_index(field)
+      changes[field.to_sym]
     end
 
     def new_type?
-      new_value_for :type_id
+      value :type_id
     end
 
     def new_content?
-      new_value_for :db_content
+      value :db_content
     end
 
     def new_name?
-      new_value_for :name
+      value :name
     end
 
     def action_type= value

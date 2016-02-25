@@ -20,7 +20,7 @@ class SearchCardContext < Card::CoreMigration
       end
       card.update_column :db_content, content
       card.actions.each do |action|
-        next unless (content_change = action.change_for(:db_content).first)
+        next unless (content_change = action.change :db_content)
         content = content_change.value
         replace.each do |key, val|
           content.gsub!(/(#{sep})_(#{key})(?=#{sep})/, "\\1_#{val}")

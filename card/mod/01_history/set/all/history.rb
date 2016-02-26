@@ -180,7 +180,21 @@ format :html do
     args[:hide_diff]   ||= hide_diff?
     args[:slot_class]  ||= "revision-#{act.id} history-slot list-group-item"
     args[:action_view] ||= action_view
-    args[:act_header]  ||= :contextual
+    args[:actions]     ||= action_list args
+  end
+
+  def action_list args
+    act = args[:act]
+    if act_context(args) == :absolute
+      act.actions #FIXME - viewable only!
+    else
+      act.relevant_actions_for(card)
+    end
+  end
+
+  def act_context args
+    args[:act_context] =
+      (args[:act_context] || params['act_context'] || :relative).to_sym
   end
 
   def hide_diff?
@@ -196,47 +210,31 @@ format :html do
       render_haml args.merge(card: card, args: args) do
         <<-HAML
 .act{style: "clear:both;"}
-  %h5
-    = card_link card
-
+  - show_header = act_context == :absolute ? :show : :hide
+  = optional_render :act_header, args, show_header
   .head
-    - act_header_view = act_header.to_s + '_act_header'
-    = render act_header_view, args
+    = render :act_metadata, args
   .toggle
     = fold_or_unfold_link args
   .action-container
-    - action_view_name = 'action_' + action_view.to_s
-    - act.relevant_actions_for(card).each do |action|
-      = render action_view_name, action: action
+    - actions.each do |action|
+      = render ('action_' + action_view.to_s), args.merge(action: action)
 HAML
       end
     end
   end
 
-  view :contextual_act_header do |args|
-    render_haml args.merge(card: card, args: args) do
-      <<-HAML
-.nr
-  = '#' + act_seq.to_s
-.title
-  .actor
-    = link_to act.actor.name, card_url(act.actor.cardname.url_key)
-  .time.timeago
-    = time_ago_in_words(act.acted_at)
-    ago
-    - if act.id == card.last_act.id
-      %em.label.label-info Current
-    - if action_view == :expanded
-      - unless act.id == card.last_act.id
-        = rollback_link act.relevant_actions_for(card)
-      = show_or_hide_changes_link args
-HAML
-    end
+
+  view :act_header do |args|
+    %(<h5 "class=act-header">#{card_link card}</h5>)
   end
 
-  view :complete_act_header do |args|
+  view :act_metadata do |args|
     render_haml args.merge(card: card, args: args) do
       <<-HAML
+- unless act_context == :absolute
+  .nr
+    = '#' + act_seq.to_s
 .title
   .actor
     = link_to act.actor.name, card_url(act.actor.cardname.url_key)
@@ -249,11 +247,8 @@ HAML
       - unless act.id == card.last_act.id
         = rollback_link act.relevant_actions_for(card)
       = show_or_hide_changes_link args
-
-
 HAML
     end
-
   end
 
   view :action_summary do |args|
@@ -353,14 +348,13 @@ HAML
     end
   end
 
-
-
   def fold_or_unfold_link args
     path_opts = {
-      act_id: args[:act].id,
-      action_view: (args[:action_view] == :expanded ? :summary : :expanded),
-      hide_diff: args[:hide_diff],
-      act_seq:   args[:act_seq]
+      act_id:      args[:act].id,
+      act_seq:     args[:act_seq],
+      hide_diff:   args[:hide_diff],
+      act_context: args[:act_context],
+      action_view: (args[:action_view] == :expanded ? :summary : :expanded)
     }
     arrow_dir = args[:action_view] == :expanded ? 'arrow-down' : 'arrow-right'
     view_link '', :act, path_opts: path_opts,
@@ -386,7 +380,8 @@ HAML
       act_id: args[:act].id,
       act_seq: args[:act_seq],
       hide_diff: !args[:hide_diff],
-      action_view: :expanded
+      action_view: :expanded,
+      act_context: args[:act_context]
     }
     link = view_link("#{toggle} changes", :act,
                      path_opts: path_opts, class: 'slotter', remote: true)

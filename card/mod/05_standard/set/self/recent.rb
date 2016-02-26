@@ -1,16 +1,13 @@
 ACTS_PER_PAGE = 10
 
 view :title do |args|
-   super args.merge(title: 'Recent Changes')
+  super args.merge(title: 'Recent Changes')
 end
 
 format :html do
-  view :open do |args|
-    frame args.merge(body_class: 'history-slot list-group', content: true) do
-      [
-        history_legend,
-        _render_recent_acts
-      ]
+  view :core do |args|
+    content_tag(:div, class: 'history-slot list-group') do
+      [history_legend, render_recent_acts(args)].join
     end
   end
 
@@ -19,7 +16,7 @@ format :html do
     acts = Act.all_viewable.order(acted_at: :desc).page(page).per(ACTS_PER_PAGE)
     acts.map do |act|
       format = act.card.format :html
-      format.render_act args.merge(act: act, act_header: :complete)
+      format.render_act args.merge(act: act, act_context: :absolute)
     end.join
   end
 end

@@ -53,13 +53,18 @@ end
 
 event :finalize_act,
       after: :finalize_action,
-      when: proc { |c| !c.supercard } do
+      when: proc { |c|  c.act_card? } do
+  # removed subcards can leave behind actions without card id
   if @current_act.actions(true).empty?
     @current_act.delete
     @current_act = nil
   else
     @current_act.update_attributes! card_id: id
   end
+end
+
+def act_card?
+  self == DirectorRegister.act_card
 end
 
 event :rollback_actions, :prepare_to_validate,

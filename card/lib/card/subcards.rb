@@ -57,6 +57,9 @@ class Card
       key = absolutize_subcard_name(key).key unless @keys.include?(key)
       @keys.delete key
       removed_card = fetch_subcard key
+      if removed_card.current_action
+        removed_card.current_action.delete
+      end
       Card::DirectorRegister.delete removed_card.director
       Card.cache.soft.delete key
       removed_card

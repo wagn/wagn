@@ -1,5 +1,4 @@
 def prepare_for_phases
-  identify_action
   reset_patterns
   include_set_modules
 end

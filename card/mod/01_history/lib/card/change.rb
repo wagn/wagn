@@ -31,7 +31,7 @@ class Card
     end
 
     def field
-      TRACKED_FIELDS[ attribute(:field)]
+      TRACKED_FIELDS[read_attribute(:field)]
     end
 
     def find_by_field_name value

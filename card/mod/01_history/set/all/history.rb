@@ -186,7 +186,7 @@ format :html do
   def action_list args
     act = args[:act]
     if act_context(args) == :absolute
-      act.actions #FIXME - viewable only!
+      act.actions # FIXME - viewable only!
     else
       act.relevant_actions_for(card)
     end
@@ -224,8 +224,7 @@ HAML
     end
   end
 
-
-  view :act_header do |args|
+  view :act_header do |_args|
     %(<h5 "class=act-header">#{card_link card}</h5>)
   end
 
@@ -324,7 +323,7 @@ HAML
   def name_changes action, hide_diff=false
     old_name = (name = action.previous_value :name) && showname(name).to_s
     if action.new_name?
-      new_name = showname(action.value :name).to_s
+      new_name = showname(action.value(:name)).to_s
       if hide_diff
         new_name
       else

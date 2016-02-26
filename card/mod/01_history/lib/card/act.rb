@@ -33,12 +33,11 @@ class Card
       def all_viewable
         joins(
           'JOIN card_actions ON card_acts.id = card_act_id '
-          #          'JOIN cards ON cards.id = card'
+        # 'JOIN cards ON cards.id = card'
         ).where(
           'draft is not true'
         ).uniq
       end
-
     end
 
     def set_actor
@@ -67,8 +66,8 @@ class Card
     def relevant_actions_for card
       actions.select do |action|
         ((card.id == action.card_id) ||
-         card.included_card_ids.include?(action.card_id)) &&
-        card.ok?(:read)
+            card.included_card_ids.include?(action.card_id)) &&
+          card.ok?(:read)
       end
     end
 

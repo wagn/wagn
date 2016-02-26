@@ -31,12 +31,16 @@ class Card
       end
 
       def all_viewable
+        where = [
+          'card_actions.id is not null', # data check. should not be needed
+          'cards.id is not null',    # ditto
+          'draft is not true',
+          Card::Query::SqlStatement.new.permission_conditions('cards')
+        ].compact.join ' AND '
         joins(
-          'JOIN card_actions ON card_acts.id = card_act_id '
-        # 'JOIN cards ON cards.id = card'
-        ).where(
-          'draft is not true'
-        ).uniq
+          'JOIN card_actions ON card_acts.id = card_act_id ' \
+          'JOIN cards ON cards.id = card_actions.card_id'
+        ).where(where).uniq
       end
     end
 
@@ -65,9 +69,8 @@ class Card
 
     def relevant_actions_for card
       actions.select do |action|
-        ((card.id == action.card_id) ||
-            card.included_card_ids.include?(action.card_id)) &&
-          card.ok?(:read)
+        (card.id == action.card_id) ||
+          card.included_card_ids.include?(action.card_id)
       end
     end
 

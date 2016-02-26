@@ -185,11 +185,14 @@ format :html do
 
   def action_list args
     act = args[:act]
-    if act_context(args) == :absolute
-      act.actions # FIXME - viewable only!
-    else
-      act.relevant_actions_for(card)
-    end
+    actions =
+      if act_context(args) == :absolute
+        act.actions
+      else
+        act.relevant_actions_for(card)
+      end
+    actions.select { |a| a.card && a.card.ok?(:read) }
+    # FIXME: should not need to test for presence of card here.
   end
 
   def act_context args

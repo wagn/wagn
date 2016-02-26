@@ -68,7 +68,7 @@ describe Card::Set::Type::Image do
 
     describe 'view: act_expanded' do
       it 'gets image url' do
-        render_args = { act: subject.last_act, act_view: :expanded }
+        render_args = { act: subject.last_act, action_view: :expanded }
         act_summary = subject.format.render :act, render_args
         current_url = subject.image.versions[:medium].url
         expect(act_summary).to match(/#{Regexp.quote current_url}/)

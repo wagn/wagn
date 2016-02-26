@@ -1,16 +1,19 @@
 include Card::Set::Type::Pointer
 
 def raw_content
-  @raw_content ||=
-    if left
-      items = if left.type_id == Card::UserID
-                user = left
-                follow_rules = Card.preference_cards left.name, 'follow'
-                follow_rules.map { |card| "[[#{card.name}]]" }
-              end.join "\n"
-    else
-      ''
-    end
+  item_names.map { |name| "[[#{name}]]" }
+end
+
+def item_names
+  if (user = left)
+    Card.preference_names user.name, 'follow'
+  else
+    []
+  end
+end
+
+def item_cards
+  item_names.map { |name| Card.fetch name }
 end
 
 def virtual?
@@ -61,28 +64,24 @@ format :html do
   end
 
   def each_suggestion
-    if (suggestions = Card['follow suggestions'])
-      suggestions.item_names.each do |sug|
-        if (set_card = Card.fetch sug.to_name.left) &&
-          set_card.type_code == :set
-          option_card = Card.fetch(sug.to_name.right) ||
-            Card[sug.to_name.right.to_sym]
-          option = if option_card.follow_option?
-                     option_card.name
-                   else
-                     '*always'
-                   end
-          yield(set_card, option)
-        elsif (set_card = Card.fetch sug) && set_card.type_code == :set
-          yield(set_card, '*always')
-        end
+    return unless (suggestions = Card['follow suggestions'])
+    suggestions.item_names.each do |sug|
+      set_card = Card.fetch sug.to_name.left
+      if set_card && set_card.type_code == :set
+        sugtag = sug.to_name.right
+        option_card = Card.fetch(sugtag) || Card[sugtag.to_sym]
+        option = option_card.follow_option? ? option_card.name : '*always'
+        yield(set_card, option)
+      elsif (set_card = Card.fetch sug) && set_card.type_code == :set
+        yield(set_card, '*always')
       end
     end
   end
 
   # returns hashes with existing and suggested follow options
   # structure:
-  # set_pattern_class => [ {card: rule_card, options: ['*always', '*created'] },.... ]
+  # set_pattern_class =>
+  #  [ {card: rule_card, options: ['*always', '*created'] },.... ]
   def followed_by_set
     res = Hash.new { |h, k| h[k] = [] }
     never = Card[:never].name

@@ -94,7 +94,8 @@ EOF
         if self.class.anchorless?
           self.class.pattern_code.camelize
         elsif anchor_codenames
-          "#{self.class.pattern_code.camelize}::#{anchor_codenames.map(&:to_s).map(&:camelize) * '::'}"
+          codenames = [self.class.pattern_code] + anchor_codenames.map(&:to_s)
+          codenames.map(&:camelize).join '::'
         end
       end
     end
@@ -108,7 +109,8 @@ EOF
     end
 
     def format_module_list klass
-      (hash = Card::Set.modules[:nonbase_format][klass]) && lookup_module_list(hash)
+      hash = Card::Set.modules[:nonbase_format][klass]
+      hash && lookup_module_list(hash)
     end
 
     def anchor_codenames

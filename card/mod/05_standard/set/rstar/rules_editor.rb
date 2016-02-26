@@ -133,7 +133,9 @@ format :html do
     end
   end
 
-  view :related_edit_rule, view: :edit_rule
+  view :edit_single_rule do |args|
+    %(<div class="edit-single-rule panel-body">#{render_edit_rule args}</div>)
+  end
 
   def default_edit_rule_args args
     args[:remote] ||= true
@@ -162,7 +164,7 @@ format :html do
       end
   end
 
-  def default_related_edit_rule_args args
+  def default_edit_single_rule_args args
     args[:remote] ||= false
     args[:success] ||= {
       card: args[:parent] || card,
@@ -172,10 +174,10 @@ format :html do
       item: nil
     }
     default_edit_rule_args args
-    related_edit_rule_button_args args
+    edit_single_rule_button_args args
   end
 
-  def related_edit_rule_button_args args
+  def edit_single_rule_button_args args
     args[:delete_button] = delete_button args, '.card-slot.related-view'
     args[:cancel_button] = card_link(
       args[:success][:id],

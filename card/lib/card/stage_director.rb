@@ -42,7 +42,10 @@ class Card
     def initialize card, opts={}, main=true
       @card = card
       @card.director = self
-      @card.prepare_for_phases
+      # for read actions there is no validation phase
+      # so we have to set the action here
+      @card.identify_action
+
       @stage = nil
       @running = false
       @parent = opts[:parent]
@@ -68,8 +71,12 @@ class Card
       @action = nil
     end
 
+    def prepare_for_phases
+      @card.prepare_for_phases
+      @subdirectors.each(&:prepare_for_phases)
+    end
+
     def validation_phase
-      @running = true
       run_single_stage :initialize
       run_single_stage :prepare_to_validate
       run_single_stage :validate
@@ -143,7 +150,10 @@ class Card
       # puts "#{@card.name}: #{stage} stage".red
       @stage = stage_index stage
       return if @card.errors.any? && @stage <= stage_index(:validate)
-
+      if stage == :initialize
+        @running ||= true
+        prepare_for_phases
+      end
       # in the store stage it can be necessary that
       # other subcards must be saved before we save this card
       if stage == :store

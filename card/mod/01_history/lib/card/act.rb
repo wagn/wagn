@@ -17,8 +17,7 @@ class Card
     class << self
       def delete_actionless
         joins(
-          'LEFT JOIN card_actions '\
-          'ON card_acts.id = card_actions.card_act_id'
+          'LEFT JOIN card_actions ON card_acts.id = card_act_id'
         ).where(
           'card_actions.id is null'
         ).delete_all
@@ -30,6 +29,16 @@ class Card
         vars = { card_ids: card_ids, current_user_id: Card::Auth.current_id }
         joins(:actions).where(sql, vars).uniq.order(:id).reverse_order
       end
+
+      def all_viewable
+        joins(
+          'JOIN card_actions ON card_acts.id = card_act_id '
+          #          'JOIN cards ON cards.id = card'
+        ).where(
+          'draft is not true'
+        ).uniq
+      end
+
     end
 
     def set_actor
@@ -57,8 +66,9 @@ class Card
 
     def relevant_actions_for card
       actions.select do |action|
-        card.included_card_ids.include?(action.card_id) ||
-          (card.id == action.card_id)
+        ((card.id == action.card_id) ||
+         card.included_card_ids.include?(action.card_id)) &&
+        card.ok?(:read)
       end
     end
 

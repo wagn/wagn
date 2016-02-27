@@ -290,7 +290,7 @@ describe Card::StageDirector do
         changed = false
         in_stage :prepare_to_validate,
                  on: :create,
-                 trigger: create_subcards do
+                 trigger: :create_subcards do
           if name.empty? && !changed
             self.name = 'main1+main2'
             expect(subfield('sub1')).to be

@@ -128,7 +128,8 @@ format :html do
   view :checkbox do |_args|
     options = card.option_names.map do |option_name|
       checked = card.item_names.include?(option_name)
-      label = ((o_card = Card.fetch(option_name)) && o_card.label) || option_name
+      o_card = Card.fetch option_name
+      label = (o_card && o_card.label) || option_name
       id = "pointer-checkbox-#{option_name.to_name.key}"
       description = pointer_option_description option_name
       <<-HTML
@@ -249,11 +250,6 @@ def diff_args
   { format: :pointer }
 end
 
-def known_item_cards args={}
-  item_names(args).map do |name|
-    Card.fetch name
-  end.compact
-end
 
 def item_cards args={}
   if args[:complete]
@@ -262,12 +258,18 @@ def item_cards args={}
   elsif args[:known_only]
     known_item_cards args
   else
-    fetch_item_cards args[:type]
+    fetch_or_initialize_item_cards args
   end
 end
 
-def fetch_item_cards default_type=nil
-  itype = default_type || item_type
+def known_item_cards args={}
+  item_names(args).map do |name|
+    Card.fetch name
+  end.compact
+end
+
+def fetch_or_initialize_item_cards args
+  itype = args[:type] || item_type
   new_args = itype ? { type: itype } : {}
   item_names(args).map do |name|
     Card.fetch name, new: new_args

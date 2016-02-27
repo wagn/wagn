@@ -211,7 +211,15 @@ describe Card::StageDirector do
             i:112v ptv:112v v:112v
             v:12 v:121
             pts:1 pts:11 pts:111 pts:112v pts:12 pts:121
-            s:1 s:11 s:111 f:111 s:112v f:112v f:11 s:12 s:121 f:121 f:12 f:1
+            s:1
+              s:11
+                s:111 f:111
+                s:112v f:112v
+              f:11
+              s:12
+                s:121 f:121
+              f:12
+            f:1
             ig:1 ig:11 ig:111 ig:112v ig:12 ig:121
             igwd:1 igwd:11 igwd:111 igwd:112v igwd:12 igwd:121
           )
@@ -229,7 +237,6 @@ describe Card::StageDirector do
           end
           test_event :validate, on: :create do
             order << "v:#{name}"
-            add_subcard '112v' if name == '11'
           end
           test_event :prepare_to_store, on: :create do
             order << "pts:#{name}"
@@ -250,15 +257,17 @@ describe Card::StageDirector do
         end
         expect(order).to eq(
           %w(
-            i:1+2 i:11 i:111
-            ptv:1 ptv:11 ptv:111 ptv:12 ptv:121
-            v:1 v:11 v:111
-            i:112v ptv:112v v:112v
-            v:12 v:121
-            pts:1 pts:11 pts:111 pts:112v pts:12 pts:121
-            s:1 s:11 s:111 f:111 s:112v f:112v f:11 s:12 s:121 f:121 f:12 f:1
-            ig:1 ig:11 ig:111 ig:112v ig:12 ig:121
-            igwd:1 igwd:11 igwd:111 igwd:112v igwd:12 igwd:121
+            i:1+2 i:11
+            ptv:1+2 ptv:11
+            v:1+2 v:11
+            pts:1+2 pts:11
+            s:1+2
+              i:1 ptv:1 v:1 pts:1 s:1 f:1
+              i:2 ptv:2 v:2 pts:2 s:2 f:2
+              s:11 f:11
+            f:1+2
+            ig:1+2 ig:11 ig:1 ig:2
+            igwd:1+2 igwd:11 igwd:1 igwd:2
           )
         )
       end

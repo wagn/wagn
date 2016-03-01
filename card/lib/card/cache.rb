@@ -1,17 +1,6 @@
 # -*- encoding : utf-8 -*-
 
 class Card
-  ActiveSupport::Cache::FileStore.class_eval do
-    # escape special symbols \*"<>| additionaly to :?.
-    # All of them not allowed to use in ms windows file system
-    def real_file_path name
-      name = name.gsub('%', '%25').gsub('?', '%3F').gsub(':', '%3A')
-      name = name.gsub('\\', '%5C').gsub('*', '%2A').gsub('"', '%22')
-      name = name.gsub('<', '%3C').gsub('>', '%3E').gsub('|', '%7C')
-      '%s/%s.cache' % [@cache_path, name]
-    end
-  end
-
   class Cache
     TEST_ENVS         = %w(test cucumber).freeze
     @@prepopulating   = TEST_ENVS.include? Rails.env
@@ -28,22 +17,14 @@ class Card
                                       store: cache_type
       end
 
+      # establish clean context;
+      # clear the temporary caches and ensure we're using the latest stamp
+      # on the persistent caches.
       def renew
-        cache_by_class.keys do |klass|
-          raise "renewing nil cache: #{klass}" unless klass.cache
-          cache_by_class[klass].system_prefix = system_prefix(klass)
+        cache_by_class.each do |_klass, cache|
+          cache.soft.reset
+          cache.hard.renew if cache.hard
         end
-        reset_soft
-      end
-
-      def database_name
-        @database_name ||= (cfg = Cardio.config) &&
-                           (dbcfg = cfg.database_configuration) &&
-                           dbcfg[Rails.env]['database']
-      end
-
-      def system_prefix klass
-        "#{database_name}/#{klass}"
       end
 
       def restore
@@ -51,16 +32,18 @@ class Card
         prepopulate
       end
 
-      def reset_global # deprecated
-        reset_all
+      def reset_global
+        cache_by_class.each do |_klass, cache|
+          cache.soft.reset
+          cache.hard.annihilate if cache.hard
+        end
+        reset_other
       end
 
       def reset_all
         reset_hard
         reset_soft
-
-        Card::Codename.reset_cache
-        Cardio.delete_tmp_files
+        reset_other
       end
 
       def reset_hard
@@ -73,6 +56,11 @@ class Card
         cache_by_class.each do |_klass, cache|
           cache.soft.reset
         end
+      end
+
+      def reset_other
+        Card::Codename.reset_cache
+        Cardio.delete_tmp_files
       end
 
       def obj_to_key obj
@@ -159,5 +147,16 @@ class Card
     def exist? key
       @soft.exist?(key) || (@hard && @hard.exist?(key))
     end
+  end
+end
+
+ActiveSupport::Cache::FileStore.class_eval do
+  # escape special symbols \*"<>| additionaly to :?.
+  # All of them not allowed to use in ms windows file system
+  def real_file_path name
+    name = name.gsub('%', '%25').gsub('?', '%3F').gsub(':', '%3A')
+    name = name.gsub('\\', '%5C').gsub('*', '%2A').gsub('"', '%22')
+    name = name.gsub('<', '%3C').gsub('>', '%3E').gsub('|', '%7C')
+    '%s/%s.cache' % [@cache_path, name]
   end
 end

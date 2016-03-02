@@ -5,8 +5,9 @@ class Card
       Card.create! args
     end
 
+    # if card with same name exists move it out of the way
     def create_card! args
-      create_card args.reverse_merge(rename_if_conflict: :new)
+      create_card args.reverse_merge(rename_if_conflict: :old)
     end
 
     def update_card name, args
@@ -50,3 +51,4 @@ class Card
     end
   end
 end
+

@@ -206,7 +206,7 @@ class Card
           when 'id'             then "#{table}.id"
           when 'update'         then "#{table}.updated_at"
           when 'create'         then "#{table}.created_at"
-          when /^(name|alpha)$/ then "LOWER( #{table}.key )"
+          when /^(name|alpha)$/ then "#{table}.key"
           when 'content'        then "#{table}.db_content"
           when 'relevance'      then "#{table}.updated_at" # deprecated
           else

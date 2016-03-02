@@ -13,7 +13,8 @@ class Card::Cache::Persistent
 
   def initialize opts
     @store = opts[:store]
-    @klass = opts[:klass]
+    @klass = opts[:class]
+    @class_key = @klass.to_s.to_name.key
     @database = opts[:database] || self.class.database_name
   end
 
@@ -33,7 +34,7 @@ class Card::Cache::Persistent
   end
 
   def stamp_key
-    "#{@database}/#{@klass}/stamp"
+    "#{@database}/#{@class_key}/stamp"
   end
 
   def new_stamp
@@ -41,7 +42,7 @@ class Card::Cache::Persistent
   end
 
   def prefix
-    @prefix ||= "#{@database}/#{@klass}/#{stamp}"
+    @prefix ||= "#{@database}/#{@class_key}/#{stamp}"
   end
 
   def full_key key

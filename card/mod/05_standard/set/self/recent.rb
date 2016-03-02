@@ -1,4 +1,4 @@
-ACTS_PER_PAGE = 10
+ACTS_PER_PAGE = 50
 
 view :title do |args|
   super args.merge(title: 'Recent Changes')
@@ -15,8 +15,13 @@ format :html do
     page = params['page'] || 1
     acts = Act.all_viewable.order(id: :desc).page(page).per(ACTS_PER_PAGE)
     acts.map do |act|
-      format = act.card.format :html
-      format.render_act args.merge(act: act, act_context: :absolute)
+      if (act_card = act.card)
+        format = act_card.format :html
+        format.render_act args.merge(act: act, act_context: :absolute)
+      else
+        Rails.logger.info "bad data, act: #{act}"
+        ''
+      end
     end.join
   end
 end

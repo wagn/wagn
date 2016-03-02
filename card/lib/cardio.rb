@@ -29,7 +29,6 @@ module Cardio
         recaptcha_private_key:  nil,
         recaptcha_proxy:        nil,
 
-        cache_store:            [:file_store, 'tmp/cache'],
         override_host:          nil,
         override_protocol:      nil,
 

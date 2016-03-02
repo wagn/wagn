@@ -15,6 +15,11 @@ class Card
     end
 
     class << self
+      def delete_cardless
+        left_join = 'LEFT JOIN cards ON card_acts.card_id = cards.id'
+        joins(left_join).where('cards.id IS NULL').delete_all
+      end
+
       def delete_actionless
         joins(
           'LEFT JOIN card_actions ON card_acts.id = card_act_id'

@@ -29,17 +29,17 @@ class Card
 
       def fetch id
         cache.fetch id.to_s do
-          Action.find id.to_i
+          find id.to_i
         end
       end
 
       def delete_cardless
         left_join = 'LEFT JOIN cards ON card_actions.card_id = cards.id'
-        Card::Action.joins(left_join).where('cards.id IS NULL').delete_all
+        joins(left_join).where('cards.id IS NULL').delete_all
       end
 
       def delete_changeless
-        Card::Action.joins(
+        joins(
           'LEFT JOIN card_changes '\
           'ON card_changes.card_action_id = card_actions.id'
         ).where(

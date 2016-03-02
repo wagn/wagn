@@ -190,9 +190,9 @@ namespace :wagn do
       verbose = ENV['VERBOSE'] ? ENV['VERBOSE'] == 'true' : true
       raise 'VERSION is required' unless version
       ActiveRecord::Migration.verbose = verbose
-      ActiveRecord::Migrator.run(:up, Cardio.migration_paths(:deck_cards), version)
+      ActiveRecord::Migrator.run :up, Cardio.migration_paths(:deck_cards),
+                                 version
     end
-  end
 
     # maybe we should move this to a method?
     desc 'write the version to a file (not usually called directly)'

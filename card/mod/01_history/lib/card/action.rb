@@ -86,12 +86,8 @@ class Card
 
     def changes
       @changes ||=
-        begin
-          hash = {}
-          card_changes.each do |change|
-            hash[change.field.to_sym] = change
-          end
-          hash
+        card_changes.each_with_object({}) do |change, hash|
+          hash[change.field.to_sym] = change
         end
     end
 
@@ -99,43 +95,6 @@ class Card
       return if action_type == :create
       return unless (previous_change = previous_change field)
       interpret_value field, previous_change.value
-    end
-
-    def previous_change field
-      field = interpret_field field
-      if @previous_changes && @previous_changes.key?(field)
-        @previous_changes[field]
-      else
-        @previous_changes ||= {}
-        @previous_changes[field] = card.last_change_on field, before: self
-      end
-    end
-
-    def field_index field
-      if field.is_a? Integer
-        field
-      else
-        Card::TRACKED_FIELDS.index(field.to_s)
-      end
-    end
-
-    def interpret_field field
-      case field
-      when :content then :db_content
-      when :cardtype then :type_id
-      else field.to_sym
-      end
-    end
-
-    def interpret_value field, value
-      case field.to_sym
-      when :type_id
-        value && value.to_i
-      when :cardtype
-        type_card = value && Card.quick_fetch(value.to_i)
-        type_card && type_card.name.capitalize
-      else value
-      end
     end
 
     def new_type?
@@ -156,10 +115,6 @@ class Card
 
     def action_type
       TYPE[read_attribute(:action_type)]
-    end
-
-    def set_act
-      self.set_act ||= acts.last
     end
 
     def revision_nr
@@ -193,6 +148,12 @@ class Card
       end
     end
 
+    def card
+      Card.fetch card_id, look_in_trash: true, skip_modules: true
+    end
+
+    private
+
     def content_diff_object opts=nil
       @diff ||= begin
         diff_args = opts || card.include_set_modules.diff_args
@@ -200,8 +161,33 @@ class Card
       end
     end
 
-    def card
-      Card.fetch card_id, look_in_trash: true, skip_modules: true
+    def previous_change field
+      field = interpret_field field
+      if @previous_changes && @previous_changes.key?(field)
+        @previous_changes[field]
+      else
+        @previous_changes ||= {}
+        @previous_changes[field] = card.last_change_on field, before: self
+      end
+    end
+
+    def interpret_field field
+      case field
+      when :content then :db_content
+      when :cardtype then :type_id
+      else field.to_sym
+      end
+    end
+
+    def interpret_value field, value
+      case field.to_sym
+      when :type_id
+        value && value.to_i
+      when :cardtype
+        type_card = value && Card.quick_fetch(value.to_i)
+        type_card && type_card.name.capitalize
+      else value
+      end
     end
   end
 end

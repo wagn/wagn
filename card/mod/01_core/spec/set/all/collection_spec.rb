@@ -130,7 +130,7 @@ describe Card::Set::All::Collection do
       end
     end
 
-    it 'handles item params' do
+      it 'handles item params' do
       tabs = render_content '{{Fruit+*type+*create|tabs|name;structure:Home}}'
       params = { slot: { structure: 'Home' }, view: :name }.to_param
       path = "/Anyone?#{params}"
@@ -142,9 +142,9 @@ describe Card::Set::All::Collection do
       tabs = render_card :tabs, name: 'tab_test', type_id: Card::PlainTextID,
                                 content: '{{A|type;title:my tab title}}'
       assert_view_select tabs, 'div[role=tabpanel]' do
-        assert_select 'li > a[data-toggle=tab][href="#tab_test-a"]',
+        assert_select 'li > a[data-toggle=tab][href="#tab_test-my_tab_title"]',
                       'my tab title'
-        assert_select 'div.tab-pane#tab_test-a', 'Basic'
+        assert_select 'div.tab-pane#tab_test-my_tab_title', 'Basic'
       end
     end
 

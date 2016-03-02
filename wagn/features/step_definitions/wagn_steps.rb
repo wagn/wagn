@@ -162,7 +162,7 @@ When /I wait (\d+) seconds$/ do |period|
 end
 
 When /^I wait until ajax response done$/ do
-  Timeout.timeout(Capybara.default_max_wait_time) do
+    Timeout.timeout(Capybara.default_wait_time) do
     sleep(0.5) while page.evaluate_script('jQuery.active') != 0
   end
 end

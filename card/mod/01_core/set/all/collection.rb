@@ -257,10 +257,12 @@ format :html do
     active_content = nil
     tabs = {}
     each_reference_with_args(item: :content) do |name, nest_args|
-      active_name ||= name
-      active_content ||= nest(Card.fetch(active_name, new: {}), nest_args)
-      tab_name   = nest_args[:title] || name
+      tab_name = nest_args[:title] || name
       tabs[tab_name] = nest_path(name, nest_args).html_safe
+
+      active_name ||= tab_name
+      # warning: nest changes nest_args
+      active_content ||= nest(Card.fetch(name, new: {}), nest_args)
     end
     lazy_loading_tabs tabs, active_name, active_content, args[:tab_type]
   end

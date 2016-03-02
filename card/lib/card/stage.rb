@@ -3,20 +3,46 @@ class Card
   # 8 stages that are grouped in 3 phases.
   #
   # 'validation phase'
-  #   * initialize stage
-  #   * prepare_to_validate stage
-  #   * validate stage
+  #   * initialize stage (I)
+  #   * prepare_to_validate stage (P2V)
+  #   * validate stage (V)
   #
   # 'storage phase'
-  #   * prepare_to_store stage
-  #   * store stage
-  #   * finalize stage
+  #   * prepare_to_store stage (P2S)
+  #   * store stage (S)
+  #   * finalize stage (F)
   #
   # 'integration phase'
-  #   * integrate stage
-  #   * integrate_with_delay stage
+  #   * integrate stage (IG)
+  #   * integrate_with_delay stage (IGwD)
   #
   #
+  # Explanation:
+  #  yes!  the recommended stage to do that
+  #  yes   ok to do it here if necessary
+  #  no    not recommended; chance to mess things up
+  #        but if something forces you to do it here you can try
+  #  no!   never do it here. it won't work or will break things
+  #
+  # if there is only a single entry in a phase column it counts for all stages
+  # of that phase
+  #
+  #                               validation    |    storage    | integrate
+  #                              I    P2V  V    |  P2S  S    F  | IG   IGwD
+  #----------------------------------------------------------------------
+  # add subcard                  yes! yes! yes  | yes  yes  yes |    yes
+  # remove subcard               yes! yes! yes  | yes  no   no! |    no!
+  # validate                     yes  yes  yes! |      no       |    no
+  # unsecure change              yes  yes! no   |      no!      |    no!
+  # secure change                     yes       | yes! no!  no! |    no!
+  # abort                             yes!      |      yes      |    yes?
+  # fail
+  # create other cards
+  # has id                            no        | no   no?  yes |    yes
+  # dirty attributes                  yes       |      yes      |    no
+
+
+  
   module Stage
     STAGES = [:initialize, :prepare_to_validate, :validate, :prepare_to_store,
               :store, :finalize, :integrate, :integrate_with_delay].freeze

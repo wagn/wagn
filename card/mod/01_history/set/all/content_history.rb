@@ -1,10 +1,13 @@
 
-# if these aren't in a nested module, the methods just overwrite the base methods,
-# but we need a distict module so that super will be able to refer to the base methods.
+# if these aren't in a nested module, the methods just overwrite the base
+#  methods, but we need a distict module so that super will be able to refer to
+# the base methods.
 def content
   if @selected_action_id
     @selected_content ||= begin
-      (change = last_change_on( :db_content, not_after: @selected_action_id, including_drafts: true ) and change.value) || db_content
+      change = last_change_on :db_content, not_after: @selected_action_id,
+                                           including_drafts: true
+      (change && change.value) || db_content
     end
   else
     super
@@ -19,33 +22,33 @@ end
 def save_content_draft content
   super
   acts.create do |act|
-    act.actions.build(draft: true, card_id: id).card_changes.build(field: :db_content, value: content)
+    act.actions.build(draft: true, card_id: id)
+       .card_changes.build(field: :db_content, value: content)
   end
 end
 
-def last_change_on(field, opts={})
-  where_sql =  'card_actions.card_id = :card_id AND field = :field '
-  if !opts[:including_drafts]
-    where_sql += 'AND (draft is not true) '
-  end
+def last_change_on field, opts={}
+  where_sql = 'card_actions.card_id = :card_id AND field = :field '
+  where_sql += 'AND (draft is not true) ' unless opts[:including_drafts]
   where_sql += if opts[:before]
-    'AND card_action_id < :action_id'
-  elsif opts[:not_after]
-    'AND card_action_id <= :action_id'
-  else
-    ''
-  end
+                 'AND card_action_id < :action_id'
+               elsif opts[:not_after]
+                 'AND card_action_id <= :action_id'
+               else
+                 ''
+               end
 
   action_arg = opts[:before] || opts[:not_after]
-  action_id = action_arg.kind_of?(Card::Action) ? action_arg.id : action_arg
+  action_id = action_arg.is_a?(Card::Action) ? action_arg.id : action_arg
   field_index = Card::TRACKED_FIELDS.index(field.to_s)
-  Change.joins(:action).where( where_sql,
-    {card_id: id, field: field_index, action_id: action_id}
+  Change.joins(:action).where(
+    where_sql, card_id: id, field: field_index, action_id: action_id
   ).order(:id).last
 end
 
 def selected_action_id
-  @selected_action_id || (@current_action and @current_action.id) || last_action_id
+  @selected_action_id || (@current_action && @current_action.id) ||
+    last_action_id
 end
 
 def selected_action_id= action_id
@@ -54,7 +57,7 @@ def selected_action_id= action_id
 end
 
 def selected_action
-  selected_action_id and Action.fetch(selected_action_id)
+  selected_action_id && Action.fetch(selected_action_id)
 end
 
 def with_selected_action_id action_id
@@ -74,13 +77,14 @@ def selected_content_action_id
 end
 
 def new_content_action_id
-  if @current_action && (new_card? || @current_action.new_content? || db_content_changed?)
+  if @current_action && (new_card? || @current_action.new_content? ||
+     db_content_changed?)
     @current_action.id
   end
 end
 
 def last_action_id
-  la = last_action and la.id
+  (la = last_action) && la.id
 end
 
 def last_action
@@ -102,20 +106,22 @@ def last_actor
 end
 
 def last_act
-  if (action = last_action)
-    last_act_on_self = acts.last
-    if last_act_on_self and ( action.act==last_act_on_self || last_act_on_self.acted_at>action.act.acted_at )
-      last_act_on_self
-    else
-      action.act
+  @last_act ||=
+    if (action = last_action)
+      last_act_on_self = acts.last
+      if last_act_on_self &&
+         (action.act == last_act_on_self ||
+         last_act_on_self.acted_at > action.act.acted_at)
+        last_act_on_self
+      else
+        action.act
+      end
     end
-  end
 end
 
 def acted_at
   last_act.acted_at
 end
-
 
 def previous_action action_id
   if action_id
@@ -127,15 +133,15 @@ def previous_action action_id
 end
 
 def revised_at
-  (last_action and act=last_action.act and act.acted_at) or Time.now
+  (last_action && (act = last_action.act) && act.acted_at) || Time.zone.now
 end
 
 def creator
-  Card[ creator_id ]
+  Card[creator_id]
 end
 
 def updater
-  Card[ updater_id ]
+  Card[updater_id]
 end
 
 def clean_html?
@@ -146,10 +152,11 @@ def draft_acts
   drafts.created_by(Card::Auth.current_id).map(&:act)
 end
 
-event :detect_conflict, before: :approve, on: :update, when: proc {|c| c.history? } do
-  if last_action_id_before_edit and last_action_id_before_edit.to_i != last_action_id and last_action.act.actor_id != Auth.current_id
-    errors.add :conflict, "changes not based on latest revision"
+event :detect_conflict, :validate,
+      on: :update, when: proc { |c| c.history? } do
+  if last_action_id_before_edit &&
+     last_action_id_before_edit.to_i != last_action_id &&
+     last_action.act.actor_id != Auth.current_id
+    errors.add :conflict, 'changes not based on latest revision'
   end
 end
-
-

@@ -58,12 +58,12 @@ format :html do
   view :field_related_rules do |args|
     with_label_and_navbars args.merge(selected_view: :field_related_rules) do
       field_settings = [:default, :help, :structure]
-      field_settings +=  [:input, :options, :options_label] if card.type_id == PointerID
+      field_settings += [:input, :options, :options_label] if card.type_id == PointerID
       rules_table (card.visible_setting_codenames & field_settings), args
     end
   end
 
-  view :set_label do |args|
+  view :set_label do |_args|
     content_tag :h3, card.label, class: 'set-label'
   end
 
@@ -71,18 +71,18 @@ format :html do
     view group_key.to_sym do |args|
       settings = card.visible_settings group_key
       if settings.present?
-        group_name =  Card::Setting.group_names[group_key] || group.to_s
+        group_name = Card::Setting.group_names[group_key] || group.to_s
         heading_id = "heading-#{group_key}"
         collapse_id = "collapse-#{card.cardname.safe_key}-#{group_key}"
         output [
           (content_tag :div, class: 'panel panel-default' do
             content_tag :div, class: 'panel-heading', role: 'tab', id: heading_id do
               content_tag :h4, class: 'panel-title' do
-                content_tag :a, group_name, 'data-toggle'=>'collapse', 'data-parent'=>'#accordion', href: "##{collapse_id}", 'aria-expanded'=>'false', 'aria-controls'=>collapse_id
+                content_tag :a, group_name, 'data-toggle' => 'collapse', 'data-parent' => '#accordion', href: "##{collapse_id}", 'aria-expanded' => 'false', 'aria-controls' => collapse_id
               end
             end
           end),
-          (content_tag :div, id: collapse_id, class: 'panel-collapse collapse', role: 'tabpanel', 'aria-labelledby'=>heading_id do
+          (content_tag :div, id: collapse_id, class: 'panel-collapse collapse', role: 'tabpanel', 'aria-labelledby' => heading_id do
             rules_table settings.map(&:codename), args
           end)
         ]
@@ -93,7 +93,7 @@ format :html do
   def rules_table settings, args={}
     wrap_with :table, class: 'set-rules table' do
       [
-        (content_tag(:tr, class: "rule-group") do
+        (content_tag(:tr, class: 'rule-group') do
           wrap_each_with :th, %w(Trait Content Set), class: 'rule-heading'
         end),
         (settings.map do |setting|
@@ -106,31 +106,31 @@ format :html do
     end
   end
 
-  view :editor do |args|
-    'Cannot currently edit Sets' #ENGLISH
+  view :editor do |_args|
+    'Cannot currently edit Sets' # ENGLISH
   end
 
   view :template_link do |args|
     args.delete :style
     wrap args do
-      link = view_link args[:inc_syntax], :template_editor, class: 'slotter' #, 'slot-include'=>include_syntax
+      link = view_link args[:inc_syntax], :template_editor, class: 'slotter' # , 'slot-include'=>include_syntax
       "{{#{link}}}"
     end
   end
 
-  view :template_closer do |args|
+  view :template_closer do |_args|
     view_link '', :template_link, class: 'slotter glyphicon glyphicon-remove template-editor-close'
   end
 
   view :template_editor do |args|
     wrap args do
-      %{
+      %(
         <div class="template-editor-left">{{</div>
         <div class="template-editor-main">
-          #{ render_template_editor_frame args }
+          #{render_template_editor_frame args}
         </div>
         <div class="template-editor-right">}}</div>
-      }
+      )
     end
   end
 
@@ -140,29 +140,28 @@ format :html do
     end
   end
 
-  view :closed_content do |args|
+  view :closed_content do |_args|
     ''
   end
 
-
   view :set_navbar do |args|
     id = "rule-navbar-#{card.cardname.safe_key}-#{args[:home_view]}"
-    related_sets =  card.related_sets(true)
+    related_sets = card.related_sets(true)
     return '' if related_sets.size <= 1
     navbar id, toggle: 'Rules<span class="caret"></span>', toggle_align: :left,
                class: 'slotter toolbar', navbar_type: 'inverse', collapsed_content: close_link(class: 'pull-right visible-xs') do
       [
-        content_tag(:span, 'Set:', class: "navbar-text hidden-xs"),
+        content_tag(:span, 'Set:', class: 'navbar-text hidden-xs'),
         (wrap_with :ul, class: 'nav navbar-nav nav-pills' do
           related_sets.map do |name, label|
             link = card_link name, text: label, remote: true,
-              path_opts: {
-                view: @slot_view,
-                slot: {subheader: showname(name), subframe: true, hide: 'header set_label rule_navbar', show: 'subheader set_navbar'}
-              }
+                                   path_opts: {
+                                     view: @slot_view,
+                                     slot: { subheader: showname(name), subframe: true, hide: 'header set_label rule_navbar', show: 'subheader set_navbar' }
+                                   }
             li_pill link, name == card.name
           end
-        end),
+        end)
       ]
     end
   end
@@ -173,35 +172,34 @@ format :html do
 
   view :rule_navbar do |args|
     id = "rule-navbar-#{card.cardname.safe_key}-#{args[:home_view]}"
-    args.merge!(path_opts: {slot: {show: :rule_navbar}})
+    args[:path_opts] = { slot: { show: :rule_navbar } }
     navbar id, toggle: 'Rules<span class="caret"></span>', toggle_align: :left,
                class: 'slotter toolbar', navbar_type: 'inverse', collapsed_content: close_link(class: 'pull-right visible-xs') do
       [
-        content_tag(:span, 'Rules:', class: "navbar-text hidden-xs"),
+        content_tag(:span, 'Rules:', class: 'navbar-text hidden-xs'),
         (wrap_with :ul, class: 'nav navbar-nav nav-pills' do
           [
-            (view_link_pill( 'field', :field_related_rules, args) if card.junction?),
-            view_link_pill( 'common', :common_rules, args),
-            view_link_pill( 'by group', :grouped_rules, args),
-            view_link_pill( 'by name', :all_rules, args),
-           (view_link_pill( 'recent', :recent_rules, args) if recently_edited_settings?),
+            (view_link_pill('field', :field_related_rules, args) if card.junction?),
+            view_link_pill('common', :common_rules, args),
+            view_link_pill('by group', :grouped_rules, args),
+            view_link_pill('by name', :all_rules, args),
+            (view_link_pill('recent', :recent_rules, args) if recently_edited_settings?)
           ]
-        end),
+        end)
       ]
     end
   end
 
   def view_link_pill name, view, args
     selected_view = args[:selected_view] || @slot_view || args[:home_view]
-    opts = {class: 'slotter', role: 'pill', path_opts: args[:path_opts]}
+    opts = { class: 'slotter', role: 'pill', path_opts: args[:path_opts] }
     li_pill view_link(name, view, opts), selected_view == view
   end
 end
 
-
 include Card::Set::Type::SearchType
 
-def followed_by? user_id = nil
+def followed_by? user_id=nil
   all_members_followed_by? user_id
 end
 
@@ -217,22 +215,16 @@ end
 
 def subclass_for_set
   current_set_pattern_code = tag.codename
-  Card.set_patterns.detect do |set|
+  Card.set_patterns.find do |set|
     current_set_pattern_code == set.pattern_code
   end
 end
 
-def junction_only?()
+def junction_only?
   if @junction_only.nil?
     @junction_only = subclass_for_set.junction_only
   else
     @junction_only
-  end
-end
-
-def reset_set_patterns
-  Card.cached_set_members(key).each do |mem|
-    Card.expire mem
   end
 end
 
@@ -254,7 +246,7 @@ end
 
 def follow_rule_name user=nil
   if user
-    if user.kind_of? String
+    if user.is_a? String
       "#{name}+#{user}+#{Card[:follow].name}"
     else
       "#{name}+#{user.name}+#{Card[:follow].name}"
@@ -279,13 +271,12 @@ def all_user_ids_with_rule_for setting_code
   Card.all_user_ids_with_rule_for self, setting_code
 end
 
-
 def setting_codenames_by_group
   result = {}
   Card::Setting.groups.each do |group, settings|
-    visible_settings = settings.reject { |s| !s or !s.applies_to_cardtype(prototype.type_id) }
+    visible_settings = settings.reject { |s| !s || !s.applies_to_cardtype(prototype.type_id) }
     unless visible_settings.empty?
-      result[group] = visible_settings.map { |s| s.codename }
+      result[group] = visible_settings.map(&:codename)
     end
   end
   result
@@ -300,7 +291,7 @@ end
 
 def visible_settings group
   Card::Setting.groups[group].reject do |setting|
-    !setting or !setting.applies_to_cardtype(prototype.type_id)
+    !setting || !setting.applies_to_cardtype(prototype.type_id)
   end
 end
 
@@ -308,45 +299,43 @@ def all_members_followed?
   all_members_followed_by? Auth.current_id
 end
 
-def all_members_followed_by? user_id = nil
+def all_members_followed_by? user_id=nil
   if !prototype.followed_by? user_id
     return false
   elsif set_followed_by? user_id
     return true
   else
     broader_sets.each do |b_s|
-      if (set_card  = Card.fetch(b_s)) && set_card.set_followed_by?(user_id)
-       return true
+      if (set_card = Card.fetch(b_s)) && set_card.set_followed_by?(user_id)
+        return true
       end
     end
   end
-  return false
+  false
 end
 
 def set_followed?
   set_followed_by? Auth.current_id
 end
 
-def set_followed_by? user_id = nil
-  return  ( user_id && (user = Card.find(user_id)) && Card.fetch(follow_rule_name(user.name)) ) ||
-          Card.fetch(follow_rule_name)
+def set_followed_by? user_id=nil
+  (user_id && (user = Card.find(user_id)) && Card.fetch(follow_rule_name(user.name))) ||
+    Card.fetch(follow_rule_name)
 end
 
 def broader_sets
   prototype.set_names[1..-1]
 end
 
-
 def prototype
-  opts = subclass_for_set.prototype_args self.cardname.trunk_name
+  opts = subclass_for_set.prototype_args cardname.trunk_name
   Card.fetch opts[:name], new: opts
 end
 
-def related_sets with_self = false
+def related_sets with_self=false
   if subclass_for_set.anchorless?
     prototype.related_sets with_self
   else
     left(new: {}).related_sets with_self
   end
 end
-

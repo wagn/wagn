@@ -2,7 +2,7 @@
 class Card
   class Query
     module Attributes
-      SORT_JOIN_TO_ITEM_MAP = { left: 'left_id', right: 'right_id' }
+      SORT_JOIN_TO_ITEM_MAP = { left: 'left_id', right: 'right_id' }.freeze
 
       # ~~~~~~ RELATIONAL
 
@@ -133,7 +133,7 @@ class Card
             "replace(#{table_alias}.name,'+',' ')",
             "#{table_alias}.db_content"
           ].map do |field|
-            %{#{field} #{cxn.match quote("[[:<:]]#{v}[[:>:]]")}}
+            %(#{field} #{cxn.match quote("[[:<:]]#{v}[[:>:]]")})
           end
           "(#{name_or_content.join ' OR '})"
         end
@@ -163,11 +163,18 @@ class Card
         r = Reference.new(key, val, self)
         refjoin = Join.new(from: self, to: r, to_field: r.infield)
         joins << refjoin
-        if r.cardquery
-          join_cards r.cardquery, from: refjoin, from_field: r.outfield
-        end
+        restrict_reference r, refjoin if r.cardquery
         r.conditions.each do |condition|
           refjoin.conditions << "#{r.table_alias}.#{condition}"
+        end
+      end
+
+      def restrict_reference ref, refjoin
+        val = ref.cardquery
+        if (id = id_from_val(val))
+          add_condition "#{ref.table_alias}.#{ref.outfield} = #{id}"
+        else
+          join_cards val, from: refjoin, from_field: ref.outfield
         end
       end
 
@@ -183,15 +190,13 @@ class Card
 
         if sort_field == 'count'
           sort_by_count val, item
+        elsif (join_field = SORT_JOIN_TO_ITEM_MAP[item.to_sym])
+          sq = join_cards(val, to_field: join_field,
+                               side: 'LEFT',
+                               conditions_on_join: true)
+          @mods[:sort] ||= "#{sq.table_alias}.#{sort_field}"
         else
-          if (join_field = SORT_JOIN_TO_ITEM_MAP[item.to_sym])
-            sq = join_cards(val, to_field: join_field,
-                                 side: 'LEFT',
-                                 conditions_on_join: true)
-            @mods[:sort] ||= "#{sq.table_alias}.#{sort_field}"
-          else
-            raise BadQuery, "sort item: #{item} not yet implemented"
-          end
+          raise BadQuery, "sort item: #{item} not yet implemented"
         end
       end
 
@@ -204,12 +209,12 @@ class Card
             group: 'sort_join_field',
             superquery: self
           )
-          subselect = Query.new(val.merge return: 'id', superquery: self)
+          subselect = Query.new val.merge(return: 'id', superquery: self)
           cs.add_condition "referer_id in (#{subselect.sql})"
           # FIXME: - SQL generated before SQL phase
           cs.joins << Join.new(
             from: cs,
-            to: ['card_references', 'wr', 'referee_id']
+            to: %w(card_references wr referee_id)
           )
           cs.mods[:sort_join_field] = "#{cs.table_alias}.id as sort_join_field"
           # HACK!
@@ -248,7 +253,8 @@ class Card
       def join_cards val, opts={}
         conditions_on_join = opts.delete :conditions_on_join
         s = subquery
-        card_join = Join.new({ from: self, to: s }.merge opts)
+        join_opts = { from: self, to: s }.merge opts
+        card_join = Join.new join_opts
         joins << card_join unless opts[:from].is_a? Join
         s.conditions_on_join = card_join if conditions_on_join
         s.interpret val
@@ -260,13 +266,13 @@ class Card
       def all val
         conjoin val, :and
       end
-      alias :and :all
+      alias and all
 
       def any val
         conjoin val, :or
       end
-      alias_method :or, :any
-      alias_method :in, :any
+      alias or any
+      alias in any
 
       def conjoin val, conj
         sq = subquery unjoined: true, conj: conj

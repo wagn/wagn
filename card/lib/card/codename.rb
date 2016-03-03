@@ -43,7 +43,7 @@ class Card
 
       def check_duplicates codehash, codename, card_id
         # FIXME: remove duplicate checks here; should be caught upon creation
-        return unless codehash.has_key?(codename) || codehash.has_key?(card_id)
+        return unless codehash.key?(codename) || codehash.key?(card_id)
         warn "dup code ID:#{card_id} (#{codehash[codename]}), " \
              "CD:#{codename} (#{codehash[card_id]})"
       end
@@ -63,7 +63,8 @@ class Card
   end
 
   def self.const_missing const
-    if const.to_s =~ /^([A-Z]\S*)ID$/ && (code = $1.underscore.to_sym)
+    if const.to_s =~ /^([A-Z]\S*)ID$/ &&
+       (code = Regexp.last_match(1).underscore.to_sym)
       if (card_id = Codename[code])
         const_set const, card_id
       else

@@ -8,7 +8,7 @@ class AttachmentUploadCards < Card::CoreMigration
                  codename: 'new_image', empty_ok: true
 
     if (js_output = Card['*all+*script+*machine output'])
-      #perhaps too narrow?
+      # perhaps too narrow?
       js_output.delete!
     end
   end

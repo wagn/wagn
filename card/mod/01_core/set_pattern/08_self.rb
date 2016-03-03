@@ -1,5 +1,5 @@
 def label name
-  %{The card "#{name}"}
+  %(The card "#{name}")
 end
 
 def prototype_args anchor

@@ -2,7 +2,7 @@
 
 require_dependency File.expand_path('../reference', __FILE__)
 
-module Card::Chunk
+module Card::Content::Chunk
   class Include < Reference
     cattr_reader :options
     @@options = ::Set.new [
@@ -23,7 +23,7 @@ module Card::Chunk
     ]
     attr_reader :options
 
-    Card::Chunk.register_class(
+    Card::Content::Chunk.register_class(
       self, prefix_re: '\\{\\{',
             full_re:    /^\{\{([^\}]*)\}\}/,
             idx_char:  '{')
@@ -36,7 +36,8 @@ module Card::Chunk
         @process_chunk = name =~ /^\#\#/ ? '' : visible_comment(in_brackets)
       else
         @options = interpret_options
-        @options.merge! inc_name: name, inc_syntax: in_brackets
+        @options[:inc_name] = name
+        @options[:inc_syntax] = in_brackets
         @name = name
       end
     end

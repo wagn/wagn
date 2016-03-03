@@ -46,10 +46,10 @@ format :html do
     hidden_args = opts.delete :hidden
     form_for card, card_form_opts(action, opts) do |form|
       @form = form
-      %{
+      %(
         #{hidden_tags hidden_args if hidden_args}
         #{yield form}
-      }
+      )
     end
   end
 
@@ -98,13 +98,13 @@ format :html do
 
   def formgroup title, content, opts={}
     wrap_with :div, formgroup_div_args(opts[:class]) do
-      %{
+      %(
         <label>#{title}</label>
         <div>
           #{editor_wrap(opts[:editor]) { content }}
           #{formgroup_help_text opts[:help]}
         </div>
-      }
+      )
     end
   end
 
@@ -128,15 +128,14 @@ format :html do
     hash ||= {}
     hash.each do |key, val|
       result += if Hash === val
-        hidden_tags val, key
-      else
-        name = base ? "#{base}[#{key}]" : key
+                  hidden_tags val, key
+                else
+                  name = base ? "#{base}[#{key}]" : key
         hidden_field_tag name, val
       end
     end
     result
   end
-
 
   # FIELDSET VIEWS
 
@@ -145,25 +144,24 @@ format :html do
   end
 
   view :type_formgroup do |args|
-    field = if args[:variety] == :edit #FIXME dislike this api -ef
-      type_field class: 'type-field edit-type-field'
-    else
-      type_field class: "type-field live-type-field", href: path(view: :new), 'data-remote'=>true
+    field = if args[:variety] == :edit # FIXME: dislike this api -ef
+              type_field class: 'type-field edit-type-field'
+            else
+              type_field class: 'type-field live-type-field', href: path(view: :new), 'data-remote' => true
     end
     formgroup 'type', field, editor: 'type', class: 'type-formgroup'
   end
 
-
   view :button_formgroup do |args|
-    %{<div class="form-group"><div>#{ args[:buttons] }</div></div>}
+    %(<div class="form-group"><div>#{args[:buttons]}</div></div>)
   end
 
   view :content_formgroup do |args|
-    raw %{
+    raw %(
       <fieldset class="card-editor editor">
-        #{ edit_slot args }
+        #{edit_slot args}
       </fieldset>
-    }
+    )
   end
 
   def name_field form=nil, options={}
@@ -202,10 +200,10 @@ format :html do
         # hidden_field_tag 'card[last_action_id_before_edit]',
         # card.last_action_id, class: 'current_revision_id'
       end
-    %{
+    %(
       #{revision_tracking}
       #{_render_editor options}
-    }
+    )
   end
 
   # FIELD VIEWS
@@ -218,12 +216,10 @@ format :html do
   view :edit_in_form, perms: :update, tags: :unknown_ok do |args|
     eform = form_for_multi
     content = content_field eform, args.merge(nested: true)
-    if card.new_card?
-      content += raw("\n #{ eform.hidden_field :type_id }")
-    end
+    content += raw("\n #{eform.hidden_field :type_id}") if card.new_card?
     opts = { editor: 'content', help: true, class: 'card-editor' }
     if card.cardname.junction?
-      opts[:class] += " RIGHT-#{ card.cardname.tag_name.safe_key }"
+      opts[:class] += " RIGHT-#{card.cardname.tag_name.safe_key}"
     end
     formgroup fancy_title(args[:title]), content, opts
   end
@@ -238,12 +234,12 @@ format :html do
   # form helpers
 
   FIELD_HELPERS =
-    %w{
+    %w(
       hidden_field color_field date_field datetime_field datetime_local_field
       email_field month_field number_field password_field phone_field
       range_field search_field telephone_field text_area text_field time_field
       url_field week_field file_field
-    }
+    ).freeze
 
   FIELD_HELPERS.each do |method_name|
     define_method(method_name) do |name, options={}|
@@ -251,7 +247,7 @@ format :html do
     end
   end
 
-  def check_box method, options={}, checked_value = '1', unchecked_value = '0'
+  def check_box method, options={}, checked_value='1', unchecked_value='0'
     form.check_box method, options, checked_value, unchecked_value
   end
 

@@ -2,6 +2,22 @@
 Card.error_codes.merge! permission_denied: [:denial, 403],
                         captcha: [:errors, 449]
 
+module ClassMethods
+  def repair_all_permissions
+    Card.where(
+      '(read_rule_class is null or read_rule_id is null) and trash is false'
+    ).each do |broken_card|
+      broken_card.include_set_modules
+      broken_card.repair_permissions!
+    end
+  end
+end
+
+def repair_permissions!
+  rule_id, rule_class = permission_rule_id_and_class :read
+  update_columns read_rule_id: rule_id, read_rule_class: rule_class
+end
+
 # ok? and ok! are public facing methods to approve one action at a time
 #
 #   fetching: if the optional :trait parameter is supplied, it is passed
@@ -82,7 +98,7 @@ end
 
 def permitted? action
   return if Card.config.read_only
-  return true if action != :comment and Auth.always_ok?
+  return true if action != :comment && Auth.always_ok?
 
   permitted_ids = who_can action
   if action == :comment && Auth.always_ok?
@@ -94,9 +110,7 @@ def permitted? action
 end
 
 def permit action, verb=nil
-  if Card.config.read_only # not called by ok_to_read
-    deny_because 'Currently in read-only mode'
-  end
+  deny_because 'Currently in read-only mode' if Card.config.read_only # not called by ok_to_read
 
   return if permitted? action
   verb ||= action.to_s
@@ -111,10 +125,9 @@ def ok_to_create
     # left is supercard; create permissions will get checked there.
     next if side == :left && @superleft
     part_card = send side, new: {}
-    if part_card && part_card.new_card? # if no card, there must be other errors
-      unless part_card.ok? :create
-        deny_because you_cant("create #{part_card.name}")
-      end
+    next unless part_card && part_card.new_card? # if no card, there must be other errors
+    unless part_card.ok? :create
+      deny_because you_cant("create #{part_card.name}")
     end
   end
 end
@@ -145,12 +158,12 @@ def ok_to_comment
   deny_because 'No comments allowed on structured content' if structure
 end
 
-event :clear_read_rule, before: :store, on: :delete do
+event :clear_read_rule, :store, on: :delete do
   self.read_rule_id = self.read_rule_class = nil
 end
 
-event :set_read_rule, before: :store, on: :save do
-  # avoid doing this on simple content saves?
+event :set_read_rule, :store,
+      on: :save, changed: [:type_id, :name] do
   read_rule_id, read_rule_class = permission_rule_id_and_class(:read)
   self.read_rule_id = read_rule_id
   self.read_rule_class = read_rule_class
@@ -171,24 +184,19 @@ end
 
 def update_read_rule
   Card.record_timestamps = false
-
   reset_patterns # why is this needed?
-  rcard, rclass = permission_rule_card :read
+  rcard_id, rclass = permission_rule_id_and_class :read
   # these two are just to make sure vals are correct on current object
-  self.read_rule_id = rcard.id
-  # warn "updating read rule for #{inspect} to #{rcard.inspect}, #{rclass}"
-
+  self.read_rule_id = rcard_id
   self.read_rule_class = rclass
-  Card.where(id: id).update_all read_rule_id: rcard.id, read_rule_class: rclass
-  expire
+  Card.where(id: id).update_all read_rule_id: rcard_id, read_rule_class: rclass
+  expire_hard
 
   # currently doing a brute force search for every card that may be impacted.
   # may want to optimize(?)
   Auth.as_bot do
     fields.each do |field|
-      if field.rule(:read) == '_left'
-        field.update_read_rule
-      end
+      field.update_read_rule if field.rule(:read) == '_left'
     end
   end
 
@@ -200,7 +208,7 @@ def add_to_read_rule_update_queue updates
   @read_rule_update_queue = Array.wrap(@read_rule_update_queue).concat updates
 end
 
-event :check_permissions, after: :approve do
+event :check_permissions, :validate do
   task =
     if @action != :delete && comment # will be obviated by new comment handling
       :comment
@@ -242,7 +250,7 @@ def have_recaptcha_keys?
     end
 end
 
-event :recaptcha, before: :approve do
+event :recaptcha, :validate do
   if !@supercard && !Env[:recaptcha_used] && recaptcha_on?
     Env[:recaptcha_used] = true
     Env[:controller].verify_recaptcha model: self, attribute: :captcha

@@ -3,7 +3,7 @@
 class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
   def up
     create_recaptcha_settings
-    Card::Cache.reset_global
+    Card::Cache.reset_all
     create_admin_cards
     update_machine_output
   end
@@ -23,8 +23,11 @@ class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
                codename: 'admin_settings',
                type_id: Card::PointerID,
                content: content
+    add_admin_info_to_home_card
+  end
 
-    home = Card['Home+original']
+  def add_admin_info_to_home_card
+    return unless (home = Card[Card[:home].content])
     new_content = home.content.prepend "{{*admin info|content}}\n"
     home.update_attributes! content: new_content
   end
@@ -35,26 +38,20 @@ class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
                content: "[[+public key]]\n" \
                         "[[+private key]]\n" \
                         '[[+proxy]]'
-    Card::Cache.reset_global
-    ['public_key', 'private_key', 'proxy'].each do |name|
+    Card::Cache.reset_all
+    %w(public_key private_key proxy).each do |name|
       Card.create!(
-        name: "#{Card[:recaptcha_settings].name}+#{name.gsub('_', ' ')}",
+        name: "#{Card[:recaptcha_settings].name}+#{name.tr('_', ' ')}",
         codename: "recaptcha_#{name}"
       )
     end
   end
 
   def admin_only args
-    shared_args = { type_id: Card::PhraseID,
-                    subcards: {
-                      '+*self+*read' => { content: '[[Administrator]]' },
-                      '+*self+*update' => { content: '[[Administrator]]' },
-                      '+*self+*delete' => { content: '[[Administrator]]' }
-                    }
-                  }
-    if args[:subcards]
-      shared_args[:subcards].merge! args.delete(:subcards)
+    create_or_update args.reverse_merge(type_id: Card::PhraseID)
+    %w(*read *update *delete).each do |perm|
+      create_or_update name: "#{args[:name]}+*self+#{perm}",
+                       content: '[[Administrator]]'
     end
-    Card.create! shared_args.merge(args)
   end
 end

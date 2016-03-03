@@ -6,7 +6,7 @@ describe Card::Set::All::Type do
       Card::Auth.as_bot do
         @type = Card.create! name: 'Hat', type: 'Cardtype'
       end
-      @hat =  Card.new type: 'Hat'
+      @hat = Card.new type: 'Hat'
     end
 
     it 'should have a type_name' do
@@ -24,20 +24,20 @@ describe Card::Set::All::Type do
     it 'should have a type_card' do
       expect(@hat.type_card).to eq(@type)
     end
-
   end
-
 
   describe 'card with structured type' do
     before do
       Card::Auth.as_bot do
         Card.create! name: 'Topic', type: 'Cardtype'
         Card.create! name: 'Topic+*type+*structure', content: '{{+results}}'
-        Card.create! name: 'Topic+results+*type plus right+*structure', type: 'Search', content: '{}'
+        Card.create! name: 'Topic+results+*type plus right+*structure',
+                     type: 'Search', content: '{}'
       end
     end
 
-    it "should clear cache of structured nested card after saving" do
+    it 'should clear cache of structured nested card after saving' do
+      pending 'need new mechanism to replace #reset_type_specific_fields'
       Card::Auth.as_bot do
         expect(Card.fetch('t1+results', new: {}).type_name).to eq('Basic')
 
@@ -48,5 +48,4 @@ describe Card::Set::All::Type do
       end
     end
   end
-
 end

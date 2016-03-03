@@ -60,25 +60,22 @@ class FileUploader < CarrierWave::Uploader::Base
 
   # generate identifier that gets stored in the card's db_content field
   def db_content opts={}
-    if opts[:mod] && !model.load_from_mod
-      model.load_from_mod = opts[:mod]
-    end
+    return '' unless file.present?
+    model.load_from_mod = opts[:mod] if opts[:mod] && !model.load_from_mod
     '%s/%s' % [file_dir, url_filename(opts)]
   end
 
   def url_filename opts={}
-    if opts[:mod] && !model.load_from_mod
-      model.load_from_mod = opts[:mod]
-    end
+    model.load_from_mod = opts[:mod] if opts[:mod] && !model.load_from_mod
 
     basename = if (mod = mod_file?)
-      "#{mod}#{extension}"
-    else
-      "#{action_id}#{extension}"
+                 "#{mod}#{extension}"
+               else
+                 "#{action_id}#{extension}"
     end
   end
 
-  def url opts = {}
+  def url opts={}
     '%s/%s/%s' % [card_path(Card.config.files_web_path), file_dir,
                   full_filename(url_filename(opts))]
   end
@@ -115,9 +112,7 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   def tmp_path
-    if !Dir.exists? model.tmp_upload_dir
-      Dir.mkdir model.tmp_upload_dir
-    end
+    Dir.mkdir model.tmp_upload_dir unless Dir.exist? model.tmp_upload_dir
     File.join model.tmp_upload_dir, filename
   end
 

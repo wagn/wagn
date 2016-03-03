@@ -1,7 +1,7 @@
 
 format :html do
   view :open do |args|
-    args.merge! optional_help: :show
+    args[:optional_help] = :show
     super args
   end
 
@@ -25,8 +25,8 @@ format :html do
     end
     args[:buttons] += raw(
       "<div style='float:right'>" \
-      "#{ view_link 'RESET PASSWORD', :edit,
-                    path_opts: { slot: { hide: :toolbar } } }" \
+      "#{view_link 'RESET PASSWORD', :edit,
+                   path_opts: { slot: { hide: :toolbar } }}" \
       '</div>') # FIXME: hardcoded styling
     args
   end
@@ -36,7 +36,7 @@ format :html do
       hidden: { success: "REDIRECT: #{Env.interrupted_action || '*previous'}" },
       recaptcha: :off
     }
-    with_inclusion_mode :edit do
+    with_nest_mode :edit do
       card_form :update, form_args do
         [
           _optional_render(:content_formgroup, args.merge(structure: true)),
@@ -79,7 +79,7 @@ format :html do
   end
 end
 
-event :signin, before: :approve, on: :update do
+event :signin, :validate, on: :update do
   email = subfield :email
   email &&= email.content
   pword = subfield :password
@@ -127,7 +127,7 @@ event :send_reset_password_token,
   end
 end
 
-event :signout, before: :approve, on: :delete do
+event :signout, :validate, on: :delete do
   Auth.signin nil
   abort :success
 end

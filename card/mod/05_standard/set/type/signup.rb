@@ -16,10 +16,8 @@ format :html do
   end
 
   def invite_args args
-    args.merge!(
-      title: 'Invite',
-      buttons: button_tag('Send Invitation', situation: 'primary'),
-    )
+    args[:title] = 'Invite'
+    args[:buttons] = button_tag('Send Invitation', situation: 'primary')
     args[:hidden][:success] = '_self'
   end
 
@@ -49,8 +47,8 @@ format :html do
     headings = []
     by_anon = card.creator_id == AnonymousID
     headings << %(
-      <strong>#{ card.name }</strong> #{ 'was' if !by_anon } signed up on
-      #{ format_date card.created_at }
+      <strong>#{card.name}</strong> #{'was' unless by_anon} signed up on
+      #{format_date card.created_at}
     )
     if (account = card.account)
       headings += verification_info account
@@ -59,9 +57,9 @@ format :html do
     end
     <<-HTML
       <div class="invite-links">
-        #{ headings.map { |h| "<div>#{h}</div>" }.join "\n" }
+        #{headings.map { |h| "<div>#{h}</div>" }.join "\n"}
       </div>
-      #{ process_content render_raw }
+      #{process_content render_raw}
     HTML
   end
 
@@ -70,7 +68,7 @@ format :html do
     token_action = 'Send'
     if account.token.present?
       headings << 'A verification email has been sent ' \
-                  "#{ "to #{account.email}" if account.email_card.ok? :read }"
+                  "#{"to #{account.email}" if account.email_card.ok? :read}"
       token_action = 'Resend'
     end
     links = verification_links account, token_action
@@ -97,11 +95,11 @@ format :html do
   end
 end
 
-event :activate_by_token, before: :approve, on: :update,
-                          when: proc { |c| c.has_token? } do
+event :activate_by_token, :validate, on: :update,
+                                     when: proc { |c| c.has_token? } do
   abort :failure, 'no field manipulation mid-activation' if subcards.present?
   # necessary because this performs actions as Wagn Bot
-  abort :failure, "no account associated with #{name}" if !account
+  abort :failure, "no account associated with #{name}" unless account
 
   account.validate_token! @env_token
 
@@ -129,16 +127,16 @@ event :activate_account do
   account.send_welcome_email
 end
 
-event :approve_with_token,
-      on: :update, before: :approve,
+event :approve_with_token, :validate,
+      on: :update,
       when: proc { Env.params[:approve_with_token] } do
   abort :failure, 'illegal approval' unless account.confirm_ok?
   account.reset_token
   account.send_account_verification_email
 end
 
-event :approve_without_token,
-      on: :update, before: :approve,
+event :approve_without_token, :validate,
+      on: :update,
       when: proc { Env.params[:approve_without_token] } do
   abort :failure, 'illegal approval' unless account.confirm_ok?
   activate_account
@@ -158,12 +156,13 @@ def signed_in_as_me_without_password?
   Auth.signed_in? && Auth.current_id == id && account.password.blank?
 end
 
-event :redirect_to_edit_password,
-      on: :update, after: :store,
+event :redirect_to_edit_password, :finalize,
+      on: :update,
       when: proc { |c| c.signed_in_as_me_without_password? } do
   Env.params[:success] = account.edit_password_success_args
 end
 
-event :act_as_current_for_extend_phase, before: :extend, on: :create do
+event :act_as_current_for_integrate_stage, :integrate,
+      on: :create do
   Auth.current_id = id
 end

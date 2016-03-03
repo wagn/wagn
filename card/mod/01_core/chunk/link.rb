@@ -2,11 +2,11 @@
 
 require_dependency File.expand_path('../reference', __FILE__)
 
-module Card::Chunk
+module Card::Content::Chunk
   class Link < Reference
     attr_reader :link_text
     # Groups: $1, [$2]: [[$1]] or [[$1|$2]] or $3, $4: [$3][$4]
-    Card::Chunk.register_class self,
+    Card::Content::Chunk.register_class self,
                                prefix_re: '\\[',
                                full_re:   /^\[\[([^\]]+)\]\]/,
                                idx_char:  '['
@@ -25,7 +25,7 @@ module Card::Chunk
         end
 
       @link_text = objectify @link_text
-      if target =~ %r(/|mailto:)
+      if target =~ %r{/|mailto:}
         @explicit_link = objectify target
       else
         @name = target
@@ -34,7 +34,7 @@ module Card::Chunk
 
     def divider_index string
       # there's probably a better way to do the following.
-      # point is to find the first pipe that's not inside an inclusion
+      # point is to find the first pipe that's not inside an nest
       return unless string.index '|'
       string_copy = "#{string}" # had to do this to create new string?!
       string.scan /\{\{[^\}]*\}\}/ do |incl|
@@ -78,7 +78,7 @@ module Card::Chunk
       replace_name_reference old_name, new_name
 
       if Card::Content === @link_text
-        @link_text.find_chunks(Card::Chunk::Reference).each do |chunk|
+        @link_text.find_chunks(Card::Content::Chunk::Reference).each do |chunk|
           chunk.replace_reference old_name, new_name
         end
       elsif old_name.to_name == @link_text

@@ -1,5 +1,5 @@
-event :update_follow_rules,
-      after: :store, on: :save, when: proc { |c| c.update_all_users } do
+event :update_follow_rules, :finalize,
+      on: :save, when: proc { |c| c.update_all_users } do
   defaults = item_names.map do |item|
     if (set_card = Card.fetch item.to_name.left) && set_card.type_code == :set
       option_card = Card.fetch(item.to_name.right) ||
@@ -18,12 +18,11 @@ event :update_follow_rules,
     Card.search(type: 'user').each do |user|
       defaults.each do |set_card, option|
         follow_rule = Card.fetch(set_card.follow_rule_name(user.name), new: {})
-        if follow_rule
-          follow_rule.drop_item '*never'
-          follow_rule.drop_item '*always'
-          follow_rule.add_item option
-          follow_rule.save!
-        end
+        next unless follow_rule
+        follow_rule.drop_item '*never'
+        follow_rule.drop_item '*always'
+        follow_rule.add_item option
+        follow_rule.save!
       end
     end
   end
@@ -44,11 +43,11 @@ format :html do
   view :confirm_update_all do |args|
     wrap args do
       alert 'info' do
-        %{
+        %(
           <h1>Are you sure you want to change the default follow rules?</h1>
           <p>You may choose to update all existing users.
              This may take a while. </p>
-        }
+        )
       end
     end
   end
@@ -59,11 +58,11 @@ format :html do
       success: '_self',
       card:    { update_all_users: false }
     )
-    args[:buttons] = %{
+    args[:buttons] = %(
       #{submit_button text: 'Submit and update all users',
                       disable_with: 'Updating', class: 'follow-updater'}
       #{button_tag 'Submit', class: 'follow'}
       #{cancel_button href: path(view: :edit, id: card.id)}
-    }
+    )
   end
 end

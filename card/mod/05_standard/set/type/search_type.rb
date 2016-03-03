@@ -67,7 +67,7 @@ format do
 
   view :search_error do |_args|
     sr_class = search_results.class.to_s
-    %{#{sr_class} :: #{search_results.message} :: #{card.raw_content}}
+    %(#{sr_class} :: #{search_results.message} :: #{card.raw_content})
   end
 
   view :card_list do |_args|
@@ -85,7 +85,7 @@ format do
       begin
         v = {}
         v[:query] = card.query(search_params)
-        v[:item] = set_inclusion_opts args.merge(query_view: v[:query][:view])
+        v[:item] = set_nest_opts args.merge(query_view: v[:query][:view])
         v
       rescue JSON::ParserError => e
         { error: e }
@@ -124,17 +124,18 @@ format do
     end
   end
 
-  def set_inclusion_opts args
-    @inclusion_defaults = nil
-    @inclusion_opts ||= {}
-    @inclusion_opts[:view] = args[:item] || inclusion_opts[:view] ||
-                             args[:query_view] || default_item_view
-    # explicit > inclusion syntax > WQL > inclusion defaults
+  def set_nest_opts args
+    @nest_defaults = nil
+    @nest_opts ||= {}
+    @nest_opts[:view] = args[:item] || nest_opts[:view] ||
+                        args[:query_view] || default_item_view
+    # explicit > nest syntax > WQL > nest defaults
   end
 
   def page_link text, page, _current=false, options={}
     @paging_path_args[:offset] = page * @paging_limit
-    options.merge!(class: 'card-paging-link slotter', remote: true)
+    options[:class] = 'card-paging-link slotter'
+    options[:remote] = true
     link_to raw(text), path(@paging_path_args), options
   end
 
@@ -205,7 +206,7 @@ format :rss do
 
   def raw_feed_items _args
     @raw_feed_items ||= begin
-      search_params.merge!(default_limit: 25)
+      search_params[:default_limit] = 25
       search_results
     end
   end
@@ -220,21 +221,21 @@ format :html do
     else
       results =
         search_results.map do |c|
-          item_view = inclusion_defaults(c)[:view]
-          %{
-            <div class="search-result-item item-#{ item_view }">
+          item_view = nest_defaults(c)[:view]
+          %(
+            <div class="search-result-item item-#{item_view}">
               #{nest(c, size: args[:size], view: item_view)}
             </div>
-          }
+          )
         end.join "\n"
 
-      %{
-        #{ paging }
+      %(
+        #{paging}
         <div class="search-result-list">
-          #{ results }
+          #{results}
         </div>
-        #{ paging if search_results.length > 10 }
-      }
+        #{paging if search_results.length > 10}
+      )
     end
   end
 
@@ -254,12 +255,13 @@ format :html do
   view :editor, mod: Html::HtmlFormat
 
   view :no_search_results do |_args|
-    %{<div class="search-no-results"></div>}
+    %(<div class="search-no-results"></div>)
   end
 
   view :paging do |_args|
     s = card.query search_params
-    offset, limit = s[:offset].to_i, s[:limit].to_i
+    offset = s[:offset].to_i
+    limit = s[:limit].to_i
     return '' if limit < 1
     # avoid query if we know there aren't enough results to warrant paging
     return '' if offset == 0 && limit > offset + search_results.length
@@ -267,7 +269,7 @@ format :html do
     # should only happen if limit exactly equals the total
     return '' if limit >= total
 
-    @paging_path_args = { limit: limit, item: inclusion_defaults(card)[:view] }
+    @paging_path_args = { limit: limit, item: nest_defaults(card)[:view] }
     @paging_limit = limit
 
     s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }
@@ -301,7 +303,7 @@ format :html do
     next_page = current_page < total_pages ? current_page + 1 : false
     out << next_page_link(next_page)
 
-    out << %{</ul></nav>}
+    out << %(</ul></nav>)
     out.join
   end
 

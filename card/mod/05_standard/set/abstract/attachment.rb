@@ -8,8 +8,8 @@ event :select_file_revision, after: :select_action do
   attachment.retrieve_from_store!(attachment.identifier)
 end
 
-event :upload_attachment, before: :validate_name, on: :save,
-                          when: proc { |c| c.preliminary_upload? } do
+event :upload_attachment, :prepare_to_validate,
+      on: :save, when: proc { |c| c.preliminary_upload? } do
   save_original_filename  # save original filename as comment in action
   write_identifier        # set db_content
   # (needs original filename to determine extension)
@@ -27,9 +27,8 @@ event :upload_attachment, before: :validate_name, on: :save,
   abort :success
 end
 
-event :assign_attachment_on_create,
-      after: :prepare,
-      on: :create,
+event :assign_attachment_on_create, :initialize,
+      after: :assign_action, on: :create,
       when: proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@action_id_of_cached_upload))
     upload_cache_card.selected_action_id = action.id
@@ -38,15 +37,14 @@ event :assign_attachment_on_create,
   end
 end
 
-event :assign_attachment_on_update,
-      after: :prepare,
-      on: :update,
+event :assign_attachment_on_update, :initialize,
+      after: :assign_action, on: :update,
       when:  proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@action_id_of_cached_upload))
     uploaded_file =
-       with_selected_action_id(action.id) do
-         attachment.file
-       end
+      with_selected_action_id(action.id) do
+        attachment.file
+      end
     assign_attachment uploaded_file, action.comment
   end
 end
@@ -59,7 +57,7 @@ end
 
 # we need a card id for the path so we have to update db_content when we have
 # an id
-event :correct_identifier, after: :store, on: :create do
+event :correct_identifier, :finalize, on: :create do
   update_column(:db_content, attachment.db_content(mod: load_from_mod))
   expire
 end
@@ -71,16 +69,14 @@ def file_ready_to_save?
     attachment_changed?
 end
 
-event :save_original_filename, after: :validate_name,
-                               when: proc { |c| c.file_ready_to_save? } do
+event :save_original_filename, :prepare_to_store,
+      when: proc { |c| c.file_ready_to_save? } do
   return unless @current_action
   @current_action.update_attributes! comment: original_filename
 end
 
-event :delete_cached_upload_file_on_create,
-      after: :extend,
-      on: :create,
-      when: proc { |c| c.save_preliminary_upload? } do
+event :delete_cached_upload_file_on_create, :integrate,
+      on: :create, when: proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@action_id_of_cached_upload))
     upload_cache_card.delete_files_for_action action
     action.delete
@@ -88,17 +84,15 @@ event :delete_cached_upload_file_on_create,
   clear_upload_cache_dir_for_new_cards
 end
 
-event :delete_cached_upload_file_on_update,
-      after: :extend,
-      on: :update,
-      when: proc { |c| c.save_preliminary_upload? } do
+event :delete_cached_upload_file_on_update, :integrate,
+      on: :update, when: proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@action_id_of_cached_upload))
     delete_files_for_action action
     action.delete
   end
 end
 
-event :validate_file_exist, before: :validate, on: :create do
+event :validate_file_exist, :validate, on: :create do
   unless attachment.file.present? || empty_ok?
     errors.add attachment_name, 'is missing'
   end
@@ -142,17 +136,11 @@ def upload_cache_card
 end
 
 # action id of the cached upload
-def action_id_of_cached_upload= value
-  @action_id_of_cached_upload = value
-end
+attr_writer :action_id_of_cached_upload
 
-def action_id_of_cached_upload
-  @action_id_of_cached_upload
-end
+attr_reader :action_id_of_cached_upload
 
-def empty_ok= value
-  @empty_ok = value
-end
+attr_writer :empty_ok
 
 def empty_ok?
   @empty_ok
@@ -203,9 +191,7 @@ def mod_dir
   mod = @mod || mod_file?
   Card.paths['mod'].to_a.each do |mod_path|
     dir = File.join(mod_path, mod, 'file', codename)
-    if Dir.exist? dir
-      return dir
-    end
+    return dir if Dir.exist? dir
   end
 end
 
@@ -215,7 +201,7 @@ def mod_file?
   # when db_content was changed assume that it's no longer a mod file
   elsif !db_content_changed? && content.present?
     case content
-    when %r{^:[^/]+/([^.]+)} then $1     # current mod_file format
+    when %r{^:[^/]+/([^.]+)} then Regexp.last_match(1) # current mod_file format
     when /^\~/               then false  # current id file format
     else
       if (lines = content.split("\n")) && (lines.size == 4)
@@ -236,15 +222,12 @@ end
 
 def clear_upload_cache_dir_for_new_cards
   Dir.entries(tmp_upload_dir).each do |filename|
-    if filename =~/^\d+/
-      path = File.join(tmp_upload_dir, filename )
-      if Card.older_than_five_days? File.ctime(path)
-        FileUtils.rm path
-      end
+    if filename =~ /^\d+/
+      path = File.join(tmp_upload_dir, filename)
+      FileUtils.rm path if Card.older_than_five_days? File.ctime(path)
     end
   end
 end
-
 
 def delete_files_for_action action
   with_selected_action_id(action.id) do
@@ -278,7 +261,7 @@ end
 
 def attachment_format ext
   if ext.present? && attachment && (original_ext = attachment.extension)
-    if['file', original_ext].member? ext
+    if ['file', original_ext].member? ext
       original_ext
     elsif (exts = MIME::Types[attachment.content_type])
       if exts.find { |mt| mt.extensions.member? ext }

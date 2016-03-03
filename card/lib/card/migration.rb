@@ -63,14 +63,14 @@ class Card::Migration < ActiveRecord::Migration
   end
 
   def contentedly
-    Card::Cache.reset_global
+    Card::Cache.reset_all
     Cardio.schema_mode '' do
       Card::Auth.as_bot do
         ActiveRecord::Base.transaction do
           begin
             yield
           ensure
-            Card::Cache.reset_global
+            Card::Cache.reset_all
           end
         end
       end
@@ -79,7 +79,7 @@ class Card::Migration < ActiveRecord::Migration
 
   def import_json filename, merge_opts={}
     Card::Mailer.perform_deliveries = false
-    output_file = File.join data_path, "unmerged_#{ filename }"
+    output_file = File.join data_path, "unmerged_#{filename}"
     merge_opts[:output_file] ||= output_file
     Card.merge_list read_json(filename), merge_opts
   end

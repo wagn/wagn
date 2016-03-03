@@ -1,5 +1,8 @@
 require 'optparse'
-require 'active_support/core_ext/object/inclusion' # adds method in? to Object class
+
+# add method in? to Object class
+require 'active_support/core_ext/object/inclusion'
+require 'wagn/parser'
 
 def load_rake_tasks
   require './config/environment'
@@ -7,7 +10,8 @@ def load_rake_tasks
   Wagn::Application.load_tasks
 end
 
-RAILS_COMMANDS = %w( generate destroy plugin benchmarker profiler console server dbconsole application runner )
+RAILS_COMMANDS = %w( generate destroy plugin benchmarker profiler console
+                     server dbconsole application runner ).freeze
 ALIAS = {
   'rs' => 'rspec',
   'cc' => 'cucumber',
@@ -18,70 +22,41 @@ ALIAS = {
   's'  => 'server',
   'db' => 'dbconsole',
   'r'  => 'runner'
-}
+}.freeze
 
 ARGV << '--help' if ARGV.empty?
 
 def supported_rails_command? arg
-  arg.in? RAILS_COMMANDS or ALIAS[arg].in? RAILS_COMMANDS
+  arg.in?(RAILS_COMMANDS) || ALIAS[arg].in?(RAILS_COMMANDS)
 end
 
 def find_spec_file filename, base_dir
   file, line = filename.split(':')
-  if file.include? '_spec.rb' and File.exist?(file)
+  if file.include?('_spec.rb') && File.exist?(file)
     filename
   else
-    file = File.basename(file,".rb").sub(/_spec$/,'')
-    Dir.glob("#{base_dir}/**/#{file}_spec.rb").flatten.map{ |file| line ? "#{file}:#{line}" : file}.join(' ')
+    file = File.basename(file, '.rb').sub(/_spec$/, '')
+    Dir.glob("#{base_dir}/**/#{file}_spec.rb").flatten.map do |spec_file|
+      line ? "#{spec_file}:#{line}" : file
+    end.join(' ')
   end
 end
 
-TASK_COMMANDS = %w[seed reseed load update]
+WAGN_DB_TASKS = %w(seed reseed load update).freeze
 
 if supported_rails_command? ARGV.first
-  if ARGV.delete('--rescue')
-    ENV["PRY_RESCUE_RAILS"]="1"
-  end
+  ENV['PRY_RESCUE_RAILS'] = '1' if ARGV.delete('--rescue')
   command = ARGV.first
   command = ALIAS[command] || command
-  require 'generators/card' if command == 'generate' # without this, the card generators don't list with: wagn g --help
+
+  # without this, the card generators don't list with: wagn g --help
+  require 'generators/card' if command == 'generate'
   require 'rails/commands'
 else
   command = ARGV.shift
   command = ALIAS[command] || command
 
   case command
-  when *TASK_COMMANDS
-    envs = []
-    parser = OptionParser.new do |parser|
-      parser.banner = "Usage: wagn #{command} [options]\n\nRun wagn:#{command} task on the production database specified in config/database.yml\n\n"
-      parser.on('--production','-p', "#{command} production database (default)") do
-        envs = ['production']
-      end
-      parser.on('--test','-t', "#{command} test database") do
-        envs = ['test']
-      end
-      parser.on('--development', '-d', "#{command} development database") do
-        envs = ['development']
-      end
-      parser.on('--all', '-a', "#{command} production, test, and development database") do
-        envs = %w( production development test)
-      end
-    end
-    parser.parse!(ARGV)
-    task_cmd="bundle exec rake wagn:#{command}"
-    if envs.empty?
-      puts task_cmd
-      puts `#{task_cmd}`
-    else
-      envs.each do |env|
-        puts "env RAILS_ENV=#{env} #{task_cmd}"
-        puts `env RAILS_ENV=#{env} #{task_cmd}`
-      end
-    end
-#  when 'update'
-#    load_rake_tasks
-#    Rake::Task['wagn:update'].invoke
   when 'cucumber'
     require 'wagn'
     require './config/environment'
@@ -89,92 +64,59 @@ else
       Dir.glob "#{p}/features"
     end.flatten
     require_args = "-r #{Wagn.gem_root}/features "
-    require_args += feature_paths.map { |path| "-r #{path}"}.join(' ')
+    require_args += feature_paths.map { |path| "-r #{path}" }.join(' ')
     feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.join(' ')
-    unless system "RAILS_ROOT=. bundle exec cucumber #{require_args} #{feature_args} 2>&1"
-      exit $?.exitstatus
+    unless system 'RAILS_ROOT=. bundle exec cucumber ' \
+                  "#{require_args} #{feature_args} 2>&1"
+      exit $CHILD_STATUS.exitstatus
     end
   when 'jasmine'
-    unless system "RAILS_ENV=test bundle exec rake spec:javascript 2>&1"
-      exit $?.exitstatus
+    unless system 'RAILS_ENV=test bundle exec rake spec:javascript 2>&1'
+      exit $CHILD_STATUS.exitstatus
     end
   when 'rspec'
-    opts = {}
     require 'rspec/core'
     require 'wagn/application'
-    parser = RSpec::Core::Parser.new.parser(opts)
-    parser.banner = "Usage: wagn rspec [WAGN ARGS] -- [RSPEC ARGS]\n\nRSPEC ARGS"
-    parser.separator <<-WAGN
-
-WAGN ARGS
-
-  You don't have to give a full path for FILENAME, the basename is enough
-  If FILENAME does not include '_spec' rspec searches for the corresponding spec file.
-  The line number always referes to example in the (corresponding) spec file.
-
-WAGN
-
-    parser.on('-d', '--spec FILENAME(:LINE)', 'Run spec for a Wagn deck file') do |file|
-      opts[:files] = find_spec_file( file, "#{Wagn.root}/mod")
-    end
-    parser.on('-c', '--core-spec FILENAME(:LINE)', 'Run spec for a Wagn core file') do |file|
-      opts[:files] = find_spec_file( file, Cardio.gem_root)
-    end
-    parser.on('-m', '--mod MODNAME', 'Run all specs for a mod or matching a mod') do |file|
-      if File.exists? mod_path = "mod/#{file}"
-        opts[:files] = "#{Cardio.gem_root}/mod/#{file}"
-      elsif File.exists? mod_path = "#{Cardio.gem_root}/mod/#{file}"
-        opts[:files] = "#{Cardio.gem_root}/mod/#{file}"
-      elsif (opts[:files] = find_spec_file( file, "mod")).present?
-      else
-        opts[:files] = find_spec_file( file, "#{Cardio.gem_root}/mod")
-      end
-    end
-    parser.on('-s', '--[no-]simplecov', 'Run with simplecov') do |s|
-      opts[:simplecov] = s ? '' : 'COVERAGE=false'
-    end
-    parser.on('--rescue', 'Run with pry-rescue') do
-      if opts[:executer] == 'spring'
-        puts "Disabled pry-rescue. Not compatible with spring."
-      else
-        opts[:rescue] = 'rescue '
-      end
-    end
-    parser.on('--[no-]spring', 'Run with spring') do |spring|
-      if spring
-        opts[:executer] = 'spring'
-        if opts[:rescue]
-          opts[:rescue]  = ''
-          puts "Disabled pry-rescue. Not compatible with spring."
-        end
-      else
-        opts[:executer] = 'bundle exec'
-      end
-    end
-    parser.separator "\n"
 
     before_split = true
-    wagn_args, rspec_args = ARGV.partition {|a| before_split = a=='--' ? false : before_split}
+    wagn_args, rspec_args =
+      ARGV.partition do |a|
+        before_split = (a == '--' ? false : before_split)
+      end
     rspec_args.shift
-
-    parser.parse!(wagn_args)
-    rspec_command = "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} #{opts[:rescue]} rspec #{rspec_args*' '} #{opts[:files]} 2>&1"
-    unless system rspec_command
-      exit $?.exitstatus
-    end
+    opts = {}
+    Wagn::Parser.rspec(opts).parse!(wagn_args)
+    rspec_command =
+      "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} " \
+      " #{opts[:rescue]} rspec #{rspec_args.join(' ')} #{opts[:files]} 2>&1"
+    exit $CHILD_STATUS.exitstatus unless system rspec_command
   when '--version', '-v'
     puts "Wagn #{Card::Version.release}"
   when 'new'
     if ARGV.first.in?(['-h', '--help'])
       require 'wagn/commands/application'
     else
-      puts "Can't initialize a new deck within the directory of another, please change to a non-deck directory first.\n"
+      puts "Can't initialize a new deck within the directory of another, " \
+           "please change to a non-deck directory first.\n"
       puts "Type 'wagn' for help."
       exit(1)
     end
+  when *WAGN_DB_TASKS
+    opts = {}
+    Wagn::Parser.db_task(command, opts).parse!(ARGV)
+    task_cmd = "bundle exec rake wagn:#{command}"
+    if !opts[:envs] || opts[:envs].empty?
+      puts task_cmd
+      puts `#{task_cmd}`
+    else
+      opts[:envs].each do |env|
+        puts "env RAILS_ENV=#{env} #{task_cmd}"
+        puts `env RAILS_ENV=#{env} #{task_cmd}`
+      end
+    end
 
   else
-    puts "Error: Command not recognized" unless command.in?(['-h', '--help'])
+    puts 'Error: Command not recognized' unless command.in?(['-h', '--help'])
     puts <<-EOT
   Usage: wagn COMMAND [ARGS]
 
@@ -192,6 +134,7 @@ WAGN
    cucumber     Run cucumber features (short-cut alias: "cc")
    rspec        Run rspec tests (short-cut alias: "rs")
    update       Run card migrations
+   load         Load bootstrap data into database
 
   In addition to those, there are the standard rails commands:
    generate     Generate new code (short-cut alias: "g")
@@ -207,5 +150,3 @@ WAGN
     exit(1)
   end
 end
-
-

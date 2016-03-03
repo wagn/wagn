@@ -1,7 +1,7 @@
 
-view :raw do |args|
+view :raw do |_args|
   # jquery.ui.all must be after jquery.mobile to override dialog weirdness *
-  # jquery.ui.autocomplete must be after jquery.ui stuff 
+  # jquery.ui.autocomplete must be after jquery.ui stuff
   # FIXME removed  jquerymobile.js. Doesn't work with the new jquery version
   js_files = %w( jquery-ui.js jquery.ui.autocomplete.html.js jquery.autosize.js jquery.fileupload.js jquery.iframe-transport.js jquery_ujs.js )
   js_files.map do |filename|

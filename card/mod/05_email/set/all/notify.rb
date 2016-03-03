@@ -22,7 +22,7 @@ class FollowerStash
             { included_by: left_card.name },
             "follow cards included by #{left_card.name}"
           ).map(&:key)
-          if !@visited.intersection(includee_set).empty?
+          unless @visited.intersection(includee_set).empty?
             add_affected_card left_card
             break
           end
@@ -72,21 +72,21 @@ def notable_change?
     Card::Auth.current_id != WagnBotID && followable?
 end
 
-event :notify_followers_after_save,
-      after: :subsequent, on: :save, when: proc { |ca| ca.notable_change? } do
+event :notify_followers_after_save, :integrate,
+      on: :save, when: proc { |ca| ca.notable_change? } do
   notify_followers
 end
 
 # in the delete case we have to calculate the follower_stash beforehand
 # but we can't pass the follower_stash through the ActiveJob queue.
-# We have to deal with the notifications in the extend phase instead of the
-# subsequent phase
-event :stash_followers, after: :approve, on: :delete do
+# We have to deal with the notifications in the integrate phase instead of the
+# integrate_with_delay phase
+event :stash_followers, :store, on: :delete do
   act_card.follower_stash ||= FollowerStash.new
   act_card.follower_stash.add_affected_card self
 end
-event :notify_followers_after_delete,
-      after: :extend, on: :delete, when: proc { |ca| ca.notable_change? } do
+event :notify_followers_after_delete, :integrate,
+      on: :delete, when: proc { |ca| ca.notable_change? } do
   notify_followers
 end
 
@@ -130,7 +130,7 @@ format do
       get_act(args).relevant_actions_for(card).map do |action|
         if action.card_id != card.id
           action.card.format(format: @format)
-            .render_subedit_notice(action: action)
+                .render_subedit_notice(action: action)
         end
       end.compact.join
 
@@ -144,10 +144,10 @@ format do
   view :subedit_notice, denial: :blank do |args|
     action = get_action(args)
     name_before_action =
-      (action.new_values[:name] && action.old_values[:name]) || card.name
+      (action.value(:name) && action.previous_value(:name)) || card.name
 
-    wrap_subedit_item %{#{name_before_action} #{action.action_type}d
-#{ render_list_of_changes(args) }}
+    wrap_subedit_item %(#{name_before_action} #{action.action_type}d
+#{render_list_of_changes(args)})
   end
 
   view :followed, perms: :none, closed: true do |args|
@@ -180,7 +180,7 @@ format do
   end
 
   def edit_info_for field, action
-    return nil unless action.new_values[field]
+    return nil unless action.value field
 
     item_title =
       case action.action_type
@@ -192,9 +192,9 @@ format do
 
     item_value =
       if action.action_type == :delete
-        action.old_values[field]
+        action.previous_value field
       else
-        action.new_values[field]
+        action.value field
       end
 
     wrap_list_item "#{item_title}#{item_value}"

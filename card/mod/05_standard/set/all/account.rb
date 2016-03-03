@@ -51,7 +51,7 @@ def fetch_roles
   Auth.as_bot do
     role_trait = fetch trait: :roles
     next [Card::AnyoneSignedInID] unless role_trait
-    [Card::AnyoneSignedInID] + (role_trait.item_ids)
+    [Card::AnyoneSignedInID] + role_trait.item_ids
   end
 end
 
@@ -59,7 +59,7 @@ event :generate_token do
   Digest::SHA1.hexdigest "--#{Time.zone.now.to_f}--#{rand 10}--"
 end
 
-event :set_stamper, before: :approve do
+event :set_stamper, :prepare_to_validate do
   self.updater_id = Auth.current_id
   self.creator_id = updater_id if new_card?
 end

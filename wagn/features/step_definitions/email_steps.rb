@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+# rubocop:disable Lint/AmbiguousRegexpLiteral
 # Commonly used email steps
 #
 # To add your own steps make a custom_email_steps.rb
@@ -58,8 +59,8 @@ Then /^(?:I|they|"([^"]*?)") should have (an|no|\d+) emails?$/ do |address, amou
 end
 
 Then /^(?:I|they|"([^"]*?)") should receive (an|no|\d+) emails? with subject "([^"]*?)"$/ do |address, amount, subject|
-#  address = address_for_user address
-  expect(unread_emails_for(address).select { |m| m.subject =~ Regexp.new(subject) }.size).to eq(parse_email_count(amount))
+  #  address = address_for_user address
+  expect(unread_emails_for(address).count { |m| m.subject =~ Regexp.new(subject) }).to eq(parse_email_count(amount))
 end
 
 Then /^(?:I|they|"([^"]*?)") should receive an email with the following body:$/ do |address, expected_body|
@@ -96,11 +97,11 @@ Then /^(?:I|they) should see \/([^"]*?)\/ in the email subject$/ do |text|
 end
 
 Then /^(?:I|they) should see \|(.*)\| in the email body$/ do |text|
-  expect(current_email.text_part.body.raw_source).to include("#{text}")
+  expect(current_email.text_part.body.raw_source).to include(text.to_s)
 end
 
 Then /^(?:I|they) should see "(.*)" in the email body$/ do |text|
-  expect(current_email.text_part.body.raw_source).to include("#{text}")
+  expect(current_email.text_part.body.raw_source).to include(text.to_s)
 end
 
 Then /^(?:I|they) should see \/([^\/]*?)\/ in the email body$/ do |text|
@@ -128,7 +129,7 @@ Then /^(?:I|they) should see (an|no|\d+) attachments? with the email$/ do |amoun
 end
 
 Then /^there should be (an|no|\d+) attachments? named "([^"]*?)"$/ do |amount, filename|
-  expect(current_email_attachments.select { |a| a.original_filename == filename }.size).to eq(parse_email_count(amount))
+  expect(current_email_attachments.count { |a| a.original_filename == filename }).to eq(parse_email_count(amount))
 end
 
 Then /^attachment (\d+) should be named "([^"]*?)"$/ do |index, filename|
@@ -136,7 +137,7 @@ Then /^attachment (\d+) should be named "([^"]*?)"$/ do |index, filename|
 end
 
 Then /^there should be (an|no|\d+) attachments? of type "([^"]*?)"$/ do |amount, content_type|
-  expect(current_email_attachments.select { |a| a.content_type == content_type }.size).to eq(parse_email_count(amount))
+  expect(current_email_attachments.count { |a| a.content_type == content_type }).to eq(parse_email_count(amount))
 end
 
 Then /^attachment (\d+) should be of type "([^"]*?)"$/ do |index, content_type|
@@ -150,7 +151,7 @@ Then /^all attachments should not be blank$/ do
 end
 
 Then /^show me a list of email attachments$/ do
-  EmailSpec::EmailViewer::save_and_open_email_attachments_list(current_email)
+  EmailSpec::EmailViewer.save_and_open_email_attachments_list(current_email)
 end
 
 #
@@ -172,29 +173,27 @@ end
 #
 
 Then /^save and open current email$/ do
-  EmailSpec::EmailViewer::save_and_open_email(current_email)
+  EmailSpec::EmailViewer.save_and_open_email(current_email)
 end
 
 Then /^save and open all text emails$/ do
-  EmailSpec::EmailViewer::save_and_open_all_text_emails
+  EmailSpec::EmailViewer.save_and_open_all_text_emails
 end
 
 Then /^save and open all html emails$/ do
-  EmailSpec::EmailViewer::save_and_open_all_html_emails
+  EmailSpec::EmailViewer.save_and_open_all_html_emails
 end
 
 Then /^save and open all raw emails$/ do
-  EmailSpec::EmailViewer::save_and_open_all_raw_emails
+  EmailSpec::EmailViewer.save_and_open_all_raw_emails
 end
-
-
 
 Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
   email = address_for_user username
   begin
-    step %{"#{email}" should receive 1 email}
+    step %("#{email}" should receive 1 email)
   rescue RSpec::Expectations::ExpectationNotMetError => e
-    raise RSpec::Expectations::ExpectationNotMetError, %(#{e.message}\n Found the following emails:\n\n #{all_emails*"\n\n~~~~~~~~\n\n"})
+    raise RSpec::Expectations::ExpectationNotMetError, %(#{e.message}\n Found the following emails:\n\n #{all_emails * "\n\n~~~~~~~~\n\n"})
   end
   open_email(email, with_subject: /#{subject}/)
 end
@@ -203,8 +202,7 @@ Then /^No notification should be sent$/ do
   expect(all_emails).to be_empty
 end
 
-
 def address_for_user username
-  card_with_acct = username=='I' ? Auth.current : Card[username]
+  card_with_acct = username == 'I' ? Auth.current : Card[username]
   card_with_acct ? card_with_acct.account.email : username
 end

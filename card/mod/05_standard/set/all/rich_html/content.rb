@@ -5,12 +5,12 @@ end
 format :html do
   def show view, args
     if show_layout?
-      args.merge! view: view if view
+      args[:view] = view if view
       @main_opts = args
       render :layout
     else
       view ||= args[:home_view] || :open
-      @inclusion_opts = (args[:items] || {}).clone
+      @nest_opts = (args[:items] || {}).clone
       render view, args
     end
   end
@@ -42,7 +42,7 @@ format :html do
         [
           _optional_render(:menu, args, :hide),
           _render_core(args)
-        ] * "\n"
+        ].join("\n")
       end
     end
   end
@@ -86,9 +86,9 @@ format :html do
   end
 
   view :type_info do
-    link_args = { text: "#{card.type_name}", class: 'navbar-link' }
+    link_args = { text: card.type_name.to_s, class: 'navbar-link' }
     link = card_link card.type_name, link_args
-    %{<span class="type-info pull-right">#{link}</span>}.html_safe
+    %(<span class="type-info pull-right">#{link}</span>).html_safe
   end
 
   view :title_editable do |args|
@@ -179,7 +179,7 @@ format :html do
       Card.fetch rcardname, new: {}
     end
 
-    subheader =  with_name_context(card.name) do
+    subheader = with_name_context(card.name) do
       subformat(rcard)._render_title(args)
     end
     add_name_context card.name
@@ -206,17 +206,17 @@ format :html do
       setting = card.new_card? ? [:add_help, { fallback: :help }] : :help
       help_card = card.rule_card(*setting)
       if help_card && help_card.ok?(:read)
-        with_inclusion_mode :normal do
+        with_nest_mode :normal do
           raw_help_content = _render_raw args.merge(structure: help_card.name)
           process_content raw_help_content, content_opts:
             { chunk_list: :references }
           # render help card with current card's format
-          # so current card's context is used in help card inclusions
+          # so current card's context is used in help card nests
         end
       end
     end
     klass = [args[:help_class], 'help-text'].compact * ' '
-    %{<div class="#{klass}">#{raw text}</div>} if text
+    %(<div class="#{klass}">#{raw text}</div>) if text
   end
 
   view :last_action do
@@ -236,19 +236,19 @@ format :html do
         )
       end
 
-    %{
+    %(
       <span class="last-update">
         #{action_verb} #{_render_acted_at} ago by
         #{subformat(card.last_actor)._render_link}
       </span>
-    }
+    )
   end
 
   private
 
   def fancy_title title=nil, title_class=nil
     klasses = ['card-title', title_class].compact * ' '
-    title = showname(title).to_name.parts.join %{<span class="joint">+</span>}
-    raw %{<span class="#{klasses}">#{title}</span>}
+    title = showname(title).to_name.parts.join %(<span class="joint">+</span>)
+    raw %(<span class="#{klasses}">#{title}</span>)
   end
 end

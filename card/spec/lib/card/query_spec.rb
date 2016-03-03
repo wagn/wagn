@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-A_JOINEES = %w( B C D E F )
-CARDS_MATCHING_TWO = ['Joe User', 'One+Two', 'One+Two+Three', 'Two']
+A_JOINEES = %w( B C D E F ).freeze
+CARDS_MATCHING_TWO = ['Joe User', 'One+Two', 'One+Two+Three', 'Two'].freeze
 
 describe Card::Query do
   subject do
@@ -271,12 +271,12 @@ describe Card::Query do
 
   describe 'compound relationships' do
     it 'right_plus should handle subqueries' do
-      @query = { right_plus: ['*create', refer_to: 'Anyone']}
+      @query = { right_plus: ['*create', refer_to: 'Anyone'] }
       is_expected.to eq(['Fruit+*type', 'Sign up+*type'])
     end
 
     it 'plus should handle subqueries' do # albeit more slowly :)
-      @query = { plus: ['*create', refer_to: 'Anyone']}
+      @query = { plus: ['*create', refer_to: 'Anyone'] }
       is_expected.to eq(['Fruit+*type', 'Sign up+*type'])
     end
   end

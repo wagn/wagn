@@ -1,15 +1,15 @@
 # -*- encoding : utf-8 -*-
 
-
 class Card
   module FollowOption
     mattr_reader :test, :follower_candidate_ids
-    @@test, @@follower_candidate_ids = {}, {}
+    @@test = {}
+    @@follower_candidate_ids = {}
 
     @@options = { all: [], main: [], restrictive: [] }
 
-    def self.included(host_class)
-       host_class.extend ClassMethods
+    def self.included host_class
+      host_class.extend ClassMethods
     end
 
     def self.codenames type=:all
@@ -17,15 +17,15 @@ class Card
     end
 
     def self.cards
-       codenames.map { |codename| Card[codename] }
+      codenames.map { |codename| Card[codename] }
     end
 
     def self.restrictive_options
-      self.codenames :restrictive
+      codenames :restrictive
     end
 
     def self.main_options
-      self.codenames :main
+      codenames :main
     end
 
     def restrictive_option?
@@ -37,7 +37,6 @@ class Card
     end
 
     module ClassMethods
-
       # args:
       # position: <Fixnum> (starting at 1, default: add to end)
       def restrictive_follow_opts args
@@ -51,11 +50,11 @@ class Card
       end
 
       def follow_test opts={}, &block
-        Card::FollowOption.test[ get_codename(opts) ] = block
+        Card::FollowOption.test[get_codename(opts)] = block
       end
 
       def follower_candidate_ids opts={}, &block
-        Card::FollowOption.follower_candidate_ids[ get_codename(opts) ] = block
+        Card::FollowOption.follower_candidate_ids[get_codename(opts)] = block
       end
 
       private
@@ -70,10 +69,10 @@ class Card
         end
       end
 
-      def add_option opts, type, &block
+      def add_option opts, type, &_block
         codename = get_codename opts
         if opts[:position]
-          insert_option opts[:position]-1, codename, type
+          insert_option opts[:position] - 1, codename, type
         else
           Card::FollowOption.codenames(type) << codename
         end
@@ -81,10 +80,8 @@ class Card
       end
 
       def get_codename opts
-        opts[:codename] || self.name.match(/::(\w+)$/)[1].underscore.to_sym
+        opts[:codename] || name.match(/::(\w+)$/)[1].underscore.to_sym
       end
-
-
     end
   end
 end

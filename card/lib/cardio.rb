@@ -29,7 +29,6 @@ module Cardio
         recaptcha_private_key:  nil,
         recaptcha_proxy:        nil,
 
-        cache_store:            [:file_store, 'tmp/cache'],
         override_host:          nil,
         override_protocol:      nil,
 
@@ -41,11 +40,11 @@ module Cardio
         email_defaults:         nil,
 
         token_expiry:           2.days,
-        revisions_per_page:     10,
+        acts_per_page:          10,
         space_last_in_multispace: true,
         closed_search_limit:    50,
 
-        non_createable_types:   [%w{ signup setting set }],
+        non_createable_types:   [%w( signup setting set )],
         view_cache:             false,
 
         encoding:               'utf-8',
@@ -92,14 +91,17 @@ module Cardio
       add_path 'db/migrate_deck_cards', root: root, with: 'db/migrate_cards'
       add_path 'db/seeds', with: 'db/seeds.rb'
 
-      add_path 'config/initializers',  glob: '**/*.rb'
+      add_path 'config/initializers', glob: '**/*.rb'
+      add_initializers root
     end
 
     def set_mod_paths
-      each_mod_path do |mod_path|
-        Dir.glob("#{mod_path}/*/initializers").each do |initializers_dir|
-          paths['config/initializers'] << initializers_dir
-        end
+      each_mod_path { |mod_path| add_initializers mod_path }
+    end
+
+    def add_initializers dir
+      Dir.glob("#{dir}/config/initializers").each do |initializers_dir|
+        paths['config/initializers'] << initializers_dir
       end
     end
 

@@ -26,7 +26,7 @@ module ClassMethods
     if block_given?
       super(options) do |records|
         yield(records)
-        Card::Cache.reset_global
+        Card::Cache.reset_soft
       end
     else
       super(options)
@@ -75,7 +75,7 @@ def insert_item index, name
   self.content = new_names.join "\n"
 end
 
-def extended_item_cards context = nil
+def extended_item_cards context=nil
   context = (context ? context.cardname : cardname)
   args = { limit: '' }
   items = item_cards(args.merge(context: context))
@@ -128,7 +128,7 @@ format do
 
   def item_view args
     args[:item] ||
-      (@inclusion_opts && @inclusion_opts[:view]) ||
+      (@nest_opts && @nest_opts[:view]) ||
       default_item_view
   end
 
@@ -170,21 +170,21 @@ format do
     params.each do |key, val|
       case key.to_s
       when '_wql'      then hash.merge! val
-      when /^\_(\w+)$/ then hash[:vars][$1.to_sym] = val
+      when /^\_(\w+)$/ then hash[:vars][Regexp.last_match(1).to_sym] = val
       end
     end
   end
 
   def each_reference_with_args args={}
     content_object = Card::Content.new _render_raw(args), card
-    content_object.find_chunks(Card::Chunk::Reference).each do |chunk|
+    content_object.find_chunks(Card::Content::Chunk::Reference).each do |chunk|
       yield chunk.referee_name.to_s, nest_args(args, chunk)
     end
   end
 
   def each_nested_chunk args={}
     content_object = Card::Content.new(_render_raw(args), card)
-    content_object.find_chunks(Card::Chunk::Include).each do |chunk|
+    content_object.find_chunks(Card::Content::Chunk::Include).each do |chunk|
       yield(chunk) if chunk.referee_name # filter commented nests
     end
   end
@@ -197,10 +197,10 @@ format do
     result
   end
 
-  def unique_chunks chunk, processed_set, &block
+  def unique_chunks chunk, processed_set, &_block
     return if processed_set.include? chunk.referee_name.key
     processed_set << chunk.referee_name.key
-    block.call(chunk)
+    yield(chunk)
   end
 
   def each_nested_field args, &block
@@ -208,26 +208,25 @@ format do
 
     each_nested_chunk(args) do |chunk|
       # TODO: handle structures that are non-virtual
-      if chunk.referee_name.to_name.field_of? card.name
-        if chunk.referee_card &&
-           chunk.referee_card.virtual? &&
-           !processed_chunk_keys.include?(chunk.referee_name.key)
+      next unless chunk.referee_name.to_name.field_of? card.name
+      if chunk.referee_card &&
+         chunk.referee_card.virtual? &&
+         !processed_chunk_keys.include?(chunk.referee_name.key)
 
-          processed_chunk_keys << chunk.referee_name.key
-          subformat(chunk.referee_card).each_nested_field(args) do |sub_chunk|
-            unique_chunks sub_chunk, processed_chunk_keys, &block
-          end
-        else
-          unique_chunks chunk, processed_chunk_keys, &block
+        processed_chunk_keys << chunk.referee_name.key
+        subformat(chunk.referee_card).each_nested_field(args) do |sub_chunk|
+          unique_chunks sub_chunk, processed_chunk_keys, &block
         end
+      else
+        unique_chunks chunk, processed_chunk_keys, &block
       end
     end
   end
 
-  def map_references_with_args args={}, &block
+  def map_references_with_args args={}, &_block
     result = []
     each_reference_with_args args do |name, n_args|
-      result << block.call(name, n_args)
+      result << yield(name, n_args)
     end
     result
   end
@@ -235,12 +234,12 @@ format do
   # process args for links and nests
   def nest_args args, chunk=nil
     r_args = item_args(args)
-    r_args.merge! @inclusion_opts.clone if @inclusion_opts
+    r_args.merge! @nest_opts.clone if @nest_opts
 
     case chunk
-    when Card::Chunk::Include
+    when Card::Content::Chunk::Include
       r_args.merge!(chunk.options)
-    when Card::Chunk::Link
+    when Card::Content::Chunk::Link
       r_args.reverse_merge!(view: :link)
       r_args.reverse_merge!(title: chunk.link_text) if chunk.link_text
     end
@@ -276,7 +275,7 @@ format :html do
     args[:tab_type] ||= 'tabs'
   end
 
-  # create a path for a nest with respect ot the inclusion options
+  # create a path for a nest with respect ot the nest options
   def nest_path name, nest_args
     path_args = {}
     path_args[:view] = nest_args[:view]

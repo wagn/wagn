@@ -44,7 +44,7 @@ describe Card::Set::Type::EmailTemplate do
     end
 
     it 'renders html email if html message given' do
-      @fields = { '+*html_message' =>  'text' }
+      @fields = { '+*html_message' => 'text' }
       expect(content_type).to include 'text/html'
     end
 
@@ -111,7 +111,7 @@ describe Card::Set::Type::EmailTemplate do
       it 'does not render link' do
         is_expected.to include 'Link([[http://wagn.org|Wagn]])'
       end
-      it 'renders inclusion' do
+      it 'renders nest' do
         is_expected.to include 'Inclusion(B)'
       end
     end
@@ -128,7 +128,7 @@ describe Card::Set::Type::EmailTemplate do
       it 'renders link' do
         is_expected.to include 'Link(Wagn[http://wagn.org])'
       end
-      it 'renders inclusion' do
+      it 'renders nest' do
         is_expected.to include 'Inclusion(B)'
       end
     end
@@ -147,7 +147,7 @@ describe Card::Set::Type::EmailTemplate do
         is_expected.to include 'Link(<a target="_blank" class="external-link" '\
                                'href="http://wagn.org">Wagn</a>)'
       end
-      it 'renders inclusion' do
+      it 'renders nest' do
         is_expected.to include 'Inclusion(B)'
       end
       it 'renders absolute urls' do
@@ -183,7 +183,7 @@ describe Card::Set::Type::EmailTemplate do
         Card.create! name: 'default subject', content: 'a very nutty thang',
                      type: 'Phrase'
         Card.create! name: 'subject search+*right+*structure',
-                     content: %{{"referred_to_by":"_left+subject"}},
+                     content: %({"referred_to_by":"_left+subject"}),
                      type: 'Search'
         update_field '*subject', content: '{{+subject search|core;item:core}}'
         expect(subject[:subject]).to eq('a very nutty thang')

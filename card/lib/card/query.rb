@@ -46,7 +46,7 @@ class Card
 
     ATTRIBUTES = {
       basic:           %w( id name key type_id content left_id right_id
-                           creator_id updater_id codename                     ),
+                           creator_id updater_id codename read_rule_id ),
       relational:      %w( type part left right
                            editor_of edited_by last_editor_of last_edited_by
                            creator_of created_by member_of member             ),
@@ -59,16 +59,16 @@ class Card
       ignore:          %w( prepend append view params vars size )
     }.inject({}) { |h, pair| pair[1].each { |v| h[v.to_sym] = pair[0] }; h }
 
-    CONJUNCTIONS = { any: :or, in: :or, or: :or, all: :and, and: :and }
+    CONJUNCTIONS = { any: :or, in: :or, or: :or, all: :and, and: :and }.freeze
 
     MODIFIERS = %w( conj return sort sort_as group dir limit offset )
-                .inject({}) { |h,v| h[v.to_sym] = nil; h }
+                .inject({}) { |h, v| h[v.to_sym] = nil; h }
 
-    OPERATORS = %w( != = =~ < > in ~ ).inject({}) {|h,v| h[v]=v; h }.merge({
+    OPERATORS = %w( != = =~ < > in ~ ).inject({}) { |h, v| h[v] = v; h }.merge({
       eq: '=', gt: '>', lt: '<', match: '~', ne: '!=', 'not in' => nil
     }.stringify_keys)
 
-    DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
+    DEFAULT_ORDER_DIRS = { update: 'desc', relevance: 'desc' }.freeze
 
     attr_reader :statement, :mods, :conditions, :comment,
                 :subqueries, :superquery
@@ -184,7 +184,7 @@ class Card
       when Hash    then clause
       when String  then { key: clause.to_name.key }
       when Integer then { id: clause }
-      else fail BadQuery, "Invalid query args #{clause.inspect}"
+      else raise BadQuery, "Invalid query args #{clause.inspect}"
       end
     end
 
@@ -193,7 +193,7 @@ class Card
       when Integer, Float, Symbol, Hash then val
       when String, SmartName            then normalize_string_value val
       when Array                        then val.map { |v| normalize_value v }
-      else fail BadQuery, "unknown WQL value type: #{val.class}"
+      else raise BadQuery, "unknown WQL value type: #{val.class}"
       end
     end
 
@@ -251,7 +251,7 @@ class Card
       when :ref_relational   then relate key, val, method: :join_references
       when :plus_relational  then relate_compound key, val
       when :ignore           then # noop
-      else                   fail BadQuery, "Invalid attribute #{key}"
+      else                   raise BadQuery, "Invalid attribute #{key}"
       end
     end
 
@@ -285,7 +285,7 @@ class Card
 
     def all_joins
       @all_joins ||=
-        (joins + subqueries.find_all(&:unjoined).map(&:all_joins)).flatten
+        (joins + subqueries.select(&:unjoined).map(&:all_joins)).flatten
     end
   end
 end

@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+require 'rspec-html-matchers'
 
 describe Card::Set::All::Base do
   describe 'handles view' do
@@ -20,8 +21,8 @@ describe Card::Set::All::Base do
       end
     end
 
-    it('key'     ) { expect(render_card(:key)).to       eq('tempo_rary') }
-    it('linkname') { expect(render_card(:linkname)).to  eq('Tempo_Rary') }
+    it('key') { expect(render_card(:key)).to eq('tempo_rary') }
+    it('linkname') { expect(render_card(:linkname)).to eq('Tempo_Rary') }
 
     it 'url' do
       Card::Env[:protocol] = 'http://'
@@ -46,12 +47,12 @@ describe Card::Set::All::Base do
       it 'of search items' do
         Card.create! name: 'n+a', type: 'Number', content: '10'
         sleep 1
-        Card.create! name: 'n+b', type: 'Phrase', content: "say:\"what\""
+        Card.create! name: 'n+b', type: 'Phrase', content: 'say:"what"'
         sleep 1
         Card.create! name: 'n+c', type: 'Number', content: '30'
         c = Card.new name: 'nplusarray',
                      content: '{{n+*children+by create|array}}'
-        expect(c.format._render(:core)).to eq(%{["10", "say:\\"what\\"", "30"]})
+        expect(c.format._render(:core)).to eq(%(["10", "say:\\"what\\"", "30"]))
       end
 
       it 'of pointer items' do
@@ -61,11 +62,11 @@ describe Card::Set::All::Base do
         Card.create! name: 'npoint', type: 'Pointer',
                      content: "[[n+a]]\n[[n+b]]\n[[n+c]]"
         c = Card.new name: 'npointArray', content: '{{npoint|array}}'
-        expect(c.format._render(:core)).to eq(%{["10", "20", "30"]})
+        expect(c.format._render(:core)).to eq(%(["10", "20", "30"]))
       end
 
       it 'of basic items' do
-        expect(render_card(:array, content: 'yoing')).to eq(%{["yoing"]})
+        expect(render_card(:array, content: 'yoing')).to eq(%(["yoing"]))
       end
     end
     it 'renders template rule of embed cards based on set' do

@@ -313,13 +313,12 @@ namespace :wagn do
                      end
           card.update_column :db_content,
                              card.attachment.db_content(mod: mod_name)
-          card.last_action.change[:db_content].update_column(
-            :value, card.attachment.db_content(mod: mod_name)
-          )
+          card.last_action.change_for(2).first
+              .update_column :value, card.attachment.db_content(mod: mod_name)
           card.expire
           card = Card.fetch card.name
 
-          # target_dir = card.store_dir
+          target_dir = card.store_dir
 
           files.each do |version, path|
             FileUtils.cp path, card.attachment.path(version)

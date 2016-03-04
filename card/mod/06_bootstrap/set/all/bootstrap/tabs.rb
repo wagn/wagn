@@ -45,7 +45,8 @@ format :html do
   def tab_panel tab_buttons, tab_panes, tab_type='tabs'
     wrap_with :div, role: 'tabpanel', class: 'tabbable' do
       [
-        content_tag(:ul, tab_buttons.html_safe, class: "nav nav-#{tab_type}",
+        content_tag(:ul, tab_buttons.html_safe, 
+                    class: "nav nav-#{tab_type}",
                     role: 'tablist'),
         content_tag(:div, tab_panes.html_safe, class: 'tab-content')
       ]

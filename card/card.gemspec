@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
     'Cards are data atoms grouped into Sets to which Rules can apply. '\
     'Cards can formatted with Views and transformed with Events.'
   s.homepage      = 'http://wagn.org'
-  s.license       = 'GPL'
+  s.license       = ['GPL-2.0', 'GPL-3.0']
 
   s.files         = `git ls-files`.split $INPUT_RECORD_SEPARATOR
 

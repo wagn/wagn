@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.summary       = 'rails engine for decko (wagn): a structured wiki web platform'
   s.description   = 'Provides the glue to make decko (currently named Wagn) available as a Rails::Engine.'
   s.homepage      = 'http://wagn.org'
-  s.license       = 'GPL'
+  s.license       = ['GPL-2.0', 'GPL-3.0']
 
   s.files         = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
 

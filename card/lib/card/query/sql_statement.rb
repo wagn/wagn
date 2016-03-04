@@ -1,9 +1,9 @@
 class Card
   class Query
     class SqlStatement
-      def initialize query
+      def initialize query=nil
         @query = query
-        @mods = query.mods
+        @mods = query && query.mods
       end
 
       def build
@@ -146,18 +146,19 @@ class Card
       end
 
       def standard_conditions query
-        [trash_condition(query), permission_conditions(query)].compact * ' AND '
+        table = query.table_alias
+        [trash_condition(table), permission_conditions(table)].compact * ' AND '
       end
 
-      def trash_condition query
-        "#{query.table_alias}.trash is false"
+      def trash_condition table
+        "#{table}.trash is false"
       end
 
-      def permission_conditions query
+      def permission_conditions table
         return if Auth.always_ok?
         read_rules = Auth.as_card.read_rules
         read_rule_list = read_rules.present? ? read_rules.join(',') : 1
-        "#{query.table_alias}.read_rule_id IN (#{read_rule_list})"
+        "#{table}.read_rule_id IN (#{read_rule_list})"
       end
 
       def group
@@ -205,7 +206,7 @@ class Card
           when 'id'             then "#{table}.id"
           when 'update'         then "#{table}.updated_at"
           when 'create'         then "#{table}.created_at"
-          when /^(name|alpha)$/ then "LOWER( #{table}.key )"
+          when /^(name|alpha)$/ then "#{table}.key"
           when 'content'        then "#{table}.db_content"
           when 'relevance'      then "#{table}.updated_at" # deprecated
           else

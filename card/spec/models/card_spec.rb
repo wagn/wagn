@@ -44,7 +44,7 @@ describe Card do
     end
 
     it 'should have original action' do
-      expect(@c.nth_action(1).change_for(2).first.value).to eq('basiccontent')
+      expect(@c.nth_action(1).value :db_content).to eq('basiccontent')
     end
   end
 

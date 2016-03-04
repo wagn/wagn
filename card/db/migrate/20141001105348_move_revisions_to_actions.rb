@@ -3,7 +3,9 @@ class MoveRevisionsToActions < ActiveRecord::Migration
     belongs_to :tmp_card, foreign_key: :card_id
     self.table_name = 'card_revisions'
     def self.delete_cardless
-      TmpRevision.where(TmpCard.where(id: arel_table[:card_id]).exists.not).delete_all
+      left_join = 'LEFT JOIN card_revisions '\
+                  'ON card_revisions.card_id = cards.id'
+      TmpRevision.joins(left_join).where('cards.id IS NULL').delete_all
     end
   end
   class TmpAct < ActiveRecord::Base

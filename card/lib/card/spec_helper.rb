@@ -89,7 +89,13 @@ module Card::SpecHelper
     stage_sym = :"#{stage}_stage"
     $rspec_binding = binding
     add_test_event stage_sym, :in_stage_test, &event_block
-    opts[:trigger].call
+    trigger =
+      if opts[:trigger].is_a?(Symbol)
+        method(opts[:trigger])
+      else
+        opts[:trigger]
+      end
+    trigger.call
   ensure
     remove_test_event stage_sym, :in_stage_test
   end

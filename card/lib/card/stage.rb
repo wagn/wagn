@@ -42,7 +42,7 @@ class Card
   # dirty attributes                  yes       |      yes      |    no
 
 
-  
+
   module Stage
     STAGES = [:initialize, :prepare_to_validate, :validate, :prepare_to_store,
               :store, :finalize, :integrate, :integrate_with_delay].freeze

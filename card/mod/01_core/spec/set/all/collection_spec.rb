@@ -130,7 +130,7 @@ describe Card::Set::All::Collection do
       end
     end
 
-      it 'handles item params' do
+    it 'handles item params' do
       tabs = render_content '{{Fruit+*type+*create|tabs|name;structure:Home}}'
       params = { slot: { structure: 'Home' }, view: :name }.to_param
       path = "/Anyone?#{params}"

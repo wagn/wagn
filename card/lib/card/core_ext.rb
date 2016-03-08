@@ -67,6 +67,14 @@ class Hash
   end
 end
 
+class Array
+  def to_pointer_content
+    map do |item|
+      "[[#{item}]]"
+    end.join "\n"
+  end
+end
+
 class Kaminari::Helpers::Tag
   def page_url_for page
     p = params_for(page)

@@ -3,6 +3,7 @@
 class Card
   module Set
     include Event
+    include Trait
     mattr_accessor :modules, :traits
     @@modules = { base: [], base_format: {}, nonbase: {}, nonbase_format: {} }
 
@@ -169,24 +170,6 @@ class Card
       end
     end
 
-    #
-    # ActiveCard support: accessing plus cards as attributes
-    #
-    def card_accessor *args
-      options = args.extract_options!
-      add_traits args, options.merge(reader: true, writer: true)
-    end
-
-    def card_reader *args
-      options = args.extract_options!
-      add_traits args, options.merge(reader: true)
-    end
-
-    def card_writer *args
-      options = args.extract_options!
-      add_traits args, options.merge(writer: true)
-    end
-
     def ensure_set &block
       set_module = yield
     rescue NameError => e
@@ -220,6 +203,7 @@ class Card
 
       # make the set available for use
       def register_set set_module
+        binding.pry if set_module.to_s == "Card::Set::Type::Optic"
         return if set_module.abstract_set?  # noop; only used by explicit
         # inclusion in other set modules
         if set_module.all_set?
@@ -283,6 +267,7 @@ EOF
 
       def clean_empty_module_from_hash hash
         hash.each do |mod_name, modlist|
+          binding.pry if mod_name == "Type::Optic"
           modlist.delete_if { |x| x.instance_methods.empty? }
           hash.delete mod_name if modlist.empty?
         end
@@ -323,52 +308,6 @@ EOF
     end
 
     private
-
-    def get_traits mod
-      Card::Set.traits ||= {}
-      Card::Set.traits[mod] || Card::Set.traits[mod] = {}
-    end
-
-    def add_traits args, options
-      mod = self
-      # raise "Can't define card traits on all set" if mod == Card
-      mod_traits = get_traits mod
-
-      new_opts = options[:type] ? { type: options[:type] } : {}
-      new_opts[:default_content] = options[:default] if options[:default]
-
-      args.each do |trait|
-        define_trait_card trait, new_opts
-        define_trait_reader trait if options[:reader]
-        define_trait_writer trait if options[:writer]
-
-        mod_traits[trait.to_sym] = options
-      end
-    end
-
-    def define_trait_card trait, opts
-      define_method "#{trait}_card" do
-        trait_var "@#{trait}_card" do
-          fetch trait: trait.to_sym, new: opts.clone
-        end
-      end
-    end
-
-    def define_trait_reader trait
-      define_method trait do
-        trait_var "@#{trait}" do
-          send("#{trait}_card").content
-        end
-      end
-    end
-
-    def define_trait_writer trait
-      define_method "#{trait}=" do |value|
-        card = send "#{trait}_card"
-        subcards.add name: card.name, type_id: card.type_id, content: value
-        instance_variable_set "@#{trait}", value
-      end
-    end
 
     def set_specific_attributes *args
       Card.set_specific_attributes ||= []

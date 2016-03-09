@@ -203,7 +203,6 @@ class Card
 
       # make the set available for use
       def register_set set_module
-        binding.pry if set_module.to_s == "Card::Set::Type::Optic"
         return if set_module.abstract_set?  # noop; only used by explicit
         # inclusion in other set modules
         if set_module.all_set?
@@ -267,7 +266,6 @@ EOF
 
       def clean_empty_module_from_hash hash
         hash.each do |mod_name, modlist|
-          binding.pry if mod_name == "Type::Optic"
           modlist.delete_if { |x| x.instance_methods.empty? }
           hash.delete mod_name if modlist.empty?
         end

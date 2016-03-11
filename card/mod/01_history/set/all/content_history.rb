@@ -40,9 +40,10 @@ def last_change_on field, opts={}
 
   action_arg = opts[:before] || opts[:not_after]
   action_id = action_arg.is_a?(Card::Action) ? action_arg.id : action_arg
-  field_index = Card::TRACKED_FIELDS.index(field.to_s)
   Change.joins(:action).where(
-    where_sql, card_id: id, field: field_index, action_id: action_id
+    where_sql, card_id: id,
+               field: Card::Change.field_index(field),
+               action_id: action_id
   ).order(:id).last
 end
 

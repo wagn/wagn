@@ -214,7 +214,7 @@ format :html do
   view :edit_nests do |args|
     frame args do
       with_nest_mode :edit do
-        process_relative_tags optional_toolbar: :hide
+        process_nested_fields optional_toolbar: :hide
       end
     end
   end

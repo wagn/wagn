@@ -11,8 +11,10 @@ format :html do
   def multi_card_edit_slot args
     if args[:core_edit] # need better name
       _render_core args
+    elsif args[:edit_fields]
+      process_edit_fields args[:edit_fields]
     else
-      process_relative_tags optional_toolbar: :hide,
+      process_nested_fields optional_toolbar: :hide,
                             structure: args[:structure]
     end
   end
@@ -26,6 +28,28 @@ format :html do
     else
       editor_wrap(:content) { field }
     end
+  end
+
+  def process_nested_fields args
+    nested_fields(args).map do |chunk|
+      nested_card = fetch_nested_card chunk.options
+      nest nested_card, chunk.options.reverse_merge(args)
+    end.join "\n"
+  end
+
+  # @param [Hash|Array] fields either an array with field names and/or field
+  # cards or a hash with the fields as keys and a hash with nest options as
+  # values
+  def process_edit_fields fields
+    fields.map do |field, opts|
+      nested_card =
+        if field.is_a?(Card)
+          field
+        else
+          Card.fetch field.to_name.absolute_name(card.cardname), new: {}
+        end
+      nest nested_card, opts
+    end.join "\n"
   end
 
   def form_for_multi
@@ -222,13 +246,6 @@ format :html do
       opts[:class] += " RIGHT-#{card.cardname.tag_name.safe_key}"
     end
     formgroup fancy_title(args[:title]), content, opts
-  end
-
-  def process_relative_tags args
-    nested_fields(args).map do |chunk|
-      nested_card = fetch_nested_card chunk.options
-      nest nested_card, chunk.options.reverse_merge(args)
-    end.join "\n"
   end
 
   # form helpers

@@ -12,6 +12,11 @@ class Card
                        mainline: @mainline, form: @form
       end
 
+      def field_subformat field
+        field = card.cardname.field(field) unless field.is_a?(Card)
+        subformat field
+      end
+
       def with_nest_mode mode
         if (switch_mode = INCLUSION_MODES[mode]) && @mode != switch_mode
           old_mode = @mode

@@ -4,6 +4,7 @@ require_dependency File.expand_path('../reference', __FILE__)
 
 module Card::Content::Chunk
   class Link < Reference
+    CODE = 'L' # L for "Link"
     attr_reader :link_text
     # Groups: $1, [$2]: [[$1]] or [[$1|$2]] or $3, $4: [$3][$4]
     Card::Content::Chunk.register_class self,
@@ -11,7 +12,7 @@ module Card::Content::Chunk
                                full_re:   /^\[\[([^\]]+)\]\]/,
                                idx_char:  '['
     def reference_code
-      'L' # L for "Link"
+      CODE
     end
 
     def interpret match, _content

@@ -1,7 +1,6 @@
 def assign_attributes args={}
   if args
     args = args.stringify_keys
-
     @set_specific = {}
     Card.set_specific_attributes.each do |key|
       @set_specific[key] = args.delete(key) if args[key]

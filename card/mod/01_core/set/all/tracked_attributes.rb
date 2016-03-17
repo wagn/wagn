@@ -30,6 +30,11 @@ protected
 
 def extract_subcard_args! args
   subcards = args.delete('subcards') || {}
+  if (subfields = args.delete('subfields'))
+    subfields.each_pair do |key, value|
+      subcards[cardname.field(key)] = value
+    end
+  end
   args.keys.each do |key|
     subcards[key] = args.delete(key) if key =~ /^\+/
   end

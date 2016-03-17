@@ -4,9 +4,12 @@ format :html do
   # @return [HTML] bootstrap table
   def table content, opts={}
     add_class opts, 'table'
+    if opts[:header]
+      header = opts[:header].is_a?(Array) ? opts[:header] : content.shift
+    end
     wrap_with :table, class: opts[:class] do
       [
-        (table_header(content.shift) if opts[:header]),
+        (table_header(header) if header),
         table_body(content)
       ]
     end

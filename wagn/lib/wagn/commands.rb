@@ -65,7 +65,7 @@ else
     end.flatten
     require_args = "-r #{Wagn.gem_root}/features "
     require_args += feature_paths.map { |path| "-r #{path}" }.join(' ')
-    feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.join(' ')
+    feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.shelljoin
     unless system 'RAILS_ROOT=. bundle exec cucumber ' \
                   "#{require_args} #{feature_args} 2>&1"
       exit $CHILD_STATUS.exitstatus
@@ -86,9 +86,11 @@ else
     rspec_args.shift
     opts = {}
     Wagn::Parser.rspec(opts).parse!(wagn_args)
+
     rspec_command =
       "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} " \
-      " #{opts[:rescue]} rspec #{rspec_args.join(' ')} #{opts[:files]} 2>&1"
+      " #{opts[:rescue]} rspec #{rspec_args.shelljoin} #{opts[:files]}
+2>&1"
     exit $CHILD_STATUS.exitstatus unless system rspec_command
   when '--version', '-v'
     puts "Wagn #{Card::Version.release}"

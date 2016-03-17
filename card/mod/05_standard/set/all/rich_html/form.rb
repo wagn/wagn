@@ -1,7 +1,8 @@
 format :html do
   def edit_slot args={}
     # note: @mode should already be :edit here...
-    if args[:structure] || card.structure
+    if args[:structure] || card.structure ||
+       args[:edit_fields]
       multi_card_edit_slot args
     else
       single_card_edit_slot args
@@ -123,7 +124,7 @@ format :html do
   def formgroup title, content, opts={}
     wrap_with :div, formgroup_div_args(opts[:class]) do
       %(
-        <label>#{title}</label>
+        #{@form.label(opts[:editor] || :content, title)}
         <div>
           #{editor_wrap(opts[:editor]) { content }}
           #{formgroup_help_text opts[:help]}
@@ -164,15 +165,17 @@ format :html do
   # FIELDSET VIEWS
 
   view :name_formgroup do |args|
-    formgroup 'name', raw(name_field form), editor: 'name', help: args[:help]
+    formgroup 'name', raw(name_field form),
+              editor: 'name', help: args[:help]
   end
 
   view :type_formgroup do |args|
     field = if args[:variety] == :edit # FIXME: dislike this api -ef
               type_field class: 'type-field edit-type-field'
             else
-              type_field class: 'type-field live-type-field', href: path(view: :new), 'data-remote' => true
-    end
+              type_field class: 'type-field live-type-field',
+                         href: path(view: :new), 'data-remote' => true
+            end
     formgroup 'type', field, editor: 'type', class: 'type-formgroup'
   end
 

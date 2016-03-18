@@ -315,7 +315,7 @@ $(window).ready ->
 
   # modal mod
 
-  $('body').on 'hide.bs.modal', (event) ->
+  $('body').on 'hidden.bs.modal', (event) ->
     $(event.target).find('.modal-dialog > .modal-content').empty()
     if $(event.target).attr('id') != 'modal-main-slot'
       slot = $( event.target ).slot()

@@ -316,20 +316,22 @@ $(window).ready ->
   # modal mod
 
   $('body').on 'hidden.bs.modal', (event) ->
-    $(event.target).find('.modal-dialog > .modal-content').empty()
+    modal_content = $(event.target).find('.modal-dialog > .modal-content')
     if $(event.target).attr('id') != 'modal-main-slot'
       slot = $( event.target ).slot()
       menu_slot = slot.find '.menu-slot:first'
       url  = wagn.rootPath + '/~' + slot.data('card-id')
       params = { view: 'menu' }
       params['is_main'] = true if slot.isMain()
-
+      modal_content.empty()
       $.ajax url, {
         type : 'GET'
         data: params
         success : (data) ->
           menu_slot.replaceWith data
       }
+
+
 
 #     for slot in $('.card-slot')
 #       menu_slot = $(slot).find '.menu-slot:first'

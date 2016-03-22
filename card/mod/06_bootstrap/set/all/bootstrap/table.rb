@@ -1,6 +1,9 @@
 format :html do
-  # @param [Array<Array>] content the content for the table
-  # @param [Boolean] header use first row of content as header
+  # @param [Array<Array,String>] content the content for the table. Accepts
+  # strings or arrays for each row.
+  # @param [Hash] opts
+  # @option opts [String, Array] :header use first row of content as header or
+  # value of this option if it is a string
   # @return [HTML] bootstrap table
   def table content, opts={}
     add_class opts, 'table'
@@ -26,9 +29,16 @@ format :html do
   end
 
   def table_body rows
-  content_tag :tbody do
-    rows.map do |row|
-      content_tag :tr do
+    content_tag :tbody do
+      rows.map do |row|
+        table_row row
+      end.join "\n"
+    end
+  end
+
+  def table_row row
+    row_content =
+      if row.is_a? Array
         row.map do |item|
           if item.is_a? Hash
             content_tag :td, item.delete(:content), item
@@ -36,9 +46,10 @@ format :html do
             content_tag :td, item
           end
         end.join "\n"
+      else
+        row
       end
-    end.join "\n"
-  end
+
+    content_tag :tr, row_content.html_safe
   end
 end
-

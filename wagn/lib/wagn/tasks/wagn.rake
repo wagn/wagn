@@ -185,7 +185,7 @@ namespace :wagn do
     end
 
     desc 'Runs the "up" for a given deck cards migration VERSION.'
-    task :up => :environment do
+    task up: :environment do
       version = ENV['VERSION'] ? ENV['VERSION'].to_i : nil
       verbose = ENV['VERBOSE'] ? ENV['VERBOSE'] == 'true' : true
       raise 'VERSION is required' unless version
@@ -269,7 +269,7 @@ namespace :wagn do
           data = ActiveRecord::Base.connection.select_all(
             "select * from #{table}"
           )
-          file.write YAML.dump(data.inject({}) do |hash, record|
+          file.write YAML.dump(data.each_with_object({}) do |record, hash|
             record['trash'] = false if record.key? 'trash'
             record['draft'] = false if record.key? 'draft'
             if record.key? 'content'
@@ -278,7 +278,6 @@ namespace :wagn do
               # would not be needed with psych.
             end
             hash["#{table}_#{i.succ!}"] = record
-            hash
           end)
         end
       end
@@ -349,7 +348,7 @@ end
 
 def delete_unwanted_cards
   Card::Auth.as_bot do
-    if ignoramus = Card['*ignore']
+    if (ignoramus = Card['*ignore'])
       ignoramus.item_cards.each(&:delete!)
     end
     Card::Cache.reset_all

@@ -152,12 +152,12 @@ format :html do
     result = ''
     hash ||= {}
     hash.each do |key, val|
-      result += if Hash === val
+      result += if val.is_a?(Hash)
                   hidden_tags val, key
                 else
                   name = base ? "#{base}[#{key}]" : key
-        hidden_field_tag name, val
-      end
+                  hidden_field_tag name, val
+                end
     end
     result
   end
@@ -165,7 +165,7 @@ format :html do
   # FIELDSET VIEWS
 
   view :name_formgroup do |args|
-    formgroup 'name', raw(name_field form),
+    formgroup 'name', raw(name_field(form)),
               editor: 'name', help: args[:help]
   end
 

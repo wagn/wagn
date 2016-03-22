@@ -4,13 +4,13 @@ require_dependency File.expand_path('../reference', __FILE__)
 
 module Card::Content::Chunk
   class Link < Reference
-    CODE = 'L' # L for "Link"
+    CODE = 'L'.freeze # L for "Link"
     attr_reader :link_text
     # Groups: $1, [$2]: [[$1]] or [[$1|$2]] or $3, $4: [$3][$4]
     Card::Content::Chunk.register_class self,
-                               prefix_re: '\\[',
-                               full_re:   /^\[\[([^\]]+)\]\]/,
-                               idx_char:  '['
+                                        prefix_re: '\\[',
+                                        full_re:   /^\[\[([^\]]+)\]\]/,
+                                        idx_char:  '['
     def reference_code
       CODE
     end
@@ -38,7 +38,7 @@ module Card::Content::Chunk
       # point is to find the first pipe that's not inside an nest
       return unless string.index '|'
       string_copy = "#{string}" # had to do this to create new string?!
-      string.scan /\{\{[^\}]*\}\}/ do |incl|
+      string.scan(/\{\{[^\}]*\}\}/) do |incl|
         string_copy.gsub! incl, ('x' * incl.length)
       end
       string_copy.index '|'
@@ -78,7 +78,7 @@ module Card::Content::Chunk
     def replace_reference old_name, new_name
       replace_name_reference old_name, new_name
 
-      if Card::Content === @link_text
+      if @link_text.is_a?(Card::Content)
         @link_text.find_chunks(Card::Content::Chunk::Reference).each do |chunk|
           chunk.replace_reference old_name, new_name
         end

@@ -20,6 +20,21 @@ class ImageUploader < FileUploader
     process resize_to_fit: [500, 500]
   end
 
+  # version :small_square, if: :create_versions?,
+  #                        from_version: :medium_square do
+  #   process resize_to_fill: [75, 75]
+  # end
+  # version :medium_square, if: :create_versions? do
+  #   process resize_to_fill: [200, 200]
+  # end
+  #
+  # In case we decide to support the squared versions
+  # we have to update all existing images with the following snippet:
+  # Card.search(type_id: Card::ImageID) do |card|
+  #   card.image.cache_stored_file!
+  #   card.image.recreate_versions!
+  # end
+
   def identifier
     full_filename(super())
   end

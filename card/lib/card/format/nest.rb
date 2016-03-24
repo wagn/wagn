@@ -82,9 +82,7 @@ class Card
           else
             view
           end
-
         sub.optional_render view, opts
-        # end
       end
 
       def get_nest_content cardname

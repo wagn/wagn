@@ -47,7 +47,7 @@ format :html do
         if field.is_a?(Card)
           field
         else
-          Card.fetch field.to_name.absolute_name(card.cardname), new: {}
+          fetch_nested_card inc_name: field
         end
       nest nested_card, opts
     end.join "\n"

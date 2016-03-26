@@ -240,16 +240,20 @@ end
 # while a card's card type and content are updated in the same request,
 # the new module will override the old module's events and functions.
 # this event is only on pointer card. Other type cards do not have this event,
-# so it is not overridden and will be run while updating type and content in the same request.
-event :standardize_items, :prepare_to_validate, on: :save, changed: :content,
-                                                when: proc {  |c| c.type_id == Card::PointerID  } do
-  self.content = item_names(context: :raw).map { |name| "[[#{name}]]" }.join "\n"
+# so it is not overridden and will be run while updating type and content in
+# the same request.
+event :standardize_items, :prepare_to_validate,
+      on: :save,
+      changed: :content,
+      when: proc { |c| c.type_id == Card::PointerID  } do
+  self.content = item_names(context: :raw).map do |name|
+    "[[#{name}]]"
+  end.join "\n"
 end
 
 def diff_args
   { format: :pointer }
 end
-
 
 def item_cards args={}
   if args[:complete]

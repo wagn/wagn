@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.description   = 'a wiki approach to stuctured data, dynamic interaction, '\
                     ' and web design'
   s.homepage      = 'http://wagn.org'
-  s.license       = ['GPL-2.0', 'GPL-3.0']
+  s.licenses      = ['GPL-2.0', 'GPL-3.0']
 
   s.files         = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
 

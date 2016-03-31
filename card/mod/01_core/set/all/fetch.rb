@@ -10,11 +10,12 @@ module ClassMethods
   #   - database
   #   - virtual cards
   #
-  # "mark" here means one of three unique identifiers
+  # @param [Integer, String, Card::Name, Symbol] mark one of three unique
+  #   identifiers
   #    1. a numeric id (Integer)
   #    2. a name/key (String or Card::Name)
   #    3. a codename (Symbol)
-  #
+  # @param [Hash] opts ({})
   #   Options:
   #     :skip_virtual               Real cards only
   #     :skip_modules               Don't load Set modules
@@ -36,6 +37,27 @@ module ClassMethods
     return if card.nil?
     write_to_cache card, opts if needs_caching
     standard_fetch_results card, mark, opts
+  end
+
+  # #fetch converts String to Card::Name. That can break in some cases.
+  # For example if you fetch "Siemens" by its key "siemen", you won't get
+  # "Siemens" because "siemen".to_name.key == "sieman"
+  # If you have a key of a real card use this method.
+  def fetch_real_by_key key, opts={}
+    if opts[:new]
+      raise Card::Error, 'fetch_real_by_key called with new args'
+    end
+
+    # look in cache
+    card = fetch_from_cache_by_key key, opts[:local_only]
+    # look in db if needed
+    if retrieve_from_db?(card, opts)
+      card = fetch_from_db :key, key, opts
+      write_to_cache card, opts if !card.nil? && !card.trash
+    end
+    return if card.nil?
+    card.include_set_modules unless opts[:skip_modules]
+    card
   end
 
   def standard_fetch_results card, mark, opts
@@ -174,8 +196,8 @@ module ClassMethods
 
   def new_for_cache card, name, opts
     return if name.is_a? Integer
-    return if !name.present? && !opts[:new]
-    return unless !card || (card.type_unknown? && !skip_type_lookup?(opts))
+    return if name.blank? && !opts[:new]
+    return if card && (card.type_known? || skip_type_lookup?(opts))
     new name: name,
         skip_modules: true,
         skip_type_lookup: skip_type_lookup?(opts)
@@ -294,8 +316,8 @@ def eager_renew? opts
   opts[:skip_virtual] && new_card? && opts[:new].present?
 end
 
-def type_unknown?
-  type_id.nil?
+def type_known?
+  type_id.present?
 end
 
 def name_from_mark! mark, opts

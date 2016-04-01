@@ -17,7 +17,7 @@ class Card
         subformat field
       end
 
-      def field_nest field, opts
+      def field_nest field, opts={}
         if field.is_a?(Card)
           nest field, opts
         else

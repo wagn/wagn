@@ -269,8 +269,10 @@ format :html do
     # should only happen if limit exactly equals the total
     return '' if limit >= total
     @paging_path_args = { limit: limit,
-                          view: nest_defaults(card)[:view],
-                          slot: { item: args[:item] } }
+                          slot: {
+                            item: args[:item] || nest_defaults(card)[:view]
+                          } }
+    @paging_path_args[:view] = args[:home_view] if args[:home_view]
     @paging_limit = limit
 
     s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }

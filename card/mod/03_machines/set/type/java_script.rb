@@ -7,7 +7,7 @@ include MachineInput
 store_machine_output filetype: 'js'
 
 machine_input do
- compress_js format(:js)._render_core
+  compress_js format(:js)._render_core
 end
 
 def compress_js input

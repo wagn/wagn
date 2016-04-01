@@ -184,10 +184,21 @@ class Card
       @@modules[set_type][set.shortname].each do |set_mod|
         include set_mod
       end
+      include_set_formats set, opts
+    end
+
+    def each_format set
+      set_type = set.abstract_set? ? :abstract : :nonbase
       format_type = "#{set_type}_format".to_sym
       @@modules[format_type].each_pair do |format, set_format_mod_hash|
         next unless (format_mods = set_format_mod_hash[set.shortname])
-        match = format.to_s.match(/::(?<format>.+)Format/)
+        yield format, format_mods
+      end
+    end
+
+    def include_set_formats set, opts
+      each_format set do |format, format_mods|
+        match = format.to_s.match(/::(?<format>[^:]+)Format/)
         format_sym = match ? match[:format] : :base
         next if opts[:except] && Array(opts[:except]).include?(format_sym)
         next if opts[:only] && !Array(opts[:only]).include?(format_sym)

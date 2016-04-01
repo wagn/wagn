@@ -3,9 +3,9 @@ def self.included host_class
   # the caller that included the set file is set.rb
   # seems like the actual set file is in fourth position in
   # the backtrace but I'm not 100% sure if that is always the case
-  path, = caller[4].partition(":")
+  path, = caller[4].partition(':')
   path_parts = path.split(File::SEPARATOR)
-  mod_dir = path_parts[path_parts.index('set')+1]
+  mod_dir = path_parts[path_parts.index('set') + 1]
   raise Card::Error, "not a set path: #{path}" unless mod_dir
   match = mod_dir.match(/^mod\d+-(?<mod_name>.+)$/)
   host_class.mattr_accessor :mod_name

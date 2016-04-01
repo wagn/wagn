@@ -1,7 +1,5 @@
-view :raw do |_args|
-  ['wagn_mod.js.coffee', 'wagn.js.coffee'].map do |name|
-    File.read "#{Cardio.gem_root}/mod/03_machines/lib/javascript/#{name}"
-  end.join("\n")
-end
+include_set Abstract::CodeFile
 
-format(:html) { include ScriptAce::HtmlFormat }
+def source_files
+  %w( wagn_mod.js.coffee wagn.js.coffee )
+end

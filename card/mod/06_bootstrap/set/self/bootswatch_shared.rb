@@ -1,5 +1,7 @@
+include_set Abstract::CodeFile
+
 view :raw do |_args|
-  bootstrap_path = "#{Cardio.gem_root}/mod/06_bootstrap/lib/stylesheets/bootstrap"
+  bootstrap_path = "#{Cardio.gem_root}/mod/#{card.mod_name}/lib/stylesheets/bootstrap"
 
   # variables
   content = File.read("#{bootstrap_path}/_variables.scss")
@@ -24,7 +26,9 @@ view :raw do |_args|
     %w(utilities responsive-utilities)
   ].map do |names|
     names.map do |name|
-      File.read File.join(bootstrap_path, "_#{name}.scss")
+      path = File.join(bootstrap_path, "_#{name}.scss")
+      Rails.logger.info "reading file: #{path}"
+      File.read path
     end.join "\n"
   end.join "\n"
 

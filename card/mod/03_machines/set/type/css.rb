@@ -12,7 +12,16 @@ end
 def compress_css input
   Sass.compile input, style: :compressed
 rescue => e
-  raise Card::Oops, "Stylesheet Error:\n#{e.message}"
+  # scss is compiled in a view
+  # If there is a scss syntax error we get the rescued view here
+  # and the error that the rescued view is no valid css
+  # To get the original error we have to refer to Card::Error.current
+  msg = if Card::Error.current
+          Card::Error.current.message
+        else
+          "Sass::SyntaxError (#{name}): #{e.message}"
+        end
+  raise Card::Error, msg
 end
 
 def clean_html?

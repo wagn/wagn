@@ -11,7 +11,7 @@ include MachineInput
 def compile_coffee script
   ::CoffeeScript.compile script
 rescue => e
-  e
+  raise Card::Error, "CoffeeScript::Error (#{name}): #{e.message}"
 end
 
 machine_input do

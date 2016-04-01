@@ -43,7 +43,6 @@ Gem::Specification.new do |s|
     ['mini_magick',                '~> 4.2'],
     ['recaptcha',                  '~> 0.4.0'],
     # 0.4.0 is last version that doesn't require ruby 2.0
-
     ['coderay',                    '~> 1.0'],
     ['sass',                       '~> 3.2'],
     ['coffee-script',              '~> 2.2'],
@@ -53,7 +52,9 @@ Gem::Specification.new do |s|
     ['kaminari',                   '~> 0.16'],
 
     ['bootstrap-kaminari-views',   '~> 0'],
-    ['diff-lcs',                   '~> 1.2']
+    ['diff-lcs',                   '~> 1.2'],
+    # mime-types-data can be removed if we drop support for ruby 1.9.3
+    ['mime-types-data',             '3.2015.1120' ],
   ].each do |dep|
     s.add_runtime_dependency(*dep)
   end

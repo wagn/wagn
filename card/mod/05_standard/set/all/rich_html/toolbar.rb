@@ -1,4 +1,3 @@
-
 format :html do
   def toolbar_pinned?
     (tp = Card[:toolbar_pinned]) && tp.content == 'true'
@@ -57,10 +56,12 @@ format :html do
     end
   end
 
-  TOOLBAR_TITLE = { edit: 'content', edit_name: 'name', edit_type: 'type',
-        edit_structure: 'structure', edit_nests: 'nests', history: 'history',
-        common_rules: 'common', recent_rules: 'recent', grouped_rules: 'all',
-        edit_nest_rules: 'nests' }.freeze
+  TOOLBAR_TITLE = {
+    edit: 'content', edit_name: 'name', edit_type: 'type',
+    edit_structure: 'structure', edit_nests: 'nests', history: 'history',
+    common_rules: 'common', recent_rules: 'recent', grouped_rules: 'all',
+    edit_nest_rules: 'nests'
+  }.freeze
 
   def toolbar_view_title view
     if view == :edit_rules
@@ -110,8 +111,10 @@ format :html do
     toolbar_split_button 'edit', { view: :edit }, args do
       {
         edit:       _render_edit_content_link(args),
-        edit_nests: (_render_edit_nests_link if !card.structure && args[:nested_fields].present?),
-        structure:  (smart_link 'structure', view: :edit_structure if structure_editable?),
+        edit_nests: (_render_edit_nests_link
+                     if !card.structure && args[:nested_fields].present?),
+        structure:  (smart_link 'structure', view: :edit_structure
+                     if structure_editable?),
         edit_name:  _render_edit_name_link,
         edit_type:  _render_edit_type_link
       }
@@ -125,7 +128,7 @@ format :html do
                             related: {
                               name: "#{card.name}+#{Card[:account].key}",
                               view: :edit }
-                            ),
+                           ),
         roles:   smart_link('roles', related: Card[:roles].key),
         created: smart_link('created', related: Card[:created].key),
         edited:  smart_link('edited', related: Card[:edited].key),
@@ -135,7 +138,9 @@ format :html do
   end
 
   def toolbar_split_button name, button_args, args
-    button = button_link name, button_args, class: ('active' if args[:active_toolbar_button] == name)
+    button =
+      button_link name, button_args,
+                  class: ('active' if args[:active_toolbar_button] == name)
     active_item =
       if @slot_view == :related
         if args[:rule_view]
@@ -154,7 +159,7 @@ format :html do
 
   def close_link args
     link_opts = { title: 'cancel',
-                  class: 'btn-toolbar-control btn btn-primary'}
+                  class: 'btn-toolbar-control btn btn-primary' }
     link_opts[:path_opts] = { slot: { subframe: true } } if args[:subslot]
     link = view_link glyphicon('remove'), :home, link_opts
     css_class = ['nav navbar-nav', args[:class]].compact.join "\n"
@@ -188,7 +193,7 @@ format :html do
 
   view :related_button do |_args|
     path_opts = { slot: { show: :toolbar } }
-    dropdown_button '', icon: 'education', class: 'related' do # , icon: 'eye-open' do
+    dropdown_button '', icon: 'education', class: 'related' do
       [
         menu_item(' children',       'baby-formula',
                   path_opts.merge(related: '*children')),
@@ -225,11 +230,12 @@ format :html do
     hide ||= 'hidden-xs hidden-sm hidden-md hidden-lg'
     tag_args[:class] = [tag_args[:class], 'btn btn-primary'].compact * ' '
     tag_args[:title] ||= text
-    link_text = "#{glyphicon symbol}<span class='menu-item-label #{hide}'>#{text}</span>"
+    link_text = glyphicon symbol
+    link_text += "<span class='menu-item-label #{hide}'>#{text}</span>"
 
-    if cardname = tag_args.delete(:page)
+    if (cardname = tag_args.delete(:page))
       card_link cardname, class: klass, text: link_text
-    elsif viewname = tag_args.delete(:view)
+    elsif (viewname = tag_args.delete(:view))
       tag_args[:path_opts] ||= { slot: { show: :toolbar } }
       view_link link_text, viewname, tag_args
     else

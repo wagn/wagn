@@ -5,8 +5,11 @@ format :html do
   end
 
   view :toolbar do |args|
-    navbar "toolbar-#{card.cardname.safe_key}-#{args[:home_view]}", toggle_align: :left, class: 'slotter toolbar', navbar_type: 'inverse',
-                                                                    collapsed_content: close_link(args.merge(class: 'pull-right visible-xs')) do
+    collapsed = close_link(args.merge(class: 'pull-right visible-xs'))
+    navbar "toolbar-#{card.cardname.safe_key}-#{args[:home_view]}",
+           toggle_align: :left, class: 'slotter toolbar',
+           navbar_type: 'inverse',
+           collapsed_content: collapsed do
       [
         close_link(args.merge(class: 'hidden-xs navbar-right')),
         (wrap_with(:form, class: 'navbar-form navbar-left') do
@@ -54,11 +57,16 @@ format :html do
     end
   end
 
+  TOOLBAR_TITLE = { edit: 'content', edit_name: 'name', edit_type: 'type',
+        edit_structure: 'structure', edit_nests: 'nests', history: 'history',
+        common_rules: 'common', recent_rules: 'recent', grouped_rules: 'all',
+        edit_nest_rules: 'nests' }.freeze
+
   def toolbar_view_title view
     if view == :edit_rules
       current_set_card.name
     else
-      { edit: 'content', edit_name: 'name', edit_type: 'type', edit_structure: 'structure', edit_nests: 'nests', history: 'history', common_rules: 'common', recent_rules: 'recent', grouped_rules: 'all', edit_nest_rules: 'nests' }[view]
+      TOOLBAR_TITLE[view]
     end
   end
 
@@ -76,11 +84,16 @@ format :html do
   end
 
   def rules_split_button args
-    recent = smart_link 'recent',   view: :edit_rules, slot: { rule_view: :recent_rules }
-    common = smart_link 'common',   view: :edit_rules, slot: { rule_view: :common_rules }
-    group  = smart_link 'by group', view: :edit_rules, slot: { rule_view: :grouped_rules }
-    all    = smart_link 'by name',  view: :edit_rules, slot: { rule_view: :all_rules }
-    nests  = smart_link 'nests',    view: :edit_nest_rules, slot: { rule_view: :field_related_rules }
+    recent = smart_link 'recent',   view: :edit_rules,
+                                    slot: { rule_view: :recent_rules }
+    common = smart_link 'common',   view: :edit_rules,
+                                    slot: { rule_view: :common_rules }
+    group  = smart_link 'by group', view: :edit_rules,
+                                    slot: { rule_view: :grouped_rules }
+    all    = smart_link 'by name',  view: :edit_rules,
+                                    slot: { rule_view: :all_rules }
+    nests  = smart_link 'nests',    view: :edit_nest_rules,
+                                    slot: { rule_view: :field_related_rules }
     toolbar_split_button 'rules',   { view: :edit_rules }, args do
       {
         common_rules:    common,
@@ -108,8 +121,12 @@ format :html do
   def account_split_button args
     toolbar_split_button 'account', { related: Card[:account].key }, args do
       {
-        account: smart_link('details', related: { name: "#{card.name}+#{Card[:account].key}", view: :edit }),
-        roles:   smart_link('roles',  related: Card[:roles].key),
+        account: smart_link('details',
+                            related: {
+                              name: "#{card.name}+#{Card[:account].key}",
+                              view: :edit }
+                            ),
+        roles:   smart_link('roles', related: Card[:roles].key),
         created: smart_link('created', related: Card[:created].key),
         edited:  smart_link('edited', related: Card[:edited].key),
         follow:  smart_link('follow', related: Card[:follow].key)
@@ -123,7 +140,8 @@ format :html do
       if @slot_view == :related
         if args[:rule_view]
           args[:rule_view].to_sym
-        elsif args[:related_card] && (r = args[:related_card].right) && (cn = r.codename)
+        elsif args[:related_card] && (r = args[:related_card].right) &&
+              (cn = r.codename)
           cn.to_sym
         end
       else
@@ -135,10 +153,10 @@ format :html do
   end
 
   def close_link args
-    link_opts = { title: 'cancel' }
+    link_opts = { title: 'cancel',
+                  class: 'btn-toolbar-control btn btn-primary'}
     link_opts[:path_opts] = { slot: { subframe: true } } if args[:subslot]
-
-    link = view_link glyphicon('remove'), :home, link_opts.merge(class: 'btn-toolbar-control btn btn-primary')
+    link = view_link glyphicon('remove'), :home, link_opts
     css_class = ['nav navbar-nav', args[:class]].compact.join "\n"
     wrap_with :div, class: css_class do
       [
@@ -146,17 +164,21 @@ format :html do
         link
       ]
     end
-    # list_tag link, class: css_class
   end
 
   def toolbar_pin_button
-    button_tag glyphicon('pushpin'), situation: :primary, remote: true, title: "#{'un' if toolbar_pinned?}pin", class: "btn-toolbar-control toolbar-pin #{'in' unless toolbar_pinned?}active"
+    button_tag glyphicon('pushpin'),
+               situation: :primary, remote: true,
+               title: "#{'un' if toolbar_pinned?}pin",
+               class: 'btn-toolbar-control toolbar-pin ' \
+                      "#{'in' unless toolbar_pinned?}active"
   end
 
   view :toolbar_buttons do |args|
+    show_or_hide_delete = card.ok?(:delete) ? :show : :hide
     wrap_with(:div, class: 'btn-group') do
       [
-        _optional_render(:delete_button,  args, (card.ok?(:delete) ? :show : :hide)),
+        _optional_render(:delete_button,  args, show_or_hide_delete),
         _optional_render(:refresh_button, args, :show),
         _optional_render(:related_button, args, :show),
         _optional_render(:history_button, args, :hide)
@@ -168,27 +190,35 @@ format :html do
     path_opts = { slot: { show: :toolbar } }
     dropdown_button '', icon: 'education', class: 'related' do # , icon: 'eye-open' do
       [
-        menu_item(' children',       'baby-formula', path_opts.merge(related: '*children')),
-        menu_item(' mates',          'bed',          path_opts.merge(related: '*mates')),
-        menu_item(' references out', 'log-out',      path_opts.merge(related: '*refers_to')),
-        menu_item(' references in',  'log-in',       path_opts.merge(related: '*referred_to_by'))
+        menu_item(' children',       'baby-formula',
+                  path_opts.merge(related: '*children')),
+        menu_item(' mates',          'bed',
+                  path_opts.merge(related: '*mates')),
+        menu_item(' references out', 'log-out',
+                  path_opts.merge(related: '*refers_to')),
+        menu_item(' references in',  'log-in',
+                  path_opts.merge(related: '*referred_to_by'))
       ]
     end
   end
   view :refresh_button do |_args|
     path_opts = { slot: { show: :toolbar }, page: card }
     icon = main? ? 'refresh' : 'new-window'
-    toolbar_button('refresh', icon, 'hidden-xs hidden-sm hidden-md hidden-lg', path_opts: path_opts)
+    toolbar_button 'refresh', icon, 'hidden-xs hidden-sm hidden-md hidden-lg',
+                   path_opts: path_opts
   end
 
   view :delete_button do |_args|
-    toolbar_button('delete', 'trash', 'hidden-xs hidden-sm hidden-md hidden-lg',
-                   action: :delete,
-                   class: 'slotter',
-                   remote: true,
-                   path_opts: { success: main? ? 'REDIRECT: *previous' : "TEXT: #{card.name} deleted" },
-                   :'data-confirm' => "Are you sure you want to delete #{card.name}?"
-                  )
+    toolbar_button(
+      'delete', 'trash', 'hidden-xs hidden-sm hidden-md hidden-lg',
+      action: :delete,
+      class: 'slotter',
+      remote: true,
+      path_opts: {
+        success: main? ? 'REDIRECT: *previous' : "TEXT: #{card.name} deleted"
+      },
+      :'data-confirm' => "Are you sure you want to delete #{card.name}?"
+    )
   end
 
   def toolbar_button text, symbol, hide=nil, tag_args={}
@@ -211,7 +241,9 @@ format :html do
   end
 
   def autosaved_draft_link
-    view_link('autosaved draft', :edit, path_opts: { edit_draft: true, slot: { show: :toolbar } }, class: 'navbar-link slotter pull-right')
+    view_link 'autosaved draft', :edit,
+              path_opts: { edit_draft: true, slot: { show: :toolbar } },
+              class: 'navbar-link slotter pull-right')
   end
 
   def default_edit_content_link_args args

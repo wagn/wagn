@@ -127,12 +127,13 @@ format :html do
     result = ''
     hash ||= {}
     hash.each do |key, val|
-      result += if Hash === val
-                  hidden_tags val, key
-                else
-                  name = base ? "#{base}[#{key}]" : key
-        hidden_field_tag name, val
-      end
+      result +=
+        if val.is_a?(Hash)
+          hidden_tags val, key
+        else
+          name = base ? "#{base}[#{key}]" : key
+          hidden_field_tag name, val
+        end
     end
     result
   end
@@ -140,15 +141,16 @@ format :html do
   # FIELDSET VIEWS
 
   view :name_formgroup do |args|
-    formgroup 'name', raw(name_field form), editor: 'name', help: args[:help]
+    formgroup 'name', raw(name_field(form)), editor: 'name', help: args[:help]
   end
 
   view :type_formgroup do |args|
     field = if args[:variety] == :edit # FIXME: dislike this api -ef
               type_field class: 'type-field edit-type-field'
             else
-              type_field class: 'type-field live-type-field', href: path(view: :new), 'data-remote' => true
-    end
+              type_field class: 'type-field live-type-field',
+                         href: path(view: :new), 'data-remote' => true
+            end
     formgroup 'type', field, editor: 'type', class: 'type-formgroup'
   end
 

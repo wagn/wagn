@@ -4,35 +4,34 @@ window.wagn ||= {} #needed to run w/o *head.  eg. jasmine
 
 $.extend wagn,
   editorContentFunctionMap: {
-    '.ace-editor-textarea' : -> ace_editor_content this[0]
-    '.tinymce-textarea' : -> tinyMCE.get(@[0].id).getContent()
-    '.pointer-select' : -> pointerContent @val()
-    '.pointer-multiselect' : -> pointerContent @val()
-    '.pointer-radio-list' : -> pointerContent @find('input:checked').val()
-    '.pointer-list-ul' : -> 
+    '.ace-editor-textarea': -> ace_editor_content this[0]
+    '.tinymce-textarea': -> tinyMCE.get(@[0].id).getContent()
+    '.pointer-select': -> pointerContent @val()
+    '.pointer-multiselect': -> pointerContent @val()
+    '.pointer-radio-list': -> pointerContent @find('input:checked').val()
+    '.pointer-list-ul': ->
       pointerContent @find('input').map( -> $(this).val() )
-    '.pointer-checkbox-list' : -> 
+    '.pointer-checkbox-list': ->
       pointerContent @find('input:checked').map( -> $(this).val() )
-    '.pointer-select-list' : -> 
+    '.pointer-select-list': ->
       pointerContent @find('.pointer-select select').map( -> $(this).val() )
-    '.pointer-mixed' : -> 
+    '.pointer-mixed': ->
       element = '.pointer-checkbox-sublist input:checked,\
                 .pointer-sublist-ul input'
       pointerContent @find(element).map( -> $(this).val() )
     # must happen after pointer-list-ul, I think
-    '.perm-editor' : -> permissionsContent this 
+    '.perm-editor': -> permissionsContent this
   }
-
   editorInitFunctionMap: {
-    '.date-editor' : -> @datepicker { dateFormat : 'yy-mm-dd' }
-    'textarea' : -> $(this).autosize()
-    '.ace-editor-textarea' : -> wagn.initAce $(this)
-    '.tinymce-textarea' : -> wagn.initTinyMCE @[0].id
-    '.pointer-list-editor' : -> 
+    '.date-editor': -> @datepicker { dateFormat : 'yy-mm-dd' }
+    'textarea': -> $(this).autosize()
+    '.ace-editor-textarea': -> wagn.initAce $(this)
+    '.tinymce-textarea': -> wagn.initTinyMCE @[0].id
+    '.pointer-list-editor': ->
       @sortable({handle : '.handle', cancel : ''})
       wagn.initPointerList @find('input')
-    '.file-upload' : -> wagn.upload_file(this)
-    '.etherpad-textarea' : ->
+    '.file-upload': -> wagn.upload_file(this)
+    '.etherpad-textarea': ->
       $(this).closest('form')
       .find('.edit-submit-button')
       .attr('class', 'etherpad-submit-button')
@@ -48,8 +47,8 @@ $.extend wagn,
       card_name = $_this.siblings(".attachment_card_name:first").attr("name")
       type_id = $_this.siblings("#attachment_type_id").val()
       data.formData = {
-        "card[type_id]" : type_id,
-        "attachment_upload" : card_name
+        "card[type_id]": type_id,
+        "attachment_upload": card_name
       }
     $_fileupload = $(fileupload)
     if $_fileupload.closest("form").attr("action").indexOf("update") > -1
@@ -316,21 +315,23 @@ $(window).ready ->
 
   # modal mod
 
-  $('body').on 'hide.bs.modal', (event) ->
-    $(event.target).find('.modal-dialog > .modal-content').empty()
+  $('body').on 'hidden.bs.modal', (event) ->
+    modal_content = $(event.target).find('.modal-dialog > .modal-content')
     if $(event.target).attr('id') != 'modal-main-slot'
       slot = $( event.target ).slot()
       menu_slot = slot.find '.menu-slot:first'
       url  = wagn.rootPath + '/~' + slot.data('card-id')
       params = { view: 'menu' }
       params['is_main'] = true if slot.isMain()
-
+      modal_content.empty()
       $.ajax url, {
         type : 'GET'
         data: params
         success : (data) ->
           menu_slot.replaceWith data
       }
+
+
 
 #     for slot in $('.card-slot')
 #       menu_slot = $(slot).find '.menu-slot:first'

@@ -98,6 +98,10 @@ describe Card::StageDirector do
                     '12' => { subcards: { '121' => 'A' } }
                   }
     end
+    let(:create_card_with_junction) do
+      Card.create name: '1+2',
+                  subcards: { '11' => 'A'}
+    end
     let(:preorder) { %w(1 11 111 12 121) }
     let(:postorder) { %w(111 11 121 12 1) }
     describe 'validate' do
@@ -207,9 +211,63 @@ describe Card::StageDirector do
             i:112v ptv:112v v:112v
             v:12 v:121
             pts:1 pts:11 pts:111 pts:112v pts:12 pts:121
-            s:1 s:11 s:111 f:111 s:112v f:112v f:11 s:12 s:121 f:121 f:12 f:1
+            s:1
+              s:11
+                s:111 f:111
+                s:112v f:112v
+              f:11
+              s:12
+                s:121 f:121
+              f:12
+            f:1
             ig:1 ig:11 ig:111 ig:112v ig:12 ig:121
             igwd:1 igwd:11 igwd:111 igwd:112v igwd:12 igwd:121
+          )
+        )
+      end
+
+      it 'with junction' do
+        order = []
+        with_test_events do
+          test_event :initialize, on: :create do
+            order << "i:#{name}"
+          end
+          test_event :prepare_to_validate, on: :create do
+            order << "ptv:#{name}"
+          end
+          test_event :validate, on: :create do
+            order << "v:#{name}"
+          end
+          test_event :prepare_to_store, on: :create do
+            order << "pts:#{name}"
+          end
+          test_event :store, on: :create do
+            order << "s:#{name}"
+          end
+          test_event :finalize, on: :create do
+            order << "f:#{name}"
+          end
+          test_event :integrate, on: :create do
+            order << "ig:#{name}"
+          end
+          test_event :integrate_with_delay, on: :create do
+            order << "igwd:#{name}"
+          end
+          create_card_with_junction
+        end
+        expect(order).to eq(
+          %w(
+            i:1+2 i:11
+            ptv:1+2 ptv:11
+            v:1+2 v:11
+            pts:1+2 pts:11
+            s:1+2
+              i:1 ptv:1 v:1 pts:1 s:1 f:1
+              i:2 ptv:2 v:2 pts:2 s:2 f:2
+              s:11 f:11
+            f:1+2
+            ig:1+2 ig:11 ig:1 ig:2
+            igwd:1+2 igwd:11 igwd:1 igwd:2
           )
         )
       end
@@ -217,22 +275,20 @@ describe Card::StageDirector do
   end
 
   describe 'subcards' do
+    def create_subcards
+      Card.create! name: '', subcards: {
+        '+sub1' => 'some content',
+        '+sub2' => { '+sub3' => 'content' }
+      }
+    end
+
     it "has correct name if supercard's name get changed" do
       Card::Auth.as_bot do
         changed = false
-        in_stage(
-          :prepare_to_validate, 
-          on: :create,
-          trigger: -> do
-             Card.create! name: '', subcards: {
-               '+sub1' => 'some content',
-               '+sub2' => { '+sub3' => 'content' }
-             }
-          end
-        ) do
-          if name.empty? && !changed
-            self.name = 'main'
-          end
+        in_stage :prepare_to_validate,
+                 on: :create,
+                 trigger: :create_subcards do
+          self.name = 'main' if name.empty? && !changed
         end
         expect(Card['main+sub1'].class).to eq(Card)
         expect(Card['main+sub2+sub3'].class).to eq(Card)
@@ -241,16 +297,9 @@ describe Card::StageDirector do
     it "has correct name if supercard's name get changed to a junction card" do
       Card::Auth.as_bot do
         changed = false
-        in_stage(
-          :prepare_to_validate, 
-          on: :create,
-          trigger: -> do
-            Card.create! name: '', subcards: {
-              '+sub1' => 'some content',
-              '+sub2' => { '+sub3' => 'content' }
-            }
-          end
-        ) do
+        in_stage :prepare_to_validate,
+                 on: :create,
+                 trigger: :create_subcards do
           if name.empty? && !changed
             self.name = 'main1+main2'
             expect(subfield('sub1')).to be
@@ -266,22 +315,18 @@ describe Card::StageDirector do
   end
 
   describe 'creating and updating cards in stages' do
-   it 'update_attributes works integrate stage' do
-     act_cnt = Card['A'].acts.size
-     in_stage(
-       :integrate, 
-       on: :create,
-       trigger: -> do
-         Card.create! name: 'act card'
-       end
-     ) do
-       Card['A'].update_attributes content: 'changed content'
-     end
-     expect(Card['A'].content).to eq 'changed content'
-     # no act added to A
-     expect(Card['A'].acts.size).to eq act_cnt
-     # new act for 'act card'
-     expect(Card['act card'].acts.size).to eq 1
+    it 'update_attributes works integrate stage' do
+      act_cnt = Card['A'].acts.size
+      in_stage :integrate,
+               on: :create,
+               trigger: -> { Card.create! name: 'act card' } do
+        Card['A'].update_attributes content: 'changed content'
+      end
+      expect(Card['A'].content).to eq 'changed content'
+      # no act added to A
+      expect(Card['A'].acts.size).to eq act_cnt
+      # new act for 'act card'
+      expect(Card['act card'].acts.size).to eq 1
     end
   end
 end

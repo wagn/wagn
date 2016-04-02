@@ -128,7 +128,8 @@ format :html do
   view :checkbox do |_args|
     options = card.option_names.map do |option_name|
       checked = card.item_names.include?(option_name)
-      label = ((o_card = Card.fetch(option_name)) && o_card.label) || option_name
+      o_card = Card.fetch option_name
+      label = (o_card && o_card.label) || option_name
       id = "pointer-checkbox-#{option_name.to_name.key}"
       description = pointer_option_description option_name
       <<-HTML
@@ -249,24 +250,29 @@ def diff_args
   { format: :pointer }
 end
 
-def known_item_cards args={}
-  item_cards args.merge(known_only: true)
-end
 
 def item_cards args={}
   if args[:complete]
-    query = { referred_to_by: name }.merge args
+    query = args.reverse_merge referred_to_by: name
     Card::Query.run query
   elsif args[:known_only]
-    item_names(args).map do |name|
-      Card.fetch name
-    end.compact
+    known_item_cards args
   else
-    itype = args[:type] || item_type
-    item_names(args).map do |name|
-      new_args = itype ? { type: itype } : {}
-      Card.fetch name, new: new_args
-    end
+    fetch_or_initialize_item_cards args
+  end
+end
+
+def known_item_cards args={}
+  item_names(args).map do |name|
+    Card.fetch name
+  end.compact
+end
+
+def fetch_or_initialize_item_cards args
+  itype = args[:type] || item_type
+  new_args = itype ? { type: itype } : {}
+  item_names(args).map do |name|
+    Card.fetch name, new: new_args
   end
 end
 

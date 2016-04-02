@@ -9,7 +9,7 @@ describe Card::Set::All::Content do
       @card.save_content_draft('booboo')
       @card.reload
       expect(@card.drafts.length).to eq 1
-      expect(@card.drafts[0].new_values[:content]).to eq 'booboo'
+      expect(@card.drafts[0].value(:db_content)).to eq 'booboo'
     end
   end
 end

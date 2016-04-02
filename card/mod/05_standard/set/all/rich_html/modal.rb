@@ -8,10 +8,12 @@ format :html do
     link_to(args[:text] || _render_title(args), path(path_opts), html_args)
   end
 
-  view :modal_slot do |args|
+  view :modal_slot, tags: :unknown_ok do |args|
     id = "modal-#{args[:modal_id] || 'main-slot'}"
+    dialog_args = { class: 'modal-dialog' }
+    add_class dialog_args, args[:dialog_class]
     wrap_with(:div, class: 'modal fade', role: 'dialog', id: id) do
-      wrap_with(:div, class: 'modal-dialog') do
+      wrap_with(:div, dialog_args) do
         content_tag :div, class: 'modal-content' do
           ''
         end

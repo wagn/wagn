@@ -1,3 +1,13 @@
+AllCops:
+  Exclude:
+    - "vendor/**/*"
+    - "card/db/schema.rb"
+    - "card/tmpsets/**/*"
+    - "card/mod/06_bootstrap/lib/**/*"
+    - "card/mod/03_machines/lib/javascript/**/*"
+    - "card/mod/03_machines/lib/stylesheets/**/*"
+    - "wagn/lib/wagn/generators/wagn/templates/Gemfile"
+
 Style/CommentAnnotation:
   Enabled: true
 Style/CollectionMethods:

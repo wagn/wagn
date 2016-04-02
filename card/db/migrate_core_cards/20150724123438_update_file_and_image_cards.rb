@@ -26,7 +26,7 @@ class UpdateFileAndImageCards < Card::CoreMigration
     Card::Cache.reset_all
     Card.search(type: [:in, 'file', 'image']).each do |card|
       card.actions.each do |action|
-        if (content_change = action.change_for(:db_content).first)
+        if (content_change = action.change :db_content)
           original_filename = content_change.value.split("\n").first
           action.update_attributes! comment: original_filename
         end

@@ -12,6 +12,19 @@ class Card
                        mainline: @mainline, form: @form
       end
 
+      def field_subformat field
+        field = card.cardname.field(field) unless field.is_a?(Card)
+        subformat field
+      end
+
+      def field_nest field, opts={}
+        if field.is_a?(Card)
+          nest field, opts
+        else
+          prepare_nest opts.merge(inc_name: card.cardname.field(field))
+        end
+      end
+
       def with_nest_mode mode
         if (switch_mode = INCLUSION_MODES[mode]) && @mode != switch_mode
           old_mode = @mode
@@ -77,9 +90,7 @@ class Card
           else
             view
           end
-
         sub.optional_render view, opts
-        # end
       end
 
       def get_nest_content cardname

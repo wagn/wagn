@@ -4,10 +4,3 @@ Style/IndentationConsistency:
   AutoCorrect: false
 Style/MutableConstant:
   AutoCorrect: false
-AllCops:
-  Exclude:
-    - "vendor/**/*"
-    - "card/db/schema.rb"
-    - "card/tmpsets/**/*"
-    - "card/mod/06_bootstrap/lib/stylesheets/smartmenu.css"
-    - "wagn/lib/wagn/generators/wagn/templates/Gemfile"

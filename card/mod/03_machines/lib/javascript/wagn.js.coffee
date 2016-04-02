@@ -43,7 +43,7 @@ jQuery.fn.extend {
         target_slot = $(parent_slot).find(@data('slot-selector'))
         parent_slot = $(parent_slot).parent().closest '.card-slot'
       if target_slot.length == 0
-        $('body').find(@data('slot-selector'))
+        $(@data('slot-selector'))
       else
         target_slot
     else
@@ -167,10 +167,13 @@ $(window).ready ->
     unless event.slotSuccessful
       slot_top_pos = $(this).slot().offset().top
       $(this).slotSuccess data
+      if $(this).hasClass "close-modal"
+        $(this).closest('.modal').modal('hide')
       # should scroll to top after clicking on new page
       if $(this).hasClass "card-paging-link"
         $("body").scrollTop slot_top_pos
       event.slotSuccessful = true
+
 
   $('body').on 'loaded.bs.modal', null, (event) ->
     unless event.slotSuccessful

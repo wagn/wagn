@@ -17,17 +17,21 @@ format :html do
     tab_panel tab_buttons, tab_panes, tab_type
   end
 
-  # @param tab_type [String] 'tabs' or 'pills'
-  # @param tabs [Hash] keys are the labels for the tabs, values the urls to
+  # @param [Hash] tabs keys are the labels for the tabs, values the urls to
   # load the content from
-  # @param active_name [String] label of the tab that should be active at the
+  # @param [String] active_name label of the tab that should be active at the
   # beginning
-  # @param active_content [String] content of the active tab
+  # @param [String] active_content content of the active tab
+  # @param [Hash] args options
+  # @option args [String] :type ('tabs') use pills or tabs
+  # @option args [Hash] :panel_args html args used for the panel div
+  # @option args [Hash] :pane_args html args used for the pane div
   # @return [HTML] bootstrap tabs element with content only for the active
   # tab; other tabs get loaded via ajax when selected
-  def lazy_loading_tabs tabs, active_name, active_content, tab_type='tabs'
+  def lazy_loading_tabs tabs, active_name, active_content, args={}
     tab_buttons = ''
     tab_panes = ''
+    tab_type = args.delete(:type) || 'tabs'
     tabs.each do |tab_name, url|
       active_tab = (active_name == tab_name)
       id = "#{card.cardname.safe_key}-#{tab_name.to_name.safe_key}"
@@ -37,15 +41,18 @@ format :html do
         class: (active_tab ? nil : 'load')
       )
       tab_content = active_tab ? active_content : ''
-      tab_panes += tab_pane(id, tab_content, active_tab)
+      tab_panes += tab_pane(id, tab_content, active_tab, args[:pane_args] || {})
     end
-    tab_panel tab_buttons, tab_panes, tab_type
+    tab_panel tab_buttons, tab_panes, tab_type, args[:panel_args] || {}
   end
 
-  def tab_panel tab_buttons, tab_panes, tab_type='tabs'
-    wrap_with :div, role: 'tabpanel', class: 'tabbable' do
+  def tab_panel tab_buttons, tab_panes, tab_type='tabs', args={}
+    add_class args, 'tabbable'
+    args.reverse_merge! role: 'tabpanel'
+    wrap_with :div, args do
       [
-        content_tag(:ul, tab_buttons.html_safe, class: "nav nav-#{tab_type}",
+        content_tag(:ul, tab_buttons.html_safe,
+                    class: "nav nav-#{tab_type}",
                     role: 'tablist'),
         content_tag(:div, tab_panes.html_safe, class: 'tab-content')
       ]
@@ -62,13 +69,11 @@ format :html do
     content_tag :li, link, li_args
   end
 
-  def tab_pane id, content, active=false
-    div_args = {
-      role: :tabpanel,
-      id: id,
-      class: 'tab-pane'
-    }
-    add_class div_args, 'active' if active
-    content_tag :div, content.html_safe, div_args
+  def tab_pane id, content, active=false, args={}
+    args.reverse_merge! role: :tabpanel,
+                        id: id
+    add_class args, 'tab-pane'
+    add_class args, 'active' if active
+    content_tag :div, content.html_safe, args
   end
 end

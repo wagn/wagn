@@ -1,4 +1,4 @@
-REVISIONS_PER_PAGE = Card.config.revisions_per_page
+ACTS_PER_PAGE = Card.config.acts_per_page
 
 def history?
   true
@@ -6,16 +6,13 @@ end
 
 # must be called on all actions and before :set_name, :process_subcards and
 # :validate_delete_children
-# event :assign_act,
-#       after: :identify_action,
-#       when: proc { |c| c.history? || c.respond_to?(:attachment) }  do
-#   @current_act = (@supercard && @supercard.current_act) ||
-#                  Card::Act.create(ip_address: Env.ip)
-#   assign_action
-# end
-#
+
+def actionable?
+  history? || respond_to?(:attachment)
+end
+
 event :assign_action, :initialize,
-      when: proc { |c| c.history? || c.respond_to?(:attachment) } do
+      when: proc { |c| c.actionable? } do
   @current_act = director.need_act
   @current_action = Card::Action.create(
     card_act_id: @current_act.id,
@@ -28,7 +25,7 @@ event :assign_action, :initialize,
 end
 
 def finalize_action?
-  (history? || respond_to?(:attachment)) && current_action
+  actionable? && current_action
 end
 
 # stores changes in the changes table and assigns them to the current action
@@ -39,6 +36,7 @@ event :finalize_action, :finalize,
     changed_attributes.member? f
   end
   if @changed_fields.present?
+    # FIXME: should be one bulk insert
     @changed_fields.each do |f|
       Card::Change.create field: f,
                           value: self[f],
@@ -95,23 +93,6 @@ def rollback_request?
     Env.params['action_ids'].class == Array
 end
 
-# alternative approach to handle act and action that doesn't change the
-# database in the beginning stopped working with Rails 4
-# def build_act_and_action
-#   @current_act = if @supercard
-#     @supercard.current_act || @supercard.acts.build(ip_address: Env.ip)
-#   else
-#     acts.build(ip_address: Env.ip)
-#   end
-#   @current_action = actions(true).build(action_type: @action, draft:
-#   (Env.params['draft'] == 'true') )
-#   @current_action.act = @current_act
-#
-#   if (@supercard and @supercard !=self)
-#     @current_action.super_action = @supercard.current_action
-#   end
-# end
-
 # all acts with actions on self and on cards that are descendants of self and
 # included in self
 def intrusive_family_acts args={}
@@ -121,7 +102,7 @@ def intrusive_family_acts args={}
 end
 
 # all acts with actions on self and on cards included in self
-def intrusive_acts  args={ with_drafts: true }
+def intrusive_acts args={ with_drafts: true }
   @intrusive_acts ||= begin
     Act.find_all_with_actions_on((included_card_ids << id), args)
   end
@@ -138,14 +119,14 @@ def current_rev_nr
 end
 
 def included_card_ids
-  Card::Reference.select(:referee_id).where(
-    ref_type: 'I', referer_id: id
-  ).pluck('referee_id').compact.uniq
+  @included_card_ids ||=
+    Card::Reference.select(:referee_id).where(
+      ref_type: 'I', referer_id: id
+    ).pluck('referee_id').compact.uniq
 end
 
 def descendant_card_ids parent_ids=[id]
   more_ids = Card.where('left_id IN (?)', parent_ids).pluck('id')
-
   more_ids += descendant_card_ids more_ids unless more_ids.empty?
   more_ids
 end
@@ -157,27 +138,25 @@ end
 format :html do
   view :history do |args|
     frame args.merge(body_class: 'history-slot list-group', content: true) do
-      [
-        history_legend,
-        _render_revisions
-      ]
+      [history_legend, _render_act_list]
     end
   end
+
   def default_history_args args
     args[:optional_toolbar] ||= :show
   end
 
-  view :revisions do |args|
+  view :act_list do |args|
     page = params['page'] || 1
-    count = card.intrusive_acts.size + 1 - (page.to_i - 1) * REVISIONS_PER_PAGE
-    card.intrusive_acts.page(page).per(REVISIONS_PER_PAGE).map do |act|
+    count = card.intrusive_acts.size + 1 - (page.to_i - 1) * ACTS_PER_PAGE
+    card.intrusive_acts.page(page).per(ACTS_PER_PAGE).map do |act|
       count -= 1
-      render_act_summary args.merge(act: act, rev_nr: count)
+      render_act args.merge(act: act, act_seq: count)
     end.join
   end
 
   def history_legend
-    intr = card.intrusive_acts.page(params['page']).per(REVISIONS_PER_PAGE)
+    intr = card.intrusive_acts.page(params['page']).per(ACTS_PER_PAGE)
     render_haml intr: intr do
       <<-HAML
 .history-header
@@ -195,70 +174,97 @@ format :html do
     end
   end
 
-  view :act_summary do |args|
-    render_act :summary, args
+  def default_act_args args
+    act = (args[:act]  ||= Act.find(params['act_id']))
+    args[:act_seq]     ||= params['act_seq']
+    args[:hide_diff]   ||= hide_diff?
+    args[:slot_class]  ||= "revision-#{act.id} history-slot list-group-item"
+    args[:action_view] ||= action_view
+    args[:actions]     ||= action_list args
   end
 
-  view :act_expanded do |args|
-    render_act :expanded, args
+  def action_list args
+    act = args[:act]
+    actions =
+      if act_context(args) == :absolute
+        act.actions
+      else
+        act.relevant_actions_for(card)
+      end
+    actions.select { |a| a.card && a.card.ok?(:read) }
+    # FIXME: should not need to test for presence of card here.
   end
 
-  def render_act act_view, args
-    act = (params['act_id'] && Card::Act.find(params['act_id'])) || args[:act]
-    rev_nr = params['rev_nr'] || args[:rev_nr]
-    current_rev_nr = params['current_rev_nr'] || args[:current_rev_nr] ||
-                     card.current_rev_nr
-    hide_diff = (params['hide_diff'] == ' true') || args[:hide_diff]
-    args[:slot_class] = "revision-#{act.id} history-slot list-group-item"
-    draft = (last_action = act.actions.last) && last_action.draft
+  def act_context args
+    args[:act_context] =
+      (args[:act_context] || params['act_context'] || :relative).to_sym
+  end
 
+  def hide_diff?
+    params['hide_diff'].to_s.strip == 'true'
+  end
+
+  def action_view
+    (params['action_view'] || 'summary').to_sym
+  end
+
+  view :act do |args|
     wrap(args) do
-      render_haml card: card, act: act, act_view: act_view, draft: draft,
-                  current_rev_nr: current_rev_nr, rev_nr: rev_nr,
-                  hide_diff: hide_diff do
+      render_haml args.merge(card: card, args: args) do
         <<-HAML
 .act{style: "clear:both;"}
+  - show_header = act_context == :absolute ? :show : :hide
+  = optional_render :act_header, args, show_header
   .head
-    .nr
-      = "##{rev_nr}"
-    .title
-      .actor
-        = link_to act.actor.name, card_url(act.actor.cardname.url_key)
-      .time.timeago
-        = time_ago_in_words(act.acted_at)
-        ago
-        - if draft
-          |
-          %em.info
-            Autosave
-        - if current_rev_nr == rev_nr
-          %em.label.label-info
-            Current
-        - elsif act_view == :expanded
-          = rollback_link act.relevant_actions_for(card)
-          = show_or_hide_changes_link hide_diff, act_id: act.id, act_view: act_view, rev_nr: rev_nr, current_rev_nr: current_rev_nr
+    = render :act_metadata, args
   .toggle
-    = fold_or_unfold_link act_id: act.id, act_view: act_view, rev_nr: rev_nr, current_rev_nr: current_rev_nr
-
-  .action-container{style: ("clear: left;" if act_view == :expanded)}
-    - act.relevant_actions_for(card).each do |action|
-      = send("_render_action_#{act_view}", action: action )
+    = fold_or_unfold_link args
+  .action-container
+    - actions.each do |action|
+      = render ('action_' + action_view.to_s), args.merge(action: action)
 HAML
       end
     end
   end
 
+  view :act_header do |_args|
+    %(<h5 "class=act-header">#{card_link card}</h5>)
+  end
+
+  view :act_metadata do |args|
+    render_haml args.merge(card: card, args: args) do
+      <<-HAML
+- unless act_context == :absolute
+  .nr
+    = '#' + act_seq.to_s
+.title
+  .actor
+    = link_to act.actor.name, card_url(act.actor.cardname.url_key)
+  .time.timeago
+    = time_ago_in_words(act.acted_at)
+    ago
+    - if act.id == card.last_act.id
+      %em.label.label-info Current
+    - if action_view == :expanded
+      - unless act.id == card.last_act.id
+        = rollback_link act.relevant_actions_for(card)
+      = show_or_hide_changes_link args
+HAML
+    end
+  end
+
   view :action_summary do |args|
-    render_action :summary, args
+    view_action :summary, args
   end
 
   view :action_expanded do |args|
-    render_action :expanded, args
+    view_action :expanded, args
   end
 
-  def render_action action_view, args
+  def view_action action_view, args
     action = args[:action] || card.last_action
-    hide_diff = Env.params['hide_diff'] == 'true' || args[:hide_diff]
+    hide_diff = args[:hide_diff] || hide_diff?
+
     render_haml action: action,
                 action_view: action_view,
                 name_diff: name_diff(action, hide_diff),
@@ -318,9 +324,9 @@ HAML
   end
 
   def name_changes action, hide_diff=false
-    old_name = (name = action.old_values[:name]) && showname(name).to_s
+    old_name = (name = action.previous_value :name) && showname(name).to_s
     if action.new_name?
-      new_name = showname(action.new_values[:name]).to_s
+      new_name = showname(action.value(:name)).to_s
       if hide_diff
         new_name
       else
@@ -332,16 +338,29 @@ HAML
   end
 
   def type_changes action, hide_diff=false
-    change = hide_diff ? action.new_values[:cardtype] : action.cardtype_diff
+    change = hide_diff ? action.value(:cardtype) : action.cardtype_diff
     "(#{change})"
   end
 
   view :content_changes do |args|
     if args[:hide_diff]
-      args[:action].new_values[:content]
+      args[:action].value :db_content
     else
       args[:action].content_diff(args[:diff_type])
     end
+  end
+
+  def fold_or_unfold_link args
+    path_opts = {
+      act_id:      args[:act].id,
+      act_seq:     args[:act_seq],
+      hide_diff:   args[:hide_diff],
+      act_context: args[:act_context],
+      action_view: (args[:action_view] == :expanded ? :summary : :expanded)
+    }
+    arrow_dir = args[:action_view] == :expanded ? 'arrow-down' : 'arrow-right'
+    view_link '', :act, path_opts: path_opts,
+                        class: "slotter revision-#{args[:act_id]} #{arrow_dir}"
   end
 
   def rollback_link actions
@@ -349,28 +368,26 @@ HAML
       actions.select { |action| action.card.last_action_id != action.id }
     return unless card.ok?(:update) && not_current.present?
     link_path = path action: :update, view: :open, action_ids: not_current
-    '| ' + link_to(
+    link = link_to(
       'Save as current', link_path,
       class: 'slotter', 'data-slot-selector' => '.card-slot.history-view',
       remote: true, method: :post, rel: 'nofollow'
     )
+    %(<div class="act-link">#{link}</div>)
   end
 
-  def fold_or_unfold_link args
-    toggled_view = args[:act_view] == :expanded ? :act_summary : :act_expanded
-    arrow_dir = args[:act_view] == :expanded ? 'arrow-down' : 'arrow-right'
-    link_to '', args.merge(view: toggled_view),
-            class: "slotter revision-#{args[:act_id]} #{arrow_dir}",
-            remote: true
-  end
-
-  def show_or_hide_changes_link hide_diff, args
-    text = (hide_diff ? 'Show' : 'Hide') + ' changes'
-    '| ' + view_link(
-      text, :act_expanded,
-      path_opts: args.merge(hide_diff: !hide_diff),
-      class: 'slotter', remote: true
-    )
+  def show_or_hide_changes_link args
+    toggle = args[:hide_diff] ? 'Show' : 'Hide'
+    path_opts = {
+      act_id: args[:act].id,
+      act_seq: args[:act_seq],
+      hide_diff: !args[:hide_diff],
+      action_view: :expanded,
+      act_context: args[:act_context]
+    }
+    link = view_link("#{toggle} changes", :act,
+                     path_opts: path_opts, class: 'slotter', remote: true)
+    %(<div class="act-link">#{link}</div>)
   end
 end
 

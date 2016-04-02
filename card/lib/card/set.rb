@@ -3,8 +3,10 @@
 class Card
   module Set
     include Event
+    include Trait
     mattr_accessor :modules, :traits
-    @@modules = { base: [], base_format: {}, nonbase: {}, nonbase_format: {} }
+    @@modules = { base: [], base_format: {}, nonbase: {}, nonbase_format: {},
+                  abstract: {}, abstract_format: {} }
 
     #  A 'Set' is a group of Cards to which 'Rules' may be applied.
     #  Sets can be as specific as a single card, as general as all cards, or
@@ -129,6 +131,7 @@ class Card
     def define_on_format format_name=:base, &block
       # format class name, eg. HtmlFormat
       klass = Card::Format.format_class_name format_name
+
       # called on current set module, eg Card::Set::Type::Pointer
       mod = const_get_or_set klass do
         # yielding set format module, eg Card::Set::Type::Pointer::HtmlFormat
@@ -169,22 +172,42 @@ class Card
       end
     end
 
-    #
-    # ActiveCard support: accessing plus cards as attributes
-    #
-    def card_accessor *args
-      options = args.extract_options!
-      add_traits args, options.merge(reader: true, writer: true)
+    # include a set module and all its format modules
+    # @param [Module] set
+    # @param [Hash] opts choose the formats you want to include
+    # @option opts [Symbol, Array<Symbol>] :only include only these formats
+    # @option opts [Symbol, Array<Symbol>] :except don't include these formats
+    # @example
+    # include_set Type::Basic, except: :css
+    def include_set set, opts={}
+      set_type = set.abstract_set? ? :abstract : :nonbase
+      @@modules[set_type][set.shortname].each do |set_mod|
+        include set_mod
+      end
+      include_set_formats set, opts
     end
 
-    def card_reader *args
-      options = args.extract_options!
-      add_traits args, options.merge(reader: true)
+    def each_format set
+      set_type = set.abstract_set? ? :abstract : :nonbase
+      format_type = "#{set_type}_format".to_sym
+      @@modules[format_type].each_pair do |format, set_format_mod_hash|
+        next unless (format_mods = set_format_mod_hash[set.shortname])
+        yield format, format_mods
+      end
     end
 
-    def card_writer *args
-      options = args.extract_options!
-      add_traits args, options.merge(writer: true)
+    def include_set_formats set, opts
+      each_format set do |format, format_mods|
+        match = format.to_s.match(/::(?<format>[^:]+)Format/)
+        format_sym = match ? match[:format] : :base
+        next if opts[:except] && Array(opts[:except]).include?(format_sym)
+        next if opts[:only] && !Array(opts[:only]).include?(format_sym)
+        format_mods.each do |format_mod|
+          define_on_format format_sym do
+            include format_mod
+          end
+        end
+      end
     end
 
     def ensure_set &block
@@ -220,15 +243,14 @@ class Card
 
       # make the set available for use
       def register_set set_module
-        return if set_module.abstract_set?  # noop; only used by explicit
-        # inclusion in other set modules
         if set_module.all_set?
           # automatically included in Card class
           modules[:base] << set_module
         else
+          set_type = set_module.abstract_set? ? :abstract : :nonbase
           # made ready for dynamic loading via #include_set_modules
-          modules[:nonbase][set_module.shortname] ||= []
-          modules[:nonbase][set_module.shortname] << set_module
+          modules[set_type][set_module.shortname] ||= []
+          modules[set_type][set_module.shortname] << set_module
         end
       end
 
@@ -287,19 +309,19 @@ EOF
           hash.delete mod_name if modlist.empty?
         end
       end
+
+
     end
 
     def register_set_format format_class, mod
-      return if abstract_set? # noop; only used by explicit inclusion in
-      # other set modules
-
       if all_set?
         # ready to include in base format classes
         modules[:base_format][format_class] ||= []
         modules[:base_format][format_class] << mod
       else
+        format_type = abstract_set? ? :abstract_format : :nonbase_format
         # ready to include dynamically in set members' format singletons
-        format_hash = modules[:nonbase_format][format_class] ||= {}
+        format_hash = modules[format_type][format_class] ||= {}
         format_hash[shortname] ||= []
         format_hash[shortname] << mod
       end
@@ -308,9 +330,13 @@ EOF
     def shortname
       parts = name.split '::'
       first = 2 # shortname eliminates Card::Set
-      set_class = Card::SetPattern.find parts[first].underscore
-
-      last = first + set_class.anchor_parts_count
+      pattern_name = parts[first].underscore
+      last = if pattern_name == 'abstract'
+               first + 1
+             else
+               set_class = Card::SetPattern.find pattern_name
+               first + set_class.anchor_parts_count
+             end
       parts[first..last].join '::'
     end
 
@@ -323,52 +349,6 @@ EOF
     end
 
     private
-
-    def get_traits mod
-      Card::Set.traits ||= {}
-      Card::Set.traits[mod] || Card::Set.traits[mod] = {}
-    end
-
-    def add_traits args, options
-      mod = self
-      # raise "Can't define card traits on all set" if mod == Card
-      mod_traits = get_traits mod
-
-      new_opts = options[:type] ? { type: options[:type] } : {}
-      new_opts[:default_content] = options[:default] if options[:default]
-
-      args.each do |trait|
-        define_trait_card trait, new_opts
-        define_trait_reader trait if options[:reader]
-        define_trait_writer trait if options[:writer]
-
-        mod_traits[trait.to_sym] = options
-      end
-    end
-
-    def define_trait_card trait, opts
-      define_method "#{trait}_card" do
-        trait_var "@#{trait}_card" do
-          fetch trait: trait.to_sym, new: opts.clone
-        end
-      end
-    end
-
-    def define_trait_reader trait
-      define_method trait do
-        trait_var "@#{trait}" do
-          send("#{trait}_card").content
-        end
-      end
-    end
-
-    def define_trait_writer trait
-      define_method "#{trait}=" do |value|
-        card = send "#{trait}_card"
-        subcards.add name: card.name, type_id: card.type_id, content: value
-        instance_variable_set "@#{trait}", value
-      end
-    end
 
     def set_specific_attributes *args
       Card.set_specific_attributes ||= []

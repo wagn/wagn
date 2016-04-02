@@ -1,7 +1,8 @@
 format :html do
   def edit_slot args={}
     # note: @mode should already be :edit here...
-    if args[:structure] || card.structure
+    if args[:structure] || card.structure ||
+       args[:edit_fields]
       multi_card_edit_slot args
     else
       single_card_edit_slot args
@@ -11,8 +12,10 @@ format :html do
   def multi_card_edit_slot args
     if args[:core_edit] # need better name
       _render_core args
+    elsif args[:edit_fields]
+      process_edit_fields args[:edit_fields]
     else
-      process_relative_tags optional_toolbar: :hide,
+      process_nested_fields optional_toolbar: :hide,
                             structure: args[:structure]
     end
   end
@@ -26,6 +29,28 @@ format :html do
     else
       editor_wrap(:content) { field }
     end
+  end
+
+  def process_nested_fields args
+    nested_fields(args).map do |chunk|
+      nested_card = fetch_nested_card chunk.options
+      nest nested_card, chunk.options.reverse_merge(args)
+    end.join "\n"
+  end
+
+  # @param [Hash|Array] fields either an array with field names and/or field
+  # cards or a hash with the fields as keys and a hash with nest options as
+  # values
+  def process_edit_fields fields
+    fields.map do |field, opts|
+      nested_card =
+        if field.is_a?(Card)
+          field
+        else
+          fetch_nested_card inc_name: field
+        end
+      nest nested_card, opts
+    end.join "\n"
   end
 
   def form_for_multi
@@ -99,7 +124,7 @@ format :html do
   def formgroup title, content, opts={}
     wrap_with :div, formgroup_div_args(opts[:class]) do
       %(
-        <label>#{title}</label>
+        #{@form.label(opts[:editor] || :content, title)}
         <div>
           #{editor_wrap(opts[:editor]) { content }}
           #{formgroup_help_text opts[:help]}
@@ -141,7 +166,8 @@ format :html do
   # FIELDSET VIEWS
 
   view :name_formgroup do |args|
-    formgroup 'name', raw(name_field(form)), editor: 'name', help: args[:help]
+    formgroup 'name', raw(name_field(form)),
+              editor: 'name', help: args[:help]
   end
 
   view :type_formgroup do |args|
@@ -224,13 +250,6 @@ format :html do
       opts[:class] += " RIGHT-#{card.cardname.tag_name.safe_key}"
     end
     formgroup fancy_title(args[:title]), content, opts
-  end
-
-  def process_relative_tags args
-    nested_fields(args).map do |chunk|
-      nested_card = fetch_nested_card chunk.options
-      nest nested_card, chunk.options.reverse_merge(args)
-    end.join "\n"
   end
 
   # form helpers

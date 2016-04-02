@@ -73,7 +73,7 @@ format :html do
   end
 
   view :edit, perms: :update, tags: :unknown_ok do |args|
-    frame_and_form :update, args.merge(optional_toolbar: :show) do
+    frame_and_form :update, args.reverse_merge(optional_toolbar: :show) do
       [
         _optional_render(:content_formgroup, args),
         _optional_render(:button_formgroup, args)
@@ -214,7 +214,7 @@ format :html do
   view :edit_nests do |args|
     frame args do
       with_nest_mode :edit do
-        process_relative_tags optional_toolbar: :hide
+        process_nested_fields optional_toolbar: :hide
       end
     end
   end

@@ -20,28 +20,29 @@ describe Card::Cache do
   describe 'with same cache_id' do
     before :each do
       @hard = ActiveSupport::Cache::MemoryStore.new
-      @cache = Card::Cache.new store: @hard, prefix: 'prefix'
+      @cache = Card::Cache.new store: @hard
+      @prefix = @cache.hard.prefix
     end
 
     it '#read' do
-      expect(@hard).to receive(:read).with('prefix/foo')
+      expect(@hard).to receive(:read).with("#{@prefix}/foo")
       @cache.read('foo')
     end
 
     it '#write' do
-      expect(@hard).to receive(:write).with('prefix/foo', 'val')
+      expect(@hard).to receive(:write).with("#{@prefix}/foo", 'val')
       @cache.write('foo', 'val')
       expect(@cache.read('foo')).to eq('val')
     end
 
     it '#fetch' do
       block = proc { 'hi' }
-      expect(@hard).to receive(:fetch).with('prefix/foo', &block)
+      expect(@hard).to receive(:fetch).with("#{@prefix}/foo", &block)
       @cache.fetch('foo', &block)
     end
 
     it '#delete' do
-      expect(@hard).to receive(:delete).with('prefix/foo')
+      expect(@hard).to receive(:delete).with("#{@prefix}/foo")
       @cache.delete 'foo'
     end
 
@@ -55,18 +56,20 @@ describe Card::Cache do
 
   it '#reset' do
     @hard = ActiveSupport::Cache::MemoryStore.new
-    @cache = Card::Cache.new store: @hard, prefix: 'prefix'
-    expect(@cache.hard.prefix).to eq('prefix/')
+    @cache = Card::Cache.new store: @hard, database: 'mydb'
+
+    expect(@cache.hard.prefix).to match(/^mydb\//)
     @cache.write('foo', 'bar')
     expect(@cache.read('foo')).to eq('bar')
 
+
     # reset
     @cache.reset
-    expect(@cache.hard.prefix).to eq('prefix/')
+    expect(@cache.hard.prefix).to match(/^mydb\//)
     expect(@cache.read('foo')).to be_nil
 
-    cache2 = Card::Cache.new store: @hard, prefix: 'prefix'
-    expect(cache2.hard.prefix).to eq('prefix/')
+    cache2 = Card::Cache.new store: @hard, database: 'mydb'
+    expect(cache2.hard.prefix).to match(/^mydb\//)
   end
 
   describe 'with file store' do

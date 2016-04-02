@@ -1,7 +1,6 @@
 def assign_attributes args={}
   if args
     args = args.stringify_keys
-
     @set_specific = {}
     Card.set_specific_attributes.each do |key|
       @set_specific[key] = args.delete(key) if args[key]
@@ -31,6 +30,11 @@ protected
 
 def extract_subcard_args! args
   subcards = args.delete('subcards') || {}
+  if (subfields = args.delete('subfields'))
+    subfields.each_pair do |key, value|
+      subcards[cardname.field(key)] = value
+    end
+  end
   args.keys.each do |key|
     subcards[key] = args.delete(key) if key =~ /^\+/
   end

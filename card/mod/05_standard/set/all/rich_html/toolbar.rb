@@ -243,7 +243,7 @@ format :html do
   def autosaved_draft_link
     view_link 'autosaved draft', :edit,
               path_opts: { edit_draft: true, slot: { show: :toolbar } },
-              class: 'navbar-link slotter pull-right')
+              class: 'navbar-link slotter pull-right'
   end
 
   def default_edit_content_link_args args

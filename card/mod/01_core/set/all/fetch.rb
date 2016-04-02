@@ -44,9 +44,7 @@ module ClassMethods
   # "Siemens" because "siemen".to_name.key == "sieman"
   # If you have a key of a real card use this method.
   def fetch_real_by_key key, opts={}
-    if opts[:new]
-      raise Card::Error, 'fetch_real_by_key called with new args'
-    end
+    raise Card::Error, 'fetch_real_by_key called with new args' if opts[:new]
 
     # look in cache
     card = fetch_from_cache_by_key key, opts[:local_only]

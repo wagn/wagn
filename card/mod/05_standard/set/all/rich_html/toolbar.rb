@@ -111,14 +111,16 @@ format :html do
     toolbar_split_button 'edit', { view: :edit }, args do
       {
         edit:       _render_edit_content_link(args),
-        edit_nests: (_render_edit_nests_link
-                     if !card.structure && args[:nested_fields].present?),
-        structure:  (smart_link 'structure', view: :edit_structure
-                     if structure_editable?),
+        edit_nests: (_render_edit_nests_link if nests_editable?),
+        structure:  (_render_edit_structure_link if structure_editable?),
         edit_name:  _render_edit_name_link,
         edit_type:  _render_edit_type_link
       }
     end
+  end
+
+  def nests_editable? args
+    !card.structure && args[:nested_fields].present?
   end
 
   def account_split_button args
@@ -258,24 +260,32 @@ format :html do
   view :edit_content_link do |args|
     toolbar_view_link :edit, args
   end
+
   def default_edit_name_link_args args
     args[:title] ||= 'name'
   end
   view :edit_name_link do |args|
     toolbar_view_link :edit_name, args
   end
+
   def default_edit_type_link_args args
     args[:title] ||= 'type'
   end
   view :edit_type_link do |args|
     toolbar_view_link :edit_type, args
   end
+
+  view :edit_structure_link do |_args|
+    smart_link 'structure', view: :edit_structure
+  end
+
   def default_history_link_args args
     args[:title] ||= 'history'
   end
   view :history_link do |args|
     toolbar_view_link :history, args
   end
+
   def default_edit_nests_link_args args
     args[:title] ||= 'nests'
   end

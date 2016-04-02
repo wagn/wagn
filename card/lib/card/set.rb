@@ -309,8 +309,6 @@ EOF
           hash.delete mod_name if modlist.empty?
         end
       end
-
-
     end
 
     def register_set_format format_class, mod

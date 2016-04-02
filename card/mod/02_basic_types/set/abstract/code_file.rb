@@ -12,8 +12,7 @@ def self.included host_class
   host_class.mod_name = match[:mod_name]
 end
 
-
-# @return [Array<String>, String] the name of file to be loaded
+# @return [Array<String>, String] the name of file(s) to be loaded
 def source_files
   case type_id
   when CoffeeScriptID then "#{codename}.js.coffee"
@@ -28,10 +27,6 @@ def source_dir
   when CoffeeScriptID, JavaScriptID then 'javascript'
   when CssID, ScssID then 'stylesheets'
   end
-end
-
-def source_path filename
-  File.join(mod_path)
 end
 
 def find_file filename

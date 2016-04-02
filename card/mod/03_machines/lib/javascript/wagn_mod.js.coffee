@@ -23,7 +23,7 @@ $.extend wagn,
     '.perm-editor': -> permissionsContent this
   }
   editorInitFunctionMap: {
-    '.date-editor': -> @datepicker { dateFormat : 'yy-mm-dd' }
+    '.date-editor': -> @datepicker { dateFormat: 'yy-mm-dd' }
     'textarea': -> $(this).autosize()
     '.ace-editor-textarea': -> wagn.initAce $(this)
     '.tinymce-textarea': -> wagn.initTinyMCE @[0].id

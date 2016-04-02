@@ -254,7 +254,7 @@ format :html do
 
   view :editor, mod: Html::HtmlFormat
 
-  view :no_search_results do |args|
+  view :no_search_results do |_args|
     %(<div class="search-no-results"></div>)
   end
 

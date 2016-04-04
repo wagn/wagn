@@ -1,2 +1,1 @@
-format { include ScriptAce::Format }
-format(:html) { include ScriptAce::HtmlFormat }
+include_set Abstract::CodeFile

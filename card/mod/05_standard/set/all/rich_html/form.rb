@@ -124,7 +124,7 @@ format :html do
   def formgroup title, content, opts={}
     wrap_with :div, formgroup_div_args(opts[:class]) do
       %(
-        #{@form.label(opts[:editor] || :content, title)}
+        #{form.label(opts[:editor] || :content, title)}
         <div>
           #{editor_wrap(opts[:editor]) { content }}
           #{formgroup_help_text opts[:help]}
@@ -152,12 +152,13 @@ format :html do
     result = ''
     hash ||= {}
     hash.each do |key, val|
-      result += if val.is_a?(Hash)
-                  hidden_tags val, key
-                else
-                  name = base ? "#{base}[#{key}]" : key
-                  hidden_field_tag name, val
-                end
+      result +=
+        if val.is_a?(Hash)
+          hidden_tags val, key
+        else
+          name = base ? "#{base}[#{key}]" : key
+          hidden_field_tag name, val
+        end
     end
     result
   end

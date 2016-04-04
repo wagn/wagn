@@ -1,7 +1,5 @@
-view :raw do |_args|
-  ['bootstrap.js', 'bootstrap_modal_wagn.js'].map do |name|
-    File.read "#{Cardio.gem_root}/mod/06_bootstrap/lib/javascript/#{name}"
-  end.join("\n")
-end
+include_set Abstract::CodeFile
 
-format(:html) { include BootstrapCards::HtmlFormat }
+def source_files
+  %w( bootstrap.js bootstrap_modal_wagn.js )
+end

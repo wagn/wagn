@@ -31,7 +31,6 @@ format :html do
   def lazy_loading_tabs tabs, active_name, active_content, args={}
     tab_buttons = ''
     tab_panes = ''
-    tab_type = args.delete(:type) || 'tabs'
     tabs.each do |tab_name, url|
       active_tab = (active_name == tab_name)
       id = "#{card.cardname.safe_key}-#{tab_name.to_name.safe_key}"
@@ -41,12 +40,14 @@ format :html do
         class: (active_tab ? nil : 'load')
       )
       tab_content = active_tab ? active_content : ''
-      tab_panes += tab_pane(id, tab_content, active_tab, args[:pane_args] || {})
+      tab_panes += tab_pane(id, tab_content, active_tab, args[:pane_args])
     end
-    tab_panel tab_buttons, tab_panes, tab_type, args[:panel_args] || {}
+    tab_type = args.delete(:type) || 'tabs'
+    tab_panel tab_buttons, tab_panes, tab_type, args[:panel_args]
   end
 
-  def tab_panel tab_buttons, tab_panes, tab_type='tabs', args={}
+  def tab_panel tab_buttons, tab_panes, tab_type='tabs', args=nil
+    args ||= {}
     add_class args, 'tabbable'
     args.reverse_merge! role: 'tabpanel'
     wrap_with :div, args do
@@ -69,7 +70,8 @@ format :html do
     content_tag :li, link, li_args
   end
 
-  def tab_pane id, content, active=false, args={}
+  def tab_pane id, content, active=false, args=nil
+    args ||= {}
     args.reverse_merge! role: :tabpanel,
                         id: id
     add_class args, 'tab-pane'

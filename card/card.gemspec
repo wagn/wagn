@@ -53,8 +53,9 @@ Gem::Specification.new do |s|
 
     ['bootstrap-kaminari-views',   '~> 0'],
     ['diff-lcs',                   '~> 1.2'],
-    # mime-types-data can be removed if we drop support for ruby 1.9.3
-    ['mime-types-data',             '3.2015.1120']
+    # mime-types can be removed if we drop support for ruby 1.9.3
+    # mime-types 3.0 uses mime-types-data which isn't compatible with 1.9.3
+    ['mime-types',                  '2.99.1']
   ].each do |dep|
     s.add_runtime_dependency(*dep)
   end

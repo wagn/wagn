@@ -65,9 +65,8 @@ end
 # insert entries in reference table
 def create_references_out
   ref_hash = {}
-  content_obj = Card::Content.new raw_content, self
-  content_obj.find_chunks(Card::Content::Chunk::Reference).each do |chunk|
-    interpret_reference ref_hash, chunk.referee_name, chunk.reference_code
+  each_reference_out do |referee_name, ref_type|
+    interpret_reference ref_hash, referee_name, ref_type
   end
   return if ref_hash.empty?
   Card::Reference.mass_insert reference_values_array(ref_hash)
@@ -119,6 +118,15 @@ def reference_values_array ref_hash
     end
   end
   values
+end
+
+# invokes the given block for each reference in raw_content with
+# the reference name and reference type
+def each_reference_out
+  content_obj = Card::Content.new raw_content, self
+  content_obj.find_chunks(Card::Content::Chunk::Reference).each do |chunk|
+    yield(chunk.referee_name, chunk.reference_code)
+  end
 end
 
 protected

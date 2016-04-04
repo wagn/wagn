@@ -13,8 +13,9 @@ format do
 
   def compile_scss scss, style=:expanded
     Sass.compile scss, style: style
-  rescue => e
-    e
+  rescue Sass::SyntaxError => e
+    raise Card::Error, "Sass::SyntaxError (#{card.name}:#{e.sass_line}): " \
+                       "#{e.message}"
   end
 end
 

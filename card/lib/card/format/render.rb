@@ -132,8 +132,14 @@ class Card
         options[:class] = [options[:class], klass].flatten.compact * ' '
       end
 
+      def id_counter
+        return @parent.id_counter if @parent
+        @id_counter ||= 0
+        @id_counter += 1
+      end
+
       def unique_id
-        "#{card.key}-#{Time.now.to_i}-#{rand(3)}"
+        "#{card.key}-#{id_counter}"
       end
     end
   end

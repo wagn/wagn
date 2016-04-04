@@ -258,7 +258,7 @@ format :html do
     %(<div class="search-no-results"></div>)
   end
 
-  view :paging do |_args|
+  view :paging do |args|
     s = card.query search_params
     offset = s[:offset].to_i
     limit = s[:limit].to_i
@@ -268,8 +268,11 @@ format :html do
     total = card.count search_params
     # should only happen if limit exactly equals the total
     return '' if limit >= total
-
-    @paging_path_args = { limit: limit, item: nest_defaults(card)[:view] }
+    @paging_path_args = { limit: limit,
+                          slot: {
+                            item: args[:item] || nest_defaults(card)[:view]
+                          } }
+    @paging_path_args[:view] = args[:home_view] if args[:home_view]
     @paging_limit = limit
 
     s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }

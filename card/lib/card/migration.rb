@@ -44,7 +44,8 @@ class Card::Migration < ActiveRecord::Migration
 
       ActiveRecord::Base.table_name_suffix = new_suffix
       ActiveRecord::SchemaMigration.reset_table_name
-      yield
+      paths = Cardio.migration_paths(type)
+      yield(paths)
       ActiveRecord::Base.table_name_suffix = original_suffix
       ActiveRecord::SchemaMigration.reset_table_name
     end

@@ -6,7 +6,19 @@ WAGN_SEED_PATH = File.join(
   ENV['DECKO_SEED_REPO_PATH'] || [Cardio.gem_root, 'db', 'seed'], 'new'
 )
 
+def run_card_migration core_or_deck
+  prepare_migration
+  verbose = ENV['VERBOSE'] ? ENV['VERBOSE'] == 'true' : true
+  Cardio.schema_mode(core_or_deck) do |paths|
+    ActiveRecord::Migrator.migrations_paths = paths
+    ActiveRecord::Migration.verbose = verbose
+    ActiveRecord::Migrator.migrate paths, version
+  end
+end
+
 def prepare_migration
+  Card::Cache.reset_all
+  ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
   Card::Cache.reset_all
   Card.config.action_mailer.perform_deliveries = false
   Card.reset_column_information
@@ -153,9 +165,9 @@ namespace :wagn do
     desc 'migrate structure'
     task structure: :environment do
       ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
-      Cardio.schema_mode(:structure) do
-        paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:structure)
-        ActiveRecord::Migrator.migrate paths
+      Cardio.schema_mode(:structure) do |paths|
+        ActiveRecord::Migrator.migrations_paths = paths
+        ActiveRecord::Migrator.migrate paths, version
         Rake::Task['db:_dump'].invoke   # write schema.rb
       end
     end
@@ -163,34 +175,23 @@ namespace :wagn do
     desc 'migrate core cards'
     task core_cards: :environment do
       require 'card/core_migration'
-
-      Card::Cache.reset_all
-      ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
-      prepare_migration
-      paths = Cardio.migration_paths(:core_cards)
-      verbose = ENV['VERBOSE'] ? ENV['VERBOSE'] == 'true' : true
-      version = ENV['VERSION'] ? ENV['VERSION'].to_i : nil
-
-      ActiveRecord::Migrator.migrations_paths = paths
-      Cardio.schema_mode :core_cards do
-        ActiveRecord::Migration.verbose = verbose
-        ActiveRecord::Migrator.migrate paths, version
-      end
+      run_card_migration :core_cards
     end
 
     desc 'migrate deck cards'
     task deck_cards: :environment do
       require 'card/migration'
+      run_card_migration :deck_cards
+    end
 
-      Card::Cache.reset_all
-      ENV['SCHEMA'] ||= "#{Cardio.gem_root}/db/schema.rb"
-      prepare_migration
-      paths = ActiveRecord::Migrator.migrations_paths = Cardio.migration_paths(:deck_cards)
-
-      Cardio.schema_mode(:deck_cards) do
-        ActiveRecord::Migration.verbose = ENV['VERBOSE'] ? ENV['VERBOSE'] == 'true' : true
-        ActiveRecord::Migrator.migrate paths, ENV['VERSION'] ? ENV['VERSION'].to_i : nil
-      end
+    desc 'Runs the "up" for a given deck cards migration VERSION.'
+    task up: :environment do
+      version = ENV['VERSION'] ? ENV['VERSION'].to_i : nil
+      verbose = ENV['VERBOSE'] ? ENV['VERBOSE'] == 'true' : true
+      raise 'VERSION is required' unless version
+      ActiveRecord::Migration.verbose = verbose
+      ActiveRecord::Migrator.run :up, Cardio.migration_paths(:deck_cards),
+                                 version
     end
 
     # maybe we should move this to a method?
@@ -268,7 +269,7 @@ namespace :wagn do
           data = ActiveRecord::Base.connection.select_all(
             "select * from #{table}"
           )
-          file.write YAML.dump(data.inject({}) do |hash, record|
+          file.write YAML.dump(data.each_with_object({}) do |record, hash|
             record['trash'] = false if record.key? 'trash'
             record['draft'] = false if record.key? 'draft'
             if record.key? 'content'
@@ -277,7 +278,6 @@ namespace :wagn do
               # would not be needed with psych.
             end
             hash["#{table}_#{i.succ!}"] = record
-            hash
           end)
         end
       end
@@ -348,7 +348,7 @@ end
 
 def delete_unwanted_cards
   Card::Auth.as_bot do
-    if ignoramus = Card['*ignore']
+    if (ignoramus = Card['*ignore'])
       ignoramus.item_cards.each(&:delete!)
     end
     Card::Cache.reset_all
@@ -374,4 +374,8 @@ def clear_history
   Card::Action.find_each do |action|
     action.update_attributes!(card_act_id: act.id)
   end
+end
+
+def version
+  ENV['VERSION'] ? ENV['VERSION'].to_i : nil
 end

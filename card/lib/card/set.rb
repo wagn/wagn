@@ -196,7 +196,14 @@ class Card
       end
     end
 
-    def include_set_formats set, opts
+    # include a format modules of a set
+    # @param [Module] set
+    # @param [Hash] opts choose the formats you want to include
+    # @option opts [Symbol, Array<Symbol>] :only include only these formats
+    # @option opts [Symbol, Array<Symbol>] :except don't include these formats
+    # @example
+    # include_set Type::Basic, except: :css
+    def include_set_formats set, opts={}
       each_format set do |format, format_mods|
         match = format.to_s.match(/::(?<format>[^:]+)Format/)
         format_sym = match ? match[:format] : :base

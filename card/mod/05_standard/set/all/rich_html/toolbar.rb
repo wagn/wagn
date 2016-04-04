@@ -111,7 +111,7 @@ format :html do
     toolbar_split_button 'edit', { view: :edit }, args do
       {
         edit:       _render_edit_content_link(args),
-        edit_nests: (_render_edit_nests_link if nests_editable?),
+        edit_nests: (_render_edit_nests_link if nests_editable?(args)),
         structure:  (_render_edit_structure_link if structure_editable?),
         edit_name:  _render_edit_name_link,
         edit_type:  _render_edit_type_link

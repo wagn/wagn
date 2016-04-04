@@ -8,8 +8,8 @@ def self.included host_class
   mod_dir = path_parts[path_parts.index('set') + 1]
   raise Card::Error, "not a set path: #{path}" unless mod_dir
   match = mod_dir.match(/^mod\d+-(?<mod_name>.+)$/)
-  host_class.mattr_accessor :mod_name
-  host_class.mod_name = match[:mod_name]
+  host_class.mattr_accessor :file_content_mod_name
+  host_class.file_content_mod_name = match[:mod_name]
 end
 
 # @return [Array<String>, String] the name of file(s) to be loaded
@@ -31,7 +31,8 @@ end
 
 def find_file filename
   Card.paths['mod'].to_a.each do |mod_path|
-    file_path = File.join(mod_path, mod_name, 'lib', source_dir, filename)
+    file_path =
+      File.join(mod_path, file_content_mod_name, 'lib', source_dir, filename)
     return file_path if File.exist? file_path
   end
   nil

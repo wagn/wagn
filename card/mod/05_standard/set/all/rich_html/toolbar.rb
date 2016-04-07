@@ -27,6 +27,7 @@ format :html do
       ]
     end
   end
+
   def default_toolbar_args args
     args[:nested_fields] = nested_fields(args)
     args[:active_toolbar_button] ||= active_toolbar_button @slot_view, args
@@ -233,7 +234,8 @@ format :html do
     tag_args[:class] = [tag_args[:class], 'btn btn-primary'].compact * ' '
     tag_args[:title] ||= text
     link_text = glyphicon symbol
-    link_text += "<span class='menu-item-label #{hide}'>#{text}</span>"
+    link_text +=
+      "<span class='menu-item-label #{hide}'>#{text}</span>".html_safe
 
     if (cardname = tag_args.delete(:page))
       card_link cardname, class: klass, text: link_text

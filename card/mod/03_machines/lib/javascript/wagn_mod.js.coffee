@@ -176,8 +176,11 @@ $.extend wagn,
 # sidebars
 
 wrapDeckoLayout = () ->
-  $('body > article, body > aside, body > footer').wrapAll('<div class="container"/>')
+  $footer  = $('body > footer').first()
+  $('body > article, body > aside').wrapAll('<div class="container"/>')
   $('div.container > article, div.container > aside').wrapAll('<div class="row row-offcanvas">')
+  if $footer
+    $('body').append $footer
 
 wrapSidebarToggle = (toggle) ->
   "<div class='container'><div class='row'>#{toggle}</div></div>"
@@ -209,6 +212,7 @@ doubleSidebar = ->
   $('body').append($asideLeft).append($article).append($asideRight)
 
   wrapDeckoLayout()
+
   $article.prepend(wrapSidebarToggle("#{sidebarToggle('right')}#{sidebarToggle('left')}"))
 
 $(window).ready ->

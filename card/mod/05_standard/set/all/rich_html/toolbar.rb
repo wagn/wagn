@@ -233,7 +233,8 @@ format :html do
     tag_args[:class] = [tag_args[:class], 'btn btn-primary'].compact * ' '
     tag_args[:title] ||= text
     link_text = glyphicon symbol
-    link_text += "<span class='menu-item-label #{hide}'>#{text}</span>"
+    link_text += content_tag :span, text.html_safe,
+                             class: "menu-item-label #{hide}"
 
     if (cardname = tag_args.delete(:page))
       card_link cardname, class: klass, text: link_text
@@ -244,7 +245,6 @@ format :html do
       path_opts = tag_args.delete(:path_opts) || {}
       path_opts[:action] = tag_args.delete(:action) if tag_args[:action]
       link_to link_text, path_opts, tag_args
-
     end
   end
 

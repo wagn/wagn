@@ -57,6 +57,7 @@ class Card
       key = absolutize_subcard_name(key).key unless @keys.include?(key)
       @keys.delete key
       removed_card = fetch_subcard key
+      removed_card.deep_clear_subcards
       if removed_card.current_action
         removed_card.current_action.delete
       end

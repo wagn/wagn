@@ -63,6 +63,13 @@ class Card
         director.delete
       end
 
+      def deep_delete director
+        director.subdirectors.each do |subdir|
+          deep_delete subdir
+        end
+        delete director
+      end
+
       def to_s
         directors.values.map(&:to_s).join "\n"
       end

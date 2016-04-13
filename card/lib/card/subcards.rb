@@ -45,22 +45,14 @@ class Card
     end
 
     def remove name_or_card
-      key = case name_or_card
-            when Card
-              name_or_card.key
-            when Symbol
-              fetch_subcard(name_or_card).key
-            else
-              name_or_card.to_name.key
-            end
-
-      key = absolutize_subcard_name(key).key unless @keys.include?(key)
+      key = subcard_key name_or_card
+      return unless @keys.include? key
       @keys.delete key
       removed_card = fetch_subcard key
       if removed_card.current_action
         removed_card.current_action.delete
       end
-      Card::DirectorRegister.delete removed_card.director
+      Card::DirectorRegister.deep_delete removed_card.director
       Card.cache.soft.delete key
       removed_card
     end
@@ -187,6 +179,19 @@ class Card
     end
 
     private
+
+    def subcard_key name_or_card
+      key = case name_or_card
+            when Card
+              name_or_card.key
+            when Symbol
+              fetch_subcard(name_or_card).key
+            else
+              name_or_card.to_name.key
+            end
+      key = absolutize_subcard_name(key).key unless @keys.include?(key)
+      key
+    end
 
     def fetch_subcard key
       Card.fetch key, local_only: true, new: {}

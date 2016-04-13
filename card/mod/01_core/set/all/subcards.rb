@@ -21,13 +21,15 @@ def add_subfield name_or_card, args=nil
   subcards.add_field name_or_card, args
 end
 
-def remove_subcard name_or_card
+def detach_subcard name_or_card
   subcards.remove name_or_card
 end
+alias_method :remove_subcard, :detach_subcard
 
-def remove_subfield name_or_card
+def detach_subfield name_or_card
   subcards.remove_field name_or_card
 end
+alias_method :remove_subfield, :detach_subfield
 
 def clear_subcards
   subcards.clear

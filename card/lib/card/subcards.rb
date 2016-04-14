@@ -225,6 +225,7 @@ class Card
       absolute_name = absolutize_subcard_name name
       if absolute_name.field_of?(@context_card.name) &&
          (absolute_name.parts.size - @context_card.cardname.parts.size) > 2
+        binding.pry
         left_card = new_by_attributes absolute_name.left
         new_by_card left_card
         left_card.new_by_attributes absolute_name, attributes
@@ -251,6 +252,7 @@ class Card
       end
       @keys << card.key
       Card.write_to_soft_cache card
+      binding.pry
       card.director = @context_card.director.subdirectors.add(card)
       card
     end

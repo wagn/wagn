@@ -67,6 +67,10 @@ class Card
         director.subdirectors.each do |subdir|
           deep_delete subdir
         end
+        director.card.subcards.each do |card|
+          binding.pry
+          delete card.director
+        end
         delete director
       end
 

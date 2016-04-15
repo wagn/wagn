@@ -221,18 +221,38 @@ class Card
       end
     end
 
+    # TODO: this method already exists as card instance method in
+    #   tracked_attributes.rb. Find a place for it where its accessible
+    #   for both. There is one important difference. The keys are symbols
+    # here instead of strings
+    def extract_subcard_args! args
+      subcards = args.delete(:subcards) || {}
+      if (subfields = args.delete(:subfields))
+        subfields.each_pair do |key, value|
+          subcards[cardname.field(key)] = value
+        end
+      end
+      args.keys.each do |key|
+        subcards[key] = args.delete(key) if key =~ /^\+/
+      end
+      subcards
+    end
+
     def new_by_attributes name, attributes={}
       absolute_name = absolutize_subcard_name name
       if absolute_name.field_of?(@context_card.name) &&
          (absolute_name.parts.size - @context_card.cardname.parts.size) > 2
-        binding.pry
         left_card = new_by_attributes absolute_name.left
         new_by_card left_card
         left_card.new_by_attributes absolute_name, attributes
       else
+
+        subcard_args = extract_subcard_args! attributes
         card = Card.assign_or_initialize_by absolute_name.s, attributes,
                                             local_only: true
-        new_by_card card
+        subcard = new_by_card card
+        card.subcards.add subcard_args
+        subcard
       end
     end
 
@@ -252,7 +272,6 @@ class Card
       end
       @keys << card.key
       Card.write_to_soft_cache card
-      binding.pry
       card.director = @context_card.director.subdirectors.add(card)
       card
     end

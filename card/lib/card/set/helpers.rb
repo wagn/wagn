@@ -11,7 +11,7 @@ class Card
       # include_set Type::Basic, except: :css
       def include_set set, opts={}
         set_type = set.abstract_set? ? :abstract : :nonbase
-        @@modules[set_type][set.shortname].each do |set_mod|
+        Card::Set.modules[set_type][set.shortname].each do |set_mod|
           include set_mod
         end
         include_set_formats set, opts

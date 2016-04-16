@@ -1,7 +1,7 @@
 class Card
   module Set
+    # advanced set module API
     module Helpers
-
       # include a set module and all its format modules
       # @param [Module] set
       # @param [Hash] opts choose the formats you want to include
@@ -60,6 +60,19 @@ class Card
                        :action_id_of_cached_upload, :empty_ok
         uploader_class = args[:uploader] || FileUploader
         mount_uploader name, uploader_class
+      end
+
+      def stage_method method, opts={}, &block
+        class_eval do
+          define_method "_#{method}", &block
+          define_method method do |*args|
+            if (error = wrong_stage(opts) || wrong_action(opts[:on]))
+              raise Card::Error, error
+            else
+              send "_#{method}", *args
+            end
+          end
+        end
       end
 
       def shortname

@@ -30,19 +30,6 @@ class Card
         end
       end
 
-      def stage_method method, opts={}, &block
-        class_eval do
-          define_method "_#{method}", &block
-          define_method method do |*args|
-            if (error = wrong_stage(opts) || wrong_action(opts[:on]))
-              raise Card::Error, error
-            else
-              send "_#{method}", *args
-            end
-          end
-        end
-      end
-
       private
 
       def with_delay? opts

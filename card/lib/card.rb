@@ -15,7 +15,7 @@ class Card < ActiveRecord::Base
   # attributes that ActiveJob can handle
   def self.serializable_attr_accessor *args
     self.serializable_attributes = args
-    attr_accessor *args
+    attr_accessor(*args)
   end
 
   require_dependency 'card/active_record_ext'
@@ -35,7 +35,6 @@ class Card < ActiveRecord::Base
   require_dependency 'card/stage_director'
   require_dependency 'card/director_register'
 
-
   has_many :references_in,  class_name: :Reference, foreign_key: :referee_id
   has_many :references_out, class_name: :Reference, foreign_key: :referer_id
   has_many :acts, -> { order :id }
@@ -44,8 +43,8 @@ class Card < ActiveRecord::Base
 
   cattr_accessor :set_patterns, :serializable_attributes, :error_codes,
                  :set_specific_attributes, :current_act
-  @@set_patterns = []
-  @@error_codes = {}
+  self.set_patterns = []
+  self.error_codes = {}
 
   serializable_attr_accessor(
     :action, :supercard, :superleft,

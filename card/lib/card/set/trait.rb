@@ -1,6 +1,5 @@
 class Card
   module Set
-    #
     # ActiveCard support: accessing plus cards as attributes
     module Trait
       def card_accessor *args
@@ -20,6 +19,11 @@ class Card
 
       private
 
+      def add_attributes *args
+        Card.set_specific_attributes ||= []
+        Card.set_specific_attributes += args.map(&:to_s)
+      end
+
       def get_traits mod
         Card::Set.traits ||= {}
         Card::Set.traits[mod] || Card::Set.traits[mod] = {}
@@ -27,7 +31,6 @@ class Card
 
       def add_traits args, options
         mod = self
-        # raise "Can't define card traits on all set" if mod == Card
         mod_traits = get_traits mod
 
         new_opts = options[:type] ? { type: options[:type] } : {}

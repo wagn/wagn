@@ -15,6 +15,20 @@ end
 
 private
 
+def wrong_stage opts
+  return false if director.stage_ok? opts
+  if !stage
+    "phase method #{method} called outside of event phases"
+  else
+    "#{opts.inspect} method #{method} called in stage #{stage}"
+  end
+end
+
+def wrong_action action
+  return false if on_condition_applies? action
+  "on: #{action} method #{method} called on #{@action}"
+end
+
 def on_condition_applies? action
   if action
     Array.wrap(action).member? @action

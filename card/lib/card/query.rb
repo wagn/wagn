@@ -43,7 +43,11 @@ class Card
 
     include Clause
     include Attributes
+    include RelationalAttributes
     include Interpretation
+    include Sorting
+    include Conjunctions
+    include Helpers
 
     ATTRIBUTES = {
       basic:           %w( id name key type_id content left_id right_id

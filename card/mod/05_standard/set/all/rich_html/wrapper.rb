@@ -99,7 +99,7 @@ format :html do
 
   def frame_and_form action, args={}, form_opts={}
     form_opts.merge! args.delete(:form_opts) if args[:form_opts]
-    form_opts[:hidden] = args.delete(:hidden)
+    form_opts[:hidden] = args.delete(:hidden) if args[:hidden]
     frame args do
       card_form action, form_opts do
         output(yield args)

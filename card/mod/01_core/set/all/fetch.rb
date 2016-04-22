@@ -101,7 +101,7 @@ module ClassMethods
   end
 
   def [] *marks
-    fetch *marks, skip_virtual: true
+    fetch(*marks, skip_virtual: true)
   end
 
   def exists? mark

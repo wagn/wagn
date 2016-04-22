@@ -15,6 +15,8 @@ module ClassMethods
   #    1. a numeric id (Integer)
   #    2. a name/key (String or Card::Name)
   #    3. a codename (Symbol)
+  #   or any combination of those. If you pass more then one mark they get
+  #   joined with a '+'
   # @param [Hash] opts ({})
   #   Options:
   #     :skip_virtual               Real cards only
@@ -23,10 +25,9 @@ module ClassMethods
   #     :local_only                 Use only local cache for lookup and storing
   #     new: {  card opts }      Return a new card when not found
   #
-  def fetch mark, opts={}
+  def fetch *args
+    mark, opts = normalize_fetch_args args
     validate_fetch_opts! opts
-    mark = normalize_mark mark, opts
-
     card, needs_caching = fetch_existing mark, opts
 
     if (new_card = new_for_cache card, mark, opts)
@@ -76,8 +77,8 @@ module ClassMethods
     fetch mark, opts.merge(local_only: true)
   end
 
-  def fetch_id mark, opts={}
-    mark = normalize_mark mark, opts
+  def fetch_id *args
+    mark, _opts = normalize_fetch_args args
     if mark.is_a?(Integer)
       mark
     else
@@ -99,8 +100,8 @@ module ClassMethods
     end
   end
 
-  def [] mark
-    fetch mark, skip_virtual: true
+  def [] *marks
+    fetch *marks, skip_virtual: true
   end
 
   def exists? mark
@@ -222,6 +223,19 @@ module ClassMethods
     return unless Card.cache
     Card.cache.soft.write card.key, card
     Card.cache.soft.write "~#{card.id}", card.key if card.id && card.id != 0
+  end
+
+  def compose_mark parts, opts
+    return normalize_mark(parts.first, opts) if parts.size == 1
+    parts.map do |p|
+      normalized = normalize_mark p, {}
+      normalized.is_a?(Integer) ? fetch(normalized).name : normalized.to_s
+    end.join('+').to_name
+  end
+
+  def normalize_fetch_args args
+    opts = args.last.is_a?(Hash) ? args.pop : {}
+    [compose_mark(args, opts), opts]
   end
 
   def normalize_mark mark, opts

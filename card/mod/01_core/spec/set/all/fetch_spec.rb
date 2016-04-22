@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::All::Fetch do
-  describe '.fetch' do
+  describe '#fetch' do
     it 'returns and caches existing cards' do
       card_double = class_double('Card')
       expect(Card.fetch('A')).to be_instance_of(Card)
@@ -72,6 +72,18 @@ describe Card::Set::All::Fetch do
         .to eq('Yomama')
     end
 
+    it 'fetches junction of names' do
+      card = Card.fetch 'A','B'
+      expect(card).to be_instance_of(Card)
+      expect(card.name).to eq 'A+B'
+    end
+
+    it 'fetches junction of name, id, and codename' do
+      card = Card.fetch 'Book', Card.fetch_id(:type), :structure
+      expect(card).to be_instance_of(Card)
+      expect(card.name).to eq 'Book+*type+*structure'
+    end
+
     it 'does not recurse infinitely on template templates' do
       expect(Card.fetch('*structure+*right+*structure')).to be_nil
     end
@@ -104,6 +116,7 @@ describe Card::Set::All::Fetch do
         a.save!
       end
     end
+
     describe 'default option' do
       context "when card doesn't exist" do
         it 'initializes new cards' do

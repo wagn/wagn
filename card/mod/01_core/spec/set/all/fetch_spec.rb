@@ -73,7 +73,7 @@ describe Card::Set::All::Fetch do
     end
 
     it 'fetches junction of names' do
-      card = Card.fetch 'A','B'
+      card = Card.fetch 'A', 'B'
       expect(card).to be_instance_of(Card)
       expect(card.name).to eq 'A+B'
     end

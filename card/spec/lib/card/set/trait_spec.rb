@@ -39,7 +39,7 @@ describe Card::Set::Trait do
         # test API doesn't support sets for event
         # so we check the name
         return unless name == 'joke'
-        expect(write_card.left.class).to eq Card
+        expect(write_card.left).to be_instance_of Card
       end
     end
     it 'loads *type plus right set module' do
@@ -55,7 +55,7 @@ describe Card::Set::Trait do
       in_stage :prepare_to_validate, on: :create,
                                      trigger: -> { subject } do
         return unless name == 'joke'
-        expect(read_card.left.class).to eq Card
+        expect(read_card.left).to be_instance_of Card
       end
     end
   end

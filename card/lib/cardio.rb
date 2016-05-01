@@ -96,7 +96,7 @@ module Cardio
     end
 
     def set_mod_paths
-      each_mod_path { |mod_path| add_initializers mod_path }
+      each_mod_path { |mod_path| add_initializers File.join(mod_path, '*') }
     end
 
     def add_initializers dir

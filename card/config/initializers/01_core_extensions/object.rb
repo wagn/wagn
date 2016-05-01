@@ -14,11 +14,7 @@ module CoreExtensions
       else
         klone = clone
       end
-      klone.instance_variables.each do |v|
-        klone.instance_variable_set(v,
-                                    klone.instance_variable_get(v).deep_clone)
-      end
-      klone
+      klone.clone_instance_variables
     end
 
     def send_unless method, *args, &_block
@@ -35,6 +31,13 @@ module CoreExtensions
 
     def to_viewname
       Card::ViewName.new self
+    end
+
+    def clone_instance_variables
+      instance_variables.each do |v|
+        instance_variable_set v, instance_variable_get(v).deep_clone
+      end
+      obj
     end
   end
 end

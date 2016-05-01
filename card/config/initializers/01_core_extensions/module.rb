@@ -4,7 +4,7 @@ module CoreExtensions
 
     def const_get_if_defined const
       args = RUBY_VERSION_18 ? [const] : [const, false]
-      const_get *args if const_defined? *args
+      const_get(*args) if const_defined?(*args)
     end
 
     def const_get_or_set const

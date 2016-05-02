@@ -1,35 +1,25 @@
 module CoreExtensions
   module Hash
     module ClassMethods
-      # FIXME: this is too ugly and narrow for a core extension.
-      def new_from_semicolon_attr_list attr_string
-        return {} if attr_string.blank?
-        attr_string.strip.split(';').inject({}) do |result, pair|
-          value, key = pair.split(':').reverse
-          key ||= 'view'
-          key.strip!
-          value.strip!
-          result[key.to_sym] = value
-          result
+      module Nesting
+
+        # create hash with default nested structures
+        # @example
+        #   h = Hash.new_nested Hash, Array
+        #   h[:a] # => {}
+        #   h[:b][:c] # => []
+        def new_nested *structure
+          initialize_nested structure.unshift Hash
         end
-      end
 
-      # create hash with default nested structures
-      # @example
-      #   h = Hash.new_nested Hash, Array
-      #   h[:a] # => {}
-      #   h[:b][:c] # => []
-      def new_nested *structure
-        initialize_nested structure.unshift Hash
-      end
-
-      def initialize_nested classes
-        klass = classes.shift
-        if classes.empty?
-          klass.new
-        else
-          klass.new do |h, k|
-            h[k] = initialize_nested classes
+        def initialize_nested classes
+          klass = classes.shift
+          if classes.empty?
+            klass.new
+          else
+            klass.new do |h, k|
+              h[k] = initialize_nested classes
+            end
           end
         end
       end

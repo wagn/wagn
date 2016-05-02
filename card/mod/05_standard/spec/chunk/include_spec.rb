@@ -85,6 +85,16 @@ describe Card::Content::Chunk::Include, 'Inclusion' do
       expect(options[:view]).to eq('link')
       expect(options[:items][:view]).to eq('name')
     end
+
+    it '#each_option should work' do
+      @chunk = '{{}}'
+      expect { |b| instance.send(:each_option, '', &b) }.not_to yield_control
+      expect { |b| instance.send(:each_option, nil, &b) }.not_to yield_control
+      expect { |b| instance.send(:each_option, 'a:b;c:4', &b) }
+        .to yield_successive_args(['a', 'b'], ['c', '4'])
+      expect { |b| instance.send(:each_option,'d:b;e:4; ', &b) }
+        .to yield_successive_args(['d', 'b'], ['e', '4'])
+    end
   end
 
   context 'rendering' do
@@ -188,16 +198,6 @@ describe Card::Content::Chunk::Include, 'Inclusion' do
       assert_view_select r, 'div[style~="shade:on;"]' do
         assert_select 'div[class~="card-content"]', 'Pooey'
       end
-    end
-
-    # FIXME: should move code and test to core_ext or some such
-    it 'Hash.new_from_semicolon_attr_list should work' do
-      expect(Hash.new_from_semicolon_attr_list('')).to eq({})
-      expect(Hash.new_from_semicolon_attr_list(nil)).to eq({})
-      expect(Hash.new_from_semicolon_attr_list('a:b;c:4'))
-        .to eq(a: 'b', c: '4')
-      expect(Hash.new_from_semicolon_attr_list('d:b;e:4; '))
-        .to eq(d: 'b', e: '4')
     end
   end
 end

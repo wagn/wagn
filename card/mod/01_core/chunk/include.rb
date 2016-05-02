@@ -120,7 +120,7 @@ module Card::Content::Chunk
 
     def each_option attr_string
       return if attr_string.blank?
-      attr_string.strip.split(';').each_with_object({}) do |pair, result|
+      attr_string.strip.split(';').each do |pair|
         value, key = pair.split(':').reverse
         key ||= 'view'
         yield key.strip, value.strip

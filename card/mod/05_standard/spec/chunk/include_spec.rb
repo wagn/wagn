@@ -91,9 +91,9 @@ describe Card::Content::Chunk::Include, 'Inclusion' do
       expect { |b| instance.send(:each_option, '', &b) }.not_to yield_control
       expect { |b| instance.send(:each_option, nil, &b) }.not_to yield_control
       expect { |b| instance.send(:each_option, 'a:b;c:4', &b) }
-        .to yield_successive_args(['a', 'b'], ['c', '4'])
-      expect { |b| instance.send(:each_option,'d:b;e:4; ', &b) }
-        .to yield_successive_args(['d', 'b'], ['e', '4'])
+        .to yield_successive_args(%w(a b), %w(c 4))
+      expect { |b| instance.send(:each_option, 'd:b;e:4; ', &b) }
+        .to yield_successive_args(%w(d b), %w(e 4))
     end
   end
 

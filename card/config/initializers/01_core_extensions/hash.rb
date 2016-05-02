@@ -2,24 +2,19 @@ module CoreExtensions
   module Hash
     module ClassMethods
       module Nesting
-
         # create hash with default nested structures
         # @example
         #   h = Hash.new_nested Hash, Array
         #   h[:a] # => {}
         #   h[:b][:c] # => []
-        def new_nested *structure
-          initialize_nested structure.unshift Hash
+        def new_nested *classes
+          initialize_nested classes.unshift ::Hash
         end
 
-        def initialize_nested classes
-          klass = classes.shift
-          if classes.empty?
-            klass.new
-          else
-            klass.new do |h, k|
-              h[k] = initialize_nested classes
-            end
+        def initialize_nested classes, level=0
+          return classes[level].new if level == classes.size - 1
+          classes[level].new do |h, k|
+            h[k] = initialize_nested classes, level + 1
           end
         end
       end

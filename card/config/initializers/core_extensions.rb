@@ -22,4 +22,3 @@ class Array
 end
 
 Hash.extend CoreExtensions::Hash::ClassMethods::Nesting
-

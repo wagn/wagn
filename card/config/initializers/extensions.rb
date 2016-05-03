@@ -1,1 +1,3 @@
-Kaminari::Helpers::Tag.include Extensions::Kaminari::Helpers::Tag
+class Kaminari::Helpers::Tag
+  include Extensions::Kaminari::Helpers::Tag
+end

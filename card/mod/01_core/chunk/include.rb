@@ -123,7 +123,7 @@ module Card::Content::Chunk
       return if attr_string.blank?
       attr_string.strip.split(';').each do |pair|
         value, key = pair.split(':').reverse
-        key ||= DEFAULT_OPTION.to_s
+        key ||= self.class::DEFAULT_OPTION.to_s
         yield key.strip, value.strip
       end
     end

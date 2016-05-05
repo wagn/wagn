@@ -89,8 +89,6 @@ class Card::Migration < ActiveRecord::Migration
     Card::Mailer.perform_deliveries = false
     output_file = File.join data_path, "unmerged_#{filename}"
     merge_opts[:output_file] ||= output_file
-    require 'pry'
-    binding.pry
     meta_data = JSON.parse(File.read data_path(filename))
     full_data =
       meta_data.map do |hash|

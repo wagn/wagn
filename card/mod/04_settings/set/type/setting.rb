@@ -12,6 +12,17 @@ def self.member_names
   end
 end
 
+format :data do
+  view :core do |_args|
+    wql = { left:  { type: Card::SetID },
+            right: card.id,
+            limit: 0
+          }
+    Card.search(wql).compact.map { |c| nest c }
+  end
+end
+
+
 view :core do |args|
   klasses = Card.set_patterns.reverse.map do |set_class|
     wql = { left:  { type: Card::SetID },

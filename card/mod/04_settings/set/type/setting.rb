@@ -22,7 +22,6 @@ format :data do
   end
 end
 
-
 view :core do |args|
   klasses = Card.set_patterns.reverse.map do |set_class|
     wql = { left:  { type: Card::SetID },

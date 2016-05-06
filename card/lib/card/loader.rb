@@ -21,45 +21,7 @@ class Card
         load_formats
         load_sets
 
-        update_machine_output_hack if ENV['RAILS_ENV'] == 'development'
-      end
-
-      def update_machine_output_hack
-        update_script_output
-        update_style_output
-      end
-
-      def update_script_output
-        script = Card['*all+*script']
-        return unless (mtime_output = script.machine_output_card.updated_at)
-        ['wagn_mod.js.coffee', 'wagn.js.coffee',
-         'script_card_menu.js.coffee'].each do |name|
-          mtime_file = File.mtime(
-            "#{Cardio.gem_root}/mod/03_machines/lib/javascript/#{name}"
-          )
-          if mtime_file > mtime_output
-            script.update_machine_output
-            break
-          end
-        end
-      end
-
-      def update_style_output
-        style = Card['*all+*style']
-        return unless (mtime_output = style.machine_output_card.updated_at)
-        style.machine_input_card.item_cards.each do |i_card|
-          next unless i_card.codename
-          %w(03_machines 06_bootstrap).each do |mod|
-            style_dir = "#{Cardio.gem_root}/mod/#{mod}/lib/stylesheets"
-            file_path = "#{style_dir}/#{i_card.codename}.scss"
-            next unless File.exist? file_path
-            mtime_file = File.mtime file_path
-            if mtime_file > mtime_output
-              style.update_machine_output
-              break
-            end
-          end
-        end
+        refresh_script_and_style if ENV['RAILS_ENV'] == 'development'
       end
 
       def load_chunks
@@ -93,6 +55,33 @@ class Card
       end
 
       private
+
+      def refresh_script_and_style
+        update_if_source_file_changed Card[:all, :script]
+        update_if_source_file_changed Card[:all, :style]
+      end
+
+      # regenerates the machine output if a source file of a input card
+      # has been changed
+      def update_if_source_file_changed machine_card
+        return unless (mtime_output = machine_card.machine_output_card.updated_at)
+        source_files(machine_card).each do |path|
+          if File.mtime(path) > mtime_output
+            machine_card.update_machine_output
+            return
+          end
+        end
+      end
+
+      def source_files card
+        files = []
+        card.machine_input_card.extended_item_cards.each do |i_card|
+          next unless i_card.codename
+          next unless i_card.respond_to?(:existing_source_paths)
+          files << i_card.existing_source_paths
+        end
+        files.flatten
+      end
 
       def load_set_patterns
         generate_set_pattern_tmp_files if rewrite_tmp_files?

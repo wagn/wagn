@@ -38,6 +38,12 @@ def find_file filename
   nil
 end
 
+def existing_source_paths
+  Array.wrap(source_files).map do |filename|
+    find_file(filename)
+  end.compact
+end
+
 view :raw do |_args|
   Array.wrap(card.source_files).map do |filename|
     if (source_path = card.find_file(filename))

@@ -166,8 +166,11 @@ class WagnGenerator < Rails::Generators::AppBase
     @spec_path = @gem_path
     @spec_helper_path = File.join @spec_path, 'card', 'spec', 'spec_helper'
     empty_directory 'spec'
+
+    @cardio_gem_root = File.join @gem_path, 'card'
+    @wagn_gem_root = File.join @gem_path 'wagn'
     inside 'spec' do
-      copy_file File.join('javascripts', 'support', 'wagn_jasmine.yml'),
+      template File.join('javascripts', 'support', 'wagn_jasmine.yml'),
                 File.join('javascripts', 'support', 'jasmine.yml')
     end
 
@@ -184,7 +187,7 @@ class WagnGenerator < Rails::Generators::AppBase
     empty_directory 'spec'
     inside 'spec' do
       template 'spec_helper.rb'
-      copy_file File.join('javascripts', 'support', 'deck_jasmine.yml'),
+      template File.join('javascripts', 'support', 'deck_jasmine.yml'),
                 File.join('javascripts', 'support', 'jasmine.yml')
     end
   end

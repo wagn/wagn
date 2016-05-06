@@ -64,11 +64,12 @@ class Card
       # regenerates the machine output if a source file of a input card
       # has been changed
       def update_if_source_file_changed machine_card
-        return unless (mtime_output = machine_card.machine_output_card.updated_at)
+        mtime_output = machine_card.machine_output_card.updated_at
+        return unless mtime_output
         source_files(machine_card).each do |path|
           if File.mtime(path) > mtime_output
             machine_card.update_machine_output
-            return
+            break
           end
         end
       end

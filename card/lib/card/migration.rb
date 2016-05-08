@@ -85,6 +85,20 @@ class Card::Migration < ActiveRecord::Migration
     Card.merge_list read_json(filename), merge_opts
   end
 
+  def import_cards filename, merge_opts={}
+    Card::Mailer.perform_deliveries = false
+    output_file = File.join data_path, "unmerged_#{filename}"
+    merge_opts[:output_file] ||= output_file
+    meta_data = JSON.parse(File.read(data_path(filename)))
+    full_data =
+      meta_data.map do |hash|
+        hash['content'] =
+          File.read data_path(File.join('cards', hash['name'].to_name.key))
+        hash
+      end
+    Card.merge_list full_data, merge_opts
+  end
+
   def read_json filename
     raw_json = File.read data_path(filename)
     json = JSON.parse raw_json

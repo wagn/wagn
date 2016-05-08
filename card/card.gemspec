@@ -48,7 +48,7 @@ Gem::Specification.new do |s|
     ['coderay',                    '~> 1.0'],
     ['sass',                       '~> 3.2'],
     ['coffee-script',              '~> 2.2'],
-    ['uglifier',                   '~> 2.5'],
+    ['uglifier',                   '~> 3.0'],
 
     ['haml',                       '~> 4.0'],
     ['kaminari',                   '~> 0.16'],

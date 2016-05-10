@@ -17,6 +17,10 @@ format :html do
     JSON(options_hash)
   end
 
+  # Does two main things:
+  # (1) gives CSS classes for styling and
+  # (2) adds card data for javascript — including the "card-slot" class,
+  #     which in principle is not supposed to be in styles
   def wrap args={}
     @slot_view = @current_view
     classes = [

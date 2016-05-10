@@ -25,7 +25,7 @@ class Card
             # hold onto the non-chunk part of the string
           end
 
-          chunk_class = Chunk.find_class_by_prefix prefix
+          chunk_class = Chunk.find_class_by_prefix prefix, @chunk_list
           # get the chunk class from the prefix
           match, offset =
             chunk_class.full_match content[chunk_start..-1], prefix

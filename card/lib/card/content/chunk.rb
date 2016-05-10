@@ -9,30 +9,47 @@ class Card #::Content
     # +pattern+ that states what sort of text it matches.
     # Chunks are initalized by passing in the result of a
     # match by its pattern.
+
     module Chunk
-      mattr_accessor :raw_list, :prefix_regexp_by_list, :prefix_map
+      mattr_accessor :raw_list, :prefix_regexp_by_list,
+                     :prefix_map_by_list, :prefix_map_by_chunkname
       @@raw_list = {}
       @@prefix_regexp_by_list = {}
-      @@prefix_map = {}
+      @@prefix_map_by_chunkname = {}
+      @@prefix_map_by_list = Hash.new { |h, k| h[k] = {} }
 
       class << self
         def register_class klass, hash
           klass.config = hash.merge class: klass
           prefix_index = hash[:idx_char] || :default
           # ^ this is gross and needs to be moved out.
-          prefix_map[prefix_index] = klass.config
+
+          klassname = klass.name.split('::').last.to_sym
+          prefix_map_by_chunkname[klassname] = { prefix_index => klass.config }
+          raw_list.each do |key, list|
+            next unless list.include? klassname
+            prefix_map_by_list[key].merge! prefix_map_by_chunkname[klassname]
+          end
         end
 
         def register_list key, list
           raw_list[key] = list
+          prefix_map_by_list[key] =
+            list.each_with_object({}) do |chunkname, h|
+              next unless (p_map = prefix_map_by_chunkname[chunkname])
+              h.merge! p_map
+            end
+          prefix_map_by_list[key]
         end
 
-        def find_class_by_prefix prefix
+        def find_class_by_prefix prefix, chunk_list_key=:default
+          prefix_map = prefix_map_by_list[chunk_list_key]
           config = prefix_map[prefix[0, 1]] ||
                    prefix_map[prefix[-1, 1]] ||
                    prefix_map[:default]
           # prefix identified by first character, last character, or default.
           # a little ugly...
+
           config[:class]
         end
 

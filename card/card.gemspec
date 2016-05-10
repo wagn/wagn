@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.9.3'
 
   [
-    ['smartname',                  '0.2.3'],
+    ['smartname',                  '0.3.0'],
     ['uuid',                       '~> 2.3'],
     # with carrierwave 0.11.1 and 0.11.2 wagn hangs in a loop on creating
     # style and script machine output

@@ -15,7 +15,7 @@ class Card #::Content
                      :prefix_map_by_list, :prefix_map_by_chunkname
       @@raw_list = {}
       @@prefix_regexp_by_list = {}
-      @@prefix_map_by_chunkname = { }
+      @@prefix_map_by_chunkname = {}
       @@prefix_map_by_list = Hash.new { |h, k| h[k] = {} }
 
       class << self

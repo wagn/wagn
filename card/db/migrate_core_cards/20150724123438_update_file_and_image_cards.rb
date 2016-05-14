@@ -12,13 +12,13 @@ class UpdateFileAndImageCards < Card::CoreMigration
 
   def up
     # use codenames for the filecards not for the left parts
-    if (credit = Card[:credit]) && (card = Card.fetch "#{credit.name}+image")
+    if (credit = Card[:credit]) && (card = credit.fetch trait: :image)
       card.update_attributes! codename: 'credit_image'
     end
     %w( cerulean_skin cosmo_skin cyborg_skin darkly_skin flatly_skin journal_skin lumen_skin paper_skin readable_skin sandstone_skin simplex_skin slate_skin spacelab_skin superhero_skin united_skin yeti_skin ).each do |name|
       next unless (card = Card[name.to_sym])
       card.update_attributes! codename: nil
-      if (card = Card.fetch "#{name}+image")
+      if (card = Card.fetch name, :image
         card.update_attributes! codename: "#{name}_image"
       end
     end

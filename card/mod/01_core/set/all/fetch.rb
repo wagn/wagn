@@ -229,7 +229,7 @@ module ClassMethods
     return normalize_mark(parts.first, opts) if parts.size == 1
     parts.map do |p|
       normalized = normalize_mark p, {}
-      normalized.is_a?(Integer) ? fetch(normalized).name : normalized.to_s
+      normalized.is_a?(Integer) ? quick_fetch(normalized).name : normalized.to_s
     end.join('+').to_name
   end
 
@@ -240,8 +240,9 @@ module ClassMethods
 
   def normalize_mark mark, opts
     case mark
-    when Symbol        then Card::Codename[mark]
-    when Integer       then mark.to_i
+    when Symbol  then Card::Codename[mark]
+    when Integer then mark.to_i
+    when Card    then mark.cardname
     when String, SmartName
       # there are some situations where this breaks if we use Card::Name
       # rather than SmartName, which would seem more correct.

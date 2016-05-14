@@ -78,8 +78,14 @@ describe Card::Set::All::Fetch do
       expect(card.name).to eq 'A+B'
     end
 
-    it 'fetches junction of name, id, and codename' do
+    it 'fetches junction of string, id, and codename' do
       card = Card.fetch 'Book', Card.fetch_id(:type), :structure
+      expect(card).to be_instance_of(Card)
+      expect(card.name).to eq 'Book+*type+*structure'
+    end
+
+    it 'fetches junction of name, card object, and codename' do
+      card = Card.fetch 'Book'.to_name, Card.fetch(:type), :structure
       expect(card).to be_instance_of(Card)
       expect(card.name).to eq 'Book+*type+*structure'
     end

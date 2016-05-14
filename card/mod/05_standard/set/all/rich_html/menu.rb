@@ -104,10 +104,12 @@ format :html do
   end
 
   def show_menu_items
-    disc_tagname = Card.fetch(:discussion, skip_modules: true).cardname
-    disc_card = unless card.new_card? || card.junction? && card.cardname.tag_name.key == disc_tagname.key
-                  Card.fetch "#{card.name}+#{disc_tagname}", skip_modules: true, new: {}
-    end
+    disc_tagname = Card.quick_fetch(:discussion).cardname
+    disc_card =
+      unless card.new_card? || card.junction? &&
+             card.cardname.tag_name.key == disc_tagname.key
+        Card.fetch "#{card.name}+#{disc_tagname}", skip_modules: true, new: {}
+      end
 
     res = {
       discuss:    disc_card && disc_card.ok?(disc_card.new_card? ? :comment : :read),

@@ -92,6 +92,12 @@ group :test do
 
   gem 'turn', :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
   gem 'minitest'
+
+  if RUBY_VERSION =~ /^(1|2\.0)/
+    puts "Warning: Can't install i18-tasks without Ruby 2.1+: will not be able to test if I18n keys are missing"
+  else
+    gem 'i18n-tasks', '~> 0.9.5'       # See if I18n keys are missing or unused
+  end
 end
 
 gem 'ruby-prof', :group=>:profile  # profiling

@@ -191,8 +191,8 @@ sidebarToggle = (side) ->
 singleSidebar = (side) ->
   $article = $('body > article').first()
   $aside   = $('body > aside').first()
-  $article.addClass("col-xs-12 col-sm-9")
-  $aside.addClass("col-xs-6 col-sm-3 sidebar-offcanvas sidebar-offcanvas-#{side}")
+  $article.addClass("col-xs-12 col-sm-9 col-md-8")
+  $aside.addClass("col-xs-6 col-sm-3 col-md-3 sidebar-offcanvas sidebar-offcanvas-#{side}")
   if side == 'left'
     $('body').append($aside).append($article)
   else

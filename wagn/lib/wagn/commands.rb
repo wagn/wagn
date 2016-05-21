@@ -42,6 +42,11 @@ def find_spec_file filename, base_dir
   end
 end
 
+def exit_with_child_status command
+  command += ' 2>&1'
+  exit $CHILD_STATUS.exitstatus unless system command
+end
+
 WAGN_DB_TASKS = %w(seed reseed load update).freeze
 
 if supported_rails_command? ARGV.first
@@ -66,14 +71,10 @@ else
     require_args = "-r #{Wagn.gem_root}/features "
     require_args += feature_paths.map { |path| "-r #{path}" }.join(' ')
     feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.shelljoin
-    unless system 'RAILS_ROOT=. bundle exec cucumber ' \
-                  "#{require_args} #{feature_args} 2>&1"
-      exit $CHILD_STATUS.exitstatus
-    end
+    exit_with_child_status 'RAILS_ROOT=. bundle exec cucumber ' \
+                           "#{require_args} #{feature_args}"
   when 'jasmine'
-    unless system 'RAILS_ENV=test bundle exec rake spec:javascript 2>&1'
-      exit $CHILD_STATUS.exitstatus
-    end
+    exit_with_child_status 'RAILS_ENV=test bundle exec rake spec:javascript'
   when 'rspec'
     require 'rspec/core'
     require 'wagn/application'
@@ -89,8 +90,8 @@ else
 
     rspec_command =
       "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} " \
-      " #{opts[:rescue]} rspec #{rspec_args.shelljoin} #{opts[:files]} 2>&1"
-    exit $CHILD_STATUS.exitstatus unless system rspec_command
+      " #{opts[:rescue]} rspec #{rspec_args.shelljoin} #{opts[:files]}"
+    exit_with_child_status rspec_command
   when '--version', '-v'
     puts "Wagn #{Card::Version.release}"
   when 'new'

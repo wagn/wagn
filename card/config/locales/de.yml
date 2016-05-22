@@ -1,0 +1,70 @@
+# I18n 'card' messages for the "de" (German) locale
+#
+# conventions:
+#
+#  key name prefixes:
+#    'exception_' begins key of text to be used in a raised exception
+#    'error_' begins key of text to be added to an error list (usuallly)
+#    'search_' begins key of text to be used in WQL search comment
+#    'deny_' begins key of text to be used in denying action due to permissions
+#    (Not all key names begin with a prefix. In the absence of a prefix,
+#    the way the text will be used is generic and not explicitly hinted at.)
+#
+#  scope:
+#    scope values correspond to the path to the source file where the
+#    translation lookup occurs, relative to the root of the 'card' gem,
+#    with slashes replaced by dots and the final .rb extension omitted.
+#    So, a scope might be
+#      'lib.card.format.render' or 'mod.01_core.set.all.permisssions'
+#    Although there isn't a common prefix for all scopes, scopes begin
+#    with either 'lib.card' or 'mod.0d_modname' and these patterns are
+#    sufficiently distinctive that key collisions with translations
+#    for applications or other gems are believed to be unlikely.
+#    Format names for time and date are begun with a 'card_' prefix to
+#    minimize the chances of interference with other gems or applications.
+---
+de:
+  time:
+    formats:
+      card_dayofwk_min_tz: '%A, %e. %B %Y, %k:%M %Z'
+      card_date_seconds: '%e. %B %Y, %k:%M:%S'
+      card_date_only: '%e. %B %Y'
+  lib:
+    card:
+      format:
+        exception_init_without_card: Format initialisiert ohne Card-Objekt
+  mod:
+    :05_standard:
+      set:
+        self:
+          account_links:
+            sign_up: Registrieren
+            sign_in: Anmelden
+            invite: Einladen
+            sign_out: Abmelden
+          admin_info:
+            email_off: E-Mail-Versand ist ausgeschaltet. Ändere die Einstellungen in %{path}, damit Benachrichtigungen verschickt werden, wenn sich neue Nutzer registrieren.
+            admin_warn: ADMINISTRATOR WARNUNG
+            captcha_temp: Dein Deck arbeitet mit provisorischen Captcha-Einstellungen. Das ist kein Problem für eine  Installation, aber falls du diese Seite online stellst, benötigst Du neue Recaptcha-Schlüssel.
+            captcha_keys: Dein Deck ist so konfiguriert, dass es [[*captcha]] nutzt, aber damit das funktioniert, benötigst Du neue Recaptcha-Schlüssel.
+            instructions: Anleitungen
+            howto_add_keys: "Neue Recaptcha-Schlüssel hinzufügen:"
+            howto_register: 1. Registriere deine Domain bei %{recaptcha_link}
+            howto_add: 2. Füge deine Schlüssel zu %{recaptcha_settings} hinzu
+            howto_turn_off: 'Captcha ausschalten:'
+            howto_go: 1. Gehe zu %{captcha_card}
+            howto_update: 2. Ändere alle *captcha-Regeln zu "no".
+          signin:
+            sign_in_title: Anmelden
+            sign_in: Anmelden
+            or_sign_up: '...oder registrieren!'
+            reset_password: PASSWORT ZURÜCKSETZEN
+            forgot_password: Passwort vergessen
+            reset_my_password: Setze mein Passwort zurück
+            check_email: Sie erhalten in Kürze eine E-Mail mit einem Link um ihr Passwort zurück zu setzen.
+            error_unknown_email: Unbekannte E-Mail-Adresse.
+            error_not_active: Entschuldigung, der Account ist nicht aktiviert.
+            error_wrong_password: Falsches Passwort
+            abort_bad_signin_args: ungültige Anmeldedaten
+            error_not_active: nicht aktiviert
+            error_not_recognized: unbekannt

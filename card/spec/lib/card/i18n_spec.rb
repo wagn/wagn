@@ -1,7 +1,7 @@
-# frozen_string_literal: true
-  require 'pathname'
+# -*- encoding : utf-8 -*-
+require 'pathname'
 
-use_i18_tasks = (not RUBY_VERSION =~ /^(1|2\.0)/)
+use_i18_tasks = !(RUBY_VERSION =~ /^(1|2\.0)/)
 if use_i18_tasks
   require 'i18n/tasks'
 end
@@ -21,18 +21,20 @@ RSpec.describe 'I18n' do
   end
 
   it 'does not have missing keys' do
-    if not use_i18_tasks
-        skip "upgrade to Ruby 2.1+ and install i18n-tasks gem"
+    unless use_i18_tasks
+      skip 'upgrade to Ruby 2.1+ and install i18n-tasks gem'
     end
     expect(missing_keys).to be_empty,
-      "Missing #{missing_keys.leaves.count} i18n keys, to show them `cd` to root of `card` gem and run `i18n-tasks missing'"
+      "Missing #{missing_keys.leaves.count} i18n keys, to show them `cd` to " +
+      'root of `card` gem and run `i18n-tasks missing`'
   end
 
   it 'does not have unused keys' do
-    if not use_i18_tasks
-        skip "upgrade to Ruby 2.1+ and install i18n-tasks gem"
+    unless use_i18_tasks
+      skip 'upgrade to Ruby 2.1+ and install i18n-tasks gem'
     end
     expect(unused_keys).to be_empty,
-      "#{unused_keys.leaves.count} unused i18n keys, to show them `cd` to root of `card` gem and run `i18n-tasks unused'"
+      "#{unused_keys.leaves.count} unused i18n keys, to show them `cd` to " +
+      'root of `card` gem and run `i18n-tasks unused`'
   end
 end

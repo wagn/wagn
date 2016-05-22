@@ -63,7 +63,7 @@ format :html do
                     scope: 'mod.05_standard.set.self.signin'),
       optional_help: :hide,
       buttons: button_tag(I18n.t(:reset_my_password, # 'Reset my password'
-                                 scope: 'mod.05_standard.set.self.signin'), 
+                                 scope: 'mod.05_standard.set.self.signin'),
                           situation: 'primary'),
       structure: true,
       hidden: {
@@ -107,13 +107,13 @@ event :signin, :validate, on: :update do
     account = Auth[email.strip.downcase]
     error_msg =
       case
-      when account.nil?     then 
+      when account.nil?     then
         #'Unrecognized email.'
         I18n.t(:error_unknown_email, scope: 'mod.05_standard.set.self.signin')
-      when !account.active? then 
+      when !account.active? then
         #'Sorry, that account is not active.'
         I18n.t(:error_not_active, scope: 'mod.05_standard.set.self.signin')
-      else 
+      else
         #'Wrong password'
         I18n.t(:error_wrong_password, scope: 'mod.05_standard.set.self.signin')
       end

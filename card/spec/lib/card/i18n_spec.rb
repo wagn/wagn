@@ -25,7 +25,7 @@ RSpec.describe 'I18n' do
       skip 'upgrade to Ruby 2.1+ and install i18n-tasks gem'
     end
     expect(missing_keys).to be_empty,
-      "Missing #{missing_keys.leaves.count} i18n keys, to show them `cd` to " +
+      "Missing #{missing_keys.leaves.count} i18n keys, to show them `cd` to " \
       'root of `card` gem and run `i18n-tasks missing`'
   end
 
@@ -34,7 +34,7 @@ RSpec.describe 'I18n' do
       skip 'upgrade to Ruby 2.1+ and install i18n-tasks gem'
     end
     expect(unused_keys).to be_empty,
-      "#{unused_keys.leaves.count} unused i18n keys, to show them `cd` to " +
+      "#{unused_keys.leaves.count} unused i18n keys, to show them `cd` to " \
       'root of `card` gem and run `i18n-tasks unused`'
   end
 end

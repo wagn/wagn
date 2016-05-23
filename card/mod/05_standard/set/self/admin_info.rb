@@ -21,7 +21,7 @@ format :html do
 
   def render_warning_list warnings
     # 'ADMINISTRATOR WARNING'
-    admin_warn = I18n.t(:admin_warn, 
+    admin_warn = I18n.t(:admin_warn,
                         scope: 'mod.05_standard.set.self.admin_info')
     "<h6>#{admin_warn}</h6>".html_safe + list_tag(
       warnings,
@@ -33,9 +33,9 @@ format :html do
   end
 
   def email_warning
-      #"Email delivery is turned off."
-      #"Change settings in config/application.rb to send sign up notifications."
-    I18n.t(:email_off, 
+    # "Email delivery is turned off."
+    # "Change settings in config/application.rb to send sign up notifications."
+    I18n.t(:email_off,
            scope: 'mod.05_standard.set.self.admin_info',
            path: 'config/application.rb')
   end
@@ -43,21 +43,24 @@ format :html do
   def recaptcha_warning
     warning =
       if Card::Env.localhost?
-        # %(Your captcha is currently working with temporary settings. This is fine for a local installation, but you will need new recaptcha keys if you want to make this site public.)
+        # %(Your captcha is currently working with temporary settings.
+        #   This is fine for a local installation, but you will need new
+        #   recaptcha keys if you want to make this site public.)
         I18n.t(:captcha_temp, scope: 'mod.05_standard.set.self.admin_info')
       else
-        # %(You are configured to use [[*captcha]], but for that to work you need new recaptcha keys.)
-        process_content(I18n.t(:captcha_keys, 
+        # %(You are configured to use [[*captcha]], but for that to work
+        #   you need new recaptcha keys.)
+        process_content(I18n.t(:captcha_keys,
                                scope: 'mod.05_standard.set.self.admin_info'))
       end
     # 'Instructions'
-    _instructions = I18n.t(:instructions, 
-                           scope: 'mod.05_standard.set.self.admin_info')
+    instructions = I18n.t(:instructions,
+                          scope: 'mod.05_standard.set.self.admin_info')
     <<-HTML
       <p>
         #{warning}
       </p>
-      <h4>#{_instructions}</h4>
+      <h4>#{instructions}</h4>
       #{howto_add_new_recaptcha_keys}
       #{howto_turn_captcha_off}
     HTML
@@ -71,29 +74,33 @@ format :html do
 
   def howto_add_new_recaptcha_keys
     instructions(
-      #'How to add new recaptcha keys:'
+      # 'How to add new recaptcha keys:'
       I18n.t(:howto_add_keys, scope: 'mod.05_standard.set.self.admin_info'),
       [
-        #"1. Register your domain at  #{web_link 'http://google.com/recaptcha'}"
-        I18n.t(:howto_register, scope: 'mod.05_standard.set.self.admin_info',
-            recaptcha_link: web_link('http://google.com/recaptcha')),
-        #"2. Add your keys to #{card_link :recaptcha_settings}"
-        I18n.t(:howto_add, scope: 'mod.05_standard.set.self.admin_info',
-              recaptcha_settings: card_link(:recaptcha_settings))
+        # "1. Register your domain at #{web_link 'http://google.com/recaptcha'}"
+        I18n.t(:howto_register, 
+               scope: 'mod.05_standard.set.self.admin_info',
+               recaptcha_link: web_link('http://google.com/recaptcha')),
+        # "2. Add your keys to #{card_link :recaptcha_settings}"
+        I18n.t(:howto_add, 
+               scope: 'mod.05_standard.set.self.admin_info',
+               recaptcha_settings: card_link(:recaptcha_settings))
       ]
     )
   end
 
   def howto_turn_captcha_off
     instructions(
-      #'How to turn captcha off:'
+      # 'How to turn captcha off:'
       I18n.t(:howto_turn_off, scope: 'mod.05_standard.set.self.admin_info'),
       [
-        #"1. Go to #{card_link :captcha}"
-        I18n.t(:howto_go, scope: 'mod.05_standard.set.self.admin_info',
+        # "1. Go to #{card_link :captcha}"
+        I18n.t(:howto_go, 
+               scope: 'mod.05_standard.set.self.admin_info',
                captcha_card: card_link(:captcha)),
-        #'2. Update all *captcha rules to "no".'
-        I18n.t(:howto_update, scope: 'mod.05_standard.set.self.admin_info')
+        # '2. Update all *captcha rules to "no".'
+        I18n.t(:howto_update, 
+               scope: 'mod.05_standard.set.self.admin_info')
       ]
     )
   end

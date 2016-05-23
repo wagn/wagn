@@ -21,13 +21,13 @@ format :html do
 
   def default_core_args args={}
     # 'Sign in' '...or sign up!' 'RESET PASSWORD'
-    sign_in, or_sign_up, reset_password = I18n.t(
-                            [:sign_in, :or_sign_up, :reset_password],
-                            scope: 'mod.05_standard.set.self.signin')
+    sign_in, or_sign_up, reset_password = 
+      I18n.t([:sign_in, :or_sign_up, :reset_password],
+             scope: 'mod.05_standard.set.self.signin')
     # since i18n-tasks doesn't understand bulk lookups, tell it keys are used
-    # i18n-tasks-use t(:sign_in, scope: 'mod.05_standard.set.self.signin') 
-    # i18n-tasks-use t(:or_sign_up, scope: 'mod.05_standard.set.self.signin') 
-    # i18n-tasks-use t(:reset_password, scope: 'mod.05_standard.set.self.signin') 
+    # i18n-tasks-use t(:sign_in, scope: 'mod.05_standard.set.self.signin')
+    # i18n-tasks-use t(:or_sign_up, scope: 'mod.05_standard.set.self.signin')
+    # i18n-tasks-use t(:reset_password, scope: 'mod.05_standard.set.self.signin')
     args[:buttons] = button_tag sign_in, situation: 'primary'
     if Card.new(type_id: Card::SignupID).ok? :create
       args[:buttons] += link_to(or_sign_up, card_path('account/signup'))
@@ -98,8 +98,10 @@ event :signin, :validate, on: :update do
   pword = subfield :password
   pword &&= pword.content
 
-  abort :failure, I18n.t(:abort_bad_signin_args, # 'bad signin args'
-           scope: 'mod.05_standard.set.self.signin') unless email && pword
+  unless email && pword
+    abort :failure, I18n.t(:abort_bad_signin_args, # 'bad signin args'
+                           scope: 'mod.05_standard.set.self.signin')
+  end
 
   if (account = Auth.authenticate(email, pword))
     Auth.signin account.left_id
@@ -108,13 +110,13 @@ event :signin, :validate, on: :update do
     error_msg =
       case
       when account.nil?     then
-        #'Unrecognized email.'
+        # 'Unrecognized email.'
         I18n.t(:error_unknown_email, scope: 'mod.05_standard.set.self.signin')
       when !account.active? then
-        #'Sorry, that account is not active.'
+        # 'Sorry, that account is not active.'
         I18n.t(:error_not_active, scope: 'mod.05_standard.set.self.signin')
       else
-        #'Wrong password'
+        # 'Wrong password'
         I18n.t(:error_wrong_password, scope: 'mod.05_standard.set.self.signin')
       end
     errors.add :signin, error_msg

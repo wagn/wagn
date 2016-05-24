@@ -31,10 +31,13 @@ $.extend wagn,
         func.call this, $(this)
 
   pingName: (name, success)->
-    $.getJSON wagn.rootPath + '/', { format: 'json', view: 'status', 'card[name]': name }, success
+    $.getJSON wagn.rootPath + '/',
+              format: 'json', view: 'status', 'card[name]': name,
+              success
 
   isTouchDevice: ->
-    if 'ontouchstart' of window or window.DocumentTouch and document instanceof DocumentTouch
+    if 'ontouchstart' of window or window.DocumentTouch and
+       document instanceof DocumentTouch
       return true
     else
       return detectMobileBrowser()
@@ -91,7 +94,9 @@ jQuery.fn.extend {
     else
       @notify result
       if status == 409 #edit conflict
-        @slot().find('.current_revision_id').val @slot().find('.new-current-revision-id').text()
+        @slot().find('.current_revision_id').val(
+          @slot().find('.new-current-revision-id').text()
+        )
       else if status == 449
         @slot().find('g-recaptcha').reloadCaptcha()
 
@@ -156,7 +161,8 @@ jQuery.fn.extend {
       $(this).setContentField(fn)
   setContentField: (fn)->
     field = @closest('.card-editor').find('.card-content')
-    init_val = field.val() # tinymce-jquery overrides val(); that's why we're not using it.
+    init_val = field.val() # tinymce-jquery overrides val();
+                           # that's why we're not using it.
     new_val = fn.call this
     field.val new_val
     field.change() if init_val != new_val
@@ -172,7 +178,8 @@ $(window).ready ->
   $.ajaxSetup cache: false
 
   setTimeout (-> wagn.initializeEditors $('body')), 10
-  #  dislike the timeout, but without this forms with multiple TinyMCE editors were failing to load properly
+  # dislike the timeout, but without this forms with multiple TinyMCE editors
+  # were failing to load properly
 
 
   $('body').on 'ajax:success', '.slotter', (event, data, c, d) ->
@@ -203,12 +210,16 @@ $(window).ready ->
   $('body').on 'ajax:beforeSend', '.slotter', (event, xhr, opt)->
     return if opt.skip_before_send
 
-    unless opt.url.match /home_view/ #avoiding duplication.  could be better test?
+    # avoiding duplication. could be better test?
+    unless opt.url.match /home_view/
       opt.url = wagn.prepUrl opt.url, $(this).slot()
 
     if $(this).is('form')
-      if wagn.recaptchaKey and $(this).attr('recaptcha')=='on' and !($(this).find('.g-recaptcha')[0])
-        if $('.g-recaptcha')[0]  # if there is already a recaptcha on the page then we don't have to load the recaptcha script
+      if wagn.recaptchaKey and $(this).attr('recaptcha')=='on' and
+         !($(this).find('.g-recaptcha')[0])
+        # if there is already a recaptcha on the page then we don't have to
+        # load the recaptcha script
+        if $('.g-recaptcha')[0]
           addCaptcha(this)
         else
           initCaptcha(this)
@@ -218,15 +229,22 @@ $(window).ready ->
         # NOTE - this entire solution is temporary.
         input = $(this).find '.file-upload'
         if input[1]
-          $(this).notify "Wagn does not yet support multiple files in a single form."
+          $(this).notify(
+            "Wagn does not yet support multiple files in a single form."
+          )
           return false
 
         widget = input.data 'blueimpFileupload' #jQuery UI widget
-        unless widget._isXHRUpload(widget.options) # browsers that can't do ajax uploads use iframe
-          $(this).find('[name=success]').val('_self') # can't do normal redirects.
-          # iframe response not passed back; all responses treated as success.  boo
+
+        # browsers that can't do ajax uploads use iframe
+        unless widget._isXHRUpload(widget.options)
+          # can't do normal redirects.
+          $(this).find('[name=success]').val('_self')
+          # iframe response not passed back;
+          # all responses treated as success.  boo
           opt.url += '&simulate_xhr=true'
-          # iframe is not xhr request, so would otherwise get full response with layout
+          # iframe is not xhr request,
+          # so would otherwise get full response with layout
           iframeUploadFilter = (data)-> data.find('body').html()
           opt.dataFilter = iframeUploadFilter
           # gets rid of default html and body tags
@@ -298,7 +316,9 @@ $(window).ready ->
     if (target = $(this).attr 'main-success') and $(this).isMain()
       input = $(this).find '[name=success]'
       if input and !(input.val().match /^REDIRECT/)
-        input.val ( if target == 'REDIRECT' then target + ': ' + input.val() else target )
+        input.val(
+          (if target == 'REDIRECT' then target + ': ' + input.val() else target)
+        )
 
   $('body').on 'change', '.live-type-field', ->
     $(this).data 'params', $(this).closest('form').serialize()
@@ -331,15 +351,19 @@ $(window).ready ->
           msg = $('<span class="name-messages"></span>')
           leg.append msg
         ed.removeClass 'real-name virtual-name known-name'
-        slot_id = box.slot().data 'cardId' # use id to avoid warning when renaming to name variant
+
+        # use id to avoid warning when renaming to name variant
+        slot_id = box.slot().data 'cardId'
         if status != 'unknown' and !(slot_id && parseInt(slot_id) == data['id'])
           ed.addClass status + '-name known-name'
           link =
-          qualifier = if status == 'virtual' #wish coffee would let me use  a ? b : c syntax here
+          # wish coffee would let me use  a ? b : c syntax here
+          qualifier = if status == 'virtual'
             'in virtual'
           else
             'already in'
-          msg.html '"<a href="' + wagn.rootPath + '/' + data['url_key'] + '">' + name + '</a>" ' + qualifier + ' use'
+          msg.html '"<a href="' + wagn.rootPath + '/' + data['url_key'] + '">' +
+                   name + '</a>" ' + qualifier + ' use'
         else
           msg.html ''
 
@@ -359,10 +383,13 @@ $(window).ready ->
 
 
 initCaptcha = (form)->
-  recapDiv = $("<div class='g-recaptcha' data-sitekey='#{wagn.recaptchaKey}'></div>")
+  recapDiv = $("<div class='g-recaptcha' data-sitekey='#{wagn.recaptchaKey}'>" +
+               "</div>")
   $(form).children().last().after recapDiv
   recapUri = "https://www.google.com/recaptcha/api.js"
-  $.getScript recapUri  # renders the first element with "g-recaptcha" class when loaded
+
+  # renders the first element with "g-recaptcha" class when loaded
+  $.getScript recapUri
 
 # call this if the recaptcha script is already initialized (via initCaptcha)
 addCaptcha = (form)->
@@ -372,6 +399,7 @@ addCaptcha = (form)->
     sitekey: wagn.recaptchaKey
 
 snakeCase = (str)->
-  str.replace /([a-z])([A-Z])/g, (match)-> match[0] + '_' + match[1].toLowerCase()
+  str.replace /([a-z])([A-Z])/g, (match)-> match[0] + '_' +
+              match[1].toLowerCase()
 
 warn = (stuff) -> console.log stuff if console?

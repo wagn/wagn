@@ -35,12 +35,15 @@ $.extend wagn,
       .attr('class', 'etherpad-submit-button')
   }
 
-  initPointerList: (input)->
+  initPointerList: (input) ->
     optionsCard = input.closest('ul').data('options-card')
-    input.autocomplete { source: wagn.prepUrl wagn.rootPath + '/' + optionsCard + '.json?view=name_complete' }
+    input.autocomplete {
+      source: wagn.prepUrl wagn.rootPath + '/' + optionsCard +
+              '.json?view=name_complete'
+    }
 
-  setTinyMCEConfig: (string)->
-    setter = ()->
+  setTinyMCEConfig: (string) ->
+    setter = ->
       try
         $.parseJSON string
       catch
@@ -87,7 +90,8 @@ $.extend wagn,
 
 
   initTinyMCE: (el_id) ->
-# verify_html: false -- note: this option needed for empty paragraphs to add space.
+    # verify_html: false -- note: this option needed for empty
+    #                             paragraphs to add space.
     conf = {
       plugins: 'autoresize'
       autoresize_max_height: 500
@@ -96,7 +100,8 @@ $.extend wagn,
     hard_conf = {
       mode: 'exact'
       elements: el_id
-#CSS could be made optional, but it may involve migrating old legacy *tinyMCE settings to get rid of stale stuff.
+      # CSS could be made optional, but it may involve migrating old legacy
+      # *tinyMCE settings to get rid of stale stuff.
       content_css: wagn.cssPath
       entity_encoding: 'raw'
     }

@@ -399,7 +399,7 @@ addCaptcha = (form)->
     sitekey: wagn.recaptchaKey
 
 snakeCase = (str)->
-  str.replace /([a-z])([A-Z])/g, (match)-> match[0] + '_' +
+  str.replace /([a-z])([A-Z])/g, (match) -> match[0] + '_' +
               match[1].toLowerCase()
 
 warn = (stuff) -> console.log stuff if console?

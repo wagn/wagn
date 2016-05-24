@@ -26,7 +26,7 @@ $.extend wagn,
     '.ace-editor-textarea': -> wagn.initAce $(this)
     '.tinymce-textarea': -> wagn.initTinyMCE @[0].id
     '.pointer-list-editor': ->
-      @sortable({handle : '.handle', cancel : ''})
+      @sortable({handle: '.handle', cancel: ''})
       wagn.initPointerList @find('input')
     '.file-upload': -> wagn.upload_file(this)
     '.etherpad-textarea': ->
@@ -109,7 +109,7 @@ $.extend wagn,
     tinyMCE.init conf
 
 pointerContent = (vals) ->
-  list = $.map $.makeArray(vals), (v)-> if v then '[[' + v + ']]'
+  list = $.map $.makeArray(vals), (v) -> if v then '[[' + v + ']]'
   $.makeArray(list).join "\n"
 
 ace_editor_content = (element) ->

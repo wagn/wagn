@@ -1,4 +1,4 @@
-wrapDeckoLayout = () ->
+wrapDeckoLayout = ->
   $footer  = $('body > footer').first()
   $('body > article, body > aside').wrapAll('<div class="container"/>')
   $('div.container > article, div.container > aside')

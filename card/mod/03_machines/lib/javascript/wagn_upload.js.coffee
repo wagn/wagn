@@ -19,19 +19,21 @@ $.extend wagn,
     else
       url = "/card/create"
     $(fileupload).fileupload(
-      url : url,
-      dataType : 'html',
-      done : wagn.doneFile,
-      add : wagn.chooseFile,
-      progressall : wagn.progressallFile
+      url: url,
+      dataType: 'html',
+      done: wagn.doneFile,
+      add: wagn.chooseFile,
+      progressall: wagn.progressallFile
     )#, forceIframeTransport: true )
 
   chooseFile: (e, data) ->
     data.form.find('button[type=submit]').attr('disabled',true)
     editor = $(this).closest '.card-editor'
     $('#progress').show()
-    editor.append '<input type="hidden" class="extra_upload_param" value="true" name="attachment_upload">'
-    editor.append '<input type="hidden" class="extra_upload_param" value="preview_editor" name="view">'
+    editor.append '<input type="hidden" class="extra_upload_param" ' +
+                  'value="true" name="attachment_upload">'
+    editor.append '<input type="hidden" class="extra_upload_param" ' +
+                  'value="preview_editor" name="view">'
     data.submit()
     editor.find('.choose-file').hide()
     editor.find('.extra_upload_param').remove()

@@ -23,16 +23,21 @@ navbox_results = (request, response) ->
     wagReq: ++reqIndex
     success: ( data, status ) ->
       response navboxize(request.term, data) if this.wagReq == reqIndex
-    error: () ->
+    error: ->
       response [] if this.wagReq == reqIndex
   }
 
-navboxize = (term, results)->
+navboxize = (term, results) ->
   items = []
 
-  $.each ['search', 'add', 'new'], (index, key)->
+  $.each ['search', 'add', 'new'], (index, key) ->
     if val = results[key]
-      i = { value: term, prefix: key, icon: 'plus', label: '<strong class="highlight">' + term + '</strong>' }
+      i = {
+        value: term,
+        prefix: key,
+        icon: 'plus',
+        label: '<strong class="highlight">' + term + '</strong>'
+      }
       if key == 'search'
         i.icon = key
         i.term = term
@@ -45,12 +50,16 @@ navboxize = (term, results)->
       items.push i
 
   $.each results['goto'], (index, val) ->
-    items.push { icon: 'share-alt', prefix: 'go to', value: val[0], label: val[1], href: '/' + val[2] }
+    items.push {
+      icon: 'share-alt', prefix: 'go to', value: val[0], label: val[1],
+      href: '/' + val[2]
+    }
 
   $.each items, (index, i) ->
     i.label =
-      '<span class="glyphicon glyphicon-'+ i.icon + '"></span><span class="navbox-item-label">' + i.prefix + ':</span> ' +
-        '<span class="navbox-item-value">' + i.label + '</span>'
+      '<span class="glyphicon glyphicon-' + i.icon + '"></span>' +
+      '<span class="navbox-item-label">'  + i.prefix + ':</span> ' +
+      '<span class="navbox-item-value">'  + i.label + '</span>'
 
   items
 

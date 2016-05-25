@@ -12,13 +12,16 @@ class UpdateFileAndImageCards < Card::CoreMigration
 
   def up
     # use codenames for the filecards not for the left parts
-    if (credit = Card[:credit]) && (card = credit.fetch trait: :image)
+    if (credit = Card[:credit]) && (card = credit.fetch(trait: :image))
       card.update_attributes! codename: 'credit_image'
     end
-    %w( cerulean_skin cosmo_skin cyborg_skin darkly_skin flatly_skin journal_skin lumen_skin paper_skin readable_skin sandstone_skin simplex_skin slate_skin spacelab_skin superhero_skin united_skin yeti_skin ).each do |name|
+    %w( cerulean_skin cosmo_skin cyborg_skin darkly_skin flatly_skin
+        journal_skin lumen_skin paper_skin readable_skin sandstone_skin
+        simplex_skin slate_skin spacelab_skin superhero_skin united_skin
+        yeti_skin ).each do |name|
       next unless (card = Card[name.to_sym])
       card.update_attributes! codename: nil
-      if (card = Card.fetch name, :image
+      if (card = Card.fetch name, :image)
         card.update_attributes! codename: "#{name}_image"
       end
     end
@@ -26,7 +29,7 @@ class UpdateFileAndImageCards < Card::CoreMigration
     Card::Cache.reset_all
     Card.search(type: [:in, 'file', 'image']).each do |card|
       card.actions.each do |action|
-        if (content_change = action.change :db_content)
+        if (content_change = action.change(:db_content))
           original_filename = content_change.value.split("\n").first
           action.update_attributes! comment: original_filename
         end
@@ -36,15 +39,17 @@ class UpdateFileAndImageCards < Card::CoreMigration
       attach_array[0].match(/\.(.+)$/) do |_match|
         extension = Regexp.last_match(1)
         if attach_array.size > 3  # mod file
-          card.update_column :db_content, ":#{card.codename}/#{attach_array[3]}.#{extension}"
+          card.update_column :db_content,
+                             ":#{card.codename}/#{attach_array[3]}.#{extension}"
         else
-          card.update_column :db_content, "~#{card.id}/#{card.last_action_id}.#{extension}"
+          card.update_column :db_content,
+                             "~#{card.id}/#{card.last_action_id}.#{extension}"
         end
         # swap variant and action_id/type_code in file name
         if Dir.exist? card.store_dir
           symlink_target_hash = {}
           Dir.entries(card.store_dir).each do |file|
-            next unless new_filename = get_new_file_name(file)
+            next unless (new_filename = get_new_file_name(file))
             file_path = File.join(card.store_dir, file)
             if File.symlink?(file_path)
               symlink_target_hash[new_filename] = File.readlink(file_path)
@@ -55,7 +60,8 @@ class UpdateFileAndImageCards < Card::CoreMigration
           end
           symlink_target_hash.each do |symlink, target|
             new_target_name = get_new_file_name(target)
-            File.symlink File.join(card.store_dir, new_target_name), File.join(card.store_dir, symlink)
+            File.symlink File.join(card.store_dir, new_target_name),
+                         File.join(card.store_dir, symlink)
           end
         end
       end

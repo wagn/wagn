@@ -53,18 +53,34 @@ $.extend wagn,
   initProseMirror: (el_id) ->
     createProseMirror(el_id, { "menuBar": true, "tooltipMenu": false })
 
+  aceModeByTypeCode: {
+    java_script: 'javascript',
+    coffee_script: 'coffee',
+    css: 'css',
+    scss: 'scss',
+    html: 'html',
+    search_type: 'json',
+    layout_type: 'html'
+  }
+
+  aceConfigByTypeCode: {
+    default: (editor) ->
+      editor.renderer.setShowGutter true
+      editor.setTheme "ace/theme/github"
+      editor.setOption "showPrintMargin", false
+      editor.getSession().setTabSize 2
+      editor.getSession().setUseSoftTabs true
+      editor.setOptions maxLines: 30
+  }
+
+  configAceEditor: (editor, type_code) ->
+    configurer = wagn.aceConfigByTypeCode[type_code] ||
+      wagn.aceConfigByTypeCode['default']
+    configurer(editor)
+
   initAce: (textarea) ->
     type_code = textarea.attr "data-card-type-code"
-    hash = {
-      "java_script": "javascript",
-      "coffee_script": "coffee",
-      "css": "css",
-      "scss": "scss",
-      "html": "html",
-      "search_type": "json",
-      "layout_type": "html"
-    }
-    mode = hash[type_code]
+    mode = wagn.aceModeByTypeCode[type_code]
     unless mode
       textarea.autosize()
       return
@@ -77,15 +93,8 @@ $.extend wagn,
     textarea.css "height", "0px"
     ace.config.set('basePath','/assets/ace')
     editor = ace.edit(editDiv[0])
-    editor.renderer.setShowGutter true
     editor.getSession().setValue textarea.val()
-    editor.setTheme "ace/theme/github"
-    editor.getSession().setMode "ace/mode/" + mode
-    editor.setOption "showPrintMargin", false
-    editor.getSession().setTabSize 2
-    editor.getSession().setUseSoftTabs true
-    editor.setOptions maxLines: 30
-
+    wagn.configAceEditor(editor)
     return
 
 

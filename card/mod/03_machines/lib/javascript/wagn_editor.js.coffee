@@ -75,7 +75,7 @@ $.extend wagn,
 
   configAceEditor: (editor, type_code) ->
     configurer = wagn.aceConfigByTypeCode[type_code] ||
-      wagn.aceConfigByTypeCode['default']
+                 wagn.aceConfigByTypeCode['default']
     configurer(editor)
 
   initAce: (textarea) ->

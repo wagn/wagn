@@ -60,8 +60,8 @@ describe Card::Set::Trait do
         end
       end
     end
-
   end
+
   context 'if accessor type is defined by an id' do
     it 'trait card is created correctly' do
       in_stage :prepare_to_validate, on: :create,

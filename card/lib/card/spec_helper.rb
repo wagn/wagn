@@ -102,12 +102,12 @@ module Card::SpecHelper
 
   def add_test_event stage, name, &event_block
     Card.class_eval do
-      def method_missing m, *args
+      def method_missing m, *args, &block
         begin
           method = eval('method(%s)' % m.inspect, $rspec_binding)
         rescue NameError
         else
-          return method.call(*args)
+          return method.call(*args, &block)
         end
         begin
           value = eval(m.to_s, $rspec_binding)

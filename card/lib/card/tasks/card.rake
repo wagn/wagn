@@ -13,7 +13,7 @@ namespace :card do
   task pull: :environment do
     _task, card = ARGV
     fail 'no card given' unless card.present?
-    Card::Migration::Import.pull card, remote: ENV['remote']
+    Card::Migration::Import.pull card, remote: ENV['from']
     exit
   end
 
@@ -21,7 +21,7 @@ namespace :card do
   task deep_pull: :environment do
     _task, card = ARGV
     fail 'no card given' unless card.present?
-    Card::Migration::Import.pull card, deep: true, remote: ENV['remote']
+    Card::Migration::Import.pull card, deep: true, remote: ENV['from']
     exit
   end
 
@@ -29,14 +29,14 @@ namespace :card do
   task deep_pull_items: :environment do
     _task, card = ARGV
     fail 'no card given' unless card.present?
-    Card::Migration::Import.pull card, items_only: true, remote: ENV['remote']
+    Card::Migration::Import.pull card, items_only: true, remote: ENV['from']
     exit
   end
 
   desc 'add items of the export card to import data'
   task pull_export: :environment do
     Card::Migration::Import.pull 'export', items_only: true,
-                                           remote: ENV['remote']
+                                           remote: ENV['from']
   end
 
   desc 'register remote for importing card data'

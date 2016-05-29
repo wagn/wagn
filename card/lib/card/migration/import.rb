@@ -46,12 +46,11 @@ class Card
         # @option opts [Boolean] items_only if true fetch all nested cards but
         #   not the card itself
         def pull name, opts={}
-          fetched_data = fetch_card_data name, opts
-
           MetaData.update do |meta_data|
-            fetched_data.each do |data|
-              saved_data = meta_data.add_card data
-              write_card_content saved_data[:key], data[:content]
+            url = opts[:remote] ? meta_data.url(opts.delete(:remote)) : nil
+            fetch_card_data(name, url, opts).each do |card_data|
+              saved_data = meta_data.add_card card_data
+              write_card_content saved_data[:key], card_data[:content]
             end
           end
         end
@@ -83,16 +82,12 @@ class Card
           File.write content_path(key), content
         end
 
-        def url remote
-          meta_data[:remotes] && meta_data[:remotes][remote.to_sym] ||
-            fail("unknown remote: #{remote}")
-        end
-
         def needs_update? data
           !data[:pushed] || data[:pushed] < File.mtime(content_path(data[:name]))
         end
 
-        def fetch_card_data name, opts
+        # Returns an array of hashes with card attributes
+        def fetch_card_data name, url, opts
           view, result_key =
             if opts[:items_only]
               ['export_items', nil]
@@ -103,16 +98,16 @@ class Card
             end
 
           card_data =
-            if opts[:remote]
-              fetch_remote_data name, view, opts[:remote]
+            if url
+              fetch_remote_data name, view, url
             else
               fetch_local_data name, view
             end
           result_key ? [card_data[result_key]] : card_data
         end
 
-        def fetch_remote_data name, view, remote
-          json_url = "#{url(remote)}/#{name}.json"
+        def fetch_remote_data name, view, url
+          json_url = "#{url}/#{name}.json"
           json_url += "?view=#{view}" if view
           json = open(json_url).read
           JSON.parse(json).deep_symbolize_keys
@@ -150,6 +145,11 @@ class Card
 
         def cards
           self[:cards]
+        end
+
+        def url remote
+          self[:remotes][remote.to_sym] ||
+            fail("unknown remote: #{remote}")
         end
 
         def add_card_attribute name, attr_key, attr_value

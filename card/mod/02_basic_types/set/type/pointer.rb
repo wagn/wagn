@@ -237,6 +237,40 @@ format :rss do
   end
 end
 
+format :json do
+  view :export_items do |args|
+    args[:count] ||= 0
+    args[:count] += 1
+    return [] if args[:count] > 3
+    card.item_cards.map do |c|
+      begin
+        case c.type_id
+        when Card::SearchTypeID
+          # avoid running the search from options and structure that
+          # case a huge result or error
+          if c.content.empty? || c.name.include?("+*options") ||
+            c.name.include?("+*structure")
+            nest(c)
+          else
+            # put the search results into the export
+            [
+              nest(c),
+              (c.item_names.map { |cs| nest(cs) })
+            ]
+          end
+        when Card::PointerID, Card::SkinID
+          subformat(c).render_export(args)
+        else
+          subformat(c).render_export(count: args[:count])
+        end
+      rescue => e
+        Rails.logger.info "Fail to get the card #{c} reason:#{e}"
+      end
+    end.flatten.reject { |c| (c.nil? || c.empty?) }
+  end
+end
+
+
 # while a card's card type and content are updated in the same request,
 # the new module will override the old module's events and functions.
 # this event is only on pointer card. Other type cards do not have this event,

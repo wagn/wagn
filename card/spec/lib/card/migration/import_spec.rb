@@ -13,7 +13,7 @@ describe Card::Migration::Import do
   end
 
   before(:each) do
-    if File.exists? Card::Migration::Import::MetaData::DEFAULT_PATH
+    if File.exist? Card::Migration::Import::MetaData::DEFAULT_PATH
       FileUtils.rm Card::Migration::Import::MetaData::DEFAULT_PATH
     end
     if Dir.exist? Card::Migration::Import::CARD_CONTENT_DIR
@@ -24,7 +24,7 @@ describe Card::Migration::Import do
   describe '.add_remote' do
     it 'adds remote to json file' do
       Card::Migration::Import.add_remote 'test', 'url'
-      remotes = meta_data["remotes"]
+      remotes = meta_data['remotes']
       expect(remotes['test']).to eq 'url'
     end
   end
@@ -40,23 +40,23 @@ describe Card::Migration::Import do
 
     it 'saves card content' do
       Card::Migration::Import.pull 'A'
-      expect(content_data_file 'a').to eq 'Alpha [[Z]]'
+      expect(content_data_file('a')).to eq 'Alpha [[Z]]'
     end
 
     context 'called with deep: true' do
       it 'saves nested card' do
         Card::Migration::Import.pull 'B', deep: true
-        expect(content_data_file 'z').to eq "I'm here to be referenced to"
+        expect(content_data_file('z')).to eq "I'm here to be referenced to"
       end
 
       it 'does not save linked card' do
         Card::Migration::Import.pull 'A', deep: true
-        expect(File.exist? content_path 'z').to be_falsey
+        expect(File.exist?(content_path('z'))).to be_falsey
       end
 
       it 'saves pointer items' do
         Card::Migration::Import.pull 'Fruit+*type+*create', deep: true
-        expect(File.exist? content_path 'anyone').to be_truthy
+        expect(File.exist?(content_path('anyone'))).to be_truthy
       end
     end
   end

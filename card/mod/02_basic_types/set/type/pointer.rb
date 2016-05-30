@@ -88,7 +88,8 @@ format :html do
     extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
     <<-HTML
-      <ul class="pointer-list-editor #{extra_css_class}" data-options-card="#{options_card_name}">
+      <ul class="pointer-list-editor #{extra_css_class}"
+          data-options-card="#{options_card_name}">
         #{items.map do |item|
             _render_list_item args.merge(pointer_item: item)
           end.join "\n"}
@@ -134,7 +135,8 @@ format :html do
       description = pointer_option_description option_name
       <<-HTML
         <div class="pointer-checkbox">
-          #{check_box_tag 'pointer_checkbox', option_name, checked, id: id, class: 'pointer-checkbox-button'}
+          #{check_box_tag 'pointer_checkbox', option_name, checked,
+                          id: id, class: 'pointer-checkbox-button'}
           <label for="#{id}">#{label}</label>
           #{%(<div class="checkbox-option-description">#{description}</div>) if description}
         </div>
@@ -157,11 +159,13 @@ format :html do
     options = card.option_names.map do |option_name|
       checked = (option_name == card.item_names.first)
       id = "pointer-radio-#{option_name.to_name.key}"
-      label = ((o_card = Card.fetch(option_name)) && o_card.label) || option_name
+      label = ((o_card = Card.fetch(option_name)) && o_card.label) ||
+              option_name
       description = pointer_option_description option_name
       <<-HTML
         <li class="pointer-radio radio">
-          #{radio_button_tag input_name, option_name, checked, id: id, class: 'pointer-radio-button'}
+          #{radio_button_tag input_name, option_name, checked,
+                             id: id, class: 'pointer-radio-button'}
           <label for="#{id}">#{label}</label>
           #{%(<div class="radio-option-description">#{description}</div>) if description}
         </li>
@@ -175,8 +179,7 @@ format :html do
     options = [['-- Select --', '']] + card.option_names.map { |x| [x, x] }
     select_tag('pointer_select',
                options_for_select(options, card.item_names.first),
-               class: 'pointer-select form-control'
-              )
+               class: 'pointer-select form-control')
   end
 
   def pointer_option_description option
@@ -248,8 +251,8 @@ format :json do
         when Card::SearchTypeID
           # avoid running the search from options and structure that
           # case a huge result or error
-          if c.content.empty? || c.name.include?("+*options") ||
-            c.name.include?("+*structure")
+          if c.content.empty? || c.name.include?('+*options') ||
+             c.name.include?('+*structure')
             nest(c)
           else
             # put the search results into the export
@@ -269,7 +272,6 @@ format :json do
     end.flatten.reject { |c| (c.nil? || c.empty?) }
   end
 end
-
 
 # while a card's card type and content are updated in the same request,
 # the new module will override the old module's events and functions.

@@ -6,7 +6,6 @@ format :json do
 
   # export the card itself and all nested content (up to 10 levels deep)
   view :export do |args|
-    puts card.name.red
     # avoid loops
     return [] if args[:count] > 10 || args[:processed_keys].include?(card.key)
     args[:processed_keys] << card.key

@@ -51,32 +51,33 @@ view :core do |args|
             </td>
           </tr>
           #{unless klass.anchorless?
-              previous_content = nil
-              rules.map do |rule|
-                current_content = rule.db_content.strip
-                duplicate = previous_content == current_content
-                changeover = previous_content && !duplicate
-                previous_content = current_content
-                %(
-                  <tr class="#{'rule-changeover' if changeover}">
-                  <td class="rule-anchor">
-                  #{card_link rule.cardname.trunk_name, text: rule.cardname.trunk_name.trunk_name}
-                  </td>
-                    #{if duplicate
-                        %( <td></td> )
-                      else
-                        %(
-                          <td class="rule-content-container">
-                            <span class="closed-content content">#{subformat(rule)._render_closed_content}</span>
-                          </td>
-                        )
-                      end}
-                  </tr>
-                )
-              end * "\n"
-            end}
-          )
-        end * "\n"}
+            previous_content = nil
+            rules.map do |rule|
+              current_content = rule.db_content.strip
+              duplicate = previous_content == current_content
+              changeover = previous_content && !duplicate
+              previous_content = current_content
+              %(
+                <tr class="#{'rule-changeover' if changeover}">
+                <td class="rule-anchor">
+                #{card_link rule.cardname.trunk_name, text: rule.cardname.trunk_name.trunk_name}
+                </td>
+                  #{if duplicate
+                      %( <td></td> )
+                    else
+                      %(
+                        <td class="rule-content-container">
+                          <span class="closed-content content">#{subformat(rule)._render_closed_content}</span>
+                        </td>
+                      )
+                    end}
+                </tr>
+              )
+            end * "\n"
+            end
+          }
+        )
+      end * "\n"}
     </table>
   HTML
 end

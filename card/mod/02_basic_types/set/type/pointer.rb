@@ -245,31 +245,32 @@ format :json do
     args[:count] ||= 0
     args[:count] += 1
     return [] if args[:count] > 3
-    card.item_cards.map do |c|
-      begin
-        case c.type_id
-        when Card::SearchTypeID
-          # avoid running the search from options and structure that
-          # case a huge result or error
-          if c.content.empty? || c.name.include?('+*options') ||
-             c.name.include?('+*structure')
-            nest(c)
-          else
-            # put the search results into the export
-            [
-              nest(c),
-              (c.item_names.map { |cs| nest(cs) })
-            ]
-          end
-        when Card::PointerID, Card::SkinID
-          subformat(c).render_export(args)
-        else
-          subformat(c).render_export(count: args[:count])
-        end
-      rescue => e
-        Rails.logger.info "Fail to get the card #{c} reason:#{e}"
+    result = card.item_cards.map { |i_card| export_item i_card }
+    result.flatten.reject { |c| (c.nil? || c.empty?) }
+  end
+  
+  def export_item item
+    case item.type_id
+    when Card::SearchTypeID
+      # avoid running the search from options and structure that
+      # case a huge result or error
+      if item.content.empty? || item.name.include?('+*options') ||
+        item.name.include?('+*structure')
+        nest(item)
+      else
+        # put the search results into the export
+        [
+          nest(item),
+          (item.item_names.map { |cs| nest(cs) })
+        ]
       end
-    end.flatten.reject { |c| (c.nil? || c.empty?) }
+    when Card::PointerID, Card::SkinID
+      subformat(item).render_export(args)
+    else
+      subformat(item).render_export(count: args[:count])
+    end
+  rescue => e
+    Rails.logger.info "Fail to get the card #{item} reason:#{e}"
   end
 end
 

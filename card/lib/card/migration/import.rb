@@ -13,7 +13,7 @@ class Card
     # the 'pushed' value or touch the content file
     class Import
       CARD_CONTENT_DIR = Card::Migration.data_path('cards').freeze
-
+      OUTPUT_FILE = Card::Migration.data_path 'unmerged'
       class << self
         # Merge the import data into the cards table
         # If 'all' is true all import data is merged.
@@ -24,10 +24,10 @@ class Card
             puts 'nothing to merge'
             return
           end
-          output_file = Card::Migration.data_path "unmerged"
+
           Card::Mailer.perform_deliveries = false
           Card::Auth.as_bot do
-            Card.merge_list merge_data, output_file: output_file
+            Card.merge_list merge_data, output_file: OUTPUT_FILE
           end
           update_time = Time.now
           MetaData.update do |meta_data|
@@ -83,7 +83,8 @@ class Card
         end
 
         def needs_update? data
-          !data[:pushed] || data[:pushed] < File.mtime(content_path(data[:name]))
+          !data[:pushed] ||
+            data[:pushed] < File.mtime(content_path(data[:name]))
         end
 
         # Returns an array of hashes with card attributes
@@ -122,6 +123,7 @@ class Card
         end
       end
 
+      # Handles the card attributes and remotes for the import
       class MetaData < Hash
         DEFAULT_PATH = Card::Migration.data_path('cards.json').freeze
 
@@ -149,7 +151,7 @@ class Card
 
         def url remote
           self[:remotes][remote.to_sym] ||
-            fail("unknown remote: #{remote}")
+            raise("unknown remote: #{remote}")
         end
 
         def add_card_attribute name, attr_key, attr_value

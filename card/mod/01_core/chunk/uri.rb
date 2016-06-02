@@ -110,7 +110,7 @@ module Card::Content::Chunk
               'tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|' \
               'za|zm|zr|zw|' \
               'eu'.freeze # made this separate, since it's not technically
-                          # a country -efm
+              # a country -efm
     # These are needed otherwise HOST will match almost anything
 
     TLDS = "(?:#{GENERIC}|#{COUNTRY})".freeze

@@ -241,31 +241,8 @@ end
 
 format :json do
   view :export_items do |args|
-    args[:count] ||= 0
-    args[:count] += 1
-    return [] if args[:count] > 3
-    result = card.item_cards.map { |i_card| export_item i_card, args }
-    result.flatten.reject { |c| (c.nil? || c.empty?) }
-  end
-  
-  def export_item item, args
-    if item.type_id == Card::SearchTypeID
-      # avoid running the search from options and structure that
-      # case a huge result or error
-      if item.content.empty? || item.name.include?('+*options') ||
-         item.name.include?('+*structure')
-        nest(item)
-      else # put the search results into the export
-        [
-          nest(item),
-          (item.item_names.map { |cs| nest(cs) })
-        ]
-      end
-    else
-      subformat(item).render_export(args)
-    end
-  rescue => e
-    Rails.logger.info "Fail to get the card #{item} reason:#{e}"
+    result = card.known_item_cards.map { |ic| subformat(ic).render_export(args) }
+    result.flatten.reject(&:blank?)
   end
 end
 

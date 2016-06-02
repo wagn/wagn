@@ -20,10 +20,10 @@ format :data do
   end
 end
 
-view :core do |args|
-  klasses = Card.set_patterns.reverse.map do |set_class|
+def set_classes_with_rules
+  Card.set_patterns.reverse.map do |set_class|
     wql = { left:  { type: Card::SetID },
-            right: card.id,
+            right: id,
             # sort:  'content',
 
             sort:  %w(content name),
@@ -33,65 +33,62 @@ view :core do |args|
     rules = Card.search wql
     [set_class, rules] unless rules.empty?
   end.compact
-
-  <<-HTML
-    #{_render_rule_help args}
-    <table class="setting-rules">
-      <tr><th>Set</th><th>Rule</th></tr>
-      #{klasses.map do |klass, rules|
-        %(
-          <tr class="klass-row anchorless-#{klass.anchorless?}">
-            <td class="setting-klass">
-              #{klass.anchorless? ? card_link(klass.pattern) : klass.pattern}
-            </td>
-            <td class="rule-content-container">
-              <span class="closed-content content">
-                #{subformat(rules[0])._render_closed_content if klass.anchorless?}
-              </span>
-            </td>
-          </tr>
-          #{unless klass.anchorless?
-            previous_content = nil
-            rules.map do |rule|
-              current_content = rule.db_content.strip
-              duplicate = previous_content == current_content
-              changeover = previous_content && !duplicate
-              previous_content = current_content
-              %(
-                <tr class="#{'rule-changeover' if changeover}">
-                <td class="rule-anchor">
-                #{card_link rule.cardname.trunk_name, text: rule.cardname.trunk_name.trunk_name}
-                </td>
-                  #{if duplicate
-                      %( <td></td> )
-                    else
-                      %(
-                        <td class="rule-content-container">
-                          <span class="closed-content content">#{subformat(rule)._render_closed_content}</span>
-                        </td>
-                      )
-                    end}
-                </tr>
-              )
-            end * "\n"
-            end
-          }
-        )
-      end * "\n"}
-    </table>
-  HTML
 end
 
-view :rule_help do |_args|
-  <<-HTML
-    <div class="alert alert-info">
-      #{process_content_object '{{+*right+*help|content}}'}
-    </div>
-  HTML
-end
+format do
+  def duplicate_check rules
+    previous_content = nil
+    rules.each do |rule|
+      current_content = rule.db_content.strip
+      duplicate = previous_content == current_content
+      changeover = previous_content && !duplicate
+      previous_content = current_content
+      yield rule, duplicate, changeover
+    end
+  end
 
-view :closed_content do |_args|
-  render_rule_help
+  view :core do |args|
+    render_haml args: args do
+      <<-'HAML'.strip_heredoc
+        = _render_rule_help args
+        %table.setting-rules
+          %tr
+            %th Set
+            %th Rule
+          - card.set_classes_with_rules.each do |klass, rules|
+            %tr.klass-row
+              %td{class: ['setting-klass', "anchorless-#{klass.anchorless?}"]}
+                = klass.anchorless? ? card_link(klass.pattern) : klass.pattern
+              %td.rule-content-container
+                %span.closed-content.content
+                  - if klass.anchorless?
+                    = subformat(rules[0])._render_closed_content
+            - if !klass.anchorless?
+              - duplicate_check(rules) do |rule, duplicate, changeover|
+                %tr{class: ('rule-changeover' if changeover)}
+                  %td.rule-anchor
+                    = card_link rule.cardname.trunk_name, text: rule.cardname.trunk_name.trunk_name
+                  - if duplicate
+                    %td
+                  - else
+                    %td.rule-content-container
+                      %span.closed-content.content
+                        = subformat(rule)._render_closed_content
+      HAML
+    end
+  end
+
+  view :rule_help do |_args|
+    <<-HTML
+      <div class="alert alert-info">
+        #{process_content_object '{{+*right+*help|content}}'}
+      </div>
+    HTML
+  end
+
+  view :closed_content do |_args|
+    render_rule_help
+  end
 end
 
 format :json do
@@ -104,3 +101,4 @@ format :json do
     end.flatten
   end
 end
+

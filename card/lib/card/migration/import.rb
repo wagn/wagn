@@ -2,8 +2,8 @@ class Card
   class Migration
     # Imports card data from a local or remote deck
     #
-    # The cards' content for the import is stored for every card in a separate file,
-    # other attributes like name or type are stored for all cards together
+    # The cards' content for the import is stored for every card in a separate
+    # file, other attributes like name or type are stored for all cards together
     # in a json file.
     #
     # To update a card's content you only have to change the card's content
@@ -20,10 +20,7 @@ class Card
         # Otherwise only the data that was changed or added since the last merge
         def merge all=false
           merge_data = card_data_for_merge all
-          if merge_data.empty?
-            puts 'nothing to merge'
-            return
-          end
+          puts('nothing to merge') && return if merge_data.empty?
 
           Card::Mailer.perform_deliveries = false
           Card::Auth.as_bot do
@@ -32,7 +29,8 @@ class Card
           update_time = Time.now
           MetaData.update do |meta_data|
             merge_data.each do |card_attr|
-              meta_data.add_card_attribute card_attr['name'], :pushed, update_time
+              meta_data.add_card_attribute card_attr['name'], :pushed,
+                                           update_time
             end
           end
         end
@@ -178,7 +176,7 @@ class Card
         end
 
         def read
-          return { cards: [], remotes: {} } unless File.exists? @path
+          return { cards: [], remotes: {} } unless File.exist? @path
           JSON.parse(File.read(@path)).deep_symbolize_keys
         end
 

@@ -241,7 +241,10 @@ end
 
 format :json do
   view :export_items do |args|
-    result = card.known_item_cards.map { |ic| subformat(ic).render_export(args) }
+    result =
+      card.known_item_cards.map do |ic|
+        subformat(ic).render_export(args)
+      end
     result.flatten.reject(&:blank?)
   end
 end

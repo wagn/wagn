@@ -70,7 +70,8 @@ module Card::Content::Chunk
       @uri = ::URI.parse(chunk)
       @process_chunk = "#{format.web_link(@link_text)}#{@trailing_punctuation}"
     rescue ::URI::Error => e
-      # warn "rescue parse #{chunk_class}: '#{m}' #{e.inspect} #{e.backtrace*"\n"}"
+      # warn "rescue parse #{chunk_class}:
+      # '#{m}' #{e.inspect} #{e.backtrace*"\n"}"
       Rails.logger.warn "rescue parse #{self.class}: #{e.inspect}"
     end
   end

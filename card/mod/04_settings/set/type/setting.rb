@@ -67,7 +67,8 @@ format do
               - duplicate_check(rules) do |rule, duplicate, changeover|
                 %tr{class: ('rule-changeover' if changeover)}
                   %td.rule-anchor
-                    = card_link rule.cardname.trunk_name, text: rule.cardname.trunk_name.trunk_name
+                    = card_link rule.cardname.trunk_name,
+                                text: rule.cardname.trunk_name.trunk_name
                   - if duplicate
                     %td
                   - else
@@ -101,4 +102,3 @@ format :json do
     end.flatten
   end
 end
-

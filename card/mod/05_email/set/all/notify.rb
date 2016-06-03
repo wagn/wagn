@@ -68,7 +68,7 @@ def silent_change?
 end
 
 def notable_change?
-  !silent_change? && !supercard && current_act &&
+  !silent_change? && !supercard && current_act && current_act.card_id == id &&
     Card::Auth.current_id != WagnBotID && followable?
 end
 

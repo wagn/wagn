@@ -1,7 +1,7 @@
 $.extend wagn,
   editorContentFunctionMap: {
-    '.prosemirror-editor': -> getProseMirror(@[0].id).getContent('html')
-    '.ace-editor-textarea': -> ace_editor_content this[0]
+    '.prosemirror-editor': -> prosemirrorContent @[0].id
+    '.ace-editor-textarea': -> aceEditorContent this[0]
     '.tinymce-textarea': -> tinyMCE.get(@[0].id).getContent()
     '.pointer-select': -> pointerContent @val()
     '.pointer-multiselect': -> pointerContent @val()
@@ -121,10 +121,15 @@ pointerContent = (vals) ->
   list = $.map $.makeArray(vals), (v) -> if v then '[[' + v + ']]'
   $.makeArray(list).join "\n"
 
-ace_editor_content = (element) ->
+aceEditorContent = (element) ->
   ace_div = $(element).siblings(".ace_editor")
   editor = ace.edit(ace_div[0])
   editor.getSession().getValue()
+
+prosemirrorContent = (id) ->
+  content = getProseMirror(id).getContent('html')
+  return '' if content == '<p></p>'
+  content
 
 permissionsContent = (ed) ->
   return '_left' if ed.find('#inherit').is(':checked')

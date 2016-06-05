@@ -70,7 +70,7 @@ edit_re = /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/
 When edit_re do |username, cardname, _field, content|
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
-    fill_in 'card[content]', with: content
+    set_content 'card[content]', content
     click_button 'Submit'
   end
 end
@@ -85,25 +85,38 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
     plusses.hashes.first.each do |name, content|
-      fill_in "card[subcards][#{cardname}+#{name}][content]", with: content
+      set_content "card[subcards][#{cardname}+#{name}][content]", content
     end
     click_button 'Submit'
   end
 end
 
-content_re = /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/
-When content_re do |username, cardtype, cardname, content|
-  create_card(username, cardtype, cardname, content) do
-    normal_textarea_types = %w(
+def set_content name, content
+  begin
+    Capybara.ignore_hidden_elements = false
+    editor_id = find("[name='#{name}']").first(:xpath, ".//..")[:id]
+    Capybara.ignore_hidden_elements = true
+    page.execute_script "getProseMirror('#{editor_id}')" \
+                          ".setContent('#{content}', 'text')"
+  rescue
+    ace_editor_types = %w(
       JavaScript CoffeeScript HTML CSS SCSS Search
     )
-    if !normal_textarea_types.include?(cardtype) ||
-       !page.evaluate_script("typeof ace != 'undefined'")
-      fill_in('card[content]', with: content)
-    else
+    if ace_editor_types.include?(cardtype) &&
+       page.evaluate_script("typeof ace != 'undefined'")
       page.execute_script "ace.edit($('.ace_editor').get(0))"\
-        ".getSession().setValue('#{content}')"
+          ".getSession().setValue('#{content}')"
+    else
+      fill_in('card[content]', with: content)
     end
+  end
+end
+
+content_re = /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/
+When content_re do |username, cardtype, cardname, content|
+
+  create_card(username, cardtype, cardname, content) do
+    set_content 'card[content]', content
   end
 end
 
@@ -116,7 +129,7 @@ plus_re = /^(.*) creates?\s*([^\s]*) card "([^"]*)" with plusses:$/
 When plus_re do |username, cardtype, cardname, plusses|
   create_card(username, cardtype, cardname) do
     plusses.hashes.first.each do |name, content|
-      fill_in "card[subcards][+#{name}][content]", with: content
+      set_content "card[subcards][+#{name}][content]", content
     end
   end
 end

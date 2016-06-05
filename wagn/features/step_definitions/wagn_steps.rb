@@ -92,29 +92,30 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
 end
 
 def set_content name, content
-  begin
-    Capybara.ignore_hidden_elements = false
-    editor_id = find("[name='#{name}']").first(:xpath, ".//..")[:id]
-    Capybara.ignore_hidden_elements = true
-    page.execute_script "getProseMirror('#{editor_id}')" \
-                          ".setContent('#{content}', 'text')"
-  rescue
-    ace_editor_types = %w(
-      JavaScript CoffeeScript HTML CSS SCSS Search
-    )
-    if ace_editor_types.include?(cardtype) &&
-       page.evaluate_script("typeof ace != 'undefined'")
-      page.execute_script "ace.edit($('.ace_editor').get(0))"\
-          ".getSession().setValue('#{content}')"
-    else
-      fill_in('card[content]', with: content)
-    end
+  set_prosemirror_content name, content
+rescue
+  ace_editor_types = %w(
+    JavaScript CoffeeScript HTML CSS SCSS Search
+  )
+  if ace_editor_types.include?(cardtype) &&
+     page.evaluate_script("typeof ace != 'undefined'")
+    page.execute_script "ace.edit($('.ace_editor').get(0))"\
+        ".getSession().setValue('#{content}')"
+  else
+    fill_in('card[content]', with: content)
   end
+end
+
+def set_prosemirror_content name, content
+  Capybara.ignore_hidden_elements = false
+  editor_id = find("[name='#{name}']").first(:xpath, './/..')[:id]
+  Capybara.ignore_hidden_elements = true
+  page.execute_script "getProseMirror('#{editor_id}')" \
+                          ".setContent('#{content}', 'text')"
 end
 
 content_re = /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/
 When content_re do |username, cardtype, cardname, content|
-
   create_card(username, cardtype, cardname, content) do
     set_content 'card[content]', content
   end

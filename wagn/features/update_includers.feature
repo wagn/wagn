@@ -79,10 +79,9 @@ Feature: Updates for Children of watched cards
       |green|mushy|
     And I wait until ajax response done
     Then No notification should be sent
-    And I wait until ajax response done
-    
 
   Scenario: Watching a plus card & including card on regular edit
+    And I wait until ajax response done
     When I create card "Ulysses+author" with content "Joyce"
     And I wait until ajax response done
     Then Joe Camel should be notified that "Joe User created \"Ulysses\+author\""

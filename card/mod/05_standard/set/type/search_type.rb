@@ -30,11 +30,10 @@ def get_query params={}
   # why is this a wagn_bot thing?  can't deny search content??
   query = Auth.as_bot do
     query_content = params.delete(:query) || raw_content
-    case
-    when query_content.empty?
+    if query_content.empty?
       raise JSON::ParserError,
             "Error in card '#{name}':can't run search with empty content"
-    when query_content.is_a?(String)
+    elsif query_content.is_a?(String)
       JSON.parse(query_content)
     else query_content
     end
@@ -48,7 +47,6 @@ def get_query params={}
 end
 
 format do
-  # rubocop:disable Style/ExtraSpacing
   view :core do |args|
     view =
       case search_results args
@@ -59,7 +57,6 @@ format do
       end
     _render view, args
   end
-  # rubocop:enable Style/ExtraSpacing
 
   view :search_count do |_args|
     search_results.to_s
@@ -193,13 +190,29 @@ format :json do
   def default_search_params
     set_default_search_params default_limit: 0
   end
+
+  view :export do |args|
+    # avoid running the search from options and structure that
+    # case a huge result or error
+    return [render_atom(args)] if card.content.empty? ||
+                                  card.name.include?('+*options') ||
+                                  card.name.include?('+*structure')
+    super(args)
+  end
+
+  view :export_items do |args|
+    card.item_names(limit: 0).map do |i_name|
+      next unless (i_card = Card[i_name])
+      subformat(i_card).render_atom(args)
+    end.flatten.reject(&:blank?)
+  end
 end
 
 format :rss do
   view :feed_body do |args|
     case raw_feed_items args
-    when Exception then @xml.item(render :search_error)
-    when Integer then @xml.item(render :search_count)
+    when Exception then @xml.item(render(:search_error))
+    when Integer then @xml.item(render(:search_count))
     else super args
     end
   end

@@ -15,7 +15,7 @@ class Card < ActiveRecord::Base
   # attributes that ActiveJob can handle
   def self.serializable_attr_accessor *args
     self.serializable_attributes = args
-    attr_accessor *args
+    attr_accessor(*args)
   end
 
   require_dependency 'card/active_record_ext'
@@ -35,7 +35,6 @@ class Card < ActiveRecord::Base
   require_dependency 'card/stage_director'
   require_dependency 'card/director_register'
 
-
   has_many :references_in,  class_name: :Reference, foreign_key: :referee_id
   has_many :references_out, class_name: :Reference, foreign_key: :referer_id
   has_many :acts, -> { order :id }
@@ -44,8 +43,8 @@ class Card < ActiveRecord::Base
 
   cattr_accessor :set_patterns, :serializable_attributes, :error_codes,
                  :set_specific_attributes, :current_act
-  @@set_patterns = []
-  @@error_codes = {}
+  self.set_patterns = []
+  self.error_codes = {}
 
   serializable_attr_accessor(
     :action, :supercard, :superleft,
@@ -61,12 +60,18 @@ class Card < ActiveRecord::Base
 
   attr_accessor :follower_stash
 
-  define_callbacks :select_action, :show_page, :handle, :act,
-                   :initialize_stage,
-                   :prepare_to_validate_stage, :validate_stage,
-                   :prepare_to_store_stage, :store_stage,
-                   :finalize_stage,
-                   :integrate_stage, :integrate_with_delay_stage
+  define_callbacks(
+    :select_action, :show_page, :handle, :act,
+
+    # VALIDATION PHASE
+    :initialize_stage, :prepare_to_validate_stage, :validate_stage,
+
+    # STORAGE PHASE
+    :prepare_to_store_stage, :store_stage, :finalize_stage,
+
+    # INTEGRATION PHASE
+    :integrate_stage, :integrate_with_delay_stage
+  )
 
   before_validation :validation_phase, if: -> { run_phases? }
   around_save :storage_phase

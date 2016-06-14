@@ -22,6 +22,7 @@ module Card::Content::Chunk
       :variant     #
     ]
     attr_reader :options
+    DEFAULT_OPTION = :view # a value without a key is interpreted as view
 
     Card::Content::Chunk.register_class(
       self, prefix_re: '\\{\\{',
@@ -68,7 +69,7 @@ module Card::Content::Chunk
     end
 
     def option_string_to_hash list_string, options_hash, style_hash
-      Hash.new_from_semicolon_attr_list(list_string).each do |key, value|
+      each_option(list_string) do |key, value|
         key = key.to_sym
         if key == :item
           options_hash[:items] ||= {}
@@ -113,6 +114,17 @@ module Card::Content::Chunk
         @text.sub! '|', "|#{view};"
       else
         @text.sub! '}}', "|#{view}}}"
+      end
+    end
+
+    private
+
+    def each_option attr_string
+      return if attr_string.blank?
+      attr_string.strip.split(';').each do |pair|
+        value, key = pair.split(':').reverse
+        key ||= self.class::DEFAULT_OPTION.to_s
+        yield key.strip, value.strip
       end
     end
   end

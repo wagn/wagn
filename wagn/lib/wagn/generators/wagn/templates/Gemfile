@@ -13,19 +13,21 @@ gem '<%= database_gemfile_entry.name %>'<%= %(, '#{database_gemfile_entry.versio
 # gem 'unicorn'
 # gem 'thin'
 
-<% if options['mod-dev'] -%>
+<% if options['mod-dev'] || options['core-dev'] -%>
 group :test do
-  gem 'rspec-rails', '~> 3.1.0'   # behavior-driven-development suite
+  gem 'rspec', '~> 3.4'
+  gem 'rspec-rails'         # behavior-driven-development suite
   gem 'spork', '>=0.9'
-  # gem 'simplecov' # code coverage analysis tool
 end
 
 group :test, :development do
   gem 'rails-dev-tweaks'
   gem 'jasmine'
-  gem 'jasmine-rails' #, :git=>"https://github.com/chuenlok/jasmine-rails.git"
+  gem 'jasmine-rails'
   gem 'jasmine-jquery-rails'
   gem 'sprockets' # just so above works
+  gem 'phantomjs', '1.9.7.1' #locked because 1.9.8.0 is breaking
+
   <%- if spring_install? %>
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'listen', '3.0.6'
@@ -33,17 +35,18 @@ group :test, :development do
   gem 'spring-commands-rspec'
   gem 'spring-commands-cucumber'
   <% end -%>
-  # gem 'pry-rails'
-  # gem 'pry-rescue'
-  # gem 'pry-stack_explorer'
+end
+
+group :debug do
+  gem 'pry-rails'
+  gem 'pry-rescue'
+  gem 'pry-stack_explorer'
   if RUBY_VERSION =~ /^2/
-    gem 'byebug'
-    # gem 'pry-byebug'
+    gem 'pry-byebug'
   else
     gem 'debugger'
   end
 end
-
 <% end -%>
 
 <% if options['core-dev'] -%>
@@ -55,17 +58,9 @@ group :assets do
   gem 'tinymce-rails', '~> 3.4'                # wysiwyg editor
 end
 
-group :development do
-  gem 'rails-dev-tweaks'
-  gem 'sprockets' # just so above works
-end
-
 group :test do
-  gem 'rspec', '~> 3.4'
-  gem 'rspec-rails'         # behavior-driven-development suite
   gem 'rspec-html-matchers'
-  gem 'spork', '>=0.9'
-  gem 'rr'#, '=1.0.0'
+  gem 'rr' #, '=1.0.0'
 	gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
   gem 'codeclimate-test-reporter', require: nil
   # gem 'guard-rspec', '~> 4.2'           # trigger test runs based on file edits,
@@ -80,12 +75,11 @@ group :test do
   gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite
   gem 'capybara', '~> 2.4.4'
   gem 'selenium-webdriver', '~> 2.47.1'
-#  gem 'capybara-webkit'
+  # gem 'capybara-webkit'
   gem 'launchy'                                # lets cucumber launch browser windows
 
   gem 'timecop', '=0.3.5'                      # not clear on use/need.  referred to in shared_data.rb
   # NOTE: had weird errors with timecop 0.4.4.  would like to update when possible
-
 
   gem 'email_spec'                             #
   gem 'database_cleaner', '~> 1.4'             # used by cucumber for db transactions
@@ -96,30 +90,7 @@ end
 
 gem 'ruby-prof', :group=>:profile  # profiling
 
-group :development, :test do
-  <%- if spring_install? %>
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'listen', '3.0.6'
-  gem 'spring'
-  gem 'spring-commands-rspec'
-  gem 'spring-commands-cucumber'
-  gem 'spring-watcher-listen'
-  <% end -%>
-  gem 'pry-rails'
-  gem 'pry-rescue'
-  # gem 'pry-stack_explorer'
-  gem 'jasmine'
-  gem 'jasmine-rails', :git=>"https://github.com/chuenlok/jasmine-rails.git"
-  gem 'jasmine-jquery-rails'
-  gem 'phantomjs' #, '1.9.7.1' #locked because 1.9.8.0 is breaking
-end
-
 group :debug do
-  if RUBY_VERSION =~ /^2/
-    gem 'pry-byebug'
-	else
-		gem 'debugger'
-	end
   gem 'better_errors', :git=>"https://github.com/xithan/better_errors.git"
   gem 'binding_of_caller'
 end
@@ -128,4 +99,3 @@ end
 Dir.glob( 'mod/**{,/*/**}/Gemfile' ).each do |gemfile|
   instance_eval File.read(gemfile)
 end
-

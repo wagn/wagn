@@ -68,7 +68,7 @@ def update_cached_list
 end
 
 def list_card item
-  Card.fetch "#{item}+#{left.type_name}"
+  Card.fetch item, left.type_name
 end
 
 def unfilled?

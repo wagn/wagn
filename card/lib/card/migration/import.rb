@@ -65,10 +65,11 @@ class Card
         def card_data_for_merge all
           MetaData.cards.map do |data|
             next unless all || needs_update?(data)
+            key = data[:key] || data[:name].to_name.key
             hash = {
               'name' => data[:name],
               'type' => data[:type],
-              'content' => File.read(content_path(data[:key]))
+              'content' => File.read(content_path(key))
             }
             hash['codename'] = data[:codename] if data[:codename]
             hash
@@ -177,11 +178,11 @@ class Card
 
         def read
           return { cards: [], remotes: {} } unless File.exist? @path
-          JSON.parse(File.read(@path)).deep_symbolize_keys
+          YAML.load(File.read(@path)).deep_symbolize_keys
         end
 
         def write
-          File.write @path, JSON.pretty_generate(self)
+          File.write @path, YAML.dump(self)
         end
 
         private

@@ -1,6 +1,6 @@
 describe Card::Migration::Import do
   def meta_data
-    path =  Card::Migration::Import::MetaData::DEFAULT_PATH
+    path = Card::Migration::Import::MetaData::DEFAULT_PATH
     YAML.load_file(path).deep_symbolize_keys
   end
 

@@ -123,8 +123,8 @@ class Card
       end
 
       # Handles the card attributes and remotes for the import
-      class MetaData < Hash
-        DEFAULT_PATH = Card::Migration.data_path('cards.json').freeze
+      class MetaData
+        DEFAULT_PATH = Card::Migration.data_path('cards.yml').freeze
 
         class << self
           def update
@@ -141,15 +141,15 @@ class Card
         def initialize path=nil
           @path = path || DEFAULT_PATH
           ensure_path
-          replace read
+          @data = read
         end
 
         def cards
-          self[:cards]
+          @data[:cards]
         end
 
         def url remote
-          self[:remotes][remote.to_sym] ||
+          @data[:remotes][remote.to_sym] ||
             raise("unknown remote: #{remote}")
         end
 
@@ -178,11 +178,11 @@ class Card
 
         def read
           return { cards: [], remotes: {} } unless File.exist? @path
-          YAML.load(File.read(@path)).deep_symbolize_keys
+          YAML.load_file(@path).deep_symbolize_keys
         end
 
         def write
-          File.write @path, YAML.dump(self)
+          File.write @path, @data.to_yaml
         end
 
         private

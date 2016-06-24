@@ -56,7 +56,7 @@ class Card
         # Save an url as remote deck to make it available for the pull method
         def add_remote name, url
           MetaData.update do |meta_data|
-            meta_data[:remotes][name] = url
+            meta_data.remotes[name] = url
           end
         end
 
@@ -146,6 +146,10 @@ class Card
 
         def cards
           @data[:cards]
+        end
+
+        def remotes
+          @data[:remotes]
         end
 
         def url remote

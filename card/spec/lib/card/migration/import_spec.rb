@@ -1,7 +1,7 @@
 describe Card::Migration::Import do
   def meta_data
-    json = File.read Card::Migration::Import::MetaData::DEFAULT_PATH
-    JSON.parse(json)
+    path =  Card::Migration::Import::MetaData::DEFAULT_PATH
+    YAML.load_file(path).deep_symbolize_keys
   end
 
   def content_path filename
@@ -22,20 +22,20 @@ describe Card::Migration::Import do
   end
 
   describe '.add_remote' do
-    it 'adds remote to json file' do
+    it 'adds remote to yml file' do
       Card::Migration::Import.add_remote 'test', 'url'
-      remotes = meta_data['remotes']
-      expect(remotes['test']).to eq 'url'
+      remotes = meta_data[:remotes]
+      expect(remotes[:test]).to eq 'url'
     end
   end
 
   describe '.pull' do
     it 'saves card attributes' do
       Card::Migration::Import.pull 'A'
-      cards = meta_data['cards']
+      cards = meta_data[:cards]
       expect(cards).to be_instance_of(Array)
-      expect(cards.first['name']).to eq 'A'
-      expect(cards.first['type']).to eq 'Basic'
+      expect(cards.first[:name]).to eq 'A'
+      expect(cards.first[:type]).to eq 'Basic'
     end
 
     it 'saves card content' do

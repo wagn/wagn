@@ -4,13 +4,13 @@ class Card
     #
     # The cards' content for the import is stored for every card in a separate
     # file, other attributes like name or type are stored for all cards together
-    # in a json file.
+    # in a yml file.
     #
     # To update a card's content you only have to change the card's content
     # file. The merge method will recognize that the file was changed
     # since the last merge and merge it into the cards table
-    # To update other attributes change them in the json file and either remove
-    # the 'pushed' value or touch the content file
+    # To update other attributes change them in the yml file and either remove
+    # the 'merged' value or touch the content file
     class Import
       CARD_CONTENT_DIR = Card::Migration.data_path('cards').freeze
       OUTPUT_FILE = Card::Migration.data_path 'unmerged'
@@ -29,7 +29,7 @@ class Card
           update_time = Time.now
           MetaData.update do |meta_data|
             merge_data.each do |card_attr|
-              meta_data.add_card_attribute card_attr['name'], :pushed,
+              meta_data.add_card_attribute card_attr['name'], :merged,
                                            update_time
             end
           end
@@ -56,7 +56,7 @@ class Card
         # Save an url as remote deck to make it available for the pull method
         def add_remote name, url
           MetaData.update do |meta_data|
-            meta_data[:remotes][name] = url
+            meta_data.remotes[name] = url
           end
         end
 
@@ -82,8 +82,8 @@ class Card
         end
 
         def needs_update? data
-          !data[:pushed] ||
-            data[:pushed] < File.mtime(content_path(data[:name]))
+          !data[:merged] ||
+            data[:merged] < File.mtime(content_path(data[:name]))
         end
 
         # Returns an array of hashes with card attributes
@@ -123,8 +123,8 @@ class Card
       end
 
       # Handles the card attributes and remotes for the import
-      class MetaData < Hash
-        DEFAULT_PATH = Card::Migration.data_path('cards.json').freeze
+      class MetaData
+        DEFAULT_PATH = Card::Migration.data_path('cards.yml').freeze
 
         class << self
           def update
@@ -141,15 +141,19 @@ class Card
         def initialize path=nil
           @path = path || DEFAULT_PATH
           ensure_path
-          replace read
+          @data = read
         end
 
         def cards
-          self[:cards]
+          @data[:cards]
+        end
+
+        def remotes
+          @data[:remotes]
         end
 
         def url remote
-          self[:remotes][remote.to_sym] ||
+          @data[:remotes][remote.to_sym] ||
             raise("unknown remote: #{remote}")
         end
 
@@ -178,11 +182,11 @@ class Card
 
         def read
           return { cards: [], remotes: {} } unless File.exist? @path
-          YAML.load(File.read(@path)).deep_symbolize_keys
+          YAML.load_file(@path).deep_symbolize_keys
         end
 
         def write
-          File.write @path, YAML.dump(self)
+          File.write @path, @data.to_yaml
         end
 
         private

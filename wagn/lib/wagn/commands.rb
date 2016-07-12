@@ -89,8 +89,7 @@ else
 
     rspec_command =
       "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} " \
-      " #{opts[:rescue]} rspec #{rspec_args.shelljoin} #{opts[:files]}
-2>&1"
+      " #{opts[:rescue]} rspec #{rspec_args.shelljoin} #{opts[:files]} 2>&1"
     exit $CHILD_STATUS.exitstatus unless system rspec_command
   when '--version', '-v'
     puts "Wagn #{Card::Version.release}"

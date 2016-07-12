@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160229134221) do
+ActiveRecord::Schema.define(version: 20160407164317) do
 
   create_table "card_actions", force: :cascade do |t|
     t.integer "card_id",         limit: 4
@@ -111,11 +111,17 @@ ActiveRecord::Schema.define(version: 20160229134221) do
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
+  create_table "schema_migrations_cards", id: false, force: :cascade do |t|
+    t.string "version", limit: 255, null: false
+  end
+
+  add_index "schema_migrations_cards", ["version"], name: "unique_schema_migrations_cards", unique: true, using: :btree
+
   create_table "schema_migrations_core_cards", id: false, force: :cascade do |t|
     t.string "version", limit: 255, null: false
   end
 
-  add_index "schema_migrations_core_cards", ["version"], name: "unique_schema_migrations_cards", unique: true, using: :btree
+  add_index "schema_migrations_core_cards", ["version"], name: "unique_schema_migrations_core_cards", unique: true, using: :btree
 
   create_table "schema_migrations_deck_cards", id: false, force: :cascade do |t|
     t.string "version", limit: 255, null: false

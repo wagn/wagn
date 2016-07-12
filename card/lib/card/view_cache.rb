@@ -11,14 +11,10 @@ class Card
       end
 
       def fetch format, view, args, &block
-        return yield if cacheable_view?(view, format)
+        return yield unless cacheable_view?(view, format)
 
         key = cache_key view, format, args
-        unless cache.exist?(key)
-          increment_cached_views_cnt
-          reduce_cache if cached_views_cnt > LIMIT
-        end
-        increment_frequency key
+        update_cache_accounting! key
 
         if Card.config.view_cache == 'debug'
           verbose_fetch key, &bloack
@@ -32,6 +28,14 @@ class Card
       end
 
       private
+
+      def update_cache_accounting! key
+        unless cache.exist?(key)
+          increment_cached_views_cnt
+          reduce_cache if cached_views_cnt > LIMIT
+        end
+        increment_frequency key
+      end
 
       def verbose_fetch
         if cache.exist? key
@@ -86,8 +90,11 @@ class Card
       end
 
       def cacheable_view? view, format
-        !Card.config.view_cache || !format.view_caching? || !format.main? ||
-          (view != :open && view != :content) || format.class != HtmlFormat
+        Card.config.view_cache &&
+          format.view_caching? &&
+          format.main? &&
+          format.class == HtmlFormat &&
+          (view == :open || view == :content)
       end
     end
   end

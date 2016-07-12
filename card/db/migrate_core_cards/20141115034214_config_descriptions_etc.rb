@@ -7,7 +7,7 @@ class ConfigDescriptionsEtc < Card::CoreMigration
     Card.merge_list json['card']['value'], output_file: 'tmp/unmerged_config_text.json'
 
     # fix missing +*from card
-    c = Card.fetch "follower notification email+#{Card[:from].name}", new: {}
+    c = Card.fetch 'follower notification email', :from, new: {}
     c.content = Card[:wagn_bot].name
     c.save!
   end

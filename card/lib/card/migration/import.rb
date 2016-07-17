@@ -1,3 +1,5 @@
+require 'import_data'
+
 class Card
   class Migration
     # Imports card data from a local or remote deck
@@ -10,27 +12,25 @@ class Card
     # file. The merge method will recognize that the file was changed
     # since the last merge and merge it into the cards table
     # To update other attributes change them in the yml file and either remove
-    # the 'merged' value or touch the content file
+    # the 'merged' value or touch the corresponding content file
     class Import
-      CARD_CONTENT_DIR = Card::Migration.data_path('cards').freeze
       OUTPUT_FILE = Card::Migration.data_path 'unmerged'
       class << self
         # Merge the import data into the cards table
         # If 'all' is true all import data is merged.
         # Otherwise only the data that was changed or added since the last merge
         def merge all=false
-          merge_data = card_data_for_merge all
+          merge_data = all ? ImportData.all_cards : ImportData.changed_cards
           puts('nothing to merge') && return if merge_data.empty?
 
           Card::Mailer.perform_deliveries = false
           Card::Auth.as_bot do
             Card.merge_list merge_data, output_file: OUTPUT_FILE
           end
-          update_time = Time.now
-          MetaData.update do |meta_data|
-            merge_data.each do |card_attr|
-              meta_data.add_card_attribute card_attr['name'], :merged,
-                                           update_time
+          update_time = Time.zone.now.to_s
+          ImportData.update do |import_data|
+            merge_data.each do |card_data|
+              import_data.merged card_data, update_time
             end
           end
         end
@@ -44,47 +44,29 @@ class Card
         # @option opts [Boolean] items_only if true fetch all nested cards but
         #   not the card itself
         def pull name, opts={}
-          MetaData.update do |meta_data|
-            url = opts[:remote] ? meta_data.url(opts.delete(:remote)) : nil
+          ImportData.update do |import_data|
+            url = opts[:remote] ? import_data.url(opts.delete(:remote)) : nil
             fetch_card_data(name, url, opts).each do |card_data|
-              saved_data = meta_data.add_card card_data
-              write_card_content saved_data[:key], card_data[:content]
+              import_data.add_card card_data
             end
+          end
+        end
+
+        # Add a card with the given attributes to the import data
+        def add_card attr
+          ImportData.update do |data|
+            data.add_card attr
           end
         end
 
         # Save an url as remote deck to make it available for the pull method
         def add_remote name, url
-          MetaData.update do |meta_data|
-            meta_data.remotes[name] = url
+          ImportData.update do |data|
+            data.add_remote name, url
           end
         end
 
         private
-
-        def card_data_for_merge all
-          MetaData.cards.map do |data|
-            next unless all || needs_update?(data)
-            key = data[:key] || data[:name].to_name.key
-            hash = {
-              'name' => data[:name],
-              'type' => data[:type],
-              'content' => File.read(content_path(key))
-            }
-            hash['codename'] = data[:codename] if data[:codename]
-            hash
-          end.compact
-        end
-
-        def write_card_content key, content
-          FileUtils.mkpath CARD_CONTENT_DIR unless Dir.exist? CARD_CONTENT_DIR
-          File.write content_path(key), content
-        end
-
-        def needs_update? data
-          !data[:merged] ||
-            data[:merged] < File.mtime(content_path(data[:name]))
-        end
 
         # Returns an array of hashes with card attributes
         def fetch_card_data name, url, opts
@@ -96,7 +78,6 @@ class Card
             else
               [nil, :card]
             end
-
           card_data =
             if url
               fetch_remote_data name, view, url
@@ -114,96 +95,9 @@ class Card
         end
 
         def fetch_local_data name, view
-          Card[name].format(format: :json).render(view || :content)
-        end
-
-        def content_path card_key
-          File.join CARD_CONTENT_DIR, card_key
-        end
-      end
-
-      # Handles the card attributes and remotes for the import
-      class MetaData
-        DEFAULT_PATH = Card::Migration.data_path('cards.yml').freeze
-
-        class << self
-          def update
-            data = MetaData.new
-            yield(data)
-            data.write
+          Card::Auth.as_bot do
+            Card[name].format(format: :json).render(view || :content)
           end
-
-          def cards
-            MetaData.new.cards
-          end
-        end
-
-        def initialize path=nil
-          @path = path || DEFAULT_PATH
-          ensure_path
-          @data = read
-        end
-
-        def cards
-          @data[:cards]
-        end
-
-        def remotes
-          @data[:remotes]
-        end
-
-        def url remote
-          @data[:remotes][remote.to_sym] ||
-            raise("unknown remote: #{remote}")
-        end
-
-        def add_card_attribute name, attr_key, attr_value
-          card = find_card name
-          return unless card
-          card[attr_key] = attr_value
-          card
-        end
-
-        def add_card new_attr
-          card_data = {}
-          [:name, :type, :codename].each do |key|
-            card_data[key] = new_attr[key] if new_attr[key]
-          end
-          card_data[:key] = new_attr[:name].to_name.key
-          card_entry = find_card card_data[:name]
-
-          if card_entry
-            card_entry.replace card_data
-          else
-            cards << card_data
-          end
-          card_data
-        end
-
-        def read
-          return { cards: [], remotes: {} } unless File.exist? @path
-          YAML.load_file(@path).deep_symbolize_keys
-        end
-
-        def write
-          File.write @path, @data.to_yaml
-        end
-
-        private
-
-        def find_card name
-          key = name.to_name.key
-          index =
-            cards.find_index do |attr|
-              attr[:key] == key
-            end
-          return unless index
-          cards[index]
-        end
-
-        def ensure_path
-          dir = File.dirname(@path)
-          FileUtils.mkpath dir unless Dir.exist? dir
         end
       end
     end

@@ -157,10 +157,7 @@ namespace :wagn do
 
   namespace :migrate do
     desc 'migrate cards'
-    task cards: :environment do
-      Rake::Task['wagn:migrate:core_cards'].invoke
-      Rake::Task['wagn:migrate:deck_cards'].execute
-    end
+    task cards: [:core_cards, :deck_cards]
 
     desc 'migrate structure'
     task structure: :environment do

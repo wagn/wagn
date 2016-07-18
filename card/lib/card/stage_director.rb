@@ -190,8 +190,8 @@ class Card
     # handle the store stage
     # The tricky part here is to preserve the dirty marks on the subcards'
     # attributes for the finalize stage.
-    # To achieve this we can't just call the :store and :finlaize callbacks on
-    # the subcards as  we do in the other phases.
+    # To achieve this we can't just call the :store and :finalize callbacks on
+    # the subcards as we do in the other phases.
     # Instead we have to call `save` on the subcards
     # and use the ActiveRecord :around_save callback to run the :store and
     # :finalize stages

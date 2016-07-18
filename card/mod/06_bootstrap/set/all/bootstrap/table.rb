@@ -36,20 +36,26 @@ format :html do
     end
   end
 
-  def table_row row
-    row_content =
-      if row.is_a? Array
-        row.map do |item|
-          if item.is_a? Hash
-            content_tag :td, item.delete(:content), item
-          else
-            content_tag :td, item
-          end
-        end.join "\n"
-      else
-        row
-      end
+  def table_cell cell
+    if cell.is_a? Hash
+      content_tag :td, cell.delete(:content).to_s.html_safe, cell
+    else
+      content_tag :td, cell.html_safe
+    end
+  end
 
-    content_tag :tr, row_content.html_safe
+  def table_row row
+    row_data, row_class =
+      case row
+      when Hash then [row.delete(:content), row]
+      else [row, nil]
+      end
+    row_content =
+      if row_data.is_a?(Array)
+        row_data.map { |item| table_cell item }.join "\n"
+      else
+        row_data
+      end
+    content_tag :tr, row_content.html_safe, row_class
   end
 end

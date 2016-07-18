@@ -21,6 +21,7 @@ module Decko
     paths.add 'config/routes.rb', with: 'rails/engine-routes.rb'
     paths.add 'lib/tasks', with: "#{::Wagn.gem_root}/lib/wagn/tasks",
                            glob: '**/*.rake'
+    paths['lib/tasks'] << "#{::Cardio.gem_root}/lib/card/tasks"
     paths.add 'lib/wagn/config/initializers',
               with: File.join(Wagn.gem_root, 'lib/wagn/config/initializers'),
               glob: '**/*.rb'

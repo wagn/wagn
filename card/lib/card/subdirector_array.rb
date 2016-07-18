@@ -17,9 +17,7 @@ class Card
       if card.is_a? Card::StageDirector
         card = card.card
       end
-      each do |dir|
-        return dir if dir.card == card
-      end
+      return dir if any? { |dir| dir.card == card }
       dir = Card::DirectorRegister.fetch card, parent: @parent
       dir.main = false
       dir.parent = @parent

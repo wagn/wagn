@@ -33,7 +33,6 @@ describe 'act API' do
         Card::Auth.as_bot do
           in_stage stage, trigger: -> { create_card } do
             if name == 'check trans'
-              binding.pry
               expect(transaction_record_state(:new_record)).to val
             end
           end

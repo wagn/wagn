@@ -76,7 +76,6 @@ class Card < ActiveRecord::Base
   before_validation :validation_phase, if: -> { run_phases? }
   around_save :storage_phase
   after_commit :integration_phase, if: -> { run_phases? }
-  after_commit :clean_up, if: -> { run_phases? }
   after_rollback :clean_up, if: -> { run_phases? }
 
   TRACKED_FIELDS = %w(name type_id db_content trash).freeze

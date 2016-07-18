@@ -38,7 +38,7 @@ class Card
     include Stage
 
     attr_accessor :prior_store, :act, :card, :stage, :parent, :main,
-                  :subdirectors
+                  :subdirectors, :transact_in_stage
     attr_reader :running
     alias running? running
     alias main? main
@@ -113,9 +113,16 @@ class Card
       return false
     ensure
       @card.changes_applied
+      if main? && !@card.skip_phases
+        DirectorRegister.clear
+      end
     end
 
     def catch_up_to_stage next_stage
+      if @transact_in_stage
+        return if @transact_in_stage != next_stage
+        next_stage = :integrate_with_delay
+      end
       @stage ||= -1
       (@stage + 1).upto(stage_index(next_stage)) do |i|
         run_single_stage stage_symbol(i)
@@ -211,12 +218,8 @@ class Card
       # saves the card
       if block_given?
         run_stage_callbacks :store
-        if parallel_subcards?
-          store_with_subcards(&save_block)
-        else
-          save_block.call
-        end
-      elsif parallel_subcards?
+        store_with_subcards(&save_block)
+      else
         store_and_finalize_as_subcard
       end
     end
@@ -250,9 +253,6 @@ class Card
       end
     end
 
-    def parallel_subcards?
-      true
-    end
 
     def run_subcards_separately
       @subdirectors.each do |subdir|

@@ -1,5 +1,9 @@
 
 class Card
+  def restore_changes_information
+    @changed_attributes = @previously_changed
+  end
+
   # A 'StageDirector' executes the stages of a card when the card gets created,
   # updated or deleted.
   # For subcards, i.e. other cards that are changed in the same act, a
@@ -97,14 +101,18 @@ class Card
       @from_trash = nil
     end
 
-    # dirty marks are gone in this phase
     def integration_phase
+      # dirty marks are gone in this phase
+      @card.restore_changes_information
       run_single_stage :integrate
       run_single_stage :integrate_with_delay
+
     rescue => e  # don't rollback
       Card::Error.current = e
       @card.notable_exception_raised
       return false
+    ensure
+      @card.changes_applied
     end
 
     def catch_up_to_stage next_stage
@@ -203,8 +211,12 @@ class Card
       # saves the card
       if block_given?
         run_stage_callbacks :store
-        store_with_subcards(&save_block)
-      else
+        if parallel_subcards?
+          store_with_subcards(&save_block)
+        else
+          save_block.call
+        end
+      elsif parallel_subcards?
         store_and_finalize_as_subcard
       end
     end
@@ -234,6 +246,16 @@ class Card
     def store_subcards
       @subdirectors.each do |subdir|
         next if subdir.prior_store
+        subdir.catch_up_to_stage :store
+      end
+    end
+
+    def parallel_subcards?
+      true
+    end
+
+    def run_subcards_separately
+      @subdirectors.each do |subdir|
         subdir.catch_up_to_stage :store
       end
     end

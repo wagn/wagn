@@ -85,7 +85,12 @@ class Card
     # ~~~~~ INSTANCE METHODS
 
     def initialize card, opts={}
-      raise Card::Error, 'format initialized without card' unless (@card = card)
+      unless (@card = card)
+        raise Card::Error, # 'format initialized without card'
+                           I18n.t(:exception_init_without_card,
+                                  scope: 'lib.card.format')
+      end
+
       opts.each do |key, value|
         instance_variable_set "@#{key}", value
       end
@@ -221,11 +226,14 @@ class Card
     def format_date date, include_time=true
       # using DateTime because Time doesn't support %e on some platforms
       if include_time
-        DateTime.new(
-          date.year, date.mon, date.day, date.hour, date.min, date.sec
-        ).strftime('%B %e, %Y %H:%M:%S')
+        # .strftime('%B %e, %Y %H:%M:%S')
+        I18n.localize(DateTime.new(date.year, date.mon, date.day,
+                                   date.hour, date.min, date.sec),
+                      format: :card_date_seconds)
       else
-        DateTime.new(date.year, date.mon, date.day).strftime('%B %e, %Y')
+        # .strftime('%B %e, %Y')
+        I18n.localize(DateTime.new(date.year, date.mon, date.day),
+                      format: :card_date_only)
       end
     end
 

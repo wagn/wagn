@@ -1,0 +1,70 @@
+# I18n 'card' messages for the "en" (English) locale
+#
+# conventions:
+#
+#  key name prefixes:
+#    'exception_' begins key of text to be used in a raised exception
+#    'error_' begins key of text to be added to an error list (usuallly)
+#    'search_' begins key of text to be used in WQL search comment
+#    'deny_' begins key of text to be used in denying action due to permissions
+#    (Not all key names begin with a prefix. In the absence of a prefix,
+#    the way the text will be used is generic and not explicitly hinted at.)
+#
+#  scope:
+#    scope values correspond to the path to the source file where the
+#    translation lookup occurs, relative to the root of the 'card' gem,
+#    with slashes replaced by dots and the final .rb extension omitted.
+#    So, a scope might be 
+#      'lib.card.format.render' or 'mod.01_core.set.all.permisssions'
+#    Although there isn't a common prefix for all scopes, scopes begin
+#    with either 'lib.card' or 'mod.0d_modname' and these patterns are
+#    sufficiently distinctive that key collisions with translations
+#    for applications or other gems are believed to be unlikely.
+#    Format names for time and date are begun with a 'card_' prefix to
+#    minimize the chances of interference with other gems or applications.
+---
+en:
+  time:
+    formats:
+      card_dayofwk_min_tz: '%A, %B %d, %Y %I:%M %p %Z'
+      card_date_seconds: '%B %e, %Y %H:%M:%S'
+      card_date_only: '%B %e, %Y'
+  lib:
+    card:
+      format:
+        exception_init_without_card: format initialized without card
+  mod:
+    :05_standard:
+      set:
+        self:
+          account_links:
+            sign_up: Sign up
+            sign_in: Sign in
+            invite: Invite
+            sign_out: Sign out
+          admin_info:
+            email_off: Email delivery is turned off. Change settings in %{path} to send sign up notifications.
+            admin_warn: ADMINISTRATOR WARNING
+            captcha_temp: Your captcha is currently working with temporary settings. This is fine for a local installation, but you will need new recaptcha keys if you want to make this site public.
+            captcha_keys: You are configured to use [[*captcha]], but for that to work you need new recaptcha keys.
+            instructions: Instructions
+            howto_add_keys: "How to add new recaptcha keys:"
+            howto_register: 1. Register your domain at %{recaptcha_link}
+            howto_add: 2. Add your keys to %{recaptcha_settings}
+            howto_turn_off: 'How to turn captcha off:'
+            howto_go: 1. Go to %{captcha_card}
+            howto_update: 2. Update all *captcha rules to "no".
+          signin:
+            sign_in_title: Sign In
+            sign_in: Sign in
+            or_sign_up: '...or sign up!'
+            reset_password: RESET PASSWORD
+            forgot_password: Forgot Password
+            reset_my_password: Reset my password
+            check_email: Check your email for a link to reset your password
+            error_unknown_email: Unrecognized email.
+            error_not_active: Sorry, that account is not active.
+            error_wrong_password: Wrong password
+            abort_bad_signin_args: bad sign in arguments
+            error_not_active: not active
+            error_not_recognized: not recognized

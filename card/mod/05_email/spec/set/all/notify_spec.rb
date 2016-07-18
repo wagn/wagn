@@ -251,6 +251,10 @@ Use this link to unfollow /update/Joe_User+*follow?card%5Bsubcards%5D%5Banother+
       Card[card_name].update_attributes! content: new_content
     end
 
+    def update_name card_name, new_name='updated content'
+      Card[card_name].update_attributes! name: new_name, update_referers: true
+    end
+
     it 'sends notifications of edits' do
       expect_user('Big Brother').to be_notified_of 'All Eyes On Me+*self'
       update 'All Eyes On Me'
@@ -265,6 +269,16 @@ Use this link to unfollow /update/Joe_User+*follow?card%5Bsubcards%5D%5Banother+
     it 'sends only one notification per user'  do
       expect_user('Big Brother').to receive(:send_change_notice).exactly(1)
       update 'Google glass'
+    end
+
+    it 'sends only one notification per user'  do
+      Card.create! name: 'WOW', content: '{{Big Brother|link}}'
+      Card::Auth.as_bot do
+        Card.create! name: 'Users+*type+John+*follow', type_id: Card::PointerID,
+                     content: "[[*always]]\n"
+      end
+      expect_user('John').to receive(:send_change_notice).exactly(1)
+      update_name 'Big Brother'
     end
 
     it 'does not send notification of not-followed cards' do

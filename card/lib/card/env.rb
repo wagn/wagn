@@ -53,6 +53,16 @@ class Card
         !self[:controller] || self[:html]
       end
 
+      def serialize
+        keep = ::Set.new [:main_name, :params, :ip, :ajax, :html, :host,
+                          :protocol]
+        @@env.select { |k,v| keep.include?(k) }
+      end
+
+      def deserialize! data
+        @@env = data
+      end
+
       def method_missing method_id, *args
         case args.length
         when 0 then self[method_id]

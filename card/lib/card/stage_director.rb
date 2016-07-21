@@ -1,7 +1,11 @@
 
 class Card
   def restore_changes_information
-    @changed_attributes = @previously_changed
+    return unless @previously_changed
+    @changed_attributes = ActiveSupport::HashWithIndifferentAccess.new
+    @previously_changed.each do |k, (old, new)|
+      @changed_attributes[k] = old
+    end
   end
 
   # A 'StageDirector' executes the stages of a card when the card gets created,

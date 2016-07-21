@@ -1,5 +1,5 @@
 describe 'act API' do
-  let(:create_card) { Card.create!(name: 'check trans') }
+  let(:create_card) { Card.create!(name: 'main card') }
   let(:create_card_with_subcards) do
     Card.create name: 'main card',
                 subcards: {
@@ -8,25 +8,89 @@ describe 'act API' do
                 }
   end
 
-  describe 'transactions' do
+
+  describe 'add subcard in integrate stage' do
+    class Card
+      def current_trans
+        ActiveRecord::Base.connection.current_transaction
+      end
+      def record_names
+        current_trans.records.map(&:name)
+      end
+    end
+
+    context 'default subcard handling' do
+      it 'processes all cards in one transaction' do
+        with_test_events do
+          test_event :validate, on: :create, for: 'main card' do
+            add_subcard('sub card')
+          end
+
+          test_event :store, on: :create, for: 'main card' do
+            expect(record_names).to eq ['main card', 'sub card']
+          end
+
+          create_card
+        end
+      end
+    end
+
+    context 'serial subcard handling' do
+      it 'processes subcards in separate transaction' do
+
+        $rspec_trans = ActiveRecord::Base.connection.current_transaction
+        with_test_events do
+          test_event :validate, on: :create, for: 'main card' do
+            Card::Env.host('new root')
+            $trans = current_trans
+
+            expect(Card['sub card']).to be_falsey
+            binding.pry
+            add_subcard('sub card', transact_in_stage: :integrate)
+
+            expect(subcard('sub card').director.transact_in_stage)
+              .to eq :integrate
+          end
+
+          test_event :integrate, on: :create, for: 'main card' do
+            #expect($rspec_trans).to eq current_trans
+            expect(subcard('sub card').director.stage).to eq nil
+          end
+
+          test_event :finalize, on: :create, for: 'main card' do
+            #expect(@trans).to eq ActiveRecord::Base.connection.current_transaction
+            expect($trans).to eq current_trans
+            expect(subcard('sub card').director.stage).to eq nil
+          end
+
+          test_event :finalize, on: :create, for: 'sub card' do
+            ct = current_trans
+            expect($trans).not_to eq ct
+          end
+        end
+        test_event :integrate_with_delay, on: :create do
+          expect($rspec_trans).to eq current_trans
+          expect(Card::Env.host).to eq('new root')
+        end
+        create_card
+        # expect to finished delayed jobs
+        expect(Delayed::Worker.new.work_off).to eq [2, 0]
+        #expect(Delayed::Worker.new.work_off).to eq [1, 0]
+        expect(Card['sub card']).to be_instance_of(Card)
+      end
+    end
+
     context 'transaction turned on' do
-      it 'initialization phase is outside transaction' do
-        check_transaction :initialize, be_falsey
+      def expect_new_transaction
+        expect($trans).not_to eq current_trans
       end
 
-      it 'validation phase is inside transaction' do
-        check_transaction :validate, be_truthy
+      def expect_no_transaction
+        expect(@rspec_trans).to eq current_trans
       end
 
-      it 'storage phase is inside transaction' do
-        check_transaction :store, be_truthy
-      end
-
-      it 'integration phase is outside transaction' do
-        # Card::Auth.as_bot do
-        #   Card.create! name: 'integrate me'
-        # end
-        check_transaction :integrate, be_falsey
+      def expect_same_transaction
+        expect($trans).to eq current_trans
       end
 
       def check_transaction stage, val
@@ -85,13 +149,10 @@ describe 'act API' do
   end
 
   describe 'dirty' do
-    context 'with transaction' do
+    it 'unchanged in integration phase' do
 
     end
 
-    context 'without transaction' do
-
-    end
   end
 
   describe 'Env' do

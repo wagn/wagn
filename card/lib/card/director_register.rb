@@ -50,7 +50,11 @@ class Card
       end
 
       def fetch card, opts={}
-        directors[card] ||= Card.new_director card, opts
+        return directors[card] if directors[card]
+        directors.each_key do |dir_card|
+          return directors[dir_card] if dir_card.name == card.name
+        end
+        directors[card] = Card.new_director card, opts
       end
 
       def add director

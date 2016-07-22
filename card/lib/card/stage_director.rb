@@ -60,6 +60,7 @@ class Card
       @parent = opts[:parent]
       # has card to be stored before the supercard?
       @prior_store = opts[:priority]
+      @call_after_store = []
       @main = main
       @subdirectors = SubdirectorArray.initialize_with_subcards(self)
       register
@@ -96,8 +97,6 @@ class Card
 
     # everything in here can use dirty marks
     def storage_phase &block
-      # for a subcard :prepare_to_store was already executed
-      # don't execute it twice
       catch_up_to_stage :prepare_to_store
       run_single_stage :store, &block
       run_single_stage :finalize
@@ -106,18 +105,16 @@ class Card
     end
 
     def integration_phase
-      # dirty marks are gone in this phase
       @card.restore_changes_information
       run_single_stage :integrate
       run_single_stage :integrate_with_delay
-
     rescue => e  # don't rollback
       Card::Error.current = e
       @card.notable_exception_raised
       return false
     ensure
       @card.changes_applied
-      if main? && !@card.skip_phases
+      if main? && !@card.only_storage_phase
         DirectorRegister.clear
       end
     end
@@ -127,14 +124,12 @@ class Card
         return if @transact_in_stage != next_stage
         next_stage = :integrate_with_delay
       end
-      @stage ||= -1
-      (@stage + 1).upto(stage_index(next_stage)) do |i|
-        run_single_stage stage_symbol(i)
+      upto_stage(next_stage) do |stage|
+        run_single_stage stage
       end
     end
 
     def call_after_store &block
-      @call_after_store ||= []
       @call_after_store << block
     end
 
@@ -167,10 +162,29 @@ class Card
 
     private
 
+    def upto_stage stage
+      @stage ||= -1
+      (@stage + 1).upto(stage_index(stage)) do |i|
+        yield stage_symbol(i)
+      end
+    end
+
+    def valid_next_stage? stage
+      new_stage = stage_index(stage)
+      @stage ||= -1
+      return if @stage >= new_stage
+      if @stage < new_stage - 1
+        raise Card::Error, "stage #{stage_symbol(new_stage - 1)} was skipped " \
+                          "for card #{@card}"
+      end
+      @card.errors.empty? || new_stage > stage_index(:validate)
+    end
+
     def run_single_stage stage, &block
+      return unless valid_next_stage? stage
       # puts "#{@card.name}: #{stage} stage".red
+
       @stage = stage_index stage
-      return if @card.errors.any? && @stage <= stage_index(:validate)
       if stage == :initialize
         @running ||= true
         prepare_for_phases
@@ -181,7 +195,7 @@ class Card
         store(&block)
       else
         run_stage_callbacks stage
-        run_subdirector_stages stage unless stage == :finalize
+        run_subdirector_stages stage
       end
     rescue => e
       @card.rescue_event e
@@ -224,42 +238,31 @@ class Card
         run_stage_callbacks :store
         store_with_subcards(&save_block)
       else
-        store_and_finalize_as_subcard
+        trigger_storage_phase_callback
       end
     end
 
     def store_with_subcards
-      store_prior_subcards
+      store_pre_subcards
       yield
-      if @call_after_store
-        @call_after_store.each do |handle_id|
-          handle_id.call(@card.id)
-        end
-      end
-      store_subcards
-      @virtual = false # TODO: find a better place for this
+      @call_after_store.each { |handle_id| handle_id.call(@card.id) }
+      store_post_subcards
+      true.tap { @virtual = false } # TODO: find a better place for this
     ensure
       @card.handle_subcard_errors
     end
 
     # store subcards whose ids we need for this card
-    def store_prior_subcards
+    def store_pre_subcards
       @subdirectors.each do |subdir|
         next unless subdir.prior_store
         subdir.catch_up_to_stage :store
       end
     end
 
-    def store_subcards
+    def store_post_subcards
       @subdirectors.each do |subdir|
         next if subdir.prior_store
-        subdir.catch_up_to_stage :store
-      end
-    end
-
-
-    def run_subcards_separately
-      @subdirectors.each do |subdir|
         subdir.catch_up_to_stage :store
       end
     end
@@ -268,8 +271,9 @@ class Card
     # At this point the :prepare_to_store stage was already executed
     # by the parent director. So the storage phase will only run
     # the :store stage and the :finalize stage
-    def store_and_finalize_as_subcard
-      @card.skip_phases = true
+    def trigger_storage_phase_callback
+      @stage = stage_index :prepare_to_store
+      @card.only_storage_phase = true
       @card.save! validate: false
     end
   end

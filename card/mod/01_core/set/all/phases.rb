@@ -3,8 +3,8 @@ def prepare_for_phases
   include_set_modules
 end
 
-def run_phases?
-  director.main? && !skip_phases
+def only_storage_phase?
+  !director.main? || only_storage_phase
 end
 
 delegate :validation_phase, to: :director

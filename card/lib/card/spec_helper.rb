@@ -86,9 +86,8 @@ module Card::SpecHelper
   #            expect(item_names).to eq []
   #          end
   def in_stage stage, opts={}, &event_block
-    stage_sym = :"#{stage}_stage"
     $rspec_binding = binding
-    add_test_event stage_sym, :in_stage_test, &event_block
+    add_test_event stage, :in_stage_test, opts, &event_block
     trigger =
       if opts[:trigger].is_a?(Symbol)
         method(opts[:trigger])
@@ -97,10 +96,10 @@ module Card::SpecHelper
       end
     trigger.call
   ensure
-    remove_test_event stage_sym, :in_stage_test
+    remove_test_event stage, :in_stage_test
   end
 
-  def add_test_event stage, name, &event_block
+  def add_test_event stage, name, opts={}, &event_block
     Card.class_eval do
       def method_missing m, *args, &block
         begin
@@ -115,24 +114,27 @@ module Card::SpecHelper
         rescue NameError
         end
         super
-        #        raise NoMethodError
+        # raise NoMethodError
       end
-
-      define_method name, event_block
+      opts[:set] ||= Card::Set::All::Event # just a random module that
+                                           # is always included
+      if (only_for_card = opts.delete(:for))
+        opts[:when] = proc { |c| c.name == only_for_card }
+      end
+      extend Card::Set::Event
+      event name, stage, opts, &event_block
     end
-    Card.define_callbacks name
-    Card.set_callback stage, :before, name, prepend: true
   end
 
   def remove_test_event stage, name
-    Card.skip_callback stage, :before, name
+    stage_sym = :"#{stage}_stage"
+    Card.skip_callback stage_sym, :after, name
   end
 
-  def test_event stage, _opts, &block
+  def test_event stage, opts={}, &block
     event_name = :"test_event_#{@events.size}"
-    stage_sym = :"#{stage}_stage"
-    @events << [stage_sym, event_name]
-    add_test_event stage_sym, event_name, &block
+    @events << [stage, event_name]
+    add_test_event stage, event_name, opts, &block
   end
 
   def with_test_events

@@ -286,10 +286,10 @@ class Card
         left_card.new_by_attributes absolute_name, attributes
       else
         subcard_args = extract_subcard_args! attributes
+        t_i_s = attributes.delete(:transact_in_stage)
         card = Card.assign_or_initialize_by absolute_name.s, attributes,
                                             local_only: true
-        subcard = new_by_card card,
-                              transact_in_stage: attributes[:transact_in_stage]
+        subcard = new_by_card card, transact_in_stage: t_i_s
         card.subcards.add subcard_args
         subcard
       end
@@ -311,7 +311,7 @@ class Card
       end
       @keys << card.key
       Card.write_to_soft_cache card
-      card.director = @context_card.director.subdirectors.add(card)
+      card.director = @context_card.director.subdirectors.add(card, opts)
       card
     end
   end

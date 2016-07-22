@@ -55,7 +55,8 @@ class Card
       private
 
       def with_delay? opts
-        opts[:after] == :integrate_with_delay_stage
+        opts[:after] == :integrate_with_delay_stage ||
+          opts[:before] == :integrate_with_delay_stage
       end
 
       def process_stage_opts opts
@@ -70,19 +71,19 @@ class Card
 
       def define_event_delaying_method event, method_name
         class_eval do
-          define_method method_name, proc {
+          define_method method_name, proc do
             Object.const_get(event.to_s.camelize).perform_later(
               self, self.serialize_for_active_job, Card::Env.serialize
             )
-          }
+          end
         end
       end
 
       def define_event_method event, call_method, _opts
         class_eval do
           define_method event do
-            puts "#{name}:#{event}".red
-            puts "#{Card::DirectorRegister.to_s}".green
+            # puts "#{name}:#{event}".red
+            # puts "#{Card::DirectorRegister.to_s}".green
             run_callbacks event do
               send call_method
             end
@@ -108,12 +109,13 @@ class Card
           end
         )
         Object.const_get(class_name).class_eval do
-          define_method :perform, proc do |card, card_attribs, env|
+          define_method(:perform, proc { |card, card_attribs, env|
               card.deserialize_for_active_job! card_attribs
               Card::Env.deserialize! env
               card.include_set_modules
               card.send final_method
-            end
+           }
+          )
         end
       end
 

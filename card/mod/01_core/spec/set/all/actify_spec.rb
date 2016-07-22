@@ -26,7 +26,7 @@ describe 'act API' do
             add_subcard('sub card')
           end
 
-          test_event :store, on: :create, for: 'main card' do
+          test_event :finalize, on: :create, for: 'main card' do
             expect(record_names).to eq ['main card', 'sub card']
           end
 
@@ -37,137 +37,104 @@ describe 'act API' do
 
     context 'serial subcard handling' do
       it 'processes subcards in separate transaction' do
-
-        $rspec_trans = ActiveRecord::Base.connection.current_transaction
+        Delayed::Worker.delay_jobs = true
         with_test_events do
           test_event :validate, on: :create, for: 'main card' do
-            Card::Env.host('new root')
-            $trans = current_trans
-
-            expect(Card['sub card']).to be_falsey
-            binding.pry
-            add_subcard('sub card', transact_in_stage: :integrate)
-
-            expect(subcard('sub card').director.transact_in_stage)
-              .to eq :integrate
-          end
-
-          test_event :integrate, on: :create, for: 'main card' do
-            #expect($rspec_trans).to eq current_trans
-            expect(subcard('sub card').director.stage).to eq nil
+            add_subcard('sub card', transact_in_stage: :integrate_with_delay)
+           # expect(subcard('sub card').director.transact_in_stage)
+            #  .to eq :integrate
           end
 
           test_event :finalize, on: :create, for: 'main card' do
-            #expect(@trans).to eq ActiveRecord::Base.connection.current_transaction
-            expect($trans).to eq current_trans
+            expect(record_names).to eq ['main card']
+            expect(subcard('sub card').director.stage).to eq nil
+          end
+
+          test_event :integrate, on: :create, for: 'main card' do
+            expect(record_names).to eq []
             expect(subcard('sub card').director.stage).to eq nil
           end
 
           test_event :finalize, on: :create, for: 'sub card' do
-            ct = current_trans
-            expect($trans).not_to eq ct
-          end
-        end
-        test_event :integrate_with_delay, on: :create do
-          expect($rspec_trans).to eq current_trans
-          expect(Card::Env.host).to eq('new root')
-        end
-        create_card
-        # expect to finished delayed jobs
-        expect(Delayed::Worker.new.work_off).to eq [2, 0]
-        #expect(Delayed::Worker.new.work_off).to eq [1, 0]
-        expect(Card['sub card']).to be_instance_of(Card)
-      end
-    end
-
-    context 'transaction turned on' do
-      def expect_new_transaction
-        expect($trans).not_to eq current_trans
-      end
-
-      def expect_no_transaction
-        expect(@rspec_trans).to eq current_trans
-      end
-
-      def expect_same_transaction
-        expect($trans).to eq current_trans
-      end
-
-      def check_transaction stage, val
-        Card::Auth.as_bot do
-          in_stage stage, trigger: -> { create_card } do
-            if name == 'check trans'
-              expect(transaction_record_state(:new_record)).to val
-            end
-          end
-        end
-      end
-    end
-
-    context 'transaction turned off' do
-      def check_transaction stage, val
-        with_test_events do
-          test_event :initialize, on: :create do
-            if name == 'main card'
-              transaction :off
-              subcard_staging
-            else
-
-            end
-          end
-          test_event :validate, on: :create do
-            case name
-            when 'main card'
-              expect(transaction_record_state(:new_record)).to be_falsey
-            else
-              expect(transaction_record_state(:new_record)).to be_truthy
-            end
-          end
-          test_event :finalize, on: :create do
-            case name
-            when 'main card'
-              expect(transaction_record_state(:new_record)).to be_falsey
-            else
-              expect(transaction_record_state(:new_record)).to be_truthy
-            end
-          end
-          test_event :integrate, on: :create do
-            expect(transaction_record_state(:new_record)).to be_falsey
+            expect(record_names).to eq ['sub card']
           end
 
-        end
-
-        Card::Auth.as_bot do
-          in_stage stage, trigger: -> { create_card } do
-            if name == 'check trans'
-              expect(transaction_record_state(:new_record)).to val
-            end
+          test_event :integrate_with_delay, on: :create do
+            expect(record_names).to eq []
           end
+
+          create_card
+          # expect to finished delayed jobs
+          expect(Delayed::Worker.new.work_off).to eq [2, 0]
+          expect(Card['sub card']).to be_instance_of(Card)
         end
       end
     end
   end
 
-  describe 'dirty' do
-    it 'unchanged in integration phase' do
-
+  describe 'dirty attributes' do
+    it 'survives to integration phase' do
+      Delayed::Worker.delay_jobs = true
+      with_test_events do
+        test_event :validate do
+          self.content =  'new content'
+        end
+        test_event :integrate do
+          expect(name_changed?).to be_truthy
+          expect(changes['name']).to eq(['A', 'new name'])
+          expect(changes['db_content']).to eq(['Alpha [[Z]]',  'new content'])
+        end
+        test_event :integrate_with_delay do
+          expect(name_changed?).to be_truthy
+          expect(changes['name']).to eq(['A', 'new name'])
+          expect(changes['db_content']).to eq(['Alpha [[Z]]',  'new content'])
+        end
+        Delayed::Worker.new.work_off
+        Card['A'].update_attributes! name: 'new name'
+      end
     end
 
+    it '"changed" option works in integration phase' do
+      @called_events = []
+      def event_called ev
+        @called_events << ev
+      end
+
+      with_test_events do
+        test_event :integrate, changed: :name do
+          event_called :i_name
+        end
+        test_event :integrate, changed: :content do
+          event_called :i_content
+        end
+        test_event :integrate_with_delay, changed: :name do
+          event_called :iwd_name
+        end
+        test_event :integrate_with_delay, changed: :content do
+          event_called :iwd_content
+        end
+        Card['A'].update_attributes! name: 'new name'
+
+      end
+      expect(@called_events).to eq([:i_name, :iwd_name])
+    end
   end
 
   describe 'Env' do
-    it 'is available in integrate_with_delay stage' do
+    it 'survives to integration phase' do
+      Delayed::Worker.delay_jobs = true
       with_test_events do
         test_event :initialize, on: :create do
-          Env.root = 'new root'
+          Card::Env.root('new root')
         end
         test_event :integrate, on: :create do
-          expect(Env.root).to eq('new root')
+          expect(Card::Env.root).to eq('new root')
         end
         test_event :integrate_with_delay, on: :create do
-          expect(Env.root).to eq('new root')
+          expect(Card::Env.root).to eq('new root')
         end
         create_card
+        Delayed::Worker.new.work_off
       end
     end
   end

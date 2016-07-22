@@ -56,6 +56,7 @@ Spork.prefork do
       c.syntax = [:should, :expect]
     end
     config.before(:each) do
+      Delayed::Worker.delay_jobs = false
       Card::Auth.current_id = JOE_USER_ID
       Card::Cache.restore
       Card::Env.reset

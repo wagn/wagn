@@ -68,8 +68,12 @@ def silent_change?
 end
 
 def notable_change?
-  !silent_change? && !supercard && current_act &&
+  !silent_change? && current_act_card? &&
     Card::Auth.current_id != WagnBotID && followable?
+end
+
+def current_act_card?
+  current_act && current_act.card_id == id
 end
 
 event :notify_followers_after_save, :integrate,

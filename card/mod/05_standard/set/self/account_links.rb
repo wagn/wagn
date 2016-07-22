@@ -10,25 +10,32 @@ format :html do
     ]
   end
 
-  # ENGLISH below
   view :sign_up, perms: ->(_r) { !Auth.signed_in? && Card.new(type_id: Card::SignupID).ok?(:create) },
                  denial: :blank do |_args|
-    link_to('Sign up', card_path('account/signup'), id: 'signup-link')
+    # 'Sign up'
+    link_to(I18n.t(:sign_up, scope: 'mod.05_standard.set.self.account_links'),
+            card_path('account/signup'), id: 'signup-link')
   end
 
   view :sign_in, perms: ->(_r) { !Auth.signed_in? },
                  denial: :blank do |_args|
-    link_to('Sign in', card_path(':signin'), id: 'signin-link')
+    # 'Sign in'
+    link_to(I18n.t(:sign_in, scope: 'mod.05_standard.set.self.account_links'),
+            card_path(':signin'), id: 'signin-link')
   end
 
   view :invite, perms: ->(_r) {  Auth.signed_in? && Card.new(type_id: Card.default_accounted_type_id).ok?(:create) },
                 denial: :blank do |_args|
-    link_to('Invite', card_path('account/signup'), id: 'invite-a-friend-link')
+    # 'Invite'
+    link_to(I18n.t(:invite, scope: 'mod.05_standard.set.self.account_links'),
+            card_path('account/signup'), id: 'invite-a-friend-link')
   end
 
   view :sign_out, perms: ->(_r) { Auth.signed_in? },
                   denial: :blank do |_args|
-    link_to('Sign out', card_path('delete/:signin'), id: 'signout-link')
+    # 'Sign out'
+    link_to(I18n.t(:sign_out, scope: 'mod.05_standard.set.self.account_links'),
+            card_path('delete/:signin'), id: 'signout-link')
   end
 
   view :my_card, perms: ->(_r) { Auth.signed_in? },

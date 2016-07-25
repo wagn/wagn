@@ -143,21 +143,22 @@ class Card
     def run_machine joint="\n"
       before_engine
       output =
-        input_item_cards.map do |input|
-          (ei = engine_input(input)) && engine(ei)
+        input_item_cards.map do |input_card|
+          run_engine input_card
         end.select(&:present?).join(joint)
       after_engine output
     end
 
-    def engine_input input_card
+    def run_engine input_card
       return if input_card.is_a? Card::Set::Type::Pointer
-      if input_card.respond_to? :machine_output_path
-        File.read input_card.machine_output_path
-      elsif input_card.respond_to? :machine_input
-        input_card.machine_input
-      else
-        input_card.format._render_raw
-      end
+      input = if input_card.respond_to? :machine_output_path
+                File.read input_card.machine_output_path
+              elsif input_card.respond_to? :machine_input
+                input_card.machine_input
+              else
+                input_card.format._render_raw
+              end
+      engine(input)
     end
 
     def reset_machine_output!

@@ -35,7 +35,7 @@ namespace :card do
   task add: :environment do
     _task, name, type, codename = ARGV
     Card::Migration::Import.add_card name: name, type: type || 'Basic',
-                                codename: codename
+                                     codename: codename
     exit
   end
 

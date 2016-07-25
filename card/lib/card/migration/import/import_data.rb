@@ -120,7 +120,7 @@ class Card
         def find_card name
           key = name.to_name.key
           index = cards.find_index { |attr| attr[:key] == key } ||
-            cards.find_index { |attr| attr[:name] == name }
+                  cards.find_index { |attr| attr[:name] == name }
           return unless index
           cards[index]
         end

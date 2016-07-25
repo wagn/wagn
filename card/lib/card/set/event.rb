@@ -60,10 +60,9 @@ class Card
       end
 
       def process_stage_opts opts
-        case
-        when opts[:after] || opts[:before]
+        if opts[:after] || opts[:before]
           # ignore :in options
-        when opts[:in]
+        elsif opts[:in]
           opts[:after] = :"#{opts.delete(:in)}_stage" if opts[:in]
         end
         opts[:on] = [:create, :update] if opts[:on] == :save
@@ -73,7 +72,7 @@ class Card
         class_eval do
           define_method(method_name, proc do
             Object.const_get(event.to_s.camelize).perform_later(
-              self, self.serialize_for_active_job, Card::Env.serialize
+              self, serialize_for_active_job, Card::Env.serialize
             )
           end)
         end
@@ -109,12 +108,13 @@ class Card
           end
         )
         Object.const_get(class_name).class_eval do
-          define_method(:perform, proc { |card, card_attribs, env|
-              card.deserialize_for_active_job! card_attribs
-              Card::Env.deserialize! env
-              card.include_set_modules
-              card.send final_method
-           }
+          define_method(:perform,
+                        proc do |card, card_attribs, env|
+                          card.deserialize_for_active_job! card_attribs
+                          Card::Env.deserialize! env
+                          card.include_set_modules
+                          card.send final_method
+                        end
           )
         end
       end

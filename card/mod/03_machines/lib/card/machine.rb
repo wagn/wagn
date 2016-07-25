@@ -144,14 +144,20 @@ class Card
       before_engine
       output =
         input_item_cards.map do |input|
-          next if input.is_a? Card::Set::Type::Pointer
-          if input.respond_to? :machine_input
-            engine(input.machine_input)
-          else
-            engine(input.format._render_raw)
-          end
+          (ei = engine_input(input)) && engine(ei)
         end.select(&:present?).join(joint)
       after_engine output
+    end
+
+    def engine_input input_card
+      return if input_card.is_a? Card::Set::Type::Pointer
+      if input_card.respond_to? :machine_output_path
+        File.read input_card.machine_output_path
+      elsif input_card.respond_to? :machine_input
+        input_card.machine_input
+      else
+        input_card.format._render_raw)
+      end
     end
 
     def reset_machine_output!

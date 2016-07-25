@@ -8,12 +8,12 @@ describe 'act API' do
                 }
   end
 
-
   describe 'add subcard in integrate stage' do
     class Card
       def current_trans
         ActiveRecord::Base.connection.current_transaction
       end
+
       def record_names
         current_trans.records.map(&:name)
       end
@@ -41,7 +41,7 @@ describe 'act API' do
         with_test_events do
           test_event :validate, on: :create, for: 'main card' do
             add_subcard('sub card', transact_in_stage: :integrate_with_delay)
-           # expect(subcard('sub card').director.transact_in_stage)
+            # expect(subcard('sub card').director.transact_in_stage)
             #  .to eq :integrate
           end
 
@@ -77,7 +77,7 @@ describe 'act API' do
       Delayed::Worker.delay_jobs = true
       with_test_events do
         test_event :validate do
-          self.content =  'new content'
+          self.content = 'new content'
         end
         test_event :integrate do
           expect(name_changed?).to be_truthy
@@ -114,7 +114,6 @@ describe 'act API' do
           event_called :iwd_content
         end
         Card['A'].update_attributes! name: 'new name'
-
       end
       expect(@called_events).to eq([:i_name, :iwd_name])
     end

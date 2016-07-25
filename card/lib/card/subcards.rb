@@ -38,7 +38,7 @@ class Card
     #   add 'spoiler', content: 'John Snow is a Targaryen',
     #                  transact_in_stage: :integrate
     #   add card_obj, delayed: true
-    def add_new name_or_card_or_attr, attr_or_opts={}
+    def add name_or_card_or_attr, attr_or_opts={}
       case name_or_card_or_attr
       when Card
         new_by_card name_or_card_or_attr, attr_or_opts
@@ -62,44 +62,10 @@ class Card
       end
     end
 
-    def add_old name_or_card_or_attr, card_or_attr=nil
-      if card_or_attr.present?
-        name = name_or_card_or_attr
-      else
-        card_or_attr = name_or_card_or_attr
-      end
-      case card_or_attr
-      when Hash
-        args = card_or_attr
-        if name
-          new_by_attributes name, args
-        elsif args[:name]
-          new_by_attributes args.delete(:name), args
-        else
-          args.each_pair do |key, val|
-            case val
-            when String then new_by_attributes key, content: val
-            when Card
-              val.name = absolutize_subcard_name key
-              new_by_card val
-            else new_by_attributes key, val
-            end
-          end
-        end
-      when Card
-        #binding.pry if card_or_attr.key = 'a+b+c'
-        new_by_card card_or_attr
-      when Symbol, String
-        new_by_attributes card_or_attr, {}
-      end
-    end
-
-    alias_method :add, :add_new
-
     def add_child name, args
       add prepend_plus(name), args
     end
-    alias add_field add_child
+    alias_method add_field add_child
 
     def remove_child name_or_card
       if name_or_card.is_a? Card
@@ -113,7 +79,7 @@ class Card
         end
       end
     end
-    alias remove_field remove_child
+    alias_method :remove_field, :remove_child
 
     def catch_up_to_stage stage_index
       each_card do |subcard|
@@ -145,9 +111,7 @@ class Card
       return unless @keys.include? key
       @keys.delete key
       removed_card = fetch_subcard key
-      if removed_card.current_action
-        removed_card.current_action.delete
-      end
+      removed_card.current_action.delete if removed_card.current_action
       Card::DirectorRegister.deep_delete removed_card.director
       Card.cache.soft.delete key
       removed_card
@@ -181,7 +145,7 @@ class Card
       end
     end
 
-    alias each each_card
+    alias_method :each, :each_card
 
     def each_with_key
       @keys.each do |key|

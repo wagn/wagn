@@ -3,7 +3,7 @@ class Card
   def restore_changes_information
     return unless @previously_changed
     @changed_attributes = ActiveSupport::HashWithIndifferentAccess.new
-    @previously_changed.each do |k, (old, new)|
+    @previously_changed.each do |k, (old, _new)|
       @changed_attributes[k] = old
     end
   end
@@ -44,8 +44,8 @@ class Card
     attr_accessor :prior_store, :act, :card, :stage, :parent, :main,
                   :subdirectors, :transact_in_stage
     attr_reader :running
-    alias running? running
-    alias main? main
+    alias_method :running?, :running
+    alias_method :main?, :main
 
     def initialize card, opts={}, main=true
       @card = card
@@ -113,9 +113,7 @@ class Card
       return false
     ensure
       @card.changes_applied
-      if main? && !@card.only_storage_phase
-        DirectorRegister.clear
-      end
+      DirectorRegister.clear if main? && !@card.only_storage_phase
     end
 
     def catch_up_to_stage next_stage
@@ -157,7 +155,7 @@ class Card
       str = @card.name.to_s.clone
       if @subdirectors
         subs = subdirectors.map(&:card)
-                 .map { |card| "  #{card.name}" }.join "\n"
+                           .map { |card| "  #{card.name}" }.join "\n"
         str << "\n#{subs}"
       end
       str
@@ -176,10 +174,10 @@ class Card
       new_stage = stage_index(stage)
       @stage ||= -1
       return if @stage >= new_stage
-      #if @stage < new_stage - 1
+      # if @stage < new_stage - 1
       #  raise Card::Error, "stage #{stage_symbol(new_stage - 1)} was skipped " \
       #                    "for card #{@card}"
-      #end
+      # end
       @card.errors.empty? || new_stage > stage_index(:validate)
     end
 

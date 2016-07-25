@@ -121,7 +121,7 @@ class Card
         new_input = []
         already_extended = {} # avoid loops
         loop_limit = 5
-        while items.size > 0
+        until items.empty?
           item = items.shift
           next if item.trash || already_extended[item.id].to_i > loop_limit
           if item.item_cards == [item] # no pointer card
@@ -156,7 +156,7 @@ class Card
       elsif input_card.respond_to? :machine_input
         input_card.machine_input
       else
-        input_card.format._render_raw)
+        input_card.format._render_raw
       end
     end
 

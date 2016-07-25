@@ -25,8 +25,8 @@ module Card::SpecHelper
   end
 
   def debug_assert_view_select view_html, *args, &block
-    Rails.logger.rspec %(
-                       #{CodeRay.scan(Nokogiri::XML(view_html, &:noblanks).to_s, :html).div}
+    Rails.logger.rspec <<-HTML
+      #{CodeRay.scan(Nokogiri::XML(view_html, &:noblanks).to_s, :html).div}
       <style>
         .CodeRay {
           background-color: #FFF;
@@ -35,7 +35,7 @@ module Card::SpecHelper
         }
         .CodeRay .code pre { overflow: auto }
       </style>
-    )
+    HTML
     assert_view_select view_html, *args, &block
   end
 

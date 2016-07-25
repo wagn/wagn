@@ -65,7 +65,7 @@ class Card
     def add_child name, args
       add prepend_plus(name), args
     end
-    alias_method add_field add_child
+    alias_method :add_field, :add_child
 
     def remove_child name_or_card
       if name_or_card.is_a? Card

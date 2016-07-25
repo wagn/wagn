@@ -32,7 +32,7 @@ end
 
 alias_method :add_subcard, :attach_subcard
 alias_method :remove_subcard, :detach_subcard
-alias_method :add_field, :attach_subfield
+alias_method :add_subfield, :attach_subfield
 alias_method :remove_subfield, :detach_subfield
 
 def clear_subcards

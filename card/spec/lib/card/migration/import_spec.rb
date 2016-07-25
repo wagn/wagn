@@ -1,11 +1,11 @@
 describe Card::Migration::Import do
   def meta_data
-    path = Card::Migration::Import::MetaData::DEFAULT_PATH
+    path = Card::Migration::Import::ImportData::DEFAULT_PATH
     YAML.load_file(path).deep_symbolize_keys
   end
 
   def content_path filename
-    File.join(Card::Migration::Import::CARD_CONTENT_DIR, filename)
+    File.join(Card::Migration::Import::ImportData::CARD_CONTENT_DIR, filename)
   end
 
   def content_data_file filename
@@ -13,11 +13,11 @@ describe Card::Migration::Import do
   end
 
   before(:each) do
-    if File.exist? Card::Migration::Import::MetaData::DEFAULT_PATH
-      FileUtils.rm Card::Migration::Import::MetaData::DEFAULT_PATH
+    if File.exist? Card::Migration::Import::ImportData::DEFAULT_PATH
+      FileUtils.rm Card::Migration::Import::ImportData::DEFAULT_PATH
     end
-    if Dir.exist? Card::Migration::Import::CARD_CONTENT_DIR
-      FileUtils.rm_rf Card::Migration::Import::CARD_CONTENT_DIR
+    if Dir.exist? Card::Migration::Import::ImportData::CARD_CONTENT_DIR
+      FileUtils.rm_rf Card::Migration::Import::ImportData::CARD_CONTENT_DIR
     end
   end
 

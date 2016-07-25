@@ -12,32 +12,31 @@ namespace :card do
 
   desc 'add card to import data'
   task pull: :environment do
-    _task, card = ARGV
-    raise 'no card given' unless card.present?
-    Card::Migration::Import.pull card, remote: ENV['from']
-    exit
+    pull_card
   end
 
   desc 'add card and all nested cards to import data'
   task deep_pull: :environment do
-    _task, card = ARGV
-    raise 'no card given' unless card.present?
-    Card::Migration::Import.pull card, deep: true, remote: ENV['from']
-    exit
+    pull_card deep: true
   end
 
   desc 'add nested cards to import data (not the card itself)'
   task deep_pull_items: :environment do
-    _task, card = ARGV
-    raise 'no card given' unless card.present?
-    Card::Migration::Import.pull card, items_only: true, remote: ENV['from']
-    exit
+    pull_card items_only: true
   end
 
   desc 'add items of the export card to import data'
   task pull_export: :environment do
     Card::Migration::Import.pull 'export', items_only: true,
                                            remote: ENV['from']
+  end
+
+  desc 'add a new card to import data'
+  task add: :environment do
+    _task, name, type, codename = ARGV
+    Card::Migration::Import.add_card name: name, type: type || 'Basic',
+                                     codename: codename
+    exit
   end
 
   desc 'register remote for importing card data'
@@ -47,5 +46,12 @@ namespace :card do
     raise 'no url given' unless url.present?
     Card::Migration::Import.add_remote name, url
     exit
+  end
+
+  def pull_card opts={}
+    _task, card = ARGV
+    raise 'no card given' unless card.present?
+    Card::Migration::Import.pull card, opts.merge(remote: ENV['from'])
+    exit # without exit the card argument is treated as second rake task
   end
 end

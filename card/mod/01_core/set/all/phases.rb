@@ -4,7 +4,7 @@ def prepare_for_phases
 end
 
 def only_storage_phase?
-  !director.main? || only_storage_phase
+  only_storage_phase || !director.main?
 end
 
 delegate :validation_phase, to: :director

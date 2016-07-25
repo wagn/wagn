@@ -95,7 +95,6 @@ class Card
       @card.errors.empty?
     end
 
-    # everything in here can use dirty marks
     def storage_phase &block
       catch_up_to_stage :prepare_to_store
       run_single_stage :store, &block
@@ -127,6 +126,10 @@ class Card
       upto_stage(next_stage) do |stage|
         run_single_stage stage
       end
+    end
+
+    def reset_stage
+      @stage = -1
     end
 
     def call_after_store &block
@@ -173,10 +176,10 @@ class Card
       new_stage = stage_index(stage)
       @stage ||= -1
       return if @stage >= new_stage
-      if @stage < new_stage - 1
-        raise Card::Error, "stage #{stage_symbol(new_stage - 1)} was skipped " \
-                          "for card #{@card}"
-      end
+      #if @stage < new_stage - 1
+      #  raise Card::Error, "stage #{stage_symbol(new_stage - 1)} was skipped " \
+      #                    "for card #{@card}"
+      #end
       @card.errors.empty? || new_stage > stage_index(:validate)
     end
 
@@ -202,6 +205,7 @@ class Card
     end
 
     def run_stage_callbacks stage
+      Rails.logger.debug "#{stage}: #{@card.name}"
       # we use abort :success in the :store stage for :save_draft
       if stage_index(stage) <= stage_index(:store) && !main?
         @card.abortable do

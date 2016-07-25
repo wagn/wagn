@@ -17,11 +17,23 @@ def attach_subcard name_or_card, args={}
 end
 alias_method :add_subcard, :attach_subcard
 
+def attach_subcard! name_or_card, args={}
+  subcard = subcards.add name_or_card, args
+  subcard.director.reset_stage
+  subcard
+end
+
 # phase_method :add_subfield, before: :approve do |name_or_card, args=nil|
 def attach_subfield name_or_card, args={}
   subcards.add_field name_or_card, args
 end
 alias_method :add_subfield, :attach_subfield
+
+def attach_subfield! name_or_card, args={}
+  subcard = subcards.add_field name_or_card, args
+  subcard.director.reset_stage
+  subcard
+end
 
 def detach_subcard name_or_card
   subcards.remove name_or_card

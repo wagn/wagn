@@ -39,9 +39,10 @@ class Card
   # fail
   # create other cards
   # has id                            no        | no   no?  yes |    yes
-  # dirty attributes                  yes       |      yes      |    no
-  #
-  #
+  # dirty attributes                  yes       |      yes      |    yes
+  # within transaction                yes       |      yes      |    no
+  # within web request                yes       |      yes      | yes  no
+
   module Stage
     STAGES = [:initialize, :prepare_to_validate, :validate, :prepare_to_store,
               :store, :finalize, :integrate, :integrate_with_delay].freeze

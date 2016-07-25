@@ -71,18 +71,18 @@ class Card
 
       def define_event_delaying_method event, method_name
         class_eval do
-          define_method method_name, proc do
+          define_method(method_name, proc do
             Object.const_get(event.to_s.camelize).perform_later(
               self, self.serialize_for_active_job, Card::Env.serialize
             )
-          end
+          end)
         end
       end
 
       def define_event_method event, call_method, _opts
         class_eval do
           define_method event do
-            # puts "#{name}:#{event}".red
+            Rails.logger.debug "#{name}:#{event}".red
             # puts "#{Card::DirectorRegister.to_s}".green
             run_callbacks event do
               send call_method

@@ -191,7 +191,9 @@ class Card
     end
 
     def update_input_card
-      machine_input_card.items = engine_input
+      input_card = attach_subcard! machine_input_card
+      input_card.content = ''
+      engine_input.each { |input| input_card << input }
     end
 
     def input_item_cards

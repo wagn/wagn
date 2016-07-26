@@ -74,6 +74,10 @@ class Card
         delete director
       end
 
+      def running_act?
+        (dir = DirectorRegister.act_director) && dir.running?
+      end
+
       def to_s
         directors.values.map(&:to_s).join "\n"
       end

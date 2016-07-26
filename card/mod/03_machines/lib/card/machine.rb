@@ -74,7 +74,7 @@ class Card
       event_suffix = host_class.name.tr ':', '_'
       event_name = "reset_machine_output_#{event_suffix}".to_sym
       host_class.event event_name, after: :expire_related, on: :save do
-        reset_machine_output!
+        reset_machine_output
       end
     end
 
@@ -159,10 +159,10 @@ class Card
       engine(input)
     end
 
-    def reset_machine_output!
+    # attaches the input card update as subcard
+    def reset_machine_output
       Auth.as_bot do
         (moc = machine_output_card) && moc.real? && moc.delete!
-        # mic = machine_input_card  and mic.real? and mic.delete!
         update_input_card
       end
     end
@@ -196,9 +196,13 @@ class Card
     end
 
     def update_input_card
-      input_card = attach_subcard! machine_input_card
-      input_card.content = ''
-      engine_input.each { |input| input_card << input }
+      if DirectorRegister.running_act?
+        input_card = attach_subcard! machine_input_card
+        input_card.content = ''
+        engine_input.each { |input| input_card << input }
+      else
+        machine_input_card.items = engine_input
+      end
     end
 
     def input_item_cards

@@ -98,24 +98,30 @@ class Card
       # @param name [String] the name for the ActiveJob child class
       # @param final_method [String] the name of the card instance method to be
       # queued
-      # @option queue [Symbol] (:default) the name of the queue8
-      def define_active_job name, final_method, queue=nil
+      # @option queue [Symbol] (:default) the name of the queue
+      def define_active_job name, final_method, queue=:default
         class_name = name.to_s.camelize
-        queue ||= :default
+        define_active_job_class class_name, queue || :default
+        define_active_job_perform_method class_name, final_method
+      end
+
+      def define_active_job_class class_name, queue
         eval %(
           class ::#{class_name} < ActiveJob::Base
             queue_as :#{queue}
           end
         )
+      end
+
+      def define_active_job_perform_method class_name, method_name
         Object.const_get(class_name).class_eval do
           define_method(:perform,
                         proc do |card, card_attribs, env|
                           card.deserialize_for_active_job! card_attribs
                           Card::Env.deserialize! env
                           card.include_set_modules
-                          card.send final_method
-                        end
-          )
+                          card.send method_name
+                        end)
         end
       end
 

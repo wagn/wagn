@@ -1,5 +1,6 @@
 module SpecHelper
 end
+
 module Card::SpecHelper
   include Rails::Dom::Testing::Assertions::SelectorAssertions
   # ~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
@@ -8,7 +9,8 @@ module Card::SpecHelper
     Card::Auth.current_id = (uc = Card[user.to_s]) && uc.id
     return unless @request
     @request.session[:user] = Card::Auth.current_id
-    # warn "(ath)login_as #{user.inspect}, #{Card::Auth.current_id}, #{@request.session[:user]}"
+    # warn "(ath)login_as #{user.inspect}, #{Card::Auth.current_id}, "\
+    #      "#{@request.session[:user]}"
   end
 
   def create! name, content=''
@@ -86,7 +88,7 @@ module Card::SpecHelper
   #            expect(item_names).to eq []
   #          end
   def in_stage stage, opts={}, &event_block
-    $rspec_binding = binding
+    Card.rspec_binding = binding
     add_test_event stage, :in_stage_test, opts, &event_block
     trigger =
       if opts[:trigger].is_a?(Symbol)
@@ -97,30 +99,17 @@ module Card::SpecHelper
     trigger.call
   ensure
     remove_test_event stage, :in_stage_test
+    Card.rspec_binding = false
   end
 
   def add_test_event stage, name, opts={}, &event_block
+    opts[:set] ||= Card::Set::All::Event # just a random module that
+                                         # is always included so that the
+                                         # event applies to all cards
+    if (only_for_card = opts.delete(:for))
+      opts[:when] = proc { |c| c.name == only_for_card }
+    end
     Card.class_eval do
-      def method_missing m, *args, &block
-        begin
-          method = eval('method(%s)' % m.inspect, $rspec_binding)
-        rescue NameError
-        else
-          return method.call(*args, &block)
-        end
-        begin
-          value = eval(m.to_s, $rspec_binding)
-          return value
-        rescue NameError
-        end
-        super
-        # raise NoMethodError
-      end
-      opts[:set] ||= Card::Set::All::Event # just a random module that
-                                           # is always included
-      if (only_for_card = opts.delete(:for))
-        opts[:when] = proc { |c| c.name == only_for_card }
-      end
       extend Card::Set::Event
       event name, stage, opts, &event_block
     end
@@ -139,11 +128,12 @@ module Card::SpecHelper
 
   def with_test_events
     @events = []
-    $rspec_binding = binding
+    Card.rspec_binding = binding
     yield
   ensure
     @events.each do |stage, name|
       remove_test_event stage, name
     end
+    Card.rspec_binding = false
   end
 end

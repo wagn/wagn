@@ -76,7 +76,7 @@ def current_act_card?
   current_act && current_act.card_id == id
 end
 
-event :notify_followers_after_save, :integrate,
+event :notify_followers_after_save, :integrate_with_delay,
       on: :save, when: proc { |ca| ca.notable_change? } do
   notify_followers
 end

@@ -81,7 +81,7 @@ class Card
       def define_event_method event, call_method, _opts
         class_eval do
           define_method event do
-            Rails.logger.debug "#{name}:#{event}".red
+            Rails.logger.debug "#{name}: #{event}"
             # puts "#{Card::DirectorRegister.to_s}".green
             run_callbacks event do
               send call_method

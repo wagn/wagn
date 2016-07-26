@@ -151,9 +151,7 @@ class Card
 
     def run_engine input_card
       return if input_card.is_a? Card::Set::Type::Pointer
-      input = if input_card.respond_to? :machine_output_path
-                File.read input_card.machine_output_path
-              elsif input_card.respond_to? :machine_input
+      input = if input_card.respond_to? :machine_input
                 input_card.machine_input
               else
                 input_card.format._render_raw

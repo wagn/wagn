@@ -9,7 +9,6 @@ module <%= app_const_base %>
     # Wagn inherits Rails configuration options.  See http://guides.rubyonrails.org/configuring.html
 
     # Email configuration
-
     config.action_mailer.perform_deliveries = false
     # config.action_mailer.delivery_method  = ...
     # config.action_mailer.smtp_settings    = ...
@@ -18,6 +17,17 @@ module <%= app_const_base %>
     # See http://mailcatcher.me for more information
     # config.action_mailer.delivery_method = :smtp
     # config.action_mailer.smtp_settings = { address: "localhost", port: 1025 }
+
+
+    # Delayed jobs
+    # Moves time-consuming minor tasks that are part of an card update
+    # (like sending notifications to followers) to a background process.
+    # To activate it change below the value of delay_jobs to true,
+    # add the gem 'daemons' to the Gemfile,
+    # and run 'RAILS_ENV=production script/delayed_job start' to start the background process.
+    # See https://github.com/collectiveidea/delayed_job#running-jobs for more information
+    config.active_job.queue_adapter = :delayed_job
+    Delayed::Worker.delay_jobs = false
 
     # The below keys are fine for testing but should not be used in production sites.
 

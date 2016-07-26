@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 require 'active_support/core_ext/numeric/time'
+require 'delayed_job_active_record'
 
 module Cardio
   CARD_GEM_ROOT = File.expand_path('../..', __FILE__)

@@ -153,6 +153,10 @@ Given /^(.*) (is|am) not watching "([^\"]+)"$/ do |user, _verb, cardname|
   end
 end
 
+Given /^Jobs are dispatched$/ do
+  Delayed::Worker.new.work_off
+end
+
 When /I wait a sec/ do
   sleep 1
 end

@@ -72,7 +72,8 @@ class Card
         class_eval do
           define_method(method_name, proc do
             Object.const_get(event.to_s.camelize).perform_later(
-              self, serialize_for_active_job, Card::Env.serialize
+              self, serialize_for_active_job, Card::Env.serialize,
+              Card::Auth.current_id
             )
           end)
         end
@@ -116,10 +117,11 @@ class Card
       def define_active_job_perform_method class_name, method_name
         Object.const_get(class_name).class_eval do
           define_method(:perform,
-                        proc do |card, card_attribs, env|
+                        proc do |card, card_attribs, env, current_id|
                           card.deserialize_for_active_job! card_attribs
                           Card::Env.deserialize! env
                           card.include_set_modules
+                          Card::Auth.current_id = current_id
                           card.send method_name
                         end)
         end

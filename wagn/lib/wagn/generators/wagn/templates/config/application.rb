@@ -26,8 +26,8 @@ module <%= app_const_base %>
     # add the gem 'daemons' to the Gemfile,
     # and run 'RAILS_ENV=production script/delayed_job start' to start the background process.
     # See https://github.com/collectiveidea/delayed_job#running-jobs for more information
-    config.active_job.queue_adapter = :delayed_job
-    Delayed::Worker.delay_jobs = false
+    # config.active_job.queue_adapter = :delayed_job
+    # Delayed::Worker.delay_jobs = false
 
     # The below keys are fine for testing but should not be used in production sites.
 

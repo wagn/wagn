@@ -21,7 +21,7 @@ format :html do
 
   def default_core_args args={}
     # 'Sign in' '...or sign up!' 'RESET PASSWORD'
-    sign_in, or_sign_up, reset_password = 
+    sign_in, or_sign_up, reset_password =
       I18n.t([:sign_in, :or_sign_up, :reset_password],
              scope: 'mod.05_standard.set.self.signin')
     # since i18n-tasks doesn't understand bulk lookups, tell it keys are used

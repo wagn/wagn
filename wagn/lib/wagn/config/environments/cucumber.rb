@@ -29,5 +29,5 @@ Wagn.application.class.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
 
-  #config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = false
 end

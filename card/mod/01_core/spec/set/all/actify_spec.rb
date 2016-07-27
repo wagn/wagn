@@ -62,7 +62,6 @@ describe 'act API' do
           test_event :integrate_with_delay, on: :create do
             expect(record_names).to eq []
           end
-
           create_card
           # expect to finished delayed jobs
           expect(Delayed::Worker.new.work_off).to eq [2, 0]

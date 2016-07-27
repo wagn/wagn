@@ -1,3 +1,4 @@
+@delayed-jobs
 Feature: Updates for Children of watched cards
   In order to keep track of changes that are important to me
   As an Editor
@@ -8,6 +9,7 @@ Feature: Updates for Children of watched cards
   Background:
     Given I am signed in as Joe User
     And I create Book card "Ulysses"
+    And Jobs are dispatched
     And Joe Camel is watching "Ulysses+*self"
     And Joe Admin is watching "Book+*type"
 
@@ -62,7 +64,7 @@ Feature: Updates for Children of watched cards
       |color|flavor|
       |green|mushy|
     Then No notification should be sent
-    
+
 
   Scenario: Watching a plus card & including card on regular edit
     When I create card "Ulysses+author" with content "Joyce"
@@ -70,5 +72,3 @@ Feature: Updates for Children of watched cards
     When Joe Camel is watching "Ulysses+author+*self"
     And I edit "Ulysses+author" setting content to "Jim"
     Then Joe Camel should be notified that "Joe User updated \"Ulysses\+author\""
-
-

@@ -153,10 +153,6 @@ Given /^(.*) (is|am) not watching "([^\"]+)"$/ do |user, _verb, cardname|
   end
 end
 
-Given /^Jobs are dispatched$/ do
-  Delayed::Worker.new.work_off
-end
-
 When /I wait a sec/ do
   sleep 1
 end
@@ -247,6 +243,10 @@ When /^In (.*) I find button with icon "(.*)" and click it$/ do |section, icon|
   within scope_of(section) do
     find("button > span.glyphicon-#{icon}").click
   end
+end
+
+Given /^Jobs are dispatched$/ do
+  Delayed::Worker.new.work_off
 end
 
 Then /I submit$/ do

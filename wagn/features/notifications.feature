@@ -6,7 +6,7 @@ Feature: Notifications
   Scenario: Watching a Card
     Given Joe Admin is watching "All Eyes On Me+*self"
     When Joe User edits "All Eyes On Me" setting content to "Boo"
-    And Jobs are dispatched
+    #And Jobs are dispatched
     Then Joe Admin should be notified that "Joe User updated \"All Eyes On Me\""
     And the card All Eyes On Me+*followers should point to "Joe Admin"
     And I should see "was just updated by Joe User" in the email body

@@ -53,12 +53,13 @@ class Card
 
       def serialize
         keep = ::Set.new [:main_name, :params, :ip, :ajax, :html, :host,
-                          :protocol]
+                          :protocol, :salt]
         @@env.select { |k, _v| keep.include?(k) }
       end
 
       def deserialize! data
-        @@env = data
+        @@env ||= {}
+        @@env.merge! data
       end
 
       def method_missing method_id, *args

@@ -1,11 +1,14 @@
 class Card
-  def deserialize_for_active_job! attr
+  def deserialize_for_active_job! attr, env, current_id
     attr.each do |attname, args|
       # symbols are not allowed so all symbols arrive here as strings
       # convert strings that were symbols before back to symbols
       value = args[:symbol] ? args[:value].to_sym : args[:value]
       instance_variable_set("@#{attname}", value)
     end
+    Card::Env.deserialize! env
+    Card::Auth.current_id = current_id
+    include_set_modules
   end
 
   def serialize_for_active_job
@@ -116,14 +119,13 @@ class Card
 
       def define_active_job_perform_method class_name, method_name
         Object.const_get(class_name).class_eval do
-          define_method(:perform,
-                        proc do |card, card_attribs, env, current_id|
-                          card.deserialize_for_active_job! card_attribs
-                          Card::Env.deserialize! env
-                          card.include_set_modules
-                          Card::Auth.current_id = current_id
-                          card.send method_name
-                        end)
+          define_method(
+            :perform,
+            proc do |card, card_attribs, env, current_id|
+              card.deserialize_for_active_job! card_attribs, env, current_id
+              card.send method_name
+            end
+          )
         end
       end
 

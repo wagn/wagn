@@ -50,7 +50,11 @@ class Card
       end
 
       def fetch card, opts={}
-        directors[card] ||= Card.new_director card, opts
+        return directors[card] if directors[card]
+        directors.each_key do |dir_card|
+          return dir_card.director if dir_card.name == card.name
+        end
+        directors[card] = Card.new_director card, opts
       end
 
       def add director
@@ -68,6 +72,10 @@ class Card
           deep_delete subdir
         end
         delete director
+      end
+
+      def running_act?
+        (dir = DirectorRegister.act_director) && dir.running?
       end
 
       def to_s

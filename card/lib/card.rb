@@ -55,7 +55,7 @@ class Card < ActiveRecord::Base
     :silent_change,               # and this probably too
     :remove_rule_stash,
     :last_action_id_before_edit,
-    :skip_phases
+    :only_storage_phase
   )
 
   attr_accessor :follower_stash
@@ -73,11 +73,12 @@ class Card < ActiveRecord::Base
     :integrate_stage, :integrate_with_delay_stage
   )
 
-  before_validation :validation_phase, if: -> { run_phases? }
+  # Validation and integration phase are only called for the act card
+  # The act card starts those phases for all its subcards
+  before_validation :validation_phase, unless: -> { only_storage_phase? }
   around_save :storage_phase
-  after_save :integration_phase, if: -> { run_phases? }
-  after_commit :clean_up, if: -> { run_phases? }
-  after_rollback :clean_up, if: -> { run_phases? }
+  after_commit :integration_phase, unless: -> { only_storage_phase? }
+  after_rollback :clean_up, unless: -> { only_storage_phase? }
 
   TRACKED_FIELDS = %w(name type_id db_content trash).freeze
   extend CarrierWave::Mount

@@ -203,6 +203,7 @@ describe Card::StageDirector do
           end
           create_card_with_subcards
         end
+        # Delayed::Worker.new.work_off
         expect(order).to eq(
           %w(
             i:1 i:11 i:111 i:12 i:121
@@ -255,6 +256,7 @@ describe Card::StageDirector do
           end
           create_card_with_junction
         end
+        # Delayed::Worker.new.work_off
         expect(order).to eq(
           %w(
             i:1+2 i:11

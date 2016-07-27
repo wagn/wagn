@@ -27,6 +27,8 @@ group :test, :development do
   gem 'jasmine-jquery-rails'
   gem 'sprockets' # just so above works
   gem 'phantomjs', '1.9.7.1' #locked because 1.9.8.0 is breaking
+  gem 'test_after_commit'
+  gem 'colorize'
 
   <%- if spring_install? %>
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
@@ -86,6 +88,12 @@ group :test do
 
   gem 'turn', :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
   gem 'minitest'
+
+  if RUBY_VERSION =~ /^(1|2\.0)/
+    puts "Warning: Can't install i18-tasks without Ruby 2.1+: will not be able to test if I18n keys are missing"
+  else
+    gem 'i18n-tasks', '~> 0.9.5'       # See if I18n keys are missing or unused
+  end
 end
 
 gem 'ruby-prof', :group=>:profile  # profiling

@@ -59,7 +59,7 @@ class Card
 
       def deserialize! data
         @@env ||= {}
-        @@env.merge! data
+        @@env.update data
       end
 
       def method_missing method_id, *args

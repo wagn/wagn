@@ -1,4 +1,3 @@
-
 event :add_and_drop_items, :prepare_to_validate, on: :save do
   adds = Env.params['add_item']
   drops = Env.params['drop_item']
@@ -88,7 +87,8 @@ format :html do
     extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
     <<-HTML
-      <ul class="pointer-list-editor #{extra_css_class}" data-options-card="#{options_card_name}">
+      <ul class="pointer-list-editor #{extra_css_class}"
+          data-options-card="#{options_card_name}">
         #{items.map do |item|
             _render_list_item args.merge(pointer_item: item)
           end.join "\n"}
@@ -134,7 +134,8 @@ format :html do
       description = pointer_option_description option_name
       <<-HTML
         <div class="pointer-checkbox">
-          #{check_box_tag 'pointer_checkbox', option_name, checked, id: id, class: 'pointer-checkbox-button'}
+          #{check_box_tag 'pointer_checkbox', option_name, checked,
+                          id: id, class: 'pointer-checkbox-button'}
           <label for="#{id}">#{label}</label>
           #{%(<div class="checkbox-option-description">#{description}</div>) if description}
         </div>
@@ -157,11 +158,13 @@ format :html do
     options = card.option_names.map do |option_name|
       checked = (option_name == card.item_names.first)
       id = "pointer-radio-#{option_name.to_name.key}"
-      label = ((o_card = Card.fetch(option_name)) && o_card.label) || option_name
+      label = ((o_card = Card.fetch(option_name)) && o_card.label) ||
+              option_name
       description = pointer_option_description option_name
       <<-HTML
         <li class="pointer-radio radio">
-          #{radio_button_tag input_name, option_name, checked, id: id, class: 'pointer-radio-button'}
+          #{radio_button_tag input_name, option_name, checked,
+                             id: id, class: 'pointer-radio-button'}
           <label for="#{id}">#{label}</label>
           #{%(<div class="radio-option-description">#{description}</div>) if description}
         </li>
@@ -175,8 +178,7 @@ format :html do
     options = [['-- Select --', '']] + card.option_names.map { |x| [x, x] }
     select_tag('pointer_select',
                options_for_select(options, card.item_names.first),
-               class: 'pointer-select form-control'
-              )
+               class: 'pointer-select form-control')
   end
 
   def pointer_option_description option
@@ -234,6 +236,16 @@ format :rss do
     @raw_feed_items ||= begin
       card.item_cards
     end
+  end
+end
+
+format :json do
+  view :export_items do |args|
+    result =
+      card.known_item_cards.map do |ic|
+        subformat(ic).render_export(args)
+      end
+    result.flatten.reject(&:blank?)
   end
 end
 

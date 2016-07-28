@@ -1,6 +1,10 @@
 describe Card::StageDirector do
   describe 'abortion' do
     let(:create_card) { Card.create name: 'a card' }
+    let(:create_card_with_subcard) do
+      Card.create name: 'a card',
+                  subcards: { 'a subcard' => 'content' }
+    end
     subject { Card.fetch 'a card' }
     context 'when error added' do
       it 'stops act in validation phase' do
@@ -59,6 +63,73 @@ describe Card::StageDirector do
           abort :success
         end
         is_expected.to be_falsey
+      end
+
+      it 'does not execute subcard stages on create' do
+        @called_events = []
+        def event_called ev
+          @called_events << ev
+        end
+        with_test_events do
+          @subcard_stages
+          test_event :validate,
+                    on: :create,
+                    for: 'a card' do
+            abort :success
+          end
+          test_event :prepare_to_validate,
+                     on: :create, for: 'a subcard' do
+            event_called 'ptv'
+          end
+          test_event :validate,
+                     on: :create, for: 'a subcard' do
+            event_called 'v'
+          end
+          test_event :prepare_to_store,
+                     on: :create, for: 'a subcard' do
+            event_called 'pts'
+          end
+          test_event :integrate,
+                     on: :create, for: 'a subcard' do
+            event_called 'i'
+          end
+          create_card_with_subcard
+          expect(@called_events).to eq ['ptv']
+        end
+      end
+
+      it 'does not delete children' do
+        @called_events = []
+        def event_called ev
+          @called_events << ev
+        end
+        with_test_events do
+          @subcard_stages
+          test_event :validate,
+                     on: :delete,
+                     for: 'A' do
+
+            abort :success
+          end
+          test_event :prepare_to_validate,
+                     on: :delete, for: 'A+B' do
+            event_called 'ptv'
+          end
+          test_event :validate,
+                     on: :delete, for: 'A+B' do
+            event_called 'v'
+          end
+          test_event :prepare_to_store,
+                     on: :delete, for: 'A+B' do
+            event_called 'pts'
+          end
+          test_event :integrate,
+                     on: :delete, for: 'A+B' do
+            event_called 'i'
+          end
+          Card['A'].delete!
+          expect(@called_events).to eq ['ptv']
+        end
       end
 
       it 'aborts storage in store stage' do
@@ -203,6 +274,7 @@ describe Card::StageDirector do
           end
           create_card_with_subcards
         end
+        # Delayed::Worker.new.work_off
         expect(order).to eq(
           %w(
             i:1 i:11 i:111 i:12 i:121
@@ -255,6 +327,7 @@ describe Card::StageDirector do
           end
           create_card_with_junction
         end
+        # Delayed::Worker.new.work_off
         expect(order).to eq(
           %w(
             i:1+2 i:11

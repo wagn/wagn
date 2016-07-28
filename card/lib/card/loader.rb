@@ -31,7 +31,7 @@ class Card
       end
 
       def load_layouts
-        mod_dirs.inject({}) do |hash, mod|
+        mod_dirs.each_with_object({}) do |mod, hash|
           dirname = "#{mod}/layout"
           if File.exist? dirname
             Dir.foreach(dirname) do |filename|
@@ -40,7 +40,6 @@ class Card
                 File.read([dirname, filename].join('/'))
             end
           end
-          hash
         end
       end
 

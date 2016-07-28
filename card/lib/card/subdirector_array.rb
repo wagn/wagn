@@ -13,16 +13,15 @@ class Card
       super()
     end
 
-    def add card
+    def add card, opts={}
       if card.is_a? Card::StageDirector
         card = card.card
       end
-      each do |dir|
-        return dir if dir.card == card
-      end
+      each { |dir| return dir if dir.card == card }
       dir = Card::DirectorRegister.fetch card, parent: @parent
       dir.main = false
       dir.parent = @parent
+      dir.transact_in_stage = opts[:transact_in_stage]
       self << dir
       dir
     end

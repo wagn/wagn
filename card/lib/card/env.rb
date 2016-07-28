@@ -6,19 +6,17 @@ class Card
     class << self
       def reset args={}
         @@env = { main_name: nil }
-
-        if (c = args[:controller])
-          self[:controller] = c
-          self[:session]    = c.request.session
-          self[:params]     = c.params
-          self[:ip]         = c.request.remote_ip
-          self[:ajax]       = c.request.xhr? || c.request.params[:simulate_xhr]
-          self[:html]       = [nil, 'html'].member?(c.params[:format])
-          self[:host]       = Card.config.override_host ||
-                              c.request.env['HTTP_HOST']
-          self[:protocol]   = Card.config.override_protocol ||
-                              c.request.protocol
-        end
+        return unless (c = args[:controller])
+        self[:controller] = c
+        self[:session]    = c.request.session
+        self[:params]     = c.params
+        self[:ip]         = c.request.remote_ip
+        self[:ajax]       = c.request.xhr? || c.request.params[:simulate_xhr]
+        self[:html]       = [nil, 'html'].member?(c.params[:format])
+        self[:host]       = Card.config.override_host ||
+                            c.request.env['HTTP_HOST']
+        self[:protocol]   = Card.config.override_protocol ||
+                            c.request.protocol
       end
 
       def [] key
@@ -51,6 +49,17 @@ class Card
 
       def html?
         !self[:controller] || self[:html]
+      end
+
+      def serialize
+        keep = ::Set.new [:main_name, :params, :ip, :ajax, :html, :host,
+                          :protocol, :salt]
+        @@env.select { |k, _v| keep.include?(k) }
+      end
+
+      def deserialize! data
+        @@env ||= {}
+        @@env.update data
       end
 
       def method_missing method_id, *args

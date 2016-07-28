@@ -91,13 +91,13 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   end
 end
 
-def set_content name, content
+def set_content name, content, cardtype=nil
   set_prosemirror_content name, content
 rescue
   ace_editor_types = %w(
     JavaScript CoffeeScript HTML CSS SCSS Search
   )
-  if ace_editor_types.include?(cardtype) &&
+  if cardtype && ace_editor_types.include?(cardtype) &&
      page.evaluate_script("typeof ace != 'undefined'")
     page.execute_script "ace.edit($('.ace_editor').get(0))"\
         ".getSession().setValue('#{content}')"
@@ -117,7 +117,7 @@ end
 content_re = /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/
 When content_re do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do
-    set_content 'card[content]', content
+    set_content 'card[content]', content, cardtype
   end
 end
 
@@ -130,7 +130,7 @@ plus_re = /^(.*) creates?\s*([^\s]*) card "([^"]*)" with plusses:$/
 When plus_re do |username, cardtype, cardname, plusses|
   create_card(username, cardtype, cardname) do
     plusses.hashes.first.each do |name, content|
-      set_content "card[subcards][+#{name}][content]", content
+      set_content "card[subcards][+#{name}][content]", content, cardtype
     end
   end
 end

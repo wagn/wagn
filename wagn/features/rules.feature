@@ -1,3 +1,4 @@
+@javascript
 Feature: Set-based Rles
   In order to control settings in an efficient way
   As a Wagneer

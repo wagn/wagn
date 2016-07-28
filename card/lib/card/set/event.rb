@@ -6,9 +6,16 @@ class Card
       value = args[:symbol] ? args[:value].to_sym : args[:value]
       instance_variable_set("@#{attname}", value)
     end
+    include_set_modules
+    # If active jobs (and hence the integrate_with_delay events) don't run
+    # in a background process then Card::Env.deserialize! decouples the
+    # controller's params hash and the Card::Env's params hash with the
+    # effect that params changes in the CardController get lost
+    # (a crucial example are success params that are processed in
+    # CardController#update_params_for_success)
+    return if Wagn.config.active_job.queue_adapter == :inline
     Card::Env.deserialize! env
     Card::Auth.current_id = current_id
-    include_set_modules
   end
 
   def serialize_for_active_job
@@ -70,7 +77,6 @@ class Card
         end
         opts[:on] = [:create, :update] if opts[:on] == :save
       end
-
       def define_event_delaying_method event, method_name
         class_eval do
           define_method(method_name, proc do

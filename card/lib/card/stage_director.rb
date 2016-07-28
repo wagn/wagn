@@ -104,6 +104,7 @@ class Card
     end
 
     def integration_phase
+      return if @abort
       @card.restore_changes_information
       run_single_stage :integrate
       run_single_stage :integrate_with_delay
@@ -112,7 +113,7 @@ class Card
       @card.notable_exception_raised
       return false
     ensure
-      @card.changes_applied
+      @card.changes_applied unless @abort
       DirectorRegister.clear if main? && !@card.only_storage_phase
     end
 
@@ -128,6 +129,10 @@ class Card
 
     def reset_stage
       @stage = -1
+    end
+
+    def abort
+      @abort = true
     end
 
     def call_after_store &block

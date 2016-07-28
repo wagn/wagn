@@ -9,6 +9,7 @@
 #   triumph: similar to success, but if called on a subcard
 #            it causes the entire action to abort (not just the subcard)
 def abort status, msg='action canceled'
+  director.abort
   if status == :failure && errors.empty?
     errors.add :abort, msg
   elsif status.is_a?(Hash) && status[:success]
@@ -32,18 +33,6 @@ module ClassMethods
       card.save
     end
     card
-  end
-end
-
-def delete
-  act do
-    super
-  end
-end
-
-def delete!
-  act do
-    super
   end
 end
 

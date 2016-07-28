@@ -71,7 +71,6 @@ format :html do
         success: { view: :reset_password_success }
       }
     )
-
     Auth.as_bot { super args }
   end
 

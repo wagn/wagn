@@ -23,7 +23,7 @@
 #    Format names for time and date are begun with a 'card_' prefix to
 #    minimize the chances of interference with other gems or applications.
 ---
-en:
+de:
   time:
     formats:
       card_dayofwk_min_tz: '%A, %e. %B %Y, %k:%M %Z'

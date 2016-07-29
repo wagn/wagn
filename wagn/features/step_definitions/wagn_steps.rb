@@ -93,7 +93,7 @@ end
 
 def set_content name, content, cardtype=nil
   set_prosemirror_content name, content
-rescue
+rescue Exception => e
   ace_editor_types = %w(
     JavaScript CoffeeScript HTML CSS SCSS Search
   )
@@ -110,8 +110,9 @@ def set_prosemirror_content name, content
   Capybara.ignore_hidden_elements = false
   editor_id = find("[name='#{name}']").first(:xpath, './/..')[:id]
   Capybara.ignore_hidden_elements = true
-  page.execute_script "getProseMirror('#{editor_id}')" \
-                          ".setContent('#{content}', 'text')"
+  escaped_quotes = content.gsub("'","\\'")
+  page.execute_script "getProseMirror('#{editor_id}')"\
+                      ".setContent('#{escaped_quotes}', 'text')"
 end
 
 content_re = /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/

@@ -9,9 +9,7 @@ class Card
 
     DEPRECATED_VIEWS = { view: :open, card: :open, line: :closed,
                          bare: :core, naked: :core }.freeze
-    INCLUSION_MODES  = { closed: :closed, closed_content: :closed, edit: :edit,
-                         layout: :layout, new: :edit, setup: :edit,
-                         normal: :normal, template: :template }.freeze
+
     # FIXME: should be set in views
 
     cattr_accessor :ajax_call, :registered
@@ -203,7 +201,9 @@ class Card
       content = override_content || render_raw || ''
       content_object = get_content_object content, opts
       content_object.process_each_chunk do |chunk_opts|
-        prepare_nest chunk_opts.merge(opts) { yield }
+        # Feels scary to just remove it but I can't make any sense of the
+        # "yield" and all tests pass without it
+        prepare_nest chunk_opts.merge(opts) #{ yield }
       end
     end
 

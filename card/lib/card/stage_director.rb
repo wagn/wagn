@@ -8,6 +8,11 @@ class Card
     end
   end
 
+  def clean_after_stage_fail
+    @action = nil
+    expire_pieces
+    subcards.each(&:expire_pieces)
+  end
   # A 'StageDirector' executes the stages of a card when the card gets created,
   # updated or deleted.
   # For subcards, i.e. other cards that are changed in the same act, a
@@ -204,7 +209,8 @@ class Card
         run_subdirector_stages stage
       end
     rescue => e
-      @card.rescue_event e
+      @card.clean_after_stage_fail
+      raise e
     end
 
     def run_stage_callbacks stage

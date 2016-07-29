@@ -32,6 +32,7 @@ class Card
   end
 
   module Set
+    # Implements the event API for card sets
     module Event
       def event event, stage_or_opts={}, opts={}, &final
         if stage_or_opts.is_a? Symbol
@@ -46,6 +47,8 @@ class Card
         set_event_callbacks event, opts
       end
 
+      private
+
       def define_event event, opts, &final
         final_method_name = "#{event}_without_callbacks" # should be private?
         class_eval do
@@ -55,14 +58,12 @@ class Card
         if with_delay? opts
           delaying_method = "#{event}_with_delay"
           define_event_delaying_method event, delaying_method
-          define_event_method event, delaying_method, opts
+          define_event_method event, delaying_method
           define_active_job event, final_method_name, opts[:queue_as]
         else
-          define_event_method event, final_method_name, opts
+          define_event_method event, final_method_name
         end
       end
-
-      private
 
       def with_delay? opts
         opts[:after] == :integrate_with_delay_stage ||
@@ -77,6 +78,7 @@ class Card
         end
         opts[:on] = [:create, :update] if opts[:on] == :save
       end
+
       def define_event_delaying_method event, method_name
         class_eval do
           define_method(method_name, proc do
@@ -88,16 +90,20 @@ class Card
         end
       end
 
-      def define_event_method event, call_method, _opts
+      def define_event_method event, call_method
         class_eval do
           define_method event do
-            Rails.logger.debug "#{name}: #{event}"
-            # puts "#{Card::DirectorRegister.to_s}".green
+            log_event_call event
             run_callbacks event do
               send call_method
             end
           end
         end
+      end
+
+      def log_event_call event
+        Rails.logger.debug "#{name}: #{event}"
+        # puts "#{Card::DirectorRegister.to_s}".green
       end
 
       # creates an Active Job.
@@ -109,9 +115,9 @@ class Card
       # @param final_method [String] the name of the card instance method to be
       # queued
       # @option queue [Symbol] (:default) the name of the queue
-      def define_active_job name, final_method, queue=:default
+      def define_active_job name, final_method, queue=:integrate_with_delay
         class_name = name.to_s.camelize
-        define_active_job_class class_name, queue || :default
+        define_active_job_class class_name, queue || :integrate_with_delay
         define_active_job_perform_method class_name, final_method
       end
 
@@ -136,16 +142,13 @@ class Card
       end
 
       def set_event_callbacks event, opts
-        this_set_module = opts.delete(:set) || self
+        opts[:set] ||= self
         [:before, :after, :around].each do |kind|
           next unless (object_method = opts.delete(kind))
           Card.class_eval do
             set_callback(
               object_method, kind, event,
-              prepend: true, if: proc do |c|
-                c.singleton_class.include?(this_set_module) &&
-                  c.event_applies?(opts)
-              end
+              prepend: true, if: proc { |c| c.event_applies?(opts) }
             )
           end
         end

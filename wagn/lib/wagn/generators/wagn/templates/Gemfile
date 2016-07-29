@@ -13,6 +13,15 @@ gem '<%= database_gemfile_entry.name %>'<%= %(, '#{database_gemfile_entry.versio
 # gem 'unicorn'
 # gem 'thin'
 
+# Use Delayed::Job for the Active Job queue to run tasks like
+# sending in notifications in a background process.
+# To activate it you have to set config.active_job.queue_adapter to :delayed_job
+# in your config file and start the background process with
+# RAILS_ENV=production script/delayed_job start
+gem 'delayed_job_active_record', '~> 4.1'
+gem 'daemons'
+
+
 <% if options['mod-dev'] || options['core-dev'] -%>
 group :test do
   gem 'rspec', '~> 3.4'
@@ -29,6 +38,7 @@ group :test, :development do
   gem 'phantomjs', '1.9.7.1' #locked because 1.9.8.0 is breaking
   gem 'test_after_commit'
   gem 'colorize'
+  gem 'delayed_job_active_record', '~> 4.1'
 
   <%- if spring_install? %>
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring

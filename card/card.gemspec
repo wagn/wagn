@@ -55,8 +55,7 @@ Gem::Specification.new do |s|
     ['diff-lcs',                   '~> 1.2'],
     # mime-types can be removed if we drop support for ruby 1.9.3
     # mime-types 3.0 uses mime-types-data which isn't compatible with 1.9.3
-    ['mime-types',                 '2.99.1'],
-    ['delayed_job_active_record',  '~> 4.1']
+    ['mime-types',                 '2.99.1']
   ].each do |dep|
     s.add_runtime_dependency(*dep)
   end

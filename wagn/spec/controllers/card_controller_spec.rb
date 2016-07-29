@@ -160,7 +160,7 @@ describe CardController do
       login_as :anonymous
       post :create, { success: 'REDIRECT: *previous',
                       'card' => { 'type' => 'Fruit', name: 'papaya' } },
-                    history: ['/blam']
+           history: ['/blam']
       assert_redirected_to '/blam'
     end
   end
@@ -258,7 +258,7 @@ describe CardController do
                  format: 'css',
                  explicit_file: true }
         get :read, args
-        output_card = Card[:all, :style, :machine_output]
+        # output_card = Card[:all, :style, :machine_output]
         expect(response).to redirect_to(@all_style.machine_output_url)
         get :read, args
         expect(response.status).to eq(200)

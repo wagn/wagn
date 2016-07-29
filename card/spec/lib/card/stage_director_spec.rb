@@ -106,7 +106,6 @@ describe Card::StageDirector do
           test_event :validate,
                      on: :delete,
                      for: 'A' do
-
             abort :success
           end
           test_event :prepare_to_validate,

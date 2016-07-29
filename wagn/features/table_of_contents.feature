@@ -1,3 +1,4 @@
+@javascript
 Feature: Table of Contents
   In order to add a table of contents to a card
   As a Wagneer

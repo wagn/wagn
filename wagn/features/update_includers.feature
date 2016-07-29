@@ -15,6 +15,7 @@ Feature: Updates for Children of watched cards
 
   Scenario: Watcher should be notified of updates to included plus card
     When I create card "Ulysses+author" with content "James Joyce"
+    And I wait 20 seconds
     #And He should see "added Ulysses+author" in the email  -- FIXME need multiline matching
     Then Joe Admin should be notified that "Joe User created \"Ulysses\+author\""
     And Joe Camel should be notified that "Joe User created \"Ulysses\+author\""

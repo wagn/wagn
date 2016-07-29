@@ -40,24 +40,19 @@ class Card
       end
 
       def prepare_nest opts
-        @char_count ||= 0
         opts ||= {}
 
-        case
-        when opts.key?(:comment)
+        if opts.key?(:comment)
           # commented nest
           opts[:comment]
-        when @mode == :closed && @char_count > Card.config.max_char_count
-          # move on; content out of view
+        elsif content_out_of_view?
           ''
-        when opts[:inc_name] == '_main' && show_layout? && @depth == 0
+        elsif opts[:inc_name] == '_main' && show_layout? && @depth == 0
           # the main card within a layout
           expand_main opts
         else
           # standard nest
-          result = nest fetch_nested_card(opts), opts
-          @char_count += result.length if @mode == :closed && result
-          result
+          count_chars { nest fetch_nested_card(opts), opts }
         end
       end
 
@@ -67,61 +62,15 @@ class Card
         opts.delete_if { |_k, v| v.nil? }
         opts.reverse_merge! nest_defaults(nested_card)
 
-        sub = nil
-        if opts[:inc_name] =~ /^_(self)?$/
-          sub = self
-        else
-          sub = subformat nested_card
-          sub.nest_opts = opts[:items] ? opts[:items].clone : {}
-        end
-
+        subformat = nest_subformat nested_card, opts
         view = canonicalize_view opts.delete :view
         opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
         # FIXME: special views should be represented in view definitions
-
-        view =
-          case @mode
-          when :edit then
-            view_in_edit_mode(view, nested_card)
-          when :template then
-            :template_rule
-          when :closed then
-            view_in_closed_mode(view, nested_card)
-          else
-            view
-          end
-        sub.optional_render view, opts
-      end
-
-      def get_nest_content cardname
-        content = params[cardname.to_s.tr('+', '_')]
-
-        # CLEANME This is a hack so plus cards re-populate on failed signups
-        p = params['subcards']
-        if p && (card_params = p[cardname.to_s])
-          content = card_params['content']
-        end
-        content if content.present? # returns nil for empty string
+        subformat.optional_render nested_card.nest_view(@mode, view), opts
       end
 
       def fetch_nested_card options
         Card.fetch options[:inc_name], new: nest_new_args(options)
-      end
-
-      def nest_new_args options
-        args = { name: options[:inc_name], type: options[:type], supercard: card }
-        args.delete(:supercard) if options[:inc_name].strip.blank?
-        # special case.  gets absolutized incorrectly. fix in smartname?
-        if options[:inc_name] =~ /^_main\+/
-          # FIXME: this is a rather hacky (and untested) way to get @superleft
-          # to work on new cards named _main+whatever
-          args[:name] = args[:name].gsub(/^_main\+/, '+')
-          args[:supercard] = root.card
-        end
-        if (content = get_nest_content options[:inc_name])
-          args[:content] = content
-        end
-        args
       end
 
       def wrap_main content
@@ -138,6 +87,15 @@ class Card
 
       def get_nest_defaults _nested_card
         { view: :name }
+      end
+
+      def nest_view mode, view
+        case mode
+        when :edit then view_in_edit_mode(view)
+        when :template then :template_rule
+        when :closed then view_in_closed_mode(view)
+        else view
+        end
       end
 
       protected
@@ -164,30 +122,82 @@ class Card
         end
       end
 
-      def view_in_edit_mode homeview, nested_card
+      private
+
+      # Returns the view that the card should use
+      # if nested in edit mode
+      def view_in_edit_mode homeview
         not_in_form =
           Card::Format.perms[homeview] == :none || # view configured not to keep
-          # in form
-          nested_card.structure || # not yet nesting structures
-          nested_card.key.blank? # eg {{_self|type}} on new cards
+            # in form
+            structure || # not yet nesting structures
+            key.blank? # eg {{_self|type}} on new cards
 
         not_in_form ? :blank : :edit_in_form
       end
 
-      def view_in_closed_mode homeview, nested_card
+      # Return the view that the card should use
+      # if nested in closed mode
+      def view_in_closed_mode homeview
         approved_view = Card::Format.closed[homeview]
-        case
-        when approved_view == true then
+        if approved_view == true then
           homeview
-        when Card::Format.error_code[homeview] then
+        elsif Card::Format.error_code[homeview] then
           homeview
-        when approved_view then
+        elsif approved_view then
           approved_view
-        when !nested_card.known? then
+        elsif !known? then
           :closed_missing
         else
           :closed_content
         end
+      end
+
+      def nest_content cardname
+        content = params[cardname.to_s.tr('+', '_')]
+
+        # CLEANME This is a hack so plus cards re-populate on failed signups
+        p = params['subcards']
+        if p && (card_params = p[cardname.to_s])
+          content = card_params['content']
+        end
+        content if content.present? # returns nil for empty string
+      end
+
+      def nest_subformat nested_card, opts
+        return self if opts[:inc_name] =~ /^_(self)?$/
+        sub = subformat nested_card
+        sub.nest_opts = opts[:items] ? opts[:items].clone : {}
+        sub
+      end
+
+      def nest_new_args options
+        args = { name: options[:inc_name], type: options[:type], supercard: card }
+        args.delete(:supercard) if options[:inc_name].strip.blank?
+        # special case.  gets absolutized incorrectly. fix in smartname?
+        if options[:inc_name] =~ /^_main\+/
+          # FIXME: this is a rather hacky (and untested) way to get @superleft
+          # to work on new cards named _main+whatever
+          args[:name] = args[:name].gsub(/^_main\+/, '+')
+          args[:supercard] = root.card
+        end
+        if (content = nest_content options[:inc_name])
+          args[:content] = content
+        end
+        args
+      end
+
+      def content_out_of_view?
+        @mode == :closed && @char_count &&
+          @char_count > Card.config.max_char_count
+      end
+
+      def count_chars
+        result = yield
+        return result unless @mode == :close && result
+        @char_count ||= 0
+        @char_count += result.length
+        result
       end
     end
   end

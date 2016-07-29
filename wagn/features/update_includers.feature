@@ -9,7 +9,6 @@ Feature: Updates for Children of watched cards
   Background:
     Given I am signed in as Joe User
     And I create Book card "Ulysses"
-    And Jobs are dispatched
     And Joe Camel is watching "Ulysses+*self"
     And Joe Admin is watching "Book+*type"
 

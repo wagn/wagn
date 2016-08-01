@@ -7,9 +7,10 @@ After('@delay-jobs') do
 end
 
 Before('@background-jobs') do
-  system "env RAILS_ENV=cucumber rake jobs:work &"
+  system 'env RAILS_ENV=cucumber rake jobs:work &'
 end
 
 After('@background-jobs') do
-  system "ps -ef | grep 'rake jobs:work' | grep -v grep | awk '{print $2}' | xargs kill -9"
+  system "ps -ef | grep 'rake jobs:work' | grep -v grep | awk '{print $2}' | "\
+         'xargs kill -9'
 end

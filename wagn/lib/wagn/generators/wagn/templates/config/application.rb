@@ -20,14 +20,15 @@ module <%= app_const_base %>
 
 
     # Delayed jobs
-    # Moves time-consuming minor tasks that are part of an card update
+    # Moves time-consuming minor tasks that are part of a card update
     # (like sending notifications to followers) to a background process.
-    # To activate it change below the value of delay_jobs to true,
-    # add the gem 'daemons' to the Gemfile,
-    # and run 'RAILS_ENV=production script/delayed_job start' to start the background process.
+    # To activate it add the gems 'delayed_job_active_record' and 'daemons'
+    # to the Gemfile, uncomment the two lines below and run
+    # 'RAILS_ENV=production script/delayed_job start' to start the background process.
     # See https://github.com/collectiveidea/delayed_job#running-jobs for more information
+    #
     # config.active_job.queue_adapter = :delayed_job
-    # Delayed::Worker.delay_jobs = false
+    # Delayed::Worker.delay_jobs = true
 
     # The below keys are fine for testing but should not be used in production sites.
 

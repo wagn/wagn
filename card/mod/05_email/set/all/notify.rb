@@ -63,6 +63,10 @@ def followable?
   true
 end
 
+def silent_change
+  @silent_change || (@supercard && @supercard.silent_change)
+end
+
 def silent_change?
   silent_change.nil? ? !Card::Env[:controller] : silent_change
 end
@@ -98,7 +102,8 @@ def notify_followers
   @current_act.reload
   @follower_stash ||= FollowerStash.new
   @current_act.actions.each do |a|
-    @follower_stash.add_affected_card a.card if a.card
+    next if !a.card || a.card.silent_change?
+    @follower_stash.add_affected_card a.card
   end
   @follower_stash.each_follower_with_reason do |follower, reason|
     if follower.account && follower != @current_act.actor

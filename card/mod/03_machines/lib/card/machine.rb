@@ -151,12 +151,29 @@ class Card
 
     def run_engine input_card
       return if input_card.is_a? Card::Set::Type::Pointer
+      if (cached = Card.fetch(cache_card_name(input_card)))
+        return cached.content
+      end
       input = if input_card.respond_to? :machine_input
                 input_card.machine_input
               else
                 input_card.format._render_raw
               end
-      engine(input)
+      output = engine(input)
+      cache_output_part input_card, output
+      output
+    end
+
+    def cache_card_name input_card
+      [input_card.name, '*machine cache', name].join '+'
+    end
+
+    def cache_output_part input_card, output
+      cached = Card.fetch cache_card_name(input_card),
+                          new: { type_id: PlainTextID }
+      Auth.as_bot do
+        cached.update_attributes! content: output
+      end
     end
 
     # attaches the input card update as subcard

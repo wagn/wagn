@@ -19,9 +19,9 @@ class Card
       #   home.field_nest :self   # => nest for 'Home+*self'
       def field_nest field, opts={}
         if field.is_a?(Card)
-          nest field, opts
+          nest_card field, opts
         else
-          nest card.cardname.field(field), opts
+          prepare_nest opts.merge(inc_name: card.cardname.field(field))
         end
       end
 
@@ -54,7 +54,7 @@ class Card
         view = canonicalize_view opts.delete :view
         opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
         # FIXME: special views should be represented in view definitions
-        subformat.nest_render view, opts
+        subformat.nest_render @mode, view, opts
       end
 
       def nest_defaults nested_card

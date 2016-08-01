@@ -42,8 +42,8 @@ Capybara.default_wait_time = 30
 # will be rendered instead.
 #
 # Sometimes we want to override this default behaviour and allow Rails to rescue
-# exceptions and display an error page (just like when the app is running in
-# production).
+# exceptions and display an error page
+# (just like when the app is running in production).
 # Typical scenarios where you want to do this is when you test your error pages.
 # There are two ways to allow Rails to rescue exceptions:
 #
@@ -55,13 +55,13 @@ Capybara.default_wait_time = 30
 ActionController::Base.allow_rescue = false
 
 # Remove/comment out the lines below if your app doesn't have a database.
-# For some databases (like MongoDB and CouchDB) you may need to use :truncation
-# instead.
+# For some databases (like MongoDB and CouchDB) you may need to
+# use :truncation instead.
 # begin
 #   DatabaseCleaner.strategy = :transaction
 # rescue NameError
-#   raise 'You need to add database_cleaner to your Gemfile (in the :test group) if you wish to use it.'
-        '(in the :test group) if you wish to use it.'
+#   raise 'You need to add database_cleaner to your Gemfile (in the :test group)
+# if you wish to use it.'
 # end
 
 # You may also want to configure DatabaseCleaner to use different strategies for
@@ -73,7 +73,6 @@ ActionController::Base.allow_rescue = false
 #   end
 #
 #   Before('~@no-txn', '~@selenium', ~@celerity', '~@javascript') do
-#        '~@javascript') do
 #   DatabaseCleaner.strategy = :transaction
 # end
 #

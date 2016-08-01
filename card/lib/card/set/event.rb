@@ -31,6 +31,12 @@ class Card
     end
   end
 
+  def log_event_call event
+    Rails.logger.debug "#{name}: #{event}"
+    # puts "#{Card::DirectorRegister.to_s}".green
+  end
+
+
   module Set
     # Implements the event API for card sets
     module Event
@@ -99,11 +105,6 @@ class Card
             end
           end
         end
-      end
-
-      def log_event_call event
-        Rails.logger.debug "#{name}: #{event}"
-        # puts "#{Card::DirectorRegister.to_s}".green
       end
 
       # creates an Active Job.

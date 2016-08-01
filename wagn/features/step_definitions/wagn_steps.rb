@@ -245,6 +245,10 @@ When /^In (.*) I find button with icon "(.*)" and click it$/ do |section, icon|
   end
 end
 
+Given /^Jobs are dispatched$/ do
+  Delayed::Worker.new.work_off
+end
+
 Then /I submit$/ do
   click_button 'Submit'
 end

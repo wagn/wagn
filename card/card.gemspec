@@ -43,22 +43,19 @@ Gem::Specification.new do |s|
     ['carrierwave',                '<= 0.11.0'],
     ['htmlentities',               '~> 4.3'],
     ['mini_magick',                '~> 4.2'],
+    # recaptcha 0.4.0 is last version that doesn't require ruby 2.0
     ['recaptcha',                  '~> 0.4.0'],
-    # 0.4.0 is last version that doesn't require ruby 2.0
     ['coderay',                    '~> 1.0'],
     ['sass',                       '~> 3.2'],
     ['coffee-script',              '~> 2.2'],
     ['uglifier',                   '~> 3.0'],
-
     ['haml',                       '~> 4.0'],
     ['kaminari',                   '~> 0.16'],
-
     ['bootstrap-kaminari-views',   '~> 0'],
     ['diff-lcs',                   '~> 1.2'],
     # mime-types can be removed if we drop support for ruby 1.9.3
     # mime-types 3.0 uses mime-types-data which isn't compatible with 1.9.3
-    ['mime-types',                  '2.99.1'],
-
+    ['mime-types',                 '2.99.1']
   ].each do |dep|
     s.add_runtime_dependency(*dep)
   end

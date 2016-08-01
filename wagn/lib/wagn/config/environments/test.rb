@@ -51,6 +51,15 @@ Wagn.application.class.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 
+  config.active_job.queue_adapter = :delayed_job
+  # Note: With delay_jobs set to false integrate_with_delay events don't run
+  # in a separate process and hence can behave differently from a real
+  # environment. To test integrate_with_delay events properly set delay_jobs to
+  # true in your test
+  Delayed::Worker.delay_jobs = false
+
+  config.active_record.raise_in_transactional_callbacks = true
+
   # Use Pry instead of IRB
   silence_warnings do
     begin

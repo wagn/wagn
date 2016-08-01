@@ -44,13 +44,13 @@ event :validate_delete, :validate, on: :delete do
   end
 end
 
-event :validate_delete_children, :validate, on: :delete do
+event :validate_delete_children, :prepare_to_validate, on: :delete do
   children.each do |child|
     child.trash = true
     add_subcard child
-    next if child.valid?
-    child.errors.each do |field, message|
-      errors.add field, "can't delete #{child.name}: #{message}"
-    end
+    # next if child.valid?
+    # child.errors.each do |field, message|
+    #   errors.add field, "can't delete #{child.name}: #{message}"
+    # end
   end
 end

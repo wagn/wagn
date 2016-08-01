@@ -189,6 +189,7 @@ Then /^save and open all raw emails$/ do
 end
 
 Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
+  Delayed::Worker.new.work_off
   email = address_for_user username
   begin
     step %("#{email}" should receive 1 email)
@@ -199,6 +200,7 @@ Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
 end
 
 Then /^No notification should be sent$/ do
+  Delayed::Worker.new.work_off
   expect(all_emails).to be_empty
 end
 

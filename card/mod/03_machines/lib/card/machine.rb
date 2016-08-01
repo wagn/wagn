@@ -74,7 +74,7 @@ class Card
       event_suffix = host_class.name.tr ':', '_'
       event_name = "reset_machine_output_#{event_suffix}".to_sym
       host_class.event event_name, after: :expire_related, on: :save do
-        reset_machine_output!
+        reset_machine_output
       end
     end
 
@@ -121,7 +121,7 @@ class Card
         new_input = []
         already_extended = {} # avoid loops
         loop_limit = 5
-        while items.size > 0
+        until items.empty?
           item = items.shift
           next if item.trash || already_extended[item.id].to_i > loop_limit
           if item.item_cards == [item] # no pointer card
@@ -143,21 +143,26 @@ class Card
     def run_machine joint="\n"
       before_engine
       output =
-        input_item_cards.map do |input|
-          next if input.is_a? Card::Set::Type::Pointer
-          if input.respond_to? :machine_input
-            engine(input.machine_input)
-          else
-            engine(input.format._render_raw)
-          end
+        input_item_cards.map do |input_card|
+          run_engine input_card
         end.select(&:present?).join(joint)
       after_engine output
     end
 
-    def reset_machine_output!
+    def run_engine input_card
+      return if input_card.is_a? Card::Set::Type::Pointer
+      input = if input_card.respond_to? :machine_input
+                input_card.machine_input
+              else
+                input_card.format._render_raw
+              end
+      engine(input)
+    end
+
+    # attaches the input card update as subcard
+    def reset_machine_output
       Auth.as_bot do
         (moc = machine_output_card) && moc.real? && moc.delete!
-        # mic = machine_input_card  and mic.real? and mic.delete!
         update_input_card
       end
     end
@@ -191,7 +196,13 @@ class Card
     end
 
     def update_input_card
-      machine_input_card.items = engine_input
+      if DirectorRegister.running_act?
+        input_card = attach_subcard! machine_input_card
+        input_card.content = ''
+        engine_input.each { |input| input_card << input }
+      else
+        machine_input_card.items = engine_input
+      end
     end
 
     def input_item_cards

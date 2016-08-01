@@ -5,45 +5,49 @@ describe CardController do
 
   include Capybara::DSL
   describe '- route generation' do
+    def card_route_to opts={}
+      route_to opts.merge(controller: 'card')
+    end
+
     it 'should recognize type' do
       # all_routes = Rails.application.routes.routes
       # require 'rails/application/route_inspector'
       # warn "rountes#{ENV['CONTROLLER']}:\n" + Rails::Application::RouteInspector.new.format(all_routes, ENV['CONTROLLER'])* "\n"
 
-      expect(get: '/new/Phrase').to route_to(controller: 'card', action: 'read', type: 'Phrase', view: 'new')
+      expect(get: '/new/Phrase')
+        .to card_route_to(action: 'read', type: 'Phrase', view: 'new')
     end
 
     it 'should recognize .rss on /recent' do
-      expect(get: '/recent.rss').to route_to(controller: 'card', action: 'read', id: ':recent', format: 'rss')
+      expect(get: '/recent.rss')
+        .to card_route_to(action: 'read', id: ':recent', format: 'rss')
     end
 
     it 'should handle RESTful posts' do
-      expect(put: '/mycard').to route_to(controller: 'card', action: 'update', id: 'mycard')
-      expect(put: '/').to route_to(controller: 'card', action: 'update')
+      expect(put: '/mycard').to card_route_to(action: 'update', id: 'mycard')
+      expect(put: '/').to card_route_to(action: 'update')
     end
 
     it 'handle asset requests' do
-      expect(get: '/asset/application.js').to route_to(controller: 'card', action: 'asset', id: 'application', format: 'js')
+      expect(get: '/asset/application.js')
+        .to card_route_to(action: 'asset', id: 'application', format: 'js')
     end
 
     ['/wagn', ''].each do |prefix|
       describe "routes prefixed with '#{prefix}'" do
         it 'should recognize .rss format' do
-          expect(get: "#{prefix}/*recent.rss").to route_to(
-            controller: 'card', action: 'read', id: '*recent', format: 'rss'
-          )
+          expect(get: "#{prefix}/*recent.rss")
+            .to card_route_to(action: 'read', id: '*recent', format: 'rss')
         end
 
         it 'should recognize .xml format' do
-          expect(get: "#{prefix}/*recent.xml").to route_to(
-            controller: 'card', action: 'read', id: '*recent', format: 'xml'
-          )
+          expect(get: "#{prefix}/*recent.xml")
+            .to card_route_to(action: 'read', id: '*recent', format: 'xml')
         end
 
         it 'should accept cards without dots' do
-          expect(get: "#{prefix}/random").to route_to(
-            controller: 'card', action: 'read', id: 'random'
-          )
+          expect(get: "#{prefix}/random")
+            .to card_route_to(action: 'read', id: 'random')
         end
       end
     end
@@ -81,7 +85,8 @@ describe CardController do
 
     # no controller-specific handling.  move test elsewhere
     it 'creates cardtype cards' do
-      xhr :post, :create, card: { 'content' => 'test', type: 'Cardtype', name: 'Editor' }
+      xhr :post, :create,
+          card: { 'content' => 'test', type: 'Cardtype', name: 'Editor' }
       expect(assigns['card']).not_to be_nil
       assert_response 200
       c = Card['Editor']
@@ -92,7 +97,10 @@ describe CardController do
     it 'pulls deleted cards from trash' do
       @c = Card.create! name: 'Problem', content: 'boof'
       @c.delete!
-      post :create, card: { 'name' => 'Problem', 'type' => 'Phrase', 'content' => 'noof' }
+      post :create,
+           card: {
+             'name' => 'Problem', 'type' => 'Phrase', 'content' => 'noof'
+           }
       assert_response 302
       c = Card['Problem']
       expect(c.type_code).to eq(:phrase)
@@ -133,7 +141,8 @@ describe CardController do
 
     it 'redirects to thanks if present' do
       login_as 'joe_admin'
-      xhr :post, :create, success: 'REDIRECT: /thank_you', card: { 'name' => 'Wombly' }
+      xhr :post, :create, success: 'REDIRECT: /thank_you',
+                          card: { 'name' => 'Wombly' }
       assert_response 200
       json = JSON.parse response.body
       expect(json['redirect']).to match(/^http.*\/thank_you$/)
@@ -141,14 +150,17 @@ describe CardController do
 
     it 'redirects to card if thanks is blank' do
       login_as 'joe_admin'
-      post :create, success: 'REDIRECT: _self', 'card' => { 'name' => 'Joe+boop' }
+      post :create, success: 'REDIRECT: _self',
+                    'card' => { 'name' => 'Joe+boop' }
       assert_redirected_to '/Joe+boop'
     end
 
     it 'redirects to previous' do
       # Fruits (from shared_data) are anon creatable but not readable
       login_as :anonymous
-      post :create, { success: 'REDIRECT: *previous', 'card' => { 'type' => 'Fruit', name: 'papaya' } }, history: ['/blam']
+      post :create, { success: 'REDIRECT: *previous',
+                      'card' => { 'type' => 'Fruit', name: 'papaya' } },
+           history: ['/blam']
       assert_redirected_to '/blam'
     end
   end
@@ -157,7 +169,8 @@ describe CardController do
     it 'works for basic request' do
       get :read, id: 'Sample_Basic'
       expect(response.body.match(/\<body[^>]*\>/im)).to be_truthy
-      # have_selector broke in commit 8d3bf2380eb8197410e962304c5e640fced684b9, presumably because of a gem (like capybara?)
+      # have_selector broke in commit 8d3bf2380eb8197410e962304c5e640fced684b9,
+      # presumably because of a gem (like capybara?)
       # response.should have_selector('body')
       assert_response :success
       expect('Sample Basic').to eq(assigns['card'].name)
@@ -198,24 +211,28 @@ describe CardController do
         get :read, view: 'new'
         expect(assigns['card'].name).to eq('')
         assert_response :success, 'response should succeed'
-        assert_equal Card::BasicID, assigns['card'].type_id, '@card type should == Basic'
+        assert_equal Card::BasicID, assigns['card'].type_id,
+                     '@card type should == Basic'
       end
 
       it 'new with name' do
         post :read, card: { name: 'BananaBread' }, view: 'new'
         assert_response :success, 'response should succeed'
-        assert_equal 'BananaBread', assigns['card'].name, '@card.name should == BananaBread'
+        assert_equal 'BananaBread', assigns['card'].name,
+                     '@card.name should == BananaBread'
       end
 
       it 'new with existing name' do
         get :read, card: { name: 'A' }, view: 'new'
-        assert_response :success, 'response should succeed'  # really?? how come this is ok?
+        # really?? how come this is ok?
+        assert_response :success, 'response should succeed'
       end
 
       it 'new with type_code' do
         post :read, card: { type: 'Date' }, view: 'new'
         assert_response :success, 'response should succeed'
-        assert_equal Card::DateID, assigns['card'].type_id, '@card type should == Date'
+        assert_equal Card::DateID, assigns['card'].type_id,
+                     '@card type should == Date'
       end
 
       it 'new should work for creatable nonviewable cardtype' do
@@ -233,13 +250,15 @@ describe CardController do
     context 'css' do
       before do
         @all_style = Card["#{Card[:all].name}+#{Card[:style].name}"]
-        @all_style.reset_machine_output!
+        @all_style.reset_machine_output
       end
 
       it 'creates missing machine output file' do
-        args = { id: @all_style.machine_output_card.name, format: 'css', explicit_file: true }
+        args = { id: @all_style.machine_output_card.name,
+                 format: 'css',
+                 explicit_file: true }
         get :read, args
-        output_card = Card["#{Card[:all].name}+#{Card[:style].name}+#{Card[:machine_output].name}"]
+        # output_card = Card[:all, :style, :machine_output]
         expect(response).to redirect_to(@all_style.machine_output_url)
         get :read, args
         expect(response.status).to eq(200)
@@ -249,7 +268,8 @@ describe CardController do
     context 'file' do
       before do
         Card::Auth.as_bot do
-          Card.create name: 'mao2', type_code: 'image', image: File.new(File.join FIXTURES_PATH, 'mao2.jpg')
+          Card.create name: 'mao2', type_code: 'image',
+                      image: File.new(File.join(FIXTURES_PATH, 'mao2.jpg'))
           Card.create name: 'mao2+*self+*read', content: '[[Administrator]]'
         end
       end
@@ -275,7 +295,8 @@ describe CardController do
     it 'serves file' do
       filename = 'asset-test.txt'
       args = { id: filename, format: 'txt', explicit_file: true }
-      path = File.join(Decko::Engine.paths['gem-assets'].existent.first, filename)
+      path =
+        File.join(Decko::Engine.paths['gem-assets'].existent.first, filename)
       File.open(path, 'w') { |f| f.puts 'test' }
       args = { filename: filename.to_s }
       visit "/assets/#{filename}"
@@ -301,7 +322,8 @@ describe CardController do
         xhr :post, :update, id: "~#{@simple_card.id}",
                             card: { content: 'brand new content' }
         assert_response :success, 'edited card'
-        assert_equal 'brand new content', Card['Sample Basic'].content, 'content was updated'
+        assert_equal 'brand new content', Card['Sample Basic'].content,
+                     'content was updated'
       end
 
       it 'rename without update references should work' do
@@ -353,9 +375,11 @@ describe CardController do
 
     it 'should comment' do
       Card::Auth.as_bot do
-        Card.create name: 'basicname+*self+*comment', content: '[[Anyone Signed In]]'
+        Card.create name: 'basicname+*self+*comment',
+                    content: '[[Anyone Signed In]]'
       end
-      post :update, id: 'basicname', card: { comment: " and more\n  \nsome lines\n\n" }
+      post :update, id: 'basicname',
+                    card: { comment: " and more\n  \nsome lines\n\n" }
       cont = Card['basicname'].content
       expect(cont).to match(/basiccontent/)
       expect(cont).to match(/some lines/)

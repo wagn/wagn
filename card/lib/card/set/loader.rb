@@ -63,6 +63,7 @@ EOF
       # Format class
       # 'nonbase modules' are included dynamically on singleton_classes
       def process_base_modules
+        return unless modules[:base]
         process_base_module_list modules[:base], Card
         modules[:base_format].each do |format_class, modules_list|
           process_base_module_list modules_list, format_class

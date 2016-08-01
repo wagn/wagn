@@ -1,5 +1,6 @@
 module SpecHelper
 end
+
 module Card::SpecHelper
   include Rails::Dom::Testing::Assertions::SelectorAssertions
   # ~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
@@ -8,7 +9,8 @@ module Card::SpecHelper
     Card::Auth.current_id = (uc = Card[user.to_s]) && uc.id
     return unless @request
     @request.session[:user] = Card::Auth.current_id
-    # warn "(ath)login_as #{user.inspect}, #{Card::Auth.current_id}, #{@request.session[:user]}"
+    # warn "(ath)login_as #{user.inspect}, #{Card::Auth.current_id}, "\
+    #      "#{@request.session[:user]}"
   end
 
   def create! name, content=''
@@ -25,8 +27,8 @@ module Card::SpecHelper
   end
 
   def debug_assert_view_select view_html, *args, &block
-    Rails.logger.rspec %(
-                       #{CodeRay.scan(Nokogiri::XML(view_html, &:noblanks).to_s, :html).div}
+    Rails.logger.rspec <<-HTML
+      #{CodeRay.scan(Nokogiri::XML(view_html, &:noblanks).to_s, :html).div}
       <style>
         .CodeRay {
           background-color: #FFF;
@@ -35,7 +37,7 @@ module Card::SpecHelper
         }
         .CodeRay .code pre { overflow: auto }
       </style>
-    )
+    HTML
     assert_view_select view_html, *args, &block
   end
 
@@ -86,9 +88,8 @@ module Card::SpecHelper
   #            expect(item_names).to eq []
   #          end
   def in_stage stage, opts={}, &event_block
-    stage_sym = :"#{stage}_stage"
-    $rspec_binding = binding
-    add_test_event stage_sym, :in_stage_test, &event_block
+    Card.rspec_binding = binding
+    add_test_event stage, :in_stage_test, opts, &event_block
     trigger =
       if opts[:trigger].is_a?(Symbol)
         method(opts[:trigger])
@@ -97,51 +98,41 @@ module Card::SpecHelper
       end
     trigger.call
   ensure
-    remove_test_event stage_sym, :in_stage_test
+    remove_test_event stage, :in_stage_test
   end
 
-  def add_test_event stage, name, &event_block
-    Card.class_eval do
-      def method_missing m, *args, &block
-        begin
-          method = eval('method(%s)' % m.inspect, $rspec_binding)
-        rescue NameError
-        else
-          return method.call(*args, &block)
-        end
-        begin
-          value = eval(m.to_s, $rspec_binding)
-          return value
-        rescue NameError
-        end
-        super
-        #        raise NoMethodError
-      end
-
-      define_method name, event_block
+  def add_test_event stage, name, opts={}, &event_block
+    # use random set module that is always included so that the
+    # event applies to all cards
+    opts[:set] ||= Card::Set::All::Event
+    if (only_for_card = opts.delete(:for))
+      opts[:when] = proc { |c| c.name == only_for_card }
     end
-    Card.define_callbacks name
-    Card.set_callback stage, :before, name, prepend: true
+    Card.class_eval do
+      extend Card::Set::Event
+      event name, stage, opts, &event_block
+    end
   end
 
   def remove_test_event stage, name
-    Card.skip_callback stage, :before, name
+    stage_sym = :"#{stage}_stage"
+    Card.skip_callback stage_sym, :after, name
   end
 
-  def test_event stage, _opts, &block
+  def test_event stage, opts={}, &block
     event_name = :"test_event_#{@events.size}"
-    stage_sym = :"#{stage}_stage"
-    @events << [stage_sym, event_name]
-    add_test_event stage_sym, event_name, &block
+    @events << [stage, event_name]
+    add_test_event stage, event_name, opts, &block
   end
 
   def with_test_events
     @events = []
-    $rspec_binding = binding
+    Card.rspec_binding = binding
     yield
   ensure
     @events.each do |stage, name|
       remove_test_event stage, name
     end
+    Card.rspec_binding = false
   end
 end

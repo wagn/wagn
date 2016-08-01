@@ -52,3 +52,5 @@ Style/ExtraSpacing:
 Lint/AssignmentInCondition:
   Enabled: true
   AllowSafeAssignment: true
+Style/Alias:
+  EnforcedStyle: prefer_alias_method

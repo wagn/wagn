@@ -36,7 +36,7 @@ class Card
       event_name = "after_machine_input_deleted_#{event_suffix}".to_sym
       host_class.event event_name, :finalize, on: :delete do
         @involved_machines.each do |item|
-          item.reset_machine_output! if item.is_a? Machine
+          item.reset_machine_output if item.is_a? Machine
         end
       end
     end
@@ -48,7 +48,7 @@ class Card
       ) do
         Card::MachineInput.search_involved_machines(name, host_class)
                           .each do |item|
-          item.reset_machine_output! if item.is_a? Machine
+          item.reset_machine_output if item.is_a? Machine
         end
       end
     end

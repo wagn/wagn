@@ -28,4 +28,6 @@ Wagn.application.class.configure do
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
+
+  config.use_transactional_fixtures = false
 end

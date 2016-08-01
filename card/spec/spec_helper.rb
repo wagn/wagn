@@ -4,7 +4,9 @@ ENV['RAILS_ENV'] = 'test'
 
 require 'timecop'
 require 'rr'
-require File.expand_path('../../db/seed/test/seed.rb', __FILE__) # used for SharedData::Users - required here so code won't show up in coverage
+
+# used for SharedData::Users - required here so code won't show up in coverage
+require File.expand_path('../../db/seed/test/seed.rb', __FILE__)
 
 require File.expand_path('../../lib/card/simplecov_helper.rb', __FILE__)
 require 'simplecov'
@@ -24,12 +26,15 @@ Spork.prefork do
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
-  #  Dir[ File.join(Cardio.gem_root, "spec/support/**/*.rb") ].each { |f| require f }
+  #  Dir[File.join(Cardio.gem_root, "spec/support/**/*.rb")].each do |f|
+  #    require f
+  #  end
 
   FIXTURES_PATH = File.expand_path('../../db/seed/test/fixtures', __FILE__)
   JOE_USER_ID = Card['joe_user'].id
   RSpec.configure do |config|
-    config.include RSpec::Rails::Matchers::RoutingMatchers,        file_path: /\bspec\/controllers\//
+    config.include RSpec::Rails::Matchers::RoutingMatchers,
+                   file_path: %r{\bspec/controllers/}
     config.include RSpecHtmlMatchers
     # format_index = ARGV.find_index {|arg| arg =~ /--format|-f/ }
     # formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation' #'textmate'
@@ -40,7 +45,8 @@ Spork.prefork do
     # config.include ControllerMacros, type: :controllers
 
     # == Mock Framework
-    # If you prefer to mock with mocha, flexmock or RR, uncomment the appropriate symbol:
+    # If you prefer to mock with mocha, flexmock or RR,
+    # uncomment the appropriate symbol:
     # :mocha, :flexmock, :rr
     # require 'card-rspec-formatter'
     config.mock_with :rr
@@ -50,12 +56,13 @@ Spork.prefork do
 
     config.mock_with :rspec do |mocks|
       mocks.syntax = [:should, :expect]
-       mocks.verify_partial_doubles = true
+      mocks.verify_partial_doubles = true
     end
     config.expect_with :rspec do |c|
       c.syntax = [:should, :expect]
     end
     config.before(:each) do
+      Delayed::Worker.delay_jobs = false
       Card::Auth.current_id = JOE_USER_ID
       Card::Cache.restore
       Card::Env.reset
@@ -112,6 +119,25 @@ class Card
         save!
       end
     end
+  end
+
+  cattr_accessor :rspec_binding
+
+  def method_missing m, *args, &block
+    return super unless Card.rspec_binding
+    suppress_name_error do
+      method = eval('method(%s)' % m.inspect, Card.rspec_binding)
+      return method.call(*args, &block)
+    end
+    suppress_name_error do
+      return eval(m.to_s, Card.rspec_binding)
+    end
+    super
+  end
+
+  def suppress_name_error
+    yield
+  rescue NameError
   end
 end
 

@@ -9,8 +9,8 @@ class Card
                         edit: :edit, closed: :closed, layout: :layout,
                         normal: :normal, template: :template }.freeze
 
-        def nest_render mode, view, opts
-          optional_render nest_view(mode, view), opts
+        def nest_render view, opts
+          optional_render nest_view(view), opts
         end
 
         def with_nest_mode mode
@@ -29,11 +29,11 @@ class Card
 
         private
 
-        def nest_view mode, view
+        def nest_view view
           # This was refactored based on the assumption that the subformat
           # has always the same @mode as its parent format
           # The nest view used to be based on the mode of the parent format
-          case mode
+          case @mode
           when :edit then view_in_edit_mode(view)
           when :template then :template_rule
           when :closed then view_in_closed_mode(view)

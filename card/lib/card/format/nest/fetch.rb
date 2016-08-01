@@ -6,13 +6,12 @@ class Card
         def fetch_nested_card name_or_card_or_opts, opts={}
           case name_or_card_or_opts
           when Card
-            opts.merge! inc_name: name_or_card_or_opts.name
             name_or_card_or_opts
           when Hash
             opts = name_or_card_or_opts
-            Card.fetch opts[:inc_name], new: nest_new_args(opts)
+            Card.fetch(opts[:inc_name], new: nest_new_args(opts))
           when Symbol
-            Card.fetch name_or_card_or_opts
+            Card.fetch(name_or_card_or_opts)
           else
             opts.merge! inc_name: name_or_card_or_opts.to_s
             Card.fetch name_or_card_or_opts, new: nest_new_args(opts)

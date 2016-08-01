@@ -7,7 +7,9 @@ class Card
       include View
 
       def nest name_or_card_or_opts, opts={}
-        nested_card = fetch_nested_card name_or_card_or_opts, opts
+        nested_card  = fetch_nested_card name_or_card_or_opts, opts
+        opts = name_or_card_or_opts if name_or_card_or_opts.is_a? Hash
+        opts[:inc_name] ||= nested_card.name
         nest_card nested_card, opts
       end
 
@@ -54,7 +56,7 @@ class Card
         view = canonicalize_view opts.delete :view
         opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
         # FIXME: special views should be represented in view definitions
-        subformat.nest_render @mode, view, opts
+        subformat.nest_render view, opts
       end
 
       def nest_defaults nested_card

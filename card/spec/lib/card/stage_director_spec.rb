@@ -71,10 +71,9 @@ describe Card::StageDirector do
           @called_events << ev
         end
         with_test_events do
-          @subcard_stages
           test_event :validate,
-                    on: :create,
-                    for: 'a card' do
+                     on: :create,
+                     for: 'a card' do
             abort :success
           end
           test_event :prepare_to_validate,
@@ -104,11 +103,9 @@ describe Card::StageDirector do
           @called_events << ev
         end
         with_test_events do
-          @subcard_stages
           test_event :validate,
                      on: :delete,
                      for: 'A' do
-
             abort :success
           end
           test_event :prepare_to_validate,
@@ -284,13 +281,13 @@ describe Card::StageDirector do
             v:12 v:121
             pts:1 pts:11 pts:111 pts:112v pts:12 pts:121
             s:1
-              s:11
-                s:111 f:111
-                s:112v f:112v
-              f:11
-              s:12
-                s:121 f:121
-              f:12
+            s:11
+            s:111 f:111
+            s:112v f:112v
+            f:11
+            s:12
+            s:121 f:121
+            f:12
             f:1
             ig:1 ig:11 ig:111 ig:112v ig:12 ig:121
             igwd:1 igwd:11 igwd:111 igwd:112v igwd:12 igwd:121
@@ -335,9 +332,9 @@ describe Card::StageDirector do
             v:1+2 v:11
             pts:1+2 pts:11
             s:1+2
-              i:1 ptv:1 v:1 pts:1 s:1 f:1
-              i:2 ptv:2 v:2 pts:2 s:2 f:2
-              s:11 f:11
+            i:1 ptv:1 v:1 pts:1 s:1 f:1
+            i:2 ptv:2 v:2 pts:2 s:2 f:2
+            s:11 f:11
             f:1+2
             ig:1+2 ig:11 ig:1 ig:2
             igwd:1+2 igwd:11 igwd:1 igwd:2

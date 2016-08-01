@@ -85,8 +85,7 @@ module ClassMethods
     if opts[:pristine] && !card.pristine?
       false
     else
-      card.attributes = attribs
-      card.save!
+      card.update_attributes! attribs
     end
   end
 

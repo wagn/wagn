@@ -99,13 +99,12 @@ module Card::SpecHelper
     trigger.call
   ensure
     remove_test_event stage, :in_stage_test
-    Card.rspec_binding = false
   end
 
   def add_test_event stage, name, opts={}, &event_block
-    opts[:set] ||= Card::Set::All::Event # just a random module that
-                                         # is always included so that the
-                                         # event applies to all cards
+    # use random set module that is always included so that the
+    # event applies to all cards
+    opts[:set] ||= Card::Set::All::Event
     if (only_for_card = opts.delete(:for))
       opts[:when] = proc { |c| c.name == only_for_card }
     end

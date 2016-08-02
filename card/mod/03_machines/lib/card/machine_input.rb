@@ -65,11 +65,11 @@ class Card
     end
 
     def expire_machine_cache
-      if (cache = field('*machine cache'))
-      Auth.as_bot do
-        cache.update_attributes! trash: true, silent_change: true
+      if (cache = fetch trait: :machine_cache)
+        Auth.as_bot do
+          cache.update_attributes! trash: true, silent_change: true
+        end
       end
-    end
     end
   end
 end

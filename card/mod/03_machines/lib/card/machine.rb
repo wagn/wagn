@@ -151,9 +151,10 @@ class Card
 
     def run_engine input_card
       return if input_card.is_a? Card::Set::Type::Pointer
-      if (cached = Card.fetch(cache_card_name(input_card)))
+      if (cached = fetch_cache_card(input_card))
         return cached.content
       end
+
       input = if input_card.respond_to? :machine_input
                 input_card.machine_input
               else
@@ -164,15 +165,21 @@ class Card
       output
     end
 
-    def cache_card_name input_card
-      [input_card.name, '*machine cache', name].join '+'
+    def fetch_cache_card input_card, new=nil
+      new &&= { type_id: PlainTextID }
+      Card.fetch input_card.name, :machine_cache, name, new: new
     end
 
     def cache_output_part input_card, output
-      cached = Card.fetch cache_card_name(input_card),
-                          new: { type_id: PlainTextID }
       Auth.as_bot do
-        cached.update_attributes! content: output
+        #fetch_cache_card(input_card, true).update_columns db_content: output
+        cache = fetch_cache_card(input_card, true)
+        cache.content = output
+        binding.pry
+        cache.save!
+                                      #.update_attributes!(
+        #   content: output, silent_change: true
+        # )
       end
     end
 
@@ -185,11 +192,23 @@ class Card
     end
 
     def update_machine_output
+      lock do
+        update_input_card
+        run_machine
+      end
+    end
+
+    def regenerate_machine_output
+      #lock do
+        run_machine
+      #end
+    end
+
+    def lock
       if ok?(:read) && !(was_already_locked = locked?)
         Auth.as_bot do
           lock!
-          update_input_card
-          run_machine
+          yield
         end
       end
     ensure

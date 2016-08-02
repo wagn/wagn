@@ -55,7 +55,7 @@ class Card < ActiveRecord::Base
     :silent_change,               # and this probably too
     :remove_rule_stash,
     :last_action_id_before_edit,
-    :only_storage_phase
+    :only_storage_phase           # used to save subcards
   )
 
   attr_accessor :follower_stash

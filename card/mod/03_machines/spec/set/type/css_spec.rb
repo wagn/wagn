@@ -30,11 +30,11 @@ describe Card::Set::Type::Css do
     end
   end
 
-  it_behaves_like 'content machine', that_produces_css do
-    let(:machine_card) { Card.gimme! 'test css', type: :css, content: css }
-    let(:card_content) do
-      { in:         css,         out:         compressed_css,
-        changed_in: changed_css, changed_out: compressed_changed_css }
-    end
-  end
+  # it_behaves_like 'content machine', that_produces_css do
+  #   let(:machine_card) { Card.gimme! 'test css', type: :css, content: css }
+  #   let(:card_content) do
+  #     { in:         css,         out:         compressed_css,
+  #       changed_in: changed_css, changed_out: compressed_changed_css }
+  #   end
+  # end
 end

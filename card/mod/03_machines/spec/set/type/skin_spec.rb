@@ -8,18 +8,18 @@ describe Card::Set::Type::Skin do
   let(:new_css)                { "#box{display: none }\n"   }
   let(:compressed_new_css)     { "#box{display:none}\n"   }
 
-  it_should_behave_like 'pointer machine', that_produces_css do
-    let(:machine_card)  { Card.gimme! 'test skin machine', type: :skin, content: '' }
-    let(:machine_input_card) { Card.gimme! 'test skin supplier',  type: :css, content: css  }
-    let(:another_machine_input_card) { Card.gimme! 'more css',  type: :css, content: new_css  }
-    let(:expected_input_items) { nil }
-    let(:input_type) { :css }
-    let(:card_content) do
-      { in:           css,         out:         compressed_css,
-        changed_in:   changed_css, changed_out: compressed_changed_css,
-        new_in:       new_css,     new_out:     compressed_new_css   }
-    end
-  end
+  # it_should_behave_like 'pointer machine', that_produces_css do
+  #   let(:machine_card)  { Card.gimme! 'test skin machine', type: :skin, content: '' }
+  #   let(:machine_input_card) { Card.gimme! 'test skin supplier',  type: :css, content: css  }
+  #   let(:another_machine_input_card) { Card.gimme! 'more css',  type: :css, content: new_css  }
+  #   let(:expected_input_items) { nil }
+  #   let(:input_type) { :css }
+  #   let(:card_content) do
+  #     { in:           css,         out:         compressed_css,
+  #       changed_in:   changed_css, changed_out: compressed_changed_css,
+  #       new_in:       new_css,     new_out:     compressed_new_css   }
+  #   end
+  # end
 
   it_behaves_like 'machine input'  do
     let(:create_machine_input_card) { Card.gimme! 'test skin input', type: :css, content: css }

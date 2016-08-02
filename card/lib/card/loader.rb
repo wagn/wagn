@@ -33,12 +33,11 @@ class Card
       def load_layouts
         mod_dirs.each_with_object({}) do |mod, hash|
           dirname = "#{mod}/layout"
-          if File.exist? dirname
-            Dir.foreach(dirname) do |filename|
-              next if filename =~ /^\./
-              hash[filename.gsub /\.html$/, ''] =
-                File.read([dirname, filename].join('/'))
-            end
+          next unless File.exist? dirname
+          Dir.foreach(dirname) do |filename|
+            next if filename =~ /^\./
+            hash[filename.gsub /\.html$/, ''] =
+              File.read([dirname, filename].join('/'))
           end
         end
       end

@@ -69,7 +69,6 @@ class Card
         input_cards_with_source_files(machine_card) do |i_card, files|
           files.each do |path|
             if File.mtime(path) > mtime_output
-              binding.pry
               i_card.expire_machine_cache
               regenerate = true
               break
@@ -77,7 +76,6 @@ class Card
           end
         end
         machine_card.regenerate_machine_output if regenerate
-
       end
 
       def input_cards_with_source_files card

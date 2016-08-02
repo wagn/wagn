@@ -175,9 +175,8 @@ class Card
         #fetch_cache_card(input_card, true).update_columns db_content: output
         cache = fetch_cache_card(input_card, true)
         cache.content = output
-        binding.pry
         cache.save!
-                                      #.update_attributes!(
+        #.update_attributes!(
         #   content: output, silent_change: true
         # )
       end

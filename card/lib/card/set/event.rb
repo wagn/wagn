@@ -36,7 +36,6 @@ class Card
     # puts "#{Card::DirectorRegister.to_s}".green
   end
 
-
   module Set
     # Implements the event API for card sets
     module Event

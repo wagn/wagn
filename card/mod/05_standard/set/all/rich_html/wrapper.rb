@@ -39,7 +39,9 @@ format :html do
                       tagged(@current_view, :no_wrap_comments)
     name = h card.name
     space = '  ' * @depth
-    %(<!--\n\n#{space}BEGIN SLOT: #{name}\n\n-->#{div}<!--\n\n#{space}END SLOT: #{name}\n\n-->)
+    "<!--\n\n#{space}BEGIN SLOT: #{name}\n\n-->" \
+    "#{div}" \
+    "<!--\n\n#{space}END SLOT: #{name}\n\n-->"
   end
 
   def wrap_classes args
@@ -82,7 +84,7 @@ format :html do
     else
       show_subheader =
         show_view?(:toolbar, args.merge(default_visibility: :hide)) &&
-          @current_view != :related && @current_view != :open
+        @current_view != :related && @current_view != :open
 
       wrap args do
         [

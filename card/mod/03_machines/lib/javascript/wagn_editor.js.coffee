@@ -49,15 +49,8 @@ $.extend wagn,
         {}
     wagn.tinyMCEConfig = setter()
 
-  aceModeByTypeCode: {
-    java_script: 'javascript',
-    coffee_script: 'coffee',
-    css: 'css',
-    scss: 'scss',
-    html: 'html',
-    search_type: 'json',
-    layout_type: 'html'
-  }
+  initProseMirror: (el_id) ->
+    createProseMirror(el_id, { "menuBar": true, "tooltipMenu": false })
 
   aceConfigByTypeCode: {
     default: (editor) ->
@@ -69,14 +62,15 @@ $.extend wagn,
       editor.setOptions maxLines: 30
   }
 
-  configAceEditor: (editor, type_code) ->
-    configurer = wagn.aceConfigByTypeCode[type_code] ||
+  configAceEditor: (editor, mode) ->
+    configurer = wagn.aceConfigByTypeCode[mode] ||
                  wagn.aceConfigByTypeCode['default']
     configurer(editor)
 
   initAce: (textarea) ->
-    type_code = textarea.attr "data-card-type-code"
-    mode = wagn.aceModeByTypeCode[type_code]
+    #type_code = textarea.attr "data-card-type-code"
+    #mode = wagn.aceModeByTypeCode[type_code]
+    mode = textarea.attr "data-ace-mode"
     unless mode
       textarea.autosize()
       return
@@ -90,7 +84,7 @@ $.extend wagn,
     ace.config.set('basePath','/assets/ace')
     editor = ace.edit(editDiv[0])
     editor.getSession().setValue textarea.val()
-    wagn.configAceEditor(editor)
+    wagn.configAceEditor(editor, mode)
     return
 
 

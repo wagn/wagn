@@ -2,6 +2,7 @@
 require 'sass'
 include Machine
 include MachineInput
+include_set Abstract::AceEditor
 
 store_machine_output filetype: 'css'
 
@@ -35,11 +36,13 @@ format do
 end
 
 format :html do
+  def default_editor_args args
+    args[:ace_mode] = 'css'
+  end
+
   def get_nest_defaults _nested_card
     { view: :closed }
   end
-
-  view :editor, mod: Html::HtmlFormat
 
   view :core do |_args|
     # FIXME: scan must happen before process for inclusion interactions to

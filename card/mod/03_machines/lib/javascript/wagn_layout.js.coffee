@@ -11,7 +11,7 @@ wrapSidebarToggle = (toggle) ->
 
 sidebarToggle = (side) ->
   icon_dir = if side == 'left' then 'right' else 'left'
-  "<button class='offcanvas-toggle offcanvas-toggle-#{side} btn btn-secondary" +
+  "<button class='offcanvas-toggle offcanvas-toggle-#{side} btn btn-secondary "+
     "visible-xs' data-toggle='offcanvas-#{side}'>" +
     "<span class='glyphicon glyphicon-chevron-#{icon_dir}'/></button>"
 

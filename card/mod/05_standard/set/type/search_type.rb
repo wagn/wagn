@@ -1,3 +1,4 @@
+include_set Abstract::AceEditor
 
 def item_cards params={}
   s = query(params)
@@ -226,6 +227,10 @@ format :rss do
 end
 
 format :html do
+  def default_editor_args args
+    args[:ace_mode] = 'json'
+  end
+
   view :card_list do |args|
     paging = _optional_render :paging, args
 
@@ -264,8 +269,6 @@ format :html do
       # otherwise use link
     end
   end
-
-  view :editor, mod: Html::HtmlFormat
 
   view :no_search_results do |_args|
     %(<div class="search-no-results"></div>)

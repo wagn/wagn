@@ -8,6 +8,8 @@ require_dependency 'card/machine_input'
 include Machine
 include MachineInput
 
+include_set Abstract::AceEditor
+
 def compile_coffee script
   ::CoffeeScript.compile script
 rescue => e
@@ -31,7 +33,9 @@ format do
 end
 
 format :html do
-  view :editor, mod: Html::HtmlFormat
+  def default_editor_args args
+    args[:ace_mode] ||= 'coffee'
+  end
 
   view :content_changes do |args|
     %(

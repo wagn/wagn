@@ -92,25 +92,25 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
 end
 
 def set_content name, content, cardtype=nil
-  set_prosemirror_content name, content
-rescue Exception => e
-  ace_editor_types = %w(
-    JavaScript CoffeeScript HTML CSS SCSS Search
-  )
-  if cardtype && ace_editor_types.include?(cardtype) &&
+  Capybara.ignore_hidden_elements = false
+  ace_editors = all(".ace-editor-textarea[name='#{name}']")
+  pm_editors = all(".prosemirror-editor > [name='#{name}']")
+  if ace_editors.present? &&
      page.evaluate_script("typeof ace != 'undefined'")
     page.execute_script "ace.edit($('.ace_editor').get(0))"\
         ".getSession().setValue('#{content}')"
+  elsif pm_editors.present?
+    editor_id = pm_editors.first.first(:xpath, './/..')[:id]
+    set_prosemirror_content editor_id, content
   else
-    fill_in('card[content]', with: content)
+#rescue Selenium::WebDriver::Error::JavascriptError
+    fill_in(name, with: content)
   end
+  Capybara.ignore_hidden_elements = true
 end
 
-def set_prosemirror_content name, content
-  Capybara.ignore_hidden_elements = false
-  editor_id = find("[name='#{name}']").first(:xpath, './/..')[:id]
-  Capybara.ignore_hidden_elements = true
-  escaped_quotes = content.gsub("'","\\'")
+def set_prosemirror_content editor_id, content
+  escaped_quotes = content.gsub("'", "\\'")
   page.execute_script "getProseMirror('#{editor_id}')"\
                       ".setContent('#{escaped_quotes}', 'text')"
 end
@@ -392,6 +392,10 @@ end
 
 Then /^I should see "([^\"]*)" in color (.*)$/ do |text, css_class|
   page.has_css?(".diff-#{css_class}", text: text)
+end
+
+Then /^I should see css class "([^\"]*)"$/ do |css_class|
+  find(css_class)
 end
 
 css_should = /^I should see css class "([^\"]*)" within "(.*)"$/

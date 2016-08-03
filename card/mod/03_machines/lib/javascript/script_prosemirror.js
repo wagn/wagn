@@ -11,14 +11,12 @@
         return module.exports;
     });
 
-    $__System.registerDynamic("4", ["3"], true, function($__require, exports, module) {
+    $__System.registerDynamic("4", ["5"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.InputRule = undefined;
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -38,255 +36,259 @@
                 return Constructor;
             };
         }();
-        exports.addInputRule = addInputRule;
-        exports.removeInputRule = removeInputRule;
-        var _edit = $__require('3');
+        function _possibleConstructorReturn(self, call) {
+            if (!self) {
+                throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+            }
+            return call && (typeof call === "object" || typeof call === "function") ? call : self;
+        }
+        function _inherits(subClass, superClass) {
+            if (typeof superClass !== "function" && superClass !== null) {
+                throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+            }
+            subClass.prototype = Object.create(superClass && superClass.prototype, {constructor: {
+                value: subClass,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }});
+            if (superClass)
+                Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+        }
         function _classCallCheck(instance, Constructor) {
             if (!(instance instanceof Constructor)) {
                 throw new TypeError("Cannot call a class as a function");
             }
         }
-        function addInputRule(pm, rule) {
-            if (!pm.mod.interpretInput)
-                pm.mod.interpretInput = new InputRules(pm);
-            pm.mod.interpretInput.addRule(rule);
-        }
-        function removeInputRule(pm, rule) {
-            var ii = pm.mod.interpretInput;
-            if (!ii)
-                return;
-            ii.removeRule(rule);
-            if (ii.rules.length == 0) {
-                ii.unregister();
-                pm.mod.interpretInput = null;
-            }
-        }
-        var InputRule = exports.InputRule = function InputRule(match, filter, handler) {
-            _classCallCheck(this, InputRule);
-            this.filter = filter;
-            this.match = match;
-            this.handler = handler;
-        };
-        var InputRules = function() {
-            function InputRules(pm) {
+        var _require = $__require('5');
+        var elt = _require.elt;
+        var insertCSS = _require.insertCSS;
+        var FieldPrompt = function() {
+            function FieldPrompt(pm, title, fields) {
                 var _this = this;
-                _classCallCheck(this, InputRules);
+                _classCallCheck(this, FieldPrompt);
                 this.pm = pm;
-                this.rules = [];
-                this.cancelVersion = null;
-                pm.on("selectionChange", this.onSelChange = function() {
-                    return _this.cancelVersion = null;
+                this.title = title;
+                this.fields = fields;
+                this.doClose = null;
+                this.domFields = [];
+                for (var name in fields) {
+                    this.domFields.push(fields[name].render(pm));
+                }
+                var promptTitle = elt("h5", {}, pm.translate(title));
+                var submitButton = elt("button", {
+                    type: "submit",
+                    class: "ProseMirror-prompt-submit"
+                }, "Ok");
+                var cancelButton = elt("button", {
+                    type: "button",
+                    class: "ProseMirror-prompt-cancel"
+                }, "Cancel");
+                cancelButton.addEventListener("click", function() {
+                    return _this.close();
                 });
-                pm.on("textInput", this.onTextInput = this.onTextInput.bind(this));
-                pm.addKeymap(new _edit.Keymap({Backspace: function Backspace(pm) {
-                    return _this.backspace(pm);
-                }}, {name: "inputRules"}), 20);
+                this.form = elt("form", null, promptTitle, this.domFields.map(function(f) {
+                    return elt("div", null, f);
+                }), elt("div", {class: "ProseMirror-prompt-buttons"}, submitButton, " ", cancelButton));
             }
-            _createClass(InputRules, [{
-                key: "unregister",
-                value: function unregister() {
-                    this.pm.off("selectionChange", this.onSelChange);
-                    this.pm.off("textInput", this.onTextInput);
-                    this.pm.removeKeymap("inputRules");
-                }
-            }, {
-                key: "addRule",
-                value: function addRule(rule) {
-                    this.rules.push(rule);
-                }
-            }, {
-                key: "removeRule",
-                value: function removeRule(rule) {
-                    var found = this.rules.indexOf(rule);
-                    if (found > -1) {
-                        this.rules.splice(found, 1);
-                        return true;
+            _createClass(FieldPrompt, [{
+                key: "close",
+                value: function close() {
+                    if (this.doClose) {
+                        this.doClose();
+                        this.doClose = null;
                     }
                 }
             }, {
-                key: "onTextInput",
-                value: function onTextInput(text) {
-                    var pos = this.pm.selection.head;
-                    if (!pos)
-                        return;
-                    var textBefore = undefined,
-                        isCode = undefined,
-                        $pos = undefined;
-                    var lastCh = text[text.length - 1];
-                    for (var i = 0; i < this.rules.length; i++) {
-                        var rule = this.rules[i],
-                            match = undefined;
-                        if (rule.filter && rule.filter != lastCh)
-                            continue;
-                        if (!$pos) {
-                            $pos = this.pm.doc.resolve(pos);
-                            var _getContext = getContext($pos);
-                            textBefore = _getContext.textBefore;
-                            isCode = _getContext.isCode;
-                            if (isCode)
-                                return;
+                key: "open",
+                value: function open(callback) {
+                    var _this2 = this;
+                    this.close();
+                    var prompt = this.prompt();
+                    var hadFocus = this.pm.hasFocus();
+                    this.doClose = function() {
+                        prompt.close();
+                        if (hadFocus)
+                            setTimeout(function() {
+                                return _this2.pm.focus();
+                            }, 50);
+                    };
+                    var submit = function submit() {
+                        var params = _this2.values();
+                        if (params) {
+                            _this2.close();
+                            callback(params);
                         }
-                        if (match = rule.match.exec(textBefore)) {
-                            var startVersion = this.pm.history.getVersion();
-                            if (typeof rule.handler == "string") {
-                                var start = pos - (match[1] || match[0]).length;
-                                var marks = this.pm.doc.marksAt(pos);
-                                this.pm.tr.delete(start, pos).insert(start, this.pm.schema.text(rule.handler, marks)).apply();
-                            } else {
-                                rule.handler(this.pm, match, pos);
-                            }
-                            this.cancelVersion = startVersion;
-                            return;
-                        }
-                    }
-                }
-            }, {
-                key: "backspace",
-                value: function backspace() {
-                    if (this.cancelVersion) {
-                        this.pm.history.backToVersion(this.cancelVersion);
-                        this.cancelVersion = null;
-                    } else {
-                        return false;
-                    }
-                }
-            }]);
-            return InputRules;
-        }();
-        function getContext($pos) {
-            var parent = $pos.parent,
-                isCode = parent.type.isCode;
-            var textBefore = "";
-            for (var i = 0,
-                     rem = $pos.parentOffset; rem > 0; i++) {
-                var child = parent.child(i);
-                if (child.isText)
-                    textBefore += child.text.slice(0, rem);
-                else
-                    textBefore += "￼";
-                rem -= child.nodeSize;
-                if (rem <= 0 && child.marks.some(function(st) {
-                        return st.type.isCode;
-                    }))
-                    isCode = true;
-            }
-            return {
-                textBefore: textBefore,
-                isCode: isCode
-            };
-        }
-        return module.exports;
-    });
-
-    $__System.registerDynamic("5", ["6", "3", "4"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.autoInputRules = undefined;
-        var _model = $__require('6');
-        var _edit = $__require('3');
-        var _inputrules = $__require('4');
-        var autoInputRules = exports.autoInputRules = Object.create(null);
-        (0, _edit.defineOption)("autoInput", false, function(pm, val) {
-            if (pm.mod.autoInput) {
-                pm.mod.autoInput.forEach(function(rule) {
-                    return (0, _inputrules.removeInputRule)(pm, rule);
-                });
-                pm.mod.autoInput = null;
-            }
-            if (val) {
-                (function() {
-                    if (val === true)
-                        val = ["schema", autoInputRules];
-                    var rules = Object.create(null),
-                        list = pm.mod.autoInput = [];
-                    val.forEach(function(spec) {
-                        if (spec === "schema") {
-                            pm.schema.registry("autoInput", function(name, rule, type, typeName) {
-                                var rname = typeName + ":" + name,
-                                    handler = rule.handler;
-                                if (handler.bind)
-                                    handler = handler.bind(type);
-                                rules[rname] = new _inputrules.InputRule(rule.match, rule.filter, handler);
-                            });
-                        } else {
-                            for (var name in spec) {
-                                var _val = spec[name];
-                                if (_val == null)
-                                    delete rules[name];
-                                else
-                                    rules[name] = _val;
-                            }
+                    };
+                    this.form.addEventListener("submit", function(e) {
+                        e.preventDefault();
+                        submit();
+                    });
+                    this.form.addEventListener("keydown", function(e) {
+                        if (e.keyCode == 27) {
+                            e.preventDefault();
+                            prompt.close();
+                        } else if (e.keyCode == 13 && !(e.ctrlKey || e.metaKey || e.shiftKey)) {
+                            e.preventDefault();
+                            submit();
                         }
                     });
-                    for (var name in rules) {
-                        (0, _inputrules.addInputRule)(pm, rules[name]);
-                        list.push(rules[name]);
+                    var input = this.form.elements[0];
+                    if (input)
+                        input.focus();
+                }
+            }, {
+                key: "values",
+                value: function values() {
+                    var result = Object.create(null),
+                        i = 0;
+                    for (var name in this.fields) {
+                        var field = this.fields[name],
+                            dom = this.domFields[i++];
+                        var value = field.read(dom),
+                            bad = field.validate(value);
+                        if (bad) {
+                            this.reportInvalid(dom, this.pm.translate(bad));
+                            return null;
+                        }
+                        result[name] = field.clean(value);
                     }
-                })();
+                    return result;
+                }
+            }, {
+                key: "prompt",
+                value: function prompt() {
+                    var _this3 = this;
+                    return openPrompt(this.pm, this.form, {onClose: function onClose() {
+                        return _this3.close();
+                    }});
+                }
+            }, {
+                key: "reportInvalid",
+                value: function reportInvalid(dom, message) {
+                    var parent = dom.parentNode;
+                    var style = "left: " + (dom.offsetLeft + dom.offsetWidth + 2) + "px; top: " + (dom.offsetTop - 5) + "px";
+                    var msg = parent.appendChild(elt("div", {
+                        class: "ProseMirror-invalid",
+                        style: style
+                    }, message));
+                    setTimeout(function() {
+                        return parent.removeChild(msg);
+                    }, 1500);
+                }
+            }]);
+            return FieldPrompt;
+        }();
+        exports.FieldPrompt = FieldPrompt;
+        var Field = function() {
+            function Field(options) {
+                _classCallCheck(this, Field);
+                this.options = options;
             }
-        });
-        autoInputRules.emDash = new _inputrules.InputRule(/--$/, "-", "—");
-        autoInputRules.openDoubleQuote = new _inputrules.InputRule(/(?:^|[\s\{\[\(\<'"\u2018\u201C])(")$/, '"', "“");
-        autoInputRules.closeDoubleQuote = new _inputrules.InputRule(/"$/, '"', "”");
-        autoInputRules.openSingleQuote = new _inputrules.InputRule(/(?:^|[\s\{\[\(\<'"\u2018\u201C])(')$/, "'", "‘");
-        autoInputRules.closeSingleQuote = new _inputrules.InputRule(/'$/, "'", "’");
-        _model.BlockQuote.register("autoInput", "startBlockQuote", new _inputrules.InputRule(/^\s*> $/, " ", function(pm, _, pos) {
-            wrapAndJoin(pm, pos, this);
-        }));
-        _model.OrderedList.register("autoInput", "startOrderedList", new _inputrules.InputRule(/^(\d+)\. $/, " ", function(pm, match, pos) {
-            var order = +match[1];
-            wrapAndJoin(pm, pos, this, {order: order || null}, function(node) {
-                return node.childCount + +node.attrs.order == order;
-            });
-        }));
-        _model.BulletList.register("autoInput", "startBulletList", new _inputrules.InputRule(/^\s*([-+*]) $/, " ", function(pm, match, pos) {
-            var bullet = match[1];
-            wrapAndJoin(pm, pos, this, null, function(node) {
-                return node.attrs.bullet == bullet;
-            });
-        }));
-        _model.CodeBlock.register("autoInput", "startCodeBlock", new _inputrules.InputRule(/^```$/, "`", function(pm, _, pos) {
-            setAs(pm, pos, this, {params: ""});
-        }));
-        _model.Heading.registerComputed("autoInput", "startHeading", function(type) {
-            var re = new RegExp("^(#{1," + type.maxLevel + "}) $");
-            return new _inputrules.InputRule(re, " ", function(pm, match, pos) {
-                setAs(pm, pos, this, {level: match[1].length});
-            });
-        });
-        function wrapAndJoin(pm, pos, type) {
-            var attrs = arguments.length <= 3 || arguments[3] === undefined ? null : arguments[3];
-            var predicate = arguments.length <= 4 || arguments[4] === undefined ? null : arguments[4];
-            var $pos = pm.doc.resolve(pos),
-                d1 = $pos.depth - 1;
-            var sibling = $pos.index(d1) > 0 && $pos.node(d1).child($pos.index(d1) - 1);
-            var join = sibling && sibling.type == type && (!predicate || predicate(sibling));
-            var start = pos - $pos.parentOffset;
-            var tr = pm.tr.delete(start, pos).wrap(start, start, type, attrs);
-            if (join)
-                tr.join($pos.before($pos.depth));
-            tr.apply();
+            _createClass(Field, [{
+                key: "read",
+                value: function read(dom) {
+                    return dom.value;
+                }
+            }, {
+                key: "validateType",
+                value: function validateType(_value) {}
+            }, {
+                key: "validate",
+                value: function validate(value) {
+                    if (!value && this.options.required)
+                        return "Required field";
+                    return this.validateType(value) || this.options.validate && this.options.validate(value);
+                }
+            }, {
+                key: "clean",
+                value: function clean(value) {
+                    return this.options.clean ? this.options.clean(value) : value;
+                }
+            }]);
+            return Field;
+        }();
+        exports.Field = Field;
+        var TextField = function(_Field) {
+            _inherits(TextField, _Field);
+            function TextField() {
+                _classCallCheck(this, TextField);
+                return _possibleConstructorReturn(this, Object.getPrototypeOf(TextField).apply(this, arguments));
+            }
+            _createClass(TextField, [{
+                key: "render",
+                value: function render(pm) {
+                    return elt("input", {
+                        type: "text",
+                        placeholder: pm.translate(this.options.label),
+                        value: this.options.value || "",
+                        autocomplete: "off"
+                    });
+                }
+            }]);
+            return TextField;
+        }(Field);
+        exports.TextField = TextField;
+        var SelectField = function(_Field2) {
+            _inherits(SelectField, _Field2);
+            function SelectField() {
+                _classCallCheck(this, SelectField);
+                return _possibleConstructorReturn(this, Object.getPrototypeOf(SelectField).apply(this, arguments));
+            }
+            _createClass(SelectField, [{
+                key: "render",
+                value: function render(pm) {
+                    var opts = this.options;
+                    var options = opts.options.call ? opts.options(pm) : opts.options;
+                    return elt("select", null, options.map(function(o) {
+                        return elt("option", {
+                            value: o.value,
+                            selected: o.value == opts.value ? "true" : null
+                        }, pm.translate(o.label));
+                    }));
+                }
+            }]);
+            return SelectField;
+        }(Field);
+        exports.SelectField = SelectField;
+        function openPrompt(pm, content, options) {
+            var button = elt("button", {class: "ProseMirror-prompt-close"});
+            var wrapper = elt("div", {class: "ProseMirror-prompt"}, content, button);
+            var outerBox = pm.wrapper.getBoundingClientRect();
+            pm.wrapper.appendChild(wrapper);
+            if (options && options.pos) {
+                wrapper.style.left = options.pos.left - outerBox.left + "px";
+                wrapper.style.top = options.pos.top - outerBox.top + "px";
+            } else {
+                var blockBox = wrapper.getBoundingClientRect();
+                var cX = Math.max(0, outerBox.left) + Math.min(window.innerWidth, outerBox.right) - blockBox.width;
+                var cY = Math.max(0, outerBox.top) + Math.min(window.innerHeight, outerBox.bottom) - blockBox.height;
+                wrapper.style.left = cX / 2 - outerBox.left + "px";
+                wrapper.style.top = cY / 2 - outerBox.top + "px";
+            }
+            var close = function close() {
+                pm.on.interaction.remove(close);
+                if (wrapper.parentNode) {
+                    wrapper.parentNode.removeChild(wrapper);
+                    if (options && options.onClose)
+                        options.onClose();
+                }
+            };
+            button.addEventListener("click", close);
+            pm.on.interaction.add(close);
+            return {close: close};
         }
-        function setAs(pm, pos, type, attrs) {
-            var $pos = pm.doc.resolve(pos),
-                start = pos - $pos.parentOffset;
-            pm.tr.delete(start, pos).setBlockType(start, start, type, attrs).apply();
-        }
+        exports.openPrompt = openPrompt;
+        insertCSS("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt h5 {\n  margin: 0;\n  font-weight: normal;\n  font-size: 100%;\n  color: #444;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n\n.ProseMirror-prompt-buttons {\n  margin-top: 5px;\n  display: none;\n}\n\n");
         return module.exports;
     });
 
-    $__System.registerDynamic("7", ["8"], true, function($__require, exports, module) {
+    $__System.registerDynamic("6", ["5"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.Tooltip = undefined;
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -306,23 +308,25 @@
                 return Constructor;
             };
         }();
-        var _dom = $__require('8');
         function _classCallCheck(instance, Constructor) {
             if (!(instance instanceof Constructor)) {
                 throw new TypeError("Cannot call a class as a function");
             }
         }
+        var _require = $__require('5');
+        var elt = _require.elt;
+        var insertCSS = _require.insertCSS;
         var prefix = "ProseMirror-tooltip";
-        var Tooltip = exports.Tooltip = function() {
+        var Tooltip = function() {
             function Tooltip(wrapper, options) {
                 var _this = this;
                 _classCallCheck(this, Tooltip);
                 this.wrapper = wrapper;
                 this.options = typeof options == "string" ? {direction: options} : options;
                 this.dir = this.options.direction || "above";
-                this.pointer = wrapper.appendChild((0, _dom.elt)("div", {class: prefix + "-pointer-" + this.dir + " " + prefix + "-pointer"}));
+                this.pointer = wrapper.appendChild(elt("div", {class: prefix + "-pointer-" + this.dir + " " + prefix + "-pointer"}));
                 this.pointerWidth = this.pointerHeight = null;
-                this.dom = wrapper.appendChild((0, _dom.elt)("div", {class: prefix}));
+                this.dom = wrapper.appendChild(elt("div", {class: prefix}));
                 this.dom.addEventListener("transitionend", function() {
                     if (_this.dom.style.opacity == "0")
                         _this.dom.style.display = _this.pointer.style.display = "";
@@ -339,7 +343,7 @@
             }, {
                 key: "getSize",
                 value: function getSize(node) {
-                    var wrap = this.wrapper.appendChild((0, _dom.elt)("div", {
+                    var wrap = this.wrapper.appendChild(elt("div", {
                         class: prefix,
                         style: "display: block; position: absolute"
                     }, node));
@@ -382,9 +386,9 @@
                             this.dom.style.top = tipTop + "px";
                             this.pointer.style.top = tipTop + size.height + "px";
                         } else {
-                            var tipTop = top - around.top + margin;
-                            this.pointer.style.top = tipTop + "px";
-                            this.dom.style.top = tipTop + this.pointerHeight + "px";
+                            var _tipTop = top - around.top + margin;
+                            this.pointer.style.top = _tipTop + "px";
+                            this.dom.style.top = _tipTop + this.pointerHeight + "px";
                         }
                     } else if (this.dir == "left" || this.dir == "right") {
                         this.dom.style.top = top - around.top - size.height / 2 + "px";
@@ -394,9 +398,9 @@
                             this.dom.style.left = pointerLeft - size.width + "px";
                             this.pointer.style.left = pointerLeft + "px";
                         } else {
-                            var pointerLeft = left - around.left + margin;
-                            this.dom.style.left = pointerLeft + this.pointerWidth + "px";
-                            this.pointer.style.left = pointerLeft + "px";
+                            var _pointerLeft = left - around.left + margin;
+                            this.dom.style.left = _pointerLeft + this.pointerWidth + "px";
+                            this.pointer.style.left = _pointerLeft + "px";
                         }
                     } else if (this.dir == "center") {
                         var _top = Math.max(around.top, boundingRect.top),
@@ -421,6 +425,7 @@
             }]);
             return Tooltip;
         }();
+        exports.Tooltip = Tooltip;
         function windowRect() {
             return {
                 left: 0,
@@ -429,11 +434,24 @@
                 bottom: window.innerHeight
             };
         }
-        (0, _dom.insertCSS)("\n\n." + prefix + " {\n  position: absolute;\n  display: none;\n  box-sizing: border-box;\n  -moz-box-sizing: border- box;\n  overflow: hidden;\n\n  -webkit-transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  -moz-transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  opacity: 0;\n\n  border-radius: 5px;\n  padding: 3px 7px;\n  margin: 0;\n  background: white;\n  border: 1px solid #777;\n  color: #555;\n\n  z-index: 11;\n}\n\n." + prefix + "-pointer {\n  position: absolute;\n  display: none;\n  width: 0; height: 0;\n\n  -webkit-transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  -moz-transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  opacity: 0;\n\n  z-index: 12;\n}\n\n." + prefix + "-pointer:after {\n  content: \"\";\n  position: absolute;\n  display: block;\n}\n\n." + prefix + "-pointer-above {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-top: 6px solid #777;\n}\n\n." + prefix + "-pointer-above:after {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-top: 6px solid white;\n  left: -6px; top: -7px;\n}\n\n." + prefix + "-pointer-below {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-bottom: 6px solid #777;\n}\n\n." + prefix + "-pointer-below:after {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-bottom: 6px solid white;\n  left: -6px; top: 1px;\n}\n\n." + prefix + "-pointer-right {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-right: 6px solid #777;\n}\n\n." + prefix + "-pointer-right:after {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-right: 6px solid white;\n  left: 1px; top: -6px;\n}\n\n." + prefix + "-pointer-left {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-left: 6px solid #777;\n}\n\n." + prefix + "-pointer-left:after {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-left: 6px solid white;\n  left: -7px; top: -6px;\n}\n\n." + prefix + " input[type=\"text\"],\n." + prefix + " textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n." + prefix + " input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n");
+        insertCSS("\n\n." + prefix + " {\n  position: absolute;\n  display: none;\n  box-sizing: border-box;\n  -moz-box-sizing: border- box;\n  overflow: hidden;\n\n  -webkit-transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  -moz-transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  opacity: 0;\n\n  border-radius: 5px;\n  padding: 3px 7px;\n  margin: 0;\n  background: white;\n  border: 1px solid #777;\n  color: #555;\n\n  z-index: 11;\n}\n\n." + prefix + "-pointer {\n  position: absolute;\n  display: none;\n  width: 0; height: 0;\n\n  -webkit-transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  -moz-transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  opacity: 0;\n\n  z-index: 12;\n}\n\n." + prefix + "-pointer:after {\n  content: \"\";\n  position: absolute;\n  display: block;\n}\n\n." + prefix + "-pointer-above {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-top: 6px solid #777;\n}\n\n." + prefix + "-pointer-above:after {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-top: 6px solid white;\n  left: -6px; top: -7px;\n}\n\n." + prefix + "-pointer-below {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-bottom: 6px solid #777;\n}\n\n." + prefix + "-pointer-below:after {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-bottom: 6px solid white;\n  left: -6px; top: 1px;\n}\n\n." + prefix + "-pointer-right {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-right: 6px solid #777;\n}\n\n." + prefix + "-pointer-right:after {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-right: 6px solid white;\n  left: 1px; top: -6px;\n}\n\n." + prefix + "-pointer-left {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-left: 6px solid #777;\n}\n\n." + prefix + "-pointer-left:after {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-left: 6px solid white;\n  left: -7px; top: -6px;\n}\n\n." + prefix + " input[type=\"text\"],\n." + prefix + " textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n." + prefix + " input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n");
         return module.exports;
     });
 
-    $__System.registerDynamic("9", ["3", "8", "7", "a", "b"], true, function($__require, exports, module) {
+    $__System.registerDynamic("7", ["8", "4", "6"], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        var _require = $__require('8');
+        var copyObj = _require.copyObj;
+        copyObj($__require('4'), exports);
+        exports.Tooltip = $__require('6').Tooltip;
+        return module.exports;
+    });
+
+    $__System.registerDynamic("9", ["3", "5", "7", "a"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
@@ -458,41 +476,35 @@
                 return Constructor;
             };
         }();
-        var _edit = $__require('3');
-        var _dom = $__require('8');
-        var _tooltip = $__require('7');
-        var _update = $__require('a');
-        var _menu = $__require('b');
         function _classCallCheck(instance, Constructor) {
             if (!(instance instanceof Constructor)) {
                 throw new TypeError("Cannot call a class as a function");
             }
         }
+        var _require = $__require('3');
+        var Plugin = _require.Plugin;
+        var _require2 = $__require('5');
+        var elt = _require2.elt;
+        var insertCSS = _require2.insertCSS;
+        var _require3 = $__require('7');
+        var Tooltip = _require3.Tooltip;
+        var _require4 = $__require('a');
+        var renderGrouped = _require4.renderGrouped;
         var classPrefix = "ProseMirror-tooltipmenu";
-        (0, _edit.defineOption)("tooltipMenu", false, function(pm, value) {
-            if (pm.mod.tooltipMenu)
-                pm.mod.tooltipMenu.detach();
-            pm.mod.tooltipMenu = value ? new TooltipMenu(pm, value) : null;
-        });
-        var defaultInline = [_menu.inlineGroup, _menu.insertMenu];
-        var defaultBlock = [[_menu.textblockMenu, _menu.blockGroup]];
         var TooltipMenu = function() {
             function TooltipMenu(pm, config) {
                 var _this = this;
                 _classCallCheck(this, TooltipMenu);
                 this.pm = pm;
-                this.config = config || {};
-                this.showLinks = this.config.showLinks !== false;
+                this.config = config;
                 this.selectedBlockMenu = this.config.selectedBlockMenu;
-                this.updater = new _update.UpdateScheduler(pm, "change selectionChange blur focus commandsChanged", function() {
+                this.updater = pm.updateScheduler([pm.on.change, pm.on.selectionChange, pm.on.blur, pm.on.focus], function() {
                     return _this.update();
                 });
                 this.onContextMenu = this.onContextMenu.bind(this);
                 pm.content.addEventListener("contextmenu", this.onContextMenu);
-                this.tooltip = new _tooltip.Tooltip(pm.wrapper, "above");
-                this.inlineContent = this.config.inlineContent || defaultInline;
-                this.blockContent = this.config.blockContent || defaultBlock;
-                this.selectedBlockContent = this.config.selectedBlockContent || this.inlineContent.concat(this.blockContent);
+                this.tooltip = new Tooltip(pm.wrapper, this.config.position);
+                this.selectedBlockContent = this.config.selectedBlockContent || this.config.inlineContent.concat(this.config.blockContent);
             }
             _createClass(TooltipMenu, [{
                 key: "detach",
@@ -504,7 +516,11 @@
             }, {
                 key: "show",
                 value: function show(content, coords) {
-                    this.tooltip.open((0, _dom.elt)("div", null, (0, _menu.renderGrouped)(this.pm, content)), coords);
+                    var rendered = renderGrouped(this.pm, content);
+                    if (rendered.childNodes.length)
+                        this.tooltip.open(elt("div", null, rendered), coords);
+                    else
+                        this.tooltip.close();
                 }
             }, {
                 key: "update",
@@ -513,37 +529,36 @@
                     var _pm$selection = this.pm.selection;
                     var empty = _pm$selection.empty;
                     var node = _pm$selection.node;
-                    var from = _pm$selection.from;
+                    var $from = _pm$selection.$from;
                     var to = _pm$selection.to;
-                    var link = undefined;
+                    var link = void 0;
                     if (!this.pm.hasFocus()) {
                         this.tooltip.close();
                     } else if (node && node.isBlock) {
                         return function() {
-                            var coords = topOfNodeSelection(_this2.pm);
+                            var coords = _this2.nodeSelectionCoords();
                             return function() {
-                                return _this2.show(_this2.blockContent, coords);
+                                return _this2.show(_this2.config.blockContent, coords);
                             };
                         };
                     } else if (!empty) {
                         return function() {
-                            var coords = node ? topOfNodeSelection(_this2.pm) : topCenterOfSelection(),
-                                $from = undefined;
-                            var showBlock = _this2.selectedBlockMenu && ($from = _this2.pm.doc.resolve(from)).parentOffset == 0 && $from.end($from.depth) == to;
+                            var coords = node ? _this2.nodeSelectionCoords() : _this2.selectionCoords();
+                            var showBlock = _this2.selectedBlockMenu && $from.parentOffset == 0 && $from.end() == to;
                             return function() {
-                                return _this2.show(showBlock ? _this2.selectedBlockContent : _this2.inlineContent, coords);
+                                return _this2.show(showBlock ? _this2.selectedBlockContent : _this2.config.inlineContent, coords);
                             };
                         };
-                    } else if (this.selectedBlockMenu && this.pm.doc.resolve(from).parent.content.size == 0) {
+                    } else if (this.selectedBlockMenu && $from.parent.content.size == 0) {
                         return function() {
-                            var coords = _this2.pm.coordsAtPos(from);
+                            var coords = _this2.selectionCoords();
                             return function() {
-                                return _this2.show(_this2.blockContent, coords);
+                                return _this2.show(_this2.config.blockContent, coords);
                             };
                         };
-                    } else if (this.showLinks && (link = this.linkUnderCursor())) {
+                    } else if (this.config.showLinks && (link = this.linkUnderCursor())) {
                         return function() {
-                            var coords = _this2.pm.coordsAtPos(from);
+                            var coords = _this2.selectionCoords();
                             return function() {
                                 return _this2.showLink(link, coords);
                             };
@@ -551,6 +566,33 @@
                     } else {
                         this.tooltip.close();
                     }
+                }
+            }, {
+                key: "selectionCoords",
+                value: function selectionCoords() {
+                    var pos = this.config.position == "above" ? topCenterOfSelection() : bottomCenterOfSelection();
+                    if (pos.top != 0)
+                        return pos;
+                    var realPos = this.pm.coordsAtPos(this.pm.selection.from);
+                    return {
+                        left: realPos.left,
+                        top: this.config.position == "above" ? realPos.top : realPos.bottom
+                    };
+                }
+            }, {
+                key: "nodeSelectionCoords",
+                value: function nodeSelectionCoords() {
+                    var selected = this.pm.content.querySelector(".ProseMirror-selectednode");
+                    if (!selected)
+                        return {
+                            left: 0,
+                            top: 0
+                        };
+                    var box = selected.getBoundingClientRect();
+                    return {
+                        left: Math.min((box.left + box.right) / 2, box.left + 20),
+                        top: this.config.position == "above" ? box.top : box.bottom
+                    };
                 }
             }, {
                 key: "linkUnderCursor",
@@ -566,9 +608,11 @@
             }, {
                 key: "showLink",
                 value: function showLink(link, pos) {
-                    var node = (0, _dom.elt)("div", {class: classPrefix + "-linktext"}, (0, _dom.elt)("a", {
+                    var node = elt("div", {class: classPrefix + "-linktext"}, elt("a", {
                         href: link.attrs.href,
-                        title: link.attrs.title
+                        title: link.attrs.title,
+                        rel: "noreferrer noopener",
+                        target: "_blank"
                     }, link.attrs.href));
                     this.tooltip.open(node, pos);
                 }
@@ -581,11 +625,11 @@
                         left: e.clientX,
                         top: e.clientY
                     });
-                    if (!pos || !pos.isValid(this.pm.doc, true))
+                    if (!pos || !this.pm.doc.resolve(pos).parent.isTextblock)
                         return;
                     this.pm.setTextSelection(pos, pos);
                     this.pm.flush();
-                    this.show(this.inlineContent, topCenterOfSelection());
+                    this.show(this.config.inlineContent, this.selectionCoords());
                 }
             }]);
             return TooltipMenu;
@@ -595,23 +639,22 @@
                 rects = range.getClientRects();
             if (!rects.length)
                 return range.getBoundingClientRect();
-            var _rects$ = rects[0];
-            var left = _rects$.left;
-            var right = _rects$.right;
-            var top = _rects$.top;
-            var i = 1;
-            while (left == right && rects.length > i) {
-                ;
-                var _rects = rects[i++];
-                left = _rects.left;
-                right = _rects.right;
-                top = _rects.top;
-            }
-            for (; i < rects.length; i++) {
-                if (rects[i].top < rects[0].bottom - 1 && (i == rects.length - 1 || Math.abs(rects[i + 1].left - rects[i].left) > 1)) {
-                    left = Math.min(left, rects[i].left);
-                    right = Math.max(right, rects[i].right);
-                    top = Math.min(top, rects[i].top);
+            var left = void 0,
+                right = void 0,
+                top = void 0,
+                bottom = void 0;
+            for (var i = 0; i < rects.length; i++) {
+                var rect = rects[i];
+                if (left == right) {
+                    ;
+                    left = rect.left;
+                    right = rect.right;
+                    top = rect.top;
+                    bottom = rect.bottom;
+                } else if (rect.top < bottom - 1 && (i == rects.length - 1 || Math.abs(rects[i + 1].left - rect.left) > 1)) {
+                    left = Math.min(left, rect.left);
+                    right = Math.max(right, rect.right);
+                    top = Math.min(top, rect.top);
                 }
             }
             return {
@@ -619,41 +662,70 @@
                 left: (left + right) / 2
             };
         }
-        function topOfNodeSelection(pm) {
-            var selected = pm.content.querySelector(".ProseMirror-selectednode");
-            if (!selected)
+        function bottomCenterOfSelection() {
+            var range = window.getSelection().getRangeAt(0),
+                rects = range.getClientRects();
+            if (!rects.length) {
+                var rect = range.getBoundingClientRect();
                 return {
-                    left: 0,
-                    top: 0
+                    left: rect.left,
+                    top: rect.bottom
                 };
-            var box = selected.getBoundingClientRect();
+            }
+            var left = void 0,
+                right = void 0,
+                bottom = void 0,
+                top = void 0;
+            for (var i = rects.length - 1; i >= 0; i--) {
+                var _rect = rects[i];
+                if (left == right) {
+                    ;
+                    left = _rect.left;
+                    right = _rect.right;
+                    bottom = _rect.bottom;
+                    top = _rect.top;
+                } else if (_rect.bottom > top + 1 && (i == 0 || Math.abs(rects[i - 1].left - _rect.left) > 1)) {
+                    left = Math.min(left, _rect.left);
+                    right = Math.max(right, _rect.right);
+                    bottom = Math.min(bottom, _rect.bottom);
+                }
+            }
             return {
-                left: Math.min((box.left + box.right) / 2, box.left + 20),
-                top: box.top
+                top: bottom,
+                left: (left + right) / 2
             };
         }
-        (0, _dom.insertCSS)("\n\n." + classPrefix + "-linktext a {\n  color: #444;\n  text-decoration: none;\n  padding: 0 5px;\n}\n\n." + classPrefix + "-linktext a:hover {\n  text-decoration: underline;\n}\n\n");
+        var tooltipMenu = new Plugin(TooltipMenu, {
+            showLinks: true,
+            selectedBlockMenu: false,
+            inlineContent: [],
+            blockContent: [],
+            selectedBlockContent: null,
+            position: "above"
+        });
+        exports.tooltipMenu = tooltipMenu;
+        insertCSS("\n\n." + classPrefix + "-linktext a {\n  color: #444;\n  text-decoration: none;\n  padding: 0 5px;\n}\n\n." + classPrefix + "-linktext a:hover {\n  text-decoration: underline;\n}\n\n");
         return module.exports;
     });
 
-    $__System.registerDynamic("c", ["8"], true, function($__require, exports, module) {
+    $__System.registerDynamic("b", ["5"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        var _dom = $__require('8');
-        (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
+        var _require = $__require('5');
+        var insertCSS = _require.insertCSS;
+        insertCSS("\n\n.ProseMirror {\n  position: relative;\n}\n\n.ProseMirror-content {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  pointer-events: none;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n/* Make sure li selections wrap around markers */\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
         return module.exports;
     });
 
-    $__System.registerDynamic("d", [], true, function($__require, exports, module) {
+    $__System.registerDynamic("c", [], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -678,7 +750,7 @@
                 throw new TypeError("Cannot call a class as a function");
             }
         }
-        var Map = exports.Map = window.Map || function() {
+        var Map = window.Map || function() {
                 function _class() {
                     _classCallCheck(this, _class);
                     this.content = [];
@@ -724,32 +796,163 @@
                 }]);
                 return _class;
             }();
+        exports.Map = Map;
         return module.exports;
     });
 
-    $__System.registerDynamic("e", ["f", "8", "10", "11"], true, function($__require, exports, module) {
+    $__System.registerDynamic("d", [], true, function($__require, exports, module) {
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        function Handler(f, once, priority) {
+            this.f = f;
+            this.once = once;
+            this.priority = priority;
+        }
+        function Subscription() {
+            this.handlers = [];
+        }
+        exports.Subscription = Subscription;
+        function insert(s, handler) {
+            var pos = 0;
+            for (; pos < s.handlers.length; pos++)
+                if (s.handlers[pos].priority < handler.priority)
+                    break;
+            s.handlers = s.handlers.slice(0, pos).concat(handler).concat(s.handlers.slice(pos));
+        }
+        Subscription.prototype.handlersForDispatch = function() {
+            var handlers = this.handlers,
+                updated = null;
+            for (var i = handlers.length - 1; i >= 0; i--)
+                if (handlers[i].once) {
+                    if (!updated)
+                        updated = handlers.slice();
+                    updated.splice(i, 1);
+                }
+            if (updated)
+                this.handlers = updated;
+            return handlers;
+        };
+        Subscription.prototype.add = function(f, priority) {
+            insert(this, new Handler(f, false, priority || 0));
+        };
+        Subscription.prototype.addOnce = function(f, priority) {
+            insert(this, new Handler(f, true, priority || 0));
+        };
+        Subscription.prototype.remove = function(f) {
+            for (var i = 0; i < this.handlers.length; i++)
+                if (this.handlers[i].f == f) {
+                    this.handlers = this.handlers.slice(0, i).concat(this.handlers.slice(i + 1));
+                    return;
+                }
+        };
+        Subscription.prototype.hasHandler = function() {
+            return this.handlers.length > 0;
+        };
+        Subscription.prototype.dispatch = function() {
+            var handlers = this.handlersForDispatch();
+            for (var i = 0; i < handlers.length; i++)
+                handlers[i].f.apply(null, arguments);
+        };
+        function PipelineSubscription() {
+            Subscription.call(this);
+        }
+        exports.PipelineSubscription = PipelineSubscription;
+        PipelineSubscription.prototype = new Subscription;
+        PipelineSubscription.prototype.dispatch = function(value) {
+            var handlers = this.handlersForDispatch();
+            for (var i = 0; i < handlers.length; i++)
+                value = handlers[i].f(value);
+            return value;
+        };
+        function StoppableSubscription() {
+            Subscription.call(this);
+        }
+        exports.StoppableSubscription = StoppableSubscription;
+        StoppableSubscription.prototype = new Subscription;
+        StoppableSubscription.prototype.dispatch = function() {
+            var handlers = this.handlersForDispatch();
+            for (var i = 0; i < handlers.length; i++) {
+                var result = handlers[i].f.apply(null, arguments);
+                if (result)
+                    return result;
+            }
+        };
+        function DOMSubscription() {
+            Subscription.call(this);
+        }
+        exports.DOMSubscription = DOMSubscription;
+        DOMSubscription.prototype = new Subscription;
+        DOMSubscription.prototype.dispatch = function(event) {
+            var handlers = this.handlersForDispatch();
+            for (var i = 0; i < handlers.length; i++)
+                if (handlers[i].f(event) || event.defaultPrevented)
+                    return true;
+            return false;
+        };
+        return module.exports;
+    });
+
+    $__System.registerDynamic("e", ["d"], true, function($__require, exports, module) {
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        module.exports = $__require('d');
+        return module.exports;
+    });
+
+    $__System.registerDynamic("f", ["10"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.draw = draw;
-        exports.redraw = redraw;
-        var _format = $__require('f');
-        var _dom = $__require('8');
-        var _main = $__require('10');
-        var _dompos = $__require('11');
+        var _require = $__require('10');
+        var baseKeymap = _require.baseKeymap;
+        var options = Object.create(null);
+        options.schema = null;
+        options.doc = null;
+        options.place = null;
+        options.historyDepth = 100;
+        options.historyEventDelay = 500;
+        options.scrollThreshold = 0;
+        options.scrollMargin = 5;
+        options.keymap = baseKeymap;
+        options.label = null;
+        options.translate = null;
+        options.plugins = [];
+        function parseOptions(obj) {
+            var result = Object.create(null);
+            for (var option in options) {
+                result[option] = Object.prototype.hasOwnProperty.call(obj, option) ? obj[option] : options[option];
+            }
+            return result;
+        }
+        exports.parseOptions = parseOptions;
+        return module.exports;
+    });
+
+    $__System.registerDynamic("11", ["5", "12", "13"], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        var _require = $__require('5');
+        var elt = _require.elt;
+        var browser = $__require('12');
+        var _require2 = $__require('13');
+        var childContainer = _require2.childContainer;
+        var DIRTY_RESCAN = 1,
+            DIRTY_REDRAW = 2;
+        exports.DIRTY_RESCAN = DIRTY_RESCAN;
+        exports.DIRTY_REDRAW = DIRTY_REDRAW;
         function options(ranges) {
             return {
                 pos: 0,
-                preRenderContent: function preRenderContent() {
-                    this.pos++;
-                },
-                postRenderContent: function postRenderContent() {
-                    this.pos++;
-                },
-                onRender: function onRender(node, dom, offset) {
+                onRender: function onRender(node, dom, _pos, offset) {
                     if (node.isBlock) {
                         if (offset != null)
                             dom.setAttribute("pm-offset", offset);
@@ -757,77 +960,73 @@
                         if (node.isTextblock)
                             adjustTrailingHacks(dom, node);
                         if (dom.contentEditable == "false")
-                            dom = (0, _dom.elt)("div", null, dom);
-                        if (!node.type.contains)
-                            this.pos++;
+                            dom = elt("div", null, dom);
                     }
                     return dom;
                 },
-                onContainer: function onContainer(node) {
-                    node.setAttribute("pm-container", true);
+                onContainer: function onContainer(dom) {
+                    dom.setAttribute("pm-container", true);
                 },
-                renderInlineFlat: function renderInlineFlat(node, dom, offset) {
-                    ranges.advanceTo(this.pos);
-                    var pos = this.pos,
-                        end = pos + node.nodeSize;
-                    var nextCut = ranges.nextChangeBefore(end);
-                    var inner = dom,
-                        wrapped = undefined;
-                    for (var i = 0; i < node.marks.length; i++) {
-                        inner = inner.firstChild;
-                    }
-                    if (dom.nodeType != 1) {
-                        dom = (0, _dom.elt)("span", null, dom);
-                        if (nextCut == -1)
-                            wrapped = dom;
-                    }
-                    if (!wrapped && (nextCut > -1 || ranges.current.length)) {
-                        wrapped = inner == dom ? dom = (0, _dom.elt)("span", null, inner) : inner.parentNode.appendChild((0, _dom.elt)("span", null, inner));
-                    }
-                    dom.setAttribute("pm-offset", offset);
-                    dom.setAttribute("pm-size", node.nodeSize);
-                    var inlineOffset = 0;
-                    while (nextCut > -1) {
-                        var size = nextCut - pos;
-                        var split = splitSpan(wrapped, size);
+                renderInlineFlat: function renderInlineFlat(node, dom, pos, offset) {
+                    if (dom.nodeType != 1)
+                        dom = elt("span", null, dom);
+                    var end = pos + node.nodeSize,
+                        fragment = void 0;
+                    for (; ; ) {
+                        ranges.advanceTo(pos);
+                        var nextCut = ranges.nextChangeBefore(end),
+                            nextDOM = void 0,
+                            size = void 0;
+                        if (nextCut > -1) {
+                            if (!fragment)
+                                fragment = document.createDocumentFragment();
+                            size = nextCut - pos;
+                            nextDOM = splitTextNode(dom, size);
+                        } else {
+                            size = end - pos;
+                        }
+                        dom.setAttribute("pm-offset", offset);
+                        dom.setAttribute("pm-size", size);
                         if (ranges.current.length)
-                            split.className = ranges.current.join(" ");
-                        split.setAttribute("pm-inner-offset", inlineOffset);
-                        inlineOffset += size;
-                        ranges.advanceTo(nextCut);
-                        nextCut = ranges.nextChangeBefore(end);
+                            dom.className = ranges.current.join(" ");
+                        if (fragment)
+                            fragment.appendChild(dom);
                         if (nextCut == -1)
-                            wrapped.setAttribute("pm-inner-offset", inlineOffset);
+                            break;
+                        offset += size;
                         pos += size;
+                        dom = nextDOM;
                     }
-                    if (ranges.current.length)
-                        wrapped.className = ranges.current.join(" ");
-                    this.pos += node.nodeSize;
-                    return dom;
+                    return fragment || dom;
                 },
                 document: document
             };
         }
-        function splitSpan(span, at) {
-            var textNode = span.firstChild,
-                text = textNode.nodeValue;
-            var newNode = span.parentNode.insertBefore((0, _dom.elt)("span", null, text.slice(0, at)), span);
-            textNode.nodeValue = text.slice(at);
-            return newNode;
+        function splitTextNode(dom, at) {
+            if (dom.nodeType == 3) {
+                var text = document.createTextNode(dom.nodeValue.slice(at));
+                dom.nodeValue = dom.nodeValue.slice(0, at);
+                return text;
+            } else {
+                var clone = dom.cloneNode(false);
+                clone.appendChild(splitTextNode(dom.firstChild, at));
+                return clone;
+            }
         }
         function draw(pm, doc) {
             pm.content.textContent = "";
-            pm.content.appendChild((0, _format.toDOM)(doc, options(pm.ranges.activeRangeTracker())));
+            pm.content.appendChild(doc.content.toDOM(options(pm.ranges.activeRangeTracker())));
         }
+        exports.draw = draw;
         function adjustTrailingHacks(dom, node) {
-            var needs = node.content.size == 0 || node.lastChild.type.isBR || node.type.isCode && node.lastChild.isText && /\n$/.test(node.lastChild.text) ? "br" : !node.lastChild.isText && node.lastChild.type.contains == null ? "text" : null;
+            var needs = node.content.size == 0 || node.lastChild.type.isBR || node.type.isCode && node.lastChild.isText && /\n$/.test(node.lastChild.text) ? "br" : !node.lastChild.isText && node.lastChild.type.isLeaf ? "text" : null;
             var last = dom.lastChild;
             var has = !last || last.nodeType != 1 || !last.hasAttribute("pm-ignore") ? null : last.nodeName == "BR" ? "br" : "text";
             if (needs != has) {
                 if (has)
                     dom.removeChild(last);
                 if (needs)
-                    dom.appendChild(needs == "br" ? (0, _dom.elt)("br", {"pm-ignore": "trailing-break"}) : (0, _dom.elt)("span", {"pm-ignore": "cursor-text"}, ""));
+                    dom.appendChild(needs == "br" ? elt("br", {"pm-ignore": "trailing-break"}) : elt("span", {"pm-ignore": "cursor-text"}, ""));
             }
         }
         function findNodeIn(parent, i, node) {
@@ -844,109 +1043,141 @@
             return next;
         }
         function redraw(pm, dirty, doc, prev) {
-            if (dirty.get(prev) == _main.DIRTY_REDRAW)
+            if (dirty.get(prev) == DIRTY_REDRAW)
                 return draw(pm, doc);
             var opts = options(pm.ranges.activeRangeTracker());
             function scan(dom, node, prev, pos) {
                 var iPrev = 0,
+                    oPrev = 0,
                     pChild = prev.firstChild;
                 var domPos = dom.firstChild;
+                function syncDOM() {
+                    while (domPos) {
+                        var curOff = domPos.nodeType == 1 && domPos.getAttribute("pm-offset");
+                        if (!curOff || +curOff < oPrev)
+                            domPos = movePast(domPos);
+                        else
+                            return +curOff == oPrev;
+                    }
+                    return false;
+                }
                 for (var iNode = 0,
                          offset = 0; iNode < node.childCount; iNode++) {
                     var child = node.child(iNode),
-                        matching = undefined,
-                        reuseDOM = undefined;
+                        matching = void 0,
+                        reuseDOM = void 0;
                     var found = pChild == child ? iPrev : findNodeIn(prev, iPrev + 1, child);
                     if (found > -1) {
                         matching = child;
                         while (iPrev != found) {
-                            iPrev++;
-                            domPos = movePast(domPos);
+                            oPrev += pChild.nodeSize;
+                            pChild = prev.maybeChild(++iPrev);
                         }
                     }
-                    if (matching && !dirty.get(matching)) {
+                    if (matching && !dirty.get(matching) && syncDOM()) {
                         reuseDOM = true;
-                    } else if (pChild && !child.isText && child.sameMarkup(pChild) && dirty.get(pChild) != _main.DIRTY_REDRAW) {
+                    } else if (pChild && !child.isText && child.sameMarkup(pChild) && dirty.get(pChild) != DIRTY_REDRAW && syncDOM()) {
                         reuseDOM = true;
-                        if (pChild.type.contains)
-                            scan((0, _dompos.childContainer)(domPos), child, pChild, pos + offset + 1);
+                        if (!pChild.type.isLeaf)
+                            scan(childContainer(domPos), child, pChild, pos + offset + 1);
+                        domPos.setAttribute("pm-size", child.nodeSize);
                     } else {
                         opts.pos = pos + offset;
-                        var rendered = (0, _format.nodeToDOM)(child, opts, offset);
+                        opts.offset = offset;
+                        var rendered = child.toDOM(opts);
                         dom.insertBefore(rendered, domPos);
                         reuseDOM = false;
                     }
                     if (reuseDOM) {
-                        domPos.setAttribute("pm-offset", offset);
-                        domPos.setAttribute("pm-size", child.nodeSize);
-                        domPos = domPos.nextSibling;
+                        if (child.isText) {
+                            for (var off = offset,
+                                     end = off + child.nodeSize; off < end; ) {
+                                if (offset != oPrev)
+                                    domPos.setAttribute("pm-offset", off);
+                                off += +domPos.getAttribute("pm-size");
+                                domPos = domPos.nextSibling;
+                            }
+                        } else {
+                            if (offset != oPrev)
+                                domPos.setAttribute("pm-offset", offset);
+                            domPos = domPos.nextSibling;
+                        }
+                        oPrev += pChild.nodeSize;
                         pChild = prev.maybeChild(++iPrev);
                     }
                     offset += child.nodeSize;
                 }
-                while (pChild) {
+                while (domPos) {
                     domPos = movePast(domPos);
-                    pChild = prev.maybeChild(++iPrev);
                 }
                 if (node.isTextblock)
                     adjustTrailingHacks(dom, node);
+                if (browser.ios)
+                    iosHacks(dom);
             }
             scan(pm.content, doc, prev, 0);
+        }
+        exports.redraw = redraw;
+        function iosHacks(dom) {
+            if (dom.nodeName == "UL" || dom.nodeName == "OL") {
+                var oldCSS = dom.style.cssText;
+                dom.style.cssText = oldCSS + "; list-style: square !important";
+                window.getComputedStyle(dom).listStyle;
+                dom.style.cssText = oldCSS;
+            }
         }
         return module.exports;
     });
 
-    $__System.registerDynamic("12", ["14", "13", "8"], true, function($__require, exports, module) {
+    $__System.registerDynamic("14", ["16", "15", "12"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.captureKeys = undefined;
-        var _browserkeymap = $__require('14');
-        var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
-        var _selection = $__require('13');
-        var _dom = $__require('8');
-        function _interopRequireDefault(obj) {
-            return obj && obj.__esModule ? obj : {default: obj};
-        }
+        var Keymap = $__require('16');
+        var _require = $__require('15');
+        var findSelectionFrom = _require.findSelectionFrom;
+        var verticalMotionLeavesTextblock = _require.verticalMotionLeavesTextblock;
+        var NodeSelection = _require.NodeSelection;
+        var TextSelection = _require.TextSelection;
+        var browser = $__require('12');
         function nothing() {}
         function moveSelectionBlock(pm, dir) {
             var _pm$selection = pm.selection;
-            var from = _pm$selection.from;
-            var to = _pm$selection.to;
+            var $from = _pm$selection.$from;
+            var $to = _pm$selection.$to;
             var node = _pm$selection.node;
-            var side = pm.doc.resolve(dir > 0 ? to : from);
-            return (0, _selection.findSelectionFrom)(pm.doc, node && node.isBlock ? side.pos : dir > 0 ? side.after(side.depth) : side.before(side.depth), dir);
+            var $side = dir > 0 ? $to : $from;
+            var $start = node && node.isBlock ? $side : $side.depth ? pm.doc.resolve(dir > 0 ? $side.after() : $side.before()) : null;
+            return $start && findSelectionFrom($start, dir);
         }
         function selectNodeHorizontally(pm, dir) {
             var _pm$selection2 = pm.selection;
             var empty = _pm$selection2.empty;
             var node = _pm$selection2.node;
-            var from = _pm$selection2.from;
-            var to = _pm$selection2.to;
+            var $from = _pm$selection2.$from;
+            var $to = _pm$selection2.$to;
             if (!empty && !node)
                 return false;
             if (node && node.isInline) {
-                pm.setTextSelection(dir > 0 ? to : from);
+                pm.setSelection(new TextSelection(dir > 0 ? $to : $from));
                 return true;
             }
             if (!node) {
-                var $from = pm.doc.resolve(from);
                 var _ref = dir > 0 ? $from.parent.childAfter($from.parentOffset) : $from.parent.childBefore($from.parentOffset);
                 var nextNode = _ref.node;
                 var offset = _ref.offset;
                 if (nextNode) {
                     if (nextNode.type.selectable && offset == $from.parentOffset - (dir > 0 ? 0 : nextNode.nodeSize)) {
-                        pm.setNodeSelection(dir < 0 ? from - nextNode.nodeSize : from);
+                        pm.setSelection(new NodeSelection(dir < 0 ? pm.doc.resolve($from.pos - nextNode.nodeSize) : $from));
                         return true;
                     }
                     return false;
                 }
             }
             var next = moveSelectionBlock(pm, dir);
-            if (next && (next instanceof _selection.NodeSelection || node)) {
+            if (next && (next instanceof NodeSelection || node)) {
                 pm.setSelection(next);
                 return true;
             }
@@ -964,25 +1195,26 @@
             var _pm$selection3 = pm.selection;
             var empty = _pm$selection3.empty;
             var node = _pm$selection3.node;
-            var from = _pm$selection3.from;
-            var to = _pm$selection3.to;
+            var $from = _pm$selection3.$from;
+            var $to = _pm$selection3.$to;
             if (!empty && !node)
                 return false;
-            var leavingTextblock = true;
+            var leavingTextblock = true,
+                $start = dir < 0 ? $from : $to;
             if (!node || node.isInline) {
                 pm.flush();
-                leavingTextblock = (0, _selection.verticalMotionLeavesTextblock)(pm, dir > 0 ? to : from, dir);
+                leavingTextblock = verticalMotionLeavesTextblock(pm, $start, dir);
             }
             if (leavingTextblock) {
                 var next = moveSelectionBlock(pm, dir);
-                if (next && next instanceof _selection.NodeSelection) {
+                if (next && next instanceof NodeSelection) {
                     pm.setSelection(next);
                     return true;
                 }
             }
             if (!node || node.isInline)
                 return false;
-            var beyond = (0, _selection.findSelectionFrom)(pm.doc, dir < 0 ? from : to, dir);
+            var beyond = findSelectionFrom($start, dir);
             if (beyond)
                 pm.setSelection(beyond);
             return true;
@@ -1001,7 +1233,7 @@
             "Ctrl-Enter": nothing,
             "Mod-Enter": nothing,
             "Shift-Enter": nothing,
-            "Backspace": nothing,
+            "Backspace": browser.ios ? undefined : nothing,
             "Delete": nothing,
             "Mod-B": nothing,
             "Mod-I": nothing,
@@ -1027,41 +1259,51 @@
             "Up": vert(-1),
             "Down": vert(1)
         };
-        if (_dom.browser.mac) {
+        if (browser.mac) {
             keys["Alt-Left"] = horiz(-1);
             keys["Alt-Right"] = horiz(1);
             keys["Ctrl-Backspace"] = keys["Ctrl-Delete"] = nothing;
         }
-        var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
+        var captureKeys = new Keymap(keys);
+        exports.captureKeys = captureKeys;
         return module.exports;
     });
 
-    $__System.registerDynamic("15", ["6", "f", "16", "13", "11"], true, function($__require, exports, module) {
+    $__System.registerDynamic("17", ["18", "19", "15", "13"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.readInputChange = readInputChange;
-        exports.readCompositionChange = readCompositionChange;
-        var _model = $__require('6');
-        var _format = $__require('f');
-        var _map = $__require('16');
-        var _selection = $__require('13');
-        var _dompos = $__require('11');
+        var _require = $__require('18');
+        var Mark = _require.Mark;
+        var _require2 = $__require('19');
+        var mapThroughResult = _require2.mapThroughResult;
+        var _require3 = $__require('15');
+        var findSelectionFrom = _require3.findSelectionFrom;
+        var findSelectionNear = _require3.findSelectionNear;
+        var TextSelection = _require3.TextSelection;
+        var _require4 = $__require('13');
+        var DOMFromPos = _require4.DOMFromPos;
+        var DOMFromPosFromEnd = _require4.DOMFromPosFromEnd;
         function readInputChange(pm) {
             pm.ensureOperation({readSelection: false});
             return readDOMChange(pm, rangeAroundSelection(pm));
         }
+        exports.readInputChange = readInputChange;
         function readCompositionChange(pm, margin) {
             return readDOMChange(pm, rangeAroundComposition(pm, margin));
         }
+        exports.readCompositionChange = readCompositionChange;
         function parseBetween(pm, from, to) {
-            var _DOMFromPos = (0, _dompos.DOMFromPos)(pm, from, true);
+            var _DOMFromPos = DOMFromPos(pm, from, true);
             var parent = _DOMFromPos.node;
             var startOff = _DOMFromPos.offset;
-            var endOff = (0, _dompos.DOMFromPos)(pm, to, true).offset;
+            var _DOMFromPosFromEnd = DOMFromPosFromEnd(pm, to);
+            var parentRight = _DOMFromPosFromEnd.node;
+            var endOff = _DOMFromPosFromEnd.offset;
+            if (parent != parentRight)
+                return null;
             while (startOff) {
                 var prev = parent.childNodes[startOff - 1];
                 if (prev.nodeType != 1 || !prev.hasAttribute("pm-offset"))
@@ -1076,13 +1318,42 @@
                 else
                     break;
             }
-            return (0, _format.fromDOM)(pm.schema, parent, {
-                topNode: pm.doc.resolve(from).parent.copy(),
-                from: startOff,
-                to: endOff,
-                preserveWhitespace: true,
-                editableContent: true
-            });
+            var domSel = window.getSelection(),
+                find = null;
+            if (domSel.anchorNode && pm.content.contains(domSel.anchorNode)) {
+                find = [{
+                    node: domSel.anchorNode,
+                    offset: domSel.anchorOffset
+                }];
+                if (!domSel.isCollapsed)
+                    find.push({
+                        node: domSel.focusNode,
+                        offset: domSel.focusOffset
+                    });
+            }
+            var sel = null,
+                doc = pm.schema.parseDOM(parent, {
+                    topNode: pm.operation.doc.resolve(from).parent.copy(),
+                    from: startOff,
+                    to: endOff,
+                    preserveWhitespace: true,
+                    editableContent: true,
+                    findPositions: find
+                });
+            if (find && find[0].pos != null) {
+                var anchor = find[0].pos,
+                    head = find[1] && find[1].pos;
+                if (head == null)
+                    head = anchor;
+                sel = {
+                    anchor: anchor,
+                    head: head
+                };
+            }
+            return {
+                doc: doc,
+                sel: sel
+            };
         }
         function isAtEnd($pos, depth) {
             for (var i = depth || 0; i < $pos.depth; i++) {
@@ -1099,11 +1370,9 @@
             return $pos.parentOffset == 0;
         }
         function rangeAroundSelection(pm) {
-            var _pm$operation = pm.operation;
-            var sel = _pm$operation.sel;
-            var doc = _pm$operation.doc;
-            var $from = doc.resolve(sel.from);
-            var $to = doc.resolve(sel.to);
+            var _pm$operation$sel = pm.operation.sel;
+            var $from = _pm$operation$sel.$from;
+            var $to = _pm$operation$sel.$to;
             if ($from.sameParent($to) && $from.parent.isTextblock && $from.parentOffset && $to.parentOffset < $to.parent.content.size)
                 return rangeAroundComposition(pm, 0);
             for (var depth = 0; ; depth++) {
@@ -1124,11 +1393,9 @@
             }
         }
         function rangeAroundComposition(pm, margin) {
-            var _pm$operation2 = pm.operation;
-            var sel = _pm$operation2.sel;
-            var doc = _pm$operation2.doc;
-            var $from = doc.resolve(sel.from),
-                $to = doc.resolve(sel.to);
+            var _pm$operation$sel2 = pm.operation.sel;
+            var $from = _pm$operation$sel2.$from;
+            var $to = _pm$operation$sel2.$to;
             if (!$from.sameParent($to))
                 return rangeAroundSelection(pm);
             var startOff = Math.max(0, $from.parentOffset - margin);
@@ -1140,7 +1407,7 @@
                 var after = $from.parent.childAfter(endOff);
                 endOff = after.offset + after.node.nodeSize;
             }
-            var nodeStart = $from.start($from.depth);
+            var nodeStart = $from.start();
             return {
                 from: nodeStart + startOff,
                 to: nodeStart + endOff
@@ -1150,30 +1417,58 @@
             var op = pm.operation;
             if (op.docSet) {
                 pm.markAllDirty();
-                return;
+                return false;
             }
-            var parsed = parseBetween(pm, range.from, range.to);
+            var parseResult = void 0;
+            for (; ; ) {
+                parseResult = parseBetween(pm, range.from, range.to);
+                if (parseResult)
+                    break;
+                range = {
+                    from: op.doc.resolve(range.from).before(),
+                    to: op.doc.resolve(range.to).after()
+                };
+            }
+            var _parseResult = parseResult;
+            var parsed = _parseResult.doc;
+            var parsedSel = _parseResult.sel;
             var compare = op.doc.slice(range.from, range.to);
             var change = findDiff(compare.content, parsed.content, range.from, op.sel.from);
             if (!change)
-                return;
-            var fromMapped = (0, _map.mapThroughResult)(op.mappings, change.start);
-            var toMapped = (0, _map.mapThroughResult)(op.mappings, change.endA);
+                return false;
+            var fromMapped = mapThroughResult(op.mappings, change.start);
+            var toMapped = mapThroughResult(op.mappings, change.endA);
             if (fromMapped.deleted && toMapped.deleted)
-                return;
+                return false;
             markDirtyFor(pm, op.doc, change.start, change.endA);
+            function newSelection(doc) {
+                if (!parsedSel)
+                    return false;
+                var newSel = findSelectionNear(doc.resolve(range.from + parsedSel.head));
+                if (parsedSel.anchor != parsedSel.head && newSel.$head) {
+                    var $anchor = doc.resolve(range.from + parsedSel.anchor);
+                    if ($anchor.parent.isTextblock)
+                        newSel = new TextSelection($anchor, newSel.$head);
+                }
+                return newSel;
+            }
             var $from = parsed.resolveNoCache(change.start - range.from);
-            var $to = parsed.resolveNoCache(change.endB - range.from),
-                nextSel = undefined,
-                text = undefined;
-            if (!$from.sameParent($to) && $from.pos < parsed.content.size && (nextSel = (0, _selection.findSelectionFrom)(parsed, $from.pos + 1, 1, true)) && nextSel.head == $to.pos) {
+            var $to = parsed.resolveNoCache(change.endB - range.from);
+            var nextSel = void 0,
+                text = void 0;
+            if (!$from.sameParent($to) && $from.pos < parsed.content.size && (nextSel = findSelectionFrom(parsed.resolve($from.pos + 1), 1, true)) && nextSel.head == $to.pos) {
                 pm.input.dispatchKey("Enter");
             } else if ($from.sameParent($to) && $from.parent.isTextblock && (text = uniformTextBetween(parsed, $from.pos, $to.pos)) != null) {
-                pm.input.insertText(fromMapped.pos, toMapped.pos, text);
+                pm.input.insertText(fromMapped.pos, toMapped.pos, text, newSelection);
             } else {
                 var slice = parsed.slice(change.start - range.from, change.endB - range.from);
-                pm.tr.replace(fromMapped.pos, toMapped.pos, slice).apply(pm.apply.scroll);
+                var tr = pm.tr.replace(fromMapped.pos, toMapped.pos, slice);
+                var sel = newSelection(tr.doc);
+                if (sel)
+                    tr.setSelection(sel);
+                tr.applyAndScroll();
             }
+            return true;
         }
         function uniformTextBetween(node, from, to) {
             var result = "",
@@ -1186,27 +1481,27 @@
                     return valid = false;
                 if (!marks)
                     marks = node.marks;
-                else if (!_model.Mark.sameSet(marks, node.marks))
+                else if (!Mark.sameSet(marks, node.marks))
                     valid = false;
                 result += node.text.slice(Math.max(0, from - pos), to - pos);
             });
             return valid ? result : null;
         }
         function findDiff(a, b, pos, preferedStart) {
-            var start = (0, _model.findDiffStart)(a, b, pos);
+            var start = a.findDiffStart(b, pos);
             if (!start)
                 return null;
-            var _findDiffEnd = (0, _model.findDiffEnd)(a, b, pos + a.size, pos + b.size);
-            var endA = _findDiffEnd.a;
-            var endB = _findDiffEnd.b;
+            var _a$findDiffEnd = a.findDiffEnd(b, pos + a.size, pos + b.size);
+            var endA = _a$findDiffEnd.a;
+            var endB = _a$findDiffEnd.b;
             if (endA < start) {
                 var move = preferedStart <= start && preferedStart >= endA ? start - preferedStart : 0;
                 start -= move;
                 endB = start + (endB - endA);
                 endA = start;
             } else if (endB < start) {
-                var move = preferedStart <= start && preferedStart >= endB ? start - preferedStart : 0;
-                start -= move;
+                var _move = preferedStart <= start && preferedStart >= endB ? start - preferedStart : 0;
+                start -= _move;
                 endA = start + (endA - endB);
                 endB = start;
             }
@@ -1228,14 +1523,12 @@
         return module.exports;
     });
 
-    $__System.registerDynamic("17", ["6", "14", "f", "12", "8", "15", "13", "11"], true, function($__require, exports, module) {
+    $__System.registerDynamic("1a", ["16", "12", "18", "14", "5", "17", "15"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.Input = undefined;
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -1255,31 +1548,35 @@
                 return Constructor;
             };
         }();
-        var _model = $__require('6');
-        var _browserkeymap = $__require('14');
-        var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
-        var _format = $__require('f');
-        var _capturekeys = $__require('12');
-        var _dom = $__require('8');
-        var _domchange = $__require('15');
-        var _selection = $__require('13');
-        var _dompos = $__require('11');
-        function _interopRequireDefault(obj) {
-            return obj && obj.__esModule ? obj : {default: obj};
-        }
         function _classCallCheck(instance, Constructor) {
             if (!(instance instanceof Constructor)) {
                 throw new TypeError("Cannot call a class as a function");
             }
         }
+        var Keymap = $__require('16');
+        var browser = $__require('12');
+        var _require = $__require('18');
+        var Slice = _require.Slice;
+        var Fragment = _require.Fragment;
+        var parseDOMInContext = _require.parseDOMInContext;
+        var _require2 = $__require('14');
+        var captureKeys = _require2.captureKeys;
+        var _require3 = $__require('5');
+        var elt = _require3.elt;
+        var contains = _require3.contains;
+        var _require4 = $__require('17');
+        var readInputChange = _require4.readInputChange;
+        var readCompositionChange = _require4.readCompositionChange;
+        var _require5 = $__require('15');
+        var findSelectionNear = _require5.findSelectionNear;
+        var hasFocus = _require5.hasFocus;
         var stopSeq = null;
         var handlers = {};
-        var Input = exports.Input = function() {
+        var Input = function() {
             function Input(pm) {
                 var _this = this;
                 _classCallCheck(this, Input);
                 this.pm = pm;
-                this.baseKeymap = null;
                 this.keySeq = null;
                 this.mouseDown = null;
                 this.dragging = null;
@@ -1287,7 +1584,6 @@
                 this.shiftKey = false;
                 this.finishComposing = null;
                 this.keymaps = [];
-                this.defaultKeymap = null;
                 this.storedMarks = null;
                 var _loop = function _loop(event) {
                     var handler = handlers[event];
@@ -1298,7 +1594,7 @@
                 for (var event in handlers) {
                     _loop(event);
                 }
-                pm.on("selectionChange", function() {
+                pm.on.selectionChange.add(function() {
                     return _this.storedMarks = null;
                 });
             }
@@ -1308,7 +1604,7 @@
                     var pm = this.pm,
                         seq = pm.input.keySeq;
                     if (seq) {
-                        if (_browserkeymap2.default.isModifierKey(name))
+                        if (Keymap.isModifierKey(name))
                             return true;
                         clearTimeout(stopSeq);
                         stopSeq = setTimeout(function() {
@@ -1324,24 +1620,14 @@
                             return "multi";
                         if (bound == null)
                             return false;
-                        var result = false;
-                        if (Array.isArray(bound)) {
-                            for (var i = 0; result === false && i < bound.length; i++) {
-                                result = handle(bound[i]);
-                            }
-                        } else if (typeof bound == "string") {
-                            result = pm.execCommand(bound);
-                        } else {
-                            result = bound(pm);
-                        }
-                        return result == false ? false : "handled";
+                        return bound(pm) == false ? false : "handled";
                     };
-                    var result = undefined;
+                    var result = void 0;
                     for (var i = 0; !result && i < pm.input.keymaps.length; i++) {
                         result = handle(pm.input.keymaps[i].map.lookup(name, pm));
                     }
                     if (!result)
-                        result = handle(pm.input.baseKeymap.lookup(name, pm)) || handle(_capturekeys.captureKeys.lookup(name));
+                        result = handle(captureKeys.lookup(name));
                     if (result == "multi")
                         pm.input.keySeq = name;
                     if ((result == "handled" || result == "multi") && e)
@@ -1355,18 +1641,16 @@
                 }
             }, {
                 key: "insertText",
-                value: function insertText(from, to, text) {
+                value: function insertText(from, to, text, findSelection) {
                     if (from == to && !text)
                         return;
                     var pm = this.pm,
                         marks = pm.input.storedMarks || pm.doc.marksAt(from);
                     var tr = pm.tr.replaceWith(from, to, text ? pm.schema.text(text, marks) : null);
-                    tr.apply({
-                        scrollIntoView: true,
-                        selection: (0, _selection.findSelectionNear)(tr.doc, tr.map(to), -1, true)
-                    });
+                    tr.setSelection(findSelection && findSelection(tr.doc) || findSelectionNear(tr.doc.resolve(tr.map(to)), -1, true));
+                    tr.applyAndScroll();
                     if (text)
-                        pm.signal("textInput", text);
+                        pm.on.textInput.dispatch(text);
                 }
             }, {
                 key: "startComposition",
@@ -1387,7 +1671,7 @@
                     var composing = this.composing;
                     if (composing.applied)
                         return;
-                    (0, _domchange.readCompositionChange)(this.pm, composing.margin);
+                    readCompositionChange(this.pm, composing.margin);
                     composing.applied = true;
                     if (andFlush)
                         this.pm.flush();
@@ -1400,15 +1684,16 @@
             }]);
             return Input;
         }();
+        exports.Input = Input;
         handlers.keydown = function(pm, e) {
-            if (!(0, _selection.hasFocus)(pm))
+            if (!hasFocus(pm))
                 return;
-            pm.signal("interaction");
+            pm.on.interaction.dispatch();
             if (e.keyCode == 16)
                 pm.input.shiftKey = true;
             if (pm.input.composing)
                 return;
-            var name = _browserkeymap2.default.keyName(e);
+            var name = Keymap.keyName(e);
             if (name && pm.input.dispatchKey(name, e))
                 return;
             pm.sel.fastPoll();
@@ -1418,95 +1703,126 @@
                 pm.input.shiftKey = false;
         };
         handlers.keypress = function(pm, e) {
-            if (!(0, _selection.hasFocus)(pm) || pm.input.composing || !e.charCode || e.ctrlKey && !e.altKey || _dom.browser.mac && e.metaKey)
+            if (!hasFocus(pm) || pm.input.composing || !e.charCode || e.ctrlKey && !e.altKey || browser.mac && e.metaKey)
                 return;
-            if (pm.input.dispatchKey(_browserkeymap2.default.keyName(e), e))
+            if (pm.input.dispatchKey(Keymap.keyName(e), e))
                 return;
             var sel = pm.selection;
-            if (!_dom.browser.ios) {
+            if (!browser.ios) {
                 pm.input.insertText(sel.from, sel.to, String.fromCharCode(e.charCode));
                 e.preventDefault();
             }
         };
-        function realTarget(pm, mouseEvent) {
-            if (pm.operation && pm.flush())
-                return document.elementFromPoint(mouseEvent.clientX, mouseEvent.clientY);
-            else
-                return mouseEvent.target;
+        function contextFromEvent(pm, event) {
+            return pm.contextAtCoords({
+                left: event.clientX,
+                top: event.clientY
+            });
         }
-        function selectClickedNode(pm, e, target) {
-            var pos = (0, _dompos.selectableNodeAbove)(pm, target, {
-                left: e.clientX,
-                top: e.clientY
-            }, true);
-            if (pos == null)
-                return pm.sel.fastPoll();
+        function selectClickedNode(pm, context) {
             var _pm$selection = pm.selection;
-            var node = _pm$selection.node;
-            var from = _pm$selection.from;
-            if (node) {
-                var $pos = pm.doc.resolve(pos),
-                    $from = pm.doc.resolve(from);
-                if ($pos.depth >= $from.depth && $pos.before($from.depth) == from) {
-                    if ($from.depth == 0)
-                        return pm.sel.fastPoll();
-                    pos = $pos.before($pos.depth);
+            var selectedNode = _pm$selection.node;
+            var $from = _pm$selection.$from;
+            var selectAt = void 0;
+            for (var i = context.inside.length - 1; i >= 0; i--) {
+                var _context$inside$i = context.inside[i];
+                var pos = _context$inside$i.pos;
+                var node = _context$inside$i.node;
+                if (node.type.selectable) {
+                    selectAt = pos;
+                    if (selectedNode && $from.depth > 0) {
+                        var $pos = pm.doc.resolve(pos);
+                        if ($pos.depth >= $from.depth && $pos.before($from.depth + 1) == $from.pos)
+                            selectAt = $pos.before($from.depth);
+                    }
+                    break;
                 }
             }
-            pm.setNodeSelection(pos);
-            pm.focus();
-            e.preventDefault();
-        }
-        var lastClick = 0,
-            oneButLastClick = 0;
-        function handleTripleClick(pm, e, target) {
-            e.preventDefault();
-            var pos = (0, _dompos.selectableNodeAbove)(pm, target, {
-                left: e.clientX,
-                top: e.clientY
-            }, true);
-            if (pos != null) {
-                var $pos = pm.doc.resolve(pos),
-                    node = $pos.nodeAfter;
-                if (node.isBlock && !node.isTextblock)
-                    pm.setNodeSelection(pos);
-                else if (node.isInline)
-                    pm.setTextSelection($pos.start($pos.depth), $pos.end($pos.depth));
-                else
-                    pm.setTextSelection(pos + 1, pos + 1 + node.content.size);
+            if (selectAt != null) {
+                pm.setNodeSelection(selectAt);
                 pm.focus();
+                return true;
+            } else {
+                return false;
+            }
+        }
+        var lastClick = {
+                time: 0,
+                x: 0,
+                y: 0
+            },
+            oneButLastClick = lastClick;
+        function isNear(event, click) {
+            var dx = click.x - event.clientX,
+                dy = click.y - event.clientY;
+            return dx * dx + dy * dy < 100;
+        }
+        function handleTripleClick(pm, context) {
+            for (var i = context.inside.length - 1; i >= 0; i--) {
+                var _context$inside$i2 = context.inside[i];
+                var pos = _context$inside$i2.pos;
+                var node = _context$inside$i2.node;
+                if (node.isTextblock)
+                    pm.setTextSelection(pos + 1, pos + 1 + node.content.size);
+                else if (node.type.selectable)
+                    pm.setNodeSelection(pos);
+                else
+                    continue;
+                pm.focus();
+                break;
+            }
+        }
+        function runHandlerOnContext(handler, context, event) {
+            for (var i = context.inside.length - 1; i >= 0; i--) {
+                if (handler.dispatch(context.pos, context.inside[i].node, context.inside[i].pos, event))
+                    return true;
             }
         }
         handlers.mousedown = function(pm, e) {
-            pm.signal("interaction");
-            var now = Date.now(),
-                doubleClick = now - lastClick < 500,
-                tripleClick = now - oneButLastClick < 600;
+            pm.on.interaction.dispatch();
+            var now = Date.now();
+            var doubleClick = now - lastClick.time < 500 && isNear(e, lastClick);
+            var tripleClick = doubleClick && now - oneButLastClick.time < 600 && isNear(e, oneButLastClick);
             oneButLastClick = lastClick;
-            lastClick = now;
-            var target = realTarget(pm, e);
-            if (tripleClick)
-                handleTripleClick(pm, e, target);
-            else if (doubleClick && (0, _dompos.handleNodeClick)(pm, "handleDoubleClick", e, target, true)) {} else
-                pm.input.mouseDown = new MouseDown(pm, e, target, doubleClick);
+            lastClick = {
+                time: now,
+                x: e.clientX,
+                y: e.clientY
+            };
+            var context = contextFromEvent(pm, e);
+            if (context == null)
+                return;
+            if (tripleClick) {
+                e.preventDefault();
+                handleTripleClick(pm, context);
+            } else if (doubleClick) {
+                if (runHandlerOnContext(pm.on.doubleClickOn, context, e) || pm.on.doubleClick.dispatch(context.pos, e))
+                    e.preventDefault();
+                else
+                    pm.sel.fastPoll();
+            } else {
+                pm.input.mouseDown = new MouseDown(pm, e, context, doubleClick);
+            }
         };
         var MouseDown = function() {
-            function MouseDown(pm, event, target, doubleClick) {
+            function MouseDown(pm, event, context, doubleClick) {
                 _classCallCheck(this, MouseDown);
                 this.pm = pm;
                 this.event = event;
-                this.target = target;
+                this.context = context;
                 this.leaveToBrowser = pm.input.shiftKey || doubleClick;
-                var pos = (0, _dompos.posBeforeFromDOM)(pm, this.target),
-                    node = pm.doc.nodeAt(pos);
-                this.mightDrag = node.type.draggable || node == pm.sel.range.node ? pos : null;
-                if (this.mightDrag != null) {
-                    this.target.draggable = true;
-                    if (_dom.browser.gecko && (this.setContentEditable = !this.target.hasAttribute("contentEditable")))
-                        this.target.setAttribute("contentEditable", "false");
-                }
                 this.x = event.clientX;
                 this.y = event.clientY;
+                var inner = context.inside[context.inside.length - 1];
+                this.mightDrag = inner && (inner.node.type.draggable || inner.node == pm.sel.range.node) ? inner : null;
+                this.target = event.target;
+                if (this.mightDrag) {
+                    if (!contains(pm.content, this.target))
+                        this.target = document.elementFromPoint(this.x, this.y);
+                    this.target.draggable = true;
+                    if (browser.gecko && (this.setContentEditable = !this.target.hasAttribute("contentEditable")))
+                        this.target.setAttribute("contentEditable", "false");
+                }
                 window.addEventListener("mouseup", this.up = this.up.bind(this));
                 window.addEventListener("mousemove", this.move = this.move.bind(this));
                 pm.sel.fastPoll();
@@ -1516,9 +1832,9 @@
                 value: function done() {
                     window.removeEventListener("mouseup", this.up);
                     window.removeEventListener("mousemove", this.move);
-                    if (this.mightDrag != null) {
+                    if (this.mightDrag) {
                         this.target.draggable = false;
-                        if (_dom.browser.gecko && this.setContentEditable)
+                        if (browser.gecko && this.setContentEditable)
                             this.target.removeAttribute("contentEditable");
                     }
                 }
@@ -1526,18 +1842,17 @@
                 key: "up",
                 value: function up(event) {
                     this.done();
-                    var target = realTarget(this.pm, event);
-                    if (this.leaveToBrowser || !(0, _dom.contains)(this.pm.content, target)) {
-                        this.pm.sel.fastPoll();
-                    } else if (this.event.ctrlKey) {
-                        selectClickedNode(this.pm, event, target);
-                    } else if (!(0, _dompos.handleNodeClick)(this.pm, "handleClick", event, target, true)) {
-                        var pos = (0, _dompos.selectableNodeAbove)(this.pm, target, {
-                            left: this.x,
-                            top: this.y
-                        });
-                        if (pos) {
-                            this.pm.setNodeSelection(pos);
+                    if (this.leaveToBrowser || !contains(this.pm.content, event.target))
+                        return this.pm.sel.fastPoll();
+                    var context = contextFromEvent(this.pm, event);
+                    if (this.event.ctrlKey && selectClickedNode(this.pm, context)) {
+                        event.preventDefault();
+                    } else if (runHandlerOnContext(this.pm.on.clickOn, this.context, event) || this.pm.on.click.dispatch(this.context.pos, event)) {
+                        event.preventDefault();
+                    } else {
+                        var inner = this.context.inside[this.context.inside.length - 1];
+                        if (inner && inner.node.type.isLeaf && inner.node.type.selectable) {
+                            this.pm.setNodeSelection(inner.pos);
                             this.pm.focus();
                         } else {
                             this.pm.sel.fastPoll();
@@ -1558,18 +1873,23 @@
             pm.sel.fastPoll();
         };
         handlers.contextmenu = function(pm, e) {
-            (0, _dompos.handleNodeClick)(pm, "handleContextMenu", e, realTarget(pm, e), false);
+            var context = contextFromEvent(pm, e);
+            if (context) {
+                var inner = context.inside[context.inside.length - 1];
+                if (pm.on.contextMenu.dispatch(context.pos, inner ? inner.node : pm.doc, e))
+                    e.preventDefault();
+            }
         };
         handlers.compositionstart = function(pm, e) {
-            if (!pm.input.composing && (0, _selection.hasFocus)(pm))
+            if (!pm.input.composing && hasFocus(pm))
                 pm.input.startComposition(e.data ? e.data.length : 0, true);
         };
         handlers.compositionupdate = function(pm) {
-            if (!pm.input.composing && (0, _selection.hasFocus)(pm))
+            if (!pm.input.composing && hasFocus(pm))
                 pm.input.startComposition(0, false);
         };
         handlers.compositionend = function(pm, e) {
-            if (!(0, _selection.hasFocus)(pm))
+            if (!hasFocus(pm))
                 return;
             var composing = pm.input.composing;
             if (!composing) {
@@ -1588,27 +1908,46 @@
                     pm.input.applyComposition(true);
             }, 20);
         };
-        handlers.input = function(pm) {
-            if (!(0, _selection.hasFocus)(pm))
-                return;
+        function readInput(pm) {
             var composing = pm.input.composing;
             if (composing) {
                 if (composing.ended)
                     pm.input.applyComposition(true);
-                return;
+                return true;
             }
-            (0, _domchange.readInputChange)(pm);
+            var result = readInputChange(pm);
             pm.flush();
+            return result;
+        }
+        function readInputSoon(pm) {
+            window.setTimeout(function() {
+                if (!readInput(pm))
+                    window.setTimeout(function() {
+                        return readInput(pm);
+                    }, 80);
+            }, 20);
+        }
+        handlers.input = function(pm) {
+            if (hasFocus(pm))
+                readInput(pm);
         };
         function toClipboard(doc, from, to, dataTransfer) {
-            var slice = doc.slice(from, to),
-                $from = doc.resolve(from);
-            var parent = $from.node($from.depth - slice.openLeft);
-            var attr = parent.type.name + " " + slice.openLeft + " " + slice.openRight;
-            var html = "<div pm-context=\"" + attr + "\">" + (0, _format.toHTML)(slice.content) + "</div>";
+            var $from = doc.resolve(from),
+                start = from;
+            for (var d = $from.depth; d > 0 && $from.end(d) == start; d--) {
+                start++;
+            }
+            var slice = doc.slice(start, to);
+            if (slice.possibleParent.type != doc.type.schema.nodes.doc)
+                slice = new Slice(Fragment.from(slice.possibleParent.copy(slice.content)), slice.openLeft + 1, slice.openRight + 1);
+            var dom = slice.content.toDOM(),
+                wrap = document.createElement("div");
+            if (dom.firstChild && dom.firstChild.nodeType == 1)
+                dom.firstChild.setAttribute("pm-open-left", slice.openLeft);
+            wrap.appendChild(dom);
             dataTransfer.clearData();
-            dataTransfer.setData("text/html", html);
-            dataTransfer.setData("text/plain", (0, _format.toText)(slice.content));
+            dataTransfer.setData("text/html", wrap.innerHTML);
+            dataTransfer.setData("text/plain", slice.content.textBetween(0, slice.content.size, "\n\n"));
             return slice;
         }
         var cachedCanUpdateClipboard = null;
@@ -1618,71 +1957,115 @@
             dataTransfer.setData("text/html", "<hr>");
             return cachedCanUpdateClipboard = dataTransfer.getData("text/html") == "<hr>";
         }
-        function fromClipboard(pm, dataTransfer, plainText) {
+        function fromClipboard(pm, dataTransfer, plainText, $target) {
             var txt = dataTransfer.getData("text/plain");
             var html = dataTransfer.getData("text/html");
             if (!html && !txt)
                 return null;
-            var doc = undefined,
-                slice = undefined;
+            var dom = void 0;
             if ((plainText || !html) && txt) {
-                doc = (0, _format.parseFrom)(pm.schema, pm.signalPipelined("transformPastedText", txt), "text");
+                dom = document.createElement("div");
+                pm.on.transformPastedText.dispatch(txt).split(/(?:\r\n?|\n){2,}/).forEach(function(block) {
+                    var para = dom.appendChild(document.createElement("p"));
+                    block.split(/\r\n?|\n/).forEach(function(line, i) {
+                        if (i)
+                            para.appendChild(document.createElement("br"));
+                        para.appendChild(document.createTextNode(line));
+                    });
+                });
             } else {
-                var dom = document.createElement("div");
-                dom.innerHTML = pm.signalPipelined("transformPastedHTML", html);
-                var wrap = dom.querySelector("[pm-context]"),
-                    context = undefined,
-                    contextNodeType = undefined,
-                    found = undefined;
-                if (wrap && (context = /^(\w+) (\d+) (\d+)$/.exec(wrap.getAttribute("pm-context"))) && (contextNodeType = pm.schema.nodes[context[1]]) && contextNodeType.defaultAttrs && (found = parseFromContext(wrap, contextNodeType, +context[2], +context[3])))
-                    slice = found;
-                else
-                    doc = (0, _format.fromDOM)(pm.schema, dom);
+                dom = readHTML(pm.on.transformPastedHTML.dispatch(html));
             }
-            if (!slice)
-                slice = doc.slice((0, _selection.findSelectionAtStart)(doc).from, (0, _selection.findSelectionAtEnd)(doc).to);
-            return pm.signalPipelined("transformPasted", slice);
-        }
-        function parseFromContext(dom, contextNodeType, openLeft, openRight) {
-            var schema = contextNodeType.schema,
-                contextNode = contextNodeType.create();
-            var parsed = (0, _format.fromDOM)(schema, dom, {
-                topNode: contextNode,
-                preserveWhitespace: true
+            var openLeft = null,
+                m = void 0;
+            var foundLeft = dom.querySelector("[pm-open-left]");
+            if (foundLeft && (m = /^\d+$/.exec(foundLeft.getAttribute("pm-open-left"))))
+                openLeft = +m[0];
+            var slice = parseDOMInContext($target, dom, {
+                openLeft: openLeft,
+                preserveWhiteSpace: true
             });
-            return new _model.Slice(parsed.content, clipOpen(parsed.content, openLeft, true), clipOpen(parsed.content, openRight, false), contextNode);
+            return pm.on.transformPasted.dispatch(slice);
         }
-        function clipOpen(fragment, max, start) {
-            for (var i = 0; i < max; i++) {
-                var node = start ? fragment.firstChild : fragment.lastChild;
-                if (!node || node.type.contains == null)
-                    return i;
-                fragment = node.content;
+        function insertRange($from, $to) {
+            var from = $from.pos,
+                to = $to.pos;
+            for (var d = $to.depth; d > 0 && $to.end(d) == to; d--) {
+                to++;
             }
-            return max;
+            for (var _d = $from.depth; _d > 0 && $from.start(_d) == from && $from.end(_d) <= to; _d--) {
+                from--;
+            }
+            return {
+                from: from,
+                to: to
+            };
+        }
+        var wrapMap = {
+            thead: "table",
+            colgroup: "table",
+            col: "table colgroup",
+            tr: "table tbody",
+            td: "table tbody tr",
+            th: "table tbody tr"
+        };
+        function readHTML(html) {
+            var metas = /(\s*<meta [^>]*>)*/.exec(html);
+            if (metas)
+                html = html.slice(metas[0].length);
+            var elt = document.createElement("div");
+            var firstTag = /(?:<meta [^>]*>)*<([a-z][^>\s]+)/i.exec(html),
+                wrap = void 0,
+                depth = 0;
+            if (wrap = firstTag && wrapMap[firstTag[1].toLowerCase()]) {
+                var nodes = wrap.split(" ");
+                html = nodes.map(function(n) {
+                        return "<" + n + ">";
+                    }).join("") + html + nodes.map(function(n) {
+                        return "</" + n + ">";
+                    }).reverse().join("");
+                depth = nodes.length;
+            }
+            elt.innerHTML = html;
+            for (var i = 0; i < depth; i++) {
+                elt = elt.firstChild;
+            }
+            return elt;
         }
         handlers.copy = handlers.cut = function(pm, e) {
             var _pm$selection2 = pm.selection;
             var from = _pm$selection2.from;
             var to = _pm$selection2.to;
             var empty = _pm$selection2.empty;
-            if (empty || !e.clipboardData || !canUpdateClipboard(e.clipboardData))
+            var cut = e.type == "cut";
+            if (empty)
                 return;
+            if (!e.clipboardData || !canUpdateClipboard(e.clipboardData)) {
+                if (cut && browser.ie && browser.ie_version <= 11)
+                    readInputSoon(pm);
+                return;
+            }
             toClipboard(pm.doc, from, to, e.clipboardData);
             e.preventDefault();
-            if (e.type == "cut" && !empty)
+            if (cut)
                 pm.tr.delete(from, to).apply();
         };
         handlers.paste = function(pm, e) {
-            if (!(0, _selection.hasFocus)(pm))
+            if (!hasFocus(pm))
                 return;
-            if (!e.clipboardData)
+            if (!e.clipboardData) {
+                if (browser.ie && browser.ie_version <= 11)
+                    readInputSoon(pm);
                 return;
-            var sel = pm.selection;
-            var slice = fromClipboard(pm, e.clipboardData, pm.input.shiftKey);
+            }
+            var sel = pm.selection,
+                range = insertRange(sel.$from, sel.$to);
+            var slice = fromClipboard(pm, e.clipboardData, pm.input.shiftKey, pm.doc.resolve(range.from));
             if (slice) {
                 e.preventDefault();
-                pm.tr.replace(sel.from, sel.to, slice).apply(pm.apply.scroll);
+                var tr = pm.tr.replace(range.from, range.to, slice);
+                tr.setSelection(findSelectionNear(tr.doc.resolve(tr.map(range.to)), -1));
+                tr.applyAndScroll();
             }
         };
         var Dragging = function Dragging(slice, from, to) {
@@ -1691,25 +2074,20 @@
             this.from = from;
             this.to = to;
         };
-        function dropPos(pm, e, slice) {
-            var pos = pm.posAtCoords({
-                left: e.clientX,
-                top: e.clientY
-            });
-            if (pos == null || !slice || !slice.content.size)
-                return pos;
-            var $pos = pm.doc.resolve(pos),
-                kind = slice.content.leastSuperKind();
-            for (var d = $pos.depth; d >= 0; d--) {
-                if (kind.isSubKind($pos.node(d).type.contains)) {
-                    if (d == $pos.depth)
-                        return pos;
-                    if (pos <= ($pos.start(d + 1) + $pos.end(d + 1)) / 2)
-                        return $pos.before(d + 1);
-                    return $pos.after(d + 1);
-                }
+        function dropPos(slice, $pos) {
+            if (!slice || !slice.content.size)
+                return $pos.pos;
+            var content = slice.content;
+            for (var i = 0; i < slice.openLeft; i++) {
+                content = content.firstChild.content;
             }
-            return pos;
+            for (var d = $pos.depth; d >= 0; d--) {
+                var bias = d == $pos.depth ? 0 : $pos.pos <= ($pos.start(d + 1) + $pos.end(d + 1)) / 2 ? -1 : 1;
+                var insertPos = $pos.index(d) + (bias > 0 ? 1 : 0);
+                if ($pos.node(d).canReplace(insertPos, insertPos, content))
+                    return bias == 0 ? $pos.pos : bias < 0 ? $pos.before(d + 1) : $pos.after(d + 1);
+            }
+            return $pos.pos;
         }
         function removeDropTarget(pm) {
             if (pm.input.dropTarget) {
@@ -1727,7 +2105,7 @@
             var from = _pm$selection3.from;
             var to = _pm$selection3.to;
             var empty = _pm$selection3.empty;
-            var dragging = undefined;
+            var dragging = void 0;
             var pos = !empty && pm.posAtCoords({
                     left: e.clientX,
                     top: e.clientY
@@ -1737,11 +2115,11 @@
                     from: from,
                     to: to
                 };
-            } else if (mouseDown && mouseDown.mightDrag != null) {
-                var _pos = mouseDown.mightDrag;
+            } else if (mouseDown && mouseDown.mightDrag) {
+                var _pos = mouseDown.mightDrag.pos;
                 dragging = {
                     from: _pos,
-                    to: _pos + pm.doc.nodeAt(_pos).nodeSize
+                    to: _pos + mouseDown.mightDrag.node.nodeSize
                 };
             }
             if (dragging) {
@@ -1750,7 +2128,8 @@
             }
         };
         handlers.dragend = function(pm) {
-            return window.setTimeout(function() {
+            removeDropTarget(pm);
+            window.setTimeout(function() {
                 return pm.input.dragging = null;
             }, 50);
         };
@@ -1758,8 +2137,12 @@
             e.preventDefault();
             var target = pm.input.dropTarget;
             if (!target)
-                target = pm.input.dropTarget = pm.wrapper.appendChild((0, _dom.elt)("div", {class: "ProseMirror-drop-target"}));
-            var pos = dropPos(pm, e, pm.input.dragging && pm.input.dragging.slice);
+                target = pm.input.dropTarget = pm.wrapper.appendChild(elt("div", {class: "ProseMirror-drop-target"}));
+            var mousePos = pm.posAtCoords({
+                left: e.clientX,
+                top: e.clientY
+            });
+            var pos = mousePos == null ? null : dropPos(pm.input.dragging && pm.input.dragging.slice, pm.doc.resolve(mousePos));
             if (pos == null)
                 return;
             var coords = pm.coordsAtPos(pos);
@@ -1780,51 +2163,52 @@
             var dragging = pm.input.dragging;
             pm.input.dragging = null;
             removeDropTarget(pm);
-            if (!e.dataTransfer || pm.signalDOM(e))
+            if (!e.dataTransfer || pm.on.domDrop.dispatch(e))
                 return;
-            var slice = dragging && dragging.slice || fromClipboard(pm, e.dataTransfer);
-            if (slice) {
-                e.preventDefault();
-                var insertPos = dropPos(pm, e, slice),
-                    start = insertPos;
-                if (insertPos == null)
-                    return;
-                var tr = pm.tr;
-                if (dragging && !e.ctrlKey && dragging.from != null) {
-                    tr.delete(dragging.from, dragging.to);
-                    insertPos = tr.map(insertPos);
-                }
-                tr.replace(insertPos, insertPos, slice).apply();
-                var found = undefined;
-                if (slice.content.childCount == 1 && slice.openLeft == 0 && slice.openRight == 0 && slice.content.child(0).type.selectable && (found = pm.doc.nodeAt(insertPos)) && found.sameMarkup(slice.content.child(0))) {
-                    pm.setNodeSelection(insertPos);
-                } else {
-                    var left = (0, _selection.findSelectionNear)(pm.doc, insertPos, 1, true).from;
-                    var right = (0, _selection.findSelectionNear)(pm.doc, tr.map(start), -1, true).to;
-                    pm.setTextSelection(left, right);
-                }
-                pm.focus();
+            var $mouse = pm.doc.resolve(pm.posAtCoords({
+                left: e.clientX,
+                top: e.clientY
+            }));
+            if (!$mouse)
+                return;
+            var range = insertRange($mouse, $mouse);
+            var slice = dragging && dragging.slice || fromClipboard(pm, e.dataTransfer, pm.doc.resolve(range.from));
+            if (!slice)
+                return;
+            var insertPos = dropPos(slice, pm.doc.resolve(range.from));
+            e.preventDefault();
+            var tr = pm.tr;
+            if (dragging && !e.ctrlKey && dragging.from != null)
+                tr.delete(dragging.from, dragging.to);
+            var start = tr.map(insertPos),
+                found = void 0;
+            tr.replace(start, tr.map(insertPos), slice).apply();
+            if (slice.content.childCount == 1 && slice.openLeft == 0 && slice.openRight == 0 && slice.content.child(0).type.selectable && (found = pm.doc.nodeAt(start)) && found.sameMarkup(slice.content.child(0))) {
+                pm.setNodeSelection(start);
+            } else {
+                var left = findSelectionNear(pm.doc.resolve(start), 1, true).from;
+                var right = findSelectionNear(pm.doc.resolve(tr.map(insertPos)), -1, true).to;
+                pm.setTextSelection(left, right);
             }
+            pm.focus();
         };
         handlers.focus = function(pm) {
             pm.wrapper.classList.add("ProseMirror-focused");
-            pm.signal("focus");
+            pm.on.focus.dispatch();
         };
         handlers.blur = function(pm) {
             pm.wrapper.classList.remove("ProseMirror-focused");
-            pm.signal("blur");
+            pm.on.blur.dispatch();
         };
         return module.exports;
     });
 
-    $__System.registerDynamic("18", ["19"], true, function($__require, exports, module) {
+    $__System.registerDynamic("1b", ["19"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.History = undefined;
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -1844,7 +2228,6 @@
                 return Constructor;
             };
         }();
-        var _transform = $__require('19');
         function _possibleConstructorReturn(self, call) {
             if (!self) {
                 throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -1869,6 +2252,9 @@
                 throw new TypeError("Cannot call a class as a function");
             }
         }
+        var _require = $__require('19');
+        var Transform = _require.Transform;
+        var Remapping = _require.Remapping;
         var max_empty_items = 500;
         var Branch = function() {
             function Branch(maxEvents) {
@@ -1881,9 +2267,9 @@
                 key: "popEvent",
                 value: function popEvent(doc, preserveItems, upto) {
                     var preserve = preserveItems,
-                        transform = new _transform.Transform(doc);
+                        transform = new Transform(doc);
                     var remap = new BranchRemapping();
-                    var selection = undefined,
+                    var selection = void 0,
                         ids = [],
                         i = this.items.length;
                     for (; ; ) {
@@ -1899,7 +2285,7 @@
                         }
                         if (preserve) {
                             var step = cur.step.map(remap.remap),
-                                map = undefined;
+                                map = void 0;
                             this.items[i] = new MapItem(cur.map);
                             if (step && transform.maybeStep(step).doc) {
                                 map = transform.maps[transform.maps.length - 1];
@@ -2001,12 +2387,12 @@
                         this.items[0] = new Item();
                     }
                     if (positions.length) {
-                        var remap = new _transform.Remapping([], newMaps.slice());
+                        var remap = new Remapping([], newMaps.slice());
                         for (var iItem = start,
                                  iPosition = startPos; iItem < this.items.length; iItem++) {
                             var item = this.items[iItem],
                                 pos = positions[iPosition++],
-                                id = undefined;
+                                id = void 0;
                             if (pos != -1) {
                                 var map = rebasedTransform.maps[pos];
                                 if (item.step) {
@@ -2025,8 +2411,8 @@
                     for (var i = 0; i < newMaps.length; i++) {
                         this.items.push(new MapItem(newMaps[i]));
                     }
-                    for (var i = 0; i < rebasedItems.length; i++) {
-                        this.items.push(rebasedItems[i]);
+                    for (var _i = 0; _i < rebasedItems.length; _i++) {
+                        this.items.push(rebasedItems[_i]);
                     }
                     if (!this.compressing && this.emptyItems(start) + newMaps.length > max_empty_items)
                         this.compress(start + newMaps.length);
@@ -2126,7 +2512,7 @@
         var BranchRemapping = function() {
             function BranchRemapping() {
                 _classCallCheck(this, BranchRemapping);
-                this.remap = new _transform.Remapping();
+                this.remap = new Remapping();
                 this.mirrorBuffer = Object.create(null);
             }
             _createClass(BranchRemapping, [{
@@ -2147,7 +2533,7 @@
             }]);
             return BranchRemapping;
         }();
-        var History = exports.History = function() {
+        var History = function() {
             function History(pm) {
                 _classCallCheck(this, History);
                 this.pm = pm;
@@ -2156,7 +2542,7 @@
                 this.lastAddedAt = 0;
                 this.ignoreTransform = false;
                 this.preserveItems = 0;
-                pm.on("transform", this.recordTransform.bind(this));
+                pm.on.transform.add(this.recordTransform.bind(this));
             }
             _createClass(History, [{
                 key: "recordTransform",
@@ -2250,17 +2636,16 @@
             }]);
             return History;
         }();
+        exports.History = History;
         return module.exports;
     });
 
-    $__System.registerDynamic("1a", ["19"], true, function($__require, exports, module) {
+    $__System.registerDynamic("1c", ["18", "19", "15"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.EditorTransform = undefined;
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -2280,7 +2665,6 @@
                 return Constructor;
             };
         }();
-        var _transform = $__require('19');
         function _classCallCheck(instance, Constructor) {
             if (!(instance instanceof Constructor)) {
                 throw new TypeError("Cannot call a class as a function");
@@ -2305,12 +2689,22 @@
             if (superClass)
                 Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
         }
-        var EditorTransform = exports.EditorTransform = function(_Transform) {
+        var _require = $__require('18');
+        var Fragment = _require.Fragment;
+        var _require2 = $__require('19');
+        var Transform = _require2.Transform;
+        var insertPoint = _require2.insertPoint;
+        var _require3 = $__require('15');
+        var findSelectionNear = _require3.findSelectionNear;
+        var _applyAndScroll = {scrollIntoView: true};
+        var EditorTransform = function(_Transform) {
             _inherits(EditorTransform, _Transform);
             function EditorTransform(pm) {
                 _classCallCheck(this, EditorTransform);
                 var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(EditorTransform).call(this, pm.doc));
                 _this.pm = pm;
+                _this.curSelection = pm.selection;
+                _this.curSelectionAt = 0;
                 return _this;
             }
             _createClass(EditorTransform, [{
@@ -2319,38 +2713,51 @@
                     return this.pm.apply(this, options);
                 }
             }, {
+                key: "applyAndScroll",
+                value: function applyAndScroll() {
+                    return this.pm.apply(this, _applyAndScroll);
+                }
+            }, {
+                key: "setSelection",
+                value: function setSelection(selection) {
+                    this.curSelection = selection;
+                    this.curSelectionAt = this.steps.length;
+                    return this;
+                }
+            }, {
                 key: "replaceSelection",
                 value: function replaceSelection(node, inheritMarks) {
                     var _selection = this.selection;
                     var empty = _selection.empty;
+                    var $from = _selection.$from;
+                    var $to = _selection.$to;
                     var from = _selection.from;
                     var to = _selection.to;
                     var selNode = _selection.node;
                     if (node && node.isInline && inheritMarks !== false)
                         node = node.mark(empty ? this.pm.input.storedMarks : this.doc.marksAt(from));
+                    var fragment = Fragment.from(node);
                     if (selNode && selNode.isTextblock && node && node.isInline) {
                         from++;
                         to--;
                     } else if (selNode) {
-                        var $from = this.doc.resolve(from),
-                            depth = $from.depth;
-                        while (depth && $from.node(depth).childCount == 1 && !(node ? $from.node(depth).type.canContain(node) : $from.node(depth).type.canBeEmpty)) {
+                        var depth = $from.depth;
+                        while (depth && $from.node(depth).childCount == 1 && !$from.node(depth).canReplace($from.index(depth), $to.indexAfter(depth), fragment)) {
                             depth--;
                         }
                         if (depth < $from.depth) {
                             from = $from.before(depth + 1);
                             to = $from.after(depth + 1);
                         }
-                    } else if (node && node.isBlock) {
-                        var $from = this.doc.resolve(from);
-                        if ($from.depth && $from.node($from.depth - 1).type.canContain(node)) {
-                            this.delete(from, to);
-                            if ($from.parentOffset && $from.parentOffset < $from.parent.content.size)
-                                this.split(from);
-                            return this.insert(from + ($from.parentOffset ? 1 : -1), node);
-                        }
+                    } else if (node && from == to) {
+                        var point = insertPoint(this.doc, from, node.type, node.attrs);
+                        if (point != null)
+                            from = to = point;
                     }
-                    return this.replaceWith(from, to, node);
+                    this.replaceWith(from, to, fragment);
+                    var map = this.maps[this.maps.length - 1];
+                    this.setSelection(findSelectionNear(this.doc.resolve(map.map(to))));
+                    return this;
                 }
             }, {
                 key: "deleteSelection",
@@ -2365,22 +2772,31 @@
             }, {
                 key: "selection",
                 get: function get() {
-                    return this.steps.length ? this.pm.selection.map(this) : this.pm.selection;
+                    if (this.curSelectionAt < this.steps.length) {
+                        if (this.curSelectionAt) {
+                            for (var i = this.curSelectionAt; i < this.steps.length; i++) {
+                                this.curSelection = this.curSelection.map(i == this.steps.length - 1 ? this.doc : this.docs[i + 1], this.maps[i]);
+                            }
+                        } else {
+                            this.curSelection = this.curSelection.map(this.doc, this);
+                        }
+                        this.curSelectionAt = this.steps.length;
+                    }
+                    return this.curSelection;
                 }
             }]);
             return EditorTransform;
-        }(_transform.Transform);
+        }(Transform);
+        exports.EditorTransform = EditorTransform;
         return module.exports;
     });
 
-    $__System.registerDynamic("10", ["c", "14", "1b", "d", "1c", "8", "f", "1d", "13", "11", "e", "17", "18", "1e", "1a"], true, function($__require, exports, module) {
+    $__System.registerDynamic("1d", [], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.DIRTY_REDRAW = exports.DIRTY_RESCAN = exports.ProseMirror = undefined;
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -2400,73 +2816,257 @@
                 return Constructor;
             };
         }();
-        $__require('c');
-        var _browserkeymap = $__require('14');
-        var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
-        var _sortedinsert = $__require('1b');
-        var _sortedinsert2 = _interopRequireDefault(_sortedinsert);
-        var _map = $__require('d');
-        var _event = $__require('1c');
-        var _dom = $__require('8');
-        var _format = $__require('f');
-        var _options = $__require('1d');
-        var _selection = $__require('13');
-        var _dompos = $__require('11');
-        var _draw = $__require('e');
-        var _input = $__require('17');
-        var _history = $__require('18');
-        var _range = $__require('1e');
-        var _transform = $__require('1a');
-        function _interopRequireDefault(obj) {
-            return obj && obj.__esModule ? obj : {default: obj};
-        }
         function _classCallCheck(instance, Constructor) {
             if (!(instance instanceof Constructor)) {
                 throw new TypeError("Cannot call a class as a function");
             }
         }
-        var ProseMirror = exports.ProseMirror = function() {
+        var UPDATE_TIMEOUT = 50;
+        var MIN_FLUSH_DELAY = 100;
+        var EditorScheduler = function() {
+            function EditorScheduler(pm) {
+                var _this = this;
+                _classCallCheck(this, EditorScheduler);
+                this.waiting = [];
+                this.timeout = null;
+                this.lastForce = 0;
+                this.pm = pm;
+                this.timedOut = function() {
+                    if (_this.pm.operation)
+                        _this.timeout = setTimeout(_this.timedOut, UPDATE_TIMEOUT);
+                    else
+                        _this.force();
+                };
+                pm.on.flush.add(this.onFlush.bind(this));
+            }
+            _createClass(EditorScheduler, [{
+                key: "set",
+                value: function set(f) {
+                    if (this.waiting.length == 0)
+                        this.timeout = setTimeout(this.timedOut, UPDATE_TIMEOUT);
+                    if (this.waiting.indexOf(f) == -1)
+                        this.waiting.push(f);
+                }
+            }, {
+                key: "unset",
+                value: function unset(f) {
+                    var index = this.waiting.indexOf(f);
+                    if (index > -1)
+                        this.waiting.splice(index, 1);
+                }
+            }, {
+                key: "force",
+                value: function force() {
+                    clearTimeout(this.timeout);
+                    this.lastForce = Date.now();
+                    while (this.waiting.length) {
+                        for (var i = 0; i < this.waiting.length; i++) {
+                            var result = this.waiting[i]();
+                            if (result)
+                                this.waiting[i] = result;
+                            else
+                                this.waiting.splice(i--, 1);
+                        }
+                    }
+                }
+            }, {
+                key: "onFlush",
+                value: function onFlush() {
+                    if (this.waiting.length && Date.now() - this.lastForce > MIN_FLUSH_DELAY)
+                        this.force();
+                }
+            }]);
+            return EditorScheduler;
+        }();
+        exports.EditorScheduler = EditorScheduler;
+        var UpdateScheduler = function() {
+            function UpdateScheduler(pm, subscriptions, start) {
+                var _this2 = this;
+                _classCallCheck(this, UpdateScheduler);
+                this.pm = pm;
+                this.start = start;
+                this.subscriptions = subscriptions;
+                this.onEvent = this.onEvent.bind(this);
+                this.subscriptions.forEach(function(sub) {
+                    return sub.add(_this2.onEvent);
+                });
+            }
+            _createClass(UpdateScheduler, [{
+                key: "detach",
+                value: function detach() {
+                    var _this3 = this;
+                    this.pm.unscheduleDOMUpdate(this.start);
+                    this.subscriptions.forEach(function(sub) {
+                        return sub.remove(_this3.onEvent);
+                    });
+                }
+            }, {
+                key: "onEvent",
+                value: function onEvent() {
+                    this.pm.scheduleDOMUpdate(this.start);
+                }
+            }, {
+                key: "force",
+                value: function force() {
+                    if (this.pm.operation) {
+                        this.onEvent();
+                    } else {
+                        this.pm.unscheduleDOMUpdate(this.start);
+                        for (var run = this.start; run; run = run()) {}
+                    }
+                }
+            }]);
+            return UpdateScheduler;
+        }();
+        exports.UpdateScheduler = UpdateScheduler;
+        return module.exports;
+    });
+
+    $__System.registerDynamic("1e", ["b", "c", "e", "5", "19", "18", "f", "15", "13", "11", "1a", "1b", "1f", "1c", "1d"], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        var _createClass = function() {
+            function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                    var descriptor = props[i];
+                    descriptor.enumerable = descriptor.enumerable || false;
+                    descriptor.configurable = true;
+                    if ("value" in descriptor)
+                        descriptor.writable = true;
+                    Object.defineProperty(target, descriptor.key, descriptor);
+                }
+            }
+            return function(Constructor, protoProps, staticProps) {
+                if (protoProps)
+                    defineProperties(Constructor.prototype, protoProps);
+                if (staticProps)
+                    defineProperties(Constructor, staticProps);
+                return Constructor;
+            };
+        }();
+        function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+            }
+        }
+        $__require('b');
+        var _require = $__require('c');
+        var Map = _require.Map;
+        var _require2 = $__require('e');
+        var Subscription = _require2.Subscription;
+        var PipelineSubscription = _require2.PipelineSubscription;
+        var StoppableSubscription = _require2.StoppableSubscription;
+        var DOMSubscription = _require2.DOMSubscription;
+        var _require3 = $__require('5');
+        var requestAnimationFrame = _require3.requestAnimationFrame;
+        var cancelAnimationFrame = _require3.cancelAnimationFrame;
+        var elt = _require3.elt;
+        var ensureCSSAdded = _require3.ensureCSSAdded;
+        var _require4 = $__require('19');
+        var mapThrough = _require4.mapThrough;
+        var _require5 = $__require('18');
+        var Mark = _require5.Mark;
+        var _require6 = $__require('f');
+        var parseOptions = _require6.parseOptions;
+        var _require7 = $__require('15');
+        var SelectionState = _require7.SelectionState;
+        var TextSelection = _require7.TextSelection;
+        var NodeSelection = _require7.NodeSelection;
+        var findSelectionAtStart = _require7.findSelectionAtStart;
+        var _hasFocus = _require7.hasFocus;
+        var _require8 = $__require('13');
+        var scrollIntoView = _require8.scrollIntoView;
+        var posAtCoords = _require8.posAtCoords;
+        var _coordsAtPos = _require8.coordsAtPos;
+        var _require9 = $__require('11');
+        var draw = _require9.draw;
+        var redraw = _require9.redraw;
+        var DIRTY_REDRAW = _require9.DIRTY_REDRAW;
+        var DIRTY_RESCAN = _require9.DIRTY_RESCAN;
+        var _require10 = $__require('1a');
+        var Input = _require10.Input;
+        var _require11 = $__require('1b');
+        var History = _require11.History;
+        var _require12 = $__require('1f');
+        var RangeStore = _require12.RangeStore;
+        var MarkedRange = _require12.MarkedRange;
+        var _require13 = $__require('1c');
+        var EditorTransform = _require13.EditorTransform;
+        var _require14 = $__require('1d');
+        var EditorScheduler = _require14.EditorScheduler;
+        var UpdateScheduler = _require14.UpdateScheduler;
+        var ProseMirror = function() {
             function ProseMirror(opts) {
+                var _this = this;
                 _classCallCheck(this, ProseMirror);
-                (0, _dom.ensureCSSAdded)();
-                opts = this.options = (0, _options.parseOptions)(opts);
-                this.schema = opts.schema;
+                ensureCSSAdded();
+                opts = this.options = parseOptions(opts);
+                this.schema = opts.schema || opts.doc && opts.doc.type.schema;
+                if (!this.schema)
+                    throw new RangeError("You must specify a schema option");
                 if (opts.doc == null)
-                    opts.doc = this.schema.node("doc", null, [this.schema.node("paragraph")]);
-                this.content = (0, _dom.elt)("div", {
+                    opts.doc = this.schema.nodes.doc.createAndFill();
+                if (opts.doc.type.schema != this.schema)
+                    throw new RangeError("Schema option does not correspond to schema used in doc option");
+                this.content = elt("div", {
                     class: "ProseMirror-content",
                     "pm-container": true
                 });
-                this.wrapper = (0, _dom.elt)("div", {class: "ProseMirror"}, this.content);
+                this.wrapper = elt("div", {class: "ProseMirror"}, this.content);
                 this.wrapper.ProseMirror = this;
+                this.on = {
+                    change: new Subscription(),
+                    selectionChange: new Subscription(),
+                    textInput: new Subscription(),
+                    beforeSetDoc: new Subscription(),
+                    setDoc: new Subscription(),
+                    interaction: new Subscription(),
+                    focus: new Subscription(),
+                    blur: new Subscription(),
+                    click: new StoppableSubscription(),
+                    clickOn: new StoppableSubscription(),
+                    doubleClick: new StoppableSubscription(),
+                    doubleClickOn: new StoppableSubscription(),
+                    contextMenu: new StoppableSubscription(),
+                    transformPasted: new PipelineSubscription(),
+                    transformPastedText: new PipelineSubscription(),
+                    transformPastedHTML: new PipelineSubscription(),
+                    transform: new Subscription(),
+                    beforeTransform: new Subscription(),
+                    filterTransform: new StoppableSubscription(),
+                    flushing: new Subscription(),
+                    flush: new Subscription(),
+                    draw: new Subscription(),
+                    activeMarkChange: new Subscription(),
+                    domDrop: new DOMSubscription()
+                };
                 if (opts.place && opts.place.appendChild)
                     opts.place.appendChild(this.wrapper);
                 else if (opts.place)
                     opts.place(this.wrapper);
-                this.setDocInner(opts.docFormat ? (0, _format.parseFrom)(this.schema, opts.doc, opts.docFormat) : opts.doc);
-                (0, _draw.draw)(this, this.doc);
+                this.setDocInner(opts.doc);
+                draw(this, this.doc);
                 this.content.contentEditable = true;
                 if (opts.label)
                     this.content.setAttribute("aria-label", opts.label);
-                this.mod = Object.create(null);
+                this.plugin = Object.create(null);
                 this.cached = Object.create(null);
                 this.operation = null;
-                this.dirtyNodes = new _map.Map();
+                this.dirtyNodes = new Map();
                 this.flushScheduled = null;
-                this.sel = new _selection.SelectionState(this, (0, _selection.findSelectionAtStart)(this.doc));
+                this.centralScheduler = new EditorScheduler(this);
+                this.sel = new SelectionState(this, findSelectionAtStart(this.doc));
                 this.accurateSelection = false;
-                this.input = new _input.Input(this);
-                this.commands = null;
-                this.commandKeys = null;
-                (0, _options.initOptions)(this);
+                this.input = new Input(this);
+                this.addKeymap(this.options.keymap, -100);
+                this.options.plugins.forEach(function(plugin) {
+                    return plugin.attach(_this);
+                });
             }
             _createClass(ProseMirror, [{
-                key: "setOption",
-                value: function setOption(name, value) {
-                    (0, _options.setOption)(this, name, value);
-                    this.signal("optionChanged", name, value);
-                }
-            }, {
                 key: "getOption",
                 value: function getOption(name) {
                     return this.options[name];
@@ -2475,21 +3075,20 @@
                 key: "setTextSelection",
                 value: function setTextSelection(anchor) {
                     var head = arguments.length <= 1 || arguments[1] === undefined ? anchor : arguments[1];
-                    this.checkPos(head, true);
-                    if (anchor != head)
-                        this.checkPos(anchor, true);
-                    this.setSelection(new _selection.TextSelection(anchor, head));
+                    var $anchor = this.doc.resolve(anchor),
+                        $head = this.doc.resolve(head);
+                    if (!$anchor.parent.isTextblock || !$head.parent.isTextblock)
+                        throw new RangeError("Setting text selection with an end not in a textblock");
+                    this.setSelection(new TextSelection($anchor, $head));
                 }
             }, {
                 key: "setNodeSelection",
                 value: function setNodeSelection(pos) {
-                    this.checkPos(pos, false);
-                    var node = this.doc.nodeAt(pos);
-                    if (!node)
-                        throw new RangeError("Trying to set a node selection that doesn't point at a node");
-                    if (!node.type.selectable)
-                        throw new RangeError("Trying to select a non-selectable node");
-                    this.setSelection(new _selection.NodeSelection(pos, pos + node.nodeSize, node));
+                    var $pos = this.doc.resolve(pos),
+                        node = $pos.nodeAfter;
+                    if (!node || !node.type.selectable)
+                        throw new RangeError("Trying to create a node selection that doesn't point at a selectable node");
+                    this.setSelection(new NodeSelection($pos));
                 }
             }, {
                 key: "setSelection",
@@ -2499,37 +3098,25 @@
                         this.sel.setAndSignal(selection);
                 }
             }, {
-                key: "setContent",
-                value: function setContent(value, format) {
-                    if (format)
-                        value = (0, _format.parseFrom)(this.schema, value, format);
-                    this.setDoc(value);
-                }
-            }, {
-                key: "getContent",
-                value: function getContent(format) {
-                    return format ? (0, _format.serializeTo)(this.doc, format) : this.doc;
-                }
-            }, {
                 key: "setDocInner",
                 value: function setDocInner(doc) {
                     if (doc.type != this.schema.nodes.doc)
                         throw new RangeError("Trying to set a document with a different schema");
                     this.doc = doc;
-                    this.ranges = new _range.RangeStore(this);
-                    this.history = new _history.History(this);
+                    this.ranges = new RangeStore(this);
+                    this.history = new History(this);
                 }
             }, {
                 key: "setDoc",
                 value: function setDoc(doc, sel) {
                     if (!sel)
-                        sel = (0, _selection.findSelectionAtStart)(doc);
-                    this.signal("beforeSetDoc", doc, sel);
+                        sel = findSelectionAtStart(doc);
+                    this.on.beforeSetDoc.dispatch(doc, sel);
                     this.ensureOperation();
                     this.setDocInner(doc);
                     this.operation.docSet = true;
                     this.sel.set(sel, true);
-                    this.signal("setDoc", doc, sel);
+                    this.on.setDoc.dispatch(doc, sel);
                 }
             }, {
                 key: "updateDoc",
@@ -2539,34 +3126,25 @@
                     this.operation.mappings.push(mapping);
                     this.doc = doc;
                     this.sel.setAndSignal(selection || this.sel.range.map(doc, mapping));
-                    this.signal("change");
+                    this.on.change.dispatch();
                 }
             }, {
                 key: "apply",
                 value: function apply(transform) {
                     var options = arguments.length <= 1 || arguments[1] === undefined ? nullOptions : arguments[1];
                     if (!transform.steps.length)
-                        return false;
+                        return transform;
                     if (!transform.docs[0].eq(this.doc))
                         throw new RangeError("Applying a transform that does not start with the current document");
-                    if (options.filter !== false && this.signalHandleable("filterTransform", transform))
-                        return false;
+                    if (options.filter !== false && this.on.filterTransform.dispatch(transform))
+                        return transform;
                     var selectionBeforeTransform = this.selection;
-                    this.signal("beforeTransform", transform, options);
-                    this.updateDoc(transform.doc, transform, options.selection);
-                    this.signal("transform", transform, selectionBeforeTransform, options);
+                    this.on.beforeTransform.dispatch(transform, options);
+                    this.updateDoc(transform.doc, transform, options.selection || transform.selection);
+                    this.on.transform.dispatch(transform, selectionBeforeTransform, options);
                     if (options.scrollIntoView)
                         this.scrollIntoView();
                     return transform;
-                }
-            }, {
-                key: "checkPos",
-                value: function checkPos(pos, textblock) {
-                    var valid = pos >= 0 && pos <= this.doc.content.size;
-                    if (valid && textblock)
-                        valid = this.doc.resolve(pos).parent.isTextblock;
-                    if (!valid)
-                        throw new RangeError("Position " + pos + " is not valid in current document");
                 }
             }, {
                 key: "ensureOperation",
@@ -2576,13 +3154,13 @@
             }, {
                 key: "startOperation",
                 value: function startOperation(options) {
-                    var _this = this;
-                    this.operation = new Operation(this);
+                    var _this2 = this;
+                    this.operation = new Operation(this, options);
                     if (!(options && options.readSelection === false) && this.sel.readFromDOM())
                         this.operation.sel = this.sel.range;
                     if (this.flushScheduled == null)
-                        this.flushScheduled = (0, _dom.requestAnimationFrame)(function() {
-                            return _this.flush();
+                        this.flushScheduled = requestAnimationFrame(function() {
+                            return _this2.flush();
                         });
                     return this.operation;
                 }
@@ -2590,7 +3168,7 @@
                 key: "unscheduleFlush",
                 value: function unscheduleFlush() {
                     if (this.flushScheduled != null) {
-                        (0, _dom.cancelAnimationFrame)(this.flushScheduled);
+                        cancelAnimationFrame(this.flushScheduled);
                         this.flushScheduled = null;
                     }
                 }
@@ -2600,7 +3178,7 @@
                     this.unscheduleFlush();
                     if (!document.body.contains(this.wrapper) || !this.operation)
                         return false;
-                    this.signal("flushing");
+                    this.on.flushing.dispatch();
                     var op = this.operation,
                         redrawn = false;
                     if (!op)
@@ -2610,29 +3188,33 @@
                     this.operation = null;
                     this.accurateSelection = true;
                     if (op.doc != this.doc || this.dirtyNodes.size) {
-                        (0, _draw.redraw)(this, this.dirtyNodes, this.doc, op.doc);
+                        redraw(this, this.dirtyNodes, this.doc, op.doc);
                         this.dirtyNodes.clear();
                         redrawn = true;
                     }
                     if (redrawn || !op.sel.eq(this.sel.range) || op.focus)
                         this.sel.toDOM(op.focus);
                     if (op.scrollIntoView !== false)
-                        (0, _dompos.scrollIntoView)(this, op.scrollIntoView);
+                        scrollIntoView(this, op.scrollIntoView);
                     if (redrawn)
-                        this.signal("draw");
-                    this.signal("flush");
+                        this.on.draw.dispatch();
+                    this.on.flush.dispatch();
                     this.accurateSelection = false;
                     return redrawn;
                 }
             }, {
                 key: "addKeymap",
                 value: function addKeymap(map) {
-                    var rank = arguments.length <= 1 || arguments[1] === undefined ? 50 : arguments[1];
-                    (0, _sortedinsert2.default)(this.input.keymaps, {
+                    var priority = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+                    var i = 0,
+                        maps = this.input.keymaps;
+                    for (; i < maps.length; i++) {
+                        if (maps[i].priority < priority)
+                            break;
+                    }
+                    maps.splice(i, 0, {
                         map: map,
-                        rank: rank
-                    }, function(a, b) {
-                        return a.rank - b.rank;
+                        priority: priority
                     });
                 }
             }, {
@@ -2649,9 +3231,7 @@
             }, {
                 key: "markRange",
                 value: function markRange(from, to, options) {
-                    this.checkPos(from);
-                    this.checkPos(to);
-                    var range = new _range.MarkedRange(from, to, options);
+                    var range = new MarkedRange(from, to, options);
                     this.ranges.addRange(range);
                     return range;
                 }
@@ -2661,29 +3241,25 @@
                     this.ranges.removeRange(range);
                 }
             }, {
-                key: "setMark",
-                value: function setMark(type, to, attrs) {
-                    var sel = this.selection;
-                    if (sel.empty) {
-                        var marks = this.activeMarks();
-                        if (to == null)
-                            to = !type.isInSet(marks);
-                        if (to && !this.doc.resolve(sel.head).parent.type.canContainMark(type))
-                            return;
-                        this.input.storedMarks = to ? type.create(attrs).addToSet(marks) : type.removeFromSet(marks);
-                        this.signal("activeMarkChange");
-                    } else {
-                        if (to != null ? to : !this.doc.rangeHasMark(sel.from, sel.to, type))
-                            this.apply(this.tr.addMark(sel.from, sel.to, type.create(attrs)));
-                        else
-                            this.apply(this.tr.removeMark(sel.from, sel.to, type));
+                key: "activeMarks",
+                value: function activeMarks() {
+                    return this.input.storedMarks || currentMarks(this);
+                }
+            }, {
+                key: "addActiveMark",
+                value: function addActiveMark(mark) {
+                    if (this.selection.empty) {
+                        this.input.storedMarks = mark.addToSet(this.input.storedMarks || currentMarks(this));
+                        this.on.activeMarkChange.dispatch();
                     }
                 }
             }, {
-                key: "activeMarks",
-                value: function activeMarks() {
-                    var head;
-                    return this.input.storedMarks || ((head = this.selection.head) != null ? this.doc.marksAt(head) : []);
+                key: "removeActiveMark",
+                value: function removeActiveMark(markType) {
+                    if (this.selection.empty) {
+                        this.input.storedMarks = markType.removeFromSet(this.input.storedMarks || currentMarks(this));
+                        this.on.activeMarkChange.dispatch();
+                    }
                 }
             }, {
                 key: "focus",
@@ -2696,62 +3272,56 @@
             }, {
                 key: "hasFocus",
                 value: function hasFocus() {
-                    if (this.sel.range instanceof _selection.NodeSelection)
+                    if (this.sel.range instanceof NodeSelection)
                         return document.activeElement == this.content;
                     else
-                        return (0, _selection.hasFocus)(this);
+                        return _hasFocus(this);
                 }
             }, {
                 key: "posAtCoords",
                 value: function posAtCoords(coords) {
-                    this.flush();
-                    return (0, _dompos.posAtCoords)(this, coords);
+                    var result = mappedPosAtCoords(this, coords);
+                    return result && result.pos;
+                }
+            }, {
+                key: "contextAtCoords",
+                value: function contextAtCoords(coords) {
+                    var result = mappedPosAtCoords(this, coords);
+                    if (!result)
+                        return null;
+                    var $pos = this.doc.resolve(result.inLeaf == -1 ? result.pos : result.inLeaf),
+                        inside = [];
+                    for (var i = 1; i <= $pos.depth; i++) {
+                        inside.push({
+                            pos: $pos.before(i),
+                            node: $pos.node(i)
+                        });
+                    }
+                    if (result.inLeaf > -1) {
+                        var after = $pos.nodeAfter;
+                        if (after && !after.isText && after.type.isLeaf)
+                            inside.push({
+                                pos: result.inLeaf,
+                                node: after
+                            });
+                    }
+                    return {
+                        pos: result.pos,
+                        inside: inside
+                    };
                 }
             }, {
                 key: "coordsAtPos",
                 value: function coordsAtPos(pos) {
-                    this.checkPos(pos);
                     this.flush();
-                    return (0, _dompos.coordsAtPos)(this, pos);
+                    return _coordsAtPos(this, pos);
                 }
             }, {
                 key: "scrollIntoView",
                 value: function scrollIntoView() {
                     var pos = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
-                    if (pos)
-                        this.checkPos(pos);
                     this.ensureOperation();
                     this.operation.scrollIntoView = pos;
-                }
-            }, {
-                key: "execCommand",
-                value: function execCommand(name, params) {
-                    var cmd = this.commands[name];
-                    return !!(cmd && cmd.exec(this, params) !== false);
-                }
-            }, {
-                key: "keyForCommand",
-                value: function keyForCommand(name) {
-                    var cached = this.commandKeys[name];
-                    if (cached !== undefined)
-                        return cached;
-                    var cmd = this.commands[name],
-                        keymap = this.input.baseKeymap;
-                    if (!cmd)
-                        return this.commandKeys[name] = null;
-                    var key = cmd.spec.key || (_dom.browser.mac ? cmd.spec.macKey : cmd.spec.pcKey);
-                    if (key) {
-                        key = _browserkeymap2.default.normalizeKeyName(Array.isArray(key) ? key[0] : key);
-                        var deflt = keymap.bindings[key];
-                        if (Array.isArray(deflt) ? deflt.indexOf(name) > -1 : deflt == name)
-                            return this.commandKeys[name] = key;
-                    }
-                    for (var _key in keymap.bindings) {
-                        var bound = keymap.bindings[_key];
-                        if (Array.isArray(bound) ? bound.indexOf(name) > -1 : bound == name)
-                            return this.commandKeys[name] = _key;
-                    }
-                    return this.commandKeys[name] = null;
                 }
             }, {
                 key: "markRangeDirty",
@@ -2768,7 +3338,7 @@
                             dirty.set(child, DIRTY_RESCAN);
                     }
                     var start = $from.index(same),
-                        end = Math.max(start + 1, $to.index(same) + (same == $to.depth ? 0 : 1));
+                        end = $to.index(same) + (same == $to.depth && $to.atNodeBoundary ? 0 : 1);
                     var parent = $from.node(same);
                     for (var i = start; i < end; i++) {
                         dirty.set(parent.child(i), DIRTY_REDRAW);
@@ -2786,6 +3356,21 @@
                     return trans ? trans(string) : string;
                 }
             }, {
+                key: "scheduleDOMUpdate",
+                value: function scheduleDOMUpdate(f) {
+                    this.centralScheduler.set(f);
+                }
+            }, {
+                key: "unscheduleDOMUpdate",
+                value: function unscheduleDOMUpdate(f) {
+                    this.centralScheduler.unset(f);
+                }
+            }, {
+                key: "updateScheduler",
+                value: function updateScheduler(subscriptions, start) {
+                    return new UpdateScheduler(this, subscriptions, start);
+                }
+            }, {
                 key: "selection",
                 get: function get() {
                     if (!this.accurateSelection)
@@ -2795,21 +3380,36 @@
             }, {
                 key: "tr",
                 get: function get() {
-                    return new _transform.EditorTransform(this);
+                    return new EditorTransform(this);
                 }
             }]);
             return ProseMirror;
         }();
-        ProseMirror.prototype.apply.scroll = {scrollIntoView: true};
-        var DIRTY_RESCAN = exports.DIRTY_RESCAN = 1,
-            DIRTY_REDRAW = exports.DIRTY_REDRAW = 2;
+        exports.ProseMirror = ProseMirror;
+        function mappedPosAtCoords(pm, coords) {
+            if (pm.operation && (pm.dirtyNodes.size > 0 || pm.operation.composing || pm.operation.docSet))
+                pm.flush();
+            var result = posAtCoords(pm, coords);
+            if (!result)
+                return null;
+            if (pm.operation)
+                return {
+                    pos: mapThrough(pm.operation.mappings, result.pos),
+                    inLeaf: result.inLeaf < 0 ? null : mapThrough(pm.operation.mappings, result.inLeaf)
+                };
+            else
+                return result;
+        }
+        function currentMarks(pm) {
+            var head = pm.selection.head;
+            return head == null ? Mark.none : pm.doc.marksAt(head);
+        }
         var nullOptions = {};
-        (0, _event.eventMixin)(ProseMirror);
-        var Operation = function Operation(pm) {
+        var Operation = function Operation(pm, options) {
             _classCallCheck(this, Operation);
             this.doc = pm.doc;
             this.docSet = false;
-            this.sel = pm.sel.range;
+            this.sel = options && options.selection || pm.sel.range;
             this.scrollIntoView = false;
             this.focus = false;
             this.mappings = [];
@@ -2818,14 +3418,12 @@
         return module.exports;
     });
 
-    $__System.registerDynamic("1f", ["8"], true, function($__require, exports, module) {
+    $__System.registerDynamic("1f", [], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.ParamPrompt = undefined;
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -2845,402 +3443,12 @@
                 return Constructor;
             };
         }();
-        exports.openPrompt = openPrompt;
-        var _dom = $__require('8');
         function _classCallCheck(instance, Constructor) {
             if (!(instance instanceof Constructor)) {
                 throw new TypeError("Cannot call a class as a function");
             }
         }
-        var ParamPrompt = exports.ParamPrompt = function() {
-            function ParamPrompt(pm, command) {
-                var _this = this;
-                _classCallCheck(this, ParamPrompt);
-                this.pm = pm;
-                this.command = command;
-                this.doClose = null;
-                this.fields = command.params.map(function(param) {
-                    if (!(param.type in _this.paramTypes))
-                        throw new RangeError("Unsupported parameter type: " + param.type);
-                    return _this.paramTypes[param.type].render.call(_this.pm, param, _this.defaultValue(param));
-                });
-                var promptTitle = (0, _dom.elt)("h5", {}, command.spec && command.spec.label ? pm.translate(command.spec.label) : "");
-                var submitButton = (0, _dom.elt)("button", {
-                    type: "submit",
-                    class: "ProseMirror-prompt-submit"
-                }, "Ok");
-                var cancelButton = (0, _dom.elt)("button", {
-                    type: "button",
-                    class: "ProseMirror-prompt-cancel"
-                }, "Cancel");
-                cancelButton.addEventListener("click", function() {
-                    return _this.close();
-                });
-                this.form = (0, _dom.elt)("form", null, promptTitle, this.fields.map(function(f) {
-                    return (0, _dom.elt)("div", null, f);
-                }), (0, _dom.elt)("div", {class: "ProseMirror-prompt-buttons"}, submitButton, " ", cancelButton));
-            }
-            _createClass(ParamPrompt, [{
-                key: "close",
-                value: function close() {
-                    if (this.doClose) {
-                        this.doClose();
-                        this.doClose = null;
-                    }
-                }
-            }, {
-                key: "open",
-                value: function open() {
-                    var _this2 = this;
-                    this.close();
-                    var prompt = this.prompt();
-                    var hadFocus = this.pm.hasFocus();
-                    this.doClose = function() {
-                        prompt.close();
-                        if (hadFocus)
-                            setTimeout(function() {
-                                return _this2.pm.focus();
-                            }, 50);
-                    };
-                    var submit = function submit() {
-                        var params = _this2.values();
-                        if (params) {
-                            _this2.close();
-                            _this2.command.exec(_this2.pm, params);
-                        }
-                    };
-                    this.form.addEventListener("submit", function(e) {
-                        e.preventDefault();
-                        submit();
-                    });
-                    this.form.addEventListener("keydown", function(e) {
-                        if (e.keyCode == 27) {
-                            e.preventDefault();
-                            prompt.close();
-                        } else if (e.keyCode == 13 && !(e.ctrlKey || e.metaKey || e.shiftKey)) {
-                            e.preventDefault();
-                            submit();
-                        }
-                    });
-                    var input = this.form.querySelector("input, textarea");
-                    if (input)
-                        input.focus();
-                }
-            }, {
-                key: "values",
-                value: function values() {
-                    var result = [];
-                    for (var i = 0; i < this.command.params.length; i++) {
-                        var param = this.command.params[i],
-                            dom = this.fields[i];
-                        var type = this.paramTypes[param.type],
-                            value = undefined,
-                            bad = undefined;
-                        if (type.validate)
-                            bad = type.validate(dom);
-                        if (!bad) {
-                            value = type.read.call(this.pm, dom);
-                            if (param.validate)
-                                bad = param.validate(value);
-                            else if (!value && param.default == null)
-                                bad = "No default value available";
-                        }
-                        if (bad) {
-                            if (type.reportInvalid)
-                                type.reportInvalid.call(this.pm, dom, bad);
-                            else
-                                this.reportInvalid(dom, bad);
-                            return null;
-                        }
-                        result.push(value);
-                    }
-                    return result;
-                }
-            }, {
-                key: "defaultValue",
-                value: function defaultValue(param) {
-                    if (param.prefill) {
-                        var prefill = param.prefill.call(this.command.self, this.pm);
-                        if (prefill != null)
-                            return prefill;
-                    }
-                    return param.default;
-                }
-            }, {
-                key: "prompt",
-                value: function prompt() {
-                    var _this3 = this;
-                    return openPrompt(this.pm, this.form, {onClose: function onClose() {
-                        return _this3.close();
-                    }});
-                }
-            }, {
-                key: "reportInvalid",
-                value: function reportInvalid(dom, message) {
-                    var parent = dom.parentNode;
-                    var style = "left: " + (dom.offsetLeft + dom.offsetWidth + 2) + "px; top: " + (dom.offsetTop - 5) + "px";
-                    var msg = parent.appendChild((0, _dom.elt)("div", {
-                        class: "ProseMirror-invalid",
-                        style: style
-                    }, message));
-                    setTimeout(function() {
-                        return parent.removeChild(msg);
-                    }, 1500);
-                }
-            }]);
-            return ParamPrompt;
-        }();
-        ParamPrompt.prototype.paramTypes = Object.create(null);
-        ParamPrompt.prototype.paramTypes.text = {
-            render: function render(param, value) {
-                return (0, _dom.elt)("input", {
-                    type: "text",
-                    placeholder: this.translate(param.label),
-                    value: value,
-                    autocomplete: "off"
-                });
-            },
-            read: function read(dom) {
-                return dom.value;
-            }
-        };
-        ParamPrompt.prototype.paramTypes.select = {
-            render: function render(param, value) {
-                var _this4 = this;
-                var options = param.options.call ? param.options(this) : param.options;
-                return (0, _dom.elt)("select", null, options.map(function(o) {
-                    return (0, _dom.elt)("option", {
-                        value: o.value,
-                        selected: o.value == value ? "true" : null
-                    }, _this4.translate(o.label));
-                }));
-            },
-            read: function read(dom) {
-                return dom.value;
-            }
-        };
-        function openPrompt(pm, content, options) {
-            var button = (0, _dom.elt)("button", {class: "ProseMirror-prompt-close"});
-            var wrapper = (0, _dom.elt)("div", {class: "ProseMirror-prompt"}, content, button);
-            var outerBox = pm.wrapper.getBoundingClientRect();
-            pm.wrapper.appendChild(wrapper);
-            if (options && options.pos) {
-                wrapper.style.left = options.pos.left - outerBox.left + "px";
-                wrapper.style.top = options.pos.top - outerBox.top + "px";
-            } else {
-                var blockBox = wrapper.getBoundingClientRect();
-                var cX = Math.max(0, outerBox.left) + Math.min(window.innerWidth, outerBox.right) - blockBox.width;
-                var cY = Math.max(0, outerBox.top) + Math.min(window.innerHeight, outerBox.bottom) - blockBox.height;
-                wrapper.style.left = cX / 2 - outerBox.left + "px";
-                wrapper.style.top = cY / 2 - outerBox.top + "px";
-            }
-            var close = function close() {
-                pm.off("interaction", close);
-                if (wrapper.parentNode) {
-                    wrapper.parentNode.removeChild(wrapper);
-                    if (options && options.onClose)
-                        options.onClose();
-                }
-            };
-            button.addEventListener("click", close);
-            pm.on("interaction", close);
-            return {close: close};
-        }
-        (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt h5 {\n  margin: 0;\n  font-weight: normal;\n  font-size: 100%;\n  color: #444;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n\n.ProseMirror-prompt-buttons {\n  margin-top: 5px;\n  display: none;\n}\n\n");
-        return module.exports;
-    });
-
-    $__System.registerDynamic("1d", ["6", "1f", "20"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.defineOption = defineOption;
-        exports.parseOptions = parseOptions;
-        exports.initOptions = initOptions;
-        exports.setOption = setOption;
-        var _model = $__require('6');
-        var _prompt = $__require('1f');
-        var _command = $__require('20');
-        function _classCallCheck(instance, Constructor) {
-            if (!(instance instanceof Constructor)) {
-                throw new TypeError("Cannot call a class as a function");
-            }
-        }
-        var Option = function Option(defaultValue, update, updateOnInit) {
-            _classCallCheck(this, Option);
-            this.defaultValue = defaultValue;
-            this.update = update;
-            this.updateOnInit = updateOnInit !== false;
-        };
-        var options = Object.create(null);
-        function defineOption(name, defaultValue, update, updateOnInit) {
-            options[name] = new Option(defaultValue, update, updateOnInit);
-        }
-        defineOption("schema", _model.defaultSchema, false);
-        defineOption("doc", null, function(pm, value) {
-            return pm.setDoc(value);
-        }, false);
-        defineOption("docFormat", null);
-        defineOption("place", null);
-        defineOption("historyDepth", 100);
-        defineOption("historyEventDelay", 500);
-        defineOption("commands", _command.CommandSet.default, _command.updateCommands);
-        defineOption("commandParamPrompt", _prompt.ParamPrompt);
-        defineOption("label", null);
-        defineOption("translate", null);
-        function parseOptions(obj) {
-            var result = Object.create(null);
-            var given = obj ? [obj].concat(obj.use || []) : [];
-            outer: for (var opt in options) {
-                for (var i = 0; i < given.length; i++) {
-                    if (opt in given[i]) {
-                        result[opt] = given[i][opt];
-                        continue outer;
-                    }
-                }
-                result[opt] = options[opt].defaultValue;
-            }
-            return result;
-        }
-        function initOptions(pm) {
-            for (var opt in options) {
-                var desc = options[opt];
-                if (desc.update && desc.updateOnInit)
-                    desc.update(pm, pm.options[opt], null, true);
-            }
-        }
-        function setOption(pm, name, value) {
-            var desc = options[name];
-            if (desc === undefined)
-                throw new RangeError("Option '" + name + "' is not defined");
-            if (desc.update === false)
-                throw new RangeError("Option '" + name + "' can not be changed");
-            var old = pm.options[name];
-            pm.options[name] = value;
-            if (desc.update)
-                desc.update(pm, value, old, false);
-        }
-        return module.exports;
-    });
-
-    $__System.registerDynamic("1c", [], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.eventMixin = eventMixin;
-        var noHandlers = [];
-        function getHandlers(obj, type) {
-            return obj._handlers && obj._handlers[type] || noHandlers;
-        }
-        var methods = {
-            on: function on(type, handler) {
-                var map = this._handlers || (this._handlers = Object.create(null));
-                map[type] = type in map ? map[type].concat(handler) : [handler];
-            },
-            off: function off(type, handler) {
-                var map = this._handlers,
-                    arr = map && map[type];
-                if (arr)
-                    for (var i = 0; i < arr.length; ++i) {
-                        if (arr[i] == handler) {
-                            map[type] = arr.slice(0, i).concat(arr.slice(i + 1));
-                            break;
-                        }
-                    }
-            },
-            signal: function signal(type) {
-                var arr = getHandlers(this, type);
-                for (var _len = arguments.length,
-                         args = Array(_len > 1 ? _len - 1 : 0),
-                         _key = 1; _key < _len; _key++) {
-                    args[_key - 1] = arguments[_key];
-                }
-                for (var i = 0; i < arr.length; ++i) {
-                    arr[i].apply(arr, args);
-                }
-            },
-            signalHandleable: function signalHandleable(type) {
-                var arr = getHandlers(this, type);
-                for (var _len2 = arguments.length,
-                         args = Array(_len2 > 1 ? _len2 - 1 : 0),
-                         _key2 = 1; _key2 < _len2; _key2++) {
-                    args[_key2 - 1] = arguments[_key2];
-                }
-                for (var i = 0; i < arr.length; ++i) {
-                    var result = arr[i].apply(arr, args);
-                    if (result != null)
-                        return result;
-                }
-            },
-            signalPipelined: function signalPipelined(type, value) {
-                var arr = getHandlers(this, type);
-                for (var i = 0; i < arr.length; ++i) {
-                    value = arr[i](value);
-                }
-                return value;
-            },
-            signalDOM: function signalDOM(event, type) {
-                var arr = getHandlers(this, type || event.type);
-                for (var i = 0; i < arr.length; ++i) {
-                    if (arr[i](event) || event.defaultPrevented)
-                        return true;
-                }
-                return false;
-            },
-            hasHandler: function hasHandler(type) {
-                return getHandlers(this, type).length > 0;
-            }
-        };
-        function eventMixin(ctor) {
-            var proto = ctor.prototype;
-            for (var prop in methods) {
-                if (methods.hasOwnProperty(prop))
-                    proto[prop] = methods[prop];
-            }
-        }
-        return module.exports;
-    });
-
-    $__System.registerDynamic("1e", ["1c"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.RangeStore = exports.MarkedRange = undefined;
-        var _createClass = function() {
-            function defineProperties(target, props) {
-                for (var i = 0; i < props.length; i++) {
-                    var descriptor = props[i];
-                    descriptor.enumerable = descriptor.enumerable || false;
-                    descriptor.configurable = true;
-                    if ("value" in descriptor)
-                        descriptor.writable = true;
-                    Object.defineProperty(target, descriptor.key, descriptor);
-                }
-            }
-            return function(Constructor, protoProps, staticProps) {
-                if (protoProps)
-                    defineProperties(Constructor.prototype, protoProps);
-                if (staticProps)
-                    defineProperties(Constructor, staticProps);
-                return Constructor;
-            };
-        }();
-        var _event = $__require('1c');
-        function _classCallCheck(instance, Constructor) {
-            if (!(instance instanceof Constructor)) {
-                throw new TypeError("Cannot call a class as a function");
-            }
-        }
-        var MarkedRange = exports.MarkedRange = function() {
+        var MarkedRange = function() {
             function MarkedRange(from, to, options) {
                 _classCallCheck(this, MarkedRange);
                 this.options = options || {};
@@ -3250,13 +3458,14 @@
             _createClass(MarkedRange, [{
                 key: "remove",
                 value: function remove() {
-                    this.signal("removed", this.from, Math.max(this.to, this.from));
+                    if (this.options.onRemove)
+                        this.options.onRemove(this.from, Math.max(this.to, this.from));
                     this.from = this.to = null;
                 }
             }]);
             return MarkedRange;
         }();
-        (0, _event.eventMixin)(MarkedRange);
+        exports.MarkedRange = MarkedRange;
         var RangeSorter = function() {
             function RangeSorter() {
                 _classCallCheck(this, RangeSorter);
@@ -3319,7 +3528,7 @@
             }]);
             return RangeSorter;
         }();
-        var RangeStore = exports.RangeStore = function() {
+        var RangeStore = function() {
             function RangeStore(pm) {
                 _classCallCheck(this, RangeStore);
                 this.pm = pm;
@@ -3380,6 +3589,10 @@
             }]);
             return RangeStore;
         }();
+        exports.RangeStore = RangeStore;
+        function significant(range) {
+            return range.options.className && range.from != range.to;
+        }
         var RangeTracker = function() {
             function RangeTracker(sorted) {
                 _classCallCheck(this, RangeTracker);
@@ -3390,10 +3603,10 @@
             _createClass(RangeTracker, [{
                 key: "advanceTo",
                 value: function advanceTo(pos) {
-                    var next = undefined;
+                    var next = void 0;
                     while (this.pos < this.sorted.length && (next = this.sorted[this.pos]).at <= pos) {
-                        var className = next.range.options.className;
-                        if (className) {
+                        if (significant(next.range)) {
+                            var className = next.range.options.className;
                             if (next.type == "open")
                                 this.current.push(className);
                             else
@@ -3409,7 +3622,7 @@
                         if (this.pos == this.sorted.length)
                             return -1;
                         var next = this.sorted[this.pos];
-                        if (!next.range.options.className)
+                        if (!significant(next.range))
                             this.pos++;
                         else if (next.at >= pos)
                             return -1;
@@ -3423,622 +3636,48 @@
         return module.exports;
     });
 
-    $__System.registerDynamic("21", ["6", "22", "23", "16"], true, function($__require, exports, module) {
+    $__System.registerDynamic("10", ["16", "12", "20"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.canLift = canLift;
-        exports.canWrap = canWrap;
-        var _model = $__require('6');
-        var _transform = $__require('22');
-        var _step = $__require('23');
-        var _map = $__require('16');
-        function isFlatRange($from, $to) {
-            if ($from.depth != $to.depth)
-                return false;
-            for (var i = 0; i < $from.depth; i++) {
-                if ($from.index(i) != $to.index(i))
-                    return false;
-            }
-            return $from.parentOffset <= $to.parentOffset;
-        }
-        _step.Step.define("ancestor", {
-            apply: function apply(doc, step) {
-                var $from = doc.resolve(step.from),
-                    $to = doc.resolve(step.to);
-                if (!isFlatRange($from, $to))
-                    return _step.StepResult.fail("Not a flat range");
-                var _step$param = step.param;
-                var _step$param$depth = _step$param.depth;
-                var depth = _step$param$depth === undefined ? 0 : _step$param$depth;
-                var _step$param$types = _step$param.types;
-                var types = _step$param$types === undefined ? [] : _step$param$types;
-                var _step$param$attrs = _step$param.attrs;
-                var attrs = _step$param$attrs === undefined ? [] : _step$param$attrs;
-                if (depth == 0 && types.length == 0)
-                    return _step.StepResult.ok(doc);
-                for (var i = 0,
-                         d = $from.depth; i < depth; i++, d--) {
-                    if ($from.start(d) != $from.pos - i || $to.end(d) != $to.pos + i)
-                        return _step.StepResult.fail("Parent at depth " + d + " not fully covered");
-                }
-                var inner = $from.parent,
-                    slice = undefined;
-                if (types.length) {
-                    var lastWrapper = types[types.length - 1];
-                    if (!lastWrapper.contains)
-                        throw new RangeError("Can not wrap content in node type " + lastWrapper.name);
-                    var content = inner.content.cut($from.parentOffset, $to.parentOffset);
-                    if (!lastWrapper.checkContent(content, attrs[types.length - 1]))
-                        return _step.StepResult.fail("Content can not be wrapped in ancestor " + lastWrapper.name);
-                    for (var i = types.length - 1; i >= 0; i--) {
-                        content = _model.Fragment.from(types[i].create(attrs[i], content));
-                    }
-                    slice = new _model.Slice(content, 0, 0);
-                } else {
-                    slice = new _model.Slice(inner.content, 0, 0);
-                }
-                return _step.StepResult.fromReplace(doc, $from.pos - depth, $to.pos + depth, slice);
-            },
-            posMap: function posMap(step) {
-                var depth = step.param.depth || 0,
-                    newDepth = step.param.types ? step.param.types.length : 0;
-                if (depth == newDepth && depth < 2)
-                    return _map.PosMap.empty;
-                return new _map.PosMap([step.from - depth, depth, newDepth, step.to, depth, newDepth]);
-            },
-            invert: function invert(step, oldDoc) {
-                var types = [],
-                    attrs = [];
-                var $from = oldDoc.resolve(step.from);
-                var oldDepth = step.param.depth || 0,
-                    newDepth = step.param.types ? step.param.types.length : 0;
-                for (var i = 0; i < oldDepth; i++) {
-                    var parent = $from.node($from.depth - i);
-                    types.unshift(parent.type);
-                    attrs.unshift(parent.attrs);
-                }
-                var dDepth = newDepth - oldDepth;
-                return new _step.Step("ancestor", step.from + dDepth, step.to + dDepth, {
-                    depth: newDepth,
-                    types: types,
-                    attrs: attrs
-                });
-            },
-            paramToJSON: function paramToJSON(param) {
-                return {
-                    depth: param.depth,
-                    types: param.types && param.types.map(function(t) {
-                        return t.name;
-                    }),
-                    attrs: param.attrs
-                };
-            },
-            paramFromJSON: function paramFromJSON(schema, json) {
-                return {
-                    depth: json.depth,
-                    types: json.types && json.types.map(function(n) {
-                        return schema.nodeType(n);
-                    }),
-                    attrs: json.attrs
-                };
-            }
+        var Keymap = $__require('16');
+        var browser = $__require('12');
+        var c = $__require('20').commands;
+        var baseKeymap = new Keymap({
+            "Enter": c.chainCommands(c.newlineInCode, c.createParagraphNear, c.liftEmptyBlock, c.splitBlock),
+            "Backspace": c.chainCommands(c.deleteSelection, c.joinBackward, c.deleteCharBefore),
+            "Mod-Backspace": c.chainCommands(c.deleteSelection, c.joinBackward, c.deleteWordBefore),
+            "Delete": c.chainCommands(c.deleteSelection, c.joinForward, c.deleteCharAfter),
+            "Mod-Delete": c.chainCommands(c.deleteSelection, c.joinForward, c.deleteWordAfter),
+            "Alt-Up": c.joinUp,
+            "Alt-Down": c.joinDown,
+            "Mod-[": c.lift,
+            "Esc": c.selectParentNode,
+            "Mod-Z": c.undo,
+            "Mod-Y": c.redo,
+            "Shift-Mod-Z": c.redo
         });
-        function canLift(doc, from, to) {
-            return !!findLiftable(doc.resolve(from), doc.resolve(to == null ? from : to));
-        }
-        function rangeDepth(from, to) {
-            var shared = from.sameDepth(to);
-            if (from.node(shared).isTextblock)
-                --shared;
-            if (shared && from.before(shared) >= to.after(shared))
-                return null;
-            return shared;
-        }
-        function findLiftable(from, to) {
-            var shared = rangeDepth(from, to);
-            if (shared == null)
-                return null;
-            var parent = from.node(shared);
-            for (var depth = shared - 1; depth >= 0; --depth) {
-                if (from.node(depth).type.canContainContent(parent.type))
-                    return {
-                        depth: depth,
-                        shared: shared,
-                        unwrap: false
-                    };
-            }
-            if (parent.isBlock)
-                for (var depth = shared - 1; depth >= 0; --depth) {
-                    var target = from.node(depth);
-                    for (var i = from.index(shared),
-                             e = Math.min(to.index(shared) + 1, parent.childCount); i < e; i++) {
-                        if (!target.type.canContainContent(parent.child(i).type))
-                            continue;
-                    }
-                    return {
-                        depth: depth,
-                        shared: shared,
-                        unwrap: true
-                    };
-                }
-        }
-        _transform.Transform.prototype.lift = function(from) {
-            var to = arguments.length <= 1 || arguments[1] === undefined ? from : arguments[1];
-            var silent = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
-            var $from = this.doc.resolve(from),
-                $to = this.doc.resolve(to);
-            var liftable = findLiftable($from, $to);
-            if (!liftable) {
-                if (!silent)
-                    throw new RangeError("No valid lift target");
-                return this;
-            }
-            var depth = liftable.depth;
-            var shared = liftable.shared;
-            var unwrap = liftable.unwrap;
-            var start = $from.before(shared + 1),
-                end = $to.after(shared + 1);
-            for (var d = shared; d > depth; d--) {
-                if ($to.index(d) + 1 < $to.node(d).childCount) {
-                    this.split($to.after(d + 1), d - depth);
-                    break;
-                }
-            }
-            for (var d = shared; d > depth; d--) {
-                if ($from.index(d) > 0) {
-                    var cut = d - depth;
-                    this.split($from.before(d + 1), cut);
-                    start += 2 * cut;
-                    end += 2 * cut;
-                    break;
-                }
-            }
-            if (unwrap) {
-                var joinPos = start,
-                    parent = $from.node(shared);
-                for (var i = $from.index(shared),
-                         e = $to.index(shared) + 1,
-                         first = true; i < e; i++, first = false) {
-                    if (!first) {
-                        this.join(joinPos);
-                        end -= 2;
-                    }
-                    joinPos += parent.child(i).nodeSize - (first ? 0 : 2);
-                }
-                shared++;
-                start++;
-                end--;
-            }
-            return this.step("ancestor", start, end, {depth: shared - depth});
-        };
-        function canWrap(doc, from, to, type) {
-            return !!checkWrap(doc.resolve(from), doc.resolve(to == null ? from : to), type);
-        }
-        function checkWrap($from, $to, type) {
-            var shared = rangeDepth($from, $to);
-            if (shared == null)
-                return null;
-            var parent = $from.node(shared);
-            var around = parent.type.findConnection(type);
-            var inside = type.findConnection(parent.child($from.index(shared)).type);
-            if (around && inside)
-                return {
-                    shared: shared,
-                    around: around,
-                    inside: inside
-                };
-        }
-        _transform.Transform.prototype.wrap = function(from) {
-            var to = arguments.length <= 1 || arguments[1] === undefined ? from : arguments[1];
-            var type = arguments[2];
-            var wrapAttrs = arguments[3];
-            var $from = this.doc.resolve(from),
-                $to = this.doc.resolve(to);
-            var check = checkWrap($from, $to, type);
-            if (!check)
-                throw new RangeError("Wrap not possible");
-            var shared = check.shared;
-            var around = check.around;
-            var inside = check.inside;
-            var types = around.concat(type).concat(inside);
-            var attrs = around.map(function() {
-                return null;
-            }).concat(wrapAttrs).concat(inside.map(function() {
-                return null;
-            }));
-            var start = $from.before(shared + 1);
-            this.step("ancestor", start, $to.after(shared + 1), {
-                types: types,
-                attrs: attrs
+        exports.baseKeymap = baseKeymap;
+        if (browser.mac)
+            baseKeymap.addBindings({
+                "Ctrl-H": baseKeymap.lookup("Backspace"),
+                "Alt-Backspace": baseKeymap.lookup("Cmd-Backspace"),
+                "Ctrl-D": baseKeymap.lookup("Delete"),
+                "Ctrl-Alt-Backspace": baseKeymap.lookup("Cmd-Delete"),
+                "Alt-Delete": baseKeymap.lookup("Cmd-Delete"),
+                "Alt-D": baseKeymap.lookup("Cmd-Delete")
             });
-            if (inside.length) {
-                var splitPos = start + types.length,
-                    parent = $from.node(shared);
-                for (var i = $from.index(shared),
-                         e = $to.index(shared) + 1,
-                         first = true; i < e; i++, first = false) {
-                    if (!first)
-                        this.split(splitPos, inside.length);
-                    splitPos += parent.child(i).nodeSize + (first ? 0 : 2 * inside.length);
-                }
-            }
-            return this;
-        };
-        _transform.Transform.prototype.setBlockType = function(from) {
-            var to = arguments.length <= 1 || arguments[1] === undefined ? from : arguments[1];
-            var _this = this;
-            var type = arguments[2];
-            var attrs = arguments[3];
-            if (!type.isTextblock)
-                throw new RangeError("Type given to setBlockType should be a textblock");
-            this.doc.nodesBetween(from, to, function(node, pos) {
-                if (node.isTextblock && !node.hasMarkup(type, attrs)) {
-                    var start = pos + 1,
-                        end = start + node.content.size;
-                    _this.clearMarkup(start, end, type);
-                    _this.step("ancestor", start, end, {
-                        depth: 1,
-                        types: [type],
-                        attrs: [attrs]
-                    });
-                    return false;
-                }
-            });
-            return this;
-        };
-        _transform.Transform.prototype.setNodeType = function(pos, type, attrs) {
-            var node = this.doc.nodeAt(pos);
-            if (!node)
-                throw new RangeError("No node at given position");
-            if (!type)
-                type = node.type;
-            if (node.type.contains)
-                return this.step("ancestor", pos + 1, pos + 1 + node.content.size, {
-                    depth: 1,
-                    types: [type],
-                    attrs: [attrs]
-                });
-            else
-                return this.replaceWith(pos, pos + node.nodeSize, type.create(attrs, null, node.marks));
-        };
         return module.exports;
     });
 
-    $__System.registerDynamic("24", ["6", "22", "23", "16"], true, function($__require, exports, module) {
+    $__System.registerDynamic("21", [], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.joinable = joinable;
-        exports.joinPoint = joinPoint;
-        var _model = $__require('6');
-        var _transform = $__require('22');
-        var _step = $__require('23');
-        var _map = $__require('16');
-        _step.Step.define("join", {
-            apply: function apply(doc, step) {
-                var $from = doc.resolve(step.from),
-                    $to = doc.resolve(step.to);
-                if ($from.parentOffset < $from.parent.content.size || $to.parentOffset > 0 || $to.pos - $from.pos != 2)
-                    return _step.StepResult.fail("Join positions not around a split");
-                return _step.StepResult.fromReplace(doc, $from.pos, $to.pos, _model.Slice.empty);
-            },
-            posMap: function posMap(step) {
-                return new _map.PosMap([step.from, 2, 0]);
-            },
-            invert: function invert(step, doc) {
-                var $before = doc.resolve(step.from),
-                    d1 = $before.depth - 1;
-                var parentAfter = $before.node(d1).child($before.index(d1) + 1);
-                var param = null;
-                if (!$before.parent.sameMarkup(parentAfter))
-                    param = {
-                        type: parentAfter.type,
-                        attrs: parentAfter.attrs
-                    };
-                return new _step.Step("split", step.from, step.from, param);
-            }
-        });
-        function joinable(doc, pos) {
-            var $pos = doc.resolve(pos);
-            return canJoin($pos.nodeBefore, $pos.nodeAfter);
-        }
-        function canJoin(a, b) {
-            return a && b && !a.isText && a.type.contains && a.type.canContainContent(b.type);
-        }
-        function joinPoint(doc, pos) {
-            var dir = arguments.length <= 2 || arguments[2] === undefined ? -1 : arguments[2];
-            var $pos = doc.resolve(pos);
-            for (var d = $pos.depth; ; d--) {
-                var before = undefined,
-                    after = undefined;
-                if (d == $pos.depth) {
-                    before = $pos.nodeBefore;
-                    after = $pos.nodeAfter;
-                } else if (dir > 0) {
-                    before = $pos.node(d + 1);
-                    after = $pos.node(d).maybeChild($pos.index(d) + 1);
-                } else {
-                    before = $pos.node(d).maybeChild($pos.index(d) - 1);
-                    after = $pos.node(d + 1);
-                }
-                if (before && !before.isTextblock && canJoin(before, after))
-                    return pos;
-                if (d == 0)
-                    break;
-                pos = dir < 0 ? $pos.before(d) : $pos.after(d);
-            }
-        }
-        _transform.Transform.prototype.join = function(pos) {
-            var depth = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-            var silent = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
-            for (var i = 0; i < depth; i++) {
-                var $pos = this.doc.resolve(pos);
-                if ($pos.parentOffset == 0 || $pos.parentOffset == $pos.parent.content.size || !$pos.nodeBefore.type.canContainContent($pos.nodeAfter.type)) {
-                    if (!silent)
-                        throw new RangeError("Nothing to join at " + pos);
-                    break;
-                }
-                this.step("join", pos - 1, pos + 1);
-                pos--;
-            }
-            return this;
-        };
-        return module.exports;
-    });
-
-    $__System.registerDynamic("25", ["6", "22", "23"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        var _model = $__require('6');
-        var _transform = $__require('22');
-        var _step = $__require('23');
-        function mapNode(node, f, parent) {
-            if (node.content.size)
-                node = node.copy(mapFragment(node.content, f, node));
-            if (node.isInline)
-                node = f(node, parent);
-            return node;
-        }
-        function mapFragment(fragment, f, parent) {
-            var mapped = [];
-            for (var i = 0; i < fragment.childCount; i++) {
-                mapped.push(mapNode(fragment.child(i), f, parent));
-            }
-            return _model.Fragment.fromArray(mapped);
-        }
-        _step.Step.define("addMark", {
-            apply: function apply(doc, step) {
-                var slice = doc.slice(step.from, step.to),
-                    $pos = doc.resolve(step.from);
-                slice.content = mapFragment(slice.content, function(node, parent) {
-                    if (!parent.type.canContainMark(step.param.type))
-                        return node;
-                    return node.mark(step.param.addToSet(node.marks));
-                }, $pos.node($pos.depth - slice.openLeft));
-                return _step.StepResult.fromReplace(doc, step.from, step.to, slice);
-            },
-            invert: function invert(step) {
-                return new _step.Step("removeMark", step.from, step.to, step.param);
-            },
-            paramToJSON: function paramToJSON(param) {
-                return param.toJSON();
-            },
-            paramFromJSON: function paramFromJSON(schema, json) {
-                return schema.markFromJSON(json);
-            }
-        });
-        _transform.Transform.prototype.addMark = function(from, to, mark) {
-            var _this = this;
-            var removed = [],
-                added = [],
-                removing = null,
-                adding = null;
-            this.doc.nodesBetween(from, to, function(node, pos, parent) {
-                if (!node.isInline)
-                    return;
-                var marks = node.marks;
-                if (mark.isInSet(marks) || !parent.type.canContainMark(mark.type)) {
-                    adding = removing = null;
-                } else {
-                    var start = Math.max(pos, from),
-                        end = Math.min(pos + node.nodeSize, to);
-                    var rm = mark.type.isInSet(marks);
-                    if (!rm)
-                        removing = null;
-                    else if (removing && removing.param.eq(rm))
-                        removing.to = end;
-                    else
-                        removed.push(removing = new _step.Step("removeMark", start, end, rm));
-                    if (adding)
-                        adding.to = end;
-                    else
-                        added.push(adding = new _step.Step("addMark", start, end, mark));
-                }
-            });
-            removed.forEach(function(s) {
-                return _this.step(s);
-            });
-            added.forEach(function(s) {
-                return _this.step(s);
-            });
-            return this;
-        };
-        _step.Step.define("removeMark", {
-            apply: function apply(doc, step) {
-                var slice = doc.slice(step.from, step.to);
-                slice.content = mapFragment(slice.content, function(node) {
-                    return node.mark(step.param.removeFromSet(node.marks));
-                });
-                return _step.StepResult.fromReplace(doc, step.from, step.to, slice);
-            },
-            invert: function invert(step) {
-                return new _step.Step("addMark", step.from, step.to, step.param);
-            },
-            paramToJSON: function paramToJSON(param) {
-                return param.toJSON();
-            },
-            paramFromJSON: function paramFromJSON(schema, json) {
-                return schema.markFromJSON(json);
-            }
-        });
-        _transform.Transform.prototype.removeMark = function(from, to) {
-            var _this2 = this;
-            var mark = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
-            var matched = [],
-                step = 0;
-            this.doc.nodesBetween(from, to, function(node, pos) {
-                if (!node.isInline)
-                    return;
-                step++;
-                var toRemove = null;
-                if (mark instanceof _model.MarkType) {
-                    var found = mark.isInSet(node.marks);
-                    if (found)
-                        toRemove = [found];
-                } else if (mark) {
-                    if (mark.isInSet(node.marks))
-                        toRemove = [mark];
-                } else {
-                    toRemove = node.marks;
-                }
-                if (toRemove && toRemove.length) {
-                    var end = Math.min(pos + node.nodeSize, to);
-                    for (var i = 0; i < toRemove.length; i++) {
-                        var style = toRemove[i],
-                            found = undefined;
-                        for (var j = 0; j < matched.length; j++) {
-                            var m = matched[j];
-                            if (m.step == step - 1 && style.eq(matched[j].style))
-                                found = m;
-                        }
-                        if (found) {
-                            found.to = end;
-                            found.step = step;
-                        } else {
-                            matched.push({
-                                style: style,
-                                from: Math.max(pos, from),
-                                to: end,
-                                step: step
-                            });
-                        }
-                    }
-                }
-            });
-            matched.forEach(function(m) {
-                return _this2.step("removeMark", m.from, m.to, m.style);
-            });
-            return this;
-        };
-        _transform.Transform.prototype.clearMarkup = function(from, to, newParent) {
-            var _this3 = this;
-            var delSteps = [];
-            this.doc.nodesBetween(from, to, function(node, pos) {
-                if (!node.isInline)
-                    return;
-                if (newParent ? !newParent.canContainType(node.type) : !node.type.isText) {
-                    delSteps.push(new _step.Step("replace", pos, pos + node.nodeSize));
-                    return;
-                }
-                for (var i = 0; i < node.marks.length; i++) {
-                    var mark = node.marks[i];
-                    if (!newParent || !newParent.canContainMark(mark.type))
-                        _this3.step("removeMark", Math.max(pos, from), Math.min(pos + node.nodeSize, to), mark);
-                }
-            });
-            for (var i = delSteps.length - 1; i >= 0; i--) {
-                this.step(delSteps[i]);
-            }
-            return this;
-        };
-        return module.exports;
-    });
-
-    $__System.registerDynamic("26", ["6", "22", "23", "16"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        var _model = $__require('6');
-        var _transform = $__require('22');
-        var _step = $__require('23');
-        var _map = $__require('16');
-        _step.Step.define("split", {
-            apply: function apply(doc, step) {
-                var $pos = doc.resolve(step.from),
-                    parent = $pos.parent;
-                var cut = [parent.copy(), step.param ? step.param.type.create(step.attrs) : parent.copy()];
-                return _step.StepResult.fromReplace(doc, $pos.pos, $pos.pos, new _model.Slice(_model.Fragment.fromArray(cut), 1, 1));
-            },
-            posMap: function posMap(step) {
-                return new _map.PosMap([step.from, 0, 2]);
-            },
-            invert: function invert(step) {
-                return new _step.Step("join", step.from, step.from + 2);
-            },
-            paramToJSON: function paramToJSON(param) {
-                return param && {
-                        type: param.type.name,
-                        attrs: param.attrs
-                    };
-            },
-            paramFromJSON: function paramFromJSON(schema, json) {
-                return json && {
-                        type: schema.nodeType(json.type),
-                        attrs: json.attrs
-                    };
-            }
-        });
-        _transform.Transform.prototype.split = function(pos) {
-            var depth = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-            var typeAfter = arguments[2];
-            var attrsAfter = arguments[3];
-            for (var i = 0; i < depth; i++) {
-                this.step("split", pos + i, pos + i, i == 0 && typeAfter ? {
-                    type: typeAfter,
-                    attrs: attrsAfter
-                } : null);
-            }
-            return this;
-        };
-        _transform.Transform.prototype.splitIfNeeded = function(pos) {
-            var depth = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-            var $pos = this.doc.resolve(pos),
-                before = true;
-            for (var i = 0; i < depth; i++) {
-                var d = $pos.depth - i,
-                    point = i == 0 ? $pos.pos : before ? $pos.before(d + 1) : $pos.after(d + 1);
-                if (point == $pos.start(d))
-                    before = true;
-                else if (point == $pos.end(d))
-                    before = false;
-                else
-                    return this.split(point, depth - i);
-            }
-            return this;
-        };
-        return module.exports;
-    });
-
-    $__System.registerDynamic("22", ["27", "23", "16"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.Transform = exports.TransformError = undefined;
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -4058,9 +3697,351 @@
                 return Constructor;
             };
         }();
-        var _error = $__require('27');
-        var _step2 = $__require('23');
-        var _map = $__require('16');
+        function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+            }
+        }
+        var pluginProps = Object.create(null);
+        function registerProp() {
+            var name = arguments.length <= 0 || arguments[0] === undefined ? "plugin" : arguments[0];
+            for (var i = 1; ; i++) {
+                var prop = name + (i > 1 ? "_" + i : "");
+                if (!(prop in pluginProps))
+                    return pluginProps[prop] = prop;
+            }
+        }
+        var Plugin = function() {
+            function Plugin(State, options, prop) {
+                _classCallCheck(this, Plugin);
+                this.State = State;
+                this.options = options || Object.create(null);
+                this.prop = prop || registerProp(State.name);
+            }
+            _createClass(Plugin, [{
+                key: "get",
+                value: function get(pm) {
+                    return pm.plugin[this.prop];
+                }
+            }, {
+                key: "attach",
+                value: function attach(pm) {
+                    if (this.get(pm))
+                        throw new RangeError("Attaching plugin multiple times");
+                    return pm.plugin[this.prop] = new this.State(pm, this.options);
+                }
+            }, {
+                key: "detach",
+                value: function detach(pm) {
+                    var found = this.get(pm);
+                    if (found) {
+                        if (found.detach)
+                            found.detach(pm);
+                        delete pm.plugin[this.prop];
+                    }
+                }
+            }, {
+                key: "ensure",
+                value: function ensure(pm) {
+                    return this.get(pm) || this.attach(pm);
+                }
+            }, {
+                key: "config",
+                value: function config(options) {
+                    if (!options)
+                        return this;
+                    var result = Object.create(null);
+                    for (var prop in this.options) {
+                        result[prop] = this.options[prop];
+                    }
+                    for (var _prop in options) {
+                        result[_prop] = options[_prop];
+                    }
+                    return new Plugin(this.State, result, this.prop);
+                }
+            }]);
+            return Plugin;
+        }();
+        exports.Plugin = Plugin;
+        return module.exports;
+    });
+
+    $__System.registerDynamic("22", ["18", "23", "24"], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        var _require = $__require('18');
+        var Slice = _require.Slice;
+        var Fragment = _require.Fragment;
+        var _require2 = $__require('23');
+        var Transform = _require2.Transform;
+        var _require3 = $__require('24');
+        var ReplaceStep = _require3.ReplaceStep;
+        var ReplaceAroundStep = _require3.ReplaceAroundStep;
+        function canCut(node, start, end) {
+            return (start == 0 || node.canReplace(start, node.childCount)) && (end == node.childCount || node.canReplace(0, start));
+        }
+        function liftTarget(range) {
+            var parent = range.parent;
+            var content = parent.content.cutByIndex(range.startIndex, range.endIndex);
+            for (var depth = range.depth; ; --depth) {
+                var node = range.$from.node(depth),
+                    index = range.$from.index(depth),
+                    endIndex = range.$to.indexAfter(depth);
+                if (depth < range.depth && node.canReplace(index, endIndex, content))
+                    return depth;
+                if (depth == 0 || !canCut(node, index, endIndex))
+                    break;
+            }
+        }
+        exports.liftTarget = liftTarget;
+        Transform.prototype.lift = function(range, target) {
+            var $from = range.$from;
+            var $to = range.$to;
+            var depth = range.depth;
+            var gapStart = $from.before(depth + 1),
+                gapEnd = $to.after(depth + 1);
+            var start = gapStart,
+                end = gapEnd;
+            var before = Fragment.empty,
+                openLeft = 0;
+            for (var d = depth,
+                     splitting = false; d > target; d--) {
+                if (splitting || $from.index(d) > 0) {
+                    splitting = true;
+                    before = Fragment.from($from.node(d).copy(before));
+                    openLeft++;
+                } else {
+                    start--;
+                }
+            }
+            var after = Fragment.empty,
+                openRight = 0;
+            for (var _d = depth,
+                     _splitting = false; _d > target; _d--) {
+                if (_splitting || $to.after(_d + 1) < $to.end(_d)) {
+                    _splitting = true;
+                    after = Fragment.from($to.node(_d).copy(after));
+                    openRight++;
+                } else {
+                    end++;
+                }
+            }
+            return this.step(new ReplaceAroundStep(start, end, gapStart, gapEnd, new Slice(before.append(after), openLeft, openRight), before.size - openLeft, true));
+        };
+        function findWrapping(range, nodeType, attrs) {
+            var innerRange = arguments.length <= 3 || arguments[3] === undefined ? range : arguments[3];
+            var wrap = {
+                type: nodeType,
+                attrs: attrs
+            };
+            var around = findWrappingOutside(range, wrap);
+            var inner = around && findWrappingInside(innerRange, wrap);
+            if (!inner)
+                return null;
+            return around.concat(wrap).concat(inner);
+        }
+        exports.findWrapping = findWrapping;
+        function findWrappingOutside(range, wrap) {
+            var parent = range.parent;
+            var startIndex = range.startIndex;
+            var endIndex = range.endIndex;
+            var around = parent.contentMatchAt(startIndex).findWrapping(wrap.type, wrap.attrs);
+            if (!around)
+                return null;
+            var outer = around.length ? around[0] : wrap;
+            if (!parent.canReplaceWith(startIndex, endIndex, outer.type, outer.attrs))
+                return null;
+            return around;
+        }
+        function findWrappingInside(range, wrap) {
+            var parent = range.parent;
+            var startIndex = range.startIndex;
+            var endIndex = range.endIndex;
+            var inner = parent.child(startIndex);
+            var inside = wrap.type.contentExpr.start(wrap.attrs).findWrapping(inner.type, inner.attrs);
+            if (!inside)
+                return null;
+            var last = inside.length ? inside[inside.length - 1] : wrap;
+            var innerMatch = last.type.contentExpr.start(last.attrs);
+            for (var i = startIndex; i < endIndex; i++) {
+                innerMatch = innerMatch && innerMatch.matchNode(parent.child(i));
+            }
+            if (!innerMatch || !innerMatch.validEnd())
+                return null;
+            return inside;
+        }
+        Transform.prototype.wrap = function(range, wrappers) {
+            var content = Fragment.empty;
+            for (var i = wrappers.length - 1; i >= 0; i--) {
+                content = Fragment.from(wrappers[i].type.create(wrappers[i].attrs, content));
+            }
+            var start = range.start,
+                end = range.end;
+            return this.step(new ReplaceAroundStep(start, end, start, end, new Slice(content, 0, 0), wrappers.length, true));
+        };
+        Transform.prototype.setBlockType = function(from) {
+            var to = arguments.length <= 1 || arguments[1] === undefined ? from : arguments[1];
+            var _this = this;
+            var type = arguments[2];
+            var attrs = arguments[3];
+            if (!type.isTextblock)
+                throw new RangeError("Type given to setBlockType should be a textblock");
+            var mapFrom = this.steps.length;
+            this.doc.nodesBetween(from, to, function(node, pos) {
+                if (node.isTextblock && !node.hasMarkup(type, attrs)) {
+                    _this.clearMarkupFor(_this.map(pos, 1, mapFrom), type, attrs);
+                    var startM = _this.map(pos, 1, mapFrom),
+                        endM = _this.map(pos + node.nodeSize, 1, mapFrom);
+                    _this.step(new ReplaceAroundStep(startM, endM, startM + 1, endM - 1, new Slice(Fragment.from(type.create(attrs)), 0, 0), 1, true));
+                    return false;
+                }
+            });
+            return this;
+        };
+        Transform.prototype.setNodeType = function(pos, type, attrs) {
+            var node = this.doc.nodeAt(pos);
+            if (!node)
+                throw new RangeError("No node at given position");
+            if (!type)
+                type = node.type;
+            if (node.type.isLeaf)
+                return this.replaceWith(pos, pos + node.nodeSize, type.create(attrs, null, node.marks));
+            if (!type.validContent(node.content, attrs))
+                throw new RangeError("Invalid content for node type " + type.name);
+            return this.step(new ReplaceAroundStep(pos, pos + node.nodeSize, pos + 1, pos + node.nodeSize - 1, new Slice(Fragment.from(type.create(attrs)), 0, 0), 1, true));
+        };
+        function canSplit(doc, pos) {
+            var depth = arguments.length <= 2 || arguments[2] === undefined ? 1 : arguments[2];
+            var typeAfter = arguments[3];
+            var attrsAfter = arguments[4];
+            var $pos = doc.resolve(pos),
+                base = $pos.depth - depth;
+            if (base < 0 || !$pos.parent.canReplace($pos.index(), $pos.parent.childCount) || !$pos.parent.canReplace(0, $pos.indexAfter()))
+                return false;
+            for (var d = $pos.depth - 1; d > base; d--) {
+                var node = $pos.node(d),
+                    _index = $pos.index(d);
+                if (!node.canReplace(0, _index) || !node.canReplaceWith(_index, node.childCount, typeAfter || $pos.node(d + 1).type, typeAfter ? attrsAfter : $pos.node(d + 1).attrs))
+                    return false;
+                typeAfter = null;
+            }
+            var index = $pos.indexAfter(base);
+            return $pos.node(base).canReplaceWith(index, index, typeAfter || $pos.node(base + 1).type, typeAfter ? attrsAfter : $pos.node(base + 1).attrs);
+        }
+        exports.canSplit = canSplit;
+        Transform.prototype.split = function(pos) {
+            var depth = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+            var typeAfter = arguments[2];
+            var attrsAfter = arguments[3];
+            var $pos = this.doc.resolve(pos),
+                before = Fragment.empty,
+                after = Fragment.empty;
+            for (var d = $pos.depth,
+                     e = $pos.depth - depth; d > e; d--) {
+                before = Fragment.from($pos.node(d).copy(before));
+                after = Fragment.from(typeAfter ? typeAfter.create(attrsAfter, after) : $pos.node(d).copy(after));
+                typeAfter = null;
+            }
+            return this.step(new ReplaceStep(pos, pos, new Slice(before.append(after), depth, depth, true)));
+        };
+        function joinable(doc, pos) {
+            var $pos = doc.resolve(pos),
+                index = $pos.index();
+            return canJoin($pos.nodeBefore, $pos.nodeAfter) && $pos.parent.canReplace(index, index + 1);
+        }
+        exports.joinable = joinable;
+        function canJoin(a, b) {
+            return a && b && !a.isText && a.canAppend(b);
+        }
+        function joinPoint(doc, pos) {
+            var dir = arguments.length <= 2 || arguments[2] === undefined ? -1 : arguments[2];
+            var $pos = doc.resolve(pos);
+            for (var d = $pos.depth; ; d--) {
+                var before = void 0,
+                    after = void 0;
+                if (d == $pos.depth) {
+                    before = $pos.nodeBefore;
+                    after = $pos.nodeAfter;
+                } else if (dir > 0) {
+                    before = $pos.node(d + 1);
+                    after = $pos.node(d).maybeChild($pos.index(d) + 1);
+                } else {
+                    before = $pos.node(d).maybeChild($pos.index(d) - 1);
+                    after = $pos.node(d + 1);
+                }
+                if (before && !before.isTextblock && canJoin(before, after))
+                    return pos;
+                if (d == 0)
+                    break;
+                pos = dir < 0 ? $pos.before(d) : $pos.after(d);
+            }
+        }
+        exports.joinPoint = joinPoint;
+        Transform.prototype.join = function(pos) {
+            var depth = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+            var silent = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+            if (silent && (pos < depth || pos + depth > this.doc.content.size))
+                return this;
+            var step = new ReplaceStep(pos - depth, pos + depth, Slice.empty, true);
+            if (silent)
+                this.maybeStep(step);
+            else
+                this.step(step);
+            return this;
+        };
+        function insertPoint(doc, pos, nodeType, attrs) {
+            var $pos = doc.resolve(pos);
+            if ($pos.parent.canReplaceWith($pos.index(), $pos.index(), nodeType, attrs))
+                return pos;
+            if ($pos.parentOffset == 0)
+                for (var d = $pos.depth - 1; d >= 0; d--) {
+                    var index = $pos.index(d);
+                    if ($pos.node(d).canReplaceWith(index, index, nodeType, attrs))
+                        return $pos.before(d + 1);
+                    if (index > 0)
+                        return null;
+                }
+            if ($pos.parentOffset == $pos.parent.content.size)
+                for (var _d2 = $pos.depth - 1; _d2 >= 0; _d2--) {
+                    var _index2 = $pos.indexAfter(_d2);
+                    if ($pos.node(_d2).canReplaceWith(_index2, _index2, nodeType, attrs))
+                        return $pos.after(_d2 + 1);
+                    if (_index2 < $pos.node(_d2).childCount)
+                        return null;
+                }
+        }
+        exports.insertPoint = insertPoint;
+        return module.exports;
+    });
+
+    $__System.registerDynamic("25", ["18", "26"], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        var _createClass = function() {
+            function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                    var descriptor = props[i];
+                    descriptor.enumerable = descriptor.enumerable || false;
+                    descriptor.configurable = true;
+                    if ("value" in descriptor)
+                        descriptor.writable = true;
+                    Object.defineProperty(target, descriptor.key, descriptor);
+                }
+            }
+            return function(Constructor, protoProps, staticProps) {
+                if (protoProps)
+                    defineProperties(Constructor.prototype, protoProps);
+                if (staticProps)
+                    defineProperties(Constructor, staticProps);
+                return Constructor;
+            };
+        }();
         function _classCallCheck(instance, Constructor) {
             if (!(instance instanceof Constructor)) {
                 throw new TypeError("Cannot call a class as a function");
@@ -4085,74 +4066,271 @@
             if (superClass)
                 Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
         }
-        var TransformError = exports.TransformError = function(_ProseMirrorError) {
-            _inherits(TransformError, _ProseMirrorError);
-            function TransformError() {
-                _classCallCheck(this, TransformError);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(TransformError).apply(this, arguments));
+        var _require = $__require('18');
+        var Fragment = _require.Fragment;
+        var Slice = _require.Slice;
+        var _require2 = $__require('26');
+        var Step = _require2.Step;
+        var StepResult = _require2.StepResult;
+        function mapFragment(fragment, f, parent) {
+            var mapped = [];
+            for (var i = 0; i < fragment.childCount; i++) {
+                var child = fragment.child(i);
+                if (child.content.size)
+                    child = child.copy(mapFragment(child.content, f, child));
+                if (child.isInline)
+                    child = f(child, parent, i);
+                mapped.push(child);
             }
-            return TransformError;
-        }(_error.ProseMirrorError);
-        var Transform = function() {
-            function Transform(doc) {
-                _classCallCheck(this, Transform);
-                this.doc = doc;
-                this.docs = [];
-                this.steps = [];
-                this.maps = [];
+            return Fragment.fromArray(mapped);
+        }
+        var AddMarkStep = function(_Step) {
+            _inherits(AddMarkStep, _Step);
+            function AddMarkStep(from, to, mark) {
+                _classCallCheck(this, AddMarkStep);
+                var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AddMarkStep).call(this));
+                _this.from = from;
+                _this.to = to;
+                _this.mark = mark;
+                return _this;
             }
-            _createClass(Transform, [{
-                key: "step",
-                value: function step(_step, from, to, param) {
-                    if (typeof _step == "string")
-                        _step = new _step2.Step(_step, from, to, param);
-                    var result = this.maybeStep(_step);
-                    if (result.failed)
-                        throw new TransformError(result.failed);
-                    return this;
+            _createClass(AddMarkStep, [{
+                key: "apply",
+                value: function apply(doc) {
+                    var _this2 = this;
+                    var oldSlice = doc.slice(this.from, this.to);
+                    var slice = new Slice(mapFragment(oldSlice.content, function(node, parent, index) {
+                        if (!parent.contentMatchAt(index + 1).allowsMark(_this2.mark.type))
+                            return node;
+                        return node.mark(_this2.mark.addToSet(node.marks));
+                    }, oldSlice.possibleParent), oldSlice.openLeft, oldSlice.openRight);
+                    return StepResult.fromReplace(doc, this.from, this.to, slice);
                 }
             }, {
-                key: "maybeStep",
-                value: function maybeStep(step) {
-                    var result = step.apply(this.doc);
-                    if (!result.failed) {
-                        this.docs.push(this.doc);
-                        this.steps.push(step);
-                        this.maps.push(step.posMap());
-                        this.doc = result.doc;
-                    }
-                    return result;
-                }
-            }, {
-                key: "mapResult",
-                value: function mapResult(pos, bias) {
-                    return (0, _map.mapThroughResult)(this.maps, pos, bias);
+                key: "invert",
+                value: function invert() {
+                    return new RemoveMarkStep(this.from, this.to, this.mark);
                 }
             }, {
                 key: "map",
-                value: function map(pos, bias) {
-                    return (0, _map.mapThrough)(this.maps, pos, bias);
+                value: function map(mapping) {
+                    var from = mapping.mapResult(this.from, 1),
+                        to = mapping.mapResult(this.to, -1);
+                    if (from.deleted && to.deleted || from.pos >= to.pos)
+                        return null;
+                    return new AddMarkStep(from.pos, to.pos, this.mark);
                 }
-            }, {
-                key: "before",
-                get: function get() {
-                    return this.docs.length ? this.docs[0] : this.doc;
+            }], [{
+                key: "fromJSON",
+                value: function fromJSON(schema, json) {
+                    return new AddMarkStep(json.from, json.to, schema.markFromJSON(json.mark));
                 }
             }]);
-            return Transform;
-        }();
-        exports.Transform = Transform;
+            return AddMarkStep;
+        }(Step);
+        exports.AddMarkStep = AddMarkStep;
+        Step.jsonID("addMark", AddMarkStep);
+        var RemoveMarkStep = function(_Step2) {
+            _inherits(RemoveMarkStep, _Step2);
+            function RemoveMarkStep(from, to, mark) {
+                _classCallCheck(this, RemoveMarkStep);
+                var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(RemoveMarkStep).call(this));
+                _this3.from = from;
+                _this3.to = to;
+                _this3.mark = mark;
+                return _this3;
+            }
+            _createClass(RemoveMarkStep, [{
+                key: "apply",
+                value: function apply(doc) {
+                    var _this4 = this;
+                    var oldSlice = doc.slice(this.from, this.to);
+                    var slice = new Slice(mapFragment(oldSlice.content, function(node) {
+                        return node.mark(_this4.mark.removeFromSet(node.marks));
+                    }), oldSlice.openLeft, oldSlice.openRight);
+                    return StepResult.fromReplace(doc, this.from, this.to, slice);
+                }
+            }, {
+                key: "invert",
+                value: function invert() {
+                    return new AddMarkStep(this.from, this.to, this.mark);
+                }
+            }, {
+                key: "map",
+                value: function map(mapping) {
+                    var from = mapping.mapResult(this.from, 1),
+                        to = mapping.mapResult(this.to, -1);
+                    if (from.deleted && to.deleted || from.pos >= to.pos)
+                        return null;
+                    return new RemoveMarkStep(from.pos, to.pos, this.mark);
+                }
+            }], [{
+                key: "fromJSON",
+                value: function fromJSON(schema, json) {
+                    return new RemoveMarkStep(json.from, json.to, schema.markFromJSON(json.mark));
+                }
+            }]);
+            return RemoveMarkStep;
+        }(Step);
+        exports.RemoveMarkStep = RemoveMarkStep;
+        Step.jsonID("removeMark", RemoveMarkStep);
         return module.exports;
     });
 
-    $__System.registerDynamic("23", ["6", "16"], true, function($__require, exports, module) {
+    $__System.registerDynamic("27", ["18", "23", "25", "24"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.StepResult = exports.Step = undefined;
+        var _require = $__require('18');
+        var MarkType = _require.MarkType;
+        var Slice = _require.Slice;
+        var _require2 = $__require('23');
+        var Transform = _require2.Transform;
+        var _require3 = $__require('25');
+        var AddMarkStep = _require3.AddMarkStep;
+        var RemoveMarkStep = _require3.RemoveMarkStep;
+        var _require4 = $__require('24');
+        var ReplaceStep = _require4.ReplaceStep;
+        Transform.prototype.addMark = function(from, to, mark) {
+            var _this = this;
+            var removed = [],
+                added = [],
+                removing = null,
+                adding = null;
+            this.doc.nodesBetween(from, to, function(node, pos, parent, index) {
+                if (!node.isInline)
+                    return;
+                var marks = node.marks;
+                if (mark.isInSet(marks) || !parent.contentMatchAt(index + 1).allowsMark(mark.type)) {
+                    adding = removing = null;
+                } else {
+                    var start = Math.max(pos, from),
+                        end = Math.min(pos + node.nodeSize, to);
+                    var rm = mark.type.isInSet(marks);
+                    if (!rm)
+                        removing = null;
+                    else if (removing && removing.mark.eq(rm))
+                        removing.to = end;
+                    else
+                        removed.push(removing = new RemoveMarkStep(start, end, rm));
+                    if (adding)
+                        adding.to = end;
+                    else
+                        added.push(adding = new AddMarkStep(start, end, mark));
+                }
+            });
+            removed.forEach(function(s) {
+                return _this.step(s);
+            });
+            added.forEach(function(s) {
+                return _this.step(s);
+            });
+            return this;
+        };
+        Transform.prototype.removeMark = function(from, to) {
+            var _this2 = this;
+            var mark = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+            var matched = [],
+                step = 0;
+            this.doc.nodesBetween(from, to, function(node, pos) {
+                if (!node.isInline)
+                    return;
+                step++;
+                var toRemove = null;
+                if (mark instanceof MarkType) {
+                    var found = mark.isInSet(node.marks);
+                    if (found)
+                        toRemove = [found];
+                } else if (mark) {
+                    if (mark.isInSet(node.marks))
+                        toRemove = [mark];
+                } else {
+                    toRemove = node.marks;
+                }
+                if (toRemove && toRemove.length) {
+                    var end = Math.min(pos + node.nodeSize, to);
+                    for (var i = 0; i < toRemove.length; i++) {
+                        var style = toRemove[i],
+                            _found = void 0;
+                        for (var j = 0; j < matched.length; j++) {
+                            var m = matched[j];
+                            if (m.step == step - 1 && style.eq(matched[j].style))
+                                _found = m;
+                        }
+                        if (_found) {
+                            _found.to = end;
+                            _found.step = step;
+                        } else {
+                            matched.push({
+                                style: style,
+                                from: Math.max(pos, from),
+                                to: end,
+                                step: step
+                            });
+                        }
+                    }
+                }
+            });
+            matched.forEach(function(m) {
+                return _this2.step(new RemoveMarkStep(m.from, m.to, m.style));
+            });
+            return this;
+        };
+        Transform.prototype.clearMarkup = function(from, to) {
+            var _this3 = this;
+            var delSteps = [];
+            this.doc.nodesBetween(from, to, function(node, pos) {
+                if (!node.isInline)
+                    return;
+                if (!node.type.isText) {
+                    delSteps.push(new ReplaceStep(pos, pos + node.nodeSize, Slice.empty));
+                    return;
+                }
+                for (var i = 0; i < node.marks.length; i++) {
+                    _this3.step(new RemoveMarkStep(Math.max(pos, from), Math.min(pos + node.nodeSize, to), node.marks[i]));
+                }
+            });
+            for (var i = delSteps.length - 1; i >= 0; i--) {
+                this.step(delSteps[i]);
+            }
+            return this;
+        };
+        Transform.prototype.clearMarkupFor = function(pos, newType, newAttrs) {
+            var node = this.doc.nodeAt(pos),
+                match = newType.contentExpr.start(newAttrs);
+            var delSteps = [];
+            for (var i = 0,
+                     cur = pos + 1; i < node.childCount; i++) {
+                var child = node.child(i),
+                    end = cur + child.nodeSize;
+                var allowed = match.matchType(child.type, child.attrs);
+                if (!allowed) {
+                    delSteps.push(new ReplaceStep(cur, end, Slice.empty));
+                } else {
+                    match = allowed;
+                    for (var j = 0; j < child.marks.length; j++) {
+                        if (!match.allowsMark(child.marks[j]))
+                            this.step(new RemoveMarkStep(cur, end, child.marks[j]));
+                    }
+                }
+                cur = end;
+            }
+            for (var _i = delSteps.length - 1; _i >= 0; _i--) {
+                this.step(delSteps[_i]);
+            }
+            return this;
+        };
+        return module.exports;
+    });
+
+    $__System.registerDynamic("26", ["18", "28"], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -4172,81 +4350,74 @@
                 return Constructor;
             };
         }();
-        var _model = $__require('6');
-        var _map = $__require('16');
         function _classCallCheck(instance, Constructor) {
             if (!(instance instanceof Constructor)) {
                 throw new TypeError("Cannot call a class as a function");
             }
         }
-        var Step = exports.Step = function() {
-            function Step(type, from, to) {
-                var param = arguments.length <= 3 || arguments[3] === undefined ? null : arguments[3];
+        var _require = $__require('18');
+        var ReplaceError = _require.ReplaceError;
+        var _require2 = $__require('28');
+        var PosMap = _require2.PosMap;
+        function mustOverride() {
+            throw new Error("Override me");
+        }
+        var stepsByID = Object.create(null);
+        var Step = function() {
+            function Step() {
                 _classCallCheck(this, Step);
-                if (!(type in steps))
-                    throw new RangeError("Unknown step type: " + type);
-                this.type = type;
-                this.from = from;
-                this.to = to;
-                this.param = param;
             }
             _createClass(Step, [{
                 key: "apply",
-                value: function apply(doc) {
-                    return steps[this.type].apply(doc, this);
+                value: function apply(_doc) {
+                    return mustOverride();
                 }
             }, {
                 key: "posMap",
                 value: function posMap() {
-                    var type = steps[this.type];
-                    return type.posMap ? type.posMap(this) : _map.PosMap.empty;
+                    return PosMap.empty;
                 }
             }, {
                 key: "invert",
-                value: function invert(oldDoc) {
-                    return steps[this.type].invert(this, oldDoc);
+                value: function invert(_doc) {
+                    return mustOverride();
                 }
             }, {
                 key: "map",
-                value: function map(remapping) {
-                    var from = remapping.mapResult(this.from, 1);
-                    var to = this.to == this.from ? from : remapping.mapResult(this.to, -1);
-                    if (from.deleted && to.deleted)
-                        return null;
-                    return new Step(this.type, from.pos, Math.max(from.pos, to.pos), this.param);
+                value: function map(_mapping) {
+                    return mustOverride();
                 }
             }, {
                 key: "toJSON",
                 value: function toJSON() {
-                    var impl = steps[this.type];
-                    return {
-                        type: this.type,
-                        from: this.from,
-                        to: this.to,
-                        param: impl.paramToJSON ? impl.paramToJSON(this.param) : this.param
-                    };
-                }
-            }, {
-                key: "toString",
-                value: function toString() {
-                    return this.type + "@" + this.from + "-" + this.to;
+                    var obj = {stepType: this.jsonID};
+                    for (var prop in this) {
+                        if (this.hasOwnProperty(prop)) {
+                            var val = this[prop];
+                            obj[prop] = val && val.toJSON ? val.toJSON() : val;
+                        }
+                    }
+                    return obj;
                 }
             }], [{
                 key: "fromJSON",
                 value: function fromJSON(schema, json) {
-                    var impl = steps[json.type];
-                    return new Step(json.type, json.from, json.to, impl.paramFromJSON ? impl.paramFromJSON(schema, json.param) : json.param);
+                    return stepsByID[json.stepType].fromJSON(schema, json);
                 }
             }, {
-                key: "define",
-                value: function define(type, implementation) {
-                    steps[type] = implementation;
+                key: "jsonID",
+                value: function jsonID(id, stepClass) {
+                    if (id in stepsByID)
+                        throw new RangeError("Duplicate use of step JSON ID " + id);
+                    stepsByID[id] = stepClass;
+                    stepClass.prototype.jsonID = id;
+                    return stepClass;
                 }
             }]);
             return Step;
         }();
-        var steps = Object.create(null);
-        var StepResult = exports.StepResult = function() {
+        exports.Step = Step;
+        var StepResult = function() {
             function StepResult(doc, failed) {
                 _classCallCheck(this, StepResult);
                 this.doc = doc;
@@ -4259,8 +4430,8 @@
                 }
             }, {
                 key: "fail",
-                value: function fail(val) {
-                    return new StepResult(null, val);
+                value: function fail(message) {
+                    return new StepResult(null, message);
                 }
             }, {
                 key: "fromReplace",
@@ -4268,7 +4439,7 @@
                     try {
                         return StepResult.ok(doc.replace(from, to, slice));
                     } catch (e) {
-                        if (e instanceof _model.ReplaceError)
+                        if (e instanceof ReplaceError)
                             return StepResult.fail(e.message);
                         throw e;
                     }
@@ -4276,16 +4447,16 @@
             }]);
             return StepResult;
         }();
+        exports.StepResult = StepResult;
         return module.exports;
     });
 
-    $__System.registerDynamic("16", [], true, function($__require, exports, module) {
+    $__System.registerDynamic("24", ["18", "26", "28"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -4305,8 +4476,190 @@
                 return Constructor;
             };
         }();
-        exports.mapThrough = mapThrough;
-        exports.mapThroughResult = mapThroughResult;
+        function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+            }
+        }
+        function _possibleConstructorReturn(self, call) {
+            if (!self) {
+                throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+            }
+            return call && (typeof call === "object" || typeof call === "function") ? call : self;
+        }
+        function _inherits(subClass, superClass) {
+            if (typeof superClass !== "function" && superClass !== null) {
+                throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+            }
+            subClass.prototype = Object.create(superClass && superClass.prototype, {constructor: {
+                value: subClass,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }});
+            if (superClass)
+                Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+        }
+        var _require = $__require('18');
+        var Slice = _require.Slice;
+        var _require2 = $__require('26');
+        var Step = _require2.Step;
+        var StepResult = _require2.StepResult;
+        var _require3 = $__require('28');
+        var PosMap = _require3.PosMap;
+        var ReplaceStep = function(_Step) {
+            _inherits(ReplaceStep, _Step);
+            function ReplaceStep(from, to, slice, structure) {
+                _classCallCheck(this, ReplaceStep);
+                var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ReplaceStep).call(this));
+                _this.from = from;
+                _this.to = to;
+                _this.slice = slice;
+                _this.structure = !!structure;
+                return _this;
+            }
+            _createClass(ReplaceStep, [{
+                key: "apply",
+                value: function apply(doc) {
+                    if (this.structure && contentBetween(doc, this.from, this.to))
+                        return StepResult.fail("Structure replace would overwrite content");
+                    return StepResult.fromReplace(doc, this.from, this.to, this.slice);
+                }
+            }, {
+                key: "posMap",
+                value: function posMap() {
+                    return new PosMap([this.from, this.to - this.from, this.slice.size]);
+                }
+            }, {
+                key: "invert",
+                value: function invert(doc) {
+                    return new ReplaceStep(this.from, this.from + this.slice.size, doc.slice(this.from, this.to));
+                }
+            }, {
+                key: "map",
+                value: function map(mapping) {
+                    var from = mapping.mapResult(this.from, 1),
+                        to = mapping.mapResult(this.to, -1);
+                    if (from.deleted && to.deleted)
+                        return null;
+                    return new ReplaceStep(from.pos, Math.max(from.pos, to.pos), this.slice);
+                }
+            }], [{
+                key: "fromJSON",
+                value: function fromJSON(schema, json) {
+                    return new ReplaceStep(json.from, json.to, Slice.fromJSON(schema, json.slice));
+                }
+            }]);
+            return ReplaceStep;
+        }(Step);
+        exports.ReplaceStep = ReplaceStep;
+        Step.jsonID("replace", ReplaceStep);
+        var ReplaceAroundStep = function(_Step2) {
+            _inherits(ReplaceAroundStep, _Step2);
+            function ReplaceAroundStep(from, to, gapFrom, gapTo, slice, insert, structure) {
+                _classCallCheck(this, ReplaceAroundStep);
+                var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(ReplaceAroundStep).call(this));
+                _this2.from = from;
+                _this2.to = to;
+                _this2.gapFrom = gapFrom;
+                _this2.gapTo = gapTo;
+                _this2.slice = slice;
+                _this2.insert = insert;
+                _this2.structure = !!structure;
+                return _this2;
+            }
+            _createClass(ReplaceAroundStep, [{
+                key: "apply",
+                value: function apply(doc) {
+                    if (this.structure && (contentBetween(doc, this.from, this.gapFrom) || contentBetween(doc, this.gapTo, this.to)))
+                        return StepResult.fail("Structure gap-replace would overwrite content");
+                    var gap = doc.slice(this.gapFrom, this.gapTo);
+                    if (gap.openLeft || gap.openRight)
+                        return StepResult.fail("Gap is not a flat range");
+                    var inserted = this.slice.insertAt(this.insert, gap.content);
+                    if (!inserted)
+                        return StepResult.fail("Content does not fit in gap");
+                    return StepResult.fromReplace(doc, this.from, this.to, inserted);
+                }
+            }, {
+                key: "posMap",
+                value: function posMap() {
+                    return new PosMap([this.from, this.gapFrom - this.from, this.insert, this.gapTo, this.to - this.gapTo, this.slice.size - this.insert]);
+                }
+            }, {
+                key: "invert",
+                value: function invert(doc) {
+                    var gap = this.gapTo - this.gapFrom;
+                    return new ReplaceAroundStep(this.from, this.from + this.slice.size + gap, this.from + this.insert, this.from + this.insert + gap, doc.slice(this.from, this.to).removeBetween(this.gapFrom - this.from, this.gapTo - this.from), this.gapFrom - this.from, this.structure);
+                }
+            }, {
+                key: "map",
+                value: function map(mapping) {
+                    var from = mapping.mapResult(this.from, 1),
+                        to = mapping.mapResult(this.to, -1);
+                    var gapFrom = mapping.map(this.gapFrom, -1),
+                        gapTo = mapping.map(this.gapTo, 1);
+                    if (from.deleted && to.deleted || gapFrom < from.pos || gapTo > to.pos)
+                        return null;
+                    return new ReplaceAroundStep(from.pos, to.pos, gapFrom, gapTo, this.slice, this.insert, this.structure);
+                }
+            }], [{
+                key: "fromJSON",
+                value: function fromJSON(schema, json) {
+                    return new ReplaceAroundStep(json.from, json.to, json.gapFrom, json.gapTo, Slice.fromJSON(schema, json.slice), json.insert, json.structure);
+                }
+            }]);
+            return ReplaceAroundStep;
+        }(Step);
+        exports.ReplaceAroundStep = ReplaceAroundStep;
+        Step.jsonID("replaceAround", ReplaceAroundStep);
+        function contentBetween(doc, from, to) {
+            var $from = doc.resolve(from),
+                dist = to - from,
+                depth = $from.depth;
+            while (dist > 0 && depth > 0 && $from.indexAfter(depth) == $from.node(depth).childCount) {
+                depth--;
+                dist--;
+            }
+            if (dist > 0) {
+                var next = $from.node(depth).maybeChild($from.indexAfter(depth));
+                while (dist > 0) {
+                    if (!next || next.type.isLeaf)
+                        return true;
+                    next = next.firstChild;
+                    dist--;
+                }
+            }
+            return false;
+        }
+        return module.exports;
+    });
+
+    $__System.registerDynamic("28", [], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        var _createClass = function() {
+            function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                    var descriptor = props[i];
+                    descriptor.enumerable = descriptor.enumerable || false;
+                    descriptor.configurable = true;
+                    if ("value" in descriptor)
+                        descriptor.writable = true;
+                    Object.defineProperty(target, descriptor.key, descriptor);
+                }
+            }
+            return function(Constructor, protoProps, staticProps) {
+                if (protoProps)
+                    defineProperties(Constructor.prototype, protoProps);
+                if (staticProps)
+                    defineProperties(Constructor, staticProps);
+                return Constructor;
+            };
+        }();
         function _classCallCheck(instance, Constructor) {
             if (!(instance instanceof Constructor)) {
                 throw new TypeError("Cannot call a class as a function");
@@ -4323,7 +4676,7 @@
         function recoverOffset(value) {
             return (value - (value & lower16)) / factor16;
         }
-        var MapResult = exports.MapResult = function MapResult(pos) {
+        var MapResult = function MapResult(pos) {
             var deleted = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
             var recover = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
             _classCallCheck(this, MapResult);
@@ -4331,11 +4684,13 @@
             this.deleted = deleted;
             this.recover = recover;
         };
-        var PosMap = exports.PosMap = function() {
-            function PosMap(ranges, inverted) {
+        exports.MapResult = MapResult;
+        var PosMap = function() {
+            function PosMap(ranges) {
+                var inverted = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
                 _classCallCheck(this, PosMap);
                 this.ranges = ranges;
-                this.inverted = inverted || false;
+                this.inverted = inverted;
             }
             _createClass(PosMap, [{
                 key: "recover",
@@ -4415,8 +4770,9 @@
             }]);
             return PosMap;
         }();
+        exports.PosMap = PosMap;
         PosMap.empty = new PosMap([]);
-        var Remapping = exports.Remapping = function() {
+        var Remapping = function() {
             function Remapping() {
                 var head = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
                 var tail = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
@@ -4465,7 +4821,7 @@
                         recoverables = null;
                     for (var i = -this.head.length; i < this.tail.length; i++) {
                         var map = this.get(i),
-                            rec = undefined;
+                            rec = void 0;
                         if ((rec = recoverables && recoverables[i]) != null && map.touches(pos, rec)) {
                             pos = map.recover(rec);
                             continue;
@@ -4502,15 +4858,17 @@
             }]);
             return Remapping;
         }();
-        function mapThrough(mappables, pos, bias) {
-            for (var i = 0; i < mappables.length; i++) {
+        exports.Remapping = Remapping;
+        function mapThrough(mappables, pos, bias, start) {
+            for (var i = start || 0; i < mappables.length; i++) {
                 pos = mappables[i].map(pos, bias);
             }
             return pos;
         }
-        function mapThroughResult(mappables, pos, bias) {
+        exports.mapThrough = mapThrough;
+        function mapThroughResult(mappables, pos, bias, start) {
             var deleted = false;
-            for (var i = 0; i < mappables.length; i++) {
+            for (var i = start || 0; i < mappables.length; i++) {
                 var result = mappables[i].mapResult(pos, bias);
                 pos = result.pos;
                 if (result.deleted)
@@ -4518,858 +4876,16 @@
             }
             return new MapResult(pos, deleted);
         }
+        exports.mapThroughResult = mapThroughResult;
         return module.exports;
     });
 
-    $__System.registerDynamic("28", [], true, function($__require, exports, module) {
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        var process = module.exports = {};
-        var queue = [];
-        var draining = false;
-        var currentQueue;
-        var queueIndex = -1;
-        function cleanUpNextTick() {
-            if (!draining || !currentQueue) {
-                return;
-            }
-            draining = false;
-            if (currentQueue.length) {
-                queue = currentQueue.concat(queue);
-            } else {
-                queueIndex = -1;
-            }
-            if (queue.length) {
-                drainQueue();
-            }
-        }
-        function drainQueue() {
-            if (draining) {
-                return;
-            }
-            var timeout = setTimeout(cleanUpNextTick);
-            draining = true;
-            var len = queue.length;
-            while (len) {
-                currentQueue = queue;
-                queue = [];
-                while (++queueIndex < len) {
-                    if (currentQueue) {
-                        currentQueue[queueIndex].run();
-                    }
-                }
-                queueIndex = -1;
-                len = queue.length;
-            }
-            currentQueue = null;
-            draining = false;
-            clearTimeout(timeout);
-        }
-        process.nextTick = function(fun) {
-            var args = new Array(arguments.length - 1);
-            if (arguments.length > 1) {
-                for (var i = 1; i < arguments.length; i++) {
-                    args[i - 1] = arguments[i];
-                }
-            }
-            queue.push(new Item(fun, args));
-            if (queue.length === 1 && !draining) {
-                setTimeout(drainQueue, 0);
-            }
-        };
-        function Item(fun, array) {
-            this.fun = fun;
-            this.array = array;
-        }
-        Item.prototype.run = function() {
-            this.fun.apply(null, this.array);
-        };
-        process.title = 'browser';
-        process.browser = true;
-        process.env = {};
-        process.argv = [];
-        process.version = '';
-        process.versions = {};
-        function noop() {}
-        process.on = noop;
-        process.addListener = noop;
-        process.once = noop;
-        process.off = noop;
-        process.removeListener = noop;
-        process.removeAllListeners = noop;
-        process.emit = noop;
-        process.binding = function(name) {
-            throw new Error('process.binding is not supported');
-        };
-        process.cwd = function() {
-            return '/';
-        };
-        process.chdir = function(dir) {
-            throw new Error('process.chdir is not supported');
-        };
-        process.umask = function() {
-            return 0;
-        };
-        return module.exports;
-    });
-
-    $__System.registerDynamic("29", ["28"], true, function($__require, exports, module) {
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        module.exports = $__require('28');
-        return module.exports;
-    });
-
-    $__System.registerDynamic("2a", ["29"], true, function($__require, exports, module) {
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        module.exports = $__System._nodeRequire ? process : $__require('29');
-        return module.exports;
-    });
-
-    $__System.registerDynamic("2b", ["2a"], true, function($__require, exports, module) {
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        module.exports = $__require('2a');
-        return module.exports;
-    });
-
-    $__System.registerDynamic("2c", ["6", "22", "23", "16", "2b"], true, function($__require, exports, module) {
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        (function(process) {
-            "use strict";
-            var _model = $__require('6');
-            var _transform = $__require('22');
-            var _step = $__require('23');
-            var _map = $__require('16');
-            _step.Step.define("replace", {
-                apply: function apply(doc, step) {
-                    return _step.StepResult.fromReplace(doc, step.from, step.to, step.param);
-                },
-                posMap: function posMap(step) {
-                    return new _map.PosMap([step.from, step.to - step.from, step.param.size]);
-                },
-                invert: function invert(step, oldDoc) {
-                    return new _step.Step("replace", step.from, step.from + step.param.size, oldDoc.slice(step.from, step.to));
-                },
-                paramToJSON: function paramToJSON(param) {
-                    return param.toJSON();
-                },
-                paramFromJSON: function paramFromJSON(schema, json) {
-                    return _model.Slice.fromJSON(schema, json);
-                }
-            });
-            _transform.Transform.prototype.delete = function(from, to) {
-                if (from != to)
-                    this.replace(from, to, _model.Slice.empty);
-                return this;
-            };
-            _transform.Transform.prototype.replace = function(from) {
-                var to = arguments.length <= 1 || arguments[1] === undefined ? from : arguments[1];
-                var slice = arguments.length <= 2 || arguments[2] === undefined ? _model.Slice.empty : arguments[2];
-                var $from = this.doc.resolve(from),
-                    $to = this.doc.resolve(to);
-                var _fitSliceInto = fitSliceInto($from, $to, slice);
-                var fitted = _fitSliceInto.fitted;
-                var distAfter = _fitSliceInto.distAfter;
-                var fSize = fitted.size;
-                if (from == to && !fSize)
-                    return this;
-                this.step("replace", from, to, fitted);
-                if (!fSize || !$to.parent.isTextblock)
-                    return this;
-                var after = from + fSize;
-                var inner = !slice.size ? from : distAfter < 0 ? -1 : after - distAfter,
-                    $inner = undefined;
-                if (inner == -1 || inner == after || !($inner = this.doc.resolve(inner)).parent.isTextblock || !$inner.parent.type.canContainFragment($to.parent.content))
-                    return this;
-                mergeTextblockAfter(this, $inner, this.doc.resolve(after));
-                return this;
-            };
-            _transform.Transform.prototype.replaceWith = function(from, to, content) {
-                return this.replace(from, to, new _model.Slice(_model.Fragment.from(content), 0, 0));
-            };
-            _transform.Transform.prototype.insert = function(pos, content) {
-                return this.replaceWith(pos, pos, content);
-            };
-            _transform.Transform.prototype.insertText = function(pos, text) {
-                return this.insert(pos, this.doc.type.schema.text(text, this.doc.marksAt(pos)));
-            };
-            _transform.Transform.prototype.insertInline = function(pos, node) {
-                return this.insert(pos, node.mark(this.doc.marksAt(pos)));
-            };
-            var distAfter = 0;
-            function fitSliceInto($from, $to, slice) {
-                var base = $from.sameDepth($to);
-                var placed = placeSlice($from, slice),
-                    outer = outerPlaced(placed);
-                if (outer)
-                    base = Math.min(outer.depth, base);
-                distAfter = -1e10;
-                var fragment = closeFragment($from.node(base).type, fillBetween($from, $to, base, placed), $from, $to, base);
-                return {
-                    fitted: new _model.Slice(fragment, $from.depth - base, $to.depth - base),
-                    distAfter: distAfter - ($to.depth - base)
-                };
-            }
-            function outerPlaced(placed) {
-                for (var i = 0; i < placed.length; i++) {
-                    if (placed[i])
-                        return placed[i];
-                }
-            }
-            function fillBetween($from, $to, depth, placed) {
-                var fromNext = $from.depth > depth && $from.node(depth + 1);
-                var toNext = $to.depth > depth && $to.node(depth + 1);
-                var placedHere = placed[depth];
-                if (fromNext && toNext && fromNext.type.canContainContent(toNext.type) && !placedHere)
-                    return _model.Fragment.from(closeNode(fromNext, fillBetween($from, $to, depth + 1, placed), $from, $to, depth + 1));
-                var content = _model.Fragment.empty;
-                if (placedHere) {
-                    content = closeLeft(placedHere.content, placedHere.openLeft);
-                    if (placedHere.isEnd)
-                        distAfter = placedHere.openRight;
-                }
-                distAfter--;
-                if (fromNext)
-                    content = content.addToStart(closeNode(fromNext, fillFrom($from, depth + 1, placed), $from, null, depth + 1));
-                if (toNext)
-                    content = closeTo(content, $to, depth + 1, placedHere ? placedHere.openRight : 0);
-                else if (placedHere)
-                    content = closeRight(content, placedHere.openRight);
-                distAfter++;
-                return content;
-            }
-            function fillFrom($from, depth, placed) {
-                var placedHere = placed[depth],
-                    content = _model.Fragment.empty;
-                if (placedHere) {
-                    content = closeRight(placedHere.content, placedHere.openRight);
-                    if (placedHere.isEnd)
-                        distAfter = placedHere.openRight;
-                }
-                distAfter--;
-                if ($from.depth > depth)
-                    content = content.addToStart(closeNode($from.node(depth + 1), fillFrom($from, depth + 1, placed), $from, null, depth + 1));
-                distAfter++;
-                return content;
-            }
-            function closeTo(content, $to, depth, openDepth) {
-                var after = $to.node(depth);
-                if (openDepth == 0 || !after.type.canContainContent(content.lastChild.type)) {
-                    var finish = closeNode(after, fillTo($to, depth), null, $to, depth);
-                    distAfter += finish.nodeSize;
-                    return closeRight(content, openDepth).addToEnd(finish);
-                }
-                var inner = content.lastChild.content;
-                if (depth < $to.depth)
-                    inner = closeTo(inner, $to, depth + 1, openDepth - 1);
-                return content.replaceChild(content.childCount - 1, after.copy(inner));
-            }
-            function fillTo(to, depth) {
-                if (to.depth == depth)
-                    return _model.Fragment.empty;
-                return _model.Fragment.from(closeNode(to.node(depth + 1), fillTo(to, depth + 1), null, to, depth + 1));
-            }
-            function closeRight(content, openDepth) {
-                if (openDepth == 0)
-                    return content;
-                var last = content.lastChild,
-                    closed = closeNode(last, closeRight(last.content, openDepth - 1));
-                return closed == last ? content : content.replaceChild(content.childCount - 1, closed);
-            }
-            function closeLeft(content, openDepth) {
-                if (openDepth == 0)
-                    return content;
-                var first = content.firstChild,
-                    closed = closeNode(first, first.content);
-                return closed == first ? content : content.replaceChild(0, closed);
-            }
-            function closeFragment(type, content, $to, $from, depth) {
-                if (type.canBeEmpty)
-                    return content;
-                var hasContent = content.size || $to && ($to.depth > depth || $to.index(depth)) || $from && ($from.depth > depth || $from.index(depth) < $from.node(depth).childCount);
-                return hasContent ? content : type.defaultContent();
-            }
-            function closeNode(node, content, $to, $from, depth) {
-                return node.copy(closeFragment(node.type, content, $to, $from, depth));
-            }
-            function nodeLeft(slice, depth) {
-                var content = slice.content;
-                for (var i = 1; i < depth; i++) {
-                    content = content.firstChild.content;
-                }
-                return content.firstChild;
-            }
-            function placeSlice($from, slice) {
-                var dFrom = $from.depth,
-                    unplaced = null,
-                    openLeftUnplaced = 0;
-                var placed = [],
-                    parents = null;
-                for (var dSlice = slice.openLeft; ; --dSlice) {
-                    var curType = undefined,
-                        curAttrs = undefined,
-                        curFragment = undefined;
-                    if (dSlice >= 0) {
-                        if (dSlice > 0) {
-                            ;
-                            var _nodeLeft = nodeLeft(slice, dSlice);
-                            curType = _nodeLeft.type;
-                            curAttrs = _nodeLeft.attrs;
-                            curFragment = _nodeLeft.content;
-                        } else if (dSlice == 0) {
-                            curFragment = slice.content;
-                        }
-                        if (dSlice < slice.openLeft)
-                            curFragment = curFragment.cut(curFragment.firstChild.nodeSize);
-                    } else {
-                        curFragment = _model.Fragment.empty;
-                        curType = parents[parents.length + dSlice - 1];
-                    }
-                    if (unplaced)
-                        curFragment = curFragment.addToStart(unplaced);
-                    if (curFragment.size == 0 && dSlice <= 0)
-                        break;
-                    var found = findPlacement(curType, curFragment, $from, dFrom);
-                    if (found > -1) {
-                        if (curFragment.size > 0)
-                            placed[found] = {
-                                content: curFragment,
-                                openLeft: openLeftUnplaced,
-                                openRight: dSlice > 0 ? 0 : slice.openRight - dSlice,
-                                isEnd: dSlice <= 0,
-                                depth: found
-                            };
-                        if (dSlice <= 0)
-                            break;
-                        unplaced = null;
-                        openLeftUnplaced = 0;
-                        dFrom = Math.max(0, found - 1);
-                    } else {
-                        if (dSlice == 0) {
-                            parents = $from.node(0).type.findConnectionToKind(curFragment.leastSuperKind());
-                            if (!parents)
-                                break;
-                            parents.unshift($from.node(0).type);
-                            curType = parents[parents.length - 1];
-                        }
-                        unplaced = curType.create(curAttrs, curFragment);
-                        openLeftUnplaced++;
-                    }
-                }
-                return placed;
-            }
-            function findPlacement(type, fragment, $from, start) {
-                for (var d = start; d >= 0; d--) {
-                    var fromType = $from.node(d).type;
-                    if (type ? fromType.canContainContent(type) : fromType.canContainFragment(fragment))
-                        return d;
-                }
-                return -1;
-            }
-            function mergeTextblockAfter(tr, $inside, $after) {
-                var base = $inside.sameDepth($after);
-                var end = $after.end($after.depth),
-                    cutAt = end + 1,
-                    cutDepth = $after.depth - 1;
-                while (cutDepth > base && $after.index(cutDepth) + 1 == $after.node(cutDepth).childCount) {
-                    --cutDepth;
-                    ++cutAt;
-                }
-                if (cutDepth > base)
-                    tr.split(cutAt, cutDepth - base);
-                var types = [],
-                    attrs = [];
-                for (var i = base + 1; i <= $inside.depth; i++) {
-                    var node = $inside.node(i);
-                    types.push(node.type);
-                    attrs.push(node.attrs);
-                }
-                tr.step("ancestor", $after.pos, end, {
-                    depth: $after.depth - base,
-                    types: types,
-                    attrs: attrs
-                });
-                tr.join($after.pos - ($after.depth - base), $inside.depth - base);
-            }
-        })($__require('2b'));
-        return module.exports;
-    });
-
-    $__System.registerDynamic("19", ["22", "23", "21", "24", "16", "25", "26", "2c"], true, function($__require, exports, module) {
+    $__System.registerDynamic("23", ["29", "28"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.Remapping = exports.MapResult = exports.PosMap = exports.joinable = exports.joinPoint = exports.canWrap = exports.canLift = exports.StepResult = exports.Step = exports.TransformError = exports.Transform = undefined;
-        var _transform = $__require('22');
-        Object.defineProperty(exports, "Transform", {
-            enumerable: true,
-            get: function get() {
-                return _transform.Transform;
-            }
-        });
-        Object.defineProperty(exports, "TransformError", {
-            enumerable: true,
-            get: function get() {
-                return _transform.TransformError;
-            }
-        });
-        var _step = $__require('23');
-        Object.defineProperty(exports, "Step", {
-            enumerable: true,
-            get: function get() {
-                return _step.Step;
-            }
-        });
-        Object.defineProperty(exports, "StepResult", {
-            enumerable: true,
-            get: function get() {
-                return _step.StepResult;
-            }
-        });
-        var _ancestor = $__require('21');
-        Object.defineProperty(exports, "canLift", {
-            enumerable: true,
-            get: function get() {
-                return _ancestor.canLift;
-            }
-        });
-        Object.defineProperty(exports, "canWrap", {
-            enumerable: true,
-            get: function get() {
-                return _ancestor.canWrap;
-            }
-        });
-        var _join = $__require('24');
-        Object.defineProperty(exports, "joinPoint", {
-            enumerable: true,
-            get: function get() {
-                return _join.joinPoint;
-            }
-        });
-        Object.defineProperty(exports, "joinable", {
-            enumerable: true,
-            get: function get() {
-                return _join.joinable;
-            }
-        });
-        var _map = $__require('16');
-        Object.defineProperty(exports, "PosMap", {
-            enumerable: true,
-            get: function get() {
-                return _map.PosMap;
-            }
-        });
-        Object.defineProperty(exports, "MapResult", {
-            enumerable: true,
-            get: function get() {
-                return _map.MapResult;
-            }
-        });
-        Object.defineProperty(exports, "Remapping", {
-            enumerable: true,
-            get: function get() {
-                return _map.Remapping;
-            }
-        });
-        $__require('25');
-        $__require('26');
-        $__require('2c');
-        return module.exports;
-    });
-
-    $__System.registerDynamic("2d", [], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.isWordChar = isWordChar;
-        exports.charCategory = charCategory;
-        exports.isExtendingChar = isExtendingChar;
-        var nonASCIISingleCaseWordChar = /[\u00df\u0587\u0590-\u05f4\u0600-\u06ff\u3040-\u309f\u30a0-\u30ff\u3400-\u4db5\u4e00-\u9fcc\uac00-\ud7af]/;
-        var extendingChar = /[\u0300-\u036f\u0483-\u0489\u0591-\u05bd\u05bf\u05c1\u05c2\u05c4\u05c5\u05c7\u0610-\u061a\u064b-\u065e\u0670\u06d6-\u06dc\u06de-\u06e4\u06e7\u06e8\u06ea-\u06ed\u0711\u0730-\u074a\u07a6-\u07b0\u07eb-\u07f3\u0816-\u0819\u081b-\u0823\u0825-\u0827\u0829-\u082d\u0900-\u0902\u093c\u0941-\u0948\u094d\u0951-\u0955\u0962\u0963\u0981\u09bc\u09be\u09c1-\u09c4\u09cd\u09d7\u09e2\u09e3\u0a01\u0a02\u0a3c\u0a41\u0a42\u0a47\u0a48\u0a4b-\u0a4d\u0a51\u0a70\u0a71\u0a75\u0a81\u0a82\u0abc\u0ac1-\u0ac5\u0ac7\u0ac8\u0acd\u0ae2\u0ae3\u0b01\u0b3c\u0b3e\u0b3f\u0b41-\u0b44\u0b4d\u0b56\u0b57\u0b62\u0b63\u0b82\u0bbe\u0bc0\u0bcd\u0bd7\u0c3e-\u0c40\u0c46-\u0c48\u0c4a-\u0c4d\u0c55\u0c56\u0c62\u0c63\u0cbc\u0cbf\u0cc2\u0cc6\u0ccc\u0ccd\u0cd5\u0cd6\u0ce2\u0ce3\u0d3e\u0d41-\u0d44\u0d4d\u0d57\u0d62\u0d63\u0dca\u0dcf\u0dd2-\u0dd4\u0dd6\u0ddf\u0e31\u0e34-\u0e3a\u0e47-\u0e4e\u0eb1\u0eb4-\u0eb9\u0ebb\u0ebc\u0ec8-\u0ecd\u0f18\u0f19\u0f35\u0f37\u0f39\u0f71-\u0f7e\u0f80-\u0f84\u0f86\u0f87\u0f90-\u0f97\u0f99-\u0fbc\u0fc6\u102d-\u1030\u1032-\u1037\u1039\u103a\u103d\u103e\u1058\u1059\u105e-\u1060\u1071-\u1074\u1082\u1085\u1086\u108d\u109d\u135f\u1712-\u1714\u1732-\u1734\u1752\u1753\u1772\u1773\u17b7-\u17bd\u17c6\u17c9-\u17d3\u17dd\u180b-\u180d\u18a9\u1920-\u1922\u1927\u1928\u1932\u1939-\u193b\u1a17\u1a18\u1a56\u1a58-\u1a5e\u1a60\u1a62\u1a65-\u1a6c\u1a73-\u1a7c\u1a7f\u1b00-\u1b03\u1b34\u1b36-\u1b3a\u1b3c\u1b42\u1b6b-\u1b73\u1b80\u1b81\u1ba2-\u1ba5\u1ba8\u1ba9\u1c2c-\u1c33\u1c36\u1c37\u1cd0-\u1cd2\u1cd4-\u1ce0\u1ce2-\u1ce8\u1ced\u1dc0-\u1de6\u1dfd-\u1dff\u200c\u200d\u20d0-\u20f0\u2cef-\u2cf1\u2de0-\u2dff\u302a-\u302f\u3099\u309a\ua66f-\ua672\ua67c\ua67d\ua6f0\ua6f1\ua802\ua806\ua80b\ua825\ua826\ua8c4\ua8e0-\ua8f1\ua926-\ua92d\ua947-\ua951\ua980-\ua982\ua9b3\ua9b6-\ua9b9\ua9bc\uaa29-\uaa2e\uaa31\uaa32\uaa35\uaa36\uaa43\uaa4c\uaab0\uaab2-\uaab4\uaab7\uaab8\uaabe\uaabf\uaac1\uabe5\uabe8\uabed\udc00-\udfff\ufb1e\ufe00-\ufe0f\ufe20-\ufe26\uff9e\uff9f]/;
-        function isWordChar(ch) {
-            return (/\w/.test(ch) || isExtendingChar(ch) || ch > "\x80" && (ch.toUpperCase() != ch.toLowerCase() || nonASCIISingleCaseWordChar.test(ch)));
-        }
-        function charCategory(ch) {
-            return (/\s/.test(ch) ? "space" : isWordChar(ch) ? "word" : "other");
-        }
-        function isExtendingChar(ch) {
-            return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
-        }
-        return module.exports;
-    });
-
-    $__System.registerDynamic("11", ["8"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.posBeforeFromDOM = posBeforeFromDOM;
-        exports.posFromDOM = posFromDOM;
-        exports.childContainer = childContainer;
-        exports.DOMFromPos = DOMFromPos;
-        exports.DOMAfterPos = DOMAfterPos;
-        exports.scrollIntoView = scrollIntoView;
-        exports.posAtCoords = posAtCoords;
-        exports.coordsAtPos = coordsAtPos;
-        exports.selectableNodeAbove = selectableNodeAbove;
-        exports.handleNodeClick = handleNodeClick;
-        var _dom = $__require('8');
-        function posBeforeFromDOM(pm, node) {
-            var pos = 0,
-                add = 0;
-            for (var cur = node; cur != pm.content; cur = cur.parentNode) {
-                var attr = cur.getAttribute("pm-offset");
-                if (attr) {
-                    pos += +attr + add;
-                    add = 1;
-                }
-            }
-            return pos;
-        }
-        function posFromDOM(pm, dom, domOffset) {
-            if (pm.operation && pm.doc != pm.operation.doc)
-                throw new RangeError("Fetching a position from an outdated DOM structure");
-            if (domOffset == null) {
-                domOffset = Array.prototype.indexOf.call(dom.parentNode.childNodes, dom);
-                dom = dom.parentNode;
-            }
-            var innerOffset = 0,
-                tag = undefined;
-            for (; ; ) {
-                var adjust = 0;
-                if (dom.nodeType == 3) {
-                    innerOffset += domOffset;
-                } else if (tag = dom.getAttribute("pm-offset") && !childContainer(dom)) {
-                    var size = +dom.getAttribute("pm-size");
-                    return posBeforeFromDOM(pm, dom) + (domOffset == dom.childNodes.length ? size : Math.min(innerOffset, size));
-                } else if (dom.hasAttribute("pm-container")) {
-                    break;
-                } else if (tag = dom.getAttribute("pm-inner-offset")) {
-                    innerOffset += +tag;
-                    adjust = -1;
-                } else if (domOffset && domOffset == dom.childNodes.length) {
-                    adjust = 1;
-                }
-                var parent = dom.parentNode;
-                domOffset = adjust < 0 ? 0 : Array.prototype.indexOf.call(parent.childNodes, dom) + adjust;
-                dom = parent;
-            }
-            var start = dom == pm.content ? 0 : posBeforeFromDOM(pm, dom) + 1,
-                before = 0;
-            for (var child = dom.childNodes[domOffset - 1]; child; child = child.previousSibling) {
-                if (child.nodeType == 1 && (tag = child.getAttribute("pm-offset"))) {
-                    before += +tag + +child.getAttribute("pm-size");
-                    break;
-                }
-            }
-            return start + before + innerOffset;
-        }
-        function childContainer(dom) {
-            return dom.hasAttribute("pm-container") ? dom : dom.querySelector("[pm-container]");
-        }
-        function DOMFromPos(pm, pos, liberal) {
-            if (!liberal && pm.operation && pm.doc != pm.operation.doc)
-                throw new RangeError("Resolving a position in an outdated DOM structure");
-            var container = pm.content,
-                offset = pos;
-            outer: for (; ; ) {
-                for (var child = container.firstChild,
-                         i = 0; ; child = child.nextSibling, i++) {
-                    if (!child) {
-                        if (offset && !liberal)
-                            throw new RangeError("Failed to find node at " + pos + " rem = " + offset);
-                        return {
-                            node: container,
-                            offset: i
-                        };
-                    }
-                    var size = child.nodeType == 1 && child.getAttribute("pm-size");
-                    if (size) {
-                        if (!offset)
-                            return {
-                                node: container,
-                                offset: i
-                            };
-                        size = +size;
-                        if (offset < size) {
-                            container = childContainer(child);
-                            if (!container) {
-                                return leafAt(child, offset);
-                            } else {
-                                offset--;
-                                break;
-                            }
-                        } else {
-                            offset -= size;
-                        }
-                    }
-                }
-            }
-        }
-        function DOMAfterPos(pm, pos) {
-            var _DOMFromPos = DOMFromPos(pm, pos);
-            var node = _DOMFromPos.node;
-            var offset = _DOMFromPos.offset;
-            if (node.nodeType != 1 || offset == node.childNodes.length)
-                throw new RangeError("No node after pos " + pos);
-            return node.childNodes[offset];
-        }
-        function leafAt(node, offset) {
-            for (; ; ) {
-                var child = node.firstChild;
-                if (!child)
-                    return {
-                        node: node,
-                        offset: offset
-                    };
-                if (child.nodeType != 1)
-                    return {
-                        node: child,
-                        offset: offset
-                    };
-                if (child.hasAttribute("pm-inner-offset")) {
-                    var nodeOffset = 0;
-                    for (; ; ) {
-                        var nextSib = child.nextSibling,
-                            nextOffset = undefined;
-                        if (!nextSib || (nextOffset = +nextSib.getAttribute("pm-inner-offset")) >= offset)
-                            break;
-                        child = nextSib;
-                        nodeOffset = nextOffset;
-                    }
-                    offset -= nodeOffset;
-                }
-                node = child;
-            }
-        }
-        function windowRect() {
-            return {
-                left: 0,
-                right: window.innerWidth,
-                top: 0,
-                bottom: window.innerHeight
-            };
-        }
-        var scrollMargin = 5;
-        function scrollIntoView(pm, pos) {
-            if (!pos)
-                pos = pm.sel.range.head || pm.sel.range.from;
-            var coords = coordsAtPos(pm, pos);
-            for (var parent = pm.content; ; parent = parent.parentNode) {
-                var atBody = parent == document.body;
-                var rect = atBody ? windowRect() : parent.getBoundingClientRect();
-                var moveX = 0,
-                    moveY = 0;
-                if (coords.top < rect.top)
-                    moveY = -(rect.top - coords.top + scrollMargin);
-                else if (coords.bottom > rect.bottom)
-                    moveY = coords.bottom - rect.bottom + scrollMargin;
-                if (coords.left < rect.left)
-                    moveX = -(rect.left - coords.left + scrollMargin);
-                else if (coords.right > rect.right)
-                    moveX = coords.right - rect.right + scrollMargin;
-                if (moveX || moveY) {
-                    if (atBody) {
-                        window.scrollBy(moveX, moveY);
-                    } else {
-                        if (moveY)
-                            parent.scrollTop += moveY;
-                        if (moveX)
-                            parent.scrollLeft += moveX;
-                    }
-                }
-                if (atBody)
-                    break;
-            }
-        }
-        function findOffsetInNode(node, coords) {
-            var closest = undefined,
-                dyClosest = 1e8,
-                coordsClosest = undefined,
-                offset = 0;
-            for (var child = node.firstChild; child; child = child.nextSibling) {
-                var rects = undefined;
-                if (child.nodeType == 1)
-                    rects = child.getClientRects();
-                else if (child.nodeType == 3)
-                    rects = textRects(child);
-                else
-                    continue;
-                for (var i = 0; i < rects.length; i++) {
-                    var rect = rects[i];
-                    if (rect.left <= coords.left && rect.right >= coords.left) {
-                        var dy = rect.top > coords.top ? rect.top - coords.top : rect.bottom < coords.top ? coords.top - rect.bottom : 0;
-                        if (dy < dyClosest) {
-                            closest = child;
-                            dyClosest = dy;
-                            coordsClosest = dy ? {
-                                left: coords.left,
-                                top: rect.top
-                            } : coords;
-                            if (child.nodeType == 1 && !child.firstChild)
-                                offset = i + (coords.left >= (rect.left + rect.right) / 2 ? 1 : 0);
-                            continue;
-                        }
-                    }
-                    if (!closest && (coords.top >= rect.bottom || coords.top >= rect.top && coords.left >= rect.right))
-                        offset = i + 1;
-                }
-            }
-            if (!closest)
-                return {
-                    node: node,
-                    offset: offset
-                };
-            if (closest.nodeType == 3)
-                return findOffsetInText(closest, coordsClosest);
-            if (closest.firstChild)
-                return findOffsetInNode(closest, coordsClosest);
-            return {
-                node: node,
-                offset: offset
-            };
-        }
-        function findOffsetInText(node, coords) {
-            var len = node.nodeValue.length;
-            var range = document.createRange();
-            for (var i = 0; i < len; i++) {
-                range.setEnd(node, i + 1);
-                range.setStart(node, i);
-                var rect = range.getBoundingClientRect();
-                if (rect.top == rect.bottom)
-                    continue;
-                if (rect.left - 1 <= coords.left && rect.right + 1 >= coords.left && rect.top - 1 <= coords.top && rect.bottom + 1 >= coords.top)
-                    return {
-                        node: node,
-                        offset: i + (coords.left >= (rect.left + rect.right) / 2 ? 1 : 0)
-                    };
-            }
-            return {
-                node: node,
-                offset: 0
-            };
-        }
-        function posAtCoords(pm, coords) {
-            var elt = document.elementFromPoint(coords.left, coords.top + 1);
-            if (!(0, _dom.contains)(pm.content, elt))
-                return null;
-            if (!elt.firstChild)
-                elt = elt.parentNode;
-            var _findOffsetInNode = findOffsetInNode(elt, coords);
-            var node = _findOffsetInNode.node;
-            var offset = _findOffsetInNode.offset;
-            return posFromDOM(pm, node, offset);
-        }
-        function textRect(node, from, to) {
-            var range = document.createRange();
-            range.setEnd(node, to);
-            range.setStart(node, from);
-            return range.getBoundingClientRect();
-        }
-        function textRects(node) {
-            var range = document.createRange();
-            range.setEnd(node, node.nodeValue.length);
-            range.setStart(node, 0);
-            return range.getClientRects();
-        }
-        function coordsAtPos(pm, pos) {
-            var _DOMFromPos2 = DOMFromPos(pm, pos);
-            var node = _DOMFromPos2.node;
-            var offset = _DOMFromPos2.offset;
-            var side = undefined,
-                rect = undefined;
-            if (node.nodeType == 3) {
-                if (offset < node.nodeValue.length) {
-                    rect = textRect(node, offset, offset + 1);
-                    side = "left";
-                }
-                if ((!rect || rect.left == rect.right) && offset) {
-                    rect = textRect(node, offset - 1, offset);
-                    side = "right";
-                }
-            } else if (node.firstChild) {
-                if (offset < node.childNodes.length) {
-                    var child = node.childNodes[offset];
-                    rect = child.nodeType == 3 ? textRect(child, 0, child.nodeValue.length) : child.getBoundingClientRect();
-                    side = "left";
-                }
-                if ((!rect || rect.left == rect.right) && offset) {
-                    var child = node.childNodes[offset - 1];
-                    rect = child.nodeType == 3 ? textRect(child, 0, child.nodeValue.length) : child.getBoundingClientRect();
-                    side = "right";
-                }
-            } else {
-                rect = node.getBoundingClientRect();
-                side = "left";
-            }
-            var x = rect[side];
-            return {
-                top: rect.top,
-                bottom: rect.bottom,
-                left: x,
-                right: x
-            };
-        }
-        function selectableNodeAbove(pm, dom, coords, liberal) {
-            for (; dom && dom != pm.content; dom = dom.parentNode) {
-                if (dom.hasAttribute("pm-offset")) {
-                    var pos = posBeforeFromDOM(pm, dom),
-                        node = pm.doc.nodeAt(pos);
-                    if (node.type.countCoordsAsChild) {
-                        var result = node.type.countCoordsAsChild(node, pos, dom, coords);
-                        if (result != null)
-                            return result;
-                    }
-                    if ((liberal || node.type.contains == null) && node.type.selectable)
-                        return pos;
-                    if (!liberal)
-                        return null;
-                }
-            }
-        }
-        function handleNodeClick(pm, type, event, target, direct) {
-            for (var dom = target; dom && dom != pm.content; dom = dom.parentNode) {
-                if (dom.hasAttribute("pm-offset")) {
-                    var pos = posBeforeFromDOM(pm, dom),
-                        node = pm.doc.nodeAt(pos);
-                    var handled = node.type[type] && node.type[type](pm, event, pos, node) !== false;
-                    if (direct || handled)
-                        return handled;
-                }
-            }
-        }
-        return module.exports;
-    });
-
-    $__System.registerDynamic("13", ["8", "11"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.NodeSelection = exports.TextSelection = exports.Selection = exports.SelectionState = undefined;
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -5389,14 +4905,11 @@
                 return Constructor;
             };
         }();
-        exports.hasFocus = hasFocus;
-        exports.findSelectionFrom = findSelectionFrom;
-        exports.findSelectionNear = findSelectionNear;
-        exports.findSelectionAtStart = findSelectionAtStart;
-        exports.findSelectionAtEnd = findSelectionAtEnd;
-        exports.verticalMotionLeavesTextblock = verticalMotionLeavesTextblock;
-        var _dom = $__require('8');
-        var _dompos = $__require('11');
+        function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+            }
+        }
         function _possibleConstructorReturn(self, call) {
             if (!self) {
                 throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -5416,2167 +4929,413 @@
             if (superClass)
                 Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
         }
-        function _classCallCheck(instance, Constructor) {
-            if (!(instance instanceof Constructor)) {
-                throw new TypeError("Cannot call a class as a function");
+        var _require = $__require('29');
+        var ProseMirrorError = _require.ProseMirrorError;
+        var _require2 = $__require('28');
+        var mapThrough = _require2.mapThrough;
+        var mapThroughResult = _require2.mapThroughResult;
+        var TransformError = function(_ProseMirrorError) {
+            _inherits(TransformError, _ProseMirrorError);
+            function TransformError() {
+                _classCallCheck(this, TransformError);
+                return _possibleConstructorReturn(this, Object.getPrototypeOf(TransformError).apply(this, arguments));
             }
-        }
-        var SelectionState = exports.SelectionState = function() {
-            function SelectionState(pm, range) {
-                var _this = this;
-                _classCallCheck(this, SelectionState);
-                this.pm = pm;
-                this.range = range;
-                this.polling = null;
-                this.lastAnchorNode = this.lastHeadNode = this.lastAnchorOffset = this.lastHeadOffset = null;
-                this.lastNode = null;
-                pm.content.addEventListener("focus", function() {
-                    return _this.receivedFocus();
-                });
-                this.poller = this.poller.bind(this);
+            return TransformError;
+        }(ProseMirrorError);
+        exports.TransformError = TransformError;
+        var Transform = function() {
+            function Transform(doc) {
+                _classCallCheck(this, Transform);
+                this.doc = doc;
+                this.steps = [];
+                this.docs = [];
+                this.maps = [];
             }
-            _createClass(SelectionState, [{
-                key: "setAndSignal",
-                value: function setAndSignal(range, clearLast) {
-                    this.set(range, clearLast);
-                    this.pm.signal("selectionChange");
+            _createClass(Transform, [{
+                key: "step",
+                value: function step(_step) {
+                    var result = this.maybeStep(_step);
+                    if (result.failed)
+                        throw new TransformError(result.failed);
+                    return this;
                 }
             }, {
-                key: "set",
-                value: function set(range, clearLast) {
-                    this.pm.ensureOperation({readSelection: false});
-                    this.range = range;
-                    if (clearLast !== false)
-                        this.lastAnchorNode = null;
-                }
-            }, {
-                key: "poller",
-                value: function poller() {
-                    if (hasFocus(this.pm)) {
-                        if (!this.pm.operation)
-                            this.readFromDOM();
-                        this.polling = setTimeout(this.poller, 100);
-                    } else {
-                        this.polling = null;
-                    }
-                }
-            }, {
-                key: "startPolling",
-                value: function startPolling() {
-                    clearTimeout(this.polling);
-                    this.polling = setTimeout(this.poller, 50);
-                }
-            }, {
-                key: "fastPoll",
-                value: function fastPoll() {
-                    this.startPolling();
-                }
-            }, {
-                key: "stopPolling",
-                value: function stopPolling() {
-                    clearTimeout(this.polling);
-                    this.polling = null;
-                }
-            }, {
-                key: "domChanged",
-                value: function domChanged() {
-                    var sel = window.getSelection();
-                    return sel.anchorNode != this.lastAnchorNode || sel.anchorOffset != this.lastAnchorOffset || sel.focusNode != this.lastHeadNode || sel.focusOffset != this.lastHeadOffset;
-                }
-            }, {
-                key: "storeDOMState",
-                value: function storeDOMState() {
-                    var sel = window.getSelection();
-                    this.lastAnchorNode = sel.anchorNode;
-                    this.lastAnchorOffset = sel.anchorOffset;
-                    this.lastHeadNode = sel.focusNode;
-                    this.lastHeadOffset = sel.focusOffset;
-                }
-            }, {
-                key: "readFromDOM",
-                value: function readFromDOM() {
-                    if (!hasFocus(this.pm) || !this.domChanged())
-                        return false;
-                    var sel = window.getSelection(),
-                        doc = this.pm.doc;
-                    var anchor = (0, _dompos.posFromDOM)(this.pm, sel.anchorNode, sel.anchorOffset);
-                    var head = sel.isCollapsed ? anchor : (0, _dompos.posFromDOM)(this.pm, sel.focusNode, sel.focusOffset);
-                    var newRange = findSelectionNear(doc, head, this.range.head != null && this.range.head < head ? 1 : -1);
-                    if (newRange instanceof TextSelection) {
-                        var selNearAnchor = findSelectionNear(doc, anchor, anchor > newRange.to ? -1 : 1, true);
-                        newRange = new TextSelection(selNearAnchor.anchor, newRange.head);
-                    } else if (anchor < newRange.from || anchor > newRange.to) {
-                        var inv = anchor > newRange.to;
-                        newRange = new TextSelection(findSelectionNear(doc, anchor, inv ? -1 : 1, true).anchor, findSelectionNear(doc, inv ? newRange.from : newRange.to, inv ? 1 : -1, true).head);
-                    }
-                    this.setAndSignal(newRange);
-                    if (newRange instanceof NodeSelection || newRange.head != head || newRange.anchor != anchor) {
-                        this.toDOM();
-                    } else {
-                        this.clearNode();
-                        this.storeDOMState();
-                    }
-                    return true;
-                }
-            }, {
-                key: "toDOM",
-                value: function toDOM(takeFocus) {
-                    if (!hasFocus(this.pm)) {
-                        if (!takeFocus)
-                            return;
-                        else if (_dom.browser.gecko)
-                            this.pm.content.focus();
-                    }
-                    if (this.range instanceof NodeSelection)
-                        this.nodeToDOM();
-                    else
-                        this.rangeToDOM();
-                }
-            }, {
-                key: "nodeToDOM",
-                value: function nodeToDOM() {
-                    var dom = (0, _dompos.DOMAfterPos)(this.pm, this.range.from);
-                    if (dom != this.lastNode) {
-                        this.clearNode();
-                        dom.classList.add("ProseMirror-selectednode");
-                        this.pm.content.classList.add("ProseMirror-nodeselection");
-                        this.lastNode = dom;
-                    }
-                    var range = document.createRange(),
-                        sel = window.getSelection();
-                    range.selectNode(dom);
-                    sel.removeAllRanges();
-                    sel.addRange(range);
-                    this.storeDOMState();
-                }
-            }, {
-                key: "rangeToDOM",
-                value: function rangeToDOM() {
-                    this.clearNode();
-                    var anchor = (0, _dompos.DOMFromPos)(this.pm, this.range.anchor);
-                    var head = (0, _dompos.DOMFromPos)(this.pm, this.range.head);
-                    var sel = window.getSelection(),
-                        range = document.createRange();
-                    if (sel.extend) {
-                        range.setEnd(anchor.node, anchor.offset);
-                        range.collapse(false);
-                    } else {
-                        if (this.range.anchor > this.range.head) {
-                            var tmp = anchor;
-                            anchor = head;
-                            head = tmp;
-                        }
-                        range.setEnd(head.node, head.offset);
-                        range.setStart(anchor.node, anchor.offset);
-                    }
-                    sel.removeAllRanges();
-                    sel.addRange(range);
-                    if (sel.extend)
-                        sel.extend(head.node, head.offset);
-                    this.storeDOMState();
-                }
-            }, {
-                key: "clearNode",
-                value: function clearNode() {
-                    if (this.lastNode) {
-                        this.lastNode.classList.remove("ProseMirror-selectednode");
-                        this.pm.content.classList.remove("ProseMirror-nodeselection");
-                        this.lastNode = null;
-                        return true;
-                    }
-                }
-            }, {
-                key: "receivedFocus",
-                value: function receivedFocus() {
-                    if (this.polling == null)
-                        this.startPolling();
-                }
-            }]);
-            return SelectionState;
-        }();
-        var Selection = exports.Selection = function Selection() {
-            _classCallCheck(this, Selection);
-        };
-        var TextSelection = exports.TextSelection = function(_Selection) {
-            _inherits(TextSelection, _Selection);
-            function TextSelection(anchor, head) {
-                _classCallCheck(this, TextSelection);
-                var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(TextSelection).call(this));
-                _this2.anchor = anchor;
-                _this2.head = head == null ? anchor : head;
-                return _this2;
-            }
-            _createClass(TextSelection, [{
-                key: "eq",
-                value: function eq(other) {
-                    return other instanceof TextSelection && other.head == this.head && other.anchor == this.anchor;
-                }
-            }, {
-                key: "map",
-                value: function map(doc, mapping) {
-                    var head = mapping.map(this.head);
-                    if (!doc.resolve(head).parent.isTextblock)
-                        return findSelectionNear(doc, head);
-                    var anchor = mapping.map(this.anchor);
-                    return new TextSelection(doc.resolve(anchor).parent.isTextblock ? anchor : head, head);
-                }
-            }, {
-                key: "inverted",
-                get: function get() {
-                    return this.anchor > this.head;
-                }
-            }, {
-                key: "from",
-                get: function get() {
-                    return Math.min(this.head, this.anchor);
-                }
-            }, {
-                key: "to",
-                get: function get() {
-                    return Math.max(this.head, this.anchor);
-                }
-            }, {
-                key: "empty",
-                get: function get() {
-                    return this.anchor == this.head;
-                }
-            }, {
-                key: "token",
-                get: function get() {
-                    return new SelectionToken(TextSelection, this.anchor, this.head);
-                }
-            }], [{
-                key: "mapToken",
-                value: function mapToken(token, mapping) {
-                    return new SelectionToken(TextSelection, mapping.map(token.a), mapping.map(token.b));
-                }
-            }, {
-                key: "fromToken",
-                value: function fromToken(token, doc) {
-                    if (!doc.resolve(token.b).parent.isTextblock)
-                        return findSelectionNear(doc, token.b);
-                    return new TextSelection(doc.resolve(token.a).parent.isTextblock ? token.a : token.b, token.b);
-                }
-            }]);
-            return TextSelection;
-        }(Selection);
-        var NodeSelection = exports.NodeSelection = function(_Selection2) {
-            _inherits(NodeSelection, _Selection2);
-            function NodeSelection(from, to, node) {
-                _classCallCheck(this, NodeSelection);
-                var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(NodeSelection).call(this));
-                _this3.from = from;
-                _this3.to = to;
-                _this3.node = node;
-                return _this3;
-            }
-            _createClass(NodeSelection, [{
-                key: "eq",
-                value: function eq(other) {
-                    return other instanceof NodeSelection && this.from == other.from;
-                }
-            }, {
-                key: "map",
-                value: function map(doc, mapping) {
-                    var from = mapping.map(this.from, 1);
-                    var to = mapping.map(this.to, -1);
-                    var node = doc.nodeAt(from);
-                    if (node && to == from + node.nodeSize && node.type.selectable)
-                        return new NodeSelection(from, to, node);
-                    return findSelectionNear(doc, from);
-                }
-            }, {
-                key: "empty",
-                get: function get() {
-                    return false;
-                }
-            }, {
-                key: "token",
-                get: function get() {
-                    return new SelectionToken(NodeSelection, this.from, this.to);
-                }
-            }], [{
-                key: "mapToken",
-                value: function mapToken(token, mapping) {
-                    return new SelectionToken(TextSelection, mapping.map(token.a, 1), mapping.map(token.b, -1));
-                }
-            }, {
-                key: "fromToken",
-                value: function fromToken(token, doc) {
-                    var node = doc.nodeAt(token.a);
-                    if (node && token.b == token.a + node.nodeSize && node.type.selectable)
-                        return new NodeSelection(token.a, token.b, node);
-                    return findSelectionNear(doc, token.a);
-                }
-            }]);
-            return NodeSelection;
-        }(Selection);
-        var SelectionToken = function SelectionToken(type, a, b) {
-            _classCallCheck(this, SelectionToken);
-            this.type = type;
-            this.a = a;
-            this.b = b;
-        };
-        function hasFocus(pm) {
-            if (document.activeElement != pm.content)
-                return false;
-            var sel = window.getSelection();
-            return sel.rangeCount && (0, _dom.contains)(pm.content, sel.anchorNode);
-        }
-        function findSelectionIn(node, pos, index, dir, text) {
-            for (var i = index - (dir > 0 ? 0 : 1); dir > 0 ? i < node.childCount : i >= 0; i += dir) {
-                var child = node.child(i);
-                if (child.isTextblock)
-                    return new TextSelection(pos + dir);
-                if (child.type.contains) {
-                    var inner = findSelectionIn(child, pos + dir, dir < 0 ? child.childCount : 0, dir, text);
-                    if (inner)
-                        return inner;
-                } else if (!text && child.type.selectable) {
-                    return new NodeSelection(pos - (dir < 0 ? child.nodeSize : 0), pos + (dir > 0 ? child.nodeSize : 0), child);
-                }
-                pos += child.nodeSize * dir;
-            }
-        }
-        function findSelectionFrom(doc, pos, dir, text) {
-            var $pos = doc.resolve(pos);
-            var inner = $pos.parent.isTextblock ? new TextSelection(pos) : findSelectionIn($pos.parent, pos, $pos.index($pos.depth), dir, text);
-            if (inner)
-                return inner;
-            for (var depth = $pos.depth - 1; depth >= 0; depth--) {
-                var found = dir < 0 ? findSelectionIn($pos.node(depth), $pos.before(depth + 1), $pos.index(depth), dir, text) : findSelectionIn($pos.node(depth), $pos.after(depth + 1), $pos.index(depth) + 1, dir, text);
-                if (found)
-                    return found;
-            }
-        }
-        function findSelectionNear(doc, pos) {
-            var bias = arguments.length <= 2 || arguments[2] === undefined ? 1 : arguments[2];
-            var text = arguments[3];
-            var result = findSelectionFrom(doc, pos, bias, text) || findSelectionFrom(doc, pos, -bias, text);
-            if (!result)
-                throw new RangeError("Searching for selection in invalid document " + doc);
-            return result;
-        }
-        function findSelectionAtStart(node, text) {
-            return findSelectionIn(node, 0, 0, 1, text);
-        }
-        function findSelectionAtEnd(node, text) {
-            return findSelectionIn(node, node.content.size, node.childCount, -1, text);
-        }
-        function verticalMotionLeavesTextblock(pm, pos, dir) {
-            var $pos = pm.doc.resolve(pos);
-            var dom = (0, _dompos.DOMAfterPos)(pm, $pos.before($pos.depth));
-            var coords = (0, _dompos.coordsAtPos)(pm, pos);
-            for (var child = dom.firstChild; child; child = child.nextSibling) {
-                if (child.nodeType != 1)
-                    continue;
-                var boxes = child.getClientRects();
-                for (var i = 0; i < boxes.length; i++) {
-                    var box = boxes[i];
-                    if (dir < 0 ? box.bottom < coords.top : box.top > coords.bottom)
-                        return false;
-                }
-            }
-            return true;
-        }
-        return module.exports;
-    });
-
-    $__System.registerDynamic("2e", ["19", "2d", "13"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.baseCommands = undefined;
-        var _transform = $__require('19');
-        var _char = $__require('2d');
-        var _selection = $__require('13');
-        function _toConsumableArray(arr) {
-            if (Array.isArray(arr)) {
-                for (var i = 0,
-                         arr2 = Array(arr.length); i < arr.length; i++) {
-                    arr2[i] = arr[i];
-                }
-                return arr2;
-            } else {
-                return Array.from(arr);
-            }
-        }
-        var baseCommands = exports.baseCommands = Object.create(null);
-        baseCommands.deleteSelection = {
-            label: "Delete the selection",
-            run: function run(pm) {
-                return pm.tr.replaceSelection().apply(pm.apply.scroll);
-            },
-            keys: {
-                all: ["Backspace(10)", "Delete(10)", "Mod-Backspace(10)", "Mod-Delete(10)"],
-                mac: ["Ctrl-H(10)", "Alt-Backspace(10)", "Ctrl-D(10)", "Ctrl-Alt-Backspace(10)", "Alt-Delete(10)", "Alt-D(10)"]
-            }
-        };
-        function deleteBarrier(pm, cut) {
-            var $cut = pm.doc.resolve(cut),
-                before = $cut.nodeBefore,
-                after = $cut.nodeAfter;
-            if (before.type.canContainContent(after.type)) {
-                var tr = pm.tr.join(cut);
-                if (tr.steps.length && before.content.size == 0 && !before.sameMarkup(after))
-                    tr.setNodeType(cut - before.nodeSize, after.type, after.attrs);
-                if (tr.apply(pm.apply.scroll) !== false)
-                    return;
-            }
-            var conn = undefined;
-            if (after.isTextblock && (conn = before.type.findConnection(after.type))) {
-                var tr = pm.tr,
-                    end = cut + after.nodeSize;
-                tr.step("ancestor", cut, end, {
-                    types: [before.type].concat(_toConsumableArray(conn)),
-                    attrs: [before.attrs].concat(_toConsumableArray(conn.map(function() {
-                        return null;
-                    })))
-                });
-                tr.join(end + 2 * conn.length + 2, 1, true);
-                tr.join(cut);
-                if (tr.apply(pm.apply.scroll) !== false)
-                    return;
-            }
-            var selAfter = (0, _selection.findSelectionFrom)(pm.doc, cut, 1);
-            return pm.tr.lift(selAfter.from, selAfter.to, true).apply(pm.apply.scroll);
-        }
-        baseCommands.joinBackward = {
-            label: "Join with the block above",
-            run: function run(pm) {
-                var _pm$selection = pm.selection;
-                var head = _pm$selection.head;
-                var empty = _pm$selection.empty;
-                if (!empty)
-                    return false;
-                var $head = pm.doc.resolve(head);
-                if ($head.parentOffset > 0)
-                    return false;
-                var before = undefined,
-                    cut = undefined;
-                for (var i = $head.depth - 1; !before && i >= 0; i--) {
-                    if ($head.index(i) > 0) {
-                        cut = $head.before(i + 1);
-                        before = $head.node(i).child($head.index(i) - 1);
-                    }
-                }
-                if (!before)
-                    return pm.tr.lift(head, head, true).apply(pm.apply.scroll);
-                if (before.type.contains == null && before.type.selectable && $head.parent.content.size == 0) {
-                    var tr = pm.tr.delete(cut, cut + $head.parent.nodeSize).apply(pm.apply.scroll);
-                    pm.setNodeSelection(cut - before.nodeSize);
-                    return tr;
-                }
-                if (before.type.contains == null)
-                    return pm.tr.delete(cut - before.nodeSize, cut).apply(pm.apply.scroll);
-                return deleteBarrier(pm, cut);
-            },
-            keys: ["Backspace(30)", "Mod-Backspace(30)"]
-        };
-        function moveBackward(doc, pos, by) {
-            if (by != "char" && by != "word")
-                throw new RangeError("Unknown motion unit: " + by);
-            var $pos = doc.resolve(pos);
-            var parent = $pos.parent,
-                offset = $pos.parentOffset;
-            var cat = null,
-                counted = 0;
-            for (; ; ) {
-                if (offset == 0)
-                    return pos;
-                var _parent$childBefore = parent.childBefore(offset);
-                var start = _parent$childBefore.offset;
-                var node = _parent$childBefore.node;
-                if (!node)
-                    return pos;
-                if (!node.isText)
-                    return cat ? pos : pos - 1;
-                if (by == "char") {
-                    for (var i = offset - start; i > 0; i--) {
-                        if (!(0, _char.isExtendingChar)(node.text.charAt(i - 1)))
-                            return pos - 1;
-                        offset--;
-                        pos--;
-                    }
-                } else if (by == "word") {
-                    for (var i = offset - start; i > 0; i--) {
-                        var nextCharCat = (0, _char.charCategory)(node.text.charAt(i - 1));
-                        if (cat == null || counted == 1 && cat == "space")
-                            cat = nextCharCat;
-                        else if (cat != nextCharCat)
-                            return pos;
-                        offset--;
-                        pos--;
-                        counted++;
-                    }
-                }
-            }
-        }
-        baseCommands.deleteCharBefore = {
-            label: "Delete a character before the cursor",
-            run: function run(pm) {
-                var _pm$selection2 = pm.selection;
-                var head = _pm$selection2.head;
-                var empty = _pm$selection2.empty;
-                if (!empty || pm.doc.resolve(head).parentOffset == 0)
-                    return false;
-                var dest = moveBackward(pm.doc, head, "char");
-                return pm.tr.delete(dest, head).apply(pm.apply.scroll);
-            },
-            keys: {
-                all: ["Backspace(60)"],
-                mac: ["Ctrl-H(40)"]
-            }
-        };
-        baseCommands.deleteWordBefore = {
-            label: "Delete the word before the cursor",
-            run: function run(pm) {
-                var _pm$selection3 = pm.selection;
-                var head = _pm$selection3.head;
-                var empty = _pm$selection3.empty;
-                if (!empty || pm.doc.resolve(head).parentOffset == 0)
-                    return false;
-                var dest = moveBackward(pm.doc, head, "word");
-                return pm.tr.delete(dest, head).apply(pm.apply.scroll);
-            },
-            keys: {
-                all: ["Mod-Backspace(40)"],
-                mac: ["Alt-Backspace(40)"]
-            }
-        };
-        baseCommands.joinForward = {
-            label: "Join with the block below",
-            run: function run(pm) {
-                var _pm$selection4 = pm.selection;
-                var head = _pm$selection4.head;
-                var empty = _pm$selection4.empty;
-                var $head = undefined;
-                if (!empty || ($head = pm.doc.resolve(head)).parentOffset < $head.parent.content.size)
-                    return false;
-                var after = undefined,
-                    cut = undefined;
-                for (var i = $head.depth - 1; !after && i >= 0; i--) {
-                    var parent = $head.node(i);
-                    if ($head.index(i) + 1 < parent.childCount) {
-                        after = parent.child($head.index(i) + 1);
-                        cut = $head.after(i + 1);
-                    }
-                }
-                if (!after)
-                    return false;
-                if (after.type.contains == null)
-                    return pm.tr.delete(cut, cut + after.nodeSize).apply(pm.apply.scroll);
-                return deleteBarrier(pm, cut);
-            },
-            keys: ["Delete(30)", "Mod-Delete(30)"]
-        };
-        function moveForward(doc, pos, by) {
-            if (by != "char" && by != "word")
-                throw new RangeError("Unknown motion unit: " + by);
-            var $pos = doc.resolve(pos);
-            var parent = $pos.parent,
-                offset = $pos.parentOffset;
-            var cat = null,
-                counted = 0;
-            for (; ; ) {
-                if (offset == parent.content.size)
-                    return pos;
-                var _parent$childAfter = parent.childAfter(offset);
-                var start = _parent$childAfter.offset;
-                var node = _parent$childAfter.node;
-                if (!node)
-                    return pos;
-                if (!node.isText)
-                    return cat ? pos : pos + 1;
-                if (by == "char") {
-                    for (var i = offset - start; i < node.text.length; i++) {
-                        if (!(0, _char.isExtendingChar)(node.text.charAt(i + 1)))
-                            return pos + 1;
-                        offset++;
-                        pos++;
-                    }
-                } else if (by == "word") {
-                    for (var i = offset - start; i < node.text.length; i++) {
-                        var nextCharCat = (0, _char.charCategory)(node.text.charAt(i));
-                        if (cat == null || counted == 1 && cat == "space")
-                            cat = nextCharCat;
-                        else if (cat != nextCharCat)
-                            return pos;
-                        offset++;
-                        pos++;
-                        counted++;
-                    }
-                }
-            }
-        }
-        baseCommands.deleteCharAfter = {
-            label: "Delete a character after the cursor",
-            run: function run(pm) {
-                var _pm$selection5 = pm.selection;
-                var head = _pm$selection5.head;
-                var empty = _pm$selection5.empty;
-                var $head = undefined;
-                if (!empty || ($head = pm.doc.resolve(head)).parentOffset == $head.parent.content.size)
-                    return false;
-                var dest = moveForward(pm.doc, head, "char");
-                return pm.tr.delete(head, dest).apply(pm.apply.scroll);
-            },
-            keys: {
-                all: ["Delete(60)"],
-                mac: ["Ctrl-D(60)"]
-            }
-        };
-        baseCommands.deleteWordAfter = {
-            label: "Delete a word after the cursor",
-            run: function run(pm) {
-                var _pm$selection6 = pm.selection;
-                var head = _pm$selection6.head;
-                var empty = _pm$selection6.empty;
-                var $head = undefined;
-                if (!empty || ($head = pm.doc.resolve(head)).parentOffset == $head.parent.content.size)
-                    return false;
-                var dest = moveForward(pm.doc, head, "word");
-                return pm.tr.delete(head, dest).apply(pm.apply.scroll);
-            },
-            keys: {
-                all: ["Mod-Delete(40)"],
-                mac: ["Ctrl-Alt-Backspace(40)", "Alt-Delete(40)", "Alt-D(40)"]
-            }
-        };
-        function joinPointAbove(pm) {
-            var _pm$selection7 = pm.selection;
-            var node = _pm$selection7.node;
-            var from = _pm$selection7.from;
-            if (node)
-                return (0, _transform.joinable)(pm.doc, from) ? from : null;
-            else
-                return (0, _transform.joinPoint)(pm.doc, from, -1);
-        }
-        baseCommands.joinUp = {
-            label: "Join with above block",
-            run: function run(pm) {
-                var point = joinPointAbove(pm),
-                    selectNode = undefined;
-                if (!point)
-                    return false;
-                if (pm.selection.node)
-                    selectNode = point - pm.doc.resolve(point).nodeBefore.nodeSize;
-                pm.tr.join(point).apply();
-                if (selectNode != null)
-                    pm.setNodeSelection(selectNode);
-            },
-            select: function select(pm) {
-                return joinPointAbove(pm);
-            },
-            menu: {
-                group: "block",
-                rank: 80,
-                display: {
-                    type: "icon",
-                    width: 800,
-                    height: 900,
-                    path: "M0 75h800v125h-800z M0 825h800v-125h-800z M250 400h100v-100h100v100h100v100h-100v100h-100v-100h-100z"
-                }
-            },
-            keys: ["Alt-Up"]
-        };
-        function joinPointBelow(pm) {
-            var _pm$selection8 = pm.selection;
-            var node = _pm$selection8.node;
-            var to = _pm$selection8.to;
-            if (node)
-                return (0, _transform.joinable)(pm.doc, to) ? to : null;
-            else
-                return (0, _transform.joinPoint)(pm.doc, to, 1);
-        }
-        baseCommands.joinDown = {
-            label: "Join with below block",
-            run: function run(pm) {
-                var node = pm.selection.node,
-                    nodeAt = pm.selection.from;
-                var point = joinPointBelow(pm);
-                if (!point)
-                    return false;
-                pm.tr.join(point).apply();
-                if (node)
-                    pm.setNodeSelection(nodeAt);
-            },
-            select: function select(pm) {
-                return joinPointBelow(pm);
-            },
-            keys: ["Alt-Down"]
-        };
-        baseCommands.lift = {
-            label: "Lift out of enclosing block",
-            run: function run(pm) {
-                var _pm$selection9 = pm.selection;
-                var from = _pm$selection9.from;
-                var to = _pm$selection9.to;
-                return pm.tr.lift(from, to, true).apply(pm.apply.scroll);
-            },
-            select: function select(pm) {
-                var _pm$selection10 = pm.selection;
-                var from = _pm$selection10.from;
-                var to = _pm$selection10.to;
-                return (0, _transform.canLift)(pm.doc, from, to);
-            },
-            menu: {
-                group: "block",
-                rank: 75,
-                display: {
-                    type: "icon",
-                    width: 1024,
-                    height: 1024,
-                    path: "M219 310v329q0 7-5 12t-12 5q-8 0-13-5l-164-164q-5-5-5-13t5-13l164-164q5-5 13-5 7 0 12 5t5 12zM1024 749v109q0 7-5 12t-12 5h-987q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h987q7 0 12 5t5 12zM1024 530v109q0 7-5 12t-12 5h-621q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h621q7 0 12 5t5 12zM1024 310v109q0 7-5 12t-12 5h-621q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h621q7 0 12 5t5 12zM1024 91v109q0 7-5 12t-12 5h-987q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h987q7 0 12 5t5 12z"
-                }
-            },
-            keys: ["Mod-["]
-        };
-        baseCommands.newlineInCode = {
-            label: "Insert newline",
-            run: function run(pm) {
-                var _pm$selection11 = pm.selection;
-                var from = _pm$selection11.from;
-                var to = _pm$selection11.to;
-                var node = _pm$selection11.node;
-                if (node)
-                    return false;
-                var $from = pm.doc.resolve(from);
-                if (!$from.parent.type.isCode || to >= $from.end($from.depth))
-                    return false;
-                return pm.tr.typeText("\n").apply(pm.apply.scroll);
-            },
-            keys: ["Enter(10)"]
-        };
-        baseCommands.createParagraphNear = {
-            label: "Create a paragraph near the selected block",
-            run: function run(pm) {
-                var _pm$selection12 = pm.selection;
-                var from = _pm$selection12.from;
-                var to = _pm$selection12.to;
-                var node = _pm$selection12.node;
-                if (!node || !node.isBlock)
-                    return false;
-                var side = pm.doc.resolve(from).parentOffset ? to : from;
-                pm.tr.insert(side, pm.schema.defaultTextblockType().create()).apply(pm.apply.scroll);
-                pm.setTextSelection(side + 1);
-            },
-            keys: ["Enter(20)"]
-        };
-        baseCommands.liftEmptyBlock = {
-            label: "Move current block up",
-            run: function run(pm) {
-                var _pm$selection13 = pm.selection;
-                var head = _pm$selection13.head;
-                var empty = _pm$selection13.empty;
-                var $head = undefined;
-                if (!empty || ($head = pm.doc.resolve(head)).parentOffset > 0 || $head.parent.content.size)
-                    return false;
-                if ($head.depth > 1) {
-                    if ($head.index($head.depth - 1) > 0 && $head.index($head.depth - 1) < $head.node($head.depth - 1).childCount - 1 && pm.tr.split($head.before($head.depth)).apply() !== false)
-                        return;
-                }
-                return pm.tr.lift(head, head, true).apply(pm.apply.scroll);
-            },
-            keys: ["Enter(30)"]
-        };
-        baseCommands.splitBlock = {
-            label: "Split the current block",
-            run: function run(pm) {
-                var _pm$selection14 = pm.selection;
-                var from = _pm$selection14.from;
-                var to = _pm$selection14.to;
-                var node = _pm$selection14.node;
-                var $from = pm.doc.resolve(from);
-                if (node && node.isBlock) {
-                    if (!$from.parentOffset)
-                        return false;
-                    return pm.tr.split(from).apply(pm.apply.scroll);
-                } else {
-                    var $to = pm.doc.resolve(to),
-                        atEnd = $to.parentOffset == $to.parent.content.size;
-                    var deflt = pm.schema.defaultTextblockType();
-                    var type = atEnd ? deflt : null;
-                    var tr = pm.tr.delete(from, to).split(from, 1, type);
-                    if (!atEnd && !$from.parentOffset && $from.parent.type != deflt)
-                        tr.setNodeType($from.before($from.depth), deflt);
-                    return tr.apply(pm.apply.scroll);
-                }
-            },
-            keys: ["Enter(60)"]
-        };
-        function nodeAboveSelection(pm) {
-            var sel = pm.selection;
-            if (sel.node) {
-                var $from = pm.doc.resolve(sel.from);
-                return !!$from.depth && $from.before($from.depth);
-            }
-            var $head = pm.doc.resolve(sel.head);
-            var same = $head.sameDepth(pm.doc.resolve(sel.anchor));
-            return same == 0 ? false : $head.before(same);
-        }
-        baseCommands.selectParentNode = {
-            label: "Select parent node",
-            run: function run(pm) {
-                var node = nodeAboveSelection(pm);
-                if (node === false)
-                    return false;
-                pm.setNodeSelection(node);
-            },
-            select: function select(pm) {
-                return nodeAboveSelection(pm);
-            },
-            menu: {
-                group: "block",
-                rank: 90,
-                display: {
-                    type: "icon",
-                    text: "⬚",
-                    style: "font-weight: bold"
-                }
-            },
-            keys: ["Esc"]
-        };
-        baseCommands.undo = {
-            label: "Undo last change",
-            run: function run(pm) {
-                pm.scrollIntoView();
-                return pm.history.undo();
-            },
-            select: function select(pm) {
-                return pm.history.undoDepth > 0;
-            },
-            menu: {
-                group: "history",
-                rank: 10,
-                display: {
-                    type: "icon",
-                    width: 1024,
-                    height: 1024,
-                    path: "M761 1024c113-206 132-520-313-509v253l-384-384 384-384v248c534-13 594 472 313 775z"
-                }
-            },
-            keys: ["Mod-Z"]
-        };
-        baseCommands.redo = {
-            label: "Redo last undone change",
-            run: function run(pm) {
-                pm.scrollIntoView();
-                return pm.history.redo();
-            },
-            select: function select(pm) {
-                return pm.history.redoDepth > 0;
-            },
-            menu: {
-                group: "history",
-                rank: 20,
-                display: {
-                    type: "icon",
-                    width: 1024,
-                    height: 1024,
-                    path: "M576 248v-248l384 384-384 384v-253c-446-10-427 303-313 509-280-303-221-789 313-775z"
-                }
-            },
-            keys: ["Mod-Y", "Shift-Mod-Z"]
-        };
-        return module.exports;
-    });
-
-    $__System.registerDynamic("20", ["14", "6", "19", "8", "1b", "2f", "2e"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.CommandSet = exports.Command = undefined;
-        var _slicedToArray = function() {
-            function sliceIterator(arr, i) {
-                var _arr = [];
-                var _n = true;
-                var _d = false;
-                var _e = undefined;
-                try {
-                    for (var _i = arr[Symbol.iterator](),
-                             _s; !(_n = (_s = _i.next()).done); _n = true) {
-                        _arr.push(_s.value);
-                        if (i && _arr.length === i)
-                            break;
-                    }
-                } catch (err) {
-                    _d = true;
-                    _e = err;
-                } finally {
-                    try {
-                        if (!_n && _i["return"])
-                            _i["return"]();
-                    } finally {
-                        if (_d)
-                            throw _e;
-                    }
-                }
-                return _arr;
-            }
-            return function(arr, i) {
-                if (Array.isArray(arr)) {
-                    return arr;
-                } else if (Symbol.iterator in Object(arr)) {
-                    return sliceIterator(arr, i);
-                } else {
-                    throw new TypeError("Invalid attempt to destructure non-iterable instance");
-                }
-            };
-        }();
-        var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function(obj) {
-            return typeof obj;
-        } : function(obj) {
-            return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
-        };
-        var _createClass = function() {
-            function defineProperties(target, props) {
-                for (var i = 0; i < props.length; i++) {
-                    var descriptor = props[i];
-                    descriptor.enumerable = descriptor.enumerable || false;
-                    descriptor.configurable = true;
-                    if ("value" in descriptor)
-                        descriptor.writable = true;
-                    Object.defineProperty(target, descriptor.key, descriptor);
-                }
-            }
-            return function(Constructor, protoProps, staticProps) {
-                if (protoProps)
-                    defineProperties(Constructor.prototype, protoProps);
-                if (staticProps)
-                    defineProperties(Constructor, staticProps);
-                return Constructor;
-            };
-        }();
-        exports.updateCommands = updateCommands;
-        exports.selectedNodeAttr = selectedNodeAttr;
-        var _browserkeymap = $__require('14');
-        var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
-        var _model = $__require('6');
-        var _transform = $__require('19');
-        var _dom = $__require('8');
-        var _sortedinsert = $__require('1b');
-        var _sortedinsert2 = _interopRequireDefault(_sortedinsert);
-        var _obj = $__require('2f');
-        var _base_commands = $__require('2e');
-        function _interopRequireDefault(obj) {
-            return obj && obj.__esModule ? obj : {default: obj};
-        }
-        function _toConsumableArray(arr) {
-            if (Array.isArray(arr)) {
-                for (var i = 0,
-                         arr2 = Array(arr.length); i < arr.length; i++) {
-                    arr2[i] = arr[i];
-                }
-                return arr2;
-            } else {
-                return Array.from(arr);
-            }
-        }
-        function _classCallCheck(instance, Constructor) {
-            if (!(instance instanceof Constructor)) {
-                throw new TypeError("Cannot call a class as a function");
-            }
-        }
-        var Command = exports.Command = function() {
-            function Command(spec, self, name) {
-                _classCallCheck(this, Command);
-                this.name = name;
-                if (!this.name)
-                    throw new RangeError("Trying to define a command without a name");
-                this.spec = spec;
-                this.self = self;
-            }
-            _createClass(Command, [{
-                key: "exec",
-                value: function exec(pm, params) {
-                    var run = this.spec.run;
-                    if (!params) {
-                        if (!this.params.length)
-                            return run.call(this.self, pm);
-                        return new pm.options.commandParamPrompt(pm, this).open();
-                    } else {
-                        if (this.params.length != (params ? params.length : 0))
-                            throw new RangeError("Invalid amount of parameters for command " + this.name);
-                        return run.call.apply(run, [this.self, pm].concat(_toConsumableArray(params)));
-                    }
-                }
-            }, {
-                key: "select",
-                value: function select(pm) {
-                    var f = this.spec.select;
-                    return f ? f.call(this.self, pm) : true;
-                }
-            }, {
-                key: "active",
-                value: function active(pm) {
-                    var f = this.spec.active;
-                    return f ? f.call(this.self, pm) : false;
-                }
-            }, {
-                key: "params",
-                get: function get() {
-                    return this.spec.params || empty;
-                }
-            }, {
-                key: "label",
-                get: function get() {
-                    return this.spec.label || this.name;
-                }
-            }]);
-            return Command;
-        }();
-        var empty = [];
-        function deriveCommandSpec(type, spec, name) {
-            if (!spec.derive)
-                return spec;
-            var conf = _typeof(spec.derive) == "object" ? spec.derive : {};
-            var dname = conf.name || name;
-            var derive = type.constructor.derivableCommands[dname];
-            if (!derive)
-                throw new RangeError("Don't know how to derive command " + dname);
-            var derived = derive.call(type, conf);
-            for (var prop in spec) {
-                if (prop != "derive")
-                    derived[prop] = spec[prop];
-            }
-            return derived;
-        }
-        var CommandSet = function() {
-            function CommandSet(base, op) {
-                _classCallCheck(this, CommandSet);
-                this.base = base;
-                this.op = op;
-            }
-            _createClass(CommandSet, [{
-                key: "add",
-                value: function add(set, filter) {
-                    return new CommandSet(this, function(commands, schema) {
-                        function add(name, spec, self) {
-                            if (!filter || filter(name, spec)) {
-                                if (commands[name])
-                                    throw new RangeError("Duplicate definition of command " + name);
-                                commands[name] = new Command(spec, self, name);
-                            }
-                        }
-                        if (set === "schema") {
-                            schema.registry("command", function(name, spec, type, typeName) {
-                                add(typeName + ":" + name, deriveCommandSpec(type, spec, name), type);
-                            });
-                        } else {
-                            for (var name in set) {
-                                add(name, set[name]);
-                            }
-                        }
-                    });
-                }
-            }, {
-                key: "update",
-                value: function update(_update) {
-                    return new CommandSet(this, function(commands) {
-                        for (var name in _update) {
-                            var spec = _update[name];
-                            if (!spec) {
-                                delete commands[name];
-                            } else if (spec.run) {
-                                commands[name] = new Command(spec, null, name);
-                            } else {
-                                var known = commands[name];
-                                if (known)
-                                    commands[name] = new Command((0, _obj.copyObj)(spec, (0, _obj.copyObj)(known.spec)), known.self, name);
-                            }
-                        }
-                    });
-                }
-            }, {
-                key: "derive",
-                value: function derive(schema) {
-                    var commands = this.base ? this.base.derive(schema) : Object.create(null);
-                    this.op(commands, schema);
-                    return commands;
-                }
-            }]);
-            return CommandSet;
-        }();
-        exports.CommandSet = CommandSet;
-        CommandSet.empty = new CommandSet(null, function() {
-            return null;
-        });
-        CommandSet.default = CommandSet.empty.add("schema").add(_base_commands.baseCommands);
-        function deriveKeymap(pm) {
-            var bindings = {},
-                platform = _dom.browser.mac ? "mac" : "pc";
-            function add(command, keys) {
-                for (var i = 0; i < keys.length; i++) {
-                    var _$exec = /^(.+?)(?:\((\d+)\))?$/.exec(keys[i]);
-                    var _$exec2 = _slicedToArray(_$exec, 3);
-                    var _ = _$exec2[0];
-                    var name = _$exec2[1];
-                    var _$exec2$ = _$exec2[2];
-                    var rank = _$exec2$ === undefined ? 50 : _$exec2$;
-                    (0, _sortedinsert2.default)(bindings[name] || (bindings[name] = []), {
-                        command: command,
-                        rank: rank
-                    }, function(a, b) {
-                        return a.rank - b.rank;
-                    });
-                }
-            }
-            for (var name in pm.commands) {
-                var cmd = pm.commands[name],
-                    keys = cmd.spec.keys;
-                if (!keys)
-                    continue;
-                if (Array.isArray(keys)) {
-                    add(cmd, keys);
-                } else {
-                    if (keys.all)
-                        add(cmd, keys.all);
-                    if (keys[platform])
-                        add(cmd, keys[platform]);
-                }
-            }
-            for (var key in bindings) {
-                bindings[key] = bindings[key].map(function(b) {
-                    return b.command.name;
-                });
-            }
-            return new _browserkeymap2.default(bindings);
-        }
-        function updateCommands(pm, set) {
-            pm.signal("commandsChanging");
-            pm.commands = set.derive(pm.schema);
-            pm.input.baseKeymap = deriveKeymap(pm);
-            pm.commandKeys = Object.create(null);
-            pm.signal("commandsChanged");
-        }
-        function markActive(pm, type) {
-            var sel = pm.selection;
-            if (sel.empty)
-                return type.isInSet(pm.activeMarks());
-            else
-                return pm.doc.rangeHasMark(sel.from, sel.to, type);
-        }
-        function canAddInline(pm, type) {
-            var _pm$selection = pm.selection;
-            var from = _pm$selection.from;
-            var to = _pm$selection.to;
-            var empty = _pm$selection.empty;
-            if (empty)
-                return !type.isInSet(pm.activeMarks()) && pm.doc.resolve(from).parent.type.canContainMark(type);
-            var can = false;
-            pm.doc.nodesBetween(from, to, function(node) {
-                if (can || node.isTextblock && !node.type.canContainMark(type))
-                    return false;
-                if (node.isInline && !type.isInSet(node.marks))
-                    can = true;
-            });
-            return can;
-        }
-        function markApplies(pm, type) {
-            var _pm$selection2 = pm.selection;
-            var from = _pm$selection2.from;
-            var to = _pm$selection2.to;
-            var relevant = false;
-            pm.doc.nodesBetween(from, to, function(node) {
-                if (node.isTextblock) {
-                    if (node.type.canContainMark(type))
-                        relevant = true;
-                    return false;
-                }
-            });
-            return relevant;
-        }
-        function selectedMarkAttr(pm, type, attr) {
-            var _pm$selection3 = pm.selection;
-            var from = _pm$selection3.from;
-            var to = _pm$selection3.to;
-            var empty = _pm$selection3.empty;
-            var start = undefined,
-                end = undefined;
-            if (empty) {
-                start = end = type.isInSet(pm.activeMarks());
-            } else {
-                var startChunk = pm.doc.resolve(from).nodeAfter;
-                start = startChunk ? type.isInSet(startChunk.marks) : null;
-                end = type.isInSet(pm.doc.marksAt(to));
-            }
-            if (start && end && start.attrs[attr] == end.attrs[attr])
-                return start.attrs[attr];
-        }
-        function selectedNodeAttr(pm, type, name) {
-            var node = pm.selection.node;
-            if (node && node.type == type)
-                return node.attrs[name];
-        }
-        function deriveParams(type, params) {
-            return params && params.map(function(param) {
-                    var attr = type.attrs[param.attr];
-                    var obj = {
-                        type: "text",
-                        default: attr.default,
-                        prefill: type instanceof _model.NodeType ? function(pm) {
-                            return selectedNodeAttr(pm, this, param.attr);
-                        } : function(pm) {
-                            return selectedMarkAttr(pm, this, param.attr);
-                        }
-                    };
-                    for (var prop in param) {
-                        obj[prop] = param[prop];
-                    }
-                    return obj;
-                });
-        }
-        function fillAttrs(conf, givenParams) {
-            var attrs = conf.attrs;
-            if (conf.params) {
-                (function() {
-                    var filled = Object.create(null);
-                    if (attrs)
-                        for (var name in attrs) {
-                            filled[name] = attrs[name];
-                        }
-                    conf.params.forEach(function(param, i) {
-                        return filled[param.attr] = givenParams[i];
-                    });
-                    attrs = filled;
-                })();
-            }
-            return attrs;
-        }
-        _model.NodeType.derivableCommands = Object.create(null);
-        _model.MarkType.derivableCommands = Object.create(null);
-        _model.MarkType.derivableCommands.set = function(conf) {
-            return {
-                run: function run(pm) {
-                    for (var _len = arguments.length,
-                             params = Array(_len > 1 ? _len - 1 : 0),
-                             _key = 1; _key < _len; _key++) {
-                        params[_key - 1] = arguments[_key];
-                    }
-                    pm.setMark(this, true, fillAttrs(conf, params));
-                },
-                select: function select(pm) {
-                    return conf.inverseSelect ? markApplies(pm, this) && !markActive(pm, this) : canAddInline(pm, this);
-                },
-                params: deriveParams(this, conf.params)
-            };
-        };
-        _model.MarkType.derivableCommands.unset = function() {
-            return {
-                run: function run(pm) {
-                    pm.setMark(this, false);
-                },
-                select: function select(pm) {
-                    return markActive(pm, this);
-                }
-            };
-        };
-        _model.MarkType.derivableCommands.toggle = function() {
-            return {
-                run: function run(pm) {
-                    pm.setMark(this, null);
-                },
-                active: function active(pm) {
-                    return markActive(pm, this);
-                },
-                select: function select(pm) {
-                    return markApplies(pm, this);
-                }
-            };
-        };
-        function isAtTopOfListItem(doc, from, to, listType) {
-            var $from = doc.resolve(from);
-            return $from.sameParent(doc.resolve(to)) && $from.depth >= 2 && $from.index($from.depth - 1) == 0 && listType.canContain($from.node($from.depth - 1));
-        }
-        _model.NodeType.derivableCommands.wrap = function(conf) {
-            return {
-                run: function run(pm) {
-                    var _pm$selection4 = pm.selection;
-                    var from = _pm$selection4.from;
-                    var to = _pm$selection4.to;
-                    var head = _pm$selection4.head;
-                    var doJoin = false;
-                    var $from = pm.doc.resolve(from);
-                    if (conf.list && head && isAtTopOfListItem(pm.doc, from, to, this)) {
-                        if ($from.index($from.depth - 2) == 0)
-                            return false;
-                        doJoin = true;
-                    }
-                    for (var _len2 = arguments.length,
-                             params = Array(_len2 > 1 ? _len2 - 1 : 0),
-                             _key2 = 1; _key2 < _len2; _key2++) {
-                        params[_key2 - 1] = arguments[_key2];
-                    }
-                    var tr = pm.tr.wrap(from, to, this, fillAttrs(conf, params));
-                    if (doJoin)
-                        tr.join($from.before($from.depth - 1));
-                    return tr.apply(pm.apply.scroll);
-                },
-                select: function select(pm) {
-                    var _pm$selection5 = pm.selection;
-                    var from = _pm$selection5.from;
-                    var to = _pm$selection5.to;
-                    var head = _pm$selection5.head;
-                    var $from = undefined;
-                    if (conf.list && head && isAtTopOfListItem(pm.doc, from, to, this) && ($from = pm.doc.resolve(from)).index($from.depth - 2) == 0)
-                        return false;
-                    return (0, _transform.canWrap)(pm.doc, from, to, this, conf.attrs);
-                },
-                params: deriveParams(this, conf.params)
-            };
-        };
-        function alreadyHasBlockType(doc, from, to, type, attrs) {
-            var found = false;
-            if (!attrs)
-                attrs = {};
-            doc.nodesBetween(from, to || from, function(node) {
-                if (node.isTextblock) {
-                    if (node.hasMarkup(type, attrs))
-                        found = true;
-                    return false;
-                }
-            });
-            return found;
-        }
-        function activeTextblockIs(pm, type, attrs) {
-            var _pm$selection6 = pm.selection;
-            var from = _pm$selection6.from;
-            var to = _pm$selection6.to;
-            var node = _pm$selection6.node;
-            if (!node || node.isInline) {
-                var $from = pm.doc.resolve(from);
-                if (!$from.sameParent(pm.doc.resolve(to)))
-                    return false;
-                node = $from.parent;
-            } else if (!node.isTextblock) {
-                return false;
-            }
-            return node.hasMarkup(type, attrs);
-        }
-        _model.NodeType.derivableCommands.make = function(conf) {
-            return {
-                run: function run(pm) {
-                    var _pm$selection7 = pm.selection;
-                    var from = _pm$selection7.from;
-                    var to = _pm$selection7.to;
-                    return pm.tr.setBlockType(from, to, this, conf.attrs).apply(pm.apply.scroll);
-                },
-                select: function select(pm) {
-                    var _pm$selection8 = pm.selection;
-                    var from = _pm$selection8.from;
-                    var to = _pm$selection8.to;
-                    var node = _pm$selection8.node;
-                    if (node)
-                        return node.isTextblock && !node.hasMarkup(this, conf.attrs);
-                    else
-                        return !alreadyHasBlockType(pm.doc, from, to, this, conf.attrs);
-                },
-                active: function active(pm) {
-                    return activeTextblockIs(pm, this, conf.attrs);
-                }
-            };
-        };
-        _model.NodeType.derivableCommands.insert = function(conf) {
-            return {
-                run: function run(pm) {
-                    for (var _len3 = arguments.length,
-                             params = Array(_len3 > 1 ? _len3 - 1 : 0),
-                             _key3 = 1; _key3 < _len3; _key3++) {
-                        params[_key3 - 1] = arguments[_key3];
-                    }
-                    return pm.tr.replaceSelection(this.create(fillAttrs(conf, params))).apply(pm.apply.scroll);
-                },
-                select: this.isInline ? function(pm) {
-                    return pm.doc.resolve(pm.selection.from).parent.type.canContainType(this);
-                } : null,
-                params: deriveParams(this, conf.params)
-            };
-        };
-        return module.exports;
-    });
-
-    $__System.registerDynamic("30", ["6", "1b", "31"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        var _createClass = function() {
-            function defineProperties(target, props) {
-                for (var i = 0; i < props.length; i++) {
-                    var descriptor = props[i];
-                    descriptor.enumerable = descriptor.enumerable || false;
-                    descriptor.configurable = true;
-                    if ("value" in descriptor)
-                        descriptor.writable = true;
-                    Object.defineProperty(target, descriptor.key, descriptor);
-                }
-            }
-            return function(Constructor, protoProps, staticProps) {
-                if (protoProps)
-                    defineProperties(Constructor.prototype, protoProps);
-                if (staticProps)
-                    defineProperties(Constructor, staticProps);
-                return Constructor;
-            };
-        }();
-        exports.fromDOM = fromDOM;
-        exports.fromHTML = fromHTML;
-        var _model = $__require('6');
-        var _sortedinsert = $__require('1b');
-        var _sortedinsert2 = _interopRequireDefault(_sortedinsert);
-        var _register = $__require('31');
-        function _interopRequireDefault(obj) {
-            return obj && obj.__esModule ? obj : {default: obj};
-        }
-        function _classCallCheck(instance, Constructor) {
-            if (!(instance instanceof Constructor)) {
-                throw new TypeError("Cannot call a class as a function");
-            }
-        }
-        function fromDOM(schema, dom, options) {
-            if (!options)
-                options = {};
-            var context = new DOMParseState(schema, options.topNode || schema.node("doc"), options);
-            var start = options.from ? dom.childNodes[options.from] : dom.firstChild;
-            var end = options.to != null && dom.childNodes[options.to] || null;
-            context.addAll(start, end, true);
-            var doc = undefined;
-            do {
-                doc = context.leave();
-            } while (context.stack.length);
-            return doc;
-        }
-        (0, _register.defineSource)("dom", fromDOM);
-        function fromHTML(schema, html, options) {
-            var wrap = (options && options.document || window.document).createElement("div");
-            wrap.innerHTML = html;
-            return fromDOM(schema, wrap, options);
-        }
-        (0, _register.defineSource)("html", fromHTML);
-        var blockElements = {
-            address: true,
-            article: true,
-            aside: true,
-            blockquote: true,
-            canvas: true,
-            dd: true,
-            div: true,
-            dl: true,
-            fieldset: true,
-            figcaption: true,
-            figure: true,
-            footer: true,
-            form: true,
-            h1: true,
-            h2: true,
-            h3: true,
-            h4: true,
-            h5: true,
-            h6: true,
-            header: true,
-            hgroup: true,
-            hr: true,
-            li: true,
-            noscript: true,
-            ol: true,
-            output: true,
-            p: true,
-            pre: true,
-            section: true,
-            table: true,
-            tfoot: true,
-            ul: true
-        };
-        var ignoreElements = {
-            head: true,
-            noscript: true,
-            object: true,
-            script: true,
-            style: true,
-            title: true
-        };
-        var listElements = {
-            ol: true,
-            ul: true
-        };
-        var noMarks = [];
-        var DOMParseState = function() {
-            function DOMParseState(schema, topNode, options) {
-                _classCallCheck(this, DOMParseState);
-                this.options = options || {};
-                this.schema = schema;
-                this.stack = [];
-                this.marks = noMarks;
-                this.closing = false;
-                this.enter(topNode.type, topNode.attrs);
-                var info = schemaInfo(schema);
-                this.tagInfo = info.tags;
-                this.styleInfo = info.styles;
-            }
-            _createClass(DOMParseState, [{
-                key: "addDOM",
-                value: function addDOM(dom) {
-                    if (dom.nodeType == 3) {
-                        var value = dom.nodeValue;
-                        var top = this.top,
-                            last = undefined;
-                        if (/\S/.test(value) || top.type.isTextblock) {
-                            if (!this.options.preserveWhitespace) {
-                                value = value.replace(/\s+/g, " ");
-                                if (/^\s/.test(value) && (!(last = top.content[top.content.length - 1]) || last.type.name == "text" && /\s$/.test(last.text)))
-                                    value = value.slice(1);
-                            }
-                            if (value)
-                                this.insertNode(this.schema.text(value, this.marks));
-                        }
-                    } else if (dom.nodeType == 1 && !dom.hasAttribute("pm-ignore")) {
-                        var style = dom.getAttribute("style");
-                        if (style)
-                            this.addElementWithStyles(parseStyles(style), dom);
-                        else
-                            this.addElement(dom);
-                    }
-                }
-            }, {
-                key: "addElement",
-                value: function addElement(dom) {
-                    var name = dom.nodeName.toLowerCase();
-                    if (listElements.hasOwnProperty(name))
-                        this.normalizeList(dom);
-                    if (this.options.editableContent && name == "br" && !dom.nextSibling)
-                        return;
-                    if (!this.parseNodeType(name, dom) && !ignoreElements.hasOwnProperty(name)) {
-                        this.addAll(dom.firstChild, null);
-                        if (blockElements.hasOwnProperty(name) && this.top.type == this.schema.defaultTextblockType())
-                            this.closing = true;
-                    }
-                }
-            }, {
-                key: "addElementWithStyles",
-                value: function addElementWithStyles(styles, dom) {
-                    var _this = this;
-                    var wrappers = [];
-                    for (var i = 0; i < styles.length; i += 2) {
-                        var parsers = this.styleInfo[styles[i]],
-                            value = styles[i + 1];
-                        if (parsers)
-                            for (var j = 0; j < parsers.length; j++) {
-                                wrappers.push(parsers[j], value);
-                            }
-                    }
-                    var next = function next(i) {
-                        if (i == wrappers.length) {
-                            _this.addElement(dom);
-                        } else {
-                            var parser = wrappers[i];
-                            parser.parse.call(parser.type, wrappers[i + 1], _this, next.bind(null, i + 2));
-                        }
-                    };
-                    next(0);
-                }
-            }, {
-                key: "tryParsers",
-                value: function tryParsers(parsers, dom) {
-                    if (parsers)
-                        for (var i = 0; i < parsers.length; i++) {
-                            var parser = parsers[i];
-                            if ((!parser.selector || matches(dom, parser.selector)) && parser.parse.call(parser.type, dom, this) !== false)
-                                return true;
-                        }
-                }
-            }, {
-                key: "parseNodeType",
-                value: function parseNodeType(name, dom) {
-                    return this.tryParsers(this.tagInfo[name], dom) || this.tryParsers(this.tagInfo._, dom);
-                }
-            }, {
-                key: "addAll",
-                value: function addAll(from, to, sync) {
-                    var stack = sync && this.stack.slice();
-                    for (var dom = from; dom != to; dom = dom.nextSibling) {
-                        this.addDOM(dom);
-                        if (sync && blockElements.hasOwnProperty(dom.nodeName.toLowerCase()))
-                            this.sync(stack);
-                    }
-                }
-            }, {
-                key: "doClose",
-                value: function doClose() {
-                    if (!this.closing || this.stack.length < 2)
-                        return;
-                    var left = this.leave();
-                    this.enter(left.type, left.attrs);
-                    this.closing = false;
-                }
-            }, {
-                key: "insertNode",
-                value: function insertNode(node) {
-                    if (this.top.type.canContain(node)) {
-                        this.doClose();
-                    } else {
-                        var found = undefined;
-                        for (var i = this.stack.length - 1; i >= 0; i--) {
-                            var route = this.stack[i].type.findConnection(node.type);
-                            if (!route)
-                                continue;
-                            if (i == this.stack.length - 1) {
-                                this.doClose();
-                            } else {
-                                while (this.stack.length > i + 1) {
-                                    this.leave();
-                                }
-                            }
-                            found = route;
-                            break;
-                        }
-                        if (!found)
-                            return;
-                        for (var j = 0; j < found.length; j++) {
-                            this.enter(found[j]);
-                        }
-                        if (this.marks.length)
-                            this.marks = noMarks;
-                    }
-                    this.top.content.push(node);
-                    return node;
-                }
-            }, {
-                key: "close",
-                value: function close(type, attrs, content) {
-                    content = _model.Fragment.from(content);
-                    if (!type.checkContent(content, attrs)) {
-                        content = type.fixContent(content, attrs);
-                        if (!content)
-                            return null;
-                    }
-                    return type.create(attrs, content, this.marks);
-                }
-            }, {
-                key: "insert",
-                value: function insert(type, attrs, content) {
-                    var closed = this.close(type, attrs, content);
-                    if (closed)
-                        return this.insertNode(closed);
-                }
-            }, {
-                key: "enter",
-                value: function enter(type, attrs) {
-                    this.stack.push({
-                        type: type,
-                        attrs: attrs,
-                        content: []
-                    });
-                }
-            }, {
-                key: "leave",
-                value: function leave() {
-                    if (this.marks.length)
-                        this.marks = noMarks;
-                    var top = this.stack.pop();
-                    var last = top.content[top.content.length - 1];
-                    if (!this.options.preserveWhitespace && last && last.isText && /\s$/.test(last.text)) {
-                        if (last.text.length == 1)
-                            top.content.pop();
-                        else
-                            top.content[top.content.length - 1] = last.copy(last.text.slice(0, last.text.length - 1));
-                    }
-                    var node = this.close(top.type, top.attrs, top.content);
-                    if (node && this.stack.length)
-                        this.insertNode(node);
-                    return node;
-                }
-            }, {
-                key: "sync",
-                value: function sync(stack) {
-                    while (this.stack.length > stack.length) {
-                        this.leave();
-                    }
-                    for (; ; ) {
-                        var n = this.stack.length - 1,
-                            one = this.stack[n],
-                            two = stack[n];
-                        if (one.type == two.type && _model.Node.sameAttrs(one.attrs, two.attrs))
-                            break;
-                        this.leave();
-                    }
-                    while (stack.length > this.stack.length) {
-                        var add = stack[this.stack.length];
-                        this.enter(add.type, add.attrs);
-                    }
-                    if (this.marks.length)
-                        this.marks = noMarks;
-                    this.closing = false;
-                }
-            }, {
-                key: "wrapIn",
-                value: function wrapIn(dom, type, attrs) {
-                    this.enter(type, attrs);
-                    this.addAll(dom.firstChild, null, true);
-                    this.leave();
-                }
-            }, {
-                key: "wrapMark",
-                value: function wrapMark(inner, mark) {
-                    var old = this.marks;
-                    this.marks = (mark.instance || mark).addToSet(old);
-                    if (inner.call)
-                        inner();
-                    else
-                        this.addAll(inner.firstChild, null);
-                    this.marks = old;
-                }
-            }, {
-                key: "normalizeList",
-                value: function normalizeList(dom) {
-                    for (var child = dom.firstChild,
-                             prev; child; child = child.nextSibling) {
-                        if (child.nodeType == 1 && listElements.hasOwnProperty(child.nodeName.toLowerCase()) && (prev = child.previousSibling)) {
-                            prev.appendChild(child);
-                            child = prev;
-                        }
-                    }
-                }
-            }, {
-                key: "top",
-                get: function get() {
-                    return this.stack[this.stack.length - 1];
-                }
-            }]);
-            return DOMParseState;
-        }();
-        function matches(dom, selector) {
-            return (dom.matches || dom.msMatchesSelector || dom.webkitMatchesSelector || dom.mozMatchesSelector).call(dom, selector);
-        }
-        function parseStyles(style) {
-            var re = /\s*([\w-]+)\s*:\s*([^;]+)/g,
-                m = undefined,
-                result = [];
-            while (m = re.exec(style)) {
-                result.push(m[1], m[2].trim());
-            }
-            return result;
-        }
-        function schemaInfo(schema) {
-            return schema.cached.parseDOMInfo || (schema.cached.parseDOMInfo = summarizeSchemaInfo(schema));
-        }
-        function summarizeSchemaInfo(schema) {
-            var tags = Object.create(null),
-                styles = Object.create(null);
-            tags._ = [];
-            schema.registry("parseDOM", function(tag, info, type) {
-                var parse = info.parse;
-                if (parse == "block")
-                    parse = function parse(dom, state) {
-                        state.wrapIn(dom, this);
-                    };
-                else if (parse == "mark")
-                    parse = function parse(dom, state) {
-                        state.wrapMark(dom, this);
-                    };
-                (0, _sortedinsert2.default)(tags[tag] || (tags[tag] = []), {
-                    type: type,
-                    parse: parse,
-                    selector: info.selector,
-                    rank: info.rank == null ? 50 : info.rank
-                }, function(a, b) {
-                    return a.rank - b.rank;
-                });
-            });
-            schema.registry("parseDOMStyle", function(style, info, type) {
-                (0, _sortedinsert2.default)(styles[style] || (styles[style] = []), {
-                    type: type,
-                    parse: info.parse,
-                    rank: info.rank == null ? 50 : info.rank
-                }, function(a, b) {
-                    return a.rank - b.rank;
-                });
-            });
-            return {
-                tags: tags,
-                styles: styles
-            };
-        }
-        _model.Paragraph.register("parseDOM", "p", {parse: "block"});
-        _model.BlockQuote.register("parseDOM", "blockquote", {parse: "block"});
-        var _loop = function _loop(i) {
-            _model.Heading.registerComputed("parseDOM", "h" + i, function(type) {
-                if (i <= type.maxLevel)
-                    return {parse: function parse(dom, state) {
-                        state.wrapIn(dom, this, {level: String(i)});
-                    }};
-            });
-        };
-        for (var i = 1; i <= 6; i++) {
-            _loop(i);
-        }
-        _model.HorizontalRule.register("parseDOM", "hr", {parse: "block"});
-        _model.CodeBlock.register("parseDOM", "pre", {parse: function parse(dom, state) {
-            var params = dom.firstChild && /^code$/i.test(dom.firstChild.nodeName) && dom.firstChild.getAttribute("class");
-            if (params && /fence/.test(params)) {
-                var found = [],
-                    re = /(?:^|\s)lang-(\S+)/g,
-                    m = undefined;
-                while (m = re.exec(params)) {
-                    found.push(m[1]);
-                }
-                params = found.join(" ");
-            } else {
-                params = null;
-            }
-            var text = dom.textContent;
-            state.insert(this, {params: params}, text ? [state.schema.text(text)] : []);
-        }});
-        _model.BulletList.register("parseDOM", "ul", {parse: "block"});
-        _model.OrderedList.register("parseDOM", "ol", {parse: function parse(dom, state) {
-            var attrs = {order: dom.getAttribute("start") || "1"};
-            state.wrapIn(dom, this, attrs);
-        }});
-        _model.ListItem.register("parseDOM", "li", {parse: "block"});
-        _model.HardBreak.register("parseDOM", "br", {parse: function parse(_, state) {
-            state.insert(this);
-        }});
-        _model.Image.register("parseDOM", "img", {parse: function parse(dom, state) {
-            state.insert(this, {
-                src: dom.getAttribute("src"),
-                title: dom.getAttribute("title") || null,
-                alt: dom.getAttribute("alt") || null
-            });
-        }});
-        _model.LinkMark.register("parseDOM", "a", {
-            parse: function parse(dom, state) {
-                state.wrapMark(dom, this.create({
-                    href: dom.getAttribute("href"),
-                    title: dom.getAttribute("title")
-                }));
-            },
-            selector: "[href]"
-        });
-        _model.EmMark.register("parseDOM", "i", {parse: "mark"});
-        _model.EmMark.register("parseDOM", "em", {parse: "mark"});
-        _model.EmMark.register("parseDOMStyle", "font-style", {parse: function parse(value, state, inner) {
-            if (value == "italic")
-                state.wrapMark(inner, this);
-            else
-                inner();
-        }});
-        _model.StrongMark.register("parseDOM", "b", {parse: "mark"});
-        _model.StrongMark.register("parseDOM", "strong", {parse: "mark"});
-        _model.StrongMark.register("parseDOMStyle", "font-weight", {parse: function parse(value, state, inner) {
-            if (value == "bold" || value == "bolder" || !/\D/.test(value) && +value >= 500)
-                state.wrapMark(inner, this);
-            else
-                inner();
-        }});
-        _model.CodeMark.register("parseDOM", "code", {parse: "mark"});
-        return module.exports;
-    });
-
-    $__System.registerDynamic("32", ["6", "31"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        var _createClass = function() {
-            function defineProperties(target, props) {
-                for (var i = 0; i < props.length; i++) {
-                    var descriptor = props[i];
-                    descriptor.enumerable = descriptor.enumerable || false;
-                    descriptor.configurable = true;
-                    if ("value" in descriptor)
-                        descriptor.writable = true;
-                    Object.defineProperty(target, descriptor.key, descriptor);
-                }
-            }
-            return function(Constructor, protoProps, staticProps) {
-                if (protoProps)
-                    defineProperties(Constructor.prototype, protoProps);
-                if (staticProps)
-                    defineProperties(Constructor, staticProps);
-                return Constructor;
-            };
-        }();
-        exports.toDOM = toDOM;
-        exports.nodeToDOM = nodeToDOM;
-        exports.toHTML = toHTML;
-        var _model = $__require('6');
-        var _register = $__require('31');
-        function _classCallCheck(instance, Constructor) {
-            if (!(instance instanceof Constructor)) {
-                throw new TypeError("Cannot call a class as a function");
-            }
-        }
-        var DOMSerializer = function() {
-            function DOMSerializer(options) {
-                _classCallCheck(this, DOMSerializer);
-                this.options = options || {};
-                this.doc = this.options.document || window.document;
-            }
-            _createClass(DOMSerializer, [{
-                key: "elt",
-                value: function elt(type, attrs) {
-                    var result = this.doc.createElement(type);
-                    if (attrs)
-                        for (var name in attrs) {
-                            if (name == "style")
-                                result.style.cssText = attrs[name];
-                            else if (attrs[name])
-                                result.setAttribute(name, attrs[name]);
-                        }
-                    for (var _len = arguments.length,
-                             content = Array(_len > 2 ? _len - 2 : 0),
-                             _key = 2; _key < _len; _key++) {
-                        content[_key - 2] = arguments[_key];
-                    }
-                    for (var i = 0; i < content.length; i++) {
-                        result.appendChild(typeof content[i] == "string" ? this.doc.createTextNode(content[i]) : content[i]);
+                key: "maybeStep",
+                value: function maybeStep(step) {
+                    var result = step.apply(this.doc);
+                    if (!result.failed) {
+                        this.docs.push(this.doc);
+                        this.steps.push(step);
+                        this.maps.push(step.posMap());
+                        this.doc = result.doc;
                     }
                     return result;
                 }
             }, {
-                key: "renderNode",
-                value: function renderNode(node, offset) {
-                    var dom = node.type.serializeDOM(node, this);
-                    if (this.options.onRender)
-                        dom = this.options.onRender(node, dom, offset) || dom;
-                    return dom;
+                key: "mapResult",
+                value: function mapResult(pos, bias, start) {
+                    return mapThroughResult(this.maps, pos, bias, start);
                 }
             }, {
-                key: "renderFragment",
-                value: function renderFragment(fragment, where) {
-                    if (!where)
-                        where = this.doc.createDocumentFragment();
-                    if (fragment.size == 0)
-                        return where;
-                    if (!fragment.firstChild.isInline)
-                        this.renderBlocksInto(fragment, where);
-                    else if (this.options.renderInlineFlat)
-                        this.renderInlineFlatInto(fragment, where);
-                    else
-                        this.renderInlineInto(fragment, where);
-                    return where;
+                key: "map",
+                value: function map(pos, bias, start) {
+                    return mapThrough(this.maps, pos, bias, start);
                 }
             }, {
-                key: "renderBlocksInto",
-                value: function renderBlocksInto(fragment, where) {
-                    var _this = this;
-                    fragment.forEach(function(node, offset) {
-                        return where.appendChild(_this.renderNode(node, offset));
-                    });
-                }
-            }, {
-                key: "renderInlineInto",
-                value: function renderInlineInto(fragment, where) {
-                    var _this2 = this;
-                    var top = where;
-                    var active = [];
-                    fragment.forEach(function(node, offset) {
-                        var keep = 0;
-                        for (; keep < Math.min(active.length, node.marks.length); ++keep) {
-                            if (!node.marks[keep].eq(active[keep]))
-                                break;
-                        }
-                        while (keep < active.length) {
-                            active.pop();
-                            top = top.parentNode;
-                        }
-                        while (active.length < node.marks.length) {
-                            var add = node.marks[active.length];
-                            active.push(add);
-                            top = top.appendChild(_this2.renderMark(add));
-                        }
-                        top.appendChild(_this2.renderNode(node, offset));
-                    });
-                }
-            }, {
-                key: "renderInlineFlatInto",
-                value: function renderInlineFlatInto(fragment, where) {
-                    var _this3 = this;
-                    fragment.forEach(function(node, offset) {
-                        var dom = _this3.renderNode(node, offset);
-                        dom = _this3.wrapInlineFlat(dom, node.marks);
-                        dom = _this3.options.renderInlineFlat(node, dom, offset) || dom;
-                        where.appendChild(dom);
-                    });
-                }
-            }, {
-                key: "renderMark",
-                value: function renderMark(mark) {
-                    return mark.type.serializeDOM(mark, this);
-                }
-            }, {
-                key: "wrapInlineFlat",
-                value: function wrapInlineFlat(dom, marks) {
-                    for (var i = marks.length - 1; i >= 0; i--) {
-                        var wrap = this.renderMark(marks[i]);
-                        wrap.appendChild(dom);
-                        dom = wrap;
-                    }
-                    return dom;
-                }
-            }, {
-                key: "renderAs",
-                value: function renderAs(node, tagName, tagAttrs) {
-                    if (this.options.preRenderContent)
-                        this.options.preRenderContent(node);
-                    var dom = this.renderFragment(node.content, this.elt(tagName, tagAttrs));
-                    if (this.options.onContainer)
-                        this.options.onContainer(dom);
-                    if (this.options.postRenderContent)
-                        this.options.postRenderContent(node);
-                    return dom;
+                key: "before",
+                get: function get() {
+                    return this.docs.length ? this.docs[0] : this.doc;
                 }
             }]);
-            return DOMSerializer;
+            return Transform;
         }();
-        function toDOM(content, options) {
-            return new DOMSerializer(options).renderFragment(content instanceof _model.Node ? content.content : content);
-        }
-        (0, _register.defineTarget)("dom", toDOM);
-        function nodeToDOM(node, options, offset) {
-            var serializer = new DOMSerializer(options);
-            var dom = serializer.renderNode(node, offset);
-            if (node.isInline) {
-                dom = serializer.wrapInlineFlat(dom, node.marks);
-                if (serializer.options.renderInlineFlat)
-                    dom = options.renderInlineFlat(node, dom, offset) || dom;
-            }
-            return dom;
-        }
-        function toHTML(content, options) {
-            var serializer = new DOMSerializer(options);
-            var wrap = serializer.elt("div");
-            wrap.appendChild(serializer.renderFragment(content instanceof _model.Node ? content.content : content));
-            return wrap.innerHTML;
-        }
-        (0, _register.defineTarget)("html", toHTML);
-        function def(cls, method) {
-            cls.prototype.serializeDOM = method;
-        }
-        def(_model.BlockQuote, function(node, s) {
-            return s.renderAs(node, "blockquote");
-        });
-        _model.BlockQuote.prototype.countCoordsAsChild = function(_, pos, dom, coords) {
-            var childBox = dom.firstChild.getBoundingClientRect();
-            if (coords.left < childBox.left - 2)
-                return pos;
-        };
-        def(_model.BulletList, function(node, s) {
-            return s.renderAs(node, "ul");
-        });
-        def(_model.OrderedList, function(node, s) {
-            return s.renderAs(node, "ol", {start: node.attrs.order != "1" && node.attrs.order});
-        });
-        _model.OrderedList.prototype.countCoordsAsChild = _model.BulletList.prototype.countCoordsAsChild = function(_, pos, dom, coords) {
-            for (var child = dom.firstChild; child; child = child.nextSibling) {
-                var off = child.getAttribute("pm-offset");
-                if (!off)
-                    continue;
-                var childBox = child.getBoundingClientRect();
-                if (coords.left > childBox.left - 2)
-                    return null;
-                if (childBox.top <= coords.top && childBox.bottom >= coords.top)
-                    return pos + 1 + +off;
-            }
-        };
-        def(_model.ListItem, function(node, s) {
-            return s.renderAs(node, "li");
-        });
-        def(_model.HorizontalRule, function(_, s) {
-            return s.elt("div", null, s.elt("hr"));
-        });
-        def(_model.Paragraph, function(node, s) {
-            return s.renderAs(node, "p");
-        });
-        def(_model.Heading, function(node, s) {
-            return s.renderAs(node, "h" + node.attrs.level);
-        });
-        def(_model.CodeBlock, function(node, s) {
-            var code = s.renderAs(node, "code");
-            if (node.attrs.params != null)
-                code.className = "fence " + node.attrs.params.replace(/(^|\s+)/g, "$&lang-");
-            return s.elt("pre", null, code);
-        });
-        def(_model.Text, function(node, s) {
-            return s.doc.createTextNode(node.text);
-        });
-        def(_model.Image, function(node, s) {
-            return s.elt("img", {
-                src: node.attrs.src,
-                alt: node.attrs.alt,
-                title: node.attrs.title
-            });
-        });
-        def(_model.HardBreak, function(_, s) {
-            return s.elt("br");
-        });
-        def(_model.EmMark, function(_, s) {
-            return s.elt("em");
-        });
-        def(_model.StrongMark, function(_, s) {
-            return s.elt("strong");
-        });
-        def(_model.CodeMark, function(_, s) {
-            return s.elt("code");
-        });
-        def(_model.LinkMark, function(mark, s) {
-            return s.elt("a", {
-                href: mark.attrs.href,
-                title: mark.attrs.title
-            });
-        });
+        exports.Transform = Transform;
         return module.exports;
     });
 
-    $__System.registerDynamic("33", ["31"], true, function($__require, exports, module) {
+    $__System.registerDynamic("2a", ["18", "24", "23"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.fromText = fromText;
-        var _register = $__require('31');
-        function fromText(schema, text) {
-            var blocks = text.trim().split(/\n{2,}/);
-            var nodes = [];
-            for (var i = 0; i < blocks.length; i++) {
-                var spans = [];
-                var parts = blocks[i].split("\n");
-                for (var j = 0; j < parts.length; j++) {
-                    if (j)
-                        spans.push(schema.node("hard_break"));
-                    if (parts[j])
-                        spans.push(schema.text(parts[j]));
+        var _require = $__require('18');
+        var Fragment = _require.Fragment;
+        var Slice = _require.Slice;
+        var _require2 = $__require('24');
+        var ReplaceStep = _require2.ReplaceStep;
+        var ReplaceAroundStep = _require2.ReplaceAroundStep;
+        var _require3 = $__require('23');
+        var Transform = _require3.Transform;
+        Transform.prototype.delete = function(from, to) {
+            return this.replace(from, to, Slice.empty);
+        };
+        Transform.prototype.replace = function(from) {
+            var to = arguments.length <= 1 || arguments[1] === undefined ? from : arguments[1];
+            var slice = arguments.length <= 2 || arguments[2] === undefined ? Slice.empty : arguments[2];
+            if (from == to && !slice.size)
+                return this;
+            var $from = this.doc.resolve(from),
+                $to = this.doc.resolve(to);
+            var placed = placeSlice($from, slice);
+            var fittedLeft = fitLeft($from, placed);
+            var fitted = fitRight($from, $to, fittedLeft);
+            if (!fitted)
+                return this;
+            if (fittedLeft.size != fitted.size && canMoveText($from, $to, fittedLeft)) {
+                var d = $to.depth,
+                    after = $to.after(d);
+                while (d > 1 && after == $to.end(--d)) {
+                    ++after;
                 }
-                nodes.push(schema.node("paragraph", null, spans));
+                var fittedAfter = fitRight($from, this.doc.resolve(after), fittedLeft);
+                if (fittedAfter)
+                    return this.step(new ReplaceAroundStep(from, after, to, $to.end(), fittedAfter, fittedLeft.size));
             }
-            if (!nodes.length)
-                nodes.push(schema.node("paragraph"));
-            return schema.node("doc", null, nodes);
+            return this.step(new ReplaceStep(from, to, fitted));
+        };
+        Transform.prototype.replaceWith = function(from, to, content) {
+            return this.replace(from, to, new Slice(Fragment.from(content), 0, 0));
+        };
+        Transform.prototype.insert = function(pos, content) {
+            return this.replaceWith(pos, pos, content);
+        };
+        Transform.prototype.insertText = function(pos, text) {
+            return this.insert(pos, this.doc.type.schema.text(text, this.doc.marksAt(pos)));
+        };
+        Transform.prototype.insertInline = function(pos, node) {
+            return this.insert(pos, node.mark(this.doc.marksAt(pos)));
+        };
+        function fitLeftInner($from, depth, placed, placedBelow) {
+            var content = Fragment.empty,
+                openRight = 0,
+                placedHere = placed[depth];
+            if ($from.depth > depth) {
+                var inner = fitLeftInner($from, depth + 1, placed, placedBelow || placedHere);
+                openRight = inner.openRight + 1;
+                content = Fragment.from($from.node(depth + 1).copy(inner.content));
+            }
+            if (placedHere) {
+                content = content.append(placedHere.content);
+                openRight = placedHere.openRight;
+            }
+            if (placedBelow) {
+                content = content.append($from.node(depth).contentMatchAt($from.indexAfter(depth)).fillBefore(Fragment.empty, true));
+                openRight = 0;
+            }
+            return {
+                content: content,
+                openRight: openRight
+            };
         }
-        (0, _register.defineSource)("text", fromText);
+        function fitLeft($from, placed) {
+            var _fitLeftInner = fitLeftInner($from, 0, placed, false);
+            var content = _fitLeftInner.content;
+            var openRight = _fitLeftInner.openRight;
+            return new Slice(content, $from.depth, openRight || 0);
+        }
+        function fitRightJoin(content, parent, $from, $to, depth, openLeft, openRight) {
+            var match = void 0,
+                count = content.childCount,
+                matchCount = count - (openRight > 0 ? 1 : 0);
+            if (openLeft < 0)
+                match = parent.contentMatchAt(matchCount);
+            else if (count == 1 && openRight > 0)
+                match = $from.node(depth).contentMatchAt(openLeft ? $from.index(depth) : $from.indexAfter(depth));
+            else
+                match = $from.node(depth).contentMatchAt($from.indexAfter(depth)).matchFragment(content, count > 0 && openLeft ? 1 : 0, matchCount);
+            var toNode = $to.node(depth);
+            if (openRight > 0 && depth < $to.depth) {
+                var after = toNode.content.cutByIndex($to.indexAfter(depth)).addToStart(content.lastChild);
+                var _joinable = match.fillBefore(after, true);
+                if (_joinable && _joinable.size && openLeft > 0 && count == 1)
+                    _joinable = null;
+                if (_joinable) {
+                    var inner = fitRightJoin(content.lastChild.content, content.lastChild, $from, $to, depth + 1, count == 1 ? openLeft - 1 : -1, openRight - 1);
+                    if (inner) {
+                        var last = content.lastChild.copy(inner);
+                        if (_joinable.size)
+                            return content.cutByIndex(0, count - 1).append(_joinable).addToEnd(last);
+                        else
+                            return content.replaceChild(count - 1, last);
+                    }
+                }
+            }
+            if (openRight > 0)
+                match = match.matchNode(count == 1 && openLeft > 0 ? $from.node(depth + 1) : content.lastChild);
+            var toIndex = $to.index(depth);
+            if (toIndex == toNode.childCount && !toNode.type.compatibleContent(parent.type))
+                return null;
+            var joinable = match.fillBefore(toNode.content, true, toIndex);
+            if (!joinable)
+                return null;
+            if (openRight > 0) {
+                var closed = fitRightClosed(content.lastChild, openRight - 1, $from, depth + 1, count == 1 ? openLeft - 1 : -1);
+                content = content.replaceChild(count - 1, closed);
+            }
+            content = content.append(joinable);
+            if ($to.depth > depth)
+                content = content.addToEnd(fitRightSeparate($to, depth + 1));
+            return content;
+        }
+        function fitRightClosed(node, openRight, $from, depth, openLeft) {
+            var match = void 0,
+                content = node.content,
+                count = content.childCount;
+            if (openLeft >= 0)
+                match = $from.node(depth).contentMatchAt($from.indexAfter(depth)).matchFragment(content, openLeft > 0 ? 1 : 0, count);
+            else
+                match = node.contentMatchAt(count);
+            if (openRight > 0) {
+                var closed = fitRightClosed(content.lastChild, openRight - 1, $from, depth + 1, count == 1 ? openLeft - 1 : -1);
+                content = content.replaceChild(count - 1, closed);
+            }
+            return node.copy(content.append(match.fillBefore(Fragment.empty, true)));
+        }
+        function fitRightSeparate($to, depth) {
+            var node = $to.node(depth);
+            var fill = node.contentMatchAt(0).fillBefore(node.content, true, $to.index(depth));
+            if ($to.depth > depth)
+                fill = fill.addToEnd(fitRightSeparate($to, depth + 1));
+            return node.copy(fill);
+        }
+        function normalizeSlice(content, openLeft, openRight) {
+            while (openLeft > 0 && openRight > 0 && content.childCount == 1) {
+                content = content.firstChild.content;
+                openLeft--;
+                openRight--;
+            }
+            return new Slice(content, openLeft, openRight);
+        }
+        function fitRight($from, $to, slice) {
+            var fitted = fitRightJoin(slice.content, $from.node(0), $from, $to, 0, slice.openLeft, slice.openRight);
+            if (!fitted)
+                return null;
+            return normalizeSlice(fitted, slice.openLeft, $to.depth);
+        }
+        function canMoveText($from, $to, slice) {
+            if (!$to.parent.isTextblock)
+                return false;
+            var match = void 0;
+            if (!slice.openRight) {
+                var parent = $from.node($from.depth - (slice.openLeft - slice.openRight));
+                if (!parent.isTextblock)
+                    return false;
+                match = parent.contentMatchAt(parent.childCount);
+                if (slice.size)
+                    match = match.matchFragment(slice.content, slice.openLeft ? 1 : 0);
+            } else {
+                var _parent = nodeRight(slice.content, slice.openRight);
+                if (!_parent.isTextblock)
+                    return false;
+                match = _parent.contentMatchAt(_parent.childCount);
+            }
+            match = match.matchFragment($to.parent.content, $to.index());
+            return match && match.validEnd();
+        }
+        function nodeLeft(content, depth) {
+            for (var i = 1; i < depth; i++) {
+                content = content.firstChild.content;
+            }
+            return content.firstChild;
+        }
+        function nodeRight(content, depth) {
+            for (var i = 1; i < depth; i++) {
+                content = content.lastChild.content;
+            }
+            return content.lastChild;
+        }
+        function placeSlice($from, slice) {
+            var dFrom = $from.depth,
+                unplaced = null;
+            var placed = [],
+                parents = null;
+            for (var dSlice = slice.openLeft; ; --dSlice) {
+                var curType = void 0,
+                    curAttrs = void 0,
+                    curFragment = void 0;
+                if (dSlice >= 0) {
+                    if (dSlice > 0) {
+                        ;
+                        var _nodeLeft = nodeLeft(slice.content, dSlice);
+                        curType = _nodeLeft.type;
+                        curAttrs = _nodeLeft.attrs;
+                        curFragment = _nodeLeft.content;
+                    } else if (dSlice == 0) {
+                        curFragment = slice.content;
+                    }
+                    if (dSlice < slice.openLeft)
+                        curFragment = curFragment.cut(curFragment.firstChild.nodeSize);
+                } else {
+                    curFragment = Fragment.empty;
+                    var parent = parents[parents.length + dSlice - 1];
+                    curType = parent.type;
+                    curAttrs = parent.attrs;
+                }
+                if (unplaced)
+                    curFragment = curFragment.addToStart(unplaced);
+                if (curFragment.size == 0 && dSlice <= 0)
+                    break;
+                var found = findPlacement(curFragment, $from, dFrom);
+                if (found) {
+                    if (found.fragment.size > 0)
+                        placed[found.depth] = {
+                            content: found.fill.append(found.fragment),
+                            openRight: dSlice > 0 ? 0 : slice.openRight - dSlice,
+                            depth: found.depth
+                        };
+                    if (dSlice <= 0)
+                        break;
+                    unplaced = null;
+                    dFrom = Math.max(0, found.depth - 1);
+                } else {
+                    if (dSlice == 0) {
+                        var top = $from.node(0);
+                        parents = top.contentMatchAt($from.index(0)).findWrapping(curFragment.firstChild.type, curFragment.firstChild.attrs);
+                        if (!parents)
+                            break;
+                        var last = parents[parents.length - 1];
+                        if (last ? !last.type.contentExpr.matches(last.attrs, curFragment) : !top.canReplace($from.indexAfter(0), $from.depth ? $from.index(0) : $from.indexAfter(0), curFragment))
+                            break;
+                        parents = [{
+                            type: top.type,
+                            attrs: top.attrs
+                        }].concat(parents);
+                        curType = parents[parents.length - 1].type;
+                        curAttrs = parents[parents.length - 1].type;
+                    }
+                    curFragment = curType.contentExpr.start(curAttrs).fillBefore(curFragment, true).append(curFragment);
+                    unplaced = curType.create(curAttrs, curFragment);
+                }
+            }
+            return placed;
+        }
+        function findPlacement(fragment, $from, start) {
+            var hasMarks = false;
+            for (var i = 0; i < fragment.childCount; i++) {
+                if (fragment.child(i).marks.length)
+                    hasMarks = true;
+            }
+            for (var d = start; d >= 0; d--) {
+                var startMatch = $from.node(d).contentMatchAt($from.indexAfter(d));
+                var match = startMatch.fillBefore(fragment);
+                if (match)
+                    return {
+                        depth: d,
+                        fill: match,
+                        fragment: fragment
+                    };
+                if (hasMarks) {
+                    var stripped = matchStrippingMarks(startMatch, fragment);
+                    if (stripped)
+                        return {
+                            depth: d,
+                            fill: Fragment.empty,
+                            fragment: stripped
+                        };
+                }
+            }
+        }
+        function matchStrippingMarks(match, fragment) {
+            var newNodes = [];
+            for (var i = 0; i < fragment.childCount; i++) {
+                var node = fragment.child(i),
+                    stripped = node.mark(node.marks.filter(function(m) {
+                        return match.allowsMark(m.type);
+                    }));
+                match = match.matchNode(stripped);
+                if (!match)
+                    return null;
+                newNodes.push(stripped);
+            }
+            return Fragment.from(newNodes);
+        }
         return module.exports;
     });
 
-    $__System.registerDynamic("27", [], true, function($__require, exports, module) {
+    $__System.registerDynamic("19", ["23", "26", "22", "28", "25", "24", "27", "2a"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.ProseMirrorError = ProseMirrorError;
+        ;
+        var _require = $__require('23');
+        exports.Transform = _require.Transform;
+        exports.TransformError = _require.TransformError;
+        var _require2 = $__require('26');
+        exports.Step = _require2.Step;
+        exports.StepResult = _require2.StepResult;
+        var _require3 = $__require('22');
+        exports.joinPoint = _require3.joinPoint;
+        exports.joinable = _require3.joinable;
+        exports.canSplit = _require3.canSplit;
+        exports.insertPoint = _require3.insertPoint;
+        exports.liftTarget = _require3.liftTarget;
+        exports.findWrapping = _require3.findWrapping;
+        var _require4 = $__require('28');
+        exports.PosMap = _require4.PosMap;
+        exports.MapResult = _require4.MapResult;
+        exports.Remapping = _require4.Remapping;
+        exports.mapThrough = _require4.mapThrough;
+        exports.mapThroughResult = _require4.mapThroughResult;
+        var _require5 = $__require('25');
+        exports.AddMarkStep = _require5.AddMarkStep;
+        exports.RemoveMarkStep = _require5.RemoveMarkStep;
+        var _require6 = $__require('24');
+        exports.ReplaceStep = _require6.ReplaceStep;
+        exports.ReplaceAroundStep = _require6.ReplaceAroundStep;
+        $__require('27');
+        $__require('2a');
+        return module.exports;
+    });
+
+    $__System.registerDynamic("29", [], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
         function ProseMirrorError(message) {
             Error.call(this, message);
             if (this.message != message) {
@@ -7587,6 +5346,7 @@
                     this.stack = new Error(message).stack;
             }
         }
+        exports.ProseMirrorError = ProseMirrorError;
         ProseMirrorError.prototype = Object.create(Error.prototype);
         ProseMirrorError.prototype.constructor = ProseMirrorError;
         Object.defineProperty(ProseMirrorError.prototype, "name", {get: function get() {
@@ -7599,14 +5359,12 @@
         return module.exports;
     });
 
-    $__System.registerDynamic("34", ["27", "35"], true, function($__require, exports, module) {
+    $__System.registerDynamic("2b", ["29", "2c"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.Slice = exports.ReplaceError = undefined;
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -7626,9 +5384,6 @@
                 return Constructor;
             };
         }();
-        exports.replace = replace;
-        var _error = $__require('27');
-        var _fragment = $__require('35');
         function _classCallCheck(instance, Constructor) {
             if (!(instance instanceof Constructor)) {
                 throw new TypeError("Cannot call a class as a function");
@@ -7653,15 +5408,20 @@
             if (superClass)
                 Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
         }
-        var ReplaceError = exports.ReplaceError = function(_ProseMirrorError) {
+        var _require = $__require('29');
+        var ProseMirrorError = _require.ProseMirrorError;
+        var _require2 = $__require('2c');
+        var Fragment = _require2.Fragment;
+        var ReplaceError = function(_ProseMirrorError) {
             _inherits(ReplaceError, _ProseMirrorError);
             function ReplaceError() {
                 _classCallCheck(this, ReplaceError);
                 return _possibleConstructorReturn(this, Object.getPrototypeOf(ReplaceError).apply(this, arguments));
             }
             return ReplaceError;
-        }(_error.ProseMirrorError);
-        var Slice = exports.Slice = function() {
+        }(ProseMirrorError);
+        exports.ReplaceError = ReplaceError;
+        var Slice = function() {
             function Slice(content, openLeft, openRight, possibleParent) {
                 _classCallCheck(this, Slice);
                 this.content = content;
@@ -7670,6 +5430,52 @@
                 this.possibleParent = possibleParent;
             }
             _createClass(Slice, [{
+                key: "insertAt",
+                value: function insertAt(pos, fragment) {
+                    function insertInto(content, dist, insert, parent) {
+                        var _content$findIndex = content.findIndex(dist);
+                        var index = _content$findIndex.index;
+                        var offset = _content$findIndex.offset;
+                        var child = content.maybeChild(index);
+                        if (offset == dist || child.isText) {
+                            if (parent && !parent.canReplace(index, index, insert))
+                                return null;
+                            return content.cut(0, dist).append(insert).append(content.cut(dist));
+                        }
+                        var inner = insertInto(child.content, dist - offset - 1, insert);
+                        return inner && content.replaceChild(index, child.copy(inner));
+                    }
+                    var content = insertInto(this.content, pos + this.openLeft, fragment, null);
+                    return content && new Slice(content, this.openLeft, this.openRight);
+                }
+            }, {
+                key: "removeBetween",
+                value: function removeBetween(from, to) {
+                    function removeRange(content, from, to) {
+                        var _content$findIndex2 = content.findIndex(from);
+                        var index = _content$findIndex2.index;
+                        var offset = _content$findIndex2.offset;
+                        var child = content.maybeChild(index);
+                        var _content$findIndex3 = content.findIndex(to);
+                        var indexTo = _content$findIndex3.index;
+                        var offsetTo = _content$findIndex3.offset;
+                        if (offset == from || child.isText) {
+                            if (offsetTo != to && !content.child(indexTo).isText)
+                                throw new RangeError("Removing non-flat range");
+                            return content.cut(0, from).append(content.cut(to));
+                        }
+                        if (index != indexTo)
+                            throw new RangeError("Removing non-flat range");
+                        return content.replaceChild(index, child.copy(removeRange(child.content, from - offset - 1, to - offset - 1)));
+                    }
+                    return new Slice(removeRange(this.content, from + this.openLeft, to + this.openLeft), this.openLeft, this.openRight);
+                }
+            }, {
+                key: "toString",
+                value: function toString() {
+                    return this.content + "(" + this.openLeft + "," + this.openRight + ")";
+                }
+            }, {
                 key: "toJSON",
                 value: function toJSON() {
                     if (!this.content.size)
@@ -7690,12 +5496,13 @@
                 value: function fromJSON(schema, json) {
                     if (!json)
                         return Slice.empty;
-                    return new Slice(_fragment.Fragment.fromJSON(schema, json.content), json.openLeft, json.openRight);
+                    return new Slice(Fragment.fromJSON(schema, json.content), json.openLeft, json.openRight);
                 }
             }]);
             return Slice;
         }();
-        Slice.empty = new Slice(_fragment.Fragment.empty, 0, 0);
+        exports.Slice = Slice;
+        Slice.empty = new Slice(Fragment.empty, 0, 0);
         function replace($from, $to, slice) {
             if (slice.openLeft > $from.depth)
                 throw new ReplaceError("Inserted content deeper than insertion position");
@@ -7703,6 +5510,7 @@
                 throw new ReplaceError("Inconsistent open depths");
             return replaceOuter($from, $to, slice, 0);
         }
+        exports.replace = replace;
         function replaceOuter($from, $to, slice, depth) {
             var index = $from.index(depth),
                 node = $from.node(depth);
@@ -7719,7 +5527,7 @@
             }
         }
         function checkJoin(main, sub) {
-            if (!main.type.canContainContent(sub.type))
+            if (!sub.type.compatibleContent(main.type))
                 throw new ReplaceError("Cannot join " + sub.type.name + " onto " + main.type.name);
         }
         function joinable($before, $after, depth) {
@@ -7754,7 +5562,7 @@
                 addNode($end.nodeBefore, target);
         }
         function close(node, content) {
-            if (!node.type.checkContent(content, node.attrs))
+            if (!node.type.validContent(content, node.attrs))
                 throw new ReplaceError("Invalid content for node " + node.type.name);
             return node.copy(content);
         }
@@ -7774,7 +5582,7 @@
                     addNode(close(openRight, replaceTwoWay($end, $to, depth + 1)), content);
             }
             addRange($to, null, depth, content);
-            return new _fragment.Fragment(content);
+            return new Fragment(content);
         }
         function replaceTwoWay($from, $to, depth) {
             var content = [];
@@ -7784,16 +5592,14 @@
                 addNode(close(type, replaceTwoWay($from, $to, depth + 1)), content);
             }
             addRange($to, null, depth, content);
-            return new _fragment.Fragment(content);
+            return new Fragment(content);
         }
         function prepareSliceForReplace(slice, $along) {
             var extra = $along.depth - slice.openLeft,
                 parent = $along.node(extra);
-            if (!parent.type.canContainFragment(slice.content))
-                throw new ReplaceError("Content " + slice.content + " cannot be placed in " + parent.type.name);
             var node = parent.copy(slice.content);
             for (var i = extra - 1; i >= 0; i--) {
-                node = $along.node(i).copy(_fragment.Fragment.from(node));
+                node = $along.node(i).copy(Fragment.from(node));
             }
             return {
                 start: node.resolveNoCache(slice.openLeft + extra),
@@ -7803,13 +5609,12 @@
         return module.exports;
     });
 
-    $__System.registerDynamic("36", [], true, function($__require, exports, module) {
+    $__System.registerDynamic("2d", [], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -7834,7 +5639,7 @@
                 throw new TypeError("Cannot call a class as a function");
             }
         }
-        var ResolvedPos = exports.ResolvedPos = function() {
+        var ResolvedPos = function() {
             function ResolvedPos(pos, path, parentOffset) {
                 _classCallCheck(this, ResolvedPos);
                 this.pos = pos;
@@ -7843,28 +5648,46 @@
                 this.parentOffset = parentOffset;
             }
             _createClass(ResolvedPos, [{
+                key: "resolveDepth",
+                value: function resolveDepth(val) {
+                    if (val == null)
+                        return this.depth;
+                    if (val < 0)
+                        return this.depth + val;
+                    return val;
+                }
+            }, {
                 key: "node",
                 value: function node(depth) {
-                    return this.path[depth * 3];
+                    return this.path[this.resolveDepth(depth) * 3];
                 }
             }, {
                 key: "index",
                 value: function index(depth) {
-                    return this.path[depth * 3 + 1];
+                    return this.path[this.resolveDepth(depth) * 3 + 1];
+                }
+            }, {
+                key: "indexAfter",
+                value: function indexAfter(depth) {
+                    depth = this.resolveDepth(depth);
+                    return this.index(depth) + (depth == this.depth && this.atNodeBoundary ? 0 : 1);
                 }
             }, {
                 key: "start",
                 value: function start(depth) {
+                    depth = this.resolveDepth(depth);
                     return depth == 0 ? 0 : this.path[depth * 3 - 1] + 1;
                 }
             }, {
                 key: "end",
                 value: function end(depth) {
+                    depth = this.resolveDepth(depth);
                     return this.start(depth) + this.node(depth).content.size;
                 }
             }, {
                 key: "before",
                 value: function before(depth) {
+                    depth = this.resolveDepth(depth);
                     if (!depth)
                         throw new RangeError("There is no position before the top-level node");
                     return depth == this.depth + 1 ? this.pos : this.path[depth * 3 - 1];
@@ -7872,6 +5695,7 @@
             }, {
                 key: "after",
                 value: function after(depth) {
+                    depth = this.resolveDepth(depth);
                     if (!depth)
                         throw new RangeError("There is no position after the top-level node");
                     return depth == this.depth + 1 ? this.pos : this.path[depth * 3 - 1] + this.path[depth * 3].nodeSize;
@@ -7887,6 +5711,18 @@
                     return depth;
                 }
             }, {
+                key: "blockRange",
+                value: function blockRange() {
+                    var other = arguments.length <= 0 || arguments[0] === undefined ? this : arguments[0];
+                    var pred = arguments[1];
+                    if (other.pos < this.pos)
+                        return other.blockRange(this);
+                    for (var d = this.depth - (this.parent.isTextblock || this.pos == other.pos ? 1 : 0); d >= 0; d--) {
+                        if (other.pos <= this.end(d) && (!pred || pred(this.node(d))))
+                            return new NodeRange(this, other, d);
+                    }
+                }
+            }, {
                 key: "sameParent",
                 value: function sameParent(other) {
                     return this.pos - this.parentOffset == other.pos - other.parentOffset;
@@ -7899,6 +5735,15 @@
                         str += (str ? "/" : "") + this.node(i).type.name + "_" + this.index(i - 1);
                     }
                     return str + ":" + this.parentOffset;
+                }
+            }, {
+                key: "plusOne",
+                value: function plusOne() {
+                    var copy = this.path.slice(),
+                        skip = this.nodeAfter.nodeSize;
+                    copy[copy.length - 2] += 1;
+                    var pos = copy[copy.length - 1] = this.pos + skip;
+                    return new ResolvedPos(pos, copy, this.parentOffset + skip);
                 }
             }, {
                 key: "parent",
@@ -7969,20 +5814,55 @@
             }]);
             return ResolvedPos;
         }();
+        exports.ResolvedPos = ResolvedPos;
         var resolveCache = [],
             resolveCachePos = 0,
             resolveCacheSize = 6;
+        var NodeRange = function() {
+            function NodeRange($from, $to, depth) {
+                _classCallCheck(this, NodeRange);
+                this.$from = $from;
+                this.$to = $to;
+                this.depth = depth;
+            }
+            _createClass(NodeRange, [{
+                key: "start",
+                get: function get() {
+                    return this.$from.before(this.depth + 1);
+                }
+            }, {
+                key: "end",
+                get: function get() {
+                    return this.$to.after(this.depth + 1);
+                }
+            }, {
+                key: "parent",
+                get: function get() {
+                    return this.$from.node(this.depth);
+                }
+            }, {
+                key: "startIndex",
+                get: function get() {
+                    return this.$from.index(this.depth);
+                }
+            }, {
+                key: "endIndex",
+                get: function get() {
+                    return this.$to.indexAfter(this.depth);
+                }
+            }]);
+            return NodeRange;
+        }();
+        exports.NodeRange = NodeRange;
         return module.exports;
     });
 
-    $__System.registerDynamic("37", ["35", "38", "34", "36"], true, function($__require, exports, module) {
+    $__System.registerDynamic("2e", ["2c", "2f", "2b", "2d", "30", "31"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.TextNode = exports.Node = undefined;
         var _get = function get(object, property, receiver) {
             if (object === null)
                 object = Function.prototype;
@@ -8023,10 +5903,6 @@
                 return Constructor;
             };
         }();
-        var _fragment = $__require('35');
-        var _mark = $__require('38');
-        var _replace2 = $__require('34');
-        var _resolvedpos = $__require('36');
         function _possibleConstructorReturn(self, call) {
             if (!self) {
                 throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -8051,15 +5927,27 @@
                 throw new TypeError("Cannot call a class as a function");
             }
         }
-        var emptyArray = [],
-            emptyAttrs = Object.create(null);
-        var Node = exports.Node = function() {
+        var _require = $__require('2c');
+        var Fragment = _require.Fragment;
+        var _require2 = $__require('2f');
+        var Mark = _require2.Mark;
+        var _require3 = $__require('2b');
+        var Slice = _require3.Slice;
+        var _replace = _require3.replace;
+        var _require4 = $__require('2d');
+        var ResolvedPos = _require4.ResolvedPos;
+        var _require5 = $__require('30');
+        var nodeToDOM = _require5.nodeToDOM;
+        var _require6 = $__require('31');
+        var compareDeep = _require6.compareDeep;
+        var emptyAttrs = Object.create(null);
+        var Node = function() {
             function Node(type, attrs, content, marks) {
                 _classCallCheck(this, Node);
                 this.type = type;
                 this.attrs = attrs;
-                this.content = content || _fragment.Fragment.empty;
-                this.marks = marks || emptyArray;
+                this.content = content || Fragment.empty;
+                this.marks = marks || Mark.none;
             }
             _createClass(Node, [{
                 key: "child",
@@ -8077,6 +5965,11 @@
                     this.content.forEach(f);
                 }
             }, {
+                key: "textBetween",
+                value: function textBetween(from, to, separator) {
+                    return this.content.textBetween(from, to, separator);
+                }
+            }, {
                 key: "eq",
                 value: function eq(other) {
                     return this == other || this.sameMarkup(other) && this.content.eq(other.content);
@@ -8089,7 +5982,7 @@
             }, {
                 key: "hasMarkup",
                 value: function hasMarkup(type, attrs, marks) {
-                    return this.type == type && Node.sameAttrs(this.attrs, attrs || emptyAttrs) && _mark.Mark.sameSet(this.marks, marks || emptyArray);
+                    return this.type == type && compareDeep(this.attrs, attrs || type.defaultAttrs || emptyAttrs) && Mark.sameSet(this.marks, marks || Mark.none);
                 }
             }, {
                 key: "copy",
@@ -8102,7 +5995,7 @@
             }, {
                 key: "mark",
                 value: function mark(marks) {
-                    return new this.constructor(this.type, this.attrs, this.content, marks);
+                    return marks == this.marks ? this : new this.constructor(this.type, this.attrs, this.content, marks);
                 }
             }, {
                 key: "cut",
@@ -8116,19 +6009,19 @@
                 value: function slice(from) {
                     var to = arguments.length <= 1 || arguments[1] === undefined ? this.content.size : arguments[1];
                     if (from == to)
-                        return _replace2.Slice.empty;
+                        return Slice.empty;
                     var $from = this.resolve(from),
                         $to = this.resolve(to);
                     var depth = $from.sameDepth($to),
                         start = $from.start(depth),
                         node = $from.node(depth);
                     var content = node.content.cut($from.pos - start, $to.pos - start);
-                    return new _replace2.Slice(content, $from.depth - depth, $to.depth - depth, node);
+                    return new Slice(content, $from.depth - depth, $to.depth - depth, node);
                 }
             }, {
                 key: "replace",
                 value: function replace(from, to, slice) {
-                    return (0, _replace2.replace)(this.resolve(from), this.resolve(to), slice);
+                    return _replace(this.resolve(from), this.resolve(to), slice);
                 }
             }, {
                 key: "nodeAt",
@@ -8196,21 +6089,21 @@
             }, {
                 key: "resolve",
                 value: function resolve(pos) {
-                    return _resolvedpos.ResolvedPos.resolveCached(this, pos);
+                    return ResolvedPos.resolveCached(this, pos);
                 }
             }, {
                 key: "resolveNoCache",
                 value: function resolveNoCache(pos) {
-                    return _resolvedpos.ResolvedPos.resolve(this, pos);
+                    return ResolvedPos.resolve(this, pos);
                 }
             }, {
                 key: "marksAt",
                 value: function marksAt(pos) {
                     var $pos = this.resolve(pos),
                         parent = $pos.parent,
-                        index = $pos.index($pos.depth);
+                        index = $pos.index();
                     if (parent.content.size == 0)
-                        return emptyArray;
+                        return Mark.none;
                     if (index == 0 || !$pos.atNodeBoundary)
                         return parent.child(index).marks;
                     var marks = parent.child(index - 1).marks;
@@ -8240,6 +6133,35 @@
                     return wrapMarks(this.marks, name);
                 }
             }, {
+                key: "contentMatchAt",
+                value: function contentMatchAt(index) {
+                    return this.type.contentExpr.getMatchAt(this.attrs, this.content, index);
+                }
+            }, {
+                key: "canReplace",
+                value: function canReplace(from, to, replacement, start, end) {
+                    return this.type.contentExpr.checkReplace(this.attrs, this.content, from, to, replacement, start, end);
+                }
+            }, {
+                key: "canReplaceWith",
+                value: function canReplaceWith(from, to, type, attrs, marks) {
+                    return this.type.contentExpr.checkReplaceWith(this.attrs, this.content, from, to, type, attrs, marks || Mark.none);
+                }
+            }, {
+                key: "canAppend",
+                value: function canAppend(other) {
+                    if (other.content.size)
+                        return this.canReplace(this.childCount, this.childCount, other.content);
+                    else
+                        return this.type.compatibleContent(other.type);
+                }
+            }, {
+                key: "defaultContentType",
+                value: function defaultContentType(at) {
+                    var elt = this.contentMatchAt(at).nextElement;
+                    return elt && elt.defaultType();
+                }
+            }, {
                 key: "toJSON",
                 value: function toJSON() {
                     var obj = {type: this.type.name};
@@ -8256,9 +6178,15 @@
                     return obj;
                 }
             }, {
+                key: "toDOM",
+                value: function toDOM() {
+                    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+                    return nodeToDOM(this, options);
+                }
+            }, {
                 key: "nodeSize",
                 get: function get() {
-                    return this.type.contains ? 2 + this.content.size : 1;
+                    return this.type.isLeaf ? 1 : 2 + this.content.size;
                 }
             }, {
                 key: "childCount",
@@ -8268,7 +6196,7 @@
             }, {
                 key: "textContent",
                 get: function get() {
-                    return this.content.textContent;
+                    return this.textBetween(0, this.content.size, "");
                 }
             }, {
                 key: "firstChild",
@@ -8300,33 +6228,18 @@
                 get: function get() {
                     return this.type.isText;
                 }
-            }, {
-                key: "value",
-                get: function get() {
-                    return this;
-                }
             }], [{
-                key: "sameAttrs",
-                value: function sameAttrs(a, b) {
-                    if (a == b)
-                        return true;
-                    for (var prop in a) {
-                        if (a[prop] !== b[prop])
-                            return false;
-                    }
-                    return true;
-                }
-            }, {
                 key: "fromJSON",
                 value: function fromJSON(schema, json) {
                     var type = schema.nodeType(json.type);
-                    var content = json.text != null ? json.text : _fragment.Fragment.fromJSON(schema, json.content);
+                    var content = json.text != null ? json.text : Fragment.fromJSON(schema, json.content);
                     return type.create(json.attrs, content, json.marks && json.marks.map(schema.markFromJSON));
                 }
             }]);
             return Node;
         }();
-        var TextNode = exports.TextNode = function(_Node) {
+        exports.Node = Node;
+        var TextNode = function(_Node) {
             _inherits(TextNode, _Node);
             function TextNode(type, attrs, content, marks) {
                 _classCallCheck(this, TextNode);
@@ -8340,6 +6253,11 @@
                 key: "toString",
                 value: function toString() {
                     return wrapMarks(this.marks, JSON.stringify(this.text));
+                }
+            }, {
+                key: "textBetween",
+                value: function textBetween(from, to) {
+                    return this.text.slice(from, to);
                 }
             }, {
                 key: "mark",
@@ -8380,6 +6298,7 @@
             }]);
             return TextNode;
         }(Node);
+        exports.TextNode = TextNode;
         function wrapMarks(marks, str) {
             for (var i = marks.length - 1; i >= 0; i--) {
                 str = marks[i].type.name + "(" + str + ")";
@@ -8389,13 +6308,12 @@
         return module.exports;
     });
 
-    $__System.registerDynamic("35", [], true, function($__require, exports, module) {
+    $__System.registerDynamic("32", [], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -8420,7 +6338,1412 @@
                 throw new TypeError("Cannot call a class as a function");
             }
         }
-        var Fragment = exports.Fragment = function() {
+        var OrderedMap = function() {
+            function OrderedMap(content) {
+                _classCallCheck(this, OrderedMap);
+                this.content = content;
+            }
+            _createClass(OrderedMap, [{
+                key: "find",
+                value: function find(key) {
+                    for (var i = 0; i < this.content.length; i += 2) {
+                        if (this.content[i] == key)
+                            return i;
+                    }
+                    return -1;
+                }
+            }, {
+                key: "get",
+                value: function get(key) {
+                    var found = this.find(key);
+                    return found == -1 ? undefined : this.content[found + 1];
+                }
+            }, {
+                key: "update",
+                value: function update(key, value, newKey) {
+                    var self = newKey && newKey != key ? this.remove(newKey) : this;
+                    var found = self.find(key),
+                        content = self.content.slice();
+                    if (found == -1) {
+                        content.push(newKey || key, value);
+                    } else {
+                        content[found + 1] = value;
+                        if (newKey)
+                            content[found] = newKey;
+                    }
+                    return new OrderedMap(content);
+                }
+            }, {
+                key: "remove",
+                value: function remove(key) {
+                    var found = this.find(key);
+                    if (found == -1)
+                        return this;
+                    var content = this.content.slice();
+                    content.splice(found, 2);
+                    return new OrderedMap(content);
+                }
+            }, {
+                key: "addToStart",
+                value: function addToStart(key, value) {
+                    return new OrderedMap([key, value].concat(this.remove(key).content));
+                }
+            }, {
+                key: "addToEnd",
+                value: function addToEnd(key, value) {
+                    var content = this.remove(key).content.slice();
+                    content.push(key, value);
+                    return new OrderedMap(content);
+                }
+            }, {
+                key: "addBefore",
+                value: function addBefore(place, key, value) {
+                    var without = this.remove(key),
+                        content = without.content.slice();
+                    var found = without.find(place);
+                    content.splice(found == -1 ? content.length : found, 0, key, value);
+                    return new OrderedMap(content);
+                }
+            }, {
+                key: "forEach",
+                value: function forEach(f) {
+                    for (var i = 0; i < this.content.length; i += 2) {
+                        f(this.content[i], this.content[i + 1]);
+                    }
+                }
+            }, {
+                key: "prepend",
+                value: function prepend(map) {
+                    map = OrderedMap.from(map);
+                    if (!map.size)
+                        return this;
+                    return new OrderedMap(map.content.concat(this.subtract(map).content));
+                }
+            }, {
+                key: "append",
+                value: function append(map) {
+                    map = OrderedMap.from(map);
+                    if (!map.size)
+                        return this;
+                    return new OrderedMap(this.subtract(map).content.concat(map.content));
+                }
+            }, {
+                key: "subtract",
+                value: function subtract(map) {
+                    var result = this;
+                    OrderedMap.from(map).forEach(function(key) {
+                        return result = result.remove(key);
+                    });
+                    return result;
+                }
+            }, {
+                key: "size",
+                get: function get() {
+                    return this.content.length >> 1;
+                }
+            }], [{
+                key: "from",
+                value: function from(value) {
+                    if (value instanceof OrderedMap)
+                        return value;
+                    var content = [];
+                    if (value)
+                        for (var prop in value) {
+                            content.push(prop, value[prop]);
+                        }
+                    return new OrderedMap(content);
+                }
+            }]);
+            return OrderedMap;
+        }();
+        exports.OrderedMap = OrderedMap;
+        return module.exports;
+    });
+
+    $__System.registerDynamic("33", ["2e", "2c", "2f", "34", "35", "8", "32"], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        var _createClass = function() {
+            function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                    var descriptor = props[i];
+                    descriptor.enumerable = descriptor.enumerable || false;
+                    descriptor.configurable = true;
+                    if ("value" in descriptor)
+                        descriptor.writable = true;
+                    Object.defineProperty(target, descriptor.key, descriptor);
+                }
+            }
+            return function(Constructor, protoProps, staticProps) {
+                if (protoProps)
+                    defineProperties(Constructor.prototype, protoProps);
+                if (staticProps)
+                    defineProperties(Constructor, staticProps);
+                return Constructor;
+            };
+        }();
+        function _possibleConstructorReturn(self, call) {
+            if (!self) {
+                throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+            }
+            return call && (typeof call === "object" || typeof call === "function") ? call : self;
+        }
+        function _inherits(subClass, superClass) {
+            if (typeof superClass !== "function" && superClass !== null) {
+                throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+            }
+            subClass.prototype = Object.create(superClass && superClass.prototype, {constructor: {
+                value: subClass,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }});
+            if (superClass)
+                Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+        }
+        function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+            }
+        }
+        var _require = $__require('2e');
+        var Node = _require.Node;
+        var TextNode = _require.TextNode;
+        var _require2 = $__require('2c');
+        var Fragment = _require2.Fragment;
+        var _require3 = $__require('2f');
+        var Mark = _require3.Mark;
+        var _require4 = $__require('34');
+        var ContentExpr = _require4.ContentExpr;
+        var _require5 = $__require('35');
+        var _parseDOM = _require5.parseDOM;
+        var _require6 = $__require('8');
+        var copyObj = _require6.copyObj;
+        var _require7 = $__require('32');
+        var OrderedMap = _require7.OrderedMap;
+        function defaultAttrs(attrs) {
+            var defaults = Object.create(null);
+            for (var attrName in attrs) {
+                var attr = attrs[attrName];
+                if (attr.default === undefined)
+                    return null;
+                defaults[attrName] = attr.default;
+            }
+            return defaults;
+        }
+        function _computeAttrs(attrs, value) {
+            var built = Object.create(null);
+            for (var name in attrs) {
+                var given = value && value[name];
+                if (given == null) {
+                    var attr = attrs[name];
+                    if (attr.default !== undefined)
+                        given = attr.default;
+                    else if (attr.compute)
+                        given = attr.compute();
+                    else
+                        throw new RangeError("No value supplied for attribute " + name);
+                }
+                built[name] = given;
+            }
+            return built;
+        }
+        var NodeType = function() {
+            function NodeType(name, schema) {
+                _classCallCheck(this, NodeType);
+                this.name = name;
+                Object.defineProperty(this, "attrs", {value: copyObj(this.attrs)});
+                this.defaultAttrs = defaultAttrs(this.attrs);
+                this.contentExpr = null;
+                this.schema = schema;
+            }
+            _createClass(NodeType, [{
+                key: "hasRequiredAttrs",
+                value: function hasRequiredAttrs(ignore) {
+                    for (var n in this.attrs) {
+                        if (this.attrs[n].isRequired && (!ignore || !(n in ignore)))
+                            return true;
+                    }
+                    return false;
+                }
+            }, {
+                key: "compatibleContent",
+                value: function compatibleContent(other) {
+                    return this == other || this.contentExpr.compatible(other.contentExpr);
+                }
+            }, {
+                key: "computeAttrs",
+                value: function computeAttrs(attrs) {
+                    if (!attrs && this.defaultAttrs)
+                        return this.defaultAttrs;
+                    else
+                        return _computeAttrs(this.attrs, attrs);
+                }
+            }, {
+                key: "create",
+                value: function create(attrs, content, marks) {
+                    return new Node(this, this.computeAttrs(attrs), Fragment.from(content), Mark.setFrom(marks));
+                }
+            }, {
+                key: "createChecked",
+                value: function createChecked(attrs, content, marks) {
+                    attrs = this.computeAttrs(attrs);
+                    content = Fragment.from(content);
+                    if (!this.validContent(content, attrs))
+                        throw new RangeError("Invalid content for node " + this.name);
+                    return new Node(this, attrs, content, Mark.setFrom(marks));
+                }
+            }, {
+                key: "createAndFill",
+                value: function createAndFill(attrs, content, marks) {
+                    attrs = this.computeAttrs(attrs);
+                    content = Fragment.from(content);
+                    if (content.size) {
+                        var before = this.contentExpr.start(attrs).fillBefore(content);
+                        if (!before)
+                            return null;
+                        content = before.append(content);
+                    }
+                    var after = this.contentExpr.getMatchAt(attrs, content).fillBefore(Fragment.empty, true);
+                    if (!after)
+                        return null;
+                    return new Node(this, attrs, content.append(after), Mark.setFrom(marks));
+                }
+            }, {
+                key: "validContent",
+                value: function validContent(content, attrs) {
+                    return this.contentExpr.matches(attrs, content);
+                }
+            }, {
+                key: "toDOM",
+                value: function toDOM(_) {
+                    throw new Error("Failed to override NodeType.toDOM");
+                }
+            }, {
+                key: "isBlock",
+                get: function get() {
+                    return false;
+                }
+            }, {
+                key: "isTextblock",
+                get: function get() {
+                    return false;
+                }
+            }, {
+                key: "isInline",
+                get: function get() {
+                    return false;
+                }
+            }, {
+                key: "isText",
+                get: function get() {
+                    return false;
+                }
+            }, {
+                key: "isLeaf",
+                get: function get() {
+                    return this.contentExpr.isLeaf;
+                }
+            }, {
+                key: "selectable",
+                get: function get() {
+                    return true;
+                }
+            }, {
+                key: "draggable",
+                get: function get() {
+                    return false;
+                }
+            }, {
+                key: "matchDOMTag",
+                get: function get() {}
+            }], [{
+                key: "compile",
+                value: function compile(nodes, schema) {
+                    var result = Object.create(null);
+                    nodes.forEach(function(name, spec) {
+                        return result[name] = new spec.type(name, schema);
+                    });
+                    if (!result.doc)
+                        throw new RangeError("Every schema needs a 'doc' type");
+                    if (!result.text)
+                        throw new RangeError("Every schema needs a 'text' type");
+                    return result;
+                }
+            }]);
+            return NodeType;
+        }();
+        exports.NodeType = NodeType;
+        var Block = function(_NodeType) {
+            _inherits(Block, _NodeType);
+            function Block() {
+                _classCallCheck(this, Block);
+                return _possibleConstructorReturn(this, Object.getPrototypeOf(Block).apply(this, arguments));
+            }
+            _createClass(Block, [{
+                key: "isBlock",
+                get: function get() {
+                    return true;
+                }
+            }, {
+                key: "isTextblock",
+                get: function get() {
+                    return this.contentExpr.inlineContent;
+                }
+            }]);
+            return Block;
+        }(NodeType);
+        exports.Block = Block;
+        var Inline = function(_NodeType2) {
+            _inherits(Inline, _NodeType2);
+            function Inline() {
+                _classCallCheck(this, Inline);
+                return _possibleConstructorReturn(this, Object.getPrototypeOf(Inline).apply(this, arguments));
+            }
+            _createClass(Inline, [{
+                key: "isInline",
+                get: function get() {
+                    return true;
+                }
+            }]);
+            return Inline;
+        }(NodeType);
+        exports.Inline = Inline;
+        var Text = function(_Inline) {
+            _inherits(Text, _Inline);
+            function Text() {
+                _classCallCheck(this, Text);
+                return _possibleConstructorReturn(this, Object.getPrototypeOf(Text).apply(this, arguments));
+            }
+            _createClass(Text, [{
+                key: "create",
+                value: function create(attrs, content, marks) {
+                    return new TextNode(this, this.computeAttrs(attrs), content, marks);
+                }
+            }, {
+                key: "toDOM",
+                value: function toDOM(node) {
+                    return node.text;
+                }
+            }, {
+                key: "selectable",
+                get: function get() {
+                    return false;
+                }
+            }, {
+                key: "isText",
+                get: function get() {
+                    return true;
+                }
+            }]);
+            return Text;
+        }(Inline);
+        exports.Text = Text;
+        var Attribute = function() {
+            function Attribute() {
+                var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+                _classCallCheck(this, Attribute);
+                this.default = options.default;
+                this.compute = options.compute;
+            }
+            _createClass(Attribute, [{
+                key: "isRequired",
+                get: function get() {
+                    return this.default === undefined && !this.compute;
+                }
+            }]);
+            return Attribute;
+        }();
+        exports.Attribute = Attribute;
+        var MarkType = function() {
+            function MarkType(name, rank, schema) {
+                _classCallCheck(this, MarkType);
+                this.name = name;
+                Object.defineProperty(this, "attrs", {value: copyObj(this.attrs)});
+                this.rank = rank;
+                this.schema = schema;
+                var defaults = defaultAttrs(this.attrs);
+                this.instance = defaults && new Mark(this, defaults);
+            }
+            _createClass(MarkType, [{
+                key: "create",
+                value: function create(attrs) {
+                    if (!attrs && this.instance)
+                        return this.instance;
+                    return new Mark(this, _computeAttrs(this.attrs, attrs));
+                }
+            }, {
+                key: "removeFromSet",
+                value: function removeFromSet(set) {
+                    for (var i = 0; i < set.length; i++) {
+                        if (set[i].type == this)
+                            return set.slice(0, i).concat(set.slice(i + 1));
+                    }
+                    return set;
+                }
+            }, {
+                key: "isInSet",
+                value: function isInSet(set) {
+                    for (var i = 0; i < set.length; i++) {
+                        if (set[i].type == this)
+                            return set[i];
+                    }
+                }
+            }, {
+                key: "toDOM",
+                value: function toDOM(_) {
+                    throw new Error("Failed to override MarkType.toDOM");
+                }
+            }, {
+                key: "inclusiveRight",
+                get: function get() {
+                    return true;
+                }
+            }, {
+                key: "matchDOMTag",
+                get: function get() {}
+            }, {
+                key: "matchDOMStyle",
+                get: function get() {}
+            }], [{
+                key: "compile",
+                value: function compile(marks, schema) {
+                    var result = Object.create(null),
+                        rank = 0;
+                    marks.forEach(function(name, markType) {
+                        return result[name] = new markType(name, rank++, schema);
+                    });
+                    return result;
+                }
+            }]);
+            return MarkType;
+        }();
+        exports.MarkType = MarkType;
+        var Schema = function() {
+            function Schema(spec, data) {
+                _classCallCheck(this, Schema);
+                this.nodeSpec = OrderedMap.from(spec.nodes);
+                this.markSpec = OrderedMap.from(spec.marks);
+                this.data = data;
+                this.nodes = NodeType.compile(this.nodeSpec, this);
+                this.marks = MarkType.compile(this.markSpec, this);
+                for (var prop in this.nodes) {
+                    if (prop in this.marks)
+                        throw new RangeError(prop + " can not be both a node and a mark");
+                    var type = this.nodes[prop];
+                    type.contentExpr = ContentExpr.parse(type, this.nodeSpec.get(prop).content || "", this.nodeSpec);
+                }
+                this.cached = Object.create(null);
+                this.cached.wrappings = Object.create(null);
+                this.node = this.node.bind(this);
+                this.text = this.text.bind(this);
+                this.nodeFromJSON = this.nodeFromJSON.bind(this);
+                this.markFromJSON = this.markFromJSON.bind(this);
+            }
+            _createClass(Schema, [{
+                key: "node",
+                value: function node(type, attrs, content, marks) {
+                    if (typeof type == "string")
+                        type = this.nodeType(type);
+                    else if (!(type instanceof NodeType))
+                        throw new RangeError("Invalid node type: " + type);
+                    else if (type.schema != this)
+                        throw new RangeError("Node type from different schema used (" + type.name + ")");
+                    return type.createChecked(attrs, content, marks);
+                }
+            }, {
+                key: "text",
+                value: function text(_text, marks) {
+                    return this.nodes.text.create(null, _text, Mark.setFrom(marks));
+                }
+            }, {
+                key: "mark",
+                value: function mark(name, attrs) {
+                    var spec = this.marks[name];
+                    if (!spec)
+                        throw new RangeError("No mark named " + name);
+                    return spec.create(attrs);
+                }
+            }, {
+                key: "nodeFromJSON",
+                value: function nodeFromJSON(json) {
+                    return Node.fromJSON(this, json);
+                }
+            }, {
+                key: "markFromJSON",
+                value: function markFromJSON(json) {
+                    var type = this.marks[json._];
+                    var attrs = null;
+                    for (var prop in json) {
+                        if (prop != "_") {
+                            if (!attrs)
+                                attrs = Object.create(null);
+                            attrs[prop] = json[prop];
+                        }
+                    }
+                    return attrs ? type.create(attrs) : type.instance;
+                }
+            }, {
+                key: "nodeType",
+                value: function nodeType(name) {
+                    var found = this.nodes[name];
+                    if (!found)
+                        throw new RangeError("Unknown node type: " + name);
+                    return found;
+                }
+            }, {
+                key: "parseDOM",
+                value: function parseDOM(dom) {
+                    var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+                    return _parseDOM(this, dom, options);
+                }
+            }]);
+            return Schema;
+        }();
+        exports.Schema = Schema;
+        return module.exports;
+    });
+
+    $__System.registerDynamic("34", ["2c", "2f"], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        var _createClass = function() {
+            function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                    var descriptor = props[i];
+                    descriptor.enumerable = descriptor.enumerable || false;
+                    descriptor.configurable = true;
+                    if ("value" in descriptor)
+                        descriptor.writable = true;
+                    Object.defineProperty(target, descriptor.key, descriptor);
+                }
+            }
+            return function(Constructor, protoProps, staticProps) {
+                if (protoProps)
+                    defineProperties(Constructor.prototype, protoProps);
+                if (staticProps)
+                    defineProperties(Constructor, staticProps);
+                return Constructor;
+            };
+        }();
+        function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+            }
+        }
+        var _require = $__require('2c');
+        var Fragment = _require.Fragment;
+        var _require2 = $__require('2f');
+        var Mark = _require2.Mark;
+        var ContentExpr = function() {
+            function ContentExpr(nodeType, elements, inlineContent) {
+                _classCallCheck(this, ContentExpr);
+                this.nodeType = nodeType;
+                this.elements = elements;
+                this.inlineContent = inlineContent;
+            }
+            _createClass(ContentExpr, [{
+                key: "start",
+                value: function start(attrs) {
+                    return new ContentMatch(this, attrs, 0, 0);
+                }
+            }, {
+                key: "matches",
+                value: function matches(attrs, fragment, from, to) {
+                    return this.start(attrs).matchToEnd(fragment, from, to);
+                }
+            }, {
+                key: "getMatchAt",
+                value: function getMatchAt(attrs, fragment) {
+                    var index = arguments.length <= 2 || arguments[2] === undefined ? fragment.childCount : arguments[2];
+                    if (this.elements.length == 1)
+                        return new ContentMatch(this, attrs, 0, index);
+                    else
+                        return this.start(attrs).matchFragment(fragment, 0, index);
+                }
+            }, {
+                key: "checkReplace",
+                value: function checkReplace(attrs, content, from, to) {
+                    var replacement = arguments.length <= 4 || arguments[4] === undefined ? Fragment.empty : arguments[4];
+                    var start = arguments.length <= 5 || arguments[5] === undefined ? 0 : arguments[5];
+                    var end = arguments.length <= 6 || arguments[6] === undefined ? replacement.childCount : arguments[6];
+                    if (this.elements.length == 1) {
+                        var elt = this.elements[0];
+                        if (!checkCount(elt, content.childCount - (to - from) + (end - start), attrs, this))
+                            return false;
+                        for (var i = start; i < end; i++) {
+                            if (!elt.matches(replacement.child(i), attrs, this))
+                                return false;
+                        }
+                        return true;
+                    }
+                    var match = this.getMatchAt(attrs, content, from).matchFragment(replacement, start, end);
+                    return match ? match.matchToEnd(content, to) : false;
+                }
+            }, {
+                key: "checkReplaceWith",
+                value: function checkReplaceWith(attrs, content, from, to, type, typeAttrs, marks) {
+                    if (this.elements.length == 1) {
+                        var elt = this.elements[0];
+                        if (!checkCount(elt, content.childCount - (to - from) + 1, attrs, this))
+                            return false;
+                        return elt.matchesType(type, typeAttrs, marks, attrs, this);
+                    }
+                    var match = this.getMatchAt(attrs, content, from).matchType(type, typeAttrs, marks);
+                    return match ? match.matchToEnd(content, to) : false;
+                }
+            }, {
+                key: "compatible",
+                value: function compatible(other) {
+                    for (var i = 0; i < this.elements.length; i++) {
+                        var elt = this.elements[i];
+                        for (var j = 0; j < other.elements.length; j++) {
+                            if (other.elements[j].compatible(elt))
+                                return true;
+                        }
+                    }
+                    return false;
+                }
+            }, {
+                key: "generateContent",
+                value: function generateContent(attrs) {
+                    return this.start(attrs).fillBefore(Fragment.empty, true);
+                }
+            }, {
+                key: "isLeaf",
+                get: function get() {
+                    return this.elements.length == 0;
+                }
+            }], [{
+                key: "parse",
+                value: function parse(nodeType, expr, specs) {
+                    var elements = [],
+                        pos = 0,
+                        inline = null;
+                    for (; ; ) {
+                        pos += /^\s*/.exec(expr.slice(pos))[0].length;
+                        if (pos == expr.length)
+                            break;
+                        var types = /^(?:(\w+)|\(\s*(\w+(?:\s*\|\s*\w+)*)\s*\))/.exec(expr.slice(pos));
+                        if (!types)
+                            throw new SyntaxError("Invalid content expression '" + expr + "' at " + pos);
+                        pos += types[0].length;
+                        var attrs = /^\[([^\]]+)\]/.exec(expr.slice(pos));
+                        if (attrs)
+                            pos += attrs[0].length;
+                        var marks = /^<(?:(_)|\s*(\w+(?:\s+\w+)*)\s*)>/.exec(expr.slice(pos));
+                        if (marks)
+                            pos += marks[0].length;
+                        var repeat = /^(?:([+*?])|\{\s*(\d+|\.\w+)\s*(,\s*(\d+|\.\w+)?)?\s*\})/.exec(expr.slice(pos));
+                        if (repeat)
+                            pos += repeat[0].length;
+                        var nodeTypes = expandTypes(nodeType.schema, specs, types[1] ? [types[1]] : types[2].split(/\s*\|\s*/));
+                        for (var i = 0; i < nodeTypes.length; i++) {
+                            if (inline == null)
+                                inline = nodeTypes[i].isInline;
+                            else if (inline != nodeTypes[i].isInline)
+                                throw new SyntaxError("Mixing inline and block content in a single node");
+                        }
+                        var attrSet = !attrs ? null : parseAttrs(nodeType, attrs[1]);
+                        var markSet = !marks ? false : marks[1] ? true : checkMarks(nodeType.schema, marks[2].split(/\s+/));
+                        var _parseRepeat = parseRepeat(nodeType, repeat);
+                        var min = _parseRepeat.min;
+                        var max = _parseRepeat.max;
+                        if (min != 0 && nodeTypes[0].hasRequiredAttrs(attrSet))
+                            throw new SyntaxError("Node type " + types[0] + " in type " + nodeType.name + " is required, but has non-optional attributes");
+                        var newElt = new ContentElement(nodeTypes, attrSet, markSet, min, max);
+                        for (var _i = elements.length - 1; _i >= 0; _i--) {
+                            var prev = elements[_i];
+                            if (prev.min != prev.max && prev.overlaps(newElt))
+                                throw new SyntaxError("Possibly ambiguous overlapping adjacent content expressions in '" + expr + "'");
+                            if (prev.min != 0)
+                                break;
+                        }
+                        elements.push(newElt);
+                    }
+                    return new ContentExpr(nodeType, elements, !!inline);
+                }
+            }]);
+            return ContentExpr;
+        }();
+        exports.ContentExpr = ContentExpr;
+        var ContentElement = function() {
+            function ContentElement(nodeTypes, attrs, marks, min, max) {
+                _classCallCheck(this, ContentElement);
+                this.nodeTypes = nodeTypes;
+                this.attrs = attrs;
+                this.marks = marks;
+                this.min = min;
+                this.max = max;
+            }
+            _createClass(ContentElement, [{
+                key: "matchesType",
+                value: function matchesType(type, attrs, marks, parentAttrs, parentExpr) {
+                    if (this.nodeTypes.indexOf(type) == -1)
+                        return false;
+                    if (this.attrs) {
+                        if (!attrs)
+                            return false;
+                        for (var prop in this.attrs) {
+                            if (attrs[prop] != _resolveValue(this.attrs[prop], parentAttrs, parentExpr))
+                                return false;
+                        }
+                    }
+                    if (this.marks === true)
+                        return true;
+                    if (this.marks === false)
+                        return marks.length == 0;
+                    for (var i = 0; i < marks.length; i++) {
+                        if (this.marks.indexOf(marks[i].type) == -1)
+                            return false;
+                    }
+                    return true;
+                }
+            }, {
+                key: "matches",
+                value: function matches(node, parentAttrs, parentExpr) {
+                    return this.matchesType(node.type, node.attrs, node.marks, parentAttrs, parentExpr);
+                }
+            }, {
+                key: "compatible",
+                value: function compatible(other) {
+                    for (var i = 0; i < this.nodeTypes.length; i++) {
+                        if (other.nodeTypes.indexOf(this.nodeTypes[i]) != -1)
+                            return true;
+                    }
+                    return false;
+                }
+            }, {
+                key: "constrainedAttrs",
+                value: function constrainedAttrs(parentAttrs, expr) {
+                    if (!this.attrs)
+                        return null;
+                    var attrs = Object.create(null);
+                    for (var prop in this.attrs) {
+                        attrs[prop] = _resolveValue(this.attrs[prop], parentAttrs, expr);
+                    }
+                    return attrs;
+                }
+            }, {
+                key: "createFiller",
+                value: function createFiller(parentAttrs, expr) {
+                    var type = this.nodeTypes[0],
+                        attrs = type.computeAttrs(this.constrainedAttrs(parentAttrs, expr));
+                    return type.create(attrs, type.contentExpr.generateContent(attrs));
+                }
+            }, {
+                key: "defaultType",
+                value: function defaultType() {
+                    return this.nodeTypes[0].defaultAttrs && this.nodeTypes[0];
+                }
+            }, {
+                key: "overlaps",
+                value: function overlaps(other) {
+                    return this.nodeTypes.some(function(t) {
+                        return other.nodeTypes.indexOf(t) > -1;
+                    });
+                }
+            }, {
+                key: "allowsMark",
+                value: function allowsMark(markType) {
+                    return this.marks === true || this.marks && this.marks.indexOf(markType) > -1;
+                }
+            }]);
+            return ContentElement;
+        }();
+        var ContentMatch = function() {
+            function ContentMatch(expr, attrs, index, count) {
+                _classCallCheck(this, ContentMatch);
+                this.expr = expr;
+                this.attrs = attrs;
+                this.index = index;
+                this.count = count;
+            }
+            _createClass(ContentMatch, [{
+                key: "move",
+                value: function move(index, count) {
+                    return new ContentMatch(this.expr, this.attrs, index, count);
+                }
+            }, {
+                key: "resolveValue",
+                value: function resolveValue(value) {
+                    return value instanceof AttrValue ? _resolveValue(value, this.attrs, this.expr) : value;
+                }
+            }, {
+                key: "matchNode",
+                value: function matchNode(node) {
+                    return this.matchType(node.type, node.attrs, node.marks);
+                }
+            }, {
+                key: "matchType",
+                value: function matchType(type, attrs) {
+                    var marks = arguments.length <= 2 || arguments[2] === undefined ? Mark.none : arguments[2];
+                    for (index = this.index, count = this.count, void 0; index < this.expr.elements.length; index++, count = 0) {
+                        var index,
+                            count;
+                        var elt = this.expr.elements[index],
+                            max = this.resolveValue(elt.max);
+                        if (count < max && elt.matchesType(type, attrs, marks, this.attrs, this.expr)) {
+                            count++;
+                            return this.move(index, count);
+                        }
+                        if (count < this.resolveValue(elt.min))
+                            return null;
+                    }
+                }
+            }, {
+                key: "matchFragment",
+                value: function matchFragment(fragment) {
+                    var from = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+                    var to = arguments.length <= 2 || arguments[2] === undefined ? fragment.childCount : arguments[2];
+                    if (from == to)
+                        return this;
+                    var fragPos = from,
+                        end = this.expr.elements.length;
+                    for (index = this.index, count = this.count, void 0; index < end; index++, count = 0) {
+                        var index,
+                            count;
+                        var elt = this.expr.elements[index],
+                            max = this.resolveValue(elt.max);
+                        while (count < max) {
+                            if (elt.matches(fragment.child(fragPos), this.attrs, this.expr)) {
+                                count++;
+                                if (++fragPos == to)
+                                    return this.move(index, count);
+                            } else {
+                                break;
+                            }
+                        }
+                        if (count < this.resolveValue(elt.min))
+                            return null;
+                    }
+                    return false;
+                }
+            }, {
+                key: "matchToEnd",
+                value: function matchToEnd(fragment, start, end) {
+                    var matched = this.matchFragment(fragment, start, end);
+                    return matched && matched.validEnd() || false;
+                }
+            }, {
+                key: "validEnd",
+                value: function validEnd() {
+                    for (var i = this.index,
+                             count = this.count; i < this.expr.elements.length; i++, count = 0) {
+                        if (count < this.resolveValue(this.expr.elements[i].min))
+                            return false;
+                    }
+                    return true;
+                }
+            }, {
+                key: "fillBefore",
+                value: function fillBefore(after, toEnd, startIndex) {
+                    var added = [],
+                        match = this,
+                        index = startIndex || 0,
+                        end = this.expr.elements.length;
+                    for (; ; ) {
+                        var fits = match.matchFragment(after, index);
+                        if (fits && (!toEnd || fits.validEnd()))
+                            return Fragment.from(added);
+                        if (fits === false)
+                            return null;
+                        var elt = match.element;
+                        if (match.count < this.resolveValue(elt.min)) {
+                            added.push(elt.createFiller(this.attrs, this.expr));
+                            match = match.move(match.index, match.count + 1);
+                        } else if (match.index < end) {
+                            match = match.move(match.index + 1, 0);
+                        } else if (after.childCount > index) {
+                            return null;
+                        } else {
+                            return Fragment.from(added);
+                        }
+                    }
+                }
+            }, {
+                key: "possibleContent",
+                value: function possibleContent() {
+                    var found = [];
+                    for (var i = this.index,
+                             count = this.count; i < this.expr.elements.length; i++, count = 0) {
+                        var elt = this.expr.elements[i],
+                            attrs = elt.constrainedAttrs(this.attrs, this.expr);
+                        if (count < this.resolveValue(elt.max))
+                            for (var j = 0; j < elt.nodeTypes.length; j++) {
+                                var type = elt.nodeTypes[j];
+                                if (!type.hasRequiredAttrs(attrs))
+                                    found.push({
+                                        type: type,
+                                        attrs: attrs
+                                    });
+                            }
+                        if (this.resolveValue(elt.min) > count)
+                            break;
+                    }
+                    return found;
+                }
+            }, {
+                key: "allowsMark",
+                value: function allowsMark(markType) {
+                    return this.element.allowsMark(markType);
+                }
+            }, {
+                key: "findWrapping",
+                value: function findWrapping(target, targetAttrs) {
+                    var seen = Object.create(null),
+                        first = {
+                            match: this,
+                            via: null
+                        },
+                        active = [first];
+                    while (active.length) {
+                        var current = active.shift(),
+                            match = current.match;
+                        if (match.matchType(target, targetAttrs)) {
+                            var result = [];
+                            for (var obj = current; obj != first; obj = obj.via) {
+                                result.push({
+                                    type: obj.match.expr.nodeType,
+                                    attrs: obj.match.attrs
+                                });
+                            }
+                            return result.reverse();
+                        }
+                        var possible = match.possibleContent();
+                        for (var i = 0; i < possible.length; i++) {
+                            var _possible$i = possible[i];
+                            var type = _possible$i.type;
+                            var attrs = _possible$i.attrs;
+                            var fullAttrs = type.computeAttrs(attrs);
+                            if (!type.isLeaf && !(type.name in seen) && (current == first || match.matchType(type, fullAttrs).validEnd())) {
+                                active.push({
+                                    match: type.contentExpr.start(fullAttrs),
+                                    via: current
+                                });
+                                seen[type.name] = true;
+                            }
+                        }
+                    }
+                }
+            }, {
+                key: "element",
+                get: function get() {
+                    return this.expr.elements[this.index];
+                }
+            }, {
+                key: "nextElement",
+                get: function get() {
+                    for (var i = this.index,
+                             count = this.count; i < this.expr.elements.length; i++) {
+                        var element = this.expr.elements[i];
+                        if (this.resolveValue(element.max) > count)
+                            return element;
+                        count = 0;
+                    }
+                }
+            }]);
+            return ContentMatch;
+        }();
+        exports.ContentMatch = ContentMatch;
+        var AttrValue = function AttrValue(attr) {
+            _classCallCheck(this, AttrValue);
+            this.attr = attr;
+        };
+        function parseValue(nodeType, value) {
+            if (value.charAt(0) == ".") {
+                var attr = value.slice(1);
+                if (!nodeType.attrs[attr])
+                    throw new SyntaxError("Node type " + nodeType.name + " has no attribute " + attr);
+                return new AttrValue(attr);
+            } else {
+                return JSON.parse(value);
+            }
+        }
+        function checkMarks(schema, marks) {
+            var found = [];
+            for (var i = 0; i < marks.length; i++) {
+                var mark = schema.marks[marks[i]];
+                if (mark)
+                    found.push(mark);
+                else
+                    throw new SyntaxError("Unknown mark type: '" + marks[i] + "'");
+            }
+            return found;
+        }
+        function _resolveValue(value, attrs, expr) {
+            if (!(value instanceof AttrValue))
+                return value;
+            var attrVal = attrs && attrs[value.attr];
+            return attrVal !== undefined ? attrVal : expr.nodeType.defaultAttrs[value.attr];
+        }
+        function checkCount(elt, count, attrs, expr) {
+            return count >= _resolveValue(elt.min, attrs, expr) && count <= _resolveValue(elt.max, attrs, expr);
+        }
+        function expandTypes(schema, specs, types) {
+            var result = [];
+            types.forEach(function(type) {
+                var found = schema.nodes[type];
+                if (found) {
+                    if (result.indexOf(found) == -1)
+                        result.push(found);
+                } else {
+                    specs.forEach(function(name, spec) {
+                        if (spec.group && spec.group.split(" ").indexOf(type) > -1) {
+                            found = schema.nodes[name];
+                            if (result.indexOf(found) == -1)
+                                result.push(found);
+                        }
+                    });
+                }
+                if (!found)
+                    throw new SyntaxError("Node type or group '" + type + "' does not exist");
+            });
+            return result;
+        }
+        var many = 2e9;
+        function parseRepeat(nodeType, match) {
+            var min = 1,
+                max = 1;
+            if (match) {
+                if (match[1] == "+") {
+                    max = many;
+                } else if (match[1] == "*") {
+                    min = 0;
+                    max = many;
+                } else if (match[1] == "?") {
+                    min = 0;
+                } else if (match[2]) {
+                    min = parseValue(nodeType, match[2]);
+                    if (match[3])
+                        max = match[4] ? parseValue(nodeType, match[4]) : many;
+                    else
+                        max = min;
+                }
+                if (max == 0 || min > max)
+                    throw new SyntaxError("Invalid repeat count in '" + match[0] + "'");
+            }
+            return {
+                min: min,
+                max: max
+            };
+        }
+        function parseAttrs(nodeType, expr) {
+            var parts = expr.split(/\s*,\s*/);
+            var attrs = Object.create(null);
+            for (var i = 0; i < parts.length; i++) {
+                var match = /^(\w+)=(\w+|\"(?:\\.|[^\\])*\"|\.\w+)$/.exec(parts[i]);
+                if (!match)
+                    throw new SyntaxError("Invalid attribute syntax: " + parts[i]);
+                attrs[match[1]] = parseValue(nodeType, match[2]);
+            }
+            return attrs;
+        }
+        return module.exports;
+    });
+
+    $__System.registerDynamic("30", [], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function(obj) {
+            return typeof obj;
+        } : function(obj) {
+            return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+        };
+        var _createClass = function() {
+            function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                    var descriptor = props[i];
+                    descriptor.enumerable = descriptor.enumerable || false;
+                    descriptor.configurable = true;
+                    if ("value" in descriptor)
+                        descriptor.writable = true;
+                    Object.defineProperty(target, descriptor.key, descriptor);
+                }
+            }
+            return function(Constructor, protoProps, staticProps) {
+                if (protoProps)
+                    defineProperties(Constructor.prototype, protoProps);
+                if (staticProps)
+                    defineProperties(Constructor, staticProps);
+                return Constructor;
+            };
+        }();
+        function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+            }
+        }
+        var DOMSerializer = function() {
+            function DOMSerializer(options) {
+                _classCallCheck(this, DOMSerializer);
+                this.options = options || {};
+                this.doc = this.options.document || window.document;
+            }
+            _createClass(DOMSerializer, [{
+                key: "renderNode",
+                value: function renderNode(node, pos, offset) {
+                    var dom = this.renderStructure(node.type.toDOM(node), node.content, pos + 1);
+                    if (this.options.onRender)
+                        dom = this.options.onRender(node, dom, pos, offset) || dom;
+                    return dom;
+                }
+            }, {
+                key: "renderStructure",
+                value: function renderStructure(structure, content, startPos) {
+                    if (typeof structure == "string")
+                        return this.doc.createTextNode(structure);
+                    if (structure.nodeType != null)
+                        return structure;
+                    var dom = this.doc.createElement(structure[0]),
+                        attrs = structure[1],
+                        start = 1;
+                    if (attrs && (typeof attrs === "undefined" ? "undefined" : _typeof(attrs)) == "object" && attrs.nodeType == null && !Array.isArray(attrs)) {
+                        start = 2;
+                        for (var name in attrs) {
+                            if (name == "style")
+                                dom.style.cssText = attrs[name];
+                            else if (attrs[name])
+                                dom.setAttribute(name, attrs[name]);
+                        }
+                    }
+                    for (var i = start; i < structure.length; i++) {
+                        var child = structure[i];
+                        if (child === 0) {
+                            if (!content)
+                                throw new RangeError("Content hole not allowed in a Mark spec (must produce a single node)");
+                            if (i < structure.length - 1 || i > start)
+                                throw new RangeError("Content hole must be the only child of its parent node");
+                            if (this.options.onContainer)
+                                this.options.onContainer(dom);
+                            this.renderFragment(content, dom, startPos);
+                        } else {
+                            dom.appendChild(this.renderStructure(child, content, startPos));
+                        }
+                    }
+                    return dom;
+                }
+            }, {
+                key: "renderFragment",
+                value: function renderFragment(fragment, where, startPos) {
+                    if (!where)
+                        where = this.doc.createDocumentFragment();
+                    if (fragment.size == 0)
+                        return where;
+                    if (!fragment.firstChild.isInline)
+                        this.renderBlocksInto(fragment, where, startPos);
+                    else if (this.options.renderInlineFlat)
+                        this.renderInlineFlatInto(fragment, where, startPos);
+                    else
+                        this.renderInlineInto(fragment, where, startPos);
+                    return where;
+                }
+            }, {
+                key: "renderBlocksInto",
+                value: function renderBlocksInto(fragment, where, startPos) {
+                    var _this = this;
+                    fragment.forEach(function(node, offset) {
+                        return where.appendChild(_this.renderNode(node, startPos + offset, offset));
+                    });
+                }
+            }, {
+                key: "renderInlineInto",
+                value: function renderInlineInto(fragment, where, startPos) {
+                    var _this2 = this;
+                    var top = where;
+                    var active = [];
+                    fragment.forEach(function(node, offset) {
+                        var keep = 0;
+                        for (; keep < Math.min(active.length, node.marks.length); ++keep) {
+                            if (!node.marks[keep].eq(active[keep]))
+                                break;
+                        }
+                        while (keep < active.length) {
+                            active.pop();
+                            top = top.parentNode;
+                        }
+                        while (active.length < node.marks.length) {
+                            var add = node.marks[active.length];
+                            active.push(add);
+                            top = top.appendChild(_this2.renderMark(add));
+                        }
+                        top.appendChild(_this2.renderNode(node, startPos + offset, offset));
+                    });
+                }
+            }, {
+                key: "renderInlineFlatInto",
+                value: function renderInlineFlatInto(fragment, where, startPos) {
+                    var _this3 = this;
+                    fragment.forEach(function(node, offset) {
+                        var pos = startPos + offset,
+                            dom = _this3.renderNode(node, pos, offset);
+                        dom = _this3.wrapInlineFlat(dom, node.marks);
+                        dom = _this3.options.renderInlineFlat(node, dom, pos, offset) || dom;
+                        where.appendChild(dom);
+                    });
+                }
+            }, {
+                key: "renderMark",
+                value: function renderMark(mark) {
+                    return this.renderStructure(mark.type.toDOM(mark));
+                }
+            }, {
+                key: "wrapInlineFlat",
+                value: function wrapInlineFlat(dom, marks) {
+                    for (var i = marks.length - 1; i >= 0; i--) {
+                        var wrap = this.renderMark(marks[i]);
+                        wrap.appendChild(dom);
+                        dom = wrap;
+                    }
+                    return dom;
+                }
+            }]);
+            return DOMSerializer;
+        }();
+        function fragmentToDOM(fragment, options) {
+            return new DOMSerializer(options).renderFragment(fragment, null, options.pos || 0);
+        }
+        exports.fragmentToDOM = fragmentToDOM;
+        function nodeToDOM(node, options) {
+            var serializer = new DOMSerializer(options),
+                pos = options.pos || 0;
+            var dom = serializer.renderNode(node, pos, options.offset || 0);
+            if (node.isInline) {
+                dom = serializer.wrapInlineFlat(dom, node.marks);
+                if (serializer.options.renderInlineFlat)
+                    dom = options.renderInlineFlat(node, dom, pos, options.offset || 0) || dom;
+            }
+            return dom;
+        }
+        exports.nodeToDOM = nodeToDOM;
+        return module.exports;
+    });
+
+    $__System.registerDynamic("36", [], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        function findDiffStart(a, b, pos) {
+            for (var i = 0; ; i++) {
+                if (i == a.childCount || i == b.childCount)
+                    return a.childCount == b.childCount ? null : pos;
+                var childA = a.child(i),
+                    childB = b.child(i);
+                if (childA == childB) {
+                    pos += childA.nodeSize;
+                    continue;
+                }
+                if (!childA.sameMarkup(childB))
+                    return pos;
+                if (childA.isText && childA.text != childB.text) {
+                    for (var j = 0; childA.text[j] == childB.text[j]; j++) {
+                        pos++;
+                    }
+                    return pos;
+                }
+                if (childA.content.size || childB.content.size) {
+                    var inner = findDiffStart(childA.content, childB.content, pos + 1);
+                    if (inner != null)
+                        return inner;
+                }
+                pos += childA.nodeSize;
+            }
+        }
+        exports.findDiffStart = findDiffStart;
+        function findDiffEnd(a, b, posA, posB) {
+            for (var iA = a.childCount,
+                     iB = b.childCount; ; ) {
+                if (iA == 0 || iB == 0)
+                    return iA == iB ? null : {
+                        a: posA,
+                        b: posB
+                    };
+                var childA = a.child(--iA),
+                    childB = b.child(--iB),
+                    size = childA.nodeSize;
+                if (childA == childB) {
+                    posA -= size;
+                    posB -= size;
+                    continue;
+                }
+                if (!childA.sameMarkup(childB))
+                    return {
+                        a: posA,
+                        b: posB
+                    };
+                if (childA.isText && childA.text != childB.text) {
+                    var same = 0,
+                        minSize = Math.min(childA.text.length, childB.text.length);
+                    while (same < minSize && childA.text[childA.text.length - same - 1] == childB.text[childB.text.length - same - 1]) {
+                        same++;
+                        posA--;
+                        posB--;
+                    }
+                    return {
+                        a: posA,
+                        b: posB
+                    };
+                }
+                if (childA.content.size || childB.content.size) {
+                    var inner = findDiffEnd(childA.content, childB.content, posA - 1, posB - 1);
+                    if (inner)
+                        return inner;
+                }
+                posA -= size;
+                posB -= size;
+            }
+        }
+        exports.findDiffEnd = findDiffEnd;
+        return module.exports;
+    });
+
+    $__System.registerDynamic("2c", ["30", "36"], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        var _createClass = function() {
+            function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                    var descriptor = props[i];
+                    descriptor.enumerable = descriptor.enumerable || false;
+                    descriptor.configurable = true;
+                    if ("value" in descriptor)
+                        descriptor.writable = true;
+                    Object.defineProperty(target, descriptor.key, descriptor);
+                }
+            }
+            return function(Constructor, protoProps, staticProps) {
+                if (protoProps)
+                    defineProperties(Constructor.prototype, protoProps);
+                if (staticProps)
+                    defineProperties(Constructor, staticProps);
+                return Constructor;
+            };
+        }();
+        function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
+            }
+        }
+        var _require = $__require('30');
+        var fragmentToDOM = _require.fragmentToDOM;
+        var _require2 = $__require('36');
+        var _findDiffStart = _require2.findDiffStart;
+        var _findDiffEnd = _require2.findDiffEnd;
+        var Fragment = function() {
             function Fragment(content, size) {
                 _classCallCheck(this, Fragment);
                 this.content = content;
@@ -8447,12 +7770,28 @@
                              pos = 0; pos < to; i++) {
                         var child = this.content[i],
                             end = pos + child.nodeSize;
-                        if (end > from && f(child, nodeStart + pos, parent) !== false && child.content.size) {
+                        if (end > from && f(child, nodeStart + pos, parent, i) !== false && child.content.size) {
                             var start = pos + 1;
                             child.nodesBetween(Math.max(0, from - start), Math.min(child.content.size, to - start), f, nodeStart + start);
                         }
                         pos = end;
                     }
+                }
+            }, {
+                key: "textBetween",
+                value: function textBetween(from, to, separator) {
+                    var text = "",
+                        separated = true;
+                    this.nodesBetween(from, to, function(node, pos) {
+                        if (node.isText) {
+                            text += node.text.slice(Math.max(from, pos) - pos, to - pos);
+                            separated = !separator;
+                        } else if (!separated && node.isBlock) {
+                            text += separator;
+                            separated = true;
+                        }
+                    }, 0);
+                    return text;
                 }
             }, {
                 key: "cut",
@@ -8483,6 +7822,15 @@
                     return new Fragment(result, size);
                 }
             }, {
+                key: "cutByIndex",
+                value: function cutByIndex(from, to) {
+                    if (from == to)
+                        return Fragment.empty;
+                    if (from == 0 && to == this.content.length)
+                        return this;
+                    return new Fragment(this.content.slice(from, to));
+                }
+            }, {
                 key: "append",
                 value: function append(other) {
                     if (!other.size)
@@ -8505,8 +7853,11 @@
             }, {
                 key: "replaceChild",
                 value: function replaceChild(index, node) {
+                    var current = this.content[index];
+                    if (current == node)
+                        return this;
                     var copy = this.content.slice();
-                    var size = this.size + node.nodeSize - copy[index].nodeSize;
+                    var size = this.size + node.nodeSize - current.nodeSize;
                     copy[index] = node;
                     return new Fragment(copy, size);
                 }
@@ -8557,19 +7908,22 @@
                     for (var i = 0,
                              p = 0; i < this.content.length; i++) {
                         var child = this.content[i];
-                        f(child, p);
+                        f(child, p, i);
                         p += child.nodeSize;
                     }
                 }
             }, {
-                key: "leastSuperKind",
-                value: function leastSuperKind() {
-                    var kind = undefined;
-                    for (var i = this.childCount - 1; i >= 0; i--) {
-                        var cur = this.child(i).type.kind;
-                        kind = kind ? kind.sharedSuperKind(cur) : cur;
-                    }
-                    return kind;
+                key: "findDiffStart",
+                value: function findDiffStart(other) {
+                    var pos = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+                    return _findDiffStart(this, other, pos);
+                }
+            }, {
+                key: "findDiffEnd",
+                value: function findDiffEnd(other) {
+                    var pos = arguments.length <= 1 || arguments[1] === undefined ? this.size : arguments[1];
+                    var otherPos = arguments.length <= 2 || arguments[2] === undefined ? other.size : arguments[2];
+                    return _findDiffEnd(this, other, pos, otherPos);
                 }
             }, {
                 key: "findIndex",
@@ -8594,13 +7948,10 @@
                     }
                 }
             }, {
-                key: "textContent",
-                get: function get() {
-                    var text = "";
-                    this.content.forEach(function(n) {
-                        return text += n.textContent;
-                    });
-                    return text;
+                key: "toDOM",
+                value: function toDOM() {
+                    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+                    return fragmentToDOM(this, options);
                 }
             }, {
                 key: "firstChild",
@@ -8627,7 +7978,7 @@
                 value: function fromArray(array) {
                     if (!array.length)
                         return Fragment.empty;
-                    var joined = undefined,
+                    var joined = void 0,
                         size = 0;
                     for (var i = 0; i < array.length; i++) {
                         var node = array[i];
@@ -8656,6 +8007,7 @@
             }]);
             return Fragment;
         }();
+        exports.Fragment = Fragment;
         var found = {
             index: 0,
             offset: 0
@@ -8669,13 +8021,54 @@
         return module.exports;
     });
 
-    $__System.registerDynamic("38", [], true, function($__require, exports, module) {
+    $__System.registerDynamic("31", [], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
+        var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function(obj) {
+            return typeof obj;
+        } : function(obj) {
+            return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+        };
+        function compareDeep(a, b) {
+            if (a === b)
+                return true;
+            if (!(a && (typeof a === "undefined" ? "undefined" : _typeof(a)) == "object") || !(b && (typeof b === "undefined" ? "undefined" : _typeof(b)) == "object"))
+                return false;
+            var array = Array.isArray(a);
+            if (Array.isArray(b) != array)
+                return false;
+            if (array) {
+                if (a.length != b.length)
+                    return false;
+                for (var i = 0; i < a.length; i++) {
+                    if (!compareDeep(a[i], b[i]))
+                        return false;
+                }
+            } else {
+                for (var p in a) {
+                    if (!(p in b) || !compareDeep(a[p], b[p]))
+                        return false;
+                }
+                for (var _p in b) {
+                    if (!(_p in a))
+                        return false;
+                }
+            }
+            return true;
+        }
+        exports.compareDeep = compareDeep;
+        return module.exports;
+    });
+
+    $__System.registerDynamic("2f", ["31"], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -8700,7 +8093,9 @@
                 throw new TypeError("Cannot call a class as a function");
             }
         }
-        var Mark = exports.Mark = function() {
+        var _require = $__require('31');
+        var compareDeep = _require.compareDeep;
+        var Mark = function() {
             function Mark(type, attrs) {
                 _classCallCheck(this, Mark);
                 this.type = type;
@@ -8757,10 +8152,8 @@
                         return true;
                     if (this.type != other.type)
                         return false;
-                    for (var attr in this.attrs) {
-                        if (other.attrs[attr] != this.attrs[attr])
-                            return false;
-                    }
+                    if (!compareDeep(other.attrs, this.attrs))
+                        return false;
                     return true;
                 }
             }], [{
@@ -8780,7 +8173,7 @@
                 key: "setFrom",
                 value: function setFrom(marks) {
                     if (!marks || marks.length == 0)
-                        return empty;
+                        return Mark.none;
                     if (marks instanceof Mark)
                         return [marks];
                     var copy = marks.slice();
@@ -8792,18 +8185,73 @@
             }]);
             return Mark;
         }();
-        var empty = [];
+        exports.Mark = Mark;
+        Mark.none = [];
         return module.exports;
     });
 
-    $__System.registerDynamic("39", ["37", "35", "38", "2f"], true, function($__require, exports, module) {
+    $__System.registerDynamic("35", ["2c", "2f"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.Schema = exports.SchemaSpec = exports.MarkType = exports.Attribute = exports.Text = exports.Inline = exports.Textblock = exports.Block = exports.NodeKind = exports.NodeType = undefined;
+        var _slicedToArray = function() {
+            function sliceIterator(arr, i) {
+                var _arr = [];
+                var _n = true;
+                var _d = false;
+                var _e = undefined;
+                try {
+                    for (var _i = arr[Symbol.iterator](),
+                             _s; !(_n = (_s = _i.next()).done); _n = true) {
+                        _arr.push(_s.value);
+                        if (i && _arr.length === i)
+                            break;
+                    }
+                } catch (err) {
+                    _d = true;
+                    _e = err;
+                } finally {
+                    try {
+                        if (!_n && _i["return"])
+                            _i["return"]();
+                    } finally {
+                        if (_d)
+                            throw _e;
+                    }
+                }
+                return _arr;
+            }
+            return function(arr, i) {
+                if (Array.isArray(arr)) {
+                    return arr;
+                } else if (Symbol.iterator in Object(arr)) {
+                    return sliceIterator(arr, i);
+                } else {
+                    throw new TypeError("Invalid attempt to destructure non-iterable instance");
+                }
+            };
+        }();
+        var _createClass = function() {
+            function defineProperties(target, props) {
+                for (var i = 0; i < props.length; i++) {
+                    var descriptor = props[i];
+                    descriptor.enumerable = descriptor.enumerable || false;
+                    descriptor.configurable = true;
+                    if ("value" in descriptor)
+                        descriptor.writable = true;
+                    Object.defineProperty(target, descriptor.key, descriptor);
+                }
+            }
+            return function(Constructor, protoProps, staticProps) {
+                if (protoProps)
+                    defineProperties(Constructor.prototype, protoProps);
+                if (staticProps)
+                    defineProperties(Constructor, staticProps);
+                return Constructor;
+            };
+        }();
         var _get = function get(object, property, receiver) {
             if (object === null)
                 object = Function.prototype;
@@ -8825,29 +8273,11 @@
                 return getter.call(receiver);
             }
         };
-        var _createClass = function() {
-            function defineProperties(target, props) {
-                for (var i = 0; i < props.length; i++) {
-                    var descriptor = props[i];
-                    descriptor.enumerable = descriptor.enumerable || false;
-                    descriptor.configurable = true;
-                    if ("value" in descriptor)
-                        descriptor.writable = true;
-                    Object.defineProperty(target, descriptor.key, descriptor);
-                }
+        function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
             }
-            return function(Constructor, protoProps, staticProps) {
-                if (protoProps)
-                    defineProperties(Constructor.prototype, protoProps);
-                if (staticProps)
-                    defineProperties(Constructor, staticProps);
-                return Constructor;
-            };
-        }();
-        var _node = $__require('37');
-        var _fragment = $__require('35');
-        var _mark = $__require('38');
-        var _obj = $__require('2f');
+        }
         function _possibleConstructorReturn(self, call) {
             if (!self) {
                 throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -8867,705 +8297,1027 @@
             if (superClass)
                 Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
         }
-        function _classCallCheck(instance, Constructor) {
-            if (!(instance instanceof Constructor)) {
-                throw new TypeError("Cannot call a class as a function");
-            }
+        var _require = $__require('2c');
+        var Fragment = _require.Fragment;
+        var _require2 = $__require('2f');
+        var Mark = _require2.Mark;
+        function parseDOM(schema, dom, options) {
+            var topNode = options.topNode;
+            var top = new NodeBuilder(topNode ? topNode.type : schema.nodes.doc, topNode ? topNode.attrs : null, true);
+            var state = new DOMParseState(schema, options, top);
+            state.addAll(dom, null, options.from, options.to);
+            return top.finish();
         }
-        var SchemaItem = function() {
-            function SchemaItem() {
-                _classCallCheck(this, SchemaItem);
+        exports.parseDOM = parseDOM;
+        function parseDOMInContext($context, dom) {
+            var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+            var schema = $context.parent.type.schema;
+            var _builderFromContext = builderFromContext($context);
+            var builder = _builderFromContext.builder;
+            var top = _builderFromContext.top;
+            var openLeft = options.openLeft,
+                startPos = $context.depth;
+            new (function(_DOMParseState) {
+                _inherits(_class, _DOMParseState);
+                function _class() {
+                    _classCallCheck(this, _class);
+                    return _possibleConstructorReturn(this, Object.getPrototypeOf(_class).apply(this, arguments));
+                }
+                _createClass(_class, [{
+                    key: "enter",
+                    value: function enter(type, attrs) {
+                        if (openLeft == null)
+                            openLeft = type.isTextblock ? 1 : 0;
+                        if (openLeft > 0 && this.top.match.matchType(type, attrs))
+                            openLeft = 0;
+                        if (openLeft == 0)
+                            return _get(Object.getPrototypeOf(_class.prototype), "enter", this).call(this, type, attrs);
+                        openLeft--;
+                        return null;
+                    }
+                }]);
+                return _class;
+            }(DOMParseState))(schema, options, builder).addAll(dom);
+            var openTo = top.openDepth,
+                doc = top.finish(openTo),
+                $startPos = doc.resolve(startPos);
+            for (var d = $startPos.depth; d >= 0 && startPos == $startPos.end(d); d--) {
+                ++startPos;
             }
-            _createClass(SchemaItem, [{
-                key: "getDefaultAttrs",
-                value: function getDefaultAttrs() {
-                    var defaults = Object.create(null);
-                    for (var attrName in this.attrs) {
-                        var attr = this.attrs[attrName];
-                        if (attr.default == null)
-                            return null;
-                        defaults[attrName] = attr.default;
+            return doc.slice(startPos, doc.content.size - openTo);
+        }
+        exports.parseDOMInContext = parseDOMInContext;
+        function builderFromContext($context) {
+            var top = void 0,
+                builder = void 0;
+            for (var i = 0; i <= $context.depth; i++) {
+                var node = $context.node(i),
+                    match = node.contentMatchAt($context.index(i));
+                if (i == 0)
+                    builder = top = new NodeBuilder(node.type, node.attrs, true, null, match);
+                else
+                    builder = builder.start(node.type, node.attrs, false, match);
+            }
+            return {
+                builder: builder,
+                top: top
+            };
+        }
+        var NodeBuilder = function() {
+            function NodeBuilder(type, attrs, solid, prev, match) {
+                _classCallCheck(this, NodeBuilder);
+                this.type = type;
+                this.match = match || type.contentExpr.start(attrs);
+                this.solid = solid;
+                this.content = [];
+                this.prev = prev;
+                this.openChild = null;
+            }
+            _createClass(NodeBuilder, [{
+                key: "add",
+                value: function add(node) {
+                    var _this2 = this;
+                    var matched = this.match.matchNode(node);
+                    if (!matched && node.marks.length) {
+                        node = node.mark(node.marks.filter(function(mark) {
+                            return _this2.match.allowsMark(mark.type);
+                        }));
+                        matched = this.match.matchNode(node);
                     }
-                    return defaults;
+                    if (!matched)
+                        return null;
+                    this.closeChild();
+                    this.content.push(node);
+                    this.match = matched;
+                    return node;
                 }
             }, {
-                key: "computeAttrs",
-                value: function computeAttrs(attrs, arg) {
-                    var built = Object.create(null);
-                    for (var name in this.attrs) {
-                        var value = attrs && attrs[name];
-                        if (value == null) {
-                            var attr = this.attrs[name];
-                            if (attr.default != null)
-                                value = attr.default;
-                            else if (attr.compute)
-                                value = attr.compute(this, arg);
-                            else
-                                throw new RangeError("No value supplied for attribute " + name);
+                key: "start",
+                value: function start(type, attrs, solid, match) {
+                    var matched = this.match.matchType(type, attrs);
+                    if (!matched)
+                        return null;
+                    this.closeChild();
+                    this.match = matched;
+                    return this.openChild = new NodeBuilder(type, attrs, solid, this, match);
+                }
+            }, {
+                key: "closeChild",
+                value: function closeChild(openRight) {
+                    if (this.openChild) {
+                        this.content.push(this.openChild.finish(openRight && openRight - 1));
+                        this.openChild = null;
+                    }
+                }
+            }, {
+                key: "stripTrailingSpace",
+                value: function stripTrailingSpace() {
+                    if (this.openChild)
+                        return;
+                    var last = this.content[this.content.length - 1],
+                        m = void 0;
+                    if (last && last.isText && (m = /\s+$/.exec(last.text))) {
+                        if (last.text.length == m[0].length)
+                            this.content.pop();
+                        else
+                            this.content[this.content.length - 1] = last.copy(last.text.slice(0, last.text.length - m[0].length));
+                    }
+                }
+            }, {
+                key: "finish",
+                value: function finish(openRight) {
+                    this.closeChild(openRight);
+                    var content = Fragment.from(this.content);
+                    if (!openRight)
+                        content = content.append(this.match.fillBefore(Fragment.empty, true));
+                    return this.type.create(this.match.attrs, content);
+                }
+            }, {
+                key: "findPlace",
+                value: function findPlace(type, attrs, node) {
+                    var route = void 0,
+                        builder = void 0;
+                    for (var top = this; ; top = top.prev) {
+                        var found = top.match.findWrapping(type, attrs);
+                        if (found && (!route || route.length > found.length)) {
+                            route = found;
+                            builder = top;
+                            if (!found.length)
+                                break;
                         }
-                        built[name] = value;
+                        if (top.solid)
+                            break;
                     }
-                    return built;
+                    if (!route)
+                        return null;
+                    for (var i = 0; i < route.length; i++) {
+                        builder = builder.start(route[i].type, route[i].attrs, false);
+                    }
+                    return node ? builder.add(node) && builder : builder.start(type, attrs, true);
                 }
             }, {
-                key: "freezeAttrs",
-                value: function freezeAttrs() {
-                    var frozen = Object.create(null);
-                    for (var name in this.attrs) {
-                        frozen[name] = this.attrs[name];
-                    }
-                    Object.defineProperty(this, "attrs", {value: frozen});
-                }
-            }, {
-                key: "attrs",
+                key: "depth",
                 get: function get() {
-                    return {};
-                }
-            }], [{
-                key: "updateAttrs",
-                value: function updateAttrs(attrs) {
-                    Object.defineProperty(this.prototype, "attrs", {value: overlayObj(this.prototype.attrs, attrs)});
-                }
-            }, {
-                key: "getRegistry",
-                value: function getRegistry() {
-                    if (this == SchemaItem)
-                        return null;
-                    if (!this.prototype.hasOwnProperty("registry"))
-                        this.prototype.registry = Object.create(Object.getPrototypeOf(this).getRegistry());
-                    return this.prototype.registry;
+                    var d = 0;
+                    for (var b = this.prev; b; b = b.prev) {
+                        d++;
+                    }
+                    return d;
                 }
             }, {
-                key: "getNamespace",
-                value: function getNamespace(name) {
-                    if (this == SchemaItem)
-                        return null;
-                    var reg = this.getRegistry();
-                    if (!Object.prototype.hasOwnProperty.call(reg, name))
-                        reg[name] = Object.create(Object.getPrototypeOf(this).getNamespace(name));
-                    return reg[name];
+                key: "openDepth",
+                get: function get() {
+                    var d = 0;
+                    for (var c = this.openChild; c; c = c.openChild) {
+                        d++;
+                    }
+                    return d;
                 }
             }, {
-                key: "register",
-                value: function register(namespace, name, value) {
-                    this.getNamespace(namespace)[name] = function() {
-                        return value;
-                    };
+                key: "posBeforeLastChild",
+                get: function get() {
+                    var pos = this.prev ? this.prev.posBeforeLastChild + 1 : 0;
+                    for (var i = 0; i < this.content.length; i++) {
+                        pos += this.content[i].nodeSize;
+                    }
+                    return pos;
                 }
             }, {
-                key: "registerComputed",
-                value: function registerComputed(namespace, name, f) {
-                    this.getNamespace(namespace)[name] = f;
-                }
-            }, {
-                key: "cleanNamespace",
-                value: function cleanNamespace(namespace) {
-                    this.getNamespace(namespace).__proto__ = null;
+                key: "currentPos",
+                get: function get() {
+                    this.closeChild();
+                    return this.posBeforeLastChild;
                 }
             }]);
-            return SchemaItem;
+            return NodeBuilder;
         }();
-        var NodeType = exports.NodeType = function(_SchemaItem) {
-            _inherits(NodeType, _SchemaItem);
-            function NodeType(name, schema) {
-                _classCallCheck(this, NodeType);
-                var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(NodeType).call(this));
-                _this.name = name;
-                _this.freezeAttrs();
-                _this.defaultAttrs = _this.getDefaultAttrs();
-                _this.schema = schema;
-                return _this;
+        var blockTags = {
+            address: true,
+            article: true,
+            aside: true,
+            blockquote: true,
+            canvas: true,
+            dd: true,
+            div: true,
+            dl: true,
+            fieldset: true,
+            figcaption: true,
+            figure: true,
+            footer: true,
+            form: true,
+            h1: true,
+            h2: true,
+            h3: true,
+            h4: true,
+            h5: true,
+            h6: true,
+            header: true,
+            hgroup: true,
+            hr: true,
+            li: true,
+            noscript: true,
+            ol: true,
+            output: true,
+            p: true,
+            pre: true,
+            section: true,
+            table: true,
+            tfoot: true,
+            ul: true
+        };
+        var ignoreTags = {
+            head: true,
+            noscript: true,
+            object: true,
+            script: true,
+            style: true,
+            title: true
+        };
+        var listTags = {
+            ol: true,
+            ul: true
+        };
+        var DOMParseState = function() {
+            function DOMParseState(schema, options, top) {
+                _classCallCheck(this, DOMParseState);
+                this.options = options || {};
+                this.schema = schema;
+                this.top = top;
+                this.marks = Mark.none;
+                this.preserveWhitespace = this.options.preserveWhitespace;
+                this.info = schemaInfo(schema);
+                this.find = options.findPositions;
             }
-            _createClass(NodeType, [{
-                key: "canContainFragment",
-                value: function canContainFragment(fragment) {
-                    for (var i = 0; i < fragment.childCount; i++) {
-                        if (!this.canContain(fragment.child(i)))
-                            return false;
-                    }
-                    return true;
+            _createClass(DOMParseState, [{
+                key: "addMark",
+                value: function addMark(mark) {
+                    var old = this.marks;
+                    this.marks = mark.addToSet(this.marks);
+                    return old;
                 }
             }, {
-                key: "canContain",
-                value: function canContain(node) {
-                    if (!this.canContainType(node.type))
-                        return false;
-                    for (var i = 0; i < node.marks.length; i++) {
-                        if (!this.canContainMark(node.marks[i]))
-                            return false;
-                    }
-                    return true;
-                }
-            }, {
-                key: "canContainMark",
-                value: function canContainMark(mark) {
-                    var contains = this.containsMarks;
-                    if (contains === true)
-                        return true;
-                    if (contains)
-                        for (var i = 0; i < contains.length; i++) {
-                            if (contains[i] == mark.name)
-                                return true;
+                key: "addDOM",
+                value: function addDOM(dom) {
+                    if (dom.nodeType == 3) {
+                        var value = dom.nodeValue;
+                        var top = this.top;
+                        if (/\S/.test(value) || top.type.isTextblock) {
+                            if (!this.preserveWhitespace) {
+                                value = value.replace(/\s+/g, " ");
+                                if (/^\s/.test(value))
+                                    top.stripTrailingSpace();
+                            }
+                            if (value)
+                                this.insertNode(this.schema.text(value, this.marks));
+                            this.findInText(dom);
+                        } else {
+                            this.findInside(dom);
                         }
-                    return false;
+                    } else if (dom.nodeType == 1 && !dom.hasAttribute("pm-ignore")) {
+                        var style = dom.getAttribute("style");
+                        if (style)
+                            this.addElementWithStyles(parseStyles(style), dom);
+                        else
+                            this.addElement(dom);
+                    }
                 }
             }, {
-                key: "canContainType",
-                value: function canContainType(type) {
-                    return type.kind && type.kind.isSubKind(this.contains);
+                key: "addElement",
+                value: function addElement(dom) {
+                    var name = dom.nodeName.toLowerCase();
+                    if (listTags.hasOwnProperty(name))
+                        this.normalizeList(dom);
+                    if (this.options.editableContent && name == "br" && !dom.nextSibling)
+                        return;
+                    if (!this.parseNodeType(dom, name)) {
+                        if (ignoreTags.hasOwnProperty(name)) {
+                            this.findInside(dom);
+                        } else {
+                            var sync = blockTags.hasOwnProperty(name) && this.top;
+                            this.addAll(dom);
+                            if (sync)
+                                this.sync(sync);
+                        }
+                    }
                 }
             }, {
-                key: "canContainContent",
-                value: function canContainContent(type) {
-                    return type.contains && type.contains.isSubKind(this.contains);
+                key: "addElementWithStyles",
+                value: function addElementWithStyles(styles, dom) {
+                    var oldMarks = this.marks,
+                        marks = this.marks;
+                    for (var i = 0; i < styles.length; i += 2) {
+                        var result = matchStyle(this.info.styles, styles[i], styles[i + 1]);
+                        if (!result)
+                            continue;
+                        if (result.attrs === false)
+                            return;
+                        marks = result.mark.create(result.attrs).addToSet(marks);
+                    }
+                    this.marks = marks;
+                    this.addElement(dom);
+                    this.marks = oldMarks;
                 }
             }, {
-                key: "findConnection",
-                value: function findConnection(other) {
-                    return other.kind && this.findConnectionToKind(other.kind);
+                key: "parseNodeType",
+                value: function parseNodeType(dom) {
+                    var result = matchTag(this.info.selectors, dom);
+                    if (!result)
+                        return false;
+                    var sync = void 0,
+                        before = void 0;
+                    if (result.node && result.node.isLeaf)
+                        this.insertNode(result.node.create(result.attrs));
+                    else if (result.node)
+                        sync = this.enter(result.node, result.attrs);
+                    else
+                        before = this.addMark(result.mark.create(result.attrs));
+                    var contentNode = dom,
+                        preserve = null,
+                        prevPreserve = this.preserveWhitespace;
+                    if (result.content) {
+                        if (result.content.content === false)
+                            contentNode = null;
+                        else if (result.content.content)
+                            contentNode = result.content.content;
+                        preserve = result.content.preserveWhitespace;
+                    } else if (result.node && result.node.isLeaf) {
+                        contentNode = null;
+                    }
+                    if (contentNode) {
+                        this.findAround(dom, contentNode, true);
+                        if (preserve != null)
+                            this.preserveWhitespace = preserve;
+                        this.addAll(contentNode, sync);
+                        if (sync)
+                            this.sync(sync.prev);
+                        else if (before)
+                            this.marks = before;
+                        if (preserve != null)
+                            this.preserveWhitespace = prevPreserve;
+                        this.findAround(dom, contentNode, true);
+                    } else {
+                        this.findInside(dom);
+                    }
+                    return true;
                 }
             }, {
-                key: "findConnectionToKind",
-                value: function findConnectionToKind(kind) {
-                    var cache = this.schema.cached.connections,
-                        key = this.name + "-" + kind.id;
-                    if (key in cache)
-                        return cache[key];
-                    return cache[key] = this.findConnectionToKindInner(kind);
+                key: "addAll",
+                value: function addAll(parent, sync, startIndex, endIndex) {
+                    var index = startIndex || 0;
+                    for (var dom = startIndex ? parent.childNodes[startIndex] : parent.firstChild,
+                             end = endIndex == null ? null : parent.childNodes[endIndex]; dom != end; dom = dom.nextSibling, ++index) {
+                        this.findAtPoint(parent, index);
+                        this.addDOM(dom);
+                        if (sync && blockTags.hasOwnProperty(dom.nodeName.toLowerCase()))
+                            this.sync(sync);
+                    }
+                    this.findAtPoint(parent, index);
                 }
             }, {
-                key: "findConnectionToKindInner",
-                value: function findConnectionToKindInner(kind) {
-                    if (kind.isSubKind(this.contains))
-                        return [];
-                    var seen = Object.create(null);
-                    var active = [{
-                        from: this,
-                        via: []
-                    }];
-                    while (active.length) {
-                        var current = active.shift();
-                        for (var name in this.schema.nodes) {
-                            var type = this.schema.nodes[name];
-                            if (type.contains && type.defaultAttrs && !(type.contains.id in seen) && current.from.canContainType(type)) {
-                                var via = current.via.concat(type);
-                                if (kind.isSubKind(type.contains))
-                                    return via;
-                                active.push({
-                                    from: type,
-                                    via: via
-                                });
-                                seen[type.contains.id] = true;
+                key: "insertNode",
+                value: function insertNode(node) {
+                    var ok = this.top.findPlace(node.type, node.attrs, node);
+                    if (ok) {
+                        this.sync(ok);
+                        return true;
+                    }
+                }
+            }, {
+                key: "insert",
+                value: function insert(type, attrs, content) {
+                    var node = type.createAndFill(attrs, content, type.isInline ? this.marks : null);
+                    if (node)
+                        this.insertNode(node);
+                }
+            }, {
+                key: "enter",
+                value: function enter(type, attrs) {
+                    var ok = this.top.findPlace(type, attrs);
+                    if (ok) {
+                        this.sync(ok);
+                        return ok;
+                    }
+                }
+            }, {
+                key: "leave",
+                value: function leave() {
+                    if (!this.preserveWhitespace)
+                        this.top.stripTrailingSpace();
+                    this.top = this.top.prev;
+                }
+            }, {
+                key: "sync",
+                value: function sync(to) {
+                    for (; ; ) {
+                        for (var cur = to; cur; cur = cur.prev) {
+                            if (cur == this.top) {
+                                this.top = to;
+                                return;
                             }
                         }
+                        this.leave();
                     }
                 }
             }, {
-                key: "computeAttrs",
-                value: function computeAttrs(attrs, content) {
-                    if (!attrs && this.defaultAttrs)
-                        return this.defaultAttrs;
-                    else
-                        return _get(Object.getPrototypeOf(NodeType.prototype), "computeAttrs", this).call(this, attrs, content);
-                }
-            }, {
-                key: "create",
-                value: function create(attrs, content, marks) {
-                    return new _node.Node(this, this.computeAttrs(attrs, content), _fragment.Fragment.from(content), _mark.Mark.setFrom(marks));
-                }
-            }, {
-                key: "checkContent",
-                value: function checkContent(content, _attrs) {
-                    if (content.size == 0)
-                        return this.canBeEmpty;
-                    for (var i = 0; i < content.childCount; i++) {
-                        if (!this.canContain(content.child(i)))
-                            return false;
+                key: "normalizeList",
+                value: function normalizeList(dom) {
+                    for (var child = dom.firstChild,
+                             prev; child; child = child.nextSibling) {
+                        if (child.nodeType == 1 && listTags.hasOwnProperty(child.nodeName.toLowerCase()) && (prev = child.previousSibling)) {
+                            prev.appendChild(child);
+                            child = prev;
+                        }
                     }
-                    return true;
                 }
             }, {
-                key: "fixContent",
-                value: function fixContent(_content, _attrs) {
-                    return this.defaultContent();
+                key: "findAtPoint",
+                value: function findAtPoint(parent, offset) {
+                    if (this.find)
+                        for (var i = 0; i < this.find.length; i++) {
+                            if (this.find[i].node == parent && this.find[i].offset == offset)
+                                this.find[i].pos = this.top.currentPos;
+                        }
                 }
             }, {
-                key: "isBlock",
-                get: function get() {
-                    return false;
+                key: "findInside",
+                value: function findInside(parent) {
+                    if (this.find)
+                        for (var i = 0; i < this.find.length; i++) {
+                            if (this.find[i].pos == null && parent.contains(this.find[i].node))
+                                this.find[i].pos = this.top.currentPos;
+                        }
                 }
             }, {
-                key: "isTextblock",
-                get: function get() {
-                    return false;
+                key: "findAround",
+                value: function findAround(parent, content, before) {
+                    if (parent != content && this.find)
+                        for (var i = 0; i < this.find.length; i++) {
+                            if (this.find[i].pos == null && parent.contains(this.find[i].node)) {
+                                var pos = content.compareDocumentPosition(this.find[i].node);
+                                if (pos & (before ? 2 : 4))
+                                    this.find[i].pos = this.top.currentPos;
+                            }
+                        }
                 }
             }, {
-                key: "isInline",
-                get: function get() {
-                    return false;
-                }
-            }, {
-                key: "isText",
-                get: function get() {
-                    return false;
-                }
-            }, {
-                key: "selectable",
-                get: function get() {
-                    return true;
-                }
-            }, {
-                key: "draggable",
-                get: function get() {
-                    return false;
-                }
-            }, {
-                key: "locked",
-                get: function get() {
-                    return false;
-                }
-            }, {
-                key: "contains",
-                get: function get() {
-                    return null;
-                }
-            }, {
-                key: "kind",
-                get: function get() {
-                    return null;
-                }
-            }, {
-                key: "canBeEmpty",
-                get: function get() {
-                    return true;
-                }
-            }, {
-                key: "containsMarks",
-                get: function get() {
-                    return false;
-                }
-            }], [{
-                key: "compile",
-                value: function compile(types, schema) {
-                    var result = Object.create(null);
-                    for (var name in types) {
-                        result[name] = new types[name](name, schema);
-                    }
-                    if (!result.doc)
-                        throw new RangeError("Every schema needs a 'doc' type");
-                    if (!result.text)
-                        throw new RangeError("Every schema needs a 'text' type");
-                    return result;
+                key: "findInText",
+                value: function findInText(textNode) {
+                    if (this.find)
+                        for (var i = 0; i < this.find.length; i++) {
+                            if (this.find[i].node == textNode)
+                                this.find[i].pos = this.top.currentPos - (textNode.nodeValue.length - this.find[i].offset);
+                        }
                 }
             }]);
-            return NodeType;
-        }(SchemaItem);
-        var NodeKind = exports.NodeKind = function() {
-            function NodeKind(name, supers, subs) {
-                var _this2 = this;
-                _classCallCheck(this, NodeKind);
-                this.name = name;
-                this.id = ++NodeKind.nextID;
-                this.supers = Object.create(null);
-                this.supers[this.id] = this;
-                this.subs = subs || [];
-                if (supers)
-                    supers.forEach(function(sup) {
-                        return _this2.addSuper(sup);
-                    });
-                if (subs)
-                    subs.forEach(function(sub) {
-                        return _this2.addSub(sub);
-                    });
-            }
-            _createClass(NodeKind, [{
-                key: "sharedSuperKind",
-                value: function sharedSuperKind(other) {
-                    if (this.isSubKind(other))
-                        return other;
-                    if (other.isSubKind(this))
-                        return this;
-                    var found = undefined;
-                    for (var id in this.supers) {
-                        var shared = other.supers[id];
-                        if (shared && (!found || shared.isSupKind(found)))
-                            found = shared;
-                    }
-                    return found;
-                }
-            }, {
-                key: "addSuper",
-                value: function addSuper(sup) {
-                    for (var id in sup.supers) {
-                        this.supers[id] = sup.supers[id];
-                        sup.subs.push(this);
-                    }
-                }
-            }, {
-                key: "addSub",
-                value: function addSub(sub) {
-                    var _this3 = this;
-                    if (this.supers[sub.id])
-                        throw new RangeError("Circular subkind relation");
-                    sub.supers[this.id] = true;
-                    sub.subs.forEach(function(next) {
-                        return _this3.addSub(next);
-                    });
-                }
-            }, {
-                key: "isSubKind",
-                value: function isSubKind(other) {
-                    return other && other.id in this.supers || false;
-                }
-            }]);
-            return NodeKind;
+            return DOMParseState;
         }();
-        NodeKind.nextID = 0;
-        NodeKind.block = new NodeKind("block");
-        NodeKind.inline = new NodeKind("inline");
-        NodeKind.text = new NodeKind("text", [NodeKind.inline]);
-        var Block = exports.Block = function(_NodeType) {
-            _inherits(Block, _NodeType);
-            function Block() {
-                _classCallCheck(this, Block);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(Block).apply(this, arguments));
+        function matches(dom, selector) {
+            return (dom.matches || dom.msMatchesSelector || dom.webkitMatchesSelector || dom.mozMatchesSelector).call(dom, selector);
+        }
+        function parseStyles(style) {
+            var re = /\s*([\w-]+)\s*:\s*([^;]+)/g,
+                m = void 0,
+                result = [];
+            while (m = re.exec(style)) {
+                result.push(m[1], m[2].trim());
             }
-            _createClass(Block, [{
-                key: "defaultContent",
-                value: function defaultContent() {
-                    var inner = this.schema.defaultTextblockType().create();
-                    var conn = this.findConnection(inner.type);
-                    if (!conn)
-                        throw new RangeError("Can't create default content for " + this.name);
-                    for (var i = conn.length - 1; i >= 0; i--) {
-                        inner = conn[i].create(null, inner);
-                    }
-                    return _fragment.Fragment.from(inner);
-                }
-            }, {
-                key: "contains",
-                get: function get() {
-                    return NodeKind.block;
-                }
-            }, {
-                key: "kind",
-                get: function get() {
-                    return NodeKind.block;
-                }
-            }, {
-                key: "isBlock",
-                get: function get() {
-                    return true;
-                }
-            }, {
-                key: "canBeEmpty",
-                get: function get() {
-                    return this.contains == null;
-                }
-            }]);
-            return Block;
-        }(NodeType);
-        var Textblock = exports.Textblock = function(_Block) {
-            _inherits(Textblock, _Block);
-            function Textblock() {
-                _classCallCheck(this, Textblock);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(Textblock).apply(this, arguments));
-            }
-            _createClass(Textblock, [{
-                key: "contains",
-                get: function get() {
-                    return NodeKind.inline;
-                }
-            }, {
-                key: "containsMarks",
-                get: function get() {
-                    return true;
-                }
-            }, {
-                key: "isTextblock",
-                get: function get() {
-                    return true;
-                }
-            }, {
-                key: "canBeEmpty",
-                get: function get() {
-                    return true;
-                }
-            }]);
-            return Textblock;
-        }(Block);
-        var Inline = exports.Inline = function(_NodeType2) {
-            _inherits(Inline, _NodeType2);
-            function Inline() {
-                _classCallCheck(this, Inline);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(Inline).apply(this, arguments));
-            }
-            _createClass(Inline, [{
-                key: "kind",
-                get: function get() {
-                    return NodeKind.inline;
-                }
-            }, {
-                key: "isInline",
-                get: function get() {
-                    return true;
-                }
-            }]);
-            return Inline;
-        }(NodeType);
-        var Text = exports.Text = function(_Inline) {
-            _inherits(Text, _Inline);
-            function Text() {
-                _classCallCheck(this, Text);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(Text).apply(this, arguments));
-            }
-            _createClass(Text, [{
-                key: "create",
-                value: function create(attrs, content, marks) {
-                    return new _node.TextNode(this, this.computeAttrs(attrs, content), content, marks);
-                }
-            }, {
-                key: "selectable",
-                get: function get() {
-                    return false;
-                }
-            }, {
-                key: "isText",
-                get: function get() {
-                    return true;
-                }
-            }, {
-                key: "kind",
-                get: function get() {
-                    return NodeKind.text;
-                }
-            }]);
-            return Text;
-        }(Inline);
-        var Attribute = exports.Attribute = function Attribute() {
-            var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-            _classCallCheck(this, Attribute);
-            this.default = options.default;
-            this.compute = options.compute;
-            this.label = options.label;
-        };
-        var MarkType = exports.MarkType = function(_SchemaItem2) {
-            _inherits(MarkType, _SchemaItem2);
-            function MarkType(name, rank, schema) {
-                _classCallCheck(this, MarkType);
-                var _this8 = _possibleConstructorReturn(this, Object.getPrototypeOf(MarkType).call(this));
-                _this8.name = name;
-                _this8.freezeAttrs();
-                _this8.rank = rank;
-                _this8.schema = schema;
-                var defaults = _this8.getDefaultAttrs();
-                _this8.instance = defaults && new _mark.Mark(_this8, defaults);
-                return _this8;
-            }
-            _createClass(MarkType, [{
-                key: "create",
-                value: function create(attrs) {
-                    if (!attrs && this.instance)
-                        return this.instance;
-                    return new _mark.Mark(this, this.computeAttrs(attrs));
-                }
-            }, {
-                key: "removeFromSet",
-                value: function removeFromSet(set) {
-                    for (var i = 0; i < set.length; i++) {
-                        if (set[i].type == this)
-                            return set.slice(0, i).concat(set.slice(i + 1));
-                    }
-                    return set;
-                }
-            }, {
-                key: "isInSet",
-                value: function isInSet(set) {
-                    for (var i = 0; i < set.length; i++) {
-                        if (set[i].type == this)
-                            return set[i];
-                    }
-                }
-            }, {
-                key: "inclusiveRight",
-                get: function get() {
-                    return true;
-                }
-            }], [{
-                key: "getOrder",
-                value: function getOrder(marks) {
-                    var sorted = [];
-                    for (var name in marks) {
-                        sorted.push({
-                            name: name,
-                            rank: marks[name].rank
+            return result;
+        }
+        function schemaInfo(schema) {
+            return schema.cached.parseDOMInfo || (schema.cached.parseDOMInfo = summarizeSchemaInfo(schema));
+        }
+        function summarizeSchemaInfo(schema) {
+            var selectors = [],
+                styles = [];
+            for (var name in schema.nodes) {
+                var type = schema.nodes[name],
+                    match = type.matchDOMTag;
+                if (match)
+                    for (var selector in match) {
+                        selectors.push({
+                            selector: selector,
+                            node: type,
+                            value: match[selector]
                         });
                     }
-                    sorted.sort(function(a, b) {
-                        return a.rank - b.rank;
-                    });
-                    var ranks = Object.create(null);
-                    for (var i = 0; i < sorted.length; i++) {
-                        ranks[sorted[i].name] = i;
-                    }
-                    return ranks;
-                }
-            }, {
-                key: "compile",
-                value: function compile(marks, schema) {
-                    var order = this.getOrder(marks);
-                    var result = Object.create(null);
-                    for (var name in marks) {
-                        result[name] = new marks[name](name, order[name], schema);
-                    }
-                    return result;
-                }
-            }, {
-                key: "rank",
-                get: function get() {
-                    return 50;
-                }
-            }]);
-            return MarkType;
-        }(SchemaItem);
-        var SchemaSpec = exports.SchemaSpec = function() {
-            function SchemaSpec(nodes, marks) {
-                _classCallCheck(this, SchemaSpec);
-                this.nodes = nodes || {};
-                this.marks = marks || {};
             }
-            _createClass(SchemaSpec, [{
-                key: "update",
-                value: function update(nodes, marks) {
-                    return new SchemaSpec(nodes ? overlayObj(this.nodes, nodes) : this.nodes, marks ? overlayObj(this.marks, marks) : this.marks);
-                }
-            }]);
-            return SchemaSpec;
-        }();
-        function overlayObj(base, update) {
-            var copy = (0, _obj.copyObj)(base);
-            for (var name in update) {
-                var value = update[name];
-                if (value == null)
-                    delete copy[name];
-                else
-                    copy[name] = value;
+            for (var _name in schema.marks) {
+                var _type = schema.marks[_name],
+                    _match = _type.matchDOMTag,
+                    props = _type.matchDOMStyle;
+                if (_match)
+                    for (var _selector in _match) {
+                        selectors.push({
+                            selector: _selector,
+                            mark: _type,
+                            value: _match[_selector]
+                        });
+                    }
+                if (props)
+                    for (var prop in props) {
+                        styles.push({
+                            prop: prop,
+                            mark: _type,
+                            value: props[prop]
+                        });
+                    }
             }
-            return copy;
+            return {
+                selectors: selectors,
+                styles: styles
+            };
         }
-        var Schema = function() {
-            function Schema(spec) {
-                _classCallCheck(this, Schema);
-                this.spec = spec;
-                this.nodes = NodeType.compile(spec.nodes, this);
-                this.marks = MarkType.compile(spec.marks, this);
-                for (var prop in this.nodes) {
-                    if (prop in this.marks)
-                        throw new RangeError(prop + " can not be both a node and a mark");
+        function matchTag(selectors, dom) {
+            for (var i = 0; i < selectors.length; i++) {
+                var cur = selectors[i];
+                if (matches(dom, cur.selector)) {
+                    var value = cur.value,
+                        content = void 0;
+                    if (value instanceof Function) {
+                        value = value(dom);
+                        if (value === false)
+                            continue;
+                    }
+                    if (Array.isArray(value)) {
+                        ;
+                        var _value = value;
+                        var _value2 = _slicedToArray(_value, 2);
+                        value = _value2[0];
+                        content = _value2[1];
+                    }
+                    return {
+                        node: cur.node,
+                        mark: cur.mark,
+                        attrs: value,
+                        content: content
+                    };
                 }
-                this.cached = Object.create(null);
-                this.cached.connections = Object.create(null);
-                this.node = this.node.bind(this);
-                this.text = this.text.bind(this);
-                this.nodeFromJSON = this.nodeFromJSON.bind(this);
-                this.markFromJSON = this.markFromJSON.bind(this);
             }
-            _createClass(Schema, [{
-                key: "node",
-                value: function node(type, attrs, content, marks) {
-                    if (typeof type == "string")
-                        type = this.nodeType(type);
-                    else if (!(type instanceof NodeType))
-                        throw new RangeError("Invalid node type: " + type);
-                    else if (type.schema != this)
-                        throw new RangeError("Node type from different schema used (" + type.name + ")");
-                    return type.create(attrs, content, marks);
-                }
-            }, {
-                key: "text",
-                value: function text(_text, marks) {
-                    return this.nodes.text.create(null, _text, _mark.Mark.setFrom(marks));
-                }
-            }, {
-                key: "defaultTextblockType",
-                value: function defaultTextblockType() {
-                    var cached = this.cached.defaultTextblockType;
-                    if (cached !== undefined)
-                        return cached;
-                    for (var name in this.nodes) {
-                        if (this.nodes[name].defaultTextblock)
-                            return this.cached.defaultTextblockType = this.nodes[name];
+        }
+        function matchStyle(styles, prop, value) {
+            for (var i = 0; i < styles.length; i++) {
+                var cur = styles[i];
+                if (cur.prop == prop) {
+                    var attrs = cur.value;
+                    if (attrs instanceof Function) {
+                        attrs = attrs(value);
+                        if (attrs === false)
+                            continue;
                     }
-                    return this.cached.defaultTextblockType = null;
+                    return {
+                        mark: cur.mark,
+                        attrs: attrs
+                    };
                 }
-            }, {
-                key: "mark",
-                value: function mark(name, attrs) {
-                    var spec = this.marks[name];
-                    if (!spec)
-                        throw new RangeError("No mark named " + name);
-                    return spec.create(attrs);
-                }
-            }, {
-                key: "nodeFromJSON",
-                value: function nodeFromJSON(json) {
-                    return _node.Node.fromJSON(this, json);
-                }
-            }, {
-                key: "markFromJSON",
-                value: function markFromJSON(json) {
-                    var type = this.marks[json._];
-                    var attrs = null;
-                    for (var prop in json) {
-                        if (prop != "_") {
-                            if (!attrs)
-                                attrs = Object.create(null);
-                            attrs[prop] = json[prop];
-                        }
-                    }
-                    return attrs ? type.create(attrs) : type.instance;
-                }
-            }, {
-                key: "nodeType",
-                value: function nodeType(name) {
-                    var found = this.nodes[name];
-                    if (!found)
-                        throw new RangeError("Unknown node type: " + name);
-                    return found;
-                }
-            }, {
-                key: "registry",
-                value: function registry(namespace, f) {
-                    for (var i = 0; i < 2; i++) {
-                        var obj = i ? this.marks : this.nodes;
-                        for (var tname in obj) {
-                            var type = obj[tname],
-                                registry = type.registry,
-                                ns = registry && registry[namespace];
-                            if (ns)
-                                for (var prop in ns) {
-                                    var value = ns[prop](type);
-                                    if (value != null)
-                                        f(prop, value, type, tname);
-                                }
-                        }
-                    }
-                }
-            }]);
-            return Schema;
-        }();
-        exports.Schema = Schema;
+            }
+        }
         return module.exports;
     });
 
-    $__System.registerDynamic("3a", ["39"], true, function($__require, exports, module) {
+    $__System.registerDynamic("18", ["2e", "2d", "2c", "2b", "2f", "33", "34", "35"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.defaultSchema = exports.CodeMark = exports.LinkMark = exports.StrongMark = exports.EmMark = exports.HardBreak = exports.Image = exports.Paragraph = exports.CodeBlock = exports.Heading = exports.HorizontalRule = exports.ListItem = exports.BulletList = exports.OrderedList = exports.BlockQuote = exports.Doc = undefined;
+        exports.Node = $__require('2e').Node;
+        var _require = $__require('2d');
+        exports.ResolvedPos = _require.ResolvedPos;
+        exports.NodeRange = _require.NodeRange;
+        exports.Fragment = $__require('2c').Fragment;
+        var _require2 = $__require('2b');
+        exports.Slice = _require2.Slice;
+        exports.ReplaceError = _require2.ReplaceError;
+        exports.Mark = $__require('2f').Mark;
+        var _require3 = $__require('33');
+        exports.SchemaSpec = _require3.SchemaSpec;
+        exports.Schema = _require3.Schema;
+        exports.NodeType = _require3.NodeType;
+        exports.Block = _require3.Block;
+        exports.Inline = _require3.Inline;
+        exports.Text = _require3.Text;
+        exports.MarkType = _require3.MarkType;
+        exports.Attribute = _require3.Attribute;
+        exports.NodeKind = _require3.NodeKind;
+        var _require4 = $__require('34');
+        exports.ContentMatch = _require4.ContentMatch;
+        exports.parseDOMInContext = $__require('35').parseDOMInContext;
+        return module.exports;
+    });
+
+    $__System.registerDynamic("37", [], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        var nonASCIISingleCaseWordChar = /[\u00df\u0587\u0590-\u05f4\u0600-\u06ff\u3040-\u309f\u30a0-\u30ff\u3400-\u4db5\u4e00-\u9fcc\uac00-\ud7af]/;
+        var extendingChar = /[\u0300-\u036f\u0483-\u0489\u0591-\u05bd\u05bf\u05c1\u05c2\u05c4\u05c5\u05c7\u0610-\u061a\u064b-\u065e\u0670\u06d6-\u06dc\u06de-\u06e4\u06e7\u06e8\u06ea-\u06ed\u0711\u0730-\u074a\u07a6-\u07b0\u07eb-\u07f3\u0816-\u0819\u081b-\u0823\u0825-\u0827\u0829-\u082d\u0900-\u0902\u093c\u0941-\u0948\u094d\u0951-\u0955\u0962\u0963\u0981\u09bc\u09be\u09c1-\u09c4\u09cd\u09d7\u09e2\u09e3\u0a01\u0a02\u0a3c\u0a41\u0a42\u0a47\u0a48\u0a4b-\u0a4d\u0a51\u0a70\u0a71\u0a75\u0a81\u0a82\u0abc\u0ac1-\u0ac5\u0ac7\u0ac8\u0acd\u0ae2\u0ae3\u0b01\u0b3c\u0b3e\u0b3f\u0b41-\u0b44\u0b4d\u0b56\u0b57\u0b62\u0b63\u0b82\u0bbe\u0bc0\u0bcd\u0bd7\u0c3e-\u0c40\u0c46-\u0c48\u0c4a-\u0c4d\u0c55\u0c56\u0c62\u0c63\u0cbc\u0cbf\u0cc2\u0cc6\u0ccc\u0ccd\u0cd5\u0cd6\u0ce2\u0ce3\u0d3e\u0d41-\u0d44\u0d4d\u0d57\u0d62\u0d63\u0dca\u0dcf\u0dd2-\u0dd4\u0dd6\u0ddf\u0e31\u0e34-\u0e3a\u0e47-\u0e4e\u0eb1\u0eb4-\u0eb9\u0ebb\u0ebc\u0ec8-\u0ecd\u0f18\u0f19\u0f35\u0f37\u0f39\u0f71-\u0f7e\u0f80-\u0f84\u0f86\u0f87\u0f90-\u0f97\u0f99-\u0fbc\u0fc6\u102d-\u1030\u1032-\u1037\u1039\u103a\u103d\u103e\u1058\u1059\u105e-\u1060\u1071-\u1074\u1082\u1085\u1086\u108d\u109d\u135f\u1712-\u1714\u1732-\u1734\u1752\u1753\u1772\u1773\u17b7-\u17bd\u17c6\u17c9-\u17d3\u17dd\u180b-\u180d\u18a9\u1920-\u1922\u1927\u1928\u1932\u1939-\u193b\u1a17\u1a18\u1a56\u1a58-\u1a5e\u1a60\u1a62\u1a65-\u1a6c\u1a73-\u1a7c\u1a7f\u1b00-\u1b03\u1b34\u1b36-\u1b3a\u1b3c\u1b42\u1b6b-\u1b73\u1b80\u1b81\u1ba2-\u1ba5\u1ba8\u1ba9\u1c2c-\u1c33\u1c36\u1c37\u1cd0-\u1cd2\u1cd4-\u1ce0\u1ce2-\u1ce8\u1ced\u1dc0-\u1de6\u1dfd-\u1dff\u200c\u200d\u20d0-\u20f0\u2cef-\u2cf1\u2de0-\u2dff\u302a-\u302f\u3099\u309a\ua66f-\ua672\ua67c\ua67d\ua6f0\ua6f1\ua802\ua806\ua80b\ua825\ua826\ua8c4\ua8e0-\ua8f1\ua926-\ua92d\ua947-\ua951\ua980-\ua982\ua9b3\ua9b6-\ua9b9\ua9bc\uaa29-\uaa2e\uaa31\uaa32\uaa35\uaa36\uaa43\uaa4c\uaab0\uaab2-\uaab4\uaab7\uaab8\uaabe\uaabf\uaac1\uabe5\uabe8\uabed\udc00-\udfff\ufb1e\ufe00-\ufe0f\ufe20-\ufe26\uff9e\uff9f]/;
+        function isWordChar(ch) {
+            return (/\w/.test(ch) || ch > "\x80" && (ch < "�" || ch > "�") && (isExtendingChar(ch) || ch.toUpperCase() != ch.toLowerCase() || nonASCIISingleCaseWordChar.test(ch)));
+        }
+        exports.isWordChar = isWordChar;
+        function charCategory(ch) {
+            return (/\s/.test(ch) ? "space" : isWordChar(ch) ? "word" : "other");
+        }
+        exports.charCategory = charCategory;
+        function isExtendingChar(ch) {
+            return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
+        }
+        exports.isExtendingChar = isExtendingChar;
+        return module.exports;
+    });
+
+    $__System.registerDynamic("12", [], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        var ie_upto10 = /MSIE \d/.test(navigator.userAgent);
+        var ie_11up = /Trident\/(?:[7-9]|\d{2,})\..*rv:(\d+)/.exec(navigator.userAgent);
+        module.exports = {
+            mac: /Mac/.test(navigator.platform),
+            ie: ie_upto10 || !!ie_11up,
+            ie_version: ie_upto10 ? document.documentMode || 6 : ie_11up && +ie_11up[1],
+            gecko: /gecko\/\d/i.test(navigator.userAgent),
+            ios: /AppleWebKit/.test(navigator.userAgent) && /Mobile\/\w+/.test(navigator.userAgent)
+        };
+        return module.exports;
+    });
+
+    $__System.registerDynamic("13", ["5"], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        var _require = $__require('5');
+        var contains = _require.contains;
+        function isEditorContent(dom) {
+            return dom.classList.contains("ProseMirror-content");
+        }
+        function posBeforeFromDOM(node) {
+            var pos = 0,
+                add = 0;
+            for (var cur = node; !isEditorContent(cur); cur = cur.parentNode) {
+                var attr = cur.getAttribute("pm-offset");
+                if (attr) {
+                    pos += +attr + add;
+                    add = 1;
+                }
+            }
+            return pos;
+        }
+        var posFromDOMResult = {
+            pos: 0,
+            inLeaf: -1
+        };
+        function posFromDOM(dom, domOffset) {
+            var bias = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
+            if (domOffset == null) {
+                domOffset = Array.prototype.indexOf.call(dom.parentNode.childNodes, dom);
+                dom = dom.parentNode;
+            }
+            var innerOffset = 0,
+                tag = void 0;
+            for (; ; ) {
+                var adjust = 0;
+                if (dom.nodeType == 3) {
+                    innerOffset += domOffset;
+                } else if (tag = dom.getAttribute("pm-offset") && !childContainer(dom)) {
+                    var size = +dom.getAttribute("pm-size");
+                    if (dom.nodeType == 1 && !dom.firstChild)
+                        innerOffset = bias > 0 ? size : 0;
+                    else if (domOffset == dom.childNodes.length)
+                        innerOffset = size;
+                    else
+                        innerOffset = Math.min(innerOffset, size);
+                    var inLeaf = posFromDOMResult.inLeaf = posBeforeFromDOM(dom);
+                    posFromDOMResult.pos = inLeaf + innerOffset;
+                    return posFromDOMResult;
+                } else if (dom.hasAttribute("pm-container")) {
+                    break;
+                } else if (domOffset == dom.childNodes.length) {
+                    if (domOffset)
+                        adjust = 1;
+                    else
+                        adjust = bias > 0 ? 1 : 0;
+                }
+                var parent = dom.parentNode;
+                domOffset = adjust < 0 ? 0 : Array.prototype.indexOf.call(parent.childNodes, dom) + adjust;
+                dom = parent;
+                bias = 0;
+            }
+            var start = isEditorContent(dom) ? 0 : posBeforeFromDOM(dom) + 1,
+                before = 0;
+            for (var child = dom.childNodes[domOffset - 1]; child; child = child.previousSibling) {
+                if (child.nodeType == 1 && (tag = child.getAttribute("pm-offset"))) {
+                    before += +tag + +child.getAttribute("pm-size");
+                    break;
+                }
+            }
+            posFromDOMResult.inLeaf = -1;
+            posFromDOMResult.pos = start + before + innerOffset;
+            return posFromDOMResult;
+        }
+        exports.posFromDOM = posFromDOM;
+        function childContainer(dom) {
+            return dom.hasAttribute("pm-container") ? dom : dom.querySelector("[pm-container]");
+        }
+        exports.childContainer = childContainer;
+        function DOMFromPos(pm, pos, loose) {
+            if (!loose && pm.operation && pm.doc != pm.operation.doc)
+                throw new RangeError("Resolving a position in an outdated DOM structure");
+            var container = pm.content,
+                offset = pos;
+            for (; ; ) {
+                for (var child = container.firstChild,
+                         i = 0; ; child = child.nextSibling, i++) {
+                    if (!child) {
+                        if (offset && !loose)
+                            throw new RangeError("Failed to find node at " + pos);
+                        return {
+                            node: container,
+                            offset: i
+                        };
+                    }
+                    var size = child.nodeType == 1 && child.getAttribute("pm-size");
+                    if (size) {
+                        if (!offset)
+                            return {
+                                node: container,
+                                offset: i
+                            };
+                        size = +size;
+                        if (offset < size) {
+                            container = childContainer(child);
+                            if (!container) {
+                                return leafAt(child, offset);
+                            } else {
+                                offset--;
+                                break;
+                            }
+                        } else {
+                            offset -= size;
+                        }
+                    }
+                }
+            }
+        }
+        exports.DOMFromPos = DOMFromPos;
+        function DOMFromPosFromEnd(pm, pos) {
+            var container = pm.content,
+                dist = (pm.operation ? pm.operation.doc : pm.doc).content.size - pos;
+            for (; ; ) {
+                for (var child = container.lastChild,
+                         i = container.childNodes.length; ; child = child.previousSibling, i--) {
+                    if (!child)
+                        return {
+                            node: container,
+                            offset: i
+                        };
+                    var size = child.nodeType == 1 && child.getAttribute("pm-size");
+                    if (size) {
+                        if (!dist)
+                            return {
+                                node: container,
+                                offset: i
+                            };
+                        size = +size;
+                        if (dist < size) {
+                            container = childContainer(child);
+                            if (!container) {
+                                return leafAt(child, size - dist);
+                            } else {
+                                dist--;
+                                break;
+                            }
+                        } else {
+                            dist -= size;
+                        }
+                    }
+                }
+            }
+        }
+        exports.DOMFromPosFromEnd = DOMFromPosFromEnd;
+        function DOMAfterPos(pm, pos) {
+            var _DOMFromPos = DOMFromPos(pm, pos);
+            var node = _DOMFromPos.node;
+            var offset = _DOMFromPos.offset;
+            if (node.nodeType != 1 || offset == node.childNodes.length)
+                throw new RangeError("No node after pos " + pos);
+            return node.childNodes[offset];
+        }
+        exports.DOMAfterPos = DOMAfterPos;
+        function leafAt(node, offset) {
+            for (; ; ) {
+                var child = node.firstChild;
+                if (!child)
+                    return {
+                        node: node,
+                        offset: offset
+                    };
+                if (child.nodeType != 1)
+                    return {
+                        node: child,
+                        offset: offset
+                    };
+                node = child;
+            }
+        }
+        function windowRect() {
+            return {
+                left: 0,
+                right: window.innerWidth,
+                top: 0,
+                bottom: window.innerHeight
+            };
+        }
+        function scrollIntoView(pm, pos) {
+            if (!pos)
+                pos = pm.sel.range.head || pm.sel.range.from;
+            var coords = coordsAtPos(pm, pos);
+            for (var parent = pm.content; ; parent = parent.parentNode) {
+                var _pm$options = pm.options;
+                var scrollThreshold = _pm$options.scrollThreshold;
+                var scrollMargin = _pm$options.scrollMargin;
+                var atBody = parent == document.body;
+                var rect = atBody ? windowRect() : parent.getBoundingClientRect();
+                var moveX = 0,
+                    moveY = 0;
+                if (coords.top < rect.top + scrollThreshold)
+                    moveY = -(rect.top - coords.top + scrollMargin);
+                else if (coords.bottom > rect.bottom - scrollThreshold)
+                    moveY = coords.bottom - rect.bottom + scrollMargin;
+                if (coords.left < rect.left + scrollThreshold)
+                    moveX = -(rect.left - coords.left + scrollMargin);
+                else if (coords.right > rect.right - scrollThreshold)
+                    moveX = coords.right - rect.right + scrollMargin;
+                if (moveX || moveY) {
+                    if (atBody) {
+                        window.scrollBy(moveX, moveY);
+                    } else {
+                        if (moveY)
+                            parent.scrollTop += moveY;
+                        if (moveX)
+                            parent.scrollLeft += moveX;
+                    }
+                }
+                if (atBody)
+                    break;
+            }
+        }
+        exports.scrollIntoView = scrollIntoView;
+        function findOffsetInNode(node, coords) {
+            var closest = void 0,
+                dxClosest = 2e8,
+                coordsClosest = void 0,
+                offset = 0;
+            for (var child = node.firstChild; child; child = child.nextSibling) {
+                var rects = void 0;
+                if (child.nodeType == 1)
+                    rects = child.getClientRects();
+                else if (child.nodeType == 3)
+                    rects = textRange(child).getClientRects();
+                else
+                    continue;
+                for (var i = 0; i < rects.length; i++) {
+                    var rect = rects[i];
+                    if (rect.top <= coords.top && rect.bottom >= coords.top) {
+                        var dx = rect.left > coords.left ? rect.left - coords.left : rect.right < coords.left ? coords.left - rect.right : 0;
+                        if (dx < dxClosest) {
+                            closest = child;
+                            dxClosest = dx;
+                            coordsClosest = dx && closest.nodeType == 3 ? {
+                                left: rect.right < coords.left ? rect.right : rect.left,
+                                top: coords.top
+                            } : coords;
+                            if (child.nodeType == 1 && !child.firstChild)
+                                offset = i + (coords.left >= (rect.left + rect.right) / 2 ? 1 : 0);
+                            continue;
+                        }
+                    }
+                    if (!closest && (coords.left >= rect.right || coords.left >= rect.left && coords.top >= rect.bottom))
+                        offset = i + 1;
+                }
+            }
+            if (!closest)
+                return {
+                    node: node,
+                    offset: offset
+                };
+            if (closest.nodeType == 3)
+                return findOffsetInText(closest, coordsClosest);
+            return findOffsetInNode(closest, coordsClosest);
+        }
+        function findOffsetInText(node, coords) {
+            var len = node.nodeValue.length;
+            var range = document.createRange();
+            for (var i = 0; i < len; i++) {
+                range.setEnd(node, i + 1);
+                range.setStart(node, i);
+                var rect = singleRect(range, 1);
+                if (rect.top == rect.bottom)
+                    continue;
+                if (rect.left - 1 <= coords.left && rect.right + 1 >= coords.left && rect.top - 1 <= coords.top && rect.bottom + 1 >= coords.top)
+                    return {
+                        node: node,
+                        offset: i + (coords.left >= (rect.left + rect.right) / 2 ? 1 : 0)
+                    };
+            }
+            return {
+                node: node,
+                offset: 0
+            };
+        }
+        function targetKludge(dom, coords) {
+            if (/^[uo]l$/i.test(dom.nodeName)) {
+                for (var child = dom.firstChild; child; child = child.nextSibling) {
+                    if (child.nodeType != 1 || !child.hasAttribute("pm-offset") || !/^li$/i.test(child.nodeName))
+                        continue;
+                    var childBox = child.getBoundingClientRect();
+                    if (coords.left > childBox.left - 2)
+                        break;
+                    if (childBox.top <= coords.top && childBox.bottom >= coords.top)
+                        return child;
+                }
+            }
+            return dom;
+        }
+        function posAtCoords(pm, coords) {
+            var elt = targetKludge(document.elementFromPoint(coords.left, coords.top + 1), coords);
+            if (!contains(pm.content, elt))
+                return null;
+            var _findOffsetInNode = findOffsetInNode(elt, coords);
+            var node = _findOffsetInNode.node;
+            var offset = _findOffsetInNode.offset;
+            var bias = -1;
+            if (node.nodeType == 1 && !node.firstChild) {
+                var rect = node.getBoundingClientRect();
+                bias = rect.left != rect.right && coords.left > (rect.left + rect.right) / 2 ? 1 : -1;
+            }
+            return posFromDOM(node, offset, bias);
+        }
+        exports.posAtCoords = posAtCoords;
+        function textRange(node, from, to) {
+            var range = document.createRange();
+            range.setEnd(node, to == null ? node.nodeValue.length : to);
+            range.setStart(node, from || 0);
+            return range;
+        }
+        function singleRect(object, bias) {
+            var rects = object.getClientRects();
+            return !rects.length ? object.getBoundingClientRect() : rects[bias < 0 ? 0 : rects.length - 1];
+        }
+        function coordsAtPos(pm, pos) {
+            var _DOMFromPos2 = DOMFromPos(pm, pos);
+            var node = _DOMFromPos2.node;
+            var offset = _DOMFromPos2.offset;
+            var side = void 0,
+                rect = void 0;
+            if (node.nodeType == 3) {
+                if (offset < node.nodeValue.length) {
+                    rect = singleRect(textRange(node, offset, offset + 1), -1);
+                    side = "left";
+                }
+                if ((!rect || rect.left == rect.right) && offset) {
+                    rect = singleRect(textRange(node, offset - 1, offset), 1);
+                    side = "right";
+                }
+            } else if (node.firstChild) {
+                if (offset < node.childNodes.length) {
+                    var child = node.childNodes[offset];
+                    rect = singleRect(child.nodeType == 3 ? textRange(child) : child, -1);
+                    side = "left";
+                }
+                if ((!rect || rect.top == rect.bottom) && offset) {
+                    var _child = node.childNodes[offset - 1];
+                    rect = singleRect(_child.nodeType == 3 ? textRange(_child) : _child, 1);
+                    side = "right";
+                }
+            } else {
+                rect = node.getBoundingClientRect();
+                side = "left";
+            }
+            var x = rect[side];
+            return {
+                top: rect.top,
+                bottom: rect.bottom,
+                left: x,
+                right: x
+            };
+        }
+        exports.coordsAtPos = coordsAtPos;
+        return module.exports;
+    });
+
+    $__System.registerDynamic("15", ["5", "12", "13"], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -9585,12 +9337,6 @@
                 return Constructor;
             };
         }();
-        var _schema = $__require('39');
-        function _classCallCheck(instance, Constructor) {
-            if (!(instance instanceof Constructor)) {
-                throw new TypeError("Cannot call a class as a function");
-            }
-        }
         function _possibleConstructorReturn(self, call) {
             if (!self) {
                 throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -9610,1120 +9356,1076 @@
             if (superClass)
                 Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
         }
-        var Doc = exports.Doc = function(_Block) {
-            _inherits(Doc, _Block);
-            function Doc() {
-                _classCallCheck(this, Doc);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(Doc).apply(this, arguments));
+        function _classCallCheck(instance, Constructor) {
+            if (!(instance instanceof Constructor)) {
+                throw new TypeError("Cannot call a class as a function");
             }
-            _createClass(Doc, [{
-                key: "kind",
-                get: function get() {
-                    return null;
-                }
-            }]);
-            return Doc;
-        }(_schema.Block);
-        var BlockQuote = exports.BlockQuote = function(_Block2) {
-            _inherits(BlockQuote, _Block2);
-            function BlockQuote() {
-                _classCallCheck(this, BlockQuote);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(BlockQuote).apply(this, arguments));
+        }
+        var _require = $__require('5');
+        var contains = _require.contains;
+        var browser = $__require('12');
+        var _require2 = $__require('13');
+        var posFromDOM = _require2.posFromDOM;
+        var DOMAfterPos = _require2.DOMAfterPos;
+        var DOMFromPos = _require2.DOMFromPos;
+        var coordsAtPos = _require2.coordsAtPos;
+        var SelectionState = function() {
+            function SelectionState(pm, range) {
+                var _this = this;
+                _classCallCheck(this, SelectionState);
+                this.pm = pm;
+                this.range = range;
+                this.polling = null;
+                this.lastAnchorNode = this.lastHeadNode = this.lastAnchorOffset = this.lastHeadOffset = null;
+                this.lastNode = null;
+                pm.content.addEventListener("focus", function() {
+                    return _this.receivedFocus();
+                });
+                this.poller = this.poller.bind(this);
             }
-            return BlockQuote;
-        }(_schema.Block);
-        _schema.NodeKind.list_item = new _schema.NodeKind("list_item");
-        var OrderedList = exports.OrderedList = function(_Block3) {
-            _inherits(OrderedList, _Block3);
-            function OrderedList() {
-                _classCallCheck(this, OrderedList);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(OrderedList).apply(this, arguments));
-            }
-            _createClass(OrderedList, [{
-                key: "contains",
-                get: function get() {
-                    return _schema.NodeKind.list_item;
+            _createClass(SelectionState, [{
+                key: "setAndSignal",
+                value: function setAndSignal(range, clearLast) {
+                    this.set(range, clearLast);
+                    this.pm.on.selectionChange.dispatch();
                 }
             }, {
-                key: "attrs",
-                get: function get() {
-                    return {order: new _schema.Attribute({default: "1"})};
-                }
-            }]);
-            return OrderedList;
-        }(_schema.Block);
-        var BulletList = exports.BulletList = function(_Block4) {
-            _inherits(BulletList, _Block4);
-            function BulletList() {
-                _classCallCheck(this, BulletList);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(BulletList).apply(this, arguments));
-            }
-            _createClass(BulletList, [{
-                key: "contains",
-                get: function get() {
-                    return _schema.NodeKind.list_item;
-                }
-            }]);
-            return BulletList;
-        }(_schema.Block);
-        var ListItem = exports.ListItem = function(_Block5) {
-            _inherits(ListItem, _Block5);
-            function ListItem() {
-                _classCallCheck(this, ListItem);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(ListItem).apply(this, arguments));
-            }
-            _createClass(ListItem, [{
-                key: "kind",
-                get: function get() {
-                    return _schema.NodeKind.list_item;
-                }
-            }]);
-            return ListItem;
-        }(_schema.Block);
-        var HorizontalRule = exports.HorizontalRule = function(_Block6) {
-            _inherits(HorizontalRule, _Block6);
-            function HorizontalRule() {
-                _classCallCheck(this, HorizontalRule);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(HorizontalRule).apply(this, arguments));
-            }
-            _createClass(HorizontalRule, [{
-                key: "contains",
-                get: function get() {
-                    return null;
-                }
-            }]);
-            return HorizontalRule;
-        }(_schema.Block);
-        var Heading = exports.Heading = function(_Textblock) {
-            _inherits(Heading, _Textblock);
-            function Heading() {
-                _classCallCheck(this, Heading);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(Heading).apply(this, arguments));
-            }
-            _createClass(Heading, [{
-                key: "attrs",
-                get: function get() {
-                    return {level: new _schema.Attribute({default: "1"})};
+                key: "set",
+                value: function set(range, clearLast) {
+                    this.pm.ensureOperation({
+                        readSelection: false,
+                        selection: range
+                    });
+                    this.range = range;
+                    if (clearLast !== false)
+                        this.lastAnchorNode = null;
                 }
             }, {
-                key: "maxLevel",
-                get: function get() {
-                    return 6;
-                }
-            }]);
-            return Heading;
-        }(_schema.Textblock);
-        var CodeBlock = exports.CodeBlock = function(_Textblock2) {
-            _inherits(CodeBlock, _Textblock2);
-            function CodeBlock() {
-                _classCallCheck(this, CodeBlock);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(CodeBlock).apply(this, arguments));
-            }
-            _createClass(CodeBlock, [{
-                key: "contains",
-                get: function get() {
-                    return _schema.NodeKind.text;
+                key: "poller",
+                value: function poller() {
+                    if (hasFocus(this.pm)) {
+                        if (!this.pm.operation)
+                            this.readFromDOM();
+                        this.polling = setTimeout(this.poller, 100);
+                    } else {
+                        this.polling = null;
+                    }
                 }
             }, {
-                key: "containsMarks",
-                get: function get() {
-                    return false;
+                key: "startPolling",
+                value: function startPolling() {
+                    clearTimeout(this.polling);
+                    this.polling = setTimeout(this.poller, 50);
                 }
             }, {
-                key: "isCode",
-                get: function get() {
+                key: "fastPoll",
+                value: function fastPoll() {
+                    this.startPolling();
+                }
+            }, {
+                key: "stopPolling",
+                value: function stopPolling() {
+                    clearTimeout(this.polling);
+                    this.polling = null;
+                }
+            }, {
+                key: "domChanged",
+                value: function domChanged() {
+                    var sel = window.getSelection();
+                    return sel.anchorNode != this.lastAnchorNode || sel.anchorOffset != this.lastAnchorOffset || sel.focusNode != this.lastHeadNode || sel.focusOffset != this.lastHeadOffset;
+                }
+            }, {
+                key: "storeDOMState",
+                value: function storeDOMState() {
+                    var sel = window.getSelection();
+                    this.lastAnchorNode = sel.anchorNode;
+                    this.lastAnchorOffset = sel.anchorOffset;
+                    this.lastHeadNode = sel.focusNode;
+                    this.lastHeadOffset = sel.focusOffset;
+                }
+            }, {
+                key: "readFromDOM",
+                value: function readFromDOM() {
+                    if (!hasFocus(this.pm) || !this.domChanged())
+                        return false;
+                    var _selectionFromDOM = selectionFromDOM(this.pm.doc, this.range.head);
+                    var range = _selectionFromDOM.range;
+                    var adjusted = _selectionFromDOM.adjusted;
+                    this.setAndSignal(range);
+                    if (range instanceof NodeSelection || adjusted) {
+                        this.toDOM();
+                    } else {
+                        this.clearNode();
+                        this.storeDOMState();
+                    }
                     return true;
                 }
-            }]);
-            return CodeBlock;
-        }(_schema.Textblock);
-        var Paragraph = exports.Paragraph = function(_Textblock3) {
-            _inherits(Paragraph, _Textblock3);
-            function Paragraph() {
-                _classCallCheck(this, Paragraph);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(Paragraph).apply(this, arguments));
-            }
-            _createClass(Paragraph, [{
-                key: "defaultTextblock",
-                get: function get() {
-                    return true;
-                }
-            }]);
-            return Paragraph;
-        }(_schema.Textblock);
-        var Image = exports.Image = function(_Inline) {
-            _inherits(Image, _Inline);
-            function Image() {
-                _classCallCheck(this, Image);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(Image).apply(this, arguments));
-            }
-            _createClass(Image, [{
-                key: "attrs",
-                get: function get() {
-                    return {
-                        src: new _schema.Attribute(),
-                        alt: new _schema.Attribute({default: ""}),
-                        title: new _schema.Attribute({default: ""})
-                    };
+            }, {
+                key: "toDOM",
+                value: function toDOM(takeFocus) {
+                    if (!hasFocus(this.pm)) {
+                        if (!takeFocus)
+                            return;
+                        else if (browser.gecko)
+                            this.pm.content.focus();
+                    }
+                    if (this.range instanceof NodeSelection)
+                        this.nodeToDOM();
+                    else
+                        this.rangeToDOM();
                 }
             }, {
-                key: "draggable",
-                get: function get() {
-                    return true;
-                }
-            }]);
-            return Image;
-        }(_schema.Inline);
-        var HardBreak = exports.HardBreak = function(_Inline2) {
-            _inherits(HardBreak, _Inline2);
-            function HardBreak() {
-                _classCallCheck(this, HardBreak);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(HardBreak).apply(this, arguments));
-            }
-            _createClass(HardBreak, [{
-                key: "selectable",
-                get: function get() {
-                    return false;
+                key: "nodeToDOM",
+                value: function nodeToDOM() {
+                    var dom = DOMAfterPos(this.pm, this.range.from);
+                    if (dom != this.lastNode) {
+                        this.clearNode();
+                        dom.classList.add("ProseMirror-selectednode");
+                        this.pm.content.classList.add("ProseMirror-nodeselection");
+                        this.lastNode = dom;
+                    }
+                    var range = document.createRange(),
+                        sel = window.getSelection();
+                    range.selectNode(dom);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    this.storeDOMState();
                 }
             }, {
-                key: "isBR",
-                get: function get() {
-                    return true;
+                key: "rangeToDOM",
+                value: function rangeToDOM() {
+                    this.clearNode();
+                    var anchor = DOMFromPos(this.pm, this.range.anchor);
+                    var head = DOMFromPos(this.pm, this.range.head);
+                    var sel = window.getSelection(),
+                        range = document.createRange();
+                    if (sel.extend) {
+                        range.setEnd(anchor.node, anchor.offset);
+                        range.collapse(false);
+                    } else {
+                        if (this.range.anchor > this.range.head) {
+                            var tmp = anchor;
+                            anchor = head;
+                            head = tmp;
+                        }
+                        range.setEnd(head.node, head.offset);
+                        range.setStart(anchor.node, anchor.offset);
+                    }
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    if (sel.extend)
+                        sel.extend(head.node, head.offset);
+                    this.storeDOMState();
+                }
+            }, {
+                key: "clearNode",
+                value: function clearNode() {
+                    if (this.lastNode) {
+                        this.lastNode.classList.remove("ProseMirror-selectednode");
+                        this.pm.content.classList.remove("ProseMirror-nodeselection");
+                        this.lastNode = null;
+                        return true;
+                    }
+                }
+            }, {
+                key: "receivedFocus",
+                value: function receivedFocus() {
+                    if (this.polling == null)
+                        this.startPolling();
                 }
             }]);
-            return HardBreak;
-        }(_schema.Inline);
-        var EmMark = exports.EmMark = function(_MarkType) {
-            _inherits(EmMark, _MarkType);
-            function EmMark() {
-                _classCallCheck(this, EmMark);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(EmMark).apply(this, arguments));
-            }
-            _createClass(EmMark, null, [{
-                key: "rank",
+            return SelectionState;
+        }();
+        exports.SelectionState = SelectionState;
+        var Selection = function() {
+            _createClass(Selection, [{
+                key: "from",
                 get: function get() {
-                    return 31;
+                    return this.$from.pos;
+                }
+            }, {
+                key: "to",
+                get: function get() {
+                    return this.$to.pos;
                 }
             }]);
-            return EmMark;
-        }(_schema.MarkType);
-        var StrongMark = exports.StrongMark = function(_MarkType2) {
-            _inherits(StrongMark, _MarkType2);
-            function StrongMark() {
-                _classCallCheck(this, StrongMark);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(StrongMark).apply(this, arguments));
+            function Selection($from, $to) {
+                _classCallCheck(this, Selection);
+                this.$from = $from;
+                this.$to = $to;
             }
-            _createClass(StrongMark, null, [{
-                key: "rank",
+            _createClass(Selection, [{
+                key: "empty",
                 get: function get() {
-                    return 32;
+                    return this.from == this.to;
                 }
             }]);
-            return StrongMark;
-        }(_schema.MarkType);
-        var LinkMark = exports.LinkMark = function(_MarkType3) {
-            _inherits(LinkMark, _MarkType3);
-            function LinkMark() {
-                _classCallCheck(this, LinkMark);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(LinkMark).apply(this, arguments));
-            }
-            _createClass(LinkMark, [{
-                key: "attrs",
+            return Selection;
+        }();
+        exports.Selection = Selection;
+        var TextSelection = function(_Selection) {
+            _inherits(TextSelection, _Selection);
+            _createClass(TextSelection, [{
+                key: "anchor",
                 get: function get() {
-                    return {
-                        href: new _schema.Attribute(),
-                        title: new _schema.Attribute({default: ""})
-                    };
+                    return this.$anchor.pos;
+                }
+            }, {
+                key: "head",
+                get: function get() {
+                    return this.$head.pos;
+                }
+            }]);
+            function TextSelection($anchor) {
+                var $head = arguments.length <= 1 || arguments[1] === undefined ? $anchor : arguments[1];
+                _classCallCheck(this, TextSelection);
+                var inv = $anchor.pos > $head.pos;
+                var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(TextSelection).call(this, inv ? $head : $anchor, inv ? $anchor : $head));
+                _this2.$anchor = $anchor;
+                _this2.$head = $head;
+                return _this2;
+            }
+            _createClass(TextSelection, [{
+                key: "eq",
+                value: function eq(other) {
+                    return other instanceof TextSelection && other.head == this.head && other.anchor == this.anchor;
+                }
+            }, {
+                key: "map",
+                value: function map(doc, mapping) {
+                    var $head = doc.resolve(mapping.map(this.head));
+                    if (!$head.parent.isTextblock)
+                        return findSelectionNear($head);
+                    var $anchor = doc.resolve(mapping.map(this.anchor));
+                    return new TextSelection($anchor.parent.isTextblock ? $anchor : $head, $head);
+                }
+            }, {
+                key: "inverted",
+                get: function get() {
+                    return this.anchor > this.head;
+                }
+            }, {
+                key: "token",
+                get: function get() {
+                    return new SelectionToken(TextSelection, this.anchor, this.head);
                 }
             }], [{
-                key: "rank",
-                get: function get() {
-                    return 60;
+                key: "mapToken",
+                value: function mapToken(token, mapping) {
+                    return new SelectionToken(TextSelection, mapping.map(token.a), mapping.map(token.b));
+                }
+            }, {
+                key: "fromToken",
+                value: function fromToken(token, doc) {
+                    var $head = doc.resolve(token.b);
+                    if (!$head.parent.isTextblock)
+                        return findSelectionNear($head);
+                    var $anchor = doc.resolve(token.a);
+                    return new TextSelection($anchor.parent.isTextblock ? $anchor : $head, $head);
                 }
             }]);
-            return LinkMark;
-        }(_schema.MarkType);
-        var CodeMark = exports.CodeMark = function(_MarkType4) {
-            _inherits(CodeMark, _MarkType4);
-            function CodeMark() {
-                _classCallCheck(this, CodeMark);
-                return _possibleConstructorReturn(this, Object.getPrototypeOf(CodeMark).apply(this, arguments));
+            return TextSelection;
+        }(Selection);
+        exports.TextSelection = TextSelection;
+        var NodeSelection = function(_Selection2) {
+            _inherits(NodeSelection, _Selection2);
+            function NodeSelection($from) {
+                _classCallCheck(this, NodeSelection);
+                var $to = $from.plusOne();
+                var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(NodeSelection).call(this, $from, $to));
+                _this3.node = $from.nodeAfter;
+                return _this3;
             }
-            _createClass(CodeMark, [{
-                key: "isCode",
+            _createClass(NodeSelection, [{
+                key: "eq",
+                value: function eq(other) {
+                    return other instanceof NodeSelection && this.from == other.from;
+                }
+            }, {
+                key: "map",
+                value: function map(doc, mapping) {
+                    var $from = doc.resolve(mapping.map(this.from, 1));
+                    var to = mapping.map(this.to, -1);
+                    var node = $from.nodeAfter;
+                    if (node && to == $from.pos + node.nodeSize && node.type.selectable)
+                        return new NodeSelection($from);
+                    return findSelectionNear($from);
+                }
+            }, {
+                key: "token",
                 get: function get() {
-                    return true;
+                    return new SelectionToken(NodeSelection, this.from, this.to);
                 }
             }], [{
-                key: "rank",
-                get: function get() {
-                    return 101;
+                key: "mapToken",
+                value: function mapToken(token, mapping) {
+                    return new SelectionToken(NodeSelection, mapping.map(token.a, 1), mapping.map(token.b, -1));
+                }
+            }, {
+                key: "fromToken",
+                value: function fromToken(token, doc) {
+                    var $from = doc.resolve(token.a),
+                        node = $from.nodeAfter;
+                    if (node && token.b == token.a + node.nodeSize && node.type.selectable)
+                        return new NodeSelection($from);
+                    return findSelectionNear($from);
                 }
             }]);
-            return CodeMark;
-        }(_schema.MarkType);
-        var defaultSpec = new _schema.SchemaSpec({
-            doc: Doc,
-            blockquote: BlockQuote,
-            ordered_list: OrderedList,
-            bullet_list: BulletList,
-            list_item: ListItem,
-            horizontal_rule: HorizontalRule,
-            paragraph: Paragraph,
-            heading: Heading,
-            code_block: CodeBlock,
-            text: _schema.Text,
-            image: Image,
-            hard_break: HardBreak
-        }, {
-            em: EmMark,
-            strong: StrongMark,
-            link: LinkMark,
-            code: CodeMark
-        });
-        var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-        return module.exports;
-    });
-
-    $__System.registerDynamic("3b", [], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.findDiffStart = findDiffStart;
-        exports.findDiffEnd = findDiffEnd;
-        function findDiffStart(a, b) {
-            var pos = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
-            for (var i = 0; ; i++) {
-                if (i == a.childCount || i == b.childCount)
-                    return a.childCount == b.childCount ? null : pos;
-                var childA = a.child(i),
-                    childB = b.child(i);
-                if (childA == childB) {
-                    pos += childA.nodeSize;
-                    continue;
-                }
-                if (!childA.sameMarkup(childB))
-                    return pos;
-                if (childA.isText && childA.text != childB.text) {
-                    for (var j = 0; childA.text[j] == childB.text[j]; j++) {
-                        pos++;
-                    }
-                    return pos;
-                }
-                if (childA.content.size || childB.content.size) {
-                    var inner = findDiffStart(childA.content, childB.content, pos + 1);
-                    if (inner != null)
-                        return inner;
-                }
-                pos += childA.nodeSize;
-            }
-        }
-        function findDiffEnd(a, b) {
-            var posA = arguments.length <= 2 || arguments[2] === undefined ? a.size : arguments[2];
-            var posB = arguments.length <= 3 || arguments[3] === undefined ? b.size : arguments[3];
-            for (var iA = a.childCount,
-                     iB = b.childCount; ; ) {
-                if (iA == 0 || iB == 0)
-                    return iA == iB ? null : {
-                        a: posA,
-                        b: posB
-                    };
-                var childA = a.child(--iA),
-                    childB = b.child(--iB),
-                    size = childA.nodeSize;
-                if (childA == childB) {
-                    posA -= size;
-                    posB -= size;
-                    continue;
-                }
-                if (!childA.sameMarkup(childB))
+            return NodeSelection;
+        }(Selection);
+        exports.NodeSelection = NodeSelection;
+        var SelectionToken = function SelectionToken(type, a, b) {
+            _classCallCheck(this, SelectionToken);
+            this.type = type;
+            this.a = a;
+            this.b = b;
+        };
+        function selectionFromDOM(doc, oldHead) {
+            var sel = window.getSelection();
+            var _posFromDOM = posFromDOM(sel.focusNode, sel.focusOffset);
+            var head = _posFromDOM.pos;
+            var headLeaf = _posFromDOM.inLeaf;
+            if (headLeaf > -1 && sel.isCollapsed) {
+                var $leaf = doc.resolve(headLeaf);
+                if ($leaf.nodeAfter.type.selectable)
                     return {
-                        a: posA,
-                        b: posB
+                        range: new NodeSelection($leaf),
+                        adjusted: true
                     };
-                if (childA.isText && childA.text != childB.text) {
-                    var same = 0,
-                        minSize = Math.min(childA.text.length, childB.text.length);
-                    while (same < minSize && childA.text[childA.text.length - same - 1] == childB.text[childB.text.length - same - 1]) {
-                        same++;
-                        posA--;
-                        posB--;
-                    }
-                    return {
-                        a: posA,
-                        b: posB
-                    };
-                }
-                if (childA.content.size || childB.content.size) {
-                    var inner = findDiffEnd(childA.content, childB.content, posA - 1, posB - 1);
-                    if (inner)
-                        return inner;
-                }
-                posA -= size;
-                posB -= size;
             }
-        }
-        return module.exports;
-    });
-
-    $__System.registerDynamic("6", ["37", "36", "35", "34", "38", "39", "3a", "3b"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        var _node = $__require('37');
-        Object.defineProperty(exports, "Node", {
-            enumerable: true,
-            get: function get() {
-                return _node.Node;
+            var anchor = sel.isCollapsed ? head : posFromDOM(sel.anchorNode, sel.anchorOffset).pos;
+            var range = findSelectionNear(doc.resolve(head), oldHead != null && oldHead < head ? 1 : -1);
+            if (range instanceof TextSelection) {
+                var selNearAnchor = findSelectionNear(doc.resolve(anchor), anchor > range.to ? -1 : 1, true);
+                range = new TextSelection(selNearAnchor.$anchor, range.$head);
+            } else if (anchor < range.from || anchor > range.to) {
+                var inv = anchor > range.to;
+                range = new TextSelection(findSelectionNear(doc.resolve(anchor), inv ? -1 : 1, true).$anchor, findSelectionNear(inv ? range.$from : range.$to, inv ? 1 : -1, true).$head);
             }
-        });
-        var _resolvedpos = $__require('36');
-        Object.defineProperty(exports, "ResolvedPos", {
-            enumerable: true,
-            get: function get() {
-                return _resolvedpos.ResolvedPos;
-            }
-        });
-        var _fragment = $__require('35');
-        Object.defineProperty(exports, "Fragment", {
-            enumerable: true,
-            get: function get() {
-                return _fragment.Fragment;
-            }
-        });
-        var _replace = $__require('34');
-        Object.defineProperty(exports, "Slice", {
-            enumerable: true,
-            get: function get() {
-                return _replace.Slice;
-            }
-        });
-        Object.defineProperty(exports, "ReplaceError", {
-            enumerable: true,
-            get: function get() {
-                return _replace.ReplaceError;
-            }
-        });
-        var _mark = $__require('38');
-        Object.defineProperty(exports, "Mark", {
-            enumerable: true,
-            get: function get() {
-                return _mark.Mark;
-            }
-        });
-        var _schema = $__require('39');
-        Object.defineProperty(exports, "SchemaSpec", {
-            enumerable: true,
-            get: function get() {
-                return _schema.SchemaSpec;
-            }
-        });
-        Object.defineProperty(exports, "Schema", {
-            enumerable: true,
-            get: function get() {
-                return _schema.Schema;
-            }
-        });
-        Object.defineProperty(exports, "NodeType", {
-            enumerable: true,
-            get: function get() {
-                return _schema.NodeType;
-            }
-        });
-        Object.defineProperty(exports, "Block", {
-            enumerable: true,
-            get: function get() {
-                return _schema.Block;
-            }
-        });
-        Object.defineProperty(exports, "Textblock", {
-            enumerable: true,
-            get: function get() {
-                return _schema.Textblock;
-            }
-        });
-        Object.defineProperty(exports, "Inline", {
-            enumerable: true,
-            get: function get() {
-                return _schema.Inline;
-            }
-        });
-        Object.defineProperty(exports, "Text", {
-            enumerable: true,
-            get: function get() {
-                return _schema.Text;
-            }
-        });
-        Object.defineProperty(exports, "MarkType", {
-            enumerable: true,
-            get: function get() {
-                return _schema.MarkType;
-            }
-        });
-        Object.defineProperty(exports, "Attribute", {
-            enumerable: true,
-            get: function get() {
-                return _schema.Attribute;
-            }
-        });
-        Object.defineProperty(exports, "NodeKind", {
-            enumerable: true,
-            get: function get() {
-                return _schema.NodeKind;
-            }
-        });
-        var _defaultschema = $__require('3a');
-        Object.defineProperty(exports, "defaultSchema", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.defaultSchema;
-            }
-        });
-        Object.defineProperty(exports, "Doc", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.Doc;
-            }
-        });
-        Object.defineProperty(exports, "BlockQuote", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.BlockQuote;
-            }
-        });
-        Object.defineProperty(exports, "OrderedList", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.OrderedList;
-            }
-        });
-        Object.defineProperty(exports, "BulletList", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.BulletList;
-            }
-        });
-        Object.defineProperty(exports, "ListItem", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.ListItem;
-            }
-        });
-        Object.defineProperty(exports, "HorizontalRule", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.HorizontalRule;
-            }
-        });
-        Object.defineProperty(exports, "Paragraph", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.Paragraph;
-            }
-        });
-        Object.defineProperty(exports, "Heading", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.Heading;
-            }
-        });
-        Object.defineProperty(exports, "CodeBlock", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.CodeBlock;
-            }
-        });
-        Object.defineProperty(exports, "Image", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.Image;
-            }
-        });
-        Object.defineProperty(exports, "HardBreak", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.HardBreak;
-            }
-        });
-        Object.defineProperty(exports, "CodeMark", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.CodeMark;
-            }
-        });
-        Object.defineProperty(exports, "EmMark", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.EmMark;
-            }
-        });
-        Object.defineProperty(exports, "StrongMark", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.StrongMark;
-            }
-        });
-        Object.defineProperty(exports, "LinkMark", {
-            enumerable: true,
-            get: function get() {
-                return _defaultschema.LinkMark;
-            }
-        });
-        var _diff = $__require('3b');
-        Object.defineProperty(exports, "findDiffStart", {
-            enumerable: true,
-            get: function get() {
-                return _diff.findDiffStart;
-            }
-        });
-        Object.defineProperty(exports, "findDiffEnd", {
-            enumerable: true,
-            get: function get() {
-                return _diff.findDiffEnd;
-            }
-        });
-        return module.exports;
-    });
-
-    $__System.registerDynamic("31", [], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.serializeTo = serializeTo;
-        exports.knownTarget = knownTarget;
-        exports.defineTarget = defineTarget;
-        exports.parseFrom = parseFrom;
-        exports.knownSource = knownSource;
-        exports.defineSource = defineSource;
-        var serializers = Object.create(null);
-        function serializeTo(doc, format, options) {
-            var converter = serializers[format];
-            if (!converter)
-                throw new RangeError("Target format " + format + " not defined");
-            return converter(doc, options);
-        }
-        function knownTarget(format) {
-            return !!serializers[format];
-        }
-        function defineTarget(format, func) {
-            serializers[format] = func;
-        }
-        defineTarget("json", function(doc) {
-            return doc.toJSON();
-        });
-        var parsers = Object.create(null);
-        function parseFrom(schema, value, format, options) {
-            var converter = parsers[format];
-            if (!converter)
-                throw new RangeError("Source format " + format + " not defined");
-            return converter(schema, value, options);
-        }
-        function knownSource(format) {
-            return !!parsers[format];
-        }
-        function defineSource(format, func) {
-            parsers[format] = func;
-        }
-        defineSource("json", function(schema, json) {
-            return schema.nodeFromJSON(json);
-        });
-        return module.exports;
-    });
-
-    $__System.registerDynamic("3c", ["6", "31"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.toText = toText;
-        var _model = $__require('6');
-        var _register = $__require('31');
-        function serializeFragment(fragment) {
-            var accum = "";
-            fragment.forEach(function(child) {
-                return accum += child.type.serializeText(child);
-            });
-            return accum;
-        }
-        _model.Block.prototype.serializeText = function(node) {
-            return serializeFragment(node.content);
-        };
-        _model.Textblock.prototype.serializeText = function(node) {
-            var text = _model.Block.prototype.serializeText(node);
-            return text && text + "\n\n";
-        };
-        _model.Inline.prototype.serializeText = function() {
-            return "";
-        };
-        _model.HardBreak.prototype.serializeText = function() {
-            return "\n";
-        };
-        _model.Text.prototype.serializeText = function(node) {
-            return node.text;
-        };
-        function toText(content) {
-            return serializeFragment(content).trim();
-        }
-        (0, _register.defineTarget)("text", toText);
-        return module.exports;
-    });
-
-    $__System.registerDynamic("f", ["31", "30", "32", "33", "3c"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        var _register = $__require('31');
-        Object.defineProperty(exports, "serializeTo", {
-            enumerable: true,
-            get: function get() {
-                return _register.serializeTo;
-            }
-        });
-        Object.defineProperty(exports, "knownTarget", {
-            enumerable: true,
-            get: function get() {
-                return _register.knownTarget;
-            }
-        });
-        Object.defineProperty(exports, "defineTarget", {
-            enumerable: true,
-            get: function get() {
-                return _register.defineTarget;
-            }
-        });
-        Object.defineProperty(exports, "parseFrom", {
-            enumerable: true,
-            get: function get() {
-                return _register.parseFrom;
-            }
-        });
-        Object.defineProperty(exports, "knownSource", {
-            enumerable: true,
-            get: function get() {
-                return _register.knownSource;
-            }
-        });
-        Object.defineProperty(exports, "defineSource", {
-            enumerable: true,
-            get: function get() {
-                return _register.defineSource;
-            }
-        });
-        var _from_dom = $__require('30');
-        Object.defineProperty(exports, "fromDOM", {
-            enumerable: true,
-            get: function get() {
-                return _from_dom.fromDOM;
-            }
-        });
-        Object.defineProperty(exports, "fromHTML", {
-            enumerable: true,
-            get: function get() {
-                return _from_dom.fromHTML;
-            }
-        });
-        var _to_dom = $__require('32');
-        Object.defineProperty(exports, "toDOM", {
-            enumerable: true,
-            get: function get() {
-                return _to_dom.toDOM;
-            }
-        });
-        Object.defineProperty(exports, "toHTML", {
-            enumerable: true,
-            get: function get() {
-                return _to_dom.toHTML;
-            }
-        });
-        Object.defineProperty(exports, "nodeToDOM", {
-            enumerable: true,
-            get: function get() {
-                return _to_dom.nodeToDOM;
-            }
-        });
-        var _from_text = $__require('33');
-        Object.defineProperty(exports, "fromText", {
-            enumerable: true,
-            get: function get() {
-                return _from_text.fromText;
-            }
-        });
-        var _to_text = $__require('3c');
-        Object.defineProperty(exports, "toText", {
-            enumerable: true,
-            get: function get() {
-                return _to_text.toText;
-            }
-        });
-        return module.exports;
-    });
-
-    $__System.registerDynamic("3d", ["6", "20", "f"], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        var _model = $__require('6');
-        var _command = $__require('20');
-        var _format = $__require('f');
-        _model.StrongMark.register("command", "set", {
-            derive: true,
-            label: "Set strong"
-        });
-        _model.StrongMark.register("command", "unset", {
-            derive: true,
-            label: "Unset strong"
-        });
-        _model.StrongMark.register("command", "toggle", {
-            derive: true,
-            label: "Toggle strong",
-            menu: {
-                group: "inline",
-                rank: 20,
-                display: {
-                    type: "icon",
-                    width: 805,
-                    height: 1024,
-                    path: "M317 869q42 18 80 18 214 0 214-191 0-65-23-102-15-25-35-42t-38-26-46-14-48-6-54-1q-41 0-57 5 0 30-0 90t-0 90q0 4-0 38t-0 55 2 47 6 38zM309 442q24 4 62 4 46 0 81-7t62-25 42-51 14-81q0-40-16-70t-45-46-61-24-70-8q-28 0-74 7 0 28 2 86t2 86q0 15-0 45t-0 45q0 26 0 39zM0 950l1-53q8-2 48-9t60-15q4-6 7-15t4-19 3-18 1-21 0-19v-37q0-561-12-585-2-4-12-8t-25-6-28-4-27-2-17-1l-2-47q56-1 194-6t213-5q13 0 39 0t38 0q40 0 78 7t73 24 61 40 42 59 16 78q0 29-9 54t-22 41-36 32-41 25-48 22q88 20 146 76t58 141q0 57-20 102t-53 74-78 48-93 27-100 8q-25 0-75-1t-75-1q-60 0-175 6t-132 6z"
-                }
-            },
-            keys: ["Mod-B"]
-        });
-        _model.EmMark.register("command", "set", {
-            derive: true,
-            label: "Add emphasis"
-        });
-        _model.EmMark.register("command", "unset", {
-            derive: true,
-            label: "Remove emphasis"
-        });
-        _model.EmMark.register("command", "toggle", {
-            derive: true,
-            label: "Toggle emphasis",
-            menu: {
-                group: "inline",
-                rank: 21,
-                display: {
-                    type: "icon",
-                    width: 585,
-                    height: 1024,
-                    path: "M0 949l9-48q3-1 46-12t63-21q16-20 23-57 0-4 35-165t65-310 29-169v-14q-13-7-31-10t-39-4-33-3l10-58q18 1 68 3t85 4 68 1q27 0 56-1t69-4 56-3q-2 22-10 50-17 5-58 16t-62 19q-4 10-8 24t-5 22-4 26-3 24q-15 84-50 239t-44 203q-1 5-7 33t-11 51-9 47-3 32l0 10q9 2 105 17-1 25-9 56-6 0-18 0t-18 0q-16 0-49-5t-49-5q-78-1-117-1-29 0-81 5t-69 6z"
-                }
-            },
-            keys: ["Mod-I"]
-        });
-        _model.CodeMark.register("command", "set", {
-            derive: true,
-            label: "Set code style"
-        });
-        _model.CodeMark.register("command", "unset", {
-            derive: true,
-            label: "Remove code style"
-        });
-        _model.CodeMark.register("command", "toggle", {
-            derive: true,
-            label: "Toggle code style",
-            menu: {
-                group: "inline",
-                rank: 22,
-                display: {
-                    type: "icon",
-                    width: 896,
-                    height: 1024,
-                    path: "M608 192l-96 96 224 224-224 224 96 96 288-320-288-320zM288 192l-288 320 288 320 96-96-224-224 224-224-96-96z"
-                }
-            },
-            keys: ["Mod-`"]
-        });
-        var linkIcon = {
-            type: "icon",
-            width: 951,
-            height: 1024,
-            path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
-        };
-        _model.LinkMark.register("command", "unset", {
-            derive: true,
-            label: "Unlink",
-            menu: {
-                group: "inline",
-                rank: 30,
-                display: linkIcon
-            },
-            active: function active() {
-                return true;
-            }
-        });
-        _model.LinkMark.register("command", "set", {
-            derive: {
-                inverseSelect: true,
-                params: [{
-                    label: "Target",
-                    attr: "href"
-                }, {
-                    label: "Title",
-                    attr: "title"
-                }]
-            },
-            label: "Add link",
-            menu: {
-                group: "inline",
-                rank: 30,
-                display: linkIcon
-            }
-        });
-        _model.Image.register("command", "insert", {
-            derive: {params: [{
-                label: "Image URL",
-                attr: "src"
-            }, {
-                label: "Description / alternative text",
-                attr: "alt",
-                prefill: function prefill(pm) {
-                    return (0, _command.selectedNodeAttr)(pm, this, "alt") || (0, _format.toText)(pm.doc.cut(pm.selection.from, pm.selection.to));
-                }
-            }, {
-                label: "Title",
-                attr: "title"
-            }]},
-            label: "Insert image",
-            menu: {
-                group: "insert",
-                rank: 20,
-                display: {
-                    type: "label",
-                    label: "Image"
-                }
-            }
-        });
-        _model.BulletList.register("command", "wrap", {
-            derive: {list: true},
-            label: "Wrap the selection in a bullet list",
-            menu: {
-                group: "block",
-                rank: 40,
-                display: {
-                    type: "icon",
-                    width: 768,
-                    height: 896,
-                    path: "M0 512h128v-128h-128v128zM0 256h128v-128h-128v128zM0 768h128v-128h-128v128zM256 512h512v-128h-512v128zM256 256h512v-128h-512v128zM256 768h512v-128h-512v128z"
-                }
-            },
-            keys: ["Shift-Ctrl-8"]
-        });
-        _model.OrderedList.register("command", "wrap", {
-            derive: {list: true},
-            label: "Wrap the selection in an ordered list",
-            menu: {
-                group: "block",
-                rank: 41,
-                display: {
-                    type: "icon",
-                    width: 768,
-                    height: 896,
-                    path: "M320 512h448v-128h-448v128zM320 768h448v-128h-448v128zM320 128v128h448v-128h-448zM79 384h78v-256h-36l-85 23v50l43-2v185zM189 590c0-36-12-78-96-78-33 0-64 6-83 16l1 66c21-10 42-15 67-15s32 11 32 28c0 26-30 58-110 112v50h192v-67l-91 2c49-30 87-66 87-113l1-1z"
-                }
-            },
-            keys: ["Shift-Ctrl-9"]
-        });
-        _model.BlockQuote.register("command", "wrap", {
-            derive: true,
-            label: "Wrap the selection in a block quote",
-            menu: {
-                group: "block",
-                rank: 45,
-                display: {
-                    type: "icon",
-                    width: 640,
-                    height: 896,
-                    path: "M0 448v256h256v-256h-128c0 0 0-128 128-128v-128c0 0-256 0-256 256zM640 320v-128c0 0-256 0-256 256v256h256v-256h-128c0 0 0-128 128-128z"
-                }
-            },
-            keys: ["Shift-Ctrl-."]
-        });
-        _model.HardBreak.register("command", "insert", {
-            label: "Insert hard break",
-            run: function run(pm) {
-                var _pm$selection = pm.selection;
-                var node = _pm$selection.node;
-                var from = _pm$selection.from;
-                if (node && node.isBlock)
-                    return false;
-                else if (pm.doc.resolve(from).parent.type.isCode)
-                    return pm.tr.typeText("\n").apply(pm.apply.scroll);
-                else
-                    return pm.tr.replaceSelection(this.create()).apply(pm.apply.scroll);
-            },
-            keys: {
-                all: ["Mod-Enter", "Shift-Enter"],
-                mac: ["Ctrl-Enter"]
-            }
-        });
-        _model.ListItem.register("command", "split", {
-            label: "Split the current list item",
-            run: function run(pm) {
-                var _pm$selection2 = pm.selection;
-                var from = _pm$selection2.from;
-                var to = _pm$selection2.to;
-                var node = _pm$selection2.node;
-                var $from = pm.doc.resolve(from);
-                if (node && node.isBlock || $from.depth < 2 || !$from.sameParent(pm.doc.resolve(to)))
-                    return false;
-                var grandParent = $from.node($from.depth - 1);
-                if (grandParent.type != this)
-                    return false;
-                var nextType = to == $from.end($from.depth) ? pm.schema.defaultTextblockType() : null;
-                return pm.tr.delete(from, to).split(from, 2, nextType).apply(pm.apply.scroll);
-            },
-            keys: ["Enter(50)"]
-        });
-        function selectedListItems(pm, type) {
-            var _pm$selection3 = pm.selection;
-            var node = _pm$selection3.node;
-            var from = _pm$selection3.from;
-            var to = _pm$selection3.to;
-            var $from = pm.doc.resolve(from);
-            if (node && node.type == type)
-                return {
-                    from: from,
-                    to: to,
-                    depth: $from.depth + 1
-                };
-            var itemDepth = $from.parent.type == type ? $from.depth : $from.depth > 0 && $from.node($from.depth - 1).type == type ? $from.depth - 1 : null;
-            if (itemDepth == null)
-                return;
-            var $to = pm.doc.resolve(to);
-            if ($from.sameDepth($to) < itemDepth - 1)
-                return null;
             return {
-                from: $from.before(itemDepth),
-                to: $to.after(itemDepth),
-                depth: itemDepth
+                range: range,
+                adjusted: head != range.head || anchor != range.anchor
             };
         }
-        _model.ListItem.register("command", "lift", {
-            label: "Lift the selected list items to an outer list",
-            run: function run(pm) {
-                var selected = selectedListItems(pm, this);
-                if (!selected || selected.depth < 3)
-                    return false;
-                var $to = pm.doc.resolve(pm.selection.to);
-                if ($to.node(selected.depth - 2).type != this)
-                    return false;
-                var itemsAfter = selected.to < $to.end(selected.depth - 1);
-                var tr = pm.tr.splitIfNeeded(selected.to, 2).splitIfNeeded(selected.from, 2);
-                var end = tr.map(selected.to, -1);
-                tr.step("ancestor", tr.map(selected.from), end, {depth: 2});
-                if (itemsAfter)
-                    tr.join(end - 2);
-                return tr.apply(pm.apply.scroll);
-            },
-            keys: ["Mod-[(20)"]
-        });
-        _model.ListItem.register("command", "sink", {
-            label: "Sink the selected list items into an inner list",
-            run: function run(pm) {
-                var selected = selectedListItems(pm, this);
-                if (!selected)
-                    return false;
-                var $from = pm.doc.resolve(pm.selection.from),
-                    startIndex = $from.index(selected.depth - 1);
-                if (startIndex == 0)
-                    return false;
-                var parent = $from.node(selected.depth - 1),
-                    before = parent.child(startIndex - 1);
-                var tr = pm.tr.wrap(selected.from, selected.to, parent.type, parent.attrs);
-                if (before.type == this)
-                    tr.join(selected.from, before.lastChild && before.lastChild.type == parent.type ? 2 : 1);
-                return tr.apply(pm.apply.scroll);
-            },
-            keys: ["Mod-](20)"]
-        });
-        var _loop = function _loop(i) {
-            _model.Heading.registerComputed("command", "make" + i, function(type) {
-                var attrs = {level: String(i)};
-                if (i <= type.maxLevel)
-                    return {
-                        derive: {
-                            name: "make",
-                            attrs: attrs
-                        },
-                        label: "Change to heading " + i,
-                        keys: i <= 6 && ["Shift-Ctrl-" + i],
-                        menu: {
-                            group: "textblockHeading",
-                            rank: 30 + i,
-                            display: {
-                                type: "label",
-                                label: "Level " + i
-                            },
-                            activeDisplay: "Head " + i
-                        }
-                    };
-            });
-        };
-        for (var i = 1; i <= 10; i++) {
-            _loop(i);
+        function hasFocus(pm) {
+            if (document.activeElement != pm.content)
+                return false;
+            var sel = window.getSelection();
+            return sel.rangeCount && contains(pm.content, sel.anchorNode);
         }
-        _model.Paragraph.register("command", "make", {
-            derive: true,
-            label: "Change to paragraph",
-            keys: ["Shift-Ctrl-0"],
-            menu: {
-                group: "textblock",
-                rank: 10,
-                display: {
-                    type: "label",
-                    label: "Plain"
-                },
-                activeDisplay: "Plain"
+        exports.hasFocus = hasFocus;
+        function findSelectionIn(doc, node, pos, index, dir, text) {
+            if (node.isTextblock)
+                return new TextSelection(doc.resolve(pos));
+            for (var i = index - (dir > 0 ? 0 : 1); dir > 0 ? i < node.childCount : i >= 0; i += dir) {
+                var child = node.child(i);
+                if (!child.type.isLeaf) {
+                    var inner = findSelectionIn(doc, child, pos + dir, dir < 0 ? child.childCount : 0, dir, text);
+                    if (inner)
+                        return inner;
+                } else if (!text && child.type.selectable) {
+                    return new NodeSelection(doc.resolve(pos - (dir < 0 ? child.nodeSize : 0)));
+                }
+                pos += child.nodeSize * dir;
             }
-        });
-        _model.CodeBlock.register("command", "make", {
-            derive: true,
-            label: "Change to code block",
-            keys: ["Shift-Ctrl-\\"],
-            menu: {
-                group: "textblock",
-                rank: 20,
-                display: {
-                    type: "label",
-                    label: "Code"
-                },
-                activeDisplay: "Code"
+        }
+        function findSelectionFrom($pos, dir, text) {
+            var inner = $pos.parent.isTextblock ? new TextSelection($pos) : findSelectionIn($pos.node(0), $pos.parent, $pos.pos, $pos.index(), dir, text);
+            if (inner)
+                return inner;
+            for (var depth = $pos.depth - 1; depth >= 0; depth--) {
+                var found = dir < 0 ? findSelectionIn($pos.node(0), $pos.node(depth), $pos.before(depth + 1), $pos.index(depth), dir, text) : findSelectionIn($pos.node(0), $pos.node(depth), $pos.after(depth + 1), $pos.index(depth) + 1, dir, text);
+                if (found)
+                    return found;
             }
-        });
-        _model.HorizontalRule.register("command", "insert", {
-            derive: true,
-            label: "Insert horizontal rule",
-            keys: ["Mod-Shift--"],
-            menu: {
-                group: "insert",
-                rank: 70,
-                display: {
-                    type: "label",
-                    label: "Horizontal rule"
+        }
+        exports.findSelectionFrom = findSelectionFrom;
+        function findSelectionNear($pos) {
+            var bias = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+            var text = arguments[2];
+            var result = findSelectionFrom($pos, bias, text) || findSelectionFrom($pos, -bias, text);
+            if (!result)
+                throw new RangeError("Searching for selection in invalid document " + $pos.node(0));
+            return result;
+        }
+        exports.findSelectionNear = findSelectionNear;
+        function findSelectionAtStart(doc, text) {
+            return findSelectionIn(doc, doc, 0, 0, 1, text);
+        }
+        exports.findSelectionAtStart = findSelectionAtStart;
+        function findSelectionAtEnd(doc, text) {
+            return findSelectionIn(doc, doc, doc.content.size, doc.childCount, -1, text);
+        }
+        exports.findSelectionAtEnd = findSelectionAtEnd;
+        function verticalMotionLeavesTextblock(pm, $pos, dir) {
+            var dom = $pos.depth ? DOMAfterPos(pm, $pos.before()) : pm.content;
+            var coords = coordsAtPos(pm, $pos.pos);
+            for (var child = dom.firstChild; child; child = child.nextSibling) {
+                if (child.nodeType != 1)
+                    continue;
+                var boxes = child.getClientRects();
+                for (var i = 0; i < boxes.length; i++) {
+                    var box = boxes[i];
+                    if (dir < 0 ? box.bottom < coords.top : box.top > coords.bottom)
+                        return false;
                 }
             }
-        });
+            return true;
+        }
+        exports.verticalMotionLeavesTextblock = verticalMotionLeavesTextblock;
         return module.exports;
     });
 
-    $__System.registerDynamic("3e", [], true, function($__require, exports, module) {
+    $__System.registerDynamic("20", ["19", "18", "12", "37", "15"], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
+        var _require = $__require('19');
+        var joinPoint = _require.joinPoint;
+        var joinable = _require.joinable;
+        var findWrapping = _require.findWrapping;
+        var liftTarget = _require.liftTarget;
+        var canSplit = _require.canSplit;
+        var ReplaceAroundStep = _require.ReplaceAroundStep;
+        var _require2 = $__require('18');
+        var Slice = _require2.Slice;
+        var Fragment = _require2.Fragment;
+        var NodeRange = _require2.NodeRange;
+        var browser = $__require('12');
+        var _require3 = $__require('37');
+        var charCategory = _require3.charCategory;
+        var isExtendingChar = _require3.isExtendingChar;
+        var _require4 = $__require('15');
+        var findSelectionFrom = _require4.findSelectionFrom;
+        var TextSelection = _require4.TextSelection;
+        var NodeSelection = _require4.NodeSelection;
+        var commands = Object.create(null);
+        exports.commands = commands;
+        commands.chainCommands = function() {
+            for (var _len = arguments.length,
+                     commands = Array(_len),
+                     _key = 0; _key < _len; _key++) {
+                commands[_key] = arguments[_key];
+            }
+            return function(pm, apply) {
+                for (var i = 0; i < commands.length; i++) {
+                    var val = commands[i](pm, apply);
+                    if (val !== false)
+                        return val;
+                }
+                return false;
+            };
+        };
+        commands.deleteSelection = function(pm, apply) {
+            if (pm.selection.empty)
+                return false;
+            if (apply !== false)
+                pm.tr.replaceSelection().applyAndScroll();
+            return true;
+        };
+        commands.joinBackward = function(pm, apply) {
+            var _pm$selection = pm.selection;
+            var $head = _pm$selection.$head;
+            var empty = _pm$selection.empty;
+            if (!empty)
+                return false;
+            if ($head.parentOffset > 0)
+                return false;
+            var before = void 0,
+                cut = void 0;
+            for (var i = $head.depth - 1; !before && i >= 0; i--) {
+                if ($head.index(i) > 0) {
+                    cut = $head.before(i + 1);
+                    before = $head.node(i).child($head.index(i) - 1);
+                }
+            }
+            if (!before) {
+                var range = $head.blockRange(),
+                    target = range && liftTarget(range);
+                if (target == null)
+                    return false;
+                if (apply !== false)
+                    pm.tr.lift(range, target).applyAndScroll();
+                return true;
+            }
+            if (before.type.isLeaf && before.type.selectable && $head.parent.content.size == 0) {
+                if (apply !== false) {
+                    var tr = pm.tr.delete(cut, cut + $head.parent.nodeSize);
+                    tr.setSelection(new NodeSelection(tr.doc.resolve(cut - before.nodeSize)));
+                    tr.applyAndScroll();
+                }
+                return true;
+            }
+            if (before.type.isLeaf) {
+                if (apply !== false)
+                    pm.tr.delete(cut - before.nodeSize, cut).applyAndScroll();
+                return true;
+            }
+            return deleteBarrier(pm, cut, apply);
+        };
+        commands.joinForward = function(pm, apply) {
+            var _pm$selection2 = pm.selection;
+            var $head = _pm$selection2.$head;
+            var empty = _pm$selection2.empty;
+            if (!empty || $head.parentOffset < $head.parent.content.size)
+                return false;
+            var after = void 0,
+                cut = void 0;
+            for (var i = $head.depth - 1; !after && i >= 0; i--) {
+                var parent = $head.node(i);
+                if ($head.index(i) + 1 < parent.childCount) {
+                    after = parent.child($head.index(i) + 1);
+                    cut = $head.after(i + 1);
+                }
+            }
+            if (!after)
+                return false;
+            if (after.type.isLeaf) {
+                if (apply !== false)
+                    pm.tr.delete(cut, cut + after.nodeSize).applyAndScroll();
+                return true;
+            } else {
+                return deleteBarrier(pm, cut, true);
+            }
+        };
+        commands.deleteCharBefore = function(pm, apply) {
+            if (browser.ios)
+                return false;
+            var _pm$selection3 = pm.selection;
+            var $head = _pm$selection3.$head;
+            var empty = _pm$selection3.empty;
+            if (!empty || $head.parentOffset == 0)
+                return false;
+            if (apply !== false) {
+                var dest = moveBackward($head, "char");
+                pm.tr.delete(dest, $head.pos).applyAndScroll();
+            }
+            return true;
+        };
+        commands.deleteWordBefore = function(pm, apply) {
+            var _pm$selection4 = pm.selection;
+            var $head = _pm$selection4.$head;
+            var empty = _pm$selection4.empty;
+            if (!empty || $head.parentOffset == 0)
+                return false;
+            if (apply !== false) {
+                var dest = moveBackward($head, "word");
+                pm.tr.delete(dest, $head.pos).applyAndScroll();
+            }
+            return true;
+        };
+        commands.deleteCharAfter = function(pm, apply) {
+            var _pm$selection5 = pm.selection;
+            var $head = _pm$selection5.$head;
+            var empty = _pm$selection5.empty;
+            if (!empty || $head.parentOffset == $head.parent.content.size)
+                return false;
+            if (apply !== false) {
+                var dest = moveForward($head, "char");
+                pm.tr.delete($head.pos, dest).applyAndScroll();
+            }
+            return true;
+        };
+        commands.deleteWordAfter = function(pm, apply) {
+            var _pm$selection6 = pm.selection;
+            var $head = _pm$selection6.$head;
+            var empty = _pm$selection6.empty;
+            if (!empty || $head.parentOffset == $head.parent.content.size)
+                return false;
+            if (apply !== false) {
+                var dest = moveForward($head, "word");
+                pm.tr.delete($head.pos, dest).applyAndScroll();
+            }
+            return true;
+        };
+        commands.joinUp = function(pm, apply) {
+            var _pm$selection7 = pm.selection;
+            var node = _pm$selection7.node;
+            var from = _pm$selection7.from;
+            var point = void 0;
+            if (node) {
+                if (node.isTextblock || !joinable(pm.doc, from))
+                    return false;
+                point = from;
+            } else {
+                point = joinPoint(pm.doc, from, -1);
+                if (point == null)
+                    return false;
+            }
+            if (apply !== false) {
+                var tr = pm.tr.join(point);
+                if (pm.selection.node)
+                    tr.setSelection(new NodeSelection(tr.doc.resolve(point - pm.doc.resolve(point).nodeBefore.nodeSize)));
+                tr.applyAndScroll();
+            }
+            return true;
+        };
+        commands.joinDown = function(pm, apply) {
+            var node = pm.selection.node,
+                nodeAt = pm.selection.from;
+            var point = joinPointBelow(pm);
+            if (!point)
+                return false;
+            if (apply !== false) {
+                var tr = pm.tr.join(point);
+                if (node)
+                    tr.setSelection(new NodeSelection(tr.doc.resolve(nodeAt)));
+                tr.applyAndScroll();
+            }
+            return true;
+        };
+        commands.lift = function(pm, apply) {
+            var _pm$selection8 = pm.selection;
+            var $from = _pm$selection8.$from;
+            var $to = _pm$selection8.$to;
+            var range = $from.blockRange($to),
+                target = range && liftTarget(range);
+            if (target == null)
+                return false;
+            if (apply !== false)
+                pm.tr.lift(range, target).applyAndScroll();
+            return true;
+        };
+        commands.newlineInCode = function(pm, apply) {
+            var _pm$selection9 = pm.selection;
+            var $from = _pm$selection9.$from;
+            var $to = _pm$selection9.$to;
+            var node = _pm$selection9.node;
+            if (node)
+                return false;
+            if (!$from.parent.type.isCode || $to.pos >= $from.end())
+                return false;
+            if (apply !== false)
+                pm.tr.typeText("\n").applyAndScroll();
+            return true;
+        };
+        commands.createParagraphNear = function(pm, apply) {
+            var _pm$selection10 = pm.selection;
+            var $from = _pm$selection10.$from;
+            var $to = _pm$selection10.$to;
+            var node = _pm$selection10.node;
+            if (!node || !node.isBlock)
+                return false;
+            var type = $from.parent.defaultContentType($to.indexAfter());
+            if (!type || !type.isTextblock)
+                return false;
+            if (apply !== false) {
+                var side = ($from.parentOffset ? $to : $from).pos;
+                var tr = pm.tr.insert(side, type.createAndFill());
+                tr.setSelection(new TextSelection(tr.doc.resolve(side + 1)));
+                tr.applyAndScroll();
+            }
+            return true;
+        };
+        commands.liftEmptyBlock = function(pm, apply) {
+            var _pm$selection11 = pm.selection;
+            var $head = _pm$selection11.$head;
+            var empty = _pm$selection11.empty;
+            if (!empty || $head.parent.content.size)
+                return false;
+            if ($head.depth > 1 && $head.after() != $head.end(-1)) {
+                var before = $head.before();
+                if (canSplit(pm.doc, before)) {
+                    if (apply !== false)
+                        pm.tr.split(before).applyAndScroll();
+                    return true;
+                }
+            }
+            var range = $head.blockRange(),
+                target = range && liftTarget(range);
+            if (target == null)
+                return false;
+            if (apply !== false)
+                pm.tr.lift(range, target).applyAndScroll();
+            return true;
+        };
+        commands.splitBlock = function(pm, apply) {
+            var _pm$selection12 = pm.selection;
+            var $from = _pm$selection12.$from;
+            var $to = _pm$selection12.$to;
+            var node = _pm$selection12.node;
+            if (node && node.isBlock) {
+                if (!$from.parentOffset || !canSplit(pm.doc, $from.pos))
+                    return false;
+                if (apply !== false)
+                    pm.tr.split($from.pos).applyAndScroll();
+                return true;
+            } else {
+                if (apply === false)
+                    return true;
+                var atEnd = $to.parentOffset == $to.parent.content.size;
+                var tr = pm.tr.delete($from.pos, $to.pos);
+                var deflt = $from.depth == 0 ? null : $from.node(-1).defaultContentType($from.indexAfter(-1));
+                var type = atEnd ? deflt : null;
+                var can = canSplit(tr.doc, $from.pos, 1, type);
+                if (!type && !can && canSplit(tr.doc, $from.pos, 1, deflt)) {
+                    type = deflt;
+                    can = true;
+                }
+                if (can) {
+                    tr.split($from.pos, 1, type);
+                    if (!atEnd && !$from.parentOffset && $from.parent.type != deflt)
+                        tr.setNodeType($from.before(), deflt);
+                }
+                tr.applyAndScroll();
+                return true;
+            }
+        };
+        commands.selectParentNode = function(pm, apply) {
+            var sel = pm.selection,
+                pos = void 0;
+            if (sel.node) {
+                if (!sel.$from.depth)
+                    return false;
+                pos = sel.$from.before();
+            } else {
+                var same = sel.$head.sameDepth(sel.$anchor);
+                if (same == 0)
+                    return false;
+                pos = sel.$head.before(same);
+            }
+            if (apply !== false)
+                pm.setNodeSelection(pos);
+            return true;
+        };
+        commands.undo = function(pm, apply) {
+            if (pm.history.undoDepth == 0)
+                return false;
+            if (apply !== false) {
+                pm.scrollIntoView();
+                pm.history.undo();
+            }
+            return true;
+        };
+        commands.redo = function(pm, apply) {
+            if (pm.history.redoDepth == 0)
+                return false;
+            if (apply !== false) {
+                pm.scrollIntoView();
+                pm.history.redo();
+            }
+            return true;
+        };
+        function deleteBarrier(pm, cut, apply) {
+            var $cut = pm.doc.resolve(cut),
+                before = $cut.nodeBefore,
+                after = $cut.nodeAfter,
+                conn = void 0;
+            if (joinable(pm.doc, cut)) {
+                if (apply === false)
+                    return true;
+                var tr = pm.tr.join(cut);
+                if (tr.steps.length && before.content.size == 0 && !before.sameMarkup(after) && $cut.parent.canReplace($cut.index() - 1, $cut.index()))
+                    tr.setNodeType(cut - before.nodeSize, after.type, after.attrs);
+                tr.applyAndScroll();
+                return true;
+            } else if (after.isTextblock && (conn = before.contentMatchAt($cut.index()).findWrapping(after.type, after.attrs))) {
+                if (apply === false)
+                    return true;
+                var end = cut + after.nodeSize,
+                    wrap = Fragment.empty;
+                for (var i = conn.length - 1; i >= 0; i--) {
+                    wrap = Fragment.from(conn[i].type.create(conn[i].attrs, wrap));
+                }
+                wrap = Fragment.from(before.copy(wrap));
+                pm.tr.step(new ReplaceAroundStep(cut - 1, end, cut, end, new Slice(wrap, 1, 0), conn.length, true)).join(end + 2 * conn.length, 1, true).applyAndScroll();
+                return true;
+            } else {
+                var selAfter = findSelectionFrom($cut, 1);
+                var range = selAfter.$from.blockRange(selAfter.$to),
+                    target = range && liftTarget(range);
+                if (target == null)
+                    return false;
+                if (apply !== false)
+                    pm.tr.lift(range, target).applyAndScroll();
+                return true;
+            }
+        }
+        function moveBackward($pos, by) {
+            if (by != "char" && by != "word")
+                throw new RangeError("Unknown motion unit: " + by);
+            var parent = $pos.parent,
+                offset = $pos.parentOffset;
+            var cat = null,
+                counted = 0,
+                pos = $pos.pos;
+            for (; ; ) {
+                if (offset == 0)
+                    return pos;
+                var _parent$childBefore = parent.childBefore(offset);
+                var start = _parent$childBefore.offset;
+                var node = _parent$childBefore.node;
+                if (!node)
+                    return pos;
+                if (!node.isText)
+                    return cat ? pos : pos - 1;
+                if (by == "char") {
+                    for (var i = offset - start; i > 0; i--) {
+                        if (!isExtendingChar(node.text.charAt(i - 1)))
+                            return pos - 1;
+                        offset--;
+                        pos--;
+                    }
+                } else if (by == "word") {
+                    for (var _i = offset - start; _i > 0; _i--) {
+                        var nextCharCat = charCategory(node.text.charAt(_i - 1));
+                        if (cat == null || counted == 1 && cat == "space")
+                            cat = nextCharCat;
+                        else if (cat != nextCharCat)
+                            return pos;
+                        offset--;
+                        pos--;
+                        counted++;
+                    }
+                }
+            }
+        }
+        function moveForward($pos, by) {
+            if (by != "char" && by != "word")
+                throw new RangeError("Unknown motion unit: " + by);
+            var parent = $pos.parent,
+                offset = $pos.parentOffset,
+                pos = $pos.pos;
+            var cat = null,
+                counted = 0;
+            for (; ; ) {
+                if (offset == parent.content.size)
+                    return pos;
+                var _parent$childAfter = parent.childAfter(offset);
+                var start = _parent$childAfter.offset;
+                var node = _parent$childAfter.node;
+                if (!node)
+                    return pos;
+                if (!node.isText)
+                    return cat ? pos : pos + 1;
+                if (by == "char") {
+                    for (var i = offset - start; i < node.text.length; i++) {
+                        if (!isExtendingChar(node.text.charAt(i + 1)))
+                            return pos + 1;
+                        offset++;
+                        pos++;
+                    }
+                } else if (by == "word") {
+                    for (var _i2 = offset - start; _i2 < node.text.length; _i2++) {
+                        var nextCharCat = charCategory(node.text.charAt(_i2));
+                        if (cat == null || counted == 1 && cat == "space")
+                            cat = nextCharCat;
+                        else if (cat != nextCharCat)
+                            return pos;
+                        offset++;
+                        pos++;
+                        counted++;
+                    }
+                }
+            }
+        }
+        function joinPointBelow(pm) {
+            var _pm$selection13 = pm.selection;
+            var node = _pm$selection13.node;
+            var to = _pm$selection13.to;
+            if (node)
+                return joinable(pm.doc, to) ? to : null;
+            else
+                return joinPoint(pm.doc, to, 1);
+        }
+        commands.wrapIn = function(nodeType, attrs) {
+            return function(pm, apply) {
+                var _pm$selection14 = pm.selection;
+                var $from = _pm$selection14.$from;
+                var $to = _pm$selection14.$to;
+                var range = $from.blockRange($to),
+                    wrapping = range && findWrapping(range, nodeType, attrs);
+                if (!wrapping)
+                    return false;
+                if (apply !== false)
+                    pm.tr.wrap(range, wrapping).applyAndScroll();
+                return true;
+            };
+        };
+        commands.setBlockType = function(nodeType, attrs) {
+            return function(pm, apply) {
+                var _pm$selection15 = pm.selection;
+                var $from = _pm$selection15.$from;
+                var $to = _pm$selection15.$to;
+                var node = _pm$selection15.node;
+                var depth = void 0;
+                if (node) {
+                    depth = $from.depth;
+                } else {
+                    if (!$from.depth || $to.pos > $from.end())
+                        return false;
+                    depth = $from.depth - 1;
+                }
+                var target = node || $from.parent;
+                if (!target.isTextblock || target.hasMarkup(nodeType, attrs))
+                    return false;
+                var index = $from.index(depth);
+                if (!$from.node(depth).canReplaceWith(index, index + 1, nodeType))
+                    return false;
+                if (apply !== false) {
+                    var where = $from.before(depth + 1);
+                    pm.tr.clearMarkupFor(where, nodeType, attrs).setNodeType(where, nodeType, attrs).applyAndScroll();
+                }
+                return true;
+            };
+        };
+        commands.wrapInList = function(nodeType, attrs) {
+            return function(pm, apply) {
+                var _pm$selection16 = pm.selection;
+                var $from = _pm$selection16.$from;
+                var $to = _pm$selection16.$to;
+                var range = $from.blockRange($to),
+                    doJoin = false,
+                    outerRange = range;
+                if (range.depth >= 2 && $from.node(range.depth - 1).type.compatibleContent(nodeType) && range.startIndex == 0) {
+                    if ($from.index(range.depth - 1) == 0)
+                        return false;
+                    var $insert = pm.doc.resolve(range.start - 2);
+                    outerRange = new NodeRange($insert, $insert, range.depth);
+                    if (range.endIndex < range.parent.childCount)
+                        range = new NodeRange($from, pm.doc.resolve($to.end(range.depth)), range.depth);
+                    doJoin = true;
+                }
+                var wrap = findWrapping(outerRange, nodeType, attrs, range);
+                if (!wrap)
+                    return false;
+                if (apply !== false)
+                    doWrapInList(pm.tr, range, wrap, doJoin, nodeType).applyAndScroll();
+                return true;
+            };
+        };
+        function doWrapInList(tr, range, wrappers, joinBefore, nodeType) {
+            var content = Fragment.empty;
+            for (var i = wrappers.length - 1; i >= 0; i--) {
+                content = Fragment.from(wrappers[i].type.create(wrappers[i].attrs, content));
+            }
+            tr.step(new ReplaceAroundStep(range.start - (joinBefore ? 2 : 0), range.end, range.start, range.end, new Slice(content, 0, 0), wrappers.length, true));
+            var found = 0;
+            for (var _i3 = 0; _i3 < wrappers.length; _i3++) {
+                if (wrappers[_i3].type == nodeType)
+                    found = _i3 + 1;
+            }
+            var splitDepth = wrappers.length - found;
+            var splitPos = range.start + wrappers.length - (joinBefore ? 2 : 0),
+                parent = range.parent;
+            for (var _i4 = range.startIndex,
+                     e = range.endIndex,
+                     first = true; _i4 < e; _i4++, first = false) {
+                if (!first && canSplit(tr.doc, splitPos, splitDepth))
+                    tr.split(splitPos, splitDepth);
+                splitPos += parent.child(_i4).nodeSize + (first ? 0 : 2 * splitDepth);
+            }
+            return tr;
+        }
+        commands.splitListItem = function(nodeType) {
+            return function(pm) {
+                var _pm$selection17 = pm.selection;
+                var $from = _pm$selection17.$from;
+                var $to = _pm$selection17.$to;
+                var node = _pm$selection17.node;
+                if (node && node.isBlock || !$from.parent.content.size || $from.depth < 2 || !$from.sameParent($to))
+                    return false;
+                var grandParent = $from.node(-1);
+                if (grandParent.type != nodeType)
+                    return false;
+                var nextType = $to.pos == $from.end() ? grandParent.defaultContentType($from.indexAfter(-1)) : null;
+                var tr = pm.tr.delete($from.pos, $to.pos);
+                if (!canSplit(tr.doc, $from.pos, 2, nextType))
+                    return false;
+                tr.split($from.pos, 2, nextType).applyAndScroll();
+                return true;
+            };
+        };
+        commands.liftListItem = function(nodeType) {
+            return function(pm, apply) {
+                var _pm$selection18 = pm.selection;
+                var $from = _pm$selection18.$from;
+                var $to = _pm$selection18.$to;
+                var range = $from.blockRange($to, function(node) {
+                    return node.childCount && node.firstChild.type == nodeType;
+                });
+                if (!range || range.depth < 2 || $from.node(range.depth - 1).type != nodeType)
+                    return false;
+                if (apply !== false) {
+                    var tr = pm.tr,
+                        end = range.end,
+                        endOfList = $to.end(range.depth);
+                    if (end < endOfList) {
+                        tr.step(new ReplaceAroundStep(end - 1, endOfList, end, endOfList, new Slice(Fragment.from(nodeType.create(null, range.parent.copy())), 1, 0), 1, true));
+                        range = new NodeRange(tr.doc.resolveNoCache($from.pos), tr.doc.resolveNoCache(endOfList), range.depth);
+                    }
+                    tr.lift(range, liftTarget(range)).applyAndScroll();
+                }
+                return true;
+            };
+        };
+        commands.sinkListItem = function(nodeType) {
+            return function(pm, apply) {
+                var _pm$selection19 = pm.selection;
+                var $from = _pm$selection19.$from;
+                var $to = _pm$selection19.$to;
+                var range = $from.blockRange($to, function(node) {
+                    return node.childCount && node.firstChild.type == nodeType;
+                });
+                if (!range)
+                    return false;
+                var startIndex = range.startIndex;
+                if (startIndex == 0)
+                    return false;
+                var parent = range.parent,
+                    nodeBefore = parent.child(startIndex - 1);
+                if (nodeBefore.type != nodeType)
+                    return false;
+                if (apply !== false) {
+                    var nestedBefore = nodeBefore.lastChild && nodeBefore.lastChild.type == parent.type;
+                    var inner = Fragment.from(nestedBefore ? nodeType.create() : null);
+                    var slice = new Slice(Fragment.from(nodeType.create(null, Fragment.from(parent.copy(inner)))), nestedBefore ? 3 : 1, 0);
+                    var before = range.start,
+                        after = range.end;
+                    pm.tr.step(new ReplaceAroundStep(before - (nestedBefore ? 3 : 1), after, before, after, slice, 1, true)).applyAndScroll();
+                }
+                return true;
+            };
+        };
+        function markApplies(doc, from, to, type) {
+            var can = false;
+            doc.nodesBetween(from, to, function(node) {
+                if (can)
+                    return false;
+                can = node.isTextblock && node.contentMatchAt(0).allowsMark(type);
+            });
+            return can;
+        }
+        commands.toggleMark = function(markType, attrs) {
+            return function(pm, apply) {
+                var _pm$selection20 = pm.selection;
+                var empty = _pm$selection20.empty;
+                var from = _pm$selection20.from;
+                var to = _pm$selection20.to;
+                if (!markApplies(pm.doc, from, to, markType))
+                    return false;
+                if (apply === false)
+                    return true;
+                if (empty) {
+                    if (markType.isInSet(pm.activeMarks()))
+                        pm.removeActiveMark(markType);
+                    else
+                        pm.addActiveMark(markType.create(attrs));
+                } else {
+                    if (pm.doc.rangeHasMark(from, to, markType))
+                        pm.tr.removeMark(from, to, markType).applyAndScroll();
+                    else
+                        pm.tr.addMark(from, to, markType.create(attrs)).applyAndScroll();
+                }
+                return true;
+            };
+        };
+        return module.exports;
+    });
+
+    $__System.registerDynamic("38", [], true, function($__require, exports, module) {
         ;
         var define,
             global = this,
@@ -10838,7 +10540,7 @@
                         alt = true;
                     else if (/^(c|ctrl|control)$/i.test(mod))
                         ctrl = true;
-                    else if (/^s(hift)$/i.test(mod))
+                    else if (/^s(hift)?$/i.test(mod))
                         shift = true;
                     else if (/^mod$/i.test(mod)) {
                         if (mac)
@@ -10862,9 +10564,7 @@
                 this.options = options || {};
                 this.bindings = Object.create(null);
                 if (keys)
-                    for (var keyname in keys)
-                        if (Object.prototype.hasOwnProperty.call(keys, keyname))
-                            this.addBinding(keyname, keys[keyname]);
+                    this.addBindings(keys);
             }
             Keymap.prototype = {
                 normalize: function(name) {
@@ -10881,6 +10581,11 @@
                         else if (prev != val)
                             throw new Error("Inconsistent bindings for " + name);
                     }
+                },
+                addBindings: function(bindings) {
+                    for (var keyname in bindings)
+                        if (Object.prototype.hasOwnProperty.call(bindings, keyname))
+                            this.addBinding(keyname, bindings[keyname]);
                 },
                 removeBinding: function(keyname) {
                     var keys = this.normalize(keyname);
@@ -10902,6 +10607,11 @@
                 lookup: function(key, context) {
                     return this.options.call ? this.options.call(key, context) : this.bindings[key];
                 },
+                reverseLookup: function(value) {
+                    for (var keyname in this.bindings)
+                        if (this.bindings[keyname] == value)
+                            return keyname;
+                },
                 constructor: Keymap
             };
             Keymap.keyName = keyName;
@@ -10912,270 +10622,33 @@
         return module.exports;
     });
 
-    $__System.registerDynamic("14", ["3e"], true, function($__require, exports, module) {
+    $__System.registerDynamic("16", ["38"], true, function($__require, exports, module) {
         ;
         var define,
             global = this,
             GLOBAL = this;
-        module.exports = $__require('3e');
+        module.exports = $__require('38');
         return module.exports;
     });
 
-    $__System.registerDynamic("3", ["10", "1d", "13", "1e", "20", "2e", "3d", "14"], true, function($__require, exports, module) {
+    $__System.registerDynamic("3", ["1e", "15", "1f", "10", "21", "20", "16"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.Keymap = exports.baseCommands = exports.Command = exports.CommandSet = exports.MarkedRange = exports.NodeSelection = exports.TextSelection = exports.Selection = exports.defineOption = exports.ProseMirror = undefined;
-        var _main = $__require('10');
-        Object.defineProperty(exports, "ProseMirror", {
-            enumerable: true,
-            get: function get() {
-                return _main.ProseMirror;
-            }
-        });
-        var _options = $__require('1d');
-        Object.defineProperty(exports, "defineOption", {
-            enumerable: true,
-            get: function get() {
-                return _options.defineOption;
-            }
-        });
-        var _selection = $__require('13');
-        Object.defineProperty(exports, "Selection", {
-            enumerable: true,
-            get: function get() {
-                return _selection.Selection;
-            }
-        });
-        Object.defineProperty(exports, "TextSelection", {
-            enumerable: true,
-            get: function get() {
-                return _selection.TextSelection;
-            }
-        });
-        Object.defineProperty(exports, "NodeSelection", {
-            enumerable: true,
-            get: function get() {
-                return _selection.NodeSelection;
-            }
-        });
-        var _range = $__require('1e');
-        Object.defineProperty(exports, "MarkedRange", {
-            enumerable: true,
-            get: function get() {
-                return _range.MarkedRange;
-            }
-        });
-        var _command = $__require('20');
-        Object.defineProperty(exports, "CommandSet", {
-            enumerable: true,
-            get: function get() {
-                return _command.CommandSet;
-            }
-        });
-        Object.defineProperty(exports, "Command", {
-            enumerable: true,
-            get: function get() {
-                return _command.Command;
-            }
-        });
-        var _base_commands = $__require('2e');
-        Object.defineProperty(exports, "baseCommands", {
-            enumerable: true,
-            get: function get() {
-                return _base_commands.baseCommands;
-            }
-        });
-        $__require('3d');
-        var _browserkeymap = $__require('14');
-        var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
-        function _interopRequireDefault(obj) {
-            return obj && obj.__esModule ? obj : {default: obj};
-        }
-        exports.Keymap = _browserkeymap2.default;
-        return module.exports;
-    });
-
-    $__System.registerDynamic("a", [], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        var _createClass = function() {
-            function defineProperties(target, props) {
-                for (var i = 0; i < props.length; i++) {
-                    var descriptor = props[i];
-                    descriptor.enumerable = descriptor.enumerable || false;
-                    descriptor.configurable = true;
-                    if ("value" in descriptor)
-                        descriptor.writable = true;
-                    Object.defineProperty(target, descriptor.key, descriptor);
-                }
-            }
-            return function(Constructor, protoProps, staticProps) {
-                if (protoProps)
-                    defineProperties(Constructor.prototype, protoProps);
-                if (staticProps)
-                    defineProperties(Constructor, staticProps);
-                return Constructor;
-            };
-        }();
-        exports.scheduleDOMUpdate = scheduleDOMUpdate;
-        exports.unscheduleDOMUpdate = unscheduleDOMUpdate;
-        function _classCallCheck(instance, Constructor) {
-            if (!(instance instanceof Constructor)) {
-                throw new TypeError("Cannot call a class as a function");
-            }
-        }
-        var UPDATE_TIMEOUT = 50;
-        var MIN_FLUSH_DELAY = 100;
-        var CentralScheduler = function() {
-            function CentralScheduler(pm) {
-                var _this = this;
-                _classCallCheck(this, CentralScheduler);
-                this.waiting = [];
-                this.timeout = null;
-                this.lastForce = 0;
-                this.pm = pm;
-                this.timedOut = function() {
-                    if (_this.pm.operation)
-                        _this.timeout = setTimeout(_this.timedOut, UPDATE_TIMEOUT);
-                    else
-                        _this.force();
-                };
-                pm.on("flush", this.onFlush.bind(this));
-            }
-            _createClass(CentralScheduler, [{
-                key: "set",
-                value: function set(f) {
-                    if (this.waiting.length == 0)
-                        this.timeout = setTimeout(this.timedOut, UPDATE_TIMEOUT);
-                    if (this.waiting.indexOf(f) == -1)
-                        this.waiting.push(f);
-                }
-            }, {
-                key: "unset",
-                value: function unset(f) {
-                    var index = this.waiting.indexOf(f);
-                    if (index > -1)
-                        this.waiting.splice(index, 1);
-                }
-            }, {
-                key: "force",
-                value: function force() {
-                    clearTimeout(this.timeout);
-                    this.lastForce = Date.now();
-                    while (this.waiting.length) {
-                        for (var i = 0; i < this.waiting.length; i++) {
-                            var result = this.waiting[i]();
-                            if (result)
-                                this.waiting[i] = result;
-                            else
-                                this.waiting.splice(i--, 1);
-                        }
-                    }
-                }
-            }, {
-                key: "onFlush",
-                value: function onFlush() {
-                    if (this.waiting.length && Date.now() - this.lastForce > MIN_FLUSH_DELAY)
-                        this.force();
-                }
-            }], [{
-                key: "get",
-                value: function get(pm) {
-                    return pm.mod.centralScheduler || (pm.mod.centralScheduler = new this(pm));
-                }
-            }]);
-            return CentralScheduler;
-        }();
-        function scheduleDOMUpdate(pm, f) {
-            CentralScheduler.get(pm).set(f);
-        }
-        function unscheduleDOMUpdate(pm, f) {
-            CentralScheduler.get(pm).unset(f);
-        }
-        var UpdateScheduler = exports.UpdateScheduler = function() {
-            function UpdateScheduler(pm, events, start) {
-                var _this2 = this;
-                _classCallCheck(this, UpdateScheduler);
-                this.pm = pm;
-                this.start = start;
-                this.events = events.split(" ");
-                this.onEvent = this.onEvent.bind(this);
-                this.events.forEach(function(event) {
-                    return pm.on(event, _this2.onEvent);
-                });
-            }
-            _createClass(UpdateScheduler, [{
-                key: "detach",
-                value: function detach() {
-                    var _this3 = this;
-                    unscheduleDOMUpdate(this.pm, this.start);
-                    this.events.forEach(function(event) {
-                        return _this3.pm.off(event, _this3.onEvent);
-                    });
-                }
-            }, {
-                key: "onEvent",
-                value: function onEvent() {
-                    scheduleDOMUpdate(this.pm, this.start);
-                }
-            }, {
-                key: "force",
-                value: function force() {
-                    if (this.pm.operation) {
-                        this.onEvent();
-                    } else {
-                        unscheduleDOMUpdate(this.pm, this.start);
-                        for (var run = this.start; run; run = run()) {}
-                    }
-                }
-            }]);
-            return UpdateScheduler;
-        }();
-        return module.exports;
-    });
-
-    $__System.registerDynamic("1b", [], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.default = sortedInsert;
-        function sortedInsert(array, elt, compare) {
-            var i = 0;
-            for (; i < array.length; i++) {
-                if (compare(array[i], elt) > 0)
-                    break;
-            }
-            array.splice(i, 0, elt);
-        }
-        return module.exports;
-    });
-
-    $__System.registerDynamic("2f", [], true, function($__require, exports, module) {
-        "use strict";
-        ;
-        var define,
-            global = this,
-            GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.copyObj = copyObj;
-        function copyObj(obj, base) {
-            var copy = base || Object.create(null);
-            for (var prop in obj) {
-                copy[prop] = obj[prop];
-            }
-            return copy;
-        }
+        exports.ProseMirror = $__require('1e').ProseMirror;
+        var _require = $__require('15');
+        exports.Selection = _require.Selection;
+        exports.TextSelection = _require.TextSelection;
+        exports.NodeSelection = _require.NodeSelection;
+        var _require2 = $__require('1f');
+        exports.MarkedRange = _require2.MarkedRange;
+        exports.baseKeymap = $__require('10').baseKeymap;
+        var _require3 = $__require('21');
+        exports.Plugin = _require3.Plugin;
+        exports.commands = $__require('20').commands;
+        exports.Keymap = $__require('16');
         return module.exports;
     });
 
@@ -11185,13 +10658,23 @@
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.elt = elt;
-        exports.requestAnimationFrame = requestAnimationFrame;
-        exports.cancelAnimationFrame = cancelAnimationFrame;
-        exports.contains = contains;
-        exports.insertCSS = insertCSS;
-        exports.ensureCSSAdded = ensureCSSAdded;
+        function copyObj(obj, base) {
+            var copy = base || Object.create(null);
+            for (var prop in obj) {
+                copy[prop] = obj[prop];
+            }
+            return copy;
+        }
+        exports.copyObj = copyObj;
+        return module.exports;
+    });
+
+    $__System.registerDynamic("5", [], true, function($__require, exports, module) {
+        "use strict";
+        ;
+        var define,
+            global = this,
+            GLOBAL = this;
         function elt(tag, attrs) {
             var result = document.createElement(tag);
             if (attrs)
@@ -11211,6 +10694,7 @@
             }
             return result;
         }
+        exports.elt = elt;
         function add(value, target) {
             if (typeof value == "string")
                 value = document.createTextNode(value);
@@ -11226,31 +10710,24 @@
         var cancelFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame || window.msCancelAnimationFrame;
         function requestAnimationFrame(f) {
             if (reqFrame)
-                return reqFrame(f);
+                return reqFrame.call(window, f);
             else
                 return setTimeout(f, 10);
         }
+        exports.requestAnimationFrame = requestAnimationFrame;
         function cancelAnimationFrame(handle) {
             if (reqFrame)
-                return cancelFrame(handle);
+                return cancelFrame.call(window, handle);
             else
                 clearTimeout(handle);
         }
-        var ie_upto10 = /MSIE \d/.test(navigator.userAgent);
-        var ie_11up = /Trident\/(?:[7-9]|\d{2,})\..*rv:(\d+)/.exec(navigator.userAgent);
-        var browser = exports.browser = {
-            mac: /Mac/.test(navigator.platform),
-            ie_upto10: ie_upto10,
-            ie_11up: ie_11up,
-            ie: ie_upto10 || ie_11up,
-            gecko: /gecko\/\d/i.test(navigator.userAgent),
-            ios: /AppleWebKit/.test(navigator.userAgent) && /Mobile\/\w+/.test(navigator.userAgent)
-        };
+        exports.cancelAnimationFrame = cancelAnimationFrame;
         function contains(parent, child) {
             if (child.nodeType != 1)
                 child = child.parentNode;
             return child && parent.contains(child);
         }
+        exports.contains = contains;
         var accumulatedCSS = "",
             cssNode = null;
         function insertCSS(css) {
@@ -11259,6 +10736,7 @@
             else
                 accumulatedCSS += css;
         }
+        exports.insertCSS = insertCSS;
         function ensureCSSAdded() {
             if (!cssNode) {
                 cssNode = document.createElement("style");
@@ -11266,68 +10744,74 @@
                 document.head.insertBefore(cssNode, document.head.firstChild);
             }
         }
+        exports.ensureCSSAdded = ensureCSSAdded;
         return module.exports;
     });
 
-    $__System.registerDynamic("3f", ["8"], true, function($__require, exports, module) {
+    $__System.registerDynamic("39", ["5"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.getIcon = getIcon;
-        var _dom = $__require('8');
-        var svgCollection = null;
-        var svgBuilt = Object.create(null);
+        var _require = $__require('5');
+        var insertCSS = _require.insertCSS;
         var SVG = "http://www.w3.org/2000/svg";
         var XLINK = "http://www.w3.org/1999/xlink";
         var prefix = "ProseMirror-icon";
-        function getIcon(name, data) {
+        function hashPath(path) {
+            var hash = 0;
+            for (var i = 0; i < path.length; i++) {
+                hash = (hash << 5) - hash + path.charCodeAt(i) | 0;
+            }
+            return hash;
+        }
+        function getIcon(icon) {
             var node = document.createElement("div");
             node.className = prefix;
-            if (data.path) {
-                if (!svgBuilt[name])
-                    buildSVG(name, data);
+            if (icon.path) {
+                var name = "pm-icon-" + hashPath(icon.path).toString(16);
+                if (!document.getElementById(name))
+                    buildSVG(name, icon);
                 var svg = node.appendChild(document.createElementNS(SVG, "svg"));
-                svg.style.width = data.width / data.height + "em";
+                svg.style.width = icon.width / icon.height + "em";
                 var use = svg.appendChild(document.createElementNS(SVG, "use"));
-                use.setAttributeNS(XLINK, "href", /([^#]*)/.exec(document.location)[1] + "#pm-icon-" + name);
-            } else if (data.dom) {
-                node.appendChild(data.dom.cloneNode(true));
+                use.setAttributeNS(XLINK, "href", /([^#]*)/.exec(document.location)[1] + "#" + name);
+            } else if (icon.dom) {
+                node.appendChild(icon.dom.cloneNode(true));
             } else {
-                node.appendChild(document.createElement("span")).textContent = data.text || '';
-                if (data.style)
-                    node.firstChild.style.cssText = data.style;
+                node.appendChild(document.createElement("span")).textContent = icon.text || '';
+                if (icon.css)
+                    node.firstChild.style.cssText = icon.css;
             }
             return node;
         }
+        exports.getIcon = getIcon;
         function buildSVG(name, data) {
-            if (!svgCollection) {
-                svgCollection = document.createElementNS(SVG, "svg");
-                svgCollection.style.display = "none";
-                document.body.insertBefore(svgCollection, document.body.firstChild);
+            var collection = document.getElementById(prefix + "-collection");
+            if (!collection) {
+                collection = document.createElementNS(SVG, "svg");
+                collection.id = prefix + "-collection";
+                collection.style.display = "none";
+                document.body.insertBefore(collection, document.body.firstChild);
             }
             var sym = document.createElementNS(SVG, "symbol");
-            sym.id = "pm-icon-" + name;
+            sym.id = name;
             sym.setAttribute("viewBox", "0 0 " + data.width + " " + data.height);
             var path = sym.appendChild(document.createElementNS(SVG, "path"));
             path.setAttribute("d", data.path);
-            svgCollection.appendChild(sym);
-            svgBuilt[name] = true;
+            collection.appendChild(sym);
         }
-        (0, _dom.insertCSS)("\n." + prefix + " {\n  display: inline-block;\n  line-height: .8;\n  vertical-align: -2px; /* Compensate for padding */\n  padding: 2px 8px;\n  cursor: pointer;\n}\n\n." + prefix + " svg {\n  fill: currentColor;\n  height: 1em;\n}\n\n." + prefix + " span {\n  vertical-align: text-top;\n}");
+        insertCSS("\n." + prefix + " {\n  display: inline-block;\n  line-height: .8;\n  vertical-align: -2px; /* Compensate for padding */\n  padding: 2px 8px;\n  cursor: pointer;\n}\n\n." + prefix + " svg {\n  fill: currentColor;\n  height: 1em;\n}\n\n." + prefix + " span {\n  vertical-align: text-top;\n}");
         return module.exports;
     });
 
-    $__System.registerDynamic("b", ["8", "1b", "2f", "3f"], true, function($__require, exports, module) {
+    $__System.registerDynamic("a", ["5", "3", "8", "39"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
             global = this,
             GLOBAL = this;
-        Object.defineProperty(exports, "__esModule", {value: true});
-        exports.historyGroup = exports.blockGroup = exports.textblockMenu = exports.insertMenu = exports.inlineGroup = exports.DropdownSubmenu = exports.Dropdown = exports.MenuCommandGroup = exports.MenuCommand = undefined;
         var _createClass = function() {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -11347,161 +10831,97 @@
                 return Constructor;
             };
         }();
-        exports.resolveGroup = resolveGroup;
-        exports.renderGrouped = renderGrouped;
-        var _dom = $__require('8');
-        var _sortedinsert = $__require('1b');
-        var _sortedinsert2 = _interopRequireDefault(_sortedinsert);
-        var _obj = $__require('2f');
-        var _icons = $__require('3f');
-        function _interopRequireDefault(obj) {
-            return obj && obj.__esModule ? obj : {default: obj};
-        }
         function _classCallCheck(instance, Constructor) {
             if (!(instance instanceof Constructor)) {
                 throw new TypeError("Cannot call a class as a function");
             }
         }
+        var _require = $__require('5');
+        var elt = _require.elt;
+        var insertCSS = _require.insertCSS;
+        var _require$commands = $__require('3').commands;
+        var undo = _require$commands.undo;
+        var redo = _require$commands.redo;
+        var lift = _require$commands.lift;
+        var joinUp = _require$commands.joinUp;
+        var selectParentNode = _require$commands.selectParentNode;
+        var wrapIn = _require$commands.wrapIn;
+        var setBlockType = _require$commands.setBlockType;
+        var wrapInList = _require$commands.wrapInList;
+        var toggleMark = _require$commands.toggleMark;
+        var _require2 = $__require('8');
+        var copyObj = _require2.copyObj;
+        var _require3 = $__require('39');
+        var getIcon = _require3.getIcon;
         var prefix = "ProseMirror-menu";
-        function title(pm, command) {
-            if (!command.label)
-                return null;
-            var label = pm.translate(command.label);
-            var key = command.name && pm.keyForCommand(command.name);
-            return key ? label + " (" + key + ")" : label;
-        }
-        var MenuCommand = exports.MenuCommand = function() {
-            function MenuCommand(command, options) {
-                _classCallCheck(this, MenuCommand);
-                this.command_ = command;
-                this.options = options;
+        var MenuItem = function() {
+            function MenuItem(spec) {
+                _classCallCheck(this, MenuItem);
+                this.spec = spec;
             }
-            _createClass(MenuCommand, [{
-                key: "command",
-                value: function command(pm) {
-                    return typeof this.command_ == "string" ? pm.commands[this.command_] : this.command_;
-                }
-            }, {
+            _createClass(MenuItem, [{
                 key: "render",
                 value: function render(pm) {
-                    var cmd = this.command(pm),
-                        disabled = false;
-                    if (!cmd)
-                        return;
-                    if (this.options.select != "ignore" && !cmd.select(pm)) {
-                        if (this.options.select == null || this.options.select == "hide")
-                            return null;
-                        else if (this.options.select == "disable")
+                    var disabled = false,
+                        spec = this.spec;
+                    if (spec.select && !spec.select(pm)) {
+                        if (spec.onDeselected == "disable")
                             disabled = true;
+                        else
+                            return null;
                     }
-                    var disp = this.options.display;
-                    if (!disp)
-                        throw new RangeError("No display style defined for menu command " + cmd.name);
-                    var dom = undefined;
-                    if (disp.render) {
-                        dom = disp.render(cmd, pm);
-                    } else if (disp.type == "icon") {
-                        dom = (0, _icons.getIcon)(cmd.name, disp);
-                        if (!disabled && cmd.active(pm))
+                    var active = spec.active && !disabled && spec.active(pm);
+                    var dom = void 0;
+                    if (spec.render) {
+                        dom = spec.render(pm);
+                    } else if (spec.icon) {
+                        dom = getIcon(spec.icon);
+                        if (active)
                             dom.classList.add(prefix + "-active");
-                    } else if (disp.type == "label") {
-                        var label = pm.translate(disp.label || cmd.spec.label);
-                        dom = (0, _dom.elt)("div", null, label);
+                    } else if (spec.label) {
+                        dom = elt("div", null, pm.translate(spec.label));
                     } else {
-                        throw new RangeError("Unsupported command display style: " + disp.type);
+                        throw new RangeError("MenuItem without render, icon, or label property");
                     }
-                    dom.setAttribute("title", title(pm, cmd));
-                    if (this.options.class)
-                        dom.classList.add(this.options.class);
+                    if (spec.title)
+                        dom.setAttribute("title", pm.translate(spec.title));
+                    if (spec.class)
+                        dom.classList.add(spec.class);
                     if (disabled)
                         dom.classList.add(prefix + "-disabled");
-                    if (this.options.css)
-                        dom.style.cssText += this.options.css;
-                    dom.addEventListener("mousedown", function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        pm.signal("interaction");
-                        cmd.exec(pm, null, dom);
-                    });
-                    dom.setAttribute("data-command", this.commandName);
+                    if (spec.css)
+                        dom.style.cssText += spec.css;
+                    if (!disabled)
+                        dom.addEventListener(spec.execEvent || "mousedown", function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            pm.on.interaction.dispatch();
+                            spec.run(pm);
+                        });
                     return dom;
                 }
-            }, {
-                key: "commandName",
-                get: function get() {
-                    return typeof this.command_ === "string" ? this.command_.command : this.command_.name;
-                }
             }]);
-            return MenuCommand;
+            return MenuItem;
         }();
-        var MenuCommandGroup = exports.MenuCommandGroup = function() {
-            function MenuCommandGroup(name, options) {
-                _classCallCheck(this, MenuCommandGroup);
-                this.name = name;
-                this.options = options;
-            }
-            _createClass(MenuCommandGroup, [{
-                key: "collect",
-                value: function collect(pm) {
-                    var _this = this;
-                    var result = [];
-                    for (var name in pm.commands) {
-                        var cmd = pm.commands[name],
-                            spec = cmd.spec.menu;
-                        if (spec && spec.group == this.name)
-                            (0, _sortedinsert2.default)(result, {
-                                cmd: cmd,
-                                rank: spec.rank == null ? 50 : spec.rank
-                            }, function(a, b) {
-                                return a.rank - b.rank;
-                            });
-                    }
-                    return result.map(function(o) {
-                        var spec = o.cmd.spec.menu;
-                        if (_this.options)
-                            spec = (0, _obj.copyObj)(_this.options, (0, _obj.copyObj)(spec));
-                        return new MenuCommand(o.cmd, spec);
-                    });
-                }
-            }, {
-                key: "get",
-                value: function get(pm) {
-                    var groups = pm.mod.menuGroups || this.startGroups(pm);
-                    return groups[this.name] || (groups[this.name] = this.collect(pm));
-                }
-            }, {
-                key: "startGroups",
-                value: function startGroups(pm) {
-                    var clear = function clear() {
-                        pm.mod.menuGroups = null;
-                        pm.off("commandsChanging", clear);
-                    };
-                    pm.on("commandsChanging", clear);
-                    return pm.mod.menuGroups = Object.create(null);
-                }
-            }]);
-            return MenuCommandGroup;
-        }();
-        var Dropdown = exports.Dropdown = function() {
-            function Dropdown(options, content) {
+        exports.MenuItem = MenuItem;
+        var Dropdown = function() {
+            function Dropdown(content, options) {
                 _classCallCheck(this, Dropdown);
                 this.options = options || {};
-                this.content = content;
+                this.content = Array.isArray(content) ? content : [content];
             }
             _createClass(Dropdown, [{
                 key: "render",
                 value: function render(pm) {
-                    var _this2 = this;
-                    var items = renderDropdownItems(resolveGroup(pm, this.content), pm);
+                    var _this = this;
+                    var items = renderDropdownItems(this.content, pm);
                     if (!items.length)
-                        return;
-                    var label = this.options.activeLabel && this.findActiveIn(this, pm) || this.options.label;
-                    label = pm.translate(label);
-                    var dom = (0, _dom.elt)("div", {
+                        return null;
+                    var dom = elt("div", {
                         class: prefix + "-dropdown " + (this.options.class || ""),
                         style: this.options.css,
-                        title: this.options.title
-                    }, label);
+                        title: this.options.title && pm.translate(this.options.title)
+                    }, pm.translate(this.options.label));
                     var open = null;
                     dom.addEventListener("mousedown", function(e) {
                         e.preventDefault();
@@ -11509,23 +10929,16 @@
                         if (open && open())
                             open = null;
                         else
-                            open = _this2.expand(pm, dom, items);
+                            open = _this.expand(pm, dom, items);
                     });
                     return dom;
-                }
-            }, {
-                key: "select",
-                value: function select(pm) {
-                    return resolveGroup(pm, this.content).some(function(e) {
-                        return e.select(pm);
-                    });
                 }
             }, {
                 key: "expand",
                 value: function expand(pm, dom, items) {
                     var box = dom.getBoundingClientRect(),
                         outer = pm.wrapper.getBoundingClientRect();
-                    var menuDOM = (0, _dom.elt)("div", {
+                    var menuDOM = elt("div", {
                         class: prefix + "-dropdown-menu " + (this.options.class || ""),
                         style: "left: " + (box.left - outer.left) + "px; top: " + (box.bottom - outer.top) + "px"
                     }, items);
@@ -11534,58 +10947,42 @@
                         if (done)
                             return;
                         done = true;
-                        pm.off("interaction", finish);
+                        pm.on.interaction.remove(finish);
                         pm.wrapper.removeChild(menuDOM);
                         return true;
                     }
-                    pm.signal("interaction");
+                    pm.on.interaction.dispatch();
                     pm.wrapper.appendChild(menuDOM);
-                    pm.on("interaction", finish);
+                    pm.on.interaction.add(finish);
                     return finish;
-                }
-            }, {
-                key: "findActiveIn",
-                value: function findActiveIn(element, pm) {
-                    var items = resolveGroup(pm, element.content);
-                    for (var i = 0; i < items.length; i++) {
-                        var cur = items[i];
-                        if (cur instanceof MenuCommand) {
-                            var active = cur.command(pm).active(pm);
-                            if (active)
-                                return cur.options.activeLabel;
-                        } else if (cur instanceof DropdownSubmenu) {
-                            var found = this.findActiveIn(cur, pm);
-                            if (found)
-                                return found;
-                        }
-                    }
                 }
             }]);
             return Dropdown;
         }();
+        exports.Dropdown = Dropdown;
         function renderDropdownItems(items, pm) {
             var rendered = [];
             for (var i = 0; i < items.length; i++) {
                 var inner = items[i].render(pm);
                 if (inner)
-                    rendered.push((0, _dom.elt)("div", {class: prefix + "-dropdown-item"}, inner));
+                    rendered.push(elt("div", {class: prefix + "-dropdown-item"}, inner));
             }
             return rendered;
         }
-        var DropdownSubmenu = exports.DropdownSubmenu = function() {
-            function DropdownSubmenu(options, content) {
+        var DropdownSubmenu = function() {
+            function DropdownSubmenu(content, options) {
                 _classCallCheck(this, DropdownSubmenu);
                 this.options = options || {};
-                this.content = content;
+                this.content = Array.isArray(content) ? content : [content];
             }
             _createClass(DropdownSubmenu, [{
                 key: "render",
                 value: function render(pm) {
-                    var items = renderDropdownItems(resolveGroup(pm, this.content), pm);
+                    var items = renderDropdownItems(this.content, pm);
                     if (!items.length)
-                        return;
-                    var label = (0, _dom.elt)("div", {class: prefix + "-submenu-label"}, pm.translate(this.options.label));
-                    var wrap = (0, _dom.elt)("div", {class: prefix + "-submenu-wrap"}, label, (0, _dom.elt)("div", {class: prefix + "-submenu"}, items));
+                        return null;
+                    var label = elt("div", {class: prefix + "-submenu-label"}, pm.translate(this.options.label));
+                    var wrap = elt("div", {class: prefix + "-submenu-wrap"}, label, elt("div", {class: prefix + "-submenu"}, items));
                     label.addEventListener("mousedown", function(e) {
                         e.preventDefault();
                         e.stopPropagation();
@@ -11596,35 +10993,19 @@
             }]);
             return DropdownSubmenu;
         }();
-        function resolveGroup(pm, content) {
-            var result = undefined,
-                isArray = Array.isArray(content);
-            for (var i = 0; i < (isArray ? content.length : 1); i++) {
-                var cur = isArray ? content[i] : content;
-                if (cur instanceof MenuCommandGroup) {
-                    var elts = cur.get(pm);
-                    if (!isArray || content.length == 1)
-                        return elts;
-                    else
-                        result = (result || content.slice(0, i)).concat(elts);
-                } else if (result) {
-                    result.push(cur);
-                }
-            }
-            return result || (isArray ? content : [content]);
-        }
+        exports.DropdownSubmenu = DropdownSubmenu;
         function renderGrouped(pm, content) {
             var result = document.createDocumentFragment(),
                 needSep = false;
             for (var i = 0; i < content.length; i++) {
-                var items = resolveGroup(pm, content[i]),
+                var items = content[i],
                     added = false;
                 for (var j = 0; j < items.length; j++) {
                     var rendered = items[j].render(pm);
                     if (rendered) {
                         if (!added && needSep)
                             result.appendChild(separator());
-                        result.appendChild((0, _dom.elt)("span", {class: prefix + "item"}, rendered));
+                        result.appendChild(elt("span", {class: prefix + "item"}, rendered));
                         added = true;
                     }
                 }
@@ -11633,23 +11014,224 @@
             }
             return result;
         }
+        exports.renderGrouped = renderGrouped;
         function separator() {
-            return (0, _dom.elt)("span", {class: prefix + "separator"});
+            return elt("span", {class: prefix + "separator"});
         }
-        var inlineGroup = exports.inlineGroup = new MenuCommandGroup("inline");
-        var insertMenu = exports.insertMenu = new Dropdown({label: "Insert"}, new MenuCommandGroup("insert"));
-        var textblockMenu = exports.textblockMenu = new Dropdown({
-            label: "Type..",
-            displayActive: true,
-            class: "ProseMirror-textblock-dropdown"
-        }, [new MenuCommandGroup("textblock"), new DropdownSubmenu({label: "Heading"}, new MenuCommandGroup("textblockHeading"))]);
-        var blockGroup = exports.blockGroup = new MenuCommandGroup("block");
-        var historyGroup = exports.historyGroup = new MenuCommandGroup("history");
-        (0, _dom.insertCSS)("\n\n.ProseMirror-textblock-dropdown {\n  min-width: 3em;\n}\n\n." + prefix + " {\n  margin: 0 -4px;\n  line-height: 1;\n}\n\n.ProseMirror-tooltip ." + prefix + " {\n  width: -webkit-fit-content;\n  width: fit-content;\n  white-space: pre;\n}\n\n." + prefix + "item {\n  margin-right: 3px;\n  display: inline-block;\n}\n\n." + prefix + "separator {\n  border-right: 1px solid #ddd;\n  margin-right: 3px;\n}\n\n." + prefix + "-dropdown, ." + prefix + "-dropdown-menu {\n  font-size: 90%;\n  white-space: nowrap;\n}\n\n." + prefix + "-dropdown {\n  padding: 1px 14px 1px 4px;\n  display: inline-block;\n  vertical-align: 1px;\n  position: relative;\n  cursor: pointer;\n}\n\n." + prefix + "-dropdown:after {\n  content: \"\";\n  border-left: 4px solid transparent;\n  border-right: 4px solid transparent;\n  border-top: 4px solid currentColor;\n  opacity: .6;\n  position: absolute;\n  right: 2px;\n  top: calc(50% - 2px);\n}\n\n." + prefix + "-dropdown-menu, ." + prefix + "-submenu {\n  position: absolute;\n  background: white;\n  color: #666;\n  border: 1px solid #aaa;\n  padding: 2px;\n}\n\n." + prefix + "-dropdown-menu {\n  z-index: 15;\n  min-width: 6em;\n}\n\n." + prefix + "-dropdown-item {\n  cursor: pointer;\n  padding: 2px 8px 2px 4px;\n}\n\n." + prefix + "-dropdown-item:hover {\n  background: #f2f2f2;\n}\n\n." + prefix + "-submenu-wrap {\n  position: relative;\n  margin-right: -4px;\n}\n\n." + prefix + "-submenu-label:after {\n  content: \"\";\n  border-top: 4px solid transparent;\n  border-bottom: 4px solid transparent;\n  border-left: 4px solid currentColor;\n  opacity: .6;\n  position: absolute;\n  right: 4px;\n  top: calc(50% - 4px);\n}\n\n." + prefix + "-submenu {\n  display: none;\n  min-width: 4em;\n  left: 100%;\n  top: -3px;\n}\n\n." + prefix + "-active {\n  background: #eee;\n  border-radius: 4px;\n}\n\n." + prefix + "-active {\n  background: #eee;\n  border-radius: 4px;\n}\n\n." + prefix + "-disabled {\n  opacity: .3;\n}\n\n." + prefix + "-submenu-wrap:hover ." + prefix + "-submenu, ." + prefix + "-submenu-wrap-active ." + prefix + "-submenu {\n  display: block;\n}\n");
+        var icons = {
+            join: {
+                width: 800,
+                height: 900,
+                path: "M0 75h800v125h-800z M0 825h800v-125h-800z M250 400h100v-100h100v100h100v100h-100v100h-100v-100h-100z"
+            },
+            lift: {
+                width: 1024,
+                height: 1024,
+                path: "M219 310v329q0 7-5 12t-12 5q-8 0-13-5l-164-164q-5-5-5-13t5-13l164-164q5-5 13-5 7 0 12 5t5 12zM1024 749v109q0 7-5 12t-12 5h-987q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h987q7 0 12 5t5 12zM1024 530v109q0 7-5 12t-12 5h-621q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h621q7 0 12 5t5 12zM1024 310v109q0 7-5 12t-12 5h-621q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h621q7 0 12 5t5 12zM1024 91v109q0 7-5 12t-12 5h-987q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h987q7 0 12 5t5 12z"
+            },
+            selectParentNode: {
+                text: "⬚",
+                css: "font-weight: bold"
+            },
+            undo: {
+                width: 1024,
+                height: 1024,
+                path: "M761 1024c113-206 132-520-313-509v253l-384-384 384-384v248c534-13 594 472 313 775z"
+            },
+            redo: {
+                width: 1024,
+                height: 1024,
+                path: "M576 248v-248l384 384-384 384v-253c-446-10-427 303-313 509-280-303-221-789 313-775z"
+            },
+            strong: {
+                width: 805,
+                height: 1024,
+                path: "M317 869q42 18 80 18 214 0 214-191 0-65-23-102-15-25-35-42t-38-26-46-14-48-6-54-1q-41 0-57 5 0 30-0 90t-0 90q0 4-0 38t-0 55 2 47 6 38zM309 442q24 4 62 4 46 0 81-7t62-25 42-51 14-81q0-40-16-70t-45-46-61-24-70-8q-28 0-74 7 0 28 2 86t2 86q0 15-0 45t-0 45q0 26 0 39zM0 950l1-53q8-2 48-9t60-15q4-6 7-15t4-19 3-18 1-21 0-19v-37q0-561-12-585-2-4-12-8t-25-6-28-4-27-2-17-1l-2-47q56-1 194-6t213-5q13 0 39 0t38 0q40 0 78 7t73 24 61 40 42 59 16 78q0 29-9 54t-22 41-36 32-41 25-48 22q88 20 146 76t58 141q0 57-20 102t-53 74-78 48-93 27-100 8q-25 0-75-1t-75-1q-60 0-175 6t-132 6z"
+            },
+            em: {
+                width: 585,
+                height: 1024,
+                path: "M0 949l9-48q3-1 46-12t63-21q16-20 23-57 0-4 35-165t65-310 29-169v-14q-13-7-31-10t-39-4-33-3l10-58q18 1 68 3t85 4 68 1q27 0 56-1t69-4 56-3q-2 22-10 50-17 5-58 16t-62 19q-4 10-8 24t-5 22-4 26-3 24q-15 84-50 239t-44 203q-1 5-7 33t-11 51-9 47-3 32l0 10q9 2 105 17-1 25-9 56-6 0-18 0t-18 0q-16 0-49-5t-49-5q-78-1-117-1-29 0-81 5t-69 6z"
+            },
+            code: {
+                width: 896,
+                height: 1024,
+                path: "M608 192l-96 96 224 224-224 224 96 96 288-320-288-320zM288 192l-288 320 288 320 96-96-224-224 224-224-96-96z"
+            },
+            link: {
+                width: 951,
+                height: 1024,
+                path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
+            },
+            bulletList: {
+                width: 768,
+                height: 896,
+                path: "M0 512h128v-128h-128v128zM0 256h128v-128h-128v128zM0 768h128v-128h-128v128zM256 512h512v-128h-512v128zM256 256h512v-128h-512v128zM256 768h512v-128h-512v128z"
+            },
+            orderedList: {
+                width: 768,
+                height: 896,
+                path: "M320 512h448v-128h-448v128zM320 768h448v-128h-448v128zM320 128v128h448v-128h-448zM79 384h78v-256h-36l-85 23v50l43-2v185zM189 590c0-36-12-78-96-78-33 0-64 6-83 16l1 66c21-10 42-15 67-15s32 11 32 28c0 26-30 58-110 112v50h192v-67l-91 2c49-30 87-66 87-113l1-1z"
+            },
+            blockquote: {
+                width: 640,
+                height: 896,
+                path: "M0 448v256h256v-256h-128c0 0 0-128 128-128v-128c0 0-256 0-256 256zM640 320v-128c0 0-256 0-256 256v256h256v-256h-128c0 0 0-128 128-128z"
+            }
+        };
+        exports.icons = icons;
+        var joinUpItem = new MenuItem({
+            title: "Join with above block",
+            run: joinUp,
+            select: function select(pm) {
+                return joinUp(pm, false);
+            },
+            icon: icons.join
+        });
+        exports.joinUpItem = joinUpItem;
+        var liftItem = new MenuItem({
+            title: "Lift out of enclosing block",
+            run: lift,
+            select: function select(pm) {
+                return lift(pm, false);
+            },
+            icon: icons.lift
+        });
+        exports.liftItem = liftItem;
+        var selectParentNodeItem = new MenuItem({
+            title: "Select parent node",
+            run: selectParentNode,
+            select: function select(pm) {
+                return selectParentNode(pm, false);
+            },
+            icon: icons.selectParentNode
+        });
+        exports.selectParentNodeItem = selectParentNodeItem;
+        var undoItem = new MenuItem({
+            title: "Undo last change",
+            run: undo,
+            select: function select(pm) {
+                return undo(pm, false);
+            },
+            icon: icons.undo
+        });
+        exports.undoItem = undoItem;
+        var redoItem = new MenuItem({
+            title: "Redo last undone change",
+            run: redo,
+            select: function select(pm) {
+                return redo(pm, false);
+            },
+            icon: icons.redo
+        });
+        exports.redoItem = redoItem;
+        function markActive(pm, type) {
+            var _pm$selection = pm.selection;
+            var from = _pm$selection.from;
+            var to = _pm$selection.to;
+            var empty = _pm$selection.empty;
+            if (empty)
+                return type.isInSet(pm.activeMarks());
+            else
+                return pm.doc.rangeHasMark(from, to, type);
+        }
+        function toggleMarkItem(markType, options) {
+            var command = toggleMark(markType, options.attrs);
+            var base = {
+                run: function run(pm) {
+                    command(pm);
+                },
+                active: function active(pm) {
+                    return markActive(pm, markType);
+                },
+                select: function select(pm) {
+                    return command(pm, false);
+                }
+            };
+            if (options.attrs instanceof Function)
+                base.run = function(pm) {
+                    if (markActive(pm, markType))
+                        command(pm);
+                    else
+                        options.attrs(pm, function(attrs) {
+                            return toggleMark(markType, attrs)(pm);
+                        });
+                };
+            return new MenuItem(copyObj(options, base));
+        }
+        exports.toggleMarkItem = toggleMarkItem;
+        function insertItem(nodeType, options) {
+            return new MenuItem(copyObj(options, {
+                select: function select(pm) {
+                    var $from = pm.selection.$from;
+                    for (var d = $from.depth; d >= 0; d--) {
+                        var index = $from.index(d);
+                        if ($from.node(d).canReplaceWith(index, index, nodeType, options.attrs instanceof Function ? null : options.attrs))
+                            return true;
+                    }
+                },
+                run: function run(pm) {
+                    function done(attrs) {
+                        pm.tr.replaceSelection(nodeType.createAndFill(attrs)).apply();
+                    }
+                    if (options.attrs instanceof Function)
+                        options.attrs(pm, done);
+                    else
+                        done(options.attrs);
+                }
+            }));
+        }
+        exports.insertItem = insertItem;
+        function wrapItem(nodeType, options) {
+            return new MenuItem(copyObj(options, {
+                run: function run(pm) {
+                    if (options.attrs instanceof Function)
+                        options.attrs(pm, function(attrs) {
+                            return wrapIn(nodeType, attrs)(pm);
+                        });
+                    else
+                        wrapIn(nodeType, options.attrs)(pm);
+                },
+                select: function select(pm) {
+                    return wrapIn(nodeType, options.attrs instanceof Function ? null : options.attrs)(pm, false);
+                }
+            }));
+        }
+        exports.wrapItem = wrapItem;
+        function blockTypeItem(nodeType, options) {
+            var command = setBlockType(nodeType, options.attrs);
+            return new MenuItem(copyObj(options, {
+                run: command,
+                select: function select(pm) {
+                    return command(pm, false);
+                },
+                active: function active(pm) {
+                    var _pm$selection2 = pm.selection;
+                    var $from = _pm$selection2.$from;
+                    var to = _pm$selection2.to;
+                    var node = _pm$selection2.node;
+                    if (node)
+                        return node.hasMarkup(nodeType, options.attrs);
+                    return to <= $from.end() && $from.parent.hasMarkup(nodeType, options.attrs);
+                }
+            }));
+        }
+        exports.blockTypeItem = blockTypeItem;
+        function wrapListItem(nodeType, options) {
+            var command = wrapInList(nodeType, options.attrs);
+            return new MenuItem(copyObj(options, {
+                run: command,
+                select: function select(pm) {
+                    return command(pm, false);
+                }
+            }));
+        }
+        exports.wrapListItem = wrapListItem;
+        insertCSS("\n\n.ProseMirror-textblock-dropdown {\n  min-width: 3em;\n}\n\n." + prefix + " {\n  margin: 0 -4px;\n  line-height: 1;\n}\n\n.ProseMirror-tooltip ." + prefix + " {\n  width: -webkit-fit-content;\n  width: fit-content;\n  white-space: pre;\n}\n\n." + prefix + "item {\n  margin-right: 3px;\n  display: inline-block;\n}\n\n." + prefix + "separator {\n  border-right: 1px solid #ddd;\n  margin-right: 3px;\n}\n\n." + prefix + "-dropdown, ." + prefix + "-dropdown-menu {\n  font-size: 90%;\n  white-space: nowrap;\n}\n\n." + prefix + "-dropdown {\n  padding: 1px 14px 1px 4px;\n  display: inline-block;\n  vertical-align: 1px;\n  position: relative;\n  cursor: pointer;\n}\n\n." + prefix + "-dropdown:after {\n  content: \"\";\n  border-left: 4px solid transparent;\n  border-right: 4px solid transparent;\n  border-top: 4px solid currentColor;\n  opacity: .6;\n  position: absolute;\n  right: 2px;\n  top: calc(50% - 2px);\n}\n\n." + prefix + "-dropdown-menu, ." + prefix + "-submenu {\n  position: absolute;\n  background: white;\n  color: #666;\n  border: 1px solid #aaa;\n  padding: 2px;\n}\n\n." + prefix + "-dropdown-menu {\n  z-index: 15;\n  min-width: 6em;\n}\n\n." + prefix + "-dropdown-item {\n  cursor: pointer;\n  padding: 2px 8px 2px 4px;\n}\n\n." + prefix + "-dropdown-item:hover {\n  background: #f2f2f2;\n}\n\n." + prefix + "-submenu-wrap {\n  position: relative;\n  margin-right: -4px;\n}\n\n." + prefix + "-submenu-label:after {\n  content: \"\";\n  border-top: 4px solid transparent;\n  border-bottom: 4px solid transparent;\n  border-left: 4px solid currentColor;\n  opacity: .6;\n  position: absolute;\n  right: 4px;\n  top: calc(50% - 4px);\n}\n\n." + prefix + "-submenu {\n  display: none;\n  min-width: 4em;\n  left: 100%;\n  top: -3px;\n}\n\n." + prefix + "-active {\n  background: #eee;\n  border-radius: 4px;\n}\n\n." + prefix + "-active {\n  background: #eee;\n  border-radius: 4px;\n}\n\n." + prefix + "-disabled {\n  opacity: .3;\n}\n\n." + prefix + "-submenu-wrap:hover ." + prefix + "-submenu, ." + prefix + "-submenu-wrap-active ." + prefix + "-submenu {\n  display: block;\n}\n");
         return module.exports;
     });
 
-    $__System.registerDynamic("40", ["3", "8", "a", "b"], true, function($__require, exports, module) {
+    $__System.registerDynamic("3a", ["3", "5", "a"], true, function($__require, exports, module) {
         "use strict";
         ;
         var define,
@@ -11679,39 +11261,35 @@
                 return Constructor;
             };
         }();
-        var _edit = $__require('3');
-        var _dom = $__require('8');
-        var _update = $__require('a');
-        var _menu = $__require('b');
         function _classCallCheck(instance, Constructor) {
             if (!(instance instanceof Constructor)) {
                 throw new TypeError("Cannot call a class as a function");
             }
         }
+        var _require = $__require('3');
+        var Plugin = _require.Plugin;
+        var _require2 = $__require('5');
+        var elt = _require2.elt;
+        var insertCSS = _require2.insertCSS;
+        var _require3 = $__require('a');
+        var renderGrouped = _require3.renderGrouped;
         var prefix = "ProseMirror-menubar";
-        (0, _edit.defineOption)("menuBar", false, function(pm, value) {
-            if (pm.mod.menuBar)
-                pm.mod.menuBar.detach();
-            pm.mod.menuBar = value ? new MenuBar(pm, value) : null;
-        });
-        var defaultMenu = [_menu.inlineGroup, _menu.insertMenu, [_menu.textblockMenu, _menu.blockGroup], _menu.historyGroup];
         var MenuBar = function() {
             function MenuBar(pm, config) {
                 var _this = this;
                 _classCallCheck(this, MenuBar);
                 this.pm = pm;
-                this.config = config || {};
-                this.wrapper = pm.wrapper.insertBefore((0, _dom.elt)("div", {class: prefix}), pm.wrapper.firstChild);
+                this.wrapper = pm.wrapper.insertBefore(elt("div", {class: prefix}), pm.wrapper.firstChild);
                 this.spacer = null;
                 this.maxHeight = 0;
                 this.widthForMaxHeight = 0;
-                this.updater = new _update.UpdateScheduler(pm, "selectionChange change activeMarkChange commandsChanged", function() {
+                this.updater = pm.updateScheduler([pm.on.selectionChange, pm.on.change, pm.on.activeMarkChange], function() {
                     return _this.update();
                 });
-                this.content = config.content || defaultMenu;
+                this.content = config.content;
                 this.updater.force();
                 this.floating = false;
-                if (this.config.float) {
+                if (config.float) {
                     this.updateFloat();
                     this.scrollFunc = function() {
                         if (!document.body.contains(_this.pm.wrapper))
@@ -11727,6 +11305,8 @@
                 value: function detach() {
                     this.updater.detach();
                     this.wrapper.parentNode.removeChild(this.wrapper);
+                    if (this.spacer)
+                        this.spacer.parentNode.removeChild(this.spacer);
                     if (this.scrollFunc)
                         window.removeEventListener("scroll", this.scrollFunc);
                 }
@@ -11735,7 +11315,7 @@
                 value: function update() {
                     var _this2 = this;
                     this.wrapper.textContent = "";
-                    this.wrapper.appendChild((0, _menu.renderGrouped)(this.pm, this.content));
+                    this.wrapper.appendChild(renderGrouped(this.pm, this.content));
                     return this.floating ? this.updateScrollCursor() : function() {
                         if (_this2.wrapper.offsetWidth != _this2.widthForMaxHeight) {
                             _this2.widthForMaxHeight = _this2.wrapper.offsetWidth;
@@ -11772,7 +11352,7 @@
                             this.wrapper.style.left = menuRect.left + "px";
                             this.wrapper.style.width = menuRect.width + "px";
                             this.wrapper.style.position = "fixed";
-                            this.spacer = (0, _dom.elt)("div", {
+                            this.spacer = elt("div", {
                                 class: prefix + "-spacer",
                                 style: "height: " + menuRect.height + "px"
                             });
@@ -11814,19 +11394,23 @@
                     return cur;
             }
         }
-        (0, _dom.insertCSS)("\n." + prefix + " {\n  border-top-left-radius: inherit;\n  border-top-right-radius: inherit;\n  position: relative;\n  min-height: 1em;\n  color: #666;\n  padding: 1px 6px;\n  top: 0; left: 0; right: 0;\n  border-bottom: 1px solid silver;\n  background: white;\n  z-index: 10;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: visible;\n}\n");
+        var menuBar = new Plugin(MenuBar, {
+            content: [],
+            float: false
+        });
+        exports.menuBar = menuBar;
+        insertCSS("\n." + prefix + " {\n  border-top-left-radius: inherit;\n  border-top-right-radius: inherit;\n  position: relative;\n  min-height: 1em;\n  color: #666;\n  padding: 1px 6px;\n  top: 0; left: 0; right: 0;\n  border-bottom: 1px solid silver;\n  background: white;\n  z-index: 10;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: visible;\n}\n");
         return module.exports;
     });
 
-    $__System.registerDynamic("1", ["2", "5", "9", "40"], true, function($__require, exports, module) {
+    $__System.registerDynamic("1", ["2", "9", "3a"], true, function($__require, exports, module) {
         ;
         var define,
             global = this,
             GLOBAL = this;
         var pm = $__require('2');
-        $__require('5');
         $__require('9');
-        $__require('40');
+        $__require('3a');
         var proseMirrorMap = {};
         getProseMirror = function(id) {
             return proseMirrorMap[id];

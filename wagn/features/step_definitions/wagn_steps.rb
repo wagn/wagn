@@ -70,7 +70,7 @@ edit_re = /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/
 When edit_re do |username, cardname, _field, content|
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
-    fill_in 'card[content]', with: content
+    set_content 'card[content]', content
     click_button 'Submit'
   end
 end
@@ -85,25 +85,40 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
     plusses.hashes.first.each do |name, content|
-      fill_in "card[subcards][#{cardname}+#{name}][content]", with: content
+      set_content "card[subcards][#{cardname}+#{name}][content]", content
     end
     click_button 'Submit'
   end
 end
 
+def set_content name, content, cardtype=nil
+  set_prosemirror_content name, content
+rescue Exception => e
+  ace_editor_types = %w(
+    JavaScript CoffeeScript HTML CSS SCSS Search
+  )
+  if cardtype && ace_editor_types.include?(cardtype) &&
+     page.evaluate_script("typeof ace != 'undefined'")
+    page.execute_script "ace.edit($('.ace_editor').get(0))"\
+        ".getSession().setValue('#{content}')"
+  else
+    fill_in('card[content]', with: content)
+  end
+end
+
+def set_prosemirror_content name, content
+  Capybara.ignore_hidden_elements = false
+  editor_id = find("[name='#{name}']").first(:xpath, './/..')[:id]
+  Capybara.ignore_hidden_elements = true
+  escaped_quotes = content.gsub("'","\\'")
+  page.execute_script "getProseMirror('#{editor_id}')"\
+                      ".setContent('#{escaped_quotes}', 'text')"
+end
+
 content_re = /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/
 When content_re do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do
-    normal_textarea_types = %w(
-      JavaScript CoffeeScript HTML CSS SCSS Search
-    )
-    if !normal_textarea_types.include?(cardtype) ||
-       !page.evaluate_script("typeof ace != 'undefined'")
-      fill_in('card[content]', with: content)
-    else
-      page.execute_script "ace.edit($('.ace_editor').get(0))"\
-        ".getSession().setValue('#{content}')"
-    end
+    set_content 'card[content]', content, cardtype
   end
 end
 
@@ -116,7 +131,7 @@ plus_re = /^(.*) creates?\s*([^\s]*) card "([^"]*)" with plusses:$/
 When plus_re do |username, cardtype, cardname, plusses|
   create_card(username, cardtype, cardname) do
     plusses.hashes.first.each do |name, content|
-      fill_in "card[subcards][+#{name}][content]", with: content
+      set_content "card[subcards][+#{name}][content]", content, cardtype
     end
   end
 end
@@ -140,6 +155,7 @@ When /^(?:|I )upload the (.+) "(.+)"$/ do |attachment_name, filename|
 end
 
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, _verb, cardname|
+  Delayed::Worker.new.work_off
   user = Card::Auth.current.name if user == 'I'
   signed_in_as user do
     step "the card #{cardname}+#{user}+*follow contains \"[[*always]]\""

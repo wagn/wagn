@@ -8,7 +8,7 @@ require 'minitest/autorun'
 require 'rspec/expectations'
 World(RSpec::Matchers)
 require 'rspec-html-matchers'
-World RSpecHtmlMatchers
+World(RSpecHtmlMatchers)
 
 require 'pry'
 
@@ -35,7 +35,7 @@ require 'test_after_commit'
 # prefer to use XPath just remove this line and adjust any selectors in your
 # steps to use the XPath syntax.
 Capybara.default_selector = :css
-Capybara.default_wait_time = 60
+Capybara.default_wait_time = 30
 # By default, any exception happening in your Rails application will bubble up
 # to Cucumber so that your scenario will fail. This is a different from how
 # your application behaves in the production environment, where an error page
@@ -73,8 +73,8 @@ ActionController::Base.allow_rescue = false
 #   end
 #
 #   Before('~@no-txn', '~@selenium', ~@celerity', '~@javascript') do
-#     DatabaseCleaner.strategy = :transaction
-#   end
+#   DatabaseCleaner.strategy = :transaction
+# end
 #
 
 # Possible values are :truncation and :transaction

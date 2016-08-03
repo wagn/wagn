@@ -16,10 +16,9 @@ describe Card::HtmlFormat do
       rendered = c.format.render(:edit)
 
       assert_view_select rendered, 'fieldset' do
-        assert_select(
-          'textarea[name=?][class~="tinymce-textarea card-content"]',
-          'card[subcards][+illustrator][content]'
-        )
+        assert_select 'div[class~="prosemirror-editor"]' do
+          assert_select 'input[name=?]', 'card[subcards][+illustrator][content]'
+        end
       end
     end
 

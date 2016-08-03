@@ -158,18 +158,18 @@ format :html do
   def history_legend
     intr = card.intrusive_acts.page(params['page']).per(ACTS_PER_PAGE)
     render_haml intr: intr do
-      <<-HAML
-.history-header
-  %span.slotter
-    = paginate intr, remote: true, theme: 'twitter-bootstrap-3'
-  %div.history-legend
-    %span.glyphicon.glyphicon-plus-sign.diff-green
-    %span
-      = Card::Diff.render_added_chunk('Added')
-      |
-    %span.glyphicon.glyphicon-minus-sign.diff-red
-    %span
-      = Card::Diff.render_deleted_chunk('Deleted')
+      <<-HAML.strip_heredoc
+        .history-header
+          %span.slotter
+            = paginate intr, remote: true, theme: 'twitter-bootstrap-3'
+          %div.history-legend
+            %span.glyphicon.glyphicon-plus-sign.diff-green
+            %span
+              = Card::Diff.render_added_chunk('Added')
+              |
+            %span.glyphicon.glyphicon-minus-sign.diff-red
+            %span
+              = Card::Diff.render_deleted_chunk('Deleted')
       HAML
     end
   end
@@ -211,18 +211,18 @@ format :html do
   view :act do |args|
     wrap(args) do
       render_haml args.merge(card: card, args: args) do
-        <<-HAML
-.act{style: "clear:both;"}
-  - show_header = act_context == :absolute ? :show : :hide
-  = optional_render :act_header, args, show_header
-  .head
-    = render :act_metadata, args
-  .toggle
-    = fold_or_unfold_link args
-  .action-container
-    - actions.each do |action|
-      = render ('action_' + action_view.to_s), args.merge(action: action)
-HAML
+        <<-HAML.strip_heredoc
+          .act{style: "clear:both;"}
+            - show_header = act_context == :absolute ? :show : :hide
+            = optional_render :act_header, args, show_header
+            .head
+              = render :act_metadata, args
+            .toggle
+              = fold_or_unfold_link args
+            .action-container
+              - actions.each do |action|
+                = render "action_#{args[:action_view]}", args.merge(action: action)
+        HAML
       end
     end
   end
@@ -233,23 +233,23 @@ HAML
 
   view :act_metadata do |args|
     render_haml args.merge(card: card, args: args) do
-      <<-HAML
-- unless act_context == :absolute
-  .nr
-    = '#' + act_seq.to_s
-.title
-  .actor
-    = link_to act.actor.name, card_url(act.actor.cardname.url_key)
-  .time.timeago
-    = time_ago_in_words(act.acted_at)
-    ago
-    - if act.id == card.last_act.id
-      %em.label.label-info Current
-    - if action_view == :expanded
-      - unless act.id == card.last_act.id
-        = rollback_link act.relevant_actions_for(card)
-      = show_or_hide_changes_link args
-HAML
+      <<-HAML.strip_heredoc
+        - unless act_context == :absolute
+          .nr
+            = '#' + act_seq.to_s
+        .title
+          .actor
+            = link_to act.actor.name, card_url(act.actor.cardname.url_key)
+          .time.timeago
+            = time_ago_in_words(act.acted_at)
+            ago
+            - if act.id == card.last_act.id
+              %em.label.label-info Current
+            - if action_view == :expanded
+              - unless act.id == card.last_act.id
+                = rollback_link act.relevant_actions_for(card)
+              = show_or_hide_changes_link args
+      HAML
     end
   end
 
@@ -270,22 +270,22 @@ HAML
                 name_diff: name_diff(action, hide_diff),
                 type_diff: type_diff(action, hide_diff),
                 content_diff: content_diff(action, action_view, hide_diff) do
-      <<-HAML
-.action
-  .summary
-    %span.ampel
-      = glyphicon 'minus-sign', (action.red? ? 'diff-red' : 'diff-invisible')
-      = glyphicon 'plus-sign', (action.green? ? 'diff-green' : 'diff-invisible')
-    = wrap_diff :name, name_diff
-    = wrap_diff :type, type_diff
-    -if content_diff
-      = glyphicon 'arrow-right', 'arrow'
-      -if action_view == :summary
-        = wrap_diff :content, content_diff
-  -if content_diff and action_view == :expanded
-    .expanded
-      = wrap_diff :content, content_diff
-HAML
+      <<-HAML.strip_heredoc
+        .action
+          .summary
+            %span.ampel
+              = glyphicon 'minus-sign', (action.red? ? 'diff-red' : 'diff-invisible')
+              = glyphicon 'plus-sign', (action.green? ? 'diff-green' : 'diff-invisible')
+            = wrap_diff :name, name_diff
+            = wrap_diff :type, type_diff
+            -if content_diff
+              = glyphicon 'arrow-right', 'arrow'
+              -if action_view == :summary
+                = wrap_diff :content, content_diff
+          -if content_diff and action_view == :expanded
+            .expanded
+              = wrap_diff :content, content_diff
+      HAML
     end
   end
 

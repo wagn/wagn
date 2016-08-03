@@ -310,7 +310,7 @@ namespace :wagn do
                      end
           card.update_column :db_content,
                              card.attachment.db_content(mod: mod_name)
-          card.last_action.change_for(2).first
+          card.last_action.change(:content)
               .update_column :value, card.attachment.db_content(mod: mod_name)
           card.expire
           card = Card.fetch card.name

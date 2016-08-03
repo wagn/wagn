@@ -23,29 +23,41 @@ format :html do
   #     which in principle is not supposed to be in styles
   def wrap args={}
     @slot_view = @current_view
-    classes = [
+    classes = wrap_classes args
+    data = wrap_data args
+
+    div = content_tag :div, output(yield).html_safe,
+                      id: card.cardname.url_key,
+                      class: classes,
+                      data: data,
+                      style: h(args[:style])
+    add_debug_comments div
+  end
+
+  def add_debug_comments content
+    return content if params[:debug] != 'slot' ||
+                      tagged(@current_view, :no_wrap_comments)
+    name = h card.name
+    space = '  ' * @depth
+    %(<!--\n\n#{space}BEGIN SLOT: #{name}\n\n-->#{div}<!--\n\n#{space}END SLOT: #{name}\n\n-->)
+  end
+
+  def wrap_classes args
+    [
       ('card-slot' unless args[:no_slot]),
       "#{@current_view}-view",
       (args[:slot_class] if args[:slot_class]),
       ("STRUCTURE-#{args[:structure].to_name.key}" if args[:structure]),
       card.safe_set_keys
     ].compact.join ' '
-    data = {
+  end
+
+  def wrap_data args
+    {
       'card-id' => card.id,
       'card-name' => h(card.name),
       'slot'      => html_escape_except_quotes(slot_options(args))
     }
-    div =
-      content_tag :div, output(yield).html_safe,
-                  id: card.cardname.url_key, data: data, style: h(args[:style]), class: classes
-
-    if params[:debug] == 'slot' && !tagged(@current_view, :no_wrap_comments)
-      name = h card.name
-      space = '  ' * @depth
-      %(<!--\n\n#{space}BEGIN SLOT: #{name}\n\n-->#{div}<!--\n\n#{space}END SLOT: #{name}\n\n-->)
-    else
-      div
-    end
   end
 
   def wrap_body args={}
@@ -68,7 +80,10 @@ format :html do
       args.delete(:panel_class)
       subframe args, &block
     else
-      show_subheader = show_view?(:toolbar, args.merge(default_visibility: :hide)) && @current_view != :related && @current_view != :open
+      show_subheader =
+        show_view?(:toolbar, args.merge(default_visibility: :hide)) &&
+          @current_view != :related && @current_view != :open
+
       wrap args do
         [
           _optional_render(:menu, args),
@@ -118,12 +133,12 @@ format :html do
     css_class += args[:alert_class] if args[:alert_class]
     close_button =
       if args[:dismissible]
-        %(
+        <<-HTML
           <button type="button" class="close" data-dismiss="alert"
                   aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-        )
+        HTML
       else
         ''
       end

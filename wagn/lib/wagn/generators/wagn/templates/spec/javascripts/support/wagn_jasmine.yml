@@ -23,6 +23,10 @@ src_files:
  - script_jquery.js
  - script_tinymce.js
  - wagn_mod.js.coffee
+ - wagn_editor.js.coffee
+ - wagn_upload.js.coffee
+ - wagn_layout.js.coffee
+ - wagn_navbox.js.coffee
  - wagn.js.coffee
  - script_card_menu.js
  # - jquerymobile.js 
@@ -33,6 +37,7 @@ src_files:
  - jquery.iframe-transport.js 
  - jquery_ujs.js
  - script_ace.js
+ - script_prosemirror.js
  #- "**/*.{js.coffee,js,coffee}"
 
 # list of file expressions to include as css files

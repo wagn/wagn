@@ -84,9 +84,9 @@ group :test do
   end
 
   # CUKES see features dir
-  gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite
-  gem 'capybara', '~> 2.4.4'
-  gem 'selenium-webdriver', '~> 2.47.1'
+  gem 'cucumber-rails', '~> 1.4', :require=>false # feature-driven-development suite
+  gem 'capybara', '~> 2.7'
+  gem 'selenium-webdriver', '~> 2.53'
   # gem 'capybara-webkit'
   gem 'launchy'                                # lets cucumber launch browser windows
 
@@ -94,7 +94,7 @@ group :test do
   # NOTE: had weird errors with timecop 0.4.4.  would like to update when possible
 
   gem 'email_spec'                             #
-  gem 'database_cleaner', '~> 1.4'             # used by cucumber for db transactions
+  gem 'database_cleaner', '~> 1.5 '             # used by cucumber for db transactions
 
   gem 'turn', :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
   gem 'minitest'

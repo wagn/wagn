@@ -237,8 +237,9 @@ format :html do
   # FIELD VIEWS
 
   view :editor do |_args|
-    text_area :content, rows: 3, class: 'tinymce-textarea card-content',
-                        id: unique_id
+    wrap_with(:div, id: unique_id, class: 'prosemirror-editor') do
+      hidden_field(:content, class: 'card-content', value: card.raw_content)
+    end
   end
 
   view :edit_in_form, perms: :update, tags: :unknown_ok do |args|

@@ -5,8 +5,11 @@ class Card
   module Env
     class << self
       def reset args={}
-        @@env = { main_name: nil }
-        return unless (c = args[:controller])
+        @env = { main_name: nil }
+        @serializable_attributes =
+          ::Set.new [:main_name, :params, :ip, :ajax, :html, :host,
+                     :protocol, :salt]
+        return self unless (c = args[:controller])
         self[:controller] = c
         self[:session]    = c.request.session
         self[:params]     = c.params
@@ -17,14 +20,15 @@ class Card
                             c.request.env['HTTP_HOST']
         self[:protocol]   = Card.config.override_protocol ||
                             c.request.protocol
+        self
       end
 
       def [] key
-        @@env[key.to_sym]
+        @env[key.to_sym]
       end
 
       def []= key, value
-        @@env[key.to_sym] = value
+        @env[key.to_sym] = value
       end
 
       def params
@@ -52,14 +56,12 @@ class Card
       end
 
       def serialize
-        keep = ::Set.new [:main_name, :params, :ip, :ajax, :html, :host,
-                          :protocol, :salt]
-        @@env.select { |k, _v| keep.include?(k) }
+        @env.select { |k, _v| @serializable_attributes.include?(k) }
       end
 
       def deserialize! data
-        @@env ||= {}
-        @@env.update data
+        @env ||= {}
+        @env.update data
       end
 
       def method_missing method_id, *args

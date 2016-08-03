@@ -1,6 +1,9 @@
 # -*- encoding : utf-8 -*-
 require 'sass'
+include Machine
 include MachineInput
+
+store_machine_output filetype: 'css'
 
 machine_input do
   compress_css format(format: :css)._render_core
@@ -35,8 +38,6 @@ format :html do
   def get_nest_defaults _nested_card
     { view: :closed }
   end
-
-  view :editor, mod: Html::HtmlFormat
 
   view :core do |_args|
     # FIXME: scan must happen before process for inclusion interactions to

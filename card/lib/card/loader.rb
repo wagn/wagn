@@ -21,7 +21,7 @@ class Card
         load_formats
         load_sets
 
-        refresh_script_and_style if ENV['RAILS_ENV'] == 'development'
+        #refresh_script_and_style if ENV['RAILS_ENV'] == 'development'
       end
 
       def load_chunks
@@ -52,16 +52,17 @@ class Card
         end
       end
 
-      private
-
       def refresh_script_and_style
         update_if_source_file_changed Card[:all, :script]
         update_if_source_file_changed Card[:all, :style]
       end
 
+      private
+
       # regenerates the machine output if a source file of a input card
       # has been changed
       def update_if_source_file_changed machine_card
+        return unless machine_card
         mtime_output = machine_card.machine_output_card.updated_at
         return unless mtime_output
         regenerate = false
@@ -74,7 +75,11 @@ class Card
             end
           end
         end
-        machine_card.regenerate_machine_output if regenerate
+        return unless regenerate
+        Auth.as_bot do
+          #(moc = machine_card.machine_output_card) && moc.real? && moc.delete!
+        end
+        #machine_card.regenerate_machine_output if regenerate
       end
 
       def input_cards_with_source_files card

@@ -1,6 +1,5 @@
 $.extend wagn,
   editorContentFunctionMap: {
-    '.prosemirror-editor': -> prosemirrorContent @[0].id
     '.ace-editor-textarea': -> aceEditorContent this[0]
     '.tinymce-textarea': -> tinyMCE.get(@[0].id).getContent()
     '.pointer-select': -> pointerContent @val()
@@ -49,9 +48,6 @@ $.extend wagn,
       catch
         {}
     wagn.tinyMCEConfig = setter()
-
-  initProseMirror: (el_id) ->
-    createProseMirror(el_id, { "menuBar": true, "tooltipMenu": false })
 
   aceModeByTypeCode: {
     java_script: 'javascript',
@@ -125,11 +121,6 @@ aceEditorContent = (element) ->
   ace_div = $(element).siblings(".ace_editor")
   editor = ace.edit(ace_div[0])
   editor.getSession().getValue()
-
-prosemirrorContent = (id) ->
-  content = getProseMirror(id).getContent('html')
-  return '' if content == '<p></p>'
-  content
 
 permissionsContent = (ed) ->
   return '_left' if ed.find('#inherit').is(':checked')

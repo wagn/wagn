@@ -3,6 +3,7 @@ require 'uglifier'
 
 include Machine
 include MachineInput
+include_set Abstract::AceEditor
 
 store_machine_output filetype: 'js'
 
@@ -36,7 +37,10 @@ format do
 end
 
 format :html do
-  view :editor, mod: Html::HtmlFormat
+  def default_editor_args args
+    args[:ace_mode] ||= 'javascript'
+  end
+
   view :content_changes, mod: CoffeeScript::HtmlFormat
 
   view :core do |_args|

@@ -1,8 +1,12 @@
-wagn.editorContentFunctionMap['.prosemirror-editor'] = ->
-  prosemirrorContent @[0].id
-wagn.editorInitFunctionMap['.prosemirror-editor'] = ->
-  wagn.initProseMirror @[0].id
+wagn.addEditor(
+  '.prosemirror-editor',
+  ->
+    wagn.initProseMirror @[0].id,
+  ->
+    prosemirrorContent @[0].id
+)
 
+$.extend wagn,
   setProseMirrorConfig: (string) ->
     setter = ->
       try

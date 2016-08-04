@@ -21,7 +21,6 @@ $.extend wagn,
   editorInitFunctionMap: {
     '.date-editor': -> @datepicker { dateFormat: 'yy-mm-dd' }
     'textarea': -> $(this).autosize()
-    '.prosemirror-editor': -> wagn.initProseMirror @[0].id
     '.ace-editor-textarea': -> wagn.initAce $(this)
     '.tinymce-textarea': -> wagn.initTinyMCE @[0].id
     '.pointer-list-editor': ->
@@ -33,6 +32,10 @@ $.extend wagn,
       .find('.edit-submit-button')
       .attr('class', 'etherpad-submit-button')
   }
+
+  addEditor: (selector, init, get_content) ->
+    wagn.editorContentFunctionMap[selector] = get_content
+    wagn.editorInitFunctionMap[selector] = init
 
   initPointerList: (input) ->
     optionsCard = input.closest('ul').data('options-card')
@@ -48,9 +51,6 @@ $.extend wagn,
       catch
         {}
     wagn.tinyMCEConfig = setter()
-
-  initProseMirror: (el_id) ->
-    createProseMirror(el_id, { "menuBar": true, "tooltipMenu": false })
 
   aceConfigByTypeCode: {
     default: (editor) ->

@@ -1,3 +1,5 @@
+include_set Pointer
+
 event :validate_listed_by_name, :validate, on: :save, changed: :name do
   if !junction? || !right || right.type_id != CardtypeID
     errors.add :name, 'must have a cardtype name as right part'
@@ -73,21 +75,4 @@ end
 
 def unfilled?
   false
-end
-
-include Pointer
-format do
-  include Pointer::Format
-end
-format :html do
-  include Pointer::HtmlFormat
-end
-format :css do
-  include Pointer::CssFormat
-end
-format :js do
-  include Pointer::JsFormat
-end
-format :data do
-  include Pointer::DataFormat
 end

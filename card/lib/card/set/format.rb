@@ -90,7 +90,10 @@ class Card
       # All Format modules are extended with this module in order to support
       # the basic format API (ok, view definitions.  It's just view
       # definitions.)
+      # No longer just view definitions. Also basket definitions now.
       module AbstractFormat
+        include Set::Basket
+
         mattr_accessor :views
         self.views = {}
 

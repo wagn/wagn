@@ -67,11 +67,13 @@ class Card
   module Set
     include Event
     include Trait
+    include Basket
 
     include Set::Format
     include Set::Helpers
 
     extend Set::Loader
+
 
     mattr_accessor :modules, :traits
     self.modules = { base: [], base_format: {}, nonbase: {}, nonbase_format: {},

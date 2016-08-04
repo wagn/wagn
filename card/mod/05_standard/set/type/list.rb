@@ -1,3 +1,5 @@
+include_set Pointer
+
 event :validate_list_name, :validate, on: :save, changed: :name do
   if !junction? || !right || right.type_id != CardtypeID
     errors.add :name, 'must have a cardtype name as right part'
@@ -92,23 +94,6 @@ def update_listed_by_cache_for item_keys, args={}
       Card::Cache[Card::Set::Type::ListedBy].delete key
     end
   end
-end
-
-include Pointer
-format do
-  include Pointer::Format
-end
-format :html do
-  include Pointer::HtmlFormat
-end
-format :css do
-  include Pointer::CssFormat
-end
-format :js do
-  include Pointer::JsFormat
-end
-format :data do
-  include Pointer::DataFormat
 end
 
 def item_type

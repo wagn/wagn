@@ -3,7 +3,7 @@ require 'uglifier'
 
 include Machine
 include MachineInput
-include_set Abstract::AceEditor
+include_set Abstract::Editor::Ace
 
 store_machine_output filetype: 'js'
 

@@ -1,4 +1,4 @@
-include_set Abstract::AceEditor
+include_set Abstract::Editor::Ace
 
 def item_cards params={}
   s = query(params)

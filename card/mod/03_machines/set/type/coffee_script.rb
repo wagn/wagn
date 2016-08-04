@@ -8,7 +8,7 @@ require_dependency 'card/machine_input'
 include Machine
 include MachineInput
 
-include_set Abstract::AceEditor
+include_set Abstract::Editor::Ace
 
 def compile_coffee script
   ::CoffeeScript.compile script

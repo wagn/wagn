@@ -2,9 +2,9 @@
 
 class ReorganizeScripts < Card::CoreMigration
   def up
-    Card.create! name: 'script: mods', type_id: Card::PointerID,
+    ensure_card name: 'script: mods', type_id: Card::PointerID,
                  codename: 'script_mods'
-    Card.create! name: 'script: editors', type_id: Card::PointerID,
+    ensure_card name: 'script: editors', type_id: Card::PointerID,
                  codename: 'script_editors'
 
     update_script_rules

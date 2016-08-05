@@ -1,3 +1,5 @@
+include_set Abstract::ProsemirrorEditor
+
 format :html do
   def edit_slot args={}
     # note: @mode should already be :edit here...
@@ -235,12 +237,6 @@ format :html do
   end
 
   # FIELD VIEWS
-
-  view :editor do |_args|
-    wrap_with(:div, id: unique_id, class: 'prosemirror-editor') do
-      hidden_field(:content, class: 'card-content', value: card.raw_content)
-    end
-  end
 
   view :edit_in_form, perms: :update, tags: :unknown_ok do |args|
     eform = form_for_multi

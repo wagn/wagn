@@ -1,4 +1,4 @@
-include_set Abstract::Editor::Ace
+include_set Abstract::AceEditor
 
 def clean_html?
   false

@@ -17,17 +17,29 @@ class Card
     #     end
     #   end
     module Basket
+      # Define a basket in a set or format
       def basket name
-        mattr_accessor name
-        send("#{name}=", [])
+        mattr_accessor "#{name}_content"
+        send("#{name}_content=", [])
         define_method name do
-          basket_content name
+          send("#{name}_content").map do |item|
+            item.respond_to?(:call) ? item.call(self) : item
+          end
+        end
+      end
+
+      # Define a basket in an abstract set
+      def abstract_basket name
+        # the basket has to be defined on the including set
+        # (instead on the set itself)
+        define_singleton_method :included do |host|
+          host.basket name
         end
       end
 
       def add_to_basket name, content=nil, &block
         content ||= block
-        send(name).send('<<', content)
+        send("#{name}_content").send('<<', content)
       end
     end
   end

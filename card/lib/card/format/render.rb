@@ -148,16 +148,6 @@ class Card
         when Array then content.compact.join "\n"
         end
       end
-
-      def basket_content name
-        mod_tags.map do |content|
-          if content.respond_to?(:call)
-            content.call(self)
-          else
-            content
-          end
-        end
-      end
     end
   end
 end

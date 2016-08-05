@@ -1,6 +1,7 @@
+abstract_basket :item_codenames
+
 def raw_content
   item_codenames.map do |codename|
-    Card[codename].name
-  end.to_pointer_content
+    Card[codename] && Card[codename].name
+  end.compact.to_pointer_content
 end
-basket :item_codenames

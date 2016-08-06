@@ -106,7 +106,7 @@ format :html do
       checked = (option_name == card.item_names.first)
       id = "pointer-radio-#{option_name.to_name.key}"
       label = ((o_card = Card.fetch(option_name)) && o_card.label) ||
-        option_name
+              option_name
       description = pointer_option_description option_name
       <<-HTML
         <li class="pointer-radio radio">

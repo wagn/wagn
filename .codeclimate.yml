@@ -27,6 +27,8 @@ ratings:
    - "**.rb"
 exclude_paths:
 - wagn/rails/assets/**/*
+- card/mod/**/lib/javascript/*.js
+- card/mod/03_machines/lib/javascript/**/*
 - card/mod/03_machines/lib/javascript/**/*
 - card/mod/06_bootstrap/lib/javascript/**/*
 - card/db/**/*

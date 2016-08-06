@@ -1,4 +1,4 @@
-$.extend wagn.editorContentFunctionMap
+$.extend wagn.editorContentFunctionMap,
     '.pointer-select': ->
       pointerContent @val()
     '.pointer-multiselect': ->

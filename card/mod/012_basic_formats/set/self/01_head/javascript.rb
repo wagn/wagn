@@ -66,7 +66,7 @@ format :html do
 
   def mod_configs
     mod_js_config.map do |codename, js_wagn_function|
-      config_json = escape_javascript Card.global_setting(:prose_mirror)
+      config_json = escape_javascript Card.global_setting(codename)
       javascript_tag { "wagn.#{js_wagn_function}('#{config_json}')" }
     end
   end

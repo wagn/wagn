@@ -1,1 +1,0 @@
-add_to_basket :item_codenames, :script_prosemirror_config

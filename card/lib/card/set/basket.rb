@@ -2,18 +2,24 @@ class Card
   module Set
     # The purpose of a basket it that you can throw something in from
     # the same set in another mod.
+    # A basket can be defined on a format or directly on a set
     #
-    # Example:
+    # @example:
     #   # mod/01_core/set/self/head.rb:
+    #   basket :basket_on_set
+    #
     #   format :html do
-    #     basket :js_tags
-    #     view :core { output_basket :js_tags }
+    #     basket :js_tags  # only available in HtmlFormat
+    #     view :core { output basket(:js_tags) }
     #   end
     #
     #   # mod/02_shell/set/self/head.rb:
+    #   add_to_basket :basket_on_set, 'hello world'
+    #
     #   format :html do
-    #     add_to_basket :js_tags do |format|
-    #       format.render_special_view
+    #     add_to_basket :js_tags "<script/>"
+    #     add_to_basket :js_tags do |format_obj|
+    #       format_obj.render_special_view
     #     end
     #   end
     module Basket

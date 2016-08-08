@@ -5,15 +5,17 @@ format :html do
       head_title,
       head_buttons,
       head_stylesheets,
-      head_javascript,
+      head_javascript
     ]
   end
 
   view :core do |args|
-    case
-    when focal?    then CGI.escapeHTML _render_raw(args)
-    when @mainline then '(*head)'
-    else _render_raw(args)
+    if focal?
+      CGI.escapeHTML _render_raw(args)
+    elsif @mainline
+      '(*head)'
+    else
+      _render_raw(args)
     end
   end
 
@@ -66,7 +68,6 @@ format :html do
     ]
   end
 
-
   def favicon
     [:favicon, :logo].each do |name|
       if (c = Card[name]) && c.type_id == ImageID && !c.db_content.blank?
@@ -79,13 +80,15 @@ format :html do
   def universal_edit_button
     return if root.card.new_record? || !root.card.ok?(:update)
     href = root.path view: :edit
-    %(<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{href}"/>)
+    tag 'link', rel: "alternate", type: "application/x-wiki",
+                title: "Edit this page!", href: href
   end
 
   def rss_link
     opts = { format: :rss }
     root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
     href = page_path root.card.cardname, opts
-    %(<link rel="alternate" type="application/rss+xml" title="RSS" href="#{href}" />)
+    tag 'link', rel: "alternate", type: "application/rss+xml",
+                title: "RSS", href: href
   end
 end

@@ -15,10 +15,12 @@ format :json do
   def show view, args
     view ||= :content
     raw = render view, args
-    case
-    when raw.is_a?(String) then raw
-    when params[:compress] then JSON(raw)
-    else JSON.pretty_generate raw
+    if raw.is_a?(String)
+      raw
+    elsif params[:compress]
+      JSON(raw)
+    else
+      JSON.pretty_generate raw
     end
   end
 

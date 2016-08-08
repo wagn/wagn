@@ -27,14 +27,15 @@ format :html do
     args ||= {}
     items = args[:item_list] || card.item_names(context: :raw)
     items = [''] if items.empty?
+    rendered_items = items.map do |item|
+                       _render_list_item args.merge(pointer_item: item)
+                     end.join "\n"
     extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
 
     <<-HTML
       <ul class="pointer-list-editor #{extra_css_class}"
           data-options-card="#{options_card_name}">
-        #{items.map do |item|
-      _render_list_item args.merge(pointer_item: item)
-    end.join "\n"}
+        #{rendered_items}
       </ul>
       #{add_item_button}
     HTML
@@ -75,16 +76,13 @@ format :html do
   view :checkbox do |_args|
     options = card.option_names.map do |option_name|
       checked = card.item_names.include?(option_name)
-      o_card = Card.fetch option_name
-      label = (o_card && o_card.label) || option_name
       id = "pointer-checkbox-#{option_name.to_name.key}"
-      description = pointer_option_description option_name
       <<-HTML
         <div class="pointer-checkbox">
           #{check_box_tag 'pointer_checkbox', option_name, checked,
                           id: id, class: 'pointer-checkbox-button'}
-          <label for="#{id}">#{label}</label>
-          #{%(<div class="checkbox-option-description">#{description}</div>) if description}
+          #{option_label option_name, id}
+          #{option_description 'checkbox', option_name}
         </div>
       HTML
     end.join "\n"
@@ -105,20 +103,29 @@ format :html do
     options = card.option_names.map do |option_name|
       checked = (option_name == card.item_names.first)
       id = "pointer-radio-#{option_name.to_name.key}"
-      label = ((o_card = Card.fetch(option_name)) && o_card.label) ||
-              option_name
-      description = pointer_option_description option_name
       <<-HTML
         <li class="pointer-radio radio">
           #{radio_button_tag input_name, option_name, checked,
                              id: id, class: 'pointer-radio-button'}
-          <label for="#{id}">#{label}</label>
-          #{%(<div class="radio-option-description">#{description}</div>) if description}
+          #{option_label option_name, id}
+          #{option_description 'radio', option_name}
         </li>
       HTML
     end.join("\n")
 
     %(<ul class="pointer-radio-list">#{options}</ul>)
+  end
+
+  def option_label option_name, id
+    o_card = Card.fetch(option_name)
+    label = (o_card && o_card.label) || option_name
+    %(<label for="#{id}">#{label}</label>)
+  end
+
+  # @param option_type [String] "checkbox" or "radio"
+  def option_description option_type, option_name
+    return '' unless (description = pointer_option_description(option_name))
+    %(<div class="#{option_type}-option-description">#{description}</div>)
   end
 
   view :select do |_args|
@@ -131,10 +138,9 @@ format :html do
   def pointer_option_description option
     pod_name = card.rule(:options_label) || 'description'
     dcard = Card["#{option}+#{pod_name}"]
-    if dcard && dcard.ok?(:read)
-      with_nest_mode :normal do
-        subformat(dcard).render_core
-      end
+    return unless dcard && dcard.ok?(:read)
+    with_nest_mode :normal do
+      subformat(dcard).render_core
     end
   end
 end

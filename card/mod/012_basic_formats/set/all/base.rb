@@ -126,15 +126,14 @@ format do
       "{{#{args[:inc_syntax]}}}"
     else
       set_name =
-        case
-        when name.absolute?
+        if name.absolute?
           "#{name}+#{Card[:self].name}" # *self set
-        when type = on_type_set
+        elsif (type = on_type_set)
           "#{type}#{name}+#{Card[:type_plus_right].name}" # *type plus right
         else
           "#{stripped.gsub(/^\+/, '')}+#{Card[:right].name}" # *right
         end
-      subformat(Card.fetch set_name).render_template_link args
+      subformat(Card.fetch(set_name)).render_template_link args
     end
   end
 

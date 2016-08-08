@@ -53,7 +53,8 @@ describe Card::Set::Type::EmailTemplate do
                          content: 'Hi Joe! My name is {{_self|name}}'
                        },
                        '+*to' => { content: 'joe@user.com' },
-                       '+*from' => { content: 'from@user.com' } }
+                       '+*from' => { content: 'from@user.com' }
+                     }
         Card.create! name: 'mail test+*self+*on update', type_code: :pointer,
                      content: "[[mail template]]\n[[another mail template]]"
         Card.create! name: 'mail test+*self+*on delete', type_code: :pointer,

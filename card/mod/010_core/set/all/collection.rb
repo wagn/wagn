@@ -35,11 +35,15 @@ module ClassMethods
 end
 
 def item_names _args={}
-  format._render_raw.split /[,\n]/
+  format._render_raw.split(/[,\n]/)
 end
 
 def item_cards _args={} # FIXME: this is inconsistent with item_names
   [self]
+end
+
+def collection?
+  item_cards != [self]
 end
 
 def item_type
@@ -82,16 +86,15 @@ def extended_item_cards context=nil
   extended_list = []
   already_extended = ::Set.new # avoid loops
 
-  while items.size > 0
+  until items.empty?
     item = items.shift
-    if already_extended.include? item
-      next
-    elsif item.item_cards == [item]  # no further level of items
+    next if already_extended.include? item
+    already_extended << item
+    if item.collection?
+      # keep items in order
+      items.unshift(*item.item_cards)
+    else  # no further level of items
       extended_list << item
-      already_extended << item
-    else
-      items.unshift(*item.item_cards) # keep items in order
-      already_extended << item
     end
   end
   extended_list
@@ -123,7 +126,7 @@ end
 
 format do
   def item_links _args={}
-    raw(render_core).split /[,\n]/
+    raw(render_core).split(/[,\n]/)
   end
 
   def item_view args

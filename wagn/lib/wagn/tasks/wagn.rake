@@ -350,7 +350,7 @@ def delete_unwanted_cards
     end
     Card::Cache.reset_all
     # FIXME: can this be associated with the machine module somehow?
-    %w( machine_input machine_output ).each do |codename|
+    %w(machine_input machine_output).each do |codename|
       Card.search(right: { codename: codename }).each do |card|
         FileUtils.rm_rf File.join("files", card.id.to_s), secure: true
         card.delete!

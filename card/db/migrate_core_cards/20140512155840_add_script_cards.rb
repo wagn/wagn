@@ -63,8 +63,8 @@ class AddScriptCards < Card::CoreMigration
 
     # create default script rule
     card_type = { "js" => "java_script", "coffee" => "coffee_script" }
-    scripts        = %w( jquery tinymce slot     card_menu jquery_helper html5shiv_printshiv  )
-    types          = %w( js     js      coffee   js        js            js                   )
+    scripts        = %w(jquery tinymce slot     card_menu jquery_helper html5shiv_printshiv)
+    types          = %w(js     js      coffee   js        js            js)
     # jquery.mobile  (in jquery_helper) must be after card to avoid mobileinit nastiness
     cardnames = scripts.map { |name| "script: #{name.tr('_', ' ')}" }
 

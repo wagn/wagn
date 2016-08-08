@@ -77,7 +77,7 @@ class Card
     )
 
     if Card.config.allow_inline_styles
-      ALLOWED_TAGS["table"] += %w( cellpadding align border cellspacing )
+      ALLOWED_TAGS["table"] += %w(cellpadding align border cellspacing)
     end
 
     ALLOWED_TAGS.each_key do |k|

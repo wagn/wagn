@@ -42,7 +42,7 @@ namespace :test do
     # which dumps with slashes that syck can't understand (also !!null stuff)
 
     sql = "SELECT * FROM %s"
-    tables = %w( cards card_acts card_actions card_changes card_references )
+    tables = %w(cards card_acts card_actions card_changes card_references)
     ActiveRecord::Base.establish_connection
     tables.each do |table_name|
       i = "000"

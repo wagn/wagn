@@ -38,14 +38,14 @@ describe Card::Reference do
     create! "Sun", "[[Yellow]]"
     create! "Yellow"
     yellow_refs = Card["Yellow"].referers.map(&:name).sort
-    expect(yellow_refs).to eq(%w( Banana Submarine Sun ))
+    expect(yellow_refs).to eq(%w(Banana Submarine Sun))
 
     y = Card["Yellow"]
     y.type_id = Card.fetch_id "UserForm"
     y.save!
 
     yellow_refs = Card["Yellow"].referers.map(&:name).sort
-    expect(yellow_refs).to eq(%w( Banana Submarine Sun ))
+    expect(yellow_refs).to eq(%w(Banana Submarine Sun))
   end
 
   it "container nest" do
@@ -176,7 +176,7 @@ describe Card::Reference do
     expect(y_referers).to include("search with references")
 
     search_referees = Card["search with references"].referees.map(&:name).sort
-    expect(search_referees).to eq(%w( A B X Y ))
+    expect(search_referees).to eq(%w(A B X Y))
   end
 
   it "handles contextual names in Basic cards" do

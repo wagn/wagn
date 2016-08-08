@@ -55,21 +55,21 @@ class Card
       relational:      %w( type part left right
                            editor_of edited_by last_editor_of last_edited_by
                            creator_of created_by member_of member             ),
-      plus_relational: %w( plus left_plus right_plus                          ),
+      plus_relational: %w(plus left_plus right_plus),
       ref_relational:  %w( refer_to referred_to_by
                            link_to linked_to_by
                            include included_by                                ),
-      conjunction:     %w( and or all any                                     ),
-      special:         %w( found_by not sort match complete extension_type    ),
-      ignore:          %w( prepend append view params vars size )
+      conjunction:     %w(and or all any),
+      special:         %w(found_by not sort match complete extension_type),
+      ignore:          %w(prepend append view params vars size)
     }.inject({}) { |h, pair| pair[1].each { |v| h[v.to_sym] = pair[0] }; h }
 
     CONJUNCTIONS = { any: :or, in: :or, or: :or, all: :and, and: :and }.freeze
 
-    MODIFIERS = %w( conj return sort sort_as group dir limit offset )
+    MODIFIERS = %w(conj return sort sort_as group dir limit offset)
                 .inject({}) { |h, v| h[v.to_sym] = nil; h }
 
-    OPERATORS = %w( != = =~ < > in ~ ).inject({}) { |h, v| h[v] = v; h }.merge({
+    OPERATORS = %w(!= = =~ < > in ~).inject({}) { |h, v| h[v] = v; h }.merge({
       eq: "=", gt: ">", lt: "<", match: "~", ne: "!=", "not in" => nil
     }.stringify_keys)
 

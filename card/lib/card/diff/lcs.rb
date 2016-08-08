@@ -11,7 +11,7 @@ class Card
         @preprocess   = opts[:preprocess]  # block; called with every word
         @postprocess  = opts[:postprocess] # block; called with complete diff
 
-        @splitters = %w( <[^>]+>  \[\[[^\]]+\]\]  \{\{[^}]+\}\}  \s+ )
+        @splitters = %w(<[^>]+>  \[\[[^\]]+\]\]  \{\{[^}]+\}\}  \s+)
         @disjunction_pattern = /^\s/
       end
 

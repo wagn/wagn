@@ -1,2 +1,4 @@
-class Card::DataFormat < Card::Format
+class Card
+  class DataFormat < Card::Format
+  end
 end

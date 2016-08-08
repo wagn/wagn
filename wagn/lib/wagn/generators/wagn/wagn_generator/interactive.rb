@@ -88,7 +88,7 @@ class WagnGenerator
         desc: "seed all databases (production, development, and test)",
         command: "wagn seed --all",
         code: proc do
-          %w( production development test ).each do |env|
+          %w(production development test).each do |env|
             bundle_exec "rake wagn:seed", rails_env: env
           end
           add_after_seed_options

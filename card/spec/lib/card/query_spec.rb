@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-A_JOINEES = %w( B C D E F ).freeze
+A_JOINEES = %w(B C D E F).freeze
 CARDS_MATCHING_TWO = ["Joe User", "One+Two", "One+Two+Three", "Two"].freeze
 
 describe Card::Query do
@@ -9,7 +9,7 @@ describe Card::Query do
   end
 
   it "should not alter original statement" do
-    @query = { right_plus: { name: %w( in tag source ) } }
+    @query = { right_plus: { name: %w(in tag source) } }
     query_clone = @query.deep_clone
     subject # runs query
     expect(query_clone).to eq(@query)
@@ -21,7 +21,7 @@ describe Card::Query do
         name: [:in, "C", "D", "F"],
         append: "A"
       }
-      is_expected.to eq(%w( C+A D+A F+A ))
+      is_expected.to eq(%w(C+A D+A F+A))
     end
 
     it "should absolutize names" do
@@ -30,7 +30,7 @@ describe Card::Query do
         append: "_right",
         context: "B+A"
       }
-      is_expected.to eq(%w( C+A D+A F+A ))
+      is_expected.to eq(%w(C+A D+A F+A))
     end
 
     it "should find virtual cards" do
@@ -44,13 +44,13 @@ describe Card::Query do
 
   describe "in" do
     it "should work for content options" do
-      @query = { in: %w( AlphaBeta Theta ) }
-      is_expected.to eq(%w( A+B T ))
+      @query = { in: %w(AlphaBeta Theta) }
+      is_expected.to eq(%w(A+B T))
     end
 
     it "should find the same thing in full syntax" do
       @query = { content: [:in, "Theta", "AlphaBeta"] }
-      is_expected.to eq(%w( A+B T ))
+      is_expected.to eq(%w(A+B T))
     end
 
     it "should work on types" do
@@ -75,66 +75,66 @@ describe Card::Query do
     it "should exclude cards matching not criteria" do
       Card::Auth.as_bot
       @query = { plus: "A", not: { plus: "A+B" } }
-      is_expected.to eq(%w( B D E F ))
+      is_expected.to eq(%w(B D E F))
     end
   end
 
   describe "multiple values" do
     it "should handle :all as the first element of an Array" do
       @query = { member_of: [:all, { name: "r1" }, { key: "r2" }] }
-      is_expected.to eq(%w( u1 u2 ))
+      is_expected.to eq(%w(u1 u2))
     end
 
     it "should handle act like :all by default" do
       @query = { member_of: [{ name: "r1" }, { key: "r2" }] }
-      is_expected.to eq(%w( u1 u2 ))
+      is_expected.to eq(%w(u1 u2))
     end
 
     it "should handle :any as the first element of an Array" do
       @query = { member_of: [:any, { name: "r1" }, { key: "r2" }] }
-      is_expected.to eq(%w( u1 u2 u3 ))
+      is_expected.to eq(%w(u1 u2 u3))
     end
 
     it "should handle :any as a relationship" do
       @query = { member_of: { any: [{ name: "r1" }, { key: "r2" }] } }
-      is_expected.to eq(%w( u1 u2 u3 ))
+      is_expected.to eq(%w(u1 u2 u3))
     end
 
     it "should handle explicit conjunctions in plus_relational keys" do
       @query = { right_plus: [:all, "e", "c"] }
-      is_expected.to eq(%w( A ))
+      is_expected.to eq(%w(A))
     end
 
     it "should handle multiple values for right_part in compound relations" do
       @query = { right_plus: [["e", {}], "c"] }
-      is_expected.to eq(%w( A )) # first element is array
+      is_expected.to eq(%w(A)) # first element is array
     end
 
     it "should not interpret simple arrays as multi values for plus" do
-      @query = { right_plus: %w( e c ) }
+      @query = { right_plus: %w(e c) }
       is_expected.to eq([]) # NOT interpreted as multi-value
     end
 
     it "should handle :and for references" do
       @query = { refer_to: [:and, "a", "b"] }
-      is_expected.to eq(%w( Y ))
+      is_expected.to eq(%w(Y))
     end
 
     it "should handle :or for references" do
       @query = { refer_to: [:or, "b", "z"] }
-      is_expected.to eq(%w( A B Y))
+      is_expected.to eq(%w(A B Y))
     end
 
     it "should handle treat simple arrays like :all for references" do
-      @query = { refer_to: %w( A T ) }
-      is_expected.to eq(%w( X Y ))
+      @query = { refer_to: %w(A T) }
+      is_expected.to eq(%w(X Y))
     end
   end
 
   describe "edited_by/editor_of" do
     it "should find card edited by joe using subquery" do
       @query = { edited_by: { match: "Joe User" } }
-      is_expected.to eq(%w( JoeLater JoeNow ))
+      is_expected.to eq(%w(JoeLater JoeNow))
     end
 
     it "should find card edited by Wagn Bot" do
@@ -142,7 +142,7 @@ describe Card::Query do
       # mechanisms in other db setups
       # was having it return *account in some cases and 'A' in others
       @query = { edited_by: "Wagn Bot", name: "A" }
-      is_expected.to eq(%w( A ))
+      is_expected.to eq(%w(A))
     end
 
     it 'should fail gracefully if user isn\'t there' do
@@ -157,7 +157,7 @@ describe Card::Query do
       c.content = "test3"
       c.save!
       @query = { edited_by: "Joe User" }
-      is_expected.to eq(%w( JoeLater JoeNow ))
+      is_expected.to eq(%w(JoeLater JoeNow))
     end
 
     it 'should find joe user among card\'s editors' do
@@ -240,32 +240,32 @@ describe Card::Query do
   describe "links" do
     it "should handle refer_to" do
       @query = { refer_to: "Z" }
-      is_expected.to eq(%w( A B ))
+      is_expected.to eq(%w(A B))
     end
 
     it "should handle link_to" do
       @query = { link_to: "Z" }
-      is_expected.to eq(%w( A ))
+      is_expected.to eq(%w(A))
     end
 
     it "should handle include" do
       @query = { include: "Z" }
-      is_expected.to eq(%w( B ))
+      is_expected.to eq(%w(B))
     end
 
     it "should handle linked_to_by" do
       @query = { linked_to_by: "A" }
-      is_expected.to eq(%w( Z ))
+      is_expected.to eq(%w(Z))
     end
 
     it "should handle included_by" do
       @query = { included_by: "B" }
-      is_expected.to eq(%w( Z ))
+      is_expected.to eq(%w(Z))
     end
 
     it "should handle referred_to_by" do
       @query = { referred_to_by: "X" }
-      is_expected.to eq(%w( A A+B T ))
+      is_expected.to eq(%w(A A+B T))
     end
   end
 
@@ -284,7 +284,7 @@ describe Card::Query do
   describe "relative links" do
     it "should handle relative refer_to" do
       @query = { refer_to: "_self", context: "Z" }
-      is_expected.to eq(%w( A B ))
+      is_expected.to eq(%w(A B))
     end
   end
 
@@ -294,7 +294,7 @@ describe Card::Query do
         Card.create name: "C+*self+*read", type: "Pointer", content: "[[R1]]"
       end
       @query = { plus: "A" }
-      is_expected.to eq(%w( B D E F ))
+      is_expected.to eq(%w(B D E F))
     end
   end
 
@@ -311,22 +311,22 @@ describe Card::Query do
 
     it "should find connection cards" do
       @query = { part: "A" }
-      is_expected.to eq(%w( A+B A+C A+D A+E C+A D+A F+A ))
+      is_expected.to eq(%w(A+B A+C A+D A+E C+A D+A F+A))
     end
 
     it "should find left connection cards" do
       @query = { left: "A" }
-      is_expected.to eq(%w( A+B A+C A+D A+E ))
+      is_expected.to eq(%w(A+B A+C A+D A+E))
     end
 
     it "should find right connection cards based on name" do
       @query = { right: "A" }
-      is_expected.to eq(%w( C+A D+A F+A ))
+      is_expected.to eq(%w(C+A D+A F+A))
     end
 
     it "should find right connection cards based on content" do
       @query = { right: { content: "Alpha [[Z]]" } }
-      is_expected.to eq(%w( C+A D+A F+A ))
+      is_expected.to eq(%w(C+A D+A F+A))
     end
 
     it "should return count" do
@@ -394,18 +394,18 @@ describe Card::Query do
     end
 
     it "should sort by name" do
-      @query = { name: %w( in B Z A Y C X ), sort: "name", dir: "desc" }
-      is_expected.to eq(%w( Z Y X C B A ))
+      @query = { name: %w(in B Z A Y C X), sort: "name", dir: "desc" }
+      is_expected.to eq(%w(Z Y X C B A))
     end
 
     it "should sort by content" do
-      @query = { name: %w( in Z T A ), sort: "content" }
-      is_expected.to eq(%w( A Z T ))
+      @query = { name: %w(in Z T A), sort: "content" }
+      is_expected.to eq(%w(A Z T))
     end
 
     it "should play nice with match" do
       @query = { match: "Z", type: "Basic", sort: "content" }
-      is_expected.to eq(%w( A B Z ))
+      is_expected.to eq(%w(A B Z))
     end
 
     it "should sort by plus card content" do
@@ -420,7 +420,7 @@ describe Card::Query do
           sort: { right: "*table_of_contents" },
           sort_as: "integer"
         }
-        is_expected.to eq(%w( *all Basic+*type Setting+*self ))
+        is_expected.to eq(%w(*all Basic+*type Setting+*self))
       end
     end
 
@@ -489,7 +489,7 @@ describe Card::Query do
 
     it "should work with multiple plusses" do
       @query = { or: { right_plus: "A", plus: "B" } }
-      is_expected.to eq(%w( A C D F ))
+      is_expected.to eq(%w(A C D F))
     end
   end
 
@@ -542,7 +542,7 @@ describe Card::Query do
 
     it "should find connection cards" do
       @query = { part: "_self", context: "A" }
-      is_expected.to eq(%w( A+B A+C A+D A+E C+A D+A F+A ))
+      is_expected.to eq(%w(A+B A+C A+D A+E C+A D+A F+A))
     end
 
     it "should be able to use parts of nonexistent cards in search" do

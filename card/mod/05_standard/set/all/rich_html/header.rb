@@ -30,7 +30,7 @@ format :html do
   end
 
   view :toggle do |args|
-    verb, adjective, direction = (args[:toggle_mode] == :close ? %w( open open expand ) : %w( close closed collapse-down ))
+    verb, adjective, direction = (args[:toggle_mode] == :close ? %w(open open expand) : %w(close closed collapse-down))
 
     link_to  glyphicon(direction),
              path(view: adjective),

@@ -42,13 +42,13 @@ end
 alias_method_chain :ok?, :fetch
 
 def ok! action, opts={}
-  raise Card::PermissionDenied.new self unless ok? action, opts
+  raise Card::PermissionDenied, self unless ok? action, opts
 end
 
 def who_can action
   # warn "who_can[#{name}] #{(prc=permission_rule_card(action)).inspect},
   # #{prc.first.item_cards.map(&:id)}" if action == :update
-  permission_rule_card(action).item_cards.map &:id
+  permission_rule_card(action).item_cards.map(&:id)
 end
 
 def permission_rule_id_and_class action
@@ -80,7 +80,7 @@ def require_permission_rule! rule_id, action
   # RULE missing.  should not be possible.
   # generalize this to handling of all required rules
   errors.add :permission_denied, "No #{action} rule for #{name}"
-  raise Card::PermissionDenied.new(self)
+  raise Card::PermissionDenied, self
 end
 
 def rule_class_name
@@ -110,7 +110,8 @@ def permitted? action
 end
 
 def permit action, verb=nil
-  deny_because "Currently in read-only mode" if Card.config.read_only # not called by ok_to_read
+  # not called by ok_to_read
+  deny_because "Currently in read-only mode" if Card.config.read_only
 
   return if permitted? action
   verb ||= action.to_s
@@ -125,7 +126,8 @@ def ok_to_create
     # left is supercard; create permissions will get checked there.
     next if side == :left && @superleft
     part_card = send side, new: {}
-    next unless part_card && part_card.new_card? # if no card, there must be other errors
+    # if no card, there must be other errors
+    next unless part_card && part_card.new_card?
     unless part_card.ok? :create
       deny_because you_cant("create #{part_card.name}")
     end
@@ -238,7 +240,7 @@ def recaptcha_on?
     !Auth.signed_in?   &&
     !Auth.needs_setup? &&
     !Auth.always_ok?   &&
-    Card.toggle(rule :captcha)
+    Card.toggle(rule(:captcha))
 end
 
 def have_recaptcha_keys?
@@ -265,12 +267,11 @@ module Accounts
   # (without creating separate rules for each account holder) but is not yet.
 
   def permit action, verb=nil
-    case
-    when action == :comment then @action_ok = false
-    when action == :create  then @superleft ? true : super(action, verb)
+    if action == :comment then @action_ok = false
+    elsif action == :create  then @superleft ? true : super(action, verb)
       # restricts account creation to subcard handling on permitted card
       # (unless explicitly permitted)
-    when own_account? then true
+    elsif own_account? then true
     else
       super action, verb
     end

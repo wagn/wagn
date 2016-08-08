@@ -27,7 +27,8 @@ module Card::Content::Chunk
     Card::Content::Chunk.register_class(
       self, prefix_re: '\\{\\{',
             full_re:    /^\{\{([^\}]*)\}\}/,
-            idx_char:  "{")
+            idx_char:  "{"
+    )
 
     def interpret match, _content
       in_brackets = strip_tags match[1]
@@ -46,7 +47,7 @@ module Card::Content::Chunk
     def strip_tags string
       # note: not using ActionView's strip_tags here
       # because this needs to be super fast.
-      string.gsub /\<[^\>]*\>/, ""
+      string.gsub(/\<[^\>]*\>/, "")
     end
 
     def visible_comment message

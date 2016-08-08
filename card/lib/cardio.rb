@@ -45,7 +45,7 @@ module Cardio
         space_last_in_multispace: true,
         closed_search_limit:    50,
 
-        non_createable_types:   [%w( signup setting set )],
+        non_createable_types:   [%w(signup setting set)],
         view_cache:             false,
 
         encoding:               "utf-8",

@@ -73,7 +73,7 @@ describe Card::Set::All::Trash do
     Card::Cache.reset_all
 
     Card::Auth.as_bot do
-      expect(Card.search right: "*account").not_to be_empty
+      expect(Card.search(right: "*account")).not_to be_empty
       Card["born to die"].delete!
     end
     expect(Card["born to die+*account"]).not_to be

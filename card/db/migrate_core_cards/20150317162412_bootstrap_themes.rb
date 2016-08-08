@@ -3,7 +3,7 @@
 class BootstrapThemes < Card::CoreMigration
   def up
     Card.create! name: "themeless bootstrap skin", type_code: :skin, content: "[[style: bootstrap]]\n[[style: jquery-ui-smoothness]]\n[[style: cards]]\n[[style: right sidebar]]\n[[style: bootstrap cards]]"
-    %w(cerulean cosmo cyborg darkly flatly journal lumen paper readable sandstone simplex slate spacelab superhero united yeti ).each do |theme|
+    %w(cerulean cosmo cyborg darkly flatly journal lumen paper readable sandstone simplex slate spacelab superhero united yeti).each do |theme|
       Card.create! name: "theme: #{theme}", type_code: :css, codename: "theme_#{theme}"
       Card.create! name: "#{theme} skin", type_code: :skin, codename: "#{theme}_skin", content: "[[themeless bootstrap skin]]\n[[theme: #{theme}]]"
     end

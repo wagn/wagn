@@ -13,7 +13,7 @@ class Card
     # helper methods for layout view
     def get_layout_content
       Auth.as_bot do
-        if requested_layout = params[:layout]
+        if (requested_layout = params[:layout])
           layout_from_card_or_code requested_layout
         else
           layout_from_rule
@@ -22,7 +22,8 @@ class Card
     end
 
     def layout_from_rule
-      if (rule = card.rule_card(:layout)) && rule.type_id == Card::PointerID && (layout_name = rule.item_names.first)
+      if (rule = card.rule_card(:layout)) && rule.type_id == Card::PointerID &&
+         (layout_name = rule.item_names.first)
         layout_from_card_or_code layout_name
       end
     end
@@ -34,7 +35,8 @@ class Card
       elsif (hardcoded_layout = LAYOUTS[name])
         hardcoded_layout
       else
-        "<h1>Unknown layout: #{name}</h1>Built-in Layouts: #{LAYOUTS.keys.join(', ')}"
+        "<h1>Unknown layout: #{name}</h1>"\
+        "Built-in Layouts: #{LAYOUTS.keys.join(', ')}"
       end
     end
 
@@ -48,14 +50,15 @@ class Card
 
     def html_escape_except_quotes s
       # to be used inside single quotes (makes for readable json attributes)
-      s.to_s.gsub(/&/, "&amp;").gsub(/\'/, "&apos;").gsub(/>/, "&gt;").gsub(/</, "&lt;")
+      s.to_s.gsub(/&/, "&amp;").gsub(/\'/, "&apos;")
+       .gsub(/>/, "&gt;").gsub(/</, "&lt;")
     end
 
     def main?
       if show_layout?
         @depth == 1 && @mainline # assumes layout includes {{_main}}
       else
-        @depth == 0 && params[:is_main]
+        @depth.zero? && params[:is_main]
       end
     end
 
@@ -63,7 +66,7 @@ class Card
       if show_layout?
         main?
       else
-        @depth == 0
+        @depth.zero?
       end
     end
   end

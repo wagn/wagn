@@ -36,7 +36,7 @@ class RailsInflectionUpdates < Card::CoreMigration
       word(keep_the_s("analysi")),
       word(keep_the_s("axi"))
     ]
-    %w( statu crisi alia bu octopu viru analysi basi diagnosi parenthesi prognosi synopsi thesi ).each do |word|
+    %w(statu crisi alia bu octopu viru analysi basi diagnosi parenthesi prognosi synopsi thesi).each do |word|
       corrections << word_end(keep_the_s(word))
     end
 

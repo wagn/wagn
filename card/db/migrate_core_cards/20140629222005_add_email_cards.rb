@@ -3,7 +3,7 @@
 class AddEmailCards < Card::CoreMigration
   def up
     # change notification rules
-    %w( create update delete ).each do |action|
+    %w(create update delete).each do |action|
       Card.create! name: "*on #{action}", type_code: :setting, codename: "on_#{action}"
       Card.create! name: "*on #{action}+*right+*help", content: "Configures email to be sent when card is #{action}d."
       Card.create! name: "*on #{action}+*right+*default", type_code: :pointer

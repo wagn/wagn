@@ -9,7 +9,7 @@ module SelectedAction
 
   def last_content_action_id
     # find action id from content (saves lookups)
-    db_content.to_s.split(/[\/\.]/)[1]
+    db_content.to_s.split(%r{[/\.]})[1]
   end
 end
 include SelectedAction
@@ -34,15 +34,21 @@ format do
 end
 
 format :file do
-  view :core do |_args|                                    # returns send_file args.  not in love with this...
-    if format = card.attachment_format(params[:format]) # this means we only support known formats.  dislike.
+  # returns send_file args.  not in love with this...
+  view :core do |_args|
+    # this means we only support known formats.  dislike.
+    if (_format = card.attachment_format(params[:format]))
       if params[:explicit_file] && (r = controller.response)
         r.headers["Expires"] = 1.year.from_now.httpdate
-        # r.headers["Cache-Control"] = "public"            # currently using default "private", because proxy servers could block needed permission checks
+        # currently using default "private", because proxy servers could block
+        # needed permission checks
+        # r.headers["Cache-Control"] = "public"
       end
 
-      #      elsif ![format, 'file'].member? params[:format]  # formerly supported redirecting to correct file format
-      #        return redirect_to( request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format ) ) #card.attachment.url(style) )
+      # formerly supported redirecting to correct file format
+      # elsif ![format, 'file'].member? params[:format]
+      #   path = request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format )
+      #   return redirect_to(path) #card.attachment.url(style) )
 
       file = selected_file_version
       [file.path,
@@ -51,8 +57,7 @@ format :file do
          filename:  "#{card.cardname.safe_key}#{file.extension}",
          x_sendfile: true,
          disposition: (params[:format] == "file" ? "attachment" : "inline")
-       }
-      ]
+       }]
     else
       _render_not_found
     end
@@ -83,29 +88,35 @@ format :html do
     cached_upload_card_name.gsub!(/\[\w+\]$/, "[action_id_of_cached_upload]")
     <<-HTML
       <div class="chosen-file">
-        <input type="hidden" name="#{cached_upload_card_name}" value="#{card.selected_action_id}">
-        <table role="presentation" class="table table-striped"><tbody class="files">
-          <tr class="template-download fade in">
-            <td>
-              <span class="preview">
-                #{preview(args)}
-              </span>
-            </td>
-            <td>
-              <p class="name">
-                #{card.original_filename}
-              </p>
-            </td>
-            <td>
-              <span class="size">#{number_to_human_size(card.attachment.size)}</span>
-            </td>
-            <td class="pull-right">
-              <button class="btn btn-danger delete cancel-upload" data-type="DELETE">
-                <i class="glyphicon glyphicon-trash"></i>
-                <span>Delete</span>
-              </button>
-            </td>
-          </tr></tbody>
+        <input type="hidden" name="#{cached_upload_card_name}"
+                             value="#{card.selected_action_id}">
+        <table role="presentation" class="table table-striped">
+          <tbody class="files">
+            <tr class="template-download fade in">
+              <td>
+                <span class="preview">
+                  #{preview(args)}
+                </span>
+              </td>
+              <td>
+                <p class="name">
+                  #{card.original_filename}
+                </p>
+              </td>
+              <td>
+                <span class="size">
+                  #{number_to_human_size(card.attachment.size)}
+                </span>
+              </td>
+              <td class="pull-right">
+                <button class="btn btn-danger delete cancel-upload"
+                        data-type="DELETE">
+                  <i class="glyphicon glyphicon-trash"></i>
+                  <span>Delete</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
     HTML

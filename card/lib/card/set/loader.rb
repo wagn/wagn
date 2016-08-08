@@ -45,7 +45,7 @@ class Card
 
       def modules_from_path path
         # remove file extension and number prefixes
-        parts = path.gsub(/\.rb/, "").gsub(%r{(?<=\A|/)\d+_},"")
+        parts = path.gsub(/\.rb/, "").gsub(%r{(?<=\A|/)\d+_}, "")
                     .split(File::SEPARATOR)
         parts.map(&:camelize)
       end

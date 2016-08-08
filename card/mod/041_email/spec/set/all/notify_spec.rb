@@ -204,7 +204,8 @@ describe Card::Set::All::Notify do
         followed_set:  "#{@card.name}+*self",
         follow_option: "*always"
       ).text_part.body.raw_source
-      expect(result).to eq(%("another card with subcards" was just created by Joe User.
+      expect(result)
+        .to eq(%("another card with subcards" was just created by Joe User.
 
    cardtype: Basic
    content: main content {{+s1}}  {{+s2}}
@@ -244,7 +245,8 @@ Use this link to unfollow /update/Joe_User+*follow?card%5Bsubcards%5D%5Banother+
     end
 
     def be_notified_of set_name, option_name="*always"
-      receive(:send_change_notice).with(kind_of(Card::Act), set_name, option_name)
+      receive(:send_change_notice)
+        .with(kind_of(Card::Act), set_name, option_name)
     end
 
     def update card_name, new_content="updated content"
@@ -340,12 +342,14 @@ Use this link to unfollow /update/Joe_User+*follow?card%5Bsubcards%5D%5Banother+
         context "and follow fields rule contains subcards" do
           it "sends notification of new subcard" do
             new_card = Card.new name: "Sunglasses+producer"
-            expect_user("Sunglasses fan").to be_notified_of "Sunglasses+*self", "*always"
+            expect_user("Sunglasses fan")
+              .to be_notified_of "Sunglasses+*self", "*always"
             new_card.save!
           end
 
           it "sends notification of updated subcard" do
-            expect_user("Sunglasses fan").to be_notified_of "Sunglasses+*self", "*always"
+            expect_user("Sunglasses fan")
+              .to be_notified_of "Sunglasses+*self", "*always"
             update "Sunglasses+price"
           end
         end

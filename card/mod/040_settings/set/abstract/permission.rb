@@ -27,7 +27,7 @@ format :html do
     %(
       #{hidden_field :content, class: 'card-content'}
       <div class="perm-editor">
-        #{inheritance_checkbox}
+        #{inheritance_checkbox args}
         <div class="perm-group perm-vals perm-section">
           <h5>Groups</h5>
           #{groups item_names}
@@ -76,7 +76,7 @@ format :html do
     @inheriting ||= inheritable? && card.content == "_left"
   end
 
-  def inheritance_checkbox
+  def inheritance_checkbox args
     return unless inheritable?
     <<-HTML
       <div class="perm-inheritance perm-section">

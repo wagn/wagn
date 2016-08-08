@@ -11,7 +11,7 @@ module ClassMethods
   def count_by_wql spec
     spec = spec.clone
     spec.delete(:offset)
-    search spec.merge(return: 'count')
+    search spec.merge(return: "count")
   end
 
   def find_each options={}
@@ -65,7 +65,7 @@ end
 def drop_item item
   return unless include_item? item
   new_names = item_names.reject { |i| i == item }
-  self.content = new_names.empty? ? '' : new_names.join("\n")
+  self.content = new_names.empty? ? "" : new_names.join("\n")
 end
 
 def insert_item index, name
@@ -77,7 +77,7 @@ end
 
 def extended_item_cards context=nil
   context = (context ? context.cardname : cardname)
-  args = { limit: '' }
+  args = { limit: "" }
   items = item_cards(args.merge(context: context))
   extended_list = []
   already_extended = ::Set.new # avoid loops
@@ -103,7 +103,7 @@ end
 
 def extended_list context=nil
   context = (context ? context.cardname : cardname)
-  args = { limit: '' }
+  args = { limit: "" }
   item_cards(args.merge(context: context)).map do |x|
     x.item_cards(args)
   end.flatten.map do |x|
@@ -169,7 +169,7 @@ format do
     hash[:vars] = params[:vars] || {}
     params.each do |key, val|
       case key.to_s
-      when '_wql'      then hash.merge! val
+      when "_wql"      then hash.merge! val
       when /^\_(\w+)$/ then hash[:vars][Regexp.last_match(1).to_sym] = val
       end
     end
@@ -268,7 +268,7 @@ format :html do
                       type: args[:tab_type]
   end
   def default_tabs_args args
-    args[:tab_type] ||= 'tabs'
+    args[:tab_type] ||= "tabs"
   end
 
   # create a path for a nest with respect ot the nest options
@@ -282,7 +282,7 @@ format :html do
 
   view :pills, view: :tabs
   def default_pills_args args
-    args[:tab_type] ||= 'pills'
+    args[:tab_type] ||= "pills"
   end
 
   view :tabs_static do |args|
@@ -293,11 +293,11 @@ format :html do
     static_tabs tabs, args[:tab_type]
   end
   def default_tabs_static_args args
-    args[:tab_type] ||= 'tabs'
+    args[:tab_type] ||= "tabs"
   end
 
   view :pills_static, view: :tabs_static
   def default_tabs_static_args args
-    args[:tab_type] ||= 'pills'
+    args[:tab_type] ||= "pills"
   end
 end

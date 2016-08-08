@@ -1,6 +1,6 @@
 
 module Wagn
-  WAGN_GEM_ROOT = File.expand_path('../..', __FILE__)
+  WAGN_GEM_ROOT = File.expand_path("../..", __FILE__)
 
   class << self
     def root

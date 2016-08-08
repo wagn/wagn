@@ -5,7 +5,7 @@
 # the "referee". The reference itself has its own class (Card::Reference),
 # which handles id-based reference tracking.
 
-PARTIAL_REF_CODE = 'P'.freeze
+PARTIAL_REF_CODE = "P".freeze
 
 # cards that refer to self
 def referers
@@ -14,7 +14,7 @@ end
 
 # cards that include self
 def includers
-  refs = references_in.where(ref_type: 'I')
+  refs = references_in.where(ref_type: "I")
   refs.map(&:referer_id).map(&Card.method(:fetch)).compact
 end
 
@@ -25,7 +25,7 @@ end
 
 # cards that self includes
 def includees
-  refs = references_out.where(ref_type: 'I')
+  refs = references_out.where(ref_type: "I")
   refs.map { |ref| Card.fetch ref.referee_key, new: {} }
 end
 
@@ -74,7 +74,7 @@ end
 
 # delete references from this card
 def delete_references_out
-  raise 'id required to delete references' if id.nil?
+  raise "id required to delete references" if id.nil?
   Card::Reference.delete_all referer_id: id
 end
 
@@ -109,7 +109,7 @@ end
 def reference_values_array ref_hash
   values = []
   ref_hash.each do |referee_key, hash_val|
-    referee_id = hash_val.shift || 'null'
+    referee_id = hash_val.shift || "null"
     ref_types = hash_val.uniq
     ref_types.delete PARTIAL_REF_CODE if ref_types.size > 1
     # partial references are not necessary if there are explicit references
@@ -133,7 +133,7 @@ protected
 
 # test for updating referer content & preload referer list
 event :prepare_referer_update, :validate, on: :update, changed: :name do
-  self.update_referers = ![nil, false, 'false'].member?(update_referers)
+  self.update_referers = ![nil, false, "false"].member?(update_referers)
   family_referers
 end
 

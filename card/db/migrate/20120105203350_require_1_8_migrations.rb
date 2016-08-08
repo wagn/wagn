@@ -10,6 +10,6 @@ Sorry about this! We're working to minimize these hassles in the future.
   end
 
   def self.down
-    raise 'Older migrations have been removed because of incompatibility.'
+    raise "Older migrations have been removed because of incompatibility."
   end
 end

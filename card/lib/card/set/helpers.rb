@@ -41,7 +41,7 @@ class Card
         set_module = yield
       rescue NameError => e
         if e.message =~ /uninitialized constant (?:Card::Set::)?(.+)$/
-          constant_pieces = Regexp.last_match(1).split('::')
+          constant_pieces = Regexp.last_match(1).split("::")
           constant_pieces.inject(Card::Set) do |set_mod, module_name|
             set_mod.const_get_or_set module_name do
               Module.new
@@ -76,16 +76,16 @@ class Card
       end
 
       def shortname
-        parts = name.split '::'
+        parts = name.split "::"
         first = 2 # shortname eliminates Card::Set
         pattern_name = parts[first].underscore
-        last = if pattern_name == 'abstract'
+        last = if pattern_name == "abstract"
                  first + 1
                else
                  set_class = Card::SetPattern.find pattern_name
                  first + set_class.anchor_parts_count
                end
-        parts[first..last].join '::'
+        parts[first..last].join "::"
       end
 
       def abstract_set?

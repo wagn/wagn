@@ -8,8 +8,8 @@ class Card
       # occuring within literal areas such as <code> and <pre> blocks
       # and within HTML tags.
       class EscapedLiteral < Abstract
-        FULL_RE = { '[' => /^\\\[\[[^\]]*\]\]/,
-                    '{' => /^\\\{\{[^\}]*\}\}/ }.freeze
+        FULL_RE = { "[" => /^\\\[\[[^\]]*\]\]/,
+                    "{" => /^\\\{\{[^\}]*\}\}/ }.freeze
         Card::Content::Chunk.register_class self,
                                             prefix_re: '\\\\(?:\\[\\[|\\{\\{)',
                                             idx_char:  '\\'

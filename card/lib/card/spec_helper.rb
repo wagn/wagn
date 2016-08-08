@@ -13,7 +13,7 @@ module Card::SpecHelper
     #      "#{@request.session[:user]}"
   end
 
-  def create! name, content=''
+  def create! name, content=""
     Card.create! name: name, content: content
   end
 
@@ -51,7 +51,7 @@ module Card::SpecHelper
   end
 
   def render_content_with_args content, format_args={}, view_args={}
-    @card ||= Card.new name: 'Tempo Rary 2'
+    @card ||= Card.new name: "Tempo Rary 2"
     @card.content = content
     @card.format(format_args)._render :core, view_args
   end
@@ -65,7 +65,7 @@ module Card::SpecHelper
       if card_args[:name]
         Card.fetch card_args[:name], new: card_args
       else
-        Card.new card_args.merge(name: 'Tempo Rary')
+        Card.new card_args.merge(name: "Tempo Rary")
       end
     end
     card.format(format_args)._render(view, view_args)

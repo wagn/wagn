@@ -5,7 +5,7 @@ class Card
       def initialize summary_opts=nil
         @dels_cnt = 0
         @adds_cnt = 0
-        @complete = ''
+        @complete = ""
         @summary = Summary.new summary_opts
       end
 
@@ -38,7 +38,7 @@ class Card
         def initialize opts
           opts ||= {}
           @remaining_chars = opts[:length] || 50
-          @joint = opts[:joint] || '...'
+          @joint = opts[:joint] || "..."
 
           @summary = nil
           @chunks = []
@@ -79,8 +79,8 @@ class Card
 
         def render_chunk action, text
           case action
-          when '+', :added then Card::Diff.render_added_chunk text
-          when '-', :deleted then Card::Diff.render_deleted_chunk text
+          when "+", :added then Card::Diff.render_added_chunk text
+          when "-", :deleted then Card::Diff.render_deleted_chunk text
           else text
           end
         end

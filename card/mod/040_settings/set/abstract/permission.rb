@@ -9,7 +9,7 @@ format :html do
   end
 
   view :core do |args|
-    if card.content == '_left'
+    if card.content == "_left"
       core_inherit_content args
     else
       render :pointer_core, args
@@ -27,11 +27,11 @@ format :html do
     not_set = set_card && set_card.type_id != SetID
 
     group_options = Auth.as_bot do
-      Card.search({ type_id: RoleID, sort: 'name' }, 'roles by name')
+      Card.search({ type_id: RoleID, sort: "name" }, "roles by name")
     end
 
     inheritable = not_set ? false : set_card.inheritable?
-    inheriting = inheritable && card.content == '_left'
+    inheriting = inheritable && card.content == "_left"
 
     item_names = inheriting ? [] : card.item_names
 
@@ -81,13 +81,13 @@ format :html do
                ancestor = Card[sc.trunk_name.trunk_name]
                links = ancestor.who_can(task.to_sym).map do |card_id|
                  card_link Card[card_id].name, target: args[:target]
-               end * ', '
+               end * ", "
                "Inherit ( #{links} )"
              rescue
-               'Inherit'
+               "Inherit"
              end
            else
-             'Inherit from left card'
+             "Inherit from left card"
     end
     %(<span class="inherit-perm">#{text}</span>)
   end

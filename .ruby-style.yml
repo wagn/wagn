@@ -39,7 +39,7 @@ Style/RegexpLiteral:
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#percent-r
   Enabled: true
 Style/StringLiterals:
-  EnforcedStyle: single_quotes
+  EnforcedStyle: double_quotes
 Style/SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
 Metrics/MethodLength:

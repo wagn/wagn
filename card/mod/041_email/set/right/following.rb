@@ -22,12 +22,12 @@ format :html do
          </div>)
       end.join
     else
-      'No following preference'
+      "No following preference"
     end
   end
 
   view :closed_content do |_args|
-    ''
+    ""
   end
 
   #    view :editor do |args|
@@ -40,14 +40,14 @@ format :html do
       card.left.default_follow_set_card.name,
       Auth.current.name,
       Card[:follow].name
-    ].join('+')
+    ].join("+")
     rule_context = Card.fetch preference_name, new: { type_id: PointerID }
 
-    wrap_with :div, class: 'edit-rule' do
+    wrap_with :div, class: "edit-rule" do
       follow_context = current_follow_rule_card || rule_context
       subformat(follow_context).render_edit_rule(
         rule_context: rule_context,
-        success: { view: 'status', id: card.name }
+        success: { view: "status", id: card.name }
       )
     end
   end

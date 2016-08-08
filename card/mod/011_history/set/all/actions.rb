@@ -48,5 +48,5 @@ def delete_old_actions
     last_change = Card::Change.find(last_change.id)
     last_change.update_attributes!(card_action_id: last_action_id)
   end
-  actions.where('id != ?', last_action_id).delete_all
+  actions.where("id != ?", last_action_id).delete_all
 end

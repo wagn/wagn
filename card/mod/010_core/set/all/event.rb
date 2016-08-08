@@ -33,8 +33,8 @@ def single_changed_condition_applies? db_column
   return true unless db_column
   db_column =
     case db_column.to_sym
-    when :content then 'db_content'
-    when :type    then 'type_id'
+    when :content then "db_content"
+    when :type    then "type_id"
     else db_column.to_s
     end
   @action != :delete && changes[db_column]

@@ -85,7 +85,7 @@ format do
   end
 
   view :blank, closed: true, perms: :none do
-    ''
+    ""
   end
 
   # note: content and open_content may look like they should be aliased to
@@ -117,7 +117,7 @@ format do
 
   view :template_rule, tags: :unknown_ok do |args|
     # FIXME: - relativity should be handled in smartname
-    return '' unless args[:inc_name]
+    return "" unless args[:inc_name]
     name = args[:inc_name].to_name
     stripped = name.stripped
 
@@ -142,7 +142,7 @@ format do
       (tmpl_set_name = parent.card.cardname.trunk_name) &&
       (tmpl_set_class_name = tmpl_set_name.tag_name) &&
       (tmpl_set_class_card = Card[tmpl_set_class_name]) &&
-      (tmpl_set_class_card.codename == 'type')
+      (tmpl_set_class_card.codename == "type")
 
     tmpl_set_name.left_name
   end

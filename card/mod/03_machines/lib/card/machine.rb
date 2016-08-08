@@ -57,7 +57,7 @@ class Card
 
     def self.included host_class
       host_class.extend(ClassMethods)
-      host_class.output_config = { filetype: 'txt' }
+      host_class.output_config = { filetype: "txt" }
 
       # for compatibility with old migrations
       return unless  Codename[:machine_output]
@@ -71,7 +71,7 @@ class Card
     end
 
     def self.define_machine_events host_class
-      event_suffix = host_class.name.tr ':', '_'
+      event_suffix = host_class.name.tr ":", "_"
       event_name = "reset_machine_output_#{event_suffix}".to_sym
       host_class.event event_name, after: :expire_related, on: :save do
         reset_machine_output
@@ -198,7 +198,7 @@ class Card
     def update_input_card
       if DirectorRegister.running_act?
         input_card = attach_subcard! machine_input_card
-        input_card.content = ''
+        input_card.content = ""
         engine_input.each { |input| input_card << input }
       else
         machine_input_card.items = engine_input

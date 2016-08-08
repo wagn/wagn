@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
-require_dependency 'card/cache'
-require_dependency 'card/name'
+require_dependency "card/cache"
+require_dependency "card/name"
 
 class Card
   class Codename
@@ -20,7 +20,7 @@ class Card
 
       def reset_cache
         @@codehash = nil
-        cache.write 'CODEHASH', nil
+        cache.write "CODEHASH", nil
       end
 
       # only used in migration
@@ -35,9 +35,9 @@ class Card
       end
 
       def each_codenamed_card
-        sql = 'select id, codename from cards where codename is not NULL'
+        sql = "select id, codename from cards where codename is not NULL"
         ActiveRecord::Base.connection.select_all(sql).each do |row|
-          yield row['codename'].to_sym, row['id'].to_i
+          yield row["codename"].to_sym, row["id"].to_i
         end
       end
 
@@ -49,14 +49,14 @@ class Card
       end
 
       def load_hash
-        @@codehash = cache.read('CODEHASH') || begin
+        @@codehash = cache.read("CODEHASH") || begin
           codehash = {}
           each_codenamed_card do |codename, card_id|
             check_duplicates codehash, codename, card_id
             codehash[codename] = card_id
             codehash[card_id] = codename
           end
-          cache.write 'CODEHASH', codehash
+          cache.write "CODEHASH", codehash
         end
       end
     end

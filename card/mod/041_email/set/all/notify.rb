@@ -141,7 +141,7 @@ format do
     if subedits.present?
       wrap_subedits subedits
     else
-      ''
+      ""
     end
   end
 
@@ -161,12 +161,12 @@ format do
        (option_card = Card.fetch(args[:follow_option]))
       option_card.description set_card
     else
-      'followed card'
+      "followed card"
     end
   end
 
   view :follower, perms: :none, closed: true do |args|
-    args[:follower] || 'follower'
+    args[:follower] || "follower"
   end
 
   view :unfollow_url, perms: :none, closed: true do |args|
@@ -188,9 +188,9 @@ format do
 
     item_title =
       case action.action_type
-      when :update then 'new '
-      when :delete then 'deleted '
-      else ''
+      when :update then "new "
+      when :delete then "deleted "
+      else ""
       end
     item_title += "#{field}: "
 

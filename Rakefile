@@ -25,5 +25,5 @@ task :cp_tmpsets do
 end
 
 def version
-  File.open(File.expand_path('../card/VERSION', __FILE__)).read.chomp
+  File.open(File.expand_path("../card/VERSION", __FILE__)).read.chomp
 end

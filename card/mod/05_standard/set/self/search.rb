@@ -50,8 +50,8 @@ format :json do
   end
 
   def complete_term
-    term = params['_keyword']
-    if (term =~ /^\+/) && (main = params['main'])
+    term = params["_keyword"]
+    if (term =~ /^\+/) && (main = params["main"])
       term = main + term
     end
     term
@@ -59,6 +59,6 @@ format :json do
 
   # hacky.  here for override
   def goto_wql term
-    { complete: term, limit: 8, sort: 'name', return: 'name' }
+    { complete: term, limit: 8, sort: "name", return: "name" }
   end
 end

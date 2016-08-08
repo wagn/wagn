@@ -17,7 +17,7 @@ def raw_content
       end
     items.map { |item| "[[#{item}]]" }.join "\n"
   else
-    ''
+    ""
   end
 end
 

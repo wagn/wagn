@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
-ENV['RAILS_ENV'] = 'test'
-require File.expand_path('../../lib/wagn/environment', __FILE__)
-require 'rails/test_help'
-require 'pathname'
+ENV["RAILS_ENV"] = "test"
+require File.expand_path("../../lib/wagn/environment", __FILE__)
+require "rails/test_help"
+require "pathname"
 
 unless defined? TEST_ROOT
   TEST_ROOT = Pathname.new(File.expand_path(File.dirname(__FILE__))).cleanpath(true).to_s
@@ -40,7 +40,7 @@ unless defined? TEST_ROOT
     def prepare_url url, cardtype
       if url =~ /:id/
         # find by naming convention in test data:
-        renames = { 'layout_type' => 'Layout', 'search_type' => 'Search' }
+        renames = { "layout_type" => "Layout", "search_type" => "Search" }
         if card = Card["Sample #{renames[cardtype] || cardtype}"]
           url.gsub!(/:id/, "~#{card.id}")
         else puts("ERROR finding 'Sample #{cardtype}'") end
@@ -61,10 +61,10 @@ unless defined? TEST_ROOT
           name = name.singularize
           first_time = true
           begin
-            constant = (name.camelize + 'TestHelper').constantize
+            constant = (name.camelize + "TestHelper").constantize
             class_eval { include constant }
           rescue NameError
-            filename = File.expand_path(TEST_ROOT + '/helpers/' + name + '_test_helper.rb')
+            filename = File.expand_path(TEST_ROOT + "/helpers/" + name + "_test_helper.rb")
             require filename if first_time
             first_time = false
             retry
@@ -81,15 +81,15 @@ unless defined? TEST_ROOT
         @url = url
 
         args[:users] ||= { anonymous: 200 }
-        args[:cardtypes] ||= ['Basic']
+        args[:cardtypes] ||= ["Basic"]
         if args[:cardtypes] == :all
           # FIXME: need a better data source for this?
           # args[:cardtypes] = YAML.load_file('db/bootstrap/card_codenames.yml').
-          bootstrap_file = File.join(Cardio.gem_root, 'db/bootstrap/cards.yml')
+          bootstrap_file = File.join(Cardio.gem_root, "db/bootstrap/cards.yml")
           args[:cardtypes] = YAML.load_file(bootstrap_file).select do |p|
-            !%w(set setting).member?(p[1]['codename']) &&
-              (card = Card[p[1]['name']]) && card.type_id == Card::CardtypeID
-          end.map { |_k, v| v['codename'] }
+            !%w(set setting).member?(p[1]["codename"]) &&
+              (card = Card[p[1]["name"]]) && card.type_id == Card::CardtypeID
+          end.map { |_k, v| v["codename"] }
         end
 
         args[:users].each_pair do |user, status|
@@ -99,8 +99,8 @@ unless defined? TEST_ROOT
           args[:cardtypes].each do |cardtype|
             next if cardtype =~ /Cardtype|UserForm|Set|Fruit|Optic|Book/
 
-            title = url.gsub(/:id/, '').gsub(/\//, '_') + "_#{cardtype}"
-            login = (current_id == Card::AnonymousID ? '' : "integration_login_as '#{user}'")
+            title = url.gsub(/:id/, "").gsub(/\//, "_") + "_#{cardtype}"
+            login = (current_id == Card::AnonymousID ? "" : "integration_login_as '#{user}'")
             test_def = %{
               def test_render_#{title}_#{user}_#{status}
                 #{login}

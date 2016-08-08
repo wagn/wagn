@@ -17,14 +17,14 @@ class Card
     end
 
     @@group_names = {
-      templating:  'Templating',
-      permission:  'Permissions',
-      webpage:     'Webpage',
-      pointer:     'Pointer',
-      editing_cue: 'Editing cues',
-      event:       'Events',
-      other:       'Other',
-      config:      'Config'
+      templating:  "Templating",
+      permission:  "Permissions",
+      webpage:     "Webpage",
+      pointer:     "Pointer",
+      editing_cue: "Editing cues",
+      event:       "Events",
+      other:       "Other",
+      config:      "Config"
     }
     @@groups = @@group_names.keys.each_with_object({}) do |key, groups|
       groups[key] = []

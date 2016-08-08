@@ -1,4 +1,4 @@
-require 'uuid'
+require "uuid"
 
 module ClassMethods
   def uniquify_name name, rename=:new
@@ -58,7 +58,7 @@ def update_subcard_names cardname
       if subcard.cardname.junction? &&
          subcard.cardname.parts.first.empty? &&
          cardname.parts.first.present?
-        ''.to_name
+        "".to_name
       else
         name
       end
@@ -119,7 +119,7 @@ end
 def [] *args
   case args[0]
   when Fixnum, Range
-    fetch_name = Array.wrap(cardname.parts[args[0]]).compact.join '+'
+    fetch_name = Array.wrap(cardname.parts[args[0]]).compact.join "+"
     Card.fetch(fetch_name, args[1] || {}) unless simple?
   else
     super
@@ -243,7 +243,7 @@ end
 event :rename, after: :set_name, on: :update do
   if (existing_card = Card.find_by_key_and_trash(cardname.key, true)) &&
      existing_card != self
-    existing_card.name = existing_card.name + '*trash'
+    existing_card.name = existing_card.name + "*trash"
     existing_card.rename_without_callbacks
     existing_card.save!
   end
@@ -253,7 +253,7 @@ def suspend_name name
   # move the current card out of the way, in case the new name will require
   # re-creating a card with the current name, ie.  A -> A+B
   Card.expire name
-  tmp_name = 'tmp:' + UUID.new.generate
+  tmp_name = "tmp:" + UUID.new.generate
   Card.where(id: id).update_all(name: tmp_name, key: tmp_name)
 end
 

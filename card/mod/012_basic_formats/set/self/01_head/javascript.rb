@@ -10,7 +10,7 @@ format :html do
     script_card ||= root.card.rule_card :script
 
     @js_tag =
-      if params[:debug] == 'script'
+      if params[:debug] == "script"
         script_card.format(:js).render_core item: :include_tag
       elsif script_card
         javascript_include_tag script_card.machine_output_url
@@ -29,10 +29,10 @@ format :html do
     card.have_recaptcha_keys? &&
       varvals << "wagn.recaptchaKey='#{Card.config.recaptcha_public_key}'"
     (c = Card[:double_click]) && !Card.toggle(c.content) &&
-      varvals << 'wagn.noDoubleClick=true'
+      varvals << "wagn.noDoubleClick=true"
     @css_path &&
       varvals << "wagn.cssPath='#{@css_path}'"
-    javascript_tag { varvals * ';' }
+    javascript_tag { varvals * ";" }
   end
 
   def trigger_slot_ready

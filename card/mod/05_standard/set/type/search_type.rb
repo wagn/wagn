@@ -2,7 +2,7 @@ include_set Abstract::AceEditor
 
 def item_cards params={}
   s = query(params)
-  raise('OH NO.. no limit') unless s[:limit]
+  raise("OH NO.. no limit") unless s[:limit]
   # forces explicit limiting
   # can be 0 or less to force no limit
   Query.run(s, name)
@@ -70,7 +70,7 @@ format do
 
   view :card_list do |_args|
     if search_results.empty?
-      'no results'
+      "no results"
     else
       search_results.map do |c|
         nest c
@@ -98,7 +98,7 @@ format do
       else
         begin
           raw_results = card.item_cards search_params
-          is_count = search_vars[:query][:return] == 'count'
+          is_count = search_vars[:query][:return] == "count"
           is_count ? raw_results.to_i : raw_results
         rescue BadQuery => e
           e
@@ -132,16 +132,16 @@ format do
 
   def page_link text, page, _current=false, options={}
     @paging_path_args[:offset] = page * @paging_limit
-    options[:class] = 'card-paging-link slotter'
+    options[:class] = "card-paging-link slotter"
     options[:remote] = true
     link_to raw(text), path(@paging_path_args), options
   end
 
   def page_li text, page, current=false, options={}
     css_class = if current
-                  'active'
+                  "active"
                 elsif !page
-                  'disabled'
+                  "disabled"
                 end
     page ||= 0
     content_tag :li, class: css_class do
@@ -151,16 +151,16 @@ format do
 
   def previous_page_link page
     page_li '<span aria-hidden="true">&laquo;</span>', page, false,
-            'aria-label' => 'Previous'
+            "aria-label" => "Previous"
   end
 
   def next_page_link page
     page_li '<span aria-hidden="true">&raquo;</span>', page, false,
-            'aria-label' => 'Next'
+            "aria-label" => "Next"
   end
 
   def ellipse_page
-    content_tag :li, content_tag(:span, '...')
+    content_tag :li, content_tag(:span, "...")
   end
 
   def chunk_list
@@ -196,8 +196,8 @@ format :json do
     # avoid running the search from options and structure that
     # case a huge result or error
     return [render_atom(args)] if card.content.empty? ||
-                                  card.name.include?('+*options') ||
-                                  card.name.include?('+*structure')
+                                  card.name.include?("+*options") ||
+                                  card.name.include?("+*structure")
     super(args)
   end
 
@@ -228,7 +228,7 @@ end
 
 format :html do
   def default_editor_args args
-    args[:ace_mode] = 'json'
+    args[:ace_mode] = "json"
   end
 
   view :card_list do |args|
@@ -259,12 +259,12 @@ format :html do
 
   view :closed_content do |args|
     if @depth > self.class.max_depth
-      '...'
+      "..."
     else
       search_limit = args[:closed_search_limit]
       search_params[:limit] =
         search_limit && [search_limit, Card.config.closed_search_limit].min
-      _render_core args.merge(hide: 'paging', item: :link)
+      _render_core args.merge(hide: "paging", item: :link)
       # TODO: if item is queryified to be "name", then that should work.
       # otherwise use link
     end
@@ -278,12 +278,12 @@ format :html do
     s = card.query search_params
     offset = s[:offset].to_i
     limit = s[:limit].to_i
-    return '' if limit < 1
+    return "" if limit < 1
     # avoid query if we know there aren't enough results to warrant paging
-    return '' if offset == 0 && limit > offset + search_results.length
+    return "" if offset == 0 && limit > offset + search_results.length
     total = card.count search_params
     # should only happen if limit exactly equals the total
-    return '' if limit >= total
+    return "" if limit >= total
     @paging_path_args = { limit: limit,
                           slot: {
                             item: args[:item] || nest_defaults(card)[:view]

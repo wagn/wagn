@@ -10,7 +10,7 @@ end
 
 format do
   view :closed_content do |_args|
-    ''
+    ""
   end
 
   def chunk_list

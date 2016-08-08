@@ -13,7 +13,7 @@ class UpdateFileAndImageCards < Card::CoreMigration
   def up
     # use codenames for the filecards not for the left parts
     if (credit = Card[:credit]) && (card = credit.fetch(trait: :image))
-      card.update_attributes! codename: 'credit_image'
+      card.update_attributes! codename: "credit_image"
     end
     %w( cerulean_skin cosmo_skin cyborg_skin darkly_skin flatly_skin
         journal_skin lumen_skin paper_skin readable_skin sandstone_skin
@@ -27,7 +27,7 @@ class UpdateFileAndImageCards < Card::CoreMigration
     end
 
     Card::Cache.reset_all
-    Card.search(type: [:in, 'file', 'image']).each do |card|
+    Card.search(type: [:in, "file", "image"]).each do |card|
       card.actions.each do |action|
         if (content_change = action.change(:db_content))
           original_filename = content_change.value.split("\n").first

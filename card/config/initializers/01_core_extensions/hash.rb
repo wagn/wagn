@@ -28,26 +28,26 @@ module CoreExtensions
       #  h = {:class => "btn"} # => {:class=>"btn"}
       #  h.css_merge({:class => "btn-primary"}) # => {:class=>"btn
       # btn-primary"}
-      def css_merge other_hash, separator=' '
+      def css_merge other_hash, separator=" "
         merge(other_hash) do |key, old, new|
           key == :class ? old.to_s + separator + new.to_s : new
         end
       end
 
-      def css_merge! other_hash, separator=' '
+      def css_merge! other_hash, separator=" "
         merge!(other_hash) do |key, old, new|
           key == :class ? old.to_s + separator + new.to_s : new
         end
       end
 
       # merge string values with `separator`
-      def string_merge other_hash, separator=' '
+      def string_merge other_hash, separator=" "
         merge(other_hash) do |_key, old, new|
           old.is_a?(String) ? old + separator + new.to_s : new
         end
       end
 
-      def string_merge! other_hash, separator=' '
+      def string_merge! other_hash, separator=" "
         merge!(other_hash) do |_key, old, new|
           old.is_a?(String) ? old + separator + new.to_s : new
         end

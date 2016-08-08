@@ -74,7 +74,7 @@ def is_preference?
     (set = self[0..-3, skip_modules: true]) &&
     set.type_id == Card::SetID &&
     (user = self[-2, skip_modules: true]) &&
-    (user.type_id == Card::UserID || user.codename == 'all')
+    (user.type_id == Card::UserID || user.codename == "all")
 end
 
 def rule setting_code, options={}
@@ -147,36 +147,36 @@ module ClassMethods
   end
 
   def path_setting name # shouldn't this be in location helper?
-    name ||= '/'
+    name ||= "/"
     return name if name =~ /^(http|mailto)/
     "#{Card.config.relative_url_root}#{name}"
   end
 
   def toggle val
-    val.to_s.strip == '1'
+    val.to_s.strip == "1"
   end
 
   def rule_cache_key row
-    return false unless (setting_code = Codename[row['setting_id'].to_i])
+    return false unless (setting_code = Codename[row["setting_id"].to_i])
 
-    anchor_id = row['anchor_id']
-    set_class_id = anchor_id.nil? ? row['set_id'] : row['set_tag_id']
+    anchor_id = row["anchor_id"]
+    set_class_id = anchor_id.nil? ? row["set_id"] : row["set_tag_id"]
     return false unless (set_class_code = Codename[set_class_id.to_i])
 
-    [anchor_id, set_class_code, setting_code].compact.map(&:to_s) * '+'
+    [anchor_id, set_class_code, setting_code].compact.map(&:to_s) * "+"
   end
 
   def interpret_simple_rules
     ActiveRecord::Base.connection.select_all(RULE_SQL).each do |row|
       next unless (key = rule_cache_key row)
-      @rule_hash[key] = row['rule_id'].to_i
+      @rule_hash[key] = row["rule_id"].to_i
     end
   end
 
   def interpret_preferences
     ActiveRecord::Base.connection.select_all(preference_sql).each do |row|
-      next unless (key = rule_cache_key row) && (user_id = row['user_id'])
-      add_preference_hash_values key, row['rule_id'].to_i, user_id.to_i
+      next unless (key = rule_cache_key row) && (user_id = row["user_id"])
+      add_preference_hash_values key, row["rule_id"].to_i, user_id.to_i
     end
   end
 
@@ -225,7 +225,7 @@ module ClassMethods
   end
 
   def rule_cache
-    Card.cache.read('RULES') || begin
+    Card.cache.read("RULES") || begin
       @rule_hash = {}
       @user_ids_hash = {}
       @rule_keys_hash = {}
@@ -245,7 +245,7 @@ module ClassMethods
 
   # all users that have a user-specific rule for a given rule key
   def user_ids_cache
-    Card.cache.read('USER_IDS') ||
+    Card.cache.read("USER_IDS") ||
       begin
       clear_rule_cache
       rule_cache
@@ -255,7 +255,7 @@ module ClassMethods
 
   # all keys of user-specific rules for a given user
   def rule_keys_cache
-    Card.cache.read('RULE_KEYS') || begin
+    Card.cache.read("RULE_KEYS") || begin
       clear_rule_cache
       rule_cache
       @rule_keys_hash
@@ -274,32 +274,32 @@ module ClassMethods
   end
 
   def write_rule_cache hash
-    Card.cache.write 'RULES', hash
+    Card.cache.write "RULES", hash
   end
 
   def write_user_ids_cache hash
-    Card.cache.write 'USER_IDS', hash
+    Card.cache.write "USER_IDS", hash
   end
 
   def write_rule_keys_cache hash
-    Card.cache.write 'RULE_KEYS', hash
+    Card.cache.write "RULE_KEYS", hash
   end
 
   def read_rule_cache
-    Card.cache.read('READRULES') || begin
+    Card.cache.read("READRULES") || begin
       hash = {}
       Card.connection.select_all(
         Card::Set::All::Rules::READ_RULE_SQL
       ).each do |row|
-        party_id = row['party_id'].to_i
+        party_id = row["party_id"].to_i
         hash[party_id] ||= []
-        hash[party_id] << row['read_rule_id'].to_i
+        hash[party_id] << row["read_rule_id"].to_i
       end
-      Card.cache.write 'READRULES', hash
+      Card.cache.write "READRULES", hash
     end
   end
 
   def clear_read_rule_cache
-    Card.cache.write 'READRULES', nil
+    Card.cache.write "READRULES", nil
   end
 end

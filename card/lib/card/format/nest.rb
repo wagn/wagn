@@ -49,8 +49,8 @@ class Card
           opts[:comment]
         when @mode == :closed && @char_count > Card.config.max_char_count
           # move on; content out of view
-          ''
-        when opts[:inc_name] == '_main' && show_layout? && @depth == 0
+          ""
+        when opts[:inc_name] == "_main" && show_layout? && @depth == 0
           # the main card within a layout
           expand_main opts
         else
@@ -94,12 +94,12 @@ class Card
       end
 
       def get_nest_content cardname
-        content = params[cardname.to_s.tr('+', '_')]
+        content = params[cardname.to_s.tr("+", "_")]
 
         # CLEANME This is a hack so plus cards re-populate on failed signups
-        p = params['subcards']
+        p = params["subcards"]
         if p && (card_params = p[cardname.to_s])
-          content = card_params['content']
+          content = card_params["content"]
         end
         content if content.present? # returns nil for empty string
       end
@@ -115,7 +115,7 @@ class Card
         if options[:inc_name] =~ /^_main\+/
           # FIXME: this is a rather hacky (and untested) way to get @superleft
           # to work on new cards named _main+whatever
-          args[:name] = args[:name].gsub(/^_main\+/, '+')
+          args[:name] = args[:name].gsub(/^_main\+/, "+")
           args[:supercard] = root.card
         end
         if (content = get_nest_content options[:inc_name])

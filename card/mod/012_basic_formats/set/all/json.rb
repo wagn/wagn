@@ -25,8 +25,8 @@ format :json do
   end
 
   view :name_complete do |_args|
-    card.item_cards complete: params['term'], limit: 8, sort: 'name',
-                    return: 'name', context: ''
+    card.item_cards complete: params["term"], limit: 8, sort: "name",
+                    return: "name", context: ""
   end
 
   view :status, tags: :unknown_ok, perms: :none do |_args|

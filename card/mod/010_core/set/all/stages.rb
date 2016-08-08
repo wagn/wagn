@@ -15,7 +15,7 @@ def identify_action
 end
 
 def current_act= act
-  raise Card::Error, 'not allowed to override current act' if Card.current_act
+  raise Card::Error, "not allowed to override current act" if Card.current_act
   Card.current_act = act
 end
 

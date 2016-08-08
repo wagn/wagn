@@ -22,7 +22,7 @@ def process_email_field field, config, args
         yield(field_card)
       end
     else
-      ''
+      ""
     end
 end
 
@@ -42,17 +42,17 @@ def email_config args={}
   [:to, :from, :cc, :bcc].each do |field_name|
     process_email_field(field_name, config, args) do |field_card|
       field_card.process_email_addresses(
-        args[:context], { format: 'email_text' }, args
+        args[:context], { format: "email_text" }, args
       )
     end
   end
   process_email_field(:attach, config, args) do |field_card|
     field_card.extended_item_contents args[:context]
   end
-  process_message_field :subject, config, args, 'email_text',
+  process_message_field :subject, config, args, "email_text",
                         content_opts: { chunk_list: :nest_only }
-  process_message_field :text_message, config, args, 'email_text'
-  process_message_field :html_message, config, args, 'email_html'
+  process_message_field :text_message, config, args, "email_text"
+  process_message_field :html_message, config, args, "email_html"
   if config[:html_message].present?
     config[:html_message] = Card::Mailer.layout config[:html_message]
   end
@@ -88,27 +88,27 @@ format do
     mail = Card::Mailer.new_mail(args) do
       if alternative
         if attachment_list && !attachment_list.empty?
-          content_type 'multipart/mixed'
-          part content_type: 'multipart/alternative' do |copy|
-            copy.part content_type: 'text/plain' do |plain|
+          content_type "multipart/mixed"
+          part content_type: "multipart/alternative" do |copy|
+            copy.part content_type: "text/plain" do |plain|
               plain.body = text_message
             end
-            copy.part content_type: 'text/html' do |html|
+            copy.part content_type: "text/html" do |html|
               html.body = html_message
             end
           end
         else
           text_part { body text_message }
           html_part do
-            content_type 'text/html; charset=UTF-8'
+            content_type "text/html; charset=UTF-8"
             body html_message
           end
         end
       elsif html_message.present?
-        content_type 'text/html; charset=UTF-8'
+        content_type "text/html; charset=UTF-8"
         body html_message
       else
-        content_type 'text/plain; charset=UTF-8'
+        content_type "text/plain; charset=UTF-8"
         text_part { body text_message }
       end
 

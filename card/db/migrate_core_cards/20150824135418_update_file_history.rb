@@ -2,7 +2,7 @@
 
 class UpdateFileHistory < Card::CoreMigration
   def up
-    Card.search(type: [:in, 'file', 'image']).each do |card|
+    Card.search(type: [:in, "file", "image"]).each do |card|
       card.actions.each do |action|
         next unless (content_change = action.change :db_content)
         original_filename, file_type, action_id, mod = content_change.value.split("\n")
@@ -16,6 +16,6 @@ class UpdateFileHistory < Card::CoreMigration
         content_change.update_attributes! value: value
       end
     end
-    Card.search(right: { codename: 'machine_output' }).each(&:delete!)
+    Card.search(right: { codename: "machine_output" }).each(&:delete!)
   end
 end

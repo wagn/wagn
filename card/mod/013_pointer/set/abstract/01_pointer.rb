@@ -24,12 +24,12 @@ format do
   end
 
   view :core do |args|
-    render_pointer_items args.merge(joint: ', ')
+    render_pointer_items args.merge(joint: ", ")
   end
 
   view :pointer_items, tags: :unknown_ok do |args|
     i_args = item_args(args)
-    joint = args[:joint] || ' '
+    joint = args[:joint] || " "
     card.item_cards.map do |i_card|
       wrap_item nest(i_card, i_args.clone), i_args
     end.join joint
@@ -43,12 +43,12 @@ format :html do
 
   view :closed_content do |args|
     args[:item] =
-      if (args[:item] || nest_defaults(card)[:view]) == 'name'
-        'name'
+      if (args[:item] || nest_defaults(card)[:view]) == "name"
+        "name"
       else
-        'link'
+        "link"
       end
-    args[:joint] ||= ', '
+    args[:joint] ||= ", "
     _render_core args
   end
 
@@ -157,7 +157,7 @@ def item_names args={}
   context = args[:context] || cardname
   content = args[:content] || raw_content
   content.to_s.split(/\n+/).map do |line|
-    item_name = line.gsub(/\[\[|\]\]/, '').strip
+    item_name = line.gsub(/\[\[|\]\]/, "").strip
     if context == :raw
       item_name
     else

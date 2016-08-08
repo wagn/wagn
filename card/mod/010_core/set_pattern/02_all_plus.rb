@@ -5,7 +5,7 @@ def label _name
 end
 
 def prototype_args _anchor
-  { name: '+' }
+  { name: "+" }
 end
 
 def follow_label _name

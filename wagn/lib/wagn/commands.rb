@@ -1,88 +1,88 @@
-require 'optparse'
+require "optparse"
 
 # add method in? to Object class
-require 'active_support/core_ext/object/inclusion'
-require 'wagn/parser'
+require "active_support/core_ext/object/inclusion"
+require "wagn/parser"
 
 def load_rake_tasks
-  require './config/environment'
-  require 'rake'
+  require "./config/environment"
+  require "rake"
   Wagn::Application.load_tasks
 end
 
 RAILS_COMMANDS = %w( generate destroy plugin benchmarker profiler console
                      server dbconsole application runner ).freeze
 ALIAS = {
-  'rs' => 'rspec',
-  'cc' => 'cucumber',
-  'jm' => 'jasmine',
-  'g'  => 'generate',
-  'd'  => 'destroy',
-  'c'  => 'console',
-  's'  => 'server',
-  'db' => 'dbconsole',
-  'r'  => 'runner'
+  "rs" => "rspec",
+  "cc" => "cucumber",
+  "jm" => "jasmine",
+  "g"  => "generate",
+  "d"  => "destroy",
+  "c"  => "console",
+  "s"  => "server",
+  "db" => "dbconsole",
+  "r"  => "runner"
 }.freeze
 
-ARGV << '--help' if ARGV.empty?
+ARGV << "--help" if ARGV.empty?
 
 def supported_rails_command? arg
   arg.in?(RAILS_COMMANDS) || ALIAS[arg].in?(RAILS_COMMANDS)
 end
 
 def find_spec_file filename, base_dir
-  file, line = filename.split(':')
-  if file.include?('_spec.rb') && File.exist?(file)
+  file, line = filename.split(":")
+  if file.include?("_spec.rb") && File.exist?(file)
     filename
   else
-    file = File.basename(file, '.rb').sub(/_spec$/, '')
+    file = File.basename(file, ".rb").sub(/_spec$/, "")
     Dir.glob("#{base_dir}/**/#{file}_spec.rb").flatten.map do |spec_file|
       line ? "#{spec_file}:#{line}" : file
-    end.join(' ')
+    end.join(" ")
   end
 end
 
 def exit_with_child_status command
-  command += ' 2>&1'
+  command += " 2>&1"
   exit $CHILD_STATUS.exitstatus unless system command
 end
 
 WAGN_DB_TASKS = %w(seed reseed load update).freeze
 
 if supported_rails_command? ARGV.first
-  ENV['PRY_RESCUE_RAILS'] = '1' if ARGV.delete('--rescue')
+  ENV["PRY_RESCUE_RAILS"] = "1" if ARGV.delete("--rescue")
   command = ARGV.first
   command = ALIAS[command] || command
 
   # without this, the card generators don't list with: wagn g --help
-  require 'generators/card' if command == 'generate'
-  require 'rails/commands'
+  require "generators/card" if command == "generate"
+  require "rails/commands"
 else
   command = ARGV.shift
   command = ALIAS[command] || command
 
   case command
-  when 'cucumber'
-    require 'wagn'
-    require './config/environment'
+  when "cucumber"
+    require "wagn"
+    require "./config/environment"
     feature_paths = Card::Loader.mod_dirs.map do |p|
       Dir.glob "#{p}/features"
     end.flatten
     require_args = "-r #{Wagn.gem_root}/features "
-    require_args += feature_paths.map { |path| "-r #{path}" }.join(' ')
-    feature_args = ARGV.empty? ? feature_paths.join(' ') : ARGV.shelljoin
-    exit_with_child_status 'RAILS_ROOT=. bundle exec cucumber ' \
+    require_args += feature_paths.map { |path| "-r #{path}" }.join(" ")
+    feature_args = ARGV.empty? ? feature_paths.join(" ") : ARGV.shelljoin
+    exit_with_child_status "RAILS_ROOT=. bundle exec cucumber " \
                            "#{require_args} #{feature_args}"
-  when 'jasmine'
-    exit_with_child_status 'RAILS_ENV=test bundle exec rake spec:javascript'
-  when 'rspec'
-    require 'rspec/core'
-    require 'wagn/application'
+  when "jasmine"
+    exit_with_child_status "RAILS_ENV=test bundle exec rake spec:javascript"
+  when "rspec"
+    require "rspec/core"
+    require "wagn/application"
 
     before_split = true
     wagn_args, rspec_args =
       ARGV.partition do |a|
-        before_split = (a == '--' ? false : before_split)
+        before_split = (a == "--" ? false : before_split)
       end
     rspec_args.shift
     opts = {}
@@ -92,11 +92,11 @@ else
       "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} " \
       " #{opts[:rescue]} rspec #{rspec_args.shelljoin} #{opts[:files]}"
     exit_with_child_status rspec_command
-  when '--version', '-v'
+  when "--version", "-v"
     puts "Wagn #{Card::Version.release}"
-  when 'new'
-    if ARGV.first.in?(['-h', '--help'])
-      require 'wagn/commands/application'
+  when "new"
+    if ARGV.first.in?(["-h", "--help"])
+      require "wagn/commands/application"
     else
       puts "Can't initialize a new deck within the directory of another, " \
            "please change to a non-deck directory first.\n"
@@ -118,7 +118,7 @@ else
     end
 
   else
-    puts 'Error: Command not recognized' unless command.in?(['-h', '--help'])
+    puts "Error: Command not recognized" unless command.in?(["-h", "--help"])
     puts <<-EOT
   Usage: wagn COMMAND [ARGS]
 

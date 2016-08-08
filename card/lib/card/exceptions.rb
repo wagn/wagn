@@ -34,7 +34,7 @@ class Card
   class Abort < StandardError
     attr_reader :status
 
-    def initialize status, msg=''
+    def initialize status, msg=""
       @status = status
       super msg
     end

@@ -1,5 +1,5 @@
 def label _name
-  'All cards'
+  "All cards"
 end
 
 def prototype_args _anchor
@@ -7,5 +7,5 @@ def prototype_args _anchor
 end
 
 def follow_label _name
-  'everything'
+  "everything"
 end

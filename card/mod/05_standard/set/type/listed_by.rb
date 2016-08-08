@@ -2,7 +2,7 @@ include_set Pointer
 
 event :validate_listed_by_name, :validate, on: :save, changed: :name do
   if !junction? || !right || right.type_id != CardtypeID
-    errors.add :name, 'must have a cardtype name as right part'
+    errors.add :name, "must have a cardtype name as right part"
   end
 end
 
@@ -37,7 +37,7 @@ event :update_content_in_list_cards, :prepare_to_validate,
         subcards.add lc
       else
         subcards.add(
-          name: "#{Card[item].name}+#{left.type_name}", type: 'list',
+          name: "#{Card[item].name}+#{left.type_name}", type: "list",
           content: "[[#{cardname.left}]]"
         )
       end
@@ -53,15 +53,15 @@ end
 
 def generate_content
   listed_by.map do |item|
-    '[[%s]]' % item.to_name.left
+    "[[%s]]" % item.to_name.left
   end.join "\n"
 end
 
 def listed_by
   Card.search(
-    { type: 'list', right: trunk.type_name,
+    { type: "list", right: trunk.type_name,
       left: { type: cardname.tag }, refer_to: cardname.trunk, return: :name
-      }, 'listed_by' # better wql comment would be...better
+      }, "listed_by" # better wql comment would be...better
   )
 end
 

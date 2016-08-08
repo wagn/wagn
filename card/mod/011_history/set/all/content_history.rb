@@ -28,12 +28,12 @@ def save_content_draft content
 end
 
 def last_change_on field, opts={}
-  where_sql = 'card_actions.card_id = :card_id AND field = :field'
-  where_sql += ' AND (draft is not true)' unless opts[:including_drafts]
+  where_sql = "card_actions.card_id = :card_id AND field = :field"
+  where_sql += " AND (draft is not true)" unless opts[:including_drafts]
   if opts[:before]
-    where_sql += ' AND card_action_id < :action_id'
+    where_sql += " AND card_action_id < :action_id"
   elsif opts[:not_after]
-    where_sql += ' AND card_action_id <= :action_id'
+    where_sql += " AND card_action_id <= :action_id"
   end
 
   action_arg = opts[:before] || opts[:not_after]
@@ -87,7 +87,7 @@ def last_action_id
 end
 
 def last_action
-  actions.where('id IS NOT NULL').last
+  actions.where("id IS NOT NULL").last
 end
 
 def last_content_action
@@ -156,6 +156,6 @@ event :detect_conflict, :validate,
   if last_action_id_before_edit &&
      last_action_id_before_edit.to_i != last_action_id &&
      last_action.act.actor_id != Auth.current_id
-    errors.add :conflict, 'changes not based on latest revision'
+    errors.add :conflict, "changes not based on latest revision"
   end
 end

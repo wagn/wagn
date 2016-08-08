@@ -1,14 +1,14 @@
 event :add_and_drop_items, :prepare_to_validate, on: :save do
-  adds = Env.params['add_item']
-  drops = Env.params['drop_item']
+  adds = Env.params["add_item"]
+  drops = Env.params["drop_item"]
   Array.wrap(adds).each { |i| add_item i } if adds
   Array.wrap(drops).each { |i| drop_item i } if drops
 end
 
 event :insert_item_event, :prepare_to_validate,
-      on: :save, when: proc { Env.params['insert_item'] } do
-  index = Env.params['item_index'] || 0
-  insert_item index.to_i, Env.params['insert_item']
+      on: :save, when: proc { Env.params["insert_item"] } do
+  index = Env.params["item_index"] || 0
+  insert_item index.to_i, Env.params["insert_item"]
 end
 
 format :html do
@@ -17,8 +17,8 @@ format :html do
   #  end
 
   view :editor do |args|
-    part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/, '') : :list
-    hidden_field(:content, class: 'card-content') +
+    part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/, "") : :list
+    hidden_field(:content, class: "card-content") +
       raw(_render(part_view, args))
     # .merge(pointer_item_class: 'form-control')))
   end
@@ -26,11 +26,11 @@ format :html do
   view :list do |args|
     args ||= {}
     items = args[:item_list] || card.item_names(context: :raw)
-    items = [''] if items.empty?
+    items = [""] if items.empty?
     rendered_items = items.map do |item|
                        _render_list_item args.merge(pointer_item: item)
                      end.join "\n"
-    extra_css_class = args[:extra_css_class] || 'pointer-list-ul'
+    extra_css_class = args[:extra_css_class] || "pointer-list-ul"
 
     <<-HTML
       <ul class="pointer-list-editor #{extra_css_class}"
@@ -42,13 +42,13 @@ format :html do
   end
 
   def options_card_name
-    (oc = card.options_rule_card) ? oc.cardname.url_key : ':all'
+    (oc = card.options_rule_card) ? oc.cardname.url_key : ":all"
   end
 
   def add_item_button
-    content_tag :span, class: 'input-group' do
-      button_tag class: 'pointer-item-add' do
-        glyphicon('plus') + ' add another'
+    content_tag :span, class: "input-group" do
+      button_tag class: "pointer-item-add" do
+        glyphicon("plus") + " add another"
       end
     end
   end
@@ -92,9 +92,9 @@ format :html do
 
   view :multiselect do |_args|
     select_tag(
-      'pointer_multiselect',
+      "pointer_multiselect",
       options_for_select(card.option_names, card.item_names),
-      multiple: true, class: 'pointer-multiselect form-control'
+      multiple: true, class: "pointer-multiselect form-control"
     )
   end
 
@@ -124,19 +124,19 @@ format :html do
 
   # @param option_type [String] "checkbox" or "radio"
   def option_description option_type, option_name
-    return '' unless (description = pointer_option_description(option_name))
+    return "" unless (description = pointer_option_description(option_name))
     %(<div class="#{option_type}-option-description">#{description}</div>)
   end
 
   view :select do |_args|
-    options = [['-- Select --', '']] + card.option_names.map { |x| [x, x] }
-    select_tag('pointer_select',
+    options = [["-- Select --", ""]] + card.option_names.map { |x| [x, x] }
+    select_tag("pointer_select",
                options_for_select(options, card.item_names.first),
-               class: 'pointer-select form-control')
+               class: "pointer-select form-control")
   end
 
   def pointer_option_description option
-    pod_name = card.rule(:options_label) || 'description'
+    pod_name = card.rule(:options_label) || "description"
     dcard = Card["#{option}+#{pod_name}"]
     return unless dcard && dcard.ok?(:read)
     with_nest_mode :normal do
@@ -146,7 +146,7 @@ format :html do
 end
 
 def items= array
-  self.content = ''
+  self.content = ""
   array.each { |i| self << i }
   save!
 end
@@ -175,7 +175,7 @@ def drop_item name
   return unless include_item? name
   key = name.to_name.key
   new_names = item_names.reject { |n| n.to_name.key == key }
-  self.content = new_names.empty? ? '' : "[[#{new_names * "]]\n[["}]]"
+  self.content = new_names.empty? ? "" : "[[#{new_names * "]]\n[["}]]"
 end
 
 def drop_item! name
@@ -200,7 +200,7 @@ def option_names
     if (oc = options_rule_card)
       oc.item_names default_limit: 50, context: name
     else
-      Card.search({ sort: 'name', limit: 50, return: :name },
+      Card.search({ sort: "name", limit: 50, return: :name },
                   "option names for pointer: #{name}")
     end
   if (selected_options = item_names)

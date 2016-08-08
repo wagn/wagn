@@ -1,11 +1,11 @@
 # -*- encoding : utf-8 -*-
 
 def list_fields
-  Card.search({ left: name, type_id: Card::ListID }, 'list fields')
+  Card.search({ left: name, type_id: Card::ListID }, "list fields")
 end
 
 def listed_by_fields
-  Card.search({ left: name, type_id: Card::ListedByID }, 'listed by fields')
+  Card.search({ left: name, type_id: Card::ListedByID }, "listed by fields")
 end
 
 def linker_lists

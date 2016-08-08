@@ -27,9 +27,9 @@ format do
 
   def handle_source args
     source = _render_source args
-    source ? yield(source) : ''
+    source ? yield(source) : ""
   rescue
-    'File Error'
+    "File Error"
   end
 end
 
@@ -37,7 +37,7 @@ format :file do
   view :core do |_args|                                    # returns send_file args.  not in love with this...
     if format = card.attachment_format(params[:format]) # this means we only support known formats.  dislike.
       if params[:explicit_file] && (r = controller.response)
-        r.headers['Expires'] = 1.year.from_now.httpdate
+        r.headers["Expires"] = 1.year.from_now.httpdate
         # r.headers["Cache-Control"] = "public"            # currently using default "private", because proxy servers could block needed permission checks
       end
 
@@ -50,7 +50,7 @@ format :file do
          type: file.content_type,
          filename:  "#{card.cardname.safe_key}#{file.extension}",
          x_sendfile: true,
-         disposition: (params[:format] == 'file' ? 'attachment' : 'inline')
+         disposition: (params[:format] == "file" ? "attachment" : "inline")
        }
       ]
     else
@@ -75,12 +75,12 @@ format :html do
   end
 
   def preview  _args
-    ''
+    ""
   end
 
   view :preview_editor, tags: :unknown_ok do |args|
     cached_upload_card_name = Card::Env.params[:attachment_upload]
-    cached_upload_card_name.gsub!(/\[\w+\]$/, '[action_id_of_cached_upload]')
+    cached_upload_card_name.gsub!(/\[\w+\]$/, "[action_id_of_cached_upload]")
     <<-HTML
       <div class="chosen-file">
         <input type="hidden" name="#{cached_upload_card_name}" value="#{card.selected_action_id}">

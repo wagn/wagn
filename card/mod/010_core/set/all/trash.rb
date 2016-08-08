@@ -33,14 +33,14 @@ event :validate_delete, :validate, on: :delete do
     %w( default style layout create read update delete )
   # FIXME: HACK! should be configured in the rule
 
-  if junction? && (l = left) && l.codename == 'all' &&
+  if junction? && (l = left) && l.codename == "all" &&
      undeletable_all_rules_tags.member?(right.codename)
     errors.add :delete, "#{name} is an indestructible rule"
   end
 
   if account && has_edits?
     errors.add :delete, "Edits have been made with #{name}'s user account.\n" \
-                        'Deleting this card would mess up our history.'
+                        "Deleting this card would mess up our history."
   end
 end
 

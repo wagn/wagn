@@ -1,9 +1,9 @@
 include_set Abstract::CodeFile
 
 view :raw do |_args|
-  bootstrap_path = File.join Cardio.gem_root, 'mod',
-                             card.file_content_mod_name, 'lib',
-                             'stylesheets', 'bootstrap'
+  bootstrap_path = File.join Cardio.gem_root, "mod",
+                             card.file_content_mod_name, "lib",
+                             "stylesheets", "bootstrap"
 
   # variables
   content = File.read("#{bootstrap_path}/_variables.scss")

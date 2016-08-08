@@ -30,7 +30,7 @@ class Card
 
       def match val
         cxn, val = match_prep val
-        val.gsub!(/[^#{Card::Name::OK4KEY_RE}]+/, ' ')
+        val.gsub!(/[^#{Card::Name::OK4KEY_RE}]+/, " ")
         return nil if val.strip.empty?
 
         val_list = val.split(/\s+/).map do |v|
@@ -46,7 +46,7 @@ class Card
       end
 
       def complete val
-        no_plus_card = (val =~ /\+/ ? '' : 'and right_id is null')
+        no_plus_card = (val =~ /\+/ ? "" : "and right_id is null")
         # FIXME: -- this should really be more nuanced --
         # it breaks down after one plus
 
@@ -58,7 +58,7 @@ class Card
 
       def extension_type _val
         # DEPRECATED LONG AGO!!!
-        Rails.logger.info 'using DEPRECATED extension_type in WQL'
+        Rails.logger.info "using DEPRECATED extension_type in WQL"
         interpret right_plus: AccountID
       end
     end

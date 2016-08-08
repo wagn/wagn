@@ -17,7 +17,7 @@ event :assign_action, :initialize,
   @current_action = Card::Action.create(
     card_act_id: @current_act.id,
     action_type: @action,
-    draft: (Env.params['draft'] == 'true')
+    draft: (Env.params["draft"] == "true")
   )
   if @supercard && @supercard != self
     @current_action.super_action = @supercard.current_action
@@ -69,7 +69,7 @@ event :rollback_actions, :prepare_to_validate,
       on: :update,
       when: proc { |c| c.rollback_request? } do
   revision = { subcards: {} }
-  rollback_actions = Env.params['action_ids'].map do |a_id|
+  rollback_actions = Env.params["action_ids"].map do |a_id|
     Action.fetch(a_id) || nil
   end
   rollback_actions.each do |action|
@@ -79,7 +79,7 @@ event :rollback_actions, :prepare_to_validate,
       revision[:subcards][action.card.name] = revision(action)
     end
   end
-  Env.params['action_ids'] = nil
+  Env.params["action_ids"] = nil
   update_attributes! revision
   rollback_actions.each do |action|
     action.card.try :symlink_to, action.id
@@ -89,8 +89,8 @@ event :rollback_actions, :prepare_to_validate,
 end
 
 def rollback_request?
-  history? && Env && Env.params['action_ids'] &&
-    Env.params['action_ids'].class == Array
+  history? && Env && Env.params["action_ids"] &&
+    Env.params["action_ids"].class == Array
 end
 
 # all acts with actions on self and on cards that are descendants of self and
@@ -121,12 +121,12 @@ end
 def included_card_ids
   @included_card_ids ||=
     Card::Reference.select(:referee_id).where(
-      ref_type: 'I', referer_id: id
-    ).pluck('referee_id').compact.uniq
+      ref_type: "I", referer_id: id
+    ).pluck("referee_id").compact.uniq
 end
 
 def descendant_card_ids parent_ids=[id]
-  more_ids = Card.where('left_id IN (?)', parent_ids).pluck('id')
+  more_ids = Card.where("left_id IN (?)", parent_ids).pluck("id")
   more_ids += descendant_card_ids more_ids unless more_ids.empty?
   more_ids
 end
@@ -137,7 +137,7 @@ end
 
 format :html do
   view :history do |args|
-    frame args.merge(body_class: 'history-slot list-group', content: true) do
+    frame args.merge(body_class: "history-slot list-group", content: true) do
       [history_legend, _render_act_list]
     end
   end
@@ -147,7 +147,7 @@ format :html do
   end
 
   view :act_list do |args|
-    page = params['page'] || 1
+    page = params["page"] || 1
     count = card.intrusive_acts.size + 1 - (page.to_i - 1) * ACTS_PER_PAGE
     card.intrusive_acts.page(page).per(ACTS_PER_PAGE).map do |act|
       count -= 1
@@ -156,7 +156,7 @@ format :html do
   end
 
   def history_legend
-    intr = card.intrusive_acts.page(params['page']).per(ACTS_PER_PAGE)
+    intr = card.intrusive_acts.page(params["page"]).per(ACTS_PER_PAGE)
     render_haml intr: intr do
       <<-HAML.strip_heredoc
         .history-header
@@ -175,8 +175,8 @@ format :html do
   end
 
   def default_act_args args
-    act = (args[:act]  ||= Act.find(params['act_id']))
-    args[:act_seq]     ||= params['act_seq']
+    act = (args[:act]  ||= Act.find(params["act_id"]))
+    args[:act_seq]     ||= params["act_seq"]
     args[:hide_diff]   ||= hide_diff?
     args[:slot_class]  ||= "revision-#{act.id} history-slot list-group-item"
     args[:action_view] ||= action_view
@@ -197,15 +197,15 @@ format :html do
 
   def act_context args
     args[:act_context] =
-      (args[:act_context] || params['act_context'] || :relative).to_sym
+      (args[:act_context] || params["act_context"] || :relative).to_sym
   end
 
   def hide_diff?
-    params['hide_diff'].to_s.strip == 'true'
+    params["hide_diff"].to_s.strip == "true"
   end
 
   def action_view
-    (params['action_view'] || 'summary').to_sym
+    (params["action_view"] || "summary").to_sym
   end
 
   view :act do |args|
@@ -295,11 +295,11 @@ format :html do
     else
       link_path = path(
         view: :related,
-        related: { view: 'history', name: action.card.name }
+        related: { view: "history", name: action.card.name }
       )
       link_to name_changes(action, hide_diff), link_path,
-              class: 'slotter label label-default',
-              'data-slot-selector' => '.card-slot.history-view',
+              class: "slotter label label-default",
+              "data-slot-selector" => ".card-slot.history-view",
               remote: true
     end
   end
@@ -315,7 +315,7 @@ format :html do
   end
 
   def wrap_diff field, content
-    return '' unless content.present?
+    return "" unless content.present?
     %(
        <span class="#{field}-diff">
        #{content}
@@ -358,8 +358,8 @@ format :html do
       act_context: args[:act_context],
       action_view: (args[:action_view] == :expanded ? :summary : :expanded)
     }
-    arrow_dir = args[:action_view] == :expanded ? 'arrow-down' : 'arrow-right'
-    view_link '', :act, path_opts: path_opts,
+    arrow_dir = args[:action_view] == :expanded ? "arrow-down" : "arrow-right"
+    view_link "", :act, path_opts: path_opts,
                         class: "slotter revision-#{args[:act_id]} #{arrow_dir}"
   end
 
@@ -369,15 +369,15 @@ format :html do
     return unless card.ok?(:update) && not_current.present?
     link_path = path action: :update, view: :open, action_ids: not_current
     link = link_to(
-      'Save as current', link_path,
-      class: 'slotter', 'data-slot-selector' => '.card-slot.history-view',
-      remote: true, method: :post, rel: 'nofollow'
+      "Save as current", link_path,
+      class: "slotter", "data-slot-selector" => ".card-slot.history-view",
+      remote: true, method: :post, rel: "nofollow"
     )
     %(<div class="act-link">#{link}</div>)
   end
 
   def show_or_hide_changes_link args
-    toggle = args[:hide_diff] ? 'Show' : 'Hide'
+    toggle = args[:hide_diff] ? "Show" : "Hide"
     path_opts = {
       act_id: args[:act].id,
       act_seq: args[:act_seq],
@@ -386,7 +386,7 @@ format :html do
       act_context: args[:act_context]
     }
     link = view_link("#{toggle} changes", :act,
-                     path_opts: path_opts, class: 'slotter', remote: true)
+                     path_opts: path_opts, class: "slotter", remote: true)
     %(<div class="act-link">#{link}</div>)
   end
 end
@@ -396,5 +396,5 @@ def diff_args
 end
 
 def has_edits?
-  Card::Act.where(actor_id: id).where('card_id IS NOT NULL').present?
+  Card::Act.where(actor_id: id).where("card_id IS NOT NULL").present?
 end

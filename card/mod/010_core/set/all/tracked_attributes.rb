@@ -6,9 +6,9 @@ def assign_attributes args={}
       @set_specific[key] = args.delete(key) if args[key]
     end
 
-    new_type_id = extract_type_id! args unless args.delete('skip_type_lookup')
+    new_type_id = extract_type_id! args unless args.delete("skip_type_lookup")
     subcard_args = extract_subcard_args! args
-    args['type_id'] = new_type_id if new_type_id
+    args["type_id"] = new_type_id if new_type_id
     reset_patterns
   end
   params = ActionController::Parameters.new(args)
@@ -29,8 +29,8 @@ end
 protected
 
 def extract_subcard_args! args
-  subcards = args.delete('subcards') || {}
-  if (subfields = args.delete('subfields'))
+  subcards = args.delete("subcards") || {}
+  if (subfields = args.delete("subfields"))
     subfields.each_pair do |key, value|
       subcards[cardname.field(key)] = value
     end
@@ -44,14 +44,14 @@ end
 def extract_type_id! args={}
   type_id =
     case
-    when args['type_id']
-      id = args.delete('type_id').to_i
+    when args["type_id"]
+      id = args.delete("type_id").to_i
       # type_id can come in as 0,'' or nil
       id == 0 ? nil : id
-    when args['type_code']
-      Card.fetch_id args.delete('type_code').to_sym
-    when args['type']
-      Card.fetch_id args.delete('type')
+    when args["type_code"]
+      Card.fetch_id args.delete("type_code").to_sym
+    when args["type"]
+      Card.fetch_id args.delete("type")
     else
       return nil
     end
@@ -63,7 +63,7 @@ def extract_type_id! args={}
 end
 
 event :set_content, :store, on: :save do
-  self.db_content = content || '' # necessary?
+  self.db_content = content || "" # necessary?
   self.db_content = Card::Content.clean!(db_content) if clean_html?
   @selected_action_id = @selected_content = nil
   clear_drafts

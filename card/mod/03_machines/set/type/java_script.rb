@@ -1,11 +1,11 @@
 # -*- encoding : utf-8 -*-
-require 'uglifier'
+require "uglifier"
 
 include Machine
 include MachineInput
 include_set Abstract::AceEditor
 
-store_machine_output filetype: 'js'
+store_machine_output filetype: "js"
 
 machine_input do
   compress_js format(:js)._render_core
@@ -38,7 +38,7 @@ end
 
 format :html do
   def default_editor_args args
-    args[:ace_mode] ||= 'javascript'
+    args[:ace_mode] ||= "javascript"
   end
 
   view :content_changes, mod: CoffeeScript::HtmlFormat

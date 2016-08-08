@@ -1,1 +1,1 @@
-require 'wagn/application'
+require "wagn/application"

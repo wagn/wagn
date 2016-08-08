@@ -3,8 +3,8 @@ class Card
     class Import
       # Handles the card attributes and remotes for the import
       class ImportData
-        DEFAULT_PATH = Card::Migration.data_path('cards.yml').freeze
-        CARD_CONTENT_DIR = Card::Migration.data_path('cards').freeze
+        DEFAULT_PATH = Card::Migration.data_path("cards.yml").freeze
+        CARD_CONTENT_DIR = Card::Migration.data_path("cards").freeze
 
         class << self
           def update
@@ -41,7 +41,7 @@ class Card
 
         # mark as merged
         def merged data, time
-          update_attribute data['name'], :merged, time
+          update_attribute data["name"], :merged, time
         end
 
         def add_card new_attr

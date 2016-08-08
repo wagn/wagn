@@ -1,4 +1,4 @@
-require 'csv'
+require "csv"
 
 format :csv  do
   def get_nest_defaults _nested_card
@@ -19,7 +19,7 @@ format :csv  do
   end
 
   view :missing do |_args|
-    ''
+    ""
   end
 
   view :csv_title_row do |_args|
@@ -29,7 +29,7 @@ format :csv  do
 
       parsed_content = Card::Content.new card1.raw_content, self
       if parsed_content.__getobj__.is_a? String
-        ''
+        ""
       else
         titles = parsed_content.map do |chunk|
           next if chunk.class != Card::Content::Chunk::Include
@@ -43,7 +43,7 @@ format :csv  do
         CSV.generate_line titles.map { |title| title.to_s.upcase }
       end
     rescue
-      ''
+      ""
     end
   end
 end

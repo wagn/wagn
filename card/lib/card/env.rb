@@ -1,5 +1,5 @@
 class Card
-  require 'card/location'
+  require "card/location"
 
   # Card::Env can differ for each request; Card.config should not
   module Env
@@ -15,9 +15,9 @@ class Card
         self[:params]     = c.params
         self[:ip]         = c.request.remote_ip
         self[:ajax]       = c.request.xhr? || c.request.params[:simulate_xhr]
-        self[:html]       = [nil, 'html'].member?(c.params[:format])
+        self[:html]       = [nil, "html"].member?(c.params[:format])
         self[:host]       = Card.config.override_host ||
-                            c.request.env['HTTP_HOST']
+                            c.request.env["HTTP_HOST"]
         self[:protocol]   = Card.config.override_protocol ||
                             c.request.protocol
         self
@@ -77,7 +77,7 @@ class Card
     # card removal we can crawl back up to the last un-removed location
     module LocationHistory
       def location_history
-        session[:history] ||= [Card::Location.card_path('')]
+        session[:history] ||= [Card::Location.card_path("")]
         session[:history].shift if session[:history].size > 5
         session[:history]
       end
@@ -91,7 +91,7 @@ class Card
       end
 
       def save_location? card
-        !Env.ajax? && Env.html? && card.known? && (card.codename != 'signin')
+        !Env.ajax? && Env.html? && card.known? && (card.codename != "signin")
       end
 
       def previous_location

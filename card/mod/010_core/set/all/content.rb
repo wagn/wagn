@@ -47,7 +47,7 @@ def last_draft_content
 end
 
 event :save_draft, :store,
-      on: :update, when: proc { Env.params['draft'] == 'true' } do
+      on: :update, when: proc { Env.params["draft"] == "true" } do
   save_content_draft content
   abort :success
 end

@@ -30,7 +30,7 @@ format :css do
     # card_url _render_linkname
   end
 
-  def major_comment comment, char='-'
+  def major_comment comment, char="-"
     edge = %(/* #{char * (comment.length + 4)} */)
     main = %(/* #{char} #{comment} #{char} */)
     "#{edge}\n#{main}\n#{edge}\n\n"

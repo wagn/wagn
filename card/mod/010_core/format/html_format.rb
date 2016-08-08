@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency 'card/diff'
+require_dependency "card/diff"
 
 class Card
   Format.register :html
@@ -8,7 +8,7 @@ class Card
     attr_accessor :options_need_save, :start_time, :skip_autosave
 
     # builtin layouts allow for rescue / testing
-    LAYOUTS = Loader.load_layouts.merge 'none' => '{{_main}}'
+    LAYOUTS = Loader.load_layouts.merge "none" => "{{_main}}"
 
     # helper methods for layout view
     def get_layout_content
@@ -48,7 +48,7 @@ class Card
 
     def html_escape_except_quotes s
       # to be used inside single quotes (makes for readable json attributes)
-      s.to_s.gsub(/&/, '&amp;').gsub(/\'/, '&apos;').gsub(/>/, '&gt;').gsub(/</, '&lt;')
+      s.to_s.gsub(/&/, "&amp;").gsub(/\'/, "&apos;").gsub(/>/, "&gt;").gsub(/</, "&lt;")
     end
 
     def main?

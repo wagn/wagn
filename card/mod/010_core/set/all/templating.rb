@@ -65,5 +65,5 @@ end
 
 def structure_rule_card
   card = rule_card :structure, skip_modules: true
-  card && card.db_content.strip == '_self' ? nil : card
+  card && card.db_content.strip == "_self" ? nil : card
 end

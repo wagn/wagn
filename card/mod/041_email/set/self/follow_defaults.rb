@@ -7,20 +7,20 @@ event :update_follow_rules, :finalize,
       option = if option_card.follow_option?
                  option_card.name
                else
-                 '*always'
+                 "*always"
                end
       [set_card, option]
     elsif (set_card = Card.fetch sug) && set_card.type_code == :set
-      [set_card, '*always']
+      [set_card, "*always"]
     end
   end.compact
   Auth.as_bot do
-    Card.search(type: 'user').each do |user|
+    Card.search(type: "user").each do |user|
       defaults.each do |set_card, option|
         follow_rule = Card.fetch(set_card.follow_rule_name(user.name), new: {})
         next unless follow_rule
-        follow_rule.drop_item '*never'
-        follow_rule.drop_item '*always'
+        follow_rule.drop_item "*never"
+        follow_rule.drop_item "*always"
         follow_rule.add_item option
         follow_rule.save!
       end
@@ -42,7 +42,7 @@ format :html do
 
   view :confirm_update_all do |args|
     wrap args do
-      alert 'info' do
+      alert "info" do
         %(
           <h1>Are you sure you want to change the default follow rules?</h1>
           <p>You may choose to update all existing users.
@@ -55,7 +55,7 @@ format :html do
   def default_edit_args args
     args[:hidden] ||= {}
     args[:hidden].reverse_merge!(
-      success: '_self',
+      success: "_self",
       card:    { update_all_users: false }
     )
     args[:buttons] = %(

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency File.expand_path('../reference', __FILE__)
+require_dependency File.expand_path("../reference", __FILE__)
 
 module Card::Content::Chunk
   # This should find +Alfred+ in expressions like
@@ -77,7 +77,7 @@ module Card::Content::Chunk
     end
 
     def reference_code
-      'Q' # for "Query"
+      "Q" # for "Query"
     end
   end
 end

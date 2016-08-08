@@ -1,6 +1,6 @@
 card_accessor :followers
 
-FOLLOWER_IDS_CACHE_KEY = 'FOLLOWER_IDS'.freeze
+FOLLOWER_IDS_CACHE_KEY = "FOLLOWER_IDS".freeze
 
 # FIXME: this should be in type/set
 event :cache_expired_for_new_set, :store,
@@ -27,13 +27,13 @@ format do
     these_emails = "emails about changes to #{card.follow_label}"
     case toggle
     when :off
-      hash[:content] = '*never'
+      hash[:content] = "*never"
       hash[:title]   = "stop sending #{these_emails}"
-      hash[:verb]    = 'unfollow'
+      hash[:verb]    = "unfollow"
     when :on
-      hash[:content] = '*always'
+      hash[:content] = "*always"
       hash[:title]   = "send #{these_emails}"
-      hash[:verb]    = 'follow'
+      hash[:verb]    = "follow"
     end
     set_card = card.default_follow_set_card
     hash[:path] = path(
@@ -55,8 +55,8 @@ end
 format :html do
   view :follow_link, tags: :unknown_ok, perms: :none do |args|
     hash = follow_link_hash args
-    text = args[:icon] ? glyphicon('flag') : ''
-    span_attrs = 'follow-verb menu-item-label'
+    text = args[:icon] ? glyphicon("flag") : ""
+    span_attrs = "follow-verb menu-item-label"
     text += %(<span class="#{span_attrs}">#{hash[:verb]}</span>).html_safe
     # follow_rule_card = Card.fetch(
     #   card.default_follow_set_card.follow_rule_name(Auth.current.name),
@@ -65,9 +65,9 @@ format :html do
     opts = (args[:html_args] || {}).clone
     opts.merge!(
       title:           hash[:title],
-      'data-path'      => hash[:path],
-      'data-toggle'    => 'modal',
-      'data-target'    => "#modal-#{card.cardname.safe_key}"
+      "data-path"      => hash[:path],
+      "data-toggle"    => "modal",
+      "data-target"    => "#modal-#{card.cardname.safe_key}"
     )
     opts[:class] = "follow-link #{opts[:class]}"
     link_to text, hash[:path], opts
@@ -89,7 +89,7 @@ def follower_names
 end
 
 def follow_rule_card?
-  is_preference? && rule_setting_name == '*follow'
+  is_preference? && rule_setting_name == "*follow"
 end
 
 def follow_option?
@@ -134,7 +134,7 @@ def follow_rule_applies? follower_id
           accounted_ids.include? follower_id
         end
 
-      return value.gsub(/[\[\]]/, '') if applicable
+      return value.gsub(/[\[\]]/, "") if applicable
     end
   end
   false

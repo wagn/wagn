@@ -28,7 +28,7 @@ format :html do
   end
 
   view :content do |args|
-    wrap args.reverse_merge(slot_class: 'card-content') do
+    wrap args.reverse_merge(slot_class: "card-content") do
       [
         _optional_render(:menu, args, :hide),
         _render_core(args)
@@ -37,8 +37,8 @@ format :html do
   end
 
   view :content_panel do |args|
-    wrap args.reverse_merge(slot_class: 'card-content panel panel-default') do
-      wrap_with :div, class: 'panel-body' do
+    wrap args.reverse_merge(slot_class: "card-content panel panel-default") do
+      wrap_with :div, class: "panel-body" do
         [
           _optional_render(:menu, args, :hide),
           _render_core(args)
@@ -63,7 +63,7 @@ format :html do
       [
         _optional_render(:menu, args),
         "<label>#{_render_title args}</label>",
-        wrap_body(body_class: 'closed-content', content: true) do
+        wrap_body(body_class: "closed-content", content: true) do
           _render_closed_content args
         end
       ]
@@ -86,7 +86,7 @@ format :html do
   end
 
   view :type_info do
-    link_args = { text: card.type_name.to_s, class: 'navbar-link' }
+    link_args = { text: card.type_name.to_s, class: "navbar-link" }
     link = card_link card.type_name, link_args
     %(<span class="type-info pull-right">#{link}</span>).html_safe
   end
@@ -97,15 +97,15 @@ format :html do
     end
     res = links.shift
     links.each_with_index do |link, index|
-      name = card.cardname.parts[0..index + 1].join '+'
-      res += card_link name, text: glyphicon('plus', 'header-icon')
+      name = card.cardname.parts[0..index + 1].join "+"
+      res += card_link name, text: glyphicon("plus", "header-icon")
       res += link
     end
-    res += ' '
+    res += " "
     res.concat view_link(
-      glyphicon('edit', 'header-icon'),
+      glyphicon("edit", "header-icon"),
       :edit_name,
-      class: 'slotter', 'data-toggle' => 'tooltip', title: 'edit name'
+      class: "slotter", "data-toggle" => "tooltip", title: "edit name"
     )
     res.concat _optional_render(:type_link, args, :show)
   end
@@ -125,7 +125,7 @@ format :html do
   # end
 
   view :type do |args|
-    klasses = ['cardtype']
+    klasses = ["cardtype"]
     klass = args[:type_class]
     klasses << klass if klass
     card_link card.type_card.name, class: klasses
@@ -134,7 +134,7 @@ format :html do
   view :closed do |args|
     frame args.reverse_merge(
       content: true,
-      body_class: 'closed-content',
+      body_class: "closed-content",
       toggle_mode: :close,
       optional_toggle: :show,
       optional_toolbar: :hide
@@ -215,7 +215,7 @@ format :html do
         end
       end
     end
-    klass = [args[:help_class], 'help-text'].compact * ' '
+    klass = [args[:help_class], "help-text"].compact * " "
     %(<div class="#{klass}">#{raw text}</div>) if text
   end
 
@@ -226,13 +226,13 @@ format :html do
     return unless action
     action_verb =
       case action.action_type
-      when :create then 'added'
-      when :delete then 'deleted'
+      when :create then "added"
+      when :delete then "deleted"
       else
         link_to(
-          'edited',
+          "edited",
           path(view: :history),
-          class: 'last-edited', rel: 'nofollow'
+          class: "last-edited", rel: "nofollow"
         )
       end
 
@@ -247,7 +247,7 @@ format :html do
   private
 
   def fancy_title title=nil, title_class=nil
-    klasses = ['card-title', title_class].compact * ' '
+    klasses = ["card-title", title_class].compact * " "
     title = showname(title).to_name.parts.join %(<span class="joint">+</span>)
     raw %(<span class="#{klasses}">#{title}</span>)
   end

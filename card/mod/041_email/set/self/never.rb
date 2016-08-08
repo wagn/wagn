@@ -5,9 +5,9 @@ follow_opts position: 3
 follow_test { |_follower_id, _accounted_ids| false }
 
 def title
-  'Ignoring'
+  "Ignoring"
 end
 
 def label
-  'ignore'
+  "ignore"
 end

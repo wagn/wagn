@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency File.expand_path('../reference', __FILE__)
+require_dependency File.expand_path("../reference", __FILE__)
 
 module Card::Content::Chunk
   class Include < Reference
@@ -27,14 +27,14 @@ module Card::Content::Chunk
     Card::Content::Chunk.register_class(
       self, prefix_re: '\\{\\{',
             full_re:    /^\{\{([^\}]*)\}\}/,
-            idx_char:  '{')
+            idx_char:  "{")
 
     def interpret match, _content
       in_brackets = strip_tags match[1]
-      name, @opt_lists = in_brackets.split '|', 2
+      name, @opt_lists = in_brackets.split "|", 2
       name = name.to_s.strip
       if name =~ /^\#/
-        @process_chunk = name =~ /^\#\#/ ? '' : visible_comment(in_brackets)
+        @process_chunk = name =~ /^\#\#/ ? "" : visible_comment(in_brackets)
       else
         @options = interpret_options
         @options[:inc_name] = name
@@ -46,7 +46,7 @@ module Card::Content::Chunk
     def strip_tags string
       # note: not using ActionView's strip_tags here
       # because this needs to be super fast.
-      string.gsub /\<[^\>]*\>/, ''
+      string.gsub /\<[^\>]*\>/, ""
     end
 
     def visible_comment message
@@ -54,7 +54,7 @@ module Card::Content::Chunk
     end
 
     def interpret_options
-      raw_options = @opt_lists.to_s.split('|').reverse
+      raw_options = @opt_lists.to_s.split("|").reverse
       raw_options.inject(nil) do |prev_level, level_options|
         interpret_piped_options level_options, prev_level
       end || {}
@@ -86,7 +86,7 @@ module Card::Content::Chunk
       return if style_hash.empty?
       options_hash[:style] = style_hash.map do |key, value|
         CGI.escapeHTML "#{key}:#{value};"
-      end * ''
+      end * ""
     end
 
     def inspect
@@ -103,7 +103,7 @@ module Card::Content::Chunk
 
     def replace_reference old_name, new_name
       replace_name_reference old_name, new_name
-      nest_body = [@name.to_s, @opt_lists].compact * '|'
+      nest_body = [@name.to_s, @opt_lists].compact * "|"
       @text = "{{#{nest_body}}}"
     end
 
@@ -111,9 +111,9 @@ module Card::Content::Chunk
       return if @options[:view]
       # could check to make sure it's not already the default...
       if @text =~ /\|/
-        @text.sub! '|', "|#{view};"
+        @text.sub! "|", "|#{view};"
       else
-        @text.sub! '}}', "|#{view}}}"
+        @text.sub! "}}", "|#{view}}}"
       end
     end
 
@@ -121,8 +121,8 @@ module Card::Content::Chunk
 
     def each_option attr_string
       return if attr_string.blank?
-      attr_string.strip.split(';').each do |pair|
-        value, key = pair.split(':').reverse
+      attr_string.strip.split(";").each do |pair|
+        value, key = pair.split(":").reverse
         key ||= self.class::DEFAULT_OPTION.to_s
         yield key.strip, value.strip
       end

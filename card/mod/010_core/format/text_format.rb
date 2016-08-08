@@ -5,6 +5,6 @@ class Card
   Format.register :txt
 
   class TextFormat < Format
-    @@aliases['txt'] = 'text'
+    @@aliases["txt"] = "text"
   end
 end

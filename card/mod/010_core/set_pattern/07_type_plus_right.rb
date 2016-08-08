@@ -11,7 +11,7 @@ end
 def prototype_args anchor
   {
     name: "+#{anchor.tag}",
-    supercard: Card.new(name: '*dummy', type: anchor.trunk_name)
+    supercard: Card.new(name: "*dummy", type: anchor.trunk_name)
   }
 end
 

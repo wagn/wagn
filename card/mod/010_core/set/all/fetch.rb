@@ -45,7 +45,7 @@ module ClassMethods
   # "Siemens" because "siemen".to_name.key == "sieman"
   # If you have a key of a real card use this method.
   def fetch_real_by_key key, opts={}
-    raise Card::Error, 'fetch_real_by_key called with new args' if opts[:new]
+    raise Card::Error, "fetch_real_by_key called with new args" if opts[:new]
 
     # look in cache
     card = fetch_from_cache_by_key key, opts[:local_only]
@@ -131,7 +131,7 @@ module ClassMethods
 
   def validate_fetch_opts! opts
     return unless opts[:new] && opts[:skip_virtual]
-    raise Card::Error, 'fetch called with new args and skip_virtual'
+    raise Card::Error, "fetch called with new args and skip_virtual"
   end
 
   def cache
@@ -230,7 +230,7 @@ module ClassMethods
     parts.map do |p|
       normalized = normalize_mark p, {}
       normalized.is_a?(Integer) ? quick_fetch(normalized).name : normalized.to_s
-    end.join('+').to_name
+    end.join("+").to_name
   end
 
   def normalize_fetch_args args

@@ -8,15 +8,15 @@ describe Card::Set::Right::Script do
   let(:new_js)                { 'alert( "Hey" );'   }
   let(:compressed_new_js)     { 'alert("Hey");'   }
 
-  it_should_behave_like 'pointer machine', that_produces_js do
+  it_should_behave_like "pointer machine", that_produces_js do
     let(:machine_card) do
-      Card.gimme! 'test my style+*script', type: :pointer, content: ''
+      Card.gimme! "test my style+*script", type: :pointer, content: ""
     end
     let(:machine_input_card) do
-      Card.gimme! 'test js',  type: Card::JavaScriptID, content: js
+      Card.gimme! "test js",  type: Card::JavaScriptID, content: js
     end
     let(:another_machine_input_card) do
-      Card.gimme! 'more js',  type: Card::JavaScriptID, content: new_js
+      Card.gimme! "more js",  type: Card::JavaScriptID, content: new_js
     end
     let(:expected_input_items) { nil }
     let(:input_type) { :java_script }

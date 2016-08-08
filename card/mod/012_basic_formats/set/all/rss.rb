@@ -14,8 +14,8 @@ format :rss do
   # FIXME: integrate this with common XML features when it is added
   view :feed do
     begin
-      @xml.instruct! :xml, version: '1.0'
-      @xml.rss version: '2.0' do
+      @xml.instruct! :xml, version: "1.0"
+      @xml.rss version: "2.0" do
         @xml.channel do
           @xml.title       render_feed_title
           @xml.description render_feed_description
@@ -46,7 +46,7 @@ format :rss do
   end
 
   view :feed_title do
-    Card.global_setting(:title) + ' : ' + card.name.gsub(/^\*/, '')
+    Card.global_setting(:title) + " : " + card.name.gsub(/^\*/, "")
   end
 
   view :feed_item do |args|
@@ -59,9 +59,9 @@ format :rss do
     @xml.guid render_url
   end
 
-  view :feed_description do '' end
-  view :comment_box      do '' end
-  view :menu             do '' end
+  view :feed_description do "" end
+  view :comment_box      do "" end
+  view :menu             do "" end
 
   view :open,         view: :titled, mod: All::Base::Format
   view :content,      view: :core,   mod: All::Base::Format

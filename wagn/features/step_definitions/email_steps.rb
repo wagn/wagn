@@ -31,7 +31,7 @@ module EmailHelpers
     # Replace with your a way to find your current email. e.g session -> email
     # last_email_address will return the last email address used by email spec to find an email.
     # Note that last_email_address will be reset after each Scenario.
-    last_email_address || 'fixthis@wagn.org'
+    last_email_address || "fixthis@wagn.org"
   end
 end
 
@@ -190,7 +190,7 @@ end
 
 Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
   Timeout.timeout(Capybara.default_wait_time) do
-    sleep(0.5) while page.evaluate_script('jQuery.active') != 0
+    sleep(0.5) while page.evaluate_script("jQuery.active") != 0
   end
   Delayed::Worker.new.work_off
   email = address_for_user username
@@ -204,13 +204,13 @@ end
 
 Then /^No notification should be sent$/ do
   Timeout.timeout(Capybara.default_wait_time) do
-    sleep(0.5) while page.evaluate_script('jQuery.active') != 0
+    sleep(0.5) while page.evaluate_script("jQuery.active") != 0
   end
   Delayed::Worker.new.work_off
   expect(all_emails).to be_empty
 end
 
 def address_for_user username
-  card_with_acct = username == 'I' ? Auth.current : Card[username]
+  card_with_acct = username == "I" ? Auth.current : Card[username]
   card_with_acct ? card_with_acct.account.email : username
 end

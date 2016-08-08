@@ -1,7 +1,7 @@
 
 format :html do
   view :type do |args|
-    args[:type_class] = 'no-edit' if card.cards_of_type_exist?
+    args[:type_class] = "no-edit" if card.cards_of_type_exist?
     super args
   end
 
@@ -25,7 +25,7 @@ format :html do
 
   view :add_button, view: :add_link
   def default_add_button_args args
-    args[:css_class] = 'btn btn-default'
+    args[:css_class] = "btn btn-default"
   end
 
   view :add_url do |args|
@@ -42,7 +42,7 @@ format :html do
         path_args[key] = value
       end
     end
-    path_args[:action] = 'new'
+    path_args[:action] = "new"
     page_path card.cardname, path_args
   end
 end

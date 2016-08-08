@@ -7,7 +7,7 @@ class Card::Cache::Persistent
     def database_name
       @database_name ||= (cfg = Cardio.config) &&
                          (dbcfg = cfg.database_configuration) &&
-                         dbcfg[Rails.env]['database']
+                         dbcfg[Rails.env]["database"]
     end
   end
 

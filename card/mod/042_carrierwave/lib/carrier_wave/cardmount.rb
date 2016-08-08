@@ -1,4 +1,4 @@
-require 'carrierwave'
+require "carrierwave"
 
 module CarrierWave
   module CardMount

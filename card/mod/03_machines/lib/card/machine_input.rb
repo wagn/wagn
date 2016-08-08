@@ -18,7 +18,7 @@ class Card
       host_class.machine_input do
         format._render_raw
       end
-      event_suffix = host_class.name.tr ':', '_'
+      event_suffix = host_class.name.tr ":", "_"
       define_update_event event_suffix, host_class
       define_delete_events event_suffix, host_class
     end
@@ -56,7 +56,7 @@ class Card
     def self.search_involved_machines name, host_class
       wql_statement =
         { right_plus: [
-          { codename: 'machine_input' },
+          { codename: "machine_input" },
           { link_to: name }
         ] }.merge(host_class.machines_wql)
       Card.search(wql_statement)

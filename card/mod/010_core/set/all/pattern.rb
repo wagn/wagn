@@ -30,7 +30,7 @@ def reset_patterns_if_rule saving=false
 end
 
 def safe_set_keys
-  patterns.map(&:safe_key).reverse * ' '
+  patterns.map(&:safe_key).reverse * " "
 end
 
 def set_modules

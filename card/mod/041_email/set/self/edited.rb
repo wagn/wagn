@@ -8,11 +8,11 @@ follower_candidate_ids do |card|
 end
 
 def title
-  'Following content you edited'
+  "Following content you edited"
 end
 
 def label
-  'follow if I edited'
+  "follow if I edited"
 end
 
 def description set_card

@@ -5,10 +5,10 @@ format :html do
       optional_help: :show, # , optional_menu: :never
       buttons: submit_button,
       account: card.fetch(trait: :account, new: {}),
-      title: 'Sign up',
+      title: "Sign up",
       hidden: {
-        success: (card.rule(:thanks) || '_self'),
-        'card[type_id]' => card.type_id
+        success: (card.rule(:thanks) || "_self"),
+        "card[type_id]" => card.type_id
       }
     )
     return unless Auth.signed_in? && args[:account].confirm_ok?
@@ -16,19 +16,19 @@ format :html do
   end
 
   def invite_args args
-    args[:title] = 'Invite'
-    args[:buttons] = button_tag('Send Invitation', situation: 'primary')
-    args[:hidden][:success] = '_self'
+    args[:title] = "Invite"
+    args[:buttons] = button_tag("Send Invitation", situation: "primary")
+    args[:hidden][:success] = "_self"
   end
 
   view :new do |args|
     # FIXME: make more use of standard new view?
 
-    frame_and_form :create, args, 'main-success' => 'REDIRECT' do
+    frame_and_form :create, args, "main-success" => "REDIRECT" do
       [
-        _render_name_formgroup(help: 'usually first and last name'),
+        _render_name_formgroup(help: "usually first and last name"),
         _optional_render(:account_formgroups, args),
-        (card.structure ? edit_slot : ''),
+        (card.structure ? edit_slot : ""),
         _optional_render(:button_formgroup, args)
       ]
     end
@@ -53,7 +53,7 @@ format :html do
     if (account = card.account)
       headings += verification_info account
     else
-      headings << 'ERROR: signup card missing account'
+      headings << "ERROR: signup card missing account"
     end
     <<-HTML
       <div class="invite-links">
@@ -65,14 +65,14 @@ format :html do
 
   def verification_info account
     headings = []
-    token_action = 'Send'
+    token_action = "Send"
     if account.token.present?
-      headings << 'A verification email has been sent ' \
+      headings << "A verification email has been sent " \
                   "#{"to #{account.email}" if account.email_card.ok? :read}"
-      token_action = 'Resend'
+      token_action = "Resend"
     end
     links = verification_links account, token_action
-    headings << links * '' if links.any?
+    headings << links * "" if links.any?
     headings
   end
 
@@ -84,12 +84,12 @@ format :html do
         card_path("update/~#{card.id}?approve_with_token=true")
       )
       links << link_to(
-        'Approve without verification',
+        "Approve without verification",
         card_path("update/~#{card.id}?approve_without_token=true")
       )
     end
     if card.ok? :delete
-      links << link_to('Deny and delete', card_path("delete/~#{card.id}"))
+      links << link_to("Deny and delete", card_path("delete/~#{card.id}"))
     end
     links
   end
@@ -97,7 +97,7 @@ end
 
 event :activate_by_token, :validate, on: :update,
                                      when: proc { |c| c.has_token? } do
-  abort :failure, 'no field manipulation mid-activation' if subcards.present?
+  abort :failure, "no field manipulation mid-activation" if subcards.present?
   # necessary because this performs actions as Wagn Bot
   abort :failure, "no account associated with #{name}" unless account
 
@@ -108,7 +108,7 @@ event :activate_by_token, :validate, on: :update,
     activate_account
     Auth.signin id
     Auth.as_bot # use admin permissions for rest of action
-    success << ''
+    success << ""
   else
     resend_activation_token
     abort :success
@@ -122,7 +122,7 @@ end
 event :activate_account do
   # FIXME: -- sends email before account is fully activated
   add_subfield :account
-  subfield(:account).add_subfield :status, content: 'active'
+  subfield(:account).add_subfield :status, content: "active"
   self.type_id = Card.default_accounted_type_id
   account.send_welcome_email
 end
@@ -130,7 +130,7 @@ end
 event :approve_with_token, :validate,
       on: :update,
       when: proc { Env.params[:approve_with_token] } do
-  abort :failure, 'illegal approval' unless account.confirm_ok?
+  abort :failure, "illegal approval" unless account.confirm_ok?
   account.reset_token
   account.send_account_verification_email
 end
@@ -138,18 +138,18 @@ end
 event :approve_without_token, :validate,
       on: :update,
       when: proc { Env.params[:approve_without_token] } do
-  abort :failure, 'illegal approval' unless account.confirm_ok?
+  abort :failure, "illegal approval" unless account.confirm_ok?
   activate_account
 end
 
 event :resend_activation_token do
   account.reset_token
   account.send_account_verification_email
-  message = 'Please check your email for a new password reset link.'
+  message = "Please check your email for a new password reset link."
   if account.errors.any?
     message = "Sorry, #{account.errors.first.last}. #{message}"
   end
-  success << { id: '_self', view: 'message', message: message }
+  success << { id: "_self", view: "message", message: message }
 end
 
 def signed_in_as_me_without_password?

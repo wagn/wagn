@@ -3,7 +3,7 @@ module ActiveRecord
   module ConnectionAdapters
     class AbstractAdapter
       def match _string
-        raise 'match not implemented'
+        raise "match not implemented"
       end
 
       def cast_types
@@ -27,11 +27,11 @@ module ActiveRecord
       end
 
       def custom_cast_types
-        { string:  { name: 'char'    },
-          integer: { name: 'signed'  },
-          text:    { name: 'char'    },
-          float:   { name: 'decimal' },
-          binary:  { name: 'binary'  }  }
+        { string:  { name: "char"    },
+          integer: { name: "signed"  },
+          text:    { name: "char"    },
+          float:   { name: "decimal" },
+          binary:  { name: "binary"  }  }
       end
     end
 

@@ -20,18 +20,18 @@ end
 
 # private
 
-def puts_events events, prefix='', depth=0
-  r = ''
+def puts_events events, prefix="", depth=0
+  r = ""
   depth += 1
   events.each do |e|
-    space = ' ' * (depth * 2)
+    space = " " * (depth * 2)
 
     # FIXME: this is not right.  before and around callbacks are processed in
     # declaration order regardless of kind.  not all befores then all arounds
-    e[:before] && r += puts_events(e[:before], space + 'v  ', depth)
-    e[:around] && r += puts_events(e[:around], space + 'vv ', depth)
+    e[:before] && r += puts_events(e[:before], space + "v  ", depth)
+    e[:around] && r += puts_events(e[:around], space + "vv ", depth)
     r += "#{prefix}#{e[:name]}\n"
-    e[:after] && r += puts_events(e[:after].reverse, space + '^  ', depth)
+    e[:after] && r += puts_events(e[:after].reverse, space + "^  ", depth)
   end
   r
 end

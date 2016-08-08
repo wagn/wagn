@@ -8,7 +8,7 @@
 #   success: no error, returns true on save
 #   triumph: similar to success, but if called on a subcard
 #            it causes the entire action to abort (not just the subcard)
-def abort status, msg='action canceled'
+def abort status, msg="action canceled"
   director.abort
   if status == :failure && errors.empty?
     errors.add :abort, msg

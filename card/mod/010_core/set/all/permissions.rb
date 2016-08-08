@@ -5,7 +5,7 @@ Card.error_codes.merge! permission_denied: [:denial, 403],
 module ClassMethods
   def repair_all_permissions
     Card.where(
-      '(read_rule_class is null or read_rule_id is null) and trash is false'
+      "(read_rule_class is null or read_rule_id is null) and trash is false"
     ).each do |broken_card|
       broken_card.include_set_modules
       broken_card.repair_permissions!
@@ -110,7 +110,7 @@ def permitted? action
 end
 
 def permit action, verb=nil
-  deny_because 'Currently in read-only mode' if Card.config.read_only # not called by ok_to_read
+  deny_because "Currently in read-only mode" if Card.config.read_only # not called by ok_to_read
 
   return if permitted? action
   verb ||= action.to_s
@@ -136,13 +136,13 @@ def ok_to_read
   return if Auth.always_ok?
   @read_rule_id ||= permission_rule_id_and_class(:read).first
   return if Auth.as_card.read_rules.member? @read_rule_id
-  deny_because you_cant 'read this'
+  deny_because you_cant "read this"
 end
 
 def ok_to_update
   permit :update
   if @action_ok && type_id_changed? && !permitted?(:create)
-    deny_because you_cant('change to this type (need create permission)')
+    deny_because you_cant("change to this type (need create permission)")
   end
   ok_to_read if @action_ok
 end
@@ -152,10 +152,10 @@ def ok_to_delete
 end
 
 def ok_to_comment
-  permit :comment, 'comment on'
+  permit :comment, "comment on"
   return unless @action_ok
-  deny_because 'No comments allowed on templates' if is_template?
-  deny_because 'No comments allowed on structured content' if structure
+  deny_because "No comments allowed on templates" if is_template?
+  deny_because "No comments allowed on structured content" if structure
 end
 
 event :clear_read_rule, :store, on: :delete do
@@ -196,7 +196,7 @@ def update_read_rule
   # may want to optimize(?)
   Auth.as_bot do
     fields.each do |field|
-      field.update_read_rule if field.rule(:read) == '_left'
+      field.update_read_rule if field.rule(:read) == "_left"
     end
   end
 

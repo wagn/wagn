@@ -1,6 +1,6 @@
 include Machine
 
-store_machine_output filetype: 'js'
+store_machine_output filetype: "js"
 
 view :javascript_include_tag do |_args|
   %(

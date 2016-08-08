@@ -6,9 +6,9 @@ class Card
              -> { order :id },
              foreign_key: :card_act_id,
              inverse_of: :act,
-             class_name: 'Card::Action'
+             class_name: "Card::Action"
 
-    belongs_to :actor, class_name: 'Card'
+    belongs_to :actor, class_name: "Card"
 
     def card
       Card.fetch card_id, look_in_trash: true, skip_modules: true
@@ -16,34 +16,34 @@ class Card
 
     class << self
       def delete_cardless
-        left_join = 'LEFT JOIN cards ON card_acts.card_id = cards.id'
-        joins(left_join).where('cards.id IS NULL').delete_all
+        left_join = "LEFT JOIN cards ON card_acts.card_id = cards.id"
+        joins(left_join).where("cards.id IS NULL").delete_all
       end
 
       def delete_actionless
         joins(
-          'LEFT JOIN card_actions ON card_acts.id = card_act_id'
+          "LEFT JOIN card_actions ON card_acts.id = card_act_id"
         ).where(
-          'card_actions.id is null'
+          "card_actions.id is null"
         ).delete_all
       end
 
       def find_all_with_actions_on card_ids, args={}
-        sql = 'card_actions.card_id IN (:card_ids) AND ( (draft is not true) '
-        sql << (args[:with_drafts] ? 'OR actor_id = :current_user_id)' : ')')
+        sql = "card_actions.card_id IN (:card_ids) AND ( (draft is not true) "
+        sql << (args[:with_drafts] ? "OR actor_id = :current_user_id)" : ")")
         vars = { card_ids: card_ids, current_user_id: Card::Auth.current_id }
         joins(:actions).where(sql, vars).uniq.order(:id).reverse_order
       end
 
       def all_viewable
-        joins = 'JOIN card_actions ON card_acts.id = card_act_id ' \
-                'JOIN cards ON cards.id = card_actions.card_id'
+        joins = "JOIN card_actions ON card_acts.id = card_act_id " \
+                "JOIN cards ON cards.id = card_actions.card_id"
         where = [
-          'card_actions.id is not null', # data check. should not be needed
-          'cards.id is not null',    # ditto
-          'draft is not true',
-          Card::Query::SqlStatement.new.permission_conditions('cards')
-        ].compact.join ' AND '
+          "card_actions.id is not null", # data check. should not be needed
+          "cards.id is not null",    # ditto
+          "draft is not true",
+          Card::Query::SqlStatement.new.permission_conditions("cards")
+        ].compact.join " AND "
 
         joins(joins).where(where).uniq
       end

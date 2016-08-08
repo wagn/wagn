@@ -4,13 +4,13 @@ class Card
   class Action < ActiveRecord::Base
     belongs_to :act,  foreign_key: :card_act_id, inverse_of: :actions
     has_many :card_changes, foreign_key: :card_action_id, inverse_of: :action,
-                            dependent: :delete_all, class_name: 'Card::Change'
+                            dependent: :delete_all, class_name: "Card::Change"
 
-    belongs_to :super_action, class_name: 'Action', inverse_of: :sub_actions
-    has_many :sub_actions, class_name: 'Action', inverse_of: :super_action
+    belongs_to :super_action, class_name: "Action", inverse_of: :sub_actions
+    has_many :sub_actions, class_name: "Action", inverse_of: :super_action
 
     scope :created_by, lambda { |actor_id|
-                         joins(:act).where 'card_acts.actor_id = ?', actor_id
+                         joins(:act).where "card_acts.actor_id = ?", actor_id
                        }
 
     # replace with enum if we start using rails 4
@@ -34,16 +34,16 @@ class Card
       end
 
       def delete_cardless
-        left_join = 'LEFT JOIN cards ON card_actions.card_id = cards.id'
-        joins(left_join).where('cards.id IS NULL').delete_all
+        left_join = "LEFT JOIN cards ON card_actions.card_id = cards.id"
+        joins(left_join).where("cards.id IS NULL").delete_all
       end
 
       def delete_changeless
         joins(
-          'LEFT JOIN card_changes '\
-          'ON card_changes.card_action_id = card_actions.id'
+          "LEFT JOIN card_changes "\
+          "ON card_changes.card_action_id = card_actions.id"
         ).where(
-          'card_changes.id IS NULL'
+          "card_changes.id IS NULL"
         ).delete_all
       end
 

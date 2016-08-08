@@ -6,7 +6,7 @@ describe Card::Set::Self::Stats do
       @core = render_card :core, name: :stats
     end
   end
-  it 'should render a table' do
-    assert_view_select @core, 'table'
+  it "should render a table" do
+    assert_view_select @core, "table"
   end
 end

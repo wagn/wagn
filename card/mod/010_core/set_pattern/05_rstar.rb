@@ -5,7 +5,7 @@ def label _name
 end
 
 def prototype_args _anchor
-  { name: '*dummy+*dummy' }
+  { name: "*dummy+*dummy" }
 end
 
 def pattern_applies? card

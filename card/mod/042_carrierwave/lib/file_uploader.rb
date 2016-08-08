@@ -29,8 +29,8 @@ module CarrierWave::Uploader::Versions
   # put version at the end of the filename
   def full_filename for_file
     name = super(for_file)
-    parts = name.split '.'
-    basename = [parts.shift, version_name].compact.join('-')
+    parts = name.split "."
+    basename = [parts.shift, version_name].compact.join("-")
     "#{basename}.#{parts.join('.')}"
   end
 end
@@ -54,15 +54,15 @@ class FileUploader < CarrierWave::Uploader::Base
     when file && file.extension.present? then ".#{file.extension}"
     when card_content = model.content    then File.extname(card_content)
     when orig = original_filename        then File.extname(orig)
-    else                                   ''
+    else                                   ""
     end.downcase
   end
 
   # generate identifier that gets stored in the card's db_content field
   def db_content opts={}
-    return '' unless file.present?
+    return "" unless file.present?
     model.load_from_mod = opts[:mod] if opts[:mod] && !model.load_from_mod
-    '%s/%s' % [file_dir, url_filename(opts)]
+    "%s/%s" % [file_dir, url_filename(opts)]
   end
 
   def url_filename opts={}
@@ -76,7 +76,7 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   def url opts={}
-    '%s/%s/%s' % [card_path(Card.config.files_web_path), file_dir,
+    "%s/%s/%s" % [card_path(Card.config.files_web_path), file_dir,
                   full_filename(url_filename(opts))]
   end
 
@@ -91,7 +91,7 @@ class FileUploader < CarrierWave::Uploader::Base
   end
 
   def cache_dir
-    Cardio.paths['files'].existent.first + '/cache'
+    Cardio.paths["files"].existent.first + "/cache"
   end
 
   # Carrierwave calls store_path without argument when it stores the file

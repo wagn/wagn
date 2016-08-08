@@ -19,6 +19,6 @@ end
 def pristine?
   # has not been edited directly by human users.  bleep blorp.
   new_card? || !actions.joins(:act).where(
-    'card_acts.actor_id != ?', Card::WagnBotID
+    "card_acts.actor_id != ?", Card::WagnBotID
   ).exists?
 end

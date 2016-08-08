@@ -34,12 +34,12 @@ class Card
   # Each condition is either a SQL-ready string (boo) or an Array in this form:
   #    [ field_string_or_sym, Card::Value::Query object ]
   class Query
-    require_dependency 'card/query/clause'
-    require_dependency 'card/query/value'
-    require_dependency 'card/query/reference'
-    require_dependency 'card/query/attributes'
-    require_dependency 'card/query/sql_statement'
-    require_dependency 'card/query/join'
+    require_dependency "card/query/clause"
+    require_dependency "card/query/value"
+    require_dependency "card/query/reference"
+    require_dependency "card/query/attributes"
+    require_dependency "card/query/sql_statement"
+    require_dependency "card/query/join"
 
     include Clause
     include Attributes
@@ -70,10 +70,10 @@ class Card
                 .inject({}) { |h, v| h[v.to_sym] = nil; h }
 
     OPERATORS = %w( != = =~ < > in ~ ).inject({}) { |h, v| h[v] = v; h }.merge({
-      eq: '=', gt: '>', lt: '<', match: '~', ne: '!=', 'not in' => nil
+      eq: "=", gt: ">", lt: "<", match: "~", ne: "!=", "not in" => nil
     }.stringify_keys)
 
-    DEFAULT_ORDER_DIRS = { update: 'desc', relevance: 'desc' }.freeze
+    DEFAULT_ORDER_DIRS = { update: "desc", relevance: "desc" }.freeze
 
     attr_reader :statement, :mods, :conditions, :comment,
                 :subqueries, :superquery
@@ -117,9 +117,9 @@ class Card
     # run the current query
     # @return array of card objects by default
     def run
-      retrn = statement[:return].present? ? statement[:return].to_s : 'card'
-      if retrn == 'card'
-        get_results('name').map do |name|
+      retrn = statement[:return].present? ? statement[:return].to_s : "card"
+      if retrn == "card"
+        get_results("name").map do |name|
           Card.fetch name, new: {}
         end
       else
@@ -130,14 +130,14 @@ class Card
     # @return Integer for :count, otherwise Array of Strings or Integers
     def get_results retrn
       rows = run_sql
-      if retrn == 'name' && (statement[:prepend] || statement[:append])
+      if retrn == "name" && (statement[:prepend] || statement[:append])
         rows.map do |row|
-          [statement[:prepend], row['name'], statement[:append]].compact * '+'
+          [statement[:prepend], row["name"], statement[:append]].compact * "+"
         end
       else
         case retrn
-        when 'count' then rows.first['count'].to_i
-        when 'raw'   then rows
+        when "count" then rows.first["count"].to_i
+        when "raw"   then rows
         when /id$/   then rows.map { |row| row[retrn].to_i }
         else              rows.map { |row| row[retrn]      }
         end
@@ -173,7 +173,7 @@ class Card
       if !@context.nil?
         @context
       else
-        @context = @superquery ? @superquery.context : ''
+        @context = @superquery ? @superquery.context : ""
       end
     end
   end

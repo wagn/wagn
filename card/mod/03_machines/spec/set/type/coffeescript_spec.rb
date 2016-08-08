@@ -6,9 +6,9 @@ describe Card::Set::Type::CoffeeScript do
   let(:changed_coffee)            { 'alert "Hello"  ' }
   let(:compressed_changed_coffee) { '(function(){alert("Hello")}).call(this);' }
 
-  it_should_behave_like 'content machine', that_produces_js do
+  it_should_behave_like "content machine", that_produces_js do
     let(:machine_card) do
-      Card.gimme! 'coffee machine', type: Card::CoffeeScriptID,
+      Card.gimme! "coffee machine", type: Card::CoffeeScriptID,
                                     content: coffee
     end
     let(:card_content) do
@@ -17,15 +17,15 @@ describe Card::Set::Type::CoffeeScript do
     end
   end
 
-  it_behaves_like 'machine input'  do
+  it_behaves_like "machine input"  do
     let(:create_machine_input_card) do
-      Card.gimme! 'coffee input', type: :coffee_script, content: coffee
+      Card.gimme! "coffee input", type: :coffee_script, content: coffee
     end
     let(:create_another_machine_input_card) do
-      Card.gimme! 'more coffee input', type: :coffee_script, content: coffee
+      Card.gimme! "more coffee input", type: :coffee_script, content: coffee
     end
     let(:create_machine_card) do
-      Card.gimme! 'coffee machine+*script', type: :pointer
+      Card.gimme! "coffee machine+*script", type: :pointer
     end
     let(:card_content) do
       { in:           coffee,         out:     compressed_coffee,

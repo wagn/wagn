@@ -2,7 +2,7 @@
 
 class UpdateStylesheets < Card::CoreMigration
   def up
-    dir = File.join data_path, '1.12_stylesheets'
+    dir = File.join data_path, "1.12_stylesheets"
     %w( common traditional ).each do |sheetname|
       card = Card["style: #{sheetname}"]
       if card && card.pristine?
@@ -10,7 +10,7 @@ class UpdateStylesheets < Card::CoreMigration
       end
     end
 
-    if (c = Card['*all+*style+file'])
+    if (c = Card["*all+*style+file"])
       c.delete!
     end
   end

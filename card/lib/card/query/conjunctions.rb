@@ -23,7 +23,7 @@ class Card
       end
 
       def not val
-        notjoin = join_cards val, conditions_on_join: true, side: 'LEFT'
+        notjoin = join_cards val, conditions_on_join: true, side: "LEFT"
         add_condition "#{notjoin.table_alias}.id is null"
       end
 

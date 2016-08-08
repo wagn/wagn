@@ -13,7 +13,7 @@ format :html do
     if focal?
       CGI.escapeHTML _render_raw(args)
     elsif @mainline
-      '(*head)'
+      "(*head)"
     else
       _render_raw(args)
     end
@@ -29,7 +29,7 @@ format :html do
   def head_title
     title = root.card && root.card.name
     title = nil if title.blank?
-    title = params[:action] if title == '*placeholder'
+    title = params[:action] if title == "*placeholder"
     %(<title>#{title ? "#{title} - " : ''}#{Card.global_setting :title}</title>)
   end
 
@@ -48,7 +48,7 @@ format :html do
     style_card = Card[manual_style] if manual_style
     style_card ||= root.card.rule_card :style
     @css_path =
-      if params[:debug] == 'style'
+      if params[:debug] == "style"
         page_path(style_card.cardname, item: :import, format: :css)
       elsif style_card
         card_path style_card.machine_output_url
@@ -80,7 +80,7 @@ format :html do
   def universal_edit_button
     return if root.card.new_record? || !root.card.ok?(:update)
     href = root.path view: :edit
-    tag 'link', rel: "alternate", type: "application/x-wiki",
+    tag "link", rel: "alternate", type: "application/x-wiki",
                 title: "Edit this page!", href: href
   end
 
@@ -88,7 +88,7 @@ format :html do
     opts = { format: :rss }
     root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
     href = page_path root.card.cardname, opts
-    tag 'link', rel: "alternate", type: "application/rss+xml",
+    tag "link", rel: "alternate", type: "application/rss+xml",
                 title: "RSS", href: href
   end
 end

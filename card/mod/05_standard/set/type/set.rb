@@ -30,10 +30,10 @@ format :html do
 
   view :grouped_rules do |args|
     with_label_and_navbars args.merge(selected_view: :grouped_rules) do
-      content_tag(:div, class: 'panel-group',
-                        id: 'accordion',
-                        role: 'tablist',
-                        'aria-multiselectable' => 'true'
+      content_tag(:div, class: "panel-group",
+                        id: "accordion",
+                        role: "tablist",
+                        "aria-multiselectable" => "true"
                  ) do
         Card::Setting.groups.keys.map do |group_key|
           _optional_render(group_key, args, :show)
@@ -64,7 +64,7 @@ format :html do
   end
 
   view :set_label do |_args|
-    content_tag :h3, card.label, class: 'set-label'
+    content_tag :h3, card.label, class: "set-label"
   end
 
   Card::Setting.groups.keys.each do |group_key|
@@ -75,14 +75,14 @@ format :html do
         heading_id = "heading-#{group_key}"
         collapse_id = "collapse-#{card.cardname.safe_key}-#{group_key}"
         output [
-          (content_tag :div, class: 'panel panel-default' do
-            content_tag :div, class: 'panel-heading', role: 'tab', id: heading_id do
-              content_tag :h4, class: 'panel-title' do
-                content_tag :a, group_name, 'data-toggle' => 'collapse', 'data-parent' => '#accordion', href: "##{collapse_id}", 'aria-expanded' => 'false', 'aria-controls' => collapse_id
+          (content_tag :div, class: "panel panel-default" do
+            content_tag :div, class: "panel-heading", role: "tab", id: heading_id do
+              content_tag :h4, class: "panel-title" do
+                content_tag :a, group_name, "data-toggle" => "collapse", "data-parent" => "#accordion", href: "##{collapse_id}", "aria-expanded" => "false", "aria-controls" => collapse_id
               end
             end
           end),
-          (content_tag :div, id: collapse_id, class: 'panel-collapse collapse', role: 'tabpanel', 'aria-labelledby' => heading_id do
+          (content_tag :div, id: collapse_id, class: "panel-collapse collapse", role: "tabpanel", "aria-labelledby" => heading_id do
             rules_table settings.map(&:codename), args
           end)
         ]
@@ -91,10 +91,10 @@ format :html do
   end
 
   def rules_table settings, args={}
-    wrap_with :table, class: 'set-rules table' do
+    wrap_with :table, class: "set-rules table" do
       [
-        (content_tag(:tr, class: 'rule-group') do
-          wrap_each_with :th, %w(Trait Content Set), class: 'rule-heading'
+        (content_tag(:tr, class: "rule-group") do
+          wrap_each_with :th, %w(Trait Content Set), class: "rule-heading"
         end),
         (settings.map do |setting|
           if show_view? setting, args
@@ -107,19 +107,19 @@ format :html do
   end
 
   view :editor do |_args|
-    'Cannot currently edit Sets' # ENGLISH
+    "Cannot currently edit Sets" # ENGLISH
   end
 
   view :template_link do |args|
     args.delete :style
     wrap args do
-      link = view_link args[:inc_syntax], :template_editor, class: 'slotter' # , 'slot-include'=>include_syntax
+      link = view_link args[:inc_syntax], :template_editor, class: "slotter" # , 'slot-include'=>include_syntax
       "{{#{link}}}"
     end
   end
 
   view :template_closer do |_args|
-    view_link '', :template_link, class: 'slotter glyphicon glyphicon-remove template-editor-close'
+    view_link "", :template_link, class: "slotter glyphicon glyphicon-remove template-editor-close"
   end
 
   view :template_editor do |args|
@@ -136,28 +136,28 @@ format :html do
 
   view :template_editor_frame do |args|
     frame no_slot: true, title: card.label, menu_hack: :template_closer do
-      _render_core args.merge(hide: 'set_label')
+      _render_core args.merge(hide: "set_label")
     end
   end
 
   view :closed_content do |_args|
-    ''
+    ""
   end
 
   view :set_navbar do |args|
     id = "rule-navbar-#{card.cardname.safe_key}-#{args[:home_view]}"
     related_sets = card.related_sets(true)
-    return '' if related_sets.size <= 1
+    return "" if related_sets.size <= 1
     navbar id, toggle: 'Rules<span class="caret"></span>', toggle_align: :left,
-               class: 'slotter toolbar', navbar_type: 'inverse', collapsed_content: close_link(class: 'pull-right visible-xs') do
+               class: "slotter toolbar", navbar_type: "inverse", collapsed_content: close_link(class: "pull-right visible-xs") do
       [
-        content_tag(:span, 'Set:', class: 'navbar-text hidden-xs'),
-        (wrap_with :ul, class: 'nav navbar-nav nav-pills' do
+        content_tag(:span, "Set:", class: "navbar-text hidden-xs"),
+        (wrap_with :ul, class: "nav navbar-nav nav-pills" do
           related_sets.map do |name, label|
             link = card_link name, text: label, remote: true,
                                    path_opts: {
                                      view: @slot_view,
-                                     slot: { subheader: showname(name), subframe: true, hide: 'header set_label rule_navbar', show: 'subheader set_navbar' }
+                                     slot: { subheader: showname(name), subframe: true, hide: "header set_label rule_navbar", show: "subheader set_navbar" }
                                    }
             li_pill link, name == card.name
           end
@@ -174,16 +174,16 @@ format :html do
     id = "rule-navbar-#{card.cardname.safe_key}-#{args[:home_view]}"
     args[:path_opts] = { slot: { show: :rule_navbar } }
     navbar id, toggle: 'Rules<span class="caret"></span>', toggle_align: :left,
-               class: 'slotter toolbar', navbar_type: 'inverse', collapsed_content: close_link(class: 'pull-right visible-xs') do
+               class: "slotter toolbar", navbar_type: "inverse", collapsed_content: close_link(class: "pull-right visible-xs") do
       [
-        content_tag(:span, 'Rules:', class: 'navbar-text hidden-xs'),
-        (wrap_with :ul, class: 'nav navbar-nav nav-pills' do
+        content_tag(:span, "Rules:", class: "navbar-text hidden-xs"),
+        (wrap_with :ul, class: "nav navbar-nav nav-pills" do
           [
-            (view_link_pill('field', :field_related_rules, args) if card.junction?),
-            view_link_pill('common', :common_rules, args),
-            view_link_pill('by group', :grouped_rules, args),
-            view_link_pill('by name', :all_rules, args),
-            (view_link_pill('recent', :recent_rules, args) if recently_edited_settings?)
+            (view_link_pill("field", :field_related_rules, args) if card.junction?),
+            view_link_pill("common", :common_rules, args),
+            view_link_pill("by group", :grouped_rules, args),
+            view_link_pill("by name", :all_rules, args),
+            (view_link_pill("recent", :recent_rules, args) if recently_edited_settings?)
           ]
         end)
       ]
@@ -192,7 +192,7 @@ format :html do
 
   def view_link_pill name, view, args
     selected_view = args[:selected_view] || @slot_view || args[:home_view]
-    opts = { class: 'slotter', role: 'pill', path_opts: args[:path_opts] }
+    opts = { class: "slotter", role: "pill", path_opts: args[:path_opts] }
     li_pill view_link(name, view, opts), selected_view == view
   end
 end
@@ -232,7 +232,7 @@ def label
   if (klass = subclass_for_set)
     klass.label cardname.left
   else
-    ''
+    ""
   end
 end
 
@@ -240,7 +240,7 @@ def follow_label
   if (klass = subclass_for_set)
     klass.follow_label cardname.left
   else
-    ''
+    ""
   end
 end
 

@@ -2,7 +2,7 @@ format :html do
   ###---( TOP_LEVEL (used by menu) NEW / EDIT VIEWS )
 
   view :new, perms: :create, tags: :unknown_ok do |args|
-    frame_and_form :create, args, 'main-success' => 'REDIRECT' do
+    frame_and_form :create, args, "main-success" => "REDIRECT" do
       [
         _optional_render(:name_formgroup, args),
         _optional_render(:type_formgroup, args),
@@ -14,7 +14,7 @@ format :html do
 
   def default_new_args args
     hidden = args[:hidden] ||= {}
-    hidden[:success] ||= card.rule(:thanks) || '_self'
+    hidden[:success] ||= card.rule(:thanks) || "_self"
     hidden[:card] ||= {}
 
     args[:optional_help] ||= :show
@@ -45,7 +45,7 @@ format :html do
     if card.type_id == Card.default_type_id
       "New #{card.type_name}"
     else
-      'New'
+      "New"
     end
   end
 
@@ -67,8 +67,8 @@ format :html do
   def default_new_args_buttons args
     cancel_path = !main? && path(view: :missing)
     args[:buttons] ||= [
-      submit_button(class: 'create-submit-button'),
-      cancel_button(class: 'create-cancel-button', href: cancel_path)
+      submit_button(class: "create-submit-button"),
+      cancel_button(class: "create-cancel-button", href: cancel_path)
     ].join "\n"
   end
 
@@ -95,7 +95,7 @@ format :html do
 
   view :edit_name, perms: :update do |args|
     frame_and_form(
-      { action: :update, id: card.id }, args, 'main-success' => 'REDIRECT'
+      { action: :update, id: card.id }, args, "main-success" => "REDIRECT"
     ) do
       [
         _render_name_formgroup(args),
@@ -112,22 +112,22 @@ format :html do
     if referers.any? || descendants.any?
       msg << rename_info(referers, descendants)
     end
-    alert('warning') { msg }
+    alert("warning") { msg }
   end
 
   def rename_info referers, descendants
     effects = []
-    options = ''
+    options = ""
     if descendants.any? # FIXME: count, don't instantiate
       effects << "automatically alter #{descendants.size} related name(s)."
     end
     if referers.any? # FIXME: count, don't instantiate
       count = referers.size
-      refs = count == 1 ? 'reference' : 'references'
+      refs = count == 1 ? "reference" : "references"
       effects << "affect at least #{count} #{refs} to \"#{card.name}\""
-      options = 'You may choose to <em>update or ignore</em> the referers.'
+      options = "You may choose to <em>update or ignore</em> the referers."
     end
-    effects = effects.map { |effect| "<li>#{effect}</li>" }.join('')
+    effects = effects.map { |effect| "<li>#{effect}</li>" }.join("")
     "<h6>This change will...</h6><ul>#{effects}</ul><p>#{options}</p>"
   end
 
@@ -135,7 +135,7 @@ format :html do
     referers = args[:referers] = card.family_referers
     args[:hidden] ||= {}
     args[:hidden].reverse_merge!(
-      success:  '_self',
+      success:  "_self",
       old_name: card.name,
       referers: referers.size, # FIXME: count, don't instantiate
       card:     { update_referers: false }
@@ -145,10 +145,10 @@ format :html do
   end
 
   def default_rename_buttons
-    [submit_button(text: 'Rename and Update',
-                   disable_with: 'Renaming',
-                   class: 'renamer-updater'),
-     button_tag('Rename', data: { disable_with: 'Renaming' }, class: 'renamer'),
+    [submit_button(text: "Rename and Update",
+                   disable_with: "Renaming",
+                   class: "renamer-updater"),
+     button_tag("Rename", data: { disable_with: "Renaming" }, class: "renamer"),
      cancel_button(href: path)
     ].join "\n"
   end
@@ -197,10 +197,10 @@ format :html do
   view :edit_structure do |args|
     slot_args =
       {
-        cancel_slot_selector: '.card-slot.related-view',
+        cancel_slot_selector: ".card-slot.related-view",
         cancel_path: card.format.path(view: :edit),
         optional_edit_toolbar: :hide,
-        hidden: { success: { view: :open, 'slot[subframe]' => true } }
+        hidden: { success: { view: :open, "slot[subframe]" => true } }
       }
     render_related args.merge(
       related: { card: card.structure, view: :edit, slot: slot_args }

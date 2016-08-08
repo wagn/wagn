@@ -48,11 +48,11 @@ format :html do
   end
 
   view :navbar_right do |args|
-    render_link_list args.merge(class: 'nav navbar-nav navbar-right')
+    render_link_list args.merge(class: "nav navbar-nav navbar-right")
   end
 
   view :navbar_left do |args|
-    render_link_list args.merge(class: 'nav navbar-nav navbar-left')
+    render_link_list args.merge(class: "nav navbar-nav navbar-left")
   end
 
   def show_follow?

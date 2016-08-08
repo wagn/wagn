@@ -13,7 +13,7 @@ format :html do
   view :pointer_items do |args|
     card.item_names(context: :raw).map do |iname|
       wrap_item iname, args
-    end.join ', '
+    end.join ", "
   end
 end
 
@@ -35,6 +35,6 @@ format :email_text do
                    .split(/[,\n]/)
         end
       end
-    end.flatten.compact.join(', ')
+    end.flatten.compact.join(", ")
   end
 end

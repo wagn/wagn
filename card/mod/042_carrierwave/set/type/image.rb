@@ -31,7 +31,7 @@ format :html do
 
   view :core do |args|
     handle_source args do |source|
-      if source == 'missing'
+      if source == "missing"
         "<!-- image missing #{@card.name} -->"
       else
         image_tag(source)
@@ -42,13 +42,13 @@ format :html do
   def preview args
     if !card.new_card? || card.preliminary_upload?
       content_tag :div, _render_core(args.merge(size: :medium)).html_safe,
-                  class: 'attachment-preview',
+                  class: "attachment-preview",
                   id: "#{card.attachment.filename}-preview"
     end
   end
 
   view :content_changes do |args|
-    out = ''
+    out = ""
     size = args[:diff_type] == :summary ? :icon : :medium
     if !args[:hide_diff] && args[:action] &&
        (last_change = card.last_change_on(:db_content, before: args[:action]))
@@ -75,7 +75,7 @@ format :file do
   include File::FileFormat
 
   view :style do |args|  # should this be in model?
-    ['', 'full'].member?(args[:style].to_s) ? :original : args[:style]
+    ["", "full"].member?(args[:style].to_s) ? :original : args[:style]
   end
 
   def selected_file_version

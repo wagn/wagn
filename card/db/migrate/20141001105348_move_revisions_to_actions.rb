@@ -1,26 +1,26 @@
 class MoveRevisionsToActions < ActiveRecord::Migration
   class TmpRevision < ActiveRecord::Base
     belongs_to :tmp_card, foreign_key: :card_id
-    self.table_name = 'card_revisions'
+    self.table_name = "card_revisions"
     def self.delete_cardless
-      left_join = 'LEFT JOIN card_revisions '\
-                  'ON card_revisions.card_id = cards.id'
-      TmpRevision.joins(left_join).where('cards.id IS NULL').delete_all
+      left_join = "LEFT JOIN card_revisions "\
+                  "ON card_revisions.card_id = cards.id"
+      TmpRevision.joins(left_join).where("cards.id IS NULL").delete_all
     end
   end
   class TmpAct < ActiveRecord::Base
-    self.table_name = 'card_acts'
+    self.table_name = "card_acts"
   end
   class TmpAction < ActiveRecord::Base
-    self.table_name = 'card_actions'
+    self.table_name = "card_actions"
   end
   class TmpChange < ActiveRecord::Base
-    self.table_name = 'card_changes'
+    self.table_name = "card_changes"
   end
   class TmpCard < ActiveRecord::Base
     belongs_to :tmp_revision, foreign_key: :current_revision_id
     has_many :tmp_actions, foreign_key: :card_id
-    self.table_name = 'cards'
+    self.table_name = "cards"
   end
 
   def up

@@ -1,6 +1,6 @@
 event :permit_codename, :validate,
       on: :update, changed: :codename do
-  errors.add :codename, 'only admins can set codename' unless Auth.always_ok?
+  errors.add :codename, "only admins can set codename" unless Auth.always_ok?
   validate_uniqueness_of_codename
 end
 
@@ -19,10 +19,10 @@ end
 
 event :validate_uniqueness_of_name do
   # validate uniqueness of name
-  condition_sql = 'cards.key = ? and trash=?'
+  condition_sql = "cards.key = ? and trash=?"
   condition_params = [cardname.key, false]
   unless new_record?
-    condition_sql << ' AND cards.id <> ?'
+    condition_sql << " AND cards.id <> ?"
     condition_params << id
   end
   if (c = Card.find_by(condition_sql, *condition_params))
@@ -32,12 +32,12 @@ end
 
 event :validate_legality_of_name do
   if name.length > 255
-    errors.add :name, 'is too long (255 character maximum)'
+    errors.add :name, "is too long (255 character maximum)"
   elsif cardname.blank?
     errors.add :name, "can't be blank"
   else
     unless cardname.valid?
-      errors.add :name, 'may not contain any of the following characters: ' \
+      errors.add :name, "may not contain any of the following characters: " \
                         "#{Card::Name.banned_array * ' '}"
     end
     # this is to protect against using a plus card as a tag
@@ -49,7 +49,7 @@ end
 
 event :validate_key, after: :validate_name, on: :save do
   if key.empty?
-    errors.add :key, 'cannot be blank' if errors.empty?
+    errors.add :key, "cannot be blank" if errors.empty?
   elsif key != cardname.key
     errors.add :key, "wrong key '#{key}' for name #{name}"
   end

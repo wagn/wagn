@@ -6,7 +6,7 @@ end
 
 def item_names
   if (user = left)
-    Card.preference_names user.name, 'follow'
+    Card.preference_names user.name, "follow"
   else
     []
   end
@@ -26,7 +26,7 @@ format :html do
   include Card::Set::Type::Pointer::HtmlFormat
 
   view :closed_content do |_args|
-    ''
+    ""
   end
 
   view :core do |args|
@@ -64,16 +64,16 @@ format :html do
   end
 
   def each_suggestion
-    return unless (suggestions = Card['follow suggestions'])
+    return unless (suggestions = Card["follow suggestions"])
     suggestions.item_names.each do |sug|
       set_card = Card.fetch sug.to_name.left
       if set_card && set_card.type_code == :set
         sugtag = sug.to_name.right
         option_card = Card.fetch(sugtag) || Card[sugtag.to_sym]
-        option = option_card.follow_option? ? option_card.name : '*always'
+        option = option_card.follow_option? ? option_card.name : "*always"
         yield(set_card, option)
       elsif (set_card = Card.fetch sug) && set_card.type_code == :set
-        yield(set_card, '*always')
+        yield(set_card, "*always")
       end
     end
   end
@@ -115,12 +115,12 @@ format :html do
     end
 
     sets = followed_by_set
-    wrap_with :div, class: 'pointer-list-editor' do
-      wrap_with :ul, class: 'delete-list list-group' do
+    wrap_with :div, class: "pointer-list-editor" do
+      wrap_with :ul, class: "delete-list list-group" do
         Card.set_patterns.select { |p| sets[p] }.reverse.map do |set_pattern|
           sets[set_pattern].map do |rule|
             rule[:options].map do |option|
-              content_tag :li, class: 'list-group-item' do
+              content_tag :li, class: "list-group-item" do
                 subformat(rule[:card]).render_follow_item condition: option,
                                                           hide: hide_buttons
               end
@@ -142,10 +142,10 @@ format :html do
       hide_buttons = [:delete_follow_rule_button, :add_follow_rule_button]
     end
     never = Card[:never].name
-    wrap_with :div, class: 'pointer-list-editor' do
-      wrap_with :ul, class: 'delete-list list-group' do
+    wrap_with :div, class: "pointer-list-editor" do
+      wrap_with :ul, class: "delete-list list-group" do
         ignore_list.map do |rule_card|
-          content_tag :li, class: 'list-group-item' do
+          content_tag :li, class: "list-group-item" do
             subformat(rule_card).render_follow_item condition: never,
                                                     hide: hide_buttons
           end
@@ -161,10 +161,10 @@ format :html do
   view :errors, perms: :none do |args|
     if card.errors.any?
       if card.errors.find { |attrib, _msg| attrib == :permission_denied }
-        Env.save_interrupted_action(request.env['REQUEST_URI'])
+        Env.save_interrupted_action(request.env["REQUEST_URI"])
         title = "Problems with #{card.name}"
-        frame args.merge(panel_class: 'panel panel-warning',
-                         title: title, hide: 'menu') do
+        frame args.merge(panel_class: "panel panel-warning",
+                         title: title, hide: "menu") do
           "Please #{link_to 'sign in', card_url(':signin')}" # " #{to_task}"
         end
       else

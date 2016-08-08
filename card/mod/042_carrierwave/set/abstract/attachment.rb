@@ -1,4 +1,4 @@
-require 'carrier_wave/cardmount'
+require "carrier_wave/cardmount"
 
 def self.included host_class
   host_class.extend CarrierWave::CardMount
@@ -21,7 +21,7 @@ event :upload_attachment, :prepare_to_validate,
   success << {
     target: (new_card? ? upload_cache_card : self),
     type: type_name,
-    view: 'preview_editor',
+    view: "preview_editor",
     rev_id: current_action.id
   }
   abort :success
@@ -94,7 +94,7 @@ end
 
 event :validate_file_exist, :validate, on: :create do
   unless attachment.file.present? || empty_ok?
-    errors.add attachment_name, 'is missing'
+    errors.add attachment_name, "is missing"
   end
 end
 
@@ -189,8 +189,8 @@ end
 # place for files of mod file cards
 def mod_dir
   mod = @mod || mod_file?
-  Card.paths['mod'].to_a.each do |mod_path|
-    dir = File.join(mod_path, mod, 'file', codename)
+  Card.paths["mod"].to_a.each do |mod_path|
+    dir = File.join(mod_path, mod, "file", codename)
     return dir if Dir.exist? dir
   end
 end
@@ -261,7 +261,7 @@ end
 
 def attachment_format ext
   if ext.present? && attachment && (original_ext = attachment.extension)
-    if ['file', original_ext].member? ext
+    if ["file", original_ext].member? ext
       original_ext
     elsif (exts = MIME::Types[attachment.content_type])
       if exts.find { |mt| mt.extensions.member? ext }

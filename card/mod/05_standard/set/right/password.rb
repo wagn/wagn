@@ -2,19 +2,19 @@
 include All::Permissions::Accounts
 
 view :editor do
-  card.content = ''
+  card.content = ""
 
   # HACK
-  autocomplete = if @parent && @parent.card.name == '*signin+*account'
-                   'on'
+  autocomplete = if @parent && @parent.card.name == "*signin+*account"
+                   "on"
                  else
-                   'off'
+                   "off"
                  end
-  password_field :content, class: 'card-content', autocomplete: autocomplete
+  password_field :content, class: "card-content", autocomplete: autocomplete
 end
 
 view :raw do
-  '<em>encrypted</em>'
+  "<em>encrypted</em>"
 end
 
 event :encrypt_password, :store,
@@ -34,7 +34,7 @@ end
 event :validate_password, :validate,
       on: :save do
   unless content.length > 3
-    errors.add :password, 'must be at least 4 characters'
+    errors.add :password, "must be at least 4 characters"
   end
 end
 

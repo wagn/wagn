@@ -6,13 +6,13 @@ class Card
     class << self
       def delete_actionless
         joins(
-          'LEFT JOIN card_actions '\
-          'ON card_changes.card_action_id = card_actions.id '
+          "LEFT JOIN card_actions "\
+          "ON card_changes.card_action_id = card_actions.id "
         ).where(
-          'card_actions.id is null'
+          "card_actions.id is null"
         ).find_in_batches do |group|
           # used to be .delete_all here, but that was failing on large dbs
-          puts 'deleting batch of changes'
+          puts "deleting batch of changes"
           where("id in (#{group.map(&:id).join ','})").delete_all
         end
       end

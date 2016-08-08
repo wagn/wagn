@@ -12,18 +12,18 @@ module ClassMethods
   def delete_trashed_files
     trashed_card_ids = all_trashed_card_ids
     file_ids = all_file_ids
-    dir = Cardio.paths['files'].existent.first
+    dir = Cardio.paths["files"].existent.first
     file_ids.each do |file_id|
       next unless trashed_card_ids.member?(file_id)
       if Card.exists?(file_id) # double check!
-        raise Card::Error, 'Narrowly averted deleting current file'
+        raise Card::Error, "Narrowly averted deleting current file"
       end
       FileUtils.rm_rf "#{dir}/#{file_id}", secure: true
     end
   end
 
   def all_file_ids
-    dir = Card.paths['files'].existent.first
+    dir = Card.paths["files"].existent.first
     Dir.entries(dir)[2..-1].map(&:to_i)
   end
 
@@ -51,13 +51,13 @@ module ClassMethods
     unmerged = []
     attribs.each do |row|
       result = begin
-        merge row['name'], row, opts
+        merge row["name"], row, opts
       end
       unmerged.push row unless result == true
     end
 
     if unmerged.empty?
-      Rails.logger.info 'successfully merged all!'
+      Rails.logger.info "successfully merged all!"
     else
       unmerged_json = JSON.pretty_generate unmerged
       report_unmerged_json unmerged_json, opts[:output_file]
@@ -67,7 +67,7 @@ module ClassMethods
 
   def report_unmerged_json unmerged_json, output_file
     if output_file
-      ::File.open output_file, 'w' do |f|
+      ::File.open output_file, "w" do |f|
         f.write unmerged_json
       end
     else
@@ -104,14 +104,14 @@ end
 
 def inspect
   tags = []
-  tags << 'trash'    if trash
-  tags << 'new'      if new_card?
-  tags << 'frozen'   if frozen?
-  tags << 'readonly' if readonly?
-  tags << 'virtual'  if @virtual
-  tags << 'set_mods_loaded' if @set_mods_loaded
+  tags << "trash"    if trash
+  tags << "new"      if new_card?
+  tags << "frozen"   if frozen?
+  tags << "readonly" if readonly?
+  tags << "virtual"  if @virtual
+  tags << "set_mods_loaded" if @set_mods_loaded
 
-  error_messages = errors.any? ? "<E*#{errors.full_messages * ', '}*>" : ''
+  error_messages = errors.any? ? "<E*#{errors.full_messages * ', '}*>" : ""
 
   "#<Card##{id}[#{debug_type}](#{name})#{error_messages}{#{tags * ','}}"
 end
@@ -140,16 +140,16 @@ format :html do
   end
 
   def accordion_group list, collapse_id=card.cardname.safe_key
-    accordions = ''
+    accordions = ""
     index = 1
     list.each_pair do |title, content|
       accordions << accordion(title, content, "#{collapse_id}-#{index}")
       index += 1
     end
-    content_tag :div, accordions.html_safe, class: 'panel-group',
+    content_tag :div, accordions.html_safe, class: "panel-group",
                                             id: "accordion-#{collapse_id}",
-                                            role: 'tablist',
-                                            'aria-multiselectable' => 'true'
+                                            role: "tablist",
+                                            "aria-multiselectable" => "true"
   end
 
   def accordion title, content, collapse_id=card.cardname.safe_key

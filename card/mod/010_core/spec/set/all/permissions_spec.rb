@@ -226,7 +226,7 @@ describe Card::Set::All::Permissions do
       Card::Auth.as_bot do
         # Card::Auth.cache.reset
         @u1, @u2, @u3, @r1, @r2, @r3, @c1, @c2, @c3 =
-          %w( u1 u2 u3 r1 r2 r3 c1 c2 c3 ).map { |x| Card[x] }
+          %w(u1 u2 u3 r1 r2 r3 c1 c2 c3).map { |x| Card[x] }
       end
     end
 
@@ -323,11 +323,11 @@ describe Card::Set::All::Permissions do
         @u3.fetch(trait: :roles, new: {}).items = [@r1]
       end
 
-      %{        u1 u2 u3
+      %(        u1 u2 u3
         c1(r1)  T  T  T
         c2(r2)  T  T  F
         c3(r3)  T  F  F
-      }
+      )
 
       assert_equal true,  @c1.writeable_by(@u1), "c1 writeable by u1"
       assert_equal true,  @c1.writeable_by(@u2), "c1 writeable by u2"
@@ -400,12 +400,12 @@ describe Card::Set::All::Permissions do
 
       Card::Auth.as(@u1) do
         expect(Card.search(content: "WeirdWord").map(&:name).sort).to(
-          eq %w( c1 c2 c3 )
+          eq %w(c1 c2 c3)
         )
       end
       Card::Auth.as(@u2) do
         expect(Card.search(content: "WeirdWord").map(&:name).sort).to(
-          eq %w( c2 c3 )
+          eq %w(c2 c3)
         )
       end
     end
@@ -424,14 +424,14 @@ describe Card::Set::All::Permissions do
 
       Card::Auth.as(@u1) do
         expect(Card.search(content: "WeirdWord").map(&:name).sort).to(
-          eq(%w( c1 c2 c3 ))
+          eq(%w(c1 c2 c3))
         )
       end
       # for Card::Auth.as to be effective, you can't have a logged in user
       Card::Auth.current_id = nil
       Card::Auth.as(@u2) do
         expect(Card.search(content: "WeirdWord").map(&:name).sort).to(
-          eq(%w( c2 c3 ))
+          eq(%w(c2 c3))
         )
       end
     end

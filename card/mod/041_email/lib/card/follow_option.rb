@@ -63,8 +63,10 @@ class Card
         if Card::FollowOption.codenames(type)[pos]
           Card::FollowOption.codenames(type).insert(pos, item)
         else
-          # If pos > codenames.size in a previous insert then we have a bunch of preceding nils in the array.
-          # Hence, we have to overwrite a nil value if we encounter one and can't use insert.
+          # If pos > codenames.size in a previous insert then we have a bunch
+          # of preceding nils in the array.
+          # Hence, we have to overwrite a nil value if we encounter one and
+          # can't use insert.
           Card::FollowOption.codenames(type)[pos] = item
         end
       end

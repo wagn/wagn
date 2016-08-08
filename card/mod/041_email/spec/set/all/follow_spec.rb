@@ -10,7 +10,8 @@ describe "Card::Set::All::Follow" do
       it "contains id of a new follower" do
         Card::Auth.as_bot do
           Card["Joe User"].follow "No One Sees Me"
-          expect(Card["No One Sees Me"].follower_ids).to eq ::Set.new([Card["Joe User"].id])
+          expect(Card["No One Sees Me"].follower_ids)
+            .to eq ::Set.new([Card["Joe User"].id])
         end
       end
     end
@@ -52,13 +53,17 @@ describe "Card::Set::All::Follow" do
     end
 
     def assert_following_view name, args
-      assert_follow_view name, args.reverse_merge(following: true, text: "unfollow")
+      assert_follow_view name,
+                         args.reverse_merge(following: true, text: "unfollow")
     end
 
-    #  href="/card/update/Home+*self+philipp+*follow?card%5Bcontent%5D=%5B%5Bnever%5D%5D&success%5Bid%5D=Home&success%5Bview%5D=follow"
+    #  href="/card/update/Home+*self+philipp+*follow?"\
+    #       "card%5Bcontent%5D=%5B%5Bnever%5D%5D&"\
+    #       "success%5Bid%5D=Home&success%5Bview%5D=follow"
     def assert_follow_view name, args
       args[:user] ||= "Big_Brother"
-      #      href = "/card/update/#{args[:add_set].to_name.url_key}+#{args[:user]}+*follow?"
+      #      href = "/card/update/#{args[:add_set].to_name.url_key}+"\
+      #             "#{args[:user]}+*follow?"
       #      href += CGI.escape("card[content]") + '='
       #      href +=
       #        if args[:following]
@@ -70,7 +75,8 @@ describe "Card::Set::All::Follow" do
       #        end
 
       link_class = "follow-link"
-      assert_view_select follow_view(name), "a[class~=#{link_class}][href*='']", args[:text] || "follow"
+      assert_view_select follow_view(name), "a[class~=#{link_class}][href*='']",
+                         args[:text] || "follow"
     end
 
     context "when not following" do
@@ -112,14 +118,16 @@ describe "Card::Set::All::Follow" do
     context "when following content I created" do
       before { Card::Auth.current_id = Card["Narcissist"].id }
       it "renders following link" do
-        assert_following_view "Sunglasses", add_set: "Sunglasses+*self", user: "Narcissist"
+        assert_following_view "Sunglasses", add_set: "Sunglasses+*self",
+                                            user: "Narcissist"
       end
     end
 
     context "when following content I edited" do
       before { Card::Auth.current_id = Card["Narcissist"].id }
       it "renders following link" do
-        assert_following_view "Magnifier+lens", add_set: "Magnifier+lens+*self", user: "Narcissist"
+        assert_following_view "Magnifier+lens", add_set: "Magnifier+lens+*self",
+                                                user: "Narcissist"
       end
     end
   end

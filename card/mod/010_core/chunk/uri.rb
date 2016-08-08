@@ -22,7 +22,7 @@ module Card::Content::Chunk
   class URI < Abstract
     SCHEMES = %w(irc http https ftp ssh git sftp file ldap ldaps mailto).freeze
 
-    REJECTED_PREFIX_RE = %w{ ! ": " ' ]( }.map { |s| Regexp.escape s } * "|"
+    REJECTED_PREFIX_RE = %w{! ": " ' ](}.map { |s| Regexp.escape s } * "|"
 
     attr_reader :uri, :link_text
     delegate :to, :scheme, :host, :port, :path, :query, :fragment, to: :uri
@@ -39,7 +39,7 @@ module Card::Content::Chunk
                         config[:prepend_str]
                       else
                         ""
-        end
+                      end
         content = prepend_str + content
         match = super content, prefix
         [match, prepend_str.length]
@@ -57,7 +57,7 @@ module Card::Content::Chunk
       chunk.gsub!(/(?:&nbsp;)+/, "")
 
       @trailing_punctuation =
-        if %w{ , . ) ! ? : }.member?(last_char)
+        if %w{, . ) ! ? :}.member?(last_char)
           @text.chop!
           chunk.chop!
           last_char
@@ -65,14 +65,23 @@ module Card::Content::Chunk
       chunk.sub!(/\.$/, "")
 
       @link_text = chunk
-
-      # warn "uri parse[#{match.inspect}]"
       @uri = ::URI.parse(chunk)
-      @process_chunk = "#{format.web_link(@link_text)}#{@trailing_punctuation}"
+      @process_chunk = process_uri_chunk
     rescue ::URI::Error => e
       # warn "rescue parse #{chunk_class}:
       # '#{m}' #{e.inspect} #{e.backtrace*"\n"}"
       Rails.logger.warn "rescue parse #{self.class}: #{e.inspect}"
+    end
+
+    private
+
+    def process_text
+      @link_text
+    end
+
+    def process_uri_chunk
+      link_opts = { text: process_text }
+      "#{format.web_link(@link_text, link_opts)}#{@trailing_punctuation}"
     end
   end
 
@@ -87,10 +96,10 @@ module Card::Content::Chunk
             prepend_str: PREPEND_STR,
             idx_char: "@"
     )
-    def interpret match, content
-      super
-      @text = @text.sub(/^mailto:/, "")  # this removes the prepended string from the unchanged match text
-      @process_chunk = "#{format.web_link(@link_text, text: @text)}#{@trailing_punctuation}"
+
+    # removes the prepended string from the unchanged match text
+    def process_text
+      @text = @text.sub(/^mailto:/, "")
     end
   end
 
@@ -126,11 +135,10 @@ module Card::Content::Chunk
             full_re: /^#{::URI.regexp(SCHEMES)}/,
             prepend_str: PREPEND_STR
     )
-    def interpret match, content
-      super
-      @text = @text.sub(/^http:\/\//, "")  # this removes the prepended string from the unchanged match text
-      # warn "huri t:#{@text}, #{match}, #{params.inspect}"
-      @process_chunk = "#{format.web_link(@link_text, text: @text)}#{@trailing_punctuation}"
+
+    # removes the prepended string from the unchanged match text
+    def process_text
+      @text = @text.sub(%r{^http://}, "")
     end
   end
 end

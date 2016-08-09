@@ -31,9 +31,15 @@ class Card
 
       def format_class_name format
         format = format.to_s
-        format = '' if format == 'base'
+        format = "" if format == "base"
         format = @@aliases[format] if @@aliases[format]
         "#{format.camelize}Format"
+      end
+
+      def format_sym format
+        return format if format.is_a? Symbol
+        match = format.to_s.match(/::(?<format>[^:]+)Format/)
+        match ? match[:format] : :base
       end
 
       def extract_class_vars view, opts
@@ -86,7 +92,7 @@ class Card
       unless (@card = card)
         raise Card::Error, # 'format initialized without card'
                            I18n.t(:exception_init_without_card,
-                                  scope: 'lib.card.format')
+                                  scope: "lib.card.format")
       end
 
       opts.each do |key, value|
@@ -109,7 +115,7 @@ class Card
         @context_names.reject { |n| !part_keys.include? n.key }
       when params[:slot]
         context_name_list = params[:slot][:name_context].to_s
-        context_name_list.split(',').map(&:to_name)
+        context_name_list.split(",").map(&:to_name)
       else
         []
       end
@@ -198,7 +204,7 @@ class Card
     end
 
     def process_content_object override_content=nil, opts={}
-      content = override_content || render_raw || ''
+      content = override_content || render_raw || ""
       content_object = get_content_object content, opts
       content_object.process_each_chunk do |chunk_opts|
         # Feels scary to just remove it but I can't make any sense of the

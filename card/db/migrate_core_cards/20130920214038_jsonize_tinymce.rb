@@ -5,7 +5,7 @@ class JsonizeTinymce < Card::CoreMigration
     card = Card[:tiny_mce]
     cleaned_rows = card.content.strip.split(/\s*\,\s+/).map do |row|
       key, val = row.split(/\s*\:\s*/)
-      val.gsub!(/\"\s*\+\s*\"/, '')
+      val.gsub!(/\"\s*\+\s*\"/, "")
       val.gsub! "'", '"‚'
       %("#{key}":#{val})
     end

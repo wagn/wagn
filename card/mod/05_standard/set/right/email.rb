@@ -6,7 +6,7 @@ view :raw do
   # following supports legacy behavior
   # (should be moved to User+*email+*type plus right)
   when card.left.account then card.left.account.email
-  else ''
+  else ""
   end
 end
 
@@ -14,7 +14,7 @@ view :core, :raw
 
 event :validate_email, :validate, on: :save do
   if content.present? && content !~ /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
-    errors.add :content, 'must be valid address'
+    errors.add :content, "must be valid address"
   end
 end
 
@@ -25,7 +25,7 @@ event :validate_unique_email, after: :validate_email, on: :save do
       wql[:not] = { id: id } if id
       wql_comment = "email duplicate? (#{content})"
       if Card.search(wql, wql_comment).first
-        errors.add :content, 'must be unique'
+        errors.add :content, "must be unique"
       end
     end
   end
@@ -44,8 +44,8 @@ def ok_to_read
   if own_email? || Auth.always_ok?
     true
   else
-    deny_because 'viewing email is restricted to administrators and ' \
-                 'account holders'
+    deny_because "viewing email is restricted to administrators and " \
+                 "account holders"
   end
 end
 

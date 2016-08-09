@@ -6,7 +6,7 @@ end
 
 format do
   view :closed_missing, perms: :none, closed: true do
-    ''
+    ""
   end
 
   view :unsupported_view, perms: :none, tags: :unknown_ok do |args|
@@ -14,11 +14,11 @@ format do
   end
 
   view :missing, perms: :none do
-    ''
+    ""
   end
 
   view :not_found, perms: :none, error_code: 404 do |_args|
-    error_name = card.name.present? ? card.name : 'the card requested'
+    error_name = card.name.present? ? card.name : "the card requested"
     %( Could not find #{error_name}. )
   end
 
@@ -31,7 +31,7 @@ format do
   end
 
   view :denial, perms: :none, error_code: 403 do
-    focal? ? 'Permission Denied' : ''
+    focal? ? "Permission Denied" : ""
   end
 
   view :bad_address, perms: :none, error_code: 404 do
@@ -65,24 +65,24 @@ format :html do
 
   def rendering_error exception, view
     details = Auth.always_ok? ? backtrace_link(exception) : error_cardname
-    content_tag :span, class: 'render-error alert alert-danger' do
-      ['error rendering', details, "(#{view} view)"].join "\n"
+    content_tag :span, class: "render-error alert alert-danger" do
+      ["error rendering", details, "(#{view} view)"].join "\n"
     end
   end
 
   def backtrace_link exception
     warning_options = {
       dismissible: true,
-      alert_class: 'render-error-message errors-view admin-error-message'
+      alert_class: "render-error-message errors-view admin-error-message"
     }
-    warning = alert('warning', warning_options) do
+    warning = alert("warning", warning_options) do
       %{
         <h3>Error message (visible to admin only)</h3>
         <p><strong>#{exception.message}</strong></p>
         <div>#{exception.backtrace * "<br>\n"}</div>
       }
     end
-    card_link(error_cardname, class: 'render-error-link') + warning
+    card_link(error_cardname, class: "render-error-link") + warning
   end
 
   view :unsupported_view, perms: :none, tags: :unknown_ok do |args|
@@ -101,7 +101,7 @@ format :html do
   end
 
   view :missing do |args|
-    return '' unless card.ok? :create  # should this be moved into ok_view?
+    return "" unless card.ok? :create  # should this be moved into ok_view?
 
     link_opts = {
       remote: true,
@@ -123,8 +123,8 @@ format :html do
     expanded_act = wrap(args) do
       _render_act_expanded act: card.last_action.act, current_rev_nr: 0
     end
-    wrap args.merge(slot_class: 'error-view') do # ENGLISH below
-      alert 'warning' do
+    wrap args.merge(slot_class: "error-view") do # ENGLISH below
+      alert "warning" do
         %(
           <strong>Conflict!</strong>
           <span class="new-current-revision-id">#{card.last_action_id}</span>
@@ -138,16 +138,16 @@ format :html do
 
   view :errors, perms: :none do |args|
     if card.errors.any?
-      title = 'Problems'
+      title = "Problems"
       title += " with #{card.name}" unless card.name.blank?
-      frame_opts = { panel_class: 'panel panel-warning',
-                     title: title, hide: 'menu' }
+      frame_opts = { panel_class: "panel panel-warning",
+                     title: title, hide: "menu" }
       frame args.merge(frame_opts) do
         card.errors.map do |attrib, msg|
           unless attrib == :abort
             msg = "<strong>#{attrib.to_s.upcase}:</strong> #{msg}"
           end
-          alert 'warning', dismissible: true, alert_class: 'card-error-msg' do
+          alert "warning", dismissible: true, alert_class: "card-error-msg" do
             msg
           end
         end
@@ -158,19 +158,19 @@ format :html do
   view :not_found do |args| # ug.  bad name.
     sign_in_or_up_links =
       unless Auth.signed_in?
-        signin_link = card_link :signin, text: 'Sign in'
-        signup_link = link_to 'Sign up', card_path('new/:signup')
+        signin_link = card_link :signin, text: "Sign in"
+        signup_link = link_to "Sign up", card_path("new/:signup")
         %(<div>#{signin_link} or #{signup_link} to create it.</div>)
       end
-    frame args.merge(title: 'Not Found', optional_menu: :never) do
-      card_label = card.name.present? ? "<em>#{card.name}</em>" : 'that'
+    frame args.merge(title: "Not Found", optional_menu: :never) do
+      card_label = card.name.present? ? "<em>#{card.name}</em>" : "that"
       %(<h2>Could not find #{card_label}.</h2> #{sign_in_or_up_links})
     end
   end
 
   view :denial do |args|
     task = args[:denied_task]
-    to_task = task ? "to #{task} this." : 'to do that.'
+    to_task = task ? "to #{task} this." : "to do that."
     if !focal?
       %(
         <span class="denied">
@@ -182,16 +182,16 @@ format :html do
         message =
           case
           when task != :read && Card.config.read_only
-            'We are currently in read-only mode.  Please try again later.'
+            "We are currently in read-only mode.  Please try again later."
           when Auth.signed_in?
             "You need permission #{to_task}"
           else
-            signin_link = link_to 'sign in', card_url(':signin')
+            signin_link = link_to "sign in", card_url(":signin")
             or_signup_link =
               if Card.new(type_id: Card::SignupID).ok? :create
-                'or ' + link_to('sign up', card_url('new/:signup'))
+                "or " + link_to("sign up", card_url("new/:signup"))
               end
-            Env.save_interrupted_action(request.env['REQUEST_URI'])
+            Env.save_interrupted_action(request.env["REQUEST_URI"])
             "Please #{signin_link} #{or_signup_link} #{to_task}"
           end
 

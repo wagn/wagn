@@ -3,7 +3,7 @@
 class AccountEvents < Card::CoreMigration
   def up
     aa = Card.fetch :signup, :type, :accountable, new: {}
-    aa.content = '1'
+    aa.content = "1"
     aa.save!
 
     role_right = "#{Card[:roles].name}+#{Card[:right].name}"
@@ -14,7 +14,7 @@ class AccountEvents < Card::CoreMigration
     r_options.save!
 
     r_input = Card.fetch role_right, :input, new: {}
-    r_input.content = '[[checkbox]]'
+    r_input.content = "[[checkbox]]"
     r_input.save!
   end
 end

@@ -10,7 +10,7 @@ module NavigationHelpers
     case page_name
 
     when /the home\s?page/
-      '/'
+      "/"
 
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
@@ -40,7 +40,7 @@ module NavigationHelpers
       "/new/#{Regexp.last_match(1).to_name.url_key}"
 
     when /kml source/
-      '/House+*type+by_name.kml'
+      "/House+*type+by_name.kml"
 
     when /url "(.*)"/
       Regexp.last_match(1).to_s
@@ -49,7 +49,7 @@ module NavigationHelpers
       begin
         page_name =~ /the (.*) page/
         path_components = Regexp.last_match(1).split(/\s+/)
-        send(path_components.push('path').join('_').to_sym)
+        send(path_components.push("path").join("_").to_sym)
       rescue Object => e
         raise "#{e.message} Can't find mapping from \"#{page_name}\" to a path.\n" \
               "Now, go and add a mapping in #{__FILE__}"

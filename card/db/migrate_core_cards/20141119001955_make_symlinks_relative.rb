@@ -2,8 +2,8 @@
 
 class MakeSymlinksRelative < Card::Migration
   def up
-    Card.paths['files'].each do |file_path|
-      files = Dir.glob(File.join file_path, '**', '*')
+    Card.paths["files"].each do |file_path|
+      files = Dir.glob(File.join file_path, "**", "*")
       symlinks = files.select { |f| File.symlink? f }
       symlinks.each do |symlink|
         base = File.basename(File.readlink(symlink))

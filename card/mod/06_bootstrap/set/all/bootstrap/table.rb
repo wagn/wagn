@@ -6,7 +6,7 @@ format :html do
   # value of this option if it is a string
   # @return [HTML] bootstrap table
   def table content, opts={}
-    add_class opts, 'table'
+    add_class opts, "table"
     if opts[:header]
       header = opts[:header].is_a?(Array) ? opts[:header] : content.shift
     end

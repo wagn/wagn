@@ -8,7 +8,7 @@ class Card
       extend Card::Set
 
       def ok_to_delete
-        deny_because 'not allowed to delete card a'
+        deny_because "not allowed to delete card a"
       end
     end
 
@@ -18,7 +18,7 @@ class Card
 
     module CardtypeD
       def valid?
-        errors.add :create_error, 'card d always has errors'
+        errors.add :create_error, "card d always has errors"
         errors.empty?
       end
     end
@@ -54,72 +54,72 @@ class Card
   end
 end
 
-describe Card, 'with role' do
+describe Card, "with role" do
   before do
     Card::Auth.as_bot do
-      @role = Card.search(type: 'Role')[0]
+      @role = Card.search(type: "Role")[0]
     end
   end
 
-  it 'should have a role type' do
+  it "should have a role type" do
     expect(@role.type_id).to eq(Card::RoleID)
   end
 end
 
-describe Card, 'with account' do
+describe Card, "with account" do
   before do
     Card::Auth.as_bot do
-      @joe = change_card_to_type('Joe User', :basic)
+      @joe = change_card_to_type("Joe User", :basic)
     end
   end
 
-  it 'should not have errors' do
+  it "should not have errors" do
     expect(@joe.errors.empty?).to eq(true)
   end
 
-  it 'should allow type changes' do
+  it "should allow type changes" do
     expect(@joe.type_code).to eq(:basic)
   end
 end
 
-describe Card, 'type transition approve create' do
-  it 'should have cardtype b create role r1' do
-    expect((c = Card.fetch('Cardtype B+*type+*create')).content).to eq('[[r1]]')
+describe Card, "type transition approve create" do
+  it "should have cardtype b create role r1" do
+    expect((c = Card.fetch("Cardtype B+*type+*create")).content).to eq("[[r1]]")
     expect(c.type_code).to eq(:pointer)
   end
 
-  it 'should have errors' do
-    c = change_card_to_type 'basicname', 'cardtype_b'
+  it "should have errors" do
+    c = change_card_to_type "basicname", "cardtype_b"
     expect(c.errors[:permission_denied]).not_to be_empty
   end
 
-  it 'should be the original type' do
-    -> { change_card_to_type 'basicname', 'cardtype_b' }
-    expect(Card['basicname'].type_code).to eq(:basic)
+  it "should be the original type" do
+    -> { change_card_to_type "basicname", "cardtype_b" }
+    expect(Card["basicname"].type_code).to eq(:basic)
   end
 end
 
-describe Card, 'type transition delete callback' do
+describe Card, "type transition delete callback" do
   before do
-    @c = change_card_to_type('type-e-card', :basic)
+    @c = change_card_to_type("type-e-card", :basic)
   end
 
-  it 'should change type of the card' do
-    expect(Card['type-e-card'].type_code).to eq(:basic)
+  it "should change type of the card" do
+    expect(Card["type-e-card"].type_code).to eq(:basic)
   end
 end
 
-describe Card, 'type transition create callback' do
+describe Card, "type transition create callback" do
   before do
     Card::Auth.as_bot do
-      Card.create name: 'Basic+*type+*delete', type: 'Pointer',
-                  content: '[[Anyone Signed in]]'
+      Card.create name: "Basic+*type+*delete", type: "Pointer",
+                  content: "[[Anyone Signed in]]"
     end
-    @c = change_card_to_type('basicname', :cardtype_f)
+    @c = change_card_to_type("basicname", :cardtype_f)
   end
 
-  it 'should change type of card' do
-    expect(Card['basicname'].type_code).to eq(:cardtype_f)
+  it "should change type of card" do
+    expect(Card["basicname"].type_code).to eq(:cardtype_f)
   end
 end
 

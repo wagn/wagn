@@ -13,7 +13,7 @@ class Card
 
       def parse_value rawvalue
         case rawvalue
-        when String, Integer then ['=', rawvalue]
+        when String, Integer then ["=", rawvalue]
         when Array           then [rawvalue[0], rawvalue[1..-1]]
         else raise("Invalid Condition Clause #{rawvalue}.inspect}")
         end
@@ -30,7 +30,7 @@ class Card
       def sqlize v
         case v
         when Query then  v.to_sql
-        when Array then  '(' + v.flatten.map { |x| sqlize(x) }.join(',') + ')'
+        when Array then  "(" + v.flatten.map { |x| sqlize(x) }.join(",") + ")"
         else quote(v.to_s)
         end
       end
@@ -41,16 +41,16 @@ class Card
         table = @query.table_alias
 
         field, v = case field.to_s
-                   when 'name'
+                   when "name"
                      ["#{table}.key", [v].flatten.map(&:to_name).map(&:key)]
-                   when 'content'
+                   when "content"
                      ["#{table}.db_content", v]
                    else
                      ["#{table}.#{safe_sql field}", v]
           end
 
-        v = v[0] if Array === v && v.length == 1 && op != 'in'
-        if op == '~'
+        v = v[0] if Array === v && v.length == 1 && op != "in"
+        if op == "~"
           cxn, v = match_prep(v)
           %(#{field} #{cxn.match(sqlize(v))})
         else

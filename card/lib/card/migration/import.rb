@@ -1,4 +1,4 @@
-require 'import_data'
+require "import_data"
 
 class Card
   class Migration
@@ -14,14 +14,14 @@ class Card
     # To update other attributes change them in the yml file and either remove
     # the 'merged' value or touch the corresponding content file
     class Import
-      OUTPUT_FILE = Card::Migration.data_path 'unmerged'
+      OUTPUT_FILE = Card::Migration.data_path "unmerged"
       class << self
         # Merge the import data into the cards table
         # If 'all' is true all import data is merged.
         # Otherwise only the data that was changed or added since the last merge
         def merge all=false
           merge_data = all ? ImportData.all_cards : ImportData.changed_cards
-          puts('nothing to merge') && return if merge_data.empty?
+          puts("nothing to merge") && return if merge_data.empty?
 
           Card::Mailer.perform_deliveries = false
           Card::Auth.as_bot do
@@ -72,9 +72,9 @@ class Card
         def fetch_card_data name, url, opts
           view, result_key =
             if opts[:items_only]
-              ['export_items', nil]
+              ["export_items", nil]
             elsif opts[:deep]
-              ['export', nil]
+              ["export", nil]
             else
               [nil, :card]
             end

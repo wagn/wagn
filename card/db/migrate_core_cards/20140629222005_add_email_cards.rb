@@ -3,7 +3,7 @@
 class AddEmailCards < Card::CoreMigration
   def up
     # change notification rules
-    %w( create update delete ).each do |action|
+    %w(create update delete).each do |action|
       Card.create! name: "*on #{action}", type_code: :setting, codename: "on_#{action}"
       Card.create! name: "*on #{action}+*right+*help", content: "Configures email to be sent when card is #{action}d."
       Card.create! name: "*on #{action}+*right+*default", type_code: :pointer
@@ -27,8 +27,8 @@ class AddEmailCards < Card::CoreMigration
     end
 
     # create new cardtype for email templates
-    Card.create! name: 'Email template', codename: :email_template, type_id: Card::CardtypeID
-    Card.create! name: 'Email template+*type+*structure', content: %(
+    Card.create! name: "Email template", codename: :email_template, type_id: Card::CardtypeID
+    Card.create! name: "Email template+*type+*structure", content: %(
 {{+#{Card[:from].name} | labeled | link}}
 {{+#{Card[:to].name} | labeled | link}}
 {{+#{Card[:cc].name} | labeled | link}}
@@ -39,19 +39,19 @@ class AddEmailCards < Card::CoreMigration
 {{+*attach | titled}}
 )
 
-    c = Card.fetch '*message', new: {}
-    c.name     = '*html message'
-    c.codename = 'html_message'
+    c = Card.fetch "*message", new: {}
+    c.name     = "*html message"
+    c.codename = "html_message"
     c.save!
 
-    Card.create! name: '*text message', codename: 'text_message'
-    Card.create! name: '*text message+*right+*default', type_code: :plain_text
+    Card.create! name: "*text message", codename: "text_message"
+    Card.create! name: "*text message+*right+*default", type_code: :plain_text
 
     Card::Cache.reset_all
 
     # create system email cards
-    dir = File.join data_path, 'mailer'
-    json = File.read(File.join(dir, 'mail_config.json'))
+    dir = File.join data_path, "mailer"
+    json = File.read(File.join(dir, "mail_config.json"))
     data = JSON.parse(json)
     data.each do |mail|
       mail = mail.symbolize_keys!
@@ -63,8 +63,8 @@ class AddEmailCards < Card::CoreMigration
 
     # move old hard-coded signup alert email handling to new card-based on_create handling
     Card.create!(
-      name: ([:signup, :type, :on_create].map { |code| Card[code].name } * '+'),
-      type_id: Card::PointerID, content: '[[signup alert email]]'
+      name: ([:signup, :type, :on_create].map { |code| Card[code].name } * "+"),
+      type_id: Card::PointerID, content: "[[signup alert email]]"
     )
     if request_card = Card[:request]
       [:to, :from].each do |field|
@@ -78,15 +78,15 @@ class AddEmailCards < Card::CoreMigration
 
     # update *from settings
 
-    signup_alert_from = Card['signup alert email'].fetch(trait: :from, new: {})
+    signup_alert_from = Card["signup alert email"].fetch(trait: :from, new: {})
     if signup_alert_from.content.blank?
-      signup_alert_from.content = '_user'
+      signup_alert_from.content = "_user"
       signup_alert_from.save!
     end
 
     wagn_bot = Card[:wagn_bot].account.email.present? ? Card[:wagn_bot].name : nil
-    token_emails_from = Card.global_setting('*invite+*from') || wagn_bot || '_user'
-    ['verification email', 'password reset email'].each do |token_email_template_name|
+    token_emails_from = Card.global_setting("*invite+*from") || wagn_bot || "_user"
+    ["verification email", "password reset email"].each do |token_email_template_name|
       Card.create! name: "#{token_email_template_name}+#{Card[:from].name}", content: token_emails_from
     end
 
@@ -97,15 +97,15 @@ class AddEmailCards < Card::CoreMigration
 
     # migrate old flexmail cards
 
-    if email_config_card = Card['email_config']
+    if email_config_card = Card["email_config"]
       Card.search(
         left: { type_id: Card::SetID },
-        right: 'email_config',
-        referred_to_by: { right: { codename: 'send' } }
+        right: "email_config",
+        referred_to_by: { right: { codename: "send" } }
       ).each do |card|
         set_name = card.cardname.left
         card.name = "#{set_name.tr('*', '').tr('+', '_')}_email_template"
-        card.type = 'Email Template'
+        card.type = "Email Template"
         card.save!
         Card.create! name: "#{set_name}+*on create", content: card.name
       end
@@ -114,7 +114,7 @@ class AddEmailCards < Card::CoreMigration
     end
 
     # the new following rule
-    Card.create! name: '*following', type_code: :pointer, codename: 'following'
+    Card.create! name: "*following", type_code: :pointer, codename: "following"
 
     send = Card[:send]
     return unless send

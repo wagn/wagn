@@ -57,9 +57,9 @@ class Card
         opts[:exclude] = /^</
       when :text
         opts[:reject] =  /^</
-        opts[:postprocess] = proc { |word| word.gsub("\n", '<br>') }
+        opts[:postprocess] = proc { |word| word.gsub("\n", "<br>") }
       when :pointer
-        opts[:preprocess] = proc { |word| word.gsub('[[', '').gsub(']]', '') }
+        opts[:preprocess] = proc { |word| word.gsub("[[", "").gsub("]]", "") }
       else # :raw
         opts[:preprocess] = proc { |word| CGI.escapeHTML(word) }
       end

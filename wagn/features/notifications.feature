@@ -1,4 +1,4 @@
-@delayed-jobs
+@javascript @delayed-jobs
 Feature: Notifications
   In order for Wagn to be a more effective communication platform
   Users should be able to track changes to Wagn cards from their email

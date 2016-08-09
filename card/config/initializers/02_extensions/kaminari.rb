@@ -6,7 +6,7 @@ module Extensions
           p = params_for(page)
           p.delete :controller
           p.delete :action
-          card = Card[p.delete('id')]
+          card = Card[p.delete("id")]
           card.format.path p
         end
 

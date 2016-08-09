@@ -147,7 +147,7 @@ class Card
     def need_act
       act_director = main_director
       unless act_director
-        raise Card::Error, 'act requested without a main stage director'
+        raise Card::Error, "act requested without a main stage director"
       end
       act_director.act ||= Card::Act.create(ip_address: Env.ip)
       @card.current_act = @act = act_director.act
@@ -243,7 +243,7 @@ class Card
     # :finalize stages
     def store &save_block
       if main? && !block_given?
-        raise Card::Error, 'need block to store main card'
+        raise Card::Error, "need block to store main card"
       end
       # the block is the ActiveRecord block from the around save callback that
       # saves the card

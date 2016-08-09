@@ -1,3 +1,5 @@
+include_set Abstract::AceEditor
+
 def clean_html?
   false
 end
@@ -8,7 +10,7 @@ end
 
 format do
   view :closed_content do |_args|
-    ''
+    ""
   end
 
   def chunk_list
@@ -16,8 +18,4 @@ format do
   end
 end
 
-format :html do
-  view :editor do |_args|
-    text_area :content, rows: 5, class: 'card-content ace-editor-textarea', 'data-card-type-code' => card.type_code
-  end
-end
+

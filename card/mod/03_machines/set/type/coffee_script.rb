@@ -1,12 +1,14 @@
 # -*- encoding : utf-8 -*-
-require 'coffee-script'
-require 'uglifier'
+require "coffee-script"
+require "uglifier"
 
-require_dependency 'card/machine'
-require_dependency 'card/machine_input'
+require_dependency "card/machine"
+require_dependency "card/machine_input"
 
 include Machine
 include MachineInput
+
+include_set Abstract::AceEditor
 
 def compile_coffee script
   ::CoffeeScript.compile script
@@ -18,7 +20,7 @@ machine_input do
   Uglifier.compile(compile_coffee format(:js)._render_raw)
 end
 
-store_machine_output filetype: 'js'
+store_machine_output filetype: "js"
 
 def clean_html?
   false
@@ -31,7 +33,9 @@ format do
 end
 
 format :html do
-  view :editor, mod: Html::HtmlFormat
+  def default_editor_args args
+    args[:ace_mode] ||= "coffee"
+  end
 
   view :content_changes do |args|
     %(

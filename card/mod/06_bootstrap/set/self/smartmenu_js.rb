@@ -1,5 +1,5 @@
 include_set Abstract::CodeFile
 
 def source_files
-  'startmenu.js'
+  "startmenu.js"
 end

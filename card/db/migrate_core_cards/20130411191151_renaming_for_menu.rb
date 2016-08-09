@@ -3,15 +3,15 @@
 class RenamingForMenu < Card::CoreMigration
   def up
     renames = {
-      '*content'    => '*structure',
-      '*edit help'  => '*help',
-      '*links'      => '*links to',
-      '*inclusions' => '*includes',
-      '*linkers'    => '*linked to by',
-      '*includers'  => '*included by',
-      '*plus cards' => '*children',
-      '*plus parts' => '*mates',
-      '*editing'    => '*edited'
+      "*content"    => "*structure",
+      "*edit help"  => "*help",
+      "*links"      => "*links to",
+      "*inclusions" => "*includes",
+      "*linkers"    => "*linked to by",
+      "*includers"  => "*included by",
+      "*plus cards" => "*children",
+      "*plus parts" => "*mates",
+      "*editing"    => "*edited"
     }
     renames.each do |oldname, newname|
       puts "updating: #{oldname}"
@@ -39,7 +39,7 @@ class RenamingForMenu < Card::CoreMigration
       edited
     )
     codenames.each do |codename|
-      name = codename =~ /^by|disc/ ? codename : '*' + codename
+      name = codename =~ /^by|disc/ ? codename : "*" + codename
       c = Card[name]
       c.codename = codename
       c.save!

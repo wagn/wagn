@@ -11,7 +11,7 @@ class Card
       case success_params
       when Hash
         apply(success_params)
-      when nil then  self.name = '_self'
+      when nil then  self.name = "_self"
       else;  self.target = success_params
       end
     end
@@ -60,8 +60,8 @@ class Card
 
     def process_target value
       case value
-      when ''                     then ''
-      when '*previous', :previous then :previous
+      when ""                     then ""
+      when "*previous", :previous then :previous
       when /^(http|\/)/           then value
       when /^TEXT:\s*(.+)/        then  Regexp.last_match(1)
       when /^REDIRECT:\s*(.+)/

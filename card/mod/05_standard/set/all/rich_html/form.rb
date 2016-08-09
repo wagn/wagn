@@ -1,3 +1,5 @@
+include_set Abstract::ProsemirrorEditor
+
 format :html do
   def edit_slot args={}
     # note: @mode should already be :edit here...
@@ -25,7 +27,7 @@ format :html do
     if [args[:optional_type_formgroup], args[:optional_name_formgroup]]
        .member? :show
       # display content field in formgroup for consistency with other fields
-      formgroup '', field, editor: :content
+      formgroup "", field, editor: :content
     else
       editor_wrap(:content) { field }
     end
@@ -51,7 +53,7 @@ format :html do
   end
 
   def subcard_input_names
-    return '' if !form_root_format || form_root_format == self
+    return "" if !form_root_format || form_root_format == self
     "#{@parent.subcard_input_names}[subcards][#{card.contextual_name}]"
   end
 
@@ -85,11 +87,11 @@ format :html do
     url, action = url_from_action(action)
 
     klasses = Array.wrap(html[:class])
-    klasses << 'card-form slotter'
-    klasses << 'autosave' if action == :update
-    html[:class] = klasses.join ' '
+    klasses << "card-form slotter"
+    klasses << "autosave" if action == :update
+    html[:class] = klasses.join " "
 
-    html[:recaptcha] ||= 'on' if card.recaptcha_on?
+    html[:recaptcha] ||= "on" if card.recaptcha_on?
     html.delete :recaptcha if html[:recaptcha] == :off
 
     { url: url, remote: true, html: html }
@@ -109,7 +111,7 @@ format :html do
   end
 
   def editor_wrap type=nil
-    html_class = 'editor'
+    html_class = "editor"
     html_class << " #{type}-editor" if type
     content_tag(:div, class: html_class) { yield.html_safe }
   end
@@ -127,7 +129,7 @@ format :html do
   end
 
   def formgroup_div_args html_class
-    div_args = { class: ['form-group', html_class].compact.join(' ') }
+    div_args = { class: ["form-group", html_class].compact.join(" ") }
     div_args[:card_id] = card.id if card.real?
     div_args[:card_name] = h card.name if card.name.present?
     div_args
@@ -135,14 +137,14 @@ format :html do
 
   def formgroup_help_text text=nil
     case text
-    when String then _render_help help_class: 'help-block', help_text: text
-    when true   then _render_help help_class: 'help-block'
+    when String then _render_help help_class: "help-block", help_text: text
+    when true   then _render_help help_class: "help-block"
     end
   end
 
   def hidden_tags hash, base=nil
     # convert hash into a collection of hidden tags
-    result = ''
+    result = ""
     hash ||= {}
     hash.each do |key, val|
       result +=
@@ -159,18 +161,18 @@ format :html do
   # FIELDSET VIEWS
 
   view :name_formgroup do |args|
-    formgroup 'name', raw(name_field(form)),
-              editor: 'name', help: args[:help]
+    formgroup "name", raw(name_field(form)),
+              editor: "name", help: args[:help]
   end
 
   view :type_formgroup do |args|
     field = if args[:variety] == :edit # FIXME: dislike this api -ef
-              type_field class: 'type-field edit-type-field'
+              type_field class: "type-field edit-type-field"
             else
-              type_field class: 'type-field live-type-field',
-                         href: path(view: :new), 'data-remote' => true
+              type_field class: "type-field live-type-field",
+                         href: path(view: :new), "data-remote" => true
             end
-    formgroup 'type', field, editor: 'type', class: 'type-formgroup'
+    formgroup "type", field, editor: "type", class: "type-formgroup"
   end
 
   view :button_formgroup do |args|
@@ -190,7 +192,7 @@ format :html do
     text_field(:name, {
       # needed because otherwise gets wrong value if there are updates
       value: card.name,
-      autocomplete: 'off'
+      autocomplete: "off"
     }.merge(options))
   end
 
@@ -208,7 +210,7 @@ format :html do
 
     options = options_from_collection_for_select typelist, :to_s, :to_s,
                                                  current_type
-    template.select_tag 'card[type]', options, args
+    template.select_tag "card[type]", options, args
   end
 
   def content_field form, options={}
@@ -217,7 +219,7 @@ format :html do
     card.last_action_id_before_edit = card.last_action_id
     revision_tracking =
       if card && !card.new_card? && !options[:skip_rev_id]
-        hidden_field :last_action_id_before_edit, class: 'current_revision_id'
+        hidden_field :last_action_id_before_edit, class: "current_revision_id"
         # hidden_field_tag 'card[last_action_id_before_edit]',
         # card.last_action_id, class: 'current_revision_id'
       end
@@ -229,16 +231,11 @@ format :html do
 
   # FIELD VIEWS
 
-  view :editor do |_args|
-    text_area :content, rows: 3, class: 'tinymce-textarea card-content',
-                        id: unique_id
-  end
-
   view :edit_in_form, perms: :update, tags: :unknown_ok do |args|
     eform = form_for_multi
     content = content_field eform, args.merge(nested: true)
     content += raw("\n #{eform.hidden_field :type_id}") if card.new_card?
-    opts = { editor: 'content', help: true, class: 'card-editor' }
+    opts = { editor: "content", help: true, class: "card-editor" }
     if card.cardname.junction?
       opts[:class] += " RIGHT-#{card.cardname.tag_name.safe_key}"
     end
@@ -261,7 +258,7 @@ format :html do
     end
   end
 
-  def check_box method, options={}, checked_value='1', unchecked_value='0'
+  def check_box method, options={}, checked_value="1", unchecked_value="0"
     form.check_box method, options, checked_value, unchecked_value
   end
 
@@ -271,24 +268,24 @@ format :html do
 
   def submit_button args={}
     args.reverse_merge!(
-      situation: 'primary',
+      situation: "primary",
       data: {}
     )
-    text = args.delete(:text) || 'Submit'
-    args[:data][:disable_with] ||= args.delete(:disable_with) || 'Submitting'
+    text = args.delete(:text) || "Submit"
+    args[:data][:disable_with] ||= args.delete(:disable_with) || "Submitting"
     button_tag text, args
   end
 
   # redirect to *previous if no :href is given
   def cancel_button args={}
-    args.reverse_merge! type: 'button'
+    args.reverse_merge! type: "button"
     if args[:href]
-      add_class args, 'slotter'
+      add_class args, "slotter"
     else
-      add_class args, 'redirecter'
-      args[:href] = Card.path_setting('/*previous')
+      add_class args, "redirecter"
+      args[:href] = Card.path_setting("/*previous")
     end
-    text = args.delete(:text) || 'Cancel'
+    text = args.delete(:text) || "Cancel"
     button_tag text, args
   end
 end

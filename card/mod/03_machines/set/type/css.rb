@@ -1,9 +1,10 @@
 # -*- encoding : utf-8 -*-
-require 'sass'
+require "sass"
 include Machine
 include MachineInput
+include_set Abstract::AceEditor
 
-store_machine_output filetype: 'css'
+store_machine_output filetype: "css"
 
 machine_input do
   compress_css format(format: :css)._render_core
@@ -35,6 +36,10 @@ format do
 end
 
 format :html do
+  def default_editor_args args
+    args[:ace_mode] = "css"
+  end
+
   def get_nest_defaults _nested_card
     { view: :closed }
   end

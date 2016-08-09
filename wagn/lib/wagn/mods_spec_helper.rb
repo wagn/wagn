@@ -1,30 +1,30 @@
 # -*- encoding : utf-8 -*-
 # require 'codeclimate-test-reporter'
 # CodeClimate::TestReporter.start
-require 'spork'
+require "spork"
 
-ENV['RAILS_ENV'] = 'test'
+ENV["RAILS_ENV"] = "test"
 
 Spork.prefork do
-  if ENV['RAILS_ROOT']
-    require File.join(ENV['RAILS_ROOT'], '/config/environment')
+  if ENV["RAILS_ROOT"]
+    require File.join(ENV["RAILS_ROOT"], "/config/environment")
   else
-    require File.expand_path('../../config/environment', __FILE__)
+    require File.expand_path("../../config/environment", __FILE__)
   end
-  require File.join Cardio.gem_root, 'lib', 'card', 'simplecov_helper.rb'
+  require File.join Cardio.gem_root, "lib", "card", "simplecov_helper.rb"
 
   if defined?(Bundler)
     Bundler.require(:test)   # if simplecov is activated in the Gemfile, it has to be required here
   end
 
-  require 'rspec/rails'
+  require "rspec/rails"
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
   #  Dir[ File.join(Wagn.gem_root, "spec/support/**/*.rb") ].each { |f| require f }
 
   #  FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
-  JOE_USER_ID = Card['joe_user'].id
+  JOE_USER_ID = Card["joe_user"].id
 
   RSpec.configure do |config|
     config.include RSpec::Rails::Matchers::RoutingMatchers,        file_path: /\bspec\/controllers\//
@@ -60,6 +60,6 @@ Spork.each_run do
   # This code will be run each time you run your specs.
 end
 
-require File.join Cardio.gem_root, 'lib', 'card', 'spec_helper.rb'
+require File.join Cardio.gem_root, "lib", "card", "spec_helper.rb"
 
 RSpec::Core::ExampleGroup.send :include, Card::SpecHelper

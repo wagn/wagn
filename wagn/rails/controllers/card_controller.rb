@@ -1,9 +1,9 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency 'card'
+require_dependency "card"
 
-require_dependency 'wagn/exceptions'
-require_dependency 'card/mailer'  # otherwise Net::SMTPError rescues can cause
+require_dependency "wagn/exceptions"
+require_dependency "card/mailer"  # otherwise Net::SMTPError rescues can cause
 # problems when error raised comes before Card::Mailer is mentioned
 
 class CardController < ActionController::Base
@@ -34,10 +34,10 @@ class CardController < ActionController::Base
 
   # DEPRECATED
   def asset
-    Rails.logger.info 'Routing assets through Card. Recommend symlink from ' \
+    Rails.logger.info "Routing assets through Card. Recommend symlink from " \
                       'Deck to Card gem using "rake wagn:update_assets_symlink"'
-    asset_path = Decko::Engine.paths['gem-assets'].existent.first
-    filename   = [params[:filename], params[:format]].join('.')
+    asset_path = Decko::Engine.paths["gem-assets"].existent.first
+    filename   = [params[:filename], params[:format]].join(".")
     send_asset asset_path, filename, x_sendfile: true
   end
 
@@ -64,7 +64,7 @@ class CardController < ActionController::Base
   def authenticate
     if params[:token]
       ok = Card::Auth.set_current_from_token params[:token], params[:current]
-      raise Card::Oops, 'token authentication failed' unless ok
+      raise Card::Oops, "token authentication failed" unless ok
       # arguably should be PermissionDenied; that requires a card object,
       # and that's not loaded yet.
     else
@@ -75,7 +75,7 @@ class CardController < ActionController::Base
   def load_id
     params[:id] =
       case params[:id]
-      when '*previous' then return card_redirect(Card::Env.previous_location)
+      when "*previous" then return card_redirect(Card::Env.previous_location)
       when nil         then determine_id
       else                  validate_id_encoding params[:id]
       end
@@ -86,7 +86,7 @@ class CardController < ActionController::Base
     raise Card::NotFound unless @card
 
     @card.select_action_by_params params #
-    Card::Env[:main_name] = params[:main] || (card && card.name) || ''
+    Card::Env[:main_name] = params[:main] || (card && card.name) || ""
 
     card.errors.any? ? render_errors : true
   end
@@ -99,7 +99,7 @@ class CardController < ActionController::Base
 
   def new_or_fetch_card
     opts = card_opts
-    if params[:action] == 'create'
+    if params[:action] == "create"
       # FIXME: we currently need a "new" card to catch duplicates
       # (otherwise save will just act like a normal update)
       # We may need a "#create" instance method to handle this checking?
@@ -115,7 +115,7 @@ class CardController < ActionController::Base
     # clone so that original params remain unaltered.  need deeper clone?
     opts[:type] ||= params[:type] if params[:type]
     # for /new/:type shortcut.  we should fix and deprecate this.
-    opts[:name] ||= params[:id].to_s.tr('_', ' ')
+    opts[:name] ||= params[:id].to_s.tr("_", " ")
     # move handling to Card::Name?
     opts
   end
@@ -127,9 +127,9 @@ class CardController < ActionController::Base
     when params[:card] && params[:card][:name]
       params[:card][:name]
     when Card::Format.tagged(params[:view], :unknown_ok)
-      ''
+      ""
     else
-      Card.global_setting(:home) || 'Home'
+      Card.global_setting(:home) || "Home"
     end
   end
 
@@ -139,17 +139,17 @@ class CardController < ActionController::Base
 
   def prepare_setup_card!
     params[:card] = { type_id: Card.default_accounted_type_id }
-    params[:view] = 'setup'
-    ''
+    params[:view] = "setup"
+    ""
   end
 
   def validate_id_encoding id
     # we should find the place where we produce these bad urls
-    id.valid_encoding? ? id : id.force_encoding('ISO-8859-1').encode('UTF-8')
+    id.valid_encoding? ? id : id.force_encoding("ISO-8859-1").encode("UTF-8")
   end
 
   def send_asset path, filename, options={}
-    if filename.include? '../'
+    if filename.include? "../"
       # for security, block relative paths
       raise Wagn::BadAddress
     else
@@ -217,7 +217,7 @@ class CardController < ActionController::Base
       card_redirect result
     else
       args = { text: result, status: status }
-      args[:content_type] = 'text/text' if format == :file
+      args[:content_type] = "text/text" if format == :file
       render args
     end
   end

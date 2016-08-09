@@ -34,15 +34,15 @@ format do
     new_class =
       case href
       when /^https?\:/
-        opts[:target] = '_blank'
-        'external-link'
+        opts[:target] = "_blank"
+        "external-link"
       when /^mailto\:/
-        'email-link'
+        "email-link"
       when /^([a-zA-Z][\-+\.a-zA-Z\d]*):/
-        Regexp.last_match(1) + '-link'
+        Regexp.last_match(1) + "-link"
       when /^\//
         href = internal_url href[1..-1]
-        'internal-link'
+        "internal-link"
       else
         return card_link href, opts
       end
@@ -64,7 +64,7 @@ format do
     path_opts[:name] = name
     path_opts[:known] =
       opts[:known].nil? ? Card.known?(name) : opts.delete(:known)
-    add_class opts, (path_opts[:known] ? 'known-card' : 'wanted-card')
+    add_class opts, (path_opts[:known] ? "known-card" : "wanted-card")
     link_to text, path_opts, opts
   end
 
@@ -74,7 +74,7 @@ format do
     path_opts = opts.delete(:path_opts) || {}
     path_opts[:view] = view unless view == :home
     opts[:remote] = true
-    opts[:rel] = 'nofollow'
+    opts[:rel] = "nofollow"
 
     link_to text, path_opts, opts
   end
@@ -99,7 +99,7 @@ format do
       base = "new/#{opts.delete(:type)}"
     else
       name = opts.delete(:name) || card.name
-      base = opts[:action] ? "card/#{opts.delete :action}/" : ''
+      base = opts[:action] ? "card/#{opts.delete :action}/" : ""
 
       opts[:no_id] = true if [:new, :create].member? opts[:action]
       # generalize. dislike hardcoding views/actions here
@@ -112,7 +112,7 @@ format do
       process_path_card_opts opts, name, linkname
     end
 
-    query = opts.empty? ? '' : "?#{opts.to_param}"
+    query = opts.empty? ? "" : "?#{opts.to_param}"
     internal_url(base + query)
   end
 

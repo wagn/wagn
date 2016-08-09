@@ -5,19 +5,19 @@ format :html do
   end
 
   def bootstrapify_button options
-    situation = options.delete(:situation) || 'default'
-    options[:class] = [options[:class], 'btn', "btn-#{situation}"].compact * ' '
+    situation = options.delete(:situation) || "default"
+    options[:class] = [options[:class], "btn", "btn-#{situation}"].compact * " "
   end
 
   def type_field args={}
-    args[:class] ||= ''
-    args[:class] += ' form-control'
+    args[:class] ||= ""
+    args[:class] += " form-control"
     super(args)
   end
 
   def bootstrap_options options
-    options[:class] ||= ''
-    options[:class] += ' form-control'
+    options[:class] ||= ""
+    options[:class] += " form-control"
     options
   end
 

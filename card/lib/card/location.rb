@@ -8,9 +8,9 @@ class Card
     # TESTME
     def page_path title, opts={}
       Rails.logger.warn "Pass only Card::Name to page_path #{title.class}, #{title}" unless Card::Name === title
-      format = opts[:format] ? ".#{opts.delete(:format)}" : ''
-      action = opts[:action] ? "#{opts.delete(:action)}/" : ''
-      query  = opts.present? ? "?#{opts.to_param}" : ''
+      format = opts[:format] ? ".#{opts.delete(:format)}" : ""
+      action = opts[:action] ? "#{opts.delete(:action)}/" : ""
+      query  = opts.present? ? "?#{opts.to_param}" : ""
       card_path "#{action}#{title.to_name.url_key}#{format}#{query}"
     end
 

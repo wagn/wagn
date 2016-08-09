@@ -11,7 +11,7 @@ end
 
 def card_table_ready?
   # FIXME: this test should be more generally usable
-  ActiveRecord::Base.connection.table_exists?('cards') &&
+  ActiveRecord::Base.connection.table_exists?("cards") &&
     Card.ancestors.include?(ActiveRecord::Base)
 end
 

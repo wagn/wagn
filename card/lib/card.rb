@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-require 'carrierwave'
+require "carrierwave"
 
 Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
 
@@ -18,22 +18,22 @@ class Card < ActiveRecord::Base
     attr_accessor(*args)
   end
 
-  require_dependency 'card/active_record_ext'
-  require_dependency 'card/codename'
-  require_dependency 'card/query'
-  require_dependency 'card/format'
-  require_dependency 'card/exceptions'
-  require_dependency 'card/auth'
-  require_dependency 'card/loader'
-  require_dependency 'card/content'
-  require_dependency 'card/action'
-  require_dependency 'card/act'
-  require_dependency 'card/change'
-  require_dependency 'card/reference'
-  require_dependency 'card/subcards'
-  require_dependency 'card/view_cache'
-  require_dependency 'card/stage_director'
-  require_dependency 'card/director_register'
+  require_dependency "card/active_record_ext"
+  require_dependency "card/codename"
+  require_dependency "card/query"
+  require_dependency "card/format"
+  require_dependency "card/exceptions"
+  require_dependency "card/auth"
+  require_dependency "card/loader"
+  require_dependency "card/content"
+  require_dependency "card/action"
+  require_dependency "card/act"
+  require_dependency "card/change"
+  require_dependency "card/reference"
+  require_dependency "card/subcards"
+  require_dependency "card/view_cache"
+  require_dependency "card/stage_director"
+  require_dependency "card/director_register"
 
   has_many :references_in,  class_name: :Reference, foreign_key: :referee_id
   has_many :references_out, class_name: :Reference, foreign_key: :referer_id

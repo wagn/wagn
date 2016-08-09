@@ -76,7 +76,7 @@ end
 
 def profile_memory &block
   before = get_current_memory_usage
-  file, line, = caller[0].split(':')
+  file, line, = caller[0].split(":")
   if block_given?
     instance_eval(&block)
     (get_current_memory_usage - before) / 1024

@@ -22,33 +22,33 @@ class Card
       def editor_of val
         act_join = Join.new(
           from: self,
-          to: ['card_acts', "a#{table_id true}", 'actor_id']
+          to: ["card_acts", "a#{table_id true}", "actor_id"]
         )
         joins << act_join
         action_join = Join.new(
           from: act_join,
-          to: ['card_actions', "an#{table_id true}", 'card_act_id'],
+          to: ["card_actions", "an#{table_id true}", "card_act_id"],
           superjoin: act_join
         )
-        join_cards val, from: action_join, from_field: 'card_id'
+        join_cards val, from: action_join, from_field: "card_id"
       end
 
       def edited_by val
         action_join = Join.new(
           from: self,
-          to: ['card_actions', "an#{table_id true}", 'card_id']
+          to: ["card_actions", "an#{table_id true}", "card_id"]
         )
         joins << action_join
         act_join = Join.new(
           from: action_join,
-          from_field: 'card_act_id',
-          to: ['card_acts', "a#{table_id true}"]
+          from_field: "card_act_id",
+          to: ["card_acts", "a#{table_id true}"]
         )
-        join_cards val, from: act_join, from_field: 'actor_id'
+        join_cards val, from: act_join, from_field: "actor_id"
       end
 
       def last_editor_of val
-        join_cards val, to_field: 'updater_id'
+        join_cards val, to_field: "updater_id"
       end
 
       def last_edited_by val
@@ -56,7 +56,7 @@ class Card
       end
 
       def creator_of val
-        join_cards val, to_field: 'creator_id'
+        join_cards val, to_field: "creator_id"
       end
 
       def created_by val

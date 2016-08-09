@@ -13,16 +13,16 @@ def method_missing m, *args, &block
   end
 end
 
-shared_examples_for 'machine' do |filetype|
-  context 'machine is run' do
+shared_examples_for "machine" do |filetype|
+  context "machine is run" do
     before do
       machine.update_machine_output
     end
 
-    it 'has +machine_input card' do
+    it "has +machine_input card" do
       expect(machine.machine_input_card.real?).to be_truthy
     end
-    it 'has +machine_output card' do
+    it "has +machine_output card" do
       expect(machine.machine_output_card.real?).to be_truthy
     end
     it "generates #{filetype} file" do
@@ -31,13 +31,13 @@ shared_examples_for 'machine' do |filetype|
   end
 end
 
-shared_examples_for 'content machine' do |filetype|
-  it_should_behave_like 'machine', that_produces(filetype) do
+shared_examples_for "content machine" do |filetype|
+  it_should_behave_like "machine", that_produces(filetype) do
     let(:machine) { machine_card }
   end
 
-  context '+machine_input card' do
-    it 'points to self' do
+  context "+machine_input card" do
+    it "points to self" do
       Card::Auth.as_bot do
         machine_card.update_input_card
       end
@@ -45,8 +45,8 @@ shared_examples_for 'content machine' do |filetype|
     end
   end
 
-  context '+machine_output card' do
-    it 'creates file with supplied content' do
+  context "+machine_output card" do
+    it "creates file with supplied content" do
       path = machine_card.machine_output_path
       expect(File.read(path)).to eq(card_content[:out])
     end
@@ -59,7 +59,7 @@ shared_examples_for 'content machine' do |filetype|
   end
 end
 
-shared_examples_for 'pointer machine' do |filetype|
+shared_examples_for "pointer machine" do |filetype|
   subject do
     # We build the following structure:
     #
@@ -92,7 +92,7 @@ shared_examples_for 'pointer machine' do |filetype|
       last_level = false
       (@depth - 1).downto(0) do |i|
         next_level = Card.fetch("level #{i} #{filetype} ", new: { type: :pointer })
-        next_level.content = ''
+        next_level.content = ""
         next_level << @leaf_items[i * 2]
         next_level << last_level if last_level
         next_level << @leaf_items[i * 2 + 1]
@@ -111,27 +111,27 @@ shared_examples_for 'pointer machine' do |filetype|
     change_machine
   end
 
-  it_should_behave_like 'machine', that_produces(filetype) do
+  it_should_behave_like "machine", that_produces(filetype) do
     let(:machine) { machine_card }
   end
 
-  describe '+machine_input card' do
+  describe "+machine_input card" do
     before do
       Card::Auth.as_bot do
         subject.update_input_card
       end
     end
 
-    it 'contains items of all levels' do
+    it "contains items of all levels" do
       expect(subject.machine_input_card.item_cards.map(&:id).sort).to eq(@expected_items.map(&:id).sort)
     end
 
-    it 'preserves order of items' do
+    it "preserves order of items" do
       expect(subject.machine_input_card.item_cards.map(&:id)).to eq(@expected_items.map(&:id))
     end
   end
 
-  describe '+machine_output card' do
+  describe "+machine_output card" do
     it 'creates #{filetype} file with supplied content' do
       path = subject.machine_output_path
       expect(File.read(path)).to eq(card_content[:out])
@@ -145,7 +145,7 @@ shared_examples_for 'pointer machine' do |filetype|
 
     it 'updates #{filetype} file if item is added' do
       Card::Auth.as_bot do
-        ca = Card.gimme! 'pointer item', type: Card::SkinID, content: ''
+        ca = Card.gimme! "pointer item", type: Card::SkinID, content: ""
         subject.items = [ca]
         ca << another_machine_input_card
         ca.save!
@@ -154,12 +154,12 @@ shared_examples_for 'pointer machine' do |filetype|
       end
     end
 
-    context 'a non-existent card was added as item and now created' do
+    context "a non-existent card was added as item and now created" do
       it 'updates #{filetype} file' do
         Card::Auth.as_bot do
-          subject.content = '[[non-existent input]]'
+          subject.content = "[[non-existent input]]"
           subject.save!
-          ca = Card.gimme! 'non-existent input', type: input_type, content: card_content[:changed_in]
+          ca = Card.gimme! "non-existent input", type: input_type, content: card_content[:changed_in]
           ca.save!
           changed_path = subject.machine_output_path
           expect(File.read(changed_path)).to eq(card_content[:changed_out])

@@ -13,14 +13,14 @@ END_TAG
 end
 
 When /I switch to (.+) window$/ do |window|
-  if window == 'first'
+  if window == "first"
     page.driver.browser.switch_to.window(page.driver.browser.window_handles.first)
-  elsif window == 'last'
+  elsif window == "last"
     page.driver.browser.switch_to.window(page.driver.browser.window_handles.last)
   end
 end
 
 When /^I close window$/ do
-  page.execute_script('window.close();')
+  page.execute_script("window.close();")
   page.driver.browser.switch_to.window(page.driver.browser.window_handles.last)
 end

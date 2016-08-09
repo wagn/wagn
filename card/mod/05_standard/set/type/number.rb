@@ -1,6 +1,6 @@
 
 view :editor do |_args|
-  text_field :content, class: 'card-content'
+  text_field :content, class: "card-content"
 end
 
 event :validate_number, :validate do

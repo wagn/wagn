@@ -23,13 +23,13 @@ end
 class AddScriptCards < Card::CoreMigration
   def up
     # JavaScript and CoffeeScript types
-    card = Card.fetch 'CoffeeScript', new: {}
-    card.codename = 'coffee_script'
+    card = Card.fetch "CoffeeScript", new: {}
+    card.codename = "coffee_script"
     card.type_id = Card::CardtypeID
     card.save!
 
-    card = Card.fetch 'JavaScript', new: {}
-    card.codename = 'java_script'
+    card = Card.fetch "JavaScript", new: {}
+    card.codename = "java_script"
     card.type_id = Card::CardtypeID
     card.save!
     # Card.create! name: 'JavaScript', codename: :java_script, type_id: Card::CardtypeID
@@ -45,26 +45,26 @@ class AddScriptCards < Card::CoreMigration
     end
 
     # +*script rules
-    Card.create! name: '*script', codename: :script, type_id: Card::SettingID
+    Card.create! name: "*script", codename: :script, type_id: Card::SettingID
     script_set = "*script+#{Card[:right].name}"
     Card.create! name: "#{script_set}+#{Card[:default].name}", type_id: Card::PointerID
     Card.create! name: "#{script_set}+#{Card[:read].name}",    content: "[[#{Card[:anyone].name}]]"
     Card.create! name: "#{script_set}+#{Card[:options].name}", content: %( {"type":["in", "JavaScript", "CoffeeScript"] }), type: Card::SearchTypeID
-    Card.create! name: "#{script_set}+#{Card[:input].name}",   content: 'list'
+    Card.create! name: "#{script_set}+#{Card[:input].name}",   content: "list"
     Card.create! name: "#{script_set}+#{Card[:help].name}",    content:       %{ JavaScript (or CoffeeScript) for card's page. }  # TODO: help link?
 
     # Machine inputs and outputs
     default_rule_ending = "#{Card[:right].name}+#{Card[:default].name}"
-    Card.create! name: '*machine output', codename: :machine_output
+    Card.create! name: "*machine output", codename: :machine_output
     Card.create! name: "*machine output+#{default_rule_ending}", type_id: Card::FileID
-    Card.create! name: "*machine output+#{Card[:right].name}+#{Card[:read].name}", content: '_left'
-    Card.create! name: '*machine input', codename: :machine_input
+    Card.create! name: "*machine output+#{Card[:right].name}+#{Card[:read].name}", content: "_left"
+    Card.create! name: "*machine input", codename: :machine_input
     Card.create! name: "*machine input+#{default_rule_ending}", type_id: Card::PointerID
 
     # create default script rule
-    card_type = { 'js' => 'java_script', 'coffee' => 'coffee_script' }
-    scripts        = %w( jquery tinymce slot     card_menu jquery_helper html5shiv_printshiv  )
-    types          = %w( js     js      coffee   js        js            js                   )
+    card_type = { "js" => "java_script", "coffee" => "coffee_script" }
+    scripts        = %w(jquery tinymce slot     card_menu jquery_helper html5shiv_printshiv)
+    types          = %w(js     js      coffee   js        js            js)
     # jquery.mobile  (in jquery_helper) must be after card to avoid mobileinit nastiness
     cardnames = scripts.map { |name| "script: #{name.tr('_', ' ')}" }
 

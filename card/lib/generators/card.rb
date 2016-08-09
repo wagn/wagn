@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-require 'rails/generators'
-require 'rails/generators/active_record'
+require "rails/generators"
+require "rails/generators/active_record"
 
 class Card
   module Generators
@@ -10,13 +10,13 @@ class Card
         if path
           @_card_source_root = path
         else
-          @_card_source_root ||= File.expand_path(File.join(File.dirname(__FILE__), 'card', generator_name, 'templates'))
+          @_card_source_root ||= File.expand_path(File.join(File.dirname(__FILE__), "card", generator_name, "templates"))
         end
       end
 
       # Override Rails default banner (wagn is the command name).
       def banner
-        "wagn generate #{namespace} #{arguments.map(&:usage) * ' '} [options]".gsub(/\s+/, ' ')
+        "wagn generate #{namespace} #{arguments.map(&:usage) * ' '} [options]".gsub(/\s+/, " ")
       end
     end
 

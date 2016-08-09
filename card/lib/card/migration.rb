@@ -59,13 +59,13 @@ class Card::Migration < ActiveRecord::Migration
 
     def data_path filename=nil
       path = migration_paths.first
-      File.join([path, 'data', filename].compact)
+      File.join([path, "data", filename].compact)
     end
   end
 
   def contentedly
     Card::Cache.reset_all
-    Cardio.schema_mode '' do
+    Cardio.schema_mode "" do
       Card::Auth.as_bot do
         ActiveRecord::Base.transaction do
           begin
@@ -92,8 +92,8 @@ class Card::Migration < ActiveRecord::Migration
     meta_data = JSON.parse(File.read(data_path(filename)))
     full_data =
       meta_data.map do |hash|
-        hash['content'] =
-          File.read data_path(File.join('cards', hash['name'].to_name.key))
+        hash["content"] =
+          File.read data_path(File.join("cards", hash["name"].to_name.key))
         hash
       end
     Card.merge_list full_data, merge_opts
@@ -102,7 +102,7 @@ class Card::Migration < ActiveRecord::Migration
   def read_json filename
     raw_json = File.read data_path(filename)
     json = JSON.parse raw_json
-    json['card']['value']
+    json["card"]["value"]
   end
 
   def data_path filename=nil
@@ -139,8 +139,8 @@ class Card::Migration < ActiveRecord::Migration
   end
 
   def update_machine_output
-    Card.search(right: { codename: 'machine_output' }).each(&:delete)
+    Card.search(right: { codename: "machine_output" }).each(&:delete)
   end
 end
 
-require 'card/core_migration'
+require "card/core_migration"

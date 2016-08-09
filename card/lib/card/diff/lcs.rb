@@ -11,7 +11,7 @@ class Card
         @preprocess   = opts[:preprocess]  # block; called with every word
         @postprocess  = opts[:postprocess] # block; called with complete diff
 
-        @splitters = %w( <[^>]+>  \[\[[^\]]+\]\]  \{\{[^}]+\}\}  \s+ )
+        @splitters = %w(<[^>]+>  \[\[[^\]]+\]\]  \{\{[^}]+\}\}  \s+)
         @disjunction_pattern = /^\s/
       end
 
@@ -107,8 +107,8 @@ class Card
           ::Diff::LCS.traverse_balanced(@words[:old], @words[:new]) do |word|
             if prev_action
               if prev_action != word.action &&
-                 !(prev_action == '-' && word.action == '!') &&
-                 !(prev_action == '!' && word.action == '+')
+                 !(prev_action == "-" && word.action == "!") &&
+                 !(prev_action == "!" && word.action == "+")
 
                 # delete and/or add section stops here; write changes to result
                 write_dels
@@ -120,11 +120,11 @@ class Card
 
               else # current word belongs to edit of previous word
                 case word.action
-                when '-'
+                when "-"
                   del_old_excludees
-                when '+'
+                when "+"
                   add_new_excludees
-                when '!'
+                when "!"
                   del_old_excludees
                   add_new_excludees
                 else
@@ -197,11 +197,11 @@ class Card
 
         def process_element old_element, new_element, action
           case action
-          when '-'
+          when "-"
             minus old_element
-          when '+'
+          when "+"
             plus new_element
-          when '!'
+          when "!"
             minus old_element
             plus new_element
           else

@@ -49,5 +49,11 @@ class Card
       return unless rename
       args[:name] = Card.uniquify_name args[:name], rename
     end
+
+    # create if it doesn't exist
+    def ensure_card args
+      return if Card[args[:name]]
+      Card.create! args
+    end
   end
 end

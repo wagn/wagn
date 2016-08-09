@@ -6,9 +6,9 @@ describe Card::Set::Type::JavaScript do
   let(:changed_js)            { 'alert( "Hello" );' }
   let(:compressed_changed_js) { 'alert("Hello");'   }
 
-  it_should_behave_like 'content machine', that_produces_js do
+  it_should_behave_like "content machine", that_produces_js do
     let(:machine_card) do
-      Card.gimme! 'test javascript', type: :java_script, content: js
+      Card.gimme! "test javascript", type: :java_script, content: js
     end
     let(:card_content) do
       { in:         js,         out:     compressed_js,
@@ -16,15 +16,15 @@ describe Card::Set::Type::JavaScript do
     end
   end
 
-  it_behaves_like 'machine input' do
+  it_behaves_like "machine input" do
     let(:create_machine_input_card) do
-      Card.gimme! 'test javascript', type: :java_script, content: js
+      Card.gimme! "test javascript", type: :java_script, content: js
     end
     let(:create_another_machine_input_card) do
-      Card.gimme! 'more javascript', type: :java_script, content: js
+      Card.gimme! "more javascript", type: :java_script, content: js
     end
     let(:create_machine_card) do
-      Card.gimme! 'script with js+*script', type: :pointer
+      Card.gimme! "script with js+*script", type: :pointer
     end
     let(:card_content) do
       { in:         js,         out:     compressed_js,

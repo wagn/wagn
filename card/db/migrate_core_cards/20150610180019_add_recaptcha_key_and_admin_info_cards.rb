@@ -9,18 +9,18 @@ class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
   end
 
   def create_admin_cards
-    admin_only name: '*admin info',
-               codename: 'admin_info'
-    admin_only name: '*google_analytics_key',
-               codename: 'google_analytics_key'
+    admin_only name: "*admin info",
+               codename: "admin_info"
+    admin_only name: "*google_analytics_key",
+               codename: "google_analytics_key"
 
     codenames = %w(debugger recaptcha_settings)
     content =
       codenames.map do |cn|
         "[[#{Card[cn.to_sym].name}]]"
       end.join "\n"
-    admin_only name: '*admin settings',
-               codename: 'admin_settings',
+    admin_only name: "*admin settings",
+               codename: "admin_settings",
                type_id: Card::PointerID,
                content: content
     add_admin_info_to_home_card
@@ -33,11 +33,11 @@ class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
   end
 
   def create_recaptcha_settings
-    admin_only name: '*recaptcha settings',
+    admin_only name: "*recaptcha settings",
                codename: :recaptcha_settings, type_id: Card::PointerID,
                content: "[[+public key]]\n" \
                         "[[+private key]]\n" \
-                        '[[+proxy]]'
+                        "[[+proxy]]"
     Card::Cache.reset_all
     %w(public_key private_key proxy).each do |name|
       Card.create!(
@@ -51,7 +51,7 @@ class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
     create_or_update args.reverse_merge(type_id: Card::PhraseID)
     %w(*read *update *delete).each do |perm|
       create_or_update name: "#{args[:name]}+*self+#{perm}",
-                       content: '[[Administrator]]'
+                       content: "[[Administrator]]"
     end
   end
 end

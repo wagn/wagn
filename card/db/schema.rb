@@ -95,6 +95,28 @@ ActiveRecord::Schema.define(version: 20160122153608) do
   add_index "cards", ["type_id"], name: "cards_type_id_index", using: :btree
   add_index "cards", ["updated_at"], name: "cards_updated_at_index", using: :btree
 
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer  "priority",   limit: 4,     default: 0, null: false
+    t.integer  "attempts",   limit: 4,     default: 0, null: false
+    t.text     "handler",    limit: 65535,             null: false
+    t.text     "last_error", limit: 65535
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by",  limit: 255
+    t.string   "queue",      limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+
+  create_table "schema_migrations_cards", id: false, force: :cascade do |t|
+    t.string "version", limit: 255, null: false
+  end
+
+  add_index "schema_migrations_cards", ["version"], name: "unique_schema_migrations_cards", unique: true, using: :btree
+
   create_table "schema_migrations_core_cards", id: false, force: :cascade do |t|
     t.string "version", limit: 255, null: false
   end

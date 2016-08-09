@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
-require_dependency 'card/env'
+require_dependency "card/env"
 
-require 'smart_name'
+require "smart_name"
 
 class Card
   class Name < SmartName
@@ -9,14 +9,14 @@ class Card
 
     self.params  = Card::Env # yuck!
     self.session = proc { Card::Auth.current.name }
-    self.banned_array = ['/']
+    self.banned_array = ["/"]
 
     def star?
-      simple? && '*' == s[0, 1]
+      simple? && "*" == s[0, 1]
     end
 
     def rstar?
-      right && '*' == right[0, 1]
+      right && "*" == right[0, 1]
     end
 
     def trait_name? *traitlist
@@ -55,7 +55,7 @@ class Card
       when Symbol
         trait_name tag_name
       else
-        tag_name = tag_name.to_s[1..-1] if tag_name.to_s[0] == '+'
+        tag_name = tag_name.to_s[1..-1] if tag_name.to_s[0] == "+"
         [self, tag_name].to_name
       end
     end
@@ -107,7 +107,7 @@ class Card
     end
 
     def stripped
-      s.gsub RELATIVE_REGEXP, ''
+      s.gsub RELATIVE_REGEXP, ""
     end
 
     def starts_with_joint?

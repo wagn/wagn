@@ -1,4 +1,4 @@
-require 'rake'
+require "rake"
 
 # This code lets us redefine existing Rake tasks, which is extremely
 # handy for modifying existing Rails rake tasks.
@@ -33,22 +33,22 @@ namespace :db do
   namespace :fixtures do
     desc "Load fixtures into the current environment's database.  Load specific fixtures using FIXTURES=x,y"
     task load: :environment do
-      require 'active_record/fixtures'
-      fixture_path = File.join(Cardio.gem_root, 'db', 'seed', 'test', 'fixtures')
+      require "active_record/fixtures"
+      fixture_path = File.join(Cardio.gem_root, "db", "seed", "test", "fixtures")
       ActiveRecord::Base.establish_connection(::Rails.env.to_sym)
-      (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(fixture_path, '*.{yml,csv}'))).each do |fixture_file|
-        ActiveRecord::FixtureSet.create_fixtures(fixture_path, File.basename(fixture_file, '.*'))
+      (ENV["FIXTURES"] ? ENV["FIXTURES"].split(/,/) : Dir.glob(File.join(fixture_path, "*.{yml,csv}"))).each do |fixture_file|
+        ActiveRecord::FixtureSet.create_fixtures(fixture_path, File.basename(fixture_file, ".*"))
       end
     end
   end
 
   namespace :test do
-    desc 'Prepare the test database and load the schema'
+    desc "Prepare the test database and load the schema"
     Rake::Task.redefine_task(prepare: :environment) do
-      if ENV['RELOAD_TEST_DATA'] == 'true' || ENV['RUN_CODE_RUN']
+      if ENV["RELOAD_TEST_DATA"] == "true" || ENV["RUN_CODE_RUN"]
         puts `env RAILS_ENV=test rake wagn:seed`
       else
-        puts 'skipping loading test data.  to force, run `env RELOAD_TEST_DATA=true rake db:test:prepare`'
+        puts "skipping loading test data.  to force, run `env RELOAD_TEST_DATA=true rake db:test:prepare`"
       end
     end
   end

@@ -3,12 +3,12 @@
 class DeleteOldRelatedTabCards < Card::CoreMigration
   def up
     [
-      '*related',
-      '*incoming',
-      '*outgoing',
-      '*community',
-      '*plusses',
-      'watcher instructions for related tab'
+      "*related",
+      "*incoming",
+      "*outgoing",
+      "*community",
+      "*plusses",
+      "watcher instructions for related tab"
     ].each do |name|
       c = Card[name]
       c.codename = nil

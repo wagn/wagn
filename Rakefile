@@ -1,5 +1,5 @@
 task :push_gems do
-  %w( card wagn ).each do |gem|
+  %w(card wagn).each do |gem|
     system %(cd #{gem}; rm *.gem; gem build #{gem}.gemspec; gem push #{gem}-#{version}.gem)
   end
 end
@@ -25,5 +25,5 @@ task :cp_tmpsets do
 end
 
 def version
-  File.open(File.expand_path('../card/VERSION', __FILE__)).read.chomp
+  File.open(File.expand_path("../card/VERSION", __FILE__)).read.chomp
 end

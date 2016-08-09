@@ -1,3 +1,4 @@
+@javascript
 Feature: Set-based Rles
   In order to control settings in an efficient way
   As a Wagneer
@@ -6,6 +7,7 @@ Feature: Set-based Rles
   Background:
     Given I am signed in as Joe Admin
     And I create card "*all+*help" with content "say something spicy"
+    And I wait a sec
 
   Scenario: default setting and plus card override
     Given I create Phrase card "color+*right+*add help" with content "If colorblind, leave blank"

@@ -3,8 +3,8 @@
 class UpdateFileAndImageCards < Card::CoreMigration
   def up
     # use codenames for the filecards not for the left parts
-    if (credit = Card[:credit]) && (card = credit.fetch trait: :image)
-      card.update_attributes! codename: 'credit_image'
+    if (credit = Card[:credit]) && (card = credit.fetch(trait: :image))
+      card.update_attributes! codename: "credit_image"
     end
     add_skin_thumbnails
     Card::Cache.reset_all
@@ -31,7 +31,7 @@ class UpdateFileAndImageCards < Card::CoreMigration
       if Dir.exist? card.store_dir
         symlink_target_hash = {}
         Dir.entries(card.store_dir).each do |file|
-          next unless new_filename = get_new_file_name(file)
+            next unless (new_filename = get_new_file_name(file))
           file_path = File.join(card.store_dir, file)
           if File.symlink?(file_path)
             symlink_target_hash[new_filename] = File.readlink(file_path)

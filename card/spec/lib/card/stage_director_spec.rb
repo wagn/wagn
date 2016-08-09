@@ -1,13 +1,13 @@
 describe Card::StageDirector do
-  describe 'abortion' do
-    let(:create_card) { Card.create name: 'a card' }
+  describe "abortion" do
+    let(:create_card) { Card.create name: "a card" }
     let(:create_card_with_subcard) do
-      Card.create name: 'a card',
-                  subcards: { 'a subcard' => 'content' }
+      Card.create name: "a card",
+                  subcards: { "a subcard" => "content" }
     end
-    subject { Card.fetch 'a card' }
-    context 'when error added' do
-      it 'stops act in validation phase' do
+    subject { Card.fetch "a card" }
+    context "when error added" do
+      it "stops act in validation phase" do
         in_stage :validate,
                  on: :save,
                  trigger: -> { create_card } do
@@ -16,7 +16,7 @@ describe Card::StageDirector do
         is_expected.to be_falsey
       end
 
-      it 'does not stop act in storage phase' do
+      it "does not stop act in storage phase" do
         in_stage :store, on: :save,
                          trigger: -> { create_card } do
           errors.add :stop, "don't do this"
@@ -25,13 +25,13 @@ describe Card::StageDirector do
       end
     end
 
-    context 'when exception raised' do
-      it 'rollbacks in finalize stage' do
+    context "when exception raised" do
+      it "rollbacks in finalize stage" do
         begin
           in_stage :finalize,
                    on: :save,
                    trigger: -> { create_card } do
-            raise Card::Error, 'rollback'
+            raise Card::Error, "rollback"
           end
         rescue Card::Error => e
         ensure
@@ -39,13 +39,13 @@ describe Card::StageDirector do
         end
       end
 
-      it 'does not rollback in integrate stage' do
+      it "does not rollback in integrate stage" do
         begin
           Card::Auth.as_bot do
             in_stage :integrate,
                      on: :save,
                      trigger: -> { create_card } do
-              raise Card::Abort, 'rollback'
+              raise Card::Abort, "rollback"
             end
           end
         rescue Card::Abort => e
@@ -55,8 +55,8 @@ describe Card::StageDirector do
       end
     end
 
-    context 'when abort :success called' do
-      it 'aborts storage in validation stage' do
+    context "when abort :success called" do
+      it "aborts storage in validation stage" do
         in_stage :validate,
                  on: :create,
                  trigger: -> { create_card } do
@@ -65,7 +65,7 @@ describe Card::StageDirector do
         is_expected.to be_falsey
       end
 
-      it 'does not execute subcard stages on create' do
+      it "does not execute subcard stages on create" do
         @called_events = []
         def event_called ev
           @called_events << ev
@@ -73,31 +73,31 @@ describe Card::StageDirector do
         with_test_events do
           test_event :validate,
                      on: :create,
-                     for: 'a card' do
+                     for: "a card" do
             abort :success
           end
           test_event :prepare_to_validate,
-                     on: :create, for: 'a subcard' do
-            event_called 'ptv'
+                     on: :create, for: "a subcard" do
+            event_called "ptv"
           end
           test_event :validate,
-                     on: :create, for: 'a subcard' do
-            event_called 'v'
+                     on: :create, for: "a subcard" do
+            event_called "v"
           end
           test_event :prepare_to_store,
-                     on: :create, for: 'a subcard' do
-            event_called 'pts'
+                     on: :create, for: "a subcard" do
+            event_called "pts"
           end
           test_event :integrate,
-                     on: :create, for: 'a subcard' do
-            event_called 'i'
+                     on: :create, for: "a subcard" do
+            event_called "i"
           end
           create_card_with_subcard
-          expect(@called_events).to eq ['ptv']
+          expect(@called_events).to eq ["ptv"]
         end
       end
 
-      it 'does not delete children' do
+      it "does not delete children" do
         @called_events = []
         def event_called ev
           @called_events << ev
@@ -105,31 +105,31 @@ describe Card::StageDirector do
         with_test_events do
           test_event :validate,
                      on: :delete,
-                     for: 'A' do
+                     for: "A" do
             abort :success
           end
           test_event :prepare_to_validate,
-                     on: :delete, for: 'A+B' do
-            event_called 'ptv'
+                     on: :delete, for: "A+B" do
+            event_called "ptv"
           end
           test_event :validate,
-                     on: :delete, for: 'A+B' do
-            event_called 'v'
+                     on: :delete, for: "A+B" do
+            event_called "v"
           end
           test_event :prepare_to_store,
-                     on: :delete, for: 'A+B' do
-            event_called 'pts'
+                     on: :delete, for: "A+B" do
+            event_called "pts"
           end
           test_event :integrate,
-                     on: :delete, for: 'A+B' do
-            event_called 'i'
+                     on: :delete, for: "A+B" do
+            event_called "i"
           end
-          Card['A'].delete!
-          expect(@called_events).to eq ['ptv']
+          Card["A"].delete!
+          expect(@called_events).to eq ["ptv"]
         end
       end
 
-      it 'aborts storage in store stage' do
+      it "aborts storage in store stage" do
         in_stage :store,
                  on: :create,
                  trigger: -> { create_card } do
@@ -138,7 +138,7 @@ describe Card::StageDirector do
         is_expected.to be_falsey
       end
 
-      it 'aborts storage in finalize stage' do
+      it "aborts storage in finalize stage" do
         in_stage :store,
                  on: :create,
                  trigger: -> { create_card } do
@@ -147,7 +147,7 @@ describe Card::StageDirector do
         is_expected.to be_falsey
       end
 
-      it 'does not abort storage in integrate stage' do
+      it "does not abort storage in integrate stage" do
         in_stage :integrate,
                  on: :create,
                  trigger: -> { create_card } do
@@ -158,22 +158,22 @@ describe Card::StageDirector do
     end
   end
 
-  describe 'stage order' do
+  describe "stage order" do
     let(:create_card_with_subcards) do
-      Card.create name: '1',
+      Card.create name: "1",
                   subcards: {
-                    '11' => { subcards: { '111' => 'A' } },
-                    '12' => { subcards: { '121' => 'A' } }
+                    "11" => { subcards: { "111" => "A" } },
+                    "12" => { subcards: { "121" => "A" } }
                   }
     end
     let(:create_card_with_junction) do
-      Card.create name: '1+2',
-                  subcards: { '11' => 'A' }
+      Card.create name: "1+2",
+                  subcards: { "11" => "A" }
     end
     let(:preorder) { %w(1 11 111 12 121) }
     let(:postorder) { %w(111 11 121 12 1) }
-    describe 'validate' do
-      it 'is pre-order depth-first' do
+    describe "validate" do
+      it "is pre-order depth-first" do
         order = []
         in_stage :validate, on: :create,
                             trigger: -> { create_card_with_subcards } do
@@ -182,7 +182,7 @@ describe Card::StageDirector do
         expect(order).to eq(preorder)
       end
 
-      it 'executes all validate stages before next stage' do
+      it "executes all validate stages before next stage" do
         order = []
         with_test_events do
           test_event :validate, on: :create do
@@ -199,8 +199,8 @@ describe Card::StageDirector do
       end
     end
 
-    describe 'finalize' do
-      it 'is post-order depth-first' do
+    describe "finalize" do
+      it "is post-order depth-first" do
         order = []
         in_stage :finalize, on: :create,
                             trigger: -> { create_card_with_subcards } do
@@ -210,8 +210,8 @@ describe Card::StageDirector do
       end
     end
 
-    describe 'store' do
-      it 'is pre-order depth-first' do
+    describe "store" do
+      it "is pre-order depth-first" do
         order = []
         in_stage :store, on: :create,
                          trigger: -> { create_card_with_subcards } do
@@ -221,8 +221,8 @@ describe Card::StageDirector do
       end
     end
 
-    describe 'store and finalize' do
-      it 'executes finalize when all subcards are stored and finalized' do
+    describe "store and finalize" do
+      it "executes finalize when all subcards are stored and finalized" do
         order = []
         with_test_events do
           test_event :store, on: :create do
@@ -240,8 +240,8 @@ describe Card::StageDirector do
       end
     end
 
-    describe 'complete run' do
-      it 'is in correct order' do
+    describe "complete run" do
+      it "is in correct order" do
         order = []
         with_test_events do
           test_event :initialize, on: :create do
@@ -252,7 +252,7 @@ describe Card::StageDirector do
           end
           test_event :validate, on: :create do
             order << "v:#{name}"
-            add_subcard '112v' if name == '11'
+            add_subcard "112v" if name == "11"
           end
           test_event :prepare_to_store, on: :create do
             order << "pts:#{name}"
@@ -295,7 +295,7 @@ describe Card::StageDirector do
         )
       end
 
-      it 'with junction' do
+      it "with junction" do
         order = []
         with_test_events do
           test_event :initialize, on: :create do
@@ -344,11 +344,11 @@ describe Card::StageDirector do
     end
   end
 
-  describe 'subcards' do
+  describe "subcards" do
     def create_subcards
-      Card.create! name: '', subcards: {
-        '+sub1' => 'some content',
-        '+sub2' => { '+sub3' => 'content' }
+      Card.create! name: "", subcards: {
+        "+sub1" => "some content",
+        "+sub2" => { "+sub3" => "content" }
       }
     end
 
@@ -358,10 +358,10 @@ describe Card::StageDirector do
         in_stage :prepare_to_validate,
                  on: :create,
                  trigger: :create_subcards do
-          self.name = 'main' if name.empty? && !changed
+          self.name = "main" if name.empty? && !changed
         end
-        expect(Card['main+sub1'].class).to eq(Card)
-        expect(Card['main+sub2+sub3'].class).to eq(Card)
+        expect(Card["main+sub1"].class).to eq(Card)
+        expect(Card["main+sub2+sub3"].class).to eq(Card)
       end
     end
     it "has correct name if supercard's name get changed to a junction card" do
@@ -371,35 +371,35 @@ describe Card::StageDirector do
                  on: :create,
                  trigger: :create_subcards do
           if name.empty? && !changed
-            self.name = 'main1+main2'
-            expect(subfield('sub1')).to be
-            expect(subfield('sub1').content).to eq('some content')
+            self.name = "main1+main2"
+            expect(subfield("sub1")).to be
+            expect(subfield("sub1").content).to eq("some content")
           end
         end
-        expect(Card['main1+main2+sub1'].class).to eq(Card)
-        expect(Card['main1+main2+sub1'].content).to eq('some content')
-        expect(Card['main1+main2+sub2+sub3'].class).to eq(Card)
-        expect(Card['main1+main2+sub2+sub3'].content).to eq('content')
+        expect(Card["main1+main2+sub1"].class).to eq(Card)
+        expect(Card["main1+main2+sub1"].content).to eq("some content")
+        expect(Card["main1+main2+sub2+sub3"].class).to eq(Card)
+        expect(Card["main1+main2+sub2+sub3"].content).to eq("content")
       end
     end
 
-    it 'adds subsubcard to correct subdirector' do
+    it "adds subsubcard to correct subdirector" do
       Card::Auth.as_bot do
         in_stage :prepare_to_store,
                  on: :create,
-                 trigger: -> { Card.create! name: 'main' } do
+                 trigger: -> { Card.create! name: "main" } do
           case  name
-          when 'main'
-            add_subcard 'subby', '+sub2' => {
-              subcards: { 'AARGH' => { '+sub4' => 'more content' } }
+          when "main"
+            add_subcard "subby", "+sub2" => {
+              subcards: { "AARGH" => { "+sub4" => "more content" } }
             }
             in_subdirectors = director.subdirectors.any? do |subdir|
-              subdir.card.name == 'AARGH'
+              subdir.card.name == "AARGH"
             end
             expect(in_subdirectors).to be_falsey
-          when 'subby+sub2'
+          when "subby+sub2"
             in_subsubdirectors = director.subdirectors.any? do |subdir|
-              subdir.card.name == 'AARGH'
+              subdir.card.name == "AARGH"
             end
             expect(in_subsubdirectors).to be_truthy
           end
@@ -408,19 +408,19 @@ describe Card::StageDirector do
     end
   end
 
-  describe 'creating and updating cards in stages' do
-    it 'update_attributes works integrate stage' do
-      act_cnt = Card['A'].acts.size
+  describe "creating and updating cards in stages" do
+    it "update_attributes works integrate stage" do
+      act_cnt = Card["A"].acts.size
       in_stage :integrate,
                on: :create,
-               trigger: -> { Card.create! name: 'act card' } do
-        Card['A'].update_attributes content: 'changed content'
+               trigger: -> { Card.create! name: "act card" } do
+        Card["A"].update_attributes content: "changed content"
       end
-      expect(Card['A'].content).to eq 'changed content'
+      expect(Card["A"].content).to eq "changed content"
       # no act added to A
-      expect(Card['A'].acts.size).to eq act_cnt
+      expect(Card["A"].acts.size).to eq act_cnt
       # new act for 'act card'
-      expect(Card['act card'].acts.size).to eq 1
+      expect(Card["act card"].acts.size).to eq 1
     end
   end
 end

@@ -95,7 +95,7 @@ EOF
           self.class.pattern_code.camelize
         elsif anchor_codenames
           codenames = [self.class.pattern_code] + anchor_codenames.map(&:to_s)
-          codenames.map(&:camelize).join '::'
+          codenames.map(&:camelize).join "::"
         end
       end
     end
@@ -133,7 +133,7 @@ EOF
     end
 
     def safe_key
-      caps_part = self.class.pattern_code.tr(' ', '_').upcase
+      caps_part = self.class.pattern_code.tr(" ", "_").upcase
       if self.class.anchorless?
         caps_part
       else

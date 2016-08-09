@@ -5,10 +5,10 @@ class Card
     @@as_card = @@as_id = @@current_id = @@current = nil
     @@simulating_setup_need = nil
 
-    SETUP_COMPLETED_KEY = 'SETUP_COMPLETED'.freeze
+    SETUP_COMPLETED_KEY = "SETUP_COMPLETED".freeze
     DEFAULT_RECAPTCHA_SETTINGS = {
-      recaptcha_public_key: '6LeoHfESAAAAAN1NdQeYHREq4jTSQhu1foEzv6KC',
-      recaptcha_private_key: '6LeoHfESAAAAAHLZpn7ijrO4_KGLEr2nGL4qjjis'
+      recaptcha_public_key: "6LeoHfESAAAAAN1NdQeYHREq4jTSQhu1foEzv6KC",
+      recaptcha_private_key: "6LeoHfESAAAAAHLZpn7ijrO4_KGLEr2nGL4qjjis"
     }.freeze
 
     # after_save :reset_instance_cache
@@ -60,7 +60,7 @@ class Card
           Card.search(
             { right_id: Card::AccountID,
               right_plus: [{ id: Card::TokenID }, { content: token.strip }]
-              }, 'find +*account card by token'
+              }, "find +*account card by token"
           ).first
         end
       end
@@ -201,7 +201,7 @@ class Card
       def always_ok_usr_id? usr_id
         return true if usr_id == Card::WagnBotID # cannot disable
 
-        always = Card.cache.read('ALWAYS') || {}
+        always = Card.cache.read("ALWAYS") || {}
         # warn(Rails.logger.warn "Auth.always_ok? #{usr_id}")
         if always[usr_id].nil?
           always = always.dup if always.frozen?
@@ -209,7 +209,7 @@ class Card
             !!Card[usr_id].all_roles.find { |r| r == Card::AdministratorID }
           # warn(Rails.logger.warn "update always hash #{always[usr_id]},
           # #{always.inspect}")
-          Card.cache.write 'ALWAYS', always
+          Card.cache.write "ALWAYS", always
         end
         # warn Rails.logger.warn("aok? #{usr_id}, #{always[usr_id]}")
         always[usr_id]
@@ -222,8 +222,8 @@ class Card
           Auth.as_bot do
             Card.search(
               { type: Card::CardtypeID, return: :name,
-                not: { codename: ['in'] + Card.config.non_createable_types } },
-              'find createable types'
+                not: { codename: ["in"] + Card.config.non_createable_types } },
+              "find createable types"
             )
           end
 

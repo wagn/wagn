@@ -1,28 +1,28 @@
 # -*- encoding : utf-8 -*-
-require 'spork'
-ENV['RAILS_ENV'] = 'test'
+require "spork"
+ENV["RAILS_ENV"] = "test"
 
-require 'timecop'
-require 'rr'
+require "timecop"
+require "rr"
 
 # used for SharedData::Users - required here so code won't show up in coverage
-require File.expand_path('../../db/seed/test/seed.rb', __FILE__)
+require File.expand_path("../../db/seed/test/seed.rb", __FILE__)
 
-require File.expand_path('../../lib/card/simplecov_helper.rb', __FILE__)
-require 'simplecov'
+require File.expand_path("../../lib/card/simplecov_helper.rb", __FILE__)
+require "simplecov"
 
-require File.expand_path('../../mod/03_machines/spec/lib/shared_machine_examples.rb', __FILE__)
-require File.expand_path('../../mod/03_machines/spec/lib/shared_machine_input_examples.rb', __FILE__)
+require File.expand_path("../../mod/03_machines/spec/lib/shared_machine_examples.rb", __FILE__)
+require File.expand_path("../../mod/03_machines/spec/lib/shared_machine_input_examples.rb", __FILE__)
 
 Spork.prefork do
-  if ENV['RAILS_ROOT']
-    require File.join(ENV['RAILS_ROOT'], '/config/environment')
+  if ENV["RAILS_ROOT"]
+    require File.join(ENV["RAILS_ROOT"], "/config/environment")
   else
-    require File.expand_path('../../config/environment', __FILE__)
+    require File.expand_path("../../config/environment", __FILE__)
   end
 
-  require 'rspec/rails'
-  require File.expand_path('../../lib/card/spec_helper.rb', __FILE__)
+  require "rspec/rails"
+  require File.expand_path("../../lib/card/spec_helper.rb", __FILE__)
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
@@ -30,8 +30,8 @@ Spork.prefork do
   #    require f
   #  end
 
-  FIXTURES_PATH = File.expand_path('../../db/seed/test/fixtures', __FILE__)
-  JOE_USER_ID = Card['joe_user'].id
+  FIXTURES_PATH = File.expand_path("../../db/seed/test/fixtures", __FILE__)
+  JOE_USER_ID = Card["joe_user"].id
   RSpec.configure do |config|
     config.include RSpec::Rails::Matchers::RoutingMatchers,
                    file_path: %r{\bspec/controllers/}
@@ -73,8 +73,8 @@ Spork.prefork do
   end
 end
 
-Card['*all+*style'].ensure_machine_output
-Card['*all+*script'].ensure_machine_output
+Card["*all+*style"].ensure_machine_output
+Card["*all+*script"].ensure_machine_output
 (ie9 = Card[:script_html5shiv_printshiv]) && ie9.ensure_machine_output
 
 Spork.each_run do
@@ -127,7 +127,7 @@ class Card
   def method_missing m, *args, &block
     return super unless Card.rspec_binding
     suppress_name_error do
-      method = eval('method(%s)' % m.inspect, Card.rspec_binding)
+      method = eval("method(%s)" % m.inspect, Card.rspec_binding)
       return method.call(*args, &block)
     end
     suppress_name_error do
@@ -141,12 +141,20 @@ class Card
     yield
   rescue NameError
   end
+
+  def format_with_set set, format_type=:html
+    singleton_class.send :include, set
+    format = format format_type
+    format_class = Card::Format.format_class_name format_type
+    format.singleton_class.send :include, set.const_get(format_class)
+    yield(format)
+  end
 end
 
 RSpec::Core::ExampleGroup.send :include, Card::SpecHelper
 
 class ActiveSupport::Logger
   def rspec msg
-    Thread.current['logger-output'] << msg
+    Thread.current["logger-output"] << msg
   end
 end

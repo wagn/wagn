@@ -3,8 +3,8 @@ class Card
     class << self
       SIZE = 500
       LIMIT = 1000 # reduce cache size to SIZE if LIMIT is reached
-      CNT_KEY = 'view_cache_cnt'.freeze
-      FREQUENCY_KEY = 'view_cache_frequency'.freeze
+      CNT_KEY = "view_cache_cnt".freeze
+      FREQUENCY_KEY = "view_cache_frequency".freeze
 
       def cache
         Card::Cache[Card::ViewCache]
@@ -16,7 +16,7 @@ class Card
         key = cache_key view, format, args
         update_cache_accounting! key
 
-        if Card.config.view_cache == 'debug'
+        if Card.config.view_cache == "debug"
           verbose_fetch key, &bloack
         else
           cache.fetch key, &block
@@ -83,9 +83,9 @@ class Card
       end
 
       def cache_key view, format, args
-        roles_key = Card::Auth.current.all_roles.sort.join '_'
+        roles_key = Card::Auth.current.all_roles.sort.join "_"
         args_key = Card::Cache.obj_to_key(args)
-        '%s#%s__args__%s__roles__%s' %
+        "%s#%s__args__%s__roles__%s" %
           [format.card.key, view, args_key, roles_key]
       end
 

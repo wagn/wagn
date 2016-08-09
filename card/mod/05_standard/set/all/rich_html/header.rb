@@ -30,7 +30,7 @@ format :html do
   end
 
   view :toggle do |args|
-    verb, adjective, direction = (args[:toggle_mode] == :close ? %w( open open expand ) : %w( close closed collapse-down ))
+    verb, adjective, direction = (args[:toggle_mode] == :close ? %w(open open expand) : %w(close closed collapse-down))
 
     link_to  glyphicon(direction),
              path(view: adjective),
@@ -48,11 +48,11 @@ format :html do
   end
 
   view :navbar_right do |args|
-    render_link_list args.merge(class: 'nav navbar-nav navbar-right')
+    render_link_list args.merge(class: "nav navbar-nav navbar-right")
   end
 
   view :navbar_left do |args|
-    render_link_list args.merge(class: 'nav navbar-nav navbar-left')
+    render_link_list args.merge(class: "nav navbar-nav navbar-left")
   end
 
   def show_follow?

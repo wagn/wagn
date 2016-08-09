@@ -1,5 +1,13 @@
 # -*- encoding : utf-8 -*-
 
+# A card that includes Abstract::SolidCache caches its core view
+# in a '+*solid cache' card.
+# If that card exists the core view returns its content as rendered view.
+# If it doesn't exist the usual core view is rendered and saved in that card.
+#
+# The cache expiration can be controlled with the cache_update_trigger and
+# cache_expire_trigger methods.
+
 card_accessor :solid_cache, type: :html
 
 format :html do

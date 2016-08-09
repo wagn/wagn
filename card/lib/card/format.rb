@@ -38,6 +38,12 @@ class Card
         "#{format.camelize}Format"
       end
 
+      def format_sym format
+        return format if format.is_a? Symbol
+        match = format.to_s.match(/::(?<format>[^:]+)Format/)
+        match ? match[:format] : :base
+      end
+
       def extract_class_vars view, opts
         return unless opts.present?
         [:perms, :error_code, :denial, :closed].each do |varname|

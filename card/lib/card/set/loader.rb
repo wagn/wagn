@@ -71,21 +71,12 @@ RUBY
       # 'nonbase modules' are included dynamically on singleton_classes
       def process_base_modules
         return unless modules[:base]
-        process_base_module_list modules[:base], Card
+        Card.add_set_modules modules[:base]
         modules[:base_format].each do |format_class, modules_list|
-          process_base_module_list modules_list, format_class
+          format_class.add_set_modules modules_list
         end
         modules.delete :base
         modules.delete :base_format
-      end
-
-      def process_base_module_list list, klass
-        list.each do |mod|
-          klass.send :include, mod if mod.instance_methods.any?
-          if (class_methods = mod.const_get_if_defined(:ClassMethods))
-            klass.send :extend, class_methods
-          end
-        end
       end
 
       def clean_empty_modules

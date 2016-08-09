@@ -1,15 +1,24 @@
 def self.included host_class
-  # extract the mod name from the path of the set's tmp file
-  # the caller that included the set file is set.rb
-  # seems like the actual set file is in fourth position in
-  # the backtrace but I'm not 100% sure if that is always the case
-  path, = caller[4].partition(":")
-  path_parts = path.split(File::SEPARATOR)
-  mod_dir = path_parts[path_parts.index("set") + 1]
-  raise Card::Error, "not a set path: #{path}" unless mod_dir
-  match = mod_dir.match(/^mod\d+-(?<mod_name>.+)$/)
   host_class.mattr_accessor :file_content_mod_name
-  host_class.file_content_mod_name = match[:mod_name]
+  host_class.file_content_mod_name = mod_name(caller)
+end
+
+# try to extract the mod name from the path of the set's tmp file
+# the caller that included the set file is set.rb
+def self.mod_name backtrace
+  mod_dir = tmp_mod_dir backtrace
+  raise Error, "not a valid set path: #{path}" unless mod_dir
+  match = mod_dir.match(/^mod\d+-(?<mod_name>.+)$/)
+  match[:mod_name]
+end
+
+def self.tmp_mod_dir backtrace
+  path = backtrace.find { |path| path.include? 'tmp/set/' }
+  raise Error, "couldn't find set path in backtrace: #{backtrace}" unless path
+  path_parts = path.split(File::SEPARATOR)
+  path_parts.fetch(path_parts.index("set") + 1) do
+    raise Error, "not a valid set path: #{path}"
+  end
 end
 
 # @return [Array<String>, String] the name of file(s) to be loaded

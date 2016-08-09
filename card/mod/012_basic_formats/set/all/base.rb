@@ -1,4 +1,3 @@
-
 format do
   def show view, args
     view ||= :core

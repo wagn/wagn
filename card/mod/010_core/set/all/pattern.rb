@@ -51,6 +51,10 @@ def set_names
   @set_names
 end
 
+def in_set? set_module
+  patterns.map(&:module_key).include? set_module.shortname
+end
+
 def rule_set_keys
   @rule_set_keys ||= patterns.map(&:rule_set_key).compact
 end

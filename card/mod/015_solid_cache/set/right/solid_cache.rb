@@ -7,10 +7,15 @@ def history?
 end
 
 format :html do
+  view :core do |args|
+    return super(args) unless card.new_card?
+    _render_missing args.merge(denied_view: :core)
+  end
+
   view :missing do |args|
     if @card.new_card? &&
-      (l = @card.left) &&
-      l.respond_to?(:update_solid_cache)
+       (l = @card.left) &&
+       l.solid_cache?
       l.update_solid_cache
       @card = Card.fetch(card.name)
       render(args[:denied_view], args)

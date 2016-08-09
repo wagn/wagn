@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-card_accessor :solid_cache, type: :plain_text
+card_accessor :solid_cache, type: :html
 
 format :html do
   def default_core_args args
@@ -8,10 +8,9 @@ format :html do
   end
 
   view :core do |args|
-    binding.pry
-    return super unless args[:solid_cache]
+    return super(args) unless args[:solid_cache]
 
-    subformat(solid_cache)._render_core args
+    subformat(card.solid_cache_card)._render_core args
   end
 end
 
@@ -40,18 +39,16 @@ module ClassMethods
     )
   end
 
-  def define_event_to_update_expired_cached_cards set_of_changed_card, args,
-                                                  method_name
+  def define_event_to_update_expired_cached_cards set_of_changed_card, args, method_name
     args[:on] ||= [:create, :update, :delete]
     name = event_name set_of_changed_card, args
-    set_of_changed_card.class_eval do
-      event name, :integrate, args do
+    Card::Set.register_set set_of_changed_card
+    set_of_changed_card.event name, :finalize, args do
         Array(yield(self)).compact.each do |expired_cache_card|
           next unless expired_cache_card.solid_cache?
           expired_cache_card.send method_name
         end
       end
-    end
   end
 
   def event_name set, args

@@ -64,7 +64,8 @@ shared_examples_for "pointer machine" do |filetype|
     # We build the following structure:
     #
     #  #{machine_card}
-    #    |- expected_input_items (passed by the calling test if it prepopulates the machine_card with some additional items)
+    #    |- expected_input_items (passed by the calling test if it prepopulates
+    #                             the machine_card with some additional items)
     #    |_ level 0 #{filetype}
     #         |- level 1 basic 1
     #         |- level 1 #{filetype}
@@ -82,16 +83,19 @@ shared_examples_for "pointer machine" do |filetype|
     start = @expected_items.size
     Card::Auth.as_bot do
       @depth.times do |i|
-        @leaf_items << Card.fetch("level #{i} basic 1", new:  { type: Card::BasicID })
+        @leaf_items << Card.fetch("level #{i} basic 1",
+                                  new: { type: Card::BasicID })
         @leaf_items.last.save
-        @leaf_items << Card.fetch("level #{i} basic 2", new:  { type: Card::BasicID })
+        @leaf_items << Card.fetch("level #{i} basic 2",
+                                  new: { type: Card::BasicID })
         @leaf_items.last.save
       end
 
       # we build the tree from bottom up
       last_level = false
       (@depth - 1).downto(0) do |i|
-        next_level = Card.fetch("level #{i} #{filetype} ", new: { type: :pointer })
+        next_level = Card.fetch("level #{i} #{filetype} ",
+                                new: { type: :pointer })
         next_level.content = ""
         next_level << @leaf_items[i * 2]
         next_level << last_level if last_level
@@ -123,11 +127,13 @@ shared_examples_for "pointer machine" do |filetype|
     end
 
     it "contains items of all levels" do
-      expect(subject.machine_input_card.item_cards.map(&:id).sort).to eq(@expected_items.map(&:id).sort)
+      expect(subject.machine_input_card.item_cards.map(&:id).sort)
+        .to eq(@expected_items.map(&:id).sort)
     end
 
     it "preserves order of items" do
-      expect(subject.machine_input_card.item_cards.map(&:id)).to eq(@expected_items.map(&:id))
+      expect(subject.machine_input_card.item_cards.map(&:id))
+        .to eq(@expected_items.map(&:id))
     end
   end
 
@@ -159,7 +165,9 @@ shared_examples_for "pointer machine" do |filetype|
         Card::Auth.as_bot do
           subject.content = "[[non-existent input]]"
           subject.save!
-          ca = Card.gimme! "non-existent input", type: input_type, content: card_content[:changed_in]
+          ca = Card.gimme! "non-existent input",
+                           type: input_type,
+                           content: card_content[:changed_in]
           ca.save!
           changed_path = subject.machine_output_path
           expect(File.read(changed_path)).to eq(card_content[:changed_out])

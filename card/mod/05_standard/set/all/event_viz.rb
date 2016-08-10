@@ -13,9 +13,7 @@
 # prevent events from showing up in the tree.
 def events action
   @action = action
-  events = Card::Stage::STAGES.map do |stage|
-             events_tree("#{stage}_stage")
-           end
+  events = Card::Stage::STAGES.map { |stage| events_tree("#{stage}_stage") }
   @action = nil
   puts_events events
 end

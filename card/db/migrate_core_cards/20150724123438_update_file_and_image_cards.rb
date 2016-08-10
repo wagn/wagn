@@ -16,7 +16,7 @@ class UpdateFileAndImageCards < Card::CoreMigration
       update_history card
       next unless card.content.present?
       update_db_content card
-      update_filename card
+      update_filenames card
     end
   end
 
@@ -35,21 +35,25 @@ class UpdateFileAndImageCards < Card::CoreMigration
   end
 
   # swap variant and action_id/type_code in file name
-  def update_filename card
+  def update_filenames card
     return unless Dir.exist? card.store_dir
-    symlink_target_hash = {}
-    Dir.entries(card.store_dir).each do |file|
-      next unless (new_filename = get_new_file_name(file))
-      file_path = File.join(card.store_dir, file)
-      if File.symlink?(file_path)
-        symlink_target_hash[new_filename] = File.readlink(file_path)
-        File.unlink file_path
-      else
-        FileUtils.mv file_path, File.join(card.store_dir, new_filename)
+    symlink_target_hash =
+      Dir.entries(card.store_dir).each_with_object({}) do |file, symlink_target|
+        next unless (new_filename = get_new_file_name(file))
+        file_path = File.join(card.store_dir, file)
+        if File.symlink?(file_path)
+          symlink_target[new_filename] = File.readlink(file_path)
+          File.unlink file_path
+        else
+          FileUtils.mv file_path, File.join(card.store_dir, new_filename)
+        end
       end
-    end
-    symlink_target_hash.each do |symlink, target|
-      new_target_name = get_new_file_name(target)
+    update_symlinks symlink_target_hash
+  end
+
+  def update_symlinks symlink_targets
+    symlink_targets.each do |symlink, target|
+      new_target_name = get_new_file_name target
       File.symlink File.join(card.store_dir, new_target_name),
                    File.join(card.store_dir, symlink)
     end

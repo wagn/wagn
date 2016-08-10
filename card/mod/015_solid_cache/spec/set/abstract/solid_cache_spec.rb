@@ -5,7 +5,7 @@ describe Card::Set::Abstract::SolidCache do
       @card = Card['A']
     end
 
-    let(:core_view) { 'Alpha <a class=\"known-card\" href=\"/Z\">Z</a>' }
+    let(:core_view) { 'Alpha <a class="known-card" href="/Z">Z</a>' }
     context 'with solid cache' do
       it 'saves core view in solid cache card' do
         @card.format_with_set(Card::Set::Abstract::SolidCache) do |format|
@@ -40,34 +40,57 @@ describe Card::Set::Abstract::SolidCache do
   end
 
   context 'when cached content expired' do
-    before  do
-      class Card; module Set; module Type; module Basic; module WithCache
-        extend Card::Set
-        include_set Card::Set::Abstract::SolidCache
-
-        cache_update_trigger Card::Set::Type::Basic do
-          Card["B"]
-        end
-      end; end; end; end; end
+    before do
+      Card::Auth.as_bot do
+        Card.create! name: "volatile", codename: 'volatile',
+                     content: "chopping"
+        Card.create! name: 'cached', codename: 'cached',
+                     content: "chopping and {{volatile|core}}"
+      end
+      Card::Codename.reset_cache
     end
-
     describe '.cache_update_trigger' do
+      before do
+        class Card; module Set; module Self; module Cached
+           extend Card::Set
+           include_set Card::Set::Abstract::SolidCache
+
+           ensure_set { Card::Set::Self::Volatile }
+           cache_update_trigger Card::Set::Self::Volatile do
+             Card["cached"]
+           end
+         end; end; end; end
+      end
+
       it 'updates solid cache card' do
         Card::Auth.as_bot do
-          Card['Z'].update_attributes! content: 'new content'
+          Card["volatile"].update_attributes! content: 'changing'
         end
-        expect(Card['B', :solid_cache].content).to match(/Beta.*new content/m)
+        expect(Card['cached', :solid_cache].content)
+          .to eq "chopping and changing"
       end
     end
 
     describe '.cache_expire_trigger' do
+      before do
+        class Card; module Set; module Self; module Cached
+          extend Card::Set
+          include_set Card::Set::Abstract::SolidCache
+
+          ensure_set { Card::Set::Self::Volatile }
+          cache_expire_trigger Card::Set::Self::Volatile do
+            Card["cached"]
+          end
+        end; end; end; end
+      end
+
       it 'expires solid cache card' do
-        Card['B'].format(:html)._render_core
-        expect(Card['B', :solid_cache]).to be_instance_of Card
+        Card['cached'].format(:html)._render_core
+        expect(Card['cached', :solid_cache]).to be_instance_of Card
         Card::Auth.as_bot do
-          Card['Z'].update_attributes! content: 'new content'
+          Card['volatile'].update_attributes! content: 'changing'
         end
-        expect(Card['B', :solid_cache]).to be_falsey
+        expect(Card['cached', :solid_cache]).to be_falsey
       end
     end
   end

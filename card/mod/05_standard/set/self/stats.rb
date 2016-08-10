@@ -4,11 +4,11 @@ format :html do
     stats = [
       ["cards", Card.where(trash: false)],
       ["trashed cards", Card.where(trash: true),
-       { link_text: 'delete all', task: 'empty_trash'}],
+       { link_text: "delete all", task: "empty_trash" }],
       ["actions", Card::Action,
-       { link_text: 'delete old', task: 'delete_old_revisions' }],
+       { link_text: "delete old", task: "delete_old_revisions" }],
       ["references", Card::Reference,
-       { link_text: 'repair all', task: 'repair_references' }],
+       { link_text: "repair all", task: "repair_references" }]
     ]
     stats += cache_stats
     stats += memory_stats
@@ -19,16 +19,16 @@ format :html do
   def cache_stats
     stats = [
       ["solid cache", solid_cache_count,
-       { unit: ' cards', link_text: 'clear cache',
-         task: 'clear_solid_cache' }],
+       { unit: " cards", link_text: "clear cache",
+         task: "clear_solid_cache" }],
       ["machine cache", machine_cache_count,
-       { unit: ' cards', link_text: 'clear cache',
-         task: 'clear_machine_cache' }]
+       { unit: " cards", link_text: "clear cache",
+         task: "clear_machine_cache" }]
     ]
     return stats unless Card.config.view_cache
     stats <<
-        ["view cache", Card::ViewCache,
-         { link_text: 'clear view cache', task: 'clear_view_cache'}]
+      ["view cache", Card::ViewCache,
+       { link_text: "clear view cache", task: "clear_view_cache" }]
     stats
   end
 
@@ -37,7 +37,7 @@ format :html do
     session[:memory] = newmem = card.profile_memory
     stats = [
       ["memory now", newmem,
-       { unit: 'M', link_text: 'clear cache', task: 'clear_cache'} ]
+       { unit: "M", link_text: "clear cache", task: "clear_cache" }]
     ]
     return stats unless oldmem
     stats << ["memory prev", oldmem, { unit: "M" }]
@@ -56,30 +56,30 @@ format :html do
   end
 
   def solid_cache_count
-    Card.search right: { codename: 'solid_cache' }, return: 'count'
+    Card.search right: { codename: "solid_cache" }, return: "count"
   end
 
   def machine_cache_count
-    Card.search right: { codename: 'machine_cache' }, return: 'count'
+    Card.search right: { codename: "machine_cache" }, return: "count"
   end
 
   def delete_sessions_link months
-    link_to months, card_path("update/:all?task=delete_old_sessions&months=#{months}")
+    link_to months,
+            card_path("update/:all?task=delete_old_sessions&months=#{months}")
   end
 end
 
-def get_current_memory_usage
+def current_memory_usage
   `ps -o rss= -p #{Process.pid}`.to_i
 end
 
 def profile_memory &block
-  before = get_current_memory_usage
-  file, line, = caller[0].split(":")
+  before = current_memory_usage
+  _file, _line, = caller[0].split(":")
   if block_given?
     instance_eval(&block)
-    (get_current_memory_usage - before) / 1024
   else
     before = 0
-    (get_current_memory_usage - before) / 1024
-  end.to_i
+  end
+  (current_memory_usage - before) / 1024.to_i
 end

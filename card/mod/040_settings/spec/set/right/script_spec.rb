@@ -9,7 +9,7 @@ describe Card::Set::Right::Script do
   let(:compressed_new_js)     { 'alert("Hey");'   }
 
   it_should_behave_like "pointer machine", that_produces_js do
-    let(:input_name) { 'test js' }
+    let(:input_name) { "test js" }
     let(:machine_card) do
       Card.gimme! "test my style+*script", type: :pointer, content: ""
     end

@@ -116,9 +116,9 @@ de:
             error_user_edits: "Wurde bearbeitet mit %{name}s Account.\nLöschen würde den Verlauf durcheinander bringen."
             error_cant_delete_child: "kann %{child_name} nicht löschen: %{message}"
           type:
-            error_cant_change_errors: "of %{name} can't be changed; errors creating new %{type_id}: %{error_messages}"
+            error_cant_change_errors: "von %{name} kann nicht geändert werden; Fehler beim Erstellen von %{type_id}: %{error_messages}"
             error_no_such_type: Typ existiert nicht
-            error_hard_templated: can't be changed because %{name} is hard templated to %{type_name}
+            error_hard_templated: kann nicht geändert werden da %{name} festgelegt ist auf %{type_name}
           utils:
             exception_almost_deleted: Narrowly averted deleting current file
       set_pattern:
@@ -149,7 +149,7 @@ de:
       set:
         all:
           content_history:
-            error_not_latest_revision: changes not based on latest revision
+            error_not_latest_revision: Änderungen basieren nicht auf letzter Version
           history:
             time_ago: "vor %{elapsed__time_in_words}"
             current: Aktuelle Fassung
@@ -215,7 +215,7 @@ de:
             follower: follower
             new: neu
             deleted: gelöscht
-            update_changes: "\nThis update included the following changes:%{changes}"
+            update_changes: "\nDiese Update beinhaltet folgende Änderungen:%{changes}"
         right:
           follow:
             more_options: mehr Optionen
@@ -227,11 +227,11 @@ de:
             following: Following
             follow: follow
           created:
-            following_created: Following content you created
+            following_created: Folge von dir erstellten Inhalten
             follow_if_created: folge wenn von mir erstellt
             thing_created: "%{label} von mir erstellt"
           edited:
-            following_edited: Following content you edited
+            following_edited: Folge von dir geänderten Inhalten
             follow_if_edited: folge wenn von mir geändert
             thing_edited: "%{label} von mir geändert"
           follow_defaults:

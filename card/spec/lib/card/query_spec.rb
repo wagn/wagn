@@ -1,7 +1,8 @@
 # -*- encoding : utf-8 -*-
 
 A_JOINEES = %w(B C D E F).freeze
-CARDS_MATCHING_TWO = ["Joe User", "One+Two", "One+Two+Three", "Two"].freeze
+CARDS_MATCHING_TWO = ["Joe User", "One+Two", "One+Two+Three",
+                      "script: slot+*all+*script+*machine cache", "Two"].freeze
 
 describe Card::Query do
   subject do
@@ -455,7 +456,8 @@ describe Card::Query do
 
     it "should get only content when content is explicit" do
       @query = { content: [:match, "two"] }
-      is_expected.to eq(["Joe User"])
+      is_expected.to eq(["Joe User", "script: ace+*all+*script+*machine cache",
+                         "script: slot+*all+*script+*machine cache"])
     end
 
     it "should get only name when name is explicit" do

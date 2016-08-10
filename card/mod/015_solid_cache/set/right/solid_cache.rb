@@ -6,6 +6,10 @@ def history?
   false
 end
 
+def clean_html?
+  false
+end
+
 format :html do
   view :core do |args|
     return super(args) unless card.new_card?

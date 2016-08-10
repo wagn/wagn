@@ -49,15 +49,7 @@ class Card
         if args[:name]
           new_by_attributes args.delete(:name), args
         else
-          args.each_pair do |key, val|
-            case val
-            when String then new_by_attributes key, content: val
-            when Card
-              val.name = absolutize_subcard_name key
-              new_by_card val
-            else new_by_attributes key, val
-            end
-          end
+          multi_add args
         end
       end
     end
@@ -182,6 +174,19 @@ class Card
     end
 
     private
+
+    # Handles hash with several subcards
+    def multi_add args
+      args.each_pair do |key, val|
+        case val
+        when String then new_by_attributes key, content: val
+        when Card
+          val.name = absolutize_subcard_name key
+          new_by_card val
+        else new_by_attributes key, val
+        end
+      end
+    end
 
     def subcard_key name_or_card
       key = case name_or_card

@@ -12,8 +12,10 @@ describe Card::Set::Type::CoffeeScript do
                                     content: coffee
     end
     let(:card_content) do
-      { in:           coffee,         out:     compressed_coffee,
-        changed_in:   changed_coffee, changed_out: compressed_changed_coffee }
+      { in:         coffee,
+        out:        "//coffee machine\n#{compressed_coffee}",
+        changed_in: changed_coffee,
+        changed_out: "//coffee machine\n#{compressed_changed_coffee}" }
     end
   end
 
@@ -28,8 +30,12 @@ describe Card::Set::Type::CoffeeScript do
       Card.gimme! "coffee machine+*script", type: :pointer
     end
     let(:card_content) do
-      { in:           coffee,         out:     compressed_coffee,
-        changed_in:   changed_coffee, changed_out: compressed_changed_coffee }
+      { in:          coffee,
+        out:         "//coffee input\n#{compressed_coffee}",
+        changed_in:  changed_coffee,
+        changed_out: "//coffee input\n#{compressed_changed_coffee}",
+        added_out:   "//coffee input\n#{compressed_coffee}\n"\
+                     "//more coffee input\n#{compressed_coffee}" }
     end
   end
 end

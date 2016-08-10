@@ -89,11 +89,11 @@ describe Card::Set::Type::File do
 
   it "handles urls" do
     # wagn.org is down so we need another url
-    # url = 'http://wagn.org/files/bruce_logo-large-122798.png'
-    url = "http://www.lcdmedia.de/UserFiles/Image/pages/reparatur/beamer_test.jpg"
+    url = "http://wagn.org/files/bruce_logo-large-122798.png"
+    # url = 'http://www.lcdmedia.de/UserFiles/Image/pages/reparatur/beamer_test.jpg'
 
     Card.create! name: "url test", type_id: Card::FileID, remote_file_url: url
     expect(Card["url test"].file.size).to be > 0
-    expect(Card["url test"].file.url).to match(/\.jpg$/)
+    expect(Card["url test"].file.url).to match(/\.png$/)
   end
 end

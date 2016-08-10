@@ -151,15 +151,32 @@ class Card
 
     def run_engine input_card
       return if input_card.is_a? Card::Set::Type::Pointer
+      if (cached = fetch_cache_card(input_card))
+        return cached.content
+      end
+
       input = if input_card.respond_to? :machine_input
                 input_card.machine_input
               else
                 input_card.format._render_raw
               end
-      engine(input)
+      output = engine(input)
+      cache_output_part input_card, output
+      output
     end
 
-    # attaches the input card update as subcard
+    def fetch_cache_card input_card, new=nil
+      new &&= { type_id: PlainTextID }
+      Card.fetch input_card.name, name, :machine_cache, new: new
+    end
+
+    def cache_output_part input_card, output
+      Auth.as_bot do
+        cache_card = fetch_cache_card(input_card, true)
+        cache_card.update_attributes! content: output
+      end
+    end
+
     def reset_machine_output
       Auth.as_bot do
         (moc = machine_output_card) && moc.real? && moc.delete!
@@ -168,11 +185,23 @@ class Card
     end
 
     def update_machine_output
+      lock do
+        update_input_card
+        run_machine
+      end
+    end
+
+    def regenerate_machine_output
+      lock do
+        run_machine
+      end
+    end
+
+    def lock
       if ok?(:read) && !(was_already_locked = locked?)
         Auth.as_bot do
           lock!
-          update_input_card
-          run_machine
+          yield
         end
       end
     ensure

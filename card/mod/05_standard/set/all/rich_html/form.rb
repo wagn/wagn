@@ -35,8 +35,7 @@ format :html do
 
   def process_nested_fields args
     nested_fields(args).map do |chunk|
-      nested_card = fetch_nested_card chunk.options
-      nest nested_card, chunk.options.reverse_merge(args)
+      nest chunk.options.reverse_merge(args)
     end.join "\n"
   end
 
@@ -45,13 +44,7 @@ format :html do
   # values
   def process_edit_fields fields
     fields.map do |field, opts|
-      nested_card =
-        if field.is_a?(Card)
-          field
-        else
-          fetch_nested_card inc_name: field
-        end
-      nest nested_card, opts
+      field_nest field, opts
     end.join "\n"
   end
 

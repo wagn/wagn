@@ -173,20 +173,10 @@ class Card
     def cache_output_part input_card, output
       Auth.as_bot do
         cache_card = fetch_cache_card(input_card, true)
-        # cache_card.update_columns db_content: output
-        # cache_card.expire
-        #
-        # cache = fetch_cache_card(input_card, true)
-        # cache.content = output
-        # cache.silent_change = true
-        # cache.save!
-        cache_card.update_attributes!(
-          content: output # , silent_change: true
-        )
+        cache_card.update_attributes! content: output
       end
     end
 
-    # attaches the input card update as subcard
     def reset_machine_output
       Auth.as_bot do
         (moc = machine_output_card) && moc.real? && moc.delete!

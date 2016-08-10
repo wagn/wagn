@@ -11,6 +11,12 @@ AllCops:
 Style/CommentAnnotation:
   Enabled: true
 Style/CollectionMethods:
+  # Mapping from undesired method to desired_method
+  # e.g. to use `detect` over `find`:
+  #
+  # CollectionMethods:
+  #   PreferredMethods:
+  #     find: detect
   Description: Preferred collection methods.
   Enabled: true
   PreferredMethods:
@@ -56,3 +62,9 @@ Style/Alias:
   EnforcedStyle: prefer_alias_method
 Style/EmptyCaseCondition:
   Enabled: false
+Style/FormatString:
+  EnforcedStyle: percent
+  SupportedStyles:
+    - format
+    - sprintf
+    - percent

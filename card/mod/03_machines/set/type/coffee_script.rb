@@ -12,7 +12,7 @@ include MachineInput
 store_machine_output filetype: "js"
 
 machine_input do
-  js = Uglifier.compile(compile_coffee format(:js)._render_raw)
+  js = Uglifier.compile compile_coffee(format(:js)._render_raw)
   comment_with_source js
 end
 

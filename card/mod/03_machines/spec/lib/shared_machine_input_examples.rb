@@ -57,7 +57,12 @@ shared_examples_for "machine input" do
         machine.putty
         updated_machine = Card.gimme machine.cardname
         path = updated_machine.machine_output_path
-        expect(File.read path).to eq(([card_content[:out]] * 2).join("\n"))
+        out = if card_content[:added_out]
+                card_content[:added_out]
+              else
+                ([card_content[:out]] * 2).join("\n")
+              end
+        expect(File.read path).to eq(out)
       end
     end
   end

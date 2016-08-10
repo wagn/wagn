@@ -20,8 +20,6 @@ class Card
         load_set_patterns
         load_formats
         load_sets
-
-        #refresh_script_and_style if ENV['RAILS_ENV'] == 'development'
       end
 
       def load_chunks

@@ -72,7 +72,7 @@ class Card
                   return: :name).each do |machine_name|
         next unless (cache = Card.fetch(name, machine_name, :machine_cache))
         Auth.as_bot do
-          cache.update_attributes! trash: true #, silent_change: true
+          cache.update_attributes! trash: true
         end
       end
     end

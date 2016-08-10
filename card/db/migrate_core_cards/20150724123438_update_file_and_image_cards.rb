@@ -8,7 +8,11 @@ class UpdateFileAndImageCards < Card::CoreMigration
     end
     add_skin_thumbnails
     Card::Cache.reset_all
-    Card.search(type: [:in, 'file', 'image']).each do |card|
+    update_cards_with_attachment
+  end
+
+  def update_cards_with_attachment
+    Card.search(type: [:in, "file", "image"]).each do |card|
       update_history card
       next unless card.content.present?
       update_attach_info card
@@ -31,7 +35,7 @@ class UpdateFileAndImageCards < Card::CoreMigration
       if Dir.exist? card.store_dir
         symlink_target_hash = {}
         Dir.entries(card.store_dir).each do |file|
-            next unless (new_filename = get_new_file_name(file))
+          next unless (new_filename = get_new_file_name(file))
           file_path = File.join(card.store_dir, file)
           if File.symlink?(file_path)
             symlink_target_hash[new_filename] = File.readlink(file_path)
@@ -59,9 +63,10 @@ class UpdateFileAndImageCards < Card::CoreMigration
   end
 
   def add_skin_thumbnails
-    %w(cerulean_skin cosmo_skin cyborg_skin darkly_skin flatly_skin journal_skin
-      lumen_skin paper_skin readable_skin sandstone_skin simplex_skin slate_skin
-      spacelab_skin superhero_skin united_skin yeti_skin).each do |name|
+    %w(cerulean_skin cosmo_skin cyborg_skin darkly_skin flatly_skin
+       journal_skin lumen_skin paper_skin readable_skin sandstone_skin
+       simplex_skin slate_skin spacelab_skin superhero_skin united_skin
+       yeti_skin).each do |name|
       next unless (card = Card[name.to_sym])
       card.update_attributes! codename: nil
       if (card = Card.fetch name, :image)
@@ -79,5 +84,4 @@ class UpdateFileAndImageCards < Card::CoreMigration
     filename = filename.downcase
     filename if filename != original_filename
   end
-
 end

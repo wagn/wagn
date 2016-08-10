@@ -89,7 +89,7 @@ describe Card::Set::Type::File do
 
   it "handles urls" do
     # wagn.org is down so we need another url
-    url = 'http://wagn.org/files/bruce_logo-large-122798.png'
+    url = "http://wagn.org/files/bruce_logo-large-122798.png"
     # url = 'http://www.lcdmedia.de/UserFiles/Image/pages/reparatur/beamer_test.jpg'
 
     Card.create! name: "url test", type_id: Card::FileID, remote_file_url: url

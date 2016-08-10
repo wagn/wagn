@@ -68,18 +68,14 @@ class Card
         regenerate = false
         input_cards_with_source_files(machine_card) do |i_card, files|
           files.each do |path|
-            if File.mtime(path) > mtime_output
-              i_card.expire_machine_cache
-              regenerate = true
-              break
-            end
+            next unless File.mtime(path) > mtime_output
+            i_card.expire_machine_cache
+            regenerate = true
+            break
           end
         end
         return unless regenerate
-        Auth.as_bot do
-          #(moc = machine_card.machine_output_card) && moc.real? && moc.delete!
-        end
-        #machine_card.regenerate_machine_output if regenerate
+        machine_card.regenerate_machine_output
       end
 
       def input_cards_with_source_files card

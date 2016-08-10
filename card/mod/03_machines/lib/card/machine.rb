@@ -167,7 +167,7 @@ class Card
 
     def fetch_cache_card input_card, new=nil
       new &&= { type_id: PlainTextID }
-      Card.fetch input_card.name, :machine_cache, name, new: new
+      Card.fetch input_card.name, name, :machine_cache, new: new
     end
 
     def cache_output_part input_card, output

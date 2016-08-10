@@ -91,8 +91,8 @@ class Card
     def initialize card, opts={}
       unless (@card = card)
         raise Card::Error, # 'format initialized without card'
-                           I18n.t(:exception_init_without_card,
-                                  scope: "lib.card.format")
+              I18n.t(:exception_init_without_card,
+                     scope: "lib.card.format")
       end
 
       opts.each do |key, value|
@@ -158,12 +158,12 @@ class Card
     end
 
     def main?
-      @depth == 0
+      @depth.zero?
     end
 
     def focal? # meaning the current card is the requested card
       if Env.ajax?
-        @depth == 0
+        @depth.zero?
       else
         main?
       end
@@ -189,7 +189,7 @@ class Card
         args[:skip_permissions] = true if Regexp.last_match(1)
         render view, args
       else
-        proc = proc { |*a| raw yield *a } if proc
+        proc = proc { |*a| raw yield(*a) } if proc
         response = root.template.send method, *opts, &proc
         response.is_a?(String) ? root.template.raw(response) : response
       end
@@ -209,7 +209,7 @@ class Card
       content_object.process_each_chunk do |chunk_opts|
         # Feels scary to just remove it but I can't make any sense of the
         # "yield" and all tests pass without it
-        prepare_nest chunk_opts.merge(opts) #{ yield }
+        prepare_nest chunk_opts.merge(opts)
       end
     end
 

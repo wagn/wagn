@@ -201,12 +201,6 @@ class Card
       end
     end
 
-    def regenerate_machine_output
-      #lock do
-        run_machine
-      #end
-    end
-
     def lock
       if ok?(:read) && !(was_already_locked = locked?)
         Auth.as_bot do

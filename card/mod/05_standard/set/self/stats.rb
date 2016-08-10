@@ -1,68 +1,66 @@
 
 format :html do
   view :core do |_args|
+    stats = [
+      ["cards", Card.where(trash: false)],
+      ["trashed cards", Card.where(trash: true),
+       { link_text: 'delete all', task: 'empty_trash'}],
+      ["actions", Card::Action,
+       { link_text: 'delete old', task: 'delete_old_revisions' }],
+      ["references", Card::Reference,
+       { link_text: 'repair all', task: 'repair_references' }],
+    ]
+    stats += cache_stats
+    stats += memory_stats
+    table_content = stats.map { |args| stat_row(*args) }
+    table table_content, header: %w(Stat Value Action)
+  end
+
+  def cache_stats
+    stats = [
+      ["solid cache", solid_cache_count,
+       { unit: ' cards', link_text: 'clear cache',
+         task: 'clear_solid_cache' }],
+      ["machine cache", machine_cache_count,
+       { unit: ' cards', link_text: 'clear cache',
+         task: 'clear_machine_cache' }]
+    ]
+    return stats unless Card.config.view_cache
+    stats <<
+        ["view cache", Card::ViewCache,
+         { link_text: 'clear view cache', task: 'clear_view_cache'}]
+    stats
+  end
+
+  def memory_stats
     oldmem = session[:memory]
     session[:memory] = newmem = card.profile_memory
-    stats = %(
-      <table>
-        <tr>
-          <th>Stat</th>
-          <th>Value</th>
-          <th>Action</th>
-        </tr>
-        <tr>
-          <td>cards</td>
-          <td>#{Card.where(trash: false).count}</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>trashed cards</td>
-          <td>#{Card.where(trash: true).count}</td>
-          <td>#{link_to 'delete all', card_path('update/:all?task=empty_trash')}</td>
-        </tr>
-        <tr>
-          <td>actions</td>
-          <td>#{Card::Action.count}</td>
-          <td>#{link_to 'delete old', card_path('update/:all?task=delete_old_revisions')}</td>
-        </tr>
-          <tr><td>references</td>
-          <td>#{Card::Reference.count}</td>
-          <td>#{link_to 'repair all', card_path('update/:all?task=repair_references')}</td>
-        </tr>
-        #{
-          if Card.config.view_cache
-            %{
-              <tr>
-                <td>view cache</td>
-                <td>#{Card::ViewCache.count}</td>
-                <td>#{link_to 'clear view cache',  card_path('update/:all?task=clear_view_cache')}</td>
-              </tr>
-            }
-          end
-        }
+    stats = [
+      ["memory now", newmem,
+       { unit: 'M', link_text: 'clear cache', task: 'clear_cache'} ]
+    ]
+    return stats unless oldmem
+    stats << ["memory prev", oldmem, { unit: "M" }]
+    stats << ["memory diff", newmem - oldmem, { unit: "M" }]
+    stats
+  end
 
-        <tr>
-          <td>memory now</td>
-          <td>#{newmem}M</td>
-          <td>#{link_to 'clear cache',  card_path('update/:all?task=clear_cache')}</td>
-        </tr>
-        #{if oldmem
-            %(
-              <tr>
-                <td>memory prev</td>
-                <td>#{oldmem}M</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>memory diff</td>
-                <td>#{newmem - oldmem}M</td>
-                <td></td>
-              </tr>
+  def stat_row name, countable, args={}
+    res = [name]
+    count = countable.respond_to?(:count) ? countable.count : countable
+    res << "#{count}#{args[:unit]}"
+    return res unless args[:task]
+    path = card_path("update/:all?task=#{args[:task]}")
+    res << link_to(args[:link_text] || args[:task], path)
+    res
+  end
 
-            )
-          end}
-      </table>
-    )
+  def solid_cache_count
+    Card.search right: { codename: 'solid_cache' }, return: 'count'
+  end
+
+  def machine_cache_count
+    Card.search right: { codename: 'machine_cache' }, return: 'count'
   end
 
   def delete_sessions_link months

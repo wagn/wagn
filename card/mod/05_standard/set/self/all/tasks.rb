@@ -9,9 +9,10 @@ event :admin_tasks, :initialize, on: :update do
       when :clear_view_cache     then Card::ViewCache.reset
       when :delete_old_revisions then Card::Action.delete_old
       when :repair_permissions   then Card.repair_all_permissions
+      when :clear_solid_cache    then Card.clear_solid_cache
+      when :clear_machine_cache  then Card.reset_all_machines
       end
-      Env.params[:success] = Card[:stats].name
-      abort :success
+      abort success: { card: Card[:stats] }
     else
       raise Card::PermissionDenied.new(self)
     end

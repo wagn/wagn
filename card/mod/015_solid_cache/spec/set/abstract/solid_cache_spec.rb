@@ -39,6 +39,8 @@ describe Card::Set::Abstract::SolidCache do
     end
   end
 
+  # rubocop:disable ClassAndModuleChildren
+  # rubocop:disable Documentation
   context "when cached content expired" do
     before do
       Card::Auth.as_bot do
@@ -51,15 +53,15 @@ describe Card::Set::Abstract::SolidCache do
     end
     describe ".cache_update_trigger" do
       before do
-        class Card; module Set; module Self; module Cached
-           extend Card::Set
-           include_set Card::Set::Abstract::SolidCache
+        module Card::Set::Self::Cached
+          extend Card::Set
+          include_set Card::Set::Abstract::SolidCache
 
-           ensure_set { Card::Set::Self::Volatile }
-           cache_update_trigger Card::Set::Self::Volatile do
-             Card["cached"]
-           end
-         end; end; end; end
+          ensure_set { Card::Set::Self::Volatile }
+          cache_update_trigger Card::Set::Self::Volatile do
+            Card["cached"]
+          end
+        end
       end
 
       it "updates solid cache card" do
@@ -73,7 +75,7 @@ describe Card::Set::Abstract::SolidCache do
 
     describe ".cache_expire_trigger" do
       before do
-        class Card; module Set; module Self; module Cached
+        module Card::Set::Self::Cached
           extend Card::Set
           include_set Card::Set::Abstract::SolidCache
 
@@ -81,7 +83,7 @@ describe Card::Set::Abstract::SolidCache do
           cache_expire_trigger Card::Set::Self::Volatile do
             Card["cached"]
           end
-        end; end; end; end
+        end
       end
 
       it "expires solid cache card" do
@@ -94,4 +96,6 @@ describe Card::Set::Abstract::SolidCache do
       end
     end
   end
+  # rubocop:enable ClassAndModuleChildren
+  # rubocop:enable Documentation
 end

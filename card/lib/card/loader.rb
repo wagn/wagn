@@ -36,8 +36,8 @@ class Card
           next unless File.exist? dirname
           Dir.foreach(dirname) do |filename|
             next if filename =~ /^\./
-            hash[filename.gsub(/\.html$/), ""] =
-              File.read([dirname, filename].join("/"))
+            layout_name = filename.gsub(/\.html$/, "")
+            hash[layout_name] = File.read File.join(dirname, filename)
           end
         end
       end

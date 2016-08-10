@@ -51,14 +51,14 @@ describe Card::Set::Abstract::SolidCache do
     describe ".cache_update_trigger" do
       before do
         module Card::Set::Self::Cached
-           extend Card::Set
-           include_set Card::Set::Abstract::SolidCache
+          extend Card::Set
+          include_set Card::Set::Abstract::SolidCache
 
-           ensure_set { Card::Set::Self::Volatile }
-           cache_update_trigger Card::Set::Self::Volatile do
-             Card["cached"]
+          ensure_set { Card::Set::Self::Volatile }
+          cache_update_trigger Card::Set::Self::Volatile do
+            Card["cached"]
           end
-           end
+        end
       end
 
       it "updates solid cache card" do

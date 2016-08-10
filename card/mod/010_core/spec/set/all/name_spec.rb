@@ -14,7 +14,7 @@ describe Card::Set::All::Name do
     end
 
     it "should increment again if name already exists" do
-      b1 = Card.create! type: "Book"
+      _b1 = Card.create! type: "Book"
       b2 = Card.create! type: "Book"
       expect(b2.name).to eq("b2")
     end

@@ -3,9 +3,9 @@
 class ReorganizeScripts < Card::CoreMigration
   def up
     ensure_card name: "script: mods", type_id: Card::PointerID,
-                 codename: "script_mods"
+                codename: "script_mods"
     ensure_card name: "script: editors", type_id: Card::PointerID,
-                 codename: "script_editors"
+                codename: "script_editors"
 
     update_script_rules
   end

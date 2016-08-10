@@ -4,7 +4,8 @@ class UpdateFileAndImageCards < Card::CoreMigration
   def get_new_file_name filename
     original_filename = filename
     if filename =~ /^(icon|small|medium|large|original)-([^.]+).(.+)$/
-      filename = "#{Regexp.last_match(2)}-#{Regexp.last_match(1)}.#{Regexp.last_match(3)}"
+      filename = "#{Regexp.last_match(2)}-#{Regexp.last_match(1)}"\
+                 ".#{Regexp.last_match(3)}"
     end
     filename = filename.downcase
     filename if filename != original_filename

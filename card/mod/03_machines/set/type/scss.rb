@@ -1,12 +1,6 @@
-include Type::Css
-
-def diff_args
-  { format: :text }
-end
+include_set Type::Css
 
 format do
-  include Css::Format
-
   view :core do |_args|
     compile_scss(process_content _render_raw)
   end
@@ -18,5 +12,3 @@ format do
                        "#{e.message}"
   end
 end
-
-format(:html) { include Css::HtmlFormat }

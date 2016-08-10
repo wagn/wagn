@@ -1,14 +1,15 @@
 # -*- encoding : utf-8 -*-
-require "uglifier"
+
+include_set Abstract::Script
 
 include Machine
 include MachineInput
-include_set Abstract::AceEditor
 
 store_machine_output filetype: "js"
 
 machine_input do
-  compress_js format(:js)._render_core
+  js = compress_js format(:js)._render_core
+  comment_with_source js
 end
 
 def compress_js input
@@ -26,29 +27,3 @@ rescue => e
   raise Card::Error, msg
 end
 
-def clean_html?
-  false
-end
-
-format do
-  def chunk_list  # turn off autodetection of uri's
-    :nest_only
-  end
-end
-
-format :html do
-  def default_editor_args args
-    args[:ace_mode] ||= "javascript"
-  end
-
-  view :content_changes, mod: CoffeeScript::HtmlFormat
-
-  view :core do |_args|
-    highlighted_js = ::CodeRay.scan(_render_raw, :js).div
-    process_content highlighted_js
-  end
-end
-
-def diff_args
-  { format: :text }
-end

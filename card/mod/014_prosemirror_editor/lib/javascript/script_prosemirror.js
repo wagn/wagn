@@ -12401,4 +12401,3 @@
 (function(factory) {
     factory();
 });
-//# sourceMappingURL=script_prosemirror.js.map

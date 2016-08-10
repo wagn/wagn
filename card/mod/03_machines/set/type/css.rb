@@ -52,7 +52,7 @@ format :html do
                     content_opts: { size: :icon }
   end
 
-  view :content_changes, mod: CoffeeScript::HtmlFormat
+  view :content_changes, mod: Abstract::Script::HtmlFormat
 end
 
 def diff_args

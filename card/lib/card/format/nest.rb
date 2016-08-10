@@ -7,7 +7,7 @@ class Card
       include View
 
       def nest name_or_card_or_opts, opts={}
-        nested_card  = fetch_nested_card name_or_card_or_opts, opts
+        nested_card = fetch_nested_card name_or_card_or_opts, opts
         opts = name_or_card_or_opts if name_or_card_or_opts.is_a? Hash
         opts[:inc_name] ||= nested_card.name
         nest_card nested_card, opts
@@ -34,7 +34,7 @@ class Card
           # commented nest
           opts[:comment]
         elsif content_out_of_view?
-          ''
+          ""
         elsif main_nest_within_layout? opts
           main_nest opts
         else
@@ -79,7 +79,7 @@ class Card
       end
 
       def main_nest_within_layout? opts
-        opts[:inc_name] == '_main' && show_layout? && @depth == 0
+        opts[:inc_name] == "_main" && show_layout? && @depth.zero?
       end
 
       def count_chars

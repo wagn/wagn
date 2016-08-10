@@ -3,11 +3,11 @@ class Card
     module Nest
       # Renders views for a nests
       module View
-        NEST_MODES  = { new: :edit,
-                        closed_content: :closed,
-                        setup: :edit,
-                        edit: :edit, closed: :closed, layout: :layout,
-                        normal: :normal, template: :template }.freeze
+        NEST_MODES = { new: :edit,
+                       closed_content: :closed,
+                       setup: :edit,
+                       edit: :edit, closed: :closed, layout: :layout,
+                       normal: :normal, template: :template }.freeze
 
         def nest_render view, opts
           optional_render nest_view(view), opts
@@ -45,10 +45,9 @@ class Card
         # if nested in edit mode
         def view_in_edit_mode homeview
           not_in_form =
-            Card::Format.perms[homeview] == :none || # view configured not to keep
-              # in form
-              card.structure || # not yet nesting structures
-                card.key.blank? # eg {{_self|type}} on new cards
+            Card::Format.perms[homeview] == :none || # view configured not to keep in form
+            card.structure || # not yet nesting structures
+            card.key.blank? # eg {{_self|type}} on new cards
 
           not_in_form ? :blank : :edit_in_form
         end
@@ -57,13 +56,13 @@ class Card
         # if nested in closed mode
         def view_in_closed_mode homeview
           approved_view = Card::Format.closed[homeview]
-          if approved_view == true then
+          if approved_view == true
             homeview
-          elsif Card::Format.error_code[homeview] then
+          elsif Card::Format.error_code[homeview]
             homeview
-          elsif approved_view then
+          elsif approved_view
             approved_view
-          elsif !card.known? then
+          elsif !card.known?
             :closed_missing
           else
             :closed_content

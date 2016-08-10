@@ -323,12 +323,10 @@ describe Card::Set::All::Permissions do
         @u3.fetch(trait: :roles, new: {}).items = [@r1]
       end
 
-      %(        u1 u2 u3
-        c1(r1)  T  T  T
-        c2(r2)  T  T  F
-        c3(r3)  T  F  F
-      )
-
+      #          u1 u2 u3
+      #  c1(r1)  T  T  T
+      #  c2(r2)  T  T  F
+      #  c3(r3)  T  F  F
       assert_equal true,  @c1.writeable_by(@u1), "c1 writeable by u1"
       assert_equal true,  @c1.writeable_by(@u2), "c1 writeable by u2"
       assert_equal true,  @c1.writeable_by(@u3), "c1 writeable by u3"

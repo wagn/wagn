@@ -68,7 +68,8 @@ describe Card::Content::Chunk::URI, "URI chunk tests" do
                    host: "moinmoin.wikiwikiweb.de",
                    path: "/HelpOnNavigation"
   end
-  it "works with some path at the end, and without http:// prefix (@link_text has prefix added)" do
+  it "works with some path at the end, and without http:// prefix "\
+     "(@link_text has prefix added)" do
     match_http_uri "moinmoin.wikiwikiweb.de/HelpOnNavigation",
                    host: "moinmoin.wikiwikiweb.de",
                    path: "/HelpOnNavigation",
@@ -91,7 +92,8 @@ describe Card::Content::Chunk::URI, "URI chunk tests" do
                    path: "/HelpOnNavigation", query: "arg=val"
   end
   it "works on Query with two arguments" do
-    match_http_uri "http://www.example.com.tw:80/HelpOnNavigation?arg=val&arg2=val2",
+    match_http_uri "http://www.example.com.tw:80/HelpOnNavigation"\
+                   "?arg=val&arg2=val2",
                    host: "www.example.com.tw", port: 80,
                    path: "/HelpOnNavigation", query: "arg=val&arg2=val2"
   end
@@ -132,7 +134,8 @@ describe Card::Content::Chunk::URI, "URI chunk tests" do
     match_http_uri(
       "http://www.example.com.tw:80/~jdoe123/Help%20Me%20?arg=val&arg2=val2",
       host: "www.example.com.tw", port: 80,
-      path: "/~jdoe123/Help%20Me%20", query: "arg=val&arg2=val2")
+      path: "/~jdoe123/Help%20Me%20", query: "arg=val&arg2=val2"
+    )
 
     # from 0.9 bug reports
     match_uri "http://www2.pos.to/~tosh/ruby/rdtool/en/doc/rd-draft.html",
@@ -233,7 +236,8 @@ describe Card::Content::Chunk::URI, "URI chunk tests" do
       "This text contains a URL http://someplace.org:8080/~person/stuff.cgi" \
       "?arg=val, doesn't it?",
       scheme: "http", host: "someplace.org", port: 8080,
-      path: "/~person/stuff.cgi", query: "arg=val")
+      path: "/~person/stuff.cgi", query: "arg=val"
+    )
   end
 
   describe Card::Content::Chunk::URI, "URI chunk tests" do

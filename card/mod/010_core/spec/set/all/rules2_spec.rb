@@ -51,16 +51,21 @@ describe Card do
         sets = Card["Cardtype A"].related_sets.map { |s| s[0] }
         expect(sets).to eq(["Cardtype A+*type", "Cardtype A+*right"])
       end
-      #      it "should show type plus right sets when they exist" do
-      #        Card::Auth.as_bot { Card.create name: 'Basic+A+*type plus right', content: '' }
-      #        sets = Card['A'].related_sets
-      #        sets.should == ['A+*self', 'A+*right', 'Basic+A+*type plus right']
-      #      end
-      #      it "should show type plus right sets when they exist, and type" do
-      #        Card::Auth.as_bot { Card.create name: 'Basic+Cardtype A+*type plus right', content: '' }
-      #        sets = Card['Cardtype A'].related_sets
-      #        sets.should == ['Cardtype A+*self', 'Cardtype A+*type', 'Cardtype A+*right', 'Basic+Cardtype A+*type plus right']
-      #      end
+      # it "should show type plus right sets when they exist" do
+      #   Card::Auth.as_bot do
+      #     Card.create name: 'Basic+A+*type plus right', content: ''
+      #   end
+      #   sets = Card['A'].related_sets
+      #   sets.should == ['A+*self', 'A+*right', 'Basic+A+*type plus right']
+      # end
+      # it "should show type plus right sets when they exist, and type" do
+      #   Card::Auth.as_bot do
+      #     Card.create name: 'Basic+Cardtype A+*type plus right', content: ''
+      #   end
+      #   sets = Card['Cardtype A'].related_sets
+      #   sets.should == ['Cardtype A+*self', 'Cardtype A+*type',
+      #     'Cardtype A+*right', 'Basic+Cardtype A+*type plus right']
+      # end
       it "is empty for a non-simple card" do
         sets = Card["A+B"].related_sets.map { |s| s[0] }
         expect(sets).to eq([])
@@ -181,8 +186,7 @@ describe Card do
           c.content = "2"
           c.save!
         else
-          c = Card.create! name: "CardtypeE+*type+*table of content",
-                           content: "2"
+          Card.create! name: "CardtypeE+*type+*table of content", content: "2"
         end
       end
     end

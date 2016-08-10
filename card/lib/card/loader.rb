@@ -36,7 +36,7 @@ class Card
           next unless File.exist? dirname
           Dir.foreach(dirname) do |filename|
             next if filename =~ /^\./
-            hash[filename.gsub /\.html$/, ""] =
+            hash[filename.gsub(/\.html$/), ""] =
               File.read([dirname, filename].join("/"))
           end
         end
@@ -164,7 +164,8 @@ class Card
 
       def make_set_module_tmp_dir mod_dir, seq
         modname = mod_dir.match(%r{[^/]+$})[0]
-        mod_tmp_dir = "#{Card.paths['tmp/set'].first}/mod#{'%03d' % seq}-#{modname}"
+        mod_tmp_dir = File.join Card.paths["tmp/set"].first,
+                                "mod#{'%03d' % seq}-#{modname}"
         Dir.mkdir mod_tmp_dir
         mod_tmp_dir
       end

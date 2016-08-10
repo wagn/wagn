@@ -62,23 +62,27 @@ class Card
       conjunction:     %w(and or all any),
       special:         %w(found_by not sort match complete extension_type),
       ignore:          %w(prepend append view params vars size)
-    }.inject({}) { |h, pair| pair[1].each { |v| h[v.to_sym] = pair[0] }; h }
+    }.each_with_object({}) do |pair, h|
+      pair[1].each { |v| h[v.to_sym] = pair[0] }
+    end
 
     CONJUNCTIONS = { any: :or, in: :or, or: :or, all: :and, and: :and }.freeze
 
     MODIFIERS = %w(conj return sort sort_as group dir limit offset)
-                .inject({}) { |h, v| h[v.to_sym] = nil; h }
+                .each_with_object({}) { |v, h| h[v.to_sym] = nil }
 
-    OPERATORS = %w(!= = =~ < > in ~).inject({}) { |h, v| h[v] = v; h }.merge({
-      eq: "=", gt: ">", lt: "<", match: "~", ne: "!=", "not in" => nil
-    }.stringify_keys)
+    OPERATORS =
+      %w(!= = =~ < > in ~).each_with_object({}) { |v, h| h[v] = v }.merge(
+        {
+          eq: "=", gt: ">", lt: "<", match: "~", ne: "!=", "not in" => nil
+        }.stringify_keys
+      )
 
     DEFAULT_ORDER_DIRS = { update: "desc", relevance: "desc" }.freeze
 
     attr_reader :statement, :mods, :conditions, :comment,
                 :subqueries, :superquery
     attr_accessor :joins, :table_seq, :unjoined, :conditions_on_join
-
 
     # Query Execution
 

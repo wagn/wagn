@@ -5,6 +5,6 @@ class AddSolidCacheCards < Card::Migration
     ensure_card name: "*solid cache",
                 codename: "solid_cache"
     ensure_card name: "*solid cache+*right+*read",
-                content: '_left'
+                content: "_left"
   end
 end

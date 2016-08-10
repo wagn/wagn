@@ -170,7 +170,9 @@ shared_examples_for "pointer machine" do |filetype|
                            content: card_content[:changed_in]
           ca.save!
           changed_path = subject.machine_output_path
-          out = card_content[:changed_out].gsub(input_name, 'non-existent input')
+          input_name = machine_input_card.name
+          out =
+            card_content[:changed_out].gsub(input_name, 'non-existent input')
           expect(File.read(changed_path)).to eq(out)
         end
       end

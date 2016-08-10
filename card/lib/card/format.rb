@@ -15,8 +15,8 @@ class Card
     # FIXME: should be set in views
 
     cattr_accessor :ajax_call, :registered
-    [:perms, :denial, :closed, :error_code, :view_tags, :aliases
-    ].each do |accessor_name|
+    [:perms, :denial, :closed, :error_code,
+     :view_tags, :aliases].each do |accessor_name|
       cattr_accessor accessor_name
       send "#{accessor_name}=", {}
     end

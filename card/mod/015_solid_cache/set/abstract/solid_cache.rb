@@ -12,7 +12,7 @@ card_accessor :solid_cache, type: :html
 
 format :html do
   def default_core_args args
-    args[:solid_cache] = true unless args.has_key?(:solid_cache)
+    args[:solid_cache] = true unless args.key?(:solid_cache)
   end
 
   view :core do |args|
@@ -47,16 +47,17 @@ module ClassMethods
     )
   end
 
-  def define_event_to_update_expired_cached_cards set_of_changed_card, args, method_name
+  def define_event_to_update_expired_cached_cards set_of_changed_card, args,
+                                                  method_name
     args[:on] ||= [:create, :update, :delete]
     name = event_name set_of_changed_card, args
     Card::Set.register_set set_of_changed_card
     set_of_changed_card.event name, :finalize, args do
-        Array(yield(self)).compact.each do |expired_cache_card|
-          next unless expired_cache_card.solid_cache?
-          expired_cache_card.send method_name
-        end
+      Array(yield(self)).compact.each do |expired_cache_card|
+        next unless expired_cache_card.solid_cache?
+        expired_cache_card.send method_name
       end
+    end
   end
 
   def event_name set, args
@@ -79,6 +80,11 @@ def update_solid_cache
   return unless solid_cache?
   new_content = format(:html)._render_core(solid_cache: false)
   return unless new_content
+  write_to_solid_cache new_content
+  new_content
+end
+
+def write_to_solid_cache new_content
   Auth.as_bot do
     if solid_cache_card.new_card?
       solid_cache_card.update_attributes! content: new_content
@@ -87,5 +93,4 @@ def update_solid_cache
       solid_cache_card.expire
     end
   end
-  new_content
 end

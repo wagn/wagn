@@ -13,7 +13,7 @@ def self.mod_name backtrace
 end
 
 def self.tmp_mod_dir backtrace
-  path = backtrace.find { |path| path.include? "tmp/set/" }
+  path = backtrace.find { |line| line.include? "tmp/set/" }
   raise Error, "couldn't find set path in backtrace: #{backtrace}" unless path
   path_parts = path.split(File::SEPARATOR)
   path_parts.fetch(path_parts.index("set") + 1) do

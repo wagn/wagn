@@ -121,7 +121,7 @@ ActiveRecord::Schema.define(version: 20160122153608) do
     t.string "version", limit: 255, null: false
   end
 
-  add_index "schema_migrations_core_cards", ["version"], name: "unique_schema_migrations_cards", unique: true, using: :btree
+  add_index "schema_migrations_core_cards", ["version"], name: "unique_schema_migrations_core_cards", unique: true, using: :btree
 
   create_table "schema_migrations_deck_cards", id: false, force: :cascade do |t|
     t.string "version", limit: 255, null: false

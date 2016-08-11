@@ -12,7 +12,7 @@ event :admin_tasks, :initialize, on: :update do
   when :clear_solid_cache    then Card.clear_solid_cache
   when :clear_machine_cache  then Card.reset_all_machines
   end
-  abort success
+  abort :success
 end
 
 format :html do

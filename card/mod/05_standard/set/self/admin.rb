@@ -1,7 +1,31 @@
+event :admin_tasks, :initialize, on: :update do
+  return unless (task = Env.params[:task])
+  raise Card::PermissionDenied.new(self) unless Auth.always_ok?
+
+  case task.to_sym
+  when :clear_cache          then Card::Cache.reset_all
+  when :repair_references    then Card::Reference.repair_all
+  when :empty_trash          then Card.empty_trash
+  when :clear_view_cache     then Card::ViewCache.reset
+  when :delete_old_revisions then Card::Action.delete_old
+  when :repair_permissions   then Card.repair_all_permissions
+  when :clear_solid_cache    then Card.clear_solid_cache
+  when :clear_machine_cache  then Card.reset_all_machines
+  end
+  abort success
+end
 
 format :html do
   view :core do |_args|
-    stats = [
+    stats = card_stats
+    stats += cache_stats
+    stats += memory_stats
+    table_content = stats.map { |args| stat_row(*args) }
+    table table_content, header: %w(Stat Value Action)
+  end
+
+  def card_stats
+    [
       ["cards", Card.where(trash: false)],
       ["trashed cards", Card.where(trash: true),
        { link_text: "delete all", task: "empty_trash" }],
@@ -10,10 +34,6 @@ format :html do
       ["references", Card::Reference,
        { link_text: "repair all", task: "repair_references" }]
     ]
-    stats += cache_stats
-    stats += memory_stats
-    table_content = stats.map { |args| stat_row(*args) }
-    table table_content, header: %w(Stat Value Action)
   end
 
   def cache_stats
@@ -50,7 +70,7 @@ format :html do
     count = countable.respond_to?(:count) ? countable.count : countable
     res << "#{count}#{args[:unit]}"
     return res unless args[:task]
-    path = card_path("update/:all?task=#{args[:task]}")
+    path = card_path("update/:admin?task=#{args[:task]}")
     res << link_to(args[:link_text] || args[:task], path)
     res
   end
@@ -65,7 +85,7 @@ format :html do
 
   def delete_sessions_link months
     link_to months,
-            card_path("update/:all?task=delete_old_sessions&months=#{months}")
+            card_path("update/:admin?task=delete_old_sessions&months=#{months}")
   end
 end
 

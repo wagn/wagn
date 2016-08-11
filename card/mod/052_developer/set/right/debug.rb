@@ -3,7 +3,7 @@ def virtual?
 end
 
 format :html do
-  view :core do |args|
+  view :core do |_args|
     subject = card.left
     [
       ["Set Modules", subject.set_modules],
@@ -26,7 +26,7 @@ format :html do
          h(cache_card.send(field)),
          h(db_card.send(field))]
       end,
-      header: ["Field", "Cache Val", "Database Val"],
+      header: ["Field", "Cache Val", "Database Val"]
     )
   end
 
@@ -37,4 +37,3 @@ format :html do
     )
   end
 end
-

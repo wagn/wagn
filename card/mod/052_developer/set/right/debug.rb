@@ -5,7 +5,6 @@ end
 format :html do
   view :core do |args|
     subject = card.left
-    binding.pry
     [
       ["Set Modules", subject.set_modules],
       ["Set Patterns", subject.patterns.map(&:to_s)],

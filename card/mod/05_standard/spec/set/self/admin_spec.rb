@@ -1,11 +1,18 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Self::Admin do
-  before do
-    @admin = Card[:admin]
+  it "should render a table" do
+    Card::Auth.as_bot do
+      @core = render_card :core, name: :stats
+    end
+    assert_view_select @core, "table"
   end
 
   context "#update" do
+    before do
+      @admin = Card[:admin]
+    end
+
     it "should trigger empty trash (with right params)" do
       Card::Auth.as_bot do
         Card["A"].delete!

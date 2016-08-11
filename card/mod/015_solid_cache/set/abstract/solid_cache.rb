@@ -32,6 +32,8 @@ module ClassMethods
   # @option args [Symbol, Array of symbols] :on the action(s)
   #   (:create, :update, or :delete) on which the cache update
   #   should be triggered. Default is all actions.
+  # @option args [Stage] :in_stage the stage when the update is executed.
+  #   Default is :integrate
   # @yield return an array of cards with solid cache that need to be updated
   def cache_update_trigger set_of_changed_card, args={}, &block
     define_event_to_update_expired_cached_cards(
@@ -51,8 +53,9 @@ module ClassMethods
                                                   method_name
     args[:on] ||= [:create, :update, :delete]
     name = event_name set_of_changed_card, args
+    stage = args[:in_stage] || :integrate
     Card::Set.register_set set_of_changed_card
-    set_of_changed_card.event name, :finalize, args do
+    set_of_changed_card.event name, stage, args do
       Array(yield(self)).compact.each do |expired_cache_card|
         next unless expired_cache_card.solid_cache?
         expired_cache_card.send method_name

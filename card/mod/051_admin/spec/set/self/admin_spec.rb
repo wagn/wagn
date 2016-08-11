@@ -3,7 +3,7 @@
 describe Card::Set::Self::Admin do
   it "should render a table" do
     Card::Auth.as_bot do
-      @core = render_card :core, name: :stats
+      @core = render_card :core, name: :admin
     end
     assert_view_select @core, "table"
   end

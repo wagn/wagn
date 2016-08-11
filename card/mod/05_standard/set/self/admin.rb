@@ -26,29 +26,31 @@ format :html do
 
   def card_stats
     [
-      ["cards", Card.where(trash: false)],
-      ["trashed cards", Card.where(trash: true),
-       { link_text: "delete all", task: "empty_trash" }],
-      ["actions", Card::Action,
-       { link_text: "delete old", task: "delete_old_revisions" }],
-      ["references", Card::Reference,
-       { link_text: "repair all", task: "repair_references" }]
+      ["cards",         { count: Card.where(trash: false) }],
+      ["trashed cards", { count: Card.where(trash: true),
+                          link_text: "delete all", task: "empty_trash" }],
+      ["actions",       { count: Card::Action,
+                          link_text: "delete old",
+                          task: "delete_old_revisions" }],
+      ["references",    { count: Card::Reference,
+                          link_text: "repair all", task: "repair_references" }]
     ]
   end
 
   def cache_stats
     stats = [
-      ["solid cache", solid_cache_count,
-       { unit: " cards", link_text: "clear cache",
-         task: "clear_solid_cache" }],
-      ["machine cache", machine_cache_count,
-       { unit: " cards", link_text: "clear cache",
-         task: "clear_machine_cache" }]
+      ["solid cache", { count: solid_cache_count, unit: " cards",
+                        link_text: "clear cache",
+                        task: "clear_solid_cache" }],
+      ["machine cache", { count: machine_cache_count, unit: " cards",
+                          link_text: "clear cache",
+                          task: "clear_machine_cache" }]
     ]
     return stats unless Card.config.view_cache
     stats <<
-      ["view cache", Card::ViewCache,
-       { link_text: "clear view cache", task: "clear_view_cache" }]
+      ["view cache", { count: Card::ViewCache,
+                       link_text: "clear view cache",
+                       task: "clear_view_cache" }]
     stats
   end
 
@@ -56,19 +58,19 @@ format :html do
     oldmem = session[:memory]
     session[:memory] = newmem = card.profile_memory
     stats = [
-      ["memory now", newmem,
-       { unit: "M", link_text: "clear cache", task: "clear_cache" }]
+      ["memory now", { count: newmem, unit: "M",
+                       link_text: "clear cache", task: "clear_cache" }]
     ]
     return stats unless oldmem
-    stats << ["memory prev", oldmem, { unit: "M" }]
-    stats << ["memory diff", newmem - oldmem, { unit: "M" }]
+    stats << ["memory prev", { count: oldmem, unit: "M" }]
+    stats << ["memory diff", { count: newmem - oldmem, unit: "M" }]
     stats
   end
 
-  def stat_row name, countable, args={}
+  def stat_row name, args={}
     res = [name]
-    count = countable.respond_to?(:count) ? countable.count : countable
-    res << "#{count}#{args[:unit]}"
+    args[:count] = args[:count].count if args[:count].respond_to?(:count)
+    res << "#{args[:count]}#{args[:unit]}"
     return res unless args[:task]
     path = card_path("update/:admin?task=#{args[:task]}")
     res << link_to(args[:link_text] || args[:task], path)
@@ -95,7 +97,6 @@ end
 
 def profile_memory &block
   before = current_memory_usage
-  _file, _line, = caller[0].split(":")
   if block_given?
     instance_eval(&block)
   else

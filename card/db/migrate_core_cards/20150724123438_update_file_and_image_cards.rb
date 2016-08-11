@@ -20,7 +20,7 @@ class UpdateFileAndImageCards < Card::CoreMigration
     end
   end
 
-  def update_attach_info card
+  def update_db_content card
     attach_array = card.content.split "\n"
     attach_array[0].match(/\.(.+)$/) do |_match|
       extension = Regexp.last_match(1)

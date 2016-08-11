@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::Set::Self::All do
+describe Card::Set::Self::Admin do
   before do
-    @all = Card[:all]
+    @admin = Card[:admin]
   end
 
   context "#update" do
@@ -11,7 +11,7 @@ describe Card::Set::Self::All do
         Card["A"].delete!
         expect(Card.where(trash: true)).not_to be_empty
         Card::Env.params[:task] = :empty_trash
-        @all.update_attributes({})
+        @admin.update_attributes({})
         expect(Card.where(trash: true)).to be_empty
       end
     end
@@ -23,7 +23,7 @@ describe Card::Set::Self::All do
         a.update_attributes! content: "another day"
         expect(a.actions.count).to eq(3)
         Card::Env.params[:task] = :delete_old_revisions
-        @all.update_attributes({})
+        @admin.update_attributes({})
         expect(a.actions.count).to eq(1)
       end
     end

@@ -27,7 +27,8 @@ format :html do
     # since i18n-tasks doesn't understand bulk lookups, tell it keys are used
     # i18n-tasks-use t(:sign_in, scope: 'mod.05_standard.set.self.signin')
     # i18n-tasks-use t(:or_sign_up, scope: 'mod.05_standard.set.self.signin')
-    # i18n-tasks-use t(:reset_password, scope: 'mod.05_standard.set.self.signin')
+    # i18n-tasks-use t(:reset_password,
+    #                  scope: 'mod.05_standard.set.self.signin')
     args[:buttons] = button_tag sign_in, situation: "primary"
     if Card.new(type_id: Card::SignupID).ok? :create
       args[:buttons] += link_to(or_sign_up, card_path("account/signup"))
@@ -36,7 +37,8 @@ format :html do
       "<div style='float:right'>" \
       "#{view_link reset_password, :edit,
                    path_opts: { slot: { hide: :toolbar } }}" \
-      "</div>") # FIXME: hardcoded styling
+      "</div>"
+    ) # FIXME: hardcoded styling
     args
   end
 

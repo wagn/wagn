@@ -78,11 +78,11 @@ format :html do
       I18n.t(:howto_add_keys, scope: "mod.05_standard.set.self.admin_info"),
       [
         # "1. Register your domain at #{web_link 'http://google.com/recaptcha'}"
-        I18n.t(:howto_register, 
+        I18n.t(:howto_register,
                scope: "mod.05_standard.set.self.admin_info",
                recaptcha_link: web_link("http://google.com/recaptcha")),
         # "2. Add your keys to #{card_link :recaptcha_settings}"
-        I18n.t(:howto_add, 
+        I18n.t(:howto_add,
                scope: "mod.05_standard.set.self.admin_info",
                recaptcha_settings: card_link(:recaptcha_settings))
       ]
@@ -95,11 +95,11 @@ format :html do
       I18n.t(:howto_turn_off, scope: "mod.05_standard.set.self.admin_info"),
       [
         # "1. Go to #{card_link :captcha}"
-        I18n.t(:howto_go, 
+        I18n.t(:howto_go,
                scope: "mod.05_standard.set.self.admin_info",
                captcha_card: card_link(:captcha)),
         # '2. Update all *captcha rules to "no".'
-        I18n.t(:howto_update, 
+        I18n.t(:howto_update,
                scope: "mod.05_standard.set.self.admin_info")
       ]
     )

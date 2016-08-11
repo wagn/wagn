@@ -13,7 +13,7 @@ format :html do
                    update: "<pre>#{subject.events(:update)}</pre>",
                    delete: "<pre>#{subject.events(:delete)}</pre>")],
       ["Cache/DB Comparison", comparison_table(subject)]
-    ].map { |args| section(*args) }
+    ].map { |item| section(*item) }
   end
 
   def comparison_table subject

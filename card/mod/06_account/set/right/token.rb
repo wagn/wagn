@@ -44,9 +44,7 @@ def term_from_string string
   return "permanent" if string == "none"
   re_match = /^(\d+)[\.\s]*(#{DURATIONS})s?$/.match(string)
   number, unit = re_match.captures if re_match
-  if unit
-    number.to_i.send unit
-  else
-    raise Card::Oops, "illegal expiration value (eg '2 days')"
-  end
+
+  raise Card::Oops, "illegal expiration value (eg '2 days')" unless unit
+  number.to_i.send unit
 end

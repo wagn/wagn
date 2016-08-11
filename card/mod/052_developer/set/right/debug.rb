@@ -5,7 +5,7 @@ end
 format :html do
   view :core do |_args|
     subject = card.left
-    [
+    output [
       ["Set Modules", subject.set_modules],
       ["Set Patterns", subject.patterns.map(&:to_s)],
       ["Events",

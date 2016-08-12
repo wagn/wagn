@@ -37,27 +37,23 @@ module ClassMethods
 end
 
 def save!(*)
-  act do
-    super
-  end
+  act { super }
 end
 
 def save(*)
-  act do
-    super
-  end
+  act { super }
 end
 
-def update_attributes opts
-  act do
-    super opts
-  end
+def valid?(*)
+  act { super }
 end
 
-def update_attributes! opts
-  act do
-    super opts
-  end
+def update_attributes(*)
+  act { super }
+end
+
+def update_attributes!(*)
+  act { super }
 end
 
 def abortable

@@ -129,7 +129,7 @@ class Card
       end
 
       def add_class options, klass
-        options[:class] = [options[:class], klass].flatten.compact * " "
+        options[:class] = [options[:class], klass].flatten.uniq.compact * " "
       end
 
       def id_counter

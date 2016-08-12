@@ -1,6 +1,10 @@
 class Card
   def act opts={}
-    if !DirectorRegister.act_card
+    if DirectorRegister.act_card
+      # director.reset_stage
+      # self.only_storage_phase = true
+      main_act_block = false
+    else
       DirectorRegister.clear
       self.director = nil
       DirectorRegister.act_card = self
@@ -8,8 +12,6 @@ class Card
       if opts[:success]
         Env[:success] = Success.new(cardname, Env.params[:success])
       end
-    else
-      main_act_block = false
     end
     yield
   ensure

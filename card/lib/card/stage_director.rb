@@ -192,7 +192,7 @@ class Card
     end
 
     def run_single_stage stage, &block
-      return unless valid_next_stage? stage
+      return true unless valid_next_stage? stage
       # puts "#{@card.name}: #{stage} stage".red
 
       @stage = stage_index stage

@@ -21,7 +21,7 @@
 #
 # Examples:
 # ~22/33-medium.png
-# :yeti_skin/05_standard-large.png
+# :yeti_skin/standard-large.png
 
 module CarrierWave::Uploader::Versions
   private

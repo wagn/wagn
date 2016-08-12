@@ -67,7 +67,7 @@ de:
         format:
           exception_alias_fail: cannot find %{optview} view in %{optmod}; failed to alias %{view} in %{self}
   mod:
-    :01_core:
+    :core:
       format:
         html_format:
           unknown_layout: "Unbekanntes Layout: %{name}"
@@ -145,7 +145,7 @@ de:
           label_setfollow_typeplusright_cards: alle "+%{right}" an "%{type}s"
         :08_self:
           label_set_self_card: Die Karte "%{name}"
-    :01_history:
+    :history:
       set:
         all:
           content_history:
@@ -158,7 +158,7 @@ de:
             save_as_current: Als aktuelle Fassung speichern
             show_changes: Zeige Änderungen
             hide_changes: Verstecke Änderungen
-    :02_basic_types:
+    :basic_types:
       set:
         abstract:
           code_file:
@@ -177,7 +177,7 @@ de:
             comment_style_group: STYLE GROUP
             search_opt_names_ptr: option names for pointer
     #:03_machines: # No language-specific items known to be present in Ruby files
-    :04_settings:
+    :settings:
       lib:
         card:
           setting:
@@ -202,7 +202,7 @@ de:
         type:
           setting:
             search_all_setting: Alle Einstellungs-Karten
-    :05_email:
+    :email:
       set:
         all:
           follow:
@@ -249,7 +249,7 @@ de:
               problems_card: Probleme mit %{cardname}
               sign_in: anmelden
               please_sign_in: Bitte %{sign_in}
-    :05_standard:
+    :standard:
       set:
         all:
           comment:
@@ -544,4 +544,4 @@ de:
             email_off: "WARNING: E-Mail-Versand ist deaktiviert. Ändere die Einstellung in %{path} um bei neuen Registrierungen Benachrichtigungen zu senden."
             set_up: Anlegen
             setting_up: Lege an
-    #:06_bootstrap: #No known language-specfic messages
+    #:bootstrap: #No known language-specfic messages

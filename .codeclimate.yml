@@ -28,9 +28,9 @@ ratings:
 exclude_paths:
 - wagn/rails/assets/**/*
 - card/mod/**/lib/javascript/*.js
-- card/mod/03_machines/lib/javascript/**/*
-- card/mod/03_machines/lib/javascript/**/*
-- card/mod/06_bootstrap/lib/javascript/**/*
+- card/mod/machines/lib/javascript/**/*
+- card/mod/machines/lib/javascript/**/*
+- card/mod/bootstrap/lib/javascript/**/*
 - card/db/**/*
 - card/spec/**/*
 - wagn/spec/**/*

@@ -15,7 +15,7 @@ def find_action_by_params args
       action
     end
   # revision id is probalby a mod (e.g. if you request
-  # files/:logo/05_standard.png)
+  # files/:logo/standard.png)
   elsif args[:rev_id]
     last_action
   end

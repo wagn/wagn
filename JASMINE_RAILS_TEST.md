@@ -3,7 +3,7 @@
 
 #### Explanation
   Most of the things are same with default settings. However, the `src_dir` and `css_dir` are not working as they are pointed to `app/assets` folder which is the default path of the asset pipeline. The important setting is `include_dir`. This will inlcude things outside app folder into the asset pipeline. That means, things inside Wagn gem and folder `mod` can be included in this way.
-  For core testing, the default settings now will include the js and coffee inside `mod/03_machines/lib/javascript`. For mod development, the default settings now will include the js and coffee inside `mod`.
+  For core testing, the default settings now will include the js and coffee inside `mod/machines/lib/javascript`. For mod development, the default settings now will include the js and coffee inside `mod`.
 
 
 #### How to run

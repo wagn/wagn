@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require File.expand_path("../../../../../03_machines/spec/lib/"\
+require File.expand_path("../../../../../machines/spec/lib/"\
                          "shared_machine_examples.rb", __FILE__)
 
 describe Card::Set::Right::Style do

@@ -24,11 +24,11 @@ src_files:
 
 # list of file expressions to include as css files
 # relative path from css_dir
-css_files: 
+css_files:
     # - "**/*.{css,scss}"
 # THIS IS IMPORTANT!!
 include_dir: "mod"
-  #- <%= Cardio.gem_root+"/mod/03_machines/lib/javascript" %>
+  #- <%= Cardio.gem_root+"/mod/machines/lib/javascript" %>
 # path to parent directory of spec_files
 # relative path from Rails.root
 #

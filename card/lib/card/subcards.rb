@@ -5,7 +5,7 @@
 #
 # Subcards can be added as card objects or attribute hashes.
 #
-# Use the methods defined in 01_core/set/all/subcards.rb
+# Use the methods defined in core/set/all/subcards.rb
 # Example
 # Together with "my address" you want to create the subcards
 # "my address+name", "my address+street", etc.

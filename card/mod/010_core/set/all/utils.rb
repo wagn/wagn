@@ -115,4 +115,3 @@ def inspect
 
   "#<Card##{id}[#{debug_type}](#{name})#{error_messages}{#{tags * ','}}"
 end
-

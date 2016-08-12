@@ -5,7 +5,7 @@ class Card
     # A basket can be defined on a format or directly on a set
     #
     # @example:
-    #   # mod/01_core/set/self/head.rb:
+    #   # mod/core/set/self/head.rb:
     #   basket :basket_on_set
     #
     #   format :html do
@@ -13,7 +13,7 @@ class Card
     #     view :core { output basket(:js_tags) }
     #   end
     #
-    #   # mod/02_shell/set/self/head.rb:
+    #   # mod/shell/set/self/head.rb:
     #   add_to_basket :basket_on_set, 'hello world'
     #
     #   format :html do

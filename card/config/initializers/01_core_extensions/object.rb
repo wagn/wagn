@@ -39,5 +39,9 @@ module CoreExtensions
         instance_variable_set v, instance_variable_get(v).deep_clone
       end
     end
+
+    def in? other
+      other.include? self
+    end
   end
 end

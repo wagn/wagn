@@ -14,7 +14,7 @@
 #    scope values correspond to the path to the source file where the
 #    translation lookup occurs, relative to the root of the 'card' gem,
 #    with slashes replaced by dots and the final .rb extension omitted.
-#    So, a scope might be 
+#    So, a scope might be
 #      'lib.card.format.render' or 'mod.01_core.set.all.permisssions'
 #    Although there isn't a common prefix for all scopes, scopes begin
 #    with either 'lib.card' or 'mod.0d_modname' and these patterns are
@@ -34,7 +34,7 @@ en:
       format:
         exception_init_without_card: format initialized without card
   mod:
-    :05_standard:
+    :standard:
       set:
         self:
           account_links:

@@ -3,9 +3,9 @@ AllCops:
     - "vendor/**/*"
     - "card/db/schema.rb"
     - "card/tmpsets/**/*"
-    - "card/mod/06_bootstrap/lib/**/*"
-    - "card/mod/03_machines/lib/javascript/**/*"
-    - "card/mod/03_machines/lib/stylesheets/**/*"
+    - "card/mod/bootstrap/lib/**/*"
+    - "card/mod/machines/lib/javascript/**/*"
+    - "card/mod/machines/lib/stylesheets/**/*"
     - "wagn/lib/wagn/generators/wagn/templates/Gemfile"
 
 Style/CommentAnnotation:

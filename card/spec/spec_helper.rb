@@ -11,8 +11,8 @@ require File.expand_path("../../db/seed/test/seed.rb", __FILE__)
 require File.expand_path("../../lib/card/simplecov_helper.rb", __FILE__)
 require "simplecov"
 
-require File.expand_path("../../mod/03_machines/spec/lib/shared_machine_examples.rb", __FILE__)
-require File.expand_path("../../mod/03_machines/spec/lib/shared_machine_input_examples.rb", __FILE__)
+require File.expand_path("../../mod/machines/spec/lib/shared_machine_examples.rb", __FILE__)
+require File.expand_path("../../mod/machines/spec/lib/shared_machine_input_examples.rb", __FILE__)
 
 Spork.prefork do
   if ENV["RAILS_ROOT"]

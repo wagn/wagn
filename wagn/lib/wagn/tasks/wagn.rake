@@ -304,9 +304,9 @@ namespace :wagn do
 
           # make card a mod file card
           mod_name = if (l = card.left) && l.type_id == Card::SkinID
-                       "06_bootstrap"
+                       "bootstrap"
                      else
-                       "05_standard"
+                       "standard"
                      end
           card.update_column :db_content,
                              card.attachment.db_content(mod: mod_name)

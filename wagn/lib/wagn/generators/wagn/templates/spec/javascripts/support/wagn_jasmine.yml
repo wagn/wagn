@@ -2,7 +2,7 @@
 # relative path from Rails.root
 # defaults to app/assets/javascripts
 # useless for wagn file structure
-src_dir: <%= @cardio_gem_root %>/mod/03_machines/lib/javascript
+src_dir: <%= @cardio_gem_root %>/mod/machines/lib/javascript
 #"app/assets/javascripts"
 
 # path to additional directory of source file that are not part of assets pipeline and need to be included
@@ -15,7 +15,7 @@ src_dir: <%= @cardio_gem_root %>/mod/03_machines/lib/javascript
 # relative path from Rails.root
 # defaults to app/assets/stylesheets
 # useless for wagn file structure
-css_dir: <%= @cardio_gem_root %>/mod/03_machines/lib/stylesheets
+css_dir: <%= @cardio_gem_root %>/mod/machines/lib/stylesheets
 
 # list of file expressions to include as source files
 # relative path from src_dir
@@ -29,12 +29,12 @@ src_files:
  - wagn_navbox.js.coffee
  - wagn.js.coffee
  - script_card_menu.js
- # - jquerymobile.js 
- - jquery-ui.js 
- - jquery.ui.autocomplete.html.js 
- - jquery.autosize.js 
- - jquery.fileupload.js 
- - jquery.iframe-transport.js 
+ # - jquerymobile.js
+ - jquery-ui.js
+ - jquery.ui.autocomplete.html.js
+ - jquery.autosize.js
+ - jquery.fileupload.js
+ - jquery.iframe-transport.js
  - jquery_ujs.js
  - script_ace.js
  - script_prosemirror.js
@@ -42,11 +42,11 @@ src_files:
 
 # list of file expressions to include as css files
 # relative path from css_dir
-css_files: 
+css_files:
     # - "**/*.{css,scss}"
 # THIS IS IMPORTANT!!!
 include_dir:
-  - <%= @cardio_gem_root %>/mod/03_machines/lib/javascript
+  - <%= @cardio_gem_root %>/mod/machines/lib/javascript
 # path to parent directory of spec_files
 # relative path from Rails.root
 #

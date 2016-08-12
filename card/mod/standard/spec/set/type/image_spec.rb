@@ -102,10 +102,10 @@ describe Card::Set::Type::Image do
       expect(subject.image.size).to be > 0
     end
     it "has correct url" do
-      expect(subject.image.url).to eq "/files/:logo/05_standard-original.png"
+      expect(subject.image.url).to eq "/files/:logo/standard-original.png"
     end
     it "has correct url as content" do
-      expect(subject.content).to eq ":#{subject.codename}/05_standard.png"
+      expect(subject.content).to eq ":#{subject.codename}/standard.png"
     end
 
     it "becomes a regular file when changed" do
@@ -121,14 +121,14 @@ describe Card::Set::Type::Image do
 
     describe "#mod_file?" do
       it "returns the mod name" do
-        expect(subject.mod_file?).to eq("05_standard")
+        expect(subject.mod_file?).to eq("standard")
       end
     end
 
     describe "source view" do
       it "renders url with medium version" do
         expect(subject.format.render_source)
-          .to eq "/files/:#{subject.codename}/05_standard-medium.png"
+          .to eq "/files/:#{subject.codename}/standard-medium.png"
       end
     end
   end

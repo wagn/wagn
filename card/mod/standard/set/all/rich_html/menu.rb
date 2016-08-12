@@ -14,44 +14,55 @@ format :html do
   view :menu_link do |args|
     path_opts = { slot: { home_view: args[:home_view] } }
     path_opts[:is_main] = true if main?
-    css_class = if show_view?(:horizontal_menu, args.merge(default_visibility: :hide, optional: true))
-                  "visible-xs"
-                else
-                  "show-on-hover"
-                end
+    css_class =
+      if show_view?(:horizontal_menu,
+                    args.merge(default_visibility: :hide, optional: true))
+        "visible-xs"
+      else
+        "show-on-hover"
+      end
     wrap_with :div, class: "vertical-card-menu card-menu #{css_class}" do
       content_tag :div, class: "btn-group slotter card-slot pull-right" do
-        view_link(glyphicon(args[:menu_icon]), :vertical_menu, path_opts: path_opts).html_safe
+        view_link(
+          glyphicon(args[:menu_icon]), :vertical_menu,
+          path_opts: path_opts
+        ).html_safe
       end
     end
   end
 
   view :vertical_menu, tags: :unknown_ok do |args|
-    items = menu_item_list(args).map { |item| "<li class='#{args[:item_class]}'>#{item}</li>" }.join "\n"
+    items = menu_item_list(args).map do |item|
+              "<li class='#{args[:item_class]}'>#{item}</li>"
+            end.join "\n"
     wrap_with :ul, class: "btn-group pull-right slotter" do
       [
-        content_tag(:span, "<a href='#'>#{glyphicon args[:menu_icon]}</a>".html_safe,
-                    class: "open-menu dropdown-toggle", "data-toggle" => "dropdown", "aria-expanded" => "false"),
+        content_tag(:span,
+                    "<a href='#'>#{glyphicon args[:menu_icon]}</a>".html_safe,
+                    class: "open-menu dropdown-toggle",
+                    "data-toggle" => "dropdown", "aria-expanded" => "false"),
         content_tag(:ul, items.html_safe, class: "dropdown-menu", role: "menu")
       ]
     end
   end
 
   view :horizontal_menu do |args|
-    content_tag :div, class: "btn-group slotter pull-right card-menu horizontal-card-menu hidden-xs" do
-      menu_item_list(args.merge(html_args: { class: "btn btn-default" })).join("\n").html_safe
+    content_tag :div, class: "btn-group slotter pull-right card-menu "\
+                             "horizontal-card-menu hidden-xs" do
+      menu_item_list(args.merge(html_args: { class: "btn btn-default" }))
+        .join("\n").html_safe
     end
   end
 
   def menu_item_list args
     menu_items = []
-    menu_items << menu_edit_link(args)            if args[:show_menu_item][:edit]
-    menu_items << menu_discuss_link(args)         if args[:show_menu_item][:discuss]
-    menu_items << _render_follow_link(args.merge(icon: true)) if args[:show_menu_item][:follow]
-    menu_items << menu_page_link(args)            if args[:show_menu_item][:page]
-    menu_items << menu_rules_link(args)           if args[:show_menu_item][:rules]
-    menu_items << menu_account_link(args)         if args[:show_menu_item][:account]
-    menu_items << menu_more_link(args)            if args[:show_menu_item][:more]
+    menu_items << menu_edit_link(args)    if args[:show_menu_item][:edit]
+    menu_items << menu_discuss_link(args) if args[:show_menu_item][:discuss]
+    menu_items << menu_follow_link(args)  if args[:show_menu_item][:follow]
+    menu_items << menu_page_link(args)    if args[:show_menu_item][:page]
+    menu_items << menu_rules_link(args)   if args[:show_menu_item][:rules]
+    menu_items << menu_account_link(args) if args[:show_menu_item][:account]
+    menu_items << menu_more_link(args)    if args[:show_menu_item][:more]
     menu_items
   end
 
@@ -61,7 +72,12 @@ format :html do
   end
 
   def menu_discuss_link args
-    menu_item("discuss", "comment", { related: Card[:discussion].key }, args[:html_args])
+    menu_item("discuss", "comment", { related: Card[:discussion].key },
+              args[:html_args])
+  end
+
+  def menu_follow_link args
+    _render_follow_link(args.merge(icon: true))
   end
 
   def menu_page_link args
@@ -86,7 +102,8 @@ format :html do
   end
 
   def menu_item text, icon, target, html_args={}
-    link_text = "#{glyphicon(icon)}<span class='menu-item-label'>#{text}</span>".html_safe
+    link_text =
+      "#{glyphicon(icon)}<span class='menu-item-label'>#{text}</span>".html_safe
     smart_link link_text, target, html_args || {}
   end
 
@@ -107,14 +124,15 @@ format :html do
     disc_tagname = Card.quick_fetch(:discussion).cardname
     disc_card =
       unless card.new_card? || card.junction? &&
-             card.cardname.tag_name.key == disc_tagname.key
+                               card.cardname.tag_name.key == disc_tagname.key
         Card.fetch "#{card.name}+#{disc_tagname}", skip_modules: true, new: {}
       end
 
     res = {
-      discuss:    disc_card && disc_card.ok?(disc_card.new_card? ? :comment : :read),
-      page:       card.name.present? && !main?,
-      rules:      card.virtual?
+      discuss: disc_card &&
+               disc_card.ok?(disc_card.new_card? ? :comment : :read),
+      page:    card.name.present? && !main?,
+      rules:   card.virtual?
     }
     if card.real?
       res.merge!(

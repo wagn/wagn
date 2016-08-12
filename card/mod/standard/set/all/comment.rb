@@ -33,7 +33,8 @@ format do
   def comment_form
     card_form :update do
       %(
-        #{hidden_field_tag('card[name]', card.name) if card.new_card? # FIXME: wish we had more generalized solution for names.
+        #{hidden_field_tag('card[name]', card.name) if card.new_card?
+          # FIXME: wish we had more generalized solution for names.
           # without this, nonexistent cards will often take left's linkname.
           # (needs test)
         }

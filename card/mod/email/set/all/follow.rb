@@ -156,7 +156,9 @@ end
 def followed_field? field_card
   (follow_field_rule = rule_card(:follow_fields)) ||
     follow_field_rule.item_names.find do |item|
-      item.to_name.key == field_card.key || (item.to_name.key == Card[:includes].key && included_card_ids.include?(field_card.id))
+      item.to_name.key == field_card.key ||
+        (item.to_name.key == Card[:includes].key &&
+         included_card_ids.include?(field_card.id))
     end
 end
 
@@ -203,11 +205,10 @@ def all_direct_follower_ids_with_reason
     set_names.each do |set_name|
       set_card = Card.fetch(set_name)
       set_card.all_user_ids_with_rule_for(:follow).each do |user_id|
-        if !visited.include?(user_id) &&
-           (follow_option = follow_rule_applies?(user_id))
-          visited << user_id
-          yield(user_id, set_card: set_card, option: follow_option)
-        end
+        next if visited.include?(user_id) ||
+                !(follow_option = follow_rule_applies?(user_id))
+        visited << user_id
+        yield(user_id, set_card: set_card, option: follow_option)
       end
     end
   end

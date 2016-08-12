@@ -25,7 +25,6 @@ class Card
 
       def each type=nil
         super() do |path|
-          binding.pry if path.is_a? Symbol
           dirname = type ? File.join(path, type.to_s) : path
           next unless Dir.exist? dirname
           yield dirname
@@ -65,9 +64,8 @@ class Card
 
       def tmp_dir modname, type
         index = @mods.index modname
-        binding.pry unless index
         File.join Card.paths["tmp/#{type}"].first,
-                  "mod#{'%03d' % (index+1)}-#{modname}"
+                  "mod#{'%03d' % (index + 1)}-#{modname}"
       end
     end
   end

@@ -10,8 +10,8 @@ describe Card::Set::All::Templating do
         expect(c.structuree_names.sort).to eq(
           ["Big Brother", "Joe Admin", "Joe Camel", "Joe User", "John",
            "Narcissist", "No Count", "Optic fan", "Sample User", "Sara",
-           "Sunglasses fan", "u1", "u2", "u3"
-          ])
+           "Sunglasses fan", "u1", "u2", "u3"]
+        )
       end
     end
   end
@@ -37,7 +37,7 @@ describe Card::Set::All::Templating do
         @bt.save!
       end
       jb = @jb.refresh true
-      expect(jb.format.render :raw).to eq("Tomorrow")
+      expect(jb.format.render(:raw)).to eq("Tomorrow")
       expect(jb.type_id).to eq(Card::PhraseID)
     end
 
@@ -55,7 +55,7 @@ describe Card::Set::All::Templating do
 
   describe "with right default" do
     before do
-      Card::Auth.as_bot  do
+      Card::Auth.as_bot do
         @bt = Card.create! name: "birthday+*right+*default",
                            type: "Date",
                            content: "Today!"

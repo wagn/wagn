@@ -66,7 +66,8 @@ describe Card::Set::Type::ListedBy do
         end
         it do
           is_expected.to eq(
-            ["50 grades of shy", "Adventures of Buckleharry Finn", "Parry Hotter"]
+            ["50 grades of shy", "Adventures of Buckleharry Finn",
+             "Parry Hotter"]
           )
         end
       end

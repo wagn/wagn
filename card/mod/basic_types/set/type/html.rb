@@ -17,5 +17,3 @@ format do
     :references
   end
 end
-
-

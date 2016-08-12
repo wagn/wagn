@@ -149,8 +149,7 @@ format :html do
                    disable_with: "Renaming",
                    class: "renamer-updater"),
      button_tag("Rename", data: { disable_with: "Renaming" }, class: "renamer"),
-     cancel_button(href: path)
-    ].join "\n"
+     cancel_button(href: path)].join "\n"
   end
 
   view :edit_type, perms: :update do |args|

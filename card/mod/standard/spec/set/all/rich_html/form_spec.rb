@@ -31,13 +31,17 @@ describe Card::Set::All::RichHtml::Form do
   context "type and header" do
     it "should render type without no-edit class when no cards of type" do
       card = Card["UserForm"]  # no cards with this type
-      expect(card.format.render_type).to match(/<a[^>]* class="([^"]*)?\bcardtype\b[^"]*"/)
-      expect(card.format.render_type).not_to match(/<a[^>]* class="([^"]*)?\bno-edit\b[^"]*"/)
+      expect(card.format.render_type)
+        .to match(/<a[^>]* class="([^"]*)?\bcardtype\b[^"]*"/)
+      expect(card.format.render_type)
+        .not_to match(/<a[^>]* class="([^"]*)?\bno-edit\b[^"]*"/)
     end
     it "should render type header with no-edit class when cards of type exist" do
       no_edit_card = Card["cardtype a"]
-      expect(no_edit_card.format.render_type).to match(/<a[^>]* class="([^"]*)?\bcardtype\b[^"]*"/)
-      expect(no_edit_card.format.render_type).to match(/<a[^>]* class="([^"]*)?\bno-edit\b[^"]*"/)
+      expect(no_edit_card.format.render_type)
+        .to match(/<a[^>]* class="([^"]*)?\bcardtype\b[^"]*"/)
+      expect(no_edit_card.format.render_type)
+        .to match(/<a[^>]* class="([^"]*)?\bno-edit\b[^"]*"/)
     end
   end
 end

@@ -23,12 +23,9 @@ format :html do
     # 'ADMINISTRATOR WARNING'
     admin_warn = I18n.t(:admin_warn,
                         scope: "mod.05_standard.set.self.admin_info")
-    "<h6>#{admin_warn}</h6>".html_safe + list_tag(
+    "<h6>#{admin_warn}</h6>".html_safe + list_group(
       warnings,
-      class: "list-group",
-      items: {
-        class: "list-group-item list-group-item-warning"
-      }
+      items: { class: "list-group-item-warning" }
     )
   end
 
@@ -67,8 +64,7 @@ format :html do
   end
 
   def instructions title, steps
-    steps = list_tag steps, class: "list-group",
-                            items: { class: "list-group-item" }
+    steps = list_group steps
     "#{title}#{steps}"
   end
 

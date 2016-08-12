@@ -269,11 +269,12 @@ describe Card::Set::All::TrackedAttributes do
     context "blues" do
       before do
         Card::Auth.as_bot do
-          [["Blue", ""],
-           ["blue includer 1", "{{Blue}}"],
-           ["blue includer 2", "{{blue|closed;other:stuff}}"],
-           ["blue linker 1", "[[Blue]]"],
-           ["blue linker 2", "[[blue]]"]
+          [
+            ["Blue", ""],
+            ["blue includer 1", "{{Blue}}"],
+            ["blue includer 2", "{{blue|closed;other:stuff}}"],
+            ["blue linker 1", "[[Blue]]"],
+            ["blue linker 2", "[[blue]]"]
           ].each do |name, content|
             Card.create! name: name, content: content
           end

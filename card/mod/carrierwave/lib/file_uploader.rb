@@ -72,7 +72,7 @@ class FileUploader < CarrierWave::Uploader::Base
                  "#{mod}#{extension}"
                else
                  "#{action_id}#{extension}"
-    end
+               end
   end
 
   def url opts={}

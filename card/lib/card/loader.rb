@@ -90,7 +90,7 @@ class Card
 
       def load_set_patterns
         generate_set_pattern_tmp_files if rewrite_tmp_files?
-        load_dir Card.paths['tmp/set_pattern'].first
+        load_dir Card.paths["tmp/set_pattern"].first
       end
 
       def generate_set_pattern_tmp_files

@@ -1,6 +1,9 @@
 format :html do
   def slot_options args
-    @@slot_option_keys ||= Card::Content::Chunk::Include.options.reject { |k| k == :view }.unshift :home_view
+    @@slot_option_keys ||=
+      Card::Content::Chunk::Include.options
+                                   .reject { |k| k == :view }
+                                   .unshift :home_view
     options_hash = {}
 
     if @context_names.present?
@@ -9,9 +12,8 @@ format :html do
 
     options_hash[:subslot] = "true" if args[:subslot]
 
-    @@slot_option_keys.inject(options_hash) do |hash, opt|
+    @@slot_option_keys.each_with_object(options_hash) do |opt, hash|
       hash[opt] = args[opt] if args[opt].present?
-      hash
     end
 
     JSON(options_hash)
@@ -19,7 +21,7 @@ format :html do
 
   # Does two main things:
   # (1) gives CSS classes for styling and
-  # (2) adds card data for javascript — including the "card-slot" class,
+  # (2) adds card data for javascript - including the "card-slot" class,
   #     which in principle is not supposed to be in styles
   def wrap args={}
     @slot_view = @current_view
@@ -92,8 +94,11 @@ format :html do
           panel(args) do
             [
               _optional_render(:header, args, :show),
-              _optional_render(:subheader, args, (show_subheader ? :show : :hide)),
-              _optional_render(:help, args.merge(help_class: "alert alert-info"), :hide),
+              _optional_render(:subheader, args,
+                               (show_subheader ? :show : :hide)),
+              _optional_render(:help,
+                               args.merge(help_class: "alert alert-info"),
+                               :hide),
               wrap_body(args) { output(yield(args)) }
             ]
           end
@@ -107,7 +112,8 @@ format :html do
       [
         _optional_render(:menu, args.merge(optional_horizontal_menu: :hide)),
         _optional_render(:subheader, args, :show),
-        _optional_render(:help, args.merge(help_class: "alert alert-info"), :hide),
+        _optional_render(:help, args.merge(help_class: "alert alert-info"),
+                         :hide),
         panel(args) do
           [
             _optional_render(:header, args, :hide),

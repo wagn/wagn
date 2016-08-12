@@ -20,25 +20,33 @@ format :html do
         item = { value: value, uri: URI.escape(value) }
         case tag.downcase
         when "h1"
-          item[:depth] = dep = 1; toc << item
+          item[:depth] = dep = 1
+          toc << item
         when "h2"
           toc << []  if dep == 1
-          item[:depth] = dep = 2; toc.last << item
+          item[:depth] = dep = 2
+          toc.last << item
         end
         %(<a name="#{item[:uri]}"></a>#{match})
       end
     end
 
     if toc.flatten.length >= min
-      content.replace %( <div class="table-of-contents"> <h5>Table of Contents</h5> ) +
-                      make_table_of_contents_list(toc) + "</div>" + content
+      content.replace(
+        %( <div class="table-of-contents"> <h5>Table of Contents</h5> ) +
+          make_table_of_contents_list(toc) + "</div>" + content
+      )
     end
   end
 
   def make_table_of_contents_list items
     list = items.map do |i|
-      Array === i ? make_table_of_contents_list(i) : %(<li><a href="##{i[:uri]}"> #{i[:value]}</a></li>)
-    end.join("\n")
+             if i.is_a?(Array)
+               make_table_of_contents_list(i)
+             else
+               %(<li><a href="##{i[:uri]}"> #{i[:value]}</a></li>)
+             end
+           end.join("\n")
     "<ol>" + list + "</ol>"
   end
 end

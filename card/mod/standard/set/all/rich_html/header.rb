@@ -14,7 +14,8 @@ format :html do
 
   def default_header_args args
     args[:optional_toolbar] ||= :show if @slot_view == :open && toolbar_pinned?
-    if show_view?(:toolbar, args.merge(default_visibility: :hide)) && card.type_code != :basic
+    if show_view?(:toolbar, args.merge(default_visibility: :hide)) &&
+       card.type_code != :basic
       args[:optional_type_info] ||= :show
     end
   end
@@ -30,7 +31,12 @@ format :html do
   end
 
   view :toggle do |args|
-    verb, adjective, direction = (args[:toggle_mode] == :close ? %w(open open expand) : %w(close closed collapse-down))
+    verb, adjective, direction =
+      if args[:toggle_mode] == :close
+        %w(open open expand)
+      else
+        %w(close closed collapse-down)
+      end
 
     link_to  glyphicon(direction),
              path(view: adjective),

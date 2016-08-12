@@ -7,7 +7,8 @@ describe Card::Set::Type::Set do
       expect(Card.fetch("*all plus").junction_only?).to be_truthy
       expect(Card.fetch("Book+*type").junction_only?).to be_falsey
       expect(Card.fetch("*to+*right").junction_only?).to be_truthy
-      expect(Card.fetch("Book+*to+*type plus right").junction_only?).to be_truthy
+      expect(Card.fetch("Book+*to+*type plus right").junction_only?)
+        .to be_truthy
     end
   end
 

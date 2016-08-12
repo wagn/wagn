@@ -134,11 +134,11 @@ module Cardio
     def migration_paths type
       list = paths["db/migrate#{schema_suffix type}"].to_a
       if type == :deck_cards
-        list += Card::Loader.mod_dirs.map do |p|
-          Dir.glob "#{p}/db/migrate_cards"
-        end.flatten
+        Card::Loader.mod_dirs.each('db/migrate_cards') do |path|
+          list += Dir.glob path
+        end
       end
-      list
+      list.flatten
     end
 
     def assume_migrated_upto_version type

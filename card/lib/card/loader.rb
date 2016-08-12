@@ -23,31 +23,25 @@ class Card
       end
 
       def load_chunks
-        mod_dirs.each do |mod|
-          load_dir "#{mod}/chunk/*.rb"
+        mod_dirs.each(:chunk) do |dir|
+          load_dir dir
         end
       end
 
       def load_layouts
-        mod_dirs.each_with_object({}) do |mod, hash|
-          dirname = "#{mod}/layout"
-          next unless File.exist? dirname
+        hash = {}
+        mod_dirs.each(:layout) do |dirname|
           Dir.foreach(dirname) do |filename|
             next if filename =~ /^\./
             layout_name = filename.gsub(/\.html$/, "")
             hash[layout_name] = File.read File.join(dirname, filename)
           end
         end
+        hash
       end
 
       def mod_dirs
-        @@mod_dirs ||= begin
-          Card.paths["mod"].existent.map do |dirname|
-            Dir.entries(dirname).sort.map do |filename|
-              "#{dirname}/#{filename}" if filename !~ /^\./
-            end.compact
-          end.flatten.compact
-        end
+        @mod_dirs ||= Loader::ModDirs.new(Card.paths["mod"].existent)
       end
 
       def refresh_script_and_style
@@ -96,15 +90,13 @@ class Card
 
       def load_set_patterns
         generate_set_pattern_tmp_files if rewrite_tmp_files?
-        load_dir "#{Card.paths['tmp/set_pattern'].first}/*.rb"
+        load_dir Card.paths['tmp/set_pattern'].first
       end
 
       def generate_set_pattern_tmp_files
         prepare_tmp_dir "tmp/set_pattern"
         seq = 100
-        mod_dirs.each do |mod|
-          dirname = "#{mod}/set_pattern"
-          next unless Dir.exist? dirname
+        mod_dirs.each(:set_pattern) do |dirname|
           Dir.entries(dirname).sort.each do |filename|
             m = filename.match(/^(\d+_)?([^\.]*).rb/)
             key = m && m[2]
@@ -119,8 +111,8 @@ class Card
       def load_formats
         # cheating on load issues now by putting all inherited-from formats in
         # core mod.
-        mod_dirs.each do |mod|
-          load_dir "#{mod}/format/*.rb"
+        mod_dirs.each(:format) do |dir|
+          load_dir dir
         end
       end
 
@@ -133,35 +125,25 @@ class Card
 
       def generate_tmp_set_modules
         return unless prepare_tmp_dir "tmp/set"
-        seq = 1
-        mod_dirs.each do |mod_dir|
-          mod_tmp_dir = make_set_module_tmp_dir mod_dir, seq
-          Dir.glob("#{mod_dir}/set/**/*.rb").each do |abs_filename|
-            rel_filename = abs_filename.gsub "#{mod_dir}/set/", ""
+        mod_dirs.each_with_tmp(:set) do |mod_dir, mod_tmp_dir|
+          Dir.mkdir mod_tmp_dir
+          Dir.glob("#{mod_dir}/**/*.rb").each do |abs_filename|
+            rel_filename = abs_filename.gsub "#{mod_dir}/", ""
             tmp_filename = "#{mod_tmp_dir}/#{rel_filename}"
             Set.write_tmp_file abs_filename, tmp_filename, rel_filename
           end
-          seq += 1
         end
       end
 
       def load_tmp_set_modules
         patterns = Card.set_patterns.reverse.map(&:pattern_code)
                        .unshift "abstract"
-        Dir.glob("#{Card.paths['tmp/set'].first}/*").sort.each do |tmp_mod|
+        mod_dirs.each_tmp(:set) do |set_tmp_dir|
           patterns.each do |pattern|
-            pattern_dir = "#{tmp_mod}/#{pattern}"
-            load_dir "#{pattern_dir}/**/*.rb" if Dir.exist? pattern_dir
+            pattern_dir = "#{set_tmp_dir}/#{pattern}"
+            load_dir "#{pattern_dir}/**" if Dir.exist? pattern_dir
           end
         end
-      end
-
-      def make_set_module_tmp_dir mod_dir, seq
-        modname = mod_dir.match(%r{[^/]+$})[0]
-        mod_tmp_dir = File.join Card.paths["tmp/set"].first,
-                                "mod#{'%03d' % seq}-#{modname}"
-        Dir.mkdir mod_tmp_dir
-        mod_tmp_dir
       end
 
       def prepare_tmp_dir path
@@ -181,7 +163,7 @@ class Card
       end
 
       def load_dir dir
-        Dir[dir].sort.each do |file|
+        Dir["#{dir}/*.rb"].sort.each do |file|
           # puts Benchmark.measure("from #load_dir: rd: #{file}") {
           require_dependency file
           # }.format('%n: %t %r')

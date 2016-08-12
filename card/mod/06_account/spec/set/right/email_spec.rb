@@ -28,7 +28,7 @@ describe Card::Set::Right::Email do
   context "+*account+*email" do
     context "update" do
       before :each do
-        @email_card = email_card = Card["u1"].account.email_card
+        @email_card = Card["u1"].account.email_card
       end
 
       it "should downcase email" do
@@ -40,7 +40,8 @@ describe Card::Set::Right::Email do
 
       it "should require valid email" do
         @email_card.update_attributes content: "boop"
-        expect(@email_card.errors[:content].first).to match(/must be valid address/)
+        expect(@email_card.errors[:content].first)
+          .to match(/must be valid address/)
       end
 
       it "should require unique email" do

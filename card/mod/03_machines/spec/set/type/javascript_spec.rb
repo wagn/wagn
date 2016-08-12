@@ -6,8 +6,8 @@ describe Card::Set::Type::JavaScript do
   let(:changed_js)            { 'alert( "Hello" );' }
   let(:compressed_changed_js) { 'alert("Hello");'   }
 
-  def comment_with_source
-
+  def comment_with_source content, source="test javascript"
+    "//#{source}\n#{content}"
   end
 
   it_should_behave_like "content machine", that_produces_js do
@@ -16,9 +16,9 @@ describe Card::Set::Type::JavaScript do
     end
     let(:card_content) do
       { in:          js,
-        out:         "//test javascript\n#{compressed_js}",
+        out:         comment_with_source(compressed_js),
         changed_in:  changed_js,
-        changed_out: "//test javascript\n#{compressed_changed_js}" }
+        changed_out: comment_with_source(compressed_changed_js) }
     end
   end
 
@@ -34,9 +34,9 @@ describe Card::Set::Type::JavaScript do
     end
     let(:card_content) do
       { in:          js,
-        out:         "//test javascript\n#{compressed_js}",
+        out:         comment_with_source(compressed_js),
         changed_in:  changed_js,
-        changed_out:  "//test javascript\n#{compressed_changed_js}",
+        changed_out: comment_with_source(compressed_changed_js),
         added_out:   "//test javascript\n#{compressed_js}\n"\
                      "//more javascript\n#{compressed_js}" }
     end

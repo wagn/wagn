@@ -15,11 +15,12 @@ class UpdateFileAndImageCards < Card::CoreMigration
     Card.search(type: [:in, "file", "image"]).each do |card|
       update_history card
       next unless card.content.present?
-      update_attach_info card
+      update_db_content card
+      update_filenames card
     end
   end
 
-  def update_attach_info card
+  def update_db_content card
     attach_array = card.content.split "\n"
     attach_array[0].match(/\.(.+)$/) do |_match|
       extension = Regexp.last_match(1)
@@ -30,26 +31,31 @@ class UpdateFileAndImageCards < Card::CoreMigration
         card.update_column :db_content,
                            "~#{card.id}/#{card.last_action_id}.#{extension}"
       end
+    end
+  end
 
-      # swap variant and action_id/type_code in file name
-      if Dir.exist? card.store_dir
-        symlink_target_hash = {}
-        Dir.entries(card.store_dir).each do |file|
-          next unless (new_filename = get_new_file_name(file))
-          file_path = File.join(card.store_dir, file)
-          if File.symlink?(file_path)
-            symlink_target_hash[new_filename] = File.readlink(file_path)
-            File.unlink file_path
-          else
-            FileUtils.mv file_path, File.join(card.store_dir, new_filename)
-          end
-        end
-        symlink_target_hash.each do |symlink, target|
-          new_target_name = get_new_file_name(target)
-          File.symlink File.join(card.store_dir, new_target_name),
-                       File.join(card.store_dir, symlink)
+  # swap variant and action_id/type_code in file name
+  def update_filenames card
+    return unless Dir.exist? card.store_dir
+    symlink_target_hash =
+      Dir.entries(card.store_dir).each_with_object({}) do |file, symlink_target|
+        next unless (new_filename = get_new_file_name(file))
+        file_path = File.join(card.store_dir, file)
+        if File.symlink?(file_path)
+          symlink_target[new_filename] = File.readlink(file_path)
+          File.unlink file_path
+        else
+          FileUtils.mv file_path, File.join(card.store_dir, new_filename)
         end
       end
+    update_symlinks symlink_target_hash
+  end
+
+  def update_symlinks symlink_targets
+    symlink_targets.each do |symlink, target|
+      new_target_name = get_new_file_name target
+      File.symlink File.join(card.store_dir, new_target_name),
+                   File.join(card.store_dir, symlink)
     end
   end
 

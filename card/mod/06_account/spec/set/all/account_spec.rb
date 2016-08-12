@@ -131,7 +131,7 @@ describe Card::Set::All::Account do
       # includes lots of account rules...
       Card::Auth.as("joe_admin") do
         ids = Card::Auth.as_card.read_rules
-        expect(ids.length).to eq(@read_rules.size + 13)
+        expect(ids.length).to eq(@read_rules.size + 14)
       end
     end
   end

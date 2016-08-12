@@ -10,7 +10,7 @@ format :html do
     ]
   end
 
-  view :sign_up, perms: ->(_r) { !Auth.signed_in? && Card.new(type_id: Card::SignupID).ok?(:create) },
+  view :sign_up, perms: ->(r) { r.show_signup_link? },
                  denial: :blank do |_args|
     # 'Sign up'
     link_to(I18n.t(:sign_up, scope: "mod.05_standard.set.self.account_links"),
@@ -24,7 +24,7 @@ format :html do
             card_path(":signin"), id: "signin-link")
   end
 
-  view :invite, perms: ->(_r) {  Auth.signed_in? && Card.new(type_id: Card.default_accounted_type_id).ok?(:create) },
+  view :invite, perms: ->(r) { r.show_invite_link? },
                 denial: :blank do |_args|
     # 'Invite'
     link_to(I18n.t(:invite, scope: "mod.05_standard.set.self.account_links"),
@@ -52,4 +52,14 @@ format :html do
       render_raw args
     end
   end
+
+  def show_signup_link?
+    !Auth.signed_in? && Card.new(type_id: Card::SignupID).ok?(:create)
+  end
+
+  def show_invite_link?
+    Auth.signed_in? &&
+      Card.new(type_id: Card.default_accounted_type_id).ok?(:create)
+  end
 end
+

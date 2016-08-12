@@ -9,7 +9,7 @@ def account
 end
 
 def accountable?
-  Card.toggle(rule :accountable)
+  Card.toggle(rule(:accountable))
 end
 
 def parties
@@ -34,7 +34,7 @@ def read_rules
     rule_ids = []
     unless id == Card::WagnBotID # always_ok, so not needed
       ([Card::AnyoneID] + parties).each do |party_id|
-        if rule_ids_for_party = self.class.read_rule_cache[party_id]
+        if (rule_ids_for_party = self.class.read_rule_cache[party_id])
           rule_ids += rule_ids_for_party
         end
       end

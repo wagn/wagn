@@ -58,14 +58,14 @@ event :setup_as_bot, before: :check_permissions, on: :create,
   # flexibility and security when configuring initial setups
 end
 
-event :setup_first_user, :prepare_to_store, on: :create,
-                                            when: proc { Card::Env.params[:setup] } do
+event :setup_first_user, :prepare_to_store,
+      on: :create, when: proc { Card::Env.params[:setup] } do
   add_subcard "signup alert email+*to", content: name
   add_subfield :roles, content: Card[:administrator].name
 end
 
-event :signin_after_setup, :integrate, on: :create,
-                                       when: proc { Card::Env.params[:setup] } do
+event :signin_after_setup, :integrate,
+      on: :create, when: proc { Card::Env.params[:setup] } do
   Auth.signin id
 end
 

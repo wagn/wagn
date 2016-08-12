@@ -1,17 +1,24 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::Set::Self::All do
-  before do
-    @all = Card[:all]
+describe Card::Set::Self::Admin do
+  it "should render a table" do
+    Card::Auth.as_bot do
+      @core = render_card :core, name: :admin
+    end
+    assert_view_select @core, "table"
   end
 
   context "#update" do
+    before do
+      @admin = Card[:admin]
+    end
+
     it "should trigger empty trash (with right params)" do
       Card::Auth.as_bot do
         Card["A"].delete!
         expect(Card.where(trash: true)).not_to be_empty
         Card::Env.params[:task] = :empty_trash
-        @all.update_attributes({})
+        @admin.update_attributes({})
         expect(Card.where(trash: true)).to be_empty
       end
     end
@@ -23,7 +30,7 @@ describe Card::Set::Self::All do
         a.update_attributes! content: "another day"
         expect(a.actions.count).to eq(3)
         Card::Env.params[:task] = :delete_old_revisions
-        @all.update_attributes({})
+        @admin.update_attributes({})
         expect(a.actions.count).to eq(1)
       end
     end

@@ -84,7 +84,7 @@ class Card
 
       def count_chars
         result = yield
-        return result unless @mode == :close && result
+        return result unless @mode == :closed && result
         @char_count ||= 0
         @char_count += result.length
         result

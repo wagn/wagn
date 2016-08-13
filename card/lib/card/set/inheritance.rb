@@ -7,7 +7,7 @@ class Card
       # @param [Hash] opts choose the formats you want to include
       # @option opts [Symbol, Array<Symbol>] :only include only these formats
       # @option opts [Symbol, Array<Symbol>] :except don't include these formats
-      # @example
+      # #@example
       # include_set Type::Basic, except: :css
       def include_set set, opts={}
         set_type = set.abstract_set? ? :abstract : :nonbase
@@ -20,7 +20,7 @@ class Card
       # @param [Hash] opts choose the formats you want to include
       # @option opts [Symbol, Array<Symbol>] :only include only these formats
       # @option opts [Symbol, Array<Symbol>] :except don't include these formats
-      # @example
+      # #@example
       # include_set Type::Basic, except: :css
       def include_set_formats set, opts={}
         each_format set do |format, format_mods|

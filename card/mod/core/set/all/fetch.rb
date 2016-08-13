@@ -10,14 +10,14 @@ module ClassMethods
   #   - database
   #   - virtual cards
   #
-  # @param [Integer, String, Card::Name, Symbol] mark one of three unique
-  #   identifiers
+  # @param [Integer, String, Card::Name, Symbol]
+  #   mark one of three unique identifiers
   #    1. a numeric id (Integer)
   #    2. a name/key (String or Card::Name)
   #    3. a codename (Symbol)
   #   or any combination of those. If you pass more then one mark they get
   #   joined with a '+'
-  # @param [Hash] opts ({})
+  # @param [Hash]
   #   Options:
   #     :skip_virtual               Real cards only
   #     :skip_modules               Don't load Set modules

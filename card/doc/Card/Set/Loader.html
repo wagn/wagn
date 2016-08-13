@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: Card::Set::Loader
+  
+    &mdash; Documentation by YARD 0.9.5
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "Card::Set::Loader";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (L)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../Card.html" title="Card (class)">Card</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Set.html" title="Card::Set (module)">Set</a></span></span>
+     &raquo; 
+    <span class="title">Loader</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <iframe id="search_frame" src="../../class_list.html"></iframe>
+
+      <div id="content"><h1>Module: Card::Set::Loader
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="../Set.html" title="Card::Set (module)">Card::Set</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/card/set/loader.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <ol><li>
+<p>Definition: interpret each set file, creating/defining set and</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_set_format'>set_format</span> <span class='id identifier rubyid_modules'>modules</span>
+</code></pre>
+</li><li>
+<p>Organization: have base classes include modules associated with the
+&#39;all&#39; set, and clean up the other modules</p>
+</li></ol>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#clean_empty_module_from_hash-instance_method" title="#clean_empty_module_from_hash (instance method)">#<strong>clean_empty_module_from_hash</strong>(hash)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#clean_empty_modules-instance_method" title="#clean_empty_modules (instance method)">#<strong>clean_empty_modules</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#extended-instance_method" title="#extended (instance method)">#<strong>extended</strong>(mod)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>each set file calls `extend Card::Set` when loaded.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#pattern_and_modules_from_path-instance_method" title="#pattern_and_modules_from_path (instance method)">#<strong>pattern_and_modules_from_path</strong>(path)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#process_base_modules-instance_method" title="#process_base_modules (instance method)">#<strong>process_base_modules</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>&#39;base modules&#39; are modules that are permanently included on the
+Card or Format class &#39;nonbase modules&#39; are included dynamically on
+singleton_classes.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#register_set-instance_method" title="#register_set (instance method)">#<strong>register_set</strong>(set_module)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>make the set available for use.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#tmp_file_template-instance_method" title="#tmp_file_template (instance method)">#<strong>tmp_file_template</strong>(pattern, modules, content_path)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#write_tmp_file-instance_method" title="#write_tmp_file (instance method)">#<strong>write_tmp_file</strong>(from_file, to_file, rel_path)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="clean_empty_module_from_hash-instance_method">
+  
+    #<strong>clean_empty_module_from_hash</strong>(hash)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+90
+91
+92
+93
+94
+95</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/set/loader.rb', line 90</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_clean_empty_module_from_hash'>clean_empty_module_from_hash</span> <span class='id identifier rubyid_hash'>hash</span>
+  <span class='id identifier rubyid_hash'>hash</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_mod_name'>mod_name</span><span class='comma'>,</span> <span class='id identifier rubyid_modlist'>modlist</span><span class='op'>|</span>
+    <span class='id identifier rubyid_modlist'>modlist</span><span class='period'>.</span><span class='id identifier rubyid_delete_if'>delete_if</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_x'>x</span><span class='op'>|</span> <span class='id identifier rubyid_x'>x</span><span class='period'>.</span><span class='id identifier rubyid_instance_methods'>instance_methods</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span> <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_hash'>hash</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span> <span class='id identifier rubyid_mod_name'>mod_name</span> <span class='kw'>if</span> <span class='id identifier rubyid_modlist'>modlist</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="clean_empty_modules-instance_method">
+  
+    #<strong>clean_empty_modules</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+83
+84
+85
+86
+87
+88</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/set/loader.rb', line 83</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_clean_empty_modules'>clean_empty_modules</span>
+  <span class='id identifier rubyid_clean_empty_module_from_hash'>clean_empty_module_from_hash</span> <span class='id identifier rubyid_modules'>modules</span><span class='lbracket'>[</span><span class='symbol'>:nonbase</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_modules'>modules</span><span class='lbracket'>[</span><span class='symbol'>:nonbase_format</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_hash'>hash</span><span class='op'>|</span>
+    <span class='id identifier rubyid_clean_empty_module_from_hash'>clean_empty_module_from_hash</span> <span class='id identifier rubyid_hash'>hash</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="extended-instance_method">
+  
+    #<strong>extended</strong>(mod)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>each set file calls `extend Card::Set` when loaded</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/set/loader.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_extended'>extended</span> <span class='id identifier rubyid_mod'>mod</span>
+  <span class='id identifier rubyid_register_set'>register_set</span> <span class='id identifier rubyid_mod'>mod</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="pattern_and_modules_from_path-instance_method">
+  
+    #<strong>pattern_and_modules_from_path</strong>(path)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+46
+47
+48
+49
+50
+51
+52</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/set/loader.rb', line 46</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_pattern_and_modules_from_path'>pattern_and_modules_from_path</span> <span class='id identifier rubyid_path'>path</span>
+  <span class='comment'># remove file extension and number prefixes
+</span>  <span class='id identifier rubyid_parts'>parts</span> <span class='op'>=</span> <span class='id identifier rubyid_path'>path</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\.rb</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>%r{</span><span class='tstring_content'>(?&lt;=\A|/)\d+_</span><span class='regexp_end'>}</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+              <span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='const'>File</span><span class='op'>::</span><span class='const'>SEPARATOR</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_parts'>parts</span><span class='period'>.</span><span class='id identifier rubyid_map!'>map!</span> <span class='op'>&amp;</span><span class='symbol'>:camelize</span>
+  <span class='lbracket'>[</span><span class='id identifier rubyid_parts'>parts</span><span class='period'>.</span><span class='id identifier rubyid_shift'>shift</span><span class='comma'>,</span> <span class='id identifier rubyid_parts'>parts</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="process_base_modules-instance_method">
+  
+    #<strong>process_base_modules</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>&#39;base modules&#39; are modules that are permanently included on the
+Card or Format class &#39;nonbase modules&#39; are included dynamically on
+singleton_classes</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+73
+74
+75
+76
+77
+78
+79
+80
+81</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/set/loader.rb', line 73</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_process_base_modules'>process_base_modules</span>
+  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_modules'>modules</span><span class='lbracket'>[</span><span class='symbol'>:base</span><span class='rbracket'>]</span>
+  <span class='const'>Card</span><span class='period'>.</span><span class='id identifier rubyid_add_set_modules'>add_set_modules</span> <span class='id identifier rubyid_modules'>modules</span><span class='lbracket'>[</span><span class='symbol'>:base</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_modules'>modules</span><span class='lbracket'>[</span><span class='symbol'>:base_format</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_format_class'>format_class</span><span class='comma'>,</span> <span class='id identifier rubyid_modules_list'>modules_list</span><span class='op'>|</span>
+    <span class='id identifier rubyid_format_class'>format_class</span><span class='period'>.</span><span class='id identifier rubyid_add_set_modules'>add_set_modules</span> <span class='id identifier rubyid_modules_list'>modules_list</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_modules'>modules</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span> <span class='symbol'>:base</span>
+  <span class='id identifier rubyid_modules'>modules</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span> <span class='symbol'>:base_format</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="register_set-instance_method">
+  
+    #<strong>register_set</strong>(set_module)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>make the set available for use</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/set/loader.rb', line 21</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_register_set'>register_set</span> <span class='id identifier rubyid_set_module'>set_module</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_set_module'>set_module</span><span class='period'>.</span><span class='id identifier rubyid_all_set?'>all_set?</span>
+    <span class='comment'># automatically included in Card class
+</span>    <span class='id identifier rubyid_modules'>modules</span><span class='lbracket'>[</span><span class='symbol'>:base</span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_set_module'>set_module</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_set_type'>set_type</span> <span class='op'>=</span> <span class='id identifier rubyid_set_module'>set_module</span><span class='period'>.</span><span class='id identifier rubyid_abstract_set?'>abstract_set?</span> <span class='op'>?</span> <span class='symbol'>:abstract</span> <span class='op'>:</span> <span class='symbol'>:nonbase</span>
+    <span class='comment'># made ready for dynamic loading via #include_set_modules
+</span>    <span class='id identifier rubyid_modules'>modules</span><span class='lbracket'>[</span><span class='id identifier rubyid_set_type'>set_type</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='id identifier rubyid_set_module'>set_module</span><span class='period'>.</span><span class='id identifier rubyid_shortname'>shortname</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_modules'>modules</span><span class='lbracket'>[</span><span class='id identifier rubyid_set_type'>set_type</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='id identifier rubyid_set_module'>set_module</span><span class='period'>.</span><span class='id identifier rubyid_shortname'>shortname</span><span class='rbracket'>]</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_set_module'>set_module</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="tmp_file_template-instance_method">
+  
+    #<strong>tmp_file_template</strong>(pattern, modules, content_path)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/set/loader.rb', line 54</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_tmp_file_template'>tmp_file_template</span> <span class='id identifier rubyid_pattern'>pattern</span><span class='comma'>,</span> <span class='id identifier rubyid_modules'>modules</span><span class='comma'>,</span> <span class='id identifier rubyid_content_path'>content_path</span>
+  <span class='id identifier rubyid_submodules'>submodules</span> <span class='op'>=</span> <span class='id identifier rubyid_modules'>modules</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>module </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_m'>m</span><span class='embexpr_end'>}</span><span class='tstring_content'>;</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+<span class='heredoc_beg'>&lt;&lt;-RUBY</span>
+<span class='tstring_content'># -*- encoding : utf-8 -*-
+class Card; module Set; class </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_pattern'>pattern</span><span class='embexpr_end'>}</span><span class='tstring_content'>; </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_submodules'>submodules</span> <span class='op'>*</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> </span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'> extend Card::Set
+# ~~ above autogenerated; below pulled from </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_content_path'>content_path</span><span class='embexpr_end'>}</span><span class='tstring_content'> ~~
+</span><span class='embexpr_beg'>#{</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span> <span class='id identifier rubyid_content_path'>content_path</span><span class='embexpr_end'>}</span><span class='tstring_content'>
+
+# ~~ below autogenerated; above pulled from </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_content_path'>content_path</span><span class='embexpr_end'>}</span><span class='tstring_content'> ~~
+end;end;end;</span><span class='embexpr_beg'>#{</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>end;</span><span class='tstring_end'>&#39;</span></span> <span class='op'>*</span> <span class='id identifier rubyid_submodules'>submodules</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='embexpr_end'>}</span><span class='tstring_content'>
+</span><span class='heredoc_end'>RUBY
+</span><span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="write_tmp_file-instance_method">
+  
+    #<strong>write_tmp_file</strong>(from_file, to_file, rel_path)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+39
+40
+41
+42
+43
+44</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/set/loader.rb', line 39</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_write_tmp_file'>write_tmp_file</span> <span class='id identifier rubyid_from_file'>from_file</span><span class='comma'>,</span> <span class='id identifier rubyid_to_file'>to_file</span><span class='comma'>,</span> <span class='id identifier rubyid_rel_path'>rel_path</span>
+  <span class='id identifier rubyid_pattern'>pattern</span><span class='comma'>,</span> <span class='id identifier rubyid_submodules'>submodules</span> <span class='op'>=</span> <span class='id identifier rubyid_pattern_and_modules_from_path'>pattern_and_modules_from_path</span> <span class='id identifier rubyid_rel_path'>rel_path</span>
+  <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_mkdir_p'>mkdir_p</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_dirname'>dirname</span><span class='lparen'>(</span><span class='id identifier rubyid_to_file'>to_file</span><span class='rparen'>)</span>
+  <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_write'>write</span> <span class='id identifier rubyid_to_file'>to_file</span><span class='comma'>,</span> <span class='id identifier rubyid_tmp_file_template'>tmp_file_template</span><span class='lparen'>(</span><span class='id identifier rubyid_pattern'>pattern</span><span class='comma'>,</span> <span class='id identifier rubyid_submodules'>submodules</span><span class='comma'>,</span> <span class='id identifier rubyid_from_file'>from_file</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_to_file'>to_file</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Fri Aug 12 23:34:59 2016 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.5 (ruby-2.3.0).
+</div>
+
+    </div>
+  </body>
+</html>

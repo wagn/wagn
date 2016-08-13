@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Top Level Namespace
+  
+    &mdash; Documentation by YARD 0.9.5
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo;
+    
+    
+    <span class="title">Top Level Namespace</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <iframe id="search_frame" src="class_list.html"></iframe>
+
+      <div id="content"><h1>Top Level Namespace
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+</div>
+
+<h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="ActiveRecord.html" title="ActiveRecord (module)">ActiveRecord</a></span>, <span class='object_link'><a href="Cardio.html" title="Cardio (module)">Cardio</a></span>, <span class='object_link'><a href="CarrierWave.html" title="CarrierWave (module)">CarrierWave</a></span>, <span class='object_link'><a href="SpecHelper.html" title="SpecHelper (module)">SpecHelper</a></span>
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Card.html" title="Card (class)">Card</a></span>, <span class='object_link'><a href="FileUploader.html" title="FileUploader (class)">FileUploader</a></span>, <span class='object_link'><a href="ImageUploader.html" title="ImageUploader (class)">ImageUploader</a></span>
+    
+  
+</p>
+
+  <h2>Constant Summary</h2>
+  <dl class="constants">
+    
+      <dt id="A_JOINEES-constant" class="">A_JOINEES =
+        
+      </dt>
+      <dd><pre class="code"><span class='qwords_beg'>%w(</span><span class='tstring_content'>B</span><span class='words_sep'> </span><span class='tstring_content'>C</span><span class='words_sep'> </span><span class='tstring_content'>D</span><span class='words_sep'> </span><span class='tstring_content'>E</span><span class='words_sep'> </span><span class='tstring_content'>F</span><span class='words_sep'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+    
+      <dt id="CARDS_MATCHING_TWO-constant" class="">CARDS_MATCHING_TWO =
+        
+      </dt>
+      <dd><pre class="code"><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Joe User</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>One+Two</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>One+Two+Three</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+<span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>script: slot+*all+*script+*machine cache</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Two</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+    
+      <dt id="EXAMPLES-constant" class="">EXAMPLES =
+        
+      </dt>
+      <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='label'>nests:</span> <span class='lbrace'>{</span>
+    <span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Some Literals: \\[{I&#39;m not| a link]}, and </span><span class='tstring_end'>&quot;</span></span> \
+                <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>\\{{This Card|Is not Included}}</span><span class='tstring_end'>&#39;</span></span> \
+                <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>, but </span><span class='tstring_end'>&quot;</span></span> \
+                <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>{{this is}}</span><span class='tstring_end'>&quot;</span></span> \
+                <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>, and some tail</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+    <span class='label'>rendered:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Some Literals: \\[{I&#39;m not| a link]}, and </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;span&gt;{&lt;/span&gt;{This Card|Is not Included}}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>, but </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='lbrace'>{</span> <span class='label'>options:</span> <span class='lbrace'>{</span> <span class='label'>inc_name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>this is</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                            <span class='label'>inc_syntax:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>this is</span><span class='tstring_end'>&quot;</span></span>
+                          <span class='rbrace'>}</span>
+               <span class='rbrace'>}</span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>, and some tail</span><span class='tstring_end'>&quot;</span></span>
+              <span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>classes:</span> <span class='lbracket'>[</span><span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:EscapedLiteral</span><span class='comma'>,</span> <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:Include</span><span class='comma'>,</span> <span class='const'>String</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span><span class='comma'>,</span>
+
+  <span class='label'>links_and_nests:</span> <span class='lbrace'>{</span>
+    <span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Some Links and includes: [[the card|the text]], </span><span class='tstring_end'>&quot;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>and {{This Card|Is Included}}{{this too}} </span><span class='tstring_end'>&quot;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>and [[http://external.wagn.org/path|link text]]</span><span class='tstring_end'>&quot;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>{{Included|open}}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+    <span class='label'>rendered:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Some Links and includes: </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;a class=&quot;wanted-card&quot; </span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>href=&quot;/the_card?card%5Bname%5D=the+card&quot;&gt;</span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>the text&lt;/a&gt;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>, and </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='lbrace'>{</span> <span class='label'>options:</span> <span class='lbrace'>{</span> <span class='label'>view:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Is Included</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                            <span class='label'>inc_name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>This Card</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                            <span class='label'>inc_syntax:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>This Card|Is Included</span><span class='tstring_end'>&quot;</span></span>
+                          <span class='rbrace'>}</span>
+               <span class='rbrace'>}</span><span class='comma'>,</span>
+               <span class='lbrace'>{</span> <span class='label'>options:</span> <span class='lbrace'>{</span> <span class='label'>inc_name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>this too</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                            <span class='label'>inc_syntax:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>this too</span><span class='tstring_end'>&quot;</span></span>
+                          <span class='rbrace'>}</span>
+               <span class='rbrace'>}</span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> and </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;a target=&quot;_blank&quot; class=&quot;external-link&quot; </span><span class='tstring_end'>&#39;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>href=&quot;http://external.wagn.org/path&quot;&gt;link text&lt;/a&gt;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+               <span class='lbrace'>{</span> <span class='label'>options:</span> <span class='lbrace'>{</span> <span class='label'>view:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>open</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                            <span class='label'>inc_name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Included</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                            <span class='label'>inc_syntax:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Included|open</span><span class='tstring_end'>&quot;</span></span>
+                          <span class='rbrace'>}</span>
+               <span class='rbrace'>}</span>
+              <span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>classes:</span> <span class='lbracket'>[</span>
+      <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:Link</span><span class='comma'>,</span> <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:Include</span><span class='comma'>,</span> <span class='symbol'>:Include</span><span class='comma'>,</span> <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:Link</span><span class='comma'>,</span> <span class='symbol'>:Include</span>
+    <span class='rbracket'>]</span>
+  <span class='rbrace'>}</span><span class='comma'>,</span>
+
+  <span class='label'>uris_and_links:</span> <span class='lbrace'>{</span>
+    <span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Some URIs and Links: http://a.url.com/ </span><span class='tstring_end'>&quot;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>More urls: wagn.com/a/path/to.html </span><span class='tstring_end'>&quot;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>http://localhost:2020/path?cgi=foo&amp;bar=baz </span><span class='tstring_end'>&quot;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[[http://brain.org/Home|extra]] </span><span class='tstring_end'>&quot;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[ http://gerry.wagn.com/a/path ] </span><span class='tstring_end'>&quot;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>{ https://brain.org/more?args } </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+    <span class='label'>rendered:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Some URIs and Links: </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;a target=&quot;_blank&quot; class=&quot;external-link&quot; </span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>href=&quot;http://a.url.com/&quot;&gt;http://a.url.com/&lt;/a&gt;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> More urls: </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;a target=&quot;_blank&quot; class=&quot;external-link&quot; </span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>href=&quot;http://wagn.com/a/path/to.html&quot;&gt;</span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>wagn.com/a/path/to.html&lt;/a&gt;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;a target=&quot;_blank&quot; class=&quot;external-link&quot; </span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>href=&quot;http://localhost:2020/path?cgi=foo&amp;amp;bar=baz&quot;&gt;</span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>http://localhost:2020/path?cgi=foo&amp;bar=baz&lt;/a&gt;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;a target=&quot;_blank&quot; class=&quot;external-link&quot; </span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>href=&quot;http://brain.org/Home&quot;&gt;extra&lt;/a&gt;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> [ </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;a target=&quot;_blank&quot; class=&quot;external-link&quot; </span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>href=&quot;http://gerry.wagn.com/a/path&quot;&gt;</span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>http://gerry.wagn.com/a/path&lt;/a&gt;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> ] { </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;a target=&quot;_blank&quot; class=&quot;external-link&quot; </span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>href=&quot;https://brain.org/more?args&quot;&gt;</span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>https://brain.org/more?args&lt;/a&gt;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> } </span><span class='tstring_end'>&quot;</span></span>
+              <span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>text_rendered:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Some URIs and Links: </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>http://a.url.com/</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> More urls: </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>wagn.com/a/path/to.html[http://wagn.com/a/path/to.html]</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>http://localhost:2020/path?cgi=foo&amp;bar=baz</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>extra[http://brain.org/Home]</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> [ </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>http://gerry.wagn.com/a/path</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> ] { </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>https://brain.org/more?args</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+                    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> } </span><span class='tstring_end'>&quot;</span></span>
+                   <span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>classes:</span> <span class='lbracket'>[</span>
+      <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:URI</span><span class='comma'>,</span> <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:HostURI</span><span class='comma'>,</span> <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:URI</span><span class='comma'>,</span> <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:Link</span><span class='comma'>,</span>
+      <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:URI</span><span class='comma'>,</span> <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:URI</span><span class='comma'>,</span> <span class='const'>String</span>
+    <span class='rbracket'>]</span>
+  <span class='rbrace'>}</span><span class='comma'>,</span>
+
+  <span class='label'>uris_and_links_2:</span> <span class='lbrace'>{</span>
+    <span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Some URIs and Links: http://a.url.com </span><span class='tstring_end'>&quot;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>More urls: wagn.com/a/path/to.html </span><span class='tstring_end'>&quot;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[ http://gerry.wagn.com/a/path ] </span><span class='tstring_end'>&quot;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>{ https://brain.org/more?args } </span><span class='tstring_end'>&quot;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>http://localhost:2020/path?cgi=foo&amp;bar=baz </span><span class='tstring_end'>&quot;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[[http://brain.org/Home|extra]]</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+    <span class='label'>rendered:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Some URIs and Links: </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;a target=&quot;_blank&quot; class=&quot;external-link&quot; </span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>href=&quot;http://a.url.com&quot;&gt;http://a.url.com&lt;/a&gt;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> More urls: </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;a target=&quot;_blank&quot; class=&quot;external-link&quot; </span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>href=&quot;http://wagn.com/a/path/to.html&quot;&gt;</span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>wagn.com/a/path/to.html&lt;/a&gt;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> [ </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;a target=&quot;_blank&quot; class=&quot;external-link&quot; </span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>href=&quot;http://gerry.wagn.com/a/path&quot;&gt;</span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>http://gerry.wagn.com/a/path&lt;/a&gt;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> ] { </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;a target=&quot;_blank&quot; class=&quot;external-link&quot; </span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>href=&quot;https://brain.org/more?args&quot;&gt;</span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>https://brain.org/more?args&lt;/a&gt;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> } </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;a target=&quot;_blank&quot; class=&quot;external-link&quot; </span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>href=&quot;http://localhost:2020/path?cgi=foo&amp;amp;bar=baz&quot;&gt;</span><span class='tstring_end'>&#39;</span></span> \
+                 <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>http://localhost:2020/path?cgi=foo&amp;bar=baz&lt;/a&gt;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;a target=&quot;_blank&quot; class=&quot;external-link&quot; </span><span class='tstring_end'>&#39;</span></span> \
+               <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>href=&quot;http://brain.org/Home&quot;&gt;extra&lt;/a&gt;</span><span class='tstring_end'>&#39;</span></span>
+              <span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>classes:</span>  <span class='lbracket'>[</span>
+      <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:URI</span><span class='comma'>,</span> <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:HostURI</span><span class='comma'>,</span> <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:URI</span><span class='comma'>,</span> <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:URI</span><span class='comma'>,</span> <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:URI</span><span class='comma'>,</span>
+      <span class='const'>String</span><span class='comma'>,</span> <span class='symbol'>:Link</span>
+    <span class='rbracket'>]</span>
+  <span class='rbrace'>}</span><span class='comma'>,</span>
+
+  <span class='label'>no_chunks:</span> <span class='lbrace'>{</span>
+    <span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>No chunks</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+    <span class='label'>rendered:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>No chunks</span><span class='tstring_end'>&quot;</span></span>
+  <span class='rbrace'>}</span><span class='comma'>,</span>
+
+  <span class='label'>single_nest:</span> <span class='lbrace'>{</span>
+    <span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>{{one nest|size;large}}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+    <span class='label'>classes:</span> <span class='lbracket'>[</span><span class='symbol'>:Include</span><span class='rbracket'>]</span>
+  <span class='rbrace'>}</span><span class='comma'>,</span>
+
+  <span class='label'>css:</span> <span class='lbrace'>{</span>
+    <span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>%(</span><span class='tstring_content'>
+     /* body text */
+     body {
+       color: #444444;
+     }
+
+     /* page - background image and color */
+     body#wagn {
+       background: #ffffff;
+     }
+
+     /* top bar background color; text colors */
+     #menu {
+       background: #3260a0;
+     }
+     #menu a {
+       color: #EEEEEE;
+     }
+
+     /* header text */
+     h1, h2 {
+       color: #664444;
+     }
+     h1.page-header,
+     h2.page-header {
+       color: #222299;
+     }
+   </span><span class='tstring_end'>)</span></span>
+  <span class='rbrace'>}</span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+    
+  </dl>
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="top-level-namespace.html#card_core_dev_simplecov_filters-instance_method" title="#card_core_dev_simplecov_filters (instance method)">#<strong>card_core_dev_simplecov_filters</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="top-level-namespace.html#card_gem_root-instance_method" title="#card_gem_root (instance method)">#<strong>card_gem_root</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Note: I18n::Tasks only knows how to function when run from root of Card
+GEM, since it locates its configuration file and source to parse relative
+to this.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="top-level-namespace.html#card_simplecov_filters-instance_method" title="#card_simplecov_filters (instance method)">#<strong>card_simplecov_filters</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="top-level-namespace.html#is_in_mod%3F-instance_method" title="#is_in_mod? (instance method)">#<strong>is_in_mod?</strong>(file, mod_path)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="top-level-namespace.html#it_generates-instance_method" title="#it_generates (instance method)">#<strong>it_generates</strong>(opts)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="top-level-namespace.html#method_missing-instance_method" title="#method_missing (instance method)">#<strong>method_missing</strong>(m, *args, &amp;block)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="top-level-namespace.html#that_produces-instance_method" title="#that_produces (instance method)">#<strong>that_produces</strong>(type)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+<div id="method_missing_details" class="method_details_list">
+  <h2>Dynamic Method Handling</h2>
+  <p class="notice this">
+    This class handles dynamic methods through the <tt>method_missing</tt> method
+    
+  </p>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="method_missing-instance_method">
+  
+    #<strong>method_missing</strong>(m, *args, &amp;block)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+7
+8
+9
+10
+11
+12
+13
+14</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'mod/machines/spec/lib/shared_machine_examples.rb', line 7</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_method_missing'>method_missing</span> <span class='id identifier rubyid_m'>m</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span>
+  <span class='kw'>case</span> <span class='id identifier rubyid_m'>m</span>
+  <span class='kw'>when</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>that_produces_(.+)</span><span class='regexp_end'>/</span></span>
+    <span class='kw'>return</span> <span class='const'>Regexp</span><span class='period'>.</span><span class='id identifier rubyid_last_match'>last_match</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='kw'>super</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="card_core_dev_simplecov_filters-instance_method">
+  
+    #<strong>card_core_dev_simplecov_filters</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/simplecov_helper.rb', line 48</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_card_core_dev_simplecov_filters'>card_core_dev_simplecov_filters</span>
+  <span class='id identifier rubyid_filters'>filters</span><span class='period'>.</span><span class='id identifier rubyid_clear'>clear</span> <span class='comment'># This will remove the :root_filter that comes via simplecov&#39;s defaults
+</span>  <span class='id identifier rubyid_add_filter'>add_filter</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_src'>src</span><span class='op'>|</span>
+    <span class='op'>!</span><span class='lparen'>(</span><span class='id identifier rubyid_src'>src</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^</span><span class='embexpr_beg'>#{</span><span class='const'>SimpleCov</span><span class='period'>.</span><span class='id identifier rubyid_root'>root</span><span class='embexpr_end'>}</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_src'>src</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>card</span><span class='regexp_end'>/</span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_add_filter'>add_filter</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/spec/</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_add_filter'>add_filter</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/features/</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_add_filter'>add_filter</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/config/</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_add_filter'>add_filter</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/tasks/</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_add_filter'>add_filter</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/generators/</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_add_filter'>add_filter</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>lib/card</span><span class='tstring_end'>&quot;</span></span>
+
+  <span class='id identifier rubyid_add_group'>add_group</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Card</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>lib/card</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_add_group'>add_group</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Set Patterns</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>tmp/set_pattern/</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_add_group'>add_group</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Sets</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>         <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>tmp/set/</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_add_group'>add_group</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Formats</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_src_file'>src_file</span><span class='op'>|</span>
+    <span class='id identifier rubyid_src_file'>src_file</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>mod\/[^\/]+\/format</span><span class='regexp_end'>/</span></span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_add_group'>add_group</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Chunks</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_src_file'>src_file</span><span class='op'>|</span>
+    <span class='id identifier rubyid_src_file'>src_file</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>mod\/[^\/]+\/chunk</span><span class='regexp_end'>/</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="card_gem_root-instance_method">
+  
+    #<strong>card_gem_root</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Note: I18n::Tasks only knows how to function when run from root of Card
+GEM, since it locates its configuration file and source to parse relative
+to this</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+12
+13
+14</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'spec/lib/card/i18n_spec.rb', line 12</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_card_gem_root'>card_gem_root</span>
+  <span class='const'>Pathname</span><span class='lparen'>(</span><span class='kw'>__FILE__</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_parent'>parent</span><span class='period'>.</span><span class='id identifier rubyid_parent'>parent</span><span class='period'>.</span><span class='id identifier rubyid_parent'>parent</span><span class='period'>.</span><span class='id identifier rubyid_parent'>parent</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="card_simplecov_filters-instance_method">
+  
+    #<strong>card_simplecov_filters</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/simplecov_helper.rb', line 6</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_card_simplecov_filters'>card_simplecov_filters</span>
+  <span class='id identifier rubyid_add_filter'>add_filter</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>spec/</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_add_filter'>add_filter</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/config/</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_add_filter'>add_filter</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/tasks/</span><span class='tstring_end'>&quot;</span></span>
+  <span class='comment'># filter all card mods
+</span>  <span class='id identifier rubyid_add_filter'>add_filter</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_src_file'>src_file</span><span class='op'>|</span>
+    <span class='id identifier rubyid_src_file'>src_file</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>tmp\/</span><span class='regexp_end'>/</span></span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\d+-(.+\.rb)</span><span class='regexp_end'>/</span></span><span class='period'>.</span><span class='id identifier rubyid_match'>match</span><span class='lparen'>(</span><span class='id identifier rubyid_src_file'>src_file</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span>
+      <span class='const'>Dir</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>mod/**/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_m'>m</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_tr'>tr</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_sub'>sub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/set/</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='comment'># add group for each deck mod
+</span>  <span class='const'>Dir</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>mod/*</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_path'>path</span><span class='op'>|</span> <span class='id identifier rubyid_path'>path</span><span class='period'>.</span><span class='id identifier rubyid_sub'>sub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>mod/</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_mod'>mod</span><span class='op'>|</span>
+    <span class='id identifier rubyid_add_group'>add_group</span> <span class='id identifier rubyid_mod'>mod</span><span class='period'>.</span><span class='id identifier rubyid_capitalize'>capitalize</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_src_file'>src_file</span><span class='op'>|</span>
+      <span class='id identifier rubyid_src_file'>src_file</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>mod\/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_mod'>mod</span><span class='embexpr_end'>}</span><span class='tstring_content'>\/</span><span class='regexp_end'>/</span></span> <span class='op'>||</span>
+        <span class='lparen'>(</span>
+          <span class='id identifier rubyid_src_file'>src_file</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>tmp\/</span><span class='regexp_end'>/</span></span> <span class='op'>&amp;&amp;</span>
+          <span class='lparen'>(</span><span class='id identifier rubyid_match'>match</span> <span class='op'>=</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\d+-(.+\.rb)</span><span class='regexp_end'>/</span></span><span class='period'>.</span><span class='id identifier rubyid_match'>match</span><span class='lparen'>(</span><span class='id identifier rubyid_src_file'>src_file</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span>
+            <span class='comment'># &#39;/set&#39; is not in the path anymore after some updates
+</span>            <span class='comment'># but `set` exists in the path of the source files
+</span>            <span class='const'>Dir</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>mod/**/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_m'>m</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_tr'>tr</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_sub'>sub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/set/</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+          <span class='kw'>end</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span>
+          <span class='id identifier rubyid_is_in_mod?'>is_in_mod?</span><span class='lparen'>(</span><span class='id identifier rubyid_src_file'>src_file</span><span class='comma'>,</span> <span class='id identifier rubyid_mod'>mod</span><span class='rparen'>)</span>
+        <span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_add_group'>add_group</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Sets</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_src_file'>src_file</span><span class='op'>|</span>
+    <span class='id identifier rubyid_src_file'>src_file</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>tmp\/set\/</span><span class='regexp_end'>/</span></span> <span class='op'>&amp;&amp;</span>
+      <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\d+-(.+\.rb)</span><span class='regexp_end'>/</span></span><span class='period'>.</span><span class='id identifier rubyid_match'>match</span><span class='lparen'>(</span><span class='id identifier rubyid_src_file'>src_file</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='const'>Dir</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>mod/**/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_m'>m</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_add_group'>add_group</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Set patterns</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_src_file'>src_file</span><span class='op'>|</span>
+    <span class='id identifier rubyid_src_file'>src_file</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>tmp\/set_pattern\/</span><span class='regexp_end'>/</span></span> <span class='op'>&amp;&amp;</span>
+      <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\d+-(.+\.rb)</span><span class='regexp_end'>/</span></span><span class='period'>.</span><span class='id identifier rubyid_match'>match</span><span class='lparen'>(</span><span class='id identifier rubyid_src_file'>src_file</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='const'>Dir</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>mod/**/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_m'>m</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_add_group'>add_group</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Formats</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_src_file'>src_file</span><span class='op'>|</span>
+    <span class='id identifier rubyid_src_file'>src_file</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>mod\/[^\/]+\/formats</span><span class='regexp_end'>/</span></span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_add_group'>add_group</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Chunks</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_src_file'>src_file</span><span class='op'>|</span>
+    <span class='id identifier rubyid_src_file'>src_file</span><span class='period'>.</span><span class='id identifier rubyid_filename'>filename</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>mod\/[^\/]+\/chunks</span><span class='regexp_end'>/</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="is_in_mod?-instance_method">
+  
+    #<strong>is_in_mod?</strong>(file, mod_path)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1
+2
+3
+4</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/simplecov_helper.rb', line 1</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_is_in_mod?'>is_in_mod?</span> <span class='id identifier rubyid_file'>file</span><span class='comma'>,</span> <span class='id identifier rubyid_mod_path'>mod_path</span>
+  <span class='id identifier rubyid_mod_msg'>mod_msg</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>below pulled from </span><span class='embexpr_beg'>#{</span><span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_root'>root</span><span class='embexpr_end'>}</span><span class='tstring_content'>/mod/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_mod_path'>mod_path</span><span class='embexpr_end'>}</span><span class='tstring_content'>/</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_file'>file</span><span class='period'>.</span><span class='id identifier rubyid_src'>src</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_mod_msg'>mod_msg</span><span class='embexpr_end'>}</span><span class='regexp_end'>/</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="it_generates-instance_method">
+  
+    #<strong>it_generates</strong>(opts)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+3
+4
+5
+6
+7
+8
+9</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'spec/lib/card/set_pattern_spec.rb', line 3</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_it_generates'>it_generates</span> <span class='id identifier rubyid_opts'>opts</span>
+  <span class='id identifier rubyid_name'>name</span> <span class='op'>=</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_card'>card</span> <span class='op'>=</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:from</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_it'>it</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>generates name &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; for card &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_described_class'>described_class</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_card'>card</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span> <span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="that_produces-instance_method">
+  
+    #<strong>that_produces</strong>(type)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+3
+4
+5</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'mod/machines/spec/lib/shared_machine_examples.rb', line 3</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_that_produces'>that_produces</span> <span class='id identifier rubyid_type'>type</span>
+  <span class='id identifier rubyid_type'>type</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Fri Aug 12 23:34:58 2016 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.5 (ruby-2.3.0).
+</div>
+
+    </div>
+  </body>
+</html>

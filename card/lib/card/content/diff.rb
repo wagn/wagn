@@ -5,11 +5,11 @@ class Card
     class Diff
       class << self
         def complete a, b, opts={}
-          Card::Diff.new(a, b, opts).complete
+          Card::Content::Diff.new(a, b, opts).complete
         end
 
         def summary a, b, opts={}
-          Card::Diff.new(a, b, opts).summary
+          Card::Content::Diff.new(a, b, opts).summary
         end
 
         def render_added_chunk text

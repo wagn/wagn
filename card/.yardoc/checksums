@@ -1,4 +1,4 @@
-lib/card.rb 9d7a330d9b8ec8e5f8fe100d179476f01dca1ad6
+lib/card.rb 06a0d1d36545c96da6fc675a10397c77a5c2a2dd
 lib/cardio.rb 12c5368bf004e93dfb5d8c003d7dc264d8eebbfc
 lib/card/set.rb bf095c8c7820f8677058f4f0a55bc91d2f93b1ac
 lib/card/env.rb 3a48c36de6b0fb5bab9ad8ceba8e70635fd36e0c
@@ -46,7 +46,7 @@ lib/card/core_migration.rb 7a1a9a7617d1c6e265d41304985bfea0b9910f9d
 lib/card/content/parser.rb 11044296019db64a7c710aaaaaab36ee5c467514
 spec/lib/card/name_spec.rb 4db2bd0449663e6feff5719adff3a816249d0868
 spec/lib/card/i18n_spec.rb 098750820b5a888fb70c47cd462266d9aa82fbc6
-spec/lib/card/diff_spec.rb e4f0bf13eacc0ee48ce099deff4a857a9b60c0e2
+spec/lib/card/diff_spec.rb b4bc5e1cba1ab03af7521c41a42e5bcf6a542162
 spec/lib/card/auth_spec.rb 432c7888e242e700c7ad651076b631b2b6687277
 lib/card/stage_director.rb 34face978932374b3cdd4dc753cb324fa8a922b3
 spec/lib/card/cache_spec.rb d1e32e5f9bc5ba5c1c7ecb8aa8407637539faac3
@@ -78,7 +78,7 @@ lib/card/query/conjunctions.rb 92684f88ed0f454ea26197748cdf22d3e5540a54
 spec/lib/card/codename_spec.rb df14197f90f7b343a1f1bf323b5f165a88b290fc
 mod/history/lib/card/change.rb 5f72775e35cba0ec1e9b31d955ddfc38b7cb73f3
 spec/lib/card/subcards_spec.rb 66c8c59ad0f9b6293bbedf3300105ae9c2de7918
-mod/history/lib/card/action.rb e5ac5b2f3d8cf1140a266b888f68f2d896e17743
+mod/history/lib/card/action.rb d6eae1198b768b6f273fb7a9107bc72152b05b78
 lib/card/query/sql_statement.rb 30cdc5b8a1ec10693920e4e2b5868d1c4d340aab
 spec/lib/card/set/trait_spec.rb 80bac2e701be976ca9257b56380d8e45775ab587
 spec/lib/card/reference_spec.rb b6aa585a9e438bfd0a738b0769806e28f902f2b0
@@ -168,7 +168,7 @@ tmpsets/set/mod017-account/self/signin.rb 3fad034464bb5be9afacfe779d64a18d63f90c
 tmpsets/set/mod001-core/all/view_cache.rb 1702a1f522385f02d279f07e2bb30fb1200f0220
 tmpsets/set/mod016-standard/type/basic.rb 536e9ca78461741801379d021805a50e2efc7f8e
 tmpsets/set/mod002-history/all/actions.rb d368aa58ea60823df8d84c859c9a6e4c8aba4e9b
-tmpsets/set/mod002-history/all/history.rb 197ca27e40fba37a983f9cd54b521c322e1ead18
+tmpsets/set/mod002-history/all/history.rb e26d7b165117f6b98e5f93c5c0e516b21e7bc8a3
 tmpsets/set/mod001-core/all/collection.rb 23bc1e8bf2b8b67c44986a7bfc5037fb63014d99
 tmpsets/set/mod011-settings/self/input.rb 65dbfd38e3351abecfa517a97fd5aa8ed14b0ff6
 tmpsets/set/mod011-settings/right/help.rb 2e21411b36df58fa94c1949dba0f1f82c6b0705d
@@ -218,7 +218,7 @@ tmpsets/set/mod009-basic_types/type/html.rb 77e7d89644e0ecbfb77698cf07b97a822213
 tmpsets/set/mod011-settings/right/create.rb 318b0c3427261e5af919165def40e65f271ccac3
 tmpsets/set/mod003-basic_formats/all/json.rb e179f04c51997cd7a2d4767b8e8f2bcc4a8ee045
 tmpsets/set/mod017-account/right/password.rb 3334000bf579e7b31ff8beb10193e5d6dc15186f
-tmpsets/set/mod013-carrierwave/type/image.rb 7f2e3330de971e66cb7b0942540a3a5eb474ea63
+tmpsets/set/mod013-carrierwave/type/image.rb 8b5582d8393951eabb1e8ab07949869d1444cde5
 tmpsets/set/mod015-developer/all/view_viz.rb 3054c6a7199c60dcf61aa2f37779e1fc380f05e3
 tmpsets/set/mod003-basic_formats/all/text.rb 609d3653857e66957eefddb172601d3fa0127367
 tmpsets/set/mod011-settings/self/add_help.rb d9ac97623cdd2b420be55fc452bf7c18c688026a
@@ -319,3 +319,6 @@ tmpsets/set/mod010-machines/self/style_jquery_ui_smoothness.rb 23d85e24e82e63e89
 tmpsets/set/mod006-prosemirror_editor/self/script_prosemirror.rb 4fafcd427d346f613a93fd23a866a9f35a8ad5f2
 tmpsets/set/mod006-prosemirror_editor/abstract/prosemirror_editor.rb f542d9647cdf680e2ec535e9f4ec2a6a4ad0c24b
 tmpsets/set/mod006-prosemirror_editor/self/script_prosemirror_config.rb e0e1ceb2f4ce91d61bce8f01ac5f7ce63a1a14e0
+lib/card/content/diff.rb 9abc7a5bc8b685f359e70fdbe8780245f27910fc
+lib/card/content/diff/lcs.rb 4ed989f306391ff32369f599e60c797e47c1863f
+lib/card/content/diff/result.rb 71bd93f65c98069afbdb2539157fde3bc0018d46

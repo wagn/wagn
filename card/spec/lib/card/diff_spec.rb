@@ -1,9 +1,9 @@
 # -*- encoding : utf-8 -*-
 # !/usr/bin/env ruby
 
-require "card/diff"
+require "card/content/diff"
 
-describe Card::Diff do
+describe Card::Content::Diff do
   def del text
     "<del class='diffdel diff-red'>#{text}</del>"
   end
@@ -17,11 +17,11 @@ describe Card::Diff do
   end
 
   def diff old_s, new_s, opts=@opts
-    Card::Diff.complete(old_s, new_s, opts)
+    Card::Content::Diff.complete(old_s, new_s, opts)
   end
 
   def summary old_s, new_s, opts=@opts
-    Card::Diff.summary(old_s, new_s, opts)
+    Card::Content::Diff.summary(old_s, new_s, opts)
   end
 
   old_p = "<p>old</p>"
@@ -35,28 +35,28 @@ describe Card::Diff do
     it "is green for addition" do
       a = "a"
       b = "a b"
-      db = Card::Diff.new(a, b)
+      db = Card::Content::Diff.new(a, b)
       expect(db.green?).to be_truthy
       expect(db.red?).to be_falsey
     end
     it "is red for deletion" do
       a = "a"
       b = ""
-      db = Card::Diff.new(a, b)
+      db = Card::Content::Diff.new(a, b)
       expect(db.green?).to be_falsey
       expect(db.red?).to be_truthy
     end
     it "is green and red for change" do
       a = "a"
       b = "b"
-      db = Card::Diff.new(a, b)
+      db = Card::Content::Diff.new(a, b)
       expect(db.green?).to be_truthy
       expect(db.red?).to be_truthy
     end
     it "is off for no change" do
       a = "a"
       b = "a"
-      db = Card::Diff.new(a, b)
+      db = Card::Content::Diff.new(a, b)
       expect(db.green?).to be_falsey
       expect(db.red?).to be_falsey
     end
@@ -172,12 +172,12 @@ describe Card::Diff do
     end
 
     it "compares complete links" do
-      diff = Card::Diff.complete("[[A]]\n[[B]]", "[[A]]\n[[C]]", format: :html)
+      diff = Card::Content::Diff.complete("[[A]]\n[[B]]", "[[A]]\n[[C]]", format: :html)
       expect(diff).to eq("[[A]]\n#{del '[[B]]'}#{ins '[[C]]'}")
     end
 
     it "compares complete nests" do
-      diff = Card::Diff.complete("{{A}}\n{{B}}", "{{A}}\n{{C}}", format: :html)
+      diff = Card::Content::Diff.complete("{{A}}\n{{B}}", "{{A}}\n{{C}}", format: :html)
       expect(diff).to eq("{{A}}\n#{del '{{B}}'}#{ins '{{C}}'}")
     end
   end

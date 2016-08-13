@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency "card/diff"
+require_dependency "card/content/diff"
 
 class Card
   Format.register :html

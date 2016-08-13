@@ -131,12 +131,14 @@ class Card
 
     def name_diff opts={}
       return unless new_name?
-      Card::Diff.complete previous_value(:name), value(:name), opts
+      Card::Content::Diff.complete previous_value(:name), value(:name), opts
     end
 
     def cardtype_diff opts={}
       return unless new_type?
-      Card::Diff.complete previous_value(:cardtype), value(:cardtype), opts
+      Card::Content::Diff.complete previous_value(:cardtype),
+                                   value(:cardtype),
+                                   opts
     end
 
     def content_diff diff_type=:expanded, opts=nil
@@ -157,7 +159,7 @@ class Card
     def content_diff_object opts=nil
       @diff ||= begin
         diff_args = opts || card.include_set_modules.diff_args
-        Card::Diff.new previous_value(:content), value(:content), diff_args
+        Card::Content::Diff.new previous_value(:content), value(:content), diff_args
       end
     end
 

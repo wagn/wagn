@@ -165,11 +165,11 @@ format :html do
           %div.history-legend
             %span.glyphicon.glyphicon-plus-sign.diff-green
             %span
-              = Card::Diff.render_added_chunk('Added')
+              = Card::Content::Diff.render_added_chunk('Added')
               |
             %span.glyphicon.glyphicon-minus-sign.diff-red
             %span
-              = Card::Diff.render_deleted_chunk('Deleted')
+              = Card::Content::Diff.render_deleted_chunk('Deleted')
       HAML
     end
   end
@@ -330,7 +330,7 @@ format :html do
       if hide_diff
         new_name
       else
-        Card::Diff.complete(old_name, new_name)
+        Card::Content::Diff.complete(old_name, new_name)
       end
     else
       old_name

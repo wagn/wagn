@@ -53,10 +53,10 @@ format :html do
     if !args[:hide_diff] && args[:action] &&
        (last_change = card.last_change_on(:db_content, before: args[:action]))
       card.selected_action_id = last_change.card_action_id
-      out << Card::Diff.render_deleted_chunk(_render_core(size: size))
+      out << Card::Content::Diff.render_deleted_chunk(_render_core(size: size))
     end
     card.selected_action_id = args[:action].id
-    out << Card::Diff.render_added_chunk(_render_core(size: size))
+    out << Card::Content::Diff.render_added_chunk(_render_core(size: size))
     out
   end
 end

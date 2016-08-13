@@ -95,7 +95,7 @@ class Card
     end
 
     def set?
-      SetPattern.card_keys[tag_name.key]
+      Set::Pattern.card_keys[tag_name.key]
     end
 
     def relative?

@@ -8,7 +8,7 @@ class Card
         last = if pattern_name == "abstract"
                  first + 1
                else
-                 set_class = Card::SetPattern.find pattern_name
+                 set_class = Pattern.find pattern_name
                  first + set_class.anchor_parts_count
                end
         parts[first..last].join "::"

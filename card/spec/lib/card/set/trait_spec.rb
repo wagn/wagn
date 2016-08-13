@@ -2,7 +2,7 @@
 describe Card::Set::Trait do
   class Card
     module Set
-      module Type
+      class Type
         module Phrase
           extend Card::Set
           card_accessor :write, type: :phrase
@@ -10,7 +10,7 @@ describe Card::Set::Trait do
         end
       end
 
-      module TypePlusRight
+      class TypePlusRight
         module Phrase
           module Write
             extend Card::Set
@@ -21,7 +21,7 @@ describe Card::Set::Trait do
         end
       end
 
-      module TypePlusRight
+      class TypePlusRight
         module Phrase
           module Read
             extend Card::Set

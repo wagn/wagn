@@ -118,11 +118,11 @@ def related_sets with_self=false
 
   sets = []
   if known? && type_id == Card::CardtypeID # FIXME: belongs in type/cardtype
-    sets << ["#{name}+*type", Card::TypeSet.label(name)]
+    sets << ["#{name}+*type", Card::Set::Type.label(name)]
   end
-  sets << ["#{name}+*self", Card::SelfSet.label(name)] if with_self
+  sets << ["#{name}+*self", Card::Set::Self.label(name)] if with_self
   if known? && cardname.simple?
-    sets << ["#{name}+*right", Card::RightSet.label(name)]
+    sets << ["#{name}+*right", Card::Set::Right.label(name)]
   end
   sets
 end

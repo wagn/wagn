@@ -234,7 +234,7 @@ end
 def inheritable?
   return true if junction_only?
   cardname.trunk_name.junction? &&
-    cardname.tag_name.key == Card::SelfSet.pattern.key
+    cardname.tag_name.key == Card::Set::Self.pattern.key
 end
 
 def subclass_for_set

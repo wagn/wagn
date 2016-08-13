@@ -10,7 +10,6 @@ Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
 #
 # It assumes that you've already read the introductory text
 # in {file:README_Developers.rdoc}.
-#
 class Card < ActiveRecord::Base
   # attributes that ActiveJob can handle
   def self.serializable_attr_accessor *args

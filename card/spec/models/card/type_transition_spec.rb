@@ -3,7 +3,7 @@
 class Card
   cattr_accessor :count
 
-  module Set::Type
+  class Set::Type
     module CardtypeA
       extend Card::Set
 

@@ -48,7 +48,7 @@ def assigns_type?
   return unless (set_pattern = Card.fetch cardname.trunk_name.tag_name,
                                           skip_modules: true)
   return unless (pattern_code = set_pattern.codename)
-  return unless (set_class = Card::SetPattern.find pattern_code)
+  return unless (set_class = Set::Pattern.find pattern_code)
   set_class.assigns_type
 end
 

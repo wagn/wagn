@@ -102,7 +102,7 @@ class Card
             key = m && m[2]
             next unless key
             filename = [dirname, filename].join("/")
-            SetPattern.write_tmp_file key, filename, seq
+            Set::Pattern.write_tmp_file key, filename, seq
             seq += 1
           end
         end

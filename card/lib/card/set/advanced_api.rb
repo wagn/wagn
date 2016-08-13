@@ -23,7 +23,7 @@ class Card
         include Abstract::Attachment
         add_attributes name, "remote_#{name}_url".to_sym, :load_from_mod,
                        :action_id_of_cached_upload, :empty_ok
-        uploader_class = args[:uploader] || FileUploader
+        uploader_class = args[:uploader] || CarrierWave::FileUploader
         mount_uploader name, uploader_class
       end
 

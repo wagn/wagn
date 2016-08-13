@@ -895,12 +895,12 @@ id   end end.</p>
       <pre class="lines">
 
 
-151
-152
-153</pre>
+153
+154
+155</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/action.rb', line 151</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/action.rb', line 153</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_card'>card</span>
   <span class='const'>Card</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span> <span class='id identifier rubyid_card_id'>card_id</span><span class='comma'>,</span> <span class='label'>look_in_trash:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>skip_modules:</span> <span class='kw'>true</span>
@@ -928,14 +928,18 @@ id   end end.</p>
 137
 138
 139
-140</pre>
+140
+141
+142</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'mod/history/lib/card/action.rb', line 137</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_cardtype_diff'>cardtype_diff</span> <span class='id identifier rubyid_opts'>opts</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span>
   <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_new_type?'>new_type?</span>
-  <span class='const'>Card</span><span class='op'>::</span><span class='const'>Diff</span><span class='period'>.</span><span class='id identifier rubyid_complete'>complete</span> <span class='id identifier rubyid_previous_value'>previous_value</span><span class='lparen'>(</span><span class='symbol'>:cardtype</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='lparen'>(</span><span class='symbol'>:cardtype</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span>
+  <span class='const'>Card</span><span class='op'>::</span><span class='const'>Content</span><span class='op'>::</span><span class='const'>Diff</span><span class='period'>.</span><span class='id identifier rubyid_complete'>complete</span> <span class='id identifier rubyid_previous_value'>previous_value</span><span class='lparen'>(</span><span class='symbol'>:cardtype</span><span class='rparen'>)</span><span class='comma'>,</span>
+                               <span class='id identifier rubyid_value'>value</span><span class='lparen'>(</span><span class='symbol'>:cardtype</span><span class='rparen'>)</span><span class='comma'>,</span>
+                               <span class='id identifier rubyid_opts'>opts</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1023,17 +1027,17 @@ id   end end.</p>
       <pre class="lines">
 
 
-142
-143
 144
 145
 146
 147
 148
-149</pre>
+149
+150
+151</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/action.rb', line 142</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/action.rb', line 144</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_content_diff'>content_diff</span> <span class='id identifier rubyid_diff_type'>diff_type</span><span class='op'>=</span><span class='symbol'>:expanded</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span><span class='op'>=</span><span class='kw'>nil</span>
   <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_new_content?'>new_content?</span>
@@ -1155,7 +1159,7 @@ id   end end.</p>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_name_diff'>name_diff</span> <span class='id identifier rubyid_opts'>opts</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span>
   <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_new_name?'>new_name?</span>
-  <span class='const'>Card</span><span class='op'>::</span><span class='const'>Diff</span><span class='period'>.</span><span class='id identifier rubyid_complete'>complete</span> <span class='id identifier rubyid_previous_value'>previous_value</span><span class='lparen'>(</span><span class='symbol'>:name</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='lparen'>(</span><span class='symbol'>:name</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span>
+  <span class='const'>Card</span><span class='op'>::</span><span class='const'>Content</span><span class='op'>::</span><span class='const'>Diff</span><span class='period'>.</span><span class='id identifier rubyid_complete'>complete</span> <span class='id identifier rubyid_previous_value'>previous_value</span><span class='lparen'>(</span><span class='symbol'>:name</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='lparen'>(</span><span class='symbol'>:name</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1489,7 +1493,7 @@ id   end end.</p>
 </div>
 
       <div id="footer">
-  Generated on Sat Aug 13 00:39:55 2016 by
+  Generated on Sat Aug 13 01:00:40 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.5 (ruby-2.3.0).
 </div>

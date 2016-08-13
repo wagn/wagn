@@ -16,8 +16,9 @@ def abort status, msg="action canceled"
     success << status[:success]
     status = :success
   end
-  raise Card::Abort.new(status, msg)
+  raise Card::Error::Abort.new(status, msg)
 end
+
 module ClassMethods
   def create! opts
     card = Card.new opts
@@ -58,7 +59,7 @@ end
 
 def abortable
   yield
-rescue Card::Abort => e
+rescue Card::Error::Abort => e
   if e.status == :triumph
     @supercard ? raise(e) : true
   elsif e.status == :success

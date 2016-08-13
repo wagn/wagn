@@ -33,7 +33,8 @@ class Card
         when :ref_relational   then relate key, val, method: :join_references
         when :plus_relational  then relate_compound key, val
         when :ignore           then # noop
-        else                   raise BadQuery, "Invalid attribute #{key}"
+        else
+          raise Card::Error::BadQuery, "Invalid attribute #{key}"
         end
       end
 
@@ -51,7 +52,7 @@ class Card
         when Hash    then clause
         when String  then { key: clause.to_name.key }
         when Integer then { id: clause }
-        else raise BadQuery, "Invalid query args #{clause.inspect}"
+        else raise Card::Error::BadQuery, "Invalid query args #{clause.inspect}"
         end
       end
 
@@ -60,7 +61,7 @@ class Card
         when Integer, Float, Symbol, Hash then val
         when String, SmartName            then normalize_string_value val
         when Array                        then val.map { |v| normalize_value v }
-        else raise BadQuery, "unknown WQL value type: #{val.class}"
+        else raise Card::Error::BadQuery, "unknown WQL value type: #{val.class}"
         end
       end
 

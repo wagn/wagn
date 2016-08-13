@@ -16,7 +16,7 @@ class Card
                                conditions_on_join: true)
           @mods[:sort] ||= "#{sq.table_alias}.#{sort_field}"
         else
-          raise BadQuery, "sort item: #{item} not yet implemented"
+          raise Card::Error::BadQuery, "sort item: #{item} not yet implemented"
         end
       end
 
@@ -44,7 +44,7 @@ class Card
             to: [cs, "srtbl", "sort_join_field"]
           )
         else
-          raise BadQuery, "count with item: #{item} not yet implemented"
+          raise Card::Error::BadQuery, "count with item: #{item} not yet implemented"
         end
       end
     end

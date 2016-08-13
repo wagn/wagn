@@ -158,7 +158,7 @@ describe "basic card tests" do
   it "create_without_read_permission" do
     c = Card.create!(name: "Banana", type: "Fruit", content: "mush")
     Card::Auth.as Card::AnonymousID do
-      assert_raises Card::PermissionDenied do
+      assert_raises Card::Error::PermissionDenied do
         c.ok! :read
       end
     end

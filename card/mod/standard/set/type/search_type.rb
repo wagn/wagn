@@ -100,7 +100,7 @@ format do
           raw_results = card.item_cards search_params
           is_count = search_vars[:query][:return] == "count"
           is_count ? raw_results.to_i : raw_results
-        rescue BadQuery => e
+        rescue Card::Error::BadQuery => e
           e
         end
       end

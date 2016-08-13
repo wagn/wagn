@@ -37,8 +37,11 @@ class Card
     end
 
     def trait tag_code
-      name = trait_name(tag_code)
-      name ? name.s : (raise Card::NotFound, "unknown codename: #{tag_code}")
+      if (name = trait_name tag_code)
+        name.s
+      else
+        raise Card::Error::NotFound, "unknown codename: #{tag_code}"
+      end
     end
 
     def field tag_name

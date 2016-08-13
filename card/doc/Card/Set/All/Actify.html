@@ -455,7 +455,7 @@ triumph: similar to success, but if called on a subcard
     <li>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="../../Abort.html" title="Card::Abort (class)">Card::Abort</a></span></tt>)</span>
+        <span class='type'>(<tt><span class='object_link'><a href="../../Error/Abort.html" title="Card::Error::Abort (class)">Card::Error::Abort</a></span></tt>)</span>
       
       
       
@@ -491,7 +491,7 @@ triumph: similar to success, but if called on a subcard
     <span class='id identifier rubyid_success'>success</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_status'>status</span><span class='lbracket'>[</span><span class='symbol'>:success</span><span class='rbracket'>]</span>
     <span class='id identifier rubyid_status'>status</span> <span class='op'>=</span> <span class='symbol'>:success</span>
   <span class='kw'>end</span>
-  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Card</span><span class='op'>::</span><span class='const'>Abort</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_msg'>msg</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Card</span><span class='op'>::</span><span class='const'>Error</span><span class='op'>::</span><span class='const'>Abort</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_msg'>msg</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -513,7 +513,6 @@ triumph: similar to success, but if called on a subcard
       <pre class="lines">
 
 
-62
 63
 64
 65
@@ -526,14 +525,15 @@ triumph: similar to success, but if called on a subcard
 72
 73
 74
-75</pre>
+75
+76</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 62</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 63</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_abortable'>abortable</span>
   <span class='kw'>yield</span>
-<span class='kw'>rescue</span> <span class='const'>Card</span><span class='op'>::</span><span class='const'>Abort</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
+<span class='kw'>rescue</span> <span class='const'>Card</span><span class='op'>::</span><span class='const'>Error</span><span class='op'>::</span><span class='const'>Abort</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_status'>status</span> <span class='op'>==</span> <span class='symbol'>:triumph</span>
     <span class='ivar'>@supercard</span> <span class='op'>?</span> <span class='id identifier rubyid_raise'>raise</span><span class='lparen'>(</span><span class='id identifier rubyid_e'>e</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='kw'>true</span>
   <span class='kw'>elsif</span> <span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_status'>status</span> <span class='op'>==</span> <span class='symbol'>:success</span>
@@ -565,12 +565,12 @@ triumph: similar to success, but if called on a subcard
       <pre class="lines">
 
 
-46
 47
-48</pre>
+48
+49</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 46</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_save'>save</span><span class='lparen'>(</span><span class='op'>*</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_act'>act</span> <span class='lbrace'>{</span> <span class='kw'>super</span> <span class='rbrace'>}</span>
@@ -595,12 +595,12 @@ triumph: similar to success, but if called on a subcard
       <pre class="lines">
 
 
-42
 43
-44</pre>
+44
+45</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 42</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 43</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_save!'>save!</span><span class='lparen'>(</span><span class='op'>*</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_act'>act</span> <span class='lbrace'>{</span> <span class='kw'>super</span> <span class='rbrace'>}</span>
@@ -625,12 +625,12 @@ triumph: similar to success, but if called on a subcard
       <pre class="lines">
 
 
-93
 94
-95</pre>
+95
+96</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 93</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 94</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_success'>success</span>
   <span class='const'>Env</span><span class='period'>.</span><span class='id identifier rubyid_success'>success</span><span class='lparen'>(</span><span class='id identifier rubyid_cardname'>cardname</span><span class='rparen'>)</span>
@@ -655,12 +655,12 @@ triumph: similar to success, but if called on a subcard
       <pre class="lines">
 
 
-54
 55
-56</pre>
+56
+57</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 54</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 55</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_attributes'>update_attributes</span><span class='lparen'>(</span><span class='op'>*</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_act'>act</span> <span class='lbrace'>{</span> <span class='kw'>super</span> <span class='rbrace'>}</span>
@@ -685,12 +685,12 @@ triumph: similar to success, but if called on a subcard
       <pre class="lines">
 
 
-58
 59
-60</pre>
+60
+61</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 58</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 59</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_attributes!'>update_attributes!</span><span class='lparen'>(</span><span class='op'>*</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_act'>act</span> <span class='lbrace'>{</span> <span class='kw'>super</span> <span class='rbrace'>}</span>
@@ -737,12 +737,12 @@ triumph: similar to success, but if called on a subcard
       <pre class="lines">
 
 
-50
 51
-52</pre>
+52
+53</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 50</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_valid?'>valid?</span><span class='lparen'>(</span><span class='op'>*</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_act'>act</span> <span class='lbrace'>{</span> <span class='kw'>super</span> <span class='rbrace'>}</span>
@@ -779,7 +779,6 @@ so that :success abortions do not rollback</p>
       <pre class="lines">
 
 
-79
 80
 81
 82
@@ -787,10 +786,11 @@ so that :success abortions do not rollback</p>
 84
 85
 86
-87</pre>
+87
+88</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 79</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/actify.rb', line 80</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_with_transaction_returning_status'>with_transaction_returning_status</span>
   <span class='id identifier rubyid_status'>status</span> <span class='op'>=</span> <span class='kw'>nil</span>
@@ -811,7 +811,7 @@ so that :success abortions do not rollback</p>
 </div>
 
       <div id="footer">
-  Generated on Fri Aug 12 23:35:01 2016 by
+  Generated on Sat Aug 13 00:39:47 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.5 (ruby-2.3.0).
 </div>

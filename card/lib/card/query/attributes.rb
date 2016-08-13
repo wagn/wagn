@@ -11,7 +11,7 @@ class Card
               c.get_query.merge(unjoined: true, context: c.name)
             )
           else
-            raise BadQuery,
+            raise Card::Error::BadQuery,
                   '"found_by" value must be valid Search, ' \
                   "but #{c.name} is a #{c.type_name}"
           end

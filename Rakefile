@@ -14,9 +14,9 @@ end
 
 task :cp_tmpsets do
   system %(
-    cd ..
-    cp -r sites/core-dev/tmp/set* decko-tmpsets
-    cd decko-tmpsets
+    cd ../decko-tmpsets
+    rm -rf set*
+    cp -r ../sites/core-dev/tmp/set* .
     git commit -a -m 'updated from core-dev'
     git push; git push wagn
     cd ../gem

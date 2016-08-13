@@ -1,6 +1,6 @@
 event :admin_tasks, :initialize, on: :update do
   return unless (task = Env.params[:task])
-  raise Card::PermissionDenied.new(self) unless Auth.always_ok?
+  raise Card::Error::PermissionDenied.new(self) unless Auth.always_ok?
 
   case task.to_sym
   when :clear_cache          then Card::Cache.reset_all

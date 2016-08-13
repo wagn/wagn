@@ -18,7 +18,7 @@ class RailsInflectionUpdates < Card::CoreMigration
         twin.destroy
         yield
       elsif !card.trash
-        raise Card::Oops.new("Your deck has two different cards with names '#{card.name}' and '#{twin.name}'. After this update it's no longer possible to differentiate between those two names. Please rename or delete one of the two cards and run the update again.")
+        raise Card::Error::Oops.new("Your deck has two different cards with names '#{card.name}' and '#{twin.name}'. After this update it's no longer possible to differentiate between those two names. Please rename or delete one of the two cards and run the update again.")
       end
     else
       yield

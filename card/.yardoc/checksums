@@ -1,10 +1,10 @@
-lib/card.rb 06a0d1d36545c96da6fc675a10397c77a5c2a2dd
+lib/card.rb 9d7a330d9b8ec8e5f8fe100d179476f01dca1ad6
 lib/cardio.rb 12c5368bf004e93dfb5d8c003d7dc264d8eebbfc
 lib/card/set.rb bf095c8c7820f8677058f4f0a55bc91d2f93b1ac
 lib/card/env.rb 3a48c36de6b0fb5bab9ad8ceba8e70635fd36e0c
 lib/card/diff.rb 119ef928a13562db5838410fe0f3c881c4bb1911
 lib/card/auth.rb 37656d65a1133c5d463b4265055baa1358be9f68
-lib/card/name.rb d4fce8c09e8920196a85f7e119f4cc5a3b98bd4e
+lib/card/name.rb 48aeb4cc08bea3562b090f046060ee26a08a089e
 lib/card/cache.rb 7a33dd69ab722c9d07df6f4e7d8d8caa3a5053f7
 lib/card/stage.rb 11bce0169a1de2198c4cc29ee32a151a21821b50
 lib/card/query.rb 698350defe037d07c2d574bc4cf1622fd60af7f8
@@ -26,11 +26,11 @@ lib/card/view_name.rb 41cdc79603056fd2c45f739b5798ce19dabf5e8b
 lib/card/set/basket.rb 229ad2d5c3be13caf71879b148c03118473e7807
 lib/card/query/join.rb b2b2c03501686d0ecf349391e0b4eaad8577337c
 lib/generators/card.rb fe6f198379adf93a8d960e13a536de5715d2dddd
-lib/card/exceptions.rb cf762549560c56a28b9a5d4738c40d5fda3ad4f1
+lib/card/exceptions.rb fdfda46c3aa69a225b71d77f7eae4a4de8186db5
 lib/card/view_cache.rb 006780f47c3ca542adefd142cf00b3051bd441a3
 lib/card/set/format.rb 78fb091434d89f5a77330c42a5ac86d1b7b3419a
 lib/card/set/loader.rb 4bfa3eeb2ca08507091e9865647553abd7d9475a
-lib/card/query/value.rb 20506e17d709ce07da7e3d4eaeef6c524a37e28f
+lib/card/query/value.rb 2122bcf3af6ff0ad292db84a744eb8548fc2add6
 lib/card/set/helpers.rb 9abd8d5ceef8c7e1f5ba532ee12320b26e1eda4e
 lib/card/format/nest.rb e91795ca50f8ec8d7b48047dfd13368bf2942d42
 lib/card/set_pattern.rb d44763f04bd07b0fed2d72437793679eae988ddf
@@ -40,7 +40,7 @@ lib/card/query/clause.rb e0320b03910f08996131af73629761dde7010729
 lib/card/format/render.rb 4209a8bb222c8db2f2151d753a155a15bd4abb48
 spec/lib/card/set_spec.rb f8c33d82de570ca7f9c3f6051ccd70d33212a2bb
 lib/card/content/chunk.rb 7cd86445fd97da685fbbf9fc3863f1e8c2e020df
-lib/card/query/sorting.rb b5dbafd43fec8c8e94a80a91a9423553210d438c
+lib/card/query/sorting.rb c3ec7a93512ef55d4e24eb4c04825be550b34b1c
 lib/card/query/helpers.rb 80ba86c0f581921fab16fecaf8440bb44cacc42f
 lib/card/core_migration.rb 7a1a9a7617d1c6e265d41304985bfea0b9910f9d
 lib/card/content/parser.rb 11044296019db64a7c710aaaaaab36ee5c467514
@@ -60,7 +60,7 @@ lib/card/set/inheritance.rb d0a1f0bf2994fc593a00339740bd8f23b4c44506
 lib/card/format/nest/view.rb 4b04e123f73d94109453ec5ece779c646cab4152
 lib/card/format/nest/main.rb b4655bbb46f430573a913cb7a7d5441fd3054b60
 lib/card/migration/import.rb f629ebe4e45618895b892964faa1683e996e21fd
-lib/card/query/attributes.rb ccd6b6b6363d6fa351f7e817631c5769297216a2
+lib/card/query/attributes.rb c6528949dd18e9245a0838672d964efeea74b110
 lib/card/set/advanced_api.rb b1735be91a91733b350794045cc448968d18daf7
 lib/card/simplecov_helper.rb 8f9c0fe0770188c3d25a15bb99a967036721b6e1
 lib/card/cache/persistent.rb 53e737a4b36c0d6106ebf31a3e8a092f95c70a36
@@ -87,7 +87,7 @@ mod/machines/lib/card/machine.rb d4337c995a71fed7d9d498b3ceee7a859e9191b9
 lib/card/active_record_helper.rb bdcf214881484d2befeee7b2d4c47c77d656f460
 mod/settings/lib/card/setting.rb e44ab29429aa74899aafeabe97e9ed9ed66bb1b9
 spec/lib/card/loader/mod_dirs.rb 60535d8c4f2ef4a0e220e7e81995e3877f5161da
-lib/card/query/interpretation.rb 9dea3d66ed8a76c22c70bdf9f3ee6a9607ad8063
+lib/card/query/interpretation.rb e726e404a1155f5ec55d5226a1dd68a87110ff73
 spec/lib/card/set_pattern_spec.rb 4be995cb7c57f6ce78e95b3a76c3669eb01ad134
 spec/lib/card/format/nest_spec.rb 60c98ae99ed1de0a54e5b915181f6d85772379a0
 lib/card/format/nest/subformat.rb 96197d7306f8dedf135f958a6cd0665b0e9733e0
@@ -128,9 +128,9 @@ tmpsets/set/mod001-core/all/export.rb 724c197697e9ea457ba98859f8fd9b6a71ab833e
 tmpsets/set/mod012-email/right/bcc.rb f0fe93ceed5756c1ed7222ef1127c5a901da0277
 tmpsets/set/mod001-core/all/phases.rb 6f9f36c83e5da643541d2ce30310779fbcc82e4e
 tmpsets/set/mod001-core/all/stages.rb 77251a6e484e8cfd23339e39420983d8fea840e1
-tmpsets/set/mod001-core/all/actify.rb 907f39f17ec53a9e7d3774fa68e32800a0cc1c3a
+tmpsets/set/mod001-core/all/actify.rb 6bd1d22b26ca169913ae40fdad7b7a8800acc84e
 tmpsets/set/mod012-email/all/notify.rb 91f1adce03a74fe3f1147290e1068b9ecc160fcf
-tmpsets/set/mod014-admin/self/admin.rb 21f9336bc1c340a18b24c7486ceb58e0ff7fccd0
+tmpsets/set/mod014-admin/self/admin.rb 6acbd6b8682f5b4f7ce8480a700d049dc1347933
 tmpsets/set/mod001-core/all/pattern.rb 1fa02d624a6a960d25b50a0cfaec19530c5516cc
 tmpsets/set/mod012-email/right/from.rb abb5e374efa5dbb9ac7eec19d097eeafa369e889
 tmpsets/set/mod001-core/all/content.rb 264758d5b5b4c5bd66e3b4477c859b1ed5781021
@@ -160,7 +160,7 @@ tmpsets/set/mod011-settings/self/help.rb bef38a102dbb22cdc925d6bceb2bf1b34c5ddcd
 tmpsets/set/mod011-settings/self/read.rb 7d6c7ed16e2f9a79b23cfd00abe025ecb1e60f27
 tmpsets/set/mod012-email/all/observer.rb 095b6014db7677b6a8dc3f592dd0eb687311820b
 tmpsets/set/mod017-account/type/signup.rb 56af685c78af0e8b66fdf866150ab8a3bf87423f
-tmpsets/set/mod017-account/right/token.rb 692be4532e3ceb105701740bb7c92f7b14164ea0
+tmpsets/set/mod017-account/right/token.rb b701bb7991f8fc48d100fb5bf948d7646a3e204d
 tmpsets/set/mod011-settings/self/style.rb fd53e90982a22a0322eb2f405591040837264f78
 tmpsets/set/mod001-core/all/templating.rb 78b8cb04234de1e01159317da1522fa87ce04317
 tmpsets/set/mod001-core/all/references.rb a8e09f6b5b0c3dfbe3e598be4920bfd1a56ca979
@@ -188,7 +188,7 @@ tmpsets/set/mod016-standard/self/alerts.rb 196c26bd22d216fa0f490f7e0f506a10f3e52
 tmpsets/set/mod016-standard/rstar/rules.rb d689ad5df5f5bb68cdbe918e782f24a12fbeef55
 tmpsets/set/mod012-email/all/email_text.rb 1fb0032bb5401c5b73cc61f831366457821709cd
 tmpsets/set/mod016-standard/all/comment.rb 220a6714664d04e7743ee860c89bdc8e351915ec
-tmpsets/set/mod001-core/all/permissions.rb 90a9341bddb33f3c18c78a73a323d80bd3eab75a
+tmpsets/set/mod001-core/all/permissions.rb 036b7907788f4a89de0299fd7587f2a6b9121603
 tmpsets/set_pattern/106-type_plus_right.rb 00c0372dbb272ae033030682d67636acf2ddb76c
 tmpsets/set/mod001-core/all/active_card.rb cb09253538d67132e1be683e9acddee11a986f8f
 tmpsets/set/mod011-settings/right/style.rb a6347283518de51a684bb8d05394fe1f0c0c487f
@@ -247,7 +247,7 @@ tmpsets/set/mod003-basic_formats/all/all_csv.rb 0c350ef3f84db88ceac689ce1d717ede
 tmpsets/set/mod010-machines/self/script_slot.rb fbfd5597b2bdf27df53e23fe3e384d925d35487e
 tmpsets/set/mod011-settings/self/accountable.rb 268216d42ae49e975915852b17527152941d2fd9
 tmpsets/set/mod010-machines/type/java_script.rb e8fd68148c82f6f2911f9ad608cd9582684a0670
-tmpsets/set/mod016-standard/type/search_type.rb 9a5439b72adf4cfddc927dc19a0b30bd22d68990
+tmpsets/set/mod016-standard/type/search_type.rb 34f0f643cb8852812843fc7d75de2f118aabaa7b
 tmpsets/set/mod016-standard/right/discussion.rb 3c1a8199da6de3159bda9031b6753baa74624750
 tmpsets/set/mod012-email/type/email_template.rb c40bde70f6ee78bde1c70445a4d17e951c5b83af
 tmpsets/set/mod016-standard/type/layout_type.rb d64364885024663d1b54883a8d5891c10c715d05

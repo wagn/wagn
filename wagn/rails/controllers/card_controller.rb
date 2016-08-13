@@ -64,7 +64,7 @@ class CardController < ActionController::Base
   def authenticate
     if params[:token]
       ok = Card::Auth.set_current_from_token params[:token], params[:current]
-      raise Card::Oops, "token authentication failed" unless ok
+      raise Card::Error::Oops, "token authentication failed" unless ok
       # arguably should be PermissionDenied; that requires a card object,
       # and that's not loaded yet.
     else
@@ -83,7 +83,7 @@ class CardController < ActionController::Base
 
   def load_card
     @card = new_or_fetch_card
-    raise Card::NotFound unless @card
+    raise Card::Error::NotFound unless @card
 
     @card.select_action_by_params params #
     Card::Env[:main_name] = params[:main] || (card && card.name) || ""
@@ -232,15 +232,15 @@ class CardController < ActionController::Base
       case exception
       ## arguably the view and status should be defined in the error class;
       ## some are redundantly defined in view
-      when Card::Oops, Card::BadQuery
+      when Card::Error::Oops, Card::Error::BadQuery
         card.errors.add :exception, exception.message
         # these error messages are visible to end users and are generally not
         # treated as bugs.
         # Probably want to rename accordingly.
         :errors
-      when Card::PermissionDenied
+      when Card::Error::PermissionDenied
         :denial
-      when Card::NotFound, ActiveRecord::RecordNotFound,
+      when Card::Error::NotFound, ActiveRecord::RecordNotFound,
            ActionController::MissingFile
         :not_found
       when Wagn::BadAddress

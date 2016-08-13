@@ -941,7 +941,7 @@
     <li>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="../../PermissionDenied.html" title="Card::PermissionDenied (class)">Card::PermissionDenied</a></span></tt>)</span>
+        <span class='type'>(<tt><span class='object_link'><a href="../../Error/PermissionDenied.html" title="Card::Error::PermissionDenied (class)">Card::Error::PermissionDenied</a></span></tt>)</span>
       
       
       
@@ -963,7 +963,7 @@
       <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/permissions.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ok!'>ok!</span> <span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span>
-  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Card</span><span class='op'>::</span><span class='const'>PermissionDenied</span><span class='comma'>,</span> <span class='kw'>self</span> <span class='kw'>unless</span> <span class='id identifier rubyid_ok?'>ok?</span> <span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Card</span><span class='op'>::</span><span class='const'>Error</span><span class='op'>::</span><span class='const'>PermissionDenied</span><span class='comma'>,</span> <span class='kw'>self</span> <span class='kw'>unless</span> <span class='id identifier rubyid_ok?'>ok?</span> <span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1579,7 +1579,7 @@
     <li>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="../../PermissionDenied.html" title="Card::PermissionDenied (class)">Card::PermissionDenied</a></span></tt>)</span>
+        <span class='type'>(<tt><span class='object_link'><a href="../../Error/PermissionDenied.html" title="Card::Error::PermissionDenied (class)">Card::Error::PermissionDenied</a></span></tt>)</span>
       
       
       
@@ -1609,7 +1609,7 @@
   <span class='comment'># RULE missing.  should not be possible.
 </span>  <span class='comment'># generalize this to handling of all required rules
 </span>  <span class='id identifier rubyid_errors'>errors</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span> <span class='symbol'>:permission_denied</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>No </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_action'>action</span><span class='embexpr_end'>}</span><span class='tstring_content'> rule for </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
-  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Card</span><span class='op'>::</span><span class='const'>PermissionDenied</span><span class='comma'>,</span> <span class='kw'>self</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Card</span><span class='op'>::</span><span class='const'>Error</span><span class='op'>::</span><span class='const'>PermissionDenied</span><span class='comma'>,</span> <span class='kw'>self</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1827,7 +1827,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Aug 12 23:35:04 2016 by
+  Generated on Sat Aug 13 00:39:49 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.5 (ruby-2.3.0).
 </div>

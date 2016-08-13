@@ -42,7 +42,7 @@ end
 alias_method_chain :ok?, :fetch
 
 def ok! action, opts={}
-  raise Card::PermissionDenied, self unless ok? action, opts
+  raise Card::Error::PermissionDenied, self unless ok? action, opts
 end
 
 def who_can action
@@ -80,7 +80,7 @@ def require_permission_rule! rule_id, action
   # RULE missing.  should not be possible.
   # generalize this to handling of all required rules
   errors.add :permission_denied, "No #{action} rule for #{name}"
-  raise Card::PermissionDenied, self
+  raise Card::Error::PermissionDenied, self
 end
 
 def rule_class_name

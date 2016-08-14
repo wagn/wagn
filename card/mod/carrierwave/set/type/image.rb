@@ -1,4 +1,4 @@
-attachment :image, uploader: ImageUploader
+attachment :image, uploader: CarrierWave::ImageCardUploader
 
 include File::SelectedAction
 

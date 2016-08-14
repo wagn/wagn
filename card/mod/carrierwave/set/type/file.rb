@@ -1,4 +1,4 @@
-attachment :file, uploader: FileUploader
+attachment :file, uploader: CarrierWave::FileCardUploader
 
 module SelectedAction
   def select_action_by_params params

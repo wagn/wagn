@@ -1,5 +1,17 @@
 # -*- encoding : utf-8 -*-
 class Card
+  # An "act" is a group of recorded actions on cards.
+  #
+  # For example, if a given web form submissions updates the contents of three
+  # three cards, then the submission will result in the recording of three
+  # actions, each of which is tied to one act.
+  #
+  # Each act records:
+  # - the "actor_id" (an id associated with the account responsible)
+  # - the "card_id" of the act's primary card
+  # - "acted_at", a timestamp of the action
+  # - the "ip_address" of the actor where applicable.
+  #
   class Act < ActiveRecord::Base
     before_save :set_actor
     has_many :actions,
@@ -15,11 +27,13 @@ class Card
     end
 
     class << self
+      # remove all acts that have no card. (janitorial)
       def delete_cardless
         left_join = "LEFT JOIN cards ON card_acts.card_id = cards.id"
         joins(left_join).where("cards.id IS NULL").delete_all
       end
 
+      # remove all acts that have no action. (janitorial)
       def delete_actionless
         joins(
           "LEFT JOIN card_actions ON card_acts.id = card_act_id"

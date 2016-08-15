@@ -32,5 +32,6 @@ exclude_paths:
 - card/mod/machines/lib/javascript/**/*
 - card/mod/bootstrap/lib/javascript/**/*
 - card/db/**/*
+- card/doc/**
 - card/spec/**/*
 - wagn/spec/**/*

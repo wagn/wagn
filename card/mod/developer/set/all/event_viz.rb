@@ -1,3 +1,5 @@
+require_dependency 'active_support/callbacks_ext'
+
 # the events method is a developer's tool for visualizing the event order
 # for a given card.
 # For example, from a console you might run
@@ -47,10 +49,4 @@ def events_tree filt
   end
 
   hash
-end
-
-class ::ActiveSupport::Callbacks::Callback
-  def applies? object
-    conditions_lambdas.all? { |c| c.call(object, nil) }
-  end
 end

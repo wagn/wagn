@@ -1,4 +1,4 @@
-lib/card.rb 06a0d1d36545c96da6fc675a10397c77a5c2a2dd
+lib/card.rb 9dbf34fdcd10294866756efdaa4f9de572d9acc5
 lib/cardio.rb 12c5368bf004e93dfb5d8c003d7dc264d8eebbfc
 lib/card/set.rb bf095c8c7820f8677058f4f0a55bc91d2f93b1ac
 lib/card/env.rb 3a48c36de6b0fb5bab9ad8ceba8e70635fd36e0c
@@ -319,3 +319,4 @@ tmpsets/set/mod010-machines/self/style_jquery_ui_smoothness.rb 23d85e24e82e63e89
 tmpsets/set/mod006-prosemirror_editor/self/script_prosemirror.rb 4fafcd427d346f613a93fd23a866a9f35a8ad5f2
 tmpsets/set/mod006-prosemirror_editor/abstract/prosemirror_editor.rb f542d9647cdf680e2ec535e9f4ec2a6a4ad0c24b
 tmpsets/set/mod006-prosemirror_editor/self/script_prosemirror_config.rb e0e1ceb2f4ce91d61bce8f01ac5f7ce63a1a14e0
+lib/active_record/connection_adapters.rb 8868fe9b5c34935c31ff5aabcc6f42cd1527d429

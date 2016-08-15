@@ -17,7 +17,7 @@ class Card < ActiveRecord::Base
     attr_accessor(*args)
   end
 
-  require_dependency "active_record/connection_adapters"
+  require_dependency "active_record/connection_adapters_ext"
   require_dependency "card/codename"
   require_dependency "card/query"
   require_dependency "card/format"

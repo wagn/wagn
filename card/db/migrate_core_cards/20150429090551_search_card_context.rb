@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class SearchCardContext < Card::CoreMigration
+class SearchCardContext < Card::Migration::Core
   def up
     sep = /\W/
     replace = [

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddEmailCards < Card::CoreMigration
+class AddEmailCards < Card::Migration::Core
   def up
     # change notification rules
     %w(create update delete).each do |action|

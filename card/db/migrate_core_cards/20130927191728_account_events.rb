@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AccountEvents < Card::CoreMigration
+class AccountEvents < Card::Migration::Core
   def up
     aa = Card.fetch :signup, :type, :accountable, new: {}
     aa.content = "1"

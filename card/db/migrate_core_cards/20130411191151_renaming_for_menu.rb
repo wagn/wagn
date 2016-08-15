@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class RenamingForMenu < Card::CoreMigration
+class RenamingForMenu < Card::Migration::Core
   def up
     renames = {
       "*content"    => "*structure",

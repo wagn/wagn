@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class ReorganizeScripts < Card::CoreMigration
+class ReorganizeScripts < Card::Migration::Core
   def up
     ensure_card name: "script: mods", type_id: Card::PointerID,
                 codename: "script_mods"

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class ResetAccountRequestType < Card::CoreMigration
+class ResetAccountRequestType < Card::Migration::Core
   def up
     arcard = Card[:signup]
     if arcard.type_code != :cardtype

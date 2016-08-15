@@ -20,7 +20,7 @@ class Card
   end
 end
 
-class AddScriptCards < Card::CoreMigration
+class AddScriptCards < Card::Migration::Core
   def up
     # JavaScript and CoffeeScript types
     card = Card.fetch "CoffeeScript", new: {}

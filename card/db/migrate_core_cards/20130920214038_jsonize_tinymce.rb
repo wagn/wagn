@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class JsonizeTinymce < Card::CoreMigration
+class JsonizeTinymce < Card::Migration::Core
   def up
     card = Card[:tiny_mce]
     cleaned_rows = card.content.strip.split(/\s*\,\s+/).map do |row|

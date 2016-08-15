@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class BootswatchThemes < Card::CoreMigration
+class BootswatchThemes < Card::Migration::Core
   def up
     themeless = Card.fetch "themeless bootstrap skin", new: { type_code: :skin }
     themeless.update_attributes! content: "[[style: jquery-ui-smoothness]]\n[[style: cards]]\n[[style: right sidebar]]\n[[style: bootstrap cards]]"

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AttachmentUploadCards < Card::CoreMigration
+class AttachmentUploadCards < Card::Migration::Core
   def up
     Card.create! name: "*new file", type: "File",
                  codename: "new_file", empty_ok: true

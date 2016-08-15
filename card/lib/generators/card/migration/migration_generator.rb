@@ -26,7 +26,7 @@ class Card
 
       def set_local_assigns!
         @migration_template = "card_migration.erb"
-        @migration_parent_class = options["core"] ? "Card::CoreMigration" : "Card::Migration"
+        @migration_parent_class = options["core"] ? "Card::Migration::Core" : "Card::Migration"
         case file_name
         when /^(import)_(.*)(?:\.json)?/
           @migration_action = Regexp.last_match(1)

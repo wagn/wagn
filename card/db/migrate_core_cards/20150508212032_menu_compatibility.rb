@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class MenuCompatibility < Card::CoreMigration
+class MenuCompatibility < Card::Migration::Core
   def up
     # Add bootswatch shared to old skins so that menu works
     bootswatch_shared = Card[:bootswatch_shared]

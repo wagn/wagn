@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AccountRequestsToSignups < Card::CoreMigration
+class AccountRequestsToSignups < Card::Migration::Core
   def up
     newname = "Sign up"
     newname = "*signup" if Card.exists? newname

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddRecentSettingSessionCard < Card::CoreMigration
+class AddRecentSettingSessionCard < Card::Migration::Core
   def up
     Card.create!(
       name: "*recent settings",

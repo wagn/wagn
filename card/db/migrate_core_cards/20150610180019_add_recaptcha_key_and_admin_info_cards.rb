@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddRecaptchaKeyAndAdminInfoCards < Card::CoreMigration
+class AddRecaptchaKeyAndAdminInfoCards < Card::Migration::Core
   def up
     create_recaptcha_settings
     Card::Cache.reset_all

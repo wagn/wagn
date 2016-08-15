@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class ConfigCardUpdates < Card::CoreMigration
+class ConfigCardUpdates < Card::Migration::Core
   def up
     raw_json = File.read(data_path "1.13_config_text.json")
     json = JSON.parse raw_json

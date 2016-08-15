@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class CreateReferencesForSearchCards < Card::CoreMigration
+class CreateReferencesForSearchCards < Card::Migration::Core
   def up
     Card.where(
       type_id: Card::SearchTypeID

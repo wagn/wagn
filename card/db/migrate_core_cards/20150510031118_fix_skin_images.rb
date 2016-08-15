@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class FixSkinImages < Card::CoreMigration
+class FixSkinImages < Card::Migration::Core
   def up
     # This is needed because the bootswatch_themes migration removed codenames.
     # They were no longer needed for style handling but are still needed for images

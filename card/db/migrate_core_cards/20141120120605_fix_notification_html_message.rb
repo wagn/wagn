@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class FixNotificationHtmlMessage < Card::CoreMigration
+class FixNotificationHtmlMessage < Card::Migration::Core
   def up
     codename = :follower_notification_email
     dir = File.join data_path, "mailer"

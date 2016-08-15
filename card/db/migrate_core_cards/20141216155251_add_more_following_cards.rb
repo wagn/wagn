@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddMoreFollowingCards < Card::CoreMigration
+class AddMoreFollowingCards < Card::Migration::Core
   def up
     Card.create! name: "*follow", codename: "follow", type_code: :setting
     Card.create! name: "*follow+*right+*default", type_code: :pointer

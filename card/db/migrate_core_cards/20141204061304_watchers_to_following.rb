@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class WatchersToFollowing < Card::CoreMigration
+class WatchersToFollowing < Card::Migration::Core
   def up
     follower_hash = Hash.new { |h, v| h[v] = [] }
 

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class DeleteOldRelatedTabCards < Card::CoreMigration
+class DeleteOldRelatedTabCards < Card::Migration::Core
   def up
     [
       "*related",

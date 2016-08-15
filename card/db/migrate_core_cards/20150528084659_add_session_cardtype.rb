@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddSessionCardtype < Card::CoreMigration
+class AddSessionCardtype < Card::Migration::Core
   def up
     session_card_name = Card.exists?("Session") ? "BrowserSession" : "Session"
     Card.create! name: session_card_name, type_code: :cardtype,

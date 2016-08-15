@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class ImportHelpText < Card::CoreMigration
+class ImportHelpText < Card::Migration::Core
   def up
     dir = data_path "1.11_help_text.json"
     data = JSON.parse(File.read dir)

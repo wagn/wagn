@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class AddListCards < Card::CoreMigration
+class AddListCards < Card::Migration::Core
   def up
     create_card! name: "List", codename: :list,
                  type_code: :cardtype

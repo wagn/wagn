@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-# describe Card::Loader do
+# describe Card::Mod::Loader do
 #   # let(:card_double) { double "Card" }
 #   # let(:pat_all_double) { proxy Card::Set::All }
 #   # let(:format_double) { proxy Card::Format }

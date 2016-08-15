@@ -132,5 +132,5 @@ class Card #::Content
       end
     end
   end
-  Card::Loader.load_chunks
+  Card::Mod::Loader.load_chunks
 end

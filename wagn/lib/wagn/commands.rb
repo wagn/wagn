@@ -65,7 +65,7 @@ else
   when "cucumber"
     require "wagn"
     require "./config/environment"
-    feature_paths = Card::Loader.mod_dirs.map do |p|
+    feature_paths = Card::Mod::Loader.mod_dirs.map do |p|
       Dir.glob "#{p}/features"
     end.flatten
     require_args = "-r #{Wagn.gem_root}/features "

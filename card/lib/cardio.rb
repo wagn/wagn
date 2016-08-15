@@ -8,7 +8,7 @@ module Cardio
 
   ActiveSupport.on_load :card do
     if Card.take
-      Card::Loader.load_mods
+      Card::Mod::Loader.load_mods
     else
       Rails.logger.warn "empty database"
     end
@@ -134,7 +134,7 @@ module Cardio
     def migration_paths type
       list = paths["db/migrate#{schema_suffix type}"].to_a
       if type == :deck_cards
-        Card::Loader.mod_dirs.each('db/migrate_cards') do |path|
+        Card::Mod::Loader.mod_dirs.each('db/migrate_cards') do |path|
           list += Dir.glob path
         end
       end

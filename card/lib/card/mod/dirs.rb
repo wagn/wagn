@@ -1,6 +1,6 @@
 class Card
-  module Loader
-    class ModDirs < Array
+  module Mod
+    class Dirs < Array
       attr_reader :mods
 
       def initialize mod_paths

@@ -42,7 +42,7 @@ class Card
         end
 
         def mod_dirs
-          @mod_dirs ||= Loader::ModDirs.new(Card.paths["mod"].existent)
+          @mod_dirs ||= Mod::Dirs.new(Card.paths["mod"].existent)
         end
 
         def refresh_script_and_style

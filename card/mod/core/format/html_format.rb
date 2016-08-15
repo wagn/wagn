@@ -8,7 +8,7 @@ class Card
     attr_accessor :options_need_save, :start_time, :skip_autosave
 
     # builtin layouts allow for rescue / testing
-    LAYOUTS = Loader.load_layouts.merge "none" => "{{_main}}"
+    LAYOUTS = Mod::Loader.load_layouts.merge "none" => "{{_main}}"
 
     # helper methods for layout view
     def get_layout_content

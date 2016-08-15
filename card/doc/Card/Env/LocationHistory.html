@@ -399,7 +399,7 @@ card removal we can crawl back up to the last un-removed location</p>
       <pre class="code"><span class="info file"># File 'lib/card/env.rb', line 79</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_location_history'>location_history</span>
-  <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='symbol'>:history</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='const'>Card</span><span class='op'>::</span><span class='const'>Location</span><span class='period'>.</span><span class='id identifier rubyid_card_path'>card_path</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='symbol'>:history</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='const'>Env</span><span class='op'>::</span><span class='const'>Location</span><span class='period'>.</span><span class='id identifier rubyid_card_path'>card_path</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='rbracket'>]</span>
   <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='symbol'>:history</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_shift'>shift</span> <span class='kw'>if</span> <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='symbol'>:history</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&gt;</span> <span class='int'>5</span>
   <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='symbol'>:history</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
@@ -500,7 +500,7 @@ card removal we can crawl back up to the last un-removed location</p>
   <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_save_location?'>save_location?</span><span class='lparen'>(</span><span class='id identifier rubyid_card'>card</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_discard_locations_for'>discard_locations_for</span> <span class='id identifier rubyid_card'>card</span>
   <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='symbol'>:previous_location</span><span class='rbracket'>]</span> <span class='op'>=</span>
-    <span class='const'>Card</span><span class='op'>::</span><span class='const'>Location</span><span class='period'>.</span><span class='id identifier rubyid_card_path'>card_path</span> <span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_cardname'>cardname</span><span class='period'>.</span><span class='id identifier rubyid_url_key'>url_key</span>
+    <span class='const'>Env</span><span class='op'>::</span><span class='const'>Location</span><span class='period'>.</span><span class='id identifier rubyid_card_path'>card_path</span> <span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_cardname'>cardname</span><span class='period'>.</span><span class='id identifier rubyid_url_key'>url_key</span>
   <span class='id identifier rubyid_location_history'>location_history</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span> <span class='id identifier rubyid_previous_location'>previous_location</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -595,7 +595,7 @@ card removal we can crawl back up to the last un-removed location</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Aug 15 13:33:44 2016 by
+  Generated on Mon Aug 15 14:23:36 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.5 (ruby-2.3.0).
 </div>

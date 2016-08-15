@@ -952,7 +952,7 @@
 <span class='kw'>def</span> <span class='id identifier rubyid_migration_paths'>migration_paths</span> <span class='id identifier rubyid_type'>type</span>
   <span class='id identifier rubyid_list'>list</span> <span class='op'>=</span> <span class='id identifier rubyid_paths'>paths</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>db/migrate</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_schema_suffix'>schema_suffix</span> <span class='id identifier rubyid_type'>type</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='symbol'>:deck_cards</span>
-    <span class='const'>Card</span><span class='op'>::</span><span class='const'>Loader</span><span class='period'>.</span><span class='id identifier rubyid_mod_dirs'>mod_dirs</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db/migrate_cards</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_path'>path</span><span class='op'>|</span>
+    <span class='const'>Card</span><span class='op'>::</span><span class='const'>Mod</span><span class='op'>::</span><span class='const'>Loader</span><span class='period'>.</span><span class='id identifier rubyid_mod_dirs'>mod_dirs</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db/migrate_cards</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_path'>path</span><span class='op'>|</span>
       <span class='id identifier rubyid_list'>list</span> <span class='op'>+=</span> <span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_glob'>glob</span> <span class='id identifier rubyid_path'>path</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
@@ -1397,7 +1397,7 @@ exist</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Aug 15 13:33:44 2016 by
+  Generated on Mon Aug 15 14:23:35 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.5 (ruby-2.3.0).
 </div>

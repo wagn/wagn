@@ -8,7 +8,7 @@ require "rr"
 # used for SharedData::Users - required here so code won't show up in coverage
 require File.expand_path("../../db/seed/test/seed.rb", __FILE__)
 
-require File.expand_path("../../lib/card/simplecov_helper.rb", __FILE__)
+require File.expand_path("../../config/simplecov_helper.rb", __FILE__)
 require "simplecov"
 
 require File.expand_path("../../mod/machines/spec/lib/shared_machine_examples.rb", __FILE__)
@@ -22,7 +22,7 @@ Spork.prefork do
   end
 
   require "rspec/rails"
-  require File.expand_path("../../lib/card/spec_helper.rb", __FILE__)
+  require File.expand_path("../../lib/card/helper/card_spec_helper.rb", __FILE__)
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
@@ -151,7 +151,7 @@ class Card
   end
 end
 
-RSpec::Core::ExampleGroup.send :include, Card::SpecHelper
+RSpec::Core::ExampleGroup.send :include, Card::Helper::CardSpecHelper
 
 class ActiveSupport::Logger
   def rspec msg

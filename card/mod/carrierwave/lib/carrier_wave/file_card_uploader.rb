@@ -24,15 +24,17 @@
 # :yeti_skin/standard-large.png
 
 module CarrierWave
-  module Uploader::Versions
-    private
+  module Uploader
+    module Versions
+      private
 
-    # put version at the end of the filename
-    def full_filename for_file
-      name = super(for_file)
-      parts = name.split "."
-      basename = [parts.shift, version_name].compact.join("-")
-      "#{basename}.#{parts.join('.')}"
+      # put version at the end of the filename
+      def full_filename for_file
+        name = super(for_file)
+        parts = name.split "."
+        basename = [parts.shift, version_name].compact.join("-")
+        "#{basename}.#{parts.join('.')}"
+      end
     end
   end
 

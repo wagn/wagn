@@ -22,7 +22,7 @@ Spork.prefork do
   end
 
   require "rspec/rails"
-  require File.expand_path("../../lib/card/helper/card_spec_helper.rb", __FILE__)
+  require File.expand_path("../../spec/card_spec_helper.rb", __FILE__)
 
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
@@ -151,7 +151,7 @@ class Card
   end
 end
 
-RSpec::Core::ExampleGroup.send :include, Card::Helper::CardSpecHelper
+RSpec::Core::ExampleGroup.send :include, Card::SpecHelper
 
 class ActiveSupport::Logger
   def rspec msg

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 class Card::Migration < ActiveRecord::Migration
-  include Card::Helper::SaveHelper
+  include Card::Model::SaveHelper
   @type = :deck_cards
 
   class << self

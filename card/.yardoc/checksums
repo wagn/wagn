@@ -15,7 +15,7 @@ lib/card/mod/dirs.rb bf45ab944cd6cc84f0dc71c514c37ce412c36108
 lib/card/subcards.rb 4c38500861bf9e20994fb748b476be499c552ac0
 lib/card/codename.rb a368dc6d6ae913601d4859dd7b7fd753872f5ab7
 lib/card/set/event.rb 1a00e6c2d256d8804c5907f8ff2456e561734804
-lib/card/migration.rb 25801b986faa9729d3db901269220b9a3c33c226
+lib/card/migration.rb 7b174ce3a18cd2572a709f22aa18bef78c7de06f
 lib/card/reference.rb a6ab9434e63b961748c60df7165e58894a9af3ee
 lib/card/set/trait.rb 03b7c038048a3c8a2e06287634794bba01bdd1e7
 lib/card/set/basket.rb 229ad2d5c3be13caf71879b148c03118473e7807
@@ -319,3 +319,4 @@ tmpsets/set/mod010-machines/self/style_jquery_ui_smoothness.rb 23d85e24e82e63e89
 tmpsets/set/mod006-prosemirror_editor/self/script_prosemirror.rb 4fafcd427d346f613a93fd23a866a9f35a8ad5f2
 tmpsets/set/mod006-prosemirror_editor/abstract/prosemirror_editor.rb f542d9647cdf680e2ec535e9f4ec2a6a4ad0c24b
 tmpsets/set/mod006-prosemirror_editor/self/script_prosemirror_config.rb e0e1ceb2f4ce91d61bce8f01ac5f7ce63a1a14e0
+lib/card/model/save_helper.rb f1583cf2b703ca0041f1ab904ab02546ae659c59

@@ -60,7 +60,6 @@ Spork.each_run do
   # This code will be run each time you run your specs.
 end
 
-require File.join Cardio.gem_root,
-                  "lib", "card", "helper", "card_spec_helper.rb"
+require File.join Cardio.gem_root, "spec", "card_spec_helper.rb"
 
-RSpec::Core::ExampleGroup.send :include, Card::Helper::CardSpecHelper
+RSpec::Core::ExampleGroup.send :include, Card::SpecHelper

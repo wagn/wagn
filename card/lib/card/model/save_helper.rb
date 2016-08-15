@@ -1,5 +1,5 @@
 class Card
-  module Helper
+  module Model
     module SaveHelper
       def create_card args
         resolve_name_conflict args

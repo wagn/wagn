@@ -6,7 +6,7 @@ event :admin_tasks, :initialize, on: :update do
   when :clear_cache          then Card::Cache.reset_all
   when :repair_references    then Card::Reference.repair_all
   when :empty_trash          then Card.empty_trash
-  when :clear_view_cache     then Card::ViewCache.reset
+  when :clear_view_cache     then Card::Cache::ViewCache.reset
   when :delete_old_revisions then Card::Action.delete_old
   when :repair_permissions   then Card.repair_all_permissions
   when :clear_solid_cache    then Card.clear_solid_cache
@@ -48,7 +48,7 @@ format :html do
     ]
     return stats unless Card.config.view_cache
     stats <<
-      ["view cache", { count: Card::ViewCache,
+      ["view cache", { count: Card::Cache::ViewCache,
                        link_text: "clear view cache",
                        task: "clear_view_cache" }]
     stats

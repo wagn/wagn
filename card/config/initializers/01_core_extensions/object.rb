@@ -31,7 +31,7 @@ module CoreExtensions
     end
 
     def to_viewname
-      Card::ViewName.new self
+      Card::Name::ViewName.new self
     end
 
     def deep_clone_instance_variables

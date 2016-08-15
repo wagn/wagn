@@ -14,7 +14,7 @@ class Card
         current_view(view) do
           args = default_render_args view, args
           with_nest_mode view do
-            Card::ViewCache.fetch(self, view, args) do
+            Card::Cache::ViewCache.fetch(self, view, args) do
               method = view_method view, args
               method.arity == 0 ? method.call : method.call(args)
             end

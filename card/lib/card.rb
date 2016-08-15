@@ -30,7 +30,7 @@ class Card < ActiveRecord::Base
   require_dependency "card/change"
   require_dependency "card/reference"
   require_dependency "card/subcards"
-  require_dependency "card/view_cache"
+  require_dependency "card/cache/view_cache"
   require_dependency "card/stage_director"
   require_dependency "card/director_register"
 

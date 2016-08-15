@@ -37,7 +37,7 @@
         <div id="menu">
   
     <a href="../../_index.html">Index (V)</a> &raquo;
-    <span class='title'><span class='object_link'><a href="../../CarrierWave.html" title="CarrierWave (module)">CarrierWave</a></span></span> &raquo; <span class='title'>Uploader</span>
+    <span class='title'><span class='object_link'><a href="../../CarrierWave.html" title="CarrierWave (module)">CarrierWave</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Uploader.html" title="CarrierWave::Uploader (module)">Uploader</a></span></span>
      &raquo; 
     <span class="title">Versions</span>
   
@@ -80,47 +80,12 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>mod/carrierwave/lib/file_uploader.rb</dd>
+    <dd>mod/carrierwave/lib/carrier_wave/file_card_uploader.rb</dd>
   </dl>
   
 </div>
 
-<h2>Overview</h2><div class="docstring">
-  <div class="discussion">
-    
-<p><strong>DATABASE_CONTENT</strong> if in mod:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='symbol'>:codename</span><span class='op'>/</span><span class='id identifier rubyid_modname'>modname</span><span class='period'>.</span><span class='id identifier rubyid_ext'>ext</span>
-</code></pre>
-
-<p>else</p>
-
-<pre class="code ruby"><code class="ruby"><span class='op'>~</span><span class='id identifier rubyid_card_id'>card_id</span><span class='op'>/</span><span class='id identifier rubyid_action_id'>action_id</span><span class='period'>.</span><span class='id identifier rubyid_ext'>ext</span>
-</code></pre>
-
-<p>*FILE SYSTEM* if in mod</p>
-
-<pre class="code ruby"><code class="ruby">(mod_dir)/files/codename/type_code-variant.ext  (no colon on codename!)</code></pre>
-
-<p>else</p>
-
-<pre class="code ruby"><code class="ruby">(files_dir)/id/action_id-variant.ext            (no tilde on id!)</code></pre>
-
-<p>variant = icon|small|medium|large|original  (only for images)</p>
-
-<p><strong>URLS</strong> mark.ext mark/revision.ext mark/revision-variant.ext</p>
-
-<p>revision = modname or action_id</p>
-
-<p>Examples: ~22/33-medium.png :yeti_skin/standard-large.png</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div>
 
 
 
@@ -132,7 +97,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Aug 13 01:00:30 2016 by
+  Generated on Mon Aug 15 12:01:58 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.5 (ruby-2.3.0).
 </div>

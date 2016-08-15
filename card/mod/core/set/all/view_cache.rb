@@ -1,5 +1,5 @@
 event :clear_view_cache, :finalize do
-  Card::ViewCache.reset
+  Card::Cache::ViewCache.reset
 end
 
 format do

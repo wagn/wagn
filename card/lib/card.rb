@@ -1,8 +1,9 @@
 # -*- encoding : utf-8 -*-
 require "carrierwave"
-
 Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
 
+# Cards are wiki-inspired building blocks.
+#
 # This documentation is intended for developers who want to understand:
 #
 # a. how ruby Card objects work, and

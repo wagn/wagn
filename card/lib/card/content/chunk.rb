@@ -2,7 +2,7 @@
 
 require "uri/common"
 
-class Card #::Content
+class Card
   class Content < SimpleDelegator
     # A chunk is a pattern of text that can be protected
     # and interrogated by a format. Each Chunk class has a

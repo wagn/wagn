@@ -113,36 +113,7 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>WHAT IS THIS? The Machine module together with the MachineInput module
-implements a kind of observer pattern. It handles a collection of input
-cards to generate an output card (default is a file card). If one of the
-input cards is changed the output card will be updated.</p>
-
-<p>The classic example: A style card observes a collection of css and sccs
-card to generate a file card with a css file that contains the assembled
-compressed  css.</p>
-
-<p>HOW TO USE IT? Include the Machine module in the card set that is supposed
-to produce the output card. If the output card should be automatically
-updated when a input card is changed the input card has to be in a set that
-includes the MachineInput module.</p>
-
-<p>The default machine</p>
-
-<pre class="code ruby"><code class="ruby">-  uses its item cards as input cards or the card itself if there are no item
-   cards;
--  can be changed by passing a block to collect_input_cards
--  takes the raw view of the input cards to generate the output;
--  can be changed by passing a block to machine_input (in the input card set)
--  stores the output as a .txt file in the &#39;+machine output&#39; card;
--  can be changed by passing a filetype and/or a block to
-   store_machine_output</code></pre>
-
-<p>HOW DOES IT WORK? Machine cards have a &#39;+machine input&#39; and a
-&#39;+machine output&#39; card. The &#39;+machine input&#39; card is a
-pointer to all input cards. Including the MachineInput module creates an
-&#39;on: save&#39; event that runs the machines of all cards that are
-linked to that card via the +machine input pointer.</p>
+<p>::Content</p>
 
 
   </div>
@@ -1403,7 +1374,7 @@ linked to that card via the +machine input pointer.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Aug 15 14:49:49 2016 by
+  Generated on Mon Aug 15 15:39:50 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.5 (ruby-2.3.0).
 </div>

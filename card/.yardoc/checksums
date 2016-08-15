@@ -1,4 +1,4 @@
-lib/card.rb ec1cb8857d892665366a6348a331018a5b1fe8f7
+lib/card.rb 6498a99fa63c1a67ffefff0989248f636da045c7
 lib/cardio.rb 8bba1118c03fe977a30d50fb1378c5cd44c945fa
 lib/card/env.rb fc57382c88afe475a79c425a8eeb4de271b8029b
 lib/card/set.rb bf095c8c7820f8677058f4f0a55bc91d2f93b1ac
@@ -35,7 +35,7 @@ lib/card/env/location.rb 6fe1c8c5e0d7bdfdb39ee9e50ef06ea309ad284c
 lib/card/query/clause.rb e0320b03910f08996131af73629761dde7010729
 lib/card/format/render.rb 9dbadbf17b88fdd53114d9cdccd573d44c47d8cc
 lib/card/query/helpers.rb 80ba86c0f581921fab16fecaf8440bb44cacc42f
-lib/card/content/chunk.rb 0db981d0403d8a7462c0ca6702831a2c39971cb0
+lib/card/content/chunk.rb d1a2abaa3408ec1821ab201dc2412fcc3390550b
 spec/lib/card/set_spec.rb f8c33d82de570ca7f9c3f6051ccd70d33212a2bb
 lib/card/query/sorting.rb c3ec7a93512ef55d4e24eb4c04825be550b34b1c
 lib/card/stage_director.rb 34face978932374b3cdd4dc753cb324fa8a922b3
@@ -47,7 +47,7 @@ spec/lib/card/diff_spec.rb b4bc5e1cba1ab03af7521c41a42e5bcf6a542162
 lib/card/content/parser.rb 11044296019db64a7c710aaaaaab36ee5c467514
 spec/lib/card/name_spec.rb 4db2bd0449663e6feff5719adff3a816249d0868
 lib/card/set/inheritance.rb d0a1f0bf2994fc593a00339740bd8f23b4c44506
-mod/history/lib/card/act.rb d6abe16ad9c35e06275c58fecf56bf8a7bbf5010
+mod/history/lib/card/act.rb 16d05e98d1fda49ca5ce6617ccdbc78a8bce4a46
 lib/card/query/reference.rb a3324a2c9dc3d4e40fd9515e74cb25247ea63c59
 spec/lib/card/query_spec.rb 283f8f837a5f9a6a42fbd3284c2c2af84d04d756
 lib/card/cache/temporary.rb f2401a8a02e16cdf4ca10ef8da87d97f0146baaa
@@ -74,7 +74,7 @@ spec/lib/card/content_spec.rb 6fc258357279829d38e1215dad324588710661a6
 spec/lib/card/codename_spec.rb df14197f90f7b343a1f1bf323b5f165a88b290fc
 lib/card/query/conjunctions.rb 92684f88ed0f454ea26197748cdf22d3e5540a54
 spec/lib/card/subcards_spec.rb 66c8c59ad0f9b6293bbedf3300105ae9c2de7918
-mod/history/lib/card/action.rb d6eae1198b768b6f273fb7a9107bc72152b05b78
+mod/history/lib/card/action.rb b8c0a2e1a99429c4482acbce53e8491a852be4d5
 mod/history/lib/card/change.rb 5f72775e35cba0ec1e9b31d955ddfc38b7cb73f3
 spec/lib/card/reference_spec.rb b6aa585a9e438bfd0a738b0769806e28f902f2b0
 lib/card/query/sql_statement.rb 30cdc5b8a1ec10693920e4e2b5868d1c4d340aab
@@ -82,7 +82,7 @@ lib/card/content/diff/result.rb 71bd93f65c98069afbdb2539157fde3bc0018d46
 spec/lib/card/set/trait_spec.rb 80bac2e701be976ca9257b56380d8e45775ab587
 spec/lib/card/view_cache_spec.rb 42e26c552e62f29921b06abdeb097b0e39268c58
 spec/lib/card/loader/mod_dirs.rb d160684fc7d51699ebda70c26179cf5cf16f9628
-mod/machines/lib/card/machine.rb d4337c995a71fed7d9d498b3ceee7a859e9191b9
+mod/machines/lib/card/machine.rb 91592aab64b95dafa8bc30e5e349492472f152c0
 lib/card/query/interpretation.rb e726e404a1155f5ec55d5226a1dd68a87110ff73
 mod/settings/lib/card/setting.rb e44ab29429aa74899aafeabe97e9ed9ed66bb1b9
 lib/card/format/nest/subformat.rb 96197d7306f8dedf135f958a6cd0665b0e9733e0

@@ -1,16 +1,16 @@
 # -*- encoding : utf-8 -*-
 class Card
-  # An "act" is a group of recorded actions on cards.
+  # An "act" is a group of recorded {Card::Action actions} on {Card cards}.
   #
   # For example, if a given web form submissions updates the contents of three
   # three cards, then the submission will result in the recording of three
   # actions, each of which is tied to one act.
   #
   # Each act records:
-  # - the "actor_id" (an id associated with the account responsible)
-  # - the "card_id" of the act's primary card
-  # - "acted_at", a timestamp of the action
-  # - the "ip_address" of the actor where applicable.
+  # - the _actor_id_ (an id associated with the account responsible)
+  # - the _card_id_ of the act's primary card
+  # - _acted_at_, a timestamp of the action
+  # - the _ip_address_ of the actor where applicable.
   #
   class Act < ActiveRecord::Base
     before_save :set_actor

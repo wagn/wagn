@@ -1,3 +1,4 @@
+class Card
 # WHAT IS THIS?
 # The Machine module together with the MachineInput module implements a kind of
 # observer pattern. It handles a collection of input cards to generate an
@@ -30,8 +31,6 @@
 # '+machine input' card is a pointer to all input cards. Including the
 # MachineInput module creates an 'on: save' event that runs the machines of
 # all cards that are linked to that card via the +machine input pointer.
-
-class Card
   module Machine
     module ClassMethods
       attr_accessor :output_config

@@ -103,7 +103,33 @@
   
 </div>
 
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>An “act” is a group of recorded <span class='object_link'><a href="Action.html" title="Card::Action (class)">actions</a></span> on cards.</p>
 
+<p>For example, if a given web form submissions updates the contents of three
+three cards, then the submission will result in the recording of three
+actions, each of which is tied to one act.</p>
+
+<p>Each act records:</p>
+<ul><li>
+<p>the “actor_id” (an id associated with the account responsible)</p>
+</li><li>
+<p>the “card_id” of the act&#39;s primary card</p>
+</li><li>
+<p>“acted_at”, a timestamp of the action</p>
+</li><li>
+<p>the “ip_address” of the actor where applicable.</p>
+</li></ul>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
 
 
 
@@ -157,7 +183,9 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>remove all acts that have no action.</p>
+</div></span>
   
 </li>
 
@@ -179,7 +207,9 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>remove all acts that have no card.</p>
+</div></span>
   
 </li>
 
@@ -394,21 +424,21 @@
       <pre class="lines">
 
 
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49</pre>
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 38</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 52</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_all_viewable'>all_viewable</span>
   <span class='id identifier rubyid_joins'>joins</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>JOIN card_actions ON card_acts.id = card_act_id </span><span class='tstring_end'>&quot;</span></span> \
@@ -436,22 +466,33 @@
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>remove all acts that have no action. (janitorial)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-23
-24
-25
-26
-27
-28
-29</pre>
+37
+38
+39
+40
+41
+42
+43</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 23</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 37</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_actionless'>delete_actionless</span>
   <span class='id identifier rubyid_joins'>joins</span><span class='lparen'>(</span>
@@ -474,19 +515,30 @@
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>remove all acts that have no card. (janitorial)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-18
-19
-20
-21</pre>
+31
+32
+33
+34</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 18</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 31</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_cardless'>delete_cardless</span>
   <span class='id identifier rubyid_left_join'>left_join</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>LEFT JOIN cards ON card_acts.card_id = cards.id</span><span class='tstring_end'>&quot;</span></span>
@@ -512,15 +564,15 @@
       <pre class="lines">
 
 
-31
-32
-33
-34
-35
-36</pre>
+45
+46
+47
+48
+49
+50</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 31</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 45</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_find_all_with_actions_on'>find_all_with_actions_on</span> <span class='id identifier rubyid_card_ids'>card_ids</span><span class='comma'>,</span> <span class='id identifier rubyid_args'>args</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span>
   <span class='id identifier rubyid_sql'>sql</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>card_actions.card_id IN (:card_ids) AND ( (draft is not true) </span><span class='tstring_end'>&quot;</span></span>
@@ -554,12 +606,12 @@
       <pre class="lines">
 
 
-56
-57
-58</pre>
+70
+71
+72</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 56</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 70</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_action_on'>action_on</span> <span class='id identifier rubyid_card_id'>card_id</span>
   <span class='id identifier rubyid_actions'>actions</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>card_id = </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_card_id'>card_id</span><span class='embexpr_end'>}</span><span class='tstring_content'> and draft is not true</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
@@ -584,12 +636,12 @@
       <pre class="lines">
 
 
-13
-14
-15</pre>
+25
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 13</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_card'>card</span>
   <span class='const'>Card</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span> <span class='id identifier rubyid_card_id'>card_id</span><span class='comma'>,</span> <span class='label'>look_in_trash:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>skip_modules:</span> <span class='kw'>true</span>
@@ -614,12 +666,12 @@
       <pre class="lines">
 
 
-64
-65
-66</pre>
+78
+79
+80</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 78</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_elapsed_time'>elapsed_time</span>
   <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_acted_at'>acted_at</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_distance_of_time_in_words_to_now'>distance_of_time_in_words_to_now</span>
@@ -644,12 +696,12 @@
       <pre class="lines">
 
 
-60
-61
-62</pre>
+74
+75
+76</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 60</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 74</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_main_action'>main_action</span>
   <span class='id identifier rubyid_action_on'>action_on</span><span class='lparen'>(</span><span class='id identifier rubyid_card_id'>card_id</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_actions'>actions</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
@@ -674,15 +726,15 @@
       <pre class="lines">
 
 
-75
-76
-77
-78
-79
-80</pre>
+89
+90
+91
+92
+93
+94</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 75</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 89</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_relevant_actions_for'>relevant_actions_for</span> <span class='id identifier rubyid_card'>card</span>
   <span class='id identifier rubyid_actions'>actions</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_action'>action</span><span class='op'>|</span>
@@ -710,15 +762,15 @@
       <pre class="lines">
 
 
-68
-69
-70
-71
-72
-73</pre>
+82
+83
+84
+85
+86
+87</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 68</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 82</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_relevant_drafts_for'>relevant_drafts_for</span> <span class='id identifier rubyid_card'>card</span>
   <span class='id identifier rubyid_drafts'>drafts</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_action'>action</span><span class='op'>|</span>
@@ -746,12 +798,12 @@
       <pre class="lines">
 
 
-52
-53
-54</pre>
+66
+67
+68</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 52</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 66</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_set_actor'>set_actor</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_actor_id'>actor_id</span> <span class='op'>||=</span> <span class='const'>Auth</span><span class='period'>.</span><span class='id identifier rubyid_current_id'>current_id</span>
@@ -766,7 +818,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Aug 15 14:49:52 2016 by
+  Generated on Mon Aug 15 15:39:52 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.5 (ruby-2.3.0).
 </div>

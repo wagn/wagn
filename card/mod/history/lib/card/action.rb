@@ -1,8 +1,17 @@
 # -*- encoding : utf-8 -*-
 
 class Card
+  # An _action_ is a group of {Card::Change changes} to a single {Card card}
+  # that is recorded during an {Card::Act act}.
+  #
+  # Card::Action records:
+  # - the _card_id_ of the {Card card} acted upon
+  # - the _card_act_id_ of the {Card::Act act} of which the action is part
+  # - the _action_type_ (create, update, or delete)
+  # - a boolean indicated whether the action is a _draft_
+  # - a _comment_ (where applicable)
   class Action < ActiveRecord::Base
-    belongs_to :act,  foreign_key: :card_act_id, inverse_of: :actions
+    belongs_to :act, foreign_key: :card_act_id, inverse_of: :actions
     has_many :card_changes, foreign_key: :card_action_id, inverse_of: :action,
                             dependent: :delete_all, class_name: "Card::Change"
 

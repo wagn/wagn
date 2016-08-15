@@ -1,5 +1,5 @@
 class Card
-  require "card/location"
+  require "card/env/location"
 
   # Card::Env can differ for each request; Card.config should not
   module Env
@@ -40,7 +40,7 @@ class Card
       end
 
       def success cardname=nil
-        self[:success] ||= Card::Success.new(cardname, params[:success])
+        self[:success] ||= Env::Success.new(cardname, params[:success])
       end
 
       def localhost?
@@ -77,7 +77,7 @@ class Card
     # card removal we can crawl back up to the last un-removed location
     module LocationHistory
       def location_history
-        session[:history] ||= [Card::Location.card_path("")]
+        session[:history] ||= [Env::Location.card_path("")]
         session[:history].shift if session[:history].size > 5
         session[:history]
       end
@@ -86,7 +86,7 @@ class Card
         return unless save_location?(card)
         discard_locations_for card
         session[:previous_location] =
-          Card::Location.card_path card.cardname.url_key
+          Env::Location.card_path card.cardname.url_key
         location_history.push previous_location
       end
 

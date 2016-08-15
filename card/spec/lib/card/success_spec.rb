@@ -1,12 +1,12 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::Success do
+describe Card::Env::Success do
   let(:context) { Card["A"].cardname }
   let(:previous) { "/B" }
   let(:home)     { Card["Home"] }
   def success_params params
     Card::Env.save_location Card["B"]
-    @success = Card::Success.new(context, params)
+    @success = Card::Env::Success.new context, params
   end
   describe "#target" do
     subject { @success.target }

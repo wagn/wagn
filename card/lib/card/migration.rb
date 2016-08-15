@@ -143,4 +143,4 @@ class Card::Migration < ActiveRecord::Migration
   end
 end
 
-require "card/core_migration"
+require "card/migration/core"

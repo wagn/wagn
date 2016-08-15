@@ -40,7 +40,7 @@ module CarrierWave
 
   class FileCardUploader < Uploader::Base
     attr_accessor :mod
-    include Card::Location
+    include Card::Env::Location
 
     storage :file
 

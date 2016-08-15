@@ -10,7 +10,7 @@ class Card
       DirectorRegister.act_card = self
       main_act_block = true
       if opts[:success]
-        Env[:success] = Success.new(cardname, Env.params[:success])
+        Env[:success] = Env::Success.new(cardname, Env.params[:success])
       end
     end
     yield

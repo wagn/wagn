@@ -2,7 +2,7 @@
 
 class Card
   class Format
-    include Card::Location
+    include Card::Env::Location
     include Nest
     include Permission
     include Render

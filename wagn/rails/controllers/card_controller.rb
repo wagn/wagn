@@ -7,7 +7,7 @@ require_dependency "card/mailer"  # otherwise Net::SMTPError rescues can cause
 # problems when error raised comes before Card::Mailer is mentioned
 
 class CardController < ActionController::Base
-  include Card::Location
+  include Card::Env::Location
   include Recaptcha::Verify
 
   layout nil

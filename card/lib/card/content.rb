@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-require_dependency 'card/content/chunk'
-require_dependency 'card/content/parser'
+require_dependency "card/content/chunk"
+require_dependency "card/content/parser"
 
 class Card
   class Content < SimpleDelegator
@@ -30,9 +30,9 @@ class Card
 
     def to_s
       case __getobj__
-      when Array    then map(&:to_s) * ''
+      when Array    then map(&:to_s) * ""
       when String   then __getobj__
-      when NilClass then '' # raise "Nil Card::Content"
+      when NilClass then "" # raise "Nil Card::Content"
       else               __getobj__.to_s
       end
     end
@@ -48,7 +48,7 @@ class Card
       when Array then each       { |e| yield e if e.is_a?(Chunk::Abstract) }
       when String # noop. strings are parsed in self, so no chunks in a String
       else
-        Rails.logger.warn 'error self is unrecognized type' \
+        Rails.logger.warn "error self is unrecognized type" \
                           " #{self.class} #{__getobj__.class}"
       end
     end
@@ -70,19 +70,19 @@ class Card
 
     # allowed attributes
     ALLOWED_TAGS.merge!(
-      'a' => %w(href title target),
-      'img' => %w(src alt title),
-      'code' => ['lang'],
-      'blockquote' => ['cite']
+      "a" => %w(href title target),
+      "img" => %w(src alt title),
+      "code" => ["lang"],
+      "blockquote" => ["cite"]
     )
 
     if Card.config.allow_inline_styles
-      ALLOWED_TAGS['table'] += %w( cellpadding align border cellspacing )
+      ALLOWED_TAGS["table"] += %w(cellpadding align border cellspacing)
     end
 
     ALLOWED_TAGS.each_key do |k|
-      ALLOWED_TAGS[k] << 'class'
-      ALLOWED_TAGS[k] << 'style' if Card.config.allow_inline_styles
+      ALLOWED_TAGS[k] << "class"
+      ALLOWED_TAGS[k] << "style" if Card.config.allow_inline_styles
       ALLOWED_TAGS[k]
     end
     ALLOWED_TAGS.freeze
@@ -104,12 +104,12 @@ class Card
               attrs.each_with_object([tag]) do |attr, pcs|
                 q, rest_value = process_attribute attr, raw[3]
                 pcs << "#{attr}=#{q}#{rest_value}#{q}" unless rest_value.blank?
-              end * ' '
+              end * " "
             "<#{raw[1]}#{html_attribs}>"
           else
-            ' '
+            " "
           end
-        end.gsub(/<\!--.*?-->/, '')
+        end.gsub(/<\!--.*?-->/, "")
       end
 
       def process_attribute attr, all_attributes
@@ -121,9 +121,9 @@ class Card
         re = ATTR_VALUE_RE[idx || 2]
         if (match = rest_value.match(re))
           rest_value = match[0]
-          if attr == 'class'
+          if attr == "class"
             rest_value =
-              rest_value.split(/\s+/).select { |s| s =~ /^w-/i }.join(' ')
+              rest_value.split(/\s+/).select { |s| s =~ /^w-/i }.join(" ")
           end
         end
         [q, rest_value]
@@ -138,14 +138,14 @@ class Card
       end
 
       def truncatewords_with_closing_tags input, words=25,
-                                          _truncate_string='...'
+                                          _truncate_string="..."
         return if input.nil?
         wordlist = input.to_s.split
         l = words.to_i - 1
         l = 0 if l < 0
-        wordstring = wordlist.length > l ? wordlist[0..l].join(' ') : input.to_s
+        wordstring = wordlist.length > l ? wordlist[0..l].join(" ") : input.to_s
         # nuke partial tags at end of snippet
-        wordstring.gsub!(/(<[^\>]+)$/, '')
+        wordstring.gsub!(/(<[^\>]+)$/, "")
 
         tags = find_tags wordstring
         tags.each { |t| wordstring += "</#{t}>" }
@@ -155,9 +155,9 @@ class Card
         end
 
         # wordstring += '...' if wordlist.length > l
-        wordstring.gsub! %r{<[/]?br[\s/]*>}, ' '
+        wordstring.gsub! %r{<[/]?br[\s/]*>}, " "
         # Also a hack -- get rid of <br>'s -- they make line view ugly.
-        wordstring.gsub! %r{<[/]?p[^>]*>}, ' '
+        wordstring.gsub! %r{<[/]?p[^>]*>}, " "
         ## Also a hack -- get rid of <br>'s -- they make line view ugly.
         wordstring
       end

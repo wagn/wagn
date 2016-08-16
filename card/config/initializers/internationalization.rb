@@ -5,7 +5,7 @@
 # Necessary since 'card' is packaged as a gem which is not an Engine
 
 I18n.load_path += Dir.glob(Pathname(__FILE__).parent.parent.to_s +
-                           '/locales/*.{rb,yml}')
+                           "/locales/*.{rb,yml}")
 
 # see http://svenfuchs.com/2009/7/19/experimental-ruby-i18n-extensions-pluralization-fallbacks-gettext-cache-and-chained-backend
 module I18n::Backend::Transformers
@@ -38,7 +38,7 @@ end
 # with ENV['WAGN_I18N_DEMARK']=1 on the command line in server startup,
 # or ./config/environments/*.rb file.
 
-if ENV['WAGN_I18N_DEMARK']
+if ENV["WAGN_I18N_DEMARK"]
   I18n::Backend::Simple.send(:include, I18n::Backend::Transformers)
-  puts 'WAGN_I18N_DEMARK is active'
+  puts "WAGN_I18N_DEMARK is active"
 end

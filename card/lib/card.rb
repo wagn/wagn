@@ -1,8 +1,9 @@
 # -*- encoding : utf-8 -*-
-require 'carrierwave'
-
+require "carrierwave"
 Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
 
+# Cards are wiki-inspired building blocks.
+#
 # This documentation is intended for developers who want to understand:
 #
 # a. how ruby Card objects work, and
@@ -10,7 +11,6 @@ Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
 #
 # It assumes that you've already read the introductory text
 # in {file:README_Developers.rdoc}.
-#
 class Card < ActiveRecord::Base
   # attributes that ActiveJob can handle
   def self.serializable_attr_accessor *args
@@ -18,22 +18,22 @@ class Card < ActiveRecord::Base
     attr_accessor(*args)
   end
 
-  require_dependency 'card/active_record_ext'
-  require_dependency 'card/codename'
-  require_dependency 'card/query'
-  require_dependency 'card/format'
-  require_dependency 'card/exceptions'
-  require_dependency 'card/auth'
-  require_dependency 'card/loader'
-  require_dependency 'card/content'
-  require_dependency 'card/action'
-  require_dependency 'card/act'
-  require_dependency 'card/change'
-  require_dependency 'card/reference'
-  require_dependency 'card/subcards'
-  require_dependency 'card/view_cache'
-  require_dependency 'card/stage_director'
-  require_dependency 'card/director_register'
+  require_dependency "active_record/connection_adapters_ext"
+  require_dependency "card/codename"
+  require_dependency "card/query"
+  require_dependency "card/format"
+  require_dependency "card/exceptions"
+  require_dependency "card/auth"
+  require_dependency "card/mod/loader"
+  require_dependency "card/content"
+  require_dependency "card/action"
+  require_dependency "card/act"
+  require_dependency "card/change"
+  require_dependency "card/reference"
+  require_dependency "card/subcards"
+  require_dependency "card/cache/view_cache"
+  require_dependency "card/stage_director"
+  require_dependency "card/director_register"
 
   has_many :references_in,  class_name: :Reference, foreign_key: :referee_id
   has_many :references_out, class_name: :Reference, foreign_key: :referer_id
@@ -55,7 +55,7 @@ class Card < ActiveRecord::Base
     :silent_change,               # and this probably too
     :remove_rule_stash,
     :last_action_id_before_edit,
-    :skip_phases
+    :only_storage_phase           # used to save subcards
   )
 
   attr_accessor :follower_stash
@@ -73,11 +73,12 @@ class Card < ActiveRecord::Base
     :integrate_stage, :integrate_with_delay_stage
   )
 
-  before_validation :validation_phase, if: -> { run_phases? }
+  # Validation and integration phase are only called for the act card
+  # The act card starts those phases for all its subcards
+  before_validation :validation_phase, unless: -> { only_storage_phase? }
   around_save :storage_phase
-  after_save :integration_phase, if: -> { run_phases? }
-  after_commit :clean_up, if: -> { run_phases? }
-  after_rollback :clean_up, if: -> { run_phases? }
+  after_commit :integration_phase, unless: -> { only_storage_phase? }
+  after_rollback :clean_up, unless: -> { only_storage_phase? }
 
   TRACKED_FIELDS = %w(name type_id db_content trash).freeze
   extend CarrierWave::Mount

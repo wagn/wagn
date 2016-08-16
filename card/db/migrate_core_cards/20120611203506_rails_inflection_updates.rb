@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class RailsInflectionUpdates < Card::CoreMigration
+class RailsInflectionUpdates < Card::Migration::Core
   def word ar
     [/(?<=\W|_|^)#{ar[0]}(?=\W|_|$)/i, /(?<=\W|_|^)#{ar[1]}(?=\W|_|$)/i, ar[2]]
   end
@@ -18,7 +18,7 @@ class RailsInflectionUpdates < Card::CoreMigration
         twin.destroy
         yield
       elsif !card.trash
-        raise Card::Oops.new("Your deck has two different cards with names '#{card.name}' and '#{twin.name}'. After this update it's no longer possible to differentiate between those two names. Please rename or delete one of the two cards and run the update again.")
+        raise Card::Error::Oops.new("Your deck has two different cards with names '#{card.name}' and '#{twin.name}'. After this update it's no longer possible to differentiate between those two names. Please rename or delete one of the two cards and run the update again.")
       end
     else
       yield
@@ -33,10 +33,10 @@ class RailsInflectionUpdates < Card::CoreMigration
       word(['(\w+)lice',  '(\w+)louse',    '\1lice']),
       word(['(\w+)mice',  '(\w+)mouse',    '\1mice']),
       word_end(%w(kine cow kine)),
-      word(keep_the_s('analysi')),
-      word(keep_the_s('axi'))
+      word(keep_the_s("analysi")),
+      word(keep_the_s("axi"))
     ]
-    %w( statu crisi alia bu octopu viru analysi basi diagnosi parenthesi prognosi synopsi thesi ).each do |word|
+    %w(statu crisi alia bu octopu viru analysi basi diagnosi parenthesi prognosi synopsi thesi).each do |word|
       corrections << word_end(keep_the_s(word))
     end
 

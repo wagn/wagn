@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-# module Card::Set::Right::Account # won't this conflict with a real set (and fail to provide controlled test?)
+# module Card::Set::Right::Account
+# won't this conflict with a real set (and fail to provide controlled test?)
 #   extend Card::Set
 #
 #   card_accessor :role,   default: "request", type: :phrase

@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 
-require 'uri/common'
+require "uri/common"
 
-class Card #::Content
+class Card
   class Content < SimpleDelegator
     # A chunk is a pattern of text that can be protected
     # and interrogated by a format. Each Chunk class has a
@@ -24,7 +24,7 @@ class Card #::Content
           prefix_index = hash[:idx_char] || :default
           # ^ this is gross and needs to be moved out.
 
-          klassname = klass.name.split('::').last.to_sym
+          klassname = klass.name.split("::").last.to_sym
           prefix_map_by_chunkname[klassname] = { prefix_index => klass.config }
           raw_list.each do |key, list|
             next unless list.include? klassname
@@ -93,7 +93,7 @@ class Card #::Content
         end
 
         def reference_code
-          'I'
+          "I"
         end
 
         def initialize match, content
@@ -105,7 +105,7 @@ class Card #::Content
         end
 
         def interpret _match_string, _content, _params
-          Rails.logger.info 'no #interpret method found for chunk class: ' \
+          Rails.logger.info "no #interpret method found for chunk class: " \
                             "#{self.class}"
         end
 
@@ -132,5 +132,5 @@ class Card #::Content
       end
     end
   end
-  Card::Loader.load_chunks
+  Card::Mod::Loader.load_chunks
 end

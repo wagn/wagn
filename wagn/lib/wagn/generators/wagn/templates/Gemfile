@@ -13,6 +13,15 @@ gem '<%= database_gemfile_entry.name %>'<%= %(, '#{database_gemfile_entry.versio
 # gem 'unicorn'
 # gem 'thin'
 
+# Use Delayed::Job for the Active Job queue to run tasks like
+# sending in notifications in a background process.
+# To activate it you have to set config.active_job.queue_adapter to :delayed_job
+# in your config file and start the background process with
+# RAILS_ENV=production script/delayed_job start
+gem 'delayed_job_active_record', '~> 4.1'
+gem 'daemons'
+
+
 <% if options['mod-dev'] || options['core-dev'] -%>
 group :test do
   gem 'rspec', '~> 3.4'
@@ -27,6 +36,9 @@ group :test, :development do
   gem 'jasmine-jquery-rails'
   gem 'sprockets' # just so above works
   gem 'phantomjs', '1.9.7.1' #locked because 1.9.8.0 is breaking
+  gem 'test_after_commit'
+  gem 'colorize'
+  gem 'delayed_job_active_record', '~> 4.1'
 
   <%- if spring_install? %>
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
@@ -72,9 +84,9 @@ group :test do
   end
 
   # CUKES see features dir
-  gem 'cucumber-rails', '~> 1.3', :require=>false # feature-driven-development suite
-  gem 'capybara', '~> 2.4.4'
-  gem 'selenium-webdriver', '~> 2.47.1'
+  gem 'cucumber-rails', '~> 1.4', :require=>false # feature-driven-development suite
+  gem 'capybara', '~> 2.7'
+  gem 'selenium-webdriver', '~> 2.53'
   # gem 'capybara-webkit'
   gem 'launchy'                                # lets cucumber launch browser windows
 
@@ -82,7 +94,7 @@ group :test do
   # NOTE: had weird errors with timecop 0.4.4.  would like to update when possible
 
   gem 'email_spec'                             #
-  gem 'database_cleaner', '~> 1.4'             # used by cucumber for db transactions
+  gem 'database_cleaner', '~> 1.5 '             # used by cucumber for db transactions
 
   gem 'turn', :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
   gem 'minitest'

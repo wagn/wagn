@@ -1,8 +1,8 @@
 #!/usr/local/bin/ruby
 
 STDOUT.sync = true
-errors_filename = './log/err.out'
-err_out = File.new(errors_filename, 'a')
+errors_filename = "./log/err.out"
+err_out = File.new(errors_filename, "a")
 
 ARGF.each_line do |l|
   error_section = false

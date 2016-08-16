@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: ImageUploader
+  
+    &mdash; Documentation by YARD 0.9.5
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "ImageUploader";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index (I)</a> &raquo;
+    
+    
+    <span class="title">ImageUploader</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <iframe id="search_frame" src="class_list.html"></iframe>
+
+      <div id="content"><h1>Class: ImageUploader
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName"><span class='object_link'><a href="FileUploader.html" title="FileUploader (class)">FileUploader</a></span></span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">CarrierWave::Uploader::Base</li>
+          
+            <li class="next"><span class='object_link'><a href="FileUploader.html" title="FileUploader (class)">FileUploader</a></span></li>
+          
+            <li class="next">ImageUploader</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd>CarrierWave::MiniMagick</dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>mod/carrierwave/lib/image_uploader.rb</dd>
+  </dl>
+  
+</div>
+
+
+
+
+
+
+
+  <h2>Instance Attribute Summary</h2>
+  
+  <h3 class="inherited">Attributes inherited from <span class='object_link'><a href="FileUploader.html" title="FileUploader (class)">FileUploader</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="FileUploader.html#mod-instance_method" title="FileUploader#mod (method)">#mod</a></span></p>
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#full_filename-instance_method" title="#full_filename (instance method)">#<strong>full_filename</strong>(for_file)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>add &#39;original&#39; if no version is given.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#identifier-instance_method" title="#identifier (instance method)">#<strong>identifier</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>version :small_square, if: :create_versions?,                       
+from_version: :medium_square do   process resize_to_fill: [75, 75] end
+version :medium_square, if: :create_versions? do   process resize_to_fill:
+[200, 200] end.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#path-instance_method" title="#path (instance method)">#<strong>path</strong>(version = nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods inherited from <span class='object_link'><a href="FileUploader.html" title="FileUploader (class)">FileUploader</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="FileUploader.html#action_id-instance_method" title="FileUploader#action_id (method)">#action_id</a></span>, <span class='object_link'><a href="FileUploader.html#cache_dir-instance_method" title="FileUploader#cache_dir (method)">#cache_dir</a></span>, <span class='object_link'><a href="FileUploader.html#create_versions%3F-instance_method" title="FileUploader#create_versions? (method)">#create_versions?</a></span>, <span class='object_link'><a href="FileUploader.html#db_content-instance_method" title="FileUploader#db_content (method)">#db_content</a></span>, <span class='object_link'><a href="FileUploader.html#extension-instance_method" title="FileUploader#extension (method)">#extension</a></span>, <span class='object_link'><a href="FileUploader.html#file_dir-instance_method" title="FileUploader#file_dir (method)">#file_dir</a></span>, <span class='object_link'><a href="FileUploader.html#filename-instance_method" title="FileUploader#filename (method)">#filename</a></span>, <span class='object_link'><a href="FileUploader.html#mod_file%3F-instance_method" title="FileUploader#mod_file? (method)">#mod_file?</a></span>, <span class='object_link'><a href="FileUploader.html#original_filename-instance_method" title="FileUploader#original_filename (method)">#original_filename</a></span>, <span class='object_link'><a href="FileUploader.html#retrieve_dir-instance_method" title="FileUploader#retrieve_dir (method)">#retrieve_dir</a></span>, <span class='object_link'><a href="FileUploader.html#retrieve_path-instance_method" title="FileUploader#retrieve_path (method)">#retrieve_path</a></span>, <span class='object_link'><a href="FileUploader.html#store_dir-instance_method" title="FileUploader#store_dir (method)">#store_dir</a></span>, <span class='object_link'><a href="FileUploader.html#store_path-instance_method" title="FileUploader#store_path (method)">#store_path</a></span>, <span class='object_link'><a href="FileUploader.html#tmp_path-instance_method" title="FileUploader#tmp_path (method)">#tmp_path</a></span>, <span class='object_link'><a href="FileUploader.html#url-instance_method" title="FileUploader#url (method)">#url</a></span>, <span class='object_link'><a href="FileUploader.html#url_filename-instance_method" title="FileUploader#url_filename (method)">#url_filename</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Card/Location.html" title="Card::Location (module)">Card::Location</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Card/Location.html#card_path-instance_method" title="Card::Location#card_path (method)">#card_path</a></span>, <span class='object_link'><a href="Card/Location.html#card_url-instance_method" title="Card::Location#card_url (method)">#card_url</a></span>, <span class='object_link'><a href="Card/Location.html#page_path-instance_method" title="Card::Location#page_path (method)">#page_path</a></span></p>
+
+  
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="full_filename-instance_method">
+  
+    #<strong>full_filename</strong>(for_file)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>add &#39;original&#39; if no version is given</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+43
+44
+45
+46
+47
+48
+49
+50
+51</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'mod/carrierwave/lib/image_uploader.rb', line 43</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_full_filename'>full_filename</span> <span class='id identifier rubyid_for_file'>for_file</span>
+  <span class='id identifier rubyid_name'>name</span> <span class='op'>=</span> <span class='kw'>super</span><span class='lparen'>(</span><span class='id identifier rubyid_for_file'>for_file</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_version_name'>version_name</span>
+    <span class='id identifier rubyid_name'>name</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_parts'>parts</span> <span class='op'>=</span> <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_parts'>parts</span><span class='period'>.</span><span class='id identifier rubyid_shift'>shift</span><span class='embexpr_end'>}</span><span class='tstring_content'>-original.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_parts'>parts</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="identifier-instance_method">
+  
+    #<strong>identifier</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>version :small_square, if: :create_versions?,</p>
+
+<pre class="code ruby"><code class="ruby">                     from_version: :medium_square do
+process resize_to_fill: [75, 75]</code></pre>
+
+<p>end version :medium_square, if: :create_versions? do</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_process'>process</span> <span class='label'>resize_to_fill:</span> <span class='lbracket'>[</span><span class='int'>200</span><span class='comma'>,</span> <span class='int'>200</span><span class='rbracket'>]</span>
+</code></pre>
+
+<p>end</p>
+
+<p>In case we decide to support the squared versions we have to update all
+existing images with the following snippet: Card.search(type_id:
+Card::ImageID) do |card|</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_image'>image</span><span class='period'>.</span><span class='id identifier rubyid_cache_stored_file!'>cache_stored_file!</span>
+<span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_image'>image</span><span class='period'>.</span><span class='id identifier rubyid_recreate_versions!'>recreate_versions!</span>
+</code></pre>
+
+<p>end</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+38
+39
+40</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'mod/carrierwave/lib/image_uploader.rb', line 38</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_identifier'>identifier</span>
+  <span class='id identifier rubyid_full_filename'>full_filename</span><span class='lparen'>(</span><span class='kw'>super</span><span class='lparen'>(</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="path-instance_method">
+  
+    #<strong>path</strong>(version = nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+6
+7
+8</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'mod/carrierwave/lib/image_uploader.rb', line 6</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_path'>path</span> <span class='id identifier rubyid_version'>version</span><span class='op'>=</span><span class='kw'>nil</span>
+  <span class='lparen'>(</span><span class='id identifier rubyid_version'>version</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_version'>version</span> <span class='op'>!=</span> <span class='symbol'>:original</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_versions'>versions</span><span class='lbracket'>[</span><span class='id identifier rubyid_version'>version</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_path'>path</span> <span class='op'>:</span> <span class='kw'>super</span><span class='lparen'>(</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sat Aug 13 01:00:40 2016 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.5 (ruby-2.3.0).
+</div>
+
+    </div>
+  </body>
+</html>

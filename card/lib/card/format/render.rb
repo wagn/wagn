@@ -14,7 +14,7 @@ class Card
         current_view(view) do
           args = default_render_args view, args
           with_nest_mode view do
-            Card::ViewCache.fetch(self, view, args) do
+            Card::Cache::ViewCache.fetch(self, view, args) do
               method = view_method view, args
               method.arity == 0 ? method.call : method.call(args)
             end
@@ -28,7 +28,7 @@ class Card
         method "_view_#{view}"
       rescue
         args[:unsupported_view] = view
-        method '_view_unsupported_view'
+        method "_view_unsupported_view"
       end
 
       def canonicalize_view view
@@ -108,7 +108,7 @@ class Card
                         "#{e.class} : #{e.message}"
         Card::Error.current = e
         card.notable_exception_raised
-        raise e if (debug = Card[:debugger]) && debug.content == 'on'
+        raise e if (debug = Card[:debugger]) && debug.content == "on"
         rendering_error e, view
       end
 
@@ -121,7 +121,7 @@ class Card
       end
 
       def error_cardname
-        card && card.name.present? ? card.name : 'unknown card'
+        card && card.name.present? ? card.name : "unknown card"
       end
 
       def rendering_error _exception, view
@@ -129,7 +129,7 @@ class Card
       end
 
       def add_class options, klass
-        options[:class] = [options[:class], klass].flatten.compact * ' '
+        options[:class] = [options[:class], klass].flatten.uniq.compact * " "
       end
 
       def id_counter
@@ -140,6 +140,13 @@ class Card
 
       def unique_id
         "#{card.key}-#{id_counter}"
+      end
+
+      def output content
+        case content
+        when String then content
+        when Array then content.compact.join "\n"
+        end
       end
     end
   end

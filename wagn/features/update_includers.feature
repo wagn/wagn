@@ -1,3 +1,4 @@
+@javascript @delayed-jobs
 Feature: Updates for Children of watched cards
   In order to keep track of changes that are important to me
   As an Editor
@@ -16,7 +17,7 @@ Feature: Updates for Children of watched cards
     #And He should see "added Ulysses+author" in the email  -- FIXME need multiline matching
     Then Joe Admin should be notified that "Joe User created \"Ulysses\+author\""
     And Joe Camel should be notified that "Joe User created \"Ulysses\+author\""
-    When Joe Admin edits "Ulysses\+author" setting content to "Jim"
+    When Joe Admin edits "Ulysses+author" setting content to "Jim"
     Then Joe Camel should be notified that "Joe Admin updated \"Ulysses\+author\""
     #And Joe Admin should be notified that "Joe User updated \"Ulysses\""
 
@@ -62,7 +63,6 @@ Feature: Updates for Children of watched cards
       |color|flavor|
       |green|mushy|
     Then No notification should be sent
-    
 
   Scenario: Watching a plus card & including card on regular edit
     When I create card "Ulysses+author" with content "Joyce"
@@ -70,5 +70,3 @@ Feature: Updates for Children of watched cards
     When Joe Camel is watching "Ulysses+author+*self"
     And I edit "Ulysses+author" setting content to "Jim"
     Then Joe Camel should be notified that "Joe User updated \"Ulysses\+author\""
-
-

@@ -3,14 +3,20 @@ AllCops:
     - "vendor/**/*"
     - "card/db/schema.rb"
     - "card/tmpsets/**/*"
-    - "card/mod/06_bootstrap/lib/**/*"
-    - "card/mod/03_machines/lib/javascript/**/*"
-    - "card/mod/03_machines/lib/stylesheets/**/*"
+    - "card/mod/bootstrap/lib/**/*"
+    - "card/mod/machines/lib/javascript/**/*"
+    - "card/mod/machines/lib/stylesheets/**/*"
     - "wagn/lib/wagn/generators/wagn/templates/Gemfile"
 
 Style/CommentAnnotation:
   Enabled: true
 Style/CollectionMethods:
+  # Mapping from undesired method to desired_method
+  # e.g. to use `detect` over `find`:
+  #
+  # CollectionMethods:
+  #   PreferredMethods:
+  #     find: detect
   Description: Preferred collection methods.
   Enabled: true
   PreferredMethods:
@@ -39,7 +45,7 @@ Style/RegexpLiteral:
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#percent-r
   Enabled: true
 Style/StringLiterals:
-  EnforcedStyle: single_quotes
+  EnforcedStyle: double_quotes
 Style/SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
 Metrics/MethodLength:
@@ -52,3 +58,13 @@ Style/ExtraSpacing:
 Lint/AssignmentInCondition:
   Enabled: true
   AllowSafeAssignment: true
+Style/Alias:
+  EnforcedStyle: prefer_alias_method
+Style/EmptyCaseCondition:
+  Enabled: false
+Style/FormatString:
+  EnforcedStyle: percent
+  SupportedStyles:
+    - format
+    - sprintf
+    - percent

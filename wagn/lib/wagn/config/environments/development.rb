@@ -19,7 +19,7 @@ Wagn.application.class.configure do
 
   if defined?(RailsDevTweaks)
     config.dev_tweaks.autoload_rules do
-      skip '/files'
+      skip "/files"
       skip /view\=status/
     end
   end
@@ -82,7 +82,7 @@ Wagn.application.class.configure do
   # Use Pry instead of IRB
   silence_warnings do
     begin
-      require 'pry'
+      require "pry"
       IRB = Pry
     rescue LoadError
     end

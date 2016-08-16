@@ -1,30 +1,30 @@
 
 =A Developer's introduction to the Wagn/Card code base
 
-Start here before you dig into the code.
+New folks should start here after playing with Wagn but before digging into code.
 
 ==Intro
 
 ===Am I in the right place?
 
-This page assumes:
+Yes, if:
 
-* You're a ruby developer or, at least, someone who does not fear ruby code. <b>Not a techie? {Try Wagn.org}[http://wagn.org]</b>
-* You've experimented with Wagn enough to know the basics (cards, types, rules, etc.) <b>No idea what a card is? {Try Wagn.org}[http://wagn.org]</b>.
-* You're looking at this page from a docs site (ie, NOT GitHub) so you can use our links to navigate code. <b>Links look funny? {Try rubydocs.info}[http://rubydoc.info/gems/card/README_Developers.rdoc].</b>
+* <b>you're a Ruby developer</b>, or at least someone who does not fear ruby code. <b>Not a techie? {Try Wagn.org}[http://wagn.org]</b>
+* <b>you've experimented with Wagn</b> enough to know the basics (cards, types, rules, etc.) <b>No idea what a card is? {Try Wagn.org}[http://wagn.org]</b>.
+* <b>you're looking at this page from a docs site</b> (ie, NOT GitHub) so you can use our links to navigate code. <b>Links look funny? {Try rubydocs.info}[http://rubydoc.info/gems/card].</b>
 
 
-===Is Wagn an application or a development framework?
+===Is Wagn an _application_ or a <i>development framework</i>?
 
 It's both.
 
-When you install a new Wagn, you have a working "Deck" right away.  There are lots of things built in: account handling, edit histories, default layouts, CSS, etc.  In other words: you have a basic application.
+When you install and "seed" a new Wagn project, you have a working "deck" right away.  There are lots of things built in: account handling, edit histories, default layouts, CSS, etc.  In other words: you have a basic application.
 
 But a newly seeded Deck is just a starting point. <b>Wagn is a development framework in which you start <i>in the middle of things</i> rather than from scratch</b>.  Seeding is a bit of a headstart, and it means that designers, developers, and content creators can start working in parallel on day 1. But the seeded cards don't determine what you can build with Wagn; you can add things, you can remove things... In fact, you can build pretty much whatever you want.
 
 ===Sets
 
-_Sets_ are a central organizing concept for both Wagneers and Wagn developers.
+_Cards_ are the fundamental building blocks of Wagn, and _Sets_ are the fundamental pattern for organizing cards. Both Wagneers and Wagn developers create web systems by applying _rules_ to _sets_ of _cards_.
 
 If you've edited Rules through a card toolbar in any Wagn deck, you will have encountered Sets. For example, imagine you're on a User card named "Henry Tai", and you decide to edit its structure.  When you edit its rule, you will be prompted to choose the Set of cards to which the rule applies, eg:
 
@@ -43,7 +43,7 @@ Sets are central to Wagn's architecture.  Wagn is not, like Ruby on Rails, an im
 
 MoFoS stands for "Model-Formats-Sets": One Model, viewable in many Formats, divisible into Sets.
 
-"Everything is a Card" is an idea familiar to any Wagneer. As you may have guessed Cards are Wagn's "one Model" in MoFoS terms.
+In Wagn, the MoFoS "one model" is, as you may have guessed, the _card_.
 
 You may have also noticed that you can add .html (the default), .text, .json, etc to any card's web path to receive the card's contents in a different format. This is the Format in MoFos.
 

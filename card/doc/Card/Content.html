@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Card::Content
+  
+    &mdash; Documentation by YARD 0.9.5
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "Card::Content";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (C)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Card.html" title="Card (class)">Card</a></span></span>
+     &raquo; 
+    <span class="title">Content</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <iframe id="search_frame" src="../class_list.html"></iframe>
+
+      <div id="content"><h1>Class: Card::Content
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">SimpleDelegator</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">SimpleDelegator</li>
+          
+            <li class="next">Card::Content</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/card/content.rb<span class="defines">,<br />
+  lib/card/content/diff.rb,<br /> lib/card/content/chunk.rb,<br /> lib/card/content/parser.rb,<br /> lib/card/content/diff/lcs.rb,<br /> lib/card/content/diff/result.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+<h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Content/Chunk.html" title="Card::Content::Chunk (module)">Chunk</a></span>
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Content/Diff.html" title="Card::Content::Diff (class)">Diff</a></span>, <span class='object_link'><a href="Content/Parser.html" title="Card::Content::Parser (class)">Parser</a></span>
+    
+  
+</p>
+
+  <h2>Constant Summary</h2>
+  <dl class="constants">
+    
+      <dt id="ALLOWED_TAGS-constant" class="">ALLOWED_TAGS =
+        
+      </dt>
+      <dd><pre class="code"><span class='lbrace'>{</span><span class='rbrace'>}</span></pre></dd>
+    
+      <dt id="ATTR_VALUE_RE-constant" class="">ATTR_VALUE_RE =
+        
+      </dt>
+      <dd><pre class="code"><span class='lbracket'>[</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>(?&lt;=^&#39;)[^&#39;]+(?=&#39;)</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>(?&lt;=^&quot;)[^&quot;]+(?=&quot;)</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\S+</span><span class='regexp_end'>/</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+    
+  </dl>
+
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#chunks-instance_method" title="#chunks (instance method)">#<strong>chunks</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute chunks.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#format-instance_method" title="#format (instance method)">#<strong>format</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute format.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#opts-instance_method" title="#opts (instance method)">#<strong>opts</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute opts.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#revision-instance_method" title="#revision (instance method)">#<strong>revision</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute revision.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#clean%21-class_method" title="clean! (class method)">.<strong>clean!</strong>(string, tags = ALLOWED_TAGS)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>this has been hacked for card to allow classes if the class begins with
+“w-”.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_tags-class_method" title="find_tags (class method)">.<strong>find_tags</strong>(wordstring)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#process_attribute-class_method" title="process_attribute (class method)">.<strong>process_attribute</strong>(attr, all_attributes)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#truncatewords_with_closing_tags-class_method" title="truncatewords_with_closing_tags (class method)">.<strong>truncatewords_with_closing_tags</strong>(input, words = 25, _truncate_string = &quot;...&quot;)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#card-instance_method" title="#card (instance method)">#<strong>card</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#chunk_list-instance_method" title="#chunk_list (instance method)">#<strong>chunk_list</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#clean_with_space_last%21-instance_method" title="#clean_with_space_last! (instance method)">#<strong>clean_with_space_last!</strong>(string, tags = ALLOWED_TAGS)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#each_chunk-instance_method" title="#each_chunk (instance method)">#<strong>each_chunk</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_chunks-instance_method" title="#find_chunks (instance method)">#<strong>find_chunks</strong>(chunk_type)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(content, format_or_card, opts = {})  &#x21d2; Content </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A new instance of Content.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#inspect-instance_method" title="#inspect (instance method)">#<strong>inspect</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#process_each_chunk-instance_method" title="#process_each_chunk (instance method)">#<strong>process_each_chunk</strong>(&amp;block)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#to_s-instance_method" title="#to_s (instance method)">#<strong>to_s</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  <div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(content, format_or_card, opts = {})  &#x21d2; <tt><span class='object_link'><a href="" title="Card::Content (class)">Content</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns a new instance of Content</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 10</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_format_or_card'>format_or_card</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='ivar'>@format</span> <span class='op'>=</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_format_or_card'>format_or_card</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Card</span><span class='rparen'>)</span>
+      <span class='const'>Format</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='id identifier rubyid_format_or_card'>format_or_card</span><span class='comma'>,</span> <span class='label'>format:</span> <span class='kw'>nil</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_format_or_card'>format_or_card</span>
+    <span class='kw'>end</span>
+  <span class='ivar'>@opts</span> <span class='op'>=</span> <span class='id identifier rubyid_opts'>opts</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+
+  <span class='ivar'>@chunks</span> <span class='op'>=</span> <span class='const'>Parser</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_chunk_list'>chunk_list</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
+  <span class='kw'>super</span><span class='lparen'>(</span><span class='ivar'>@chunks</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='op'>?</span> <span class='ivar'>@chunks</span> <span class='op'>:</span> <span class='id identifier rubyid_content'>content</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="chunks-instance_method">
+  
+    #<strong>chunks</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute chunks</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+8
+9
+10</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 8</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_chunks'>chunks</span>
+  <span class='ivar'>@chunks</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="format-instance_method">
+  
+    #<strong>format</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute format</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+8
+9
+10</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 8</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_format'>format</span>
+  <span class='ivar'>@format</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="opts-instance_method">
+  
+    #<strong>opts</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute opts</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+8
+9
+10</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 8</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_opts'>opts</span>
+  <span class='ivar'>@opts</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="revision-instance_method">
+  
+    #<strong>revision</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute revision</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+8
+9
+10</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 8</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_revision'>revision</span>
+  <span class='ivar'>@revision</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="clean!-class_method">
+  
+    .<strong>clean!</strong>(string, tags = ALLOWED_TAGS)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>this has been hacked for card to allow classes if the class begins with
+“w-”</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 98</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_clean!'>clean!</span> <span class='id identifier rubyid_string'>string</span><span class='comma'>,</span> <span class='id identifier rubyid_tags'>tags</span><span class='op'>=</span><span class='const'>ALLOWED_TAGS</span>
+  <span class='id identifier rubyid_string'>string</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>%r{</span><span class='tstring_content'>&lt;(/*)(\w+)([^&gt;]*)&gt;</span><span class='regexp_end'>}</span></span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_raw'>raw</span> <span class='op'>=</span> <span class='gvar'>$LAST_MATCH_INFO</span>
+    <span class='id identifier rubyid_tag'>tag</span> <span class='op'>=</span> <span class='id identifier rubyid_raw'>raw</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span>
+    <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_attrs'>attrs</span> <span class='op'>=</span> <span class='id identifier rubyid_tags'>tags</span><span class='lbracket'>[</span><span class='id identifier rubyid_tag'>tag</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_html_attribs'>html_attribs</span> <span class='op'>=</span>
+        <span class='id identifier rubyid_attrs'>attrs</span><span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='lbracket'>[</span><span class='id identifier rubyid_tag'>tag</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_attr'>attr</span><span class='comma'>,</span> <span class='id identifier rubyid_pcs'>pcs</span><span class='op'>|</span>
+          <span class='id identifier rubyid_q'>q</span><span class='comma'>,</span> <span class='id identifier rubyid_rest_value'>rest_value</span> <span class='op'>=</span> <span class='id identifier rubyid_process_attribute'>process_attribute</span> <span class='id identifier rubyid_attr'>attr</span><span class='comma'>,</span> <span class='id identifier rubyid_raw'>raw</span><span class='lbracket'>[</span><span class='int'>3</span><span class='rbracket'>]</span>
+          <span class='id identifier rubyid_pcs'>pcs</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_attr'>attr</span><span class='embexpr_end'>}</span><span class='tstring_content'>=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_q'>q</span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_rest_value'>rest_value</span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_q'>q</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_rest_value'>rest_value</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+        <span class='kw'>end</span> <span class='op'>*</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span>
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_raw'>raw</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_html_attribs'>html_attribs</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>else</span>
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>&lt;\!--.*?--&gt;</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="find_tags-class_method">
+  
+    .<strong>find_tags</strong>(wordstring)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 165</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_tags'>find_tags</span> <span class='id identifier rubyid_wordstring'>wordstring</span>
+  <span class='id identifier rubyid_tags'>tags</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+
+  <span class='comment'># match tags with or without self closing (ie. &lt;foo /&gt;)
+</span>  <span class='id identifier rubyid_wordstring'>wordstring</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>%r{</span><span class='tstring_content'>\&lt;([^\&gt;\s/]+)[^\&gt;]*?\&gt;</span><span class='regexp_end'>}</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_t'>t</span><span class='op'>|</span>
+    <span class='id identifier rubyid_tags'>tags</span><span class='period'>.</span><span class='id identifier rubyid_unshift'>unshift</span><span class='lparen'>(</span><span class='id identifier rubyid_t'>t</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='comment'># match tags with self closing and mark them as closed
+</span>  <span class='id identifier rubyid_wordstring'>wordstring</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>%r{</span><span class='tstring_content'>\&lt;([^\&gt;\s/]+)[^\&gt;]*?/\&gt;</span><span class='regexp_end'>}</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_t'>t</span><span class='op'>|</span>
+    <span class='kw'>next</span> <span class='kw'>unless</span> <span class='lparen'>(</span><span class='id identifier rubyid_x'>x</span> <span class='op'>=</span> <span class='id identifier rubyid_tags'>tags</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='id identifier rubyid_t'>t</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_tags'>tags</span><span class='period'>.</span><span class='id identifier rubyid_slice!'>slice!</span><span class='lparen'>(</span><span class='id identifier rubyid_x'>x</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='comment'># match close tags
+</span>  <span class='id identifier rubyid_wordstring'>wordstring</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>%r{</span><span class='tstring_content'>\&lt;/([^\&gt;\s/]+)[^\&gt;]*?\&gt;</span><span class='regexp_end'>}</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_t'>t</span><span class='op'>|</span>
+    <span class='kw'>next</span> <span class='kw'>unless</span> <span class='lparen'>(</span><span class='id identifier rubyid_x'>x</span> <span class='op'>=</span> <span class='id identifier rubyid_tags'>tags</span><span class='period'>.</span><span class='id identifier rubyid_rindex'>rindex</span><span class='lparen'>(</span><span class='id identifier rubyid_t'>t</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_tags'>tags</span><span class='period'>.</span><span class='id identifier rubyid_slice!'>slice!</span><span class='lparen'>(</span><span class='id identifier rubyid_x'>x</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_tags'>tags</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="process_attribute-class_method">
+  
+    .<strong>process_attribute</strong>(attr, all_attributes)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 115</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_process_attribute'>process_attribute</span> <span class='id identifier rubyid_attr'>attr</span><span class='comma'>,</span> <span class='id identifier rubyid_all_attributes'>all_attributes</span>
+  <span class='kw'>return</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&quot;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rbracket'>]</span> <span class='kw'>unless</span> <span class='id identifier rubyid_all_attributes'>all_attributes</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\b</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_attr'>attr</span><span class='embexpr_end'>}</span><span class='tstring_content'>\s*=\s*(?=(.))</span><span class='regexp_end'>/i</span></span>
+  <span class='id identifier rubyid_q'>q</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&quot;</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_rest_value'>rest_value</span> <span class='op'>=</span> <span class='backref'>$&#39;</span>
+  <span class='lparen'>(</span><span class='id identifier rubyid_idx'>idx</span> <span class='op'>=</span> <span class='qwords_beg'>%w(</span><span class='tstring_content'>&#39;</span><span class='words_sep'> </span><span class='tstring_content'>&quot;</span><span class='words_sep'>)</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span><span class='lparen'>(</span><span class='const'>Regexp</span><span class='period'>.</span><span class='id identifier rubyid_last_match'>last_match</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span>
+    <span class='lparen'>(</span><span class='id identifier rubyid_q'>q</span> <span class='op'>=</span> <span class='const'>Regexp</span><span class='period'>.</span><span class='id identifier rubyid_last_match'>last_match</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_re'>re</span> <span class='op'>=</span> <span class='const'>ATTR_VALUE_RE</span><span class='lbracket'>[</span><span class='id identifier rubyid_idx'>idx</span> <span class='op'>||</span> <span class='int'>2</span><span class='rbracket'>]</span>
+  <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_match'>match</span> <span class='op'>=</span> <span class='id identifier rubyid_rest_value'>rest_value</span><span class='period'>.</span><span class='id identifier rubyid_match'>match</span><span class='lparen'>(</span><span class='id identifier rubyid_re'>re</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_rest_value'>rest_value</span> <span class='op'>=</span> <span class='id identifier rubyid_match'>match</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_attr'>attr</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>class</span><span class='tstring_end'>&quot;</span></span>
+      <span class='id identifier rubyid_rest_value'>rest_value</span> <span class='op'>=</span>
+        <span class='id identifier rubyid_rest_value'>rest_value</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\s+</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_s'>s</span><span class='op'>|</span> <span class='id identifier rubyid_s'>s</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^w-</span><span class='regexp_end'>/i</span></span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='lbracket'>[</span><span class='id identifier rubyid_q'>q</span><span class='comma'>,</span> <span class='id identifier rubyid_rest_value'>rest_value</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="truncatewords_with_closing_tags-class_method">
+  
+    .<strong>truncatewords_with_closing_tags</strong>(input, words = 25, _truncate_string = &quot;...&quot;)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 140</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_truncatewords_with_closing_tags'>truncatewords_with_closing_tags</span> <span class='id identifier rubyid_input'>input</span><span class='comma'>,</span> <span class='id identifier rubyid_words'>words</span><span class='op'>=</span><span class='int'>25</span><span class='comma'>,</span>
+                                    <span class='id identifier rubyid__truncate_string'>_truncate_string</span><span class='op'>=</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>...</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_input'>input</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='id identifier rubyid_wordlist'>wordlist</span> <span class='op'>=</span> <span class='id identifier rubyid_input'>input</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span>
+  <span class='id identifier rubyid_l'>l</span> <span class='op'>=</span> <span class='id identifier rubyid_words'>words</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='op'>-</span> <span class='int'>1</span>
+  <span class='id identifier rubyid_l'>l</span> <span class='op'>=</span> <span class='int'>0</span> <span class='kw'>if</span> <span class='id identifier rubyid_l'>l</span> <span class='op'>&lt;</span> <span class='int'>0</span>
+  <span class='id identifier rubyid_wordstring'>wordstring</span> <span class='op'>=</span> <span class='id identifier rubyid_wordlist'>wordlist</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='op'>&gt;</span> <span class='id identifier rubyid_l'>l</span> <span class='op'>?</span> <span class='id identifier rubyid_wordlist'>wordlist</span><span class='lbracket'>[</span><span class='int'>0</span><span class='op'>..</span><span class='id identifier rubyid_l'>l</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_input'>input</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
+  <span class='comment'># nuke partial tags at end of snippet
+</span>  <span class='id identifier rubyid_wordstring'>wordstring</span><span class='period'>.</span><span class='id identifier rubyid_gsub!'>gsub!</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>(&lt;[^\&gt;]+)$</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_tags'>tags</span> <span class='op'>=</span> <span class='id identifier rubyid_find_tags'>find_tags</span> <span class='id identifier rubyid_wordstring'>wordstring</span>
+  <span class='id identifier rubyid_tags'>tags</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_t'>t</span><span class='op'>|</span> <span class='id identifier rubyid_wordstring'>wordstring</span> <span class='op'>+=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_t'>t</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_wordlist'>wordlist</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='op'>&gt;</span> <span class='id identifier rubyid_l'>l</span>
+    <span class='id identifier rubyid_wordstring'>wordstring</span> <span class='op'>+=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;span class=&quot;closed-content-ellipses&quot;&gt;...&lt;/span&gt;</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># wordstring += &#39;...&#39; if wordlist.length &gt; l
+</span>  <span class='id identifier rubyid_wordstring'>wordstring</span><span class='period'>.</span><span class='id identifier rubyid_gsub!'>gsub!</span> <span class='tstring'><span class='regexp_beg'>%r{</span><span class='tstring_content'>&lt;[/]?br[\s/]*&gt;</span><span class='regexp_end'>}</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span>
+  <span class='comment'># Also a hack -- get rid of &lt;br&gt;&#39;s -- they make line view ugly.
+</span>  <span class='id identifier rubyid_wordstring'>wordstring</span><span class='period'>.</span><span class='id identifier rubyid_gsub!'>gsub!</span> <span class='tstring'><span class='regexp_beg'>%r{</span><span class='tstring_content'>&lt;[/]?p[^&gt;]*&gt;</span><span class='regexp_end'>}</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span>
+  <span class='comment'>## Also a hack -- get rid of &lt;br&gt;&#39;s -- they make line view ugly.
+</span>  <span class='id identifier rubyid_wordstring'>wordstring</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="card-instance_method">
+  
+    #<strong>card</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+23
+24
+25</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 23</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_card'>card</span>
+  <span class='id identifier rubyid_format'>format</span><span class='period'>.</span><span class='id identifier rubyid_card'>card</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="chunk_list-instance_method">
+  
+    #<strong>chunk_list</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+27
+28
+29</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 27</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_chunk_list'>chunk_list</span>
+  <span class='ivar'>@opts</span><span class='lbracket'>[</span><span class='symbol'>:chunk_list</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='ivar'>@format</span><span class='period'>.</span><span class='id identifier rubyid_chunk_list'>chunk_list</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="clean_with_space_last!-instance_method">
+  
+    #<strong>clean_with_space_last!</strong>(string, tags = ALLOWED_TAGS)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+133
+134
+135
+136</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 133</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_clean_with_space_last!'>clean_with_space_last!</span> <span class='id identifier rubyid_string'>string</span><span class='comma'>,</span> <span class='id identifier rubyid_tags'>tags</span><span class='op'>=</span><span class='const'>ALLOWED_TAGS</span>
+  <span class='id identifier rubyid_cwo'>cwo</span> <span class='op'>=</span> <span class='id identifier rubyid_clean_without_space_last!'>clean_without_space_last!</span><span class='lparen'>(</span><span class='id identifier rubyid_string'>string</span><span class='comma'>,</span> <span class='id identifier rubyid_tags'>tags</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_cwo'>cwo</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>(?:^|\b) ((?:&amp;nbsp;)+)</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>\1 </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="each_chunk-instance_method">
+  
+    #<strong>each_chunk</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 44</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_each_chunk'>each_chunk</span>
+  <span class='kw'>return</span> <span class='id identifier rubyid_enum_for'>enum_for</span><span class='lparen'>(</span><span class='symbol'>:each_chunk</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+  <span class='kw'>case</span> <span class='id identifier rubyid___getobj__'>__getobj__</span>
+  <span class='kw'>when</span> <span class='const'>Hash</span>  <span class='kw'>then</span> <span class='id identifier rubyid_each_value'>each_value</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='kw'>yield</span> <span class='id identifier rubyid_v'>v</span> <span class='kw'>if</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Chunk</span><span class='op'>::</span><span class='const'>Abstract</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='kw'>when</span> <span class='const'>Array</span> <span class='kw'>then</span> <span class='id identifier rubyid_each'>each</span>       <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_e'>e</span><span class='op'>|</span> <span class='kw'>yield</span> <span class='id identifier rubyid_e'>e</span> <span class='kw'>if</span> <span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Chunk</span><span class='op'>::</span><span class='const'>Abstract</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='kw'>when</span> <span class='const'>String</span> <span class='comment'># noop. strings are parsed in self, so no chunks in a String
+</span>  <span class='kw'>else</span>
+    <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>error self is unrecognized type</span><span class='tstring_end'>&quot;</span></span> \
+                      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___getobj__'>__getobj__</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="find_chunks-instance_method">
+  
+    #<strong>find_chunks</strong>(chunk_type)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+56
+57
+58</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 56</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_chunks'>find_chunks</span> <span class='id identifier rubyid_chunk_type'>chunk_type</span>
+  <span class='id identifier rubyid_each_chunk'>each_chunk</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_chunk'>chunk</span><span class='op'>|</span> <span class='id identifier rubyid_chunk'>chunk</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='id identifier rubyid_chunk_type'>chunk_type</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="inspect-instance_method">
+  
+    #<strong>inspect</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+40
+41
+42</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 40</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___getobj__'>__getobj__</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_card'>card</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="process_each_chunk-instance_method">
+  
+    #<strong>process_each_chunk</strong>(&amp;block)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+60
+61
+62
+63</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 60</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_process_each_chunk'>process_each_chunk</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span>
+  <span class='id identifier rubyid_each_chunk'>each_chunk</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_chunk'>chunk</span><span class='op'>|</span> <span class='id identifier rubyid_chunk'>chunk</span><span class='period'>.</span><span class='id identifier rubyid_process_chunk'>process_chunk</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="to_s-instance_method">
+  
+    #<strong>to_s</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+31
+32
+33
+34
+35
+36
+37
+38</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/content.rb', line 31</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
+  <span class='kw'>case</span> <span class='id identifier rubyid___getobj__'>__getobj__</span>
+  <span class='kw'>when</span> <span class='const'>Array</span>    <span class='kw'>then</span> <span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_s</span><span class='rparen'>)</span> <span class='op'>*</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>when</span> <span class='const'>String</span>   <span class='kw'>then</span> <span class='id identifier rubyid___getobj__'>__getobj__</span>
+  <span class='kw'>when</span> <span class='const'>NilClass</span> <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span> <span class='comment'># raise &quot;Nil Card::Content&quot;
+</span>  <span class='kw'>else</span>               <span class='id identifier rubyid___getobj__'>__getobj__</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Mon Aug 15 15:39:51 2016 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.5 (ruby-2.3.0).
+</div>
+
+    </div>
+  </body>
+</html>

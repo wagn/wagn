@@ -1,1 +1,1 @@
-require 'wagn/mods_spec_helper'
+require "wagn/mods_spec_helper"

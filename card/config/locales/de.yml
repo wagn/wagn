@@ -67,7 +67,7 @@ de:
         format:
           exception_alias_fail: cannot find %{optview} view in %{optmod}; failed to alias %{view} in %{self}
   mod:
-    :01_core:
+    :core:
       format:
         html_format:
           unknown_layout: "Unbekanntes Layout: %{name}"
@@ -145,7 +145,7 @@ de:
           label_setfollow_typeplusright_cards: alle "+%{right}" an "%{type}s"
         :08_self:
           label_set_self_card: Die Karte "%{name}"
-    :01_history:
+    :history:
       set:
         all:
           content_history:
@@ -158,7 +158,7 @@ de:
             save_as_current: Als aktuelle Fassung speichern
             show_changes: Zeige Änderungen
             hide_changes: Verstecke Änderungen
-    :02_basic_types:
+    :basic_types:
       set:
         abstract:
           code_file:
@@ -177,7 +177,7 @@ de:
             comment_style_group: STYLE GROUP
             search_opt_names_ptr: option names for pointer
     #:03_machines: # No language-specific items known to be present in Ruby files
-    :04_settings:
+    :settings:
       lib:
         card:
           setting:
@@ -202,7 +202,7 @@ de:
         type:
           setting:
             search_all_setting: Alle Einstellungs-Karten
-    :05_email:
+    :email:
       set:
         all:
           follow:
@@ -249,7 +249,7 @@ de:
               problems_card: Probleme mit %{cardname}
               sign_in: anmelden
               please_sign_in: Bitte %{sign_in}
-    :05_standard:
+    :standard:
       set:
         all:
           comment:
@@ -372,35 +372,6 @@ de:
               type: Typ
             wrapper:
               close: Schliessen
-        right:
-          account:
-            error_not_allowed: nicht erlaubt für diese Karte
-            sorry_email_reset: Entschuldigung, %{error_msg}. Please check your email for a new password reset link.
-          email:
-            error_invalid_address: ungültige Adresse
-            search_email_duplicate: E-Mail-Duplikat? (%{content})
-            error_not_unique: existiert bereits
-            deny_email_restricted: E-Mail-Adresse ist nur für Administratoren und den Accountinhaber sichtbar
-          password:
-            encrypted: verschlüsselt
-            password_length: mindestens 4 Zeichen
-          salt:
-            private_data: Private data
-          stats:
-            field: Field
-            cache_value: Cache Val
-            db_value: Database Val
-            cache_db_compare: Cache/DB Comparison
-            cached_card: Cached Card Inspect
-            db_card: Database Card Inspect
-          status:
-            deny_not_change_own_account: Du bist nicht berechtigt den Status deines eigenen Accounts zu ändern.
-          token:
-            private_data: Private data
-            error_token_not_found: kein Token gefunden
-            error_token_expired: Token abgelaufen
-            error_incorrect_token: Token passt nicht
-            exception_bad_expiration: ungültiger Wert für Ablaufdatum (z.B. '%{example}')
         rstar:
           rules_editor:
             not_a_rule: keine Regel
@@ -417,23 +388,6 @@ de:
               other: Diese Regel ist wirkungslos für diese Karte solange die nicht die engeren Regeln für %{rules_sentence} löschst.
             submit: Speichern
         self:
-          account_links:
-            sign_up: Registrieren
-            sign_in: Anmelden
-            invite: Einladen
-            sign_out: Abmelden
-          admin_info:
-            email_off: E-Mail-Versand ist ausgeschaltet. Ändere die Einstellungen in %{path}, damit Benachrichtigungen verschickt werden, wenn sich neue Nutzer registrieren.
-            admin_warn: ADMINISTRATOR WARNUNG
-            captcha_temp: Dein Deck arbeitet mit provisorischen Captcha-Einstellungen. Das ist kein Problem für eine lokale Installation, aber falls du diese Seite online stellst, benötigst Du neue Recaptcha-Schlüssel.
-            captcha_keys: Dein Deck ist so konfiguriert, dass es [[*captcha]] nutzt, aber damit das funktioniert, benötigst Du neue Recaptcha-Schlüssel.
-            instructions: Anleitungen
-            howto_add_keys: "Neue Recaptcha-Schlüssel hinzufügen:"
-            howto_register: 1. Registriere deine Domain bei %{recaptcha_link}
-            howto_add: 2. Füge deine Schlüssel zu %{recaptcha_settings} hinzu
-            howto_turn_off: 'Captcha ausschalten:'
-            howto_go: 1. Gehe zu %{captcha_card}
-            howto_update: 2. Ändere alle *captcha-Regeln zu "no".
           head:
             edit_page: Ändere diese Seite!
           recent:
@@ -441,20 +395,6 @@ de:
           search:
             results_for: "Suchergebnis für: %{keyword}"
             search_goto_items: "Gehe zu Ergebnis für Ausdruck: %{term}"  # TODO
-          signin:
-            sign_in_title: Anmelden
-            sign_in: Anmelden
-            or_sign_up: '...oder registrieren!'
-            reset_password: PASSWORT ZURÜCKSETZEN
-            forgot_password: Passwort vergessen
-            reset_my_password: Setze mein Passwort zurück
-            check_email: Sie erhalten in Kürze eine E-Mail mit einem Link um ihr Passwort zurück zu setzen.
-            error_unknown_email: Unbekannte E-Mail-Adresse.
-            error_not_active: Entschuldigung, der Account ist nicht aktiviert.
-            error_wrong_password: Falsches Passwort
-            abort_bad_signin_args: ungültige Anmeldedaten
-            error_not_active: nicht aktiviert
-            error_not_recognized: unbekannt
           stats:
             stat: Stat
             value: Value
@@ -513,6 +453,76 @@ de:
             by_group: nach Kategorie
             by_name: nach Name
             recent: zuletzt benutzt
+          toggle:
+            # Warning: unless careful, yes/no get converted to true/false
+            :yes: 'yes'
+            :no: 'no'
+    #:bootstrap: #No known language-specfic messages
+
+    :account:
+      set:
+        right:
+          account:
+            error_not_allowed: nicht erlaubt für diese Karte
+            sorry_email_reset: Entschuldigung, %{error_msg}. Please check your email for a new password reset link.
+          email:
+            error_invalid_address: ungültige Adresse
+            search_email_duplicate: E-Mail-Duplikat? (%{content})
+            error_not_unique: existiert bereits
+            deny_email_restricted: E-Mail-Adresse ist nur für Administratoren und den Accountinhaber sichtbar
+          password:
+            encrypted: verschlüsselt
+            password_length: mindestens 4 Zeichen
+          salt:
+            private_data: Private data
+          stats:
+            field: Field
+            cache_value: Cache Val
+            db_value: Database Val
+            cache_db_compare: Cache/DB Comparison
+            cached_card: Cached Card Inspect
+            db_card: Database Card Inspect
+          status:
+            deny_not_change_own_account: Du bist nicht berechtigt den Status deines eigenen Accounts zu ändern.
+          token:
+            private_data: Private data
+            error_token_not_found: kein Token gefunden
+            error_token_expired: Token abgelaufen
+            error_incorrect_token: Token passt nicht
+            exception_bad_expiration: ungültiger Wert für Ablaufdatum (z.B. '%{example}')
+        self:
+          account_links:
+            sign_up: Registrieren
+            sign_in: Anmelden
+            invite: Einladen
+            sign_out: Abmelden
+          admin_info:
+            email_off: E-Mail-Versand ist ausgeschaltet. Ändere die Einstellungen in %{path}, damit Benachrichtigungen verschickt werden, wenn sich neue Nutzer registrieren.
+            admin_warn: ADMINISTRATOR WARNUNG
+            captcha_temp: Dein Deck arbeitet mit provisorischen Captcha-Einstellungen. Das ist kein Problem für eine lokale Installation, aber falls du diese Seite online stellst, benötigst Du neue Recaptcha-Schlüssel.
+            captcha_keys: Dein Deck ist so konfiguriert, dass es [[*captcha]] nutzt, aber damit das funktioniert, benötigst Du neue Recaptcha-Schlüssel.
+            instructions: Anleitungen
+            howto_add_keys: "Neue Recaptcha-Schlüssel hinzufügen:"
+            howto_register: 1. Registriere deine Domain bei %{recaptcha_link}
+            howto_add: 2. Füge deine Schlüssel zu %{recaptcha_settings} hinzu
+            howto_turn_off: 'Captcha ausschalten:'
+            howto_go: 1. Gehe zu %{captcha_card}
+            howto_update: 2. Ändere alle *captcha-Regeln zu "no".
+          signin:
+            sign_in_title: Anmelden
+            sign_in: Anmelden
+            or_sign_up: '...oder registrieren!'
+            reset_password: PASSWORT ZURÜCKSETZEN
+            forgot_password: Passwort vergessen
+            reset_my_password: Setze mein Passwort zurück
+            check_email: Sie erhalten in Kürze eine E-Mail mit einem Link um ihr Passwort zurück zu setzen.
+            error_unknown_email: Unbekannte E-Mail-Adresse.
+            error_not_active: Entschuldigung, der Account ist nicht aktiviert.
+            error_wrong_password: Falsches Passwort
+            abort_bad_signin_args: ungültige Anmeldedaten
+            error_not_active: nicht aktiviert
+            error_not_recognized: unbekannt
+        type:
           signup:
             sign_up: Registrieren
             invite: Einladen
@@ -533,10 +543,6 @@ de:
             illegal_approval_abort: ungültige Genehmigung
             check_email_reset: Please check your email for a new password reset link.
             errors_message: Sorry, %{item}. %{message}
-          toggle:
-            # Warning: unless careful, yes/no get converted to true/false
-            :yes: 'yes'
-            :no: 'no'
           user:
             help_first_last: üblicherweise Vor- und Nachname
             welcome: Willkommen, Wagneer!
@@ -544,4 +550,3 @@ de:
             email_off: "WARNING: E-Mail-Versand ist deaktiviert. Ändere die Einstellung in %{path} um bei neuen Registrierungen Benachrichtigungen zu senden."
             set_up: Anlegen
             setting_up: Lege an
-    #:06_bootstrap: #No known language-specfic messages

@@ -14,7 +14,7 @@ Wagn.application.class.configure do
 
   # Configure static asset server for tests with Cache-Control for performance
   config.serve_static_files = true
-  config.static_cache_control = 'public, max-age=3600'
+  config.static_cache_control = "public, max-age=3600"
 
   # Log error messages when you accidentally call methods on nil
   config.whiny_nils = true
@@ -34,7 +34,7 @@ Wagn.application.class.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
   config.action_mailer.perform_deliveries = true
-  config.action_mailer.default charset: 'utf-8'
+  config.action_mailer.default charset: "utf-8"
 
   # config.action_mailer.delivery_method = :smtp
   # config.action_mailer.smtp_settings = { address: "localhost", port: 1025 }
@@ -51,10 +51,19 @@ Wagn.application.class.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 
+  config.active_job.queue_adapter = :delayed_job
+  # Note: With delay_jobs set to false integrate_with_delay events don't run
+  # in a separate process and hence can behave differently from a real
+  # environment. To test integrate_with_delay events properly set delay_jobs to
+  # true in your test
+  Delayed::Worker.delay_jobs = false
+
+  config.active_record.raise_in_transactional_callbacks = true
+
   # Use Pry instead of IRB
   silence_warnings do
     begin
-      require 'pry'
+      require "pry"
       IRB = Pry
     rescue LoadError
     end

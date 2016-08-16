@@ -3,11 +3,12 @@
 # API to create/update/delete additional cards together with the main card.
 # The most common case is for fields but subcards don't have to be descendants.
 #
-# Example toghether with "my address" you want to create the subcards
-# "my address+name", "my address+street", etc.
-#
 # Subcards can be added as card objects or attribute hashes.
-
+#
+# Use the methods defined in core/set/all/subcards.rb
+# Example
+# Together with "my address" you want to create the subcards
+# "my address+name", "my address+street", etc.
 class Card
   def subcards
     @subcards ||= Subcards.new(self)
@@ -23,6 +24,59 @@ class Card
     def initialize context_card
       @context_card = context_card
       @keys = ::Set.new
+    end
+
+    # @example Add a subcard with name 'spoiler'
+    #   add 'spoiler', type: 'Phrase', content: 'John Snow is a Targaryen'
+    #   card_obj = Card.new name: 'spoiler', type: 'Phrase',
+    #                       content: 'John Snow is a Targaryen'
+    #   add card_obj
+    #   add name: 'spoiler', type: 'Phrase', content: 'John Snow is a Targaryen'
+    #
+    # @example Add a subcard that is added in the integration phase
+    #     (and hence doesn't hold up the transaction for the main card)
+    #   add 'spoiler', content: 'John Snow is a Targaryen',
+    #                  transact_in_stage: :integrate
+    #   add card_obj, delayed: true
+    def add name_or_card_or_attr, attr_or_opts={}
+      case name_or_card_or_attr
+      when Card
+        new_by_card name_or_card_or_attr, attr_or_opts
+      when Symbol, String
+        new_by_attributes name_or_card_or_attr, attr_or_opts
+      when Hash
+        args = name_or_card_or_attr
+        if args[:name]
+          new_by_attributes args.delete(:name), args
+        else
+          multi_add args
+        end
+      end
+    end
+
+    def add_child name, args
+      add prepend_plus(name), args
+    end
+    alias_method :add_field, :add_child
+
+    def remove_child name_or_card
+      if name_or_card.is_a? Card
+        remove name_or_card
+      else
+        absolute_name = @context_card.cardname.field_name(name_or_card)
+        if @keys.include? absolute_name.key
+          remove absolute_name
+        else
+          remove @context_card.cardname.relative_field_name(name_or_card)
+        end
+      end
+    end
+    alias_method :remove_field, :remove_child
+
+    def catch_up_to_stage stage_index
+      each_card do |subcard|
+        subcard.catch_up_to_stage stage_index
+      end
     end
 
     def clear
@@ -49,49 +103,10 @@ class Card
       return unless @keys.include? key
       @keys.delete key
       removed_card = fetch_subcard key
-      if removed_card.current_action
-        removed_card.current_action.delete
-      end
+      removed_card.current_action.delete if removed_card.current_action
       Card::DirectorRegister.deep_delete removed_card.director
       Card.cache.soft.delete key
       removed_card
-    end
-
-    def add name_or_card_or_attr, card_or_attr=nil
-      if card_or_attr
-        name = name_or_card_or_attr
-      else
-        card_or_attr = name_or_card_or_attr
-      end
-      case card_or_attr
-      when Hash
-        args = card_or_attr
-        if name
-          new_by_attributes name, args
-        elsif args[:name]
-          new_by_attributes args.delete(:name), args
-        else
-          args.each_pair do |key, val|
-            case val
-            when String then new_by_attributes key, content: val
-            when Card
-              val.name = absolutize_subcard_name key
-              new_by_card val
-            else new_by_attributes key, val
-            end
-          end
-        end
-      when Card
-        new_by_card card_or_attr
-      when Symbol, String
-        new_by_attributes card_or_attr, {}
-      end
-    end
-
-    def catch_up_to_stage stage_index
-      each_card do |subcard|
-        subcard.catch_up_to_stage stage_index
-      end
     end
 
     def rename old_name, new_name
@@ -122,7 +137,7 @@ class Card
       end
     end
 
-    alias each each_card
+    alias_method :each, :each_card
 
     def each_with_key
       @keys.each do |key|
@@ -154,31 +169,24 @@ class Card
       fetch_subcard name
     end
 
-    def add_child name, args
-      add prepend_plus(name), args
-    end
-
-    def remove_child name_or_card
-      if name_or_card.is_a? Card
-        remove name_or_card
-      else
-        absolute_name = @context_card.cardname.field_name(name_or_card)
-        if @keys.include? absolute_name.key
-          remove absolute_name
-        else
-          remove @context_card.cardname.relative_field_name(name_or_card)
-        end
-      end
-    end
-
-    alias add_field add_child
-    alias remove_field remove_child
-
     def present?
       @keys.present?
     end
 
     private
+
+    # Handles hash with several subcards
+    def multi_add args
+      args.each_pair do |key, val|
+        case val
+        when String then new_by_attributes key, content: val
+        when Card
+          val.name = absolutize_subcard_name key
+          new_by_card val
+        else new_by_attributes key, val
+        end
+      end
+    end
 
     def subcard_key name_or_card
       key = case name_or_card
@@ -243,14 +251,14 @@ class Card
       if absolute_name.field_of?(@context_card.name) &&
          (absolute_name.parts.size - @context_card.cardname.parts.size) > 2
         left_card = new_by_attributes absolute_name.left
-        new_by_card left_card
+        new_by_card left_card, transact_in_stage: attributes[:transact_in_stage]
         left_card.new_by_attributes absolute_name, attributes
       else
-
         subcard_args = extract_subcard_args! attributes
+        t_i_s = attributes.delete(:transact_in_stage)
         card = Card.assign_or_initialize_by absolute_name.s, attributes,
                                             local_only: true
-        subcard = new_by_card card
+        subcard = new_by_card card, transact_in_stage: t_i_s
         card.subcards.add subcard_args
         subcard
       end
@@ -264,7 +272,7 @@ class Card
       end
     end
 
-    def new_by_card card
+    def new_by_card card, opts={}
       card.supercard = @context_card
       if !card.cardname.simple? &&
          card.cardname.field_of?(@context_card.cardname)
@@ -272,7 +280,7 @@ class Card
       end
       @keys << card.key
       Card.write_to_soft_cache card
-      card.director = @context_card.director.subdirectors.add(card)
+      card.director = @context_card.director.subdirectors.add(card, opts)
       card
     end
   end

@@ -31,13 +31,17 @@ module CoreExtensions
     end
 
     def to_viewname
-      Card::ViewName.new self
+      Card::Name::ViewName.new self
     end
 
     def deep_clone_instance_variables
       instance_variables.each do |v|
         instance_variable_set v, instance_variable_get(v).deep_clone
       end
+    end
+
+    def in? other
+      other.include? self
     end
   end
 end

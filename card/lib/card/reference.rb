@@ -10,8 +10,8 @@ class Card
       def mass_insert array
         return if array.empty?
         value_statements = array.map { |values| "\n(#{values.join ', '})" }
-        sql = 'INSERT into card_references '\
-              '(referer_id, referee_id, referee_key, ref_type) '\
+        sql = "INSERT into card_references "\
+              "(referer_id, referee_id, referee_key, ref_type) "\
               "VALUES #{value_statements.join ', '}"
         Card.connection.execute sql
       end
@@ -29,21 +29,21 @@ class Card
       # find all references to missing (eg deleted) cards and reset them
       def unmap_if_referee_missing
         joins(
-          'LEFT JOIN cards ON card_references.referee_id = cards.id'
+          "LEFT JOIN cards ON card_references.referee_id = cards.id"
         ).where(
-          '(cards.id IS NULL OR cards.trash IS TRUE) AND referee_id IS NOT NULL'
+          "(cards.id IS NULL OR cards.trash IS TRUE) AND referee_id IS NOT NULL"
         ).update_all referee_id: nil
       end
 
       # remove all references from missing (eg deleted) cards
       def delete_if_referer_missing
         joins(
-          'LEFT JOIN cards ON card_references.referer_id = cards.id'
+          "LEFT JOIN cards ON card_references.referer_id = cards.id"
         ).where(
-          'cards.id IS NULL'
+          "cards.id IS NULL"
         ).find_in_batches do |group|
           # used to be .delete_all here, but that was failing on large dbs
-          puts 'deleting batch of references'
+          puts "deleting batch of references"
           where("id in (#{group.map(&:id).join ','})").delete_all
         end
       end

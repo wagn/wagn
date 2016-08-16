@@ -1,15 +1,17 @@
 class Card
   def act opts={}
-    if !DirectorRegister.act_card
+    if DirectorRegister.act_card
+      # director.reset_stage
+      # self.only_storage_phase = true
+      main_act_block = false
+    else
       DirectorRegister.clear
       self.director = nil
       DirectorRegister.act_card = self
       main_act_block = true
       if opts[:success]
-        Env[:success] = Success.new(cardname, Env.params[:success])
+        Env[:success] = Env::Success.new(cardname, Env.params[:success])
       end
-    else
-      main_act_block = false
     end
     yield
   ensure
@@ -50,7 +52,11 @@ class Card
       end
 
       def fetch card, opts={}
-        directors[card] ||= Card.new_director card, opts
+        return directors[card] if directors[card]
+        directors.each_key do |dir_card|
+          return dir_card.director if dir_card.name == card.name
+        end
+        directors[card] = Card.new_director card, opts
       end
 
       def add director
@@ -68,6 +74,10 @@ class Card
           deep_delete subdir
         end
         delete director
+      end
+
+      def running_act?
+        (dir = DirectorRegister.act_director) && dir.running?
       end
 
       def to_s

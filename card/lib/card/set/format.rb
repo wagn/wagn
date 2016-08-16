@@ -71,26 +71,13 @@ class Card
         modules[:base_format][format_class] << mod
       end
 
-      # iterate through each format associated with a set
-      def each_format set
-        set_type = set.abstract_set? ? :abstract : :nonbase
-        format_type = "#{set_type}_format".to_sym
-        modules[format_type].each_pair do |format, set_format_mod_hash|
-          next unless (format_mods = set_format_mod_hash[set.shortname])
-          yield format, format_mods
-        end
-      end
-
-      def applicable_format? format, except, only
-        return false if except && Array(except).include?(format)
-        return false if only && !Array(only).include?(format)
-        true
-      end
-
       # All Format modules are extended with this module in order to support
       # the basic format API (ok, view definitions.  It's just view
       # definitions.)
+      # No longer just view definitions. Also basket definitions now.
       module AbstractFormat
+        include Set::Basket
+
         mattr_accessor :views
         self.views = {}
 

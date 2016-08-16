@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: Card::Set
+  
+    &mdash; Documentation by YARD 0.9.5
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "Card::Set";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (S)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Card.html" title="Card (class)">Card</a></span></span>
+     &raquo; 
+    <span class="title">Set</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <iframe id="search_frame" src="../class_list.html"></iframe>
+
+      <div id="content"><h1>Module: Card::Set
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  <dl>
+      <dt>Extended by:</dt>
+      <dd><span class='object_link'><a href="Set/Loader.html" title="Card::Set::Loader (module)">Loader</a></span></dd>
+  </dl>
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="Set/AdvancedApi.html" title="Card::Set::AdvancedApi (module)">AdvancedApi</a></span>, <span class='object_link'><a href="Set/Basket.html" title="Card::Set::Basket (module)">Basket</a></span>, <span class='object_link'><a href="Set/Event.html" title="Card::Set::Event (module)">Event</a></span>, <span class='object_link'><a href="Set/Format.html" title="Card::Set::Format (module)">Format</a></span>, <span class='object_link'><a href="Set/Helpers.html" title="Card::Set::Helpers (module)">Helpers</a></span>, <span class='object_link'><a href="Set/Inheritance.html" title="Card::Set::Inheritance (module)">Inheritance</a></span>, <span class='object_link'><a href="Set/Trait.html" title="Card::Set::Trait (module)">Trait</a></span></dd>
+  </dl>
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="Set/Abstract/AceEditor.html" title="Card::Set::Abstract::AceEditor (module)">Abstract::AceEditor</a></span>, <span class='object_link'><a href="Set/Abstract/Attachment.html" title="Card::Set::Abstract::Attachment (module)">Abstract::Attachment</a></span>, <span class='object_link'><a href="Set/Abstract/CodeFile.html" title="Card::Set::Abstract::CodeFile (module)">Abstract::CodeFile</a></span>, <span class='object_link'><a href="Set/Abstract/CodePointer.html" title="Card::Set::Abstract::CodePointer (module)">Abstract::CodePointer</a></span>, <span class='object_link'><a href="Set/Abstract/Permission.html" title="Card::Set::Abstract::Permission (module)">Abstract::Permission</a></span>, <span class='object_link'><a href="Set/Abstract/Pointer.html" title="Card::Set::Abstract::Pointer (module)">Abstract::Pointer</a></span>, <span class='object_link'><a href="Set/Abstract/Pointer/Edit.html" title="Card::Set::Abstract::Pointer::Edit (module)">Abstract::Pointer::Edit</a></span>, <span class='object_link'><a href="Set/Abstract/ProsemirrorEditor.html" title="Card::Set::Abstract::ProsemirrorEditor (module)">Abstract::ProsemirrorEditor</a></span>, <span class='object_link'><a href="Set/Abstract/Script.html" title="Card::Set::Abstract::Script (module)">Abstract::Script</a></span>, <span class='object_link'><a href="Set/Abstract/SolidCache.html" title="Card::Set::Abstract::SolidCache (module)">Abstract::SolidCache</a></span>, <span class='object_link'><a href="Set/All/Account.html" title="Card::Set::All::Account (module)">All::Account</a></span>, <span class='object_link'><a href="Set/All/Actify.html" title="Card::Set::All::Actify (module)">All::Actify</a></span>, <span class='object_link'><a href="Set/All/Actions.html" title="Card::Set::All::Actions (module)">All::Actions</a></span>, <span class='object_link'><a href="Set/All/ActiveCard.html" title="Card::Set::All::ActiveCard (module)">All::ActiveCard</a></span>, <span class='object_link'><a href="Set/All/AllCss.html" title="Card::Set::All::AllCss (module)">All::AllCss</a></span>, <span class='object_link'><a href="Set/All/AllCsv.html" title="Card::Set::All::AllCsv (module)">All::AllCsv</a></span>, <span class='object_link'><a href="Set/All/AllJs.html" title="Card::Set::All::AllJs (module)">All::AllJs</a></span>, <span class='object_link'><a href="Set/All/Base.html" title="Card::Set::All::Base (module)">All::Base</a></span>, <span class='object_link'><a href="Set/All/Bootstrap/Form.html" title="Card::Set::All::Bootstrap::Form (module)">All::Bootstrap::Form</a></span>, <span class='object_link'><a href="Set/All/Bootstrap/Helper.html" title="Card::Set::All::Bootstrap::Helper (module)">All::Bootstrap::Helper</a></span>, <span class='object_link'><a href="Set/All/Bootstrap/Table.html" title="Card::Set::All::Bootstrap::Table (module)">All::Bootstrap::Table</a></span>, <span class='object_link'><a href="Set/All/Bootstrap/Tabs.html" title="Card::Set::All::Bootstrap::Tabs (module)">All::Bootstrap::Tabs</a></span>, <span class='object_link'><a href="Set/All/Bootstrap/Wrapper.html" title="Card::Set::All::Bootstrap::Wrapper (module)">All::Bootstrap::Wrapper</a></span>, <span class='object_link'><a href="Set/All/Collection.html" title="Card::Set::All::Collection (module)">All::Collection</a></span>, <span class='object_link'><a href="Set/All/Comment.html" title="Card::Set::All::Comment (module)">All::Comment</a></span>, <span class='object_link'><a href="Set/All/Content.html" title="Card::Set::All::Content (module)">All::Content</a></span>, <span class='object_link'><a href="Set/All/ContentHistory.html" title="Card::Set::All::ContentHistory (module)">All::ContentHistory</a></span>, <span class='object_link'><a href="Set/All/EmailHtml.html" title="Card::Set::All::EmailHtml (module)">All::EmailHtml</a></span>, <span class='object_link'><a href="Set/All/EmailText.html" title="Card::Set::All::EmailText (module)">All::EmailText</a></span>, <span class='object_link'><a href="Set/All/Erb.html" title="Card::Set::All::Erb (module)">All::Erb</a></span>, <span class='object_link'><a href="Set/All/Error.html" title="Card::Set::All::Error (module)">All::Error</a></span>, <span class='object_link'><a href="Set/All/Event.html" title="Card::Set::All::Event (module)">All::Event</a></span>, <span class='object_link'><a href="Set/All/EventViz.html" title="Card::Set::All::EventViz (module)">All::EventViz</a></span>, <span class='object_link'><a href="Set/All/Export.html" title="Card::Set::All::Export (module)">All::Export</a></span>, <span class='object_link'><a href="Set/All/Fetch.html" title="Card::Set::All::Fetch (module)">All::Fetch</a></span>, <span class='object_link'><a href="Set/All/File.html" title="Card::Set::All::File (module)">All::File</a></span>, <span class='object_link'><a href="Set/All/Follow.html" title="Card::Set::All::Follow (module)">All::Follow</a></span>, <span class='object_link'><a href="Set/All/Haml.html" title="Card::Set::All::Haml (module)">All::Haml</a></span>, <span class='object_link'><a href="Set/All/History.html" title="Card::Set::All::History (module)">All::History</a></span>, <span class='object_link'><a href="Set/All/Initialize.html" title="Card::Set::All::Initialize (module)">All::Initialize</a></span>, <span class='object_link'><a href="Set/All/Json.html" title="Card::Set::All::Json (module)">All::Json</a></span>, <span class='object_link'><a href="Set/All/Links.html" title="Card::Set::All::Links (module)">All::Links</a></span>, <span class='object_link'><a href="Set/All/ListChanges.html" title="Card::Set::All::ListChanges (module)">All::ListChanges</a></span>, <span class='object_link'><a href="Set/All/LocationHistory.html" title="Card::Set::All::LocationHistory (module)">All::LocationHistory</a></span>, <span class='object_link'><a href="Set/All/Name.html" title="Card::Set::All::Name (module)">All::Name</a></span>, <span class='object_link'><a href="Set/All/NameValidations.html" title="Card::Set::All::NameValidations (module)">All::NameValidations</a></span>, <span class='object_link'><a href="Set/All/Notify.html" title="Card::Set::All::Notify (module)">All::Notify</a></span>, <span class='object_link'><a href="Set/All/Observer.html" title="Card::Set::All::Observer (module)">All::Observer</a></span>, <span class='object_link'><a href="Set/All/Pattern.html" title="Card::Set::All::Pattern (module)">All::Pattern</a></span>, <span class='object_link'><a href="Set/All/Permissions.html" title="Card::Set::All::Permissions (module)">All::Permissions</a></span>, <span class='object_link'><a href="Set/All/Phases.html" title="Card::Set::All::Phases (module)">All::Phases</a></span>, <span class='object_link'><a href="Set/All/References.html" title="Card::Set::All::References (module)">All::References</a></span>, <span class='object_link'><a href="Set/All/ResetMachines.html" title="Card::Set::All::ResetMachines (module)">All::ResetMachines</a></span>, <span class='object_link'><a href="Set/All/RichBootstrap.html" title="Card::Set::All::RichBootstrap (module)">All::RichBootstrap</a></span>, <span class='object_link'><a href="Set/All/RichHtml/Content.html" title="Card::Set::All::RichHtml::Content (module)">All::RichHtml::Content</a></span>, <span class='object_link'><a href="Set/All/RichHtml/Editing.html" title="Card::Set::All::RichHtml::Editing (module)">All::RichHtml::Editing</a></span>, <span class='object_link'><a href="Set/All/RichHtml/Form.html" title="Card::Set::All::RichHtml::Form (module)">All::RichHtml::Form</a></span>, <span class='object_link'><a href="Set/All/RichHtml/Header.html" title="Card::Set::All::RichHtml::Header (module)">All::RichHtml::Header</a></span>, <span class='object_link'><a href="Set/All/RichHtml/Menu.html" title="Card::Set::All::RichHtml::Menu (module)">All::RichHtml::Menu</a></span>, <span class='object_link'><a href="Set/All/RichHtml/Modal.html" title="Card::Set::All::RichHtml::Modal (module)">All::RichHtml::Modal</a></span>, <span class='object_link'><a href="Set/All/RichHtml/Toolbar.html" title="Card::Set::All::RichHtml::Toolbar (module)">All::RichHtml::Toolbar</a></span>, <span class='object_link'><a href="Set/All/RichHtml/Wrapper.html" title="Card::Set::All::RichHtml::Wrapper (module)">All::RichHtml::Wrapper</a></span>, <span class='object_link'><a href="Set/All/Rss.html" title="Card::Set::All::Rss (module)">All::Rss</a></span>, <span class='object_link'><a href="Set/All/Rules.html" title="Card::Set::All::Rules (module)">All::Rules</a></span>, <span class='object_link'><a href="Set/All/SolidCache.html" title="Card::Set::All::SolidCache (module)">All::SolidCache</a></span>, <span class='object_link'><a href="Set/All/Stages.html" title="Card::Set::All::Stages (module)">All::Stages</a></span>, <span class='object_link'><a href="Set/All/States.html" title="Card::Set::All::States (module)">All::States</a></span>, <span class='object_link'><a href="Set/All/Subcards.html" title="Card::Set::All::Subcards (module)">All::Subcards</a></span>, <span class='object_link'><a href="Set/All/Templating.html" title="Card::Set::All::Templating (module)">All::Templating</a></span>, <span class='object_link'><a href="Set/All/Text.html" title="Card::Set::All::Text (module)">All::Text</a></span>, <span class='object_link'><a href="Set/All/TrackedAttributes.html" title="Card::Set::All::TrackedAttributes (module)">All::TrackedAttributes</a></span>, <span class='object_link'><a href="Set/All/Trash.html" title="Card::Set::All::Trash (module)">All::Trash</a></span>, <span class='object_link'><a href="Set/All/Type.html" title="Card::Set::All::Type (module)">All::Type</a></span>, <span class='object_link'><a href="Set/All/Utils.html" title="Card::Set::All::Utils (module)">All::Utils</a></span>, <span class='object_link'><a href="Set/All/ViewCache.html" title="Card::Set::All::ViewCache (module)">All::ViewCache</a></span>, <span class='object_link'><a href="Set/All/ViewViz.html" title="Card::Set::All::ViewViz (module)">All::ViewViz</a></span>, <span class='object_link'><a href="Set/Right/Account.html" title="Card::Set::Right::Account (module)">Right::Account</a></span>, <span class='object_link'><a href="Set/Right/AddHelp.html" title="Card::Set::Right::AddHelp (module)">Right::AddHelp</a></span>, <span class='object_link'><a href="Set/Right/Bcc.html" title="Card::Set::Right::Bcc (module)">Right::Bcc</a></span>, <span class='object_link'><a href="Set/Right/Cc.html" title="Card::Set::Right::Cc (module)">Right::Cc</a></span>, <span class='object_link'><a href="Set/Right/Comment.html" title="Card::Set::Right::Comment (module)">Right::Comment</a></span>, <span class='object_link'><a href="Set/Right/Create.html" title="Card::Set::Right::Create (module)">Right::Create</a></span>, <span class='object_link'><a href="Set/Right/Debug.html" title="Card::Set::Right::Debug (module)">Right::Debug</a></span>, <span class='object_link'><a href="Set/Right/Default.html" title="Card::Set::Right::Default (module)">Right::Default</a></span>, <span class='object_link'><a href="Set/Right/Delete.html" title="Card::Set::Right::Delete (module)">Right::Delete</a></span>, <span class='object_link'><a href="Set/Right/Discussion.html" title="Card::Set::Right::Discussion (module)">Right::Discussion</a></span>, <span class='object_link'><a href="Set/Right/Email.html" title="Card::Set::Right::Email (module)">Right::Email</a></span>, <span class='object_link'><a href="Set/Right/Follow.html" title="Card::Set::Right::Follow (module)">Right::Follow</a></span>, <span class='object_link'><a href="Set/Right/FollowFields.html" title="Card::Set::Right::FollowFields (module)">Right::FollowFields</a></span>, <span class='object_link'><a href="Set/Right/Followers.html" title="Card::Set::Right::Followers (module)">Right::Followers</a></span>, <span class='object_link'><a href="Set/Right/Following.html" title="Card::Set::Right::Following (module)">Right::Following</a></span>, <span class='object_link'><a href="Set/Right/From.html" title="Card::Set::Right::From (module)">Right::From</a></span>, <span class='object_link'><a href="Set/Right/Help.html" title="Card::Set::Right::Help (module)">Right::Help</a></span>, <span class='object_link'><a href="Set/Right/HtmlMessage.html" title="Card::Set::Right::HtmlMessage (module)">Right::HtmlMessage</a></span>, <span class='object_link'><a href="Set/Right/MachineCache.html" title="Card::Set::Right::MachineCache (module)">Right::MachineCache</a></span>, <span class='object_link'><a href="Set/Right/MachineInput.html" title="Card::Set::Right::MachineInput (module)">Right::MachineInput</a></span>, <span class='object_link'><a href="Set/Right/MachineOutput.html" title="Card::Set::Right::MachineOutput (module)">Right::MachineOutput</a></span>, <span class='object_link'><a href="Set/Right/Password.html" title="Card::Set::Right::Password (module)">Right::Password</a></span>, <span class='object_link'><a href="Set/Right/Read.html" title="Card::Set::Right::Read (module)">Right::Read</a></span>, <span class='object_link'><a href="Set/Right/Salt.html" title="Card::Set::Right::Salt (module)">Right::Salt</a></span>, <span class='object_link'><a href="Set/Right/Script.html" title="Card::Set::Right::Script (module)">Right::Script</a></span>, <span class='object_link'><a href="Set/Right/SolidCache.html" title="Card::Set::Right::SolidCache (module)">Right::SolidCache</a></span>, <span class='object_link'><a href="Set/Right/Status.html" title="Card::Set::Right::Status (module)">Right::Status</a></span>, <span class='object_link'><a href="Set/Right/Structure.html" title="Card::Set::Right::Structure (module)">Right::Structure</a></span>, <span class='object_link'><a href="Set/Right/Style.html" title="Card::Set::Right::Style (module)">Right::Style</a></span>, <span class='object_link'><a href="Set/Right/To.html" title="Card::Set::Right::To (module)">Right::To</a></span>, <span class='object_link'><a href="Set/Right/Token.html" title="Card::Set::Right::Token (module)">Right::Token</a></span>, <span class='object_link'><a href="Set/Right/Update.html" title="Card::Set::Right::Update (module)">Right::Update</a></span>, <span class='object_link'><a href="Set/Right/WhenCreated.html" title="Card::Set::Right::WhenCreated (module)">Right::WhenCreated</a></span>, <span class='object_link'><a href="Set/Right/WhenLastEdited.html" title="Card::Set::Right::WhenLastEdited (module)">Right::WhenLastEdited</a></span>, <span class='object_link'><a href="Set/Rstar/Rules.html" title="Card::Set::Rstar::Rules (module)">Rstar::Rules</a></span>, <span class='object_link'><a href="Set/Rstar/RulesEditor.html" title="Card::Set::Rstar::RulesEditor (module)">Rstar::RulesEditor</a></span>, <span class='object_link'><a href="Set/Self/AccountLinks.html" title="Card::Set::Self::AccountLinks (module)">Self::AccountLinks</a></span>, <span class='object_link'><a href="Set/Self/Accountable.html" title="Card::Set::Self::Accountable (module)">Self::Accountable</a></span>, <span class='object_link'><a href="Set/Self/AddHelp.html" title="Card::Set::Self::AddHelp (module)">Self::AddHelp</a></span>, <span class='object_link'><a href="Set/Self/Admin.html" title="Card::Set::Self::Admin (module)">Self::Admin</a></span>, <span class='object_link'><a href="Set/Self/AdminInfo.html" title="Card::Set::Self::AdminInfo (module)">Self::AdminInfo</a></span>, <span class='object_link'><a href="Set/Self/Alerts.html" title="Card::Set::Self::Alerts (module)">Self::Alerts</a></span>, <span class='object_link'><a href="Set/Self/Always.html" title="Card::Set::Self::Always (module)">Self::Always</a></span>, <span class='object_link'><a href="Set/Self/Autoname.html" title="Card::Set::Self::Autoname (module)">Self::Autoname</a></span>, <span class='object_link'><a href="Set/Self/BootstrapCards.html" title="Card::Set::Self::BootstrapCards (module)">Self::BootstrapCards</a></span>, <span class='object_link'><a href="Set/Self/BootstrapJs.html" title="Card::Set::Self::BootstrapJs (module)">Self::BootstrapJs</a></span>, <span class='object_link'><a href="Set/Self/BootswatchShared.html" title="Card::Set::Self::BootswatchShared (module)">Self::BootswatchShared</a></span>, <span class='object_link'><a href="Set/Self/Captcha.html" title="Card::Set::Self::Captcha (module)">Self::Captcha</a></span>, <span class='object_link'><a href="Set/Self/Codenames.html" title="Card::Set::Self::Codenames (module)">Self::Codenames</a></span>, <span class='object_link'><a href="Set/Self/Create.html" title="Card::Set::Self::Create (module)">Self::Create</a></span>, <span class='object_link'><a href="Set/Self/Created.html" title="Card::Set::Self::Created (module)">Self::Created</a></span>, <span class='object_link'><a href="Set/Self/Default.html" title="Card::Set::Self::Default (module)">Self::Default</a></span>, <span class='object_link'><a href="Set/Self/DefaultHtmlView.html" title="Card::Set::Self::DefaultHtmlView (module)">Self::DefaultHtmlView</a></span>, <span class='object_link'><a href="Set/Self/Delete.html" title="Card::Set::Self::Delete (module)">Self::Delete</a></span>, <span class='object_link'><a href="Set/Self/Edited.html" title="Card::Set::Self::Edited (module)">Self::Edited</a></span>, <span class='object_link'><a href="Set/Self/Follow.html" title="Card::Set::Self::Follow (module)">Self::Follow</a></span>, <span class='object_link'><a href="Set/Self/FollowDefaults.html" title="Card::Set::Self::FollowDefaults (module)">Self::FollowDefaults</a></span>, <span class='object_link'><a href="Set/Self/FollowFields.html" title="Card::Set::Self::FollowFields (module)">Self::FollowFields</a></span>, <span class='object_link'><a href="Set/Self/Foot.html" title="Card::Set::Self::Foot (module)">Self::Foot</a></span>, <span class='object_link'><a href="Set/Self/Head.html" title="Card::Set::Self::Head (module)">Self::Head</a></span>, <span class='object_link'><a href="Set/Self/Head/Javascript.html" title="Card::Set::Self::Head::Javascript (module)">Self::Head::Javascript</a></span>, <span class='object_link'><a href="Set/Self/Help.html" title="Card::Set::Self::Help (module)">Self::Help</a></span>, <span class='object_link'><a href="Set/Self/Input.html" title="Card::Set::Self::Input (module)">Self::Input</a></span>, <span class='object_link'><a href="Set/Self/Layout.html" title="Card::Set::Self::Layout (module)">Self::Layout</a></span>, <span class='object_link'><a href="Set/Self/Navbox.html" title="Card::Set::Self::Navbox (module)">Self::Navbox</a></span>, <span class='object_link'><a href="Set/Self/Never.html" title="Card::Set::Self::Never (module)">Self::Never</a></span>, <span class='object_link'><a href="Set/Self/Now.html" title="Card::Set::Self::Now (module)">Self::Now</a></span>, <span class='object_link'><a href="Set/Self/OnCreate.html" title="Card::Set::Self::OnCreate (module)">Self::OnCreate</a></span>, <span class='object_link'><a href="Set/Self/OnDelete.html" title="Card::Set::Self::OnDelete (module)">Self::OnDelete</a></span>, <span class='object_link'><a href="Set/Self/OnUpdate.html" title="Card::Set::Self::OnUpdate (module)">Self::OnUpdate</a></span>, <span class='object_link'><a href="Set/Self/Options.html" title="Card::Set::Self::Options (module)">Self::Options</a></span>, <span class='object_link'><a href="Set/Self/OptionsLabel.html" title="Card::Set::Self::OptionsLabel (module)">Self::OptionsLabel</a></span>, <span class='object_link'><a href="Set/Self/Read.html" title="Card::Set::Self::Read (module)">Self::Read</a></span>, <span class='object_link'><a href="Set/Self/Recent.html" title="Card::Set::Self::Recent (module)">Self::Recent</a></span>, <span class='object_link'><a href="Set/Self/RecentSettings.html" title="Card::Set::Self::RecentSettings (module)">Self::RecentSettings</a></span>, <span class='object_link'><a href="Set/Self/Script.html" title="Card::Set::Self::Script (module)">Self::Script</a></span>, <span class='object_link'><a href="Set/Self/ScriptAce.html" title="Card::Set::Self::ScriptAce (module)">Self::ScriptAce</a></span>, <span class='object_link'><a href="Set/Self/ScriptAceConfig.html" title="Card::Set::Self::ScriptAceConfig (module)">Self::ScriptAceConfig</a></span>, <span class='object_link'><a href="Set/Self/ScriptCardMenu.html" title="Card::Set::Self::ScriptCardMenu (module)">Self::ScriptCardMenu</a></span>, <span class='object_link'><a href="Set/Self/ScriptEditors.html" title="Card::Set::Self::ScriptEditors (module)">Self::ScriptEditors</a></span>, <span class='object_link'><a href="Set/Self/ScriptHtml5shivPrintshiv.html" title="Card::Set::Self::ScriptHtml5shivPrintshiv (module)">Self::ScriptHtml5shivPrintshiv</a></span>, <span class='object_link'><a href="Set/Self/ScriptJquery.html" title="Card::Set::Self::ScriptJquery (module)">Self::ScriptJquery</a></span>, <span class='object_link'><a href="Set/Self/ScriptJqueryHelper.html" title="Card::Set::Self::ScriptJqueryHelper (module)">Self::ScriptJqueryHelper</a></span>, <span class='object_link'><a href="Set/Self/ScriptMods.html" title="Card::Set::Self::ScriptMods (module)">Self::ScriptMods</a></span>, <span class='object_link'><a href="Set/Self/ScriptPointerConfig.html" title="Card::Set::Self::ScriptPointerConfig (module)">Self::ScriptPointerConfig</a></span>, <span class='object_link'><a href="Set/Self/ScriptProsemirror.html" title="Card::Set::Self::ScriptProsemirror (module)">Self::ScriptProsemirror</a></span>, <span class='object_link'><a href="Set/Self/ScriptProsemirrorConfig.html" title="Card::Set::Self::ScriptProsemirrorConfig (module)">Self::ScriptProsemirrorConfig</a></span>, <span class='object_link'><a href="Set/Self/ScriptSlot.html" title="Card::Set::Self::ScriptSlot (module)">Self::ScriptSlot</a></span>, <span class='object_link'><a href="Set/Self/Search.html" title="Card::Set::Self::Search (module)">Self::Search</a></span>, <span class='object_link'><a href="Set/Self/Signin.html" title="Card::Set::Self::Signin (module)">Self::Signin</a></span>, <span class='object_link'><a href="Set/Self/SmartmenuCss.html" title="Card::Set::Self::SmartmenuCss (module)">Self::SmartmenuCss</a></span>, <span class='object_link'><a href="Set/Self/SmartmenuJs.html" title="Card::Set::Self::SmartmenuJs (module)">Self::SmartmenuJs</a></span>, <span class='object_link'><a href="Set/Self/Structure.html" title="Card::Set::Self::Structure (module)">Self::Structure</a></span>, <span class='object_link'><a href="Set/Self/Style.html" title="Card::Set::Self::Style (module)">Self::Style</a></span>, <span class='object_link'><a href="Set/Self/StyleBootstrapCompatible.html" title="Card::Set::Self::StyleBootstrapCompatible (module)">Self::StyleBootstrapCompatible</a></span>, <span class='object_link'><a href="Set/Self/StyleCards.html" title="Card::Set::Self::StyleCards (module)">Self::StyleCards</a></span>, <span class='object_link'><a href="Set/Self/StyleJqueryUiSmoothness.html" title="Card::Set::Self::StyleJqueryUiSmoothness (module)">Self::StyleJqueryUiSmoothness</a></span>, <span class='object_link'><a href="Set/Self/TableOfContents.html" title="Card::Set::Self::TableOfContents (module)">Self::TableOfContents</a></span>, <span class='object_link'><a href="Set/Self/Thanks.html" title="Card::Set::Self::Thanks (module)">Self::Thanks</a></span>, <span class='object_link'><a href="Set/Self/Update.html" title="Card::Set::Self::Update (module)">Self::Update</a></span>, <span class='object_link'><a href="Set/Self/Version.html" title="Card::Set::Self::Version (module)">Self::Version</a></span>, <span class='object_link'><a href="Set/Type/Basic.html" title="Card::Set::Type::Basic (module)">Type::Basic</a></span>, <span class='object_link'><a href="Set/Type/Cardtype.html" title="Card::Set::Type::Cardtype (module)">Type::Cardtype</a></span>, <span class='object_link'><a href="Set/Type/CoffeeScript.html" title="Card::Set::Type::CoffeeScript (module)">Type::CoffeeScript</a></span>, <span class='object_link'><a href="Set/Type/Css.html" title="Card::Set::Type::Css (module)">Type::Css</a></span>, <span class='object_link'><a href="Set/Type/Date.html" title="Card::Set::Type::Date (module)">Type::Date</a></span>, <span class='object_link'><a href="Set/Type/EmailTemplate.html" title="Card::Set::Type::EmailTemplate (module)">Type::EmailTemplate</a></span>, <span class='object_link'><a href="Set/Type/File.html" title="Card::Set::Type::File (module)">Type::File</a></span>, <span class='object_link'><a href="Set/Type/Html.html" title="Card::Set::Type::Html (module)">Type::Html</a></span>, <span class='object_link'><a href="Set/Type/Image.html" title="Card::Set::Type::Image (module)">Type::Image</a></span>, <span class='object_link'><a href="Set/Type/JavaScript.html" title="Card::Set::Type::JavaScript (module)">Type::JavaScript</a></span>, <span class='object_link'><a href="Set/Type/LayoutType.html" title="Card::Set::Type::LayoutType (module)">Type::LayoutType</a></span>, <span class='object_link'><a href="Set/Type/List.html" title="Card::Set::Type::List (module)">Type::List</a></span>, <span class='object_link'><a href="Set/Type/ListedBy.html" title="Card::Set::Type::ListedBy (module)">Type::ListedBy</a></span>, <span class='object_link'><a href="Set/Type/Number.html" title="Card::Set::Type::Number (module)">Type::Number</a></span>, <span class='object_link'><a href="Set/Type/Phrase.html" title="Card::Set::Type::Phrase (module)">Type::Phrase</a></span>, <span class='object_link'><a href="Set/Type/PlainText.html" title="Card::Set::Type::PlainText (module)">Type::PlainText</a></span>, <span class='object_link'><a href="Set/Type/Pointer.html" title="Card::Set::Type::Pointer (module)">Type::Pointer</a></span>, <span class='object_link'><a href="Set/Type/Scss.html" title="Card::Set::Type::Scss (module)">Type::Scss</a></span>, <span class='object_link'><a href="Set/Type/SearchType.html" title="Card::Set::Type::SearchType (module)">Type::SearchType</a></span>, <span class='object_link'><a href="Set/Type/Session.html" title="Card::Set::Type::Session (module)">Type::Session</a></span>, <span class='object_link'><a href="Set/Type/Set.html" title="Card::Set::Type::Set (module)">Type::Set</a></span>, <span class='object_link'><a href="Set/Type/Setting.html" title="Card::Set::Type::Setting (module)">Type::Setting</a></span>, <span class='object_link'><a href="Set/Type/Signup.html" title="Card::Set::Type::Signup (module)">Type::Signup</a></span>, <span class='object_link'><a href="Set/Type/Skin.html" title="Card::Set::Type::Skin (module)">Type::Skin</a></span>, <span class='object_link'><a href="Set/Type/Toggle.html" title="Card::Set::Type::Toggle (module)">Type::Toggle</a></span>, <span class='object_link'><a href="Set/Type/Uri.html" title="Card::Set::Type::Uri (module)">Type::Uri</a></span>, <span class='object_link'><a href="Set/Type/User.html" title="Card::Set::Type::User (module)">Type::User</a></span>, <span class='object_link'><a href="Set/TypePlusRight/User/Follow.html" title="Card::Set::TypePlusRight::User::Follow (module)">TypePlusRight::User::Follow</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/card/set.rb<span class="defines">,<br />
+  lib/card/set/trait.rb,<br /> lib/card/set/event.rb,<br /> lib/card/set/format.rb,<br /> lib/card/set/basket.rb,<br /> lib/card/set/loader.rb,<br /> lib/card/set_pattern.rb,<br /> lib/card/set/helpers.rb,<br /> lib/card/set/inheritance.rb,<br /> lib/card/set/advanced_api.rb,<br /> tmpsets/set/mod001-core/all/erb.rb,<br /> tmpsets/set/mod001-core/all/type.rb,<br /> tmpsets/set/mod001-core/all/haml.rb,<br /> tmpsets/set/mod001-core/all/name.rb,<br /> tmpsets/set/mod012-email/right/to.rb,<br /> tmpsets/set/mod001-core/all/rules.rb,<br /> tmpsets/set/mod001-core/all/trash.rb,<br /> tmpsets/set/mod001-core/all/event.rb,<br /> tmpsets/set/mod001-core/all/fetch.rb,<br /> tmpsets/set/mod001-core/all/utils.rb,<br /> tmpsets/set/mod012-email/right/cc.rb,<br /> tmpsets/set/mod001-core/all/states.rb,<br /> tmpsets/set/mod001-core/all/export.rb,<br /> tmpsets/set/mod012-email/right/bcc.rb,<br /> tmpsets/set/mod001-core/all/phases.rb,<br /> tmpsets/set/mod001-core/all/stages.rb,<br /> tmpsets/set/mod001-core/all/actify.rb,<br /> tmpsets/set/mod012-email/all/notify.rb,<br /> tmpsets/set/mod014-admin/self/admin.rb,<br /> tmpsets/set/mod001-core/all/pattern.rb,<br /> tmpsets/set/mod012-email/right/from.rb,<br /> tmpsets/set/mod001-core/all/content.rb,<br /> tmpsets/set/mod012-email/all/follow.rb,<br /> tmpsets/set/mod012-email/self/never.rb,<br /> tmpsets/set/mod016-standard/type/uri.rb,<br /> tmpsets/set/mod001-core/all/subcards.rb,<br /> tmpsets/set/mod017-account/type/user.rb,<br /> tmpsets/set/mod012-email/self/follow.rb,<br /> tmpsets/set/mod012-email/self/always.rb,<br /> tmpsets/set/mod012-email/self/edited.rb,<br /> tmpsets/set/mod010-machines/type/css.rb,<br /> tmpsets/set/mod016-standard/self/now.rb,<br /> tmpsets/set/mod016-standard/type/set.rb,<br /> tmpsets/set/mod012-email/right/follow.rb,<br /> tmpsets/set/mod012-email/self/created.rb,<br /> tmpsets/set/mod017-account/right/salt.rb,<br /> tmpsets/set/mod016-standard/type/list.rb,<br /> tmpsets/set/mod016-standard/type/date.rb,<br /> tmpsets/set/mod016-standard/self/foot.rb,<br /> tmpsets/set/mod016-standard/all/links.rb,<br /> tmpsets/set/mod016-standard/all/error.rb,<br /> tmpsets/set/mod010-machines/type/scss.rb,<br /> tmpsets/set/mod010-machines/type/skin.rb,<br /> tmpsets/set/mod014-admin/self/version.rb,<br /> tmpsets/set/mod011-settings/self/help.rb,<br /> tmpsets/set/mod011-settings/self/read.rb,<br /> tmpsets/set/mod012-email/all/observer.rb,<br /> tmpsets/set/mod017-account/type/signup.rb,<br /> tmpsets/set/mod017-account/right/token.rb,<br /> tmpsets/set/mod011-settings/self/style.rb,<br /> tmpsets/set/mod001-core/all/templating.rb,<br /> tmpsets/set/mod001-core/all/references.rb,<br /> tmpsets/set/mod017-account/self/signin.rb,<br /> tmpsets/set/mod001-core/all/view_cache.rb,<br /> tmpsets/set/mod016-standard/type/basic.rb,<br /> tmpsets/set/mod002-history/all/actions.rb,<br /> tmpsets/set/mod002-history/all/history.rb,<br /> tmpsets/set/mod001-core/all/collection.rb,<br /> tmpsets/set/mod011-settings/self/input.rb,<br /> tmpsets/set/mod011-settings/right/help.rb,<br /> tmpsets/set/mod011-settings/right/read.rb,<br /> tmpsets/set/mod001-core/all/initialize.rb,<br /> tmpsets/set/mod017-account/right/email.rb,<br /> tmpsets/set/mod017-account/all/account.rb,<br /> tmpsets/set/mod012-email/all/email_html.rb,<br /> tmpsets/set/mod016-standard/type/phrase.rb,<br /> tmpsets/set/mod016-standard/type/number.rb,<br /> tmpsets/set/mod011-settings/self/thanks.rb,<br /> tmpsets/set/mod011-settings/self/update.rb,<br /> tmpsets/set/mod016-standard/self/search.rb,<br /> tmpsets/set/mod016-standard/self/recent.rb,<br /> tmpsets/set/mod016-standard/self/navbox.rb,<br /> tmpsets/set/mod016-standard/self/alerts.rb,<br /> tmpsets/set/mod016-standard/rstar/rules.rb,<br /> tmpsets/set/mod012-email/all/email_text.rb,<br /> tmpsets/set/mod016-standard/all/comment.rb,<br /> tmpsets/set/mod001-core/all/permissions.rb,<br /> tmpsets/set/mod001-core/all/active_card.rb,<br /> tmpsets/set/mod011-settings/right/style.rb,<br /> tmpsets/set/mod011-settings/self/create.rb,<br /> tmpsets/set/mod011-settings/self/delete.rb,<br /> tmpsets/set/mod011-settings/self/layout.rb,<br /> tmpsets/set/mod011-settings/self/script.rb,<br /> tmpsets/set/mod017-account/right/status.rb,<br /> tmpsets/set/mod004-pointer/type/pointer.rb,<br /> tmpsets/set/mod016-standard/type/toggle.rb,<br /> tmpsets/set/mod011-settings/self/default.rb,<br /> tmpsets/set/mod011-settings/self/options.rb,<br /> tmpsets/set/mod013-carrierwave/type/file.rb,<br /> tmpsets/set/mod012-email/right/following.rb,<br /> tmpsets/set/mod017-account/right/account.rb,<br /> tmpsets/set/mod015-developer/right/debug.rb,<br /> tmpsets/set/mod003-basic_formats/all/rss.rb,<br /> tmpsets/set/mod011-settings/type/setting.rb,<br /> tmpsets/set/mod016-standard/type/session.rb,<br /> tmpsets/set/mod012-email/right/followers.rb,<br /> tmpsets/set/mod011-settings/right/update.rb,<br /> tmpsets/set/mod014-admin/self/admin_info.rb,<br /> tmpsets/set/mod011-settings/self/captcha.rb,<br /> tmpsets/set/mod011-settings/right/script.rb,<br /> tmpsets/set/mod011-settings/right/delete.rb,<br /> tmpsets/set/mod009-basic_types/type/html.rb,<br /> tmpsets/set/mod011-settings/right/create.rb,<br /> tmpsets/set/mod003-basic_formats/all/json.rb,<br /> tmpsets/set/mod017-account/right/password.rb,<br /> tmpsets/set/mod013-carrierwave/type/image.rb,<br /> tmpsets/set/mod015-developer/all/view_viz.rb,<br /> tmpsets/set/mod003-basic_formats/all/text.rb,<br /> tmpsets/set/mod011-settings/self/add_help.rb,<br /> tmpsets/set/mod011-settings/right/default.rb,<br /> tmpsets/set/mod003-basic_formats/all/file.rb,<br /> tmpsets/set/mod011-settings/right/comment.rb,<br /> tmpsets/set/mod016-standard/type/cardtype.rb,<br /> tmpsets/set/mod011-settings/self/autoname.rb,<br /> tmpsets/set/mod003-basic_formats/all/base.rb,<br /> tmpsets/set/mod001-core/abstract/code_file.rb,<br /> tmpsets/set/mod003-basic_formats/self/head.rb,<br /> tmpsets/set/mod011-settings/right/add_help.rb,<br /> tmpsets/set/mod011-settings/self/on_create.rb,<br /> tmpsets/set/mod011-settings/self/on_delete.rb,<br /> tmpsets/set/mod011-settings/self/on_update.rb,<br /> tmpsets/set/mod011-settings/self/structure.rb,<br /> tmpsets/set/mod015-developer/all/event_viz.rb,<br /> tmpsets/set/mod016-standard/self/codenames.rb,<br /> tmpsets/set/mod016-standard/type/listed_by.rb,<br /> tmpsets/set/mod011-settings/right/structure.rb,<br /> tmpsets/set/mod004-pointer/self/script_mods.rb,<br /> tmpsets/set/mod003-basic_formats/all/all_js.rb,<br /> tmpsets/set/mod010-machines/abstract/script.rb,<br /> tmpsets/set/mod012-email/right/html_message.rb,<br /> tmpsets/set/mod003-basic_formats/all/all_csv.rb,<br /> tmpsets/set/mod010-machines/self/script_slot.rb,<br /> tmpsets/set/mod011-settings/self/accountable.rb,<br /> tmpsets/set/mod010-machines/type/java_script.rb,<br /> tmpsets/set/mod016-standard/type/search_type.rb,<br /> tmpsets/set/mod016-standard/right/discussion.rb,<br /> tmpsets/set/mod012-email/type/email_template.rb,<br /> tmpsets/set/mod016-standard/type/layout_type.rb,<br /> tmpsets/set/mod001-core/all/name_validations.rb,<br /> tmpsets/set/mod016-standard/all/list_changes.rb,<br /> tmpsets/set/mod003-basic_formats/all/all_css.rb,<br /> tmpsets/set/mod012-email/right/follow_fields.rb,<br /> tmpsets/set/mod001-core/all/location_history.rb,<br /> tmpsets/set/mod010-machines/self/style_cards.rb,<br /> tmpsets/set/mod018-bootstrap/self/script_mods.rb,<br /> tmpsets/set/mod012-email/self/follow_defaults.rb,<br /> tmpsets/set/mod005-ace_editor/self/script_ace.rb,<br /> tmpsets/set/mod017-account/self/account_links.rb,<br /> tmpsets/set/mod001-core/all/tracked_attributes.rb,<br /> tmpsets/set/mod011-settings/self/options_label.rb,<br /> tmpsets/set/mod011-settings/self/follow_fields.rb,<br /> tmpsets/set/mod010-machines/type/coffee_script.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/form.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/menu.rb,<br /> tmpsets/set/mod016-standard/right/when_created.rb,<br /> tmpsets/set/mod016-standard/rstar/rules_editor.rb,<br /> tmpsets/set/mod010-machines/self/script_jquery.rb,<br /> tmpsets/set/mod010-machines/all/reset_machines.rb,<br /> tmpsets/set/mod009-basic_types/type/plain_text.rb,<br /> tmpsets/set/mod008-solid_cache/all/solid_cache.rb,<br /> tmpsets/set/mod004-pointer/self/script_editors.rb,<br /> tmpsets/set/mod004-pointer/abstract/01_pointer.rb,<br /> tmpsets/set/mod018-bootstrap/self/bootstrap_js.rb,<br /> tmpsets/set/mod018-bootstrap/self/smartmenu_js.rb,<br /> tmpsets/set/mod002-history/all/content_history.rb,<br /> tmpsets/set/mod010-machines/right/machine_cache.rb,<br /> tmpsets/set/mod018-bootstrap/all/bootstrap/tabs.rb,<br /> tmpsets/set/mod011-settings/abstract/permission.rb,<br /> tmpsets/set/mod018-bootstrap/self/smartmenu_css.rb,<br /> tmpsets/set/mod018-bootstrap/all/rich_bootstrap.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/modal.rb,<br /> tmpsets/set/mod018-bootstrap/all/bootstrap/form.rb,<br /> tmpsets/set/mod010-machines/right/machine_input.rb,<br /> tmpsets/set/mod011-settings/self/recent_settings.rb,<br /> tmpsets/set/mod018-bootstrap/all/bootstrap/table.rb,<br /> tmpsets/set/mod008-solid_cache/right/solid_cache.rb,<br /> tmpsets/set/mod010-machines/right/machine_output.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/header.rb,<br /> tmpsets/set/mod004-pointer/abstract/code_pointer.rb,<br /> tmpsets/set/mod005-ace_editor/abstract/ace_editor.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/editing.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/toolbar.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/content.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/wrapper.rb,<br /> tmpsets/set/mod010-machines/self/script_card_menu.rb,<br /> tmpsets/set/mod018-bootstrap/self/bootstrap_cards.rb,<br /> tmpsets/set/mod018-bootstrap/all/bootstrap/helper.rb,<br /> tmpsets/set/mod016-standard/right/when_last_edited.rb,<br /> tmpsets/set/mod011-settings/self/default_html_view.rb,<br /> tmpsets/set/mod013-carrierwave/abstract/attachment.rb,<br /> tmpsets/set/mod011-settings/self/table_of_contents.rb,<br /> tmpsets/set/mod018-bootstrap/all/bootstrap/wrapper.rb,<br /> tmpsets/set/mod008-solid_cache/abstract/solid_cache.rb,<br /> tmpsets/set/mod004-pointer/abstract/01_pointer/edit.rb,<br /> tmpsets/set/mod018-bootstrap/self/bootswatch_shared.rb,<br /> tmpsets/set/mod005-ace_editor/self/script_ace_config.rb,<br /> tmpsets/set/mod012-email/type_plus_right/user/follow.rb,<br /> tmpsets/set/mod010-machines/self/script_jquery_helper.rb,<br /> tmpsets/set/mod004-pointer/self/script_pointer_config.rb,<br /> tmpsets/set/mod003-basic_formats/self/01_head/javascript.rb,<br /> tmpsets/set/mod010-machines/self/style_bootstrap_compatible.rb,<br /> tmpsets/set/mod010-machines/self/script_html5shiv_printshiv.rb,<br /> tmpsets/set/mod010-machines/self/style_jquery_ui_smoothness.rb,<br /> tmpsets/set/mod006-prosemirror_editor/self/script_prosemirror.rb,<br /> tmpsets/set/mod006-prosemirror_editor/abstract/prosemirror_editor.rb,<br /> tmpsets/set/mod006-prosemirror_editor/self/script_prosemirror_config.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>A &#39;Set&#39; is a group of Cards to which &#39;Rules&#39; may be
+applied.</p>
+
+<pre class="code ruby"><code class="ruby">Sets can be as specific as a single card, as general as all cards, or
+anywhere in between.
+
+Rules take two main forms: card rules and code rules.
+
+&#39;Card rules&#39; are defined in card content. These are generally configured
+via the web interface and are thus documented at http://wagn.org/rules.
+
+&#39;Code rules&#39; can be defined in a &#39;set module&#39;. Card::Set supports
+creating and organizing these set modules.  It also provides an API for
+defining special methods within set modules.
+
+Set modules follow the following naming convention:
+
+    MOD/set/PATTERN/ANCHOR[/FREENAME].rb
+
+For example, suppose you created a &quot;mod&quot; (a Card modification) for managing
+your contacts called &quot;contactmanager&quot;, and you wanted to write code
+that would apply to all +address cards.  You could add a file here:
+
+    ./contactmanager/set/right/address.rb
+
+or here:
+
+    ./contactmanager/set/right/address/countries.rb
+
+Then, whenever you fetch or instantiate a +address card, the card will
+automatically include code from that set module.  In fact, it will include
+all the set modules associated with sets of which it is a member.
+
+For example, say you have a Plaintext card named &#39;Philipp+address&#39;, and
+you have set files for the following sets:
+
+    * all cards
+    * all Plaintext cards
+    * all cards ending in +address
+
+When you run this:
+
+    mycard = Card.fetch &#39;Philipp+address&#39;
+
+...then mycard will include the set modules associated with each of those
+sets in the above order.
+
+You can quickly create a new set module running
+
+    `wagn generate set MOD PATTERN ANCHOR`
+
+In the current example, this would translate to:
+
+    `wagn generate set contactmanager right address`.
+
+Note that the set module&#39;s filename connects it to the set, so both
+the set_pattern and the set_anchor must correspond to the
+codename of a card in the database to function correctly.
+
+A set module is &quot;just ruby&quot;, but is generally quite concise because
+Card (a) uses its the set module&#39;s file location to autogenerate ruby
+module names and (b) then uses Card::Set module to provide API for the
+most common set methods.</code></pre>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Set/AdvancedApi.html" title="Card::Set::AdvancedApi (module)">AdvancedApi</a></span>, <span class='object_link'><a href="Set/Basket.html" title="Card::Set::Basket (module)">Basket</a></span>, <span class='object_link'><a href="Set/Event.html" title="Card::Set::Event (module)">Event</a></span>, <span class='object_link'><a href="Set/Format.html" title="Card::Set::Format (module)">Format</a></span>, <span class='object_link'><a href="Set/Helpers.html" title="Card::Set::Helpers (module)">Helpers</a></span>, <span class='object_link'><a href="Set/Inheritance.html" title="Card::Set::Inheritance (module)">Inheritance</a></span>, <span class='object_link'><a href="Set/Loader.html" title="Card::Set::Loader (module)">Loader</a></span>, <span class='object_link'><a href="Set/Trait.html" title="Card::Set::Trait (module)">Trait</a></span>
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Set/Abstract.html" title="Card::Set::Abstract (class)">Abstract</a></span>, <span class='object_link'><a href="Set/All.html" title="Card::Set::All (class)">All</a></span>, <span class='object_link'><a href="Set/AllPlus.html" title="Card::Set::AllPlus (class)">AllPlus</a></span>, <span class='object_link'><a href="Set/Pattern.html" title="Card::Set::Pattern (class)">Pattern</a></span>, <span class='object_link'><a href="Set/Right.html" title="Card::Set::Right (class)">Right</a></span>, <span class='object_link'><a href="Set/Rstar.html" title="Card::Set::Rstar (class)">Rstar</a></span>, <span class='object_link'><a href="Set/Self.html" title="Card::Set::Self (class)">Self</a></span>, <span class='object_link'><a href="Set/Star.html" title="Card::Set::Star (class)">Star</a></span>, <span class='object_link'><a href="Set/Type.html" title="Card::Set::Type (class)">Type</a></span>, <span class='object_link'><a href="Set/TypePlusRight.html" title="Card::Set::TypePlusRight (class)">TypePlusRight</a></span>
+    
+  
+</p>
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <h2>Method Summary</h2>
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Set/Loader.html" title="Card::Set::Loader (module)">Loader</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Set/Loader.html#clean_empty_module_from_hash-instance_method" title="Card::Set::Loader#clean_empty_module_from_hash (method)">clean_empty_module_from_hash</a></span>, <span class='object_link'><a href="Set/Loader.html#clean_empty_modules-instance_method" title="Card::Set::Loader#clean_empty_modules (method)">clean_empty_modules</a></span>, <span class='object_link'><a href="Set/Loader.html#extended-instance_method" title="Card::Set::Loader#extended (method)">extended</a></span>, <span class='object_link'><a href="Set/Loader.html#pattern_and_modules_from_path-instance_method" title="Card::Set::Loader#pattern_and_modules_from_path (method)">pattern_and_modules_from_path</a></span>, <span class='object_link'><a href="Set/Loader.html#process_base_modules-instance_method" title="Card::Set::Loader#process_base_modules (method)">process_base_modules</a></span>, <span class='object_link'><a href="Set/Loader.html#register_set-instance_method" title="Card::Set::Loader#register_set (method)">register_set</a></span>, <span class='object_link'><a href="Set/Loader.html#tmp_file_template-instance_method" title="Card::Set::Loader#tmp_file_template (method)">tmp_file_template</a></span>, <span class='object_link'><a href="Set/Loader.html#write_tmp_file-instance_method" title="Card::Set::Loader#write_tmp_file (method)">write_tmp_file</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Set/Helpers.html" title="Card::Set::Helpers (module)">Helpers</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Set/Helpers.html#abstract_set%3F-instance_method" title="Card::Set::Helpers#abstract_set? (method)">#abstract_set?</a></span>, <span class='object_link'><a href="Set/Helpers.html#all_set%3F-instance_method" title="Card::Set::Helpers#all_set? (method)">#all_set?</a></span>, <span class='object_link'><a href="Set/Helpers.html#shortname-instance_method" title="Card::Set::Helpers#shortname (method)">#shortname</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Set/AdvancedApi.html" title="Card::Set::AdvancedApi (module)">AdvancedApi</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Set/AdvancedApi.html#attachment-instance_method" title="Card::Set::AdvancedApi#attachment (method)">#attachment</a></span>, <span class='object_link'><a href="Set/AdvancedApi.html#ensure_set-instance_method" title="Card::Set::AdvancedApi#ensure_set (method)">#ensure_set</a></span>, <span class='object_link'><a href="Set/AdvancedApi.html#stage_method-instance_method" title="Card::Set::AdvancedApi#stage_method (method)">#stage_method</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Set/Format.html" title="Card::Set::Format (module)">Format</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Set/Format.html#all_set_format_mod%21-instance_method" title="Card::Set::Format#all_set_format_mod! (method)">#all_set_format_mod!</a></span>, <span class='object_link'><a href="Set/Format.html#define_on_format-instance_method" title="Card::Set::Format#define_on_format (method)">#define_on_format</a></span>, <span class='object_link'><a href="Set/Format.html#format-instance_method" title="Card::Set::Format#format (method)">#format</a></span>, <span class='object_link'><a href="Set/Format.html#register_set_format-instance_method" title="Card::Set::Format#register_set_format (method)">#register_set_format</a></span>, <span class='object_link'><a href="Set/Format.html#view-instance_method" title="Card::Set::Format#view (method)">#view</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Set/Inheritance.html" title="Card::Set::Inheritance (module)">Inheritance</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Set/Inheritance.html#include_set-instance_method" title="Card::Set::Inheritance#include_set (method)">#include_set</a></span>, <span class='object_link'><a href="Set/Inheritance.html#include_set_formats-instance_method" title="Card::Set::Inheritance#include_set_formats (method)">#include_set_formats</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Set/Basket.html" title="Card::Set::Basket (module)">Basket</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Set/Basket.html#abstract_basket-instance_method" title="Card::Set::Basket#abstract_basket (method)">#abstract_basket</a></span>, <span class='object_link'><a href="Set/Basket.html#add_to_basket-instance_method" title="Card::Set::Basket#add_to_basket (method)">#add_to_basket</a></span>, <span class='object_link'><a href="Set/Basket.html#basket-instance_method" title="Card::Set::Basket#basket (method)">#basket</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Set/Trait.html" title="Card::Set::Trait (module)">Trait</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Set/Trait.html#card_accessor-instance_method" title="Card::Set::Trait#card_accessor (method)">#card_accessor</a></span>, <span class='object_link'><a href="Set/Trait.html#card_reader-instance_method" title="Card::Set::Trait#card_reader (method)">#card_reader</a></span>, <span class='object_link'><a href="Set/Trait.html#card_writer-instance_method" title="Card::Set::Trait#card_writer (method)">#card_writer</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Set/Event.html" title="Card::Set::Event (module)">Event</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Set/Event.html#event-instance_method" title="Card::Set::Event#event (method)">#event</a></span></p>
+
+
+</div>
+
+      <div id="footer">
+  Generated on Mon Aug 15 15:39:41 2016 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.5 (ruby-2.3.0).
+</div>
+
+    </div>
+  </body>
+</html>

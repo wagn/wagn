@@ -1,4 +1,4 @@
-require_dependency 'card/content/chunk'
+require_dependency "card/content/chunk"
 
 class Card
   class Content
@@ -12,7 +12,7 @@ class Card
 
         position = last_position = 0
         prefix_regexp = Chunk.get_prefix_regexp @chunk_list
-        interval_string = ''
+        interval_string = ""
 
         while (prefix_match = content[position..-1].match(prefix_regexp))
           prefix = prefix_match[0]
@@ -45,7 +45,7 @@ class Card
               # add the nonchunk string to the chunk list
               chunks << chunk_class.new(match, content_object)
               # add the chunk to the chunk list
-              interval_string = ''
+              interval_string = ""
               # reset interval string for next go-round
               last_position = position
               # note that the end of the chunk was the last place where a

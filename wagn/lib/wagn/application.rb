@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require 'decko/engine'
+require "decko/engine"
 
 if defined?(Bundler)
   # If you precompile assets before deploying to production, use this line
@@ -13,8 +13,8 @@ module Wagn
   class Application < Rails::Application
     initializer :load_wagn_environment_config,
                 before: :load_environment_config, group: :all do
-      add_path paths, 'lib/wagn/config/environments', glob: "#{Rails.env}.rb"
-      paths['lib/wagn/config/environments'].existent.each do |environment|
+      add_path paths, "lib/wagn/config/environments", glob: "#{Rails.env}.rb"
+      paths["lib/wagn/config/environments"].existent.each do |environment|
         require environment
       end
     end
@@ -58,7 +58,7 @@ module Wagn
         # config.active_record.raise_in_transactional_callbacks = true
 
         config.assets.enabled = false
-        config.assets.version = '1.0'
+        config.assets.version = "1.0"
 
         config.filter_parameters += [:password]
         config
@@ -70,13 +70,13 @@ module Wagn
         paths = super
         Cardio.set_paths paths
 
-        paths['mod'] << 'mod'
-        paths.add 'files'
+        paths["mod"] << "mod"
+        paths.add "files"
 
-        paths['app/models'] = []
-        paths['app/mailers'] = []
+        paths["app/models"] = []
+        paths["app/mailers"] = []
 
-        add_path paths, 'config/routes.rb', with: 'rails/application-routes.rb'
+        add_path paths, "config/routes.rb", with: "rails/application-routes.rb"
 
         Cardio.set_mod_paths # really this should happen later
 

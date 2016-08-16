@@ -32,11 +32,11 @@ class Card
           when Array
             { table: object.shift, alias: object.shift, field: object.shift }
           when Card::Query
-            { table: 'cards', alias: object.table_alias }
+            { table: "cards", alias: object.table_alias }
           when Card::Query::Reference
-            { table: 'card_references', alias: object.table_alias }
+            { table: "card_references", alias: object.table_alias }
           when Card::Query::Join
-            raise 'to: cannot be Join' if side == :to
+            raise "to: cannot be Join" if side == :to
             { table: object.to_table, alias: object.to_alias }
           else
             raise "invalid #{side} option: #{object}"
@@ -50,13 +50,13 @@ class Card
         if !@side.nil?
           @side
         else
-          in_or = from && from.is_a?(Card::Query) && from.mods[:conj] == 'or'
-          @side = in_or ? 'LEFT' : nil
+          in_or = from && from.is_a?(Card::Query) && from.mods[:conj] == "or"
+          @side = in_or ? "LEFT" : nil
         end
       end
 
       def left?
-        side == 'LEFT'
+        side == "LEFT"
       end
 
       def in_left?

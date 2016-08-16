@@ -1,11 +1,11 @@
 # -*- encoding : utf-8 -*-
 
-class MenuCompatibility < Card::CoreMigration
+class MenuCompatibility < Card::Migration::Core
   def up
     # Add bootswatch shared to old skins so that menu works
     bootswatch_shared = Card[:bootswatch_shared]
     Card.search(type_id: Card::SkinID) do |skin|
-      if skin.item_cards.find { |item_card| item_card.codename.to_s == 'style_bootstrap_compatible' }
+      if skin.item_cards.find { |item_card| item_card.codename.to_s == "style_bootstrap_compatible" }
         skin.add_item! bootswatch_shared.name
       end
     end

@@ -1,5 +1,5 @@
 task :push_gems do
-  %w( card wagn ).each do |gem|
+  %w(card wagn).each do |gem|
     system %(cd #{gem}; rm *.gem; gem build #{gem}.gemspec; gem push #{gem}-#{version}.gem)
   end
 end
@@ -14,9 +14,9 @@ end
 
 task :cp_tmpsets do
   system %(
-    cd ..
-    cp -r sites/core-dev/tmp/set* decko-tmpsets
-    cd decko-tmpsets
+    cd ../decko-tmpsets
+    rm -rf set*
+    cp -r ../sites/core-dev/tmp/set* .
     git commit -a -m 'updated from core-dev'
     git push; git push wagn
     cd ../gem
@@ -25,5 +25,5 @@ task :cp_tmpsets do
 end
 
 def version
-  File.open(File.expand_path('../card/VERSION', __FILE__)).read.chomp
+  File.open(File.expand_path("../card/VERSION", __FILE__)).read.chomp
 end

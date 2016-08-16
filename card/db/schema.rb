@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160407164317) do
+ActiveRecord::Schema.define(version: 20160122153608) do
 
   create_table "card_actions", force: :cascade do |t|
     t.integer "card_id",         limit: 4
@@ -68,20 +68,20 @@ ActiveRecord::Schema.define(version: 20160407164317) do
   add_index "card_revisions", ["creator_id"], name: "revisions_created_by_index", using: :btree
 
   create_table "cards", force: :cascade do |t|
+    t.string   "name",                limit: 255,      null: false
+    t.string   "key",                 limit: 255,      null: false
+    t.string   "codename",            limit: 255
     t.integer  "left_id",             limit: 4
+    t.integer  "right_id",            limit: 4
+    t.integer  "current_revision_id", limit: 4
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
-    t.integer  "current_revision_id", limit: 4
-    t.string   "name",                limit: 255,      null: false
     t.integer  "creator_id",          limit: 4,        null: false
     t.integer  "updater_id",          limit: 4,        null: false
-    t.integer  "right_id",            limit: 4
-    t.string   "key",                 limit: 255,      null: false
-    t.boolean  "trash",                                null: false
-    t.integer  "references_expired",  limit: 4
-    t.string   "codename",            limit: 255
     t.string   "read_rule_class",     limit: 255
     t.integer  "read_rule_id",        limit: 4
+    t.integer  "references_expired",  limit: 4
+    t.boolean  "trash",                                null: false
     t.integer  "type_id",             limit: 4,        null: false
     t.text     "db_content",          limit: 16777215
   end

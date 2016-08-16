@@ -2,21 +2,19 @@
 
 class Card
   class Format
-    include Card::Location
+    include Card::Env::Location
     include Nest
     include Permission
     include Render
 
     DEPRECATED_VIEWS = { view: :open, card: :open, line: :closed,
                          bare: :core, naked: :core }.freeze
-    INCLUSION_MODES  = { closed: :closed, closed_content: :closed, edit: :edit,
-                         layout: :layout, new: :edit, setup: :edit,
-                         normal: :normal, template: :template }.freeze
+
     # FIXME: should be set in views
 
     cattr_accessor :ajax_call, :registered
-    [:perms, :denial, :closed, :error_code, :view_tags, :aliases
-    ].each do |accessor_name|
+    [:perms, :denial, :closed, :error_code,
+     :view_tags, :aliases].each do |accessor_name|
       cattr_accessor accessor_name
       send "#{accessor_name}=", {}
     end
@@ -33,9 +31,15 @@ class Card
 
       def format_class_name format
         format = format.to_s
-        format = '' if format == 'base'
+        format = "" if format == "base"
         format = @@aliases[format] if @@aliases[format]
         "#{format.camelize}Format"
+      end
+
+      def format_sym format
+        return format if format.is_a? Symbol
+        match = format.to_s.match(/::(?<format>[^:]+)Format/)
+        match ? match[:format] : :base
       end
 
       def extract_class_vars view, opts
@@ -87,8 +91,8 @@ class Card
     def initialize card, opts={}
       unless (@card = card)
         raise Card::Error, # 'format initialized without card'
-                           I18n.t(:exception_init_without_card,
-                                  scope: 'lib.card.format')
+              I18n.t(:exception_init_without_card,
+                     scope: "lib.card.format")
       end
 
       opts.each do |key, value|
@@ -111,7 +115,7 @@ class Card
         @context_names.reject { |n| !part_keys.include? n.key }
       when params[:slot]
         context_name_list = params[:slot][:name_context].to_s
-        context_name_list.split(',').map(&:to_name)
+        context_name_list.split(",").map(&:to_name)
       else
         []
       end
@@ -154,12 +158,12 @@ class Card
     end
 
     def main?
-      @depth == 0
+      @depth.zero?
     end
 
     def focal? # meaning the current card is the requested card
       if Env.ajax?
-        @depth == 0
+        @depth.zero?
       else
         main?
       end
@@ -185,7 +189,7 @@ class Card
         args[:skip_permissions] = true if Regexp.last_match(1)
         render view, args
       else
-        proc = proc { |*a| raw yield *a } if proc
+        proc = proc { |*a| raw yield(*a) } if proc
         response = root.template.send method, *opts, &proc
         response.is_a?(String) ? root.template.raw(response) : response
       end
@@ -200,10 +204,12 @@ class Card
     end
 
     def process_content_object override_content=nil, opts={}
-      content = override_content || render_raw || ''
+      content = override_content || render_raw || ""
       content_object = get_content_object content, opts
       content_object.process_each_chunk do |chunk_opts|
-        prepare_nest chunk_opts.merge(opts) { yield }
+        # Feels scary to just remove it but I can't make any sense of the
+        # "yield" and all tests pass without it
+        prepare_nest chunk_opts.merge(opts)
       end
     end
 

@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-class RemovePerformanceLogCard < Card::CoreMigration
+class RemovePerformanceLogCard < Card::Migration::Core
   def up
     if card = Card[:performance_log]
       card.update_attributes! codename: nil

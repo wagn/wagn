@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Card::Query
+  
+    &mdash; Documentation by YARD 0.9.5
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "Card::Query";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (Q)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Card.html" title="Card (class)">Card</a></span></span>
+     &raquo; 
+    <span class="title">Query</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <iframe id="search_frame" src="../class_list.html"></iframe>
+
+      <div id="content"><h1>Class: Card::Query
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Card::Query</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="Query/Attributes.html" title="Card::Query::Attributes (module)">Attributes</a></span>, <span class='object_link'><a href="Query/Clause.html" title="Card::Query::Clause (module)">Clause</a></span>, <span class='object_link'><a href="Query/Conjunctions.html" title="Card::Query::Conjunctions (module)">Conjunctions</a></span>, <span class='object_link'><a href="Query/Helpers.html" title="Card::Query::Helpers (module)">Helpers</a></span>, <span class='object_link'><a href="Query/Interpretation.html" title="Card::Query::Interpretation (module)">Interpretation</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html" title="Card::Query::RelationalAttributes (module)">RelationalAttributes</a></span>, <span class='object_link'><a href="Query/Sorting.html" title="Card::Query::Sorting (module)">Sorting</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/card/query.rb<span class="defines">,<br />
+  lib/card/query/join.rb,<br /> lib/card/query/value.rb,<br /> lib/card/query/helpers.rb,<br /> lib/card/query/sorting.rb,<br /> lib/card/query/reference.rb,<br /> lib/card/query/attributes.rb,<br /> lib/card/query/conjunctions.rb,<br /> lib/card/query/sql_statement.rb,<br /> lib/card/query/interpretation.rb,<br /> lib/card/query/relational_attributes.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Card::Query is for finding implicit lists (or counts of lists) of cards.</p>
+
+<p>Search and Set cards use Card::Query to query the database, and it&#39;s
+also frequently used directly in code.</p>
+
+<p>Query “statements” (objects, really) are made in WQL (Wagn Query Language).
+Because WQL is used by Wagneers, the primary language documentation is on
+wagn.org. (<a href="http://wagn.org/WQL_Syntax">wagn.org/WQL_Syntax</a>).
+Note that the examples there are in JSON, like Search card content, but
+statements in Card::Query are in ruby form.</p>
+
+<p>In Wagn&#39;s current form, Card::Query generates and executes SQL
+statements. However, the SQL generation is largely (not yet fully)
+separated from the WQL statement interpretation.</p>
+
+<p>The most common way to use Card::Query is as follows:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_list_of_cards'>list_of_cards</span> <span class='op'>=</span> <span class='const'>Card</span><span class='op'>::</span><span class='const'>Query</span><span class='period'>.</span><span class='id identifier rubyid_run'>run</span><span class='lparen'>(</span><span class='id identifier rubyid_statement'>statement</span><span class='rparen'>)</span>
+</code></pre>
+
+<p>This is equivalent to:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_query'>query</span> <span class='op'>=</span> <span class='const'>Card</span><span class='op'>::</span><span class='const'>Query</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_statement'>statement</span><span class='rparen'>)</span>
+<span class='id identifier rubyid_list_of_cards'>list_of_cards</span> <span class='op'>=</span> <span class='id identifier rubyid_query'>query</span><span class='period'>.</span><span class='id identifier rubyid_run'>run</span>
+</code></pre>
+
+<p>Upon initiation, the query is interpreted, and the following key objects
+are populated:</p>
+<ul><li>
+<p>@join - an Array of Card::Query::Join objects</p>
+</li><li>
+<p>@conditions - an Array of conditions</p>
+</li><li>
+<p>@mod - a Hash of other query-altering keys</p>
+</li><li>
+<p>@subqueries - a list of other queries nested within this one</p>
+</li></ul>
+
+<p>Each condition is either a SQL-ready string (boo) or an Array in this form:</p>
+
+<pre class="code ruby"><code class="ruby">[ field_string_or_sym, Card::Value::Query object ]</code></pre>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Query/Attributes.html" title="Card::Query::Attributes (module)">Attributes</a></span>, <span class='object_link'><a href="Query/Clause.html" title="Card::Query::Clause (module)">Clause</a></span>, <span class='object_link'><a href="Query/Conjunctions.html" title="Card::Query::Conjunctions (module)">Conjunctions</a></span>, <span class='object_link'><a href="Query/Helpers.html" title="Card::Query::Helpers (module)">Helpers</a></span>, <span class='object_link'><a href="Query/Interpretation.html" title="Card::Query::Interpretation (module)">Interpretation</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html" title="Card::Query::RelationalAttributes (module)">RelationalAttributes</a></span>, <span class='object_link'><a href="Query/Sorting.html" title="Card::Query::Sorting (module)">Sorting</a></span>
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Query/Join.html" title="Card::Query::Join (class)">Join</a></span>, <span class='object_link'><a href="Query/Reference.html" title="Card::Query::Reference (class)">Reference</a></span>, <span class='object_link'><a href="Query/SqlStatement.html" title="Card::Query::SqlStatement (class)">SqlStatement</a></span>, <span class='object_link'><a href="Query/Value.html" title="Card::Query::Value (class)">Value</a></span>
+    
+  
+</p>
+
+  <h2>Constant Summary</h2>
+  <dl class="constants">
+    
+      <dt id="ATTRIBUTES-constant" class="">ATTRIBUTES =
+        
+      </dt>
+      <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='label'>basic:</span>           <span class='qwords_beg'>%w( </span><span class='tstring_content'>id</span><span class='words_sep'> </span><span class='tstring_content'>name</span><span class='words_sep'> </span><span class='tstring_content'>key</span><span class='words_sep'> </span><span class='tstring_content'>type_id</span><span class='words_sep'> </span><span class='tstring_content'>content</span><span class='words_sep'> </span><span class='tstring_content'>left_id</span><span class='words_sep'> </span><span class='tstring_content'>right_id</span><span class='words_sep'>
+</span><span class='tstring_content'>                       creator_id</span><span class='words_sep'> </span><span class='tstring_content'>updater_id</span><span class='words_sep'> </span><span class='tstring_content'>codename</span><span class='words_sep'> </span><span class='tstring_content'>read_rule_id</span><span class='words_sep'>        )</span><span class='comma'>,</span>
+  <span class='label'>relational:</span>      <span class='qwords_beg'>%w( </span><span class='tstring_content'>type</span><span class='words_sep'> </span><span class='tstring_content'>part</span><span class='words_sep'> </span><span class='tstring_content'>left</span><span class='words_sep'> </span><span class='tstring_content'>right</span><span class='words_sep'>
+</span><span class='tstring_content'>                       editor_of</span><span class='words_sep'> </span><span class='tstring_content'>edited_by</span><span class='words_sep'> </span><span class='tstring_content'>last_editor_of</span><span class='words_sep'> </span><span class='tstring_content'>last_edited_by</span><span class='words_sep'>
+</span><span class='tstring_content'>                       creator_of</span><span class='words_sep'> </span><span class='tstring_content'>created_by</span><span class='words_sep'> </span><span class='tstring_content'>member_of</span><span class='words_sep'> </span><span class='tstring_content'>member</span><span class='words_sep'>             )</span><span class='comma'>,</span>
+  <span class='label'>plus_relational:</span> <span class='qwords_beg'>%w(</span><span class='tstring_content'>plus</span><span class='words_sep'> </span><span class='tstring_content'>left_plus</span><span class='words_sep'> </span><span class='tstring_content'>right_plus</span><span class='words_sep'>)</span><span class='comma'>,</span>
+  <span class='label'>ref_relational:</span>  <span class='qwords_beg'>%w( </span><span class='tstring_content'>refer_to</span><span class='words_sep'> </span><span class='tstring_content'>referred_to_by</span><span class='words_sep'>
+</span><span class='tstring_content'>                       link_to</span><span class='words_sep'> </span><span class='tstring_content'>linked_to_by</span><span class='words_sep'>
+</span><span class='tstring_content'>                       include</span><span class='words_sep'> </span><span class='tstring_content'>included_by</span><span class='words_sep'>                                )</span><span class='comma'>,</span>
+  <span class='label'>conjunction:</span>     <span class='qwords_beg'>%w(</span><span class='tstring_content'>and</span><span class='words_sep'> </span><span class='tstring_content'>or</span><span class='words_sep'> </span><span class='tstring_content'>all</span><span class='words_sep'> </span><span class='tstring_content'>any</span><span class='words_sep'>)</span><span class='comma'>,</span>
+  <span class='label'>special:</span>         <span class='qwords_beg'>%w(</span><span class='tstring_content'>found_by</span><span class='words_sep'> </span><span class='tstring_content'>not</span><span class='words_sep'> </span><span class='tstring_content'>sort</span><span class='words_sep'> </span><span class='tstring_content'>match</span><span class='words_sep'> </span><span class='tstring_content'>complete</span><span class='words_sep'> </span><span class='tstring_content'>extension_type</span><span class='words_sep'>)</span><span class='comma'>,</span>
+  <span class='label'>ignore:</span>          <span class='qwords_beg'>%w(</span><span class='tstring_content'>prepend</span><span class='words_sep'> </span><span class='tstring_content'>append</span><span class='words_sep'> </span><span class='tstring_content'>view</span><span class='words_sep'> </span><span class='tstring_content'>params</span><span class='words_sep'> </span><span class='tstring_content'>vars</span><span class='words_sep'> </span><span class='tstring_content'>size</span><span class='words_sep'>)</span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_pair'>pair</span><span class='comma'>,</span> <span class='id identifier rubyid_h'>h</span><span class='op'>|</span>
+  <span class='id identifier rubyid_pair'>pair</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_pair'>pair</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre></dd>
+    
+      <dt id="CONJUNCTIONS-constant" class="">CONJUNCTIONS =
+        
+      </dt>
+      <dd><pre class="code"><span class='lbrace'>{</span> <span class='label'>any:</span> <span class='symbol'>:or</span><span class='comma'>,</span> <span class='label'>in:</span> <span class='symbol'>:or</span><span class='comma'>,</span> <span class='label'>or:</span> <span class='symbol'>:or</span><span class='comma'>,</span> <span class='label'>all:</span> <span class='symbol'>:and</span><span class='comma'>,</span> <span class='label'>and:</span> <span class='symbol'>:and</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+    
+      <dt id="MODIFIERS-constant" class="">MODIFIERS =
+        
+      </dt>
+      <dd><pre class="code"><span class='qwords_beg'>%w(</span><span class='tstring_content'>conj</span><span class='words_sep'> </span><span class='tstring_content'>return</span><span class='words_sep'> </span><span class='tstring_content'>sort</span><span class='words_sep'> </span><span class='tstring_content'>sort_as</span><span class='words_sep'> </span><span class='tstring_content'>group</span><span class='words_sep'> </span><span class='tstring_content'>dir</span><span class='words_sep'> </span><span class='tstring_content'>limit</span><span class='words_sep'> </span><span class='tstring_content'>offset</span><span class='words_sep'>)</span>
+<span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='id identifier rubyid_h'>h</span><span class='op'>|</span> <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='kw'>nil</span> <span class='rbrace'>}</span></pre></dd>
+    
+      <dt id="OPERATORS-constant" class="">OPERATORS =
+        
+      </dt>
+      <dd><pre class="code"><span class='qwords_beg'>%w(</span><span class='tstring_content'>!=</span><span class='words_sep'> </span><span class='tstring_content'>=</span><span class='words_sep'> </span><span class='tstring_content'>=~</span><span class='words_sep'> </span><span class='tstring_content'>&lt;</span><span class='words_sep'> </span><span class='tstring_content'>&gt;</span><span class='words_sep'> </span><span class='tstring_content'>in</span><span class='words_sep'> </span><span class='tstring_content'>~</span><span class='words_sep'>)</span><span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='id identifier rubyid_h'>h</span><span class='op'>|</span> <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='id identifier rubyid_v'>v</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_v'>v</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span>
+  <span class='lbrace'>{</span>
+    <span class='label'>eq:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>=</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>gt:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>lt:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>match:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>~</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>ne:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>!=</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>not in</span><span class='tstring_end'>&quot;</span></span> <span class='op'>=&gt;</span> <span class='kw'>nil</span>
+  <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_stringify_keys'>stringify_keys</span>
+<span class='rparen'>)</span></pre></dd>
+    
+      <dt id="DEFAULT_ORDER_DIRS-constant" class="">DEFAULT_ORDER_DIRS =
+        
+      </dt>
+      <dd><pre class="code"><span class='lbrace'>{</span> <span class='label'>update:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>desc</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>relevance:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>desc</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+    
+  </dl>
+
+
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Query/Sorting.html" title="Card::Query::Sorting (module)">Sorting</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Query/Sorting.html#SORT_JOIN_TO_ITEM_MAP-constant" title="Card::Query::Sorting::SORT_JOIN_TO_ITEM_MAP (constant)">Sorting::SORT_JOIN_TO_ITEM_MAP</a></span></p>
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#comment-instance_method" title="#comment (instance method)">#<strong>comment</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute comment.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#conditions-instance_method" title="#conditions (instance method)">#<strong>conditions</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute conditions.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#conditions_on_join-instance_method" title="#conditions_on_join (instance method)">#<strong>conditions_on_join</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute conditions_on_join.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#joins-instance_method" title="#joins (instance method)">#<strong>joins</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute joins.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#mods-instance_method" title="#mods (instance method)">#<strong>mods</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute mods.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#statement-instance_method" title="#statement (instance method)">#<strong>statement</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute statement.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#subqueries-instance_method" title="#subqueries (instance method)">#<strong>subqueries</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute subqueries.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#superquery-instance_method" title="#superquery (instance method)">#<strong>superquery</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute superquery.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#table_seq-instance_method" title="#table_seq (instance method)">#<strong>table_seq</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute table_seq.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#unjoined-instance_method" title="#unjoined (instance method)">#<strong>unjoined</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute unjoined.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#run-class_method" title="run (class method)">.<strong>run</strong>(statement, comment = nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>By default a query returns card objects.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#context-instance_method" title="#context (instance method)">#<strong>context</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#default_comment-instance_method" title="#default_comment (instance method)">#<strong>default_comment</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#get_results-instance_method" title="#get_results (instance method)">#<strong>get_results</strong>(retrn)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Integer for :count, otherwise Array of Strings or Integers.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(statement, comment = nil)  &#x21d2; Query </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A new instance of Query.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#root-instance_method" title="#root (instance method)">#<strong>root</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Query Hierarchy @root, @subqueries, and @superquery are used to track a
+hierarchy of query objects.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#run-instance_method" title="#run (instance method)">#<strong>run</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>run the current query.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#run_sql-instance_method" title="#run_sql (instance method)">#<strong>run_sql</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sql-instance_method" title="#sql (instance method)">#<strong>sql</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#subquery-instance_method" title="#subquery (instance method)">#<strong>subquery</strong>(opts = {})  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Query/Helpers.html" title="Card::Query::Helpers (module)">Helpers</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Query/Helpers.html#id_from_val-instance_method" title="Card::Query::Helpers#id_from_val (method)">#id_from_val</a></span>, <span class='object_link'><a href="Query/Helpers.html#join_cards-instance_method" title="Card::Query::Helpers#join_cards (method)">#join_cards</a></span>, <span class='object_link'><a href="Query/Helpers.html#join_references-instance_method" title="Card::Query::Helpers#join_references (method)">#join_references</a></span>, <span class='object_link'><a href="Query/Helpers.html#restrict-instance_method" title="Card::Query::Helpers#restrict (method)">#restrict</a></span>, <span class='object_link'><a href="Query/Helpers.html#restrict_reference-instance_method" title="Card::Query::Helpers#restrict_reference (method)">#restrict_reference</a></span>, <span class='object_link'><a href="Query/Helpers.html#table_alias-instance_method" title="Card::Query::Helpers#table_alias (method)">#table_alias</a></span>, <span class='object_link'><a href="Query/Helpers.html#table_id-instance_method" title="Card::Query::Helpers#table_id (method)">#table_id</a></span>, <span class='object_link'><a href="Query/Helpers.html#tick_table_seq%21-instance_method" title="Card::Query::Helpers#tick_table_seq! (method)">#tick_table_seq!</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Query/Conjunctions.html" title="Card::Query::Conjunctions (module)">Conjunctions</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Query/Conjunctions.html#all-instance_method" title="Card::Query::Conjunctions#all (method)">#all</a></span>, <span class='object_link'><a href="Query/Conjunctions.html#any-instance_method" title="Card::Query::Conjunctions#any (method)">#any</a></span>, <span class='object_link'><a href="Query/Conjunctions.html#conjoin-instance_method" title="Card::Query::Conjunctions#conjoin (method)">#conjoin</a></span>, <span class='object_link'><a href="Query/Conjunctions.html#conjunction-instance_method" title="Card::Query::Conjunctions#conjunction (method)">#conjunction</a></span>, <span class='object_link'><a href="Query/Conjunctions.html#not-instance_method" title="Card::Query::Conjunctions#not (method)">#not</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Query/Sorting.html" title="Card::Query::Sorting (module)">Sorting</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Query/Sorting.html#sort-instance_method" title="Card::Query::Sorting#sort (method)">#sort</a></span>, <span class='object_link'><a href="Query/Sorting.html#sort_by_count-instance_method" title="Card::Query::Sorting#sort_by_count (method)">#sort_by_count</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Query/Interpretation.html" title="Card::Query::Interpretation (module)">Interpretation</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Query/Interpretation.html#add_condition-instance_method" title="Card::Query::Interpretation#add_condition (method)">#add_condition</a></span>, <span class='object_link'><a href="Query/Interpretation.html#all_joins-instance_method" title="Card::Query::Interpretation#all_joins (method)">#all_joins</a></span>, <span class='object_link'><a href="Query/Interpretation.html#clause_to_hash-instance_method" title="Card::Query::Interpretation#clause_to_hash (method)">#clause_to_hash</a></span>, <span class='object_link'><a href="Query/Interpretation.html#current_conjunction-instance_method" title="Card::Query::Interpretation#current_conjunction (method)">#current_conjunction</a></span>, <span class='object_link'><a href="Query/Interpretation.html#interpret-instance_method" title="Card::Query::Interpretation#interpret (method)">#interpret</a></span>, <span class='object_link'><a href="Query/Interpretation.html#interpret_attributes-instance_method" title="Card::Query::Interpretation#interpret_attributes (method)">#interpret_attributes</a></span>, <span class='object_link'><a href="Query/Interpretation.html#interpret_by_key-instance_method" title="Card::Query::Interpretation#interpret_by_key (method)">#interpret_by_key</a></span>, <span class='object_link'><a href="Query/Interpretation.html#normalize_clause-instance_method" title="Card::Query::Interpretation#normalize_clause (method)">#normalize_clause</a></span>, <span class='object_link'><a href="Query/Interpretation.html#normalize_string_value-instance_method" title="Card::Query::Interpretation#normalize_string_value (method)">#normalize_string_value</a></span>, <span class='object_link'><a href="Query/Interpretation.html#normalize_value-instance_method" title="Card::Query::Interpretation#normalize_value (method)">#normalize_value</a></span>, <span class='object_link'><a href="Query/Interpretation.html#relate-instance_method" title="Card::Query::Interpretation#relate (method)">#relate</a></span>, <span class='object_link'><a href="Query/Interpretation.html#relate_compound-instance_method" title="Card::Query::Interpretation#relate_compound (method)">#relate_compound</a></span>, <span class='object_link'><a href="Query/Interpretation.html#relate_multi_value-instance_method" title="Card::Query::Interpretation#relate_multi_value (method)">#relate_multi_value</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Query/RelationalAttributes.html" title="Card::Query::RelationalAttributes (module)">RelationalAttributes</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Query/RelationalAttributes.html#created_by-instance_method" title="Card::Query::RelationalAttributes#created_by (method)">#created_by</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#creator_of-instance_method" title="Card::Query::RelationalAttributes#creator_of (method)">#creator_of</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#edited_by-instance_method" title="Card::Query::RelationalAttributes#edited_by (method)">#edited_by</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#editor_of-instance_method" title="Card::Query::RelationalAttributes#editor_of (method)">#editor_of</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#junction-instance_method" title="Card::Query::RelationalAttributes#junction (method)">#junction</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#last_edited_by-instance_method" title="Card::Query::RelationalAttributes#last_edited_by (method)">#last_edited_by</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#last_editor_of-instance_method" title="Card::Query::RelationalAttributes#last_editor_of (method)">#last_editor_of</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#left-instance_method" title="Card::Query::RelationalAttributes#left (method)">#left</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#left_plus-instance_method" title="Card::Query::RelationalAttributes#left_plus (method)">#left_plus</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#member-instance_method" title="Card::Query::RelationalAttributes#member (method)">#member</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#member_of-instance_method" title="Card::Query::RelationalAttributes#member_of (method)">#member_of</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#part-instance_method" title="Card::Query::RelationalAttributes#part (method)">#part</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#plus-instance_method" title="Card::Query::RelationalAttributes#plus (method)">#plus</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#right-instance_method" title="Card::Query::RelationalAttributes#right (method)">#right</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#right_plus-instance_method" title="Card::Query::RelationalAttributes#right_plus (method)">#right_plus</a></span>, <span class='object_link'><a href="Query/RelationalAttributes.html#type-instance_method" title="Card::Query::RelationalAttributes#type (method)">#type</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Query/Attributes.html" title="Card::Query::Attributes (module)">Attributes</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Query/Attributes.html#complete-instance_method" title="Card::Query::Attributes#complete (method)">#complete</a></span>, <span class='object_link'><a href="Query/Attributes.html#extension_type-instance_method" title="Card::Query::Attributes#extension_type (method)">#extension_type</a></span>, <span class='object_link'><a href="Query/Attributes.html#found_by-instance_method" title="Card::Query::Attributes#found_by (method)">#found_by</a></span>, <span class='object_link'><a href="Query/Attributes.html#found_by_cards-instance_method" title="Card::Query::Attributes#found_by_cards (method)">#found_by_cards</a></span>, <span class='object_link'><a href="Query/Attributes.html#match-instance_method" title="Card::Query::Attributes#match (method)">#match</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Query/Clause.html" title="Card::Query::Clause (module)">Clause</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Query/Clause.html#match_prep-instance_method" title="Card::Query::Clause#match_prep (method)">#match_prep</a></span>, <span class='object_link'><a href="Query/Clause.html#quote-instance_method" title="Card::Query::Clause#quote (method)">#quote</a></span>, <span class='object_link'><a href="Query/Clause.html#safe_sql-instance_method" title="Card::Query::Clause#safe_sql (method)">#safe_sql</a></span></p>
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(statement, comment = nil)  &#x21d2; <tt><span class='object_link'><a href="" title="Card::Query (class)">Query</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns a new instance of Query</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 97</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span> <span class='id identifier rubyid_statement'>statement</span><span class='comma'>,</span> <span class='id identifier rubyid_comment'>comment</span><span class='op'>=</span><span class='kw'>nil</span>
+  <span class='ivar'>@subqueries</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='ivar'>@conditions</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='ivar'>@joins</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='ivar'>@mods</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='ivar'>@statement</span> <span class='op'>=</span> <span class='id identifier rubyid_statement'>statement</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span>
+
+  <span class='ivar'>@context</span>    <span class='op'>=</span> <span class='ivar'>@statement</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:context</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='kw'>nil</span>
+  <span class='ivar'>@unjoined</span>   <span class='op'>=</span> <span class='ivar'>@statement</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:unjoined</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='kw'>nil</span>
+  <span class='ivar'>@superquery</span> <span class='op'>=</span> <span class='ivar'>@statement</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:superquery</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='kw'>nil</span>
+  <span class='ivar'>@vars</span>       <span class='op'>=</span> <span class='ivar'>@statement</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:vars</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='ivar'>@vars</span><span class='period'>.</span><span class='id identifier rubyid_symbolize_keys!'>symbolize_keys!</span>
+
+  <span class='ivar'>@comment</span> <span class='op'>=</span> <span class='id identifier rubyid_comment'>comment</span> <span class='op'>||</span> <span class='id identifier rubyid_default_comment'>default_comment</span>
+
+  <span class='id identifier rubyid_interpret'>interpret</span> <span class='ivar'>@statement</span>
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="comment-instance_method">
+  
+    #<strong>comment</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute comment</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+83
+84
+85</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 83</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_comment'>comment</span>
+  <span class='ivar'>@comment</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="conditions-instance_method">
+  
+    #<strong>conditions</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute conditions</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+83
+84
+85</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 83</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_conditions'>conditions</span>
+  <span class='ivar'>@conditions</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="conditions_on_join=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="conditions_on_join-instance_method">
+  
+    #<strong>conditions_on_join</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute conditions_on_join</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+85
+86
+87</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 85</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_conditions_on_join'>conditions_on_join</span>
+  <span class='ivar'>@conditions_on_join</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="joins=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="joins-instance_method">
+  
+    #<strong>joins</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute joins</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+85
+86
+87</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 85</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_joins'>joins</span>
+  <span class='ivar'>@joins</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="mods-instance_method">
+  
+    #<strong>mods</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute mods</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+83
+84
+85</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 83</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_mods'>mods</span>
+  <span class='ivar'>@mods</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="statement-instance_method">
+  
+    #<strong>statement</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute statement</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+83
+84
+85</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 83</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_statement'>statement</span>
+  <span class='ivar'>@statement</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="subqueries-instance_method">
+  
+    #<strong>subqueries</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute subqueries</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+83
+84
+85</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 83</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_subqueries'>subqueries</span>
+  <span class='ivar'>@subqueries</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="superquery-instance_method">
+  
+    #<strong>superquery</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute superquery</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+83
+84
+85</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 83</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_superquery'>superquery</span>
+  <span class='ivar'>@superquery</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="table_seq=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="table_seq-instance_method">
+  
+    #<strong>table_seq</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute table_seq</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+85
+86
+87</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 85</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_table_seq'>table_seq</span>
+  <span class='ivar'>@table_seq</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="unjoined=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="unjoined-instance_method">
+  
+    #<strong>unjoined</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute unjoined</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+85
+86
+87</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 85</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_unjoined'>unjoined</span>
+  <span class='ivar'>@unjoined</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="run-class_method">
+  
+    .<strong>run</strong>(statement, comment = nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>By default a query returns card objects. This is accomplished by returning
+a card identifier from SQL and then hooking into our caching system (see
+Card::Fetch)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+93
+94
+95</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 93</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_run'>run</span> <span class='id identifier rubyid_statement'>statement</span><span class='comma'>,</span> <span class='id identifier rubyid_comment'>comment</span><span class='op'>=</span><span class='kw'>nil</span>
+  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_statement'>statement</span><span class='comma'>,</span> <span class='id identifier rubyid_comment'>comment</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_run'>run</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="context-instance_method">
+  
+    #<strong>context</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+176
+177
+178
+179
+180
+181
+182</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 176</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_context'>context</span>
+  <span class='kw'>if</span> <span class='op'>!</span><span class='ivar'>@context</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='ivar'>@context</span>
+  <span class='kw'>else</span>
+    <span class='ivar'>@context</span> <span class='op'>=</span> <span class='ivar'>@superquery</span> <span class='op'>?</span> <span class='ivar'>@superquery</span><span class='period'>.</span><span class='id identifier rubyid_context'>context</span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="default_comment-instance_method">
+  
+    #<strong>default_comment</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+116
+117
+118
+119</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 116</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_default_comment'>default_comment</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='ivar'>@superquery</span> <span class='op'>||</span> <span class='op'>!</span><span class='const'>Card</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_sql_comments'>sql_comments</span>
+  <span class='id identifier rubyid_statement'>statement</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="get_results-instance_method">
+  
+    #<strong>get_results</strong>(retrn)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns Integer for :count, otherwise Array of Strings or Integers</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        
+        <div class='inline'>
+<p>Integer for :count, otherwise Array of Strings or Integers</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 135</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get_results'>get_results</span> <span class='id identifier rubyid_retrn'>retrn</span>
+  <span class='id identifier rubyid_rows'>rows</span> <span class='op'>=</span> <span class='id identifier rubyid_run_sql'>run_sql</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_retrn'>retrn</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>name</span><span class='tstring_end'>&quot;</span></span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='id identifier rubyid_statement'>statement</span><span class='lbracket'>[</span><span class='symbol'>:prepend</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_statement'>statement</span><span class='lbracket'>[</span><span class='symbol'>:append</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_rows'>rows</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_row'>row</span><span class='op'>|</span>
+      <span class='lbracket'>[</span><span class='id identifier rubyid_statement'>statement</span><span class='lbracket'>[</span><span class='symbol'>:prepend</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_row'>row</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>name</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_statement'>statement</span><span class='lbracket'>[</span><span class='symbol'>:append</span><span class='rbracket'>]</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span> <span class='op'>*</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>+</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+  <span class='kw'>else</span>
+    <span class='kw'>case</span> <span class='id identifier rubyid_retrn'>retrn</span>
+    <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>count</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>then</span> <span class='id identifier rubyid_rows'>rows</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>count</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
+    <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>raw</span><span class='tstring_end'>&quot;</span></span>   <span class='kw'>then</span> <span class='id identifier rubyid_rows'>rows</span>
+    <span class='kw'>when</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>id$</span><span class='regexp_end'>/</span></span>   <span class='kw'>then</span> <span class='id identifier rubyid_rows'>rows</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_row'>row</span><span class='op'>|</span> <span class='id identifier rubyid_row'>row</span><span class='lbracket'>[</span><span class='id identifier rubyid_retrn'>retrn</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='rbrace'>}</span>
+    <span class='kw'>else</span>              <span class='id identifier rubyid_rows'>rows</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_row'>row</span><span class='op'>|</span> <span class='id identifier rubyid_row'>row</span><span class='lbracket'>[</span><span class='id identifier rubyid_retrn'>retrn</span><span class='rbracket'>]</span>      <span class='rbrace'>}</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="root-instance_method">
+  
+    #<strong>root</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Query Hierarchy @root, @subqueries, and @superquery are used to track a
+hierarchy of query objects.  This nesting allows to find, for example,
+cards that link to cards that link to cards.…</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+166
+167
+168</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 166</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_root'>root</span>
+  <span class='ivar'>@root</span> <span class='op'>||=</span> <span class='ivar'>@superquery</span> <span class='op'>?</span> <span class='ivar'>@superquery</span><span class='period'>.</span><span class='id identifier rubyid_root'>root</span> <span class='op'>:</span> <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="run-instance_method">
+  
+    #<strong>run</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>run the current query</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        
+        <div class='inline'>
+<p>array of card objects by default</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 123</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_run'>run</span>
+  <span class='id identifier rubyid_retrn'>retrn</span> <span class='op'>=</span> <span class='id identifier rubyid_statement'>statement</span><span class='lbracket'>[</span><span class='symbol'>:return</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>?</span> <span class='id identifier rubyid_statement'>statement</span><span class='lbracket'>[</span><span class='symbol'>:return</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>card</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_retrn'>retrn</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>card</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_get_results'>get_results</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>name</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='op'>|</span>
+      <span class='const'>Card</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>new:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+    <span class='kw'>end</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_get_results'>get_results</span> <span class='id identifier rubyid_retrn'>retrn</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="run_sql-instance_method">
+  
+    #<strong>run_sql</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+151
+152
+153
+154
+155</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 151</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_run_sql'>run_sql</span>
+  <span class='comment'># puts &quot;\nstatement = #{@statement}&quot;
+</span>  <span class='comment'># puts &quot;sql = #{sql}&quot;
+</span>  <span class='const'>ActiveRecord</span><span class='op'>::</span><span class='const'>Base</span><span class='period'>.</span><span class='id identifier rubyid_connection'>connection</span><span class='period'>.</span><span class='id identifier rubyid_select_all'>select_all</span><span class='lparen'>(</span><span class='id identifier rubyid_sql'>sql</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="sql-instance_method">
+  
+    #<strong>sql</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+157
+158
+159</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 157</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_sql'>sql</span>
+  <span class='ivar'>@sql</span> <span class='op'>||=</span> <span class='const'>SqlStatement</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='kw'>self</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_build'>build</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="subquery-instance_method">
+  
+    #<strong>subquery</strong>(opts = {})  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+170
+171
+172
+173
+174</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/query.rb', line 170</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_subquery'>subquery</span> <span class='id identifier rubyid_opts'>opts</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_subquery'>subquery</span> <span class='op'>=</span> <span class='const'>Query</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='id identifier rubyid_opts'>opts</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='label'>superquery:</span> <span class='kw'>self</span><span class='rparen'>)</span>
+  <span class='ivar'>@subqueries</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_subquery'>subquery</span>
+  <span class='id identifier rubyid_subquery'>subquery</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Mon Aug 15 15:39:50 2016 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.5 (ruby-2.3.0).
+</div>
+
+    </div>
+  </body>
+</html>

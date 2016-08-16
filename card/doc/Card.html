@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Card
+  
+    &mdash; Documentation by YARD 0.9.5
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "Card";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index (C)</a> &raquo;
+    
+    
+    <span class="title">Card</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <iframe id="search_frame" src="class_list.html"></iframe>
+
+      <div id="content"><h1>Class: Card
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">ActiveRecord::Base</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">ActiveRecord::Base</li>
+          
+            <li class="next">Card</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  <dl>
+      <dt>Extended by:</dt>
+      <dd>CarrierWave::Mount</dd>
+  </dl>
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/card.rb<span class="defines">,<br />
+  lib/card/env.rb,<br /> lib/card/set.rb,<br /> lib/card/name.rb,<br /> lib/card/auth.rb,<br /> lib/card/stage.rb,<br /> lib/card/cache.rb,<br /> lib/card/query.rb,<br /> lib/card/mailer.rb,<br /> lib/card/format.rb,<br /> lib/card/content.rb,<br /> lib/card/mod/dirs.rb,<br /> lib/card/subcards.rb,<br /> lib/card/codename.rb,<br /> lib/card/set/trait.rb,<br /> lib/card/set/event.rb,<br /> lib/card/reference.rb,<br /> lib/card/set/format.rb,<br /> lib/card/exceptions.rb,<br /> lib/card/mod/loader.rb,<br /> lib/card/query/join.rb,<br /> lib/card/set/basket.rb,<br /> lib/card/set/loader.rb,<br /> lib/generators/card.rb,<br /> lib/card/query/value.rb,<br /> lib/card/env/success.rb,<br /> lib/card/set_pattern.rb,<br /> lib/card/format/nest.rb,<br /> lib/card/set/helpers.rb,<br /> lib/card/content/diff.rb,<br /> lib/card/env/location.rb,<br /> lib/card/format/render.rb,<br /> lib/card/query/helpers.rb,<br /> lib/card/content/chunk.rb,<br /> lib/card/query/sorting.rb,<br /> lib/card/stage_director.rb,<br /> lib/card/name/view_name.rb,<br /> lib/card/migration/core.rb,<br /> lib/card/content/parser.rb,<br /> lib/card/set/inheritance.rb,<br /> mod/history/lib/card/act.rb,<br /> lib/card/format/nest/view.rb,<br /> lib/card/cache/view_cache.rb,<br /> lib/card/format/nest/main.rb,<br /> lib/card/migration/import.rb,<br /> lib/card/set/advanced_api.rb,<br /> lib/card/content/diff/lcs.rb,<br /> lib/card/query/attributes.rb,<br /> lib/card/director_register.rb,<br /> lib/card/subdirector_array.rb,<br /> lib/card/format/permission.rb,<br /> lib/card/model/save_helper.rb,<br /> lib/card/format/nest/fetch.rb,<br /> lib/card/query/conjunctions.rb,<br /> mod/history/lib/card/action.rb,<br /> mod/history/lib/card/change.rb,<br /> lib/card/query/sql_statement.rb,<br /> lib/card/content/diff/result.rb,<br /> mod/machines/lib/card/machine.rb,<br /> lib/card/query/interpretation.rb,<br /> mod/settings/lib/card/setting.rb,<br /> lib/card/format/nest/subformat.rb,<br /> mod/email/lib/card/follow_option.rb,<br /> mod/machines/lib/card/machine_input.rb,<br /> lib/card/query/relational_attributes.rb,<br /> lib/card/migration/import/import_data.rb,<br /> lib/generators/card/set/set_generator.rb,<br /> lib/generators/card/format/format_generator.rb,<br /> lib/generators/card/migration/migration_generator.rb,<br /> tmpsets/set/mod001-core/all/erb.rb,<br /> tmpsets/set/mod001-core/all/type.rb,<br /> tmpsets/set/mod001-core/all/haml.rb,<br /> tmpsets/set/mod001-core/all/name.rb,<br /> tmpsets/set/mod012-email/right/to.rb,<br /> tmpsets/set/mod001-core/all/rules.rb,<br /> tmpsets/set/mod001-core/all/trash.rb,<br /> tmpsets/set/mod001-core/all/event.rb,<br /> tmpsets/set/mod001-core/all/fetch.rb,<br /> tmpsets/set/mod001-core/all/utils.rb,<br /> tmpsets/set/mod012-email/right/cc.rb,<br /> tmpsets/set/mod001-core/all/states.rb,<br /> tmpsets/set/mod001-core/all/export.rb,<br /> tmpsets/set/mod012-email/right/bcc.rb,<br /> tmpsets/set/mod001-core/all/phases.rb,<br /> tmpsets/set/mod001-core/all/stages.rb,<br /> tmpsets/set/mod001-core/all/actify.rb,<br /> tmpsets/set/mod012-email/all/notify.rb,<br /> tmpsets/set/mod014-admin/self/admin.rb,<br /> tmpsets/set/mod001-core/all/pattern.rb,<br /> tmpsets/set/mod012-email/right/from.rb,<br /> tmpsets/set/mod001-core/all/content.rb,<br /> tmpsets/set/mod012-email/all/follow.rb,<br /> tmpsets/set/mod012-email/self/never.rb,<br /> tmpsets/set/mod016-standard/type/uri.rb,<br /> tmpsets/set/mod001-core/all/subcards.rb,<br /> tmpsets/set/mod017-account/type/user.rb,<br /> tmpsets/set/mod012-email/self/follow.rb,<br /> tmpsets/set/mod012-email/self/always.rb,<br /> tmpsets/set/mod012-email/self/edited.rb,<br /> tmpsets/set/mod010-machines/type/css.rb,<br /> tmpsets/set/mod016-standard/self/now.rb,<br /> tmpsets/set/mod016-standard/type/set.rb,<br /> tmpsets/set/mod012-email/right/follow.rb,<br /> tmpsets/set/mod012-email/self/created.rb,<br /> tmpsets/set/mod017-account/right/salt.rb,<br /> tmpsets/set/mod016-standard/type/list.rb,<br /> tmpsets/set/mod016-standard/type/date.rb,<br /> tmpsets/set/mod016-standard/self/foot.rb,<br /> tmpsets/set/mod016-standard/all/links.rb,<br /> tmpsets/set/mod016-standard/all/error.rb,<br /> tmpsets/set/mod010-machines/type/scss.rb,<br /> tmpsets/set/mod010-machines/type/skin.rb,<br /> tmpsets/set/mod014-admin/self/version.rb,<br /> tmpsets/set/mod011-settings/self/help.rb,<br /> tmpsets/set/mod011-settings/self/read.rb,<br /> tmpsets/set/mod012-email/all/observer.rb,<br /> tmpsets/set/mod017-account/type/signup.rb,<br /> tmpsets/set/mod017-account/right/token.rb,<br /> tmpsets/set/mod011-settings/self/style.rb,<br /> tmpsets/set/mod001-core/all/templating.rb,<br /> tmpsets/set/mod001-core/all/references.rb,<br /> tmpsets/set/mod017-account/self/signin.rb,<br /> tmpsets/set/mod001-core/all/view_cache.rb,<br /> tmpsets/set/mod016-standard/type/basic.rb,<br /> tmpsets/set/mod002-history/all/actions.rb,<br /> tmpsets/set/mod002-history/all/history.rb,<br /> tmpsets/set/mod001-core/all/collection.rb,<br /> tmpsets/set/mod011-settings/self/input.rb,<br /> tmpsets/set/mod011-settings/right/help.rb,<br /> tmpsets/set/mod011-settings/right/read.rb,<br /> tmpsets/set/mod001-core/all/initialize.rb,<br /> tmpsets/set/mod017-account/right/email.rb,<br /> tmpsets/set/mod017-account/all/account.rb,<br /> tmpsets/set/mod012-email/all/email_html.rb,<br /> tmpsets/set/mod016-standard/type/phrase.rb,<br /> tmpsets/set/mod016-standard/type/number.rb,<br /> tmpsets/set/mod011-settings/self/thanks.rb,<br /> tmpsets/set/mod011-settings/self/update.rb,<br /> tmpsets/set/mod016-standard/self/search.rb,<br /> tmpsets/set/mod016-standard/self/recent.rb,<br /> tmpsets/set/mod016-standard/self/navbox.rb,<br /> tmpsets/set/mod016-standard/self/alerts.rb,<br /> tmpsets/set/mod016-standard/rstar/rules.rb,<br /> tmpsets/set/mod012-email/all/email_text.rb,<br /> tmpsets/set/mod016-standard/all/comment.rb,<br /> tmpsets/set/mod001-core/all/permissions.rb,<br /> tmpsets/set/mod001-core/all/active_card.rb,<br /> tmpsets/set/mod011-settings/right/style.rb,<br /> tmpsets/set/mod011-settings/self/create.rb,<br /> tmpsets/set/mod011-settings/self/delete.rb,<br /> tmpsets/set/mod011-settings/self/layout.rb,<br /> tmpsets/set/mod011-settings/self/script.rb,<br /> tmpsets/set/mod017-account/right/status.rb,<br /> tmpsets/set/mod004-pointer/type/pointer.rb,<br /> tmpsets/set/mod016-standard/type/toggle.rb,<br /> tmpsets/set/mod011-settings/self/default.rb,<br /> tmpsets/set/mod011-settings/self/options.rb,<br /> tmpsets/set/mod013-carrierwave/type/file.rb,<br /> tmpsets/set/mod012-email/right/following.rb,<br /> tmpsets/set/mod017-account/right/account.rb,<br /> tmpsets/set/mod015-developer/right/debug.rb,<br /> tmpsets/set/mod003-basic_formats/all/rss.rb,<br /> tmpsets/set/mod011-settings/type/setting.rb,<br /> tmpsets/set/mod016-standard/type/session.rb,<br /> tmpsets/set/mod012-email/right/followers.rb,<br /> tmpsets/set/mod011-settings/right/update.rb,<br /> tmpsets/set/mod014-admin/self/admin_info.rb,<br /> tmpsets/set/mod011-settings/self/captcha.rb,<br /> tmpsets/set/mod011-settings/right/script.rb,<br /> tmpsets/set/mod011-settings/right/delete.rb,<br /> tmpsets/set/mod009-basic_types/type/html.rb,<br /> tmpsets/set/mod011-settings/right/create.rb,<br /> tmpsets/set/mod003-basic_formats/all/json.rb,<br /> tmpsets/set/mod017-account/right/password.rb,<br /> tmpsets/set/mod013-carrierwave/type/image.rb,<br /> tmpsets/set/mod015-developer/all/view_viz.rb,<br /> tmpsets/set/mod003-basic_formats/all/text.rb,<br /> tmpsets/set/mod011-settings/self/add_help.rb,<br /> tmpsets/set/mod011-settings/right/default.rb,<br /> tmpsets/set/mod003-basic_formats/all/file.rb,<br /> tmpsets/set/mod011-settings/right/comment.rb,<br /> tmpsets/set/mod016-standard/type/cardtype.rb,<br /> tmpsets/set/mod011-settings/self/autoname.rb,<br /> tmpsets/set/mod003-basic_formats/all/base.rb,<br /> tmpsets/set/mod001-core/abstract/code_file.rb,<br /> tmpsets/set/mod003-basic_formats/self/head.rb,<br /> tmpsets/set/mod011-settings/right/add_help.rb,<br /> tmpsets/set/mod011-settings/self/on_create.rb,<br /> tmpsets/set/mod011-settings/self/on_delete.rb,<br /> tmpsets/set/mod011-settings/self/on_update.rb,<br /> tmpsets/set/mod011-settings/self/structure.rb,<br /> tmpsets/set/mod015-developer/all/event_viz.rb,<br /> tmpsets/set/mod016-standard/self/codenames.rb,<br /> tmpsets/set/mod016-standard/type/listed_by.rb,<br /> tmpsets/set/mod011-settings/right/structure.rb,<br /> tmpsets/set/mod004-pointer/self/script_mods.rb,<br /> tmpsets/set/mod003-basic_formats/all/all_js.rb,<br /> tmpsets/set/mod010-machines/abstract/script.rb,<br /> tmpsets/set/mod012-email/right/html_message.rb,<br /> tmpsets/set/mod003-basic_formats/all/all_csv.rb,<br /> tmpsets/set/mod010-machines/self/script_slot.rb,<br /> tmpsets/set/mod011-settings/self/accountable.rb,<br /> tmpsets/set/mod010-machines/type/java_script.rb,<br /> tmpsets/set/mod016-standard/type/search_type.rb,<br /> tmpsets/set/mod016-standard/right/discussion.rb,<br /> tmpsets/set/mod012-email/type/email_template.rb,<br /> tmpsets/set/mod016-standard/type/layout_type.rb,<br /> tmpsets/set/mod001-core/all/name_validations.rb,<br /> tmpsets/set/mod016-standard/all/list_changes.rb,<br /> tmpsets/set/mod003-basic_formats/all/all_css.rb,<br /> tmpsets/set/mod012-email/right/follow_fields.rb,<br /> tmpsets/set/mod001-core/all/location_history.rb,<br /> tmpsets/set/mod010-machines/self/style_cards.rb,<br /> tmpsets/set/mod018-bootstrap/self/script_mods.rb,<br /> tmpsets/set/mod012-email/self/follow_defaults.rb,<br /> tmpsets/set/mod005-ace_editor/self/script_ace.rb,<br /> tmpsets/set/mod017-account/self/account_links.rb,<br /> tmpsets/set/mod001-core/all/tracked_attributes.rb,<br /> tmpsets/set/mod011-settings/self/options_label.rb,<br /> tmpsets/set/mod011-settings/self/follow_fields.rb,<br /> tmpsets/set/mod010-machines/type/coffee_script.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/form.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/menu.rb,<br /> tmpsets/set/mod016-standard/right/when_created.rb,<br /> tmpsets/set/mod016-standard/rstar/rules_editor.rb,<br /> tmpsets/set/mod010-machines/self/script_jquery.rb,<br /> tmpsets/set/mod010-machines/all/reset_machines.rb,<br /> tmpsets/set/mod009-basic_types/type/plain_text.rb,<br /> tmpsets/set/mod008-solid_cache/all/solid_cache.rb,<br /> tmpsets/set/mod004-pointer/self/script_editors.rb,<br /> tmpsets/set/mod004-pointer/abstract/01_pointer.rb,<br /> tmpsets/set/mod018-bootstrap/self/bootstrap_js.rb,<br /> tmpsets/set/mod018-bootstrap/self/smartmenu_js.rb,<br /> tmpsets/set/mod002-history/all/content_history.rb,<br /> tmpsets/set/mod010-machines/right/machine_cache.rb,<br /> tmpsets/set/mod018-bootstrap/all/bootstrap/tabs.rb,<br /> tmpsets/set/mod011-settings/abstract/permission.rb,<br /> tmpsets/set/mod018-bootstrap/self/smartmenu_css.rb,<br /> tmpsets/set/mod018-bootstrap/all/rich_bootstrap.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/modal.rb,<br /> tmpsets/set/mod018-bootstrap/all/bootstrap/form.rb,<br /> tmpsets/set/mod010-machines/right/machine_input.rb,<br /> tmpsets/set/mod011-settings/self/recent_settings.rb,<br /> tmpsets/set/mod018-bootstrap/all/bootstrap/table.rb,<br /> tmpsets/set/mod008-solid_cache/right/solid_cache.rb,<br /> tmpsets/set/mod010-machines/right/machine_output.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/header.rb,<br /> tmpsets/set/mod004-pointer/abstract/code_pointer.rb,<br /> tmpsets/set/mod005-ace_editor/abstract/ace_editor.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/editing.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/toolbar.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/content.rb,<br /> tmpsets/set/mod016-standard/all/rich_html/wrapper.rb,<br /> tmpsets/set/mod010-machines/self/script_card_menu.rb,<br /> tmpsets/set/mod018-bootstrap/self/bootstrap_cards.rb,<br /> tmpsets/set/mod018-bootstrap/all/bootstrap/helper.rb,<br /> tmpsets/set/mod016-standard/right/when_last_edited.rb,<br /> tmpsets/set/mod011-settings/self/default_html_view.rb,<br /> tmpsets/set/mod013-carrierwave/abstract/attachment.rb,<br /> tmpsets/set/mod011-settings/self/table_of_contents.rb,<br /> tmpsets/set/mod018-bootstrap/all/bootstrap/wrapper.rb,<br /> tmpsets/set/mod008-solid_cache/abstract/solid_cache.rb,<br /> tmpsets/set/mod004-pointer/abstract/01_pointer/edit.rb,<br /> tmpsets/set/mod018-bootstrap/self/bootswatch_shared.rb,<br /> tmpsets/set/mod005-ace_editor/self/script_ace_config.rb,<br /> tmpsets/set/mod012-email/type_plus_right/user/follow.rb,<br /> tmpsets/set/mod010-machines/self/script_jquery_helper.rb,<br /> tmpsets/set/mod004-pointer/self/script_pointer_config.rb,<br /> tmpsets/set/mod003-basic_formats/self/01_head/javascript.rb,<br /> tmpsets/set/mod010-machines/self/style_bootstrap_compatible.rb,<br /> tmpsets/set/mod010-machines/self/script_html5shiv_printshiv.rb,<br /> tmpsets/set/mod010-machines/self/style_jquery_ui_smoothness.rb,<br /> tmpsets/set/mod006-prosemirror_editor/self/script_prosemirror.rb,<br /> tmpsets/set/mod006-prosemirror_editor/abstract/prosemirror_editor.rb,<br /> tmpsets/set/mod006-prosemirror_editor/self/script_prosemirror_config.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>::Content</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Card/Auth.html" title="Card::Auth (module)">Auth</a></span>, <span class='object_link'><a href="Card/Env.html" title="Card::Env (module)">Env</a></span>, <span class='object_link'><a href="Card/FollowOption.html" title="Card::FollowOption (module)">FollowOption</a></span>, <span class='object_link'><a href="Card/Generators.html" title="Card::Generators (module)">Generators</a></span>, <span class='object_link'><a href="Card/Machine.html" title="Card::Machine (module)">Machine</a></span>, <span class='object_link'><a href="Card/MachineInput.html" title="Card::MachineInput (module)">MachineInput</a></span>, <span class='object_link'><a href="Card/Mod.html" title="Card::Mod (module)">Mod</a></span>, <span class='object_link'><a href="Card/Model.html" title="Card::Model (module)">Model</a></span>, <span class='object_link'><a href="Card/Set.html" title="Card::Set (module)">Set</a></span>, <span class='object_link'><a href="Card/Setting.html" title="Card::Setting (module)">Setting</a></span>, <span class='object_link'><a href="Card/Stage.html" title="Card::Stage (module)">Stage</a></span>, <span class='object_link'><a href="Card/Version.html" title="Card::Version (module)">Version</a></span>
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Card/Act.html" title="Card::Act (class)">Act</a></span>, <span class='object_link'><a href="Card/Action.html" title="Card::Action (class)">Action</a></span>, <span class='object_link'><a href="Card/Cache.html" title="Card::Cache (class)">Cache</a></span>, <span class='object_link'><a href="Card/Change.html" title="Card::Change (class)">Change</a></span>, <span class='object_link'><a href="Card/Codename.html" title="Card::Codename (class)">Codename</a></span>, <span class='object_link'><a href="Card/Content.html" title="Card::Content (class)">Content</a></span>, <span class='object_link'><a href="Card/DirectorRegister.html" title="Card::DirectorRegister (class)">DirectorRegister</a></span>, <span class='object_link'><a href="Card/Error.html" title="Card::Error (class)">Error</a></span>, <span class='object_link'><a href="Card/Format.html" title="Card::Format (class)">Format</a></span>, <span class='object_link'><a href="Card/Mailer.html" title="Card::Mailer (class)">Mailer</a></span>, <span class='object_link'><a href="Card/Migration.html" title="Card::Migration (class)">Migration</a></span>, <span class='object_link'><a href="Card/Name.html" title="Card::Name (class)">Name</a></span>, <span class='object_link'><a href="Card/Query.html" title="Card::Query (class)">Query</a></span>, <span class='object_link'><a href="Card/Reference.html" title="Card::Reference (class)">Reference</a></span>, <span class='object_link'><a href="Card/StageDirector.html" title="Card::StageDirector (class)">StageDirector</a></span>, <span class='object_link'><a href="Card/StageSubdirector.html" title="Card::StageSubdirector (class)">StageSubdirector</a></span>, <span class='object_link'><a href="Card/Subcards.html" title="Card::Subcards (class)">Subcards</a></span>, <span class='object_link'><a href="Card/SubdirectorArray.html" title="Card::SubdirectorArray (class)">SubdirectorArray</a></span>
+    
+  
+</p>
+
+  <h2>Constant Summary</h2>
+  <dl class="constants">
+    
+      <dt id="TRACKED_FIELDS-constant" class="">TRACKED_FIELDS =
+        
+      </dt>
+      <dd><pre class="code"><span class='qwords_beg'>%w(</span><span class='tstring_content'>name</span><span class='words_sep'> </span><span class='tstring_content'>type_id</span><span class='words_sep'> </span><span class='tstring_content'>db_content</span><span class='words_sep'> </span><span class='tstring_content'>trash</span><span class='words_sep'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+    
+  </dl>
+
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#follower_stash-instance_method" title="#follower_stash (instance method)">#<strong>follower_stash</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute follower_stash.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#config-class_method" title="config (class method)">.<strong>config</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#const_missing-class_method" title="const_missing (class method)">.<strong>const_missing</strong>(const)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#new_director-class_method" title="new_director (class method)">.<strong>new_director</strong>(card, opts = {})  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#paths-class_method" title="paths (class method)">.<strong>paths</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#serializable_attr_accessor-class_method" title="serializable_attr_accessor (class method)">.<strong>serializable_attr_accessor</strong>(*args)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>attributes that ActiveJob can handle.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#act-instance_method" title="#act (instance method)">#<strong>act</strong>(opts = {})  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#clean_after_stage_fail-instance_method" title="#clean_after_stage_fail (instance method)">#<strong>clean_after_stage_fail</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#deserialize_for_active_job%21-instance_method" title="#deserialize_for_active_job! (instance method)">#<strong>deserialize_for_active_job!</strong>(attr, env, current_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#expire_subcards-instance_method" title="#expire_subcards (instance method)">#<strong>expire_subcards</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#left_id%3D-instance_method" title="#left_id= (instance method)">#<strong>left_id=</strong>(card_or_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_event_call-instance_method" title="#log_event_call (instance method)">#<strong>log_event_call</strong>(event)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#restore_changes_information-instance_method" title="#restore_changes_information (instance method)">#<strong>restore_changes_information</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#right_id%3D-instance_method" title="#right_id= (instance method)">#<strong>right_id=</strong>(card_or_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#serialize_for_active_job-instance_method" title="#serialize_for_active_job (instance method)">#<strong>serialize_for_active_job</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#subcards-instance_method" title="#subcards (instance method)">#<strong>subcards</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#type_id%3D-instance_method" title="#type_id= (instance method)">#<strong>type_id=</strong>(card_or_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#with_id_when_exists-instance_method" title="#with_id_when_exists (instance method)">#<strong>with_id_when_exists</strong>(card, &amp;block)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#write_card_or_id-instance_method" title="#write_card_or_id (instance method)">#<strong>write_card_or_id</strong>(attribute, card_or_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="follower_stash=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="follower_stash-instance_method">
+  
+    #<strong>follower_stash</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute follower_stash</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+60
+61
+62</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card.rb', line 60</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_follower_stash'>follower_stash</span>
+  <span class='ivar'>@follower_stash</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="config-class_method">
+  
+    .<strong>config</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+8
+9
+10</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/mod/loader.rb', line 8</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_config'>config</span>
+  <span class='const'>Cardio</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="const_missing-class_method">
+  
+    .<strong>const_missing</strong>(const)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/codename.rb', line 65</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_const_missing'>const_missing</span> <span class='id identifier rubyid_const'>const</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_const'>const</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^([A-Z]\S*)ID$</span><span class='regexp_end'>/</span></span> <span class='op'>&amp;&amp;</span>
+     <span class='lparen'>(</span><span class='id identifier rubyid_code'>code</span> <span class='op'>=</span> <span class='const'>Regexp</span><span class='period'>.</span><span class='id identifier rubyid_last_match'>last_match</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_underscore'>underscore</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rparen'>)</span>
+    <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_card_id'>card_id</span> <span class='op'>=</span> <span class='const'>Codename</span><span class='lbracket'>[</span><span class='id identifier rubyid_code'>code</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_const_set'>const_set</span> <span class='id identifier rubyid_const'>const</span><span class='comma'>,</span> <span class='id identifier rubyid_card_id'>card_id</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Missing codename </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_code'>code</span><span class='embexpr_end'>}</span><span class='tstring_content'> (</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_const'>const</span><span class='embexpr_end'>}</span><span class='tstring_content'>)</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+  <span class='kw'>else</span>
+    <span class='kw'>super</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="new_director-class_method">
+  
+    .<strong>new_director</strong>(card, opts = {})  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/director_register.rb', line 21</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_new_director'>new_director</span> <span class='id identifier rubyid_card'>card</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:parent</span><span class='rbracket'>]</span>
+    <span class='const'>StageSubdirector</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='id identifier rubyid_card'>card</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span>
+  <span class='kw'>elsif</span> <span class='const'>DirectorRegister</span><span class='period'>.</span><span class='id identifier rubyid_act_card'>act_card</span> <span class='op'>&amp;&amp;</span>
+        <span class='const'>DirectorRegister</span><span class='period'>.</span><span class='id identifier rubyid_act_card'>act_card</span> <span class='op'>!=</span> <span class='id identifier rubyid_card'>card</span> <span class='op'>&amp;&amp;</span>
+        <span class='const'>DirectorRegister</span><span class='period'>.</span><span class='id identifier rubyid_act_card'>act_card</span><span class='period'>.</span><span class='id identifier rubyid_director'>director</span><span class='period'>.</span><span class='id identifier rubyid_running?'>running?</span>
+    <span class='const'>DirectorRegister</span><span class='period'>.</span><span class='id identifier rubyid_act_card'>act_card</span><span class='period'>.</span><span class='id identifier rubyid_director'>director</span><span class='period'>.</span><span class='id identifier rubyid_subdirectors'>subdirectors</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span><span class='lparen'>(</span><span class='id identifier rubyid_card'>card</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='const'>StageDirector</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='id identifier rubyid_card'>card</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="paths-class_method">
+  
+    .<strong>paths</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+12
+13
+14</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/mod/loader.rb', line 12</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_paths'>paths</span>
+  <span class='const'>Cardio</span><span class='period'>.</span><span class='id identifier rubyid_paths'>paths</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="serializable_attr_accessor-class_method">
+  
+    .<strong>serializable_attr_accessor</strong>(*args)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>attributes that ActiveJob can handle</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+15
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card.rb', line 15</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_serializable_attr_accessor'>serializable_attr_accessor</span> <span class='op'>*</span><span class='id identifier rubyid_args'>args</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_serializable_attributes'>serializable_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span>
+  <span class='id identifier rubyid_attr_accessor'>attr_accessor</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="act-instance_method">
+  
+    #<strong>act</strong>(opts = {})  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/director_register.rb', line 2</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_act'>act</span> <span class='id identifier rubyid_opts'>opts</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='kw'>if</span> <span class='const'>DirectorRegister</span><span class='period'>.</span><span class='id identifier rubyid_act_card'>act_card</span>
+    <span class='comment'># director.reset_stage
+</span>    <span class='comment'># self.only_storage_phase = true
+</span>    <span class='id identifier rubyid_main_act_block'>main_act_block</span> <span class='op'>=</span> <span class='kw'>false</span>
+  <span class='kw'>else</span>
+    <span class='const'>DirectorRegister</span><span class='period'>.</span><span class='id identifier rubyid_clear'>clear</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_director'>director</span> <span class='op'>=</span> <span class='kw'>nil</span>
+    <span class='const'>DirectorRegister</span><span class='period'>.</span><span class='id identifier rubyid_act_card'>act_card</span> <span class='op'>=</span> <span class='kw'>self</span>
+    <span class='id identifier rubyid_main_act_block'>main_act_block</span> <span class='op'>=</span> <span class='kw'>true</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:success</span><span class='rbracket'>]</span>
+      <span class='const'>Env</span><span class='lbracket'>[</span><span class='symbol'>:success</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='const'>Env</span><span class='op'>::</span><span class='const'>Success</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_cardname'>cardname</span><span class='comma'>,</span> <span class='const'>Env</span><span class='period'>.</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:success</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='kw'>yield</span>
+<span class='kw'>ensure</span>
+  <span class='const'>DirectorRegister</span><span class='period'>.</span><span class='id identifier rubyid_clear'>clear</span> <span class='kw'>if</span> <span class='id identifier rubyid_main_act_block'>main_act_block</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="clean_after_stage_fail-instance_method">
+  
+    #<strong>clean_after_stage_fail</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+11
+12
+13
+14
+15</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/stage_director.rb', line 11</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_clean_after_stage_fail'>clean_after_stage_fail</span>
+  <span class='ivar'>@action</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='id identifier rubyid_expire_pieces'>expire_pieces</span>
+  <span class='id identifier rubyid_subcards'>subcards</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:expire_pieces</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="deserialize_for_active_job!-instance_method">
+  
+    #<strong>deserialize_for_active_job!</strong>(attr, env, current_id)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/set/event.rb', line 2</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_deserialize_for_active_job!'>deserialize_for_active_job!</span> <span class='id identifier rubyid_attr'>attr</span><span class='comma'>,</span> <span class='id identifier rubyid_env'>env</span><span class='comma'>,</span> <span class='id identifier rubyid_current_id'>current_id</span>
+  <span class='id identifier rubyid_attr'>attr</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_attname'>attname</span><span class='comma'>,</span> <span class='id identifier rubyid_args'>args</span><span class='op'>|</span>
+    <span class='comment'># symbols are not allowed so all symbols arrive here as strings
+</span>    <span class='comment'># convert strings that were symbols before back to symbols
+</span>    <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='symbol'>:symbol</span><span class='rbracket'>]</span> <span class='op'>?</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='symbol'>:value</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span> <span class='op'>:</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='symbol'>:value</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_instance_variable_set'>instance_variable_set</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>@</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_attname'>attname</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_include_set_modules'>include_set_modules</span>
+  <span class='comment'># If active jobs (and hence the integrate_with_delay events) don&#39;t run
+</span>  <span class='comment'># in a background process then Card::Env.deserialize! decouples the
+</span>  <span class='comment'># controller&#39;s params hash and the Card::Env&#39;s params hash with the
+</span>  <span class='comment'># effect that params changes in the CardController get lost
+</span>  <span class='comment'># (a crucial example are success params that are processed in
+</span>  <span class='comment'># CardController#update_params_for_success)
+</span>  <span class='kw'>return</span> <span class='kw'>if</span> <span class='const'>Wagn</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_active_job'>active_job</span><span class='period'>.</span><span class='id identifier rubyid_queue_adapter'>queue_adapter</span> <span class='op'>==</span> <span class='symbol'>:inline</span>
+  <span class='const'>Card</span><span class='op'>::</span><span class='const'>Env</span><span class='period'>.</span><span class='id identifier rubyid_deserialize!'>deserialize!</span> <span class='id identifier rubyid_env'>env</span>
+  <span class='const'>Card</span><span class='op'>::</span><span class='const'>Auth</span><span class='period'>.</span><span class='id identifier rubyid_current_id'>current_id</span> <span class='op'>=</span> <span class='id identifier rubyid_current_id'>current_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="expire_subcards-instance_method">
+  
+    #<strong>expire_subcards</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+18
+19
+20</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/subcards.rb', line 18</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_expire_subcards'>expire_subcards</span>
+  <span class='id identifier rubyid_subcards'>subcards</span><span class='period'>.</span><span class='id identifier rubyid_clear'>clear</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="left_id=-instance_method">
+  
+    #<strong>left_id=</strong>(card_or_id)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+292
+293
+294</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/subcards.rb', line 292</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_left_id='>left_id=</span> <span class='id identifier rubyid_card_or_id'>card_or_id</span>
+  <span class='id identifier rubyid_write_card_or_id'>write_card_or_id</span> <span class='symbol'>:left_id</span><span class='comma'>,</span> <span class='id identifier rubyid_card_or_id'>card_or_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="log_event_call-instance_method">
+  
+    #<strong>log_event_call</strong>(event)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+34
+35
+36
+37</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/set/event.rb', line 34</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_log_event_call'>log_event_call</span> <span class='id identifier rubyid_event'>event</span>
+  <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_event'>event</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='comment'># puts &quot;#{Card::DirectorRegister.to_s}&quot;.green
+</span><span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="restore_changes_information-instance_method">
+  
+    #<strong>restore_changes_information</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+3
+4
+5
+6
+7
+8
+9</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/stage_director.rb', line 3</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_restore_changes_information'>restore_changes_information</span>
+  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='ivar'>@previously_changed</span>
+  <span class='ivar'>@changed_attributes</span> <span class='op'>=</span> <span class='const'>ActiveSupport</span><span class='op'>::</span><span class='const'>HashWithIndifferentAccess</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+  <span class='ivar'>@previously_changed</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='lparen'>(</span><span class='id identifier rubyid_old'>old</span><span class='comma'>,</span> <span class='id identifier rubyid__new'>_new</span><span class='rparen'>)</span><span class='op'>|</span>
+    <span class='ivar'>@changed_attributes</span><span class='lbracket'>[</span><span class='id identifier rubyid_k'>k</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_old'>old</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="right_id=-instance_method">
+  
+    #<strong>right_id=</strong>(card_or_id)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+288
+289
+290</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/subcards.rb', line 288</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_right_id='>right_id=</span> <span class='id identifier rubyid_card_or_id'>card_or_id</span>
+  <span class='id identifier rubyid_write_card_or_id'>write_card_or_id</span> <span class='symbol'>:right_id</span><span class='comma'>,</span> <span class='id identifier rubyid_card_or_id'>card_or_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="serialize_for_active_job-instance_method">
+  
+    #<strong>serialize_for_active_job</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/set/event.rb', line 21</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_serialize_for_active_job'>serialize_for_active_job</span>
+  <span class='id identifier rubyid_serializable_attributes'>serializable_attributes</span><span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_hash'>hash</span><span class='op'>|</span>
+    <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_instance_variable_get'>instance_variable_get</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>@</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_hash'>hash</span><span class='lbracket'>[</span><span class='id identifier rubyid_name'>name</span><span class='rbracket'>]</span> <span class='op'>=</span>
+      <span class='comment'># ActiveJob doesn&#39;t accept symbols as arguments
+</span>      <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>Symbol</span>
+        <span class='lbrace'>{</span> <span class='label'>value:</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='comma'>,</span> <span class='label'>symbol:</span> <span class='kw'>true</span> <span class='rbrace'>}</span>
+      <span class='kw'>else</span>
+        <span class='lbrace'>{</span> <span class='label'>value:</span> <span class='id identifier rubyid_value'>value</span> <span class='rbrace'>}</span>
+      <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="subcards-instance_method">
+  
+    #<strong>subcards</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+13
+14
+15
+16</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/subcards.rb', line 13</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_subcards'>subcards</span>
+  <span class='ivar'>@subcards</span> <span class='op'>||=</span> <span class='const'>Subcards</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='kw'>self</span><span class='rparen'>)</span>
+  <span class='comment'># @subcards ||= (director &amp;&amp; director.subcards)
+</span><span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="type_id=-instance_method">
+  
+    #<strong>type_id=</strong>(card_or_id)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+296
+297
+298</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/subcards.rb', line 296</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_type_id='>type_id=</span> <span class='id identifier rubyid_card_or_id'>card_or_id</span>
+  <span class='id identifier rubyid_write_card_or_id'>write_card_or_id</span> <span class='symbol'>:type_id</span><span class='comma'>,</span> <span class='id identifier rubyid_card_or_id'>card_or_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="with_id_when_exists-instance_method">
+  
+    #<strong>with_id_when_exists</strong>(card, &amp;block)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+317
+318
+319</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/subcards.rb', line 317</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_with_id_when_exists'>with_id_when_exists</span> <span class='id identifier rubyid_card'>card</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span>
+  <span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_director'>director</span><span class='period'>.</span><span class='id identifier rubyid_call_after_store'>call_after_store</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="write_card_or_id-instance_method">
+  
+    #<strong>write_card_or_id</strong>(attribute, card_or_id)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/card/subcards.rb', line 300</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_write_card_or_id'>write_card_or_id</span> <span class='id identifier rubyid_attribute'>attribute</span><span class='comma'>,</span> <span class='id identifier rubyid_card_or_id'>card_or_id</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_card_or_id'>card_or_id</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>Card</span>
+    <span class='id identifier rubyid_card'>card</span> <span class='op'>=</span> <span class='id identifier rubyid_card_or_id'>card_or_id</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
+      <span class='id identifier rubyid_write_attribute'>write_attribute</span> <span class='id identifier rubyid_attribute'>attribute</span><span class='comma'>,</span> <span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_add_subcard'>add_subcard</span> <span class='id identifier rubyid_card'>card</span>
+      <span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_director'>director</span><span class='period'>.</span><span class='id identifier rubyid_prior_store'>prior_store</span> <span class='op'>=</span> <span class='kw'>true</span>
+      <span class='id identifier rubyid_with_id_when_exists'>with_id_when_exists</span><span class='lparen'>(</span><span class='id identifier rubyid_card'>card</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_id'>id</span><span class='op'>|</span>
+        <span class='id identifier rubyid_write_attribute'>write_attribute</span> <span class='id identifier rubyid_attribute'>attribute</span><span class='comma'>,</span> <span class='id identifier rubyid_id'>id</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_write_attribute'>write_attribute</span> <span class='id identifier rubyid_attribute'>attribute</span><span class='comma'>,</span> <span class='id identifier rubyid_card_or_id'>card_or_id</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Mon Aug 15 15:39:50 2016 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.5 (ruby-2.3.0).
+</div>
+
+    </div>
+  </body>
+</html>

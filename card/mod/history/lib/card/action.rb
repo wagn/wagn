@@ -12,10 +12,14 @@ class Card
   # - a _comment_ (where applicable)
   #
   class Action < ActiveRecord::Base
-    belongs_to :act, foreign_key: :card_act_id, inverse_of: :actions
-    has_many :card_changes, foreign_key: :card_action_id, inverse_of: :action,
-                            dependent: :delete_all, class_name: "Card::Change"
+    include Card::Action::Diff
+    extend Card::Action::Admin
 
+    belongs_to :act, foreign_key: :card_act_id, inverse_of: :actions
+    has_many :card_changes, foreign_key: :card_action_id,
+                            inverse_of: :action,
+                            dependent: :delete_all,
+                            class_name: "Card::Change"
     belongs_to :super_action, class_name: "Action", inverse_of: :sub_actions
     has_many :sub_actions, class_name: "Action", inverse_of: :super_action
 
@@ -23,12 +27,7 @@ class Card
                          joins(:act).where "card_acts.actor_id = ?", actor_id
                        }
 
-    # replace with enum if we start using rails 4
-    TYPE = [:create, :update, :delete].freeze
-
-    def expire
-      self.class.cache.delete id.to_s
-    end
+    enum action_type: [:create, :update, :delete]
 
     after_save :expire
 
@@ -42,48 +41,15 @@ class Card
           find id.to_i
         end
       end
-
-      def delete_cardless
-        left_join = "LEFT JOIN cards ON card_actions.card_id = cards.id"
-        joins(left_join).where("cards.id IS NULL").delete_all
-      end
-
-      def delete_changeless
-        joins(
-          "LEFT JOIN card_changes "\
-          "ON card_changes.card_action_id = card_actions.id"
-        ).where(
-          "card_changes.id IS NULL"
-        ).delete_all
-      end
-
-      def delete_old
-        Card.find_each(&:delete_old_actions)
-        Card::Act.delete_actionless
-      end
     end
 
-    #
-    # This is the main API from Cards to history
-    # See also create_act_and_action, which needs to happen before this or we
-    # don't have the action to call this method on.
-    #
-    # When changes are stored for versioned attributes, this is the signal
-    # method. By overriding this method in a module, the module takes over
-    # handling of changes.  Although the standard version stores the Changes in
-    # ActiveRecord models (Act, Action and Change records), these could be
-    # /dev/nulled for a history-less implementation, or handled by an external
-    # service.
-    #
-    # If change streams are generated from database triggers, and we aren't
-    # writing here (disabled history), we still have to generate change stream
-    # events in another way.
+    def card
+      Card.fetch card_id, look_in_trash: true, skip_modules: true
+    end
 
-    # def changed_fields obj, changed_fields
-    #   changed_fields.each do |f|
-    #     Card::Change.create field: f, value: obj[f], card_action_id: id
-    #   end
-    # end
+    def expire
+      self.class.cache.delete id.to_s
+    end
 
     def value field
       return unless (change = change field)
@@ -119,58 +85,8 @@ class Card
       value :name
     end
 
-    def action_type= value
-      write_attribute :action_type, TYPE.index(value)
-    end
-
-    def action_type
-      TYPE[read_attribute(:action_type)]
-    end
-
     def revision_nr
       card.actions.index_of self
-    end
-
-    def red?
-      content_diff_object.red?
-    end
-
-    def green?
-      content_diff_object.green?
-    end
-
-    def name_diff opts={}
-      return unless new_name?
-      Card::Content::Diff.complete previous_value(:name), value(:name), opts
-    end
-
-    def cardtype_diff opts={}
-      return unless new_type?
-      Card::Content::Diff.complete previous_value(:cardtype),
-                                   value(:cardtype),
-                                   opts
-    end
-
-    def content_diff diff_type=:expanded, opts=nil
-      return unless new_content?
-      if diff_type == :summary
-        content_diff_object(opts).summary
-      else
-        content_diff_object(opts).complete
-      end
-    end
-
-    def card
-      Card.fetch card_id, look_in_trash: true, skip_modules: true
-    end
-
-    private
-
-    def content_diff_object opts=nil
-      @diff ||= begin
-        diff_args = opts || card.include_set_modules.diff_args
-        Card::Content::Diff.new previous_value(:content), value(:content), diff_args
-      end
     end
 
     def previous_change field

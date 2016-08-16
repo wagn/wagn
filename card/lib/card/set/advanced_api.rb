@@ -24,7 +24,7 @@ class Card
         add_attributes name, "remote_#{name}_url".to_sym, :load_from_mod,
                        :action_id_of_cached_upload, :empty_ok,
                        :bucket
-        uploader_class = args[:uploader] || CarrierWave::FileUploader
+        uploader_class = args[:uploader] || CarrierWave::FileCardUploader
         mount_uploader name, uploader_class
       end
 

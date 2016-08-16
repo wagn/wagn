@@ -670,7 +670,7 @@
       <pre class="code"><span class="info file"># File 'tmpsets/set/mod017-account/right/account.rb', line 167</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_changes_visible?'>changes_visible?</span> <span class='id identifier rubyid_act'>act</span>
-  <span class='id identifier rubyid_act'>act</span><span class='period'>.</span><span class='id identifier rubyid_relevant_actions_for'>relevant_actions_for</span><span class='lparen'>(</span><span class='id identifier rubyid_act'>act</span><span class='period'>.</span><span class='id identifier rubyid_card'>card</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_action'>action</span><span class='op'>|</span>
+  <span class='id identifier rubyid_act'>act</span><span class='period'>.</span><span class='id identifier rubyid_actions_affecting'>actions_affecting</span><span class='lparen'>(</span><span class='id identifier rubyid_act'>act</span><span class='period'>.</span><span class='id identifier rubyid_card'>card</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_action'>action</span><span class='op'>|</span>
     <span class='kw'>return</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_ok?'>ok?</span> <span class='symbol'>:read</span>
   <span class='kw'>end</span>
   <span class='kw'>false</span>
@@ -995,7 +995,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Aug 15 15:39:47 2016 by
+  Generated on Mon Aug 15 22:13:59 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.5 (ruby-2.3.0).
 </div>

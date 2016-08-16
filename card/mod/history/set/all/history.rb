@@ -189,7 +189,7 @@ format :html do
       if act_context(args) == :absolute
         act.actions
       else
-        act.relevant_actions_for(card)
+        act.actions_affecting(card)
       end
     actions.select { |a| a.card && a.card.ok?(:read) }
     # FIXME: should not need to test for presence of card here.
@@ -247,7 +247,7 @@ format :html do
               %em.label.label-info Current
             - if action_view == :expanded
               - unless act.id == card.last_act.id
-                = rollback_link act.relevant_actions_for(card)
+                = rollback_link act.actions_affecting(card)
               = show_or_hide_changes_link args
       HAML
     end

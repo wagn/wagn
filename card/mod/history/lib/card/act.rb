@@ -13,18 +13,11 @@ class Card
   # - the _ip_address_ of the actor where applicable.
   #
   class Act < ActiveRecord::Base
-    before_save :set_actor
-    has_many :actions,
-             -> { order :id },
-             foreign_key: :card_act_id,
-             inverse_of: :act,
-             class_name: "Card::Action"
-
+    before_save :assign_actor
+    has_many :actions, -> { order :id }, foreign_key: :card_act_id,
+                                         inverse_of: :act,
+                                         class_name: "Card::Action"
     belongs_to :actor, class_name: "Card"
-
-    def card
-      Card.fetch card_id, look_in_trash: true, skip_modules: true
-    end
 
     class << self
       # remove all acts that have no card. (janitorial)
@@ -42,6 +35,11 @@ class Card
         ).delete_all
       end
 
+      # all actions on a set of card ids
+      # @param card_ids [Array of Integers]
+      # @param args [Hash]
+      #   with_drafts: [true, false]
+      # @return [Array of Actions]
       def find_all_with_actions_on card_ids, args={}
         sql = "card_actions.card_id IN (:card_ids) AND ( (draft is not true) "
         sql << (args[:with_drafts] ? "OR actor_id = :current_user_id)" : ")")
@@ -49,6 +47,8 @@ class Card
         joins(:actions).where(sql, vars).uniq.order(:id).reverse_order
       end
 
+      # all actions that current user has permission to view
+      # @return [Array of Actions]
       def all_viewable
         joins = "JOIN card_actions ON card_acts.id = card_act_id " \
                 "JOIN cards ON cards.id = card_actions.card_id"
@@ -63,30 +63,35 @@ class Card
       end
     end
 
-    def set_actor
-      self.actor_id ||= Auth.current_id
+    # the act's primary card
+    # @return [Card]
+    def card
+      Card.fetch card_id, look_in_trash: true, skip_modules: true
     end
 
+    # act's action on the card in question
+    # @param card_id [Integer]
+    # @return [Card::Action]
     def action_on card_id
       actions.where("card_id = #{card_id} and draft is not true").first
     end
 
+    # act's action on primary card if it exists. otherwise act's first action
+    # @return [Card::Action]
     def main_action
       action_on(card_id) || actions.first
     end
 
+    # time (in words) since act took place
+    # @return [String]
     def elapsed_time
       DateTime.new(acted_at).distance_of_time_in_words_to_now
     end
 
-    def relevant_drafts_for card
-      drafts.select do |action|
-        card.included_card_ids.include?(action.card_id) ||
-          (card.id == action.card_id)
-      end
-    end
-
-    def relevant_actions_for card
+    # act's actions on either the card itself or another card that includes it
+    # @param card [Card]
+    # @return [Array of Actions]
+    def actions_affecting card
       actions.select do |action|
         (card.id == action.card_id) ||
           card.included_card_ids.include?(action.card_id)
@@ -95,6 +100,12 @@ class Card
 
     private
 
+    # used by before filter
+    def assign_actor
+      self.actor_id ||= Auth.current_id
+    end
+
+    # used by rails time_ago
     def timestamp_attributes_for_create
       super << :acted_at
     end

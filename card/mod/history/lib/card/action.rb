@@ -10,6 +10,7 @@ class Card
   # - the _action_type_ (create, update, or delete)
   # - a boolean indicated whether the action is a _draft_
   # - a _comment_ (where applicable)
+  #
   class Action < ActiveRecord::Base
     belongs_to :act, foreign_key: :card_act_id, inverse_of: :actions
     has_many :card_changes, foreign_key: :card_action_id, inverse_of: :action,

@@ -113,7 +113,15 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>::Content</p>
+<p>API to create/update/delete additional cards together with the main card.
+The most common case is for fields but subcards don&#39;t have to be
+descendants.</p>
+
+<p>Subcards can be added as card objects or attribute hashes.</p>
+
+<p>Use the methods defined in core/set/all/subcards.rb Example Together with
+“my address” you want to create the subcards “my address+name”, “my
+address+street”, etc.</p>
 
 
   </div>
@@ -634,12 +642,12 @@
       <pre class="lines">
 
 
-60
 61
-62</pre>
+62
+63</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/card.rb', line 60</span>
+      <pre class="code"><span class="info file"># File 'lib/card.rb', line 61</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_follower_stash'>follower_stash</span>
   <span class='ivar'>@follower_stash</span>
@@ -836,13 +844,13 @@
       <pre class="lines">
 
 
-15
 16
 17
-18</pre>
+18
+19</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/card.rb', line 15</span>
+      <pre class="code"><span class="info file"># File 'lib/card.rb', line 16</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_serializable_attr_accessor'>serializable_attr_accessor</span> <span class='op'>*</span><span class='id identifier rubyid_args'>args</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_serializable_attributes'>serializable_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span>
@@ -1374,7 +1382,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Aug 15 15:39:50 2016 by
+  Generated on Mon Aug 15 22:14:02 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.5 (ruby-2.3.0).
 </div>

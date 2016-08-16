@@ -106,7 +106,7 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>An “act” is a group of recorded <span class='object_link'><a href="Action.html" title="Card::Action (class)">actions</a></span> on cards.</p>
+<p>An “act” is a group of recorded <span class='object_link'><a href="Action.html" title="Card::Action (class)">actions</a></span> on <span class='object_link'><a href="../Card.html" title="Card (class)">cards</a></span>.</p>
 
 <p>For example, if a given web form submissions updates the contents of three
 three cards, then the submission will result in the recording of three
@@ -114,13 +114,13 @@ actions, each of which is tied to one act.</p>
 
 <p>Each act records:</p>
 <ul><li>
-<p>the “actor_id” (an id associated with the account responsible)</p>
+<p>the <em>actor_id</em> (an id associated with the account responsible)</p>
 </li><li>
-<p>the “card_id” of the act&#39;s primary card</p>
+<p>the <em>card_id</em> of the act&#39;s primary card</p>
 </li><li>
-<p>“acted_at”, a timestamp of the action</p>
+<p><em>acted_at</em>, a timestamp of the action</p>
 </li><li>
-<p>the “ip_address” of the actor where applicable.</p>
+<p>the <em>ip_address</em> of the actor where applicable.</p>
 </li></ul>
 
 
@@ -147,7 +147,7 @@ actions, each of which is tied to one act.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#all_viewable-class_method" title="all_viewable (class method)">.<strong>all_viewable</strong>  &#x21d2; Object </a>
+      <a href="#all_viewable-class_method" title="all_viewable (class method)">.<strong>all_viewable</strong>  &#x21d2; Array of Actions </a>
     
 
     
@@ -161,7 +161,9 @@ actions, each of which is tied to one act.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>all actions that current user has permission to view.</p>
+</div></span>
   
 </li>
 
@@ -217,7 +219,7 @@ actions, each of which is tied to one act.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#find_all_with_actions_on-class_method" title="find_all_with_actions_on (class method)">.<strong>find_all_with_actions_on</strong>(card_ids, args = {})  &#x21d2; Object </a>
+      <a href="#find_all_with_actions_on-class_method" title="find_all_with_actions_on (class method)">.<strong>find_all_with_actions_on</strong>(card_ids, args = {})  &#x21d2; Array of Actions </a>
     
 
     
@@ -231,7 +233,9 @@ actions, each of which is tied to one act.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>all actions on a set of card ids.</p>
+</div></span>
   
 </li>
 
@@ -248,7 +252,7 @@ actions, each of which is tied to one act.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#action_on-instance_method" title="#action_on (instance method)">#<strong>action_on</strong>(card_id)  &#x21d2; Object </a>
+      <a href="#action_on-instance_method" title="#action_on (instance method)">#<strong>action_on</strong>(card_id)  &#x21d2; Card::Action </a>
     
 
     
@@ -262,7 +266,9 @@ actions, each of which is tied to one act.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>find an action on the card in question in the current act.</p>
+</div></span>
   
 </li>
 
@@ -270,7 +276,7 @@ actions, each of which is tied to one act.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#card-instance_method" title="#card (instance method)">#<strong>card</strong>  &#x21d2; Object </a>
+      <a href="#actions_affecting-instance_method" title="#actions_affecting (instance method)">#<strong>actions_affecting</strong>(card)  &#x21d2; Array of Actions </a>
     
 
     
@@ -284,7 +290,9 @@ actions, each of which is tied to one act.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>actions on either the card itself or another card that includes it.</p>
+</div></span>
   
 </li>
 
@@ -292,7 +300,7 @@ actions, each of which is tied to one act.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#elapsed_time-instance_method" title="#elapsed_time (instance method)">#<strong>elapsed_time</strong>  &#x21d2; Object </a>
+      <a href="#card-instance_method" title="#card (instance method)">#<strong>card</strong>  &#x21d2; Card </a>
     
 
     
@@ -306,7 +314,9 @@ actions, each of which is tied to one act.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>the act&#39;s primary card.</p>
+</div></span>
   
 </li>
 
@@ -314,7 +324,7 @@ actions, each of which is tied to one act.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#main_action-instance_method" title="#main_action (instance method)">#<strong>main_action</strong>  &#x21d2; Object </a>
+      <a href="#elapsed_time-instance_method" title="#elapsed_time (instance method)">#<strong>elapsed_time</strong>  &#x21d2; String </a>
     
 
     
@@ -328,7 +338,9 @@ actions, each of which is tied to one act.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>time (in words) since act took place.</p>
+</div></span>
   
 </li>
 
@@ -336,7 +348,7 @@ actions, each of which is tied to one act.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#relevant_actions_for-instance_method" title="#relevant_actions_for (instance method)">#<strong>relevant_actions_for</strong>(card)  &#x21d2; Object </a>
+      <a href="#main_action-instance_method" title="#main_action (instance method)">#<strong>main_action</strong>  &#x21d2; Card::Action </a>
     
 
     
@@ -350,51 +362,9 @@ actions, each of which is tied to one act.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#relevant_drafts_for-instance_method" title="#relevant_drafts_for (instance method)">#<strong>relevant_drafts_for</strong>(card)  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#set_actor-instance_method" title="#set_actor (instance method)">#<strong>set_actor</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>action on primary card if it exists.</p>
+</div></span>
   
 </li>
 
@@ -412,13 +382,37 @@ actions, each of which is tied to one act.</p>
       <div class="method_details first">
   <h3 class="signature first" id="all_viewable-class_method">
   
-    .<strong>all_viewable</strong>  &#x21d2; <tt>Object</tt> 
+    .<strong>all_viewable</strong>  &#x21d2; <tt>Array of Actions</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>all actions that current user has permission to view</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array of Actions</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
@@ -483,16 +477,16 @@ actions, each of which is tied to one act.</p>
       <pre class="lines">
 
 
-37
-38
-39
-40
-41
-42
-43</pre>
+30
+31
+32
+33
+34
+35
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 30</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_actionless'>delete_actionless</span>
   <span class='id identifier rubyid_joins'>joins</span><span class='lparen'>(</span>
@@ -532,13 +526,13 @@ actions, each of which is tied to one act.</p>
       <pre class="lines">
 
 
-31
-32
-33
-34</pre>
+24
+25
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 31</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 24</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_cardless'>delete_cardless</span>
   <span class='id identifier rubyid_left_join'>left_join</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>LEFT JOIN cards ON card_acts.card_id = cards.id</span><span class='tstring_end'>&quot;</span></span>
@@ -552,27 +546,84 @@ actions, each of which is tied to one act.</p>
       <div class="method_details ">
   <h3 class="signature " id="find_all_with_actions_on-class_method">
   
-    .<strong>find_all_with_actions_on</strong>(card_ids, args = {})  &#x21d2; <tt>Object</tt> 
+    .<strong>find_all_with_actions_on</strong>(card_ids, args = {})  &#x21d2; <tt>Array of Actions</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>all actions on a set of card ids</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>card_ids</span>
+      
+      
+        <span class='type'>(<tt>Array of Integers</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>args</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>{}</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>with_drafts: [true, false]</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array of Actions</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
+43
+44
 45
 46
 47
-48
-49
-50</pre>
+48</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 45</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 43</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_find_all_with_actions_on'>find_all_with_actions_on</span> <span class='id identifier rubyid_card_ids'>card_ids</span><span class='comma'>,</span> <span class='id identifier rubyid_args'>args</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span>
   <span class='id identifier rubyid_sql'>sql</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>card_actions.card_id IN (:card_ids) AND ( (draft is not true) </span><span class='tstring_end'>&quot;</span></span>
@@ -594,24 +645,63 @@ actions, each of which is tied to one act.</p>
       <div class="method_details first">
   <h3 class="signature first" id="action_on-instance_method">
   
-    #<strong>action_on</strong>(card_id)  &#x21d2; <tt>Object</tt> 
+    #<strong>action_on</strong>(card_id)  &#x21d2; <tt><span class='object_link'><a href="Action.html" title="Card::Action (class)">Card::Action</a></span></tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>find an action on the card in question in the current act</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>card_id</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Action.html" title="Card::Action (class)">Card::Action</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-70
-71
-72</pre>
+75
+76
+77</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 70</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 75</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_action_on'>action_on</span> <span class='id identifier rubyid_card_id'>card_id</span>
   <span class='id identifier rubyid_actions'>actions</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>card_id = </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_card_id'>card_id</span><span class='embexpr_end'>}</span><span class='tstring_content'> and draft is not true</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
@@ -622,26 +712,125 @@ actions, each of which is tied to one act.</p>
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="card-instance_method">
+  <h3 class="signature " id="actions_affecting-instance_method">
   
-    #<strong>card</strong>  &#x21d2; <tt>Object</tt> 
-  
-
+    #<strong>actions_affecting</strong>(card)  &#x21d2; <tt>Array of Actions</tt> 
   
 
   
-</h3><table class="source_code">
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>actions on either the card itself or another card that includes it</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>card</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Card.html" title="Card (class)">Card</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array of Actions</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-25
-26
-27</pre>
+94
+95
+96
+97
+98
+99</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 94</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_actions_affecting'>actions_affecting</span> <span class='id identifier rubyid_card'>card</span>
+  <span class='id identifier rubyid_actions'>actions</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_action'>action</span><span class='op'>|</span>
+    <span class='lparen'>(</span><span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='op'>==</span> <span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_card_id'>card_id</span><span class='rparen'>)</span> <span class='op'>||</span>
+      <span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_included_card_ids'>included_card_ids</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_card_id'>card_id</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="card-instance_method">
+  
+    #<strong>card</strong>  &#x21d2; <tt><span class='object_link'><a href="../Card.html" title="Card (class)">Card</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>the act&#39;s primary card</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Card.html" title="Card (class)">Card</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+68
+69
+70</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 68</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_card'>card</span>
   <span class='const'>Card</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span> <span class='id identifier rubyid_card_id'>card_id</span><span class='comma'>,</span> <span class='label'>look_in_trash:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>skip_modules:</span> <span class='kw'>true</span>
@@ -654,24 +843,48 @@ actions, each of which is tied to one act.</p>
       <div class="method_details ">
   <h3 class="signature " id="elapsed_time-instance_method">
   
-    #<strong>elapsed_time</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>elapsed_time</strong>  &#x21d2; <tt>String</tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>time (in words) since act took place</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-78
-79
-80</pre>
+87
+88
+89</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 78</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 87</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_elapsed_time'>elapsed_time</span>
   <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_acted_at'>acted_at</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_distance_of_time_in_words_to_now'>distance_of_time_in_words_to_now</span>
@@ -684,129 +897,51 @@ actions, each of which is tied to one act.</p>
       <div class="method_details ">
   <h3 class="signature " id="main_action-instance_method">
   
-    #<strong>main_action</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>main_action</strong>  &#x21d2; <tt><span class='object_link'><a href="Action.html" title="Card::Action (class)">Card::Action</a></span></tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>action on primary card if it exists. otherwise the first action recorded</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Action.html" title="Card::Action (class)">Card::Action</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-74
-75
-76</pre>
+81
+82
+83</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 74</span>
+      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 81</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_main_action'>main_action</span>
   <span class='id identifier rubyid_action_on'>action_on</span><span class='lparen'>(</span><span class='id identifier rubyid_card_id'>card_id</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_actions'>actions</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="relevant_actions_for-instance_method">
-  
-    #<strong>relevant_actions_for</strong>(card)  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-89
-90
-91
-92
-93
-94</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 89</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_relevant_actions_for'>relevant_actions_for</span> <span class='id identifier rubyid_card'>card</span>
-  <span class='id identifier rubyid_actions'>actions</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_action'>action</span><span class='op'>|</span>
-    <span class='lparen'>(</span><span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='op'>==</span> <span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_card_id'>card_id</span><span class='rparen'>)</span> <span class='op'>||</span>
-      <span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_included_card_ids'>included_card_ids</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_card_id'>card_id</span><span class='rparen'>)</span>
-  <span class='kw'>end</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="relevant_drafts_for-instance_method">
-  
-    #<strong>relevant_drafts_for</strong>(card)  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-82
-83
-84
-85
-86
-87</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 82</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_relevant_drafts_for'>relevant_drafts_for</span> <span class='id identifier rubyid_card'>card</span>
-  <span class='id identifier rubyid_drafts'>drafts</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_action'>action</span><span class='op'>|</span>
-    <span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_included_card_ids'>included_card_ids</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_card_id'>card_id</span><span class='rparen'>)</span> <span class='op'>||</span>
-      <span class='lparen'>(</span><span class='id identifier rubyid_card'>card</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='op'>==</span> <span class='id identifier rubyid_action'>action</span><span class='period'>.</span><span class='id identifier rubyid_card_id'>card_id</span><span class='rparen'>)</span>
-  <span class='kw'>end</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="set_actor-instance_method">
-  
-    #<strong>set_actor</strong>  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-66
-67
-68</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'mod/history/lib/card/act.rb', line 66</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_set_actor'>set_actor</span>
-  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_actor_id'>actor_id</span> <span class='op'>||=</span> <span class='const'>Auth</span><span class='period'>.</span><span class='id identifier rubyid_current_id'>current_id</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -818,7 +953,7 @@ actions, each of which is tied to one act.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Aug 15 15:39:52 2016 by
+  Generated on Mon Aug 15 22:14:05 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.5 (ruby-2.3.0).
 </div>

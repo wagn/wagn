@@ -499,12 +499,12 @@
       <pre class="lines">
 
 
+330
 331
-332
-333</pre>
+332</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 331</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 330</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_eager_renew?'>eager_renew?</span> <span class='id identifier rubyid_opts'>opts</span>
   <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:skip_virtual</span><span class='rbracket'>]</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_new_card?'>new_card?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:new</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
@@ -529,13 +529,13 @@
       <pre class="lines">
 
 
+315
 316
 317
-318
-319</pre>
+318</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 316</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 315</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_expire'>expire</span>
   <span class='id identifier rubyid_expire_hard'>expire_hard</span>
@@ -561,14 +561,14 @@
       <pre class="lines">
 
 
+304
 305
 306
 307
-308
-309</pre>
+308</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 305</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 304</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_expire_hard'>expire_hard</span>
   <span class='kw'>return</span> <span class='kw'>unless</span> <span class='const'>Card</span><span class='period'>.</span><span class='id identifier rubyid_cache'>cache</span><span class='period'>.</span><span class='id identifier rubyid_hard'>hard</span>
@@ -595,14 +595,14 @@
       <pre class="lines">
 
 
+298
 299
 300
 301
-302
-303</pre>
+302</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 299</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 298</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_expire_pieces'>expire_pieces</span>
   <span class='id identifier rubyid_cardname'>cardname</span><span class='period'>.</span><span class='id identifier rubyid_piece_names'>piece_names</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_piece'>piece</span><span class='op'>|</span>
@@ -629,13 +629,13 @@
       <pre class="lines">
 
 
+310
 311
 312
-313
-314</pre>
+313</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 311</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 310</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_expire_soft'>expire_soft</span>
   <span class='const'>Card</span><span class='period'>.</span><span class='id identifier rubyid_cache'>cache</span><span class='period'>.</span><span class='id identifier rubyid_soft'>soft</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span> <span class='id identifier rubyid_key'>key</span>
@@ -672,6 +672,7 @@
       <pre class="lines">
 
 
+271
 272
 273
 274
@@ -679,11 +680,10 @@
 276
 277
 278
-279
-280</pre>
+279</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 272</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 271</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_fetch'>fetch</span> <span class='id identifier rubyid_opts'>opts</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span>
   <span class='id identifier rubyid_traits'>traits</span> <span class='op'>=</span> <span class='id identifier rubyid_opts'>opts</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:trait</span><span class='rparen'>)</span>
@@ -714,17 +714,17 @@
       <pre class="lines">
 
 
+289
 290
 291
 292
 293
 294
 295
-296
-297</pre>
+296</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 290</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 289</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_handle_default_content'>handle_default_content</span> <span class='id identifier rubyid_opts'>opts</span>
   <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_default_content'>default_content</span> <span class='op'>=</span> <span class='id identifier rubyid_opts'>opts</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:default_content</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_db_content'>db_content</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
@@ -754,14 +754,14 @@
       <pre class="lines">
 
 
+338
 339
 340
 341
-342
-343</pre>
+342</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 339</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 338</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_name_from_mark!'>name_from_mark!</span> <span class='id identifier rubyid_mark'>mark</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span>
   <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:local_only</span><span class='rbracket'>]</span>
@@ -788,6 +788,7 @@
       <pre class="lines">
 
 
+320
 321
 322
 323
@@ -795,11 +796,10 @@
 325
 326
 327
-328
-329</pre>
+328</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 321</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 320</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_refresh'>refresh</span> <span class='id identifier rubyid_force'>force</span><span class='op'>=</span><span class='kw'>false</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_force'>force</span> <span class='op'>||</span> <span class='id identifier rubyid_frozen?'>frozen?</span> <span class='op'>||</span> <span class='id identifier rubyid_readonly?'>readonly?</span>
@@ -830,16 +830,16 @@
       <pre class="lines">
 
 
+281
 282
 283
 284
 285
 286
-287
-288</pre>
+287</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 282</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 281</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_renew'>renew</span> <span class='id identifier rubyid_args'>args</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span>
   <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='lbracket'>[</span><span class='symbol'>:new</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_clone'>clone</span>
@@ -890,12 +890,12 @@
       <pre class="lines">
 
 
+334
 335
-336
-337</pre>
+336</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 335</span>
+      <pre class="code"><span class="info file"># File 'tmpsets/set/mod001-core/all/fetch.rb', line 334</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_type_known?'>type_known?</span>
   <span class='id identifier rubyid_type_id'>type_id</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
@@ -910,7 +910,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Aug 15 15:39:43 2016 by
+  Generated on Mon Aug 15 22:13:56 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.5 (ruby-2.3.0).
 </div>

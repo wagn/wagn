@@ -187,17 +187,18 @@ def tmp_upload_dir _action_id=nil
 end
 
 def files_base_dir
-  bucket ? bucket_config[:subdirectory] : Card.paths['files'].existent.first
+  bucket ? bucket_config[:subdirectory] : Card.paths["files"].existent.first
 end
 
+attr_writer :bucket
+
+def bucket
+  @bucket ||= (!new_card? && bucket_from_content) || bucket_from_config
+end
 
 def bucket_config
   return {} unless bucket
   @bucket_config ||= Cardio.config.file_buckets[bucket] || {}
-end
-
-def bucket
-  @bucket ||= (!new_card? && bucket_from_content) || bucket_from_config
 end
 
 def bucket_from_content
@@ -206,7 +207,7 @@ def bucket_from_content
 end
 
 def bucket_from_config
-  maybe_bucket = Cardio.config.file_storage.to_sym
+  maybe_bucket = Cardio.config.file_storage && Cardio.config.file_storage.to_sym
   Cardio.config.file_buckets &&
     Cardio.config.file_buckets.symbolize_keys[maybe_bucket] &&
     maybe_bucket

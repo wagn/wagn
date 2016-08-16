@@ -98,17 +98,17 @@ describe Card::Set::Type::File do
   end
 
   context "using bucket" do
-    let(:directory) { 'philipp-test' }
+    let(:directory) { "philipp-test" }
     before do
       Wagn.config.file_storage = :test_bucket
       Wagn.config.file_buckets = {
         test_bucket: {
-          provider: 'fog/aws',
+          provider: "fog/aws",
           credentials: bucket_credentials(:aws),
-          subdirectory: 'files',
+          subdirectory: "files",
           directory:  directory,
           public:   true,
-          attributes: { 'Cache-Control' => "max-age=#{365.day.to_i}" },
+          attributes: { "Cache-Control" => "max-age=#{365.day.to_i}" },
           authenticated_url_expiration: 180
         }
       }

@@ -96,4 +96,46 @@ describe Card::Set::Type::File do
     expect(Card["url test"].file.size).to be > 0
     expect(Card["url test"].file.url).to match(/\.png$/)
   end
+
+  context "using bucket" do
+    let(:directory) { 'philipp-test' }
+    before do
+      Wagn.config.file_storage = :test_bucket
+      Wagn.config.file_buckets = {
+        test_bucket: {
+          provider: 'fog/aws',
+          credentials: bucket_credentials(:aws),
+          subdirectory: 'files',
+          directory:  directory,
+          public:   true,
+          attributes: { 'Cache-Control' => "max-age=#{365.day.to_i}" },
+          authenticated_url_expiration: 180
+        }
+      }
+      Card::Auth.as_bot do
+        Card.create! name: "file card", type_code: "file",
+                     file: File.new(File.join(FIXTURES_PATH, "file1.txt"))
+      end
+    end
+
+    after do
+      Wagn.config.file_storage = :protected
+    end
+    subject { Card["file card"] }
+
+    it "stores correct identifier ((<bucket>)/<card id>/<action id>.<ext>)" do
+      expect(subject.content)
+        .to eq "(test_bucket)/#{subject.id}/#{subject.last_action_id}.txt"
+    end
+
+    it "stores file" do
+      expect(subject.file.read.strip).to eq "file1"
+    end
+
+    it "generates correct absolute url" do
+      expect(subject.file.url)
+        .to eq "http://#{directory}.s3.amazonaws.com/"\
+               "files/#{subject.id}/#{subject.last_action_id}.txt"
+    end
+  end
 end

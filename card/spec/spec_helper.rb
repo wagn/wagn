@@ -77,6 +77,17 @@ Card["*all+*style"].ensure_machine_output
 Card["*all+*script"].ensure_machine_output
 (ie9 = Card[:script_html5shiv_printshiv]) && ie9.ensure_machine_output
 
+
+def bucket_credentials key
+  @buckets ||= begin
+    bucket_yml =
+      ENV["BUCKET_CREDENTIALS_PATH"] ||
+      File.expand_path("../config/bucket_credentials.yml", __FILE__)
+    File.exist?(bucket_yml) ? YAML.load_file(bucket_yml).deep_symbolize_keys : {}
+  end
+  @buckets[key]
+end
+
 Spork.each_run do
   # This code will be run each time you run your specs.
 end

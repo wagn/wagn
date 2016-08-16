@@ -14,6 +14,7 @@ describe Card::Set::All::History do
         first = Card.fetch("First")
         first.format.render_action_summary
       end
+
       it "should have a summary" do
         assert_view_select subject, 'del[class="diffdel diff-red"]',
                            text: "chicken"

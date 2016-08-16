@@ -12,7 +12,7 @@ class Card
   # - a _comment_ (where applicable)
   #
   class Action < ActiveRecord::Base
-    include Card::Action::Diff
+    include Card::Action::Differ
     extend Card::Action::Admin
 
     belongs_to :act, foreign_key: :card_act_id, inverse_of: :actions
@@ -27,68 +27,76 @@ class Card
                          joins(:act).where "card_acts.actor_id = ?", actor_id
                        }
 
-    enum action_type: [:create, :update, :delete]
+    # these are the three possible values for action_type
+    TYPE_OPTIONS = [:create, :update, :delete].freeze
 
     after_save :expire
 
     class << self
-      def cache
-        Card::Cache[Action]
-      end
-
+      # retrieve action from cache if available
+      # @param id [id of Action]
+      # @return [Action, nil]
       def fetch id
         cache.fetch id.to_s do
           find id.to_i
         end
       end
+
+      # cache object for actions
+      # @return [Card::Cache]
+      def cache
+        Card::Cache[Action]
+      end
     end
 
+    # each action is associated with on and only one card
+    # @return [Card]
     def card
       Card.fetch card_id, look_in_trash: true, skip_modules: true
     end
 
+    # remove action from action cache
     def expire
       self.class.cache.delete id.to_s
     end
 
+    # assign action_type (create, update, or delete)
+    def action_type= value
+      write_attribute :action_type, TYPE_OPTIONS.index(value)
+    end
+
+    # retrieve action_type (create, update, or delete)
+    def action_type
+      TYPE_OPTIONS[read_attribute(:action_type)]
+    end
+
+    # value set by action's {Change} to given field
+    # @see #interpret_field #interpret_field for field param
+    # @see #interpret_value #interpret_value for return values
     def value field
       return unless (change = change field)
       interpret_value field, change.value
     end
 
-    def change field
-      changes[interpret_field field]
-    end
-
-    def changes
-      @changes ||=
-        card_changes.each_with_object({}) do |change, hash|
-          hash[change.field.to_sym] = change
-        end
-    end
-
+    # value of field set by most recent {Change} before this one
+    # @see #interpret_field #interpret_field for field param
+    # @see #interpret_field  #interpret_field for field param
     def previous_value field
       return if action_type == :create
       return unless (previous_change = previous_change field)
       interpret_value field, previous_change.value
     end
 
-    def new_type?
-      value :type_id
+    # action's {Change} object for given field
+    # @see #interpret_field #interpret_field for field param
+    # @return [Change]
+    def change field
+      changes[interpret_field field]
     end
 
-    def new_content?
-      value :db_content
-    end
-
-    def new_name?
-      value :name
-    end
-
-    def revision_nr
-      card.actions.index_of self
-    end
-
+    # most recent change to given field before this one
+    # @see #interpret_field #interpret_field for field param
+    # @return [Change]
     def previous_change field
       field = interpret_field field
       if @previous_changes && @previous_changes.key?(field)
@@ -99,6 +107,37 @@ class Card
       end
     end
 
+    # all action {Change changes} in hash form. { field1: Change1 }
+    # @return [Hash]
+    def changes
+      @changes ||=
+        card_changes.each_with_object({}) do |change, hash|
+          hash[change.field.to_sym] = change
+        end
+    end
+
+    # does action change card's type?
+    # @return [true/false]
+    def new_type?
+      !value(:type_id).nil?
+    end
+
+    # does action change card's content?
+    # @return [true/false]
+    def new_content?
+      !value(:db_content).nil?
+    end
+
+    # does action change card's name?
+    # @return [true/false]
+    def new_name?
+      !value(:name).nil?
+    end
+
+    # field as referred to in database (Card::TRACKED_FIELDS)
+    # @param field [Symbol] can be :type_id, :cardtype, :db_content, :content,
+    #     :name, :trash
+    # @return [Symbol]
     def interpret_field field
       case field
       when :content then :db_content
@@ -107,6 +146,11 @@ class Card
       end
     end
 
+    # value in form prescribed for specific field name
+    # @param value [value of {Change}]
+    # @return [Integer] for :type_id
+    # @return [String] for :name, :db_content, :content, :cardtype
+    # @return [True/False] for :trash
     def interpret_value field, value
       case field.to_sym
       when :type_id

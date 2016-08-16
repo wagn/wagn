@@ -9,7 +9,7 @@ module SelectedAction
 
   def last_content_action_id
     # find action id from content (saves lookups)
-    db_content.to_s.split(%r{[/\.]})[1]
+    db_content.to_s.split(%r{[/\.]})[-2]
   end
 end
 include SelectedAction

@@ -53,11 +53,11 @@ def update_subcard_names cardname
     # and self is a subcard as well that changed from +B to A+B then
     # +C should change to A+B+C. #replace_part doesn't work in this case
     # because the old name +B is not a part of +C
-    # name_to_replace =
     name_to_replace =
       if subcard.cardname.junction? &&
          subcard.cardname.parts.first.empty? &&
          cardname.parts.first.present?
+        # replace the empty part
         "".to_name
       else
         name

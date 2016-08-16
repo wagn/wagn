@@ -175,7 +175,7 @@ end
 # place for files of regular file cards
 def upload_dir
   if id
-    "#{Card.paths['files'].existent.first}/#{id}"
+    "#{files_base_dir}/#{id}"
   else
     tmp_upload_dir
   end
@@ -183,7 +183,33 @@ end
 
 # place for files if card doesn't have an id yet
 def tmp_upload_dir _action_id=nil
-  "#{Card.paths['files'].existent.first}/#{upload_cache_card.id}"
+  "#{files_base_dir}/#{upload_cache_card.id}"
+end
+
+def files_base_dir
+  bucket ? bucket_config[:subdirectory] : Card.paths['files'].existent.first
+end
+
+
+def bucket_config
+  return {} unless bucket
+  @bucket_config ||= Cardio.config.file_buckets[bucket] || {}
+end
+
+def bucket
+  @bucket ||= (!new_card? && bucket_from_content) || bucket_from_config
+end
+
+def bucket_from_content
+  return unless content
+  content.match(/^\(([^)]+)\)/) && Regexp.last_match(1).to_sym
+end
+
+def bucket_from_config
+  maybe_bucket = Cardio.config.file_storage.to_sym
+  Cardio.config.file_buckets &&
+    Cardio.config.file_buckets.symbolize_keys[maybe_bucket] &&
+    maybe_bucket
 end
 
 # place for files of mod file cards

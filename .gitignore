@@ -14,3 +14,4 @@ decko*gem
 *.DS_Store
 *.swp
 test_work/*
+card/spec/config/bucket_credentials.yml

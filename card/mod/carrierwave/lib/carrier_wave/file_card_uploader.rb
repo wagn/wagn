@@ -41,9 +41,9 @@ end
 # :yeti_skin/standard-large.png
 #
 # bucket files generate absolut urls
-class FileUploader < CarrierWave::Uploader::Base
+class FileCardUploader < CarrierWave::Uploader::Base
   attr_accessor :mod
-  include Card::Location
+  include Card::Env::Location
 
   #storage :fog #:file
 

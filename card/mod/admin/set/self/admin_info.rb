@@ -9,7 +9,7 @@ format :html do
       warnings << email_warning
     end
     if Card.config.recaptcha_public_key ==
-       Self::Captcha::RECAPTCHA_DEFAULTS[:recaptcha_public_key] &&
+       Card::Auth::Permissions::RECAPTCHA_DEFAULTS[:recaptcha_public_key] &&
        card.rule(:captcha) == "1"
       warnings << recaptcha_warning
     end

@@ -11,7 +11,7 @@ def load_recaptcha_config setting
 end
 
 def default_setting setting
-  Card::Set::Self::Captcha::RECAPTCHA_DEFAULTS[setting]
+  Card::Auth::Permissions::RECAPTCHA_DEFAULTS[setting]
 end
 
 def card_table_ready?

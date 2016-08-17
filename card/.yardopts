@@ -1,9 +1,7 @@
---markup markdown
--
 **/lib/**/*.rb                    \
 tmpsets/set*/**/*.rb -            \
 **/*.rdoc                         \
-**/*.md
 GPL                               \
 LICENSE                           \
 VERSION
+--markup markdown

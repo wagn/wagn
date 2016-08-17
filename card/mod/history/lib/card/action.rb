@@ -61,11 +61,14 @@ class Card
     end
 
     # assign action_type (create, update, or delete)
+    # @param value [Symbol]
+    # @return [Integer]
     def action_type= value
       write_attribute :action_type, TYPE_OPTIONS.index(value)
     end
 
     # retrieve action_type (create, update, or delete)
+    # @return [Symbol]
     def action_type
       TYPE_OPTIONS[read_attribute(:action_type)]
     end

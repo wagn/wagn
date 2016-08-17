@@ -2,7 +2,7 @@
 
 describe Card::Set::Right::Password do
   before :each do
-    @account = Card::Auth["joe@user.com"]
+    @account = Card::Auth.find_account_by_email("joe@user.com")
   end
 
   describe "#update_attributes" do

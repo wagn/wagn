@@ -22,17 +22,17 @@ describe Card::Auth do
   end
 
   it "should set current directly from email" do
-    Card::Auth.set_current_from_mark "joe@user.com"
+    Card::Auth.current= "joe@user.com"
     expect(Card::Auth.current_id).to eq(@joeuserid)
   end
 
   it "should set current directly from id when mark is id" do
-    Card::Auth.set_current_from_mark @joeuserid
+    Card::Auth.current= @joeuserid
     expect(Card::Auth.current_id).to eq(@joeuserid)
   end
 
   it "should set current directly from id when mark is id" do
-    Card::Auth.set_current_from_mark @joeuserid
+    Card::Auth.current= @joeuserid
     expect(Card::Auth.current_id).to eq(@joeuserid)
   end
 

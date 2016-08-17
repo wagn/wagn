@@ -107,7 +107,7 @@ event :signin, :validate, on: :update do
   if (account = Auth.authenticate(email, pword))
     Auth.signin account.left_id
   else
-    account = Auth[email.strip.downcase]
+    account = Auth.find_account_by_email(email.strip.downcase)
     error_msg =
       case
       when account.nil?     then
@@ -135,7 +135,7 @@ event :send_reset_password_token,
   email = subfield :email
   email &&= email.content
 
-  account = Auth[email.strip.downcase]
+  account = Auth.find_account_by_email(email.strip.downcase)
   if account
     if account.active?
       account.send_reset_password_token

@@ -86,7 +86,7 @@ describe Card::Set::All::Account do
                    "+*account" => { "+*email" => "joe@new.com" }
 
       c = Card["Joe New"]
-      u = Card::Auth["joe@new.com"]
+      u = Card::Auth.find_account_by_email("joe@new.com")
 
       expect(c.account).to eq(u)
       expect(c.type_id).to eq(Card::UserID)

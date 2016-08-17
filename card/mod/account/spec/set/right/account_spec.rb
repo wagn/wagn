@@ -47,7 +47,7 @@ describe Card::Set::Right::Account do
   describe "#send_account_verification_email" do
     before do
       @email = "joe@user.com"
-      @account = Card::Auth[@email]
+      @account = Card::Auth.find_account_by_email(@email)
       Mail::TestMailer.deliveries.clear
       @account.send_account_verification_email
       @mail = Mail::TestMailer.deliveries.last
@@ -76,7 +76,7 @@ describe Card::Set::Right::Account do
   describe "#send_reset_password_token" do
     before do
       @email = "joe@user.com"
-      @account = Card::Auth[@email]
+      @account = Card::Auth.find_account_by_email(@email)
       Mail::TestMailer.deliveries = []
       @account.send_reset_password_token
       @mail = Mail::TestMailer.deliveries.last
@@ -101,7 +101,7 @@ describe Card::Set::Right::Account do
 
   describe "#update_attributes" do
     before :each do
-      @account = Card::Auth["joe@user.com"]
+      @account = Card::Auth.find_account_by_email("joe@user.com")
     end
 
     it "should reset password" do
@@ -120,7 +120,7 @@ describe Card::Set::Right::Account do
   describe "#reset_password" do
     before :each do
       @email = "joe@user.com"
-      @account = Card::Auth[@email]
+      @account = Card::Auth.find_account_by_email(@email)
       @account.send_reset_password_token
       @token = @account.token
       Card::Env.params[:token] = @token

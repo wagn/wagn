@@ -3,10 +3,15 @@
 # card config overrides application.rb config overrides default
 def load_recaptcha_config setting
   setting = "recaptcha_#{setting}".to_sym
-  Cardio.config.send("#{setting}=",
-                     load_recaptcha_card_config(setting) || # card content
-                     Cardio.config.send(setting) || # application.rb
-                     Card::Auth::DEFAULT_RECAPTCHA_SETTINGS[setting])
+  Cardio.config.send(
+    "#{setting}=", load_recaptcha_card_config(setting) || # card content
+                   Cardio.config.send(setting) || # application.rb
+                   default_setting(setting)
+  )
+end
+
+def default_setting setting
+  Card::Set::Self::Captcha::RECAPTCHA_DEFAULTS[setting]
 end
 
 def card_table_ready?

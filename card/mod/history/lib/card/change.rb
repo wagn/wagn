@@ -1,7 +1,8 @@
 # -*- encoding : utf-8 -*-
 class Card
   class Change < ActiveRecord::Base
-    belongs_to :action, foreign_key: :card_action_id, inverse_of: :card_changes
+    belongs_to :action, foreign_key: :card_action_id,
+                        inverse_of: :card_changes
 
     class << self
       def delete_actionless

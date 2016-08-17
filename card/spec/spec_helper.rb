@@ -84,7 +84,7 @@ def bucket_credentials key
     yml_file =
       ENV["BUCKET_CREDENTIALS_PATH"] ||
       File.expand_path("../config/bucket_credentials.yml", __FILE__)
-    File.exist?(bucket_yml) ? YAML.load_file(yml_file).deep_symbolize_keys : {}
+    File.exist?(yml_file) ? YAML.load_file(yml_file).deep_symbolize_keys : {}
   end
   @buckets[key]
 end

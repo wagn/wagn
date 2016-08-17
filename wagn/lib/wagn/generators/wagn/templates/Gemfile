@@ -18,8 +18,8 @@ gem '<%= database_gemfile_entry.name %>'<%= %(, '#{database_gemfile_entry.versio
 # To activate it you have to set config.active_job.queue_adapter to :delayed_job
 # in your config file and start the background process with
 # RAILS_ENV=production script/delayed_job start
-gem 'delayed_job_active_record', '~> 4.1'
-gem 'daemons'
+# gem 'delayed_job_active_record', '~> 4.1'
+# gem 'daemons'
 
 
 <% if options['mod-dev'] || options['core-dev'] -%>

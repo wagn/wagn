@@ -47,6 +47,32 @@ module CarrierWave
     attr_accessor :mod
     include Card::Env::Location
 
+    STORAGE_TYPES = [:cloud, :web, :protected, :coded, :unprotected].freeze
+
+    def self.update_all_storage_locations
+      Card.search(type_id: ["in", FileID, ImageID]).each do |card|
+        card.update_storage_location!
+      end
+    end
+
+    def self.delete_tmp_files_of_cached_uploads
+      actions = Card::Action.find_by_sql "SELECT * FROM card_actions
+      INNER JOIN cards ON card_actions.card_id = cards.id
+      WHERE cards.type_id IN (#{Card::FileID}, #{Card::ImageID})
+      AND card_actions.draft = true"
+      actions.each do |action|
+        # we don't want to delete uploads in progress
+        if older_than_five_days?(action.created_at) && (card = action.card)
+          # we don't want to delete uploads in progress
+          card.delete_files_for_action action
+          action.delete
+        end
+      end
+    end
+
+    def self.older_than_five_days? time
+      Time.now - time > 432_000
+    end
     #storage :fog #:file
 
     def filename
@@ -157,12 +183,11 @@ module CarrierWave
 
     private
 
-
     def storage
-      if bucket
-        ::CarrierWave::Storage::Fog.new(self)
-      else
-        ::CarrierWave::Storage::File.new(self)
+      case @model.storage_type
+      when :cloud then ::CarrierWave::Storage::Fog.new(self)
+      when :web then ::CarrierWave::Storage::Web.new(self)
+      else ::CarrierWave::Storage::File.new(self)
       end
     end
   end

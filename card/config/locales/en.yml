@@ -68,3 +68,10 @@ en:
             abort_bad_signin_args: bad sign in arguments
             error_not_active: not active
             error_not_recognized: not recognized
+
+    :carrierwave:
+      set:
+        abstract:
+          attachment:
+            error_invalid_storage_type: %{type} is not a valid file storage option
+

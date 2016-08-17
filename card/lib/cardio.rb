@@ -51,7 +51,11 @@ module Cardio
         encoding:               "utf-8",
         request_logger:         false,
         performance_logger:     false,
-        sql_comments:           true
+        sql_comments:           true,
+
+        file_storage:           :protected,
+        file_buckets:           {},
+        file_default_bucket:    nil
       }
     end
 

@@ -1,3 +1,5 @@
+basket :tasks
+
 event :admin_tasks, :initialize, on: :update do
   return unless (task = Env.params[:task])
   raise Card::Error::PermissionDenied.new(self) unless Auth.always_ok?
@@ -11,6 +13,10 @@ event :admin_tasks, :initialize, on: :update do
   when :repair_permissions   then Card.repair_all_permissions
   when :clear_solid_cache    then Card.clear_solid_cache
   when :clear_machine_cache  then Card.reset_all_machines
+  else
+    if (task_data = Hash[tasks][task])
+      task_data[:execute_policy].call
+    end
   end
   abort :success
 end
@@ -20,6 +26,9 @@ format :html do
     stats = card_stats
     stats += cache_stats
     stats += memory_stats
+    tasks.each do |task_data|
+      stats += task_data[:stat_policy].call
+    end
     table_content = stats.map { |args| stat_row(*args) }
     table table_content, header: %w(Stat Value Action)
   end

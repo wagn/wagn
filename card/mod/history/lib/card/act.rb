@@ -1,12 +1,15 @@
 # -*- encoding : utf-8 -*-
 class Card
   # An "act" is a group of recorded {Card::Action actions} on {Card cards}.
+  # Together, {Act acts}, {Action actions}, and {Change changes} comprise a
+  # comprehensive {Card card} history tracking system.
   #
-  # For example, if a given web form submissions updates the contents of three
+  # For example, if a given web form submissions updates the contents of
   # three cards, then the submission will result in the recording of three
-  # actions, each of which is tied to one act.
+  # {Action actions}, each of which is tied to one {Act act}.
   #
   # Each act records:
+  #
   # - the _actor_id_ (an id associated with the account responsible)
   # - the _card_id_ of the act's primary card
   # - _acted_at_, a timestamp of the action

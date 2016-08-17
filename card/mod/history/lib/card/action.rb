@@ -3,13 +3,22 @@
 class Card
   # An _action_ is a group of {Card::Change changes} to a single {Card card}
   # that is recorded during an {Card::Act act}.
+  # Together, {Act acts}, {Action actions}, and {Change changes} comprise a
+  # comprehensive {Card card} history tracking system.
   #
-  # Card::Action records:
-  # - the _card_id_ of the {Card card} acted upon
-  # - the _card_act_id_ of the {Card::Act act} of which the action is part
-  # - the _action_type_ (create, update, or delete)
-  # - a boolean indicated whether the action is a _draft_
-  # - a _comment_ (where applicable)
+  # For example, if a given web submission changes both the name and type of
+  # a given card, that would be recorded as one {Action action} with two
+  # {Change changes}. If there are multiple cards changed, each card would
+  # have its own {Action action}, but the whole submission would still comprise
+  # just one single {Act act}.
+  #
+  # An {action} records:
+  #
+  # * the _card_id_ of the {Card card} acted upon
+  # *  the _card_act_id_ of the {Card::Act act} of which the action is part
+  # * the _action_type_ (create, update, or delete)
+  # * a boolean indicated whether the action is a _draft_
+  # * a _comment_ (where applicable)
   #
   class Action < ActiveRecord::Base
     include Card::Action::Differ
@@ -137,7 +146,8 @@ class Card
       !value(:name).nil?
     end
 
-    # field as referred to in database (Card::TRACKED_FIELDS)
+    # translate field into fieldname as referred to in database
+    # @see Change::TRACKED_FIELDS
     # @param field [Symbol] can be :type_id, :cardtype, :db_content, :content,
     #     :name, :trash
     # @return [Symbol]

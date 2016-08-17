@@ -32,7 +32,7 @@ end
 # removes the action if there are no changes
 event :finalize_action, :finalize,
       when: proc { |c| c.finalize_action? } do
-  @changed_fields = Card::TRACKED_FIELDS.select do |f|
+  @changed_fields = Card::Change::TRACKED_FIELDS.select do |f|
     changed_attributes.member? f
   end
   if @changed_fields.present?

@@ -1,7 +1,8 @@
 # -*- encoding : utf-8 -*-
 
 class Card
-  # Singleton methods for authentication
+  # Singleton methods for authentication. Manages current user,
+  # "as" user, and password verification.
   module Auth
     extend Card::Auth::Permissions
     extend Card::Auth::Proxy
@@ -38,7 +39,7 @@ class Card
         end
       end
 
-      # set current id
+      # set the id of the current user.
       def current_id= card_id
         @current = @as_id = @as_card = nil
         card_id = card_id.to_i if card_id.present?

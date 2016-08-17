@@ -1,10 +1,29 @@
 # -*- encoding : utf-8 -*-
 class Card
+  # A _change_ is an alteration to a card's name, type, content, or trash state.
+  # Together, {Act acts}, {Action actions}, and {Change changes} comprise a
+  # comprehensive {Card card} history tracking system.
+  #
+  # For example, if a given web submission changes both the name and type of
+  # card, that would be recorded as one {Action action} with two
+  # {Change changes}.
+  #
+  # A {change} records:
+  #
+  # * the _field_ changed
+  # * the new _value_ of that field
+  # * the {Action action} of which the change is part
+  #
   class Change < ActiveRecord::Base
     belongs_to :action, foreign_key: :card_action_id,
                         inverse_of: :card_changes
 
+    # lists the database fields for which changes are recorded
+    TRACKED_FIELDS = %w(name type_id db_content trash).freeze
+
     class << self
+      # delete all {Change changes} not associated with an {Action action}
+      # (janitorial)
       def delete_actionless
         joins(
           "LEFT JOIN card_actions "\
@@ -18,25 +37,32 @@ class Card
         end
       end
 
+      # Change fields are recorded as integers. #field_index looks up the
+      # integer associated with a given field name.
+      # @param [String, Symbol]
+      # @return [Integer]
       def field_index value
         value.is_a?(Integer) ? value : TRACKED_FIELDS.index(value.to_s)
       end
 
+      # look up changes based on field name
+      # @param [String, Symbol]
+      # @return [Change]
       def find_by_field_name value
         find_by_field field_index(value)
       end
     end
 
+    # set field value (integer)
+    # @param [String, Symbol]
     def field= value
       write_attribute(:field, TRACKED_FIELDS.index(value.to_s))
     end
 
+    # retrieve field name
+    # @return [String]
     def field
       TRACKED_FIELDS[read_attribute(:field)]
-    end
-
-    def find_by_field_name value
-      find_by_field self.class.field_index(value)
     end
   end
 end

@@ -10,19 +10,26 @@ class Card
     @as_card = @as_id = @current_id = @current = nil
 
     class << self
+      # set current user in process and session
       def signin signin_id
         self.current_id = signin_id
         session[:user] = signin_id if session
       end
 
+      # current user is not anonymous
+      # @return [true/false]
       def signed_in?
         current_id != Card::AnonymousID
       end
 
+      # id of current user card.
+      # @return [Integer]
       def current_id
         @current_id ||= Card::AnonymousID
       end
 
+      # current user card (must have +\*account)
+      # @return [Card]
       def current
         if @current && @current.id == current_id
           @current
@@ -31,22 +38,27 @@ class Card
         end
       end
 
+      # set current id
       def current_id= card_id
         @current = @as_id = @as_card = nil
         card_id = card_id.to_i if card_id.present?
         @current_id = card_id
       end
 
+      # set current user from email or id
+      # @return [Integer]
       def current= mark
         self.current_id =
           if mark.to_s =~ /@/
-            account = Auth.find_account_by_email mark.downcase
+            account = Auth.find_account_by_email mark
             account && account.active? ? account.left_id : Card::AnonymousID
           else
             mark
           end
       end
 
+      # get session object from Env
+      # return [Session]
       def session
         Card::Env[:session]
       end
@@ -61,6 +73,7 @@ class Card
               session[:user] = nil
             end
           end
+        current_id
       end
 
       # set the current user based on token
@@ -81,21 +94,21 @@ class Card
         end
       end
 
-      # find +*account card by +*token card
+      # find +\*account card by +\*token card
       # @param token [String]
       # @return [+*account card, nil]
       def find_account_by_token token
         find_account_by "token", Card::TokenID, token.strip
       end
 
-      # find +*account card by +*email card
+      # find +\*account card by +\*email card
       # @param email [String]
       # @return [+*account card, nil]
       def find_account_by_email email
         find_account_by "email", Card::EmailID, email.strip.downcase
       end
 
-      # general pattern for finding +*account card based on field cards
+      # general pattern for finding +\*account card based on field cards
       # @param fieldname [String] right name of field card (for WQL comment)
       # @param field_id [Integer] card id of field's simple card
       # @param value [String] content of field

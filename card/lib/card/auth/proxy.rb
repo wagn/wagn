@@ -2,6 +2,7 @@ class Card
   module Auth
     # mechanism for assuming permissions of another user.
     module Proxy
+      # operate with the permissions of another "proxy" user
       def as given_user
         tmp_id   = @as_id
         tmp_card = @as_card
@@ -21,18 +22,19 @@ class Card
         end
       end
 
+      # operate with the permissions of WagnBot (administrator)
       def as_bot &block
         as Card::WagnBotID, &block
       end
 
-      def among? authzed
-        as_card.among? authzed
-      end
-
+      # id of proxy user
+      # @return [Integer]
       def as_id
         @as_id || current_id
       end
 
+      # proxy user card
+      # @return [Card]
       def as_card
         if @as_card && @as_card.id == as_id
           @as_card
@@ -41,6 +43,8 @@ class Card
         end
       end
 
+      # get card id from args of unknown type
+      # @todo replace with general mechanism, eg #quick_fetch
       def get_user_id user
         case user
         when NilClass then nil

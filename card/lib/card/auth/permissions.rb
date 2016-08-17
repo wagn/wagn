@@ -1,7 +1,7 @@
 class Card
   module Auth
+    # singleton permission methods
     module Permissions
-
       # user has "root" permissions
       # @return [true/false]
       def always_ok?
@@ -11,6 +11,7 @@ class Card
       end
 
       # specified user has root permission
+      # @param usr_id [Integer]
       # @return [true/false]
       def always_ok_usr_id? usr_id
         return true if usr_id == Card::WagnBotID # cannot disable
@@ -24,6 +25,8 @@ class Card
         always[usr_id]
       end
 
+      # list of names of cardtype cards that current user has perms to create
+      # @return [Array of strings]
       def createable_types
         type_names =
           Auth.as_bot do
@@ -39,6 +42,9 @@ class Card
         end.sort
       end
 
+      # test whether user is an administrator
+      # @param user_id [Integer]
+      # @return [true/false]
       def admin? user_id
         !Card[user_id].all_roles.find do |r|
           r == Card::AdministratorID

@@ -5,8 +5,7 @@ class Card
     TEST_ENVS        = %w(test cucumber).freeze
     @prepopulating   = TEST_ENVS.include? Rails.env
     @no_rails_cache  = TEST_ENVS.include?(Rails.env) || ENV["NO_RAILS_CACHE"]
-    @cache_by_class  = {}
-
+    @@cache_by_class = {}
     cattr_reader :cache_by_class
 
     class << self

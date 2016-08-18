@@ -12,7 +12,7 @@ class Card
           @preprocess   = opts[:preprocess]  # block; called with every word
           @postprocess  = opts[:postprocess] # block; called with complete diff
 
-          @splitters = %w(<[^>]+>  \[\[[^\]]+\]\]  \{\{[^}]+\}\}  \s+)
+          @splitters = %w(<[^>]+> \[\[[^\]]+\]\] \{\{[^}]+\}\} \s+)
           @disjunction_pattern = /^\s/
         end
 
@@ -28,7 +28,8 @@ class Card
           if old_text
             old_words, old_ex = separate_comparables_from_excludees old_text
             new_words, new_ex = separate_comparables_from_excludees new_text
-            ChunkProcessor.new(old_words, new_words, old_ex, new_ex).run(@result)
+            processor = ChunkProcessor.new old_words, new_words, old_ex, new_ex
+            processor.run @result
           else
             list = split_and_preprocess(new_text)
             if @exclude_pattern
@@ -92,10 +93,7 @@ class Card
           def initialize old_words, new_words, old_excludees, new_excludees
             @adds = []
             @dels = []
-            @words = {
-              old: old_words,
-              new: new_words
-            }
+            @words = { old: old_words, new: new_words }
             @excludees = {
               old: ExcludeeIterator.new(old_excludees),
               new: ExcludeeIterator.new(new_excludees)
@@ -107,46 +105,46 @@ class Card
             prev_action = nil
             ::Diff::LCS.traverse_balanced(@words[:old], @words[:new]) do |word|
               if prev_action
-                if prev_action != word.action &&
-                   !(prev_action == "-" && word.action == "!") &&
-                   !(prev_action == "!" && word.action == "+")
-
-                  # delete and/or add section stops here; write changes to result
-                  write_dels
-                  write_adds
-
-                  # new neutral section starts
-                  # we can just write excludees to result
-                  write_excludees
-
-                else # current word belongs to edit of previous word
-                  case word.action
-                  when "-"
-                    del_old_excludees
-                  when "+"
-                    add_new_excludees
-                  when "!"
-                    del_old_excludees
-                    add_new_excludees
-                  else
-                    write_excludees
-                  end
-                end
+                interpret_action prev_action, word
               else
                 write_excludees
               end
-
               process_word word
               prev_action = word.action
             end
-            write_dels
-            write_adds
-            write_excludees
-
+            write_all
             @result
           end
 
           private
+
+          def interpret_action prev_action, word
+            if (prev_action == word.action) ||
+               (prev_action == "-" && word.action == "!") ||
+               (prev_action == "!" && word.action == "+")
+              handle_action word.action
+            else
+              write_all
+            end
+          end
+
+          def handle_action action
+            case action
+            when "-" then del_old_excludees
+            when "+" then add_new_excludees
+            when "!" then
+              del_old_excludees
+              add_new_excludees
+            else
+              write_excludees
+            end
+          end
+
+          def write_all
+            write_dels
+            write_adds
+            write_excludees
+          end
 
           def write_unchanged text
             @result.write_unchanged_chunk text
@@ -198,10 +196,8 @@ class Card
 
           def process_element old_element, new_element, action
             case action
-            when "-"
-              minus old_element
-            when "+"
-              plus new_element
+            when "-" then minus old_element
+            when "+" then plus new_element
             when "!"
               minus old_element
               plus new_element

@@ -20,6 +20,33 @@ event :upload_attachment, :prepare_to_validate,
   abort :success
 end
 
+event :assign_attachment_on_create, :initialize,
+      after: :assign_action, on: :create,
+      when: proc { |c| c.save_preliminary_upload? } do
+  return unless  (action = Card::Action.fetch(@action_id_of_cached_upload))
+  upload_cache_card.selected_action_id = action.id
+  upload_cache_card.select_file_revision
+  assign_attachment upload_cache_card.attachment.file, action.comment
+end
+
+event :assign_attachment_on_update, :initialize,
+      after: :assign_action, on: :update,
+      when:  proc { |c| c.save_preliminary_upload? } do
+  if (action = Card::Action.fetch(@action_id_of_cached_upload))
+    uploaded_file =
+      with_selected_action_id(action.id) do
+        attachment.file
+      end
+    assign_attachment uploaded_file, action.comment
+  end
+end
+
+def assign_attachment file, original_filename
+  send "#{attachment_name}=", file
+  write_identifier
+  @current_action.update_attributes! comment: original_filename
+end
+
 event :delete_cached_upload_file_on_create, :integrate,
       on: :create, when: proc { |c| c.save_preliminary_upload? } do
   if (action = Card::Action.fetch(@action_id_of_cached_upload))

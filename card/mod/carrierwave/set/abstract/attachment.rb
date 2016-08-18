@@ -8,34 +8,6 @@ event :select_file_revision, after: :select_action do
   attachment.retrieve_from_store!(attachment.identifier)
 end
 
-event :assign_attachment_on_create, :initialize,
-      after: :assign_action, on: :create,
-      when: proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(@action_id_of_cached_upload))
-    upload_cache_card.selected_action_id = action.id
-    upload_cache_card.select_file_revision
-    assign_attachment upload_cache_card.attachment.file, action.comment
-  end
-end
-
-event :assign_attachment_on_update, :initialize,
-      after: :assign_action, on: :update,
-      when:  proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(@action_id_of_cached_upload))
-    uploaded_file =
-      with_selected_action_id(action.id) do
-        attachment.file
-      end
-    assign_attachment uploaded_file, action.comment
-  end
-end
-
-def assign_attachment file, original_filename
-  send "#{attachment_name}=", file
-  write_identifier
-  @current_action.update_attributes! comment: original_filename
-end
-
 # we need a card id for the path so we have to update db_content when we have
 # an id
 event :correct_identifier, :finalize, on: :create do
@@ -43,19 +15,11 @@ event :correct_identifier, :finalize, on: :create do
   expire
 end
 
-def file_ready_to_save?
-  attachment.file.present? &&
-    !preliminary_upload? &&
-    !save_preliminary_upload? &&
-    attachment_changed?
-end
-
 event :save_original_filename, :prepare_to_store,
       when: proc { |c| c.file_ready_to_save? } do
   return unless @current_action
   @current_action.update_attributes! comment: original_filename
 end
-
 
 event :validate_file_exist, :validate, on: :create do
   unless attachment.file.present? || empty_ok?
@@ -66,6 +30,26 @@ end
 event :write_identifier, after: :save_original_filename do
   self.content = attachment.db_content(mod: load_from_mod)
 end
+
+event :storage_type_change, :store,
+      on: :update,
+      when: proc { |c| c.storage_type_changed? } do
+  @bucket = @new_bucket
+  @storage_type = @new_storage_type
+  write_identifier
+end
+
+def file_ready_to_save?
+  attachment.file.present? &&
+    !preliminary_upload? &&
+    !save_preliminary_upload? &&
+    attachment_changed?
+end
+
+def storage_type_changed?
+  @new_bucket || @new_storage_type
+end
+
 
 def store_dir
   @store_in_mod ? mod_dir : upload_dir
@@ -102,6 +86,26 @@ def empty_ok?
   @empty_ok
 end
 
+def bucket= value
+  if @action == :update
+    @update_storage = true
+    @new_bucket = value
+  else
+    @bucket = value
+  end
+end
+
+def storage_type= value
+  if @action == :update
+    # we cant update the storage type directly here
+    # if we do then the uploader doesn't find the file we want to update
+    @update_storage = true
+    @new_storage_type = value
+  else
+    @storage_type = value
+  end
+end
+
 def load_from_mod= value
   @mod = value
   write_identifier
@@ -131,12 +135,16 @@ def files_base_dir
 end
 
 def bucket
-  @bucket ||= bucket? &&
+  @bucket ||= cloud? &&
               ((new_card? && bucket_from_config) || bucket_from_content)
 end
 
-def bucket?
-  storage_type == :bucket
+def cloud?
+  storage_type == :cloud
+end
+
+def remote_storage?
+  cloud? || storage_type == :web
 end
 
 def bucket_config
@@ -215,8 +223,8 @@ def storage_type
 end
 
 def storage_type_from_config
-  return unless (type = Cardio.file_storage)
-  unless type.in? CarrierWave::FileCardUploader.STORAGE_TYPES
+  return unless (type = Cardio.config.file_storage)
+  unless type.in? CarrierWave::FileCardUploader::STORAGE_TYPES
     raise Card::Error,
           I18n.t(:error_invalid_storage_option,
                  scope: "mod.carrierwave.set.abstract.attachment",
@@ -236,5 +244,7 @@ def storage_type_from_content
 end
 
 def update_storage_location! storage_type=nil, bucket=nil
-
+  storage_type ||= storage_type_from_config
+  bucket ||= bucket_from_config if storage_type == :cloud
+  update_attributes! storage_type: storage_type, bucket: bucket
 end

@@ -97,10 +97,10 @@ describe Card::Set::Type::File do
     expect(Card["url test"].file.url).to match(/\.png$/)
   end
 
-  context "using bucket" do
+  context "using cloud" do
     let(:directory) { "philipp-test" }
     before do
-      Wagn.config.file_storage = :test_bucket
+      Wagn.config.file_storage = :cloud
       Wagn.config.file_buckets = {
         test_bucket: {
           provider: "fog/aws",
@@ -112,16 +112,18 @@ describe Card::Set::Type::File do
           authenticated_url_expiration: 180
         }
       }
-      Card::Auth.as_bot do
-        Card.create! name: "file card", type_code: "file",
-                     file: File.new(File.join(FIXTURES_PATH, "file1.txt"))
-      end
     end
 
     after do
       Wagn.config.file_storage = :protected
     end
-    subject { Card["file card"] }
+    subject do
+      Card::Auth.as_bot do
+        Card.create! name: "file card", type_code: "file",
+                     file: File.new(File.join(FIXTURES_PATH, "file1.txt")),
+                     storage_type: @storage_type || :cloud
+      end
+    end
 
     it "stores correct identifier ((<bucket>)/<card id>/<action id>.<ext>)" do
       expect(subject.content)
@@ -136,6 +138,25 @@ describe Card::Set::Type::File do
       expect(subject.file.url)
         .to eq "http://#{directory}.s3.amazonaws.com/"\
                "files/#{subject.id}/#{subject.last_action_id}.txt"
+    end
+
+    describe "#update_storage_location" do
+      it "updates storage location from cloud to protected" do
+        subject.update_storage_location! :protected
+        expect(subject.content)
+          .to eq "~#{subject.id}/#{subject.last_action_id - 1}.txt"
+        expect(File.read subject.file.retrieve_path).to eq "file1"
+      end
+
+      it "updates storage location from protected to cloud" do
+        @storage_type = :protected
+        expect(subject.content)
+          .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
+        subject.update_storage_location! :cloud
+
+        expect(subject.content)
+          .to eq "(test_bucket)/#{subject.id}/#{subject.last_action_id - 1}.txt"
+      end
     end
   end
 end

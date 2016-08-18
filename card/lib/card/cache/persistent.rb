@@ -10,9 +10,9 @@ class Card
     # "virtual", meaning that they follow known patterns but do not exist in the
     # database.
     #
-    # Most persistent cache implementations cannot store singleton classes,
-    # therefore {Card cards} generally must have set_modules re-included after
-    # retrieval from the persistent cache.
+    # Most persistent cache implementations cannot store objects with singleton
+    # classes, therefore {Card cards} generally must have set_modules
+    # re-included after retrieval from the persistent cache.
     #
     class Persistent
       attr_accessor :prefix
@@ -37,7 +37,6 @@ class Card
         @klass = opts[:class]
         @class_key = @klass.to_s.to_name.key
         @database = opts[:database] || self.class.database_name
-        self
       end
 
       # renew insures you're using the most current cache version by
@@ -47,33 +46,44 @@ class Card
         @prefix = nil
       end
 
-      # reset effectively clears the
+      # reset effectively clears the cache by setting a new stamp
       def reset
         @stamp = new_stamp
         @prefix = nil
         Cardio.cache.write stamp_key, @stamp
       end
 
+      # the nuclear option. can affect other applications sharing the same
+      # cache engine. keep in mind mutually assured destruction.
       def annihilate
         @store.clear
       end
 
+      # the current time stamp. changing this value effectively resets
+      # the cache. Note that Cardio.cache is a simple Rails::Cache, not
+      # a Card::Cache object.
       def stamp
         @stamp ||= Cardio.cache.fetch stamp_key { new_stamp }
       end
 
+      # key for looking up the current stamp
       def stamp_key
         "#{@database}/#{@class_key}/stamp"
       end
 
+      # stamp generator
       def new_stamp
         Time.now.to_i.to_s 32
       end
 
+      # prefix added to cache key to create a system-wide unique key
       def prefix
         @prefix ||= "#{@database}/#{@class_key}/#{stamp}"
       end
 
+      # returns prefix/key
+      # @param key [String]
+      # @return [String]
       def full_key key
         "#{prefix}/#{key}"
       end
@@ -82,9 +92,12 @@ class Card
         @store.read full_key(key)
       end
 
-      def write_variable key, variable, value
+      # update an attribute of an object already in the cache
+      # @param key [String]
+      # @param attribute [String, Symbol]
+      def write_attribute key, attribute, value
         if @store && (object = read key)
-          object.instance_variable_set "@#{variable}", value
+          object.instance_variable_set "@#{attribute}", value
           write key, object
         end
         value

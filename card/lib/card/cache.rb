@@ -1,6 +1,22 @@
 # -*- encoding : utf-8 -*-
 
 class Card
+  def self.cache
+    Card::Cache[Card]
+  end
+
+  # The {Cache} class manages and integrates {Temporary} and {Persistent
+  # caching. The {Temporary} cache is typically process- and request- specific
+  # and is often "ahead" of the database; the {Persistent} cache is typically
+  # shared across processes and tends to stay true to the database.
+  #
+  # Any ruby Class can declare and/or retrieve its own cache as follows:
+  #
+  # ```` Card::Cache[MyClass] ````
+  #
+  # Typically speaking, mod developers do not need to use the Cache classes
+  # directly, because caching is automatically handled by Card#fetch
+  #
   class Cache
     extend Card::Cache::Prepopulate
 
@@ -25,7 +41,7 @@ class Card
       # clear the temporary caches and ensure we're using the latest stamp
       # on the persistent caches.
       def renew
-        cache_by_class.each do |_klass, cache|
+        cache_by_class.each_value do |cache|
           cache.soft.reset
           cache.hard.renew if cache.hard
         end
@@ -40,10 +56,10 @@ class Card
 
       # completely wipe out all caches, often including the Persistent cache of
       # other decks using the same mechanism.
-      # Generally prefer {#reset_all}
-      # @see #reset_all
+      # Generally prefer {.reset_all}
+      # @see .reset_all
       def reset_global
-        cache_by_class.each do |_klass, cache|
+        cache_by_class.each_value do |cache|
           cache.soft.reset
           cache.hard.annihilate if cache.hard
         end
@@ -52,16 +68,14 @@ class Card
 
       # reset the Persistent cache for all classes
       def reset_hard
-        cache_by_class.each do |_klass, cache|
+        cache_by_class.each_value do |cache|
           cache.hard.reset if cache.hard
         end
       end
 
       # reset the Temporary cache for all classes
       def reset_soft
-        cache_by_class.each do |_klass, cache|
-          cache.soft.reset
-        end
+        cache_by_class.each_value { |cache| cache.soft.reset }
       end
 
       # reset Codename cache and delete tmp files
@@ -88,47 +102,56 @@ class Card
 
     attr_reader :hard, :soft
 
+    # Cache#new initializes a {Temporary}/soft cache, and -- if a :store opt
+    # is provided -- a {Persistent}/hard cache
+    # @param opts [Hash]
+    # @option opts [Rails::Cache] :store
+    # @option opts [Constant] :class
     def initialize opts={}
       @klass = opts[:class]
       cache_by_class[@klass] = self
       @hard = Persistent.new opts if opts[:store]
-
-      # soft cache is temporary
-      # lasts only one request/script execution/console session
       @soft = Temporary.new
     end
 
+    # read cache value (and write to soft cache if missing)
+    # @param key [String]
     def read key
       @soft.read(key) ||
         (@hard && (ret = @hard.read(key)) && @soft.write(key, ret))
     end
 
+    # write to hard (where applicable) and soft cache
+    # @param key [String]
+    # @param value
     def write key, value
       @hard.write key, value if @hard
       @soft.write key, value
     end
 
+    # like read, but also writes to hard cache
+    # @param key [String]
     def fetch key, &block
       @soft.fetch(key) do
         @hard ? @hard.fetch(key, &block) : yield
       end
     end
 
+    # delete specific cache entries by key
+    # @param key [String]
     def delete key
       @hard.delete key if @hard
       @soft.delete key
     end
 
-    def dump
-      p "dumping temporary request cache...."
-      @soft.dump
-    end
-
+    # reset both caches (for a given Card::Cache instance)
     def reset
       @hard.reset if @hard
       @soft.reset
     end
 
+    # test for the existence of the key in either cache
+    # @return [true/false]
     def exist? key
       @soft.exist?(key) || (@hard && @hard.exist?(key))
     end

@@ -29,7 +29,7 @@ class Card
         @current_id ||= Card::AnonymousID
       end
 
-      # current user card (must have +\*account)
+      # current accounted card (must have +\*account)
       # @return [Card]
       def current
         if @current && @current.id == current_id

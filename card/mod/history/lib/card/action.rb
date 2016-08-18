@@ -12,7 +12,7 @@ class Card
   # have its own {Action action}, but the whole submission would still comprise
   # just one single {Act act}.
   #
-  # An {action} records:
+  # An {Action} records:
   #
   # * the _card_id_ of the {Card card} acted upon
   # *  the _card_act_id_ of the {Card::Act act} of which the action is part

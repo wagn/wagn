@@ -133,10 +133,6 @@ module ClassMethods
     raise Card::Error, "fetch called with new args and skip_virtual"
   end
 
-  def cache
-    Card::Cache[Card]
-  end
-
   def fetch_from_cache cache_key, local_only=false
     return unless Card.cache
     if local_only

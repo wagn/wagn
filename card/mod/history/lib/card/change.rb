@@ -8,7 +8,7 @@ class Card
   # card, that would be recorded as one {Action action} with two
   # {Change changes}.
   #
-  # A {change} records:
+  # A {Change} records:
   #
   # * the _field_ changed
   # * the new _value_ of that field
@@ -39,14 +39,14 @@ class Card
 
       # Change fields are recorded as integers. #field_index looks up the
       # integer associated with a given field name.
-      # @param [String, Symbol]
+      # @param value [String, Symbol]
       # @return [Integer]
       def field_index value
         value.is_a?(Integer) ? value : TRACKED_FIELDS.index(value.to_s)
       end
 
       # look up changes based on field name
-      # @param [String, Symbol]
+      # @param value [String, Symbol]
       # @return [Change]
       def find_by_field_name value
         find_by_field field_index(value)
@@ -54,7 +54,7 @@ class Card
     end
 
     # set field value (integer)
-    # @param [String, Symbol]
+    # @param value [String, Symbol]
     def field= value
       write_attribute(:field, TRACKED_FIELDS.index(value.to_s))
     end

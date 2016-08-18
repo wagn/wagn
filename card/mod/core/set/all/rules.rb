@@ -245,8 +245,7 @@ module ClassMethods
 
   # all users that have a user-specific rule for a given rule key
   def user_ids_cache
-    Card.cache.read("USER_IDS") ||
-      begin
+    Card.cache.read("USER_IDS") || begin
       clear_rule_cache
       rule_cache
       @user_ids_hash

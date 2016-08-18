@@ -2,12 +2,21 @@ require_dependency "card/content/chunk"
 
 class Card
   class Content
+    # The Content::Parser breaks content strings into an Array of "chunks",
+    # each of which may be an instance of a {Chunk} class or a simple String.
     class Parser
+      # @param chunk_list [Symbol] name of registered list of chunk classes
+      # to be used in parsing
+      # @see Card::Chunk.register_list
+      # @param content_object [Card::Content]
       def initialize chunk_list, content_object
         @content_object = content_object
         @chunk_list = chunk_list
       end
 
+      # break content string into an array of chunk objects and strings
+      # @param content [String]
+      # @return [Array]
       def parse content
         @content = content
         @chunks = []

@@ -64,7 +64,8 @@ class Card
         end
       end
 
-      # not sure whether this is best place.  Could really happen almost anywhere
+      # not sure whether this is best place.
+      # Could really happen almost anywhere
       # (even before chunk classes are loaded).
       register_list :default, [
         :URI, :HostURI, :EmailURI, :EscapedLiteral, :Include, :Link

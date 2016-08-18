@@ -1,2 +1,4 @@
-extend Model::Utils
-include Model::Debug
+class Card
+  extend Card::Model::Utils
+  include Card::Model::Debug
+end

@@ -1,6 +1,6 @@
-class Card
-  module Model
-    module Utils
+# class Card
+#   module Model
+    module Card::Model::Utils
       def empty_trash
         Card.delete_trashed_files
         Card.where(trash: true).delete_all
@@ -76,5 +76,5 @@ class Card
         end
       end
     end
-  end
-end
+#   end
+# end

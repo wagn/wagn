@@ -1,6 +1,6 @@
-class Card
-  module Model
-    module Debug
+# class Card
+#   module Model
+    module Card::Model::Debug
       def to_s
         "#<#{self.class.name}[#{debug_type}]#{attributes['name']}>"
       end
@@ -25,5 +25,5 @@ class Card
         "#{type_code || ''}:#{type_id}"
       end
     end
-  end
-end
+#   end
+# end

@@ -200,17 +200,12 @@ class Card
     #
 
     def process_content override_content=nil, opts={}
-      process_content_object(override_content, opts).to_s
-    end
-
-    def process_content_object override_content=nil, opts={}
       content = override_content || render_raw || ""
       content_object = get_content_object content, opts
       content_object.process_each_chunk do |chunk_opts|
-        # Feels scary to just remove it but I can't make any sense of the
-        # "yield" and all tests pass without it
         prepare_nest chunk_opts.merge(opts)
       end
+      content_object.to_s
     end
 
     def get_content_object content, opts

@@ -32,7 +32,7 @@ end
 # removes the action if there are no changes
 event :finalize_action, :finalize,
       when: proc { |c| c.finalize_action? } do
-  @changed_fields = Card::TRACKED_FIELDS.select do |f|
+  @changed_fields = Card::Change::TRACKED_FIELDS.select do |f|
     changed_attributes.member? f
   end
   if @changed_fields.present?
@@ -189,7 +189,7 @@ format :html do
       if act_context(args) == :absolute
         act.actions
       else
-        act.relevant_actions_for(card)
+        act.actions_affecting(card)
       end
     actions.select { |a| a.card && a.card.ok?(:read) }
     # FIXME: should not need to test for presence of card here.
@@ -247,7 +247,7 @@ format :html do
               %em.label.label-info Current
             - if action_view == :expanded
               - unless act.id == card.last_act.id
-                = rollback_link act.relevant_actions_for(card)
+                = rollback_link act.actions_affecting(card)
               = show_or_hide_changes_link args
       HAML
     end

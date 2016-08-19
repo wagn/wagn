@@ -2,8 +2,9 @@
 .jhw-cache
 .rvmrc
 .tm_properties
+.yardoc
 coverage
-/doc
+doc
 log/*
 pkg
 wagn*gem

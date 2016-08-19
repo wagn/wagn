@@ -51,7 +51,7 @@ class Card
         end
 
         def cached_views_cnt
-          cache.read(CNT_KEY) || 0
+          cache.fetch(CNT_KEY) { 0 }
         end
 
         def reduce_cache

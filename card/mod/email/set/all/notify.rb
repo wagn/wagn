@@ -136,7 +136,7 @@ format do
 
   view :subedits, perms: :none do |args|
     subedits =
-      get_act(args).relevant_actions_for(card).map do |action|
+      get_act(args).actions_affecting(card).map do |action|
         if action.card_id != card.id
           action.card.format(format: @format)
                 .render_subedit_notice(action: action)

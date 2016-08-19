@@ -80,7 +80,6 @@ class Card < ActiveRecord::Base
   after_commit :integration_phase, unless: -> { only_storage_phase? }
   after_rollback :clean_up, unless: -> { only_storage_phase? }
 
-  TRACKED_FIELDS = %w(name type_id db_content trash).freeze
   extend CarrierWave::Mount
   ActiveSupport.run_load_hooks(:card, self)
 end

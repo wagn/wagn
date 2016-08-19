@@ -4,3 +4,4 @@ tmpsets/set*/**/*.rb -            \
 GPL                               \
 LICENSE                           \
 VERSION
+--markup markdown

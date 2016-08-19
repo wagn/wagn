@@ -3,28 +3,27 @@
 # A multipurpose retrieval operator that integrates caching, database lookups,
 # and "virtual" card construction
 module ClassMethods
-  # === fetch
+  # Look for cards in
+  # * cache
+  # * database
+  # * virtual cards
   #
-  # looks for cards in
-  #   - cache
-  #   - database
-  #   - virtual cards
-  #
-  # @param [Integer, String, Card::Name, Symbol]
-  #   mark one of three unique identifiers
+  # @param mark [Integer, String, Card::Name, Symbol, Array]
+  #    one of three unique identifiers
   #    1. a numeric id (Integer)
   #    2. a name/key (String or Card::Name)
   #    3. a codename (Symbol)
-  #   or any combination of those. If you pass more then one mark they get
-  #   joined with a '+'
-  # @param [Hash]
+  #    or any combination of those. If you pass more then one mark they get
+  #    joined with a '+'
+  # @param options [Hash]
   #   Options:
   #     :skip_virtual               Real cards only
   #     :skip_modules               Don't load Set modules
   #     :look_in_trash              Return trashed card objects
   #     :local_only                 Use only local cache for lookup and storing
-  #     new: {  card opts }      Return a new card when not found
+  #     new: { opts for Card#new }  Return a new card when not found
   #
+  # @return [Card]
   def fetch *args
     mark, opts = normalize_fetch_args args
     validate_fetch_opts! opts
@@ -132,10 +131,6 @@ module ClassMethods
   def validate_fetch_opts! opts
     return unless opts[:new] && opts[:skip_virtual]
     raise Card::Error, "fetch called with new args and skip_virtual"
-  end
-
-  def cache
-    Card::Cache[Card]
   end
 
   def fetch_from_cache cache_key, local_only=false

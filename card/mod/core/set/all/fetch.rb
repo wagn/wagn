@@ -113,21 +113,6 @@ module ClassMethods
     card.present?
   end
 
-  def expire_hard name
-    return unless Card.cache.hard
-    key = name.to_name.key
-    Card.cache.hard.delete key
-    Card.cache.hard.delete "~#{card.id}" if card.id
-  end
-
-  def expire name
-    # note: calling instance method breaks on dirty names
-    key = name.to_name.key
-    return unless (card = Card.cache.read key)
-    Card.cache.delete key
-    Card.cache.delete "~#{card.id}" if card.id
-  end
-
   def validate_fetch_opts! opts
     return unless opts[:new] && opts[:skip_virtual]
     raise Card::Error, "fetch called with new args and skip_virtual"
@@ -211,7 +196,6 @@ module ClassMethods
     opts
   end
 
-
   def new_for_cache card, name, opts
     return if name.is_a? Integer
     return if name.blank? && !opts[:new]
@@ -227,21 +211,6 @@ module ClassMethods
     # and can postpone type lookup for the cached variant
     # if skipping virtual no need to look for actual type
     opts[:skip_virtual] || opts[:new].present? || opts[:skip_type_lookup]
-  end
-
-  def write_to_cache card, opts
-    if opts[:local_only]
-      write_to_soft_cache card
-    elsif Card.cache
-      Card.cache.write card.key, card
-      Card.cache.write "~#{card.id}", card.key if card.id && card.id != 0
-    end
-  end
-
-  def write_to_soft_cache card
-    return unless Card.cache
-    Card.cache.soft.write card.key, card
-    Card.cache.soft.write "~#{card.id}", card.key if card.id && card.id != 0
   end
 
   def compose_mark parts, opts

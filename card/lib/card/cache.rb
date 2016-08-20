@@ -1,8 +1,44 @@
 # -*- encoding : utf-8 -*-
 
 class Card
-  def self.cache
-    Card::Cache[Card]
+  class << self
+    def cache
+      Card::Cache[Card]
+    end
+
+    def write_to_cache card, opts
+      if opts[:local_only]
+        write_to_soft_cache card
+      elsif Card.cache
+        Card.cache.write card.key, card
+        if card.id && card.id.nonzero?
+          Card.cache.write "~#{card.id}", card.key
+        end
+      end
+    end
+
+    def write_to_soft_cache card
+      return unless Card.cache
+      Card.cache.soft.write card.key, card
+      if card.id && card.id.nonzero?
+        Card.cache.soft.write "~#{card.id}", card.key
+      end
+    end
+
+    def expire name
+      # note: calling instance method breaks on dirty names
+      key = name.to_name.key
+      return unless (card = Card.cache.read key)
+      Card.cache.delete key
+      Card.cache.delete "~#{card.id}" if card.id
+    end
+
+    def expire_hard name
+      return unless Card.cache.hard
+      key = name.to_name.key
+      Card.cache.hard.delete key
+      Card.cache.hard.delete "~#{card.id}" if card.id
+    end
   end
 
   # The {Cache} class manages and integrates {Temporary} and {Persistent

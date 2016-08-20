@@ -88,7 +88,7 @@ class Card
           def add_new_excludees
             @excludees[:new].scan_and_record(@adds) do |element|
               write_adds
-              @result.complete << ex[:element]
+              @result.complete << element
             end
           end
 

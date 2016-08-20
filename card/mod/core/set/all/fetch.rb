@@ -196,7 +196,7 @@ module ClassMethods
       # We may need a "#create" instance method to handle this checking?
       Card.new opts
     else
-      mark = params[:id] || opts[:name]
+      mark = args[:id] || opts[:name]
       Card.fetch mark, new: opts
     end
   end
@@ -204,9 +204,9 @@ module ClassMethods
   def deep_opts args
     opts = (args[:card] || {}).clone
     # clone so that original params remain unaltered.  need deeper clone?
-    opts[:type] ||= params[:type] if params[:type]
+    opts[:type] ||= args[:type] if args[:type]
     # for /new/:type shortcut.  we should fix and deprecate this.
-    opts[:name] ||= params[:id].to_s.tr("_", " ")
+    opts[:name] ||= args[:id].to_s.tr("_", " ")
     # move handling to Card::Name?
     opts
   end

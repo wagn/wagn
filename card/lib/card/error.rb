@@ -79,6 +79,17 @@ class Card
           :server_error
         end
       end
+
+      # card view and HTTP status code associate with errors on card
+      # @todo  should prioritize certain error classes
+      def view_and_status card
+        card.errors.keys.each do |key|
+          if (view_and_status = Card.error_codes[key])
+            return view_and_status
+          end
+        end
+        nil
+      end
     end
   end
 end

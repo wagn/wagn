@@ -3,12 +3,15 @@
 require_dependency "card"
 
 require_dependency "wagn/exceptions"
+require_dependency "wagn/response"
 require_dependency "card/mailer"  # otherwise Net::SMTPError rescues can cause
 # problems when error raised comes before Card::Mailer is mentioned
 
+# Wagn's only controller.
 class CardController < ActionController::Base
   include Card::Env::Location
   include Recaptcha::Verify
+  include Wagn::Response
 
   layout nil
   attr_reader :card
@@ -32,13 +35,11 @@ class CardController < ActionController::Base
     handle { card.delete }
   end
 
-  # DEPRECATED
+  # @deprecated
   def asset
     Rails.logger.info "Routing assets through Card. Recommend symlink from " \
                       'Deck to Card gem using "rake wagn:update_assets_symlink"'
-    asset_path = Decko::Engine.paths["gem-assets"].existent.first
-    filename   = [params[:filename], params[:format]].join(".")
-    send_asset asset_path, filename, x_sendfile: true
+    send_deprecated_asset
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -95,80 +96,15 @@ class CardController < ActionController::Base
   end
 
   def render_success
-    success.name_context = @card.cardname
-    return card_redirect success.to_url if !ajax? || success.hard_redirect?
-    return render text: success.target if success.target.is_a? String
-
-    @card = success.target
-    update_params_for_success
-    @card.select_action_by_params params
-    show
-  end
-
-
-
-
-
-
-
-  def determine_id
-    case
-    when prompt_setup?
-      prepare_setup_card!
-    when params[:card] && params[:card][:name]
-      params[:card][:name]
-    when Card::Format.tagged(params[:view], :unknown_ok)
-      ""
+    success = Card::Env.success
+    if !Card::Env.ajax? || success.hard_redirect?
+      card_redirect success.to_url
+    elsif success.target.is_a? String
+      render text: success.target
     else
-      Card.global_setting(:home) || "Home"
+      reset_card success.target
+      show
     end
-  end
-
-  def prompt_setup?
-    Card::Auth.needs_setup? && Card::Env.html?
-  end
-
-  def prepare_setup_card!
-    params[:card] = { type_id: Card.default_accounted_type_id }
-    params[:view] = "setup"
-    ""
-  end
-
-  def validate_id_encoding id
-    # we should find the place where we produce these bad urls
-    id.valid_encoding? ? id : id.force_encoding("ISO-8859-1").encode("UTF-8")
-  end
-
-  def send_asset path, filename, options={}
-    if filename.include? "../"
-      # for security, block relative paths
-      raise Wagn::BadAddress
-    else
-      send_file File.join(path, filename), options
-    end
-  end
-
-  def card_redirect url
-    url = card_url url # make sure we have absolute url
-    if ajax?
-      # lets client reset window location (not just receive redirected response)
-      # formerly used 303 response, but that gave IE the fits
-      render json: { redirect: url }
-    else
-      redirect_to url
-    end
-  end
-
-
-
-  def render_errors
-    # FIXME: should prioritize certain error classes
-    code = nil
-    card.errors.each do |key, _msg|
-      break if (code = Card.error_codes[key])
-    end
-    view, status = code || [:errors, 422]
-    show view, status
   end
 
   def show view=nil, status=200
@@ -198,20 +134,42 @@ class CardController < ActionController::Base
     end
   end
 
-  rescue_from StandardError do |exception|
-    Rails.logger.info "exception = #{exception.class}: #{exception.message}"
-    @card ||= Card.new
-    Card::Error.current = exception
-    show Card::Error.exception_view(@card, exception)
+  def render_errors
+    view, status = Card::Error.view_and_status(card) || [:errors, 422]
+    show view, status
   end
 
-  def ajax?
-    Card::Env.ajax?
+  def determine_id
+    case
+    when prompt_setup?
+      prepare_setup_card!
+    when params[:card] && params[:card][:name]
+      params[:card][:name]
+    when Card::Format.tagged(params[:view], :unknown_ok)
+      ""
+    else
+      Card.global_setting(:home) || "Home"
+    end
   end
 
-  def success
-    Card::Env[:success]
+  def prompt_setup?
+    Card::Auth.needs_setup? && Card::Env.html?
   end
+
+  def prepare_setup_card!
+    params[:card] = { type_id: Card.default_accounted_type_id }
+    params[:view] = "setup"
+    ""
+  end
+
+  def validate_id_encoding id
+    # we should find the place where we produce these bad urls
+    id.valid_encoding? ? id : id.force_encoding("ISO-8859-1").encode("UTF-8")
+  end
+
+
+
+
 
   def format_from_params
     return :file if params[:explicit_file]
@@ -220,16 +178,14 @@ class CardController < ActionController::Base
     format
   end
 
-  def update_params_for_success
-    if success.soft_redirect?
-      self.params = success.params
-    else
-      # need tests. insure we get slot, main...
-      params.merge! success.params
-    end
-  end
-
   def use_draft?
     params[:edit_draft] && card.drafts.present?
+  end
+
+  rescue_from StandardError do |exception|
+    Rails.logger.info "exception = #{exception.class}: #{exception.message}"
+    @card ||= Card.new
+    Card::Error.current = exception
+    show Card::Error.exception_view(@card, exception)
   end
 end

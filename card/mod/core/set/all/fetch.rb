@@ -188,6 +188,30 @@ module ClassMethods
     card
   end
 
+  def deep_fetch args
+    opts = deep_opts args
+    if args[:action] == "create"
+      # FIXME: we currently need a "new" card to catch duplicates
+      # (otherwise save will just act like a normal update)
+      # We may need a "#create" instance method to handle this checking?
+      Card.new opts
+    else
+      mark = params[:id] || opts[:name]
+      Card.fetch mark, new: opts
+    end
+  end
+
+  def deep_opts args
+    opts = (args[:card] || {}).clone
+    # clone so that original params remain unaltered.  need deeper clone?
+    opts[:type] ||= params[:type] if params[:type]
+    # for /new/:type shortcut.  we should fix and deprecate this.
+    opts[:name] ||= params[:id].to_s.tr("_", " ")
+    # move handling to Card::Name?
+    opts
+  end
+
+
   def new_for_cache card, name, opts
     return if name.is_a? Integer
     return if name.blank? && !opts[:new]

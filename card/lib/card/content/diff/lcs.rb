@@ -1,4 +1,4 @@
-require_dependency "card/content/diff/lcs_mechanic"
+require_dependency "card/content/diff/processor"
 
 class Card
   class Content
@@ -87,61 +87,6 @@ class Card
 
         def postprocess text
           @postprocess ? @postprocess.call(text) : text
-        end
-
-        # Compares two lists of chunks and generates a diff
-        class Processor
-          include ProcessorMechanic
-
-          attr_reader :result, :summary, :dels_cnt, :adds_cnt
-          def initialize old_words, new_words, old_excludees, new_excludees
-            @adds = []
-            @dels = []
-            @words = { old: old_words, new: new_words }
-            @excludees = {
-              old: ExcludeeIterator.new(old_excludees),
-              new: ExcludeeIterator.new(new_excludees)
-            }
-          end
-
-          def run result
-            @result = result
-            prev_action = nil
-            ::Diff::LCS.traverse_balanced(@words[:old], @words[:new]) do |word|
-              if prev_action
-                interpret_action prev_action, word
-              else
-                write_excludees
-              end
-              process_element word.old_element, word.new_element, word.action
-              prev_action = word.action
-            end
-            write_all
-            @result
-          end
-        end
-
-        # support class for LCS::Processor
-        class ExcludeeIterator
-          def initialize list
-            @list = list
-            @index = 0
-            @chunk_index = 0
-          end
-
-          def word_step
-            @chunk_index += 1
-          end
-
-          def next
-            if @index < @list.size &&
-               @list[@index][:chunk_index] == @chunk_index
-              res = @list[@index]
-              @index += 1
-              @chunk_index += 1
-              res
-            end
-          end
         end
       end
     end

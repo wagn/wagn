@@ -2,6 +2,8 @@ class Card
   class Content
     # tools for truncating content
     module Truncate
+      ELLISPES_HTML = '<span class="closed-content-ellipses">...</span>'.freeze
+
       def smart_truncate input, words=25
         return if input.nil?
         truncated, wordstring = truncate input, words

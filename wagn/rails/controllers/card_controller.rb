@@ -62,14 +62,7 @@ class CardController < ActionController::Base
   end
 
   def authenticate
-    if params[:token]
-      ok = Card::Auth.set_current_from_token params[:token], params[:current]
-      raise Card::Error::Oops, "token authentication failed" unless ok
-      # arguably should be PermissionDenied; that requires a card object,
-      # and that's not loaded yet.
-    else
-      Card::Auth.set_current_from_session
-    end
+    Card::Auth.set_current params[:token], params[:current]
   end
 
   def load_id
@@ -82,12 +75,10 @@ class CardController < ActionController::Base
   end
 
   def load_card
-    @card = new_or_fetch_card
+    @card = Card.deep_fetch params
     raise Card::Error::NotFound unless @card
-
     @card.select_action_by_params params #
     Card::Env[:main_name] = params[:main] || (card && card.name) || ""
-
     card.errors.any? ? render_errors : true
   end
 
@@ -97,32 +88,32 @@ class CardController < ActionController::Base
 
   # ----------( HELPER METHODS ) -------------
 
-  def new_or_fetch_card
-    opts = card_opts
-    if params[:action] == "create"
-      # FIXME: we currently need a "new" card to catch duplicates
-      # (otherwise save will just act like a normal update)
-      # We may need a "#create" instance method to handle this checking?
-      Card.new opts
-    else
-      mark = params[:id] || opts[:name]
-      Card.fetch mark, new: opts
+  def handle
+    card.act(success: true) do
+      yield ? render_success : render_errors
     end
   end
 
-  def card_opts
-    opts = (params[:card] || {}).clone
-    # clone so that original params remain unaltered.  need deeper clone?
-    opts[:type] ||= params[:type] if params[:type]
-    # for /new/:type shortcut.  we should fix and deprecate this.
-    opts[:name] ||= params[:id].to_s.tr("_", " ")
-    # move handling to Card::Name?
-    opts
+  def render_success
+    success.name_context = @card.cardname
+    return card_redirect success.to_url if !ajax? || success.hard_redirect?
+    return render text: success.target if success.target.is_a? String
+
+    @card = success.target
+    update_params_for_success
+    @card.select_action_by_params params
+    show
   end
+
+
+
+
+
+
 
   def determine_id
     case
-    when needs_setup?
+    when prompt_setup?
       prepare_setup_card!
     when params[:card] && params[:card][:name]
       params[:card][:name]
@@ -133,7 +124,7 @@ class CardController < ActionController::Base
     end
   end
 
-  def needs_setup?
+  def prompt_setup?
     Card::Auth.needs_setup? && Card::Env.html?
   end
 
@@ -168,22 +159,7 @@ class CardController < ActionController::Base
     end
   end
 
-  def handle
-    card.act(success: true) do
-      yield ? render_success : render_errors
-    end
-  end
 
-  def render_success
-    success.name_context = @card.cardname
-    return card_redirect success.to_url if !ajax? || success.hard_redirect?
-    return render text: success.target if success.target.is_a? String
-
-    @card = success.target
-    update_params_for_success
-    @card.select_action_by_params params
-    show
-  end
 
   def render_errors
     # FIXME: should prioritize certain error classes
@@ -224,43 +200,9 @@ class CardController < ActionController::Base
 
   rescue_from StandardError do |exception|
     Rails.logger.info "exception = #{exception.class}: #{exception.message}"
-
     @card ||= Card.new
     Card::Error.current = exception
-    view =
-
-      case exception
-      ## arguably the view and status should be defined in the error class;
-      ## some are redundantly defined in view
-      when Card::Error::Oops, Card::Error::BadQuery
-        card.errors.add :exception, exception.message
-        # these error messages are visible to end users and are generally not
-        # treated as bugs.
-        # Probably want to rename accordingly.
-        :errors
-      when Card::Error::PermissionDenied
-        :denial
-      when Card::Error::NotFound, ActiveRecord::RecordNotFound,
-           ActionController::MissingFile
-        :not_found
-      when Wagn::BadAddress
-        :bad_address
-      else
-        # the following indicate a code problem and therefore require full
-        # logging
-        @card.notable_exception_raised
-
-        if ActiveRecord::RecordInvalid === exception
-          :errors
-        # could also just check non-production mode...
-        elsif Rails.logger.level == 0
-          raise exception
-        else
-          :server_error
-        end
-      end
-
-    show view
+    show Card::Error.exception_view(@card, exception)
   end
 
   def ajax?

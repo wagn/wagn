@@ -22,7 +22,7 @@ class Card < ActiveRecord::Base
   require_dependency "card/codename"
   require_dependency "card/query"
   require_dependency "card/format"
-  require_dependency "card/exceptions"
+  require_dependency "card/error"
   require_dependency "card/auth"
   require_dependency "card/mod/loader"
   require_dependency "card/content"

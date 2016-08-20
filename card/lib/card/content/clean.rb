@@ -29,7 +29,6 @@ class Card
       ALLOWED_TAGS = allowed_tags.freeze
 
       ATTR_VALUE_RE = [/(?<=^')[^']+(?=')/, /(?<=^")[^"]+(?=")/, /\S+/].freeze
-      ELLISPES_HTML = '<span class="closed-content-ellipses">...</span>'.freeze
 
       ## Method that cleans the String of HTML tags
       ## and attributes outside of the allowed list.

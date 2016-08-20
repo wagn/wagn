@@ -53,7 +53,7 @@ class CardController < ActionController::Base
   before_filter :authenticate, except: [:asset]
   before_filter :load_id, only: [:read]
   before_filter :load_card, except: [:asset]
-  before_filter :refresh_card, only: [:create, :update, :delete, :rollback]
+  before_filter :refresh_card, only: [:create, :update, :delete]
 
   def setup
     request.format = :html unless params[:format] # is this used??
@@ -67,12 +67,7 @@ class CardController < ActionController::Base
   end
 
   def load_id
-    params[:id] =
-      case params[:id]
-      when "*previous" then return card_redirect(Card::Env.previous_location)
-      when nil         then determine_id
-      else                  validate_id_encoding params[:id]
-      end
+    params[:id] = interpret_id params[:id]
   end
 
   def load_card
@@ -111,75 +106,21 @@ class CardController < ActionController::Base
     card.action = :read
     card.content = card.last_draft_content if use_draft?
 
+    formatname = format_from_params
+    format = card.format formatname
+
     view ||= params[:view]
-    slot_opts = (params[:slot] || {}).deep_symbolize_keys
-
-    format = format_from_params
-    formatter = card.format(format.to_sym)
-    result = card.act { formatter.page view, slot_opts }
-    status = formatter.error_status || status
-
-    deliver format, result, status
-  end
-
-  def deliver format, result, status
-    if format == :file && status == 200
-      send_file(*result)
-    elsif status == 302
-      card_redirect result
-    else
-      args = { text: result, status: status }
-      args[:content_type] = "text/text" if format == :file
-      render args
+    result = card.act do
+      format.page view, page_opts_from_params
     end
+
+    status = format.error_status || status
+    deliver formatname, result, status
   end
 
   def render_errors
     view, status = Card::Error.view_and_status(card) || [:errors, 422]
     show view, status
-  end
-
-  def determine_id
-    case
-    when prompt_setup?
-      prepare_setup_card!
-    when params[:card] && params[:card][:name]
-      params[:card][:name]
-    when Card::Format.tagged(params[:view], :unknown_ok)
-      ""
-    else
-      Card.global_setting(:home) || "Home"
-    end
-  end
-
-  def prompt_setup?
-    Card::Auth.needs_setup? && Card::Env.html?
-  end
-
-  def prepare_setup_card!
-    params[:card] = { type_id: Card.default_accounted_type_id }
-    params[:view] = "setup"
-    ""
-  end
-
-  def validate_id_encoding id
-    # we should find the place where we produce these bad urls
-    id.valid_encoding? ? id : id.force_encoding("ISO-8859-1").encode("UTF-8")
-  end
-
-
-
-
-
-  def format_from_params
-    return :file if params[:explicit_file]
-    format = request.parameters[:format]
-    return :file unless Card::Format.registered.member?(format) # unknown format
-    format
-  end
-
-  def use_draft?
-    params[:edit_draft] && card.drafts.present?
   end
 
   rescue_from StandardError do |exception|

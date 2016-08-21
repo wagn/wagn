@@ -31,12 +31,66 @@ event :write_identifier, after: :save_original_filename do
   self.content = attachment.db_content(mod: load_from_mod)
 end
 
+event :create_public_link, :integrate,
+      on: :save,  when: proc { |c| c.unprotected? } do
+  return if File.exist? public_path
+  FileUtils.mkdir_p File.dirname(public_path)
+  File.symlink attachment.path, public_path
+end
+
+event :remove_public_link, before: :storage_type_change,
+      on: :update, when: proc { |c| !c.unprotected? } do
+  return unless File.exist? public_path
+  File.rm public_path
+end
+
 event :storage_type_change, :store,
       on: :update,
       when: proc { |c| c.storage_type_changed? } do
+  return if storage_type.in? [:web, :coded]
+  return if @new_storage_type.in? [:web, :coded]
+
+  case storage_type
+  when :cloud
+    if @new_storage_type == :cloud
+      move_from_cloud_to_cloud
+    else
+      move_from_cloud_to_local
+    end
+  when :protected, :unprotected
+    if @new_storage_type == :cloud
+      move_from_local_to_cloud
+    end
+  end
+  #attachment.url
+  #binding.pry
+  # @bucket = @new_bucket
+  # @storage_type = @new_storage_type
+  #
+  # write_identifier
+end
+
+def public_path
+  Cardio.paths["public"].existent.first + file.url
+end
+
+def move_from_cloud_to_cloud
+  #old_url = attachment.url
+  #upload_cache_card.update_attributes! remote_file_url: url
+end
+
+def move_from_cloud_to_local
+  raise Card::Error, "storage type change from :cloud to #{@new_storage_type} "\
+                     "is not supported"
+end
+
+def move_from_local_to_cloud
+  old_file = attachment.file
   @bucket = @new_bucket
   @storage_type = @new_storage_type
+  #self.attachment.store!
   write_identifier
+  self.attachment.store! old_file
 end
 
 def file_ready_to_save?
@@ -149,7 +203,7 @@ end
 
 def bucket_config
   return {} unless bucket
-  @bucket_config ||= Cardio.config.file_buckets[bucket] || {}
+  @bucket_config ||= Cardio.config.file_buckets[bucket].deep_symbolize_keys || {}
 end
 
 def bucket_from_content
@@ -189,6 +243,7 @@ def delete_files_for_action action
   with_selected_action_id(action.id) do
     attachment.file.delete
     attachment.versions.each_value do |version|
+      binding.pry
       version.delete
       #FileUtils.rm version.path
     end
@@ -226,7 +281,7 @@ def storage_type_from_config
   return unless (type = Cardio.config.file_storage)
   unless type.in? CarrierWave::FileCardUploader::STORAGE_TYPES
     raise Card::Error,
-          I18n.t(:error_invalid_storage_option,
+          I18n.t(:error_invalid_storage_type,
                  scope: "mod.carrierwave.set.abstract.attachment",
                  type: type)
   end

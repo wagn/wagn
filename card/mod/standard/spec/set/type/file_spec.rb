@@ -107,7 +107,7 @@ describe Card::Set::Type::File do
           credentials: bucket_credentials(:aws),
           subdirectory: "files",
           directory:  directory,
-          public:   true,
+          public: true,
           attributes: { "Cache-Control" => "max-age=#{365.day.to_i}" },
           authenticated_url_expiration: 180
         }
@@ -156,6 +156,10 @@ describe Card::Set::Type::File do
 
         expect(subject.content)
           .to eq "(test_bucket)/#{subject.id}/#{subject.last_action_id - 1}.txt"
+        url = subject.file.url
+        expect(url).to match /^http/
+        file_content = open(url).read
+        expect(file_content.strip).to eq "file1"
       end
     end
   end

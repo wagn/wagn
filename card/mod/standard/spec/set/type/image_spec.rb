@@ -132,4 +132,18 @@ describe Card::Set::Type::Image do
       end
     end
   end
+
+  describe "#delete_files_for_action" do
+    subject do
+      Card::Auth.as_bot do
+        Card.create! name: "image card", type: "image",
+                     image: File.new(File.join(FIXTURES_PATH, "mao2.jpg"))
+      end
+    end
+    it "deletes all versions" do
+      path = subject.image.small.path
+      subject.delete_files_for_action(subject.last_action)
+      expect(File.exist?(path)).to be_falsey
+    end
+  end
 end

@@ -49,30 +49,6 @@ module CarrierWave
 
     STORAGE_TYPES = [:cloud, :web, :protected, :coded, :unprotected].freeze
 
-    def self.update_all_storage_locations
-      Card.search(type_id: ["in", FileID, ImageID]).each do |card|
-        card.update_storage_location!
-      end
-    end
-
-    def self.delete_tmp_files_of_cached_uploads
-      actions = Card::Action.find_by_sql "SELECT * FROM card_actions
-      INNER JOIN cards ON card_actions.card_id = cards.id
-      WHERE cards.type_id IN (#{Card::FileID}, #{Card::ImageID})
-      AND card_actions.draft = true"
-      actions.each do |action|
-        # we don't want to delete uploads in progress
-        if older_than_five_days?(action.created_at) && (card = action.card)
-          # we don't want to delete uploads in progress
-          card.delete_files_for_action action
-          action.delete
-        end
-      end
-    end
-
-    def self.older_than_five_days? time
-      Time.now - time > 432_000
-    end
     #storage :fog #:file
 
     def filename
@@ -110,7 +86,7 @@ module CarrierWave
     end
 
     def url opts={}
-      return file.url if bucket
+      return file.url if @model.cloud?
       "%s/%s/%s" % [card_path(Card.config.files_web_path), file_dir,
                     full_filename(url_filename(opts))]
     end
@@ -119,7 +95,7 @@ module CarrierWave
       return ":#{model.codename}" if mod_file?
 
       file_id = model.id? ? model.id : model.upload_cache_card.id
-      if bucket
+      if @model.cloud?
         "(#{bucket})/#{file_id}"
       else
         "~#{file_id}"
@@ -174,11 +150,7 @@ module CarrierWave
 
     [:provider, :attributes, :credentials, :directory, :public,
      :authenticated_url_expiration, :use_ssl_for_aws].each do |name|
-      define_method "fog_#{name}" do
-        Cardio.config.file_buckets &&
-          (b = bucket) && (b_config = Cardio.config.file_buckets[b]) &&
-          b_config[name]
-      end
+      define_method("fog_#{name}") { @model.bucket_config[name] }
     end
 
     private

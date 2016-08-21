@@ -32,13 +32,9 @@ end
 event :assign_attachment_on_update, :initialize,
       after: :assign_action, on: :update,
       when:  proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(@action_id_of_cached_upload))
-    uploaded_file =
-      with_selected_action_id(action.id) do
-        attachment.file
-      end
-    assign_attachment uploaded_file, action.comment
-  end
+  return unless (action = Card::Action.fetch(@action_id_of_cached_upload))
+  uploaded_file = with_selected_action_id(action.id) { attachment.file }
+  assign_attachment uploaded_file, action.comment
 end
 
 def assign_attachment file, original_filename
@@ -49,33 +45,22 @@ end
 
 event :delete_cached_upload_file_on_create, :integrate,
       on: :create, when: proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(@action_id_of_cached_upload))
-    upload_cache_card.delete_files_for_action action
-    action.delete
-  end
-  ::CarrierWave::Fileclear_upload_cache_dir_for_new_cards
+  return unless (action = Card::Action.fetch(@action_id_of_cached_upload))
+  upload_cache_card.delete_files_for_action action
+  action.delete
+  Card.delete_tmp_files_of_cached_uploads
 end
 
 event :delete_cached_upload_file_on_update, :integrate,
       on: :update, when: proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(@action_id_of_cached_upload))
-    delete_files_for_action action
-    action.delete
-  end
+  return unless  (action = Card::Action.fetch(@action_id_of_cached_upload))
+  delete_files_for_action action
+  action.delete
 end
 
 # used for uploads for new cards until the new card is created
 def upload_cache_card
   @upload_cache_card ||= Card["new_#{attachment_name}".to_sym]
-end
-
-def clear_upload_cache_dir_for_new_cards
-  Dir.entries(tmp_upload_dir).each do |filename|
-    if filename =~ /^\d+/
-      path = File.join(tmp_upload_dir, filename)
-      FileUtils.rm path if Card.older_than_five_days? File.ctime(path)
-    end
-  end
 end
 
 def preliminary_upload?

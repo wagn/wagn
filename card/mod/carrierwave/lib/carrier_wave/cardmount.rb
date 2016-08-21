@@ -30,15 +30,15 @@ module CarrierWave
               on: :update do
           mark_remove_#{column}_false
         end
-        event :store_previous_model_for_#{column}_event, :store,
+        event :store_previous_changes_for_#{column}_event, :store,
               on: :update, when: proc { |c| !c.history? } do
-          store_previous_model_for_#{column}
+          store_previous_changes_for_#{column}
         end
-        event :remove_previously_stored_#{column}_event, :store,
+        event :remove_previously_stored_#{column}_event, :finalize,
               on: :update, when: proc { |c| !c.history?} do
-          if @previous_model_for_#{column}
-            @previous_model_for_#{column}.include_set_modules
-          end
+          # if @previous_model_for_#{column}
+          #   @previous_model_for_#{column}.include_set_modules
+          # end
           remove_previously_stored_#{column}
         end
 

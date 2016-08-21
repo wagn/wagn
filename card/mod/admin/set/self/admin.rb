@@ -1,3 +1,5 @@
+# collect arrays of the form
+# [task symbol, { execute_policy: block, stats_policy: block }]
 basket :tasks
 
 event :admin_tasks, :initialize, on: :update do
@@ -26,8 +28,11 @@ format :html do
     stats = card_stats
     stats += cache_stats
     stats += memory_stats
-    tasks.each do |task_data|
-      stats += task_data[:stat_policy].call
+    card.tasks.each do |_task, policies|
+      binding.pry
+      entries = policies[:stats_policy].call
+      entries = [entries] unless entries.first.is_a?(Array)
+      stats += entries
     end
     table_content = stats.map { |args| stat_row(*args) }
     table table_content, header: %w(Stat Value Action)

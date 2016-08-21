@@ -16,26 +16,27 @@ class Card
   # Strings, and _ids_ are Integers.
   #
   class Codename
+    @codehase = {}
+
     class << self
       # returns codename for id and id for codename
       # @param key [Integer, String]
       # @return [String, Integer]
       def [] key
         return if key.nil?
-        key = key.to_sym unless key.is_a? Integer
-        codehash[key]
+        codehash[key.is_a?(Integer) ? key : key.to_sym]
       end
 
       # a Hash in which String keys have Integer values and vice versa
       # @return [Hash]
       def codehash
-        @codehash || generate_codehash
+        @codehash ||= load_codehash
       end
 
-      # clear cache both locally and in Persistent cache
+      # clear cache both locally and in cache
       def reset_cache
         @codehash = nil
-        Card.cache.write "CODEHASH", nil
+        Card.cache.delete "CODEHASH"
       end
 
       private
@@ -58,18 +59,20 @@ class Card
       end
 
       # generate Hash for @codehash and put it in the cache
-      def generate_codehash
-        @codehash = begin
-          Card.cache.fetch("CODEHASH") do
-            codehash = {}
-            each_codenamed_card do |codename, card_id|
-              check_duplicates codehash, codename, card_id
-              codehash[codename] = card_id
-              codehash[card_id] = codename
-            end
-            codehash
-          end
+      def load_codehash
+        Card.cache.fetch("CODEHASH") do
+          generate_codehash
         end
+      end
+
+      def generate_codehash
+        hash = {}
+        each_codenamed_card do |codename, card_id|
+          check_duplicates hash, codename, card_id
+          hash[codename] = card_id
+          hash[card_id] = codename
+        end
+        hash
       end
     end
   end

@@ -8,7 +8,7 @@ class Card
       def format_class_name format
         format = format.to_s
         format = "" if format == "base"
-        format = self.aliases[format] if self.aliases[format]
+        format = aliases[format] if aliases[format]
         "#{format.camelize}Format"
       end
 

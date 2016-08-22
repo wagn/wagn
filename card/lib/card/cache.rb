@@ -11,18 +11,14 @@ class Card
         write_to_soft_cache card
       elsif Card.cache
         Card.cache.write card.key, card
-        if card.id && card.id.nonzero?
-          Card.cache.write "~#{card.id}", card.key
-        end
+        Card.cache.write "~#{card.id}", card.key if card.id.to_i.nonzero?
       end
     end
 
     def write_to_soft_cache card
       return unless Card.cache
       Card.cache.soft.write card.key, card
-      if card.id && card.id.nonzero?
-        Card.cache.soft.write "~#{card.id}", card.key
-      end
+      Card.cache.soft.write "~#{card.id}", card.key if card.id.to_i.nonzero?
     end
 
     def expire name

@@ -16,8 +16,6 @@ class Card
   # Strings, and _ids_ are Integers.
   #
   class Codename
-    @codehase = {}
-
     class << self
       # returns codename for id and id for codename
       # @param key [Integer, String]

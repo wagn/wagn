@@ -10,7 +10,7 @@ class Card
           with_nest_mode view do
             Card::Cache::ViewCache.fetch(self, view, args) do
               method = view_method view, args
-              method.arity == 0 ? method.call : method.call(args)
+              method.arity.zero? ? method.call : method.call(args)
             end
           end
         end
@@ -108,7 +108,6 @@ class Card
       ensure
         @current_view = old_view
       end
-
     end
   end
 end

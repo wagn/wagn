@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::CssFormat do
+describe Card::Format::CssFormat do
   # SPECSTUB
 end

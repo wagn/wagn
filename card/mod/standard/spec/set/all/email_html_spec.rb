@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::EmailHtmlFormat do
+describe Card::Format::EmailHtmlFormat do
   it "renders full urls" do
     Card::Env[:protocol] = "http://"
     Card::Env[:host] = "www.fake.com"

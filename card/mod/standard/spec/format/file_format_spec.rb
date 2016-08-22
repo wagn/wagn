@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::FileFormat do
+describe Card::Format::FileFormat do
   # format has no methods
 end

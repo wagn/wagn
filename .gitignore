@@ -1,4 +1,5 @@
-.idea/
+.idea/*
+.idea-old/*
 .jhw-cache
 .rvmrc
 .tm_properties
@@ -15,4 +16,5 @@ decko*gem
 *.DS_Store
 *.swp
 test_work/*
+*.orig
 card/spec/config/bucket_credentials.yml

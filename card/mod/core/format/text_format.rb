@@ -2,11 +2,10 @@
 
 class Card
   class Format
-    register :text
-    register :txt
-
     class TextFormat < Format
-      @@aliases["txt"] = "text"
+      register :text
+      register :txt
+      aliases["txt"] = "text"
     end
   end
 end

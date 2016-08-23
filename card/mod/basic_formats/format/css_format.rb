@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 class Card
   class Format
-    register :css
     class CssFormat < Format
+      register :css
     end
   end
 end

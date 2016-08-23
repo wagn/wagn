@@ -47,7 +47,7 @@ class Card
       end
 
       def class_from_name formatname
-        if formatname == 'Format'
+        if formatname == "Format"
           Card::Format
         else
           Card::Format.const_get formatname

@@ -35,6 +35,8 @@ event :validate_legality_of_name do
     errors.add :name, "is too long (255 character maximum)"
   elsif cardname.blank?
     errors.add :name, "can't be blank"
+  elsif cardname.parts.include? ""
+    errors.add :name, "is incomplete"
   else
     unless cardname.valid?
       errors.add :name, "may not contain any of the following characters: " \

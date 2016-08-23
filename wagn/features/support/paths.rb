@@ -16,7 +16,7 @@ module NavigationHelpers
     # Here is an example that pulls values out of the Regexp:
     #
     #   when /^(.*)'s profile page$/i
-    #     user_profile_path(Auth[ $1 ])
+    #     user_profile_path(Auth.find_account_by_email( $1 ))
 
     when /card (.*) with (.*) layout$/
       "/#{Regexp.last_match(1).to_name.url_key}?layout=$2"

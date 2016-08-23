@@ -9,7 +9,7 @@ class Card
     # +pattern+ that states what sort of text it matches.
     # Chunks are initalized by passing in the result of a
     # match by its pattern.
-
+    #
     module Chunk
       mattr_accessor :raw_list, :prefix_regexp_by_list,
                      :prefix_map_by_list, :prefix_map_by_chunkname
@@ -64,7 +64,8 @@ class Card
         end
       end
 
-      # not sure whether this is best place.  Could really happen almost anywhere
+      # not sure whether this is best place.
+      # Could really happen almost anywhere
       # (even before chunk classes are loaded).
       register_list :default, [
         :URI, :HostURI, :EmailURI, :EscapedLiteral, :Include, :Link

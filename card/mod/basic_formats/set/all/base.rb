@@ -80,7 +80,7 @@ format do
   end
 
   view :closed_content, closed: true do |args|
-    Card::Content.truncatewords_with_closing_tags _render_core(args)
+    Card::Content.smart_truncate _render_core(args)
   end
 
   view :blank, closed: true, perms: :none do

@@ -48,11 +48,11 @@ def valid?(*)
   act { super }
 end
 
-def update_attributes(*args)
+def update_attributes *args
   act(*args) { super }
 end
 
-def update_attributes!(*args)
+def update_attributes! *args
   act(*args) { super }
 end
 

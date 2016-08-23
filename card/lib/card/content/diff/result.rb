@@ -1,6 +1,7 @@
 class Card
-    class Content
+  class Content
     class Diff
+      # Result object for Diff processing
       class Result
         attr_accessor :complete, :summary, :dels_cnt, :adds_cnt
         def initialize summary_opts=nil
@@ -35,6 +36,7 @@ class Card
           @complete << text
         end
 
+        # Summary object for Diff processing
         class Summary
           def initialize opts
             opts ||= {}
@@ -89,27 +91,34 @@ class Card
           end
 
           def truncate_overlap
-            if @remaining_chars < 0
-              if @chunks.last[:action] == :ellipsis
-                @chunks.pop
-                @remaining_chars += @joint.size
-              end
+            return unless @remaining_chars < 0
+            process_ellipsis
 
-              index = @chunks.size - 1
-              while @remaining_chars < @joint.size && index >= 0
-                if @remaining_chars + @chunks[index][:text].size == @joint.size
-                  replace_with_joint index
-                  break
-                elsif @remaining_chars +
-                      @chunks[index][:text].size > @joint.size
-                  cut_with_joint index
-                  break
-                else
-                  @remaining_chars += @chunks[index][:text].size
-                  @chunks.delete_at(index)
-                end
-                index -= 1
-              end
+            index = @chunks.size - 1
+            while @remaining_chars < @joint.size && index >= 0
+              overlap_size = @remaining_chars + @chunks[index][:text].size
+              break if process_overlap overlap_size, index
+              index -= 1
+            end
+          end
+
+          def process_ellipsis
+            return unless @chunks.last[:action] == :ellipsis
+            @chunks.pop
+            @remaining_chars += @joint.size
+          end
+
+          def process_overlap overlap_size, index
+            if overlap_size == @joint.size
+              replace_with_joint index
+              true
+            elsif overlap_size > @joint.size
+              cut_with_joint index
+              true
+            else
+              @remaining_chars += @chunks[index][:text].size
+              @chunks.delete_at(index)
+              false
             end
           end
 

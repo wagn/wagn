@@ -89,6 +89,12 @@ class Card
         @char_count += result.length
         result
       end
+
+      module ClassMethods
+        def max_depth
+          Card.config.max_depth
+        end
+      end
     end
   end
 end

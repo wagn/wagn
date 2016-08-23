@@ -29,7 +29,7 @@ class Card < ActiveRecord::Base
   require_dependency "card/codename"
   require_dependency "card/query"
   require_dependency "card/format"
-  require_dependency "card/exceptions"
+  require_dependency "card/error"
   require_dependency "card/auth"
   require_dependency "card/mod/loader"
   require_dependency "card/content"
@@ -87,7 +87,6 @@ class Card < ActiveRecord::Base
   after_commit :integration_phase, unless: -> { only_storage_phase? }
   after_rollback :clean_up, unless: -> { only_storage_phase? }
 
-  TRACKED_FIELDS = %w(name type_id db_content trash).freeze
   extend CarrierWave::Mount
   ActiveSupport.run_load_hooks(:card, self)
 end

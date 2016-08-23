@@ -105,7 +105,7 @@ def permitted? action
     # admin can comment if anyone can
     !permitted_ids.empty?
   else
-    Auth.among? permitted_ids
+    Auth.as_card.among? permitted_ids
   end
 end
 

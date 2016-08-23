@@ -32,7 +32,8 @@ def revision action
   # a "revision" refers to the state of all tracked fields
   # at the time of a given action
   action = Card::Action.fetch(action) if action.is_a? Integer
-  action && Card::TRACKED_FIELDS.each_with_object({}) do |field, attr_changes|
+  return unless action
+  Card::Change::TRACKED_FIELDS.each_with_object({}) do |field, attr_changes|
     last_change = action.change(field) ||
                   last_change_on(field, not_after: action)
     attr_changes[field.to_sym] = (last_change ? last_change.value : self[field])
@@ -40,7 +41,7 @@ def revision action
 end
 
 def delete_old_actions
-  Card::TRACKED_FIELDS.each do |field|
+  Card::Change::TRACKED_FIELDS.each do |field|
     # assign previous changes on each tracked field to the last action
     next unless (la = last_action) && !la.change(field).present? &&
                 (last_change = last_change_on field)

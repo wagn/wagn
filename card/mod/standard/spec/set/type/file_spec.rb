@@ -70,6 +70,7 @@ describe Card::Set::Type::File do
                            file: File.new(File.join(FIXTURES_PATH, "file1.txt"))
         file = File.new File.join(FIXTURES_PATH, "file2.txt")
         card.update_attributes! file: file
+        card
       end
     end
 
@@ -169,12 +170,14 @@ describe Card::Set::Type::File do
     end
 
     describe "#update_storage_location" do
-      context "when chnged from cloud to protected" do
+      context "when changed from cloud to protected" do
         it "copies file to local file system" do
-          subject.update_storage_location! :protected
-          expect(subject.content)
-            .to eq "~#{subject.id}/#{subject.last_action_id - 1}.txt"
-          expect(File.read(subject.file.retrieve_path)).to eq "file1"
+          # not yet supported
+          expect{subject.update_storage_location!(:protected)}
+            .to raise_error(Card::Error)
+          # expect(subject.content)
+          #   .to eq "~#{subject.id}/#{subject.last_action_id - 1}.txt"
+          # expect(File.read(subject.file.retrieve_path)).to eq "file1"
         end
       end
 
@@ -213,7 +216,7 @@ describe Card::Set::Type::File do
           expect(subject.content)
             .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
 
-          subject.update_storage_location! :unprotected
+          subject.update_storage_location! :protected
           expect(public_path_exist?).to be_falsey
         end
       end
@@ -235,7 +238,7 @@ describe Card::Set::Type::File do
     end
 
     def public_path_exist?
-      "public/files/~#{subject.id}/#{subject.last_action_id}.txt"
+      File.exist? "public/files/~#{subject.id}/#{subject.last_action_id}.txt"
     end
   end
 end

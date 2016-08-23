@@ -141,8 +141,12 @@ describe Card::Set::Type::Image do
       end
     end
     it "deletes all versions" do
-      path = subject.image.small.path
+      path = subject.image.path
+      small_path = subject.image.small.path
+      medium_path = subject.image.medium.path
       subject.delete_files_for_action(subject.last_action)
+      expect(File.exist?(small_path)).to be_falsey
+      expect(File.exist?(medium_path)).to be_falsey
       expect(File.exist?(path)).to be_falsey
     end
   end

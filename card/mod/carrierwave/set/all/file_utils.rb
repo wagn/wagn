@@ -1,8 +1,7 @@
 module ClassMethods
   def update_all_storage_locations
-    Card.search(type_id: ["in", FileID, ImageID]).each do |card|
-      card.update_storage_location!
-    end
+    Card.search(type_id: ["in", FileID, ImageID])
+        .each(&:update_storage_location!)
   end
 
   def delete_tmp_files_of_cached_uploads

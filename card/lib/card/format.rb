@@ -1,23 +1,28 @@
 # -*- encoding : utf-8 -*-
 
 class Card
-  # The {Format} class is a key strut in the MoFoS (Model-Format-Set)
-  # architecture.
+  # The {Format} class is a key strut in the MoFoS
+  # _(Model-Format-Set)_ architecture.
   #
-  # The primary mechanism for transacting with cards (cards across time)
-  # is the _event_.  The primary mechanism for displaying them (cards across
-  # space) is the _view_. Formats are objects for creating views of cards.
+  # The primary means of transacting with the card Model (cards across time)
+  # is the _event_.  The primary means for displaying card content (cards across
+  # space) is the _view_. __Format objects manage card views__.
   #
   # Here is a very simple view that just displays the card's id:
   #
   # ```` view(:simple_content) { card.raw_content } ````
   #
-  # ...but perhaps you would like this view to appear differently in different
+  # But suppose you would like this view to appear differently in different
   # output formats.  You might need certain characters escaped in some formats
   # (csv, html, etc) but not others.  You might like to make use of the
   # aesthetic or structural benefits certain formats allow.
   #
-  # To this end we have format classes. {Format:HtmlFormat},
+  # To this end we have format classes. {Format::HtmlFormat},
+  # {Format::JsonFormat}, {Format::XmlFormat}, etc, each are descendants of
+  # {Card::Format}.
+  #
+  # For information on how Formats intersect with Sets, see {Card::Set::Format}
+  #
   class Format
     include Card::Env::Location
     include Nest
@@ -29,9 +34,6 @@ class Card
 
     extend Nest::ClassMethods
     extend Registration
-
-    DEPRECATED_VIEWS = { view: :open, card: :open, line: :closed,
-                         bare: :core, naked: :core }.freeze
 
     # FIXME: should be set in views
 
@@ -118,6 +120,11 @@ class Card
       else
         pass_method_to_template_object(method, opts, proc) { yield }
       end
+    end
+
+    def respond_to_missing? method_name, _include_private=false
+      (method_name =~ /(_)?(optional_)?render(_(\w+))?/) ||
+        template.respond_to?(method_name)
     end
 
     def pass_method_to_template_object method, opts, proc

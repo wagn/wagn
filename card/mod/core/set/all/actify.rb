@@ -48,12 +48,12 @@ def valid?(*)
   act { super }
 end
 
-def update_attributes(*)
-  act { super }
+def update_attributes(*args)
+  act(*args) { super }
 end
 
-def update_attributes!(*)
-  act { super }
+def update_attributes!(*args)
+  act(*args) { super }
 end
 
 def abortable

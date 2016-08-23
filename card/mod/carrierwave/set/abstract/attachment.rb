@@ -10,7 +10,8 @@ end
 
 # we need a card id for the path so we have to update db_content when we have
 # an id
-event :correct_identifier, :finalize, on: :create do
+event :correct_identifier, :finalize,
+      on: :create, when: proc { |c| !c.web? } do
   update_column(:db_content, attachment.db_content(mod: load_from_mod))
   expire
 end
@@ -21,13 +22,15 @@ event :save_original_filename, :prepare_to_store,
   @current_action.update_attributes! comment: original_filename
 end
 
-event :validate_file_exist, :validate, on: :create do
+event :validate_file_exist, :validate,
+      on: :create, when: proc { |c| !c.web? } do
   unless attachment.file.present? || empty_ok?
     errors.add attachment_name, "is missing"
   end
 end
 
-event :write_identifier, after: :save_original_filename do
+event :write_identifier, after: :save_original_filename,
+                         when: proc { |c| !c.web? } do
   self.content = attachment.db_content(mod: load_from_mod)
 end
 
@@ -38,15 +41,8 @@ event :create_public_link, :integrate,
   File.symlink attachment.path, public_path
 end
 
-event :remove_public_link, before: :storage_type_change,
-      on: :update, when: proc { |c| !c.unprotected? } do
-  return unless File.exist? public_path
-  File.rm public_path
-end
-
 event :storage_type_change, :store,
-      on: :update,
-      when: proc { |c| c.storage_type_changed? } do
+      on: :update, when: proc { |c| c.storage_type_changed? } do
   return if storage_type.in? [:web, :coded]
   return if @new_storage_type.in? [:web, :coded]
 
@@ -68,6 +64,12 @@ event :storage_type_change, :store,
   # @storage_type = @new_storage_type
   #
   # write_identifier
+end
+
+event :remove_public_link, before: :storage_type_change,
+      on: :update, when: proc { |c| !c.unprotected? } do
+  return unless File.exist? public_path
+  File.rm public_path
 end
 
 def public_path
@@ -197,6 +199,10 @@ def cloud?
   storage_type == :cloud
 end
 
+def web?
+  storage_type == :web
+end
+
 def remote_storage?
   cloud? || storage_type == :web
 end
@@ -290,10 +296,10 @@ end
 
 def storage_type_from_content
   case content
-  when /^\(/        then :cloud
-  when %r{^http://} then :web
-  when /^~/         then :protected
-  when /^\:/        then :coded
+  when /^\(/           then :cloud
+  when %r{/^https?\:/} then :web
+  when /^~/            then :protected
+  when /^\:/           then :coded
   else :unprotected
   end
 end

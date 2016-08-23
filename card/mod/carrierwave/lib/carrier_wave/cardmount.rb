@@ -64,17 +64,25 @@ module CarrierWave
 
         def #{column}=(new_file)
           return if new_file.blank?
-          send(:"#{column}_will_change!")
           db_column = _mounter(:#{column}).serialization_column
           send(:"\#{db_column}_will_change!")
-          super
+          if web?
+            self.content = new_file
+          else
+            send(:"#{column}_will_change!")
+            super
+          end
         end
 
         def remote_#{column}_url=(url)
-          send(:"#{column}_will_change!")
           db_column = _mounter(:#{column}).serialization_column
           send(:"\#{db_column}_will_change!")
-          super
+          if web?
+            self.content = url
+          else
+            send(:"#{column}_will_change!")
+            super
+          end
         end
 
         def remove_#{column}!

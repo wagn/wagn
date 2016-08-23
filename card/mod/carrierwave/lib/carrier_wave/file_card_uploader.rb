@@ -49,8 +49,6 @@ module CarrierWave
 
     STORAGE_TYPES = [:cloud, :web, :protected, :coded, :unprotected].freeze
 
-    #storage :fog #:file
-
     def filename
       if mod_file?
         "#{model.type_code}#{extension}"
@@ -139,7 +137,7 @@ module CarrierWave
 
     def original_filename
       @original_filename ||= model.selected_action &&
-        model.selected_action.comment
+                             model.selected_action.comment
     end
 
     delegate :store_dir, :retrieve_dir, :mod_file?, :bucket, to: :model

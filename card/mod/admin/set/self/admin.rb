@@ -4,7 +4,7 @@ basket :tasks
 
 event :admin_tasks, :initialize, on: :update do
   return unless (task = Env.params[:task])
-  raise Card::Error::PermissionDenied.new(self) unless Auth.always_ok?
+  raise Card::Error::PermissionDenied, self unless Auth.always_ok?
 
   case task.to_sym
   when :clear_cache          then Card::Cache.reset_all
@@ -29,7 +29,6 @@ format :html do
     stats += cache_stats
     stats += memory_stats
     card.tasks.each do |_task, policies|
-      binding.pry
       entries = policies[:stats_policy].call
       entries = [entries] unless entries.first.is_a?(Array)
       stats += entries

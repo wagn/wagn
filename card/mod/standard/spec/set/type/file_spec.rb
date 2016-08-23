@@ -174,7 +174,7 @@ describe Card::Set::Type::File do
           subject.update_storage_location! :protected
           expect(subject.content)
             .to eq "~#{subject.id}/#{subject.last_action_id - 1}.txt"
-          expect(File.read subject.file.retrieve_path).to eq "file1"
+          expect(File.read(subject.file.retrieve_path)).to eq "file1"
         end
       end
 
@@ -185,10 +185,11 @@ describe Card::Set::Type::File do
             .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
           subject.update_storage_location! :cloud
 
-          expect(subject.content)
-            .to eq "(test_bucket)/#{subject.id}/#{subject.last_action_id - 1}.txt"
+          expect(subject.content).to eq(
+            "(test_bucket)/#{subject.id}/#{subject.last_action_id - 1}.txt"
+          )
           url = subject.file.url
-          expect(url).to match /^http/
+          expect(url).to match(/^http/)
           file_content = open(url).read
           expect(file_content.strip).to eq "file1"
         end

@@ -17,7 +17,7 @@ class Card
       self.director = nil
       DirectorRegister.act_card = self
       main_act_block = true
-      if opts[:success]
+      if opts && opts[:success]
         Env[:success] = Env::Success.new(cardname, Env.params[:success])
       end
     end

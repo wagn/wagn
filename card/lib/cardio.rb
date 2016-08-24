@@ -2,17 +2,19 @@
 
 require "active_support/core_ext/numeric/time"
 require "delayed_job_active_record"
+require "cardio/schema.rb"
+
+ActiveSupport.on_load :card do
+  if Card.take
+    Card::Mod::Loader.load_mods
+  else
+    Rails.logger.warn "empty database"
+  end
+end
 
 module Cardio
+  extend Schema
   CARD_GEM_ROOT = File.expand_path("../..", __FILE__)
-
-  ActiveSupport.on_load :card do
-    if Card.take
-      Card::Mod::Loader.load_mods
-    else
-      Rails.logger.warn "empty database"
-    end
-  end
 
   mattr_reader :paths, :config, :cache
 
@@ -128,63 +130,17 @@ module Cardio
 
     def future_stamp
       # # used in test data
-      @@future_stamp ||= Time.zone.local 2020, 1, 1, 0, 0, 0
+      @future_stamp ||= Time.zone.local 2020, 1, 1, 0, 0, 0
     end
 
     def migration_paths type
       list = paths["db/migrate#{schema_suffix type}"].to_a
       if type == :deck_cards
-        Card::Mod::Loader.mod_dirs.each('db/migrate_cards') do |path|
+        Card::Mod::Loader.mod_dirs.each("db/migrate_cards") do |path|
           list += Dir.glob path
         end
       end
       list.flatten
-    end
-
-    def assume_migrated_upto_version type
-      Cardio.schema_mode(type) do
-        ActiveRecord::Schema.assume_migrated_upto_version(
-          Cardio.schema(type), Cardio.migration_paths(type)
-        )
-      end
-    end
-
-    def schema_suffix type
-      case type
-      when :core_cards then "_core_cards"
-      when :deck_cards then "_deck_cards"
-      else ""
-      end
-    end
-
-    def delete_tmp_files id=nil
-      dir = Cardio.paths["files"].existent.first + "/tmp"
-      dir += "/#{id}" if id
-      FileUtils.rm_rf dir, secure: true
-    rescue
-      Rails.logger.info "failed to remove tmp files"
-    end
-
-    def schema_mode type
-      new_suffix = Cardio.schema_suffix type
-      original_suffix = ActiveRecord::Base.table_name_suffix
-      ActiveRecord::Base.table_name_suffix = new_suffix
-      ActiveRecord::SchemaMigration.reset_table_name
-      paths = Cardio.migration_paths(type)
-      yield(paths)
-      ActiveRecord::Base.table_name_suffix = original_suffix
-      ActiveRecord::SchemaMigration.reset_table_name
-    end
-
-    def schema type=nil
-      File.read(schema_stamp_path type).strip
-    end
-
-    def schema_stamp_path type
-      root_dir = (type == :deck_cards ? root : gem_root)
-      stamp_dir = ENV["SCHEMA_STAMP_PATH"] || File.join(root_dir, "db")
-
-      File.join stamp_dir, "version#{schema_suffix type}.txt"
     end
   end
 end

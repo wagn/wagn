@@ -7,7 +7,7 @@ gem 'card',        :path=>"<%= @gemfile_gem_path %>/card", :require => false
 gem 'wagn'
 <% end %>
 
-gem '<%= database_gemfile_entry.name %>'<%= %(, '#{database_gemfile_entry.version}') if database_gemfile_entry.version -%>
+gem '<%= database_gemfile_entry.name %>'<%= %(, '#{database_gemfile_entry.version}') if database_gemfile_entry.version %>
 
 # Use Unicorn or Thin as server
 # gem 'unicorn'

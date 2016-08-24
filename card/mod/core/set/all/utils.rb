@@ -22,6 +22,14 @@ module ClassMethods
     end
   end
 
+  def delete_tmp_files id=nil
+    dir = Cardio.paths["files"].existent.first + "/tmp"
+    dir += "/#{id}" if id
+    FileUtils.rm_rf dir, secure: true
+  rescue
+    Rails.logger.info "failed to remove tmp files"
+  end
+
   def all_file_ids
     dir = Card.paths["files"].existent.first
     Dir.entries(dir)[2..-1].map(&:to_i)

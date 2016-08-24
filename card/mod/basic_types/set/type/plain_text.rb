@@ -7,6 +7,6 @@ format :html do
   end
 
   view :core do |_args|
-    process_content_object(CGI.escapeHTML _render_raw)
+    process_content CGI.escapeHTML(_render_raw)
   end
 end

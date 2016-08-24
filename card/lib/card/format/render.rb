@@ -1,12 +1,6 @@
 class Card
   class Format
     module Render
-      def page view, slot_opts
-        @card.run_callbacks :show_page do
-          show view, slot_opts
-        end
-      end
-
       def render view, args={}
         view = canonicalize_view view
         return if hidden_view? view, args
@@ -16,12 +10,25 @@ class Card
           with_nest_mode view do
             Card::Cache::ViewCache.fetch(self, view, args) do
               method = view_method view, args
-              method.arity == 0 ? method.call : method.call(args)
+              method.arity.zero? ? method.call : method.call(args)
             end
           end
         end
       rescue => e
         rescue_view e, view
+      end
+
+      def render_api match, opts
+        view = match[3] ? match[4] : opts.shift
+        args = opts[0] ? opts.shift.clone : {}
+        optional_render_args(args, opts) if match[2]
+        args[:skip_permissions] = true if match[1]
+        render view, args
+      end
+
+      def optional_render_args args, opts
+        args[:optional] = true
+        args[:default_visibility] = opts.shift
       end
 
       def view_method view, args
@@ -73,43 +80,25 @@ class Card
 
       def parse_view_visibility val
         case val
-        when NilClass then
-          []
-        when Array then
-          val
-        when String then
-          val.split(/[\s,]+/)
-        else
-          raise Card::Error, "bad show/hide argument: #{val}"
+        when NilClass then []
+        when Array    then val
+        when String   then val.split(/[\s,]+/)
+        else raise Card::Error, "bad show/hide argument: #{val}"
         end.map { |view| canonicalize_view view }
       end
 
       def default_render_args view, a=nil
         args =
           case a
-          when nil then
-            {}
-          when Hash then
-            a.clone
-          when Array then
-            a[0].merge a[1]
-          else
-            raise Card::Error, "bad render args: #{a}"
+          when nil   then {}
+          when Hash  then a.clone
+          when Array then a[0].merge a[1]
+          else raise Card::Error, "bad render args: #{a}"
           end
 
         default_method = "default_#{view}_args"
         send default_method, args if respond_to?(default_method)
         args
-      end
-
-      def rescue_view e, view
-        raise e if Rails.env =~ /^cucumber|test$/
-        Rails.logger.info "\nError rendering #{error_cardname} / #{view}: "\
-                        "#{e.class} : #{e.message}"
-        Card::Error.current = e
-        card.notable_exception_raised
-        raise e if (debug = Card[:debugger]) && debug.content == "on"
-        rendering_error e, view
       end
 
       def current_view view
@@ -118,35 +107,6 @@ class Card
         yield
       ensure
         @current_view = old_view
-      end
-
-      def error_cardname
-        card && card.name.present? ? card.name : "unknown card"
-      end
-
-      def rendering_error _exception, view
-        "Error rendering: #{error_cardname} (#{view} view)"
-      end
-
-      def add_class options, klass
-        options[:class] = [options[:class], klass].flatten.uniq.compact * " "
-      end
-
-      def id_counter
-        return @parent.id_counter if @parent
-        @id_counter ||= 0
-        @id_counter += 1
-      end
-
-      def unique_id
-        "#{card.key}-#{id_counter}"
-      end
-
-      def output content
-        case content
-        when String then content
-        when Array then content.compact.join "\n"
-        end
       end
     end
   end

@@ -1,8 +1,40 @@
 # -*- encoding : utf-8 -*-
 
 class Card
-  def self.cache
-    Card::Cache[Card]
+  class << self
+    def cache
+      Card::Cache[Card]
+    end
+
+    def write_to_cache card, opts
+      if opts[:local_only]
+        write_to_soft_cache card
+      elsif Card.cache
+        Card.cache.write card.key, card
+        Card.cache.write "~#{card.id}", card.key if card.id.to_i.nonzero?
+      end
+    end
+
+    def write_to_soft_cache card
+      return unless Card.cache
+      Card.cache.soft.write card.key, card
+      Card.cache.soft.write "~#{card.id}", card.key if card.id.to_i.nonzero?
+    end
+
+    def expire name
+      # note: calling instance method breaks on dirty names
+      key = name.to_name.key
+      return unless (card = Card.cache.read key)
+      Card.cache.delete key
+      Card.cache.delete "~#{card.id}" if card.id
+    end
+
+    def expire_hard name
+      return unless Card.cache.hard
+      key = name.to_name.key
+      Card.cache.hard.delete key
+      Card.cache.hard.delete "~#{card.id}" if card.id
+    end
   end
 
   # The {Cache} class manages and integrates {Temporary} and {Persistent
@@ -82,7 +114,7 @@ class Card
       # (the non-standard caches)
       def reset_other
         Card::Codename.reset_cache
-        Cardio.delete_tmp_files
+        Card.delete_tmp_files
       end
 
       # generate a cache key from an object

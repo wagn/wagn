@@ -8,8 +8,10 @@ class Card
       # app is not totally set up yet
       # @return [true/false]
       def needs_setup?
-        @simulating_setup_need ||
-          !Card.cache.fetch(SETUP_COMPLETED_KEY) { account_count > 2 }
+        @simulating_setup_need || (
+          !Card.cache.read(SETUP_COMPLETED_KEY) &&
+          !Card.cache.write(SETUP_COMPLETED_KEY, account_count > 2)
+        )
         # every deck starts with two accounts: WagnBot and Anonymous
       end
 

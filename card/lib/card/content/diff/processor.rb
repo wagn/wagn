@@ -2,9 +2,31 @@ class Card
   class Content
     class Diff
       class LCS
-        # support methods for LCS::Processor
-        module ProcessorMechanic
-          private
+        # Compares two lists of chunks and generates a diff
+        class Processor
+          def initialize old_words, new_words, old_excludees, new_excludees
+            @adds = []
+            @dels = []
+            @words = { old: old_words, new: new_words }
+            @excludees =
+              ExcludeeIterator.old_and_new old_excludees, new_excludees
+          end
+
+          def run result
+            @result = result
+            prev_action = nil
+            ::Diff::LCS.traverse_balanced(@words[:old], @words[:new]) do |word|
+              if prev_action
+                interpret_action prev_action, word
+              else
+                write_excludees
+              end
+              process_element word.old_element, word.new_element, word.action
+              prev_action = word.action
+            end
+            write_all
+            @result
+          end
 
           def interpret_action prev_action, word
             if (prev_action == word.action) ||
@@ -57,24 +79,16 @@ class Card
           end
 
           def del_old_excludees
-            while (ex = @excludees[:old].next)
-              if ex[:type] == :disjunction
-                @dels << ex[:element]
-              else
-                write_dels
-                @result.write_excluded_chunk ex[:element]
-              end
+            @excludees[:old].scan_and_record(@dels) do |element|
+              write_dels
+              @result.write_excluded_chunk element
             end
           end
 
           def add_new_excludees
-            while (ex = @excludees[:new].next)
-              if ex[:type] == :disjunction
-                @adds << ex[:element]
-              else
-                write_adds
-                @result.complete << ex[:element]
-              end
+            @excludees[:new].scan_and_record(@adds) do |element|
+              write_adds
+              @result.complete << element
             end
           end
 
@@ -99,6 +113,46 @@ class Card
           def minus old_element
             @dels << old_element
             @excludees[:old].word_step
+          end
+        end
+
+        # support class for LCS::Processor
+        class ExcludeeIterator
+          def self.old_and_new old_excludees, new_excludees
+            {
+              old: new(old_excludees),
+              new: new(new_excludees)
+            }
+          end
+
+          def initialize list
+            @list = list
+            @index = 0
+            @chunk_index = 0
+          end
+
+          def word_step
+            @chunk_index += 1
+          end
+
+          def next
+            if @index < @list.size &&
+               @list[@index][:chunk_index] == @chunk_index
+              res = @list[@index]
+              @index += 1
+              @chunk_index += 1
+              res
+            end
+          end
+
+          def scan_and_record record_array
+            while (ex = self.next)
+              if ex[:type] == :disjunction
+                record_array << ex[:element]
+              else
+                yield ex[:element]
+              end
+            end
           end
         end
       end

@@ -65,4 +65,10 @@ namespace :test do
     load "#{TEST_SEED_PATH}/seed.rb"
     SharedData.add_test_data
   end
+
+  desc "seed test db"
+  task seed: :environment do
+    raise "must be test env" unless Rails.env == "test"
+    Rake::Task["db:fixtures:load"].invoke
+  end
 end

@@ -37,7 +37,7 @@ event :remove_public_link, on: :update,
                            after: :storage_type_change,
                            when: proc { |c| !c.unprotected? } do
   return unless File.exist? public_path
-  File.rm public_path
+  FileUtils.rm public_path
 end
 
 def cloud?

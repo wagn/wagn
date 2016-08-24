@@ -156,7 +156,6 @@ module CarrierWave
     def storage
       case @model.storage_type
       when :cloud then ::CarrierWave::Storage::Fog.new(self)
-      when :web then ::CarrierWave::Storage::Web.new(self)
       else ::CarrierWave::Storage::File.new(self)
       end
     end

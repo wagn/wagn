@@ -1,3 +1,5 @@
+cw_path = File.expand_path "../../../../../vendor/carrierwave/lib", __FILE__
+$LOAD_PATH.unshift(cw_path) unless $LOAD_PATH.include?(cw_path)
 require "carrierwave"
 
 module CarrierWave
@@ -85,10 +87,17 @@ module CarrierWave
           end
         end
 
-        def remove_#{column}!
+        def remove_#{column}=(value)
+          column = _mounter(:#{column}).serialization_column
+          send(:"\#{column}_will_change!")
           super
-          _mounter(:#{column}).remove = true
-          _mounter(:#{column}).write_identifier
+        end
+
+        def remove_#{column}!
+          self.remove_#{column} = true
+          write_#{column}_identifier
+          self.remove_#{column} = false
+          super
         end
 
         def #{column}_will_change!

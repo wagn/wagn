@@ -1,15 +1,23 @@
 class Card
   def act opts={}
     if DirectorRegister.act_card
-      # director.reset_stage
-      # self.only_storage_phase = true
+      if DirectorRegister.act_card != self && !only_storage_phase
+        director.reset_stage
+        if opts && opts[:trash]
+          @action = :delete
+        else
+          identify_action
+        end
+        director.update_card self
+        self.only_storage_phase = true
+      end
       main_act_block = false
     else
       DirectorRegister.clear
       self.director = nil
       DirectorRegister.act_card = self
       main_act_block = true
-      if opts[:success]
+      if opts && opts[:success]
         Env[:success] = Env::Success.new(cardname, Env.params[:success])
       end
     end
@@ -61,6 +69,11 @@ class Card
 
       def add director
         directors[director.card] = director
+      end
+
+      def card_changed old_card
+        return unless (director = @directors.delete old_card)
+        add director
       end
 
       def delete director

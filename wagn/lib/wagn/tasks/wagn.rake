@@ -171,7 +171,7 @@ namespace :wagn do
 
     desc "migrate core cards"
     task core_cards: :environment do
-      require "card/core_migration"
+      require "card/migration/core"
       run_card_migration :core_cards
     end
 

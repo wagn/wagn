@@ -100,6 +100,10 @@ module ClassMethods
   def older_than_five_days? time
     Time.now - time > 432_000
   end
+
+  def seed_test_db
+    system "env RAILS_ENV=test bundle exec rake db:fixtures:load"
+  end
 end
 
 def debug_type

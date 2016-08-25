@@ -24,7 +24,7 @@ Before("~@background-jobs", "~@delayed-jobs", "~@javascript") do
   DatabaseCleaner.strategy = :transaction
 end
 After("@background-jobs, @delayed-jobs, @javascript") do
-  system "env RAILS_ENV=test bundle exec rake test:seed"
+  Card.seed_test_db
 end
 
 require "cucumber/rails"

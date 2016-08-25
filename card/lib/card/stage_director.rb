@@ -171,6 +171,12 @@ class Card
       str
     end
 
+    def update_card card
+      old_card = @card
+      @card = card
+      DirectorRegister.card_changed old_card
+    end
+
     private
 
     def upto_stage stage

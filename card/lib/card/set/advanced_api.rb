@@ -22,7 +22,7 @@ class Card
       def attachment name, args
         include_set Abstract::Attachment
         add_attributes name, "remote_#{name}_url".to_sym,
-                       :action_id_of_cached_upload, :empty_ok, :load_from_mod,
+                       :action_id_of_cached_upload, :empty_ok,
                        :storage_type, :bucket, :mod
         uploader_class = args[:uploader] || ::CarrierWave::FileCardUploader
         mount_uploader name, uploader_class

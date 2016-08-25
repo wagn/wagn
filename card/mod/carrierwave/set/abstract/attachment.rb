@@ -14,7 +14,7 @@ end
 # an id
 event :correct_identifier, :finalize,
       on: :create, when: proc { |c| !c.web? } do
-  update_column(:db_content, attachment.db_content(mod: mod))
+  update_column(:db_content, attachment.db_content)
   expire
 end
 
@@ -32,7 +32,7 @@ end
 
 event :write_identifier, after: :save_original_filename,
                          when: proc { |c| !c.web? } do
-  self.content = attachment.db_content(mod: mod)
+  self.content = attachment.db_content
 end
 
 def public_path
@@ -47,11 +47,12 @@ def file_ready_to_save?
 end
 
 def store_dir
-  @store_in_mod ? mod_dir : upload_dir
+  store_as == :coded ? mod_dir(@new_mod) : upload_dir
+  #@store_in_mod ? mod_dir : upload_dir
 end
 
 def retrieve_dir
-  mod_file? ? mod_dir : upload_dir
+  coded? ? mod_dir : upload_dir
 end
 
 def item_names _args={} # needed for flexmail attachments.  hacky.
@@ -84,10 +85,10 @@ def upload_dir
 end
 
 # place for files of mod file cards
-def mod_dir
-  mod = @mod || mod_file?
+def mod_dir new_mod=nil
+  #mod = @mod || coded?
   Card.paths["mod"].to_a.each do |mod_path|
-    dir = File.join(mod_path, mod, "file", codename)
+    dir = File.join(mod_path, new_mod || mod, "file", codename)
     return dir if Dir.exist? dir
   end
 end

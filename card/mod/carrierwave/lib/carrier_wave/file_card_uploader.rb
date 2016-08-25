@@ -50,7 +50,7 @@ module CarrierWave
     STORAGE_TYPES = [:cloud, :web, :protected, :coded, :unprotected].freeze
 
     def filename
-      if mod_file?
+      if coded?
         "#{model.type_code}#{extension}"
       else
         "#{action_id}#{extension}"
@@ -69,31 +69,36 @@ module CarrierWave
     # generate identifier that gets stored in the card's db_content field
     def db_content opts={}
       return "" unless file.present?
-      model.load_from_mod = opts[:mod] if opts[:mod] && !model.load_from_mod
+      @storage_type = opts[:storage_type] if opts[:storage_type]
+      @mod = opts[:mod] if opts[:mod]
+      @bucket = opts[:bucket] if opts[:bucket]
+      #model.mod = opts[:mod] if opts[:mod] && !model.mod
       "%s/%s" % [file_dir, url_filename(opts)]
     end
 
     def url_filename opts={}
-      model.load_from_mod = opts[:mod] if opts[:mod] && !model.load_from_mod
+      @storage_type = opts[:storage_type] if opts[:storage_type]
+      @mod = opts[:mod]
+      #model.mod = opts[:mod] if opts[:mod] && !model.mod
 
-      basename = if (mod = mod_file?)
-                   "#{mod}#{extension}"
-                 else
-                   "#{action_id}#{extension}"
-                 end
+      if coded?
+        "#{model.mod}#{extension}"
+      else
+        "#{action_id}#{extension}"
+      end
     end
 
     def url opts={}
-      return file.url if @model.cloud?
+      return file.url if model.cloud?
       "%s/%s/%s" % [card_path(Card.config.files_web_path), file_dir,
                     full_filename(url_filename(opts))]
     end
 
     def file_dir
-      return ":#{model.codename}" if mod_file?
+      return ":#{model.codename}" if coded?
 
       file_id = model.id? ? model.id : model.upload_cache_card.id
-      if @model.cloud?
+      if cloud?
         "(#{bucket})/#{file_id}"
       else
         "~#{file_id}"
@@ -140,7 +145,7 @@ module CarrierWave
                              model.selected_action.comment
     end
 
-    delegate :store_dir, :retrieve_dir, :mod_file?, :bucket, to: :model
+    delegate :store_dir, :retrieve_dir, :cloud?, :coded?, :mod, :bucket, to: :model
 
     def action_id
       model.selected_content_action_id

@@ -114,14 +114,14 @@ describe Card::Set::Type::Image do
           image: File.new(File.join(FIXTURES_PATH, "rails.gif"))
         )
       end
-      expect(subject.mod_file?).to be_falsey
+      expect(subject.coded?).to be_falsey
       expect(subject.image.url)
         .to eq "/files/~#{subject.id}/#{subject.last_action_id}-original.gif"
     end
 
-    describe "#mod_file?" do
+    describe "#coded?" do
       it "returns the mod name" do
-        expect(subject.mod_file?).to eq("standard")
+        expect(subject.coded?).to eq("standard")
       end
     end
 

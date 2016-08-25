@@ -32,9 +32,9 @@ describe Card::Set::Type::File do
       )
     end
 
-    describe "#mod_file?" do
+    describe "#coded?" do
       it "returns false" do
-        expect(subject.mod_file?).to be_falsey
+        expect(subject.coded?).to be_falsey
       end
     end
 
@@ -112,6 +112,63 @@ describe Card::Set::Type::File do
         Card.create! name: "file card", type_code: "file",
                      file: File.new(File.join(FIXTURES_PATH, "file1.txt")),
                      storage_type: @storage_type || :cloud
+      end
+    end
+
+    describe "mod" do
+      let(:mod_path) do
+        deck_mod_path = Cardio.paths["mod"].existent.last
+        File.join deck_mod_path, "test_mod"
+      end
+      # before do
+      #   file_dir = File.join(mod_path,  "file", "mod_file")
+      #   FileUtils.mkdir_p file_dir
+      #   File.open(File.join(file_dir, "test_mod.txt"),"w") do |f|
+      #     f.puts "test"
+      #   end
+      # end
+      # after do
+      #   FileUtils.rm_rf  mod_path
+      # end
+
+      context "when creating mod file" do
+        subject do
+          Card::Auth.as_bot do
+            Card.create! name: "mod file card", type_code: "file",
+                         codename: "mod_file",
+                         file: File.new(File.join(FIXTURES_PATH, "file1.txt")),
+                         storage_type: :mod,
+                         mod: "test_mod"
+          end
+        end
+        it "stores correct identifier (:<codename>/<mod name>.<ext>)" do
+          expect(subject.content)
+            .to eq ":#{subject.codename}/test_mod.txt"
+        end
+        it "stores file in mod directory" do
+          file_path = File.join mod_path, "file", "mod_file", "test_mod.txt"
+          expect(File.read(file_path).strip).to eq "file1"
+        end
+      end
+      context "when updating mod file" do
+        before do
+          Card::Auth.as_bot do
+            card = Card.create! name: "mod file card", type_code: "file",
+                                codename: "mod_file",
+                                file: File.new(File.join(FIXTURES_PATH, "file1.txt")),
+                                storage_type: :mod,
+                                mod: "test_mod"
+            file = File.new File.join(FIXTURES_PATH, "file2.txt")
+            card.update_attributes! file: file
+            card
+          end
+        end
+        it "storage type changes to default" do
+          storage_config :protected
+          expect(subject.content)
+            .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
+          expect(subject.coded?).to be_falsey
+        end
       end
     end
 

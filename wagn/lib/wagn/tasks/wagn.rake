@@ -287,7 +287,7 @@ namespace :wagn do
       # mark mod files as mod files
       Card::Auth.as_bot do
         Card.search(type: %w(in Image File), ne: "").each do |card|
-          if card.mod_file? || card.codename == "new_file" ||
+          if card.coded? || card.codename == "new_file" ||
              card.codename == "new_image"
             puts "skipping #{card.name}: already in code"
             next

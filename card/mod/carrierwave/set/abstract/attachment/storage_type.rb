@@ -1,20 +1,24 @@
 attr_writer :bucket, :storage_type
+attr_reader :mod
 
 event :storage_type_change, :store,
       on: :update, when: proc { |c| c.storage_type_changed? } do
   return if storage_type.in? [:web, :coded]
-  return if @new_storage_type.in? [:web, :coded]
+  return if @new_storage_type == :web
 
   case storage_type
   when :cloud
     if @new_storage_type == :cloud
       move_from_cloud_to_cloud
     else
-      move_from_cloud_to_local
+      raise Card::Error, "moving files from cloud elsewhere"\
+                         "is not supported"
+      # move_from_cloud_to_local
     end
   when :protected, :unprotected
-    if @new_storage_type == :cloud
-      move_from_local_to_cloud
+    case  @new_storage_type
+    when :cloud then move_from_local_to_cloud
+    when :coded then move_from_local_to_coded
     end
   end
   @storage_type = @new_storage_type
@@ -24,6 +28,12 @@ event :storage_type_change, :store,
   # @storage_type = @new_storage_type
   #
   # write_identifier
+end
+
+event :loose_coded_status_on_update, :initialize, on: :update,
+                                     when: proc { |c| c.coded? } do
+  return if @new_mod
+  @new_storage_type ||= storage_type_from_config
 end
 
 event :create_public_link, :integrate, on: :save,
@@ -38,6 +48,10 @@ event :remove_public_link, on: :update,
                            when: proc { |c| !c.unprotected? } do
   return unless File.exist? public_path
   FileUtils.rm public_path
+end
+
+def store_as
+  @new_storage_type || storage_type
 end
 
 def cloud?
@@ -57,51 +71,51 @@ def protected?
 end
 
 def coded?
-  @mod
+  return @mod if @store_in_mod
+  # when db_content was changed assume that it's no longer a coded file
+  # unless a mod argument was passed
+  return if (db_content_changed? && !@new_mod) || !content.present?
+  mod_from_content
 end
 
-def load_from_mod
-  @mod
-end
-
-def load_from_mod= value
-  @mod = value
-  write_identifier
-  @store_in_mod = true if value
+def deprecated_mod_file?
+  content && (lines = content.split("\n")) && lines.size == 4
 end
 
 def mod= value
-  @mod = value
-  write_identifier
-  @store_in_mod = true if value
+  if @action == :update
+    @new_mod = value
+  else
+    @mod = value
+  end
+  # @mod = value
+  # write_identifier
+  # @store_in_mod = true if value
 end
 
-def mod_file?
-  return @mod if @store_in_mod
-  # when db_content was changed assume that it's no longer a mod file
-  return if db_content_changed? || !content.present?
-  case content
-  when %r{^:[^/]+/([^.]+)} then Regexp.last_match(1) # current mod_file format
-  when /^\~/               then false  # current id file format
+def mod_from_content
+  if content.match(%r{^:[^/]+/([^.]+)})
+    Regexp.last_match(1) # current mod_file format
   else
-    if (lines = content.split("\n")) && (lines.size == 4)
-      # old format, still used in card_changes.
-      lines.last
-    end
+    mod_from_deprecated_content
   end
 end
 
+def mod_from_deprecated_content
+  return if content =~ /^\~/
+  return unless (lines = content.split("\n")) && lines.size == 4
+  # old format, still used in card_changes
+  lines.last
+end
+
 def remote_storage?
-  cloud? || storage_type == :web
+  cloud? || web?
 end
 
 def bucket
   @bucket ||= cloud? &&
-    ((new_card? && bucket_from_config) || bucket_from_content)
-end
-
-def mod
-  @mod
+              ((new_card? && bucket_from_config) || bucket_from_content ||
+                bucket_from_config)
 end
 
 def bucket_config
@@ -141,7 +155,8 @@ def storage_type_from_content
   when %r{/^https?\:/} then :web
   when /^~/            then :protected
   when /^\:/           then :coded
-  else :unprotected
+  else
+    deprecated_mod_file? ? :coded : :unprotected
   end
 end
 
@@ -165,7 +180,17 @@ def move_from_local_to_cloud
   old_file = attachment.file
   @bucket = @new_bucket
   @storage_type = @new_storage_type
-  #self.attachment.store!
+  write_identifier
+  self.attachment.store! old_file
+end
+
+def move_from_local_to_coded
+  unless @new_mod
+    raise Card::Error, "mod needed to change storage type to :coded"
+  end
+  old_file = attachment.file
+  @mod = @new_mod
+  @storage_type = @new_storage_type
   write_identifier
   self.attachment.store! old_file
 end
@@ -176,7 +201,6 @@ end
 
 def bucket= value
   if @action == :update
-    @update_storage = true
     @new_bucket = value
   else
     @bucket = value
@@ -187,7 +211,6 @@ def storage_type= value
   if @action == :update
     # we cant update the storage type directly here
     # if we do then the uploader doesn't find the file we want to update
-    @update_storage = true
     @new_storage_type = value
   else
     @storage_type = value

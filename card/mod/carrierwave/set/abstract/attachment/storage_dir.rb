@@ -44,16 +44,14 @@ def file_dir
   end
 end
 
-# used in the url
-def web_file_dir
-  return file_id if unprotected?
-  file_dir
+def public?
+  who_can(:read).include? Card[:anyone].id
 end
 
 def file_id
   id? ? id : upload_cache_card.id
 end
 
-def public_path
-  File.join Cardio.paths["public"].existent.first, file.url
+def public_file_dir
+  File.join Cardio.paths["public"].existent.first, file_dir
 end

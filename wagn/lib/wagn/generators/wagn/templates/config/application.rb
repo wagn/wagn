@@ -46,10 +46,10 @@ module <%= app_const_base %>
     # config.paths['files'] = 'files'
     # where uploaded files are actually stored. (eg Image and File cards)
 
-    # config.file_storage = :protected
+    # config.file_storage = :local
     # File storage options (see http://wagn.org/file_storage_options)
-    # options include: protected, unprotected, cloud, web, coded
-    # defaults to protected
+    # options include: local, cloud, web, coded
+    # defaults to local
     # config.file_default_bucket = :my_bucket
     # config.file_buckets = {
     #   my_bucket: {
@@ -69,7 +69,7 @@ module <%= app_const_base %>
     #     authenticated_url_expiration: 180  # if public is set to false this
     #                                        # option is needed
     #   }
-}
+    # }
 
     # config.paths['mod'] << 'my-mod-dir'
     # add a new directory for code customizations, or "mods"

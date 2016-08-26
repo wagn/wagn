@@ -14,7 +14,7 @@ event :storage_type_change, :store,
                          "is not supported"
       # move_from_cloud_to_local
     end
-  when :protected, :unprotected
+  when :local
     case  @new_storage_type
     when :cloud then move_from_local_to_cloud
     when :coded then move_from_local_to_coded
@@ -35,18 +35,33 @@ event :loose_coded_status_on_update, :initialize, on: :update,
   @new_storage_type ||= storage_type_from_config
 end
 
-event :create_public_link, :integrate, on: :save,
-      when: proc { |c| c.unprotected? } do
-  return if File.exist? public_path
-  FileUtils.mkdir_p File.dirname(public_path)
-  File.symlink attachment.path, public_path
+def create_public_link
+  url = attachment.url
+  return if File.exist? url
+  FileUtils.mkdir_p File.dirname(url)
+  File.symlink attachment.path, url
+
+  attachment.versions.each do |name, version|
+    File.symlink version.path, version.url
+  end
 end
 
-event :remove_public_link, on: :update,
-                           after: :storage_type_change,
-                           when: proc { |c| !c.unprotected? } do
-  return unless File.exist? public_path
-  FileUtils.rm public_path
+def remove_all_public_links
+  return unless Dir.exist? public_file_dir
+  FileUtils.rm_rf public_file_dir
+end
+
+event :update_public_link_on_create, :integrate, on: :create do
+  update_public_link
+end
+
+event :update_public_link, after: :update_read_rule do
+  return unless local?
+  if who_can(:read).include? Card[:anyone].id
+    create_public_link
+  else
+    remove_all_public_links
+  end
 end
 
 def store_as
@@ -61,12 +76,8 @@ def web?
   storage_type == :web
 end
 
-def unprotected?
-  storage_type == :unprotected
-end
-
-def protected?
-  storage_type == :protected
+def local?
+  storage_type == :local
 end
 
 def coded?
@@ -157,10 +168,14 @@ def storage_type_from_content
   case content
   when /^\(/           then :cloud
   when %r{/^https?\:/} then :web
-  when /^~/            then :protected
+  when /^~/            then :local
   when /^\:/           then :coded
   else
-    deprecated_mod_file? ? :coded : :unprotected
+    if deprecated_mod_file?
+      :coded
+    else
+      raise Error, "invalid file identifier: #{content}"
+    end
   end
 end
 

@@ -55,7 +55,7 @@ module Cardio
         performance_logger:     false,
         sql_comments:           true,
 
-        file_storage:           :protected,
+        file_storage:           :local,
         file_buckets:           {},
         file_default_bucket:    nil
       }

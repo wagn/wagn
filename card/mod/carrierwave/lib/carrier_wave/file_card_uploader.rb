@@ -45,22 +45,19 @@ module CarrierWave
   #   card.update_attributes remote_image_url: "http://a.image/somewhere.png"
   #
   # ## Storage types
-  # You can choose between five different storage options
+  # You can choose between four different storage options
   #  - coded: These files are in the codebase, like the default logo.
   #      Every view is a wagn request.
-  #  - protected: Uploaded files which are stored in a private upload directory
+  #  - local: Uploaded files which are stored in a local upload directory
   #      (upload path is configurable via config.paths["files"]).
-  #      Every view is a wagn request.
-  #  - unprotected: Same as protected, but with symlink from public directory.
-  #      Link is rendered as relative url.
+  #      If read permissions are set such that "Anyone" can read, then there is
+  #      a symlink from the public directory.  Otherwise every view is a wagn
+  #      request.
   #  - cloud: You can configure buckets that refer to an external storage
   #      service. Link is rendered as absolute url
   #  - web: A fixed url (to external source). No upload or other file processing.
   #      Link is just the saved url.
   #
-  # Changing between protected and unprotected happens automatically on
-  # permission-changing events. If a file card is readable for all users it
-  # changes to unprotected.
   # Currently, there is no web interface that let's a user or administrator
   # choose a storage option for a specific card or set of cards.
   # There is only a global config option to set the storage type for all new
@@ -106,15 +103,15 @@ module CarrierWave
   # and identifiers.
   # ### Identifier (stored in the database as db_content)
   #  - coded: :codename/mod_name.ext
-  #  - protected/unprotected: ~card_id/action_id.ext
+  #  - local: ~card_id/action_id.ext
   #  - cloud: (bucket)/card_id/action_id.ext
   #  - web: http://url
   #
   # ### Storage path
   #  - coded:
   #    mod_dir/file/codename/type_code(-variant).ext  (no colon on codename!)
-  #  - protected/unprotected:
-  #    files_dir/id/action_id(-variant).ext           (no tilde on id!)
+  #  - local:
+  #    files_dir/card_id/action_id(-variant).ext           (no tilde on id!)
   #  - cloud:
   #    bucket/bucket_subdir/id/action_id(-variant).ext
   #  - web: no storage
@@ -123,16 +120,14 @@ module CarrierWave
   # icon|small|medium|large|original.
   # files_dir, bucket, and bucket_subdir can be changed via config options.
   #
-  # The only difference between protected and unprotected is that
-  # unprotected files have a symlink from the public directory to the storage
-  # path.
-  #
   # ### Supported url patterns
   # mark.ext
   # mark/revision.ext
   # mark/revision-variant.ext
+  # /files/mark/revision-variant.ext  # <- public symlink if readable by
+  #                                   #    "Anyone"
   #
-  # <mark> can one of the following options
+  # <mark> can be one of the following options
   # - <card name>
   # - ~<card id>
   # - :<code name>
@@ -142,16 +137,15 @@ module CarrierWave
   #
   # Examples:
   # *logo.png
-  # ~22/33-medium.png               # protected
+  # ~22/33-medium.png               # local
   # :yeti_skin/standard-large.png   # coded
   #
   class FileCardUploader < Uploader::Base
     attr_accessor :mod
     include Card::Env::Location
 
-    STORAGE_TYPES = [:cloud, :web, :protected, :coded, :unprotected].freeze
-    delegate :store_dir, :retrieve_dir, :file_dir, :web_file_dir, :mod, :bucket,
-             to: :model
+    STORAGE_TYPES = [:cloud, :web, :coded, :local].freeze
+    delegate :store_dir, :retrieve_dir, :file_dir, :mod, :bucket, to: :model
 
     def filename
       if model.coded?
@@ -204,24 +198,13 @@ module CarrierWave
     def url opts={}
       if model.cloud?
         file.url
-      #elsif  model.unprotected?
-      #  unprotected_url(opts)
       elsif model.web?
         model.content
       else
-        "%s/%s/%s" % [card_path(Card.config.files_web_path), web_file_dir,
+        "%s/%s/%s" % [card_path(Card.config.files_web_path), file_dir,
                       full_filename(url_filename(opts))]
       end
     end
-
-    # def unprotected_url opts={}
-    #   "%s/%s" % [web_file_dir, full_filename(url_filename(opts))]
-    # end
-    #
-    # def protected_url opts={}
-    #   "%s/%s/%s" % [card_path(Card.config.files_web_path), web_file_dir,
-    #                 full_filename(url_filename(opts))]
-    # end
 
     def cache_dir
       Cardio.paths["files"].existent.first + "/cache"

@@ -1,37 +1,56 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Type::File do
-  context "new file card" do
-    before do
+  context "creating" do
+    it "fails if no file given" do
+      expect do
+        Card::Auth.as_bot do
+          Card.create! name: "hide and seek", type_id: Card::FileID
+        end
+      end.to raise_error ActiveRecord::RecordInvalid,
+                         "Validation failed: File is missing"
+    end
+    it "allows no file if 'empty_ok' is true" do
       Card::Auth.as_bot do
-        Card.create name: "file card", type_code: "file",
-                    file: File.new(File.join(FIXTURES_PATH, "file1.txt"))
+        card = Card.create! name: "hide and seek", type_id: Card::FileID,
+                     empty_ok: true
+        expect(card).to be_instance_of(Card)
+        expect(card.content).to eq ""
       end
     end
-    subject { Card["file card"] }
-    it "stores correct identifier (<card id>/<action id>.<ext>)" do
-      expect(subject.content)
-        .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
-    end
 
-    it "stores file" do
-      expect(subject.file.read.strip).to eq "file1"
-    end
+    context "storage type:" do
+      subject
+        Card::Auth.as_bot do
+          Card.create name: "file card", type_code: "file",
+                      file: File.new(File.join(FIXTURES_PATH, "file1.txt"))
+        end
+      end
+      context "protected" do
+        it "stores correct identifier (~<card id>/<action id>.<ext>)" do
+          expect(subject.content)
+            .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
+        end
 
-    it "saves original file name as action comment" do
-      expect(subject.last_action.comment).to eq "file1.txt"
-    end
+        it "stores file" do
+          expect(subject.file.read.strip).to eq "file1"
+        end
 
-    it "has correct original filename" do
-      expect(subject.original_filename).to eq "file1.txt"
-    end
+        it "saves original file name as action comment" do
+          expect(subject.last_action.comment).to eq "file1.txt"
+        end
 
-    it "has correct url" do
-      expect(subject.file.url).to(
-        eq "/files/~#{subject.id}/#{subject.last_action_id}.txt"
-      )
-    end
+        it "has correct original filename" do
+          expect(subject.original_filename).to eq "file1.txt"
+        end
 
+        it "has correct url" do
+          expect(subject.file.url).to(
+            eq "/files/~#{subject.id}/#{subject.last_action_id}.txt"
+          )
+        end
+      end
+    end
     describe "#coded?" do
       it "returns false" do
         expect(subject.coded?).to be_falsey
@@ -63,7 +82,7 @@ describe Card::Set::Type::File do
     end
   end
 
-  context "updated file card" do
+  context "updating" do
     subject do
       Card::Auth.as_bot do
         card = Card.create name: "file card", type_code: "file",
@@ -88,9 +107,8 @@ describe Card::Set::Type::File do
     end
   end
 
-  it "creates empty file card without content" do
-    card = Card.create name: "hide and seek", type_id: Card::FileID
-    expect(card.content).to eq("")
+  context "deleting" do
+
   end
 
   it "handles urls as source" do

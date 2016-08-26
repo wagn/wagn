@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Card
-  class FileFormat < Card::Format
+  class Format
+    class FileFormat < Format
+    end
   end
 end

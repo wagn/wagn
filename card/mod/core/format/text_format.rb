@@ -1,10 +1,11 @@
 # -*- encoding : utf-8 -*-
 
 class Card
-  Format.register :text
-  Format.register :txt
-
-  class TextFormat < Format
-    @@aliases["txt"] = "text"
+  class Format
+    class TextFormat < Format
+      register :text
+      register :txt
+      aliases["txt"] = "text"
+    end
   end
 end

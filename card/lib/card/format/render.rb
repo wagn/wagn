@@ -1,6 +1,12 @@
 class Card
   class Format
+    # View rendering methods.
+    #
     module Render
+      DEPRECATED_VIEWS = {
+        view: :open, card: :open, line: :closed, bare: :core, naked: :core
+      }.freeze
+
       def render view, args={}
         view = canonicalize_view view
         return if hidden_view? view, args
@@ -53,21 +59,23 @@ class Card
       end
 
       def show_view? view, args
-        default = args.delete(:default_visibility) || :show # FIXME: - ugly
-        api_option = args["optional_#{view}".to_sym]
-        case api_option
+        code_config = args["optional_#{view}".to_sym]
+        case code_config
           # permanent visibility specified in code
         when :always then true
-        when  :never then false
+        when :never  then false
+        else configured_visibility view, args, code_config
+        end
+      end
+
+      def configured_visibility view, args, code_config
+        card_config = nest_arg_visibility view, args
+        case (card_config || code_config)
+        when :show then true
+        when :hide then false
         else
-          # wagneer can override code settings
-          contextual_setting = nest_arg_visibility(view, args) || api_option
-          case contextual_setting
-          when :show then true
-          when :hide then false
-          else
-            default == :show
-          end
+          default_viz = args.delete :default_visibility
+          default_viz ? default_viz == :show : true
         end
       end
 

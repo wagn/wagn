@@ -1,6 +1,28 @@
 # -*- encoding : utf-8 -*-
 
 class Card
+  # The {Format} class is a key strut in the MoFoS
+  # _(Model-Format-Set)_ architecture.
+  #
+  # The primary means of transacting with the card Model (cards across time)
+  # is the _event_.  The primary means for displaying card content (cards across
+  # space) is the _view_. __Format objects manage card views__.
+  #
+  # Here is a very simple view that just displays the card's id:
+  #
+  # ```` view(:simple_content) { card.raw_content } ````
+  #
+  # But suppose you would like this view to appear differently in different
+  # output formats.  You might need certain characters escaped in some formats
+  # (csv, html, etc) but not others.  You might like to make use of the
+  # aesthetic or structural benefits certain formats allow.
+  #
+  # To this end we have format classes. {Format::HtmlFormat},
+  # {Format::JsonFormat}, {Format::XmlFormat}, etc, each are descendants of
+  # {Card::Format}.
+  #
+  # For information on how Formats intersect with Sets, see {Card::Set::Format}
+  #
   class Format
     include Card::Env::Location
     include Nest
@@ -9,11 +31,9 @@ class Card
     include Names
     include Content
     include Error
+
     extend Nest::ClassMethods
     extend Registration
-
-    DEPRECATED_VIEWS = { view: :open, card: :open, line: :closed,
-                         bare: :core, naked: :core }.freeze
 
     # FIXME: should be set in views
 
@@ -28,19 +48,10 @@ class Card
     attr_reader :card, :root, :parent, :main_opts
     attr_accessor :form, :error_status, :nest_opts
 
-    def page view, slot_opts
-      @card.run_callbacks :show_page do
-        show view, slot_opts
-      end
-    end
-
-    # ~~~~~ INSTANCE METHODS
-
     def initialize card, opts={}
       unless (@card = card)
-        raise Card::Error, # 'format initialized without card'
-              I18n.t(:exception_init_without_card,
-                     scope: "lib.card.format")
+        msg = I18n.t :exception_init_without_card, scope: "lib.card.format"
+        raise Card::Error, msg
       end
 
       opts.each do |key, value|
@@ -61,6 +72,12 @@ class Card
         card.set_format_modules(klass).each do |m|
           singleton_class.send :include, m
         end
+      end
+    end
+
+    def page view, slot_opts
+      @card.run_callbacks :show_page do
+        show view, slot_opts
       end
     end
 
@@ -103,6 +120,11 @@ class Card
       else
         pass_method_to_template_object(method, opts, proc) { yield }
       end
+    end
+
+    def respond_to_missing? method_name, _include_private=false
+      (method_name =~ /(_)?(optional_)?render(_(\w+))?/) ||
+        template.respond_to?(method_name)
     end
 
     def pass_method_to_template_object method, opts, proc

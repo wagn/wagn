@@ -4,7 +4,7 @@
 #   # let(:card_double) { double "Card" }
 #   # let(:pat_all_double) { proxy Card::Set::All }
 #   # let(:format_double) { proxy Card::Format }
-#   # let(:html_format_double) { proxy Card::HtmlFormat }
+#   # let(:html_format_double) { proxy Card::Format::HtmlFormat }
 #   # it "should auto-load Card class methods from lib/card and mods" do
 #   #   #xpect(Card).to receive(:load_mods)
 #   #   #

@@ -1,6 +1,8 @@
 # -*- encoding : utf-8 -*-
 class Card
-  Format.register :css
-  class CssFormat < Card::Format
+  class Format
+    class CssFormat < Format
+      register :css
+    end
   end
 end

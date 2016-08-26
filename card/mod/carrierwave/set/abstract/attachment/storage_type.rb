@@ -35,32 +35,37 @@ event :loose_coded_status_on_update, :initialize, on: :update,
   @new_storage_type ||= storage_type_from_config
 end
 
-def create_public_link
-  url = attachment.url
-  return if File.exist? url
-  FileUtils.mkdir_p File.dirname(url)
-  File.symlink attachment.path, url
+def create_public_links
+  path = attachment.public_path
+  return if File.exist? path
+  FileUtils.mkdir_p File.dirname(path)
+  File.symlink attachment.path, path
 
-  attachment.versions.each do |name, version|
-    File.symlink version.path, version.url
+  attachment.versions.each do |_name, version|
+    File.symlink version.path, version.public_path
   end
 end
 
-def remove_all_public_links
-  return unless Dir.exist? public_file_dir
-  FileUtils.rm_rf public_file_dir
+def remove_public_links
+  symlink_dir = File.dirname attachment.public_path
+  return unless Dir.exist? symlink_dir
+  FileUtils.rm_rf symlink_dir
 end
 
 event :update_public_link_on_create, :integrate, on: :create do
   update_public_link
 end
 
+event :remove_public_link_on_delete, :integrate, on: :delete do
+  remove_public_links
+end
+
 event :update_public_link, after: :update_read_rule do
   return unless local?
   if who_can(:read).include? Card[:anyone].id
-    create_public_link
+    create_public_links
   else
-    remove_all_public_links
+    remove_public_links
   end
 end
 
@@ -135,7 +140,8 @@ end
 
 def bucket_config
   return {} unless bucket
-  @bucket_config ||= Cardio.config.file_buckets[bucket].deep_symbolize_keys || {}
+  #binding.pry if $stop
+  @bucket_config ||= Cardio.config.file_buckets[bucket.to_sym].deep_symbolize_keys || {}
 end
 
 def bucket_from_content

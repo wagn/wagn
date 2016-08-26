@@ -51,7 +51,3 @@ end
 def file_id
   id? ? id : upload_cache_card.id
 end
-
-def public_file_dir
-  File.join Cardio.paths["public"].existent.first, file_dir
-end

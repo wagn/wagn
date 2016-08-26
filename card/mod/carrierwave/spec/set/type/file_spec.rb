@@ -26,7 +26,7 @@ describe Card::Set::Type::File do
     end
     card
   end
-  let(:unprotected_file) { create_file_card :local, test_file(2) }
+  let(:unprotected_file) { create_file_card :local, test_file(2), codename: nil }
   let(:coded_file) { Card[:logo] }
   let(:web_file) do
     Card::Auth.as_bot do
@@ -36,7 +36,9 @@ describe Card::Set::Type::File do
   end
   let(:cloud_file) do
     storage_config :cloud
-    create_file_card :cloud, bucket: :test_bucket
+    card = create_file_card :cloud, test_file, bucket: :test_bucket
+    storage_config :local
+    card
   end
 
   describe "view: core" do
@@ -116,6 +118,7 @@ describe Card::Set::Type::File do
 
     it "handles urls as source" do
       url = "http://wagn.org/files/bruce_logo-large-122798.png"
+      storage_config :local
       Card.create! name: "url test", type_id: Card::FileID, remote_file_url: url
       expect(Card["url test"].file.size).to be > 0
       expect(Card["url test"].file.url).to match(/\.png$/)
@@ -149,39 +152,15 @@ describe Card::Set::Type::File do
         end
 
         it "doesn't create public symlink" do
-          expect(subject.content)
-            .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
+          subject
           expect(public_path_exist?).to be_falsey
         end
       end
 
       context "unprotected" do
         subject { unprotected_file }
-        it "stores correct identifier (~<card id>/<action id>.<ext>)" do
-          expect(subject.content)
-            .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
-        end
-
-        it "stores file" do
-          expect(File.exist?(subject.file.path)).to be_truthy
-          expect(subject.file.read.strip).to eq "file2"
-        end
-
-        it "saves original file name as action comment" do
-          expect(subject.last_action.comment).to eq "file2.txt"
-        end
-
-        it "has correct original filename" do
-          expect(subject.original_filename).to eq "file2.txt"
-        end
-
-        it "has correct url" do
-          expect(subject.file.url).to(
-            eq "/files/~#{subject.id}/#{subject.last_action_id}.txt"
-          )
-        end
-
         it "creates public symlink" do
+          subject
           expect(public_path_exist?).to be_truthy
         end
       end
@@ -347,41 +326,44 @@ describe Card::Set::Type::File do
       end
     end
 
-    context "when changed from protected to unprotected" do
-      before do
-        @storage_type = :local
-      end
-      it "creates public svmlink" do
-        subject.update_storage_location! :unprotected
-        expect(public_path_exist?).to be_truthy
-      end
-    end
-
-    context "when changed from unprotected to protected" do
-      before do
-        @storage_type = :local
-      end
-      it "removes public symlink" do
-        expect(subject.content)
-          .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
-
-        subject.update_storage_location! :protected
-        expect(public_path_exist?).to be_falsey
-      end
-    end
+    # context "when changed from protected to unprotected" do
+    #   before do
+    #     @storage_type = :local
+    #   end
+    #   it "creates public svmlink" do
+    #     subject.update_storage_location! :local
+    #     expect(public_path_exist?).to be_truthy
+    #   end
+    # end
+    #
+    # context "when changed from unprotected to protected" do
+    #   before do
+    #     @storage_type = :local
+    #   end
+    #   it "removes public symlink" do
+    #     expect(subject.content)
+    #       .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
+    #
+    #     subject.update_storage_location! :local
+    #     expect(public_path_exist?).to be_falsey
+    #   end
+    # end
   end
 
   context "deleting" do
     it "removes symlink for unprotected files" do
-      unprotected_file
-      pp = public_path
-      expect()
+      pp = unprotected_file.attachment.public_path
+      expect(File.exist? pp).to be_truthy
+      Card::Auth.as_bot do
+        unprotected_file.delete!
+      end
+      expect(Dir.exist?(File.dirname(pp))).to be_falsey
     end
   end
 
   describe "#update_storage_location" do
     before { storage_config :cloud }
-    after { Wagn.config.file_storage = :local }
+    after { Cardio.config.file_storage = :local }
     subject do
       Card::Auth.as_bot do
         Card.create! name: "file card", type_code: "file",
@@ -423,12 +405,12 @@ describe Card::Set::Type::File do
   end
 
   def public_path
-    "public/files/#{subject.id}/#{subject.last_action_id}.txt"
+    "public/files/~#{subject.id}/#{subject.last_action_id}.txt"
   end
 
   let(:directory) { "philipp-test" }
   def storage_config type=:local
-    Wagn.config.file_storage = type
+    Cardio.config.file_storage = type
     Wagn.config.file_buckets = {
       test_bucket: {
         provider: "fog/aws",

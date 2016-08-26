@@ -8,6 +8,9 @@ module SelectedAction
   end
 
   def last_content_action_id
+    if storage_type != :coded && storage_type_from_content == :coded
+      return super
+    end
     # find action id from content (saves lookups)
     db_content.to_s.split(%r{[/\.]})[-2]
   end
@@ -16,7 +19,6 @@ include SelectedAction
 
 format do
   view :source do |_args|
-    return card.raw_content if card.web?
     card.attachment.url
   end
 

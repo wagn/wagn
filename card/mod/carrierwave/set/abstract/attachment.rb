@@ -35,10 +35,6 @@ event :write_identifier, after: :save_original_filename,
   self.content = attachment.db_content
 end
 
-def public_path
-  Cardio.paths["public"].existent.first + file.url
-end
-
 def file_ready_to_save?
   attachment.file.present? &&
     !preliminary_upload? &&
@@ -46,20 +42,12 @@ def file_ready_to_save?
     attachment_changed?
 end
 
-def store_dir
-  store_as == :coded ? mod_dir(@new_mod) : upload_dir
-  #@store_in_mod ? mod_dir : upload_dir
-end
-
-def retrieve_dir
-  coded? ? mod_dir : upload_dir
-end
-
 def item_names _args={} # needed for flexmail attachments.  hacky.
   [cardname]
 end
 
 def original_filename
+  return content.split('/').last if web?
   attachment.original_filename
 end
 
@@ -77,24 +65,6 @@ end
 
 def empty_ok?
   @empty_ok
-end
-
-# place for files of regular file cards
-def upload_dir
-  id ? "#{files_base_dir}/#{id}" : tmp_upload_dir
-end
-
-# place for files of mod file cards
-def mod_dir new_mod=nil
-  #mod = @mod || coded?
-  Card.paths["mod"].to_a.each do |mod_path|
-    dir = File.join(mod_path, new_mod || mod, "file", codename)
-    return dir if Dir.exist? dir
-  end
-end
-
-def files_base_dir
-  bucket ? bucket_config[:subdirectory] : Card.paths["files"].existent.first
 end
 
 def assign_set_specific_attributes

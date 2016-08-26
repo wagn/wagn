@@ -1,5 +1,4 @@
 attr_writer :bucket, :storage_type
-attr_reader :mod
 
 event :storage_type_change, :store,
       on: :update, when: proc { |c| c.storage_type_changed? } do
@@ -37,7 +36,7 @@ event :loose_coded_status_on_update, :initialize, on: :update,
 end
 
 event :create_public_link, :integrate, on: :save,
-                                       when: proc { |c| c.unprotected? } do
+      when: proc { |c| c.unprotected? } do
   return if File.exist? public_path
   FileUtils.mkdir_p File.dirname(public_path)
   File.symlink attachment.path, public_path
@@ -71,15 +70,20 @@ def protected?
 end
 
 def coded?
-  return @mod if @store_in_mod
-  # when db_content was changed assume that it's no longer a coded file
-  # unless a mod argument was passed
-  return if (db_content_changed? && !@new_mod) || !content.present?
-  mod_from_content
+  storage_type == :coded
+  # return @mod if @store_in_mod
+  # # when db_content was changed assume that it's no longer a coded file
+  # # unless a mod argument was passed
+  # return if (db_content_changed? && !@new_mod) || !content.present?
+  # mod_from_content
 end
 
 def deprecated_mod_file?
   content && (lines = content.split("\n")) && lines.size == 4
+end
+
+def mod
+  @mod ||= coded? && mod_from_content
 end
 
 def mod= value
@@ -208,11 +212,43 @@ def bucket= value
 end
 
 def storage_type= value
+  validate_storage_type value
   if @action == :update
     # we cant update the storage type directly here
     # if we do then the uploader doesn't find the file we want to update
     @new_storage_type = value
   else
     @storage_type = value
+  end
+end
+
+def with_storage_options opts={}
+  old_values = {}
+  validate_storage_type_change opts[:storage_type]
+  [:storage_type, :mod, :bucket].each do |opt_name|
+    next unless opts[opt_name]
+    old_values[opt_name] = instance_variable_get "@#{opt_name}"
+    instance_variable_set "@#{opt_name}", opts[opt_name]
+  end
+  yield
+ensure
+  old_values.each do |key, val|
+    instance_variable_set "@#{key}", val
+  end
+end
+
+def validate_storage_type_change new_storage_type=nil
+  new_storage_type ||= @new_storage_type
+  return unless new_storage_type
+  validate_storage_type new_storage_type
+
+  if new_storage_type == :coded && codename.blank?
+    raise Error, "codename needed for storage type :coded"
+  end
+end
+
+def validate_storage_type type
+  unless type.in? CarrierWave::FileCardUploader::STORAGE_TYPES
+    raise Error, "unknown storage type: #{type}"
   end
 end

@@ -1,8 +1,7 @@
-MOD_FILE_DIR = "file"
+MOD_FILE_DIR = "file".freeze
 
 def store_dir
   store_as == :coded ? coded_dir(@new_mod) : upload_dir
-  #@store_in_mod ? mod_dir : upload_dir
 end
 
 def retrieve_dir

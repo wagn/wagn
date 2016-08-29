@@ -55,8 +55,8 @@ module CarrierWave
   #      request.
   #  - cloud: You can configure buckets that refer to an external storage
   #      service. Link is rendered as absolute url
-  #  - web: A fixed url (to external source). No upload or other file processing.
-  #      Link is just the saved url.
+  #  - web: A fixed url (to external source). No upload or other file
+  #      processing. Link is just the saved url.
   #
   # Currently, there is no web interface that let's a user or administrator
   # choose a storage option for a specific card or set of cards.
@@ -172,20 +172,14 @@ module CarrierWave
     # @option opts [String] mod
     # @option opts [Symbol] bucket
     def db_content opts={}
-      return "" unless file.present?
-      # @storage_type = opts[:storage_type] if opts[:storage_type]
-      # @mod = opts[:mod] if opts[:mod]
-      # @bucket = opts[:bucket] if opts[:bucket]
       model.with_storage_options opts do
-        model.web? ? model.content : "%s/%s" % [file_dir, url_filename]
-      #model.mod = opts[:mod] if opts[:mod] && !model.mod
+        return model.content if model.web?
+        return "" unless file.present?
+        "%s/%s" % [file_dir, url_filename]
       end
     end
 
     def url_filename opts={}
-      # @storage_type = opts[:storage_type] if opts[:storage_type]
-      # @mod = opts[:mod]
-      #model.mod = opts[:mod] if opts[:mod] && !model.mod
       model.with_storage_options opts do
         if model.coded?
           "#{model.mod}#{extension}"
@@ -201,9 +195,13 @@ module CarrierWave
       elsif model.web?
         model.content
       else
-        "%s/%s/%s" % [card_path(Card.config.files_web_path), file_dir,
-                      full_filename(url_filename(opts))]
+        local_url opts
       end
+    end
+
+    def local_url opts={}
+      "%s/%s/%s" % [card_path(Card.config.files_web_path), file_dir,
+                    full_filename(url_filename(opts))]
     end
 
     def public_path

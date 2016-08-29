@@ -2,18 +2,13 @@ attr_writer :bucket, :storage_type
 
 event :storage_type_change, :store,
       on: :update, when: proc { |c| c.storage_type_changed? } do
-  return if storage_type.in? [:web, :coded]
+  return if storage_type == :web
   return if @new_storage_type == :web
 
   case storage_type
   when :cloud
-    if @new_storage_type == :cloud
-      move_from_cloud_to_cloud
-    else
-      raise Card::Error, "moving files from cloud elsewhere"\
-                         "is not supported"
-      # move_from_cloud_to_local
-    end
+    raise Card::Error, "moving files from cloud elsewhere"\
+                       "is not supported"
   when :local
     case  @new_storage_type
     when :cloud then move_from_local_to_cloud
@@ -21,16 +16,11 @@ event :storage_type_change, :store,
     end
   end
   @storage_type = @new_storage_type
-  #attachment.url
-  #binding.pry
-  # @bucket = @new_bucket
-  # @storage_type = @new_storage_type
-  #
-  # write_identifier
 end
 
-event :loose_coded_status_on_update, :initialize, on: :update,
-                                     when: proc { |c| c.coded? } do
+event :loose_coded_status_on_update, :initialize,
+      on: :update,
+      when: proc { |c| c.coded? } do
   return if @new_mod
   @new_storage_type ||= storage_type_from_config
 end
@@ -39,9 +29,13 @@ def create_public_links
   path = attachment.public_path
   return if File.exist? path
   FileUtils.mkdir_p File.dirname(path)
-  File.symlink attachment.path, path
+  File.symlink attachment.path, path unless File.symlink? path
+  create_versions_public_links
+end
 
+def create_versions_public_links
   attachment.versions.each do |_name, version|
+    next if File.symlink? version.public_path
     File.symlink version.path, version.public_path
   end
 end
@@ -62,6 +56,7 @@ end
 
 event :update_public_link, after: :update_read_rule do
   return unless local?
+  return if content.blank?
   if who_can(:read).include? Card[:anyone].id
     create_public_links
   else
@@ -87,11 +82,6 @@ end
 
 def coded?
   storage_type == :coded
-  # return @mod if @store_in_mod
-  # # when db_content was changed assume that it's no longer a coded file
-  # # unless a mod argument was passed
-  # return if (db_content_changed? && !@new_mod) || !content.present?
-  # mod_from_content
 end
 
 def deprecated_mod_file?
@@ -108,23 +98,20 @@ def mod= value
   else
     @mod = value
   end
-  # @mod = value
-  # write_identifier
-  # @store_in_mod = true if value
 end
 
 def mod_from_content
-  if content.match(%r{^:[^/]+/([^.]+)})
+  if content =~ %r{^:[^/]+/([^.]+)}
     Regexp.last_match(1) # current mod_file format
   else
     mod_from_deprecated_content
   end
 end
 
+# old format is still used in card_changes
 def mod_from_deprecated_content
   return if content =~ /^\~/
   return unless (lines = content.split("\n")) && lines.size == 4
-  # old format, still used in card_changes
   lines.last
 end
 
@@ -140,8 +127,8 @@ end
 
 def bucket_config
   return {} unless bucket
-  #binding.pry if $stop
-  @bucket_config ||= Cardio.config.file_buckets[bucket.to_sym].deep_symbolize_keys || {}
+  @bucket_config ||= Cardio.config.file_buckets[bucket.to_sym]
+                           .deep_symbolize_keys || {}
 end
 
 def bucket_from_content
@@ -180,25 +167,9 @@ def storage_type_from_content
     if deprecated_mod_file?
       :coded
     else
-      raise Error, "invalid file identifier: #{content}"
+      storage_type_from_config
     end
   end
-end
-
-def update_storage_location! storage_type=nil, bucket=nil
-  storage_type ||= storage_type_from_config
-  bucket ||= bucket_from_config if storage_type == :cloud
-  update_attributes! storage_type: storage_type, bucket: bucket
-end
-
-def move_from_cloud_to_cloud
-  #old_url = attachment.url
-  #upload_cache_card.update_attributes! remote_file_url: url
-end
-
-def move_from_cloud_to_local
-  raise Card::Error, "storage type change from :cloud to #{@new_storage_type} "\
-                     "is not supported"
 end
 
 def move_from_local_to_cloud
@@ -206,18 +177,18 @@ def move_from_local_to_cloud
   @bucket = @new_bucket
   @storage_type = @new_storage_type
   write_identifier
-  self.attachment.store! old_file
+  attachment.store! old_file
 end
 
 def move_from_local_to_coded
   unless @new_mod
-    raise Card::Error, "mod needed to change storage type to :coded"
+    raise Card::Error, "mod argument needed to change storage type to :coded"
   end
   old_file = attachment.file
   @mod = @new_mod
   @storage_type = @new_storage_type
   write_identifier
-  self.attachment.store! old_file
+  attachment.store! old_file
 end
 
 def storage_type_changed?

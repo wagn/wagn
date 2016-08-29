@@ -120,8 +120,8 @@ describe Card::Set::Type::Image do
     end
 
     describe "#coded?" do
-      it "returns the mod name" do
-        expect(subject.coded?).to eq("standard")
+      it "returns true" do
+        expect(subject.coded?).to be_truthy
       end
     end
 

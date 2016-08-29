@@ -38,9 +38,6 @@ module CarrierWave
         end
         event :remove_previously_stored_#{column}_event, :finalize,
               on: :update, when: proc { |c| !c.history?} do
-          # if @previous_model_for_#{column}
-          #   @previous_model_for_#{column}.include_set_modules
-          # end
           remove_previously_stored_#{column}
         end
 

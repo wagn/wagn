@@ -4,6 +4,7 @@ describe Card::Set::Type::File do
   def test_file no=1
     File.new(File.join(FIXTURES_PATH, "file#{no}.txt"))
   end
+
   def create_file_card storage_type, file=test_file, opts={}
     Card::Auth.as_bot do
       Card.create! opts.reverse_merge(name: "file card", type_id: Card::FileID,
@@ -12,7 +13,7 @@ describe Card::Set::Type::File do
     end
   end
 
-  let(:web_url) { "http://web.de/web_file.txt"}
+  let(:web_url) { "http://web.de/web_file.txt" }
   let(:mod_path) do
     deck_mod_path = Cardio.paths["mod"].existent.last
     File.join deck_mod_path, "test_mod"
@@ -26,7 +27,9 @@ describe Card::Set::Type::File do
     end
     card
   end
-  let(:unprotected_file) { create_file_card :local, test_file(2), codename: nil }
+  let(:unprotected_file) do
+    create_file_card :local, test_file(2), codename: nil
+  end
   let(:coded_file) { Card[:logo] }
   let(:web_file) do
     Card::Auth.as_bot do
@@ -66,7 +69,8 @@ describe Card::Set::Type::File do
       subject { source_view unprotected_file }
       it "renders relative url" do
         is_expected.to(
-          eq "/files/~#{unprotected_file.id}/#{unprotected_file.last_action_id}.txt"
+          eq "/files/~#{unprotected_file.id}/"\
+             "#{unprotected_file.last_action_id}.txt"
         )
       end
     end
@@ -241,7 +245,8 @@ describe Card::Set::Type::File do
 
       describe "cloud" do
         subject { cloud_file }
-        it "stores correct identifier ((<bucket>)/<card id>/<action id>.<ext>)" do
+        it "stores correct identifier "\
+           "((<bucket>)/<card id>/<action id>.<ext>)" do
           expect(subject.content)
             .to eq "(test_bucket)/#{subject.id}/#{subject.last_action_id}.txt"
         end
@@ -256,7 +261,6 @@ describe Card::Set::Type::File do
                "files/#{subject.id}/#{subject.last_action_id}.txt"
         end
       end
-
     end
 
     context "with subcards" do
@@ -326,34 +330,34 @@ describe Card::Set::Type::File do
       end
     end
 
-    # context "when changed from protected to unprotected" do
-    #   before do
-    #     @storage_type = :local
-    #   end
-    #   it "creates public svmlink" do
-    #     subject.update_storage_location! :local
-    #     expect(public_path_exist?).to be_truthy
-    #   end
-    # end
-    #
-    # context "when changed from unprotected to protected" do
-    #   before do
-    #     @storage_type = :local
-    #   end
-    #   it "removes public symlink" do
-    #     expect(subject.content)
-    #       .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
-    #
-    #     subject.update_storage_location! :local
-    #     expect(public_path_exist?).to be_falsey
-    #   end
-    # end
+    context "when read rules are restricted" do
+      subject { unprotected_file }
+      it "removes public svmlink" do
+        expect(public_path_exist?).to be_truthy
+        Card::Auth.as_bot do
+          Card.create! name: "#{subject.name}+*self+*read",
+                       content: "[[Anyone Signed In]]"
+        end
+        expect(public_path_exist?).to be_falsey
+      end
+    end
+
+    context "when read rules changed to 'Anyone'" do
+      subject { protected_file }
+      it "creates public symlink" do
+        expect(public_path_exist?).to be_falsey
+        Card::Auth.as_bot do
+          Card["#{subject.name}+*self+*read"].delete
+        end
+        expect(public_path_exist?).to be_truthy
+      end
+    end
   end
 
   context "deleting" do
     it "removes symlink for unprotected files" do
       pp = unprotected_file.attachment.public_path
-      expect(File.exist? pp).to be_truthy
+      expect(File.exist?(pp)).to be_truthy
       Card::Auth.as_bot do
         unprotected_file.delete!
       end
@@ -374,7 +378,7 @@ describe Card::Set::Type::File do
     context "when changed from cloud to local" do
       it "copies file to local file system" do
         # not yet supported
-        expect{subject.update_storage_location!(:local)}
+        expect { subject.update_storage_location!(:local) }
           .to raise_error(Card::Error)
         # expect(subject.content)
         #   .to eq "~#{subject.id}/#{subject.last_action_id - 1}.txt"

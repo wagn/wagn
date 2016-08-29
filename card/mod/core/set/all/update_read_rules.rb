@@ -15,7 +15,7 @@ event :update_ruled_cards, :finalize do
 end
 
 def update_read_rules_not_overridden_by_narrower_rules cur_index,
-                                                      rule_class_index, set
+                                                       rule_class_index, set
   set.item_cards(limit: 0).each_with_object(::Set.new) do |item_card, in_set|
     in_set << item_card.key
     next if cur_index < rule_class_index
@@ -25,10 +25,10 @@ end
 
 def update_read_rules_of_set_members set
   return ::Set.new if trash || !(class_id = id_of_set_class(set))
-  rule_class_ids = set_patterns.  map(&:pattern_id)
+  rule_class_ids = set_patterns.map(&:pattern_id)
   Auth.as_bot do
-    cur_index = rule_class_ids.index Card[read_rule_class].id
     if (rule_class_index = rule_class_ids.index(class_id))
+      cur_index = rule_class_ids.index Card[read_rule_class].id
       update_read_rules_not_overridden_by_narrower_rules cur_index,
                                                          rule_class_index, set
     else

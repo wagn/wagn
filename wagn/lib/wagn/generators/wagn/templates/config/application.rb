@@ -50,6 +50,8 @@ module <%= app_const_base %>
     # File storage options (see http://wagn.org/file_storage_options)
     # options include: local, cloud, web, coded
     # defaults to local
+    # For cloud storage use the following config options and add the gems
+    # "fog" and "fog/aws" to your Gemfile.
     # config.file_default_bucket = :my_bucket
     # config.file_buckets = {
     #   my_bucket: {

@@ -233,12 +233,18 @@ def with_storage_options opts={}
     next unless opts[opt_name]
     old_values[opt_name] = instance_variable_get "@#{opt_name}"
     instance_variable_set "@#{opt_name}", opts[opt_name]
+    @temp_storage_type = true
   end
   yield
 ensure
+  @temp_storage_type = false
   old_values.each do |key, val|
     instance_variable_set "@#{key}", val
   end
+end
+
+def temporary_storage_type_change?
+ @temp_storage_type
 end
 
 def validate_temporary_storage_type_change new_storage_type=nil

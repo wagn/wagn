@@ -34,7 +34,7 @@ event :validate_file_exist, :validate, on: :save do
 end
 
 event :write_identifier, after: :save_original_filename,
-      when: proc { |c| !c.web? } do
+                         when: proc { |c| !c.web? } do
   self.content = attachment.db_content
 end
 

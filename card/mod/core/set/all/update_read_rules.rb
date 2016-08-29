@@ -14,7 +14,7 @@ event :update_ruled_cards, :finalize do
   end
 end
 
-def update_read_rules_not_overidden_by_narrower_rules cur_index,
+def update_read_rules_not_overridden_by_narrower_rules cur_index,
                                                       rule_class_index, set
   set.item_cards(limit: 0).each_with_object(::Set.new) do |item_card, in_set|
     in_set << item_card.key
@@ -24,7 +24,7 @@ def update_read_rules_not_overidden_by_narrower_rules cur_index,
 end
 
 def update_read_rules_of_set_members set
-  return ::Set.new if trash || !(class_id = set_class_id(set))
+  return ::Set.new if trash || !(class_id = id_of_set_class(set))
   rule_class_ids = set_patterns.  map(&:pattern_id)
   Auth.as_bot do
     cur_index = rule_class_ids.index Card[read_rule_class].id
@@ -38,10 +38,9 @@ def update_read_rules_of_set_members set
   end
 end
 
-def set_class_id set
+def id_of_set_class set
   set && (set_class = set.tag) && set_class.id
 end
-
 
 def update_read_ruled_cards set
   self.class.clear_read_rule_cache

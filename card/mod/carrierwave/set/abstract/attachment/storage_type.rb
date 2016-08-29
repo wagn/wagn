@@ -128,7 +128,7 @@ end
 def bucket_config
   return {} unless bucket
   @bucket_config ||= Cardio.config.file_buckets[bucket.to_sym]
-                           .deep_symbolize_keys || {}
+                                  .deep_symbolize_keys || {}
 end
 
 def bucket_from_content

@@ -7,11 +7,10 @@ module ClassMethods
   def delete_tmp_files_of_cached_uploads
     draft_actions_with_attachment.each do |action|
       # we don't want to delete uploads in progress
-      if old_enough?(action.created_at) && (card = action.card)
+      next unless old_enough?(action.created_at) && (card = action.card)
         # we don't want to delete uploads in progress
-        card.delete_files_for_action action
-        action.delete
-      end
+      card.delete_files_for_action action
+      action.delete
     end
   end
 

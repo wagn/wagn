@@ -35,7 +35,6 @@ event :write_identifier, after: :save_original_filename,
   self.content = attachment.db_content
 end
 
-
 def file_ready_to_save?
   attachment.file.present? &&
     !preliminary_upload? &&
@@ -48,7 +47,7 @@ def item_names _args={} # needed for flexmail attachments.  hacky.
 end
 
 def original_filename
-  return content.split('/').last if web?
+  return content.split("/").last if web?
   attachment.original_filename
 end
 

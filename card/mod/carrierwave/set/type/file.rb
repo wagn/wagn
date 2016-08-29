@@ -44,7 +44,6 @@ format :file do
     return _render_not_found unless attachment_format
     return card.format(:html).render_core(args) if card.remote_storage?
 
-
     if params[:explicit_file] && (r = controller.response)
       r.headers["Expires"] = 1.year.from_now.httpdate
       # currently using default "private", because proxy servers could block

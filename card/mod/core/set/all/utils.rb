@@ -81,4 +81,8 @@ module ClassMethods
       card.update_attributes! attribs
     end
   end
+
+  def seed_test_db
+    system "env RAILS_ENV=test bundle exec rake db:fixtures:load"
+  end
 end

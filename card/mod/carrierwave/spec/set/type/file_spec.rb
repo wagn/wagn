@@ -365,7 +365,7 @@ describe Card::Set::Type::File do
     end
   end
 
-  describe "#update_storage_location" do
+  describe "change storage type" do
     before { storage_config :cloud }
     after { Cardio.config.file_storage = :local }
     subject do
@@ -378,7 +378,7 @@ describe Card::Set::Type::File do
     context "when changed from cloud to local" do
       it "copies file to local file system" do
         # not yet supported
-        expect { subject.update_storage_location!(:local) }
+        expect { subject.update_attributes!(storage_type: :local) }
           .to raise_error(Card::Error)
         # expect(subject.content)
         #   .to eq "~#{subject.id}/#{subject.last_action_id - 1}.txt"
@@ -391,7 +391,7 @@ describe Card::Set::Type::File do
         @storage_type = :local
         expect(subject.content)
           .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
-        subject.update_storage_location! :cloud
+        subject.update_attributes! storage_type: :cloud
 
         expect(subject.content).to eq(
           "(test_bucket)/#{subject.id}/#{subject.last_action_id - 1}.txt"

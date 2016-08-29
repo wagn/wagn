@@ -13,7 +13,7 @@ end
 event :validate_storage_type, :validate,
       on: :save do
   if will_become_coded?
-    if !(mod || @new_mod)
+    unless mod || @new_mod
       errors.add :storage_type, "mod argument needed to save card as coded"
     end
     if codename.blank?
@@ -137,8 +137,8 @@ end
 
 def bucket_config
   return {} unless bucket
-  @bucket_config ||= Cardio.config.file_buckets[bucket.to_sym]
-                                  .deep_symbolize_keys || {}
+  @bucket_config ||=
+    Cardio.config.file_buckets[bucket.to_sym].deep_symbolize_keys || {}
 end
 
 def bucket_from_content

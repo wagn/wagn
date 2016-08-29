@@ -24,14 +24,17 @@ event :save_original_filename, :prepare_to_store,
   @current_action.update_attributes! comment: original_filename
 end
 
-event :validate_file_exist, :validate,
-      on: :create, when: proc { |c| !c.web? } do
-  return if attachment.file.present? || empty_ok?
-  errors.add attachment_name, "is missing"
+event :validate_file_exist, :validate, on: :save do
+  return if empty_ok?
+  if will_be_stored_as == :web
+    errors.add "url is missing" if content.blank?
+  elsif !attachment.file.present?
+    errors.add attachment_name, "is missing"
+  end
 end
 
 event :write_identifier, after: :save_original_filename,
-                         when: proc { |c| !c.web? } do
+      when: proc { |c| !c.web? } do
   self.content = attachment.db_content
 end
 

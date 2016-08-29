@@ -2,27 +2,59 @@ attr_writer :bucket, :storage_type
 
 event :storage_type_change, :store,
       on: :update, when: proc { |c| c.storage_type_changed? } do
-  return if storage_type == :web
-  return if @new_storage_type == :web
+  if @new_storage_type == :cloud
+    move_to_cloud
+  else
+    update_storage_attributes
+    write_identifier
+  end
+end
 
-  case storage_type
-  when :cloud
-    raise Card::Error, "moving files from cloud elsewhere"\
-                       "is not supported"
-  when :local
-    case  @new_storage_type
-    when :cloud then move_from_local_to_cloud
-    when :coded then move_from_local_to_coded
+event :validate_storage_type, :validate,
+      on: :save do
+  if will_become_coded?
+    if !(mod || @new_mod)
+      errors.add :storage_type, "mod argument needed to save card as coded"
+    end
+    if codename.blank?
+      errors.add :storage_type, "codename needed for storage type coded"
     end
   end
-  @storage_type = @new_storage_type
+  unless known_storage_type? will_be_stored_as
+    errors.add :storage_type, "unknown storage type: #{@new_storage_type}"
+  end
+end
+
+event :validate_storage_type_update, :validate,
+      on: :update do
+  if cloud? && storage_type_changed?
+    errors.add :storage_type, "moving files from cloud elsewhere "\
+                              "is not supported"
+  end
 end
 
 event :loose_coded_status_on_update, :initialize,
-      on: :update,
-      when: proc { |c| c.coded? } do
+      on: :update, when: proc { |c| c.coded? } do
   return if @new_mod
   @new_storage_type ||= storage_type_from_config
+end
+
+event :update_public_link_on_create, :integrate, on: :create do
+  update_public_link
+end
+
+event :remove_public_link_on_delete, :integrate, on: :delete do
+  remove_public_links
+end
+
+event :update_public_link, after: :update_read_rule do
+  return unless local?
+  return if content.blank?
+  if who_can(:read).include? Card[:anyone].id
+    create_public_links
+  else
+    remove_public_links
+  end
 end
 
 def create_public_links
@@ -46,25 +78,7 @@ def remove_public_links
   FileUtils.rm_rf symlink_dir
 end
 
-event :update_public_link_on_create, :integrate, on: :create do
-  update_public_link
-end
-
-event :remove_public_link_on_delete, :integrate, on: :delete do
-  remove_public_links
-end
-
-event :update_public_link, after: :update_read_rule do
-  return unless local?
-  return if content.blank?
-  if who_can(:read).include? Card[:anyone].id
-    create_public_links
-  else
-    remove_public_links
-  end
-end
-
-def store_as
+def will_be_stored_as
   @new_storage_type || storage_type
 end
 
@@ -84,20 +98,16 @@ def coded?
   storage_type == :coded
 end
 
+def will_become_coded?
+  will_be_stored_as == :coded
+end
+
 def deprecated_mod_file?
   content && (lines = content.split("\n")) && lines.size == 4
 end
 
 def mod
   @mod ||= coded? && mod_from_content
-end
-
-def mod= value
-  if @action == :update
-    @new_mod = value
-  else
-    @mod = value
-  end
 end
 
 def mod_from_content
@@ -172,27 +182,21 @@ def storage_type_from_content
   end
 end
 
-def move_from_local_to_cloud
+def move_to_cloud
   old_file = attachment.file
-  @bucket = @new_bucket
-  @storage_type = @new_storage_type
+  update_storage_attributes
   write_identifier
   attachment.store! old_file
 end
 
-def move_from_local_to_coded
-  unless @new_mod
-    raise Card::Error, "mod argument needed to change storage type to :coded"
-  end
-  old_file = attachment.file
-  @mod = @new_mod
+def update_storage_attributes
+  @mod = @new_mod if @new_mod
+  @bucket = @new_bucket if @new_bucket
   @storage_type = @new_storage_type
-  write_identifier
-  attachment.store! old_file
 end
 
 def storage_type_changed?
-  @new_bucket || @new_storage_type
+  @new_bucket || @new_storage_type || @new_mod
 end
 
 def bucket= value
@@ -204,7 +208,7 @@ def bucket= value
 end
 
 def storage_type= value
-  validate_storage_type value
+  known_storage_type? value
   if @action == :update
     # we cant update the storage type directly here
     # if we do then the uploader doesn't find the file we want to update
@@ -214,9 +218,17 @@ def storage_type= value
   end
 end
 
+def mod= value
+  if @action == :update
+    @new_mod = value
+  else
+    @mod = value
+  end
+end
+
 def with_storage_options opts={}
   old_values = {}
-  validate_storage_type_change opts[:storage_type]
+  validate_temporary_storage_type_change opts[:storage_type]
   [:storage_type, :mod, :bucket].each do |opt_name|
     next unless opts[opt_name]
     old_values[opt_name] = instance_variable_get "@#{opt_name}"
@@ -229,18 +241,17 @@ ensure
   end
 end
 
-def validate_storage_type_change new_storage_type=nil
+def validate_temporary_storage_type_change new_storage_type=nil
   new_storage_type ||= @new_storage_type
   return unless new_storage_type
-  validate_storage_type new_storage_type
-
+  unless known_storage_type? new_storage_type
+    raise Error, "unknown storage type: #{new_storage_type}"
+  end
   if new_storage_type == :coded && codename.blank?
     raise Error, "codename needed for storage type :coded"
   end
 end
 
-def validate_storage_type type
-  unless type.in? CarrierWave::FileCardUploader::STORAGE_TYPES
-    raise Error, "unknown storage type: #{type}"
-  end
+def known_storage_type? type=storage_type
+  type.in? CarrierWave::FileCardUploader::STORAGE_TYPES
 end

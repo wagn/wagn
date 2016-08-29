@@ -8,9 +8,7 @@ module SelectedAction
   end
 
   def last_content_action_id
-    if storage_type != :coded && storage_type_from_content == :coded
-      return super
-    end
+    return @current_action.id if storage_type_changed?
     # find action id from content (saves lookups)
     db_content.to_s.split(%r{[/\.]})[-2]
   end

@@ -300,33 +300,31 @@ describe Card::Set::Type::File do
         .to eq "/files/~#{subject.id}/#{subject.last_action_id}.txt"
     end
 
-    context "storage type: coded" do
-      context "coded" do
-        before do
-          FileUtils.mkdir_p mod_path
-        end
+    context "if storage type is coded" do
+      before do
+        FileUtils.mkdir_p mod_path
+      end
 
-        subject do
-          create_file_card :coded, test_file,
-                           codename: "mod_file", mod: "test_mod"
-        end
-        it "changes storage type to default" do
-          storage_config :local
-          subject.update_attributes! file: test_file(2)
-          expect(subject.storage_type).to eq :local
-          expect(subject.content)
-            .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
-        end
-        it "keeps storage type :coded if explicitly set" do
-          storage_config :local
-          subject.update_attributes! file: test_file(2), storage_type: :coded
-          expect(subject.storage_type).to eq :coded
-          expect(subject.content)
-            .to eq ":#{subject.codename}/test_mod.txt"
-          expect(subject.attachment.path)
-            .to match(%r{test_mod/file/mod_file/file.txt$})
-          expect(File.read(subject.attachment.path).strip).to eq "file2"
-        end
+      subject do
+        create_file_card :coded, test_file,
+                         codename: "mod_file", mod: "test_mod"
+      end
+      it "changes storage type to default" do
+        storage_config :local
+        subject.update_attributes! file: test_file(2)
+        expect(subject.storage_type).to eq :local
+        expect(subject.content)
+          .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
+      end
+      it "keeps storage type coded if explicitly set" do
+        storage_config :local
+        subject.update_attributes! file: test_file(2), storage_type: :coded
+        expect(subject.storage_type).to eq :coded
+        expect(subject.content)
+          .to eq ":#{subject.codename}/test_mod.txt"
+        expect(subject.attachment.path)
+          .to match(%r{test_mod/file/mod_file/file.txt$})
+        expect(File.read(subject.attachment.path).strip).to eq "file2"
       end
     end
 
@@ -365,9 +363,7 @@ describe Card::Set::Type::File do
     end
   end
 
-  describe "change storage type" do
-    before { storage_config :cloud }
-    after { Cardio.config.file_storage = :local }
+  context "when changing storage type" do
     subject do
       Card::Auth.as_bot do
         Card.create! name: "file card", type_code: "file",
@@ -375,18 +371,55 @@ describe Card::Set::Type::File do
                      storage_type: @storage_type || :cloud
       end
     end
-    context "when changed from cloud to local" do
+    context "from cloud to local" do
+      before { storage_config :cloud }
+      after { Cardio.config.file_storage = :local }
       it "copies file to local file system" do
         # not yet supported
         expect { subject.update_attributes!(storage_type: :local) }
-          .to raise_error(Card::Error)
+          .to raise_error(ActiveRecord::RecordInvalid)
         # expect(subject.content)
         #   .to eq "~#{subject.id}/#{subject.last_action_id - 1}.txt"
         # expect(File.read(subject.file.retrieve_path)).to eq "file1"
       end
     end
 
-    context "when changed from local to cloud" do
+    context "from local to coded" do
+      before do
+        FileUtils.mkdir_p mod_path
+      end
+      after do
+        FileUtils.rm_rf mod_path
+      end
+      let(:file_path) { File.join mod_path, "file", "mod_file", "file.txt" }
+
+      it "copies file to mod" do
+        @storage_type = :local
+        expect(subject.content)
+          .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
+        Card::Auth.as_bot do
+          subject.update_attributes! storage_type: :coded, mod: "test_mod",
+                                     codename: "mod_file"
+        end
+        expect(subject.content)
+          .to eq ":#{subject.codename}/test_mod.txt"
+        expect(File.exist?(file_path)).to be_truthy
+      end
+    end
+
+    context "from coded to local" do
+      subject { Card[:logo] }
+      it "copies file to mod" do
+        @storage_type = :local
+        Card::Auth.as_bot do
+          subject.update_attributes! storage_type: :local
+        end
+        expect(subject.content)
+          .to eq "~#{subject.id}/#{subject.last_action_id}.png"
+      end
+    end
+
+    context "from local to cloud" do
       it "copies file to cloud" do
         @storage_type = :local
         expect(subject.content)
@@ -394,7 +427,7 @@ describe Card::Set::Type::File do
         subject.update_attributes! storage_type: :cloud
 
         expect(subject.content).to eq(
-          "(test_bucket)/#{subject.id}/#{subject.last_action_id - 1}.txt"
+          "(test_bucket)/#{subject.id}/#{subject.last_action_id}.txt"
         )
         url = subject.file.url
         expect(url).to match(/^http/)

@@ -1,3 +1,5 @@
+require 'pry'
+
 format do
   # link is called by web_link, card_link, and view_link
   # (and is overridden in other formats)
@@ -153,6 +155,6 @@ end
 
 format :css do
   def link_to _text, href, _opts={}
-    interpret_href href
+    card_url interpret_href(href)
   end
 end

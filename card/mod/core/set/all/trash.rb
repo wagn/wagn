@@ -1,15 +1,13 @@
 Self::Admin.add_to_basket(
   :tasks,
-   {
-     name: :empty_trash,
-     execute_policy: -> { Card.empty_trash },
-     stats: {
-       title: "trashed cards",
-       count: -> { Card.where(trash: true) },
-       link_text: "delete all",
-       task: "empty_trash"
-     }
-   }
+  name: :empty_trash,
+  execute_policy: -> { Card.empty_trash },
+  stats: {
+    title: "trashed cards",
+    count: -> { Card.where(trash: true) },
+    link_text: "delete all",
+    task: "empty_trash"
+  }
 )
 
 module ClassMethods

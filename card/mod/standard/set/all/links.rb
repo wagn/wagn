@@ -1,5 +1,3 @@
-require 'pry'
-
 format do
   # link is called by web_link, card_link, and view_link
   # (and is overridden in other formats)
@@ -42,7 +40,7 @@ format do
         "email-link"
       when /^([a-zA-Z][\-+\.a-zA-Z\d]*):/
         Regexp.last_match(1) + "-link"
-      when /^\//
+      when %r{^/}
         href = internal_url href[1..-1]
         "internal-link"
       else

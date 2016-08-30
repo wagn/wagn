@@ -50,7 +50,7 @@ namespace :wagn do
   end
 
   desc "clear and load fixtures with existing tables"
-  task :reseed do
+  task reseed: :environment do
     ENV["SCHEMA"] ||= "#{Cardio.gem_root}/db/schema.rb"
 
     Rake::Task["wagn:clear"].invoke

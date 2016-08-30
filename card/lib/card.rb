@@ -2,8 +2,6 @@
 cw_path = File.expand_path "../../vendor/carrierwave/lib", __FILE__
 $LOAD_PATH.unshift(cw_path) unless $LOAD_PATH.include?(cw_path)
 require "carrierwave"
-require "carrierwave/storage/fog"
-require "fog"
 
 # if Cardio.file_buckets.present?
 #   require "carrierwave/storage/fog"

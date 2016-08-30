@@ -259,7 +259,6 @@ module CarrierWave
     end
 
     def fog_credentials
-      binding.pry
       credentials = @model.bucket_config[:credentials]
       [:aws_access_key_id, :aws_secret_access_key].each do |key|
         env_key = "#{@model.bucket.to_s.upcase}_#{key.to_s.upcase}"

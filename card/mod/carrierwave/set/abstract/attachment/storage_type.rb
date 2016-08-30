@@ -39,16 +39,20 @@ event :loose_coded_status_on_update, :initialize,
   @new_storage_type ||= storage_type_from_config
 end
 
-event :update_public_link_on_create, :integrate, on: :create do
+event :update_public_link_on_create, :integrate,
+      on: :create,
+      when: proc { |c| c.local? } do
   update_public_link
 end
 
-event :remove_public_link_on_delete, :integrate, on: :delete do
+event :remove_public_link_on_delete, :integrate,
+      on: :delete,
+      when: proc { |c| c.local? } do
   remove_public_links
 end
 
-event :update_public_link, after: :update_read_rule do
-  return unless local?
+event :update_public_link, after: :update_read_rule,
+                           when: proc { |c| c.local? } do
   return if content.blank?
   if who_can(:read).include? Card[:anyone].id
     create_public_links

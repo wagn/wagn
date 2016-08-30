@@ -209,7 +209,7 @@ module CarrierWave
     end
 
     def cache_dir
-      Cardio.paths["files"].existent.first + "/cache"
+      @model.files_base_dir + "/cache"
     end
 
     # Carrierwave calls store_path without argument when it stores the file

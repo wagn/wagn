@@ -63,14 +63,14 @@ module CarrierWave
 
         def #{column}=(new_file)
           return if new_file.blank?
-          assign_attachment(new_file) { super }
+          assign_file(new_file) { super }
         end
 
         def remote_#{column}_url=(url)
-          assign_attachment(url) { super }
+          assign_file(url) { super }
         end
 
-        def assign_attachment file
+        def assign_file file
           db_column = _mounter(:#{column}).serialization_column
           send(:"\#{db_column}_will_change!")
           if web?

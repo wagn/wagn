@@ -191,7 +191,7 @@ module CarrierWave
 
     def url opts={}
       if model.cloud?
-        file.url
+        file.url(scheme: 'https')
       elsif model.web?
         model.content
       else

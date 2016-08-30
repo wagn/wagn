@@ -51,7 +51,7 @@ module <%= app_const_base %>
     # options include: local, cloud, web, coded
     # defaults to local
     # For cloud storage use the following config options and add the gems
-    # "fog" and "fog/aws" to your Gemfile.
+    # "fog" and "fog-aws" to your Gemfile.
     # config.file_default_bucket = :my_bucket
     # config.file_buckets = {
     #   my_bucket: {

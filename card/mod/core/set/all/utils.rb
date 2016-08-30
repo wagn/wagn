@@ -5,7 +5,6 @@ module ClassMethods
     Card::Action.delete_cardless
     Card::Reference.unmap_if_referee_missing
     Card::Reference.delete_if_referer_missing
-    Card.delete_tmp_files_of_cached_uploads
   end
 
   # deletes any file not associated with a real card.
@@ -41,20 +40,6 @@ module ClassMethods
     sql_results.map(&:values).flatten.map(&:to_i)
   end
 
-  def delete_tmp_files_of_cached_uploads
-    actions = Card::Action.find_by_sql "SELECT * FROM card_actions
-      INNER JOIN cards ON card_actions.card_id = cards.id
-      WHERE cards.type_id IN (#{Card::FileID}, #{Card::ImageID})
-      AND card_actions.draft = true"
-    actions.each do |action|
-      # we don't want to delete uploads in progress
-      if older_than_five_days?(action.created_at) && (card = action.card)
-        # we don't want to delete uploads in progress
-        card.delete_files_for_action action
-      end
-    end
-  end
-
   def merge_list attribs, opts={}
     unmerged = []
     attribs.each do |row|
@@ -84,7 +69,7 @@ module ClassMethods
   end
 
   def merge name, attribs={}, opts={}
-    # puts "merging #{name}"
+    puts "merging #{name}"
     card = fetch name, new: {}
     [:image, :file].each do |attach|
       next unless attribs[attach] && attribs[attach].is_a?(String)
@@ -97,33 +82,7 @@ module ClassMethods
     end
   end
 
-  def older_than_five_days? time
-    Time.now - time > 432_000
-  end
-
   def seed_test_db
     system "env RAILS_ENV=test bundle exec rake db:fixtures:load"
   end
-end
-
-def debug_type
-  "#{type_code || ''}:#{type_id}"
-end
-
-def to_s
-  "#<#{self.class.name}[#{debug_type}]#{attributes['name']}>"
-end
-
-def inspect
-  tags = []
-  tags << "trash"    if trash
-  tags << "new"      if new_card?
-  tags << "frozen"   if frozen?
-  tags << "readonly" if readonly?
-  tags << "virtual"  if @virtual
-  tags << "set_mods_loaded" if @set_mods_loaded
-
-  error_messages = errors.any? ? "<E*#{errors.full_messages * ', '}*>" : ""
-
-  "#<Card##{id}[#{debug_type}](#{name})#{error_messages}{#{tags * ','}}"
 end

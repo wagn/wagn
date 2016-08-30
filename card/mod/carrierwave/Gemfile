@@ -1,0 +1,4 @@
+# the current release 0.11.2 uses an old version of the fog gem which isn't
+# compatible with rails 4.2
+gem "carrierwave", git: "https://github.com/carrierwaveuploader/carrierwave",
+                   branch: "master"

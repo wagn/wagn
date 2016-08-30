@@ -114,14 +114,14 @@ describe Card::Set::Type::Image do
           image: File.new(File.join(FIXTURES_PATH, "rails.gif"))
         )
       end
-      expect(subject.mod_file?).to be_falsey
+      expect(subject.coded?).to be_falsey
       expect(subject.image.url)
         .to eq "/files/~#{subject.id}/#{subject.last_action_id}-original.gif"
     end
 
-    describe "#mod_file?" do
-      it "returns the mod name" do
-        expect(subject.mod_file?).to eq("standard")
+    describe "#coded?" do
+      it "returns true" do
+        expect(subject.coded?).to be_truthy
       end
     end
 
@@ -130,6 +130,24 @@ describe Card::Set::Type::Image do
         expect(subject.format.render_source)
           .to eq "/files/:#{subject.codename}/standard-medium.png"
       end
+    end
+  end
+
+  describe "#delete_files_for_action" do
+    subject do
+      Card::Auth.as_bot do
+        Card.create! name: "image card", type: "image",
+                     image: File.new(File.join(FIXTURES_PATH, "mao2.jpg"))
+      end
+    end
+    it "deletes all versions" do
+      path = subject.image.path
+      small_path = subject.image.small.path
+      medium_path = subject.image.medium.path
+      subject.delete_files_for_action(subject.last_action)
+      expect(File.exist?(small_path)).to be_falsey
+      expect(File.exist?(medium_path)).to be_falsey
+      expect(File.exist?(path)).to be_falsey
     end
   end
 end

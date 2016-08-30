@@ -54,17 +54,17 @@ describe Card::Set::Type::Pointer do
                 content: "[[item1]]\n[[item2]]"
   end
 
+  def pointer_update content
+    lambda { pointer.update_attributes! content: content }
+  end
+
   describe "#added_item_names" do
     it "recognizes added items" do
       Card::Auth.as_bot do
         pointer
-        in_stage :validate,
+        in_stage(:validate,
                  on: :save,
-                 trigger: -> do
-                            pointer.update_attributes!(
-                              content: "[[item1]]\n[[item2]]\n[[item3]]"
-                            )
-                          end do
+                 trigger: pointer_update("[[item1]]\n[[item2]]\n[[item3]]")) do
           expect(added_item_names).to eq ["item3"]
         end
       end
@@ -75,11 +75,7 @@ describe Card::Set::Type::Pointer do
         pointer
         in_stage :validate,
                  on: :save,
-                 trigger: -> do
-                   pointer.update_attributes!(
-                     content: "[[item2]]\n[[item1]]"
-                   )
-                 end do
+                 trigger: pointer_update("[[item2]]\n[[item1]]") do
           expect(added_item_names).to eq []
         end
       end
@@ -92,11 +88,7 @@ describe Card::Set::Type::Pointer do
         pointer
         in_stage :validate,
                  on: :save,
-                 trigger: -> do
-                   pointer.update_attributes!(
-                     content: "[[item1]]"
-                   )
-                 end do
+                 trigger: pointer_update("[[item1]]") do
           expect(dropped_item_names).to eq ["item2"]
         end
       end
@@ -107,11 +99,7 @@ describe Card::Set::Type::Pointer do
         pointer
         in_stage :validate,
                  on: :save,
-                 trigger: -> do
-                   pointer.update_attributes!(
-                     content: "[[item2]]\n[[item1]]"
-                   )
-                 end do
+                 trigger: pointer_update("[[item2]]\n[[item1]]") do
           expect(dropped_item_names).to eq []
         end
       end
@@ -124,11 +112,7 @@ describe Card::Set::Type::Pointer do
         pointer
         in_stage :validate,
                  on: :save,
-                 trigger: -> do
-                   pointer.update_attributes!(
-                     content: "[[item1]]\n[[item3]]"
-                   )
-                 end do
+                 trigger: pointer_update("[[item1]]\n[[item3]]") do
           expect(changed_item_names.sort).to eq %w(item2 item3)
         end
       end

@@ -1,5 +1,17 @@
 # -*- encoding : utf-8 -*-
+cw_path = File.expand_path "../../vendor/carrierwave/lib", __FILE__
+$LOAD_PATH.unshift(cw_path) unless $LOAD_PATH.include?(cw_path)
 require "carrierwave"
+require "carrierwave/storage/fog"
+require "fog"
+
+# if Cardio.file_buckets.present?
+#   require "carrierwave/storage/fog"
+#   Cardio.file_buckets.each do |bucket, config|
+#     require config["provider"]
+#   end
+# end
+
 Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
 
 # Cards are wiki-inspired building blocks.

@@ -1,5 +1,7 @@
 require "carrier_wave/cardmount"
 
+attr_writer :empty_ok
+
 def self.included host_class
   host_class.extend CarrierWave::CardMount
 end
@@ -8,58 +10,32 @@ event :select_file_revision, after: :select_action do
   attachment.retrieve_from_store!(attachment.identifier)
 end
 
-event :upload_attachment, :prepare_to_validate,
-      on: :save, when: proc { |c| c.preliminary_upload? } do
-  save_original_filename  # save original filename as comment in action
-  write_identifier        # set db_content
-  # (needs original filename to determine extension)
-  store_attachment!
-  finalize_action         # create Card::Change entry for db_content
-
-  card_id = new_card? ? upload_cache_card.id : id
-  @current_action.update_attributes! draft: true, card_id: card_id
-  success << {
-    target: (new_card? ? upload_cache_card : self),
-    type: type_name,
-    view: "preview_editor",
-    rev_id: current_action.id
-  }
-  abort :success
+# we need a card id for the path so we have to update db_content when we have
+# an id
+event :correct_identifier, :finalize,
+      on: :create, when: proc { |c| !c.web? } do
+  update_column(:db_content, attachment.db_content)
+  expire
 end
 
-event :assign_attachment_on_create, :initialize,
-      after: :assign_action, on: :create,
-      when: proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(@action_id_of_cached_upload))
-    upload_cache_card.selected_action_id = action.id
-    upload_cache_card.select_file_revision
-    assign_attachment upload_cache_card.attachment.file, action.comment
-  end
-end
-
-event :assign_attachment_on_update, :initialize,
-      after: :assign_action, on: :update,
-      when:  proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(@action_id_of_cached_upload))
-    uploaded_file =
-      with_selected_action_id(action.id) do
-        attachment.file
-      end
-    assign_attachment uploaded_file, action.comment
-  end
-end
-
-def assign_attachment file, original_filename
-  send "#{attachment_name}=", file
-  write_identifier
+event :save_original_filename, :prepare_to_store,
+      when: proc { |c| c.file_ready_to_save? } do
+  return unless @current_action
   @current_action.update_attributes! comment: original_filename
 end
 
-# we need a card id for the path so we have to update db_content when we have
-# an id
-event :correct_identifier, :finalize, on: :create do
-  update_column(:db_content, attachment.db_content(mod: load_from_mod))
-  expire
+event :validate_file_exist, :validate, on: :save do
+  return if empty_ok?
+  if will_be_stored_as == :web
+    errors.add "url is missing" if content.blank?
+  elsif !attachment.file.present?
+    errors.add attachment_name, "is missing"
+  end
+end
+
+event :write_identifier, after: :save_original_filename,
+                         when: proc { |c| !c.web? } do
+  self.content = attachment.db_content
 end
 
 def file_ready_to_save?
@@ -69,57 +45,18 @@ def file_ready_to_save?
     attachment_changed?
 end
 
-event :save_original_filename, :prepare_to_store,
-      when: proc { |c| c.file_ready_to_save? } do
-  return unless @current_action
-  @current_action.update_attributes! comment: original_filename
-end
-
-event :delete_cached_upload_file_on_create, :integrate,
-      on: :create, when: proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(@action_id_of_cached_upload))
-    upload_cache_card.delete_files_for_action action
-    action.delete
-  end
-  clear_upload_cache_dir_for_new_cards
-end
-
-event :delete_cached_upload_file_on_update, :integrate,
-      on: :update, when: proc { |c| c.save_preliminary_upload? } do
-  if (action = Card::Action.fetch(@action_id_of_cached_upload))
-    delete_files_for_action action
-    action.delete
-  end
-end
-
-event :validate_file_exist, :validate, on: :create do
-  unless attachment.file.present? || empty_ok?
-    errors.add attachment_name, "is missing"
-  end
-end
-
-event :write_identifier, after: :save_original_filename do
-  self.content = attachment.db_content(mod: load_from_mod)
-end
-
 def item_names _args={} # needed for flexmail attachments.  hacky.
   [cardname]
 end
 
 def original_filename
+  return content.split("/").last if web?
   attachment.original_filename
 end
 
 def unfilled?
-  !attachment.present? && !save_preliminary_upload? && !subcards.present?
-end
-
-def preliminary_upload?
-  Card::Env && Card::Env.params[:attachment_upload]
-end
-
-def save_preliminary_upload?
-  @action_id_of_cached_upload.present?
+  !attachment.present? && !save_preliminary_upload? && !subcards.present? &&
+    !content.present?
 end
 
 def attachment_changed?
@@ -130,84 +67,8 @@ def create_versions?
   true
 end
 
-# used for uploads for new cards until the new card is created
-def upload_cache_card
-  @upload_cache_card ||= Card["new_#{attachment_name}".to_sym]
-end
-
-# action id of the cached upload
-attr_writer :action_id_of_cached_upload
-
-attr_reader :action_id_of_cached_upload
-
-attr_writer :empty_ok
-
 def empty_ok?
   @empty_ok
-end
-
-def load_from_mod= value
-  @mod = value
-  write_identifier
-  @store_in_mod = true if value
-end
-
-def load_from_mod
-  @mod
-end
-
-def store_dir
-  if @store_in_mod
-    mod_dir
-  else
-    upload_dir
-  end
-end
-
-def retrieve_dir
-  if mod_file?
-    mod_dir
-  else
-    upload_dir
-  end
-end
-
-# place for files of regular file cards
-def upload_dir
-  if id
-    "#{Card.paths['files'].existent.first}/#{id}"
-  else
-    tmp_upload_dir
-  end
-end
-
-# place for files if card doesn't have an id yet
-def tmp_upload_dir _action_id=nil
-  "#{Card.paths['files'].existent.first}/#{upload_cache_card.id}"
-end
-
-# place for files of mod file cards
-def mod_dir
-  mod = @mod || mod_file?
-  Card.paths["mod"].to_a.each do |mod_path|
-    dir = File.join(mod_path, mod, "file", codename)
-    return dir if Dir.exist? dir
-  end
-end
-
-def mod_file?
-  return @mod if @store_in_mod
-  # when db_content was changed assume that it's no longer a mod file
-  return if db_content_changed? || !content.present?
-  case content
-  when %r{^:[^/]+/([^.]+)} then Regexp.last_match(1) # current mod_file format
-  when /^\~/               then false  # current id file format
-  else
-    if (lines = content.split("\n")) && (lines.size == 4)
-      # old format, still used in card_changes.
-      lines.last
-    end
-  end
 end
 
 def assign_set_specific_attributes
@@ -218,43 +79,18 @@ def assign_set_specific_attributes
   super
 end
 
-def clear_upload_cache_dir_for_new_cards
-  Dir.entries(tmp_upload_dir).each do |filename|
-    if filename =~ /^\d+/
-      path = File.join(tmp_upload_dir, filename)
-      FileUtils.rm path if Card.older_than_five_days? File.ctime(path)
-    end
-  end
-end
-
 def delete_files_for_action action
   with_selected_action_id(action.id) do
-    FileUtils.rm attachment.file.path
+    attachment.file.delete
     attachment.versions.each_value do |version|
-      FileUtils.rm version.path
+      version.file.delete
     end
   end
 end
 
 # create filesystem links to files from prior action
-def symlink_to prior_action_id
-  return unless prior_action_id != last_action_id
-  save_action_id = selected_action_id
-  links = {}
-
-  self.selected_action_id = prior_action_id
-  attachment.versions.each do |name, version|
-    links[name] = version.store_path
-  end
-  original = attachment.store_path
-
-  self.selected_action_id = last_action_id
-  attachment.versions.each do |name, version|
-    ::File.symlink links[name], version.store_path
-  end
-  ::File.symlink original, attachment.store_path
-
-  self.selected_action_id = save_action_id
+def rollback_to action
+  update_attributes! revision(action).merge(empty_ok: true)
 end
 
 def attachment_format ext

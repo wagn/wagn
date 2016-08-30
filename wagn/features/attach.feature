@@ -42,14 +42,14 @@ Feature: File Upload
     Then I should see an image of size "large" and type "jpg"
     And I wait until ajax response done
 
-  Scenario: Changing a mod image
+  Scenario: Changing a coded image
     When I edit "*logo"
     And I upload the image "image2.jpg"
     And I wait until ajax response done
     Then I should see "image2.jpg 69.8 KB"
     And I press "Submit"
     And I wait until ajax response done
-    Then I should see a non-mod image of size "large" and type "jpg"
+    Then I should see a non-coded image of size "large" and type "jpg"
 
   Scenario: uploading a file as a field in a form
     When I go to  "/new Cardtype"

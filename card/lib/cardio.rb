@@ -53,7 +53,11 @@ module Cardio
         encoding:               "utf-8",
         request_logger:         false,
         performance_logger:     false,
-        sql_comments:           true
+        sql_comments:           true,
+
+        file_storage:           :local,
+        file_buckets:           {},
+        file_default_bucket:    nil
       }
     end
 
@@ -61,8 +65,8 @@ module Cardio
       @@config = config
       @@root = config.root
 
-      config.autoload_paths += Dir["#{gem_root}/mod/*/lib/**/"]
       config.autoload_paths += Dir["#{gem_root}/lib/**/"]
+      config.autoload_paths += Dir["#{gem_root}/mod/*/lib/**/"]
       config.autoload_paths += Dir["#{root}/mod/*/lib/**/"]
 
       default_configs.each_pair do |setting, value|

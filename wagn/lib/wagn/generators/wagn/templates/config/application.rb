@@ -59,13 +59,13 @@ module <%= app_const_base %>
     #     directory: "bucket-name",
     #     subdirectory: "files",
     #     credentials: {
-    #        provider: 'AWS'                         # required
-    #        aws_access_key_id: 'key'                # required
-    #        aws_secret_access_key: 'secret-key'     # required
-    #        region: 'eu-central-1'                  # optional, defaults to 'us-east-1'
-    #        host: 's3.example.com'                  # optional, defaults to nil
+    #        provider: 'AWS',                         # required
+    #        aws_access_key_id: 'key',                # required
+    #        aws_secret_access_key: 'secret-key',     # required
+    #        region: 'eu-central-1',                  # optional, defaults to 'us-east-1'
+    #        host: 's3.example.com',                  # optional, defaults to nil
     #        endpoint: 'https://s3.example.com:8080' # optional, defaults to nil
-    #     }
+    #     },
     #     attributes: { "Cache-Control" => "max-age=#{365.day.to_i}" },
     #     public: true,
     #     authenticated_url_expiration: 180  # if public is set to false this

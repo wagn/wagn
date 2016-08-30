@@ -17,4 +17,4 @@ decko*gem
 *.swp
 test_work/*
 *.orig
-card/spec/config/bucket_credentials.yml
+**/bucket_credentials.yml

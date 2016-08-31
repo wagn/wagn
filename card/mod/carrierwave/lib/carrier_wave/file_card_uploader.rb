@@ -145,6 +145,10 @@ module CarrierWave
     include Card::Env::Location
 
     STORAGE_TYPES = [:cloud, :web, :coded, :local].freeze
+    CONFIG_OPTIONS = [:provider, :attributes, :directory, :public, :credentials,
+                      :authenticated_url_expiration, :use_ssl_for_aws]
+    CONFIG_CREDENTIAL_OPTIONS = [:provider, :region, :host, :endpoint,
+                                 :aws_access_key_id, :aws_secret_access_key]
     delegate :store_dir, :retrieve_dir, :file_dir, :mod, :bucket, to: :model
 
     def filename
@@ -253,18 +257,8 @@ module CarrierWave
     end
 
     # delegate carrierwave's fog config methods to cardio's config methods
-    [:provider, :attributes, :directory, :public,
-     :authenticated_url_expiration, :use_ssl_for_aws].each do |name|
+    ::CarrierWave::FileCardUploader::CONFIG_OPTIONS.each do |name|
       define_method("fog_#{name}") { @model.bucket_config[name] }
-    end
-
-    def fog_credentials
-      credentials = @model.bucket_config[:credentials]
-      [:aws_access_key_id, :aws_secret_access_key].each do |key|
-        env_key = "#{@model.bucket.to_s.upcase}_#{key.to_s.upcase}"
-        credentials[key] = ENV[env_key] if ENV[env_key]
-      end
-      credentials
     end
 
     private

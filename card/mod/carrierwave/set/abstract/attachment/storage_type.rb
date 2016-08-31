@@ -140,9 +140,51 @@ def bucket
 end
 
 def bucket_config
+  @bucket_config ||= load_bucket_config
+end
+
+def load_bucket_config
   return {} unless bucket
-  @bucket_config ||=
-    Cardio.config.file_buckets[bucket.to_sym].deep_symbolize_keys || {}
+  bucket_config = Cardio.config.file_buckets[bucket.to_sym]
+  bucket_config &&= bucket_config.symbolize_keys
+  bucket_config ||= {}
+  # we don't want :attributes hash symbolized, so we can't use
+  # deep_symbolize_keys
+  bucket_config[:credentials] &&= bucket_config[:credentials].symbolize_keys
+  ensure_bucket_config do
+    load_bucket_config_from_env bucket_config
+  end
+end
+
+def ensure_bucket_config
+  config = yield
+  unless config.present?
+    raise Card::Error, "couldn't find configuration for bucket #{bucket}"
+  end
+  config
+end
+
+
+def load_bucket_config_from_env config, options=nil, prefix=nil
+  config ||= {}
+  options ||= ::CarrierWave::FileCardUploader::CONFIG_OPTIONS
+  options.each do |key|
+    next if key == :attributes
+    if key == :credentials
+      new_hash = load_bucket_config_from_env(
+                   config[key],
+                   ::CarrierWave::FileCardUploader::CONFIG_CREDENTIAL_OPTIONS,
+                   "credentials"
+                 )
+      config[key] = new_hash if new_hash.present?
+    else
+      env_key = [prefix, key].compact.join("_").upcase
+      new_value = ENV["#{bucket.to_s.upcase}_#{env_key}"] ||
+                  ENV[env_key]
+      config[key] = new_value if new_value
+    end
+  end
+  config
 end
 
 def bucket_from_content

@@ -146,12 +146,12 @@ module CarrierWave
 
     STORAGE_TYPES = [:cloud, :web, :coded, :local].freeze
     CONFIG_OPTIONS = [:provider, :attributes, :directory, :public, :credentials,
-                      :authenticated_url_expiration, :use_ssl_for_aws]
+                      :authenticated_url_expiration, :use_ssl_for_aws].freeze
     CONFIG_CREDENTIAL_OPTIONS = [
       :provider,
       :aws_access_key_id, :aws_secret_access_key, :region, :host, :endpoint,
       :google_access_key_id, :google_secret_access_key
-    ]
+    ].freeze
     delegate :store_dir, :retrieve_dir, :file_dir, :mod, :bucket, to: :model
 
     def filename

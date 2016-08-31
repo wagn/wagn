@@ -164,7 +164,6 @@ def ensure_bucket_config
   config
 end
 
-
 def load_bucket_config_from_env config, options=nil, prefix=nil
   config ||= {}
   options ||= ::CarrierWave::FileCardUploader::CONFIG_OPTIONS
@@ -172,10 +171,10 @@ def load_bucket_config_from_env config, options=nil, prefix=nil
     next if key == :attributes
     if key == :credentials
       new_hash = load_bucket_config_from_env(
-                   config[key],
-                   ::CarrierWave::FileCardUploader::CONFIG_CREDENTIAL_OPTIONS,
-                   "credentials"
-                 )
+        config[key],
+        ::CarrierWave::FileCardUploader::CONFIG_CREDENTIAL_OPTIONS,
+        "credentials"
+      )
       config[key] = new_hash if new_hash.present?
     else
       env_key = [prefix, key].compact.join("_").upcase
@@ -290,7 +289,7 @@ ensure
 end
 
 def temporary_storage_type_change?
- @temp_storage_type
+  @temp_storage_type
 end
 
 def validate_temporary_storage_type_change new_storage_type=nil

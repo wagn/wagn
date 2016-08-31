@@ -439,7 +439,7 @@ describe Card::Set::Type::File do
 
   describe "#bucket config" do
     subject do
-      Card.new(name: 'test', type_id: Card::FileID,
+      Card.new(name: "test", type_id: Card::FileID,
                empty_ok: true, storage_type: :cloud,
                bucket: :test_bucket).bucket_config
     end
@@ -453,7 +453,7 @@ describe Card::Set::Type::File do
             host: "host",
             endpoint: "endpoint",
             aws_access_key_id: "aws_access_key_id",
-            aws_secret_access_key: "aws_secret_access_key",
+            aws_secret_access_key: "aws_secret_access_key"
           },
           subdirectory: "files",
           directory: "directory",

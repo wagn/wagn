@@ -329,8 +329,7 @@ namespace :wagn do
       # FIXME: shouldn't we be more standard and use seed.rb for this code?
       Rake.application.options.trace = true
       puts "bootstrap load starting #{WAGN_SEED_PATH}"
-      require "active_record/fixtures"
-      ActiveRecord::FixtureSet.create_fixtures WAGN_SEED_PATH, WAGN_SEED_TABLES
+      Rake::Task["db:seed"].invoke
     end
   end
 end

@@ -2,8 +2,8 @@
 
 include_set Abstract::Script
 
-include Machine
-include MachineInput
+include_set Abstract::Machine
+include_set Abstract::MachineInput
 
 store_machine_output filetype: "js"
 

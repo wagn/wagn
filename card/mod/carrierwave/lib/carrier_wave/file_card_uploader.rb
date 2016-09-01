@@ -145,6 +145,13 @@ module CarrierWave
     include Card::Env::Location
 
     STORAGE_TYPES = [:cloud, :web, :coded, :local].freeze
+    CONFIG_OPTIONS = [:provider, :attributes, :directory, :public, :credentials,
+                      :authenticated_url_expiration, :use_ssl_for_aws].freeze
+    CONFIG_CREDENTIAL_OPTIONS = [
+      :provider,
+      :aws_access_key_id, :aws_secret_access_key, :region, :host, :endpoint,
+      :google_access_key_id, :google_secret_access_key
+    ].freeze
     delegate :store_dir, :retrieve_dir, :file_dir, :mod, :bucket, to: :model
 
     def filename
@@ -209,7 +216,7 @@ module CarrierWave
     end
 
     def cache_dir
-      Cardio.paths["files"].existent.first + "/cache"
+      @model.files_base_dir + "/cache"
     end
 
     # Carrierwave calls store_path without argument when it stores the file
@@ -253,8 +260,7 @@ module CarrierWave
     end
 
     # delegate carrierwave's fog config methods to cardio's config methods
-    [:provider, :attributes, :credentials, :directory, :public,
-     :authenticated_url_expiration, :use_ssl_for_aws].each do |name|
+    ::CarrierWave::FileCardUploader::CONFIG_OPTIONS.each do |name|
       define_method("fog_#{name}") { @model.bucket_config[name] }
     end
 
@@ -262,7 +268,10 @@ module CarrierWave
 
     def storage
       case @model.storage_type
-      when :cloud then ::CarrierWave::Storage::Fog.new(self)
+      when :cloud
+        require "carrierwave/storage/fog"
+        require "fog"
+        ::CarrierWave::Storage::Fog.new(self)
       else ::CarrierWave::Storage::File.new(self)
       end
     end

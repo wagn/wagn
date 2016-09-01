@@ -55,7 +55,7 @@ describe Card::Set::Type::Pointer do
   end
 
   def pointer_update content
-    lambda { pointer.update_attributes! content: content }
+    -> { pointer.update_attributes! content: content }
   end
 
   describe "#added_item_names" do

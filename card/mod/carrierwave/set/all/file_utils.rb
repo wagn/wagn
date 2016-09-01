@@ -13,7 +13,7 @@ module ClassMethods
     end
   end
 
-  def old_enough? time, expiration_time=432_000 # = five days
+  def old_enough? time, expiration_time=5.day.to_i
     Time.now - time > expiration_time
   end
 

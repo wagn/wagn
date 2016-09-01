@@ -39,16 +39,20 @@ event :loose_coded_status_on_update, :initialize,
   @new_storage_type ||= storage_type_from_config
 end
 
-event :update_public_link_on_create, :integrate, on: :create do
+event :update_public_link_on_create, :integrate,
+      on: :create,
+      when: proc { |c| c.local? } do
   update_public_link
 end
 
-event :remove_public_link_on_delete, :integrate, on: :delete do
+event :remove_public_link_on_delete, :integrate,
+      on: :delete,
+      when: proc { |c| c.local? } do
   remove_public_links
 end
 
-event :update_public_link, after: :update_read_rule do
-  return unless local?
+event :update_public_link, after: :update_read_rule,
+                           when: proc { |c| c.local? } do
   return if content.blank?
   if who_can(:read).include? Card[:anyone].id
     create_public_links
@@ -136,9 +140,57 @@ def bucket
 end
 
 def bucket_config
+  @bucket_config ||= load_bucket_config
+end
+
+def load_bucket_config
   return {} unless bucket
-  @bucket_config ||=
-    Cardio.config.file_buckets[bucket.to_sym].deep_symbolize_keys || {}
+  bucket_config = Cardio.config.file_buckets[bucket.to_sym]
+  bucket_config &&= bucket_config.symbolize_keys
+  bucket_config ||= {}
+  # we don't want :attributes hash symbolized, so we can't use
+  # deep_symbolize_keys
+  bucket_config[:credentials] &&= bucket_config[:credentials].symbolize_keys
+  ensure_bucket_config do
+    load_bucket_config_from_env bucket_config
+  end
+end
+
+def ensure_bucket_config
+  config = yield
+  unless config.present?
+    raise Card::Error, "couldn't find configuration for bucket #{bucket}"
+  end
+  config
+end
+
+def load_bucket_config_from_env config
+  config ||= {}
+  CarrierWave::FileCardUploader::CONFIG_OPTIONS.each do |key|
+    next if key.in? [:attributes, :credentials]
+    replace_with_env_variable config, key
+  end
+  config[:credentials] ||= {}
+  load_bucket_credentials_from_env config[:credentials]
+  config.delete :credentials unless config[:credentials].present?
+  config
+end
+
+def load_bucket_credentials_from_env cred_config
+  cred_opt_pattern =
+    Regexp.new(/^(?:#{bucket.to_s.upcase}_)?CREDENTIALS_(?<option>.+)$/)
+  ENV.keys.each do |env_key|
+    next unless (m = cred_opt_pattern.match(env_key))
+    replace_with_env_variable cred_config, m[:option].downcase.to_sym,
+                              "credentials"
+  end
+end
+
+def replace_with_env_variable config, option, prefix=nil
+  env_key = [prefix, option].compact.join("_").upcase
+  new_value = ENV["#{bucket.to_s.upcase}_#{env_key}"] ||
+              ENV[env_key]
+  config[option] = new_value if new_value
 end
 
 def bucket_from_content
@@ -244,7 +296,7 @@ ensure
 end
 
 def temporary_storage_type_change?
- @temp_storage_type
+  @temp_storage_type
 end
 
 def validate_temporary_storage_type_change new_storage_type=nil

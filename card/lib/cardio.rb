@@ -96,7 +96,7 @@ module Cardio
       add_path "db/migrate"
       add_path "db/migrate_core_cards"
       add_path "db/migrate_deck_cards", root: root, with: "db/migrate_cards"
-      add_path "db/seeds", with: "db/seeds.rb"
+      add_path "db/seeds.rb", with: "db/seeds.rb"
 
       add_path "config/initializers", glob: "**/*.rb"
       add_initializers root

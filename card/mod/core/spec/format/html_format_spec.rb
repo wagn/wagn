@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::HtmlFormat do
+describe Card::Format::HtmlFormat do
   describe "views" do
     it "content" do
       result = render_card(:content, name: "A+B")

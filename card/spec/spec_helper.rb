@@ -11,8 +11,10 @@ require File.expand_path("../../db/seed/test/seed.rb", __FILE__)
 require File.expand_path("../../config/simplecov_helper.rb", __FILE__)
 require "simplecov"
 
-require File.expand_path("../../mod/machines/spec/lib/shared_machine_examples.rb", __FILE__)
-require File.expand_path("../../mod/machines/spec/lib/shared_machine_input_examples.rb", __FILE__)
+require File.expand_path("../../mod/machines/spec/lib/"\
+                         "shared_machine_examples.rb", __FILE__)
+require File.expand_path("../../mod/machines/spec/lib/"\
+                         "shared_machine_input_examples.rb", __FILE__)
 
 Spork.prefork do
   if ENV["RAILS_ROOT"]
@@ -37,7 +39,7 @@ Spork.prefork do
                    file_path: %r{\bspec/controllers/}
     config.include RSpecHtmlMatchers
     # format_index = ARGV.find_index {|arg| arg =~ /--format|-f/ }
-    # formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation' #'textmate'
+    # formatter = format_index ? ARGV[ format_index + 1 ] : 'documentation'
     # config.default_formatter=formatter
 
     config.infer_spec_type_from_file_location!
@@ -76,6 +78,16 @@ end
 Card["*all+*style"].ensure_machine_output
 Card["*all+*script"].ensure_machine_output
 (ie9 = Card[:script_html5shiv_printshiv]) && ie9.ensure_machine_output
+
+def bucket_credentials key
+  @buckets ||= begin
+    yml_file =
+      ENV["BUCKET_CREDENTIALS_PATH"] ||
+      File.expand_path("../config/bucket_credentials.yml", __FILE__)
+    File.exist?(yml_file) ? YAML.load_file(yml_file).deep_symbolize_keys : {}
+  end
+  @buckets[key]
+end
 
 Spork.each_run do
   # This code will be run each time you run your specs.

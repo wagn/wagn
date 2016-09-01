@@ -41,8 +41,16 @@ class Card
           super
         else
           format = opts[:format] || :html
-          klass = Card.const_get format_class_name(format)
+          klass = class_from_name format_class_name(format)
           self == klass ? super : klass.new(card, opts)
+        end
+      end
+
+      def class_from_name formatname
+        if formatname == "Format"
+          Card::Format
+        else
+          Card::Format.const_get formatname
         end
       end
 

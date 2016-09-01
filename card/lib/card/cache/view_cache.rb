@@ -94,7 +94,7 @@ class Card
           Card.config.view_cache &&
             format.view_caching? &&
             format.main? &&
-            format.class == HtmlFormat &&
+            format.class == Format::HtmlFormat &&
             (view == :open || view == :content)
         end
       end

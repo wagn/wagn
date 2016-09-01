@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::EmailHtmlFormat do
+describe Card::Format::EmailHtmlFormat do
   # SPECSTUB
 end

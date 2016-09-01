@@ -1,4 +1,6 @@
 **/lib/**/*.rb                    \
+**/mod/*/format/*.rb              \
+**/mod/*/chunk/*.rb               \
 tmpsets/set*/**/*.rb -            \
 **/*.rdoc                         \
 GPL                               \

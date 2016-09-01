@@ -46,7 +46,7 @@ class Card
         mod = const_get_or_set klass do
           # yielding set format module, eg Card::Set::Type::Pointer::HtmlFormat
           m = Module.new
-          register_set_format Card.const_get(klass), m
+          register_set_format Card::Format.class_from_name(klass), m
           m.extend Card::Set::AbstractFormat
           m
         end

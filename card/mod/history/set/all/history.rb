@@ -82,7 +82,8 @@ event :rollback_actions, :prepare_to_validate,
   Env.params["action_ids"] = nil
   update_attributes! revision
   rollback_actions.each do |action|
-    action.card.try :symlink_to, action.id
+    # rollback file and image cards
+    action.card.try :rollback_to, action
   end
   clear_drafts
   abort :success

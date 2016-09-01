@@ -8,8 +8,10 @@ module SelectedAction
   end
 
   def last_content_action_id
+    return @current_action.id if storage_type_changed?
+    return super if temporary_storage_type_change?
     # find action id from content (saves lookups)
-    db_content.to_s.split(%r{[/\.]})[1]
+    db_content.to_s.split(%r{[/\.]})[-2]
   end
 end
 include SelectedAction
@@ -37,30 +39,29 @@ format :file do
   # returns send_file args.  not in love with this...
   view :core do |_args|
     # this means we only support known formats.  dislike.
-    if (_format = card.attachment_format(params[:format]))
-      if params[:explicit_file] && (r = controller.response)
-        r.headers["Expires"] = 1.year.from_now.httpdate
-        # currently using default "private", because proxy servers could block
-        # needed permission checks
-        # r.headers["Cache-Control"] = "public"
-      end
+    attachment_format = card.attachment_format(params[:format])
+    return _render_not_found unless attachment_format
+    return card.format(:html).render_core(args) if card.remote_storage?
 
-      # formerly supported redirecting to correct file format
-      # elsif ![format, 'file'].member? params[:format]
-      #   path = request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format )
-      #   return redirect_to(path) #card.attachment.url(style) )
-
-      file = selected_file_version
-      [file.path,
-       {
-         type: file.content_type,
-         filename:  "#{card.cardname.safe_key}#{file.extension}",
-         x_sendfile: true,
-         disposition: (params[:format] == "file" ? "attachment" : "inline")
-       }]
-    else
-      _render_not_found
+    if params[:explicit_file] && (r = controller.response)
+      r.headers["Expires"] = 1.year.from_now.httpdate
+      # currently using default "private", because proxy servers could block
+      # needed permission checks
+      # r.headers["Cache-Control"] = "public"
     end
+
+    # formerly supported redirecting to correct file format
+    # elsif ![format, 'file'].member? params[:format]
+    #   path = request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format )
+    #   return redirect_to(path) #card.attachment.url(style) )
+    file = selected_file_version
+    [file.path,
+     {
+       type: file.content_type,
+       filename:  "#{card.cardname.safe_key}#{file.extension}",
+       x_sendfile: true,
+       disposition: (params[:format] == "file" ? "attachment" : "inline")
+     }]
   end
 
   def selected_file_version
@@ -76,6 +77,7 @@ format :html do
   end
 
   view :editor do |args|
+    return text_field(:content, class: "card-content") if card.web?
     file_chooser args
   end
 

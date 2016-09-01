@@ -49,12 +49,12 @@ def valid?(*)
   act { super }
 end
 
-def update_attributes(*)
-  act { super }
+def update_attributes *args
+  act(*args) { super }
 end
 
-def update_attributes!(*)
-  act { super }
+def update_attributes! *args
+  act(*args) { super }
 end
 
 def abortable
@@ -85,7 +85,8 @@ def with_transaction_returning_status
 end
 
 event :notable_exception_raised do
-  Rails.logger.debug "BT:  #{Card::Error.current.backtrace * "\n  "}"
+  error = Card::Error.current
+  Rails.logger.debug "#{error.message}\n#{error.backtrace * "\n  "}"
 end
 
 def success

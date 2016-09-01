@@ -46,6 +46,33 @@ module <%= app_const_base %>
     # config.paths['files'] = 'files'
     # where uploaded files are actually stored. (eg Image and File cards)
 
+    # config.file_storage = :local
+    # File storage options (see http://wagn.org/file_storage_options)
+    # options include: local, cloud, web, coded
+    # defaults to local
+    # For cloud storage use the following config options and add the gems
+    # "fog" and "fog-aws" to your Gemfile.
+    # config.file_default_bucket = :my_bucket
+    # config.file_buckets = {
+    #   my_bucket: {
+    #     provider: "fog/aws",
+    #     directory: "bucket-name",
+    #     subdirectory: "files",
+    #     credentials: {
+    #        provider: 'AWS',                         # required
+    #        aws_access_key_id: 'key',                # required
+    #        aws_secret_access_key: 'secret-key',     # required
+    #        region: 'eu-central-1',                  # optional, defaults to 'us-east-1'
+    #        host: 's3.example.com',                  # optional, defaults to nil
+    #        endpoint: 'https://s3.example.com:8080' # optional, defaults to nil
+    #     },
+    #     attributes: { "Cache-Control" => "max-age=#{365.day.to_i}" },
+    #     public: true,
+    #     authenticated_url_expiration: 180  # if public is set to false this
+    #                                        # option is needed
+    #   }
+    # }
+
     # config.paths['mod'] << 'my-mod-dir'
     # add a new directory for code customizations, or "mods"
 

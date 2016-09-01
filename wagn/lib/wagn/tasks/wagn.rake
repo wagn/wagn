@@ -50,7 +50,7 @@ namespace :wagn do
   end
 
   desc "clear and load fixtures with existing tables"
-  task :reseed do
+  task reseed: :environment do
     ENV["SCHEMA"] ||= "#{Cardio.gem_root}/db/schema.rb"
 
     Rake::Task["wagn:clear"].invoke
@@ -171,7 +171,7 @@ namespace :wagn do
 
     desc "migrate core cards"
     task core_cards: :environment do
-      require "card/core_migration"
+      require "card/migration/core"
       run_card_migration :core_cards
     end
 
@@ -287,7 +287,7 @@ namespace :wagn do
       # mark mod files as mod files
       Card::Auth.as_bot do
         Card.search(type: %w(in Image File), ne: "").each do |card|
-          if card.mod_file? || card.codename == "new_file" ||
+          if card.coded? || card.codename == "new_file" ||
              card.codename == "new_image"
             puts "skipping #{card.name}: already in code"
             next
@@ -329,8 +329,7 @@ namespace :wagn do
       # FIXME: shouldn't we be more standard and use seed.rb for this code?
       Rake.application.options.trace = true
       puts "bootstrap load starting #{WAGN_SEED_PATH}"
-      require "active_record/fixtures"
-      ActiveRecord::FixtureSet.create_fixtures WAGN_SEED_PATH, WAGN_SEED_TABLES
+      Rake::Task["db:seed"].invoke
     end
   end
 end

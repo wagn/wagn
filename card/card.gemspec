@@ -38,9 +38,9 @@ Gem::Specification.new do |s|
   [
     ["smartname",                  "0.3.1"],
     ["uuid",                       "~> 2.3"],
-    # with carrierwave 0.11.1 and 0.11.2 wagn hangs in a loop on creating
-    # style and script machine output
-    ["carrierwave",                "<= 0.11.0"],
+    # if carrierwave > 11 is availabe remove carrierwave git submodule and
+    # load it here as gem
+    # ["carrierwave",                "<= 0.11.0"],
     ["htmlentities",               "~> 4.3"],
     ["mini_magick",                "~> 4.2"],
     # recaptcha 0.4.0 is last version that doesn't require ruby 2.0

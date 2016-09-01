@@ -10,6 +10,7 @@ format do
   end
 
   view :source do |args|
+    return card.raw_content if card.web?
     style =
       case
       when @mode == :closed then :icon

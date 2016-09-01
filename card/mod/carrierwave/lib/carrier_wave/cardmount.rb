@@ -1,3 +1,5 @@
+cw_path = File.expand_path "../../../../../vendor/carrierwave/lib", __FILE__
+$LOAD_PATH.unshift(cw_path) unless $LOAD_PATH.include?(cw_path)
 require "carrierwave"
 
 module CarrierWave
@@ -30,15 +32,12 @@ module CarrierWave
               on: :update do
           mark_remove_#{column}_false
         end
-        event :store_previous_model_for_#{column}_event, :store,
+        event :store_previous_changes_for_#{column}_event, :store,
               on: :update, when: proc { |c| !c.history? } do
-          store_previous_model_for_#{column}
+          store_previous_changes_for_#{column}
         end
-        event :remove_previously_stored_#{column}_event, :store,
+        event :remove_previously_stored_#{column}_event, :finalize,
               on: :update, when: proc { |c| !c.history?} do
-          if @previous_model_for_#{column}
-            @previous_model_for_#{column}.include_set_modules
-          end
           remove_previously_stored_#{column}
         end
 
@@ -64,23 +63,35 @@ module CarrierWave
 
         def #{column}=(new_file)
           return if new_file.blank?
-          send(:"#{column}_will_change!")
-          db_column = _mounter(:#{column}).serialization_column
-          send(:"\#{db_column}_will_change!")
-          super
+          assign_file(new_file) { super }
         end
 
         def remote_#{column}_url=(url)
-          send(:"#{column}_will_change!")
+          assign_file(url) { super }
+        end
+
+        def assign_file file
           db_column = _mounter(:#{column}).serialization_column
           send(:"\#{db_column}_will_change!")
+          if web?
+            self.content = file
+          else
+            send(:"#{column}_will_change!")
+            yield
+          end
+        end
+
+        def remove_#{column}=(value)
+          column = _mounter(:#{column}).serialization_column
+          send(:"\#{column}_will_change!")
           super
         end
 
         def remove_#{column}!
+          self.remove_#{column} = true
+          write_#{column}_identifier
+          self.remove_#{column} = false
           super
-          _mounter(:#{column}).remove = true
-          _mounter(:#{column}).write_identifier
         end
 
         def #{column}_will_change!

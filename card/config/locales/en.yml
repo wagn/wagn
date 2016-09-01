@@ -34,14 +34,9 @@ en:
       format:
         exception_init_without_card: format initialized without card
   mod:
-    :standard:
+    admin:
       set:
         self:
-          account_links:
-            sign_up: Sign up
-            sign_in: Sign in
-            invite: Invite
-            sign_out: Sign out
           admin_info:
             email_off: Email delivery is turned off. Change settings in %{path} to send sign up notifications.
             admin_warn: ADMINISTRATOR WARNING
@@ -54,6 +49,14 @@ en:
             howto_turn_off: 'How to turn captcha off:'
             howto_go: 1. Go to %{captcha_card}
             howto_update: 2. Update all *captcha rules to "no".
+    standard:
+      set:
+        self:
+          account_links:
+            sign_up: Sign up
+            sign_in: Sign in
+            invite: Invite
+            sign_out: Sign out
           signin:
             sign_in_title: Sign In
             sign_in: Sign in
@@ -68,3 +71,9 @@ en:
             abort_bad_signin_args: bad sign in arguments
             error_not_active: not active
             error_not_recognized: not recognized
+    carrierwave:
+      set:
+        abstract:
+          attachment:
+            error_invalid_storage_type: "%{type} is not a valid file storage option"
+

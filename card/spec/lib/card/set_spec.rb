@@ -49,8 +49,8 @@
 #   let(:card_double) { Card }
 #   let(:format_double) { object_double(Card.new(name: 'card+*right').format) }
 #
-#   #let(:html_format_double) { Card::HtmlFormat }
-#   let(:html_format_double) { double("Card::HtmlFormat") }
+#   #let(:html_format_double) { Card::Format::HtmlFormat }
+#   let(:html_format_double) { double("Card::Format::HtmlFormat") }
 #
 #   it "should define Formatter methods from modules" do
 #     expect(format_double).to respond_to(:render_navbox_self_core)

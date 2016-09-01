@@ -384,7 +384,7 @@ Then img_sld do |selector, size, type|
   end
 end
 
-img_should = /^I should see a non-mod image of size "(.+)" and type "(.+)"$/
+img_should = /^I should see a non-coded image of size "(.+)" and type "(.+)"$/
 Then img_should do |size, type|
   element = find("img[src*='#{size}.#{type}']")
   expect(element[:src]).to match(%r{/~\d+/})

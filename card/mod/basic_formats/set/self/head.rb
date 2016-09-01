@@ -51,7 +51,7 @@ format :html do
       if params[:debug] == "style"
         page_path(style_card.cardname, item: :import, format: :css)
       elsif style_card
-        card_path style_card.machine_output_url
+        style_card.machine_output_url
       end
     return unless @css_path
     %(<link href="#{@css_path}" media="all" rel="stylesheet" type="text/css" />)

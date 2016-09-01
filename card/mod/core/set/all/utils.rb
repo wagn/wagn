@@ -1,58 +1,10 @@
 module ClassMethods
-  def empty_trash
-    Card.delete_trashed_files
-    Card.where(trash: true).delete_all
-    Card::Action.delete_cardless
-    Card::Reference.unmap_if_referee_missing
-    Card::Reference.delete_if_referer_missing
-    Card.delete_tmp_files_of_cached_uploads
-  end
-
-  # deletes any file not associated with a real card.
-  def delete_trashed_files
-    trashed_card_ids = all_trashed_card_ids
-    file_ids = all_file_ids
-    dir = Cardio.paths["files"].existent.first
-    file_ids.each do |file_id|
-      next unless trashed_card_ids.member?(file_id)
-      if Card.exists?(file_id) # double check!
-        raise Card::Error, "Narrowly averted deleting current file"
-      end
-      FileUtils.rm_rf "#{dir}/#{file_id}", secure: true
-    end
-  end
-
   def delete_tmp_files id=nil
     dir = Cardio.paths["files"].existent.first + "/tmp"
     dir += "/#{id}" if id
     FileUtils.rm_rf dir, secure: true
   rescue
     Rails.logger.info "failed to remove tmp files"
-  end
-
-  def all_file_ids
-    dir = Card.paths["files"].existent.first
-    Dir.entries(dir)[2..-1].map(&:to_i)
-  end
-
-  def all_trashed_card_ids
-    trashed_card_sql = %( select id from cards where trash is true )
-    sql_results = Card.connection.select_all(trashed_card_sql)
-    sql_results.map(&:values).flatten.map(&:to_i)
-  end
-
-  def delete_tmp_files_of_cached_uploads
-    actions = Card::Action.find_by_sql "SELECT * FROM card_actions
-      INNER JOIN cards ON card_actions.card_id = cards.id
-      WHERE cards.type_id IN (#{Card::FileID}, #{Card::ImageID})
-      AND card_actions.draft = true"
-    actions.each do |action|
-      # we don't want to delete uploads in progress
-      if older_than_five_days?(action.created_at) && (card = action.card)
-        # we don't want to delete uploads in progress
-        card.delete_files_for_action action
-      end
-    end
   end
 
   def merge_list attribs, opts={}
@@ -84,7 +36,7 @@ module ClassMethods
   end
 
   def merge name, attribs={}, opts={}
-    # puts "merging #{name}"
+    puts "merging #{name}"
     card = fetch name, new: {}
     [:image, :file].each do |attach|
       next unless attribs[attach] && attribs[attach].is_a?(String)
@@ -97,29 +49,7 @@ module ClassMethods
     end
   end
 
-  def older_than_five_days? time
-    Time.now - time > 432_000
+  def seed_test_db
+    system "env RAILS_ENV=test bundle exec rake db:fixtures:load"
   end
-end
-
-def debug_type
-  "#{type_code || ''}:#{type_id}"
-end
-
-def to_s
-  "#<#{self.class.name}[#{debug_type}]#{attributes['name']}>"
-end
-
-def inspect
-  tags = []
-  tags << "trash"    if trash
-  tags << "new"      if new_card?
-  tags << "frozen"   if frozen?
-  tags << "readonly" if readonly?
-  tags << "virtual"  if @virtual
-  tags << "set_mods_loaded" if @set_mods_loaded
-
-  error_messages = errors.any? ? "<E*#{errors.full_messages * ', '}*>" : ""
-
-  "#<Card##{id}[#{debug_type}](#{name})#{error_messages}{#{tags * ','}}"
 end

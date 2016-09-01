@@ -51,23 +51,19 @@ format :html do
   def cache_stats
     stats = [
       { title: "solid cache",
-        count: solid_cache_count,
-        unit: " cards",
+        count: solid_cache_count, unit: " cards",
         link_text: "clear cache",
         task: "clear_solid_cache" },
       { title: "machine cache",
-        count: machine_cache_count,
-        unit: " cards",
+        count: machine_cache_count, unit: " cards",
         link_text: "clear cache",
         task: "clear_machine_cache" }
     ]
     return stats unless Card.config.view_cache
-    stats <<
-      { title: "view cache",
-        count: Card::Cache::ViewCache,
-        link_text: "clear view cache",
-        task: "clear_view_cache" }
-    stats
+    stats << { title: "view cache",
+               count: Card::Cache::ViewCache,
+               link_text: "clear view cache",
+               task: "clear_view_cache" }
   end
 
   def memory_stats
@@ -86,13 +82,16 @@ format :html do
 
   def stat_row args={}
     res = [(args[:title] || "")]
-    args[:count] = args[:count].call if args[:count].is_a?(Proc)
-    args[:count] = args[:count].count if args[:count].respond_to?(:count)
-    res << "#{args[:count]}#{args[:unit]}"
+    res << "#{count(args[:count])}#{args[:unit]}"
     return res unless args[:task]
     path = card_path("update/:admin?task=#{args[:task]}")
     res << link_to(args[:link_text] || args[:task], path)
     res
+  end
+
+  def count counter
+    counter = counter.call if counter.is_a?(Proc)
+    counter.respond_to?(:count) ? counter.count : counter
   end
 
   def solid_cache_count

@@ -512,6 +512,16 @@ describe Card::Set::Type::File do
       changed_config[:credentials][:provider] = "bucket cred provider"
       is_expected.to eq changed_config
     end
+
+    it "finds any credential env variable" do
+      ENV["CREDENTIALS_MY_OWN_CLOUD_BUCKET"] = "my provider"
+      ENV["CREDENTIALS_MY_OWN_CLOUD"] = "ignore me"
+      ENV["TEST_BUCKET_CREDENTIALS_MY_OWN_CLOUD"] = "find me"
+      changed_config = bucket_config[:test_bucket]
+      changed_config[:credentials][:my_own_cloud_bucket] =  "my provider"
+      changed_config[:credentials][:my_own_cloud] = "find me"
+      is_expected.to eq changed_config
+    end
   end
 
   def public_path_exist?

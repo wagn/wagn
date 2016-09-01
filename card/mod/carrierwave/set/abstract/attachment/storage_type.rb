@@ -164,26 +164,33 @@ def ensure_bucket_config
   config
 end
 
-def load_bucket_config_from_env config, options=nil, prefix=nil
+def load_bucket_config_from_env config
   config ||= {}
-  options ||= ::CarrierWave::FileCardUploader::CONFIG_OPTIONS
-  options.each do |key|
-    next if key == :attributes
-    if key == :credentials
-      new_hash = load_bucket_config_from_env(
-        config[key],
-        ::CarrierWave::FileCardUploader::CONFIG_CREDENTIAL_OPTIONS,
-        "credentials"
-      )
-      config[key] = new_hash if new_hash.present?
-    else
-      env_key = [prefix, key].compact.join("_").upcase
-      new_value = ENV["#{bucket.to_s.upcase}_#{env_key}"] ||
-                  ENV[env_key]
-      config[key] = new_value if new_value
-    end
+  CarrierWave::FileCardUploader::CONFIG_OPTIONS.each do |key|
+    next if key.in? [:attributes, :credentials]
+    replace_with_env_variable config, key
   end
+  config[:credentials] ||= {}
+  load_bucket_credentials_from_env config[:credentials]
+  config.delete :credentials unless config[:credentials].present?
   config
+end
+
+def load_bucket_credentials_from_env cred_config
+  cred_opt_pattern =
+    Regexp.new(/^(?:#{bucket.to_s.upcase}_)?CREDENTIALS_(?<option>.+)$/)
+  ENV.keys.each do |env_key|
+    next unless (m = cred_opt_pattern.match(env_key))
+    replace_with_env_variable cred_config, m[:option].downcase.to_sym,
+                              "credentials"
+  end
+end
+
+def replace_with_env_variable config, option, prefix=nil
+  env_key = [prefix, option].compact.join("_").upcase
+  new_value = ENV["#{bucket.to_s.upcase}_#{env_key}"] ||
+              ENV[env_key]
+  config[option] = new_value if new_value
 end
 
 def bucket_from_content

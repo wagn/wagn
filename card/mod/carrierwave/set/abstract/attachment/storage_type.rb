@@ -5,11 +5,12 @@ event :storage_type_change, :store,
   # carrierwave stores file if @cache_id is not nil
   attachment.cache_stored_file!
   update_storage_attributes
-  # might be necessary to move files to cloud
+  # next line might be necessary to move files to cloud
   # attachment.retrieve_from_cache!(attachment.cache_name)
-  db_content_will_change! # make sure that we get the new identifier
-                          # otherwise action_id will return
-                          # the wrong id for the new identifier
+
+  # make sure that we get the new identifier
+  # otherwise action_id will return wrong id for new identifier
+  db_content_will_change!
   write_identifier
 end
 

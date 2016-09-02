@@ -25,7 +25,7 @@ class UpdateFileAndImageCards < Card::Migration::Core
     attach_array[0].match(/\.(.+)$/) do |_match|
       extension = Regexp.last_match(1)
       if attach_array.size > 3 # mod file
-        mod_name = attach_array[3].sub(/^0\d_/,'')
+        mod_name = attach_array[3].sub(/^0\d_/, "")
         card.update_column :db_content,
                            ":#{card.codename}/#{mod_name}.#{extension}"
       else

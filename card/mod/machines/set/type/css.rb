@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require "sass"
-include Machine
-include MachineInput
+include_set Abstract::Machine
+include_set Abstract::MachineInput
 include_set Abstract::AceEditor
 
 store_machine_output filetype: "css"

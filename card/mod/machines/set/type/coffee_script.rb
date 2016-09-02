@@ -2,12 +2,8 @@
 require "coffee-script"
 
 include_set Abstract::Script
-
-require_dependency "card/machine"
-require_dependency "card/machine_input"
-
-include Machine
-include MachineInput
+include_set Abstract::Machine
+include_set Abstract::MachineInput
 
 store_machine_output filetype: "js"
 

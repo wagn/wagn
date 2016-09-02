@@ -6,6 +6,12 @@ def history?
   false
 end
 
+event :remove_codename, :prepare_to_validate,
+      on: :delete,
+      when: proc { |c| c.codename.present? } do
+  self.codename = nil
+end
+
 format do
   view :not_found do |args|
     if update_machine_output_live?
@@ -20,7 +26,7 @@ format do
 
   def update_machine_output_live?
     case
-    when !card.left.is_a?(Machine) then false # must be a machine
+    when !card.left.is_a?(Abstract::Machine) then false # must be a machine
     when card.left.locked?         then false # machine must not be running
     when card.new_card?            then true  # always update if new
     else

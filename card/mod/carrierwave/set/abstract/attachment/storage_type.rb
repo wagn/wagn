@@ -272,9 +272,9 @@ end
 
 def mod= value
   if @action == :update
-    @new_mod = value
+    @new_mod = value.to_s
   else
-    @mod = value
+    @mod = value.to_s
   end
 end
 

@@ -1,4 +1,4 @@
-include Machine
+include_set Abstract::Machine
 
 store_machine_output filetype: "js"
 

@@ -2,12 +2,15 @@ attr_writer :bucket, :storage_type
 
 event :storage_type_change, :store,
       on: :update, when: proc { |c| c.storage_type_changed? } do
-  if @new_storage_type == :cloud
-    move_to_cloud
-  else
-    update_storage_attributes
-    write_identifier
-  end
+  # carrierwave stores file if @cache_id is not nil
+  attachment.cache_stored_file!
+  update_storage_attributes
+  # might be necessary to move files to cloud
+  # attachment.retrieve_from_cache!(attachment.cache_name)
+  db_content_will_change! # make sure that we get the new identifier
+                          # otherwise action_id will return
+                          # the wrong id for the new identifier
+  write_identifier
 end
 
 event :validate_storage_type, :validate,
@@ -232,13 +235,6 @@ def storage_type_from_content
       storage_type_from_config
     end
   end
-end
-
-def move_to_cloud
-  old_file = attachment.file
-  update_storage_attributes
-  write_identifier
-  attachment.store! old_file
 end
 
 def update_storage_attributes

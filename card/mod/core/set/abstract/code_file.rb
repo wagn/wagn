@@ -25,9 +25,9 @@ end
 def source_files
   case type_id
   when CoffeeScriptID then "#{codename}.js.coffee"
-  when JavaScriptID then "#{codename}.js"
-  when CssID then "#{codename}.css"
-  when ScssID then "#{codename}.scss"
+  when JavaScriptID   then "#{codename}.js"
+  when CssID          then "#{codename}.css"
+  when ScssID         then "#{codename}.scss"
   end
 end
 

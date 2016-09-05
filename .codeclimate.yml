@@ -35,4 +35,4 @@ exclude_paths:
 - card/doc/**
 - card/spec/**/*
 - wagn/spec/**/*
-- card/mod/**/file/**
+- card/mod/**/file/**/*

@@ -257,6 +257,7 @@ namespace :wagn do
       Rake::Task["wagn:bootstrap:copy_mod_files"].invoke
       Card[:all, :script].make_machine_output_coded
       Card[:all, :style].make_machine_output_coded
+      Card[:script_html5shiv_printshiv].make_machine_output_coded
 
       YAML::ENGINE.yamler = "syck" if RUBY_VERSION !~ /^(2|1\.9)/
       # use old engine while we're supporting ruby 1.8.7 because it can't
@@ -303,8 +304,10 @@ namespace :wagn do
                      else
                        "standard"
                      end
+          binding.pry
           card.update_attributes! storage_type: :coded,
-                                  mod: mod_name
+                                  mod: mod_name,
+                                  empty_ok: true
         end
       end
     end

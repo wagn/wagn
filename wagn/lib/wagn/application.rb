@@ -76,7 +76,10 @@ module Wagn
         paths["app/models"] = []
         paths["app/mailers"] = []
 
-        add_path paths, "config/routes.rb", with: "rails/application-routes.rb"
+        unless paths["config/routes.rb"].existent.present?
+          add_path paths, "config/routes.rb",
+                   with: "rails/application-routes.rb"
+        end
 
         Cardio.set_mod_paths # really this should happen later
 

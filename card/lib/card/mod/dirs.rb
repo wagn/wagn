@@ -17,16 +17,6 @@ class Card
         end
       end
 
-      # add a new mod to mod load paths
-      def mod mod_name
-        if @mods.include? mod_name
-          raise Error,
-                "name conflict: mod with name \"#{mod_name}\" already loaded"
-        end
-        @mods << mod_name
-        @paths[mod_name] = File.join @current_path, mod_name
-      end
-
       def path mod_name
         @paths[mod_name]
       end
@@ -66,8 +56,18 @@ class Card
       def load_from_dir
         Dir.entries(@current_path).sort.each do |filename|
           next if filename =~ /^\./
-          mod filename
+          add_path filename
         end.compact
+      end
+
+      # add a new mod to mod load paths
+      def add_path mod_name
+        if @mods.include? mod_name
+          raise Error,
+                "name conflict: mod with name \"#{mod_name}\" already loaded"
+        end
+        @mods << mod_name
+        @paths[mod_name] = File.join @current_path, mod_name
       end
 
       def tmp_dir modname, type

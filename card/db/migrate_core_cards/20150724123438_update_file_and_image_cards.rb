@@ -24,14 +24,14 @@ class UpdateFileAndImageCards < Card::Migration::Core
     attach_array = card.content.split "\n"
     attach_array[0].match(/\.(.+)$/) do |_match|
       extension = Regexp.last_match(1)
+      db_content =
       if attach_array.size > 3 # mod file
         mod_name = attach_array[3].sub(/^0\d_/, "")
-        card.update_column :db_content,
-                           ":#{card.codename}/#{mod_name}.#{extension}"
+        ":#{card.codename}/#{mod_name}.#{extension}"
       else
-        card.update_column :db_content,
-                           "~#{card.id}/#{card.last_action_id}.#{extension}"
+        "~#{card.id}/#{card.last_action_id}.#{extension}"
       end
+      card.update_column :db_content, db_content
     end
   end
 

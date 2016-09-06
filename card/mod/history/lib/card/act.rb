@@ -71,7 +71,6 @@ class Card
     def card
       res = Card.fetch card_id, look_in_trash: true, skip_modules: true
       return res unless res.type_id.in? [FileID, ImageID]
-      binding.pry
       res.include_set_modules
     end
 

@@ -4,7 +4,7 @@ def raw_content
   item_names.map { |name| "[[#{name}]]" }
 end
 
-def item_names args={}
+def item_names _args={}
   if (user = left)
     Card.preference_names user.name, "follow"
   else

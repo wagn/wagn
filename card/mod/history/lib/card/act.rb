@@ -69,7 +69,9 @@ class Card
     # the act's primary card
     # @return [Card]
     def card
-      Card.fetch card_id, look_in_trash: true, skip_modules: true
+      res = Card.fetch card_id, look_in_trash: true, skip_modules: true
+      return res unless res.type_id.in? [FileID, ImageID]
+      res.include_set_modules
     end
 
     # act's action on the card in question

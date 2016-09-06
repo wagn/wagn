@@ -61,7 +61,9 @@ class Card
     # each action is associated with on and only one card
     # @return [Card]
     def card
-      Card.fetch card_id, look_in_trash: true, skip_modules: true
+      res = Card.fetch card_id, look_in_trash: true, skip_modules: true
+      return res unless res.type_id.in? [FileID, ImageID]
+      res.include_set_modules
     end
 
     # remove action from action cache

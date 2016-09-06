@@ -12,8 +12,13 @@ module Patches
           p = params_for(page)
           p.delete :controller
           p.delete :action
-          card = Card[p.delete("id")]
-          card.format.path p
+          if p["related"]
+            p["related"]["page"] = p["page"]
+            p["related"]["subslot"] = true
+            p = p["related"]
+          end
+          id = p.delete("id") || p.delete("name")
+          Card.fetch(id).format.path p
         end
 
         private

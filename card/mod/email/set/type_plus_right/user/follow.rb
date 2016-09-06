@@ -4,16 +4,12 @@ def raw_content
   item_names.map { |name| "[[#{name}]]" }
 end
 
-def item_names
+def item_names args={}
   if (user = left)
     Card.preference_names user.name, "follow"
   else
     []
   end
-end
-
-def item_cards
-  item_names.map { |name| Card.fetch name }
 end
 
 def virtual?
@@ -56,7 +52,7 @@ format :html do
 
   def followed_by_option
     hash = Hash.new { |h, k| h[k] = [] }
-    card.item_cards.each do |follow_rule|
+    card.known_item_cards.each do |follow_rule|
       follow_rule.item_cards.each do |follow_option|
         hash[follow_option.codename.to_sym] << follow_rule
       end
@@ -85,7 +81,7 @@ format :html do
   def followed_by_set
     res = Hash.new { |h, k| h[k] = [] }
     never = Card[:never].name
-    card.item_cards.each do |follow_rule|
+    card.known_item_cards.each do |follow_rule|
       options = follow_rule.item_names.reject { |item| item == never }
       res[follow_rule.rule_set.subclass_for_set] << { card: follow_rule,
                                                       options: options }
@@ -133,7 +129,7 @@ format :html do
 
   view :ignoring_list do |_args|
     ignore_list = []
-    card.item_cards.each do |follow_rule|
+    card.known_item_cards.each do |follow_rule|
       follow_rule.item_cards.each do |follow_option|
         ignore_list << follow_rule if follow_option.codename.to_sym == :never
       end

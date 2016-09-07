@@ -68,7 +68,7 @@ def silent_change
 end
 
 def silent_change?
-  silent_change.nil? ? !Card::Env[:controller] : silent_change
+  silent_change || !Card::Env[:controller]
 end
 
 def notable_change?

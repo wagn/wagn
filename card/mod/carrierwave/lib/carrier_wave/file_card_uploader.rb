@@ -1,7 +1,7 @@
 module CarrierWave
   class << self
     def tmp_path
-      @tmp_path ||= File.expand_path("tmp", root)
+      @tmp_path ||= Card.paths["tmp"].existent.first
     end
   end
   module Uploader

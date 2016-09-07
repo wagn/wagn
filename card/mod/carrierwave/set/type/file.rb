@@ -8,7 +8,6 @@ module SelectedAction
   end
 
   def last_content_action_id
-    return @current_action.id if storage_type_changed?
     return super if temporary_storage_type_change?
     # find action id from content (saves lookups)
     db_content.to_s.split(%r{[/\.]})[-2]
@@ -77,7 +76,9 @@ format :html do
   end
 
   view :editor do |args|
-    return text_field(:content, class: "card-content") if card.web?
+    if card.web? || card.no_upload?
+      return text_field(:content, class: "card-content")
+    end
     file_chooser args
   end
 

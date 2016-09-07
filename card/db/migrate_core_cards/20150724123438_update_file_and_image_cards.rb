@@ -4,7 +4,7 @@ class UpdateFileAndImageCards < Card::Migration::Core
   def up
     # use codenames for the filecards not for the left parts
     if (credit = Card[:credit]) && (card = credit.fetch(trait: :image))
-      card.update_attributes! codename: "credit_image"
+      card.update_column :codename, "credit_image"
     end
     add_skin_thumbnails
     Card::Cache.reset_all
@@ -22,15 +22,15 @@ class UpdateFileAndImageCards < Card::Migration::Core
 
   def update_db_content card
     attach_array = card.content.split "\n"
-    attach_array[0].match(/\.(.+)$/) do |_match|
-      extension = Regexp.last_match(1)
-      if attach_array.size > 3 # mod file
-        card.update_column :db_content,
-                           ":#{card.codename}/#{attach_array[3]}.#{extension}"
-      else
-        card.update_column :db_content,
-                           "~#{card.id}/#{card.last_action_id}.#{extension}"
-      end
+    attach_array[0].match(/\.(?<ext>.+)$/) do |match|
+      basename =
+        if attach_array.size > 3 # mod file
+          mod_name = attach_array[3].sub(/^0\d_/, "")
+          ":#{card.codename}/#{mod_name}"
+        else
+          "~#{card.id}/#{card.last_action_id}"
+        end
+      card.update_column :db_content, "#{basename}.#{match[:ext]}"
     end
   end
 
@@ -76,7 +76,7 @@ class UpdateFileAndImageCards < Card::Migration::Core
       next unless (card = Card[name.to_sym])
       card.update_attributes! codename: nil
       if (card = Card.fetch name, :image)
-        card.update_attributes! codename: "#{name}_image"
+        card.update_column :codename, "#{name}_image"
       end
     end
   end

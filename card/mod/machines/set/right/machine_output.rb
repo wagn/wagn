@@ -9,6 +9,8 @@ end
 event :remove_codename, :prepare_to_validate,
       on: :delete,
       when: proc { |c| c.codename.present? } do
+  # load file before deleting codename otherwise it will fail later
+  attachment
   self.codename = nil
 end
 

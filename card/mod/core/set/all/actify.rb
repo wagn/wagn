@@ -19,6 +19,53 @@ def abort status, msg="action canceled"
   raise Card::Error::Abort.new(status, msg)
 end
 
+def act opts={}
+  if DirectorRegister.act_card
+    add_to_act opts
+    main_act_block = false
+  else
+    start_new_act opts
+    main_act_block = true
+  end
+  yield
+ensure
+  DirectorRegister.clear if main_act_block
+end
+
+def start_new_act opts
+  DirectorRegister.clear
+  self.director = nil
+  DirectorRegister.act_card = self
+  if opts && opts[:success]
+    Env[:success] = Env::Success.new(cardname, Env.params[:success])
+  end
+end
+
+def add_to_act opts
+  # if only_storage_phase is true the card is already part of the act
+  return if DirectorRegister.act_card == self || only_storage_phase
+  director.reset_stage
+  if opts && opts[:trash]
+    @action = :delete
+  else
+    identify_action
+  end
+  director.update_card self
+  self.only_storage_phase = true
+end
+
+def self.new_director card, opts={}
+  if opts[:parent]
+    StageSubdirector.new card, opts
+  elsif DirectorRegister.act_card &&
+    DirectorRegister.act_card != card &&
+    DirectorRegister.act_card.director.running?
+    DirectorRegister.act_card.director.subdirectors.add(card)
+  else
+    StageDirector.new card
+  end
+end
+
 module ClassMethods
   def create! opts
     card = Card.new opts

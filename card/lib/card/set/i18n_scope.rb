@@ -22,7 +22,7 @@ class Card
         path_parts = find_tmp_set_path(backtrace).split(File::SEPARATOR)
         res = path_parts[path_mod_index(path_parts)..-1]
         res[0] = mod_name_from_tmp_dir res.first
-        res[-1] = res.last.split('.').first
+        res[-1] = res.last.split(".").first
         res
       end
 
@@ -37,7 +37,7 @@ class Card
       # index of the mod part in the tmp path
       def path_mod_index parts
         unless (set_index = parts.index("set")) &&
-          parts.size >= set_index + 2
+               parts.size >= set_index + 2
           raise Error, "not a valid set path: #{path}"
         end
         set_index + 1

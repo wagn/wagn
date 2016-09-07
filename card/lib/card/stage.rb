@@ -19,7 +19,7 @@ class Card
   #
   # Explanation:
   #  yes!  the recommended stage to do that
-  #  yes   ok to do it here if necessary
+  #  yes   ok to do it here
   #  no    not recommended; chance to mess things up
   #        but if something forces you to do it here you can try
   #  no!   never do it here. it won't work or will break things
@@ -27,30 +27,37 @@ class Card
   # if there is only a single entry in a phase column it counts for all stages
   # of that phase
   #
-  #                                  validation    |    storage    | integrate
+  #                                  validation    |    storage    | integration
   #                                 I    P2V  V    |  P2S  S    F  | IG   IGwD
   #-------------------------------------------------------------------------
-  # 1  attach subcard               yes! yes! yes  | yes  yes  yes |    yes
-  # 2  detach subcard               yes! yes! yes  | yes  no   no! |    no!
-  # 3  validate                     yes  yes  yes! |      no       |    no
-  # 4  insecure change              yes  yes! no   |      no!      |    no!
-  # 5  secure change                     yes       | yes! no!  no! |    no!
-  # 6  abort                             yes!      |      yes      |    yes?
-  # 7  fail
-  # 8  create other cards
-  # 9  has id                            no        | no   no?  yes |    yes
-  # 10 within transaction                yes       |      yes      |    no
-  # 11 within web request                yes       |      yes      | yes  no
+  #    attach subcard               yes! yes! yes  | yes  yes  yes |    yes
+  #    detach subcard               yes! yes! yes  | yes  no   no! |    no!
+  #    validate                     yes  yes  yes! |      no       |    no
+  # 1  insecure change              yes  yes! no   |      no!      |    no!
+  # 2  secure change                     yes       | yes! no!  no! |    no!
+  #    abort                             yes!      |      yes      |    yes?
+  #    add errors                        yes!      |      no!      |    no!
+  # 3  create other cards                yes       |      yes      |    yes
+  #    has id                            no        | no   no?  yes |    yes
+  #    within web request                yes       |      yes      | yes  no
+  # 4  within transaction                yes       |      yes      |    no
 
   #    available values:
   #    dirty attributes                  yes       |      yes      |    yes
+  #    params                            yes       |      yes      |    yes
   #    success                           yes       |      yes      | yes  no
   #    session                           yes       |      yes      | yes  no
-  #    params                            yes       |      yes      |    yes
   #
-  # 4) 'insecure' means a change of a card attribute that can possibly make
+  # 1) 'insecure' means a change of a card attribute that can possibly make
   #    the card invalid to save
-  # 5) 'secure' means you are sure that the change doesn't affect the validation
+  # 2) 'secure' means you are sure that the change doesn't affect the validation
+  # 3) If you call 'create', 'update_attributes' or 'save' the card will become
+  #    part of the same act and all stage of the validation and storage phase
+  #    will be executed immediately for that card. The integration phase will be
+  #    executed together with the act card and its subcards
+  # 4) This means if an exception is raised in the validation or storage phase
+  #    everything will rollback. If the integration phase fails the db changes
+  #    of the other two phases will remain persistent.
   module Stage
     STAGES = [:initialize, :prepare_to_validate, :validate, :prepare_to_store,
               :store, :finalize, :integrate, :integrate_with_delay].freeze

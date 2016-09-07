@@ -208,9 +208,11 @@ describe Card::Set::Type::File do
           # File.open(File.join(file_dir, "test_mod.txt"),"w") do |f|
           #   f.puts "test"
           # end
+          Card::Mod::Loader.mod_dirs.mod "test_mod"
         end
         after do
           FileUtils.rm_rf mod_path
+          Card::Mod::Loader.mod_dirs.mods.delete "test_mod"
         end
         let(:file_path) { File.join mod_path, "file", "mod_file", "file.txt" }
 
@@ -303,6 +305,11 @@ describe Card::Set::Type::File do
     context "if storage type is coded" do
       before do
         FileUtils.mkdir_p mod_path
+        Card::Mod::Loader.mod_dirs.mod "test_mod"
+      end
+      after do
+        FileUtils.rm_rf mod_path
+        Card::Mod::Loader.mod_dirs.mods.delete "test_mod"
       end
 
       subject do

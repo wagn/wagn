@@ -17,10 +17,18 @@ class Card
         end
       end
 
+      # add a new mod to mod load paths
       def mod mod_name
+        if @mods.include? mod_name
+          raise Error,
+                "name conflict: mod with name \"#{mod_name}\" already loaded"
+        end
         @mods << mod_name
-        # TODO: do something if two mods have the same name?
         @paths[mod_name] = File.join @current_path, mod_name
+      end
+
+      def path mod_name
+        @paths[mod_name]
       end
 
       def each type=nil

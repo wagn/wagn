@@ -4,7 +4,7 @@ task :push_gems do
       cd #{gem}
       rm *.gem
       gem build #{gem}.gemspec
-      gem push -V #{gem}-#{version}.gem
+      gem push #{gem}-#{version}.gem
     )
   end
 end

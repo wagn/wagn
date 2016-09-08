@@ -1,4 +1,9 @@
 module CarrierWave
+  class << self
+    def tmp_path
+      @tmp_path ||= Card.paths["tmp"].existent.first
+    end
+  end
   module Uploader
     # Implements a different name pattern for versions than CarrierWave's
     # default: we expect the version name at the end of the filename separated

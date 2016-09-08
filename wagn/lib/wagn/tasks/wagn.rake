@@ -304,7 +304,6 @@ namespace :wagn do
                      else
                        "standard"
                      end
-          binding.pry
           card.update_attributes! storage_type: :coded,
                                   mod: mod_name,
                                   empty_ok: true

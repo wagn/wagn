@@ -3,11 +3,11 @@ class Card
     module Stage
       STAGES = [:initialize, :prepare_to_validate, :validate, :prepare_to_store,
                 :store, :finalize, :integrate, :integrate_with_delay].freeze
-      STAGE_INDEX = {}
+      stage_index = {}
       STAGES.each_with_index do |stage, i|
-        STAGE_INDEX[stage] = i
+        stage_index[stage] = i
       end
-      STAGE_INDEX.freeze
+      STAGE_INDEX = stage_index.freeze
 
       def stage_symbol index
         case index
@@ -48,8 +48,8 @@ class Card
       end
 
       def in? allowed_phase
-      (allowed_phase.is_a?(Array) && allowed_phase.include?(stage)) ||
-        allowed_phase == stage
+        (allowed_phase.is_a?(Array) && allowed_phase.include?(stage)) ||
+          allowed_phase == stage
       end
     end
   end

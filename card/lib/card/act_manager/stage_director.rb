@@ -193,8 +193,8 @@ class Card
         @stage ||= -1
         return if @stage >= new_stage
         if @stage < new_stage - 1
-          raise Card::Error, "stage #{stage_symbol(new_stage - 1)} was skipped " \
-                             "for card #{@card}"
+          raise Card::Error, "stage #{stage_symbol(new_stage - 1)} was " \
+                             "skipped for card #{@card}"
         end
         @card.errors.empty? || new_stage > stage_index(:validate)
       end

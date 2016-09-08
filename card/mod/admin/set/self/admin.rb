@@ -5,7 +5,6 @@ basket :tasks
 event :admin_tasks, :initialize, on: :update do
   return unless (task = Env.params[:task])
   raise Card::Error::PermissionDenied, self unless Auth.always_ok?
-
   case task.to_sym
   when :clear_cache          then Card::Cache.reset_all
   when :repair_references    then Card::Reference.repair_all
@@ -15,7 +14,7 @@ event :admin_tasks, :initialize, on: :update do
   when :clear_solid_cache    then Card.clear_solid_cache
   when :clear_machine_cache  then Card.reset_all_machines
   else
-    task_data = tasks.find { |h| h[:name].to_sym == task }
+    task_data = tasks.find { |h| h[:name].to_sym == task.to_sym }
     task_data[:execute_policy].call if task_data
   end
   abort :success

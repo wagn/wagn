@@ -52,7 +52,7 @@ describe Card::Set::Type::Scss do
     end
   end
 
-  it_should_behave_like "content machine", that_produces_css do
+  it_should_behave_like "content machine", that_produces: :css do
     let(:machine_card) { Card.gimme! "test scss", type: :scss, content: scss }
     let(:card_content) do
       { in:           scss,         out:     compressed_css,

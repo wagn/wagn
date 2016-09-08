@@ -11,10 +11,9 @@ require File.expand_path("../../db/seed/test/seed.rb", __FILE__)
 require File.expand_path("../../config/simplecov_helper.rb", __FILE__)
 require "simplecov"
 
-require File.expand_path("../../mod/machines/spec/lib/"\
-                         "shared_machine_examples.rb", __FILE__)
-require File.expand_path("../../mod/machines/spec/lib/"\
-                         "shared_machine_input_examples.rb", __FILE__)
+shared_example_dir =
+  File.expand_path("../../mod/machines/spec/shared_examples", __FILE__)
+Dir["#{shared_example_dir}**/*.rb"].sort.each { |f| require f}
 
 Spork.prefork do
   if ENV["RAILS_ROOT"]

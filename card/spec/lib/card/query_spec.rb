@@ -1,10 +1,11 @@
 # -*- encoding : utf-8 -*-
 
-A_JOINEES = %w(B C D E F).freeze
-CARDS_MATCHING_TWO = ["Joe User", "One+Two", "One+Two+Three",
-                      "script: slot+*all+*script+*machine cache", "Two"].freeze
-
 describe Card::Query do
+  A_JOINEES = %w(B C D E F).freeze
+  CARDS_MATCHING_TWO = ["Joe User", "One+Two", "One+Two+Three",
+                        "script: slot+*all+*script+*machine cache",
+                        "Two"].freeze
+
   subject do
     Card::Query.run @query.reverse_merge return: :name, sort: :name
   end

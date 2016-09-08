@@ -29,7 +29,7 @@ class Card
         directors.each_key do |dir_card|
           return dir_card.director if dir_card.name == card.name
         end
-        directors[card] = Card.new_director card, opts
+        directors[card] = card.new_director opts
       end
 
       def add director

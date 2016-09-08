@@ -54,13 +54,13 @@ def add_to_act opts
   self.only_storage_phase = true
 end
 
-def self.new_director card, opts={}
+def new_director opts={}
   if opts[:parent]
-    StageSubdirector.new card, opts
+    StageSubdirector.new self, opts
   elsif DirectorRegister.act_card &&
-    DirectorRegister.act_card != card &&
-    DirectorRegister.act_card.director.running?
-    DirectorRegister.act_card.director.subdirectors.add(card)
+        DirectorRegister.act_card != self &&
+        DirectorRegister.act_card.director.running?
+    DirectorRegister.act_card.director.subdirectors.add(self)
   else
     StageDirector.new card
   end

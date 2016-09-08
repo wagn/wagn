@@ -13,7 +13,7 @@ require "simplecov"
 
 shared_example_dir =
   File.expand_path("../../mod/machines/spec/shared_examples", __FILE__)
-Dir["#{shared_example_dir}**/*.rb"].sort.each { |f| require f}
+Dir["#{shared_example_dir}**/*.rb"].sort.each { |f| require f }
 
 Spork.prefork do
   if ENV["RAILS_ROOT"]

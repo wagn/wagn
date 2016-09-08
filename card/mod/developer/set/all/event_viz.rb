@@ -15,7 +15,8 @@ require_dependency 'active_support/callbacks_ext'
 # prevent events from showing up in the tree.
 def events action
   @action = action
-  events = ActManager::Stage::STAGES.map { |stage| events_tree("#{stage}_stage") }
+  events =
+    ActManager::Stage::STAGES.map { |stage| events_tree("#{stage}_stage") }
   @action = nil
   puts_events events
 end

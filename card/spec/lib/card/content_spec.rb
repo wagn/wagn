@@ -13,11 +13,8 @@ describe Card::Content do
                  "<span>{</span>{This Card|Is not Included}}",
                  ", but ",
                  { options: { inc_name: "this is",
-                              inc_syntax: "this is"
-                 }
-                 },
-                 ", and some tail"
-      ],
+                              inc_syntax: "this is" } },
+                 ", and some tail"],
       classes: [String, :EscapedLiteral, String, :Include, String]
     },
 
@@ -33,22 +30,15 @@ describe Card::Content do
                  ", and ",
                  { options: { view: "Is Included",
                               inc_name: "This Card",
-                              inc_syntax: "This Card|Is Included"
-                 }
-                 },
+                              inc_syntax: "This Card|Is Included" } },
                  { options: { inc_name: "this too",
-                              inc_syntax: "this too"
-                 }
-                 },
+                              inc_syntax: "this too" } },
                  " and ",
                  '<a target="_blank" class="external-link" ' \
                'href="http://external.wagn.org/path">link text</a>',
                  { options: { view: "open",
                               inc_name: "Included",
-                              inc_syntax: "Included|open"
-                 }
-                 }
-      ],
+                              inc_syntax: "Included|open" } }],
       classes: [
         String, :Link, String, :Include, :Include, String, :Link, :Include
       ]
@@ -83,8 +73,7 @@ describe Card::Content do
                  '<a target="_blank" class="external-link" ' \
                  'href="https://brain.org/more?args">' \
                  "https://brain.org/more?args</a>",
-                 " } "
-      ],
+                 " } "],
       text_rendered: ["Some URIs and Links: ", "http://a.url.com/",
                       " More urls: ",
                       "wagn.com/a/path/to.html[http://wagn.com/a/path/to.html]",
@@ -96,8 +85,7 @@ describe Card::Content do
                       "http://gerry.wagn.com/a/path",
                       " ] { ",
                       "https://brain.org/more?args",
-                      " } "
-      ],
+                      " } "],
       classes: [
         String, :URI, String, :HostURI, String, :URI, String, :Link,
         String, :URI, String, :URI, String
@@ -132,11 +120,10 @@ describe Card::Content do
                  "http://localhost:2020/path?cgi=foo&bar=baz</a>",
                  " ",
                  '<a target="_blank" class="external-link" ' \
-               'href="http://brain.org/Home">extra</a>'
-      ],
+               'href="http://brain.org/Home">extra</a>'],
       classes:  [
-        String, :URI, String, :HostURI, String, :URI, String, :URI, String, :URI,
-        String, :Link
+        String, :URI, String, :HostURI, String, :URI, String, :URI,
+        String, :URI, String, :Link
       ]
     },
 
@@ -189,11 +176,10 @@ describe Card::Content do
     end
   end
 
-
   context "instance" do
     before do
       @check_proc = proc do |m, v|
-        if Array === m
+        if m.is_a? Arrau
           wrong_class = m[0] != v.class
           expect(wrong_class).to be_falsey
           is_last = m.size == 1
@@ -279,18 +265,18 @@ describe Card::Content do
     describe "render" do
       it "renders all nests" do
         @example = :nests
-        expect(cobj.as_json.to_s).to match /not rendered/
-        cobj.process_each_chunk &@render_block
+        expect(cobj.as_json.to_s).to match(/not rendered/)
+        cobj.process_each_chunk(&@render_block)
         rdr = cobj.as_json.to_json
-        expect(rdr).not_to match /not rendered/
+        expect(rdr).not_to match(/not rendered/)
         expect(rdr).to eq(rendered.to_json)
       end
 
       it "renders links and nests" do
         @example = :links_and_nests
-        cobj.process_each_chunk &@render_block
+        cobj.process_each_chunk(&@render_block)
         rdr = cobj.as_json.to_json
-        expect(rdr).not_to match /not rendered/
+        expect(rdr).not_to match(/not rendered/)
         expect(rdr).to eq(rendered.to_json)
       end
 
@@ -299,24 +285,24 @@ describe Card::Content do
         card2 = Card[@card.id]
         format = card2.format format: :text
         cobj = Card::Content.new content, format
-        cobj.process_each_chunk &@render_block
+        cobj.process_each_chunk(&@render_block)
         expect(cobj.as_json.to_json).to eq(text_rendered.to_json)
       end
 
       it "does not need rendering if no nests" do
         @example = :uris_and_links
-        cobj.process_each_chunk &@render_block
+        cobj.process_each_chunk(&@render_block)
         expect(cobj.as_json.to_json).to eq(rendered.to_json)
       end
 
       it "does not need rendering if no nests (b)" do
         @example = :uris_and_links_2
         rdr1 = cobj.as_json.to_json
-        expect(rdr1).to match /not rendered/
+        expect(rdr1).to match(/not rendered/)
         # links are rendered too, but not with a block
-        cobj.process_each_chunk &@render_block
+        cobj.process_each_chunk(&@render_block)
         rdr2 = cobj.as_json.to_json
-        expect(rdr2).not_to match /not rendered/
+        expect(rdr2).not_to match(/not rendered/)
         expect(rdr2).to eq(rendered.to_json)
       end
     end
@@ -326,8 +312,7 @@ describe Card::Content do
                     " {{this is a test}}, {{this|view|is:too}} and",
                     " so is http://foo.bar.come//",
                     ' and foo="my attr, not int a tag" <not a=tag ',
-                    ' p class"foobar"> and more'
-                   ].freeze
+                    ' p class"foobar"> and more'].freeze
 
   context "class" do
     describe "#clean!" do

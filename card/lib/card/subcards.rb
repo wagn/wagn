@@ -82,7 +82,7 @@ class Card
     def clear
       @keys.each do |key|
         if (subcard = fetch_subcard key)
-          Card::DirectorRegister.delete subcard.director
+          ActManager.delete subcard.director
         end
         Card.cache.soft.delete key
       end
@@ -104,7 +104,7 @@ class Card
       @keys.delete key
       removed_card = fetch_subcard key
       removed_card.current_action.delete if removed_card.current_action
-      Card::DirectorRegister.deep_delete removed_card.director
+      ActManager.deep_delete removed_card.director
       Card.cache.soft.delete key
       removed_card
     end

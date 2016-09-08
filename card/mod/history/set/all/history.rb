@@ -62,7 +62,7 @@ event :finalize_act,
 end
 
 def act_card?
-  self == DirectorRegister.act_card
+  self == Card::ActManager.act_card
 end
 
 event :rollback_actions, :prepare_to_validate,

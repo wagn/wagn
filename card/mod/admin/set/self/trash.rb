@@ -3,14 +3,14 @@ format :html do
     Card.where(trash: true)
   end
 
-  view :core do |args|
+  view :core do |_args|
     rows =
       trashed_cards.map do |card|
         [card.name, Card[card.updater_id].name, put_back_link(card)]
       end
     output [
       (content_tag(:p, empty_trash_link) if rows.present?),
-      table(rows, header: ['card','deleted by',''])
+      table(rows, header: ["card", "deleted by", ""])
     ]
   end
 

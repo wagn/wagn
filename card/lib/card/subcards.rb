@@ -12,7 +12,6 @@
 class Card
   def subcards
     @subcards ||= Subcards.new(self)
-    # @subcards ||= (director && director.subcards)
   end
 
   def expire_subcards

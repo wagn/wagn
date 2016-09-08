@@ -2,7 +2,7 @@
 
 require "active_support/core_ext/numeric/time"
 djar = "delayed_job_active_record"
-require djar if Gem::Specification::find_all_by_name(djar).any?
+require djar if Gem::Specification.find_all_by_name(djar).any?
 require "cardio/schema.rb"
 
 ActiveSupport.on_load :card do
@@ -17,11 +17,11 @@ module Cardio
   extend Schema
   CARD_GEM_ROOT = File.expand_path("../..", __FILE__)
 
-  mattr_reader :paths, :config, :cache
+  mattr_reader :paths, :config
 
   class << self
     def cache
-      @@cache ||= ::Rails.cache
+      @cache ||= ::Rails.cache
     end
 
     def default_configs
@@ -64,7 +64,6 @@ module Cardio
 
     def set_config config
       @@config = config
-      @@root = config.root
 
       config.autoload_paths += Dir["#{gem_root}/lib/**/"]
       config.autoload_paths += Dir["#{gem_root}/mod/*/lib/**/"]

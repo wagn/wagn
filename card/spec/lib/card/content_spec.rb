@@ -179,7 +179,7 @@ describe Card::Content do
   context "instance" do
     before do
       @check_proc = proc do |m, v|
-        if m.is_a? Arrau
+        if m.is_a? Array
           wrong_class = m[0] != v.class
           expect(wrong_class).to be_falsey
           is_last = m.size == 1

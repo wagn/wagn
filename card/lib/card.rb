@@ -42,8 +42,8 @@ class Card < ActiveRecord::Base
   require_dependency "card/reference"
   require_dependency "card/subcards"
   require_dependency "card/cache/view_cache"
-  require_dependency "card/stage_director"
-  require_dependency "card/director_register"
+  require_dependency "card/act_manager"
+  require_dependency "card/act_manager/stage_director"
 
   has_many :references_in,  class_name: :Reference, foreign_key: :referee_id
   has_many :references_out, class_name: :Reference, foreign_key: :referer_id

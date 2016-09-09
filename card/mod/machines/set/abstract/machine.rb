@@ -239,7 +239,7 @@ def unlock!
 end
 
 def update_input_card
-  if DirectorRegister.running_act?
+  if Card::ActManager.running_act?
     input_card = attach_subcard! machine_input_card
     input_card.content = ""
     engine_input.each { |input| input_card << input }

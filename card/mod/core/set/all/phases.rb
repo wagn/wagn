@@ -12,5 +12,5 @@ delegate :storage_phase, to: :director
 delegate :integration_phase, to: :director
 
 def clean_up
-  Card::DirectorRegister.clear
+  Card::ActManager.clear
 end

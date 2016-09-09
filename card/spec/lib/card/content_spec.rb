@@ -1,156 +1,144 @@
 # -*- encoding : utf-8 -*-
 require "card/content"
 
-EXAMPLES = {
-  nests: {
-    content: "Some Literals: \\[{I'm not| a link]}, and " \
+describe Card::Content do
+  EXAMPLES = {
+    nests: {
+      content: "Some Literals: \\[{I'm not| a link]}, and " \
                 '\\{{This Card|Is not Included}}' \
                 ", but " \
                 "{{this is}}" \
                 ", and some tail",
-    rendered: ["Some Literals: \\[{I'm not| a link]}, and ",
-               "<span>{</span>{This Card|Is not Included}}",
-               ", but ",
-               { options: { inc_name: "this is",
-                            inc_syntax: "this is"
-                          }
-               },
-               ", and some tail"
-              ],
-    classes: [String, :EscapedLiteral, String, :Include, String]
-  },
+      rendered: ["Some Literals: \\[{I'm not| a link]}, and ",
+                 "<span>{</span>{This Card|Is not Included}}",
+                 ", but ",
+                 { options: { inc_name: "this is",
+                              inc_syntax: "this is" } },
+                 ", and some tail"],
+      classes: [String, :EscapedLiteral, String, :Include, String]
+    },
 
-  links_and_nests: {
-    content: "Some Links and includes: [[the card|the text]], " \
+    links_and_nests: {
+      content: "Some Links and includes: [[the card|the text]], " \
                "and {{This Card|Is Included}}{{this too}} " \
                "and [[http://external.wagn.org/path|link text]]" \
                "{{Included|open}}",
-    rendered: ["Some Links and includes: ",
-               '<a class="wanted-card" ' \
+      rendered: ["Some Links and includes: ",
+                 '<a class="wanted-card" ' \
                  'href="/the_card?card%5Bname%5D=the+card">' \
                  "the text</a>",
-               ", and ",
-               { options: { view: "Is Included",
-                            inc_name: "This Card",
-                            inc_syntax: "This Card|Is Included"
-                          }
-               },
-               { options: { inc_name: "this too",
-                            inc_syntax: "this too"
-                          }
-               },
-               " and ",
-               '<a target="_blank" class="external-link" ' \
+                 ", and ",
+                 { options: { view: "Is Included",
+                              inc_name: "This Card",
+                              inc_syntax: "This Card|Is Included" } },
+                 { options: { inc_name: "this too",
+                              inc_syntax: "this too" } },
+                 " and ",
+                 '<a target="_blank" class="external-link" ' \
                'href="http://external.wagn.org/path">link text</a>',
-               { options: { view: "open",
-                            inc_name: "Included",
-                            inc_syntax: "Included|open"
-                          }
-               }
-              ],
-    classes: [
-      String, :Link, String, :Include, :Include, String, :Link, :Include
-    ]
-  },
+                 { options: { view: "open",
+                              inc_name: "Included",
+                              inc_syntax: "Included|open" } }],
+      classes: [
+        String, :Link, String, :Include, :Include, String, :Link, :Include
+      ]
+    },
 
-  uris_and_links: {
-    content: "Some URIs and Links: http://a.url.com/ " \
+    uris_and_links: {
+      content: "Some URIs and Links: http://a.url.com/ " \
                "More urls: wagn.com/a/path/to.html " \
                "http://localhost:2020/path?cgi=foo&bar=baz " \
                "[[http://brain.org/Home|extra]] " \
                "[ http://gerry.wagn.com/a/path ] " \
                "{ https://brain.org/more?args } ",
-    rendered: ["Some URIs and Links: ",
-               '<a target="_blank" class="external-link" ' \
+      rendered: ["Some URIs and Links: ",
+                 '<a target="_blank" class="external-link" ' \
                  'href="http://a.url.com/">http://a.url.com/</a>',
-               " More urls: ",
-               '<a target="_blank" class="external-link" ' \
+                 " More urls: ",
+                 '<a target="_blank" class="external-link" ' \
                  'href="http://wagn.com/a/path/to.html">' \
                  "wagn.com/a/path/to.html</a>",
-               " ",
-               '<a target="_blank" class="external-link" ' \
+                 " ",
+                 '<a target="_blank" class="external-link" ' \
                  'href="http://localhost:2020/path?cgi=foo&amp;bar=baz">' \
                  "http://localhost:2020/path?cgi=foo&bar=baz</a>",
-               " ",
-               '<a target="_blank" class="external-link" ' \
+                 " ",
+                 '<a target="_blank" class="external-link" ' \
                  'href="http://brain.org/Home">extra</a>',
-               " [ ",
-               '<a target="_blank" class="external-link" ' \
+                 " [ ",
+                 '<a target="_blank" class="external-link" ' \
                  'href="http://gerry.wagn.com/a/path">' \
                  "http://gerry.wagn.com/a/path</a>",
-               " ] { ",
-               '<a target="_blank" class="external-link" ' \
+                 " ] { ",
+                 '<a target="_blank" class="external-link" ' \
                  'href="https://brain.org/more?args">' \
                  "https://brain.org/more?args</a>",
-               " } "
-              ],
-    text_rendered: ["Some URIs and Links: ", "http://a.url.com/",
-                    " More urls: ",
-                    "wagn.com/a/path/to.html[http://wagn.com/a/path/to.html]",
-                    " ",
-                    "http://localhost:2020/path?cgi=foo&bar=baz",
-                    " ",
-                    "extra[http://brain.org/Home]",
-                    " [ ",
-                    "http://gerry.wagn.com/a/path",
-                    " ] { ",
-                    "https://brain.org/more?args",
-                    " } "
-                   ],
-    classes: [
-      String, :URI, String, :HostURI, String, :URI, String, :Link,
-      String, :URI, String, :URI, String
-    ]
-  },
+                 " } "],
+      text_rendered: ["Some URIs and Links: ", "http://a.url.com/",
+                      " More urls: ",
+                      "wagn.com/a/path/to.html[http://wagn.com/a/path/to.html]",
+                      " ",
+                      "http://localhost:2020/path?cgi=foo&bar=baz",
+                      " ",
+                      "extra[http://brain.org/Home]",
+                      " [ ",
+                      "http://gerry.wagn.com/a/path",
+                      " ] { ",
+                      "https://brain.org/more?args",
+                      " } "],
+      classes: [
+        String, :URI, String, :HostURI, String, :URI, String, :Link,
+        String, :URI, String, :URI, String
+      ]
+    },
 
-  uris_and_links_2: {
-    content: "Some URIs and Links: http://a.url.com " \
+    uris_and_links_2: {
+      content: "Some URIs and Links: http://a.url.com " \
                "More urls: wagn.com/a/path/to.html " \
                "[ http://gerry.wagn.com/a/path ] " \
                "{ https://brain.org/more?args } " \
                "http://localhost:2020/path?cgi=foo&bar=baz " \
                "[[http://brain.org/Home|extra]]",
-    rendered: ["Some URIs and Links: ",
-               '<a target="_blank" class="external-link" ' \
+      rendered: ["Some URIs and Links: ",
+                 '<a target="_blank" class="external-link" ' \
                  'href="http://a.url.com">http://a.url.com</a>',
-               " More urls: ",
-               '<a target="_blank" class="external-link" ' \
+                 " More urls: ",
+                 '<a target="_blank" class="external-link" ' \
                  'href="http://wagn.com/a/path/to.html">' \
                  "wagn.com/a/path/to.html</a>",
-               " [ ",
-               '<a target="_blank" class="external-link" ' \
+                 " [ ",
+                 '<a target="_blank" class="external-link" ' \
                  'href="http://gerry.wagn.com/a/path">' \
                  "http://gerry.wagn.com/a/path</a>",
-               " ] { ",
-               '<a target="_blank" class="external-link" ' \
+                 " ] { ",
+                 '<a target="_blank" class="external-link" ' \
                  'href="https://brain.org/more?args">' \
                  "https://brain.org/more?args</a>",
-               " } ",
-               '<a target="_blank" class="external-link" ' \
+                 " } ",
+                 '<a target="_blank" class="external-link" ' \
                  'href="http://localhost:2020/path?cgi=foo&amp;bar=baz">' \
                  "http://localhost:2020/path?cgi=foo&bar=baz</a>",
-               " ",
-               '<a target="_blank" class="external-link" ' \
-               'href="http://brain.org/Home">extra</a>'
-              ],
-    classes:  [
-      String, :URI, String, :HostURI, String, :URI, String, :URI, String, :URI,
-      String, :Link
-    ]
-  },
+                 " ",
+                 '<a target="_blank" class="external-link" ' \
+               'href="http://brain.org/Home">extra</a>'],
+      classes:  [
+        String, :URI, String, :HostURI, String, :URI, String, :URI,
+        String, :URI, String, :Link
+      ]
+    },
 
-  no_chunks: {
-    content: "No chunks",
-    rendered: "No chunks"
-  },
+    no_chunks: {
+      content: "No chunks",
+      rendered: "No chunks"
+    },
 
-  single_nest: {
-    content: "{{one nest|size;large}}",
-    classes: [:Include]
-  },
+    single_nest: {
+      content: "{{one nest|size;large}}",
+      classes: [:Include]
+    },
 
-  css: {
-    content: %(
+    css: {
+      content: %(
      /* body text */
      body {
        color: #444444;
@@ -178,21 +166,20 @@ EXAMPLES = {
        color: #222299;
      }
    )
-  }
-}.freeze
+    }
+  }.freeze
 
-EXAMPLES.each_value do |val|
-  next unless val[:classes]
-  val[:classes] = val[:classes].map do |klass|
-    klass.is_a?(Class) ? klass : Card::Content::Chunk.const_get(klass)
+  EXAMPLES.each_value do |val|
+    next unless val[:classes]
+    val[:classes] = val[:classes].map do |klass|
+      klass.is_a?(Class) ? klass : Card::Content::Chunk.const_get(klass)
+    end
   end
-end
 
-describe Card::Content do
   context "instance" do
     before do
       @check_proc = proc do |m, v|
-        if Array === m
+        if m.is_a? Array
           wrong_class = m[0] != v.class
           expect(wrong_class).to be_falsey
           is_last = m.size == 1
@@ -278,18 +265,18 @@ describe Card::Content do
     describe "render" do
       it "renders all nests" do
         @example = :nests
-        expect(cobj.as_json.to_s).to match /not rendered/
-        cobj.process_each_chunk &@render_block
+        expect(cobj.as_json.to_s).to match(/not rendered/)
+        cobj.process_each_chunk(&@render_block)
         rdr = cobj.as_json.to_json
-        expect(rdr).not_to match /not rendered/
+        expect(rdr).not_to match(/not rendered/)
         expect(rdr).to eq(rendered.to_json)
       end
 
       it "renders links and nests" do
         @example = :links_and_nests
-        cobj.process_each_chunk &@render_block
+        cobj.process_each_chunk(&@render_block)
         rdr = cobj.as_json.to_json
-        expect(rdr).not_to match /not rendered/
+        expect(rdr).not_to match(/not rendered/)
         expect(rdr).to eq(rendered.to_json)
       end
 
@@ -298,24 +285,24 @@ describe Card::Content do
         card2 = Card[@card.id]
         format = card2.format format: :text
         cobj = Card::Content.new content, format
-        cobj.process_each_chunk &@render_block
+        cobj.process_each_chunk(&@render_block)
         expect(cobj.as_json.to_json).to eq(text_rendered.to_json)
       end
 
       it "does not need rendering if no nests" do
         @example = :uris_and_links
-        cobj.process_each_chunk &@render_block
+        cobj.process_each_chunk(&@render_block)
         expect(cobj.as_json.to_json).to eq(rendered.to_json)
       end
 
       it "does not need rendering if no nests (b)" do
         @example = :uris_and_links_2
         rdr1 = cobj.as_json.to_json
-        expect(rdr1).to match /not rendered/
+        expect(rdr1).to match(/not rendered/)
         # links are rendered too, but not with a block
-        cobj.process_each_chunk &@render_block
+        cobj.process_each_chunk(&@render_block)
         rdr2 = cobj.as_json.to_json
-        expect(rdr2).not_to match /not rendered/
+        expect(rdr2).not_to match(/not rendered/)
         expect(rdr2).to eq(rendered.to_json)
       end
     end
@@ -325,8 +312,7 @@ describe Card::Content do
                     " {{this is a test}}, {{this|view|is:too}} and",
                     " so is http://foo.bar.come//",
                     ' and foo="my attr, not int a tag" <not a=tag ',
-                    ' p class"foobar"> and more'
-                   ].freeze
+                    ' p class"foobar"> and more'].freeze
 
   context "class" do
     describe "#clean!" do

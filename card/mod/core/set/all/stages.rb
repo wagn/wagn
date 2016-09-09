@@ -1,8 +1,8 @@
 attr_writer :director
-delegate :stage, to: :director
+delegate :act_manager, to: :director
 
 def director
-  @director ||= Card::DirectorRegister.fetch self
+  @director ||= Card::ActManager.fetch self
 end
 
 def identify_action

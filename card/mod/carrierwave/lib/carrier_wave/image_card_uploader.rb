@@ -20,10 +20,10 @@ module CarrierWave
       process resize_to_fit: [75, 75]
     end
     version :medium, if: :create_versions? do
-      process resize_to_fit: [200, 200]
+      process resize_to_limit: [200, 200]
     end
     version :large, if: :create_versions? do
-      process resize_to_fit: [500, 500]
+      process resize_to_limit: [500, 500]
     end
 
     # version :small_square, if: :create_versions?,

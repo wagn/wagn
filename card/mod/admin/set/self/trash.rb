@@ -40,10 +40,9 @@ format :html do
     content_tag :p, button
   end
 
-  def restore_link card
-    before_delete = card.actions[-2]
-    link_path = path action: :update, view: :open,
-                     restore: card.id,
+  def restore_link trashed_card
+    before_delete = trashed_card.actions[-2]
+    link_path = path action: :update, view: :open, restore: trashed_card.id,
                      action_ids: [before_delete]
     link_to "restore", link_path, method: :post, rel: "nofollow",
                                   remote: true, class: "slotter"

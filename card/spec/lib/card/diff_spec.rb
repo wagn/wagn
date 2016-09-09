@@ -5,11 +5,11 @@ require "card/content/diff"
 
 describe Card::Content::Diff do
   def del text
-    "<del class='diffdel diff-red'>#{text}</del>"
+    "<del class='diffdel diff-deleted'>#{text}</del>"
   end
 
   def ins text
-    "<ins class='diffins diff-green'>#{text}</ins>"
+    "<ins class='diffins diff-added'>#{text}</ins>"
   end
 
   def tag text

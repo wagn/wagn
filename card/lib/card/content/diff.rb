@@ -13,11 +13,11 @@ class Card
         end
 
         def render_added_chunk text
-          "<ins class='diffins diff-green'>#{text}</ins>"
+          "<ins class='diffins diff-added'>#{text}</ins>"
         end
 
         def render_deleted_chunk text, _count=true
-          "<del class='diffdel diff-red'>#{text}</del>"
+          "<del class='diffdel diff-deleted'>#{text}</del>"
         end
       end
 

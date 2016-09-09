@@ -181,12 +181,13 @@ namespace :wagn do
       run_card_migration :deck_cards
     end
 
-    desc 'Runs the "up" for a given deck cards migration VERSION.'
-    task up: :environment do
+    desc 'Redo the deck cards migration given by VERSION.'
+    task redo: :environment do
       version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
       raise "VERSION is required" unless version
       ActiveRecord::Migration.verbose = verbose
+      ActiveRecord::SchemaMigration.where(:version => version.to_s).delete_all
       ActiveRecord::Migrator.run :up, Cardio.migration_paths(:deck_cards),
                                  version
     end

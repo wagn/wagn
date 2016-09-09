@@ -24,7 +24,7 @@ module <%= app_const_base %>
     # (like sending notifications to followers) to a background process.
     # To activate it add the gems 'delayed_job_active_record' and 'daemons'
     # to the Gemfile, uncomment the two lines below and run
-    # 'RAILS_ENV=production script/delayed_job start' to start the background process.
+    # 'RAILS_ENV=production bin/delayed_job start' to start the background process.
     # See https://github.com/collectiveidea/delayed_job#running-jobs for more information
     #
     # config.active_job.queue_adapter = :delayed_job

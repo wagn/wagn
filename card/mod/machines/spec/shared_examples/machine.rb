@@ -1,19 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-def that_produces type
-  type
-end
-
-def method_missing m, *args, &block
-  case m
-  when /that_produces_(.+)/
-    return Regexp.last_match(1)
-  else
-    super
-  end
-end
-
-shared_examples_for "machine" do |filetype|
+shared_examples_for "machine" do |args|
+  let(:filetype)  { args[:that_produces] }
   context "machine is run" do
     before do
       machine.update_machine_output
@@ -25,14 +13,16 @@ shared_examples_for "machine" do |filetype|
     it "has +machine_output card" do
       expect(machine.machine_output_card.real?).to be_truthy
     end
-    it "generates #{filetype} file" do
+    it "generates #{args[:that_produces]} file" do
       expect(machine.machine_output_path).to match(/\.#{filetype}$/)
     end
   end
 end
 
-shared_examples_for "content machine" do |filetype|
-  it_should_behave_like "machine", that_produces(filetype) do
+shared_examples_for "content machine" do |args|
+  let(:filetype) { args[:that_produces] }
+
+  it_should_behave_like "machine", args do
     let(:machine) { machine_card }
   end
 
@@ -50,7 +40,7 @@ shared_examples_for "content machine" do |filetype|
       path = machine_card.machine_output_path
       expect(File.read(path)).to eq(card_content[:out])
     end
-    it "updates #{filetype} file when content is changed" do
+    it "updates #{args[:that_produces]} file when content is changed" do
       changed_factory = machine_card
       changed_factory.putty content: card_content[:changed_in]
       changed_path = changed_factory.machine_output_path
@@ -59,7 +49,8 @@ shared_examples_for "content machine" do |filetype|
   end
 end
 
-shared_examples_for "pointer machine" do |filetype|
+shared_examples_for "pointer machine" do |args|
+  let(:filetype) { args[:that_produces] }
   subject do
     # We build the following structure:
     #
@@ -115,7 +106,7 @@ shared_examples_for "pointer machine" do |filetype|
     change_machine
   end
 
-  it_should_behave_like "machine", that_produces(filetype) do
+  it_should_behave_like "machine", args do
     let(:machine) { machine_card }
   end
 
@@ -138,18 +129,18 @@ shared_examples_for "pointer machine" do |filetype|
   end
 
   describe "+machine_output card" do
-    it 'creates #{filetype} file with supplied content' do
+    it 'creates #{args[:that_produces]} file with supplied content' do
       path = subject.machine_output_path
       expect(File.read(path)).to eq(card_content[:out])
     end
 
-    it 'updates #{filetype} file if item is changed' do
+    it 'updates #{args[:that_produces]} file if item is changed' do
       machine_input_card.putty content: card_content[:changed_in]
       changed_path = subject.machine_output_path
       expect(File.read(changed_path)).to eq(card_content[:changed_out])
     end
 
-    it 'updates #{filetype} file if item is added' do
+    it 'updates #{args[:that_produces]} file if item is added' do
       Card::Auth.as_bot do
         ca = Card.gimme! "pointer item", type: Card::SkinID, content: ""
         subject.items = [ca]
@@ -161,7 +152,7 @@ shared_examples_for "pointer machine" do |filetype|
     end
 
     context "a non-existent card was added as item and now created" do
-      it 'updates #{filetype} file' do
+      it 'updates #{args[:that_produces]} file' do
         Card::Auth.as_bot do
           subject.content = "[[non-existent input]]"
           subject.save!

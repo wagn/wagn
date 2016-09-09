@@ -1,8 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-require File.expand_path("../../../../../machines/spec/lib/"\
-                         "shared_machine_examples.rb", __FILE__)
-
 describe Card::Set::Right::Style do
   #  describe "#delet"
   #  it "should delete tempfile"
@@ -13,7 +10,7 @@ describe Card::Set::Right::Style do
   let(:new_css)                { "#box{ display: none}\n"   }
   let(:compressed_new_css)     { "#box{display:none}\n"   }
 
-  it_should_behave_like "pointer machine", that_produces_css do
+  it_should_behave_like "pointer machine", that_produces: :css do
     let(:machine_card) do
       Card.gimme! "test my style+*style", type: :pointer, content: ""
     end

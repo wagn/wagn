@@ -623,14 +623,22 @@ $act-gray:  #b7b7b7;
   }
 }
 
-.diff-red {
+.deleted-mark {
+  color: $diff-red;
+}
+
+.added-mark {
+  color: $diff-green;
+}
+
+.diff-deleted {
   text-decoration: line-through;
   color: $diff-red;
   img {
     border: 2px solid $diff-red;
   }
 }
-.diff-green {
+.diff-added {
   color: $diff-green;
   img {
     margin: 0px 4px 0px 4px;

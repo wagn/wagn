@@ -179,7 +179,7 @@ module ClassMethods
       Card.new opts
     else
       mark = args[:id] || opts[:name]
-      Card.fetch mark, new: opts
+      Card.fetch mark, look_in_trash: args[:look_in_trash], new: opts
     end
   end
 

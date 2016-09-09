@@ -68,8 +68,14 @@ def silent_change
 end
 
 def silent_change?
-  silent_change.nil? ? !Card::Env[:controller] : silent_change
+  silent_change
 end
+
+event :only_notify_on_web_requests, :initialize,
+      when: proc { !Card::Env[:controller] } do
+  @silent_change = true
+end
+
 
 def notable_change?
   !silent_change? && current_act_card? &&
@@ -82,6 +88,8 @@ end
 
 event :notify_followers_after_save, :integrate_with_delay,
       on: :save, when: proc { |ca| ca.notable_change? } do
+  require "pry"
+  binding.pry
   notify_followers
 end
 

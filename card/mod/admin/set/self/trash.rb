@@ -35,8 +35,8 @@ format :html do
                   { card: :admin, action: :update,
                     task: :empty_trash, success: { id: "~#{card.id}" } },
                   btn_type: :default,
-                  :'data-confirm' => "Are you sure you want to delete all "\
-                                     "cards in the trash"
+                  "data-confirm": "Are you sure you want to delete all "\
+                                  "cards in the trash"
     content_tag :p, button
   end
 

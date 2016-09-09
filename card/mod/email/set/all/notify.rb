@@ -88,8 +88,6 @@ end
 
 event :notify_followers_after_save, :integrate_with_delay,
       on: :save, when: proc { |ca| ca.notable_change? } do
-  require "pry"
-  binding.pry
   notify_followers
 end
 

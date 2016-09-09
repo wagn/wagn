@@ -36,6 +36,14 @@ class Card
         content_diff_object.green?
       end
 
+      def raw_view content=nil
+        original_content = card.db_content
+        card.db_content = content || value(:db_content)
+        card.format.render_raw
+      ensure
+        card.db_content = original_content
+      end
+
       private
 
       def diff_object field, opts
@@ -45,19 +53,10 @@ class Card
       def content_diff_object opts=nil
         @diff ||= begin
           diff_args = opts || card.include_set_modules.diff_args
-          previous = raw_view previous_value(:content), diff_args[:format]
-          current = raw_view value(:content), diff_args[:format]
-
+          previous = raw_view previous_value(:content)
+          current = raw_view
           Card::Content::Diff.new previous, current, diff_args
         end
-      end
-
-      def raw_view content, format=:text
-        original_content = card.db_content
-        card.db_content = content
-        card.format(format).render_raw
-      ensure
-        card.db_content = original_content
       end
     end
   end

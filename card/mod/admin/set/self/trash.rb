@@ -17,7 +17,7 @@ format :html do
       card.name,
       "#{time_ago_in_words(card.updated_at)} ago",
       Card[card.updater_id].name,
-      restore_link(card)
+      "#{history_link(card)} | #{restore_link(card)}"
     ]
   end
 
@@ -40,10 +40,16 @@ format :html do
     content_tag :p, button
   end
 
+  def history_link trashed_card
+    card_link trashed_card, path_opts: { view: :history, look_in_trash: true },
+                            text: "history"
+  end
+
   def restore_link trashed_card
     before_delete = trashed_card.actions[-2]
-    link_path = path action: :update, view: :open, restore: trashed_card.id,
-                     action_ids: [before_delete]
+    link_path = path id: trashed_card.id, look_in_trash: true, action: :update,
+                     view: :open, restore: trashed_card.id,
+                     action_ids: [before_delete], success: { id: "~#{card.id}" }
     link_to "restore", link_path, method: :post, rel: "nofollow",
                                   remote: true, class: "slotter"
   end

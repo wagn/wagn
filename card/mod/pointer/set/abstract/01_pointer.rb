@@ -125,7 +125,7 @@ event :standardize_items, :prepare_to_validate,
 end
 
 def diff_args
-  { format: :text }
+  { format: :pointer }
 end
 
 def item_cards args={}

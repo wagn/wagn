@@ -5,7 +5,7 @@ def clean_html?
 end
 
 def diff_args
-  { format: :raw }
+  { diff_format: :raw }
 end
 
 format do

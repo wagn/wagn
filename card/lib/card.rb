@@ -1,6 +1,4 @@
 # -*- encoding : utf-8 -*-
-cw_path = File.expand_path "../../vendor/carrierwave/lib", __FILE__
-$LOAD_PATH.unshift(cw_path) unless $LOAD_PATH.include?(cw_path)
 require "carrierwave"
 
 # if Cardio.file_buckets.present?

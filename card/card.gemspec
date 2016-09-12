@@ -38,9 +38,7 @@ Gem::Specification.new do |s|
   [
     ["smartname",                  "0.3.1"],
     ["uuid",                       "~> 2.3"],
-    # if carrierwave > 11 is availabe remove carrierwave git submodule and
-    # load it here as gem
-    # ["carrierwave",                "<= 0.11.0"],
+    ["carrierwave",                "1.0.0.beta"],
     ["htmlentities",               "~> 4.3"],
     ["mini_magick",                "~> 4.2"],
     # recaptcha 0.4.0 is last version that doesn't require ruby 2.0

@@ -233,7 +233,7 @@ format :html do
   end
 
   view :act_header do |_args|
-    %(<h5 "class=act-header">#{card_link card}</h5>)
+    %(<h5 class="act-header">#{card_link card}</h5>)
   end
 
   view :act_metadata do |args|
@@ -283,10 +283,9 @@ format :html do
               = glyphicon 'plus-sign', (action.green? ? 'added-mark' : 'diff-invisible')
             = wrap_diff :name, name_diff
             = wrap_diff :type, type_diff
-            -if content_diff
+            -if content_diff && action_view == :summary
               = glyphicon 'arrow-right', 'arrow'
-              -if action_view == :summary
-                = wrap_diff :content, content_diff
+              = wrap_diff :content, content_diff
           -if content_diff and action_view == :expanded
             .expanded
               = wrap_diff :content, content_diff
@@ -326,9 +325,12 @@ format :html do
   end
 
   def content_diff action, action_view, hide_diff
-    action.new_content? && action.card.format.render_content_changes(
-      action: action, diff_type: action_view, hide_diff: hide_diff
-    )
+    diff = action.new_content? &&
+           action.card.format.render_content_changes(
+             action: action, diff_type: action_view, hide_diff: hide_diff
+           )
+    return "<i>empty</i>" unless diff.present?
+    diff
   end
 
   def wrap_diff field, content, extra_class=nil
@@ -412,7 +414,7 @@ format :html do
 end
 
 def diff_args
-  { format: :text }
+  { diff_format: :text }
 end
 
 def has_edits?

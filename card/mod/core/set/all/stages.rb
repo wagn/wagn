@@ -7,10 +7,12 @@ end
 
 def identify_action
   @action =
-    case
-    when trash     then :delete
-    when new_card? then :create
-    else :update
+    if trash && trash_changed?
+      :delete
+    elsif new_card?
+      :create
+    else
+      :update
     end
 end
 

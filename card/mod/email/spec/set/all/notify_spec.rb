@@ -123,7 +123,7 @@ describe Card::Set::All::Notify do
       context "and missing permissions" do
         context "for subcard" do
           before do
-            Card.create_or_update! "#{name}+s1+*self+*read",
+            create_or_update! "#{name}+s1+*self+*read",
                                    type: "Pointer", content: "[[Administrator]]"
           end
           it "excludes subcard content" do
@@ -142,9 +142,9 @@ describe Card::Set::All::Notify do
             ).text_part.body.raw_source
           end
           before do
-            Card.create_or_update! "#{name}+*self+*read",
+            create_or_update! "#{name}+*self+*read",
                                    type: "Pointer", content: "[[Administrator]]"
-            Card.create_or_update! "#{name}+s1+*self+*read",
+            create_or_update! "#{name}+s1+*self+*read",
                                    type: "Pointer", content: "[[Anyone]]"
           end
           it "includes subcard content" do
@@ -157,11 +157,11 @@ describe Card::Set::All::Notify do
         end
         context "for all parts" do
           before do
-            Card.create_or_update! "#{name}+s1+*self+*read",
+            create_or_update! "#{name}+s1+*self+*read",
                                    type: "Pointer", content: "[[Administrator]]"
-            Card.create_or_update! "#{name}+s2+*self+*read",
+            create_or_update! "#{name}+s2+*self+*read",
                                    type: "Pointer", content: "[[Administrator]]"
-            Card.create_or_update! "#{name}+*self+*read",
+            create_or_update! "#{name}+*self+*read",
                                    type: "Pointer", content: "[[Administrator]]"
           end
           it { is_expected.not_to include content }

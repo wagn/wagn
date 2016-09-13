@@ -4,11 +4,31 @@ class Card
     module Inheritance
       # include a set module and all its format modules
       # @param [Module] set
-      # @param [Hash] opts choose the formats you want to include
+      # @param [Hash] opts choose the formats you want to include. You can also
+      #    pass arbitrary options to the included set. The option is saved
+      #    in the including set. To use the option you need a `included` method
+      #    in the included set to fetch the option.
       # @option opts [Symbol, Array<Symbol>] :only include only these formats
       # @option opts [Symbol, Array<Symbol>] :except don't include these formats
-      # #@example
-      # include_set Type::Basic, except: :css
+      # @example
+      #   include_set Type::Basic, except: :css
+      # @example pass an option
+      #   include_set Type::Name, default_name: "Luke"
+      #   default_name           # => "Luke"
+      #
+      #   def introduce_yourself
+      #     puts my_name_is      # => "Luke"
+      #   end
+      #
+      #   # in Type::Name
+      #   def self.included host_class
+      #     host_class.class_eval do
+      #       define_method :my_name_is do |name=nil|
+      #         name || host_class.default_name
+      #       end
+      #     end
+      #   end
+      #
       def include_set set, opts={}
         opts.each do |key, value|
           cattr_accessor key
@@ -25,8 +45,8 @@ class Card
       # @param [Hash] opts choose the formats you want to include
       # @option opts [Symbol, Array<Symbol>] :only include only these formats
       # @option opts [Symbol, Array<Symbol>] :except don't include these formats
-      # #@example
-      # include_set Type::Basic, except: :css
+      # @example
+      #   include_set_formats Type::Basic, except: :css
       def include_set_formats set, opts={}
         each_format set do |format, format_mods|
           format_sym = Card::Format.format_sym format

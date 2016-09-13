@@ -10,6 +10,11 @@ class Card
       # #@example
       # include_set Type::Basic, except: :css
       def include_set set, opts={}
+        opts.each do |key, value|
+          cattr_accessor key
+          self.send "#{key}=", value
+        end
+
         set_type = set.abstract_set? ? :abstract : :nonbase
         add_set_modules Card::Set.modules[set_type][set.shortname]
         include_set_formats set, opts

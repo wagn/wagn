@@ -60,7 +60,8 @@ end
 
 # used for uploads for new cards until the new card is created
 def upload_cache_card
-  @upload_cache_card ||= Card["new_#{attachment_name}".to_sym]
+  @upload_cache_card ||=
+    Card["new_#{attachment_name}".to_sym] || Card[:new_file]
 end
 
 def preliminary_upload?

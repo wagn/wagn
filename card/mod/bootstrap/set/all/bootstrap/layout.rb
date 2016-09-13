@@ -27,22 +27,26 @@ format :html do
   end
 
   def row *args
+    opts, cols, @col_widths = process_row_args args
     @rows ||= "".html_safe
-    opts = args.last.is_a?(Hash) ? args.pop : {}
-    cols = args.last.is_a?(Array) && args.pop
-    raise Error, "bad argument" unless args.all? { |a| a.is_a? Fixnum }
-    total_width = args.inject(0) { |res, a| res += a }
-    raise Error, "column widths must sum up to 12" unless total_width == 12
-    @col_widths = args
-    add_class opts, "row"
     @columns = "".html_safe
     cols ||= yield
-    if cols.is_a? Array
-      cols.each do |col_content|
-        column(col_content)
-      end
-    end
+    cols.each { |col_content| column(col_content) } if cols.is_a? Array
+    add_class opts, "row"
     @rows << content_tag(:div, @columns, opts)
+  end
+
+  def process_row_args args
+    opts = args.last.is_a?(Hash) ? args.pop : {}
+    cols = args.last.is_a?(Array) && args.pop
+    return opts, cols, check_col_widths args
+  end
+
+  def check_col_widths args
+    raise Error, "bad argument" unless args.all? { |a| a.is_a? Fixnum }
+    total_width = args.inject(0) { |a, e| a + e }
+    raise Error, "column widths must sum up to 12" unless total_width == 12
+    args
   end
 
   # default column width type is for medium devices (col-md-)
@@ -52,10 +56,3 @@ format :html do
     @columns << content_tag(:div, content.html_safe, opts)
   end
 end
-
-
-
-  # column-md-xx
-  # column-lg-xx
-  # column-xs-xx
-  # column-xs-visible

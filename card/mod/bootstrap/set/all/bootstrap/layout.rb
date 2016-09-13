@@ -39,7 +39,7 @@ format :html do
   def process_row_args args
     opts = args.last.is_a?(Hash) ? args.pop : {}
     cols = args.last.is_a?(Array) && args.pop
-    return opts, cols, check_col_widths args
+    return opts, cols, check_col_widths(args)
   end
 
   def check_col_widths args

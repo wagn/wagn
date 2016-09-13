@@ -1,16 +1,18 @@
 attr_writer :director
-delegate :stage, to: :director
+delegate :act_manager, to: :director
 
 def director
-  @director ||= Card::DirectorRegister.fetch self
+  @director ||= Card::ActManager.fetch self
 end
 
 def identify_action
   @action =
-    case
-    when trash     then :delete
-    when new_card? then :create
-    else :update
+    if trash && trash_changed?
+      :delete
+    elsif new_card?
+      :create
+    else
+      :update
     end
 end
 

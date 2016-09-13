@@ -21,12 +21,12 @@ class Card
         @simulating_setup_need = mode
       end
 
-      # def instant_account_activation
-      #   simulate_setup_need!
-      #   yield
-      # ensure
-      #   simulate_setup_need! false
-      # end
+      def instant_account_activation
+        simulate_setup_need!
+        yield
+      ensure
+        simulate_setup_need! false
+      end
 
       private
 

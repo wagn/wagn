@@ -36,8 +36,8 @@ Decko::Engine.routes.draw do
   get "account/accept"             => "card#read",   view: "edit", card: { type_code: :signup }
   # use type_code rather than id because in some cases (eg populating test data) routes must get loaded without loading Card
 
-  get "admin/stats"                => "card#read",   id: ":stats"
-  get "admin/:task"                => "card#update", id: ":all"
+  get "admin/stats"                => "card#read",   id: ":admin"
+  get "admin/:task"                => "card#update", id: ":admin"
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   # standard non-RESTful

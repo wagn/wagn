@@ -256,6 +256,9 @@ namespace :wagn do
 
       # FIXME: temporarily taking this out!!
       Rake::Task["wagn:bootstrap:copy_mod_files"].invoke
+      Card[:all, :script].make_machine_output_coded
+      Card[:all, :style].make_machine_output_coded
+      Card[:script_html5shiv_printshiv].make_machine_output_coded
 
       YAML::ENGINE.yamler = "syck" if RUBY_VERSION !~ /^(2|1\.9)/
       # use old engine while we're supporting ruby 1.8.7 because it can't
@@ -296,31 +299,15 @@ namespace :wagn do
             puts "working on #{card.name}"
           end
 
-          raise "need codename for file" unless card.codename.present?
-
-          files = { original: card.attachment.path }
-          card.attachment.versions.each_key do |version|
-            files[version] = card.attachment.path(version)
-          end
-
           # make card a mod file card
           mod_name = if (l = card.left) && l.type_id == Card::SkinID
                        "bootstrap"
                      else
                        "standard"
                      end
-          card.update_column :db_content,
-                             card.attachment.db_content(mod: mod_name)
-          card.last_action.change(:content)
-              .update_column :value, card.attachment.db_content(mod: mod_name)
-          card.expire
-          card = Card.fetch card.name
-
-          target_dir = card.store_dir
-
-          files.each do |version, path|
-            FileUtils.cp path, card.attachment.path(version)
-          end
+          card.update_attributes! storage_type: :coded,
+                                  mod: mod_name,
+                                  empty_ok: true
         end
       end
     end

@@ -21,11 +21,9 @@ def coded_dir new_mod=nil
 end
 
 def mod_dir new_mod=nil
-  Card.paths["mod"].to_a.each do |mod_path|
-    dir = File.join(mod_path, new_mod || mod)
-    return dir if Dir.exist? dir
-  end
-  raise Error, "can't find mod directory for mod \"#{new_mod || mod}\""
+  find_mod = new_mod || mod
+  Card::Mod::Loader.mod_dirs.path(find_mod) ||
+    raise(Error, "can't find mod \"#{find_mod}\"")
 end
 
 def files_base_dir

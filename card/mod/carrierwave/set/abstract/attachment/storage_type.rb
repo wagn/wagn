@@ -2,12 +2,16 @@ attr_writer :bucket, :storage_type
 
 event :storage_type_change, :store,
       on: :update, when: proc { |c| c.storage_type_changed? } do
-  if @new_storage_type == :cloud
-    move_to_cloud
-  else
-    update_storage_attributes
-    write_identifier
-  end
+  # carrierwave stores file if @cache_id is not nil
+  attachment.cache_stored_file!
+  # attachment.retrieve_from_cache!(attachment.cache_name)
+  update_storage_attributes
+  # next line might be necessary to move files to cloud
+
+  # make sure that we get the new identifier
+  # otherwise action_id will return wrong id for new identifier
+  db_content_will_change!
+  write_identifier
 end
 
 event :validate_storage_type, :validate,
@@ -133,6 +137,10 @@ def remote_storage?
   cloud? || web?
 end
 
+def no_upload?
+  storage_type_from_config == :web
+end
+
 def bucket
   @bucket ||= cloud? &&
               ((new_card? && bucket_from_config) || bucket_from_content ||
@@ -145,7 +153,8 @@ end
 
 def load_bucket_config
   return {} unless bucket
-  bucket_config = Cardio.config.file_buckets[bucket.to_sym]
+  bucket_config = Cardio.config.file_buckets &&
+                  Cardio.config.file_buckets[bucket.to_sym]
   bucket_config &&= bucket_config.symbolize_keys
   bucket_config ||= {}
   # we don't want :attributes hash symbolized, so we can't use
@@ -209,7 +218,9 @@ def storage_type
 end
 
 def storage_type_from_config
-  return unless (type = Cardio.config.file_storage)
+  type = ENV["FILE_STORAGE"] || Cardio.config.file_storage
+  return unless type
+  type = type.to_sym
   unless type.in? CarrierWave::FileCardUploader::STORAGE_TYPES
     raise Card::Error,
           I18n.t(:error_invalid_storage_type,
@@ -232,13 +243,6 @@ def storage_type_from_content
       storage_type_from_config
     end
   end
-end
-
-def move_to_cloud
-  old_file = attachment.file
-  update_storage_attributes
-  write_identifier
-  attachment.store! old_file
 end
 
 def update_storage_attributes

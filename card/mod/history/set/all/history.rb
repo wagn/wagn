@@ -62,7 +62,7 @@ event :finalize_act,
 end
 
 def act_card?
-  self == DirectorRegister.act_card
+  self == Card::ActManager.act_card
 end
 
 event :rollback_actions, :prepare_to_validate,
@@ -164,13 +164,17 @@ format :html do
           %span.slotter
             = paginate intr, remote: true, theme: 'twitter-bootstrap-3'
           %div.history-legend
-            %span.glyphicon.glyphicon-plus-sign.diff-green
+            = glyphicon "plus-sign", "added-mark"
             %span
               = Card::Content::Diff.render_added_chunk('Added')
               |
-            %span.glyphicon.glyphicon-minus-sign.diff-red
+            = glyphicon "minus-sign", "deleted-mark"
             %span
-              = Card::Content::Diff.render_deleted_chunk('Deleted')
+              = Card::Content::Diff.render_deleted_chunk('Removed')
+              |
+            = glyphicon "trash", "deleted-mark"
+            %span
+              card deleted
       HAML
     end
   end
@@ -229,7 +233,7 @@ format :html do
   end
 
   view :act_header do |_args|
-    %(<h5 "class=act-header">#{card_link card}</h5>)
+    %(<h5 class="act-header">#{card_link card}</h5>)
   end
 
   view :act_metadata do |args|
@@ -265,7 +269,7 @@ format :html do
   def view_action action_view, args
     action = args[:action] || card.last_action
     hide_diff = args[:hide_diff] || hide_diff?
-
+    return trashed_view(action) if action.action_type == :delete
     render_haml action: action,
                 action_view: action_view,
                 name_diff: name_diff(action, hide_diff),
@@ -275,17 +279,28 @@ format :html do
         .action
           .summary
             %span.ampel
-              = glyphicon 'minus-sign', (action.red? ? 'diff-red' : 'diff-invisible')
-              = glyphicon 'plus-sign', (action.green? ? 'diff-green' : 'diff-invisible')
+              = glyphicon 'minus-sign', (action.red? ? 'deleted-mark' : 'diff-invisible')
+              = glyphicon 'plus-sign', (action.green? ? 'added-mark' : 'diff-invisible')
             = wrap_diff :name, name_diff
             = wrap_diff :type, type_diff
-            -if content_diff
+            -if content_diff && action_view == :summary
               = glyphicon 'arrow-right', 'arrow'
-              -if action_view == :summary
-                = wrap_diff :content, content_diff
+              = wrap_diff :content, content_diff
           -if content_diff and action_view == :expanded
             .expanded
               = wrap_diff :content, content_diff
+      HAML
+    end
+  end
+
+  def trashed_view action
+    render_haml action: action do
+      <<-HAML.strip_heredoc
+        .action
+          .summary
+            %span.ampel
+              = glyphicon 'trash', 'deleted-mark'
+            = wrap_diff :name, action.card.name, ('label label-default' if action.card != card)
       HAML
     end
   end
@@ -310,15 +325,18 @@ format :html do
   end
 
   def content_diff action, action_view, hide_diff
-    action.new_content? && action.card.format.render_content_changes(
-      action: action, diff_type: action_view, hide_diff: hide_diff
-    )
+    diff = action.new_content? &&
+           action.card.format.render_content_changes(
+             action: action, diff_type: action_view, hide_diff: hide_diff
+           )
+    return "<i>empty</i>" unless diff.present?
+    diff
   end
 
-  def wrap_diff field, content
+  def wrap_diff field, content, extra_class=nil
     return "" unless content.present?
     %(
-       <span class="#{field}-diff">
+       <span class="#{field}-diff #{extra_class}">
        #{content}
        </span>
     )
@@ -345,7 +363,7 @@ format :html do
 
   view :content_changes do |args|
     if args[:hide_diff]
-      args[:action].value :db_content
+      args[:action].raw_view
     else
       args[:action].content_diff(args[:diff_type])
     end
@@ -357,7 +375,8 @@ format :html do
       act_seq:     args[:act_seq],
       hide_diff:   args[:hide_diff],
       act_context: args[:act_context],
-      action_view: (args[:action_view] == :expanded ? :summary : :expanded)
+      action_view: (args[:action_view] == :expanded ? :summary : :expanded),
+      look_in_trash: true
     }
     arrow_dir = args[:action_view] == :expanded ? "arrow-down" : "arrow-right"
     view_link "", :act, path_opts: path_opts,
@@ -368,7 +387,8 @@ format :html do
     not_current =
       actions.select { |action| action.card.last_action_id != action.id }
     return unless card.ok?(:update) && not_current.present?
-    link_path = path action: :update, view: :open, action_ids: not_current
+    link_path = path action: :update, view: :open, action_ids: not_current,
+                     look_in_trash: true
     link = link_to(
       "Save as current", link_path,
       class: "slotter", "data-slot-selector" => ".card-slot.history-view",
@@ -384,7 +404,8 @@ format :html do
       act_seq: args[:act_seq],
       hide_diff: !args[:hide_diff],
       action_view: :expanded,
-      act_context: args[:act_context]
+      act_context: args[:act_context],
+      look_in_trash: true
     }
     link = view_link("#{toggle} changes", :act,
                      path_opts: path_opts, class: "slotter", remote: true)
@@ -393,7 +414,7 @@ format :html do
 end
 
 def diff_args
-  { format: :text }
+  { diff_format: :text }
 end
 
 def has_edits?

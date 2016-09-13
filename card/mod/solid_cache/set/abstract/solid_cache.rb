@@ -33,7 +33,7 @@ module ClassMethods
   # cards whose solid caches are expired because of the change.
   # @param set_of_changed_card [set constant] a set of cards that triggers
   #   a cache update
-  # @params args [Hash]
+  # @param args [Hash]
   # @option args [Symbol, Array<Symbol>] :on the action(s)
   #   (:create, :update, or :delete) on which the cache update
   #   should be triggered. Default is all actions.

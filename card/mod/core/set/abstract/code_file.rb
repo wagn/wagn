@@ -1,33 +1,15 @@
 def self.included host_class
   host_class.mattr_accessor :file_content_mod_name
-  host_class.file_content_mod_name = mod_name(caller)
-end
-
-# try to extract the mod name from the path of the set's tmp file
-# the caller that included the set file is set.rb
-def self.mod_name backtrace
-  mod_dir = tmp_mod_dir backtrace
-  raise Error, "not a valid set path: #{path}" unless mod_dir
-  match = mod_dir.match(/^mod\d+-(?<mod_name>.+)$/)
-  match[:mod_name]
-end
-
-def self.tmp_mod_dir backtrace
-  path = backtrace.find { |line| line.include? "tmp/set/" }
-  raise Error, "couldn't find set path in backtrace: #{backtrace}" unless path
-  path_parts = path.split(File::SEPARATOR)
-  path_parts.fetch(path_parts.index("set") + 1) do
-    raise Error, "not a valid set path: #{path}"
-  end
+  host_class.file_content_mod_name = Card::Set.mod_name(caller)
 end
 
 # @return [Array<String>, String] the name of file(s) to be loaded
 def source_files
   case type_id
   when CoffeeScriptID then "#{codename}.js.coffee"
-  when JavaScriptID then "#{codename}.js"
-  when CssID then "#{codename}.css"
-  when ScssID then "#{codename}.scss"
+  when JavaScriptID   then "#{codename}.js"
+  when CssID          then "#{codename}.css"
+  when ScssID         then "#{codename}.scss"
   end
 end
 
@@ -39,12 +21,10 @@ def source_dir
 end
 
 def find_file filename
-  Card.paths["mod"].to_a.each do |mod_path|
-    file_path =
-      File.join(mod_path, file_content_mod_name, "lib", source_dir, filename)
-    return file_path if File.exist? file_path
-  end
-  nil
+  mod_path = Card::Mod::Loader.mod_dirs.path file_content_mod_name
+  file_path = File.join(mod_path, "lib", source_dir, filename)
+  return unless File.exist? file_path
+  file_path
 end
 
 def existing_source_paths

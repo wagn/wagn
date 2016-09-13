@@ -13,11 +13,11 @@ class Card
         end
 
         def render_added_chunk text
-          "<ins class='diffins diff-green'>#{text}</ins>"
+          "<ins class='diffins diff-added'>#{text}</ins>"
         end
 
         def render_deleted_chunk text, _count=true
-          "<del class='diffdel diff-red'>#{text}</del>"
+          "<del class='diffdel diff-deleted'>#{text}</del>"
         end
       end
 
@@ -32,11 +32,10 @@ class Card
       #   :raw     = escape html tags and compare everything
       #
       # summary: {length: <number> , joint: <string> }
-
       def initialize old_version, new_version, opts={}
         @result = Result.new opts[:summary]
         if new_version
-          lcs_opts = lcs_opts_for_format opts[:format]
+          lcs_opts = lcs_opts_for_format opts[:diff_format]
           LCS.new(lcs_opts).run(old_version, new_version, @result)
         end
       end
@@ -51,9 +50,9 @@ class Card
 
       private
 
-      def lcs_opts_for_format format
+      def lcs_opts_for_format diff_format
         opts = {}
-        case format
+        case diff_format
         when :html
           opts[:exclude] = /^</
         when :text

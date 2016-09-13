@@ -6,14 +6,13 @@ if use_i18_tasks
   require "i18n/tasks"
 end
 
-# Note: I18n::Tasks only knows how to function when run from root of Card GEM,
-# since it locates its configuration file and source to parse relative to this
-
-def card_gem_root
-  Pathname(__FILE__).parent.parent.parent.parent.to_s
-end
-
 RSpec.describe "I18n" do
+  # Note: I18n::Tasks only knows how to function when run from root of Card GEM,
+  # since it locates its configuration file and source to parse relative to this
+  def card_gem_root
+    Pathname(__FILE__).parent.parent.parent.parent.to_s
+  end
+
   if use_i18_tasks
     let(:i18n) { Dir.chdir(card_gem_root) { I18n::Tasks::BaseTask.new } }
     let(:missing_keys) { Dir.chdir(card_gem_root) { i18n.missing_keys } }

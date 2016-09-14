@@ -51,11 +51,11 @@ format :html do
     stats = [
       { title: "solid cache",
         count: solid_cache_count, unit: " cards",
-        link_text: "clear cache",
+        link_text: "clear solid cache",
         task: "clear_solid_cache" },
       { title: "machine cache",
         count: machine_cache_count, unit: " cards",
-        link_text: "clear cache",
+        link_text: "clear machine cache",
         task: "clear_machine_cache" }
     ]
     return stats unless Card.config.view_cache

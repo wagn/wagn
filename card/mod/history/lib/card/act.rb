@@ -53,16 +53,17 @@ class Card
       # all actions that current user has permission to view
       # @return [Array of Actions]
       def all_viewable
-        joins = "JOIN card_actions ON card_acts.id = card_act_id " \
-                "JOIN cards ON cards.id = card_actions.card_id"
-        where = [
-          "card_actions.id is not null", # data check. should not be needed
-          "cards.id is not null",    # ditto
+        card_join = "JOIN cards ON cards.id = card_actions.card_id"
+        action_conditions = [
+          "card_acts.id = card_act_id",
+          "card_actions.card_id is not null",
           "draft is not true",
-          Card::Query::SqlStatement.new.permission_conditions("cards")
+          Query::SqlStatement.new.permission_conditions("cards")
         ].compact.join " AND "
 
-        joins(joins).where(where).uniq
+        viewable_actions =
+          Action.joins(card_join).where(action_conditions).to_sql
+        where("card_id is not null AND EXISTS (#{viewable_actions})")
       end
     end
 

@@ -5,10 +5,11 @@ describe Card::Set::Abstract::SolidCache do
       @card = Card["A"]
     end
 
-    let(:core_view) { 'Alpha <a class="known-card" href="/Z">Z</a>' }
+    # let(:core_view) { 'Alpha <a class="known-card" href="/Z">Z</a>' }
+    let(:core_view) { 'Alpha Z[/Z]' }
     context "with solid cache" do
       it "saves core view in solid cache card" do
-        @card.format_with_abstract_set(Card::Set::Abstract::SolidCache, nil, &:render_core)
+        @card.format_with_set(Card::Set::Abstract::SolidCache, &:render_core)
         Card::Auth.as_bot do
           expect(Card["A", :solid_cache]).to be_instance_of(Card)
           expect(Card["A", :solid_cache].content).to eq(core_view)

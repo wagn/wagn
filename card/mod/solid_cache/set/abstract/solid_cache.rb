@@ -11,8 +11,7 @@
 card_accessor :solid_cache, type: :html
 
 def self.included host_class
-  set_class = host_class.is_a?(Card::Set) ? host_class : self
-  set_class.format(set_class.try(:cached_format)) do
+  host_class.format(host_class.try(:cached_format) || :base) do
     view :core do |args|
       return super(args) unless args[:solid_cache]
       card.update_solid_cache if card.solid_cache_card.new?
@@ -26,7 +25,6 @@ format do
     args[:solid_cache] = true unless args.key?(:solid_cache)
   end
 end
-
 
 module ClassMethods
   # If a card of the set given by 'set_of_changed_card' is changed
@@ -100,7 +98,8 @@ def update_solid_cache changed_card=nil
 end
 
 def generate_content_for_cache changed_card=nil
-  format(try(:cached_format))._render_core(solid_cache: false,
+  format_type = try(:cached_format) || :base
+  format(format_type)._render_core(solid_cache: false,
                                      changed_card: changed_card)
 end
 

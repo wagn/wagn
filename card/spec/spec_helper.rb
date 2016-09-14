@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require File.expand_path("../../spec/spec_loader.rb", __FILE__)
+require File.expand_path("../support/spec_loader.rb", __FILE__)
 SpecLoader.init
 
 require "rr"

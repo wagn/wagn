@@ -11,7 +11,8 @@
 card_accessor :solid_cache, type: :html
 
 def self.included host_class
-  host_class.format(host_class.try(:cached_format)) do
+  set_class = host_class.is_a?(Card::Set) ? host_class : self
+  set_class.format(set_class.try(:cached_format)) do
     view :core do |args|
       return super(args) unless args[:solid_cache]
       card.update_solid_cache if card.solid_cache_card.new?
@@ -99,7 +100,7 @@ def update_solid_cache changed_card=nil
 end
 
 def generate_content_for_cache changed_card=nil
-  format(cached_format)._render_core(solid_cache: false,
+  format(try(:cached_format))._render_core(solid_cache: false,
                                      changed_card: changed_card)
 end
 

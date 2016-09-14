@@ -1,4 +1,13 @@
 class Card
+  # def format_with_set set, format_type=:html
+  #   singleton_class.send :include, set
+  #   format = format format_type
+  #   format_class = Card::Format.format_class_name format_type
+  #   format.singleton_class.send :include, set.const_get(format_class)
+  #   yield(format)
+  # end
+
+
   module SpecHelper
     # to be included in Card
     module CardHelper
@@ -52,14 +61,6 @@ class Card
       def suppress_name_error
         yield
       rescue NameError
-      end
-
-      def format_with_set set, format_type=:html
-        singleton_class.send :include, set
-        format = format format_type
-        format_class = Card::Format.format_class_name format_type
-        format.singleton_class.send :include, set.const_get(format_class)
-        yield(format)
       end
     end
   end

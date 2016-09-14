@@ -21,6 +21,8 @@ class Card
             c
           end
         end
+
+        cattr_accessor :rspec_binding
       end
 
       def putty args={}
@@ -32,8 +34,6 @@ class Card
           end
         end
       end
-
-      cattr_accessor :rspec_binding
 
       # rubocop:disable Lint/Eval
       def method_missing m, *args, &block

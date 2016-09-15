@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 describe Card::Migration::Import do
   def meta_data
     path = Card::Migration::Import::ImportData::DEFAULT_PATH

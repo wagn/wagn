@@ -1,5 +1,4 @@
-class Card
-  class SpecLoader
+  class CardSpecLoader
     class << self
       def init
         require "spork"
@@ -20,8 +19,9 @@ class Card
           else
             require File.expand_path("../../config/environment", __FILE__)
           end
+          @@joe_user_id = Card["joe_user"].id
           load_shared_examples
-
+          require File.expand_path("../simplecov_helper.rb", __FILE__)
           yield if block_given?
         end
       end
@@ -41,6 +41,7 @@ class Card
         #    require f
         #  end
 
+        #@joe_user_id = Card["joe_user"].id
         RSpec.configure do |config|
           config.include RSpec::Rails::Matchers::RoutingMatchers,
                          file_path: %r{\bspec/controllers/}
@@ -63,7 +64,7 @@ class Card
 
           config.before(:each) do
             Delayed::Worker.delay_jobs = false
-            Card::Auth.current_id = JOE_USER_ID
+            Card::Auth.current_id = @@joe_user_id
             Card::Cache.restore
             Card::Env.reset
           end
@@ -83,4 +84,3 @@ class Card
       end
     end
   end
-end

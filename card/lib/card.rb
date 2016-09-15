@@ -8,7 +8,7 @@ require "carrierwave"
 #   end
 # end
 
-Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
+Object.const_remove_if_defined :Card
 
 # Cards are wiki-inspired building blocks.
 #

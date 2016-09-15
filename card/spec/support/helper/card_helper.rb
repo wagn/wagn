@@ -65,26 +65,20 @@ class Card
 
       def set_format_class set, format_type
         format_class = Card::Format.format_class_name format_type
-        set.const_get(format_class)
+        set.const_get format_class
       end
 
       def include_set_in_test_set set
-        if Object.send(:const_defined?, "Card::Set::All::TestSet")
-          Object.send :remove_const, Card::Set::Self::TestSet
-        end
+        ::Card::Set::Self.const_remove_if_defined :TestSet
         eval <<-RUBY
-          class ::Card
-            module Set
-              class Self
-                module TestSet
-                  extend Card::Set
-                  include_set #{set}
-                end
-              end
+          class ::Card::Set::Self
+            module TestSet
+              extend Card::Set
+              include_set #{set}
             end
           end
         RUBY
-        Card::Set::Self::TestSet
+        ::Card::Set::Self::TestSet
       end
     end
   end

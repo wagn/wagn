@@ -100,10 +100,10 @@ end
 def generate_content_for_cache changed_card=nil
   format_type = try(:cached_format) || :base
   format(format_type)._render_core(solid_cache: false,
-                                     changed_card: changed_card)
+                                   changed_card: changed_card)
 end
 
-def updated_content_for_cache changed_card=nil
+def updated_content_for_cache _changed_card=nil
   generate_content_for_cache
 end
 

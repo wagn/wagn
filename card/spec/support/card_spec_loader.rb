@@ -25,10 +25,8 @@ class CardSpecLoader
     end
 
     def each_run
-
-        # This code will be run each time you run your specs.
-        yield if block_given?
-      end
+      # This code will be run each time you run your specs.
+      yield if block_given?
     end
 
     def rspec_config

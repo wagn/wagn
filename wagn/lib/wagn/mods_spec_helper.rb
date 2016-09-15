@@ -2,10 +2,20 @@
 # require 'codeclimate-test-reporter'
 # CodeClimate::TestReporter.start
 
-require File.expand_path "../../../../card/spec/spec_loader.rb", __FILE__
-SpecLoader.init
+def locate_gem name
+  spec = Bundler.load.specs.find{|s| s.name == name }
+  unless spec
+    raise GemNotFound, "Could not find gem '#{name}' in the current bundle."
+  end
+  return File.expand_path('../../../', __FILE__) if spec.name == 'bundler'
+  spec.full_gem_path
+end
 
-SpecLoader.prefork do
+require File.join locate_gem("card"), "/spec/support/card_spec_loader.rb"
+
+Card::SpecLoader.init
+
+Card::SpecLoader.prefork do
   require File.join Cardio.gem_root, "config", "simplecov_helper.rb"
   if defined?(Bundler)
     Bundler.require(:test)   # if simplecov is activated in the Gemfile, it has to be required here
@@ -13,11 +23,13 @@ SpecLoader.prefork do
 
   #  FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   JOE_USER_ID = Card["joe_user"].id
-  SpecLoader.rspec_config
+  Card::SpecLoader.rspec_config
 end
 
-Spork.each_run do
+Card::SpecLoader.each_run do
   # This code will be run each time you run your specs.
 end
 
-SpecLoader.card_helper
+Card::SpecLoader.helper
+
+

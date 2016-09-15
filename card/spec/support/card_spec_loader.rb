@@ -25,8 +25,9 @@ class CardSpecLoader
     end
 
     def each_run
-      Spork.each_run do
+
         # This code will be run each time you run your specs.
+        yield if block_given?
       end
     end
 

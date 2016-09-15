@@ -48,17 +48,14 @@ class Card
     end
 
     def bucket_credentials key
-      @buckets ||= begin
-        yml_file =
-          ENV["BUCKET_CREDENTIALS_PATH"] ||
-          File.expand_path("../config/bucket_credentials.yml", __FILE__)
-        if File.exist?(yml_file)
-          YAML.load_file(yml_file).deep_symbolize_keys
-        else
-          {}
-        end
-      end
+      @buckets ||= bucket_credentials_from_yml_file || {}
       @buckets[key]
+    end
+
+    def bucket_credentials_from_yml_file
+      yml_file = ENV["BUCKET_CREDENTIALS_PATH"] ||
+                 File.expand_path("../bucket_credentials.yml", __FILE__)
+      File.exist?(yml_file) && YAML.load_file(yml_file).deep_symbolize_keys
     end
   end
 end

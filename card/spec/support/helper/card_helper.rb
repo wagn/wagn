@@ -69,6 +69,7 @@ class Card
       end
 
       def include_set_in_test_set set
+        # rubocop:disable Lint/Eval
         ::Card::Set::Self.const_remove_if_defined :TestSet
         eval <<-RUBY
           class ::Card::Set::Self
@@ -79,6 +80,7 @@ class Card
           end
         RUBY
         ::Card::Set::Self::TestSet
+        # rubocop:enable Lint/Eval
       end
     end
   end

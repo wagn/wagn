@@ -3,7 +3,7 @@ require_dependency "card/content/diff/processor"
 class Card
   class Content
     class Diff
-      # Use LCS algorithm to create a Diff::Result
+      # Use LCS algorithm to create a {Diff::Result}
       class LCS
         def initialize opts
           # regex; remove matches completely from diff

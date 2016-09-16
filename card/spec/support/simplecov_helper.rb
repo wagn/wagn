@@ -1,20 +1,30 @@
+def is_in_mod? file, mod_path
+  mod_msg = "below pulled from #{Rails.root}/mod/#{mod_path}/"
+  file.src.join("") =~ /#{mod_msg}/
+end
+
 def card_simplecov_filters
   add_filter "spec/"
   add_filter "/config/"
   add_filter "/tasks/"
-
   # filter all card mods
   add_filter do |src_file|
-    src_file.filename =~ /tmp\// && !/\d+-(.+\.rb)/.match(src_file.filename) { |m| Dir["mod/**/#{m[1]}"].present? }
+    src_file.filename =~ /tmp\// && !/\d+-(.+\.rb)/.match(src_file.filename) do |m|
+      Dir["mod/**/#{m[1].tr('-', '/').sub('/', '/set/')}"].present?
+    end
   end
-
   # add group for each deck mod
   Dir["mod/*"].map { |path| path.sub("mod/", "") }.each do |mod|
     add_group mod.capitalize do |src_file|
       src_file.filename =~ /mod\/#{mod}\// ||
         (
           src_file.filename =~ /tmp\// &&
-          /\d+-(.+\.rb)/.match(src_file.filename) { |m| Dir["mod/#{mod}/**/#{m[1]}"].present? }
+          (match = /\d+-(.+\.rb)/.match(src_file.filename) do |m|
+            # '/set' is not in the path anymore after some updates
+            # but `set` exists in the path of the source files
+            Dir["mod/**/#{m[1].tr('-', '/').sub('/', '/set/')}"].present?
+          end) &&
+          is_in_mod?(src_file, mod)
         )
     end
   end
@@ -38,7 +48,7 @@ end
 def card_core_dev_simplecov_filters
   filters.clear # This will remove the :root_filter that comes via simplecov's defaults
   add_filter do |src|
-    !(src.filename =~ /^#{SimpleCov.root}/) unless src.filename =~ /wagn/
+    !(src.filename =~ /^#{SimpleCov.root}/) unless src.filename =~ /card|wagn/
   end
 
   add_filter "/spec/"

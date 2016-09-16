@@ -117,7 +117,7 @@ class Card
       # @option queue [Symbol] (:default) the name of the queue
       def define_active_job name, final_method, queue=:integrate_with_delay
         class_name = name.to_s.camelize
-        define_active_job_class class_name, queue || :integrate_with_delay
+        define_active_job_class class_name, (queue || :integrate_with_delay)
         define_active_job_perform_method class_name, final_method
       end
 

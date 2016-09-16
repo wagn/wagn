@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 describe Hash do
   describe "new_nested" do
     it "creates nested hashes" do

@@ -7,6 +7,10 @@ module CoreExtensions
       const_get(*args) if const_defined?(*args)
     end
 
+    def const_remove_if_defined const
+      remove_const const if const_defined? const
+    end
+
     def const_get_or_set const
       const_get_if_defined(const) || const_set(const, yield)
     end

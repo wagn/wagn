@@ -170,6 +170,9 @@ def ensure_bucket_config
   unless config.present?
     raise Card::Error, "couldn't find configuration for bucket #{bucket}"
   end
+  unless config[:credentials]
+    raise Card::Error, "couldn't find credentials for bucket #{bucket}"
+  end
   config
 end
 

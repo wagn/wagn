@@ -87,7 +87,10 @@ else
     rspec_args.shift
     opts = {}
     Wagn::Parser.rspec(opts).parse!(wagn_args)
-
+    # no coverage if rspec was started with file argument
+    if (opts[:files] || rspec_args.present?) && !opts[:simplecov]
+      opts[:simplecov] = "COVERAGE=false"
+    end
     rspec_command =
       "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} " \
       " #{opts[:rescue]} rspec #{rspec_args.shelljoin} #{opts[:files]} "\

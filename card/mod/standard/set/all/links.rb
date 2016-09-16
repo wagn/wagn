@@ -93,27 +93,74 @@ format do
   end
 
   def path opts={}
-    if opts[:action] == :new && opts[:type] &&
-       !(opts[:name] || opts[:card] || opts[:id])
-      opts.delete(:action)
-      base = "new/#{opts.delete(:type)}"
+    base = new_cardtype_path(opts) || standard_path(opts)
+    query = path_query(opts)
+    internal_url base + query
+  end
+
+  def new_cardtype_path opts
+    return unless opts[:action] == :new
+    opts.delete :action
+    return unless opts[:type] && !opts[:name] && !opts[:card] && !opts[:id]
+    "new/#{opts.delete :type}"
+  end
+
+  def standard_path opts
+    standardize_action! opts
+    path_action = case opts[:action]
+                  when :create then "card/#{opts[:action]}/"
+                  # sometimes create action has no mark,
+                  # but /create refers to a card named "create"
+                  when nil     then ""
+                  else              "#{opts[:action]}/"
+                  end
+    path_action + path_mark(opts)
+  end
+
+  def standardize_action! opts
+    return if [:create, :update, :delete].member? opts[:action]
+    opts.delete :action
+  end
+
+  def path_mark opts
+    if (id = opts.delete :id) && id.present? && !opts.delete(:no_id)
+      "~#{id}"
     else
-      name = opts.delete(:name) || card.name
-      base = opts[:action] ? "card/#{opts.delete :action}/" : ""
-
-      opts[:no_id] = true if [:new, :create].member? opts[:action]
-      # generalize. dislike hardcoding views/actions here
-
-      linkname = name.to_name.url_key
-      unless name.empty? || opts.delete(:no_id)
-        base += (opts[:id] ? "~#{opts.delete :id}" : linkname)
-      end
-
-      process_path_card_opts opts, name, linkname
+      (opts[:name] || card.name).to_name.url_key
     end
+  end
 
-    query = opts.empty? ? "" : "?#{opts.to_param}"
-    internal_url(base + query)
+  def path_query opts
+    card_opts = opts.delete(:card) || {}
+    if opts.delete :action
+      assign_path_card_opt :name
+      assign_path_card_opt :type
+    end
+    opts[:card] = card_opts unless card_opts.empty?
+    opts.empty? ? "" : "?#{opts.to_param}"
+  end
+
+  def assign_path_card_opt card_opts, field, opts
+    return if card_opts[field]
+    return unless (new_value = send "new_#{field}_in_path", opts)
+    card_opts[field] = new_value
+  end
+
+  def new_name_in_path action, opts
+    optname = opts.delete :name
+    name = optname || card.name
+    case action
+    when :create
+      linkname = name.to_name.url_key
+      name if name != linkname
+    when :update
+      optname if optname != name
+    end
+  end
+
+  def new_type_in_path_opts opts
+    type = opts.delete(:type)
+    return type if type && Card.known?(type)
   end
 
   def internal_url relative_path
@@ -123,31 +170,18 @@ format do
   def interpret_href href
     href.is_a?(Hash) ? path(href) : href
   end
-
-  def process_path_card_opts opts, name, linkname
-    opts[:card] ||= {}
-    if opts.delete(:known) == false && name.present? && name.to_s != linkname
-      opts[:card][:name] = name
-    end
-
-    if (type = opts.delete(:type)) && Card.known?(type)
-      opts[:card][:type] = type
-    end
-    opts.delete(:card) if opts[:card].empty?
-  end
 end
 
 format :html do
   def link_to text, href, opts={}
-    href = interpret_href href
+    opts[:href] = interpret_href href
 
     [:remote, :method].each do |key|
-      if (val = opts.delete(key))
-        opts["data-#{key}"] = val
-      end
+      next unless (val = opts.delete key)
+      opts["data-#{key}"] = val
     end
 
-    content_tag :a, raw(text), opts.merge(href: href)
+    content_tag :a, raw(text), opts
   end
 end
 

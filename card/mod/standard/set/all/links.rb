@@ -47,8 +47,6 @@ format do
     link_to text, href, opts
   end
 
-
-
   # link to a specific card
   def card_link name_or_card, opts={}
     name = Card::Name.cardish name_or_card

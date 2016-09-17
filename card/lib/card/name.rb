@@ -11,7 +11,7 @@ class Card
     self.session = proc { Card::Auth.current.name }
     self.banned_array = ["/"]
 
-    def try_convert name_or_card
+    def self.cardish name_or_card
       case name_or_card
       when Symbol then Card.fetch(name_or_card, skip_modules: true).cardname
       when Card   then name_or_card.cardname

@@ -49,7 +49,7 @@ format do
 
   # link to a specific card
   def card_link name_or_card, opts={}
-    name = Card::Name.try_convert name_or_card
+    name = Card::Name.cardish name_or_card
     text = (opts.delete(:text) || name).to_name.to_show @context_names
 
     path_opts = opts.delete(:path_opts) || {}
@@ -71,7 +71,7 @@ format do
   end
 
   def related_link name_or_card, opts={}
-    name = Card::Name.try_convert name_or_card
+    name = Card::Name.cardish name_or_card
     opts[:path_opts] ||= { view: :related }
     opts[:path_opts][:related] = { name: "+#{name}" }
     opts[:path_opts][:related].merge! opts[:related_opts] if opts[:related_opts]
@@ -127,7 +127,8 @@ format do
   end
 
   def path_id opts
-    id if (id = opts.delete :id) && id.present?
+    id = opts.delete :id
+    id if id.present?
   end
 
   def path_query opts
@@ -183,7 +184,7 @@ format :html do
   end
 
   def data_option_for_link_to key, opts
-    next unless (val = opts.delete key)
+    return unless (val = opts.delete key)
     opts["data-#{key}"] = val
   end
 end

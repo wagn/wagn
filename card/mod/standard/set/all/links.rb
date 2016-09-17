@@ -36,15 +36,12 @@ format do
       when /^https?\:/
         opts[:target] = "_blank"
         "external-link"
-      when /^mailto\:/
-        "email-link"
-      when /^([a-zA-Z][\-+\.a-zA-Z\d]*):/
-        Regexp.last_match(1) + "-link"
       when %r{^/}
         href = internal_url href[1..-1]
         "internal-link"
-      else
-        return card_link href, opts
+      when /^mailto\:/                    then "email-link"
+      when /^([a-zA-Z][\-+\.a-zA-Z\d]*):/ then Regexp.last_match(1) + "-link"
+      else                                return card_link href, opts
       end
     add_class opts, new_class
     link_to text, href, opts
@@ -52,19 +49,13 @@ format do
 
   # link to a specific card
   def card_link name_or_card, opts={}
-    name =
-      case name_or_card
-      when Symbol then Card.fetch(name_or_card, skip_modules: true).cardname
-      when Card   then name_or_card.cardname
-      else             name_or_card
-      end
+    name = Card::Name.try_convert name_or_card
     text = (opts.delete(:text) || name).to_name.to_show @context_names
 
     path_opts = opts.delete(:path_opts) || {}
     path_opts[:name] = name
-    path_opts[:known] =
-      opts[:known].nil? ? Card.known?(name) : opts.delete(:known)
-    add_class opts, (path_opts[:known] ? "known-card" : "wanted-card")
+    known = opts[:known].nil? ? Card.known?(name) : opts.delete(:known)
+    add_class opts, (known ? "known-card" : "wanted-card")
     link_to text, path_opts, opts
   end
 
@@ -80,20 +71,22 @@ format do
   end
 
   def related_link name_or_card, opts={}
-    name =
-      case name_or_card
-      when Symbol then Card.fetch(name_or_card, skip_modules: true).cardname
-      when Card   then name_or_card.cardname
-      else             name_or_card
-      end
+    name = Card::Name.try_convert name_or_card
     opts[:path_opts] ||= { view: :related }
     opts[:path_opts][:related] = { name: "+#{name}" }
     opts[:path_opts][:related].merge! opts[:related_opts] if opts[:related_opts]
     view_link(opts[:text] || name, :related, opts)
   end
 
-  def path opts={}
-    base = new_cardtype_path(opts) || standard_path(opts)
+  # @param opts [Hash]
+  # @param mark_type [Symbol] defaults to :id
+  # @option opts [Symbol] :action card action (:create, :update, :delete)
+  # @option opts [Integer, String] :id
+  # @option opts [String, Card::Name] :name
+  # @option opts [String] :type
+  # @option opts [Hash] :card
+  def path opts={}, mark_type=:id
+    base = new_cardtype_path(opts) || standard_path(opts, mark_type)
     query = path_query(opts)
     internal_url base + query
   end
@@ -105,16 +98,19 @@ format do
     "new/#{opts.delete :type}"
   end
 
-  def standard_path opts
+  def standard_path opts, mark_type
     standardize_action! opts
-    path_action = case opts[:action]
-                  when :create then "card/#{opts[:action]}/"
-                  # sometimes create action has no mark,
-                  # but /create refers to a card named "create"
-                  when nil     then ""
-                  else              "#{opts[:action]}/"
-                  end
-    path_action + path_mark(opts)
+    path_action(opts[:action]) + path_mark(opts, mark_type)
+  end
+
+  def path_action action
+    case action
+    when :create then "card/#{action}/"
+    # sometimes create action has no mark,
+    # but /create refers to a card named "create"
+    when nil     then ""
+    else              "#{action}/"
+    end
   end
 
   def standardize_action! opts
@@ -122,45 +118,51 @@ format do
     opts.delete :action
   end
 
-  def path_mark opts
-    if (id = opts.delete :id) && id.present? && !opts.delete(:no_id)
-      "~#{id}"
-    else
-      (opts[:name] || card.name).to_name.url_key
+  def path_mark opts, mark_type
+    case mark_type
+    when :id       && (id = path_id opts)        then "~#{id}"
+    when :codename && (codename = card.codename) then ":#{codename}"
+    else (opts[:name] || card.name).to_name.url_key
     end
+  end
+
+  def path_id opts
+    id if (id = opts.delete :id) && id.present?
   end
 
   def path_query opts
-    card_opts = opts.delete(:card) || {}
-    if opts.delete :action
-      assign_path_card_opt card_opts, :name, opts
-      assign_path_card_opt card_opts, :type, opts
-    end
-    opts[:card] = card_opts unless card_opts.empty?
+    finalize_card_opts opts.delete(:card), opts
+    opts.delete :action
     opts.empty? ? "" : "?#{opts.to_param}"
   end
 
+  def finalize_card_opts card_opts, opts
+    card_opts ||= {}
+    [:name, :type].each do |field|
+      assign_path_card_opt card_opts, field, opts
+    end
+    opts[:card] = card_opts unless card_opts.empty?
+  end
+
   def assign_path_card_opt card_opts, field, opts
+    optvalue = opts.delete field
     return if card_opts[field]
-    return unless (new_value = send "new_#{field}_in_path", opts)
+    new_value = send "new_#{field}_in_path_opts", optvalue, opts
+    return unless new_value
     card_opts[field] = new_value
   end
 
-  def new_name_in_path action, opts
-    optname = opts.delete :name
-    name = optname || card.name
-    case action
-    when :create
-      linkname = name.to_name.url_key
-      name if name != linkname
-    when :update
+  def new_name_in_path_opts optname, opts
+    name = (optname || card.name).to_s
+    if opts[:action] == :update
       optname if optname != name
+    elsif name != name.to_name.url_key
+      name
     end
   end
 
-  def new_type_in_path_opts opts
-    type = opts.delete(:type)
-    return type if type && Card.known?(type)
+  def new_type_in_path_opts opttype, _opts
+    opttype if opttype && Card.known?(opttype)
   end
 
   def internal_url relative_path
@@ -175,13 +177,14 @@ end
 format :html do
   def link_to text, href, opts={}
     opts[:href] = interpret_href href
-
-    [:remote, :method].each do |key|
-      next unless (val = opts.delete key)
-      opts["data-#{key}"] = val
-    end
-
+    data_option_for_link_to :remote, opts
+    data_option_for_link_to :method, opts
     content_tag :a, raw(text), opts
+  end
+
+  def data_option_for_link_to key, opts
+    next unless (val = opts.delete key)
+    opts["data-#{key}"] = val
   end
 end
 

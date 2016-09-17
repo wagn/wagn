@@ -115,7 +115,7 @@ format :html do
   view :edit_rule, tags: :unknown_ok do |args|
     return "not a rule" unless card.is_rule?
     form_args = {
-      url: path(action: :update, no_id: true),
+      url: path(action: :update, mark_type: :name),
       html: { class: "card-form card-rule-form" }
     }
     if args[:remote]

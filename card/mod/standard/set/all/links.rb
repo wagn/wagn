@@ -1,8 +1,8 @@
 format do
   # link is called by web_link, card_link, and view_link
   # (and is overridden in other formats)
-  def link_to text, href, _opts={}
-    href = interpret_href href
+  def link_to text, pathish, _opts={}
+    href = interpret_pathish pathish
 
     if text && href != text
       "#{text}[#{href}]"
@@ -47,6 +47,8 @@ format do
     link_to text, href, opts
   end
 
+
+
   # link to a specific card
   def card_link name_or_card, opts={}
     name = Card::Name.cardish name_or_card
@@ -79,12 +81,12 @@ format do
   end
 
   # @param opts [Hash]
-  # @param mark_type [Symbol] defaults to :id
   # @option opts [Symbol] :action card action (:create, :update, :delete)
   # @option opts [Integer, String] :id
   # @option opts [String, Card::Name] :name
   # @option opts [String] :type
   # @option opts [Hash] :card
+  # @param mark_type [Symbol] defaults to :id
   def path opts={}, mark_type=:id
     base = new_cardtype_path(opts) || standard_path(opts, mark_type)
     query = path_query(opts)
@@ -170,14 +172,14 @@ format do
     card_path relative_path
   end
 
-  def interpret_href href
-    href.is_a?(Hash) ? path(href) : href
+  def interpret_pathish pathish
+    pathish.is_a?(Hash) ? path(pathish) : pathish
   end
 end
 
 format :html do
   def link_to text, href, opts={}
-    opts[:href] = interpret_href href
+    opts[:href] = interpret_pathish href
     data_option_for_link_to :remote, opts
     data_option_for_link_to :method, opts
     content_tag :a, raw(text), opts
@@ -191,6 +193,6 @@ end
 
 format :css do
   def link_to _text, href, _opts={}
-    card_url interpret_href(href)
+    card_url interpret_pathish(href)
   end
 end

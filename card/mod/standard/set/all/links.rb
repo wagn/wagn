@@ -133,8 +133,8 @@ format do
   def path_query opts
     card_opts = opts.delete(:card) || {}
     if opts.delete :action
-      assign_path_card_opt :name
-      assign_path_card_opt :type
+      assign_path_card_opt card_opts, :name, opts
+      assign_path_card_opt card_opts, :type, opts
     end
     opts[:card] = card_opts unless card_opts.empty?
     opts.empty? ? "" : "?#{opts.to_param}"

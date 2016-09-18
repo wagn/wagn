@@ -1,3 +1,5 @@
+RESOURCE_TYPE_REGEXP = /^([a-zA-Z][\-+\.a-zA-Z\d]*):/
+
 format do
   # link is called by web_link, card_link, and view_link
   # (and is overridden in other formats)
@@ -10,6 +12,15 @@ format do
       href
     end
   end
+
+  link_to pathish, text, _opts={}
+  link_to_card cardish
+  link_to_view view, text,
+  link_to_related
+  link_to_resource resource, text,
+
+
+  text, path_opts
 
   # link to url, view, card or related card
   def smart_link link_text, target, html_args={}
@@ -40,16 +51,38 @@ format do
         href = internal_url href[1..-1]
         "internal-link"
       when /^mailto\:/                    then "email-link"
-      when /^([a-zA-Z][\-+\.a-zA-Z\d]*):/ then Regexp.last_match(1) + "-link"
+      when  then Regexp.last_match(1) + "-link"
       else                                return card_link href, opts
       end
     add_class opts, new_class
     link_to text, href, opts
   end
 
+
+
+  def link_to_resource resource, text, opts={}
+    text ||= resource
+    resource_type = resource_type resource
+    case (resource_type = resource_type resource)
+    when "external-link" then opts[:target] = "_blank"
+    when "internal-link" then resource = internal_url resource[1..-1]
+    end
+    add_class opts, resource_type
+    link_to text, resource, opts
+  end
+
+  def resource_type resource
+    case resource
+    when /^https?\:/          then "external-link"
+    when %r{^/}               then "internal-link"
+    when /^mailto\:/          then "email-link"
+    when RESOURCE_TYPE_REGEXP then Regexp.last_match(1) + "-link"
+    end
+  end
+
   # link to a specific card
-  def card_link name_or_card, opts={}
-    name = Card::Name.cardish name_or_card
+  def card_link cardish, opts={}
+    name = Card::Name.cardish cardish
     text = (opts.delete(:text) || name).to_name.to_show @context_names
 
     path_opts = opts.delete(:path_opts) || {}
@@ -70,8 +103,8 @@ format do
     link_to text, path_opts, opts
   end
 
-  def related_link name_or_card, opts={}
-    name = Card::Name.cardish name_or_card
+  def related_link cardish, opts={}
+    name = Card::Name.cardish cardish
     opts[:path_opts] ||= { view: :related }
     opts[:path_opts][:related] = { name: "+#{name}" }
     opts[:path_opts][:related].merge! opts[:related_opts] if opts[:related_opts]

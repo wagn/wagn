@@ -153,9 +153,9 @@ format do
     card_opts[field] = new_value
   end
 
-  def new_name_in_path_opts optname, opts
+  def new_name_in_path_opts name, opts
     if opts[:action] == :update
-      optname if optname != name
+      name if name != card.name
     elsif name != name.to_name.url_key
       name
     end

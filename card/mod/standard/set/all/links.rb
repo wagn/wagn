@@ -180,23 +180,22 @@ format do
 
   def assign_path_card_opt card_opts, field, opts
     optvalue = opts.delete field
-    return if card_opts[field]
-    new_value = send "new_#{field}_in_path_opts", optvalue, opts
+    return if card_opts[field] || !optvalue.present?
+    new_value = send "new_#{field}_in_path_opts", optvalue.to_s, opts
     return unless new_value
     card_opts[field] = new_value
   end
 
-  def new_name_in_path_opts optname, opts
-    name = (optname || card.name).to_s
+  def new_name_in_path_opts name, opts
     if opts[:action] == :update
-      optname if optname != name
+      name if name != card.name
     elsif name != name.to_name.url_key
       name
     end
   end
 
   def new_type_in_path_opts opttype, _opts
-    opttype if opttype && Card.known?(opttype)
+    opttype if Card.known?(opttype)
   end
 
   def internal_url relative_path

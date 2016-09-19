@@ -1,6 +1,4 @@
 # -*- encoding : utf-8 -*-
-cw_path = File.expand_path "../../vendor/carrierwave/lib", __FILE__
-$LOAD_PATH.unshift(cw_path) unless $LOAD_PATH.include?(cw_path)
 require "carrierwave"
 
 # if Cardio.file_buckets.present?
@@ -10,7 +8,7 @@ require "carrierwave"
 #   end
 # end
 
-Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
+Object.const_remove_if_defined :Card
 
 # Cards are wiki-inspired building blocks.
 #
@@ -42,8 +40,8 @@ class Card < ActiveRecord::Base
   require_dependency "card/reference"
   require_dependency "card/subcards"
   require_dependency "card/cache/view_cache"
-  require_dependency "card/stage_director"
-  require_dependency "card/director_register"
+  require_dependency "card/act_manager"
+  require_dependency "card/act_manager/stage_director"
 
   has_many :references_in,  class_name: :Reference, foreign_key: :referee_id
   has_many :references_out, class_name: :Reference, foreign_key: :referer_id

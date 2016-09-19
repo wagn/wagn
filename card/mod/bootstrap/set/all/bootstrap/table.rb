@@ -40,7 +40,7 @@ format :html do
     if cell.is_a? Hash
       content_tag :td, cell.delete(:content).to_s.html_safe, cell
     else
-      content_tag :td, cell.html_safe
+      content_tag :td, String(cell).html_safe
     end
   end
 

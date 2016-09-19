@@ -18,7 +18,7 @@ Style/CollectionMethods:
   #   PreferredMethods:
   #     find: detect
   Description: Preferred collection methods.
-  Enabled: true
+  Enabled: false
   PreferredMethods:
     collect: map
     collect!: map!
@@ -48,6 +48,8 @@ Style/StringLiterals:
   EnforcedStyle: double_quotes
 Style/SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
+Style/FrozenStringLiteralComment:
+  Enabled: false
 Metrics/MethodLength:
   Enabled: true
   CountComments: false

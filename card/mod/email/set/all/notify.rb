@@ -68,8 +68,14 @@ def silent_change
 end
 
 def silent_change?
-  silent_change.nil? ? !Card::Env[:controller] : silent_change
+  silent_change
 end
+
+event :only_notify_on_web_requests, :initialize,
+      when: proc { !Card::Env[:controller] } do
+  @silent_change = true
+end
+
 
 def notable_change?
   !silent_change? && current_act_card? &&

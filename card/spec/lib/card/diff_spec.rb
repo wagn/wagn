@@ -5,11 +5,11 @@ require "card/content/diff"
 
 describe Card::Content::Diff do
   def del text
-    "<del class='diffdel diff-red'>#{text}</del>"
+    "<del class='diffdel diff-deleted'>#{text}</del>"
   end
 
   def ins text
-    "<ins class='diffins diff-green'>#{text}</ins>"
+    "<ins class='diffins diff-added'>#{text}</ins>"
   end
 
   def tag text
@@ -64,7 +64,7 @@ describe Card::Content::Diff do
 
   describe "summary" do
     before(:all) do
-      @opts = { format: :html }
+      @opts = { diff_format: :html }
     end
 
     it "omits unchanged text" do
@@ -118,7 +118,7 @@ describe Card::Content::Diff do
     it "removes html tags" do
       a = "<a>A</a>"
       b = "<b>B</b>"
-      expect(summary a, b, format: :html).to eq(
+      expect(summary a, b, diff_format: :html).to eq(
         "#{del 'A'}#{ins 'B'}"
       )
     end
@@ -126,7 +126,7 @@ describe Card::Content::Diff do
     it "with html tags in raw format" do
       a = "<a>1</a>"
       b = "<b>1</b>"
-      expect(summary a, b, format: :raw).to eq(
+      expect(summary a, b, diff_format: :raw).to eq(
         "#{del(tag 'a')}#{ins(tag 'b')}...#{del(tag '/a')}#{ins(tag '/b')}"
       )
     end
@@ -134,7 +134,7 @@ describe Card::Content::Diff do
 
   context "html format" do
     before(:all) do
-      @opts = { format: :html }
+      @opts = { diff_format: :html }
     end
 
     it "doesn't change a text without changes" do
@@ -164,7 +164,7 @@ describe Card::Content::Diff do
 
   context "text format" do
     before(:all) do
-      @opts = { format: :text }
+      @opts = { diff_format: :text }
     end
 
     it "removes html" do
@@ -172,19 +172,19 @@ describe Card::Content::Diff do
     end
 
     it "compares complete links" do
-      diff = Card::Content::Diff.complete("[[A]]\n[[B]]", "[[A]]\n[[C]]", format: :html)
+      diff = Card::Content::Diff.complete("[[A]]\n[[B]]", "[[A]]\n[[C]]", diff_format: :html)
       expect(diff).to eq("[[A]]\n#{del '[[B]]'}#{ins '[[C]]'}")
     end
 
     it "compares complete nests" do
-      diff = Card::Content::Diff.complete("{{A}}\n{{B}}", "{{A}}\n{{C}}", format: :html)
+      diff = Card::Content::Diff.complete("{{A}}\n{{B}}", "{{A}}\n{{C}}", diff_format: :html)
       expect(diff).to eq("{{A}}\n#{del '{{B}}'}#{ins '{{C}}'}")
     end
   end
 
   context "raw format" do
     before(:all) do
-      @opts = { format: :raw }
+      @opts = { diff_format: :raw }
     end
 
     it "excapes html" do
@@ -198,7 +198,7 @@ describe Card::Content::Diff do
 
   context "pointer format" do
     before(:all) do
-      @opts = { format: :pointer }
+      @opts = { diff_format: :pointer }
     end
 
     it "removes square brackets" do

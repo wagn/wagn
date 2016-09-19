@@ -1,4 +1,6 @@
-describe Card::StageDirector do
+# -*- encoding : utf-8 -*-
+
+describe Card::ActManager::StageDirector do
   describe "abortion" do
     let(:create_card) { Card.create name: "a card" }
     let(:create_card_with_subcard) do

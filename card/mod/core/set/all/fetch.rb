@@ -8,21 +8,18 @@ module ClassMethods
   # * database
   # * virtual cards
   #
-  # @param mark [Integer, String, Card::Name, Symbol, Array]
-  #    one of three unique identifiers
-  #    1. a numeric id (Integer)
-  #    2. a name/key (String or Card::Name)
-  #    3. a codename (Symbol)
-  #    or any combination of those. If you pass more then one mark they get
-  #    joined with a '+'
-  # @param options [Hash]
-  #   Options:
-  #     :skip_virtual               Real cards only
-  #     :skip_modules               Don't load Set modules
-  #     :look_in_trash              Return trashed card objects
-  #     :local_only                 Use only local cache for lookup and storing
-  #     new: { opts for Card#new }  Return a new card when not found
-  #
+  # @param args [Integer, String, Card::Name, Symbol]
+  #    one or more of the three unique identifiers
+  #      1. a numeric id (Integer)
+  #      2. a name/key (String or Card::Name)
+  #      3. a codename (Symbol)
+  #    If you pass more then one mark they get joined with a '+'.
+  #    The final argument can be a hash to set the following options
+  #      :skip_virtual               Real cards only
+  #      :skip_modules               Don't load Set modules
+  #      :look_in_trash              Return trashed card objects
+  #      :local_only                 Use only local cache for lookup and storing
+  #      new: { opts for Card#new }  Return a new card when not found
   # @return [Card]
   def fetch *args
     mark, opts = normalize_fetch_args args
@@ -182,7 +179,7 @@ module ClassMethods
       Card.new opts
     else
       mark = args[:id] || opts[:name]
-      Card.fetch mark, new: opts
+      Card.fetch mark, look_in_trash: args[:look_in_trash], new: opts
     end
   end
 

@@ -74,6 +74,7 @@ class Card
     include AdvancedApi
     include Helpers
 
+    extend I18nScope
     extend Loader
 
     mattr_accessor :modules, :traits

@@ -1,6 +1,11 @@
 task :push_gems do
   %w(card wagn).each do |gem|
-    system %(cd #{gem}; rm *.gem; gem build #{gem}.gemspec; gem push #{gem}-#{version}.gem)
+    system %(
+      cd #{gem}
+      rm *.gem
+      gem build #{gem}.gemspec
+      gem push #{gem}-#{version}.gem
+    )
   end
 end
 
@@ -9,7 +14,10 @@ task :version do
 end
 
 task :release do
-  system %(git tag -a v#{version} -m "Wagn Version #{version}";  git push --tags wagn)
+  system %(
+    git tag -a v#{version} -m "Wagn Version #{version}"
+    git push --tags wagn
+  )
 end
 
 task :cp_tmpsets do

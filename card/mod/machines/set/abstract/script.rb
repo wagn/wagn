@@ -38,5 +38,5 @@ format :html do
 end
 
 def diff_args
-  { format: :text }
+  { diff_format: :text }
 end

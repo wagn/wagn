@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 
 describe Card::Set::Abstract::SolidCache do
   context "render core view of a card" do
@@ -5,7 +6,8 @@ describe Card::Set::Abstract::SolidCache do
       @card = Card["A"]
     end
 
-    let(:core_view) { 'Alpha <a class="known-card" href="/Z">Z</a>' }
+    # let(:core_view) { 'Alpha <a class="known-card" href="/Z">Z</a>' }
+    let(:core_view) { "Alpha Z[/Z]" }
     context "with solid cache" do
       it "saves core view in solid cache card" do
         @card.format_with_set(Card::Set::Abstract::SolidCache, &:render_core)

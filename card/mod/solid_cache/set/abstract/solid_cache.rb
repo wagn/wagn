@@ -10,31 +10,36 @@
 
 card_accessor :solid_cache, type: :html
 
-format :html do
+def self.included host_class
+  host_class.format(host_class.try(:cached_format) || :base) do
+    view :core do |args|
+      return super(args) unless args[:solid_cache]
+      card.update_solid_cache if card.solid_cache_card.new?
+      subformat(card.solid_cache_card)._render_core args
+    end
+  end
+end
+
+format do
   def default_core_args args
     args[:solid_cache] = true unless args.key?(:solid_cache)
-  end
-
-  view :core do |args|
-    return super(args) unless args[:solid_cache]
-
-    subformat(card.solid_cache_card)._render_core args
   end
 end
 
 module ClassMethods
-  # If a card of the set given by 'set_of_changed_card' is updated
+  # If a card of the set given by 'set_of_changed_card' is changed
   # the given block is executed. It is supposed to return an array of
-  # cards whose solid caches are expired because of the update.
+  # cards whose solid caches are expired because of the change.
   # @param set_of_changed_card [set constant] a set of cards that triggers
   #   a cache update
-  # @params args [Hash]
-  # @option args [Symbol, Array of symbols] :on the action(s)
+  # @param args [Hash]
+  # @option args [Symbol, Array<Symbol>] :on the action(s)
   #   (:create, :update, or :delete) on which the cache update
   #   should be triggered. Default is all actions.
   # @option args [Stage] :in_stage the stage when the update is executed.
   #   Default is :integrate
-  # @yield return an array of cards with solid cache that need to be updated
+  # @yield return a card or an array of cards with solid cache that need to be
+  #   updated
   def cache_update_trigger set_of_changed_card, args={}, &block
     define_event_to_update_expired_cached_cards(
       set_of_changed_card, args, :update_solid_cache, &block
@@ -56,9 +61,9 @@ module ClassMethods
     stage = args[:in_stage] || :integrate
     Card::Set.register_set set_of_changed_card
     set_of_changed_card.event name, stage, args do
-      Array(yield(self)).compact.each do |expired_cache_card|
+      Array.wrap(yield(self)).compact.each do |expired_cache_card|
         next unless expired_cache_card.solid_cache?
-        expired_cache_card.send method_name
+        expired_cache_card.send method_name, self
       end
     end
   end
@@ -72,19 +77,34 @@ module ClassMethods
   end
 end
 
-def expire_solid_cache
+def expire_solid_cache _changed_card=nil
   return unless solid_cache?
   Auth.as_bot do
     solid_cache_card.delete!
   end
 end
 
-def update_solid_cache
+def update_solid_cache changed_card=nil
   return unless solid_cache?
-  new_content = format(:html)._render_core(solid_cache: false)
+  new_content =
+    if solid_cache_card.new?
+      generate_content_for_cache changed_card
+    else
+      updated_content_for_cache changed_card
+    end
   return unless new_content
   write_to_solid_cache new_content
   new_content
+end
+
+def generate_content_for_cache changed_card=nil
+  format_type = try(:cached_format) || :base
+  format(format_type)._render_core(solid_cache: false,
+                                   changed_card: changed_card)
+end
+
+def updated_content_for_cache _changed_card=nil
+  generate_content_for_cache
 end
 
 def write_to_solid_cache new_content

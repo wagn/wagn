@@ -113,7 +113,9 @@ describe Card::Set::All::Account do
     it "should not allow a user to block or unblock himself" do
       expect do
         @card.account.status_card.update_attributes! content: "blocked"
-      end.to raise_error
+      end.to raise_error(ActiveRecord::RecordInvalid,
+                         "Validation failed: Permission denied You don't have "\
+                         "permission to change the status of your own account")
       expect(@card.account.blocked?).to be_falsey
     end
   end

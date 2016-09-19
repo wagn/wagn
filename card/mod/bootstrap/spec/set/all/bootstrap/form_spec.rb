@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 describe Card::Set::All::Bootstrap::Form  do
   describe "input" do
     it "has form-group css class" do

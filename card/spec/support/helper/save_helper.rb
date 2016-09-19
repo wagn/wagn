@@ -6,12 +6,20 @@ class Card
         Card.create! name: name, content: content
       end
 
-      def create_or_update name_or_args, args={}
+      def create name_or_args, content_or_args=nil
         Card::Auth.as_bot { super }
       end
 
-      def update name, args
-        Card::Auth.as_bot { update_card name, args }
+      def create_or_update name_or_args, content_or_args=nil
+        Card::Auth.as_bot { super }
+      end
+
+      def update name_or_args, content_or_args=nil
+        Card::Auth.as_bot { super }
+      end
+
+      def delete name
+        Card::Auth.as_bot { Card[name].delete! }
       end
     end
   end

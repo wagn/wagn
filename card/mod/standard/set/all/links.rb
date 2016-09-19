@@ -86,9 +86,11 @@ format do
   # @option opts [Hash] :card
   # @param mark_type [Symbol] defaults to :id
   def path opts={}, mark_type=:id
+    opts2 = opts.deep_clone
     base = new_cardtype_path(opts) || standard_path(opts, mark_type)
     query = path_query(opts)
-    internal_url base + query
+    result = internal_url base + query
+    puts "path(#{opts2}, #{mark_type}) yields #{result}"
   end
 
   def new_cardtype_path opts

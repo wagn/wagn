@@ -5,13 +5,10 @@ format :html do
       @format = format
       @rows = "".html_safe
       @opts = opts
-      if block_given?
-        define_singleton_method :generate_rows, block
-        generate_rows
-      end
+      instance_exec &block
     end
 
-    def generate_layout
+    def render
       @opts.delete(:container) ? container(@rows, @opts) : @rows
     end
 
@@ -22,7 +19,6 @@ format :html do
 
     def row *args, &block
       opts, cols, @col_widths = process_row_args args
-      @rows ||= "".html_safe
       @columns = "".html_safe
       cols ||= instance_exec(&block)
       cols.each { |col_content| column(col_content) } if cols.is_a? Array
@@ -49,15 +45,19 @@ format :html do
       content, opts = if block_given?
                         [instance_exec(&block), content_or_opts]
                       else
-                        [content_or_opts, opts || {}]
+                        [content_or_opts, (opts || {})]
                       end
       add_class opts, "col-md-#{@col_widths.shift}"
       @columns << content_tag(:div, content.html_safe, opts)
     end
 
-    def method_missing method_name, *args
+    def method_missing(method_name, *args, &block)
       return super unless @format.respond_to? method_name
-      @format.send method_name, *args
+      if block_given?
+        @format.send(method_name, *args, &block)
+      else
+        @format.send(method_name, *args)
+      end
     end
 
     def respond_to_missing? method_name, _include_private=false
@@ -81,6 +81,6 @@ format :html do
   #     row 6, 6, ["unicorn", "rainbow"], class: "horn"
   #   end
   def layout opts={}, &block
-    BootstrapLayout.new(self, opts, &block).generate_layout
+    BootstrapLayout.new(self, opts, &block).render
   end
 end

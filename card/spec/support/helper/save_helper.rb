@@ -14,8 +14,8 @@ class Card
         Card::Auth.as_bot { super }
       end
 
-      def update name, content_or_args
-        Card::Auth.as_bot { update_card name, content_or_args }
+      def update name_or_args, content_or_args={}
+        Card::Auth.as_bot { super }
       end
 
       def delete name

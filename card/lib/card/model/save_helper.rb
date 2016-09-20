@@ -28,6 +28,16 @@ class Card
         end
       end
 
+      def delete_card name
+        return unless (card = Card[name])
+        card.delete!
+      end
+
+      def delete_code_card name
+        update name, codename: nil
+        delete name
+      end
+
       # create if card doesn't exist
       # updates existing card only if given attributes are different except the
       # name
@@ -118,6 +128,7 @@ class Card
       alias_method :create_or_update!, :create_or_update_card!
       alias_method :ensure, :ensure_card
       alias_method :ensure!, :ensure_card!
+      alias_method :delete, :delete_card
     end
   end
 end

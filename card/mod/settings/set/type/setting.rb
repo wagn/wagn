@@ -58,17 +58,19 @@ format do
           - card.set_classes_with_rules.each do |klass, rules|
             %tr.klass-row
               %td{class: ['setting-klass', "anchorless-#{klass.anchorless?}"]}
-                = klass.anchorless? ? card_link(klass.pattern) : klass.pattern
+                = klass.anchorless? ?
+                    link_to_card(klass.pattern) :
+                    klass.pattern
               %td.rule-content-container
                 %span.closed-content.content
                   - if klass.anchorless?
                     = subformat(rules[0])._render_closed_content
             - if !klass.anchorless?
+              - setname = rule.cardname.trunk_name
               - duplicate_check(rules) do |rule, duplicate, changeover|
                 %tr{class: ('rule-changeover' if changeover)}
                   %td.rule-anchor
-                    = card_link rule.cardname.trunk_name,
-                                text: rule.cardname.trunk_name.trunk_name
+                    = link_to_card setname, setname.trunk_name
                   - if duplicate
                     %td
                   - else

@@ -11,11 +11,11 @@ class Card
     self.session = proc { Card::Auth.current.name }
     self.banned_array = ["/"]
 
-    def self.cardish name_or_card
-      case name_or_card
-      when Symbol then Card.fetch(name_or_card, skip_modules: true).cardname
-      when Card   then name_or_card.cardname
-      else             name_or_card
+    def self.cardish mark
+      case mark
+      when Card            then mark.cardname
+      when Symbol, Integer then Card.quick_fetch(mark).cardname
+      else                      mark.to_name
       end
     end
 

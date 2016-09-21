@@ -161,16 +161,15 @@ format :html do
   end
 
   def close_link args
-    link_opts = { title: "cancel",
-                  class: "btn-toolbar-control btn btn-primary" }
-    link_opts[:path_opts] = { slot: { subframe: true } } if args[:subslot]
-    link = view_link glyphicon("remove"), :home, link_opts
+    path_opts = args[:subslot] ? { slot: { subframe: true } } : {}
+
+    link = link_to_view :home, glyphicon("remove"),
+                        path: path_opts, title: "cancel",
+                        class: "btn-toolbar-control btn btn-primary"
     css_class = ["nav navbar-nav", args[:class]].compact.join "\n"
+
     wrap_with :div, class: css_class do
-      [
-        toolbar_pin_button,
-        link
-      ]
+      [toolbar_pin_button, link]
     end
   end
 
@@ -210,54 +209,55 @@ format :html do
     end
   end
   view :refresh_button do |_args|
-    path_opts = { slot: { show: :toolbar }, page: card }
+    path_opts = { slot: { show: :toolbar }, card: card }
     icon = main? ? "refresh" : "new-window"
-    toolbar_button "refresh", icon, "hidden-xs hidden-sm hidden-md hidden-lg",
-                   path_opts: path_opts
+    toolbar_button "refresh", icon, path_opts
   end
 
   view :delete_button do |_args|
-    toolbar_button(
-      "delete", "trash", "hidden-xs hidden-sm hidden-md hidden-lg",
-      action: :delete,
-      class: "slotter",
-      remote: true,
-      path_opts: {
-        success: main? ? "REDIRECT: *previous" : "TEXT: #{card.name} deleted"
-      },
-      :'data-confirm' => "Are you sure you want to delete #{card.name}?"
-    )
+    confirm = "Are you sure you want to delete #{card.name}?"
+    success = main? ? "REDIRECT: *previous" : "TEXT: #{card.name} deleted"
+    toolbar_button "delete", "trash",
+                   path: { action: :delete, success: success },
+                   class: "slotter", remote: true, :'data-confirm' => confirm
   end
 
-  def toolbar_button text, symbol, hide=nil, tag_args={}
-    hide ||= "hidden-xs hidden-sm hidden-md hidden-lg"
-    tag_args[:class] = [tag_args[:class], "btn btn-primary"].compact * " "
-    tag_args[:title] ||= text
-    link_text =
-      glyphicon(symbol) +
-      content_tag(:span, text.html_safe, class: "menu-item-label #{hide}")
+  def toolbar_button text, symbol, target, opts={}
+    link_text = toolbar_button_text text, symbol, opts.delete(:hide)
+    opts[:class] = [opts[:class], "btn btn-primary"].compact * " "
+    opts[:title] ||= text
+    smart_link_to target, link_text, opts
 
-    if (cardname = tag_args.delete(:page))
-      card_link cardname, class: klass, text: link_text
-    elsif (viewname = tag_args.delete(:view))
-      tag_args[:path_opts] ||= { slot: { show: :toolbar } }
-      view_link link_text, viewname, tag_args
-    else
-      path_opts = tag_args.delete(:path_opts) || {}
-      path_opts[:action] = tag_args.delete(:action) if tag_args[:action]
-      link_to link_text, path_opts, tag_args
-    end
+    # if (cardname = opts.delete(:page))
+    #   link_to_card cardname, link_text, class: klass
+    # elsif (viewname = tag_args.delete(:view))
+    #   _opts = opts[:path] || { slot: { show: :toolbar } }
+    #   link_to_view viewname, link_text, path: path_opts, format_opts
+    # else
+    #   path_opts = opts.delete(:path) || {}
+    #   path_opts[:action] = opts.delete(:action) if opts[:action]
+    #   link_to path_opts, link_text, opts[:format]
+    # end
+  end
+
+  def toolbar_button_text text, symbol, hide
+    icon = glyphicon symbol
+    hide ||= "hidden-xs hidden-sm hidden-md hidden-lg"
+    css_classes = "menu-item-label #{hide}"
+    rich_text = content_tag :span, text.html_safe, class: css_classes
+    icon + rich_text
   end
 
   def autosaved_draft_link
-    view_link "autosaved draft", :edit,
-              path_opts: { edit_draft: true, slot: { show: :toolbar } },
-              class: "navbar-link slotter pull-right"
+    link_to_view :edit, "autosaved draft",
+                 path: { edit_draft: true, slot: { show: :toolbar } },
+                 class: "navbar-link slotter pull-right"
   end
 
   def default_edit_content_link_args args
     args[:title] ||= "content"
   end
+
   view :edit_content_link do |args|
     toolbar_view_link :edit, args
   end
@@ -272,6 +272,7 @@ format :html do
   def default_edit_type_link_args args
     args[:title] ||= "type"
   end
+
   view :edit_type_link do |args|
     toolbar_view_link :edit_type, args
   end
@@ -283,6 +284,7 @@ format :html do
   def default_history_link_args args
     args[:title] ||= "history"
   end
+
   view :history_link do |args|
     toolbar_view_link :history, args
   end
@@ -290,13 +292,14 @@ format :html do
   def default_edit_nests_link_args args
     args[:title] ||= "nests"
   end
+
   view :edit_nests_link do |args|
     toolbar_view_link :edit_nests, args
   end
 
   def toolbar_view_link view, args
     text = args.delete(:title)
-    view_link text, view, args
+    link_to_view view, text, args
   end
 
   def recently_edited_settings?

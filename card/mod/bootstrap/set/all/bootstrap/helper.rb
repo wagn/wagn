@@ -7,7 +7,7 @@ format :html do
     )
   end
 
-  def button_link link_text, target, html_args={}
+  def button_link path_opts, link_text, format_opts={}
     html_args[:class] ||= ""
     btn_type = html_args[:btn_type] || "primary"
     html_args[:class] +=  " btn btn-#{btn_type}"

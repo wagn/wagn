@@ -41,8 +41,8 @@ format :html do
   end
 
   def history_link trashed_card
-    card_link trashed_card, path_opts: { view: :history, look_in_trash: true },
-                            text: "history"
+    link_to_card trashed_card, "history",
+                 path: { view: :history, look_in_trash: true }
   end
 
   def restore_link trashed_card

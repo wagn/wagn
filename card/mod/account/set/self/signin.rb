@@ -33,12 +33,10 @@ format :html do
     if Card.new(type_id: Card::SignupID).ok? :create
       args[:buttons] += link_to(or_sign_up, card_path("account/signup"))
     end
-    args[:buttons] += raw(
-      "<div style='float:right'>" \
-      "#{view_link reset_password, :edit,
-                   path_opts: { slot: { hide: :toolbar } }}" \
-      "</div>"
-    ) # FIXME: hardcoded styling
+    reset_link = link_to_view :edit, reset_password,
+                              path: { slot: { hide: :toolbar } }
+    args[:buttons] += raw("<div style='float:right'>#{reset_link}</div>")
+    # FIXME: hardcoded styling
     args
   end
 

@@ -12,6 +12,7 @@ format :html do
   end
 
   view :menu_link do |args|
+    menu_icon = glyphicon args[:menu_icon]
     path_opts = { slot: { home_view: args[:home_view] } }
     path_opts[:is_main] = true if main?
     css_class =
@@ -23,10 +24,7 @@ format :html do
       end
     wrap_with :div, class: "vertical-card-menu card-menu #{css_class}" do
       content_tag :div, class: "btn-group slotter card-slot pull-right" do
-        view_link(
-          glyphicon(args[:menu_icon]), :vertical_menu,
-          path_opts: path_opts
-        ).html_safe
+        link_to_view(:vertical_menu, menu_icon, path: path_opts).html_safe
       end
     end
   end

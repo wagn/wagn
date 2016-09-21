@@ -40,7 +40,7 @@ format :html do
 
   view :my_card, perms: ->(_r) { Auth.signed_in? },
                  denial: :blank do |_args|
-    card_link(Auth.current.cardname, id: "my-card-link")
+    link_to_card Auth.current.cardname, nil, id: "my-card-link"
   end
 
   view :raw do |args|

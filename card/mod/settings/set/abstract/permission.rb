@@ -45,14 +45,11 @@ format :html do
 
   def groups item_names
     group_options.map do |option|
-      checked = !!item_names.delete(option.name)
-      %(
-        <div class="group-option">
-          #{check_box_tag("#{option.key}-perm-checkbox", option.name, checked,
-                          class: 'perm-checkbox-button')}
-          <label>#{card_link option.name, target: 'wagn_role'}</label>
-        </div>
-      )
+      checked = !item_names.delete(option.name).nil?
+      option_link = link_to_card option.name, nil, target: "wagn_role"
+      box = check_box_tag "#{option.key}-perm-checkbox",
+                          option.name, checked, class: "perm-checkbox-button"
+      %(<div class="group-option">#{box}<label>#{option_link}</label></div>)
     end * "\n"
   end
 
@@ -103,7 +100,7 @@ format :html do
     task = card.tag.codename
     ancestor = Card[set_context.trunk_name.trunk_name]
     links = ancestor.who_can(task.to_sym).map do |card_id|
-      card_link Card[card_id].name, target: args[:target]
+      link_to_card card_id, nil, target: args[:target]
     end * ", "
     "Inherit ( #{links} )"
   rescue

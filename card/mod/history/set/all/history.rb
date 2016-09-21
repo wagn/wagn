@@ -233,7 +233,7 @@ format :html do
   end
 
   view :act_header do |_args|
-    %(<h5 class="act-header">#{card_link card}</h5>)
+    %(<h5 class="act-header">#{link_to_card card}</h5>)
   end
 
   view :act_metadata do |args|
@@ -370,17 +370,17 @@ format :html do
   end
 
   def fold_or_unfold_link args
-    path_opts = {
-      act_id:      args[:act].id,
-      act_seq:     args[:act_seq],
-      hide_diff:   args[:hide_diff],
-      act_context: args[:act_context],
-      action_view: (args[:action_view] == :expanded ? :summary : :expanded),
-      look_in_trash: true
-    }
+    act_id = args[:act].id
+    action_view = args[:action_view] == :expanded ? :summary : :expanded
     arrow_dir = args[:action_view] == :expanded ? "arrow-down" : "arrow-right"
-    view_link "", :act, path_opts: path_opts,
-                        class: "slotter revision-#{args[:act_id]} #{arrow_dir}"
+
+    link_to_view :act, "", class: "slotter revision-#{act_id} #{arrow_dir}"
+                           path: { act_id:      act_id,
+                                   act_seq:     args[:act_seq],
+                                   hide_diff:   args[:hide_diff],
+                                   act_context: args[:act_context],
+                                   action_view: action_view,
+                                   look_in_trash: true }
   end
 
   def rollback_link actions
@@ -398,17 +398,12 @@ format :html do
   end
 
   def show_or_hide_changes_link args
-    toggle = args[:hide_diff] ? "Show" : "Hide"
-    path_opts = {
-      act_id: args[:act].id,
-      act_seq: args[:act_seq],
-      hide_diff: !args[:hide_diff],
-      action_view: :expanded,
-      act_context: args[:act_context],
-      look_in_trash: true
-    }
-    link = view_link("#{toggle} changes", :act,
-                     path_opts: path_opts, class: "slotter", remote: true)
+    link = link_to_view(
+      :act, "#{args[:hide_diff] ? 'Show' : 'Hide'} changes",
+      class: "slotter",
+      path: { act_id:      args[:act].id,      act_seq: args[:act_seq],
+              hide_diff:  !args[:hide_diff],   action_view: :expanded,
+              act_context: args[:act_context], look_in_trash: true     })
     %(<div class="act-link">#{link}</div>)
   end
 end

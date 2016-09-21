@@ -82,29 +82,25 @@ format :html do
 
   view :title_link do |args|
     title_text = args[:title_ready] || showname(args[:title])
-    card_link card.cardname, text: title_text
+    link_to_card card.cardname, title_text
   end
 
   view :type_info do
-    link_args = { text: card.type_name.to_s, class: "navbar-link" }
-    link = card_link card.type_name, link_args
+    link = link_to_card card.type_name, nil, class: "navbar-link"
     %(<span class="type-info pull-right">#{link}</span>).html_safe
   end
 
   view :title_editable do |args|
-    links = card.cardname.parts.map do |name|
-      card_link name
-    end
+    links = card.cardname.parts.map { |name| link_to_card name }
     res = links.shift
     links.each_with_index do |link, index|
       name = card.cardname.parts[0..index + 1].join "+"
-      res += card_link name, text: glyphicon("plus", "header-icon")
+      res += link_to_card name, glyphicon("plus", "header-icon")
       res += link
     end
     res += " "
-    res.concat view_link(
-      glyphicon("edit", "header-icon"),
-      :edit_name,
+    res.concat link_to_view(
+      :edit_name, glyphicon("edit", "header-icon"),
       class: "slotter", "data-toggle" => "tooltip", title: "edit name"
     )
     res.concat _optional_render(:type_link, args, :show)
@@ -128,7 +124,7 @@ format :html do
     klasses = ["cardtype"]
     klass = args[:type_class]
     klasses << klass if klass
-    card_link card.type_card.name, class: klasses
+    link_to_card card.type_card.name, class: klasses
   end
 
   view :closed do |args|

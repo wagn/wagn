@@ -19,17 +19,12 @@ def abort status, msg="action canceled"
   raise Card::Error::Abort.new(status, msg)
 end
 
-def act opts={}
+def act opts={}, &block
   if ActManager.act_card
-    add_to_act opts
-    main_act_block = false
+    add_to_act opts, &block
   else
-    start_new_act opts
-    main_act_block = true
+    start_new_act opts, &block
   end
-  yield
-ensure
-  ActManager.clear if main_act_block
 end
 
 def start_new_act opts
@@ -39,6 +34,11 @@ def start_new_act opts
   if opts && opts[:success]
     Env[:success] = Env::Success.new(cardname, Env.params[:success])
   end
+  run_callbacks :act do
+    yield
+  end
+ensure
+  ActManager.clear
 end
 
 def add_to_act opts
@@ -52,6 +52,7 @@ def add_to_act opts
   end
   director.update_card self
   self.only_storage_phase = true
+  yield
 end
 
 module ClassMethods

@@ -70,7 +70,8 @@ format :html do
       "data-target"    => "#modal-#{card.cardname.safe_key}"
     )
     opts[:class] = "follow-link #{opts[:class]}"
-    link_to text, hash[:path], opts
+    opts[:path] = hash[:path]
+    link_to text, opts
   end
 end
 

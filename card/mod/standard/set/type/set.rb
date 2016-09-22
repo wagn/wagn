@@ -174,7 +174,7 @@ format :html do
                           subframe: true,
                           hide: "header set_label rule_navbar",
                           show: "subheader set_navbar" }
-            link = link_to_card name, label, remote: true
+            link = link_to_card name, label, remote: true,
                                              path: { view: @slot_view,
                                                      slot: slot_opts }
             li_pill link, name == card.name

@@ -153,7 +153,7 @@ format :html do
     sign_in_or_up_links =
       unless Auth.signed_in?
         signin_link = link_to_card :signin, "Sign in"
-        signup_link = link_to "Sign up", card_path("new/:signup")
+        signup_link = link_to "Sign up", path: { account: :new, type: :signup }
         %(<div>#{signin_link} or #{signup_link} to create it.</div>)
       end
     frame args.merge(title: "Not Found", optional_menu: :never) do
@@ -180,10 +180,11 @@ format :html do
           when Auth.signed_in?
             "You need permission #{to_task}"
           else
-            signin_link = link_to "sign in", card_url(":signin")
+            signin_link = link_to_card :signin, "sign in"
             or_signup_link =
               if Card.new(type_id: Card::SignupID).ok? :create
-                "or " + link_to("sign up", card_url("new/:signup"))
+                "or " +
+                  link_to("sign up", path: { account: "new", type: :signup })
               end
             Env.save_interrupted_action(request.env["REQUEST_URI"])
             "Please #{signin_link} #{or_signup_link} #{to_task}"

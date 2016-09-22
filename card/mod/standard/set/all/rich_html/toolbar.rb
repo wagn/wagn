@@ -58,9 +58,9 @@ format :html do
   end
 
   TOOLBAR_TITLE = {
-    edit: "content", edit_name: "name", edit_type: "type",
-    edit_structure: "structure", edit_nests: "nests", history: "history",
-    common_rules: "common", recent_rules: "recent", grouped_rules: "all",
+    edit: "content",             edit_name: "name",      edit_type: "type",
+    edit_structure: "structure", edit_nests: "nests",    history: "history",
+    common_rules: "common",      recent_rules: "recent", grouped_rules: "all",
     edit_nest_rules: "nests"
   }.freeze
 
@@ -73,8 +73,8 @@ format :html do
   end
 
   def activity_split_button args
-    discuss = smart_link "discuss",  related: Card[:discussion].key
-    editors = smart_link "editors",  related: Card[:editors].key
+    discuss = smart_link_to "discuss",  related: Card[:discussion].key
+    editors = smart_link_to "editors",  related: Card[:editors].key
     toolbar_split_button "activity", { view: :history }, args do
       {
         history:    (_render_history_link if card.history?),
@@ -86,17 +86,17 @@ format :html do
   end
 
   def rules_split_button args
-    recent = smart_link "recent",   view: :edit_rules,
-                                    slot: { rule_view: :recent_rules }
-    common = smart_link "common",   view: :edit_rules,
-                                    slot: { rule_view: :common_rules }
-    group  = smart_link "by group", view: :edit_rules,
-                                    slot: { rule_view: :grouped_rules }
-    all    = smart_link "by name",  view: :edit_rules,
-                                    slot: { rule_view: :all_rules }
-    nests  = smart_link "nests",    view: :edit_nest_rules,
-                                    slot: { rule_view: :field_related_rules }
-    toolbar_split_button "rules",   { view: :edit_rules }, args do
+    recent = smart_link_to "recent",   view: :edit_rules,
+                                       slot: { rule_view: :recent_rules }
+    common = smart_link_to "common",   view: :edit_rules,
+                                       slot: { rule_view: :common_rules }
+    group  = smart_link_to "by group", view: :edit_rules,
+                                       slot: { rule_view: :grouped_rules }
+    all    = smart_link_to "by name",  view: :edit_rules,
+                                       slot: { rule_view: :all_rules }
+    nests  = smart_link_to "nests",    view: :edit_nest_rules,
+                                       slot: { rule_view: :field_related_rules }
+    toolbar_split_button "rules", { view: :edit_rules }, args do
       {
         common_rules:    common,
         grouped_rules:   group,
@@ -125,25 +125,24 @@ format :html do
   end
 
   def account_split_button args
+    details = "#{card.name}+#{Card[:account].key}"
     toolbar_split_button "account", { related: Card[:account].key }, args do
       {
-        account: smart_link("details",
-                            related: {
-                              name: "#{card.name}+#{Card[:account].key}",
-                              view: :edit }
-                           ),
-        roles:   smart_link("roles", related: Card[:roles].key),
-        created: smart_link("created", related: Card[:created].key),
-        edited:  smart_link("edited", related: Card[:edited].key),
-        follow:  smart_link("follow", related: Card[:follow].key)
+        account: smart_link_to(
+          "details", view: :related,
+                     paths: { related: { name: details, view: :edit } }
+        ),
+        roles:   smart_link_to("roles", related: Card[:roles].key),
+        created: smart_link_to("created", related: Card[:created].key),
+        edited:  smart_link_to("edited", related: Card[:edited].key),
+        follow:  smart_link_to("follow", related: Card[:follow].key)
       }
     end
   end
 
-  def toolbar_split_button name, button_args, args
-    button =
-      button_link name, button_args,
-                  class: ("active" if args[:active_toolbar_button] == name)
+  def toolbar_split_button name, button_path_opts, args
+    status = args[:active_toolbar_button] == name ? "active" : ""
+    button = button_link name, path: button_path_opts, class: status
     active_item =
       if @slot_view == :related
         if args[:rule_view]
@@ -194,24 +193,21 @@ format :html do
   end
 
   view :related_button do |_args|
-    path_opts = { slot: { show: :toolbar } }
     dropdown_button "", icon: "education", class: "related" do
-      [
-        menu_item(" children",       "baby-formula",
-                  path_opts.merge(related: "*children")),
-        menu_item(" mates",          "bed",
-                  path_opts.merge(related: "*mates")),
-        menu_item(" references out", "log-out",
-                  path_opts.merge(related: "*refers_to")),
-        menu_item(" references in",  "log-in",
-                  path_opts.merge(related: "*referred_to_by"))
-      ]
+      [["children",       "baby-formula", "*children"      ],
+       ["mates",          "bed",          "*mates"         ],
+       ["references out", "log-out",      "*refers_to"     ],
+       ["references in",  "log-in",       "*referred_to_by"]
+      ].map do |title, icon, tag|
+        menu_item " #{title}", icon, related: tag,
+                                     path: { slot: { show: :toolbar } }
+      end
     end
   end
   view :refresh_button do |_args|
-    path_opts = { slot: { show: :toolbar }, card: card }
     icon = main? ? "refresh" : "new-window"
-    toolbar_button "refresh", icon, path_opts
+    toolbar_button "refresh", icon, card: card,
+                                    path: { slot: { show: :toolbar } }
   end
 
   view :delete_button do |_args|
@@ -222,11 +218,11 @@ format :html do
                    class: "slotter", remote: true, :'data-confirm' => confirm
   end
 
-  def toolbar_button text, symbol, target, opts={}
+  def toolbar_button text, symbol, opts={}
     link_text = toolbar_button_text text, symbol, opts.delete(:hide)
     opts[:class] = [opts[:class], "btn btn-primary"].compact * " "
     opts[:title] ||= text
-    smart_link_to target, link_text, opts
+    smart_link_to link_text, opts
 
     # if (cardname = opts.delete(:page))
     #   link_to_card cardname, link_text, class: klass
@@ -278,7 +274,7 @@ format :html do
   end
 
   view :edit_structure_link do |_args|
-    smart_link "structure", view: :edit_structure
+    link_to_view :edit_structure, "structure"
   end
 
   def default_history_link_args args

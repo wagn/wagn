@@ -30,14 +30,15 @@ format :html do
   end
 
   def empty_trash_link
-    button =
-      button_link "empty trash",
-                  { card: :admin, action: :update,
-                    task: :empty_trash, success: { id: "~#{card.id}" } },
+    content_tag(
+      :p,
+      button_link("empty trash",
                   btn_type: :default,
-                  "data-confirm" => "Are you sure you want to delete all "\
-                                    "cards in the trash"
-    content_tag :p, button
+                  path: { card: :admin, action: :update, task: :empty_trash,
+                          success: { id: "~#{card.id}" } },
+                  "data-confirm" => "Are you sure you want to delete "\
+                                    "all cards in the trash?")
+    )
   end
 
   def history_link trashed_card
@@ -47,10 +48,16 @@ format :html do
 
   def restore_link trashed_card
     before_delete = trashed_card.actions[-2]
-    link_path = path id: trashed_card.id, look_in_trash: true, action: :update,
-                     view: :open, restore: trashed_card.id,
-                     action_ids: [before_delete], success: { id: "~#{card.id}" }
-    link_to "restore", link_path, method: :post, rel: "nofollow",
-                                  remote: true, class: "slotter"
+    link_to "restore", method: :post,
+                       rel: "nofollow",
+                       remote: true,
+                       class: "slotter",
+                       path: { id: trashed_card.id,
+                               view: :open,
+                               look_in_trash: true,
+                               action: :update,
+                               restore: trashed_card.id,
+                               action_ids: [before_delete],
+                               success: { id: "~#{card.id}" } }
   end
 end

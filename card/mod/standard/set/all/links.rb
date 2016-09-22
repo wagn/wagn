@@ -1,11 +1,11 @@
 RESOURCE_TYPE_REGEXP = /^([a-zA-Z][\-+\.a-zA-Z\d]*):/
 
 format :html do
-  def link_to pathish, text=nil, opts={}
-    path = interpret_pathish pathish
-    opts[:href] = path
+  def link_to text=nil, opts={}
+    opts[:href] = interpret_pathish opts.delete(:path)
+    text = raw(text || opts[:href])
     interpret_data_opts_to_link_to opts
-    content_tag :a, raw(text || path), opts
+    content_tag :a, text, opts
   end
 
   def interpret_data_opts_to_link_to opts
@@ -17,14 +17,14 @@ format :html do
 end
 
 format :css do
-  def link_to pathish, _text=nil, _opts={}
-    card_url interpret_pathish(pathish)
+  def link_to _text=nil, opts={}
+    card_url interpret_pathish(opts.delete(:path))
   end
 end
 
 format do
-  def link_to pathish, text=nil, _format_opts={}
-    href = interpret_pathish pathish
+  def link_to text=nil, opts={}
+    href = interpret_pathish opts.delete(:path)
     if text && href != text
       "#{text}[#{href}]"
     else
@@ -32,33 +32,21 @@ format do
     end
   end
 
-  # link_to pathish, text, format_opts={}
-  # link_to_card cardish, text=nil, opts={} # :path, :format
-  # link_to_view view, text, opts={} # :path, :format
-  # link_to_related cardish, text, opts={} # :path, :format, :related
-  # link_to_resource resource, text, format_opts={}
-  #
-  # smart_link_to target, text, opts
-  #
-  # text, path_opts
-
-  # link to url, view, card or related card
-
-  def smart_link_to target, text=nil, format_opts={}
-    target_type = [:view, :related, :card, :resource].find { |key| target[key] }
-    method = "link_to_#{target_type}"
-    target_value = target.delete target_type
-    method_opts = format_opts.merge path: target
-    send method, target_value, text, method_opts
+  def smart_link_to text, opts={}
+    if (linktype = [:view, :related, :card, :resource].find { |key| opts[key] })
+      send "link_to_#{linktype}", opts.delete(linktype), text, opts
+    else
+      send :link_to, text, opts
+    end
   end
 
-  def link_to_resource resource, text=nil, format_opts={}
+  def link_to_resource resource, text=nil, opts={}
     case (resource_type = resource_type resource)
-    when "external-link" then format_opts[:target] = "_blank"
+    when "external-link" then opts[:target] = "_blank"
     when "internal-link" then resource = internal_url resource[1..-1]
     end
-    add_class format_opts, resource_type
-    link_to resource, text, format_opts
+    add_class opts, resource_type
+    link_to text, opts.merge(path: resource)
   end
 
   def resource_type resource
@@ -71,12 +59,13 @@ format do
   end
 
   def link_to_card cardish, text, opts={}
-    name = Card::Name.cardish cardish
-    text ||= name.to_name.to_show @context_names
+    opts[:path] ||= {}
+    name = opts[:path][:name] = Card::Name.cardish cardish
     # @fixme - need smarter mark handling
-    path_opts = (opts.delete(:path) || {}).merge name: name
+
+    text ||= name.to_name.to_show @context_names
     add_known_or_wanted_class opts, name
-    link_to path_opts, text, opts
+    link_to text, opts
   end
 
   def add_known_or_wanted_class opts, name
@@ -88,10 +77,9 @@ format do
   # link to a specific view (defaults to current card)
   # this is generally used for ajax calls
   def link_to_view view, text, opts={}
-    path_opts = opts.delete(:path) || {}
-    path_opts[:view] = view unless view == :home
-    format_opts = opts.merge remote: true, rel: "nofollow"
-    link_to path_opts, text, format_opts
+    opts.reverse_merge! path: {}, remote: true, rel: "nofollow"
+    opts[:path][view] = view unless view == :home
+    link_to text, opts
   end
 
   def link_to_related cardish, text=nil, opts={}

@@ -20,7 +20,8 @@ format :html do
 
   view :add_link do |args|
     args[:title] ||= "Add #{card.name}"
-    link_to _render_title(args), _render_add_path(args), class: args[:css_class]
+    title = _render_title args
+    link_to title, path: _render_add_path(args), class: args[:css_class]
   end
 
   view :add_button, view: :add_link

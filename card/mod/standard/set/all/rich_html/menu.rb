@@ -47,8 +47,8 @@ format :html do
   view :horizontal_menu do |args|
     content_tag :div, class: "btn-group slotter pull-right card-menu "\
                              "horizontal-card-menu hidden-xs" do
-      menu_item_list(args.merge(html_args: { class: "btn btn-default" }))
-        .join("\n").html_safe
+      list_opts = args.merge(link_opts: { class: "btn btn-default" })
+      menu_item_list(list_opts).join("\n").html_safe
     end
   end
 
@@ -65,13 +65,13 @@ format :html do
   end
 
   def menu_edit_link args
-    path_opts = { view: :edit }
-    menu_item("edit", "edit", path_opts, args[:html_args])
+
+    menu_item "edit", "edit", args[:link_opts].merge(view: :edit)
   end
 
   def menu_discuss_link args
-    menu_item("discuss", "comment", { related: Card[:discussion].key },
-              args[:html_args])
+    opts = args[:link_opts].merge related: Card[:discussion].key
+    menu_item "discuss", "comment", opts
   end
 
   def menu_follow_link args
@@ -79,30 +79,35 @@ format :html do
   end
 
   def menu_page_link args
-    menu_item("page", "new-window", { card: card }, args[:html_args])
+    opts = args[:link_opts].merge card: card
+    menu_item "page", "new-window", opts
   end
 
   def menu_rules_link args
-    menu_item("rules", "wrench", { view: :options }, args[:html_args])
+    opts = args[:link_opts].merge view: :options
+    menu_item "rules", "wrench", opts
   end
 
   def menu_account_link args
-    path_opts = { related: { name: "+*account", view: :edit } }
-    menu_item("account", "user", path_opts, args[:html_args])
+    opts = args[:link_opts].merge(
+      view: :related,
+      path: { related: { name: "+*account", view: :edit } }
+    )
+    menu_item "account", "user", opts
   end
 
   def menu_more_link args
-    path_opts = {
-      view: args[:home_view] || :open,
+    opts = args[:link_opts].merge(
+      view: (args[:home_view] || :open),
+      path: { view: args[:home_view] || :open },
       slot: { show: :toolbar }
-    }
-    menu_item("", "option-horizontal", path_opts, args[:html_args])
+    )
+    menu_item "", "option-horizontal", opts
   end
 
-  def menu_item text, icon, target, html_args={}
-    link_text =
-      "#{glyphicon(icon)}<span class='menu-item-label'>#{text}</span>".html_safe
-    smart_link link_text, target, html_args || {}
+  def menu_item text, icon, opts={}
+    link_text = "#{glyphicon(icon)}<span class='menu-item-label'>#{text}</span>"
+    smart_link_to link_text.html_safe, opts
   end
 
   def default_menu_link_args args

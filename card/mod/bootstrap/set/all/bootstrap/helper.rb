@@ -7,11 +7,10 @@ format :html do
     )
   end
 
-  def button_link path_opts, link_text, format_opts={}
-    html_args[:class] ||= ""
-    btn_type = html_args[:btn_type] || "primary"
-    html_args[:class] +=  " btn btn-#{btn_type}"
-    smart_link link_text, target, html_args.merge(type: "button")
+  def button_link link_text, opts={}
+    btn_type = opts.delete(:btn_type) || "primary"
+    opts[:class] = [opts[:class], "btn btn-#{btn_type}"].compact.join " "
+    smart_link_to link_text, opts.merge(type: "button")
   end
 
   def dropdown_button name, opts={}

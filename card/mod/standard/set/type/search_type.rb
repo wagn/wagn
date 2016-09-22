@@ -134,7 +134,8 @@ format do
     @paging_path_args[:offset] = page * @paging_limit
     options[:class] = "card-paging-link slotter"
     options[:remote] = true
-    link_to raw(text), path(@paging_path_args), options
+    options[:path] = @paging_path_args
+    link_to raw(text), options
   end
 
   def page_li text, page, current=false, options={}

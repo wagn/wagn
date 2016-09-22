@@ -225,11 +225,7 @@ format :html do
       when :create then "added"
       when :delete then "deleted"
       else
-        link_to(
-          "edited",
-          path(view: :history),
-          class: "last-edited", rel: "nofollow"
-        )
+        link_to_view :history, "edited", class: "last-edited", rel: "nofollow"
       end
 
     %(

@@ -244,7 +244,7 @@ format :html do
             = '#' + act_seq.to_s
         .title
           .actor
-            = link_to act.actor.name, card_url(act.actor.cardname.url_key)
+            = link_to_card act.actor
           .time.timeago
             = time_ago_in_words(act.acted_at)
             ago
@@ -306,17 +306,17 @@ format :html do
   end
 
   def name_diff action, hide_diff
+    working_name = name_changes action, hide_diff
     if action.card == card
-      name_changes(action, hide_diff)
+      working_name
     else
-      link_path = path(
-        view: :related,
-        related: { view: "history", name: action.card.name }
+      link_to_view(
+        :related, working_name,
+        path: { related: { view: "history", name: action.card.name } },
+        remote: true,
+        class: "slotter label label-default",
+        "data-slot-selector" => ".card-slot.history-view"
       )
-      link_to name_changes(action, hide_diff), link_path,
-              class: "slotter label label-default",
-              "data-slot-selector" => ".card-slot.history-view",
-              remote: true
     end
   end
 
@@ -374,7 +374,7 @@ format :html do
     action_view = args[:action_view] == :expanded ? :summary : :expanded
     arrow_dir = args[:action_view] == :expanded ? "arrow-down" : "arrow-right"
 
-    link_to_view :act, "", class: "slotter revision-#{act_id} #{arrow_dir}"
+    link_to_view :act, "", class: "slotter revision-#{act_id} #{arrow_dir}",
                            path: { act_id:      act_id,
                                    act_seq:     args[:act_seq],
                                    hide_diff:   args[:hide_diff],
@@ -384,15 +384,16 @@ format :html do
   end
 
   def rollback_link actions
-    not_current =
+    # @fixme -- doesn't this need to specify which action it wants?
+    prior =  # @fixme - should be a Card::Action method
       actions.select { |action| action.card.last_action_id != action.id }
-    return unless card.ok?(:update) && not_current.present?
-    link_path = path action: :update, view: :open, action_ids: not_current,
-                     look_in_trash: true
+    return unless card.ok?(:update) && prior.present?
     link = link_to(
-      "Save as current", link_path,
-      class: "slotter", "data-slot-selector" => ".card-slot.history-view",
-      remote: true, method: :post, rel: "nofollow"
+      "Save as current", class: "slotter",
+                         "data-slot-selector" => ".card-slot.history-view",
+                         remote: true, method: :post, rel: "nofollow",
+                         path: { action: :update, action_ids: prior,
+                                 view: :open, look_in_trash: true }
     )
     %(<div class="act-link">#{link}</div>)
   end
@@ -403,7 +404,8 @@ format :html do
       class: "slotter",
       path: { act_id:      args[:act].id,      act_seq: args[:act_seq],
               hide_diff:  !args[:hide_diff],   action_view: :expanded,
-              act_context: args[:act_context], look_in_trash: true     })
+              act_context: args[:act_context], look_in_trash: true }
+    )
     %(<div class="act-link">#{link}</div>)
   end
 end

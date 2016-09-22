@@ -121,10 +121,8 @@ format :html do
   # end
 
   view :type do |args|
-    klasses = ["cardtype"]
-    klass = args[:type_class]
-    klasses << klass if klass
-    link_to_card card.type_card.name, class: klasses
+    klasses = ["cardtype", args[:type_class]].compact
+    link_to_card card.type_card, nil, class: klasses
   end
 
   view :closed do |args|

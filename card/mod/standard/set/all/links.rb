@@ -58,7 +58,7 @@ format do
     end
   end
 
-  def link_to_card cardish, text, opts={}
+  def link_to_card cardish, text=nil, opts={}
     opts[:path] ||= {}
     name = opts[:path][:name] = Card::Name.cardish cardish
     # @fixme - need smarter mark handling
@@ -78,7 +78,7 @@ format do
   # this is generally used for ajax calls
   def link_to_view view, text, opts={}
     opts.reverse_merge! path: {}, remote: true, rel: "nofollow"
-    opts[:path][view] = view unless view == :home
+    opts[:path][:view] = view unless view == :home
     link_to text, opts
   end
 

@@ -80,7 +80,8 @@ format :html do
   end
 
   def open_rule_setting_links setting_name
-    closed_rule_link = link_to_view :closed_rule, setting_name.tr("*", ""),
+    setting_title = setting_name.tr "*", ""
+    closed_rule_link = link_to_view :closed_rule, setting_title,
                                     class: "close-rule-link slotter"
     all_rules_link = link_to_card setting_name, "all #{setting_title} rules",
                                   class: "setting-link", target: "wagn_setting"

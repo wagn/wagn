@@ -98,21 +98,21 @@ format do
   # @option opts [Hash] :card
   # @param mark_type [Symbol] defaults to :id
   def path opts={}, mark_type=:id
-    base = new_cardtype_path(opts) || standard_path(opts, mark_type)
-    query = path_query(opts)
-    internal_url base + query
+    path = new_cardtype_path(opts) || standard_path(opts, mark_type)
+    internal_url path
   end
 
   def new_cardtype_path opts
     return unless opts[:action] == :new
     opts.delete :action
-    return unless opts[:type] && !opts[:name] && !opts[:card] && !opts[:id]
-    "new/#{opts.delete :type}"
+    return unless (type_mark = opts.delete(:type))
+    "new/#{Card.quick_fetch(type_mark).cardname.url_key}"
   end
 
   def standard_path opts, mark_type
     standardize_action! opts
-    path_action(opts[:action]) + path_mark(opts, mark_type)
+    base = path_action(opts[:action]) + path_mark(opts, mark_type)
+    base + path_query(opts)
   end
 
   def path_action action

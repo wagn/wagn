@@ -42,8 +42,8 @@ ensure
 end
 
 def add_to_act opts
-  # if only_storage_phase is true the card is already part of the act
-  return if ActManager.act_card == self || only_storage_phase
+  # if only_storage_phase is true then the card is already part of the act
+  return yield if ActManager.act_card == self || only_storage_phase
   director.reset_stage
   if opts && opts[:trash]
     @action = :delete

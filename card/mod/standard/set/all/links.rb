@@ -185,5 +185,3 @@ format do
     pathish.is_a?(Hash) ? path(pathish) : pathish
   end
 end
-
-

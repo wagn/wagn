@@ -98,7 +98,7 @@ format :html do
 
   def deny_link
     return unless card.ok? :delete
-    link_to_card card, "Deny and delete", path: { action: :delete}
+    link_to_card card, "Deny and delete", path: { action: :delete }
   end
 end
 

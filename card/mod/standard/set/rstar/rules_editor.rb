@@ -316,7 +316,7 @@ format :html do
 
   def set_label card, set_name, label, state
     label_class = "set-label"
-    body = link_to_card set_name, label, target: "wagn_set"
+    label_body = link_to_card set_name, label, target: "wagn_set"
     info =
       case state
       when :current
@@ -325,8 +325,8 @@ format :html do
       when :overwritten, :exists
         link_to_card "#{set_name}+#{card.rule_user_setting_name}", "(#{state})"
       end
-    body += " <em>#{info}</em" if info
-    %(<label class="#{label_class}">#{label}</label>).html_safe
+    label_body += " <em>#{info}</em" if info
+    %(<label class="#{label_class}">#{label_body}</label>).html_safe
   end
 
   def narrower_rule_warning narrower_rules

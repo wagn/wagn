@@ -65,7 +65,6 @@ format :html do
   end
 
   def menu_edit_link args
-
     menu_item "edit", "edit", args[:link_opts].merge(view: :edit)
   end
 

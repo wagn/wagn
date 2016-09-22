@@ -194,16 +194,18 @@ format :html do
 
   view :related_button do |_args|
     dropdown_button "", icon: "education", class: "related" do
-      [["children",       "baby-formula", "*children"      ],
-       ["mates",          "bed",          "*mates"         ],
-       ["references out", "log-out",      "*refers_to"     ],
-       ["references in",  "log-in",       "*referred_to_by"]
+      [
+        ["children",       "baby-formula", "*children"],
+        ["mates",          "bed",          "*mates"],
+        ["references out", "log-out",      "*refers_to"],
+        ["references in",  "log-in",       "*referred_to_by"]
       ].map do |title, icon, tag|
         menu_item " #{title}", icon, related: tag,
                                      path: { slot: { show: :toolbar } }
       end
     end
   end
+
   view :refresh_button do |_args|
     icon = main? ? "refresh" : "new-window"
     toolbar_button "refresh", icon, card: card,

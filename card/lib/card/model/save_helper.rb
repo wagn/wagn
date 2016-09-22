@@ -1,6 +1,8 @@
 class Card
   module Model
-    # Helper methods to create and update cards.
+    # API to create and update cards.
+    # It is intended as a helper for "external" scripts
+    # (seeding, testing, migrating, etc) and not for internal application code.
     # The general pattern is:
     # All methods use the ActiveRecord !-methods that throw exceptions if
     # somethings fails.

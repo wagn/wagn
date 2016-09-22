@@ -64,12 +64,17 @@ format :html do
     menu_items
   end
 
+  def menu_link_opts old, new
+    opts = old[:link_opts] || {}
+    opts.merge new
+  end
+
   def menu_edit_link args
-    menu_item "edit", "edit", args[:link_opts].merge(view: :edit)
+    menu_item "edit", "edit", menu_link_opts(args, view: :edit)
   end
 
   def menu_discuss_link args
-    opts = args[:link_opts].merge related: Card[:discussion].key
+    opts = menu_link_opts args, related: Card[:discussion].key
     menu_item "discuss", "comment", opts
   end
 
@@ -78,30 +83,25 @@ format :html do
   end
 
   def menu_page_link args
-    opts = args[:link_opts].merge card: card
-    menu_item "page", "new-window", opts
+    menu_item "page", "new-window", menu_link_opts(args, card: card)
   end
 
   def menu_rules_link args
-    opts = args[:link_opts].merge view: :options
-    menu_item "rules", "wrench", opts
+    menu_item "rules", "wrench", menu_link_opts(args, view: :options)
   end
 
   def menu_account_link args
-    opts = args[:link_opts].merge(
-      view: :related,
-      path: { related: { name: "+*account", view: :edit } }
+    menu_item "account", "user", menu_link_opts(
+      args, view: :related,
+            path: { related: { name: "+*account", view: :edit } }
     )
-    menu_item "account", "user", opts
   end
 
   def menu_more_link args
-    opts = args[:link_opts].merge(
-      view: (args[:home_view] || :open),
-      path: { view: args[:home_view] || :open },
-      slot: { show: :toolbar }
+    view = args[:home_view] || :open
+    menu_item "", "option-horizontal", menu_link_opts(
+      args, path: { view: view, slot: { show: :toolbar } }
     )
-    menu_item "", "option-horizontal", opts
   end
 
   def menu_item text, icon, opts={}

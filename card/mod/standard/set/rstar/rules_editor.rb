@@ -325,7 +325,7 @@ format :html do
       when :overwritten, :exists
         link_to_card "#{set_name}+#{card.rule_user_setting_name}", "(#{state})"
       end
-    label_body += " <em>#{info}</em" if info
+    label_body += " <em>#{info}</em>".html_safe if info
     %(<label class="#{label_class}">#{label_body}</label>).html_safe
   end
 

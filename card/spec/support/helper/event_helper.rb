@@ -7,12 +7,16 @@ class Card
       # instead of the card's context.
       # An additionally :trigger block in opts is expected that is called
       # to start the event phase.
-      # Other event options like :on or :when are not supported yet.
-      # Example:
-      # in_stage :initialize,
-      #          trigger: ->{ test_card.update_attributes! content: '' } do
-      #            expect(item_names).to eq []
-      #          end
+      # You can restrict the event to a specific card by passing a name
+      # with :for options.
+      # That's for example necessary if you create a card in a event.
+      # Otherwise you get a loop of card creations.
+      # @example
+      #   in_stage :initialize,
+      #            for: "my test card",
+      #            trigger: -> { test_card.update_attributes! content: '' } do
+      #     expect(item_names).to eq []
+      #   end
       def in_stage stage, opts={}, &event_block
         Card.rspec_binding = binding
         add_test_event stage, :in_stage_test, opts, &event_block
@@ -25,6 +29,33 @@ class Card
         trigger.call
       ensure
         remove_test_event stage, :in_stage_test
+      end
+
+      # if you need more then one test event (otherwise use #in_stage)
+      # @example
+      #   with_test_events do
+      #     test_event :store, for: "my card" do
+      #        Card.create name: "other card"
+      #     end
+      #     test_event :finalize, for: "other card" do
+      #        expect(content).to be_empty
+      #     end
+      #   end
+      def with_test_events
+        @events = []
+        Card.rspec_binding = binding
+        yield
+      ensure
+        @events.each do |stage, name|
+          remove_test_event stage, name
+        end
+        Card.rspec_binding = false
+      end
+
+      def test_event stage, opts={}, &block
+        event_name = :"test_event_#{@events.size}"
+        @events << [stage, event_name]
+        add_test_event stage, event_name, opts, &block
       end
 
       def add_test_event stage, name, opts={}, &event_block
@@ -43,23 +74,6 @@ class Card
       def remove_test_event stage, name
         stage_sym = :"#{stage}_stage"
         Card.skip_callback stage_sym, :after, name
-      end
-
-      def test_event stage, opts={}, &block
-        event_name = :"test_event_#{@events.size}"
-        @events << [stage, event_name]
-        add_test_event stage, event_name, opts, &block
-      end
-
-      def with_test_events
-        @events = []
-        Card.rspec_binding = binding
-        yield
-      ensure
-        @events.each do |stage, name|
-          remove_test_event stage, name
-        end
-        Card.rspec_binding = false
       end
     end
   end

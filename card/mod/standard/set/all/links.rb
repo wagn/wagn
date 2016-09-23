@@ -119,7 +119,7 @@ format do
     case action
     when :create then "card/#{action}/"
     # sometimes create action has no mark,
-    # but /create refers to a card named "create"
+    # but /create alone would refer to a card named "create"
     when nil     then ""
     else              "#{action}/"
     end

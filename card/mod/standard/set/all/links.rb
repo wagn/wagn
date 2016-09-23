@@ -24,25 +24,17 @@ end
 
 format do
   def link_to text=nil, opts={}
-    href = interpret_pathish opts.delete(:path)
-    if text && href != text
-      "#{text}[#{href}]"
+    path = interpret_pathish opts.delete(:path)
+    if text && path != text
+      "#{text}[#{path}]"
     else
-      href
-    end
-  end
-
-  def smart_link_to text, opts={}
-    if (linktype = [:view, :related, :card, :resource].find { |key| opts[key] })
-      send "link_to_#{linktype}", opts.delete(linktype), text, opts
-    else
-      send :link_to, text, opts
+      path
     end
   end
 
   def link_to_resource resource, text=nil, opts={}
     case (resource_type = resource_type resource)
-    when "external-link" then opts[:target] = "_blank"
+    when "external-link" then opts[:target] ||= "_blank"
     when "internal-link" then resource = internal_url resource[1..-1]
     end
     add_class opts, resource_type
@@ -86,6 +78,18 @@ format do
     opts[:path][:related] ||= {}
     opts[:path][:related][:name] ||= "+#{name}"
     link_to_view :related, (text || name), opts
+  end
+
+  # smart_link_to is wrapper method for #link_to, #link_to_card, #link_to_view,
+  # #link_to_resource, and #link_to_related.  If the opts argument contains
+  # :view, :related, :card, or :resource, it will use the respective method to
+  # render a link.
+  def smart_link_to text, opts={}
+    if (linktype = [:view, :related, :card, :resource].find { |key| opts[key] })
+      send "link_to_#{linktype}", opts.delete(linktype), text, opts
+    else
+      send :link_to, text, opts
+    end
   end
 
   # @param opts [Hash]

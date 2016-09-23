@@ -41,7 +41,7 @@ format :html do
   end
 
   def default_sign_in_args args
-    account_link_text :invite, args
+    account_link_text :sign_in, args
     account_link_opts "signin-link", args
   end
 

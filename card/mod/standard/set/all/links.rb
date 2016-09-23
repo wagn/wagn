@@ -2,7 +2,7 @@ RESOURCE_TYPE_REGEXP = /^([a-zA-Z][\-+\.a-zA-Z\d]*):/
 
 format :html do
   def link_to text=nil, opts={}
-    opts[:href] = interpret_pathish(opts.delete(:path)).html_safe
+    opts[:href] = interpret_pathish opts.delete(:path)
     text = raw(text || opts[:href])
     interpret_data_opts_to_link_to opts
     content_tag :a, text, opts

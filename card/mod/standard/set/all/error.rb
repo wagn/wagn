@@ -100,12 +100,10 @@ format :html do
 
   view :missing do |args|
     return "" unless card.ok? :create  # should this be moved into ok_view?
-    missing_view = args[:denied_view] || args[:home_view]
-    wrap args do
-      link_to_view :new, "Add #{fancy_title args[:title]}",
-                   path: (args[:type] ? { type: args[:type] } : {}),
-                   class: "slotter missing-#{missing_view}"
-    end
+    path_opts = args[:type] ? { card: { type: args[:type] } } : {}
+    link_text = "Add #{fancy_title args[:title]}"
+    klass = "slotter missing-#{args[:denied_view] || args[:home_view]}"
+    wrap(args) { link_to_view :new, link_text, path: path_opts, class: klass }
   end
 
   view :closed_missing, perms: :none do
@@ -153,7 +151,7 @@ format :html do
     sign_in_or_up_links =
       unless Auth.signed_in?
         signin_link = link_to_card :signin, "Sign in"
-        signup_link = link_to "Sign up", path: { account: :new, type: :signup }
+        signup_link = link_to "Sign up", path: { action: :new, mark: :signup }
         %(<div>#{signin_link} or #{signup_link} to create it.</div>)
       end
     frame args.merge(title: "Not Found", optional_menu: :never) do
@@ -184,7 +182,7 @@ format :html do
             or_signup_link =
               if Card.new(type_id: Card::SignupID).ok? :create
                 "or " +
-                  link_to("sign up", path: { account: "new", type: :signup })
+                  link_to("sign up", path: { action: "new", mark: :signup })
               end
             Env.save_interrupted_action(request.env["REQUEST_URI"])
             "Please #{signin_link} #{or_signup_link} #{to_task}"

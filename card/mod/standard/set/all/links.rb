@@ -60,9 +60,7 @@ format do
 
   def link_to_card cardish, text=nil, opts={}
     opts[:path] ||= {}
-    name = opts[:path][:name] = Card::Name.cardish cardish
-    # @fixme - need smarter mark handling
-
+    name = opts[:path][:mark] = Card::Name.cardish cardish
     text ||= name.to_name.to_show @context_names
     add_known_or_wanted_class opts, name
     link_to text, opts
@@ -97,32 +95,31 @@ format do
   # @option opts [String] :type
   # @option opts [Hash] :card
   # @param mark_type [Symbol] defaults to :id
-  def path opts={}, mark_type=:id
-    path = new_cardtype_path(opts) || standard_path(opts, mark_type)
+  def path opts={}
+    path = new_cardtype_path(opts) || standard_path(opts)
     internal_url path
   end
 
   def new_cardtype_path opts
     return unless opts[:action] == :new
     opts.delete :action
-    return unless (type_mark = opts.delete(:type))
-    "new/#{Card.quick_fetch(type_mark).cardname.url_key}"
+    return unless opts[:mark]
+    "new/#{path_mark opts}"
   end
 
-  def standard_path opts, mark_type
+  def standard_path opts
     standardize_action! opts
-    base = path_action(opts[:action]) + path_mark(opts, mark_type)
+    mark = path_mark opts
+    base = path_base opts[:action], mark
     base + path_query(opts)
   end
 
-  def path_action action
-    case action
-    when :create then "card/#{action}/"
-    # sometimes create action has no mark,
-    # but /create alone would refer to a card named "create"
-    when nil     then ""
-    else              "#{action}/"
+  def path_base action, mark
+    if action && mark then "#{action}/#{mark}"
+    elsif action      then "card/#{action}"
+    else                   mark
     end
+    # the card/ prefix prevents interpreting action as cardname
   end
 
   def standardize_action! opts
@@ -130,51 +127,24 @@ format do
     opts.delete :action
   end
 
-  def path_mark opts, mark_type
-    case mark_type
-    when :id       && (id = path_id opts)        then "~#{id}"
-    when :codename && (codename = card.codename) then ":#{codename}"
-    else (opts[:name] || card.name).to_name.url_key
-    end
-  end
-
-  def path_id opts
-    id = opts.delete :id
-    id if id.present?
+  def path_mark opts
+    return "" if opts[:action] == :create || opts.delete(:no_mark)
+    name = opts[:mark] ? Card::Name.cardish(opts.delete(:mark)) : card.name
+    add_unknown_name_to_opts name.to_name, opts
+    name.to_name.url_key
   end
 
   def path_query opts
-    finalize_card_opts opts.delete(:card), opts
     opts.delete :action
     opts.empty? ? "" : "?#{opts.to_param}"
   end
 
-  def finalize_card_opts card_opts, opts
-    card_opts ||= {}
-    [:name, :type].each do |field|
-      assign_path_card_opt card_opts, field, opts
-    end
-    opts[:card] = card_opts unless card_opts.empty?
-  end
-
-  def assign_path_card_opt card_opts, field, opts
-    optvalue = opts.delete field
-    return if card_opts[field] || !optvalue.present?
-    new_value = send "new_#{field}_in_path_opts", optvalue.to_s, opts
-    return unless new_value
-    card_opts[field] = new_value
-  end
-
-  def new_name_in_path_opts name, opts
-    if opts[:action] == :update
-      name if name != card.name
-    elsif !Card.known?(name) && name != name.to_name.url_key
-      name
-    end
-  end
-
-  def new_type_in_path_opts opttype, _opts
-    opttype if Card.known?(opttype)
+  def add_unknown_name_to_opts name, opts
+    return if opts[:card] && opts[:card][:name]
+    return if name.s == Card::Name.url_key_to_standard(name.url_key)
+    return if Card.known? name
+    opts[:card] ||= {}
+    opts[:card][:name] = name
   end
 
   def internal_url relative_path

@@ -11,11 +11,17 @@ class Card
     self.session = proc { Card::Auth.current.name }
     self.banned_array = ["/"]
 
-    def self.cardish mark
-      case mark
-      when Card            then mark.cardname
-      when Symbol, Integer then Card.quick_fetch(mark).cardname
-      else                      mark.to_name
+    class << self
+      def cardish mark
+        case mark
+        when Card            then mark.cardname
+        when Symbol, Integer then Card.quick_fetch(mark).cardname
+        else                      mark.to_name
+        end
+      end
+
+      def url_key_to_standard key
+        key.to_s.tr "_", " "
       end
     end
 

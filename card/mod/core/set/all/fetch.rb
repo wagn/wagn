@@ -187,9 +187,8 @@ module ClassMethods
     opts = (args[:card] || {}).clone
     # clone so that original params remain unaltered.  need deeper clone?
     opts[:type] ||= args[:type] if args[:type]
-    # for /new/:type shortcut.  we should fix and deprecate this.
-    opts[:name] ||= args[:id].to_s.tr("_", " ")
-    # move handling to Card::Name?
+    # for /new/:type shortcut.  we should handle in routing and deprecate this
+    opts[:name] ||= Card::Name.url_key_to_standard(args[:id])
     opts
   end
 

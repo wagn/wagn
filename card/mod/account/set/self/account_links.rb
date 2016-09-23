@@ -37,7 +37,7 @@ format :html do
 
   def default_sign_up_args args
     account_link_text :sign_up, args
-    account_link_opts "signup-link", args, action: :new, type: :signup
+    account_link_opts "signup-link", args, action: :new, mark: :signup
   end
 
   def default_sign_in_args args
@@ -47,7 +47,7 @@ format :html do
 
   def default_invite_args args
     account_link_text :invite, args
-    account_link_opts "invite-a-friend-link", args, action: :new, type: :signup
+    account_link_opts "invite-a-friend-link", args, action: :new, mark: :signup
   end
 
   def default_sign_out_args args

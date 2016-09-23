@@ -43,10 +43,11 @@ format do
 
   view :link, closed: true, perms: :none do |args|
     title = showname args[:title]
-    known = card.known?
-    path_opts = {}
-    path_opts[:type] = args[:type] if !known && Card.known?(args[:type])
-    link_to_card card.name, title, known: known, path: path_opts
+    opts = { known: card.known? }
+    if args[:type] && !opts[:known]
+      opts[:path] = { card: { type: args[:type] } }
+    end
+    link_to_card card.name, title, opts
   end
 
   view(:codename, closed: true) { card.codename.to_s }

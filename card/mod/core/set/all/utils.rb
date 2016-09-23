@@ -36,7 +36,7 @@ module ClassMethods
   end
 
   def merge name, attribs={}, opts={}
-    puts "merging #{name}"
+    # puts "merging #{name}"
     card = fetch name, new: {}
     [:image, :file].each do |attach|
       next unless attribs[attach] && attribs[attach].is_a?(String)

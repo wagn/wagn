@@ -20,11 +20,11 @@ Style/CollectionMethods:
   Description: Preferred collection methods.
   Enabled: false
   PreferredMethods:
-    collect: map
-    collect!: map!
-    detect: find
-    find_all: select
-    reduce: inject
+    collect: 'map'
+    collect!: 'map!'
+    detect: 'find'
+    find_all: 'select'
+    reduce: 'inject'
 Style/DotPosition:
   EnforcedStyle: leading
 Style/Encoding:

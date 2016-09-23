@@ -26,7 +26,7 @@ format :html do
   end
 
   view :invite, perms: ->(r) { r.show_invite_link? },
-       denial: :blank do |args|
+                denial: :blank do |args|
     link_to args[:link_text], args[:link_opts]
   end
 

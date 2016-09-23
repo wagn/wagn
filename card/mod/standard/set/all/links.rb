@@ -156,7 +156,7 @@ format do
   def new_name_in_path_opts name, opts
     if opts[:action] == :update
       name if name != card.name
-    elsif name != name.to_name.url_key
+    elsif !Card.known?(name) && name != name.to_name.url_key
       name
     end
   end

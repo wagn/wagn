@@ -80,8 +80,8 @@ module Card::Content::Chunk
     end
 
     def process_uri_chunk
-      link_opts = { text: process_text }
-      "#{format.web_link(@link_text, link_opts)}#{@trailing_punctuation}"
+      link = format.link_to_resource @link_text, process_text
+      "#{link}#{@trailing_punctuation}"
     end
   end
 

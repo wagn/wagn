@@ -5,93 +5,117 @@ format :html do
     return "not a rule" unless card.is_rule?
 
     rule_card = find_current_rule_card
-    rule_content =
-      if rule_card
-        subformat(rule_card)._render_closed_content(
-          set_context: card.cardname.trunk_name
-        )
-      else
-        ""
-      end
+    rule_content = closed_rule_content rule_card
+    known_or_missing = known_or_missing_rule rule_card
 
     cells = [
-      ["rule-setting",
-       link_to(
-         card.cardname.tag.sub(/^\*/, ""), path(view: :open_rule),
-         class: "edit-rule-link slotter", remote: true, rel: "nofollow"
-       )
-      ],
-      ["rule-content",
-       %(<div class="rule-content-container">
-           <span class="closed-content content">#{rule_content}</span>
-         </div> )],
+      ["rule-setting", link_to_open_rule],
+      ["rule-content", rule_content_container(rule_content)],
       ["rule-set", (rule_card ? rule_card.trunk.label : "")]
-    ]
-    extra_css_class =
-      rule_card && !rule_card.new_card? ? "known-rule" : "missing-rule"
+    ].map do |css_class, cell_content|
+      wrap_rule_cell css_class, cell_content, known_or_missing
+    end
+    %(<tr class="card-slot closed-rule">#{cells.join "\n"}</tr>)
+  end
 
-    row =
-      cells.map do |css_class, content|
-        %(<td class="rule-cell #{css_class} #{extra_css_class}">#{content}</td>)
-      end.join("\n")
+  def wrap_rule_cell css_class, cell_content, known_or_missing
+    %(
+      <td class="rule-cell #{css_class} #{known_or_missing}">
+        #{cell_content}
+      </td>
+    )
+  end
 
-    %(<tr class="card-slot closed-rule"> #{row} </tr>)
+  def known_or_missing_rule rule_card
+    rule_card && !rule_card.new_card? ? "known-rule" : "missing-rule"
+  end
+
+  def rule_content_container rule_content
+    %(
+      <div class="rule-content-container">
+        <span class="closed-content content">#{rule_content}</span>
+      </div>
+    )
+  end
+
+  def link_to_open_rule
+    setting_title = card.cardname.tag.tr "*", ""
+    link_to_view :open_rule, setting_title, class: "edit-rule-link slotter"
+  end
+
+  def closed_rule_content rule_card
+    if rule_card
+      subformat(rule_card)._render_closed_content(
+        set_context: card.cardname.trunk_name
+      )
+    else
+      ""
+    end
   end
 
   view :open_rule, tags: :unknown_ok do |args|
     return "not a rule" unless card.is_rule?
-    current_rule = args[:current_rule]
     setting_name = args[:setting_name]
+    current_rule = args[:current_rule]
 
-    edit_mode =
-      !params[:success] && card.ok?((card.new_card? ? :create : :update))
-    # ~~~~~~ handle reloading due to type change
-    if params[:type_reload] && (card_args = params[:card])
-      if card_args[:name] && card_args[:name].to_name.key != current_rule.key
-        current_rule = Card.new card_args
-      else
-        current_rule = current_rule.refresh
-        current_rule.assign_attributes card_args
-        current_rule.include_set_modules
-      end
-      edit_mode = true
-    end
-
-    opts = {
-      rule_context: card,   # determines the set options and the success view
-      set_context:  card.rule_set_name
-    }
-    rule_view = edit_mode ? :edit_rule : :show_rule
+    rule_view = open_rule_body_view
+    rule_view_args = { rule_context: card, set_context: card.rule_set_name }
+    body = subformat(current_rule)._render rule_view, rule_view_args
 
     <<-HTML
       <tr class="card-slot open-rule #{rule_view.to_s.sub '_', '-'}">
         <td class="rule-cell" colspan="3">
           <div class="rule-setting">
-            #{view_link setting_name.sub(/^\*/, ''), :closed_rule,
-                        class: 'close-rule-link slotter'}
-            #{card_link setting_name,
-                        text: "all #{setting_name} rules",
-                        class: 'setting-link',
-                        target: 'wagn_setting'}
+            #{open_rule_setting_links setting_name}
           </div>
-
           <div class="alert alert-info rule-instruction">
-            #{process_content "{{#{setting_name}+*right+*help|content}}"}
+            #{open_rule_instruction setting_name}
           </div>
-
           <div class="card-body">
-            #{subformat(current_rule)._render rule_view, opts}
+            #{body}
           </div>
         </td>
       </tr>
     HTML
   end
 
+  def open_rule_setting_links setting_name
+    setting_title = setting_name.tr "*", ""
+    closed_rule_link = link_to_view :closed_rule, setting_title,
+                                    class: "close-rule-link slotter"
+    all_rules_link = link_to_card setting_name, "all #{setting_title} rules",
+                                  class: "setting-link", target: "wagn_setting"
+    closed_rule_link + all_rules_link
+  end
+
+  def open_rule_instruction setting_name
+    process_content "{{#{setting_name}+*right+*help|content}}"
+  end
+
+  def open_rule_body_view
+    return :show_rule if params[:success] && !params[:reload]
+    card_action = card.new_card? ? :create : :update
+    return :show_rule unless card.ok? card_action
+    :edit_rule
+  end
+
+  def reload_current_rule current_rule
+    return current_rule unless (card_args = params[:card])
+    if card_args[:name] && card_args[:name].to_name.key != current_rule.key
+      Card.new card_args
+    else
+      current_rule = current_rule.refresh
+      current_rule.assign_attributes card_args
+      current_rule.include_set_modules
+    end
+  end
+
   def default_open_rule_args args
-    current_rule_card = find_current_rule_card || begin
+    current_rule = find_current_rule_card || begin
       Card.new name: "#{Card[:all].name}+#{card.rule_user_setting_name}"
     end
-    args.reverse_merge! current_rule: current_rule_card,
+    current_rule = reload_current_rule current_rule
+    args.reverse_merge! current_rule: current_rule,
                         setting_name: card.rule_setting_name
   end
 
@@ -103,7 +127,7 @@ format :html do
       args[:item] ||= :link
       %(
         <div class="rule-set">
-        <label>Applies to</label> #{card_link set.cardname, text: set.label}:
+        <label>Applies to</label> #{link_to_card set.cardname, set.label}:
         </div>
         #{_render_core args}
       )
@@ -179,12 +203,11 @@ format :html do
 
   def edit_single_rule_button_args args
     args[:delete_button] = delete_button args, ".card-slot.related-view"
-    args[:cancel_button] = card_link(
-      args[:success][:id],
-      text: "Cancel",
-      class: "rule-cancel-button btn btn-default",
-      path_opts: { view: args[:success][:view] }
-    )
+
+    args[:cancel_button] =
+      link_to_card args[:success][:id], "Cancel",
+                   class: "rule-cancel-button btn btn-default",
+                   path: { view: args[:success][:view] }
   end
 
   def delete_button args, slot_selector=nil
@@ -292,21 +315,18 @@ format :html do
   end
 
   def set_label card, set_name, label, state
+    label_class = "set-label"
+    label_body = link_to_card set_name, label, target: "wagn_set"
     info =
       case state
       when :current
+        label_class += " current-set_label"
         "(current)"
       when :overwritten, :exists
-        card_link "#{set_name}+#{card.rule_user_setting_name}",
-                  text: "(#{state})"
+        link_to_card "#{set_name}+#{card.rule_user_setting_name}", "(#{state})"
       end
-    label = <<-HTML
-      <label class="set-label #{'current-set-label' if state == :current}">
-        #{card_link set_name, text: label, target: 'wagn_set'}
-        #{"<em> #{info} </em>" if info}
-      </label>
-    HTML
-    label.html_safe
+    label_body += " <em>#{info}</em>".html_safe if info
+    %(<label class="#{label_class}">#{label_body}</label>).html_safe
   end
 
   def narrower_rule_warning narrower_rules
@@ -317,10 +337,7 @@ format :html do
   end
 
   def option_list title
-    list =
-      wrap_each_with(:li, class: "radio") do
-        yield
-      end
+    list = wrap_each_with(:li, class: "radio") { yield }
     formgroup title, "<ul>#{list}</ul>", editor: "set", class: "col-xs-6"
   end
 

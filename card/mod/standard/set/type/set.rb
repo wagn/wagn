@@ -125,17 +125,16 @@ format :html do
   end
 
   view :template_link do |args|
-    args.delete :style
+    args.delete :style # why? comment needed
     wrap args do
-      link = view_link args[:inc_syntax], :template_editor, class: "slotter"
-      # , 'slot-include'=>include_syntax
-      "{{#{link}}}"
+      link = link_to_view :template_editor, args[:inc_syntax], class: "slotter"
+      "{{#{link}}"
     end
   end
 
   view :template_closer do |_args|
-    view_link "", :template_link,
-              class: "slotter glyphicon glyphicon-remove template-editor-close"
+    link_classes = "slotter glyphicon glyphicon-remove template-editor-close"
+    link_to_view :template_link, "", class: link_classes
   end
 
   view :template_editor do |args|
@@ -171,17 +170,13 @@ format :html do
         content_tag(:span, "Set:", class: "navbar-text hidden-xs"),
         (wrap_with :ul, class: "nav navbar-nav nav-pills" do
           related_sets.map do |name, label|
-            path_opts = {
-              view: @slot_view,
-              slot: {
-                subheader: showname(name),
-                subframe: true,
-                hide: "header set_label rule_navbar",
-                show: "subheader set_navbar"
-              }
-            }
-            link = card_link name, text: label, remote: true,
-                                   path_opts: path_opts
+            slot_opts = { subheader: showname(name),
+                          subframe: true,
+                          hide: "header set_label rule_navbar",
+                          show: "subheader set_navbar" }
+            link = link_to_card name, label, remote: true,
+                                             path: { view: @slot_view,
+                                                     slot: slot_opts }
             li_pill link, name == card.name
           end
         end)
@@ -216,8 +211,9 @@ format :html do
 
   def view_link_pill name, view, args
     selected_view = args[:selected_view] || @slot_view || args[:home_view]
-    opts = { class: "slotter", role: "pill", path_opts: args[:path_opts] }
-    li_pill view_link(name, view, opts), selected_view == view
+    link = link_to_view view, name, class: "slotter", role: "pill",
+                                    path: args[:path_opts]
+    li_pill link, selected_view == view
   end
 end
 

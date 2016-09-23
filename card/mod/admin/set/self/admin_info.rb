@@ -70,31 +70,25 @@ format :html do
 
   def howto_add_new_recaptcha_keys
     instructions(
-      # 'How to add new recaptcha keys:'
       I18n.t(:howto_add_keys, scope: "mod.admin.set.self.admin_info"),
       [
-        # "1. Register your domain at #{web_link 'http://google.com/recaptcha'}"
         I18n.t(:howto_register,
                scope: "mod.admin.set.self.admin_info",
-               recaptcha_link: web_link("http://google.com/recaptcha")),
-        # "2. Add your keys to #{card_link :recaptcha_settings}"
+               recaptcha_link: link_to_resource("http://google.com/recaptcha")),
         I18n.t(:howto_add,
                scope: "mod.admin.set.self.admin_info",
-               recaptcha_settings: card_link(:recaptcha_settings))
+               recaptcha_settings: link_to_card(:recaptcha_settings))
       ]
     )
   end
 
   def howto_turn_captcha_off
     instructions(
-      # 'How to turn captcha off:'
       I18n.t(:howto_turn_off, scope: "mod.admin.set.self.admin_info"),
       [
-        # "1. Go to #{card_link :captcha}"
         I18n.t(:howto_go,
                scope: "mod.admin.set.self.admin_info",
-               captcha_card: card_link(:captcha)),
-        # '2. Update all *captcha rules to "no".'
+               captcha_card: link_to_card(:captcha)),
         I18n.t(:howto_update,
                scope: "mod.admin.set.self.admin_info")
       ]

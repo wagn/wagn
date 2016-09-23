@@ -1,11 +1,12 @@
 format :html do
   view :modal_link do |args|
-    path_opts = args[:path_opts] || {}
-    path_opts[:layout] = :modal
-    html_args = args[:html_args] || {}
-    html_args["data-target"] = "#modal-main-slot"
-    html_args["data-toggle"] = "modal"
-    link_to(args[:text] || _render_title(args), path(path_opts), html_args)
+    opts = args[:link_opts] || {}
+    opts[:path] ||= {}
+    opts[:path][:layout] = :modal
+    opts["data-target"] = "#modal-main-slot"
+    opts["data-toggle"] = "modal"
+    text = args[:link_text] || _render_title(args)
+    link_to text, opts
   end
 
   view :modal_slot, tags: :unknown_ok do |args|
@@ -29,10 +30,11 @@ format :html do
     # (eg we don't want layout, id, controller...)
     wrap_with :div, class: "modal-menu" do
       [
-        link_to(glyphicon("remove"), "",
-                class: "close-modal pull-right close",
+        link_to(glyphicon("remove"),
+                path: "", class: "close-modal pull-right close",
                 "data-dismiss" => "modal"),
-        link_to(glyphicon("new-window"), popout_params,
+        link_to(glyphicon("new-window"),
+                path: popout_params,
                 class: "pop-out-modal pull-right close ")
       ]
     end

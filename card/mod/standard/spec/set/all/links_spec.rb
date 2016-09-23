@@ -1,15 +1,18 @@
 # -*- encoding : utf-8 -*-
 describe Card::Set::All::Links do
   require "card"
-  describe "#web_link" do
+  describe "#link_to_resource" do
     it "opens external link in new tab" do
-      link = Card["Home"].format.web_link("http://example.com")
-      assert_view_select link, 'a[class="external-link"][target="_blank"][href="http://example.com"]'
+      actual = Card["Home"].format.link_to_resource "http://example.com"
+      expected = 'a[class="external-link"][target="_blank"]' \
+                 '[href="http://example.com"]'
+      assert_view_select actual, expected
     end
 
     it "opens interal link in same tab" do
-      link = Card["Home"].format.web_link("/Home")
-      assert_view_select link, 'a[target="_blank"]', false
+      actual = Card["Home"].format.link_to_resource "/Home"
+      expected = 'a[target="_blank"]'
+      assert_view_select actual, expected, false
     end
   end
 end

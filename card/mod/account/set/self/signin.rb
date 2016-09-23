@@ -30,15 +30,11 @@ format :html do
     # i18n-tasks-use t(:reset_password,
     #                  scope: 'mod.standard.set.self.signin')
     args[:buttons] = button_tag sign_in, situation: "primary"
-    if Card.new(type_id: Card::SignupID).ok? :create
-      args[:buttons] += link_to(or_sign_up, card_path("account/signup"))
-    end
-    args[:buttons] += raw(
-      "<div style='float:right'>" \
-      "#{view_link reset_password, :edit,
-                   path_opts: { slot: { hide: :toolbar } }}" \
-      "</div>"
-    ) # FIXME: hardcoded styling
+    subformat(Card[:account_links]).render :sign_up, title: or_sign_up
+    reset_link = link_to_view :edit, reset_password,
+                              path: { slot: { hide: :toolbar } }
+    args[:buttons] += raw("<div style='float:right'>#{reset_link}</div>")
+    # FIXME: hardcoded styling
     args
   end
 

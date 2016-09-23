@@ -12,6 +12,7 @@ format :html do
   end
 
   view :menu_link do |args|
+    menu_icon = glyphicon args[:menu_icon]
     path_opts = { slot: { home_view: args[:home_view] } }
     path_opts[:is_main] = true if main?
     css_class =
@@ -23,10 +24,7 @@ format :html do
       end
     wrap_with :div, class: "vertical-card-menu card-menu #{css_class}" do
       content_tag :div, class: "btn-group slotter card-slot pull-right" do
-        view_link(
-          glyphicon(args[:menu_icon]), :vertical_menu,
-          path_opts: path_opts
-        ).html_safe
+        link_to_view(:vertical_menu, menu_icon, path: path_opts).html_safe
       end
     end
   end
@@ -49,8 +47,8 @@ format :html do
   view :horizontal_menu do |args|
     content_tag :div, class: "btn-group slotter pull-right card-menu "\
                              "horizontal-card-menu hidden-xs" do
-      menu_item_list(args.merge(html_args: { class: "btn btn-default" }))
-        .join("\n").html_safe
+      list_opts = args.merge(link_opts: { class: "btn btn-default" })
+      menu_item_list(list_opts).join("\n").html_safe
     end
   end
 
@@ -66,14 +64,18 @@ format :html do
     menu_items
   end
 
+  def menu_link_opts old, new
+    opts = old[:link_opts] || {}
+    opts.merge new
+  end
+
   def menu_edit_link args
-    path_opts = { view: :edit }
-    menu_item("edit", "edit", path_opts, args[:html_args])
+    menu_item "edit", "edit", menu_link_opts(args, view: :edit)
   end
 
   def menu_discuss_link args
-    menu_item("discuss", "comment", { related: Card[:discussion].key },
-              args[:html_args])
+    opts = menu_link_opts args, related: Card[:discussion].key
+    menu_item "discuss", "comment", opts
   end
 
   def menu_follow_link args
@@ -81,30 +83,30 @@ format :html do
   end
 
   def menu_page_link args
-    menu_item("page", "new-window", { card: card }, args[:html_args])
+    menu_item "page", "new-window", menu_link_opts(args, card: card)
   end
 
   def menu_rules_link args
-    menu_item("rules", "wrench", { view: :options }, args[:html_args])
+    menu_item "rules", "wrench", menu_link_opts(args, view: :options)
   end
 
   def menu_account_link args
-    path_opts = { related: { name: "+*account", view: :edit } }
-    menu_item("account", "user", path_opts, args[:html_args])
+    menu_item "account", "user", menu_link_opts(
+      args, view: :related,
+            path: { related: { name: "+*account", view: :edit } }
+    )
   end
 
   def menu_more_link args
-    path_opts = {
-      view: args[:home_view] || :open,
-      slot: { show: :toolbar }
-    }
-    menu_item("", "option-horizontal", path_opts, args[:html_args])
+    view = args[:home_view] || :open
+    menu_item "", "option-horizontal", menu_link_opts(
+      args, path: { view: view, slot: { show: :toolbar } }
+    )
   end
 
-  def menu_item text, icon, target, html_args={}
-    link_text =
-      "#{glyphicon(icon)}<span class='menu-item-label'>#{text}</span>".html_safe
-    smart_link link_text, target, html_args || {}
+  def menu_item text, icon, opts={}
+    link_text = "#{glyphicon(icon)}<span class='menu-item-label'>#{text}</span>"
+    smart_link_to link_text.html_safe, opts
   end
 
   def default_menu_link_args args

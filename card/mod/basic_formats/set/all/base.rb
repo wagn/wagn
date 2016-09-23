@@ -38,16 +38,15 @@ format do
   end
 
   view :url_link, closed: true, perms: :none do
-    web_link card_url(_render_linkname)
+    link_to_resource card_url(_render_linkname)
   end
 
   view :link, closed: true, perms: :none do |args|
-    card_link(
-      card.name,
-      text: showname(args[:title]),
-      known: card.known?,
-      path_opts: { type: args[:type] }
-    )
+    title = showname args[:title]
+    known = card.known?
+    path_opts = {}
+    path_opts[:type] = args[:type] if !known && Card.known?(args[:type])
+    link_to_card card.name, title, known: known, path: path_opts
   end
 
   view(:codename, closed: true) { card.codename.to_s }

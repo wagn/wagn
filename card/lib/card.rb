@@ -69,7 +69,7 @@ class Card < ActiveRecord::Base
   attr_accessor :follower_stash
 
   define_callbacks(
-    :select_action, :show_page, :handle, :act,
+    :select_action, :show_page, :act,
 
     # VALIDATION PHASE
     :initialize_stage, :prepare_to_validate_stage, :validate_stage,

@@ -71,18 +71,16 @@ format :html do
   end
 
   def backtrace_link exception
-    warning_options = {
-      dismissible: true,
-      alert_class: "render-error-message errors-view admin-error-message"
-    }
-    warning = alert("warning", warning_options) do
+    alert_class = "render-error-message errors-view admin-error-message"
+    warning = alert("warning", dismissible: true, alert_class: alert_class) do
       %{
         <h3>Error message (visible to admin only)</h3>
         <p><strong>#{exception.message}</strong></p>
         <div>#{exception.backtrace * "<br>\n"}</div>
       }
     end
-    card_link(error_cardname, class: "render-error-link") + warning
+    link = link_to_card error_cardname, nil, class: "render-error-link"
+    link + warning
   end
 
   view :unsupported_view, perms: :none, tags: :unknown_ok do |args|
@@ -102,15 +100,11 @@ format :html do
 
   view :missing do |args|
     return "" unless card.ok? :create  # should this be moved into ok_view?
-
-    link_opts = {
-      remote: true,
-      class: "slotter missing-#{args[:denied_view] || args[:home_view]}"
-    }
-    link_opts[:path_opts] = { type: args[:type] } if args[:type]
-
+    missing_view = args[:denied_view] || args[:home_view]
     wrap args do
-      view_link "Add #{fancy_title args[:title]}", :new, link_opts
+      link_to_view :new, "Add #{fancy_title args[:title]}",
+                   path: (args[:type] ? { type: args[:type] } : {}),
+                   class: "slotter missing-#{missing_view}"
     end
   end
 
@@ -119,7 +113,7 @@ format :html do
   end
 
   view :conflict, error_code: 409 do |args|
-    actor_link = card_link card.last_action.act.actor.cardname
+    actor_link = link_to_card card.last_action.act.actor.cardname
     expanded_act = wrap(args) do
       _render_act_expanded act: card.last_action.act, current_rev_nr: 0
     end
@@ -158,8 +152,8 @@ format :html do
   view :not_found do |args| # ug.  bad name.
     sign_in_or_up_links =
       unless Auth.signed_in?
-        signin_link = card_link :signin, text: "Sign in"
-        signup_link = link_to "Sign up", card_path("new/:signup")
+        signin_link = link_to_card :signin, "Sign in"
+        signup_link = link_to "Sign up", path: { account: :new, type: :signup }
         %(<div>#{signin_link} or #{signup_link} to create it.</div>)
       end
     frame args.merge(title: "Not Found", optional_menu: :never) do
@@ -186,10 +180,11 @@ format :html do
           when Auth.signed_in?
             "You need permission #{to_task}"
           else
-            signin_link = link_to "sign in", card_url(":signin")
+            signin_link = link_to_card :signin, "sign in"
             or_signup_link =
               if Card.new(type_id: Card::SignupID).ok? :create
-                "or " + link_to("sign up", card_url("new/:signup"))
+                "or " +
+                  link_to("sign up", path: { account: "new", type: :signup })
               end
             Env.save_interrupted_action(request.env["REQUEST_URI"])
             "Please #{signin_link} #{or_signup_link} #{to_task}"

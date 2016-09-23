@@ -33,7 +33,7 @@ format :html do
   end
 
   def set_patterns_breadcrumb subject
-    links = subject.patterns.reverse.map { |pattern| card_link pattern.to_s }
+    links = subject.patterns.reverse.map { |pattern| link_to_card pattern.to_s }
     breadcrumb(links)
   end
   # rubocop:enable AccessorMethodName

@@ -2,7 +2,7 @@ RESOURCE_TYPE_REGEXP = /^([a-zA-Z][\-+\.a-zA-Z\d]*):/
 
 format :html do
   def link_to text=nil, opts={}
-    opts[:href] = interpret_pathish opts.delete(:path)
+    opts[:href] = path opts.delete(:path)
     text = raw(text || opts[:href])
     interpret_data_opts_to_link_to opts
     content_tag :a, text, opts
@@ -18,13 +18,13 @@ end
 
 format :css do
   def link_to _text=nil, opts={}
-    card_url interpret_pathish(opts.delete(:path))
+    card_url path(opts.delete(:path))
   end
 end
 
 format do
   def link_to text=nil, opts={}
-    path = interpret_pathish opts.delete(:path)
+    path = path opts.delete(:path)
     if text && path != text
       "#{text}[#{path}]"
     else
@@ -64,8 +64,8 @@ format do
     add_class opts, (known ? "known-card" : "wanted-card")
   end
 
-  # link to a specific view (defaults to current card)
-  # this is generally used for ajax calls
+  # dynamic (ajax) link to a specific view
+  #
   def link_to_view view, text, opts={}
     opts.reverse_merge! path: {}, remote: true, rel: "nofollow"
     opts[:path][:view] = view unless view == :home
@@ -92,14 +92,19 @@ format do
     end
   end
 
-  # @param opts [Hash]
+  # path is for generating standard card routes, eg
+  #   [cardname]
+  #   [cardname]?[param]=[value]
+  #   [action]/[cardname]?[param]=[value]
+
+  # @param opts [Hash, String] a String is treated as a complete path and
+  # bypasses all processing
+  # @option opts [String, Card::Name, Integer, Symbol, Card] :mark
   # @option opts [Symbol] :action card action (:create, :update, :delete)
-  # @option opts [Integer, String] :id
-  # @option opts [String, Card::Name] :name
-  # @option opts [String] :type
   # @option opts [Hash] :card
-  # @param mark_type [Symbol] defaults to :id
+  # @option opts []
   def path opts={}
+    return opts unless opts.is_a? Hash
     path = new_cardtype_path(opts) || standard_path(opts)
     internal_url path
   end
@@ -119,11 +124,12 @@ format do
   end
 
   def path_base action, mark
-    if action && mark then "#{action}/#{mark}"
-    elsif action      then "card/#{action}"
-    else                   mark
+    if action
+      mark.present? ? "#{action}/#{mark}" : "card/#{action}"
+      # the card/ prefix prevents interpreting action as cardname
+    else
+      mark
     end
-    # the card/ prefix prevents interpreting action as cardname
   end
 
   def standardize_action! opts
@@ -153,9 +159,5 @@ format do
 
   def internal_url relative_path
     card_path relative_path
-  end
-
-  def interpret_pathish pathish
-    pathish.is_a?(Hash) ? path(pathish) : pathish
   end
 end

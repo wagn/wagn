@@ -384,8 +384,8 @@ format :html do
   end
 
   def rollback_link actions
-    # @fixme -- doesn't this need to specify which action it wants?
-    prior =  # @fixme - should be a Card::Action method
+    # FIXME -- doesn't this need to specify which action it wants?
+    prior =  # FIXME - should be a Card::Action method
       actions.select { |action| action.card.last_action_id != action.id }
     return unless card.ok?(:update) && prior.present?
     link = link_to(

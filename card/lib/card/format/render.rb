@@ -8,22 +8,88 @@ class Card
       }.freeze
 
       def render view, args={}
-        view = canonicalize_view view
-        return if hidden_view? view, args
-        view = ok_view view, args
-        current_view(view) do
-          args = default_render_args view, args
-          with_nest_mode view do
-            Card::Cache::ViewCache.fetch(self, view, args) do
-              method = view_method view, args
-              method.arity.zero? ? method.call : method.call(args)
-            end
-          end
+        return unless (view = renderable_view)
+        args = default_render_args view, args
+        cache_render view, args do
+          render! view, args
         end
       rescue => e
         rescue_view e, view
       end
 
+      def render! view, args
+        current_view(view) do
+          with_nest_mode view do
+            method = view_method view, args
+            method.arity.zero? ? method.call : method.call(args)
+          end
+        end
+      end
+
+      def cache_render view, args
+        if cacheable_render? view, args
+          cached_result view, args, &block
+        elsif stub_nest? view, args
+          stub_nest view, args
+        else
+          yield
+        end
+      end
+
+      def cacheable_render? view, args
+        Card.config.view_cache &&
+          cacheable_nest_name?(args) &&
+          cacheable_view?(view, args) &&
+          cache_permissible?(view, args)
+      end
+
+      def stub_nest? view, args
+        Card.config.view_cache &&
+          cache_render_in_progress? &&
+          view_approved_for?(:stub, view, args)
+      end
+
+      def cacheable_nest_name?
+        nest_name = args[:inc_name]
+        !(nest_name && nest_name == "_user")
+      end
+
+      def cacheable_view? view, args
+        view_approved_for? :cache, view, args
+        test_method = "cache_view_#{view}?"
+        return true unless respond_to? test_method
+        send test_method, args
+      end
+
+      def view_approved_for? role, view, args
+        test_method = "#{role}_view_#{view}?"
+        return true unless respond_to? test_method
+        send test_method, args
+      end
+
+      def cache_permissible? view, args
+        # for now, permit only if "Anyone" can read card and see view
+        # later add support for caching restricted views nested by other views
+        # with the same restrictions
+      end
+
+      def cached_result view, args
+        cached_view = Card::Cache::ViewCache.fetch self, view, args, &block
+        cache_strategy = Card.config.view_cache
+        cache_strategy == :client ? cached_view : complete_render(cached_view)
+      end
+
+      def complete_render content_with_nest_stubs
+        # use Card::Content to process nest stubs
+      end
+
+      def renderable_view view, args
+        view = canonicalize_view view
+        return false if hidden_view? view, args
+        ok_view view, args
+      end
+
+      # FIXME: would have method name conflict with render method for view :api
       def render_api match, opts
         view = match[3] ? match[4] : opts.shift
         args = opts[0] ? opts.shift.clone : {}

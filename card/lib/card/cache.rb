@@ -29,12 +29,12 @@ class Card
       Card.cache.delete "~#{card.id}" if card.id
     end
 
-    def expire_hard name
-      return unless Card.cache.hard
-      key = name.to_name.key
-      Card.cache.hard.delete key
-      Card.cache.hard.delete "~#{card.id}" if card.id
-    end
+    # def expire_hard name
+    #   return unless Card.cache.hard
+    #   key = name.to_name.key
+    #   Card.cache.hard.delete key
+    #   Card.cache.hard.delete "~#{card.id}" if card.id
+    # end
   end
 
   # The {Cache} class manages and integrates {Temporary} and {Persistent

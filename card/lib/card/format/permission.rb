@@ -32,18 +32,19 @@ class Card
       end
 
       def permitted_view view, args
-        perms_required = Card::Format.perms[view] || :read
-        args[:denied_task] =
-          if perms_required.is_a? Proc
-            :read unless perms_required.call(self)  # read isn't quite right
-          else
-            [perms_required].flatten.find { |task| !ok? task }
-          end
-
-        if args[:denied_task]
+        if (args[:denied_task] = task_denied_for_view view)
           Card::Format.denial[view] || :denial
         else
           view
+        end
+      end
+
+      def task_denied_for_view view
+        perms_required = Card::Format.perms[view] || :read
+        if perms_required.is_a? Proc
+          :read unless perms_required.call(self)  # read isn't quite right
+        else
+          [perms_required].flatten.find { |task| !ok? task }
         end
       end
 

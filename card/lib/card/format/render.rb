@@ -46,7 +46,7 @@ class Card
       def stub_nest? view, args
         Card.config.view_cache &&
           cache_render_in_progress? &&
-          view_approved_for?(:stub, view, args)
+          view_used_for?(:stub, view, args)
       end
 
       def cacheable_nest_name?
@@ -55,19 +55,22 @@ class Card
       end
 
       def cacheable_view? view, args
-        view_approved_for? :cache, view, args
+        view_used_for? :cache, view, args
         test_method = "cache_view_#{view}?"
         return true unless respond_to? test_method
         send test_method, args
       end
 
-      def view_approved_for? role, view, args
+      def view_used_for? role, view, args
         test_method = "#{role}_view_#{view}?"
         return true unless respond_to? test_method
         send test_method, args
       end
 
       def cache_permissible? view, args
+        Card::Auth.as(:anonymous) do
+          card.ok?(:read) && ok(view, args)
+        end
         # for now, permit only if "Anyone" can read card and see view
         # later add support for caching restricted views nested by other views
         # with the same restrictions

@@ -30,8 +30,8 @@ describe Card::Set::All::Bootstrap::Layout do
     end
 
     it "handles layout sequence" do
-      format = Card["A"].format :html
-      def format.generate_layout
+      # format = Card["A"].form
+      def subject.generate_layout
         layout do
           row 8, 4 do
             column "first column"
@@ -45,26 +45,31 @@ describe Card::Set::All::Bootstrap::Layout do
           end
         end
       end
-      lay = format.generate_layout
+      lay = subject.generate_layout
+      # assert_view_select lay, 'div[class="row"]' do
+      #   assert_select 'div[class="col-md-8"]', text: "first column"
+      #   assert_select 'div[class="col-md-4"]', text: "second column"
+      # end
       assert_view_select lay, 'div[class="six-times-six row"]' do
-        assert_select 'div[class="col-md-8"]', false
         assert_select 'div[class="col-md-12"]', text: "new column"
       end
     end
 
-    it "handles |nested layouts" do
-      format = Card["A"].format :html
-      def format.generate_layout
+    it "handles nested layouts" do
+      # format = Card["A"].format :html
+      def subject.generate_layout
         layout do
           row 8, 4 do
-            column(layout { row 12, ["first nested column"] } )
+            column do
+              layout { row 12, ["first nested column"] }
+            end
             column do
               layout { row 12, ["second nested column"] }
             end
           end
         end
       end
-      lay = format.generate_layout
+      lay = subject.generate_layout
       assert_view_select lay, 'div[class="row"]' do
         assert_select 'div[class="col-md-8"]' do
           assert_select 'div[class="row"]' do

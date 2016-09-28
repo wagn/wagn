@@ -123,8 +123,8 @@ describe Card::Set::All::Notify do
       context "and missing permissions" do
         context "for subcard" do
           before do
-            Card.create_or_update! "#{name}+s1+*self+*read",
-                                   type: "Pointer", content: "[[Administrator]]"
+            create_or_update! "#{name}+s1+*self+*read",
+                              type: "Pointer", content: "[[Administrator]]"
           end
           it "excludes subcard content" do
             is_expected.not_to include sub1_content
@@ -142,10 +142,10 @@ describe Card::Set::All::Notify do
             ).text_part.body.raw_source
           end
           before do
-            Card.create_or_update! "#{name}+*self+*read",
-                                   type: "Pointer", content: "[[Administrator]]"
-            Card.create_or_update! "#{name}+s1+*self+*read",
-                                   type: "Pointer", content: "[[Anyone]]"
+            create_or_update! "#{name}+*self+*read",
+                              type: "Pointer", content: "[[Administrator]]"
+            create_or_update! "#{name}+s1+*self+*read",
+                              type: "Pointer", content: "[[Anyone]]"
           end
           it "includes subcard content" do
             is_expected.to include sub1_content
@@ -157,18 +157,18 @@ describe Card::Set::All::Notify do
         end
         context "for all parts" do
           before do
-            Card.create_or_update! "#{name}+s1+*self+*read",
-                                   type: "Pointer", content: "[[Administrator]]"
-            Card.create_or_update! "#{name}+s2+*self+*read",
-                                   type: "Pointer", content: "[[Administrator]]"
-            Card.create_or_update! "#{name}+*self+*read",
-                                   type: "Pointer", content: "[[Administrator]]"
+            create_or_update! "#{name}+s1+*self+*read",
+                              type: "Pointer", content: "[[Administrator]]"
+            create_or_update! "#{name}+s2+*self+*read",
+                              type: "Pointer", content: "[[Administrator]]"
+            create_or_update! "#{name}+*self+*read",
+                              type: "Pointer", content: "[[Administrator]]"
           end
           it { is_expected.not_to include content }
           it { is_expected.not_to include sub1_content }
           it { is_expected.not_to include sub2_content }
           it "will not be send" do
-            expect(Card["Joe User"].account.changes_visible? @card.acts.last)
+            expect(Card["Joe User"].account.changes_visible?(@card.acts.last))
               .to be_falsey
           end
         end
@@ -204,6 +204,9 @@ describe Card::Set::All::Notify do
         followed_set:  "#{@card.name}+*self",
         follow_option: "*always"
       ).text_part.body.raw_source
+      unfollow_link =
+        "/update/Joe_User+*follow?card%5Bsubcards%5D%5Banother+"\
+        "card+with+subcards%2B%2Aself%2BJoe+User%2B%2Afollow%5D=%2Anever"
       expect(result)
         .to eq(%("another card with subcards" was just created by Joe User.
 
@@ -230,7 +233,7 @@ See the card: /another_card_with_subcards
 
 You received this email because you're following "another card with subcards".
 
-Use this link to unfollow /update/Joe_User+*follow?card%5Bsubcards%5D%5Banother+card+with+subcards%2B%2Aself%2BJoe+User%2B%2Afollow%5D=%2Anever
+Use this link to unfollow #{unfollow_link}
 ))
     end
   end

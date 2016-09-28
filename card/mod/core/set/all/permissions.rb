@@ -277,13 +277,12 @@ module Accounts
   # (without creating separate rules for each account holder) but is not yet.
 
   def permit action, verb=nil
-    if action == :comment then @action_ok = false
-    elsif action == :create  then @superleft ? true : super(action, verb)
-      # restricts account creation to subcard handling on permitted card
-      # (unless explicitly permitted)
-    elsif own_account? then true
-    else
-      super action, verb
+    case action
+    when :comment then @action_ok = false
+    when :create  then @superleft ? true : super(action, verb)
+    # restricts account creation to subcard handling on permitted card
+    # (unless explicitly permitted)
+    else own_account? ? true : super(action, verb)
     end
   end
 end

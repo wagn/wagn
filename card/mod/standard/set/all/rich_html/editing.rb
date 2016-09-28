@@ -43,9 +43,9 @@ format :html do
 
   def generic_new_card_title
     if card.type_id == Card.default_type_id
-      "New #{card.type_name}"
-    else
       "New"
+    else
+      "New #{card.type_name}"
     end
   end
 

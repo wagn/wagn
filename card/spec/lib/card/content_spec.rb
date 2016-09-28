@@ -25,7 +25,7 @@ describe Card::Content do
                "{{Included|open}}",
       rendered: ["Some Links and includes: ",
                  '<a class="wanted-card" ' \
-                 'href="/the_card?card%5Bname%5D=the+card">' \
+                 'href="/the_card">' \
                  "the text</a>",
                  ", and ",
                  { options: { view: "Is Included",
@@ -208,18 +208,26 @@ describe Card::Content do
 
     describe "parse" do
       def check_chunk_classes
-        expect(cobj.inject(classes, &@check_proc)).to eq(true)
-        clist = classes.select { |c| String != c }
+        all_classes_pass_check_proc
+        clist = nonstring_classes
         cobj.each_chunk do |chk|
           expect(chk).to be_instance_of clist.shift
         end
         expect(clist).to be_empty
       end
 
+      def nonstring_classes
+        classes.select { |c| String != c }
+      end
+
+      def all_classes_pass_check_proc
+        expect(cobj.inject(classes, &@check_proc)).to eq(true)
+      end
+
       it "finds all the chunks and strings" do
         # note the mixed [} that are considered matching, needs some cleanup ...
         @example = :nests
-        expect(cobj.inject(classes, &@check_proc)).to eq(true)
+        all_classes_pass_check_proc
       end
 
       it "gives just the chunks" do
@@ -229,7 +237,7 @@ describe Card::Content do
 
       it "finds all the chunks links and trasclusions" do
         @example = :links_and_nests
-        expect(cobj.inject(classes, &@check_proc)).to eq(true)
+        all_classes_pass_check_proc
       end
 
       it "finds uri chunks " do

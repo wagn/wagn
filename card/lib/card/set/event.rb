@@ -62,12 +62,10 @@ class Card
 
         if with_delay? opts
           delaying_method = "#{event}_with_delay"
-          define_event_delaying_method event, delaying_method
-          define_event_method event, delaying_method
-          define_active_job event, final_method_name, opts[:queue_as]
-        else
-          define_event_method event, final_method_name
+          define_event_delaying_method event, delaying_method, final_method_name
+          final_method_name = delaying_method
         end
+        define_event_method event, final_method_name
       end
 
       def with_delay? opts
@@ -84,17 +82,6 @@ class Card
         opts[:on] = [:create, :update] if opts[:on] == :save
       end
 
-      def define_event_delaying_method event, method_name
-        class_eval do
-          define_method(method_name, proc do
-            Object.const_get(event.to_s.camelize).perform_later(
-              self, serialize_for_active_job, Card::Env.serialize,
-              Card::Auth.current_id
-            )
-          end)
-        end
-      end
-
       def define_event_method event, call_method
         class_eval do
           define_method event do
@@ -106,38 +93,31 @@ class Card
         end
       end
 
-      # creates an Active Job.
+      # creates an ActiveJob.
       # The scheduled job gets the card object as argument and all serializable
       # attributes of the card.
       # (when the job is executed ActiveJob fetches the card from the database
       # so all attributes get lost)
-      # @param name [String] the name for the ActiveJob child class
-      # @param final_method [String] the name of the card instance method to be
-      # queued
-      # @option queue [Symbol] (:default) the name of the queue
-      def define_active_job name, final_method, queue=:integrate_with_delay
-        class_name = name.to_s.camelize
-        define_active_job_class class_name, queue || :integrate_with_delay
-        define_active_job_perform_method class_name, final_method
+      # @param event [String] the event used as queue name
+      # @param method_name [String] the name of the method we define to trigger
+      #   the actjve job
+      # @param final_method_name [String] the name of the method that get called
+      #   by the active job and finally executes the event
+      def define_event_delaying_method event, method_name, final_method_name
+        class_eval do
+          define_method(method_name, proc do
+            IntegrateWithDelayJob.set(queue: event).perform_later(
+              self, serialize_for_active_job, Card::Env.serialize,
+              Card::Auth.current_id, final_method_name
+            )
+          end)
+        end
       end
 
-      def define_active_job_class class_name, queue
-        eval %(
-          class ::#{class_name} < ActiveJob::Base
-            queue_as :#{queue}
-          end
-        )
-      end
-
-      def define_active_job_perform_method class_name, method_name
-        Object.const_get(class_name).class_eval do
-          define_method(
-            :perform,
-            proc do |card, card_attribs, env, current_id|
-              card.deserialize_for_active_job! card_attribs, env, current_id
-              card.send method_name
-            end
-          )
+      class IntegrateWithDelayJob < ActiveJob::Base
+        def perform card, card_attribs, env, current_id, method_name
+          card.deserialize_for_active_job! card_attribs, env, current_id
+          card.send method_name
         end
       end
 

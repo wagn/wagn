@@ -21,6 +21,7 @@ class Card
     #
     module Format
       def format *format_names, &block
+        format_names.compact!
         if format_names.empty?
           format_names = [:base]
         elsif format_names.first == :all

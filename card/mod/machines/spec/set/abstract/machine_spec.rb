@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 describe Card::Set::Abstract::Machine do
   describe "#make_machine_output_coded" do
     it "creates coded file" do

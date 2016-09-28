@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 
 describe Card::Set::Trait do
   class Card

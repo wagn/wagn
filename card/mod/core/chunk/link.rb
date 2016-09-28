@@ -59,10 +59,10 @@ module Card::Content::Chunk
 
       if @explicit_link
         @explicit_link = render_obj @explicit_link
-        format.web_link @explicit_link, text: @link_text
+        format.link_to_resource @explicit_link, @link_text
       elsif @name
-        format.card_link referee_name, text: @link_text,
-                                       known: referee_card.send_if(:known?)
+        known = referee_card.send_if :known?
+        format.link_to_card referee_name, @link_text, known: known
       end
     end
 

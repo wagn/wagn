@@ -37,7 +37,7 @@ format do
     end
     set_card = card.default_follow_set_card
     hash[:path] = path(
-      name: set_card.follow_rule_name(Auth.current.name),
+      mark: set_card.follow_rule_name(Auth.current.name),
       action: :update,
       success: { layout: :modal, view: :follow_status },
       card: { content: "[[#{hash[:content]}]]" }
@@ -70,7 +70,8 @@ format :html do
       "data-target"    => "#modal-#{card.cardname.safe_key}"
     )
     opts[:class] = "follow-link #{opts[:class]}"
-    link_to text, hash[:path], opts
+    opts[:path] = hash[:path]
+    link_to text, opts
   end
 end
 

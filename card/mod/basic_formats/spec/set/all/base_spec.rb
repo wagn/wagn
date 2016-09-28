@@ -69,6 +69,7 @@ describe Card::Set::All::Base do
         expect(render_card(:array, content: "yoing")).to eq(%(["yoing"]))
       end
     end
+
     it "renders template rule of embed cards based on set" do
       Card::Auth.as_bot
       content = "{{_left+test_another_card|content|content;"\

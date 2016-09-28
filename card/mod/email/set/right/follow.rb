@@ -43,7 +43,7 @@ format :html do
       ) do
         output [
           _optional_render(button_view, args),
-          card_link(link_target, text: text)
+          link_to_card(link_target, text)
         ]
       end
     end
@@ -54,29 +54,26 @@ format :html do
   end
 
   view :follow_status do |args|
-    delete_options =
-      wrap_with(:ul, class: "delete-list list-group") do
-        card.item_names.map do |option|
-          content_tag :li, class: "list-group-item" do
-            condition = option == "*never" ? "*always" : option
-            subformat(card).render_follow_item condition: condition
-          end
-        end.join "\n"
-      end
+    ["<h4>Get notified about changes</h4>",
+     render(:follow_status_delete_options),
+     follow_status_link(card.name, args[:card_key])].join "\n\n"
+  end
 
-    follow_link =
-      card_link args[:card_key],
-                text: "more options",
-                path_opts: {
-                  view: :related,
-                  related: { name: card.name, view: :edit_single_rule }
-                },
-                class: "btn update-follow-link",
-                "data-card_key" => args[:card_key]
+  def follow_status_link name, key
+    link_to_related key, "more options",
+                    path: { related: { name: name, view: :edit_single_rule } },
+                    class: "btn update-follow-link", "data-card_key" => key
+  end
 
-    header = "<h4>Get notified about changes</h4>"
-
-    [header, delete_options, follow_link].join "\n\n"
+  view :follow_status_delete_options do
+    wrap_with(:ul, class: "delete-list list-group") do
+      card.item_names.map do |option|
+        content_tag :li, class: "list-group-item" do
+          condition = option == "*never" ? "*always" : option
+          subformat(card).render_follow_item condition: condition
+        end
+      end.join "\n"
+    end
   end
 
   view :delete_follow_rule_button do |_args|

@@ -8,7 +8,7 @@ require "carrierwave"
 #   end
 # end
 
-Object.send :remove_const, :Card if Object.send(:const_defined?, :Card)
+Object.const_remove_if_defined :Card
 
 # Cards are wiki-inspired building blocks.
 #
@@ -69,7 +69,7 @@ class Card < ActiveRecord::Base
   attr_accessor :follower_stash
 
   define_callbacks(
-    :select_action, :show_page, :handle, :act,
+    :select_action, :show_page, :act,
 
     # VALIDATION PHASE
     :initialize_stage, :prepare_to_validate_stage, :validate_stage,

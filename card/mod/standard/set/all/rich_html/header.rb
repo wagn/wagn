@@ -38,11 +38,9 @@ format :html do
         %w(close closed collapse-down)
       end
 
-    link_to  glyphicon(direction),
-             path(view: adjective),
-             remote: true,
-             title: "#{verb} #{card.name}",
-             class: "#{verb}-icon toggler slotter nodblclick"
+    link_to_view adjective, glyphicon(direction),
+                 title: "#{verb} #{card.name}",
+                 class: "#{verb}-icon toggler slotter nodblclick"
   end
 
   view :link_list do |args|

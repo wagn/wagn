@@ -83,8 +83,8 @@ format :html do
     res = [(args[:title] || "")]
     res << "#{count(args[:count])}#{args[:unit]}"
     return res unless args[:task]
-    path = card_path("update/:admin?task=#{args[:task]}")
-    res << link_to(args[:link_text] || args[:task], path)
+    res << link_to_card(:admin, (args[:link_text] || args[:task]),
+                        path: { action: :update, task: args[:task] })
     res
   end
 
@@ -102,8 +102,8 @@ format :html do
   end
 
   def delete_sessions_link months
-    link_to months,
-            card_path("update/:admin?task=delete_old_sessions&months=#{months}")
+    link_to_card :admin, months, path: { action: :update, months: months,
+                                         task: "delete_old_sessions" }
   end
 end
 

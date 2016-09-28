@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 describe Card::Cache::ViewCache do
   it "gets cleared by Card::Cache.reset_all" do
     Card::Cache::ViewCache.cache.write "testkey", 1

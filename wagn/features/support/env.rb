@@ -1,7 +1,8 @@
 # -*- encoding : utf-8 -*-
 ENV["RAILS_ENV"] = "cucumber"
 
-require File.expand_path("../../../lib/wagn/simplecov_helper.rb", __FILE__)
+require "wagn"
+require File.join Wagn.card_gem_root, "spec/support/simplecov_helper.rb"
 require "simplecov"
 require "minitest/autorun"
 

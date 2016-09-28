@@ -77,21 +77,28 @@ format :html do
   end
 
   def verification_links account, token_action
-    links = []
-    if account.confirm_ok?
-      links << link_to(
-        "#{token_action} verification email",
-        card_path("update/~#{card.id}?approve_with_token=true")
-      )
-      links << link_to(
-        "Approve without verification",
-        card_path("update/~#{card.id}?approve_without_token=true")
-      )
-    end
-    if card.ok? :delete
-      links << link_to("Deny and delete", card_path("delete/~#{card.id}"))
-    end
-    links
+    [
+      approve_with_token_link(account, token_action),
+      approve_without_token_link(account),
+      deny_link
+    ].compact
+  end
+
+  def approve_with_token_link account, token_action
+    return unless account.confirm_ok?
+    link_to_card card, "#{token_action} verification email",
+                 path: { action: :update, approve_with_token: true }
+  end
+
+  def approve_without_token_link account
+    return unless account.confirm_ok?
+    link_to_card card, "Approve without verification",
+                 path: { action: :update, approve_without_token: true }
+  end
+
+  def deny_link
+    return unless card.ok? :delete
+    link_to_card card, "Deny and delete", path: { action: :delete }
   end
 end
 

@@ -161,7 +161,7 @@ format :html do
         title = "Problems with #{card.name}"
         frame args.merge(panel_class: "panel panel-warning",
                          title: title, hide: "menu") do
-          "Please #{link_to 'sign in', card_url(':signin')}" # " #{to_task}"
+          "Please #{link_to_card :signin, 'sign in'}" # " #{to_task}"
         end
       else
         super(args)

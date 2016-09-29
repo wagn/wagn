@@ -7,6 +7,10 @@ class Card
         view: :open, card: :open, line: :closed, bare: :core, naked: :core
       }.freeze
 
+      CACHE_SETTING_NEST_LEVEL = {
+        weak: :off, strong: :full, none: :stub
+      }.freeze
+
       def render view, args={}
         return unless (view = renderable_view)
         args = default_render_args view, args
@@ -27,44 +31,53 @@ class Card
       end
 
       def cache_render view, args
-        if cacheable_render? view, args
-          cached_result view, args, &block
-        elsif stub_nest? view, args
-          stub_nest view, args
-        else
-          yield
+        case cache_level view, args
+        when :off  then yield
+        when :full then cached_result view, args, &block
+        when :stub then stub_nest view, args
+        else raise "Invalid cache level #{cache_level}"
         end
       end
 
-      def cacheable_render? view, args
-        Card.config.view_cache &&
-          cacheable_nest_name?(args) &&
-          cacheable_view?(view, args) &&
-          cache_permissible?(view, args)
+      def cache_level
+        return :none unless Card.config.view_cache
+        if cache_render_in_progress?
+          cache_nest_level view, args
+        else
+          cache_default_level view, args
+        end
       end
 
-      def stub_nest? view, args
-        Card.config.view_cache &&
-          cache_render_in_progress? &&
-          view_used_for?(:stub, view, args)
+      def cache_render_in_progress?
+        # write me.
       end
 
-      def cacheable_nest_name?
+      def cache_nest_level view, args
+        return :off unless cacheable_nest_name? args
+        CACHE_SETTING_NEST_LEVEL[view_cache_setting(view, args)]
+      end
+
+      # "default" means not in the context of a nest within an active
+      # cache result
+      def cache_default_level view, args
+        return :off if view_cache_setting(view, args) == :none
+        return :off unless cache_permissible? view, args
+        :full
+      end
+
+      # get setting determined in view definition
+      def view_cache_setting view, args
+        setting_method = "view_#{view}_cache_setting"
+        if respond_to? setting_method
+          send setting_method, args
+        else
+          :strong
+        end
+      end
+
+      def cacheable_nest_name? args
         nest_name = args[:inc_name]
         !(nest_name && nest_name == "_user")
-      end
-
-      def cacheable_view? view, args
-        view_used_for? :cache, view, args
-        test_method = "cache_view_#{view}?"
-        return true unless respond_to? test_method
-        send test_method, args
-      end
-
-      def view_used_for? role, view, args
-        test_method = "#{role}_view_#{view}?"
-        return true unless respond_to? test_method
-        send test_method, args
       end
 
       def cache_permissible? view, args

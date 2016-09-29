@@ -26,7 +26,7 @@ format :html do
 
   def default_new_args_for_name_field_or_title args
     hidden = args[:hidden]
-    if !params[:name_prompt] && !card.cardname.blank?
+    if !params[:name_prompt] && card.cardname.present?
       # name is ready and will show up in title
       hidden[:card][:name] ||= card.name
     else

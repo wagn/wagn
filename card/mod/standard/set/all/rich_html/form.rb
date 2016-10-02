@@ -118,13 +118,13 @@ format :html do
 
   def formgroup title, content, opts={}
     wrap_with :div, formgroup_div_args(opts[:class]) do
-      %(
+      <<-HTML
         #{form.label(opts[:editor] || :content, title)}
         <div>
           #{editor_wrap(opts[:editor]) { content }}
           #{formgroup_help_text opts[:help]}
         </div>
-      )
+      HTML
     end
   end
 

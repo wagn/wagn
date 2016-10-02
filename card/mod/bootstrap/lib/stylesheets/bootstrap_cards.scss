@@ -63,6 +63,13 @@ form {
 }
 
 
+.link-muted {
+  color: $gray-light;
+  &:hover {
+    color: inherit;
+  }
+}
+
 /*-------- Special Pages --------*/
 
 /*-- sign in page --*/
@@ -277,3 +284,8 @@ body.mceContentBody {
   margin-left: 10px;
 
 }
+
+/*-------- Help texts --------*/
+ .alert-info p:last-child {
+   margin-bottom: 0;
+ }

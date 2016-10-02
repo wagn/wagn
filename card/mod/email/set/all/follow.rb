@@ -62,7 +62,7 @@ format :html do
     #   card.default_follow_set_card.follow_rule_name(Auth.current.name),
     #   new: {}
     # )
-    opts = (args[:html_args] || {}).clone
+    opts = (args[:link_opts] || {}).clone
     opts.merge!(
       title:           hash[:title],
       "data-path"      => hash[:path],

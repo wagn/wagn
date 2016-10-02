@@ -65,11 +65,11 @@ format :html do
     <<-HTML
       <tr class="card-slot open-rule #{rule_view.to_s.sub '_', '-'}">
         <td class="rule-cell" colspan="3">
-          <div class="rule-setting">
-            #{open_rule_setting_links setting_name}
-          </div>
           <div class="alert alert-info rule-instruction">
             #{open_rule_instruction setting_name}
+          </div>
+          <div class="rule-setting">
+            #{open_rule_setting_links setting_name}
           </div>
           <div class="card-body">
             #{body}
@@ -286,7 +286,7 @@ format :html do
       narrower_rules << label
       narrower_rules.last[0] = narrower_rules.last[0].downcase
     end
-    button + set_label(card, set_name, label, state)
+    set_label(card, set_name, label, state, button)
   end
 
   def checked_set_button? set_name, args
@@ -308,15 +308,14 @@ format :html do
         rule_name = "#{set_name}+#{tag}"
         rule_card = Card.fetch rule_name, skip_modules: true
         state = (rule_card && :exists)
-        radio_button(:name, rule_name) +
-          set_label(card, set_name, label, state)
+        set_label(card, set_name, label, state, radio_button(:name, rule_name))
       end
     end
   end
 
-  def set_label card, set_name, label, state
+  def set_label card, set_name, label, state, button
     label_class = "set-label"
-    label_body = link_to_card set_name, label, target: "wagn_set"
+    set_link = link_to_card set_name, glyphicon("question-sign", "link-muted"), target: "wagn_set"
     info =
       case state
       when :current
@@ -325,8 +324,12 @@ format :html do
       when :overwritten, :exists
         link_to_card "#{set_name}+#{card.rule_user_setting_name}", "(#{state})"
       end
-    label_body += " <em>#{info}</em>".html_safe if info
-    %(<label class="#{label_class}">#{label_body}</label>).html_safe
+    label += " <em>#{info}</em>".html_safe if info
+    <<-HTML.html_safe
+      <label class="#{label_class}">
+        #{button} #{label} #{set_link}
+      </label>
+    HTML
   end
 
   def narrower_rule_warning narrower_rules

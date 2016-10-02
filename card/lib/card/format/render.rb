@@ -21,7 +21,7 @@ class Card
 
 
       def render view, args={}
-        return unless (view = renderable_view)
+        return unless (view = renderable_view view, args)
         args = default_render_args view, args
         cache_render view, args do
           render! view, args
@@ -48,7 +48,7 @@ class Card
         end
       end
 
-      def cache_level
+      def cache_level view, args
         return :off unless Card.config.view_cache
         if cache_render_in_progress?
           cache_nest_level view, args

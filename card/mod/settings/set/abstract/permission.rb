@@ -35,7 +35,8 @@ format :html do
 
         <div class="perm-indiv perm-vals perm-section">
           <h5 class="text-muted">Individuals</h5>
-          #{_render_list item_list: item_names, extra_css_class: 'perm-indiv-ul'}
+          #{_render_list item_list: item_names,
+                         extra_css_class: 'perm-indiv-ul'}
         </div>
       </div>
     )
@@ -46,7 +47,8 @@ format :html do
   def groups item_names
     group_options.map do |option|
       checked = !item_names.delete(option.name).nil?
-      option_link = link_to_card option.name, glyphicon("question-sign", "link-muted"), target: "wagn_role"
+      icon = glyphicon "question-sign", "link-muted"
+      option_link = link_to_card option.name, icon, target: "wagn_role"
       box = check_box_tag "#{option.key}-perm-checkbox",
                           option.name, checked, class: "perm-checkbox-button"
       <<-HTML

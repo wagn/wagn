@@ -29,13 +29,14 @@ format :html do
       <div class="perm-editor">
         #{inheritance_checkbox args}
         <div class="perm-group perm-vals perm-section">
-          <h5>Groups</h5>
+          <h5 class="text-muted">Groups</h5>
           #{groups item_names}
         </div>
 
         <div class="perm-indiv perm-vals perm-section">
-          <h5>Individuals</h5>
-          #{_render_list item_list: item_names, extra_css_class: 'perm-indiv-ul'}
+          <h5 class="text-muted">Individuals</h5>
+          #{_render_list item_list: item_names,
+                         extra_css_class: 'perm-indiv-ul'}
         </div>
       </div>
     )
@@ -46,10 +47,17 @@ format :html do
   def groups item_names
     group_options.map do |option|
       checked = !item_names.delete(option.name).nil?
-      option_link = link_to_card option.name, nil, target: "wagn_role"
+      icon = glyphicon "question-sign", "link-muted"
+      option_link = link_to_card option.name, icon, target: "wagn_role"
       box = check_box_tag "#{option.key}-perm-checkbox",
                           option.name, checked, class: "perm-checkbox-button"
-      %(<div class="group-option">#{box}<label>#{option_link}</label></div>)
+      <<-HTML
+        <div class="form-check checkbox">
+          <label class="form-check-label">
+            #{box} #{option.name} #{option_link}
+          </label>
+        </div>
+      HTML
     end * "\n"
   end
 

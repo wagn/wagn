@@ -32,7 +32,7 @@ module ClassMethods
       if Card.exists?(file_id) # double check!
         raise Card::Error, "Narrowly averted deleting current file"
       end
-      FileUtils.rm_rf "#{dir}/#{file_id}", secure: true
+      ::FileUtils.rm_rf "#{dir}/#{file_id}", secure: true
     end
   end
 

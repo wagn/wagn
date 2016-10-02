@@ -160,10 +160,12 @@ format :html do
     options = content_or_options if block_given?
     content = block_given? ? yield : content_or_options
     content = Array(content)
-    item_options = options.delete(:items) || {}
+    default_item_options = options.delete(:items) || {}
     wrap_with :ul, options  do
       content.map do |item|
-        content_tag :li, item.html_safe, item_options
+        i_content, i_opts = item
+        i_opts ||= default_item_options
+        content_tag :li, i_content.html_safe, i_opts
       end.join "\n"
     end
   end

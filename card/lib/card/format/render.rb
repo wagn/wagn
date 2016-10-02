@@ -8,8 +8,17 @@ class Card
       }.freeze
 
       CACHE_SETTING_NEST_LEVEL = {
-        weak: :off, strong: :full, none: :stub
+        always: :full, nested: :off, never: :stub
       }.freeze
+
+      # API
+      # `view cache: [:always, :nested, :never]
+      # :always means a view is always cached when rendered
+
+      # :nested means a view is not cached independently, but it can be cached within another view
+      # :never means a view is never cached
+
+
 
       def render view, args={}
         return unless (view = renderable_view)
@@ -30,17 +39,17 @@ class Card
         end
       end
 
-      def cache_render view, args
-        case cache_level view, args
-        when :off  then yield
+      def cache_render view, args, &block
+        case (level = cache_level view, args)
+        when :off  then yield view, args
         when :full then cached_result view, args, &block
         when :stub then stub_nest view, args
-        else raise "Invalid cache level #{cache_level}"
+        else raise "Invalid cache level #{level}"
         end
       end
 
       def cache_level
-        return :none unless Card.config.view_cache
+        return :off unless Card.config.view_cache
         if cache_render_in_progress?
           cache_nest_level view, args
         else
@@ -53,14 +62,14 @@ class Card
       end
 
       def cache_nest_level view, args
-        return :off unless cacheable_nest_name? args
+        return :stub unless cacheable_nest_name? args
         CACHE_SETTING_NEST_LEVEL[view_cache_setting(view, args)]
       end
 
       # "default" means not in the context of a nest within an active
       # cache result
       def cache_default_level view, args
-        return :off if view_cache_setting(view, args) == :none
+        return :off if view_cache_setting(view, args) == :never
         return :off unless cache_permissible? view, args
         :full
       end
@@ -71,13 +80,17 @@ class Card
         if respond_to? setting_method
           send setting_method, args
         else
-          :strong
+          :always
         end
       end
 
+      # names
       def cacheable_nest_name? args
-        nest_name = args[:inc_name]
-        !(nest_name && nest_name == "_user")
+        case args[:inc_name]
+        when "_main" then main?
+        when "_user" then false
+        else true
+        end
       end
 
       def cache_permissible? view, args
@@ -89,13 +102,14 @@ class Card
         # with the same restrictions
       end
 
-      def cached_result view, args
+      def cached_result view, args, &block
         cached_view = Card::Cache::ViewCache.fetch self, view, args, &block
         cache_strategy = Card.config.view_cache
         cache_strategy == :client ? cached_view : complete_render(cached_view)
       end
 
       def complete_render content_with_nest_stubs
+
         # use Card::Content to process nest stubs
       end
 

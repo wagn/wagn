@@ -48,7 +48,7 @@ def get_query params={}
 end
 
 format do
-  view :core do |args|
+  view :core, cache: :never do |args|
     view =
       case search_results args
       when Exception          then :search_error
@@ -59,16 +59,16 @@ format do
     _render view, args
   end
 
-  view :search_count do |_args|
+  view :search_count, cache: :never do |_args|
     search_results.to_s
   end
 
-  view :search_error do |_args|
+  view :search_error, cache: :never do |_args|
     sr_class = search_results.class.to_s
     %(#{sr_class} :: #{search_results.message} :: #{card.raw_content})
   end
 
-  view :card_list do |_args|
+  view :card_list, cache: :never do |_args|
     if search_results.empty?
       "no results"
     else
@@ -232,7 +232,7 @@ format :html do
     args[:ace_mode] = "json"
   end
 
-  view :card_list do |args|
+  view :card_list, cache: :never do |args|
     paging = _optional_render :paging, args
 
     if search_results.empty?
@@ -258,7 +258,7 @@ format :html do
     end
   end
 
-  view :closed_content do |args|
+  view :closed_content, cache: :never do |args|
     if @depth > self.class.max_depth
       "..."
     else
@@ -275,7 +275,7 @@ format :html do
     %(<div class="search-no-results"></div>)
   end
 
-  view :paging do |args|
+  view :paging, cache: :never do |args|
     s = card.query search_params
     offset = s[:offset].to_i
     limit = s[:limit].to_i

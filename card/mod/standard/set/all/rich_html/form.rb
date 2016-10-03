@@ -120,9 +120,9 @@ format :html do
     wrap_with :div, formgroup_div_args(opts[:class]) do
       <<-HTML
         #{form.label(opts[:editor] || :content, title)}
+        #{formgroup_help_text opts[:help]}
         <div>
           #{editor_wrap(opts[:editor]) { content }}
-          #{formgroup_help_text opts[:help]}
         </div>
       HTML
     end

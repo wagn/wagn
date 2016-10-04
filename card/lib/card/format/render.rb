@@ -48,6 +48,10 @@ class Card
         end
       end
 
+      def stub_nest view, args
+        "<card-nest/>"
+      end
+
       def cache_level view, args
         return :off unless Card.config.view_cache
         if cache_render_in_progress?

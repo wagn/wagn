@@ -1,70 +1,5 @@
 
 format :html do
-  class BootstrapLayout
-    def initialize format, opts={}, &block
-      @format = format
-      @rows = "".html_safe
-      @opts = opts
-      instance_exec &block
-    end
-
-    def render
-      @opts.delete(:container) ? container(@rows, @opts) : @rows
-    end
-
-    def container content, opts={}
-      add_class opts, opts.delete(:fluid) ? "container-fluid" : "container"
-      content_tag :div, content, opts
-    end
-
-    def row *args, &block
-      opts, cols, @col_widths = process_row_args args
-      @columns = "".html_safe
-      cols ||= instance_exec(&block)
-      cols.each { |col_content| column(col_content) } if cols.is_a? Array
-      add_class opts, "row"
-      @rows << content_tag(:div, @columns, opts)
-    end
-
-    def process_row_args args
-      opts = args.last.is_a?(Hash) ? args.pop : {}
-      cols = args.last.is_a?(Array) && args.pop
-      [opts, cols, check_col_widths(args)]
-    end
-
-    def check_col_widths args
-      raise Error, "bad argument" unless args.all? { |a| a.is_a? Fixnum }
-      total_width = args.inject(0) { |a, e| a + e }
-      raise Error, "column widths must sum up to 12" unless total_width == 12
-      args
-    end
-
-    # default column width type is for medium devices (col-md-)
-    def column content_or_opts={}, opts=nil, &block
-      @columns ||= "".html_safe
-      content, opts = if block_given?
-                        [instance_exec(&block), content_or_opts]
-                      else
-                        [content_or_opts, (opts || {})]
-                      end
-      add_class opts, "col-md-#{@col_widths.shift}"
-      @columns << content_tag(:div, content.html_safe, opts)
-    end
-
-    def method_missing(method_name, *args, &block)
-      return super unless @format.respond_to? method_name
-      if block_given?
-        @format.send(method_name, *args, &block)
-      else
-        @format.send(method_name, *args)
-      end
-    end
-
-    def respond_to_missing? method_name, _include_private=false
-      @format.respond_to? method_name
-    end
-  end
-
   # generate bootstrap column layout
   # @example
   #   layout container: true, fluid: true, class: "hidden" do
@@ -78,9 +13,74 @@ format :html do
   #     row 3, 3, 4, 2, class: "unicorn" do
   #       [ "horn", "body", "tail", "rainbow"]
   #     end
+  #     add_html "<span> some extra html</span>"
   #     row 6, 6, ["unicorn", "rainbow"], class: "horn"
   #   end
-  def layout opts={}, &block
-    BootstrapLayout.new(self, opts, &block).render
+  def bs_layout opts={}, &block
+    BootstrapLayout.render self, opts, &block
+  end
+  alias_method :layout, :bs_layout
+
+  class BootstrapLayout < BootstrapBuilder
+
+    def render_layout opts, &block
+      content = instance_exec &block
+      add_content content
+      return unless opts.delete(:container)
+      content = @content.pop
+      @content = ["".html_safe]
+      container content, opts
+    end
+
+    add_div_method :container, nil do |opts, _extra_args|
+      prepend_class opts, opts.delete(:fluid) ? "container-fluid" : "container"
+      opts
+    end
+
+    # @param *args column widths, column content and html attributes
+    # @example
+    #   row 6, 6, ["col one", "col two"], class: "count", id: "count"
+    # @example
+    #   row md: 12, xs: 8, "single column content"
+    # @example
+    #   row md: [1, 11], xs: [2, 10] do
+    #     col "A"
+    #     col "B"
+    #   end
+    add_div_method :row, "row", content_processor: :column do |opts, extra_args|
+      [opts, col_widths(extra_args, opts)]
+    end
+
+    # default column width type is for medium devices (col-md-)
+    add_div_method :column, nil do |opts, _extra_args|
+      @child_args.last.each do |medium, size|
+        prepend_class opts, "col-#{medium}-#{size.shift}"
+      end
+      opts
+    end
+
+    alias_method :col, :column
+
+    private
+
+    def standardize_row_args args
+      opts = args.last.is_a?(Hash) ? args.pop : {}
+      cols = (args.last.is_a?(Array) || args.last.is_a?(String)) &&
+             Array.wrap(args.pop)
+      [cols, opts, col_widths(args, opts)]
+    end
+
+    def col_widths args, opts
+      opts = args.pop if args.one? && args.last.is_a?(Hash)
+      if args.present?
+        raise Error, "bad argument" unless args.all? { |a| a.is_a? Fixnum }
+        { md: Array.wrap(args) }
+      else
+        [:lg, :xs, :sm, :md].each_with_object({}) do |k, cols_w|
+          next unless (widths = opts.delete(k))
+          cols_w[k] = Array.wrap widths
+        end
+      end
+    end
   end
 end

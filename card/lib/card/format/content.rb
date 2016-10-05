@@ -36,6 +36,12 @@ class Card
         options[:class] = [options[:class], klass].flatten.uniq.compact * " "
       end
 
+      alias_method :append_class, :add_class
+
+      def prepend_class options, klass
+        options[:class] = [klass, options[:class]].flatten.uniq.compact * " "
+      end
+
       def id_counter
         return @parent.id_counter if @parent
         @id_counter ||= 0

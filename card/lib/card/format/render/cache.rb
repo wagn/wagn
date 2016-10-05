@@ -32,13 +32,12 @@ class Card
         end
 
         def cache_render_in_progress?
-          false
-          # write me.
+          false # TODO: write me.
         end
 
         def cache_nest_level view, args
-          return :stub unless cacheable_nest_name?(args) &&
-                              cache_permissible?(view, args)
+          return :stub if !cacheable_nest_name?(args) ||
+                          !cache_permissible?(view, args)
           CACHE_SETTING_NEST_LEVEL[view_cache_setting(view, args)]
         end
 
@@ -71,7 +70,9 @@ class Card
 
         def cache_permissible? view, args
           Card::Auth.as(:anonymous) do
-            card.ok?(:read) && ok(view, args)
+            # view is the ok_view at this point
+            # check if it changes for anonymous user
+            view == ok_view(view, args)
           end
           # for now, permit only if "Anyone" can read card and see view
           # later add support for caching restricted views nested by other views

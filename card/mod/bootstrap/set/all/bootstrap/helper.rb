@@ -173,10 +173,16 @@ format :html do
   def accordion_group list, collapse_id=card.cardname.safe_key
     accordions = ""
     index = 1
-    list.each_pair do |title, content|
-      accordions << accordion(title, content, "#{collapse_id}-#{index}")
-      index += 1
+    case list
+    when Array then accordions = list.join
+    when String then accordions = list
+    else
+      list.each_pair do |title, content|
+        accordions << accordion(title, content, "#{collapse_id}-#{index}")
+        index += 1
+      end
     end
+
     content_tag :div, accordions.html_safe,
                 class: "panel-group",
                 id: "accordion-#{collapse_id}",
@@ -200,8 +206,12 @@ format :html do
     HTML
   end
 
-  def accordion_panel title, body, collapse_id
+  def accordion_panel title, body, collapse_id, panel_heading_link=false
     if body
+      collapse_args = {}
+    end
+      panel_heading, panel_title =
+        if panel_heading_link
       <<-HTML
         <div class="panel-heading" role="tab" id="heading-#{collapse_id}">
           <h4 class="panel-title">

@@ -164,17 +164,22 @@ format :html do
           %span.slotter
             = paginate intr, remote: true, theme: 'twitter-bootstrap-3'
           %div.history-legend
-            = glyphicon "plus-sign", "added-mark"
-            %span
-              = Card::Content::Diff.render_added_chunk('Added')
+            %span.pull-left
+              Actions:
+              = glyphicon "plus"
+              created
               |
-            = glyphicon "minus-sign", "deleted-mark"
-            %span
-              = Card::Content::Diff.render_deleted_chunk('Removed')
+              = glyphicon "pencil"
+              updated
               |
-            = glyphicon "trash", "deleted-mark"
+              = glyphicon "trash"
+              deleted
+            Content changes:
             %span
-              card deleted
+              = Card::Content::Diff.render_added_chunk('Additions')
+              |
+            %span
+              = Card::Content::Diff.render_deleted_chunk('Subtractions')
       HAML
     end
   end
@@ -214,21 +219,80 @@ format :html do
   end
 
   view :act do |args|
-    wrap(args) do
-      render_haml args.merge(card: card, args: args) do
-        <<-HAML.strip_heredoc
-          .act{style: "clear:both;"}
-            - show_header = act_context == :absolute ? :show : :hide
-            = optional_render :act_header, args, show_header
-            .head
-              = render :act_metadata, args
-            .toggle
-              = fold_or_unfold_link args
-            .action-container
-              - actions.each do |action|
-                = render "action_#{args[:action_view]}", args.merge(action: action)
-        HAML
+    accordion act_header(args[:act], args),
+              render("action_#{args[:action_view]}", args.merge(action: args[:action])),
+              "act-id-#{args[:act].id}"
+    # wrap(args) do
+    #   render_haml args.merge(card: card, args: args) do
+    #     <<-HAML.strip_heredoc
+    #       .act{style: "clear:both;"}
+    #         - show_header = act_context == :absolute ? :show : :hide
+    #         = optional_render :act_header, args, show_header
+    #         .head
+    #           = render :act_metadata, args
+    #         .toggle
+    #           = fold_or_unfold_link args
+    #         .action-container
+    #           - actions.each do |action|
+    #             = render "action_#{args[:action_view]}", args.merge(action: action)
+    #     HAML
+    #   end
+    # end
+  end
+
+  def act_header act, args
+    link = link_to_card act.card
+    bs_layout do
+      row 11, 1 do
+        col content_tag(:h4, link)
+        col act_summary(act)
       end
+      row 12 do
+        col act_metadata(act, args)
+      end
+    end
+  end
+
+  def act_summary act
+    types = Hash.new { |h, k| h[k] = 0 }
+    act.actions.each do |action|
+      types[action.action_type] += 1
+    end
+    [:create, :update, :delete].map do |type|
+      next unless types[type] > 0
+      action_summary type, types[type]
+    end.join " "
+  end
+
+  def action_summary type, count
+    icon =
+      case type
+      when :create then "plus-sign"
+      when :delete then "adjust"
+      when :update then "remove-sign"
+      end
+    "#{glyphicon(icon)} #{count}"
+  end
+
+  def act_metadata act, args
+    render_haml args.merge(act: act, card: card) do
+      <<-HAML.strip_heredoc
+        - unless act_context == :absolute
+          .nr
+            = '#' + act_seq.to_s
+        %span.text-muted
+          .actor
+            = link_to_card act.actor
+          .time.timeago
+            = time_ago_in_words(act.acted_at)
+            ago
+            - if act.id == card.last_act.id
+              %em.label.label-info Current
+            - if action_view == :expanded
+              - unless act.id == card.last_act.id
+                = rollback_link act.actions_affecting(card)
+              = show_or_hide_changes_link args
+      HAML
     end
   end
 

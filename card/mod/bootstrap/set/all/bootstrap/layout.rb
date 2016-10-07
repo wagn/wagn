@@ -20,66 +20,66 @@ format :html do
     BootstrapLayout.render self, opts, &block
   end
   alias_method :layout, :bs_layout
+end
 
-  class BootstrapLayout < BootstrapBuilder
+class BootstrapLayout < BootstrapBuilder
 
-    def render_layout opts, &block
-      content = instance_exec &block
-      add_content content
-      return unless opts.delete(:container)
-      content = @content.pop
-      @content = ["".html_safe]
-      container content, opts
+  def render_layout opts, &block
+    content = instance_exec &block
+    add_content content
+    return unless opts.delete(:container)
+    content = @content.pop
+    @content = ["".html_safe]
+    container content, opts
+  end
+
+  add_div_method :container, nil do |opts, _extra_args|
+    prepend_class opts, opts.delete(:fluid) ? "container-fluid" : "container"
+    opts
+  end
+
+  # @param *args column widths, column content and html attributes
+  # @example
+  #   row 6, 6, ["col one", "col two"], class: "count", id: "count"
+  # @example
+  #   row md: 12, xs: 8, "single column content"
+  # @example
+  #   row md: [1, 11], xs: [2, 10] do
+  #     col "A"
+  #     col "B"
+  #   end
+  add_div_method :row, "row", content_processor: :column do |opts, extra_args|
+    [opts, col_widths(extra_args, opts)]
+  end
+
+  # default column width type is for medium devices (col-md-)
+  add_div_method :column, nil do |opts, _extra_args|
+    @child_args.last.each do |medium, size|
+      prepend_class opts, "col-#{medium}-#{size.shift}"
     end
+    opts
+  end
 
-    add_div_method :container, nil do |opts, _extra_args|
-      prepend_class opts, opts.delete(:fluid) ? "container-fluid" : "container"
-      opts
-    end
+  alias_method :col, :column
 
-    # @param *args column widths, column content and html attributes
-    # @example
-    #   row 6, 6, ["col one", "col two"], class: "count", id: "count"
-    # @example
-    #   row md: 12, xs: 8, "single column content"
-    # @example
-    #   row md: [1, 11], xs: [2, 10] do
-    #     col "A"
-    #     col "B"
-    #   end
-    add_div_method :row, "row", content_processor: :column do |opts, extra_args|
-      [opts, col_widths(extra_args, opts)]
-    end
+  private
 
-    # default column width type is for medium devices (col-md-)
-    add_div_method :column, nil do |opts, _extra_args|
-      @child_args.last.each do |medium, size|
-        prepend_class opts, "col-#{medium}-#{size.shift}"
-      end
-      opts
-    end
+  def standardize_row_args args
+    opts = args.last.is_a?(Hash) ? args.pop : {}
+    cols = (args.last.is_a?(Array) || args.last.is_a?(String)) &&
+      Array.wrap(args.pop)
+    [cols, opts, col_widths(args, opts)]
+  end
 
-    alias_method :col, :column
-
-    private
-
-    def standardize_row_args args
-      opts = args.last.is_a?(Hash) ? args.pop : {}
-      cols = (args.last.is_a?(Array) || args.last.is_a?(String)) &&
-             Array.wrap(args.pop)
-      [cols, opts, col_widths(args, opts)]
-    end
-
-    def col_widths args, opts
-      opts = args.pop if args.one? && args.last.is_a?(Hash)
-      if args.present?
-        raise Error, "bad argument" unless args.all? { |a| a.is_a? Fixnum }
-        { md: Array.wrap(args) }
-      else
-        [:lg, :xs, :sm, :md].each_with_object({}) do |k, cols_w|
-          next unless (widths = opts.delete(k))
-          cols_w[k] = Array.wrap widths
-        end
+  def col_widths args, opts
+    opts = args.pop if args.one? && args.last.is_a?(Hash)
+    if args.present?
+      raise Error, "bad argument" unless args.all? { |a| a.is_a? Fixnum }
+      { md: Array.wrap(args) }
+    else
+      [:lg, :xs, :sm, :md].each_with_object({}) do |k, cols_w|
+        next unless (widths = opts.delete(k))
+        cols_w[k] = Array.wrap widths
       end
     end
   end

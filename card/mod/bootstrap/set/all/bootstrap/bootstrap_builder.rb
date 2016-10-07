@@ -59,7 +59,7 @@ class BootstrapBuilder
 
   add_tag_method :tag, nil do |opts, extra_args|
     prepend_class opts, extra_args[1] if extra_args[1].present?
-    opts[:tag] = extra_args.first
+    opts[:tag] = extra_args.delete 0
     opts
   end
 
@@ -83,7 +83,7 @@ class BootstrapBuilder
   # end
 
   def method_missing(method_name, *args, &block)
-    return super unless @format.respond_to? method_name
+    #return super unless @format.respond_to? method_name
     if block_given?
       @format.send(method_name, *args, &block)
     else

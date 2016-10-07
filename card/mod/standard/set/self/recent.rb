@@ -7,7 +7,15 @@ end
 format :html do
   view :core do |args|
     content_tag(:div, class: "history-slot list-group") do
-      [history_legend, render_recent_acts(args)].join
+      [_render_legend, render_recent_acts(args)].join
+    end
+  end
+
+  view :legend do
+    bs_layout do
+      row 12 do
+        col history_legend
+      end
     end
   end
 
@@ -22,6 +30,6 @@ format :html do
         Rails.logger.info "bad data, act: #{act}"
         ""
       end
-    end)
+    end, nil, class: "clear-both")
   end
 end

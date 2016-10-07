@@ -170,7 +170,7 @@ format :html do
     end
   end
 
-  def accordion_group list, collapse_id=card.cardname.safe_key
+  def accordion_group list, collapse_id=card.cardname.safe_key, args={}
     accordions = ""
     index = 1
     case list
@@ -182,15 +182,14 @@ format :html do
         index += 1
       end
     end
+    add_class args, "panel-group"
 
     content_tag :div, accordions.html_safe,
-                class: "panel-group",
+                class: args[:class],
                 id: "accordion-#{collapse_id}",
                 role: "tablist",
                 "aria-multiselectable" => "true"
   end
-
-  private
 
   def accordion title, content, collapse_id=card.cardname.safe_key
     accordion_content =
@@ -208,10 +207,6 @@ format :html do
 
   def accordion_panel title, body, collapse_id, panel_heading_link=false
     if body
-      collapse_args = {}
-    end
-      panel_heading, panel_title =
-        if panel_heading_link
       <<-HTML
         <div class="panel-heading" role="tab" id="heading-#{collapse_id}">
           <h4 class="panel-title">

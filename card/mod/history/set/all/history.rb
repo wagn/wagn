@@ -11,6 +11,19 @@ def actionable?
   history? || respond_to?(:attachment)
 end
 
+def finalize_action?
+  actionable? && current_action
+end
+
+def act_card?
+  self == Card::ActManager.act_card
+end
+
+def rollback_request?
+  history? && Env && Env.params["action_ids"] &&
+    Env.params["action_ids"].class == Array
+end
+
 event :assign_action, :initialize,
       when: proc { |c| c.actionable? } do
   @current_act = director.need_act
@@ -22,10 +35,6 @@ event :assign_action, :initialize,
   if @supercard && @supercard != self
     @current_action.super_action = @supercard.current_action
   end
-end
-
-def finalize_action?
-  actionable? && current_action
 end
 
 # stores changes in the changes table and assigns them to the current action
@@ -61,10 +70,6 @@ event :finalize_act,
   end
 end
 
-def act_card?
-  self == Card::ActManager.act_card
-end
-
 event :rollback_actions, :prepare_to_validate,
       on: :update,
       when: proc { |c| c.rollback_request? } do
@@ -89,10 +94,6 @@ event :rollback_actions, :prepare_to_validate,
   abort :success
 end
 
-def rollback_request?
-  history? && Env && Env.params["action_ids"] &&
-    Env.params["action_ids"].class == Array
-end
 
 # all acts with actions on self and on cards that are descendants of self and
 # included in self
@@ -165,32 +166,23 @@ format :html do
             = paginate intr, remote: true, theme: 'twitter-bootstrap-3'
           %div.history-legend
             %span.pull-left
-              Actions:
-              = glyphicon "plus"
-              created
+              = action_legend
+            %span.pull-right
+              Content changes:
+              %span
+                = Card::Content::Diff.render_added_chunk('Additions')
               |
-              = glyphicon "pencil"
-              updated
-              |
-              = glyphicon "trash"
-              deleted
-            Content changes:
-            %span
-              = Card::Content::Diff.render_added_chunk('Additions')
-              |
-            %span
-              = Card::Content::Diff.render_deleted_chunk('Subtractions')
+              %span
+                = Card::Content::Diff.render_deleted_chunk('Subtractions')
       HAML
     end
   end
 
-  def default_act_args args
-    act = (args[:act]  ||= Act.find(params["act_id"]))
-    args[:act_seq]     ||= params["act_seq"]
-    args[:hide_diff]   ||= hide_diff?
-    args[:slot_class]  ||= "revision-#{act.id} history-slot list-group-item"
-    args[:action_view] ||= action_view
-    args[:actions]     ||= action_list args
+  def action_legend
+    legend = [:create, :update, :delete].map do |action_type|
+               "#{action_icon(action_type)} #{action_type}d"
+              end.join " | "
+    "Actions: #{legend}"
   end
 
   def action_list args
@@ -205,11 +197,6 @@ format :html do
     # FIXME: should not need to test for presence of card here.
   end
 
-  def act_context args
-    args[:act_context] =
-      (args[:act_context] || params["act_context"] || :relative).to_sym
-  end
-
   def hide_diff?
     params["hide_diff"].to_s.strip == "true"
   end
@@ -218,83 +205,7 @@ format :html do
     (params["action_view"] || "summary").to_sym
   end
 
-  view :act do |args|
-    accordion act_header(args[:act], args),
-              render("action_#{args[:action_view]}", args.merge(action: args[:action])),
-              "act-id-#{args[:act].id}"
-    # wrap(args) do
-    #   render_haml args.merge(card: card, args: args) do
-    #     <<-HAML.strip_heredoc
-    #       .act{style: "clear:both;"}
-    #         - show_header = act_context == :absolute ? :show : :hide
-    #         = optional_render :act_header, args, show_header
-    #         .head
-    #           = render :act_metadata, args
-    #         .toggle
-    #           = fold_or_unfold_link args
-    #         .action-container
-    #           - actions.each do |action|
-    #             = render "action_#{args[:action_view]}", args.merge(action: action)
-    #     HAML
-    #   end
-    # end
-  end
 
-  def act_header act, args
-    link = link_to_card act.card
-    bs_layout do
-      row 11, 1 do
-        col content_tag(:h4, link)
-        col act_summary(act)
-      end
-      row 12 do
-        col act_metadata(act, args)
-      end
-    end
-  end
-
-  def act_summary act
-    types = Hash.new { |h, k| h[k] = 0 }
-    act.actions.each do |action|
-      types[action.action_type] += 1
-    end
-    [:create, :update, :delete].map do |type|
-      next unless types[type] > 0
-      action_summary type, types[type]
-    end.join " "
-  end
-
-  def action_summary type, count
-    icon =
-      case type
-      when :create then "plus-sign"
-      when :delete then "adjust"
-      when :update then "remove-sign"
-      end
-    "#{glyphicon(icon)} #{count}"
-  end
-
-  def act_metadata act, args
-    render_haml args.merge(act: act, card: card) do
-      <<-HAML.strip_heredoc
-        - unless act_context == :absolute
-          .nr
-            = '#' + act_seq.to_s
-        %span.text-muted
-          .actor
-            = link_to_card act.actor
-          .time.timeago
-            = time_ago_in_words(act.acted_at)
-            ago
-            - if act.id == card.last_act.id
-              %em.label.label-info Current
-            - if action_view == :expanded
-              - unless act.id == card.last_act.id
-                = rollback_link act.actions_affecting(card)
-              = show_or_hide_changes_link args
-      HAML
-    end
-  end
 
   view :act_header do |_args|
     %(<h5 class="act-header">#{link_to_card card}</h5>)

@@ -12,6 +12,10 @@ stage_method :added_item_names do
   item_names - old_items
 end
 
+stage_method :changed_item_cards do
+  item_cards content: changed_item_names
+end
+
 format do
   def item_links args={}
     card.item_cards(args).map do |item_card|

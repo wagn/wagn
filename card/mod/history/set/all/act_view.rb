@@ -1,3 +1,5 @@
+ACTS_PER_PAGE = Card.config.acts_per_page
+
 format :html do
   def default_act_args args
     act = (args[:act]  ||= Act.find(params["act_id"]))
@@ -9,6 +11,20 @@ format :html do
     act_context args
   end
 
+  view :act_list do |args|
+    acts = args.delete :acts
+    page = params["page"] || 1
+    count = acts.size + 1 - (page.to_i - 1) * ACTS_PER_PAGE
+    accordion_group(acts.map do |act|
+      if (act_card = act.card)
+        count -= 1
+        act_card.format(:html).render_act args.merge(act: act, act_seq: count)
+      else
+        Rails.logger.info "bad data, act: #{act}"
+        ""
+      end
+    end, nil, class: "clear-both")
+  end
 
   view :act do |args|
     ActRenderer.new(self, args[:act], args).render
@@ -18,7 +34,7 @@ format :html do
     #     <<-HAML.strip_heredoc
     #       .act{style: "clear:both;"}
     #         - show_header = act_context == :absolute ? :show : :hide
-    #         = optional_render :act_header, args, show_header
+    #         = optional_render :act_header, args, show_heaargs[:acts] = card.intrusive_acts.page(page).per(ACTS_PER_PAGE)der
     #         .head
     #           = render :act_metadata, args
     #         .toggle

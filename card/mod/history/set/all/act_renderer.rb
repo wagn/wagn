@@ -58,7 +58,7 @@ class ActRenderer
   end
 
   def relative_title
-    link_to_card(@act.actor) + content_tag(:small, edited_ago)
+    "<span class=\"nr\">##{@args[:act_seq]}</span>" + accordion_expand_link(@act.actor.name, html_id) + " " + content_tag(:small, edited_ago)
   end
 
   def absolute_subtitle
@@ -85,19 +85,28 @@ class ActRenderer
   end
 
   def relative_subtitle
-    @format.render_haml @args.merge(act: @act, card: @card) do
-      <<-HAML.strip_heredoc
-        .nr
-          = '#' + act_seq.to_s
-        %small
-          = absolute_title
-          - if act.id == card.last_act.id
-          - if action_view == :expanded
-            - unless act.id == card.last_act.id
-              = rollback_link act.actions_affecting(card)
-            = show_or_hide_changes_link args
-      HAML
+    expanded = ""
+    if @args[:action_view] == :expanded
+      expanded += rollback_link @act.actions_affecting(@card) unless @act.id == @card.last_act.id
+      expanded += show_or_hide_changes_link
     end
+    <<-HTML
+      <small>
+        act on #{absolute_title}
+        #{expanded}
+      </small>
+    HTML
+    # @format.render_haml @args.merge(act: @act, card: @card) do
+    #   <<-HAML.strip_heredoc
+    #     .nr
+    #       = '#' + act_seq.to_s
+    #     %small
+    #       = absolute_title
+    #       - if action_view == :expanded
+    #         - unless act.id == card.last_act.id
+    #           = rollback_link act.actions_affecting(card)
+    #         = show_or_hide_changes_link args
+    #   HAML
   end
 
   def summary
@@ -162,5 +171,31 @@ class ActRenderer
         </div>
       </div>
     HTML
+  end
+
+  def rollback_link actions
+    # FIXME -- doesn't this need to specify which action it wants?
+    prior =  # FIXME - should be a Card::Action method
+      actions.select { |action| action.card.last_action_id != action.id }
+    return unless card.ok?(:update) && prior.present?
+    link = link_to(
+      "Save as current", class: "slotter",
+      "data-slot-selector" => ".card-slot.history-view",
+      remote: true, method: :post, rel: "nofollow",
+      path: { action: :update, action_ids: prior,
+              view: :open, look_in_trash: true }
+    )
+    %(<div class="act-link">#{link}</div>)
+  end
+
+  def show_or_hide_changes_link
+    link = @format.link_to_view(
+      :act, "#{@args[:hide_diff] ? 'Show' : 'Hide'} changes",
+      class: "slotter",
+      path: { act_id:      @args[:act].id,      act_seq: @args[:act_seq],
+              hide_diff:  !@args[:hide_diff],   action_view: :expanded,
+              act_context: @args[:act_context], look_in_trash: true }
+    )
+    %(<div class="act-link">#{link}</div>)
   end
 end

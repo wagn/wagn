@@ -140,7 +140,7 @@ end
 format :html do
   view :history do |args|
     frame args.merge(body_class: "history-slot list-group", content: true) do
-      [history_legend, _render_act_list]
+      [history_legend, _render_history_acts(args)]
     end
   end
 
@@ -148,18 +148,15 @@ format :html do
     args[:optional_toolbar] ||= :show
   end
 
-  view :act_list do |args|
+  view :history_acts do |args|
     page = params["page"] || 1
-    count = card.intrusive_acts.size + 1 - (page.to_i - 1) * ACTS_PER_PAGE
-    card.intrusive_acts.page(page).per(ACTS_PER_PAGE).map do |act|
-      count -= 1
-      render_act args.merge(act: act, act_seq: count)
-    end.join
+    args[:acts] = card.intrusive_acts.page(page).per(ACTS_PER_PAGE)
+    _render_act_list args
   end
 
   def history_legend
     intr = card.intrusive_acts.page(params["page"]).per(ACTS_PER_PAGE)
-    render_haml intr: intr do
+    legend = render_haml intr: intr do
       <<-HAML.strip_heredoc
         .history-header
           %span.slotter
@@ -175,6 +172,12 @@ format :html do
               %span
                 = Card::Content::Diff.render_deleted_chunk('Subtractions')
       HAML
+    end
+
+    bs_layout do
+      row 12 do
+        col legend
+      end
     end
   end
 
@@ -204,8 +207,6 @@ format :html do
   def action_view
     (params["action_view"] || "summary").to_sym
   end
-
-
 
   view :act_header do |_args|
     %(<h5 class="act-header">#{link_to_card card}</h5>)
@@ -356,32 +357,6 @@ format :html do
                                    act_context: args[:act_context],
                                    action_view: action_view,
                                    look_in_trash: true }
-  end
-
-  def rollback_link actions
-    # FIXME -- doesn't this need to specify which action it wants?
-    prior =  # FIXME - should be a Card::Action method
-      actions.select { |action| action.card.last_action_id != action.id }
-    return unless card.ok?(:update) && prior.present?
-    link = link_to(
-      "Save as current", class: "slotter",
-                         "data-slot-selector" => ".card-slot.history-view",
-                         remote: true, method: :post, rel: "nofollow",
-                         path: { action: :update, action_ids: prior,
-                                 view: :open, look_in_trash: true }
-    )
-    %(<div class="act-link">#{link}</div>)
-  end
-
-  def show_or_hide_changes_link args
-    link = link_to_view(
-      :act, "#{args[:hide_diff] ? 'Show' : 'Hide'} changes",
-      class: "slotter",
-      path: { act_id:      args[:act].id,      act_seq: args[:act_seq],
-              hide_diff:  !args[:hide_diff],   action_view: :expanded,
-              act_context: args[:act_context], look_in_trash: true }
-    )
-    %(<div class="act-link">#{link}</div>)
   end
 end
 

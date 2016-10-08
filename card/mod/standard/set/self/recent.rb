@@ -6,6 +6,7 @@ end
 
 format :html do
   view :core do |args|
+    return "boopy"
     content_tag(:div, class: "history-slot list-group") do
       [history_legend, render_recent_acts(args)].join
     end

@@ -116,7 +116,7 @@ class Card
 
     def method_missing method, *opts, &proc
       if method =~ /(_)?(optional_)?render(_(\w+))?/
-        render_api Regexp.last_match, opts
+        api_render Regexp.last_match, opts
       else
         pass_method_to_template_object(method, opts, proc) { yield }
       end

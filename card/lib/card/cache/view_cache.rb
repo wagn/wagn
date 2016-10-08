@@ -2,6 +2,8 @@ class Card
   class Cache
     module ViewCache
       class << self
+        attr_accessor :active
+
         def cache
           Card::Cache[Card::Cache::ViewCache]
         end

@@ -48,7 +48,7 @@ def get_query params={}
 end
 
 format do
-  view :core do |args|
+  view :core, cache: :never do |args|
     view =
       case search_results args
       when Exception          then :search_error

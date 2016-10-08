@@ -1,13 +1,9 @@
 
 format :html do
   def item_links args
-    [
-      optional_render(:my_card, args),
-      optional_render(:invite, args),
-      optional_render(:sign_out, args),
-      optional_render(:sign_up, args),
-      optional_render(:sign_in, args)
-    ]
+    [:my_card, :invite, :sign_out, :sign_up, :sign_in].map do |link_view|
+      optional_render link_view, args
+    end
   end
 
   view :sign_up, perms: ->(r) { r.show_signup_link? },

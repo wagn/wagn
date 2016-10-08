@@ -14,10 +14,10 @@ format :html do
 
   def default_header_args args
     args[:optional_toolbar] ||= :show if @slot_view == :open && toolbar_pinned?
-    if show_view?(:toolbar, args.merge(default_visibility: :hide)) &&
-       card.type_code != :basic
-      args[:optional_type_info] ||= :show
-    end
+    toolbar_view =
+      Card::View.new self, :toolbar, args.merge(default_visibility: :hide)
+    return unless toolbar_view.show? && card.type_code != :basic
+    args[:optional_type_info] ||= :show
   end
 
   view :subheader do |args|

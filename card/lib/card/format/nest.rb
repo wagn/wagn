@@ -53,7 +53,7 @@ class Card
         opts.reverse_merge! nest_defaults(nested_card)
 
         subformat = nest_subformat nested_card, opts
-        view = canonicalize_view opts.delete :view
+        view = Card::View.canonicalize opts.delete :view
         opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
         # FIXME: special views should be represented in view definitions
         subformat.nest_render view, opts

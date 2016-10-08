@@ -16,17 +16,20 @@ format :html do
     path_opts = { slot: { home_view: args[:home_view] } }
     path_opts[:is_main] = true if main?
     css_class =
-      if show_view?(:horizontal_menu,
-                    args.merge(default_visibility: :hide, optional: true))
-        "visible-xs"
-      else
-        "show-on-hover"
-      end
+      show_view?(:horizontal_menu, args, :hide) ? "visible-xs" : "show-on-hover"
+
     wrap_with :div, class: "vertical-card-menu card-menu #{css_class}" do
       content_tag :div, class: "btn-group slotter card-slot pull-right" do
         link_to_view(:vertical_menu, menu_icon, path: path_opts).html_safe
       end
     end
+  end
+
+
+  def show_view? view, args, default_visibility=:show
+    args = args.merge default_visibility: default_visibility,
+                      optional: true
+    Card::View.new(self, view, args).show?
   end
 
   view :vertical_menu, tags: :unknown_ok do |args|

@@ -58,8 +58,8 @@ format :html do
 
   def commentable? view, args
     return false unless self.class.tagged view, :comment
-    visibility_args = args.merge default_visibility: :hide
-    return false unless show_view? :comment_box, visibility_args
+    view = View.new self, :comment_box, args.merge(default_visibility: :hide)
+    return false unless view.show?
     ok? :comment
   end
 

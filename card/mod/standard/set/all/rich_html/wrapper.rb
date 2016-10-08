@@ -84,9 +84,10 @@ format :html do
       args.delete(:panel_class)
       subframe args, &block
     else
-      show_subheader =
-        show_view?(:toolbar, args.merge(default_visibility: :hide)) &&
-        @current_view != :related && @current_view != :open
+      # FIXME: hardcoded view names.
+      # this should be confifured in open/related.  not here!
+      show_subheader = show_view?(:toolbar, args, :hide) &&
+                       ![:open, :related].include?(@current_view)
 
       wrap args do
         [

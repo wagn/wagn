@@ -245,12 +245,17 @@ def track_permission_errors
 end
 
 def recaptcha_on?
-  have_recaptcha_keys? &&
-    Env[:controller]   &&
-    !Auth.signed_in?   &&
-    !Auth.needs_setup? &&
-    !Auth.always_ok?   &&
+  consider_recaptcha?    &&
+    have_recaptcha_keys? &&
+    Env[:controller]     &&
+    !Auth.signed_in?     &&
+    !Auth.needs_setup?   &&
+    !Auth.always_ok?     &&
     Card.toggle(rule(:captcha))
+end
+
+def consider_recaptcha?
+  true
 end
 
 def have_recaptcha_keys?

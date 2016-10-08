@@ -15,7 +15,6 @@ class Card
       # :never means a view is never cached
 
       def render view, args={}
-        puts "render #{card.name} :: #{view}"
         View.new(self, view, args).render do |final_view, final_args|
           final_render final_view, final_args
         end
@@ -53,7 +52,7 @@ class Card
       end
 
       def cache_render_in_progress?
-        Card::Cache::ViewCache.active
+        Card::View.in_progress
       end
 
       def cache_nest_level view
@@ -100,13 +99,13 @@ class Card
 
       def cached_result view, args, &block
         active_view_cache do
-          cached_view = Card::Cache::ViewCache.fetch self, view, args, &block
+          cached_view = Card::View.fetch self, view, args, &block
           cache_strategy == :client ? cached_view : complete_render(cached_view)
         end
       end
 
       def active_view_cache
-        vc = Card::Cache::ViewCache
+        vc = Card::View
         return yield if vc.active
         vc.active = true
         result = yield

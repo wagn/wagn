@@ -1,8 +1,56 @@
+require "card/view/visibility"
+
 class Card
   class View
-    def self.canonicalize view
-      return if view.blank? # error?
-      view.to_viewname.key.to_sym
+    include Visibility
+    class << self
+      attr_accessor :active
+
+      def cache
+        Card::Cache[View]
+      end
+
+      def fetch format, view, args, &block
+        key = cache_key view, format, args
+        send fetch_method, key, &block
+      end
+
+      def fetch_method
+        @fetch_method ||= begin
+          config_option = Card.config.view_cache
+          config_option == "debug" ? :verbose_fetch : :standard_fetch
+        end
+      end
+
+      def reset
+        cache.reset
+      end
+
+      def canonicalize view
+        return if view.blank? # error?
+        view.to_viewname.key.to_sym
+      end
+
+      private
+
+      def standard_fetch key, &block
+        cache.fetch key, &block
+      end
+
+      def verbose_fetch key, &block
+        if cache.exist? key
+          "fetched from view cache: #{cache.read key}"
+        else
+          "written to view cache: #{cache.fetch(key, &block)}"
+        end
+      end
+
+      def cache_key view, format, args
+        roles_key = Card::Auth.current.all_roles.sort.join "_"
+        args_key = Card::Cache.obj_to_key(args)
+        "%s#%s__args__%s__roles__%s" %
+          [format.card.key, view, args_key, roles_key]
+      end
     end
 
     def initialize format, view, args={}
@@ -11,12 +59,19 @@ class Card
       @original_args = args
     end
 
+    def render
+      return if hide?
+      #      cached_render do
+      yield approved, approved_args
+      #      end
+    end
+
     def requested
       @requested ||= View.canonicalize @original
     end
 
     def approved
-      @approved ||= @format.ok_view requested
+      @approved ||= @format.ok_view requested, view_args
     end
 
     def view_args
@@ -40,82 +95,6 @@ class Card
       end
     end
 
-    def render
-      if hide?
-        puts "hiding #{requested}"
-        return
-      end
-      approve!
-      #      cached_render do
-      #binding.pry
-
-
-      yield approved, approved_args
-      #      end
-    end
-
-    def approve!
-    end
-
-    # VISIBILITY
-
-    def optional?
-      @optional ||= view_args.delete :optional
-    end
-
-    def hide?
-      !show?
-    end
-
-    def show?
-      puts "visibility for #{requested}, #{@format.card.name} = #{optional?}, #{visibility_config == :show}"
-      return true unless optional?
-      # binding.pry
-
-      visibility_config == :show
-    end
-
-    def raw_visibility_config
-      @raw_visibility_config ||= view_args["optional_#{requested}".to_sym]
-    end
-
-    def visibility_config
-      @visibility_config ||= (forced_visibility     ||
-                              wagneered_visibility  ||
-                              raw_visibility_config ||
-                              default_visibility    ||
-                              :show)
-    end
-
-    def forced_visibility
-      puts "visibility_config = #{raw_visibility_config}"
-      case raw_visibility_config
-      when :always then :show
-      when :never  then :hide
-      else nil
-      end
-    end
-
-    def default_visibility
-      @default_visibility ||= view_args.delete :default_visibility
-    end
-
-    def wagneered_visibility
-      [:show, :hide].each do |setting|
-        view_list = visible_view_list view_args[setting]
-        return setting if view_list.member? requested
-      end
-      nil
-    end
-
-    def visible_view_list val
-      case val
-      when NilClass then []
-      when Array    then val
-      when String   then val.split(/[\s,]+/)
-      else raise Card::Error, "bad show/hide argument: #{val}"
-      end.map { |view| View.canonicalize view }
-    end
 
   end
 end

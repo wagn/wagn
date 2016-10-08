@@ -25,7 +25,6 @@ format :html do
     end
   end
 
-
   def show_view? view, args, default_visibility=:show
     args = args.merge default_visibility: default_visibility,
                       optional: true

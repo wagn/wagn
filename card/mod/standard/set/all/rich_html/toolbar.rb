@@ -187,8 +187,6 @@ format :html do
         _optional_render(:delete_button,  args, show_or_hide_delete),
         _optional_render(:refresh_button, args, :show),
         _optional_render(:related_button, args, :show)
-#        ,
-#        _optional_render(:history_button, args, :hide)
       ]
     end
   end

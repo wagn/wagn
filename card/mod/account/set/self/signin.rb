@@ -3,7 +3,6 @@ def consider_recaptcha?
 end
 
 format :html do
-
   view :open do |args|
     args[:optional_help] = :show
     super args

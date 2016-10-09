@@ -161,18 +161,23 @@ format :html do
   # FIELDSET VIEWS
 
   view :name_formgroup do |args|
-    formgroup "name", raw(name_field(form)),
-              editor: "name", help: args[:help]
+    formgroup "name", raw(name_field(form)), editor: "name", help: args[:help]
   end
 
   view :type_formgroup do |args|
-    field = if args[:variety] == :edit # FIXME: dislike this api -ef
-              type_field class: "type-field edit-type-field"
-            else
-              type_field class: "type-field live-type-field",
-                         href: path(view: :new), "data-remote" => true
-            end
+    # FIXME: dislike this api -ef
+    field = args[:variety] == :edit ? standard_type_field : live_type_field
     formgroup "type", field, editor: "type", class: "type-formgroup"
+  end
+
+  def standard_type_field
+    type_field class: "type-field edit-type-field"
+  end
+
+  def live_type_field
+    type_field class: "type-field live-type-field",
+               href: path(view: :new),
+               "data-remote" => true
   end
 
   view :button_formgroup do |args|
@@ -198,19 +203,20 @@ format :html do
 
   def type_field args={}
     typelist = Auth.createable_types
-    current_type =
-      unless args.delete :no_current_type
-        if !card.new_card? && !typelist.include?(card.type_name)
-          # current type should be an option on existing cards,
-          # regardless of create perms
-          typelist.push(card.type_name).sort!
-        end
-        card.type_name_or_default
-      end
-
+    current_type = type_field_current_value args, typelist
     options = options_from_collection_for_select typelist, :to_s, :to_s,
                                                  current_type
     template.select_tag "card[type]", options, args
+  end
+
+  def type_field_current_value args, typelist
+    return if args.delete :no_current_type
+    if !card.new_card? && !typelist.include?(card.type_name)
+      # current type should be an option on existing cards,
+      # regardless of create perms
+      typelist.push(card.type_name).sort!
+    end
+    card.type_name_or_default
   end
 
   def content_field form, options={}

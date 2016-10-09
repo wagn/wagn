@@ -26,7 +26,7 @@ format :html do
   end
 
   def show_view? view, args={}, default_viz=nil
-    args[:optional] = true
+    args = args.merge optional: true
     args[:default_visibility] = default_viz if default_viz
     Card::View.new(self, view, args).show?
   end

@@ -25,7 +25,9 @@ module NavigationHelpers
       "/#{Regexp.last_match(1).to_name.url_key}"
 
     when /new (.*) presetting name to "(.*)" and author to "(.*)"/
-      url = "/new/#{Regexp.last_match(1)}?card[name]=#{Regexp.last_match(2).to_name.url_key}&_author=#{CGI.escape(Regexp.last_match(3))}"
+      "/new/#{Regexp.last_match(1)}" \
+      "?card[name]=#{Regexp.last_match(2).to_name.url_key}" \
+      "&_author=#{CGI.escape(Regexp.last_match(3))}"
 
     when /new card named (.*)$/
       "/card/new?card[name]=#{CGI.escape(Regexp.last_match(1))}"

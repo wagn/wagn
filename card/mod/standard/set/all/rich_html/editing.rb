@@ -94,9 +94,8 @@ format :html do
   end
 
   view :edit_name, perms: :update do |args|
-    frame_and_form(
-      { action: :update, id: card.id }, args, "main-success" => "REDIRECT"
-    ) do
+    frame_and_form({ action: :update, id: card.id },
+                   args, "main-success" => "REDIRECT") do
       [
         _render_name_formgroup(args),
         _optional_render(:confirm_rename, args),

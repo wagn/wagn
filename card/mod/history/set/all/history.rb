@@ -11,8 +11,7 @@ def actionable?
   history? || respond_to?(:attachment)
 end
 
-event :assign_action, :initialize,
-      when: proc { |c| c.actionable? } do
+event :assign_action, :initialize, when: proc { |c| c.actionable? } do
   @current_act = director.need_act
   @current_action = Card::Action.create(
     card_act_id: @current_act.id,

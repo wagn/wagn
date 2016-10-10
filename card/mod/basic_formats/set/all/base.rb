@@ -116,13 +116,13 @@ format do
 
   view :template_rule, tags: :unknown_ok do |args|
     # FIXME: - relativity should be handled in smartname
-    return "" unless args[:inc_name]
-    name = args[:inc_name].to_name
+    return "" unless args[:nest_name]
+    name = args[:nest_name].to_name
     stripped = name.stripped
 
     if name.relative? && !stripped.to_name.starts_with_joint?
       # not a simple relative name; just return the original syntax
-      "{{#{args[:inc_syntax]}}}"
+      "{{#{args[:nest_syntax]}}}"
     else
       set_name =
         if name.absolute?

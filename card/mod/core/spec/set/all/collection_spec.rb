@@ -87,10 +87,10 @@ describe Card::Set::All::Collection do
       end
       expect(result).to eq [
         ["A", { view: :closed }],
-        ["B", { view: :closed, inc_name: "B", inc_syntax: "B" }],
+        ["B", { view: :closed, nest_name: "B", nest_syntax: "B" }],
         ["C", { view: :closed, title: "link C" }],
-        ["D", { view: "name", title: "nest D", inc_name: "D",
-                inc_syntax: "D|name;title:nest D" }]
+        ["D", { view: "name", title: "nest D", nest_name: "D",
+                nest_syntax: "D|name;title:nest D" }]
       ]
     end
   end

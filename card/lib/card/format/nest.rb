@@ -9,7 +9,7 @@ class Card
       def nest name_or_card_or_opts, opts={}
         nested_card = fetch_nested_card name_or_card_or_opts, opts
         opts = name_or_card_or_opts if name_or_card_or_opts.is_a? Hash
-        opts[:inc_name] ||= nested_card.name
+        opts[:nest_name] ||= nested_card.name
         nest_card nested_card, opts
       end
 
@@ -23,7 +23,7 @@ class Card
         if field.is_a?(Card)
           nest_card field, opts
         else
-          prepare_nest opts.merge(inc_name: card.cardname.field(field))
+          prepare_nest opts.merge(nest_name: card.cardname.field(field))
         end
       end
 
@@ -79,7 +79,7 @@ class Card
       end
 
       def main_nest_within_layout? opts
-        opts[:inc_name] == "_main" && show_layout? && @depth.zero?
+        opts[:nest_name] == "_main" && show_layout? && @depth.zero?
       end
 
       def count_chars

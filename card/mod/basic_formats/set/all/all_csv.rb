@@ -37,7 +37,7 @@ format :csv  do
           if %w(name link).member? opts[:view]
             opts[:view]
           else
-            opts[:inc_name].to_name.tag
+            opts[:nest_name].to_name.tag
           end
         end.compact
         CSV.generate_line titles.map { |title| title.to_s.upcase }

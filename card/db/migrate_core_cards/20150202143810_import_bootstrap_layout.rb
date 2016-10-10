@@ -58,7 +58,7 @@ class ImportBootstrapLayout < Card::Migration::Core
     Card.search(type_id: Card::LayoutTypeID) do |lcard|
       lcontent = Card::Content.new lcard.content, lcard
       lcontent.find_chunks(Card::Content::Chunk::Include).each do |nest|
-        nest.explicit_view = (nest.options[:inc_name] == "_main" ? "open" : "core")
+        nest.explicit_view = (nest.options[:nest_name] == "_main" ? "open" : "core")
       end
       lcard.update_attributes! content: lcontent.to_s
     end

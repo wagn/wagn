@@ -24,19 +24,19 @@ describe Card::Content::Chunk::Include, "Inclusion" do
     it "handles empty nests" do
       @chunk = "{{ }}"
       expect(name).to eq("")
-      expect(options[:inc_syntax]).to eq(" ")
+      expect(options[:nest_syntax]).to eq(" ")
     end
 
     it "handles empty nests with pipe" do
       @chunk = "{{|}}"
       expect(name).to eq("")
-      expect(options[:inc_syntax]).to eq("|")
+      expect(options[:nest_syntax]).to eq("|")
     end
 
     it "handles no pipes" do
       @chunk = "{{toy}}"
       expect(name).to eq("toy")
-      expect(options[:inc_name]).to eq("toy")
+      expect(options[:nest_name]).to eq("toy")
       expect(options.key?(:view)).to eq(false)
     end
 
@@ -58,7 +58,7 @@ describe Card::Content::Chunk::Include, "Inclusion" do
 
     it "handles single pipe" do
       @chunk = "{{toy|view:link;hide:me}}"
-      expect(options[:inc_name]).to eq("toy")
+      expect(options[:nest_name]).to eq("toy")
       expect(options[:view]).to eq("link")
       expect(options[:hide]).to eq("me")
       expect(options.key?(:items)).to eq(false)
@@ -66,7 +66,7 @@ describe Card::Content::Chunk::Include, "Inclusion" do
 
     it "handles multiple pipes" do
       @chunk = "{{box|open|closed}}"
-      expect(options[:inc_name]).to eq("box")
+      expect(options[:nest_name]).to eq("box")
       expect(options[:view]).to eq("open")
       expect(options[:items][:view]).to eq("closed")
       expect(options[:items].key?(:items)).to eq(false)
@@ -74,14 +74,14 @@ describe Card::Content::Chunk::Include, "Inclusion" do
 
     it "handles multiple pipes with blank lists" do
       @chunk = "{{box||closed}}"
-      expect(options[:inc_name]).to eq("box")
+      expect(options[:nest_name]).to eq("box")
       expect(options[:view]).to eq(nil)
       expect(options[:items][:view]).to eq("closed")
     end
 
     it "treats :item as view of next level" do
       @chunk = "{{toy|link;item:name}}"
-      expect(options[:inc_name]).to eq("toy")
+      expect(options[:nest_name]).to eq("toy")
       expect(options[:view]).to eq("link")
       expect(options[:items][:view]).to eq("name")
     end

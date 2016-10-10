@@ -12,8 +12,8 @@ describe Card::Content do
       rendered: ["Some Literals: \\[{I'm not| a link]}, and ",
                  "<span>{</span>{This Card|Is not Included}}",
                  ", but ",
-                 { options: { inc_name: "this is",
-                              inc_syntax: "this is" } },
+                 { options: { nest_name: "this is",
+                              nest_syntax: "this is" } },
                  ", and some tail"],
       classes: [String, :EscapedLiteral, String, :Include, String]
     },
@@ -29,16 +29,16 @@ describe Card::Content do
                  "the text</a>",
                  ", and ",
                  { options: { view: "Is Included",
-                              inc_name: "This Card",
-                              inc_syntax: "This Card|Is Included" } },
-                 { options: { inc_name: "this too",
-                              inc_syntax: "this too" } },
+                              nest_name: "This Card",
+                              nest_syntax: "This Card|Is Included" } },
+                 { options: { nest_name: "this too",
+                              nest_syntax: "this too" } },
                  " and ",
                  '<a target="_blank" class="external-link" ' \
                'href="http://external.wagn.org/path">link text</a>',
                  { options: { view: "open",
-                              inc_name: "Included",
-                              inc_syntax: "Included|open" } }],
+                              nest_name: "Included",
+                              nest_syntax: "Included|open" } }],
       classes: [
         String, :Link, String, :Include, :Include, String, :Link, :Include
       ]

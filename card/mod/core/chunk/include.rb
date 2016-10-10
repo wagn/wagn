@@ -9,8 +9,8 @@ class Card
       class Include < Reference
         cattr_reader :options
         @@options = ::Set.new [
-          :inc_name,   # name as used in nest
-          :inc_syntax, # full nest syntax
+          :nest_name,   # name as used in nest
+          :nest_syntax, # full nest syntax
           :items,      # handles pipe-based recursion
 
           # _conventional options_
@@ -33,8 +33,8 @@ class Card
           if name =~ /^\#/
             @process_chunk = name =~ /^\#\#/ ? "" : visible_comment(in_brackets)
           else
-            @options = interpret_options.merge inc_name: name,
-                                               inc_syntax: in_brackets
+            @options = interpret_options.merge nest_name: name,
+                                               nest_syntax: in_brackets
             @name = name
           end
         end

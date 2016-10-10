@@ -36,7 +36,7 @@ format :json do
   end
 
   def main_nest? chunk
-    chunk.respond_to?(:options) && chunk.options && chunk.options[:inc_name] &&
-      chunk.options[:inc_name] == "_main"
+    chunk.respond_to?(:options) && chunk.options && chunk.options[:nest_name] &&
+      chunk.options[:nest_name] == "_main"
   end
 end

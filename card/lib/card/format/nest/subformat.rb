@@ -21,7 +21,7 @@ class Card
         private
 
         def nest_subformat nested_card, opts
-          return self if opts[:inc_name] =~ /^_(self)?$/
+          return self if opts[:nest_name] =~ /^_(self)?$/
           sub = subformat nested_card
           sub.nest_opts = opts[:items] ? opts[:items].clone : {}
           sub

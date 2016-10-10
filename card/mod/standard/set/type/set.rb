@@ -127,7 +127,7 @@ format :html do
   view :template_link do |args|
     args.delete :style # why? comment needed
     wrap args do
-      link = link_to_view :template_editor, args[:inc_syntax], class: "slotter"
+      link = link_to_view :template_editor, args[:nest_syntax], class: "slotter"
       "{{#{link}}"
     end
   end

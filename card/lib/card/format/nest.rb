@@ -7,9 +7,10 @@ class Card
       include View
 
       def nest cardish, options={}
+        # binding.pry if cardish.is_a? Hash
         return "" if nest_invisible?
         # nested_card = Card.cardish cardish
-        nested_card = fetch_nested_card cardish
+        nested_card = fetch_nested_card cardish, options
 
         view = standardize_nest_options nested_card, options
         nest_render nested_card, view, options
@@ -46,9 +47,9 @@ class Card
       #   home = Card['home'].format
       #   home.nest :self         # => nest for '*self'
       #   home.field_nest :self   # => nest for 'Home+*self'
-      def field_nest field, view, opts={}
+      def field_nest field, opts={}
         field = card.cardname.field(field) unless field.is_a? Card
-        nest field, view, opts
+        nest field, opts
       end
 
       # opts[:home_view] = [:closed, :edit].member?(view) ? :open : view

@@ -3,18 +3,13 @@ class Card
     module Nest
       # Fetch card for a nest
       module Fetch
-        def fetch_nested_card name_or_card_or_opts, opts={}
-          case name_or_card_or_opts
-          when Card
-            name_or_card_or_opts
-          when Hash
-            opts = name_or_card_or_opts
-            Card.fetch(opts[:nest_name], new: nest_new_args(opts))
-          when Symbol
-            Card.fetch(name_or_card_or_opts)
+        def fetch_nested_card cardish, opts={}
+          case cardish
+          when Card            then cardish
+          when Symbol, Integer then Card.fetch cardish
           else
-            opts[:nest_name] = name_or_card_or_opts.to_s
-            Card.fetch name_or_card_or_opts, new: nest_new_args(opts)
+            opts[:nest_name] = cardish.to_s
+            Card.fetch cardish, new: nest_new_args(opts)
           end
         end
 

@@ -35,7 +35,8 @@ format :html do
 
   def process_nested_fields args
     nested_fields(args).map do |chunk|
-      nest chunk.options.reverse_merge(args)
+      nest_options = chunk.options.reverse_merge args
+      nest nest_options[:nest_name], nest_options
     end.join "\n"
   end
 

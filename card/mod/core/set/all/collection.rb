@@ -265,11 +265,12 @@ format :html do
 
       active_name ||= tab_name
       # warning: nest changes nest_args
-      active_content ||= nest(Card.fetch(name, new: {}), nest_args)
+      active_content ||= nest(name, nest_args)
     end
     lazy_loading_tabs tabs, active_name, active_content,
                       type: args[:tab_type]
   end
+
   def default_tabs_args args
     args[:tab_type] ||= "tabs"
   end

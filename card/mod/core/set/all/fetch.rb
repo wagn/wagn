@@ -183,6 +183,14 @@ module ClassMethods
     end
   end
 
+  def cardish cardish
+    if cardish.is_a? Card
+      cardish
+    else
+      fetch cardish, new: {}
+    end
+  end
+
   def deep_opts args
     opts = (args[:card] || {}).clone
     # clone so that original params remain unaltered.  need deeper clone?

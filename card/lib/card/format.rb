@@ -32,7 +32,6 @@ class Card
     include Content
     include Error
 
-    extend Nest::ClassMethods
     extend Registration
 
     # FIXME: should be set in views

@@ -15,7 +15,7 @@ class Card
 
           with_nest_mode :normal do
             @mainline = true
-            result = wrap_main nest_card(root.card, opts)
+            result = wrap_main nest(root.card, opts)
             @mainline = false
             result
           end

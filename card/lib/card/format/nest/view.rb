@@ -9,10 +9,6 @@ class Card
                        edit: :edit, closed: :closed, layout: :layout,
                        normal: :normal, template: :template }.freeze
 
-        def nest_render view, opts
-          optional_render nest_view(view), opts
-        end
-
         def with_nest_mode mode
           if (switch_mode = NEST_MODES[mode]) && @mode != switch_mode
             old_mode = @mode
@@ -44,12 +40,15 @@ class Card
         # Returns the view that the card should use
         # if nested in edit mode
         def view_in_edit_mode homeview
-          not_in_form =
-            Card::Format.perms[homeview] == :none || # view configured not to keep in form
-            card.structure || # not yet nesting structures
-            card.key.blank? # eg {{_self|type}} on new cards
+          hide_view_in_edit_mode?(homeview) ? :blank : :edit_in_form
+        end
 
-          not_in_form ? :blank : :edit_in_form
+        def hide_view_in_edit_mode? view
+          return true if Card::Format.perms[view] == :none
+          # view configured not to keep in form
+          return true if card.structure  # not yet nesting structures
+          return true if card.key.blank? # eg {{_self|type}} on new cards
+          false
         end
 
         # Return the view that the card should use

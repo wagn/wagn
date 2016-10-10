@@ -259,7 +259,7 @@ format :html do
   end
 
   view :closed_content do |args|
-    if @depth > self.class.max_depth
+    if @depth > max_depth
       "..."
     else
       search_limit = args[:closed_search_limit]

@@ -7,9 +7,7 @@ class Card
       include View
 
       def nest cardish, options={}
-        # binding.pry if cardish.is_a? Hash
         return "" if nest_invisible?
-        # nested_card = Card.cardish cardish
         nested_card = fetch_nested_card cardish, options
 
         view = standardize_nest_options nested_card, options

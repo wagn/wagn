@@ -15,32 +15,44 @@ class Card
 
         private
 
-        def nest_content cardname
-          content = params[cardname.to_s.tr("+", "_")]
+        def nest_new_args nest_opts
+          nest_name = nest_opts[:nest_name].to_s
+          new_args = { name: nest_name, type: nest_opts[:type] }
 
-          # CLEANME This is a hack so plus cards re-populate on failed signups
-          p = params["subcards"]
-          if p && (card_params = p[cardname.to_s])
-            content = card_params["content"]
-          end
-          content if content.present? # returns nil for empty string
-        end
-
-        def nest_new_args opts
-          args = { name: opts[:nest_name], type: opts[:type], supercard: card }
-          args.delete(:supercard) if opts[:nest_name].strip.blank?
+          new_args[:supercard] = card unless nest_name.strip.blank?
           # special case.  gets absolutized incorrectly. fix in smartname?
-          if opts[:nest_name] =~ /^_main\+/
-            # FIXME: this is a rather hacky (and untested) way to get @superleft
-            # to work on new cards named _main+whatever
-            args[:name] = args[:name].gsub(/^_main\+/, "+")
-            args[:supercard] = root.card
-          end
-          if (content = nest_content opts[:nest_name])
-            args[:content] = content
-          end
-          args
+
+          nest_new_main_args new_args if nest_name =~ /^_main\+/
+          nest_new_content_args new_args, nest_name
+          new_args
         end
+
+        def nest_new_main_args new_args
+          # FIXME: this is a rather hacky way to get @superleft
+          # to work on new cards named _main+whatever
+          new_args[:name] = new_args[:name].gsub(/^_main\+/, "+")
+          new_args[:supercard] = root.card
+        end
+
+        def nest_new_content_args new_args, nest_name
+          content = nest_content_from_shorthand_param(nest_name) ||
+                    nest_content_from_subcard_params(nest_name)
+          new_args[:content] = content if content.present?
+        end
+
+        def nest_content_from_shorthand_param nest_name
+          shorthand_param = nest_name.tr "+", "_"
+          # FIXME: this is a lame shorthand; could be another card's key
+          # should be more robust and managed by Card::Name
+          params[shorthand_param]
+        end
+
+        def nest_content_from_subcard_params nest_name
+          return unless (subcard_params = params["subcards"])
+          return unless (nestcard_params = subcard_params[nest_name])
+          nestcard_params["content"]
+        end
+
       end
     end
   end

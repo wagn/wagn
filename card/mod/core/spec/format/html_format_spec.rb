@@ -13,7 +13,7 @@ describe Card::Format::HtmlFormat do
 
     it "nests in multi edit" do
       c = Card.new name: "ABook", type: "Book"
-      rendered = c.format.render(:edit)
+      rendered = c.format.render :edit
 
       assert_view_select rendered, "fieldset" do
         assert_select 'div[class~="prosemirror-editor"]' do

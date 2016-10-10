@@ -23,7 +23,7 @@ class Card
           result
         end
 
-        private
+        # private
 
         def nest_view view
           # This was refactored based on the assumption that the subformat

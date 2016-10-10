@@ -20,9 +20,7 @@ class Card
         options.reverse_merge! nest_defaults(nested_card)
 
         options[:nest_name] ||= nested_card.name
-
-
-        view = nest_view Card::View.canonicalize(options.delete(:view))
+        view = Card::View.canonicalize options.delete(:view)
 
         options[:home_view] = [:closed, :edit].member?(view) ? :open : view
         view
@@ -30,6 +28,7 @@ class Card
 
       def nest_render nested_card, view, options
         subformat = nest_subformat nested_card, options
+        view = subformat.nest_view view
         count_chars do
           subformat.optional_render view, options
         end

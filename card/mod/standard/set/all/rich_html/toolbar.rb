@@ -85,17 +85,15 @@ format :html do
     end
   end
 
-  def rules_split_button args
-    recent = smart_link_to "recent",   view: :edit_rules,
-                                       slot: { rule_view: :recent_rules }
-    common = smart_link_to "common",   view: :edit_rules,
-                                       slot: { rule_view: :common_rules }
-    group  = smart_link_to "by group", view: :edit_rules,
-                                       slot: { rule_view: :grouped_rules }
-    all    = smart_link_to "by name",  view: :edit_rules,
-                                       slot: { rule_view: :all_rules }
-    nests  = smart_link_to "nests",    view: :edit_nest_rules,
-                                       slot: { rule_view: :field_related_rules }
+  def rules_split_button argss
+    recent = edit_rules_link "recent",   :recent_rules
+    common = edit_rules_link "common",   :common_rules
+    group  = edit_rules_link "by group", :grouped_rules
+    all    = edit_rules_link "by name",  :all_rules
+    nests  = smart_link_to "nests",
+                           view: :edit_nest_rules,
+                           path: { slot: { rule_view: :field_related_rules } }
+
     toolbar_split_button "rules", { view: :edit_rules }, args do
       {
         common_rules:    common,
@@ -106,6 +104,11 @@ format :html do
         edit_nest_rules: (nests if args[:nested_fields].present?)
       }
     end
+  end
+
+  def edit_rules_link text, rule_view
+    smart_link_to text, view: :edit_rules,
+                        path: { slot: { rule_view: rule_view } }
   end
 
   def edit_split_button args

@@ -315,7 +315,8 @@ format :html do
 
   def set_label card, set_name, label, state, button
     label_class = "set-label"
-    set_link = link_to_card set_name, glyphicon("question-sign", "link-muted"), target: "wagn_set"
+    icon = glyphicon "question-sign", "link-muted"
+    set_link = link_to_card set_name, icon, target: "wagn_set"
     info =
       case state
       when :current

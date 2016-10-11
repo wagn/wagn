@@ -76,7 +76,6 @@ event :only_notify_on_web_requests, :initialize,
   @silent_change = true
 end
 
-
 def notable_change?
   !silent_change? && current_act_card? &&
     Card::Auth.current_id != WagnBotID && followable?
@@ -99,6 +98,7 @@ event :stash_followers, :store, on: :delete do
   act_card.follower_stash ||= FollowerStash.new
   act_card.follower_stash.add_affected_card self
 end
+
 event :notify_followers_after_delete, :integrate,
       on: :delete, when: proc { |ca| ca.notable_change? } do
   notify_followers

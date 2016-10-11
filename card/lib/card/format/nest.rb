@@ -11,7 +11,16 @@ class Card
         nested_card = fetch_nested_card cardish, options
 
         view = standardize_nest_options nested_card, options
-        nest_render nested_card, view, options
+        rendered = nest_render nested_card, view, options
+
+        block_given? ? yield(view, rendered) : rendered
+      end
+
+      def nest_subformat nested_card, opts
+        return self if opts[:nest_name] =~ /^_(self)?$/
+        sub = subformat nested_card
+        sub.nest_opts = opts[:items] ? opts[:items].clone : {}
+        sub
       end
 
       def standardize_nest_options nested_card, options

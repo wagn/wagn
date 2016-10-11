@@ -180,7 +180,7 @@ end
 format :csv do
   view :card_list do |args|
     items = super args
-    if @depth == 0
+    if @depth.zero?
       render_csv_title_row + items
     else
       items
@@ -233,29 +233,27 @@ format :html do
   end
 
   view :card_list do |args|
-    paging = _optional_render :paging, args
-
-    if search_results.empty?
-      render_no_search_results(args)
-    else
-      results =
-        search_results.map do |c|
-          item_view = nest_defaults(c)[:view]
-          %(
-            <div class="search-result-item item-#{item_view}">
-              #{nest(c, size: args[:size], view: item_view)}
-            </div>
-          )
-        end.join "\n"
-
-      %(
-        #{paging}
-        <div class="search-result-list">
-          #{results}
-        </div>
-        #{paging if search_results.length > 10}
-      )
+    return render_no_search_results(args) if search_results.empty?
+    search_result_list args, search_results.length do
+      search_results.map do |item_card|
+        nest item_card, size: args[:size] do |item_view, rendered|
+          klass = "search-result-item item-#{item_view}"
+          %(<div class="#{klass}">#{rendered}</div>)
+        end
+      end
     end
+  end
+
+  def search_result_list args, num_results
+    paging = _optional_render :paging, args
+    %(
+      #{paging}
+      <div class="search-result-list">
+        #{yield.join "\n"}
+      </div>
+      #{paging if num_results > 10}
+    )
+
   end
 
   view :closed_content do |args|

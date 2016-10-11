@@ -82,7 +82,11 @@ def notable_change?
 end
 
 def current_act_card?
-  current_act && current_act.card_id == id
+  return false unless current_act
+  current_act.card_id.nil? || current_act.card_id == id
+  # FIXME: currently card_id is nil for deleted acts (at least
+  # in the store phase when it's tested).  This nil test was needed
+  # to make this work.
 end
 
 event :notify_followers_after_save, :integrate_with_delay,
@@ -94,7 +98,8 @@ end
 # but we can't pass the follower_stash through the ActiveJob queue.
 # We have to deal with the notifications in the integrate phase instead of the
 # integrate_with_delay phase
-event :stash_followers, :store, on: :delete do
+event :stash_followers, :store,
+      on: :delete, when: proc { |ca| ca.notable_change? } do
   act_card.follower_stash ||= FollowerStash.new
   act_card.follower_stash.add_affected_card self
 end

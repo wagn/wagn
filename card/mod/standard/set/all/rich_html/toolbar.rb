@@ -86,26 +86,35 @@ format :html do
   end
 
   def rules_split_button args
-    recent = smart_link_to "recent",   view: :edit_rules,
-                                       slot: { rule_view: :recent_rules }
-    common = smart_link_to "common",   view: :edit_rules,
-                                       slot: { rule_view: :common_rules }
-    group  = smart_link_to "by group", view: :edit_rules,
-                                       slot: { rule_view: :grouped_rules }
-    all    = smart_link_to "by name",  view: :edit_rules,
-                                       slot: { rule_view: :all_rules }
-    nests  = smart_link_to "nests",    view: :edit_nest_rules,
-                                       slot: { rule_view: :field_related_rules }
-    toolbar_split_button "rules", { view: :edit_rules }, args do
-      {
-        common_rules:    common,
-        grouped_rules:   group,
-        all_rules:       all,
-        separator:       (separator if args[:nested_fields].present?),
-        recent_rules:    (recent if recently_edited_settings?),
-        edit_nest_rules: (nests if args[:nested_fields].present?)
-      }
-    end
+    button_hash = {
+      common_rules:  edit_rules_link("common",   :common_rules),
+      grouped_rules: edit_rules_link("by group", :grouped_rules),
+      all_rules:     edit_rules_link("by name",  :all_rules)
+    }
+    recently_edited_rules_link button_hash
+    nest_rules_link button_hash, args[:nested_fields]
+    toolbar_split_button("rules", { view: :edit_rules }, args) { button_hash }
+  end
+
+  def nest_rules_link button_hash, nested_fields
+    return unless nested_fields.present?
+    button_hash[:separator] = separator
+    button_hash[:edit_nest_rules] = edit_nest_rules_link "nests"
+  end
+
+  def recently_edited_rules_link button_hash
+    return unless recently_edited_settings?
+    button_hash[:recent_rules] = edit_rules_link "recent", :recent_rules
+  end
+
+  def edit_nest_rules_link text
+    smart_link_to text, view: :edit_nest_rules,
+                        path: { slot: { rule_view: :field_related_rules } }
+  end
+
+  def edit_rules_link text, rule_view
+    smart_link_to text, view: :edit_rules,
+                        path: { slot: { rule_view: rule_view } }
   end
 
   def edit_split_button args

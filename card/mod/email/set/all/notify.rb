@@ -76,14 +76,17 @@ event :only_notify_on_web_requests, :initialize,
   @silent_change = true
 end
 
-
 def notable_change?
   !silent_change? && current_act_card? &&
     Card::Auth.current_id != WagnBotID && followable?
 end
 
 def current_act_card?
-  current_act && current_act.card_id == id
+  return false unless current_act
+  current_act.card_id.nil? || current_act.card_id == id
+  # FIXME: currently card_id is nil for deleted acts (at least
+  # in the store phase when it's tested).  This nil test was needed
+  # to make this work.
 end
 
 event :notify_followers_after_save, :integrate_with_delay,

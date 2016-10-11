@@ -1,6 +1,6 @@
 
 format :json do
-  def get_nest_defaults _nested_card
+  def get_nest_defaults
     { view: :atom }
   end
 

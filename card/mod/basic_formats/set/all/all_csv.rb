@@ -1,7 +1,7 @@
 require "csv"
 
 format :csv  do
-  def get_nest_defaults _nested_card
+  def get_nest_defaults
     { view: :core }
   end
 

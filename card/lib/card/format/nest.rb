@@ -64,13 +64,13 @@ class Card
 
       def nest_defaults nested_card
         @nest_defaults ||= begin
-          defaults = get_nest_defaults(nested_card).clone
+          defaults = get_nest_defaults.clone
           defaults.merge! @nest_opts if @nest_opts
           defaults
         end
       end
 
-      def get_nest_defaults _nested_card
+      def get_nest_defaults
         { view: :name }
       end
 

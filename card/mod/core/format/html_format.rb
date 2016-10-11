@@ -44,8 +44,9 @@ class Card
         end
       end
 
-      def get_nest_defaults nested_card
-        { view: (rule(:default_html_view) || :titled) }
+      def get_nest_defaults
+        card_rule = card.rule :default_html_view
+        { view: (card_rule || :titled) }
       end
 
       def default_item_view

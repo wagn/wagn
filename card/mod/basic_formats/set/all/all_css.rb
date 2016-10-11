@@ -1,6 +1,6 @@
 
 format :css do
-  def get_nest_defaults _nested_card
+  def get_nest_defaults
     { view: :raw }
   end
 

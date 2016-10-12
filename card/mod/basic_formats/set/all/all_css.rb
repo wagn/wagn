@@ -1,7 +1,7 @@
 
 format :css do
-  def get_nest_defaults
-    { view: :raw }
+  def default_nest_view
+    :raw
   end
 
   def show view, args

@@ -6,46 +6,59 @@ class Card
       include Subformat
       include View
 
-      def nest cardish, options={}
+      # def voo
+      #   # voo = ViewOptions object
+      #   @voo ||= Card::ViewOptions.new options
+      # end
+
+      def content_nest opts={}
+        return opts[:comment] if opts.key? :comment # commented nest
+        return main_nest(opts) if main_nest?(opts)
+        nest opts[:nest_name], opts
+      end
+
+      def nest cardish, options={}, &block
         return "" if nest_invisible?
         nested_card = fetch_nested_card cardish, options
+        view, options = interpret_nest_options nested_card, options
+        nest_render nested_card, view, options, &block
+      end
 
-        view = standardize_nest_options nested_card, options
-        rendered = nest_render nested_card, view, options
+      def interpret_nest_options nested_card, options
+        options.delete_if { |_k, v| v.nil? }
+        options[:nest_name] ||= nested_card.name
+        view = nest_view options.delete(:view)
+        options[:home_view] = [:closed, :edit].member?(view) ? :open : view
+        [view, options]
+      end
 
+      def interpret_items_directive directive
+        return unless directive.is_a? Hash
+        @items_directive_view = directive.delete :view
+        @items_directive_options = directive
+      end
+
+      def nest_view explicit_view
+        view = explicit_view || @items_directive_view || default_nest_view
+        Card::View.canonicalize view
+      end
+
+      def default_nest_view
+        :name
+      end
+
+      def nest_render nested_card, view, options
+        subformat = nest_subformat nested_card, options
+        view = subformat.modal_nest_view view
+        rendered = count_chars { subformat.optional_render view, options }
         block_given? ? yield(view, rendered) : rendered
       end
 
       def nest_subformat nested_card, opts
         return self if opts[:nest_name] =~ /^_(self)?$/
         sub = subformat nested_card
-        sub.nest_opts = opts[:items] ? opts[:items].clone : {}
+        sub.interpret_items_directive opts[:items]
         sub
-      end
-
-      def standardize_nest_options nested_card, options
-        options.delete_if { |_k, v| v.nil? }
-        options.reverse_merge! nest_defaults(nested_card)
-
-        options[:nest_name] ||= nested_card.name
-        view = Card::View.canonicalize options.delete(:view)
-
-        options[:home_view] = [:closed, :edit].member?(view) ? :open : view
-        view
-      end
-
-      def nest_render nested_card, view, options
-        subformat = nest_subformat nested_card, options
-        view = subformat.nest_view view
-        count_chars do
-          subformat.optional_render view, options
-        end
-      end
-
-      def content_nest opts={}
-        return opts[:comment] if opts.key? :comment # commented nest
-        return main_nest(opts) if main_nest?(opts)
-        nest opts[:nest_name], opts
       end
 
       # Main difference compared to #nest is that you can use
@@ -61,18 +74,6 @@ class Card
 
       # opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
       # FIXME: special views should be represented in view definitions
-
-      def nest_defaults nested_card
-        @nest_defaults ||= begin
-          defaults = get_nest_defaults.clone
-          defaults.merge! @nest_opts if @nest_opts
-          defaults
-        end
-      end
-
-      def get_nest_defaults
-        { view: :name }
-      end
 
       private
 

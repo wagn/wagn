@@ -1,12 +1,12 @@
 require "csv"
 
 format :csv  do
-  def get_nest_defaults
-    { view: :core }
+  def default_nest_view
+    :core
   end
 
   def default_item_view
-    @depth == 0 ? :csv_row : :name
+    @depth.zero? ? :csv_row : :name
   end
 
   view :csv_row do |_args|

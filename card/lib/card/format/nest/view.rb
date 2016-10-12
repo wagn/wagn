@@ -25,10 +25,8 @@ class Card
 
         # private
 
-        def nest_view view
-          # This was refactored based on the assumption that the subformat
-          # has always the same @mode as its parent format
-          # The nest view used to be based on the mode of the parent format
+        def modal_nest_view view
+          # Note: the subformat always has the same @mode as its parent format
           case @mode
           when :edit then view_in_edit_mode(view)
           when :template then :template_rule

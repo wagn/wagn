@@ -40,8 +40,8 @@ format :html do
     args[:ace_mode] = "css"
   end
 
-  def get_nest_defaults
-    { view: :closed }
+  def default_nest_view
+    :closed
   end
 
   view :core do |_args|

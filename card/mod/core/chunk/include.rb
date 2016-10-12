@@ -7,7 +7,7 @@ class Card
     module Chunk
       # Handler for nest chunks: {{example}}
       class Include < Reference
-        cattr_reader :options
+        cattr_reader :options, :nest_name
         @@options = ::Set.new [
           :nest_name,   # name as used in nest
           :nest_syntax, # full nest syntax

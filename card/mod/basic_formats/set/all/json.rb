@@ -1,7 +1,7 @@
 
 format :json do
-  def get_nest_defaults
-    { view: :atom }
+  def default_nest_view
+    :atom
   end
 
   def default_item_view

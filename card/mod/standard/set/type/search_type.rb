@@ -243,7 +243,6 @@ format :html do
       </div>
       #{paging if num_results > 10}
     )
-
   end
 
   view :closed_content do |args|
@@ -269,12 +268,12 @@ format :html do
     limit = s[:limit].to_i
     return "" if limit < 1
     # avoid query if we know there aren't enough results to warrant paging
-    return "" if offset == 0 && limit > offset + search_results.length
+    return "" if offset.zero? && limit > offset + search_results.length
     total = card.count search_params
     # should only happen if limit exactly equals the total
     return "" if limit >= total
-    @paging_path_args = { limit: limit,
-                          slot: { item: nest_view(args[:item]) } }
+    item_view = args[:item] || implicit_nest_view
+    @paging_path_args = { limit: limit, slot: { item: item_view } }
     @paging_path_args[:view] = args[:home_view] if args[:home_view]
     @paging_limit = limit
 

@@ -71,7 +71,7 @@ format :html do
   end
 
   view :title do |args|
-    title = fancy_title args[:title], args[:title_class]
+    title = fancy_title voo.title, args[:title_class]
     title =
      # _optional_render(:title_editable, args, :hide) ||
       _optional_render(:title_link, args.merge(title_ready: title), :hide) ||
@@ -81,7 +81,7 @@ format :html do
   end
 
   view :title_link do |args|
-    title_text = args[:title_ready] || showname(args[:title])
+    title_text = args[:title_ready] || showname(voo.title)
     link_to_card card.cardname, title_text
   end
 

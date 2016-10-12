@@ -3,7 +3,7 @@ format :html do
   view :title do |args|
     vars = root.search_params[:vars]
     if vars && vars[:keyword]
-      args[:title] = %(Search results for: <span class="search-keyword">)\
+      voo.title = %(Search results for: <span class="search-keyword">)\
                          "#{vars[:keyword]}</span>"
     end
     super args

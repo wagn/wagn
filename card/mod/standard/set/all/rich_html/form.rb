@@ -246,7 +246,7 @@ format :html do
     if card.cardname.junction?
       opts[:class] += " RIGHT-#{card.cardname.tag_name.safe_key}"
     end
-    formgroup fancy_title(args[:title]), content, opts
+    formgroup fancy_title(voo.title), content, opts
   end
 
   # form helpers

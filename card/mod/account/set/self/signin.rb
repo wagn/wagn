@@ -9,7 +9,7 @@ format :html do
   end
 
   def default_title_args args
-    args[:title] ||= I18n.t(:sign_in_title, # 'Sign In'
+    voo.title ||= I18n.t(:sign_in_title, # 'Sign In'
                             scope: "mod.standard.set.self.signin")
   end
 

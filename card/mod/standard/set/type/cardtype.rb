@@ -19,7 +19,7 @@ format :html do
   end
 
   view :add_link do |args|
-    args[:title] ||= "Add #{card.name}"
+    voo.title ||= "Add #{card.name}"
     title = _render_title args
     link_to title, path: _render_add_path(args), class: args[:css_class]
   end

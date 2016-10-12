@@ -100,7 +100,7 @@ format :html do
   view :missing do |args|
     return "" unless card.ok? :create  # should this be moved into ok_view?
     path_opts = args[:type] ? { card: { type: args[:type] } } : {}
-    link_text = "Add #{fancy_title args[:title]}"
+    link_text = "Add #{fancy_title voo.title}"
     klass = "slotter missing-#{args[:denied_view] || args[:home_view]}"
     wrap(args) { link_to_view :new, link_text, path: path_opts, class: klass }
   end

@@ -16,7 +16,7 @@ format :html do
   end
 
   def invite_args args
-    args[:title] = "Invite"
+    voo.title = "Invite"
     args[:buttons] = button_tag("Send Invitation", situation: "primary")
     args[:hidden][:success] = "_self"
   end

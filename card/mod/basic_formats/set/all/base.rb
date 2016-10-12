@@ -34,7 +34,7 @@ format do
   view(:url,      closed: true, perms: :none) { card_url _render_linkname }
 
   view :title, closed: true, perms: :none do |args|
-    args[:title] || card.name
+    voo.title || card.name
   end
 
   view :url_link, closed: true, perms: :none do
@@ -42,7 +42,7 @@ format do
   end
 
   view :link, closed: true, perms: :none do |args|
-    title = showname args[:title]
+    title = showname voo.title
     opts = { known: card.known? }
     if args[:type] && !opts[:known]
       opts[:path] = { card: { type: args[:type] } }

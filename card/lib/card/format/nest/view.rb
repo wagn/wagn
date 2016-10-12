@@ -13,11 +13,9 @@ class Card
           if (switch_mode = NEST_MODES[mode]) && @mode != switch_mode
             old_mode = @mode
             @mode = switch_mode
-            @nest_defaults = nil
           end
           result = yield
           if old_mode
-            @nest_defaults = nil
             @mode = old_mode
           end
           result

@@ -22,6 +22,21 @@ class Card
         rescue_view e, view
       end
 
+      #
+      # def voo
+      #
+      # end
+      #
+      # def render view, args={}
+      #   voo = new_voo(view) unless view.is_a? View
+      #   voo.with(args).render do |final_view|
+      #     final_render final_view
+      #   end
+      # rescue => e
+      #   rescue_view e, view
+      # end
+      #
+
       def final_render view, args
         current_view(view) do
           with_nest_mode view do
@@ -140,10 +155,6 @@ class Card
       rescue
         args[:unsupported_view] = view
         method "_view_unsupported_view"
-      end
-
-      def default_item_view
-        :name
       end
 
       def current_view view

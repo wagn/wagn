@@ -27,19 +27,19 @@ class Card
       def interpret_nest_options nested_card, options
         options.delete_if { |_k, v| v.nil? }
         options[:nest_name] ||= nested_card.name
-        view = nest_view options.delete(:view)
+        view = options[:view] || implicit_nest_view
         options[:home_view] = [:closed, :edit].member?(view) ? :open : view
         [view, options]
       end
 
       def interpret_items_directive directive
         return unless directive.is_a? Hash
-        @items_directive_view = directive.delete :view
+        @items_directive_view = directive[:view]
         @items_directive_options = directive
       end
 
-      def nest_view explicit_view
-        view = explicit_view || @items_directive_view || default_nest_view
+      def implicit_nest_view
+        view = @items_directive_view || default_nest_view
         Card::View.canonicalize view
       end
 

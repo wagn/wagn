@@ -45,7 +45,7 @@ class Card
     end
 
     attr_reader :card, :root, :parent, :main_opts
-    attr_accessor :form, :error_status, :items_directive_view, :nest_opts
+    attr_accessor :form, :error_status
 
     def initialize card, opts={}
       unless (@card = card)

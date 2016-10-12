@@ -42,12 +42,8 @@ format :html do
   end
 
   view :closed_content do |args|
-    args[:item] =
-      if (args[:item] || nest_defaults(card)[:view]) == "name"
-        "name"
-      else
-        "link"
-      end
+    item_view = args[:item] || implicit_item_view
+    args[:item] = item_view == "name" ? "name" : "link"
     args[:joint] ||= ", "
     _render_core args
   end
@@ -69,7 +65,7 @@ format :css do
 
   view :core do |args|
     card.item_cards.map do |item|
-      nest item, view: item_view(args)
+      nest item, view: (args[:item] || implicit_item_view)
     end.join "\n\n"
   end
 

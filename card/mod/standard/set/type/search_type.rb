@@ -50,7 +50,7 @@ end
 format do
   view :core, cache: :never do |args|
     view =
-      case search_results args
+      case search_results
       when Exception          then :search_error
       when Integer            then :search_count
       when @mode == :template then :raw
@@ -78,33 +78,25 @@ format do
     end
   end
 
-  def search_vars args={}
-    @search_vars ||=
-      begin
-        v = {}
-        v[:query] = card.query(search_params)
-        v[:item] = set_nest_opts args.merge(query_view: v[:query][:view])
-        v
-      rescue JSON::ParserError => e
-        { error: e }
-      end
+  def parse_search_query
+    @query_hash = card.query search_params
+    @query_item_view = @query_hash[:view]
+  rescue JSON::ParserError => e
+    @parse_error = e
   end
 
-  def search_results args={}
+  def search_results
     @search_results ||= begin
-      search_vars args
-      if search_vars[:error]
-        search_vars[:error]
-      else
-        begin
-          raw_results = card.item_cards search_params
-          is_count = search_vars[:query][:return] == "count"
-          is_count ? raw_results.to_i : raw_results
-        rescue Card::Error::BadQuery => e
-          e
-        end
-      end
+      parse_search_query
+      @parse_error || standard_results
     end
+  end
+
+  def standard_results
+    raw_results = card.item_cards search_params
+    @query_hash[:return] == "count" ? raw_results.to_i : raw_results
+  rescue Card::Error::BadQuery => e
+    e
   end
 
   def search_result_names
@@ -122,12 +114,9 @@ format do
     end
   end
 
-  def set_nest_opts args
-    @nest_defaults = nil
-    @nest_opts ||= {}
-    @nest_opts[:view] = args[:item] || nest_opts[:view] ||
-                        args[:query_view] || default_item_view
-    # explicit > nest syntax > WQL > nest defaults
+  def implicit_item_view
+    view = @items_directive_view || @query_item_view || default_item_view
+    Card::View.canonicalize view
   end
 
   def page_link text, page, _current=false, options={}
@@ -236,7 +225,8 @@ format :html do
     return render_no_search_results(args) if search_results.empty?
     search_result_list args, search_results.length do
       search_results.map do |item_card|
-        nest item_card, size: args[:size] do |item_view, rendered|
+        nest_item item_card, size: args[:size],
+                             view: args[:item] do |item_view, rendered|
           klass = "search-result-item item-#{item_view}"
           %(<div class="#{klass}">#{rendered}</div>)
         end
@@ -284,9 +274,7 @@ format :html do
     # should only happen if limit exactly equals the total
     return "" if limit >= total
     @paging_path_args = { limit: limit,
-                          slot: {
-                            item: args[:item] || nest_defaults(card)[:view]
-                          } }
+                          slot: { item: nest_view(args[:item]) } }
     @paging_path_args[:view] = args[:home_view] if args[:home_view]
     @paging_limit = limit
 

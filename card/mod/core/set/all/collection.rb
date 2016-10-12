@@ -129,14 +129,22 @@ format do
     raw(render_core).split(/[,\n]/)
   end
 
-  def item_view args
-    args[:item] ||
-      (@nest_opts && @nest_opts[:view]) ||
-      default_item_view
+  def nest_item cardish, options={}, &block
+    options[:view] ||= implicit_item_view
+    nest cardish, options, &block
+  end
+
+  def implicit_item_view
+    view = @items_directive_view || default_item_view
+    Card::View.canonicalize view
+  end
+
+  def default_item_view
+    :name
   end
 
   def item_args args
-    i_args = { view: item_view(args) }
+    i_args = { view: (args[:item] || implicit_item_view) }
     if (type = card.item_type)
       i_args[:type] = type
     end
@@ -237,7 +245,7 @@ format do
   # process args for links and nests
   def nest_args args, chunk=nil
     r_args = item_args(args)
-    r_args.merge! @nest_opts.clone if @nest_opts
+    r_args.merge! @items_directive_options.clone if @items_directive_options
 
     case chunk
     when Card::Content::Chunk::Include
@@ -296,6 +304,7 @@ format :html do
     end
     static_tabs tabs, args[:tab_type]
   end
+
   def default_tabs_static_args args
     args[:tab_type] ||= "tabs"
   end

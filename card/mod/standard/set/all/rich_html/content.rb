@@ -10,7 +10,7 @@ format :html do
       render :layout
     else
       view ||= args[:home_view] || :open
-      @nest_opts = (args[:items] || {}).clone
+      interpret_items_directive args[:items]
       render view, args
     end
   end

@@ -1,68 +1,36 @@
-require "card/view/visibility"
+require_dependency "card/view/visibility"
+require_dependency "card/view/cache"
 
 class Card
   class View
     include Visibility
-    class << self
-      attr_accessor :active
+    extend Cache
 
-      def cache
-        Card::Cache[View]
-      end
+    @@option_keys = ::Set.new [
+      :nest_name,   # name as used in nest
+      :nest_syntax, # full nest syntax
+      :items,      # handles pipe-based recursion
 
-      def fetch format, view, args, &block
-        key = cache_key view, format, args
-        send fetch_method, key, &block
-      end
+      # _conventional options_
+      :view, :type, :title, :params, :variant,
+      :size,        # images only
+      :hide, :show, # affects optional rendering
+      :structure    # override raw_content
+    ]
 
-      def fetch_method
-        @fetch_method ||= begin
-          config_option = Card.config.view_cache
-          config_option == "debug" ? :verbose_fetch : :standard_fetch
-        end
-      end
-
-      def reset
-        cache.reset
-      end
-
-      def canonicalize view
-        return if view.blank? # error?
-        view.to_viewname.key.to_sym
-      end
-
-      private
-
-      def standard_fetch key, &block
-        cache.fetch key, &block
-      end
-
-      def verbose_fetch key, &block
-        if cache.exist? key
-          "fetched from view cache: #{cache.read key}"
-        else
-          "written to view cache: #{cache.fetch(key, &block)}"
-        end
-      end
-
-      def cache_key view, format, args
-        roles_key = Card::Auth.current.all_roles.sort.join "_"
-        args_key = Card::Cache.obj_to_key(args)
-        "%s#%s__args__%s__roles__%s" %
-          [format.card.key, view, args_key, roles_key]
-      end
-    end
+    cattr_reader :option_keys
+    attr_reader :format
 
     def initialize format, view, args={}
       @format = format
       @original = view
-      @original_args = args
+      @original_options = args
     end
 
-    def render
+    def prepare
       return if hide?
       #      cached_render do
-      yield approved, approved_args
+      yield self, approved, options
       #      end
     end
 
@@ -71,30 +39,32 @@ class Card
     end
 
     def approved
-      @approved ||= @format.ok_view requested, view_args
+      @approved ||= format.ok_view requested, pre_options
     end
 
-    def view_args
-      @view_args ||= hash_args_from_originals
+    # default_X_args not yet run
+    def pre_options
+      @pre_options ||= case (a = @original_options.clone)
+                       when nil   then {}
+                       when Hash  then a.clone
+                       when Array then a[0].merge a[1]
+                       else raise Card::Error, "bad view args: #{a}"
+                       end
     end
 
-    def approved_args
-      default_method = "default_#{approved}_args"
-      if @format.respond_to? default_method
-        @format.send default_method, view_args
+    def options
+      @options ||= format.view_options_with_defaults approved, pre_options.clone
+    end
+
+    @@option_keys.each do |option_key|
+      define_method option_key do
+        options[option_key]
       end
-      view_args
-    end
 
-    def hash_args_from_originals
-      case (a = @original_args.clone)
-      when nil   then {}
-      when Hash  then a.clone
-      when Array then a[0].merge a[1]
-      else raise Card::Error, "bad view args: #{a}"
+      define_method "#{option_key}=" do |value|
+        options[option_key] = value
       end
     end
-
 
   end
 end

@@ -28,7 +28,9 @@ class Card
         options.delete_if { |_k, v| v.nil? }
         options[:nest_name] ||= nested_card.name
         view = options[:view] || implicit_nest_view
+
         options[:home_view] = [:closed, :edit].member?(view) ? :open : view
+
         [view, options]
       end
 

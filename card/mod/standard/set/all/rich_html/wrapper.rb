@@ -1,9 +1,5 @@
 format :html do
   def slot_options args
-    @@slot_option_keys ||=
-      Card::Content::Chunk::Include.options
-                                   .reject { |k| k == :view }
-                                   .unshift :home_view
     options_hash = {}
 
     if @context_names.present?
@@ -12,11 +8,17 @@ format :html do
 
     options_hash[:subslot] = "true" if args[:subslot]
 
-    @@slot_option_keys.each_with_object(options_hash) do |opt, hash|
+    slot_option_keys.each_with_object(options_hash) do |opt, hash|
       hash[opt] = args[opt] if args[opt].present?
     end
 
     JSON(options_hash)
+  end
+
+  def slot_option_keys
+    @@slot_option_keys ||= Card::View.option_keys
+                                     .reject { |k| k == :view }
+                                     .unshift :home_view
   end
 
   # Does two main things:
@@ -51,7 +53,7 @@ format :html do
       ("card-slot" unless args[:no_slot]),
       "#{@current_view}-view",
       (args[:slot_class] if args[:slot_class]),
-      ("STRUCTURE-#{args[:structure].to_name.key}" if args[:structure]),
+      ("STRUCTURE-#{voo.structure.to_name.key}" if voo.structure),
       card.safe_set_keys
     ].compact.join " "
   end

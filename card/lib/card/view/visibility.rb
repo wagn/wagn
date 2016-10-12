@@ -11,11 +11,11 @@ class Card
       end
 
       def optional?
-        @optional ||= view_args.delete :optional
+        @optional ||= pre_options.delete :optional
       end
 
       def raw_visibility_config
-        @raw_visibility_config ||= view_args["optional_#{requested}".to_sym]
+        @raw_visibility_config ||= pre_options["optional_#{requested}".to_sym]
       end
 
       def visibility_config
@@ -34,12 +34,12 @@ class Card
       end
 
       def default_visibility
-        @default_visibility ||= view_args.delete :default_visibility
+        @default_visibility ||= pre_options.delete :default_visibility
       end
 
       def wagneered_visibility
         [:show, :hide].each do |setting|
-          view_list = visible_view_list view_args[setting]
+          view_list = visible_view_list pre_options[setting]
           return setting if view_list.member? requested
         end
         nil

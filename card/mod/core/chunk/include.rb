@@ -7,18 +7,6 @@ class Card
     module Chunk
       # Handler for nest chunks: {{example}}
       class Include < Reference
-        cattr_reader :options, :nest_name
-        @@options = ::Set.new [
-          :nest_name,   # name as used in nest
-          :nest_syntax, # full nest syntax
-          :items,      # handles pipe-based recursion
-
-          # _conventional options_
-          :view, :type, :title, :params, :variant,
-          :size,        # images only
-          :hide, :show, # affects optional rendering
-          :structure    # override raw_content
-        ]
         attr_reader :options
         DEFAULT_OPTION = :view # a value without a key is interpreted as view
 
@@ -70,7 +58,7 @@ class Card
             if key == :item
               options_hash[:items] ||= {}
               options_hash[:items][:view] = value
-            elsif @@options.include? key
+            elsif Card::View.option_keys.include? key
               options_hash[key] = value
             else
               style_hash[key] = value

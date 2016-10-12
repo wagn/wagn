@@ -3,7 +3,7 @@ include_set Abstract::ProsemirrorEditor
 format :html do
   def edit_slot args={}
     # note: @mode should already be :edit here...
-    if args[:structure] || card.structure ||
+    if voo.structure || card.structure ||
        args[:edit_fields]
       multi_card_edit_slot args
     else

@@ -14,8 +14,8 @@ format do
     style =
       case
       when @mode == :closed then :icon
-      when args[:size]    then args[:size].to_sym
-      when main?          then :large
+      when args[:size]      then args[:size].to_sym
+      when main?            then :large
       else :medium
       end
     style = :original if style.to_sym == :full

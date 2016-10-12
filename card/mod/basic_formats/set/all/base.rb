@@ -63,7 +63,7 @@ format do
   # CONTENT VIEWS
 
   view :raw do |args|
-    scard = args[:structure] ? Card[args[:structure]] : card
+    scard = voo.structure ? Card[voo.structure] : card
     scard ? scard.raw_content : _render_blank
   end
 

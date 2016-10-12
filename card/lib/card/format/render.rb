@@ -15,27 +15,30 @@ class Card
       # :never means a view is never cached
 
       def render view, args={}
-        View.new(self, view, args).render do |final_view, final_args|
-          final_render final_view, final_args
+        View.new(self, view, args).prepare do |voo, final_view, final_args|
+          with_voo(voo) { final_render final_view, final_args }
         end
       rescue => e
         rescue_view e, view
       end
 
-      #
-      # def voo
-      #
-      # end
-      #
-      # def render view, args={}
-      #   voo = new_voo(view) unless view.is_a? View
-      #   voo.with(args).render do |final_view|
-      #     final_render final_view
-      #   end
-      # rescue => e
-      #   rescue_view e, view
-      # end
-      #
+      def with_voo voo
+        old_voo = @voo
+        @voo = voo
+        result = yield
+        @voo = old_voo
+        result
+      end
+
+      def view_options_with_defaults view, options
+        default_method = "default_#{view}_args"
+        send default_method, options if respond_to? default_method
+        options
+      end
+
+      def voo
+        @voo
+      end
 
       def final_render view, args
         current_view(view) do

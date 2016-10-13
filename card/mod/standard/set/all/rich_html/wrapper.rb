@@ -9,7 +9,7 @@ format :html do
     options_hash[:subslot] = "true" if args[:subslot]
 
     slot_option_keys.each_with_object(options_hash) do |opt, hash|
-      hash[opt] = args[opt] if args[opt].present?
+      hash[opt] = voo.options[opt] if voo.options[opt].present?
     end
 
     JSON(options_hash)
@@ -34,7 +34,7 @@ format :html do
                       id: card.cardname.url_key,
                       class: classes,
                       data: data,
-                      style: h(args[:style])
+                      style: h(voo.style)
     add_debug_comments div
   end
 
@@ -82,31 +82,19 @@ format :html do
   end
 
   def frame args={}, &block
-    if args[:subframe]
-      args.delete(:panel_class)
-      subframe args, &block
-    else
-      # FIXME: hardcoded view names.
-      # this should be confifured in open/related.  not here!
-      show_subheader = show_view?(:toolbar, args, :hide) &&
-                       ![:open, :related].include?(@current_view)
-
-      wrap args do
-        [
-          _optional_render(:menu, args),
-          panel(args) do
-            [
-              _optional_render(:header, args, :show),
-              _optional_render(:subheader, args,
-                               (show_subheader ? :show : :hide)),
-              _optional_render(:help,
-                               args.merge(help_class: "alert alert-info"),
-                               :hide),
-              wrap_body(args) { output(yield(args)) }
-            ]
-          end
-        ]
-      end
+    wrap args do
+      [
+        _optional_render(:menu, args),
+        panel(args) do
+          [
+            _optional_render(:header, args, :show),
+            #_optional_render(:subheader, args,
+            #                 (show_subheader ? :show : :hide)),
+            _optional_render(:help, { help_class: "alert alert-info" }, :hide),
+            wrap_body(args) { output(yield(args)) }
+          ]
+        end
+      ]
     end
   end
 
@@ -127,12 +115,10 @@ format :html do
     end
   end
 
-  def frame_and_form action, args={}, form_opts={}
-    form_opts.merge! args.delete(:form_opts) if args[:form_opts]
-    form_opts[:hidden] = args.delete(:hidden) if args[:hidden]
-    frame args do
+  def frame_and_form action, frame_opts={}, form_opts={}
+    frame frame_optsv do
       card_form action, form_opts do
-        output(yield args)
+        output(yield)
       end
     end
   end

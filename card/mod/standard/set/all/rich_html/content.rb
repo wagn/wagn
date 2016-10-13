@@ -106,12 +106,12 @@ format :html do
   #   res.concat _optional_render(:type_link, args, :show)
   # end
 
-  view :open, tags: :comment do |args|
-    args[:optional_toggle] ||= main? ? :hide : :show
-    frame args.merge(content: true) do
+  view :open, tags: :comment do
+    voo.viz :toggle, (main? ? :hide : :show)
+    frame content: true do
       [
-        _render_open_content(args),
-        optional_render(:comment_box, args)
+        _render_open_content,
+        optional_render(:comment_box)
       ]
     end
   end
@@ -126,19 +126,15 @@ format :html do
   end
 
   view :closed do |args|
-    frame args.reverse_merge(
-      content: true,
-      body_class: "closed-content",
-      toggle_mode: :close,
-      optional_toggle: :show,
-      optional_toolbar: :hide
-    ) do
-      _optional_render :closed_content, args
+    voo.show! :toggle
+    voo.hide! :toolbar
+    frame content: true, body_class: "closed-content", toggle_mode: :close do
+      _optional_render :closed_content
     end
   end
 
   view :change do |args|
-    args[:optional_title_link] = :show
+    voo.show! :title_link
     wrap args do
       [
         _optional_render(:title, args),
@@ -178,18 +174,17 @@ format :html do
     end
     add_name_context card.name
     nest_args = (rparams[:slot] || {}).deep_symbolize_keys.reverse_merge(
-      view:            (rparams[:view] || :open),
-      optional_header: :hide,
-      optional_menu:   :show,
+      view:  (rparams[:view] || :open),
+      hide: [:header, :toggle],
+      show: [:menu, :help],
+
       subheader:       subheader,
-      optional_toggle: :hide,
-      optional_help:   :show,
       parent:          card,
       subframe:        true,
       subslot:         true
     )
     if rcard.show_comment_box_in_related?
-      nest_args[:optional_comment_box] = :show
+      nest_args[:show] << :comment_box
     end
     args[:related_args] = nest_args
     args[:related_card] = rcard

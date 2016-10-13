@@ -355,18 +355,6 @@ format :html do
     end
   end
 
-  # view :edit_rule2 do |args|
-  #
-  #   card_form :update do
-  #     [
-  #       _optional_render(:type_formgroup,    args),
-  #       _optional_render(:content_formgroup, args),
-  #       _optional_render(:set_formgroup,     args),
-  #       _optional_render(:button_formgroup,  args)
-  #     ]
-  #   end
-  # end
-
   private
 
   def find_current_rule_card

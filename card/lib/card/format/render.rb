@@ -49,14 +49,7 @@ class Card
         end
       end
 
-      def cache_render view, args, &block
-        case (level = cache_level viewo)
-        when :off  then yield viewo
-        when :full then cached_result viewo, &block
-        when :stub then stub_nest viewo
-        else raise "Invalid cache level #{level}"
-        end
-      end
+
 
       def stub_nest view, args
         # binding.pry
@@ -115,25 +108,9 @@ class Card
         end
       end
 
-      def cached_result view, args, &block
-        active_view_cache do
-          cached_view = Card::View.fetch self, view, args, &block
-          cache_strategy == :client ? cached_view : complete_render(cached_view)
-        end
-      end
 
-      def active_view_cache
-        vc = Card::View
-        return yield if vc.active
-        vc.active = true
-        result = yield
-        vc.active = false
-        result
-      end
 
-      def cache_strategy
-        Card.config.view_cache
-      end
+
 
       def complete_render cached_view
         cached_view
@@ -149,8 +126,7 @@ class Card
       end
 
       def optional_render_args args, opts
-        args[:optional] = true
-        args[:default_visibility] = opts.shift
+        args[:optional] = opts.shift || :show
       end
 
       def view_method view, args

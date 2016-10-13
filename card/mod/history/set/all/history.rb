@@ -143,7 +143,7 @@ format :html do
   end
 
   def default_history_args args
-    args[:optional_toolbar] ||= :show
+    voo.show! :toolbar
   end
 
   view :act_list do |args|

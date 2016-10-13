@@ -65,9 +65,9 @@ format :html do
     content * " "
   end
 
-  view :edit do |args|
-    args[:structure] = true
-    super args
+  view :edit do
+    voo.structure = true
+    super
   end
 end
 

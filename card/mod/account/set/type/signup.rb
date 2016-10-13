@@ -1,38 +1,42 @@
 format :html do
-  def default_new_args args
-    super args
-    args.merge!(
-      optional_help: :show, # , optional_menu: :never
-      buttons: submit_button,
-      account: card.fetch(trait: :account, new: {}),
-      title: "Sign up",
-      hidden: {
-        success: (card.rule(:thanks) || "_self"),
-        "card[type_id]" => card.type_id
-      }
-    )
-    return unless Auth.signed_in? && args[:account].confirm_ok?
-    invite_args args
-  end
-
-  def invite_args args
-    voo.title = "Invite"
-    args[:buttons] = button_tag("Send Invitation", situation: "primary")
-    args[:hidden][:success] = "_self"
+  def invitation?
+    if @invitation.nil?
+      @invitation = Auth.signed_in? && args[:account].confirm_ok?
+    else
+      @invitation
+    end
   end
 
   view :new do |args|
-    # FIXME: make more use of standard new view?
+    voo.title = invitation? ? "Invite" : "Sign up"
+    super
+  end
 
-    frame_and_form :create, args, "main-success" => "REDIRECT" do
-      [
-        _render_name_formgroup(help: "usually first and last name"),
-        _optional_render(:account_formgroups, args),
-        (card.structure ? edit_slot : ""),
-        _optional_render(:button_formgroup, args)
-      ]
+  def new_name_formgroup
+    super "usually first and last name"
+  end
+
+  def new_content_formgroup
+    [_optional_render(:account_formgroups, args),
+     (card.structure ? edit_slot : "")].join
+  end
+
+  def hidden_success
+    override = invitation? ? nil : card.rule(:thanks)
+    hidden_success override
+  end
+
+  def new_buttons
+    button_formgroup do
+      [standard_submit_button, invite_button].compact
     end
   end
+
+  def invite_button
+    return unless invitation?
+    button_tag "Send Invitation", situation: "primary"
+  end
+
 
   view :account_formgroups do |args|
     sub_args = { structure: true }

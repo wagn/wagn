@@ -1,31 +1,28 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Format do
-  describe "#show?" do
+  describe "#show_view?" do
     let(:format) { described_class.new Card.new }
 
-    def show_menu? args
-      format.show_view?(:menu, args)
+    def show_menu? args, default_viz=nil
+      format.show_view?(:menu, args, default_viz)
     end
     it "should respect defaults" do
-      expect(show_menu?(default_visibility: :show)).to be_truthy
-      expect(show_menu?(default_visibility: :hide)).to be_falsey
+      expect(show_menu?({}, :show)).to be_truthy
+      expect(show_menu?({}, :hide)).to be_falsey
       expect(show_menu?({})).to be_truthy
     end
 
-    it "should respect developer default overrides" do
-      expect(show_menu?(optional_menu: :show, default_visibility: :hide))
-        .to be_truthy
-      expect(show_menu?(optional_menu: :hide, default_visibility: :show))
-        .to be_falsey
-      expect(show_menu?(optional_menu: :hide)).to be_falsey
+    it "should respect developer defaults" do
+      expect(show_menu?({ show: "menu" }, :hide)).to be_truthy
+      expect(show_menu?({ hide: "menu" }, :show)).to be_falsey
+      expect(show_menu?(hide: "menu")).to be_falsey
     end
 
     it "should handle args from nests" do
-      expect(show_menu?(show: "menu", default_visibility: :hide)).to be_truthy
-      expect(show_menu?(hide: "menu, paging", default_visibility: :show))
-        .to be_falsey
-      expect(show_menu?(show: "menu", optional_menu: :hide)).to be_truthy
+      expect(show_menu?({ show: "menu" }, :hide)).to be_truthy
+      expect(show_menu?({ hide: "menu, paging" }, :show)).to be_falsey
+      expect(show_menu?({ show: "menu" }, :hide)).to be_truthy
     end
 
     it "should handle hard developer overrides" do

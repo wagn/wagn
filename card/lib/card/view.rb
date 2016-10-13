@@ -29,9 +29,29 @@ class Card
 
     def prepare
       return if hide?
-      #      cached_render do
-      yield self, approved, options
-      #      end
+      #fetch do
+        yield self, approved, options
+        #end
+    end
+
+    def fetch &block
+      case (level = cache_level)
+      when :off  then yield
+      when :full then cache_fetch(&block)
+      when :stub then stub_nest
+      else raise "Invalid cache level #{level}"
+      end
+    end
+
+    def cache_fetch
+      self.class.actively do
+        cached_view = fetch cache_key, &block
+        cache_strategy == :client ? cached_view : complete_render(cached_view)
+      end
+    end
+
+    def cache_strategy
+      Card.config.view_cache
     end
 
     def requested
@@ -54,6 +74,10 @@ class Card
 
     def options
       @options ||= format.view_options_with_defaults approved, pre_options.clone
+    end
+
+    def style
+      options[:style]
     end
 
     @@option_keys.each do |option_key|

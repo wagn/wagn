@@ -6,25 +6,35 @@ attr_accessor :email
 format :html do
   view :setup, tags: :unknown_ok,
                perms: ->(_r) { Auth.needs_setup? } do |args|
+    voo.title "Welcome, Wagneer!"
+    voo.show! :help
+    voo.hide! :menu
+
     account = card.fetch trait: :account, new: {}
     Auth.as_bot do
       frame_and_form :create, args do
         [
           _render_name_formgroup(help: "usually first and last name"),
           subformat(account)._render(:content_formgroup, structure: true),
-          _render_button_formgroup(args)
+          setup_form_buttons
         ]
       end
     end
   end
 
+  def setup_form_buttons
+    button_formgroup do
+      setup_button
+    end
+  end
+
+  def setup_button
+    submit_button text: "Set up", disable_with: "Setting up"
+  end
+
   def default_setup_args args
     args.merge!(
-      title: "Welcome, Wagneer!",
-      optional_help: :show,
-      optional_menu: :never,
       help_text: help_text,
-      buttons: setup_button,
       hidden: {
         success: "REDIRECT: #{Card.path_setting '/'}",
         "card[type_id]" => Card.default_accounted_type_id,
@@ -44,9 +54,7 @@ format :html do
     text
   end
 
-  def setup_button
-    submit_button text: "Set up", disable_with: "Setting up"
-  end
+
 end
 
 event :setup_as_bot, before: :check_permissions, on: :create,

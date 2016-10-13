@@ -33,7 +33,7 @@ format do
   view(:linkname, closed: true, perms: :none) { card.cardname.url_key }
   view(:url,      closed: true, perms: :none) { card_url _render_linkname }
 
-  view :title, closed: true, perms: :none do |args|
+  view :title, closed: true, perms: :none do
     voo.title || card.name
   end
 

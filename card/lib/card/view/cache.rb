@@ -7,9 +7,28 @@ class Card
         Card::Cache[Card::View]
       end
 
-      def fetch format, view, args, &block
-        key = cache_key view, format, args
-        send fetch_method, key, &block
+
+      def fetch view, &block
+        actively do
+          cached_view = fetch self, view, args, &block
+          cache_strategy == :client ? cached_view : complete_render(cached_view)
+        end
+      end
+
+      def cache_strategy
+        Card.config.view_cache
+      end
+
+      def actively
+        return yield if active
+        self.active = true
+        result = yield
+        self.active = false
+        result
+      end
+
+      def fetch cache_key, &block
+        send fetch_method, cache_key, &block
       end
 
       def fetch_method

@@ -43,8 +43,51 @@ class Card
       end
     end
 
+    def stub_nest view, args
+      # binding.pry
+      "<card-nest/>"
+    end
+
+    def cache_level
+      return :off unless Card.config.view_cache
+      level_method = self.class.in_progress? ? :cache_nest : :cache_default
+      send "#{level_method}_level"
+    end
+
+    def cache_nest_level
+      if cacheable_nest_name? && cache_permissible?
+        CACHE_SETTING_NEST_LEVEL[cache_setting]
+      else
+        :stub
+      end
+    end
+
+    def cache_permissible?
+      format.view_cache_permissible? approved, options
+    end
+
+    def cache_setting
+      format.view_cache_setting
+    end
+
+
+    # "default" means not in the context of a nest within an active
+    # cache result
+    def cache_default_level
+      cache_setting == :always && cache_permissible? ? :full : :off
+    end
+
+    # names
+    def cacheable_nest_name? name
+      case name
+      when "_main" then main?
+      when "_user" then false
+      else true
+      end
+    end
+
     def cache_fetch
-      self.class.actively do
+      self.class.progressively do
         cached_view = fetch cache_key, &block
         cache_strategy == :client ? cached_view : complete_render(cached_view)
       end
@@ -53,6 +96,17 @@ class Card
     def cache_strategy
       Card.config.view_cache
     end
+
+    def cache_key
+    end
+
+
+
+    def complete_render cached_view
+      cached_view
+      # use Card::Content to process nest stubs
+    end
+
 
     def requested
       @requested ||= View.canonicalize @original

@@ -1,10 +1,10 @@
 format :html do
   ###---( TOP_LEVEL (used by menu) NEW / EDIT VIEWS )
 
-  view :new, perms: :create, tags: :unknown_ok do |args|
+  view :new, perms: :create, tags: :unknown_ok do
     assign_new_view_title
     voo.show! :help
-    frame_and_form :create, args, "main-success" => "REDIRECT" do
+    frame_and_form :create, {}, "main-success" => "REDIRECT" do
       [new_hidden_fields,
        new_name_formgroup,
        new_type_formgroup,

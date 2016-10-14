@@ -7,9 +7,9 @@ format :html do
     end
   end
 
-  view :new do |args|
+  view :new do
     voo.title = invitation? ? "Invite" : "Sign up"
-    super
+    super()
   end
 
   def new_name_formgroup
@@ -17,13 +17,12 @@ format :html do
   end
 
   def new_content_formgroup
-    [_optional_render(:account_formgroups, args),
-     (card.structure ? edit_slot : "")].join
+    [account_formgroups, (card.structure ? edit_slot : "")].join
   end
 
-  def hidden_success
-    override = invitation? ? nil : card.rule(:thanks)
-    hidden_success override
+  def hidden_success override=nil
+    override = card.rule(:thanks) unless invitation?
+    super override
   end
 
   def new_buttons
@@ -37,13 +36,12 @@ format :html do
     button_tag "Send Invitation", situation: "primary"
   end
 
-
-  view :account_formgroups do |args|
-    sub_args = { structure: true }
-    sub_args[:no_password] = true if Auth.signed_in?
+  def account_formgroups
+    # sub_args[:no_password] = true if Auth.signed_in?
+    account = card.fetch trait: :account, new: {}
     Auth.as_bot do
-      subformat(args[:account])._render :content_formgroup, sub_args
-    end # YUCK!!!!
+      subformat(account).content_formgroup
+    end
   end
 
   view :core do |_args|

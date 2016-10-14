@@ -1,12 +1,10 @@
 class Card
   class View
     module Cache
-      attr_accessor :active
 
       def cache
         Card::Cache[Card::View]
       end
-
 
       def fetch view, &block
         actively do
@@ -19,11 +17,15 @@ class Card
         Card.config.view_cache
       end
 
-      def actively
-        return yield if active
-        self.active = true
+      def in_progress?
+        @in_progress
+      end
+
+      def progressively
+        return yield if @in_progress
+        @in_progress = true
         result = yield
-        self.active = false
+        @in_progress = false
         result
       end
 

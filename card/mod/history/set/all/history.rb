@@ -137,13 +137,10 @@ end
 
 format :html do
   view :history do |args|
+    voo.show! :toolbar
     frame args.merge(body_class: "history-slot list-group", content: true) do
       [history_legend, _render_act_list]
     end
-  end
-
-  def default_history_args args
-    voo.show! :toolbar
   end
 
   view :act_list do |args|

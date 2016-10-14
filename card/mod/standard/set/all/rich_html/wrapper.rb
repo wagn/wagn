@@ -116,7 +116,7 @@ format :html do
   end
 
   def frame_and_form action, frame_opts={}, form_opts={}
-    frame frame_optsv do
+    frame frame_opts do
       card_form action, form_opts do
         output(yield)
       end

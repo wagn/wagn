@@ -4,28 +4,16 @@ format do
     render view, args
   end
 
+  @@variant_methods = [:capitalize, :singularize, :pluralize, :titleize,                               :downcase, :upcase, :swapcase, :reverse, :succ]
+  @@variant_aliases = { capitalized: :capitalize, singular: :singularize,
+                        plural: :pluralize,       title: :titleize }
+
   # NAME VIEWS
-  view :name, closed: true, perms: :none do |args|
-    return card.name unless args[:variant]
-    args[:variant].split(/[\s,]+/).inject(card.name) do |name, variant|
-      case variant.to_sym
-      when :capitalized
-        name.capitalize
-      when :singular
-        name.singularize
-      when :plural
-        name.pluralize
-      when :title
-        name.titleize
-      else
-        if ::Set.new([
-                       :downcase, :upcase, :swapcase, :reverse, :succ
-                     ]).include?(variant.to_sym)
-          name.send variant
-        else
-          name
-        end
-      end
+  view :name, closed: true, perms: :none do
+    return card.name unless voo.variant
+    voo.variant.split(/[\s,]+/).inject(card.name) do |name, variant|
+      variant = @@variant_aliases[variant.to_sym] || variant.to_sym
+      @@variant_methods.include?(variant) ? name.send(variant) : name
     end
   end
 
@@ -41,11 +29,11 @@ format do
     link_to_resource card_url(_render_linkname)
   end
 
-  view :link, closed: true, perms: :none do |args|
+  view :link, closed: true, perms: :none do
     title = showname voo.title
     opts = { known: card.known? }
-    if args[:type] && !opts[:known]
-      opts[:path] = { card: { type: args[:type] } }
+    if voo.type && !opts[:known]
+      opts[:path] = { card: { type: voo.type } }
     end
     link_to_card card.name, title, opts
   end
@@ -62,25 +50,25 @@ format do
 
   # CONTENT VIEWS
 
-  view :raw do |args|
+  view :raw do
     scard = voo.structure ? Card[voo.structure] : card
     scard ? scard.raw_content : _render_blank
   end
 
-  view :core do |args|
-    process_content _render_raw(args)
+  view :core do
+    process_content _render_raw
   end
 
-  view :content do |args|
-    _render_core args
+  view :content do
+    _render_core
   end
 
-  view :open_content do |args|
-    _render_core args
+  view :open_content do
+    _render_core
   end
 
-  view :closed_content, closed: true do |args|
-    Card::Content.smart_truncate _render_core(args)
+  view :closed_content, closed: true do
+    Card::Content.smart_truncate _render_core
   end
 
   view :blank, closed: true, perms: :none do
@@ -106,23 +94,23 @@ format do
 
   # SPECIAL VIEWS
 
-  view :array do |args|
+  view :array do
     card.item_cards(limit: 0).map do |item_card|
-      subformat(item_card)._render_core(args)
+      subformat(item_card)._render_core
     end.inspect
   end
 
   # none of the below belongs here!!
 
-  view :template_rule, tags: :unknown_ok do |args|
+  view :template_rule, tags: :unknown_ok do
     # FIXME: - relativity should be handled in smartname
-    return "" unless args[:nest_name]
-    name = args[:nest_name].to_name
+    return "" unless voo.nest_name
+    name = voo.nest_name.to_name
     stripped = name.stripped
 
     if name.relative? && !stripped.to_name.starts_with_joint?
       # not a simple relative name; just return the original syntax
-      "{{#{args[:nest_syntax]}}}"
+      "{{#{voo.nest_syntax}}}"
     else
       set_name =
         if name.absolute?
@@ -132,7 +120,7 @@ format do
         else
           "#{stripped.gsub(/^\+/, '')}+#{Card[:right].name}" # *right
         end
-      subformat(Card.fetch(set_name)).render_template_link args
+      subformat(Card.fetch(set_name)).render_template_link
     end
   end
 

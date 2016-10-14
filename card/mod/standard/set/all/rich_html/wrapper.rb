@@ -34,7 +34,7 @@ format :html do
                       id: card.cardname.url_key,
                       class: classes,
                       data: data,
-                      style: h(voo.style)
+                      style: h(args[:style])
     add_debug_comments div
   end
 

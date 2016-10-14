@@ -10,12 +10,12 @@ format :html do
     voo.show! :help
     voo.hide! :menu
 
-    account = card.fetch trait: :account, new: {}
     Auth.as_bot do
-      frame_and_form :create, args do
+      frame_and_form :create, args.merge(help_text: help_text) do
         [
-          _render_name_formgroup(help: "usually first and last name"),
-          subformat(account)._render(:content_formgroup, structure: true),
+          setup_hidden_fields,
+          name_formgroup("usually first and last name"),
+          account_formgroup,
           setup_form_buttons
         ]
       end
@@ -23,23 +23,23 @@ format :html do
   end
 
   def setup_form_buttons
-    button_formgroup do
-      setup_button
-    end
+    button_formgroup { setup_button }
+  end
+
+  def account_formgroup
+    account = card.fetch trait: :account, new: {}
+    subformat(account)._render :content_formgroup, structure: true
   end
 
   def setup_button
     submit_button text: "Set up", disable_with: "Setting up"
   end
 
-  def default_setup_args args
-    args.merge!(
-      help_text: help_text,
-      hidden: {
-        success: "REDIRECT: #{Card.path_setting '/'}",
-        "card[type_id]" => Card.default_accounted_type_id,
-        "setup" => true
-      }
+  def setup_hidden_fields
+    hidden_tags(
+      setup: true,
+      success: "REDIRECT: #{Card.path_setting '/'}",
+      "card[type_id]" => Card.default_accounted_type_id
     )
   end
 
@@ -53,8 +53,6 @@ format :html do
     end
     text
   end
-
-
 end
 
 event :setup_as_bot, before: :check_permissions, on: :create,

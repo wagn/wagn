@@ -12,7 +12,7 @@ end
 
 format :html do
   view :core do |args|
-    return super(args) unless card.new_card?
+    return super() unless card.new_card?
     _render_missing args.merge(denied_view: :core)
   end
 

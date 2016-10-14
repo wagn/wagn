@@ -5,16 +5,16 @@ include File::SelectedAction
 format do
   include File::Format
 
-  view :closed_content do |_args|
+  view :closed_content do
     _render_core size: :icon
   end
 
-  view :source do |args|
+  view :source do
     return card.raw_content if card.web?
     style =
       case
       when @mode == :closed then :icon
-      when args[:size]      then args[:size].to_sym
+      when voo.size         then voo.size.to_sym
       when main?            then :large
       else :medium
       end
@@ -63,11 +63,11 @@ format :html do
 end
 
 format :css do
-  view :core do |_args|
+  view :core do
     render_source
   end
 
-  view :content do |_args|  # why is this necessary?
+  view :content do  # why is this necessary?
     render_core
   end
 end
@@ -80,7 +80,7 @@ format :file do
   end
 
   def selected_file_version
-    style = _render_style(style: params[:size]).to_sym
+    style = _render_style(style: voo.size).to_sym
     if style && style != :original
       card.attachment.versions[style]
     else

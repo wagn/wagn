@@ -35,9 +35,9 @@ format :html do
 
   view :add_path do |args|
     path_args = {}
-    if args[:params]
+    if voo.params
       context = ((@parent && @parent.card) || card).name
-      Rack::Utils.parse_nested_query(args[:params]).each do |key, value|
+      Rack::Utils.parse_nested_query(voo.params).each do |key, value|
         value = value.to_name.to_absolute(context) if value
         key = key.to_name.to_absolute(context)
         path_args[key] = value

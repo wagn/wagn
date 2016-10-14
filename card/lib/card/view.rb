@@ -7,7 +7,7 @@ class Card
     include Cache
     extend Cache::ClassMethods
 
-    #@@string_option_keys = [:view, :type, :title, :variant]
+    # @@string_option_keys = [:view, :type, :title, :variant, :params]
 
     @@option_keys = ::Set.new [
       :nest_name,   # name as used in nest
@@ -15,7 +15,7 @@ class Card
       :items,      # handles pipe-based recursion
 
       # _conventional options_
-      :view, :type, :title, :params, :variant,
+      :view, :type, :title, :params, :variant, :home_view,
       :size,        # images only
       :hide, :show, # affects optional rendering
       :structure    # override raw_content
@@ -28,7 +28,7 @@ class Card
       @format = format
       @original = view
       @arguments = args
-      @parent_voo
+      @parent_voo = parent_voo
     end
 
     def original_options
@@ -42,7 +42,7 @@ class Card
     def prepare
       return if hide?
       #fetch do
-        yield approved, options
+        yield approved, non_option_arguments
         #end
     end
 
@@ -65,11 +65,22 @@ class Card
     end
 
     def options
-      @options ||= format.view_options_with_defaults approved, pre_options.clone
+      @options ||= @@option_keys.each_with_object({}) do |key, hash|
+        hash[key] = all_arguments[key] if all_arguments[key]
+        hash
+      end
     end
 
-    def home_view
-      'fixme'
+    def non_option_arguments
+      options # make sure options have been processed
+      @non_option_arguments ||= all_arguments.reject do |key, _value|
+        @@option_keys.member? key
+      end
+    end
+
+    def all_arguments
+      @all_arguments ||=
+        format.view_options_with_defaults(approved, pre_options.clone)
     end
 
     def style

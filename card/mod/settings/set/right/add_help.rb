@@ -1,11 +1,11 @@
 format :html do
-  view :core do |args|
+  view :core do
     with_nest_mode :template do
-      super args
+      super()
     end
   end
 
-  view :closed_content do |_args|
+  view :closed_content do
     "#{_render_type} : #{_render_raw}"
   end
 end

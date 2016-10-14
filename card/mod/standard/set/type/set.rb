@@ -120,42 +120,41 @@ format :html do
     end
   end
 
-  view :editor do |_args|
+  view :editor do
     "Cannot currently edit Sets" # ENGLISH
   end
 
-  view :template_link do |args|
-    args.delete :style # why? comment needed
-    wrap args do
-      link = link_to_view :template_editor, args[:nest_syntax], class: "slotter"
+  view :template_link do
+    wrap do
+      link = link_to_view :template_editor, voo.nest_syntax, class: "slotter"
       "{{#{link}}"
     end
   end
 
-  view :template_closer do |_args|
+  view :template_closer do
     link_classes = "slotter glyphicon glyphicon-remove template-editor-close"
     link_to_view :template_link, "", class: link_classes
   end
 
-  view :template_editor do |args|
-    wrap args do
+  view :template_editor do
+    wrap do
       %(
         <div class="template-editor-left">{{</div>
         <div class="template-editor-main">
-          #{render_template_editor_frame args}
+          #{render_template_editor_frame}
         </div>
         <div class="template-editor-right">}}</div>
       )
     end
   end
 
-  view :template_editor_frame do |args|
+  view :template_editor_frame do
     frame no_slot: true, title: card.label, menu_hack: :template_closer do
-      _render_core args.merge(hide: "set_label")
+      _render_core hide: "set_label"
     end
   end
 
-  view :closed_content do |_args|
+  view :closed_content do
     ""
   end
 

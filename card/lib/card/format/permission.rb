@@ -5,13 +5,14 @@ class Card
         return view if args.delete :skip_permissions
         approved_view = check_view view, args
         handle_view_denial view, approved_view, args
+        assign_view_error_status approved_view
+
         approved_view
       end
 
       def handle_view_denial view, approved_view, args
         return if approved_view == view
         args[:denied_view] = view
-        assign_view_error_status approved_view
       end
 
       def assign_view_error_status view

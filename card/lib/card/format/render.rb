@@ -15,8 +15,11 @@ class Card
       # :never means a view is never cached
 
       def render view, args={}
-        View.new(self, view, args).prepare do |voo, final_view, final_args|
-          with_voo(voo) { final_render final_view, final_args }
+        voo = View.new self, view, args, @voo
+        with_voo(voo) do
+          voo.prepare do |final_view, final_args|
+            final_render final_view, final_args
+          end
         end
       rescue => e
         rescue_view e, view
@@ -38,6 +41,12 @@ class Card
 
       def voo
         @voo ||= View.new(self, :noview)
+      end
+
+      def show_view? view, default_viz=:show
+        voo.optional? # triggers visibility processing
+        visibility = voo.viz_hash[view] || default_viz
+        visibility == :show
       end
 
       def final_render view, args

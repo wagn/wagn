@@ -48,17 +48,17 @@ format do
 end
 
 format :html do
-  def view_for_unknown view, args
+  def view_for_unknown view
     case
-    when focal? && ok?(:create)   then :new
-    when commentable?(view, args) then view
+    when focal? && ok?(:create) then :new
+    when commentable?(view)     then view
     else super
     end
   end
 
-  def commentable? view, args
+  def commentable? view
     return false unless self.class.tagged(view, :comment) &&
-                        show_view?(:comment_box, args, :hide)
+                        show_view?(:comment_box, :hide)
     ok? :comment
   end
 

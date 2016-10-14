@@ -4,8 +4,12 @@ describe Card::Format do
   describe "#show_view?" do
     let(:format) { described_class.new Card.new }
 
-    def show_menu? args, default_viz=nil
-      format.show_view?(:menu, args, default_viz)
+    def show_menu? args, default_viz=:show
+      args.merge! optional: true
+      format.with_voo(Card::View.new format, :nonview, args) do
+        format.voo.optional? #triggers visibility processing
+        format.show_view?(:menu, default_viz)
+      end
     end
     it "should respect defaults" do
       expect(show_menu?({}, :show)).to be_truthy
@@ -23,11 +27,6 @@ describe Card::Format do
       expect(show_menu?({ show: "menu" }, :hide)).to be_truthy
       expect(show_menu?({ hide: "menu, paging" }, :show)).to be_falsey
       expect(show_menu?({ show: "menu" }, :hide)).to be_truthy
-    end
-
-    it "should handle hard developer overrides" do
-      expect(show_menu?(optional_menu: :always, hide: "menu")).to be_truthy
-      expect(show_menu?(optional_menu: :never,  show: "menu")).to be_falsey
     end
   end
 

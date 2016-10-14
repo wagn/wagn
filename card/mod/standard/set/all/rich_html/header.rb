@@ -14,7 +14,7 @@ format :html do
 
   def default_header_args args
     args[:optional_toolbar] ||= :show if @slot_view == :open && toolbar_pinned?
-    return unless show_view?(:toolbar, args, :hide) && card.type_code != :basic
+    return unless show_view?(:toolbar, :hide) && card.type_code != :basic
     args[:optional_type_info] ||= :show
   end
 

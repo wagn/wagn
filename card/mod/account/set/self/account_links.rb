@@ -7,16 +7,16 @@ format :html do
   end
 
   view :sign_up, perms: ->(r) { r.show_signup_link? }, denial: :blank do
-    link_to_card account_link_text(:sign_up),
+    link_to_card :signup, account_link_text(:sign_up),
                  id: "signup-link", path: { action: :new, mark: :signup }
   end
 
   view :sign_in, perms: ->(_r) { !Auth.signed_in? }, denial: :blank do
-    link_to_card account_link_text(:sign_in), id: "signin-link"
+    link_to_card :signin, account_link_text(:sign_in), id: "signin-link"
   end
 
   view :sign_out, perms: ->(_r) { Auth.signed_in? }, denial: :blank do
-    link_to_card account_link_text(:sign_out),
+    link_to_card :signin, account_link_text(:sign_out),
                  id: "signout-link", path: { action: :delete }
   end
 
@@ -25,8 +25,7 @@ format :html do
             id: "invite-a-friend-link", path: { action: :new, mark: :signup }
   end
 
-  view :my_card, perms: ->(_r) { Auth.signed_in? },
-                 denial: :blank do |_args|
+  view :my_card, perms: ->(_r) { Auth.signed_in? }, denial: :blank do
     link_to_card Auth.current.cardname, nil, id: "my-card-link"
   end
 

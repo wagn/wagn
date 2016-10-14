@@ -107,7 +107,8 @@ format :html do
   # end
 
   view :open, tags: :comment do
-    voo.viz :toggle, (main? ? :hide : :show)
+    voo.show! :toggle
+    #voo.viz :toggle, (main? ? :hide : :show)
     frame content: true do
       [
         _render_open_content,
@@ -153,13 +154,6 @@ format :html do
     Card.fetch(set_name)
   end
 
-  view :related do |args|
-    if args[:related_card]
-      frame args.merge(optional_toolbar: :show) do
-        nest(args[:related_card], args[:related_args])
-      end
-    end
-  end
 
   def default_related_args args
     rparams = args[:related] || params[:related]
@@ -189,6 +183,16 @@ format :html do
     args[:related_args] = nest_args
     args[:related_card] = rcard
   end
+
+
+  view :related do |args|
+    if args[:related_card]
+      frame args.merge(optional_toolbar: :show) do
+        nest(args[:related_card], args[:related_args])
+      end
+    end
+  end
+
 
   view :help, tags: :unknown_ok do |args|
     text = args[:help_text] || begin

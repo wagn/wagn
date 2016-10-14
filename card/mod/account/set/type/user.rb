@@ -6,7 +6,7 @@ attr_accessor :email
 format :html do
   view :setup, tags: :unknown_ok,
                perms: ->(_r) { Auth.needs_setup? } do |args|
-    voo.title "Welcome, Wagneer!"
+    voo.title = "Welcome, Wagneer!"
     voo.show! :help
     voo.hide! :menu
 

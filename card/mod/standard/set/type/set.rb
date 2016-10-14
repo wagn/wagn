@@ -111,7 +111,7 @@ format :html do
           wrap_each_with :th, %w(Trait Content Set), class: "rule-heading"
         end),
         (settings.map do |setting|
-          if show_view? setting, args
+          if show_view? setting
             rule_card = card.fetch(trait: setting, new: {})
             nest(rule_card, view: :closed_rule).html_safe
           end

@@ -232,7 +232,7 @@ format :html do
     wrap_with(:div, class: "card-editor") do
       [
         (type_formgroup(args) if card.right.rule_type_editable),
-        formgroup("rule", content, editor: "content"),
+        formgroup("rule", editor: "content") { content },
         set_selection(args)
       ]
     end
@@ -342,7 +342,9 @@ format :html do
 
   def option_list title
     list = wrap_each_with(:li, class: "radio") { yield }
-    formgroup title, "<ul>#{list}</ul>", editor: "set", class: "col-xs-6"
+    formgroup title, editor: "set", class: "col-xs-6" do
+      "<ul>#{list}</ul>"
+    end
   end
 
   def edit_buttons  args

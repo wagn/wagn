@@ -15,16 +15,15 @@ class Card
       end
 
       def show! *views
-        viz views, :show
+        viz views, :show, force=true
       end
 
       def hide! *views
-        viz views, :hide
+        viz views, :hide, force=true
       end
 
       def optional?
         return @optional unless @optional.nil?
-        process_cardist_visibility
         @optional = detect_if_optional
       end
 
@@ -32,11 +31,19 @@ class Card
         Array.wrap(views).each do |view|
           next if !force && viz_hash[view]
           viz_hash[view] = setting
+          update_viz_arrays view, setting
         end
       end
 
+      def update_viz_arrays view, setting
+        other = setting == :hide ? :show : :hide
+        options[setting] ||= []
+        options[setting].push view unless options[setting].include? view
+        options[other].delete view if options[other]
+      end
+
       def detect_if_optional
-        if (setting = pre_options.delete :optional)
+        if (setting = live_args.delete :optional)
           viz requested, setting
           setting
         else
@@ -52,14 +59,14 @@ class Card
         @visibility ||= (viz_hash[requested] || :show)
       end
 
-      def process_cardist_visibility
+      def process_visibility arg_hash
         [:hide, :show].each do |setting|
-          list = visible_view_list(pre_options[setting])
+          list = viz_view_list arg_hash[setting]
           viz list, setting, force=true
         end
       end
 
-      def visible_view_list val
+      def viz_view_list val
         case val
         when NilClass then []
         when Array    then val

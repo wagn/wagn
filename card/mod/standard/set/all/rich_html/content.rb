@@ -107,13 +107,9 @@ format :html do
   # end
 
   view :open, tags: :comment do
-    voo.show! :toggle
-    #voo.viz :toggle, (main? ? :hide : :show)
+    voo.viz :toggle, (main? ? :hide : :show)
     frame content: true do
-      [
-        _render_open_content,
-        optional_render(:comment_box)
-      ]
+      [_render_open_content, optional_render(:comment_box)]
     end
   end
 

@@ -7,19 +7,30 @@ class Card
     include Cache
     extend Cache::ClassMethods
 
-    # @@string_option_keys = [:view, :type, :title, :variant, :params]
-
-    @@option_keys = ::Set.new [
+    @@string_option_keys = [
       :nest_name,   # name as used in nest
       :nest_syntax, # full nest syntax
-      :items,      # handles pipe-based recursion
 
-      # _conventional options_
-      :view, :type, :title, :params, :variant, :home_view,
-      :size,        # images only
-      :hide, :show, # affects optional rendering
-      :structure    # override raw_content
+      :view,
+      :structure,
+      :type,
+      :title,
+      :variant,
+      :params,
+      :home_view,
+      :size
     ]
+
+    @@hash_option_keys = [
+      :items        # handles pipe-based recursion
+    ]
+
+    @@array_option_keys = [
+      :hide, :show  # affect optional rendering
+    ]
+
+    @@option_keys =
+      @@string_option_keys + @@hash_option_keys + @@array_option_keys
 
     cattr_reader :option_keys
     attr_reader :format
@@ -27,36 +38,31 @@ class Card
     def initialize format, view, args={}, parent_voo=nil
       @format = format
       @original = view
-      @arguments = args
+      @original_args = args
       @parent_voo = parent_voo
+      options
     end
 
-    def original_options
-      if @parent_voo
-        @parent_voo.options.clone.merge @arguments
-      else
-        @arguments
-      end
-    end
 
     def prepare
       return if hide?
       #fetch do
-        yield approved, non_option_arguments
+        yield approved, sanitized_live_args
         #end
     end
+
 
     def requested
       @requested ||= View.canonicalize @original
     end
 
     def approved
-      @approved ||= format.ok_view requested, pre_options
+      @approved ||= format.ok_view requested, live_args
     end
 
     # default_X_args not yet run
-    def pre_options
-      @pre_options ||= case (a = original_options.clone)
+    def clean_args
+      @clean_args ||= case (a = @original_args.clone)
                        when nil   then {}
                        when Hash  then a
                        when Array then a[0].merge a[1]
@@ -65,22 +71,32 @@ class Card
     end
 
     def options
-      @options ||= @@option_keys.each_with_object({}) do |key, hash|
-        hash[key] = all_arguments[key] if all_arguments[key]
+      return @options if @options
+      @options = standard_options_from_args_and_parent
+      process_visibility @parent_voo.options if @parent_voo
+      process_visibility live_args
+      @options
+    end
+
+    def standard_options_from_args_and_parent
+      standard_keys = @@string_option_keys + @@hash_option_keys
+      standard_keys.each_with_object({}) do |key, hash|
+        value = live_args.delete(key)
+        value ||= @parent_voo.options[key] if @parent_voo
+        hash[key] = value if value
         hash
       end
     end
 
-    def non_option_arguments
-      options # make sure options have been processed
-      @non_option_arguments ||= all_arguments.reject do |key, _value|
+    def sanitized_live_args
+      live_args.reject do |key, _value|
         @@option_keys.member? key
       end
     end
 
-    def all_arguments
-      @all_arguments ||=
-        format.view_options_with_defaults(approved, pre_options.clone)
+    def live_args
+      @live_args ||=
+        format.view_options_with_defaults(requested, clean_args.clone)
     end
 
     def style

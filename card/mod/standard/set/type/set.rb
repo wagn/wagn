@@ -126,8 +126,9 @@ format :html do
 
   view :template_link do
     wrap do
-      link = link_to_view :template_editor, voo.nest_syntax, class: "slotter"
-      "{{#{link}}"
+      link = link_to_view :template_editor, parent.voo.nest_syntax,
+                          class: "slotter"
+      "{{#{link}}}"
     end
   end
 

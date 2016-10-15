@@ -15,7 +15,7 @@ def self.included host_class
     view :core do |args|
       return super() unless args[:solid_cache]
       card.update_solid_cache if card.solid_cache_card.new?
-      subformat(card.solid_cache_card)._render_coreq
+      subformat(card.solid_cache_card)._render_core
     end
   end
 end

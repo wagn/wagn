@@ -29,8 +29,8 @@ class Card
       :hide, :show  # affect optional rendering
     ]
 
-    @@option_keys =
-      @@string_option_keys + @@hash_option_keys + @@array_option_keys
+    @@standard_option_keys = @@string_option_keys + @@hash_option_keys
+    @@option_keys = @@standard_option_keys + @@array_option_keys
 
     cattr_reader :option_keys
     attr_reader :format
@@ -63,24 +63,27 @@ class Card
     # default_X_args not yet run
     def clean_args
       @clean_args ||= case (a = @original_args.clone)
-                       when nil   then {}
-                       when Hash  then a
-                       when Array then a[0].merge a[1]
-                       else raise Card::Error, "bad view args: #{a}"
-                       end
+                      when nil   then {}
+                      when Hash  then a
+                      when Array then a[0].merge a[1]
+                      else raise Card::Error, "bad view args: #{a}"
+                      end
+    end
+
+    def refreshed_options
+      @options = nil
+      options
     end
 
     def options
       return @options if @options
       @options = standard_options_from_args_and_parent
-      process_visibility @parent_voo.options if @parent_voo
-      process_visibility live_args
+      process_visibility_options
       @options
     end
 
     def standard_options_from_args_and_parent
-      standard_keys = @@string_option_keys + @@hash_option_keys
-      standard_keys.each_with_object({}) do |key, hash|
+      @@standard_option_keys.each_with_object({}) do |key, hash|
         value = live_args.delete(key)
         value ||= @parent_voo.options[key] if @parent_voo
         hash[key] = value if value

@@ -130,25 +130,36 @@ format do
   end
 
   def nest_item cardish, options={}, &block
-    options[:view] ||= implicit_item_view
+    options = item_view_options options
     nest cardish, options, &block
   end
 
   def implicit_item_view
-    view = @items_directive_view || default_item_view
+    view = voo_items_view || default_item_view
     Card::View.canonicalize view
+  end
+
+  def voo_items_view
+    return unless items = voo.items
+    items[:view]
   end
 
   def default_item_view
     :name
   end
 
-  def item_args args
-    i_args = { view: (args[:item] || implicit_item_view) }
-    if (type = card.item_type)
-      i_args[:type] = type
-    end
-    i_args
+  def item_view_options new_options={}
+    options = (voo.items || {}).clone
+    options = options.merge new_options
+    options[:view] ||= implicit_item_view
+    determine_item_view_options_type options
+    options
+  end
+
+  def determine_item_view_options_type options
+    return if options[:type]
+    type_from_rule = card.item_type
+    options[:type] = type_from_rule if type_from_rule
   end
 
   def search_params
@@ -244,17 +255,15 @@ format do
 
   # process args for links and nests
   def nest_args args, chunk=nil
-    r_args = item_args(args)
-    r_args.merge! @items_directive_options.clone if @items_directive_options
-
+    options = item_view_options args
     case chunk
     when Card::Content::Chunk::Include
-      r_args.merge!(chunk.options)
+      options.merge!(chunk.options)
     when Card::Content::Chunk::Link
-      r_args.reverse_merge!(view: :link)
-      r_args.reverse_merge!(title: chunk.link_text) if chunk.link_text
+      options.reverse_merge!(view: :link)
+      optionsreverse_merge!(title: chunk.link_text) if chunk.link_text
     end
-    r_args
+    options
   end
 end
 
@@ -267,7 +276,7 @@ format :html do
     active_name = nil
     active_content = nil
     tabs = {}
-    each_reference_with_args(item: :content) do |name, nest_args|
+    each_reference_with_args(view: :content) do |name, nest_args|
       tab_name = nest_args[:title] || name
       tabs[tab_name] = nest_path(name, nest_args).html_safe
 
@@ -300,7 +309,7 @@ format :html do
   view :tabs_static do |args|
     tabs = {}
     card.item_cards.each do |item|
-      tabs[item.name] = nest item, item_args(args)
+      tabs[item.name] = nest item, item_view_options(args)
     end
     static_tabs tabs, args[:tab_type]
   end

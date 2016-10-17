@@ -49,12 +49,12 @@ class Card
 
         # Return the view that the card should use
         # if nested in closed mode
-        def view_in_closed_mode homeview
-          approved_view = Card::Format.closed[homeview]
+        def view_in_closed_mode view
+          approved_view = Card::Format.closed[view]
           if approved_view == true
-            homeview
-          elsif Card::Format.error_code[homeview]
-            homeview
+            view
+          elsif Card::Format.error_code[view]
+            view
           elsif approved_view
             approved_view
           elsif !card.known?

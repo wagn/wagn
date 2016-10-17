@@ -27,6 +27,7 @@ class Card
       def interpret_nest_options nested_card, options
         options[:nest_name] ||= nested_card.name
         view = options[:view] || implicit_nest_view
+        view = Card::View.canonicalize view
 
         # FIXME: should handle in closed / edit view definitions
         options[:home_view] = [:closed, :edit].member?(view) ? :open : view
@@ -34,14 +35,8 @@ class Card
         [view, options]
       end
 
-      def interpret_items_directive directive
-        return unless directive.is_a? Hash
-        @items_directive_view = directive[:view]
-        @items_directive_options = directive
-      end
-
       def implicit_nest_view
-        view = @items_directive_view || default_nest_view
+        view = voo_items_view || default_nest_view
         Card::View.canonicalize view
       end
 
@@ -53,13 +48,12 @@ class Card
         subformat = nest_subformat nested_card, options
         view = subformat.modal_nest_view view
         rendered = count_chars { subformat.optional_render view, options }
-        block_given? ? yield(view, rendered) : rendered
+        block_given? ? yield(rendered, view) : rendered
       end
 
       def nest_subformat nested_card, opts
         return self if opts[:nest_name] =~ /^_(self)?$/
         sub = subformat nested_card
-        sub.interpret_items_directive opts[:items]
         sub
       end
 

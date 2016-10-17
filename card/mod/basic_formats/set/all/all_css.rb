@@ -22,7 +22,7 @@ format :css do
   end
 
   view :import do |_args|
-    %{\n@import url("#{_render_url item: :import}");\n}
+    %{\n@import url("#{_render_url items: { view: :import }}");\n}
   end
 
   view :url, perms: :none do |args|

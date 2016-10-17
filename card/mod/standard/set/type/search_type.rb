@@ -72,8 +72,8 @@ format do
     if search_results.empty?
       "no results"
     else
-      search_results.map do |c|
-        nest c
+      search_results.map do |item_card|
+        nest_item item_card
       end.join "\n"
     end
   end
@@ -110,12 +110,12 @@ format do
 
   def each_reference_with_args args={}
     search_result_names.each do |name|
-      yield(name, nest_args(args.reverse_merge!(item: :content)))
+      yield(name, nest_args(args.reverse_merge!(view: :content)))
     end
   end
 
   def implicit_item_view
-    view = @items_directive_view || @query_item_view || default_item_view
+    view = voo_items_view || @query_item_view || default_item_view
     Card::View.canonicalize view
   end
 
@@ -160,8 +160,8 @@ end
 
 format :data do
   view :card_list do |_args|
-    search_results.map do |c|
-      nest c
+    search_results.map do |item_card|
+      nest_item item_card
     end
   end
 end
@@ -226,7 +226,7 @@ format :html do
     search_result_list args, search_results.length do
       search_results.map do |item_card|
         nest_item item_card, size: args[:size],
-                             view: args[:item] do |item_view, rendered|
+                             view: args[:item] do |rendered, item_view|
           klass = "search-result-item item-#{item_view}"
           %(<div class="#{klass}">#{rendered}</div>)
         end
@@ -252,7 +252,7 @@ format :html do
       search_limit = args[:closed_search_limit]
       search_params[:limit] =
         search_limit && [search_limit, Card.config.closed_search_limit].min
-      _render_core args.merge(hide: "paging", item: :link)
+      _render_core args.merge(hide: "paging", items: {view: :link })
       # TODO: if item is queryified to be "name", then that should work.
       # otherwise use link
     end

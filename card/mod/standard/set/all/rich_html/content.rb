@@ -4,19 +4,23 @@ end
 
 format :html do
   def show view, args
-    if show_layout?
-      args[:view] = view if view
-      @main_opts = args
-      render :layout
-    else
-      view ||= args[:home_view] || :open
-      interpret_items_directive args[:items]
-      render view, args
-    end
+    method = show_layout? ? :show_with_layout : :show_without_layout
+    send method, view, args
   end
 
   def show_layout?
     !Env.ajax? || params[:layout]
+  end
+
+  def show_with_layout view, args
+    args[:view] = view if view
+    @main_opts = args
+    render :layout
+  end
+
+  def show_without_layout view, args
+    view ||= args[:home_view] || :open
+    render view, args
   end
 
   view :layout, perms: :none do |args|

@@ -151,7 +151,7 @@ describe Card::Set::All::Collection do
 
     it "works with search cards" do
       Card.create type: "Search", name: "Asearch", content: '{"type":"User"}'
-      tabs = render_content("{{Asearch|tabs;item:name}}")
+      tabs = render_content("{{Asearch|tabs|name}}")
       assert_view_select tabs, "div[role=tabpanel]" do
         assert_select(
           'li > a[data-toggle=tab][href="#asearch-joe_admin"] span.card-title',

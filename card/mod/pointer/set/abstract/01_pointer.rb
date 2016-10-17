@@ -23,16 +23,23 @@ format do
     item # no wrap in base
   end
 
-  view :core do |args|
-    render_pointer_items args.merge(joint: ", ")
+  def nest_item_array
+    card.item_cards.map do |item|
+      nest_item item
+    end
+  end
+
+  view :core do |_args|
+    render_pointer_items joint: ", "
   end
 
   view :pointer_items, tags: :unknown_ok do |args|
-    i_args = item_args(args)
-    joint = args[:joint] || " "
-    card.item_cards.map do |i_card|
-      wrap_item nest(i_card, i_args.clone), i_args
-    end.join joint
+    item_options = item_view_options args
+    card.item_cards.map do |item_card|
+      nest_item item_card, item_options.clone do |rendered, item_view|
+        wrap_item rendered, item_view
+      end
+    end.join args[:joint] || " "
   end
 end
 
@@ -48,43 +55,37 @@ format :html do
     _render_core args
   end
 
-  def wrap_item item, args
-    %(<div class="pointer-item item-#{args[:view]}">#{item}</div>)
+  def wrap_item rendered, item_view
+    %(<div class="pointer-item item-#{item_view}">#{rendered}</div>)
   end
 end
 
 format :css do
   # generalize to all collections?
   def default_item_view
-    params[:item] || :content
+    :content
   end
 
-  view :titled do |_args|
+  view :titled do
     %(#{major_comment "STYLE GROUP: \"#{card.name}\"", '='}#{_render_core})
   end
 
-  view :core do |args|
-    card.item_cards.map do |item|
-      nest item, view: (args[:item] || implicit_item_view)
-    end.join "\n\n"
+  view :core do
+    nest_item_array.join "\n\n"
   end
 
   view :content, :core
 end
 
 format :js do
-  view :core do |args|
-    card.item_cards.map do |item|
-      nest item, view: (args[:item] || :core)
-    end.join "\n\n"
+  view :core do
+    nest_item_array.join "\n\n"
   end
 end
 
 format :data do
   view :core do |_args|
-    card.item_cards.map do |c|
-      nest c
-    end
+    nest_item_array
   end
 end
 
@@ -98,11 +99,10 @@ end
 
 format :json do
   view :export_items do |args|
-    result =
-      card.known_item_cards.map do |ic|
-        subformat(ic).render_export(args)
-      end
-    result.flatten.reject(&:blank?)
+    item_options = args.merge view: :export
+    card.known_item_cards.map do |item_card|
+      nest_item item_card, item_options
+    end.flatten.reject(&:blank?)
   end
 end
 

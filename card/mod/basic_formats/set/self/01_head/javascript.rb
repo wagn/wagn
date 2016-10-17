@@ -11,7 +11,7 @@ format :html do
 
     @js_tag =
       if params[:debug] == "script"
-        script_card.format(:js).render_core item: :include_tag
+        script_card.format(:js).render_core items: { view: :include_tag }
       elsif script_card
         javascript_include_tag script_card.machine_output_url
       end

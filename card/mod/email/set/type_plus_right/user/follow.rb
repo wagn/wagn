@@ -151,7 +151,8 @@ format :html do
   end
 
   view :pointer_items, tags: :unknown_ok do |args|
-    super(args.merge(item: :link))
+    voo.items[:view] ||= :link
+    super(args)
   end
 
   view :errors, perms: :none do |args|

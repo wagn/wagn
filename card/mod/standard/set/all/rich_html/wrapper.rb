@@ -101,7 +101,7 @@ format :html do
   def subframe args={}
     wrap args do
       [
-        _optional_render(:menu, args.merge(optional_horizontal_menu: :hide)),
+        _optional_render(:menu, hide: :horizontal_menu),
         _optional_render(:subheader, args, :show),
         _optional_render(:help, args.merge(help_class: "alert alert-info"),
                          :hide),

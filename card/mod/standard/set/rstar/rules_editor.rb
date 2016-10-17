@@ -231,22 +231,24 @@ format :html do
     content = content_field(form, args.merge(skip_rev_id: true))
     wrap_with(:div, class: "card-editor") do
       [
-        (type_formgroup(args) if card.right.rule_type_editable),
+        rules_type_formgroup(args),
         formgroup("rule", editor: "content") { content },
         set_selection(args)
-      ]
+      ].compact
     end
   end
 
-  def type_formgroup args
-    content = type_field(
-      href: path(name: args[:success][:card].name,
-                 view: args[:success][:view],
-                 type_reload: true),
-      class: "type-field rule-type-field live-type-field",
-      "data-remote" => true
-    )
-    formgroup "type", content, editor: "type"
+  def rules_type_formgroup args
+    return unless card.right.rule_type_editable
+    type_formgroup do
+      type_field(
+        href: path(name: args[:success][:card].name,
+                   view: args[:success][:view],
+                   type_reload: true),
+        class: "type-field rule-type-field live-type-field",
+        "data-remote" => true
+      )
+    end
   end
 
   def hidden_success_formgroup args

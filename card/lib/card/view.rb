@@ -106,7 +106,11 @@ class Card
       options[:style]
     end
 
-    @@option_keys.each do |option_key|
+    def items
+      options[:items] ||= {}
+    end
+
+    @@string_option_keys.each do |option_key|
       define_method option_key do
         options[option_key]
       end
@@ -115,6 +119,8 @@ class Card
         options[option_key] = value
       end
     end
+
+
 
   end
 end

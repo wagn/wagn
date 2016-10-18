@@ -23,7 +23,7 @@ format :json do
   # export all nested content (up to 10 levels deep)
   view :export_items do |args|
     result = []
-    each_nested_chunk do |chunk|
+    card.each_nested_chunk do |chunk|
       next if nest_name_main? chunk
       next unless (r_card = chunk.referee_card)
       next if r_card.new? || r_card == card

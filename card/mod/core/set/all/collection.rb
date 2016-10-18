@@ -124,6 +124,36 @@ def contextual_content context_card, format_args={}, view_args={}
   )
 end
 
+def each_chunk opts={}
+  content = opts[:content] || raw_content
+  chunk_type = opts[:chunk_type] || Card::Content::Chunk
+  Card::Content.new(content, self).find_chunks(chunk_type).each do |chunk|
+    next unless chunk.referee_name # filter commented nests
+    yield chunk
+  end
+end
+
+def each_reference_chunk content=nil
+  reference_chunk_type = Card::Content::Chunk::Reference
+  each_chunk content: content, chunk_type: reference_chunk_type do |chunk|
+    yield chunk
+  end
+end
+
+def each_nested_chunk content=nil
+  nest_chunk_type = Card::Content::Chunk::Include
+  each_chunk content: content, chunk_type: nest_chunk_type do |chunk|
+    yield chunk
+  end
+end
+
+def each_item_name_with_options content=nil
+  each_reference_chunk content do |chunk|
+    options = chunk.respond_to?(:options) ? chunk.options : {}
+    yield chunk.referee_name, options
+  end
+end
+
 format do
   def item_links _args={}
     raw(render_core).split(/[,\n]/)
@@ -197,20 +227,6 @@ format do
     end
   end
 
-  def each_reference_with_args args={}
-    content_object = Card::Content.new _render_raw(args), card
-    content_object.find_chunks(Card::Content::Chunk::Reference).each do |chunk|
-      yield chunk.referee_name.to_s, nest_args(args, chunk)
-    end
-  end
-
-  def each_nested_chunk args={}
-    content_object = Card::Content.new(_render_raw(args), card)
-    content_object.find_chunks(Card::Content::Chunk::Include).each do |chunk|
-      yield(chunk) if chunk.referee_name # filter commented nests
-    end
-  end
-
   def nested_fields args={}
     result = []
     each_nested_field(args) do |chunk|
@@ -228,7 +244,7 @@ format do
   def each_nested_field args, &block
     processed_chunk_keys = ::Set.new([card.key])
 
-    each_nested_chunk(args) do |chunk|
+    card.each_nested_chunk do |chunk|
       # TODO: handle structures that are non-virtual
       next unless chunk.referee_name.to_name.field_of? card.name
       if chunk.referee_card &&
@@ -244,27 +260,6 @@ format do
       end
     end
   end
-
-  def map_references_with_args args={}, &_block
-    result = []
-    each_reference_with_args args do |name, n_args|
-      result << yield(name, n_args)
-    end
-    result
-  end
-
-  # process args for links and nests
-  def nest_args args, chunk=nil
-    options = item_view_options args
-    case chunk
-    when Card::Content::Chunk::Include
-      options.merge!(chunk.options)
-    when Card::Content::Chunk::Link
-      options.reverse_merge!(view: :link)
-      optionsreverse_merge!(title: chunk.link_text) if chunk.link_text
-    end
-    options
-  end
 end
 
 format :html do
@@ -272,54 +267,52 @@ format :html do
     card.item_names(args).size
   end
 
-  view :tabs do |args|
-    active_name = nil
-    active_content = nil
-    tabs = {}
-    each_reference_with_args(view: :content) do |name, nest_args|
-      tab_name = nest_args[:title] || name
-      tabs[tab_name] = nest_path(name, nest_args).html_safe
-
-      active_name ||= tab_name
-      # warning: nest changes nest_args
-      active_content ||= nest(name, nest_args)
-    end
-    lazy_loading_tabs tabs, active_name, active_content,
-                      type: args[:tab_type]
+  view :tabs do
+    construct_tabs "tabs"
   end
 
-  def default_tabs_args args
-    args[:tab_type] ||= "tabs"
+  def construct_tabs tab_type
+    tabs = { active: {}, paths: {} }
+    voo.items[:view] ||= :content
+    card.each_item_name_with_options(_render_raw) do |name, options|
+      construct_tab tabs, name, options
+    end
+    lazy_loading_tabs tabs[:paths], tabs[:active][:name],
+                      tabs[:active][:content], type: tab_type
+  end
+
+  def construct_tab tabs, name, explicit_options
+    tab_options = item_view_options explicit_options
+    tab_name = tab_options[:title] || name
+    tabs[:paths][tab_name] = nest_path(name, tab_options).html_safe
+    return unless tabs[:active].empty?
+    tabs[:active] = { name: tab_name, content: nest(name, tab_options) }
   end
 
   # create a path for a nest with respect ot the nest options
-  def nest_path name, nest_args
-    path_args = {}
-    path_args[:view] = nest_args[:view]
-    path_args[:slot] = nest_args.clone
-    path_args[:slot].delete(:view)
-    page_path(name, path_args)
+  def nest_path name, nest_opts={}
+    path_opts = { slot: nest_opts.clone }
+    path_opts[:view] = path_opts[:slot].delete :view
+    page_path name, path_opts
   end
 
-  view :pills, view: :tabs
-  def default_pills_args args
-    args[:tab_type] ||= "pills"
+  view :pills do
+    construct_tabs "pills"
   end
 
-  view :tabs_static do |args|
+  view :tabs_static do
+    construct_static_tabs "tabs"
+  end
+
+  view :pills_static do
+    construct_static_tabs "pills"
+  end
+
+  def construct_static_tabs tab_type
     tabs = {}
     card.item_cards.each do |item|
       tabs[item.name] = nest item, item_view_options(args)
     end
-    static_tabs tabs, args[:tab_type]
-  end
-
-  def default_tabs_static_args args
-    args[:tab_type] ||= "tabs"
-  end
-
-  view :pills_static, view: :tabs_static
-  def default_tabs_static_args args
-    args[:tab_type] ||= "pills"
+    static_tabs tabs, tab_type
   end
 end

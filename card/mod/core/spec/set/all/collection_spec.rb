@@ -72,29 +72,6 @@ describe Card::Set::All::Collection do
     end
   end
 
-  describe "#map_nests" do
-    before do
-      Card::Auth.as_bot do
-        @list = Card.create!(
-          name: "mixed list",
-          content: "[[A]]\n{{B}}\n[[C|link C]]\n{{D|name;title:nest D}}"
-        )
-      end
-    end
-    it "handles links and nest arguments" do
-      result = @list.format.map_references_with_args do |name, args|
-        [name, args]
-      end
-      expect(result).to eq [
-        ["A", { view: :closed }],
-        ["B", { view: :closed, nest_name: "B", nest_syntax: "B" }],
-        ["C", { view: :closed, title: "link C" }],
-        ["D", { view: "name", title: "nest D", nest_name: "D",
-                nest_syntax: "D|name;title:nest D" }]
-      ]
-    end
-  end
-
   describe "tabs view" do
     it "renders tab panel" do
       tabs = render_card :tabs, content: "[[A]]\n[[B]]\n[[C]]", type: "pointer"

@@ -44,6 +44,11 @@ module Card::Content::Chunk
       string_copy.index "|"
     end
 
+    # view options
+    def options
+      link_text ? { title: link_text } : {}
+    end
+
     def objectify raw
       return unless raw
       raw.strip!

@@ -18,6 +18,14 @@ def item_type
   query[:type]
 end
 
+def each_item_name_with_options _content=nil
+  options = {}
+  options[:view] = query[:item] if query && query[:item]
+  item_names.each do |name|
+    yield name, options
+  end
+end
+
 def count params={}
   Card.count_by_wql query(params)
 end
@@ -106,12 +114,6 @@ format do
       rescue => e
         { error: e }
       end
-  end
-
-  def each_reference_with_args args={}
-    search_result_names.each do |name|
-      yield(name, nest_args(args.reverse_merge!(view: :content)))
-    end
   end
 
   def implicit_item_view

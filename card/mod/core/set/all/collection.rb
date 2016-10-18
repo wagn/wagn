@@ -256,10 +256,10 @@ format do
     send method, chunk, processed, &block
   end
 
-  def process_virtual_field chunk, processed
+  def process_virtual_field chunk, processed, &block
     return unless process_unique_field? chunk, processed
-    subformat(chunk.referee_card).each_nested_field(args) do |sub_chunk|
-      process_feld sub_chunk, processed, &block
+    subformat(chunk.referee_card).each_nested_field do |sub_chunk|
+      process_field sub_chunk, processed, &block
     end
   end
 

@@ -221,44 +221,53 @@ format do
     hash[:vars] = params[:vars] || {}
     params.each do |key, val|
       case key.to_s
-      when "_wql"      then hash.merge! val
+#      when "_wql"      then hash.merge! val
       when /^\_(\w+)$/ then hash[:vars][Regexp.last_match(1).to_sym] = val
       end
     end
   end
 
-  def nested_fields args={}
+  def nested_fields content=nil
     result = []
-    each_nested_field(args) do |chunk|
+    each_nested_field(content) do |chunk|
       result << chunk
     end
     result
   end
 
-  def unique_chunks chunk, processed_set, &_block
-    return if processed_set.include? chunk.referee_name.key
-    processed_set << chunk.referee_name.key
-    yield(chunk)
+  def process_field chunk, processed, &_block
+    return unless process_unique_field? chunk, processed
+    yield chunk
   end
 
-  def each_nested_field args, &block
-    processed_chunk_keys = ::Set.new([card.key])
-
-    card.each_nested_chunk do |chunk|
-      # TODO: handle structures that are non-virtual
+  def each_nested_field content=nil, &block
+    processed = ::Set.new [card.key]
+    content ||= _render_raw
+    card.each_nested_chunk content do |chunk|
       next unless chunk.referee_name.to_name.field_of? card.name
-      if chunk.referee_card &&
-         chunk.referee_card.virtual? &&
-         !processed_chunk_keys.include?(chunk.referee_name.key)
-
-        processed_chunk_keys << chunk.referee_name.key
-        subformat(chunk.referee_card).each_nested_field(args) do |sub_chunk|
-          unique_chunks sub_chunk, processed_chunk_keys, &block
-        end
-      else
-        unique_chunks chunk, processed_chunk_keys, &block
-      end
+      process_nested_chunk chunk, processed, &block
     end
+  end
+
+  def process_nested_chunk chunk, processed, &block
+    virtual = chunk.referee_card && chunk.referee_card.virtual?
+    # TODO: handle structures that are non-virtual
+    method = virtual ? :process_virtual_field : :process_field
+    send method, chunk, processed, &block
+  end
+
+  def process_virtual_field chunk, processed
+    return unless process_unique_field? chunk, processed
+    subformat(chunk.referee_card).each_nested_field(args) do |sub_chunk|
+      process_feld sub_chunk, processed, &block
+    end
+  end
+
+  def process_unique_field? chunk, processed
+    key = chunk.referee_name.key
+    return false if processed.include? key
+    processed << key
+    true
   end
 end
 

@@ -249,7 +249,7 @@ format :html do
     view = args[:rule_view] || :field_related_rules
     frame args do
       # with_nest_mode :edit do
-      nested_fields(args).map do |chunk|
+      nested_fields.map do |chunk|
         nest Card.fetch("#{chunk.referee_name}+*self"),
              view: :titled, title: chunk.referee_name, rule_view: view,
              optional_set_label: :hide,

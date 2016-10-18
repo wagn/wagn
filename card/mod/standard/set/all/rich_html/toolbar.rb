@@ -29,7 +29,7 @@ format :html do
   end
 
   def default_toolbar_args args
-    args[:nested_fields] = nested_fields(args)
+    args[:nested_fields] = nested_fields
     args[:active_toolbar_button] ||= active_toolbar_button @slot_view, args
   end
 

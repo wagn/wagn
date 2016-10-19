@@ -94,7 +94,6 @@ format :html do
   end
 
   view :open, tags: :comment do
-    # binding.pry
     voo.show! :toolbar if toolbar_pinned?
     voo.viz :toggle, (main? ? :hide : :show)
     frame content: true do

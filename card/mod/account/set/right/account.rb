@@ -42,13 +42,11 @@ format do
     card_url token_path(event: :reset_password)
   end
 
-  def token_path extra_opts=true
-    opts = {
-      mark: card.cardname.left_name,
-      action: :update,
-      token: card.token_card.refresh(true).content,
-      live_token: true
-    }
+  def token_path extra_opts={}
+    opts = { mark: card.cardname.left_name,
+             action: :update,
+             token: card.token_card.refresh(true).content,
+             live_token: true }
     path opts.merge extra_opts
   end
 

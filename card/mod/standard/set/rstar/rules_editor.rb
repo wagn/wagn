@@ -14,23 +14,25 @@ format :html do
   end
 
   def open_rule_wrap rule_view
-    wrap_with :tr, class: "card-slot open-rule #{rule_view.to_s.tr '_', '-'}" do
+    rule_view_class = rule_view.to_s.tr '_', '-'
+    wrap_with :tr, class: "card-slot open-rule #{rule_view_class}" do
       wrap_with(:td, class: "rule-cell", colspan: 3) { yield }
     end
   end
 
   view :open_rule, tags: :unknown_ok do
     return "not a rule" unless card.is_rule?
-    open_rule_wrap do
+    rule_view = open_rule_body_view
+    open_rule_wrap(rule_view) do
       [open_rule_instruction,
        open_rule_setting_links,
-       open_rule_body]
+       open_rule_body(rule_view)]
     end
   end
 
-  def open_rule_body
+  def open_rule_body rule_view
     wrap_with :div, class: "card-body" do
-      nest current_rule, view: open_rule_body_view
+      nest current_rule, view: rule_view, rule_context: card
     end
   end
 
@@ -115,12 +117,12 @@ format :html do
   end
 
   def link_to_all_rules
-    link_to_card setting_name, "all #{rule_setting_title} rules",
+    link_to_card card.rule_setting_name, "all #{card.rule_setting_title} rules",
                  class: "setting-link", target: "wagn_setting"
   end
 
   def link_to_closed_rule
-    link_to_view :closed_rule, rule_setting_title,
+    link_to_view :closed_rule, card.rule_setting_title,
                  class: "close-rule-link slotter"
   end
 

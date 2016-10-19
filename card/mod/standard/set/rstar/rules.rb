@@ -52,7 +52,7 @@ end
 
 # ~~~~~~~~~~ determine the set options to which a user can apply the rule.
 def set_options
-  candidates = set_prototypes.set_names
+  candidates = set_prototype.set_names
   first = first_set_option_index candidates
   tally = { existing: 0, options: [] }
   candidates[first..-1].each do |set_name|

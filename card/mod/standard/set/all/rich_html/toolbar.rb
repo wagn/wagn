@@ -268,7 +268,7 @@ format :html do
 
   view :edit_structure_link do
     voo.title ||= "structure"
-    link_to_view :edit_structure
+    toolbar_view_link :edit_structure
   end
 
   view :history_link do

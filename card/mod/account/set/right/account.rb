@@ -60,7 +60,7 @@ format :html do
 
   view :edit do
     voo.structure = true
-    super
+    super()
   end
 
   view :content_formgroup do

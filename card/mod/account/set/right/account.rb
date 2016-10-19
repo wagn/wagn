@@ -29,9 +29,13 @@ def validate_token! test_token
   errors.empty?
 end
 
+def refreshed_token # TODO: explain why needed
+  token_card.refresh(true).content
+end
+
 format do
   view :verify_url do
-    card_url token_path
+    card_url path({ mark: card.cardname.left }.merge(token_path_opts))
   end
 
   view :verify_days do
@@ -39,15 +43,11 @@ format do
   end
 
   view :reset_password_url do
-    card_url token_path(event: :reset_password)
+    card_url path({ mark: card, event: :reset_password }.merge(token_path_opts))
   end
 
-  def token_path extra_opts={}
-    opts = { mark: card.cardname.left_name,
-             action: :update,
-             token: card.token_card.refresh(true).content,
-             live_token: true }
-    path opts.merge extra_opts
+  def token_path_opts
+    { action: :update, live_token: true, token: card.refreshed_token }
   end
 
   view :reset_password_days do
@@ -97,34 +97,36 @@ def confirm_ok?
   Card.new(type_id: Card.default_accounted_type_id).ok? :create
 end
 
-event :generate_confirmation_token, :prepare_to_store,
-      on: :create,
-      when: proc { |c| c.confirm_ok? } do
+event :generate_confirmation_token,
+      :prepare_to_store, on: :create, when: :confirm_ok do
   add_subfield :token, content: generate_token
 end
 
 event :reset_password,
-      :prepare_to_validate, on: :update, when: proc { |c| c.reset_password? } do
-  if validate_token! @env_token
-    token_card.used!
-    Auth.signin left_id
-    success << edit_password_success_args
-  else
-    error_msg = errors.first.last
-    send_reset_password_token
-    msg = "Sorry, #{error_msg}. " \
-          "Please check your email for a new password reset link."
-    success << { id: "_self", view: "message", message: msg }
-  end
+      :prepare_to_validate, on: :update, when: :reset_password do
+  valid = validate_token! @env_token
+  success << (valid ? reset_password_success : reset_password_try_again)
   abort :success
 end
 
+def reset_password_success
+  token_card.used!
+  Auth.signin left_id
+  { id: left.name, view: :related, related: { name: "+#{Card[:account].name}",
+                                              view: "edit" } }
+end
+
+def reset_password_try_again
+  send_reset_password_token
+  { id: "_self",
+    view: "message",
+    message: "Sorry, #{errors.first.last}. " \
+             "Please check your email for a new password reset link." }
+end
+
+
 def edit_password_success_args
-  {
-    id: left.name,
-    view: :related,
-    related: { name: "+#{Card[:account].name}", view: "edit" }
-  }
+
 end
 
 def reset_password?

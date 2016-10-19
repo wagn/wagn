@@ -182,6 +182,7 @@ format :html do
     count = referers.size
     refs = count == 1 ? "reference" : "references"
     effect = "affect at least #{count} #{refs} to \"#{card.name}\""
+    effect += hidden_field_tag(:referers, count)
     option = "You may choose to <em>update or ignore</em> the referers."
     [effect, option]
   end

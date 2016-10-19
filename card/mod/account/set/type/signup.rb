@@ -37,10 +37,9 @@ format :html do
   end
 
   def account_formgroups
-    # sub_args[:no_password] = true if Auth.signed_in?
     account = card.fetch trait: :account, new: {}
     Auth.as_bot do
-      subformat(account).content_formgroup
+      subformat(account)._render :content_formgroup, structure: true
     end
   end
 

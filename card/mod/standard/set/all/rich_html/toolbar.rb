@@ -251,52 +251,38 @@ format :html do
                  class: "navbar-link slotter pull-right"
   end
 
-  def default_edit_content_link_args args
+  view :edit_content_link do
     voo.title ||= "content"
+    toolbar_view_link :edit
   end
 
-  view :edit_content_link do |args|
-    toolbar_view_link :edit, args
-  end
-
-  def default_edit_name_link_args args
+  view :edit_name_link do
     voo.title ||= "name"
-  end
-  view :edit_name_link do |args|
-    toolbar_view_link :edit_name, args
+    toolbar_view_link :edit_name
   end
 
-  def default_edit_type_link_args args
+  view :edit_type_link do
     voo.title ||= "type"
+    toolbar_view_link :edit_type
   end
 
-  view :edit_type_link do |args|
-    toolbar_view_link :edit_type, args
+  view :edit_structure_link do
+    voo.title ||= "structure"
+    link_to_view :edit_structure
   end
 
-  view :edit_structure_link do |_args|
-    link_to_view :edit_structure, "structure"
-  end
-
-  def default_history_link_args args
+  view :history_link do
     voo.title ||= "history"
+    toolbar_view_link :history
   end
 
-  view :history_link do |args|
-    toolbar_view_link :history, args
-  end
-
-  def default_edit_nests_link_args args
+  view :edit_nests_link do
     voo.title ||= "nests"
+    toolbar_view_link :edit_nests
   end
 
-  view :edit_nests_link do |args|
-    toolbar_view_link :edit_nests, args
-  end
-
-  def toolbar_view_link view, args
-    text = args.delete(:title)
-    link_to_view view, text, args
+  def toolbar_view_link view
+    link_to_view view, voo.title
   end
 
   def recently_edited_settings?

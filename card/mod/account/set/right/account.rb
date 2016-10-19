@@ -1,4 +1,3 @@
-
 include All::Permissions::Accounts
 
 card_accessor :email
@@ -54,20 +53,18 @@ format do
 end
 
 format :html do
-  view :raw do |args|
-    content = []
-    unless args[:no_email]
-      content << "{{+#{Card[:email].name}|titled;title:email}}"
-    end
-    unless args[:no_password]
-      content << "{{+#{Card[:password].name}|titled;title:password}}"
-    end
-    content * " "
+  view :raw do
+    %({{+#{Card[:email].name}|titled;title:email}}
+     {{+#{Card[:password].name}|titled;title:password}})
   end
 
   view :edit do
     voo.structure = true
     super
+  end
+
+  view :content_formgroup do
+    content_formgroup
   end
 end
 

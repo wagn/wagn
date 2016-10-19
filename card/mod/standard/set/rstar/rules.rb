@@ -30,6 +30,10 @@ def rule_setting_name
   cardname.tag
 end
 
+def rule_setting_title
+  rule_setting_name.tr "*", ""
+end
+
 def rule_user_setting_name
   if is_preference?
     "#{rule_user_name}+#{rule_setting_name}"
@@ -46,49 +50,34 @@ def rule_user
   is_preference? ? self[-2] : nil
 end
 
-# ~~~~~~~~~~ determine the set options to which the user can apply the rule.
+# ~~~~~~~~~~ determine the set options to which a user can apply the rule.
 def set_options
-  first = if new_card?
-            0
-          else
-            set_prototype.set_names.index { |s| s.to_name.key == rule_set_key }
-          end
-  rule_cnt = 0
-  res = []
-  fallback_set = nil
-  set_prototype.set_names[first..-1].each do |set_name|
-    if Card.exists?("#{set_name}+#{rule_user_setting_name}")
-      rule_cnt += 1
-      res << if rule_cnt == 1
-               [set_name, :current]
-             else
-               fallback_set ||= set_name
-               [set_name, :overwritten]
-             end
-    else
-      res << (rule_cnt < 1 ? [set_name, :enabled] : [set_name, :disabled])
-    end
+  candidates = set_prototypes.set_names
+  first = first_set_option_index candidates
+  tally = { existing: 0, options: [] }
+  candidates[first..-1].each do |set_name|
+    tally_set_option set_name, tally
   end
+  tally[:options]
+end
 
-  # fallback_set = if first > 0
-  #                 res[0..(first-1)].find do |set_name|
-  #                   Card.exists?("#{set_name}+#{rule_user_setting_name}")
-  #                 end
-  #               end
-  # last = res.index{|s| s.to_name.key == cardname.trunk_name.key} || -1
-  # # note, the -1 can happen with virtual cards because the self set doesn't
-  # show up in the set_names.  FIXME!!
-  # [res[first..last], fallback_set]
-  #
-  # The broadest set should always be the currently applied rule
-  # (for anything more general, they must explicitly choose to 'DELETE' the
-  # current one)
-  # the narrowest rule should be the one attached to the set being viewed.
-  # So, eg, if you're looking at the '*all plus' set, you shouldn't
-  # have the option to create rules based on arbitrary narrower sets, though
-  # narrower sets will always apply to whatever prototype we create
+def tally_set_option set_name, tally
+  state =
+    if Card.exists?("#{set_name}+#{rule_user_setting_name}")
+      tally[:existing] += 1
+      tally[:existing] == 1 ? :current : :overwritten
+    else
+      tally[:existing] < 1 ? :enabled : :disabled
+    end
+  tally[:options] << [set_name, state]
+end
 
-  [res, fallback_set]
+# the narrowest rule should be the one attached to the set being viewed.
+# So, eg, if you're looking at the '*all plus' set, you shouldn't
+# have the option to create rules based on arbitrary narrower sets, though
+# narrower sets will always apply to whatever prototype we create
+def first_set_option_index candidates
+  new_card? ? 0 : candidates.index { |c| c.to_name.key == rule_set_key }
 end
 
 def set_prototype

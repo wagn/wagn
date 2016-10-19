@@ -256,6 +256,13 @@ def label
   end
 end
 
+def uncapitalized_label
+  label = label
+  return label unless label[0]
+  label[0] = label[0].downcase
+  label
+end
+
 def follow_label
   if (klass = subclass_for_set)
     klass.follow_label cardname.left

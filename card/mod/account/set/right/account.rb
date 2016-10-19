@@ -31,10 +31,7 @@ end
 
 format do
   view :verify_url do
-    signup_name = card.cardname.left_name
-    card_url "update/#{signup_name.url_key}" \
-             "?token=#{card.token}" \
-             "&live_token=true"
+    card_url token_path
   end
 
   view :verify_days do
@@ -42,9 +39,17 @@ format do
   end
 
   view :reset_password_url do
-    card_url "update/#{card.cardname.url_key}" \
-             "?token=#{card.token_card.refresh(true).content}" \
-             "&live_token=true&event=reset_password"
+    card_url token_path(event: :reset_password)
+  end
+
+  def token_path extra_opts=true
+    opts = {
+      mark: card.cardname.left_name,
+      action: :update,
+      token: card.token_card.refresh(true).content,
+      live_token: true
+    }
+    path opts.merge extra_opts
   end
 
   view :reset_password_days do

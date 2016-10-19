@@ -77,7 +77,6 @@ format :html do
   view :title do |args|
     title = fancy_title voo.title, args[:title_class]
     title =
-     # _optional_render(:title_editable, args, :hide) ||
       _optional_render(:title_link, args.merge(title_ready: title), :hide) ||
       title
     add_name_context
@@ -94,23 +93,9 @@ format :html do
     %(<span class="type-info pull-right">#{link}</span>).html_safe
   end
 
-  # view :title_editable do |args|
-  #   links = card.cardname.parts.map { |name| link_to_card name }
-  #   res = links.shift
-  #   links.each_with_index do |link, index|
-  #     name = card.cardname.parts[0..index + 1].join "+"
-  #     res += link_to_card name, glyphicon("plus", "header-icon")
-  #     res += link
-  #   end
-  #   res += " "
-  #   res.concat link_to_view(
-  #     :edit_name, glyphicon("edit", "header-icon"),
-  #     class: "slotter", "data-toggle" => "tooltip", title: "edit name"
-  #   )
-  #   res.concat _optional_render(:type_link, args, :show)
-  # end
-
   view :open, tags: :comment do
+    # binding.pry
+    voo.show! :toolbar if toolbar_pinned?
     voo.viz :toggle, (main? ? :hide : :show)
     frame content: true do
       [_render_open_content, optional_render(:comment_box)]

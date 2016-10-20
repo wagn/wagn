@@ -11,7 +11,7 @@ format :html do
   # FIXME: need a generic solution for this
   view :title do
     voo.title ||= I18n.t(:sign_in_title, scope: "mod.standard.set.self.signin")
-    super({})
+    super()
   end
 
   view :open_content do

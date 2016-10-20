@@ -107,7 +107,7 @@ format :html do
     %(<span class="faint"> #{showname} </span>)
   end
 
-  view :conflict, error_code: 409 do |args|
+  view :conflict, error_code: 409 do
     actor_link = link_to_card card.last_action.act.actor.cardname
     expanded_act = wrap do
       _render_act_expanded act: card.last_action.act, current_rev_nr: 0
@@ -126,8 +126,8 @@ format :html do
     end
   end
 
-  view :errors, perms: :none do |args|
-    return card.errors.empty?
+  view :errors, perms: :none do
+    return if card.errors.empty?
     voo.title = card.name.blank? ? "Problems" : "Problems with #{card.name}"
     class_up "card-frame", "panel panel-warning"
     voo.hide! :menu
@@ -159,7 +159,6 @@ format :html do
     signup_link = link_to "Sign up", path: { action: :new, mark: :signup }
     wrap_with(:div) { "#{signin_link} or #{signup_link} to create it." }
   end
-
 
   view :denial do |args|
     task = args[:denied_task]

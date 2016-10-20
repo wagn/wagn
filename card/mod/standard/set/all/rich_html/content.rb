@@ -169,7 +169,7 @@ format :html do
 
   view :related do |args|
     return unless args[:related_card]
-    show :toolbar
+    voo.show :toolbar
     frame do
       nest(args[:related_card], args[:related_args])
     end

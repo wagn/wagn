@@ -119,7 +119,7 @@ format :html do
   view :edit_name, perms: :update do |args|
     voo.show! :toolbar
     frame_and_form({ action: :update, id: card.id },
-                   args, "main-success" => "REDIRECT") do
+                   "main-success" => "REDIRECT") do
       [hidden_edit_name_fields,
        name_formgroup,
        rename_confirmation_alert,

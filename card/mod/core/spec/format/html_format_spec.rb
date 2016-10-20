@@ -3,11 +3,11 @@
 describe Card::Format::HtmlFormat do
   describe "views" do
     it "content" do
-      result = render_card(:content, name: "A+B")
+      result = render_card :content, name: "A+B"
       assert_view_select(
         result,
-        'div[class="card-slot content-view card-content ALL ALL_PLUS ' \
-        'TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]'
+        'div[class="card-slot content-view ALL ALL_PLUS TYPE-basic '\
+        'RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b card-content"]'
       )
     end
 
@@ -65,8 +65,8 @@ describe Card::Format::HtmlFormat do
       it "renders card content" do
         assert_view_select(
           @simple_page,
-          'div[class="card-body panel-body card-content ALL ALL_PLUS ' \
-          'TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]',
+          'div[class="card-body card-content ALL ALL_PLUS ' \
+          'TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b panel-body"]',
           "AlphaBeta"
         )
       end

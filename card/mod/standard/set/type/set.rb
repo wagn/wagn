@@ -150,8 +150,10 @@ format :html do
   end
 
   view :template_editor_frame do
-    frame no_slot: true, title: card.label, menu_hack: :template_closer do
-      _render_core hide: "set_label"
+    voo.title = card.label
+    voo.hide :set_label
+    template_frame do
+      _render_core
     end
   end
 

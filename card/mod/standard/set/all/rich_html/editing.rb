@@ -4,7 +4,7 @@ format :html do
   view :new, perms: :create, tags: :unknown_ok do
     assign_new_view_title
     voo.show! :help
-    frame_and_form :create, {}, "main-success" => "REDIRECT" do
+    frame_and_form :create, "main-success" => "REDIRECT" do
       [new_hidden_fields,
        new_name_formgroup,
        new_type_formgroup,
@@ -52,7 +52,7 @@ format :html do
   end
 
   def new_hidden_fields
-    fields = [hidden_success(card.rule :thanks)]
+    fields = [hidden_success(card.rule(:thanks))]
     fields << hidden_type unless show_new_type_formgroup?
     fields << hidden_name if new_name_in_hidden_field?
     fields << hidden_name_prompt unless hide_new_name_prompt?
@@ -187,9 +187,9 @@ format :html do
     [effect, option]
   end
 
-  view :edit_type, perms: :update do |args|
+  view :edit_type, perms: :update do
     voo.show! :toolbar
-    frame_and_form :update, args do
+    frame_and_form :update do
       [
         hidden_edit_type_fields,
         standard_type_formgroup,

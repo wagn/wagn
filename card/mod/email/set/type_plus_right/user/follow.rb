@@ -159,9 +159,9 @@ format :html do
     if card.errors.any?
       if card.errors.find { |attrib, _msg| attrib == :permission_denied }
         Env.save_interrupted_action(request.env["REQUEST_URI"])
-        title = "Problems with #{card.name}"
-        frame args.merge(panel_class: "panel panel-warning",
-                         title: title, hide: "menu") do
+        voo.title = "Problems with #{card.name}"
+        class_up "card-frame", "panel panel-warning"
+        frame do
           "Please #{link_to_card :signin, 'sign in'}" # " #{to_task}"
         end
       else

@@ -31,11 +31,10 @@ end
 
 format :html do
   view :edit, perms: :update, tags: :unknown_ok do
-    args = {}
-    frame_and_form :update, args do
+    frame_and_form :update do
       [
         content_formgroup,
-        _optional_render(:confirm_update_all, args),
+        _optional_render_confirm_update_all,
         edit_buttons
       ]
     end
@@ -61,7 +60,7 @@ format :html do
   end
 
   view :confirm_update_all do |args|
-    wrap args do
+    wrap do
       alert "info" do
         %(
           <h1>Are you sure you want to change the default follow rules?</h1>

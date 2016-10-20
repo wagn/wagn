@@ -11,7 +11,7 @@ format :html do
     voo.hide! :menu
 
     Auth.as_bot do
-      frame_and_form :create, args.merge(help_text: help_text) do
+      frame_and_form :create do
         [
           setup_hidden_fields,
           name_formgroup("usually first and last name"),

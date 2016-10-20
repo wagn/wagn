@@ -91,10 +91,8 @@ format :html do
     )
   end
 
-  view :message, perms: :none, tags: :unknown_ok do |args|
-    frame args do
-      params[:message]
-    end
+  view :message, perms: :none, tags: :unknown_ok do
+    frame { params[:message] }
   end
 
   view :missing do |args|
@@ -102,7 +100,7 @@ format :html do
     path_opts = args[:type] ? { card: { type: args[:type] } } : {}
     link_text = "Add #{fancy_title voo.title}"
     klass = "slotter missing-#{args[:denied_view] || args[:home_view]}"
-    wrap(args) { link_to_view :new, link_text, path: path_opts, class: klass }
+    wrap { link_to_view :new, link_text, path: path_opts, class: klass }
   end
 
   view :closed_missing, perms: :none do
@@ -111,10 +109,11 @@ format :html do
 
   view :conflict, error_code: 409 do |args|
     actor_link = link_to_card card.last_action.act.actor.cardname
-    expanded_act = wrap(args) do
+    expanded_act = wrap do
       _render_act_expanded act: card.last_action.act, current_rev_nr: 0
     end
-    wrap args.merge(slot_class: "error-view") do # ENGLISH below
+    class_up "card-slot", "error-view"
+    wrap do # ENGLISH below
       alert "warning" do
         %(
           <strong>Conflict!</strong>
@@ -128,36 +127,39 @@ format :html do
   end
 
   view :errors, perms: :none do |args|
-    if card.errors.any?
-      title = "Problems"
-      title += " with #{card.name}" unless card.name.blank?
-      frame_opts = { panel_class: "panel panel-warning",
-                     title: title, hide: "menu" }
-      frame args.merge(frame_opts) do
-        card.errors.map do |attrib, msg|
-          unless attrib == :abort
-            msg = "<strong>#{attrib.to_s.upcase}:</strong> #{msg}"
-          end
-          alert "warning", dismissible: true, alert_class: "card-error-msg" do
-            msg
-          end
+    return card.errors.empty?
+    voo.title = card.name.blank? ? "Problems" : "Problems with #{card.name}"
+    class_up "card-frame", "panel panel-warning"
+    voo.hide! :menu
+    frame do
+      card.errors.map do |attrib, msg|
+        unless attrib == :abort
+          msg = "<strong>#{attrib.to_s.upcase}:</strong> #{msg}"
+        end
+        alert "warning", dismissible: true, alert_class: "card-error-msg" do
+          msg
         end
       end
     end
   end
 
-  view :not_found do |args| # ug.  bad name.
-    sign_in_or_up_links =
-      unless Auth.signed_in?
-        signin_link = link_to_card :signin, "Sign in"
-        signup_link = link_to "Sign up", path: { action: :new, mark: :signup }
-        %(<div>#{signin_link} or #{signup_link} to create it.</div>)
-      end
-    frame args.merge(title: "Not Found", optional_menu: :never) do
-      card_label = card.name.present? ? "<em>#{card.name}</em>" : "that"
-      %(<h2>Could not find #{card_label}.</h2> #{sign_in_or_up_links})
+  view :not_found do # ug.  bad name.
+    voo.hide! :menu
+    voo.title = "Not Found"
+    card_label = card.name.present? ? "<em>#{card.name}</em>" : "that"
+    frame do
+      [wrap_with(:h2) { "Could not find #{card_label}." },
+       sign_in_or_up_links]
     end
   end
+
+  def sign_in_or_up_links
+    return if Auth.signed_in?
+    signin_link = link_to_card :signin, "Sign in"
+    signup_link = link_to "Sign up", path: { action: :new, mark: :signup }
+    wrap_with(:div) { "#{signin_link} or #{signup_link} to create it." }
+  end
+
 
   view :denial do |args|
     task = args[:denied_task]
@@ -169,7 +171,7 @@ format :html do
         </span>
       )
     else
-      frame args do # ENGLISH below
+      frame do # ENGLISH below
         message =
           case
           when task != :read && Card.config.read_only

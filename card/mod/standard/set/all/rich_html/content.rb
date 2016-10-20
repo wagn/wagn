@@ -23,62 +23,59 @@ format :html do
     render view, args
   end
 
-  view :layout, perms: :none do |args|
-    output [
-      process_content(get_layout_content, content_opts:
-        { chunk_list: :references }),
-      _render_modal_slot(args)
-    ]
+  view :layout, perms: :none do
+    layout = process_content get_layout_content,
+                             content_opts: { chunk_list: :references }
+    output [layout, _render_modal_slot]
   end
 
-  view :content do |args|
-    wrap args.reverse_merge(slot_class: "card-content") do
-      [
-        _optional_render(:menu, args, :hide),
-        _render_core(args)
-      ]
-    end
+  view :content do
+    class_up "card-slot", "card-content"
+    voo.hide :menu
+    wrap { [_optional_render_menu, _render_core] }
   end
 
-  view :content_panel do |args|
-    wrap args.reverse_merge(slot_class: "card-content panel panel-default") do
+  view :content_panel do
+    class_up "card-slot", "card-content panel panel-default"
+    voo.hide :menu
+    wrap do
       wrap_with :div, class: "panel-body" do
-        [
-          _optional_render(:menu, args, :hide),
-          _render_core(args)
-        ].join("\n")
+        [_optional_render_menu, _render_core]
       end
     end
   end
 
-  view :titled, tags: :comment do |args|
-    wrap args do
+  view :titled, tags: :comment do
+    @content_body = true
+    wrap do
       [
-        _optional_render(:menu, args),
-        _render_header(args),
-        wrap_body(content: true) { _render_core args },
-        optional_render(:comment_box, args)
+        _optional_render_menu,
+        _render_header,
+        wrap_body { _render_core },
+        optional_render_comment_box
       ]
     end
   end
 
-  view :labeled do |args|
-    wrap args do
+  view :labeled do
+    class_up "card-body", "closed-content"
+    @content_body = true
+    wrap do
       [
-        _optional_render(:menu, args),
-        "<label>#{_render_title args}</label>",
-        wrap_body(body_class: "closed-content", content: true) do
-          _render_closed_content args
+        _optional_render_menu,
+        wrap_with(:label, _render_title),
+        wrap_body do
+          _render_closed_content
         end
       ]
     end
   end
 
-  view :title do |args|
-    title = fancy_title voo.title, args[:title_class]
-    title =
-      _optional_render(:title_link, args.merge(title_ready: title), :hide) ||
-      title
+  view :title do
+    title = fancy_title voo.title
+    if show_view? :title_link, :hide
+      title = _render_title_link title_ready: title
+    end
     add_name_context
     title
   end
@@ -89,15 +86,18 @@ format :html do
   end
 
   view :type_info do
-    link = link_to_card card.type_name, nil, class: "navbar-link"
-    %(<span class="type-info pull-right">#{link}</span>).html_safe
+    return unless show_view?(:toolbar, :hide) && card.type_code != :basic
+    wrap_with :span, class: "type-info pull-right" do
+      link_to_card card.type_name, nil, class: "navbar-link"
+    end
   end
 
   view :open, tags: :comment do
     voo.show! :toolbar if toolbar_pinned?
     voo.viz :toggle, (main? ? :hide : :show)
-    frame content: true do
-      [_render_open_content, optional_render(:comment_box)]
+    @content_body = true
+    frame do
+      [_render_open_content, optional_render_comment_box]
     end
   end
 
@@ -110,22 +110,22 @@ format :html do
     link_to_card card.type_card, nil, class: klasses
   end
 
-  view :closed do |args|
-    voo.show! :toggle
+  view :closed do
+    voo.show :toggle
     voo.hide! :toolbar
-    frame content: true, body_class: "closed-content", toggle_mode: :close do
-      _optional_render :closed_content
-    end
+    class_up "card-body", "closed-content"
+    @content_body = true
+    @toggle_mode = :close
+    frame { _optional_render :closed_content }
   end
 
-  view :change do |args|
-    voo.show! :title_link
-    wrap args do
-      [
-        _optional_render(:title, args),
-        _optional_render(:menu, args, :hide),
-        _optional_render(:last_action, args)
-      ]
+  view :change do
+    voo.show :title_link
+    voo.hide :menu
+    wrap do
+      [_optional_render_title,
+       _optional_render_menu,
+       _optional_render_last_action]
     end
   end
 
@@ -137,7 +137,6 @@ format :html do
     set_name ||= "#{card.name}+*self"
     Card.fetch(set_name)
   end
-
 
   def default_related_args args
     rparams = args[:related] || params[:related]
@@ -158,8 +157,7 @@ format :html do
 
       subheader:       subheader,
       parent:          card,
-      subframe:        true,
-      subslot:         true
+      subframe:        true
     )
     if rcard.show_comment_box_in_related?
       nest_args[:show] << :comment_box
@@ -170,10 +168,10 @@ format :html do
 
 
   view :related do |args|
-    if args[:related_card]
-      frame args.merge(optional_toolbar: :show) do
-        nest(args[:related_card], args[:related_args])
-      end
+    return unless args[:related_card]
+    show :toolbar
+    frame do
+      nest(args[:related_card], args[:related_args])
     end
   end
 
@@ -219,9 +217,13 @@ format :html do
 
   private
 
-  def fancy_title title=nil, title_class=nil
-    klasses = ["card-title", title_class].compact * " "
-    title = showname(title).to_name.parts.join %(<span class="joint">+</span>)
-    raw %(<span class="#{klasses}">#{title}</span>)
+  def fancy_title title=nil
+    wrap_with :span, class: classy("card-title") do
+      showname(title).to_name.parts.join fancy_joint
+    end
+  end
+
+  def fancy_joint
+    wrap_with :span, "+", classy("joint")
   end
 end

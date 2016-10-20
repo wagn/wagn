@@ -15,11 +15,19 @@ class Card
       end
 
       def show! *views
-        viz views, :show, force=true
+        viz views, :show, true
       end
 
       def hide! *views
-        viz views, :hide, force=true
+        viz views, :hide, true
+      end
+
+      def show *views
+        viz views, :show
+      end
+
+      def hide *views
+        viz views, :hide
       end
 
       def optional?

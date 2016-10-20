@@ -136,9 +136,11 @@ def included_descendant_card_ids
 end
 
 format :html do
-  view :history do |args|
+  view :history do
     voo.show! :toolbar
-    frame args.merge(body_class: "history-slot list-group", content: true) do
+    @content_body = true
+    class_up "card-body",  "history-slot list-group"
+    frame do
       [history_legend, _render_act_list]
     end
   end
@@ -210,7 +212,7 @@ format :html do
   end
 
   view :act do |args|
-    wrap(args) do
+    wrap do
       render_haml args.merge(card: card, args: args) do
         <<-HAML.strip_heredoc
           .act{style: "clear:both;"}

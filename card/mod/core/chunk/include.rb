@@ -46,13 +46,11 @@ class Card
 
         def interpret_piped_options list_string, items
           options_hash = items.nil? ? {} : { items: items }
-          style_hash = {}
-          option_string_to_hash list_string, options_hash, style_hash
-          style_hash_to_string options_hash, style_hash
+          option_string_to_hash list_string, options_hash
           options_hash
         end
 
-        def option_string_to_hash list_string, options_hash, style_hash
+        def option_string_to_hash list_string, options_hash
           each_option(list_string) do |key, value|
             key = key.to_sym
             if key == :item
@@ -60,17 +58,10 @@ class Card
               options_hash[:items][:view] = value
             elsif Card::View.option_keys.include? key
               options_hash[key] = value
-            else
-              style_hash[key] = value
+              # else
+              # handle other keys
             end
           end
-        end
-
-        def style_hash_to_string options_hash, style_hash
-          return if style_hash.empty?
-          options_hash[:style] = style_hash.map do |key, value|
-            CGI.escapeHTML "#{key}:#{value};"
-          end * ""
         end
 
         def inspect

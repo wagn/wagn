@@ -1,19 +1,4 @@
 format :html do
-  def slot_options args
-    options_hash = {}
-
-    if @context_names.present?
-      options_hash["name_context"] = @context_names.map(&:key) * ","
-    end
-
-    options_hash[:subslot] = "true" if args[:subslot]
-
-    slot_option_keys.each_with_object(options_hash) do |opt, hash|
-      hash[opt] = voo.options[opt] if voo.options[opt].present?
-    end
-
-    JSON(options_hash)
-  end
 
   def slot_option_keys
     @@slot_option_keys ||= Card::View.option_keys
@@ -25,100 +10,91 @@ format :html do
   # (1) gives CSS classes for styling and
   # (2) adds card data for javascript - including the "card-slot" class,
   #     which in principle is not supposed to be in styles
-  def wrap args={}
+  def wrap slot=true
     @slot_view = @current_view
-    classes = wrap_classes args
-    data = wrap_data args
-
-    div = content_tag :div, output(yield).html_safe,
-                      id: card.cardname.url_key,
-                      class: classes,
-                      data: data,
-                      style: h(args[:style])
-    add_debug_comments div
+    debug_slot do
+      wrap_with(:div, id: card.cardname.url_key,
+                      class: wrap_classes(slot),
+                      data:  wrap_data) { yield }
+    end
   end
 
-  def add_debug_comments content
-    return content if params[:debug] != "slot" ||
-                      tagged(@current_view, :no_wrap_comments)
-    name = h card.name
-    space = "  " * @depth
-    "<!--\n\n#{space}BEGIN SLOT: #{name}\n\n-->" \
-    "#{div}" \
-    "<!--\n\n#{space}END SLOT: #{name}\n\n-->"
+  def wrap_data
+    { "card-id"           => card.id,
+      "card-name"         => h(card.name),
+      "slot"              => voo.slot_options(@context_names) }
   end
 
-  def wrap_classes args
-    [
-      ("card-slot" unless args[:no_slot]),
-      "#{@current_view}-view",
-      (args[:slot_class] if args[:slot_class]),
-      ("STRUCTURE-#{voo.structure.to_name.key}" if voo.structure),
-      card.safe_set_keys
-    ].compact.join " "
+  def debug_slot
+    debug_slot? ? debug_slot_wrap { yield } : yield
   end
 
-  def wrap_data args
-    {
-      "card-id" => card.id,
-      "card-name" => h(card.name),
-      "slot"      => html_escape_except_quotes(slot_options(args))
-    }
+  def debug_slot?
+    params[:debug] == "slot" && !tagged(@current_view, :no_wrap_comments)
   end
 
-  def wrap_body args={}
+  def debug_slot_wrap
+    pre = "<!--\n\n#{'  ' * @depth}"
+    post = " SLOT: #{h card.name}\n\n-->"
+    [pre, "BEGIN", post, yield, pre, "END", post].join
+  end
+
+  def wrap_classes slot
+    list = ["card-slot", "#{@current_view}-view", card.safe_set_keys]
+    list.push "STRUCTURE-#{voo.structure.to_name.key}" if voo.structure
+    list.shift unless slot
+    classy list
+  end
+
+  def wrap_body
     css_classes = ["card-body"]
-    css_classes << args[:body_class]                      if args[:body_class]
-    css_classes += ["card-content", card.safe_set_keys] if args[:content]
-    content_tag :div, class: css_classes.compact * " " do
-      yield args
+    css_classes += ["card-content", card.safe_set_keys] if @content_body
+    wrap_with :div, class: classy(*css_classes) do
+      yield
     end
   end
 
-  def panel args={}
-    wrap_with :div, class: "card-frame #{args[:panel_class]}" do
-      output(yield)
+  def panel
+    wrap_with :div, class: classy("card-frame") do
+      yield
     end
   end
 
-  def frame args={}, &block
-    wrap args do
+  def related_frame
+    wrap do
       [
-        _optional_render(:menu, args),
-        panel(args) do
+        _optional_render_menu,
+        _optional_render_related_subheader,
+        frame_help,
+        panel { wrap_body { yield } }
+      ]
+    end
+  end
+
+  def frame
+    voo.hide :horizontal_menu, :help
+    wrap do
+      [
+        _optional_render_menu,
+        panel do
           [
-            _optional_render(:header, args, :show),
-            #_optional_render(:subheader, args,
-            #                 (show_subheader ? :show : :hide)),
-            _optional_render(:help, { help_class: "alert alert-info" }, :hide),
-            wrap_body(args) { output(yield(args)) }
+            _optional_render_header,
+            frame_help,
+            wrap_body { yield }
           ]
         end
       ]
     end
   end
 
-  def subframe args={}
-    wrap args do
-      [
-        _optional_render(:menu, hide: :horizontal_menu),
-        _optional_render(:subheader, args, :show),
-        _optional_render(:help, args.merge(help_class: "alert alert-info"),
-                         :hide),
-        panel(args) do
-          [
-            _optional_render(:header, args, :hide),
-            wrap_body(args) { output(yield args) }
-          ]
-        end
-      ]
-    end
+  def frame_help
+    _optional_render :help, help_class: "alert alert-info"
   end
 
-  def frame_and_form action, frame_opts={}, form_opts={}
-    frame frame_opts do
+  def frame_and_form action, form_opts={}
+    frame do
       card_form action, form_opts do
-        output(yield)
+        output yield
       end
     end
   end
@@ -146,28 +122,20 @@ format :html do
 
   def wrap_main content
     return content if Env.ajax? || params[:layout] == "none"
-    %(<div id="main">#{content}</div>)
+    wrap_with :div, content, id: "main"
   end
 
   def wrap_with tag, content_or_args={}, html_args={}
-    if block_given?
-      content_tag(tag, content_or_args) do
-        output(yield).html_safe
-      end
-    else
-      content_tag(tag, html_args) do
-        output(content_or_args).html_safe
-      end
-    end
+    content = block_given? ? yield : content_or_args
+    tag_args = block_given? ? content_or_args : html_args
+    content_tag(tag, tag_args) { output(content).to_s.html_safe }
   end
 
   def wrap_each_with tag, content_or_args={}, args={}
     content = block_given? ? yield(args) : content_or_args
     args    = block_given? ? content_or_args : args
     content.compact.map do |item|
-      wrap_with tag, args do
-        item
-      end
+      wrap_with(tag, args) { item }
     end.join "\n"
   end
 end

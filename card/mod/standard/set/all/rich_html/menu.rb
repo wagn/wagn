@@ -3,7 +3,7 @@ format :html do
     return "" if card.unknown?
     wrap_with :div, class: "menu-slot nodblclick" do
       [
-        _optional_render(:horizontal_menu, args, :hide),
+        _render(:horizontal_menu, optional: :hide),
         _render_menu_link(args),
         _render_modal_slot(args.merge(modal_id: card.cardname.safe_key))
       ]

@@ -178,26 +178,5 @@ describe Card::Content::Chunk::Include, "Inclusion" do
       expect(wooga_age.format.render_core).to eq("39")
       expect(wooga_age.includers.map(&:name)).to eq(["Wooga"])
     end
-
-    it "handles shading" do
-      create! "Alpha", "Pooey"
-      create! "Beta", "{{Alpha|shade:off}}"
-      r = create!("Bee", "{{Alpha|shade:off}}").format.render_core
-      assert_view_select r, 'div[style~="shade:off;"]' do
-        assert_select "div[class~=card-content]", "Pooey"
-      end
-      r = create!("Cee", "{{Alpha| shade: off }}").format.render_core
-      assert_view_select r, 'div[style~="shade:off;"]' do
-        assert_select "div[class~=card-content]", "Pooey"
-      end
-      r = create!("Dee", "{{Alpha| shade:off }}").format.render_core
-      assert_view_select r, 'div[style~="shade:off;"]' do
-        assert_select 'div[class~="card-content"]', "Pooey"
-      end
-      r = create!("Eee", "{{Alpha| shade:on }}").format.render_core
-      assert_view_select r, 'div[style~="shade:on;"]' do
-        assert_select 'div[class~="card-content"]', "Pooey"
-      end
-    end
   end
 end

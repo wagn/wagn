@@ -82,6 +82,18 @@ class Card
       @options
     end
 
+    def slot_options context_names
+      opts = options.clone
+      opts.delete :view
+      slot_name_context_option opts, context_names
+      opts
+    end
+
+    def slot_name_context_option opts, context_names
+      return unless context_names.present?
+      opts[:name_context] = context_names.map(&:key) * ","
+    end
+
     def standard_options_from_args_and_parent
       @@standard_option_keys.each_with_object({}) do |key, hash|
         value = live_args.delete(key)
@@ -100,10 +112,6 @@ class Card
     def live_args
       @live_args ||=
         format.view_options_with_defaults(requested, clean_args.clone)
-    end
-
-    def style
-      options[:style]
     end
 
     def items

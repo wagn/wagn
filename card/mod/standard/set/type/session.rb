@@ -9,7 +9,6 @@ def followable?
 end
 
 event :store_in_session, :prepare_to_validate, on: :save, changed: :content do
-  # binding.pry
   Env.session[key] = db_content
   self.db_content = ""
 end

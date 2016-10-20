@@ -29,7 +29,8 @@ describe Card::Set::All::RichHtml::Wrapper do
           assert_select 'div[class="card-header panel-heading"]' do
             assert_select 'div[class="card-header-title panel-title"]'
           end
-          assert_select 'div[class~="closed-content card-content"]'
+          assert_select 'div[class~="card-body card-content"]'
+          assert_select 'div[class~="closed-content"]'
         end
       end
     end

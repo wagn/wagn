@@ -61,17 +61,27 @@ format :html do
   end
 
   def related_frame
+    voo.show! :menu
     wrap do
       [
-        _optional_render_menu,
-        _optional_render_related_subheader,
+        _render_menu,
+        _optional_render_subheader,
         frame_help,
         panel { wrap_body { yield } }
       ]
     end
   end
 
-  def frame
+  def frame &block
+    method = show_related_frame? ? :related_frame : :standard_frame
+    send method, &block
+  end
+
+  def show_related_frame?
+    parent && parent.voo.approved == :related
+  end
+
+  def standard_frame
     voo.hide :horizontal_menu, :help
     wrap do
       [
@@ -86,6 +96,7 @@ format :html do
       ]
     end
   end
+
 
   def frame_help
     _optional_render :help, help_class: "alert alert-info"

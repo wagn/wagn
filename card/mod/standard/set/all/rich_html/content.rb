@@ -138,43 +138,37 @@ format :html do
     Card.fetch(set_name)
   end
 
-  def default_related_args args
-    rparams = args[:related] || params[:related]
-    return unless rparams
-    rcard = rparams[:card] || begin
-      rcardname = rparams[:name].to_name.to_absolute_name(card.cardname)
-      Card.fetch rcardname, new: {}
-    end
 
-    subheader = with_name_context(card.name) do
-      subformat(rcard)._render_title(args)
-    end
-    add_name_context card.name
-    nest_args = (rparams[:slot] || {}).deep_symbolize_keys.reverse_merge(
-      view:  (rparams[:view] || :open),
-      hide: [:header, :toggle],
-      show: [:menu, :help],
-
-      subheader:       subheader,
-      parent:          card,
-      subframe:        true
-    )
-    if rcard.show_comment_box_in_related?
-      nest_args[:show] << :comment_box
-    end
-    args[:related_args] = nest_args
-    args[:related_card] = rcard
-  end
+    # subheader = with_name_context(card.name) do
+    #   subformat(rcard)._render_title(args)
+    # end
 
 
   view :related do |args|
-    return unless args[:related_card]
-    voo.show :toolbar
+    related_card, options = related_card_and_options args
+    return unless related_card
+    voo.show :toolbar, :menu, :help
     frame do
-      nest(args[:related_card], args[:related_args])
+      voo.hide :header, :toggle
+      nest related_card, options
     end
   end
 
+  def related_card_and_options args
+    return unless (options = args[:related] || params[:related])
+    related_card = related_card_from_options options
+    options[:view] ||= :open
+    options[:show] ||= []
+    options[:show] << :comment_box if related_card.show_comment_box_in_related?
+    [related_card, options]
+  end
+
+  def related_card_from_options options
+    related_card = options.delete :card
+    return related_card if related_card
+    related_name = options[:name].to_name.to_absolute_name card.cardname
+    Card.fetch related_name, new: {}
+  end
 
   view :help, tags: :unknown_ok do |args|
     text = args[:help_text] || begin

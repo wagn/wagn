@@ -26,14 +26,13 @@ format :html do
     main_header + _optional_render_toolbar
   end
 
-  view :subheader do |args|
-    args[:subheader] ||= toolbar_view_title(@slot_view) || _render_title(args)
-    %(
-      <div class="card-subheader navbar-inverse btn-primary active">
-        #{args[:subheader]}
-        #{autosaved_draft_link if card.drafts.present? && @slot_view == :edit}
-      </div>
-    )
+  view :subheader do
+    wrap_with :div, class: "card-subheader navbar-inverse btn-primary active" do
+      [_render_title,
+       (autosaved_draft_link if card.drafts.present? && @slot_view == :edit)
+      ]
+    end
+    # toolbar_view_title(@slot_view) || _render_title(args)
   end
 
   view :toggle do

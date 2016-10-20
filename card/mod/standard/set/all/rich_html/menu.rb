@@ -1,16 +1,16 @@
 format :html do
-  view :menu, denial: :blank, tags: :unknown_ok, when:{} do |args|
+  view :menu, denial: :blank, tags: :unknown_ok do
     return "" if card.unknown?
     wrap_with :div, class: "menu-slot nodblclick" do
       [
         _render(:horizontal_menu, optional: :hide),
-        _render_menu_link(args),
-        _render_modal_slot(args.merge(modal_id: card.cardname.safe_key))
+        _render_menu_link,
+        _render_modal_slot(modal_id: card.cardname.safe_key)
       ]
     end
   end
 
-  view :menu_link do |args|
+  view :menu_link do
     css_class =
       show_view?(:horizontal_menu, :hide) ? "visible-xs" : "show-on-hover"
 
@@ -52,8 +52,7 @@ format :html do
     end
   end
 
-
-  view :horizontal_menu do |args|
+  view :horizontal_menu do
     content_tag :div, class: "btn-group slotter pull-right card-menu "\
                              "horizontal-card-menu hidden-xs" do
       menu_item_list(class: "btn btn-default").join("\n").html_safe

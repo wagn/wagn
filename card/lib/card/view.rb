@@ -7,7 +7,7 @@ class Card
     include Cache
     extend Cache::ClassMethods
 
-    @@string_option_keys = [
+    @@standard_options = [
       :nest_name,   # name as used in nest
       :nest_syntax, # full nest syntax
 
@@ -21,24 +21,25 @@ class Card
       :size
     ]
 
-    @@hash_option_keys = [
+    @@hash_options = [
       :items        # handles pipe-based recursion
     ]
 
-    @@array_option_keys = [
+    @@array_options = [
       :hide, :show  # affect optional rendering
     ]
 
-    @@standard_option_keys = @@string_option_keys + @@hash_option_keys
-    @@option_keys = @@standard_option_keys + @@array_option_keys
+    @@string_options = @@standard_options << :view
+    @@options = @@string_options + @@array_options + @@hash_options
 
-    cattr_reader :option_keys
+    cattr_reader :options
     attr_reader :format
 
-    def initialize format, view, args={}, parent_voo=nil
+    def initialize format, view, raw_options={}, parent_voo=nil
       @format = format
-      @original = view
-      @original_args = args
+      @card = @format.card
+      @raw_view = view
+      @raw_options = raw_options
       @parent_voo = parent_voo
       options
     end
@@ -46,26 +47,25 @@ class Card
     def prepare
       return if hide?
       fetch do
-        yield approved, sanitized_live_args
+        yield approved, non_standard_options
       end
     end
 
-    def requested
-      @requested ||= View.canonicalize @original
+    def original_view
+      @original_view ||= View.canonicalize @raw_view
     end
 
     def approved
-      @approved ||= format.ok_view requested, live_args
+      @approved ||= @format.ok_view original_view, live_options
     end
 
-    # default_X_args not yet run
-    def clean_args
-      @clean_args ||= case (a = @original_args.clone)
-                      when nil   then {}
-                      when Hash  then a
-                      when Array then a[0].merge a[1]
-                      else raise Card::Error, "bad view args: #{a}"
-                      end
+    def normalized_options
+      @normalized_options ||= case (raw = @raw_options.clone)
+                              when nil   then {}
+                              when Hash  then raw
+                              when Array then raw[0].merge raw[1]
+                              else raise Card::Error, "bad view options: #{raw}"
+                              end
     end
 
     def refreshed_options
@@ -75,48 +75,38 @@ class Card
 
     def options
       return @options if @options
-      @options = standard_options_from_args_and_parent
+      @options = standard_options_with_inheritance
       process_visibility_options
       @options
     end
 
-    def slot_options context_names
-      opts = options.clone
-      opts.delete :view
-      slot_name_context_option opts, context_names
-      opts
-    end
-
-    def slot_name_context_option opts, context_names
-      return unless context_names.present?
-      opts[:name_context] = context_names.map(&:key) * ","
-    end
-
-    def standard_options_from_args_and_parent
-      @@standard_option_keys.each_with_object({}) do |key, hash|
-        value = live_args.delete(key)
+    def standard_options_with_inheritance
+      @@standard_options.each_with_object({}) do |key, hash|
+        value = live_options.delete key
         value ||= @parent_voo.options[key] if @parent_voo
         hash[key] = value if value
         hash
       end
     end
 
-    def sanitized_live_args
-      live_args.reject do |key, _value|
-        @@option_keys.member? key
+    def non_standard_options
+      live_options.reject do |key, _value|
+        @@options.member? key
       end
     end
 
-    def live_args
-      @live_args ||=
-        format.view_options_with_defaults(requested, clean_args.clone)
+    # run default_X_args
+    def live_options
+      @live_options ||= @format.view_options_with_defaults(
+        original_view, normalized_options.clone
+      )
     end
 
     def items
       options[:items] ||= {}
     end
 
-    @@string_option_keys.each do |option_key|
+    @@standard_options.each do |option_key|
       define_method option_key do
         options[option_key]
       end

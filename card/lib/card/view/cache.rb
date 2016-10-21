@@ -6,7 +6,7 @@ class Card
 
       def fetch &block
         level = cache_level
-        # puts "#{format.card.name}/#{approved}..cache level = #{level} for #{approved}, "
+        # puts "#{@card.name}/#{approved}..cache level = #{level}"
         case level
         when :off  then yield
         when :full then cache_fetch(&block)
@@ -35,11 +35,11 @@ class Card
       end
 
       def cache_permissible?
-        format.view_cache_permissible? approved, options
+        @format.view_cache_permissible? approved, options
       end
 
       def cache_setting
-        format.view_cache_setting approved
+        @format.view_cache_setting approved
       end
 
       # "default" means not in the context of a nest within an active
@@ -51,7 +51,7 @@ class Card
       # names
       def cacheable_nest_name?
         case options[:nest_name]
-        when "_main" then format.main?
+        when "_main" then @format.main?
         when "_user" then false
         else true
         end
@@ -69,7 +69,7 @@ class Card
       end
 
       def cache_key
-        "#{format.card.key}-#{approved}-#{options}"
+        "#{@card.key}-#{approved}-#{options}"
       end
 
       def complete_render cached_view

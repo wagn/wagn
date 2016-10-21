@@ -1,11 +1,5 @@
 format :html do
 
-  def slot_option_keys
-    @@slot_option_keys ||= Card::View.option_keys
-                                     .reject { |k| k == :view }
-                                     .unshift :home_view
-  end
-
   # Does two main things:
   # (1) gives CSS classes for styling and
   # (2) adds card data for javascript - including the "card-slot" class,
@@ -22,7 +16,28 @@ format :html do
   def wrap_data
     { "card-id"           => card.id,
       "card-name"         => h(card.name),
-      "slot"              => voo.slot_options(@context_names) }
+      "slot"              => slot_options }
+  end
+
+  def slot_options_json
+    html_escape_except_quotes JSON(slot_options)
+  end
+
+  def slot_options
+    options = standard_slot_options
+    name_context_slot_option options
+    options
+  end
+
+  def standard_slot_options
+    opts = voo.options.clone
+    opts.delete :view
+    opts
+  end
+
+  def name_context_slot_option opts
+    return unless @context_names.present?
+    opts[:name_context] = @context_names.map(&:key) * ","
   end
 
   def debug_slot

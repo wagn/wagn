@@ -56,7 +56,7 @@ class Card
             if key == :item
               options_hash[:items] ||= {}
               options_hash[:items][:view] = value
-            elsif Card::View.option_keys.include? key
+            elsif Card::View.options.include? key
               options_hash[key] = value
               # else
               # handle other keys

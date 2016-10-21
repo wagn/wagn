@@ -93,7 +93,7 @@ format :html do
   end
 
   def show_related_frame?
-    parent && parent.voo.approved == :related
+    parent && parent.voo.ok_view == :related
   end
 
   def standard_frame

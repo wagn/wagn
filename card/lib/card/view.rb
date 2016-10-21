@@ -11,7 +11,6 @@ class Card
       :nest_name,   # name as used in nest
       :nest_syntax, # full nest syntax
 
-      :view,
       :structure,
       :type,
       :title,
@@ -47,7 +46,7 @@ class Card
     def prepare
       return if hide?
       fetch do
-        yield approved, non_standard_options
+        yield ok_view, non_standard_options
       end
     end
 
@@ -55,23 +54,31 @@ class Card
       @original_view ||= View.canonicalize @raw_view
     end
 
-    def approved
-      @approved ||= @format.ok_view original_view, live_options
+    def ok_view
+      @ok_view ||= @format.ok_view original_view, live_options
     end
 
     def normalized_options
-      @normalized_options ||= case (raw = @raw_options.clone)
-                              when nil   then {}
-                              when Hash  then raw
-                              when Array then raw[0].merge raw[1]
-                              else raise Card::Error, "bad view options: #{raw}"
-                              end
+      @normalized_options ||= begin
+        opts = options_to_hash @raw_options.clone
+        opts.delete :view
+        opts
+      end
     end
 
-    def refreshed_options
-      @options = nil
-      options
+    def options_to_hash opts
+      case opts
+      when Hash  then opts
+      when Array then opts[0].merge opts[1]
+      when nil   then {}
+      else raise Card::Error, "bad view options: #{opts}"
+      end
     end
+
+    # def refreshed_options
+    #   @options = nil
+    #   options
+    # end
 
     def options
       return @options if @options
@@ -81,7 +88,7 @@ class Card
     end
 
     def standard_options_with_inheritance
-      @@standard_options.each_with_object({}) do |key, hash|
+      (@@standard_options + @@hash_options).each_with_object({}) do |key, hash|
         value = live_options.delete key
         value ||= @parent_voo.options[key] if @parent_voo
         hash[key] = value if value

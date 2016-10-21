@@ -1,9 +1,13 @@
 class Card
   class View
     module Cache
+      CACHE_SETTING_NEST_LEVEL =
+        { always: :full, nested: :off, never: :stub }.freeze
 
       def fetch &block
-        case (level = cache_level)
+        level = cache_level
+        # puts "#{format.card.name}/#{approved}..cache level = #{level} for #{approved}, "
+        case level
         when :off  then yield
         when :full then cache_fetch(&block)
         when :stub then stub_nest
@@ -11,13 +15,13 @@ class Card
         end
       end
 
-      def stub_nest view, args
+      def stub_nest
         # binding.pry
         "<card-nest/>"
       end
 
       def cache_level
-        return :off unless Card.config.view_cache
+        return :off # unless Card.config.view_cache
         level_method = self.class.in_progress? ? :cache_nest : :cache_default
         send "#{level_method}_level"
       end
@@ -35,9 +39,8 @@ class Card
       end
 
       def cache_setting
-        format.view_cache_setting
+        format.view_cache_setting approved
       end
-
 
       # "default" means not in the context of a nest within an active
       # cache result
@@ -46,17 +49,17 @@ class Card
       end
 
       # names
-      def cacheable_nest_name? name
-        case name
-        when "_main" then main?
+      def cacheable_nest_name?
+        case options[:nest_name]
+        when "_main" then format.main?
         when "_user" then false
         else true
         end
       end
 
-      def cache_fetch
+      def cache_fetch &block
         self.class.progressively do
-          cached_view = fetch cache_key, &block
+          cached_view = Card::View.cache.fetch cache_key, &block
           cache_strategy == :client ? cached_view : complete_render(cached_view)
         end
       end
@@ -66,6 +69,7 @@ class Card
       end
 
       def cache_key
+        "#{format.card.key}-#{approved}-#{options}"
       end
 
       def complete_render cached_view

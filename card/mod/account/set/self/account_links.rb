@@ -38,7 +38,10 @@ format :html do
     item_links.join " "
   end
 
-  view :core do
+  view(:navbar_right, cache: :never) { super() }
+
+
+  view :core, cache: :never do
     status_class = Auth.signed_in? ? "logged-in" : "logged-out"
     content_tag :span, id: "logging", class: status_class do
       render_raw

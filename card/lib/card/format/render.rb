@@ -3,9 +3,6 @@ class Card
     # View rendering methods.
     #
     module Render
-      CACHE_SETTING_NEST_LEVEL =
-        { always: :full, nested: :off, never: :stub }.freeze
-
       # API
       # `view cache: [:always, :nested, :never]
       # :always means a view is always cached when rendered
@@ -60,7 +57,7 @@ class Card
 
       # setting (:alway, :never, :nested) designated in view definition
       def view_cache_setting view
-        setting_method = "view_#{view}_cache_setting"
+        setting_method = self.class.view_cache_setting_method view
         respond_to?(setting_method) ? send(setting_method) : :always
       end
 

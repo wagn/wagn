@@ -43,14 +43,12 @@ class Card
       options
     end
 
-
     def prepare
       return if hide?
-      #fetch do
+      fetch do
         yield approved, sanitized_live_args
-        #end
+      end
     end
-
 
     def requested
       @requested ||= View.canonicalize @original
@@ -127,8 +125,5 @@ class Card
         options[option_key] = value
       end
     end
-
-
-
   end
 end

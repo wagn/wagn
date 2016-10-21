@@ -145,39 +145,39 @@ format :html do
 
   view :edit_rule, tags: :unknown_ok do |args|
     return "not a rule" unless card.is_rule?
-    rule_context = args[:rule_context] || card
-    success_args = edit_rule_success rule_context
+    @rule_context = args[:rule_context] || card
+    @edit_rule_success = edit_rule_success
     action_args = { action: :update, no_mark: true }
 
     card_form action_args, class: "card-rule-form" do |_form|
-      [hidden_tags(success: success_args),
-       editor(rule_context, success_args),
-       edit_rule_buttons(success_args)].join
+      [hidden_tags(success: @edit_rule_success),
+       editor,
+       edit_rule_buttons].join
     end
   end
 
-  def edit_rule_success rule_context
-    { id:   rule_context.cardname.url_key,
+  def edit_rule_success
+    { id:   @rule_context.cardname.url_key,
       view: "open_rule",
       item: "view_rule" }
   end
 
-  def edit_rule_buttons success_args
+  def edit_rule_buttons
     wrap_with(:div, class: "button-area") do
       [
-        edit_rule_delete_button(success: success_args),
+        edit_rule_delete_button,
         edit_rule_submit_button,
         edit_rule_cancel_button
       ]
     end
   end
 
-  def edit_rule_delete_button args, slot_selector=nil
+  def edit_rule_delete_button args={}
     return if card.new_card?
     options = { remote: true,
                 type: "button",
                 class: "rule-delete-button slotter",
-                href: path(action: :delete, success: args[:success]) }
+                href: path(action: :delete, success: @edit_rule_success) }
     options["data-slot-selector"] = slot_selector if args[:slot_selector]
     delete_button_confirmation_option options, args[:fallback_set]
     wrap_with :span, class: "rule-delete-section" do
@@ -202,16 +202,17 @@ format :html do
                   href: path(view: cancel_view, success: false)
   end
 
-  def editor rule_context, success
+  def editor
     wrap_with(:div, class: "card-editor") do
-      [rules_type_formgroup(success),
+      [rules_type_formgroup,
        rule_content_formgroup,
-       rule_set_selection(rule_context)].compact
+       rule_set_selection].compact
     end
   end
 
-  def rules_type_formgroup success
+  def rules_type_formgroup
     return unless card.right.rule_type_editable
+    success = @edit_rule_success
     type_formgroup do
       type_field(
         href: path(mark: success[:id], view: success[:view], type_reload: true),
@@ -227,10 +228,10 @@ format :html do
     end
   end
 
-  def rule_set_selection rule_context
+  def rule_set_selection
     wrap_with :div, class: "row" do
-      [rule_set_formgroup(rule_context),
-       related_set_formgroup(rule_context)]
+      [rule_set_formgroup,
+       related_set_formgroup]
     end
   end
 
@@ -238,18 +239,18 @@ format :html do
   #   args[:set_context] ||= card.rule_set_name
   # end
 
-  def rule_set_formgroup rule_context
-    tag = rule_context.rule_user_setting_name
+  def rule_set_formgroup
+    tag = @rule_context.rule_user_setting_name
     narrower = []
     option_list "set" do
-      rule_set_options(rule_context).each do |set_name, state|
+      rule_set_options.map do |set_name, state|
         rule_set_radio_button set_name, tag, state, narrower
       end
     end
   end
 
-  def rule_set_options rule_context
-    @rule_set_options ||= rule_context.set_options
+  def rule_set_options
+    @rule_set_options ||= @rule_context.set_options
   end
 
   def selected_rule_set
@@ -289,17 +290,17 @@ format :html do
     card.new_card? ? Card.quick_fetch(:all).cardname.key : card.rule_set_key
   end
 
-  def related_set_formgroup rule_context
-    related_sets = related_sets_in_context rule_context
+  def related_set_formgroup
+    related_sets = related_sets_in_context
     return "" unless related_sets && !related_sets.empty?
-    tag = rule_context.rule_user_setting_name
+    tag = @rule_context.rule_user_setting_name
     option_list "related set" do
       related_rule_radios related_sets, tag
     end
   end
 
-  def related_sets_in_context rule_context
-    set_context = rule_context.rule_set_name
+  def related_sets_in_context
+    set_context = @rule_context.rule_set_name
     set_context && Card.fetch(set_context).prototype.related_sets
   end
 
@@ -361,9 +362,6 @@ format :html do
     %(<div class="edit-single-rule panel-body">#{render_edit_rule args}</div>)
   end
 
-
-
-
   def default_edit_single_rule_args args
     args[:remote] ||= false
     args[:success] ||= {
@@ -385,9 +383,6 @@ format :html do
                    class: "rule-cancel-button btn btn-default",
                    path: { view: args[:success][:view] }
   end
-
-
-
 
   private
 

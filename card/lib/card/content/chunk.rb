@@ -68,10 +68,10 @@ class Card
       # Could really happen almost anywhere
       # (even before chunk classes are loaded).
       register_list :default, [
-        :URI, :HostURI, :EmailURI, :EscapedLiteral, :Include, :Link
+        :URI, :HostURI, :EmailURI, :EscapedLiteral, :Nest, :Link
       ]
-      register_list :references,  [:EscapedLiteral, :Include, :Link]
-      register_list :nest_only, [:Include]
+      register_list :references,  [:EscapedLiteral, :Nest, :Link]
+      register_list :nest_only, [:Nest]
       register_list :query, [:QueryReference]
 
       class Abstract

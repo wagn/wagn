@@ -141,7 +141,7 @@ def each_reference_chunk content=nil
 end
 
 def each_nested_chunk content=nil
-  nest_chunk_type = Card::Content::Chunk::Include
+  nest_chunk_type = Card::Content::Chunk::Nest
   each_chunk content: content, chunk_type: nest_chunk_type do |chunk|
     yield chunk
   end

@@ -6,7 +6,7 @@ class Card
   class Content
     module Chunk
       # Handler for nest chunks: {{example}}
-      class Include < Reference
+      class Nest < Reference
         attr_reader :options
         DEFAULT_OPTION = :view # a value without a key is interpreted as view
 

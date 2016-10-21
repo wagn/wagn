@@ -70,6 +70,18 @@ class Card
         end
       end
 
+      def complete_cached_view_render cached_content
+        return cached_content
+        string_and_stub_chunks(cached_content).map do |chunk|
+          process_view_stubs chunk
+        end.join
+      end
+
+      def string_and_stub_chunks cached_content
+
+      end
+
+
       def api_render match, opts
         view = match[3] ? match[4] : opts.shift
         args = opts[0] ? opts.shift.clone : {}

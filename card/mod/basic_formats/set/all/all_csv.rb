@@ -32,7 +32,7 @@ format :csv  do
         ""
       else
         titles = parsed_content.map do |chunk|
-          next if chunk.class != Card::Content::Chunk::Include
+          next if chunk.class != Card::Content::Chunk::Nest
           opts = chunk.options
           if %w(name link).member? opts[:view]
             opts[:view]

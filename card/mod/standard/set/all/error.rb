@@ -70,8 +70,8 @@ format :html do
   end
 
   def backtrace_link exception
-    alert_class = "render-error-message errors-view admin-error-message"
-    warning = alert("warning", dismissible: true, alert_class: alert_class) do
+    class_up "alert", "render-error-message errors-view admin-error-message"
+    warning = alert("warning", true) do
       %{
         <h3>Error message (visible to admin only)</h3>
         <p><strong>#{exception.message}</strong></p>
@@ -129,18 +129,20 @@ format :html do
   view :errors, perms: :none do
     return if card.errors.empty?
     voo.title = card.name.blank? ? "Problems" : "Problems with #{card.name}"
-    class_up "card-frame", "panel panel-warning"
     voo.hide! :menu
+    class_up "card-frame", "panel panel-warning"
+    class_up "alert", "card-error-msg"
     frame do
       card.errors.map do |attrib, msg|
-        unless attrib == :abort
-          msg = "<strong>#{attrib.to_s.upcase}:</strong> #{msg}"
-        end
-        alert "warning", dismissible: true, alert_class: "card-error-msg" do
-          msg
+        alert "warning", true do
+          attrib == :abort ? msg : standard_error_message(attrib, msg)
         end
       end
     end
+  end
+
+  def standard_error_message attribute, message
+    "<strong>#{attribute.to_s.upcase}:</strong> #{message}"
   end
 
   view :not_found do # ug.  bad name.

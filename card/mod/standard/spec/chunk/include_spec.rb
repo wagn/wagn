@@ -1,9 +1,9 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::Content::Chunk::Include, "Inclusion" do
+describe Card::Content::Chunk::Nest, "Inclusion" do
   context "syntax parsing" do
     before do
-      @class = Card::Content::Chunk::Include
+      @class = Card::Content::Chunk::Nest
     end
 
     let :instance do

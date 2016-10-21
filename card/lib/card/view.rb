@@ -97,9 +97,7 @@ class Card
     end
 
     def non_standard_options
-      live_options.reject do |key, _value|
-        @@options.member? key
-      end
+      live_options.reject { |key, _value| @@options.member? key }
     end
 
     # run default_X_args

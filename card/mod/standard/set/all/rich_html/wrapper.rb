@@ -112,8 +112,8 @@ format :html do
     end
   end
 
-
   def frame_help
+    # TODO: address these args
     _optional_render :help, help_class: "alert alert-info"
   end
 
@@ -126,23 +126,19 @@ format :html do
   end
 
   # alert_types: 'success', 'info', 'warning', 'danger'
-  def alert alert_type, args={}
-    css_class = "alert alert-#{alert_type} "
-    css_class += "alert-dismissible " if args[:dismissible]
-    css_class += args[:alert_class] if args[:alert_class]
-    close_button =
-      if args[:dismissible]
-        <<-HTML
-          <button type="button" class="close" data-dismiss="alert"
-                  aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        HTML
-      else
-        ""
-      end
-    content_tag :div, class: css_class, role: "alert" do
-      close_button + output(yield args)
+  def alert alert_type, dismissable=false
+    classes = ["alert", "alert-#{alert_type}"]
+    classes << "alert-dismissible " if dismissable
+
+    wrap_with :div, class: classy(classes), role: "alert" do
+      [(alert_close_button if dismissable), output(yield)]
+    end
+  end
+
+  def alert_close_button
+    wrap_with :button, type: "button", "data-dismiss" => "alert",
+                       class: "close", "aria-label" => "Close" do
+      wrap_with :span, "&times;", "aria-hidden" => true
     end
   end
 

@@ -7,12 +7,12 @@ describe Card::Content::Chunk, "Chunk" do
       expect(Card::Content::Chunk.prefix_map_by_list[:default].keys.size)
         .to be > 0
       expect(Card::Content::Chunk.prefix_map_by_list[:default]["{"][:class])
-        .to eq(Card::Content::Chunk::Include)
+        .to eq(Card::Content::Chunk::Nest)
     end
 
     it "should find Chunk classes using matched prefix" do
       expect(Card::Content::Chunk.find_class_by_prefix("{{"))
-        .to eq(Card::Content::Chunk::Include)
+        .to eq(Card::Content::Chunk::Nest)
     end
   end
 end

@@ -5,42 +5,42 @@ describe Card::Content do
   EXAMPLES = {
     nests: {
       content: "Some Literals: \\[{I'm not| a link]}, and " \
-                '\\{{This Card|Is not Included}}' \
+                '\\{{This Card|Is not Nestd}}' \
                 ", but " \
                 "{{this is}}" \
                 ", and some tail",
       rendered: ["Some Literals: \\[{I'm not| a link]}, and ",
-                 "<span>{</span>{This Card|Is not Included}}",
+                 "<span>{</span>{This Card|Is not Nestd}}",
                  ", but ",
                  { options: { nest_name: "this is",
                               nest_syntax: "this is" } },
                  ", and some tail"],
-      classes: [String, :EscapedLiteral, String, :Include, String]
+      classes: [String, :EscapedLiteral, String, :Nest, String]
     },
 
     links_and_nests: {
       content: "Some Links and includes: [[the card|the text]], " \
-               "and {{This Card|Is Included}}{{this too}} " \
+               "and {{This Card|Is Nestd}}{{this too}} " \
                "and [[http://external.wagn.org/path|link text]]" \
-               "{{Included|open}}",
+               "{{Nestd|open}}",
       rendered: ["Some Links and includes: ",
                  '<a class="wanted-card" ' \
                  'href="/the_card">' \
                  "the text</a>",
                  ", and ",
-                 { options: { view: "Is Included",
+                 { options: { view: "Is Nestd",
                               nest_name: "This Card",
-                              nest_syntax: "This Card|Is Included" } },
+                              nest_syntax: "This Card|Is Nestd" } },
                  { options: { nest_name: "this too",
                               nest_syntax: "this too" } },
                  " and ",
                  '<a target="_blank" class="external-link" ' \
                'href="http://external.wagn.org/path">link text</a>',
                  { options: { view: "open",
-                              nest_name: "Included",
-                              nest_syntax: "Included|open" } }],
+                              nest_name: "Nestd",
+                              nest_syntax: "Nestd|open" } }],
       classes: [
-        String, :Link, String, :Include, :Include, String, :Link, :Include
+        String, :Link, String, :Nest, :Nest, String, :Link, :Nest
       ]
     },
 
@@ -134,7 +134,7 @@ describe Card::Content do
 
     single_nest: {
       content: "{{one nest|size;large}}",
-      classes: [:Include]
+      classes: [:Nest]
     },
 
     css: {

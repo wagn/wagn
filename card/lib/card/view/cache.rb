@@ -6,7 +6,8 @@ class Card
 
       def fetch &block
         level = cache_level
-        # puts "#{@card.name}/#{ok_view}..cache level = #{level}"
+        # puts "cache level #{level.to_s.upcase} :: "\
+        #     " #{@card.name}/#{original_view}"
         case level
         when :off  then yield
         when :full then cache_fetch(&block)
@@ -16,8 +17,15 @@ class Card
       end
 
       def stub_nest
-        # binding.pry
-        "<card-nest/>"
+        "<card-nest>#{stub_json}</card-nest>"
+      end
+
+      def stub_json
+        JSON(stub_hash)
+      end
+
+      def stub_hash
+        normalized_options.merge view: original_view
       end
 
       def cache_level
@@ -35,17 +43,24 @@ class Card
       end
 
       def cache_permissible?
-        @format.view_cache_permissible? ok_view, options
+        return false unless ok_view == original_view
+        @format.view_cache_permissible? original_view, options
       end
 
       def cache_setting
-        @format.view_cache_setting ok_view
+        @format.view_cache_setting original_view
       end
 
       # "default" means not in the context of a nest within an active
       # cache result
       def cache_default_level
-        cache_setting == :always && cache_permissible? ? :full : :off
+        ok_to_cache_independently? ? :full : :off
+      end
+
+      def ok_to_cache_independently?
+        cache_setting == :always &&
+          non_standard_options.empty? &&
+          cache_permissible?
       end
 
       # names
@@ -59,8 +74,11 @@ class Card
 
       def cache_fetch &block
         self.class.progressively do
-          cached_view = Card::View.cache.fetch cache_key, &block
-          cache_strategy == :client ? cached_view : complete_render(cached_view)
+          #cached_view = Card::View.cache.fetch cache_key, &block
+          cached_view = block.call
+          @format.complete_cached_view_render cached_view
+
+          #cache_strategy == :client ? cached_view : complete_render(cached_view)
         end
       end
 
@@ -69,7 +87,7 @@ class Card
       end
 
       def cache_key
-        "#{@card.key}-#{ok_view}-#{options}"
+        "#{@card.key}-#{original_view}-#{options}"
       end
 
       def complete_render cached_view

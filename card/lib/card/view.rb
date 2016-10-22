@@ -61,7 +61,7 @@ class Card
     def normalized_options
       @normalized_options ||= begin
         opts = options_to_hash @raw_options.clone
-        opts.delete :view
+        opts[:view] = original_view
         opts
       end
     end

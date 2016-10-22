@@ -6,8 +6,8 @@ class Card
 
       def fetch &block
         level = cache_level
-        # puts "cache level #{level.to_s.upcase} :: "\
-        #     " #{@card.name}/#{original_view}"
+        puts "cache level #{level.to_s.upcase} :: "\
+             " #{@card.name}/#{original_view}"
         case level
         when :off  then yield
         when :full then cache_fetch(&block)
@@ -16,20 +16,30 @@ class Card
         end
       end
 
+      def cache_fetch &block
+        cached_view =
+          self.class.progressively do
+            Card::View.cache.fetch cache_key, &block
+            # block.call
+          end
+        return cached_view unless cached_view.is_a? String
+        @format.complete_cached_view_render cached_view
+      end
+
       def stub_nest
-        "<card-nest>#{stub_json}</card-nest>"
+        "<card-view>#{stub_json}</card-view>"
       end
 
       def stub_json
-        JSON(stub_hash)
+        JSON.generate stub_array
       end
 
-      def stub_hash
-        normalized_options.merge view: original_view
+      def stub_array
+        [@card.cast, normalized_options]
       end
 
       def cache_level
-        return :off # unless Card.config.view_cache
+        # return :off # unless Card.config.view_cache
         level_method = self.class.in_progress? ? :cache_nest : :cache_default
         send "#{level_method}_level"
       end
@@ -72,16 +82,6 @@ class Card
         end
       end
 
-      def cache_fetch &block
-        self.class.progressively do
-          #cached_view = Card::View.cache.fetch cache_key, &block
-          cached_view = block.call
-          @format.complete_cached_view_render cached_view
-
-          #cache_strategy == :client ? cached_view : complete_render(cached_view)
-        end
-      end
-
       def cache_strategy
         Card.config.view_cache
       end
@@ -90,26 +90,9 @@ class Card
         "#{@card.key}-#{original_view}-#{options}"
       end
 
-      def complete_render cached_view
-        cached_view
-        # use Card::Content to process nest stubs
-      end
-
       module ClassMethods
         def cache
           Card::Cache[Card::View]
-        end
-
-        def fetch view, &block
-          actively do
-            cached_view = fetch self, view, args, &block
-            # cache_strategy == :client ? cached_view :
-            complete_render(cached_view)
-          end
-        end
-
-        def cache_strategy
-          Card.config.view_cache
         end
 
         def in_progress?
@@ -157,7 +140,6 @@ class Card
             "written to view cache: #{cache.fetch(key, &block)}"
           end
         end
-
       end
     end
   end

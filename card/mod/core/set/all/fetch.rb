@@ -183,6 +183,11 @@ module ClassMethods
     end
   end
 
+  def fetch_from_cast cast
+    fetch_args = cast[:id] ? [cast[:id].to_i] : [cast[:name], { new: cast }]
+    Card.fetch(*fetch_args)
+  end
+
   def cardish cardish
     if cardish.is_a? Card
       cardish

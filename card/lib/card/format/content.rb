@@ -11,11 +11,11 @@ class Card
       end
 
       def get_content_object content, opts
-        if content.is_a? Card::Content
-          content
-        else
-          Card::Content.new content, self, opts.delete(:content_opts)
-        end
+        #if content.is_a? Card::Content
+        #  content
+        #else
+        Card::Content.new content, self, opts.delete(:content_opts)
+        #end
       end
 
       def format_date date, include_time=true

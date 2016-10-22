@@ -73,6 +73,7 @@ class Card
       register_list :references,  [:EscapedLiteral, :Nest, :Link]
       register_list :nest_only, [:Nest]
       register_list :query, [:QueryReference]
+      register_list :stub, [:ViewStub]
 
       class Abstract
         class_attribute :config

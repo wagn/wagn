@@ -71,16 +71,18 @@ class Card
       end
 
       def complete_cached_view_render cached_content
-        return cached_content
-        string_and_stub_chunks(cached_content).map do |chunk|
-          process_view_stubs chunk
-        end.join
+        expand_stubs cached_content do |card, options|
+          nest card, options
+        end
       end
 
-      def string_and_stub_chunks cached_content
-
+      def expand_stubs cached_content
+        conto = Card::Content.new cached_content, self, chunk_list: :stub
+        conto.process_each_chunk do |card, options|
+          yield(card, options).to_s
+        end
+        conto.to_s
       end
-
 
       def api_render match, opts
         view = match[3] ? match[4] : opts.shift

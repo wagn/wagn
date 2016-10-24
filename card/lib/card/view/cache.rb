@@ -38,7 +38,7 @@ class Card
       end
 
       def cache_level
-        # return :off # unless Card.config.view_cache
+        return :off # unless Card.config.view_cache
         level_method = self.class.in_progress? ? :cache_nest : :cache_default
         send "#{level_method}_level"
       end

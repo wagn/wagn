@@ -86,7 +86,7 @@ class Card
       end
 
       def cache_key
-        "#{@card.key}-#{original_view}-#{options}"
+        "#{@card.key}-#{@format.class}-#{original_view}-#{options}"
       end
 
       module ClassMethods

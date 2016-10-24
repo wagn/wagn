@@ -163,38 +163,41 @@ format :html do
   end
 
   view :denial do
-    to_task = @denied_task ? "to #{@denied_task} this." : "to do that."
-    if !focal?
-      %(
-        <span class="denied">
-          <!-- Sorry, you don't have permission #{to_task} -->
-        </span>
-      )
-    else
-      frame do # ENGLISH below
-        message =
-          case
-          when task != :read && Card.config.read_only
-            "We are currently in read-only mode.  Please try again later."
-          when Auth.signed_in?
-            "You need permission #{to_task}"
-          else
-            signin_link = link_to_card :signin, "sign in"
-            or_signup_link =
-              if Card.new(type_id: Card::SignupID).ok? :create
-                "or " +
-                  link_to("sign up", path: { action: "new", mark: :signup })
-              end
-            Env.save_interrupted_action(request.env["REQUEST_URI"])
-            "Please #{signin_link} #{or_signup_link} #{to_task}"
-          end
+    focal? ? loud_denial : quiet_denial
+  end
 
-        %(
-          <h1>Sorry!</h1>
-          <div>#{message}</div>
-        )
-      end
+  def quiet_denial
+    wrap_with :span, class: "denied" do
+      "<!-- Sorry, you don't have permission (#{@denied_task}) -->"
     end
+  end
+
+  def loud_denial
+    frame do
+      wrap_with :h1, "Sorry!"
+      wrap_with :div, loud_denial_message
+    end
+  end
+
+  def loud_denial_message
+    to_task = @denied_task ? "to #{@denied_task} this." : "to do that."
+    case
+    when @denied_task != :read && Card.config.read_only
+      "We are currently in read-only mode.  Please try again later."
+    when Auth.signed_in?
+      "You need permission #{to_task}"
+    else
+      denial_message_with_links to_task
+    end
+  end
+
+  def denial_message_with_links to_task
+    linx = [link_to_card(:signin, "sign in")]
+    if Card.new(type_id: Card::SignupID).ok?(:create)
+      linx += ["or", link_to("sign up", path: { action: "new", mark: :signup })]
+    end
+    Env.save_interrupted_action request.env["REQUEST_URI"]
+    "Please #{linx.join ' '} #{to_task}"
   end
 
   view :server_error do

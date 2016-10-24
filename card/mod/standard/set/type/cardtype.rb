@@ -68,6 +68,10 @@ def cards_of_type_exist?
   !new_card? && Auth.as_bot { Card.count_by_wql type_id: id } > 0
 end
 
+def create_ok?
+  Card.new(type_id: id).ok? :create
+end
+
 event :check_for_cards_of_type, after: :validate_delete do
   if cards_of_type_exist?
     errors.add :cardtype, "can't alter this type; #{name} cards still exist"

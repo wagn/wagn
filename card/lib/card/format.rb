@@ -53,9 +53,7 @@ class Card
         raise Card::Error, msg
       end
 
-      opts.each do |key, value|
-        instance_variable_set "@#{key}", value
-      end
+      opts.each { |key, value| instance_variable_set "@#{key}", value }
 
       @mode ||= :normal
       @root ||= self

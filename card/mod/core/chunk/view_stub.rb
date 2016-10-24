@@ -11,14 +11,15 @@ class Card
 
         def interpret match, _content
           @options_json = match[1]
-          @card_cast, @options = JSON.parse @options_json
+          @card_cast, @options, nest_mode = JSON.parse @options_json
           @card_cast.symbolize_keys!
           @options.symbolize_keys!
+          @nest_mode = nest_mode.to_sym
         end
 
         def process_chunk
           @card = Card.fetch_from_cast @card_cast
-          @processed = yield @card, @options
+          @processed = yield @card, @options, @nest_mode
         end
       end
     end

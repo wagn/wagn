@@ -44,7 +44,7 @@ class Card
       send "#{accessor_name}=", {}
     end
 
-    attr_reader :card, :root, :parent, :main_opts
+    attr_reader :card, :root, :parent, :main_opts, :mode
     attr_accessor :form, :error_status
 
     def initialize card, opts={}

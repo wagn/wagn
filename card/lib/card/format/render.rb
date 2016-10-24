@@ -61,26 +61,17 @@ class Card
         respond_to?(setting_method) ? send(setting_method) : :always
       end
 
-      # for now, permit only if "Anyone" can read card and see view
-      # later add support for caching restricted views nested by other views
-      # with the same restrictions
-      def view_cache_permissible? view, args
-        Card::Auth.as(:anonymous) do
-          card.ok?(:read) && ok_view(view, args)
-        end
-      end
-
       def complete_cached_view_render cached_content
         return cached_content unless cached_content.is_a? String
-        expand_stubs cached_content do |card, options|
-          nest card, options
+        expand_stubs cached_content do |card, options, nest_mode|
+          with_nest_mode(nest_mode) { nest card, options }
         end
       end
 
       def expand_stubs cached_content
         conto = Card::Content.new cached_content, self, chunk_list: :stub
-        conto.process_each_chunk do |card, options|
-          yield(card, options).to_s
+        conto.process_each_chunk do |card, options, nest_mode|
+          yield(card, options, nest_mode).to_s
         end
         conto.to_s
       end

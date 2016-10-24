@@ -39,6 +39,7 @@ format :html do
                      "REDIRECT: #{Env.interrupted_action || '*previous'}"
   end
 
+
   def signin_buttons
     button_formgroup do
       [signin_button, signup_link, reset_password_link]
@@ -87,11 +88,17 @@ format :html do
     if @forgot_password
       "{{+#{Card[:email].name}|title:email;type:Phrase}}"
     else
-      %(
-        {{+#{Card[:email].name}|titled;title:email}}
-        {{+#{Card[:password].name}|titled;title:password}}
-      )
+      "{{+#{Card[:email].name}|titled;title:email}}
+       {{+#{Card[:password].name}|titled;title:password}}"
     end
+
+    # fields = [nest("".to_name.trait(:email),
+    #                view: "titled", title: "email", skip_permissions: true)]
+    # unless @forgot_password
+    #   fields << nest("".to_name.trait(:password),
+    #                  view: "titled", title: "password", skip_permissions: true)
+    # end
+    # fields.join
   end
 
   view :reset_password_success do

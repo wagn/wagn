@@ -111,7 +111,7 @@ format :html do
   def edit_split_button args
     toolbar_split_button "edit", { view: :edit }, args do
       {
-        edit:       _render_edit_content_link(args),
+        edit:       _render_edit_link(args),
         edit_nests: (_render_edit_nests_link if nests_editable?(args)),
         structure:  (_render_edit_structure_link if structure_editable?),
         edit_name:  _render_edit_name_link,
@@ -251,34 +251,19 @@ format :html do
                  class: "navbar-link slotter pull-right"
   end
 
-  view :edit_content_link do
-    voo.title ||= "content"
-    toolbar_view_link :edit
-  end
+  {
+    edit:           "content",
+    edit_name:      "name",
+    edit_type:      "type",
+    edit_nests:     "nests",
+    edit_structure: "structure",
+    history:        "history"
+  }.each do |viewname, viewtitle|
 
-  view :edit_name_link do
-    voo.title ||= "name"
-    toolbar_view_link :edit_name
-  end
-
-  view :edit_type_link do
-    voo.title ||= "type"
-    toolbar_view_link :edit_type
-  end
-
-  view :edit_structure_link do
-    voo.title ||= "structure"
-    toolbar_view_link :edit_structure
-  end
-
-  view :history_link do
-    voo.title ||= "history"
-    toolbar_view_link :history
-  end
-
-  view :edit_nests_link do
-    voo.title ||= "nests"
-    toolbar_view_link :edit_nests
+    view "#{viewname}_link" do
+      voo.title ||= viewtitle
+      toolbar_view_link viewname
+    end
   end
 
   def toolbar_view_link view

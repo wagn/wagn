@@ -17,21 +17,33 @@ class Card
       :variant,
       :params,
       :home_view,
-      :size
+      :size,
+
+      :skip_permissions
     ]
 
-    @@hash_options = [
-      :items        # handles pipe-based recursion
+    @@standard_inheritance_options = @@standard_options + [
+      :items
     ]
 
-    @@array_options = [
+    @@other_options = [
+      :view,
       :hide, :show  # affect optional rendering
     ]
 
-    @@string_options = @@standard_options << :view
-    @@options = @@string_options + @@array_options + @@hash_options
+    cattr_reader :options, :nest_options
 
-    cattr_reader :options
+    class << self
+      def options
+        @options ||= @@standard_inheritance_options + @@other_options
+      end
+
+      def nest_options
+        @nest_options ||= options.reject { |o| o == :skip_permissions }
+      end
+    end
+
+
     attr_reader :format
 
     def initialize format, view, raw_options={}, parent_voo=nil
@@ -46,7 +58,7 @@ class Card
     def prepare
       return if hide?
       fetch do
-        yield ok_view, non_standard_options
+        yield ok_view, foreign_options
       end
     end
 
@@ -55,8 +67,7 @@ class Card
     end
 
     def ok_view
-      @ok_view ||=
-        @format.ok_view original_view, live_options[:skip_permissions]
+      @format.ok_view original_view, options[:skip_permissions]
     end
 
     def normalized_options
@@ -89,7 +100,7 @@ class Card
     end
 
     def standard_options_with_inheritance
-      (@@standard_options + @@hash_options).each_with_object({}) do |key, hash|
+      (@@standard_inheritance_options).each_with_object({}) do |key, hash|
         value = live_options.delete key
         value ||= @parent_voo.options[key] if @parent_voo
         hash[key] = value if value
@@ -97,8 +108,8 @@ class Card
       end
     end
 
-    def non_standard_options
-      live_options.reject { |key, _value| @@options.member? key }
+    def foreign_options
+      live_options.reject { |key, _value| self.class.options.member? key }
     end
 
     # run default_X_args

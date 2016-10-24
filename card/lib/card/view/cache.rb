@@ -6,9 +6,11 @@ class Card
 
       def fetch &block
         level = cache_level
-        # puts "cache level #{level.to_s.upcase} :: "\
-        #      " #{@card.name}/#{original_view}" \
-        #      " depth = #{@format.instance_variable_get '@depth'}"
+         # puts "#{@card.name}/#{original_view}" \
+         #      " cache level #{level.to_s.upcase} :: "\
+         #      " #{cache_key}\n-nonstandard=#{foreign_options}"
+         #      # " depth = #{@format.instance_variable_get '@depth'}"
+         #      # binding.pry if options[:nest_name] == "+*email"
         case level
         when :off  then yield
         when :full then cache_fetch(&block)
@@ -18,11 +20,15 @@ class Card
       end
 
       def cache_fetch &block
-        cached_view =
-          self.class.progressively do
-            Card::View.cache.fetch cache_key, &block
-          end
+        cached_view = progressively do
+          self.class.cache.fetch cache_key, &block
+        end
+        return cached_view if self.class.in_progress?
         @format.complete_cached_view_render cached_view
+      end
+
+      def progressively
+        self.class.progressively(self) { yield }
       end
 
       def stub_nest
@@ -34,12 +40,13 @@ class Card
       end
 
       def stub_array
-        [@card.cast, normalized_options]
+        [@card.cast, normalized_options, @format.mode]
       end
 
       def cache_level
-        return :off # unless Card.config.view_cache
+        # return :off # unless Card.config.view_cache
         level_method = self.class.in_progress? ? :cache_nest : :cache_default
+        # binding.pry if level_method == :cache_nest && @card.name == "*signin+*email"
         send "#{level_method}_level"
       end
 
@@ -53,7 +60,20 @@ class Card
 
       def cache_permissible?
         return false unless [original_view, :too_deep].include? ok_view
-        @format.view_cache_permissible? original_view, options
+        return true if options[:skip_permissions]
+        view_permissions_ok?
+      end
+
+      def view_permissions_ok?
+        case Card::Format.perms[original_view]
+        when :none      then true
+        when :read, nil then anyone_can_read?
+        else                 false
+        end
+      end
+
+      def anyone_can_read?
+        Card::Auth.as(:anonymous) { @card.ok? :read }
       end
 
       def cache_setting
@@ -67,9 +87,7 @@ class Card
       end
 
       def ok_to_cache_independently?
-        cache_setting == :always &&
-          non_standard_options.empty? &&
-          cache_permissible?
+        cache_setting == :always && foreign_options.empty? && cache_permissible?
       end
 
       # names
@@ -86,7 +104,9 @@ class Card
       end
 
       def cache_key
-        "#{@card.key}-#{@format.class}-#{original_view}-#{options}"
+        [
+          @card.key, @format.class, @format.mode, original_view, options
+        ].map(&:to_s).join "-"
       end
 
       module ClassMethods
@@ -98,11 +118,11 @@ class Card
           @in_progress
         end
 
-        def progressively
+        def progressively voo
           return yield if @in_progress
-          @in_progress = true
+          @in_progress = voo
           result = yield
-          @in_progress = false
+          @in_progress = nil
           result
         end
 

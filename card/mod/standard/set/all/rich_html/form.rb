@@ -178,7 +178,7 @@ format :html do
   end
 
   def content_formgroup
-    raw %(<fieldset class="card-editor editor">#{edit_slot}</fieldset>)
+    wrap_with :fieldset, edit_slot, class: classy("card-editor", "editor")
   end
 
   def name_field

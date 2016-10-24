@@ -29,6 +29,8 @@ class Card
         view = options[:view] || implicit_nest_view
         view = Card::View.canonicalize view
 
+        options[:skip_permissions] = true if @voo && @voo.skip_permissions
+
         # FIXME: should handle in closed / edit view definitions
         options[:home_view] = [:closed, :edit].member?(view) ? :open : view
 

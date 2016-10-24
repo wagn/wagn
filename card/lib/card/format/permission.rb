@@ -2,8 +2,8 @@ class Card
   class Format
     module Permission
       def ok_view view, skip_permissions=false
-        return view if skip_permissions
-        approved_view = check_view view
+        return :too_deep if subformats_nested_too_deeply?
+        approved_view = check_view view, skip_permissions
         handle_view_denial view, approved_view
         assign_view_error_status approved_view
 
@@ -21,9 +21,9 @@ class Card
         root.error_status = error_code
       end
 
-      def check_view view
+      def check_view view, skip_permissions
         case
-        when subformats_nested_too_deeply?    then :too_deep
+        when skip_permissions                 then view
         when view_always_permitted?(view)     then view
         when unknown_disqualifies_view?(view) then view_for_unknown view
         else permitted_view view  # run explicit permission checks

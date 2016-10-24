@@ -18,6 +18,9 @@ describe Card::Content::Chunk::Nest, "Inclusion" do
     it "handles visible comments" do
       expect(render_content("{{# now you see me}}"))
         .to eq("<!-- # now you see me -->")
+    end
+
+    it "handles weird characters in nest comments" do
       expect(render_content("{{# -->}}")).to eq("<!-- # --&gt; -->")
     end
 

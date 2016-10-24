@@ -51,7 +51,9 @@ class Card
       end
 
       def cache_nest_level
-        if cacheable_nest_name? && cache_permissible?
+        if ok_view == :too_deep
+          :off
+        elsif cacheable_nest_name? && cache_permissible?
           CACHE_SETTING_NEST_LEVEL[cache_setting]
         else
           :stub
@@ -59,7 +61,7 @@ class Card
       end
 
       def cache_permissible?
-        return false unless [original_view, :too_deep].include? ok_view
+        return false unless original_view == ok_view
         return true if options[:skip_permissions]
         view_permissions_ok?
       end

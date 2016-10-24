@@ -234,7 +234,7 @@ format :html do
     %(<h5 class="act-header">#{link_to_card card}</h5>)
   end
 
-  view :act_metadata do |args|
+  view :act_metadata, cache: :never do |args|
     render_haml args.merge(card: card, args: args) do
       <<-HAML.strip_heredoc
         - unless act_context == :absolute
@@ -256,11 +256,11 @@ format :html do
     end
   end
 
-  view :action_summary do |args|
+  view :action_summary, cache: :never do |args|
     view_action :summary, args
   end
 
-  view :action_expanded do |args|
+  view :action_expanded, cache: :never do |args|
     view_action :expanded, args
   end
 

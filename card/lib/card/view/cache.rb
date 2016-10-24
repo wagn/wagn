@@ -62,8 +62,17 @@ class Card
 
       def cache_permissible?
         return false unless original_view == ok_view
+        return false unless permissible_card_state?
         return true if options[:skip_permissions]
         view_permissions_ok?
+      end
+
+      def permissible_card_state?
+        return false if @card.unknown?
+        return false if @card.db_content_changed?
+        # FIXME: might consider other changes as disqualifying, though
+        # we should make sure not to disallow caching of virtual cards
+        true
       end
 
       def view_permissions_ok?

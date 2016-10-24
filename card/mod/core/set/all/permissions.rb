@@ -55,8 +55,10 @@ def permission_rule_id_and_class action
   direct_rule_id = rule_card_id action
   require_permission_rule! direct_rule_id, action
   direct_rule = Card.fetch direct_rule_id, skip_modules: true
-  [applicable_permission_rule_id(direct_rule, action),
-   direct_rule.rule_class_name]
+  [
+    applicable_permission_rule_id(direct_rule, action),
+    direct_rule.rule_class_name
+  ]
 end
 
 def applicable_permission_rule_id direct_rule, action

@@ -6,8 +6,9 @@ class Card
 
       def fetch &block
         level = cache_level
-        puts "cache level #{level.to_s.upcase} :: "\
-             " #{@card.name}/#{original_view}"
+        # puts "cache level #{level.to_s.upcase} :: "\
+        #      " #{@card.name}/#{original_view}" \
+        #      " depth = #{@format.instance_variable_get '@depth'}"
         case level
         when :off  then yield
         when :full then cache_fetch(&block)
@@ -20,9 +21,7 @@ class Card
         cached_view =
           self.class.progressively do
             Card::View.cache.fetch cache_key, &block
-            # block.call
           end
-        return cached_view unless cached_view.is_a? String
         @format.complete_cached_view_render cached_view
       end
 
@@ -53,7 +52,7 @@ class Card
       end
 
       def cache_permissible?
-        return false unless ok_view == original_view
+        return false unless [original_view, :too_deep].include? ok_view
         @format.view_cache_permissible? original_view, options
       end
 

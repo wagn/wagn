@@ -1,18 +1,18 @@
 class Card
   class Format
     module Permission
-      def ok_view view, args={}
-        return view if args.delete :skip_permissions
-        approved_view = check_view view, args
-        handle_view_denial view, approved_view, args
+      def ok_view view, skip_permissions=false
+        return view if skip_permissions
+        approved_view = check_view view
+        handle_view_denial view, approved_view
         assign_view_error_status approved_view
 
         approved_view
       end
 
-      def handle_view_denial view, approved_view, args
+      def handle_view_denial view, approved_view
         return if approved_view == view
-        args[:denied_view] = view
+        @denied_view = view
       end
 
       def assign_view_error_status view
@@ -21,12 +21,12 @@ class Card
         root.error_status = error_code
       end
 
-      def check_view view, args={}
+      def check_view view
         case
         when subformats_nested_too_deeply?    then :too_deep
         when view_always_permitted?(view)     then view
         when unknown_disqualifies_view?(view) then view_for_unknown view
-        else permitted_view view, args # run explicit permission checks
+        else permitted_view view  # run explicit permission checks
         end
       end
 
@@ -45,8 +45,8 @@ class Card
         Card::Format.perms[view] == :none
       end
 
-      def permitted_view view, args
-        if (args[:denied_task] = task_denied_for_view view)
+      def permitted_view view
+        if (@denied_task = task_denied_for_view view)
           Card::Format.denial[view] || :denial
         else
           view

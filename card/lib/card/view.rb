@@ -55,7 +55,8 @@ class Card
     end
 
     def ok_view
-      @ok_view ||= @format.ok_view original_view, live_options
+      @ok_view ||=
+        @format.ok_view original_view, live_options[:skip_permissions]
     end
 
     def normalized_options

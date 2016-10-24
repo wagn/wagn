@@ -95,16 +95,16 @@ format :html do
     frame { params[:message] }
   end
 
-  view :missing do |args|
+  view :missing do
     return "" unless card.ok? :create  # should this be moved into ok_view?
-    path_opts = args[:type] ? { card: { type: args[:type] } } : {}
+    path_opts = voo.type ? { card: { type: voo.type } } : {}
     link_text = "Add #{fancy_title voo.title}"
-    klass = "slotter missing-#{args[:denied_view] || args[:home_view]}"
+    klass = "slotter missing-#{@denied_view || voo.home_view}"
     wrap { link_to_view :new, link_text, path: path_opts, class: klass }
   end
 
   view :closed_missing, perms: :none do
-    %(<span class="faint"> #{showname} </span>)
+    wrap_with :span, showname, class: "faint"
   end
 
   view :conflict, error_code: 409 do
@@ -162,9 +162,8 @@ format :html do
     wrap_with(:div) { "#{signin_link} or #{signup_link} to create it." }
   end
 
-  view :denial do |args|
-    task = args[:denied_task]
-    to_task = task ? "to #{task} this." : "to do that."
+  view :denial do
+    to_task = @denied_task ? "to #{@denied_task} this." : "to do that."
     if !focal?
       %(
         <span class="denied">

@@ -71,6 +71,7 @@ class Card
       end
 
       def complete_cached_view_render cached_content
+        return cached_content unless cached_content.is_a? String
         expand_stubs cached_content do |card, options|
           nest card, options
         end

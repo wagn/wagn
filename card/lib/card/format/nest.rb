@@ -6,11 +6,8 @@ class Card
       include Subformat
       include View
 
-      # def voo
-      #   # voo = ViewOptions object
-      #   @voo ||= Card::ViewOptions.new options
-      # end
-
+      # nested by another card's content
+      # (as opposed to a direct API nest)
       def content_nest opts={}
         return opts[:comment] if opts.key? :comment # commented nest
         return main_nest(opts) if main_nest?(opts)
@@ -28,8 +25,6 @@ class Card
         options[:nest_name] ||= nested_card.name
         view = options[:view] || implicit_nest_view
         view = Card::View.canonicalize view
-
-        options[:skip_permissions] = true if @voo && @voo.skip_permissions
 
         # FIXME: should handle in closed / edit view definitions
         options[:home_view] = [:closed, :edit].member?(view) ? :open : view

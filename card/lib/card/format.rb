@@ -48,6 +48,7 @@ class Card
     attr_accessor :form, :error_status
 
     def initialize card, opts={}
+      # binding.pry
       unless (@card = card)
         msg = I18n.t :exception_init_without_card, scope: "lib.card.format"
         raise Card::Error, msg

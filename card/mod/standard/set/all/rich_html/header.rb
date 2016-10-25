@@ -15,7 +15,7 @@ format :html do
     [classes, class_list[classes.first]].flatten.compact.join " "
   end
 
-  view :header do
+  view :header, cache: :nested do
     voo.hide :toggle, :toolbar
     main_header =
       wrap_with :div, class: classy("card-header") do

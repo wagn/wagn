@@ -6,11 +6,11 @@ class Card
 
       def fetch &block
         level = cache_level
-         # puts "#{@card.name}/#{original_view}" \
-         #      " cache level #{level.to_s.upcase} :: "\
-         #      " #{cache_key}\n-nonstandard=#{foreign_options}"
-         #      # " depth = #{@format.instance_variable_get '@depth'}"
-         #      # binding.pry if options[:nest_name] == "+*email"
+        # puts "#{@card.name}/#{original_view}" \
+        #      " cache level #{level.to_s.upcase} :: "\
+        #      "\n--#{cache_key}\n--nonstandard=#{foreign_options}"
+        #      # " depth = #{@format.instance_variable_get '@depth'}"
+        #      # binding.pry if options[:nest_name] == "+*email"
         case level
         when :off  then yield
         when :full then cache_fetch(&block)
@@ -103,7 +103,7 @@ class Card
       # names
       def cacheable_nest_name?
         case options[:nest_name]
-        when "_main" then @format.main?
+        when "_main" then false
         when "_user" then false
         else true
         end

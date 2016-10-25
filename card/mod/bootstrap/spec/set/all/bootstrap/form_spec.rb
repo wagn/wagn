@@ -25,7 +25,7 @@ describe Card::Set::All::Bootstrap::Form  do
             input "password", "Password", id: "thepassword"
           end
         end
-      debug_assert_view_select form, 'form' do
+      assert_view_select form, 'form' do
         assert_select 'div[class="form-group"]' do
           assert_select 'label[for="theemail"', text: "Email Address"
           assert_select 'input[type="email",id="theemail",class="form-control"]'
@@ -47,7 +47,7 @@ describe Card::Set::All::Bootstrap::Form  do
             checkbox "test", "checkbox label", id: "thecheckbox"
           end
         end
-      debug_assert_view_select form, 'form[class="form-horizontal"]' do
+      assert_view_select form, 'form[class="form-horizontal"]' do
         assert_select 'div[class="form-group"]' do
           assert_select 'label[for="theemail"', text: "Email Address"
           assert_select 'div[class="col-sm-10"]' do

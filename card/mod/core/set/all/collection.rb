@@ -261,7 +261,8 @@ format :html do
     tabs = {}
     each_reference_with_args(item: :content) do |name, nest_args|
       tab_name = nest_args[:title] || name
-      tabs[tab_name] = nest_path(name, nest_args).html_safe
+      tabs[tab_name] = { title: tab_name,
+                         path: nest_path(name, nest_args).html_safe }
 
       active_name ||= tab_name
       # warning: nest changes nest_args

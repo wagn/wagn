@@ -140,7 +140,7 @@ end
 format :html do
   view :history do |args|
     frame args.merge(body_class: "history-slot list-group", content: true) do
-      [history_legend, _render_history_acts(args)]
+      [_render_history_legend, _render_history_acts(args)]
     end
   end
 

@@ -37,7 +37,7 @@ describe Card::Set::All::Bootstrap::Layout do
           column "c2", class: "extra-class"
         end
       end
-      debug_assert_view_select layout, 'div[class="row six-times-six"]' do
+      assert_view_select layout, 'div[class="row six-times-six"]' do
         assert_select 'div[class="col-md-8 col-xs-6"]', text: "c1"
         assert_select 'div[class="col-md-4 col-xs-6 extra-class"]',
                       text: "c2"
@@ -92,7 +92,7 @@ describe Card::Set::All::Bootstrap::Layout do
         end
       end
       lay = subject.generate_layout
-      debug_assert_view_select lay, 'div[class="row"]' do
+      assert_view_select lay, 'div[class="row"]' do
         assert_select 'div[class="col-md-8"]' do
           assert_select 'div[class="row"]' do
             assert_select 'div[class="col-md-12"]', text: "c1"

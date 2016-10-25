@@ -105,7 +105,7 @@ describe Card::Set::All::Collection do
 
     it "loads only the first tab pane" do
       tabs = render_card :tabs, content: "[[A]]\n[[B]]\n[[C]]", type: "pointer"
-      debug_assert_view_select tabs, "div[role=tabpanel]" do
+      assert_view_select tabs, "div[role=tabpanel]" do
         assert_select "div.tab-pane#tempo_rary-a  .card-slot#A"
         assert_select 'li > a.load[data-toggle=tab][href="#tempo_rary-b"]'
         assert_select "div.tab-pane#tempo_rary-b", ""

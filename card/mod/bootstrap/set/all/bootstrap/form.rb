@@ -94,9 +94,8 @@ format :html do
       @child_args.last && @child_args.last[1] || 10
     end
 
-    add_tag_method :form, "form-horizontal" do |opts, extra_args|
-      @child_args.push extra_args
-    end
+    add_tag_method :form, "form-horizontal"
+
     add_tag_method :label, "control-label" do |opts, extra_args|
       prepend_class opts, "col-sm-#{left_col_width}"
       opts

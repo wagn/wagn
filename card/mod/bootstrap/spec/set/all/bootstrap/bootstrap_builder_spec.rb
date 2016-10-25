@@ -17,7 +17,7 @@ describe 'bootstrap builder' do
     end
     it 'appends work' do
       #assert_select 'prepend[class="prepend-class"]'
-      debug_assert_view_select subject, "buildertest" do
+      assert_view_select subject, "buildertest" do
         #assert_select 'prepend[class="prepend-class]"'
         assert_select 'prepend[class="prepend-class]"'
         assert_select 'test_tag[class="test-class"]' do

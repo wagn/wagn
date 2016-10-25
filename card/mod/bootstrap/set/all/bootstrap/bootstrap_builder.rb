@@ -30,7 +30,7 @@ class BootstrapBuilder
 
           content = with_child_args new_child_args do
             generate_content content,
-                             tag_opts.delete(:content_processor),
+                             tag_opts[:content_processor],
                              &block
           end
 
@@ -136,7 +136,7 @@ class BootstrapBuilder
 
   def standardize_args args, &block
     opts = args.last.is_a?(Hash) ? args.pop : {}
-    items = (args.one? && (args.last.is_a?(Array) || args.last.is_a?(String))) &&
+    items = ( (args.one? && args.last.is_a?(String)) || args.last.is_a?(Array) ) &&
             args.pop
     if block.present?
       opts, args = instance_exec opts, args, &block

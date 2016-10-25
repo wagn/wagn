@@ -24,10 +24,11 @@ end
 
 class BootstrapLayout < BootstrapBuilder
 
-  def render_layout opts, &block
-    content = instance_exec &block
+  def render_content
+    content = instance_exec *@args, &@build_block
     add_content content
-    return unless opts.delete(:container)
+    opts = @args.first
+    return unless opts && opts.delete(:container)
     content = @content.pop
     @content = ["".html_safe]
     container content, opts
@@ -49,7 +50,8 @@ class BootstrapLayout < BootstrapBuilder
   #     col "B"
   #   end
   add_div_method :row, "row", content_processor: :column do |opts, extra_args|
-    [opts, col_widths(extra_args, opts)]
+    cols_content = extra_args.pop if extra_args.last.is_a? Array
+    [opts, col_widths(extra_args, opts), cols_content].compact
   end
 
   # default column width type is for medium devices (col-md-)

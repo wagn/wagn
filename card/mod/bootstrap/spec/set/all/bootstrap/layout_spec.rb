@@ -81,7 +81,7 @@ describe Card::Set::All::Bootstrap::Layout do
             column do
               row 12, ["c2"]
               row 6 do
-                add_html "<span>s1</span>"
+                html "<span>s1</span>"
                 column "c3"
               end
               row 8 do

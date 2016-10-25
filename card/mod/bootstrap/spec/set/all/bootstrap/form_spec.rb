@@ -19,13 +19,13 @@ describe Card::Set::All::Bootstrap::Form  do
     subject { Card["A"].format(:html) }
     it "creates form" do
       form =
-        subject.bs_form horizontal: true do
+        subject.bs_form do
           group do
             input "email", "Email Address", id: "theemail"
             input "password", "Password", id: "thepassword"
           end
         end
-      debug_assert_view_select form, 'form[class="form-horizontal"]' do
+      debug_assert_view_select form, 'form' do
         assert_select 'div[class="form-group"]' do
           assert_select 'label[for="theemail"', text: "Email Address"
           assert_select 'input[type="email",id="theemail",class="form-control"]'

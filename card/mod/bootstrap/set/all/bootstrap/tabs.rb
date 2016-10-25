@@ -27,18 +27,20 @@ format :html do
   # @param [String] active_name label of the tab that should be active at the
   # beginning
   # @param [String] active_content content of the active tab
+  #   can also be passed via a block
   # @param [Hash] args options
   # @option args [String] :type ('tabs') use pills or tabs
   # @option args [Hash] :panel_args html args used for the panel div
   # @option args [Hash] :pane_args html args used for the pane div
   # @return [HTML] bootstrap tabs element with content only for the active
   # tab; other tabs get loaded via ajax when selected
-  def lazy_loading_tabs tabs, active_name, args={}, &block
+  def lazy_loading_tabs tabs, active_name, active_content="", args={}, &block
     tab_buttons = ""
     tab_panes = ""
     standardize_tabs(tabs, active_name) do |tab_name, url, id, active_tab|
       tab_buttons += lazy_tab_button tab_name, id, url, active_tab
-      tab_panes += lazy_tab_pane id, active_tab, args[:pane_args], &block
+      tab_panes += lazy_tab_pane id, active_tab, active_content,
+                                 args[:pane_args], &block
     end
     tab_type = args.delete(:type) || "tabs"
     tab_panel tab_buttons, tab_panes, tab_type, args[:panel_args]
@@ -52,8 +54,13 @@ format :html do
     )
   end
 
-  def lazy_tab_pane id, active_tab, args
-    tab_content = active_tab && block_given? ? yield : ""
+  def lazy_tab_pane id, active_tab, active_content, args
+    tab_content =
+      if active_tab
+        block_given? ? yield : active_content
+      else
+        ""
+      end
     tab_pane(id, tab_content, active_tab, args)
   end
 

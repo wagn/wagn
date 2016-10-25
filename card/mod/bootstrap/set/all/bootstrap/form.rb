@@ -33,26 +33,26 @@ format :html do
     end
   end
 
-  # generate bootstrap column layout
+  # generate bootstrap form
   # @example
-  #   layout container: true, fluid: true, class: "hidden" do
-  #     row 6, 6, class: "unicorn" do
-  #       column "horn",
-  #       column "rainbow", class: "colorful"
+  #   bs_form do
+  #     group do
+  #       number "label text"
+  #       input "button", "label text"
   #     end
-  #   end
-  # @example
-  #   layout do
-  #     row 3, 3, 4, 2, class: "unicorn" do
-  #       [ "horn", "body", "tail", "rainbow"]
-  #     end
-  #     add_html "<span> some extra html</span>"
-  #     row 6, 6, ["unicorn", "rainbow"], class: "horn"
   #   end
   def bs_form opts={}, &block
     BootstrapForm.render self, opts, &block
   end
 
+  # generate bootstrap form
+  # @example
+  #   bs_horizontal_form do
+  #     group do
+  #       number "label text"
+  #       input "button", "label text"
+  #     end
+  #   end
   def bs_horizontal_form *args, &block
     BootstrapHorizontalForm.render self, *args, &block
   end
@@ -86,9 +86,19 @@ format :html do
   end
 
   class BootstrapHorizontalForm < BootstrapForm
-    add_tag_method :form, "form-horizontal"
+    def left_col_width
+      @child_args.last && @child_args.last[0] || 2
+    end
+
+    def right_col_width
+      @child_args.last && @child_args.last[1] || 10
+    end
+
+    add_tag_method :form, "form-horizontal" do |opts, extra_args|
+      @child_args.push extra_args
+    end
     add_tag_method :label, "control-label" do |opts, extra_args|
-      prepend_class opts, "col-sm-#{@child_args.last[0]}"
+      prepend_class opts, "col-sm-#{left_col_width}"
       opts
     end
 
@@ -96,7 +106,7 @@ format :html do
       type, label = extra_args
       prepend { tag :label, nil, for: opts[:id] } if label
       insert { inner_input opts.merge(type: type) }
-      { class: "col-sm-#{@child_args.last[1]}" }
+      { class: "col-sm-#{right_col_width}" }
     end
     add_tag_method :inner_input, "form-control", tag: :input
     add_div_method :inner_checkbox, "checkbox"
@@ -107,7 +117,7 @@ format :html do
           inner_input "checkbox", extra_args.first, opts
         end
       end
-      { class: "col-sm-offset-#{@child_args.last[0]} col-sm-#{@child_args.last[1]}" }
+      { class: "col-sm-offset-#{left_col_width} col-sm-#{right_col_width}" }
     end
   end
 end

@@ -154,7 +154,7 @@ format :html do
     _render_act_list args
   end
 
-  def history_legend
+  view :history_legend do
     intr = card.intrusive_acts.page(params["page"]).per(ACTS_PER_PAGE)
     legend = render_haml intr: intr do
       <<-HAML.strip_heredoc

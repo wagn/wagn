@@ -224,15 +224,18 @@ format :html do
 
   view :edit_structure do |args|
     voo.show! :toolbar
-    slot_args =
-      {
-        cancel_slot_selector: ".card-slot.related-view",
-        cancel_path: card.format.path(view: :edit),
-        optional_edit_toolbar: :hide,
-        hidden: { success: { view: :open, "slot[subframe]" => true } }
-      }
     render_related args.merge(
-      related: { card: card.structure, view: :edit, slot: slot_args }
+      related: {
+        card: card.structure,
+        view: :edit
+      }
+      # FIXME: this stuff:
+      #  slot: {
+      #    cancel_slot_selector: ".card-slot.related-view",
+      #    cancel_path: card.format.path(view: :edit), hide: :edit_toolbar,
+      #    hidden: { success: { view: :open, "slot[subframe]" => true } }
+      #  }
+      #}
     )
   end
 
@@ -250,11 +253,10 @@ format :html do
     view = args[:rule_view] || :field_related_rules
     frame args do
       # with_nest_mode :edit do
-      nested_fields.map do |chunk|
-        nest Card.fetch("#{chunk.referee_name}+*self"),
-             view: :titled, title: chunk.referee_name, rule_view: view,
-             optional_set_label: :hide,
-             optional_rule_navbar: :show
+      nested_fields.map do |name, _options|
+        nest Card.fetch(name.to_name.trait(:self)),
+             view: :titled, title: name, rule_view: view,
+             hide: :set_label, show: :rule_navbar
       end
     end
   end

@@ -84,21 +84,14 @@ format :html do
     button_tag text, situation: "primary"
   end
 
-  view :raw do
-    if @forgot_password
-      "{{+#{Card[:email].name}|title:email;type:Phrase}}"
-    else
-      "{{+#{Card[:email].name}|titled;title:email}}
-       {{+#{Card[:password].name}|titled;title:password}}"
+  def nested_fields
+    fields = [["".to_name.trait(:email),
+               { view: "titled", title: "email", skip_permissions: true }]]
+    unless @forgot_password
+      fields << ["".to_name.trait(:password),
+                 { view: "titled", title: "password", skip_permissions: true }]
     end
-
-    # fields = [nest("".to_name.trait(:email),
-    #                view: "titled", title: "email", skip_permissions: true)]
-    # unless @forgot_password
-    #   fields << nest("".to_name.trait(:password),
-    #                  view: "titled", title: "password", skip_permissions: true)
-    # end
-    # fields.join
+    fields
   end
 
   view :reset_password_success do
@@ -143,9 +136,8 @@ event :signin_success, after: :signin do
   abort :success
 end
 
-event :send_reset_password_token,
-      before: :signin, on: :update,
-      when: proc { Env.params[:reset_password] } do
+event :send_reset_password_token, before: :signin, on: :update,
+                                  when: proc { Env.params[:reset_password] } do
   email = subfield :email
   email &&= email.content
 
@@ -157,8 +149,10 @@ def send_reset_password_email_or_fail account
   if account && account.active?
     account.send_reset_password_token
     abort :success
-  elsif account then errors.add :account, i18n_signin(:error_not_active)
-  else               errors.add :email, i18n_signin(:error_not_recognized)
+  elsif account
+    errors.add :account, i18n_signin(:error_not_active)
+  else
+    errors.add :email, i18n_signin(:error_not_recognized)
   end
   abort :failure
 end

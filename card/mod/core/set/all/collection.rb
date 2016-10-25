@@ -230,7 +230,7 @@ format do
   def nested_fields content=nil
     result = []
     each_nested_field(content) do |chunk|
-      result << chunk
+      result << [chunk.referee_name, chunk.options]
     end
     result
   end

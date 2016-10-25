@@ -28,10 +28,9 @@ format :html do
   end
 
   def process_nested_fields
-    nested_fields.map do |chunk|
-      nest_options = chunk.options
-      nest_options[:hide] = :toolbar
-      nest nest_options[:nest_name], nest_options
+    nested_fields.map do |name, options|
+      options[:hide] = :toolbar
+      nest name, options
     end.join "\n"
   end
 

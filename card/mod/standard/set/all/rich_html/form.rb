@@ -28,9 +28,9 @@ format :html do
   end
 
   def process_nested_fields
-    nested_fields.map do |name, options|
+    nested_fields.map do |_name, options|
       options[:hide] = :toolbar
-      nest name, options
+      nest options[:nest_name], options
     end.join "\n"
   end
 

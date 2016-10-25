@@ -39,7 +39,6 @@ format :html do
                      "REDIRECT: #{Env.interrupted_action || '*previous'}"
   end
 
-
   def signin_buttons
     button_formgroup do
       [signin_button, signup_link, reset_password_link]

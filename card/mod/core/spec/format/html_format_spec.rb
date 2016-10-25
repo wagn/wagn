@@ -3,9 +3,8 @@
 describe Card::Format::HtmlFormat do
   describe "views" do
     it "content" do
-      result = render_card :content, name: "A+B"
       assert_view_select(
-        result,
+        render_card(:content, name: "A+B"),
         'div[class="card-slot content-view ALL ALL_PLUS TYPE-basic '\
         'RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b card-content"]'
       )
@@ -14,7 +13,6 @@ describe Card::Format::HtmlFormat do
     it "nests in multi edit" do
       c = Card.new name: "ABook", type: "Book"
       rendered = c.format.render :edit
-
       assert_view_select rendered, "fieldset" do
         assert_select 'div[class~="prosemirror-editor"]' do
           assert_select "input[name=?]", "card[subcards][+illustrator][content]"

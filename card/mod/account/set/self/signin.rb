@@ -84,13 +84,15 @@ format :html do
   end
 
   def nested_fields
-    fields = [["".to_name.trait(:email),
-               { view: "titled", title: "email", skip_permissions: true }]]
-    unless @forgot_password
-      fields << ["".to_name.trait(:password),
-                 { view: "titled", title: "password", skip_permissions: true }]
-    end
+    fields = [signin_field(:email)]
+    fields << signin_field(:password) unless @forgot_password
     fields
+  end
+
+  def signin_field name
+    nest_name = "".to_name.trait(name)
+    [nest_name, { title: name.to_s, view: "titled",
+                  nest_name: nest_name, skip_permissions: true }]
   end
 
   view :reset_password_success do

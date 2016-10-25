@@ -23,9 +23,9 @@ class Card
 
       def check_view view, skip_permissions
         case
+        when skip_permissions                 then view
         when view_always_permitted?(view)     then view
         when unknown_disqualifies_view?(view) then view_for_unknown view
-        when skip_permissions                 then view
         else permitted_view view  # run explicit permission checks
         end
       end

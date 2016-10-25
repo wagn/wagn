@@ -46,7 +46,6 @@ class Card
       def cache_level
         # return :off # unless Card.config.view_cache
         level_method = self.class.in_progress? ? :cache_nest : :cache_default
-        # binding.pry if level_method == :cache_nest && @card.name == "*signin+*email"
         send "#{level_method}_level"
       end
 

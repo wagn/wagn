@@ -7,7 +7,6 @@ describe Card::Format do
     def show_menu? args, default_viz=:show
       args.merge! optional: true
       format.with_voo(Card::View.new format, :nonview, args) do
-        format.voo.optional? #triggers visibility processing
         format.show_view?(:menu, default_viz)
       end
     end

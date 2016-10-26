@@ -3,7 +3,6 @@ class Card
 
     module Visibility
       def hide? view
-        puts "viz_hash = #{viz_hash}"
         viz_hash[view] == :hide
       end
 

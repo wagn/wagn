@@ -41,7 +41,7 @@ class Card
       end
 
       def show_view? view, default_viz=:show
-        voo.optional? # triggers visibility processing
+        voo.options #trigger viz processing
         visibility = voo.viz_hash[view] || default_viz
         visibility == :show
       end

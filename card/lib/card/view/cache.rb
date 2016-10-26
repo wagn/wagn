@@ -13,7 +13,6 @@ class Card
 
        #       "\n--nonstandard=#{foreign_options}#"
        #      # " depth = #{@format.instance_variable_get '@depth'}"
-             # binding.pry if options[:nest_name] == "+*email"
         case level
         when :off  then yield
         when :full then cache_fetch(&block)

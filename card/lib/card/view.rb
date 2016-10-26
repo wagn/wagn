@@ -63,7 +63,7 @@ class Card
     end
 
     def original_view
-      @original_view ||= @raw_view
+      @original_view ||= View.canonicalize(@raw_view)
     end
 
     def requested_view
@@ -77,7 +77,11 @@ class Card
     end
 
     def normalized_options
-      @normalized_options ||= options_to_hash @raw_options.clone
+      @normalized_options ||= begin
+        options = options_to_hash @raw_options.clone
+        options[:view] = original_view
+        options
+      end
     end
 
     def options_to_hash opts
@@ -103,8 +107,9 @@ class Card
       @options
     end
 
-    def main?
-      normalized_options[:main] && !parent
+    def root_main?
+      return @root_main if !@root_main.nil?
+      @root_main = !parent && @format.main_nest?(normalized_options[:nest_name])
     end
 
     def standard_options_with_inheritance
@@ -116,7 +121,7 @@ class Card
     end
 
     def main_nest_options
-      return {} unless main?
+      return {} unless root_main?
       @format.main_nest_options
     end
 

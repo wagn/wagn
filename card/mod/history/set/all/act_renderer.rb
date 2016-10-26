@@ -44,71 +44,6 @@ class ActRenderer
             @args.merge(action: @args[:action])
   end
 
-  def title
-    absolute_context? ? absolute_title : relative_title
-  end
-
-  def subtitle
-    absolute_context? ? absolute_subtitle : relative_subtitle
-  end
-
-  def absolute_title
-    accordion_expand_link(@act.card.name, html_id) + " " +
-      link_to_card(@act.card, glyphicon("new-window"))
-  end
-
-  def relative_title
-    "<span class=\"nr\">##{@args[:act_seq]}</span>" + accordion_expand_link(@act.actor.name, html_id) + " " + content_tag(:small, edited_ago)
-  end
-
-  def absolute_subtitle
-    locals = @args.merge(act: @act, card: @card)
-    template = #@format.render_haml @args.merge(act: @act, card: @card), binding do
-      <<-HAML.strip_heredoc
-        %small
-          =
-          =
-          - if act.id == card.last_act.id
-            %em.label.label-info Current
-          - if action_view == :expanded
-            - unless act.id == card.last_act.id
-              = rollback_link act.actions_affecting(card)
-            = show_or_hide_changes_link args
-      HAML
-    #end
-    content = output [
-                       @format.link_to_card(@act.actor),
-                       edited_ago
-                     ]
-    content_tag :small, content.html_safe
-    #::Haml::Engine.new(template).render(Object.new, locals)
-  end
-
-  def relative_subtitle
-    expanded = ""
-    if @args[:action_view] == :expanded
-      expanded += rollback_link @act.actions_affecting(@card) unless @act.id == @card.last_act.id
-      expanded += show_or_hide_changes_link
-    end
-    <<-HTML
-      <small>
-        act on #{absolute_title}
-        #{expanded}
-      </small>
-    HTML
-    # @format.render_haml @args.merge(act: @act, card: @card) do
-    #   <<-HAML.strip_heredoc
-    #     .nr
-    #       = '#' + act_seq.to_s
-    #     %small
-    #       = absolute_title
-    #       - if action_view == :expanded
-    #         - unless act.id == card.last_act.id
-    #           = rollback_link act.actions_affecting(card)
-    #         = show_or_hide_changes_link args
-    #   HAML
-  end
-
   def summary
     [:create, :update, :delete].map do |type|
       next unless count_types[type] > 0
@@ -126,10 +61,6 @@ class ActRenderer
 
   def edited_ago
     "#{time_ago_in_words(@act.acted_at)} ago"
-  end
-
-  def absolute_context?
-    @context == :absolute
   end
 
   def html_id

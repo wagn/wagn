@@ -27,7 +27,7 @@ format :html do
   end
 
   view :act do |args|
-    ActRenderer.new(self, args[:act], args).render
+    act_renderer.new(self, args[:act], args).render
 
     # wrap(args) do
     #   render_haml args.merge(card: card, args: args) do
@@ -57,6 +57,14 @@ format :html do
   end
 
   private
+
+  def act_renderer args
+      if args[:act_context] == :absolute
+        AbsoluteActRenderer
+      else
+        RelativeActRenderer
+      end
+  end
 
   def act_context args
     args[:act_context] =

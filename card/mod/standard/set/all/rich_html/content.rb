@@ -14,12 +14,12 @@ format :html do
 
   def show_with_layout view, args
     args[:view] = view if view
-    @main = nil
     @main_opts = args
     render :layout
   end
 
   def show_without_layout view, args
+    @main = true if params[:is_main]
     view ||= args[:home_view] || :open
     render view, args
   end

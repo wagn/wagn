@@ -56,7 +56,6 @@ class Card
       @mode ||= :normal
       @root ||= self
       @depth ||= 0
-      @main ||= @depth.zero?
 
       @context_names = initialize_context_names
       include_set_format_modules
@@ -97,15 +96,11 @@ class Card
     end
 
     def main?
-      !@main.nil?
+      @depth.zero?
     end
 
     def focal? # meaning the current card is the requested card
-      if Env.ajax?
-        @depth.zero?
-      else
-        main?
-      end
+      @depth.zero?
     end
 
     def template

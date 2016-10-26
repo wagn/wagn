@@ -181,6 +181,8 @@ class Card
           result = yield
           @in_progress = nil
           result
+        rescue
+          @in_progress = nil
         end
 
         def fetch cache_key, &block

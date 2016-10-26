@@ -145,7 +145,7 @@ format :html do
     end
   end
 
-  view :act_list do |args|
+  view :act_list, cache: :never do |args|
     page = params["page"] || 1
     count = card.intrusive_acts.size + 1 - (page.to_i - 1) * ACTS_PER_PAGE
     card.intrusive_acts.page(page).per(ACTS_PER_PAGE).map do |act|
@@ -211,7 +211,7 @@ format :html do
     (params["action_view"] || "summary").to_sym
   end
 
-  view :act do |args|
+  view :act, cache: :never do |args|
     wrap do
       render_haml args.merge(card: card, args: args) do
         <<-HAML.strip_heredoc
@@ -223,7 +223,7 @@ format :html do
             .toggle
               = fold_or_unfold_link args
             .action-container
-              - actions.each do |action|
+              - actions[0..20].each do |action|
                 = render "action_#{args[:action_view]}", args.merge(action: action)
         HAML
       end

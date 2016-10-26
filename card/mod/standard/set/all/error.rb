@@ -174,8 +174,10 @@ format :html do
 
   def loud_denial
     frame do
-      wrap_with :h1, "Sorry!"
-      wrap_with :div, loud_denial_message
+      [
+        wrap_with(:h1, "Sorry!"),
+        wrap_with(:div, loud_denial_message)
+      ]
     end
   end
 

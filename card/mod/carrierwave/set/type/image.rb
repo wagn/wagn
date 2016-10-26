@@ -30,34 +30,35 @@ end
 format :html do
   include File::HtmlFormat
 
-  view :core do |args|
-    handle_source args do |source|
+  view :core do
+    handle_source do |source|
       if source == "missing"
         "<!-- image missing #{@card.name} -->"
       else
-        image_tag(source)
+        image_tag source
       end
     end
   end
 
-  def preview args
-    if !card.new_card? || card.preliminary_upload?
-      content_tag :div, _render_core(args.merge(size: :medium)).html_safe,
-                  class: "attachment-preview",
-                  id: "#{card.attachment.filename}-preview"
+  def preview
+    return unless card.new_card? && !card.preliminary_upload?
+    voo.size = :medium
+    wrap_with :div, class: "attachment-preview",
+                    id: "#{card.attachment.filename}-preview" do
+      _render_core
     end
   end
 
   view :content_changes do |args|
     out = ""
-    size = args[:diff_type] == :summary ? :icon : :medium
+    voo.size = args[:diff_type] == :summary ? :icon : :medium
     if !args[:hide_diff] && args[:action] &&
        (last_change = card.last_change_on(:db_content, before: args[:action]))
       card.selected_action_id = last_change.card_action_id
-      out << Card::Content::Diff.render_deleted_chunk(_render_core(size: size))
+      out << Card::Content::Diff.render_deleted_chunk(_render_core)
     end
     card.selected_action_id = args[:action].id
-    out << Card::Content::Diff.render_added_chunk(_render_core(size: size))
+    out << Card::Content::Diff.render_added_chunk(_render_core)
     out
   end
 end
@@ -75,8 +76,8 @@ end
 format :file do
   include File::FileFormat
 
-  view :style do |args|  # should this be in model?
-    ["", "full"].member?(args[:style].to_s) ? :original : args[:style]
+  view :style do # should this be in model?
+    ["", "full"].member?(voo.size.to_s) ? :original : voo.size
   end
 
   def selected_file_version

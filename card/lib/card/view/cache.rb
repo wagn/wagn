@@ -6,12 +6,11 @@ class Card
 
       def fetch &block
         level = cache_level
-        #puts "#{@card.name}/#{requested_view} -> #{ok_view}:" #\
+        puts "#{@card.name}/#{requested_view} -> #{ok_view}:" #\
         #     "\n--#{cache_key}"
         #     #      "in_progress: #{self.class.in_progress?}"#\
 
-       #       "\n--nonstandard=#{foreign_options}#"
-       #      # " depth = #{@format.instance_variable_get '@depth'}"
+        #       "\n--nonstandard=#{foreign_options}#"
         case level
         when :off  then yield
         when :full then cache_fetch(&block)

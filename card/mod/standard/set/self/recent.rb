@@ -12,7 +12,7 @@ format :html do
     end
   end
 
-  view :recent_acts do
+  view :recent_acts, cache: :never do
     page = params["page"] || 1
     acts = Act.all_viewable.order(id: :desc).page(page).per(ACTS_PER_PAGE)
     acts.map do |act|

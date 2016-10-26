@@ -19,7 +19,6 @@ class Card
       :home_view,
       :size,
 
-      :main,
       :skip_permissions
     ]
 
@@ -47,11 +46,13 @@ class Card
     attr_reader :format, :parent
 
     def initialize format, view, raw_options={}, parent=nil
+      puts "initialize #{view} with #{raw_options}"
       @format = format
       @card = @format.card
       @raw_view = view
       @raw_options = raw_options
       @parent = parent
+      @main = normalized_options.delete :main
     end
 
     def prepare
@@ -108,7 +109,7 @@ class Card
     end
 
     def root_main?
-      !parent && normalized_options[:main]
+      @main
     end
 
     def standard_options_with_inheritance

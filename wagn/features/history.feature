@@ -9,6 +9,7 @@ Feature: History
 
   Scenario: view history and rollback
     When I go to url "/First?view=history"
+    Then show me the page
     Then In the main card content I should see a del with content "egg"
 
     When I expand act 2

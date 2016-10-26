@@ -16,18 +16,18 @@ end
 include SelectedAction
 
 format do
-  view :source do |_args|
+  view :source do
     card.attachment.url
   end
 
-  view :core do |args|
-    handle_source args do |source|
+  view :core do
+    handle_source do |source|
       card_url source
     end
   end
 
-  def handle_source args
-    source = _render_source args
+  def handle_source
+    source = _render_source
     source ? yield(source) : ""
   rescue
     "File Error"
@@ -82,7 +82,7 @@ format :html do
     file_chooser args
   end
 
-  def preview  _args
+  def preview
     ""
   end
 
@@ -98,7 +98,7 @@ format :html do
             <tr class="template-download fade in">
               <td>
                 <span class="preview">
-                  #{preview(args)}
+                  #{preview}
                 </span>
               </td>
               <td>
@@ -128,7 +128,7 @@ format :html do
   def file_chooser args
     <<-HTML
       <div class="choose-file">
-        #{preview(args)}
+        #{preview}
         <span class="btn btn-success fileinput-button">
             <i class="glyphicon glyphicon-cloud-upload"></i>
             <span>

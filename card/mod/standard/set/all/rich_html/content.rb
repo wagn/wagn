@@ -23,8 +23,8 @@ format :html do
     render view, args
   end
 
-  def default_layout_args args
-    args[:title] = params[:layout] # FIXME: using title for param.  hack!
+  def default_layout_args _args
+    voo.title = params[:layout] # FIXME: using title for param.  hack!
   end
 
   view :layout, perms: :none do
@@ -96,12 +96,12 @@ format :html do
     end
   end
 
-  def default_open_args _args
-    voo.show! :toolbar if toolbar_pinned?
-    voo.viz :toggle, (main? ? :hide : :show)
+  def default_open_args args
+    voo.show!(:toolbar) if toolbar_pinned?
   end
 
   view :open, tags: :comment do
+    voo.viz :toggle, (main? ? :hide : :show)
     @content_body = true
     frame do
       [_render_open_content, optional_render_comment_box]

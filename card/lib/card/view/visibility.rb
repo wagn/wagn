@@ -2,16 +2,13 @@ class Card
   class View
 
     module Visibility
-      def hide? view=nil
-        !show? view
+      def hide? view
+        puts "viz_hash = #{viz_hash}"
+        viz_hash[view] == :hide
       end
 
-      def show? view=nil
-        if view.nil?
-          return true unless optional?
-          view = original_view
-        end
-        viz_hash[view] == :show
+      def show? view
+        !hide? view
       end
 
       def show! *views
@@ -44,7 +41,7 @@ class Card
 
       def detect_if_optional
         if (setting = live_options.delete :optional)
-          viz original_view, setting
+          viz requested_view, setting
           setting
         else
           false
@@ -56,20 +53,12 @@ class Card
       end
 
       def visibility
-        @visibility ||= (viz_hash[original_view] || :show)
+        @visibility ||= (viz_hash[requested_view] || :show)
       end
 
       def process_visibility_options
-        @viz_hash = @parent_voo ? @parent_voo.viz_hash.clone : {}
+        viz_hash.reverse_merge! parent.viz_hash if parent
         process_visibility live_options
-      end
-
-      def update_visibility_options
-        [:hide, :show].each do |setting|
-          options[setting] = viz_hash.keys.select do |k|
-            viz_hash[k] == setting
-          end.sort
-        end
       end
 
       def process_visibility arg_hash

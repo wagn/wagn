@@ -141,7 +141,8 @@ format :html do
     @content_body = true
     class_up "card-body",  "history-slot list-group"
     frame do
-      [history_legend, _render_act_list]
+      "fix tomorrow"
+      #[history_legend, _render_act_list]
     end
   end
 

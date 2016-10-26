@@ -10,8 +10,9 @@ class Card
       # (as opposed to a direct API nest)
       def content_nest opts={}
         return opts[:comment] if opts.key? :comment # commented nest
-        return main_nest(opts) if main_nest?(opts)
-        nest opts[:nest_name], opts
+        nest_name = opts[:nest_name]
+        return main_nest(opts) if main_nest?(nest_name)
+        nest nest_name, opts
       end
 
       def nest cardish, options={}, &block
@@ -72,10 +73,6 @@ class Card
 
       def nest_invisible?
         @mode == :closed && @char_count && @char_count > max_char_count
-      end
-
-      def main_nest? opts
-        opts[:nest_name] == "_main" && show_layout? && @depth.zero?
       end
 
       def count_chars

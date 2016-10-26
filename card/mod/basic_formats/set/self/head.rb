@@ -9,14 +9,12 @@ format :html do
     ]
   end
 
-  view :core, cache: :never do |args|
-    if focal?
-      CGI.escapeHTML _render_raw(args)
-    elsif @mainline
-      "(*head)"
-    else
-      _render_raw(args)
-    end
+  view :core, cache: :never do
+    functional_head? ? _render_raw : CGI.escapeHTML(_render_raw)
+  end
+
+  def functional_head?
+    @depth == 1 && !voo.parent
   end
 
   def head_meta

@@ -6,10 +6,12 @@ class Card
 
       def fetch &block
         level = cache_level
-        puts "#{@card.name}/#{original_view}" #\
-       #      " cache level #{level.to_s.upcase} :: "#\
-       #      "in_progress: #{self.class.in_progress?}"#\
-       #      "\n--#{cache_key}\n--nonstandard=#{foreign_options}#"
+        #puts "#{@card.name}/#{requested_view}" \
+        #     " cache level #{level.to_s.upcase} ::: " \
+        #     "\n--#{cache_key}"
+        #     #      "in_progress: #{self.class.in_progress?}"#\
+
+       #       "\n--nonstandard=#{foreign_options}#"
        #      # " depth = #{@format.instance_variable_get '@depth'}"
              # binding.pry if options[:nest_name] == "+*email"
         case level
@@ -41,7 +43,21 @@ class Card
       end
 
       def stub_array
-        [@card.cast, normalized_options, @format.mode]
+        [@card.cast, stub_options, @format.mode]
+      end
+
+      def stub_options
+        stub_options = options.merge view: requested_view
+        stub_visibility_options stub_options
+        stub_options
+      end
+
+      def stub_visibility_options stub_options
+        [:hide, :show].each do |setting|
+          stub_options[setting] = viz_hash.keys.select do |k|
+            viz_hash[k] == setting
+          end.sort.join ","
+        end
       end
 
       def cache_level
@@ -62,7 +78,7 @@ class Card
       end
 
       def cache_permissible?
-        return false unless original_view == ok_view
+        return false unless requested_view == ok_view
         return false unless permissible_card_state?
         true
       end
@@ -82,7 +98,7 @@ class Card
       end
 
       def nestable_view_permissions?
-        case Card::Format.perms[original_view]
+        case Card::Format.perms[requested_view]
         when :none      then true
         when :read, nil then anyone_can_read?
         else                 false
@@ -94,7 +110,7 @@ class Card
       end
 
       def cache_setting
-        @format.view_cache_setting original_view
+        @format.view_cache_setting requested_view
       end
 
       # "default" means not in the context of a nest within an active
@@ -111,7 +127,7 @@ class Card
 
       # names
       def cacheable_nest_name?
-        return true if @parent_voo # not directly nested
+        return true if @parent # not directly nested
         case options[:nest_name]
         when "_main" then false
         when "_user" then false
@@ -125,8 +141,25 @@ class Card
 
       def cache_key
         [
-          @card.key, @format.class, @format.mode, original_view, options
+          @card.key, @format.class, @format.mode,
+          requested_view, hash_key(options), hash_key(viz_hash)
         ].map(&:to_s).join "-"
+      end
+
+      def hash_key hash
+        hash.keys.sort.map do |key|
+          key_for_option key, hash[key]
+        end.join ";"
+      end
+
+      def key_for_option key, value
+        string_value =
+          case value
+          when Hash then "{#{hash_key value}}"
+          when Array then value.sort.map(&:to_s).join ","
+          else value.to_s
+          end
+        "#{key}:#{string_value}"
       end
 
       module ClassMethods

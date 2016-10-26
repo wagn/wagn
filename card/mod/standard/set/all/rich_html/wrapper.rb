@@ -142,9 +142,9 @@ format :html do
     end
   end
 
-  def wrap_main content
-    return content if Env.ajax? || params[:layout] == "none"
-    wrap_with :div, content, id: "main"
+  def wrap_main
+    return yield if Env.ajax? || params[:layout] == "none"
+    wrap_with :div, yield, id: "main"
   end
 
   def wrap_with tag, content_or_args={}, html_args={}

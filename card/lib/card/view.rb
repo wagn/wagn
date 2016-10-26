@@ -7,7 +7,7 @@ class Card
     include Cache
     extend Cache::ClassMethods
 
-    @@standard_options = [
+    @@standard_options = ::Set.new [
       :nest_name,   # name as used in nest
       :nest_syntax, # full nest syntax
 
@@ -19,6 +19,7 @@ class Card
       :home_view,
       :size,
 
+      :main,
       :skip_permissions
     ]
 
@@ -35,48 +36,48 @@ class Card
 
     class << self
       def options
-        @options ||= @@standard_inheritance_options + @@other_options
+        @options ||= ::Set.new(@@standard_inheritance_options + @@other_options)
       end
 
       def nest_options
-        @nest_options ||= options.reject { |o| o == :skip_permissions }
+        @nest_options ||= (options - [:main, :skip_permissions])
       end
     end
 
+    attr_reader :format, :parent
 
-    attr_reader :format
-
-    def initialize format, view, raw_options={}, parent_voo=nil
+    def initialize format, view, raw_options={}, parent=nil
       @format = format
       @card = @format.card
       @raw_view = view
       @raw_options = raw_options
-      @parent_voo = parent_voo
-      options
+      @parent = parent
     end
 
     def prepare
-      return if hide?
+      options
+      return if optional? && hide?(ok_view)
       fetch do
         yield ok_view, foreign_options
       end
     end
 
     def original_view
-      @original_view ||= View.canonicalize @raw_view
+      @original_view ||= @raw_view
+    end
+
+    def requested_view
+      @requested_view ||=
+        View.canonicalize(live_options[:view] || original_view)
     end
 
     def ok_view
       @ok_view ||=
-        @format.ok_view original_view, options[:skip_permissions]
+        @format.ok_view requested_view, options[:skip_permissions]
     end
 
     def normalized_options
-      @normalized_options ||= begin
-        opts = options_to_hash @raw_options.clone
-        opts[:view] = original_view
-        opts
-      end
+      @normalized_options ||= options_to_hash @raw_options.clone
     end
 
     def options_to_hash opts
@@ -95,18 +96,28 @@ class Card
 
     def options
       return @options if @options
-      @options = standard_options_with_inheritance
+      @options = {}
+      standard_options_with_inheritance
+      main_nest_options
       process_visibility_options
       @options
     end
 
+    def main?
+      normalized_options[:main] && !parent
+    end
+
     def standard_options_with_inheritance
-      @@standard_inheritance_options.each_with_object({}) do |key, hash|
+      @@standard_inheritance_options.each do |key|
         value = live_options.delete key
-        value ||= @parent_voo.options[key] if @parent_voo
-        hash[key] = value if value
-        hash
+        value ||= @parent.options[key] if @parent
+        options[key] = value if value
       end
+    end
+
+    def main_nest_options
+      return {} unless main?
+      @format.main_nest_options
     end
 
     def foreign_options
@@ -115,9 +126,12 @@ class Card
 
     # run default_X_args
     def live_options
-      @live_options ||= @format.view_options_with_defaults(
+      return @live_options if @live_options
+      live_options ||= @format.view_options_with_defaults(
         original_view, normalized_options.clone
       )
+      live_options.merge! main_nest_options
+      @live_options = live_options
     end
 
     def items

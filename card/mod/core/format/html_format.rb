@@ -59,11 +59,8 @@ class Card
       end
 
       def main?
-        if show_layout?
-          @depth == 1 && @mainline # assumes layout includes {{_main}}
-        else
-          @depth.zero? && params[:is_main]
-        end
+        return false unless show_layout? || params[:is_main]
+        voo.main
       end
 
       def focal? # meaning the current card is the requested card

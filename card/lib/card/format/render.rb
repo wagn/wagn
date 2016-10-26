@@ -13,9 +13,9 @@ class Card
 
       def render view, args={}
         voo = View.new self, view, args, @voo
-        with_voo(voo) do
-          voo.prepare do |final_view, final_args|
-            final_render final_view, final_args
+        with_voo voo do
+          voo.prepare do |final_view, options|
+            final_render final_view, options
           end
         end
       rescue => e
@@ -37,7 +37,7 @@ class Card
       end
 
       def voo
-        @voo ||= View.new(self, :noview)
+        @voo
       end
 
       def show_view? view, default_viz=:show

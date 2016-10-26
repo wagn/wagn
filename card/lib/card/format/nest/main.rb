@@ -15,7 +15,6 @@ class Card
 
           with_nest_mode :normal do
             @mainline = true
-            opts.delete :nest_name
             result = wrap_main nest(root.card, opts)
             @mainline = false
             result

@@ -2,15 +2,16 @@ class Card
   class View
     module Cache
       CACHE_SETTING_NEST_LEVEL =
-        { always: :full, nested: :off, never: :stub }.freeze
+        { always: :full, standard: :off, nested: :off, never: :stub }.freeze
 
       def fetch &block
         level = cache_level
-        # puts "#{@card.name}/#{original_view}" \
-        #      " cache level #{level.to_s.upcase} :: "\
-        #      "\n--#{cache_key}\n--nonstandard=#{foreign_options}"
-        #      # " depth = #{@format.instance_variable_get '@depth'}"
-        #      # binding.pry if options[:nest_name] == "+*email"
+        puts "#{@card.name}/#{original_view}" #\
+       #      " cache level #{level.to_s.upcase} :: "#\
+       #      "in_progress: #{self.class.in_progress?}"#\
+       #      "\n--#{cache_key}\n--nonstandard=#{foreign_options}#"
+       #      # " depth = #{@format.instance_variable_get '@depth'}"
+             # binding.pry if options[:nest_name] == "+*email"
         case level
         when :off  then yield
         when :full then cache_fetch(&block)
@@ -45,14 +46,15 @@ class Card
 
       def cache_level
         # return :off # unless Card.config.view_cache
-        level_method = self.class.in_progress? ? :cache_nest : :cache_default
+        level_method =
+          self.class.in_progress? ? :cache_nest : :cache_independent
         send "#{level_method}_level"
       end
 
       def cache_nest_level
         if ok_view == :too_deep
           :off
-        elsif cacheable_nest_name? && cache_permissible?
+        elsif cacheable_nest_name? && cache_nest_permissible?
           CACHE_SETTING_NEST_LEVEL[cache_setting]
         else
           :stub
@@ -62,8 +64,13 @@ class Card
       def cache_permissible?
         return false unless original_view == ok_view
         return false unless permissible_card_state?
+        true
+      end
+
+      def cache_nest_permissible?
+        return false unless cache_permissible?
         return true if options[:skip_permissions]
-        view_permissions_ok?
+        nestable_view_permissions?
       end
 
       def permissible_card_state?
@@ -74,7 +81,7 @@ class Card
         true
       end
 
-      def view_permissions_ok?
+      def nestable_view_permissions?
         case Card::Format.perms[original_view]
         when :none      then true
         when :read, nil then anyone_can_read?
@@ -92,16 +99,19 @@ class Card
 
       # "default" means not in the context of a nest within an active
       # cache result
-      def cache_default_level
+      def cache_independent_level
         ok_to_cache_independently? ? :full : :off
       end
 
       def ok_to_cache_independently?
-        cache_setting == :always && foreign_options.empty? && cache_permissible?
+        cache_setting.in?([:always, :standard]) &&
+          foreign_options.empty? &&
+          cache_permissible?
       end
 
       # names
       def cacheable_nest_name?
+        return true if @parent_voo # not directly nested
         case options[:nest_name]
         when "_main" then false
         when "_user" then false

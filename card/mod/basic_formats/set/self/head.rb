@@ -1,5 +1,5 @@
 format :html do
-  view :raw do
+  view :raw, cache: :never do
     output [
       head_meta,
       head_title,
@@ -9,7 +9,7 @@ format :html do
     ]
   end
 
-  view :core do |args|
+  view :core, cache: :never do |args|
     if focal?
       CGI.escapeHTML _render_raw(args)
     elsif @mainline

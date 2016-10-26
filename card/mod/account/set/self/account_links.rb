@@ -6,26 +6,32 @@ format :html do
     end
   end
 
-  view :sign_up, perms: ->(r) { r.show_signup_link? }, denial: :blank do
+  def self.link_options opts={}
+    options = { denial: :blank, cache: :never }.merge opts
+    options[:perms] = ->(r) { yield r } if block_given?
+    options.clone
+  end
+
+  view :sign_up, link_options(&:show_signup_link?) do
     link_to_card :signup, account_link_text(:sign_up),
                  id: "signup-link", path: { action: :new, mark: :signup }
   end
 
-  view :sign_in, perms: ->(_r) { !Auth.signed_in? }, denial: :blank do
+  view :sign_in, link_options { !Auth.signed_in? } do
     link_to_card :signin, account_link_text(:sign_in), id: "signin-link"
   end
 
-  view :sign_out, perms: ->(_r) { Auth.signed_in? }, denial: :blank do
+  view :sign_out, link_options { Auth.signed_in? } do
     link_to_card :signin, account_link_text(:sign_out),
                  id: "signout-link", path: { action: :delete }
   end
 
-  view :invite, perms: ->(r) { r.show_invite_link? }, denial: :blank do
+  view :invite, link_options(&:show_invite_link?) do
     link_to account_link_text(:invite),
             id: "invite-a-friend-link", path: { action: :new, mark: :signup }
   end
 
-  view :my_card, perms: ->(_r) { Auth.signed_in? }, denial: :blank do
+  view :my_card, link_options { Auth.signed_in? } do
     link_to_card Auth.current.cardname, nil, id: "my-card-link"
   end
 

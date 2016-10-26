@@ -13,9 +13,9 @@ class Card
       LAYOUTS = Mod::Loader.load_layouts.merge "none" => "{{_main}}"
 
       # helper methods for layout view
-      def get_layout_content
+      def get_layout_content requested_layout
         Auth.as_bot do
-          if (requested_layout = params[:layout])
+          if requested_layout
             layout_from_card_or_code requested_layout
           else
             layout_from_rule

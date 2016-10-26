@@ -101,7 +101,7 @@ class Card
     end
 
     def standard_options_with_inheritance
-      (@@standard_inheritance_options).each_with_object({}) do |key, hash|
+      @@standard_inheritance_options.each_with_object({}) do |key, hash|
         value = live_options.delete key
         value ||= @parent_voo.options[key] if @parent_voo
         hash[key] = value if value

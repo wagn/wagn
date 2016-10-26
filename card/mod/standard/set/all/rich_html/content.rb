@@ -23,8 +23,12 @@ format :html do
     render view, args
   end
 
+  def default_layout_args args
+    args[:title] = params[:layout] # FIXME: using title for param.  hack!
+  end
+
   view :layout, perms: :none do
-    layout = process_content get_layout_content,
+    layout = process_content get_layout_content(voo.title),
                              content_opts: { chunk_list: :references }
     output [layout, _render_modal_slot]
   end
@@ -92,9 +96,12 @@ format :html do
     end
   end
 
-  view :open, tags: :comment do
+  def default_open_args _args
     voo.show! :toolbar if toolbar_pinned?
     voo.viz :toggle, (main? ? :hide : :show)
+  end
+
+  view :open, tags: :comment do
     @content_body = true
     frame do
       [_render_open_content, optional_render_comment_box]

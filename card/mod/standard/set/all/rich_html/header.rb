@@ -26,7 +26,7 @@ format :html do
     main_header + _optional_render_toolbar
   end
 
-  view :subheader do
+  view :subheader, cache: :nested  do
     wrap_with :div, class: "card-subheader navbar-inverse btn-primary active" do
       [_render_title,
        (autosaved_draft_link if card.drafts.present? && @slot_view == :edit)
@@ -35,7 +35,7 @@ format :html do
     # toolbar_view_title(@slot_view) || _render_title(args)
   end
 
-  view :toggle do
+  view :toggle, cache: :nested do
     verb, adjective, direction = toggle_verb_adjective_direction
     link_to_view adjective, glyphicon(direction),
                  title: "#{verb} #{card.name}",

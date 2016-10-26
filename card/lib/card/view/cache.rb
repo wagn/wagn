@@ -6,7 +6,7 @@ class Card
 
       def fetch &block
         level = cache_level
-        puts "#{@card.name}/#{requested_view} -> #{ok_view}:" #\
+        #puts "#{@card.name}/#{requested_view} -> #{ok_view}:" #\
         #     "\n--#{cache_key}"
         #     #      "in_progress: #{self.class.in_progress?}"#\
 

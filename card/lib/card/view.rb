@@ -46,7 +46,6 @@ class Card
     attr_reader :format, :parent
 
     def initialize format, view, raw_options={}, parent=nil
-      puts "initialize #{view} with #{raw_options}"
       @format = format
       @card = @format.card
       @raw_view = view

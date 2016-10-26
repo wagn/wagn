@@ -66,13 +66,21 @@ class Card
       end
 
       def cache_nest_level
-        if ok_view == :too_deep
-          :off
-        elsif cacheable_nest_name? && cache_nest_permissible?
-          CACHE_SETTING_NEST_LEVEL[cache_setting]
-        else
-          :stub
-        end
+        level =
+          if ok_view == :too_deep
+            :off
+          elsif cacheable_nest_name? && cache_nest_permissible?
+            CACHE_SETTING_NEST_LEVEL[cache_setting]
+          else
+            :stub
+          end
+        validate_nest_cache! level
+      end
+
+      def validate_nest_cache! level
+        return level unless level == :stub && foreign_options.any?
+        raise "INVALID NEST CACHE: #{@card.name}/#{ok_view}" \
+              " has foreign options: #{foreign_options}"
       end
 
       def cache_permissible?

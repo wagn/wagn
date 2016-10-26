@@ -139,8 +139,8 @@ describe Card::Format::HtmlFormat do
           Card.create name: "outer space", content: "{{_main|name}}"
         end
 
-        expect(@layout_card.format.render(:layout)).to eq(
-          "Joe User\n" \
+        expect(@main_card.format.render(:layout)).to eq(
+          '<div id="main">Joe User</div>' + "\n" \
           '<div class="modal fade" role="dialog" id="modal-main-slot">' \
           '<div class="modal-dialog"><div class="modal-content">' \
           "</div></div></div>"

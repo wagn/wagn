@@ -58,17 +58,8 @@ class Card
          .gsub(/>/, "&gt;").gsub(/</, "&lt;")
       end
 
-      def main?
-        return false unless show_layout? || params[:is_main]
-        voo.main
-      end
-
       def focal? # meaning the current card is the requested card
-        if show_layout?
-          main?
-        else
-          @depth.zero?
-        end
+        show_layout? ? main? : @depth.zero?
       end
     end
   end

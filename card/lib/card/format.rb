@@ -48,22 +48,27 @@ class Card
     attr_accessor :form, :error_status
 
     def initialize card, opts={}
-      # binding.pry
-      unless (@card = card)
-        msg = I18n.t :exception_init_without_card, scope: "lib.card.format"
-        raise Card::Error, msg
-      end
+      @card = card
+      require_card_to_initialize!
 
       opts.each { |key, value| instance_variable_set "@#{key}", value }
 
       @mode ||= :normal
       @root ||= self
       @depth ||= 0
+      @main ||= @depth.zero?
 
       @context_names = initialize_context_names
       include_set_format_modules
       self
     end
+
+    def require_card_to_initialize!
+      return if @card
+      msg = I18n.t :exception_init_without_card, scope: "lib.card.format"
+      raise Card::Error, msg
+    end
+
 
     def include_set_format_modules
       self.class.format_ancestry.reverse_each do |klass|
@@ -92,7 +97,7 @@ class Card
     end
 
     def main?
-      @depth.zero?
+      !@main.nil?
     end
 
     def focal? # meaning the current card is the requested card

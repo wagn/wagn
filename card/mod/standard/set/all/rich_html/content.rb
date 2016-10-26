@@ -14,6 +14,7 @@ format :html do
 
   def show_with_layout view, args
     args[:view] = view if view
+    @main = nil
     @main_opts = args
     render :layout
   end

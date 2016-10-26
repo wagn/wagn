@@ -108,8 +108,7 @@ class Card
     end
 
     def root_main?
-      return @root_main if !@root_main.nil?
-      @root_main = !parent && @format.main_nest?(normalized_options[:nest_name])
+      !parent && normalized_options[:main]
     end
 
     def standard_options_with_inheritance

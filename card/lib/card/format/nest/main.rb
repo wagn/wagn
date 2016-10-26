@@ -16,7 +16,17 @@ class Card
         end
 
         def main_nest? nest_name
-          nest_name == "_main" && show_layout? && @depth.zero?
+          nest_name == "_main" && !root.already_mained?
+        end
+
+        def already_mained?
+          return true if @main || @already_main
+          @already_main = true
+          return false
+        end
+
+        def main!
+          @main = true
         end
 
         def main_nest_options

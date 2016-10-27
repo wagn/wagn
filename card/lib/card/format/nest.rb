@@ -52,7 +52,7 @@ class Card
       def nest_subformat nested_card, opts
         return self if opts[:nest_name] =~ /^_(self)?$/
         sub = subformat nested_card
-        sub.main! if opts[:main]
+        sub.main! if opts.delete(:main)
         sub
       end
 

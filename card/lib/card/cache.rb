@@ -22,11 +22,9 @@ class Card
     end
 
     def expire name
-      # note: calling instance method breaks on dirty names
       key = name.to_name.key
       return unless (card = Card.cache.read key)
-      Card.cache.delete key
-      Card.cache.delete "~#{card.id}" if card.id
+      card.expire
     end
   end
 

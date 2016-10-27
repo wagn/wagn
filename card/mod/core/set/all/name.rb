@@ -213,8 +213,7 @@ event :set_autoname, :prepare_to_validate, on: :create do
 end
 
 event :set_name, :store, changed: :name do
-  Card.expire name
-  Card.expire name_was
+  expire
 end
 
 event :set_left_and_right, :store,

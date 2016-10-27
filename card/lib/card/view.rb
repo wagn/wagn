@@ -54,12 +54,17 @@ class Card
       @main = normalized_options.delete :main
     end
 
-    def prepare
-      options
+    def process
+      load_options
       return if optional? && hide?(ok_view)
       fetch do
         yield ok_view, foreign_options
       end
+    end
+
+    def load_options
+      options
+      process_visibility_options
     end
 
     def original_view
@@ -79,6 +84,7 @@ class Card
     def normalized_options
       @normalized_options ||= begin
         options = options_to_hash @raw_options.clone
+        options.deep_symbolize_keys!
         options[:view] = original_view
         options
       end
@@ -99,12 +105,7 @@ class Card
     # end
 
     def options
-      return @options if @options
-      @options = {}
-      standard_options_with_inheritance
-      main_nest_options
-      process_visibility_options
-      @options
+      @options ||= standard_options_with_inheritance
     end
 
     def root_main?
@@ -112,11 +113,13 @@ class Card
     end
 
     def standard_options_with_inheritance
+      @options = {}
       @@standard_inheritance_options.each do |key|
         value = live_options.delete key
         value ||= @parent.options[key] if @parent
-        options[key] = value if value
+        @options[key] = value if value
       end
+      @options
     end
 
     def main_nest_options

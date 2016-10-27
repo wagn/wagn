@@ -14,7 +14,7 @@ class Card
       def render view, args={}
         voo = View.new self, view, args, @voo
         with_voo voo do
-          voo.prepare do |final_view, options|
+          voo.process do |final_view, options|
             final_render final_view, options
           end
         end
@@ -61,17 +61,17 @@ class Card
         respond_to?(setting_method) ? send(setting_method) : :standard
       end
 
-      def complete_cached_view_render cached_content
+      def stub_render cached_content
         return cached_content unless cached_content.is_a? String
-        expand_stubs cached_content do |card, options, nest_mode|
-          with_nest_mode(nest_mode) { nest card, options }
+        expand_stubs cached_content do |card, options, nest_mode, main|
+          with_nest_mode(nest_mode) { nest card, options.merge(main: main) }
         end
       end
 
       def expand_stubs cached_content
         conto = Card::Content.new cached_content, self, chunk_list: :stub
-        conto.process_each_chunk do |card, options, nest_mode|
-          yield(card, options, nest_mode).to_s
+        conto.process_each_chunk do |card, options, nest_mode, main|
+          yield(card, options, nest_mode, main).to_s
         end
         conto.to_s
       end

@@ -17,6 +17,10 @@ include SelectedAction
 
 format do
   view :source do
+    source_url
+  end
+
+  def source_url
     card.attachment.url
   end
 
@@ -27,7 +31,7 @@ format do
   end
 
   def handle_source
-    source = _render_source
+    source = source_url
     source ? yield(source) : ""
   rescue
     "File Error"

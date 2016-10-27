@@ -18,12 +18,11 @@ format :html do
   end
 
   def single_card_edit_slot
-    field = content_field form
     if voo.show?(:type_formgroup) || voo.show?(:name_formgroup)
       # display content field in formgroup for consistency with other fields
-      formgroup("", editor: :content) { field }
+      formgroup("", editor: :content) { content_field }
     else
-      editor_wrap(:content) { field }
+      editor_wrap(:content) { content_field }
     end
   end
 
@@ -95,8 +94,8 @@ format :html do
   def editor_wrap type=nil
     html_class = "editor"
     html_class << " #{type}-editor" if type
-    content_tag :div, class: html_class do
-      yield.html_safe
+    wrap_with :div, class: html_class do
+      yield
     end
   end
 
@@ -203,8 +202,7 @@ format :html do
     card.type_name_or_default
   end
 
-  def content_field form, skip_rev_id=false
-    @form = form
+  def content_field skip_rev_id=false
     [content_field_revision_tracking(skip_rev_id), _render_editor].compact.join
   end
 
@@ -216,15 +214,17 @@ format :html do
 
   # FIELD VIEWS
 
-  view :edit_in_form, perms: :update, tags: :unknown_ok do |args|
-    eform = form_for_multi
-    content = content_field eform, args.merge(nested: true)
-    content += raw("\n #{eform.hidden_field :type_id}") if card.new_card?
+  view :edit_in_form, cache: :never, perms: :update, tags: :unknown_ok do
     opts = { editor: "content", help: true, class: "card-editor" }
     if card.cardname.junction?
-      opts[:class] += " RIGHT-#{card.cardname.tag_name.safe_key}"
+      add_class opts, "RIGHT-#{card.cardname.tag_name.safe_key}"
     end
-    formgroup(fancy_title(voo.title), opts) { content }
+    formgroup(fancy_title(voo.title), opts) do
+      [
+        content_field,
+        (form.hidden_field(:type_id) if card.new_card?)
+      ]
+    end
   end
 
   # form helpers

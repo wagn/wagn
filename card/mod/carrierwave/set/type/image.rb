@@ -9,28 +9,35 @@ format do
     _render_core size: :icon
   end
 
-  view :source do
+  view :source, cache: :never do
+    default_core_args
+    source_url
+  end
+
+  def source_url
     return card.raw_content if card.web?
-    style =
-      case
-      when @mode == :closed then :icon
-      when voo.size         then voo.size.to_sym
-      when main?            then :large
-      else :medium
-      end
-    style = :original if style.to_sym == :full
-    if style == :original
+    if voo.size == :original
       card.image.url
     else
-      card.image.versions[style].url
+      card.image.versions[voo.size.to_sym].url
     end
+  end
+
+  def default_core_args args={}
+    size = case
+           when @mode == :closed then :icon
+           when voo.size         then voo.size.to_sym
+           when main?            then :large
+           else :medium
+           end
+    voo.size = size == :full ? :original : size
   end
 end
 
 format :html do
   include File::HtmlFormat
 
-  view :core do
+  view :core, cache: :never do
     handle_source do |source|
       if source == "missing"
         "<!-- image missing #{@card.name} -->"

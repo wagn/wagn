@@ -47,6 +47,7 @@ class Card
         end
       end
 
+      # eg  { toggle: :hide }
       def viz_hash
         @viz_hash ||= {}
       end

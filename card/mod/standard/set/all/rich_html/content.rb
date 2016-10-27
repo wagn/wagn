@@ -163,7 +163,8 @@ format :html do
   end
 
   def related_card_and_options args
-    return unless (options = args[:related] || params[:related])
+    options = (args[:related] || params[:related]).symbolize_keys
+    return unless options
     related_card = related_card_from_options options
     options[:view] ||= :open
     options[:show] ||= []
@@ -174,7 +175,7 @@ format :html do
   def related_card_from_options options
     related_card = options.delete :card
     return related_card if related_card
-    related_name = options[:name].to_name.to_absolute_name card.cardname
+    related_name = options.delete(:name).to_name.to_absolute_name card.cardname
     Card.fetch related_name, new: {}
   end
 

@@ -8,32 +8,32 @@ class Card
         level = cache_level
         # puts "#{@card.name}/#{requested_view} -> #{ok_view}:" #\
         #      "\n--#{cache_key}"
-        #     #      "in_progress: #{self.class.in_progress?}"#\
+        #     #      "caching: #{self.class.caching?}"#\
         #       "\n--nonstandard=#{foreign_options}#"
         case level
         when :off  then yield
         when :full then cache_fetch(&block)
-        when :stub then stub_nest
+        when :stub then stub_view
         else raise "Invalid cache level #{level}"
         end
       end
 
       def cache_fetch
-        cached_view = progressively do
+        cached_view = caching do
           self.class.cache.fetch cache_key do
             @card.register_view_cache_key cache_key
             yield
           end
         end
-        return cached_view if self.class.in_progress?
-        @format.complete_cached_view_render cached_view
+        return cached_view if self.class.caching?
+        @format.stub_render cached_view
       end
 
-      def progressively
-        self.class.progressively(self) { yield }
+      def caching
+        self.class.caching(self) { yield }
       end
 
-      def stub_nest
+      def stub_view
         "<card-view>#{stub_json}</card-view>"
       end
 
@@ -42,7 +42,7 @@ class Card
       end
 
       def stub_array
-        [@card.cast, stub_options, @format.mode]
+        [@card.cast, stub_options, @format.mode, @format.main?]
       end
 
       def stub_options
@@ -61,7 +61,7 @@ class Card
 
       def cache_level
         # return :off # unless Card.config.view_cache
-        level_method = self.class.in_progress? ? :nest : :independent
+        level_method = self.class.caching? ? :nest : :independent
         send "cache_#{level_method}_level"
       end
 
@@ -74,12 +74,12 @@ class Card
           else
             :stub
           end
-        validate_nest_cache! level
+        validate_stub! level
       end
 
-      def validate_nest_cache! level
+      def validate_stub! level
         return level unless level == :stub && foreign_options.any?
-        raise "INVALID NEST CACHE: #{@card.name}/#{ok_view}" \
+        raise "INVALID STUB: #{@card.name}/#{ok_view}" \
               " has foreign options: #{foreign_options}"
       end
 
@@ -147,7 +147,7 @@ class Card
 
       def cache_key
         @cache_key ||= [
-          @card.key, @format.class, @format.mode,
+          @card.key, @format.class, @format.mode, @format.main?,
           requested_view, hash_key(options), hash_key(viz_hash)
         ].map(&:to_s).join "-"
       end
@@ -173,16 +173,16 @@ class Card
           Card::Cache[Card::View]
         end
 
-        def in_progress?
-          @in_progress
+        def caching?
+          @caching
         end
 
-        def progressively voo
-          return yield if @in_progress
-          @in_progress = voo
+        def caching voo
+          return yield if @caching
+          @caching = voo
           yield
         ensure
-          @in_progress = nil
+          @caching = nil
         end
 
         def fetch cache_key, &block

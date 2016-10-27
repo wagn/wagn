@@ -215,16 +215,17 @@ format :html do
   # FIELD VIEWS
 
   view :edit_in_form, cache: :never, perms: :update, tags: :unknown_ok do
-    opts = { editor: "content", help: true, class: "card-editor" }
-    if card.cardname.junction?
-      add_class opts, "RIGHT-#{card.cardname.tag_name.safe_key}"
+    @form = form_for_multi
+    add_junction_class
+    formgroup fancy_title(voo.title),
+              editor: "content", help: true, class: classy("card-editor") do
+      [content_field, (form.hidden_field(:type_id) if card.new_card?)]
     end
-    formgroup(fancy_title(voo.title), opts) do
-      [
-        content_field,
-        (form.hidden_field(:type_id) if card.new_card?)
-      ]
-    end
+  end
+
+  def add_junction_class
+    return unless card.cardname.junction?
+    class_up "card-editor", "RIGHT-#{card.cardname.tag_name.safe_key}"
   end
 
   # form helpers

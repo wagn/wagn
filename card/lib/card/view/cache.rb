@@ -1,6 +1,11 @@
 class Card
   class View
-    # Support view caching
+    # Support context-aware card view caching.
+    #
+    # View defintions can contain cache settings that guide whether and how
+    # the view should be cached.
+    #
+    #
     module Cache
       # Each of the following keys represents an accepted value for cache
       # directives on view definitions.  eg:
@@ -15,7 +20,6 @@ class Card
                                 # another one already being cached)
         standard: :yield,       # cache independently or dependently, but
                                 # don't double cache
-        nested:   :yield,       # only cache dependently
         never:    :stub         # don't ever cache this view
       }.freeze
 
@@ -30,20 +34,18 @@ class Card
         end
       end
 
+      # "dependent" caching
+      # "independent" caching takes place
       def cache_level
         send "#{self.class.caching? ? '' : 'in'}dependent_cache_level"
       end
 
-      # "default" means not in the context of a nest within an active
-      # cache result
       def independent_cache_level
         ok_to_cache_independently? ? :cache_yield : :yield
       end
 
       def ok_to_cache_independently?
-        cache_setting.in?([:always, :standard]) &&
-          foreign_options.empty? &&
-          cache_permissible?
+        cache_setting != :never && foreign_options.empty? && cache_permissible?
       end
 
       # The following methods are shared by independent and dependent caching
@@ -69,11 +71,12 @@ class Card
 
       def dependent_cache_level
         level = unvalidated_dependent_cache_level
-        validate_stub! level
+        validate_stub if level == :stub
+        level
       end
 
-      def validate_stub! level
-        return level unless level == :stub && foreign_options.any?
+      def validate_stub
+        return if foreign_options.empty?
         raise "INVALID STUB: #{@card.name}/#{ok_view}" \
               " has foreign options: #{foreign_options}"
       end
@@ -132,16 +135,11 @@ class Card
         end
       end
 
-
-
-
       def cache_nest_permissible?
         return false unless cache_permissible?
         return true if options[:skip_permissions]
         nestable_view_permissions?
       end
-
-
 
       def nestable_view_permissions?
         case Card::Format.perms[requested_view]
@@ -154,8 +152,6 @@ class Card
       def anyone_can_read?
         Card::Auth.as(:anonymous) { @card.ok? :read }
       end
-
-
 
       # names
       def cacheable_nest_name?
@@ -172,10 +168,10 @@ class Card
       end
 
       def cache_key
-        @cache_key ||= ([
+        @cache_key ||= [
           @card.key, @format.class, @format.mode, @format.main?,
           requested_view, hash_key(options), hash_key(viz_hash)
-        ].map(&:to_s).join "-")
+        ].map(&:to_s).join "-"
       end
 
       def hash_key hash

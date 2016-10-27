@@ -178,10 +178,8 @@ class Card
         def progressively voo
           return yield if @in_progress
           @in_progress = voo
-          result = yield
-          @in_progress = nil
-          result
-        rescue
+          yield
+        ensure
           @in_progress = nil
         end
 

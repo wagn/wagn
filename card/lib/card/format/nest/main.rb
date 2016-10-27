@@ -22,7 +22,7 @@ class Card
         def already_mained?
           return true if @main || @already_main
           @already_main = true
-          return false
+          false
         end
 
         def main!
@@ -39,16 +39,17 @@ class Card
         protected
 
         def main_nest_size_opt opts
-          return unless (val = params[:size]) && val.present?
+          val = params[:size]
+          return unless val.present?
           opts[:size] = val.to_sym
         end
 
         def main_nest_items_opt opts
-          return unless (val = params[:item]) && val.present?
+          val = params[:item]
+          return unless val.present?
           opts[:items] ||= {}
           opts[:items][:view] = val.to_sym
         end
-
       end
     end
   end

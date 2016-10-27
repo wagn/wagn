@@ -40,7 +40,6 @@ class Card < ActiveRecord::Base
   require_dependency "card/reference"
   require_dependency "card/subcards"
   require_dependency "card/view"
-  require_dependency "card/cache/view_cache"
   require_dependency "card/act_manager"
   require_dependency "card/act_manager/stage_director"
 

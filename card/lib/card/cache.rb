@@ -28,13 +28,6 @@ class Card
       Card.cache.delete key
       Card.cache.delete "~#{card.id}" if card.id
     end
-
-    # def expire_hard name
-    #   return unless Card.cache.hard
-    #   key = name.to_name.key
-    #   Card.cache.hard.delete key
-    #   Card.cache.hard.delete "~#{card.id}" if card.id
-    # end
   end
 
   # The {Cache} class manages and integrates {Temporary} and {Persistent
@@ -190,13 +183,3 @@ class Card
   end
 end
 
-# ActiveSupport::Cache::FileStore.class_eval do
-#   # escape special symbols \*"<>| additionaly to :?.
-#   # All of them not allowed to use in ms windows file system
-#   def real_file_path name
-#     name = name.gsub("%", "%25").gsub("?", "%3F").gsub(":", "%3A")
-#     name = name.gsub('\\', "%5C").gsub("*", "%2A").gsub('"', "%22")
-#     name = name.gsub("<", "%3C").gsub(">", "%3E").gsub("|", "%7C")
-#     "%s/%s.cache" % [@cache_path, name]
-#   end
-# end

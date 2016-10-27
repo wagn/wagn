@@ -212,8 +212,7 @@ event :update_read_rule do
     self.read_rule_class = rclass
     Card.where(id: id).update_all read_rule_id: rcard_id,
                                   read_rule_class: rclass
-    expire_hard
-
+    expire :hard
     update_field_read_rules
   end
 end

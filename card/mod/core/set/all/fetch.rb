@@ -296,30 +296,40 @@ def expire_pieces
   end
 end
 
-def expire_hard
-  return unless Card.cache.hard
-  Card.cache.hard.delete key
-  Card.cache.hard.delete "~#{id}" if id
+def expire cache_type=nil
+  return unless (cache_class = cache_class_from_type cache_type)
+  expire_names cache_class
+  # expire_views cache_class
+  expire_id cache_class
 end
 
-def expire_soft
-  Card.cache.soft.delete key
-  Card.cache.soft.delete "~#{id}" if id
+def cache_class_from_type cache_type
+  cache_type ? Card.cache.send(cache_type) : Card.cache
 end
 
-def expire
-  expire_hard
-  expire_soft
+def expire_names cache_class
+  [name, name_was].each do |name_version|
+    expire_name name_version, cache_class
+  end
+end
+
+def expire_name name_version, cache_class
+  return unless name_version.present?
+  key_version = name_version.to_name.key
+  return unless key_version.present?
+  cache_class.delete key_version
+end
+
+def expire_id cache_class
+  return unless id
+  cache_class.delete "~#{id}"
 end
 
 def refresh force=false
-  if force || frozen? || readonly?
-    fresh_card = self.class.find id
-    fresh_card.include_set_modules
-    fresh_card
-  else
-    self
-  end
+  return self unless force || frozen? || readonly?
+  fresh_card = self.class.find id
+  fresh_card.include_set_modules
+  fresh_card
 end
 
 def eager_renew? opts

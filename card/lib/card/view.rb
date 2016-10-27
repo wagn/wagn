@@ -5,6 +5,7 @@ class Card
   class View
     include Visibility
     include Cache
+    include Stub
     extend Cache::ClassMethods
 
     @@standard_options = ::Set.new [

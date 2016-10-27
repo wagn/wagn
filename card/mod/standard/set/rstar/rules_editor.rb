@@ -224,7 +224,7 @@ format :html do
 
   def rule_content_formgroup
     formgroup "rule", editor: "content" do
-      content_field form, true
+      content_field true
     end
   end
 

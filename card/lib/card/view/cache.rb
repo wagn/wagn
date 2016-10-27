@@ -6,10 +6,9 @@ class Card
 
       def fetch &block
         level = cache_level
-        #puts "#{@card.name}/#{requested_view} -> #{ok_view}:" #\
-        #     "\n--#{cache_key}"
+        # puts "#{@card.name}/#{requested_view} -> #{ok_view}:" #\
+        #      "\n--#{cache_key}"
         #     #      "in_progress: #{self.class.in_progress?}"#\
-
         #       "\n--nonstandard=#{foreign_options}#"
         case level
         when :off  then yield
@@ -19,9 +18,12 @@ class Card
         end
       end
 
-      def cache_fetch &block
+      def cache_fetch
         cached_view = progressively do
-          self.class.cache.fetch cache_key, &block
+          self.class.cache.fetch cache_key do
+            @card.register_view_cache_key cache_key
+            yield
+          end
         end
         return cached_view if self.class.in_progress?
         @format.complete_cached_view_render cached_view
@@ -144,7 +146,7 @@ class Card
       end
 
       def cache_key
-        [
+        @cache_key ||= [
           @card.key, @format.class, @format.mode,
           requested_view, hash_key(options), hash_key(viz_hash)
         ].map(&:to_s).join "-"

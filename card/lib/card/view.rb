@@ -39,7 +39,7 @@ class Card
       end
 
       def nest_options
-        @nest_options ||= (options - [:main, :skip_permissions])
+        @nest_options ||= (options - [:skip_permissions])
       end
     end
 
@@ -51,7 +51,7 @@ class Card
       @raw_view = view
       @raw_options = raw_options
       @parent = parent
-      @main = normalized_options.delete :main
+      @main_view = normalized_options.delete :main_view
     end
 
     def process
@@ -108,8 +108,8 @@ class Card
       @options ||= standard_options_with_inheritance
     end
 
-    def root_main?
-      @main
+    def main_view?
+      @main_view
     end
 
     def standard_options_with_inheritance
@@ -122,8 +122,8 @@ class Card
       @options
     end
 
-    def main_nest_options
-      return {} unless root_main?
+    def main_view_options
+      return {} unless main_view?
       @format.main_nest_options
     end
 
@@ -137,7 +137,7 @@ class Card
       live_options ||= @format.view_options_with_defaults(
         original_view, normalized_options.clone
       )
-      live_options.merge! main_nest_options
+      live_options.merge! main_view_options
       @live_options = live_options
     end
 

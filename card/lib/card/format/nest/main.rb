@@ -10,7 +10,7 @@ class Card
         def main_nest opts
           wrap_main do
             with_nest_mode :normal do
-              nest root.card, opts.merge(main: true)
+              nest root.card, opts.merge(main_view: true)
             end
           end
         end

@@ -1,16 +1,22 @@
 class Card
   class View
+    # Support view caching
     module Cache
-      # each of these keys represents an accepted value for cache directives on
-      # view definitions.  eg:
+      # Each of the following keys represents an accepted value for cache
+      # directives on view definitions.  eg:
       #   view :myview, cache: :standard do ...
       #
-      # the values represent the default #fetch product to be used for these
+      # the values represent the default #fetch product to be provided in the
+      # context of a "dependent" view caching -- on that is rendered by another
+      # view while in the process of being cached.
       DEPENDENT_CACHE_LEVEL = {
-        always:   :cache_yield,
-        standard: :yield,
-        nested:   :yield,
-        never:    :stub
+        always:   :cache_yield, # always store independent cached view, even if
+                                # that means double caching. (eg view is inside
+                                # another one already being cached)
+        standard: :yield,       # cache independently or dependently, but
+                                # don't double cache
+        nested:   :yield,       # only cache dependently
+        never:    :stub         # don't ever cache this view
       }.freeze
 
       def fetch &block
@@ -19,7 +25,7 @@ class Card
         #     #      "caching: #{self.class.caching?}"#\
         case cache_level
         when :yield       then yield
-        when :cache_yield then cache_fetch(&block)
+        when :cache_yield then cache_fetch &block
         when :stub        then stub
         end
       end
@@ -40,6 +46,13 @@ class Card
           cache_permissible?
       end
 
+      # The following methods are shared by independent and dependent caching
+
+      def cache_setting
+        @format.view_cache_setting requested_view
+      end
+
+      # altered view requests and altered cards are not cacheable
       def cache_permissible?
         return false unless requested_view == ok_view
         return false unless permissible_card_state?
@@ -57,6 +70,12 @@ class Card
       def dependent_cache_level
         level = unvalidated_dependent_cache_level
         validate_stub! level
+      end
+
+      def validate_stub! level
+        return level unless level == :stub && foreign_options.any?
+        raise "INVALID STUB: #{@card.name}/#{ok_view}" \
+              " has foreign options: #{foreign_options}"
       end
 
       def unvalidated_dependent_cache_level
@@ -116,15 +135,6 @@ class Card
 
 
 
-
-      def validate_stub! level
-        return level unless level == :stub && foreign_options.any?
-        raise "INVALID STUB: #{@card.name}/#{ok_view}" \
-              " has foreign options: #{foreign_options}"
-      end
-
-
-
       def cache_nest_permissible?
         return false unless cache_permissible?
         return true if options[:skip_permissions]
@@ -145,12 +155,6 @@ class Card
         Card::Auth.as(:anonymous) { @card.ok? :read }
       end
 
-      def cache_setting
-        @format.view_cache_setting requested_view
-      end
-
-
-
 
 
       # names
@@ -168,10 +172,10 @@ class Card
       end
 
       def cache_key
-        @cache_key ||= [
+        @cache_key ||= ([
           @card.key, @format.class, @format.mode, @format.main?,
           requested_view, hash_key(options), hash_key(viz_hash)
-        ].map(&:to_s).join "-"
+        ].map(&:to_s).join "-")
       end
 
       def hash_key hash
@@ -216,10 +220,6 @@ class Card
             config_option = Card.config.view_cache
             config_option == "debug" ? :verbose_fetch : :standard_fetch
           end
-        end
-
-        def reset
-          cache.reset
         end
 
         def canonicalize view

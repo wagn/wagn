@@ -29,7 +29,7 @@ class Card
         #     #      "caching: #{self.class.caching?}"#\
         case cache_level
         when :yield       then yield
-        when :cache_yield then cache_fetch &block
+        when :cache_yield then cache_fetch(&block)
         when :stub        then stub
         end
       end

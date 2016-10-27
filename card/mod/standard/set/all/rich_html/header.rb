@@ -15,7 +15,7 @@ format :html do
     [classes, class_list[classes.first]].flatten.compact.join " "
   end
 
-  view :header, cache: :nested do
+  view :header do
     voo.hide :toggle, :toolbar
     main_header =
       wrap_with :div, class: classy("card-header") do
@@ -26,7 +26,7 @@ format :html do
     main_header + _optional_render_toolbar
   end
 
-  view :subheader, cache: :nested  do
+  view :subheader do
     wrap_with :div, class: "card-subheader navbar-inverse btn-primary active" do
       [_render_title,
        (autosaved_draft_link if card.drafts.present? && @slot_view == :edit)
@@ -35,7 +35,7 @@ format :html do
     # toolbar_view_title(@slot_view) || _render_title(args)
   end
 
-  view :toggle, cache: :nested do
+  view :toggle do
     verb, adjective, direction = toggle_verb_adjective_direction
     link_to_view adjective, glyphicon(direction),
                  title: "#{verb} #{card.name}",

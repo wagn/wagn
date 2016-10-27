@@ -1,21 +1,75 @@
 class Card
   class View
     module Cache
-      CACHE_SETTING_NEST_LEVEL =
-        { always: :full, standard: :off, nested: :off, never: :stub }.freeze
+      # each of these keys represents an accepted value for cache directives on
+      # view definitions.  eg:
+      #   view :myview, cache: :standard do ...
+      #
+      # the values represent the default #fetch product to be used for these
+      DEPENDENT_CACHE_LEVEL = {
+        always:   :cache_yield,
+        standard: :yield,
+        nested:   :yield,
+        never:    :stub
+      }.freeze
 
       def fetch &block
-        level = cache_level
         # puts "#{@card.name}/#{requested_view} -> #{ok_view}:" #\
         #      "\n--#{cache_key}"
         #     #      "caching: #{self.class.caching?}"#\
-        #       "\n--nonstandard=#{foreign_options}#"
-        case level
-        when :off  then yield
-        when :full then cache_fetch(&block)
-        when :stub then stub_view
-        else raise "Invalid cache level #{level}"
+        case cache_level
+        when :yield       then yield
+        when :cache_yield then cache_fetch(&block)
+        when :stub        then stub
         end
+      end
+
+      def cache_level
+        send "#{self.class.caching? ? '' : 'in'}dependent_cache_level"
+      end
+
+      # "default" means not in the context of a nest within an active
+      # cache result
+      def independent_cache_level
+        ok_to_cache_independently? ? :cache_yield : :yield
+      end
+
+      def ok_to_cache_independently?
+        cache_setting.in?([:always, :standard]) &&
+          foreign_options.empty? &&
+          cache_permissible?
+      end
+
+      def cache_permissible?
+        return false unless requested_view == ok_view
+        return false unless permissible_card_state?
+        true
+      end
+
+      def permissible_card_state?
+        return false if @card.unknown?
+        return false if @card.db_content_changed?
+        # FIXME: might consider other changes as disqualifying, though
+        # we should make sure not to disallow caching of virtual cards
+        true
+      end
+
+      def dependent_cache_level
+        level = unvalidated_dependent_cache_level
+        validate_stub! level
+      end
+
+      def unvalidated_dependent_cache_level
+        return :yield if ok_view == :too_deep
+        ok_to_cache_dependently? ? dependent_cache_setting : :stub
+      end
+
+      def ok_to_cache_dependently?
+        cacheable_nest_name? && cache_nest_permissible?
+      end
+
+      def dependent_cache_setting
+        DEPENDENT_CACHE_LEVEL[cache_setting]
       end
 
       def cache_fetch
@@ -33,7 +87,7 @@ class Card
         self.class.caching(self) { yield }
       end
 
-      def stub_view
+      def stub
         "<card-view>#{stub_json}</card-view>"
       end
 
@@ -59,23 +113,9 @@ class Card
         end
       end
 
-      def cache_level
-        # return :off # unless Card.config.view_cache
-        level_method = self.class.caching? ? :nest : :independent
-        send "cache_#{level_method}_level"
-      end
 
-      def cache_nest_level
-        level =
-          if ok_view == :too_deep
-            :off
-          elsif cacheable_nest_name? && cache_nest_permissible?
-            CACHE_SETTING_NEST_LEVEL[cache_setting]
-          else
-            :stub
-          end
-        validate_stub! level
-      end
+
+
 
       def validate_stub! level
         return level unless level == :stub && foreign_options.any?
@@ -83,11 +123,7 @@ class Card
               " has foreign options: #{foreign_options}"
       end
 
-      def cache_permissible?
-        return false unless requested_view == ok_view
-        return false unless permissible_card_state?
-        true
-      end
+
 
       def cache_nest_permissible?
         return false unless cache_permissible?
@@ -95,13 +131,7 @@ class Card
         nestable_view_permissions?
       end
 
-      def permissible_card_state?
-        return false if @card.unknown?
-        return false if @card.db_content_changed?
-        # FIXME: might consider other changes as disqualifying, though
-        # we should make sure not to disallow caching of virtual cards
-        true
-      end
+
 
       def nestable_view_permissions?
         case Card::Format.perms[requested_view]
@@ -119,17 +149,9 @@ class Card
         @format.view_cache_setting requested_view
       end
 
-      # "default" means not in the context of a nest within an active
-      # cache result
-      def cache_independent_level
-        ok_to_cache_independently? ? :full : :off
-      end
 
-      def ok_to_cache_independently?
-        cache_setting.in?([:always, :standard]) &&
-          foreign_options.empty? &&
-          cache_permissible?
-      end
+
+
 
       # names
       def cacheable_nest_name?
@@ -204,8 +226,6 @@ class Card
           return if view.blank? # error?
           view.to_viewname.key.to_sym
         end
-
-        private
 
         def standard_fetch key, &block
           cache.fetch key, &block

@@ -4,21 +4,22 @@ class Card
     #
     # View definitions can contain cache settings that guide whether and how
     # the view should be cached.
-    module Fetch      # Each of the following keys represents an accepted value for cache
+    module Fetch
+      # Each of the following keys represents an accepted value for cache
       # directives on view definitions.  eg:
       #   view :myview, cache: :standard do ...
       #
       # the values represent the default #fetch product to be provided in the
       # context of a "dependent" view caching -- on that is rendered by another
       # view while in the process of being cached.
-      DEPENDENT_CACHE_LEVEL = {
-        always:   :cache_yield, # always store independent cached view, even if
-                                # that means double caching. (eg view is inside
-                                # another one already being cached)
-        standard: :yield,       # cache independently or dependently, but
-                                # don't double cache
-        never:    :stub         # don't ever cache this view
-      }.freeze
+
+      DEPENDENT_CACHE_LEVEL =
+        { always: :cache_yield, standard: :yield, never: :stub }.freeze
+      # * *always* - store independent cached view, even if that means double
+      #   caching. (eg view is inside another one already being cached)
+      # * *standard* (default) cache independently or dependently, but
+      #   don't double cache
+      # * *never* don't ever cache this view
 
       def fetch &block
         # puts "#{@card.name}/#{requested_view} -> #{ok_view}:" #\
@@ -31,11 +32,12 @@ class Card
         end
       end
 
-      # "dependent" caching
-      # "independent" caching takes place
       def cache_level
         send "#{self.class.caching? ? '' : 'in'}dependent_cache_level"
       end
+
+      # INDEPENDENT CACHING
+      # takes place on its own (not within another view being cached)
 
       def independent_cache_level
         ok_to_cache_independently? ? :cache_yield : :yield
@@ -47,6 +49,8 @@ class Card
 
       # The following methods are shared by independent and dependent caching
 
+      # view-specific setting as set in view definition. (always, standard, or
+      # never)
       def cache_setting
         @format.view_cache_setting requested_view
       end
@@ -65,6 +69,9 @@ class Card
         # we should make sure not to disallow caching of virtual cards
         true
       end
+
+      # DEPENDENT CACHING
+      # handling of views rendered within another cached view.
 
       def dependent_cache_level
         level = unvalidated_dependent_cache_level
@@ -103,7 +110,7 @@ class Card
         Card::Auth.as(:anonymous) { @card.ok? :read }
       end
 
-      # names
+      # some contextual nest names
       def cacheable_nest_name?
         return true if @parent # not directly nested
         case options[:nest_name]

@@ -6,11 +6,15 @@ class Card
       end
 
       def stub_json
-        JSON.generate stub_array
+        JSON.generate stub_hash
       end
 
-      def stub_array
-        [@card.cast, stub_options, @format.mode, @format.main?]
+      def stub_hash
+        {
+          cast: @card.cast,
+          options: stub_options,
+          mode: @format.mode
+        }
       end
 
       def stub_options

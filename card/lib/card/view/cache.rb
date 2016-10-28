@@ -9,12 +9,16 @@ class Card
             yield
           end
         end
-        return cached_view if self.class.caching?
+        return cached_view if caching?
         @format.stub_render cached_view
       end
 
       def caching
         self.class.caching(self) { yield }
+      end
+
+      def caching?
+        self.class.caching?
       end
 
       def cache_key
@@ -45,7 +49,7 @@ class Card
         "#{key}:#{string_value}"
       end
 
-
+      # cache-related Card::View class methods
       module ClassMethods
         def cache
           Card::Cache[Card::View]

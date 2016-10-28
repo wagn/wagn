@@ -28,21 +28,21 @@ class Card
           @format.mode,
           @format.main?,
           requested_view,
-          hash_key(options),
-          hash_key(viz_hash)
+          hash_for_cache_key(options),
+          hash_for_cache_key(viz_hash)
         ].map(&:to_s).join "-"
       end
 
-      def hash_key hash
+      def hash_for_cache_key hash
         hash.keys.sort.map do |key|
-          key_for_option key, hash[key]
+          option_for_cache_key key, hash[key]
         end.join ";"
       end
 
-      def key_for_option key, value
+      def option_for_cache_key key, value
         string_value =
           case value
-          when Hash then "{#{hash_key value}}"
+          when Hash then "{#{hash_for_cache_key value}}"
           when Array then value.sort.map(&:to_s).join ","
           else value.to_s
           end

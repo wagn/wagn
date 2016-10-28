@@ -62,7 +62,7 @@ class Card
       def prep_or_parent_option key
         value = prep_options[key]
         value ||= @parent.options[key] if @parent
-        @options[key] = value if value
+        @options[key] = value if value.present?
       end
 
       def normalized_options
@@ -74,7 +74,6 @@ class Card
         options.deep_symbolize_keys!
         options[:view] = original_view
         options[:main] = @format.main?
-        binding.pry if main_view?
         options
       end
 

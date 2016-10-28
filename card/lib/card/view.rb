@@ -47,6 +47,11 @@ class Card
 
     attr_reader :format, :parent
 
+    def self.canonicalize view
+      return if view.blank? # error?
+      view.to_viewname.key.to_sym
+    end
+
     def initialize format, view, raw_options={}, parent=nil
       @format = format
       @card = @format.card

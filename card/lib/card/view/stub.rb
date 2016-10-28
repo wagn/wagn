@@ -1,12 +1,6 @@
 class Card
   class View
     module Stub
-      def validate_stub
-        return if foreign_options.empty?
-        raise "INVALID STUB: #{@card.name}/#{ok_view}" \
-              " has foreign options: #{foreign_options}"
-      end
-
       def stub
         "<card-view>#{stub_json}</card-view>"
       end
@@ -20,17 +14,13 @@ class Card
       end
 
       def stub_options
-        stub_options = options.merge view: requested_view
-        stub_visibility_options stub_options
-        stub_options
+        slot_options.merge view: requested_view
       end
 
-      def stub_visibility_options stub_options
-        [:hide, :show].each do |setting|
-          stub_options[setting] = viz_hash.keys.select do |k|
-            viz_hash[k] == setting
-          end.sort.join ","
-        end
+      def validate_stub
+        return if foreign_options.empty?
+        raise "INVALID STUB: #{@card.name}/#{ok_view}" \
+              " has foreign options: #{foreign_options}"
       end
     end
   end

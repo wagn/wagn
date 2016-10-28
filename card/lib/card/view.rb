@@ -4,6 +4,7 @@ require_dependency "card/view/cache"
 class Card
   class View
     include Visibility
+    include Fetch
     include Cache
     include Stub
     extend Cache::ClassMethods

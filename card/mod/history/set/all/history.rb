@@ -11,8 +11,7 @@ def actionable?
   history? || respond_to?(:attachment)
 end
 
-event :assign_action, :initialize,
-      when: proc { |c| c.actionable? } do
+event :assign_action, :initialize, when: proc { |c| c.actionable? } do
   @current_act = director.need_act
   @current_action = Card::Action.create(
     card_act_id: @current_act.id,
@@ -137,17 +136,16 @@ def included_descendant_card_ids
 end
 
 format :html do
-  view :history do |args|
-    frame args.merge(body_class: "history-slot list-group", content: true) do
+  view :history do
+    voo.show! :toolbar
+    @content_body = true
+    class_up "card-body",  "history-slot list-group"
+    frame do
       [history_legend, _render_act_list]
     end
   end
 
-  def default_history_args args
-    args[:optional_toolbar] ||= :show
-  end
-
-  view :act_list do |args|
+  view :act_list, cache: :never do |args|
     page = params["page"] || 1
     count = card.intrusive_acts.size + 1 - (page.to_i - 1) * ACTS_PER_PAGE
     card.intrusive_acts.page(page).per(ACTS_PER_PAGE).map do |act|
@@ -213,8 +211,8 @@ format :html do
     (params["action_view"] || "summary").to_sym
   end
 
-  view :act do |args|
-    wrap(args) do
+  view :act, cache: :never do |args|
+    wrap do
       render_haml args.merge(card: card, args: args) do
         <<-HAML.strip_heredoc
           .act{style: "clear:both;"}
@@ -225,7 +223,7 @@ format :html do
             .toggle
               = fold_or_unfold_link args
             .action-container
-              - actions.each do |action|
+              - actions[0..20].each do |action|
                 = render "action_#{args[:action_view]}", args.merge(action: action)
         HAML
       end
@@ -236,7 +234,7 @@ format :html do
     %(<h5 class="act-header">#{link_to_card card}</h5>)
   end
 
-  view :act_metadata do |args|
+  view :act_metadata, cache: :never do |args|
     render_haml args.merge(card: card, args: args) do
       <<-HAML.strip_heredoc
         - unless act_context == :absolute
@@ -258,11 +256,11 @@ format :html do
     end
   end
 
-  view :action_summary do |args|
+  view :action_summary, cache: :never do |args|
     view_action :summary, args
   end
 
-  view :action_expanded do |args|
+  view :action_expanded, cache: :never do |args|
     view_action :expanded, args
   end
 

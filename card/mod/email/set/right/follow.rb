@@ -76,7 +76,7 @@ format :html do
     end
   end
 
-  view :delete_follow_rule_button do |_args|
+  view :delete_follow_rule_button do
     button_tag(
       type: :submit,
       class: "btn-xs btn-item-delete btn-primary", "aria-label" => "Left Align"
@@ -85,7 +85,7 @@ format :html do
     end
   end
 
-  view :add_follow_rule_button do |_args|
+  view :add_follow_rule_button do
     button_tag(
       type: :submit,
       class: "btn-xs btn-item-add", "aria-label" => "Left Align"

@@ -1,9 +1,9 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::Content::Chunk::Include, "Inclusion" do
+describe Card::Content::Chunk::Nest, "Inclusion" do
   context "syntax parsing" do
     before do
-      @class = Card::Content::Chunk::Include
+      @class = Card::Content::Chunk::Nest
     end
 
     let :instance do
@@ -18,25 +18,28 @@ describe Card::Content::Chunk::Include, "Inclusion" do
     it "handles visible comments" do
       expect(render_content("{{# now you see me}}"))
         .to eq("<!-- # now you see me -->")
+    end
+
+    it "handles weird characters in nest comments" do
       expect(render_content("{{# -->}}")).to eq("<!-- # --&gt; -->")
     end
 
     it "handles empty nests" do
       @chunk = "{{ }}"
       expect(name).to eq("")
-      expect(options[:inc_syntax]).to eq(" ")
+      expect(options[:nest_syntax]).to eq(" ")
     end
 
     it "handles empty nests with pipe" do
       @chunk = "{{|}}"
       expect(name).to eq("")
-      expect(options[:inc_syntax]).to eq("|")
+      expect(options[:nest_syntax]).to eq("|")
     end
 
     it "handles no pipes" do
       @chunk = "{{toy}}"
       expect(name).to eq("toy")
-      expect(options[:inc_name]).to eq("toy")
+      expect(options[:nest_name]).to eq("toy")
       expect(options.key?(:view)).to eq(false)
     end
 
@@ -58,7 +61,7 @@ describe Card::Content::Chunk::Include, "Inclusion" do
 
     it "handles single pipe" do
       @chunk = "{{toy|view:link;hide:me}}"
-      expect(options[:inc_name]).to eq("toy")
+      expect(options[:nest_name]).to eq("toy")
       expect(options[:view]).to eq("link")
       expect(options[:hide]).to eq("me")
       expect(options.key?(:items)).to eq(false)
@@ -66,7 +69,7 @@ describe Card::Content::Chunk::Include, "Inclusion" do
 
     it "handles multiple pipes" do
       @chunk = "{{box|open|closed}}"
-      expect(options[:inc_name]).to eq("box")
+      expect(options[:nest_name]).to eq("box")
       expect(options[:view]).to eq("open")
       expect(options[:items][:view]).to eq("closed")
       expect(options[:items].key?(:items)).to eq(false)
@@ -74,14 +77,14 @@ describe Card::Content::Chunk::Include, "Inclusion" do
 
     it "handles multiple pipes with blank lists" do
       @chunk = "{{box||closed}}"
-      expect(options[:inc_name]).to eq("box")
+      expect(options[:nest_name]).to eq("box")
       expect(options[:view]).to eq(nil)
       expect(options[:items][:view]).to eq("closed")
     end
 
     it "treats :item as view of next level" do
       @chunk = "{{toy|link;item:name}}"
-      expect(options[:inc_name]).to eq("toy")
+      expect(options[:nest_name]).to eq("toy")
       expect(options[:view]).to eq("link")
       expect(options[:items][:view]).to eq("name")
     end
@@ -177,27 +180,6 @@ describe Card::Content::Chunk::Include, "Inclusion" do
       wooga_age = create! "#{wooga.name}#{Card::Name.joint}age", "39"
       expect(wooga_age.format.render_core).to eq("39")
       expect(wooga_age.includers.map(&:name)).to eq(["Wooga"])
-    end
-
-    it "handles shading" do
-      create! "Alpha", "Pooey"
-      create! "Beta", "{{Alpha|shade:off}}"
-      r = create!("Bee", "{{Alpha|shade:off}}").format.render_core
-      assert_view_select r, 'div[style~="shade:off;"]' do
-        assert_select "div[class~=card-content]", "Pooey"
-      end
-      r = create!("Cee", "{{Alpha| shade: off }}").format.render_core
-      assert_view_select r, 'div[style~="shade:off;"]' do
-        assert_select "div[class~=card-content]", "Pooey"
-      end
-      r = create!("Dee", "{{Alpha| shade:off }}").format.render_core
-      assert_view_select r, 'div[style~="shade:off;"]' do
-        assert_select 'div[class~="card-content"]', "Pooey"
-      end
-      r = create!("Eee", "{{Alpha| shade:on }}").format.render_core
-      assert_view_select r, 'div[style~="shade:on;"]' do
-        assert_select 'div[class~="card-content"]', "Pooey"
-      end
     end
   end
 end

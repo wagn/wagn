@@ -1,11 +1,13 @@
 format :html do
-  def frame args={}, &_block
-    args.reverse_merge!(
-      panel_class:  "panel panel-default",
-      header_class: "panel-heading",
-      title_class:  "panel-title",
-      body_class:   "panel-body"
-    )
-    super args
+  def frame
+    class_up "card-header", "panel-heading"
+    class_up "card-header-title", "panel-title"
+    class_up "card-body", "panel-body"
+    super
+  end
+
+  def standard_frame
+    class_up "card-frame", "panel panel-default"
+    super
   end
 end

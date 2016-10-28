@@ -14,7 +14,7 @@ format :html do
       warnings << recaptcha_warning
     end
     return "" if warnings.empty?
-    alert :warning, dismissible: true do
+    alert :warning, true do
       render_warning_list warnings
     end
   end

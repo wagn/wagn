@@ -1,53 +1,68 @@
 class Card
   class Format
     module Permission
-      def ok_view view, args={}
-        return view if args.delete :skip_permissions
-        approved_view = approved_view view, args
-        args[:denied_view] = view if approved_view != view
-        if focal? && (error_code = Card::Format.error_code[approved_view])
-          root.error_status = error_code
-        end
+      def ok_view view, skip_permissions=false
+        return :too_deep if subformats_nested_too_deeply?
+        approved_view = check_view view, skip_permissions
+        handle_view_denial view, approved_view
+        assign_view_error_status approved_view
+
         approved_view
       end
 
-      def approved_view view, args={}
+      def handle_view_denial view, approved_view
+        return if approved_view == view
+        @denied_view = view
+      end
+
+      def assign_view_error_status view
+        return unless focal?
+        return unless (error_code = Card::Format.error_code[view])
+        root.error_status = error_code
+      end
+
+      def check_view view, skip_permissions
         case
-        when @depth >= Card.config.max_depth
-          # prevent recursion. @depth tracks subformats
-          :too_deep
-        when Card::Format.perms[view] == :none
-          # permission skipping specified in view definition
-          view
-        when args.delete(:skip_permissions)
-          # permission skipping specified in args
-          view
-        when !card.known? && !tagged(view, :unknown_ok)
-          # handle unknown cards (where view not exempt)
-          view_for_unknown view, args
-        else
-          # run explicit permission checks
-          permitted_view view, args
+        when skip_permissions                 then view
+        when view_always_permitted?(view)     then view
+        when unknown_disqualifies_view?(view) then view_for_unknown view
+        else permitted_view view  # run explicit permission checks
         end
       end
 
-      def permitted_view view, args
-        perms_required = Card::Format.perms[view] || :read
-        args[:denied_task] =
-          if perms_required.is_a? Proc
-            :read unless perms_required.call(self)  # read isn't quite right
-          else
-            [perms_required].flatten.find { |task| !ok? task }
-          end
+      def unknown_disqualifies_view? view
+        # view can't handle unknown cards (and card is unknown)
+        return if tagged view, :unknown_ok
+        card.unknown?
+      end
 
-        if args[:denied_task]
+      def subformats_nested_too_deeply?
+        # prevent recursion
+        @depth >= Card.config.max_depth
+      end
+
+      def view_always_permitted? view
+        Card::Format.perms[view] == :none
+      end
+
+      def permitted_view view
+        if (@denied_task = task_denied_for_view view)
           Card::Format.denial[view] || :denial
         else
           view
         end
       end
 
-      def view_for_unknown _view, _args
+      def task_denied_for_view view
+        perms_required = Card::Format.perms[view] || :read
+        if perms_required.is_a? Proc
+          :read unless perms_required.call(self)  # read isn't quite right
+        else
+          [perms_required].flatten.find { |task| !ok? task }
+        end
+      end
+
+      def view_for_unknown _view
         # note: overridden in HTML
         focal? ? :not_found : :missing
       end

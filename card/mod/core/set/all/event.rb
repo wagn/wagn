@@ -25,8 +25,11 @@ def changed_condition_applies? db_columns
 end
 
 def when_condition_applies? block
-  return true unless block
-  block.call(self)
+  case block
+  when Proc then block.call(self)
+  when Symbol then self.send "#{block}?"
+  else true
+  end
 end
 
 def single_changed_condition_applies? db_column

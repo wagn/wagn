@@ -1,45 +1,46 @@
 format :html do
-  def default_new_args args
-    super args
-    args.merge!(
-      optional_help: :show, # , optional_menu: :never
-      buttons: submit_button,
-      account: card.fetch(trait: :account, new: {}),
-      title: "Sign up",
-      hidden: {
-        success: (card.rule(:thanks) || "_self"),
-        "card[type_id]" => card.type_id
-      }
-    )
-    return unless Auth.signed_in? && args[:account].confirm_ok?
-    invite_args args
-  end
-
-  def invite_args args
-    args[:title] = "Invite"
-    args[:buttons] = button_tag("Send Invitation", situation: "primary")
-    args[:hidden][:success] = "_self"
-  end
-
-  view :new do |args|
-    # FIXME: make more use of standard new view?
-
-    frame_and_form :create, args, "main-success" => "REDIRECT" do
-      [
-        _render_name_formgroup(help: "usually first and last name"),
-        _optional_render(:account_formgroups, args),
-        (card.structure ? edit_slot : ""),
-        _optional_render(:button_formgroup, args)
-      ]
+  def invitation?
+    if @invitation.nil?
+      @invitation = Auth.signed_in? && args[:account].confirm_ok?
+    else
+      @invitation
     end
   end
 
-  view :account_formgroups do |args|
-    sub_args = { structure: true }
-    sub_args[:no_password] = true if Auth.signed_in?
+  view :new do
+    voo.title = invitation? ? "Invite" : "Sign up"
+    super()
+  end
+
+  def new_name_formgroup
+    super "usually first and last name"
+  end
+
+  def new_content_formgroup
+    [account_formgroups, (card.structure ? edit_slot : "")].join
+  end
+
+  def hidden_success override=nil
+    override = card.rule(:thanks) unless invitation?
+    super override
+  end
+
+  def new_buttons
+    button_formgroup do
+      [standard_submit_button, invite_button].compact
+    end
+  end
+
+  def invite_button
+    return unless invitation?
+    button_tag "Send Invitation", situation: "primary"
+  end
+
+  def account_formgroups
+    account = card.fetch trait: :account, new: {}
     Auth.as_bot do
-      subformat(args[:account])._render :content_formgroup, sub_args
-    end # YUCK!!!!
+      subformat(account)._render :content_formgroup, structure: true
+    end
   end
 
   view :core do |_args|

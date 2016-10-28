@@ -7,12 +7,11 @@ class Card
 
         def referee_name
           return if name.nil?
-          @referee_name ||=
-            begin
-              rendered_name = render_obj(name)
-              ref_card = fetch_referee_card rendered_name
-              ref_card ? ref_card.cardname : rendered_name.to_name
-            end
+          @referee_name ||= begin
+            rendered_name = render_obj(name)
+            ref_card = fetch_referee_card rendered_name
+            ref_card ? ref_card.cardname : rendered_name.to_name
+          end
           @referee_name = @referee_name.to_absolute(card.cardname).to_name
         end
 

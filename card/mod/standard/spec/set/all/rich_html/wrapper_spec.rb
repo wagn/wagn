@@ -21,7 +21,7 @@ describe Card::Set::All::RichHtml::Wrapper do
     end
 
     it "has the appropriate attributes on closed" do
-      v = @ocslot.render(:closed)
+      v = @ocslot.render :closed
       assert_view_select(
         v, 'div[class="card-slot closed-view ALL TYPE-basic SELF-a"]'
       ) do
@@ -29,7 +29,8 @@ describe Card::Set::All::RichHtml::Wrapper do
           assert_select 'div[class="card-header panel-heading"]' do
             assert_select 'div[class="card-header-title panel-title"]'
           end
-          assert_select 'div[class~="closed-content card-content"]'
+          assert_select 'div[class~="card-body card-content"]'
+          assert_select 'div[class~="closed-content"]'
         end
       end
     end

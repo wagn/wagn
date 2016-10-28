@@ -1,89 +1,101 @@
+def consider_recaptcha?
+  false
+end
 
 format :html do
-  view :open do |args|
-    args[:optional_help] = :show
-    super args
+  view :open do
+    voo.show! :help
+    super()
   end
 
-  def default_title_args args
-    args[:title] ||= I18n.t(:sign_in_title, # 'Sign In'
-                            scope: "mod.standard.set.self.signin")
+  # FIXME: need a generic solution for this
+  view :title do
+    voo.title ||= I18n.t(:sign_in_title, scope: "mod.standard.set.self.signin")
+    super()
   end
 
-  view :open_content do |args|
+  view :open_content do
     # annoying step designed to avoid table of contents.  sigh
-    _render_core(args)
+    _render_core
   end
 
-  view :closed_content do |_args|
+  view :closed_content do
     ""
   end
 
-  def default_core_args args={}
-    # 'Sign in' '...or sign up!' 'RESET PASSWORD'
-    sign_in, or_sign_up, reset_password =
-      I18n.t([:sign_in, :or_sign_up, :reset_password],
-             scope: "mod.standard.set.self.signin")
-    # since i18n-tasks doesn't understand bulk lookups, tell it keys are used
-    # i18n-tasks-use t(:sign_in, scope: 'mod.standard.set.self.signin')
-    # i18n-tasks-use t(:or_sign_up, scope: 'mod.standard.set.self.signin')
-    # i18n-tasks-use t(:reset_password,
-    #                  scope: 'mod.standard.set.self.signin')
-    args[:buttons] = button_tag sign_in, situation: "primary"
-    subformat(Card[:account_links]).render :sign_up, title: or_sign_up
-    reset_link = link_to_view :edit, reset_password,
-                              path: { slot: { hide: :toolbar } }
-    args[:buttons] += raw("<div style='float:right'>#{reset_link}</div>")
-    # FIXME: hardcoded styling
-    args
-  end
-
-  view :core do |args|
-    form_args = {
-      hidden: { success: "REDIRECT: #{Env.interrupted_action || '*previous'}" },
-      recaptcha: :off
-    }
+  view :core do
+    voo.structure = true
     with_nest_mode :edit do
-      card_form :update, form_args do
-        [
-          _optional_render(:content_formgroup, args.merge(structure: true)),
-          _optional_render(:button_formgroup, args)
-        ].join
+      card_form :update, recaptcha: :off do
+        [hidden_signin_fields,
+         content_formgroup,
+         signin_buttons].join
       end
     end
   end
 
-  # FORGOT PASSWORD
-  view :edit do |args|
-    @forgot_password = true
-    args.merge!(
-      title: I18n.t(:forgot_password, # 'Forgot Password'
-                    scope: "mod.standard.set.self.signin"),
-      optional_help: :hide,
-      buttons: button_tag(I18n.t(:reset_my_password, # 'Reset my password'
-                                 scope: "mod.standard.set.self.signin"),
-                          situation: "primary"),
-      structure: true,
-      hidden: {
-        reset_password: true,
-        success: { view: :reset_password_success }
-      }
-    )
-    Auth.as_bot { super args }
+  def hidden_signin_fields
+    hidden_field_tag :success,
+                     "REDIRECT: #{Env.interrupted_action || '*previous'}"
   end
 
-  view :raw do |_args|
-    if @forgot_password
-      "{{+#{Card[:email].name}|title:email;type:Phrase}}"
-    else
-      %(
-        {{+#{Card[:email].name}|titled;title:email}}
-        {{+#{Card[:password].name}|titled;title:password}}
-      )
+  def signin_buttons
+    button_formgroup do
+      [signin_button, signup_link, reset_password_link]
     end
   end
 
-  view :reset_password_success do |_args|
+  def signin_button
+    text = I18n.t :sign_in, scope: "mod.standard.set.self.signin"
+    button_tag text, situation: "primary"
+  end
+
+  def signup_link
+    text = I18n.t :or_sign_up, scope: "mod.standard.set.self.signin"
+    subformat(Card[:account_links]).render :sign_up, title: text
+  end
+
+  def reset_password_link
+    text = I18n.t :reset_password, scope: "mod.standard.set.self.signin"
+    reset_link = link_to_view :edit, text, path: { slot: { hide: :toolbar } }
+    # FIXME: inline styling
+    raw("<div style='float:right'>#{reset_link}</div>")
+  end
+
+  # FORGOT PASSWORD
+  view :edit do
+    @forgot_password = true
+    voo.title ||= card.i18n_signin(:forgot_password)
+    voo.structure ||= true
+    voo.hide! :help
+    Auth.as_bot { super() }
+  end
+
+  def hidden_edit_fields
+    hidden_tags(
+      reset_password: true,
+      success: { view: :reset_password_success }
+    )
+  end
+
+  def edit_buttons
+    text = I18n.t :reset_my_password, scope: "mod.standard.set.self.signin"
+    button_tag text, situation: "primary"
+  end
+
+  def nested_fields
+    fields = [signin_field(:email)]
+    fields << signin_field(:password) unless @forgot_password
+    fields
+  end
+
+  def signin_field name
+    nest_name = "".to_name.trait(name)
+    [nest_name, { title: name.to_s, view: "titled",
+                  nest_name: nest_name, skip_permissions: true }]
+  end
+
+  view :reset_password_success do
     # 'Check your email for a link to reset your password'
     frame { I18n.t(:check_email, scope: "mod.standard.set.self.signin") }
   end
@@ -95,57 +107,55 @@ event :signin, :validate, on: :update do
   pword = subfield :password
   pword &&= pword.content
 
-  unless email && pword
-    abort :failure, I18n.t(:abort_bad_signin_args, # 'bad signin args'
-                           scope: "mod.standard.set.self.signin")
-  end
+  authenticate_or_abort email, pword
+end
 
+def authenticate_or_abort email, pword
+  abort :failure, i18n_signin(:abort_bad_signin_args) unless email && pword
   if (account = Auth.authenticate(email, pword))
     Auth.signin account.left_id
   else
     account = Auth.find_account_by_email email
-    error_msg =
-      case
-      when account.nil?     then
-        # 'Unrecognized email.'
-        I18n.t(:error_unknown_email, scope: "mod.standard.set.self.signin")
-      when !account.active? then
-        # 'Sorry, that account is not active.'
-        I18n.t(:error_not_active, scope: "mod.standard.set.self.signin")
-      else
-        # 'Wrong password'
-        I18n.t(:error_wrong_password, scope: "mod.standard.set.self.signin")
-      end
-    errors.add :signin, error_msg
+    errors.add :signin, signin_error_message(account)
     abort :failure
   end
+end
+
+def signin_error_message account
+  case
+  when account.nil?     then i18n_signin(:error_unknown_email)
+  when !account.active? then i18n_signin(:error_not_active)
+  else                       i18n_signin(:error_wrong_password)
+  end
+end
+
+def i18n_signin key
+  I18n.t key, scope: "mod.standard.set.self.signin"
 end
 
 event :signin_success, after: :signin do
   abort :success
 end
 
-event :send_reset_password_token,
-      before: :signin, on: :update,
-      when: proc { Env.params[:reset_password] } do
+event :send_reset_password_token, before: :signin, on: :update,
+                                  when: proc { Env.params[:reset_password] } do
   email = subfield :email
   email &&= email.content
 
   account = Auth.find_account_by_email email
-  if account
-    if account.active?
-      account.send_reset_password_token
-      abort :success
-    else
-      errors.add :account, I18n.t(:error_not_active, # 'not active'
-                                  scope: "mod.standard.set.self.signin")
-      abort :failure
-    end
+  send_reset_password_email_or_fail account
+end
+
+def send_reset_password_email_or_fail account
+  if account && account.active?
+    account.send_reset_password_token
+    abort :success
+  elsif account
+    errors.add :account, i18n_signin(:error_not_active)
   else
-    errors.add :email, I18n.t(:error_not_recognized, # 'not recognized'
-                              scope: "mod.standard.set.self.signin")
-    abort :failure
+    errors.add :email, i18n_signin(:error_not_recognized)
   end
+  abort :failure
 end
 
 event :signout, :validate, on: :delete do

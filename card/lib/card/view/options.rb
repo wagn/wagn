@@ -94,20 +94,23 @@ class Card
       end
 
       def prep_options
-        return @prep_options if @prep_options
-        @indirect_options = {}
-        default_opts = process_default_options
-        @prep_options = default_opts.merge(@indirect_options)
-                                    .merge main_view_options
+        @prep_options ||= default_options.merge(main_view_options)
+      end
+
+      def default_options
+        @default_options ||= begin
+          @default_options = normalized_options.clone
+          process_default_options @default_options
+          @default_options
+        end
       end
 
       def main_view_options
         main_view? ? @format.main_nest_options : {}
       end
 
-      def process_default_options
-        @format.view_options_with_defaults original_view,
-                                           normalized_options.clone
+      def process_default_options opts
+        @format.view_options_with_defaults original_view, opts
       end
 
       def slot_options
@@ -130,14 +133,14 @@ class Card
 
       Options.keys[:standard].each do |option_key|
         define_method option_key do
-          @prepared ? options[option_key] : @indirect_options[option_key]
+          @prepared ? options[option_key] : default_options[option_key]
         end
 
         define_method "#{option_key}=" do |value|
           if @prepared
             options[option_key] = value
           else
-            @indirect_options[option_key] = value
+            default_options[option_key] = value
           end
         end
       end

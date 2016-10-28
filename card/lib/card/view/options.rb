@@ -79,9 +79,8 @@ class Card
 
       def prep_options
         return @prep_options if @prep_options
-        @prep_options = {}
-        opts = normalized_options.clone
-        opts = @format.view_options_with_defaults original_view, opts
+        @prep_options = normalized_options.clone
+        opts = @format.view_options_with_defaults original_view, @prep_options
         opts.merge! @format.main_nest_options if main_view?
         @prep_options.reverse_merge! opts
         @prep_options

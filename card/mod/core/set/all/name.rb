@@ -71,7 +71,7 @@ def cardname
 end
 
 def autoname name
-  if Card.exists? name
+  if Card.exists?(name) || ActManager.include?(name)
     autoname name.next
   else
     name

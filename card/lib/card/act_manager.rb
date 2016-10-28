@@ -99,6 +99,10 @@ class Card
         directors[card] = new_director card, opts
       end
 
+      def include? name
+        directors.keys.any? { |card| card.key == name.to_name.key }
+      end
+
       def new_director card, opts={}
         if opts[:parent]
           StageSubdirector.new card, opts

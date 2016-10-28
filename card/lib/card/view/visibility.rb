@@ -33,6 +33,7 @@ class Card
 
       def viz views, setting, force=false
         Array.wrap(views).each do |view|
+          view = view.to_sym
           next if !force && viz_hash[view]
           viz_hash[view] = setting
         end

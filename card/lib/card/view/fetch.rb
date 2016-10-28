@@ -22,7 +22,9 @@ class Card
       # * *never* don't ever cache this view
 
       def fetch &block
-        # puts "#{@card.name}/#{requested_view} -> #{ok_view}:" #\
+        # level = cache_level
+        # puts "View#fetch: #{@card.name}/#{requested_view} #{level}
+        # #{prep_options}"
         #      "\n--#{cache_key}"
         #     #      "caching: #{self.class.caching?}"#\
         case cache_level

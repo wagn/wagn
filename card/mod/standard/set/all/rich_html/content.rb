@@ -4,8 +4,7 @@ end
 
 format :html do
   def show view, args
-    method = show_layout? ? :show_with_layout : :show_without_layout
-    send method, view, args
+    send "show_#{show_layout? ? :with : :without}_layout", view, args
   end
 
   def show_layout?
@@ -14,6 +13,7 @@ format :html do
 
   def show_with_layout view, args
     args[:view] = view if view
+    @main = false
     @main_opts = args
     render :layout
   end

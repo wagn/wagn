@@ -7,6 +7,7 @@ class Card
     include Fetch
     include Cache
     include Stub
+    include Options
     extend Cache::ClassMethods
 
     @@standard_options = ::Set.new [
@@ -35,17 +36,17 @@ class Card
 
     cattr_reader :options, :nest_options
 
+    attr_reader :format, :parent
+
     class << self
       def options
         @options ||= ::Set.new(@@standard_inheritance_options + @@other_options)
       end
 
       def nest_options
-        @nest_options ||= (options - [:skip_permissions])
+        @nest_options ||= (options - [:skip_permissions, :main])
       end
     end
-
-    attr_reader :format, :parent
 
     def self.canonicalize view
       return if view.blank? # error?
@@ -88,12 +89,17 @@ class Card
         @format.ok_view requested_view, options[:skip_permissions]
     end
 
+    def main_view?
+      @main_view
+    end
+
     def normalized_options
       @normalized_options ||= begin
         options = options_to_hash @raw_options.clone
         options.deep_symbolize_keys!
         options[:view] = original_view
-        options
+#          options[:main] = @format.main?
+        options #.reject { |_k, v| v.blank? }
       end
     end
 
@@ -115,19 +121,7 @@ class Card
       @options ||= standard_options_with_inheritance
     end
 
-    def main_view?
-      @main_view
-    end
 
-    def standard_options_with_inheritance
-      @options = {}
-      @@standard_inheritance_options.each do |key|
-        value = live_options.delete key
-        value ||= @parent.options[key] if @parent
-        @options[key] = value if value
-      end
-      @options
-    end
 
     def main_view_options
       return {} unless main_view?
@@ -150,6 +144,16 @@ class Card
 
     def items
       options[:items] ||= {}
+    end
+
+    def standard_options_with_inheritance
+      @options = {}
+      @@standard_inheritance_options.each do |key|
+        value = live_options.delete key
+        value ||= @parent.options[key] if @parent
+        @options[key] = value if value
+      end
+      @options
     end
 
     @@standard_options.each do |option_key|

@@ -39,7 +39,7 @@ class Card
       end
 
       def detect_if_optional
-        if (setting = live_options.delete :optional)
+        if (setting = prep_options.delete :optional)
           viz requested_view, setting
           setting
         else
@@ -58,7 +58,7 @@ class Card
 
       def process_visibility_options
         viz_hash.reverse_merge! parent.viz_hash if parent
-        process_visibility live_options
+        process_visibility prep_options
       end
 
       def process_visibility arg_hash

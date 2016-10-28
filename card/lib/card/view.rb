@@ -31,11 +31,17 @@ class Card
     end
 
     def process
-      load_options
+      prepare_render
       return if optional? && hide?(ok_view)
       fetch do
         yield ok_view, foreign_options
       end
+    end
+
+    def prepare_render
+      prep_options
+      process_visibility_options
+      @prepared = true
     end
 
     def original_view
@@ -44,7 +50,7 @@ class Card
 
     def requested_view
       @requested_view ||=
-        View.canonicalize(live_options[:view] || original_view)
+        View.canonicalize(prep_options[:view] || original_view)
     end
 
     def ok_view

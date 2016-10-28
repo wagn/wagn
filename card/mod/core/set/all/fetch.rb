@@ -317,8 +317,6 @@ end
 def hard_write_view_cache_keys
   return unless Card.cache.hard
   Card.cache.hard.write_attribute key, :view_cache_keys, @view_cache_keys
-rescue
-  binding.pry
 end
 
 def expire_views

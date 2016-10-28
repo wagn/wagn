@@ -45,13 +45,11 @@ class Card
         end
       end
 
-      def load_options
-        options
-        process_visibility_options
-      end
-
       def options
-        @options ||= standard_options_with_inheritance
+        @options ||= begin
+          prep_options
+          standard_options_with_inheritance
+        end
       end
 
       def normalized_options
@@ -59,7 +57,7 @@ class Card
           options = options_to_hash @raw_options.clone
           options.deep_symbolize_keys!
           options[:view] = original_view
-  #          options[:main] = @format.main?
+          # options[:main] = @format.main?
           options # .reject { |_k, v| v.blank? }
         end
       end
@@ -73,23 +71,20 @@ class Card
         end
       end
 
-      def main_view_options
-        return {} unless main_view?
-        @format.main_nest_options
-      end
-
       def foreign_options
-        live_options.reject { |key, _value| self.class.option_keys.member? key }
+        @foreign_options ||= prep_options.reject do |key, _value|
+          self.class.option_keys.member? key
+        end
       end
 
-      # run default_X_args
-      def live_options
-        return @live_options if @live_options
-        live_options ||= @format.view_options_with_defaults(
-          original_view, normalized_options.clone
-        )
-        live_options.merge! main_view_options
-        @live_options = live_options
+      def prep_options
+        return @prep_options if @prep_options
+        @prep_options = {}
+        opts = normalized_options.clone
+        opts = @format.view_options_with_defaults original_view, opts
+        opts.merge! @format.main_nest_options if main_view?
+        @prep_options.reverse_merge! opts
+        @prep_options
       end
 
       def slot_options
@@ -106,13 +101,13 @@ class Card
       end
 
       def standard_options_with_inheritance
-        @options = {}
-        self.class.standard_inheritance_option_keys.each do |key|
-          value = live_options.delete key
+        keys = self.class.standard_inheritance_option_keys
+        keys.each_with_object({}) do |key, opts|
+          value = prep_options[key]
           value ||= @parent.options[key] if @parent
-          @options[key] = value if value
+          opts[key] = value if value
+          opts
         end
-        @options
       end
 
       def items
@@ -121,11 +116,15 @@ class Card
 
       Options.keys[:standard].each do |option_key|
         define_method option_key do
-          options[option_key]
+          @prepared ? options[option_key] : prep_options[option_key]
         end
 
         define_method "#{option_key}=" do |value|
-          options[option_key] = value
+          if @prepared
+            options[option_key] = value
+          else
+            prep_options[option_key] = value
+          end
         end
       end
     end

@@ -10,10 +10,10 @@ format do
 end
 
 format :html do
-  view :pointer_items do |args|
+  def pointer_items args
     card.item_names(context: :raw).map do |iname|
       wrap_item iname, args
-    end.join ", "
+    end
   end
 end
 

@@ -25,6 +25,8 @@ class Card
         return if foreign_options.empty?
         raise "INVALID STUB: #{@card.name}/#{ok_view}" \
               " has foreign options: #{foreign_options}"
+      # rescue
+      #   binding.pry
       end
     end
   end

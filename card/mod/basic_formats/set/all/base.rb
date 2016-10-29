@@ -82,13 +82,13 @@ format do
 
   # NAME + CONTENT VIEWS
 
-  view :titled do |args|
-    "#{card.name}\n\n#{_render_core args}"
+  view :titled do
+    "#{card.name}\n\n#{_render_core}"
   end
   view :open, :titled
 
-  view :labeled do |args|
-    "#{card.name}: #{_render_closed_content args}"
+  view :labeled do
+    "#{card.name}: #{_render_closed_content}"
   end
   view :closed, :labeled
 

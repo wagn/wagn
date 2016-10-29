@@ -65,7 +65,7 @@ format :html do
                     class: "btn update-follow-link", "data-card_key" => key
   end
 
-  view :follow_status_delete_options do
+  view :follow_status_delete_options, cache: :never do
     wrap_with(:ul, class: "delete-list list-group") do
       card.item_names.map do |option|
         content_tag :li, class: "list-group-item" do

@@ -22,9 +22,10 @@ class Card
       # * *never* don't ever cache this view
 
       def fetch &block
+        level = cache_level
         # puts "View#fetch: #{@card.name}/#{requested_view} #{level} " \
         #      "#{'(caching)' if !caching?.nil?}"
-        case cache_level
+        case level
         when :yield       then yield
         when :cache_yield then cache_fetch(&block)
         when :stub        then stub

@@ -37,28 +37,22 @@ event :validate_storage_type_update, :validate,
   end
 end
 
-event :loose_coded_status_on_update, :initialize,
-      on: :update, when: proc { |c| c.coded? } do
+event :loose_coded_status_on_update, :initialize, on: :update, when: :coded do
   return if @new_mod
   @new_storage_type ||= storage_type_from_config
 end
 
-event :update_public_link_on_create, :integrate,
-      on: :create,
-      when: proc { |c| c.local? } do
+event :update_public_link_on_create, :integrate, on: :create, when: :local do
   update_public_link
 end
 
-event :remove_public_link_on_delete, :integrate,
-      on: :delete,
-      when: proc { |c| c.local? } do
+event :remove_public_link_on_delete, :integrate, on: :delete, when: :local do
   remove_public_links
 end
 
-event :update_public_link, after: :update_read_rule,
-                           when: proc { |c| c.local? } do
+event :update_public_link, after: :update_read_rule, when: :local do
   return if content.blank?
-  if who_can(:read).include? Card[:anyone].id
+  if who_can(:read).include? Card::AnyoneID
     create_public_links
   else
     remove_public_links

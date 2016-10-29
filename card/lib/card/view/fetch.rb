@@ -22,9 +22,9 @@ class Card
       # * *never* don't ever cache this view
 
       def fetch &block
-        level = cache_level
         # puts "View#fetch: #{@card.name}/#{requested_view} #{level} " \
         #      "#{'(caching)' if !caching?.nil?}"
+        case cache_level
         when :yield       then yield
         when :cache_yield then cache_fetch(&block)
         when :stub        then stub
@@ -94,39 +94,27 @@ class Card
       end
 
       def dependent_cacheable_permissions?
-        case permission
-        when :none             then true
-        when parent.permission then true
-        when :read, nil        then anyone_can_read?
-        else                        false
+        case permission_task
+        when :none                  then true
+        when parent.permission_task then true
+        when Symbol                 then anyone_permitted?
+        else                             false
         end
       end
 
-      def permission
-        @permission ||= Card::Format.perms[requested_view] || :read
+      def permission_task
+        @permission_task ||= Card::Format.perms[requested_view] || :read
       end
 
       # FIXME: make card method?
-      def anyone_can_read?
-        Card::Auth.as(:anonymous) { @card.ok? :read }
+      def anyone_permitted?
+        @card.anyone_can? permission_task
       end
 
       def dependent_cache_setting
         level = DEPENDENT_CACHE_LEVEL[cache_setting]
         level || raise("unknown cache setting: #{cache_setting}")
       end
-
-
-
-      # some contextual nest names
-      # def cacheable_nest_name?
-      #   return true if @parent # not directly nested
-      #   case options[:nest_name]
-      #   when "_main" then false
-      #   when "_user" then false
-      #   else true
-      #   end
-      # end
     end
   end
 end

@@ -193,7 +193,7 @@ format :json do
     super(args)
   end
 
-  view :export_items do |args|
+  view :export_items, cache: :never do |args|
     card.item_names(limit: 0).map do |i_name|
       next unless (i_card = Card[i_name])
       subformat(i_card).render_atom(args)
@@ -202,15 +202,15 @@ format :json do
 end
 
 format :rss do
-  view :feed_body do |args|
-    case raw_feed_items args
+  view :feed_body do
+    case raw_feed_items
     when Exception then @xml.item(render(:search_error))
     when Integer then @xml.item(render(:search_count))
-    else super args
+    else super()
     end
   end
 
-  def raw_feed_items _args
+  def raw_feed_items
     @raw_feed_items ||= begin
       search_params[:default_limit] = 25
       search_results

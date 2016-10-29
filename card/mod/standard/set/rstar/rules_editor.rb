@@ -20,7 +20,7 @@ format :html do
     end
   end
 
-  view :open_rule, tags: :unknown_ok do
+  view :open_rule, cache: :never, tags: :unknown_ok do
     return "not a rule" unless card.is_rule?
     rule_view = open_rule_body_view
     open_rule_wrap(rule_view) do
@@ -42,7 +42,7 @@ format :html do
     card.ok?(card_action) ? :edit_rule : :show_rule
   end
 
-  view :show_rule, tags: :unknown_ok do
+  view :show_rule, cache: :never, tags: :unknown_ok do
     return "not a rule" unless card.is_rule?
     return "No Current Rule" if card.new_card?
 
@@ -56,7 +56,7 @@ format :html do
     end
   end
 
-  view :closed_rule, tags: :unknown_ok do
+  view :closed_rule, cache: :never, tags: :unknown_ok do
     return "not a rule" unless card.is_rule?
     rule_card = find_existing_rule_card
     wrap_closed_rule rule_card do
@@ -143,7 +143,7 @@ format :html do
     end
   end
 
-  view :edit_rule, tags: :unknown_ok do |args|
+  view :edit_rule, cache: :never, tags: :unknown_ok do |args|
     return "not a rule" unless card.is_rule?
     @rule_context = args[:rule_context] || card
     @edit_rule_success = edit_rule_success
@@ -358,7 +358,7 @@ format :html do
 
 
 
-  view :edit_single_rule do |args|
+  view :edit_single_rule, cache: :never do |args|
     %(<div class="edit-single-rule panel-body">#{render_edit_rule args}</div>)
   end
 

@@ -94,7 +94,7 @@ format do
 
   # SPECIAL VIEWS
 
-  view :array do
+  view :array, cache: :never do
     card.item_cards(limit: 0).map do |item_card|
       subformat(item_card)._render_core
     end.inspect
@@ -102,25 +102,24 @@ format do
 
   # none of the below belongs here!!
 
-  view :template_rule, tags: :unknown_ok do
-    # FIXME: - relativity should be handled in smartname
+  view :template_rule, cache: :never, tags: :unknown_ok do
     return "" unless voo.nest_name
-    name = voo.nest_name.to_name
-    stripped = name.stripped
-
-    if name.relative? && !stripped.to_name.starts_with_joint?
-      # not a simple relative name; just return the original syntax
-      "{{#{voo.nest_syntax}}}"
+    if voo.nest_name.to_name.simple_relative?
+      set_card = Card.fetch template_link_set_name
+      subformat(set_card).render_template_link
     else
-      set_name =
-        if name.absolute?
-          "#{name}+#{Card[:self].name}" # *self set
-        elsif (type = on_type_set)
-          "#{type}#{name}+#{Card[:type_plus_right].name}" # *type plus right
-        else
-          "#{stripped.gsub(/^\+/, '')}+#{Card[:right].name}" # *right
-        end
-      subformat(Card.fetch(set_name)).render_template_link
+      "{{#{voo.nest_syntax}}}"
+    end
+  end
+
+  def template_link_set_name
+    name = voo.nest_name.to_name
+    if name.absolute?
+      name.trait_name :self
+    elsif (type = on_type_set)
+      [type, name].to_name.trait_name :type_plus_right
+    else
+      name.stripped.gsub(/^\+/, "").to_name.trait_name :right
     end
   end
 

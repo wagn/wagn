@@ -90,10 +90,8 @@ format :data do
 end
 
 format :rss do
-  def raw_feed_items _args
-    @raw_feed_items ||= begin
-      card.item_cards
-    end
+  def raw_feed_items
+    @raw_feed_items ||= card.item_cards
   end
 end
 

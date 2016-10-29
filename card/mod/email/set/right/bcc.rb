@@ -18,7 +18,7 @@ format :html do
 end
 
 format :email_text do
-  view :email_addresses do |args|
+  view :email_addresses, cache: :never do |args|
     context = args[:context] || self
     card.item_names(context: context.cardname).map do |item_name|
       # note that context is processed twice here because pointers absolutize

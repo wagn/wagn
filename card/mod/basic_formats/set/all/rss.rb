@@ -12,7 +12,7 @@ format :rss do
   end
 
   # FIXME: integrate this with common XML features when it is added
-  view :feed do
+  view :feed, cache: :never do
     begin
       @xml.instruct! :xml, version: "1.0"
       @xml.rss version: "2.0" do
@@ -28,16 +28,16 @@ format :rss do
     end
   end
 
-  def raw_feed_items _args
+  def raw_feed_items
     [card]
   end
 
-  view :feed_body do |_args|
+  view :feed_body do
     render_feed_item_list
   end
 
-  view :feed_item_list do |args|
-    raw_feed_items(args).each do |item|
+  view :feed_item_list, cache: :never do
+    raw_feed_items.each do |item|
       @xml.item do
         # FIXME: yuck.
         subformat(item).render_feed_item view_changes: (card.id == RecentID)
@@ -49,7 +49,7 @@ format :rss do
     Card.global_setting(:title) + " : " + card.name.gsub(/^\*/, "")
   end
 
-  view :feed_item do |args|
+  view :feed_item, cache: :never do |args|
     @xml.title card.name
     add_name_context
     @xml.description render((args[:view_changes] ? :change : :open_content))

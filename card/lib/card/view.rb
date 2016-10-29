@@ -23,10 +23,11 @@ class Card
 
     def initialize format, view, raw_options={}, parent=nil
       @format = format
-      @card = @format.card
       @raw_view = view
       @raw_options = raw_options
       @parent = parent
+
+      @card = @format.card
       @main_view = normalized_options.delete :main_view
     end
 

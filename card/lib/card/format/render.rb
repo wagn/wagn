@@ -66,7 +66,7 @@ class Card
         expand_stubs cached_content do |stub_hash|
           stub_card = Card.fetch_from_cast stub_hash[:cast]
           with_nest_mode(stub_hash[:mode]) do
-            nest stub_card, stub_hash[:options].merge(stub: true)
+            nest stub_card, stub_hash[:options]
           end
         end
       end

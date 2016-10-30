@@ -93,12 +93,7 @@ class Card
       end
 
       def prep_options
-        @prep_options ||=
-          if normalized_options.delete :stub
-            normalized_options.clone
-          else
-            default_options.merge main_view_options
-          end
+        @prep_options ||= default_options.merge(main_view_options)
       end
 
       def default_options

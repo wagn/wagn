@@ -76,7 +76,8 @@ class Card
         options.deep_symbolize_keys!
         options[:view] = original_view
         options[:main] = @format.main?
-        merge_main_options options
+        options.merge! @format.main_nest_options if options[:main_view]
+        options
       end
 
       def options_to_hash opts
@@ -86,12 +87,6 @@ class Card
         when nil   then {}
         else raise Card::Error, "bad view options: #{opts}"
         end
-      end
-
-      def merge_main_options options
-        @main_view = options.delete :main_view
-        return options unless @main_view
-        options.merge @format.main_nest_options
       end
 
       def foreign_options
@@ -116,9 +111,6 @@ class Card
 
       def slot_options
         normalized_options.clone
-        #slot_options[:main_view] = true if main_view?
-        # slot_visibility_options slot_options
-        #slot_options
       end
 
       def slot_visibility_options slot_options

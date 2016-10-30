@@ -56,9 +56,5 @@ class Card
       @ok_view ||=
         @format.ok_view requested_view, options[:skip_permissions]
     end
-
-    def main_view?
-      @main_view
-    end
   end
 end

@@ -31,7 +31,6 @@ class Card
 
         def main_nest_options
           opts = root.main_opts || {}
-          # opts.delete :main_view
           main_nest_size_opt opts
           main_nest_items_opt opts
           opts

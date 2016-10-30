@@ -65,8 +65,8 @@ class Card
         @options[key] = value if value.present?
       end
 
-      def normalized_options
-        @normalized_options ||= normalize_options
+      def clean_options
+        @clean_options ||= normalize_options
       end
 
       def normalize_options
@@ -74,7 +74,13 @@ class Card
         options.deep_symbolize_keys!
         options[:view] = original_view
         options[:main] = @format.main?
-        options
+        merge_main_options options
+      end
+
+      def merge_main_options options
+        @main_view = options.delete :main_view
+        return options unless @main_view
+        options.merge @format.main_nest_options
       end
 
       def options_to_hash opts
@@ -93,19 +99,15 @@ class Card
       end
 
       def prep_options
-        @prep_options ||= default_options.merge(main_view_options)
+        @prep_options ||= default_options #.merge(main_view_options)
       end
 
       def default_options
         @default_options ||= begin
-          @default_options = normalized_options.clone
+          @default_options = clean_options.clone
           process_default_options @default_options
           @default_options
         end
-      end
-
-      def main_view_options
-        main_view? ? @format.main_nest_options : {}
       end
 
       def process_default_options opts

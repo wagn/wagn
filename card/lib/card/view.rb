@@ -26,9 +26,7 @@ class Card
       @raw_view = view
       @raw_options = raw_options
       @parent = parent
-
       @card = @format.card
-      @main_view = normalized_options.delete :main_view
     end
 
     def process

@@ -31,7 +31,7 @@ class Card
 
     def process
       prepare_render
-      return if optional? && hide?(ok_view)
+      return if optional? && hide?(requested_view)
       fetch do
         yield ok_view, foreign_options
       end

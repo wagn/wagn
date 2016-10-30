@@ -65,22 +65,16 @@ class Card
         @options[key] = value if value.present?
       end
 
-      def clean_options
-        @clean_options ||= normalize_options
+      def normalized_options
+        @normalized_options ||= normalize_options!
       end
 
-      def normalize_options
+      def normalize_options!
         options = options_to_hash @raw_options.clone
         options.deep_symbolize_keys!
         options[:view] = original_view
         options[:main] = @format.main?
         merge_main_options options
-      end
-
-      def merge_main_options options
-        @main_view = options.delete :main_view
-        return options unless @main_view
-        options.merge @format.main_nest_options
       end
 
       def options_to_hash opts
@@ -92,6 +86,12 @@ class Card
         end
       end
 
+      def merge_main_options options
+        @main_view = options.delete :main_view
+        return options unless @main_view
+        options.merge @format.main_nest_options
+      end
+
       def foreign_options
         @foreign_options ||= prep_options.reject do |key, _value|
           self.class.option_keys.member? key
@@ -99,19 +99,17 @@ class Card
       end
 
       def prep_options
-        @prep_options ||= default_options #.merge(main_view_options)
+        @prep_options ||= prep_options!
       end
 
-      def default_options
-        @default_options ||= begin
-          @default_options = clean_options.clone
-          process_default_options @default_options
-          @default_options
-        end
+      def prep_options!
+        @prep_options = normalized_options.clone
+        process_default_options
+        @prep_options
       end
 
-      def process_default_options opts
-        @format.view_options_with_defaults original_view, opts
+      def process_default_options
+        @format.view_options_with_defaults original_view, @prep_options
       end
 
       def slot_options
@@ -134,14 +132,14 @@ class Card
 
       Options.keys[:standard].each do |option_key|
         define_method option_key do
-          @prepared ? options[option_key] : default_options[option_key]
+          @prepared ? options[option_key] : prep_options[option_key]
         end
 
         define_method "#{option_key}=" do |value|
           if @prepared
             options[option_key] = value
           else
-            default_options[option_key] = value
+            prep_options[option_key] = value
           end
         end
       end

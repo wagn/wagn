@@ -28,7 +28,8 @@ class Card
             :items,
             :view,
             :hide,
-            :show
+            :show,
+            :main_view
           ]
         )
       }
@@ -43,7 +44,8 @@ class Card
         end
 
         def nest_option_keys
-          @nest_option_keys ||= (option_keys - [:skip_permissions, :main])
+          @nest_option_keys ||=
+            (option_keys - [:skip_permissions, :main, :main_view])
         end
       end
 
@@ -113,10 +115,10 @@ class Card
       end
 
       def slot_options
-        slot_options = options.clone
-        slot_options[:main_view] = true if main_view?
+        normalized_options.clone
+        #slot_options[:main_view] = true if main_view?
         # slot_visibility_options slot_options
-        slot_options
+        #slot_options
       end
 
       def slot_visibility_options slot_options

@@ -18,7 +18,7 @@ class Card
       end
 
       def stub_options
-        slot_options.merge view: requested_view
+        normalized_options.merge view: original_view
       end
 
       def validate_stub

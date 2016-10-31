@@ -14,7 +14,7 @@ class Card
           wrap_with :small, "act on #{absolute_title}"
         end
 
-        def links
+        def act_links
           return unless (content = rollback_or_edit_link)
           wrap_with :small, content
         end

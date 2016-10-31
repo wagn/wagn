@@ -60,9 +60,9 @@ class Card
             opts
           end
 
-          add_tag_method :tag, nil do |opts, extra_args|
+          add_tag_method :tag, nil, tag: :yield do |opts, extra_args|
             prepend_class opts, extra_args[1] if extra_args[1].present?
-            opts[:tag] = extra_args.delete 0
+            opts[:tag] = extra_args[0]
             opts
           end
 
@@ -130,6 +130,7 @@ class Card
             content, opts = yield
             add_content content
             collected_content = @content.pop
+            tag_name = opts.delete(:tag) if tag_name == :yield
             add_content content_tag(tag_name, collected_content, opts)
             @append.pop.each do |block|
               add_content instance_exec(&block)

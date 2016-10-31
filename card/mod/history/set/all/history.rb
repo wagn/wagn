@@ -86,10 +86,6 @@ event :rollback_actions, :prepare_to_validate,
   end
   Env.params["action_ids"] = nil
   update_attributes! revision
-  # rollback_actions.each do |action|
-  #   # rollback file and image cards
-  #   action.card.try :rollback_to, action
-  # end
   clear_drafts
   abort :success
 end
@@ -139,10 +135,11 @@ end
 
 format :html do
   view :history do |args|
-    frame args.merge(body_class: "history-slot list-group") do
+    frame args.merge(body_class: "history-slot") do
       bs_layout container: true, fluid: true do
-        row 12 do
-          col history_legend
+        row md: [12, 12], lg: [6, 6] do
+          col action_legend
+          col content_legend
         end
         row 12 do
           html _render_act_list(args)
@@ -167,36 +164,23 @@ format :html do
     end
   end
 
-  def history_legend with_drafts=true
-    render_haml with_drafts: with_drafts do
-      <<-HAML.strip_heredoc
-        %div.history-legend
-          %span.pull-left
-            = action_legend with_drafts
-          %span.pull-right
-            Content changes:
-            %span
-              = Card::Content::Diff.render_added_chunk('Additions')
-            |
-            %span
-              = Card::Content::Diff.render_deleted_chunk('Subtractions')
-      HAML
-    end
-  end
-
   def page_from_params
     params["page"] || 1
   end
 
-  def action_legend with_drafts
+  def action_legend with_drafts=true
     types = [:create, :update, :delete]
     legend = types.map do |action_type|
                "#{action_icon(action_type)} #{action_type}d"
-    end.join " | "
-    if with_drafts
-      legend << " | #{action_icon(:draft)} unsaved draft"
-    end
-    "Actions: #{legend}"
+             end
+    legend << "#{action_icon(:draft)} unsaved draft" if with_drafts
+    "Actions: #{legend.join ' | '}"
+  end
+
+  def content_legend
+    legend = [Card::Content::Diff.render_added_chunk('Additions'),
+              Card::Content::Diff.render_deleted_chunk('Subtractions')]
+    "Content changes: #{legend.join ' | '}"
   end
 
   view :content_changes do |args|

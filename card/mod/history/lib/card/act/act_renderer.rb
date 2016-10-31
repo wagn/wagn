@@ -29,15 +29,12 @@ class Card
 
       def header
         Format::HtmlFormat::Bootstrap::Layout.render self, {} do
-          row 11, 1 do
+          row 10, 2 do
             col do
-              tag(:h4, "pull-left") { title }
-              tag(:span, "pull-left text-muted") { summary }
+              html title
+              tag(:span, "text-muted") { summary }
             end
-            # col do
-            #   html link_to_card(@act.card, glyphicon("time", "pull-right"), path: {view: :history, look_in_trash: true})
-            #   html link_to_card(@act.card, glyphicon("new-window", "pull-right"))
-            # end
+            col act_links, class: "text-right"
           end
           row 12 do
             col subtitle
@@ -63,8 +60,10 @@ class Card
         end.compact.join " | "
       end
 
-      def links
-        ""
+      def act_links
+        link_to_card(@act.card, glyphicon("time"),
+                     path: {view: :history, look_in_trash: true}) + " " +
+          link_to_card(@act.card, glyphicon("new-window"))
       end
 
       def approved_actions
@@ -127,7 +126,6 @@ class Card
             <h4 class="panel-title">
                #{header}
             </h4>
-            #{links}
           </div>
           <div id="#{collapse_id}" class="panel-collapse collapse #{collapse_id}" \
                  role="tabpanel" aria-labelledby="heading-#{collapse_id}">

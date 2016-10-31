@@ -1,4 +1,4 @@
-ACTS_PER_PAGE = 5
+ACTS_PER_PAGE = 50
 
 view :title do |args|
   super args.merge(title: "Recent Changes")
@@ -6,14 +6,23 @@ end
 
 format :html do
   view :core do |args|
-    content_tag(:div, class: "history-slot list-group") do
-      [history_header(false), render_recent_acts(args)].join
+    bs_layout container: true, fluid: true do
+      row md: [12, 12], lg: [6, 6] do
+        col action_legend(false)
+        col content_legend, class: "text-right"
+      end
+      row 12 do
+        html _render_recent_acts(args)
+      end
+      row 12 do
+        col paging
+      end
     end
   end
 
   view :recent_acts do |args|
-    page = params["page"] || 1
-    acts = Act.all_viewable.order(id: :desc).page(page).per(ACTS_PER_PAGE)
+    acts = Act.all_viewable.order(id: :desc)
+              .page(page_from_params).per(ACTS_PER_PAGE)
     render_act_list args.merge(acts: acts, act_context: :absolute)
   end
 

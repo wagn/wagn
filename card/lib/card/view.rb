@@ -26,7 +26,9 @@ class Card
       @raw_view = view
       @raw_options = raw_options
       @parent = parent
+
       @card = @format.card
+      normalize_options!
     end
 
     def process

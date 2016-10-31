@@ -39,14 +39,7 @@ class Card
         end
       end
 
-      def detect_if_optional
-        if (setting = prep_options.delete :optional)
-          viz requested_view, setting
-          setting
-        else
-          false
-        end
-      end
+
 
       # eg  { toggle: :hide }
       def viz_hash

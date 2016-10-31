@@ -90,7 +90,7 @@ class Card
 
       def dependent_cache_permissible?
         return false unless cache_permissible?
-        return true if options[:skip_permissions]
+        return true if normalized_options[:skip_permissions]
         dependent_cacheable_permissions?
       end
 

@@ -69,14 +69,20 @@ class Card
       end
 
       def normalized_options
-        @normalized_options ||= normalize_options!
+        @normalized_options
       end
 
       def normalize_options!
-        options = options_to_hash @raw_options.clone
-        options[:view] = @raw_view
-        handle_main_options options
-        options
+        @normalized_options = opts = options_to_hash @raw_options.clone
+        opts[:view] = @raw_view
+        handle_main_options opts
+        detect_if_optional opts
+        opts
+      end
+
+      def detect_if_optional opts
+        @optional = opts.delete(:optional) || false
+        viz requested_view, @optional if @optional
       end
 
       def handle_main_options opts
@@ -94,7 +100,7 @@ class Card
       end
 
       def foreign_options
-        @foreign_options ||= prep_options.reject do |key, _value|
+        @foreign_options ||= normalized_options.reject do |key, _value|
           self.class.option_keys.member? key
         end
       end

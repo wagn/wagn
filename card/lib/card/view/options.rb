@@ -110,7 +110,7 @@ class Card
       end
 
       def slot_options
-        normalized_options.clone
+        normalized_options.select { |k, _v| self.class.option_keys.include? k }
       end
 
       def slot_visibility_options slot_options

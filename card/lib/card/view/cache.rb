@@ -27,7 +27,7 @@ class Card
           @format.class,
           @format.mode,
           requested_view,
-          hash_for_cache_key(options),
+          hash_for_cache_key(options)
         ].map(&:to_s).join "-"
       end
 

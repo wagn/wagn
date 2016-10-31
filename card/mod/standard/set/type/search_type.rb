@@ -67,16 +67,16 @@ format do
     _render view, args
   end
 
-  view :search_count do |_args|
+  view :search_count, cache: :never do |_args|
     search_results.to_s
   end
 
-  view :search_error do |_args|
+  view :search_error, cache: :never do |_args|
     sr_class = search_results.class.to_s
     %(#{sr_class} :: #{search_results.message} :: #{card.raw_content})
   end
 
-  view :card_list do |_args|
+  view :card_list, cache: :never do |_args|
     if search_results.empty?
       "no results"
     else
@@ -226,6 +226,7 @@ format :html do
   view :card_list do |args|
     return render_no_search_results(args) if search_results.empty?
     search_result_list args, search_results.length do
+      # binding.pry
       search_results.map do |item_card|
         nest_item item_card, size: args[:size],
                              view: args[:item] do |rendered, item_view|

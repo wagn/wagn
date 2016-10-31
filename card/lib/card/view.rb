@@ -32,17 +32,11 @@ class Card
     end
 
     def process
-      prepare_render
+      process_visibility_options
       return if optional? && hide?(requested_view)
       fetch do
         yield ok_view, foreign_live_options
       end
-    end
-
-    def prepare_render
-      prep_options
-      process_visibility_options
-      @prepared = true
     end
 
     def requested_view

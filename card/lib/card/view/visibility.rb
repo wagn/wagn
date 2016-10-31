@@ -52,7 +52,7 @@ class Card
 
       def process_visibility_options
         viz_hash.reverse_merge! parent.viz_hash if parent
-        process_visibility prep_options
+        process_visibility live_options
       end
 
       def process_visibility arg_hash

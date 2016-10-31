@@ -54,17 +54,18 @@ class Card
       end
 
       def standard_options_with_inheritance
-        @options = {}
-        self.class.standard_inheritance_option_keys.each do |key|
-          prep_or_parent_option key
+        @options = prep_options.select do |k, _v|
+          self.class.option_keys.member? k
         end
+        inherit_from_parent if @parent
+        @options.reject! { |_k, v| v.blank? }
         @options
       end
 
-      def prep_or_parent_option key
-        value = prep_options[key]
-        value ||= @parent.options[key] if @parent
-        @options[key] = value if value.present?
+      def inherit_from_parent
+        self.class.standard_inheritance_option_keys.each do |key|
+          @options[key] ||= @parent.options[key]
+        end
       end
 
       def normalized_options
@@ -74,10 +75,14 @@ class Card
       def normalize_options!
         options = options_to_hash @raw_options.clone
         options.deep_symbolize_keys!
-        options[:view] = original_view
-        options[:main] = @format.main?
-        options.merge! @format.main_nest_options if options[:main_view]
+        handle_main_options options
+        options[:view] ||= @raw_view
         options
+      end
+
+      def handle_main_options opts
+        opts[:main] = @format.main?
+        opts.merge! @format.main_nest_options if opts[:main_view]
       end
 
       def options_to_hash opts
@@ -106,7 +111,7 @@ class Card
       end
 
       def process_default_options
-        @format.view_options_with_defaults original_view, @prep_options
+        @format.view_options_with_defaults requested_view, @prep_options
       end
 
       def slot_options

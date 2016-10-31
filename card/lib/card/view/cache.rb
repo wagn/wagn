@@ -26,10 +26,8 @@ class Card
           @card.key,
           @format.class,
           @format.mode,
-          @format.main?,
           requested_view,
-          hash_for_cache_key(options),
-          hash_for_cache_key(viz_hash)
+          hash_for_cache_key(normalized_options)
         ].map(&:to_s).join "-"
       end
 

@@ -43,18 +43,13 @@ class Card
       @prepared = true
     end
 
-    def original_view
-      @original_view ||= View.canonicalize(@raw_view)
-    end
-
     def requested_view
-      @requested_view ||=
-        View.canonicalize(prep_options[:view] || original_view)
+      @requested_view ||= View.canonicalize(normalized_options[:view])
     end
 
     def ok_view
       @ok_view ||=
-        @format.ok_view requested_view, options[:skip_permissions]
+        @format.ok_view requested_view, normalized_options[:skip_permissions]
     end
   end
 end

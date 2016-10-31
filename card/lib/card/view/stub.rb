@@ -18,15 +18,13 @@ class Card
       end
 
       def stub_options
-        normalized_options.merge view: original_view
+        normalized_options.merge view: requested_view
       end
 
       def validate_stub
         return if foreign_options.empty?
         raise "INVALID STUB: #{@card.name}/#{ok_view}" \
               " has foreign options: #{foreign_options}"
-      # rescue
-      #   binding.pry
       end
     end
   end

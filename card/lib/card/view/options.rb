@@ -74,9 +74,8 @@ class Card
 
       def normalize_options!
         options = options_to_hash @raw_options.clone
-        options.deep_symbolize_keys!
+        options[:view] = @raw_view
         handle_main_options options
-        options[:view] ||= @raw_view
         options
       end
 
@@ -91,7 +90,7 @@ class Card
         when Array then opts[0].merge opts[1]
         when nil   then {}
         else raise Card::Error, "bad view options: #{opts}"
-        end
+        end.deep_symbolize_keys!
       end
 
       def foreign_options

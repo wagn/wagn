@@ -44,7 +44,7 @@ class Card
     end
 
     def requested_view
-      @requested_view ||= View.canonicalize(normalized_options[:view])
+      @requested_view ||= View.canonicalize normalized_options[:view]
     end
 
     def ok_view

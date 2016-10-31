@@ -60,7 +60,6 @@ class Card
         handle_main_options opts
         inherit_from_parent if parent
         detect_if_optional opts
-        opts.reject! { |_k, v| v.blank? }
         opts
       end
 

@@ -32,7 +32,7 @@ format :rss do
     [card]
   end
 
-  view :feed_body do
+  view :feed_body, cache: :never do
     render_feed_item_list
   end
 

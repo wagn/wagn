@@ -6,7 +6,7 @@ format :json do
   end
 
   # export the card itself and all nested content (up to 10 levels deep)
-  view :export do |args|
+  view :export, cache: :never do |args|
     # avoid loops
     return [] if args[:count] > 10 || args[:processed_keys].include?(card.key)
     args[:processed_keys] << card.key
@@ -21,7 +21,7 @@ format :json do
   end
 
   # export all nested content (up to 10 levels deep)
-  view :export_items do |args|
+  view :export_items, cache: :never do |args|
     result = []
     card.each_nested_chunk do |chunk|
       next if nest_name_main? chunk

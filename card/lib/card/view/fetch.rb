@@ -23,8 +23,8 @@ class Card
 
       def fetch &block
         level = cache_level
-        # puts "View#fetch: #{@card.name}/#{requested_view} #{level} " \
-        #      "#{'(caching)' if !caching?.nil?}"
+        #puts "View#fetch: #{@card.name}/#{requested_view} #{level} " \
+        #     "#{'(caching)' if !caching?.nil?}"
         case level
         when :yield       then yield
         when :cache_yield then cache_fetch(&block)
@@ -44,7 +44,9 @@ class Card
       end
 
       def independent_cache_ok?
-        cache_setting != :never && foreign_options.empty? && cache_permissible?
+        cache_setting != :never &&
+          foreign_normalized_options.empty? &&
+          cache_permissible?
       end
 
       # The following methods are shared by independent and dependent caching

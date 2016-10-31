@@ -9,8 +9,7 @@ class Card
             yield
           end
         end
-        return cached_view if caching?
-        @format.stub_render cached_view
+        caching? ? cached_view : @format.stub_render(cached_view)
       end
 
       def caching
@@ -18,15 +17,16 @@ class Card
       end
 
       def caching?
-        self.class.caching?
+        root? ? false : self.class.caching?
+      end
+
+      def root?
+        !parent && !format.parent
       end
 
       def cache_key
         @cache_key ||= [
-          @card.key,
-          @format.class,
-          @format.mode,
-          requested_view,
+          @card.key, @format.class, @format.mode,
           hash_for_cache_key(normalized_options)
         ].map(&:to_s).join "-"
       end
@@ -58,11 +58,11 @@ class Card
         end
 
         def caching voo
-          return yield if @caching
+          old_caching = @caching
           @caching = voo
           yield
         ensure
-          @caching = nil
+          @caching = old_caching
         end
       end
     end

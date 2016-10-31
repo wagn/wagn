@@ -35,7 +35,7 @@ class Card
       prepare_render
       return if optional? && hide?(requested_view)
       fetch do
-        yield ok_view, foreign_options
+        yield ok_view, foreign_live_options
       end
     end
 

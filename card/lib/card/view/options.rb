@@ -1,5 +1,6 @@
 class Card
   class View
+    #
     module Options
       def self.keys
         @keys
@@ -99,8 +100,16 @@ class Card
         end.deep_symbolize_keys!
       end
 
-      def foreign_options
-        @foreign_options ||= normalized_options.reject do |key, _value|
+      def foreign_normalized_options
+        @foreign_normalize_options ||= foreign_options normalized_options
+      end
+
+      def foreign_live_options
+        foreign_options prep_options
+      end
+
+      def foreign_options opts
+        opts.reject do |key, _value|
           self.class.option_keys.member? key
         end
       end
@@ -121,13 +130,6 @@ class Card
 
       def slot_options
         normalized_options.select { |k, _v| self.class.option_keys.include? k }
-      end
-
-      def slot_visibility_options slot_options
-        [:hide, :show].each do |setting|
-          array = viz_hash.keys.select { |k| viz_hash[k] == setting }
-          slot_options[setting] = array.join "," if array.any?
-        end
       end
 
       def items

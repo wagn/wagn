@@ -22,9 +22,9 @@ class Card
       end
 
       def validate_stub
-        return if foreign_options.empty?
+        return if foreign_normalized_options.empty?
         raise "INVALID STUB: #{@card.name}/#{ok_view}" \
-              " has foreign options: #{foreign_options}"
+              " has foreign options: #{foreign_normalized_options}"
       end
     end
   end

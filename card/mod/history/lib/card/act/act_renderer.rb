@@ -29,11 +29,15 @@ class Card
 
       def header
         Format::HtmlFormat::Bootstrap::Layout.render self, {} do
-          row 12 do
+          row 11, 1 do
             col do
               tag(:h4, "pull-left") { title }
-              tag(:span, "pull-right") { summary }
+              tag(:span, "pull-left text-muted") { summary }
             end
+            # col do
+            #   html link_to_card(@act.card, glyphicon("time", "pull-right"), path: {view: :history, look_in_trash: true})
+            #   html link_to_card(@act.card, glyphicon("new-window", "pull-right"))
+            # end
           end
           row 12 do
             col subtitle
@@ -42,9 +46,7 @@ class Card
       end
 
       def absolute_title
-        accordion_expand_link(@act.card.name) + " " +
-          link_to_card(@act.card, glyphicon("time", "text-muted"), path: {view: :history, look_in_trash: true}) + " " +
-          link_to_card(@act.card, glyphicon("new-window", "text-muted"))
+        accordion_expand_link(@act.card.name)
       end
 
       def details
@@ -71,8 +73,9 @@ class Card
       end
 
       def action_header?
-        @action_header ||= approved_actions.size != 1 ||
-                           approved_actions[0].card_id != @format.card.id
+        true
+        #@action_header ||= approved_actions.size != 1 ||
+        #                   approved_actions[0].card_id != @format.card.id
       end
 
       def count_types

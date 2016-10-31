@@ -12,19 +12,16 @@ format :html do
     default_action_expanded_args args
   end
 
-  view :action_content_toggle do |args|
-    toggle_action_content_link args[:action], args[:view_type]
-  end
-
   view :action_summary do |args|
     render_action_content args[:action], :summary
   end
 
+  view :action_content_toggle do |args|
+    toggle_action_content_link args[:action], args[:view_type]
+  end
+
   def render_action_content action, view_type
     return "" unless action.present?
-    content =
-    #content << toggle_action_content_link(action, view_type)
-    #Action::ActionRenderer.new(self, action, header, view_type).render
     wrap do
       [
         action_content_toggle(action, view_type),
@@ -35,7 +32,7 @@ format :html do
 
   def content_diff action, view_type
     diff = action.new_content? &&
-      _render_content_changes(action: action, diff_type: view_type) #, hide_diff: @hide_diff
+           _render_content_changes(action: action, diff_type: view_type) #, hide_diff: @hide_diff
     return "<i>empty</i>" unless diff.present?
     diff
   end
@@ -46,7 +43,7 @@ format :html do
   end
 
   def action_content_toggle action, view_type
-    return unless show_action_content_toggle?(action, view_type)
+    #return unless show_action_content_toggle?(action, view_type)
     toggle_action_content_link action, view_type
   end
 

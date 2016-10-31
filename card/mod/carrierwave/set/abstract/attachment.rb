@@ -25,7 +25,6 @@ event :save_original_filename, :prepare_to_store,
 end
 
 event :validate_file_exist, :validate, on: :save do
-  binding.pry
   return if empty_ok?
   if will_be_stored_as == :web
     errors.add "url is missing" if content.blank?
@@ -69,7 +68,6 @@ def create_versions?
 end
 
 def empty_ok?
-  binding.pry
   @empty_ok
 end
 

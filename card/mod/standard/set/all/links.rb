@@ -150,7 +150,6 @@ format do
   end
 
   def add_unknown_name_to_opts name, opts
-    binding.pry if opts[:card ] && !opts[:card].is_a?(Hash)
     return if opts[:card] && opts[:card][:name]
     return if name.s == Card::Name.url_key_to_standard(name.url_key)
     return if Card.known? name

@@ -85,7 +85,6 @@ event :rollback_actions, :prepare_to_validate,
     end
   end
   Env.params["action_ids"] = nil
-  binding.pry
   update_attributes! revision
   # rollback_actions.each do |action|
   #   # rollback file and image cards
@@ -140,46 +139,53 @@ end
 
 format :html do
   view :history do |args|
-    frame args.merge(body_class: "history-slot list-group", content: true) do
-      [history_legend, history_acts(args)]
+    frame args.merge(body_class: "history-slot list-group") do
+      bs_layout container: true, fluid: true do
+        row 12 do
+          col history_legend
+        end
+        row 12 do
+          html _render_act_list(args)
+        end
+        row 12 do
+          col paging
+        end
+      end
     end
   end
 
   def default_history_args args
     args[:optional_toolbar] ||= :show
+    args[:acts] = card.intrusive_acts.page(page_from_params).per(ACTS_PER_PAGE)
   end
 
-  def history_acts args
-    page = params["page"] || 1
-    args[:acts] = card.intrusive_acts.page(page).per(ACTS_PER_PAGE)
-    _render_act_list args
+  def paging
+    intrusive_acts = card.intrusive_acts
+                         .page(page_from_params).per(ACTS_PER_PAGE)
+    wrap_with :span, class: "slotter" do
+      paginate intrusive_acts, remote: true, theme: 'twitter-bootstrap-3'
+    end
   end
 
   def history_legend with_drafts=true
-    intr = card.intrusive_acts.page(params["page"]).per(ACTS_PER_PAGE)
-    legend = render_haml intr: intr, with_drafts: with_drafts do
+    render_haml with_drafts: with_drafts do
       <<-HAML.strip_heredoc
-        .history-header
-          %span.slotter
-            = paginate intr, remote: true, theme: 'twitter-bootstrap-3'
-          %div.history-legend
-            %span.pull-left
-              = action_legend with_drafts
-            %span.pull-right
-              Content changes:
-              %span
-                = Card::Content::Diff.render_added_chunk('Additions')
-              |
-              %span
-                = Card::Content::Diff.render_deleted_chunk('Subtractions')
+        %div.history-legend
+          %span.pull-left
+            = action_legend with_drafts
+          %span.pull-right
+            Content changes:
+            %span
+              = Card::Content::Diff.render_added_chunk('Additions')
+            |
+            %span
+              = Card::Content::Diff.render_deleted_chunk('Subtractions')
       HAML
     end
+  end
 
-    bs_layout do
-      row 12 do
-        col legend
-      end
-    end
+  def page_from_params
+    params["page"] || 1
   end
 
   def action_legend with_drafts

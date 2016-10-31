@@ -133,7 +133,7 @@ class Card
       end
 
       def items
-        options[:items] ||= {}
+        prep_options[:items] ||= {}
       end
 
       Options.keys[:standard].each do |option_key|

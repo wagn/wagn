@@ -13,14 +13,6 @@ class Card
       # context of a "dependent" view caching -- on that is rendered by another
       # view while in the process of being cached.
 
-      DEPENDENT_CACHE_LEVEL =
-        { always: :cache_yield, standard: :yield, never: :stub }.freeze
-      # * *always* - store independent cached view, even if that means double
-      #   caching. (eg view is inside another one already being cached)
-      # * *standard* (default) cache independently or dependently, but
-      #   don't double cache
-      # * *never* don't ever cache this view
-
       def fetch &block
         level = cache_level
         #puts "View#fetch: #{@card.name}/#{requested_view} #{level} " \
@@ -32,6 +24,11 @@ class Card
         end
       end
 
+      # * *always* - store independent cached view, even if that means double
+      #   caching. (eg view is inside another one already being cached)
+      # * *standard* (default) cache independently or dependently, but
+      #   don't double cache
+      # * *never* don't ever cache this view
       def cache_level
         send "#{caching? ? 'dependent' : 'independent'}_cache_level"
       end
@@ -46,7 +43,7 @@ class Card
       def independent_cache_ok?
         cache_setting != :never &&
           foreign_normalized_options.empty? &&
-          cache_permissible?
+          clean_enough_to_cache?
       end
 
       # The following methods are shared by independent and dependent caching
@@ -58,18 +55,12 @@ class Card
       end
 
       # altered view requests and altered cards are not cacheable
-      def cache_permissible?
-        return false unless requested_view == ok_view
-        return false unless cache_permissible_card_state?
-        true
-      end
-
-      def cache_permissible_card_state?
-        return false if @card.unknown?
-        return false if @card.db_content_changed?
+      def clean_enough_to_cache?
+        requested_view == ok_view &&
+          !@card.unknown? &&
+          !@card.db_content_changed?
         # FIXME: might consider other changes as disqualifying, though
         # we should make sure not to disallow caching of virtual cards
-        true
       end
 
       # DEPENDENT CACHING
@@ -87,20 +78,16 @@ class Card
       end
 
       def dependent_cache_ok?
-        parent && dependent_cache_permissible?
-      end
-
-      def dependent_cache_permissible?
-        return false unless cache_permissible?
+        return false unless parent && clean_enough_to_cache?
         return true if normalized_options[:skip_permissions]
-        dependent_cacheable_permissions?
+        dependent_cacheable_permissible?
       end
 
-      def dependent_cacheable_permissions?
+      def dependent_cacheable_permissible?
         case permission_task
         when :none                  then true
         when parent.permission_task then true
-        when Symbol                 then anyone_permitted?
+        when Symbol                 then @card.anyone_can?(permission_task)
         else                             false
         end
       end
@@ -109,10 +96,8 @@ class Card
         @permission_task ||= Card::Format.perms[requested_view] || :read
       end
 
-      # FIXME: make card method?
-      def anyone_permitted?
-        @card.anyone_can? permission_task
-      end
+      DEPENDENT_CACHE_LEVEL =
+        { always: :cache_yield, standard: :yield, never: :stub }.freeze
 
       def dependent_cache_setting
         level = DEPENDENT_CACHE_LEVEL[cache_setting]

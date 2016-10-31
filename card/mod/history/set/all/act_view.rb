@@ -7,7 +7,6 @@ format :html do
     args[:hide_diff]   ||= hide_diff?
     args[:slot_class]  ||= "revision-#{act.id} history-slot list-group-item"
     args[:action_view] ||= action_view
-    args[:actions]     ||= action_list args
     act_context args
   end
 
@@ -27,43 +26,35 @@ format :html do
   end
 
   view :act do |args|
-    act_renderer.new(self, args[:act], args).render
-
-    # wrap(args) do
-    #   render_haml args.merge(card: card, args: args) do
-    #     <<-HAML.strip_heredoc
-    #       .act{style: "clear:both;"}
-    #         - show_header = act_context == :absolute ? :show : :hide
-    #         = optional_render :act_header, args, show_heaargs[:acts] = card.intrusive_acts.page(page).per(ACTS_PER_PAGE)der
-    #         .head
-    #           = render :act_metadata, args
-    #         .toggle
-    #           = fold_or_unfold_link args
-    #         .action-container
-    #           - actions.each do |action|
-    #             = render "action_#{args[:action_view]}", args.merge(action: action)
-    #     HAML
-    #   end
-    # end
+    act_renderer(args[:act_context]).new(self, args[:act], args).render
   end
 
-  def action_icon action_type
+  def action_icon action_type, extra_class=nil
     icon = case action_type
            when :create then "plus"
            when :update then "pencil"
            when :delete then "trash"
+           when :draft then "wrench"
            end
-    glyphicon icon
+    glyphicon icon, extra_class
+  end
+
+  def action_view
+    (params["action_view"] || "summary").to_sym
+  end
+
+  def hide_diff?
+    params["hide_diff"].to_s.strip == "true"
   end
 
   private
 
-  def act_renderer args
-      if args[:act_context] == :absolute
-        AbsoluteActRenderer
-      else
-        RelativeActRenderer
-      end
+  def act_renderer context
+    if context == :absolute
+      Act::ActRenderer::AbsoluteActRenderer
+    else
+      Act::ActRenderer::RelativeActRenderer
+    end
   end
 
   def act_context args

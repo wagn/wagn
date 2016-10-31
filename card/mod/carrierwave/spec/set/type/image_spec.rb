@@ -66,7 +66,7 @@ describe Card::Set::Type::Image do
       end
     end
 
-    describe "view: act_expanded" do
+    describe "view: content changes" do
       it "gets image url" do
         render_args = { act: subject.last_act, action_view: :expanded }
         act_summary = subject.format.render :act, render_args

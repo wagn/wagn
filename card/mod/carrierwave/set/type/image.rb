@@ -48,17 +48,28 @@ format :html do
     end
   end
 
+  def show_action_content_toggle? action, view_type
+    true
+  end
+
   view :content_changes do |args|
-    out = ""
+    action = args[:action]
     size = args[:diff_type] == :summary ? :icon : :medium
-    if !args[:hide_diff] && args[:action] &&
-       (last_change = card.last_change_on(:db_content, before: args[:action]))
-      card.selected_action_id = last_change.card_action_id
-      out << Card::Content::Diff.render_deleted_chunk(_render_core(size: size))
+    [old_image(action, size, args), new_image(action, size)].compact.join
+  end
+
+  def old_image action, size, args
+    return if args[:hide_diff] || !action
+    return unless (last_change = card.last_change_on(:db_content, before: action))
+    card.with_selected_action_id last_change.card_action_id do
+      Card::Content::Diff.render_deleted_chunk _render_core(size: size)
     end
-    card.selected_action_id = args[:action].id
-    out << Card::Content::Diff.render_added_chunk(_render_core(size: size))
-    out
+  end
+
+  def new_image action, size
+    card.with_selected_action_id action.id do
+      Card::Content::Diff.render_added_chunk _render_core(size: size)
+    end
   end
 end
 

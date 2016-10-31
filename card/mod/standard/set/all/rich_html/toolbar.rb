@@ -255,10 +255,11 @@ format :html do
     icon + rich_text
   end
 
-  def autosaved_draft_link
-    link_to_view :edit, "autosaved draft",
-                 path: { edit_draft: true, slot: { show: :toolbar } },
-                 class: "navbar-link slotter pull-right"
+  def autosaved_draft_link opts={}
+    text = opts.delete(:text) || "autosaved draft"
+    opts[:path] = { edit_draft: true, slot: { show: :toolbar } }
+    add_class opts, "navbar-link slotter"
+    link_to_view :edit, text, opts
   end
 
   def default_edit_content_link_args args

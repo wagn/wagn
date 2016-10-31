@@ -38,7 +38,7 @@ format :html do
     if Card.config.action_mailer.perform_deliveries == false
       text += <<-HTML
         <br>WARNING: Email delivery is turned off.
-        Change settings in config/application.rb to send sign up notifications.'
+        Change settings in config/application.rb to send sign up notifications.
       HTML
     end
     text

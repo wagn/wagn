@@ -1,4 +1,4 @@
-describe Card::Set::All::Bootstrap::Layout do
+describe Card::Format::HtmlFormat::Bootstrap::Layout do
   describe "layout dsl" do
     subject { Card["A"].format(:html) }
     it "creates correct layout with column array" do
@@ -42,6 +42,15 @@ describe Card::Set::All::Bootstrap::Layout do
         assert_select 'div[class="col-md-4 col-xs-6 extra-class"]',
                       text: "c2"
       end
+    end
+
+    it "works without column" do
+      layout = subject.layout do
+        row  do
+          "test"
+        end
+      end
+      assert_view_select layout, 'div[class="row"]', text: "test"
     end
 
     it "handles layout sequence" do

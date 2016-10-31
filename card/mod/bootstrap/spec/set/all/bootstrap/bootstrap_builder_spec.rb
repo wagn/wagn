@@ -1,5 +1,5 @@
 describe 'bootstrap builder' do
-  class BuilderTest < Card::Set::All::Bootstrap::BootstrapBuilder
+  class BuilderTest < Card::Format::HtmlFormat::Bootstrap::BootstrapBuilder
     add_tag_method :test_tag, "test-class" do |opts, extra_args|
       prepend { tag :prepend, "prepend-class" }
       append { tag :append, "append-class" }

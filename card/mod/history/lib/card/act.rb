@@ -88,6 +88,10 @@ class Card
       action_on(card_id) || actions.first
     end
 
+    def draft?
+      main_action.draft
+    end
+
     # time (in words) since act took place
     # @return [String]
     def elapsed_time

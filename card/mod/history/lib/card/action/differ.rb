@@ -44,6 +44,10 @@ class Card
         card.db_content = original_content
       end
 
+      def summary_diff_omits_content?
+        content_diff_object.summary_omits_content?
+      end
+
       private
 
       def diff_object field, opts
@@ -53,7 +57,8 @@ class Card
       def content_diff_object opts=nil
         @diff ||= begin
           diff_args = opts || card.include_set_modules.diff_args
-          previous = raw_view previous_value(:content)
+          previous_value = previous_value(:content)
+          previous = previous_value ? raw_view(previous_value) : ""
           current = raw_view
           Card::Content::Diff.new previous, current, diff_args
         end

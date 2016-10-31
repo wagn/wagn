@@ -7,7 +7,7 @@ end
 format :html do
   view :core do |args|
     content_tag(:div, class: "history-slot list-group") do
-      [_render_history_legend, render_recent_acts(args)].join
+      [history_legend(false), render_recent_acts(args)].join
     end
   end
 

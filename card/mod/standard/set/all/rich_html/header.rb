@@ -25,9 +25,13 @@ format :html do
     %(
       <div class="card-subheader navbar-inverse btn-primary active">
         #{args[:subheader]}
-        #{autosaved_draft_link if card.drafts.present? && @slot_view == :edit}
+        #{autosaved_draft_link(class: "pull-right") if show_draft_link?}
       </div>
     )
+  end
+
+  def show_draft_link?
+    card.drafts.present? && @slot_view == :edit
   end
 
   view :toggle do |args|

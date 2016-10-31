@@ -1,51 +1,68 @@
 format :html do
-  def action_summary action, hide_diff
-    bs_panel do
-      heading do
-        name_diff
-      end
+  def default_action_expanded_args args
+    args[:action] ||= action_from_params || card.last_action
+    args[:header] ||= params[:header]
+  end
+
+  view :action_expanded do |args|
+    render_action_content args[:action], :expanded
+  end
+
+  def default_action_summary_args args
+    default_action_expanded_args args
+  end
+
+  view :action_content_toggle do |args|
+    toggle_action_content_link args[:action], args[:view_type]
+  end
+
+  view :action_summary do |args|
+    render_action_content args[:action], :summary
+  end
+
+  def render_action_content action, view_type
+    return "" unless action.present?
+    content =
+    #content << toggle_action_content_link(action, view_type)
+    #Action::ActionRenderer.new(self, action, header, view_type).render
+    wrap do
+      [
+        action_content_toggle(action, view_type),
+        content_diff(action, view_type)
+      ]
     end
   end
 
-  def action_expanded action, hide_diff
-    bs_panel do
-      heading
-      if
-      body do
-
-      end
-    end
-    end
-
-  end
-
-
-
-  def name_diff action, hide_diff
-    working_name = name_changes action, hide_diff
-    if action.card == card
-      working_name
-    else
-      link_to_view(
-        :related, working_name,
-        path: { related: { view: "history", name: action.card.name } },
-        remote: true,
-        class: "slotter label label-default",
-        "data-slot-selector" => ".card-slot.history-view"
-      )
-    end
-  end
-
-  def type_diff action, hide_diff
-    action.new_type? && type_changes(action, hide_diff)
-  end
-
-  def content_diff action, action_view, hide_diff
+  def content_diff action, view_type
     diff = action.new_content? &&
-      action.card.format.render_content_changes(
-        action: action, diff_type: action_view, hide_diff: hide_diff
-      )
+      _render_content_changes(action: action, diff_type: view_type) #, hide_diff: @hide_diff
     return "<i>empty</i>" unless diff.present?
     diff
+  end
+
+  def action_from_params
+    return unless (action_id = params[:action_id])
+    Action.find action_id
+  end
+
+  def action_content_toggle action, view_type
+    return unless show_action_content_toggle?(action, view_type)
+    toggle_action_content_link action, view_type
+  end
+
+  def show_action_content_toggle? action, view_type
+    action.summary_diff_omits_content? || view_type == :expanded
+  end
+
+  def toggle_action_content_link action, view_type
+    other_view_type = view_type == :expanded ? :summary : :expanded
+    link_to_view "action_#{other_view_type}",
+                 glyphicon(arrow_dir(view_type)),
+                 class: "slotter revision-#{action.card_act_id} pull-right",
+                 path: { action_id: action.id, look_in_trash: true }
+  end
+
+  def arrow_dir view_type
+    view_type == :expanded ? "triangle-left" : "triangle-right"
   end
 end

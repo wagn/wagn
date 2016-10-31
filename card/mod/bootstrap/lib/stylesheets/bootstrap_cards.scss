@@ -289,3 +289,43 @@ body.mceContentBody {
  .alert-info p:last-child {
    margin-bottom: 0;
  }
+
+ /*------ History -----------*/
+
+ul.action-list {
+  list-style-type: none;
+  padding-left: 15px;
+  li:before {
+    font-family: 'Glyphicons Halflings';
+    float: left;
+    margin-top: 4px;
+    margin-left: -17px;
+  }
+
+  li.update:before {
+    content: "\270f";
+  }
+
+  li.create:before {
+    content: "\2b";
+  }
+
+  li.delete:before {
+    content: "\e020";
+  }
+
+  li.draft:before {
+    content: "\e136";
+  }
+}
+
+.collapse.in {
+  .act-link {
+    display: none;
+  }
+}
+
+
+
+
+

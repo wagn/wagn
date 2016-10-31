@@ -25,6 +25,7 @@ event :save_original_filename, :prepare_to_store,
 end
 
 event :validate_file_exist, :validate, on: :save do
+  binding.pry
   return if empty_ok?
   if will_be_stored_as == :web
     errors.add "url is missing" if content.blank?
@@ -68,6 +69,7 @@ def create_versions?
 end
 
 def empty_ok?
+  binding.pry
   @empty_ok
 end
 
@@ -88,9 +90,10 @@ def delete_files_for_action action
   end
 end
 
-# create filesystem links to files from prior action
-def rollback_to action
-  update_attributes! revision(action).merge(empty_ok: true)
+def revision action
+  result = super action
+  result[:empty_ok] = true
+  result
 end
 
 def attachment_format ext

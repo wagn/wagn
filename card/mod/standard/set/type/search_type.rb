@@ -227,8 +227,7 @@ format :html do
     return render_no_search_results(args) if search_results.empty?
     search_result_list args, search_results.length do
       search_results.map do |item_card|
-        nest_item item_card, size: args[:size],
-                             view: args[:item] do |rendered, item_view|
+        nest_item item_card, size: voo.size do |rendered, item_view|
           klass = "search-result-item item-#{item_view}"
           %(<div class="#{klass}">#{rendered}</div>)
         end

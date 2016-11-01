@@ -44,8 +44,8 @@ class Card
     end
 
     def ok_view
-      @ok_view ||= @format.ok_view requested_view,
-                                   normalized_options[:skip_permissions]
+      @ok_view ||= format.ok_view requested_view,
+                                  normalized_options[:skip_permissions]
     end
   end
 end

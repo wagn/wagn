@@ -63,7 +63,7 @@ class Card
         @normalized_options = opts = options_to_hash @raw_options.clone
         opts[:view] = @raw_view
         inherit_from_parent if parent
-        @format.main? ? opts[:main] = true : opts.delete(:main)
+        format.main? ? opts[:main] = true : opts.delete(:main)
         @optional = opts.delete(:optional) || false
         opts
       end
@@ -83,7 +83,7 @@ class Card
 
       def process_live_options!
         opts = @live_options = normalized_options.clone
-        opts.merge! @format.main_nest_options if opts[:main_view]
+        opts.merge! format.main_nest_options if opts[:main_view]
         process_default_options
         opts
       end
@@ -96,7 +96,7 @@ class Card
       end
 
       def process_default_options
-        @format.view_options_with_defaults requested_view, @live_options
+        format.view_options_with_defaults requested_view, live_options
       end
 
       def foreign_normalized_options
@@ -108,9 +108,7 @@ class Card
       end
 
       def foreign_options opts
-        opts.reject do |key, _value|
-          self.class.option_keys.member? key
-        end
+        opts.reject { |key, _value| self.class.option_keys.member? key }
       end
 
       def slot_options

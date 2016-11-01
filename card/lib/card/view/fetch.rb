@@ -42,7 +42,7 @@ class Card
 
       def independent_cache_ok?
         cache_setting != :never &&
-          foreign_normalized_options.empty? &&
+          foreign_live_options.empty? &&
           clean_enough_to_cache?
       end
 
@@ -51,14 +51,14 @@ class Card
       # view-specific setting as set in view definition. (always, standard, or
       # never)
       def cache_setting
-        @format.view_cache_setting requested_view
+        format.view_cache_setting requested_view
       end
 
       # altered view requests and altered cards are not cacheable
       def clean_enough_to_cache?
         requested_view == ok_view &&
-          !@card.unknown? &&
-          !@card.db_content_changed?
+          !card.unknown? &&
+          !card.db_content_changed?
         # FIXME: might consider other changes as disqualifying, though
         # we should make sure not to disallow caching of virtual cards
       end
@@ -87,7 +87,7 @@ class Card
         case permission_task
         when :none                  then true
         when parent.permission_task then true
-        when Symbol                 then @card.anyone_can?(permission_task)
+        when Symbol                 then card.anyone_can?(permission_task)
         else                             false
         end
       end

@@ -11,15 +11,15 @@ class Card
 
       def stub_hash
         {
-          cast: @card.cast,
+          cast: card.cast,
           options: normalized_options,
-          mode: @format.mode
+          mode: format.mode
         }
       end
 
       def validate_stub
         return if foreign_normalized_options.empty?
-        raise "INVALID STUB: #{@card.name}/#{ok_view}" \
+        raise "INVALID STUB: #{card.name}/#{ok_view}" \
               " has foreign options: #{foreign_normalized_options}"
       end
     end

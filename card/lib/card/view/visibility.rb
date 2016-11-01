@@ -39,8 +39,6 @@ class Card
         end
       end
 
-
-
       # eg  { toggle: :hide }
       def viz_hash
         @viz_hash ||= {}
@@ -53,6 +51,7 @@ class Card
       def process_visibility_options
         viz_hash.reverse_merge! parent.viz_hash if parent
         process_visibility live_options
+        viz requested_view, @optional if @optional && !viz_hash[requested_view]
       end
 
       def process_visibility arg_hash

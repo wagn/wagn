@@ -59,13 +59,8 @@ class Card
         opts[:view] = @raw_view
         handle_main_options opts
         inherit_from_parent if parent
-        detect_if_optional opts
-        opts
-      end
-
-      def detect_if_optional opts
         @optional = opts.delete(:optional) || false
-        viz requested_view, @optional if @optional
+        opts
       end
 
       def handle_main_options opts

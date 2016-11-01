@@ -28,8 +28,9 @@ format :html do
 
   view :subheader do
     wrap_with :div, class: "card-subheader navbar-inverse btn-primary active" do
-      [_render_title,
-       (autosaved_draft_link if card.drafts.present? && @slot_view == :edit)
+      [
+        _render_title,
+        (autosaved_draft_link if card.drafts.present? && @slot_view == :edit)
       ]
     end
     # toolbar_view_title(@slot_view) || _render_title(args)

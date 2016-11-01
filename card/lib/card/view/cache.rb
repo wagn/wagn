@@ -26,7 +26,7 @@ class Card
 
       def cache_key
         @cache_key ||= [
-          @card.key, @format.class, @format.mode,
+          @card.key, @format.class, @format.mode, requested_view,
           hash_for_cache_key(normalized_options)
         ].map(&:to_s).join "-"
       end

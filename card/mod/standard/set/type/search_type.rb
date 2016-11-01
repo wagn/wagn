@@ -226,7 +226,6 @@ format :html do
   view :card_list do |args|
     return render_no_search_results(args) if search_results.empty?
     search_result_list args, search_results.length do
-      # binding.pry
       search_results.map do |item_card|
         nest_item item_card, size: args[:size],
                              view: args[:item] do |rendered, item_view|

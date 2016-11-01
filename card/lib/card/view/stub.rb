@@ -12,13 +12,9 @@ class Card
       def stub_hash
         {
           cast: @card.cast,
-          options: stub_options,
+          options: normalized_options,
           mode: @format.mode
         }
-      end
-
-      def stub_options
-        normalized_options.merge view: requested_view
       end
 
       def validate_stub

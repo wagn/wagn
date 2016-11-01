@@ -15,7 +15,7 @@ class Card
 
       def fetch &block
         level = cache_level
-        # puts "View#fetch: #{@card.name}/#{requested_view} #{level}"
+        #puts "View#fetch: #{@card.name}/#{ok_view} #{level} #{cache_key}"
         #     "#{'(caching)' if !caching?.nil?}"
         case level
         when :yield       then yield

@@ -40,12 +40,12 @@ class Card
     end
 
     def requested_view
-      @requested_view ||= View.canonicalize normalized_options[:view]
+      @requested_view ||= View.canonicalize live_options[:view]
     end
 
     def ok_view
-      @ok_view ||=
-        @format.ok_view requested_view, normalized_options[:skip_permissions]
+      @ok_view ||= @format.ok_view requested_view,
+                                   normalized_options[:skip_permissions]
     end
   end
 end

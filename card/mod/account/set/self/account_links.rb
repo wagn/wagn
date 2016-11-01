@@ -1,80 +1,56 @@
 
 format :html do
-  def item_links args
-    [
-      optional_render(:my_card, args),
-      optional_render(:invite, args),
-      optional_render(:sign_out, args),
-      optional_render(:sign_up, args),
-      optional_render(:sign_in, args)
-    ]
+  def item_links _args=nil
+    [:my_card, :invite, :sign_out, :sign_up, :sign_in].map do |link_view|
+      optional_render link_view
+    end
   end
 
-  view :sign_up, perms: ->(r) { r.show_signup_link? },
-                 denial: :blank do |args|
-    link_to_card :signup, args[:link_text], args[:link_opts]
+  def self.link_options opts={}
+    options = { denial: :blank, cache: :never }.merge opts
+    options[:perms] = ->(r) { yield r } if block_given?
+    options.clone
   end
 
-  view :sign_in, perms: ->(_r) { !Auth.signed_in? },
-                 denial: :blank do |args|
-    link_to_card :signin, args[:link_text], args[:link_opts]
+  view :sign_up, link_options(&:show_signup_link?) do
+    link_to_card :signup, account_link_text(:sign_up),
+                 id: "signup-link", path: { action: :new, mark: :signup }
   end
 
-  view :sign_out, perms: ->(_r) { Auth.signed_in? },
-                  denial: :blank do |args|
-    link_to_card :signin, args[:link_text], args[:link_opts]
+  view :sign_in, link_options { !Auth.signed_in? } do
+    link_to_card :signin, account_link_text(:sign_in), id: "signin-link"
   end
 
-  view :invite, perms: ->(r) { r.show_invite_link? },
-                denial: :blank do |args|
-    link_to args[:link_text], args[:link_opts]
+  view :sign_out, link_options { Auth.signed_in? } do
+    link_to_card :signin, account_link_text(:sign_out),
+                 id: "signout-link", path: { action: :delete }
   end
 
-  view :my_card, perms: ->(_r) { Auth.signed_in? },
-                 denial: :blank do |_args|
+  view :invite, link_options(&:show_invite_link?) do
+    link_to account_link_text(:invite),
+            id: "invite-a-friend-link", path: { action: :new, mark: :signup }
+  end
+
+  view :my_card, link_options { Auth.signed_in? } do
     link_to_card Auth.current.cardname, nil, id: "my-card-link"
   end
 
-  def default_sign_up_args args
-    account_link_text :sign_up, args
-    account_link_opts "signup-link", args, action: :new, type: :signup
-  end
-
-  def default_sign_in_args args
-    account_link_text :sign_in, args
-    account_link_opts "signin-link", args
-  end
-
-  def default_invite_args args
-    account_link_text :invite, args
-    account_link_opts "invite-a-friend-link", args, action: :new, type: :signup
-  end
-
-  def default_sign_out_args args
-    account_link_text :sign_out, args
-    account_link_opts "signout-link", args, action: :delete
-  end
-
-  def account_link_text purpose, args
-    args[:link_text] =
-      args.delete(:title) ||
+  def account_link_text purpose
+    voo.title ||
       I18n.t(purpose, scope: "mod.standard.set.self.account_links")
   end
 
-  def account_link_opts id, args, path=nil
-    args[:link_opts] ||= {}
-    args[:link_opts][:id] ||= id
-    args[:link_opts][:path] ||= path if path
+  view :raw do
+    item_links.join " "
   end
 
-  view :raw do |args|
-    item_links(args).join " "
-  end
+  view(:navbar_right, cache: :never) { super() }
 
-  view :core do |args|
+
+  view :core, cache: :never do
     status_class = Auth.signed_in? ? "logged-in" : "logged-out"
     content_tag :span, id: "logging", class: status_class do
-      render_raw args
+      render_raw
     end
   end
 

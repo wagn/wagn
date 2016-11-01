@@ -88,9 +88,10 @@ def delete_files_for_action action
   end
 end
 
-# create filesystem links to files from prior action
-def rollback_to action
-  update_attributes! revision(action).merge(empty_ok: true)
+def revision action
+  result = super action
+  result[:empty_ok] = true
+  result
 end
 
 def attachment_format ext

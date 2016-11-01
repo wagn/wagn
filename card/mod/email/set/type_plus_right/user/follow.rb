@@ -127,7 +127,7 @@ format :html do
     end
   end
 
-  view :ignoring_list do |_args|
+  view :ignoring_list, cache: :never do |_args|
     ignore_list = []
     card.known_item_cards.each do |follow_rule|
       follow_rule.item_cards.each do |follow_option|
@@ -150,17 +150,18 @@ format :html do
     end
   end
 
-  view :pointer_items, tags: :unknown_ok do |args|
-    super(args.merge(item: :link))
+  def pointer_items args
+    voo.items[:view] ||= :link
+    super(args)
   end
 
   view :errors, perms: :none do |args|
     if card.errors.any?
       if card.errors.find { |attrib, _msg| attrib == :permission_denied }
         Env.save_interrupted_action(request.env["REQUEST_URI"])
-        title = "Problems with #{card.name}"
-        frame args.merge(panel_class: "panel panel-warning",
-                         title: title, hide: "menu") do
+        voo.title = "Problems with #{card.name}"
+        class_up "card-frame", "panel panel-warning"
+        frame do
           "Please #{link_to_card :signin, 'sign in'}" # " #{to_task}"
         end
       else

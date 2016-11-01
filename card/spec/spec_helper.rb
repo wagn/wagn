@@ -37,7 +37,11 @@ end
 CardSpecLoader.helper
 
 class ActiveSupport::Logger
-  def rspec msg
-    Thread.current["logger-output"] << msg
+  def rspec msg, console_text=nil
+    if Thread.current["logger-output"]
+      Thread.current["logger-output"] << msg
+    else
+      puts console_text || msg
+    end
   end
 end

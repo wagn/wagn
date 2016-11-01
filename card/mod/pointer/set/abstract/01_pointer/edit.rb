@@ -12,9 +12,6 @@ event :insert_item_event, :prepare_to_validate,
 end
 
 format :html do
-  #  view :edit do |args|
-  #    super(args.merge(pointer_item_class: 'form-control'))
-  #  end
 
   view :editor do |args|
     part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/, "") : :list

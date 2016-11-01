@@ -22,7 +22,7 @@ class Card
       end
 
       attr_reader :result
-      delegate :summary, :complete, to: :result
+      delegate :summary, :complete, :summary_omits_content?, to: :result
 
       # diff options
       # :format  => :html|:text|:pointer|:raw
@@ -59,7 +59,7 @@ class Card
           opts[:reject] =  /^</
           opts[:postprocess] = proc { |word| word.gsub("\n", "<br>") }
         when :pointer
-          opts[:preprocess] = proc { |word| word.gsub("[[", "").gsub("]]", "") }
+          opts[:preprocess] = proc { |word| word.gsub("[[", "").gsub("]]", "<br>") }
         else # :raw
           opts[:preprocess] = proc { |word| CGI.escapeHTML(word) }
         end

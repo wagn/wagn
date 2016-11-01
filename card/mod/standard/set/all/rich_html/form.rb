@@ -1,52 +1,46 @@
 include_set Abstract::ProsemirrorEditor
 
 format :html do
-  def edit_slot args={}
-    # note: @mode should already be :edit here...
-    if args[:structure] || card.structure ||
-       args[:edit_fields]
-      multi_card_edit_slot args
+  def edit_slot core_edit=false
+    if core_edit || voo.structure || card.structure
+      multi_card_edit_slot core_edit
     else
-      single_card_edit_slot args
+      single_card_edit_slot
     end
   end
 
-  def multi_card_edit_slot args
-    if args[:core_edit] # need better name
-      _render_core args
-    elsif args[:edit_fields]
-      process_edit_fields args[:edit_fields]
+  def multi_card_edit_slot core_edit
+    if core_edit # need better name
+      _render_core # FIXME:  get options from voo?  eg structure?
     else
-      process_nested_fields optional_toolbar: :hide,
-                            structure: args[:structure]
+      process_nested_fields
     end
   end
 
-  def single_card_edit_slot args
-    field = content_field form, args
-    if [args[:optional_type_formgroup], args[:optional_name_formgroup]]
-       .member? :show
+  def single_card_edit_slot
+    if voo.show?(:type_formgroup) || voo.show?(:name_formgroup)
       # display content field in formgroup for consistency with other fields
-      formgroup "", field, editor: :content
+      formgroup("", editor: :content) { content_field }
     else
-      editor_wrap(:content) { field }
+      editor_wrap(:content) { content_field }
     end
   end
 
-  def process_nested_fields args
-    nested_fields(args).map do |chunk|
-      nest chunk.options.reverse_merge(args)
+  def process_nested_fields
+    nested_fields.map do |_name, options|
+      options[:hide] = :toolbar
+      nest options[:nest_name], options
     end.join "\n"
   end
 
   # @param [Hash|Array] fields either an array with field names and/or field
   # cards or a hash with the fields as keys and a hash with nest options as
   # values
-  def process_edit_fields fields
-    fields.map do |field, opts|
-      field_nest field, opts
-    end.join "\n"
-  end
+  # def process_edit_fields fields
+  #   fields.map do |field, opts|
+  #     field_nest field, opts
+  #   end.join "\n"
+  # end
 
   def form_for_multi
     instantiate_builder("card#{subcard_input_names}", card, {})
@@ -63,69 +57,60 @@ format :html do
 
   def card_form action, opts={}
     @form_root = true
-    hidden_args = opts.delete :hidden
-    form_for card, card_form_opts(action, opts) do |form|
-      @form = form
-      %(
-        #{hidden_tags hidden_args if hidden_args}
-        #{yield form}
-      )
+    url, action = card_form_url action
+    html_opts = card_form_html_opts action, opts
+    form_for card, url: url, html: html_opts, remote: true do |form|
+      yield (@form = form)
     end
   end
 
   def form_root_format
-    if @form_root
-      self
-    elsif !@parent
-      nil
-    else
-      @parent.form_root_format
+    if @form_root   then self
+    elsif !@parent  then nil
+    else                 @parent.form_root_format
     end
   end
 
-  def card_form_opts action, html={}
-    url, action = url_from_action(action)
-
-    klasses = Array.wrap(html[:class])
-    klasses << "card-form slotter"
+  def card_form_html_opts action, opts={}
+    klasses = Array.wrap(opts[:class]) << "card-form slotter"
     klasses << "autosave" if action == :update
-    html[:class] = klasses.join " "
+    opts[:class] = klasses.join " "
 
-    html[:recaptcha] ||= "on" if card.recaptcha_on?
-    html.delete :recaptcha if html[:recaptcha] == :off
-
-    { url: url, remote: true, html: html }
+    opts[:recaptcha] ||= "on" if card.recaptcha_on?
+    opts.delete :recaptcha if opts[:recaptcha] == :off
+    opts
   end
 
-  def url_from_action action
+  def card_form_url action
     case action
-    when Symbol
-      [path(action: action), action]
-    when Hash
-      [path(action), action[:action]]
-    when String # deprecated
-      [card_path(action), nil]
+    when Symbol then [path(action: action), action]
+    when Hash   then [path(action), action[:action]]
+      # for when non-action path args are required
     else
-      raise Card::Error, "unsupported card_form action class: #{action.class}"
+      raise Card::Error, "unsupported #card_form_url action: #{action}"
     end
   end
 
   def editor_wrap type=nil
     html_class = "editor"
     html_class << " #{type}-editor" if type
-    content_tag(:div, class: html_class) { yield.html_safe }
+    wrap_with :div, class: html_class do
+      yield
+    end
   end
 
-  def formgroup title, content, opts={}
+  def formgroup title, opts={}, &block
+    label = formgroup_label opts[:editor], title
+    editor_body = editor_wrap opts[:editor], &block
+    help_text = formgroup_help_text opts[:help]
     wrap_with :div, formgroup_div_args(opts[:class]) do
-      %(
-        #{form.label(opts[:editor] || :content, title)}
-        <div>
-          #{editor_wrap(opts[:editor]) { content }}
-          #{formgroup_help_text opts[:help]}
-        </div>
-      )
+      "#{label} #{help_text}<div>#{editor_body}</div>"
     end
+  end
+
+  def formgroup_label editor_type, title
+    label_type = editor_type || :content
+    form.label label_type, title
   end
 
   def formgroup_div_args html_class
@@ -160,46 +145,55 @@ format :html do
 
   # FIELDSET VIEWS
 
-  view :name_formgroup do |args|
-    formgroup "name", raw(name_field(form)),
-              editor: "name", help: args[:help]
+  def name_formgroup help=nil
+    formgroup "name", editor: "name", help: help do
+      raw name_field
+    end
   end
 
-  view :type_formgroup do |args|
-    field = if args[:variety] == :edit # FIXME: dislike this api -ef
+  def type_formgroup
+    formgroup "type", editor: "type", class: "type-formgroup" do
+      yield
+    end
+  end
+
+  def standard_type_formgroup
+    type_formgroup do
               type_field class: "type-field edit-type-field"
-            else
-              type_field class: "type-field live-type-field",
-                         href: path(view: :new), "data-remote" => true
+    end
+  end
+
+  def live_type_formgroup
+    type_formgroup do
+      type_field class: "type-field live-type-field", href: path(view: :new),
+                 "data-remote" => true
             end
-    formgroup "type", field, editor: "type", class: "type-formgroup"
   end
 
-  view :button_formgroup do |args|
-    %(<div class="form-group"><div>#{args[:buttons]}</div></div>)
+  def button_formgroup
+    buttons = Array.wrap(yield).join "\n"
+    %(<div class="form-group"><div>#{buttons}</div></div>)
   end
 
-  view :content_formgroup do |args|
-    raw %(
-      <fieldset class="card-editor editor">
-        #{edit_slot args}
-      </fieldset>
-    )
+  def content_formgroup
+    wrap_with :fieldset, edit_slot, class: classy("card-editor", "editor")
   end
 
-  def name_field form=nil, options={}
-    form ||= self.form
-    text_field(:name, {
-      # needed because otherwise gets wrong value if there are updates
-      value: card.name,
-      autocomplete: "off"
-    }.merge(options))
+  def name_field
+    # value needed because otherwise gets wrong value if there are updates
+    text_field :name, value: card.name, autocomplete: "off"
   end
 
   def type_field args={}
     typelist = Auth.createable_types
-    current_type =
-      unless args.delete :no_current_type
+    current_type = type_field_current_value args, typelist
+    options = options_from_collection_for_select typelist, :to_s, :to_s,
+                                                 current_type
+    template.select_tag "card[type]", options, args
+  end
+
+  def type_field_current_value args, typelist
+    return if args.delete :no_current_type
         if !card.new_card? && !typelist.include?(card.type_name)
           # current type should be an option on existing cards,
           # regardless of create perms
@@ -208,38 +202,30 @@ format :html do
         card.type_name_or_default
       end
 
-    options = options_from_collection_for_select typelist, :to_s, :to_s,
-                                                 current_type
-    template.select_tag "card[type]", options, args
+  def content_field skip_rev_id=false
+    [content_field_revision_tracking(skip_rev_id), _render_editor].compact.join
   end
 
-  def content_field form, options={}
-    @form = form
-    @nested = options[:nested]
+  def content_field_revision_tracking skip_rev_id
     card.last_action_id_before_edit = card.last_action_id
-    revision_tracking =
-      if card && !card.new_card? && !options[:skip_rev_id]
+    return if !card || card.new_card? || skip_rev_id
         hidden_field :last_action_id_before_edit, class: "current_revision_id"
-        # hidden_field_tag 'card[last_action_id_before_edit]',
-        # card.last_action_id, class: 'current_revision_id'
-      end
-    %(
-      #{revision_tracking}
-      #{_render_editor options}
-    )
   end
 
   # FIELD VIEWS
 
-  view :edit_in_form, perms: :update, tags: :unknown_ok do |args|
-    eform = form_for_multi
-    content = content_field eform, args.merge(nested: true)
-    content += raw("\n #{eform.hidden_field :type_id}") if card.new_card?
-    opts = { editor: "content", help: true, class: "card-editor" }
-    if card.cardname.junction?
-      opts[:class] += " RIGHT-#{card.cardname.tag_name.safe_key}"
+  view :edit_in_form, cache: :never, perms: :update, tags: :unknown_ok do
+    @form = form_for_multi
+    add_junction_class
+    formgroup fancy_title(voo.title),
+              editor: "content", help: true, class: classy("card-editor") do
+      [content_field, (form.hidden_field(:type_id) if card.new_card?)]
     end
-    formgroup fancy_title(args[:title]), content, opts
+    end
+
+  def add_junction_class
+    return unless card.cardname.junction?
+    class_up "card-editor", "RIGHT-#{card.cardname.tag_name.safe_key}"
   end
 
   # form helpers
@@ -267,25 +253,18 @@ format :html do
   end
 
   def submit_button args={}
-    args.reverse_merge!(
-      situation: "primary",
-      data: {}
-    )
     text = args.delete(:text) || "Submit"
+    args.reverse_merge! situation: "primary", data: {}
     args[:data][:disable_with] ||= args.delete(:disable_with) || "Submitting"
     button_tag text, args
   end
 
   # redirect to *previous if no :href is given
   def cancel_button args={}
-    args.reverse_merge! type: "button"
-    if args[:href]
-      add_class args, "slotter"
-    else
-      add_class args, "redirecter"
-      args[:href] = Card.path_setting("/*previous")
-    end
     text = args.delete(:text) || "Cancel"
+    args[:type] ||= "button"
+    add_class args, (args[:href] ? "slotter" : "redirecter")
+    args[:href] ||= Card.path_setting("/*previous")
     button_tag text, args
   end
 end

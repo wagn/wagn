@@ -1,29 +1,34 @@
 
 format :html do
-  view :raw do |_args|
-    input_args = { class: "navbox form-control" }
-    @@placeholder ||= begin
-      (p = Card["#{Card[:navbox].name}+*placeholder"]) && p.raw_content
-    end
-    input_args[:placeholder] = @@placeholder if @@placeholder
-
+  view :raw do
     content_tag :div, class: "form-group" do
-      text_field_tag :_keyword, "", input_args
+      text_field_tag :_keyword, "", class: "navbox form-control",
+                                    placeholder: navbar_placeholder
     end
   end
 
-  view :navbar_left do |args|
-    _render_core args.merge(navbar_class: "navbar-form navbar-left")
+  def navbar_placeholder
+    @@placeholder ||= begin
+      holder_card = Card["#{Card[:navbox].name}+*placeholder"]
+      holder_card ? holder_card.raw_content : ""
+    end
   end
 
-  view :navbar_right do |args|
-    _render_core args.merge(navbar_class: "navbar-form navbar-right")
+  view :navbar_left do
+    class_up "navbox-form", "navbar-form navbar-left"
+    _render_core
   end
 
-  view :core do |args|
-    tag_args = { method: "get", role: "search", class: "nodblclick navbox-form #{args[:navbar_class]}" }
-    form_tag Card.path_setting("/:search"), tag_args do
-      _render_raw args
+  view :navbar_right do
+    class_up "navbox-form", "navbar-form navbar-left"
+    _render_core
+  end
+
+  view :core do
+    form_tag Card.path_setting("/:search"),
+             method: "get", role: "search",
+             class: classy("navbox-form", "nodblclick") do
+      _render_raw
     end
   end
 end

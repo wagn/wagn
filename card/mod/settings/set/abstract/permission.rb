@@ -5,21 +5,20 @@ def standardize_items
 end
 
 format :html do
-  view :pointer_core do |args| # view: :core, mod: Type::Pointer::HtmlFormat
-    %(<div class="pointer-list">#{render_pointer_items args}</div>)
+  view :pointer_core do
+    wrap_with :div, pointer_items, class: "pointer-list"
   end
 
   view :core do |args|
     if card.content == "_left"
       core_inherit_content args
     else
-      render :pointer_core, args
+      render :pointer_core
     end
   end
 
-  view :closed_content do |args|
-    args[:item] ||= :link
-    render_core args
+  view :closed_content do
+    render_core items: { view: :link }
   end
 
   view :editor do |args|
@@ -29,13 +28,14 @@ format :html do
       <div class="perm-editor">
         #{inheritance_checkbox args}
         <div class="perm-group perm-vals perm-section">
-          <h5>Groups</h5>
+          <h5 class="text-muted">Groups</h5>
           #{groups item_names}
         </div>
 
         <div class="perm-indiv perm-vals perm-section">
-          <h5>Individuals</h5>
-          #{_render_list item_list: item_names, extra_css_class: 'perm-indiv-ul'}
+          <h5 class="text-muted">Individuals</h5>
+          #{_render_list item_list: item_names,
+                         extra_css_class: 'perm-indiv-ul'}
         </div>
       </div>
     )
@@ -46,10 +46,17 @@ format :html do
   def groups item_names
     group_options.map do |option|
       checked = !item_names.delete(option.name).nil?
-      option_link = link_to_card option.name, nil, target: "wagn_role"
+      icon = glyphicon "question-sign", "link-muted"
+      option_link = link_to_card option.name, icon, target: "wagn_role"
       box = check_box_tag "#{option.key}-perm-checkbox",
                           option.name, checked, class: "perm-checkbox-button"
-      %(<div class="group-option">#{box}<label>#{option_link}</label></div>)
+      <<-HTML
+        <div class="form-check checkbox">
+          <label class="form-check-label">
+            #{box} #{option.name} #{option_link}
+          </label>
+        </div>
+      HTML
     end * "\n"
   end
 

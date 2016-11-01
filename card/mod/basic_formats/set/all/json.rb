@@ -1,7 +1,6 @@
-
 format :json do
-  def get_nest_defaults _nested_card
-    { view: :atom }
+  def default_nest_view
+    :atom
   end
 
   def default_item_view
@@ -15,55 +14,48 @@ format :json do
   def show view, args
     view ||= :content
     raw = render view, args
-    if raw.is_a?(String)
-      raw
-    elsif params[:compress]
-      JSON(raw)
-    else
-      JSON.pretty_generate raw
-    end
+    return raw if raw.is_a? String
+    method = params[:compress] ? :generate : :pretty_generate
+    JSON.send method, raw
   end
 
-  view :name_complete do |_args|
+  view :name_complete do
     card.item_cards complete: params["term"], limit: 8, sort: "name",
                     return: "name", context: ""
   end
 
-  view :status, tags: :unknown_ok, perms: :none do |_args|
-    status =
-      case
-      when !card.known?     then :unknown
-      # do we want the following to prevent fishing?  of course, they can always
-      # post...
-      when !card.ok?(:read) then :unknown
-      when card.real?       then :real
-      when card.virtual?    then :virtual
-      else :wtf
-      end
-
-    hash = { key: card.key, url_key: card.cardname.url_key, status: status }
+  view :status, tags: :unknown_ok, perms: :none do
+    status = card.state
+    hash = { key: card.key,
+             url_key: card.cardname.url_key,
+             status: status }
     hash[:id] = card.id if status == :real
-
     hash
   end
 
-  view :content do |_args|
+  view :content do
     req = controller.request
-    {
-      url:       (req && req.original_url),
+    { url:       (req && req.original_url),
       timestamp: Time.now.to_s,
-      card:      _render_atom
-    }
+      card:      _render_atom }
   end
 
-  view :atom do |args|
-    h = {
-      name: card.name,
-      type: card.type_name
-    }
+  view :atom do
+    h = { name: card.name, type: card.type_name }
     h[:content]  = card.content  unless card.structure
-    h[:codename] = card.codename     if card.codename
-    h[:value]    = _render_core args if @depth < max_depth
+    h[:codename] = card.codename if card.codename
+    h[:value]    = _render_core  if @depth < max_depth
     h
   end
+
+  # minimum needed to re-fetch card
+  view :cast do
+    card.cast
+  end
 end
+
+# TODO: perhaps this should be in a general "data" module.
+def cast
+  real? ? { id: id } : { name: name, type_id: type_id, content: db_content }
+end
+

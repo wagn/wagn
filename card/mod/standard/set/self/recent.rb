@@ -1,27 +1,36 @@
 ACTS_PER_PAGE = 50
 
-view :title do |args|
-  super args.merge(title: "Recent Changes")
+view :title do
+  voo.title = "Recent Changes"
+  super()
 end
 
 format :html do
-  view :core do |args|
-    content_tag(:div, class: "history-slot list-group") do
-      [history_legend, render_recent_acts(args)].join
+  view :core do
+    bs_layout container: true, fluid: true do
+      row md: [12, 12], lg: [6, 6] do
+        col action_legend(false)
+        col content_legend, class: "text-right"
+      end
+      row 12 do
+        html _render_recent_acts
+      end
+      row 12 do
+        col paging
+      end
     end
   end
 
-  view :recent_acts do |args|
-    page = params["page"] || 1
-    acts = Act.all_viewable.order(id: :desc).page(page).per(ACTS_PER_PAGE)
-    acts.map do |act|
-      if (act_card = act.card)
-        act_view_args = args.merge(act: act, act_context: :absolute)
-        act_card.format(:html).render_act act_view_args
-      else
-        Rails.logger.info "bad data, act: #{act}"
-        ""
-      end
-    end.join
+  view :recent_acts, cache: :never do
+    acts = Act.all_viewable.order(id: :desc)
+              .page(page_from_params).per(ACTS_PER_PAGE)
+    render_act_list acts: acts, act_context: :absolute
+  end
+
+  def paging
+    acts = Act.all_viewable.order(id: :desc).page(page_from_params).per(ACTS_PER_PAGE)
+    wrap_with :span, class: "slotter" do
+      paginate acts, remote: true, theme: 'twitter-bootstrap-3'
+    end
   end
 end

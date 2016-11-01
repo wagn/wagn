@@ -1,62 +1,74 @@
 format :html do
-  view :header do |args|
-    %(
-      <div class="card-header #{args[:header_class]}">
-        <div class="card-header-title #{args[:title_class]}">
-          #{_optional_render :toggle, args, :hide}
-          #{_optional_render :title, args}
-        </div>
-        #{_optional_render :type_info, args, :hide}
-      </div>
-      #{_optional_render :toolbar, args, :hide}
-    )
+  # TODO: find these a better home.
+  def class_up klass, classier, force=false
+    key = klass.to_s
+    return if !force && class_list[key]
+    class_list[key] = classier.to_s
   end
 
-  def default_header_args args
-    args[:optional_toolbar] ||= :show if @slot_view == :open && toolbar_pinned?
-    if show_view?(:toolbar, args.merge(default_visibility: :hide)) &&
-       card.type_code != :basic
-      args[:optional_type_info] ||= :show
+  def class_list
+    @class_list ||= {}
+  end
+
+  def classy *classes
+    classes = Array.wrap(classes).flatten
+    [classes, class_list[classes.first]].flatten.compact.join " "
+  end
+
+  view :header do
+    voo.hide :toggle, :toolbar
+    main_header =
+      wrap_with :div, class: classy("card-header") do
+        wrap_with :div, class: classy("card-header-title") do
+          [_optional_render_toggle, _optional_render_title]
+        end
     end
+    main_header + _optional_render_toolbar
   end
 
-  view :subheader do |args|
-    args[:subheader] ||= toolbar_view_title(@slot_view) || _render_title(args)
-    %(
-      <div class="card-subheader navbar-inverse btn-primary active">
-        #{args[:subheader]}
-        #{autosaved_draft_link if card.drafts.present? && @slot_view == :edit}
-      </div>
-    )
+  view :subheader do
+    wrap_with :div, class: "card-subheader navbar-inverse btn-primary active" do
+      [
+        _render_title,
+        (autosaved_draft_link(class: "pull-right") if show_draft_link?)
+      ]
+    end
+    # toolbar_view_title(@slot_view) || _render_title(args)
   end
 
-  view :toggle do |args|
-    verb, adjective, direction =
-      if args[:toggle_mode] == :close
-        %w(open open expand)
-      else
-        %w(close closed collapse-down)
-      end
+  def show_draft_link?
+    card.drafts.present? && @slot_view == :edit
+  end
 
+  view :toggle do
+    verb, adjective, direction = toggle_verb_adjective_direction
     link_to_view adjective, glyphicon(direction),
                  title: "#{verb} #{card.name}",
                  class: "#{verb}-icon toggler slotter nodblclick"
   end
 
-  view :link_list do |args|
-    content_tag :ul, class: args[:class] do
-      item_links(args).map do |al|
-        content_tag :li, raw(al)
+  def toggle_verb_adjective_direction
+    if @toggle_mode == :close
+      %w(open open expand)
+    else
+      %w(close closed collapse-down)
+    end
+  end
+
+  def nav_link_list side
+    wrap_with :ul, class: "nav navbar-nav navbar-#{side}" do
+      item_links.map do |link|
+        wrap_with(:li) { link }
       end.join "\n"
     end
   end
 
-  view :navbar_right do |args|
-    render_link_list args.merge(class: "nav navbar-nav navbar-right")
+  view :navbar_right do
+    nav_link_list :right
   end
 
-  view :navbar_left do |args|
-    render_link_list args.merge(class: "nav navbar-nav navbar-left")
+  view :navbar_left do
+    nav_link_list :left
   end
 
   def show_follow?

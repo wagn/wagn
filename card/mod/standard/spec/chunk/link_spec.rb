@@ -9,7 +9,8 @@ describe Card::Content::Chunk::Link do
       assert_args[0] << "[#{key}=\"#{val}\"]"
     end
     assert_args << { text: text } if text
-    assert_view_select render_content(target, (format_args || {})), *assert_args
+    link = render_content target, (format_args || {})
+    assert_view_select link, *assert_args
   end
 
   it "handles unknown cards" do

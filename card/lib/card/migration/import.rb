@@ -91,7 +91,16 @@ class Card
           json_url = "#{url}/#{name}.json"
           json_url += "?view=#{view}" if view
           json = open(json_url).read
-          JSON.parse(json).deep_symbolize_keys
+          parse_and_symbolize json
+        end
+
+        def parse_and_symbolize json
+          parsed = JSON.parse(json)
+          case parsed
+          when Hash then parsed.deep_symbolize_keys
+          when Array then parsed.map(&:deep_symbolize_keys)
+          else parsed
+          end
         end
 
         def fetch_local_data name, view

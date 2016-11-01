@@ -29,8 +29,9 @@ class Card
     end
 
     def debug_assert_view_select view_html, *args, &block
-      Rails.logger.rspec <<-HTML
-        #{CodeRay.scan(Nokogiri::XML(view_html, &:noblanks).to_s, :html).div}
+      parsed = CodeRay.scan(Nokogiri::XML(view_html, &:noblanks).to_s, :html)
+      Rails.logger.rspec <<-HTML, parsed.text
+        #{parsed.div}
         <style>
           .CodeRay {
             background-color: #FFF;

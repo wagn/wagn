@@ -27,7 +27,8 @@ def permanent?
 end
 
 def used!
-  Auth.as_bot { delete! } unless permanent?
+  # immediate deletion was causing problems.  commenting for now
+  # Auth.as_bot { delete! } unless permanent?
 end
 
 def term

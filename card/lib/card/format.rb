@@ -32,7 +32,6 @@ class Card
     include Content
     include Error
 
-    extend Nest::ClassMethods
     extend Registration
 
     # FIXME: should be set in views
@@ -45,18 +44,14 @@ class Card
       send "#{accessor_name}=", {}
     end
 
-    attr_reader :card, :root, :parent, :main_opts
-    attr_accessor :form, :error_status, :nest_opts
+    attr_reader :card, :root, :parent, :main_opts, :mode
+    attr_accessor :form, :error_status
 
     def initialize card, opts={}
-      unless (@card = card)
-        msg = I18n.t :exception_init_without_card, scope: "lib.card.format"
-        raise Card::Error, msg
-      end
+      @card = card
+      require_card_to_initialize!
 
-      opts.each do |key, value|
-        instance_variable_set "@#{key}", value
-      end
+      opts.each { |key, value| instance_variable_set "@#{key}", value }
 
       @mode ||= :normal
       @root ||= self
@@ -66,6 +61,13 @@ class Card
       include_set_format_modules
       self
     end
+
+    def require_card_to_initialize!
+      return if @card
+      msg = I18n.t :exception_init_without_card, scope: "lib.card.format"
+      raise Card::Error, msg
+    end
+
 
     def include_set_format_modules
       self.class.format_ancestry.reverse_each do |klass|
@@ -98,11 +100,7 @@ class Card
     end
 
     def focal? # meaning the current card is the requested card
-      if Env.ajax?
-        @depth.zero?
-      else
-        main?
-      end
+      @depth.zero?
     end
 
     def template
@@ -116,7 +114,7 @@ class Card
 
     def method_missing method, *opts, &proc
       if method =~ /(_)?(optional_)?render(_(\w+))?/
-        render_api Regexp.last_match, opts
+        api_render Regexp.last_match, opts
       else
         pass_method_to_template_object(method, opts, proc) { yield }
       end

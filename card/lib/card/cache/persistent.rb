@@ -101,6 +101,12 @@ class Card
           write key, object
         end
         value
+      rescue
+        # FIXME: somehow read is finding Card objects with set_modules_loaded
+        # That shouldn't be possible (#fetch is designed to prevent it), and
+        # it immediately breaks write.  Best guess is that #read is somehow
+        # shortcutting and returning current object.  need to research!
+        puts "failed to write attribute: #{attribute}"
       end
 
       def write key, value

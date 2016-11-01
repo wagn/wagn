@@ -11,8 +11,7 @@ def actionable?
   history? || respond_to?(:attachment)
 end
 
-event :assign_action, :initialize,
-      when: proc { |c| c.actionable? } do
+event :assign_action, :initialize, when: proc { |c| c.actionable? } do
   @current_act = director.need_act
   @current_action = Card::Action.create(
     card_act_id: @current_act.id,
@@ -24,14 +23,9 @@ event :assign_action, :initialize,
   end
 end
 
-def finalize_action?
-  actionable? && current_action
-end
-
 # stores changes in the changes table and assigns them to the current action
 # removes the action if there are no changes
-event :finalize_action, :finalize,
-      when: proc { |c| c.finalize_action? } do
+event :finalize_action, :finalize, when: :finalize_action do
   @changed_fields = Card::Change::TRACKED_FIELDS.select do |f|
     changed_attributes.member? f
   end
@@ -47,6 +41,10 @@ event :finalize_action, :finalize,
     @current_action.delete
     @current_action = nil
   end
+end
+
+def finalize_action?
+  actionable? && current_action
 end
 
 event :finalize_act,
@@ -81,10 +79,6 @@ event :rollback_actions, :prepare_to_validate,
   end
   Env.params["action_ids"] = nil
   update_attributes! revision
-  rollback_actions.each do |action|
-    # rollback file and image cards
-    action.card.try :rollback_to, action
-  end
   clear_drafts
   abort :success
 end
@@ -137,276 +131,63 @@ def included_descendant_card_ids
 end
 
 format :html do
-  view :history do |args|
-    frame args.merge(body_class: "history-slot list-group", content: true) do
-      [history_legend, _render_act_list]
-    end
-  end
-
-  def default_history_args args
-    args[:optional_toolbar] ||= :show
-  end
-
-  view :act_list do |args|
-    page = params["page"] || 1
-    count = card.intrusive_acts.size + 1 - (page.to_i - 1) * ACTS_PER_PAGE
-    card.intrusive_acts.page(page).per(ACTS_PER_PAGE).map do |act|
-      count -= 1
-      render_act args.merge(act: act, act_seq: count)
-    end.join
-  end
-
-  def history_legend
-    intr = card.intrusive_acts.page(params["page"]).per(ACTS_PER_PAGE)
-    render_haml intr: intr do
-      <<-HAML.strip_heredoc
-        .history-header
-          %span.slotter
-            = paginate intr, remote: true, theme: 'twitter-bootstrap-3'
-          %div.history-legend
-            = glyphicon "plus-sign", "added-mark"
-            %span
-              = Card::Content::Diff.render_added_chunk('Added')
-              |
-            = glyphicon "minus-sign", "deleted-mark"
-            %span
-              = Card::Content::Diff.render_deleted_chunk('Removed')
-              |
-            = glyphicon "trash", "deleted-mark"
-            %span
-              card deleted
-      HAML
-    end
-  end
-
-  def default_act_args args
-    act = (args[:act]  ||= Act.find(params["act_id"]))
-    args[:act_seq]     ||= params["act_seq"]
-    args[:hide_diff]   ||= hide_diff?
-    args[:slot_class]  ||= "revision-#{act.id} history-slot list-group-item"
-    args[:action_view] ||= action_view
-    args[:actions]     ||= action_list args
-  end
-
-  def action_list args
-    act = args[:act]
-    actions =
-      if act_context(args) == :absolute
-        act.actions
-      else
-        act.actions_affecting(card)
-      end
-    actions.select { |a| a.card && a.card.ok?(:read) }
-    # FIXME: should not need to test for presence of card here.
-  end
-
-  def act_context args
-    args[:act_context] =
-      (args[:act_context] || params["act_context"] || :relative).to_sym
-  end
-
-  def hide_diff?
-    params["hide_diff"].to_s.strip == "true"
-  end
-
-  def action_view
-    (params["action_view"] || "summary").to_sym
-  end
-
-  view :act do |args|
-    wrap(args) do
-      render_haml args.merge(card: card, args: args) do
-        <<-HAML.strip_heredoc
-          .act{style: "clear:both;"}
-            - show_header = act_context == :absolute ? :show : :hide
-            = optional_render :act_header, args, show_header
-            .head
-              = render :act_metadata, args
-            .toggle
-              = fold_or_unfold_link args
-            .action-container
-              - actions.each do |action|
-                = render "action_#{args[:action_view]}", args.merge(action: action)
-        HAML
+  view :history, cache: :never do
+    voo.show! :toolbar
+    class_up "card-body",  "history-slot"
+    frame do
+      bs_layout container: true, fluid: true do
+        row md: [12, 12], lg: [6, 6] do
+          col action_legend
+          col content_legend
+        end
+        row 12 do
+          html _render_act_list acts: history_acts
+        end
+        row 12 do
+          col paging
+        end
       end
     end
   end
 
-  view :act_header do |_args|
-    %(<h5 class="act-header">#{link_to_card card}</h5>)
+  def history_acts
+    card.intrusive_acts.page(page_from_params).per(ACTS_PER_PAGE)
   end
 
-  view :act_metadata do |args|
-    render_haml args.merge(card: card, args: args) do
-      <<-HAML.strip_heredoc
-        - unless act_context == :absolute
-          .nr
-            = '#' + act_seq.to_s
-        .title
-          .actor
-            = link_to_card act.actor
-          .time.timeago
-            = time_ago_in_words(act.acted_at)
-            ago
-            - if act.id == card.last_act.id
-              %em.label.label-info Current
-            - if action_view == :expanded
-              - unless act.id == card.last_act.id
-                = rollback_link act.actions_affecting(card)
-              = show_or_hide_changes_link args
-      HAML
+  def paging
+    intrusive_acts = card.intrusive_acts
+                         .page(page_from_params).per(ACTS_PER_PAGE)
+    wrap_with :span, class: "slotter" do
+      paginate intrusive_acts, remote: true, theme: 'twitter-bootstrap-3'
     end
   end
 
-  view :action_summary do |args|
-    view_action :summary, args
+  def page_from_params
+    params["page"] || 1
   end
 
-  view :action_expanded do |args|
-    view_action :expanded, args
+  def action_legend with_drafts=true
+    types = [:create, :update, :delete]
+    legend = types.map do |action_type|
+               "#{action_icon(action_type)} #{action_type}d"
+             end
+    legend << "#{action_icon(:draft)} unsaved draft" if with_drafts
+    "Actions: #{legend.join ' | '}"
   end
 
-  def view_action action_view, args
-    action = args[:action] || card.last_action
-    hide_diff = args[:hide_diff] || hide_diff?
-    return trashed_view(action) if action.action_type == :delete
-    render_haml action: action,
-                action_view: action_view,
-                name_diff: name_diff(action, hide_diff),
-                type_diff: type_diff(action, hide_diff),
-                content_diff: content_diff(action, action_view, hide_diff) do
-      <<-HAML.strip_heredoc
-        .action
-          .summary
-            %span.ampel
-              = glyphicon 'minus-sign', (action.red? ? 'deleted-mark' : 'diff-invisible')
-              = glyphicon 'plus-sign', (action.green? ? 'added-mark' : 'diff-invisible')
-            = wrap_diff :name, name_diff
-            = wrap_diff :type, type_diff
-            -if content_diff && action_view == :summary
-              = glyphicon 'arrow-right', 'arrow'
-              = wrap_diff :content, content_diff
-          -if content_diff and action_view == :expanded
-            .expanded
-              = wrap_diff :content, content_diff
-      HAML
-    end
-  end
-
-  def trashed_view action
-    render_haml action: action do
-      <<-HAML.strip_heredoc
-        .action
-          .summary
-            %span.ampel
-              = glyphicon 'trash', 'deleted-mark'
-            = wrap_diff :name, action.card.name, ('label label-default' if action.card != card)
-      HAML
-    end
-  end
-
-  def name_diff action, hide_diff
-    working_name = name_changes action, hide_diff
-    if action.card == card
-      working_name
-    else
-      link_to_view(
-        :related, working_name,
-        path: { related: { view: "history", name: action.card.name } },
-        remote: true,
-        class: "slotter label label-default",
-        "data-slot-selector" => ".card-slot.history-view"
-      )
-    end
-  end
-
-  def type_diff action, hide_diff
-    action.new_type? && type_changes(action, hide_diff)
-  end
-
-  def content_diff action, action_view, hide_diff
-    diff = action.new_content? &&
-           action.card.format.render_content_changes(
-             action: action, diff_type: action_view, hide_diff: hide_diff
-           )
-    return "<i>empty</i>" unless diff.present?
-    diff
-  end
-
-  def wrap_diff field, content, extra_class=nil
-    return "" unless content.present?
-    %(
-       <span class="#{field}-diff #{extra_class}">
-       #{content}
-       </span>
-    )
-  end
-
-  def name_changes action, hide_diff=false
-    old_name = (name = action.previous_value :name) && showname(name).to_s
-    if action.new_name?
-      new_name = showname(action.value(:name)).to_s
-      if hide_diff
-        new_name
-      else
-        Card::Content::Diff.complete(old_name, new_name)
-      end
-    else
-      old_name
-    end
-  end
-
-  def type_changes action, hide_diff=false
-    change = hide_diff ? action.value(:cardtype) : action.cardtype_diff
-    "(#{change})"
+  def content_legend
+    legend = [Card::Content::Diff.render_added_chunk('Additions'),
+              Card::Content::Diff.render_deleted_chunk('Subtractions')]
+    "Content changes: #{legend.join ' | '}"
   end
 
   view :content_changes do |args|
+    action = args[:action]
     if args[:hide_diff]
-      args[:action].raw_view
+      action.raw_view
     else
-      args[:action].content_diff(args[:diff_type])
+      action.content_diff(args[:diff_type])
     end
-  end
-
-  def fold_or_unfold_link args
-    act_id = args[:act].id
-    action_view = args[:action_view] == :expanded ? :summary : :expanded
-    arrow_dir = args[:action_view] == :expanded ? "arrow-down" : "arrow-right"
-
-    link_to_view :act, "", class: "slotter revision-#{act_id} #{arrow_dir}",
-                           path: { act_id:      act_id,
-                                   act_seq:     args[:act_seq],
-                                   hide_diff:   args[:hide_diff],
-                                   act_context: args[:act_context],
-                                   action_view: action_view,
-                                   look_in_trash: true }
-  end
-
-  def rollback_link actions
-    # @fixme -- doesn't this need to specify which action it wants?
-    prior =  # @fixme - should be a Card::Action method
-      actions.select { |action| action.card.last_action_id != action.id }
-    return unless card.ok?(:update) && prior.present?
-    link = link_to(
-      "Save as current", class: "slotter",
-                         "data-slot-selector" => ".card-slot.history-view",
-                         remote: true, method: :post, rel: "nofollow",
-                         path: { action: :update, action_ids: prior,
-                                 view: :open, look_in_trash: true }
-    )
-    %(<div class="act-link">#{link}</div>)
-  end
-
-  def show_or_hide_changes_link args
-    link = link_to_view(
-      :act, "#{args[:hide_diff] ? 'Show' : 'Hide'} changes",
-      class: "slotter",
-      path: { act_id:      args[:act].id,      act_seq: args[:act_seq],
-              hide_diff:  !args[:hide_diff],   action_view: :expanded,
-              act_context: args[:act_context], look_in_trash: true }
-    )
-    %(<div class="act-link">#{link}</div>)
   end
 end
 

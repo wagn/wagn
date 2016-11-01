@@ -1,4 +1,5 @@
 # require: rubocop-decko
+require: rubocop-rspec
 inherit_from: .ruby-style.yml
 Style/IndentationConsistency:
   AutoCorrect: false

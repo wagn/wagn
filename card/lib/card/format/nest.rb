@@ -6,11 +6,54 @@ class Card
       include Subformat
       include View
 
-      def nest name_or_card_or_opts, opts={}
-        nested_card = fetch_nested_card name_or_card_or_opts, opts
-        opts = name_or_card_or_opts if name_or_card_or_opts.is_a? Hash
-        opts[:inc_name] ||= nested_card.name
-        nest_card nested_card, opts
+      # nested by another card's content
+      # (as opposed to a direct API nest)
+      def content_nest opts={}
+        return opts[:comment] if opts.key? :comment # commented nest
+        nest_name = opts[:nest_name]
+        return main_nest(opts) if main_nest?(nest_name)
+        nest nest_name, opts
+      end
+
+      def nest cardish, options={}, &block
+        return "" if nest_invisible?
+        nested_card = fetch_nested_card cardish, options
+        view, options = interpret_nest_options nested_card, options
+        nest_render nested_card, view, options, &block
+      end
+
+      def interpret_nest_options nested_card, options
+        options[:nest_name] ||= nested_card.name
+        view = options[:view] || implicit_nest_view
+        view = Card::View.canonicalize view
+
+        # FIXME: should handle in closed / edit view definitions
+        options[:home_view] = [:closed, :edit].member?(view) ? :open : view
+
+        [view, options]
+      end
+
+      def implicit_nest_view
+        view = voo_items_view || default_nest_view
+        Card::View.canonicalize view
+      end
+
+      def default_nest_view
+        :name
+      end
+
+      def nest_render nested_card, view, options
+        subformat = nest_subformat nested_card, options
+        view = subformat.modal_nest_view view
+        rendered = count_chars { subformat.optional_render view, options }
+        block_given? ? yield(rendered, view) : rendered
+      end
+
+      def nest_subformat nested_card, opts
+        return self if opts[:nest_name] =~ /^_(self)?$/
+        sub = subformat nested_card
+        sub.main! if opts[:main]
+        sub
       end
 
       # Main difference compared to #nest is that you can use
@@ -20,66 +63,17 @@ class Card
       #   home.nest :self         # => nest for '*self'
       #   home.field_nest :self   # => nest for 'Home+*self'
       def field_nest field, opts={}
-        if field.is_a?(Card)
-          nest_card field, opts
-        else
-          prepare_nest opts.merge(inc_name: card.cardname.field(field))
-        end
+        field = card.cardname.field(field) unless field.is_a? Card
+        nest field, opts
       end
 
-      def process_nest opts
-        opts ||= {}
-
-        if opts.key?(:comment)
-          # commented nest
-          opts[:comment]
-        elsif content_out_of_view?
-          ""
-        elsif main_nest_within_layout? opts
-          main_nest opts
-        else
-          # standard nest
-          count_chars { nest opts }
-        end
-      end
-
-      # deprecated, use process_nest
-      alias_method :prepare_nest, :process_nest
-
-      def nest_card nested_card, opts={}
-        # ActiveSupport::Notifications.instrument('card', message:
-        # "nest: #{nested_card.name}, #{opts}") do
-        opts.delete_if { |_k, v| v.nil? }
-        opts.reverse_merge! nest_defaults(nested_card)
-
-        subformat = nest_subformat nested_card, opts
-        view = canonicalize_view opts.delete :view
-        opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
-        # FIXME: special views should be represented in view definitions
-        subformat.nest_render view, opts
-      end
-
-      def nest_defaults nested_card
-        @nest_defaults ||= begin
-          defaults = get_nest_defaults(nested_card).clone
-          defaults.merge! @nest_opts if @nest_opts
-          defaults
-        end
-      end
-
-      def get_nest_defaults _nested_card
-        { view: :name }
-      end
+      # opts[:home_view] = [:closed, :edit].member?(view) ? :open : view
+      # FIXME: special views should be represented in view definitions
 
       private
 
-      def content_out_of_view?
-        @mode == :closed && @char_count &&
-          @char_count > Card.config.max_char_count
-      end
-
-      def main_nest_within_layout? opts
-        opts[:inc_name] == "_main" && show_layout? && @depth.zero?
+      def nest_invisible?
+        @mode == :closed && @char_count && @char_count > max_char_count
       end
 
       def count_chars
@@ -90,10 +84,12 @@ class Card
         result
       end
 
-      module ClassMethods
-        def max_depth
-          Card.config.max_depth
-        end
+      def max_depth
+        Card.config.max_depth
+      end
+
+      def max_char_count
+        Card.config.max_char_count
       end
     end
   end

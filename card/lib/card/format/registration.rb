@@ -18,22 +18,28 @@ class Card
         match ? match[:format] : :base
       end
 
-      def extract_class_vars view, opts
-        return unless opts.present?
-        [:perms, :error_code, :denial, :closed].each do |varname|
-          class_var = send varname
-          class_var[view] = opts.delete(varname) if opts[varname]
-        end
-        extract_view_tags view, opts
+      def interpret_view_opts view, opts
+        extract_class_vars view, opts
+        extract_view_tags view, opts.delete(:tags)
       end
 
-      def extract_view_tags view, opts
-        tags = opts.delete :tags
+      def extract_class_vars view, opts
+        [:perms, :error_code, :denial, :closed].each do |varname|
+          next unless (value = opts.delete varname)
+          send(varname)[view] = value
+        end
+      end
+
+      def extract_view_tags view, tags
         return unless tags
         Array.wrap(tags).each do |tag|
           view_tags[view] ||= {}
           view_tags[view][tag] = true
         end
+      end
+
+      def view_cache_setting_method view
+        "view_#{view}_cache_setting"
       end
 
       def new card, opts={}

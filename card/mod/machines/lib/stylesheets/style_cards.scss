@@ -507,120 +507,12 @@ ul.pointer {
 /*- HISTORY          - */
 /*-------------------- */
 
-
-
 $diff-green: #41ad41;
 $diff-red: #ff5050;
-$action-white: #fdfdfd;
-$act-gray:  #b7b7b7;
 
 .history-slot {
   overflow: hidden;
   clear: both;
-}
-
-.history-header {
-  padding: 10px;
-  background: $action-white;
-}
-.history-legend {
-  text-align: right;
-}
-.history-header nav.pagination {
-  display: inline;
-  float: left;
-}
-
-.act {
-  .head {
-    float: left;
-    margin-right:10px;
-    min-width: 175px;
-  }
-  .nr {
-    float: left;
-  }
-  .title {
-    float: left;
-    margin-left: 10px;
-  }
-  .actor {
-    float: left;
-  }
-  .time {
-    font-size: 8pt;
-    float:left;
-    clear:left;
-  }
-
-  .action-container {
-    overflow: hidden;
-  }
-  .action {
-    background-color: $action-white;
-    margin: 5px 5px 2px 2px;
-    padding: 6px 5px 6px 5px;
-    overflow: hidden;
-  }
-  .ampel {
-    margin: 2px 0 0 4px;
-  }
-  .arrow {
-    margin: 0px 10px 0px 10px;
-    color: green;
-  }
-  .toggle {
-    float: right;
-    margin: 12px 10px 0px 10px;
-    width: 20px;
-  }
-/*
-  .name-diff {
-    color: #000;
-    border-style: solid;
-    border-width: 1px;
-    border-color: #E4E4E4;
-    padding: 3px 8px 3px 8px;
-    background-color: #EEEEEE;
-    margin-left: 3px;
-  }
-*/
-  .type-diff {
-    padding: 1px 0px 1px 3px;
-  }
-  .content-diff {
-    overflow: hidden;
-  }
-
-  .action {
-    .expanded {
-      clear:left;
-      padding: 14px 10px 14px 24px;
-    }
-    .summary {
-      padding: 6px 0px;
-    }
-  }
-
-  .arrow-down {
-  	width: 0;
-  	height: 0;
-  	border-left: 7px solid transparent;
-  	border-right: 7px solid transparent;
-  	border-top: 11px solid $act-gray;
-    display: block;
-  }
-  .arrow-right {
-  	width: 0;
-  	height: 0;
-  	border-top: 7px solid transparent;
-  	border-bottom: 7px solid transparent;
-  	border-left: 11px solid $act-gray;
-    display: block;
-  }
-  .info {
-    font-style: italic;
-  }
 }
 
 .deleted-mark {
@@ -645,14 +537,33 @@ $act-gray:  #b7b7b7;
     border: 2px solid $diff-green;
   }
 }
-.diff-invisible {
-  color: $action-white;
-}
 
-.diff-green,.diff-invisible{
-  text-decoration: none;
-}
+ul.action-list {
+  list-style-type: none;
+  padding-left: 15px;
+  li:before {
+    font-family: 'Glyphicons Halflings';
+    float: left;
+    margin-top: 4px;
+    margin-left: -17px;
+  }
 
+  li.update:before {
+    content: "\270f";
+  }
+
+  li.create:before {
+    content: "\2b";
+  }
+
+  li.delete:before {
+    content: "\e020";
+  }
+
+  li.draft:before {
+    content: "\e136";
+  }
+}
 
 
 /*-------------------- */
@@ -822,7 +733,7 @@ td.rule-setting {
     margin: 0;
   }
 }
-td.missing-rule {
+tr.missing-rule > td {
   background-color: #eee;
   border-bottom: 1px solid #fff;
 }
@@ -891,6 +802,10 @@ h2.set-label {
 }
 
 /*------- permissions ------------------*/
+
+.perm-editor {
+  margin-left: 40px;
+}
 
 .perm-section {
   margin-bottom: 20px;

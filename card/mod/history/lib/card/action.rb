@@ -81,6 +81,7 @@ class Card
     # retrieve action_type (create, update, or delete)
     # @return [Symbol]
     def action_type
+      return :draft if draft
       TYPE_OPTIONS[read_attribute(:action_type)]
     end
 

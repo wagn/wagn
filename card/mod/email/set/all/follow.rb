@@ -37,7 +37,7 @@ format do
     end
     set_card = card.default_follow_set_card
     hash[:path] = path(
-      name: set_card.follow_rule_name(Auth.current.name),
+      mark: set_card.follow_rule_name(Auth.current.name),
       action: :update,
       success: { layout: :modal, view: :follow_status },
       card: { content: "[[#{hash[:content]}]]" }
@@ -62,7 +62,7 @@ format :html do
     #   card.default_follow_set_card.follow_rule_name(Auth.current.name),
     #   new: {}
     # )
-    opts = (args[:html_args] || {}).clone
+    opts = (args[:link_opts] || {}).clone
     opts.merge!(
       title:           hash[:title],
       "data-path"      => hash[:path],

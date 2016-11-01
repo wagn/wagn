@@ -49,9 +49,9 @@ class Card
 
       def clause_to_hash clause
         case clause
-        when Hash    then clause
-        when String  then { key: clause.to_name.key }
-        when Integer then { id: clause }
+        when Hash              then clause
+        when String, SmartName then { key: clause.to_name.key }
+        when Integer           then { id: clause }
         else raise Card::Error::BadQuery, "Invalid query args #{clause.inspect}"
         end
       end

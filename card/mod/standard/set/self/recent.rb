@@ -13,14 +13,15 @@ format :html do
         col content_legend, class: "text-right"
       end
       row 12 do
-        html _render_recent_acts(args)
+        html _render_recent_acts
       end
       row 12 do
         col paging
       end
-g|
     end
-  en  view :recent_acts, cache: :never do
+  end
+
+  view :recent_acts, cache: :never do
     acts = Act.all_viewable.order(id: :desc)
               .page(page_from_params).per(ACTS_PER_PAGE)
     render_act_list acts: acts, act_context: :absolute

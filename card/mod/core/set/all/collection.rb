@@ -162,9 +162,9 @@ format do
   def nest_item cardish, options={}, &block
     options = item_view_options options
     nest cardish, options, &block
-  def implicit_item_view
   end
 
+  def implicit_item_view
     view = voo_items_view || default_item_view
     Card::View.canonicalize view
   end

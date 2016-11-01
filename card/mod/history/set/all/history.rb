@@ -43,6 +43,10 @@ event :finalize_action, :finalize, when: :finalize_action do
   end
 end
 
+def finalize_action?
+  actionable? && current_action
+end
+
 event :finalize_act,
       after: :finalize_action,
       when: proc { |c|  c.act_card? } do
@@ -127,7 +131,7 @@ def included_descendant_card_ids
 end
 
 format :html do
-  view :history do
+  view :history, cache: :never do
     voo.show! :toolbar
     class_up "card-body",  "history-slot"
     frame do
@@ -137,7 +141,7 @@ format :html do
           col content_legend
         end
         row 12 do
-          html _render_act_list(args)
+          html _render_act_list acts: history_acts
         end
         row 12 do
           col paging
@@ -146,9 +150,8 @@ format :html do
     end
   end
 
-  def default_history_args args
-    args[:optional_toolbar] ||= :show
-    args[:acts] = card.intrusive_acts.page(page_from_params).per(ACTS_PER_PAGE)
+  def history_acts
+    card.intrusive_acts.page(page_from_params).per(ACTS_PER_PAGE)
   end
 
   def paging

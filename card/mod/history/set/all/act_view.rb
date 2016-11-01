@@ -10,7 +10,7 @@ format :html do
     act_context args
   end
 
-  view :act_list do |args|
+  view :act_list, cache: :never do |args|
     acts = args.delete :acts
     page = params["page"] || 1
     count = acts.size + 1 - (page.to_i - 1) * ACTS_PER_PAGE
@@ -25,7 +25,7 @@ format :html do
     end, nil, class: "clear-both")
   end
 
-  view :act do |args|
+  view :act, cache: :never do |args|
     act_renderer(args[:act_context]).new(self, args[:act], args).render
   end
 

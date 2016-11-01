@@ -1,57 +1,48 @@
 class Card
   class View
-    #
+    # means for managing standard view options
     module Options
-      def self.keys
-        @keys
-      end
-
-      @keys = {
-        standard: ::Set.new(
-          [
-            :nest_name,   # name as used in nest
-            :nest_syntax, # full nest syntax
-
-            :structure,   # overrides the content of the card
-            :title,       # overrides the name of the card
-            :variant,     # override the canonical version of the name with
-            #               a different variant
-            :type,        # set the default type of new cards
-            :size,        # set an image size
-
-            :params,      # TODO: let's discuss this one!
-
-            #                    # These three are not
-            :home_view,
-            :skip_permissions,
-            :main
-          ]
-        ),
-        non_standard: ::Set.new(
-          [
-            :items,
-            :view,
-            :hide,
-            :show,
-            :main_view
-          ]
-        )
+      @keymap = {
+        nest_and_inherit: [
+          :nest_name,   # name as used in nest
+          :nest_syntax, # full nest syntax
+          :structure,   # overrides the content of the card
+          :title,       # overrides the name of the card
+          :variant,     # override the canonical version of the name with
+          #             # a different variant
+          :type,        # set the default type of new cards
+          :size,        # set an image size
+          :params,      # TODO: let's discuss this one!
+          :items
+        ],
+        nest: [
+          :view,
+          :hide,
+          :show
+        ],
+        inherit: [
+          :main,
+          :home_view
+        ],
+        other: [
+          :skip_permissions,
+          :main_view
+        ]
       }
 
-      module ClassMethods
-        def standard_inheritance_option_keys
-          @standard_inheritance_option_keys ||=
-            Options.keys[:standard] + [:items]
+      class << self
+        attr_reader :keymap
+
+        def all_keys
+          @all_keys ||= keymap.each_with_object([]) { |(_k, v), a| a.push(*v) }
         end
 
-        def option_keys
-          @option_keys ||= Options.keys[:standard] + Options.keys[:non_standard]
-          # Option.keys.each_with_object([]) { |(k, v), array| array + values }
+        def heir_keys
+          @heir_keys ||= ::Set.new(keymap[:nest_and_inherit]) + keymap[:inherit]
         end
 
-        def nest_option_keys
-          @nest_option_keys ||=
-            (option_keys - [:skip_permissions, :main, :main_view, :home_view])
+        def nest_keys
+          @nest_keys ||= ::Set.new(keymap[:nest_and_inherit]) + keymap[:nest]
         end
       end
 
@@ -89,7 +80,7 @@ class Card
       end
 
       def inherit_from_parent
-        self.class.standard_inheritance_option_keys.each do |key|
+        Options.heir_keys.each do |key|
           parent_value = parent.live_options[key]
           normalized_options[key] ||= parent_value if parent_value
         end
@@ -108,18 +99,18 @@ class Card
       end
 
       def foreign_options opts
-        opts.reject { |key, _value| self.class.option_keys.member? key }
+        opts.reject { |k, _v| Options.all_keys.include? k }
       end
 
       def slot_options
-        normalized_options.select { |k, _v| self.class.option_keys.include? k }
+        normalized_options.select { |k, _v| Options.all_keys.include? k }
       end
 
       def items
         live_options[:items] ||= {}
       end
 
-      Options.keys[:standard].each do |option_key|
+      (heir_keys - [:items]).each do |option_key|
         define_method option_key do
           live_options[option_key]
         end

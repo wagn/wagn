@@ -1,5 +1,8 @@
 class Card
   class View
+    # A "stub" is a placeholder for a card view. It can only be used in
+    # situations where the card identifier, known options, and nest mode
+    # comprise all the info needed to reproduce the view as intended
     module Stub
       def stub
         "<card-view>#{stub_json}</card-view>"

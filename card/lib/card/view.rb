@@ -12,7 +12,6 @@ class Card
     include Stub
     include Options
     extend Cache::ClassMethods
-    extend Options::ClassMethods
 
     attr_reader :format, :parent, :card
 

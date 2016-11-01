@@ -46,10 +46,6 @@ class Card
         end
       end
 
-      def normalized_options
-        @normalized_options
-      end
-
       def normalize_options!
         @normalized_options = opts = options_to_hash @raw_options.clone
         opts[:view] = @raw_view
@@ -68,22 +64,19 @@ class Card
         end.deep_symbolize_keys!
       end
 
-      def live_options
-        @live_options ||= process_live_options!
+      def inherit_from_parent
+        Options.heir_keys.each do |key|
+          parent_value = parent.live_options[key]
+          normalized_options[key] ||= parent_value if parent_value
+        end
       end
 
       def process_live_options!
         opts = @live_options = normalized_options.clone
         opts.merge! format.main_nest_options if opts[:main_view]
         process_default_options
+        process_visibility_options
         opts
-      end
-
-      def inherit_from_parent
-        Options.heir_keys.each do |key|
-          parent_value = parent.live_options[key]
-          normalized_options[key] ||= parent_value if parent_value
-        end
       end
 
       def process_default_options

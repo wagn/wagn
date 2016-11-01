@@ -65,7 +65,7 @@ class Card
       # takes an options_hash and processes it to update viz_hash
       def process_visibility options_hash
         [:hide, :show].each do |setting|
-          list = viz_view_list options_hash[setting]
+          list = viz_view_list options_hash.delete(setting)
           viz list, setting, true
         end
       end

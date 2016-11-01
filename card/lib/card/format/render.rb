@@ -83,7 +83,7 @@ class Card
         view = match[3] ? match[4] : opts.shift
         args = opts[0] ? opts.shift.clone : {}
         optional_render_args(args, opts) if match[2]
-        args[:skip_permissions] = true if match[1]
+        args[:skip_perms] = true if match[1]
         render view, args
       end
 

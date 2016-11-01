@@ -38,7 +38,7 @@ class Card
       end
 
       def options_for_cache_key
-        hash_for_cache_key live_options
+        hash_for_cache_key(live_options) + hash_for_cache_key(viz_hash)
       end
 
       def hash_for_cache_key hash

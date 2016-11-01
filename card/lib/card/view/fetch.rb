@@ -5,25 +5,23 @@ class Card
     # View definitions can contain cache settings that guide whether and how
     # the view should be cached.
     module Fetch
-      # Each of the following keys represents an accepted value for cache
-      # directives on view definitions.  eg:
-      #   view :myview, cache: :standard do ...
-      #
-      # the values represent the default #fetch product to be provided in the
-      # context of a "dependent" view caching -- on that is rendered by another
-      # view while in the process of being cached.
-
+      # fetching can result in one of three things:
+      # - simply yielding the initial render call
+      # - storing or retrieving the render to/from the cache
+      # - creating a stub within another render
+      #   (so that the stub may be rendered later)
       def fetch &block
-        level = cache_level
-        #puts "View#fetch: #{@card.name}/#{ok_view} #{level} #{cache_key}"
-        #     "#{'(caching)' if !caching?.nil?}"
-        case level
+        case cache_level
         when :yield       then yield
         when :cache_yield then cache_fetch(&block)
         when :stub        then stub
         end
       end
 
+      # Each of the following represents an accepted value for cache
+      # directives on view definitions.  eg:
+      #   view :myview, cache: :standard do ...
+      #
       # * *always* - store independent cached view, even if that means double
       #   caching. (eg view is inside another one already being cached)
       # * *standard* (default) cache independently or dependently, but
@@ -79,7 +77,7 @@ class Card
 
       def dependent_cache_ok?
         return false unless parent && clean_enough_to_cache?
-        return true if normalized_options[:skip_permissions]
+        return true if normalized_options[:skip_perms]
         dependent_cacheable_permissible?
       end
 
@@ -92,6 +90,8 @@ class Card
         end
       end
 
+      # task directly associated with the view in its definition via the
+      # "perms" directive
       def permission_task
         @permission_task ||= Card::Format.perms[requested_view] || :read
       end

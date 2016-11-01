@@ -119,6 +119,10 @@ class Card
       s =~ RELATIVE_REGEXP || starts_with_joint?
     end
 
+    def simple_relative?
+      relative? && stripped.to_name.starts_with_joint?
+    end
+
     def absolute?
       !relative?
     end

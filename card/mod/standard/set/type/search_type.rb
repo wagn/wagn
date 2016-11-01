@@ -67,16 +67,16 @@ format do
     _render view, args
   end
 
-  view :search_count do |_args|
+  view :search_count, cache: :never do |_args|
     search_results.to_s
   end
 
-  view :search_error do |_args|
+  view :search_error, cache: :never do |_args|
     sr_class = search_results.class.to_s
     %(#{sr_class} :: #{search_results.message} :: #{card.raw_content})
   end
 
-  view :card_list do |_args|
+  view :card_list, cache: :never do |_args|
     if search_results.empty?
       "no results"
     else
@@ -193,7 +193,7 @@ format :json do
     super(args)
   end
 
-  view :export_items do |args|
+  view :export_items, cache: :never do |args|
     card.item_names(limit: 0).map do |i_name|
       next unless (i_card = Card[i_name])
       subformat(i_card).render_atom(args)
@@ -202,15 +202,15 @@ format :json do
 end
 
 format :rss do
-  view :feed_body do |args|
-    case raw_feed_items args
+  view :feed_body do
+    case raw_feed_items
     when Exception then @xml.item(render(:search_error))
     when Integer then @xml.item(render(:search_count))
-    else super args
+    else super()
     end
   end
 
-  def raw_feed_items _args
+  def raw_feed_items
     @raw_feed_items ||= begin
       search_params[:default_limit] = 25
       search_results
@@ -227,8 +227,7 @@ format :html do
     return render_no_search_results(args) if search_results.empty?
     search_result_list args, search_results.length do
       search_results.map do |item_card|
-        nest_item item_card, size: args[:size],
-                             view: args[:item] do |rendered, item_view|
+        nest_item item_card, size: voo.size do |rendered, item_view|
           klass = "search-result-item item-#{item_view}"
           %(<div class="#{klass}">#{rendered}</div>)
         end

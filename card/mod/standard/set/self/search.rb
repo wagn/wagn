@@ -11,7 +11,7 @@ format :html do
 end
 
 format :json do
-  view :complete do
+  view :complete, cache: :never do
     term = complete_term
     exact = Card.fetch term, new: {}
 

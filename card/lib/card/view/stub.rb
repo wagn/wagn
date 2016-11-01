@@ -1,36 +1,29 @@
 class Card
   class View
+    # A "stub" is a placeholder for a card view. It can only be used in
+    # situations where the card identifier, known options, and nest mode
+    # comprise all the info needed to reproduce the view as intended
     module Stub
-      def validate_stub
-        return if foreign_options.empty?
-        raise "INVALID STUB: #{@card.name}/#{ok_view}" \
-              " has foreign options: #{foreign_options}"
-      end
-
       def stub
         "<card-view>#{stub_json}</card-view>"
       end
 
       def stub_json
-        JSON.generate stub_array
+        JSON.generate stub_hash
       end
 
-      def stub_array
-        [@card.cast, stub_options, @format.mode, @format.main?]
+      def stub_hash
+        {
+          cast: card.cast,
+          options: normalized_options,
+          mode: format.mode
+        }
       end
 
-      def stub_options
-        stub_options = options.merge view: requested_view
-        stub_visibility_options stub_options
-        stub_options
-      end
-
-      def stub_visibility_options stub_options
-        [:hide, :show].each do |setting|
-          stub_options[setting] = viz_hash.keys.select do |k|
-            viz_hash[k] == setting
-          end.sort.join ","
-        end
+      def validate_stub
+        return if foreign_normalized_options.empty?
+        raise "INVALID STUB: #{card.name}/#{ok_view}" \
+              " has foreign options: #{foreign_normalized_options}"
       end
     end
   end

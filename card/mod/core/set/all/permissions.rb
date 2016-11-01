@@ -46,9 +46,11 @@ def ok! action, opts={}
 end
 
 def who_can action
-  # warn "who_can[#{name}] #{(prc=permission_rule_card(action)).inspect},
-  # #{prc.first.item_cards.map(&:id)}" if action == :update
   permission_rule_card(action).item_cards.map(&:id)
+end
+
+def anyone_can? action
+  who_can(action).include? Card::AnyoneID
 end
 
 def permission_rule_id_and_class action

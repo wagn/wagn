@@ -141,7 +141,7 @@ format :html do
     "Cannot currently edit Sets" # ENGLISH
   end
 
-  view :template_link do
+  view :template_link, cache: :never do
     wrap do
       link = link_to_view :template_editor, parent.voo.nest_syntax,
                           class: "slotter"

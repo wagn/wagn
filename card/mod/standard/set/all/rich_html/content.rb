@@ -4,8 +4,7 @@ end
 
 format :html do
   def show view, args
-    method = show_layout? ? :show_with_layout : :show_without_layout
-    send method, view, args
+    send "show_#{show_layout? ? :with : :without}_layout", view, args
   end
 
   def show_layout?
@@ -14,18 +13,16 @@ format :html do
 
   def show_with_layout view, args
     args[:view] = view if view
+    @main = false
     @main_opts = args
-    render :layout
+    render :layout, title: params[:layout]
+    # FIXME: using title because it's a standard view option.  hack!
   end
 
   def show_without_layout view, args
     @main = true if params[:is_main]
     view ||= args[:home_view] || :open
     render view, args
-  end
-
-  def default_layout_args _args
-    voo.title = params[:layout] # FIXME: using title for param.  hack!
   end
 
   view :layout, perms: :none do

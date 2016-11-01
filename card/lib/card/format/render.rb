@@ -63,15 +63,18 @@ class Card
 
       def stub_render cached_content
         return cached_content unless cached_content.is_a? String
-        expand_stubs cached_content do |card, options, nest_mode, main|
-          with_nest_mode(nest_mode) { nest card, options.merge(main: main) }
+        expand_stubs cached_content do |stub_hash|
+          stub_card = Card.fetch_from_cast stub_hash[:cast]
+          with_nest_mode(stub_hash[:mode]) do
+            nest stub_card, stub_hash[:options]
+          end
         end
       end
 
       def expand_stubs cached_content
         conto = Card::Content.new cached_content, self, chunk_list: :stub
-        conto.process_each_chunk do |card, options, nest_mode, main|
-          yield(card, options, nest_mode, main).to_s
+        conto.process_each_chunk do |stub_hash|
+          yield(stub_hash).to_s
         end
         conto.to_s
       end
@@ -80,7 +83,7 @@ class Card
         view = match[3] ? match[4] : opts.shift
         args = opts[0] ? opts.shift.clone : {}
         optional_render_args(args, opts) if match[2]
-        args[:skip_permissions] = true if match[1]
+        args[:skip_perms] = true if match[1]
         render view, args
       end
 

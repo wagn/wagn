@@ -92,7 +92,7 @@ format :html do
   def signin_field name
     nest_name = "".to_name.trait(name)
     [nest_name, { title: name.to_s, view: "titled",
-                  nest_name: nest_name, skip_permissions: true }]
+                  nest_name: nest_name, skip_perms: true }]
   end
 
   view :reset_password_success do

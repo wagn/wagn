@@ -24,15 +24,9 @@ format :html do
   end
 
   def slot_options
-    options = standard_slot_options
+    options = voo.slot_options
     name_context_slot_option options
     options
-  end
-
-  def standard_slot_options
-    opts = voo.options.clone
-    opts.delete :view
-    opts
   end
 
   def name_context_slot_option opts

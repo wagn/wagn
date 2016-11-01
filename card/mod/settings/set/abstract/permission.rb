@@ -5,21 +5,20 @@ def standardize_items
 end
 
 format :html do
-  view :pointer_core do |args| # view: :core, mod: Type::Pointer::HtmlFormat
-    %(<div class="pointer-list">#{render_pointer_items args}</div>)
+  view :pointer_core do
+    wrap_with :div, pointer_items, class: "pointer-list"
   end
 
   view :core do |args|
     if card.content == "_left"
       core_inherit_content args
     else
-      render :pointer_core, args
+      render :pointer_core
     end
   end
 
-  view :closed_content do |args|
-    args[:item] ||= :link
-    render_core args
+  view :closed_content do
+    render_core items: { view: :link }
   end
 
   view :editor do |args|

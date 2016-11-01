@@ -127,7 +127,7 @@ format :html do
     end
   end
 
-  view :ignoring_list do |_args|
+  view :ignoring_list, cache: :never do |_args|
     ignore_list = []
     card.known_item_cards.each do |follow_rule|
       follow_rule.item_cards.each do |follow_option|
@@ -150,7 +150,7 @@ format :html do
     end
   end
 
-  view :pointer_items, tags: :unknown_ok do |args|
+  def pointer_items args
     voo.items[:view] ||= :link
     super(args)
   end

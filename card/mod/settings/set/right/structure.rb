@@ -1,6 +1,6 @@
 
 format :rss do
-  def raw_feed_items _args
+  def raw_feed_items
     [card]
   end
 end

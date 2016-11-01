@@ -30,29 +30,30 @@ format do
   end
 
   view :core do |_args|
-    render_pointer_items joint: ", "
+    pointer_items.join ", "
   end
 
-  view :pointer_items, tags: :unknown_ok do |args|
+  def pointer_items args={}
     item_options = item_view_options args
     card.item_cards.map do |item_card|
       nest_item item_card, item_options.clone do |rendered, item_view|
         wrap_item rendered, item_view
       end
-    end.join args[:joint] || " "
+    end
   end
 end
 
 format :html do
-  view :core do |args|
-    %(<div class="pointer-list">#{render_pointer_items args}</div>)
+  view :core do
+    wrap_with :div, pointer_items, class: "pointer-list"
   end
 
-  view :closed_content do |args|
-    item_view = args[:item] || implicit_item_view
-    args[:item] = item_view == "name" ? "name" : "link"
-    args[:joint] ||= ", "
-    _render_core args
+  view :closed_content do
+    item_view = implicit_item_view
+    item_view = item_view == "name" ? "name" : "link"
+    wrap_with :div, class: "pointer-list" do
+      pointer_items(view: item_view).join ", "
+    end
   end
 
   def wrap_item rendered, item_view
@@ -90,10 +91,8 @@ format :data do
 end
 
 format :rss do
-  def raw_feed_items _args
-    @raw_feed_items ||= begin
-      card.item_cards
-    end
+  def raw_feed_items
+    @raw_feed_items ||= card.item_cards
   end
 end
 

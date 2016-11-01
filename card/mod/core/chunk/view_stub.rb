@@ -11,15 +11,30 @@ class Card
 
         def interpret match, _content
           @options_json = match[1]
-          @card_cast, @options, nest_mode, @main = JSON.parse @options_json
-          @card_cast.symbolize_keys!
-          @options.symbolize_keys!
-          @nest_mode = nest_mode.to_sym
+          @stub_hash = JSON.parse(@options_json).symbolize_keys
+          interpret_hash_values
+        end
+
+        def interpret_hash_values
+          @stub_hash.keys.each do |key|
+            send "interpret_#{key}"
+          end
+        end
+
+        def interpret_cast
+          @stub_hash[:cast].symbolize_keys!
+        end
+
+        def interpret_options
+          @stub_hash[:options].symbolize_keys!
+        end
+
+        def interpret_mode
+          @stub_hash[:mode] = @stub_hash[:mode].to_sym
         end
 
         def process_chunk
-          @card = Card.fetch_from_cast @card_cast
-          @processed = yield @card, @options, @nest_mode, @main
+          @processed = yield @stub_hash
         end
       end
     end

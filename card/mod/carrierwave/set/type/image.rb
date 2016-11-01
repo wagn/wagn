@@ -10,7 +10,7 @@ format do
   end
 
   view :source, cache: :never do
-    default_core_args
+    determine_image_size
     source_url
   end
 
@@ -23,16 +23,22 @@ format do
     end
   end
 
-  def default_core_args args={}
-    size = case
-           when @mode == :closed then :icon
-           when voo.size         then voo.size.to_sym
-           when main?            then :large
-           else :medium
-           end
-    voo.size = size == :full ? :original : size
+  def default_core_args _args={}
+    determine_image_size
+  end
+
+  def determine_image_size
+    voo.size =
+      case
+      when @mode == :closed   then :icon
+      when voo.size           then voo.size.to_sym
+      when main?              then :large
+      else                         :medium
+      end
+    voo.size = :original if voo.size == :full
   end
 end
+
 
 format :html do
   include File::HtmlFormat

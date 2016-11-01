@@ -1,51 +1,63 @@
 class Card
   class View
-    # Support context-aware card view caching.
-    #
-    # View defintions can contain cache settings that guide whether and how
-    # the view should be cached.
-    #
-    #
+    # cache mechanics for view caching
     module Cache
-
+      # adds tracking, mapping, and stub handling to standard cache fetching
       def cache_fetch
         cached_view = caching do
           self.class.cache.fetch cache_key do
-            @card.register_view_cache_key cache_key
+            card.register_view_cache_key cache_key
             yield
           end
         end
-        return cached_view if self.class.caching?
-        @format.stub_render cached_view
+        caching? ? cached_view : format.stub_render(cached_view)
       end
 
+      # tracks that a cache fetch is in progress
       def caching
         self.class.caching(self) { yield }
       end
 
+      # answers: should this cache fetch depend on one already in progress?
+      # Note that f you create a brand new format object (ie, not a subformat)
+      # midrender, (eg card.format...), it needs to be treated as unrelated to
+      # any caching in progress.
+      def caching?
+        root? ? false : self.class.caching?
+      end
+
+      # neither view nor format has a parent
+      def root?
+        !parent && !format.parent
+      end
+
       def cache_key
         @cache_key ||= [
-          @card.key, @format.class, @format.mode, @format.main?,
-          requested_view, hash_key(options), hash_key(viz_hash)
+          card.key, format.class, format.mode, options_for_cache_key
         ].map(&:to_s).join "-"
       end
 
-      def hash_key hash
+      def options_for_cache_key
+        hash_for_cache_key(live_options) + hash_for_cache_key(viz_hash)
+      end
+
+      def hash_for_cache_key hash
         hash.keys.sort.map do |key|
-          key_for_option key, hash[key]
+          option_for_cache_key key, hash[key]
         end.join ";"
       end
 
-      def key_for_option key, value
+      def option_for_cache_key key, value
         string_value =
           case value
-          when Hash then "{#{hash_key value}}"
+          when Hash then "{#{hash_for_cache_key value}}"
           when Array then value.sort.map(&:to_s).join ","
           else value.to_s
           end
         "#{key}:#{string_value}"
       end
 
+      # cache-related Card::View class methods
       module ClassMethods
         def cache
           Card::Cache[Card::View]
@@ -56,39 +68,11 @@ class Card
         end
 
         def caching voo
-          return yield if @caching
+          old_caching = @caching
           @caching = voo
           yield
         ensure
-          @caching = nil
-        end
-
-        def fetch cache_key, &block
-          send fetch_method, cache_key, &block
-        end
-
-        def fetch_method
-          @fetch_method ||= begin
-            config_option = Card.config.view_cache
-            config_option == "debug" ? :verbose_fetch : :standard_fetch
-          end
-        end
-
-        def canonicalize view
-          return if view.blank? # error?
-          view.to_viewname.key.to_sym
-        end
-
-        def standard_fetch key, &block
-          cache.fetch key, &block
-        end
-
-        def verbose_fetch key, &block
-          if cache.exist? key
-            "fetched from view cache: #{cache.read key}"
-          else
-            "written to view cache: #{cache.fetch(key, &block)}"
-          end
+          @caching = old_caching
         end
       end
     end

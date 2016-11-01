@@ -13,7 +13,7 @@ class Card
     include Options
     extend Cache::ClassMethods
 
-    attr_reader :format, :parent, :card, :normalized_options, :live_options
+    attr_reader :format, :parent, :card, :normalized_options
 
     def self.canonicalize view
       return if view.blank? # error?
@@ -27,15 +27,14 @@ class Card
       @parent = parent
 
       @card = @format.card
-      normalize_options!
+      normalize_options
     end
 
     def process
-      process_live_options!
+      process_live_options
+      process_visibility_options
       return if optional? && hide?(requested_view)
-      fetch do
-        yield ok_view, foreign_live_options
-      end
+      fetch { yield ok_view, foreign_live_options }
     end
 
     def requested_view

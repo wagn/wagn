@@ -46,7 +46,7 @@ class Card
         end
       end
 
-      def normalize_options!
+      def normalize_options
         @normalized_options = opts = options_to_hash @raw_options.clone
         opts[:view] = @raw_view
         inherit_from_parent if parent
@@ -71,11 +71,14 @@ class Card
         end
       end
 
-      def process_live_options!
+      def live_options
+        @live_options ||= process_live_options
+      end
+
+      def process_live_options
         opts = @live_options = normalized_options.clone
         opts.merge! format.main_nest_options if opts[:main_view]
         process_default_options
-        process_visibility_options
         opts
       end
 

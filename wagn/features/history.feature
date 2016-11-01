@@ -15,9 +15,8 @@ Feature: History
     When I expand act 2
 #    And In the main card content I click "Hide changes"
 #    Then In the main card content I should not see a del with content "egg"
-
-    When In the main card content I click "Save as current"
+    And I wait until ajax response done
+    When In the main card body I click "Save as current"
     Then the card First should contain "chicken"
-    Then I wait a sec
 
 

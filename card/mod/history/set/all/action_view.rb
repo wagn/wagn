@@ -43,7 +43,7 @@ format :html do
   end
 
   def action_content_toggle action, view_type
-    #return unless show_action_content_toggle?(action, view_type)
+    return unless show_action_content_toggle?(action, view_type)
     toggle_action_content_link action, view_type
   end
 

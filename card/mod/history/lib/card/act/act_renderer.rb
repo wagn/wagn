@@ -47,7 +47,7 @@ class Card
       end
 
       def details
-        approved_actions.map do |action|
+        approved_actions[0..20].map do |action|
           Action::ActionRenderer.new(@format, action, action_header?,
                                      :summary).render
         end.join
@@ -73,13 +73,15 @@ class Card
 
       def action_header?
         true
-        #@action_header ||= approved_actions.size != 1 ||
+        # @action_header ||= approved_actions.size != 1 ||
         #                   approved_actions[0].card_id != @format.card.id
       end
 
       def count_types
         @count_types ||=
-          actions.each_with_object(Hash.new { |h, k| h[k] = 0 }) do |action, type_cnt|
+          approved_actions.each_with_object(
+            Hash.new { |h, k| h[k] = 0 }
+          ) do |action, type_cnt|
             type_cnt[action.action_type] += 1
           end
       end

@@ -3,14 +3,6 @@ class Card
     # View rendering methods.
     #
     module Render
-      include Render::Cache
-      # `view cache: [:always, :nested, :never]
-      # :always means a view is always cached when rendered
-
-      # :nested means a view is not cached independently,
-      # but it can be cached within another view
-      # :never means a view is never cached
-
       def render view, args={}
         voo = View.new self, view, args, @voo
         with_voo voo do
@@ -51,8 +43,8 @@ class Card
           with_nest_mode view do
             method = view_method view, args
             method.arity.zero? ? method.call : method.call(args)
-      end
-      end
+          end
+        end
       end
 
       # setting (:alway, :never, :nested) designated in view definition

@@ -733,7 +733,7 @@ td.rule-setting {
     margin: 0;
   }
 }
-td.missing-rule {
+tr.missing-rule > td {
   background-color: #eee;
   border-bottom: 1px solid #fff;
 }

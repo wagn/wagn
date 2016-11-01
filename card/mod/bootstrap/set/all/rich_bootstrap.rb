@@ -1,6 +1,6 @@
 format :html do
-  view :closed do |args|
-    args[:body_class] = "closed-content"
-    super args
+  view :closed do
+    class_up "card-body", "closed-content"
+    super()
   end
 end

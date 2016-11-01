@@ -72,29 +72,6 @@ describe Card::Set::All::Collection do
     end
   end
 
-  describe "#map_nests" do
-    before do
-      Card::Auth.as_bot do
-        @list = Card.create!(
-          name: "mixed list",
-          content: "[[A]]\n{{B}}\n[[C|link C]]\n{{D|name;title:nest D}}"
-        )
-      end
-    end
-    it "handles links and nest arguments" do
-      result = @list.format.map_references_with_args do |name, args|
-        [name, args]
-      end
-      expect(result).to eq [
-        ["A", { view: :closed }],
-        ["B", { view: :closed, inc_name: "B", inc_syntax: "B" }],
-        ["C", { view: :closed, title: "link C" }],
-        ["D", { view: "name", title: "nest D", inc_name: "D",
-                inc_syntax: "D|name;title:nest D" }]
-      ]
-    end
-  end
-
   describe "tabs view" do
     it "renders tab panel" do
       tabs = render_card :tabs, content: "[[A]]\n[[B]]\n[[C]]", type: "pointer"
@@ -138,6 +115,7 @@ describe Card::Set::All::Collection do
         assert_select %(li > a[data-toggle="tab"][data-url="#{path}"])
       end
     end
+
     it "handles nests as items" do
       tabs = render_card :tabs, name: "tab_test", type_id: Card::PlainTextID,
                                 content: "{{A|type;title:my tab title}}"
@@ -150,7 +128,7 @@ describe Card::Set::All::Collection do
 
     it "works with search cards" do
       Card.create type: "Search", name: "Asearch", content: '{"type":"User"}'
-      tabs = render_content("{{Asearch|tabs;item:name}}")
+      tabs = render_content("{{Asearch|tabs|name}}")
       assert_view_select tabs, "div[role=tabpanel]" do
         assert_select(
           'li > a[data-toggle=tab][href="#asearch-joe_admin"] span.card-title',

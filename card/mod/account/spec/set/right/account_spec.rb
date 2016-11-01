@@ -63,8 +63,11 @@ describe Card::Set::Right::Account do
     end
 
     it "contains link to verify account" do
-      url = "/update/#{@account.left.cardname.url_key}?token=#{@account.token}"
-      expect(@mail.parts[0].body.raw_source).to include(url)
+      raw_source = @mail.parts[0].body.raw_source
+      ["/update/#{@account.left.cardname.url_key}",
+       "token=#{@account.token}"].each do |url_part|
+        expect(raw_source).to include(url_part)
+      end
     end
 
     it "contains expiry days" do
@@ -87,10 +90,16 @@ describe Card::Set::Right::Account do
       expect(body).to match(Card.global_setting(:title))
     end
 
-    it "contains password resset link" do
+    it "contains password reset link" do
+      raw_source = @mail.parts[0].body.raw_source
       token = @account.token_card.refresh(true).content
-      url = "/update/#{@account.cardname.url_key}?token=#{token}"
-      expect(@mail.parts[0].body.raw_source).to include(url)
+      ["/update/#{@account.left.cardname.url_key}",
+       "token=#{token}",
+       "live_token=true",
+       "event=reset_password"].each do |url_part|
+
+        expect(raw_source).to include(url_part)
+      end
     end
 
     it "contains expiry days" do

@@ -24,7 +24,7 @@ format :html do
   def restored
     return unless (res_id = Env.params[:restore]) &&
                   (res_card = Card[res_id.to_i])
-    alert :success, dismissible: true do
+    alert :success, true do
       content_tag(:h5, "restored") + subformat(res_card).render_closed
     end
   end

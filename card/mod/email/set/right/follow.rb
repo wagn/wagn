@@ -65,7 +65,7 @@ format :html do
                     class: "btn update-follow-link", "data-card_key" => key
   end
 
-  view :follow_status_delete_options do
+  view :follow_status_delete_options, cache: :never do
     wrap_with(:ul, class: "delete-list list-group") do
       card.item_names.map do |option|
         content_tag :li, class: "list-group-item" do
@@ -76,7 +76,7 @@ format :html do
     end
   end
 
-  view :delete_follow_rule_button do |_args|
+  view :delete_follow_rule_button do
     button_tag(
       type: :submit,
       class: "btn-xs btn-item-delete btn-primary", "aria-label" => "Left Align"
@@ -85,7 +85,7 @@ format :html do
     end
   end
 
-  view :add_follow_rule_button do |_args|
+  view :add_follow_rule_button do
     button_tag(
       type: :submit,
       class: "btn-xs btn-item-add", "aria-label" => "Left Align"

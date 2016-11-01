@@ -1,41 +1,102 @@
 format :html do
-  view :closed_rule, tags: :unknown_ok do
-    # these are helpful for handling non-rule rstar cards until we have real
-    # rule sets
-    return "not a rule" unless card.is_rule?
-
-    rule_card = find_current_rule_card
-    rule_content = closed_rule_content rule_card
-    known_or_missing = known_or_missing_rule rule_card
-
-    cells = [
-      ["rule-setting", link_to_open_rule],
-      ["rule-content", rule_content_container(rule_content)],
-      ["rule-set", (rule_card ? rule_card.trunk.label : "")]
-    ].map do |css_class, cell_content|
-      wrap_rule_cell css_class, cell_content, known_or_missing
+  def current_rule force_reload=true
+    @current_rule = nil if force_reload
+    @current_rule ||= begin
+      rule = determine_current_rule
+      reload_rule rule
     end
-    %(<tr class="card-slot closed-rule">#{cells.join "\n"}</tr>)
   end
 
-  def wrap_rule_cell css_class, cell_content, known_or_missing
-    %(
-      <td class="rule-cell #{css_class} #{known_or_missing}">
-        #{cell_content}
-      </td>
-    )
+  def determine_current_rule
+    existing = find_existing_rule_card
+    return existing if existing
+    Card.new name: "#{Card[:all].name}+#{card.rule_user_setting_name}"
   end
 
-  def known_or_missing_rule rule_card
-    rule_card && !rule_card.new_card? ? "known-rule" : "missing-rule"
+  def open_rule_wrap rule_view
+    rule_view_class = rule_view.to_s.tr '_', '-'
+    wrap_with :tr, class: "card-slot open-rule #{rule_view_class}" do
+      wrap_with(:td, class: "rule-cell", colspan: 3) { yield }
+    end
   end
 
-  def rule_content_container rule_content
-    %(
-      <div class="rule-content-container">
-        <span class="closed-content content">#{rule_content}</span>
-      </div>
-    )
+  view :open_rule, cache: :never, tags: :unknown_ok do
+    return "not a rule" unless card.is_rule?
+    rule_view = open_rule_body_view
+    open_rule_wrap(rule_view) do
+      [open_rule_instruction,
+       open_rule_setting_links,
+       open_rule_body(rule_view)]
+    end
+  end
+
+  def open_rule_body rule_view
+    wrap_with :div, class: "card-body" do
+      nest current_rule, view: rule_view, rule_context: card
+    end
+  end
+
+  def open_rule_body_view
+    return :show_rule if params[:success] && !params[:reload]
+    card_action = card.new_card? ? :create : :update
+    card.ok?(card_action) ? :edit_rule : :show_rule
+  end
+
+  view :show_rule, cache: :never, tags: :unknown_ok do
+    return "not a rule" unless card.is_rule?
+    return "No Current Rule" if card.new_card?
+
+    voo.items[:view] ||= :link
+    show_rule_set(card.rule_set) + _render_core
+  end
+
+  def show_rule_set set
+    wrap_with :div, class: "rule-set" do
+      %(<label>Applies to</label>#{link_to_card set.cardname, set.label}:)
+    end
+  end
+
+  view :closed_rule, cache: :never, tags: :unknown_ok do
+    return "not a rule" unless card.is_rule?
+    rule_card = find_existing_rule_card
+    wrap_closed_rule rule_card do
+      [:setting, :content, :set].map do |cell|
+        send "closed_rule_#{cell}_cell", rule_card
+      end
+    end
+  end
+
+  def closed_rule_setting_cell _rule_card
+    wrap_rule_cell "rule-setting" do
+      link_to_open_rule
+    end
+  end
+
+  def closed_rule_content_cell rule_card
+    wrap_rule_cell "rule-content" do
+      rule_content_container { closed_rule_content rule_card }
+    end
+  end
+
+  def closed_rule_set_cell rule_card
+    wrap_rule_cell "rule-set" do
+      rule_card ? rule_card.trunk.label : ""
+    end
+  end
+
+  def wrap_closed_rule rule_card
+    klass = rule_card && rule_card.real? ? "known-rule" : "missing-rule"
+    wrap_with(:tr, class: "card-slot closed-rule #{klass}") { yield }
+  end
+
+  def wrap_rule_cell css_class
+    wrap_with(:td, class: "rule-cell #{css_class}") { yield }
+  end
+
+  def rule_content_container
+    wrap_with :div, class: "rule-content-container" do
+      wrap_with(:span, class: "closed-content content") { yield }
+    end
   end
 
   def link_to_open_rule
@@ -44,148 +105,261 @@ format :html do
   end
 
   def closed_rule_content rule_card
-    if rule_card
-      subformat(rule_card)._render_closed_content(
-        set_context: card.cardname.trunk_name
-      )
-    else
-      ""
+    return "" unless rule_card
+    nest rule_card, view: :closed_content,
+                    set_context: card.cardname.trunk_name
+  end
+
+  def open_rule_setting_links
+    wrap_with :div, class: "rule-setting" do
+      [link_to_closed_rule, link_to_all_rules]
     end
   end
 
-  view :open_rule, tags: :unknown_ok do |args|
-    return "not a rule" unless card.is_rule?
-    setting_name = args[:setting_name]
-    current_rule = args[:current_rule]
-
-    rule_view = open_rule_body_view
-    rule_view_args = { rule_context: card, set_context: card.rule_set_name }
-    body = subformat(current_rule)._render rule_view, rule_view_args
-
-    <<-HTML
-      <tr class="card-slot open-rule #{rule_view.to_s.sub '_', '-'}">
-        <td class="rule-cell" colspan="3">
-          <div class="alert alert-info rule-instruction">
-            #{open_rule_instruction setting_name}
-          </div>
-          <div class="rule-setting">
-            #{open_rule_setting_links setting_name}
-          </div>
-          <div class="card-body">
-            #{body}
-          </div>
-        </td>
-      </tr>
-    HTML
+  def link_to_all_rules
+    link_to_card card.rule_setting_name, "all #{card.rule_setting_title} rules",
+                 class: "setting-link", target: "wagn_setting"
   end
 
-  def open_rule_setting_links setting_name
-    setting_title = setting_name.tr "*", ""
-    closed_rule_link = link_to_view :closed_rule, setting_title,
-                                    class: "close-rule-link slotter"
-    all_rules_link = link_to_card setting_name, "all #{setting_title} rules",
-                                  class: "setting-link", target: "wagn_setting"
-    closed_rule_link + all_rules_link
+  def link_to_closed_rule
+    link_to_view :closed_rule, card.rule_setting_title,
+                 class: "close-rule-link slotter"
   end
 
-  def open_rule_instruction setting_name
-    process_content "{{#{setting_name}+*right+*help|content}}"
+  def open_rule_instruction
+    wrap_with :div, class: "alert alert-info rule-instruction" do
+      process_content "{{#{card.rule_setting_name}+*right+*help|content}}"
+    end
   end
 
-  def open_rule_body_view
-    return :show_rule if params[:success] && !params[:reload]
-    card_action = card.new_card? ? :create : :update
-    return :show_rule unless card.ok? card_action
-    :edit_rule
-  end
-
-  def reload_current_rule current_rule
-    return current_rule unless (card_args = params[:card])
-    if card_args[:name] && card_args[:name].to_name.key != current_rule.key
+  def reload_rule rule
+    return rule unless (card_args = params[:card])
+    if card_args[:name] && card_args[:name].to_name.key != rule.key
       Card.new card_args
     else
-      current_rule = current_rule.refresh
-      current_rule.assign_attributes card_args
-      current_rule.include_set_modules
+      rule = rule.refresh
+      rule.assign_attributes card_args
+      rule.include_set_modules
     end
   end
 
-  def default_open_rule_args args
-    current_rule = find_current_rule_card || begin
-      Card.new name: "#{Card[:all].name}+#{card.rule_user_setting_name}"
-    end
-    current_rule = reload_current_rule current_rule
-    args.reverse_merge! current_rule: current_rule,
-                        setting_name: card.rule_setting_name
-  end
-
-  view :show_rule, tags: :unknown_ok do |args|
+  view :edit_rule, cache: :never, tags: :unknown_ok do |args|
     return "not a rule" unless card.is_rule?
+    @rule_context = args[:rule_context] || card
+    @edit_rule_success = edit_rule_success
+    action_args = { action: :update, no_mark: true }
 
-    if !card.new_card?
-      set = card.rule_set
-      args[:item] ||= :link
-      %(
-        <div class="rule-set">
-        <label>Applies to</label> #{link_to_card set.cardname, set.label}:
-        </div>
-        #{_render_core args}
-      )
-    else
-      "No Current Rule"
+    card_form action_args, class: "card-rule-form" do |_form|
+      [hidden_tags(success: @edit_rule_success),
+       editor,
+       edit_rule_buttons].join
     end
   end
 
-  view :edit_rule, tags: :unknown_ok do |args|
-    return "not a rule" unless card.is_rule?
-    form_args = {
-      url: path(action: :update, no_mark: true),
-      html: { class: "card-form card-rule-form" }
-    }
-    if args[:remote]
-      form_args[:remote] = true
-      form_args[:html][:class] += " slotter"
-    end
-
-    form_for card, form_args do |form|
-      @form = form
-      %(
-        #{hidden_success_formgroup args[:success]}
-        #{editor args}
-        #{edit_buttons args}
-      )
-    end
-  end
-
-  view :edit_single_rule do |args|
-    %(<div class="edit-single-rule panel-body">#{render_edit_rule args}</div>)
-  end
-
-  def default_edit_rule_args args
-    args[:remote] ||= true
-    args[:rule_context] ||= card
-    args[:set_context] ||= card.rule_set_name
-    args[:set_selected] = params[:type_reload] ? card.rule_set_name : false
-    args[:set_options], args[:fallback_set] = args[:rule_context].set_options
-
-    args[:success] ||= {}
-    args[:success].reverse_merge!(
-      card: args[:rule_context],
-      id:   args[:rule_context].cardname.url_key,
+  def edit_rule_success
+    { id:   @rule_context.cardname.url_key,
       view: "open_rule",
-      item: "view_rule"
-    )
-    edit_rule_button_args args
+      item: "view_rule" }
   end
 
-  def edit_rule_button_args args
-    args[:delete_button] ||= delete_button args
-    args[:cancel_button] ||=
-      begin
-        cancel_view = card.new_card? ? :closed_rule : :open_rule
-        cancel_button class: "rule-cancel-button",
-                      href: path(view: cancel_view, success: false)
+  def edit_rule_buttons
+    wrap_with(:div, class: "button-area") do
+      [
+        edit_rule_delete_button,
+        edit_rule_submit_button,
+        edit_rule_cancel_button
+      ]
+    end
+  end
+
+  def edit_rule_delete_button args={}
+    return if card.new_card?
+    options = { remote: true,
+                type: "button",
+                class: "rule-delete-button slotter",
+                href: path(action: :delete, success: @edit_rule_success) }
+    options["data-slot-selector"] = slot_selector if args[:slot_selector]
+    delete_button_confirmation_option options, args[:fallback_set]
+    wrap_with :span, class: "rule-delete-section" do
+      button_tag "Delete", options
+    end
+  end
+
+  def delete_button_confirmation_option options, fallback_set
+    return unless fallback_set && (fallback_set_card = Card.fetch fallback_set)
+    setting = card.rule_setting_name
+    options["data-confirm"] = "Deleting will revert to #{setting} rule "\
+                              "for #{fallback_set_card.label}"
+  end
+
+  def edit_rule_submit_button
+    submit_button class: "rule-submit-button"
+  end
+
+  def edit_rule_cancel_button
+    cancel_view = card.new_card? ? :closed_rule : :open_rule
+    cancel_button class: "rule-cancel-button",
+                  href: path(view: cancel_view, success: false)
+  end
+
+  def editor
+    wrap_with(:div, class: "card-editor") do
+      [rules_type_formgroup,
+       rule_content_formgroup,
+       rule_set_selection].compact
+    end
+  end
+
+  def rules_type_formgroup
+    return unless card.right.rule_type_editable
+    success = @edit_rule_success
+    type_formgroup do
+      type_field(
+        href: path(mark: success[:id], view: success[:view], type_reload: true),
+        class: "type-field rule-type-field live-type-field",
+        "data-remote" => true
+      )
+    end
+  end
+
+  def rule_content_formgroup
+    formgroup "rule", editor: "content" do
+      content_field true
+    end
+  end
+
+  def rule_set_selection
+    wrap_with :div, class: "row" do
+      [rule_set_formgroup,
+       related_set_formgroup]
+    end
+  end
+
+  # def default_edit_rule_args args
+  #   args[:set_context] ||= card.rule_set_name
+  # end
+
+  def rule_set_formgroup
+    tag = @rule_context.rule_user_setting_name
+    narrower = []
+    option_list "set" do
+      rule_set_options.map do |set_name, state|
+        rule_set_radio_button set_name, tag, state, narrower
       end
+    end
+  end
+
+  def rule_set_options
+    @rule_set_options ||= @rule_context.set_options
+  end
+
+  def selected_rule_set
+    if @rule_set_options.length == 1 then true
+    elsif params[:type_reload]       then card.rule_set_name
+    else                                  false
+    end
+  end
+
+  def rule_set_radio_button set_name, tag, state, narrower
+    warning = narrower_rule_warning narrower, state, set_name
+    checked = checked_set_button? set_name, selected_rule_set
+    rule_radio set_name, state do
+      radio_text = "#{set_name}+#{tag}"
+      radio_button :name, radio_text, checked: checked, warning: warning
+    end
+  end
+
+  def narrower_rule_warning narrower_rules, state, set_name
+    return unless state.in? [:current, :overwritten]
+    narrower_rules << Card.fetch(set_name).uncapitalized_label
+    return unless state == :overwritten
+    narrower_rule_warning_message narrower_rules
+  end
+
+  def narrower_rule_warning_message narrower_rules
+    plural = narrower_rules.size > 1 ? "s" : ""
+    "This rule will not have any effect on this card unless you delete " \
+    "the narrower rule#{plural} for #{narrower_rules.to_sentence}."
+  end
+
+  def checked_set_button? set_name, selected
+    [set_name, true].include? selected
+  end
+
+  def current_set_key
+    card.new_card? ? Card.quick_fetch(:all).cardname.key : card.rule_set_key
+  end
+
+  def related_set_formgroup
+    related_sets = related_sets_in_context
+    return "" unless related_sets && !related_sets.empty?
+    tag = @rule_context.rule_user_setting_name
+    option_list "related set" do
+      related_rule_radios related_sets, tag
+    end
+  end
+
+  def related_sets_in_context
+    set_context = @rule_context.rule_set_name
+    set_context && Card.fetch(set_context).prototype.related_sets
+  end
+
+  def related_rule_radios related_sets, tag
+    related_sets.map do |set_name, _label|
+      rule_name = "#{set_name}+#{tag}"
+      state = Card.exists?(rule_name) ? :exists : nil
+      rule_radio set_name, state do
+        radio_button :name, rule_name
+      end
+    end
+  end
+
+  def rule_radio set_name, state
+    label_classes = ["set-label", ("current-set-label" if state == :current)]
+    icon = glyphicon "question-sign", "link-muted"
+    wrap_with :label, class: label_classes.compact.join(" ") do
+      [yield,
+       rule_radio_label(set_name, state),
+       link_to_card(set_name, icon, target: "wagn_set")]
+    end
+  end
+
+  def rule_radio_label set_name, state
+    label = Card.fetch(set_name).label
+    extra_info = extra_rule_radio_info state, set_name
+    label += " <em>#{extra_info}</em>".html_safe if extra_info
+    label
+  end
+
+  def extra_rule_radio_info state, set_name
+    case state
+    when :current
+      "(current)"
+    when :overwritten, :exists
+      link_to_card "#{set_name}+#{card.rule_user_setting_name}", "(#{state})"
+    end
+  end
+
+  def option_list title
+    formgroup title, editor: "set", class: "col-xs-6" do
+      wrap_with :ul do
+        wrap_each_with(:li, class: "radio") { yield }
+      end
+    end
+  end
+
+
+
+
+
+
+
+
+
+
+
+  view :edit_single_rule, cache: :never do |args|
+    %(<div class="edit-single-rule panel-body">#{render_edit_rule args}</div>)
   end
 
   def default_edit_single_rule_args args
@@ -210,166 +384,9 @@ format :html do
                    path: { view: args[:success][:view] }
   end
 
-  def delete_button args, slot_selector=nil
-    return if card.new_card?
-    b_args = {
-      remote: true, class: "rule-delete-button slotter", type: "button"
-    }
-    b_args["data-slot-selector"] = slot_selector if slot_selector
-    b_args[:href] = path action: :delete, success: args[:success]
-    if (fset = args[:fallback_set]) && (fcard = Card.fetch(fset))
-      b_args["data-confirm"] =
-        "Deleting will revert to #{card.rule_setting_name} rule for " \
-        "#{fcard.label}"
-    end
-    %(<span class="rule-delete-section">#{button_tag 'Delete', b_args}</span>)
-  end
-
-  # used keys for args:
-  # :success,  :set_selected, :set_options, :rule_context
-  def editor args
-    content = content_field(form, args.merge(skip_rev_id: true))
-    wrap_with(:div, class: "card-editor") do
-      [
-        (type_formgroup(args) if card.right.rule_type_editable),
-        formgroup("rule", content, editor: "content"),
-        set_selection(args)
-      ]
-    end
-  end
-
-  def type_formgroup args
-    content = type_field(
-      href: path(name: args[:success][:card].name,
-                 view: args[:success][:view],
-                 type_reload: true),
-      class: "type-field rule-type-field live-type-field",
-      "data-remote" => true
-    )
-    formgroup "type", content, editor: "type"
-  end
-
-  def hidden_success_formgroup args
-    %(
-      #{hidden_field_tag 'success[id]', args[:id] || args[:card].name}
-      #{hidden_field_tag 'success[view]', args[:view]}
-      #{hidden_field_tag 'success[item]', args[:item]}
-    )
-  end
-
-  def set_selection args
-    wrap_with(:div, class: "row") do
-      [
-        set_formgroup(args),
-        related_set_formgroup(args)
-      ]
-    end
-  end
-
-  def set_formgroup args
-    tag = args[:rule_context].rule_user_setting_name
-    narrower_rules = []
-    option_list "set" do
-      args[:set_options].map do |set_name, state|
-        set_radio_button set_name, tag, state, narrower_rules,
-                         checked: checked_set_button?(set_name, args)
-      end
-    end
-  end
-
-  def set_radio_button set_name, tag, state, narrower_rules, opts
-    button = radio_button :name, "#{set_name}+#{tag}",
-                          checked: opts[:checked],
-                          warning: narrower_rule_warning(narrower_rules)
-    label = Card.fetch(set_name).label
-    if state.in? [:current, :overwritten]
-      narrower_rules << label
-      narrower_rules.last[0] = narrower_rules.last[0].downcase
-    end
-    set_label(card, set_name, label, state, button)
-  end
-
-  def checked_set_button? set_name, args
-    (args[:set_selected] == set_name) ||
-      (current_set_key && args[:set_options].length == 1)
-  end
-
-  def current_set_key
-    card.new_card? ? Card[:all].cardname.key : card.rule_set_key
-  end
-
-  def related_set_formgroup args
-    related_sets = args[:set_context] &&
-                   Card.fetch(args[:set_context]).prototype.related_sets
-    return "" unless related_sets && related_sets.size > 0
-    tag = args[:rule_context].rule_user_setting_name
-    option_list "related set" do
-      related_sets.map do |set_name, label|
-        rule_name = "#{set_name}+#{tag}"
-        rule_card = Card.fetch rule_name, skip_modules: true
-        state = (rule_card && :exists)
-        set_label(card, set_name, label, state, radio_button(:name, rule_name))
-      end
-    end
-  end
-
-  def set_label card, set_name, label, state, button
-    label_class = "set-label"
-    icon = glyphicon "question-sign", "link-muted"
-    set_link = link_to_card set_name, icon, target: "wagn_set"
-    info =
-      case state
-      when :current
-        label_class += " current-set_label"
-        "(current)"
-      when :overwritten, :exists
-        link_to_card "#{set_name}+#{card.rule_user_setting_name}", "(#{state})"
-      end
-    label += " <em>#{info}</em>".html_safe if info
-    <<-HTML.html_safe
-      <label class="#{label_class}">
-        #{button} #{label} #{set_link}
-      </label>
-    HTML
-  end
-
-  def narrower_rule_warning narrower_rules
-    return unless narrower_rules.present?
-    plural = narrower_rules.size > 1 ? "s" : ""
-    "This rule will not have any effect on this card unless you delete " \
-    "the narrower rule#{plural} for #{narrower_rules.to_sentence}."
-  end
-
-  def option_list title
-    list = wrap_each_with(:li, class: "radio") { yield }
-    formgroup title, "<ul>#{list}</ul>", editor: "set", class: "col-xs-6"
-  end
-
-  def edit_buttons  args
-    wrap_with(:div, class: "button-area") do
-      [
-        args[:delete_button],
-        button_tag("Submit", class: "rule-submit-button", situation: "primary"),
-        args[:cancel_button]
-      ]
-    end
-  end
-
-  # view :edit_rule2 do |args|
-  #
-  #   card_form :update do
-  #     [
-  #       _optional_render(:type_formgroup,    args),
-  #       _optional_render(:content_formgroup, args),
-  #       _optional_render(:set_formgroup,     args),
-  #       _optional_render(:button_formgroup,  args)
-  #     ]
-  #   end
-  # end
-
   private
 
-  def find_current_rule_card
+  def find_existing_rule_card
     # self.card is a POTENTIAL rule; it quacks like a rule but may or may not
     # exist.
     # This generates a prototypical member of the POTENTIAL rule's set

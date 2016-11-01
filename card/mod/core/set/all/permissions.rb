@@ -46,17 +46,21 @@ def ok! action, opts={}
 end
 
 def who_can action
-  # warn "who_can[#{name}] #{(prc=permission_rule_card(action)).inspect},
-  # #{prc.first.item_cards.map(&:id)}" if action == :update
   permission_rule_card(action).item_cards.map(&:id)
+end
+
+def anyone_can? action
+  who_can(action).include? Card::AnyoneID
 end
 
 def permission_rule_id_and_class action
   direct_rule_id = rule_card_id action
   require_permission_rule! direct_rule_id, action
   direct_rule = Card.fetch direct_rule_id, skip_modules: true
-  [applicable_permission_rule_id(direct_rule, action),
-   direct_rule.rule_class_name]
+  [
+    applicable_permission_rule_id(direct_rule, action),
+    direct_rule.rule_class_name
+  ]
 end
 
 def applicable_permission_rule_id direct_rule, action
@@ -210,8 +214,7 @@ event :update_read_rule do
     self.read_rule_class = rclass
     Card.where(id: id).update_all read_rule_id: rcard_id,
                                   read_rule_class: rclass
-    expire_hard
-
+    expire :hard
     update_field_read_rules
   end
 end
@@ -245,12 +248,17 @@ def track_permission_errors
 end
 
 def recaptcha_on?
-  have_recaptcha_keys? &&
-    Env[:controller]   &&
-    !Auth.signed_in?   &&
-    !Auth.needs_setup? &&
-    !Auth.always_ok?   &&
+  consider_recaptcha?    &&
+    have_recaptcha_keys? &&
+    Env[:controller]     &&
+    !Auth.signed_in?     &&
+    !Auth.needs_setup?   &&
+    !Auth.always_ok?     &&
     Card.toggle(rule(:captcha))
+end
+
+def consider_recaptcha?
+  true
 end
 
 def have_recaptcha_keys?

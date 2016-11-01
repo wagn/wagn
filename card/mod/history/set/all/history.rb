@@ -11,21 +11,7 @@ def actionable?
   history? || respond_to?(:attachment)
 end
 
-def finalize_action?
-  actionable? && current_action
-end
-
-def act_card?
-  self == Card::ActManager.act_card
-end
-
-def rollback_request?
-  history? && Env && Env.params["action_ids"] &&
-    Env.params["action_ids"].class == Array
-end
-
-event :assign_action, :initialize,
-      when: proc { |c| c.actionable? } do
+event :assign_action, :initialize, when: proc { |c| c.actionable? } do
   @current_act = director.need_act
   @current_action = Card::Action.create(
     card_act_id: @current_act.id,
@@ -39,8 +25,7 @@ end
 
 # stores changes in the changes table and assigns them to the current action
 # removes the action if there are no changes
-event :finalize_action, :finalize,
-      when: proc { |c| c.finalize_action? } do
+event :finalize_action, :finalize, when: :finalize_action do
   @changed_fields = Card::Change::TRACKED_FIELDS.select do |f|
     changed_attributes.member? f
   end
@@ -70,6 +55,10 @@ event :finalize_act,
   end
 end
 
+def act_card?
+  self == Card::ActManager.act_card
+end
+
 event :rollback_actions, :prepare_to_validate,
       on: :update,
       when: proc { |c| c.rollback_request? } do
@@ -90,6 +79,10 @@ event :rollback_actions, :prepare_to_validate,
   abort :success
 end
 
+def rollback_request?
+  history? && Env && Env.params["action_ids"] &&
+    Env.params["action_ids"].class == Array
+end
 
 # all acts with actions on self and on cards that are descendants of self and
 # included in self
@@ -134,8 +127,10 @@ def included_descendant_card_ids
 end
 
 format :html do
-  view :history do |args|
-    frame args.merge(body_class: "history-slot") do
+  view :history do
+    voo.show! :toolbar
+    class_up "card-body",  "history-slot"
+    frame do
       bs_layout container: true, fluid: true do
         row md: [12, 12], lg: [6, 6] do
           col action_legend

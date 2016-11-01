@@ -1,17 +1,17 @@
 
 format :html do
-  view :title do |args|
+  view :title do
     vars = root.search_params[:vars]
     if vars && vars[:keyword]
-      args[:title] = %(Search results for: <span class="search-keyword">)\
+      voo.title = %(Search results for: <span class="search-keyword">)\
                          "#{vars[:keyword]}</span>"
     end
-    super args
+    super()
   end
 end
 
 format :json do
-  view :complete do
+  view :complete, cache: :never do
     term = complete_term
     exact = Card.fetch term, new: {}
 

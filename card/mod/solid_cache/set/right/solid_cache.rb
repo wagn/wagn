@@ -11,20 +11,19 @@ def clean_html?
 end
 
 format :html do
-  view :core do |args|
-    return super(args) unless card.new_card?
-    _render_missing args.merge(denied_view: :core)
+  view :core do
+    return super() unless card.new_card?
+    @denied_view = :core
+    _render_missing
   end
 
-  view :missing do |args|
-    if @card.new_card? &&
-       (l = @card.left) &&
-       l.solid_cache?
+  view :missing do
+    if @card.new_card? && (l = @card.left) && l.solid_cache?
       l.update_solid_cache
-      @card = Card.fetch(card.name)
-      render(args[:denied_view], args)
+      @card = Card.fetch card.name
+      render @denied_view
     else
-      super(args)
+      super()
     end
   end
 

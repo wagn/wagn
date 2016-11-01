@@ -29,7 +29,7 @@ format :html do
   end
 
   def default_toolbar_args args
-    args[:nested_fields] = nested_fields(args)
+    args[:nested_fields] = nested_fields
     args[:active_toolbar_button] ||= active_toolbar_button @slot_view, args
   end
 
@@ -120,7 +120,7 @@ format :html do
   def edit_split_button args
     toolbar_split_button "edit", { view: :edit }, args do
       {
-        edit:       _render_edit_content_link(args),
+        edit:       _render_edit_link(args),
         edit_nests: (_render_edit_nests_link if nests_editable?(args)),
         structure:  (_render_edit_structure_link if structure_editable?),
         edit_name:  _render_edit_name_link,
@@ -195,8 +195,7 @@ format :html do
       [
         _optional_render(:delete_button,  args, show_or_hide_delete),
         _optional_render(:refresh_button, args, :show),
-        _optional_render(:related_button, args, :show),
-        _optional_render(:history_button, args, :hide)
+        _optional_render(:related_button, args, :show)
       ]
     end
   end
@@ -262,52 +261,23 @@ format :html do
     link_to_view :edit, text, opts
   end
 
-  def default_edit_content_link_args args
-    args[:title] ||= "content"
+  {
+    edit:           "content",
+    edit_name:      "name",
+    edit_type:      "type",
+    edit_nests:     "nests",
+    edit_structure: "structure",
+    history:        "history"
+  }.each do |viewname, viewtitle|
+
+    view "#{viewname}_link" do
+      voo.title ||= viewtitle
+      toolbar_view_link viewname
+    end
   end
 
-  view :edit_content_link do |args|
-    toolbar_view_link :edit, args
-  end
-
-  def default_edit_name_link_args args
-    args[:title] ||= "name"
-  end
-  view :edit_name_link do |args|
-    toolbar_view_link :edit_name, args
-  end
-
-  def default_edit_type_link_args args
-    args[:title] ||= "type"
-  end
-
-  view :edit_type_link do |args|
-    toolbar_view_link :edit_type, args
-  end
-
-  view :edit_structure_link do |_args|
-    link_to_view :edit_structure, "structure"
-  end
-
-  def default_history_link_args args
-    args[:title] ||= "history"
-  end
-
-  view :history_link do |args|
-    toolbar_view_link :history, args
-  end
-
-  def default_edit_nests_link_args args
-    args[:title] ||= "nests"
-  end
-
-  view :edit_nests_link do |args|
-    toolbar_view_link :edit_nests, args
-  end
-
-  def toolbar_view_link view, args
-    text = args.delete(:title)
-    link_to_view view, text, args
+  def toolbar_view_link view
+    link_to_view view, voo.title
   end
 
   def recently_edited_settings?

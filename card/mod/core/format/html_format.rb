@@ -12,10 +12,27 @@ class Card
       # builtin layouts allow for rescue / testing
       LAYOUTS = Mod::Loader.load_layouts.merge "none" => "{{_main}}"
 
+      def main?
+        !@main.nil?
+      end
+
+      def focal? # meaning the current card is the requested card
+        show_layout? ? main? : @depth.zero?
+      end
+
+      def default_nest_view
+        # FIXME: not sure this makes sense as a rule...
+        card.rule(:default_html_view) || :titled
+      end
+
+      def default_item_view
+        :closed
+      end
+
       # helper methods for layout view
-      def get_layout_content
+      def get_layout_content requested_layout
         Auth.as_bot do
-          if (requested_layout = params[:layout])
+          if requested_layout
             layout_from_card_or_code requested_layout
           else
             layout_from_rule
@@ -44,34 +61,10 @@ class Card
         end
       end
 
-      def get_nest_defaults nested_card
-        { view: (nested_card.rule(:default_html_view) || :titled) }
-      end
-
-      def default_item_view
-        :closed
-      end
-
       def html_escape_except_quotes s
         # to be used inside single quotes (makes for readable json attributes)
         s.to_s.gsub(/&/, "&amp;").gsub(/\'/, "&apos;")
          .gsub(/>/, "&gt;").gsub(/</, "&lt;")
-      end
-
-      def main?
-        if show_layout?
-          @depth == 1 && @mainline # assumes layout includes {{_main}}
-        else
-          @depth.zero? && params[:is_main]
-        end
-      end
-
-      def focal? # meaning the current card is the requested card
-        if show_layout?
-          main?
-        else
-          @depth.zero?
-        end
       end
     end
   end

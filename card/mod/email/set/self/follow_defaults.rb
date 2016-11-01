@@ -30,18 +30,37 @@ event :update_follow_rules, :finalize,
 end
 
 format :html do
-  view :edit, perms: :update, tags: :unknown_ok do |args|
-    frame_and_form :update, args do
+  view :edit, perms: :update, tags: :unknown_ok do
+    frame_and_form :update do
       [
-        _optional_render(:content_formgroup, args),
-        _optional_render(:confirm_update_all, args),
-        _optional_render(:button_formgroup,   args)
+        content_formgroup,
+        _optional_render_confirm_update_all,
+        edit_buttons
       ]
     end
   end
 
+  def edit_buttons
+    button_formgroup do
+      [submit_and_update_button, simple_submit_button, cancel_to_edit_button]
+    end
+  end
+
+  def submit_and_update_button
+    submit_button text: "Submit and update all users",
+                  disable_with: "Updating", class: "follow-updater"
+  end
+
+  def simple_submit_button
+    button_tag "Submit", class: "follow"
+  end
+
+  def cancel_to_edit_button
+    cancel_button href: path(view: :edit, id: card.id)
+  end
+
   view :confirm_update_all do |args|
-    wrap args do
+    wrap do
       alert "info" do
         %(
           <h1>Are you sure you want to change the default follow rules?</h1>
@@ -54,15 +73,7 @@ format :html do
 
   def default_edit_args args
     args[:hidden] ||= {}
-    args[:hidden].reverse_merge!(
-      success: "_self",
-      card:    { update_all_users: false }
-    )
-    args[:buttons] = %(
-      #{submit_button text: 'Submit and update all users',
-                      disable_with: 'Updating', class: 'follow-updater'}
-      #{button_tag 'Submit', class: 'follow'}
-      #{cancel_button href: path(view: :edit, id: card.id)}
-    )
+    args[:hidden].reverse_merge!(success: "_self",
+                                 card: { update_all_users: false })
   end
 end

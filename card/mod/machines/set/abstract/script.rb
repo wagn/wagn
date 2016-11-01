@@ -23,9 +23,7 @@ format :html do
   end
 
   view :content_changes do |args|
-    %(
-      <pre>#{super(args)}</pre>
-    )
+    wrap_with(:pre) { super args }
   end
 
   view :core do |_args|

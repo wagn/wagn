@@ -30,6 +30,6 @@ format :html do
   include Pointer::HtmlFormat
 
   def default_core_args args
-    args[:item] = :name
+    args[:items] = { view: :name }
   end
 end

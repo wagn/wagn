@@ -6,7 +6,7 @@ format :html do
   # @param active_name [String] label of the tab that should be active at the
   # beginning (default is the first)
   # @return [HTML] bootstrap tabs element with all content preloaded
-  def static_tabs tabs, active_name=nil,  tab_type="tabs"
+  def static_tabs tabs, active_name=nil, tab_type="tabs"
     tab_buttons = ""
     tab_panes = ""
     tabs.each do |tab_name, tab_content|

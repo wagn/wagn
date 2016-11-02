@@ -16,7 +16,7 @@ Feature: History
 #    And In the main card content I click "Hide changes"
 #    Then In the main card content I should not see a del with content "egg"
     When In the main card body I click "Save as current"
-    And I wait a sec
+    And I wait 2 seconds
     Then the card First should contain "chicken"
 
 

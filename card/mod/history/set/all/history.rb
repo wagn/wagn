@@ -63,9 +63,8 @@ def act_card?
   self == Card::ActManager.act_card
 end
 
-event :rollback_actions, :prepare_to_validate,
-      on: :update,
-      when: proc { |c| c.rollback_request? } do
+event :rollback_actions,
+      :prepare_to_validate, on: :update, when: :rollback_request do
   revision = { subcards: {} }
   rollback_actions = Env.params["action_ids"].map do |a_id|
     Action.fetch(a_id) || nil

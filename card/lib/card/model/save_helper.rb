@@ -43,8 +43,10 @@ class Card
       # create if card doesn't exist
       # updates existing card only if given attributes are different except the
       # name
-      # For example if a card with name "under_score" exists
-      # then `ensure_card "Under Score"` doesn't change anything
+      # @example if a card with name "under_score" exists
+      #   ensure_card "Under Score"                 # => no change
+      #   ensure_card "Under Score", type: :pointer # => changes the type to pointer
+      #                                             #    but not the name
       def ensure_card name_or_args, content_or_args=nil
         args = standardize_args name_or_args, content_or_args
         name = args.delete(:name)

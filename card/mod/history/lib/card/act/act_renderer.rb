@@ -12,11 +12,7 @@ class Card
       end
 
       def method_missing method_name, *args, &block
-        if block_given?
-          @format.send(method_name, *args, &block)
-        else
-          @format.send(method_name, *args)
-        end
+        @format.send method_name, *args, &block
       end
 
       def respond_to_missing? method_name, _include_private=false

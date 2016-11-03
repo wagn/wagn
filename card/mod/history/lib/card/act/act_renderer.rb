@@ -12,11 +12,7 @@ class Card
       end
 
       def method_missing method_name, *args, &block
-        if block_given?
-          @format.send(method_name, *args, &block)
-        else
-          @format.send(method_name, *args)
-        end
+        @format.send method_name, *args, &block
       end
 
       def respond_to_missing? method_name, _include_private=false
@@ -61,9 +57,19 @@ class Card
       end
 
       def act_links
-        link_to_card(@act.card, glyphicon("time"),
-                     path: {view: :history, look_in_trash: true}) + " " +
-          link_to_card(@act.card, glyphicon("new-window"))
+        [
+          link_to_history,
+          (link_to_act_card unless @act.card.trash)
+        ].compact.join " "
+      end
+
+      def link_to_act_card
+        link_to_card @act.card, glyphicon("new-window")
+      end
+
+      def link_to_history
+        link_to_card @act.card, glyphicon("time"), path: { view: :history,
+                                                           look_in_trash: true }
       end
 
       def approved_actions
@@ -115,53 +121,64 @@ class Card
       end
 
       def accordion_expand_options
-        <<-STRING
-          data-toggle="collapse" data-parent="#accordion-#{collapse_id}" \
-          data-target=".#{collapse_id}" aria-expanded="true" \
-                   aria-controls="#{collapse_id}"
-        STRING
+        {
+          "data-toggle" => "collapse",
+          "data-parent" => "#accordion-#{collapse_id}",
+          "data-target" => ".#{collapse_id}",
+          "aria-expanded" => true,
+          "aria-controls" => collapse_id
+        }
+      end
+
+      def act_panel_options
+        { class: "panel-heading", role: "tab", id: "heading-#{collapse_id}" }
       end
 
       def act_accordion_panel
-        <<-HTML
-          <div class="panel-heading" #{accordion_expand_options} role="tab" id="heading-#{collapse_id}">
-            <h4 class="panel-title">
-               #{header}
-            </h4>
-          </div>
-          <div id="#{collapse_id}" class="panel-collapse collapse #{collapse_id}" \
-                 role="tabpanel" aria-labelledby="heading-#{collapse_id}">
-            <div class="panel-body">
-              #{details}
-            </div>
-          </div>
-        HTML
+        act_accordion_heading + act_accordion_body
+      end
+
+      def act_accordion_heading
+        wrap_with :div, act_panel_options.merge(accordion_expand_options) do
+          wrap_with :h4, header, class: "panel-title"
+        end
+      end
+
+      def act_accordion_body
+        wrap_with :div, id: collapse_id,
+                        class: "panel-collapse collapse #{collapse_id}" do
+          wrap_with :div, details, class: "panel-body"
+        end
       end
 
       def rollback_link
-        # FIXME -- doesn't this need to specify which action it wants?
-        prior =  # FIXME - should be a Card::Action method
-          actions.select { |action| action.card.last_action_id != action.id }
-        return unless card.ok?(:update) && prior.present?
-        link = link_to(
-          "Save as current", class: "slotter",
-          "data-slot-selector" => ".card-slot.history-view",
-          remote: true, method: :post, rel: "nofollow",
-          path: { action: :update, action_ids: prior,
-                  view: :open, look_in_trash: true }
-        )
-        %(<div class="act-link collapse #{collapse_id}">#{link}</div>).html_safe
+        return unless card.ok? :update
+        return unless (prior = previous_action)
+        wrap_with :div, class: "act-link collapse #{collapse_id}" do
+          link_to "Save as current",
+                  class: "slotter", remote: true,
+                  method: :post,    rel: "nofollow",
+                  "data-slot-selector" => ".card-slot.history-view",
+                  path: { action: :update, action_ids: prior,
+                          view: :open,     look_in_trash: true }
+        end
+      end
+
+      def previous_action
+        # TODO: optimize
+        actions.select { |action| action.card.last_action_id != action.id }
       end
 
       def show_or_hide_changes_link
-        link = @format.link_to_view(
-          :act, "#{@args[:hide_diff] ? 'Show' : 'Hide'} changes",
-          class: "slotter",
-          path: { act_id:      @args[:act].id,      act_seq: @args[:act_seq],
-                  hide_diff:  !@args[:hide_diff],   action_view: :expanded,
-                  act_context: @args[:act_context], look_in_trash: true }
-        )
-        %(<div class="act-link">#{link}</div>)
+        wrap_with :div, class: "act-link" do
+          @format.link_to_view(
+            :act, "#{@args[:hide_diff] ? 'Show' : 'Hide'} changes",
+            class: "slotter",
+            path: { act_id:      @args[:act].id,      act_seq: @args[:act_seq],
+                    hide_diff:  !@args[:hide_diff],   action_view: :expanded,
+                    act_context: @args[:act_context], look_in_trash: true }
+          )
+        end
       end
     end
   end

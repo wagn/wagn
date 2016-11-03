@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Self::Admin do
-  it "should render a table" do
+  it "renders a table" do
     Card::Auth.as_bot do
       @core = render_card :core, name: :admin
     end
@@ -13,7 +13,7 @@ describe Card::Set::Self::Admin do
       @admin = Card[:admin]
     end
 
-    it "should trigger empty trash (with right params)" do
+    it "triggers empty trash (with right params)" do
       Card::Auth.as_bot do
         Card["A"].delete!
         expect(Card.where(trash: true)).not_to be_empty
@@ -23,7 +23,7 @@ describe Card::Set::Self::Admin do
       end
     end
 
-    it "should trigger deleting old revisions (with right params)" do
+    it "triggers deleting old revisions (with right params)" do
       Card::Auth.as_bot do
         a = Card["A"]
         a.update_attributes! content: "a new day"
@@ -35,7 +35,7 @@ describe Card::Set::Self::Admin do
       end
     end
 
-    #     it 'should be trigger reference repair' do
+    #     it 'is trigger reference repair' do
     #       Card::Auth.as_bot do
     #         a = Card['A']
     #         puts a.references_out.count

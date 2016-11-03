@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Rstar::Rules do
-  it "should render setting view for a right set" do
+  it "renders setting view for a right set" do
     r = Card["*read+*right"].format.render_open
     expect(r).not_to match(/error/i)
     expect(r).not_to match("No Card!")
@@ -12,7 +12,7 @@ describe Card::Set::Rstar::Rules do
     end
   end
 
-  it "should render setting view for a *input rule" do
+  it "renders setting view for a *input rule" do
     Card::Auth.as_bot do
       r = Card.fetch("*read+*right+*input", new: {}).format.render_open_rule
       expect(r).not_to match(/error/i)

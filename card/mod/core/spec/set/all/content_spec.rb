@@ -2,7 +2,7 @@
 
 describe Card::Set::All::Content do
   describe "save_content_draft" do
-    it "should store a draft revision" do
+    it "stores a draft revision" do
       @card = Card.create! name: "mango", content: "foo"
       @card.save_content_draft("bar")
       expect(@card.drafts.length).to eq 1

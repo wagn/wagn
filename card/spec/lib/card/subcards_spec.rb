@@ -12,6 +12,16 @@ describe Card::Subcards do
       expect(Card["card with subs+sub1"].content).to eq "this is sub1"
     end
 
+    it "check name-key bug" do
+      Card::Auth.as_bot do
+        Card.create! name: "Matthias", subcards: {"+name" => "test"}
+        binding.pry
+        expect(Card.exists? "Matthias+name").to be_truthy
+
+        expect(Card["Matthias+name"]).to be_instance_of Card
+      end
+    end
+
     it "works with content string" do
       Card::Auth.as_bot do
         @card = Card.create!(

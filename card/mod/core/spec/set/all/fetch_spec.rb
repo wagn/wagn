@@ -167,7 +167,7 @@ describe Card::Set::All::Fetch do
         expect(card.raw_content).to eq("Formatted Content")
       end
 
-      it "should recognize pattern overrides" do
+      it "recognizes pattern overrides" do
         # ~~~ create right rule
         Card.create!(name: "y+*right+*structure", content: "Right Content")
         card = Card.fetch("a+y")
@@ -188,7 +188,7 @@ describe Card::Set::All::Fetch do
         expect(card.raw_content).to eq("Right Content")
       end
 
-      it "should not hit the database for every fetch_virtual lookup" do
+      it "does not hit the database for every fetch_virtual lookup" do
         card_double = class_double("Card")
         Card.create!(name: "y+*right+*structure", content: "Formatted Content")
         Card.fetch("a+y")
@@ -196,7 +196,7 @@ describe Card::Set::All::Fetch do
         Card.fetch("a+y")
       end
 
-      it "should not be a new_record after being saved" do
+      it "does not be a new_record after being saved" do
         Card.create!(name: "growing up")
         card = Card.fetch("growing up")
         expect(card.new_record?).to be_falsey
@@ -252,14 +252,14 @@ describe Card::Set::All::Fetch do
                      content: '{"plus":"_self"}', type: "Search"
       end
     end
-    it "should find cards with *right+*structure specified" do
+    it "finds cards with *right+*structure specified" do
       c = Card.fetch("A+testsearch".to_name)
       assert c.virtual?
       expect(c.type_code).to eq(:search_type)
       expect(c.raw_content).to eq('{"plus":"_self"}')
     end
     context "fetched virtual card with new args" do
-      it "should fetch the virtual card with type set in patterns" do
+      it "fetchs the virtual card with type set in patterns" do
         Card.fetch "+testsearch", new: { name: "+testsearch",
                                          supercard: Card["home"] }
 

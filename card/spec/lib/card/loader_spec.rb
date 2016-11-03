@@ -5,7 +5,7 @@
 #   # let(:pat_all_double) { proxy Card::Set::All }
 #   # let(:format_double) { proxy Card::Format }
 #   # let(:html_format_double) { proxy Card::Format::HtmlFormat }
-#   # it "should auto-load Card class methods from lib/card and mods" do
+#   # it "autos-load Card class methods from lib/card and mods" do
 #   #   #xpect(Card).to receive(:load_mods)
 #   #   #
 #   #   card = Card[:all]
@@ -19,16 +19,16 @@
 #   #   # allow(Card).to receive(:file_path_sdfs)
 #   #   #expect(Card.instance_method(:file_path)).to be
 #   # end
-#   # it "should define Card methods from modules" do
+#   # it "defines Card methods from modules" do
 #   #   expect(Card.instance_method(:set_modules)).to be
 #   # end
-#   # it "should define Formatter methods from modules" do
+#   # it "defines Formatter methods from modules" do
 #   #   #expect(Card.instance_method(:render_core)).to be
 #   #   expect(Card.instance_method(:_render_raw)).to be
 #   #   expect(Card.instance_method(:render_core)).to be
 #   #   expect(Card.instance_method(:_render_raw)).to be
 #   # end
-#   # it "should define Formatter methods from modules" do
+#   # it "defines Formatter methods from modules" do
 #   #   expect(html_format_double.method(:render_core)).to be
 #   #   expect(html_format_double.method(:_render_raw)).to be
 #   #   expect(html_format_double.method(:render_core)).to be

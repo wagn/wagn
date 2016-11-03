@@ -33,7 +33,7 @@ describe Card::Set::All::AssignAttributes do
   include RenameMethods
 
   describe "set_name" do
-    it "should handle case variants" do
+    it "handles case variants" do
       @c = Card.create! name: "chump"
       expect(@c.name).to eq("chump")
       @c.name = "Chump"
@@ -41,7 +41,7 @@ describe Card::Set::All::AssignAttributes do
       expect(@c.name).to eq("Chump")
     end
 
-    it "should handle changing from plus card to simple" do
+    it "handles changing from plus card to simple" do
       c = Card.create! name: "four+five"
       c.name = "nine"
       c.save!
@@ -144,7 +144,7 @@ describe Card::Set::All::AssignAttributes do
       @t = card "T"
       @t.name = "A+B"
       assert !@t.save, "save should fail"
-      assert @t.errors[:name], "should have errors on key"
+      assert @t.errors[:name], "has errors on key"
     end
 
     it "test_used_as_tag" do
@@ -209,7 +209,7 @@ describe Card::Set::All::AssignAttributes do
       end
     end
 
-    it "should handle plus cards that have children" do
+    it "handles plus cards that have children" do
       Card::Auth.as_bot do
         Card.create name: "a+b+c+d"
         ab = Card["a+b"]
@@ -259,7 +259,7 @@ describe Card::Set::All::AssignAttributes do
         assert_equal "[[/new/{{_self|name}}|new]]", Card["Buttah"].content
       end
 
-      it "should rename card without updating references" do
+      it "renames card without updating references" do
         c = Card["Dairy"]
         c.update_attributes name: "Newt", update_referers: false
         assert_equal "[[/new/{{_self|name}}|new]]", Card["Newt"].content

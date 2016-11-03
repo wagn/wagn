@@ -6,21 +6,21 @@ describe Card::Set::Right::Password do
   end
 
   describe "#update_attributes" do
-    it "should encrypt password" do
+    it "encrypts password" do
       @account.password_card.update_attributes! content: "new password"
       expect(@account.password).not_to eq("new password")
       authenticated = Card::Auth.authenticate "joe@user.com", "new password"
       assert_equal @account, authenticated
     end
 
-    it "should validate password" do
+    it "validates password" do
       password_card = @account.password_card
       password_card.update_attributes content: "2b"
       expect(password_card.errors[:password]).not_to be_empty
     end
 
     context "blank password" do
-      it "shouldn't change the password" do
+      it "does not change the password" do
         acct = @account
         original_pw = acct.password
         expect(original_pw.size).to be > 10
@@ -30,7 +30,7 @@ describe Card::Set::Right::Password do
         expect(original_pw).to eq(pw_card.refresh(_force = true).content)
       end
 
-      it "shouldn't break email editing" do
+      it "does not break email editing" do
         @account.update_attributes! subcards: { "+*password" => "",
                                                 "+*email" => "joe2@user.com" }
         expect(@account.email).to eq("joe2@user.com")

@@ -2,11 +2,11 @@
 
 describe Card::Set::All::Account do
   describe "accountable?" do
-    it "should be false for cards with *accountable rule off" do
+    it "is false for cards with *accountable rule off" do
       expect(Card["A"].accountable?).to eq(false)
     end
 
-    it "should be true for cards with *accountable rule on" do
+    it "is true for cards with *accountable rule on" do
       Card::Auth.as_bot do
         Card.create name: "A+*self+*accountable", content: "1"
         Card.create name: "*account+*right+*create",
@@ -35,11 +35,11 @@ describe Card::Set::All::Account do
         @parties = @joe_user_card.parties # note: must be called to test resets
       end
 
-      it "should initially have only auth and self " do
+      it "initially has only auth and self " do
         expect(@parties).to eq([Card::AnyoneSignedInID, @joe_user_card.id])
       end
 
-      it "should update when new roles are set" do
+      it "updates when new roles are set" do
         roles_card = @joe_user_card.fetch trait: :roles, new: {}
         r1 = Card["r1"]
 
@@ -68,13 +68,13 @@ describe Card::Set::All::Account do
   end
 
   describe "among?" do
-    it "should be true for self" do
+    it "is true for self" do
       expect(Card::Auth.current.among?([Card::Auth.current_id])).to be_truthy
     end
   end
 
   describe "+*email" do
-    it "should create a card and account card" do
+    it "creates a card and account card" do
       jadmin = Card["joe admin"]
       Card::Auth.current_id = jadmin.id
       # simulate login to get correct from address
@@ -98,19 +98,19 @@ describe Card::Set::All::Account do
       @card = Card["Joe User"]
     end
 
-    it "should handle email updates" do
+    it "handles email updates" do
       @card.update_attributes! "+*account" => { "+*email" => "joe@user.co.uk" }
       expect(@card.account.email).to eq("joe@user.co.uk")
     end
 
-    it "should let Wagn Bot block accounts" do
+    it "lets Wagn Bot block accounts" do
       Card::Auth.as_bot do
         @card.account.status_card.update_attributes! content: "blocked"
         expect(@card.account.blocked?).to be_truthy
       end
     end
 
-    it "should not allow a user to block or unblock himself" do
+    it "does not allow a user to block or unblock himself" do
       expect do
         @card.account.status_card.update_attributes! content: "blocked"
       end.to raise_error(ActiveRecord::RecordInvalid,

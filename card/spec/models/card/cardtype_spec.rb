@@ -7,7 +7,7 @@ class Card
 end
 
 describe "Card (Cardtype)" do
-  it "should not allow cardtype remove when instances present" do
+  it "does not allow cardtype remove when instances present" do
     Card.create name: "City", type: "Cardtype"
     city = Card.fetch("City")
     c1 = Card.create name: "Sparta", type: "City"
@@ -68,11 +68,11 @@ describe Card, "created without permission" do
   # FIXME:  this one should pass.  unfortunately when I tried to fix it it started looking like the clean solution
   #  was to rewrite most of the permissions section as simple validations and i decided not to go down that rabbit hole.
   #
-  # it "should not be valid" do
+  # it "does not be valid" do
   #  Card.new( name: 'foo', type: 'Cardtype').valid?.should_not be_true
   # end
 
-  it "should not create a new cardtype until saved" do
+  it "does not create a new cardtype until saved" do
     expect do
       Card.new(name: "foo", type: "Cardtype")
     end.not_to change(Card, :count)
@@ -84,18 +84,18 @@ describe Card, "Normal card with descendants" do
     @a = Card["A"]
   end
 
-  it "should confirm that it has descendants" do
+  it "confirms that it has descendants" do
     expect(@a.descendants.length).to be > 0
   end
 
-  it "should successfully have its type changed" do
+  it "has its type changed" do
     Card::Auth.as_bot do
       @a.type_id = Card::PhraseID
       @a.save!
       expect(Card["A"].type_code).to eq(:phrase)
     end
   end
-  it "should still have its descendants after changing type" do
+  it "still has its descendants after changing type" do
     Card::Auth.as_bot do
       assert type_id = Card.fetch_id("cardtype_e")
       @a.type_id = type_id
@@ -112,7 +112,7 @@ describe Card, "New Cardtype" do
     end
   end
 
-  it "should have create permissions" do
+  it "has create permissions" do
     expect(@ct.who_can(:create)).not_to be_nil
   end
 
@@ -129,7 +129,7 @@ describe Card, "Wannabe Cardtype Card" do
       @card.save!
     end
   end
-  it "should successfully change its type to a Cardtype" do
+  it "changes its type to a Cardtype" do
     expect(Card["convertible"].type_code).to eq(:cardtype)
   end
 end
@@ -145,16 +145,16 @@ describe Card, "Joe User" do
     @type_names = Card::Auth.createable_types
   end
 
-  it "should not have r3 permissions" do
+  it "does not have r3 permissions" do
     expect(@ucard.fetch(new: {}, trait: :roles).item_names.member?(@r3.name)).to be_falsey
   end
-  it "should ponder creating a card of Cardtype F, but find that he lacks create permissions" do
+  it "ponders creating a card of Cardtype F, but find that he lacks create permissions" do
     expect(Card.new(type: "Cardtype F").ok?(:create)).to be_falsey
   end
-  it "should not find Cardtype F on its list of createable cardtypes" do
+  it "does not find Cardtype F on its list of createable cardtypes" do
     expect(@type_names.member?("Cardtype F")).to be_falsey
   end
-  it "should find Basic on its list of createable cardtypes" do
+  it "finds Basic on its list of createable cardtypes" do
     expect(@type_names.member?("Basic")).to be_truthy
   end
 end
@@ -163,11 +163,11 @@ describe Card, "Cardtype with Existing Cards" do
   before do
     @ct = Card["Cardtype F"]
   end
-  it "should have existing cards of that type" do
+  it "has existing cards of that type" do
     expect(Card.search(type: @ct.name)).not_to be_empty
   end
 
-  it "should raise an error when you try to delete it" do
+  it "raises an error when you try to delete it" do
     Card::Auth.as_bot do
       @ct.delete
       expect(@ct.errors[:cardtype]).not_to be_empty
@@ -176,7 +176,7 @@ describe Card, "Cardtype with Existing Cards" do
 end
 
 describe Card::Set::Type::Cardtype do
-  it "should handle changing away from Cardtype" do
+  it "handles changing away from Cardtype" do
     Card::Auth.as_bot do
       ctg = Card.create! name: "CardtypeG", type: "Cardtype"
       ctg.type_id = Card::BasicID

@@ -9,19 +9,19 @@ describe Card::Set::All::Type do
       @hat = Card.new type: "Hat"
     end
 
-    it "should have a type_name" do
+    it "has a type_name" do
       expect(@hat.type_name).to eq("Hat")
     end
 
-    it "should not have a type_code" do
+    it "does not have a type_code" do
       expect(@hat.type_code).to eq(nil)
     end
 
-    it "should have a type_id" do
+    it "has a type_id" do
       expect(@hat.type_id).to eq(@type.id)
     end
 
-    it "should have a type_card" do
+    it "has a type_card" do
       expect(@hat.type_card).to eq(@type)
     end
   end
@@ -36,7 +36,7 @@ describe Card::Set::All::Type do
       end
     end
 
-    it "should clear cache of structured nested card after saving" do
+    it "clears cache of structured nested card after saving" do
       pending "need new mechanism to replace #reset_type_specific_fields"
       Card::Auth.as_bot do
         expect(Card.fetch("t1+results", new: {}).type_name).to eq("Basic")

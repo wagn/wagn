@@ -44,7 +44,7 @@ class Card
           end
 
           def html content
-            add_content content.html_safe
+            add_content String(content).html_safe
             ""
           end
 

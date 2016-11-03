@@ -15,15 +15,18 @@ class UpdateKeys < Card::Migration::Core
   end
 
   def resolve_conflict id, key, new_key
-    if key.include? "taxis" || key[0] == " " || key[-1] == " "
+    if walking_dead? key
       Card::Auth.as_bot do
         Card.where(id: id).delete_all
-        puts "resolved"
         # card wasn't reachable anyway
-        # (due to rails inflection update and smartname update)
+        # (due to rails inflection update or smartname update)
       end
     else
-      puts "don't know how to resolve conflict"
+      puts "key conflict: can't change #{key} to #{new_key}"
     end
+  end
+
+  def walking_dead? key
+    key.include? "taxis" || key[0] == " " || key[-1] == " "
   end
 end

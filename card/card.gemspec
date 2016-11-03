@@ -36,9 +36,9 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 1.9.3"
 
   [
-    ["smartname",                  "0.4"],
+    ["smartname",                  "0.3.1"],
     ["uuid",                       "~> 2.3"],
-    ["carrierwave",                "1.0.0.beta"],
+    ["carrierwave",                "1.0.0.rc"],
     ["htmlentities",               "~> 4.3"],
     ["mini_magick",                "~> 4.2"],
     # recaptcha 0.4.0 is last version that doesn't require ruby 2.0

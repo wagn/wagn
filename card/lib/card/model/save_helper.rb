@@ -52,6 +52,7 @@ class Card
         name = args.delete(:name)
         if (card = Card[name])
           ensure_attributes card, args
+          card
         else
           Card.create! args.merge(name: name)
         end

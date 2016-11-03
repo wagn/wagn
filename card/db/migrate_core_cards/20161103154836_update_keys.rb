@@ -23,7 +23,20 @@ class UpdateKeys < Card::Migration::Core
       # card wasn't reachable anyway
       # (due to rails inflection update or smartname update)
     else
-      puts "key conflict: can't change #{key} to #{new_key}"
+      # example:
+      # "Matthias Taxes" can be in the database with two keys:
+      # "matthia_taxis" and "matthia_tax".
+      # Their keys will both be updated to "matthias_tax".
+      # "matthia_taxis" is a walking dead since the last rails inflection
+      # update (it's in the db but you can only get to via its id; all requests via
+      # name find the other one). If we update the walking dead
+      # "matthia_taxis" first to "matthias_tax" we want to replace it with
+      # the living "matthia_tax".
+      # The living card is the one that has been updated more recently.
+      longer_untouched = [Card.find(id), Card.find_by_key(new_key)]
+                           .min { |a, b| a.updated_at <=> b.updated_at}
+      Card.where(id: longer_untouched).delete_all
+      update_key id, key, new_key if longer_untouched != id
     end
   end
 

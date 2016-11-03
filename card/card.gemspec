@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 1.9.3"
 
   [
-    ["smartname",                  "0.3.1"],
+    ["smartname",                  "0.4"],
     ["uuid",                       "~> 2.3"],
     ["carrierwave",                "1.0.0.beta"],
     ["htmlentities",               "~> 4.3"],

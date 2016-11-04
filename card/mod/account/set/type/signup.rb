@@ -12,9 +12,8 @@ format :html do
     super()
   end
 
-  def new_name_formgroup
+  def default_name_formgroup_args _args
     voo.help = "usually first and last name"
-    super
   end
 
   def new_content_formgroup

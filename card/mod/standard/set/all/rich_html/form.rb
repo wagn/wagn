@@ -146,21 +146,21 @@ format :html do
 
   # FIELDSET VIEWS
 
-  def name_formgroup help=nil
-    formgroup "name", editor: "name", help: help do
+  view :name_formgroup do
+    formgroup "name", editor: "name" do
       raw name_field
     end
   end
 
-  def type_formgroup
+  def wrap_type_formgroup
     formgroup "type", editor: "type", class: "type-formgroup" do
       yield
     end
   end
 
-  def standard_type_formgroup
-    type_formgroup do
-              type_field class: "type-field edit-type-field"
+  view :type_formgroup do
+    wrap_type_formgroup do
+      type_field class: "type-field edit-type-field"
     end
   end
 

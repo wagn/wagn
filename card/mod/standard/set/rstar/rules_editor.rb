@@ -213,7 +213,7 @@ format :html do
   def rules_type_formgroup
     return unless card.right.rule_type_editable
     success = @edit_rule_success
-    type_formgroup do
+    wrap_type_formgroup do
       type_field(
         href: path(mark: success[:id], view: success[:view], type_reload: true),
         class: "type-field rule-type-field live-type-field",

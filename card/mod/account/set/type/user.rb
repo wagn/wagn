@@ -14,7 +14,8 @@ format :html do
       frame_and_form :create do
         [
           setup_hidden_fields,
-          name_formgroup("usually first and last name"),
+
+          _render_name_formgroup(help: "usually first and last name"),
           account_formgroup,
           setup_form_buttons
         ]

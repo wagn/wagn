@@ -3,7 +3,11 @@ format :html do
   view :edit, perms: :update, tags: :unknown_ok do
     voo.show! :toolbar, :help
     frame_and_form :update do
-      [hidden_edit_fields, _render_content_formgroup, _render_edit_buttons]
+      [
+        hidden_edit_fields,
+        _optional_render_content_formgroup,
+        _optional_render_edit_buttons
+      ]
     end
   end
 
@@ -11,7 +15,7 @@ format :html do
     # for override
   end
 
-  def edit_buttons
+  view :edit_buttons do
     button_formgroup do
       [standard_submit_button, standard_cancel_button]
     end
@@ -31,7 +35,7 @@ format :html do
     frame_and_form({ action: :update, id: card.id },
                    "main-success" => "REDIRECT") do
       [hidden_edit_name_fields,
-       name_formgroup,
+       _optional_render_name_formgroup,
        rename_confirmation_alert,
        edit_name_buttons]
     end
@@ -102,7 +106,7 @@ format :html do
     frame_and_form :update do
       [
         hidden_edit_type_fields,
-        standard_type_formgroup,
+        _render_type_formgroup,
         edit_type_buttons
       ]
     end

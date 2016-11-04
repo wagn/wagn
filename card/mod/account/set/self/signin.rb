@@ -80,7 +80,7 @@ format :html do
     )
   end
 
-  def edit_buttons
+  view :edit_buttons do
     text = I18n.t :reset_my_password, scope: "mod.standard.set.self.signin"
     button_tag text, situation: "primary"
   end

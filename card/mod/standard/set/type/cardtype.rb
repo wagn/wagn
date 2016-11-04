@@ -7,12 +7,10 @@ format :html do
 
   view :type_formgroup do |args|
     if card.cards_of_type_exist?
-      %(
-        <div>
-          Sorry, this card must remain a Cardtype so long as there are
-          <strong>#{card.name}</strong> cards.
-        </div>
-      )
+      wrap_with :div do
+        "Sorry, this card must remain a Cardtype so long as " \
+        "there are <strong>#{card.name}</strong> cards."
+      end
     else
       super args
     end

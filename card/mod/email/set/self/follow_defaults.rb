@@ -40,7 +40,7 @@ format :html do
     end
   end
 
-  def edit_buttons
+  view :edit_buttons do
     button_formgroup do
       [submit_and_update_button, simple_submit_button, cancel_to_edit_button]
     end

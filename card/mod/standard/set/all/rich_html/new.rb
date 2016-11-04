@@ -36,7 +36,8 @@ format :html do
   end
 
   def new_name_formgroup
-    output _render_name_formgroup, hidden_field_tag("name_prompt", true)
+    output _optional_render_name_formgroup,
+           hidden_field_tag("name_prompt", true)
   end
 
   def new_name_prompt?
@@ -82,7 +83,7 @@ format :html do
   end
 
   view :new_type_formgroup do
-    type_formgroup do
+    wrap_type_formgroup do
       type_field class: "type-field live-type-field",
                  href: path(view: :new),
                  "data-remote" => true

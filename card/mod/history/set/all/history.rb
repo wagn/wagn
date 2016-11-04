@@ -135,16 +135,22 @@ format :html do
     class_up "card-body",  "history-slot"
     frame do
       bs_layout container: true, fluid: true do
-        row md: [12, 12], lg: [6, 6] do
-          col action_legend
-          col content_legend
-        end
+        html _optional_render_history_legend(with_drafts: true)
         row 12 do
           html _render_act_list acts: history_acts
         end
         row 12 do
-          col paging
+          col act_paging
         end
+      end
+    end
+  end
+
+  view :history_legend do |args|
+    bs_layout do
+      row md: [12, 12], lg: [7, 5] do
+        col action_legend(args[:with_drafts])
+        col content_legend, class: "text-right"
       end
     end
   end
@@ -153,7 +159,7 @@ format :html do
     card.intrusive_acts.page(page_from_params).per(ACTS_PER_PAGE)
   end
 
-  def paging
+  def act_paging
     intrusive_acts = card.intrusive_acts
                          .page(page_from_params).per(ACTS_PER_PAGE)
     wrap_with :span, class: "slotter" do
@@ -171,13 +177,13 @@ format :html do
                "#{action_icon(action_type)} #{action_type}d"
              end
     legend << "#{action_icon(:draft)} unsaved draft" if with_drafts
-    "Actions: #{legend.join ' | '}"
+    "<small>Actions: #{legend.join ' | '}</small>"
   end
 
   def content_legend
     legend = [Card::Content::Diff.render_added_chunk('Additions'),
               Card::Content::Diff.render_deleted_chunk('Subtractions')]
-    "Content changes: #{legend.join ' | '}"
+    "<small>Content changes: #{legend.join ' | '}</small>"
   end
 
   view :content_changes do |args|

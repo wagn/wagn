@@ -97,7 +97,7 @@ format :html do
     [effect, option]
   end
 
-  view :edit_type, perms: :update do
+  view :edit_type, cache: :never, perms: :update do
     voo.show! :toolbar
     frame_and_form :update do
       [
@@ -119,7 +119,7 @@ format :html do
     end
   end
 
-  view :edit_rules, tags: :unknown_ok do |args|
+  view :edit_rules, cache: :never, tags: :unknown_ok do |args|
     voo.show! :set_navbar, :toolbar
     voo.hide! :set_label, :rule_navbar
 
@@ -132,7 +132,7 @@ format :html do
     )
   end
 
-  view :edit_structure do |args|
+  view :edit_structure, cache: :never do |args|
     voo.show! :toolbar
     render_related args.merge(
       related: {
@@ -149,7 +149,7 @@ format :html do
     )
   end
 
-  view :edit_nests do
+  view :edit_nests, cache: :never do
     voo.show! :toolbar
     frame do
       with_nest_mode :edit do
@@ -158,7 +158,7 @@ format :html do
     end
   end
 
-  view :edit_nest_rules do |args|
+  view :edit_nest_rules, cache: :never do |args|
     voo.show! :toolbar
     view = args[:rule_view] || :field_related_rules
     frame do

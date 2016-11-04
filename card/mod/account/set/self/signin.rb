@@ -23,7 +23,7 @@ format :html do
     ""
   end
 
-  view :core do
+  view :core, cache: :never do
     voo.structure = true
     with_nest_mode :edit do
       card_form :update, recaptcha: :off do

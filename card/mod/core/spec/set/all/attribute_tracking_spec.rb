@@ -8,11 +8,11 @@
 #       end
 #     end
 #
-#     it "should have updates" do
+#     it "has updates" do
 #       described_class::Updates.should === @c.updates
 #     end
 #
-#     it "should track changes" do
+#     it "tracks changes" do
 #       @c.name.should == 'New Card'
 #       @c.name = 'Old Card'
 #       @c.name.should == 'Old Card'

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Content::Chunk::URI, "URI chunk tests" do
-  it "should test_non_matches" do
+  it "test_non_matches" do
     no_match_uri "There is no URI here"
     no_match_uri "One gemstone is the garnet:reddish in colour, like ruby"
   end
@@ -45,7 +45,7 @@ describe Card::Content::Chunk::URI, "URI chunk tests" do
                    text: "example.com",
                    link_text: "http://example.com"
   end
-  it 'should match "unusual" base domain (was a bug in an early version)' do
+  it 'matches "unusual" base domain (was a bug in an early version)' do
     match_http_uri "http://example.com.au/",
                    host: "example.com.au"
   end
@@ -104,24 +104,24 @@ describe Card::Content::Chunk::URI, "URI chunk tests" do
               link_text: "irc://irc.freenode.net#recentchangescamp"
   end
 
-  it "should see HTTPS" do
+  it "sees HTTPS" do
     match_uri "https://www.example.com",
               scheme: "https", host: "www.example.com", port: 443,
               path: "", query: nil
   end
-  it "should see FTP" do
+  it "sees FTP" do
     match_uri "ftp://www.example.com",
               scheme: "ftp", host: "www.example.com", port: 21,
               path: "", query: nil
   end
-  it "should handle mailto:" do
+  it "handles mailto:" do
     match_uri "mailto:jdoe123@example.com",
               scheme: "mailto", host: nil, port: nil,
               path: nil, query: nil,
               to: "jdoe123@example.com"
   end
 
-  it "should run more basic cases" do
+  it "runs more basic cases" do
     # from *css (with () around the URI)
     # so, now this doesn't even match because I fixed the suspiciou* stuff
     no_match_uri(
@@ -147,23 +147,23 @@ describe Card::Content::Chunk::URI, "URI chunk tests" do
               path: "/default.aspx", query: "scid=kb;en-us;234562"
   end
 
-  it "should test_email_uri" do
+  it "test_email_uri" do
     match_uri "mail@example.com",
               to: "mail@example.com", host: nil,
               text: "mail@example.com",
               link_text: "mailto:mail@example.com"
   end
 
-  it "should test_non_email" do
+  it "test_non_email" do
     # The @ is part of the normal text, but 'example.com' is marked up.
     match_uri "Not an email: @example.com", uri: "http://example.com"
   end
 
-  it "should test_textile_image" do
+  it "test_textile_image" do
     no_match_uri "This !http://hobix.com/sample.jpg! is a Textile image link."
   end
 
-  it "should test_textile_link" do
+  it "test_textile_link" do
     no_match_uri(
       'This "hobix (hobix)":http://hobix.com/sample.jpg is a Textile link.'
     )
@@ -172,12 +172,12 @@ describe Card::Content::Chunk::URI, "URI chunk tests" do
               link_text: "http://hobix.com/sample.jpg"
   end
 
-  it "should test_inline_html" do
+  it "test_inline_html" do
     no_match_uri "<img src='http://hobix.com/sample.jpg'/>"
     no_match_uri '<IMG SRC="http://hobix.com/sample.jpg">'
   end
 
-  it "should test_non_uri" do
+  it "test_non_uri" do
     # "so" is a valid country code; "libproxy.so" is a valid url
     match_uri "libproxy.so", host: "libproxy.so",
                              text: "libproxy.so",
@@ -195,7 +195,7 @@ describe Card::Content::Chunk::URI, "URI chunk tests" do
     no_match_uri "file.ps"
   end
 
-  it "should test_uri_in_text" do
+  it "test_uri_in_text" do
     match_uri "Go to: http://www.example.com/",
               host: "www.example.com", path: "/"
     match_uri "http://www.example.com/ is a link.", host: "www.example.com"
@@ -208,7 +208,7 @@ describe Card::Content::Chunk::URI, "URI chunk tests" do
     no_match_uri '"link":http://fake.link.com.'
   end
 
-  it "should test_uri_in_parentheses" do
+  it "test_uri_in_parentheses" do
     match_uri "URI (http://brackets.com.de) in brackets",
               host: "brackets.com.de"
     match_uri "because (as shown at research.net) the results",
@@ -218,7 +218,7 @@ describe Card::Content::Chunk::URI, "URI chunk tests" do
               query: "WhatIsWiki"
   end
 
-  it "should test_uri_list_item" do
+  it "test_uri_list_item" do
     match_chunk(
       Card::Content::Chunk::URI,
       "* http://www.btinternet.com/~mail2minh/SonyEricssonP80xPlatform.sis",
@@ -226,7 +226,7 @@ describe Card::Content::Chunk::URI, "URI chunk tests" do
     )
   end
 
-  it "should test_interesting_uri_with__comma" do
+  it "test_interesting_uri_with__comma" do
     # Counter-intuitively, this URL matches, but the query part includes the
     # trailing comma.
     # It has no way to know that the query does not include the comma.
@@ -241,7 +241,7 @@ describe Card::Content::Chunk::URI, "URI chunk tests" do
   end
 
   describe Card::Content::Chunk::URI, "URI chunk tests" do
-    it "should test_local_urls" do
+    it "test_local_urls" do
       # normal
       match_http_uri "http://perforce:8001/toto.html",
                      host: "perforce", port: 8001

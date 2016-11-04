@@ -6,7 +6,7 @@ describe Card::Set::All::Rules do
   end
 
   describe "setting data setup" do
-    it "should make Set of +*type" do
+    it "makes Set of +*type" do
       Card.create! name: "SpeciForm", type: "Cardtype"
       expect(Card.create!(name: "SpeciForm+*type").type_code).to eq(:set)
     end

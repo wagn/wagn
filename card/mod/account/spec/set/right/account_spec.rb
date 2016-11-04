@@ -16,13 +16,13 @@ describe Card::Set::Right::Account do
         end
       end
 
-      it "should create an authenticable password" do
+      it "creates an authenticable password" do
         validity = Card::Auth.password_valid? @user_card.account, "tmp_pass"
         expect(validity).to be_truthy
       end
     end
 
-    it "should check accountability of 'accounted' card" do
+    it "checks accountability of 'accounted' card" do
       @unaccountable = Card.create(
         name: "BasicUnaccountable",
         "+*account" => {
@@ -34,7 +34,7 @@ describe Card::Set::Right::Account do
       expect(error_msg).to eq("not allowed on this card")
     end
 
-    it "should require email" do
+    it "requires email" do
       @no_email = Card.create(
         name: "TmpUser",
         type_id: Card::UserID,
@@ -113,13 +113,13 @@ describe Card::Set::Right::Account do
       @account = Card::Auth.find_account_by_email("joe@user.com")
     end
 
-    it "should reset password" do
+    it "resets password" do
       @account.password_card.update_attributes!(content: "new password")
       authenticated = Card::Auth.authenticate "joe@user.com", "new password"
       assert_equal @account, authenticated
     end
 
-    it "should not rehash password when updating email" do
+    it "does not rehash password when updating email" do
       @account.email_card.update_attributes! content: "joe2@user.com"
       authenticated = Card::Auth.authenticate "joe2@user.com", "joe_pass"
       assert_equal @account, authenticated
@@ -137,7 +137,7 @@ describe Card::Set::Right::Account do
       Card::Auth.current_id = Card::AnonymousID
     end
 
-    it "should authenticate with correct token" do
+    it "authenticates with correct token" do
       expect(Card::Auth.current_id).to eq(Card::AnonymousID)
       expect(@account.save).to eq(true)
       expect(Card::Auth.current_id).to eq(@account.left_id)
@@ -145,7 +145,7 @@ describe Card::Set::Right::Account do
       # expect(@account.fetch(trait: :token)).to be_nil
     end
 
-    it "should not work if token is expired" do
+    it "does not work if token is expired" do
       @account.token_card.update_column :updated_at,
                                         3.days.ago.strftime("%F %T")
       @account.token_card.expire
@@ -161,7 +161,7 @@ describe Card::Set::Right::Account do
       # user notified of expired token
     end
 
-    it "should not work if token is wrong" do
+    it "does not work if token is wrong" do
       Card::Env.params[:token] = @token + "xxx"
       Card::Env.params[:event] = "reset_password"
       @account.save

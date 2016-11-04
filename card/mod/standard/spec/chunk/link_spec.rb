@@ -68,7 +68,7 @@ describe Card::Content::Chunk::Link do
                 href: "http://google.com", text: "http://google.com"
   end
 
-  it "should escape spaces in cardnames with %20 (not +)" do
+  it "escapes spaces in cardnames with %20 (not +)" do
     assert_link '[[Marie "Mad Dog" Deatherage|Marie]]',
                 class: "wanted-card",
                 href: "/Marie_Mad_Dog_Deatherage" \

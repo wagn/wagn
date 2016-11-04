@@ -176,7 +176,7 @@ describe Card::Set::All::Permissions do
       expect(c.read_rule_id).to eq(@perm_card.id)
     end
 
-    it "should get updated when relative settings change" do
+    it "gets updated when relative settings change" do
       Card::Auth.as_bot do
         all_plus = Card.fetch "*all plus+*read", new: { content: "_left" }
         all_plus.save
@@ -202,7 +202,7 @@ describe Card::Set::All::Permissions do
       )
     end
 
-    it "should insure that class overrides work with relative settings" do
+    it "insures that class overrides work with relative settings" do
       Card::Auth.as_bot do
         all_plus = Card.fetch "*all plus+*read", new: { content: "_left" }
         all_plus.save
@@ -215,7 +215,7 @@ describe Card::Set::All::Permissions do
       end
     end
 
-    it "should work on virtual+virtual cards" do
+    it "works on virtual+virtual cards" do
       c = Card.fetch("Number+*type+by name")
       expect(c.ok?(:read)).to be_truthy
     end
@@ -251,7 +251,7 @@ describe Card::Set::All::Permissions do
       end
     end
 
-    it "should be granted to admin if to anybody" do
+    it "is granted to admin if to anybody" do
       Card::Auth.as_bot do
         c1 = Card["c1"]
         Card.create! name: "c1+*self+*comment", type: "Pointer",
@@ -454,7 +454,7 @@ describe Card::Set::All::Permissions do
     end
   end
 
-  it "should let joe view new cards" do
+  it "lets joe view new cards" do
     expect(Card.new.ok?(:read)).to be_truthy
   end
 
@@ -463,24 +463,24 @@ describe Card::Set::All::Permissions do
       @c = Card.create! name: "sky blue"
     end
 
-    it "should let anonymous users view basic cards" do
+    it "lets anonymous users view basic cards" do
       Card::Auth.as :anonymous do
         expect(@c.ok?(:read)).to be_truthy
       end
     end
 
-    it "should let joe user basic cards" do
+    it "lets joe user basic cards" do
       Card::Auth.as "joe_user" do
         expect(@c.ok?(:read)).to be_truthy
       end
     end
   end
 
-  it "should allow anyone signed in to create Basic Cards" do
+  it "allows anyone signed in to create Basic Cards" do
     expect(Card.new.ok?(:create)).to be_truthy
   end
 
-  it "should not allow someone not signed in to create Basic Cards" do
+  it "does not allow someone not signed in to create Basic Cards" do
     Card::Auth.as :anonymous do
       expect(Card.new.ok?(:create)).not_to be_truthy
     end
@@ -496,7 +496,7 @@ describe Card::Set::All::Permissions do
       end
     end
 
-    it "should handle delete as a setting" do
+    it "handles delete as a setting" do
       c = Card.new name: "whatever"
       expect(c.who_can(:delete)).to eq([Card["joe_user"].id])
       Card::Auth.as("joe_user") do

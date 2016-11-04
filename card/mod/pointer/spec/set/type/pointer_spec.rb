@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 describe Card::Set::Type::Pointer do
   describe "item_names" do
-    it "should return array of names of items referred to by a pointer" do
+    it "returns array of names of items referred to by a pointer" do
       card = Card.new(type: "Pointer", content: "[[Busy]]\n[[Body]]")
       card.item_names.should == %w(Busy Body)
     end
@@ -133,7 +133,7 @@ describe Card::Set::Type::Pointer do
       end
     end
 
-    it "should include nonexisting card in radio options" do
+    it "includes nonexisting card in radio options" do
       common_html =
         'input[class="pointer-radio-button"]'\
         '[checked="checked"]'\
@@ -146,7 +146,7 @@ describe Card::Set::Type::Pointer do
       assert_view_select @inherit_pointer.format.render_radio, option_html
     end
 
-    it "should include nonexisting card in checkbox options" do
+    it "includes nonexisting card in checkbox options" do
       option_html =
         'input[class="pointer-checkbox-button"]'\
         '[checked="checked"]'\
@@ -157,14 +157,14 @@ describe Card::Set::Type::Pointer do
       assert_view_select @inherit_pointer.format.render_checkbox, option_html
     end
 
-    it "should include nonexisting card in select options" do
+    it "includes nonexisting card in select options" do
       option_html = "option[value='#{@card_name}'][selected='selected']"
       assert_view_select @pointer.format.render_select, option_html, @card_name
       assert_view_select @inherit_pointer.format.render_select, option_html,
                          @card_name
     end
 
-    it "should include nonexisting card in multiselect options" do
+    it "includes nonexisting card in multiselect options" do
       option_html = "option[value='#{@card_name}'][selected='selected']"
       assert_view_select @pointer.format.render_multiselect, option_html,
                          @card_name
@@ -178,7 +178,7 @@ describe Card::Set::Type::Pointer do
       @css = "#box { display: block }"
       Card.create name: "my css", content: @css
     end
-    it "should render CSS of items" do
+    it "renders CSS of items" do
       css_list = render_card(
         :content,
         { type: Card::PointerID, name: "my style list", content: "[[my css]]" },
@@ -191,7 +191,7 @@ describe Card::Set::Type::Pointer do
   end
 
   describe "#standardize_item" do
-    it "should handle unlinked items" do
+    it "handles unlinked items" do
       pointer1 = Card.create!(
         name: "pointer1", type: "Pointer", content: "bracketme"
       )

@@ -9,7 +9,7 @@ describe CardController do
       route_to opts.merge(controller: "card")
     end
 
-    it "should recognize type" do
+    it "recognizes type" do
       # all_routes = Rails.application.routes.routes
       # require 'rails/application/route_inspector'
       # warn "rountes#{ENV['CONTROLLER']}:\n" + Rails::Application::RouteInspector.new.format(all_routes, ENV['CONTROLLER'])* "\n"
@@ -18,12 +18,12 @@ describe CardController do
         .to card_route_to(action: "read", type: "Phrase", view: "new")
     end
 
-    it "should recognize .rss on /recent" do
+    it "recognizes .rss on /recent" do
       expect(get: "/recent.rss")
         .to card_route_to(action: "read", id: ":recent", format: "rss")
     end
 
-    it "should handle RESTful posts" do
+    it "handles RESTful posts" do
       expect(put: "/mycard").to card_route_to(action: "update", id: "mycard")
       expect(put: "/").to card_route_to(action: "update")
     end
@@ -35,17 +35,17 @@ describe CardController do
 
     ["/wagn", ""].each do |prefix|
       describe "routes prefixed with '#{prefix}'" do
-        it "should recognize .rss format" do
+        it "recognizes .rss format" do
           expect(get: "#{prefix}/*recent.rss")
             .to card_route_to(action: "read", id: "*recent", format: "rss")
         end
 
-        it "should recognize .xml format" do
+        it "recognizes .xml format" do
           expect(get: "#{prefix}/*recent.xml")
             .to card_route_to(action: "read", id: "*recent", format: "xml")
         end
 
-        it "should accept cards without dots" do
+        it "accepts cards without dots" do
           expect(get: "#{prefix}/random")
             .to card_route_to(action: "read", id: "random")
         end
@@ -207,7 +207,7 @@ describe CardController do
         login_as "joe_user"
       end
 
-      it "should work on index" do
+      it "works on index" do
         get :read, view: "new"
         expect(assigns["card"].name).to eq("")
         assert_response :success, "response should succeed"
@@ -241,7 +241,7 @@ describe CardController do
         assert_response :success
       end
 
-      it "should use card params name over id in new cards" do
+      it "uses card params name over id in new cards" do
         get :read, id: "my_life", card: { name: "My LIFE" }, view: "new"
         expect(assigns["card"].name).to eq("My LIFE")
       end
@@ -276,9 +276,9 @@ describe CardController do
 
       it "handles image with no read permission" do
         get :read, id: "mao2"
-        assert_response 403, "should deny html card view"
+        assert_response 403, "denies html card view"
         get :read, id: "mao2", format: "jpg"
-        assert_response 403, "should deny simple file view"
+        assert_response 403, "denies simple file view"
       end
 
       it "handles image with read permission" do
@@ -373,7 +373,7 @@ describe CardController do
       end
     end
 
-    it "should comment" do
+    it "comments" do
       Card::Auth.as_bot do
         Card.create name: "basicname+*self+*comment",
                     content: "[[Anyone Signed In]]"

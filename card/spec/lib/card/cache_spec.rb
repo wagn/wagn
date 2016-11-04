@@ -7,7 +7,7 @@ describe Card::Cache do
     end
 
     describe "#basic operations" do
-      it "should work" do
+      it "works" do
         @cache.write("a", "foo")
         expect(@cache.read("a")).to eq("foo")
         @cache.fetch("b") { "bar" }
@@ -90,7 +90,7 @@ describe Card::Cache do
     end
 
     describe "#basic operations with special symbols" do
-      it "should work" do
+      it "works" do
         @cache.write('%\\/*:?"<>|', "foo")
         cache2 = Card::Cache.new store: @hard, prefix: "prefix"
         expect(cache2.read('%\\/*:?"<>|')).to eq("foo")
@@ -99,7 +99,7 @@ describe Card::Cache do
     end
 
     describe "#basic operations with non-latin symbols" do
-      it "should work" do
+      it "works" do
         @cache.write("(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén", "foo")
         @cache.write("русский", "foo")
         cache3 = Card::Cache.new store: @hard, prefix: "prefix"

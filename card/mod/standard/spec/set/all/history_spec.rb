@@ -4,7 +4,7 @@ describe Card::Set::All::History do
     # before do
     #   Card.create! name: 'my histoer card'
     # end
-    it "should have a frame" do
+    it "has a frame" do
       history = render_card :history, name: "A"
       assert_view_select history, 'div[class~="card-frame"]'
     end
@@ -15,7 +15,7 @@ describe Card::Set::All::History do
         first.format.render_action_summary
       end
 
-      it "should have a summary" do
+      it "has a summary" do
         assert_view_select subject, 'del[class="diffdel diff-deleted"]',
                            text: "chicken"
         assert_view_select subject, 'ins[class="diffins diff-added"]',

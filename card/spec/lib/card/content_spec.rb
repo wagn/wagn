@@ -324,13 +324,13 @@ describe Card::Content do
 
   context "class" do
     describe "#clean!" do
-      it "should not alter untagged content" do
+      it "does not alter untagged content" do
         UNTAGGED_CASES.each do |test_case|
           assert_equal test_case, Card::Content.clean!(test_case)
         end
       end
 
-      it "should strip disallowed html class attributes" do
+      it "strips disallowed html class attributes" do
         assert_equal "<p>html<div>with</div> funky tags</p>",
                      Card::Content.clean!(
                        '<p>html<div class="boo">with</div>' \
@@ -340,7 +340,7 @@ describe Card::Content do
                      Card::Content.clean!('<span class="banana">foo</span>')
       end
 
-      it "should not strip permitted_classes" do
+      it "does not strip permitted_classes" do
         has_stripped1 = '<span class="w-spotlight">foo</span>'
         assert_equal has_stripped1,
                      Card::Content.clean!(has_stripped1)
@@ -349,7 +349,7 @@ describe Card::Content do
                      Card::Content.clean!(has_stripped2)
       end
 
-      it "should strip permitted_classes " \
+      it "strips permitted_classes " \
             "but not permitted ones when both are present" do
         assert_equal '<span class="w-spotlight w-ok">foo</span>',
                      Card::Content.clean!(
@@ -365,7 +365,7 @@ describe Card::Content do
                      )
       end
 
-      it "should allow permitted attributes" do
+      it "allows permitted attributes" do
         assert_equal '<img src="foo">', Card::Content.clean!('<img src="foo">')
         assert_equal "<img alt='foo'>", Card::Content.clean!("<img alt='foo'>")
         assert_equal '<img title="foo">',
@@ -377,12 +377,12 @@ describe Card::Content do
                      Card::Content.clean!('<blockquote cite="foo">')
       end
 
-      it "should not allow nonpermitted attributes" do
+      it "does not allow nonpermitted attributes" do
         assert_equal "<img>", Card::Content.clean!('<img size="25">')
         assert_equal "<p>",   Card::Content.clean!('<p font="blah">')
       end
 
-      it "should remove comments" do
+      it "removes comments" do
         assert_equal "yo", Card::Content.clean!("<!-- not me -->yo")
         assert_equal "joe",
                      Card::Content.clean!("<!-- not me -->joe<!-- not me -->")

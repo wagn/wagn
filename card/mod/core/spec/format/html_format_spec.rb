@@ -91,14 +91,14 @@ describe Card::Format::HtmlFormat do
         # warn "lay #{@layout_card.inspect}, #{@main_card.inspect}"
       end
 
-      #      it "should default to core view when in layout mode" do
+      #      it "defaults to core view when in layout mode" do
       #        @layout_card.content = "Hi {{A}}"
       #        Card::Auth.as_bot { @layout_card.save }
       #
       #        expect(@main_card.format.render(:layout)).to match('Hi Alpha')
       #      end
 
-      #      it "should default to open view for main card" do
+      #      it "defaults to open view for main card" do
       #        @layout_card.content='Open up {{_main}}'
       #        Card::Auth.as_bot { @layout_card.save }
       #
@@ -117,7 +117,7 @@ describe Card::Format::HtmlFormat do
         expect(result).not_to match(/card-header/)
       end
 
-      it "shouldn't recurse" do
+      it "does not recurse" do
         @layout_card.content = "Mainly {{_main|core}}"
         Card::Auth.as_bot { @layout_card.save }
 

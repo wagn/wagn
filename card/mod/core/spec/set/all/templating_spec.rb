@@ -26,11 +26,11 @@ describe Card::Set::All::Templating do
       @jb = Card.create! name: "Jim+birthday"
     end
 
-    it "should have default content" do
+    it "has default content" do
       expect(@jb.format._render_raw).to eq("Today!")
     end
 
-    it "should change type and content with template" do
+    it "changes type and content with template" do
       Card::Auth.as_bot do
         @bt.content = "Tomorrow"
         @bt.type = "Phrase"
@@ -41,7 +41,7 @@ describe Card::Set::All::Templating do
       expect(jb.type_id).to eq(Card::PhraseID)
     end
 
-    it "should have type and content overridden by (new) type_plus_right set" do
+    it "has type and content overridden by (new) type_plus_right set" do
       Card::Auth.as_bot do
         Card.create! name: "Basic+birthday+*type plus right+*structure",
                      type: "PlainText",
@@ -64,15 +64,15 @@ describe Card::Set::All::Templating do
       @jb = Card.create! name: "Jim+birthday"
     end
 
-    it "should have default cardtype" do
+    it "has default cardtype" do
       expect(@jb.type_code).to eq(:date)
     end
 
-    it "should have default content" do
+    it "has default content" do
       expect(Card["Jim+birthday"].content).to eq("Today!")
     end
 
-    it "should apply to new cards" do
+    it "applies to new cards" do
       pb = Card.new name: "Pete+birthday"
       expect(pb.raw_content).to eq("Today!")
       expect(pb.content).to eq("Today!")
@@ -88,7 +88,7 @@ describe Card::Set::All::Templating do
       end
     end
 
-    it "should return templated content even if content is passed in" do
+    it "returns templated content even if content is passed in" do
       new_date_card = Card.new type: "Date", content: ""
       expect(new_date_card.format._render(:raw)).to eq("Tomorrow")
     end
@@ -107,7 +107,7 @@ describe Card::Set::All::Templating do
         expect(Card["Jim+birthday"].raw_content).to eq("Today")
       end
 
-      it "should defer to normal content " \
+      it "defers to normal content " \
          "when *structure rule's content is (exactly) '_self'" do
         Card::Auth.as_bot do
           Card.create! name: "Jim+birthday+*self+*structure", content: "_self"

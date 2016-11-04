@@ -2,7 +2,7 @@
 
 # FIXME: this shouldn't be here
 describe Card::Set::Type::Cardtype, ".create with :codename" do
-  it "should work" do
+  it "works" do
     card = Card.create! name: "Foo Type", codename: "foo",
                         type: "Cardtype"
     expect(card.type_code).to eq(:cardtype)
@@ -16,7 +16,7 @@ describe Card, "created by Card.new" do
     end
   end
 
-  it "should not override explicit content with default content" do
+  it "does not override explicit content with default content" do
     Card::Auth.as_bot do
       Card.create! name: "blue+*right+*default", content: "joe", type: "Pointer"
       c = Card.new name: "Lady+blue", content: "[[Jimmy]]"

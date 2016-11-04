@@ -16,7 +16,7 @@ format :html do
     voo.help = "usually first and last name"
   end
 
-  def new_content_formgroup
+  view :content_formgroup do
     [account_formgroups, (card.structure ? edit_slot : "")].join
   end
 

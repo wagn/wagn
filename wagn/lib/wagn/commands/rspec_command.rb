@@ -9,7 +9,7 @@ module Wagn
 
         @wagn_args, @rspec_args = split_wagn_and_rspec_args args
         @opts = {}
-        Parser.rspec(@opts).parse!(@wagn_args)
+        Parser.new(@opts).parse!(@wagn_args)
       end
 
       def command
@@ -27,7 +27,7 @@ module Wagn
       def coverage
         # no coverage if rspec was started with file argument
         if (@opts[:files] || @rspec_args.present?) && !@opts[:simplecov]
-          @opts[:simplecov] = "COVERAGE=f alse"
+          @opts[:simplecov] = "COVERAGE=false"
         end
         @opts[:simplecov]
       end
@@ -41,6 +41,10 @@ module Wagn
         rspec.shift
         [wagn, rspec]
       end
+
+
     end
   end
 end
+
+require File.expand_path("../rspec_command/parser", __FILE__)

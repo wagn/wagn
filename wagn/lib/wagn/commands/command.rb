@@ -2,6 +2,7 @@ module Wagn
   module Commands
     class Command
       def run
+        puts command
         exit_with_child_status command
       end
 

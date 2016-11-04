@@ -27,8 +27,8 @@ module Wagn
       end
 
       def require_args
-        require_args = "-r #{Wagn.gem_root}/features "
-        require_args += feature_paths.map { |path| "-r #{path}" }.join(" ")
+        "-r #{Wagn.gem_root}/features " +
+          feature_paths.map { |path| "-r #{path}" }.join(" ")
       end
 
       def feature_paths

@@ -3,47 +3,23 @@ require "optparse"
 
 module Wagn
   module Commands
-    class Parser
-      class << self
-        def db_task command, opts
-          OptionParser.new do |parser|
-            parser.banner = "Usage: wagn #{command} [options]\n\n" \
-                            "Run wagn:#{command} task on the production "\
-                            " database specified in config/database.yml\n\n"
-            parser.on("--production", "-p",
-                      "#{command} production database (default)") do
-              opts[:envs] = ["production"]
-            end
-            parser.on("--test", "-t",
-                      "#{command} test database") do
-              opts[:envs] = ["test"]
-            end
-            parser.on("--development", "-d",
-                      "#{command} development database") do
-              opts[:envs] = ["development"]
-            end
-            parser.on("--all", "-a",
-                      "#{command} production, test, and development database") do
-              opts[:envs] = %w(production development test)
-            end
-          end
-        end
-
-        def rspec opts
-          OptionParser.new do |parser|
+    class RspecCommand
+      class Parser < OptionParser
+        def initialize opts
+          super() do |parser|
             parser.banner = "Usage: wagn rspec [WAGN ARGS] -- [RSPEC ARGS]\n\n" \
                             "RSPEC ARGS"
-            parser.separator <<-WAGN
+            parser.separator <<-EOT
 
-        WAGN ARGS
+            WAGN ARGS
 
-          You don't have to give a full path for FILENAME, the basename is enough
-          If FILENAME does not include '_spec' rspec searches for the
-          corresponding spec file.
-          The line number always referes to example in the (corresponding) spec
-          file.
+            You don't have to give a full path for FILENAME, the basename is enough
+              If FILENAME does not include '_spec' rspec searches for the
+              corresponding spec file.
+              The line number always referes to example in the (corresponding) spec
+              file.
 
-        WAGN
+            EOT
 
             parser.on("-d", "--spec FILENAME(:LINE)",
                       "Run spec for a Wagn deck file") do |file|

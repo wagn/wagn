@@ -15,6 +15,7 @@ class Card
 
         both: [:nest_name,   # name as used in nest
                :nest_syntax, # full nest syntax
+               :help,        # cue text when editing
                :structure,   # overrides the content of the card
                :title,       # overrides the name of the card
                :variant,     # override the canonical version of the name with

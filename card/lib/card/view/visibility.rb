@@ -53,7 +53,7 @@ class Card
         unless viz_hash[view]
           viz view, yield
         end
-        voo.show? view
+        show? view
       end
 
       # test whether main_view is optional

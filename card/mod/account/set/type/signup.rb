@@ -13,7 +13,8 @@ format :html do
   end
 
   def new_name_formgroup
-    super "usually first and last name"
+    voo.help = "usually first and last name"
+    super
   end
 
   def new_content_formgroup

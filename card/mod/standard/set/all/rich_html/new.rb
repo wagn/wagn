@@ -65,7 +65,7 @@ format :html do
 
   def new_type_prompt?
     voo.visible? :new_type_formgroup do
-      !new_type_preset && new_type_prompt_context? && new_type_prompt_permitted?
+      !new_type_preset? && new_type_prompt_context? && new_type_permitted?
     end
   end
 
@@ -77,7 +77,7 @@ format :html do
     main? || card.simple? || card.is_template?
   end
 
-  def new_type_prompt_permitted?
+  def new_type_permitted?
     Card.new(type_id: card.type_id).ok? :create
   end
 

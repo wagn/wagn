@@ -15,10 +15,7 @@ describe Card::Subcards do
     it "check name-key bug" do
       Card::Auth.as_bot do
         Card.create! name: "Matthias", subcards: {"+name" => "test"}
-        binding.pry
         expect(Card.exists? "Matthias+name").to be_truthy
-
-        expect(Card["Matthias+name"]).to be_instance_of Card
       end
     end
 

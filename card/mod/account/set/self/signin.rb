@@ -27,9 +27,11 @@ format :html do
     voo.structure = true
     with_nest_mode :edit do
       card_form :update, recaptcha: :off do
-        [hidden_signin_fields,
-         content_formgroup,
-         signin_buttons].join
+        [
+          hidden_signin_fields,
+          _render_content_formgroup,
+          _render_signin_buttons
+        ]
       end
     end
   end

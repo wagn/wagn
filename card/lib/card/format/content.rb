@@ -52,11 +52,9 @@ class Card
         "#{card.key}-#{id_counter}"
       end
 
-      def output content
-        case content
-        when String then content
-        when Array then content.compact.join "\n"
-        end
+      def output *content
+        content ||= yield
+        Array.wrap(content).flatten.compact.join "\n"
       end
     end
   end

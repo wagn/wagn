@@ -1,99 +1,9 @@
 format :html do
   ###---( TOP_LEVEL (used by menu) NEW / EDIT VIEWS )
-
-  view :new, perms: :create, tags: :unknown_ok do
-    assign_new_view_title
-    voo.show! :help
-    frame_and_form :create, "main-success" => "REDIRECT" do
-      [new_hidden_fields,
-       new_name_formgroup,
-       new_type_formgroup,
-       new_content_formgroup,
-       new_buttons].compact
-    end
-  end
-
-  def assign_new_view_title
-    return if new_name_in_hidden_field?
-    voo.title ||= generic_new_card_title
-  end
-
-  def new_content_formgroup
-    content_formgroup
-  end
-
-  def new_name_formgroup help=nil
-    return if hide_new_name_prompt?
-    name_formgroup help
-  end
-
-  def hide_new_name_prompt?
-    new_name_in_hidden_field? || card.rule_card(:autoname)
-  end
-
-  def new_name_in_hidden_field?
-    card.cardname.present? && !params[:name_prompt]
-  end
-
-  def new_type_formgroup
-    return if hide_new_type_formgroup?
-    live_type_formgroup
-  end
-
-  def hide_new_type_formgroup?
-    return @hide_new_type_formgroup unless @hide_new_type_formgroup.nil?
-    @hide_new_type_formgroup = !show_new_type_formgroup?
-  end
-
-  def show_new_type_formgroup?
-    !(params[:type] || voo.type) &&                   # type isn't already set
-      (main? || card.simple? || card.is_template?) && # appropriate context
-      Card.new(type_id: card.type_id).ok?(:create)
-  end
-
-  def new_hidden_fields
-    fields = [hidden_success(card.rule(:thanks))]
-    fields << hidden_type unless show_new_type_formgroup?
-    fields << hidden_name if new_name_in_hidden_field?
-    fields << hidden_name_prompt unless hide_new_name_prompt?
-    fields.join
-  end
-
-  def hidden_success override=nil
-    hidden_field_tag "success", override || "_self"
-  end
-
-  def hidden_name
-    hidden_field_tag "card[name]", card.name
-  end
-
-  def hidden_name_prompt
-    hidden_field_tag "name_prompt", true
-  end
-
-  def hidden_type
-    hidden_field_tag "card[type_id]", card.type_id
-  end
-
-  def generic_new_card_title
-    if card.type_id == Card.default_type_id
-      "New"
-    else
-      "New #{card.type_name}"
-    end
-  end
-
-  def new_buttons
-    cancel_path = !main? && path(view: :missing)
-    button_formgroup do
-      [standard_submit_button, standard_cancel_button(cancel_path)]
-    end
-  end
-
   view :edit, perms: :update, tags: :unknown_ok do
     voo.show! :toolbar, :help
     frame_and_form :update do
-      [hidden_edit_fields, content_formgroup, edit_buttons]
+      [hidden_edit_fields, _render_content_formgroup, _render_edit_buttons]
     end
   end
 
@@ -116,7 +26,7 @@ format :html do
     cancel_button class: "cancel-button", href: href
   end
 
-  view :edit_name, perms: :update do |args|
+  view :edit_name, perms: :update do
     voo.show! :toolbar
     frame_and_form({ action: :update, id: card.id },
                    "main-success" => "REDIRECT") do
@@ -235,15 +145,15 @@ format :html do
       #    cancel_path: card.format.path(view: :edit), hide: :edit_toolbar,
       #    hidden: { success: { view: :open, "slot[subframe]" => true } }
       #  }
-      #}
+      # }
     )
   end
 
-  view :edit_nests do |args|
+  view :edit_nests do
     voo.show! :toolbar
-    frame args do
+    frame do
       with_nest_mode :edit do
-        process_nested_fields optional_toolbar: :hide
+        process_nested_fields hide: :toolbar
       end
     end
   end
@@ -251,7 +161,7 @@ format :html do
   view :edit_nest_rules do |args|
     voo.show! :toolbar
     view = args[:rule_view] || :field_related_rules
-    frame args do
+    frame do
       # with_nest_mode :edit do
       nested_fields.map do |name, _options|
         nest Card.fetch(name.to_name.trait(:self)),

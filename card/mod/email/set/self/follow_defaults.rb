@@ -33,9 +33,9 @@ format :html do
   view :edit, perms: :update, tags: :unknown_ok do
     frame_and_form :update do
       [
-        content_formgroup,
+        _optional_render_content_formgroup,
         _optional_render_confirm_update_all,
-        edit_buttons
+        _optional_render_edit_buttons
       ]
     end
   end

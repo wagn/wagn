@@ -60,7 +60,8 @@ format :html do
     url, action = card_form_url action
     html_opts = card_form_html_opts action, opts
     form_for card, url: url, html: html_opts, remote: true do |form|
-      yield (@form = form)
+      @form = form
+      output yield(form)
     end
   end
 
@@ -163,19 +164,12 @@ format :html do
     end
   end
 
-  def live_type_formgroup
-    type_formgroup do
-      type_field class: "type-field live-type-field", href: path(view: :new),
-                 "data-remote" => true
-            end
-  end
-
   def button_formgroup
     buttons = Array.wrap(yield).join "\n"
     %(<div class="form-group"><div>#{buttons}</div></div>)
   end
 
-  def content_formgroup
+  view :content_formgroup do
     wrap_with :fieldset, edit_slot, class: classy("card-editor", "editor")
   end
 

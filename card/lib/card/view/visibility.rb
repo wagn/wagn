@@ -39,12 +39,21 @@ class Card
       end
 
       # advanced write method
+      VIZ_SETTING = { show: :show, true => :show, hide: :hide, false => :hide }
+
       def viz views, setting, force=false
         Array.wrap(views).each do |view|
           view = view.to_sym
           next if !force && viz_hash[view]
-          viz_hash[view] = setting
+          viz_hash[view] = VIZ_SETTING[setting]
         end
+      end
+
+      def visible? view
+        unless viz_hash[view]
+          viz view, yield
+        end
+        voo.show? view
       end
 
       # test whether main_view is optional

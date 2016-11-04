@@ -56,7 +56,7 @@ def run_db_task command
   require "wagn/commands/rake_command"
   opts = {}
   Wagn::Commands::Parser.db_task(command, opts).parse!(ARGV)
-  Wagn::Commands::RakeCommand.new("wagn:command", opts).run
+  Wagn::Commands::RakeCommand.new("wagn:#{command}", opts).run
 end
 
 def run_jasmine

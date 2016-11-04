@@ -29,6 +29,10 @@ When /^(?:|I )follow "([^"]*)"$/ do |link|
   click_link(link)
 end
 
+When /^(?:|I )click on "([^"]*)"$/ do |link|
+  click_link_or_button(link)
+end
+
 When /^(?:|I )follow "([^"]*)" within "([^"]*)"$/ do |link, parent|
   click_link_within(parent, link)
 end
@@ -43,6 +47,11 @@ end
 
 When /^(?:|I )select "([^"]*)" from "([^"]*)"$/ do |value, field|
   select(value, from: field)
+end
+
+When /^(?:|I )single-select "([^"]*)" from "([^"]*)"$/ do |value, field|
+  find('label', text: field).parent.find("a.chosen-single").click
+  find('li', text: value).click
 end
 
 # Use this step in conjunction with Rail's datetime_select helper. For example:

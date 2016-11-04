@@ -65,10 +65,6 @@ format :html do
     voo.structure = true
     super()
   end
-
-  view :content_formgroup do
-    content_formgroup
-  end
 end
 
 event :validate_accountability, :prepare_to_validate, on: :create do

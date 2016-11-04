@@ -29,8 +29,8 @@ format :html do
       card_form :update, recaptcha: :off do
         [
           hidden_signin_fields,
-          _render_content_formgroup,
-          _render_signin_buttons
+          _optional_render_content_formgroup,
+          _optional_render_signin_buttons
         ]
       end
     end
@@ -41,7 +41,7 @@ format :html do
                      "REDIRECT: #{Env.interrupted_action || '*previous'}"
   end
 
-  def signin_buttons
+  view :signin_buttons do
     button_formgroup do
       [signin_button, signup_link, reset_password_link]
     end

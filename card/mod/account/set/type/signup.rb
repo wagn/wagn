@@ -25,7 +25,7 @@ format :html do
     super override
   end
 
-  def new_buttons
+  view :new_buttons do
     button_formgroup do
       [standard_submit_button, invite_button].compact
     end

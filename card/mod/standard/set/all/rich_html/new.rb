@@ -8,7 +8,7 @@ format :html do
         new_view_name,
         new_view_type,
         _optional_render_content_formgroup,
-        _optional_render_new_view_buttons
+        _optional_render_new_buttons
       ]
     end
   end
@@ -90,7 +90,7 @@ format :html do
     end
   end
 
-  view :new_view_buttons do
+  view :new_buttons do
     cancel_path = !main? && path(view: :missing)
     button_formgroup do
       [standard_submit_button, standard_cancel_button(cancel_path)]

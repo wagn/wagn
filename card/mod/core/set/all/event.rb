@@ -27,7 +27,7 @@ end
 def when_condition_applies? block
   case block
   when Proc then block.call(self)
-  when Symbol then self.send "#{block}?"
+  when Symbol then send block
   else true
   end
 end

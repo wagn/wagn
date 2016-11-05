@@ -94,12 +94,12 @@ def confirm_ok?
 end
 
 event :generate_confirmation_token,
-      :prepare_to_store, on: :create, when: :confirm_ok do
+      :prepare_to_store, on: :create, when: :confirm_ok? do
   add_subfield :token, content: generate_token
 end
 
 event :reset_password,
-      :prepare_to_validate, on: :update, when: :reset_password do
+      :prepare_to_validate, on: :update, when: :reset_password? do
   valid = validate_token! @env_token
   success << (valid ? reset_password_success : reset_password_try_again)
   abort :success

@@ -165,8 +165,9 @@ format :html do
   end
 
   def button_formgroup
-    buttons = Array.wrap(yield).join "\n"
-    %(<div class="form-group"><div>#{buttons}</div></div>)
+    wrap_with :div, class: "form-group" do
+      wrap_with :div, yield
+    end
   end
 
   view :content_formgroup do

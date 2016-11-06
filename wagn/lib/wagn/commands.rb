@@ -1,8 +1,5 @@
-require "optparse"
-
 # add method in? to Object class
 require "active_support/core_ext/object/inclusion"
-require "wagn/parser"
 
 def load_rake_tasks
   require "./config/environment"
@@ -12,6 +9,9 @@ end
 
 RAILS_COMMANDS = %w( generate destroy plugin benchmarker profiler console
                      server dbconsole application runner ).freeze
+WAGN_COMMANDS = %w(new cucumber rspec jasmine).freeze
+WAGN_DB_COMMANDS = %w(seed reseed load update).freeze
+
 ALIAS = {
   "rs" => "rspec",
   "cc" => "cucumber",
@@ -24,97 +24,46 @@ ALIAS = {
   "r"  => "runner"
 }.freeze
 
-ARGV << "--help" if ARGV.empty?
-
 def supported_rails_command? arg
   arg.in?(RAILS_COMMANDS) || ALIAS[arg].in?(RAILS_COMMANDS)
 end
 
-def find_spec_file filename, base_dir
-  file, line = filename.split(":")
-  if file.include?("_spec.rb") && File.exist?(file)
-    filename
-  else
-    file = File.basename(file, ".rb").sub(/_spec$/, "")
-    Dir.glob("#{base_dir}/**/#{file}_spec.rb").flatten.map do |spec_file|
-      line ? "#{spec_file}:#{line}" : file
-    end.join(" ")
-  end
-end
+ARGV << "--help" if ARGV.empty?
 
-def exit_with_child_status command
-  command += " 2>&1"
-  exit $CHILD_STATUS.exitstatus unless system command
-end
-
-WAGN_DB_TASKS = %w(seed reseed load update).freeze
-
-def run_rspec
-  require "rspec/core"
-  require "wagn/application"
-
-  before_split = true
-  wagn_args, rspec_args =
-    ARGV.partition do |a|
-      before_split = (a == "--" ? false : before_split)
-    end
-  rspec_args.shift
-  opts = {}
-  Wagn::Parser.rspec(opts).parse!(wagn_args)
-  # no coverage if rspec was started with file argument
-  if (opts[:files] || rspec_args.present?) && !opts[:simplecov]
-    opts[:simplecov] = "COVERAGE=false"
-  end
-  rspec_command =
-    "RAILS_ROOT=. #{opts[:simplecov]} #{opts[:executer]} " \
-      " #{opts[:rescue]} rspec #{rspec_args.shelljoin} #{opts[:files]} "\
-      " --exclude-pattern \"./card/vendor/**/*\""
-  exit_with_child_status rspec_command
-end
-
-def feature_paths
-  Card::Mod::Loader.mod_dirs.map do |p|
-    Dir.glob "#{p}/features"
-  end.flatten
-end
-
-def run_cucumber
-  require "wagn"
-  require "./config/environment"
-  require_args = "-r #{Wagn.gem_root}/features "
-  require_args += feature_paths.map { |path| "-r #{path}" }.join(" ")
-  feature_args = ARGV.empty? ? feature_paths.join(" ") : ARGV.shelljoin
-  env_args = "RAILS_ROOT=."
-  env_args << " COVERAGE=false" if ARGV.present?
-  cucumber_command = "#{env_args} bundle exec cucumber " \
-                           "#{require_args} #{feature_args}"
-  puts cucumber_command
-  exit_with_child_status cucumber_command
-end
-
-def run_db_task command
-  opts = {}
-  Wagn::Parser.db_task(command, opts).parse!(ARGV)
-  task_cmd = "bundle exec rake wagn:#{command}"
-  if !opts[:envs] || opts[:envs].empty?
-    puts task_cmd
-    puts `#{task_cmd}`
-  else
-    opts[:envs].each do |env|
-      puts "env RAILS_ENV=#{env} #{task_cmd}"
-      puts `env RAILS_ENV=#{env} #{task_cmd}`
-    end
-  end
-end
-
-def run_new
-  if ARGV.first.in?(["-h", "--help"])
-    require "wagn/commands/application"
-  else
-    puts "Can't initialize a new deck within the directory of another, " \
+module Wagn
+  module Commands
+    class << self
+      def run_new
+        if ARGV.first.in?(["-h", "--help"])
+          require "wagn/commands/application"
+        else
+          puts "Can't initialize a new deck within the directory of another, " \
            "please change to a non-deck directory first.\n"
-    puts "Type 'wagn' for help."
-    exit(1)
+          puts "Type 'wagn' for help."
+          exit(1)
+        end
+      end
+
+      def run_rspec
+        require "wagn/commands/rspec_command"
+        RspecCommand.new(ARGV).run
+      end
+
+      def run_cucumber
+        require "wagn/commands/cucumber_command"
+        CucumberCommand.new(ARGV).run
+      end
+
+      def run_db_task command
+        require "wagn/commands/rake_command"
+        RakeCommand.new("wagn:#{command}", ARGV).run
+      end
+
+      def run_jasmine
+        require "wagn/commands/rake_command"
+        RakeCommand.new("spec:javascript", envs: "test").run
+      end
+    end
   end
 end
 
@@ -129,18 +78,12 @@ if supported_rails_command? command
 else
   ARGV.shift
   case command
-  when "cucumber"
-    run_cucumber
-  when "jasmine"
-    exit_with_child_status "RAILS_ENV=test bundle exec rake spec:javascript"
-  when "rspec"
-    run_rspec
-  when "new"
-    run_new
-  when *WAGN_DB_TASKS
-    run_db_task command
   when "--version", "-v"
     puts "Wagn #{Card::Version.release}"
+  when *WAGN_COMMANDS
+    Wagn::Commands.send("run_#{command}")
+  when *WAGN_DB_COMMANDS
+    Wagn::Commands.run_db_task command
   else
     puts "Error: Command not recognized" unless command.in?(["-h", "--help"])
     puts <<-EOT
@@ -176,4 +119,3 @@ else
     exit(1)
   end
 end
-

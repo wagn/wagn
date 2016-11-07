@@ -122,10 +122,9 @@ format :html do
   end
 
   def formgroup_help_text text=nil
-    case text
-    when String then _render_help help_class: "help-block", help_text: text
-    when true   then _render_help help_class: "help-block"
-    end
+    class_up "help-text", "help-block"
+    voo.help = text unless text.to_s == "true"
+    _render_help
   end
 
   def hidden_tags hash, base=nil

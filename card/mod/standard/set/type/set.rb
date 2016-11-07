@@ -179,7 +179,7 @@ format :html do
   end
 
   view :set_navbar do |args|
-    id = "rule-navbar-#{card.cardname.safe_key}-#{args[:home_view]}"
+    id = "rule-navbar-#{card.cardname.safe_key}-#{voo.home_view}"
     related_sets = card.related_sets(true)
     return "" if related_sets.size <= 1
     navbar id, toggle: 'Rules<span class="caret"></span>', toggle_align: :left,

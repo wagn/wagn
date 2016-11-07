@@ -275,7 +275,7 @@ format :html do
     return "" if limit >= total
     item_view = args[:item] || implicit_nest_view
     @paging_path_args = { limit: limit, slot: { item: item_view } }
-    @paging_path_args[:view] = args[:home_view] if args[:home_view]
+    @paging_path_args[:view] = voo.home_view if voo.home_view
     @paging_limit = limit
 
     s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }

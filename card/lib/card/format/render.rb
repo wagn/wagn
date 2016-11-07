@@ -86,7 +86,7 @@ class Card
       def view_method view, args
         method "_view_#{view}"
       rescue
-        args[:unsupported_view] = view
+        voo.unsupported_view = view
         method "_view_unsupported_view"
       end
 

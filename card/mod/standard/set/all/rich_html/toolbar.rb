@@ -5,7 +5,7 @@ format :html do
 
   view :toolbar do |args|
     collapsed = close_link(args.merge(class: "pull-right visible-xs"))
-    navbar "toolbar-#{card.cardname.safe_key}-#{args[:home_view]}",
+    navbar "toolbar-#{card.cardname.safe_key}-#{voo.home_view}",
            toggle_align: :left, class: "slotter toolbar",
            navbar_type: "inverse",
            collapsed_content: collapsed do

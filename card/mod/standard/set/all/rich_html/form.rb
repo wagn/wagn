@@ -1,20 +1,24 @@
 include_set Abstract::ProsemirrorEditor
 
 format :html do
-  def edit_slot core_edit=false
-    if core_edit || voo.structure || card.structure
-      multi_card_edit_slot core_edit
-    else
-      single_card_edit_slot
-    end
+  def edit_slot
+    multi_edit? ? multi_card_edit_slot : single_card_edit_slot
   end
 
-  def multi_card_edit_slot core_edit
-    if core_edit # need better name
-      _render_core # FIXME:  get options from voo?  eg structure?
-    else
-      process_nested_fields
-    end
+  def multi_edit?
+    inline_nests_editor? || nests_editor? || voo.structure || card.structure
+  end
+
+  def multi_card_edit_slot
+    inline_nests_editor? ? _render_core : process_nested_fields
+  end
+
+  def inline_nests_editor?
+    voo.editor == :inline_nests
+  end
+
+  def nests_editor?
+    voo.editor == :nests
   end
 
   def single_card_edit_slot
@@ -27,20 +31,20 @@ format :html do
   end
 
   def process_nested_fields
-    nested_fields.map do |_name, options|
+    nested_fields_for_edit.map do |name, options|
       options[:hide] = :toolbar
-      nest options[:nest_name], options
+      nest name, options
     end.join "\n"
   end
 
   # @param [Hash|Array] fields either an array with field names and/or field
   # cards or a hash with the fields as keys and a hash with nest options as
   # values
-  # def process_edit_fields fields
-  #   fields.map do |field, opts|
-  #     field_nest field, opts
-  #   end.join "\n"
-  # end
+  def process_edit_fields fields
+    fields.map do | field, opts |
+      field_nest field, opts
+    end.join "\n"
+  end
 
   def form_for_multi
     instantiate_builder("card#{subcard_input_names}", card, {})
@@ -169,7 +173,7 @@ format :html do
     end
   end
 
-  view :content_formgroup do
+  view :content_formgroup, cache: :never do
     wrap_with :fieldset, edit_slot, class: classy("card-editor", "editor")
   end
 

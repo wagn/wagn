@@ -11,6 +11,7 @@ class Card
         # or comma separated views (String)
 
         heir: [:main,        # format object is page's "main" object (Boolean)
+               :edit_structure,
                :home_view],  # view for slot to return to when no view specified
 
         both: [:nest_name,   # name as used in nest
@@ -19,7 +20,9 @@ class Card
                :structure,   # overrides the content of the card
                :title,       # overrides the name of the card
                :variant,     # override the canonical version of the name with
-               #             # a different variant
+               #               a different variant
+               :editor,      # inline_nests makes a form within standard content
+               #               (Symbol)
                :type,        # set the default type of new cards
                :size,        # set an image size
                :params,      # parameters for add button.  deprecate?
@@ -69,12 +72,18 @@ class Card
 
       (heir_keys - [:items]).each do |option_key|
         define_method option_key do
-          live_options[option_key]
+          norm_method = "normalize_#{option_key}"
+          value = live_options[option_key]
+          try(norm_method, value) || value
         end
 
         define_method "#{option_key}=" do |value|
           live_options[option_key] = value
         end
+      end
+
+      def normalize_editor value
+        value && value.to_sym
       end
 
       # options to be used in data attributes of card slots (normalized options

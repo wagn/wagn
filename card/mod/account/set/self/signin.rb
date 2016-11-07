@@ -85,10 +85,12 @@ format :html do
     button_tag text, situation: "primary"
   end
 
-  def nested_fields
+  view :content_formgroup do
     fields = [signin_field(:email)]
     fields << signin_field(:password) unless @forgot_password
-    fields
+    voo.edit_structure = fields
+
+    super()
   end
 
   def signin_field name

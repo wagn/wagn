@@ -10,11 +10,7 @@ format :html do
   end
 
   view :core, cache: :never do
-    functional_head? ? _render_raw : CGI.escapeHTML(_render_raw)
-  end
-
-  def functional_head?
-    @depth == 1 && !voo.parent
+    root.first_head? ? _render_raw : CGI.escapeHTML(_render_raw)
   end
 
   def head_meta

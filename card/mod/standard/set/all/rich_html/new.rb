@@ -1,5 +1,5 @@
 format :html do
-  view :new, perms: :create, tags: :unknown_ok do
+  view :new, perms: :create, tags: :unknown_ok, cache: :never do
     voo.title ||= new_view_title if new_name_prompt?
     voo.show! :help
     frame_and_form :create, "main-success" => "REDIRECT" do

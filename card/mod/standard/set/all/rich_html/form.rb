@@ -123,7 +123,7 @@ format :html do
 
   def formgroup_help_text text=nil
     class_up "help-text", "help-block"
-    voo.help = text unless text.to_s == "true"
+    voo.help = text if voo && text.to_s != "true"
     _render_help
   end
 

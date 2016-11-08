@@ -4,7 +4,7 @@ end
 
 format :html do
   view :open do
-    voo.show! :help
+    voo.show :help
     super()
   end
 

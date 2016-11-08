@@ -41,7 +41,7 @@ format :html do
   # cards or a hash with the fields as keys and a hash with nest options as
   # values
   def process_edit_fields fields
-    fields.map do | field, opts |
+    fields.map do |field, opts|
       field_nest field, opts
     end.join "\n"
   end
@@ -109,7 +109,7 @@ format :html do
     editor_body = editor_wrap opts[:editor], &block
     help_text = formgroup_help_text opts[:help]
     wrap_with :div, formgroup_div_args(opts[:class]) do
-      "#{label} #{help_text}<div>#{editor_body}</div>"
+      "#{label}<div>#{editor_body} #{help_text}</div>"
     end
   end
 
@@ -128,7 +128,7 @@ format :html do
   def formgroup_help_text text=nil
     class_up "help-text", "help-block"
     voo.help = text if voo && text.to_s != "true"
-    _render_help
+    _optional_render_help
   end
 
   def hidden_tags hash, base=nil

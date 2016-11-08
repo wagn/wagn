@@ -1,7 +1,7 @@
 format :html do
   view :new, perms: :create, tags: :unknown_ok, cache: :never do
     voo.title ||= new_view_title if new_name_prompt?
-    voo.show! :help
+    voo.show :help
     frame_and_form :create, "main-success" => "REDIRECT" do
       [
         new_view_hidden,
@@ -16,7 +16,7 @@ format :html do
   def new_view_title
     output(
       "New",
-      (card.type_name if card.type_id == Card.default_type_id)
+      (card.type_name unless card.type_id == Card.default_type_id)
     )
   end
 

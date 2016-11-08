@@ -76,7 +76,7 @@ class Card
         live_options[:items] ||= {}
       end
 
-      (heir_keys - [:items]).each do |option_key|
+      (heir_keys + [:nest_name, :nest_syntax] - [:items]).each do |option_key|
         define_method option_key do
           norm_method = "normalize_#{option_key}"
           value = live_options[option_key]

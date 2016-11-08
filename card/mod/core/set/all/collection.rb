@@ -184,7 +184,7 @@ format do
     options[:view] ||= implicit_item_view
     determine_item_view_options_type options
     options
-    end
+  end
 
   def determine_item_view_options_type options
     return if options[:type]
@@ -195,7 +195,6 @@ format do
   def search_params
     @search_params ||= begin
       p = default_search_params.clone
-
       if focal?
         p[:offset] = params[:offset] if params[:offset]
         p[:limit]  = params[:limit]  if params[:limit]

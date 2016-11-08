@@ -26,7 +26,7 @@ format :html do
   end
 
   def show_without_layout view, args
-    @main = true if params[:is_main]
+    @main = true if params[:is_main] || args[:main]
     view ||= args[:home_view] || :open
     render view, args
   end

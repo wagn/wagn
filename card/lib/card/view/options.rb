@@ -4,32 +4,38 @@ class Card
     module Options
       # option values are strings unless otherwise noted
       @keymap = {
-        nest: [:view,        # view to render
-               :show,        # render these views when optional
-               :hide],       # do render these views when optional
+        nest: [
+          :view,          # view to render
+          :show,          # render these views when optional
+          :hide,          # do render these views when optional
+          :nest_name,     # name as used in nest
+          :nest_syntax    # full nest syntax
+        ],
         # note: show/hide can be single view (Symbol), list of views (Array),
         # or comma separated views (String)
+        heir: [
+          :main,          # format object is page's "main" object (Boolean)
+          :home_view,     # view for slot to return to when no view specified
+          :edit_structure # use a different structure for editing (Array)
 
-        heir: [:main,        # format object is page's "main" object (Boolean)
-               :edit_structure,
-               :home_view],  # view for slot to return to when no view specified
-
-        both: [:nest_name,   # name as used in nest
-               :nest_syntax, # full nest syntax
-               :help,        # cue text when editing
-               :structure,   # overrides the content of the card
-               :title,       # overrides the name of the card
-               :variant,     # override the canonical version of the name with
-               #               a different variant
-               :editor,      # inline_nests makes a form within standard content
-               #               (Symbol)
-               :type,        # set the default type of new cards
-               :size,        # set an image size
-               :params,      # parameters for add button.  deprecate?
-               :items],      # options for items (Hash)
-
-        none: [:skip_perms,  # do not check permissions for this view (Boolean)
-               :main_view]   # this is main view of page (Boolean)
+        ],
+        both: [
+          :help,          # cue text when editing
+          :structure,     # overrides the content of the card
+          :title,         # overrides the name of the card
+          :variant,       # override the canonical version of the name with
+          #                 a different variant
+          :editor,        # inline_nests makes a form within standard content
+          #                 (Symbol)
+          :type,          # set the default type of new cards
+          :size,          # set an image size
+          :params,        # parameters for add button.  deprecate?
+          :items          # options for items (Hash)
+        ],
+        none: [
+          :skip_perms,  # do not check permissions for this view (Boolean)
+          :main_view
+        ]   # this is main view of page (Boolean)
       }
 
       class << self

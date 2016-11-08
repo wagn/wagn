@@ -28,7 +28,7 @@ class Card
         view = Card::View.canonicalize view
 
         # FIXME: should handle in closed / edit view definitions
-        options[:home_view] = [:closed, :edit].member?(view) ? :open : view
+        options[:home_view] ||= [:closed, :edit].member?(view) ? :open : view
 
         [view, options]
       end

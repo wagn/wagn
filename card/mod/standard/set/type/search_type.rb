@@ -121,40 +121,6 @@ format do
     Card::View.canonicalize view
   end
 
-  def page_link text, page, _current=false, options={}
-    @paging_path_args[:offset] = page * @paging_limit
-    options[:class] = "card-paging-link slotter"
-    options[:remote] = true
-    options[:path] = @paging_path_args
-    link_to raw(text), options
-  end
-
-  def page_li text, page, current=false, options={}
-    css_class = if current
-                  "active"
-                elsif !page
-                  "disabled"
-                end
-    page ||= 0
-    content_tag :li, class: css_class do
-      page_link text, page, current, options
-    end
-  end
-
-  def previous_page_link page
-    page_li '<span aria-hidden="true">&laquo;</span>', page, false,
-            "aria-label" => "Previous"
-  end
-
-  def next_page_link page
-    page_li '<span aria-hidden="true">&raquo;</span>', page, false,
-            "aria-label" => "Next"
-  end
-
-  def ellipse_page
-    content_tag :li, content_tag(:span, "...")
-  end
-
   def chunk_list
     :query
   end
@@ -223,9 +189,9 @@ format :html do
     args[:ace_mode] = "json"
   end
 
-  view :card_list do |args|
-    return render_no_search_results(args) if search_results.empty?
-    search_result_list args, search_results.length do
+  view :card_list do
+    return render_no_search_results if search_results.empty?
+    search_result_list do
       search_results.map do |item_card|
         nest_item item_card, size: voo.size do |rendered, item_view|
           klass = "search-result-item item-#{item_view}"
@@ -235,82 +201,33 @@ format :html do
     end
   end
 
-  def search_result_list args, num_results
-    paging = _optional_render :paging, args
-      %(
-        #{paging}
-        <div class="search-result-list">
-        #{yield.join "\n"}
-        </div>
-      #{paging if num_results > 10}
-      )
+  def search_result_list
+    with_paging do
+      wrap_with :div, class: "search-result-list" do
+        yield
+      end
+    end
+  end
+
+  def with_paging
+    paging = _optional_render :paging
+    output [paging, yield, (paging if search_results.size > 10)]
   end
 
   view :closed_content do |args|
     if @depth > max_depth
       "..."
     else
-      search_limit = args[:closed_search_limit]
       search_params[:limit] =
-        search_limit && [search_limit, Card.config.closed_search_limit].min
-      _render_core args.merge(hide: "paging", items: {view: :link })
+        [search_params[:limit].to_i, Card.config.closed_search_limit].min
+      _render_core hide: "paging", items: { view: :link }
       # TODO: if item is queryified to be "name", then that should work.
       # otherwise use link
     end
   end
 
-  view :no_search_results do |_args|
-    %(<div class="search-no-results"></div>)
-  end
-
-  view :paging, cache: :never do |args|
-    s = card.query search_params
-    offset = s[:offset].to_i
-    limit = s[:limit].to_i
-    return "" if limit < 1
-    # avoid query if we know there aren't enough results to warrant paging
-    return "" if offset.zero? && limit > offset + search_results.length
-    total = card.count search_params
-    # should only happen if limit exactly equals the total
-    return "" if limit >= total
-    item_view = args[:item] || implicit_nest_view
-    @paging_path_args = { limit: limit, slot: { item: item_view } }
-    @paging_path_args[:view] = voo.home_view if voo.home_view
-    @paging_limit = limit
-
-    s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }
-
-    out = ['<nav><ul class="pagination paging">']
-
-    total_pages = ((total - 1) / limit).to_i
-    current_page = (offset / limit).to_i # should already be integer
-    window = 2 # should be configurable
-    window_min = current_page - window
-    window_max = current_page + window
-
-    previous_page = current_page > 0 ? current_page - 1 : false
-    out << previous_page_link(previous_page)
-    if window_min > 0
-      out << page_li(1, 0)
-      out << ellipse_page if window_min > 1
-    end
-
-    (window_min..window_max).each do |page|
-      next if page < 0 || page > total_pages
-      text = page + 1
-      out << page_li(text, page, page == current_page)
-    end
-
-    if total_pages > window_max
-      out << ellipse_page if total_pages > window_max + 1
-      out << page_li(total_pages + 1, total_pages)
-    end
-
-    next_page = current_page < total_pages ? current_page + 1 : false
-    out << next_page_link(next_page)
-
-    out << %(</ul></nav>)
-    out.join
+  view :no_search_results do
+    wrap_with :div, "", class: "search-no-results"
   end
 
   def default_search_params

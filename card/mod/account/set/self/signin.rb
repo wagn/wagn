@@ -73,7 +73,7 @@ format :html do
     Auth.as_bot { super() }
   end
 
-  def hidden_edit_fields
+  def edit_view_hidden
     hidden_tags(
       reset_password: true,
       success: { view: :reset_password_success }

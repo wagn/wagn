@@ -4,7 +4,7 @@ format :html do
     voo.show! :help
     frame_and_form :create, "main-success" => "REDIRECT" do
       [
-        new_view_standard_hidden,
+        new_view_hidden,
         new_view_name,
         new_view_type,
         _optional_render_content_formgroup,
@@ -20,7 +20,7 @@ format :html do
     )
   end
 
-  def new_view_standard_hidden
+  def new_view_hidden
     target = card.rule(:thanks) || "_self"
     hidden_field_tag "success", target
   end

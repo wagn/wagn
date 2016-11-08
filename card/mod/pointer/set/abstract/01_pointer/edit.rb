@@ -12,8 +12,7 @@ event :insert_item_event, :prepare_to_validate,
 end
 
 format :html do
-
-  view :editor do |args|
+  view :editor do
     part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/, "") : :list
     hidden_field(:content, class: "card-content") +
       raw(_render(part_view, args))

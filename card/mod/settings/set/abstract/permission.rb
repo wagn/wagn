@@ -9,9 +9,9 @@ format :html do
     wrap_with :div, pointer_items, class: "pointer-list"
   end
 
-  view :core do |args|
+  view :core do
     if card.content == "_left"
-      core_inherit_content args
+      core_inherit_content
     else
       render :pointer_core
     end
@@ -21,12 +21,12 @@ format :html do
     render_core items: { view: :link }
   end
 
-  view :editor do |args|
+  view :editor do
     item_names = inheriting? ? [] : card.item_names
     %(
       #{hidden_field :content, class: 'card-content'}
       <div class="perm-editor">
-        #{inheritance_checkbox args}
+        #{inheritance_checkbox}
         <div class="perm-group perm-vals perm-section">
           <h5 class="text-muted">Groups</h5>
           #{groups item_names}
@@ -80,13 +80,13 @@ format :html do
     @inheriting ||= inheritable? && card.content == "_left"
   end
 
-  def inheritance_checkbox args
+  def inheritance_checkbox
     return unless inheritable?
     <<-HTML
       <div class="perm-inheritance perm-section">
         #{check_box_tag 'inherit', 'inherit', inheriting?}
         <label>
-          #{core_inherit_content args.merge(target: 'wagn_role')}
+          #{core_inherit_content target: 'wagn_role'}
           #{content_tag(:a, title: "use left's #{card.cardname.tag} rule") { '?' }}
         </label>
       </div>

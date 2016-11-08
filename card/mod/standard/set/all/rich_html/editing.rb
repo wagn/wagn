@@ -4,14 +4,14 @@ format :html do
     voo.show! :toolbar, :help
     frame_and_form :update do
       [
-        hidden_edit_fields,
+        edit_view_hidden,
         _optional_render_content_formgroup,
         _optional_render_edit_buttons
       ]
     end
   end
 
-  def hidden_edit_fields
+  def edit_view_hidden
     # for override
   end
 

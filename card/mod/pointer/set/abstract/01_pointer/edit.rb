@@ -15,7 +15,7 @@ format :html do
   view :editor do
     part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/, "") : :list
     hidden_field(:content, class: "card-content") +
-      raw(_render(part_view, args))
+      raw(_render(part_view))
     # .merge(pointer_item_class: 'form-control')))
   end
 

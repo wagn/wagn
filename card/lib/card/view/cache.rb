@@ -10,6 +10,7 @@ class Card
             yield
           end
         end
+
         caching? ? cached_view : format.stub_render(cached_view)
       end
 

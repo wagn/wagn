@@ -12,10 +12,11 @@ event :insert_item_event, :prepare_to_validate,
 end
 
 format :html do
-  view :editor do
+
+  view :editor do |args|
     part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/, "") : :list
     hidden_field(:content, class: "card-content") +
-      raw(_render(part_view))
+      raw(_render(part_view, args))
     # .merge(pointer_item_class: 'form-control')))
   end
 
@@ -42,7 +43,7 @@ format :html do
   end
 
   def add_item_button
-    content_tag :span, class: "input-group" do
+    wrap_with :span, class: "input-group" do
       button_tag class: "pointer-item-add" do
         glyphicon("plus") + " add another"
       end

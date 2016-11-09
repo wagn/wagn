@@ -68,7 +68,7 @@ format :html do
   end
 
   view :set_label do
-    content_tag :h3, card.label, class: "set-label"
+    wrap_with :h3, card.label, class: "set-label"
   end
 
   Card::Setting.groups.keys.each do |group_key|
@@ -186,7 +186,7 @@ format :html do
                class: "slotter toolbar", navbar_type: "inverse",
                collapsed_content: close_link(class: "pull-right visible-xs") do
       [
-        content_tag(:span, "Set:", class: "navbar-text hidden-xs"),
+        wrap_with(:span, "Set:", class: "navbar-text hidden-xs"),
         (wrap_with :ul, class: "nav navbar-nav nav-pills" do
           related_sets.map do |name, label|
             slot_opts = { subheader: showname(name),

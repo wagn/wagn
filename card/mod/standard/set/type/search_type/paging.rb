@@ -14,7 +14,7 @@ format :html do
                   "disabled"
                 end
     page ||= 0
-    content_tag :li, class: css_class do
+    wrap_with :li, class: css_class do
       page_link text, page, current, options
     end
   end
@@ -30,7 +30,7 @@ format :html do
   end
 
   def ellipse_page
-    content_tag :li, content_tag(:span, "...")
+    wrap_with :li, wrap_with(:span, "...")
   end
 
   view :paging, cache: :never do

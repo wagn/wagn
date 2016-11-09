@@ -1,7 +1,7 @@
 
 format :html do
   view :raw do
-    content_tag :div, class: "form-group" do
+    wrap_with :div, class: "form-group" do
       text_field_tag :_keyword, "", class: "navbox form-control",
                                     placeholder: navbar_placeholder
     end

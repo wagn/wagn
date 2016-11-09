@@ -13,11 +13,10 @@ format :html do
     end
     add_class args, "panel-group"
 
-    content_tag :div, accordions.html_safe,
-                class: args[:class],
-                id: "accordion-#{collapse_id}",
-                role: "tablist",
-                "aria-multiselectable" => "true"
+    wrap_with :div, class: args[:class], id: "accordion-#{collapse_id}",
+                    role: "tablist", "aria-multiselectable" => "true" do
+      accordions
+    end
   end
 
   def accordion title, content, collapse_id=card.cardname.safe_key

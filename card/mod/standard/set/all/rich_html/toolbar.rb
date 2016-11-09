@@ -20,7 +20,7 @@ format :html do
           ]
         end),
         (wrap_with(:form, class: "navbar-form navbar-right") do
-          content_tag :div, class: "form-group" do
+          wrap_with :div, class: "form-group" do
             _optional_render(:toolbar_buttons, args, :show)
           end
         end)
@@ -250,7 +250,7 @@ format :html do
     icon = glyphicon symbol
     hide ||= "hidden-xs hidden-sm hidden-md hidden-lg"
     css_classes = "menu-item-label #{hide}"
-    rich_text = content_tag :span, text.html_safe, class: css_classes
+    rich_text = wrap_with :span, text.html_safe, class: css_classes
     icon + rich_text
   end
 

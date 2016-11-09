@@ -87,7 +87,7 @@ format :html do
         #{check_box_tag 'inherit', 'inherit', inheriting?}
         <label>
           #{core_inherit_content target: 'wagn_role'}
-          #{content_tag(:a, title: "use left's #{card.cardname.tag} rule") { '?' }}
+          #{wrap_with(:a, title: "use left's #{card.cardname.tag} rule") { '?' }}
         </label>
       </div>
     HTML

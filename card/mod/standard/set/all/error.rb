@@ -64,7 +64,7 @@ format :html do
 
   def rendering_error exception, view
     details = Auth.always_ok? ? backtrace_link(exception) : error_cardname
-    content_tag :span, class: "render-error alert alert-danger" do
+    wrap_with :span, class: "render-error alert alert-danger" do
       ["error rendering", details, "(#{view} view)"].join "\n"
     end
   end

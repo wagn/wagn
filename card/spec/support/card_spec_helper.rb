@@ -34,7 +34,7 @@ class Card
     end
 
     def log_html html
-      parsed = CodeRay.scan(Nokogiri::XML(view_html, &:noblanks).to_s, :html)
+      parsed = CodeRay.scan(Nokogiri::XML(html, &:noblanks).to_s, :html)
       if Rails.logger.respond_to? :rspec
         Rails.logger.rspec "#{parsed.div}#{CODE_RAY_STYLE}"
       else

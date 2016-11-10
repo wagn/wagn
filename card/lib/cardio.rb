@@ -139,8 +139,13 @@ module Cardio
 
     def migration_paths type
       list = paths["db/migrate#{schema_suffix type}"].to_a
-      if type == :deck_cards
+      case type
+      when :deck_cards
         Card::Mod::Loader.mod_dirs.each("db/migrate_cards") do |path|
+          list += Dir.glob path
+        end
+      when :structure
+        Card::Mod::Loader.mod_dirs.each("db/migrate") do |path|
           list += Dir.glob path
         end
       end

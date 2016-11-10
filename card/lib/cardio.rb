@@ -142,6 +142,7 @@ module Cardio
       if type == :deck_cards
         Card::Mod::Loader.mod_dirs.each("db/migrate_cards") do |path|
           list += Dir.glob path
+        end
       end
 
       list.flatten

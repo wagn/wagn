@@ -31,7 +31,7 @@ format :html do
 
   view :invite, link_options(&:show_invite_link?) do
     link_to_card :signup, account_link_text(:invite),
-                 id: "invite-link",
+                 class: classy("invite-link"),
                  path: { action: :new, mark: :signup }
   end
 

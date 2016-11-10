@@ -25,12 +25,12 @@ format :html do
     return unless (res_id = Env.params[:restore]) &&
                   (res_card = Card[res_id.to_i])
     alert :success, true do
-      content_tag(:h5, "restored") + subformat(res_card).render_closed
+      wrap_with(:h5, "restored") + subformat(res_card).render_closed
     end
   end
 
   def empty_trash_link
-    content_tag(
+    wrap_with(
       :p,
       button_link("empty trash",
                   btn_type: :default,

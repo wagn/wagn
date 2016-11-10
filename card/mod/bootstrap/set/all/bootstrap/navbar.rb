@@ -20,15 +20,14 @@ format :html do
         navbar_header(id, header_opts.delete(:content),
                       header_opts.reverse_merge(toggle: opts[:toggle])),
         navbar_collapsed_content(opts[:collapsed_content]),
-        content_tag(:div, output(yield).html_safe,
-                    class: "collapse navbar-collapse",
-                    id: "navbar-collapse-#{id}")
+        wrap_with(:div, class: "collapse navbar-collapse",
+                        id: "navbar-collapse-#{id}") { yield }
       ]
     end
   end
 
   def navbar_collapsed_content content
-    content_tag(:div, content.html_safe, class: "container-fluid") if content
+    wrap_with(:div, content, class: "container-fluid") if content
   end
 
   def navbar_header id, content="", opts={}
@@ -66,9 +65,9 @@ format :html do
   end
 
   def breadcrumb items
-    content_tag :ol, class: "breadcrumb" do
+    wrap_with :ol, class: "breadcrumb" do
       items.map do |item|
-        content_tag :li, item, class: "breadcrumb-item"
+        wrap_with :li, item, class: "breadcrumb-item"
       end.join
     end
   end

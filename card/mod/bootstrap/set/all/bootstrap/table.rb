@@ -19,17 +19,17 @@ format :html do
   end
 
   def table_header entries
-    content_tag :thead do
-      content_tag :tr do
+    wrap_with :thead do
+      wrap_with :tr do
         entries.map do |item|
-          content_tag :th, item
+          wrap_with :th, item
         end.join "\n"
       end
     end
   end
 
   def table_body rows
-    content_tag :tbody do
+    wrap_with :tbody do
       rows.map do |row|
         table_row row
       end.join "\n"
@@ -38,9 +38,9 @@ format :html do
 
   def table_cell cell
     if cell.is_a? Hash
-      content_tag :td, cell.delete(:content).to_s.html_safe, cell
+      wrap_with :td, cell.delete(:content).to_s, cell
     else
-      content_tag :td, String(cell).html_safe
+      wrap_with :td, String(cell)
     end
   end
 
@@ -56,6 +56,6 @@ format :html do
       else
         row_data
       end
-    content_tag :tr, row_content.html_safe, row_class
+    wrap_with :tr, row_content, row_class
   end
 end

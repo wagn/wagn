@@ -29,19 +29,29 @@ class Card
     end
 
     def debug_assert_view_select view_html, *args, &block
-      Rails.logger.rspec <<-HTML
-        #{CodeRay.scan(Nokogiri::XML(view_html, &:noblanks).to_s, :html).div}
-        <style>
-          .CodeRay {
-            background-color: #FFF;
-            border: 1px solid #CCC;
-            padding: 1em 0px 1em 1em;
-          }
-          .CodeRay .code pre { overflow: auto }
-        </style>
-      HTML
+      log_html view_html
       assert_view_select view_html, *args, &block
     end
+
+    def log_html html
+      parsed_html = CodeRay.scan(Nokogiri::XML(html, &:noblanks).to_s, :html)
+      if Rails.logger.respond_to? :rspec
+        Rails.logger.rspec "#{parsed_html.div}#{CODE_RAY_STYLE}"
+      else
+        puts parsed.text
+      end
+    end
+
+    CODE_RAY_STYLE = <<-HTML
+      <style>
+        .CodeRay {
+          background-color: #FFF;
+          border: 1px solid #CCC;
+          padding: 1em 0px 1em 1em;
+        }
+        .CodeRay .code pre { overflow: auto }
+      </style>
+    HTML
 
     def users
       SharedData::USERS.sort

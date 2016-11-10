@@ -16,8 +16,8 @@ module Cardio
       end
     end
 
-    def schema_mode mig_type=type
-      with_suffix mig_type do
+    def schema_mode type
+      with_suffix type do
         paths = Cardio.migration_paths(type)
         yield(paths)
       end

@@ -357,7 +357,7 @@ Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
 end
 
 Then /^"([^"]*)" should be signed in$/ do |user|  # "
-  has_css?("#my-card-link", text: user)
+  has_css?(".my-card-link", text: user)
 end
 
 When /^I press enter to search$/ do

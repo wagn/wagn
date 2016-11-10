@@ -6,19 +6,7 @@ class Card
   class Content
     module Chunk
       # Handler for nest chunks: {{example}}
-      class Include < Reference
-        cattr_reader :options
-        @@options = ::Set.new [
-          :inc_name,   # name as used in nest
-          :inc_syntax, # full nest syntax
-          :items,      # handles pipe-based recursion
-
-          # _conventional options_
-          :view, :type, :title, :params, :variant,
-          :size,        # images only
-          :hide, :show, # affects optional rendering
-          :structure    # override raw_content
-        ]
+      class Nest < Reference
         attr_reader :options
         DEFAULT_OPTION = :view # a value without a key is interpreted as view
 
@@ -33,8 +21,8 @@ class Card
           if name =~ /^\#/
             @process_chunk = name =~ /^\#\#/ ? "" : visible_comment(in_brackets)
           else
-            @options = interpret_options.merge inc_name: name,
-                                               inc_syntax: in_brackets
+            @options = interpret_options.merge nest_name: name,
+                                               nest_syntax: in_brackets
             @name = name
           end
         end
@@ -58,31 +46,22 @@ class Card
 
         def interpret_piped_options list_string, items
           options_hash = items.nil? ? {} : { items: items }
-          style_hash = {}
-          option_string_to_hash list_string, options_hash, style_hash
-          style_hash_to_string options_hash, style_hash
+          option_string_to_hash list_string, options_hash
           options_hash
         end
 
-        def option_string_to_hash list_string, options_hash, style_hash
+        def option_string_to_hash list_string, options_hash
           each_option(list_string) do |key, value|
             key = key.to_sym
             if key == :item
               options_hash[:items] ||= {}
               options_hash[:items][:view] = value
-            elsif @@options.include? key
+            elsif Card::View::Options.nest_keys.include? key
               options_hash[key] = value
-            else
-              style_hash[key] = value
+              # else
+              # handle other keys
             end
           end
-        end
-
-        def style_hash_to_string options_hash, style_hash
-          return if style_hash.empty?
-          options_hash[:style] = style_hash.map do |key, value|
-            CGI.escapeHTML "#{key}:#{value};"
-          end * ""
         end
 
         def inspect

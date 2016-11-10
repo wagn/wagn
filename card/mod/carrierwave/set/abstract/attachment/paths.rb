@@ -42,7 +42,7 @@ def file_dir
 end
 
 def public?
-  who_can(:read).include? Card[:anyone].id
+  who_can(:read).include? Card::AnyoneID
 end
 
 def file_id

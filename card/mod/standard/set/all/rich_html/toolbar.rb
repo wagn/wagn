@@ -29,7 +29,7 @@ format :html do
   end
 
   def default_toolbar_args args
-    args[:nested_fields] = nested_fields(args)
+    args[:nested_fields] = nested_fields
     args[:active_toolbar_button] ||= active_toolbar_button @slot_view, args
   end
 
@@ -86,32 +86,41 @@ format :html do
   end
 
   def rules_split_button args
-    recent = smart_link_to "recent",   view: :edit_rules,
-                                       slot: { rule_view: :recent_rules }
-    common = smart_link_to "common",   view: :edit_rules,
-                                       slot: { rule_view: :common_rules }
-    group  = smart_link_to "by group", view: :edit_rules,
-                                       slot: { rule_view: :grouped_rules }
-    all    = smart_link_to "by name",  view: :edit_rules,
-                                       slot: { rule_view: :all_rules }
-    nests  = smart_link_to "nests",    view: :edit_nest_rules,
-                                       slot: { rule_view: :field_related_rules }
-    toolbar_split_button "rules", { view: :edit_rules }, args do
-      {
-        common_rules:    common,
-        grouped_rules:   group,
-        all_rules:       all,
-        separator:       (separator if args[:nested_fields].present?),
-        recent_rules:    (recent if recently_edited_settings?),
-        edit_nest_rules: (nests if args[:nested_fields].present?)
-      }
-    end
+    button_hash = {
+      common_rules:  edit_rules_link("common",   :common_rules),
+      grouped_rules: edit_rules_link("by group", :grouped_rules),
+      all_rules:     edit_rules_link("by name",  :all_rules)
+    }
+    recently_edited_rules_link button_hash
+    nest_rules_link button_hash, args[:nested_fields]
+    toolbar_split_button("rules", { view: :edit_rules }, args) { button_hash }
+  end
+
+  def nest_rules_link button_hash, nested_fields
+    return unless nested_fields.present?
+    button_hash[:separator] = separator
+    button_hash[:edit_nest_rules] = edit_nest_rules_link "nests"
+  end
+
+  def recently_edited_rules_link button_hash
+    return unless recently_edited_settings?
+    button_hash[:recent_rules] = edit_rules_link "recent", :recent_rules
+  end
+
+  def edit_nest_rules_link text
+    smart_link_to text, view: :edit_nest_rules,
+                        path: { slot: { rule_view: :field_related_rules } }
+  end
+
+  def edit_rules_link text, rule_view
+    smart_link_to text, view: :edit_rules,
+                        path: { slot: { rule_view: rule_view } }
   end
 
   def edit_split_button args
     toolbar_split_button "edit", { view: :edit }, args do
       {
-        edit:       _render_edit_content_link(args),
+        edit:       _render_edit_link(args),
         edit_nests: (_render_edit_nests_link if nests_editable?(args)),
         structure:  (_render_edit_structure_link if structure_editable?),
         edit_name:  _render_edit_name_link,
@@ -186,8 +195,7 @@ format :html do
       [
         _optional_render(:delete_button,  args, show_or_hide_delete),
         _optional_render(:refresh_button, args, :show),
-        _optional_render(:related_button, args, :show),
-        _optional_render(:history_button, args, :hide)
+        _optional_render(:related_button, args, :show)
       ]
     end
   end
@@ -246,58 +254,30 @@ format :html do
     icon + rich_text
   end
 
-  def autosaved_draft_link
-    link_to_view :edit, "autosaved draft",
-                 path: { edit_draft: true, slot: { show: :toolbar } },
-                 class: "navbar-link slotter pull-right"
+  def autosaved_draft_link opts={}
+    text = opts.delete(:text) || "autosaved draft"
+    opts[:path] = { edit_draft: true, slot: { show: :toolbar } }
+    add_class opts, "navbar-link slotter"
+    link_to_view :edit, text, opts
   end
 
-  def default_edit_content_link_args args
-    args[:title] ||= "content"
+  {
+    edit:           "content",
+    edit_name:      "name",
+    edit_type:      "type",
+    edit_nests:     "nests",
+    edit_structure: "structure",
+    history:        "history"
+  }.each do |viewname, viewtitle|
+
+    view "#{viewname}_link" do
+      voo.title ||= viewtitle
+      toolbar_view_link viewname
+    end
   end
 
-  view :edit_content_link do |args|
-    toolbar_view_link :edit, args
-  end
-
-  def default_edit_name_link_args args
-    args[:title] ||= "name"
-  end
-  view :edit_name_link do |args|
-    toolbar_view_link :edit_name, args
-  end
-
-  def default_edit_type_link_args args
-    args[:title] ||= "type"
-  end
-
-  view :edit_type_link do |args|
-    toolbar_view_link :edit_type, args
-  end
-
-  view :edit_structure_link do |_args|
-    link_to_view :edit_structure, "structure"
-  end
-
-  def default_history_link_args args
-    args[:title] ||= "history"
-  end
-
-  view :history_link do |args|
-    toolbar_view_link :history, args
-  end
-
-  def default_edit_nests_link_args args
-    args[:title] ||= "nests"
-  end
-
-  view :edit_nests_link do |args|
-    toolbar_view_link :edit_nests, args
-  end
-
-  def toolbar_view_link view, args
-    text = args.delete(:title)
-    link_to_view view, text, args
+  def toolbar_view_link view
+    link_to_view view, voo.title
   end
 
   def recently_edited_settings?

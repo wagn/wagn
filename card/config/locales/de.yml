@@ -406,8 +406,6 @@ de:
             delete_old: delete old
             references: Verweise
             repair_all: alle reparieren
-            view_cache: view cache
-            clear_view_cache: clear view cache
             memory_now: memory now
             clear_cache: clear cache
             # memory previous

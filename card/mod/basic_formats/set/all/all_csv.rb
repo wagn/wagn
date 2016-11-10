@@ -1,12 +1,12 @@
 require "csv"
 
 format :csv  do
-  def get_nest_defaults _nested_card
-    { view: :core }
+  def default_nest_view
+    :core
   end
 
   def default_item_view
-    @depth == 0 ? :csv_row : :name
+    @depth.zero? ? :csv_row : :name
   end
 
   view :csv_row do |_args|
@@ -32,12 +32,12 @@ format :csv  do
         ""
       else
         titles = parsed_content.map do |chunk|
-          next if chunk.class != Card::Content::Chunk::Include
+          next if chunk.class != Card::Content::Chunk::Nest
           opts = chunk.options
           if %w(name link).member? opts[:view]
             opts[:view]
           else
-            opts[:inc_name].to_name.tag
+            opts[:nest_name].to_name.tag
           end
         end.compact
         CSV.generate_line titles.map { |title| title.to_s.upcase }

@@ -6,7 +6,7 @@ describe Card::Set::All::RichHtml::Form do
       @card = Card["UserForm"]  # no cards with this type
     end
 
-    it "should get type options from type_field renderer method" do
+    it "gets type options from type_field renderer method" do
       expect(@card.format.type_field).to match(/<option [^>]*selected/)
       tf = @card.format.type_field(no_current_type: true)
       expect(tf).not_to match(/<option [^>]*selected/)
@@ -16,7 +16,7 @@ describe Card::Set::All::RichHtml::Form do
       expect(tf.scan(/<option /).length).to eq(29)
     end
 
-    it "should get type list" do
+    it "gets type list" do
       Card::Auth.as :anonymous do
         tf = @card.format.type_field(no_current_type: true)
         expect(tf).not_to match(/<option [^>]*selected/)
@@ -29,14 +29,14 @@ describe Card::Set::All::RichHtml::Form do
   end
 
   context "type and header" do
-    it "should render type without no-edit class when no cards of type" do
+    it "renders type without no-edit class when no cards of type" do
       card = Card["UserForm"]  # no cards with this type
       expect(card.format.render_type)
         .to match(/<a[^>]* class="([^"]*)?\bcardtype\b[^"]*"/)
       expect(card.format.render_type)
         .not_to match(/<a[^>]* class="([^"]*)?\bno-edit\b[^"]*"/)
     end
-    it "should render type header with no-edit class when cards of type exist" do
+    it "renders type header with no-edit class when cards of type exist" do
       no_edit_card = Card["cardtype a"]
       expect(no_edit_card.format.render_type)
         .to match(/<a[^>]* class="([^"]*)?\bcardtype\b[^"]*"/)

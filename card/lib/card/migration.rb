@@ -102,7 +102,7 @@ class Card::Migration < ActiveRecord::Migration
   def read_json filename
     raw_json = File.read data_path(filename)
     json = JSON.parse raw_json
-    json["card"]["value"]
+    json.is_a?(Hash) ? json["card"]["value"] : json
   end
 
   def data_path filename=nil

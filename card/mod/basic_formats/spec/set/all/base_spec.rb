@@ -72,17 +72,20 @@ describe Card::Set::All::Base do
 
     it "renders template rule of embed cards based on set" do
       Card::Auth.as_bot
-      content = "{{_left+test_another_card|content|content;"\
-                "structure:test_another_card_structure}}"
-      card = Card.create! name: "test_card+*right+*structure",
-                          type_id: Card::HTMLID, content: content
+      structure_card = Card.create!(
+        name: "test_card+*right+*structure",
+        type_id: Card::HTMLID,
+        content: "{{_left+test_another_card|content|content;"\
+                 "structure:test_another_card_structure}}"
+      )
       Card.create! name: "test_another_card+*right+*structure",
                    type_id: Card::SearchTypeID,
                    content: ' {"type":"basic","left":"_1"}'
-      html = card.format.render_open
       href = "/test_another_card+*right?view=template_editor"
       text = "_left+test_another_card|content|content;"\
              "structure:test_another_card_structure"
+
+      html = structure_card.format.render_open
       expect(html).to have_tag("a", with: { class: "slotter", href: href },
                                     text: text)
     end

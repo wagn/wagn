@@ -6,7 +6,7 @@ describe Card::Set::Type::Css do
   let(:changed_css)            { "#box { display: inline }" }
   let(:compressed_changed_css) { "#box{display:inline}\n" }
 
-  it "should highlight code" do
+  it "highlights code" do
     Card::Auth.as_bot do
       css_card = Card.create! name: "tmp css", type_code: "css",
                               content: "p { border: 1px solid black; }"

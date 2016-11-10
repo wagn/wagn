@@ -3,18 +3,16 @@
 describe Card::Format::HtmlFormat do
   describe "views" do
     it "content" do
-      result = render_card(:content, name: "A+B")
       assert_view_select(
-        result,
-        'div[class="card-slot content-view card-content ALL ALL_PLUS ' \
-        'TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]'
+        render_card(:content, name: "A+B"),
+        'div[class="card-slot content-view ALL ALL_PLUS TYPE-basic '\
+        'RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b card-content"]'
       )
     end
 
     it "nests in multi edit" do
       c = Card.new name: "ABook", type: "Book"
-      rendered = c.format.render(:edit)
-
+      rendered = c.format.render :edit
       assert_view_select rendered, "fieldset" do
         assert_select 'div[class~="prosemirror-editor"]' do
           assert_select "input[name=?]", "card[subcards][+illustrator][content]"
@@ -65,8 +63,8 @@ describe Card::Format::HtmlFormat do
       it "renders card content" do
         assert_view_select(
           @simple_page,
-          'div[class="card-body panel-body card-content ALL ALL_PLUS ' \
-          'TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"]',
+          'div[class="card-body card-content ALL ALL_PLUS ' \
+          'TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b panel-body"]',
           "AlphaBeta"
         )
       end
@@ -93,14 +91,14 @@ describe Card::Format::HtmlFormat do
         # warn "lay #{@layout_card.inspect}, #{@main_card.inspect}"
       end
 
-      #      it "should default to core view when in layout mode" do
+      #      it "defaults to core view when in layout mode" do
       #        @layout_card.content = "Hi {{A}}"
       #        Card::Auth.as_bot { @layout_card.save }
       #
       #        expect(@main_card.format.render(:layout)).to match('Hi Alpha')
       #      end
 
-      #      it "should default to open view for main card" do
+      #      it "defaults to open view for main card" do
       #        @layout_card.content='Open up {{_main}}'
       #        Card::Auth.as_bot { @layout_card.save }
       #
@@ -119,7 +117,7 @@ describe Card::Format::HtmlFormat do
         expect(result).not_to match(/card-header/)
       end
 
-      it "shouldn't recurse" do
+      it "does not recurse" do
         @layout_card.content = "Mainly {{_main|core}}"
         Card::Auth.as_bot { @layout_card.save }
 
@@ -141,8 +139,8 @@ describe Card::Format::HtmlFormat do
           Card.create name: "outer space", content: "{{_main|name}}"
         end
 
-        expect(@layout_card.format.render(:layout)).to eq(
-          "Joe User\n" \
+        expect(@main_card.format.render(:layout)).to eq(
+          '<div id="main">Joe User</div>' + "\n" \
           '<div class="modal fade" role="dialog" id="modal-main-slot">' \
           '<div class="modal-dialog"><div class="modal-content">' \
           "</div></div></div>"

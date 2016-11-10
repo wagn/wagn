@@ -6,32 +6,32 @@ describe Card::Auth do
     @joeuserid = Card["Joe User"].id
   end
 
-  it "should authenticate user" do
+  it "authenticates user" do
     authenticated = Card::Auth.authenticate "joe@user.com", "joe_pass"
     expect(authenticated.left_id).to eq(@joeuserid)
   end
 
-  it "should authenticate user despite whitespace" do
+  it "authenticates user despite whitespace" do
     authenticated = Card::Auth.authenticate " joe@user.com ", " joe_pass "
     expect(authenticated.left_id).to eq(@joeuserid)
   end
 
-  it "should authenticate user with weird email capitalization" do
+  it "authenticates user with weird email capitalization" do
     authenticated = Card::Auth.authenticate "JOE@user.com", "joe_pass"
     expect(authenticated.left_id).to eq(@joeuserid)
   end
 
-  it "should set current directly from email" do
+  it "sets current directly from email" do
     Card::Auth.current= "joe@user.com"
     expect(Card::Auth.current_id).to eq(@joeuserid)
   end
 
-  it "should set current directly from id when mark is id" do
+  it "sets current directly from id when mark is id" do
     Card::Auth.current= @joeuserid
     expect(Card::Auth.current_id).to eq(@joeuserid)
   end
 
-  it "should set current directly from id when mark is id" do
+  it "sets current directly from id when mark is id" do
     Card::Auth.current= @joeuserid
     expect(Card::Auth.current_id).to eq(@joeuserid)
   end
@@ -45,12 +45,12 @@ describe Card::Auth do
       end
     end
 
-    it "should set current from token" do
+    it "sets current from token" do
       Card::Auth.set_current_from_token @token
       expect(Card::Auth.current_id).to eq(@joeadmin.id)
     end
 
-    it "should set arbitrary current from token on authorized account" do
+    it "sets arbitrary current from token on authorized account" do
       Card::Auth.set_current_from_token @token, @joeuserid
       expect(Card::Auth.current_id).to eq(@joeuserid)
     end

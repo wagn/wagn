@@ -85,14 +85,25 @@ class Card
         def view view, *args, &block
           view = view.to_viewname.key.to_sym
           views[self] ||= {}
-          view_block = views[self][view] =
-                         if block_given?
-                           Card::Format.extract_class_vars view, args[0]
-                           block
-                         else
-                           lookup_alias_block view, args
-                         end
+          interpret_view_opts view, args[0] if block_given?
+          view_block = views[self][view] = view_block view, args, &block
           define_method "_view_#{view}", view_block
+        end
+
+        def interpret_view_opts view, opts
+          return unless opts.present?
+          Card::Format.interpret_view_opts view, opts
+          extract_view_cache_rules view, opts.delete(:cache)
+        end
+
+        def extract_view_cache_rules view, cache_rule
+          return unless cache_rule
+          methodname = Card::Format.view_cache_setting_method view
+          define_method(methodname) { cache_rule }
+        end
+
+        def view_block view, args, &block
+          block_given? ? block : lookup_alias_block(view, args)
         end
 
         def lookup_alias_block view, args

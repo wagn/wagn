@@ -202,7 +202,7 @@ describe Card::Content::Diff do
     end
 
     it "removes square brackets" do
-      expect(diff "[[Hello]]", "[[Hi]]").to eq(del("Hello") + ins("Hi"))
+      expect(diff "[[Hello]]", "[[Hi]]").to eq(del("Hello<br>") + ins("Hi<br>"))
     end
   end
 end

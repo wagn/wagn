@@ -39,14 +39,21 @@ class Card::Migration < ActiveRecord::Migration
     end
 
     def schema_mode mig_type=type
-      new_suffix = schema_suffix mig_type
-      original_suffix = ActiveRecord::Base.table_name_suffix
+      with_suffix mig_type do
+        paths = Cardio.migration_paths(type)
+        yield(paths)
+      end
+    end
 
-      ActiveRecord::Base.table_name_suffix = new_suffix
+    def with_suffix mig_type
+      original_name = ActiveRecord::Base.schema_migrations_table_name
+      #original_suffix = ActiveRecord::Base.table_name_suffix
+      #ActiveRecord::Base.table_name_suffix = new_suffix
+      ActiveRecord::Base.schema_migrations_table_name += schema_suffix mig_type
       ActiveRecord::SchemaMigration.reset_table_name
-      paths = Cardio.migration_paths(type)
-      yield(paths)
-      ActiveRecord::Base.table_name_suffix = original_suffix
+      yield
+      #ActiveRecord::Base.table_name_suffix = original_suffix
+      ActiveRecord::Base.schema_migrations_table_name = original_name
       ActiveRecord::SchemaMigration.reset_table_name
     end
 

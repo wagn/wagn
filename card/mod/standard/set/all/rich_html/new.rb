@@ -93,7 +93,11 @@ format :html do
   view :new_buttons do
     cancel_path = !main? && path(view: :missing)
     button_formgroup do
-      [standard_submit_button, standard_cancel_button(cancel_path)]
+      [standard_create_button, standard_cancel_button(cancel_path)]
     end
+  end
+
+  def standard_create_button
+    submit_button class: "submit-button create-submit-button"
   end
 end

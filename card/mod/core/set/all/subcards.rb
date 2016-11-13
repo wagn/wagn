@@ -10,9 +10,9 @@ def subfield field_name
   subcards.field field_name
 end
 
-# phase_method :add_subcard, before: :store do |name_or_card, args=nil|
+# phase_method :attach_subcard, before: :store do |name_or_card, args=nil|
 # TODO: handle differently in different stages
-def attach_subcard name_or_card, args={}
+def attach_subcard name_or_card, args=nil
   subcards.add name_or_card, args
 end
 alias_method :add_subcard, :attach_subcard
@@ -23,8 +23,8 @@ def attach_subcard! name_or_card, args={}
   subcard
 end
 
-# phase_method :add_subfield, before: :approve do |name_or_card, args=nil|
-def attach_subfield name_or_card, args={}
+# phase_method :attach_subfield, before: :approve do |name_or_card, args=nil|
+def attach_subfield name_or_card, args=nil
   subcards.add_field name_or_card, args
 end
 alias_method :add_subfield, :attach_subfield
@@ -38,11 +38,15 @@ end
 def detach_subcard name_or_card
   subcards.remove name_or_card
 end
-alias_method :remove_subcard, :detach_subcard
+
 
 def detach_subfield name_or_card
   subcards.remove_field name_or_card
 end
+
+alias_method :add_subcard, :attach_subcard
+alias_method :remove_subcard, :detach_subcard
+alias_method :add_subfield, :attach_subfield
 alias_method :remove_subfield, :detach_subfield
 
 def clear_subcards

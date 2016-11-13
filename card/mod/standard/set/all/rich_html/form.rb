@@ -57,9 +57,7 @@ format :html do
 
   def card_form action, opts={}
     @form_root = true
-    url, action = card_form_url action
-    html_opts = card_form_html_opts action, opts
-    form_for card, url: url, html: html_opts, remote: true do |form|
+    form_for card, card_form_opts(action, opts) do |form|
       @form = form
       output yield(form)
     end
@@ -72,8 +70,17 @@ format :html do
     end
   end
 
+  def card_form_opts action, opts={}
+    url, action = card_form_url action
+    html_opts = card_form_html_opts action, opts
+    form_opts = { url: url, html: html_opts }
+    form_opts[:remote] = true unless html_opts.delete(:redirect)
+    form_opts
+  end
+
   def card_form_html_opts action, opts={}
-    klasses = Array.wrap(opts[:class]) << "card-form slotter"
+    klasses = Array.wrap(opts[:class])
+    klasses << "card-form slotter" unless opts[:redirect]
     klasses << "autosave" if action == :update
     opts[:class] = klasses.join " "
 

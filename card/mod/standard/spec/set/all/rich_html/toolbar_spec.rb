@@ -1,5 +1,3 @@
-require 'rspec'
-
 describe Card::Set::All::RichHtml::Toolbar do
   context "hidden toolbar" do
     subject do

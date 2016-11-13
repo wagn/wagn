@@ -246,6 +246,7 @@ class Card
     end
 
     def new_by_attributes name, attributes={}
+      attributes ||= {}
       absolute_name = absolutize_subcard_name name
       if absolute_name.field_of?(@context_card.name) &&
          (absolute_name.parts.size - @context_card.cardname.parts.size) > 2

@@ -23,34 +23,17 @@ module Cardio
       end
     end
 
-    def with_suffix mig_type
-      original_name = ActiveRecord::Base.schema_migrations_table_name
-      #original_suffix = ActiveRecord::Base.table_name_suffix
-      #ActiveRecord::Base.table_name_suffix = new_suffix
-      ActiveRecord::Base.schema_migrations_table_name += schema_suffix mig_type
+    def with_suffix type
+      new_suffix = Cardio.schema_suffix type
+      original_suffix = ActiveRecord::Base.table_name_suffix
+      # original_name = ActiveRecord::Base.schema_migrations_table_name
+      ActiveRecord::Base.table_name_suffix = new_suffix
       ActiveRecord::SchemaMigration.reset_table_name
       yield
-      #ActiveRecord::Base.table_name_suffix = original_suffix
-      ActiveRecord::Base.schema_migrations_table_name = original_name
+      ActiveRecord::Base.table_name_suffix = original_suffix
+      #  ActiveRecord::Base.schema_migrations_table_name = original_name
       ActiveRecord::SchemaMigration.reset_table_name
     end
-
-    # def schema_mode type
-    #   paths = Cardio.migration_paths(type)
-    #   with_suffix type do
-    #     ActiveRecord::SchemaMigration.reset_table_name
-    #     yield(paths)
-    #     ActiveRecord::SchemaMigration.reset_table_name
-    #   end
-    # end
-    #
-    # def with_suffix type
-    #   new_suffix = Cardio.schema_suffix type
-    #   original_suffix = ActiveRecord::Base.table_name_suffix
-    #   ActiveRecord::Base.table_name_suffix = new_suffix
-    #   yield
-    #   ActiveRecord::Base.table_name_suffix = original_suffix
-    # end
 
     def schema type=nil
       File.read(schema_stamp_path(type)).strip

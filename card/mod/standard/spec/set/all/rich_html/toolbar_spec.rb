@@ -5,7 +5,7 @@ describe Card::Set::All::RichHtml::Toolbar do
     end
     it "renders toolbar" do
       is_expected.to have_tag "div", with: { class: "SELF-a edit-view" } do
-        with_tag  "nav", with: { class: "toolbar" }
+        with_tag "nav", with: { class: "toolbar" }
       end
     end
   end
@@ -15,7 +15,7 @@ describe Card::Set::All::RichHtml::Toolbar do
     end
     it "hides toolbar" do
       is_expected.to have_tag "div", with: { class: "SELF-a edit-view" } do
-        without_tag  "nav", with: { class: "toolbar" }
+        without_tag "nav", with: { class: "toolbar" }
       end
     end
   end

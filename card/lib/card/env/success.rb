@@ -25,7 +25,7 @@ class Card
       end
 
       def hard_redirect?
-        @redirect == true
+        @redirect == true || @redirect == "true"
       end
 
       # reset card object and override params with success params

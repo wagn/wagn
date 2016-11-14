@@ -6,7 +6,7 @@ format :html do
     super
   end
 
-  def standard_frame
+  def standard_frame slot=true
     class_up "card-frame", "panel panel-default"
     super
   end

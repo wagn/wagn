@@ -46,7 +46,7 @@ view :raw do |_args|
 end
 
 format :html do
-  view :editor do |_args|
+  view :editor do
     "Content is stored in file and can't be edited."
   end
 end

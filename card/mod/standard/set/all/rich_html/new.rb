@@ -1,10 +1,10 @@
 format :html do
-  view :new, perms: :create, tags: :unknown_ok do
+  view :new, perms: :create, tags: :unknown_ok, cache: :never do
     voo.title ||= new_view_title if new_name_prompt?
-    voo.show! :help
+    voo.show :help
     frame_and_form :create, "main-success" => "REDIRECT" do
       [
-        new_view_success,
+        new_view_hidden,
         new_view_name,
         new_view_type,
         _optional_render_content_formgroup,
@@ -16,11 +16,11 @@ format :html do
   def new_view_title
     output(
       "New",
-      (card.type_name if card.type_id == Card.default_type_id)
+      (card.type_name unless card.type_id == Card.default_type_id)
     )
   end
 
-  def new_view_success
+  def new_view_hidden
     target = card.rule(:thanks) || "_self"
     hidden_field_tag "success", target
   end
@@ -93,7 +93,11 @@ format :html do
   view :new_buttons do
     cancel_path = !main? && path(view: :missing)
     button_formgroup do
-      [standard_submit_button, standard_cancel_button(cancel_path)]
+      [standard_create_button, standard_cancel_button(cancel_path)]
     end
+  end
+
+  def standard_create_button
+    submit_button class: "submit-button create-submit-button"
   end
 end

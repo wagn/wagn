@@ -56,11 +56,19 @@ class Card
       def stub_render cached_content
         return cached_content unless cached_content.is_a? String
         expand_stubs cached_content do |stub_hash|
-          stub_card = Card.fetch_from_cast stub_hash[:cast]
-          with_nest_mode(stub_hash[:mode]) do
-            nest stub_card, stub_hash[:options]
+          prepare_stub_nest(stub_hash) do |stub_card, mode, options|
+            with_nest_mode(mode) { nest stub_card, options }
+          end
         end
+      end
+
+      def prepare_stub_nest stub_hash
+        stub_card = Card.fetch_from_cast stub_hash[:cast]
+        stub_options = stub_hash[:options]
+        if stub_card.key.present? && stub_card.key == card.key
+          stub_options[:nest_name] ||= "_self"
         end
+        yield stub_card, stub_hash[:mode], stub_options
       end
 
       def expand_stubs cached_content
@@ -86,7 +94,7 @@ class Card
       def view_method view, args
         method "_view_#{view}"
       rescue
-        args[:unsupported_view] = view
+        voo.unsupported_view = view
         method "_view_unsupported_view"
       end
 

@@ -70,6 +70,9 @@ format :html do
     end
   end
 
+  # @param action [Symbol] :create or :update
+  # @param opts [Hash] html options
+  # @option opts [Boolean] :redirect (false) if true form is no "slotter"
   def card_form_opts action, opts={}
     url, action = card_form_url action
     html_opts = card_form_html_opts action, opts
@@ -79,11 +82,9 @@ format :html do
   end
 
   def card_form_html_opts action, opts={}
-    klasses = Array.wrap(opts[:class])
-    klasses << "card-form slotter" unless opts[:redirect]
-    klasses << "autosave" if action == :update
-    opts[:class] = klasses.join " "
-
+    add_class opts, "card-form"
+    add_class opts, "slotter" unless opts[:redirect]
+    add_class opts, "autosave" if action == :update
     opts[:recaptcha] ||= "on" if card.recaptcha_on?
     opts.delete :recaptcha if opts[:recaptcha] == :off
     opts

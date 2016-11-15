@@ -47,7 +47,7 @@ module Cardio
     def schema_stamp_path type
       root_dir = (type == :deck_cards ? root : gem_root)
       stamp_dir = ENV["SCHEMA_STAMP_PATH"] || File.join(root_dir, "db")
-      
+
       File.join stamp_dir, "version#{schema_suffix type}.txt"
     end
   end

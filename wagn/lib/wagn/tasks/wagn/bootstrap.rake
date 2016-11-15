@@ -1,6 +1,7 @@
 namespace :wagn do
   namespace :bootstrap do
-    desc "rid template of unneeded cards, acts, actions, changes, and references"
+    desc "rid template of unneeded cards, acts, actions, changes, " \
+         "and references"
     task clean: :environment do
       Card::Cache.reset_all
       clear_history
@@ -28,7 +29,7 @@ namespace :wagn do
         i = "000"
         File.open(File.join(WAGN_SEED_PATH, "#{table}.yml"), "w") do |file|
           data = ActiveRecord::Base.connection.select_all(
-              "select * from #{table}"
+            "select * from #{table}"
           )
           file.write YAML.dump(data.each_with_object({}) do |record, hash|
             record["trash"] = false if record.key? "trash"
@@ -46,13 +47,11 @@ namespace :wagn do
 
     desc "copy files from template database to standard mod and update cards"
     task copy_mod_files: :environment do
-      source_files_dir = "#{Wagn.root}/files"
-
       # mark mod files as mod files
       Card::Auth.as_bot do
         Card.search(type: %w(in Image File), ne: "").each do |card|
           if card.coded? || card.codename == "new_file" ||
-              card.codename == "new_image"
+             card.codename == "new_image"
             puts "skipping #{card.name}: already in code"
             next
           else
@@ -61,10 +60,10 @@ namespace :wagn do
 
           # make card a mod file card
           mod_name = if (l = card.left) && l.type_id == Card::SkinID
-            "bootstrap"
-          else
-            "standard"
-          end
+                       "bootstrap"
+                     else
+                       "standard"
+                     end
           card.update_attributes! storage_type: :coded,
                                   mod: mod_name,
                                   empty_ok: true
@@ -85,7 +84,8 @@ end
 def correct_time_and_user_stamps
   conn = ActiveRecord::Base.connection
   who_and_when = [Card::WagnBotID, Time.now.utc.to_s(:db)]
-  card_sql = "update cards set creator_id=%1$s, created_at='%2$s', updater_id=%1$s, updated_at='%2$s'"
+  card_sql = "update cards set creator_id=%1$s, created_at='%2$s', " \
+             "updater_id=%1$s, updated_at='%2$s'"
   conn.update(card_sql % who_and_when)
   conn.update("update card_acts set actor_id=%s, acted_at='%s'" % who_and_when)
 end

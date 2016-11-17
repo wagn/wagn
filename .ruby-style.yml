@@ -70,6 +70,13 @@ Style/FormatString:
     - format
     - sprintf
     - percent
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - 'Rakefile'
+    - '**/*.rake'
+    - 'spec/**/*.rb'
+    - '**/*_spec.rb'
 RSpec/ExampleLength:
   Description: Checks for long examples.
   Enabled: true

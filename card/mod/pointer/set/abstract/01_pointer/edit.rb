@@ -43,7 +43,7 @@ format :html do
   end
 
   def add_item_button
-    content_tag :span, class: "input-group" do
+    wrap_with :span, class: "input-group" do
       button_tag class: "pointer-item-add" do
         glyphicon("plus") + " add another"
       end

@@ -83,6 +83,14 @@ module ClassMethods
     end
   end
 
+  def fetch_name mark, &block
+    if (card = quick_fetch(mark))
+      card.name
+    elsif block_given?
+      block.call
+    end
+  end
+
   def quick_fetch mark
     fetch mark, skip_virtual: true, skip_modules: true
   end

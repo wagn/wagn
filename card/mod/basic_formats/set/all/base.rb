@@ -55,7 +55,7 @@ format do
     scard ? scard.raw_content : _render_blank
   end
 
-  view :core do
+  view :core, closed: true do
     process_content _render_raw
   end
 

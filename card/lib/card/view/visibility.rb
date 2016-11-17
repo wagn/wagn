@@ -39,7 +39,8 @@ class Card
       end
 
       # advanced write method
-      VIZ_SETTING = { show: :show, true => :show, hide: :hide, false => :hide }
+      VIZ_SETTING = { show: :show, true => :show,
+                      hide: :hide, false => :hide, nil => :hide }
 
       def viz views, setting, force=false
         Array.wrap(views).each do |view|

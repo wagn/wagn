@@ -161,6 +161,7 @@ format do
 
   def nest_item cardish, options={}, &block
     options = item_view_options options
+    options[:nest_name] = Card::Name.cardish(cardish).s
     nest cardish, options, &block
   end
 
@@ -184,7 +185,7 @@ format do
     options[:view] ||= implicit_item_view
     determine_item_view_options_type options
     options
-    end
+  end
 
   def determine_item_view_options_type options
     return if options[:type]
@@ -195,7 +196,6 @@ format do
   def search_params
     @search_params ||= begin
       p = default_search_params.clone
-
       if focal?
         p[:offset] = params[:offset] if params[:offset]
         p[:limit]  = params[:limit]  if params[:limit]
@@ -235,6 +235,26 @@ format do
     result
   end
 
+  def nested_fields_for_edit
+    return normalized_edit_fields if edit_fields.present?
+    result = []
+    each_nested_field do |chunk|
+      result << [chunk.options[:nest_name], chunk.options]
+    end
+    result
+  end
+
+  def edit_fields
+    voo.edit_structure || []
+  end
+
+  def normalized_edit_fields
+    edit_fields.map do |name, options|
+      options = { title: options } if options.is_a?(String)
+      [card.cardname.field(name), options]
+    end
+  end
+
   def process_field chunk, processed, &_block
     return unless process_unique_field? chunk, processed
     yield chunk
@@ -246,8 +266,8 @@ format do
     card.each_nested_chunk content do |chunk|
       next unless chunk.referee_name.to_name.field_of? card.name
       process_nested_chunk chunk, processed, &block
-        end
-      end
+    end
+  end
 
   def process_nested_chunk chunk, processed, &block
     virtual = chunk.referee_card && chunk.referee_card.virtual?

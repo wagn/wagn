@@ -9,8 +9,8 @@ format do
     ""
   end
 
-  view :unsupported_view, perms: :none, tags: :unknown_ok do |args|
-    "view (#{args[:unsupported_view]}) not supported for #{error_cardname}"
+  view :unsupported_view, perms: :none, tags: :unknown_ok do
+    "view (#{voo.unsupported_view}) not supported for #{error_cardname}"
   end
 
   view :missing, perms: :none do
@@ -64,7 +64,7 @@ format :html do
 
   def rendering_error exception, view
     details = Auth.always_ok? ? backtrace_link(exception) : error_cardname
-    content_tag :span, class: "render-error alert alert-danger" do
+    wrap_with :span, class: "render-error alert alert-danger" do
       ["error rendering", details, "(#{view} view)"].join "\n"
     end
   end
@@ -82,10 +82,10 @@ format :html do
     link + warning
   end
 
-  view :unsupported_view, perms: :none, tags: :unknown_ok do |args|
+  view :unsupported_view, perms: :none, tags: :unknown_ok do
     %(
       <strong>
-        view <em>#{args[:unsupported_view]}</em>
+        view <em>#{voo.unsupported_view}</em>
         not supported for <em>#{error_cardname}</em>
       </strong>
     )

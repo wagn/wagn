@@ -84,10 +84,9 @@ format :html do
     args.reverse_merge! role: "tabpanel"
     wrap_with :div, args do
       [
-        content_tag(:ul, tab_buttons.html_safe,
-                    class: "nav nav-#{tab_type}",
-                    role: "tablist"),
-        content_tag(:div, tab_panes.html_safe, class: "tab-content")
+        wrap_with(:ul, tab_buttons, class: "nav nav-#{tab_type}",
+                                    role: "tablist"),
+        wrap_with(:div, tab_panes, class: "tab-content")
       ]
     end
   end
@@ -96,7 +95,7 @@ format :html do
     link = tab_button_link target, text, link_attr
     li_args = { role: :presentation }
     li_args[:class] = "active" if active
-    content_tag :li, link, li_args
+    wrap_with :li, link, li_args
   end
 
   def tab_button_link target, text, link_attr={}
@@ -111,6 +110,6 @@ format :html do
                         id: id
     add_class args, "tab-pane"
     add_class args, "active" if active
-    content_tag :div, content.html_safe, args
+    wrap_with :div, content, args
   end
 end

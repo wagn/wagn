@@ -4,7 +4,7 @@ end
 
 format :html do
   view :open do
-    voo.show! :help
+    voo.show :help
     super()
   end
 
@@ -69,7 +69,7 @@ format :html do
     @forgot_password = true
     voo.title ||= card.i18n_signin(:forgot_password)
     voo.structure ||= true
-    voo.hide! :help
+    voo.hide :help
     Auth.as_bot { super() }
   end
 

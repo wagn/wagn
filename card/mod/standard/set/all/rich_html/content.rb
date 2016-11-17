@@ -94,11 +94,8 @@ format :html do
     end
   end
 
-  def default_open_args args
-    voo.show!(:toolbar) if toolbar_pinned?
-  end
-
   view :open, tags: :comment do
+    voo.show! :toolbar if toolbar_pinned?
     voo.viz :toggle, (main? ? :hide : :show)
     @content_body = true
     frame do

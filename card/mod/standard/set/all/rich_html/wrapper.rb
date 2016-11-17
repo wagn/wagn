@@ -70,7 +70,7 @@ format :html do
   end
 
   def related_frame
-    voo.show! :menu
+    voo.show :menu
     wrap do
       [
         _render_menu,

@@ -171,7 +171,7 @@ format do
   end
 
   def voo_items_view
-    return unless items = voo.items
+    return unless (items = voo.items)
     items[:view]
   end
 
@@ -221,7 +221,7 @@ format do
     hash[:vars] = params[:vars] || {}
     params.each do |key, val|
       case key.to_s
-#      when "_wql"      then hash.merge! val
+      # when "_wql"      then hash.merge! val
       when /^\_(\w+)$/ then hash[:vars][Regexp.last_match(1).to_sym] = val
       end
     end
@@ -274,7 +274,7 @@ format do
     # TODO: handle structures that are non-virtual
     method = virtual ? :process_virtual_field : :process_field
     send method, chunk, processed, &block
-    end
+  end
 
   def process_virtual_field chunk, processed, &block
     return unless process_unique_field? chunk, processed
@@ -288,8 +288,8 @@ format do
     return false if processed.include? key
     processed << key
     true
-    end
   end
+end
 
 format :html do
   view :count do |args|
@@ -313,7 +313,8 @@ format :html do
   def construct_tab tabs, name, explicit_options
     tab_options = item_view_options explicit_options
     tab_name = tab_options[:title] || name
-    tabs[:paths][tab_name] = { title: tab_name, path: nest_path(name, tab_options).html_safe }
+    tabs[:paths][tab_name] = { title: tab_name,
+                               path: nest_path(name, tab_options).html_safe }
     return unless tabs[:active].empty?
     tabs[:active] = { name: tab_name, content: nest(name, tab_options) }
   end

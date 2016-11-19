@@ -88,7 +88,7 @@ format :js do
 end
 
 format :data do
-  view :core do |_args|
+  view :core, cache: :never do
     nest_item_array
   end
 end

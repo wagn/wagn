@@ -41,7 +41,7 @@ class Card
       def final_render view, args
         current_view(view) do
           with_nest_mode view do
-            method = view_method view, args
+            method = view_method view
             method.arity.zero? ? method.call : method.call(args)
           end
         end
@@ -89,9 +89,9 @@ class Card
 
       def optional_render_args args, opts
         args[:optional] = opts.shift || :show
-          end
+      end
 
-      def view_method view, args
+      def view_method view
         method "_view_#{view}"
       rescue
         voo.unsupported_view = view

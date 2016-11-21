@@ -312,13 +312,17 @@ format :html do
 
   def construct_tab tabs, name, explicit_options
     tab_options = item_view_options explicit_options
-    tab_name = tab_options[:title] || name
-    tabs[:paths][tab_name] = { title: tab_name,
-                               path: nest_path(name, tab_options).html_safe }
+    title = tab_title tab_options[:title], name
+    tabs[:paths][title] = { title: title,
+                            path: nest_path(name, tab_options).html_safe }
     return unless tabs[:active].empty?
-    tabs[:active] = { name: tab_name, content: nest(name, tab_options) }
+    tabs[:active] = { name: title, content: nest(name, tab_options) }
   end
 
+  def tab_title title, name
+    return name unless title
+    name.to_name.title title, @context_names
+  end
   # create a path for a nest with respect ot the nest options
   def nest_path name, nest_opts={}
     path_opts = { slot: nest_opts.clone }

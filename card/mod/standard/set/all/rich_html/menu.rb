@@ -15,7 +15,7 @@ format :html do
       show_view?(:horizontal_menu, :hide) ? "visible-xs" : "show-on-hover"
 
     wrap_with :div, class: "vertical-card-menu card-menu #{css_class}" do
-      content_tag :div, class: "btn-group slotter card-slot pull-right" do
+      wrap_with :div, class: "btn-group slotter card-slot pull-right" do
         link_to_view(:vertical_menu, menu_icon, path: menu_path_opts).html_safe
       end
     end
@@ -38,14 +38,14 @@ format :html do
   end
 
   def vertical_menu_toggle
-    content_tag :span, "<a href='#'>#{menu_icon}</a>".html_safe,
+    wrap_with :span, "<a href='#'>#{menu_icon}</a>".html_safe,
                 class: "open-menu dropdown-toggle",
                 "data-toggle" => "dropdown",
                 "aria-expanded" => "false"
   end
 
   def vertical_menu_item_list
-    content_tag :ul, class: "dropdown-menu", role: "menu" do
+    wrap_with :ul, class: "dropdown-menu", role: "menu" do
       menu_item_list.map do |item|
         "<li>#{item}</li>"
       end.join("\n").html_safe
@@ -53,7 +53,7 @@ format :html do
   end
 
   view :horizontal_menu do
-    content_tag :div, class: "btn-group slotter pull-right card-menu "\
+    wrap_with :div, class: "btn-group slotter pull-right card-menu "\
                              "horizontal-card-menu hidden-xs" do
       menu_item_list(class: "btn btn-default").join("\n").html_safe
     end

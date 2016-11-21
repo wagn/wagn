@@ -131,7 +131,7 @@ class Card
             add_content content
             collected_content = @content.pop
             tag_name = opts.delete(:tag) if tag_name == :yield
-            add_content content_tag(tag_name, collected_content, opts)
+            add_content wrap_with(tag_name, collected_content, opts)
             @append.pop.each do |block|
               add_content instance_exec(&block)
             end

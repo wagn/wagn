@@ -7,6 +7,6 @@ view :core do |_args|
   end
 end
 
-view :editor do |_args|
+view :editor do
   check_box :content
 end

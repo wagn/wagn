@@ -116,7 +116,7 @@ format :html do
         Card.set_patterns.select { |p| sets[p] }.reverse.map do |set_pattern|
           sets[set_pattern].map do |rule|
             rule[:options].map do |option|
-              content_tag :li, class: "list-group-item" do
+              wrap_with :li, class: "list-group-item" do
                 subformat(rule[:card]).render_follow_item condition: option,
                                                           hide: hide_buttons
               end
@@ -141,7 +141,7 @@ format :html do
     wrap_with :div, class: "pointer-list-editor" do
       wrap_with :ul, class: "delete-list list-group" do
         ignore_list.map do |rule_card|
-          content_tag :li, class: "list-group-item" do
+          wrap_with :li, class: "list-group-item" do
             subformat(rule_card).render_follow_item condition: never,
                                                     hide: hide_buttons
           end

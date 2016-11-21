@@ -161,6 +161,7 @@ format do
 
   def nest_item cardish, options={}, &block
     options = item_view_options options
+    options[:nest_name] = Card::Name.cardish(cardish).s
     nest cardish, options, &block
   end
 
@@ -170,7 +171,7 @@ format do
   end
 
   def voo_items_view
-    return unless items = voo.items
+    return unless (items = voo.items)
     items[:view]
   end
 
@@ -184,7 +185,7 @@ format do
     options[:view] ||= implicit_item_view
     determine_item_view_options_type options
     options
-    end
+  end
 
   def determine_item_view_options_type options
     return if options[:type]
@@ -195,7 +196,6 @@ format do
   def search_params
     @search_params ||= begin
       p = default_search_params.clone
-
       if focal?
         p[:offset] = params[:offset] if params[:offset]
         p[:limit]  = params[:limit]  if params[:limit]
@@ -221,7 +221,7 @@ format do
     hash[:vars] = params[:vars] || {}
     params.each do |key, val|
       case key.to_s
-#      when "_wql"      then hash.merge! val
+      # when "_wql"      then hash.merge! val
       when /^\_(\w+)$/ then hash[:vars][Regexp.last_match(1).to_sym] = val
       end
     end
@@ -235,6 +235,26 @@ format do
     result
   end
 
+  def nested_fields_for_edit
+    return normalized_edit_fields if edit_fields.present?
+    result = []
+    each_nested_field do |chunk|
+      result << [chunk.options[:nest_name], chunk.options]
+    end
+    result
+  end
+
+  def edit_fields
+    voo.edit_structure || []
+  end
+
+  def normalized_edit_fields
+    edit_fields.map do |name, options|
+      options = { title: options } if options.is_a?(String)
+      [card.cardname.field(name), options]
+    end
+  end
+
   def process_field chunk, processed, &_block
     return unless process_unique_field? chunk, processed
     yield chunk
@@ -246,15 +266,15 @@ format do
     card.each_nested_chunk content do |chunk|
       next unless chunk.referee_name.to_name.field_of? card.name
       process_nested_chunk chunk, processed, &block
-        end
-      end
+    end
+  end
 
   def process_nested_chunk chunk, processed, &block
     virtual = chunk.referee_card && chunk.referee_card.virtual?
     # TODO: handle structures that are non-virtual
     method = virtual ? :process_virtual_field : :process_field
     send method, chunk, processed, &block
-    end
+  end
 
   def process_virtual_field chunk, processed, &block
     return unless process_unique_field? chunk, processed
@@ -268,8 +288,8 @@ format do
     return false if processed.include? key
     processed << key
     true
-    end
   end
+end
 
 format :html do
   view :count do |args|
@@ -292,12 +312,17 @@ format :html do
 
   def construct_tab tabs, name, explicit_options
     tab_options = item_view_options explicit_options
-    tab_name = tab_options[:title] || name
-    tabs[:paths][tab_name] = { title: tab_name, path: nest_path(name, tab_options).html_safe }
+    title = tab_title tab_options[:title], name
+    tabs[:paths][title] = { title: title,
+                            path: nest_path(name, tab_options).html_safe }
     return unless tabs[:active].empty?
-    tabs[:active] = { name: tab_name, content: nest(name, tab_options) }
+    tabs[:active] = { name: title, content: nest(name, tab_options) }
   end
 
+  def tab_title title, name
+    return name unless title
+    name.to_name.title title, @context_names
+  end
   # create a path for a nest with respect ot the nest options
   def nest_path name, nest_opts={}
     path_opts = { slot: nest_opts.clone }

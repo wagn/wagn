@@ -10,6 +10,7 @@ class Card
             yield
           end
         end
+
         caching? ? cached_view : format.stub_render(cached_view)
       end
 
@@ -23,12 +24,16 @@ class Card
       # midrender, (eg card.format...), it needs to be treated as unrelated to
       # any caching in progress.
       def caching?
-        root? ? false : self.class.caching?
+        deep_root? ? false : self.class.caching?
       end
 
       # neither view nor format has a parent
-      def root?
+      def deep_root?
         !parent && !format.parent
+      end
+
+      def root
+        @root = parent ? parent.root : self
       end
 
       def cache_key

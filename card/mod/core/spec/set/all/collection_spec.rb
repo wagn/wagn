@@ -111,8 +111,18 @@ describe Card::Set::All::Collection do
       tabs = render_content "{{Fruit+*type+*create|tabs|name;structure:Home}}"
       params = { slot: { structure: "Home" }, view: :name }.to_param
       path = "/Anyone?#{params}"
+      log_html tabs
       assert_view_select tabs, "div[role=tabpanel]" do
         assert_select %(li > a[data-toggle="tab"][data-url="#{path}"])
+      end
+    end
+
+    it "handles contextual titles" do
+      create name: "tabs card", content: "[[A+B]]\n[[One+Two+Three]]\n[[Four+One+Five]]", type: "pointer"
+      tabs = render_content  "{{tabs card|tabs|closed;title:_left}}"
+      assert_view_select tabs, "div[role=tabpanel]" do
+        assert_select 'li > a[data-toggle="tab"]', "A"
+        assert_select 'li > a[data-toggle="tab"]', "One+Two"
       end
     end
 

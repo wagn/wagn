@@ -138,5 +138,9 @@ class Card
     def to_sym
       s.to_sym
     end
+
+    def title title_directive, context_names
+      title_directive.to_name.to_absolute_name(self).to_show(*context_names)
+    end
   end
 end

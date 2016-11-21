@@ -5,7 +5,7 @@ format :html do
     opts[:href] = path opts.delete(:path)
     text = raw(text || opts[:href])
     interpret_data_opts_to_link_to opts
-    content_tag :a, text, opts
+    wrap_with :a, text, opts
   end
 
   def interpret_data_opts_to_link_to opts

@@ -38,9 +38,8 @@ format do
   end
 
   def pointer_items args={}
-    item_options = item_view_options args
     card.item_cards.map do |item_card|
-      nest_item item_card, item_options.clone do |rendered, item_view|
+      nest_item item_card, args do |rendered, item_view|
         wrap_item rendered, item_view
       end
     end
@@ -89,7 +88,7 @@ format :js do
 end
 
 format :data do
-  view :core do |_args|
+  view :core, cache: :never do
     nest_item_array
   end
 end
@@ -102,9 +101,9 @@ end
 
 format :json do
   view :export_items do |args|
-    item_options = args.merge view: :export
+    item_args = args.merge view: :export
     card.known_item_cards.map do |item_card|
-      nest_item item_card, item_options
+      nest_item item_card, item_args
     end.flatten.reject(&:blank?)
   end
 end

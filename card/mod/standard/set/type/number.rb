@@ -1,5 +1,5 @@
 
-view :editor do |_args|
+view :editor do
   text_field :content, class: "card-content"
 end
 

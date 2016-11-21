@@ -14,6 +14,7 @@ class Card
     extend Cache::ClassMethods
 
     attr_reader :format, :parent, :card
+    attr_accessor :unsupported_view
 
     def self.canonicalize view
       return if view.blank? # error?

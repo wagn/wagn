@@ -50,7 +50,7 @@ class Card
       # test whether user is an administrator
       # @param user_id [Integer]
       # @return [true/false]
-      def admin? user_idmao
+      def admin? user_id
         has_role? user_id, Card::AdministratorID
       end
 

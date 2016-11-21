@@ -106,7 +106,7 @@ class Card
         # That shouldn't be possible (#fetch is designed to prevent it), and
         # it immediately breaks write.  Best guess is that #read is somehow
         # shortcutting and returning current object.  need to research!
-        puts "failed to write attribute: #{attribute}"
+        Rails.logger.info "failed to write attribute: #{attribute}"
       end
 
       def write key, value

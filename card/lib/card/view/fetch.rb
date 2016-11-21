@@ -11,7 +11,6 @@ class Card
       # - creating a stub within another render
       #   (so that the stub may be rendered later)
       def fetch &block
-        return yield unless Cardio.config.view_cache
         case cache_level
         when :yield       then yield
         when :cache_yield then cache_fetch(&block)
@@ -29,6 +28,7 @@ class Card
       #   don't double cache
       # * *never* don't ever cache this view
       def cache_level
+        return :yield unless Cardio.config.view_cache
         send "#{caching? ? 'dependent' : 'independent'}_cache_level"
       end
 

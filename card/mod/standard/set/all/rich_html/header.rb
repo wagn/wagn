@@ -17,13 +17,19 @@ format :html do
 
   view :header do
     voo.hide :toggle, :toolbar
-    main_header =
-      wrap_with :div, class: classy("card-header") do
-        wrap_with :div, class: classy("card-header-title") do
-          [_optional_render_toggle, _optional_render_title]
-        end
-    end
     main_header + _optional_render_toolbar
+  end
+
+  def main_header
+    wrap_with :div, class: classy("card-header") do
+      wrap_with :div, class: classy("card-header-title") do
+        header_title_elements
+      end
+    end
+  end
+
+  def header_title_elements
+    [_optional_render_toggle, _optional_render_title]
   end
 
   view :subheader do

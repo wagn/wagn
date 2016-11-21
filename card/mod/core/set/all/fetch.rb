@@ -230,7 +230,8 @@ module ClassMethods
     opts[:skip_virtual] || opts[:new].present? || opts[:skip_type_lookup]
   end
 
-  def compose_mark parts, opts
+  def compose_mark parts, opts={}
+    parts.flatten!
     return normalize_mark(parts.first, opts) if parts.size == 1
     parts.map do |p|
       normalized = normalize_mark p, {}

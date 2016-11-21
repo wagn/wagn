@@ -164,8 +164,7 @@ def add_item name
 end
 
 def add_item! name
-  add_item name
-  save!
+  add_item(name) && save!
 end
 
 def drop_item name

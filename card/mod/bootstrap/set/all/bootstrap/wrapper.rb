@@ -7,7 +7,11 @@ format :html do
   end
 
   def standard_frame slot=true
-    class_up "card-frame", "panel panel-default"
+    class_up "card-frame", "panel panel-#{panel_state}"
     super
+  end
+
+  def panel_state
+    "default"
   end
 end

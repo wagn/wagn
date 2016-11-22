@@ -7,7 +7,7 @@ namespace :card do
 
   desc "merge all import card data into the the database"
   task merge_all: :environment do
-    Card::Migration::Import.merge true
+    Card::Migration::Import.merge all: true
   end
 
   desc "add card to import data"

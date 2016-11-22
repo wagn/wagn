@@ -20,6 +20,10 @@ class Card
           def changed_cards
             ImportData.new.changed_cards
           end
+
+          def select_cards names_or_keys
+            ImportData.new.select_cards Array(names_or_keys)
+          end
         end
 
         def initialize path=nil
@@ -30,6 +34,13 @@ class Card
 
         def all_cards
           cards.map { |data| prepare_for_import data }
+        end
+
+        def select_cards names_or_keys
+          all_cards.select do |attributes|
+            names_or_keys.include?(attributes[:name]) ||
+                names_or_keys.include?(attributes[:name].to_name.key)
+          end
         end
 
         def changed_cards

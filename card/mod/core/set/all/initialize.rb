@@ -11,6 +11,7 @@ module ClassMethods
 end
 
 def initialize args={}
+  args["name"]= Card.compose_mark(args["name"]) if args["name"].is_a?(Array)
   args["name"] = args["name"].to_s
   args["db_content"] = args.delete("content") if args["content"]
   @supercard = args.delete "supercard" # must come before name =

@@ -115,7 +115,7 @@ class Card
 
       def resolve_name_conflict args
         rename = args.delete :rename_if_conflict
-        return unless rename
+        return unless args[:name] && rename
         args[:name] = Card.uniquify_name args[:name], rename
       end
 

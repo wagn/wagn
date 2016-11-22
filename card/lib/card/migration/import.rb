@@ -19,8 +19,16 @@ class Card
         # Merge the import data into the cards table
         # If 'all' is true all import data is merged.
         # Otherwise only the data that was changed or added since the last merge
-        def merge all=false
-          merge_data = all ? ImportData.all_cards : ImportData.changed_cards
+        def merge opts={}
+          merge_data =
+              if opts[:all]
+                ImportData.all_cards
+              elsif opts[:only]
+                ImportData.select_cards opts[:only]
+              else
+                ImportData.changed_cards
+              end
+
           puts("nothing to merge") && return if merge_data.empty?
 
           Card::Mailer.perform_deliveries = false

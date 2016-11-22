@@ -94,6 +94,15 @@ class Card::Migration < ActiveRecord::Migration
     Card.merge_list full_data, merge_opts
   end
 
+  # uses the data in cards.yml and the card content in db/migrate_cards/data/cards
+  # to update or create the cards given by name or key in names_or_keys
+  def merge_cards names_or_keys
+    names_or_keys = Array(names_or_keys)
+    Card::Mailer.perform_deliveries = false
+
+    Card::Migration::Import.merge only: names_or_keys
+  end
+
   def read_json filename
     raw_json = File.read data_path(filename)
     json = JSON.parse raw_json

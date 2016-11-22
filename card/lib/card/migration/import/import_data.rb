@@ -37,10 +37,10 @@ class Card
         end
 
         def select_cards names_or_keys
-          all_cards.select do |attributes|
-            names_or_keys.include?(attributes[:name]) ||
-                names_or_keys.include?(attributes[:name].to_name.key)
-          end
+          cards.map do |attributes|
+            next unless name_or_key_match attributes, names_or_keys
+            prepare_for_import data
+          end.compact
         end
 
         def changed_cards
@@ -91,6 +91,13 @@ class Card
         end
 
         private
+
+        def name_or_key_match attributes, names_or_keys
+          names_or_keys.include?(attributes[:name]) ||
+            names_or_keys.include?(attributes[:name].to_name.key) ||
+            names_or_keys.include?(attributes[:key])
+        end
+
 
         def update_attribute name, attr_key, attr_value
           card = find_card name

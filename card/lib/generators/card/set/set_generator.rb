@@ -22,8 +22,8 @@ class Card
         suffix = modifier ? "_#{modifier}" : nil
         filename = "#{anchors.last}#{suffix}.rb"
         dirs = anchors[0..-2]
-        path_parts = [mod_path, modifier, set_pattern, dirs, filename].compact
-        File.join(*path_parts)
+        path_parts = [mod_path, modifier, "set", set_pattern, dirs, filename]
+        File.join(*path_parts.compact)
       end
     end
   end

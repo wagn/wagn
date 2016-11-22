@@ -15,7 +15,7 @@ format :html do
     add_class dialog_args, args[:dialog_class]
     wrap_with(:div, class: "modal fade", role: "dialog", id: id) do
       wrap_with(:div, dialog_args) do
-        content_tag :div, class: "modal-content" do
+        wrap_with :div, class: "modal-content" do
           ""
         end
       end
@@ -40,14 +40,9 @@ format :html do
     end
   end
 
-  view :modal_footer, tags: :unknown_ok do |args|
-    args[:buttons] || ""
-  end
-
-  def default_modal_footer_args args
-    args[:buttons] ||=
-      button_tag "Close",
-                 class: "btn-xs close-modal pull-right",
-                 "data-dismiss" => "modal"
+  view :modal_footer, tags: :unknown_ok do
+    button_tag "Close",
+               class: "btn-xs close-modal pull-right",
+               "data-dismiss" => "modal"
   end
 end

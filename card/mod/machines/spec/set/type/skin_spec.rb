@@ -47,9 +47,9 @@ describe Card::Set::Type::Skin do
     it "updates output of related machine card" do
       # item = Card.gimme! "skin item", type: :css, content: css
       skin = Card.gimme! "test skin supplier", type: :skin, content: ""
+      item = Card.gimme! "skin item", type: :css, content: css
       machine = Card.gimme! "style with skin machine+*style",
                             type: :pointer, content: "[[test skin supplier]]"
-      item = Card.gimme! "skin item", type: :css, content: css
       skin << item
       skin.putty
       updated_machine = Card.gimme machine.cardname
@@ -61,16 +61,16 @@ describe Card::Set::Type::Skin do
   context "when item changed" do
     it "updates output of related machine card" do
       skin = Card.gimme! "test skin supplier", type: :skin, content: ""
-      machine = Card.gimme! "style with skin machine+*style",
-                            type: :pointer,
-                            content: "[[test skin supplier]]"
       item = Card.gimme! "skin item", type: :css, content: css
+      machine = Card.gimme! "style with skin machine+*style",
+                            type: :pointer, content: "[[test skin supplier]]"
       skin << item
       skin.putty
+
       Card::Auth.as_bot do
-        item.update_attributes content: changed_css
-        { get: machine.machine_output_url }
-        item.update_attributes content: new_css
+        Card["skin_item"].update_attributes content: changed_css
+        machine.machine_output_url
+        Card["skin_item"].update_attributes content: new_css
       end
       updated_machine = Card.gimme machine.cardname
       path = updated_machine.machine_output_path

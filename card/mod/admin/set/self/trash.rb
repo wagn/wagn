@@ -24,17 +24,17 @@ format :html do
   def restored
     return unless (res_id = Env.params[:restore]) &&
                   (res_card = Card[res_id.to_i])
-    alert :success, dismissible: true do
-      content_tag(:h5, "restored") + subformat(res_card).render_closed
+    alert :success, true do
+      wrap_with(:h5, "restored") + subformat(res_card).render_closed
     end
   end
 
   def empty_trash_link
-    content_tag(
+    wrap_with(
       :p,
       button_link("empty trash",
                   btn_type: :default,
-                  path: { card: :admin, action: :update, task: :empty_trash,
+                  path: { mark: :admin, action: :update, task: :empty_trash,
                           success: { id: "~#{card.id}" } },
                   "data-confirm" => "Are you sure you want to delete "\
                                     "all cards in the trash?")

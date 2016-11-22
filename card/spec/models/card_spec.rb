@@ -2,7 +2,7 @@
 
 describe Card do
   describe "test data" do
-    it "should be findable by name" do
+    it "is findable by name" do
       expect(Card["Wagn Bot"].class).to eq(Card)
     end
   end
@@ -15,18 +15,18 @@ describe Card do
       end
     end
 
-    it "should not have errors"        do expect(@b.errors.size).to eq(0)        end
-    it "should have the right class"   do expect(@c.class).to    eq(Card)        end
-    it "should have the right key"     do expect(@c.key).to      eq("new_card")  end
-    it "should have the right name"    do expect(@c.name).to     eq("New Card")  end
-    it "should have the right content" do expect(@c.content).to  eq("Great Content") end
+    it "does not have errors"        do expect(@b.errors.size).to eq(0)        end
+    it "has the right class"   do expect(@c.class).to    eq(Card)        end
+    it "has the right key"     do expect(@c.key).to      eq("new_card")  end
+    it "has the right name"    do expect(@c.name).to     eq("New Card")  end
+    it "has the right content" do expect(@c.content).to  eq("Great Content") end
 
-    it "should have the right content" do
+    it "has the right content" do
       expect(@c.db_content).to eq("Great Content")
       expect(@c.content).to eq("Great Content")
     end
 
-    it "should be findable by name" do
+    it "is findable by name" do
       expect(Card["New Card"].class).to eq(Card)
     end
   end
@@ -39,17 +39,17 @@ describe Card do
       end
     end
 
-    it "should have 2 actions"  do
+    it "has 2 actions"  do
       expect(@c.actions.count).to eq(2)
     end
 
-    it "should have original action" do
+    it "has original action" do
       expect(@c.nth_action(1).value :db_content).to eq("basiccontent")
     end
   end
 
   describe "created a virtual card when missing and has a template" do
-    it "should be flagged as virtual" do
+    it "is flagged as virtual" do
       expect(Card.new(name: "A+*last edited").virtual?).to be_truthy
     end
   end
@@ -76,7 +76,7 @@ describe "basic card tests" do
     assert_equal card1.right, card2.right
   end
 
-  it "should remove cards" do
+  it "removes cards" do
     forba = Card.create! name: "Forba"
     torga = Card.create! name: "TorgA"
     torgb = Card.create! name: "TorgB"
@@ -107,7 +107,7 @@ describe "basic card tests" do
   #   alpha.attribute_card('beta').should be_instance_of(Card)
   # end
 
-  it "should create cards" do
+  it "creates cards" do
     alpha = Card.new name: "alpha", content: "alpha"
     expect(alpha.content).to eq("alpha")
     alpha.save
@@ -115,7 +115,7 @@ describe "basic card tests" do
     assert_stable alpha
   end
 
-  it "should not find nonexistent" do
+  it "does not find nonexistent" do
     expect(Card["no such card+no such tag"]).to be_nil
     expect(Card["HomeCard+no such tag"]).to be_nil
   end

@@ -55,13 +55,13 @@ describe Card::Set::Self::Signin do
       Card::Env.params[:reset_password] = true
     end
 
-    it "should be triggered by an update" do
+    it "is triggered by an update" do
       # Card['joe admin'].account.token.should be_nil FIXME - this should be t
       @card.update_attributes! "+*email" => "joe@admin.com"
       expect(Card["joe admin"].account.token).not_to be_nil
     end
 
-    it "should return an error if email is not found" do
+    it "returns an error if email is not found" do
       @card.update_attributes "+*email" => "schmoe@admin.com"
       expect(@card.errors[:email].first).to match(/not recognized/)
     end

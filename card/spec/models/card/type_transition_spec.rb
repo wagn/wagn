@@ -61,7 +61,7 @@ describe Card, "with role" do
     end
   end
 
-  it "should have a role type" do
+  it "has a role type" do
     expect(@role.type_id).to eq(Card::RoleID)
   end
 end
@@ -73,27 +73,27 @@ describe Card, "with account" do
     end
   end
 
-  it "should not have errors" do
+  it "does not have errors" do
     expect(@joe.errors.empty?).to eq(true)
   end
 
-  it "should allow type changes" do
+  it "allows type changes" do
     expect(@joe.type_code).to eq(:basic)
   end
 end
 
 describe Card, "type transition approve create" do
-  it "should have cardtype b create role r1" do
+  it "has cardtype b create role r1" do
     expect((c = Card.fetch("Cardtype B+*type+*create")).content).to eq("[[r1]]")
     expect(c.type_code).to eq(:pointer)
   end
 
-  it "should have errors" do
+  it "has errors" do
     c = change_card_to_type "basicname", "cardtype_b"
     expect(c.errors[:permission_denied]).not_to be_empty
   end
 
-  it "should be the original type" do
+  it "is the original type" do
     -> { change_card_to_type "basicname", "cardtype_b" }
     expect(Card["basicname"].type_code).to eq(:basic)
   end
@@ -104,7 +104,7 @@ describe Card, "type transition delete callback" do
     @c = change_card_to_type("type-e-card", :basic)
   end
 
-  it "should change type of the card" do
+  it "changes type of the card" do
     expect(Card["type-e-card"].type_code).to eq(:basic)
   end
 end
@@ -118,7 +118,7 @@ describe Card, "type transition create callback" do
     @c = change_card_to_type("basicname", :cardtype_f)
   end
 
-  it "should change type of card" do
+  it "changes type of card" do
     expect(Card["basicname"].type_code).to eq(:cardtype_f)
   end
 end

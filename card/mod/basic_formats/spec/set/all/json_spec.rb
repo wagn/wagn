@@ -2,7 +2,7 @@
 
 describe Card::Set::All::Json, "JSON mod" do
   context "status view" do
-    it "should handle real and virtual cards" do
+    it "handles real and virtual cards" do
       jf = Card::Format::JsonFormat
       real_json = jf.new(Card["T"]).show :status, {}
       expect(JSON[real_json]).to eq(
@@ -14,7 +14,7 @@ describe Card::Set::All::Json, "JSON mod" do
       )
     end
 
-    it "should treat both unknown and unreadable cards as unknown" do
+    it "treats both unknown and unreadable cards as unknown" do
       Card::Auth.as Card::AnonymousID do
         jf = Card::Format::JsonFormat
 

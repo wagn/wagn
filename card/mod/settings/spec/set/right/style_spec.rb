@@ -2,7 +2,7 @@
 
 describe Card::Set::Right::Style do
   #  describe "#delet"
-  #  it "should delete tempfile"
+  #  it "deletes tempfile"
   let(:css)                    { "#box { display: block }"  }
   let(:compressed_css)         { "#box{display:block}\n"    }
   let(:changed_css)            { "#box { display: inline }" }

@@ -22,7 +22,7 @@ end
 def save_content_draft content
   super
   acts.create do |act|
-    act.actions.build(draft: true, card_id: id)
+    act.actions.build(draft: true, card_id: id, action_type: :update)
        .card_changes.build(field: :db_content, value: content)
   end
 end

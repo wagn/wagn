@@ -1,6 +1,18 @@
-# require: rubocop-decko
+require:
+  - rubocop-decko
+  - rubocop-rspec
 inherit_from: .ruby-style.yml
 Style/IndentationConsistency:
   AutoCorrect: false
 Style/MutableConstant:
   AutoCorrect: false
+Decko/ViewLength:
+  Description: Avoid views longer than 15 lines of code.
+  Enabled: true
+  CountComments: false
+  Max: 15
+Decko/EventLength:
+  Description: Avoid events longer than 10 lines of code.
+  Enabled: true
+  CountComments: false
+  Max: 10

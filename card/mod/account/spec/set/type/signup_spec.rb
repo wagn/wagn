@@ -6,14 +6,13 @@ describe Card::Set::Type::Signup do
   end
 
   context "signup form form" do
-    before do
-      card = Card.new type_id: Card::SignupID
-      @form = card.format.render_new
+    subject do
+      Card.new(type_id: Card::SignupID).format.render :new
     end
 
     it "prompts to signup" do
       Card::Auth.as :anonymous do
-        expect(@form.match(/Sign up/)).to be_truthy
+        expect(subject.match(/Sign up/)).to be_truthy
       end
     end
   end
@@ -106,7 +105,7 @@ describe Card::Set::Type::Signup do
       @account = @signup.account
     end
 
-    it "should create all the necessary cards, but no token" do
+    it "creates all the necessary cards, but no token" do
       expect(@signup.type_id).to eq(Card::SignupID)
       expect(@account.email).to eq("wolf@wagn.org")
       expect(@account.status).to eq("pending")
@@ -114,7 +113,7 @@ describe Card::Set::Type::Signup do
       expect(@account.password.length).to be > 10 # encrypted
     end
 
-    it "should not create a token" do
+    it "does not create a token" do
       expect(@account.token).not_to be_present
     end
 
@@ -133,7 +132,7 @@ describe Card::Set::Type::Signup do
     end
 
     context "approval with token" do
-      it "should create token" do
+      it "creates token" do
         Card::Env.params[:approve_with_token] = true
         Card::Auth.as "joe_admin"
 
@@ -144,7 +143,7 @@ describe Card::Set::Type::Signup do
     end
 
     context "approval without token" do
-      it "should create token" do
+      it "creates token" do
         Card::Env.params[:approve_without_token] = true
         Card::Auth.as "joe_admin"
 

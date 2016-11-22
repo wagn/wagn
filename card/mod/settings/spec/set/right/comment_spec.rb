@@ -9,7 +9,7 @@ describe Card::Set::Right::Comment do
                        content: "[[Anyone Signed In]]"
     end
 
-    it "should have appender immediately" do
+    it "has appender immediately" do
       expect(Card["a"].ok?(:comment)).not_to be_truthy
       Card::Auth.as_bot do
         @rule.save!
@@ -17,7 +17,7 @@ describe Card::Set::Right::Comment do
       expect(Card["a"].ok?(:comment)).to be_truthy
     end
 
-    it "should have appender immediately" do
+    it "has appender immediately" do
       Card::Auth.as_bot do
         expect(Card["a"].ok?(:comment)).not_to be_truthy
         @rule.save!
@@ -27,7 +27,7 @@ describe Card::Set::Right::Comment do
   end
 
   context "comment addition" do
-    it "should combine content after save" do
+    it "combines content after save" do
       Card::Auth.as_bot do
         Card.create name: "basicname+*self+*comment",
                     content: "[[Anyone Signed In]]"

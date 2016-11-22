@@ -7,19 +7,17 @@ format :html do
 
   view :type_formgroup do |args|
     if card.cards_of_type_exist?
-      %(
-        <div>
-          Sorry, this card must remain a Cardtype so long as there are
-          <strong>#{card.name}</strong> cards.
-        </div>
-      )
+      wrap_with :div do
+        "Sorry, this card must remain a Cardtype so long as " \
+        "there are <strong>#{card.name}</strong> cards."
+      end
     else
       super args
     end
   end
 
   view :add_link do |args|
-    args[:title] ||= "Add #{card.name}"
+    voo.title ||= "Add #{card.name}"
     title = _render_title args
     link_to title, path: _render_add_path(args), class: args[:css_class]
   end
@@ -35,9 +33,9 @@ format :html do
 
   view :add_path do |args|
     path_args = {}
-    if args[:params]
+    if voo.params
       context = ((@parent && @parent.card) || card).name
-      Rack::Utils.parse_nested_query(args[:params]).each do |key, value|
+      Rack::Utils.parse_nested_query(voo.params).each do |key, value|
         value = value.to_name.to_absolute(context) if value
         key = key.to_name.to_absolute(context)
         path_args[key] = value
@@ -66,6 +64,10 @@ end
 def cards_of_type_exist?
   # FIXME: faster test than counting all of type?
   !new_card? && Auth.as_bot { Card.count_by_wql type_id: id } > 0
+end
+
+def create_ok?
+  Card.new(type_id: id).ok? :create
 end
 
 event :check_for_cards_of_type, after: :validate_delete do

@@ -19,12 +19,12 @@ describe Card::Set::Type::Scss do
     @scss_card = Card[:style_cards]
   end
 
-  it "should highlight code in html" do
+  it "highlights code in html" do
     assert_view_select @scss_card.format(:html).render_core,
                        "div[class=CodeRay]"
   end
 
-  it "should not highlight code in css" do
+  it "does not highlight code in css" do
     expect(@scss_card.format(:css).render_core).not_to match(/CodeRay/)
   end
 
@@ -44,7 +44,7 @@ describe Card::Set::Type::Scss do
     end
   end
 
-  it "should process links and nests but not urls" do
+  it "processes links and nests but not urls" do
     Card::Auth.as_bot do
       scss = ".TYPE-X.no-citations {\n  color: #BA5B5B;\n}\n"
       card = Card.create! name: "minimal css", type: "scss", content: scss

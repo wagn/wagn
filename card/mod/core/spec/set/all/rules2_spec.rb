@@ -18,20 +18,20 @@ describe Card do
     end
 
     describe ".rule" do
-      it "should have a value of 2" do
+      it "has a value of 2" do
         expect(@rule_card.content).to eq("2")
         expect(@c1.rule(:table_of_contents)).to eq("2")
       end
     end
 
     describe "renders with/without toc" do
-      it "should not render for 'Onne Heading'" do
+      it "does not render for 'Onne Heading'" do
         expect(@c1.format.render_open_content).not_to match(/Table of Contents/)
       end
-      it "should render for 'Twwo Heading'" do
+      it "renders for 'Twwo Heading'" do
         expect(@c2.format.render_open_content).to match(/Table of Contents/)
       end
-      it "should render for 'Three Heading'" do
+      it "renders for 'Three Heading'" do
         expect(@c3.format.render_open_content).to match(/Table of Contents/)
       end
     end
@@ -51,14 +51,14 @@ describe Card do
         sets = Card["Cardtype A"].related_sets.map { |s| s[0] }
         expect(sets).to eq(["Cardtype A+*type", "Cardtype A+*right"])
       end
-      # it "should show type plus right sets when they exist" do
+      # it "shows type plus right sets when they exist" do
       #   Card::Auth.as_bot do
       #     Card.create name: 'Basic+A+*type plus right', content: ''
       #   end
       #   sets = Card['A'].related_sets
       #   sets.should == ['A+*self', 'A+*right', 'Basic+A+*type plus right']
       # end
-      # it "should show type plus right sets when they exist, and type" do
+      # it "shows type plus right sets when they exist, and type" do
       #   Card::Auth.as_bot do
       #     Card.create name: 'Basic+Cardtype A+*type plus right', content: ''
       #   end
@@ -73,7 +73,7 @@ describe Card do
     end
     #     # class methods
     #     describe ".default_rule" do
-    #       it 'should have default rule' do
+    #       it 'has default rule' do
     #         Card.default_rule(:table_of_contents).should == '0'
     #       end
     #     end
@@ -89,20 +89,20 @@ describe Card do
     end
 
     describe ".rule" do
-      it "should have a value of 1" do
+      it "has a value of 1" do
         expect(@rule_card.content).to eq("1")
         expect(@c1.rule(:table_of_contents)).to eq("1")
       end
     end
 
     describe "renders with/without toc" do
-      it "should not render toc for 'Onne Heading'" do
+      it "does not render toc for 'Onne Heading'" do
         expect(@c1.format.render_open_content).to match(/Table of Contents/)
       end
-      it "should render toc for 'Twwo Heading'" do
+      it "renders toc for 'Twwo Heading'" do
         expect(@c2.format.render_open_content).to match(/Table of Contents/)
       end
-      it "should not render for 'Twwo Heading' when changed to 3" do
+      it "does not render for 'Twwo Heading' when changed to 3" do
         @rule_card.content = "3"
         expect(@c2.rule(:table_of_contents)).to eq("3")
         expect(@c2.format.render_open_content).not_to match(/Table of Contents/)
@@ -130,20 +130,20 @@ describe Card do
     end
 
     describe ".rule" do
-      it "should have a value of 0" do
+      it "has a value of 0" do
         expect(@c1.rule(:table_of_contents)).to eq("0")
         expect(@rule_card.content).to eq("0")
       end
     end
 
     describe "renders without toc" do
-      it "should not render for 'Onne Heading'" do
+      it "does not render for 'Onne Heading'" do
         expect(@c1.format.render_open_content).not_to match(/Table of Contents/)
       end
-      it "should render for 'Twwo Heading'" do
+      it "renders for 'Twwo Heading'" do
         expect(@c2.format.render_open_content).not_to match(/Table of Contents/)
       end
-      it "should render for 'Three Heading'" do
+      it "renders for 'Three Heading'" do
         expect(@c3.format.render_open_content).not_to match(/Table of Contents/)
       end
     end
@@ -161,7 +161,7 @@ describe Card do
 
     #     # class methods
     #     describe ".default_rule" do
-    #       it 'should have default rule' do
+    #       it 'has default rule' do
     #         Card.default_rule(:table_of_contents).should == '0'
     #       end
     #     end
@@ -190,7 +190,7 @@ describe Card do
         end
       end
     end
-    it "should take on new setting value" do
+    it "takes on new setting value" do
       c = Card["toc1"]
       expect(c.rule_card(:table_of_contents).name)
         .to eq("CardtypeE+*type+*table of content")
@@ -198,14 +198,14 @@ describe Card do
     end
 
     describe "renders with/without toc" do
-      it "should not render for 'Onne Heading'" do
+      it "does not render for 'Onne Heading'" do
         expect(@c1.format.render_open_content).not_to match(/Table of Contents/)
       end
-      it "should render for 'Twwo Heading'" do
+      it "renders for 'Twwo Heading'" do
         expect(@c2.rule(:table_of_contents)).to eq("2")
         expect(@c2.format.render_open_content).to match(/Table of Contents/)
       end
-      it "should render for 'Three Heading'" do
+      it "renders for 'Three Heading'" do
         expect(@c3.format.render_open_content).to match(/Table of Contents/)
       end
     end
@@ -225,20 +225,20 @@ describe Card do
     end
 
     describe ".rule" do
-      it "should have a value of 1" do
+      it "has a value of 1" do
         expect(@rule_card.content).to eq("1")
         expect(@c1.rule(:table_of_contents)).to eq("1")
       end
     end
 
     describe "renders with/without toc" do
-      it "should not render toc for 'Onne Heading'" do
+      it "does not render toc for 'Onne Heading'" do
         expect(@c1.format.render_open_content).to match(/Table of Contents/)
       end
-      it "should render toc for 'Twwo Heading'" do
+      it "renders toc for 'Twwo Heading'" do
         expect(@c2.format.render_open_content).to match(/Table of Contents/)
       end
-      it "should not render for 'Twwo Heading' when changed to 3" do
+      it "does not render for 'Twwo Heading' when changed to 3" do
         @rule_card.content = "3"
         expect(@c2.format.render_open_content).not_to match(/Table of Contents/)
       end

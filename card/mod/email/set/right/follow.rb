@@ -17,7 +17,7 @@ format :html do
     args[:condition] ||= Env.params[:condition] || "*always"
   end
 
-  view :follow_item, tags: :unknown_ok do |args|
+  view :follow_item, tags: :unknown_ok, cache: :never do |args|
     if card.new_card? || !card.include_item?(args[:condition])
       button_view = :add_follow_rule_button
       form_opts = { add_item: args[:condition] }
@@ -65,10 +65,10 @@ format :html do
                     class: "btn update-follow-link", "data-card_key" => key
   end
 
-  view :follow_status_delete_options do
+  view :follow_status_delete_options, cache: :never do
     wrap_with(:ul, class: "delete-list list-group") do
       card.item_names.map do |option|
-        content_tag :li, class: "list-group-item" do
+        wrap_with :li, class: "list-group-item" do
           condition = option == "*never" ? "*always" : option
           subformat(card).render_follow_item condition: condition
         end
@@ -76,7 +76,7 @@ format :html do
     end
   end
 
-  view :delete_follow_rule_button do |_args|
+  view :delete_follow_rule_button do
     button_tag(
       type: :submit,
       class: "btn-xs btn-item-delete btn-primary", "aria-label" => "Left Align"
@@ -85,7 +85,7 @@ format :html do
     end
   end
 
-  view :add_follow_rule_button do |_args|
+  view :add_follow_rule_button do
     button_tag(
       type: :submit,
       class: "btn-xs btn-item-add", "aria-label" => "Left Align"

@@ -32,4 +32,29 @@ format :html do
       form.send(method_name, name, bootstrap_options(options))
     end
   end
+
+  # generate bootstrap form
+  # @example
+  #   bs_form do
+  #     group do
+  #       number "label text"
+  #       input "button", "label text"
+  #     end
+  #   end
+  def bs_form opts={}, &block
+    Card::Format::HtmlFormat::Bootstrap::Form.render self, opts, &block
+  end
+
+  # generate bootstrap form
+  # @example
+  #   bs_horizontal_form do
+  #     group do
+  #       number "label text"
+  #       input "button", "label text"
+  #     end
+  #   end
+  def bs_horizontal_form *args, &block
+    Card::Format::HtmlFormat::Bootstrap::HorizontalForm.render self, *args, &block
+  end
+
 end

@@ -119,6 +119,10 @@ class Card
       s =~ RELATIVE_REGEXP || starts_with_joint?
     end
 
+    def simple_relative?
+      relative? && stripped.to_name.starts_with_joint?
+    end
+
     def absolute?
       !relative?
     end
@@ -133,6 +137,10 @@ class Card
 
     def to_sym
       s.to_sym
+    end
+
+    def title title_directive, context_names
+      title_directive.to_name.to_absolute_name(self).to_show(*context_names)
     end
   end
 end

@@ -1,7 +1,7 @@
 
 format :css do
-  def get_nest_defaults _nested_card
-    { view: :raw }
+  def default_nest_view
+    :raw
   end
 
   def show view, args
@@ -22,7 +22,7 @@ format :css do
   end
 
   view :import do |_args|
-    %{\n@import url("#{_render_url item: :import}");\n}
+    %{\n@import url("#{_render_url items: { view: :import }}");\n}
   end
 
   view :url, perms: :none do |args|

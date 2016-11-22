@@ -1,36 +1,31 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Format do
-  describe "#show?" do
+  describe "#show_view?" do
     let(:format) { described_class.new Card.new }
 
-    def show_menu? args
-      format.show_view?(:menu, args)
+    def show_menu? args, default_viz=:show
+      args.merge! optional: true
+      format.with_voo(Card::View.new format, :nonview, args) do
+        format.show_view?(:menu, default_viz)
+      end
     end
-    it "should respect defaults" do
-      expect(show_menu?(default_visibility: :show)).to be_truthy
-      expect(show_menu?(default_visibility: :hide)).to be_falsey
+    it "respects defaults" do
+      expect(show_menu?({}, :show)).to be_truthy
+      expect(show_menu?({}, :hide)).to be_falsey
       expect(show_menu?({})).to be_truthy
     end
 
-    it "should respect developer default overrides" do
-      expect(show_menu?(optional_menu: :show, default_visibility: :hide))
-        .to be_truthy
-      expect(show_menu?(optional_menu: :hide, default_visibility: :show))
-        .to be_falsey
-      expect(show_menu?(optional_menu: :hide)).to be_falsey
+    it "respects developer defaults" do
+      expect(show_menu?({ show: "menu" }, :hide)).to be_truthy
+      expect(show_menu?({ hide: "menu" }, :show)).to be_falsey
+      expect(show_menu?(hide: "menu")).to be_falsey
     end
 
-    it "should handle args from nests" do
-      expect(show_menu?(show: "menu", default_visibility: :hide)).to be_truthy
-      expect(show_menu?(hide: "menu, paging", default_visibility: :show))
-        .to be_falsey
-      expect(show_menu?(show: "menu", optional_menu: :hide)).to be_truthy
-    end
-
-    it "should handle hard developer overrides" do
-      expect(show_menu?(optional_menu: :always, hide: "menu")).to be_truthy
-      expect(show_menu?(optional_menu: :never,  show: "menu")).to be_falsey
+    it "handles args from nests" do
+      expect(show_menu?({ show: "menu" }, :hide)).to be_truthy
+      expect(show_menu?({ hide: "menu, paging" }, :show)).to be_falsey
+      expect(show_menu?({ show: "menu" }, :hide)).to be_truthy
     end
   end
 
@@ -56,7 +51,7 @@ describe Card::Format do
       "external with port: http://localhost:2020/path?cgi=foo+bar=baz after "
     end
 
-    it "should format links" do
+    it "formats links" do
       cobj = Card::Content.new url_text1, text_format
       expect(cobj.to_s).to eq url_text1
       cobj = Card::Content.new url_text2, text_format
@@ -69,7 +64,7 @@ describe Card::Format do
       expect(cobj.to_s).to eq url_text5
     end
 
-    it "should format html links" do
+    it "formats html links" do
       cobj = Card::Content.new url_text1, html_format
       expect(cobj.to_s).to eq(
         'with external free link <a target="_blank" class="external-link" ' \

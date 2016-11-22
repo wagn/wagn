@@ -37,7 +37,7 @@ class Card
 
       def showname title=nil
         if title
-          title.to_name.to_absolute_name(card.cardname).to_show(*@context_names)
+          card.cardname.title title, @context_names
         else
           @showname ||= card.cardname.to_show(*@context_names)
         end

@@ -15,6 +15,10 @@ class Card
           @summary.rendered
         end
 
+        def summary_omits_content?
+          @summary.omits_content?
+        end
+
         def write_added_chunk text
           @adds_cnt += 1
           @complete << Card::Content::Diff.render_added_chunk(text)
@@ -45,6 +49,7 @@ class Card
 
             @summary = nil
             @chunks = []
+            @content_omitted = false
           end
 
           def rendered
@@ -52,6 +57,7 @@ class Card
               begin
                 truncate_overlap
                 @chunks.map do |chunk|
+                  @content_omitted ||= chunk[:action] == :ellipsis
                   render_chunk chunk[:action], chunk[:text]
                 end.join
               end
@@ -69,6 +75,10 @@ class Card
             if @chunks.empty? || @chunks.last[:action] != :ellipsis
               add_chunk @joint, :ellipsis
             end
+          end
+
+          def omits_content?
+            @content_omitted || @remaining_chars < 0
           end
 
           private
@@ -105,6 +115,7 @@ class Card
           def process_ellipsis
             return unless @chunks.last[:action] == :ellipsis
             @chunks.pop
+            @content_omitted = true
             @remaining_chars += @joint.size
           end
 

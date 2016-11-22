@@ -33,7 +33,8 @@ class Card
 
   def log_event_call event
     Rails.logger.debug "#{name}: #{event}"
-    # puts "#{Card::DirectorRegister.to_s}".green
+    # puts "#{name}: #{event}"
+    # puts "#{Card::ActManager.to_s}".green
   end
 
   module Set

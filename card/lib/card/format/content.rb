@@ -5,7 +5,7 @@ class Card
         content = override_content || render_raw || ""
         content_object = get_content_object content, opts
         content_object.process_each_chunk do |chunk_opts|
-          prepare_nest chunk_opts.merge(opts)
+          content_nest chunk_opts.merge(opts)
         end
         content_object.to_s
       end
@@ -36,6 +36,12 @@ class Card
         options[:class] = [options[:class], klass].flatten.uniq.compact * " "
       end
 
+      alias_method :append_class, :add_class
+
+      def prepend_class options, klass
+        options[:class] = [klass, options[:class]].flatten.uniq.compact * " "
+      end
+
       def id_counter
         return @parent.id_counter if @parent
         @id_counter ||= 0
@@ -46,11 +52,9 @@ class Card
         "#{card.key}-#{id_counter}"
       end
 
-      def output content
-        case content
-        when String then content
-        when Array then content.compact.join "\n"
-        end
+      def output *content
+        content ||= yield
+        Array.wrap(content).flatten.compact.join "\n"
       end
     end
   end

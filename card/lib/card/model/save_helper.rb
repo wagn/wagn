@@ -43,13 +43,16 @@ class Card
       # create if card doesn't exist
       # updates existing card only if given attributes are different except the
       # name
-      # For example if a card with name "under_score" exists
-      # then `ensure_card "Under Score"` doesn't change anything
+      # @example if a card with name "under_score" exists
+      #   ensure_card "Under Score"                 # => no change
+      #   ensure_card "Under Score", type: :pointer # => changes the type to pointer
+      #                                             #    but not the name
       def ensure_card name_or_args, content_or_args=nil
         args = standardize_args name_or_args, content_or_args
         name = args.delete(:name)
         if (card = Card[name])
           ensure_attributes card, args
+          card
         else
           Card.create! args.merge(name: name)
         end
@@ -112,7 +115,7 @@ class Card
 
       def resolve_name_conflict args
         rename = args.delete :rename_if_conflict
-        return unless rename
+        return unless args[:name] && rename
         args[:name] = Card.uniquify_name args[:name], rename
       end
 

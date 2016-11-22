@@ -8,7 +8,7 @@ event :admin_tasks, :initialize, on: :update do
   case task.to_sym
   when :clear_cache          then Card::Cache.reset_all
   when :repair_references    then Card::Reference.repair_all
-  when :clear_view_cache     then Card::Cache::ViewCache.reset
+#  when :clear_view_cache     then Card::View.reset
   when :delete_old_revisions then Card::Action.delete_old
   when :repair_permissions   then Card.repair_all_permissions
   when :clear_solid_cache    then Card.clear_solid_cache
@@ -60,7 +60,7 @@ format :html do
     ]
     return stats unless Card.config.view_cache
     stats << { title: "view cache",
-               count: Card::Cache::ViewCache,
+               count: Card::View,
                link_text: "clear view cache",
                task: "clear_view_cache" }
   end
@@ -80,7 +80,7 @@ format :html do
   end
 
   def stat_row args={}
-    res = [(args[:title] || "")]
+    res = [(voo.title || "")]
     res << "#{count(args[:count])}#{args[:unit]}"
     return res unless args[:task]
     res << link_to_card(:admin, (args[:link_text] || args[:task]),

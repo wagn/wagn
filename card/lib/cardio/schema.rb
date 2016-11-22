@@ -17,14 +17,27 @@ module Cardio
     end
 
     def schema_mode type
-      new_suffix = Cardio.schema_suffix type
-      original_suffix = ActiveRecord::Base.table_name_suffix
-      ActiveRecord::Base.table_name_suffix = new_suffix
-      ActiveRecord::SchemaMigration.reset_table_name
-      paths = Cardio.migration_paths(type)
-      yield(paths)
-      ActiveRecord::Base.table_name_suffix = original_suffix
-      ActiveRecord::SchemaMigration.reset_table_name
+      with_suffix type do
+        paths = Cardio.migration_paths(type)
+        yield(paths)
+      end
+    end
+
+    def with_suffix type
+      return yield unless (new_suffix = Cardio.schema_suffix type) &&
+                          new_suffix.present?
+      original_name = ActiveRecord::Base.schema_migrations_table_name
+      ActiveRecord::Base.schema_migrations_table_name =
+        "#{original_name}#{new_suffix}"
+      ActiveRecord::SchemaMigration.table_name = "#{original_name}#{new_suffix}"
+      # ActiveRecord::Base.table_name_suffix = new_suffix
+      # ActiveRecord::SchemaMigration.reset_table_name
+      # original_suffix = ActiveRecord::Base.table_name_suffix
+      yield
+      ActiveRecord::Base.schema_migrations_table_name = original_name
+      ActiveRecord::SchemaMigration.table_name = original_name
+      # ActiveRecord::Base.table_name_suffix = original_suffix
+      # ActiveRecord::SchemaMigration.reset_table_name
     end
 
     def schema type=nil

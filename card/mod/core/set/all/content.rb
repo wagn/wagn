@@ -46,6 +46,14 @@ def last_draft_content
   drafts.last.card_changes.last.value
 end
 
+event :set_content, :store, on: :save do
+  self.db_content = content || "" # necessary?
+  self.db_content = Card::Content.clean!(db_content) if clean_html?
+  @selected_action_id = @selected_content = nil
+  clear_drafts
+  reset_patterns_if_rule true
+end
+
 event :save_draft, :store,
       on: :update, when: proc { Env.params["draft"] == "true" } do
   save_content_draft content

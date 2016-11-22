@@ -21,6 +21,9 @@ module ScopeHelpers
     when /main card frame/
       "#main > .card-slot > .card-frame"
 
+    when /main card body/
+      "#main > .card-slot > .card-frame > .card-body"
+
     else
       raise "Can't find mapping from \"#{section}\" to a scope.\n" \
             "Now, go and add a mapping in #{__FILE__}"

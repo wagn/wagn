@@ -10,7 +10,7 @@ format :html do
     else
       fname = "#{card.cardname.left}+#{Card[:followers].name}"
       fcard = Card.fetch fname
-      nest fcard, view: :titled, item: :link
+      nest fcard, view: :titled, items: { view: :link }
     end
   end
 

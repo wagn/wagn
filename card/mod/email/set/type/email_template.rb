@@ -79,7 +79,7 @@ def email_config args={}
 end
 
 format do
-  view :mail, perms: :none do |args|
+  view :mail, perms: :none, cache: :never do |args|
     args = card.email_config(args)
     text_message = args.delete(:text_message)
     html_message = args.delete(:html_message)

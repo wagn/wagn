@@ -70,3 +70,22 @@ Style/FormatString:
     - format
     - sprintf
     - percent
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - 'Rakefile'
+    - '**/*.rake'
+    - 'spec/**/*.rb'
+    - '**/*_spec.rb'
+RSpec/ExampleLength:
+  Description: Checks for long examples.
+  Enabled: true
+  Max: 10
+RSpec/FilePath:
+  Description: Checks that spec file paths are consistent with the test subject.
+  Enabled: true
+  CustomTransform:
+    RuboCop: rubocop
+    RSpec: rspec
+    Card: spec
+  IgnoreMethods: false

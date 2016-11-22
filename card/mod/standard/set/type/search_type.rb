@@ -18,6 +18,14 @@ def item_type
   query[:type]
 end
 
+def each_item_name_with_options _content=nil
+  options = {}
+  options[:view] = query[:item] if query && query[:item]
+  item_names.each do |name|
+    yield name, options
+  end
+end
+
 def count params={}
   Card.count_by_wql query(params)
 end
@@ -48,9 +56,9 @@ def get_query params={}
 end
 
 format do
-  view :core do |args|
+  view :core, cache: :never do |args|
     view =
-      case search_results args
+      case search_results
       when Exception          then :search_error
       when Integer            then :search_count
       when @mode == :template then :raw
@@ -59,52 +67,44 @@ format do
     _render view, args
   end
 
-  view :search_count do |_args|
+  view :search_count, cache: :never do |_args|
     search_results.to_s
   end
 
-  view :search_error do |_args|
+  view :search_error, cache: :never do |_args|
     sr_class = search_results.class.to_s
     %(#{sr_class} :: #{search_results.message} :: #{card.raw_content})
   end
 
-  view :card_list do |_args|
+  view :card_list, cache: :never do |_args|
     if search_results.empty?
       "no results"
     else
-      search_results.map do |c|
-        nest c
+      search_results.map do |item_card|
+        nest_item item_card
       end.join "\n"
     end
   end
 
-  def search_vars args={}
-    @search_vars ||=
-      begin
-        v = {}
-        v[:query] = card.query(search_params)
-        v[:item] = set_nest_opts args.merge(query_view: v[:query][:view])
-        v
+  def parse_search_query
+    @query_hash = card.query search_params
+    @query_item_view = @query_hash[:view]
       rescue JSON::ParserError => e
-        { error: e }
+    @parse_error = e
+  end
+
+  def search_results
+    @search_results ||= begin
+      parse_search_query
+      @parse_error || standard_results
       end
   end
 
-  def search_results args={}
-    @search_results ||= begin
-      search_vars args
-      if search_vars[:error]
-        search_vars[:error]
-      else
-        begin
+  def standard_results
           raw_results = card.item_cards search_params
-          is_count = search_vars[:query][:return] == "count"
-          is_count ? raw_results.to_i : raw_results
+    @query_hash[:return] == "count" ? raw_results.to_i : raw_results
         rescue Card::Error::BadQuery => e
           e
-        end
-      end
-    end
   end
 
   def search_result_names
@@ -116,52 +116,9 @@ format do
       end
   end
 
-  def each_reference_with_args args={}
-    search_result_names.each do |name|
-      yield(name, nest_args(args.reverse_merge!(item: :content)))
-    end
-  end
-
-  def set_nest_opts args
-    @nest_defaults = nil
-    @nest_opts ||= {}
-    @nest_opts[:view] = args[:item] || nest_opts[:view] ||
-                        args[:query_view] || default_item_view
-    # explicit > nest syntax > WQL > nest defaults
-  end
-
-  def page_link text, page, _current=false, options={}
-    @paging_path_args[:offset] = page * @paging_limit
-    options[:class] = "card-paging-link slotter"
-    options[:remote] = true
-    options[:path] = @paging_path_args
-    link_to raw(text), options
-  end
-
-  def page_li text, page, current=false, options={}
-    css_class = if current
-                  "active"
-                elsif !page
-                  "disabled"
-                end
-    page ||= 0
-    content_tag :li, class: css_class do
-      page_link text, page, current, options
-    end
-  end
-
-  def previous_page_link page
-    page_li '<span aria-hidden="true">&laquo;</span>', page, false,
-            "aria-label" => "Previous"
-  end
-
-  def next_page_link page
-    page_li '<span aria-hidden="true">&raquo;</span>', page, false,
-            "aria-label" => "Next"
-  end
-
-  def ellipse_page
-    content_tag :li, content_tag(:span, "...")
+  def implicit_item_view
+    view = voo_items_view || @query_item_view || default_item_view
+    Card::View.canonicalize view
   end
 
   def chunk_list
@@ -171,8 +128,8 @@ end
 
 format :data do
   view :card_list do |_args|
-    search_results.map do |c|
-      nest c
+    search_results.map do |item_card|
+      nest_item item_card
     end
   end
 end
@@ -180,7 +137,7 @@ end
 format :csv do
   view :card_list do |args|
     items = super args
-    if @depth == 0
+    if @depth.zero?
       render_csv_title_row + items
     else
       items
@@ -202,7 +159,7 @@ format :json do
     super(args)
   end
 
-  view :export_items do |args|
+  view :export_items, cache: :never do |args|
     card.item_names(limit: 0).map do |i_name|
       next unless (i_card = Card[i_name])
       subformat(i_card).render_atom(args)
@@ -211,15 +168,15 @@ format :json do
 end
 
 format :rss do
-  view :feed_body do |args|
-    case raw_feed_items args
+  view :feed_body do
+    case raw_feed_items
     when Exception then @xml.item(render(:search_error))
     when Integer then @xml.item(render(:search_count))
-    else super args
+    else super()
     end
   end
 
-  def raw_feed_items _args
+  def raw_feed_items
     @raw_feed_items ||= begin
       search_params[:default_limit] = 25
       search_results
@@ -232,99 +189,45 @@ format :html do
     args[:ace_mode] = "json"
   end
 
-  view :card_list do |args|
-    paging = _optional_render :paging, args
-
-    if search_results.empty?
-      render_no_search_results(args)
-    else
-      results =
-        search_results.map do |c|
-          item_view = nest_defaults(c)[:view]
-          %(
-            <div class="search-result-item item-#{item_view}">
-              #{nest(c, size: args[:size], view: item_view)}
-            </div>
-          )
-        end.join "\n"
-
-      %(
-        #{paging}
-        <div class="search-result-list">
-          #{results}
-        </div>
-        #{paging if search_results.length > 10}
-      )
+  view :card_list do
+    return render_no_search_results if search_results.empty?
+    search_result_list do
+      search_results.map do |item_card|
+        nest_item item_card, size: voo.size do |rendered, item_view|
+          klass = "search-result-item item-#{item_view}"
+          %(<div class="#{klass}">#{rendered}</div>)
+        end
+      end
     end
   end
 
+  def search_result_list
+    with_paging do
+      wrap_with :div, class: "search-result-list" do
+        yield
+      end
+    end
+  end
+
+  def with_paging
+    paging = _optional_render :paging
+    output [paging, yield, (paging if search_results.size > 10)]
+  end
+
   view :closed_content do |args|
-    if @depth > self.class.max_depth
+    if @depth > max_depth
       "..."
     else
-      search_limit = args[:closed_search_limit]
       search_params[:limit] =
-        search_limit && [search_limit, Card.config.closed_search_limit].min
-      _render_core args.merge(hide: "paging", item: :link)
+        [search_params[:limit].to_i, Card.config.closed_search_limit].min
+      _render_core hide: "paging", items: { view: :link }
       # TODO: if item is queryified to be "name", then that should work.
       # otherwise use link
     end
   end
 
-  view :no_search_results do |_args|
-    %(<div class="search-no-results"></div>)
-  end
-
-  view :paging do |args|
-    s = card.query search_params
-    offset = s[:offset].to_i
-    limit = s[:limit].to_i
-    return "" if limit < 1
-    # avoid query if we know there aren't enough results to warrant paging
-    return "" if offset == 0 && limit > offset + search_results.length
-    total = card.count search_params
-    # should only happen if limit exactly equals the total
-    return "" if limit >= total
-    @paging_path_args = { limit: limit,
-                          slot: {
-                            item: args[:item] || nest_defaults(card)[:view]
-                          } }
-    @paging_path_args[:view] = args[:home_view] if args[:home_view]
-    @paging_limit = limit
-
-    s[:vars].each { |key, value| @paging_path_args["_#{key}"] = value }
-
-    out = ['<nav><ul class="pagination paging">']
-
-    total_pages = ((total - 1) / limit).to_i
-    current_page = (offset / limit).to_i # should already be integer
-    window = 2 # should be configurable
-    window_min = current_page - window
-    window_max = current_page + window
-
-    previous_page = current_page > 0 ? current_page - 1 : false
-    out << previous_page_link(previous_page)
-    if window_min > 0
-      out << page_li(1, 0)
-      out << ellipse_page if window_min > 1
-    end
-
-    (window_min..window_max).each do |page|
-      next if page < 0 || page > total_pages
-      text = page + 1
-      out << page_li(text, page, page == current_page)
-    end
-
-    if total_pages > window_max
-      out << ellipse_page if total_pages > window_max + 1
-      out << page_li(total_pages + 1, total_pages)
-    end
-
-    next_page = current_page < total_pages ? current_page + 1 : false
-    out << next_page_link(next_page)
-
-    out << %(</ul></nav>)
-    out.join
+  view :no_search_results do
+    wrap_with :div, "", class: "search-no-results"
   end
 
   def default_search_params

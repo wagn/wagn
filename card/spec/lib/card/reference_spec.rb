@@ -64,7 +64,7 @@ describe Card::Reference do
     expect(Card["Ethan"].referers.map(&:name).include?("L")).not_to eq(nil)
   end
 
-  it "should update references on rename when requested" do
+  it "updates references on rename when requested" do
     create! "watermelon", "mmmm"
     create! "watermelon+seeds", "black"
     lew = create!("Lew", "likes [[watermelon]] and [[watermelon+seeds|seeds]]")
@@ -77,7 +77,7 @@ describe Card::Reference do
     expect(lew.reload.content).to eq(result)
   end
 
-  it "should update referers on rename when requested (case 2)" do
+  it "updates referers on rename when requested (case 2)" do
     card = Card["Administrator Menu+*self+*read"]
     old_refs = Card::Reference.where(referee_id: Card::AdministratorID)
 
@@ -89,14 +89,14 @@ describe Card::Reference do
     expect(old_refs).to eq(new_refs)
   end
 
-  it "should not update references when not requested" do
+  it "does not update references when not requested" do
     watermelon = create! "watermelon", "mmmm"
     watermelon_seeds = create! "watermelon+seeds", "black"
     lew = create!("Lew", "likes [[watermelon]] and [[watermelon+seeds|seeds]]")
 
     assert_equal [watermelon.id, watermelon_seeds.id],
                  lew.references_out.order(:id).map(&:referee_id),
-                 "should store referee ids"
+                 "stores referee ids"
 
     watermelon = Card["watermelon"]
     watermelon.update_referers = false
@@ -191,7 +191,7 @@ describe Card::Reference do
     expect(Card["search w refs"].content).to eq '{"name":"_+AAA"}'
   end
 
-  it "should handle commented nest" do
+  it "handles commented nest" do
     c = Card.create name: "nest comment test", content: "{{## hi mom }}"
     expect(c.errors.any?).to be_falsey
   end

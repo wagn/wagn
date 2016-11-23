@@ -11,8 +11,8 @@ module ClassMethods
 end
 
 def initialize args={}
-  initialize_name args
-  initialize_content args
+  args["name"] = initial_name args["name"]
+  args["db_content"] = args.delete "content" if args["content"]
   @supercard = args.delete "supercard" # must come before name=
 
   handle_skip_args args do
@@ -29,13 +29,9 @@ def handle_skip_args args
   include_set_modules unless skip_modules
 end
 
-def initialize_name args
-  args["name"] = Card.compose_mark(args["name"]) if args["name"].is_a?(Array)
-  args["name"] = args["name"].to_s
-end
-
-def initialize_content args
-  args["db_content"] = args.delete("content") if args["content"]
+def initial_name name
+  name = Card.compose_mark name if name.is_a? Array
+  name.to_s
 end
 
 def include_set_modules

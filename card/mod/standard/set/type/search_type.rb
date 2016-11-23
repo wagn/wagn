@@ -56,7 +56,7 @@ def get_query params={}
 end
 
 format do
-  view :core, cache: :never do |args|
+  view :core, cache: :never do
     view =
       case search_results
       when Exception          then :search_error
@@ -64,19 +64,19 @@ format do
       when @mode == :template then :raw
       else                         :card_list
       end
-    _render view, args
+    _render view
   end
 
-  view :search_count, cache: :never do |_args|
+  view :search_count, cache: :never do
     search_results.to_s
   end
 
-  view :search_error, cache: :never do |_args|
+  view :search_error, cache: :never do
     sr_class = search_results.class.to_s
     %(#{sr_class} :: #{search_results.message} :: #{card.raw_content})
   end
 
-  view :card_list, cache: :never do |_args|
+  view :card_list, cache: :never do
     if search_results.empty?
       "no results"
     else

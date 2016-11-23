@@ -1,4 +1,4 @@
-
+# shared methods for card collections (Pointers, Searches, Sets, etc.)
 module ClassMethods
   def search spec, comment=nil
     results = ::Card::Query.run(spec, comment)
@@ -196,12 +196,19 @@ format do
   def search_params
     @search_params ||= begin
       p = default_search_params.clone
-      if focal?
-        p[:offset] = params[:offset] if params[:offset]
-        p[:limit]  = params[:limit]  if params[:limit]
-        p.merge! params[:wql]        if params[:wql]
-      end
+      add_focal_search_params p if focal?
       p
+    end
+  end
+
+  def add_focal_search_params hash
+    offset_and_limit_search_params hash
+    hash.merge! params[:wql] if params[:wql]
+  end
+
+  def offset_and_limit_search_params hash
+    [:offset, :limit].each do |key|
+      hash[key] = params[key] if params[key]
     end
   end
 
@@ -323,6 +330,7 @@ format :html do
     return name unless title
     name.to_name.title title, @context_names
   end
+
   # create a path for a nest with respect ot the nest options
   def nest_path name, nest_opts={}
     path_opts = { slot: nest_opts.clone }

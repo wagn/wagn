@@ -1,4 +1,5 @@
 require "import_data"
+require "merger"
 
 class Card
   class Migration
@@ -14,33 +15,16 @@ class Card
     # To update other attributes change them in the yml file and either remove
     # the 'merged' value or touch the corresponding content file
     class Import
-      OUTPUT_FILE = Card::Migration.data_path "unmerged"
       class << self
-        # Merge the import data into the cards table
-        # If 'all' is true all import data is merged.
-        # Otherwise only the data that was changed or added since the last merge
+        # Merge the import data into the cards table.
+        # Bu default it merges only the data that was changed or added
+        # since the last merge.
+        # @param [Hash] opts choose which cards to merge
+        # @option opts [Boolean] :all merge all available import data
+        # @option opts [Array] :only a key/name or list of keys/names to
+        #   be merged
         def merge opts={}
-          merge_data =
-              if opts[:all]
-                ImportData.all_cards
-              elsif opts[:only]
-                ImportData.select_cards opts[:only]
-              else
-                ImportData.changed_cards
-              end
-
-          puts("nothing to merge") && return if merge_data.empty?
-
-          Card::Mailer.perform_deliveries = false
-          Card::Auth.as_bot do
-            Card.merge_list merge_data, output_file: OUTPUT_FILE
-          end
-          update_time = Time.zone.now.to_s
-          ImportData.update do |import_data|
-            merge_data.each do |card_data|
-              import_data.merged card_data, update_time
-            end
-          end
+          Merger.new(opts).merge
         end
 
         # Get import data from a deck
@@ -102,18 +86,18 @@ class Card
           parse_and_symbolize json
         end
 
+        def fetch_local_data name, view
+          Card::Auth.as_bot do
+            Card[name].format(format: :json).render(view || :content)
+          end
+        end
+
         def parse_and_symbolize json
           parsed = JSON.parse(json)
           case parsed
           when Hash then parsed.deep_symbolize_keys
           when Array then parsed.map(&:deep_symbolize_keys)
           else parsed
-          end
-        end
-
-        def fetch_local_data name, view
-          Card::Auth.as_bot do
-            Card[name].format(format: :json).render(view || :content)
           end
         end
       end

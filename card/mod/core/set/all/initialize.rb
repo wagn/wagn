@@ -11,17 +11,31 @@ module ClassMethods
 end
 
 def initialize args={}
-  args["name"]= Card.compose_mark(args["name"]) if args["name"].is_a?(Array)
-  args["name"] = args["name"].to_s
-  args["db_content"] = args.delete("content") if args["content"]
-  @supercard = args.delete "supercard" # must come before name =
+  initialize_name args
+  initialize_content args
+  @supercard = args.delete "supercard" # must come before name=
+
+  handle_skip_args args do
+    super args # ActiveRecord #initialize
+  end
+  self
+end
+
+def handle_skip_args args
   skip_modules = args.delete "skip_modules"
   skip_type_lookup = args["skip_type_lookup"]
-
-  super args # ActiveRecord #initialize
+  yield
   self.type_id = get_type_id_from_structure if !type_id && !skip_type_lookup
   include_set_modules unless skip_modules
-  self
+end
+
+def initialize_name args
+  args["name"] = Card.compose_mark(args["name"]) if args["name"].is_a?(Array)
+  args["name"] = args["name"].to_s
+end
+
+def initialize_content args
+  args["db_content"] = args.delete("content") if args["content"]
 end
 
 def include_set_modules

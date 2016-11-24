@@ -11,8 +11,8 @@ module ClassMethods
 end
 
 def initialize args={}
-  args["name"] = args["name"].to_s
-  args["db_content"] = args.delete("content") if args["content"]
+  args["name"] = initial_name args["name"]
+  args["db_content"] = args.delete "content" if args["content"]
   @supercard = args.delete "supercard" # must come before name =
   skip_modules = args.delete "skip_modules"
   skip_type_lookup = args["skip_type_lookup"]
@@ -21,6 +21,11 @@ def initialize args={}
   self.type_id = get_type_id_from_structure if !type_id && !skip_type_lookup
   include_set_modules unless skip_modules
   self
+end
+
+def initial_name name
+  name = Card.compose_mark name if name.is_a? Array
+  name.to_s
 end
 
 def include_set_modules

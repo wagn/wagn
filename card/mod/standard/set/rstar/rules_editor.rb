@@ -37,7 +37,7 @@ format :html do
   end
 
   def open_rule_body_view
-    return :show_rule if params[:success] && !params[:reload]
+    return :show_rule if params[:success] && !params[:type_reload]
     card_action = card.new_card? ? :create : :update
     card.ok?(card_action) ? :edit_rule : :show_rule
   end
@@ -52,7 +52,7 @@ format :html do
 
   def show_rule_set set
     wrap_with :div, class: "rule-set" do
-      %(<label>Applies to</label>#{link_to_card set.cardname, set.label}:)
+      %(<label>Applies to</label> #{link_to_card set.cardname, set.label}:)
     end
   end
 

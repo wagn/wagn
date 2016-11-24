@@ -1,13 +1,17 @@
 wrapDeckoLayout = ->
   $footer  = $('body > footer').first()
-  $('body > article, body > aside').wrapAll('<div class="container"/>')
-  $('div.container > article, div.container > aside')
+  $('body > article, body > aside').wrapAll("<div class='#{containerClass()}'/>")
+  $('body > div > article, body > div > aside')
     .wrapAll('<div class="row row-offcanvas">')
   if $footer
     $('body').append $footer
 
 wrapSidebarToggle = (toggle) ->
   "<div class='container'><div class='row'>#{toggle}</div></div>"
+
+containerClass = ->
+  if $('body').hasClass('fluid') then "container-fluid" else "fluid"
+
 
 sidebarToggle = (side) ->
   icon_dir = if side == 'left' then 'right' else 'left'
@@ -18,7 +22,7 @@ sidebarToggle = (side) ->
 singleSidebar = (side) ->
   $article = $('body > article').first()
   $aside   = $('body > aside').first()
-  $article.addClass("col-xs-12 col-sm-9 col-md-8")
+  $article.addClass("col-xs-12 col-sm-9 col-md-9")
   $aside.addClass(
     "col-xs-6 col-sm-3 col-md-3 sidebar-offcanvas sidebar-offcanvas-#{side}"
   )

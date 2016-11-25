@@ -111,7 +111,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   }
 
   .horizontal-card-menu {
-    z-index: 1;
+    z-index: 100;
     li {
       height: 30px;
     }

@@ -4,16 +4,10 @@ format do
     render view, args
   end
 
-  @@variant_methods = [:capitalize, :singularize, :pluralize, :titleize,                               :downcase, :upcase, :swapcase, :reverse, :succ]
-  @@variant_aliases = { capitalized: :capitalize, singular: :singularize,
-                        plural: :pluralize,       title: :titleize }
-
   # NAME VIEWS
   view :name, closed: true, perms: :none do
-    return card.name unless voo.variant
-    voo.variant.split(/[\s,]+/).inject(card.name) do |name, variant|
-      variant = @@variant_aliases[variant.to_sym] || variant.to_sym
-      @@variant_methods.include?(variant) ? name.send(variant) : name
+    begin
+      voo.variant ? card.cardname.vary(voo.variant) : card.name
     end
   end
 
@@ -22,7 +16,7 @@ format do
   view(:url,      closed: true, perms: :none) { card_url _render_linkname }
 
   view :title, closed: true, perms: :none do
-    voo.title || card.name
+    voo.title || _render_name
   end
 
   view :url_link, closed: true, perms: :none do

@@ -16,10 +16,13 @@ format :html do
   #     add_html "<span> some extra html</span>"
   #     row 6, 6, ["unicorn", "rainbow"], class: "horn"
   #   end
+  #delegate :layout, to: :bootstrap, prefix: :bs
   def bs_layout opts={}, &block
-    ::Card::Format::HtmlFormat::Bootstrap::Layout.render self, opts, &block
+    bootstrap.layout opts, &block
+      #layout opts, &block
+    #end
   end
-  alias_method :layout, :bs_layout
+  #alias_method :layout, :bs_layout
 end
 
 

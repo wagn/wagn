@@ -11,8 +11,14 @@ class Card
         @context = @args[:act_context]
       end
 
-      def method_missing method_name, *args, &block
-        @format.send method_name, *args, &block
+      include ::Bootstrapper
+
+      def method_missing(method_name, *args, &block)
+        if block_given?
+          @format.send(method_name, *args, &block)
+        else
+          @format.send(method_name, *args)
+        end
       end
 
       def respond_to_missing? method_name, _include_private=false
@@ -24,18 +30,21 @@ class Card
       end
 
       def header
-        ::Bootstrap::Layout.render self, {} do
-          row 10, 2 do
-            col do
-              html title
-              tag(:span, "text-muted") { summary }
+        #::Bootstrap.new(self).render do
+        #::Boo.bs do
+          bs_layout do
+            row 10, 2 do
+              column do
+                html title
+                tag(:span, "text-muted") { summary }
+              end
+              column act_links, class: "text-right"
             end
-            col act_links, class: "text-right"
+            row 12 do
+              column subtitle
+            end
           end
-          row 12 do
-            col subtitle
-          end
-        end
+        #end
       end
 
       def absolute_title

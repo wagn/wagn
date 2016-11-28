@@ -6,9 +6,7 @@ format do
 
   # NAME VIEWS
   view :name, closed: true, perms: :none do
-    begin
-      voo.variant ? card.cardname.vary(voo.variant) : card.name
-    end
+    voo.variant ? card.cardname.vary(voo.variant) : card.name
   end
 
   view(:key,      closed: true, perms: :none) { card.key }
@@ -16,7 +14,8 @@ format do
   view(:url,      closed: true, perms: :none) { card_url _render_linkname }
 
   view :title, closed: true, perms: :none do
-    voo.title || _render_name
+    raw_title = voo.title || card.name
+    voo.variant ? raw_title.to_name.vary(voo.variant) : raw_title
   end
 
   view :url_link, closed: true, perms: :none do
@@ -26,9 +25,7 @@ format do
   view :link, closed: true, perms: :none do
     title = showname voo.title
     opts = { known: card.known? }
-    if voo.type && !opts[:known]
-      opts[:path] = { card: { type: voo.type } }
-    end
+    opts[:path] = { card: { type: voo.type } } if voo.type && !opts[:known]
     link_to_card card.name, title, opts
   end
 

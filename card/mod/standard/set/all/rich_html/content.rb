@@ -80,7 +80,7 @@ format :html do
   end
 
   view :title do
-    title = fancy_title _render_name
+    title = fancy_title super()
     if show_view? :title_link, :hide
       title = _render_title_link title_ready: title
     end

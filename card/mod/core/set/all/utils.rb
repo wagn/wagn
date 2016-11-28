@@ -11,7 +11,7 @@ module ClassMethods
     unmerged = []
     attribs.each do |row|
       if merge row["name"], row, opts
-        puts "merged #{row['name']}"
+        Rails.logger.info "merged #{row['name']}"
       else
         unmerged.push row
       end

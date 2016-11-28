@@ -10,7 +10,7 @@ class Card
          end
 
          def update_card_attributes card_data
-           card_entry = find_card card_data[:name]
+           card_entry = find_card_attributes card_data[:name]
            if card_entry
              card_entry.replace card_data
            else
@@ -25,7 +25,7 @@ class Card
            card
          end
 
-         def write_attibutes
+         def write_attributes
            File.write @path, @data.to_yaml
          end
 

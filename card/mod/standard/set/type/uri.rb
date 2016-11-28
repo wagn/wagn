@@ -1,11 +1,11 @@
 format do
   include Phrase::Format
 
-  view :core do |args|
-    link_to_resource _render_raw(args), render_title(args)
+  view :core do
+    link_to_resource _render_raw, render_title
   end
 
-  view :url_link do |args|
-    link_to_resource _render_raw(args)
+  view :url_link do
+    link_to_resource _render_raw
   end
 end

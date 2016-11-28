@@ -4,13 +4,18 @@ class Card
       # Handles the card attributes and remotes for the import
       class ImportData
         DEFAULT_PATH = Card::Migration.data_path("cards.yml").freeze
-        CARD_CONTENT_DIR = Card::Migration.data_path("cards").freeze
+
+        include CardContent
+        include CardAttributes
 
         class << self
+          # Takes a block to update import data
+          # use #add_card and #add_remote in the block to make
+          # changes
           def update
             data = ImportData.new
             yield(data)
-            data.write
+            data.write_attributes
           end
 
           def all_cards
@@ -28,8 +33,7 @@ class Card
 
         def initialize path=nil
           @path = path || DEFAULT_PATH
-          ensure_path
-          @data = read
+          @data = read_attributes
         end
 
         def all_cards
@@ -37,10 +41,10 @@ class Card
         end
 
         def select_cards names_or_keys
-          all_cards.select do |attributes|
-            names_or_keys.include?(attributes[:name]) ||
-                names_or_keys.include?(attributes[:name].to_name.key)
-          end
+          cards.map do |attributes|
+            next unless name_or_key_match attributes, names_or_keys
+            prepare_for_import data
+          end.compact
         end
 
         def changed_cards
@@ -55,48 +59,45 @@ class Card
           update_attribute data["name"], :merged, time
         end
 
-        def add_card new_attr
-          card_data = {}
-          [:name, :type, :codename].each do |key|
-            card_data[key] = new_attr[key] if new_attr[key]
-          end
-          card_data[:key] = new_attr[:name].to_name.key
-          card_entry = find_card card_data[:name]
+        # to be used in an update block
+        def add_card card_data
+          card_attr, card_content = split_attributes_and_content card_data
 
-          if card_entry
-            card_entry.replace card_data
-          else
-            cards << card_data
-          end
-          write_card_content card_data, new_attr[:content]
-          card_data
+          update_card_attributes card_attr
+          write_card_content card_attr, card_content
+          card_attr
         end
 
+        # to be used in an update block
         def add_remote name, url
-          @data[:remotes][name] = url
+          remotes[name] = url
         end
 
         def url remote_name
-          @data[:remotes][remote_name.to_sym] ||
+          remotes[remote_name.to_sym] ||
             raise("unknown remote: #{remote_name}")
-        end
-
-        def read
-          return { cards: [], remotes: {} } unless File.exist? @path
-          YAML.load_file(@path).deep_symbolize_keys
-        end
-
-        def write
-          File.write @path, @data.to_yaml
         end
 
         private
 
-        def update_attribute name, attr_key, attr_value
-          card = find_card name
-          return unless card
-          card[attr_key] = attr_value
-          card
+        def split_attributes_and_content data
+          card_data = {}
+          [:name, :type, :codename].each do |key|
+            card_data[key] = data[key] if data[key]
+          end
+          card_data[:key] = data[:name].to_name.key
+          [card_data, data[:content]]
+        end
+
+        def name_or_key_match attributes, names_or_keys
+          names_or_keys.any? do |nk|
+            nk == attributes[:name] || nk == attributes[:name].to_name.key ||
+              nk == attributes[:key]
+          end
+        end
+
+        def remotes
+          @data[:remotes]
         end
 
         def cards
@@ -104,41 +105,20 @@ class Card
         end
 
         def prepare_for_import data
-          card_attr = ::Set.new [:name, :type, :codename, :file, :image]
-          hash = data.select { |k, v| v && card_attr.include?(k) }
-          hash[:content] = File.read(content_path(data))
+          hash = card_attributes(data)
+          hash[:content] = card_content(data)
           [:file, :image].each do |attach|
-            hash[attach] &&= Card::Migration.data_path "files/#{hash[attach]}"
+            hash[attach] &&= card_attachment(attach, data)
           end
           hash.with_indifferent_access
         end
 
         def changed? data
-          !data[:merged] ||
-            Time.parse(data[:merged]) < File.mtime(content_path(data))
+          !data[:merged] || content_changed?(data)
         end
 
-        def write_card_content data, content
-          FileUtils.mkpath CARD_CONTENT_DIR unless Dir.exist? CARD_CONTENT_DIR
-          File.write content_path(data), content.to_s
-        end
-
-        def content_path data
-          filename = data[:key] || data[:name].to_name.key
-          File.join CARD_CONTENT_DIR, filename
-        end
-
-        def find_card name
-          key = name.to_name.key
-          index = cards.find_index { |attr| attr[:key] == key } ||
-                  cards.find_index { |attr| attr[:name] == name }
-          return unless index
-          cards[index]
-        end
-
-        def ensure_path
-          dir = File.dirname(@path)
-          FileUtils.mkpath dir unless Dir.exist? dir
+        def card_attachment attach_type, data
+          Card::Migration.data_path "files/#{data[attach_type]}"
         end
       end
     end

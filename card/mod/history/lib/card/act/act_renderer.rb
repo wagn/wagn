@@ -24,7 +24,7 @@ class Card
       end
 
       def header
-        Format::HtmlFormat::Bootstrap::Layout.render self, {} do
+        ::Bootstrap::Layout.render self, {} do
           row 10, 2 do
             col do
               html title

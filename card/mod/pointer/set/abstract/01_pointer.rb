@@ -116,7 +116,7 @@ end
 event :standardize_items, :prepare_to_validate,
       on: :save,
       changed: :content,
-      when: proc { |c| c.type_id == Card::PointerID  } do
+      when: proc { |c| c.type_id == Card::PointerID } do
   self.content = item_names(context: :raw).map do |name|
     "[[#{name}]]"
   end.join "\n"

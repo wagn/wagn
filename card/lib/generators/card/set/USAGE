@@ -6,7 +6,7 @@ Example:
 
     This will create:
         mod/standard/set/type/tshirt.rb
-        spec/mod/standard/set/type/tshirt_spec.rb
+        mod/standard/spec/set/type/tshirt_spec.rb
 
     wagn generate card:set standard type_plus_right basic about tshirt
 

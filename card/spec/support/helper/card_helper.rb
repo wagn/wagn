@@ -60,7 +60,7 @@ class Card
         singleton_class.send :include, set
         format = format format_type
         format.singleton_class.send :include, set_format_class(set, format_type)
-        yield format
+        block_given? ? yield(format) : format
       end
 
       def set_format_class set, format_type

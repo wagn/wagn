@@ -133,6 +133,34 @@ class Card
         card.update_attributes! update_args
       end
 
+      def add_style name, opts={}
+        name.sub!(/^style\:?\s?/, '') # in case name is given with prefix
+        # remove it so that we don't double it
+
+        add_coderule_item name, "style",
+                          opts[:type_id] || Card::ScssID,
+                          opts[:to] || "*all+*style"
+      end
+
+      def add_script name, opts={}
+        name.sub!(/^script\:?\s?/, '') # in case name is given with prefix
+        # remove it so that we don't double it
+
+        add_coderule_item name, "script",
+                          opts[:type_id] || Card::CoffeeScriptID,
+                          opts[:to] || "*all+*script"
+      end
+
+
+      def add_coderule_item name, prefix, type_id, to
+        codename = "#{prefix}_#{name.tr(' ', '_').underscore}"
+        name = "#{prefix}: #{name}"
+
+        ensure_card name, type_id: type_id,
+                    codename: codename
+        Card[to].add_item! name
+      end
+
       alias_method :create, :create_card
       alias_method :update, :update_card
       alias_method :create_or_update, :create_or_update_card

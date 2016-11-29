@@ -43,7 +43,7 @@ class Card
         def select_cards names_or_keys
           cards.map do |attributes|
             next unless name_or_key_match attributes, names_or_keys
-            prepare_for_import data
+            prepare_for_import attributes
           end.compact
         end
 

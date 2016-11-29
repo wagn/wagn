@@ -32,14 +32,4 @@ format :html do
       form.send(method_name, name, bootstrap_options(options))
     end
   end
-
-  # generate bootstrap form
-  # @example
-  #   bs_form do
-  #     group do
-  #       number "label text"
-  #       input "button", "label text"
-  #     end
-  #   end
-  delegate :horizontal_form, :form, to: :bootstrap, prefix: :bs
 end

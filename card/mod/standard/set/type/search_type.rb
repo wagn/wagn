@@ -210,8 +210,9 @@ format :html do
   end
 
   def with_paging
-    paging = _optional_render :paging
-    output [paging, yield, (paging if search_results.size > 10)]
+    output [yield, _optional_render_paging]
+    #paging =
+    #output [paging, yield, (paging if search_results.size > 10)]
   end
 
   view :closed_content do |args|

@@ -13,6 +13,7 @@ machine_input do
 end
 
 def compress_js input
+  return input unless compress_js?
   Uglifier.compile(input)
 rescue => e
   # CoffeeScript is compiled in a view
@@ -25,5 +26,9 @@ rescue => e
           "CoffeeScript::SyntaxError (#{name}): #{e.message}"
         end
   raise Card::Error, msg
+end
+
+def compress_js?
+  true
 end
 

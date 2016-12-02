@@ -110,7 +110,7 @@ class Card
       end
 
       def name_from_args name_or_args
-        name_or_args.is_a?(String) ? name_or_args : name_or_args[:name]
+        name_or_args.is_a?(Hash) ? name_or_args[:name] : name_or_args
       end
 
       def add_name name, content_or_args

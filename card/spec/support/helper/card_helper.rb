@@ -54,12 +54,19 @@ class Card
       rescue NameError
       end
 
-      def format_with_set set, format_type=:base
+      def with_set set
         set = include_set_in_test_set(set) if set.abstract_set?
-
         singleton_class.send :include, set
+        yield set if block_given?
+        self
+      end
+
+      def format_with_set set, format_type=:base
         format = format format_type
-        format.singleton_class.send :include, set_format_class(set, format_type)
+        with_set set do |extended_set|
+          format_class = set_format_class(extended_set, format_type)
+          format.singleton_class.send :include, format_class
+        end
         block_given? ? yield(format) : format
       end
 

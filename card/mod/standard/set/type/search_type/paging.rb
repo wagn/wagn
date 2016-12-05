@@ -47,7 +47,7 @@ format :html do
 
   def stash_paging_args_for_links limit, vars
     @paging_path_args = {
-      limit: limit, view: voo.home_view, slot: { items: voo.items }
+      limit: limit, view: voo.home_view, slot: voo.slot_options
     }
     @paging_limit = limit  # why limit twice?
 

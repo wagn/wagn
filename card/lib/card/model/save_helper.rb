@@ -16,16 +16,19 @@ class Card
       end
 
       def update_card name, content_or_args
-        args = standardize_update_args content_or_args
+        args = standardize_update_args name, content_or_args
         resolve_name_conflict args
         Card[name].update_attributes! args
       end
 
       def create_or_update_card name_or_args, content_or_args=nil
-        args = standardize_args name_or_args, content_or_args
-        if Card[args[:name]]
-          update_card(args.delete(:name), args)
+        name = name_from_args name_or_args
+
+        if Card[name]
+          args = standardize_update_args name_or_args, content_or_args
+          update_card(name, args)
         else
+          args = standardize_args name_or_args, content_or_args
           create_card(args)
         end
       end
@@ -79,7 +82,7 @@ class Card
       end
 
       def update_card! name, content_or_args
-        args = standardize_update_args content_or_args
+        args = standardize_update_args name, content_or_args
         update_card name, args.reverse_merge(rename_if_conflict: :new)
       end
 
@@ -97,7 +100,8 @@ class Card
         end
       end
 
-      def standardize_update_args content_or_args
+      def standardize_update_args name_or_args, content_or_args
+        return name_or_args if name_or_args.is_a?(Hash)
         if content_or_args.is_a?(String)
           { content: content_or_args }
         else
@@ -105,11 +109,15 @@ class Card
         end
       end
 
+      def name_from_args name_or_args
+        name_or_args.is_a?(String) ? name_or_args : name_or_args[:name]
+      end
+
       def add_name name, content_or_args
         if content_or_args.is_a?(String)
           { content: content_or_args, name: name }
         else
-          content_or_args.merge name: name
+          content_or_args.reverse_merge name: name
         end
       end
 
@@ -123,6 +131,34 @@ class Card
         update_args = args.select { |key, value| card.send(key) != value }
         return if update_args.empty?
         card.update_attributes! update_args
+      end
+
+      def add_style name, opts={}
+        name.sub!(/^style\:?\s?/, '') # in case name is given with prefix
+        # remove it so that we don't double it
+
+        add_coderule_item name, "style",
+                          opts[:type_id] || Card::ScssID,
+                          opts[:to] || "*all+*style"
+      end
+
+      def add_script name, opts={}
+        name.sub!(/^script\:?\s?/, '') # in case name is given with prefix
+        # remove it so that we don't double it
+
+        add_coderule_item name, "script",
+                          opts[:type_id] || Card::CoffeeScriptID,
+                          opts[:to] || "*all+*script"
+      end
+
+
+      def add_coderule_item name, prefix, type_id, to
+        codename = "#{prefix}_#{name.tr(' ', '_').underscore}"
+        name = "#{prefix}: #{name}"
+
+        ensure_card name, type_id: type_id,
+                    codename: codename
+        Card[to].add_item! name
       end
 
       alias_method :create, :create_card

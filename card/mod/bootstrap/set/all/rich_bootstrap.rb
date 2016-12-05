@@ -3,4 +3,6 @@ format :html do
     class_up "card-body", "closed-content"
     super()
   end
+
+  include Bootstrapper
 end

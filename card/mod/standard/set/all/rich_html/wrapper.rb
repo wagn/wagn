@@ -7,9 +7,9 @@ format :html do
   def wrap slot=true
     @slot_view = @current_view
     debug_slot do
-      wrap_with(:div, id: card.cardname.url_key,
-                      class: wrap_classes(slot),
-                      data:  wrap_data) { yield }
+      wrap_with :div, yield, id: card.cardname.url_key,
+                             class: wrap_classes(slot),
+                             data:  wrap_data
     end
   end
 

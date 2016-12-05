@@ -36,7 +36,7 @@ format :html do
   end
 
   view :my_card, link_options { Auth.signed_in? } do
-    link_to_card Auth.current.cardname, nil, class: "my-card-link"
+    link_to_card Auth.current.cardname, nil, id: "my-card-link"
   end
 
   def account_link_text purpose

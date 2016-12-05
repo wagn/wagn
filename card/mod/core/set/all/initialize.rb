@@ -13,14 +13,20 @@ end
 def initialize args={}
   args["name"] = initial_name args["name"]
   args["db_content"] = args.delete "content" if args["content"]
-  @supercard = args.delete "supercard" # must come before name =
+  @supercard = args.delete "supercard" # must come before name=
+
+  handle_skip_args args do
+    super args # ActiveRecord #initialize
+  end
+  self
+end
+
+def handle_skip_args args
   skip_modules = args.delete "skip_modules"
   skip_type_lookup = args["skip_type_lookup"]
-
-  super args # ActiveRecord #initialize
+  yield
   self.type_id = get_type_id_from_structure if !type_id && !skip_type_lookup
   include_set_modules unless skip_modules
-  self
 end
 
 def initial_name name

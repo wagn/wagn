@@ -10,7 +10,7 @@ wrapSidebarToggle = (toggle) ->
   "<div class='container'><div class='row'>#{toggle}</div></div>"
 
 containerClass = ->
-  if $('body').hasClass('fluid') then "container-fluid" else "fluid"
+  if $('body').hasClass('fluid') then "container-fluid" else "container"
 
 
 sidebarToggle = (side) ->

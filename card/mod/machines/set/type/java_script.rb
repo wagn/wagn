@@ -8,7 +8,7 @@ include_set Abstract::MachineInput
 store_machine_output filetype: "js"
 
 machine_input do
-  js = compress_js format(:js)._render_core
+  js = compress_js format(:js)._render_raw
   comment_with_source js
 end
 
@@ -31,4 +31,3 @@ end
 def compress_js?
   true
 end
-

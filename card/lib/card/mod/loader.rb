@@ -155,11 +155,11 @@ class Card
         end
 
         def rewrite_tmp_files?
-          if defined?(@@rewrite)
-            @@rewrite
+          if defined?(@rewrite)
+            @rewrite
           else
-            @@rewrite = !(Rails.env.production? &&
-                        Card.paths["tmp/set"].existent.first)
+            @rewrite = !(Rails.env.production? &&
+                         Card.paths["tmp/set"].existent.first)
           end
         end
 

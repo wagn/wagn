@@ -105,7 +105,7 @@ format :html do
     res
   end
 
-  view :following_list do |_args|
+  view :following_list, cache: :never do |_args|
     if !Auth.signed_in? || Auth.current_id != card.left.id
       hide_buttons = [:delete_follow_rule_button, :add_follow_rule_button]
     end

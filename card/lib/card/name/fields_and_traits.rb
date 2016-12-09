@@ -45,7 +45,7 @@ class Card
       # @return [Card::Name]
       def trait_name tag_code
         return unless (card_id = Card::Codename[tag_code])
-        [self, Card.quick_fetch(card_id).cardname].to_name
+        [self, Card.quick_fetch(card_id).name].to_name
       end
 
       # @return [True/False]

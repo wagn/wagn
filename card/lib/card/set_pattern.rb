@@ -187,12 +187,12 @@ EOF
         return unless @inherit_card
         card = @inherit_card
         @inherit_card = nil
-        return unless default_type_code
+        return unless default_type_code card
         mod_key = "Type::#{type_code.to_s.camelize}"
         mod_key if mods_exist_for_key? mod_key
       end
 
-      def default_type_code
+      def default_type_code card
         default_rule = card.rule_card :default
         default_rule && default_rule.type_code
       end

@@ -98,7 +98,7 @@ format :html do
   view :missing do
     return "" unless card.ok? :create  # should this be moved into ok_view?
     path_opts = voo.type ? { card: { type: voo.type } } : {}
-    link_text = "Add #{fancy_title voo.title}"
+    link_text = "Add #{fancy_title _render_title}"
     klass = "slotter missing-#{@denied_view || voo.home_view}"
     wrap { link_to_view :new, link_text, path: path_opts, class: klass }
   end

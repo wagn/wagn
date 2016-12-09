@@ -30,8 +30,8 @@ format :html do
   end
 
   def name_context_slot_option opts
-    return unless @context_names.present?
-    opts[:name_context] = @context_names.map(&:key) * ","
+    return unless initial_context_names.present?
+    opts[:name_context] = initial_context_names.map(&:key) * ","
   end
 
   def debug_slot

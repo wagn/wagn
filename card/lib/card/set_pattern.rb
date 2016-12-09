@@ -187,7 +187,7 @@ EOF
         return unless @inherit_card
         card = @inherit_card
         @inherit_card = nil
-        return unless default_type_code card
+        return unless (type_code = default_type_code card)
         mod_key = "Type::#{type_code.to_s.camelize}"
         mod_key if mods_exist_for_key? mod_key
       end

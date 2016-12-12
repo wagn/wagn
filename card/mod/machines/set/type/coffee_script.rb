@@ -7,31 +7,28 @@ include_set Abstract::MachineInput
 
 store_machine_output filetype: "js"
 
-machine_input do
-  js = compile_coffee(format(:js)._render_raw)
-  js = compress_js js if compress_js?
-  comment_with_source js
-end
-
-def compile_coffee script
-  ::CoffeeScript.compile script
-rescue => e
-  raise Card::Error, "CoffeeScript::Error (#{name}): #{e.message}"
-end
-
 format :html do
   def default_editor_args args
     args[:ace_mode] ||= "coffee"
   end
 
   def highlighted_js
-    js = card.compile_coffee _render_raw
-    ::CodeRay.scan(js, :js).div
+    ::CodeRay.scan(compiled_content, :js).div
   end
 end
 
 format do
-  view :core do |_args|
-    process_content card.compile_coffee(_render_raw)
+  view :core do
+    compiled_content
+  end
+
+  def compiled_content
+    compile_coffee _render_raw
+  end
+
+  def compile_coffee script
+    ::CoffeeScript.compile script
+  rescue => e
+    raise Card::Error, "CoffeeScript::Error (#{name}): #{e.message}"
   end
 end

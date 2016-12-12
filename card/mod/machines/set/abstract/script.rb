@@ -3,6 +3,12 @@ require "uglifier"
 
 include_set Abstract::AceEditor
 
+machine_input do
+  js = format(:js)._render_core
+  js = compress_js js if compress_js?
+  comment_with_source js
+end
+
 def comment_with_source js
   "//#{name}\n#{js}"
 end

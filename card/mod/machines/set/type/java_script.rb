@@ -7,8 +7,8 @@ include_set Abstract::MachineInput
 
 store_machine_output filetype: "js"
 
-machine_input do
-  js = format(:js)._render_raw
-  js = compress_js(js) if compress_js?
-  comment_with_source js
+format :js do
+  view :core do
+    _render_raw
+  end
 end

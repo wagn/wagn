@@ -7,11 +7,11 @@ Gem::Specification.new do |s|
     ["Ethan McCutchen", "Lewis Hoffman", "Gerry Gleason", "Philipp Kühl"]
   s.email = ["info@wagn.org"]
 
-  #  s.date          = '2013-12-20'
-  s.summary       = "an atomic, set-driven content engine"
+  s.summary       = "a surprisingly simple content nesting engine"
   s.description   =
-    "Cards are data atoms grouped into Sets to which Rules can apply. "\
-    "Cards can formatted with Views and transformed with Events."
+    "Cards are wiki-inspired data atoms." \
+    '"Cardists" use links, nests, types, patterned names, queries, views, ' \
+    "events, and rules to create rich structures."
   s.homepage      = "http://wagn.org"
   s.licenses      = ["GPL-2.0", "GPL-3.0"]
 
@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   s.test_files    = s.files.grep(%r{^(test|spec|features)/})
   s.require_paths = ["lib"]
 
-  s.required_ruby_version = ">= 1.9.3"
+  s.required_ruby_version = ">= 2.0"
 
   [
     ["smartname",                  "0.4"],

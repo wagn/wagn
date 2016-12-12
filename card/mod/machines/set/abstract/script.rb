@@ -62,12 +62,13 @@ format :html do
     wrap_with(:pre) { super args }
   end
 
-  view :core do |_args|
-    process_content highlighted_js
+  view :core do
+    script = format(:js).render_core
+    process_content highlight(script)
   end
 
-  def highlighted_js
-    ::CodeRay.scan(_render_raw, :js).div
+  def highlight script
+    ::CodeRay.scan(script, :js).div
   end
 end
 

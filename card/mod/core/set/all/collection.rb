@@ -257,6 +257,7 @@ format do
 
   def normalized_edit_fields
     edit_fields.map do |name, options|
+      options ||= name.to_s
       options = { title: options } if options.is_a?(String)
       [card.cardname.field(name), options]
     end

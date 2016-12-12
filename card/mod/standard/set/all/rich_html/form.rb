@@ -6,7 +6,9 @@ format :html do
   end
 
   def multi_edit?
-    inline_nests_editor? || nests_editor? || voo.structure || card.structure
+    inline_nests_editor? || nests_editor? || # editor configured in voo
+      voo.structure || voo.edit_structure || # structure configured in voo
+      card.structure                         # structure in card rule
   end
 
   def multi_card_edit_slot

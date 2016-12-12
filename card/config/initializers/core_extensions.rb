@@ -13,7 +13,7 @@ module CoreExtensions
   ::Module.include_extension Module
   ::Array.include_extension Array
   ::Hash.include_extension Hash::Merging
+  ::Symbol.include_extension PersistentIdentifier
+  ::Integer.include_extension PersistentIdentifier
   ::Hash.extend Hash::ClassMethods::Nesting
-rescue
-  binding.pry
 end

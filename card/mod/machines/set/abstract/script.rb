@@ -3,7 +3,15 @@ require "uglifier"
 
 include_set Abstract::AceEditor
 
-machine_input do
+def self.included host_class
+  host_class.include_set Abstract::Machine
+  host_class.include_set Abstract::MachineInput
+
+  host_class.machine_input { standard_machine_input }
+  host_class.store_machine_output filetype: "js"
+end
+
+def standard_machine_input
   js = format(:js)._render_core
   js = compress_js js if compress_js?
   comment_with_source js
@@ -14,7 +22,7 @@ def comment_with_source js
 end
 
 def compress_js input
-  Uglifier.compile(input)
+  Uglifier.compile input
 rescue => e
   # CoffeeScript is compiled in a view
   # If there is a CoffeeScript syntax error we get the rescued view here

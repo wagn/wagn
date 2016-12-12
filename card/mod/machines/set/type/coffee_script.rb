@@ -8,7 +8,8 @@ include_set Abstract::MachineInput
 store_machine_output filetype: "js"
 
 machine_input do
-  js = Uglifier.compile compile_coffee(format(:js)._render_raw)
+  js = compile_coffee(format(:js)._render_raw)
+  js = compress_js js if compress_js?
   comment_with_source js
 end
 

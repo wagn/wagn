@@ -53,7 +53,7 @@ class Card
       end
 
       def unique_id
-        "#{card.key}-#{id_counter}"
+        "#{card.cardname.safe_key}-#{id_counter}"
       end
 
       def output *content

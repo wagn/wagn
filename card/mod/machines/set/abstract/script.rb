@@ -7,6 +7,28 @@ def comment_with_source js
   "//#{name}\n#{js}"
 end
 
+def compress_js input
+  Uglifier.compile(input)
+rescue => e
+  # CoffeeScript is compiled in a view
+  # If there is a CoffeeScript syntax error we get the rescued view here
+  # and the error that the rescued view is no valid Javascript
+  # To get the original error we have to refer to Card::Error.current
+  raise Card::Error, compression_error_message(e)
+end
+
+def compression_error_message e
+  if Card::Error.current
+    Card::Error.current.message
+  else
+    "JavaScript::SyntaxError (#{name}): #{e.message}"
+  end
+end
+
+def compress_js?
+  !Rails.env.development?
+end
+
 def clean_html?
   false
 end

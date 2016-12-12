@@ -3,7 +3,7 @@
 # extend core Ruby object classes
 
 class Class
-  def self.include_extension extension
+  def include_extension extension
     include extension
   end
 end
@@ -14,4 +14,6 @@ module CoreExtensions
   ::Array.include_extension Array
   ::Hash.include_extension Hash::Merging
   ::Hash.extend Hash::ClassMethods::Nesting
+rescue
+  binding.pry
 end

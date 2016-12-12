@@ -1,13 +1,6 @@
 # -*- encoding : utf-8 -*-
 require "carrierwave"
 
-# if Cardio.file_buckets.present?
-#   require "carrierwave/storage/fog"
-#   Cardio.file_buckets.each do |bucket, config|
-#     require config["provider"]
-#   end
-# end
-
 Object.const_remove_if_defined :Card
 
 # Cards are wiki-inspired building blocks.

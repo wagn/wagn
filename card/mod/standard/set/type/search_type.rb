@@ -35,22 +35,34 @@ def query params={}
   @query[params.to_s] ||= get_query(params.clone)
 end
 
+def raw_ruby_query override
+  raw_query = override || raw_content
+  return raw_query if raw_query.is_a? Hash # does this happen?
+  parse_json_query raw_query
+end
+
+def parse_json_query query
+  empty_query_error! if query.empty?
+  JSON.parse query
+rescue
+  raise Error::BadQuery, "Invalid JSON search query: #{query}"
+end
+
+def empty_query_error!
+  raise Error::BadQuery,
+        "Error in card '#{name}':can't run search with empty content"
+end
+
 def get_query params={}
   # why is this a wagn_bot thing?  can't deny search content??
-  query = Auth.as_bot do
-    query_content = params.delete(:query) || raw_content
-    if query_content.empty?
-      raise JSON::ParserError,
-            "Error in card '#{name}':can't run search with empty content"
-    elsif query_content.is_a?(String)
-      JSON.parse(query_content)
-    else query_content
-    end
-  end
-  query.symbolize_keys!.merge! params.symbolize_keys
-  if (default_limit = query.delete(:default_limit))
-    query[:limit] ||= default_limit
-  end
+  query_override = params.delete :query
+  standardize_query raw_ruby_query(query_override), params
+end
+
+def standardize_query query, params
+  query = query.symbolize_keys.merge params.symbolize_keys
+  default_limit = query.delete :default_limit
+  query[:limit] ||= default_limit if default_limit
   query[:context] ||= cardname
   query
 end

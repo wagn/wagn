@@ -8,9 +8,5 @@ module CoreExtensions
     def cardname
       Card.quick_fetch(self).cardname
     end
-
-    def name
-      Card.quick_fetch(self).name
-    end
   end
 end

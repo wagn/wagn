@@ -69,14 +69,14 @@ end
 
 format do
   view :core, cache: :never do
-    view =
+    _render(
       case search_results
       when Exception          then :search_error
       when Integer            then :search_count
       when @mode == :template then :raw
       else                         :card_list
       end
-    _render view
+    )
   end
 
   view :search_count, cache: :never do
@@ -113,14 +113,14 @@ format do
     @query_hash[:return] == "count" ? raw_results.to_i : raw_results
   end
 
-  def search_result_names
-    @search_result_names ||=
-      begin
-        card.item_names search_params
-      rescue => e
-        { error: e }
-      end
-  end
+  # def search_result_names
+  #   @search_result_names ||=
+  #     begin
+  #       card.item_names search_params
+  #     rescue => e
+  #       { error: e }
+  #     end
+  # end
 
   def implicit_item_view
     view = voo_items_view || @query_hash[:item] || default_item_view
@@ -217,20 +217,21 @@ format :html do
 
   def with_paging
     output [yield, _optional_render_paging]
-    #paging =
-    #output [paging, yield, (paging if search_results.size > 10)]
   end
 
-  view :closed_content do |args|
+  view :closed_content do
     if @depth > max_depth
       "..."
     else
-      search_params[:limit] =
-        [search_params[:limit].to_i, Card.config.closed_search_limit].min
+      search_params[:limit] = closed_limit
       _render_core hide: "paging", items: { view: :link }
       # TODO: if item is queryified to be "name", then that should work.
       # otherwise use link
     end
+  end
+
+  def closed_limit
+    [search_params[:limit].to_i, Card.config.closed_search_limit].min
   end
 
   view :no_search_results do

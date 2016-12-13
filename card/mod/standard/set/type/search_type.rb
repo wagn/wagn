@@ -98,25 +98,19 @@ format do
     end
   end
 
-  def parse_search_query
-    @query_hash = card.query search_params
-    @query_item_view = @query_hash[:view]
-      rescue JSON::ParserError => e
-    @parse_error = e
-  end
-
   def search_results
-    @search_results ||= begin
-      parse_search_query
-      @parse_error || standard_results
-      end
+    @search_results ||= prepare_query && run_query
+  rescue Error::BadQuery => e
+    e
   end
 
-  def standard_results
-          raw_results = card.item_cards search_params
+  def prepare_query
+    @query_hash = card.query search_params
+  end
+
+  def run_query
+    raw_results = card.item_cards search_params
     @query_hash[:return] == "count" ? raw_results.to_i : raw_results
-        rescue Card::Error::BadQuery => e
-          e
   end
 
   def search_result_names
@@ -129,7 +123,7 @@ format do
   end
 
   def implicit_item_view
-    view = voo_items_view || @query_item_view || default_item_view
+    view = voo_items_view || @query_hash[:item] || default_item_view
     Card::View.canonicalize view
   end
 

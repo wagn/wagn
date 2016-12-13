@@ -15,3 +15,22 @@ describe Hash do
     end
   end
 end
+
+describe CoreExtensions::PersistentIdentifier do
+  describe ::Symbol do
+    it "converts into a cardname" do
+      expect(:wagn_bot.cardname.s).to eq("Wagn Bot")
+    end
+
+    it "converts into a card" do
+      expect(:logo.card.id).to eq(Card::LogoID)
+      expect(:logo.card.key).to eq(:logo.cardname.key)
+    end
+  end
+
+  describe ::Integer do
+    it "converts into a card" do
+      expect(Card::LogoID.card.id).to eq(Card::LogoID)
+    end
+  end
+end

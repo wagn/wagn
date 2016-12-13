@@ -63,7 +63,7 @@ format :html do
   end
 
   view :core do
-    script = format(:js).render_core
+    script = card.format(:js).render_core
     process_content highlight(script)
   end
 

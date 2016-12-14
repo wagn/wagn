@@ -4,7 +4,6 @@ def clean_html?
 end
 
 def deliver args={}
-  binding.pry
   mail = format.render_mail(args)
   mail.deliver
 rescue Net::SMTPError => exception
@@ -75,10 +74,10 @@ def email_config args={}
   config.select { |_k, v| v.present? }
 end
 
-def process_html_message config, args, attachments, binding
+def process_html_message config, args, inline_attachment_url
   process_message_field(:html_message, config,
-                        args.merge(attachments: attachments,
-                                   binding: binding), "email_html")
+                        args.merge(inline_attachment_url: inline_attachment_url),
+                        "email_html")
   if config[:html_message].present?
     config[:html_message] = Card::Mailer.layout config[:html_message]
   end
@@ -87,21 +86,24 @@ end
 
 format do
   view :mail, perms: :none, cache: :never do |args|
-    binding.pry
     config = card.email_config(args)
     text_message = config.delete(:text_message)
     attachment_list = config.delete(:attach)
-    email_card = card
-    voo = voo
+    email_card = card # card is not accessible in the new_mail block
     mail = Card::Mailer.new_mail(config) do
+      # inline attachments only work in the binding of this block
+      # so the current solution is to create a lambda here and pass it
+      # to the view where it is needed to create the image tag
+      # (see core view in Type::Image::EmailHtmlFormat)
       inline_attachment_url =
         lambda do |path|
           attachments.inline[path] = ::File.read path
           attachments[path].url
         end
-      email_card.process_html_message config, args, attachments, attachment_url
+      email_card.process_html_message config, args, inline_attachment_url
       html_message = config.delete(:html_message)
       alternative = (text_message.present? && html_message.present?)
+
       if alternative
         if attachment_list && !attachment_list.empty?
           content_type "multipart/mixed"

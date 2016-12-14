@@ -4,6 +4,7 @@ def clean_html?
 end
 
 def deliver args={}
+  binding.pry
   mail = format.render_mail(args)
   mail.deliver
 rescue Net::SMTPError => exception
@@ -52,10 +53,6 @@ def email_config args={}
   process_message_field :subject, config, args, "email_text",
                         content_opts: { chunk_list: :nest_only }
   process_message_field :text_message, config, args, "email_text"
-  process_message_field :html_message, config, args, "email_html"
-  if config[:html_message].present?
-    config[:html_message] = Card::Mailer.layout config[:html_message]
-  end
 
   from_name, from_email =
     if config[:from] =~ /(.*)\<(.*)>/
@@ -78,14 +75,33 @@ def email_config args={}
   config.select { |_k, v| v.present? }
 end
 
+def process_html_message config, args, attachments, binding
+  process_message_field(:html_message, config,
+                        args.merge(attachments: attachments,
+                                   binding: binding), "email_html")
+  if config[:html_message].present?
+    config[:html_message] = Card::Mailer.layout config[:html_message]
+  end
+end
+
+
 format do
   view :mail, perms: :none, cache: :never do |args|
-    args = card.email_config(args)
-    text_message = args.delete(:text_message)
-    html_message = args.delete(:html_message)
-    attachment_list = args.delete(:attach)
-    alternative = (text_message.present? && html_message.present?)
-    mail = Card::Mailer.new_mail(args) do
+    binding.pry
+    config = card.email_config(args)
+    text_message = config.delete(:text_message)
+    attachment_list = config.delete(:attach)
+    email_card = card
+    voo = voo
+    mail = Card::Mailer.new_mail(config) do
+      inline_attachment_url =
+        lambda do |path|
+          attachments.inline[path] = ::File.read path
+          attachments[path].url
+        end
+      email_card.process_html_message config, args, attachments, attachment_url
+      html_message = config.delete(:html_message)
+      alternative = (text_message.present? && html_message.present?)
       if alternative
         if attachment_list && !attachment_list.empty?
           content_type "multipart/mixed"

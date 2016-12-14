@@ -119,6 +119,7 @@ def extended_list context=nil
 end
 
 def contextual_content context_card, format_args={}, view_args={}
+  binding.pry
   context_card.format(format_args).process_content(
     format(format_args)._render_raw(view_args), view_args
   )
@@ -171,7 +172,7 @@ format do
   end
 
   def voo_items_view
-    return unless (items = voo.items)
+    return unless (voo && items = voo.items)
     items[:view]
   end
 

@@ -245,7 +245,7 @@ format :html do
   end
 end
 
-include Card::Set::Type::SearchType
+include Abstract::Search
 
 def followed_by? user_id=nil
   all_members_followed_by? user_id

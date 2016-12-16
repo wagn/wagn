@@ -193,47 +193,6 @@ format do
     options[:type] = type_from_rule if type_from_rule
   end
 
-  def search_params
-    @search_params ||= begin
-      p = default_search_params.clone
-      add_focal_search_params p if focal?
-      p
-    end
-  end
-
-  def add_focal_search_params hash
-    offset_and_limit_search_params hash
-    hash.merge! params[:wql] if params[:wql]
-  end
-
-  def offset_and_limit_search_params hash
-    [:offset, :limit].each do |key|
-      hash[key] = params[key] if params[key]
-    end
-  end
-
-  def default_search_params # wahh?
-    set_default_search_params
-  end
-
-  def set_default_search_params overrides={}
-    @default_search_params ||= begin
-      p = { default_limit: 100 }.merge overrides
-      set_search_params_variables! p
-      p
-    end
-  end
-
-  def set_search_params_variables! hash
-    hash[:vars] = params[:vars] || {}
-    params.each do |key, val|
-      case key.to_s
-      # when "_wql"      then hash.merge! val
-      when /^\_(\w+)$/ then hash[:vars][Regexp.last_match(1).to_sym] = val
-      end
-    end
-  end
-
   def nested_fields content=nil
     result = []
     each_nested_field(content) do |chunk|

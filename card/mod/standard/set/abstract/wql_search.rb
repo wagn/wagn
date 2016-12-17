@@ -2,12 +2,10 @@ include_set Abstract::Search
 
 def search args={}
   statement = fetch_query args
-  raise("OH NO.. no limit") unless statement[:limit]
+  raise "OH NO.. no limit" unless statement[:limit]
   # forces explicit limiting
   # can be 0 or less to force no limit
-  Query.run(statement, name)
-rescue
-  binding.pry
+  Query.run statement, name
 end
 
 def raw_ruby_query
@@ -31,8 +29,13 @@ end
 
 format do
   def default_search_params
-    @default_search_params ||=
-      { limit: (card.raw_ruby_query[:limit] || default_limit) }
+    @default_search_params ||= { limit: (card_content_limit || default_limit) }
+  end
+
+  def card_content_limit
+    card.raw_ruby_query[:limit]
+  rescue
+    nil
   end
 
   def query_with_params

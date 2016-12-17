@@ -76,7 +76,7 @@ format do
   end
 
   def implicit_item_view
-    view = voo_items_view || @query_hash[:item] || default_item_view
+    view = voo_items_view || query_with_params[:item] || default_item_view
     Card::View.canonicalize view
   end
 end

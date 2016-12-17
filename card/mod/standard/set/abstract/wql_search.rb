@@ -8,9 +8,9 @@ def search args={}
   Query.run(statement, name)
 end
 
-def raw_ruby_query
-  raise Error::BadQuery, "override 'raw_ruby_query'"
-end
+# def raw_ruby_query
+#   raise Error::BadQuery, "override 'raw_ruby_query'"
+# end
 
 def query args={}
   raw_ruby_query.merge standardized_query_args(args)
@@ -25,6 +25,27 @@ def standardized_query_args args
   args.symbolize_keys!
   args[:context] ||= cardname
   args
+end
+
+# override this with a wql hash to define search
+def raw_ruby_query
+  @raw_ruby_query ||= begin
+    query = raw_content
+    query = query.is_a?(Hash) ? query : parse_json_query(query)
+    query.symbolize_keys
+  end
+end
+
+def parse_json_query query
+  empty_query_error! if query.empty?
+  JSON.parse query
+rescue
+  raise Error::BadQuery, "Invalid JSON search query: #{query}"
+end
+
+def empty_query_error!
+  raise Error::BadQuery,
+        "Error in card '#{name}':can't run search with empty content"
 end
 
 format do

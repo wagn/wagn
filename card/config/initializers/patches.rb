@@ -6,8 +6,10 @@ module Kaminari
   end
 end
 
-module BetterErrors
-  class StackFrame
-    include Patches::BetterErrors::StackFrame::TmpPath
+if defined? BetterErrors
+  module BetterErrors
+    class StackFrame
+      include Patches::BetterErrors::StackFrame::TmpPath
+    end
   end
 end

@@ -245,7 +245,7 @@ format :html do
   end
 end
 
-include Abstract::Search
+include Abstract::WqlSearch
 
 def followed_by? user_id=nil
   all_members_followed_by? user_id

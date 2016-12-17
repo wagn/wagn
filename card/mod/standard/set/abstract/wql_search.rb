@@ -6,6 +6,8 @@ def search args={}
   # forces explicit limiting
   # can be 0 or less to force no limit
   Query.run(statement, name)
+rescue
+  binding.pry
 end
 
 def raw_ruby_query

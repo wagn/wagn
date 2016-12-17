@@ -19,6 +19,7 @@ def item_cards args={}
 end
 
 def item_names args={}
+  args.merge! limit: 0
   returning(:name, args) { search args }
 end
 

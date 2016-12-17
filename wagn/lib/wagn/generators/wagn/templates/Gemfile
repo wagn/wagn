@@ -113,7 +113,7 @@ end
 gem 'ruby-prof', :group=>:profile  # profiling
 
 group :debug do
-  gem 'better_errors', :git=>"https://github.com/xithan/better_errors.git"
+  gem 'better_errors'
   gem 'binding_of_caller'
 end
 <% end %>

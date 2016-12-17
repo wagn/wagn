@@ -5,3 +5,9 @@ module Kaminari
     end
   end
 end
+
+module BetterErrors
+  class StackFrame
+    include Patches::BetterErrors::StackFrame::TmpPath
+  end
+end

@@ -203,7 +203,7 @@ end
 
 def configured_option_names
   if (oc = options_rule_card)
-    oc.item_names context: name, limit: (oc.fetch_query[:limit] || 50)
+    oc.item_names context: name, limit: oc.default_limit
   else
     Card.search({ sort: "name", limit: 50, return: :name },
                 "option names for pointer: #{name}")

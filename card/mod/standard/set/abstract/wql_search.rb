@@ -62,6 +62,6 @@ format do
   end
 
   def limit
-    query_with_params[:limit]
+    query_with_params.limit
   end
 end

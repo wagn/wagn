@@ -120,8 +120,9 @@ class Card
 
     # run the current query
     # @return array of card objects by default
-    def run
-      retrn = statement[:return].present? ? statement[:return].to_s : "card"
+    def run retrn=nil
+      retrn ||= statement[:return].present? ? statement[:return] : "card"
+      retrn = retrn.to_s
       if retrn == "card"
         get_results("name").map do |name|
           Card.fetch name, new: {}
@@ -179,6 +180,10 @@ class Card
       else
         @context = @superquery ? @superquery.context : ""
       end
+    end
+
+    def limit
+      @mods[:limit]
     end
   end
 end

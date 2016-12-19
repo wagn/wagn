@@ -30,7 +30,7 @@ def count args={}
 end
 
 def item_type
-  type = fetch_query[:type]
+  type = wql_hash[:type]
   return if type.is_a?(Array) || type.is_a?(Hash)
   type
 end

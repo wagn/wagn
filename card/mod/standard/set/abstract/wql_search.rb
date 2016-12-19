@@ -1,19 +1,26 @@
 include_set Abstract::Search
 
 def search args={}
-  statement = fetch_query args
-  raise "OH NO.. no limit" unless statement[:limit]
+  query = fetch_query(args)
   # forces explicit limiting
   # can be 0 or less to force no limit
-  Query.run statement, name
+  raise "OH NO.. no limit" unless query.mods[:limit]
+  query.run
 end
 
-# def raw_ruby_query
-#   raise Error::BadQuery, "override 'raw_ruby_query'"
-# end
+# override this to define search
+def wql_hash
+  @wql_hash ||= begin
+    query = raw_content
+    query = query.is_a?(Hash) ? query : parse_json_query(query)
+    query.symbolize_keys
+  end
+end
 
 def query args={}
-  raw_ruby_query.merge standardized_query_args(args)
+  query_args = wql_hash.merge! args
+  query_args = standardized_query_args query_args
+  Query.new query_args, name
 end
 
 def fetch_query args={}
@@ -25,15 +32,6 @@ def standardized_query_args args
   args.symbolize_keys!
   args[:context] ||= cardname
   args
-end
-
-# override this with a wql hash to define search
-def raw_ruby_query
-  @raw_ruby_query ||= begin
-    query = raw_content
-    query = query.is_a?(Hash) ? query : parse_json_query(query)
-    query.symbolize_keys
-  end
 end
 
 def parse_json_query query
@@ -54,7 +52,7 @@ format do
   end
 
   def card_content_limit
-    card.raw_ruby_query[:limit]
+    card.wql_hash[:limit]
   rescue
     nil
   end

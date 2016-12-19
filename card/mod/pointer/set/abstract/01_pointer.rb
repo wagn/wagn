@@ -128,7 +128,7 @@ end
 
 def item_cards args={}
   if args[:complete]
-    query = args.reverse_merge referred_to_by: name
+    query = args.reverse_merge referred_to_by: name, limit: 0
     Card::Query.run query
   elsif args[:known_only]
     known_item_cards args

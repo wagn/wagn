@@ -75,15 +75,16 @@ def email_config args={}
 end
 
 def process_html_message config, args, inline_attachment_url
-  process_message_field(:html_message, config,
-                        args.merge(inline_attachment_url: inline_attachment_url),
-                        "email_html")
+  process_message_field(
+    :html_message, config,
+    args.merge(inline_attachment_url: inline_attachment_url),
+    "email_html"
+  )
   if config[:html_message].present?
     config[:html_message] = Card::Mailer.layout config[:html_message]
   end
   config
 end
-
 
 format do
   view :mail, perms: :none, cache: :never do |args|

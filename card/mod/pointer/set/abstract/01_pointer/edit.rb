@@ -192,18 +192,22 @@ def insert_item! index, name
 end
 
 def option_names
-  result_names =
-    if (oc = options_rule_card)
-      oc.item_names default_limit: 50, context: name
-    else
-      Card.search({ sort: "name", limit: 50, return: :name },
-                  "option names for pointer: #{name}")
-    end
+  result_names = configured_option_names
+
   if (selected_options = item_names)
     result_names += selected_options
     result_names.uniq!
   end
   result_names
+end
+
+def configured_option_names
+  if (oc = options_rule_card)
+    oc.item_names context: name, limit: oc.default_limit
+  else
+    Card.search({ sort: "name", limit: 50, return: :name },
+                "option names for pointer: #{name}")
+  end
 end
 
 def option_cards

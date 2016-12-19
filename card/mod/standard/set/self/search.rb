@@ -17,6 +17,7 @@ format do
       next unless key.to_s =~ /^\_(\w+)$/
       hash[:vars][Regexp.last_match(1).to_sym] = val
     end
+    hash
   end
 
 end

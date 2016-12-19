@@ -19,6 +19,7 @@ def item_cards args={}
 end
 
 def item_names args={}
+  args.merge! limit: 0
   returning(:name, args) { search args }
 end
 
@@ -75,7 +76,7 @@ format do
   end
 
   def implicit_item_view
-    view = voo_items_view || @query_hash[:item] || default_item_view
+    view = voo_items_view || query_with_params[:item] || default_item_view
     Card::View.canonicalize view
   end
 end

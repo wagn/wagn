@@ -57,5 +57,5 @@ end
 def structuree_statement
   set_card = trunk
   return unless set_card.type_id == SetID
-  set_card.get_query
+  set_card.query
 end

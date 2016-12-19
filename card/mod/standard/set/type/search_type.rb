@@ -1,10 +1,10 @@
 include_set Abstract::AceEditor
-include_set Abstract::Search
+include_set Abstract::WqlSearch
 
 format do
   view :core, cache: :never do
     _render(
-      case search_results
+      case search_with_params
       when Exception          then :search_error
       when Integer            then :search_count
       when @mode == :template then :raw
@@ -46,10 +46,7 @@ format :rss do
   end
 
   def raw_feed_items
-    @raw_feed_items ||= begin
-      search_params[:default_limit] = 25
-      search_results
-    end
+    @raw_feed_items ||= search_with_params
   end
 end
 

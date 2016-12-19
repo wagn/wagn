@@ -1,7 +1,9 @@
 
+include_set Type::SearchType
+
 format :html do
   COMMON_RULE_SETTINGS =
-    [:create, :read, :update, :delete, :structure, :default, :style]
+    [:create, :read, :update, :delete, :structure, :default, :style].freeze
 
   view :core do |args|
     voo.show :set_label, :rule_navbar
@@ -244,8 +246,6 @@ format :html do
     li_pill link, selected_view == view
   end
 end
-
-include Abstract::Search
 
 def followed_by? user_id=nil
   all_members_followed_by? user_id

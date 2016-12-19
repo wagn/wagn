@@ -5,3 +5,11 @@ module Kaminari
     end
   end
 end
+
+if defined? BetterErrors
+  module BetterErrors
+    class StackFrame
+      include Patches::BetterErrors::StackFrame::TmpPath
+    end
+  end
+end

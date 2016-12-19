@@ -37,7 +37,7 @@ end
 
 def each_item_name_with_options _content=nil
   options = {}
-  item = fetch_query[:view]
+  item = fetch_query.statement[:view]
   options[:view] = item if item
   item_names.each do |name|
     yield name, options

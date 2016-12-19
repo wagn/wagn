@@ -28,9 +28,9 @@ event :update_structurees_type, :finalize,
 end
 
 def structuree_names
-  return [] unless (query = structuree_query)
+  return [] unless (query = structuree_query(return: :name))
   Auth.as_bot do
-    query.run :name
+    query.run
   end
 end
 
@@ -39,17 +39,17 @@ def update_structurees args
   # for example, if someone were to change the type of a
   # +*right+*structure rule that was overridden
   # by a +*type plus right+*structure rule, the override would not be respected.
-  query = structuree_query
-  return unless query
+  return unless (query = structuree_query(return: :id))
+
   Auth.as_bot do
-    query.run(:id).each_slice(100) do |id_batch|
+    query.run.each_slice(100) do |id_batch|
       Card.where(id: id_batch).update_all args
     end
   end
 end
 
-def structuree_query
+def structuree_query args={}
   set_card = trunk
   return unless set_card.type_id == SetID
-  set_card.query
+  set_card.fetch_query args
 end

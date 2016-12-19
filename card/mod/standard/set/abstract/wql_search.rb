@@ -29,7 +29,7 @@ def fetch_query args={}
 end
 
 def standardized_query_args args
-  args.symbolize_keys!
+  args = args.symbolize_keys
   args[:context] ||= cardname
   args
 end

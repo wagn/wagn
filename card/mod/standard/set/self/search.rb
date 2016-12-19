@@ -9,7 +9,6 @@ format do
     end
   end
 
-
   def default_search_params
     hash = super
     hash[:vars] = params[:vars] || {}
@@ -19,7 +18,6 @@ format do
     end
     hash
   end
-
 end
 
 format :html do

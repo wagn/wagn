@@ -1,8 +1,6 @@
 include_set Abstract::AceEditor
 include_set Abstract::WqlSearch
 
-
-
 format do
   view :core, cache: :never do
     _render(

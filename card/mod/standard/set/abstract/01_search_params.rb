@@ -15,11 +15,6 @@ format do
     100
   end
 
-  #def add_focal_search_params hash
-  #  offset_and_limit_search_params hash
-  #  hash.merge! params[:wql] if params[:wql]
-  #end
-
   def offset_and_limit_search_params hash
     [:offset, :limit].each do |key|
       hash[key] = params[key].to_i if params[key]

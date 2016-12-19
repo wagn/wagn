@@ -1,6 +1,6 @@
 include_set Abstract::SearchParams
 
-def search args={}
+def search _args={}
   raise Error, "search not overridden"
 end
 
@@ -10,7 +10,7 @@ def cached_search args={}
 end
 
 def returning item, args
-  args.merge!(return: item)
+  args[:return] = item
   yield
 end
 
@@ -19,12 +19,13 @@ def item_cards args={}
 end
 
 def item_names args={}
-  args.merge! limit: 0
+  args[:limit] = 0
   returning(:name, args) { search args }
 end
 
 def count args={}
-  args.merge! offset: 0, limit: 0
+  args[:offset] = 0
+  args[:limit] = 0
   returning(:count, args) { search args }
 end
 
@@ -42,7 +43,6 @@ def each_item_name_with_options _content=nil
     yield name, options
   end
 end
-
 
 format do
   view :search_count, cache: :never do

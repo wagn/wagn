@@ -19,7 +19,7 @@ format :html do
     total_pages = ((count_with_params - 1) / limit).to_i
     current_page = (offset / limit).to_i
     PagingLinks.new(total_pages, current_page)
-      .build do |text, page, status, options|
+               .build do |text, page, status, options|
       page_link_li text, page, status, options
     end
   end

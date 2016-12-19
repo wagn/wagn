@@ -7,7 +7,7 @@ module Patches
         @map = {} # cache tmp path mapping
 
         class << self
-          def included(klass)
+          def included klass
             klass.class_eval do
               remove_method :initialize
             end
@@ -15,7 +15,7 @@ module Patches
 
           def corrections filename
             @map[filename] ||= real_filename_and_line_offset filename
-            yield *@map[filename]
+            yield(*@map[filename])
           end
 
           def real_filename_and_line_offset filename
@@ -26,11 +26,11 @@ module Patches
                 end
               end
             end
-            return filename, 0
+            [filename, 0]
           end
         end
 
-        def initialize filename, line, name, frame_binding = nil
+        def initialize filename, line, name, frame_binding=nil
           @filename = filename
           @line = line
           @name = name
@@ -41,7 +41,7 @@ module Patches
         end
 
         def tmp_file?
-          @filename.include? '/tmp/'
+          @filename.include? "/tmp/"
         end
 
         def correct_tmp_file

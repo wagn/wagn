@@ -1,5 +1,6 @@
 #! no set module
 
+# render paging links
 class PagingLinks
   def initialize total_pages, current_page
     @total = total_pages
@@ -22,26 +23,32 @@ class PagingLinks
   private
 
   def links window
-    window_min = [@current - window, 0].max
-    window_max = [@current + window, @total].min
+    @window_start = [@current - window, 0].max
+    @window_end = [@current + window, @total].min
+    left_part + window_part + right_part
+  end
 
-    out = []
-    out << previous_page_link
-    if window_min > 0
-      out << direct_page_link(0)
-      out << ellipse if window_min > 1
-    end
+  # the links around the current page
+  def window_part
+    (@window_start..@window_end).map do |page|
+      direct_page_link page
+    end.compact
+  end
 
-    (window_min..window_max).each do |page|
-      out << direct_page_link(page)
-    end
+  def left_part
+    [
+      previous_page_link,
+      (direct_page_link 0 if @window_start > 0),
+      (ellipse if @window_start > 1)
+    ].compact
+  end
 
-    if @total > window_max
-      out << ellipse if @total > window_max + 1
-      out << direct_page_link(@total)
-    end
-    out << next_page_link
-    out
+  def right_part
+    [
+      (ellipse if @total > @window_end + 1),
+      (direct_page_link @total if @total > @window_end),
+      next_page_link
+    ].compact
   end
 
   def previous_page_link
@@ -60,7 +67,7 @@ class PagingLinks
   end
 
   def ellipse
-    @render_item.call '<span>...</span>', false
+    @render_item.call "<span>...</span>", false
   end
 
   def paging_item text, page, options={}

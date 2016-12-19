@@ -48,10 +48,7 @@ format :rss do
   end
 
   def raw_feed_items
-    @raw_feed_items ||= begin
-      search_params[:default_limit] = 25
-      search_with_params
-    end
+    @raw_feed_items ||= search_with_params
   end
 end
 

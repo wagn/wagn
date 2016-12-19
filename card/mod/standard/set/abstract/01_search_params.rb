@@ -38,3 +38,9 @@ format :json do
     0
   end
 end
+
+format :rss do
+  def default_limit
+    25
+  end
+end

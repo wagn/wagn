@@ -1,25 +1,7 @@
 include_set Abstract::AceEditor
 include_set Abstract::WqlSearch
 
-def raw_ruby_query
-  @raw_ruby_query ||= begin
-    query = raw_content
-    query = query.is_a?(Hash) ? query : parse_json_query(query)
-    query.symbolize_keys
-  end
-end
 
-def parse_json_query query
-  empty_query_error! if query.empty?
-  JSON.parse query
-rescue
-  raise Error::BadQuery, "Invalid JSON search query: #{query}"
-end
-
-def empty_query_error!
-  raise Error::BadQuery,
-        "Error in card '#{name}':can't run search with empty content"
-end
 
 format do
   view :core, cache: :never do

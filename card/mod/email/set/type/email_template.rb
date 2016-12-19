@@ -81,6 +81,7 @@ def process_html_message config, args, inline_attachment_url
   if config[:html_message].present?
     config[:html_message] = Card::Mailer.layout config[:html_message]
   end
+  config
 end
 
 

@@ -134,7 +134,13 @@ describe Card::Set::Type::EmailTemplate do
     end
 
     describe "html message" do
-      subject { mailconfig[:html_message] }
+      subject do
+        config = mailconfig
+        config[:context] = Card[email_name]
+        config = Card[email_name].process_html_message(config, { context: Card[email_name]}, nil)
+        # TODO: very hacky to test this; screams for refactoring
+        config[:html_message]
+      end
 
       it "uses *html_message field" do
         is_expected.to include "*html message"
@@ -186,12 +192,14 @@ describe Card::Set::Type::EmailTemplate do
                      content: %({"referred_to_by":"_left+subject"}),
                      type: "Search"
         update_field "*subject", content: "{{+subject search|core|core}}"
+        binding.pry
         expect(subject[:subject]).to eq("a very nutty thang")
       end
 
       it "handles _self in html message" do
         update_field "*html message", content: "Triggered by {{_self|name}}"
-        expect(subject[:html_message]).to include("Triggered by Banana")
+        mail = email.format.render_mail context: context_card
+        expect(mail.parts[1].body.raw_source).to include("Triggered by Banana")
       end
 
       it "handles _left in html message" do
@@ -199,8 +207,21 @@ describe Card::Set::Type::EmailTemplate do
                      content: "Nobody expects {{_left+surprise|core}}"
         Card.create name: "Banana+surprise", content: "the Spanish Inquisition"
         c = Card.create name: "Banana+emailtest", content: "data content"
-        expected = mailconfig(context: c)[:html_message]
+        mail = email.format.render_mail context: c
+        #c.format.render_mail.parts[1].body.raw_source
+        expected = mail.parts[1].body.raw_source
+        #expected = mailconfig(context: c)[:html_message]
         expect(expected).to include "Nobody expects the Spanish Inquisition"
+      end
+
+      it "handles image nests in html message" do
+        update_field "*html message", content: "Triggered by {{:logo|core}}"
+        mail = email.format.render_mail context: context_card
+        expect(mail.parts[0].mime_type).to eq "image/png"
+        url = mail.parts[0].url
+        expect(mail.parts[2].mime_type).to eq "text/html"
+        expect(mail.parts[2].body.raw_source).to include('<img src="cid:')
+        expect(mail.parts[2].body.raw_source).to include("<img src=\"#{url}\"")
       end
 
       it "handles contextual name for attachments" do

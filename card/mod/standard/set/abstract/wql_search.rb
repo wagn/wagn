@@ -22,8 +22,9 @@ def fetch_query args={}
 end
 
 def standardized_query_args args
+  args.symbolize_keys!
   args[:context] ||= cardname
-  args.symbolize_keys
+  args
 end
 
 # override this with a wql hash to define search

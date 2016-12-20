@@ -269,7 +269,7 @@ module ClassMethods
 
   def require_id_for_codename mark
     id = Card::Codename[mark]
-    raise Card::NotFound, "missing card with codename: #{mark}" unless id
+    raise Card::Error::NotFound, "missing card with codename: #{mark}" unless id
     id
   end
 

@@ -49,7 +49,7 @@ module Cardio
         closed_search_limit:    10,
 
         non_createable_types:   [%w(signup setting set)],
-        view_cache:             (Rails.env == "production"),
+        view_cache: false,
 
         encoding:               "utf-8",
         request_logger:         false,

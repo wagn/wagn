@@ -1,3 +1,13 @@
+format do
+  def limit
+    default_limit
+  end
+
+  def offset
+    search_params[:offset] || 0
+  end
+end
+
 format :html do
   def with_paging path_args={}
     paging_path_args path_args
@@ -63,13 +73,5 @@ format :html do
   def fewer_results_than_limit?
     return false unless offset.zero?
     limit > offset + search_with_params.length
-  end
-
-  def limit
-    default_limit
-  end
-
-  def offset
-    search_params[:offset] || 0
   end
 end

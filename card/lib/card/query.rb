@@ -182,7 +182,7 @@ class Card
     end
 
     def limit
-      @mods[:limit]
+      @mods[:limit].to_i
     end
   end
 end

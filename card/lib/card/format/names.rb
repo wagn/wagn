@@ -22,6 +22,11 @@ class Card
         context_name_list.split(",").map(&:to_name)
       end
 
+      def context_names_to_params
+        return unless @context_names
+        @context_names.join(",")
+      end
+
       def add_name_context name=nil
         name ||= card.name
         @context_names += name.to_name.part_names

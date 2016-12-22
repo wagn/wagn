@@ -43,7 +43,7 @@ class Card
       end
 
       def nest_render nested_card, view, options
-        subformat = nest_subformat nested_card, options
+        subformat = nest_subformat nested_card, options, view
         view = subformat.modal_nest_view view
         rendered = count_chars { subformat.optional_render view, options }
         block_given? ? yield(rendered, view) : rendered
@@ -56,9 +56,9 @@ class Card
         sub
       end
 
-      def reuse_format? opts
+      def reuse_format? opts, view
         return false unless opts[:nest_name] =~ /^_(self)?$/
-        !content_view? opts[:view]
+        !content_view? view
       end
 
       def content_view? view

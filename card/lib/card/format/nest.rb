@@ -50,10 +50,15 @@ class Card
       end
 
       def nest_subformat nested_card, opts
-        return self if opts[:nest_name] =~ /^_(self)?$/
+        return self if reuse_format? opts
         sub = subformat nested_card
         sub.main! if opts[:main]
         sub
+      end
+
+      def reuse_format? opts
+        return false unless opts[:nest_name] =~ /^_(self)?$/
+        opts[:view] && [:link, :name].member?(opts[:view])
       end
 
       # Main difference compared to #nest is that you can use

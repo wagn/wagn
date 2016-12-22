@@ -51,7 +51,7 @@ format :rss do
 end
 
 format :html do
-  view :closed_content do
+  view :closed_content, cache: :never do
     if @depth > max_depth
       "..."
     else

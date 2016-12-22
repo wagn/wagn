@@ -171,7 +171,7 @@ format do
   end
 
   def voo_items_view
-    return unless (items = voo.items)
+    return unless (voo && items = voo.items)
     items[:view]
   end
 

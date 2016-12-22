@@ -58,6 +58,10 @@ format :html do
     }.merge(extra_paging_path_args).merge local_args
   end
 
+  def paging_view
+    (voo && voo.home_view) || :content
+  end
+
   def extra_paging_path_args
     {}
   end

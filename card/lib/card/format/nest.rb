@@ -49,8 +49,8 @@ class Card
         block_given? ? yield(rendered, view) : rendered
       end
 
-      def nest_subformat nested_card, opts
-        return self if reuse_format? opts
+      def nest_subformat nested_card, opts, view
+        return self if reuse_format? opts, view
         sub = subformat nested_card
         sub.main! if opts[:main]
         sub

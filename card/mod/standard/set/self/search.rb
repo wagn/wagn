@@ -2,7 +2,7 @@ include_set Abstract::SearchParams
 
 format do
   def extra_paging_path_args
-    vars = query_with_params[:vars]
+    vars = query_with_params.vars
     return {} unless vars.is_a? Hash
     vars.each_with_object({}) do |(key, value), hash|
       hash["_#{key}"] = value

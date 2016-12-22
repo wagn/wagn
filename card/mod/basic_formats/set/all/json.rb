@@ -20,8 +20,11 @@ format :json do
   end
 
   view :name_complete, cache: :never do
-    card.item_cards complete: params["term"], limit: 8, sort: "name",
-                    return: "name", context: ""
+    # context is "" so that term will not be interpreted in the context
+    # of search card name.  However, this can break searches where the
+    # search card name is required (eg found_by)
+    card.search complete: params["term"], limit: 8, sort: "name",
+                return: "name", context: ""
   end
 
   view :status, tags: :unknown_ok, perms: :none, cache: :never do

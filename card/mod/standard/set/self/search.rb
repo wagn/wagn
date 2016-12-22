@@ -1,6 +1,14 @@
 include_set Abstract::SearchParams
 
 format do
+  def extra_paging_path_args
+    vars = query_with_params.vars
+    return {} unless vars.is_a? Hash
+    vars.each_with_object({}) do |(key, value), hash|
+      hash["_#{key}"] = value
+    end
+  end
+
   def default_search_params
     hash = super
     hash[:vars] = params[:vars] || {}
@@ -13,14 +21,6 @@ format do
 end
 
 format :html do
-  def extra_paging_path_args
-    vars = query_with_params[:vars]
-    return {} unless vars.is_a? Hash
-    vars.each_with_object({}) do |(key, value), hash|
-      hash["_#{key}"] = value
-    end
-  end
-
   view :title do
     vars = root.search_params[:vars]
     if vars && vars[:keyword]

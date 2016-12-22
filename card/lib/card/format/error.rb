@@ -8,9 +8,7 @@ class Card
         rendering_error e, view
       end
 
-      def debug_error e, view
-        Rails.logger.info "#{rendering_error e, view}:\n" \
-                          "#{e.class} : #{e.message}"
+      def debug_error e
         debug = Card[:debugger]
         raise e if debug && debug.content == "on"
       end

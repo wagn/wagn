@@ -8,6 +8,7 @@ format :html do
       end
       @rows = content
       @opts = opts
+      @format.add_class opts, :table
     end
 
     def render

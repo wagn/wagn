@@ -19,7 +19,7 @@ format :html do
       tag :thead do
         tag :tr do
           @header.map do |item|
-            tag :th { item }
+            tag(:th) { item }
           end.join "\n"
         end
       end

@@ -1,15 +1,17 @@
 format :html do
-  class Table
-    def initalize content, opts={}
+  class TableHelper
+    def initialize format, content, opts={}
+      @format = format
       @div_table = opts.delete :div_table
       if opts[:header]
         @header = opts[:header].is_a?(Array) ? opts[:header] : content.shift
       end
       @rows = content
+      @opts = opts
     end
 
     def render
-      tag :table, class: opts[:class] do
+      tag :table, class: @opts[:class] do
         [header, body]
       end
     end
@@ -39,7 +41,7 @@ format :html do
         when Hash then
           [row.delete(:content), row]
         else
-          [row, nil]
+          [row, {}]
         end
       row_content =
         if row_data.is_a?(Array)
@@ -47,9 +49,7 @@ format :html do
         else
           row_data
         end
-      tag :tr, row_class do
-        row_content
-      end
+      tag :tr, row_content, row_class
     end
 
     def cell cell
@@ -65,17 +65,19 @@ format :html do
       end
     end
 
-
-    def tag elem, opts={}
+    def tag elem, content_or_opts={}, opts={}, &block
       if @div_table
-        add_class opts, elem
+        if content_or_opts.is_a? Hash
+          @format.add_class content_or_opts, elem
+        else
+          @format.add_class opts, elem
+        end
         elem = :div
       end
-      wrap_with elem, opts do
-        yield
-      end
+      @format.wrap_with elem, content_or_opts, opts, &block
     end
   end
+
   # @param [Array<Array,String>] content the content for the table. Accepts
   # strings or arrays for each row.
   # @param [Hash] opts
@@ -83,6 +85,6 @@ format :html do
   # value of this option if it is a string
   # @return [HTML] bootstrap table
   def table content, opts={}
-    Table.new(self, content, opts).render
+    TableHelper.new(self, content, opts).render
   end
 end

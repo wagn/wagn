@@ -10,7 +10,8 @@ class Card
         @hide_diff = hide_diff
       end
 
-      def method_missing method_name, *args, &block
+      include ::Bootstrapper
+      def method_missing(method_name, *args, &block)
         if block_given?
           @format.send(method_name, *args, &block)
         else
@@ -23,8 +24,7 @@ class Card
       end
 
       def render
-        Format::HtmlFormat::Bootstrap::Layout.render self, container: true,
-                                                           fluid: true do
+        bs_layout container: true, fluid: true do
           row do
             html <<-HTML
               <ul class="action-list">
@@ -38,17 +38,15 @@ class Card
       end
 
       def action_panel
-        Format::HtmlFormat::Bootstrap::Panel.render self, container: true do
-          panel do
-            if header
-              heading do
-                div type_diff, class: "pull-right"
-                div name_diff
-              end
+        bs_panel do
+          if header
+            heading do
+              div type_diff, class: "pull-right"
+              div name_diff
             end
-            body do
-              content_diff
-            end
+          end
+          body do
+            content_diff
           end
         end
       end

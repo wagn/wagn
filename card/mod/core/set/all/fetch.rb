@@ -83,6 +83,14 @@ module ClassMethods
     end
   end
 
+  def fetch_name mark
+    if (card = quick_fetch(mark))
+      card.name
+    elsif block_given?
+      yield
+    end
+  end
+
   def quick_fetch mark
     fetch mark, skip_virtual: true, skip_modules: true
   end
@@ -222,7 +230,8 @@ module ClassMethods
     opts[:skip_virtual] || opts[:new].present? || opts[:skip_type_lookup]
   end
 
-  def compose_mark parts, opts
+  def compose_mark parts, opts={}
+    parts.flatten!
     return normalize_mark(parts.first, opts) if parts.size == 1
     parts.map do |p|
       normalized = normalize_mark p, {}
@@ -237,19 +246,31 @@ module ClassMethods
 
   def normalize_mark mark, opts
     case mark
-    when Symbol  then Card::Codename[mark]
-    when Integer then mark.to_i
-    when Card    then mark.cardname
-    when String, SmartName
+    when Symbol            then require_id_for_codename mark
+    when Integer           then mark.to_i
+    when Card              then mark.cardname
+    when String, SmartName then normalize_stringy_mark mark, opts
       # there are some situations where this breaks if we use Card::Name
       # rather than SmartName, which would seem more correct.
       # very hard to reproduce, not captured in a spec :(
-      case mark.to_s
-      when /^\~(\d+)$/ then $1.to_i                   # id
-      when /^\:(\w+)$/ then Card::Codename[$1.to_sym] # codename
-      else fullname_from_mark mark, opts[:new]        # name
-      end
     end
+  end
+
+  def normalize_stringy_mark mark, opts
+    case mark.to_s
+    when /^\~(\d+)$/  # id, eg "~75"
+      Regexp.last_match[1].to_i
+    when /^\:(\w+)$/  # codename, eg ":options"
+      require_id_for_codename(Regexp.last_match[1].to_sym)
+    else
+      fullname_from_mark mark, opts[:new]
+    end
+  end
+
+  def require_id_for_codename mark
+    id = Card::Codename[mark]
+    raise Card::Error::NotFound, "missing card with codename: #{mark}" unless id
+    id
   end
 
   def fullname_from_mark name, new_opts={}

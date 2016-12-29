@@ -8,7 +8,7 @@ class Card
             # FIXME: - move this check to set mods!
 
             subquery(
-              c.get_query.merge(unjoined: true, context: c.name)
+              c.wql_hash.merge(unjoined: true, context: c.name)
             )
           else
             raise Card::Error::BadQuery,

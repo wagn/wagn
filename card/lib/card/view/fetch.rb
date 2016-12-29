@@ -28,6 +28,7 @@ class Card
       #   don't double cache
       # * *never* don't ever cache this view
       def cache_level
+        return :yield unless Cardio.config.view_cache
         send "#{caching? ? 'dependent' : 'independent'}_cache_level"
       end
 

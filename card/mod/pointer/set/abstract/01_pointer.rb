@@ -38,9 +38,8 @@ format do
   end
 
   def pointer_items args={}
-    item_options = item_view_options args
     card.item_cards.map do |item_card|
-      nest_item item_card, item_options.clone do |rendered, item_view|
+      nest_item item_card, args do |rendered, item_view|
         wrap_item rendered, item_view
       end
     end
@@ -89,7 +88,7 @@ format :js do
 end
 
 format :data do
-  view :core do |_args|
+  view :core, cache: :never do
     nest_item_array
   end
 end
@@ -102,9 +101,9 @@ end
 
 format :json do
   view :export_items do |args|
-    item_options = args.merge view: :export
+    item_args = args.merge view: :export
     card.known_item_cards.map do |item_card|
-      nest_item item_card, item_options
+      nest_item item_card, item_args
     end.flatten.reject(&:blank?)
   end
 end
@@ -117,7 +116,7 @@ end
 event :standardize_items, :prepare_to_validate,
       on: :save,
       changed: :content,
-      when: proc { |c| c.type_id == Card::PointerID  } do
+      when: proc { |c| c.type_id == Card::PointerID } do
   self.content = item_names(context: :raw).map do |name|
     "[[#{name}]]"
   end.join "\n"
@@ -129,7 +128,7 @@ end
 
 def item_cards args={}
   if args[:complete]
-    query = args.reverse_merge referred_to_by: name
+    query = args.reverse_merge referred_to_by: name, limit: 0
     Card::Query.run query
   elsif args[:known_only]
     known_item_cards args

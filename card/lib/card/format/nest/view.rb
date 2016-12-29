@@ -38,11 +38,9 @@ class Card
         end
 
         def hide_view_in_edit_mode? view
-          return true if Card::Format.perms[view] == :none
-          # view configured not to keep in form
-          return true if card.structure  # not yet nesting structures
-          return true if card.key.blank? # eg {{_self|type}} on new cards
-          false
+          Card::Format.perms[view] == :none || # view never edited
+            card.structure                  || # not yet nesting structures
+            card.key.blank?                    # eg {{_self|type}} on new cards
         end
 
         # Return the view that the card should use

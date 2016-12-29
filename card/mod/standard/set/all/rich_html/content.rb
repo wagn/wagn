@@ -2,6 +2,12 @@ def show_comment_box_in_related?
   false
 end
 
+def help_rule_card
+  setting = new_card? ? [:add_help, { fallback: :help }] : :help
+  help_card = rule_card(*setting)
+  help_card if help_card && help_card.ok?(:read)
+end
+
 format :html do
   def show view, args
     send "show_#{show_layout? ? :with : :without}_layout", view, args
@@ -20,7 +26,7 @@ format :html do
   end
 
   def show_without_layout view, args
-    @main = true if params[:is_main]
+    @main = true if params[:is_main] || args[:main]
     view ||= args[:home_view] || :open
     render view, args
   end
@@ -74,7 +80,7 @@ format :html do
   end
 
   view :title do
-    title = fancy_title voo.title
+    title = fancy_title super()
     if show_view? :title_link, :hide
       title = _render_title_link title_ready: title
     end
@@ -94,11 +100,8 @@ format :html do
     end
   end
 
-  def default_open_args args
-    voo.show!(:toolbar) if toolbar_pinned?
-  end
-
   view :open, tags: :comment do
+    voo.show! :toolbar if toolbar_pinned?
     voo.viz :toggle, (main? ? :hide : :show)
     @content_body = true
     frame do
@@ -143,11 +146,9 @@ format :html do
     Card.fetch(set_name)
   end
 
-
-    # subheader = with_name_context(card.name) do
-    #   subformat(rcard)._render_title(args)
-    # end
-
+  # subheader = with_name_context(card.name) do
+  #   subformat(rcard)._render_title(args)
+  # end
 
   view :related do |args|
     related_card, options = related_card_and_options args
@@ -176,22 +177,20 @@ format :html do
     Card.fetch related_name, new: {}
   end
 
-  view :help, tags: :unknown_ok do |args|
-    text = args[:help_text] || begin
-      setting = card.new_card? ? [:add_help, { fallback: :help }] : :help
-      help_card = card.rule_card(*setting)
-      if help_card && help_card.ok?(:read)
-        with_nest_mode :normal do
-          raw_help_content = _render_raw args.merge(structure: help_card.name)
-          process_content raw_help_content, content_opts:
-            { chunk_list: :references }
-          # render help card with current card's format
-          # so current card's context is used in help card nests
-        end
-      end
+  view :help, tags: :unknown_ok do
+    help_text = voo.help || rule_based_help
+    return "" unless help_text.present?
+    wrap_with :div, help_text, class: classy("help-text")
+  end
+
+  def rule_based_help
+    return "" unless (rule_card = card.help_rule_card)
+    with_nest_mode :normal do
+      process_content _render_raw(structure: rule_card.name),
+                      content_opts: { chunk_list: :references }
+      # render help card with current card's format
+      # so current card's context is used in help card nests
     end
-    klass = [args[:help_class], "help-text"].compact * " "
-    %(<div class="#{klass}">#{raw text}</div>) if text
   end
 
   view :last_action do

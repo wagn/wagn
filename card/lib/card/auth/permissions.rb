@@ -51,9 +51,11 @@ class Card
       # @param user_id [Integer]
       # @return [true/false]
       def admin? user_id
-        !Card[user_id].all_roles.find do |r|
-          r == Card::AdministratorID
-        end.nil?
+        has_role? user_id, Card::AdministratorID
+      end
+
+      def has_role? user_id, role_id
+        Card[user_id].all_roles.include? role_id
       end
     end
   end

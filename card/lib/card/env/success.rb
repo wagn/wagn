@@ -116,6 +116,10 @@ class Card
         @params.marshal_dump
       end
 
+      def raw_params
+        @params
+      end
+
       def to_url name_context=@name_context
         case (target = target(name_context))
         when Card

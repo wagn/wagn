@@ -80,7 +80,7 @@ format :html do
   end
 
   def stat_row args={}
-    res = [(voo.title || "")]
+    res = [(args[:title] || "")]
     res << "#{count(args[:count])}#{args[:unit]}"
     return res unless args[:task]
     res << link_to_card(:admin, (args[:link_text] || args[:task]),

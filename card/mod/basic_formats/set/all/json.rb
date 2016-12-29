@@ -19,12 +19,15 @@ format :json do
     JSON.send method, raw
   end
 
-  view :name_complete do
-    card.item_cards complete: params["term"], limit: 8, sort: "name",
-                    return: "name", context: ""
+  view :name_complete, cache: :never do
+    # context is "" so that term will not be interpreted in the context
+    # of search card name.  However, this can break searches where the
+    # search card name is required (eg found_by)
+    card.search complete: params["term"], limit: 8, sort: "name",
+                return: "name", context: ""
   end
 
-  view :status, tags: :unknown_ok, perms: :none do
+  view :status, tags: :unknown_ok, perms: :none, cache: :never do
     status = card.state
     hash = { key: card.key,
              url_key: card.cardname.url_key,
@@ -33,14 +36,14 @@ format :json do
     hash
   end
 
-  view :content do
+  view :content, cache: :never do
     req = controller.request
     { url:       (req && req.original_url),
       timestamp: Time.now.to_s,
       card:      _render_atom }
   end
 
-  view :atom do
+  view :atom, cache: :never do
     h = { name: card.name, type: card.type_name }
     h[:content]  = card.content  unless card.structure
     h[:codename] = card.codename if card.codename
@@ -49,7 +52,7 @@ format :json do
   end
 
   # minimum needed to re-fetch card
-  view :cast do
+  view :cast, cache: :never do
     card.cast
   end
 end

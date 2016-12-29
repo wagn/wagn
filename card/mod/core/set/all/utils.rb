@@ -10,10 +10,11 @@ module ClassMethods
   def merge_list attribs, opts={}
     unmerged = []
     attribs.each do |row|
-      result = begin
-        merge row["name"], row, opts
+      if merge row["name"], row, opts
+        Rails.logger.info "merged #{row['name']}"
+      else
+        unmerged.push row
       end
-      unmerged.push row unless result == true
     end
 
     if unmerged.empty?

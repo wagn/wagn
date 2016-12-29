@@ -6,7 +6,7 @@ Feature: paging
 
   Background:
     Given I am signed in as Joe Admin
-    And I create Search card "basic card search" with content "{\"type\":\"basic\", \"limit\":2}"
+    And I create Search card "basic card search" with content "{\"type\":\"basic\"}"
 
   Scenario: jump to pages should keep the item structure
     When I create HTML card "basic item structure" with content "{{_|name}}"

@@ -31,12 +31,12 @@ format :html do
 
   view :invite, link_options(&:show_invite_link?) do
     link_to_card :signup, account_link_text(:invite),
-                 id: "invite-link",
+                 class: classy("invite-link"),
                  path: { action: :new, mark: :signup }
   end
 
   view :my_card, link_options { Auth.signed_in? } do
-    link_to_card Auth.current.cardname, nil, class: "my-card-link"
+    link_to_card Auth.current.cardname, nil, id: "my-card-link"
   end
 
   def account_link_text purpose
@@ -53,7 +53,7 @@ format :html do
 
   view :core, cache: :never do
     status_class = Auth.signed_in? ? "logged-in" : "logged-out"
-    content_tag :span, id: "logging", class: status_class do
+    wrap_with :span, id: "logging", class: status_class do
       render_raw
     end
   end

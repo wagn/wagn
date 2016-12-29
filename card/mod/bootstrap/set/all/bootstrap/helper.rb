@@ -1,10 +1,7 @@
 format :html do
   def glyphicon icon_type, extra_class=""
-    content_tag(
-      :span, "",
-      class: "glyphicon glyphicon-#{icon_type} #{extra_class}",
-      "aria-hidden" => true
-    )
+    wrap_with :span, "", "aria-hidden" => true,
+              class: "glyphicon glyphicon-#{icon_type} #{extra_class}"
   end
 
   def button_link link_text, opts={}
@@ -87,12 +84,12 @@ format :html do
     content = block_given? ? yield : content_or_options
     content = Array(content)
     default_item_options = options.delete(:items) || {}
-    wrap_with :ul, options  do
+    wrap_with :ul, options do
       content.map do |item|
         i_content, i_opts = item
         i_opts ||= default_item_options
-        content_tag :li, i_content.html_safe, i_opts
-      end.join "\n"
+        wrap_with :li, i_content, i_opts
+      end
     end
   end
 end

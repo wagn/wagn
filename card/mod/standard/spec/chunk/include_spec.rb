@@ -168,7 +168,7 @@ describe Card::Content::Chunk::Nest, "Inclusion" do
     it "handles structured cards" do
       create!("age")
       Card["*template"]
-      specialtype = Card.create type_code: "Cardtype", name: "SpecialType"
+      specialtype = Card.create type_code: :cardtype, name: "SpecialType"
       specialtype_template = specialtype.fetch(trait: :type, new: {})
                                         .fetch(trait: :structure, new: {})
       specialtype_template.content = "{{#{Card::Name.joint}age}}"

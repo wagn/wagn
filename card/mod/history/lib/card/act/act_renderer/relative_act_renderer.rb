@@ -6,7 +6,7 @@ class Card
           "<span class=\"nr\">##{@args[:act_seq]}</span>" +
             accordion_expand_link(@act.actor.name) +
             " " +
-            content_tag(:small, edited_ago)
+            wrap_with(:small, edited_ago)
         end
 
         def subtitle

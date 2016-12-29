@@ -7,9 +7,9 @@ format :html do
   def wrap slot=true
     @slot_view = @current_view
     debug_slot do
-      wrap_with(:div, id: card.cardname.url_key,
-                      class: wrap_classes(slot),
-                      data:  wrap_data) { yield }
+      wrap_with :div, yield, id: card.cardname.url_key,
+                             class: wrap_classes(slot),
+                             data:  wrap_data
     end
   end
 
@@ -30,8 +30,8 @@ format :html do
   end
 
   def name_context_slot_option opts
-    return unless @context_names.present?
-    opts[:name_context] = @context_names.map(&:key) * ","
+    return unless initial_context_names.present?
+    opts[:name_context] = initial_context_names.map(&:key) * ","
   end
 
   def debug_slot
@@ -70,7 +70,7 @@ format :html do
   end
 
   def related_frame
-    voo.show! :menu
+    voo.show :menu
     wrap do
       [
         _render_menu,

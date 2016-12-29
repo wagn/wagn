@@ -39,15 +39,10 @@ class Card::Migration < ActiveRecord::Migration
     end
 
     def schema_mode mig_type=type
-      new_suffix = schema_suffix mig_type
-      original_suffix = ActiveRecord::Base.table_name_suffix
-
-      ActiveRecord::Base.table_name_suffix = new_suffix
-      ActiveRecord::SchemaMigration.reset_table_name
-      paths = Cardio.migration_paths(type)
-      yield(paths)
-      ActiveRecord::Base.table_name_suffix = original_suffix
-      ActiveRecord::SchemaMigration.reset_table_name
+      Cardio.with_suffix mig_type do
+        paths = Cardio.migration_paths(type)
+        yield(paths)
+      end
     end
 
     def assume_migrated_upto_version
@@ -97,6 +92,15 @@ class Card::Migration < ActiveRecord::Migration
         hash
       end
     Card.merge_list full_data, merge_opts
+  end
+
+  # uses the data in cards.yml and the card content in db/migrate_cards/data/cards
+  # to update or create the cards given by name or key in names_or_keys
+  def merge_cards names_or_keys
+    names_or_keys = Array(names_or_keys)
+    Card::Mailer.perform_deliveries = false
+
+    Card::Migration::Import.merge only: names_or_keys
   end
 
   def read_json filename

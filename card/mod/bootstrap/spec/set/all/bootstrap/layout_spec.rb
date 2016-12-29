@@ -1,8 +1,8 @@
-describe Card::Format::HtmlFormat::Bootstrap::Layout do
+describe Bootstrap::Component::Layout do
   describe "layout dsl" do
     subject { Card["A"].format(:html) }
     it "creates correct layout with column array" do
-      layout = subject.layout container: true, fluid: true do
+      layout = subject.bs_layout container: true, fluid: true do
         row 6, 4, 2, class: "six-times-six" do
           ["c1", "c2", "c3"]
         end
@@ -17,7 +17,7 @@ describe Card::Format::HtmlFormat::Bootstrap::Layout do
     end
 
     it "creates correct layout with column calls" do
-      layout = subject.layout do
+      layout = subject.bs_layout do
         row 8, 4, class: "six-times-six" do
           column "c1"
           column "c2", class: "extra-class"
@@ -31,7 +31,7 @@ describe Card::Format::HtmlFormat::Bootstrap::Layout do
     end
 
     it "handles different medium sizes" do
-      layout = subject.layout do
+      layout = subject.bs_layout do
         row md: [8, 4], xs: [6, 6], class: "six-times-six" do
           column "c1"
           column "c2", class: "extra-class"
@@ -45,7 +45,7 @@ describe Card::Format::HtmlFormat::Bootstrap::Layout do
     end
 
     it "works without column" do
-      layout = subject.layout do
+      layout = subject.bs_layout do
         row  do
           "test"
         end
@@ -55,7 +55,7 @@ describe Card::Format::HtmlFormat::Bootstrap::Layout do
 
     it "handles layout sequence" do
       # format = Card["A"].form
-      def subject.generate_layout
+      lay = subject.bs do
         layout do
           row 8, 4 do
             column "c1"
@@ -69,7 +69,6 @@ describe Card::Format::HtmlFormat::Bootstrap::Layout do
           end
         end
       end
-      lay = subject.generate_layout
       # assert_view_select lay, 'div[class="row"]' do
       #   assert_select 'div[class="col-md-8"]', text: "c1"
       #   assert_select 'div[class="col-md-4"]', text: "c2"
@@ -81,7 +80,7 @@ describe Card::Format::HtmlFormat::Bootstrap::Layout do
 
     it "handles nested layouts" do
       # format = Card["A"].format :html
-      def subject.generate_layout
+      lay = subject.bs do
         layout do
           row 8, 4 do
             column do
@@ -100,7 +99,6 @@ describe Card::Format::HtmlFormat::Bootstrap::Layout do
           end
         end
       end
-      lay = subject.generate_layout
       assert_view_select lay, 'div[class="row"]' do
         assert_select 'div[class="col-md-8"]' do
           assert_select 'div[class="row"]' do

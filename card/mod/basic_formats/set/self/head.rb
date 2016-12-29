@@ -10,11 +10,7 @@ format :html do
   end
 
   view :core, cache: :never do
-    functional_head? ? _render_raw : CGI.escapeHTML(_render_raw)
-  end
-
-  def functional_head?
-    @depth == 1 && !voo.parent
+    root.first_head? ? _render_raw : CGI.escapeHTML(_render_raw)
   end
 
   def head_meta
@@ -84,7 +80,9 @@ format :html do
 
   def rss_link
     opts = { format: :rss }
-    root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
+    if root.search_params[:vars]
+      root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
+    end
     href = page_path root.card.cardname, opts
     tag "link", rel: "alternate", type: "application/rss+xml",
                 title: "RSS", href: href

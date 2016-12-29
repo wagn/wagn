@@ -1,17 +1,17 @@
 format :html do
   ###---( TOP_LEVEL (used by menu) NEW / EDIT VIEWS )
-  view :edit, perms: :update, tags: :unknown_ok do
-    voo.show! :toolbar, :help
+  view :edit, perms: :update, tags: :unknown_ok, cache: :never do
+    voo.show :toolbar, :help
     frame_and_form :update do
       [
-        hidden_edit_fields,
+        edit_view_hidden,
         _optional_render_content_formgroup,
         _optional_render_edit_buttons
       ]
     end
   end
 
-  def hidden_edit_fields
+  def edit_view_hidden
     # for override
   end
 
@@ -31,7 +31,7 @@ format :html do
   end
 
   view :edit_name, perms: :update do
-    voo.show! :toolbar
+    voo.show :toolbar
     frame_and_form({ action: :update, id: card.id },
                    "main-success" => "REDIRECT") do
       [hidden_edit_name_fields,
@@ -102,7 +102,7 @@ format :html do
   end
 
   view :edit_type, cache: :never, perms: :update do
-    voo.show! :toolbar
+    voo.show :toolbar
     frame_and_form :update do
       [
         hidden_edit_type_fields,
@@ -124,8 +124,8 @@ format :html do
   end
 
   view :edit_rules, cache: :never, tags: :unknown_ok do |args|
-    voo.show! :set_navbar, :toolbar
-    voo.hide! :set_label, :rule_navbar
+    voo.show :set_navbar, :toolbar
+    voo.hide :set_label, :rule_navbar
 
     _render_related args.merge(
       related: {
@@ -137,7 +137,7 @@ format :html do
   end
 
   view :edit_structure, cache: :never do |args|
-    voo.show! :toolbar
+    voo.show :toolbar
     render_related args.merge(
       related: {
         card: card.structure,
@@ -154,7 +154,7 @@ format :html do
   end
 
   view :edit_nests, cache: :never do
-    voo.show! :toolbar
+    voo.show :toolbar
     frame do
       with_nest_mode :edit do
         process_nested_fields hide: :toolbar
@@ -163,7 +163,7 @@ format :html do
   end
 
   view :edit_nest_rules, cache: :never do |args|
-    voo.show! :toolbar
+    voo.show :toolbar
     view = args[:rule_view] || :field_related_rules
     frame do
       # with_nest_mode :edit do

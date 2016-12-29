@@ -106,12 +106,12 @@ end
 format :file do
   include File::FileFormat
 
-  view :style do # should this be in model?
-    ["", "full"].member?(voo.size.to_s) ? :original : voo.size
+  def image_style
+    ["", "full"].member?(params[:size].to_s) ? :original : params[:size].to_sym
   end
 
   def selected_file_version
-    style = _render_style(style: voo.size).to_sym
+    style = voo.size = image_style.to_sym
     if style && style != :original
       card.attachment.versions[style]
     else

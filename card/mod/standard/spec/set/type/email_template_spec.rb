@@ -192,7 +192,6 @@ describe Card::Set::Type::EmailTemplate do
                      content: %({"referred_to_by":"_left+subject"}),
                      type: "Search"
         update_field "*subject", content: "{{+subject search|core|core}}"
-        #binding.pry
         expect(subject[:subject]).to eq("a very nutty thang")
       end
 

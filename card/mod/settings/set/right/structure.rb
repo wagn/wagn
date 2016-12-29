@@ -1,4 +1,3 @@
-
 format :rss do
   def raw_feed_items
     [card]
@@ -11,9 +10,9 @@ end
 
 event :update_structurees_references, :integrate,
       when: proc { |c| c.db_content_changed? || c.action == :delete } do
-  return unless (statement = structuree_statement)
+  return unless (query = structuree_query)
   Auth.as_bot do
-    Card::Query.run(statement).each(&:update_references_out)
+    query.run.each(&:update_references_out)
   end
 end
 
@@ -29,12 +28,9 @@ event :update_structurees_type, :finalize,
 end
 
 def structuree_names
-  if (wql = structuree_statement)
-    Auth.as_bot do
-      Card::Query.run wql.merge(return: :name)
-    end
-  else
-    []
+  return [] unless (query = structuree_query(return: :name))
+  Auth.as_bot do
+    query.run
   end
 end
 
@@ -43,19 +39,17 @@ def update_structurees args
   # for example, if someone were to change the type of a
   # +*right+*structure rule that was overridden
   # by a +*type plus right+*structure rule, the override would not be respected.
+  return unless (query = structuree_query(return: :id))
 
-  statement = structuree_statement
-  return unless statement
   Auth.as_bot do
-    statement[:return] = :id
-    Card::Query.run(statement).each_slice(100) do |id_batch|
+    query.run.each_slice(100) do |id_batch|
       Card.where(id: id_batch).update_all args
     end
   end
 end
 
-def structuree_statement
+def structuree_query args={}
   set_card = trunk
   return unless set_card.type_id == SetID
-  set_card.get_query
+  set_card.fetch_query args
 end

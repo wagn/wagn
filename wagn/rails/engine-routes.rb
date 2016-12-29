@@ -4,9 +4,9 @@ Decko::Engine.routes.draw do
   # most common
   root "card#read"
   get "#{Decko::Engine.config.files_web_path}/:id/:rev_id(-:size).:format" =>
-                                 "card#read", id: /[^-]+/, rev_id: /[^-]+/, explicit_file: true
+    "card#read", id: /[^-]+/, rev_id: /[^-]+/, explicit_file: true
   get "#{Decko::Engine.config.files_web_path}/:id(-:size)-:rev_id.:format" =>
-                                 "card#read", id: /[^-]+/, explicit_file: true  # deprecated
+    "card#read", id: /[^-]+/, explicit_file: true  # deprecated
   get "assets/*filename"      => "card#asset"
   get "javascripts/*filename" => "card#asset"
   get "jasmine/*filename"     => "card#asset"

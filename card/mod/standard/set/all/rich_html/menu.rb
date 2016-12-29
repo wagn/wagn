@@ -22,7 +22,8 @@ format :html do
   end
 
   def menu_path_opts
-    opts = { slot: { home_view: voo.home_view } }
+    opts = { slot: { home_view: (voo.home_view || @slot_view),
+                     name_context: context_names_to_params } }
     opts[:is_main] = true if main?
     opts
   end
@@ -67,7 +68,7 @@ format :html do
   end
 
   def menu_edit_link opts
-    menu_item "edit", "edit", opts.merge(view: :edit)
+    menu_item "edit", "edit", opts.merge(view: :edit, path: menu_path_opts)
   end
 
   def menu_discuss_link opts

@@ -54,7 +54,7 @@ format :html do
   end
 
   def preview
-    return unless card.new_card? && !card.preliminary_upload?
+    return if card.new_card? && !card.preliminary_upload?
     voo.size = :medium
     wrap_with :div, class: "attachment-preview",
                     id: "#{card.attachment.filename}-preview" do

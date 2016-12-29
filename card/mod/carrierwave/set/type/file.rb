@@ -83,14 +83,14 @@ format :html do
     if card.web? || card.no_upload?
       return text_field(:content, class: "card-content")
     end
-    file_chooser args
+    file_chooser
   end
 
   def preview
     ""
   end
 
-  view :preview_editor, tags: :unknown_ok do |args|
+  view :preview_editor, tags: :unknown_ok, cache: :never do |args|
     cached_upload_card_name = Card::Env.params[:attachment_upload]
     cached_upload_card_name.gsub!(/\[\w+\]$/, "[action_id_of_cached_upload]")
     <<-HTML
@@ -129,7 +129,7 @@ format :html do
     HTML
   end
 
-  def file_chooser args
+  def file_chooser
     <<-HTML
       <div class="choose-file">
         #{preview}

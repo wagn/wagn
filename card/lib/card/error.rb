@@ -45,6 +45,8 @@ class Card
 
     class << self
       def exception_view card, exception
+        Card::Error.current = exception
+
         case exception
         ## arguably the view and status should be defined in the error class;
         ## some are redundantly defined in view

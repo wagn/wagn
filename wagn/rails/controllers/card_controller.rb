@@ -127,7 +127,6 @@ class CardController < ActionController::Base
   rescue_from StandardError do |exception|
     Rails.logger.info "exception = #{exception.class}: #{exception.message}"
     @card ||= Card.new
-    Card::Error.current = exception
     show Card::Error.exception_view(@card, exception)
   end
 end

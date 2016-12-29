@@ -116,6 +116,7 @@ format :html do
   end
 
   def formgroup_label editor_type, title
+    return if voo && voo.hide?(:title)
     label_type = editor_type || :content
     form.label label_type, title
   end

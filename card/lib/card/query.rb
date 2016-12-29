@@ -81,7 +81,7 @@ class Card
     DEFAULT_ORDER_DIRS = { update: "desc", relevance: "desc" }.freeze
 
     attr_reader :statement, :mods, :conditions, :comment,
-                :subqueries, :superquery
+                :subqueries, :superquery, :vars
     attr_accessor :joins, :table_seq, :unjoined, :conditions_on_join
 
     # Query Execution
@@ -121,7 +121,7 @@ class Card
     # run the current query
     # @return array of card objects by default
     def run
-      retrn = statement[:return].present? ? statement[:return].to_s : "card"
+      retrn ||= statement[:return].present? ? statement[:return].to_s : "card"
       if retrn == "card"
         get_results("name").map do |name|
           Card.fetch name, new: {}
@@ -179,6 +179,10 @@ class Card
       else
         @context = @superquery ? @superquery.context : ""
       end
+    end
+
+    def limit
+      @mods[:limit].to_i
     end
   end
 end

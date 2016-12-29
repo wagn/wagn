@@ -80,7 +80,9 @@ format :html do
 
   def rss_link
     opts = { format: :rss }
-    root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
+    if root.search_params[:vars]
+      root.search_params[:vars].each { |key, val| opts["_#{key}"] = val }
+    end
     href = page_path root.card.cardname, opts
     tag "link", rel: "alternate", type: "application/rss+xml",
                 title: "RSS", href: href

@@ -56,7 +56,12 @@ class Card
         string_value =
           case value
           when Hash then "{#{hash_for_cache_key value}}"
-          when Array then value.sort.map(&:to_s).join ","
+          when Array then
+            # TODO: needs better handling of edit_structure
+            #       currently we pass complete structure as nested array
+            value.map do |item|
+              item.is_a?(Array) ? item.join(":") : item.to_s
+            end.sort.join ","
           else value.to_s
           end
         "#{key}:#{string_value}"

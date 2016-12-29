@@ -1,2 +1,5 @@
 require: rubocop-rspec
 inherit_from: .ruby-style.yml
+Metrics/BlockLength:
+  Enabled: false # we need a way to use rubocop-cop in codeclimate
+

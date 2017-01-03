@@ -93,7 +93,7 @@ format :html do
     ""
   end
 
-  view :preview_editor, tags: :unknown_ok do |args|
+  view :preview_editor, tags: :unknown_ok, cache: :never do |args|
     cached_upload_card_name = Card::Env.params[:attachment_upload]
     cached_upload_card_name.gsub!(/\[\w+\]$/, "[action_id_of_cached_upload]")
     <<-HTML

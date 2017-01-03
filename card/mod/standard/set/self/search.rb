@@ -21,7 +21,7 @@ format do
 end
 
 format :html do
-  view :title do
+  view :title, cache: :never do
     vars = root.search_params[:vars]
     if vars && vars[:keyword]
       voo.title = %(Search results for: <span class="search-keyword">)\

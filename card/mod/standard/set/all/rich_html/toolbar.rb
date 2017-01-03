@@ -97,6 +97,7 @@ format :html do
   end
 
   def nest_rules_link button_hash, nested_fields
+    return # FIXME: remove when reinstating edit_nest_rules
     return unless nested_fields.present?
     button_hash[:separator] = separator
     button_hash[:edit_nest_rules] = edit_nest_rules_link "nests"
@@ -204,7 +205,8 @@ format :html do
     dropdown_button "", icon: "education", class: "related" do
       [
         ["children",       "baby-formula", "*children"],
-        ["mates",          "bed",          "*mates"],
+        # ["mates",          "bed",          "*mates"],
+        # FIXME: optimize and restore
         ["references out", "log-out",      "*refers_to"],
         ["references in",  "log-in",       "*referred_to_by"]
       ].map do |title, icon, tag|

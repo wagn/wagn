@@ -47,7 +47,7 @@ Gem::Specification.new do |s|
     ["sass",                       "~> 3.2"],
     ["coffee-script",              "~> 2.2"],
     ["uglifier",                   "~> 3.0"],
-    ["nokogiri",                   "~> 1.6.8"],
+    ["nokogiri",                   "~> 1.6.8"], # 1.7 needs ruby 2.1
     ["haml",                       "~> 4.0"],
     ["kaminari",                   "~> 0.16"],
     ["bootstrap-kaminari-views",   "~> 0"],

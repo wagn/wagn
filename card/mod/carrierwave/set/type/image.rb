@@ -87,6 +87,12 @@ format :html do
   end
 end
 
+format :email_html do
+  view :core do |args|
+    image_tag args[:inline_attachment_url].call(card.attachment.path)
+  end
+end
+
 format :css do
   view :core do
     render_source

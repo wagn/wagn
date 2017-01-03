@@ -23,17 +23,20 @@ describe Card::Set::Self::Admin do
       end
     end
 
-    it "triggers deleting old revisions (with right params)" do
-      Card::Auth.as_bot do
-        a = Card["A"]
-        a.update_attributes! content: "a new day"
-        a.update_attributes! content: "another day"
-        expect(a.actions.count).to eq(3)
-        Card::Env.params[:task] = :delete_old_revisions
-        @admin.update_attributes({})
-        expect(a.actions.count).to eq(1)
-      end
-    end
+    # NOTE: I removed this functionality for now, because I don't think we
+    # should have web access to admin functions that can incur actual data loss.
+
+    # it "triggers deleting old revisions (with right params)" do
+    #   Card::Auth.as_bot do
+    #     a = Card["A"]
+    #     a.update_attributes! content: "a new day"
+    #     a.update_attributes! content: "another day"
+    #     expect(a.actions.count).to eq(3)
+    #     Card::Env.params[:task] = :delete_old_revisions
+    #     @admin.update_attributes({})
+    #     expect(a.actions.count).to eq(1)
+    #   end
+    # end
 
     #     it 'is trigger reference repair' do
     #       Card::Auth.as_bot do

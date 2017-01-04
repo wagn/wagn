@@ -133,11 +133,8 @@ end
 def contextual_content context_card, format_args={}, view_args={}
   view = view_args.delete(:view) || :core
   with_context context_card do
-    format(format_args).render(view, view_args) #_raw(view_args), view_args
+    format(format_args).render view, view_args
   end
-  # context_card.format(format_args).process_content(
-  #   format(format_args)._render_raw(view_args), view_args
-  # )
 end
 
 def each_chunk opts={}

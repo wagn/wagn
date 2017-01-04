@@ -38,17 +38,16 @@ format do
       when voo.size           then voo.size.to_sym
       when main?              then :large
       else                         :medium
-    end
+      end
     voo.size = :original if voo.size == :full
   end
 end
-
 
 format :html do
   include File::HtmlFormat
 
   view :core, cache: :never do
-    handle_source do |source|2
+    handle_source do |source|
       if source == "missing"
         "<!-- image missing #{@card.name} -->"
       else
@@ -66,7 +65,7 @@ format :html do
     end
   end
 
-  def show_action_content_toggle? action, view_type
+  def show_action_content_toggle? _action, _view_type
     true
   end
 

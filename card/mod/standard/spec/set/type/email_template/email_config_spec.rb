@@ -61,7 +61,7 @@ describe Card::Set::Type::EmailTemplate::EmailConfig do
 
     it "handles search card" do
       create_field "*bcc", content: '{"name":"Joe Admin","append":"*email"}',
-                   type: "Search"
+                           type: "Search"
       expect(mailconfig[:bcc]).to eq "joe@admin.com"
     end
     # TODO: not obvious how to deal with that.
@@ -158,7 +158,7 @@ describe Card::Set::Type::EmailTemplate::EmailConfig do
 
     it "handles contextual name in address search" do
       update_field "*from", content: '{"left":"_self", "right":"email"}',
-                   type: "Search"
+                            type: "Search"
       expect(config[:from]).to eq "gary@gary.com"
     end
 

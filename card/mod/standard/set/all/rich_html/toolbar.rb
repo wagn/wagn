@@ -277,12 +277,8 @@ format :html do
 
     view "#{viewname}_link" do
       voo.title ||= viewtitle
-      toolbar_view_link viewname
+      link_to_view viewname, voo.title
     end
-  end
-
-  def toolbar_view_link view
-    link_to_view view, voo.title
   end
 
   def recently_edited_settings?

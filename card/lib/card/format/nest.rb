@@ -59,12 +59,17 @@ class Card
       def reuse_format? opts, view
         return false unless opts[:nest_name] =~ /^_(self)?$/
         return false if card.context_card != card
-        !content_view? view
+        # binding.pry
+        #
+        return true
+        # !content_view? view
       end
 
       def content_view? view
         # TODO: this should be specified in view definition
-        [:core, :content, :titled, :open, :closed].member? view.to_sym
+        [
+          :core, :content, :titled, :open, :closed, :open_content
+        ].member? view.to_sym
       end
 
       # Main difference compared to #nest is that you can use

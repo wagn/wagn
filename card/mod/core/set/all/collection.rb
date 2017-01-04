@@ -118,10 +118,26 @@ def extended_list context=nil
   # a collection
 end
 
+def context_card
+  @context_card || self
+end
+
+def with_context card
+  old_context = @context_card
+  @context_card = card
+  result = yield
+  @context_card = old_context
+  result
+end
+
 def contextual_content context_card, format_args={}, view_args={}
-  context_card.format(format_args).process_content(
-    format(format_args)._render_raw(view_args), view_args
-  )
+  view = view_args.delete(:view) || :raw
+  with_context context_card do
+    format(format_args).render(view, view_args) #_raw(view_args), view_args
+  end
+  # context_card.format(format_args).process_content(
+  #   format(format_args)._render_raw(view_args), view_args
+  # )
 end
 
 def each_chunk opts={}

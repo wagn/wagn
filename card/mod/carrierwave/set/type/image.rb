@@ -88,12 +88,6 @@ format :html do
 end
 
 format :email_html do
-  view :source do
-    handle_source do |source|
-      image_tag card_url(source)
-    end
-  end
-
   view :core do
     url_generator = voo.closest_live_option(:inline_attachment_url)
     path = card.attachment.path

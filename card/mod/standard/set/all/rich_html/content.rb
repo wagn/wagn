@@ -150,7 +150,7 @@ format :html do
   #   subformat(rcard)._render_title(args)
   # end
 
-  view :related do |args|
+  view :related, cache: :never do |args|
     related_card, options = related_card_and_options args
     return unless related_card
     voo.show :toolbar, :menu, :help

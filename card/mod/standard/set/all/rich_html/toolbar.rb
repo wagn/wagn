@@ -4,26 +4,11 @@ format :html do
   end
 
   view :toolbar do |args|
-    collapsed = close_link(args.merge(class: "pull-right visible-xs"))
-    navbar "toolbar-#{card.cardname.safe_key}-#{voo.home_view}",
-           toggle_align: :left, class: "slotter toolbar",
-           navbar_type: "inverse",
-           collapsed_content: collapsed do
+    tool_navbar do
       [
-        close_link(args.merge(class: "hidden-xs navbar-right")),
-        (wrap_with(:form, class: "navbar-form navbar-left") do
-          [
-            (account_split_button(args) if card.accountable?),
-            activity_split_button(args),
-            rules_split_button(args),
-            edit_split_button(args)
-          ]
-        end),
-        (wrap_with(:form, class: "navbar-form navbar-right") do
-          wrap_with :div, class: "form-group" do
-            _optional_render(:toolbar_buttons, args, :show)
-          end
-        end)
+        expanded_close_link,
+        toolbar_split_buttons(args),
+        toolbar_simple_buttons(args)
       ]
     end
   end
@@ -33,27 +18,61 @@ format :html do
     args[:active_toolbar_button] ||= active_toolbar_button @slot_view, args
   end
 
+  def expanded_close_link
+    close_link class: "hidden-xs navbar-right"
+  end
+
+  def collapsed_close_link
+    close_link class: "pull-right visible-xs"
+  end
+
+  def tool_navbar
+    navbar "toolbar-#{card.cardname.safe_key}-#{voo.home_view}",
+           toggle_align: :left, class: "slotter toolbar",
+           navbar_type: "inverse",
+           collapsed_content: collapsed_close_link do
+      yield
+    end
+  end
+
+  def toolbar_split_buttons args
+    wrap_with :form, class: "navbar-form navbar-left" do
+      [
+        (account_split_button(args) if card.accountable?),
+        activity_split_button(args),
+        rules_split_button(args),
+        edit_split_button(args)
+      ]
+    end
+  end
+
+  def toolbar_simple_buttons args
+    wrap_with :form, class: "navbar-form navbar-right" do
+      wrap_with :div, class: "form-group" do
+        _optional_render :toolbar_buttons, args, :show
+      end
+    end
+  end
+
+  # TODO: decentralize and let views choose which menu they are in.
   def active_toolbar_button active_view, args
     case active_view
-    when :follow, :editors, :history
-      "activity"
-    when :edit_rules, :edit_nest_rules
-      "rules"
-    when :edit, :edit_name, :edit_type, :edit_structure, :edit_nests
-      "edit"
+    when :follow, :editors, :history    then "activity"
+    when :edit_rules, :edit_nest_rules  then "rules"
+    when :edit, :edit_name, :edit_type,
+         :edit_structure, :edit_nests   then "edit"
     when :related
-      if args[:related_card] && (tag = args[:related_card].tag)
-        case tag.codename
-        when "discussion", "editors"
-          "engage"
-        when "account", "roles", "edited", "created", "follow"
-          "account"
-        when "structure"
-          "edit"
-        else
-          "rules"
-        end
-      end
+      active_related_toolbar_button args[:related_card]
+    end
+  end
+
+  def active_related_toolbar_button related_card
+    return unless (codename = related_codename related_card)
+    case codename
+    when :discussion, :editors                        then "engage"
+    when :account, :roles, :edited, :created, :follow then "account"
+    when :structure                                   then "edit"
+    else                                                   "rules"
     end
   end
 
@@ -73,14 +92,12 @@ format :html do
   end
 
   def activity_split_button args
-    discuss = smart_link_to "discuss",  related: Card[:discussion].key
-    editors = smart_link_to "editors",  related: Card[:editors].key
     toolbar_split_button "activity", { view: :history }, args do
       {
-        history:    (_render_history_link if card.history?),
-        discuss: discuss,
+        history: (_render_history_link if card.history?),
+        discuss: link_to_related(:discussion, "discuss"),
         follow:  _render_follow_link(args),
-        editors: editors
+        editors: link_to_related(:editors, "editors")
       }
     end
   end
@@ -109,13 +126,13 @@ format :html do
   end
 
   def edit_nest_rules_link text
-    smart_link_to text, view: :edit_nest_rules,
-                        path: { slot: { rule_view: :field_related_rules } }
+    link_to_view :edit_nest_rules, text,
+                 path: { slot: { rule_view: :field_related_rules } }
   end
 
   def edit_rules_link text, rule_view
-    smart_link_to text, view: :edit_rules,
-                        path: { slot: { rule_view: rule_view } }
+    link_to_view :edit_rules, text,
+                 path: { slot: { rule_view: rule_view } }
   end
 
   def edit_split_button args
@@ -135,38 +152,35 @@ format :html do
   end
 
   def account_split_button args
-    details = "#{card.name}+#{Card[:account].key}"
-    toolbar_split_button "account", { related: Card[:account].key }, args do
+    toolbar_split_button "account", { related: :account.cardname.key }, args do
       {
-        account: smart_link_to(
-          "details", view: :related,
-                     paths: { related: { name: details, view: :edit } }
-        ),
-        roles:   smart_link_to("roles", related: Card[:roles].key),
-        created: smart_link_to("created", related: Card[:created].key),
-        edited:  smart_link_to("edited", related: Card[:edited].key),
-        follow:  smart_link_to("follow", related: Card[:follow].key)
+        account: link_to_related(:account, "details", path: { view: :edit }),
+        roles:   link_to_related(:roles,   "roles"),
+        created: link_to_related(:created, "created"),
+        edited:  link_to_related(:edited,  "edited"),
+        follow:  link_to_related(:follow,  "follow")
       }
     end
   end
 
   def toolbar_split_button name, button_path_opts, args
     status = args[:active_toolbar_button] == name ? "active" : ""
-    button = button_link name, path: button_path_opts, class: status
-    active_item =
-      if @slot_view == :related
-        if args[:rule_view]
-          args[:rule_view].to_sym
-        elsif args[:related_card] && (r = args[:related_card].right) &&
-              (cn = r.codename)
-          cn.to_sym
-        end
-      else
-        @slot_view
-      end
-    split_button button, args.merge(active_item: active_item) do
-      yield
-    end
+    button_link = button_link name, path: button_path_opts, class: status
+    button_args = args.merge active_item: active_toolbar_item(args)
+    split_button(button_link, button_args) { yield }
+  end
+
+  def active_toolbar_item args
+    return @slot_view unless @slot_view == :related
+    return args[:rule_view].to_sym if args[:rule_view]
+    return @slot_view unless (codename = related_codename args[:related_card])
+    codename.to_sym
+  end
+
+  def related_codename related_card
+    return nil unless related_card
+    tag_card = Card.quick_fetch related_card.cardname.right
+    tag_card && tag_card.codename
   end
 
   def close_link args
@@ -235,17 +249,6 @@ format :html do
     opts[:class] = [opts[:class], "btn btn-primary"].compact * " "
     opts[:title] ||= text
     smart_link_to link_text, opts
-
-    # if (cardname = opts.delete(:page))
-    #   link_to_card cardname, link_text, class: klass
-    # elsif (viewname = tag_args.delete(:view))
-    #   _opts = opts[:path] || { slot: { show: :toolbar } }
-    #   link_to_view viewname, link_text, path: path_opts, format_opts
-    # else
-    #   path_opts = opts.delete(:path) || {}
-    #   path_opts[:action] = opts.delete(:action) if opts[:action]
-    #   link_to path_opts, link_text, opts[:format]
-    # end
   end
 
   def toolbar_button_text text, symbol, hide

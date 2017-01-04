@@ -36,7 +36,7 @@ class Card
 
       def with_fetch_logging
         cache_level = determine_cache_level
-        logging = true # TODO: make configurable
+        logging = false # TODO: make configurable
         if logging
           puts "FETCH_VIEW (#{card.name}##{requested_view})" \
                "cache-level = #{cache_level}"

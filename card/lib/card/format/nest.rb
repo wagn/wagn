@@ -50,26 +50,23 @@ class Card
       end
 
       def nest_subformat nested_card, opts, view
-        return self if reuse_format? opts, view
+        return self if reuse_format? opts[:nest_name]
         sub = subformat nested_card
         sub.main! if opts[:main]
         sub
       end
 
-      def reuse_format? opts, view
-        opts[:nest_name] =~ /^_(self)?$/
-        # return false unless
-        # binding.pry
-        #
+      def reuse_format? nest_name
+        nest_name =~ /^_(self)?$/ && context_card == card
         # !content_view? view
       end
 
-      def content_view? view
-        # TODO: this should be specified in view definition
-        [
-          :core, :content, :titled, :open, :closed, :open_content
-        ].member? view.to_sym
-      end
+      # def content_view? view
+      #   # TODO: this should be specified in view definition
+      #   [
+      #     :core, :content, :titled, :open, :closed, :open_content
+      #   ].member? view.to_sym
+      # end
 
       # Main difference compared to #nest is that you can use
       # codename symbols to get nested fields

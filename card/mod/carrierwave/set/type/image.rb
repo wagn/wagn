@@ -16,10 +16,14 @@ format do
 
   def source_url
     return card.raw_content if card.web?
+    selected_version.url
+  end
+
+  def selected_version
     if voo.size == :original
-      card.image.url
+      card.image
     else
-      card.image.versions[voo.size.to_sym].url
+      card.image.versions[voo.size.to_sym]
     end
   end
 
@@ -34,11 +38,10 @@ format do
       when voo.size           then voo.size.to_sym
       when main?              then :large
       else                         :medium
-    end
+      end
     voo.size = :original if voo.size == :full
   end
 end
-
 
 format :html do
   include File::HtmlFormat
@@ -62,7 +65,7 @@ format :html do
     end
   end
 
-  def show_action_content_toggle? action, view_type
+  def show_action_content_toggle? _action, _view_type
     true
   end
 
@@ -88,15 +91,9 @@ format :html do
 end
 
 format :email_html do
-  view :source do
-    handle_source do |source|
-      image_tag card_url(source)
-    end
-  end
-
   view :core do
     url_generator = voo.closest_live_option(:inline_attachment_url)
-    path = card.attachment.path
+    path = selected_version.path
     return _render_source unless url_generator && ::File.exist?(path)
     image_tag url_generator.call(path)
   end

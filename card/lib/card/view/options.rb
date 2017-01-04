@@ -100,8 +100,10 @@ class Card
       def closest_live_option key
         if live_options.key? key
           live_options[key]
-        elsif format.parent && format.parent.voo
-          format.parent.voo.closest_live_option key
+        else
+          (parent && parent.closest_live_option(key)) ||
+            (format.parent && format.parent.voo &&
+              format.parent.voo.closest_live_option(key))
         end
       end
 

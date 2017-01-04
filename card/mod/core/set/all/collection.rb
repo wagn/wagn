@@ -131,7 +131,7 @@ def with_context card
 end
 
 def contextual_content context_card, format_args={}, view_args={}
-  view = view_args.delete(:view) || :raw
+  view = view_args.delete(:view) || :core
   with_context context_card do
     format(format_args).render(view, view_args) #_raw(view_args), view_args
   end

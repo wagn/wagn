@@ -16,10 +16,14 @@ format do
 
   def source_url
     return card.raw_content if card.web?
+    selected_version.url
+  end
+
+  def selected_version
     if voo.size == :original
-      card.image.url
+      card.image
     else
-      card.image.versions[voo.size.to_sym].url
+      card.image.versions[voo.size.to_sym]
     end
   end
 
@@ -44,7 +48,7 @@ format :html do
   include File::HtmlFormat
 
   view :core, cache: :never do
-    handle_source do |source|
+    handle_source do |source|2
       if source == "missing"
         "<!-- image missing #{@card.name} -->"
       else
@@ -88,6 +92,14 @@ format :html do
 end
 
 format :email_html do
+  def default_nest_view
+    :core
+  end
+
+  def default_item_view
+    :core
+  end
+
   view :source do
     handle_source do |source|
       image_tag card_url(source)
@@ -95,8 +107,9 @@ format :email_html do
   end
 
   view :core do
+    binding.pry
     url_generator = voo.closest_live_option(:inline_attachment_url)
-    path = card.attachment.path
+    path = selected_version.path
     return _render_source unless url_generator && ::File.exist?(path)
     image_tag url_generator.call(path)
   end

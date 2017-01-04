@@ -88,8 +88,16 @@ format :html do
 end
 
 format :email_html do
-  view :core do |args|
-    image_tag args[:inline_attachment_url].call(card.attachment.path)
+  view :source do
+    handle_source do |source|
+      image_tag card_url(source)
+    end
+  end
+
+  view :core do
+    url_generator = voo.closest_live_option(:inline_attachment_url)
+    return _render_source unless url_generator
+    image_tag url_generator.call(card.attachment.path)
   end
 end
 

@@ -61,7 +61,7 @@ describe Card::Set::Type::EmailTemplate::EmailConfig do
 
     it "handles search card" do
       create_field "*bcc", content: '{"name":"Joe Admin","append":"*email"}',
-                   type: "Search"
+                           type: "Search"
       expect(mailconfig[:bcc]).to eq "joe@admin.com"
     end
     # TODO: not obvious how to deal with that.
@@ -83,7 +83,7 @@ describe Card::Set::Type::EmailTemplate::EmailConfig do
       is_expected.to include "Url(wagn.org)"
     end
     it "does not render link" do
-      is_expected.to include "Link([[http://wagn.org|Wagn]])"
+      is_expected.to include "Link(Wagn[http://wagn.org])"
     end
     it "renders nest" do
       is_expected.to include "Inclusion(B)"
@@ -158,7 +158,7 @@ describe Card::Set::Type::EmailTemplate::EmailConfig do
 
     it "handles contextual name in address search" do
       update_field "*from", content: '{"left":"_self", "right":"email"}',
-                   type: "Search"
+                            type: "Search"
       expect(config[:from]).to eq "gary@gary.com"
     end
 
@@ -192,6 +192,16 @@ describe Card::Set::Type::EmailTemplate::EmailConfig do
 
     it "handles image nests in html message" do
       update_field "*html message", content: "Triggered by {{:logo|core}}"
+      mail = email.format.render_mail context: context_card
+      expect(mail.parts[0].mime_type).to eq "image/png"
+      url = mail.parts[0].url
+      expect(mail.parts[2].mime_type).to eq "text/html"
+      expect(mail.parts[2].body.raw_source).to include('<img src="cid:')
+      expect(mail.parts[2].body.raw_source).to include("<img src=\"#{url}\"")
+    end
+
+    it "handles image nests in html message in default view" do
+      update_field "*html message", content: "Triggered by {{:logo}}"
       mail = email.format.render_mail context: context_card
       expect(mail.parts[0].mime_type).to eq "image/png"
       url = mail.parts[0].url

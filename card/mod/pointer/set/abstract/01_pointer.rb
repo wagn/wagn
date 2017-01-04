@@ -152,7 +152,7 @@ def fetch_or_initialize_item_cards args
 end
 
 def item_names args={}
-  context = args[:context] || cardname
+  context = args[:context] || context_card.cardname
   content = args[:content] || raw_content
   content.to_s.split(/\n+/).map do |line|
     item_name = line.gsub(/\[\[|\]\]/, "").strip

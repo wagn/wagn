@@ -7,17 +7,16 @@ class Card
         nest: [
           :view,          # view to render
           :show,          # render these views when optional
-          :hide,          # do render these views when optional
+          :hide,          # do not render these views when optional
           :nest_name,     # name as used in nest
           :nest_syntax    # full nest syntax
         ],
         # note: show/hide can be single view (Symbol), list of views (Array),
         # or comma separated views (String)
         heir: [
-          :main,          # format object is page's "main" object (Boolean)
-          :home_view,     # view for slot to return to when no view specified
-          :edit_structure # use a different structure for editing (Array)
-
+          :main,           # format object is page's "main" object (Boolean)
+          :home_view,      # view for slot to return to when no view specified
+          :edit_structure  # use a different structure for editing (Array)
         ],
         both: [
           :help,          # cue text when editing
@@ -96,6 +95,16 @@ class Card
       # with standard keys)
       def slot_options
         normalized_options.select { |k, _v| Options.all_keys.include? k }
+      end
+
+      def closest_live_option key
+        if live_options.key? key
+          live_options[key]
+        else
+          (parent && parent.closest_live_option(key)) ||
+            (format.parent && format.parent.voo &&
+              format.parent.voo.closest_live_option(key))
+        end
       end
 
       private

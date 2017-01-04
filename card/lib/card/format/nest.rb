@@ -58,6 +58,7 @@ class Card
 
       def reuse_format? opts, view
         return false unless opts[:nest_name] =~ /^_(self)?$/
+        return false if card.context_card != card
         !content_view? view
       end
 

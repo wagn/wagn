@@ -58,7 +58,6 @@ class Card
 
       def reuse_format? nest_name
         nest_name =~ /^_(self)?$/ && context_card == card
-        # !content_view? view
       end
 
       # def content_view? view

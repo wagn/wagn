@@ -83,7 +83,7 @@ describe Card::Set::Type::EmailTemplate::EmailConfig do
       is_expected.to include "Url(wagn.org)"
     end
     it "does not render link" do
-      is_expected.to include "Link([[http://wagn.org|Wagn]])"
+      is_expected.to include "Link(Wagn[http://wagn.org])"
     end
     it "renders nest" do
       is_expected.to include "Inclusion(B)"

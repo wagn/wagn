@@ -16,7 +16,7 @@ class Card
         heir: [
           :main,           # format object is page's "main" object (Boolean)
           :home_view,      # view for slot to return to when no view specified
-          :edit_structure, # use a different structure for editing (Array)
+          :edit_structure  # use a different structure for editing (Array)
         ],
         both: [
           :help,          # cue text when editing

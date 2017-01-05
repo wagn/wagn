@@ -228,10 +228,11 @@ format do
   end
 
   def normalized_edit_fields
-    edit_fields.map do |name, options|
-      options ||= Card.quick_fetch(name).name
+    edit_fields.map do |name_or_card, options|
+      next [name_or_card, options || {}] if name_or_card.is_a?(Card)
+      options ||= Card.fetch_name name_or_card
       options = { title: options } if options.is_a?(String)
-      [card.cardname.field(name), options]
+      [card.cardname.field(name_or_card), options]
     end
   end
 

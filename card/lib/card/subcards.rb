@@ -251,7 +251,7 @@ class Card
          (absolute_name.parts.size - @context_card.cardname.parts.size) > 2
         left_card = new_by_attributes absolute_name.left
         new_by_card left_card, transact_in_stage: attributes[:transact_in_stage]
-        left_card.new_by_attributes absolute_name, attributes
+        left_card.subcards.new_by_attributes absolute_name, attributes
       else
         subcard_args = extract_subcard_args! attributes
         t_i_s = attributes.delete(:transact_in_stage)

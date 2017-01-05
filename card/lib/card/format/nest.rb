@@ -57,7 +57,7 @@ class Card
       end
 
       def reuse_format? nest_name
-        nest_name =~ /^_(self)?$/ && context_card == card
+        nest_name =~ /^_(self)?$/ && card.context_card == card
       end
 
       # def content_view? view

@@ -16,7 +16,7 @@ format :html do
 
     wrap_with :div, class: "vertical-card-menu card-menu #{css_class}" do
       wrap_with :div, class: "btn-group slotter card-slot pull-right" do
-        link_to_view(:vertical_menu, menu_icon, path: menu_path_opts).html_safe
+        link_to_view :vertical_menu, menu_icon, path: menu_path_opts
       end
     end
   end
@@ -32,7 +32,7 @@ format :html do
     glyphicon "cog"
   end
 
-  view :vertical_menu, tags: :unknown_ok do
+  view :vertical_menu, cache: :never, tags: :unknown_ok do
     wrap_with :ul, class: "btn-group pull-right slotter" do
       [vertical_menu_toggle, vertical_menu_item_list]
     end
@@ -53,7 +53,7 @@ format :html do
     end
   end
 
-  view :horizontal_menu do
+  view :horizontal_menu, cache: :never do
     wrap_with :div, class: "btn-group slotter pull-right card-menu "\
                              "horizontal-card-menu hidden-xs" do
       menu_item_list(class: "btn btn-default").join("\n").html_safe

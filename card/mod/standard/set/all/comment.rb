@@ -1,5 +1,4 @@
-event :add_comment, :prepare_to_store,
-      on: :save, when: proc { |c| c.comment } do
+event :add_comment, :prepare_to_store, on: :save, when: :comment do
   cleaned_comment =
     comment.split(/\n/).map do |line|
       "<p>#{line.strip.empty? ? '&nbsp;' : line}</p>"

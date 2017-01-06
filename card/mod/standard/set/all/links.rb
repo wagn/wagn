@@ -113,7 +113,7 @@ format do
     return unless opts[:action] == :new
     opts.delete :action
     return unless opts[:mark]
-    "new/#{path_mark opts}"
+    "new/#{path_mark opts}#{path_query opts}"
   end
 
   def standard_path opts

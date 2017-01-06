@@ -195,22 +195,31 @@ format :html do
 
   def type_field_current_value args, typelist
     return if args.delete :no_current_type
-        if !card.new_card? && !typelist.include?(card.type_name)
-          # current type should be an option on existing cards,
-          # regardless of create perms
-          typelist.push(card.type_name).sort!
-        end
-        card.type_name_or_default
-      end
+    if !card.new_card? && !typelist.include?(card.type_name)
+      # current type should be an option on existing cards,
+      # regardless of create perms
+      typelist.push(card.type_name).sort!
+    end
+    card.type_name_or_default
+  end
 
   def content_field skip_rev_id=false
-    [content_field_revision_tracking(skip_rev_id), _render_editor].compact.join
+    with_nest_mode :normal do
+      # by changing nest mode to normal, we ensure that editors (eg image
+      # previews) can render core views.
+      output [content_field_revision_tracking(skip_rev_id), _render_editor]
+    end
   end
+
+  # SAMPLE editor view for override
+  # view :editor do
+  #   text_area :content, rows: 5, class: "card-content"
+  # end
 
   def content_field_revision_tracking skip_rev_id
     card.last_action_id_before_edit = card.last_action_id
     return if !card || card.new_card? || skip_rev_id
-        hidden_field :last_action_id_before_edit, class: "current_revision_id"
+    hidden_field :last_action_id_before_edit, class: "current_revision_id"
   end
 
   # FIELD VIEWS
@@ -222,7 +231,7 @@ format :html do
               editor: "content", help: true, class: classy("card-editor") do
       [content_field, (form.hidden_field(:type_id) if card.new_card?)]
     end
-    end
+  end
 
   def add_junction_class
     return unless card.cardname.junction?

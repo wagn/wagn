@@ -341,6 +341,7 @@ def hard_write_view_cache_keys
 end
 
 def expire_views
+  (l = left) && l.expire_views
   return unless @view_cache_keys
   Array.wrap(@view_cache_keys).each do |view_cache_key|
     Card::View.cache.delete view_cache_key

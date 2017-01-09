@@ -63,7 +63,7 @@ class Card
       # the cache. Note that Cardio.cache is a simple Rails::Cache, not
       # a Card::Cache object.
       def stamp
-        @stamp ||= Cardio.cache.fetch stamp_key { new_stamp }
+        @stamp ||= Cardio.cache.fetch(stamp_key) { new_stamp }
       end
 
       # key for looking up the current stamp
@@ -96,17 +96,13 @@ class Card
       # @param key [String]
       # @param attribute [String, Symbol]
       def write_attribute key, attribute, value
-        if @store && (object = read key)
+        return value unless @store
+        @store.send(:local_cache).clear # clear rails local cache
+        if (object = read key)
           object.instance_variable_set "@#{attribute}", value
           write key, object
         end
         value
-      rescue
-        # FIXME: somehow read is finding Card objects with set_modules_loaded
-        # That shouldn't be possible (#fetch is designed to prevent it), and
-        # it immediately breaks write.  Best guess is that #read is somehow
-        # shortcutting and returning current object.  need to research!
-        Rails.logger.info "failed to write attribute: #{attribute}"
       end
 
       def write key, value

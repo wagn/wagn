@@ -13,7 +13,7 @@ describe Card::Format::Render do
       is_expected.to receive(:fetch).with cache_key
       render_content "{{A}}"
       is_expected.not_to receive(:fetch)
-      render_content "{{A|cache:never}}"
+      render_content "{{A|content;cache:never}}"
     end
   end
 end

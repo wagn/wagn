@@ -56,6 +56,24 @@ class Card
         def heir_keys
           @heir_keys ||= ::Set.new(keymap[:both]) + keymap[:heir]
         end
+
+        def accesible_keys
+          heir_keys + [:nest_name, :nest_syntax] - [:items]
+        end
+
+        def define_getter option_key
+          define_method option_key do
+            norm_method = "normalize_#{option_key}"
+            value = live_options[option_key]
+            try(norm_method, value) || value
+          end
+        end
+
+        def define_setter option_key
+          define_method "#{option_key}=" do |value|
+            live_options[option_key] = value
+          end
+        end
       end
 
       # There are two primary options hashes:
@@ -77,7 +95,7 @@ class Card
         live_options[:items] ||= {}
       end
 
-      (heir_keys + [:nest_name, :nest_syntax] - [:items]).each do |option_key|
+      accessible_keys.each do |option_key|
         define_getter option_key
         define_setter option_key
       end
@@ -107,20 +125,6 @@ class Card
       end
 
       private
-
-      def define_getter option_key
-        define_method option_key do
-          norm_method = "normalize_#{option_key}"
-          value = live_options[option_key]
-          try(norm_method, value) || value
-        end
-      end
-
-      def define_setter option_key
-        define_method "#{option_key}=" do |value|
-          live_options[option_key] = value
-        end
-      end
 
       # option normalization includes standardizing options into a hash with
       # symbols as keys, managing standard view inheritance, and special

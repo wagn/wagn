@@ -57,7 +57,7 @@ class Card
           @heir_keys ||= ::Set.new(keymap[:both]) + keymap[:heir]
         end
 
-        def accesible_keys
+        def accessible_keys
           heir_keys + [:nest_name, :nest_syntax] - [:items]
         end
 

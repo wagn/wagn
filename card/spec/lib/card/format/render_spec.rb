@@ -4,16 +4,16 @@ describe Card::Format::Render do
 
     let(:cache_key) do
       "a-Card::Format::HtmlFormat-normal-home_view:content;"\
-      "nest_name:A;nest_syntax:A;view:contentcontent:show"
+      "nest_name:A;nest_syntax:A|content;view:contentcontent:show"
     end
 
     subject { Card::Cache[Card::View] }
 
     it "can be changed with nest option" do
       is_expected.to receive(:fetch).with cache_key
-      render_content "{{A}}"
+      render_content "{{A|content}}"
       is_expected.not_to receive(:fetch)
-      render_content "{{A|content;cache:never}}"
+      render_content "{{A|cache:never}}"
     end
   end
 end

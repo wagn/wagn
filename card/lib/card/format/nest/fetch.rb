@@ -7,6 +7,7 @@ class Card
           case cardish
           when Card            then cardish
           when Symbol, Integer then Card.fetch cardish
+          when "_", "_self"    then card.context_card
           else
             opts[:nest_name] = cardish.to_s
             Card.fetch cardish, new: nest_new_args(opts)

@@ -23,14 +23,15 @@ class Card
           :structure, # overrides the content of the card
           :title, # overrides the name of the card
           :variant, # override the canonical version of the name with
-          #                 a different variant
+          #                a different variant
           :editor, # inline_nests makes a form within standard content
-          #                 (Symbol)
+          #                (Symbol)
           :type, # set the default type of new cards
           :size, # set an image size
           :params, # parameters for add button.  deprecate?
           :items, # options for items (Hash)
-          :cache # change view cache behaviour (Symbol<:always, :standard, :never>)
+          :cache # change view cache behaviour
+        #                (Symbol<:always, :standard, :never>)
         ],
         none: [
           :skip_perms,  # do not check permissions for this view (Boolean)

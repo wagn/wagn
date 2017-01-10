@@ -19,17 +19,18 @@ class Card
           :edit_structure  # use a different structure for editing (Array)
         ],
         both: [
-          :help,          # cue text when editing
-          :structure,     # overrides the content of the card
-          :title,         # overrides the name of the card
-          :variant,       # override the canonical version of the name with
+          :help, # cue text when editing
+          :structure, # overrides the content of the card
+          :title, # overrides the name of the card
+          :variant, # override the canonical version of the name with
           #                 a different variant
-          :editor,        # inline_nests makes a form within standard content
+          :editor, # inline_nests makes a form within standard content
           #                 (Symbol)
-          :type,          # set the default type of new cards
-          :size,          # set an image size
-          :params,        # parameters for add button.  deprecate?
-          :items          # options for items (Hash)
+          :type, # set the default type of new cards
+          :size, # set an image size
+          :params, # parameters for add button.  deprecate?
+          :items, # options for items (Hash)
+          :cache # change view cache behaviour (Symbol<:always, :standard, :never>)
         ],
         none: [
           :skip_perms,  # do not check permissions for this view (Boolean)
@@ -76,18 +77,15 @@ class Card
       end
 
       (heir_keys + [:nest_name, :nest_syntax] - [:items]).each do |option_key|
-        define_method option_key do
-          norm_method = "normalize_#{option_key}"
-          value = live_options[option_key]
-          try(norm_method, value) || value
-        end
-
-        define_method "#{option_key}=" do |value|
-          live_options[option_key] = value
-        end
+        define_getter option_key
+        define_setter option_key
       end
 
       def normalize_editor value
+        value && value.to_sym
+      end
+
+      def normalize_cache value
         value && value.to_sym
       end
 
@@ -108,6 +106,20 @@ class Card
       end
 
       private
+
+      def define_getter option_key
+        define_method option_key do
+          norm_method = "normalize_#{option_key}"
+          value = live_options[option_key]
+          try(norm_method, value) || value
+        end
+      end
+
+      def define_setter option_key
+        define_method "#{option_key}=" do |value|
+          live_options[option_key] = value
+        end
+      end
 
       # option normalization includes standardizing options into a hash with
       # symbols as keys, managing standard view inheritance, and special

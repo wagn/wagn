@@ -20,7 +20,7 @@ class Card
       end
 
       # answers: should this cache fetch depend on one already in progress?
-      # Note that f you create a brand new format object (ie, not a subformat)
+      # Note that if you create a brand new format object (ie, not a subformat)
       # midrender, (eg card.format...), it needs to be treated as unrelated to
       # any caching in progress.
       def caching?

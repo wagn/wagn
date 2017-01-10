@@ -354,7 +354,7 @@ end
 
 def expire_views
   puts "EXPIRE VIEW CACHE (#{name}): #{view_cache_keys}"
-  return unless view_cache_keys.any?
+  return unless view_cache_keys.present?
   Array.wrap(@view_cache_keys).each do |view_cache_key|
     Card::View.cache.delete view_cache_key
   end

@@ -73,7 +73,7 @@ class Card
 
       # stamp generator
       def new_stamp
-        Time.now.to_i.to_s 32
+        Time.now.to_i.to_s(32) + rand(9999).to_s(32)
       end
 
       # prefix added to cache key to create a system-wide unique key
@@ -97,12 +97,21 @@ class Card
       # @param attribute [String, Symbol]
       def write_attribute key, attribute, value
         return value unless @store
-        @store.send(:local_cache).clear # clear rails local cache
-        if (object = read key)
+        if (object = deep_read key)
           object.instance_variable_set "@#{attribute}", value
           write key, object
         end
         value
+      end
+
+      def deep_read key
+        @store.send(:local_cache).clear
+        read key
+      end
+
+      def read_attribute key, attribute
+        object = deep_read key
+        object.instance_variable_get "@#{attribute}"
       end
 
       def write key, value

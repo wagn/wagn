@@ -49,9 +49,10 @@ class Card
 
       # setting (:alway, :never, :nested) designated in view definition
       def view_cache_setting view
-        setting_method = self.class.view_cache_setting_method view
-        coded_setting = respond_to?(setting_method) ? send(setting_method) : :standard
-        return :never if coded_setting == :never # seems unwise to override a hard-coded "never"
+        method = self.class.view_cache_setting_method view
+        coded_setting = respond_to?(method) ? send(method) : :standard
+        return :never if coded_setting == :never
+        # seems unwise to override a hard-coded "never"
         (voo && voo.cache) || coded_setting
       end
 

@@ -91,7 +91,7 @@ format :html do
   def menu_account_link opts
     menu_item "account", "user", opts.merge(
       view: :related,
-      path: { related: { name: "+*account", view: :edit } }
+      path: { related: { name: "+#{:account.cardname.key}", view: :edit } }
     )
   end
 

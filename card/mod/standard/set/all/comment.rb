@@ -6,7 +6,7 @@ end
 
 def comment_author
   @comment_author ||=
-    session[:comment_author] || params[:comment_author] || "Anonymous"
+    Env.session[:comment_author] || params[:comment_author] || "Anonymous"
 end
 
 def clean_comment

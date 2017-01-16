@@ -1,12 +1,12 @@
 event :add_comment, :prepare_to_store, on: :save, when: :comment do
   Env.session[:comment_author] = comment_author if Env.session
   self.content =
-    [content, card.format.comment_with_signature].compact.join "\n<hr\>\n"
+    [content, format.comment_with_signature].compact.join "\n<hr\>\n"
 end
 
 def comment_author
   @comment_author ||=
-    Env.session[:comment_author] || params[:comment_author] || "Anonymous"
+    Env.session[:comment_author] || Env.params[:comment_author] || "Anonymous"
 end
 
 def clean_comment

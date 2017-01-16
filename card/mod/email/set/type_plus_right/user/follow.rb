@@ -120,9 +120,9 @@ format :html do
                 subformat(rule[:card]).render_follow_item condition: option,
                                                           hide: hide_buttons
               end
-            end.join("\n")
-          end.join("\n")
-        end.join("\n")
+            end
+          end
+        end
       end
     end
   end

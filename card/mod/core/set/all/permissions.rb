@@ -224,26 +224,20 @@ def add_to_read_rule_update_queue updates
 end
 
 event :check_permissions, :validate do
-  task =
-    if @action != :delete && comment # will be obviated by new comment handling
-      :comment
-    else
-      @action
-    end
   track_permission_errors do
-    ok? task
+    ok? action_for_permission_check
   end
+end
+
+def action_for_permission_check
+  commenting? ? :comment : @action
 end
 
 def track_permission_errors
   @permission_errors = []
   result = yield
-
-  @permission_errors.each do |message|
-    errors.add :permission_denied, message
-  end
+  @permission_errors.each { |msg| errors.add :permission_denied, msg }
   @permission_errors = nil
-
   result
 end
 

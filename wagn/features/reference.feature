@@ -2,10 +2,10 @@
 Feature: Reference
   In order to connect related cards
   As a Wagneer
-  
+
   Background:
     Given I am signed in as Joe Admin
-    And I wait until ajax response done
+    And I wait for ajax response
 
   Scenario: Renaming a embed card
     When I create PlainText card "Vignesh" with content "Indian"
@@ -14,7 +14,7 @@ Feature: Reference
     And I fill in "card_name" with "Srivigneshwar"
     And I press "Rename"
     And I press "Rename and Update"
-    And I wait until ajax response done
+    And I wait for ajax response
     Then I go to card "Kawaii Man"
     And I should see "Srivigneshwar"
 

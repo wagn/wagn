@@ -170,14 +170,14 @@ Given /^(.*) (is|am) not watching "([^\"]+)"$/ do |user, _verb, cardname|
 end
 
 When /I wait a sec/ do
-  sleep 1
+  sleep 5
 end
 
 When /I wait (\d+) seconds$/ do |period|
   sleep period.to_i
 end
 
-When /^I wait until ajax response done$/ do
+When /^I wait for ajax response$/ do
   Timeout.timeout(Capybara.default_wait_time) do
     sleep(0.5) while page.evaluate_script("jQuery.active") != 0
   end
@@ -187,10 +187,11 @@ end
 #   save_and_open_page
 # end
 #
-# Then /debug/ do
+Then /debug/ do
+  require 'pry'
+  binding.pry
+end
 #   if RUBY_VERSION =~ /^2/
-#     require 'pry'
-#     binding.pry
 #   else
 #     debugger
 #   end

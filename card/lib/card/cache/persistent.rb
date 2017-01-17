@@ -105,7 +105,8 @@ class Card
       end
 
       def deep_read key
-        @store.send(:local_cache).clear
+        local_cache = @store.send :local_cache
+        local_cache.clear if local_cache
         read key
       end
 

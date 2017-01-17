@@ -5,10 +5,10 @@ format :html do
   COMMON_RULE_SETTINGS =
     [:create, :read, :update, :delete, :structure, :default, :style].freeze
 
-  view :core do |args|
+  view :core, cache: :never do |args|
     voo.show :set_label, :rule_navbar
     voo.hide :set_navbar
-    rule_view = args[:rule_view] || :common_rules
+    rule_view = params[:rule_view] || :common_rules
     _render rule_view
   end
 
@@ -186,7 +186,7 @@ format :html do
     return "" if related_sets.size <= 1
     navbar id, toggle: 'Rules<span class="caret"></span>', toggle_align: :left,
                class: "slotter toolbar", navbar_type: "inverse",
-               collapsed_content: close_link(class: "pull-right visible-xs") do
+               collapsed_content: close_link("pull-right visible-xs") do
       [
         wrap_with(:span, "Set:", class: "navbar-text hidden-xs"),
         (wrap_with :ul, class: "nav navbar-nav nav-pills" do
@@ -213,7 +213,7 @@ format :html do
     navbar "rule-navbar-#{card.cardname.safe_key}-#{voo.home_view}",
            toggle: 'Rules<span class="caret"></span>', toggle_align: :left,
            class: "slotter toolbar", navbar_type: "inverse",
-           collapsed_content: close_link(class: "pull-right visible-xs") do
+           collapsed_content: close_link("pull-right visible-xs") do
       [rule_navbar_heading, rule_navbar_content]
     end
   end

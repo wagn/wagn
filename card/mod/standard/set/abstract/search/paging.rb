@@ -55,7 +55,8 @@ format :html do
       limit: limit,
       view: voo.home_view,
       slot: voo.slot_options
-    }.merge(extra_paging_path_args).merge local_args
+    }.merge(extra_paging_path_args)
+    @paging_path_args.merge local_args
   end
 
   def paging_view

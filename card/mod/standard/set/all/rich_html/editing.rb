@@ -130,8 +130,7 @@ format :html do
     _render_related args.merge(
       related: {
         card: current_set_card,
-        view: :open,
-        slot: { rule_view: (args[:rule_view] || :common_rules) }
+        view: :open
       }
     )
   end

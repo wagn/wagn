@@ -73,9 +73,11 @@ format :html do
   end
 
   def follow_status_link name, key
-    link_to_related key, "more options",
-                    path: { related: { name: name, view: :edit_single_rule } },
-                    class: "btn update-follow-link", "data-card_key" => key
+    # simplified this to straight link for now.
+    # consider restoring to slotter action
+    link_to_card name, "more options",
+                 path: { view: :edit_single_rule },
+                 class: "btn update-follow-link", "data-card_key" => key
   end
 
   view :follow_status_delete_options, cache: :never do

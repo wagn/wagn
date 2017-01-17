@@ -348,40 +348,8 @@ format :html do
     end
   end
 
-
-
-
-
-
-
-
-
-
-
-  view :edit_single_rule, cache: :never do |args|
-    %(<div class="edit-single-rule panel-body">#{render_edit_rule args}</div>)
-  end
-
-  def default_edit_single_rule_args args
-    args[:remote] ||= false
-    args[:success] ||= {
-      card: args[:parent] || card,
-      id: (args[:parent] && args[:parent].cardname.url_key) ||
-          card.cardname.url_key,
-      view: :open,
-      item: nil
-    }
-    default_edit_rule_args args
-    edit_single_rule_button_args args
-  end
-
-  def edit_single_rule_button_args args
-    args[:delete_button] = delete_button args, ".card-slot.related-view"
-
-    args[:cancel_button] =
-      link_to_card args[:success][:id], "Cancel",
-                   class: "rule-cancel-button btn btn-default",
-                   path: { view: args[:success][:view] }
+  view :edit_single_rule, tags: :unknown_ok, cache: :never do
+    frame() { render_edit_rule }
   end
 
   private

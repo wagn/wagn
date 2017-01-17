@@ -1,3 +1,7 @@
+def commenting?
+  comment && @action != :delete
+end
+
 event :add_comment, :prepare_to_store, on: :save, when: :comment do
   Env.session[:comment_author] = comment_author if Env.session
   self.content =
@@ -38,7 +42,8 @@ format do
        denial: :blank, tags: :unknown_ok,
        perms: ->(r) { r.card.ok? :comment } do
     wrap_with :div, class: "comment-box nodblclick" do
-      card_form action: :update, no_mark: true do
+      action = card.new_card? ? :create : :update
+      card_form action do
         [hidden_comment_fields, comment_box, comment_buttons]
       end
     end

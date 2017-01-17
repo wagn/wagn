@@ -6,6 +6,15 @@ format :html do
     class_list[key] = classier.to_s
   end
 
+  # don't use in the given block the additional class that
+  # was added to `klass`
+  def without_upped_class klass
+    tmp_class = class_list.delete klass
+    result = yield tmp_class
+    class_list[klass] = tmp_class
+    result
+  end
+
   def class_list
     @class_list ||= {}
   end

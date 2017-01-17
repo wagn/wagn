@@ -170,7 +170,7 @@ Given /^(.*) (is|am) not watching "([^\"]+)"$/ do |user, _verb, cardname|
 end
 
 When /I wait a sec/ do
-  sleep 5
+  sleep 1
 end
 
 When /I wait (\d+) seconds$/ do |period|

@@ -56,13 +56,23 @@ When /^(?:|I )submit form$/ do
 end
 
 When /^(?:|I )single-select "([^"]*)" from "([^"]*)"$/ do |value, field|
-  find("label", text: field).find(:xpath, "..//a[@class='chosen-single']").click
-  li = find("li", text: value)
-  li.click
-  # If the list element is too far down the list then the first click
-  # scrolls it up but doesn't select it. It needs another click.
-  # A selected item is no longer visible (because the list disappears)
-  li.click if li.visible?
+  select =
+    find("label", text: field).find(:xpath, "..//select", visible: false)
+  page.execute_script("$('##{select['id']}').val('#{value}')")
+  page.execute_script("$('##{select['id']}').trigger('chosen:updated')")
+  page.execute_script("$('##{select['id']}').change()")
+
+  # code below doesn't work on wikirate because if you select an item in
+  # a very long list the list gets pushed below the navigation bart
+  # find("label", text: field).find(:xpath, "..//a[@class='chosen-single']").click
+  # li = find("li", text: value, visible: false)
+  # li.click
+  # # If the list element is too far down the list then the first click
+  # # scrolls it up but doesn't select it. It needs another click.
+  # # A selected item is no longer visible (because the list disappears)
+  # if li.visible?
+  #   li.click
+  # end
 end
 
 # Use this step in conjunction with Rail's datetime_select helper. For example:

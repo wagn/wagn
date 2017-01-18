@@ -58,12 +58,13 @@ end
 When /^(?:|I )single-select "([^"]*)" from "([^"]*)"$/ do |value, field|
   select =
     find("label", text: field).find(:xpath, "..//select", visible: false)
+  value = select.find("option", text: value, visible: false)['value']
   page.execute_script("$('##{select['id']}').val('#{value}')")
   page.execute_script("$('##{select['id']}').trigger('chosen:updated')")
   page.execute_script("$('##{select['id']}').change()")
 
   # code below doesn't work on wikirate because if you select an item in
-  # a very long list the list gets pushed below the navigation bart
+  # a very long list the list gets pushed below the navigation bar
   # find("label", text: field).find(:xpath, "..//a[@class='chosen-single']").click
   # li = find("li", text: value, visible: false)
   # li.click

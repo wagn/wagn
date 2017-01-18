@@ -51,9 +51,18 @@ When /^(?:|I )select "([^"]*)" from "([^"]*)"$/ do |value, field|
   select(value, from: field)
 end
 
+When /^(?:|I )submit form$/ do
+  find(:css, "button[type='submit']").click
+end
+
 When /^(?:|I )single-select "([^"]*)" from "([^"]*)"$/ do |value, field|
-  find("label", text: field).parent.find("a.chosen-single").click
-  find("li", text: value).click
+  find("label", text: field).find(:xpath, "..//a[@class='chosen-single']").click
+  li = find("li", text: value)
+  li.click
+  # If the list element is too far down the list then the first click
+  # scrolls it up but doesn't select it. It needs another click.
+  # A selected item is no longer visible (because the list disappears)
+  li.click if li.visible?
 end
 
 # Use this step in conjunction with Rail's datetime_select helper. For example:

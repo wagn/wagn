@@ -1,5 +1,4 @@
 format :html do
-
   # Does two main things:
   # (1) gives CSS classes for styling and
   # (2) adds card data for javascript - including the "card-slot" class,
@@ -17,8 +16,8 @@ format :html do
     @slot_view = @current_view
     debug_slot do
       haml_tag :div, id: card.cardname.url_key,
-                class: wrap_classes(slot),
-                data:  wrap_data do
+                     class: wrap_classes(slot),
+                     data:  wrap_data do
         yield
       end
     end

@@ -78,7 +78,8 @@ class Card
         if opts[:after] || opts[:before]
           # ignore :in options
         elsif opts[:in]
-          opts[:after] = callback_name opts.delete(:in), opts.delete(:after_subcards)
+          opts[:after] =
+            callback_name opts.delete(:in), opts.delete(:after_subcards)
         end
         opts[:on] = [:create, :update] if opts[:on] == :save
       end

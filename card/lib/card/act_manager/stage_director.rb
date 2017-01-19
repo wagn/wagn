@@ -202,12 +202,22 @@ class Card
       def run_single_stage stage, &block
         return true unless valid_next_stage? stage
         # puts "#{@card.name}: #{stage} stage".red
+        prepare_stage_run stage
+        execute_stage_run stage
+      rescue => e
+        @card.clean_after_stage_fail
+        raise e
+      end
 
+      def prepare_stage_run stage
         @stage = stage_index stage
-        if stage == :initialize
-          @running ||= true
-          prepare_for_phases
-        end
+        return unless stage == :initialize
+
+        @running ||= true
+        prepare_for_phases
+      end
+
+      def execute_stage_run stage
         # in the store stage it can be necessary that
         # other subcards must be saved before we save this card
         if stage == :store
@@ -217,9 +227,6 @@ class Card
           run_subdirector_stages stage
           run_final_stage_callbacks stage
         end
-      rescue => e
-        @card.clean_after_stage_fail
-        raise e
       end
 
       def run_stage_callbacks stage, callback_postfix=""

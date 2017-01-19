@@ -66,7 +66,8 @@ class Card < ActiveRecord::Base
 
     # VALIDATION PHASE
     :initialize_stage, :prepare_to_validate_stage, :validate_stage,
-    :initialize_final_stage, :prepare_to_validate_final_stage, :validate_final_stage,
+    :initialize_final_stage, :prepare_to_validate_final_stage,
+    :validate_final_stage,
 
     # STORAGE PHASE
     :prepare_to_store_stage, :store_stage, :finalize_stage,

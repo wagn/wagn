@@ -50,8 +50,8 @@ class Card < ActiveRecord::Base
   serializable_attr_accessor(
     :action, :supercard, :superleft,
     :current_act, :current_action,
-    :comment, :comment_author,    # obviated soon
-    :update_referers,          # wrong mechanism for this
+    :comment,                     # obviated soon
+    :update_referers,             # wrong mechanism for this
     :update_all_users,            # if the above is wrong then this one too
     :silent_change,               # and this probably too
     :remove_rule_stash,

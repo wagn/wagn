@@ -63,7 +63,7 @@ format :html do
 
   def card_form action, opts={}
     @form_root = true
-    url, action = card_form_url action
+    url, action = card_form_url_and_action action
     html_opts = card_form_html_opts action, opts
     form_for card, url: url, html: html_opts, remote: true do |form|
       @form = form
@@ -88,7 +88,7 @@ format :html do
     opts
   end
 
-  def card_form_url action
+  def card_form_url_and_action action
     case action
     when Symbol then [path(action: action), action]
     when Hash   then [path(action), action[:action]]

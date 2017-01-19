@@ -10,13 +10,15 @@ Feature: History
 
   Scenario: view history and rollback
     When I go to url "/First?view=history"
-#    Then In the main card content I should see a del with content "egg"
+    #    Then In the main card content I should see a del with content "egg"
 
     When I expand act 2
-#    And In the main card content I click "Hide changes"
-#    Then In the main card content I should not see a del with content "egg"
+    #    And In the main card content I click "Hide changes"
+    #    Then In the main card content I should not see a del with content "egg"
+    And I wait for ajax response
+
     When In the main card body I click "Save as current"
-    And I wait until ajax response
+    And I wait for ajax response
 
     Then In the main card content I should see "chicken"
 

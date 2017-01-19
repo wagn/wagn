@@ -18,34 +18,47 @@ format :html do
   end
 
   view :follow_item, tags: :unknown_ok, cache: :never do |args|
-    if card.new_card? || !card.include_item?(args[:condition])
-      button_view = :add_follow_rule_button
-      form_opts = { add_item: args[:condition] }
-    else
-      button_view = :delete_follow_rule_button
-      form_opts = { drop_item: args[:condition] }
-    end
-
-    text = if (option_card = Card.fetch args[:condition])
-             option_card.description(card.rule_set)
-           else
-             card.rule_set.follow_label
-           end
-    link_target = if card.rule_set.tag.codename == "self"
-                    card.rule_set_name.left
-                  else
-                    "#{card.rule_set_name}+by name"
-                  end
+    condition = args[:condition]
     wrap do
-      card_form(
-        { action: :update, name: card.name, success: { view: :follow_item } },
-        hidden: { condition: args[:condition] }.merge(form_opts)
-      ) do
-        output [
-          _optional_render(button_view, args),
-          link_to_card(link_target, text)
+      card_form action: :update, success: { view: :follow_item } do
+        [
+          follow_item_hidden_tags(condition),
+          follow_item_button(condition),
+          follow_item_link(condition)
         ]
       end
+    end
+  end
+
+  def add_follow_item? condition
+    card.new_card? || !card.include_item?(condition)
+  end
+
+  def follow_item_hidden_tags condition
+    condkey = add_follow_item?(condition) ? :add_item : :drop_item
+    hidden_tags condition: condition, condkey => condition
+  end
+
+  def follow_item_button condition
+    action = add_follow_item?(condition) ? :add : :delete
+    _optional_render "#{action}_follow_rule_button"
+  end
+
+  def follow_item_link condition
+    link_to_card follow_item_link_target, follow_item_link_text(condition)
+  end
+
+  def follow_item_link_target
+    set = card.rule_set
+    setname = set.cardname
+    set.tag.codename == "self" ? setname.left : setname.field("by name")
+  end
+
+  def follow_item_link_text condition
+    if (option_card = Card.fetch condition)
+      option_card.description card.rule_set
+    else
+      card.rule_set.follow_label
     end
   end
 
@@ -60,9 +73,11 @@ format :html do
   end
 
   def follow_status_link name, key
-    link_to_related key, "more options",
-                    path: { related: { name: name, view: :edit_single_rule } },
-                    class: "btn update-follow-link", "data-card_key" => key
+    # simplified this to straight link for now.
+    # consider restoring to slotter action
+    link_to_card name, "more options",
+                 path: { view: :edit_single_rule },
+                 class: "btn update-follow-link", "data-card_key" => key
   end
 
   view :follow_status_delete_options, cache: :never do
@@ -77,19 +92,17 @@ format :html do
   end
 
   view :delete_follow_rule_button do
-    button_tag(
-      type: :submit,
-      class: "btn-xs btn-item-delete btn-primary", "aria-label" => "Left Align"
-    ) do
+    button_tag(type: :submit,
+               class: "btn-xs btn-item-delete btn-primary",
+               "aria-label" => "Left Align") do
       tag :span, class: "glyphicon glyphicon-ok", "aria-hidden" => "true"
     end
   end
 
   view :add_follow_rule_button do
-    button_tag(
-      type: :submit,
-      class: "btn-xs btn-item-add", "aria-label" => "Left Align"
-    ) do
+    button_tag(type: :submit,
+               class: "btn-xs btn-item-add",
+               "aria-label" => "Left Align") do
       tag :span, class: "glyphicon glyphicon-plus", "aria-hidden" => "true"
     end
   end

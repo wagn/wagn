@@ -203,7 +203,7 @@ class Card
         return true unless valid_next_stage? stage
         # puts "#{@card.name}: #{stage} stage".red
         prepare_stage_run stage
-        execute_stage_run stage
+        execute_stage_run stage, &block
       rescue => e
         @card.clean_after_stage_fail
         raise e
@@ -217,7 +217,7 @@ class Card
         prepare_for_phases
       end
 
-      def execute_stage_run stage
+      def execute_stage_run stage, &block
         # in the store stage it can be necessary that
         # other subcards must be saved before we save this card
         if stage == :store

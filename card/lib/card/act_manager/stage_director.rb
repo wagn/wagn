@@ -215,22 +215,27 @@ class Card
         else
           run_stage_callbacks stage
           run_subdirector_stages stage
+          run_final_stage_callbacks stage
         end
       rescue => e
         @card.clean_after_stage_fail
         raise e
       end
 
-      def run_stage_callbacks stage
+      def run_stage_callbacks stage, callback_postfix=""
         Rails.logger.debug "#{stage}: #{@card.name}"
         # we use abort :success in the :store stage for :save_draft
         if stage_index(stage) <= stage_index(:store) && !main?
           @card.abortable do
-            @card.run_callbacks :"#{stage}_stage"
+            @card.run_callbacks :"#{stage}#{callback_postfix}_stage"
           end
         else
-          @card.run_callbacks :"#{stage}_stage"
+          @card.run_callbacks :"#{stage}#{callback_postfix}_stage"
         end
+      end
+
+      def run_final_stage_callbacks stage
+        run_stage_callbacks stage, "_final"
       end
 
       def run_subdirector_stages stage

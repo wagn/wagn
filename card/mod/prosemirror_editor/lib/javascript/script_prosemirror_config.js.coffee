@@ -26,6 +26,6 @@ $.extend wagn,
     createProseMirror(el_id, conf)
 
 prosemirrorContent = (id) ->
-  content = getProseMirror(id).getContent("html")
+  content = getProseMirrorContent(id)
   return '' if content == '<p></p>'
   content

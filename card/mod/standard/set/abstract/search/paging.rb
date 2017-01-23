@@ -43,17 +43,16 @@ format :html do
 
   def page_link text, page, options
     return text unless page
-    paging_path_args[:offset] = page * limit
     options.merge! class: "card-paging-link slotter",
                    remote: true,
-                   path: paging_path_args
+                   path: paging_path_args(offset: page * limit)
     link_to raw(text), options
   end
 
   def paging_path_args local_args={}
     @paging_path_args ||= {
       limit: limit,
-      view: voo.home_view,
+      view: paging_view,
       slot: voo.slot_options
     }.merge(extra_paging_path_args)
     @paging_path_args.merge local_args

@@ -78,9 +78,15 @@ class Card
         if opts[:after] || opts[:before]
           # ignore :in options
         elsif opts[:in]
-          opts[:after] = :"#{opts.delete(:in)}_stage" if opts[:in]
+          opts[:after] =
+            callback_name opts.delete(:in), opts.delete(:after_subcards)
         end
         opts[:on] = [:create, :update] if opts[:on] == :save
+      end
+
+      def callback_name stage, after_subcards=false
+        name = after_subcards ? "#{stage}_final_stage" : "#{stage}_stage"
+        name.to_sym
       end
 
       def define_event_method event, call_method

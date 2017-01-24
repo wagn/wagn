@@ -79,6 +79,18 @@ def insert_item index, name
   self.content = new_names.join "\n"
 end
 
+def add_id id
+  add_item "~#{id}"
+end
+
+def drop_id id
+  drop_item "~#{id}"
+end
+
+def insert_id index, id
+  insert_item index, "~#{id}"
+end
+
 def extended_item_cards context=nil
   context = (context ? context.cardname : cardname)
   args = { limit: "" }

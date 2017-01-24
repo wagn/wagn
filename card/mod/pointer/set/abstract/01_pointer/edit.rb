@@ -14,10 +14,13 @@ end
 format :html do
 
   view :editor do |args|
-    part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/, "") : :list
     hidden_field(:content, class: "card-content") +
       raw(_render(part_view, args))
     # .merge(pointer_item_class: 'form-control')))
+  end
+
+  def part_view
+    (c = card.rule(:input)) ? c.gsub(/[\[\]]/, "") : :list
   end
 
   view :list do |args|

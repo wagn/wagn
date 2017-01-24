@@ -59,7 +59,7 @@ module Cardio
 
         file_storage:           :local,
         file_buckets:           {},
-        file_default_bucket: nil,
+        file_default_bucket: nil
       }
     end
 

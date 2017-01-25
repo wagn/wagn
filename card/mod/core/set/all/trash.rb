@@ -95,7 +95,8 @@ event :validate_delete, :validate, on: :delete do
   end
 end
 
-event :validate_delete_children, :prepare_to_validate, on: :delete do
+event :validate_delete_children, after: :validate_delete, on: :delete do
+  return if errors.any?
   children.each do |child|
     child.trash = true
     add_subcard child

@@ -1,4 +1,4 @@
-include Pointer
+include_set Pointer
 
 def history?
   false
@@ -22,13 +22,7 @@ def content
   Env.session[key]
 end
 
-format do
-  include Pointer::Format
-end
-
 format :html do
-  include Pointer::HtmlFormat
-
   def default_core_args args
     args[:items] = { view: :name }
   end

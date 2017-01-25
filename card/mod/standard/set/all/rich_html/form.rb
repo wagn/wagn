@@ -64,10 +64,11 @@ format :html do
   def card_form action, opts={}
     @form_root = true
     url, action = card_form_url_and_action action
+    success = opts.delete(:success)
     html_opts = card_form_html_opts action, opts
     form_for card, url: url, html: html_opts, remote: true do |form|
       @form = form
-      output yield(form)
+      success_tags(success) + output(yield(form))
     end
   end
 
@@ -132,6 +133,11 @@ format :html do
     class_up "help-text", "help-block"
     voo.help = text if voo && text.to_s != "true"
     _optional_render_help
+  end
+
+  def success_tags opts
+    return "" unless opts
+    hidden_tags success: opts
   end
 
   def hidden_tags hash, base=nil

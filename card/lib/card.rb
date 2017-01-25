@@ -66,12 +66,16 @@ class Card < ActiveRecord::Base
 
     # VALIDATION PHASE
     :initialize_stage, :prepare_to_validate_stage, :validate_stage,
+    :initialize_final_stage, :prepare_to_validate_final_stage,
+    :validate_final_stage,
 
     # STORAGE PHASE
     :prepare_to_store_stage, :store_stage, :finalize_stage,
+    :prepare_to_store_final_stage, :store_final_stage, :finalize_final_stage,
 
     # INTEGRATION PHASE
-    :integrate_stage, :integrate_with_delay_stage
+    :integrate_stage, :integrate_with_delay_stage,
+    :integrate_final_stage, :integrate_with_delay_final_stage
   )
 
   # Validation and integration phase are only called for the act card

@@ -42,11 +42,11 @@ format :html do
   # @param [Hash|Array] fields either an array with field names and/or field
   # cards or a hash with the fields as keys and a hash with nest options as
   # values
-  # def process_edit_fields fields
-  #   fields.map do |field, opts|
-  #     field_nest field, opts
-  #   end.join "\n"
-  # end
+  def process_edit_fields fields
+    fields.map do |field, opts|
+      field_nest field, opts
+    end.join "\n"
+  end
 
   def form_for_multi
     instantiate_builder("card#{subcard_input_names}", card, {})

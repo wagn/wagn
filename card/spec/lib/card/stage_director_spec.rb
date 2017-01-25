@@ -127,7 +127,7 @@ describe Card::ActManager::StageDirector do
             event_called "i"
           end
           Card["A"].delete!
-          expect(@called_events).to eq ["ptv"]
+          expect(@called_events).to eq []
         end
       end
 

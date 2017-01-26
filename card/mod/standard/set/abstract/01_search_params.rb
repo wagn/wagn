@@ -24,7 +24,7 @@ end
 
 format :html do
   def default_limit
-    20
+    Cardio.config.paging_limit || 20
   end
 end
 

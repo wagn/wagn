@@ -75,7 +75,7 @@ end
 group :test do
   gem 'fog'
   gem 'fog-aws'
-  gem 'rspec-html-matchers', '0.8.1' #0.9 requires ruby >= 2.1
+  gem 'rspec-html-matchers', '0.8.1' # 0.9 requires ruby >= 2.1
   gem 'rr' #, '=1.0.0'
 	gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
   gem 'codeclimate-test-reporter', require: nil

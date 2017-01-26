@@ -41,8 +41,6 @@ class Card
       case name_or_card_or_attr
       when Card
         new_by_card name_or_card_or_attr, attr_or_opts
-      when Symbol, String
-        new_by_attributes name_or_card_or_attr, attr_or_opts
       when Hash
         args = name_or_card_or_attr
         if args[:name]
@@ -50,6 +48,8 @@ class Card
         else
           multi_add args
         end
+      else
+        new_by_attributes name_or_card_or_attr, attr_or_opts
       end
     end
 

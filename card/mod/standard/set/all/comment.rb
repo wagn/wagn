@@ -8,6 +8,8 @@ event :add_comment, :prepare_to_store, on: :save, when: :comment do
     [content, format.comment_with_signature].compact.join "\n<hr\>\n"
 end
 
+attr_writer :comment_author
+
 def comment_author
   @comment_author ||=
     Env.session[:comment_author] || Env.params[:comment_author] || "Anonymous"

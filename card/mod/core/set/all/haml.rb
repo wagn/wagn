@@ -30,7 +30,7 @@ format do
   #       some haml
   def render_haml template_or_locals={}, locals_or_binding=nil, a_binding=nil
     if template_or_locals.is_a?(Symbol)
-      return render_haml_template template_or_locals, locals_or_binding
+      return render_haml_template template_or_locals, locals_or_binding || {}
     end
     if block_given?
       haml_to_html yield, template_or_locals, locals_or_binding

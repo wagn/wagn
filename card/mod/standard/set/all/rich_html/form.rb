@@ -54,7 +54,14 @@ format :html do
 
   def subcard_input_names
     return "" if !form_root_format || form_root_format == self
-    "#{@parent.subcard_input_names}[subcards][#{card.contextual_name}]"
+    "#{@parent.subcard_input_names}[subcards][#{name_in_form}]"
+  end
+
+  # If you use subfield cards to render a form for a new card
+  # then the subfield cards should be created on the new card not the existing
+  # card that build the form
+  def name_in_form
+    @native_mode == :new ? card.relative_name : card.contextual_name
   end
 
   def form

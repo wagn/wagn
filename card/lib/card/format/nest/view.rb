@@ -11,11 +11,14 @@ class Card
       module View
         def with_nest_mode mode
           old_mode = @mode
+          old_native_mode = @native_mode
           if (switch_mode = NEST_MODES[mode])
+            @native_mode = mode
             @mode = switch_mode
           end
           result = yield
           @mode = old_mode
+          @native_mode = old_native_mode
           result
         end
 

@@ -65,13 +65,16 @@ format do
   #   def view_template_path view
   #     super(view, __FILE__)
   #   end
-  def view_template_path view, file=__FILE__
-    first_try = ::File.expand_path("../#{view}.haml", file)
+  def view_template_path view, tmp_set_path=__FILE__
+    basename = ::File.basename(tmp_set_path, ".rb")
+    try_view_template_path("../#{view}", tmp_set_path) ||
+      try_view_template_path("../#{basename}/#{view}", tmp_set_path)
+  end
+
+  def try_view_template_path template_path, tmp_set_path, ext="haml"
+    path = ::File.expand_path("#{template_path}.#{ext}", tmp_set_path)
       .gsub(%r{/tmp/set/mod\d+-([^/]+)/}, '/mod/\1/view/')
-    return first_try if ::File.exist?(first_try)
-    basename = ::File.basename(file, ".rb")
-    ::File.expand_path("../#{basename}/#{view}.haml", file)
-      .gsub(%r{/tmp/set/mod\d+-([^/]+)/}, '/mod/\1/view/')
+    ::File.exist?(path) && path
   end
 
   def haml_to_html haml, locals, a_binding=nil

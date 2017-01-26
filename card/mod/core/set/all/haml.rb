@@ -28,7 +28,7 @@ format do
   #   - haml_wrap do
   #     %p
   #       some haml
-  def render_haml template_or_locals={}, locals_or_binding={}, a_binding=nil
+  def render_haml template_or_locals={}, locals_or_binding=nil, a_binding=nil
     if template_or_locals.is_a?(Symbol)
       return render_haml_template template_or_locals, locals_or_binding
     end
@@ -76,7 +76,7 @@ format do
 
   def haml_to_html haml, locals, a_binding=nil
     a_binding ||= binding
-    ::Haml::Engine.new(haml).render a_binding, locals
+    ::Haml::Engine.new(haml).render a_binding, locals || {}
   end
 end
 

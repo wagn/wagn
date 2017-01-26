@@ -8,7 +8,7 @@ def followable?
   false
 end
 
-event :store_in_session, :prepare_to_validate, on: :save, changed: :content do
+event :store_in_session, :initialize, on: :save, changed: :content do
   Env.session[key] = db_content
   self.db_content = ""
 end

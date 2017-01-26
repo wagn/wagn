@@ -1,7 +1,7 @@
 format do
   # Renders haml templates. The haml template can be passed as string or
   # block or a symbol that refers to a view template.
-  # @param  locals_or_template [Hash, String, Symbol]
+  # @param  template_or_locals [Hash, String, Symbol]
   #   If a symbol is given then a template is expected in the corresponding view
   #   directory. Note that {view_template_path} needs to be overridden in
   #   that case to get the right path to the template.
@@ -28,14 +28,14 @@ format do
   #   - haml_wrap do
   #     %p
   #       some haml
-  def render_haml locals_or_template={}, locals_or_binding={}, a_binding=nil
-    if locals_or_template.is_a?(Symbol)
-      return render_haml_template locals_or_template, locals
+  def render_haml template_or_locals={}, locals_or_binding={}, a_binding=nil
+    if template_or_locals.is_a?(Symbol)
+      return render_haml_template template_or_locals, locals_or_binding
     end
     if block_given?
-      haml_to_html yield, locals_or_template, locals_or_binding
+      haml_to_html yield, template_or_locals, locals_or_binding
     else
-      haml_to_html locals_or_template, locals_or_binding, a_binding
+      haml_to_html template_or_locals, locals_or_binding, a_binding
     end
   end
 

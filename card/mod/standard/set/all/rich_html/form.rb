@@ -165,8 +165,9 @@ format :html do
 
   def with_relative_names_in_form
     @relative_names_in_form = true
-    yield
+    result = yield
     @relative_names_in_form = nil
+    result
   end
 
   def relative_names_in_form?

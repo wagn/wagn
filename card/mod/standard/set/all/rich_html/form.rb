@@ -80,9 +80,9 @@ format :html do
   end
 
   # use relative names in the form
-  def relative_card_form action, opts={}
+  def relative_card_form action, opts={}, &block
     with_relative_names_in_form do
-      card_form action, opts
+      card_form action, opts, &block
     end
   end
 

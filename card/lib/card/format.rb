@@ -54,7 +54,6 @@ class Card
       opts.each { |key, value| instance_variable_set "@#{key}", value }
 
       @mode ||= :normal
-      @native_mode ||= @mode
       @root ||= self
       @depth ||= 0
 

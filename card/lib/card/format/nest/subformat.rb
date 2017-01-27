@@ -6,7 +6,7 @@ class Card
           subcard = Card.fetch(subcard, new: {}) if subcard.is_a?(String)
           self.class.new subcard, root: @root, parent: self, depth: @depth + 1,
                          form: @form,
-                         mode: @mode, native_mode: @native_mode,
+                         mode: @mode,
                          context_names: @context_names
         end
 

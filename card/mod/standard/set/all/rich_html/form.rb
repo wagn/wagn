@@ -61,7 +61,7 @@ format :html do
   # then the subfield cards should be created on the new card not the existing
   # card that build the form
   def name_in_form
-    @native_mode == :new ? card.relative_name : card.contextual_name
+    relative_names_in_form? ? card.relative_name : card.contextual_name
   end
 
   def form
@@ -161,6 +161,16 @@ format :html do
         end
     end
     result
+  end
+
+  def with_relative_names_in_form
+    @relative_names_in_form = true
+    yield
+    @relative_names_in_form = nil
+  end
+
+  def relative_names_in_form?
+    @relative_names_in_form || (parent && parent.relative_names_in_form?)
   end
 
   # FIELDSET VIEWS

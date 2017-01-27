@@ -79,6 +79,13 @@ format :html do
     end
   end
 
+  # use relative names in the form
+  def relative_card_form action, opts={}
+    with_relative_names_in_form do
+      card_form action, opts
+    end
+  end
+
   def form_root_format
     if @form_root   then self
     elsif !@parent  then nil

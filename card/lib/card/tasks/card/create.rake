@@ -2,8 +2,8 @@ require "colorize"
 
 namespace :card do
   namespace :create do
-    DEFAULT_STYLE_RULE = "*all+*style"
-    DEFAULT_SCRIPT_RULE = "*all+*script"
+    DEFAULT_RULE = { style: "*all+*style",
+                     script: "*all+*script" }.freeze
 
     # 1. Creates a js/coffee/css/scss file with the appropriate path in
     #    the given mod.
@@ -11,7 +11,8 @@ namespace :card do
     #    file.
     # 2. Creates a self set file that loads the code file as content
     # 3. Creates a card migration that adds the code card to the script/style
-    #    rule defined by DEFAULT_STYLE_RULE/DEFAULT_SCRIPT_RULE.
+    #    rule defined by DEFAULT_RULE. Override the rule_card_name
+    #    method to change it.
     # @parem mod [String] the name of the mod where the files are created
     # @param name [String] the card name
     #   A "script: " or "style: " prefix is added if missing.
@@ -170,14 +171,7 @@ namespace :card do
     end
 
     def rule_card_name category
-      case category
-      when :style then
-        DEFAULT_STYLE_RULE
-      when :script then
-        DEFAULT_SCRIPT_RULE
-      end
+      DEFAULT_RULE[category]
     end
   end
 end
-
-

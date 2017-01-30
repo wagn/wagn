@@ -91,6 +91,10 @@ module ClassMethods
     end
   end
 
+  def fetch_type_id mark
+    (card = quick_fetch(mark)) && card.type_id
+  end
+
   def quick_fetch mark
     fetch mark, skip_virtual: true, skip_modules: true
   end

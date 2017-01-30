@@ -1,4 +1,4 @@
-include Pointer
+include_set Pointer
 
 def history?
   false
@@ -8,7 +8,7 @@ def followable?
   false
 end
 
-event :store_in_session, :prepare_to_validate, on: :save, changed: :content do
+event :store_in_session, :initialize, on: :save, changed: :content do
   Env.session[key] = db_content
   self.db_content = ""
 end
@@ -22,13 +22,7 @@ def content
   Env.session[key]
 end
 
-format do
-  include Pointer::Format
-end
-
 format :html do
-  include Pointer::HtmlFormat
-
   def default_core_args args
     args[:items] = { view: :name }
   end

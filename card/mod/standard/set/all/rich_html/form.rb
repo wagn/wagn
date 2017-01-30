@@ -54,7 +54,14 @@ format :html do
 
   def subcard_input_names
     return "" if !form_root_format || form_root_format == self
-    "#{@parent.subcard_input_names}[subcards][#{card.contextual_name}]"
+    "#{@parent.subcard_input_names}[subcards][#{name_in_form}]"
+  end
+
+  # If you use subfield cards to render a form for a new card
+  # then the subfield cards should be created on the new card not the existing
+  # card that build the form
+  def name_in_form
+    relative_names_in_form? ? card.relative_name : card.contextual_name
   end
 
   def form
@@ -64,10 +71,18 @@ format :html do
   def card_form action, opts={}
     @form_root = true
     url, action = card_form_url_and_action action
+    success = opts.delete(:success)
     html_opts = card_form_html_opts action, opts
     form_for card, url: url, html: html_opts, remote: true do |form|
       @form = form
-      output yield(form)
+      success_tags(success) + output(yield(form))
+    end
+  end
+
+  # use relative names in the form
+  def relative_card_form action, opts={}, &block
+    with_relative_names_in_form do
+      card_form action, opts, &block
     end
   end
 
@@ -134,6 +149,11 @@ format :html do
     _optional_render_help
   end
 
+  def success_tags opts
+    return "" unless opts
+    hidden_tags success: opts
+  end
+
   def hidden_tags hash, base=nil
     # convert hash into a collection of hidden tags
     result = ""
@@ -148,6 +168,17 @@ format :html do
         end
     end
     result
+  end
+
+  def with_relative_names_in_form
+    @relative_names_in_form = true
+    result = yield
+    @relative_names_in_form = nil
+    result
+  end
+
+  def relative_names_in_form?
+    @relative_names_in_form || (parent && parent.relative_names_in_form?)
   end
 
   # FIELDSET VIEWS

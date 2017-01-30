@@ -150,10 +150,10 @@ describe Card::Set::Type::Pointer do
       option_html =
         'input[class="pointer-checkbox-button"]'\
         '[checked="checked"]'\
-        '[name="pointer_checkbox"][type="checkbox"]'\
+        '[type="checkbox"]'\
         '[value="nonexistingcardmustnotexistthisistherule"]'\
         '[id="pointer-checkbox-nonexistingcardmustnotexistthisistherule"]'
-      assert_view_select @pointer.format.render_checkbox, option_html
+      debug_assert_view_select @pointer.format.render_checkbox, option_html
       assert_view_select @inherit_pointer.format.render_checkbox, option_html
     end
 

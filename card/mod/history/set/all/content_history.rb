@@ -164,5 +164,6 @@ end
 def edit_conflict?
   last_action_id_before_edit &&
     last_action_id_before_edit.to_i != last_action_id &&
-    last_action.act.actor_id != Auth.current_id
+    (la = last_action) &&
+    la.act.actor_id != Auth.current_id
 end

@@ -17,6 +17,6 @@ format do
   def compile_coffee script
     ::CoffeeScript.compile script
   rescue => e
-    raise Card::Error, "CoffeeScript::Error (#{name}): #{e.message}"
+    raise Card::Error, "CoffeeScript::Error (#{card.name}): #{e.message}"
   end
 end

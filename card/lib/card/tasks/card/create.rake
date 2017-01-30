@@ -175,5 +175,3 @@ namespace :card do
     end
   end
 end
-
-

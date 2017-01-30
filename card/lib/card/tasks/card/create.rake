@@ -5,6 +5,14 @@ namespace :card do
     DEFAULT_STYLE_RULE = "*all+*style"
     DEFAULT_SCRIPT_RULE = "*all+*script"
 
+    # 1. Creates a js/coffee/css/scss file with the appropriate path in
+    #    the given mod.
+    #    If a card with the given name exists it copies the content to that
+    #    file.
+    # 2. Creates a self set file that loads the code file as content
+    # 3. Creates a card migration that adds the code card to the script/style
+    #    rule defined by DEFAULT_STYLE_RULE/DEFAULT_SCRIPT_RULE.
+    # @parem mod [String] the name of the mod where the files are created
     # @param name [String] the card name
     #   A "script: " or "style: " prefix is added if missing.
     #   Whitespaces are translated to underscores for the codename.
@@ -32,14 +40,36 @@ namespace :card do
       Rake::Task["card:create:codefile"].invoke
     end
 
+    def create_content_file mod, name, type
+      write_to_mod(mod, content_dir(type), content_filename(name, type)) do |f|
+        content = (card = Card.fetch(name)) ? card.content : ""
+        f.puts content
+      end
+    end
+
+    def create_rb_file mod, name
+      self_dir = File.join "set", "self"
+      self_file = name + ".rb"
+      write_to_mod(mod, self_dir, self_file) do |f|
+        f.puts("include_set Abstract::CodeFile")
+      end
+    end
+
+    def create_migration_file name, category, type_codename
+      puts "creating migration file...".yellow
+      migration_out = `bundle exec wagn generate card:migration #{name}`
+      migration_file = migration_out[/db.*/]
+      content = migration_content name, category, type_codename
+      write_at migration_file, 5, content # 5 is line no.
+    end
+
     def with_params *keys
       return unless parameters_present?(*keys)
       values = keys.map { |k| ENV[k.to_s] }
       mod, name, type = values
-      typecode = type_codename type
-      cat = category typecode
       name = remove_prefix name
-      yield(mod, name, cat, type, typecode)
+      typecode = type_codename(type)
+      yield mod, name, category(typecode), type, typecode
     end
 
     def remove_prefix name
@@ -107,32 +137,9 @@ namespace :card do
         type.to_sym
       else
         color_puts "'#{type}' is not a valid type. "\
-                 "Choose between js, coffee, css and scss.", :red
+                 "Please choose between js, coffee, css and scss.", :red
         exit
       end
-    end
-
-    def create_content_file mod, name, type
-      write_to_mod(mod, content_dir(type), content_filename(name, type)) do |f|
-        content = (card = Card.fetch(name)) ? card.content : ""
-        f.puts content
-      end
-    end
-
-    def create_rb_file mod, name
-      self_dir = File.join "set", "self"
-      self_file = name + ".rb"
-      write_to_mod(mod, self_dir, self_file) do |f|
-        f.puts("include_set Abstract::CodeFile")
-      end
-    end
-
-    def create_migration_file name, category, type_codename
-      puts "creating migration file...".yellow
-      migration_out = `bundle exec wagn generate card:migration #{name}`
-      migration_file = migration_out[/db.*/]
-      content = migration_content name, category, type_codename
-      write_at migration_file, 5, content # 5 is line no.
     end
 
     def migration_content name, category, type_codename
@@ -163,12 +170,9 @@ namespace :card do
     end
 
     def rule_card_name category
-      require 'pry'
-      binding.pry
       case category
       when :style then
         DEFAULT_STYLE_RULE
-        #"customized classic skin"
       when :script then
         DEFAULT_SCRIPT_RULE
       end

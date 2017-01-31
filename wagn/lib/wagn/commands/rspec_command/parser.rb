@@ -3,7 +3,7 @@ require "optparse"
 
 module Wagn
   module Commands
-    class RspecCommand
+    class CucumberCommand
       class Parser < OptionParser
         def initialize opts
           super() do |parser|

@@ -6,6 +6,9 @@ module Wagn
       def initialize args
         require "wagn"
         require "./config/environment"
+        @wagn_args, @cucumber_args = split_args args
+        @opts = {}
+        Parser.new(@opts).parse!(@wagn_args)
         @args = args
       end
 

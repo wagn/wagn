@@ -409,3 +409,56 @@ end
 When /^I fill in "([^\"]*)" with$/ do |field, value|
   fill_in(field, with: value)
 end
+
+
+module Capybara
+  module Node
+    module Actions
+      alias_method :original_fill_in, :fill_in
+      alias_method :original_select, :select
+
+      def fill_in locator, options={}
+        wagn_fill_in(locator, options) || original_fill_in(locator, options)
+      end
+
+      def select value, options={}
+        wagn_select(value, options) || original_select(value, options)
+      end
+
+      def wagn_fill_in locator, options
+        el = labeled_field(:input, locator) || labeled_field(:textarea, locator)
+        return unless el
+        id = el["id"]
+        session.execute_script("$('##{id}').val('#{value}')")
+        session.execute_script("$('##{id}').trigger('chosen:updated')")
+        session.execute_script("$('##{id}').change()")
+        el.set options[:with]
+        true
+      end
+
+      def wagn_select value, options
+        el = labeled_field :select, options[:from], visible: false
+        return unless el
+        value = el.find("option", text: value, visible: false)["value"]
+        choose_value el, value
+        true
+
+      end
+
+      def choose_value el, value
+        id = el["id"]
+        session.execute_script("$('##{id}').val('#{value}')")
+        # session.execute_script("$('##{id}').trigger('chosen:updated')")
+                # session.execute_script("$('##{id}').change()")
+      end
+
+      def labeled_field type, label, options={}
+        label.gsub!(/^\+/,'') # because '+' is in an extra span,
+                              # descendant-or-self::text doesn't find it
+        first :xpath,
+              "//label[descendant-or-self::text()='#{label}']/..//#{type}",
+              options.merge(wait: 5)
+      end
+    end
+  end
+end

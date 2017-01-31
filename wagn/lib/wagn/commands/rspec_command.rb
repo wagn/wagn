@@ -31,10 +31,6 @@ module Wagn
         end
         @opts[:simplecov]
       end
-
-
-
-
     end
   end
 end

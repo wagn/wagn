@@ -91,7 +91,7 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   end
 end
 
-def set_content name, content, cardtype=nil
+def set_content name, content, _cardtype=nil
   Capybara.ignore_hidden_elements = false
   ace_editors = all(".ace-editor-textarea[name='#{name}']")
   pm_editors = all(".prosemirror-editor > [name='#{name}']")
@@ -103,7 +103,7 @@ def set_content name, content, cardtype=nil
     editor_id = pm_editors.first.first(:xpath, ".//..")[:id]
     set_prosemirror_content editor_id, content
   else
-#rescue Selenium::WebDriver::Error::JavascriptError
+    # rescue Selenium::WebDriver::Error::JavascriptError
     fill_in(name, with: content)
   end
   Capybara.ignore_hidden_elements = true
@@ -188,8 +188,7 @@ end
 # end
 #
 Then /debug/ do
-  require 'pry'
-  binding.pry
+  require "pry"
 end
 #   if RUBY_VERSION =~ /^2/
 #   else
@@ -410,7 +409,6 @@ When /^I fill in "([^\"]*)" with$/ do |field, value|
   fill_in(field, with: value)
 end
 
-
 module Capybara
   module Node
     module Actions
@@ -442,19 +440,18 @@ module Capybara
         value = el.find("option", text: value, visible: false)["value"]
         choose_value el, value
         true
-
       end
 
       def choose_value el, value
         id = el["id"]
         session.execute_script("$('##{id}').val('#{value}')")
         # session.execute_script("$('##{id}').trigger('chosen:updated')")
-                # session.execute_script("$('##{id}').change()")
+        # session.execute_script("$('##{id}').change()")
       end
 
       def labeled_field type, label, options={}
-        label.gsub!(/^\+/,'') # because '+' is in an extra span,
-                              # descendant-or-self::text doesn't find it
+        label.gsub!(/^\+/, "") # because '+' is in an extra span,
+        # descendant-or-self::text doesn't find it
         first :xpath,
               "//label[descendant-or-self::text()='#{label}']/..//#{type}",
               options.merge(wait: 5)

@@ -85,7 +85,7 @@ Cucumber::Rails::Database.javascript_strategy = :truncation
 
 # `LAUNCHY=1 cucumber` to open page on failure
 After do |scenario|
-if scenario.failed? && ENV["LAUNCHY"]
+  save_and_open_page if scenario.failed? && ENV["LAUNCHY"]
 end
 
 # `FAST=1 cucumber` to stop on first failure

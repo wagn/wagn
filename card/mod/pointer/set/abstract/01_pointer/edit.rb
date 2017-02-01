@@ -117,9 +117,12 @@ format :html do
   end
 
   def option_label option_name, id
+    %(<label for="#{id}">#{option_label_text option_name}</label>)
+  end
+
+  def option_label_text option_name
     o_card = Card.fetch(option_name)
-    label = (o_card && o_card.label) || option_name
-    %(<label for="#{id}">#{label}</label>)
+    (o_card && o_card.label) || option_name
   end
 
   # @param option_type [String] "checkbox" or "radio"
@@ -161,8 +164,8 @@ def << item
   add_item newname
 end
 
-def add_item name
-  return if include_item? name
+def add_item name, allow_duplicates=false
+  return if !allow_duplicates && include_item?(name)
   self.content = "[[#{(item_names << name).reject(&:blank?) * "]]\n[["}]]"
 end
 

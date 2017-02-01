@@ -79,7 +79,7 @@ format :html do
       id = "pointer-checkbox-#{option_name.to_name.key}"
       <<-HTML
         <div class="pointer-checkbox">
-          #{check_box_tag 'pointer_checkbox', option_name, checked,
+          #{check_box_tag "pointer_checkbox-#{unique_id}", option_name, checked,
                           id: id, class: 'pointer-checkbox-button'}
           #{option_label option_name, id}
           #{option_description 'checkbox', option_name}
@@ -92,7 +92,7 @@ format :html do
 
   view :multiselect do |_args|
     select_tag(
-      "pointer_multiselect",
+      "pointer_multiselect-#{unique_id}",
       options_for_select(card.option_names, card.item_names),
       multiple: true, class: "pointer-multiselect form-control"
     )
@@ -130,7 +130,7 @@ format :html do
 
   view :select do |_args|
     options = [["-- Select --", ""]] + card.option_names.map { |x| [x, x] }
-    select_tag("pointer_select",
+    select_tag("pointer_select-#{unique_id}",
                options_for_select(options, card.item_names.first),
                class: "pointer-select form-control")
   end

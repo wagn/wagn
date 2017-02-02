@@ -189,6 +189,8 @@ end
 #
 Then /debug/ do
   require "pry"
+  binding.pry
+  nil
 end
 #   if RUBY_VERSION =~ /^2/
 #   else
@@ -426,10 +428,6 @@ module Capybara
       def wagn_fill_in locator, options
         el = labeled_field(:input, locator) || labeled_field(:textarea, locator)
         return unless el
-        id = el["id"]
-        session.execute_script("$('##{id}').val('#{value}')")
-        session.execute_script("$('##{id}').trigger('chosen:updated')")
-        session.execute_script("$('##{id}').change()")
         el.set options[:with]
         true
       end

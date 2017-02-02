@@ -108,14 +108,20 @@ After do |scenario|
 end
 
 # `STEP=1 cucumber` to pause after each step
-AfterStep do |scenario|
+AfterStep do |result, step|
   next unless ENV["STEP"]
   unless defined?(@counter)
-    puts "Stepping through #{scenario.title}"
+    #puts "Stepping through #{scenario.name}"
     @counter = 0
   end
   @counter += 1
-  print "At step ##{@counter} of #{scenario.steps.count}. Press Return to"\
-        " execute..."
-  STDIN.getc
+  #print "At step ##{@counter} of #{scenario.steps.count}. Press Return to"\
+  #      " execute..."
+  print "Press Return to execute next step...(d=debug, c=continue, s=step)"
+  case STDIN.getch
+  when "d" then
+    binding.pry
+  when "c" then
+    ENV.delete "STEP"
+  end
 end

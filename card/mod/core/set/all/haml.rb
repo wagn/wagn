@@ -68,7 +68,8 @@ format do
   def view_template_path view, tmp_set_path=__FILE__
     basename = ::File.basename(tmp_set_path, ".rb")
     try_view_template_path("../#{view}", tmp_set_path) ||
-      try_view_template_path("../#{basename}/#{view}", tmp_set_path)
+      try_view_template_path("../#{basename}/#{view}", tmp_set_path) ||
+      raise(Card::Error, "no haml template for view #{view}")
   end
 
   def try_view_template_path template_path, tmp_set_path, ext="haml"

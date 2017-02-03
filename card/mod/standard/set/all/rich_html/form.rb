@@ -1,18 +1,107 @@
 include_set Abstract::ProsemirrorEditor
 
 format :html do
+  # FIELDSET VIEWS
+  view :content_formgroup, cache: :never do
+    wrap_with :fieldset, edit_slot, class: classy("card-editor", "editor")
+  end
+
+  view :name_formgroup do
+    formgroup "name", editor: "name" do
+      raw name_field
+    end
+  end
+
+  view :type_formgroup do
+    wrap_type_formgroup do
+      type_field class: "type-field edit-type-field"
+    end
+  end
+
+  view :edit_in_form, cache: :never, perms: :update, tags: :unknown_ok do
+    @form = form_for_multi
+    multi_edit_slot
+  end
+
+  def wrap_type_formgroup
+    formgroup "type", editor: "type", class: "type-formgroup" do
+      yield
+    end
+  end
+
+  def button_formgroup
+    wrap_with :div, class: "form-group" do
+      wrap_with :div, yield
+    end
+  end
+
+  def name_field
+    # value needed because otherwise gets wrong value if there are updates
+    text_field :name, value: card.name, autocomplete: "off"
+  end
+
+  def type_field args={}
+    typelist = Auth.createable_types
+    current_type = type_field_current_value args, typelist
+    options = options_from_collection_for_select typelist, :to_s, :to_s,
+                                                 current_type
+    template.select_tag "card[type]", options, args
+  end
+
+  def type_field_current_value args, typelist
+    return if args.delete :no_current_type
+    if !card.new_card? && !typelist.include?(card.type_name)
+      # current type should be an option on existing cards,
+      # regardless of create perms
+      typelist.push(card.type_name).sort!
+    end
+    card.type_name_or_default
+  end
+
+  def content_field skip_rev_id=false
+    with_nest_mode :normal do
+      # by changing nest mode to normal, we ensure that editors (eg image
+      # previews) can render core views.
+      output [content_field_revision_tracking(skip_rev_id), _render_editor]
+    end
+  end
+
+  # SAMPLE editor view for override
+  # view :editor do
+  #   text_area :content, rows: 5, class: "card-content"
+  # end
+
+  def content_field_revision_tracking skip_rev_id
+    card.last_action_id_before_edit = card.last_action_id
+    return if !card || card.new_card? || skip_rev_id
+    hidden_field :last_action_id_before_edit, class: "current_revision_id"
+  end
+
+
   def edit_slot
-    multi_edit? ? multi_card_edit_slot : single_card_edit_slot
+    if inline_nests_editor?
+      _render_core
+    elsif multi_edit?
+      process_nested_fields
+    else
+      single_card_edit_slot
+    end
+  end
+
+  def multi_edit_slot
+    if inline_nests_editor?
+      _render_core
+    elsif multi_edit?
+      process_nested_fields
+    else
+      multi_card_edit_slot
+    end
   end
 
   def multi_edit?
-    inline_nests_editor? || nests_editor? || # editor configured in voo
+    nests_editor? || # editor configured in voo
       voo.structure || voo.edit_structure || # structure configured in voo
       card.structure                         # structure in card rule
-  end
-
-  def multi_card_edit_slot
-    inline_nests_editor? ? _render_core : process_nested_fields
   end
 
   def inline_nests_editor?
@@ -32,9 +121,17 @@ format :html do
     end
   end
 
+  def multi_card_edit_slot
+    add_junction_class
+    formgroup fancy_title(voo.title),
+              editor: "content", help: true, class: classy("card-editor") do
+      [content_field, (form.hidden_field(:type_id) if card.new_card?)]
+    end
+  end
+
   def process_nested_fields
     nested_fields_for_edit.map do |name, options|
-      options[:hide] = :toolbar
+      options[:hide] = [options[:hide], :toolbar].compact
       nest name, options
     end.join "\n"
   end
@@ -121,55 +218,6 @@ format :html do
     end
   end
 
-  def formgroup title, opts={}, &block
-    label = formgroup_label opts[:editor], title
-    editor_body = editor_wrap opts[:editor], &block
-    help_text = formgroup_help_text opts[:help]
-    wrap_with :div, formgroup_div_args(opts[:class]) do
-      "#{label}<div>#{editor_body} #{help_text}</div>"
-    end
-  end
-
-  def formgroup_label editor_type, title
-    return if voo && voo.hide?(:title)
-    label_type = editor_type || :content
-    form.label label_type, title
-  end
-
-  def formgroup_div_args html_class
-    div_args = { class: ["form-group", html_class].compact.join(" ") }
-    div_args[:card_id] = card.id if card.real?
-    div_args[:card_name] = h card.name if card.name.present?
-    div_args
-  end
-
-  def formgroup_help_text text=nil
-    class_up "help-text", "help-block"
-    voo.help = text if voo && text.to_s != "true"
-    _optional_render_help
-  end
-
-  def success_tags opts
-    return "" unless opts
-    hidden_tags success: opts
-  end
-
-  def hidden_tags hash, base=nil
-    # convert hash into a collection of hidden tags
-    result = ""
-    hash ||= {}
-    hash.each do |key, val|
-      result +=
-        if val.is_a?(Hash)
-          hidden_tags val, key
-        else
-          name = base ? "#{base}[#{key}]" : key
-          hidden_field_tag name, val
-        end
-    end
-    result
-  end
-
   def with_relative_names_in_form
     @relative_names_in_form = true
     result = yield
@@ -181,131 +229,10 @@ format :html do
     @relative_names_in_form || (parent && parent.relative_names_in_form?)
   end
 
-  # FIELDSET VIEWS
-
-  view :name_formgroup do
-    formgroup "name", editor: "name" do
-      raw name_field
-    end
-  end
-
-  def wrap_type_formgroup
-    formgroup "type", editor: "type", class: "type-formgroup" do
-      yield
-    end
-  end
-
-  view :type_formgroup do
-    wrap_type_formgroup do
-      type_field class: "type-field edit-type-field"
-    end
-  end
-
-  def button_formgroup
-    wrap_with :div, class: "form-group" do
-      wrap_with :div, yield
-    end
-  end
-
-  view :content_formgroup, cache: :never do
-    wrap_with :fieldset, edit_slot, class: classy("card-editor", "editor")
-  end
-
-  def name_field
-    # value needed because otherwise gets wrong value if there are updates
-    text_field :name, value: card.name, autocomplete: "off"
-  end
-
-  def type_field args={}
-    typelist = Auth.createable_types
-    current_type = type_field_current_value args, typelist
-    options = options_from_collection_for_select typelist, :to_s, :to_s,
-                                                 current_type
-    template.select_tag "card[type]", options, args
-  end
-
-  def type_field_current_value args, typelist
-    return if args.delete :no_current_type
-    if !card.new_card? && !typelist.include?(card.type_name)
-      # current type should be an option on existing cards,
-      # regardless of create perms
-      typelist.push(card.type_name).sort!
-    end
-    card.type_name_or_default
-  end
-
-  def content_field skip_rev_id=false
-    with_nest_mode :normal do
-      # by changing nest mode to normal, we ensure that editors (eg image
-      # previews) can render core views.
-      output [content_field_revision_tracking(skip_rev_id), _render_editor]
-    end
-  end
-
-  # SAMPLE editor view for override
-  # view :editor do
-  #   text_area :content, rows: 5, class: "card-content"
-  # end
-
-  def content_field_revision_tracking skip_rev_id
-    card.last_action_id_before_edit = card.last_action_id
-    return if !card || card.new_card? || skip_rev_id
-    hidden_field :last_action_id_before_edit, class: "current_revision_id"
-  end
-
   # FIELD VIEWS
-
-  view :edit_in_form, cache: :never, perms: :update, tags: :unknown_ok do
-    @form = form_for_multi
-    add_junction_class
-    formgroup fancy_title(voo.title),
-              editor: "content", help: true, class: classy("card-editor") do
-      [content_field, (form.hidden_field(:type_id) if card.new_card?)]
-    end
-  end
 
   def add_junction_class
     return unless card.cardname.junction?
     class_up "card-editor", "RIGHT-#{card.cardname.tag_name.safe_key}"
-  end
-
-  # form helpers
-
-  FIELD_HELPERS =
-    %w(
-      hidden_field color_field date_field datetime_field datetime_local_field
-      email_field month_field number_field password_field phone_field
-      range_field search_field telephone_field text_area text_field time_field
-      url_field week_field file_field label check_box radio_button
-    ).freeze
-
-  FIELD_HELPERS.each do |method_name|
-    define_method(method_name) do |*args|
-      form.send(method_name, *args)
-    end
-  end
-
-  # def check_box method, options={}, checked_value="1", unchecked_value="0"
-  #   form.check_box method, options, checked_value, unchecked_value
-  # end
-  #
-  # def radio_button method, tag_value, options={}
-  #   form.radio_button method, tag_value, options
-  # end
-
-  def submit_button args={}
-    text = args.delete(:text) || "Submit"
-    args.reverse_merge! situation: "primary", data: {}
-    args[:data][:disable_with] ||= args.delete(:disable_with) || "Submitting"
-    button_tag text, args
-  end
-
-  # redirect to *previous if no :href is given
-  def cancel_button args={}
-    text = args.delete(:text) || "Cancel"
-    args[:type] ||= "button"
-    add_class args, (args[:href] ? "slotter" : "redirecter")
-    args[:href] ||= Card.path_setting("/*previous")
-    button_tag text, args
   end
 end

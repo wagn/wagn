@@ -20,6 +20,8 @@ class Card
         render_card_with_args view, card_args, format_args
       end
 
+      alias_method :render_view, :render_card
+
       def render_card_with_args view, card_args={}, format_args={}, view_args={}
         card = begin
           if card_args[:name]

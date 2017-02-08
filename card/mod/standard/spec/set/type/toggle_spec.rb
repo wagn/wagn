@@ -15,7 +15,7 @@ describe Card::Set::Type::Toggle do
     subject { render_view :labeled_editor, type: :toggle, name: "A+toggle" }
     it "has checkbox label" do
       is_expected.to have_tag("label", with: { for: "card_content" }) do
-        with_text "Toggle"
+        with_text "toggle"
       end
     end
   end

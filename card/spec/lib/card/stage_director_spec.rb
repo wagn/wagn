@@ -393,7 +393,7 @@ describe Card::ActManager::StageDirector do
       Card::Auth.as_bot do
         in_stage :prepare_to_validate,
                  on: :create,
-                 for: "single card"
+                 for: "single card",
                  trigger: :create_single_card do
 
           u_card = attach_subfield "a user", type_id: Card::UserID

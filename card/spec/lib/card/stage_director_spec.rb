@@ -393,16 +393,13 @@ describe Card::ActManager::StageDirector do
       Card::Auth.as_bot do
         in_stage :prepare_to_validate,
                  on: :create,
-                 #for: "single card"
+                 for: "single card"
                  trigger: :create_single_card do
-          case name
-          when "single card"
-            attach_subcard "a user", type_id: Card::UserID
-          when "a user"
-            attach_subfield "follow"
-          when "a user+follow"
-            expect(set_modules).to include(Card::Set::TypePlusRight::User::Follow)
-          end
+
+          u_card = attach_subfield "a user", type_id: Card::UserID
+          f_card = u_card.attach_subfield "*follow"
+          expect(f_card.set_modules)
+            .to include(Card::Set::TypePlusRight::User::Follow)
         end
       end
     end

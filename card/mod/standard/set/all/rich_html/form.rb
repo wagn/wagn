@@ -151,6 +151,7 @@ format :html do
 
   def subcard_input_names
     return "" if !form_root_format || form_root_format == self
+    return @parent.subcard_input_names if @parent.card == card
     "#{@parent.subcard_input_names}[subcards][#{name_in_form}]"
   end
 

@@ -354,6 +354,10 @@ describe Card::ActManager::StageDirector do
       }
     end
 
+    def create_single_card
+      Card.create! name: "single card"
+    end
+
     it "has correct name if supercard's name get changed" do
       Card::Auth.as_bot do
         changed = false
@@ -382,6 +386,24 @@ describe Card::ActManager::StageDirector do
         expect(Card["main1+main2+sub1"].content).to eq("some content")
         expect(Card["main1+main2+sub2+sub3"].class).to eq(Card)
         expect(Card["main1+main2+sub2+sub3"].content).to eq("content")
+      end
+    end
+
+    it "load type_plus_right set module" do
+      Card::Auth.as_bot do
+        in_stage :prepare_to_validate,
+                 on: :create,
+                 #for: "single card"
+                 trigger: :create_single_card do
+          case name
+          when "single card"
+            attach_subcard "a user", type_id: Card::UserID
+          when "a user"
+            attach_subfield "follow"
+          when "a user+follow"
+            expect(set_modules).to include(Card::Set::TypePlusRight::User::Follow)
+          end
+        end
       end
     end
 

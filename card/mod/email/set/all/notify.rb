@@ -184,7 +184,7 @@ format do
        (option_card = follow_option_card)
       option_card.description set_card
     else
-      "followed card"
+      "*followed set of cards*"
     end
   end
 
@@ -258,17 +258,22 @@ format do
   end
 end
 
-format :email_text do
-  view :last_action, perms: :none do |args|
+format do
+  view :last_action_verb do |args|
     act = get_act(args)
     "#{act.main_action.action_type}d"
   end
 end
 
+format :email_text do
+  view :last_action, perms: :none do |args|
+    _render_last_action_verb
+  end
+end
+
 format :email_html do
   view :last_action, perms: :none do |args|
-    act = get_act(args)
-    "#{act.main_action.action_type}d"
+    _render_last_action_verb
   end
 
   def wrap_list list

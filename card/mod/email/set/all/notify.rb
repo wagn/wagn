@@ -267,13 +267,13 @@ end
 
 format :email_text do
   view :last_action, perms: :none do |args|
-    _render_last_action_verb
+    _render_last_action_verb args
   end
 end
 
 format :email_html do
   view :last_action, perms: :none do |args|
-    _render_last_action_verb
+    _render_last_action_verb args
   end
 
   def wrap_list list

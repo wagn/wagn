@@ -3,8 +3,7 @@
 class EmailTestContext < Card::Migration::Core
   def up
     ensure_card "*test context",
-                codename: :test_context,
-                type_id: Card::PointerID
+                codename: :test_context
     ensure_card "*changed card",
                 codename: :changed_card
     ensure_card "*test context+*right+*default",

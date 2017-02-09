@@ -125,6 +125,6 @@ AfterStep do |result, step|
   when "c" then
     ENV.delete "STEP"
   when "a" then
-    Cucumber.want_to_quit = true
+    Cucumber.wants_to_quit = true
   end
 end

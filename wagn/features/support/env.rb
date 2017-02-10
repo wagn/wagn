@@ -117,11 +117,13 @@ AfterStep do |result, step|
   @counter += 1
   #print "At step ##{@counter} of #{scenario.steps.count}. Press Return to"\
   #      " execute..."
-  print "Press Return to execute next step...(d=debug, c=continue, s=step)"
+  print "Press Return to execute next step...\n(d=debug, c=continue, s=step, a=abort)"
   case STDIN.getch
   when "d" then
     binding.pry
   when "c" then
     ENV.delete "STEP"
+  when "a" then
+    Cucumber.want_to_quit = true
   end
 end

@@ -91,7 +91,7 @@ format :html do
 end
 
 format :email_html do
-  view :core do
+  view :inline do
     url_generator = voo.closest_live_option(:inline_attachment_url)
     path = selected_version.path
     return _render_source unless url_generator && ::File.exist?(path)

@@ -90,8 +90,15 @@ format :html do
   end
 end
 
+format do
+  view :inline do
+    _render_core
+  end
+end
+
 format :email_html do
   view :inline do
+    determine_image_size
     url_generator = voo.closest_live_option(:inline_attachment_url)
     path = selected_version.path
     return _render_source unless url_generator && ::File.exist?(path)

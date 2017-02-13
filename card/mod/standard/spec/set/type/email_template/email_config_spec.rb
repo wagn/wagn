@@ -191,13 +191,14 @@ describe Card::Set::Type::EmailTemplate::EmailConfig do
     end
 
     it "handles inline image nests in html message  in core view" do
+      Card::Env[:host] = "http://testhost"
       update_field "*html message", content: "Triggered by {{:logo|core}}"
       mail = email.format.render_mail context: context_card
       expect(mail.parts.size).to eq 2
       expect(mail.parts[0].mime_type).to eq "text/plain"
       expect(mail.parts[1].mime_type).to eq "text/html"
       expect(mail.parts[1].body.raw_source)
-        .to include('<img src="/files/:logo/standard-medium.png"')
+        .to include('<img src="http://testhost/files/:logo/standard-medium.png"')
     end
 
     it "handles inline image nests in html message" do

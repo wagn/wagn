@@ -16,7 +16,7 @@ format do
 
   def source_url
     return card.raw_content if card.web?
-    selected_version.url
+    internal_url selected_version.url
   end
 
   def selected_version

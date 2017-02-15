@@ -52,13 +52,13 @@ class Card
       to_absolute_name(context_name)
     end
 
-    def child_of? context_name
-      if context_name.present?
-        # Do I still equal myself after I've been relativised in the context
-        # of context_name?
-        relative_name(context_name).key != absolute_name(context_name).key
+    def child_of? context
+      if context.present?
+        junction? &&
+          absolute_name(context).part_names
+            .map(&:key).include?(context.to_name.key)
       else
-        s.match(/^\s*\+/)
+        starts_with_join?
       end
     end
 
@@ -87,7 +87,7 @@ class Card
     end
 
     def starts_with_joint?
-      s =~ /^\+/
+      s =~ /^\s*\+/
     end
 
     def to_sym

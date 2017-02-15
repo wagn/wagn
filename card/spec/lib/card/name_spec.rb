@@ -1,6 +1,8 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::Name do
+require 'rspec'
+
+RSpec.describe Card::Name do
   describe "#key" do
     it "lowercases and underscores" do
       expect("This Name".to_name.key).to eq("this_name")
@@ -288,6 +290,36 @@ describe Card::Name do
         Card.create name: "left+right"
       end
       expect(Card.fetch("right")).to be_truthy
+    end
+  end
+
+  describe "#child_of?" do
+    [["A+B",   "A",   true],
+     ["A+B",   "B",   true],
+     ["A",     "A",   false],
+     ["A+B",   "A+B", false],
+     ["A",     "A+B", false],
+     ["A+C",   "A+B", false],
+     ["A+B",   "C+B", false],
+     ["X+A+B", "A+C", false]].each do |a, b, res|
+      it "#{a} is a child of #{b}" do
+        expect(a.to_name.child_of?(b)).to be res
+      end
+    end
+  end
+
+  describe "#relative_name" do
+    [["A+B",   "A",   "+B"],
+     ["A+B",   "B",   "A"],
+     ["A",     "A",   "A"],
+     ["A+B",   "A+B", "A+B"],
+     ["A",     "A+B", "A"],
+     ["A+C",   "A+B", "+C"],
+     ["A+B",   "C+B", "A"],
+     ["X+A+B", "A+C", "X+B"]].each do |name, context, res|
+      it "#{name} relative to #{context} is #{res}" do
+        expect(name.to_name.relative_name(context).to_s).to eq res
+      end
     end
   end
 end

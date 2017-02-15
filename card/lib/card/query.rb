@@ -121,7 +121,7 @@ class Card
     # run the current query
     # @return array of card objects by default
     def run
-      retrn ||= statement[:return].present? ? statement[:return].to_s : "card"
+      retrn  ||= statement[:return].present? ? statement[:return].to_s : "card"
       if retrn == "card"
         get_results("name").map do |name|
           Card.fetch name, new: {}
@@ -131,10 +131,16 @@ class Card
       end
     end
 
+
     # @return Integer for :count, otherwise Array of Strings or Integers
     def get_results retrn
       rows = run_sql
-      if retrn == "name" && (statement[:prepend] || statement[:append])
+      if retrn =~ /_\w+/
+        name_processor = contextual_name_processor retrn
+        rows.map do |row|
+          name_processor.call row["name"]
+        end
+      elsif retrn == "name" && (statement[:prepend] || statement[:append])
         rows.map do |row|
           [statement[:prepend], row["name"], statement[:append]].compact * "+"
         end
@@ -156,6 +162,26 @@ class Card
 
     def sql
       @sql ||= SqlStatement.new(self).build.to_s
+    end
+
+    def contextual_name_processor pattern
+      case pattern.downcase
+      when "_left", "_l"
+        lambda { |name| name.to_name.left_name.to_s }
+      when "_right", "_r"
+        lambda { |name| name.to_name.right_name.to_s }
+      else
+        chain = "name.to_name"
+        pattern.each_char do |ch|
+          case ch
+          when "l", "L"
+            chain += ".left_name"
+          when "r", "R"
+            chain += ".right_name"
+          end
+        end
+        eval "lambda { |name| #{chain}.to_s }"
+      end
     end
 
     # Query Hierarchy

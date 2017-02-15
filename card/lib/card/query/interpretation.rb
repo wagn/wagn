@@ -42,6 +42,7 @@ class Card
         clause = clause_to_hash clause
         clause.symbolize_keys!
         clause.each do |key, val|
+          next if key.to_sym == :return
           clause[key] = normalize_value val
         end
         clause

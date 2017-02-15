@@ -54,10 +54,10 @@ class Card
 
     def child_of? context
       if context.present?
-        relative_name(context).key != absolute_name(context).key
-        #junction? &&
-        #  absolute_name(context).part_names
-        #    .map(&:key).include?(context.to_name.key)
+        #relative_name(context).key != absolute_name(context).key
+        junction? &&
+          absolute_name(context).part_names
+            .map(&:key).include?(context.to_name.key)
       else
         starts_with_join?
       end

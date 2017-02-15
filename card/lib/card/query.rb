@@ -121,7 +121,7 @@ class Card
     # run the current query
     # @return array of card objects by default
     def run
-      retrn  ||= statement[:return].present? ? statement[:return].to_s : "card"
+      retrn ||= statement[:return].present? ? statement[:return].to_s : "card"
       if retrn == "card"
         get_results("name").map do |name|
           Card.fetch name, new: {}

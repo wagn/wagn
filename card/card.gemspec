@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
   [
     ["smartname",                  "0.4"],
     ["uuid",                       "~> 2.3"],
-    ["carrierwave",                "1.0.0.rc"],
+    ["carrierwave",                "1.0.0"],
     ["htmlentities",               "~> 4.3"],
     ["mini_magick",                "~> 4.2"],
     # recaptcha 0.4.0 is last version that doesn't require ruby 2.0

@@ -23,7 +23,7 @@ class Card
       end
 
       # @return [True/False]
-      def field_of? context_name
+      def field_of? context
         if context_name.present?
           junction? &&
             absolute_name(context).left_name.key == context.to_name.key

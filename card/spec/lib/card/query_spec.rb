@@ -581,23 +581,23 @@ describe Card::Query do
     end
   end
 
-  # describe "return part of name" do
-  #   subject do
-  #     Card::Query.run right: "C", return: @return, sort: :name
-  #   end
-  #   it "handles _left" do
-  #     @return = "_left"
-  #     is_expected.to eq %w(A+B A)
-  #   end
-  #
-  #   it "handles _right" do
-  #     @return = "_right"
-  #     is_expected.to eq %w(C C)
-  #   end
-  #
-  #   it "handles _LL" do
-  #     @return = "_LL"
-  #     is_expected.to eq ["A", ""]
-  #   end
-  # end
+  describe "return part of name" do
+    subject do
+      Card::Query.run right: "C", return: @return, sort: :name
+    end
+    it "handles _left" do
+      @return = "_left"
+      is_expected.to eq %w(A+B A)
+    end
+
+    it "handles _right" do
+      @return = "_right"
+      is_expected.to eq %w(C C)
+    end
+
+    it "handles _LL" do
+      @return = "_LL"
+      is_expected.to eq ["A", ""]
+    end
+  end
 end

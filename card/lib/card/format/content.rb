@@ -57,7 +57,7 @@ class Card
       end
 
       def output *content
-        content ||= yield
+        content = yield if block_given?
         Array.wrap(content).flatten.compact.join "\n"
       end
     end

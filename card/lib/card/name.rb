@@ -53,13 +53,8 @@ class Card
     end
 
     def child_of? context
-      if context.present?
-        junction? &&
-          absolute_name(context).part_names
-            .map(&:key).include?(context.to_name.key)
-      else
-        starts_with_join?
-      end
+      return true if relative?
+      junction? && include?(context)
     end
 
     def setting?
@@ -84,10 +79,6 @@ class Card
 
     def stripped
       s.gsub RELATIVE_REGEXP, ""
-    end
-
-    def starts_with_joint?
-      s =~ /^\s*\+/
     end
 
     def to_sym

@@ -42,9 +42,27 @@ class Card
         current_view(view) do
           with_nest_mode view do
             method = view_method view
-            method.arity.zero? ? method.call : method.call(args)
+            rendered = method.arity.zero? ? method.call : method.call(args)
+            add_debug_info view, method, rendered
           end
         end
+      end
+
+      def add_debug_info view, method, rendered
+        return rendered unless show_debug_info?
+        <<-HTML
+          <view-debug view='#{card.name}##{view}' src='#{pretty_path method.source_location}' module='#{method.owner}'/>
+          #{rendered}
+        HTML
+      end
+
+      def show_debug_info?
+        Env.params[:debug] == "view"
+      end
+
+      def pretty_path source_location
+        source_location.first.gsub(%r{^.+mod\d+-([^/]+)}, '\1: ') + ':' +
+          source_location.second.to_s
       end
 
       # setting (:alway, :never, :nested) designated in view definition

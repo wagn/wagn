@@ -128,9 +128,20 @@ class Card
       end
 
       def ensure_attributes card, args
-        update_args = args.select { |key, value| card.send(key) != value }
-        return if update_args.empty?
-        card.update_attributes! update_args
+        args =args.with_indifferent_access
+        subcards = card.extract_subcard_args! args
+        update_args =
+          args.select do |key, value|
+            if key =~ /^\+/
+              subfields[key] = value
+              false
+            else
+              card.send(key) != value
+            end
+          end
+        return if update_args.empty? && subcards.empty?
+        # FIXME: use ensure_attributes for subcards
+        card.update_attributes! update_args.merge(subcards: subcards)
       end
 
       def add_style name, opts={}

@@ -17,6 +17,19 @@ def assign_set_specific_attributes
   end
 end
 
+def extract_subcard_args! args
+  subcards = args.delete("subcards") || {}
+  if (subfields = args.delete("subfields"))
+    subfields.each_pair do |key, value|
+      subcards[cardname.field(key)] = value
+    end
+  end
+  args.keys.each do |key|
+    subcards[key] = args.delete(key) if key =~ /^\+/
+  end
+  subcards
+end
+
 protected
 
 def prepare_assignment_params args
@@ -65,19 +78,6 @@ end
 def normalize_type_attributes args
   new_type_id = extract_type_id! args unless args.delete("skip_type_lookup")
   args["type_id"] = new_type_id if new_type_id
-end
-
-def extract_subcard_args! args
-  subcards = args.delete("subcards") || {}
-  if (subfields = args.delete("subfields"))
-    subfields.each_pair do |key, value|
-      subcards[cardname.field(key)] = value
-    end
-  end
-  args.keys.each do |key|
-    subcards[key] = args.delete(key) if key =~ /^\+/
-  end
-  subcards
 end
 
 def extract_type_id! args={}

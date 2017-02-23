@@ -169,6 +169,28 @@ RSpec.describe Card::Query do
     end
   end
 
+  describe "changed_by/changer_of" do
+    it "finds card changed by Narcissist" do
+      @query = { changed_by: "Narcissist" }
+      is_expected.to eq(%w(Magnifier+lens))
+    end
+
+    it "finds Narcississt as the card's changer" do
+      @query = { changer_of: "Magnifier+lens" }
+      is_expected.to eq(%w(Narcissist))
+    end
+
+    it "does not give duplicate results for multiple changes" do
+      @query = { changer_of: "First" }
+      is_expected.to eq(["Wagn Bot"])
+    end
+
+    it "does not give results if not changed" do
+      @query = { changer_of: "Sunglasses+price" }
+      is_expected.to be_empty
+    end
+  end
+
   describe "created_by/creator_of" do
     before do
       Card.create name: "Create Test", content: "sufficiently distinctive"

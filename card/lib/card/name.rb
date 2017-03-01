@@ -10,9 +10,7 @@ class Card
   # Card::Name adds support for deeper card integration
   class Name < SmartName
     include FieldsAndTraits
-    include Variants
-
-    RELATIVE_REGEXP = /\b_(left|right|whole|self|user|main|\d+|L*R?)\b/
+    include ::Card::Name::NameVariants
 
     self.params  = Card::Env # yuck!
     self.session = proc { Card::Auth.current.name }
@@ -44,55 +42,12 @@ class Card
       Card::Codename[Card.fetch_id self]
     end
 
-    def relative_name context_name
-      to_show(*context_name.to_name.parts).to_name
-    end
-
-    def absolute_name context_name
-      to_absolute_name(context_name)
-    end
-
-    def child_of? context
-      if context.present?
-        #relative_name(context).key != absolute_name(context).key
-        junction? &&
-          absolute_name(context).part_names
-            .map(&:key).include?(context.to_name.key)
-      else
-        starts_with_join?
-      end
-    end
-
     def setting?
       Set::Type::Setting.member_names[key]
     end
 
     def set?
       Set::Pattern.card_keys[tag_name.key]
-    end
-
-    def relative?
-      s =~ RELATIVE_REGEXP || starts_with_joint?
-    end
-
-    def simple_relative?
-      relative? && stripped.to_name.starts_with_joint?
-    end
-
-    def absolute?
-      !relative?
-    end
-
-    def stripped
-      s.gsub RELATIVE_REGEXP, ""
-    end
-
-    def starts_with_joint?
-      s =~ /^\s*\+/
-    end
-
-    def to_sym
-      s.to_sym
     end
 
     # processes contextual title argument used in nests like "title: _left"

@@ -1,6 +1,6 @@
 class Card
   class Name
-    module Variants
+    module NameVariants
       @@variant_methods = [:capitalize, :singularize, :pluralize, :titleize,
                            :downcase, :upcase, :swapcase, :reverse, :succ]
       @@variant_aliases = { capitalized: :capitalize, singular: :singularize,

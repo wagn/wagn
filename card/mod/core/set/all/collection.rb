@@ -136,7 +136,7 @@ end
 
 def with_context card
   old_context = @context_card
-  @context_card = card
+  @context_card = card if card
   result = yield
   @context_card = old_context
   result

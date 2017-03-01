@@ -190,24 +190,35 @@ describe Card::Set::Type::EmailTemplate::EmailConfig do
       expect(expected).to include "Nobody expects the Spanish Inquisition"
     end
 
-    it "handles image nests in html message" do
+    it "handles inline image nests in html message  in core view" do
+      Card::Env[:host] = "http://testhost"
       update_field "*html message", content: "Triggered by {{:logo|core}}"
       mail = email.format.render_mail context: context_card
-      expect(mail.parts[0].mime_type).to eq "image/png"
-      url = mail.parts[0].url
-      expect(mail.parts[2].mime_type).to eq "text/html"
-      expect(mail.parts[2].body.raw_source).to include('<img src="cid:')
-      expect(mail.parts[2].body.raw_source).to include("<img src=\"#{url}\"")
+      expect(mail.parts.size).to eq 2
+      expect(mail.parts[0].mime_type).to eq "text/plain"
+      expect(mail.parts[1].mime_type).to eq "text/html"
+      expect(mail.parts[1].body.raw_source)
+        .to include('<img src="http://testhost/files/:logo/standard-medium.png"')
     end
 
+    it "handles inline image nests in html message" do
+         update_field "*html message", content: "Triggered by {{:logo|inline}}"
+         mail = email.format.render_mail context: context_card
+         expect(mail.parts[0].mime_type).to eq "image/png"
+         url = mail.parts[0].url
+         expect(mail.parts[2].mime_type).to eq "text/html"
+         expect(mail.parts[2].body.raw_source).to include('<img src="cid:')
+         expect(mail.parts[2].body.raw_source).to include("<img src=\"#{url}\"")
+       end
+
     it "handles image nests in html message in default view" do
-      update_field "*html message", content: "Triggered by {{:logo}}"
+      update_field "*html message", content: "Triggered by {{:logo|core}}"
       mail = email.format.render_mail context: context_card
-      expect(mail.parts[0].mime_type).to eq "image/png"
-      url = mail.parts[0].url
-      expect(mail.parts[2].mime_type).to eq "text/html"
-      expect(mail.parts[2].body.raw_source).to include('<img src="cid:')
-      expect(mail.parts[2].body.raw_source).to include("<img src=\"#{url}\"")
+      expect(mail.parts.size).to eq 2
+      expect(mail.parts[0].mime_type).to eq "text/plain"
+      expect(mail.parts[1].mime_type).to eq "text/html"
+      expect(mail.parts[1].body.raw_source)
+        .to include('<img src="/files/:logo/standard-medium.png"')
     end
 
     it "handles contextual name for attachments" do

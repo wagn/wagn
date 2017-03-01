@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::Name do
+RSpec.describe Card::Name do
   describe "#valid" do
     it "rejects long names" do
       card = Card.new

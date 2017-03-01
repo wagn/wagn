@@ -96,7 +96,7 @@ class Card
         if name_or_args.is_a?(Hash)
           name_or_args
         else
-          add_name name_or_args, content_or_args
+          add_name name_or_args, content_or_args || {}
         end
       end
 

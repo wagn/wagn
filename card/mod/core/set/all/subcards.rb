@@ -49,6 +49,10 @@ def clear_subcards
   subcards.clear
 end
 
+def subfield_present? field_name
+  (field_card = subfield(field_name)) && field_card.content.present?
+end
+
 def deep_clear_subcards
   subcards.deep_clear
 end

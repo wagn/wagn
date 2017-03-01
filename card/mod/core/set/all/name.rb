@@ -51,7 +51,7 @@ def update_subcard_names cardname
   subcards.each do |subcard|
     # if subcard has a relative name like +C
     # and self is a subcard as well that changed from +B to A+B then
-    # +C should change to A+B+C. #replace_part doesn't work in this case
+    # +C should change to A+B+C. #replace doesn't work in this case
     # because the old name +B is not a part of +C
     name_to_replace =
       if subcard.cardname.junction? &&
@@ -62,7 +62,7 @@ def update_subcard_names cardname
       else
         name
       end
-    subcard.name = subcard.cardname.replace_part name_to_replace, cardname.s
+    subcard.name = subcard.cardname.replace name_to_replace, cardname.s
   end
 end
 
@@ -265,7 +265,7 @@ event :cascade_name_changes, :finalize, on: :update, changed: :name do
     # cards, have to go this low level to avoid callbacks.
     Rails.logger.info "cascading name: #{de.name}"
     Card.expire de.name # old name
-    newname = de.cardname.replace_part name_was, name
+    newname = de.cardname.replace name_was, name
     Card.where(id: de.id).update_all name: newname.to_s, key: newname.key
     de.update_referers = update_referers
     de.refresh_references_in

@@ -55,7 +55,7 @@ class Card
       relational:      %w( type part left right
                            editor_of edited_by last_editor_of last_edited_by
                            creator_of created_by member_of member
-                           changer_of changed_by),
+                           updater_of updated_by),
       plus_relational: %w(plus left_plus right_plus),
       ref_relational:  %w( refer_to referred_to_by
                            link_to linked_to_by

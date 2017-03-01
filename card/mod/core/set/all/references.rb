@@ -46,7 +46,7 @@ def replace_reference_syntax old_name, new_name
   obj_content = Card::Content.new raw_content, self
   obj_content.find_chunks(Card::Content::Chunk::Reference).select do |chunk|
     next unless (old_ref_name = chunk.referee_name)
-    next unless (new_ref_name = old_ref_name.replace_part old_name, new_name)
+    next unless (new_ref_name = old_ref_name.replace old_name, new_name)
     chunk.referee_name = chunk.replace_reference old_name, new_name
     refs = Card::Reference.where referee_key: old_ref_name.key
     refs.update_all referee_key: new_ref_name.key

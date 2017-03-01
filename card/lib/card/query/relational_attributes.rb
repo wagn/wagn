@@ -1,7 +1,6 @@
 class Card
   class Query
     module RelationalAttributes
-
       def type val
         restrict :type_id, val
       end

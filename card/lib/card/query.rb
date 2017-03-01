@@ -131,7 +131,6 @@ class Card
       end
     end
 
-
     # @return Integer for :count, otherwise Array of Strings or Integers
     def get_results retrn
       rows = run_sql
@@ -167,9 +166,9 @@ class Card
     def contextual_name_processor pattern
       case pattern.downcase
       when "_left", "_l"
-        lambda { |name| name.to_name.left_name.to_s }
+        ->(name) { name.to_name.left_name.to_s }
       when "_right", "_r"
-        lambda { |name| name.to_name.right_name.to_s }
+        ->(name) { name.to_name.right_name.to_s }
       else
         chain = "name.to_name"
         pattern.each_char do |ch|

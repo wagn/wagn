@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::Query do
+
+RSpec.describe Card::Query do
   A_JOINEES = %w(B C D E F).freeze
   CARDS_MATCHING_TWO = ["Joe User", "One+Two", "One+Two+Three",
                         "script: slot+*all+*script+*machine cache",
@@ -578,6 +579,26 @@ describe Card::Query do
         perm_count += 1
       end
       expect(perm_count).to eq(2)
+    end
+  end
+
+  describe "return part of name" do
+    subject do
+      Card::Query.run right: "C", return: @return, sort: :name
+    end
+    it "handles _left" do
+      @return = "_left"
+      is_expected.to eq %w(A+B A)
+    end
+
+    it "handles _right" do
+      @return = "_right"
+      is_expected.to eq %w(C C)
+    end
+
+    it "handles _LL" do
+      @return = "_LL"
+      is_expected.to eq ["A", ""]
     end
   end
 end

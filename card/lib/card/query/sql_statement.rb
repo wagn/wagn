@@ -40,7 +40,7 @@ class Card
 
       def fields
         table = @query.table_alias
-        field = @mods[:return]
+        field = @mods[:return] unless @mods[:return] =~ /_\w+/
         field = field.blank? ? :card : field.to_sym
         field = full_field(table, field)
         [field, @mods[:sort_join_field]].compact * ", "

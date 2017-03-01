@@ -21,7 +21,7 @@ format do
   end
 
   def source_url
-    card.attachment.url
+    internal_url card.attachment.url
   end
 
   view :core do

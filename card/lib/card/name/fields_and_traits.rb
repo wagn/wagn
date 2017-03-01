@@ -23,9 +23,12 @@ class Card
       end
 
       # @return [True/False]
-      def field_of? context_name
-        if context_name.present?
-          child_of?(context_name) && relative_name(context_name).length == 2
+      def field_of? context
+        if context.present?
+          child_of?(context) && relative_name(context).length == 2
+          #junction? &&
+          #  absolute_name(context).left_name.key == context.to_name.key
+          #@child_of?(context_name) && relative_name(context_name).length == 2
         else
           s.match(/^\s*\+[^+]+$/).present?
         end

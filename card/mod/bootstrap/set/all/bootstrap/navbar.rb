@@ -2,7 +2,7 @@ format :html do
   # Options
   # header: { content: String, brand: ( String | {name: , href: } ) }
   def navbar id, opts={}
-    return navbar_nocollapse(id, opts, yield) if opts[:no_collapse]
+    return navbar_nocollapse(yield, opts) if opts[:no_collapse]
     nav_opts = opts[:navbar_opts] || {}
     nav_opts[:class] ||= opts[:class]
     add_class nav_opts,
@@ -27,8 +27,9 @@ format :html do
     end
   end
 
-  def navbar_nocollapse id, opts={}, content
-    wrap_with :div, class: "navbar navbar-inverse" do
+  def navbar_nocollapse content, opts={}
+    nav_classes = "navbar navbar-#{opts.delete(:navbar_type) || 'default'}"
+    wrap_with :div, class: nav_classes do
       [
         wrap_with(:div, content, class: "container-fluid")
       ]

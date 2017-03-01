@@ -18,7 +18,7 @@ def wql_hash
 end
 
 def query args={}
-  query_args = wql_hash.merge! args
+  query_args = wql_hash.merge args
   query_args = standardized_query_args query_args
   Query.new query_args, name
 end

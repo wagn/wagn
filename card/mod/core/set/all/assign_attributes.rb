@@ -18,8 +18,8 @@ def assign_set_specific_attributes
 end
 
 def extract_subcard_args! args
-  subcards = args.delete("subcards") || {}
-  if (subfields = args.delete("subfields"))
+  subcards = args.delete("subcards") ||  args.delete(:subcards) || {}
+  if (subfields = args.delete("subfields") || args.delete(:subfields))
     subfields.each_pair do |key, value|
       subcards[cardname.field(key)] = value
     end

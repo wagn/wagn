@@ -45,6 +45,7 @@ class Card
         end
       end
 
+      # generates an id used to identify a table variable in the sql statement
       def table_id force=false
         if force
           tick_table_seq!

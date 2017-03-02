@@ -101,7 +101,7 @@ After do |scenario|
   if respond_to? :debugger
     debugger
   elsif binding.respond_to? :pry
-    binding.pry
+    binding.pry #
   else
     puts "Can't find debugger or pry to debug"
   end
@@ -121,7 +121,7 @@ AfterStep do |result, step|
         "(d=debug, c=continue, s=step, a=abort)"
   case STDIN.getch
   when "d" then
-    binding.pry
+    binding.pry #
   when "c" then
     ENV.delete "STEP"
   when "a" then

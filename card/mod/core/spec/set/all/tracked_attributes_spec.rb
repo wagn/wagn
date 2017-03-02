@@ -29,7 +29,7 @@ module RenameMethods
   end
 end
 
-describe Card::Set::All::AssignAttributes do
+RSpec.describe Card::Set::All::AssignAttributes do
   include RenameMethods
 
   describe "set_name" do

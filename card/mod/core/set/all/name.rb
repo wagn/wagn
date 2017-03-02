@@ -56,7 +56,7 @@ def update_subcard_names new_name, name_to_replace=nil
     name_to_replace ||=
       if subcard.cardname.junction? &&
          subcard.cardname.parts.first.empty? &&
-        new_name.parts.first.present?
+         new_name.parts.first.present?
         # replace the empty part
         "".to_name
       else

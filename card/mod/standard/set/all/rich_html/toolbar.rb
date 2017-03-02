@@ -50,8 +50,7 @@ format :html do
     navbar "toolbar-#{card.cardname.safe_key}-#{voo.home_view}",
            toggle_align: :left, class: "slotter toolbar",
            navbar_type: "inverse",
-           no_collapse: true,
-           collapsed_content: collapsed_close_link do
+           no_collapse: true do
       yield
     end
   end

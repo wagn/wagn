@@ -2,11 +2,11 @@ format :html do
   # Options
   # header: { content: String, brand: ( String | {name: , href: } ) }
   def navbar id, opts={}
-    return navbar_nocollapse(yield, opts) if opts[:no_collapse]
     nav_opts = opts[:navbar_opts] || {}
     nav_opts[:class] ||= opts[:class]
     add_class nav_opts,
               "navbar navbar-#{opts.delete(:navbar_type) || 'default'}"
+    return navbar_nocollapse(yield, nav_opts) if opts[:no_collapse]
     header_opts = opts[:header] || {}
     if opts[:toggle_align] == :left
       opts[:toggle] = :hide
@@ -27,13 +27,9 @@ format :html do
     end
   end
 
-  def navbar_nocollapse content, opts={}
-    nav_classes = "navbar navbar-#{opts.delete(:navbar_type) || 'default'}"
-    wrap_with :div, class: nav_classes do
-      [
-        wrap_with(:div, content, class: "container-fluid")
-      ]
-    end
+  def navbar_nocollapse content, nav_opts
+    content = wrap_with(:div, content, class: "container-fluid")
+    wrap_with :div, content, nav_opts
   end
 
   def navbar_collapsed_content content

@@ -41,13 +41,14 @@ class Card
       # @return [String]
       def trait tag_code
         name = trait_name tag_code
-        raise Card::Error::NotFound, "unknown codename: #{tag_code}" unless name
+
         name.s
       end
 
       # @return [Card::Name]
       def trait_name tag_code
-        return unless (card_id = Card::Codename[tag_code])
+        card_id = Card::Codename[tag_code]
+        raise Card::Error::NotFound, "unknown codename: #{tag_code}" unless card_id
         [self, Card.quick_fetch(card_id).name].to_name
       end
 

@@ -189,7 +189,7 @@ end
 #
 Then /debug/ do
   require "pry"
-  binding.pry
+  binding.pry #
   nil
 end
 #   if RUBY_VERSION =~ /^2/

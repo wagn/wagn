@@ -169,6 +169,40 @@ RSpec.describe Card::Query do
     end
   end
 
+  describe "updated_by/updater_of" do
+    it "finds card updated by Narcissist" do
+      @query = { updated_by: "Narcissist" }
+      is_expected.to eq(%w(Magnifier+lens))
+    end
+
+    it "finds Narcississt as the card's updater" do
+      @query = { updater_of: "Magnifier+lens" }
+      is_expected.to eq(%w(Narcissist))
+    end
+
+    it "does not give duplicate results for multiple updates" do
+      @query = { updater_of: "First" }
+      is_expected.to eq(["Wagn Bot"])
+    end
+
+    it "does not give results if not updated" do
+      @query = { updater_of: "Sunglasses+price" }
+      is_expected.to be_empty
+    end
+
+    it "'or' doesn't mess up updated_by SQL" do
+      @query = { or: { updated_by: "Narcissist" } }
+      puts Card::Query.new(@query).sql
+      is_expected.to eq(%w(Magnifier+lens))
+    end
+
+    it "'or' doesn't mess up updater_of SQL" do
+      @query = { or: { updater_of: "First" } }
+      puts Card::Query.new(@query).sql
+      is_expected.to eq(["Wagn Bot"])
+    end
+  end
+
   describe "created_by/creator_of" do
     before do
       Card.create name: "Create Test", content: "sufficiently distinctive"

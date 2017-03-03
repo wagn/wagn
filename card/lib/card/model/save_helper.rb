@@ -96,7 +96,7 @@ class Card
         if name_or_args.is_a?(Hash)
           name_or_args
         else
-          add_name name_or_args, content_or_args
+          add_name name_or_args, content_or_args || {}
         end
       end
 
@@ -128,6 +128,7 @@ class Card
       end
 
       def ensure_attributes card, args
+        args = args.with_indifferent_access
         subcards = card.extract_subcard_args! args
         update_args =
           args.select do |key, value|

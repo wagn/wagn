@@ -29,7 +29,7 @@ format :html do
 
   def navbar_nocollapse content, nav_opts
     content = wrap_with(:div, content, class: "container-fluid")
-    wrap_with :div, content, nav_opts
+    wrap_with :nav, content, nav_opts
   end
 
   def navbar_collapsed_content content

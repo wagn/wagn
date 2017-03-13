@@ -1,7 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-require 'rspec'
-
 RSpec.describe Card::Name do
   describe "#valid" do
     it "rejects long names" do

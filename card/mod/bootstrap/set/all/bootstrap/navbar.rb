@@ -6,6 +6,7 @@ format :html do
     nav_opts[:class] ||= opts[:class]
     add_class nav_opts,
               "navbar navbar-#{opts.delete(:navbar_type) || 'default'}"
+    return navbar_nocollapse(yield, nav_opts) if opts[:no_collapse]
     header_opts = opts[:header] || {}
     if opts[:toggle_align] == :left
       opts[:toggle] = :hide
@@ -24,6 +25,11 @@ format :html do
                         id: "navbar-collapse-#{id}") { yield }
       ]
     end
+  end
+
+  def navbar_nocollapse content, nav_opts
+    content = wrap_with(:div, content, class: "container-fluid")
+    wrap_with :nav, content, nav_opts
   end
 
   def navbar_collapsed_content content

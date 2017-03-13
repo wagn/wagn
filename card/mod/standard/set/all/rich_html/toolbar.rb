@@ -16,6 +16,7 @@ format :html do
       [
         expanded_close_link,
         toolbar_split_buttons,
+        collapsed_close_link,
         toolbar_simple_buttons
       ]
     end
@@ -34,24 +35,28 @@ format :html do
   # end
 
   def expanded_close_link
-    close_link "hidden-xs navbar-right"
+    opts = {}
+    opts[:no_nav] = true
+    close_link "hidden-xs pull-right navbar-text"
   end
 
   def collapsed_close_link
-    close_link "pull-right visible-xs"
+    opts = {}
+    opts[:no_nav] = true
+    close_link "pull-right visible-xs navbar-text", opts
   end
 
   def tool_navbar
     navbar "toolbar-#{card.cardname.safe_key}-#{voo.home_view}",
            toggle_align: :left, class: "slotter toolbar",
            navbar_type: "inverse",
-           collapsed_content: collapsed_close_link do
+           no_collapse: true do
       yield
     end
   end
 
   def toolbar_split_buttons
-    wrap_with :form, class: "navbar-form navbar-left" do
+    wrap_with :form, class: "pull-left navbar-text" do
       [
         (account_split_button if card.accountable?),
         activity_split_button,
@@ -62,8 +67,8 @@ format :html do
   end
 
   def toolbar_simple_buttons
-    wrap_with :form, class: "navbar-form navbar-right" do
-      wrap_with :div, class: "form-group" do
+    wrap_with :form, class: "pull-right navbar-text" do
+      wrap_with :div do
         _optional_render :toolbar_buttons
       end
     end
@@ -111,7 +116,7 @@ format :html do
   end
 
   def activity_split_button
-    toolbar_split_button "activity", view: :history do
+    toolbar_split_button "activity", view: :history, icon: :time do
       {
         history: (_render_history_link if card.history?),
         discussion: link_to_related(:discussion, "discuss"),
@@ -129,7 +134,7 @@ format :html do
     }
     recently_edited_rules_link button_hash
     nest_rules_link button_hash
-    toolbar_split_button("rules", view: :edit_rules) { button_hash }
+    toolbar_split_button("rules", view: :edit_rules, icon: :list) { button_hash }
   end
 
   def nest_rules_link button_hash
@@ -155,7 +160,7 @@ format :html do
   end
 
   def edit_split_button
-    toolbar_split_button "edit", view: :edit do
+    toolbar_split_button "edit", view: :edit, icon: :edit do
       {
         edit:       _render_edit_link,
         edit_nests: (_render_edit_nests_link if nests_editable?),
@@ -184,6 +189,11 @@ format :html do
 
   def toolbar_split_button name, button_link_opts
     status = active_toolbar_button == name ? "active" : ""
+    html_class = "visible-md visible-lg pull-right"
+    icon = button_link_opts.delete(:icon)
+    name_content = "&nbsp;#{name}"
+    name = icon ? glyphicon(icon) : ""
+    name += content_tag(:span, name_content.html_safe, class: html_class)
     button_link = button_link name, button_link_opts.merge(class: status)
     split_button(button_link, active_toolbar_item) { yield }
   end
@@ -194,8 +204,10 @@ format :html do
     tag_card && tag_card.codename.to_sym
   end
 
-  def close_link extra_class
-    wrap_with :div, class: css_classes("nav navbar-nav", extra_class) do
+  def close_link extra_class, opts={}
+    nav_css_classes = css_classes("nav navbar-nav", extra_class)
+    css_classes = opts[:no_nav] ? extra_class : nav_css_classes
+    wrap_with :div, class: css_classes do
       [
         toolbar_pin_button,
         link_to_view(voo.home_view, glyphicon("remove"),
@@ -209,17 +221,18 @@ format :html do
     button_tag glyphicon("pushpin"),
                situation: :primary, remote: true,
                title: "#{'un' if toolbar_pinned?}pin",
-               class: "btn-toolbar-control toolbar-pin " \
+               class: "btn-toolbar-control toolbar-pin hidden-xs " \
                       "#{'in' unless toolbar_pinned?}active"
   end
 
   view :toolbar_buttons, cache: :never do
+    related_button = _optional_render(:related_button).html_safe
     wrap_with(:div, class: "btn-group") do
       [
         _optional_render(:delete_button,
                          optional: (card.ok?(:delete) ? :show : :hide)),
         _optional_render(:refresh_button),
-        _optional_render(:related_button)
+        content_tag(:div, related_button, class: "hidden-xs pull-left")
       ]
     end
   end

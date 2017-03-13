@@ -55,6 +55,12 @@ format :html do
   view :content_changes, mod: Abstract::Script::HtmlFormat
 end
 
+format :css do
+  view :import do
+    %{\n@import url("#{_render_url}");\n}
+  end
+end
+
 def diff_args
   { diff_format: :text }
 end

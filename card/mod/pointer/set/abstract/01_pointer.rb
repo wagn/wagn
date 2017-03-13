@@ -75,7 +75,12 @@ format :css do
   end
 
   view :core do
+    voo.items[:view] = params[:item] if params[:item]
     nest_item_array.join "\n\n"
+  end
+
+  view :import do
+    _render_core
   end
 
   view :content, :core

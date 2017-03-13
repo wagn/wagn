@@ -22,12 +22,14 @@ format :css do
   end
 
   view :import do |_args|
-    %{\n@import url("#{_render_url items: { view: :import }}");\n}
+    voo.items[:view] = :import
+    %{\n@import url("#{_render_url}");\n}
   end
 
   view :url, perms: :none do |args|
-    page_path card.cardname, format: :css, item: args[:item]
-    # card_url _render_linkname
+    path_opts = { format: :css }
+    path_opts[:item] = voo.items[:view] if voo.items[:view]
+    page_path card.cardname, path_opts
   end
 
   def major_comment comment, char="-"

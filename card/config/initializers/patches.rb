@@ -13,3 +13,7 @@ if defined? BetterErrors
     end
   end
 end
+
+class ActiveRecord::Relation
+  include Patches::ActiveRecord::Relation
+end

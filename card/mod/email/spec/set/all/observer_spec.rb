@@ -62,7 +62,7 @@ describe Card::Set::Type::EmailTemplate do
       end
       card = Card.fetch "mail test"
       ActionMailer::Base.deliveries = []
-      card.send_action_mails on: :update
+      card.execute_card_events on: :update
     end
 
     it "delivers all emails for given action" do

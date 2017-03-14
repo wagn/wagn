@@ -108,6 +108,7 @@ format :html do
         panel do
           [
             _optional_render_header,
+            _optional_render(:notifications),
             frame_help,
             wrap_body { yield }
           ]

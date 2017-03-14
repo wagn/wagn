@@ -79,10 +79,6 @@ format :css do
     nest_item_array.join "\n\n"
   end
 
-  view :import do
-    _render_core
-  end
-
   view :content, :core
 end
 

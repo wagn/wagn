@@ -83,6 +83,29 @@ class Card
         end
       end
 
+      def ensure_trait name, codename, args
+        ensure_card name, codename: codename
+        args.each do |k, v|
+          send "ensure_trait_#{k}", name, v
+        end
+      end
+
+      def ensure_trait_default_type_id name, type_id
+        ensure_card [name, :right, :default], type_id: type_id
+      end
+
+      def ensure_trait_options name, options
+        ensure_card [name, :right, :options],
+                    type_id: Card::PointerID,
+                    content: Array(options).to_pointer_content
+      end
+
+      def ensure_trait_input name, input
+        ensure_card [name, :right, :input],
+                    type_id: Card::PointerID,
+                    content: "[[#{input}]]"
+      end
+
       # if card with same name exists move it out of the way
       def create_card! name_or_args, content_or_args=nil
         args = standardize_args name_or_args, content_or_args

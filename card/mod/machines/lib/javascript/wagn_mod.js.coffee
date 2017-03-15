@@ -226,7 +226,8 @@ toggleShade = (shadeSlot) ->
   shadeSlot.find('.shade-content').slideToggle 1000
   shadeSlot.find('.glyphicon').toggleClass 'glyphicon-triangle-right glpyphicon-triangle-bottom'
 
-
+wagn.slotReady (slot) ->
+  slot.find('._disappear').delay(5000).animate(height: 0, 1000, -> $(this).hide())
 
 
 

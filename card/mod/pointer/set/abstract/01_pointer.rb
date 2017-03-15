@@ -152,6 +152,10 @@ def fetch_or_initialize_item_cards args
   end
 end
 
+def item args={}
+  item_names(args).first
+end
+
 def item_names args={}
   context = args[:context] || context_card.cardname
   content = args[:content] || raw_content

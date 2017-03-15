@@ -109,6 +109,7 @@ format :html do
           [
             _optional_render_header,
             frame_help,
+            _optional_render(:flash),
             wrap_body { yield }
           ]
         end
@@ -130,9 +131,10 @@ format :html do
   end
 
   # alert_types: 'success', 'info', 'warning', 'danger'
-  def alert alert_type, dismissable=false
+  def alert alert_type, dismissable=false, disappear=false
     classes = ["alert", "alert-#{alert_type}"]
     classes << "alert-dismissible " if dismissable
+    classes << "_disappear" if disappear
 
     wrap_with :div, class: classy(classes), role: "alert" do
       [(alert_close_button if dismissable), output(yield)]

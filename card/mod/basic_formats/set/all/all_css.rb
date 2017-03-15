@@ -21,15 +21,12 @@ format :css do
     major_comment "MISSING Style Card: #{card.name}"
   end
 
-  view :import do |_args|
-    voo.items[:view] = :import
-    %{\n@import url("#{_render_url}");\n}
+  view :import do
+    _render_core
   end
 
-  view :url, perms: :none do |args|
-    path_opts = { format: :css }
-    path_opts[:item] = voo.items[:view] if voo.items[:view]
-    page_path card.cardname, path_opts
+  view :url, perms: :none do
+    page_path card.cardname, format: :css
   end
 
   def major_comment comment, char="-"

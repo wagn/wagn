@@ -112,6 +112,11 @@ class Card
         end
       end
 
+      def flash message
+        @params[:flash] ||= []
+        @params[:flash] << message
+      end
+
       def params
         @params.marshal_dump
       end

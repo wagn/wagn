@@ -1,3 +1,5 @@
+include_set Abstract::Paging
+
 stage_method :changed_item_names do
   dropped_item_names + added_item_names
 end
@@ -79,10 +81,6 @@ format :css do
     nest_item_array.join "\n\n"
   end
 
-  view :import do
-    _render_core
-  end
-
   view :content, :core
 end
 
@@ -156,10 +154,19 @@ def fetch_or_initialize_item_cards args
   end
 end
 
+def item args={}
+  item_names(args).first
+end
+
 def item_names args={}
   context = args[:context] || context_card.cardname
   content = args[:content] || raw_content
-  content.to_s.split(/\n+/).map do |line|
+  raw_items = content.to_s.split(/\n+/)
+  if args[:limit].is_a? Numeric
+    offset = args[:offset] || 0
+    raw_items = raw_items[offset, args[:limit]]
+  end
+  raw_items.map do |line|
     item_name = line.gsub(/\[\[|\]\]/, "").strip
     if context == :raw
       item_name

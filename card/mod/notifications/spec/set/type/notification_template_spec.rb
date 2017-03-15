@@ -4,15 +4,15 @@ describe Card::Set::Type::NotificationTemplate do
     @routes = Decko::Engine.routes
     @controller = CardController.new
     login_as "joe_user"
+    create "A+*self+*on update",
+                    type_id: Card::PointerID,
+                    content: "[[success]]"
   end
 
-  def notify template="success"
+  def notify
     Card::Auth.as_bot do
-      ensure_card "A+*self+*on update",
-                  type_id: Card::PointerID,
-                  content: "[[#{template}]]"
       xhr :post, :update, id: "~#{Card["A"].id}",
-          card: { "content" => "change" }
+            card: { "content" => "change" }
     end
   end
 

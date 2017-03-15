@@ -1,4 +1,5 @@
 include_set Abstract::SearchParams
+include_set Abstract::Paging
 
 def search _args={}
   raise Error, "search not overridden"

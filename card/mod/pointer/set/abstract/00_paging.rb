@@ -4,7 +4,16 @@ format do
   end
 
   def offset
-    search_params[:offset] || 0
+    return 0 unless Env.params[:offset].present?
+    Env.params[:offset].to_i
+  end
+
+  def search_with_params args={}
+    card.item_names(args)
+  end
+
+  def count_with_params args={}
+    card.item_names(args).count
   end
 end
 

@@ -1,9 +1,10 @@
-# pluck_in_batches:  yields an array of *columns that is at least size
-#                    batch_size to a block.
+# pluck_in_batches:
+#   yields an array of *columns that is at least size
+#   batch_size to a block.
 #
-#                    Special case: if there is only one column selected than each batch
-#                                  will yield an array of columns like [:column, :column, ...]
-#                                  rather than [[:column], [:column], ...]
+#   Special case: if there is only one column selected than each batch
+#                 will yield an array of columns like [:column, :column, ...]
+#                 rather than [[:column], [:column], ...]
 # Arguments
 #   columns      ->  an arbitrary selection of columns found on the table.
 #   batch_size   ->  How many items to pluck at a time
@@ -16,10 +17,8 @@
 module Patches
   module ActiveRecord
     module Relation
-      def pluck_in_batches(*columns, batch_size: 1000)
-        if columns.empty?
-          raise "There must be at least one column to pluck"
-        end
+      def pluck_in_batches *columns, batch_size: 1000
+        raise "There must be at least one column to pluck" if columns.empty?
 
         # the :id to start the query at
         batch_start = nil
@@ -42,8 +41,10 @@ module Patches
         end
 
         loop do
-          relation = self.reorder(table[primary_key].asc).limit(batch_size)
-          relation = relation.where(table[primary_key].gt(batch_start)) if batch_start
+          relation = reorder(table[primary_key].asc).limit(batch_size)
+          if batch_start
+            relation = relation.where(table[primary_key].gt(batch_start))
+          end
           items = relation.pluck(*select_columns)
 
           break if items.empty?

@@ -162,9 +162,9 @@ def item_names args={}
   context = args[:context] || context_card.cardname
   content = args[:content] || raw_content
   raw_items = content.to_s.split(/\n+/)
-  if args[:limit].is_a? Numeric
+  if args[:limit].present? && args[:limit].to_i > 0
     offset = args[:offset] || 0
-    raw_items = raw_items[offset, args[:limit]]
+    raw_items = raw_items[offset, args[:limit].to_i]
   end
   raw_items.map do |line|
     item_name = line.gsub(/\[\[|\]\]/, "").strip

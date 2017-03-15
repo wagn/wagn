@@ -1,6 +1,7 @@
 format :html do
   view :flash do
-    return "" unless params[:flash] && focal?
-    Array(params[:flash]).join "\n"
+    flash_notice = Env.success.params[:flash]
+    return "" unless flash_notice && focal?
+    Array(flash_notice).join "\n"
   end
 end

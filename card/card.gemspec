@@ -55,7 +55,8 @@ Gem::Specification.new do |s|
     # mime-types can be removed if we drop support for ruby 1.9.3
     # mime-types 3.0 uses mime-types-data which isn't compatible with 1.9.3
     ["mime-types",                 "2.99.1"],
-    ["twitter"]
+    ["twitter",                    "6.1.0"],
+    ["colorize",                   "0.8.1"]
   ].each do |dep|
     s.add_runtime_dependency(*dep)
   end

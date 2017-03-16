@@ -31,7 +31,6 @@ end
 require "cucumber/rails"
 require "test_after_commit"
 
-
 Capybara.register_driver :selenium do |app|
   Capybara::Selenium::Driver.new(app, browser: :chrome)
 end

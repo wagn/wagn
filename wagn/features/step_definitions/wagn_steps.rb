@@ -94,8 +94,7 @@ end
 def set_content name, content, _cardtype=nil
   Capybara.ignore_hidden_elements = false
   editor = page.find("[name='#{name}']")
-  if editor.has_css?(".ace-editor-textarea") &&
-     page.evaluate_script("typeof ace != 'undefined'")
+  if editor.has_css?(".ace-editor-textarea")
     page.execute_script "ace.edit($('.ace_editor').get(0))"\
                         ".getSession().setValue('#{content}')"
   elsif editor.parent.has_css?(".prosemirror-editor")
@@ -111,7 +110,7 @@ def set_prosemirror_content editor_id, content
   escaped_quotes = content.gsub("'", "\\'")
   #require 'pry'
   #binding.pry
-  page.evaluate_script "$('##{editor_id} .ProseMirror').text('#{escaped_quotes}')"
+  page.driver.browser.execute_script "$('##{editor_id} .ProseMirror').text('#{escaped_quotes}')"
   #wait_for_ajax
   #page.execute_script "getProseMirror('#{editor_id}')"\
   #                    ".setContent('#{escaped_quotes}', 'text')"
@@ -150,10 +149,12 @@ When /^(?:|I )enter "([^"]*)" into "([^"]*)"$/ do |value, field|
 end
 
 When /^(?:|I )upload the (.+) "(.+)"$/ do |attachment_name, filename|
-  script = "$('input[type=file]').css('opacity','1');"
-  page.driver.browser.execute_script(script)
+  # script = "$('input[type=file]').css('opacity','1');"
+  # page.driver.browser.execute_script(script)
+  Capybara.ignore_hidden_elements = false
   file = File.join Wagn.gem_root, "features", "support", filename
   attach_file "card_#{attachment_name}", file
+  Capybara.ignore_hidden_elements = true
 end
 
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, _verb, cardname|
@@ -181,6 +182,8 @@ end
 
 def wait_for_ajax
   Timeout.timeout(Capybara.default_wait_time) do
+    require 'pry'
+    binding.pry
       sleep(0.5) while page.evaluate_script("jQuery.active") != 0
     end
 end

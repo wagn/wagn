@@ -93,17 +93,15 @@ end
 
 def set_content name, content, _cardtype=nil
   Capybara.ignore_hidden_elements = false
-  ace_editors = all(".ace-editor-textarea[name='#{name}']")
-  pm_editors = all(".prosemirror-editor > [name='#{name}']")
-  if ace_editors.present? &&
+  editor = page.find("[name='#{name}']")
+  if editor.has_css?(".ace-editor-textarea") &&
      page.evaluate_script("typeof ace != 'undefined'")
     page.execute_script "ace.edit($('.ace_editor').get(0))"\
-        ".getSession().setValue('#{content}')"
-  elsif pm_editors.present?
-    editor_id = pm_editors.first.first(:xpath, ".//..")[:id]
+                        ".getSession().setValue('#{content}')"
+  elsif editor.parent.has_css?(".prosemirror-editor")
+    editor_id = editor.find(:xpath, ".//..")[:id]
     set_prosemirror_content editor_id, content
   else
-    # rescue Selenium::WebDriver::Error::JavascriptError
     fill_in(name, with: content)
   end
   Capybara.ignore_hidden_elements = true
@@ -111,8 +109,12 @@ end
 
 def set_prosemirror_content editor_id, content
   escaped_quotes = content.gsub("'", "\\'")
-  page.execute_script "getProseMirror('#{editor_id}')"\
-                      ".setContent('#{escaped_quotes}', 'text')"
+  #require 'pry'
+  #binding.pry
+  page.evaluate_script "$('##{editor_id} .ProseMirror').text('#{escaped_quotes}')"
+  #wait_for_ajax
+  #page.execute_script "getProseMirror('#{editor_id}')"\
+  #                    ".setContent('#{escaped_quotes}', 'text')"
 end
 
 content_re = /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/
@@ -177,10 +179,14 @@ When /I wait (\d+) seconds$/ do |period|
   sleep period.to_i
 end
 
-When /^I wait for ajax response$/ do
+def wait_for_ajax
   Timeout.timeout(Capybara.default_wait_time) do
-    sleep(0.5) while page.evaluate_script("jQuery.active") != 0
-  end
+      sleep(0.5) while page.evaluate_script("jQuery.active") != 0
+    end
+end
+
+When /^I wait for ajax response$/ do
+  wait_for_ajax
 end
 
 # Then /what/ do
@@ -207,6 +213,7 @@ def create_card username, cardtype, cardname, content=""
       visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"
       yield if block_given?
       click_button "Submit"
+      wait_for_ajax
     end
   end
 end

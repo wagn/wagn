@@ -93,27 +93,29 @@ end
 
 def set_content name, content, _cardtype=nil
   Capybara.ignore_hidden_elements = false
-  editor = page.find("[name='#{name}']")
-  if editor.has_css?(".ace-editor-textarea")
-    page.execute_script "ace.edit($('.ace_editor').get(0))"\
-                        ".getSession().setValue('#{content}')"
-  elsif editor.parent.has_css?(".prosemirror-editor")
-    editor_id = editor.find(:xpath, ".//..")[:id]
-    set_prosemirror_content editor_id, content
-  else
+  wait_for_ajax
+  set_ace_editor_content(name, content) ||
+    set_pm_editor_content(name, content) ||
     fill_in(name, with: content)
-  end
   Capybara.ignore_hidden_elements = true
 end
 
-def set_prosemirror_content editor_id, content
+def set_ace_editor_content name, content
+  return unless all(".ace-editor-textarea[name='#{name}']").present? &&
+                page.evaluate_script("typeof ace != 'undefined'")
+  sleep(0.5)
+  page.execute_script "ace.edit($('.ace_editor').get(0))"\
+                      ".getSession().setValue('#{content}')"
+  true
+end
+
+def set_pm_editor_content name, content
+  (editors = all(".prosemirror-editor > [name='#{name}']"))
+  return unless editors.present?
+  editor_id = editors.first.first(:xpath, ".//..")[:id]
   escaped_quotes = content.gsub("'", "\\'")
-  #require 'pry'
-  #binding.pry
-  page.driver.browser.execute_script "$('##{editor_id} .ProseMirror').text('#{escaped_quotes}')"
-  #wait_for_ajax
-  #page.execute_script "getProseMirror('#{editor_id}')"\
-  #                    ".setContent('#{escaped_quotes}', 'text')"
+  page.execute_script "$('##{editor_id} .ProseMirror').text('#{escaped_quotes}')"
+  true
 end
 
 content_re = /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/
@@ -181,10 +183,12 @@ When /I wait (\d+) seconds$/ do |period|
 end
 
 def wait_for_ajax
+  sleep(0.5)
+  return
   Timeout.timeout(Capybara.default_wait_time) do
-    require 'pry'
-    binding.pry
-      sleep(0.5) while page.evaluate_script("jQuery.active") != 0
+    #require 'pry'
+    #binding.pry
+      sleep(0.5) while page.evaluate_script("$.active") != 0
     end
 end
 

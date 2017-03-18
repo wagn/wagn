@@ -81,6 +81,7 @@ Feature: File Upload
     And I upload the image "image2.jpg"
     And I wait for ajax response
     Then I should see "image2.jpg 69.8 KB"
+    And I scroll 300 pixels down
     And I press "Submit"
     Then I should see an image of size "medium" and type "jpg"
     And I wait for ajax response
@@ -97,6 +98,7 @@ Feature: File Upload
     And I wait for ajax response
     And I press "Submit"
     And I edit "Vignesh has a complicated relationship"
+    And I scroll 300 pixels down
     And I press "Submit"
     And I wait for ajax response
     Then within ".card-body" I should see an image of size "medium" and type "png"

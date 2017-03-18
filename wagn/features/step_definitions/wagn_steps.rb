@@ -425,6 +425,18 @@ When /^I fill in "([^\"]*)" with$/ do |field, value|
   fill_in(field, with: value)
 end
 
+When(/^I scroll (-?\d+) pixels$/) do |number|
+  page.execute_script "window.scrollBy(0, #{number})"
+end
+
+When(/^I scroll (\d+) pixels down$/) do |number|
+  page.execute_script "window.scrollBy(0, #{number})"
+end
+
+When(/^I scroll (\d+) pixels up$/) do |number|
+  page.execute_script "window.scrollBy(0, -#{number})"
+end
+
 module Capybara
   module Node
     module Actions

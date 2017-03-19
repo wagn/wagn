@@ -93,26 +93,29 @@ end
 
 def set_content name, content, _cardtype=nil
   Capybara.ignore_hidden_elements = false
-  ace_editors = all(".ace-editor-textarea[name='#{name}']")
-  pm_editors = all(".prosemirror-editor > [name='#{name}']")
-  if ace_editors.present? &&
-     page.evaluate_script("typeof ace != 'undefined'")
-    page.execute_script "ace.edit($('.ace_editor').get(0))"\
-        ".getSession().setValue('#{content}')"
-  elsif pm_editors.present?
-    editor_id = pm_editors.first.first(:xpath, ".//..")[:id]
-    set_prosemirror_content editor_id, content
-  else
-    # rescue Selenium::WebDriver::Error::JavascriptError
+  wait_for_ajax
+  set_ace_editor_content(name, content) ||
+    set_pm_editor_content(name, content) ||
     fill_in(name, with: content)
-  end
   Capybara.ignore_hidden_elements = true
 end
 
-def set_prosemirror_content editor_id, content
+def set_ace_editor_content name, content
+  return unless all(".ace-editor-textarea[name='#{name}']").present? &&
+                page.evaluate_script("typeof ace != 'undefined'")
+  sleep(0.5)
+  page.execute_script "ace.edit($('.ace_editor').get(0))"\
+                      ".getSession().setValue('#{content}')"
+  true
+end
+
+def set_pm_editor_content name, content
+  (editors = all(".prosemirror-editor > [name='#{name}']"))
+  return unless editors.present?
+  editor_id = editors.first.first(:xpath, ".//..")[:id]
   escaped_quotes = content.gsub("'", "\\'")
-  page.execute_script "getProseMirror('#{editor_id}')"\
-                      ".setContent('#{escaped_quotes}', 'text')"
+  page.execute_script "$('##{editor_id} .ProseMirror').text('#{escaped_quotes}')"
+  true
 end
 
 content_re = /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/
@@ -148,10 +151,12 @@ When /^(?:|I )enter "([^"]*)" into "([^"]*)"$/ do |value, field|
 end
 
 When /^(?:|I )upload the (.+) "(.+)"$/ do |attachment_name, filename|
-  script = "$('input[type=file]').css('opacity','1');"
-  page.driver.browser.execute_script(script)
+  # script = "$('input[type=file]').css('opacity','1');"
+  # page.driver.browser.execute_script(script)
+  Capybara.ignore_hidden_elements = false
   file = File.join Wagn.gem_root, "features", "support", filename
   attach_file "card_#{attachment_name}", file
+  Capybara.ignore_hidden_elements = true
 end
 
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, _verb, cardname|
@@ -177,10 +182,18 @@ When /I wait (\d+) seconds$/ do |period|
   sleep period.to_i
 end
 
-When /^I wait for ajax response$/ do
+def wait_for_ajax
+  sleep(0.5)
+  return
   Timeout.timeout(Capybara.default_wait_time) do
-    sleep(0.5) while page.evaluate_script("jQuery.active") != 0
-  end
+    #require 'pry'
+    #binding.pry
+      sleep(0.5) while page.evaluate_script("$.active") != 0
+    end
+end
+
+When /^I wait for ajax response$/ do
+  wait_for_ajax
 end
 
 # Then /what/ do
@@ -207,6 +220,7 @@ def create_card username, cardtype, cardname, content=""
       visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"
       yield if block_given?
       click_button "Submit"
+      wait_for_ajax
     end
   end
 end
@@ -409,6 +423,18 @@ end
 
 When /^I fill in "([^\"]*)" with$/ do |field, value|
   fill_in(field, with: value)
+end
+
+When(/^I scroll (-?\d+) pixels$/) do |number|
+  page.execute_script "window.scrollBy(0, #{number})"
+end
+
+When(/^I scroll (\d+) pixels down$/) do |number|
+  page.execute_script "window.scrollBy(0, #{number})"
+end
+
+When(/^I scroll (\d+) pixels up$/) do |number|
+  page.execute_script "window.scrollBy(0, -#{number})"
 end
 
 module Capybara

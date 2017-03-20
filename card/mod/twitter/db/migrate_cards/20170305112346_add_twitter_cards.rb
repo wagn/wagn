@@ -5,14 +5,14 @@ class AddTwitterCards < Card::Migration
     ensure_card name: "Twitter template", codename: "twitter_template",
                 type_id: Card::CardtypeID
     ensure_card name: "*message", codename: "message"
-    [:consumer ]
+
     [["*consumer key", "consumer_key"],
      ["*consumer secret", "consumer_secret"],
      ["*access token", "access_token"],
      ["*access secret", "access_secret"]].each do |name, key|
-      ensure_card name, codename: key
-      ensure_card [name, :right, :default], type_id: Card::PhraseID
-      ensure_card [name, :right, :read], content: "[[Administrator]]"
+      ensure_trait name, codename: key,
+                         default: { type_id: Card::PhraseID },
+                         read: "Administrator"
     end
 
     Card::Cache.reset_all

@@ -83,24 +83,39 @@ class Card
         end
       end
 
+
+      # create trait with codename and common right rules
+      # @example
+      #   ensure_trait "*a_or_b", :a_or_b,
+      #                default_type_id: Card::PointerID,
+      #                options: ["A", "B"],
+      #                input: "radio"
       def ensure_trait name, codename, args
         ensure_card name, codename: codename
-        args.each do |k, v|
-          send "ensure_trait_#{k}", name, v
+        args.each do |setting, value|
+          ensure_trait_rule name, setting, value
         end
       end
 
-      def ensure_trait_default_type_id name, type_id
+      def ensure_trait_rule trait, setting, value
+        method_name = "ensure_trait_rule_#{setting}"
+        unless respond_to? method_name
+          raise ArgumentError, "not a valid trait rule option: #{k}"
+        end
+        send method_name, trait, value
+      end
+
+      def ensure_trait_rule_default_type_id name, type_id
         ensure_card [name, :right, :default], type_id: type_id
       end
 
-      def ensure_trait_options name, options
+      def ensure_trait_rule_options name, options
         ensure_card [name, :right, :options],
                     type_id: Card::PointerID,
                     content: Array(options).to_pointer_content
       end
 
-      def ensure_trait_input name, input
+      def ensure_trait_rule_input name, input
         ensure_card [name, :right, :input],
                     type_id: Card::PointerID,
                     content: "[[#{input}]]"

@@ -30,10 +30,10 @@ class Card
           "ON card_changes.card_action_id = card_actions.id "
         ).where(
           "card_actions.id is null"
-        ).find_in_batches do |group|
+        ).pluck_in_batches(:id) do |group_ids|
           # used to be .delete_all here, but that was failing on large dbs
           puts "deleting batch of changes"
-          where("id in (#{group.map(&:id).join ','})").delete_all
+          where("id in (#{group_ids.join ','})").delete_all
         end
       end
 

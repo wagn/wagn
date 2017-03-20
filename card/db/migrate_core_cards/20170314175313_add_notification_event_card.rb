@@ -7,7 +7,7 @@ class AddNotificationEventCard < Card::Migration::Core
     ensure_trait "*message", "message", default_type_id: Card::PhraseID
     ensure_trait "*disappear", "disappear", default_type_id: Card::ToggleID
     ensure_trait "*contextual class", "contextual_class",
-                 default_type_id: Card::PointerID,
+                 default: { type_id: Card::PointerID },
                  input: "radio",
                  options: %w(success info warning danger)
 

@@ -36,6 +36,7 @@ describe "Card::Set::All::Follow" do
       let(:cardname) { "Sunglasses" }
       it { is_expected.to eq ["Big Brother", "Narcissist", "Optic fan", "Sara", "Sunglasses fan"] }
     end
+    
     context "followers of Sunglasses+tint" do
       let(:cardname) { "Sunglasses+tint" }
       it { is_expected.to eq ["Big Brother", "Narcissist", "Optic fan", "Sara", "Sunglasses fan"] }

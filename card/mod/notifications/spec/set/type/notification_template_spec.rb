@@ -5,21 +5,21 @@ describe Card::Set::Type::NotificationTemplate do
     @controller = CardController.new
     login_as "joe_user"
     create "A+*self+*on update",
-                    type_id: Card::PointerID,
-                    content: "[[success]]"
+           type_id: Card::PointerID,
+           content: "[[success]]"
   end
 
   def notify
     Card::Auth.as_bot do
-      xhr :post, :update, id: "~#{Card["A"].id}",
-            card: { "content" => "change" }
+      xhr :post, :update, id: "~#{Card['A'].id}",
+                          card: { "content" => "change" }
     end
   end
 
   context "notification template without fields" do
     before do
       create "success", type_id: Card::NotificationTemplateID,
-             content: "success"
+                        content: "success"
     end
 
     describe "#deliver" do
@@ -33,7 +33,7 @@ describe Card::Set::Type::NotificationTemplate do
     it "shows notification" do
       notify
       expect(response.body).to have_tag "div.alert.alert-success" do
-        with_text /success/
+        with_text(/success/)
       end
     end
   end
@@ -51,7 +51,7 @@ describe Card::Set::Type::NotificationTemplate do
     it "shows notification" do
       notify
       expect(response.body).to have_tag "div.alert.alert-danger._disappear" do
-        with_text /failed/
+        with_text(/failed/)
       end
     end
   end

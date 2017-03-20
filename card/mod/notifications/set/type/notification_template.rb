@@ -21,7 +21,3 @@ end
 def alert_class
   contextual_class.present? ? contextual_class_card.item : :success
 end
-
-
-
-

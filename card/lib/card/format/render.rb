@@ -113,10 +113,11 @@ class Card
       end
 
       def view_method view
+        unless supports_view? view
+          voo.unsupported_view = view
+          view = :unsupported_view
+        end
         method view_method_name(view)
-      rescue
-        voo.unsupported_view = view
-        method "_view_unsupported_view"
       end
 
       def supports_view? view

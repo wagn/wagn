@@ -112,9 +112,10 @@ class Card
         end
       end
 
-      def flash message
+      def flash message=nil
         @params[:flash] ||= []
-        @params[:flash] << message
+        @params[:flash] << message if message
+        @params[:flash]
       end
 
       def params

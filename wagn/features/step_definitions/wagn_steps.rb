@@ -220,7 +220,7 @@ def create_card username, cardtype, cardname, content=""
       begin
         wait_for_ajax
       rescue
-        sleep(1) # hack to fix the issue that in layout.feature jQuery
+        sleep(2) # hack to fix the issue that in layout.feature jQuery
                        # is not defined
       end
     end

@@ -220,7 +220,13 @@ def create_card username, cardtype, cardname, content=""
       visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"
       yield if block_given?
       click_button "Submit"
-      wait_for_ajax
+
+      begin
+        wait_for_ajax
+      rescue
+        sleep(1) # hack to fix the issue that in layout.feature jQuery
+                       # is not defined
+      end
     end
   end
 end

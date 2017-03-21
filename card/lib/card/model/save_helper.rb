@@ -92,7 +92,7 @@ class Card
       #                default: { type_id: Card::PointerID },
       #                options: ["A", "B"],
       #                input: "radio"
-      def ensure_trait name, codename, args
+      def ensure_trait name, codename, args={}
         ensure_card name, codename: codename
         args.each do |setting, value|
           ensure_trait_rule name, setting, value
@@ -114,7 +114,7 @@ class Card
 
       def normalize_trait_rule_args setting, value
         return value if value.is_a? Hash
-        if Card.fetch_type_id(setting, :right, :default) == PointerID
+        if Card.fetch_type_id([setting, :right, :default]) == PointerID
           value = Array(value).to_pointer_content
         end
         { content: value }

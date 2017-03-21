@@ -4,8 +4,8 @@ class AddNotificationEventCard < Card::Migration::Core
   def up
     ensure_card "Notification template", codename: "notification_template",
                 type_id: Card::CardtypeID
-    ensure_trait "*message", "message", default_type_id: Card::PhraseID
-    ensure_trait "*disappear", "disappear", default_type_id: Card::ToggleID
+    ensure_trait "*message", "message", default: { type_id: Card::PhraseID }
+    ensure_trait "*disappear", "disappear", default: { type_id: Card::ToggleID }
     ensure_trait "*contextual class", "contextual_class",
                  default: { type_id: Card::PointerID },
                  input: "radio",

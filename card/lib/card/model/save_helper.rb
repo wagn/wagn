@@ -105,7 +105,7 @@ class Card
         ensure_card [trait, :right, setting], card_args
       end
 
-      def valid_setting setting
+      def validate_setting setting
         unless Card::Codename[setting] &&
                Card.fetch_type_id(setting) == SettingID
           raise ArgumentError, "not a valid setting: #{setting}"

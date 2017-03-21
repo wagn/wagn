@@ -183,13 +183,9 @@ When /I wait (\d+) seconds$/ do |period|
 end
 
 def wait_for_ajax
-  sleep(0.5)
-  return
   Timeout.timeout(Capybara.default_wait_time) do
-    #require 'pry'
-    #binding.pry
-      sleep(0.5) while page.evaluate_script("$.active") != 0
-    end
+    sleep(0.5) while page.evaluate_script("$.active") != 0
+  end
 end
 
 When /^I wait for ajax response$/ do

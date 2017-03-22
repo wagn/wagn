@@ -151,12 +151,16 @@ When /^(?:|I )enter "([^"]*)" into "([^"]*)"$/ do |value, field|
 end
 
 When /^(?:|I )upload the (.+) "(.+)"$/ do |attachment_name, filename|
-  # script = "$('input[type=file]').css('opacity','1');"
-  # page.driver.browser.execute_script(script)
   Capybara.ignore_hidden_elements = false
-  file = File.join Wagn.gem_root, "features", "support", filename
-  attach_file "card_#{attachment_name}", file
+  attach_file "card_#{attachment_name}", find_file(filename)
   Capybara.ignore_hidden_elements = true
+end
+
+def find_file filename
+  roots = "{#{Cardio.root}/mod,#{Cardio.gem_root},#{Wagn.gem_root}}"
+  paths = Dir.glob(File.join(roots, "**", "features", "support", filename))
+  raise ArgumentError, "couldn't find file '#{filename}'" if paths.empty?
+  paths.first
 end
 
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, _verb, cardname|
@@ -183,7 +187,7 @@ When /I wait (\d+) seconds$/ do |period|
 end
 
 def wait_for_ajax
-  Timeout.timeout(Capybara.default_wait_time) do
+  Timeout.timeout(Capybara.default_max_wait_time) do
     sleep(0.5) while page.evaluate_script("$.active") != 0
   end
 end

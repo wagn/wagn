@@ -83,7 +83,7 @@ module ClassMethods
     end
   end
 
-  def fetch_name mark
+  def fetch_name *mark
     if (card = quick_fetch(mark))
       card.name
     elsif block_given?
@@ -91,11 +91,11 @@ module ClassMethods
     end
   end
 
-  def fetch_type_id mark
+  def fetch_type_id *mark
     (card = quick_fetch(mark)) && card.type_id
   end
 
-  def quick_fetch mark
+  def quick_fetch *mark
     fetch mark, skip_virtual: true, skip_modules: true
   end
 

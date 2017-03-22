@@ -77,6 +77,7 @@ Feature: File Upload
     And I upload the image "image.png"
     And I wait for ajax response
     And I press "Submit"
+    And I wait for ajax response
     And I edit "Vignesh has a complicated relationship"
     And I upload the image "image2.jpg"
     And I wait for ajax response
@@ -96,6 +97,7 @@ Feature: File Upload
     And I upload the image "image.png"
     And I wait for ajax response
     And I press "Submit"
+    And I wait for ajax response
     And I edit "Vignesh has a complicated relationship"
     And I press "Submit"
     And I wait for ajax response

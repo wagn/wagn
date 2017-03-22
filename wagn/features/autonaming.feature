@@ -1,3 +1,4 @@
+@javascript
 Feature: autonaming
   In order to save effort from thinking up names
   As an Editor

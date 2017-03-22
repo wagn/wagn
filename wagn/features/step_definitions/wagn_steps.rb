@@ -102,7 +102,7 @@ end
 
 def set_ace_editor_content name, content
   return unless all(".ace-editor-textarea[name='#{name}']").present? &&
-                page.evaluate_script("typeof ace != 'undefined'")
+    page.evaluate_script("typeof ace != 'undefined'")
   sleep(0.5)
   page.execute_script "ace.edit($('.ace_editor').get(0))"\
                       ".getSession().setValue('#{content}')"
@@ -188,8 +188,18 @@ end
 
 def wait_for_ajax
   Timeout.timeout(Capybara.default_max_wait_time) do
-    sleep(0.5) while page.evaluate_script("$.active") != 0
+    begin
+      sleep(0.5) while !finished_all_ajax_requests?
+    rescue Selenium::WebDriver::Error::UnknownError
+      sleep(2) # hack to fix the issue that sometimes in layout.feature jQuery
+      # is not defined
+    end
   end
+end
+
+
+def finished_all_ajax_requests?
+  page.evaluate_script('jQuery.active').zero?
 end
 
 When /^I wait for ajax response$/ do
@@ -220,13 +230,7 @@ def create_card username, cardtype, cardname, content=""
       visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"
       yield if block_given?
       click_button "Submit"
-
-      begin
-        wait_for_ajax
-      rescue
-        sleep(2) # hack to fix the issue that in layout.feature jQuery
-                       # is not defined
-      end
+      wait_for_ajax
     end
   end
 end
@@ -378,7 +382,7 @@ Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
   expect(selected.inner_html).to match /#{value}/
 end
 
-Then /^"([^"]*)" should be signed in$/ do |user|  # "
+Then /^"([^"]*)" should be signed in$/ do |user| # "
   has_css?(".my-card-link", text: user)
 end
 

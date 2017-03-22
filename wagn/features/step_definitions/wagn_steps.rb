@@ -157,8 +157,8 @@ When /^(?:|I )upload the (.+) "(.+)"$/ do |attachment_name, filename|
 end
 
 def find_file filename
-  roots = "{#{Cardio.root}/mod,#{Cardio.gem_root},#{Wagn.gem_root}}"
-  paths = Dir.glob(File.join(roots, "**", "features", "support", filename))
+  roots = "{#{Cardio.root}/mod/**,#{Cardio.gem_root}/mod/**,#{Wagn.gem_root}}"
+  paths = Dir.glob(File.join(roots, "features", "support", filename))
   raise ArgumentError, "couldn't find file '#{filename}'" if paths.empty?
   paths.first
 end

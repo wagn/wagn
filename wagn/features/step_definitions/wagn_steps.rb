@@ -151,12 +151,16 @@ When /^(?:|I )enter "([^"]*)" into "([^"]*)"$/ do |value, field|
 end
 
 When /^(?:|I )upload the (.+) "(.+)"$/ do |attachment_name, filename|
-  # script = "$('input[type=file]').css('opacity','1');"
-  # page.driver.browser.execute_script(script)
   Capybara.ignore_hidden_elements = false
-  file = File.join Wagn.gem_root, "features", "support", filename
-  attach_file "card_#{attachment_name}", file
+  attach_file "card_#{attachment_name}", find_file(filename)
   Capybara.ignore_hidden_elements = true
+end
+
+def find_file filename
+  roots = "{#{Cardio.root}/mod/**,#{Cardio.gem_root}/mod/**,#{Wagn.gem_root}}"
+  paths = Dir.glob(File.join(roots, "features", "support", filename))
+  raise ArgumentError, "couldn't find file '#{filename}'" if paths.empty?
+  paths.first
 end
 
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, _verb, cardname|
@@ -183,9 +187,18 @@ When /I wait (\d+) seconds$/ do |period|
 end
 
 def wait_for_ajax
-  Timeout.timeout(Capybara.default_wait_time) do
-    sleep(0.5) while page.evaluate_script("$.active") != 0
+  Timeout.timeout(Capybara.default_max_wait_time) do
+    begin
+      sleep(0.5) until finished_all_ajax_requests?
+    rescue Selenium::WebDriver::Error::UnknownError
+      sleep(1.5) # HACK: to fix the issue that in layout.feature jQuery
+      # after the layout change is not defined
+    end
   end
+end
+
+def finished_all_ajax_requests?
+  page.evaluate_script("jQuery.active").zero?
 end
 
 When /^I wait for ajax response$/ do
@@ -198,7 +211,7 @@ end
 #
 Then /debug/ do
   require "pry"
-  binding.pry #
+  #
   nil
 end
 #   if RUBY_VERSION =~ /^2/
@@ -216,13 +229,7 @@ def create_card username, cardtype, cardname, content=""
       visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"
       yield if block_given?
       click_button "Submit"
-
-      begin
-        wait_for_ajax
-      rescue
-        sleep(1) # hack to fix the issue that in layout.feature jQuery
-                       # is not defined
-      end
+      wait_for_ajax
     end
   end
 end
@@ -374,7 +381,7 @@ Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
   expect(selected.inner_html).to match /#{value}/
 end
 
-Then /^"([^"]*)" should be signed in$/ do |user|  # "
+Then /^"([^"]*)" should be signed in$/ do |user| # "
   has_css?(".my-card-link", text: user)
 end
 
@@ -441,6 +448,7 @@ end
 
 module Capybara
   module Node
+    # adapt capybara methods to fill in forms to wagn's form interface
     module Actions
       alias_method :original_fill_in, :fill_in
       alias_method :original_select, :select

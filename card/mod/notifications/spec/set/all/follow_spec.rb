@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-describe "Card::Set::All::Follow" do
+describe Card::Set::All::Follow do
   def follow_view card_name
     render_card :follow_link, name: card_name
   end
@@ -34,12 +34,18 @@ describe "Card::Set::All::Follow" do
 
     context "followers of Sunglasses" do
       let(:cardname) { "Sunglasses" }
-      it { is_expected.to eq ["Big Brother", "Narcissist", "Optic fan", "Sara", "Sunglasses fan"] }
+      it do
+        is_expected.to eq ["Big Brother", "Narcissist", "Optic fan", "Sara",
+                           "Sunglasses fan"]
+      end
     end
-    
+
     context "followers of Sunglasses+tint" do
       let(:cardname) { "Sunglasses+tint" }
-      it { is_expected.to eq ["Big Brother", "Narcissist", "Optic fan", "Sara", "Sunglasses fan"] }
+      it do
+        is_expected.to eq ["Big Brother", "Narcissist", "Optic fan", "Sara",
+                           "Sunglasses fan"]
+      end
     end
 
     context "followers of Google glass" do
@@ -127,8 +133,10 @@ describe "Card::Set::All::Follow" do
     context "when following content I edited" do
       before { Card::Auth.current_id = Card["Narcissist"].id }
       it "renders following link" do
-        assert_following_view "Magnifier+lens", add_set: "Magnifier+lens+*self",
-                                                user: "Narcissist"
+        assert_following_view "Magnifier+lens",
+                              add_set: "Magnifier+lens+*self",
+
+                              user: "Narcissist"
       end
     end
   end

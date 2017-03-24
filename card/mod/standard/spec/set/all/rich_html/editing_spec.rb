@@ -7,7 +7,8 @@ describe Card::Set::All::RichHtml::Editing do
 
   def assert_active_toolbar_pill view, content, related_view=false
     view_selector = related_view ? "related" : view
-    assert_view_select @mycard.render(view), "div[class~='card-slot #{view_selector}-view']" do
+    assert_view_select @mycard.render(view),
+                       "div[class~='card-slot #{view_selector}-view']" do
       assert_select 'nav[class="slotter toolbar navbar navbar-inverse"]' do
         assert_select 'ul[class="nav navbar-nav nav-pills"]' do
           assert_select 'li[class~="active"] > a', content

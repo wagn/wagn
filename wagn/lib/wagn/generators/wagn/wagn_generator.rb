@@ -171,7 +171,7 @@ class WagnGenerator < Rails::Generators::AppBase
     @wagn_gem_root = File.join @gem_path, "wagn"
     inside "spec" do
       template File.join("javascripts", "support", "wagn_jasmine.yml"),
-                File.join("javascripts", "support", "jasmine.yml")
+               File.join("javascripts", "support", "jasmine.yml")
     end
 
     # ending slash is important in order to load support and step folders
@@ -188,7 +188,7 @@ class WagnGenerator < Rails::Generators::AppBase
     inside "spec" do
       template "spec_helper.rb"
       template File.join("javascripts", "support", "deck_jasmine.yml"),
-                File.join("javascripts", "support", "jasmine.yml")
+               File.join("javascripts", "support", "jasmine.yml")
     end
   end
 
@@ -203,15 +203,15 @@ class WagnGenerator < Rails::Generators::AppBase
 
   def mysql_socket
     @mysql_socket ||= [
-      "/tmp/mysql.sock",                        # default
-      "/var/run/mysqld/mysqld.sock",            # debian/gentoo
-      "/var/tmp/mysql.sock",                    # freebsd
-      "/var/lib/mysql/mysql.sock",              # fedora
-      "/opt/local/lib/mysql/mysql.sock",        # fedora
-      "/opt/local/var/run/mysqld/mysqld.sock",  # mac + darwinports + mysql
-      "/opt/local/var/run/mysql4/mysqld.sock",  # mac + darwinports + mysql4
-      "/opt/local/var/run/mysql5/mysqld.sock",  # mac + darwinports + mysql5
-      "/opt/lampp/var/mysql/mysql.sock"         # xampp for linux
+      "/tmp/mysql.sock", # default
+      "/var/run/mysqld/mysqld.sock", # debian/gentoo
+      "/var/tmp/mysql.sock", # freebsd
+      "/var/lib/mysql/mysql.sock", # fedora
+      "/opt/local/lib/mysql/mysql.sock", # fedora
+      "/opt/local/var/run/mysqld/mysqld.sock", # mac + darwinports + mysql
+      "/opt/local/var/run/mysql4/mysqld.sock", # mac + darwinports + mysql4
+      "/opt/local/var/run/mysql5/mysqld.sock", # mac + darwinports + mysql5
+      "/opt/lampp/var/mysql/mysql.sock" # xampp for linux
     ].find { |f| File.exist?(f) } unless RbConfig::CONFIG["host_os"] =~ /mswin|mingw/
   end
 
@@ -240,8 +240,9 @@ class WagnGenerator < Rails::Generators::AppBase
 
   def app_const_base
     @app_const_base ||= defined_app_const_base ||
-                        app_name.gsub(/\W/, "_").squeeze("_").camelize
+      app_name.gsub(/\W/, "_").squeeze("_").camelize
   end
+
   alias camelized app_const_base
 
   def app_const
@@ -252,9 +253,9 @@ class WagnGenerator < Rails::Generators::AppBase
     if app_const =~ /^\d/
       raise Thor::Error, "Invalid application name #{app_name}. " \
                    "Please give a name which does not start with numbers."
-      #    elsif RESERVED_NAMES.include?(app_name)
-      #      raise Error, "Invalid application name #{app_name}." \
-      # "Please give a name which does not match one of the reserved rails words."
+    #    elsif RESERVED_NAMES.include?(app_name)
+    #      raise Error, "Invalid application name #{app_name}." \
+    # "Please give a name which does not match one of the reserved rails words."
     elsif Object.const_defined?(app_const_base)
       raise Thor::Error, "Invalid application name #{app_name}, " \
                    "constant #{app_const_base} is already in use. " \

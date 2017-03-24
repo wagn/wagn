@@ -96,4 +96,5 @@ RSpec/NestedGroups:
 Metrics/LineLength:
   Enabled: true
   Max: 90
-
+  Exclude:
+    - '**/step_definitions/*_steps.rb'

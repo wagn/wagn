@@ -102,7 +102,7 @@ end
 
 def set_ace_editor_content name, content
   return unless all(".ace-editor-textarea[name='#{name}']").present? &&
-    page.evaluate_script("typeof ace != 'undefined'")
+                page.evaluate_script("typeof ace != 'undefined'")
   sleep(0.5)
   page.execute_script "ace.edit($('.ace_editor').get(0))"\
                       ".getSession().setValue('#{content}')"
@@ -189,17 +189,16 @@ end
 def wait_for_ajax
   Timeout.timeout(Capybara.default_max_wait_time) do
     begin
-      sleep(0.5) while !finished_all_ajax_requests?
+      sleep(0.5) until finished_all_ajax_requests?
     rescue Selenium::WebDriver::Error::UnknownError
-      sleep(1.5) # hack to fix the issue that in layout.feature jQuery
-                 # after the layout change is not defined
+      sleep(1.5) # HACK: to fix the issue that in layout.feature jQuery
+      # after the layout change is not defined
     end
   end
 end
 
-
 def finished_all_ajax_requests?
-  page.evaluate_script('jQuery.active').zero?
+  page.evaluate_script("jQuery.active").zero?
 end
 
 When /^I wait for ajax response$/ do
@@ -212,7 +211,7 @@ end
 #
 Then /debug/ do
   require "pry"
-  binding.pry #
+  #
   nil
 end
 #   if RUBY_VERSION =~ /^2/
@@ -449,6 +448,7 @@ end
 
 module Capybara
   module Node
+    # adapt capybara methods to fill in forms to wagn's form interface
     module Actions
       alias_method :original_fill_in, :fill_in
       alias_method :original_select, :select

@@ -16,6 +16,7 @@ Feature: Reference
     And I press "Rename and Update"
     And I wait for ajax response
     Then I go to card "Kawaii Man"
+    And I wait for ajax response
     And I should see "Srivigneshwar"
 
 

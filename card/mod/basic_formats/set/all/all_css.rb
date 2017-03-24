@@ -21,13 +21,12 @@ format :css do
     major_comment "MISSING Style Card: #{card.name}"
   end
 
-  view :import do |_args|
-    %{\n@import url("#{_render_url items: { view: :import }}");\n}
+  view :import do
+    _render_core
   end
 
-  view :url, perms: :none do |args|
-    page_path card.cardname, format: :css, item: args[:item]
-    # card_url _render_linkname
+  view :url, perms: :none do
+    page_path card.cardname, format: :css
   end
 
   def major_comment comment, char="-"

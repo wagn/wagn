@@ -1,4 +1,8 @@
 format do
+  def offset
+    search_params[:offset] || 0
+  end
+
   def search_params
     @search_params ||= begin
       p = default_search_params.clone

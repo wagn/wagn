@@ -83,6 +83,43 @@ class Card
         end
       end
 
+
+      # Creates or updates a trait card with codename and right rules.
+      # Content for rules that are pointer cards by default
+      # is converted to pointer format.
+      # @example
+      #   ensure_trait "*a_or_b", :a_or_b,
+      #                default: { type_id: Card::PointerID },
+      #                options: ["A", "B"],
+      #                input: "radio"
+      def ensure_trait name, codename, args={}
+        ensure_card name, codename: codename
+        args.each do |setting, value|
+          ensure_trait_rule name, setting, value
+        end
+      end
+
+      def ensure_trait_rule trait, setting, value
+        validate_setting setting
+        card_args = normalize_trait_rule_args setting, value
+        ensure_card [trait, :right, setting], card_args
+      end
+
+      def validate_setting setting
+        unless Card::Codename[setting] &&
+               Card.fetch_type_id(setting) == SettingID
+          raise ArgumentError, "not a valid setting: #{setting}"
+        end
+      end
+
+      def normalize_trait_rule_args setting, value
+        return value if value.is_a? Hash
+        if Card.fetch_type_id([setting, :right, :default]) == PointerID
+          value = Array(value).to_pointer_content
+        end
+        { content: value }
+      end
+
       # if card with same name exists move it out of the way
       def create_card! name_or_args, content_or_args=nil
         args = standardize_args name_or_args, content_or_args

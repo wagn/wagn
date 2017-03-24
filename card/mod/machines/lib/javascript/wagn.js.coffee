@@ -385,3 +385,7 @@ snakeCase = (str)->
               match[1].toLowerCase()
 
 warn = (stuff) -> console.log stuff if console?
+
+wagn.slotReady (slot) ->
+  slot.find('._disappear').delay(5000).animate(
+    height: 0, 1000, -> $(this).hide())

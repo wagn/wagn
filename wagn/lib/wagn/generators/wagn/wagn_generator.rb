@@ -17,7 +17,7 @@ class WagnGenerator < Rails::Generators::AppBase
                desc: "Prepare deck for wagn core testing"
 
   class_option "gem-path",
-               type: :string, aliases: "-g", default: false, group: :runtime,
+               type: :string, aliases: "-g", default: "", group: :runtime,
                desc: "Path to local gem installation " \
                      "(Default, use env WAGN_GEM_PATH)"
 
@@ -157,7 +157,7 @@ class WagnGenerator < Rails::Generators::AppBase
   protected
 
   def core_dev_setup
-    unless @gem_path
+    if @gem_path.blank?
       @gemfile_gem_path =
         @gem_path = ask("Enter the path to your local wagn gem installation: ")
     end
@@ -250,13 +250,13 @@ class WagnGenerator < Rails::Generators::AppBase
 
   def valid_const?
     if app_const =~ /^\d/
-      raise Error, "Invalid application name #{app_name}. " \
+      raise Thor::Error, "Invalid application name #{app_name}. " \
                    "Please give a name which does not start with numbers."
-    #    elsif RESERVED_NAMES.include?(app_name)
-    #      raise Error, "Invalid application name #{app_name}." \
-    # "Please give a name which does not match one of the reserved rails words."
+      #    elsif RESERVED_NAMES.include?(app_name)
+      #      raise Error, "Invalid application name #{app_name}." \
+      # "Please give a name which does not match one of the reserved rails words."
     elsif Object.const_defined?(app_const_base)
-      raise Error, "Invalid application name #{app_name}, " \
+      raise Thor::Error, "Invalid application name #{app_name}, " \
                    "constant #{app_const_base} is already in use. " \
                    "Please choose another application name."
     end

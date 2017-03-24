@@ -191,7 +191,7 @@ def wait_for_ajax
     begin
       sleep(0.5) until finished_all_ajax_requests?
     rescue Selenium::WebDriver::Error::UnknownError
-      sleep(1.5) # HACK: to fix the issue that in layout.feature jQuery
+      sleep(2) # HACK: to fix the issue that in layout.feature jQuery
       # after the layout change is not defined
     end
   end

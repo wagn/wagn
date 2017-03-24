@@ -240,7 +240,7 @@ class WagnGenerator < Rails::Generators::AppBase
 
   def app_const_base
     @app_const_base ||= defined_app_const_base ||
-      app_name.gsub(/\W/, "_").squeeze("_").camelize
+                        app_name.gsub(/\W/, "_").squeeze("_").camelize
   end
 
   alias camelized app_const_base

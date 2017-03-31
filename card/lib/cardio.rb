@@ -69,6 +69,7 @@ module Cardio
       config.autoload_paths += Dir["#{gem_root}/lib/**/"]
       config.autoload_paths += Dir["#{gem_root}/mod/*/lib/**/"]
       config.autoload_paths += Dir["#{root}/mod/*/lib/**/"]
+      config.eager_load_paths += Dir["#{root}/mod/counts/lib/card/*"]
 
       default_configs.each_pair do |setting, value|
         set_default_value(config, setting, *value)
@@ -100,11 +101,20 @@ module Cardio
       add_path "db/seeds.rb", with: "db/seeds.rb"
 
       add_path "config/initializers", glob: "**/*.rb"
+      add_path "mod/config/initializers", glob: "**/*.rb"
       add_initializers root
     end
 
     def set_mod_paths
-      each_mod_path { |mod_path| add_initializers File.join(mod_path, "*") }
+      each_mod_path do |mod_path|
+        add_mod_initializers mod_path
+      end
+    end
+
+    def add_mod_initializers mod_path
+      Dir.glob("#{mod_path}/*/config/initializers").each do |initializers_dir|
+        paths["mod/config/initializers"] << initializers_dir
+      end
     end
 
     def add_initializers dir

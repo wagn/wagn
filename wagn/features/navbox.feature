@@ -16,6 +16,14 @@ Feature: Navbox
     And I wait a sec
     Then I should see "Search results"
 
+  Scenario: wql search
+    Given I go to the homepage
+    And I fill in "_keyword" with '{"type":"User"}'
+    Then I press enter to search
+    And I wait a sec
+    Then I should see "Search results"
+    And I should see "Joe Camel"
+
   Scenario: paging
     Given I go to the homepage
     And I fill in "_keyword" with "skin"

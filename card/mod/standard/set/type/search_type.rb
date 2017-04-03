@@ -3,18 +3,20 @@ include_set Abstract::WqlSearch
 
 format do
   view :core, cache: :never do
-    _render(
-      case search_with_params
-      when Exception          then :search_error
-      when Integer            then :search_count
-      when @mode == :template then :raw
-      else                         :card_list
-      end
-    )
+    _render search_result_view
   end
 
   def chunk_list
     :query
+  end
+
+  def search_result_view
+    case search_with_params
+    when Exception          then :search_error
+    when Integer            then :search_count
+    when @mode == :template then :raw
+    else                         :card_list
+    end
   end
 end
 

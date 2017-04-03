@@ -1,5 +1,17 @@
 include_set Abstract::SearchParams
 
+def query_args args={}
+  query_args = process_wql_keyword args
+  standardized_query_args query_args
+end
+
+def process_wql_keyword hash
+  return wql_hash unless hash[:vars] && (keyword = hash[:vars][:keyword]) &&
+                         keyword =~ /^\{.+\}$/
+  hash.merge! parse_json_query(keyword)
+  hash
+end
+
 format do
   def default_search_params
     hash = super
@@ -8,17 +20,14 @@ format do
       next unless key.to_s =~ /^\_(\w+)$/
       hash[:vars][Regexp.last_match(1).to_sym] = val
     end
-    process_wql hash
     hash
   end
 
-  def process_wql hash
-    if (keyword = hash[:vars][:keyword]) && keyword =~ /^\{.+\}$/
-      hash.merge! JSON.parse(keyword)
-      hash[:vars].delete :keyword
-    end
-  rescue JSON::ParserError => _e
-    # invalid json, treat it like a keyword
+  view :search_error, cache: :never do
+    sr_class = search_with_params.class.to_s
+
+    # don't show card content; not very helpful in this case
+    %(#{sr_class} :: #{search_with_params.message})
   end
 end
 
@@ -56,15 +65,15 @@ format :json do
 
   def add_item exact
     return unless exact.new_card? &&
-                  exact.cardname.valid? &&
-                  !exact.virtual? &&
-                  exact.ok?(:create)
+      exact.cardname.valid? &&
+      !exact.virtual? &&
+      exact.ok?(:create)
     exact.name
   end
 
   def new_item_of_type exact
     return unless (exact.type_id == Card::CardtypeID) &&
-                  Card.new(type_id: exact.id).ok?(:create)
+      Card.new(type_id: exact.id).ok?(:create)
     [exact.name, exact.cardname.url_key]
   end
 

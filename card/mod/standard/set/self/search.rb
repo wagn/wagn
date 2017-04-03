@@ -71,9 +71,9 @@ format :json do
 
   def add_item exact
     return unless exact.new_card? &&
-      exact.cardname.valid? &&
-      !exact.virtual? &&
-      exact.ok?(:create)
+                  exact.cardname.valid? &&
+                  !exact.virtual? &&
+                  exact.ok?(:create)
     exact.name
   end
 

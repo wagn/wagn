@@ -22,7 +22,7 @@ Feature: Navbox
     Then I press enter to search
     And I wait a sec
     Then I should see "Search results"
-    And I should see "Joe Camel"
+    And I should see "Big Brother"
 
   Scenario: paging
     Given I go to the homepage

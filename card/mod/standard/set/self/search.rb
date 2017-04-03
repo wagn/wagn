@@ -8,7 +8,17 @@ format do
       next unless key.to_s =~ /^\_(\w+)$/
       hash[:vars][Regexp.last_match(1).to_sym] = val
     end
+    process_wql hash
     hash
+  end
+
+  def process_wql hash
+    if (keyword = hash[:vars][:keyword]) && keyword =~ /^\{.+\}$/
+      hash.merge! JSON.parse(keyword)
+      hash[:vars].delete :keyword
+    end
+  rescue JSON::ParserError => _e
+    # invalid json, treat it like a keyword
   end
 end
 

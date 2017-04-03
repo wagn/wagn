@@ -2,7 +2,7 @@ include_set Abstract::SearchParams
 
 def query_args args={}
   query_args =
-    if wql_keyword?
+    if wql_keyword? args
       parse_wql_keyword args
     else
       wql_hash.merge args

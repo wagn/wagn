@@ -1,15 +1,21 @@
 include_set Abstract::SearchParams
 
 def query_args args={}
-  query_args = process_wql_keyword args
+  query_args =
+    if wql_keyword?
+      parse_wql_keyword args
+    else
+      wql_hash.merge args
+    end
   standardized_query_args query_args
 end
 
-def process_wql_keyword hash
-  return wql_hash unless hash[:vars] && (keyword = hash[:vars][:keyword]) &&
-                         keyword =~ /^\{.+\}$/
-  hash.merge! parse_json_query(keyword)
-  hash
+def parse_wql_keyword args
+  args.merge parse_json_query(args[:vars][:keyword])
+end
+
+def wql_keyword? hash
+  hash[:vars] && (keyword = hash[:vars][:keyword]) && keyword =~ /^\{.+\}$/
 end
 
 format do

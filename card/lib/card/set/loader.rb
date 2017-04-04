@@ -64,13 +64,14 @@ class Card
         else
           submodules[-1] += " extend Card::Set"
         end
-        tmp_file_frame pattern, submodules, wrapped_content
+        tmp_file_frame pattern, submodules, wrapped_content, content_path
       end
 
-      def tmp_file_frame pattern, submodules, content
+      def tmp_file_frame pattern, submodules, content, content_path
 <<-RUBY
 # -*- encoding : utf-8 -*-
 class Card; module Set; class #{pattern}; #{submodules.join ' '}
+  def self.source_location; "#{content_path}"; end
 #{content}
 end;end;end;#{'end;' * submodules.size}
 RUBY

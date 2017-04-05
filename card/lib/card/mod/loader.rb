@@ -91,7 +91,8 @@ class Card
         end
 
         def load_initializers
-          Card.config.paths["mod/config/initializers"].existent.sort.each do |initializer|
+          Card.config.paths["mod/config/initializers"].existent
+              .sort.each do |initializer|
             load initializer
           end
         end

@@ -17,10 +17,13 @@ def wql_hash
   end
 end
 
-def query args={}
+def query_args args={}
   query_args = wql_hash.merge args
-  query_args = standardized_query_args query_args
-  Query.new query_args, name
+  standardized_query_args query_args
+end
+
+def query args={}
+  Query.new query_args(args), name
 end
 
 def fetch_query args={}

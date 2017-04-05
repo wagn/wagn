@@ -1,5 +1,23 @@
 include_set Abstract::SearchParams
 
+def query_args args={}
+  query_args =
+    if wql_keyword? args
+      parse_wql_keyword args
+    else
+      wql_hash.merge args
+    end
+  standardized_query_args query_args
+end
+
+def parse_wql_keyword args
+  args.merge parse_json_query(args[:vars][:keyword])
+end
+
+def wql_keyword? hash
+  hash[:vars] && (keyword = hash[:vars][:keyword]) && keyword =~ /^\{.+\}$/
+end
+
 format do
   def default_search_params
     hash = super
@@ -9,6 +27,13 @@ format do
       hash[:vars][Regexp.last_match(1).to_sym] = val
     end
     hash
+  end
+
+  view :search_error, cache: :never do
+    sr_class = search_with_params.class.to_s
+
+    # don't show card content; not very helpful in this case
+    %(#{sr_class} :: #{search_with_params.message})
   end
 end
 
@@ -54,7 +79,7 @@ format :json do
 
   def new_item_of_type exact
     return unless (exact.type_id == Card::CardtypeID) &&
-                  Card.new(type_id: exact.id).ok?(:create)
+      Card.new(type_id: exact.id).ok?(:create)
     [exact.name, exact.cardname.url_key]
   end
 

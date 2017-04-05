@@ -91,7 +91,6 @@ class Card
           define_method "_view_#{view}", view_block
         end
 
-
         def interpret_view_opts view, opts
           return unless opts.present?
           Card::Format.interpret_view_opts view, opts
@@ -123,12 +122,13 @@ class Card
           end
         end
 
-        def set_module
-          Card.const_get self.name.split('::')[0..-2].join('::')
-        end
-
         def source_location
           set_module.source_location
+        end
+
+        # remove the format part of the module name
+        def set_module
+          Card.const_get name.split("::")[0..-2].join("::")
         end
       end
     end

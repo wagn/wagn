@@ -197,5 +197,12 @@ describe Card::Set::Type::Pointer do
       )
       pointer1.content.should == "[[bracketme]]"
     end
+
+    it "handles array" do
+      pointer1 = Card.create!(
+        name: "pointer1", type: "Pointer", content: ["b1", "[[b2]]"]
+      )
+      expect(pointer1.content).to eq "[[b1]]\n[[b2]]"
+    end
   end
 end

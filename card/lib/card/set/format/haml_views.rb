@@ -3,7 +3,8 @@ class Card
     module Format
       # Support haml templates in a Rails like way:
       # If the view option `template: :haml` is set then wagn expects a haml template
-      # in a corresponding template path and renders it
+      # in a corresponding template path and renders it.
+
       #
       # @example
       #   # mod/core/set/type/basic.rb

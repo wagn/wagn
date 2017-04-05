@@ -35,6 +35,9 @@ protected
 def prepare_assignment_params args
   params = ActionController::Parameters.new(args)
   params.permit!
+  if params[:db_content].is_a? Array
+    params[:db_content] = params[:db_content].join("\n")
+  end
   params
 end
 

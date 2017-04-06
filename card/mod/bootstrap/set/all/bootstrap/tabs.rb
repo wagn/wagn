@@ -24,6 +24,8 @@ format :html do
   # @option tabs [String] :title
   # @option tabs [path] :path
   # @option tabs [Symbol] :view
+  # @option tabs [HTML] :html if present use value as inner html for li tag and
+  #   ignore the other tab options
   # @param [String] active_name label of the tab that should be active at the
   # beginning
   # @param [String] active_content content of the active tab
@@ -47,6 +49,7 @@ format :html do
   end
 
   def lazy_tab_button tab_name, id, url, active_tab
+    return wrap_with(:li, tab_name, role: "presentation") unless url
     tab_button(
       "##{id}", tab_name, active_tab,
       "data-url" => url.html_safe,
@@ -68,7 +71,11 @@ format :html do
     tabs.each do |tab_view_name, tab_details|
       tab_title, url =
         if tab_details.is_a? Hash
-          [tab_details[:title], tab_details[:path] || path(tab_details[:view])]
+          if tab_details[:html]
+            tab_details[:html]
+          else
+            [tab_details[:title], tab_details[:path] || path(tab_details[:view])]
+          end
         else
           [tab_details, path(view: tab_view_name)]
         end

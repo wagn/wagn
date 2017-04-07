@@ -128,7 +128,7 @@ class Card
       end
 
       class IntegrateWithDelayJob < ActiveJob::Base
-        def perform card, card_attribs, env, current_id, method_name
+        def perform card, card_attribs, env, auth, method_name
           card.deserialize_for_active_job! card_attribs
           card.with_env_and_auth env, auth do
             card.send method_name

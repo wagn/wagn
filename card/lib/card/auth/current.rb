@@ -51,28 +51,18 @@ class Card
 
 
       def serialize
-        { as_id: as_id, current_id: current_id}
+        { as_id: as_id, current_id: current_id }
       end
 
       def deserialize data
         tmp_current = current_id
         tmp_as_id = as_id
-        self.current_id = data[:current_id]
-        self.as_id = data[:as_id] if data[:as_id]
+        @current_id = data[:current_id]
+        @as_id = data[:as_id] if data[:as_id]
         yield
       ensure
-        self.current_id = tmp_current
-        self.as_id = tmp_as_id
-      end
-
-
-      def with_current mark
-        binding.pry
-        tmp_current = current_id
-        self.current = mark
-        yield
-      ensure
-        #self.current = tmp_current
+        @current_id = tmp_current
+        @as_id = tmp_as_id
       end
 
       # get session object from Env

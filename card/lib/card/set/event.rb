@@ -9,16 +9,16 @@ class Card
     include_set_modules
   end
 
-  def with_env_and_current env, current_id
+  def with_env_and_auth env, auth
     # If active jobs (and hence the integrate_with_delay events) don't run
     # in a background process then Card::Env.deserialize! decouples the
     # controller's params hash and the Card::Env's params hash with the
     # effect that params changes in the CardController get lost
     # (a crucial example are success params that are processed in
     # CardController#update_params_for_success)
-    return yield if Wagn.config.active_job.queue_adapter == :inline
-    Card::Env.deserialize env do
-      Card::Auth.with_current current_id do
+    #return yield if Wagn.config.active_job.queue_adapter == :inline
+    Card::Auth.deserialize auth do
+      Card::Env.deserialize env do
         yield
       end
     end
@@ -121,7 +121,7 @@ class Card
           define_method(method_name, proc do
             IntegrateWithDelayJob.set(queue: event).perform_later(
               self, serialize_for_active_job, Card::Env.serialize,
-              Card::Auth.current_id, final_method_name
+              Card::Auth.serialize, final_method_name
             )
           end)
         end
@@ -130,7 +130,7 @@ class Card
       class IntegrateWithDelayJob < ActiveJob::Base
         def perform card, card_attribs, env, current_id, method_name
           card.deserialize_for_active_job! card_attribs
-          card.with_env_and_current env, current_id do
+          card.with_env_and_auth env, auth do
             card.send method_name
           end
         end

@@ -68,9 +68,9 @@ class Card
         tmp_env = serialize if @env
         @env ||= {}
         @env.update data
-        res = yield
+        yield
+      ensure
         @env.update tmp_env if tmp_env
-        res
       end
 
       private

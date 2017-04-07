@@ -4,6 +4,8 @@ class Card
     module AdvancedApi
       def ensure_set &block
         set_module = yield
+        set_module = set_module_const_get(set_module) unless set_module.is_a?(Module)
+        set_module
       rescue NameError => e
         if e.message =~ /uninitialized constant (?:Card::Set::)?(.+)$/
           constant_pieces = Regexp.last_match(1).split("::")
@@ -17,6 +19,23 @@ class Card
         ensure_set(&block)
       else
         set_module.extend Card::Set
+        set_module
+      end
+
+      # "set" is the noun not the verb
+      def set_module_const_get const
+        Card::Set.const_get normalize_const(const)
+      end
+
+      def normalize_const const
+        case const
+        when Array
+          const.map { |piece| piece.to_s.camelcase }.join("::")
+        when Symbol
+          const.to_s.camelcase
+        else
+          const
+        end
       end
 
       def attachment name, args

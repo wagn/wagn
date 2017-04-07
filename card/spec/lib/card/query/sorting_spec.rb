@@ -40,7 +40,6 @@ describe Card::Query, "sorting" do
         sort: { right: "*table_of_contents" },
         sort_as: "integer"
       }
-      binding.pry
       is_expected.to eq(%w(*all Basic+*type Setting+*self))
     end
   end

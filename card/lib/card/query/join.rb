@@ -8,6 +8,7 @@ class Card
                     :from_field, :to_field,
                     :superjoin, :subjoins
 
+      # documentation??? -pk
       def initialize opts={}
         from_and_to opts
         opts.each do |key, value|
@@ -15,6 +16,8 @@ class Card
         end
         @from_field ||= :id
         @to_field   ||= :id
+
+        # why set to empty? why not allow to initialize with conditions? -pk
         @conditions = []
         @subjoins = []
         if @from.is_a? Join

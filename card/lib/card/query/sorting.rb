@@ -22,30 +22,34 @@ class Card
 
       # EXPERIMENTAL!
       def sort_by_count val, item
-        if item == "referred_to"
-          @mods[:sort] = "coalesce(count,0)" # needed for postgres
-          cs = Query.new(
-            return: "coalesce(count(*), 0) as count",
-            group: "sort_join_field",
-            superquery: self
-          )
-          subselect = Query.new val.merge(return: "id", superquery: self)
-          cs.add_condition "referer_id in (#{subselect.sql})"
-          # FIXME: - SQL generated before SQL phase
-          cs.joins << Join.new(
-            from: cs,
-            to: %w(card_references wr referee_id)
-          )
-          cs.mods[:sort_join_field] = "#{cs.table_alias}.id as sort_join_field"
-          # HACK!
-
-          joins << Join.new(
-            from: self,
-            to: [cs, "srtbl", "sort_join_field"]
-          )
-        else
+        method_name = "sort_by_count_#{item}"
+        unless respond_to?(method_name)
           raise Card::Error::BadQuery, "count with item: #{item} not yet implemented"
         end
+        send method_name, val
+      end
+
+      def sort_by_count_referred_to
+        @mods[:sort] = "coalesce(count,0)" # needed for postgres
+        cs = Query.new(
+          return: "coalesce(count(*), 0) as count",
+          group: "sort_join_field",
+          superquery: self
+        )
+        subselect = Query.new val.merge(return: "id", superquery: self)
+        cs.add_condition "referer_id in (#{subselect.sql})"
+        # FIXME: - SQL generated before SQL phase
+        cs.joins << Join.new(
+          from: cs,
+          to: %w(card_references wr referee_id)
+        )
+        cs.mods[:sort_join_field] = "#{cs.table_alias}.id as sort_join_field"
+        # HACK!
+
+        joins << Join.new(
+          from: self,
+          to: [cs, "srtbl", "sort_join_field"]
+        )
       end
     end
   end

@@ -24,7 +24,6 @@ class Card
     end
   end
 
-
   def serialize_for_active_job
     serializable_attributes.each_with_object({}) do |name, hash|
       value = instance_variable_get("@#{name}")
@@ -131,7 +130,7 @@ class Card
       class IntegrateWithDelayJob < ActiveJob::Base
         def perform card, card_attribs, env, current_id, method_name
           card.deserialize_for_active_job! card_attribs
-          with_env_and_current env, current_id do
+          card.with_env_and_current env, current_id do
             card.send method_name
           end
         end

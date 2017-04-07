@@ -29,7 +29,7 @@ class Card
         send method_name, val
       end
 
-      def sort_by_count_referred_to
+      def sort_by_count_referred_to val
         @mods[:sort] = "coalesce(count,0)" # needed for postgres
         cs = Query.new(
           return: "coalesce(count(*), 0) as count",

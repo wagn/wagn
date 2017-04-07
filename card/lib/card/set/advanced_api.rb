@@ -65,7 +65,6 @@ class Card
           const
         end
       end
-
     end
   end
 end

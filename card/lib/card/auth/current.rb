@@ -49,6 +49,14 @@ class Card
           end
       end
 
+      def with_current mark
+        tmp_current = current_id
+        self.current = mark
+        res = yield
+        self.current = tmp_current
+        res
+      end
+
       # get session object from Env
       # return [Session]
       def session

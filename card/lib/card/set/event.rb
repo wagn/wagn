@@ -1,5 +1,5 @@
 class Card
-  def deserialize_for_active_job! attr, env, current_id
+  def deserialize_for_active_job! attr
     attr.each do |attname, args|
       # symbols are not allowed so all symbols arrive here as strings
       # convert strings that were symbols before back to symbols
@@ -7,16 +7,23 @@ class Card
       instance_variable_set("@#{attname}", value)
     end
     include_set_modules
+  end
+
+  def with_env_and_current env, current_id
     # If active jobs (and hence the integrate_with_delay events) don't run
     # in a background process then Card::Env.deserialize! decouples the
     # controller's params hash and the Card::Env's params hash with the
     # effect that params changes in the CardController get lost
     # (a crucial example are success params that are processed in
     # CardController#update_params_for_success)
-    return if Wagn.config.active_job.queue_adapter == :inline
-    Card::Env.deserialize! env
-    Card::Auth.current_id = current_id
+    return yield if Wagn.config.active_job.queue_adapter == :inline
+    Card::Env.deserialize env do
+      Card::Auth.with_current current_id do
+        yield
+      end
+    end
   end
+
 
   def serialize_for_active_job
     serializable_attributes.each_with_object({}) do |name, hash|
@@ -123,8 +130,10 @@ class Card
 
       class IntegrateWithDelayJob < ActiveJob::Base
         def perform card, card_attribs, env, current_id, method_name
-          card.deserialize_for_active_job! card_attribs, env, current_id
-          card.send method_name
+          card.deserialize_for_active_job! card_attribs
+          with_env_and_current env, current_id do
+            card.send method_name
+          end
         end
       end
 

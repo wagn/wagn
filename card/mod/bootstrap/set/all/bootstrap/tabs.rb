@@ -72,7 +72,7 @@ format :html do
       tab_title, url =
         if tab_details.is_a? Hash
           tab_details[:html] ||
-          [tab_details[:title], tab_details[:path] || path(tab_details[:view])]
+            [tab_details[:title], tab_details[:path] || path(tab_details[:view])]
         else
           [tab_details, path(view: tab_view_name)]
         end

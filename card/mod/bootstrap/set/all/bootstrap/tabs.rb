@@ -69,16 +69,19 @@ format :html do
 
   def standardize_tabs tabs, active_name
     tabs.each do |tab_view_name, tab_details|
-      tab_title, url =
-        if tab_details.is_a? Hash
-          tab_details[:html] ||
-            [tab_details[:title], tab_details[:path] || path(tab_details[:view])]
-        else
-          [tab_details, path(view: tab_view_name)]
-        end
+      tab_title, url = tab_title_and_url(tab_details, tab_view_name)
       id = "#{card.cardname.safe_key}-#{tab_view_name.to_name.safe_key}"
       active_tab = (active_name == tab_view_name)
       yield tab_title, url, id, active_tab
+    end
+  end
+
+  def tab_title_and_url tab_details, tab_view_name
+    if tab_details.is_a? Hash
+      tab_details[:html] ||
+        [tab_details[:title], tab_details[:path] || path(tab_details[:view])]
+    else
+      [tab_details, path(view: tab_view_name)]
     end
   end
 

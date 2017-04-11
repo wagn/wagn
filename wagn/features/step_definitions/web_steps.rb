@@ -143,14 +143,6 @@ Then /^(?:|I )should see "([^"]*)"$/ do |text|
   expect(page).to have_content(text)
 end
 
-Then /^(?:|I )should see "([^"]*)" or "([^"]*)"$/ do |text1, text2|
-  begin
-    expect(page).to have_content(text1)
-  rescue
-    expect(page).to have_content(text2)
-  end
-end
-
 Then /^(?:|I )should not see "([^"]*)"$/ do |text|
   expect(page).to_not have_content(text)
 end

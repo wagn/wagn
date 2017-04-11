@@ -22,7 +22,9 @@ end
 
 def mod_dir new_mod=nil
   find_mod = new_mod || mod
+
   Card::Mod::Loader.mod_dirs.path(find_mod) ||
+    (find_mod.to_sym == :test && "test") ||
     raise(Error, "can't find mod \"#{find_mod}\"")
 end
 

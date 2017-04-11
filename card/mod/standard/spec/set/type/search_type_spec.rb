@@ -56,12 +56,52 @@ describe Card::Set::Type::SearchType do
       expect(subject.content).to eq '{"name":"YYY"}'
     end
   end
-  context "rss format" do
+  describe "rss format" do
     it "render rss without errors" do
       search_card = Card.create type: "Search", name: "Asearch",
                                 content: %({"id":"1"})
       rss = search_card.format(:rss).render_feed
       expect(rss).to have_tag("title", text: "Wagn Bot")
+    end
+  end
+
+  describe "csv format" do
+    describe "view :content" do
+      subject do
+        render_view :content, { name: "Book+*type+by name" },
+                    format: :csv
+      end
+
+      it "has title row with nest names" do
+        is_expected.to include "AUTHOR,ILLUSTRATOR"
+      end
+
+      it "has nests contents" do
+        create "Guide",
+               type: "Book",
+               subfields: { "author" => "Hitchhiker",
+                            "illustrator" => "Galaxy" }
+        is_expected.to include "Hitchhiker,Galaxy"
+      end
+    end
+
+    describe "view :nested_fields" do
+      subject do
+        render_view :nested_fields, { name: "Book+*type+by name" },
+                    format: :csv
+      end
+
+      it "has title row item name and field names" do
+        is_expected.to include "NAME,AUTHOR,ILLUSTRATOR"
+      end
+
+      it "has field contents" do
+        create "Guide",
+               type: "Book",
+               subfields: { "author" => "Hitchhiker",
+                            "illustrator" => "Galaxy" }
+        is_expected.to include "Guide,Hitchhiker,Galaxy"
+      end
     end
   end
 end

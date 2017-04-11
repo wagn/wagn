@@ -4,7 +4,7 @@ class Card
     module AdvancedApi
       def ensure_set &block
         set_module = yield
-        set_module = set_module_const_get(set_module) unless set_module.is_a?(Module)
+        set_module = card_set_module_const_get(set_module) unless set_module.is_a?(Module)
         set_module
       rescue NameError => e
         if e.message =~ /uninitialized constant (?:Card::Set::)?(.+)$/
@@ -51,7 +51,7 @@ class Card
       end
 
       # "set" is the noun not the verb
-      def set_module_const_get const
+      def card_set_module_const_get const
         Card::Set.const_get normalize_const(const)
       end
 

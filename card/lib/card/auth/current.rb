@@ -49,7 +49,6 @@ class Card
           end
       end
 
-
       def serialize
         { as_id: as_id, current_id: current_id }
       end

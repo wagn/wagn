@@ -161,13 +161,19 @@ format :html do
   end
 
   def related_card_and_options args
-    options = (args[:related] || params[:related]).symbolize_keys
-    return unless options
+    return unless (options = related_options(args))
     related_card = related_card_from_options options
     options[:view] ||= :open
     options[:show] ||= []
     options[:show] << :comment_box if related_card.show_comment_box_in_related?
     [related_card, options]
+  end
+
+  def related_options args
+    options = (args[:related] || params[:related])
+    options = { name: options } if options.is_a? String
+    return unless options.is_a? Hash
+    options.symbolize_keys
   end
 
   def related_card_from_options options

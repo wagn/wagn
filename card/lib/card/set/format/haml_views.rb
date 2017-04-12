@@ -1,6 +1,7 @@
 class Card
   module Set
     module Format
+      TEMPLATE_DIR = "template"
       # Support haml templates in a Rails like way:
       # If the view option `template: :haml` is set then wagn expects a haml template
       # in a corresponding template path and renders it.
@@ -38,7 +39,7 @@ class Card
           end
         end
 
-        def haml_template_render_block_with_locals
+        def haml_template_render_block_with_locals view, template
           proc do |view_args|
             instance_exec view_args, &block
             locals = instance_variables.each_with_object({}) do |var, h|
@@ -54,14 +55,16 @@ class Card
         def haml_template_path view
           source = source_location
           basename = ::File.basename(source, ".rb")
-          try_haml_template_path("../#{view}", source) ||
-            try_haml_template_path("../#{basename}/#{view}", source) ||
-            raise(Card::Error, "can't find haml template for #{view}")
+          ["./#{basename}", "."].each do |template_dir|
+            path = try_haml_template_path(template_dir, view, source)
+            return path if path
+          end
+          raise(Card::Error, "can't find haml template for #{view}")
         end
 
-        def try_haml_template_path template_path, source_path, ext="haml"
-          path = ::File.expand_path("#{template_path}.#{ext}", source_path)
-                       .gsub("/set/", "/view/")
+        def try_haml_template_path template_path, view, source_path, ext="haml"
+          path = ::File.expand_path("#{template_path}/#{view}.#{ext}", source_path)
+                       .sub(%r{(/mod/[^/]+)/set/}, "\\1/#{TEMPLATE_DIR}/")
           ::File.exist?(path) && path
         end
 

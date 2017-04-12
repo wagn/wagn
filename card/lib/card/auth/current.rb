@@ -49,12 +49,17 @@ class Card
           end
       end
 
-
       def serialize
         { as_id: as_id, current_id: current_id }
       end
 
-      def deserialize data
+      # @param auth_data [Integer|Hash] user id or a hash
+      # @opts auth_data [Integer] current_id
+      # @opts auth_data [Integer] as_id
+      def with auth_data
+        auth_data = { current_id: auth_data } if auth_data.is_a?(Integer)
+        raise ArgumentError unless auth_data.is_a? Hash
+
         tmp_current = current_id
         tmp_as_id = as_id
         @current_id = data[:current_id]

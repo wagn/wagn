@@ -17,9 +17,8 @@ class Card
         @from_field ||= :id
         @to_field   ||= :id
 
-        # why set to empty? why not allow to initialize with conditions? -pk
-        @conditions = []
-        @subjoins = []
+        @conditions = Array @conditions
+        @subjoins = Array @subjoins
         if @from.is_a? Join
           @superjoin = @from
           @superjoin.subjoins << self

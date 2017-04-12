@@ -17,8 +17,8 @@ class Card
     # (a crucial example are success params that are processed in
     # CardController#update_params_for_success)
     return yield if Wagn.config.active_job.queue_adapter == :inline
-    Card::Auth.deserialize auth do
-      Card::Env.deserialize env do
+    Card::Auth.with auth do
+      Card::Env.with env do
         yield
       end
     end

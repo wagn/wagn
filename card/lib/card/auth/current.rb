@@ -62,8 +62,8 @@ class Card
 
         tmp_current = current_id
         tmp_as_id = as_id
-        @current_id = data[:current_id]
-        @as_id = data[:as_id] if data[:as_id]
+        @current_id = auth_data[:current_id]
+        @as_id = auth_data[:as_id] if auth_data[:as_id]
         yield
       ensure
         @current_id = tmp_current

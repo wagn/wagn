@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-<% if @gem_path %>
+<% if @gem_path.present? %>
 gem 'wagn',        :path=>"<%= @gemfile_gem_path %>/wagn"
 gem 'card',        :path=>"<%= @gemfile_gem_path %>/card", :require => false
 <% else %>

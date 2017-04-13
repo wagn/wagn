@@ -8,6 +8,7 @@ class Card
                     :from_field, :to_field,
                     :superjoin, :subjoins
 
+      # documentation??? -pk
       def initialize opts={}
         from_and_to opts
         opts.each do |key, value|
@@ -15,8 +16,9 @@ class Card
         end
         @from_field ||= :id
         @to_field   ||= :id
-        @conditions = []
-        @subjoins = []
+
+        @conditions = Array @conditions
+        @subjoins = Array @subjoins
         if @from.is_a? Join
           @superjoin = @from
           @superjoin.subjoins << self

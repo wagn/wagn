@@ -78,6 +78,7 @@ class Card
       # No longer just view definitions. Also basket definitions now.
       module AbstractFormat
         include Set::Basket
+        include Set::Format::HamlViews
 
         mattr_accessor :views
         self.views = {}
@@ -103,7 +104,12 @@ class Card
         end
 
         def view_block view, args, &block
+          return haml_view_block(view, &block) if haml_view?(args)
           block_given? ? block : lookup_alias_block(view, args)
+        end
+
+        def haml_view? args
+          args.first.is_a?(Hash) && args.first[:template] == :haml
         end
 
         def lookup_alias_block view, args
@@ -114,6 +120,15 @@ class Card
             raise "cannot find #{opts[:view]} view in #{opts[:mod]}; " \
                   "failed to alias #{view} in #{self}"
           end
+        end
+
+        def source_location
+          set_module.source_location
+        end
+
+        # remove the format part of the module name
+        def set_module
+          Card.const_get name.split("::")[0..-2].join("::")
         end
       end
     end

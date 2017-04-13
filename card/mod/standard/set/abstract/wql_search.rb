@@ -17,10 +17,12 @@ def wql_hash
   end
 end
 
+def query_args args={}
+  wql_hash.merge args
+end
+
 def query args={}
-  query_args = wql_hash.merge args
-  query_args = standardized_query_args query_args
-  Query.new query_args, name
+  Query.new standardized_query_args(args), name
 end
 
 def fetch_query args={}
@@ -29,7 +31,7 @@ def fetch_query args={}
 end
 
 def standardized_query_args args
-  args = args.symbolize_keys
+  args = query_args(args).symbolize_keys
   args[:context] ||= cardname
   args
 end

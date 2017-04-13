@@ -18,6 +18,7 @@ class Card
     module Loader
       class << self
         def load_mods
+          load_initializers
           load_set_patterns
           load_formats
           load_sets
@@ -87,6 +88,13 @@ class Card
             files << i_card.existing_source_paths
           end
           files.flatten
+        end
+
+        def load_initializers
+          Card.config.paths["mod/config/initializers"].existent
+              .sort.each do |initializer|
+            load initializer
+          end
         end
 
         def load_set_patterns

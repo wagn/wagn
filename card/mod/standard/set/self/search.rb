@@ -1,5 +1,18 @@
 include_set Abstract::SearchParams
 
+def query_args args={}
+  return super unless keyword_contains_wql? args
+  args.merge parse_keyword_wql(args)
+end
+
+def parse_keyword_wql args
+  parse_json_query(args[:vars][:keyword])
+end
+
+def keyword_contains_wql? hash
+  hash[:vars] && (keyword = hash[:vars][:keyword]) && keyword =~ /^\{.+\}$/
+end
+
 format do
   def default_search_params
     hash = super
@@ -9,6 +22,13 @@ format do
       hash[:vars][Regexp.last_match(1).to_sym] = val
     end
     hash
+  end
+
+  view :search_error, cache: :never do
+    sr_class = search_with_params.class.to_s
+
+    # don't show card content; not very helpful in this case
+    %(#{sr_class} :: #{search_with_params.message})
   end
 end
 

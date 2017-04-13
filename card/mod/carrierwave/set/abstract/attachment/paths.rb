@@ -21,11 +21,11 @@ def coded_dir new_mod=nil
 end
 
 def mod_dir new_mod=nil
-  find_mod = new_mod || mod
+  mod_name = new_mod || mod
+  dir = Card::Mod::Loader.mod_dirs.path(mod_name) || (mod_name == :test && "test")
 
-  Card::Mod::Loader.mod_dirs.path(find_mod) ||
-    (find_mod.to_sym == :test && "test") ||
-    raise(Error, "can't find mod \"#{find_mod}\"")
+  raise Error, "can't find mod \"#{mod_name}\"" unless dir
+  dir
 end
 
 def files_base_dir

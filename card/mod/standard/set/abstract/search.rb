@@ -99,20 +99,26 @@ format :csv do
 
   def csv_nested_field_rows
     list = search_with_params return: :name
-    columns = []
-    Card.fetch(list.first).format.each_nested_field do |chunk|
-      columns << chunk.referee_name.tag
-    end
+    columns = columns_from_referees list.first
+
     list.map do |item_name|
-      row = [item_name]
-      row +=
-        columns.map do |field|
-          nest [item_name, field], view: :core
-        end
-      CSV.generate_line row
+      CSV.generate_line row_from_field_names(item_name, columns)
     end.join
   end
 
+  def columns_from_referees referer
+    columns = []
+    Card.fetch(referer).format.each_nested_field do |chunk|
+      columns << chunk.referee_name.tag
+    end
+    columns
+  end
+
+  def row_from_field_names parent_name, field_names, view=:core
+    field_names.each_with_object([parent_name]) do |field, row|
+      row << nest([parent_name, field], view: view)
+    end
+  end
 
   view :card_list do
     items = super()
@@ -135,14 +141,17 @@ format :csv do
     res = Array extra_titles
     card1 = search_with_params(limit: 1).first
     card1.each_nested_chunk do |chunk|
-      opts = chunk.options
-      res << if %w(name link).member? opts[:view]
-               opts[:view]
-             else
-               opts[:nest_name].to_name.tag
-             end
+      res << column_title(chunk.options)
     end
     res.compact
+  end
+
+  def column_title opts
+    if %w(name link).member? opts[:view]
+      opts[:view]
+    else
+      opts[:nest_name].to_name.tag
+    end
   end
 end
 

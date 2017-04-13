@@ -49,7 +49,7 @@ class Card
         case user
         when NilClass then nil
         when Card     then user.id
-        when Fixnum   then user
+        when Integer   then user
         else Card.fetch_id(user)
         end
       end

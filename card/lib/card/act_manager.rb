@@ -114,6 +114,7 @@ class Card
       end
 
       def add director
+        Rails.logger.debug "added: #{director.card.name}".green
         directors[director.card] = director
       end
 
@@ -140,7 +141,8 @@ class Card
       end
 
       def to_s
-        directors.values.map(&:to_s).join "\n"
+        act_director.to_s
+        #directors.values.map(&:to_s).join "\n"
       end
     end
   end

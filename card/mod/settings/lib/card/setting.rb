@@ -36,7 +36,7 @@ class Card
     end
 
     def to_type_id type
-      type.is_a?(Fixnum) ? type : Card::Codename[type]
+      type.is_a?(Integer) ? type : Card::Codename[type]
     end
 
     # usage:

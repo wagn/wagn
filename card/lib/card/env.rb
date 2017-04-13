@@ -64,9 +64,14 @@ class Card
         @env.select { |k, _v| SERIALIZABLE_ATTRIBUTES.include?(k) }
       end
 
-      def deserialize! data
+      # @param serialized_env [Hash]
+      def with serialized_env
+        tmp_env = serialize if @env
         @env ||= {}
-        @env.update data
+        @env.update serialized_env
+        yield
+      ensure
+        @env.update tmp_env if tmp_env
       end
 
       private

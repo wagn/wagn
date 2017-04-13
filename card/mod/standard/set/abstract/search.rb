@@ -92,13 +92,57 @@ format :data do
 end
 
 format :csv do
-  view :card_list do |args|
-    items = super args
+  view :nested_fields do
+    # NOTE: assumes all cards have the same structure!
+    csv_title_row("name") + csv_nested_field_rows
+  end
+
+  def csv_nested_field_rows
+    list = search_with_params return: :name
+    columns = []
+    Card.fetch(list.first).format.each_nested_field do |chunk|
+      columns << chunk.referee_name.tag
+    end
+    list.map do |item_name|
+      row = [item_name]
+      row +=
+        columns.map do |field|
+          nest [item_name, field], view: :core
+        end
+      CSV.generate_line row
+    end.join
+  end
+
+
+  view :card_list do
+    items = super()
     if @depth.zero?
-      render_csv_title_row + items
+      csv_title_row + items
     else
       items
     end
+  end
+
+  def csv_title_row extra_titles=nil
+    titles = column_titles extra_titles
+    return "" unless titles.present?
+    CSV.generate_line titles.map { |title| title.to_s.upcase }
+  rescue
+    ""
+  end
+
+  def column_titles extra_titles=nil
+    res = Array extra_titles
+    card1 = search_with_params(limit: 1).first
+    card1.each_nested_chunk do |chunk|
+      opts = chunk.options
+      res << if %w(name link).member? opts[:view]
+               opts[:view]
+             else
+               opts[:nest_name].to_name.tag
+             end
+    end
+    res.compact
   end
 end
 

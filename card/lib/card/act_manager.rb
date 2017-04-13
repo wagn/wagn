@@ -114,7 +114,7 @@ class Card
       end
 
       def add director
-        Rails.logger.debug "added: #{director.card.name}".green
+        # Rails.logger.debug "added: #{director.card.name}".green
         directors[director.card] = director
       end
 

@@ -21,4 +21,14 @@ format :csv  do
   view :missing do |_args|
     ""
   end
+
+  view :name_with_fields do
+    CSV.generate_line name_with_fields_row
+  end
+
+  def name_with_fields_row
+    nested_fields.each_with_object([card.name]) do |(field_name, options), row|
+      row << nest(field_name)
+    end
+  end
 end

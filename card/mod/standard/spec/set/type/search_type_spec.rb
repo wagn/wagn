@@ -87,12 +87,13 @@ describe Card::Set::Type::SearchType do
 
     describe "view :nested_fields" do
       subject do
-        render_view :nested_fields, { name: "Book+*type+by name" },
-                    format: :csv
+        Card::Env.params[:item] = :name_with_fields
+        render_card_with_args :core, { name: "Book+*type+by name" },
+                    { format: :csv },  items: { view: :name_with_fields }
       end
 
       it "has title row item name and field names" do
-        is_expected.to include "NAME,AUTHOR,ILLUSTRATOR"
+        is_expected.to include "ITEM NAME,AUTHOR,ILLUSTRATOR"
       end
 
       it "has field contents" do

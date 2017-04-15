@@ -2,13 +2,14 @@
 
 # extend core Ruby object classes
 
-class Class
+class Module
   def include_extension extension
     include extension
   end
 end
 
 module CoreExtensions
+  ::Kernel.include_extension Kernel
   ::Object.include_extension Object
   ::Module.include_extension Module
   ::Array.include_extension Array

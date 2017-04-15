@@ -20,7 +20,7 @@ def item_cards args={}
 end
 
 def item_names args={}
-  args[:limit] = 0
+  args[:limit] ||= 0
   returning(:name, args) { search args }
 end
 
@@ -92,10 +92,12 @@ format :data do
 end
 
 format :csv do
-  view :card_list do |args|
-    items = super args
+  view :core, mod: All::Collection::CsvFormat
+
+  view :card_list do
+    items = super()
     if @depth.zero?
-      render_csv_title_row + items
+      title_row + items
     else
       items
     end

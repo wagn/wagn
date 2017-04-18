@@ -55,15 +55,16 @@ class Card
         def haml_template_path view
           source = source_location
           basename = ::File.basename(source, ".rb")
+          source_dir = ::File.dirname(source)
           ["./#{basename}", "."].each do |template_dir|
-            path = try_haml_template_path(template_dir, view, source)
+            path = try_haml_template_path(template_dir, view, source_dir)
             return path if path
           end
           raise(Card::Error, "can't find haml template for #{view}")
         end
 
-        def try_haml_template_path template_path, view, source_path, ext="haml"
-          path = ::File.expand_path("#{template_path}/#{view}.#{ext}", source_path)
+        def try_haml_template_path template_path, view, source_dir, ext="haml"
+          path = ::File.expand_path("#{template_path}/#{view}.#{ext}", source_dir)
                        .sub(%r{(/mod/[^/]+)/set/}, "\\1/#{TEMPLATE_DIR}/")
           ::File.exist?(path) && path
         end

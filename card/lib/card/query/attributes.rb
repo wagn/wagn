@@ -4,17 +4,12 @@ class Card
     module Attributes
       def found_by val
         found_by_cards(val).compact.each do |c|
-          if c && [SearchTypeID, SetID].include?(c.type_id)
-            # FIXME: - move this check to set mods!
-
-            subquery(
-              c.wql_hash.merge(unjoined: true, context: c.name)
-            )
-          else
+          unless c && c.respond_to?(:wql_hash)
             raise Card::Error::BadQuery,
-                  '"found_by" value must be valid Search, ' \
-                  "but #{c.name} is a #{c.type_name}"
+                              '"found_by" value must be valid Search, ' \
+                              "but #{c.name} is a #{c.type_name}"
           end
+          subquery c.wql_hash.merge(unjoined: true, context: c.name)
         end
       end
 

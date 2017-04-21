@@ -58,7 +58,6 @@ class Card
           source_dir = ::File.dirname(source)
           ["./#{basename}", "."].each do |template_dir|
             path = try_haml_template_path(template_dir, view, source_dir)
-            binding.pry
             return path if path
           end
           raise(Card::Error, "can't find haml template for #{view}")

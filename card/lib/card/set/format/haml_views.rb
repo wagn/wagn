@@ -22,24 +22,26 @@ class Card
       #   > render :with_instance_variables  # => "Hello haml"
       module HamlViews
         def haml_view_block view, &block
-          template = ::File.read haml_template_path view
+          template_path = haml_template_path view
           if block_given?
-            haml_template_render_block_with_locals view, template, &block
+            haml_template_render_block_with_locals view, template_path, &block
           else
-            haml_template_render_block view, template
+            haml_template_render_block view, template_path
           end
         end
 
-        def haml_template_render_block view, template
+        def haml_template_render_block view, template_path
+          template = ::File.read template_path
           proc do |view_args|
             voo = View.new(self, view, view_args, @voo)
             with_voo voo do
-              haml_to_html template, view_args
+              haml_to_html template, view_args, nil, path: template_path
             end
           end
         end
 
-        def haml_template_render_block_with_locals view, template
+        def haml_template_render_block_with_locals view, template_path, &block
+          template = ::File.read template_path
           proc do |view_args|
             instance_exec view_args, &block
             locals = instance_variables.each_with_object({}) do |var, h|
@@ -47,7 +49,7 @@ class Card
             end
             voo = View.new(self, view, view_args, @voo)
             with_voo voo do
-              haml_to_html template, locals
+              haml_to_html template, locals, nil, path: template_path
             end
           end
         end
@@ -69,9 +71,16 @@ class Card
           ::File.exist?(path) && path
         end
 
-        def haml_to_html haml, locals, a_binding=nil
+        def haml_to_html haml, locals, a_binding=nil, debug_info={}
           a_binding ||= binding
           ::Haml::Engine.new(haml).render a_binding, locals || {}
+        rescue Haml::SyntaxError => e
+          info =
+            if debug_info[:path]
+              Pathname.new(debug_info[:path])
+                      .relative_path_from(Pathname.new(Dir.pwd))
+            end
+          fail Card::Error, "haml syntax error in #{info}: #{e.message}"
         end
       end
     end

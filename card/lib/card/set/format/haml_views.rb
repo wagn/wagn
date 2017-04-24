@@ -24,7 +24,7 @@ class Card
         def haml_view_block view, &block
           template = ::File.read haml_template_path view
           if block_given?
-            haml_temlate_render_block_with_locals view, template, &block
+            haml_template_render_block_with_locals view, template, &block
           else
             haml_template_render_block view, template
           end

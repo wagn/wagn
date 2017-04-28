@@ -61,7 +61,8 @@ class Card
                            link_to linked_to_by
                            include included_by                                ),
       conjunction:     %w(and or all any),
-      special:         %w(found_by not sort match complete extension_type),
+      special:         %w(found_by not sort match name_match complete junction_complete
+                          extension_type),
       ignore:          %w(prepend append view params vars size)
     }.each_with_object({}) do |pair, h|
       pair[1].each { |v| h[v.to_sym] = pair[0] }

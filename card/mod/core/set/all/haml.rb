@@ -74,4 +74,3 @@ format do
     haml_template_path view, set_path
   end
 end
-

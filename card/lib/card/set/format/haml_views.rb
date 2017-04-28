@@ -67,7 +67,7 @@ class Card
 
         def try_haml_template_path template_path, view, source_dir, ext="haml"
           path = ::File.expand_path("#{template_path}/#{view}.#{ext}", source_dir)
-                   .sub(%r{(/mod/[^/]+)/set/}, "\\1/#{TEMPLATE_DIR}/")
+                       .sub(%r{(/mod/[^/]+)/set/}, "\\1/#{TEMPLATE_DIR}/")
           ::File.exist?(path) && path
         end
 
@@ -80,7 +80,7 @@ class Card
               Pathname.new(debug_info[:path])
                       .relative_path_from(Pathname.new(Dir.pwd))
             end
-          fail Card::Error, "haml syntax error in #{info}: #{e.message}"
+          raise Card::Error, "haml syntax error in #{info}: #{e.message}"
         end
       end
     end

@@ -1,4 +1,3 @@
-
 class Card
   class Query
     module Attributes
@@ -6,8 +5,8 @@ class Card
         found_by_cards(val).compact.each do |c|
           unless c && c.respond_to?(:wql_hash)
             raise Card::Error::BadQuery,
-                              '"found_by" value must be valid Search, ' \
-                              "but #{c.name} is a #{c.type_name}"
+                  '"found_by" value must be valid Search, ' \
+                  "but #{c.name} is a #{c.type_name}"
           end
           subquery c.wql_hash.merge(unjoined: true, context: c.name)
         end

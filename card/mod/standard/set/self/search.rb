@@ -42,12 +42,17 @@ format :html do
   end
 
   view :title, cache: :never do
-    vars = root.search_params[:vars]
-    if vars && vars[:keyword]
+    if (keyword = search_keyword)
       voo.title = %(Search results for: <span class="search-keyword">)\
-                         "#{vars[:keyword]}</span>"
+                         "#{keyword}</span>"
     end
     super()
+  end
+
+  def search_keyword
+    vars =
+      root.respond_to?(:search_params) ? root.search_params[:vars] : search_params[:vars]
+    vars && vars[:keyword]
   end
 end
 

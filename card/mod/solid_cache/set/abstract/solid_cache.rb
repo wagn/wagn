@@ -79,7 +79,7 @@ module ClassMethods
 end
 
 def expire_solid_cache _changed_card=nil
-  return unless solid_cache?
+  return unless solid_cache? && solid_cache_card.real?
   Auth.as_bot do
     solid_cache_card.delete!
   end

@@ -17,6 +17,8 @@ class Card
         template "format_spec_template.erb", format_path("spec")
       end
 
+      private
+
       def format_path modifier=nil
         suffix = modifier ? "_#{modifier}" : nil
         filename = "#{module_name}_format#{suffix}.rb"

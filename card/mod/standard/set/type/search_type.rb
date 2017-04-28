@@ -53,6 +53,11 @@ format :rss do
 end
 
 format :html do
+  view :closed do
+    voo.hide :closed_content
+    super()
+  end
+
   view :closed_content, cache: :never do
     if @depth > max_depth
       "..."

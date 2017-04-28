@@ -65,22 +65,12 @@ format do
   #   def view_template_path view
   #     super(view, __FILE__)
   #   end
+
+  include Card::Set::Format::HamlViews
+
   def view_template_path view, tmp_set_path=__FILE__
-    basename = ::File.basename(tmp_set_path, ".rb")
-    try_view_template_path("../#{view}", tmp_set_path) ||
-      try_view_template_path("../#{basename}/#{view}", tmp_set_path) ||
-      raise(Card::Error, "can't find haml template for #{view}")
-  end
-
-  def try_view_template_path template_path, tmp_set_path, ext="haml"
-    path = ::File.expand_path("#{template_path}.#{ext}", tmp_set_path)
-      .gsub(%r{/tmp/set/mod\d+-([^/]+)/}, '/mod/\1/view/')
-    ::File.exist?(path) && path
-  end
-
-  def haml_to_html haml, locals, a_binding=nil
-    a_binding ||= binding
-    ::Haml::Engine.new(haml).render a_binding, locals || {}
+    set_path =
+      tmp_set_path.gsub(%r{/tmp/set/mod\d+-([^/]+)/}, '/mod/\1/template/')
+    haml_template_path view, set_path
   end
 end
-

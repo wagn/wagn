@@ -1,0 +1,10 @@
+Description:
+    Generates a haml template.
+
+Example:
+    wagn generate card:template standard type tshirt core
+
+    This will create:
+        mod/standard/template/type/tshirt/core.haml
+
+

@@ -75,12 +75,14 @@ class Card
           a_binding ||= binding
           ::Haml::Engine.new(haml).render a_binding, locals || {}
         rescue Haml::SyntaxError => e
-          info =
-            if debug_info[:path]
-              Pathname.new(debug_info[:path])
-                      .relative_path_from(Pathname.new(Dir.pwd))
-            end
-          raise Card::Error, "haml syntax error in #{info}: #{e.message}"
+          raise Card::Error,
+                "haml syntax error #{template_location(debug_info)}: #{e.message}"
+        end
+
+        def template_location debug_info
+          return "" unless debug_info[:path]
+          Pathname.new(debug_info[:path])
+                  .relative_path_from(Pathname.new(Dir.pwd))
         end
       end
     end

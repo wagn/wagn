@@ -61,6 +61,10 @@ class Card
         self
       end
 
+      def with_set_block
+
+      end
+
       def format_with_set set, format_type=:base
         format = format format_type
         with_set set do |extended_set|

@@ -42,9 +42,7 @@ describe Card::Format do
     let(:url_text1) do
       "with external free link http://localhost:2020/path?cgi=foo&bar=baz"
     end
-    let(:url_text2) do
-      "with external in link syntax: [[http://brain.org/Home|extra]]"
-    end
+    let(:url_text2) { "with external in link syntax: [[http://brain.org/Home|extra]]" }
     let(:url_text3) { "with internal lik [[A]]" }
     let(:url_text4) { "with internal lik [[Home|display text]]" }
     let(:url_text5) do
@@ -93,6 +91,12 @@ describe Card::Format do
       expect(text_format.card_path(card.name)).to eq "/#{card.name}"
       expect(html_format.card_url(card.name))
         .to eq "http://test.host/#{card.name}"
+    end
+  end
+
+  describe "async views" do
+    it "works" do
+      Card["A"].format(:html)
     end
   end
 end

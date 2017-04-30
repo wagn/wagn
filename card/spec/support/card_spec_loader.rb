@@ -71,6 +71,7 @@ class CardSpecLoader
       require File.expand_path "../card_spec_helper.rb", __FILE__
       RSpec::Core::ExampleGroup.send :include, Card::SpecHelper
       Card.send :include, Card::SpecHelper::CardHelper
+      Card.send :include, Card::SpecHelper::SetHelper
       Card.send :extend, Card::SpecHelper::CardHelper::ClassMethods
     end
 

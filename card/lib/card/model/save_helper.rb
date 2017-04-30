@@ -12,9 +12,9 @@ class Card
       def as_user user_name
         current = Card::Auth.current_id
         Card::Auth.current_id = Card.fetch_id user_name
-        result = yield
+        yield
+      ensure
         Card::Auth.current_id = current
-        result
       end
 
       def create_card name_or_args, content_or_args=nil

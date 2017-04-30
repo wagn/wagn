@@ -22,24 +22,26 @@ class Card
       #   > render :with_instance_variables  # => "Hello haml"
       module HamlViews
         def haml_view_block view, &block
-          template = ::File.read haml_template_path view
+          template_path = haml_template_path view
           if block_given?
-            haml_temlate_render_block_with_locals view, template, &block
+            haml_template_render_block_with_locals view, template_path, &block
           else
-            haml_template_render_block view, template
+            haml_template_render_block view, template_path
           end
         end
 
-        def haml_template_render_block view, template
+        def haml_template_render_block view, template_path
+          template = ::File.read template_path
           proc do |view_args|
             voo = View.new(self, view, view_args, @voo)
             with_voo voo do
-              haml_to_html template, view_args
+              haml_to_html template, view_args, nil, path: template_path
             end
           end
         end
 
-        def haml_template_render_block_with_locals view, template
+        def haml_template_render_block_with_locals view, template_path, &block
+          template = ::File.read template_path
           proc do |view_args|
             instance_exec view_args, &block
             locals = instance_variables.each_with_object({}) do |var, h|
@@ -47,30 +49,40 @@ class Card
             end
             voo = View.new(self, view, view_args, @voo)
             with_voo voo do
-              haml_to_html template, locals
+              haml_to_html template, locals, nil, path: template_path
             end
           end
         end
 
-        def haml_template_path view
-          source = source_location
+        def haml_template_path view, source=nil
+          source ||= source_location
           basename = ::File.basename(source, ".rb")
+          source_dir = ::File.dirname(source)
           ["./#{basename}", "."].each do |template_dir|
-            path = try_haml_template_path(template_dir, view, source)
+            path = try_haml_template_path(template_dir, view, source_dir)
             return path if path
           end
           raise(Card::Error, "can't find haml template for #{view}")
         end
 
-        def try_haml_template_path template_path, view, source_path, ext="haml"
-          path = ::File.expand_path("#{template_path}/#{view}.#{ext}", source_path)
+        def try_haml_template_path template_path, view, source_dir, ext="haml"
+          path = ::File.expand_path("#{template_path}/#{view}.#{ext}", source_dir)
                        .sub(%r{(/mod/[^/]+)/set/}, "\\1/#{TEMPLATE_DIR}/")
           ::File.exist?(path) && path
         end
 
-        def haml_to_html haml, locals, a_binding=nil
+        def haml_to_html haml, locals, a_binding=nil, debug_info={}
           a_binding ||= binding
           ::Haml::Engine.new(haml).render a_binding, locals || {}
+        rescue Haml::SyntaxError => e
+          raise Card::Error,
+                "haml syntax error #{template_location(debug_info)}: #{e.message}"
+        end
+
+        def template_location debug_info
+          return "" unless debug_info[:path]
+          Pathname.new(debug_info[:path])
+                  .relative_path_from(Pathname.new(Dir.pwd))
         end
       end
     end

@@ -1,20 +1,14 @@
-
 class Card
   class Query
     module Attributes
       def found_by val
         found_by_cards(val).compact.each do |c|
-          if c && [SearchTypeID, SetID].include?(c.type_id)
-            # FIXME: - move this check to set mods!
-
-            subquery(
-              c.wql_hash.merge(unjoined: true, context: c.name)
-            )
-          else
+          unless c && c.respond_to?(:wql_hash)
             raise Card::Error::BadQuery,
                   '"found_by" value must be valid Search, ' \
                   "but #{c.name} is a #{c.type_name}"
           end
+          subquery c.wql_hash.merge(unjoined: true, context: c.name)
         end
       end
 
@@ -40,26 +34,47 @@ class Card
           ].map do |field|
             %(#{field} #{cxn.match quote("[[:<:]]#{v}[[:>:]]")})
           end
-          "(#{name_or_content.join ' OR '})"
+          or_join name_or_content
         end
-        add_condition "(#{val_list.join ' AND '})"
+        add_condition and_join(val_list)
+      end
+
+      def name_match val
+        name_like "%#{val}%"
       end
 
       def complete val
         no_plus_card = (val =~ /\+/ ? "" : "and right_id is null")
         # FIXME: -- this should really be more nuanced --
         # it breaks down after one plus
+        name_like "#{val}%",no_plus_card
+      end
 
-        add_condition(
-          " lower(#{table_alias}.name) LIKE" \
-          " lower(#{quote(val.to_s + '%')}) #{no_plus_card}"
-        )
+      def junction_complete val
+        name_like ["#{val}%", "%+#{val}%"]
       end
 
       def extension_type _val
         # DEPRECATED LONG AGO!!!
         Rails.logger.info "using DEPRECATED extension_type in WQL"
         interpret right_plus: AccountID
+      end
+
+      private
+
+      def name_like patterns, extra_cond=""
+        likes = Array(patterns).map do |pat|
+                  "lower(#{table_alias}.name) LIKE lower(#{quote pat})"
+                end
+        add_condition "#{or_join(likes)} #{extra_cond}"
+      end
+
+      def or_join conditions
+        "(#{Array(conditions).join ' OR '})"
+      end
+
+      def and_join conditions
+        "(#{Array(conditions).join ' AND '})"
       end
     end
   end

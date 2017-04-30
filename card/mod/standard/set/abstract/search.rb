@@ -16,6 +16,7 @@ def returning item, args
 end
 
 def item_cards args={}
+  args[:limit] ||= 0
   returning(:card, args) { search args }
 end
 

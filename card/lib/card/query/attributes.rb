@@ -47,7 +47,7 @@ class Card
         no_plus_card = (val =~ /\+/ ? "" : "and right_id is null")
         # FIXME: -- this should really be more nuanced --
         # it breaks down after one plus
-        name_like "#{val}%",no_plus_card
+        name_like "#{val}%", no_plus_card
       end
 
       def junction_complete val
@@ -63,9 +63,10 @@ class Card
       private
 
       def name_like patterns, extra_cond=""
-        likes = Array(patterns).map do |pat|
-                  "lower(#{table_alias}.name) LIKE lower(#{quote pat})"
-                end
+        likes =
+          Array(patterns).map do |pat|
+            "lower(#{table_alias}.name) LIKE lower(#{quote pat})"
+          end
         add_condition "#{or_join(likes)} #{extra_cond}"
       end
 

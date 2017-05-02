@@ -20,11 +20,10 @@ class Card
       end
 
       def canonicalize_operator
-        if target = OPERATORS[@operator.to_s]
-          @operator = target
-        else
+        unless (target = OPERATORS[@operator.to_s])
           raise Card::Error::BadQuery, "Invalid Operator #{@operator}"
         end
+        @operator = target
       end
 
       def sqlize v
@@ -47,7 +46,7 @@ class Card
                      ["#{table}.db_content", v]
                    else
                      ["#{table}.#{safe_sql field}", v]
-          end
+                   end
 
         v = v[0] if Array === v && v.length == 1 && op != "in"
         if op == "~"

@@ -60,7 +60,7 @@ format :html do
   end
 
   def wql_search?
-    card.keyword_contains_wql? search_vars
+    card.keyword_contains_wql? vars: search_vars
   end
 end
 

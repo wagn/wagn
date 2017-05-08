@@ -74,7 +74,7 @@ end
 def stash_set_specific_attributes args
   @set_specific = {}
   Card.set_specific_attributes.each do |key|
-    @set_specific[key] = args.delete(key) if args[key]
+    @set_specific[key] = args.delete(key) if args.has_key?(key)
   end
 end
 

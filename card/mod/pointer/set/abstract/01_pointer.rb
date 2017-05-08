@@ -56,7 +56,8 @@ end
 format :html do
   view :core do
     with_paging do |paging_args|
-      wrap_with :div, pointer_items(paging_args), class: "pointer-list"
+      wrap_with :div, pointer_items(paging_args.extract!(:limit, :offset)),
+                class: "pointer-list"
     end
   end
 

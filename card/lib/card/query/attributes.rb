@@ -22,6 +22,10 @@ class Card
         end
       end
 
+      # Implements the match attribute that matches always against content and name.
+      # That's different from the match operator that can be restricted to names or
+      # content.
+      # Example: { match: "name or content" } vs. { name: ["match", "a name"] }
       def match val
         cxn, val = match_prep val
         val.gsub!(/[^#{Card::Name::OK4KEY_RE}]+/, " ")

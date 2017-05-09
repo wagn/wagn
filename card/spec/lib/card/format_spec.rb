@@ -10,6 +10,7 @@ describe Card::Format do
         format.show_view?(:menu, default_viz)
       end
     end
+
     it "respects defaults" do
       expect(show_menu?({}, :show)).to be_truthy
       expect(show_menu?({}, :hide)).to be_falsey
@@ -42,9 +43,7 @@ describe Card::Format do
     let(:url_text1) do
       "with external free link http://localhost:2020/path?cgi=foo&bar=baz"
     end
-    let(:url_text2) do
-      "with external in link syntax: [[http://brain.org/Home|extra]]"
-    end
+    let(:url_text2) { "with external in link syntax: [[http://brain.org/Home|extra]]" }
     let(:url_text3) { "with internal lik [[A]]" }
     let(:url_text4) { "with internal lik [[Home|display text]]" }
     let(:url_text5) do
@@ -67,18 +66,18 @@ describe Card::Format do
     it "formats html links" do
       cobj = Card::Content.new url_text1, html_format
       expect(cobj.to_s).to eq(
-        'with external free link <a target="_blank" class="external-link" ' \
+                             'with external free link <a target="_blank" class="external-link" ' \
         'href="http://localhost:2020/path?cgi=foo&amp;bar=baz">' \
         "http://localhost:2020/path?cgi=foo&bar=baz</a>"
-      )
+                           )
       cobj = Card::Content.new url_text2 + url_text3 + url_text4, html_format
       expect(cobj.to_s).to eq url_text2 + url_text3 + url_text4
       cobj = Card::Content.new url_text5, html_format
       expect(cobj.to_s).to eq(
-        'external with port: <a target="_blank" class="external-link" ' \
+                             'external with port: <a target="_blank" class="external-link" ' \
         'href="http://localhost:2020/path?cgi=foo+bar=baz">' \
         "http://localhost:2020/path?cgi=foo+bar=baz</a> after "
-      )
+                           )
     end
 
     it "formats page_path" do
@@ -93,6 +92,26 @@ describe Card::Format do
       expect(text_format.card_path(card.name)).to eq "/#{card.name}"
       expect(html_format.card_url(card.name))
         .to eq "http://test.host/#{card.name}"
+    end
+  end
+
+  describe "async view" do
+    let(:format) do
+      Card["A"].format_with do
+        view :lazy_view, async: true do
+          "content"
+        end
+      end
+    end
+
+    it "renders placeholder" do
+      expect(format.render(:lazy_view))
+        .to eq "<card-view-placeholder data-url=/A?view=lazy_view_async_content/>"
+    end
+
+    it "renders content in _async_content view" do
+      expect(format.render(:lazy_view_async_content))
+        .to eq "content"
     end
   end
 end

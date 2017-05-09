@@ -10,7 +10,7 @@ format :html do
     label = formgroup_label opts[:editor], title
     editor_body = editor_wrap opts[:editor], &block
     help_text = formgroup_help_text opts[:help]
-    "#{label}<div>#{editor_body} #{help_text}</div>"
+    "#{label}<div>#{help_text} #{editor_body}</div>"
   end
 
   def formgroup_label editor_type, title

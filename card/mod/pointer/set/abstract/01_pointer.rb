@@ -108,7 +108,6 @@ end
 
 format :rss do
   def raw_feed_items
-    binding.pry
     @raw_feed_items ||= card.item_cards(limit: limit, offset: offset)
   end
 end

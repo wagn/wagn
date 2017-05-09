@@ -59,6 +59,10 @@ class Card < ActiveRecord::Base
     :only_storage_phase           # used to save subcards
   )
 
+  def serializable_attributes
+    self.class.serializable_attributes + @set_specific.keys
+  end
+
   attr_accessor :follower_stash
 
   define_callbacks(

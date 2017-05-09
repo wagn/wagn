@@ -20,7 +20,7 @@ end
 
 format do
   def default_limit
-     20
+    20
   end
 
   def item_links args={}

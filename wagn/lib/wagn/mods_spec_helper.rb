@@ -4,6 +4,7 @@
 
 require "wagn" # only for card_gem_root
 require File.join Wagn.card_gem_root, "spec/support/card_spec_loader.rb"
+require File.join Wagn.card_gem_root, "spec/support/matchers.rb"
 
 CardSpecLoader.init
 

@@ -186,7 +186,7 @@ format :html do
   view :help, tags: :unknown_ok do
     help_text = voo.help || rule_based_help
     return "" unless help_text.present?
-    wrap_with :div, help_text, class: classy("help-text")
+    wrap_with :div, help_text, class: classy("help-text #{args[:help_class]}")
   end
 
   def rule_based_help

@@ -60,7 +60,7 @@ class Card < ActiveRecord::Base
   )
 
   def serializable_attributes
-    self.class.serializable_attributes + @set_specific.keys
+    self.class.serializable_attributes + set_specific.keys
   end
 
   attr_accessor :follower_stash

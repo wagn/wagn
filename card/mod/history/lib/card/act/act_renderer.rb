@@ -6,6 +6,7 @@ class Card
       def initialize format, act, args
         @format = format
         @act = act
+        @act_card = act.card
         @args = args
         @card = @format.card
         @context = @args[:act_context]
@@ -26,6 +27,7 @@ class Card
       end
 
       def render
+        return "" unless @act_card
         act_accordion
       end
 
@@ -48,7 +50,7 @@ class Card
       end
 
       def absolute_title
-        accordion_expand_link(@act.card.name)
+        accordion_expand_link(@act_card.name)
       end
 
       def details
@@ -68,17 +70,18 @@ class Card
       def act_links
         [
           link_to_history,
-          (link_to_act_card unless @act.card.trash)
+          (link_to_act_card unless @act_card.trash)
         ].compact.join " "
       end
 
       def link_to_act_card
-        link_to_card @act.card, glyphicon("new-window")
+        link_to_card @act_card, glyphicon("new-window")
       end
 
       def link_to_history
-        link_to_card @act.card, glyphicon("time"), path: { view: :history,
-                                                           look_in_trash: true }
+        link_to_card @act_card, glyphicon("time"),
+                     path: { view: :history, look_in_trash: true },
+                     rel: "nofollow"
       end
 
       def approved_actions

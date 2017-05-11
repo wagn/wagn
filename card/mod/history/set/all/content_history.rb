@@ -121,7 +121,7 @@ def last_act
          last_act_on_self.acted_at > action.act.acted_at)
         last_act_on_self
       else
-        action.act
+        action.act || last_act_on_self
       end
     end
 end

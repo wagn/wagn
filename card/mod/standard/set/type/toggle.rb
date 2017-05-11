@@ -2,7 +2,7 @@ def checked?
   content == "1"
 end
 
-view :core do |_args|
+view :core do
   case card.raw_content.to_i
   when 1 then "yes"
   when 0 then "no"

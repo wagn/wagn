@@ -17,10 +17,11 @@ def parties
 end
 
 def among? ok_ids
-  ok_ids.each do |ok_id|
-    return true if parties.member? ok_id
+  ok_ids.any? do |ok_id|
+    parties.member? ok_id
   end
   ok_ids.member? Card::AnyoneID
+  ok_ids.member?(Card::AnyoneWithRoleID) && all_roles.size > 1
 end
 
 def own_account?

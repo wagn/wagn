@@ -129,11 +129,11 @@ describe Card::Set::All::Account do
       expect(@read_rules.member?(Card.fetch("*all+*read").id)).to be_truthy
     end
 
-    it "13 more should apply to Joe Admin" do
+    it "14 more should apply to Joe Admin" do
       # includes lots of account rules...
       Card::Auth.as("joe_admin") do
         ids = Card::Auth.as_card.read_rules
-        expect(ids.length).to eq(@read_rules.size + 18)
+        expect(ids.length).to eq(@read_rules.size + 14)
       end
     end
   end

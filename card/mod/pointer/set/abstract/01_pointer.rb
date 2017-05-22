@@ -113,13 +113,25 @@ format :rss do
 end
 
 format :json do
+  def max_depth
+    params[:max_depth] || 2
+  end
+
   view :export_items do |args|
     item_args = args.merge view: :export
     card.known_item_cards.map do |item_card|
       nest_item item_card, item_args
     end.flatten.reject(&:blank?)
   end
+
+  def essentials
+    return if @depth > max_depth
+    item_cards.map do |item|
+      nest item, view: :essentials
+    end
+  end
 end
+
 
 # If a card's type and content are updated in the same action, the new module
 # will override the old module's events and functions. But this event is only

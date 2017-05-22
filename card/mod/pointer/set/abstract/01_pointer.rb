@@ -114,7 +114,7 @@ end
 
 format :json do
   def max_depth
-    params[:max_depth] || 2
+    params[:max_depth] || 1
   end
 
   view :export_items do |args|

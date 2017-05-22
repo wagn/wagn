@@ -395,7 +395,9 @@ format :csv do
   end
 
   def column_title opts
-    if %w(name link).member? opts[:view]
+    if opts[:title]
+      opts[:title]
+    elsif %w(name link).member? opts[:view]
       opts[:view]
     else
       opts[:nest_name].to_name.tag

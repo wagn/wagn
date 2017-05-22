@@ -182,6 +182,7 @@ class Card
         when Card
           val.name = absolutize_subcard_name key
           new_by_card val
+        when nil then next
         else new_by_attributes key, val
         end
       end

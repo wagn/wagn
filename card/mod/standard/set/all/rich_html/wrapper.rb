@@ -119,7 +119,9 @@ format :html do
 
   def frame_help
     # TODO: address these args
-    _optional_render :help, help_class: "alert alert-info"
+    with_class_up "help-text", "alert alert-info" do
+      _optional_render :help
+    end
   end
 
   def frame_and_form action, form_opts={}

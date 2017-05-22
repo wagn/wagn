@@ -35,9 +35,17 @@ format do
 
   # DATE VIEWS
 
-  view(:created_at, closed: true) { time_ago_in_words card.created_at }
-  view(:updated_at, closed: true) { time_ago_in_words card.updated_at }
-  view(:acted_at,   closed: true) { time_ago_in_words card.acted_at   }
+  view(:created_at, closed: true) { date_view card.created_at }
+  view(:updated_at, closed: true) { date_view card.updated_at }
+  view(:acted_at,   closed: true) { date_view card.acted_at   }
+
+  def date_view date
+    if voo.variant
+      date.strftime voo.variant
+    else
+      time_ago_in_words date
+    end
+  end
 
   # CONTENT VIEWS
 

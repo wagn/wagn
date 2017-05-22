@@ -132,7 +132,6 @@ format :json do
   end
 end
 
-
 # If a card's type and content are updated in the same action, the new module
 # will override the old module's events and functions. But this event is only
 # on pointers -- other type cards do not have this event,

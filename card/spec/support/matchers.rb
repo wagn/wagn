@@ -1,6 +1,12 @@
+RSpec::Matchers.define :be_valid do
+  match do |card|
+    value_match?(true, card.errors.empty?)
+  end
+end
+
 RSpec::Matchers.define :be_invalid do
   match do |card|
-    @valid = card.valid?
+    @valid = card.errors.empty?
     # card.errors returns an array, hence we need an extra include matcher
     values_match?(false, @valid) &&
       values_match?(include(@error_msg), card.errors[@error_key])

@@ -6,7 +6,11 @@ end
 
 RSpec::Matchers.define :be_invalid do
   match do |card|
-    @valid = card.errors.empty?
+    # valid? clears errors
+    # For a new card we have to call valid? to create the errors.
+    # For a updated card we have to check errors because with valid? we would
+    # loose the errors.
+    @valid = card.errors.empty? && card.valid?
     # card.errors returns an array, hence we need an extra include matcher
     values_match?(false, @valid) &&
       values_match?(include(@error_msg), card.errors[@error_key])

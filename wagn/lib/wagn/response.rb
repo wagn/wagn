@@ -51,10 +51,6 @@ module Wagn
       send_file File.join(path, filename), x_sendfile: true
     end
 
-    def page_opts_from_params
-      (params[:slot] || {}).deep_symbolize_keys
-    end
-
     def format_from_params
       return :file if params[:explicit_file]
       format = request.parameters[:format]

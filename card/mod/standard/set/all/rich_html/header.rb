@@ -1,29 +1,4 @@
 format :html do
-  # TODO: find these a better home.
-  def class_up klass, classier, force=false
-    key = klass.to_s
-    return if !force && class_list[key]
-    class_list[key] = classier.to_s
-  end
-
-  # don't use in the given block the additional class that
-  # was added to `klass`
-  def without_upped_class klass
-    tmp_class = class_list.delete klass
-    result = yield tmp_class
-    class_list[klass] = tmp_class
-    result
-  end
-
-  def class_list
-    @class_list ||= {}
-  end
-
-  def classy *classes
-    classes = Array.wrap(classes).flatten
-    [classes, class_list[classes.first]].flatten.compact.join " "
-  end
-
   view :header do
     voo.hide :toggle, :toolbar
     main_header + _optional_render_toolbar

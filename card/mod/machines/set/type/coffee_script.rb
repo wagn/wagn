@@ -4,8 +4,8 @@ require "coffee-script"
 include_set Abstract::Script
 
 format :html do
-  def default_editor_args args
-    args[:ace_mode] ||= "coffee"
+  def ace_mode
+    :coffee
   end
 end
 

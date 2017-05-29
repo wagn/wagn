@@ -151,7 +151,7 @@ format :html do
 
     card_form action_args, class: "card-rule-form" do |_form|
       [hidden_tags(success: @edit_rule_success),
-       editor,
+       rules_editor,
        edit_rule_buttons].join
     end
   end
@@ -202,7 +202,7 @@ format :html do
                   href: path(view: cancel_view, success: false)
   end
 
-  def editor
+  def rule_editor
     wrap_with(:div, class: "card-editor") do
       [rules_type_formgroup,
        rule_content_formgroup,

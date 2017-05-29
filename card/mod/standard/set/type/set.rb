@@ -5,7 +5,7 @@ format :html do
   COMMON_RULE_SETTINGS =
     [:create, :read, :update, :delete, :structure, :default, :style].freeze
 
-  view :core, cache: :never do |args|
+  view :core, cache: :never do
     voo.show :set_label, :rule_navbar
     voo.hide :set_navbar
     rule_view = params[:rule_view] || :common_rules

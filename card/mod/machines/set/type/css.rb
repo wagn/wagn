@@ -2,7 +2,6 @@
 require "sass"
 include_set Abstract::Machine
 include_set Abstract::MachineInput
-include_set Abstract::AceEditor
 
 store_machine_output filetype: "css"
 
@@ -36,8 +35,12 @@ format do
 end
 
 format :html do
-  def default_editor_args args
-    args[:ace_mode] = "css"
+  def editor
+    :ace
+  end
+
+  def ace_mode
+    :css
   end
 
   def default_nest_view

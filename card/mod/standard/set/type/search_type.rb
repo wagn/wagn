@@ -1,4 +1,3 @@
-include_set Abstract::AceEditor
 include_set Abstract::WqlSearch
 
 format do
@@ -69,7 +68,11 @@ format :html do
     end
   end
 
-  def default_editor_args args
-    args[:ace_mode] = "json"
+  def editor
+    :ace
+  end
+
+  def ace_mode
+    :json
   end
 end

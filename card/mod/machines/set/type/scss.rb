@@ -12,3 +12,10 @@ format do
                        "#{e.message}"
   end
 end
+
+format :html do
+  def ace_mode
+    :scss
+  end
+end
+

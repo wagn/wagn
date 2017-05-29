@@ -63,13 +63,17 @@ def permission_rule_id_and_class action
   ]
 end
 
+def left_permission_rule_id_and_class action
+  lcard = left_or_new(skip_virtual: true, skip_modules: true)
+  if action == :create && lcard.real? && lcard.action != :create
+    action = :update
+  end
+  lcard.permission_rule_id_and_class(action).first
+end
+
 def applicable_permission_rule_id direct_rule, action
   if junction? && direct_rule.db_content =~ /^\[?\[?_left\]?\]?$/
-    lcard = left_or_new(skip_virtual: true, skip_modules: true)
-    if action == :create && lcard.real? && !lcard.action == :create
-      action = :update
-    end
-    lcard.permission_rule_id_and_class(action).first
+    left_permission_rule_id_and_class action
   else
     direct_rule.id
   end

@@ -1,3 +1,5 @@
-view :editor do
-  text_field :content, class: "card-content"
+format :html do
+  def editor
+    :phrase
+  end
 end

@@ -67,11 +67,13 @@ format :html do
 
   view :edit do
     voo.structure = true
+    voo.edit_structure = [[:email, "email"], [:password, "password"]]
     super()
   end
 
   view :edit_in_form do
     voo.structure = true
+    voo.edit_structure = [[:email, "email"], [:password, "password"]]
     super()
   end
 end

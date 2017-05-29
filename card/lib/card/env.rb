@@ -40,6 +40,11 @@ class Card
         self[:params] ||= {}
       end
 
+      def slot_opts
+        return {} unless params[:slot].is_a? Hash
+        params[:slot].deep_symbolize_keys
+      end
+
       def session
         self[:session] ||= {}
       end

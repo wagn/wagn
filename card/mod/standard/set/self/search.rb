@@ -42,17 +42,25 @@ format :html do
   end
 
   view :title, cache: :never do
-    if (keyword = search_keyword)
-      voo.title = %(Search results for: <span class="search-keyword">)\
-                         "#{keyword}</span>"
-    end
-    super()
+    return super() unless (keyword = search_keyword) &&
+                          (title = keyword_search_title(keyword))
+    voo.title = title
+  end
+
+  def keyword_search_title keyword
+    %(Search results for: <span class="search-keyword">#{keyword}</span>)
   end
 
   def search_keyword
-    vars =
-      root.respond_to?(:search_params) ? root.search_params[:vars] : search_params[:vars]
-    vars && vars[:keyword]
+    (vars = search_vars) && vars[:keyword]
+  end
+
+  def search_vars
+    root.respond_to?(:search_params) ? root.search_params[:vars] : search_params[:vars]
+  end
+
+  def wql_search?
+    card.keyword_contains_wql? vars: search_vars
   end
 end
 

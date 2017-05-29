@@ -4,9 +4,8 @@ Card.error_codes.merge! permission_denied: [:denial, 403],
 
 module ClassMethods
   def repair_all_permissions
-    Card.where(
-      "(read_rule_class is null or read_rule_id is null) and trash is false"
-    ).each do |broken_card|
+    Card.where("(read_rule_class is null or read_rule_id is null) and trash is false")
+        .each do |broken_card|
       broken_card.include_set_modules
       broken_card.repair_permissions!
     end
@@ -53,34 +52,35 @@ def anyone_can? action
   who_can(action).include? Card::AnyoneID
 end
 
-def permission_rule_id_and_class action
+def direct_rule_card action
   direct_rule_id = rule_card_id action
   require_permission_rule! direct_rule_id, action
-  direct_rule = Card.fetch direct_rule_id, skip_modules: true
+  Card.fetch direct_rule_id, skip_modules: true
+end
+
+def permission_rule_id action
+  direct_rule = direct_rule_card action
+  applicable_permission_rule_id direct_rule, action
+end
+
+def permission_rule_id_and_class action
+  direct_rule = direct_rule_card action
   [
     applicable_permission_rule_id(direct_rule, action),
     direct_rule.rule_class_name
   ]
 end
 
-def left_permission_rule_id_and_class action
-  lcard = left_or_new(skip_virtual: true, skip_modules: true)
-  if action == :create && lcard.real? && lcard.action != :create
-    action = :update
-  end
-  lcard.permission_rule_id_and_class(action).first
-end
-
 def applicable_permission_rule_id direct_rule, action
   if junction? && direct_rule.db_content =~ /^\[?\[?_left\]?\]?$/
-    left_permission_rule_id_and_class action
+    lcard.permission_rule_id action
   else
     direct_rule.id
   end
 end
 
 def permission_rule_card action
-  Card.fetch permission_rule_id_and_class(action).first
+  Card.fetch permission_rule_id(action)
 end
 
 def require_permission_rule! rule_id, action
@@ -144,7 +144,7 @@ end
 
 def ok_to_read
   return if Auth.always_ok?
-  @read_rule_id ||= permission_rule_id_and_class(:read).first
+  @read_rule_id ||= permission_rule_id(:read)
   return if Auth.as_card.read_rules.member? @read_rule_id
   deny_because you_cant "read this"
 end

@@ -19,6 +19,10 @@ stage_method :changed_item_cards do
 end
 
 format do
+  def default_limit
+    20
+  end
+
   def item_links args={}
     card.item_cards(args).map do |item_card|
       subformat(item_card).render_link
@@ -40,7 +44,8 @@ format do
   end
 
   def pointer_items args={}
-    card.item_cards.map do |item_card|
+    page_args = args.extract! :limit, :offset
+    card.item_cards(page_args).map do |item_card|
       nest_item item_card, args do |rendered, item_view|
         wrap_item rendered, item_view
       end
@@ -50,14 +55,19 @@ end
 
 format :html do
   view :core do
-    wrap_with :div, pointer_items, class: "pointer-list"
+    with_paging do |paging_args|
+      wrap_with :div, pointer_items(paging_args.extract!(:limit, :offset)),
+                class: "pointer-list"
+    end
   end
 
   view :closed_content do
     item_view = implicit_item_view
     item_view = item_view == "name" ? "name" : "link"
     wrap_with :div, class: "pointer-list" do
-      pointer_items(view: item_view).join ", "
+      # unlikely that more than 100 items fit in closed content
+      # even if every item is only one character
+      pointer_items(view: item_view, limit: 100, offset: 0).join ", "
     end
   end
 
@@ -98,7 +108,7 @@ end
 
 format :rss do
   def raw_feed_items
-    @raw_feed_items ||= card.item_cards
+    @raw_feed_items ||= card.item_cards(limit: limit, offset: offset)
   end
 end
 

@@ -19,7 +19,6 @@ format :html do
     end
   end
 
-
   view :recent_acts, cache: :never do
     acts = Act.all_viewable.order(id: :desc)
               .page(page_from_params).per(ACTS_PER_PAGE)
@@ -33,3 +32,11 @@ format :html do
     end
   end
 end
+
+format :rss do
+  def feed_item_description_view
+    :blank
+  end
+end
+
+

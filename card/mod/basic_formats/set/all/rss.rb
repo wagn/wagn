@@ -14,8 +14,9 @@ format :rss do
   # FIXME: integrate this with common XML features when it is added
   view :feed, cache: :never do
     begin
-      @xml.instruct! :xml, version: "1.0"
-      @xml.rss version: "2.0" do
+      @xml.instruct! :xml, version: "1.0", standalone: "yes"
+      @xml.rss version: "2.0",
+               "xmlns:content" => "http://purl.org/rss/1.0/modules/content/" do
         @xml.channel do
           @xml.title       render_feed_title
           @xml.description render_feed_description
@@ -39,8 +40,8 @@ format :rss do
   view :feed_item_list, cache: :never do
     raw_feed_items.each do |item|
       @xml.item do
-        # FIXME: yuck.
-        subformat(item).render_feed_item view_changes: (card.id == RecentID)
+        subformat(item).render(:feed_item,
+                               description_view: feed_item_description_view)
       end
     end
   end
@@ -52,11 +53,24 @@ format :rss do
   view :feed_item, cache: :never do |args|
     @xml.title card.name
     add_name_context
-    @xml.description render((args[:view_changes] ? :change : :open_content))
-    @xml.pubDate card.revised_at.to_s(:rfc822)  # updated_at fails on virtual
-    # cards, because not all to_s's take args (just actual dates)
+    @xml.description description(args)
+    @xml.pubDate pub_date
     @xml.link render_url
     @xml.guid render_url
+  end
+
+  def pub_date
+    (card.updated_at || Time.zone.now).to_s(:rfc822)
+    # updated_at fails on virtual
+    # cards, because not all to_s's take args (just actual dates)
+  end
+
+  def description args
+    render(args[:description_view] || :open_content)
+  end
+
+  def feed_item_description_view
+    :open_content
   end
 
   view :feed_description do "" end

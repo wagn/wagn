@@ -57,12 +57,16 @@ end
 
 format :html do
   view :raw do
-    output(
-      [
-        field_nest(:email, view: :titled, title: "email"),
-        field_nest(:password, view: :titled, title: "password")
-      ]
-    )
+    # FIXME: use field_nest instead of parsing content
+    #        Problem: whey you do that then the fields are missing in the sign up form
+    # output(
+    #   [
+    #     field_nest(:email, view: :titled, title: "email"),
+    #     field_nest(:password, view: :titled, title: "password")
+    #   ]
+    # )
+    %({{+#{Card[:email].name}|titled;title:email}}
+      {{+#{Card[:password].name}|titled;title:password}})
   end
 
   view :edit do

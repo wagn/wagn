@@ -57,11 +57,20 @@ end
 
 format :html do
   view :raw do
-    %({{+#{Card[:email].name}|titled;title:email}}
-     {{+#{Card[:password].name}|titled;title:password}})
+    output(
+      [
+        field_nest(:email, view: :titled, title: "email"),
+        field_nest(:password, view: :titled, title: "password")
+      ]
+    )
   end
 
   view :edit do
+    voo.structure = true
+    super()
+  end
+
+  view :edit_in_form do
     voo.structure = true
     super()
   end

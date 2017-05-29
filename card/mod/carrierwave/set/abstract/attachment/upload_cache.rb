@@ -48,6 +48,12 @@ event :delete_cached_upload_file_on_create, :integrate,
   return unless (action = Card::Action.fetch(@action_id_of_cached_upload))
   upload_cache_card.delete_files_for_action action
   action.delete
+end
+
+# at some point uploaded files of canceled file card creation
+# should be deleted. We do this when ever an new file is created.
+event :clear_draft_files, :integrate_with_delay,
+      on: :create do
   Card.delete_tmp_files_of_cached_uploads
 end
 

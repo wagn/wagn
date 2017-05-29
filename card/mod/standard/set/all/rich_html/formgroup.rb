@@ -10,7 +10,7 @@ format :html do
     label = formgroup_label opts[:editor], title
     editor_body = editor_wrap opts[:editor], &block
     help_text = formgroup_help_text opts[:help]
-    "#{label}<div>#{editor_body} #{help_text}</div>"
+    "#{label}<div>#{help_text} #{editor_body}</div>"
   end
 
   def formgroup_label editor_type, title
@@ -27,6 +27,7 @@ format :html do
   end
 
   def formgroup_help_text text=nil
+    return "" if text == false
     class_up "help-text", "help-block"
     voo.help = text if voo && text.to_s != "true"
     _optional_render_help

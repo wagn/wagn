@@ -119,7 +119,7 @@ end
 
 def [] *args
   case args[0]
-  when Fixnum, Range
+  when Integer, Range
     fetch_name = Array.wrap(cardname.parts[args[0]]).compact.join "+"
     Card.fetch(fetch_name, args[1] || {}) unless simple?
   else

@@ -2,6 +2,7 @@ format :html do
 
   TOOLBAR_TITLE = {
     edit: "content",             edit_name: "name",      edit_type: "type",
+
     edit_structure: "structure", edit_nests: "nests",    history: "history",
     common_rules: "common",      recent_rules: "recent", grouped_rules: "all",
     edit_nest_rules: "nests"
@@ -176,7 +177,7 @@ format :html do
   end
 
   def account_split_button
-    toolbar_split_button "account", related: :account do
+    toolbar_split_button "account", related: :account, icon: :user do
       {
         account: link_to_related(:account, "details", path: { view: :edit }),
         roles:   link_to_related(:roles,   "roles"),
@@ -201,7 +202,7 @@ format :html do
   def related_codename related_card
     return nil unless related_card
     tag_card = Card.quick_fetch related_card.cardname.right
-    tag_card && tag_card.codename.to_sym
+    tag_card && tag_card.codename && tag_card.codename.to_sym
   end
 
   def close_link extra_class, opts={}
@@ -254,8 +255,9 @@ format :html do
 
   view :refresh_button do |_args|
     icon = main? ? "refresh" : "new-window"
-    toolbar_button "refresh", icon, card: card,
-                                    path: { slot: { show: :toolbar } }
+    button_args = { card: card,  path: { slot: { show: :toolbar } } }
+    button_args[:class] = "hidden-xs" if card.accountable?
+    toolbar_button "refresh", icon, button_args
   end
 
   view :delete_button do |_args|

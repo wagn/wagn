@@ -189,7 +189,7 @@ Then /^save and open all raw emails$/ do
 end
 
 Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
-  Timeout.timeout(Capybara.default_wait_time) do
+  Timeout.timeout(Capybara.default_max_wait_time) do
     sleep(0.5) while page.evaluate_script("jQuery.active") != 0
   end
   Delayed::Worker.new.work_off
@@ -203,7 +203,7 @@ Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
 end
 
 Then /^No notification should be sent$/ do
-  Timeout.timeout(Capybara.default_wait_time) do
+  Timeout.timeout(Capybara.default_max_wait_time) do
     sleep(0.5) while page.evaluate_script("jQuery.active") != 0
   end
   Delayed::Worker.new.work_off

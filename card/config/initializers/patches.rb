@@ -9,7 +9,7 @@ end
 if defined? BetterErrors
   module BetterErrors
     class StackFrame
-      include Patches::BetterErrors::StackFrame::TmpPath
+      suppress_warnings { include Patches::BetterErrors::StackFrame::TmpPath }
     end
   end
 end

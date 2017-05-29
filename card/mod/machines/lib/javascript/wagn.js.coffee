@@ -356,6 +356,11 @@ $(window).ready ->
     event.preventDefault()
 
 
+  $('card-view-placeholder').each ->
+    $this = $(this)
+    $.get $this.data("url"), (data, status) ->
+      $this.replaceWith data
+
 # important: this prevents jquery-mobile from taking over everything
 # $( document ).on "mobileinit", ->
 #   $.extend $.mobile , {

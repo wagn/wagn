@@ -8,8 +8,9 @@ When /^I open a new window for (.*)$/ do |account_name|
 END_TAG
   page.execute_script(str)
   page.driver.browser.switch_to.window(page.driver.browser.window_handles.last)
-  accounted = Card[account_name]
-  visit "/update/:signin?card[subcards][%2B*email][content]=#{accounted.account.email}&card[subcards][%2B*password][content]=joe_pass"
+  email = Card[account_name].account.email
+  visit "/update/:signin?card[subcards][%2B*email][content]=#{email}&"\
+        "card[subcards][%2B*password][content]=joe_pass"
 end
 
 When /I switch to (.+) window$/ do |window|

@@ -27,6 +27,7 @@ format :html do
   end
 
   def formgroup_help_text text=nil
+    return "" if text == false
     class_up "help-text", "help-block"
     voo.help = text if voo && text.to_s != "true"
     _optional_render_help

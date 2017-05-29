@@ -7,7 +7,7 @@ format :html do
   end
 
   view :name_formgroup do
-    formgroup "name", editor: "name" do
+    formgroup "name", editor: "name", help: false do
       raw name_field
     end
   end
@@ -24,7 +24,7 @@ format :html do
   end
 
   def wrap_type_formgroup
-    formgroup "type", editor: "type", class: "type-formgroup" do
+    formgroup "type", editor: "type", class: "type-formgroup", help: false do
       yield
     end
   end
@@ -114,7 +114,7 @@ format :html do
   def single_card_edit_slot
     if voo.show?(:type_formgroup) || voo.show?(:name_formgroup)
       # display content field in formgroup for consistency with other fields
-      formgroup("", editor: :content) { content_field }
+      formgroup("", editor: :content, help: false) { content_field }
     else
       editor_wrap(:content) { content_field }
     end

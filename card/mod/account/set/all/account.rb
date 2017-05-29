@@ -18,10 +18,10 @@ end
 
 def among? ok_ids
   ok_ids.any? do |ok_id|
-    parties.member? ok_id
+    ok_id == Card::AnyoneID ||
+      (ok_id == Card::AnyoneWithRoleID && all_roles.size > 1) ||
+      parties.member?(ok_id)
   end
-  ok_ids.member? Card::AnyoneID
-  ok_ids.member?(Card::AnyoneWithRoleID) && all_roles.size > 1
 end
 
 def own_account?
@@ -49,10 +49,13 @@ def all_roles
 end
 
 def fetch_roles
+  [Card::AnyoneSignedInID] + role_ids_from_roles_trait
+end
+
+def role_ids_from_roles_trait
   Auth.as_bot do
     role_trait = fetch trait: :roles
-    next [Card::AnyoneSignedInID] unless role_trait
-    [Card::AnyoneSignedInID] + role_trait.item_ids
+    role_trait ? role_trait.item_ids : []
   end
 end
 

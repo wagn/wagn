@@ -368,7 +368,7 @@ format :csv do
 
   def columns
     columns = []
-    csv_structure_card.format.format.each_nested_field do |chunk|
+    csv_structure_card.format.each_nested_field do |chunk|
       columns << chunk.referee_name.tag
     end
     columns

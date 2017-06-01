@@ -14,8 +14,7 @@ end
 format :html do
 
   view :editor do |args|
-    hidden_field(:content, class: "card-content") +
-      raw(_render(part_view, args))
+    _render_hidden_content_field + raw(_render(part_view, args))
     # .merge(pointer_item_class: 'form-control')))
   end
 

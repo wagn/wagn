@@ -206,10 +206,8 @@ describe Card::Set::Type::Signup do
       expect(@account.password).not_to be_present
     end
 
-    describe "#invitation?" do
-      it "should be true of signups created by signed in users" do
-        @signup.format.invitation? == true
-      end
+    it "considers signups created by signed-in users to be invitations" do
+      @signup.format.invitation? == true
     end
   end
 

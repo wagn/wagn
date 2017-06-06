@@ -1,6 +1,6 @@
 format :html do
   def invitation?
-    return @invitation if !@invitation.nil?
+    return @invitation unless @invitation.nil?
     @invitation = Auth.signed_in? &&
                   (card.fetch trait: :account, new: {}).confirm_ok?
     # consider making account a card_accessor?

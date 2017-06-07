@@ -207,7 +207,7 @@ describe Card::Set::Type::Signup do
     end
 
     it "considers signups created by signed-in users to be invitations" do
-      @signup.format.invitation? == true
+      expect(@signup.format.invitation?).to be_true
     end
   end
 

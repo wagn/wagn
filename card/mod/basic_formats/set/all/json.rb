@@ -75,8 +75,8 @@ format :json do
 
   view :marks do
     {
-      id: id,
-      name: name,
+      id: card.id,
+      name: card.name,
       url: request_url
     }
   end

@@ -116,12 +116,15 @@ def last_act
   @last_act ||=
     if (action = last_action)
       last_act_on_self = acts.last
-      if last_act_on_self && action.act &&
-         (action.act == last_act_on_self ||
-         last_act_on_self.acted_at > action.act.acted_at)
+      act_of_last_action = action.act
+      return act_of_last_action unless last_act_on_self
+      return last_act_on_self unless act_of_last_action
+
+      return last_act_on_self if act_of_last_action == last_act_on_self
+      if last_act_on_self.acted_at > act_of_last_action.acted_at
         last_act_on_self
       else
-        action.act || last_act_on_self
+        act_of_last_action
       end
     end
 end

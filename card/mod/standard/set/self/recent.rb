@@ -38,5 +38,3 @@ format :rss do
     :blank
   end
 end
-
-

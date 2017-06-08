@@ -168,9 +168,7 @@ format :html do
 
   def card_form action, opts={}
     @form_root = true
-    url, action = card_form_url_and_action action
     success = opts.delete(:success)
-    html_opts = card_form_html_opts action, opts
     form_for card, card_form_opts(action, opts) do |form|
       @form = form
       success_tags(success) + output(yield(form))
@@ -235,10 +233,10 @@ format :html do
     @relative_names_in_form = nil
     result
   end
-  def relative_names_in_form?
 
+  def relative_names_in_form?
     @relative_names_in_form || (parent && parent.relative_names_in_form?)
-        end
+  end
 
   # FIELD VIEWS
 

@@ -68,6 +68,9 @@ module <%= app_const_base %>
     #     },
     #     attributes: { "Cache-Control" => "max-age=#{365.day.to_i}" },
     #     public: true,
+    #     read_only: false,                  # if true then updating a file
+    #                                        # in that bucket will move it
+    #                                        # to the default storage location
     #     authenticated_url_expiration: 180  # if public is set to false this
     #                                        # option is needed
     #   }

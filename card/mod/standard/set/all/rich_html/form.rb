@@ -193,7 +193,7 @@ format :html do
   # @param opts [Hash] html options
   # @option opts [Boolean] :redirect (false) if true form is no "slotter"
   def card_form_opts action, opts={}
-    url, action = card_form_url action
+    url, action = card_form_url_and_action action
     html_opts = card_form_html_opts action, opts
     form_opts = { url: url, html: html_opts }
     form_opts[:remote] = true unless html_opts.delete(:redirect)

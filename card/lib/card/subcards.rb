@@ -257,8 +257,7 @@ class Card
       else
         subcard_args = extract_subcard_args! attributes
         t_i_s = attributes.delete(:transact_in_stage)
-        card = Card.assign_or_initialize_by absolute_name.s, attributes,
-                                            local_only: true
+        card = Card.assign_or_initialize_by absolute_name.s, attributes, local_only: true
         subcard = new_by_card card, transact_in_stage: t_i_s
         card.subcards.add subcard_args
         subcard

@@ -69,7 +69,7 @@ format :html do
   end
 
   def editor
-    :ace
+    :ace_editor
   end
 
   def ace_mode

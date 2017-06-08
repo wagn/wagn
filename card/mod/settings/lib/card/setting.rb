@@ -20,8 +20,7 @@ class Card
       templating:  "Templating",
       permission:  "Permissions",
       webpage:     "Webpage",
-      pointer:     "Pointer",
-      editing_cue: "Editing cues",
+      editing:     "Editing",
       event:       "Events",
       other:       "Other",
       config:      "Config"

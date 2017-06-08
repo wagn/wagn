@@ -18,6 +18,6 @@ end
 
 format :html do
   def editor
-    :ace
+    :ace_editor
   end
 end

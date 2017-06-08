@@ -3,11 +3,11 @@ include_set Abstract::AceEditor
 
 format :html do
   def editor
-    card.rule(:editor)
+    card.rule(:input)
   end
 
   def editor_method editor_type
-    "#{editor_type}_editor"
+    "#{editor_type}_input"
   end
 
   def editor_defined_by_card
@@ -26,20 +26,20 @@ format :html do
   end
 
   # overriden by mods that provide rich text editors
-  def rich_text_editor
-    prosemirror_editor
+  def rich_text_input
+    prosemirror_editor_input
   end
 
-  def plain_text_editor
+  def plain_text_input
     text_area :content, rows: 5, class: "card-content",
               "data-card-type-code" => card.type_code
   end
 
-  def phrase_editor
+  def phrase_input
     text_field :content, class: "card-content"
   end
 
-  def date_editor
+  def date_input
     text_field :content, class: "date-editor"
   end
 end

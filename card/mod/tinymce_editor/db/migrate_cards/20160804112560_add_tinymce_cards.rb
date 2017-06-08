@@ -25,13 +25,15 @@ class AddTinymceCards < Card::Migration
     ensure_card name: "*TinyMCE", type_id: Card::PlainTextID,
                 codename: "tiny_mce",
                 content: TINYMCE_CONFIG
+    Card::Cache.reset_all
     create_or_update(
       name: "*TinyMCE+*self+*help",
       content: "Configure [[http://tinymce.com|TinyMCE]], Wagn's default "\
                "[[http://en.wikipedia.org/wiki/Wysiwyg|wysiwyg]] editor. "\
                "[[http://wagn.org/TinyMCE|more]]"
     )
-    ensure_card name: "script: tinymce", type_id: Card::JavaScriptID,
+    ensure_card name: "script: tinymce",
+                type_id: Card::JavaScriptID,
                 codename: "script_tinymce"
     ensure_card name: "script: tinymce config",
                 type_id: Card::CoffeeScriptID,

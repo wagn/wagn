@@ -20,7 +20,7 @@ end
 
 format :html do
   view :hidden_content_field, tags: :unknown_ok do
-    hidden_field :content, class: 'card-content'
+    hidden_field :content, class: "card-content"
   end
 end
 

@@ -77,7 +77,7 @@ format :json do
     {
       id: card.id,
       name: card.name,
-      url: request_url
+      url: path
     }
   end
 
@@ -90,6 +90,7 @@ format :json do
   end
 
   def essentials
+    return {} if card.structure
     { content: card.content }
   end
 

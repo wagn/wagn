@@ -383,7 +383,7 @@ describe Card::Set::Type::File do
       after { Cardio.config.file_storage = :local }
       it "copies file to local file system" do
         # not yet supported
-        expect { subject.update_attributes!(storage_type: :local) }
+        expect { Card[subject.name].update_attributes!(storage_type: :local) }
           .to raise_error(ActiveRecord::RecordInvalid)
         # expect(subject.content)
         #   .to eq "~#{subject.id}/#{subject.last_action_id - 1}.txt"

@@ -1,5 +1,6 @@
 format :html do
   def glyphicon icon_type, extra_class=""
+    return "" unless icon_type
     wrap_with :span, "",
               "aria-hidden" => true,
               class: "glyphicon glyphicon-#{icon_type} #{extra_class}"

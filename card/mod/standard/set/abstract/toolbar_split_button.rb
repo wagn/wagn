@@ -1,13 +1,19 @@
 format :html do
   def toolbar_split_button name, button_link_opts
-    status = active_toolbar_button == name ? "active" : ""
-    html_class = "visible-md visible-lg pull-right"
-    icon = button_link_opts.delete(:icon)
-    name_content = "&nbsp;#{name}"
-    name = icon ? glyphicon(icon) : ""
-    name += content_tag(:span, name_content.html_safe, class: html_class)
-    button_link = button_link name, button_link_opts.merge(class: status)
-    split_button(button_link, active_toolbar_item) {yield}
+    button_link = toolbar_split_button_link name, button_link_opts
+    split_button(button_link, active_toolbar_item) { yield }
+  end
+
+  def toolbar_split_button_link name, opts
+    link_text = toolbar_split_button_link_text name, opts
+    opts[:class] = "active" if active_toolbar_button == name
+    button_link link_text, opts
+  end
+
+  def toolbar_split_button_link_text name, opts
+    icon = glyphicon opts.delete(:icon)
+    icon + content_tag(:span, "&nbsp;#{name}".html_safe,
+                       class: "visible-md visible-lg pull-right")
   end
 
   def subject

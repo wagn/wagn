@@ -7,7 +7,7 @@ module Wagn
         require "rspec/core"
         require "wagn/application"
 
-        @wagn_args, @rspec_args = split_wagn_and_rspec_args args
+        @wagn_args, @rspec_args = split_args args
         @opts = {}
         Parser.new(@opts).parse!(@wagn_args)
       end
@@ -31,18 +31,6 @@ module Wagn
         end
         @opts[:simplecov]
       end
-
-      def split_wagn_and_rspec_args args
-        before_split = true
-        wagn, rspec =
-          args.partition do |a|
-            before_split = (a == "--" ? false : before_split)
-          end
-        rspec.shift
-        [wagn, rspec]
-      end
-
-
     end
   end
 end

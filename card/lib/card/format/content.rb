@@ -33,13 +33,17 @@ class Card
       end
 
       def add_class options, klass
-        options[:class] = [options[:class], klass].flatten.uniq.compact * " "
+        options[:class] = css_classes options[:class], klass
       end
 
       alias_method :append_class, :add_class
 
       def prepend_class options, klass
-        options[:class] = [klass, options[:class]].flatten.uniq.compact * " "
+        options[:class] = css_classes klass, options[:class]
+      end
+
+      def css_classes *array
+        array.flatten.uniq.compact * " "
       end
 
       def id_counter
@@ -49,11 +53,11 @@ class Card
       end
 
       def unique_id
-        "#{card.key}-#{id_counter}"
+        "#{card.cardname.safe_key}-#{id_counter}"
       end
 
       def output *content
-        content ||= yield
+        content = yield if block_given?
         Array.wrap(content).flatten.compact.join "\n"
       end
     end

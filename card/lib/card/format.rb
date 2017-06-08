@@ -57,7 +57,7 @@ class Card
       @root ||= self
       @depth ||= 0
 
-      @context_names = initialize_context_names
+      @context_names = initial_context_names
       include_set_format_modules
       self
     end
@@ -67,7 +67,6 @@ class Card
       msg = I18n.t :exception_init_without_card, scope: "lib.card.format"
       raise Card::Error, msg
     end
-
 
     def include_set_format_modules
       self.class.format_ancestry.reverse_each do |klass|

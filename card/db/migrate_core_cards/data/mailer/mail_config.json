@@ -17,6 +17,6 @@
   {
     "name"    : "follower notification email",
   	"codename": "follower_notification_email",
-    "subject" : "{{_user|name}} {{_|last_action}} \"{{_|name}}\""
+    "subject" : "{{_user|name}} {{_|last_action_verb}} \"{{_|name}}\""
   }
 ]

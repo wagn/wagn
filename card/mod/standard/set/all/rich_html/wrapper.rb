@@ -1,5 +1,4 @@
 format :html do
-
   # Does two main things:
   # (1) gives CSS classes for styling and
   # (2) adds card data for javascript - including the "card-slot" class,
@@ -10,6 +9,17 @@ format :html do
       wrap_with :div, yield, id: card.cardname.url_key,
                              class: wrap_classes(slot),
                              data:  wrap_data
+    end
+  end
+
+  def haml_wrap slot=true
+    @slot_view = @current_view
+    debug_slot do
+      haml_tag :div, id: card.cardname.url_key,
+                     class: wrap_classes(slot),
+                     data:  wrap_data do
+        yield
+      end
     end
   end
 
@@ -30,8 +40,8 @@ format :html do
   end
 
   def name_context_slot_option opts
-    return unless @context_names.present?
-    opts[:name_context] = @context_names.map(&:key) * ","
+    return unless initial_context_names.present?
+    opts[:name_context] = initial_context_names.map(&:key) * ","
   end
 
   def debug_slot
@@ -99,6 +109,7 @@ format :html do
           [
             _optional_render_header,
             frame_help,
+            _optional_render(:flash),
             wrap_body { yield }
           ]
         end
@@ -108,7 +119,9 @@ format :html do
 
   def frame_help
     # TODO: address these args
-    _optional_render :help, help_class: "alert alert-info"
+    with_class_up "help-text", "alert alert-info" do
+      _optional_render :help
+    end
   end
 
   def frame_and_form action, form_opts={}
@@ -120,9 +133,10 @@ format :html do
   end
 
   # alert_types: 'success', 'info', 'warning', 'danger'
-  def alert alert_type, dismissable=false
+  def alert alert_type, dismissable=false, disappear=false
     classes = ["alert", "alert-#{alert_type}"]
     classes << "alert-dismissible " if dismissable
+    classes << "_disappear" if disappear
 
     wrap_with :div, class: classy(classes), role: "alert" do
       [(alert_close_button if dismissable), output(yield)]

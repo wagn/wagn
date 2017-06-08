@@ -16,13 +16,14 @@ format :html do
 
     wrap_with :div, class: "vertical-card-menu card-menu #{css_class}" do
       wrap_with :div, class: "btn-group slotter card-slot pull-right" do
-        link_to_view(:vertical_menu, menu_icon, path: menu_path_opts).html_safe
+        link_to_view :vertical_menu, menu_icon, path: menu_path_opts
       end
     end
   end
 
   def menu_path_opts
-    opts = { slot: { home_view: voo.home_view } }
+    opts = { slot: { home_view: (voo.home_view || @slot_view),
+                     name_context: context_names_to_params } }
     opts[:is_main] = true if main?
     opts
   end
@@ -31,17 +32,17 @@ format :html do
     glyphicon "cog"
   end
 
-  view :vertical_menu, tags: :unknown_ok do
+  view :vertical_menu, cache: :never, tags: :unknown_ok do
     wrap_with :ul, class: "btn-group pull-right slotter" do
       [vertical_menu_toggle, vertical_menu_item_list]
     end
   end
 
   def vertical_menu_toggle
-    wrap_with :span, "<a href='#'>#{menu_icon}</a>".html_safe,
-                class: "open-menu dropdown-toggle",
-                "data-toggle" => "dropdown",
-                "aria-expanded" => "false"
+    wrap_with :span, "<a href='#'>#{menu_icon}</a>",
+              class: "open-menu dropdown-toggle",
+              "data-toggle" => "dropdown",
+              "aria-expanded" => "false"
   end
 
   def vertical_menu_item_list
@@ -52,7 +53,7 @@ format :html do
     end
   end
 
-  view :horizontal_menu do
+  view :horizontal_menu, cache: :never do
     wrap_with :div, class: "btn-group slotter pull-right card-menu "\
                              "horizontal-card-menu hidden-xs" do
       menu_item_list(class: "btn btn-default").join("\n").html_safe
@@ -67,11 +68,12 @@ format :html do
   end
 
   def menu_edit_link opts
-    menu_item "edit", "edit", opts.merge(view: :edit)
+    menu_item "edit", "edit", opts.merge(view: :edit, path: menu_path_opts)
   end
 
   def menu_discuss_link opts
-    menu_item "discuss", "comment", opts.merge(related: Card[:discussion].key)
+    menu_item "discuss", "comment",
+              opts.merge(related: :discussion.cardname.key)
   end
 
   def menu_follow_link opts
@@ -83,13 +85,13 @@ format :html do
   end
 
   def menu_rules_link opts
-    menu_item "rules", "wrench", opts.merge(view: :options)
+    menu_item "rules", "wrench", opts.merge(view: :edit_rules)
   end
 
   def menu_account_link opts
     menu_item "account", "user", opts.merge(
       view: :related,
-      path: { related: { name: "+*account", view: :edit } }
+      path: { related: { name: "+#{:account.cardname.key}", view: :edit } }
     )
   end
 
@@ -141,8 +143,11 @@ format :html do
 
   def menu_discussion_card
     return if card.new_card?
-    disc_tagname = Card.quick_fetch(:discussion).cardname
-    return if card.junction? && card.cardname.tag_name.key == disc_tagname.key
+    return if discussion_card?
     card.fetch trait: :discussion, skip_modules: true, new: {}
+  end
+
+  def discussion_card?
+    card.junction? && card.cardname.tag_name.key == :discussion.cardname.key
   end
 end

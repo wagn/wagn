@@ -121,7 +121,7 @@ def last_act
          last_act_on_self.acted_at > action.act.acted_at)
         last_act_on_self
       else
-        action.act
+        action.act || last_act_on_self
       end
     end
 end
@@ -164,5 +164,6 @@ end
 def edit_conflict?
   last_action_id_before_edit &&
     last_action_id_before_edit.to_i != last_action_id &&
-    last_action.act.actor_id != Auth.current_id
+    (la = last_action) &&
+    la.act.actor_id != Auth.current_id
 end

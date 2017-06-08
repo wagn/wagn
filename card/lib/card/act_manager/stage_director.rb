@@ -163,11 +163,10 @@ class Card
         end
       end
 
-      def to_s
+      def to_s level=1
         str = @card.name.to_s.clone
         if @subdirectors
-          subs = subdirectors.map(&:card)
-                             .map { |card| "  #{card.name}" }.join "\n"
+          subs = subdirectors.map { |d| "  " * level + d.to_s(level + 1) }.join "\n"
           str << "\n#{subs}"
         end
         str
@@ -202,12 +201,22 @@ class Card
       def run_single_stage stage, &block
         return true unless valid_next_stage? stage
         # puts "#{@card.name}: #{stage} stage".red
+        prepare_stage_run stage
+        execute_stage_run stage, &block
+      rescue => e
+        @card.clean_after_stage_fail
+        raise e
+      end
 
+      def prepare_stage_run stage
         @stage = stage_index stage
-        if stage == :initialize
-          @running ||= true
-          prepare_for_phases
-        end
+        return unless stage == :initialize
+
+        @running ||= true
+        prepare_for_phases
+      end
+
+      def execute_stage_run stage, &block
         # in the store stage it can be necessary that
         # other subcards must be saved before we save this card
         if stage == :store
@@ -215,22 +224,24 @@ class Card
         else
           run_stage_callbacks stage
           run_subdirector_stages stage
+          run_final_stage_callbacks stage
         end
-      rescue => e
-        @card.clean_after_stage_fail
-        raise e
       end
 
-      def run_stage_callbacks stage
+      def run_stage_callbacks stage, callback_postfix=""
         Rails.logger.debug "#{stage}: #{@card.name}"
         # we use abort :success in the :store stage for :save_draft
         if stage_index(stage) <= stage_index(:store) && !main?
           @card.abortable do
-            @card.run_callbacks :"#{stage}_stage"
+            @card.run_callbacks :"#{stage}#{callback_postfix}_stage"
           end
         else
-          @card.run_callbacks :"#{stage}_stage"
+          @card.run_callbacks :"#{stage}#{callback_postfix}_stage"
         end
+      end
+
+      def run_final_stage_callbacks stage
+        run_stage_callbacks stage, "_final"
       end
 
       def run_subdirector_stages stage

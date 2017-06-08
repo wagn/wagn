@@ -1,24 +1,20 @@
 # -*- encoding : utf-8 -*-
 
-# include is private in ruby 1.9.3
-# Object.include CoreExtensions::Object
-# Module.include CoreExtensions::Module
-# Hash.include CoreExtensions::Hash::Merging
-# Array.include CoreExtensions::Array
-class Object
-  include CoreExtensions::Object
-end
+# extend core Ruby object classes
 
 class Module
-  include CoreExtensions::Module
+  def include_extension extension
+    include extension
+  end
 end
 
-class Hash
-  include CoreExtensions::Hash::Merging
+module CoreExtensions
+  ::Kernel.include_extension Kernel
+  ::Object.include_extension Object
+  ::Module.include_extension Module
+  ::Array.include_extension Array
+  ::Hash.include_extension Hash::Merging
+  ::Symbol.include_extension PersistentIdentifier
+  ::Integer.include_extension PersistentIdentifier
+  ::Hash.extend Hash::ClassMethods::Nesting
 end
-
-class Array
-  include CoreExtensions::Array
-end
-
-Hash.extend CoreExtensions::Hash::ClassMethods::Nesting

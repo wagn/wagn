@@ -21,7 +21,7 @@ format do
   end
 
   def source_url
-    card.attachment.url
+    internal_url card.attachment.url
   end
 
   view :core do
@@ -40,31 +40,34 @@ end
 
 format :file do
   # returns send_file args.  not in love with this...
-  view :core do |_args|
+  view :core, cache: :never do |args|
     # this means we only support known formats.  dislike.
     attachment_format = card.attachment_format(params[:format])
     return _render_not_found unless attachment_format
     return card.format(:html).render_core(args) if card.remote_storage?
+    set_response_headers
+    args_for_send_file
+  end
 
-    if params[:explicit_file] && (r = controller.response)
-      r.headers["Expires"] = 1.year.from_now.httpdate
-      # currently using default "private", because proxy servers could block
-      # needed permission checks
-      # r.headers["Cache-Control"] = "public"
-    end
-
-    # formerly supported redirecting to correct file format
-    # elsif ![format, 'file'].member? params[:format]
-    #   path = request.fullpath.sub( /\.#{params[:format]}\b/, '.' + format )
-    #   return redirect_to(path) #card.attachment.url(style) )
+  def args_for_send_file
     file = selected_file_version
-    [file.path,
-     {
-       type: file.content_type,
-       filename:  "#{card.cardname.safe_key}#{file.extension}",
-       x_sendfile: true,
-       disposition: (params[:format] == "file" ? "attachment" : "inline")
-     }]
+    [
+      file.path,
+      {
+        type: file.content_type,
+        filename:  "#{card.cardname.safe_key}#{file.extension}",
+        x_sendfile: true,
+        disposition: (params[:format] == "file" ? "attachment" : "inline")
+      }
+    ]
+  end
+
+  def set_response_headers
+    return unless params[:explicit_file] && (r = controller.response)
+    r.headers["Expires"] = 1.year.from_now.httpdate
+    # currently using default "private", because proxy servers could block
+    # needed permission checks
+    # r.headers["Cache-Control"] = "public"
   end
 
   def selected_file_version
@@ -73,7 +76,7 @@ format :file do
 end
 
 format :html do
-  view :core do |args|
+  view :core do |_args|
     handle_source do |source|
       "<a href=\"#{source}\">Download #{showname voo.title}</a>"
     end
@@ -90,7 +93,7 @@ format :html do
     ""
   end
 
-  view :preview_editor, tags: :unknown_ok do |args|
+  view :preview_editor, tags: :unknown_ok, cache: :never do |_args|
     cached_upload_card_name = Card::Env.params[:attachment_upload]
     cached_upload_card_name.gsub!(/\[\w+\]$/, "[action_id_of_cached_upload]")
     <<-HTML

@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-describe Card::Query do
+
+RSpec.describe Card::Query do
   A_JOINEES = %w(B C D E F).freeze
   CARDS_MATCHING_TWO = ["Joe User", "One+Two", "One+Two+Three",
                         "script: slot+*all+*script+*machine cache",
@@ -165,6 +166,40 @@ describe Card::Query do
     it "finds joe user among card's editors" do
       @query = { editor_of: "JoeLater" }
       is_expected.to eq(["Joe User"])
+    end
+  end
+
+  describe "updated_by/updater_of" do
+    it "finds card updated by Narcissist" do
+      @query = { updated_by: "Narcissist" }
+      is_expected.to eq(%w(Magnifier+lens))
+    end
+
+    it "finds Narcississt as the card's updater" do
+      @query = { updater_of: "Magnifier+lens" }
+      is_expected.to eq(%w(Narcissist))
+    end
+
+    it "does not give duplicate results for multiple updates" do
+      @query = { updater_of: "First" }
+      is_expected.to eq(["Wagn Bot"])
+    end
+
+    it "does not give results if not updated" do
+      @query = { updater_of: "Sunglasses+price" }
+      is_expected.to be_empty
+    end
+
+    it "'or' doesn't mess up updated_by SQL" do
+      @query = { or: { updated_by: "Narcissist" } }
+      puts Card::Query.new(@query).sql
+      is_expected.to eq(%w(Magnifier+lens))
+    end
+
+    it "'or' doesn't mess up updater_of SQL" do
+      @query = { or: { updater_of: "First" } }
+      puts Card::Query.new(@query).sql
+      is_expected.to eq(["Wagn Bot"])
     end
   end
 
@@ -384,71 +419,6 @@ describe Card::Query do
     end
   end
 
-  describe "order" do
-    it "sorts by create" do
-      Card.create! name: "classic bootstrap skin head"
-      # classic skin head is created more recently than classic skin,
-      # which is in the seed data
-      @query = { sort: "create", name: [:match, "classic bootstrap skin"] }
-      is_expected.to eq(
-        ["classic bootstrap skin", "classic bootstrap skin head"]
-      )
-    end
-
-    it "sorts by name" do
-      @query = { name: %w(in B Z A Y C X), sort: "name", dir: "desc" }
-      is_expected.to eq(%w(Z Y X C B A))
-    end
-
-    it "sorts by content" do
-      @query = { name: %w(in Z T A), sort: "content" }
-      is_expected.to eq(%w(A Z T))
-    end
-
-    it "plays nice with match" do
-      @query = { match: "Z", type: "Basic", sort: "content" }
-      is_expected.to eq(%w(A B Z))
-    end
-
-    it "sorts by plus card content" do
-      Card::Auth.as_bot do
-        c = Card.fetch("Setting+*self+*table of contents")
-        c.content = "10"
-        c.save
-        Card.create! name: "Basic+*type+*table of contents", content: "3"
-
-        @query = {
-          right_plus: "*table of contents",
-          sort: { right: "*table_of_contents" },
-          sort_as: "integer"
-        }
-        is_expected.to eq(%w(*all Basic+*type Setting+*self))
-      end
-    end
-
-    it "sorts by count" do
-      Card::Auth.as_bot do
-        @query = {
-          name: [:in, "*always", "*never", "*edited"],
-          sort: { right: "*follow", item: "referred_to", return: "count" }
-        }
-        is_expected.to eq(["*never", "*edited", "*always"])
-      end
-    end
-
-    #  it 'sorts by update' do
-    #    # do this on a restricted set so it won't change every time we
-    #    #  add a card..
-    #    Card::Query.run(
-    #    match: 'two', sort: 'update', dir: 'desc'
-    #    ).map(&:name).should == ['One+Two+Three', 'One+Two','Two','Joe User']
-    #    Card['Two'].update_attributes! content: 'new bar'
-    #    Card::Query.run(
-    #    match: 'two', sort: 'update', dir: 'desc'
-    #    ).map(&:name).should == ['Two','One+Two+Three', 'One+Two','Joe User']
-    #  end
-  end
-
   describe "match" do
     it "reachs content and name via shortcut" do
       @query = { match: "two" }
@@ -578,6 +548,26 @@ describe Card::Query do
         perm_count += 1
       end
       expect(perm_count).to eq(2)
+    end
+  end
+
+  describe "return part of name" do
+    subject do
+      Card::Query.run right: "C", return: @return, sort: :name
+    end
+    it "handles _left" do
+      @return = "_left"
+      is_expected.to eq %w(A+B A)
+    end
+
+    it "handles _right" do
+      @return = "_right"
+      is_expected.to eq %w(C C)
+    end
+
+    it "handles _LL" do
+      @return = "_LL"
+      is_expected.to eq ["A", ""]
     end
   end
 end

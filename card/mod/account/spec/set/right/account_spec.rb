@@ -170,9 +170,23 @@ describe Card::Set::Right::Account do
   end
 
   describe "#send_change_notice" do
-    it "send multipart email" do
-      skip
-      #      pending
+    subject(:mail) do
+      Card[:follower_notification_email].format.render_mail(
+        context:       Card.fetch("A", look_in_trash: true),
+        to:            "joe@user.com",
+        follower:      Card["Joe User"],
+        followed_set:  Card[:all],
+        follow_option: Card[:always]
+      )
+    end
+
+    it "works for deleted card" do
+      delete "A"
+      expect(mail.subject).to eq 'Joe User deleted "A"'
+    end
+
+    it "sends multipart email" do
+      expect(mail.content_type).to include("multipart/alternative")
     end
 
     context "denied access" do

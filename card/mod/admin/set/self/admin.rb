@@ -8,8 +8,6 @@ event :admin_tasks, :initialize, on: :update do
   case task.to_sym
   when :clear_cache          then Card::Cache.reset_all
   when :repair_references    then Card::Reference.repair_all
-#  when :clear_view_cache     then Card::View.reset
-  when :delete_old_revisions then Card::Action.delete_old
   when :repair_permissions   then Card.repair_all_permissions
   when :clear_solid_cache    then Card.clear_solid_cache
   when :clear_machine_cache  then Card.reset_all_machines
@@ -80,7 +78,7 @@ format :html do
   end
 
   def stat_row args={}
-    res = [(voo.title || "")]
+    res = [(args[:title] || "")]
     res << "#{count(args[:count])}#{args[:unit]}"
     return res unless args[:task]
     res << link_to_card(:admin, (args[:link_text] || args[:task]),

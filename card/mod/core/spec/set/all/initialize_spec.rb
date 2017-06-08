@@ -59,19 +59,19 @@ describe Card::Set::All::Initialize do
       end
 
       it "happens after new" do
-        expect(@c.respond_to?(:get_query)).to be_truthy
+        expect(@c.respond_to?(:query)).to be_truthy
       end
 
       it "happens after save" do
-        expect(@c.respond_to?(:get_query)).to be_truthy
+        expect(@c.respond_to?(:query)).to be_truthy
         @c.save!
-        expect(@c.respond_to?(:get_query)).to be_truthy
+        expect(@c.respond_to?(:query)).to be_truthy
       end
 
       it "happens after fetch" do
         @c.save!
         c = Card.fetch(@c.name)
-        expect(c.respond_to?(:get_query)).to be_truthy
+        expect(c.respond_to?(:query)).to be_truthy
       end
     end
 

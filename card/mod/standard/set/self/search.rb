@@ -1,12 +1,66 @@
+include_set Abstract::SearchParams
+
+def query_args args={}
+  return super unless keyword_contains_wql? args
+  args.merge parse_keyword_wql(args)
+end
+
+def parse_keyword_wql args
+  parse_json_query(args[:vars][:keyword])
+end
+
+def keyword_contains_wql? hash
+  hash[:vars] && (keyword = hash[:vars][:keyword]) && keyword =~ /^\{.+\}$/
+end
+
+format do
+  def default_search_params
+    hash = super
+    hash[:vars] = params[:vars] || {}
+    params.each do |key, val|
+      next unless key.to_s =~ /^\_(\w+)$/
+      hash[:vars][Regexp.last_match(1).to_sym] = val
+    end
+    hash
+  end
+
+  view :search_error, cache: :never do
+    sr_class = search_with_params.class.to_s
+
+    # don't show card content; not very helpful in this case
+    %(#{sr_class} :: #{search_with_params.message})
+  end
+end
 
 format :html do
-  view :title do
-    vars = root.search_params[:vars]
-    if vars && vars[:keyword]
-      voo.title = %(Search results for: <span class="search-keyword">)\
-                         "#{vars[:keyword]}</span>"
+  def extra_paging_path_args
+    vars = query_with_params.vars
+    return {} unless vars.is_a? Hash
+    vars.each_with_object({}) do |(key, value), hash|
+      hash["_#{key}"] = value
     end
-    super()
+  end
+
+  view :title, cache: :never do
+    return super() unless (keyword = search_keyword) &&
+                          (title = keyword_search_title(keyword))
+    voo.title = title
+  end
+
+  def keyword_search_title keyword
+    %(Search results for: <span class="search-keyword">#{keyword}</span>)
+  end
+
+  def search_keyword
+    (vars = search_vars) && vars[:keyword]
+  end
+
+  def search_vars
+    root.respond_to?(:search_params) ? root.search_params[:vars] : search_params[:vars]
+  end
+
+  def wql_search?
+    card.keyword_contains_wql? vars: search_vars
   end
 end
 

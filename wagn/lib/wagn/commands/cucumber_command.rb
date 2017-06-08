@@ -6,7 +6,9 @@ module Wagn
       def initialize args
         require "wagn"
         require "./config/environment"
-        @args = args
+        @wagn_args, @cucumber_args = split_args args
+        @opts = {}
+        Parser.new(@opts).parse!(@wagn_args)
       end
 
       def command
@@ -17,13 +19,18 @@ module Wagn
       private
 
       def env_args
-        env_args = "RAILS_ROOT=."
-        env_args << " COVERAGE=false" if @args.present?
+        env_args = @opts[:env].join " "
+        # turn coverage off if not all cukes run
+        env_args << " COVERAGE=false" if @cucumber_args.present?
         env_args
       end
 
       def feature_args
-        @args.empty? ? feature_paths.join(" ") : @args.shelljoin
+        if @cucumber_args.empty?
+          feature_paths.join(" ")
+        else
+          @cucumber_args.shelljoin
+        end
       end
 
       def require_args
@@ -39,3 +46,5 @@ module Wagn
     end
   end
 end
+
+require File.expand_path("../cucumber_command/parser", __FILE__)

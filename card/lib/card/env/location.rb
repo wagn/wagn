@@ -23,7 +23,7 @@ class Card
           Rails.logger.warn "Pass only strings to card_path. "\
                             "(#{rel_path} = #{rel_path.class})"
         end
-        if rel_path =~ /^\//
+        if rel_path =~ %r{^(https?\:)?/}
           rel_path
         else
           "#{Card.config.relative_url_root}/#{rel_path}"

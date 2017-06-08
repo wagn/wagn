@@ -20,14 +20,17 @@ class Card
       end
 
       def layout message
-        %(
+        <<-HTML
           <!DOCTYPE html>
           <html>
+            <head>
+              <meta http-equiv="Content-type" content="text/html;charset=UTF-8"/>
+            </head>
             <body>
               #{message}
             </body>
           </html>
-        )
+         HTML
       end
     end
   end

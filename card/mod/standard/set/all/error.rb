@@ -63,6 +63,7 @@ format :html do
   end
 
   def rendering_error exception, view
+    debug_error exception if Auth.always_ok?
     details = Auth.always_ok? ? backtrace_link(exception) : error_cardname
     wrap_with :span, class: "render-error alert alert-danger" do
       ["error rendering", details, "(#{view} view)"].join "\n"
@@ -98,7 +99,7 @@ format :html do
   view :missing do
     return "" unless card.ok? :create  # should this be moved into ok_view?
     path_opts = voo.type ? { card: { type: voo.type } } : {}
-    link_text = "Add #{fancy_title voo.title}"
+    link_text = "Add #{fancy_title _render_title}"
     klass = "slotter missing-#{@denied_view || voo.home_view}"
     wrap { link_to_view :new, link_text, path: path_opts, class: klass }
   end

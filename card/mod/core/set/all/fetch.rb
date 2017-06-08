@@ -83,15 +83,19 @@ module ClassMethods
     end
   end
 
-  def fetch_name mark, &block
+  def fetch_name *mark
     if (card = quick_fetch(mark))
       card.name
     elsif block_given?
-      block.call
+      yield
     end
   end
 
-  def quick_fetch mark
+  def fetch_type_id *mark
+    (card = quick_fetch(mark)) && card.type_id
+  end
+
+  def quick_fetch *mark
     fetch mark, skip_virtual: true, skip_modules: true
   end
 
@@ -246,19 +250,31 @@ module ClassMethods
 
   def normalize_mark mark, opts
     case mark
-    when Symbol  then Card::Codename[mark]
-    when Integer then mark.to_i
-    when Card    then mark.cardname
-    when String, SmartName
+    when Symbol            then require_id_for_codename mark
+    when Integer           then mark.to_i
+    when Card              then mark.cardname
+    when String, SmartName then normalize_stringy_mark mark, opts
       # there are some situations where this breaks if we use Card::Name
       # rather than SmartName, which would seem more correct.
       # very hard to reproduce, not captured in a spec :(
-      case mark.to_s
-      when /^\~(\d+)$/ then $1.to_i                   # id
-      when /^\:(\w+)$/ then Card::Codename[$1.to_sym] # codename
-      else fullname_from_mark mark, opts[:new]        # name
-      end
     end
+  end
+
+  def normalize_stringy_mark mark, opts
+    case mark.to_s
+    when /^\~(\d+)$/  # id, eg "~75"
+      Regexp.last_match[1].to_i
+    when /^\:(\w+)$/  # codename, eg ":options"
+      require_id_for_codename(Regexp.last_match[1].to_sym)
+    else
+      fullname_from_mark mark, opts[:new]
+    end
+  end
+
+  def require_id_for_codename mark
+    id = Card::Codename[mark]
+    raise Card::Error::NotFound, "missing card with codename: #{mark}" unless id
+    id
   end
 
   def fullname_from_mark name, new_opts={}
@@ -317,19 +333,32 @@ def cache_class_from_type cache_type
 end
 
 def register_view_cache_key cache_key
-  @view_cache_keys ||= []
-  @view_cache_keys << cache_key
-  @view_cache_keys.uniq!
+  view_cache_keys cache_key
   hard_write_view_cache_keys
 end
 
+def view_cache_keys new_key=nil
+  @view_cache_keys ||= []
+  @view_cache_keys << new_key if new_key
+  append_missing_view_cache_keys
+  @view_cache_keys.uniq!
+end
+
+def append_missing_view_cache_keys
+  return unless Card.cache.hard
+  @view_cache_keys +=
+    (Card.cache.hard.read_attribute(key, :view_cache_keys) || [])
+end
+
 def hard_write_view_cache_keys
+#  puts "WRITE VIEW CACHE KEYS (#{name}): #{view_cache_keys}"
   return unless Card.cache.hard
   Card.cache.hard.write_attribute key, :view_cache_keys, @view_cache_keys
 end
 
 def expire_views
-  return unless @view_cache_keys
+#  puts "EXPIRE VIEW CACHE (#{name}): #{view_cache_keys}"
+  return unless view_cache_keys.present?
   Array.wrap(@view_cache_keys).each do |view_cache_key|
     Card::View.cache.delete view_cache_key
   end

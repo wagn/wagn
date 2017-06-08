@@ -43,7 +43,9 @@ unless defined? TEST_ROOT
         renames = { "layout_type" => "Layout", "search_type" => "Search" }
         if card = Card["Sample #{renames[cardtype] || cardtype}"]
           url.gsub!(/:id/, "~#{card.id}")
-        else puts("ERROR finding 'Sample #{cardtype}'") end
+        else
+          puts("ERROR finding 'Sample #{cardtype}'")
+        end
       end
       url
     end
@@ -64,14 +66,15 @@ unless defined? TEST_ROOT
             constant = (name.camelize + "TestHelper").constantize
             class_eval { include constant }
           rescue NameError
-            filename = File.expand_path(TEST_ROOT + "/helpers/" + name + "_test_helper.rb")
-            require filename if first_time
+            filename = "#{name}_test_helper.rb"
+            filepath = File.expand_path(File.join(TEST_ROOT, "helpers", filename))
+            require filepath if first_time
             first_time = false
             retry
           end
         end
       end
-      alias test_helpers test_helper
+      alias_method :test_helpers, :test_helper
     end
 
     class RenderTest
@@ -86,27 +89,30 @@ unless defined? TEST_ROOT
           # FIXME: need a better data source for this?
           # args[:cardtypes] = YAML.load_file('db/bootstrap/card_codenames.yml').
           bootstrap_file = File.join(Cardio.gem_root, "db/bootstrap/cards.yml")
-          args[:cardtypes] = YAML.load_file(bootstrap_file).select do |p|
+          cardtypes = YAML.load_file(bootstrap_file).select do |p|
             !%w(set setting).member?(p[1]["codename"]) &&
               (card = Card[p[1]["name"]]) && card.type_id == Card::CardtypeID
-          end.map { |_k, v| v["codename"] }
+          end
+          args[:cardtypes] = cardtypes.map { |_k, v| v["codename"] }
         end
 
         args[:users].each_pair do |user, status|
           user = user.to_s
-          current_id = Integer === user ? user : Card[user].id
+          current_id = user.is_a?(Integer) ? user : Card[user].id
 
           args[:cardtypes].each do |cardtype|
             next if cardtype =~ /Cardtype|UserForm|Set|Fruit|Optic|Book/
 
-            title = url.gsub(/:id/, "").gsub(/\//, "_") + "_#{cardtype}"
-            login = (current_id == Card::AnonymousID ? "" : "integration_login_as '#{user}'")
+            title = url.gsub(/:id/, "").tr("/", "_") + "_#{cardtype}"
+            login =
+              (current_id == Card::AnonymousID ? "" : "integration_login_as '#{user}'")
             test_def = %{
               def test_render_#{title}_#{user}_#{status}
                 #{login}
                 url = prepare_url('#{url}', '#{cardtype}')
                 get url
-                assert_response #{status}, "\#\{url\} as #{user} should have status #{status}"
+                assert_response #{status},
+                                "\#\{url\} as #{user} should have status #{status}"
               end
             }
 

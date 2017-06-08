@@ -7,11 +7,11 @@ Gem::Specification.new do |s|
     ["Ethan McCutchen", "Lewis Hoffman", "Gerry Gleason", "Philipp Kühl"]
   s.email = ["info@wagn.org"]
 
-  #  s.date          = '2013-12-20'
-  s.summary       = "an atomic, set-driven content engine"
+  s.summary       = "a surprisingly simple content nesting engine"
   s.description   =
-    "Cards are data atoms grouped into Sets to which Rules can apply. "\
-    "Cards can formatted with Views and transformed with Events."
+    "Cards are wiki-inspired data atoms." \
+    '"Cardists" use links, nests, types, patterned names, queries, views, ' \
+    "events, and rules to create rich structures."
   s.homepage      = "http://wagn.org"
   s.licenses      = ["GPL-2.0", "GPL-3.0"]
 
@@ -33,27 +33,30 @@ Gem::Specification.new do |s|
   s.test_files    = s.files.grep(%r{^(test|spec|features)/})
   s.require_paths = ["lib"]
 
-  s.required_ruby_version = ">= 1.9.3"
+  s.required_ruby_version = ">= 2.0"
 
   [
-    ["smartname",                  "0.4"],
+    ["smartname",                  "0.5.1"],
     ["uuid",                       "~> 2.3"],
-    ["carrierwave",                "1.0.0.rc"],
+    ["carrierwave",                "1.1.0"],
     ["htmlentities",               "~> 4.3"],
     ["mini_magick",                "~> 4.2"],
     # recaptcha 0.4.0 is last version that doesn't require ruby 2.0
     ["recaptcha",                  "~> 0.4.0"],
-    ["coderay",                    "~> 1.0"],
-    ["sass",                       "~> 3.2"],
-    ["coffee-script",              "~> 2.2"],
-    ["uglifier",                   "~> 3.0"],
-    ["haml",                       "~> 4.0"],
-    ["kaminari",                   "~> 0.16"],
+    ["coderay",                    "~> 1.1"],
+    ["sass",                       "~> 3.4"],
+    ["coffee-script",              "~> 2.4"],
+    ["uglifier",                   "~> 3.2"],
+    ["nokogiri",                   "~> 1.6.8"], # 1.7 needs ruby 2.1
+    ["haml",                       "~> 5.0"],
+    ["kaminari",                   "~> 0.16"], # 1.0 needs rails 5
     ["bootstrap-kaminari-views",   "~> 0"],
-    ["diff-lcs",                   "~> 1.2"],
+    ["diff-lcs",                   "~> 1.3"],
     # mime-types can be removed if we drop support for ruby 1.9.3
     # mime-types 3.0 uses mime-types-data which isn't compatible with 1.9.3
-    ["mime-types",                 "2.99.1"]
+    ["mime-types",                 "2.99.1"],
+    ["twitter",                    "6.1.0"],
+    ["colorize",                   "0.8"]
   ].each do |dep|
     s.add_runtime_dependency(*dep)
   end

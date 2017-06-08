@@ -3,14 +3,12 @@ class Card
     module Error
       def rescue_view e, view
         raise e if Rails.env =~ /^cucumber|test$/
-        Card::Error.current = e
-        card.notable_exception_raised
+        error_view = Card::Error.exception_view @card, e
+        # TODO: consider rendering dynamic error view here.
         rendering_error e, view
       end
 
-      def debug_error e, view
-        Rails.logger.info "#{rendering_error e, view}:\n" \
-                          "#{e.class} : #{e.message}"
+      def debug_error e
         debug = Card[:debugger]
         raise e if debug && debug.content == "on"
       end

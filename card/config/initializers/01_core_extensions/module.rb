@@ -17,7 +17,7 @@ module CoreExtensions
 
     def add_set_modules list
       Array(list).each do |mod|
-        include mod if mod.instance_methods.any?
+        include mod if mod.instance_methods.any? || mod.respond_to?(:included)
         if (class_methods = mod.const_get_if_defined(:ClassMethods))
           extend class_methods
         end

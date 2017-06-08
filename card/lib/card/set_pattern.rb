@@ -169,12 +169,11 @@ EOF
       end
 
       def lookup_module_list modules_hash
-        if module_key
-          modules_hash[module_key]
-        else
-          inherited_key && modules_hash[inherited_key]
-        end
+        lookup_key = module_key || inherited_key
+        modules_hash[lookup_key] if lookup_key
       end
+
+      private
 
       def inherited_key
         if defined?(@inherited_key)
@@ -188,15 +187,20 @@ EOF
         return unless @inherit_card
         card = @inherit_card
         @inherit_card = nil
+        return unless (type_code = default_type_code card)
+        mod_key = "Type::#{type_code.to_s.camelize}"
+        mod_key if mods_exist_for_key? mod_key
+      end
 
-        (default_rule = card.rule_card(:default)) &&
-          (type_code = default_rule.type_code) &&
-          # default_rule.cardname.size > 2 and
-          # default_rule.left.right.codename == self.class.pattern_code
-          (mod_key = "Type::#{type_code.to_s.camelize}") &&
-          (Card::Set.modules[:nonbase_format].values +
-            [Card::Set.modules[:nonbase]]).any? { |hash| hash[mod_key] } &&
-          mod_key
+      def default_type_code card
+        default_rule = card.rule_card :default
+        default_rule && default_rule.type_code
+      end
+
+      def mods_exist_for_key? mod_key
+        list_of_hashes = Card::Set.modules[:nonbase_format].values
+        list_of_hashes << Card::Set.modules[:nonbase]
+        list_of_hashes.any? { |h| h[mod_key] }
       end
     end
   end

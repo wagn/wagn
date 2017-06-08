@@ -62,7 +62,6 @@ describe Card::Cache do
     @cache.write("foo", "bar")
     expect(@cache.read("foo")).to eq("bar")
 
-
     # reset
     @cache.reset
     expect(@cache.hard.prefix).to match(/^mydb\//)

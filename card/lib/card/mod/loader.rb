@@ -18,6 +18,7 @@ class Card
     module Loader
       class << self
         def load_mods
+          load_initializers
           load_set_patterns
           load_formats
           load_sets
@@ -89,6 +90,13 @@ class Card
           files.flatten
         end
 
+        def load_initializers
+          Card.config.paths["mod/config/initializers"].existent
+              .sort.each do |initializer|
+            load initializer
+          end
+        end
+
         def load_set_patterns
           generate_set_pattern_tmp_files if rewrite_tmp_files?
           load_dir Card.paths["tmp/set_pattern"].first
@@ -155,11 +163,11 @@ class Card
         end
 
         def rewrite_tmp_files?
-          if defined?(@@rewrite)
-            @@rewrite
+          if defined?(@rewrite)
+            @rewrite
           else
-            @@rewrite = !(Rails.env.production? &&
-                        Card.paths["tmp/set"].existent.first)
+            @rewrite = !(Rails.env.production? &&
+                         Card.paths["tmp/set"].existent.first)
           end
         end
 

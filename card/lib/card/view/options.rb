@@ -7,30 +7,31 @@ class Card
         nest: [
           :view,          # view to render
           :show,          # render these views when optional
-          :hide,          # do render these views when optional
+          :hide,          # do not render these views when optional
           :nest_name,     # name as used in nest
           :nest_syntax    # full nest syntax
         ],
         # note: show/hide can be single view (Symbol), list of views (Array),
         # or comma separated views (String)
         heir: [
-          :main,          # format object is page's "main" object (Boolean)
-          :home_view,     # view for slot to return to when no view specified
-          :edit_structure # use a different structure for editing (Array)
-
+          :main,           # format object is page's "main" object (Boolean)
+          :home_view,      # view for slot to return to when no view specified
+          :edit_structure  # use a different structure for editing (Array)
         ],
         both: [
-          :help,          # cue text when editing
-          :structure,     # overrides the content of the card
-          :title,         # overrides the name of the card
-          :variant,       # override the canonical version of the name with
-          #                 a different variant
-          :editor,        # inline_nests makes a form within standard content
-          #                 (Symbol)
-          :type,          # set the default type of new cards
-          :size,          # set an image size
-          :params,        # parameters for add button.  deprecate?
-          :items          # options for items (Hash)
+          :help, # cue text when editing
+          :structure, # overrides the content of the card
+          :title, # overrides the name of the card
+          :variant, # override the canonical version of the name with
+          #                a different variant
+          :editor, # inline_nests makes a form within standard content
+          #                (Symbol)
+          :type, # set the default type of new cards
+          :size, # set an image size
+          :params, # parameters for add button.  deprecate?
+          :items, # options for items (Hash)
+          :cache # change view cache behaviour
+        #                (Symbol<:always, :standard, :never>)
         ],
         none: [
           :skip_perms,  # do not check permissions for this view (Boolean)
@@ -55,6 +56,24 @@ class Card
         def heir_keys
           @heir_keys ||= ::Set.new(keymap[:both]) + keymap[:heir]
         end
+
+        def accessible_keys
+          heir_keys + [:nest_name, :nest_syntax] - [:items]
+        end
+
+        def define_getter option_key
+          define_method option_key do
+            norm_method = "normalize_#{option_key}"
+            value = live_options[option_key]
+            try(norm_method, value) || value
+          end
+        end
+
+        def define_setter option_key
+          define_method "#{option_key}=" do |value|
+            live_options[option_key] = value
+          end
+        end
       end
 
       # There are two primary options hashes:
@@ -76,19 +95,16 @@ class Card
         live_options[:items] ||= {}
       end
 
-      (heir_keys + [:nest_name, :nest_syntax] - [:items]).each do |option_key|
-        define_method option_key do
-          norm_method = "normalize_#{option_key}"
-          value = live_options[option_key]
-          try(norm_method, value) || value
-        end
-
-        define_method "#{option_key}=" do |value|
-          live_options[option_key] = value
-        end
+      accessible_keys.each do |option_key|
+        define_getter option_key
+        define_setter option_key
       end
 
       def normalize_editor value
+        value && value.to_sym
+      end
+
+      def normalize_cache value
         value && value.to_sym
       end
 
@@ -96,6 +112,16 @@ class Card
       # with standard keys)
       def slot_options
         normalized_options.select { |k, _v| Options.all_keys.include? k }
+      end
+
+      def closest_live_option key
+        if live_options.key? key
+          live_options[key]
+        else
+          (parent && parent.closest_live_option(key)) ||
+            (format.parent && format.parent.voo &&
+              format.parent.voo.closest_live_option(key))
+        end
       end
 
       private

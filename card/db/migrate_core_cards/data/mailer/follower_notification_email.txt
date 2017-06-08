@@ -1,4 +1,4 @@
-"{{_|name}}" was just {{_|last_action}} by {{_user|name}}.
+"{{_|name}}" was just {{_|last_action_verb}} by {{_user|name}}.
 
 {{_|list_of_changes}}
 

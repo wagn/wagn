@@ -42,15 +42,36 @@ class Card
         current_view(view) do
           with_nest_mode view do
             method = view_method view
-            method.arity.zero? ? method.call : method.call(args)
+            rendered = method.arity.zero? ? method.call : method.call(args)
+            add_debug_info view, method, rendered
           end
         end
       end
 
+      def add_debug_info view, method, rendered
+        return rendered unless show_debug_info?
+        <<-HTML
+          <view-debug view='#{card.name}##{view}' src='#{pretty_path method.source_location}' module='#{method.owner}'/>
+          #{rendered}
+        HTML
+      end
+
+      def show_debug_info?
+        Env.params[:debug] == "view"
+      end
+
+      def pretty_path source_location
+        source_location.first.gsub(%r{^.+mod\d+-([^/]+)}, '\1: ') + ':' +
+          source_location.second.to_s
+      end
+
       # setting (:alway, :never, :nested) designated in view definition
       def view_cache_setting view
-        setting_method = self.class.view_cache_setting_method view
-        respond_to?(setting_method) ? send(setting_method) : :standard
+        method = self.class.view_cache_setting_method view
+        coded_setting = respond_to?(method) ? send(method) : :standard
+        return :never if coded_setting == :never
+        # seems unwise to override a hard-coded "never"
+        (voo && voo.cache) || coded_setting
       end
 
       def stub_render cached_content
@@ -92,10 +113,19 @@ class Card
       end
 
       def view_method view
-        method "_view_#{view}"
-      rescue
-        voo.unsupported_view = view
-        method "_view_unsupported_view"
+        unless supports_view? view
+          voo.unsupported_view = view
+          view = :unsupported_view
+        end
+        method view_method_name(view)
+      end
+
+      def supports_view? view
+        respond_to? view_method_name(view)
+      end
+
+      def view_method_name view
+        "_view_#{view}"
       end
 
       def current_view view

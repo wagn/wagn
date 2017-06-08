@@ -17,7 +17,7 @@ class WagnGenerator < Rails::Generators::AppBase
                desc: "Prepare deck for wagn core testing"
 
   class_option "gem-path",
-               type: :string, aliases: "-g", default: false, group: :runtime,
+               type: :string, aliases: "-g", default: "", group: :runtime,
                desc: "Path to local gem installation " \
                      "(Default, use env WAGN_GEM_PATH)"
 
@@ -157,7 +157,7 @@ class WagnGenerator < Rails::Generators::AppBase
   protected
 
   def core_dev_setup
-    unless @gem_path
+    if @gem_path.blank?
       @gemfile_gem_path =
         @gem_path = ask("Enter the path to your local wagn gem installation: ")
     end
@@ -171,7 +171,7 @@ class WagnGenerator < Rails::Generators::AppBase
     @wagn_gem_root = File.join @gem_path, "wagn"
     inside "spec" do
       template File.join("javascripts", "support", "wagn_jasmine.yml"),
-                File.join("javascripts", "support", "jasmine.yml")
+               File.join("javascripts", "support", "jasmine.yml")
     end
 
     # ending slash is important in order to load support and step folders
@@ -188,7 +188,7 @@ class WagnGenerator < Rails::Generators::AppBase
     inside "spec" do
       template "spec_helper.rb"
       template File.join("javascripts", "support", "deck_jasmine.yml"),
-                File.join("javascripts", "support", "jasmine.yml")
+               File.join("javascripts", "support", "jasmine.yml")
     end
   end
 
@@ -242,6 +242,7 @@ class WagnGenerator < Rails::Generators::AppBase
     @app_const_base ||= defined_app_const_base ||
                         app_name.gsub(/\W/, "_").squeeze("_").camelize
   end
+
   alias camelized app_const_base
 
   def app_const
@@ -250,13 +251,13 @@ class WagnGenerator < Rails::Generators::AppBase
 
   def valid_const?
     if app_const =~ /^\d/
-      raise Error, "Invalid application name #{app_name}. " \
+      raise Thor::Error, "Invalid application name #{app_name}. " \
                    "Please give a name which does not start with numbers."
     #    elsif RESERVED_NAMES.include?(app_name)
     #      raise Error, "Invalid application name #{app_name}." \
     # "Please give a name which does not match one of the reserved rails words."
     elsif Object.const_defined?(app_const_base)
-      raise Error, "Invalid application name #{app_name}, " \
+      raise Thor::Error, "Invalid application name #{app_name}, " \
                    "constant #{app_const_base} is already in use. " \
                    "Please choose another application name."
     end

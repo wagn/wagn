@@ -11,10 +11,12 @@ class Card
       # - creating a stub within another render
       #   (so that the stub may be rendered later)
       def fetch &block
-        case cache_level
-        when :yield       then yield
-        when :cache_yield then cache_fetch(&block)
-        when :stub        then stub
+        with_fetch_logging do |cache_level|
+          case cache_level
+          when :yield       then yield
+          when :cache_yield then cache_fetch(&block)
+          when :stub        then stub
+          end
         end
       end
 
@@ -27,9 +29,19 @@ class Card
       # * *standard* (default) cache independently or dependently, but
       #   don't double cache
       # * *never* don't ever cache this view
-      def cache_level
+      def determine_cache_level
         return :yield unless Cardio.config.view_cache
         send "#{caching? ? 'dependent' : 'independent'}_cache_level"
+      end
+
+      def with_fetch_logging
+        cache_level = determine_cache_level
+        logging = false # TODO: make configurable
+        if logging
+          puts "FETCH_VIEW (#{card.name}##{requested_view})" \
+               "cache-level = #{cache_level}"
+        end
+        yield cache_level
       end
 
       # INDEPENDENT CACHING

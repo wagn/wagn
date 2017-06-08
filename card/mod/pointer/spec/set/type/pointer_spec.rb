@@ -150,10 +150,10 @@ describe Card::Set::Type::Pointer do
       option_html =
         'input[class="pointer-checkbox-button"]'\
         '[checked="checked"]'\
-        '[name="pointer_checkbox"][type="checkbox"]'\
+        '[type="checkbox"]'\
         '[value="nonexistingcardmustnotexistthisistherule"]'\
         '[id="pointer-checkbox-nonexistingcardmustnotexistthisistherule"]'
-      assert_view_select @pointer.format.render_checkbox, option_html
+      debug_assert_view_select @pointer.format.render_checkbox, option_html
       assert_view_select @inherit_pointer.format.render_checkbox, option_html
     end
 
@@ -196,6 +196,13 @@ describe Card::Set::Type::Pointer do
         name: "pointer1", type: "Pointer", content: "bracketme"
       )
       pointer1.content.should == "[[bracketme]]"
+    end
+
+    it "handles array" do
+      pointer1 = Card.create!(
+        name: "pointer1", type: "Pointer", content: ["b1", "[[b2]]"]
+      )
+      expect(pointer1.content).to eq "[[b1]]\n[[b2]]"
     end
   end
 end

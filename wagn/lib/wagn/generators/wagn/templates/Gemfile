@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-<% if @gem_path %>
+<% if @gem_path.present? %>
 gem 'wagn',        :path=>"<%= @gemfile_gem_path %>/wagn"
 gem 'card',        :path=>"<%= @gemfile_gem_path %>/card", :require => false
 <% else %>
@@ -75,7 +75,7 @@ end
 group :test do
   gem 'fog'
   gem 'fog-aws'
-  gem 'rspec-html-matchers'
+  gem 'rspec-html-matchers', '0.8.1' # 0.9 requires ruby >= 2.1
   gem 'rr' #, '=1.0.0'
 	gem 'simplecov', '~> 0.7.1', :require => false  #test coverage
   gem 'codeclimate-test-reporter', require: nil
@@ -90,7 +90,8 @@ group :test do
   # CUKES see features dir
   gem 'cucumber-rails', '~> 1.4', :require=>false # feature-driven-development suite
   gem 'capybara', '~> 2.7'
-  gem 'selenium-webdriver', '~> 2.53'
+  gem 'selenium-webdriver', '~> 3.3'
+  gem 'chromedriver-helper', '~> 1.0.0'
   # gem 'capybara-webkit'
   gem 'launchy'                                # lets cucumber launch browser windows
 
@@ -113,7 +114,7 @@ end
 gem 'ruby-prof', :group=>:profile  # profiling
 
 group :debug do
-  gem 'better_errors', :git=>"https://github.com/xithan/better_errors.git"
+  gem 'better_errors'
   gem 'binding_of_caller'
 end
 <% end %>

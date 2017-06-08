@@ -54,21 +54,22 @@ describe Card::Set::All::Collection do
   end
 
   describe "#contextual_content" do
+    let(:context_card) { Card["A"] } # refers to 'Z'
     it "processes nests relative to context card" do
-      context_card = Card["A"] # refers to 'Z'
-      c = Card.new(name: "foo", content: "{{_self+B|core}}")
+      c = create "foo", content: "{{_self+B|core}}"
       expect(c.contextual_content(context_card)).to eq("AlphaBeta")
     end
 
     # why the heck is this good?  -efm
     it "returns content even when context card is hard templated" do
-      context_card = Card["A"] # refers to 'Z'
-
-      Card::Auth.as_bot do
-        Card.create! name: "A+*self+*structure", content: "Banana"
-      end
-      c = Card.new name: "foo", content: "{{_self+B|core}}"
+      create "A+*self+*structure", content: "Banana"
+      c = create "foo", content: "{{_self+B|core}}"
       expect(c.contextual_content(context_card)).to eq("AlphaBeta")
+    end
+
+    it "it doesn't use chunk list of context card" do
+      c = create "foo", content: "test@email.com", type: "HTML"
+      expect(c.contextual_content(context_card)).not_to have_tag "a"
     end
   end
 
@@ -126,9 +127,11 @@ describe Card::Set::All::Collection do
       end
     end
 
-    it "handles contextual titles" do
-      create name: "tabs card", content: "[[A+B]]\n[[One+Two+Three]]\n[[Four+One+Five]]", type: "pointer"
-      tabs = render_content  "{{tabs card|tabs|closed;title:_left;show:title_link}}"
+    it "handles contextual titles as link" do
+      create name: "tabs card",
+             content: "[[A+B]]\n[[One+Two+Three]]\n[[Four+One+Five]]",
+             type: "pointer"
+      tabs = render_content "{{tabs card|tabs|closed;title:_left;show:title_link}}"
       assert_view_select tabs, "div[role=tabpanel]" do
         assert_select 'li > a[data-toggle="tab"]', "A"
         assert_select 'li > a[data-toggle="tab"]', "One+Two"

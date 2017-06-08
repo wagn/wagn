@@ -15,6 +15,7 @@ module ClassMethods
     Card.delete_trashed_files
     Card.where(trash: true).delete_all
     Card::Action.delete_cardless
+    Card::Change.delete_actionless
     Card::Reference.unmap_if_referee_missing
     Card::Reference.delete_if_referer_missing
   end
@@ -94,7 +95,8 @@ event :validate_delete, :validate, on: :delete do
   end
 end
 
-event :validate_delete_children, :prepare_to_validate, on: :delete do
+event :validate_delete_children, after: :validate_delete, on: :delete do
+  return if errors.any?
   children.each do |child|
     child.trash = true
     add_subcard child

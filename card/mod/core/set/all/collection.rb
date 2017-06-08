@@ -79,6 +79,18 @@ def insert_item index, name
   self.content = new_names.join "\n"
 end
 
+def add_id id
+  add_item "~#{id}"
+end
+
+def drop_id id
+  drop_item "~#{id}"
+end
+
+def insert_id index, id
+  insert_item index, "~#{id}"
+end
+
 def extended_item_cards context=nil
   context = (context ? context.cardname : cardname)
   args = { limit: "" }
@@ -118,10 +130,23 @@ def extended_list context=nil
   # a collection
 end
 
+def context_card
+  @context_card || self
+end
+
+def with_context card
+  old_context = @context_card
+  @context_card = card if card
+  result = yield
+  @context_card = old_context
+  result
+end
+
 def contextual_content context_card, format_args={}, view_args={}
-  context_card.format(format_args).process_content(
-    format(format_args)._render_raw(view_args), view_args
-  )
+  view = view_args.delete(:view) || :core
+  with_context context_card do
+    format(format_args).render view, view_args
+  end
 end
 
 def each_chunk opts={}
@@ -166,12 +191,12 @@ format do
   end
 
   def implicit_item_view
-    view = voo_items_view || default_item_view
+    view = params[:item] || voo_items_view || default_item_view
     Card::View.canonicalize view
   end
 
   def voo_items_view
-    return unless (items = voo.items)
+    return unless voo && (items = voo.items)
     items[:view]
   end
 
@@ -191,47 +216,6 @@ format do
     return if options[:type]
     type_from_rule = card.item_type
     options[:type] = type_from_rule if type_from_rule
-  end
-
-  def search_params
-    @search_params ||= begin
-      p = default_search_params.clone
-      add_focal_search_params p if focal?
-      p
-    end
-  end
-
-  def add_focal_search_params hash
-    offset_and_limit_search_params hash
-    hash.merge! params[:wql] if params[:wql]
-  end
-
-  def offset_and_limit_search_params hash
-    [:offset, :limit].each do |key|
-      hash[key] = params[key] if params[key]
-    end
-  end
-
-  def default_search_params # wahh?
-    set_default_search_params
-  end
-
-  def set_default_search_params overrides={}
-    @default_search_params ||= begin
-      p = { default_limit: 100 }.merge overrides
-      set_search_params_variables! p
-      p
-    end
-  end
-
-  def set_search_params_variables! hash
-    hash[:vars] = params[:vars] || {}
-    params.each do |key, val|
-      case key.to_s
-      # when "_wql"      then hash.merge! val
-      when /^\_(\w+)$/ then hash[:vars][Regexp.last_match(1).to_sym] = val
-      end
-    end
   end
 
   def nested_fields content=nil
@@ -256,9 +240,11 @@ format do
   end
 
   def normalized_edit_fields
-    edit_fields.map do |name, options|
+    edit_fields.map do |name_or_card, options|
+      next [name_or_card, options || {}] if name_or_card.is_a?(Card)
+      options ||= Card.fetch_name name_or_card
       options = { title: options } if options.is_a?(String)
-      [card.cardname.field(name), options]
+      [card.cardname.field(name_or_card), options]
     end
   end
 
@@ -356,5 +342,65 @@ format :html do
       tabs[item.name] = nest item, item_view_options(args)
     end
     static_tabs tabs, tab_type
+  end
+end
+
+format :csv do
+  view :core do
+    if (item_view_options[:view] == :name_with_fields) && focal?
+      title_row("item name") + name_with_field_rows
+    else
+      super()
+    end
+  end
+
+  def name_with_field_rows
+    list = card.item_names
+    columns = columns_from_referees list.first
+
+    list.map do |item_name|
+      CSV.generate_line row_from_field_names(item_name, columns)
+    end.join
+  end
+
+  def columns_from_referees referer
+    columns = []
+    Card.fetch(referer).format.each_nested_field do |chunk|
+      columns << chunk.referee_name.tag
+    end
+    columns
+  end
+
+  def row_from_field_names parent_name, field_names, view=:core
+    field_names.each_with_object([parent_name]) do |field, row|
+      row << nest([parent_name, field], view: view)
+    end
+  end
+
+  def title_row extra_titles=nil
+    titles = column_titles extra_titles
+    return "" unless titles.present?
+    CSV.generate_line titles.map { |title| title.to_s.upcase }
+  rescue
+    ""
+  end
+
+  def column_titles extra_titles=nil
+    res = Array extra_titles
+    card1 = Card.fetch card.item_names(limit: 1).first
+    card1.each_nested_chunk do |chunk|
+      res << column_title(chunk.options)
+    end
+    res.compact
+  end
+
+  def column_title opts
+    if opts[:title]
+      opts[:title]
+    elsif %w(name link).member? opts[:view]
+      opts[:view]
+    else
+      opts[:nest_name].to_name.tag
+    end
   end
 end

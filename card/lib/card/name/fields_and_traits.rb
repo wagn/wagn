@@ -23,9 +23,12 @@ class Card
       end
 
       # @return [True/False]
-      def field_of? context_name
-        if context_name.present?
-          child_of?(context_name) && relative_name(context_name).length == 2
+      def field_of? context
+        if context.present?
+          child_of?(context) && relative_name(context).length == 2
+          # junction? &&
+          #  absolute_name(context).left_name.key == context.to_name.key
+          # @child_of?(context_name) && relative_name(context_name).length == 2
         else
           s.match(/^\s*\+[^+]+$/).present?
         end
@@ -38,14 +41,15 @@ class Card
       # @return [String]
       def trait tag_code
         name = trait_name tag_code
-        raise Card::Error::NotFound, "unknown codename: #{tag_code}" unless name
+
         name.s
       end
 
       # @return [Card::Name]
       def trait_name tag_code
-        return unless (card_id = Card::Codename[tag_code])
-        [self, Card.quick_fetch(card_id).cardname].to_name
+        card_id = Card::Codename[tag_code]
+        raise Card::Error::NotFound, "unknown codename: #{tag_code}" unless card_id
+        [self, Card.quick_fetch(card_id).name].to_name
       end
 
       # @return [True/False]
@@ -59,9 +63,6 @@ class Card
           end.present?
         end
       end
-
-
-
     end
   end
 end

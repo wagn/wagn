@@ -16,10 +16,14 @@ format do
 
   def source_url
     return card.raw_content if card.web?
+    internal_url selected_version.url
+  end
+
+  def selected_version
     if voo.size == :original
-      card.image.url
+      card.image
     else
-      card.image.versions[voo.size.to_sym].url
+      card.image.versions[voo.size.to_sym]
     end
   end
 
@@ -34,11 +38,10 @@ format do
       when voo.size           then voo.size.to_sym
       when main?              then :large
       else                         :medium
-    end
+      end
     voo.size = :original if voo.size == :full
   end
 end
-
 
 format :html do
   include File::HtmlFormat
@@ -54,7 +57,7 @@ format :html do
   end
 
   def preview
-    return unless card.new_card? && !card.preliminary_upload?
+    return if card.new_card? && !card.preliminary_upload?
     voo.size = :medium
     wrap_with :div, class: "attachment-preview",
                     id: "#{card.attachment.filename}-preview" do
@@ -62,7 +65,7 @@ format :html do
     end
   end
 
-  def show_action_content_toggle? action, view_type
+  def show_action_content_toggle? _action, _view_type
     true
   end
 
@@ -87,6 +90,22 @@ format :html do
   end
 end
 
+format do
+  view :inline do
+    _render_core
+  end
+end
+
+format :email_html do
+  view :inline do
+    determine_image_size
+    url_generator = voo.closest_live_option(:inline_attachment_url)
+    path = selected_version.path
+    return _render_source unless url_generator && ::File.exist?(path)
+    image_tag url_generator.call(path)
+  end
+end
+
 format :css do
   view :core do
     render_source
@@ -100,12 +119,12 @@ end
 format :file do
   include File::FileFormat
 
-  view :style do # should this be in model?
-    ["", "full"].member?(voo.size.to_s) ? :original : voo.size
+  def image_style
+    ["", "full"].member?(params[:size].to_s) ? :original : params[:size].to_sym
   end
 
   def selected_file_version
-    style = _render_style(style: voo.size).to_sym
+    style = voo.size = image_style.to_sym
     if style && style != :original
       card.attachment.versions[style]
     else

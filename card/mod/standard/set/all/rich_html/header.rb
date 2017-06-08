@@ -1,20 +1,4 @@
 format :html do
-  # TODO: find these a better home.
-  def class_up klass, classier, force=false
-    key = klass.to_s
-    return if !force && class_list[key]
-    class_list[key] = classier.to_s
-  end
-
-  def class_list
-    @class_list ||= {}
-  end
-
-  def classy *classes
-    classes = Array.wrap(classes).flatten
-    [classes, class_list[classes.first]].flatten.compact.join " "
-  end
-
   view :header do
     voo.hide :toggle, :toolbar
     main_header + _optional_render_toolbar

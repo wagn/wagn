@@ -146,13 +146,11 @@ format :html do
     Card.fetch(set_name)
   end
 
+  # subheader = with_name_context(card.name) do
+  #   subformat(rcard)._render_title(args)
+  # end
 
-    # subheader = with_name_context(card.name) do
-    #   subformat(rcard)._render_title(args)
-    # end
-
-
-  view :related do |args|
+  view :related, cache: :never do |args|
     related_card, options = related_card_and_options args
     return unless related_card
     voo.show :toolbar, :menu, :help
@@ -163,13 +161,19 @@ format :html do
   end
 
   def related_card_and_options args
-    options = (args[:related] || params[:related]).symbolize_keys
-    return unless options
+    return unless (options = related_options(args))
     related_card = related_card_from_options options
     options[:view] ||= :open
     options[:show] ||= []
     options[:show] << :comment_box if related_card.show_comment_box_in_related?
     [related_card, options]
+  end
+
+  def related_options args
+    options = (args[:related] || params[:related])
+    options = { name: options } if options.is_a? String
+    return unless options.is_a? Hash
+    options.symbolize_keys
   end
 
   def related_card_from_options options

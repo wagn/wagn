@@ -14,10 +14,13 @@ end
 format :html do
 
   view :editor do |args|
-    part_view = (c = card.rule(:input)) ? c.gsub(/[\[\]]/, "") : :list
     hidden_field(:content, class: "card-content") +
       raw(_render(part_view, args))
     # .merge(pointer_item_class: 'form-control')))
+  end
+
+  def part_view
+    (c = card.rule(:input)) ? c.gsub(/[\[\]]/, "") : :list
   end
 
   view :list do |args|
@@ -76,7 +79,7 @@ format :html do
       id = "pointer-checkbox-#{option_name.to_name.key}"
       <<-HTML
         <div class="pointer-checkbox">
-          #{check_box_tag 'pointer_checkbox', option_name, checked,
+          #{check_box_tag "pointer_checkbox-#{unique_id}", option_name, checked,
                           id: id, class: 'pointer-checkbox-button'}
           #{option_label option_name, id}
           #{option_description 'checkbox', option_name}
@@ -89,7 +92,7 @@ format :html do
 
   view :multiselect do |_args|
     select_tag(
-      "pointer_multiselect",
+      "pointer_multiselect-#{unique_id}",
       options_for_select(card.option_names, card.item_names),
       multiple: true, class: "pointer-multiselect form-control"
     )
@@ -114,9 +117,12 @@ format :html do
   end
 
   def option_label option_name, id
+    %(<label for="#{id}">#{option_label_text option_name}</label>)
+  end
+
+  def option_label_text option_name
     o_card = Card.fetch(option_name)
-    label = (o_card && o_card.label) || option_name
-    %(<label for="#{id}">#{label}</label>)
+    (o_card && o_card.label) || option_name
   end
 
   # @param option_type [String] "checkbox" or "radio"
@@ -127,7 +133,7 @@ format :html do
 
   view :select do |_args|
     options = [["-- Select --", ""]] + card.option_names.map { |x| [x, x] }
-    select_tag("pointer_select",
+    select_tag("pointer_select-#{unique_id}",
                options_for_select(options, card.item_names.first),
                class: "pointer-select form-control")
   end
@@ -158,8 +164,8 @@ def << item
   add_item newname
 end
 
-def add_item name
-  return if include_item? name
+def add_item name, allow_duplicates=false
+  return if !allow_duplicates && include_item?(name)
   self.content = "[[#{(item_names << name).reject(&:blank?) * "]]\n[["}]]"
 end
 
@@ -192,18 +198,23 @@ def insert_item! index, name
 end
 
 def option_names
-  result_names =
-    if (oc = options_rule_card)
-      oc.item_names default_limit: 50, context: name
-    else
-      Card.search({ sort: "name", limit: 50, return: :name },
-                  "option names for pointer: #{name}")
-    end
+  result_names = configured_option_names
+
   if (selected_options = item_names)
     result_names += selected_options
     result_names.uniq!
   end
   result_names
+end
+
+def configured_option_names
+  if (oc = options_rule_card)
+    oc.item_names context: name,
+                  limit: oc.respond_to?(:default_limit) ? oc.default_limit : 0
+  else
+    Card.search({ sort: "name", limit: 50, return: :name },
+                "option names for pointer: #{name}")
+  end
 end
 
 def option_cards

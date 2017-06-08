@@ -21,11 +21,15 @@ def template
   end
 end
 
+def default_type_id default_card=nil
+  default_card ? default_card.type_id : Card.default_type_id
+end
+
 def new_card_template
   default = rule_card :default, skip_modules: true
 
   dup_card = dup
-  dup_card.type_id = default ? default.type_id : Card.default_type_id
+  dup_card.type_id = default_type_id default
 
   if (structure = dup_card.structure_rule_card)
     @virtual = true if junction?

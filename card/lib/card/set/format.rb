@@ -78,16 +78,38 @@ class Card
       # No longer just view definitions. Also basket definitions now.
       module AbstractFormat
         include Set::Basket
+        include Set::Format::HamlViews
 
         mattr_accessor :views
-        self.views = {}
+        self.views = Hash.new { |h, k| h[k] = {} }
 
         def view view, *args, &block
           view = view.to_viewname.key.to_sym
-          views[self] ||= {}
           interpret_view_opts view, args[0] if block_given?
-          view_block = views[self][view] = view_block view, args, &block
-          define_method "_view_#{view}", view_block
+          view_method_block = view_block(view, args, &block)
+          if async_view? args
+            # This case makes only sense for HtmlFormat
+            # but I don't see an easy way to override class methods for a specific
+            # format. All formats are extended with this general module. So
+            # a HtmlFormat.view method would be overridden by AbstractFormat.view
+            # We need something like AbstractHtmlFormat for that.
+            define_async_view_method view, &view_method_block
+          else
+            define_standard_view_method view, &view_method_block
+          end
+        end
+
+        def define_standard_view_method view, &block
+          views[self][view] = block
+          define_method "_view_#{view}", &block
+        end
+
+        def define_async_view_method view, &block
+          view_content = "#{view}_async_content"
+          define_standard_view_method view_content, &block
+          define_standard_view_method view do
+            "<card-view-placeholder data-url=#{path view: view_content}/>"
+          end
         end
 
         def interpret_view_opts view, opts
@@ -103,7 +125,16 @@ class Card
         end
 
         def view_block view, args, &block
+          return haml_view_block(view, &block) if haml_view?(args)
           block_given? ? block : lookup_alias_block(view, args)
+        end
+
+        def haml_view? args
+          args.first.is_a?(Hash) && args.first[:template] == :haml
+        end
+
+        def async_view? args
+          args.first.is_a?(Hash) && args.first[:async]
         end
 
         def lookup_alias_block view, args
@@ -114,6 +145,15 @@ class Card
             raise "cannot find #{opts[:view]} view in #{opts[:mod]}; " \
                   "failed to alias #{view} in #{self}"
           end
+        end
+
+        def source_location
+          set_module.source_location
+        end
+
+        # remove the format part of the module name
+        def set_module
+          Card.const_get name.split("::")[0..-2].join("::")
         end
       end
     end

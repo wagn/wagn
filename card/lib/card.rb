@@ -1,13 +1,6 @@
 # -*- encoding : utf-8 -*-
 require "carrierwave"
 
-# if Cardio.file_buckets.present?
-#   require "carrierwave/storage/fog"
-#   Cardio.file_buckets.each do |bucket, config|
-#     require config["provider"]
-#   end
-# end
-
 Object.const_remove_if_defined :Card
 
 # Cards are wiki-inspired building blocks.
@@ -57,14 +50,18 @@ class Card < ActiveRecord::Base
   serializable_attr_accessor(
     :action, :supercard, :superleft,
     :current_act, :current_action,
-    :comment, :comment_author,    # obviated soon
-    :update_referers,          # wrong mechanism for this
+    :comment,                     # obviated soon
+    :update_referers,             # wrong mechanism for this
     :update_all_users,            # if the above is wrong then this one too
     :silent_change,               # and this probably too
     :remove_rule_stash,
     :last_action_id_before_edit,
     :only_storage_phase           # used to save subcards
   )
+
+  def serializable_attributes
+    self.class.serializable_attributes + set_specific.keys
+  end
 
   attr_accessor :follower_stash
 
@@ -73,12 +70,16 @@ class Card < ActiveRecord::Base
 
     # VALIDATION PHASE
     :initialize_stage, :prepare_to_validate_stage, :validate_stage,
+    :initialize_final_stage, :prepare_to_validate_final_stage,
+    :validate_final_stage,
 
     # STORAGE PHASE
     :prepare_to_store_stage, :store_stage, :finalize_stage,
+    :prepare_to_store_final_stage, :store_final_stage, :finalize_final_stage,
 
     # INTEGRATION PHASE
-    :integrate_stage, :integrate_with_delay_stage
+    :integrate_stage, :integrate_with_delay_stage,
+    :integrate_final_stage, :integrate_with_delay_final_stage
   )
 
   # Validation and integration phase are only called for the act card

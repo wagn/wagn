@@ -1,14 +1,13 @@
 class Card
   class Format
     module Names
-      def initialize_context_names
-        if @context_names
-          context_names_minus_irrelevants
-        elsif params[:slot]
-          context_names_from_params
-        else
-          []
-        end
+      def initial_context_names
+        @initial_context_names ||=
+          if @context_names
+            context_names_minus_irrelevants
+          else
+            context_names_from_params
+          end
       end
 
       def context_names_minus_irrelevants
@@ -17,22 +16,19 @@ class Card
       end
 
       def context_names_from_params
-        context_name_list = params[:slot][:name_context].to_s
-        context_name_list.split(",").map(&:to_name)
+        return [] unless (name_list = Card::Env.slot_opts[:name_context])
+        name_list.to_s.split(",").map(&:to_name)
+      end
+
+      def context_names_to_params
+        return unless @context_names
+        @context_names.join(",")
       end
 
       def add_name_context name=nil
         name ||= card.name
         @context_names += name.to_name.part_names
         @context_names.uniq!
-      end
-
-      def with_name_context name
-        old_context = @context_names
-        add_name_context name
-        result = yield
-        @context_names = old_context
-        result
       end
 
       def showname title=nil

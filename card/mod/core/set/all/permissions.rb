@@ -4,9 +4,8 @@ Card.error_codes.merge! permission_denied: [:denial, 403],
 
 module ClassMethods
   def repair_all_permissions
-    Card.where(
-      "(read_rule_class is null or read_rule_id is null) and trash is false"
-    ).each do |broken_card|
+    Card.where("(read_rule_class is null or read_rule_id is null) and trash is false")
+        .each do |broken_card|
       broken_card.include_set_modules
       broken_card.repair_permissions!
     end
@@ -224,26 +223,20 @@ def add_to_read_rule_update_queue updates
 end
 
 event :check_permissions, :validate do
-  task =
-    if @action != :delete && comment # will be obviated by new comment handling
-      :comment
-    else
-      @action
-    end
   track_permission_errors do
-    ok? task
+    ok? action_for_permission_check
   end
+end
+
+def action_for_permission_check
+  commenting? ? :comment : @action
 end
 
 def track_permission_errors
   @permission_errors = []
   result = yield
-
-  @permission_errors.each do |message|
-    errors.add :permission_denied, message
-  end
+  @permission_errors.each { |msg| errors.add :permission_denied, msg }
   @permission_errors = nil
-
   result
 end
 

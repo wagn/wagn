@@ -1,3 +1,5 @@
+include_set Abstract::Paging
+
 stage_method :changed_item_names do
   dropped_item_names + added_item_names
 end
@@ -17,6 +19,10 @@ stage_method :changed_item_cards do
 end
 
 format do
+  def default_limit
+    20
+  end
+
   def item_links args={}
     card.item_cards(args).map do |item_card|
       subformat(item_card).render_link
@@ -38,7 +44,8 @@ format do
   end
 
   def pointer_items args={}
-    card.item_cards.map do |item_card|
+    page_args = args.extract! :limit, :offset
+    card.item_cards(page_args).map do |item_card|
       nest_item item_card, args do |rendered, item_view|
         wrap_item rendered, item_view
       end
@@ -48,14 +55,19 @@ end
 
 format :html do
   view :core do
-    wrap_with :div, pointer_items, class: "pointer-list"
+    with_paging do |paging_args|
+      wrap_with :div, pointer_items(paging_args.extract!(:limit, :offset)),
+                class: "pointer-list"
+    end
   end
 
   view :closed_content do
     item_view = implicit_item_view
     item_view = item_view == "name" ? "name" : "link"
     wrap_with :div, class: "pointer-list" do
-      pointer_items(view: item_view).join ", "
+      # unlikely that more than 100 items fit in closed content
+      # even if every item is only one character
+      pointer_items(view: item_view, limit: 100, offset: 0).join ", "
     end
   end
 
@@ -75,6 +87,7 @@ format :css do
   end
 
   view :core do
+    voo.items[:view] = params[:item] if params[:item]
     nest_item_array.join "\n\n"
   end
 
@@ -95,27 +108,39 @@ end
 
 format :rss do
   def raw_feed_items
-    @raw_feed_items ||= card.item_cards
+    @raw_feed_items ||= card.item_cards(limit: limit, offset: offset)
   end
 end
 
 format :json do
+  def max_depth
+    params[:max_depth] || 1
+  end
+
   view :export_items do |args|
     item_args = args.merge view: :export
     card.known_item_cards.map do |item_card|
       nest_item item_card, item_args
     end.flatten.reject(&:blank?)
   end
+
+  def essentials
+    return if @depth > max_depth
+    item_cards.map do |item|
+      nest item, view: :essentials
+    end
+  end
 end
 
-# while a card's card type and content are updated in the same request,
-# the new module will override the old module's events and functions.
-# this event is only on pointer card. Other type cards do not have this event,
-# so it is not overridden and will be run while updating type and content in
-# the same request.
+
+# If a card's type and content are updated in the same action, the new module
+# will override the old module's events and functions. But this event is only
+# on pointers -- other type cards do not have this event,
+# Therefore if something is changed from a pointer and its content is changed
+# in the same action, this event will be run and will treat the content like
+# it' still pointer content.  The "when" clause helps with that (but is a hack)
 event :standardize_items, :prepare_to_validate,
-      on: :save,
-      changed: :content,
+      on: :save, changed: :content,
       when: proc { |c| c.type_id == Card::PointerID } do
   self.content = item_names(context: :raw).map do |name|
     "[[#{name}]]"
@@ -128,7 +153,7 @@ end
 
 def item_cards args={}
   if args[:complete]
-    query = args.reverse_merge referred_to_by: name
+    query = args.reverse_merge referred_to_by: name, limit: 0
     Card::Query.run query
   elsif args[:known_only]
     known_item_cards args
@@ -151,10 +176,19 @@ def fetch_or_initialize_item_cards args
   end
 end
 
+def item args={}
+  item_names(args).first
+end
+
 def item_names args={}
-  context = args[:context] || cardname
+  context = args[:context] || context_card.cardname
   content = args[:content] || raw_content
-  content.to_s.split(/\n+/).map do |line|
+  raw_items = content.to_s.split(/\n+/)
+  if args[:limit].present? && args[:limit].to_i > 0
+    offset = args[:offset] || 0
+    raw_items = raw_items[offset, args[:limit].to_i]
+  end
+  raw_items.map do |line|
     item_name = line.gsub(/\[\[|\]\]/, "").strip
     if context == :raw
       item_name

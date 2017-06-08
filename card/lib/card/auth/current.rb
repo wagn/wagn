@@ -49,6 +49,27 @@ class Card
           end
       end
 
+      def serialize
+        { as_id: as_id, current_id: current_id }
+      end
+
+      # @param auth_data [Integer|Hash] user id or a hash
+      # @opts auth_data [Integer] current_id
+      # @opts auth_data [Integer] as_id
+      def with auth_data
+        auth_data = { current_id: auth_data } if auth_data.is_a?(Integer)
+        raise ArgumentError unless auth_data.is_a? Hash
+
+        tmp_current = current_id
+        tmp_as_id = as_id
+        @current_id = auth_data[:current_id]
+        @as_id = auth_data[:as_id] if auth_data[:as_id]
+        yield
+      ensure
+        @current_id = tmp_current
+        @as_id = tmp_as_id
+      end
+
       # get session object from Env
       # return [Session]
       def session

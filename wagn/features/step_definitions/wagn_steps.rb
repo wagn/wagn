@@ -91,28 +91,31 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   end
 end
 
-def set_content name, content, cardtype=nil
+def set_content name, content, _cardtype=nil
   Capybara.ignore_hidden_elements = false
-  ace_editors = all(".ace-editor-textarea[name='#{name}']")
-  pm_editors = all(".prosemirror-editor > [name='#{name}']")
-  if ace_editors.present? &&
-     page.evaluate_script("typeof ace != 'undefined'")
-    page.execute_script "ace.edit($('.ace_editor').get(0))"\
-        ".getSession().setValue('#{content}')"
-  elsif pm_editors.present?
-    editor_id = pm_editors.first.first(:xpath, ".//..")[:id]
-    set_prosemirror_content editor_id, content
-  else
-#rescue Selenium::WebDriver::Error::JavascriptError
+  wait_for_ajax
+  set_ace_editor_content(name, content) ||
+    set_pm_editor_content(name, content) ||
     fill_in(name, with: content)
-  end
   Capybara.ignore_hidden_elements = true
 end
 
-def set_prosemirror_content editor_id, content
+def set_ace_editor_content name, content
+  return unless all(".ace-editor-textarea[name='#{name}']").present? &&
+                page.evaluate_script("typeof ace != 'undefined'")
+  sleep(0.5)
+  page.execute_script "ace.edit($('.ace_editor').get(0))"\
+                      ".getSession().setValue('#{content}')"
+  true
+end
+
+def set_pm_editor_content name, content
+  (editors = all(".prosemirror-editor > [name='#{name}']"))
+  return unless editors.present?
+  editor_id = editors.first.first(:xpath, ".//..")[:id]
   escaped_quotes = content.gsub("'", "\\'")
-  page.execute_script "getProseMirror('#{editor_id}')"\
-                      ".setContent('#{escaped_quotes}', 'text')"
+  page.execute_script "$('##{editor_id} .ProseMirror').text('#{escaped_quotes}')"
+  true
 end
 
 content_re = /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/
@@ -148,10 +151,16 @@ When /^(?:|I )enter "([^"]*)" into "([^"]*)"$/ do |value, field|
 end
 
 When /^(?:|I )upload the (.+) "(.+)"$/ do |attachment_name, filename|
-  script = "$('input[type=file]').css('opacity','1');"
-  page.driver.browser.execute_script(script)
-  file = File.join Wagn.gem_root, "features", "support", filename
-  attach_file "card_#{attachment_name}", file
+  Capybara.ignore_hidden_elements = false
+  attach_file "card_#{attachment_name}", find_file(filename)
+  Capybara.ignore_hidden_elements = true
+end
+
+def find_file filename
+  roots = "{#{Cardio.root}/mod/**,#{Cardio.gem_root}/mod/**,#{Wagn.gem_root}}"
+  paths = Dir.glob(File.join(roots, "features", "support", filename))
+  raise ArgumentError, "couldn't find file '#{filename}'" if paths.empty?
+  paths.first
 end
 
 Given /^(.*) (is|am) watching "([^\"]+)"$/ do |user, _verb, cardname|
@@ -177,20 +186,35 @@ When /I wait (\d+) seconds$/ do |period|
   sleep period.to_i
 end
 
-When /^I wait until ajax response done$/ do
-  Timeout.timeout(Capybara.default_wait_time) do
-    sleep(0.5) while page.evaluate_script("jQuery.active") != 0
+def wait_for_ajax
+  Timeout.timeout(Capybara.default_max_wait_time) do
+    begin
+      sleep(0.5) until finished_all_ajax_requests?
+    rescue Selenium::WebDriver::Error::UnknownError
+      sleep(2) # HACK: to fix the issue that in layout.feature jQuery
+      # after the layout change is not defined
+    end
   end
+end
+
+def finished_all_ajax_requests?
+  page.evaluate_script("jQuery.active").zero?
+end
+
+When /^I wait for ajax response$/ do
+  wait_for_ajax
 end
 
 # Then /what/ do
 #   save_and_open_page
 # end
 #
-# Then /debug/ do
+Then /debug/ do
+  require "pry"
+  #
+  nil
+end
 #   if RUBY_VERSION =~ /^2/
-#     require 'pry'
-#     binding.pry
 #   else
 #     debugger
 #   end
@@ -205,6 +229,7 @@ def create_card username, cardtype, cardname, content=""
       visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"
       yield if block_given?
       click_button "Submit"
+      wait_for_ajax
     end
   end
 end
@@ -356,7 +381,7 @@ Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
   expect(selected.inner_html).to match /#{value}/
 end
 
-Then /^"([^"]*)" should be signed in$/ do |user|  # "
+Then /^"([^"]*)" should be signed in$/ do |user| # "
   has_css?(".my-card-link", text: user)
 end
 
@@ -407,4 +432,64 @@ end
 
 When /^I fill in "([^\"]*)" with$/ do |field, value|
   fill_in(field, with: value)
+end
+
+When(/^I scroll (-?\d+) pixels$/) do |number|
+  page.execute_script "window.scrollBy(0, #{number})"
+end
+
+When(/^I scroll (\d+) pixels down$/) do |number|
+  page.execute_script "window.scrollBy(0, #{number})"
+end
+
+When(/^I scroll (\d+) pixels up$/) do |number|
+  page.execute_script "window.scrollBy(0, -#{number})"
+end
+
+module Capybara
+  module Node
+    # adapt capybara methods to fill in forms to wagn's form interface
+    module Actions
+      alias_method :original_fill_in, :fill_in
+      alias_method :original_select, :select
+
+      def fill_in locator, options={}
+        wagn_fill_in(locator, options) || original_fill_in(locator, options)
+      end
+
+      def select value, options={}
+        wagn_select(value, options) || original_select(value, options)
+      end
+
+      def wagn_fill_in locator, options
+        el = labeled_field(:input, locator) || labeled_field(:textarea, locator)
+        return unless el
+        el.set options[:with]
+        true
+      end
+
+      def wagn_select value, options
+        el = labeled_field :select, options[:from], visible: false
+        return unless el
+        value = el.find("option", text: value, visible: false)["value"]
+        choose_value el, value
+        true
+      end
+
+      def choose_value el, value
+        id = el["id"]
+        session.execute_script("$('##{id}').val('#{value}')")
+        # session.execute_script("$('##{id}').trigger('chosen:updated')")
+        # session.execute_script("$('##{id}').change()")
+      end
+
+      def labeled_field type, label, options={}
+        label.gsub!(/^\+/, "") # because '+' is in an extra span,
+        # descendant-or-self::text doesn't find it
+        first :xpath,
+              "//label[descendant-or-self::text()='#{label}']/..//#{type}",
+              options.merge(wait: 5)
+      end
+    end
+  end
 end

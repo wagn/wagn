@@ -18,6 +18,8 @@ class Card
         template "set_spec_template.erb", set_path("spec")
       end
 
+      private
+
       def set_path modifier=nil
         suffix = modifier ? "_#{modifier}" : nil
         filename = "#{anchors.last}#{suffix}.rb"

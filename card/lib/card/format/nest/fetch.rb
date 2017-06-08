@@ -7,6 +7,7 @@ class Card
           case cardish
           when Card            then cardish
           when Symbol, Integer then Card.fetch cardish
+          when "_", "_self"    then card.context_card
           else
             opts[:nest_name] = cardish.to_s
             Card.fetch cardish, new: nest_new_args(opts)
@@ -19,7 +20,7 @@ class Card
           nest_name = nest_opts[:nest_name].to_s
           new_args = { name: nest_name, type: nest_opts[:type] }
 
-          new_args[:supercard] = card unless nest_name.strip.blank?
+          new_args[:supercard] = card.context_card unless nest_name.strip.blank?
           # special case.  gets absolutized incorrectly. fix in smartname?
 
           nest_new_main_args new_args if nest_name =~ /^_main\+/

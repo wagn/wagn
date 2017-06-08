@@ -54,13 +54,15 @@ class Card
                            creator_id updater_id codename read_rule_id        ),
       relational:      %w( type part left right
                            editor_of edited_by last_editor_of last_edited_by
-                           creator_of created_by member_of member             ),
+                           creator_of created_by member_of member
+                           updater_of updated_by),
       plus_relational: %w(plus left_plus right_plus),
       ref_relational:  %w( refer_to referred_to_by
                            link_to linked_to_by
                            include included_by                                ),
       conjunction:     %w(and or all any),
-      special:         %w(found_by not sort match complete extension_type),
+      special:         %w(found_by not sort match name_match complete junction_complete
+                          extension_type),
       ignore:          %w(prepend append view params vars size)
     }.each_with_object({}) do |pair, h|
       pair[1].each { |v| h[v.to_sym] = pair[0] }
@@ -81,7 +83,7 @@ class Card
     DEFAULT_ORDER_DIRS = { update: "desc", relevance: "desc" }.freeze
 
     attr_reader :statement, :mods, :conditions, :comment,
-                :subqueries, :superquery
+                :subqueries, :superquery, :vars
     attr_accessor :joins, :table_seq, :unjoined, :conditions_on_join
 
     # Query Execution
@@ -121,7 +123,7 @@ class Card
     # run the current query
     # @return array of card objects by default
     def run
-      retrn = statement[:return].present? ? statement[:return].to_s : "card"
+      retrn ||= statement[:return].present? ? statement[:return].to_s : "card"
       if retrn == "card"
         get_results("name").map do |name|
           Card.fetch name, new: {}
@@ -134,7 +136,12 @@ class Card
     # @return Integer for :count, otherwise Array of Strings or Integers
     def get_results retrn
       rows = run_sql
-      if retrn == "name" && (statement[:prepend] || statement[:append])
+      if retrn =~ /_\w+/
+        name_processor = contextual_name_processor retrn
+        rows.map do |row|
+          name_processor.call row["name"]
+        end
+      elsif retrn == "name" && (statement[:prepend] || statement[:append])
         rows.map do |row|
           [statement[:prepend], row["name"], statement[:append]].compact * "+"
         end
@@ -158,6 +165,26 @@ class Card
       @sql ||= SqlStatement.new(self).build.to_s
     end
 
+    def contextual_name_processor pattern
+      case pattern.downcase
+      when "_left", "_l"
+        ->(name) { name.to_name.left_name.to_s }
+      when "_right", "_r"
+        ->(name) { name.to_name.right_name.to_s }
+      else
+        chain = "name.to_name"
+        pattern.each_char do |ch|
+          case ch
+          when "l", "L"
+            chain += ".left_name"
+          when "r", "R"
+            chain += ".right_name"
+          end
+        end
+        eval "lambda { |name| #{chain}.to_s }"
+      end
+    end
+
     # Query Hierarchy
     # @root, @subqueries, and @superquery are used to track a hierarchy of
     # query objects.  This nesting allows to find, for example, cards that
@@ -179,6 +206,10 @@ class Card
       else
         @context = @superquery ? @superquery.context : ""
       end
+    end
+
+    def limit
+      @mods[:limit].to_i
     end
   end
 end

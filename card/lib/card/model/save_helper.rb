@@ -9,6 +9,14 @@ class Card
     # All !-methods in this module rename existing cards
     # to resolve name conflicts)
     module SaveHelper
+      def as_user user_name
+        current = Card::Auth.current_id
+        Card::Auth.current_id = Card.fetch_id user_name
+        yield
+      ensure
+        Card::Auth.current_id = current
+      end
+
       def create_card name_or_args, content_or_args=nil
         args = standardize_args name_or_args, content_or_args
         resolve_name_conflict args
@@ -75,6 +83,43 @@ class Card
         end
       end
 
+
+      # Creates or updates a trait card with codename and right rules.
+      # Content for rules that are pointer cards by default
+      # is converted to pointer format.
+      # @example
+      #   ensure_trait "*a_or_b", :a_or_b,
+      #                default: { type_id: Card::PointerID },
+      #                options: ["A", "B"],
+      #                input: "radio"
+      def ensure_trait name, codename, args={}
+        ensure_card name, codename: codename
+        args.each do |setting, value|
+          ensure_trait_rule name, setting, value
+        end
+      end
+
+      def ensure_trait_rule trait, setting, value
+        validate_setting setting
+        card_args = normalize_trait_rule_args setting, value
+        ensure_card [trait, :right, setting], card_args
+      end
+
+      def validate_setting setting
+        unless Card::Codename[setting] &&
+               Card.fetch_type_id(setting) == SettingID
+          raise ArgumentError, "not a valid setting: #{setting}"
+        end
+      end
+
+      def normalize_trait_rule_args setting, value
+        return value if value.is_a? Hash
+        if Card.fetch_type_id([setting, :right, :default]) == PointerID
+          value = Array(value).to_pointer_content
+        end
+        { content: value }
+      end
+
       # if card with same name exists move it out of the way
       def create_card! name_or_args, content_or_args=nil
         args = standardize_args name_or_args, content_or_args
@@ -96,7 +141,7 @@ class Card
         if name_or_args.is_a?(Hash)
           name_or_args
         else
-          add_name name_or_args, content_or_args
+          add_name name_or_args, content_or_args || {}
         end
       end
 
@@ -110,7 +155,7 @@ class Card
       end
 
       def name_from_args name_or_args
-        name_or_args.is_a?(String) ? name_or_args : name_or_args[:name]
+        name_or_args.is_a?(Hash) ? name_or_args[:name] : name_or_args
       end
 
       def add_name name, content_or_args
@@ -128,9 +173,20 @@ class Card
       end
 
       def ensure_attributes card, args
-        update_args = args.select { |key, value| card.send(key) != value }
-        return if update_args.empty?
-        card.update_attributes! update_args
+        args = args.with_indifferent_access
+        subcards = card.extract_subcard_args! args
+        update_args =
+          args.select do |key, value|
+            if key =~ /^\+/
+              subfields[key] = value
+              false
+            else
+              card.send(key) != value
+            end
+          end
+        return if update_args.empty? && subcards.empty?
+        # FIXME: use ensure_attributes for subcards
+        card.update_attributes! update_args.merge(subcards: subcards)
       end
 
       def add_style name, opts={}

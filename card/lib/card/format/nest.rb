@@ -43,17 +43,34 @@ class Card
       end
 
       def nest_render nested_card, view, options
-        subformat = nest_subformat nested_card, options
+        subformat = nest_subformat nested_card, options, view
         view = subformat.modal_nest_view view
         rendered = count_chars { subformat.optional_render view, options }
         block_given? ? yield(rendered, view) : rendered
       end
 
-      def nest_subformat nested_card, opts
-        return self if opts[:nest_name] =~ /^_(self)?$/
+      def nest_subformat nested_card, opts, view
+        return self if reuse_format? opts[:nest_name], view
         sub = subformat nested_card
         sub.main! if opts[:main]
         sub
+      end
+
+      def reuse_format? nest_name, view
+        nest_name =~ /^_(self)?$/ &&
+          card.context_card == card &&
+          !nest_recursion_risk?(view)
+      end
+
+      def nest_recursion_risk? view
+        content_view?(view) && voo.structure
+      end
+
+      def content_view? view
+        # TODO: this should be specified in view definition
+        [
+          :core, :content, :titled, :open, :closed, :open_content
+        ].member? view.to_sym
       end
 
       # Main difference compared to #nest is that you can use

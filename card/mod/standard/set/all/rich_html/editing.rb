@@ -130,8 +130,7 @@ format :html do
     _render_related args.merge(
       related: {
         card: current_set_card,
-        view: :open,
-        slot: { rule_view: (args[:rule_view] || :common_rules) }
+        view: :open
       }
     )
   end
@@ -157,12 +156,14 @@ format :html do
     voo.show :toolbar
     frame do
       with_nest_mode :edit do
-        process_nested_fields hide: :toolbar
+        process_nested_fields
       end
     end
   end
 
   view :edit_nest_rules, cache: :never do |args|
+    return ""
+    # FIXME - view can recurse.  temporarily turned off
     voo.show :toolbar
     view = args[:rule_view] || :field_related_rules
     frame do

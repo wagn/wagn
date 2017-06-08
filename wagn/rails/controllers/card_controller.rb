@@ -112,7 +112,7 @@ class CardController < ActionController::Base
 
     view ||= params[:view]
     result = card.act do
-      format.page view, page_opts_from_params
+      format.page view, Card::Env.slot_opts
     end
 
     status = format.error_status || status
@@ -127,7 +127,6 @@ class CardController < ActionController::Base
   rescue_from StandardError do |exception|
     Rails.logger.info "exception = #{exception.class}: #{exception.message}"
     @card ||= Card.new
-    Card::Error.current = exception
     show Card::Error.exception_view(@card, exception)
   end
 end

@@ -20,7 +20,7 @@ class Card
       end
 
       # answers: should this cache fetch depend on one already in progress?
-      # Note that f you create a brand new format object (ie, not a subformat)
+      # Note that if you create a brand new format object (ie, not a subformat)
       # midrender, (eg card.format...), it needs to be treated as unrelated to
       # any caching in progress.
       def caching?
@@ -56,7 +56,12 @@ class Card
         string_value =
           case value
           when Hash then "{#{hash_for_cache_key value}}"
-          when Array then value.sort.map(&:to_s).join ","
+          when Array then
+            # TODO: needs better handling of edit_structure
+            #       currently we pass complete structure as nested array
+            value.map do |item|
+              item.is_a?(Array) ? item.join(":") : item.to_s
+            end.sort.join ","
           else value.to_s
           end
         "#{key}:#{string_value}"

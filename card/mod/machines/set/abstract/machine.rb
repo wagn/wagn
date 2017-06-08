@@ -141,6 +141,8 @@ class << self
   end
 end
 
+include_set Abstract::Lock
+
 def run_machine joint="\n"
   before_engine
   output =
@@ -173,6 +175,11 @@ end
 
 def cache_output_part input_card, output
   Auth.as_bot do
+    # save virtual cards first
+    # otherwise the cache card will save it to get the left_id
+    # and trigger the cache update again
+    input_card.save! if input_card.new_card?
+
     cache_card = fetch_cache_card(input_card, true)
     cache_card.update_attributes! content: output
   end
@@ -186,6 +193,7 @@ def reset_machine_output
 end
 
 def update_machine_output
+  return unless ok?(:read)
   lock do
     update_input_card
     run_machine
@@ -206,36 +214,10 @@ def make_machine_output_coded mod=:machines
 end
 
 def regenerate_machine_output
+  return unless ok?(:read)
   lock do
     run_machine
   end
-end
-
-def lock
-  if ok?(:read) && !(was_already_locked = locked?)
-    Auth.as_bot do
-      lock!
-      yield
-    end
-  end
-ensure
-  unlock! unless was_already_locked
-end
-
-def lock_cache_key
-  "UPDATE-LOCK:#{key}"
-end
-
-def locked?
-  Card.cache.read lock_cache_key
-end
-
-def lock!
-  Card.cache.write lock_cache_key, true
-end
-
-def unlock!
-  Card.cache.write lock_cache_key, false
 end
 
 def update_input_card

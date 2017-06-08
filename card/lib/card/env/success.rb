@@ -43,7 +43,9 @@ class Card
       end
 
       def id= id
-        self.mark = id  # for backwards compatibility use mark here: id was often used for the card name
+        # for backwards compatibility use mark here.
+        # id was often used for the card name
+        self.mark = id
       end
 
       def type= type
@@ -63,7 +65,7 @@ class Card
         case value
         when ""                     then ""
         when "*previous", :previous then :previous
-        when /^(http|\/)/           then value
+        when %r{^(http|/)}          then value
         when /^TEXT:\s*(.+)/        then  Regexp.last_match(1)
         when /^REDIRECT:\s*(.+)/
           @redirect = true
@@ -89,7 +91,9 @@ class Card
       end
 
       def target name_context=@name_context
-        card(name_context) || (@target == :previous ? Card::Env.previous_location : @target) || Card.fetch(name_context)
+        card(name_context) ||
+          (@target == :previous ? Card::Env.previous_location : @target) ||
+          Card.fetch(name_context)
       end
 
       def []= key, value
@@ -110,6 +114,12 @@ class Card
         else
           @params.send key.to_sym
         end
+      end
+
+      def flash message=nil
+        @params[:flash] ||= []
+        @params[:flash] << message if message
+        @params[:flash]
       end
 
       def params

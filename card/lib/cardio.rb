@@ -47,9 +47,10 @@ module Cardio
         acts_per_page:          10,
         space_last_in_multispace: true,
         closed_search_limit:    10,
+        paging_limit: 20,
 
         non_createable_types:   [%w(signup setting set)],
-        view_cache:             (Rails.env == "production"),
+        view_cache: false,
 
         encoding:               "utf-8",
         request_logger:         false,
@@ -58,7 +59,7 @@ module Cardio
 
         file_storage:           :local,
         file_buckets:           {},
-        file_default_bucket:    nil
+        file_default_bucket: nil
       }
     end
 
@@ -92,18 +93,34 @@ module Cardio
 
       add_path "mod"
 
+      set_db_paths
+      set_initializer_paths
+    end
+
+    def set_db_paths
       add_path "db"
       add_path "db/migrate"
       add_path "db/migrate_core_cards"
       add_path "db/migrate_deck_cards", root: root, with: "db/migrate_cards"
       add_path "db/seeds.rb", with: "db/seeds.rb"
+    end
 
+    def set_initializer_paths
       add_path "config/initializers", glob: "**/*.rb"
+      add_path "mod/config/initializers", glob: "**/*.rb"
       add_initializers root
     end
 
     def set_mod_paths
-      each_mod_path { |mod_path| add_initializers File.join(mod_path, "*") }
+      each_mod_path do |mod_path|
+        add_mod_initializers mod_path
+      end
+    end
+
+    def add_mod_initializers mod_path
+      Dir.glob("#{mod_path}/*/config/initializers").each do |initializers_dir|
+        paths["mod/config/initializers"] << initializers_dir
+      end
     end
 
     def add_initializers dir

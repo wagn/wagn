@@ -343,7 +343,7 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 .closed-content {
   table, tbody, tr, th, td, p, h1, h2, h3, h4, h5, h6, ul, li, pre, ol, div, span, a, blockquote, img {
     font-size: 1em;
-    margin: 0 0 0 0;
+    margin: 0 6px 0 0;
     padding: 0;
     border:  0;
   }

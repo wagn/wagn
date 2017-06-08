@@ -227,7 +227,7 @@ format :html do
               editor: "content", help: true, class: classy("card-editor") do
       [content_field, (form.hidden_field(:type_id) if card.new_card?)]
     end
-    end
+  end
 
   def add_junction_class
     return unless card.cardname.junction?

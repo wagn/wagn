@@ -4,9 +4,8 @@ Card.error_codes.merge! permission_denied: [:denial, 403],
 
 module ClassMethods
   def repair_all_permissions
-    Card.where(
-      "(read_rule_class is null or read_rule_id is null) and trash is false"
-    ).each do |broken_card|
+    Card.where("(read_rule_class is null or read_rule_id is null) and trash is false")
+        .each do |broken_card|
       broken_card.include_set_modules
       broken_card.repair_permissions!
     end

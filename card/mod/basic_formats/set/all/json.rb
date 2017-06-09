@@ -55,8 +55,7 @@ format :json do
   end
 
   view :content, cache: :never do
-    req = controller.request
-    { url: (req && req.original_url),
+    { url: request_url,
       timestamp: Time.now.to_s,
       card: _render_atom }
   end
@@ -72,6 +71,31 @@ format :json do
   # minimum needed to re-fetch card
   view :cast, cache: :never do
     card.cast
+  end
+
+  view :marks do
+    {
+      id: id,
+      name: name,
+      url: request_url
+    }
+  end
+
+  view :essentials do
+    if voo.show? :marks
+      render_marks.merge(essentials)
+    else
+      essentials
+    end
+  end
+
+  def essentials
+    { content: card.content }
+  end
+
+  def request_url
+    req = controller.request
+    req ? req.original_url : path
   end
 end
 

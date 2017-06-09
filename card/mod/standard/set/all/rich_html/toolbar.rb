@@ -202,7 +202,7 @@ format :html do
   def related_codename related_card
     return nil unless related_card
     tag_card = Card.quick_fetch related_card.cardname.right
-    tag_card && tag_card.codename.to_sym
+    tag_card && tag_card.codename && tag_card.codename.to_sym
   end
 
   def close_link extra_class, opts={}

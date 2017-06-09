@@ -112,7 +112,7 @@ class CardController < ActionController::Base
 
     view ||= params[:view]
     result = card.act do
-      format.page view, page_opts_from_params
+      format.page view, Card::Env.slot_opts
     end
 
     status = format.error_status || status

@@ -97,7 +97,8 @@ class Card
         def each_option attr_string
           return if attr_string.blank?
           attr_string.strip.split(";").each do |pair|
-            value, key = pair.split(":").reverse
+            # key is optional for view option
+            value, key = pair.split(":", 2).reverse
             key ||= self.class::DEFAULT_OPTION.to_s
             yield key.strip, value.strip
           end

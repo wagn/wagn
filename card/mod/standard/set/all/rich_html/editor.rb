@@ -1,9 +1,13 @@
 include_set Abstract::ProsemirrorEditor
 include_set Abstract::AceEditor
 
+Self::InputOptions.add_to_basket :options, "plain text"
+Self::InputOptions.add_to_basket :options, "phrase"
+Self::InputOptions.add_to_basket :options, "date"
+
 format :html do
   def editor
-    card.rule(:input)
+    (input = card.rule(:input)) && input.gsub(" ", "_")
   end
 
   def editor_method editor_type

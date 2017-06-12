@@ -151,7 +151,7 @@ format :html do
 
     card_form action_args, class: "card-rule-form" do |_form|
       [hidden_tags(success: @edit_rule_success),
-       rules_editor,
+       rule_editor,
        edit_rule_buttons].join
     end
   end

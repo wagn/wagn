@@ -19,6 +19,10 @@ format :html do
     # .merge(pointer_item_class: 'form-control')))
   end
 
+  def default_editor
+    :list
+  end
+
   def part_view
     (c = card.rule(:input)) ? c.gsub(/[\[\]]/, "") : :list
   end

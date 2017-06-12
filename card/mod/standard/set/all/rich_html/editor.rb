@@ -1,13 +1,14 @@
 include_set Abstract::ProsemirrorEditor
+include_set Abstract::TinymceEditor
 include_set Abstract::AceEditor
 
-Self::InputOptions.add_to_basket :options, "plain text"
-Self::InputOptions.add_to_basket :options, "phrase"
-Self::InputOptions.add_to_basket :options, "date"
+Self::InputOptions.add_to_basket :options, "text area"
+Self::InputOptions.add_to_basket :options, "text field"
+Self::InputOptions.add_to_basket :options, "calendar"
 
 format :html do
   def editor
-    (input = card.rule(:input)) && input.gsub(" ", "_")
+    (c = card.rule(:input)) && c.gsub(/[\[\]]/, "").gsub(" ", "_")
   end
 
   def editor_method editor_type
@@ -20,6 +21,7 @@ format :html do
   end
 
   view :editor do
+    binding.pry
     try(editor_method(editor)) ||
       editor_defined_by_card ||
       send(editor_method(default_editor))
@@ -34,16 +36,16 @@ format :html do
     prosemirror_editor_input
   end
 
-  def plain_text_input
+  def text_area_input
     text_area :content, rows: 5, class: "card-content",
               "data-card-type-code" => card.type_code
   end
 
-  def phrase_input
+  def text_field_input
     text_field :content, class: "card-content"
   end
 
-  def date_input
+  def calendar_input
     text_field :content, class: "date-editor"
   end
 end

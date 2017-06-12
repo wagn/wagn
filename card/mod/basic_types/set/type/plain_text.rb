@@ -1,6 +1,6 @@
 format :html do
   def editor
-    :plain_text
+    :text_area
   end
 
   view :core do

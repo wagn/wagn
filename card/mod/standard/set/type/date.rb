@@ -1,6 +1,6 @@
 
 format :html do
   def editor
-    :date
+    :calendar
   end
 end

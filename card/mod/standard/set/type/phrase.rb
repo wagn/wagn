@@ -1,5 +1,5 @@
 format :html do
   def editor
-    :phrase
+    :text_field
   end
 end

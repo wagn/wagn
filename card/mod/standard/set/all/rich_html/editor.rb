@@ -21,7 +21,6 @@ format :html do
   end
 
   view :editor do
-    binding.pry
     try(editor_method(editor)) ||
       editor_defined_by_card ||
       send(editor_method(default_editor))

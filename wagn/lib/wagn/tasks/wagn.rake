@@ -85,6 +85,7 @@ namespace :wagn do
   desc "reset cache"
   task reset_cache: :environment do
     Card::Cache.reset_all
+    Card.reset_all_machines
   end
 
   desc "set symlink for assets"

@@ -205,6 +205,10 @@ describe Card::Set::Type::Signup do
       expect(@account.token).to be_present
       expect(@account.password).not_to be_present
     end
+
+    it "considers signups created by signed-in users to be invitations" do
+      expect(@signup.format.invitation?).to be(true)
+    end
   end
 
   # describe '#signup_notifications' do

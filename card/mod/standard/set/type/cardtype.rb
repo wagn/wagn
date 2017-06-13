@@ -1,3 +1,8 @@
+include_set Abstract::WqlSearch
+
+def wql_hash
+  { type_id: id }
+end
 
 format :html do
   view :type do |args|
@@ -62,8 +67,7 @@ def default_follow_set_card
 end
 
 def cards_of_type_exist?
-  # FIXME: faster test than counting all of type?
-  !new_card? && Auth.as_bot { Card.count_by_wql type_id: id } > 0
+  !new_card? && Card.where(trash: false, type_id: id).exists?
 end
 
 def create_ok?

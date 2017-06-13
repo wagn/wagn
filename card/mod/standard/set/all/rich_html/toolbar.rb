@@ -1,8 +1,9 @@
+include_set Abstract::ToolbarSplitButton
+
 format :html do
 
   TOOLBAR_TITLE = {
     edit: "content",             edit_name: "name",      edit_type: "type",
-
     edit_structure: "structure", edit_nests: "nests",    history: "history",
     common_rules: "common",      recent_rules: "recent", grouped_rules: "all",
     edit_nest_rules: "nests"
@@ -59,9 +60,9 @@ format :html do
   def toolbar_split_buttons
     wrap_with :form, class: "pull-left navbar-text" do
       [
-        (account_split_button if card.accountable?),
-        activity_split_button,
-        rules_split_button,
+        account_split_button,
+        toolbar_button_card(:activity),
+        toolbar_button_card(:rules),
         edit_split_button
       ]
     end
@@ -116,50 +117,6 @@ format :html do
     end
   end
 
-  def activity_split_button
-    toolbar_split_button "activity", view: :history, icon: :time do
-      {
-        history: (_render_history_link if card.history?),
-        discussion: link_to_related(:discussion, "discuss"),
-        follow:  _render_follow_link,
-        editors: link_to_related(:editors, "editors")
-      }
-    end
-  end
-
-  def rules_split_button
-    button_hash = {
-      common_rules:  edit_rules_link("common",   :common_rules),
-      grouped_rules: edit_rules_link("by group", :grouped_rules),
-      all_rules:     edit_rules_link("by name",  :all_rules)
-    }
-    recently_edited_rules_link button_hash
-    nest_rules_link button_hash
-    toolbar_split_button("rules", view: :edit_rules, icon: :list) { button_hash }
-  end
-
-  def nest_rules_link button_hash
-    return # FIXME: remove when reinstating edit_nest_rules
-    return unless nested_fields.present?
-    button_hash[:separator] = separator
-    button_hash[:edit_nest_rules] = edit_nest_rules_link "nests"
-  end
-
-  def recently_edited_rules_link button_hash
-    return unless recently_edited_settings?
-    button_hash[:recent_rules] = edit_rules_link "recent", :recent_rules
-  end
-
-  def edit_nest_rules_link text
-    link_to_view :edit_nest_rules, text,
-                 path: { rule_view: :field_related_rules }
-  end
-
-  def edit_rules_link text, rule_view
-    link_to_view :edit_rules, text,
-                 path: { rule_view: rule_view }
-  end
-
   def edit_split_button
     toolbar_split_button "edit", view: :edit, icon: :edit do
       {
@@ -177,6 +134,7 @@ format :html do
   end
 
   def account_split_button
+    return "" unless card.accountable?
     toolbar_split_button "account", related: :account, icon: :user do
       {
         account: link_to_related(:account, "details", path: { view: :edit }),
@@ -188,15 +146,12 @@ format :html do
     end
   end
 
-  def toolbar_split_button name, button_link_opts
-    status = active_toolbar_button == name ? "active" : ""
-    html_class = "visible-md visible-lg pull-right"
-    icon = button_link_opts.delete(:icon)
-    name_content = "&nbsp;#{name}"
-    name = icon ? glyphicon(icon) : ""
-    name += content_tag(:span, name_content.html_safe, class: html_class)
-    button_link = button_link name, button_link_opts.merge(class: status)
-    split_button(button_link, active_toolbar_item) { yield }
+  def toolbar_button_card name
+    button_codename = "#{name}_toolbar_button".to_sym
+    return "" unless button_card = Card[button_codename]
+    with_nest_mode :normal do
+      nest button_card, view: :core
+    end
   end
 
   def related_codename related_card

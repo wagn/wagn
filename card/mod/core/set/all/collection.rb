@@ -355,20 +355,27 @@ format :csv do
   end
 
   def name_with_field_rows
-    list = card.item_names
-    columns = columns_from_referees list.first
+    return [] unless row_card_names.present?
 
-    list.map do |item_name|
+    row_card_names.map do |item_name|
       CSV.generate_line row_from_field_names(item_name, columns)
     end.join
   end
 
-  def columns_from_referees referer
+  def row_card_names
+    @row_cards ||= card.item_names
+  end
+
+  def columns
     columns = []
-    Card.fetch(referer).format.each_nested_field do |chunk|
+    csv_structure_card.format.each_nested_field do |chunk|
       columns << chunk.referee_name.tag
     end
     columns
+  end
+
+  def csv_structure_card
+    card.rule_card(:csv_structure) || Card.fetch(row_card_names.first)
   end
 
   def row_from_field_names parent_name, field_names, view=:core

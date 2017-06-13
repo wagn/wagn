@@ -73,12 +73,6 @@ describe Card::Set::All::Rules do
       expect(snbg.keys.first).to be_a Symbol
       expect(snbg.keys.member?(:pointer)).not_to be_truthy
     end
-
-    it "returns pointer-specific setting names for pointer card" do
-      c = Card.fetch "Fruit+*type+*create+*self", new: {}
-      snbg = c.setting_codenames_by_group
-      expect(snbg[:pointer]).to eq(@pointer_settings)
-    end
   end
 
   describe "user specific rules" do

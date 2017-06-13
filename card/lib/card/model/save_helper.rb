@@ -9,12 +9,10 @@ class Card
     # All !-methods in this module rename existing cards
     # to resolve name conflicts)
     module SaveHelper
-      def as_user user_name
-        current = Card::Auth.current_id
-        Card::Auth.current_id = Card.fetch_id user_name
-        yield
-      ensure
-        Card::Auth.current_id = current
+      def with_user user_name
+        Card::Auth.with current_id: Card.fetch_id(user_name) do
+          yield
+        end
       end
 
       def create_card name_or_args, content_or_args=nil

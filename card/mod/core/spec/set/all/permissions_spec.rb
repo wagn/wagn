@@ -171,7 +171,7 @@ describe Card::Set::All::Permissions do
       end
       c = Card.new(name: "Home+Heart")
       expect(c.who_can(:read)).to eq([Card::AnyoneSignedInID])
-      expect(c.permission_rule_id_and_class(:read).first).to eq(@perm_card.id)
+      expect(c.permission_rule_id(:read)).to eq(@perm_card.id)
       c.save
       expect(c.read_rule_id).to eq(@perm_card.id)
     end
@@ -183,7 +183,7 @@ describe Card::Set::All::Permissions do
       end
       c = Card.new(name: "Home+Heart")
       expect(c.who_can(:read)).to eq([Card::AnyoneID])
-      expect(c.permission_rule_id_and_class(:read).first).to(
+      expect(c.permission_rule_id(:read)).to(
         eq(Card.fetch("*all+*read").id)
       )
       c.save

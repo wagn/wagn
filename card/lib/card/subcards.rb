@@ -247,6 +247,7 @@ class Card
     end
 
     def new_by_attributes name, attributes={}
+      attributes ||= {}
       absolute_name = absolutize_subcard_name name
       if absolute_name.field_of?(@context_card.name) &&
          (absolute_name.parts.size - @context_card.cardname.parts.size) > 2
@@ -256,8 +257,7 @@ class Card
       else
         subcard_args = extract_subcard_args! attributes
         t_i_s = attributes.delete(:transact_in_stage)
-        card = Card.assign_or_initialize_by absolute_name.s, attributes,
-                                            local_only: true
+        card = Card.assign_or_initialize_by absolute_name.s, attributes, local_only: true
         subcard = new_by_card card, transact_in_stage: t_i_s
         card.subcards.add subcard_args
         subcard

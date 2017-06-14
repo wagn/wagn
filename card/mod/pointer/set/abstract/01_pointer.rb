@@ -126,12 +126,11 @@ format :json do
 
   def essentials
     return if @depth > max_depth
-    item_cards.map do |item|
+    card.item_cards.map do |item|
       nest item, view: :essentials
     end
   end
 end
-
 
 # If a card's type and content are updated in the same action, the new module
 # will override the old module's events and functions. But this event is only

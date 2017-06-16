@@ -59,11 +59,14 @@ format :html do
   end
 
   def paging_path_args local_args={}
-    @paging_path_args ||= {
+    @paging_path_args ||= {}
+    @paging_path_args.reverse_merge!(
       limit: limit,
+      offset: offset,
       view: paging_view,
       slot: voo.slot_options
-    }.merge(extra_paging_path_args)
+    )
+    @paging_path_args.merge! extra_paging_path_args
     @paging_path_args.merge local_args
   end
 

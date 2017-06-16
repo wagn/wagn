@@ -77,7 +77,6 @@ format :html do
     hidden_field :last_action_id_before_edit, class: "current_revision_id"
   end
 
-
   def edit_slot
     if inline_nests_editor?
       _render_core

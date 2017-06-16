@@ -125,6 +125,7 @@ format :html do
   end
 
   def frame_and_form action, form_opts={}
+    form_opts ||= {}
     frame do
       card_form action, form_opts do
         output yield

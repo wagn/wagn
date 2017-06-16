@@ -75,9 +75,9 @@ format :json do
 
   view :marks do
     {
-      id: id,
-      name: name,
-      url: request_url
+      id: card.id,
+      name: card.name,
+      url: path
     }
   end
 
@@ -90,6 +90,7 @@ format :json do
   end
 
   def essentials
+    return {} if card.structure
     { content: card.content }
   end
 

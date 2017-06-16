@@ -111,7 +111,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   }
 
   .horizontal-card-menu {
-    z-index: 1;
+    z-index: 100;
     li {
       height: 30px;
     }
@@ -162,7 +162,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 .closed-view {
   position: relative;
   > .card-frame {
-    white-space: nowrap !important;
+    white-space: nowrap;
     padding-right: 30px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -177,15 +177,15 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 }
 .closed-content {
   display: inline;
-  white-space: nowrap !important;
+  white-space: nowrap;
 
   table, thead, tbody, tr, th, td, p, h1, h2, h3, h4, h5, h6, ul, li, pre, ol, div, span, a, blockquote, img, label, i {
-    display: inline !important;
-    white-space: nowrap !important;
-    float: none !important;
+    display: inline;
+    white-space: nowrap;
+    float: none;
   }
   br, hr, input, textarea, object, :after, :before {
-    display: none !important;
+    display: none;
   }
 }
 
@@ -342,10 +342,10 @@ in your skin.  Choosing (b) will mean your CSS will not be affected by automated
 }
 .closed-content {
   table, tbody, tr, th, td, p, h1, h2, h3, h4, h5, h6, ul, li, pre, ol, div, span, a, blockquote, img {
-    font-size: 1em !important;
+    font-size: 1em;
     margin: 0 6px 0 0;
-    padding: 0 !important;
-    border:  0 !important;
+    padding: 0;
+    border:  0;
   }
   a {
     margin: 0;

@@ -99,7 +99,7 @@ describe Card::Set::All::Base do
 
     it "can handle colons" do
       rendered = render_content "{{A|created_at; variant: %I:%M%P}}"
-      expect(rendered).to match(%r{\d\d\:\d\d\w\w})
+      expect(rendered).to match(/\d\d\:\d\d\w\w/)
     end
   end
 end

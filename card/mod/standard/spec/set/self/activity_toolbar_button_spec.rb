@@ -15,7 +15,7 @@ describe Card::Set::Self::ActivityToolbarButton do
                   content: "Administrator"
     end
 
-    as_user "Joe User" do
+    with_user "Joe User" do
       is_expected.not_to include "activity"
     end
   end

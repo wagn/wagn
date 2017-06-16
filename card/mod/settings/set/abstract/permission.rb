@@ -24,7 +24,7 @@ format :html do
   view :editor do
     item_names = inheriting? ? [] : card.item_names
     %(
-      #{hidden_field :content, class: 'card-content'}
+      #{_render_hidden_content_field}
       <div class="perm-editor">
         #{inheritance_checkbox}
         <div class="perm-group perm-vals perm-section">

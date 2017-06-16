@@ -100,9 +100,9 @@ format :html do
     parent && parent.voo.ok_view == :related
   end
 
-  def standard_frame
+  def standard_frame slot=true
     voo.hide :horizontal_menu, :help
-    wrap do
+    wrap slot do
       [
         _optional_render_menu,
         panel do

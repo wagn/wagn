@@ -65,7 +65,8 @@ format :html do
       offset: offset,
       view: paging_view,
       slot: voo.slot_options
-    ).merge(extra_paging_path_args)
+    )
+    @paging_path_args.merge! extra_paging_path_args
     @paging_path_args.merge local_args
   end
 

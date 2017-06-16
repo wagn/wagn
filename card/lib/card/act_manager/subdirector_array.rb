@@ -15,6 +15,7 @@ class Card
       end
 
       def add card, opts={}
+        opts ||= {}
         card = card.card if card.is_a? StageDirector
         each { |dir| return dir if dir.card == card }
         dir = ActManager.fetch card, parent: @parent

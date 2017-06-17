@@ -163,7 +163,7 @@ format :html do
     intrusive_acts = card.intrusive_acts
                          .page(page_from_params).per(ACTS_PER_PAGE)
     wrap_with :span, class: "slotter" do
-      paginate intrusive_acts, remote: true, theme: 'twitter-bootstrap-3'
+      paginate intrusive_acts, remote: true, theme: "twitter-bootstrap-3"
     end
   end
 
@@ -172,17 +172,17 @@ format :html do
   end
 
   def action_legend with_drafts=true
-    types = [:create, :update, :delete]
+    types = %i[create update delete]
     legend = types.map do |action_type|
-               "#{action_icon(action_type)} #{action_type}d"
-             end
+      "#{action_icon(action_type)} #{action_type}d"
+    end
     legend << "#{action_icon(:draft)} unsaved draft" if with_drafts
     "<small>Actions: #{legend.join ' | '}</small>"
   end
 
   def content_legend
-    legend = [Card::Content::Diff.render_added_chunk('Additions'),
-              Card::Content::Diff.render_deleted_chunk('Subtractions')]
+    legend = [Card::Content::Diff.render_added_chunk("Additions"),
+              Card::Content::Diff.render_deleted_chunk("Subtractions")]
     "<small>Content changes: #{legend.join ' | '}</small>"
   end
 

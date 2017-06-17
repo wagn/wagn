@@ -73,15 +73,15 @@ module ClassMethods
   end
 end
 
-def save!(*)
+def save! *
   act { super }
 end
 
-def save(*)
+def save *
   act { super }
 end
 
-def valid?(*)
+def valid? *
   act { super }
 end
 

@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 require "sass"
 include_set Abstract::Machine
 include_set Abstract::MachineInput

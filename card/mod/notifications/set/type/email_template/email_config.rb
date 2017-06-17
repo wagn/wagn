@@ -2,7 +2,7 @@ def email_config args={}
   config = {}
   args[:context] ||= self
 
-  [:to, :from, :cc, :bcc].each do |field_name|
+  %i[to from cc bcc].each do |field_name|
     process_email_field(field_name, config, args) do |field_card|
       field_card.process_email_addresses(
         args[:context], { format: "email_text" }, args
@@ -44,7 +44,7 @@ def process_email_field field, config, args
     elsif (field_card = fetch(trait: field))
       # configuration can be anything visible to configurer
       user = (args[:follower] && Card.fetch(args[:follower])) ||
-        field_card.updater
+             field_card.updater
       Auth.as(user) do
         yield(field_card)
       end

@@ -1,5 +1,5 @@
-require 'bootstrap/component_loader'
-require 'bootstrap/component'
+require "bootstrap/component_loader"
+require "bootstrap/component"
 
 class Bootstrap
   include Delegate

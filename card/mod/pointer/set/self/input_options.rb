@@ -10,6 +10,3 @@ add_to_basket :options, "list"
 def raw_content
   options.to_pointer_content
 end
-
-
-

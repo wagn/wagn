@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 require "uglifier"
 
 def self.included host_class

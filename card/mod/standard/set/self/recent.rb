@@ -28,7 +28,7 @@ format :html do
   def act_paging
     acts = Act.all_viewable.order(id: :desc).page(page_from_params).per(ACTS_PER_PAGE)
     wrap_with :span, class: "slotter" do
-      paginate acts, remote: true, theme: 'twitter-bootstrap-3'
+      paginate acts, remote: true, theme: "twitter-bootstrap-3"
     end
   end
 end

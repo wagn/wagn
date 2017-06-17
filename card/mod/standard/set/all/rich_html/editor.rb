@@ -8,7 +8,7 @@ Self::InputOptions.add_to_basket :options, "calendar"
 
 format :html do
   def editor
-    (c = card.rule(:input)) && c.gsub(/[\[\]]/, "").gsub(" ", "_")
+    (c = card.rule(:input)) && c.gsub(/[\[\]]/, "").tr(" ", "_")
   end
 
   def editor_method editor_type
@@ -37,7 +37,7 @@ format :html do
 
   def text_area_input
     text_area :content, rows: 5, class: "card-content",
-              "data-card-type-code" => card.type_code
+                        "data-card-type-code" => card.type_code
   end
 
   def text_field_input

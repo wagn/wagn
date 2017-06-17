@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 describe Card::Set::Right::Password do
-  before :each do
+  before do
     @account = Card::Auth.find_account_by_email("joe@user.com")
   end
 

@@ -41,12 +41,12 @@ format :html do
 
   def make_table_of_contents_list items
     list = items.map do |i|
-             if i.is_a?(Array)
-               make_table_of_contents_list(i)
-             else
-               %(<li><a href="##{i[:uri]}"> #{i[:value]}</a></li>)
-             end
-           end.join("\n")
+      if i.is_a?(Array)
+        make_table_of_contents_list(i)
+      else
+        %(<li><a href="##{i[:uri]}"> #{i[:value]}</a></li>)
+      end
+    end.join("\n")
     "<ol>" + list + "</ol>"
   end
 end

@@ -10,7 +10,7 @@ module CarrierWave
     include CarrierWave::MiniMagick
 
     def path version=nil
-      (version && version != :original) ? versions[version].path : super()
+      version && version != :original ? versions[version].path : super()
     end
 
     version :icon, if: :create_versions?, from_version: :small do

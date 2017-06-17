@@ -58,7 +58,7 @@ module ClassMethods
 
   def define_event_to_update_expired_cached_cards set_of_changed_card, args,
                                                   method_name
-    args[:on] ||= [:create, :update, :delete]
+    args[:on] ||= %i[create update delete]
     name = event_name set_of_changed_card, args
     stage = args[:in_stage] || :integrate
     Card::Set.register_set set_of_changed_card

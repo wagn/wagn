@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 class Card
   class Format
     class EmailHtmlFormat < Card::Format::HtmlFormat

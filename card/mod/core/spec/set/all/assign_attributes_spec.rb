@@ -155,8 +155,8 @@ RSpec.describe Card::Set::All::AssignAttributes do
     end
 
     it "test_update_descendants" do
-      old_names = %w(One+Two One+Two+Three Four+One Four+One+Five)
-      new_names = %w(Uno+Two Uno+Two+Three Four+Uno Four+Uno+Five)
+      old_names = %w[One+Two One+Two+Three Four+One Four+One+Five]
+      new_names = %w[Uno+Two Uno+Two+Three Four+Uno Four+Uno+Five]
       card_list = old_names.map { |name| Card[name] }
 
       assert_equal old_names, card_list.map(&:name)

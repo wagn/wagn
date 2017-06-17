@@ -10,7 +10,7 @@ event :cache_expired_for_new_set, :store,
 end
 
 event :cache_expired_for_type_change, :store,
-      on: :update, changed: [:type_id, :name] do
+      on: :update, changed: %i[type_id name] do
   # FIXME: expire (also?) after save
   Card.follow_caches_expired
 end

@@ -220,7 +220,7 @@ end
 event :set_left_and_right, :store,
       changed: :name, on: :save do
   if cardname.junction?
-    [:left, :right].each do |side|
+    %i[left right].each do |side|
       sidename = cardname.send "#{side}_name"
       sidecard = Card[sidename]
 

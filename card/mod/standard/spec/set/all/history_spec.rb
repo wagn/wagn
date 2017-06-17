@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 describe Card::Set::All::History do
   context "history view" do
     # before do

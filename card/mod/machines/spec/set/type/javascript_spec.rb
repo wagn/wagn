@@ -10,7 +10,7 @@ describe Card::Set::Type::JavaScript do
     "//#{source}\n#{content}"
   end
 
-  it_should_behave_like "content machine", that_produces: :js do
+  it_behaves_like "content machine", that_produces: :js do
     let(:machine_card) do
       Card.gimme! "test javascript", type: :java_script, content: js
     end

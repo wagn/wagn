@@ -12,7 +12,7 @@ describe Card::Set::All::Export do
 
     context "pointer card" do
       it "contains cards in the pointer card and its children" do
-        expect(export_pointer %w[T A+B]).to include(
+        expect(export_pointer(%w[T A+B])).to include(
           a_hash_including(name: "pointer export card", type: "Pointer",
                            content: "[[T]]\n[[A+B]]"),
           a_hash_including(name: "T", type: "Basic", content: "Theta"),
@@ -33,7 +33,8 @@ describe Card::Set::All::Export do
       it "stops while the depth count > 10" do
         expect(export_pointer("pointer export card")).to include(
           name: "pointer export card", type: "Pointer",
-          content: "[[pointer export card]]")
+          content: "[[pointer export card]]"
+        )
       end
     end
 

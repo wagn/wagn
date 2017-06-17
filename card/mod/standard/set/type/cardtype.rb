@@ -36,7 +36,7 @@ format :html do
     card_url _render_add_path(args)
   end
 
-  view :add_path do |args|
+  view :add_path do |_args|
     path_args = {}
     if voo.params
       context = ((@parent && @parent.card) || card).name

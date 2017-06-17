@@ -25,7 +25,7 @@ format :html do
   end
 
   def wagn_variables
-    varvals = ["window.wagn={rootPath:'#{Card.config.relative_url_root}'}",]
+    varvals = ["window.wagn={rootPath:'#{Card.config.relative_url_root}'}"]
     card.have_recaptcha_keys? &&
       varvals << "wagn.recaptchaKey='#{Card.config.recaptcha_public_key}'"
     (c = Card[:double_click]) && !Card.toggle(c.content) &&

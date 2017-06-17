@@ -28,7 +28,7 @@ describe Card::Set::All::Name do
   end
 
   describe "codename" do
-    before :each do
+    before do
       @card = Card["a"]
     end
 

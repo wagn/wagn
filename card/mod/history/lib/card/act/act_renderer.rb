@@ -1,4 +1,4 @@
-#require_dependency File.expand_path("../../action/action_renderer", __FILE__)
+# require_dependency File.expand_path("../../action/action_renderer", __FILE__)
 
 class Card
   class Act
@@ -14,7 +14,7 @@ class Card
 
       include ::Bootstrapper
 
-      def method_missing(method_name, *args, &block)
+      def method_missing method_name, *args, &block
         if block_given?
           @format.send(method_name, *args, &block)
         else
@@ -34,19 +34,19 @@ class Card
       def header
         #::Bootstrap.new(self).render do
         #::Boo.bs do
-          bs_layout do
-            row 10, 2 do
-              column do
-                html title
-                tag(:span, "text-muted") { summary }
-              end
-              column act_links, class: "text-right"
+        bs_layout do
+          row 10, 2 do
+            column do
+              html title
+              tag(:span, "text-muted") { summary }
             end
-            row 12 do
-              column subtitle
-            end
+            column act_links, class: "text-right"
           end
-        #end
+          row 12 do
+            column subtitle
+          end
+        end
+        # end
       end
 
       def absolute_title
@@ -61,7 +61,7 @@ class Card
       end
 
       def summary
-        [:create, :update, :delete, :draft].map do |type|
+        %i[create update delete draft].map do |type|
           next unless count_types[type] > 0
           "#{@format.action_icon type} #{count_types[type]}"
         end.compact.join " | "
@@ -178,7 +178,7 @@ class Card
 
       def previous_action
         # TODO: optimize
-        actions.select { |action| action.card.last_action_id != action.id }
+        actions.reject { |action| action.card.last_action_id == action.id }
       end
 
       def show_or_hide_changes_link

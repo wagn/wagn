@@ -183,7 +183,7 @@ end
 def load_bucket_config_from_env config
   config ||= {}
   CarrierWave::FileCardUploader::CONFIG_OPTIONS.each do |key|
-    next if key.in? %i[attributes credentials]
+    next if key.in? [:attributes, :credentials]
     replace_with_env_variable config, key
   end
   config[:credentials] ||= {}
@@ -292,7 +292,7 @@ end
 def with_storage_options opts={}
   old_values = {}
   validate_temporary_storage_type_change opts[:storage_type]
-  %i[storage_type mod bucket].each do |opt_name|
+  [:storage_type, :mod, :bucket].each do |opt_name|
     next unless opts[opt_name]
     old_values[opt_name] = instance_variable_get "@#{opt_name}"
     instance_variable_set "@#{opt_name}", opts[opt_name]

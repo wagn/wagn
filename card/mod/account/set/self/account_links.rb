@@ -1,7 +1,7 @@
 
 format :html do
   def item_links _args=nil
-    [:my_card, :invite, :sign_out, :sign_up, :sign_in].map do |link_view|
+    %i[my_card invite sign_out sign_up sign_in].map do |link_view|
       optional_render link_view
     end
   end
@@ -49,7 +49,6 @@ format :html do
   end
 
   view(:navbar_right, cache: :never) { super() }
-
 
   view :core, cache: :never do
     status_class = Auth.signed_in? ? "logged-in" : "logged-out"

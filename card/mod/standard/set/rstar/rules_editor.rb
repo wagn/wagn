@@ -14,7 +14,7 @@ format :html do
   end
 
   def open_rule_wrap rule_view
-    rule_view_class = rule_view.to_s.tr '_', '-'
+    rule_view_class = rule_view.to_s.tr "_", "-"
     wrap_with :tr, class: "card-slot open-rule #{rule_view_class}" do
       wrap_with(:td, class: "rule-cell", colspan: 3) { yield }
     end
@@ -60,7 +60,7 @@ format :html do
     return "not a rule" unless card.is_rule?
     rule_card = find_existing_rule_card
     wrap_closed_rule rule_card do
-      [:setting, :content, :set].map do |cell|
+      %i[setting content set].map do |cell|
         send "closed_rule_#{cell}_cell", rule_card
       end
     end
@@ -270,7 +270,7 @@ format :html do
   end
 
   def narrower_rule_warning narrower_rules, state, set_name
-    return unless state.in? [:current, :overwritten]
+    return unless state.in? %i[current overwritten]
     narrower_rules << Card.fetch(set_name).uncapitalized_label
     return unless state == :overwritten
     narrower_rule_warning_message narrower_rules
@@ -349,7 +349,7 @@ format :html do
   end
 
   view :edit_single_rule, tags: :unknown_ok, cache: :never do
-    frame() { render_edit_rule }
+    frame { render_edit_rule }
   end
 
   private

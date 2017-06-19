@@ -3,7 +3,7 @@ include_set Type::SearchType
 
 format :html do
   COMMON_RULE_SETTINGS =
-    [:create, :read, :update, :delete, :structure, :default, :style].freeze
+    %i[create read update delete structure default style].freeze
 
   view :core, cache: :never do
     voo.show :set_label, :rule_navbar
@@ -59,10 +59,10 @@ format :html do
 
   view :field_related_rules do
     with_label_and_navbars :field_related_rules do
-      field_settings = [:default, :help, :structure]
+      field_settings = %i[default help structure]
       if card.type_id == PointerID
         # FIXME: should be done with override in pointer set module
-        field_settings += [:input, :options, :options_label]
+        field_settings += %i[input options options_label]
       end
       settings = card.visible_setting_codenames & field_settings
       rules_table settings
@@ -127,7 +127,7 @@ format :html do
 
   def rules_table_headings
     wrap_with :tr, class: "rule-group" do
-      wrap_each_with :th, %w(Trait Content Set), class: "rule-heading"
+      wrap_each_with :th, %w[Trait Content Set], class: "rule-heading"
     end
   end
 
@@ -180,7 +180,7 @@ format :html do
     ""
   end
 
-  view :set_navbar do |args|
+  view :set_navbar do |_args|
     id = "rule-navbar-#{card.cardname.safe_key}-#{voo.home_view}"
     related_sets = card.related_sets(true)
     return "" if related_sets.size <= 1
@@ -329,8 +329,8 @@ end
 
 def visible_setting_codenames
   @visible_settings ||=
-    Card::Setting.groups.values.flatten.compact.reject do |setting|
-      !setting.applies_to_cardtype(prototype.type_id)
+    Card::Setting.groups.values.flatten.compact.select do |setting|
+      setting.applies_to_cardtype(prototype.type_id)
     end.map(&:codename)
 end
 

@@ -9,7 +9,7 @@ format :html do
   end
 
   def interpret_data_opts_to_link_to opts
-    [:remote, :method].each do |key|
+    %i[remote method].each do |key|
       next unless (val = opts.delete key)
       opts["data-#{key}"] = val
     end
@@ -85,7 +85,7 @@ format do
   # :view, :related, :card, or :resource, it will use the respective method to
   # render a link.
   def smart_link_to text, opts={}
-    if (linktype = [:view, :related, :card, :resource].find { |key| opts[key] })
+    if (linktype = %i[view related card resource].find { |key| opts[key] })
       send "link_to_#{linktype}", opts.delete(linktype), text, opts
     else
       send :link_to, text, opts
@@ -133,7 +133,7 @@ format do
   end
 
   def standardize_action! opts
-    return if [:create, :update, :delete].member? opts[:action]
+    return if %i[create update delete].member? opts[:action]
     opts.delete :action
   end
 

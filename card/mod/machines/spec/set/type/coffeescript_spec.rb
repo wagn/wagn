@@ -6,7 +6,7 @@ describe Card::Set::Type::CoffeeScript do
   let(:changed_coffee)            { 'alert "Hello"  ' }
   let(:compressed_changed_coffee) { '(function(){alert("Hello")}).call(this);' }
 
-  it_should_behave_like "content machine", that_produces: :js do
+  it_behaves_like "content machine", that_produces: :js do
     let(:machine_card) do
       Card.gimme! "coffee machine", type: Card::CoffeeScriptID,
                                     content: coffee

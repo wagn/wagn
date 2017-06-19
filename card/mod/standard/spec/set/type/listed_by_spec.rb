@@ -2,6 +2,7 @@
 
 describe Card::Set::Type::ListedBy do
   let(:listed_by) { Card.fetch("Darles Chickens+books").item_names.sort }
+
   before do
     Card::Auth.as_bot do
       Card.create!(
@@ -28,6 +29,7 @@ describe Card::Set::Type::ListedBy do
            "Parry Hotter" and "50 grades of shy"' do
     describe "Darles Chickens+books" do
       subject { listed_by }
+
       it { is_expected.to eq ["50 grades of shy", "Parry Hotter"] }
 
       it "is recorded in the reference table" do
@@ -122,6 +124,7 @@ describe Card::Set::Type::ListedBy do
           )
         end
         subject { Card.fetch("Darles Eggs+books").item_names.sort }
+
         it { is_expected.to eq ["50 grades of shy", "Parry Hotter"] }
       end
       context "when the cartype of Darles Chickens changed" do
@@ -133,6 +136,7 @@ describe Card::Set::Type::ListedBy do
       end
       context "when the name of Darles Chickens+books changed" do
         subject { Card.fetch("Darles Chickens+authors").item_names.sort }
+
         before do
           Card["Darles Chickens+books"].update_attributes!(
             name: "Darles Chickens+authors"
@@ -145,6 +149,7 @@ describe Card::Set::Type::ListedBy do
           Card["book"].update_attributes! name: "literature"
         end
         subject { Card.fetch("Darles Chickens+literature").item_names.sort }
+
         it { is_expected.to eq ["50 grades of shy", "Parry Hotter"] }
       end
       context "when the name of the cardtype authors changed" do

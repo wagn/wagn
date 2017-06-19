@@ -17,6 +17,7 @@ describe Bootstrap::Component::Form do
 
   describe "form" do
     subject { Card["A"].format(:html) }
+
     it "creates form" do
       form =
         subject.bs_form do
@@ -26,10 +27,10 @@ describe Bootstrap::Component::Form do
           end
         end
       expect(form).to have_tag :form do
-        with_tag 'div.form-group' do
+        with_tag "div.form-group" do
           with_tag :label, with: { for: "theemail" },
-                   text: "\nEmail Address"
-          with_tag 'input.form-control', with: { type: "email", id: "theemail" }
+                           text: "\nEmail Address"
+          with_tag "input.form-control", with: { type: "email", id: "theemail" }
         end
       end
     end
@@ -37,6 +38,7 @@ describe Bootstrap::Component::Form do
 
   describe "horizontal form" do
     subject { Card["A"].format(:html) }
+
     let(:form) do
       subject.bs_horizontal_form 2, 10 do
         group do
@@ -61,6 +63,7 @@ describe Bootstrap::Component::Form do
         end
       end
     end
+
     it "creates form" do
       assert_view_select bsform, 'form[class="form-horizontal"]' do
         assert_select 'div[class="form-group"]' do

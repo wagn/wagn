@@ -109,7 +109,7 @@ describe Card::Set::Right::Account do
   end
 
   describe "#update_attributes" do
-    before :each do
+    before do
       @account = Card::Auth.find_account_by_email("joe@user.com")
     end
 
@@ -127,7 +127,7 @@ describe Card::Set::Right::Account do
   end
 
   describe "#reset_password" do
-    before :each do
+    before do
       @email = "joe@user.com"
       @account = Card::Auth.find_account_by_email(@email)
       @account.send_reset_password_token

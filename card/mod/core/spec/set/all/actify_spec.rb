@@ -116,7 +116,7 @@ describe "act API" do
         end
         Card["A"].update_attributes! name: "new name"
       end
-      expect(@called_events).to eq([:i_name, :iwd_name])
+      expect(@called_events).to eq(%i[i_name iwd_name])
     end
   end
 

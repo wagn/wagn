@@ -17,7 +17,7 @@ class AddTwitterCards < Card::Migration
 
     Card::Cache.reset_all
 
-    ensure_card name: [:twitter_template, :type, :structure],
+    ensure_card name: %i[twitter_template type structure],
                 content: structure
   end
 

@@ -1,5 +1,6 @@
 describe Card::Bootstrap do
   subject { described_class.new(format) }
+
   let(:format) { Card["A"].format(:html) }
 
   def render
@@ -14,7 +15,7 @@ describe Card::Bootstrap do
   end
   describe "html" do
     it "renderes plain text" do
-      #expect(render { html "test" }).to eq "test"
+      # expect(render { html "test" }).to eq "test"
     end
   end
 end

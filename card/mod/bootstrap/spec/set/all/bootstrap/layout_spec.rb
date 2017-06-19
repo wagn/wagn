@@ -1,10 +1,11 @@
 describe Bootstrap::Component::Layout do
   describe "layout dsl" do
     subject { Card["A"].format(:html) }
+
     it "creates correct layout with column array" do
       layout = subject.bs_layout container: true, fluid: true do
         row 6, 4, 2, class: "six-times-six" do
-          ["c1", "c2", "c3"]
+          %w[c1 c2 c3]
         end
       end
       assert_view_select layout, 'div[class="container-fluid"]' do
@@ -111,7 +112,7 @@ describe Bootstrap::Component::Layout do
           end
           assert_select 'div[class="row"]' do
             assert_select 'div[class="col-md-6"]', text: "c3"
-            assert_select 'span', text: "s1"
+            assert_select "span", text: "s1"
           end
           assert_select 'div[class="row"]', text: "some content"
         end

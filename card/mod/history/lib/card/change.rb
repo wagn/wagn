@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 class Card
   # A _change_ is an alteration to a card's name, type, content, or trash state.
   # Together, {Act acts}, {Action actions}, and {Change changes} comprise a
@@ -19,7 +20,7 @@ class Card
                         inverse_of: :card_changes
 
     # lists the database fields for which changes are recorded
-    TRACKED_FIELDS = %w(name type_id db_content trash).freeze
+    TRACKED_FIELDS = %w[name type_id db_content trash].freeze
 
     class << self
       # delete all {Change changes} not associated with an {Action action}

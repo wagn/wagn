@@ -26,5 +26,3 @@ class Bootstrap
     end
   end
 end
-
-

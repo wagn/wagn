@@ -1,10 +1,10 @@
-describe 'bootstrap builder' do
+describe "bootstrap builder" do
   class BuilderTest < Card::Format::HtmlFormat::Bootstrap::Component
-    add_tag_method :test_tag, "test-class" do |opts, extra_args|
+    add_tag_method :test_tag, "test-class" do |opts, _extra_args|
       prepend { tag :prepend, "prepend-class" }
       append { tag :append, "append-class" }
       insert { tag :insert, "insert-class" }
-      #wrap { |content| tag :wrap, "wrap-class" { content } }
+      # wrap { |content| tag :wrap, "wrap-class" { content } }
       opts
     end
   end
@@ -15,10 +15,11 @@ describe 'bootstrap builder' do
       tag = BuilderTest.render(fo) { test_tag }
       "<buildertest>#{tag}<buildertest>"
     end
-    it 'appends work' do
-      #assert_select 'prepend[class="prepend-class"]'
+
+    it "appends work" do
+      # assert_select 'prepend[class="prepend-class"]'
       assert_view_select subject, "buildertest" do
-        #assert_select 'prepend[class="prepend-class]"'
+        # assert_select 'prepend[class="prepend-class]"'
         assert_select 'prepend[class="prepend-class]"'
         assert_select 'test_tag[class="test-class"]' do
           assert_select 'insert[class="insert-class]"'

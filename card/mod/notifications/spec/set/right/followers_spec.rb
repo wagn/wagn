@@ -28,6 +28,7 @@ describe Card::Set::Right::Followers do
 
   describe "item_names" do
     subject { @card.followers_card.item_names.sort }
+
     it "is an array of followers" do
       @card = Card["All Eyes On Me"]
       is_expected.to eq ["Big Brother", "John", "Sara"]

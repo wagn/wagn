@@ -63,7 +63,7 @@ format :html do
   end
 
   def favicon
-    [:favicon, :logo].each do |name|
+    %i[favicon logo].each do |name|
       if (c = Card[name]) && c.type_id == ImageID && !c.db_content.blank?
         href = subformat(c)._render_source size: :small
         return %(<link rel="shortcut icon" href="#{href}" />)

@@ -60,8 +60,7 @@ end
 def listed_by
   Card.search(
     { type: "list", right: trunk.type_name,
-      left: { type: cardname.tag }, refer_to: cardname.trunk, return: :name
-      }, "listed_by" # better wql comment would be...better
+      left: { type: cardname.tag }, refer_to: cardname.trunk, return: :name }, "listed_by" # better wql comment would be...better
   )
 end
 

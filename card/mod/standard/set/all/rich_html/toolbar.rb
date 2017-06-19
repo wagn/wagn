@@ -1,7 +1,6 @@
 include_set Abstract::ToolbarSplitButton
 
 format :html do
-
   TOOLBAR_TITLE = {
     edit: "content",             edit_name: "name",      edit_type: "type",
     edit_structure: "structure", edit_nests: "nests",    history: "history",

@@ -2,6 +2,7 @@
 
 describe Card::Set::Type::List do
   subject { Card.fetch("Parry Hotter+authors").item_names.sort }
+
   before do
     Card::Auth.as_bot do
       Card.create! name: "Stam Broker+books", type: "listed by"
@@ -60,6 +61,7 @@ describe Card::Set::Type::List do
       subject do
         Card.fetch("Parry Moppins+authors").item_names.sort
       end
+
       it { is_expected.to eq ["Darles Chickens", "Stam Broker"] }
     end
 

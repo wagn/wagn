@@ -33,7 +33,7 @@ format :html do
     HTML
   end
 
-  def accordion_panel title, body, collapse_id, panel_heading_link=false
+  def accordion_panel title, body, collapse_id, _panel_heading_link=false
     if body
       <<-HTML
         <div class="panel-heading" role="tab" id="heading-#{collapse_id}">

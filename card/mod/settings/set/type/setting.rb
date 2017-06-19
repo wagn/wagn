@@ -26,7 +26,7 @@ def set_classes_with_rules
             right: id,
             # sort:  'content',
 
-            sort:  %w(content name),
+            sort:  %w[content name],
             limit: 0 }
     wql[:left][(set_class.anchorless? ? :id : :right_id)] = set_class.pattern_id
 

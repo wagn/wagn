@@ -49,7 +49,7 @@ format :html do
     db_card    = Card.find_by_key(subject.key)
     return unless cache_card && db_card
     table(
-      [:name, :updated_at, :updater_id, :content, :inspect].map do |field|
+      %i[name updated_at updater_id content inspect].map do |field|
         [field.to_s,
          h(cache_card.send(field)),
          h(db_card.send(field))]

@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 describe Card::Set::All::Links do
   require "card"
   describe "#link_to_resource" do

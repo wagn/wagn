@@ -4,6 +4,5 @@ describe Card::Set::Self::InputOptions do
       "radio", "checkbox", "select", "multiselect", "list", "ace editor",
       "prosemirror editor", "tinymce editor", "text area", "text field", "calendar"
     )
-
   end
 end

@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 require "card/mailer"
 
 describe Card::Set::Type::EmailTemplate::EmailConfig do
@@ -143,6 +144,7 @@ describe Card::Set::Type::EmailTemplate::EmailConfig do
 
   context "with context card" do
     subject(:config) { mailconfig(context: context_card) }
+
     let(:context_card) do
       file = File.new(File.join(FIXTURES_PATH, "mao2.jpg"))
       Card.create(

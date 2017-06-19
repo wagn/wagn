@@ -163,7 +163,7 @@ format :html do
 
   view :edit_nest_rules, cache: :never do |args|
     return ""
-    # FIXME - view can recurse.  temporarily turned off
+    # FIXME: - view can recurse.  temporarily turned off
     voo.show :toolbar
     view = args[:rule_view] || :field_related_rules
     frame do

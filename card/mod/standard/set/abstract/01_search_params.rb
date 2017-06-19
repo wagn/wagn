@@ -20,7 +20,7 @@ format do
   end
 
   def offset_and_limit_search_params hash
-    [:offset, :limit].each do |key|
+    %i[offset limit].each do |key|
       hash[key] = params[key].to_i if params[key]
     end
   end

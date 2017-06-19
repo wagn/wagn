@@ -11,7 +11,7 @@ describe Card::Set::Self::ActivityToolbarButton do
 
   it "can be hidden with read rule" do
     Card::Auth.as_bot do
-      ensure_card [:activity_toolbar_button, :self, :read],
+      ensure_card %i[activity_toolbar_button self read],
                   content: "Administrator"
     end
 

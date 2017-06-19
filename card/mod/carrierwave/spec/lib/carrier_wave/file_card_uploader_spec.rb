@@ -22,6 +22,7 @@ describe CarrierWave::FileCardUploader do
   describe "#db_content" do
     context "coded file" do
       subject { coded_file }
+
       it "returns correct identifier" do
         expect(subject.attachment.db_content)
           .to eq ":logo/standard.png"
@@ -35,6 +36,7 @@ describe CarrierWave::FileCardUploader do
 
     context "local file" do
       subject { local_file }
+
       it "returns correct identifier" do
         expect(subject.attachment.db_content)
           .to eq "~#{subject.id}/#{subject.last_action_id}.txt"
@@ -58,6 +60,7 @@ describe CarrierWave::FileCardUploader do
 
     context "web file" do
       subject { web_file }
+
       it "returns correct identifier" do
         expect(subject.attachment.db_content)
           .to eq "http://web.de/test.txt"

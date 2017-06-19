@@ -11,7 +11,7 @@ class Card
       end
 
       include ::Bootstrapper
-      def method_missing(method_name, *args, &block)
+      def method_missing method_name, *args, &block
         if block_given?
           @format.send(method_name, *args, &block)
         else
@@ -60,7 +60,7 @@ class Card
             path: { related: { view: "history", name: @action.card.name } },
             remote: true,
             class: "slotter",
-            #"data-slot-selector" => ".card-slot.history-view"
+            # "data-slot-selector" => ".card-slot.history-view"
           )
         end
       end

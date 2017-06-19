@@ -21,7 +21,8 @@ format do
 
   def offset_and_limit_search_params hash
     [:offset, :limit].each do |key|
-      hash[key] = params[key].to_i if params[key]
+      # delete values otherwise nested pointers use them for paging
+      hash[key] = params.delete(key).to_i if params[key]
     end
   end
 end

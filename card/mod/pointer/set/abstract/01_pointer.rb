@@ -185,7 +185,7 @@ def item_names args={}
   raw_items = content.to_s.split(/\n+/)
   if args[:limit].present? && args[:limit].to_i > 0
     offset = args[:offset] || 0
-    raw_items = raw_items[offset, args[:limit].to_i]
+    raw_items = raw_items[offset, args[:limit].to_i] || []
   end
   raw_items.map do |line|
     item_name = line.gsub(/\[\[|\]\]/, "").strip

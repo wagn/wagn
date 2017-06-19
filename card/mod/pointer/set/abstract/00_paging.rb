@@ -5,7 +5,7 @@ format do
 
   def offset
     return 0 unless Env.params[:offset].present?
-    Env.params[:offset].to_i
+    @offset ||= Env.params.delete(:offset).to_i
   end
 
   def search_with_params args={}
